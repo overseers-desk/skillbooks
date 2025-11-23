@@ -871,6 +871,12 @@ When constraints exist (e.g., limited Christmas Day dining), research WHAT is ac
 
 All research phases completed: traveller composition identified, event anchors categorised, seasonal context established, activities clustered geographically with operating schedules verified, accommodation strategy developed (IHG prioritised for children, conference proximity where applicable), day-by-day recommendations prepared, update mode respected.
 
+**Critical quality requirements verified:**
+- Seasonal festivals researched with **specific dates** (not "likely open", but "open Dec 1-24, CLOSES Dec 30")
+- Weekly closure patterns documented with **day-of-week mapped to travel dates** (not "Monday closures", but "Dec 29 is Monday - Museum X CLOSED")
+- Operating hours researched with **date-specific schedules** (not "special Christmas hours", but "Dec 24: 10:00-14:00, Dec 25: CLOSED, Dec 26: 10:00-18:00")
+- Activity costs documented with **children's pricing details** (not "~€20-25", but "Adults €23, Children 4-14 €12, Under-4 free")
+
 ## Procedure 2: Mental Journey Simulation and Completeness Evaluation
 
 ### Purpose
@@ -1568,6 +1574,13 @@ This integration ensures the day-by-day view and the completeness assessment are
 ### Checkpoint: Itinerary Document Complete
 
 Existing Itinerary.md reviewed, to-do items updated (☑ for booked, ☐ for pending), accommodation reflects actual bookings, day-by-day timeline uses actual hotel locations, completeness checklist integrated (concise, under half page), transportation table complete with all intercity segments, gaps referenced inline, document saved.
+
+**Critical output quality verified:**
+- Day-by-day section uses **actual calendar dates** (not "Day 1, Day 2", but "December 26, 2025 (Friday), December 27, 2025 (Saturday)")
+- Seasonal events documented with **specific closure dates** (not "some markets close Dec 24-25", but "Alexanderplatz market: Nov 24-Dec 30, CLOSES Dec 30 - last day for Dec 29 travelers")
+- Activity operating hours include **date-specific schedules** mapped to actual travel dates
+- Accommodation to-do items include **specific hotel names with reasoning** (not "book accommodation", but "Book InterContinental Berlin - near Alexanderplatz, IHG Platinum upgrade potential")
+- Transport costs documented as **family totals with children's fare policies** (not "€9.50/adult", but "€12.30/adult, children 6-14 free with adult pass, family of 4 = €24.60/day")
 
 ## Procedure 4: Quality Control Checklist and Iteration
 
