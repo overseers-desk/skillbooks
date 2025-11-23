@@ -450,70 +450,16 @@ The comprehensive research requirements in this phase (sunset times, museum open
 
 **For Journeys WITH Children:**
 
-1. **Identify Destinations and Seasonal Context**
+1. **Identify Destinations and Seasonal Context (Child-Specific Notes)**
    - Extract cities from Fares and Accommodations folders
-   - Note duration of stay in each city
    - Note which travellers (including which children) are present for each segment
    - Calculate available activity time per day: ~4 hours actual exploring time in typical 12-hour day
-   - **Identify travel dates and season**: Winter, Spring, Summer, Autumn
-   - **Research sunrise and sunset times** for the travel dates in each destination
+   - **Identify travel dates, season, and research sunrise/sunset times**
      - **Critical with children**: Winter sunset at 16:00-17:00 means afternoon activities must finish earlier
-     - Adjust activity timing to account for available daylight
-     - Evening activities in winter are limited; plan more morning/early afternoon activities
+     - Adjust activity timing to account for available daylight; winter limits evening activities
    - Cross-reference with existing event commitments from Phase 1
 
-2. **Research Airport Positioning and Regional Accessibility**
-
-   For the arrival and departure airports, conduct web searches and document findings:
-
-   a. **Geographic position**:
-      - Search: "Where is [Airport Name] located [Country/Region]?" and "What cities are near [Airport Name]?"
-      - Document the airport's geographic position with specific details (distance from main city, highway access, position between multiple cities)
-      - Example finding: "Edinburgh Airport is located 5.8 miles west of Edinburgh city centre, at M8/M9 motorway junction, positioned between Edinburgh and Glasgow"
-
-   b. **Nearby destinations within 60 minutes**:
-      - Search: "cities within 60 minutes drive [Airport Name]" or "day trips from [City] driving distance"
-      - List all cities/towns within 60-minute drive
-      - Document approximate driving times (e.g., "Glasgow 45 min, Stirling 60 min, Linlithgow 30 min")
-
-   c. **Regional travel patterns**:
-      - Search: "is [Region/Country] good for road trips" or "do tourists explore [Region] by car"
-      - Document whether car-based touring is common
-      - Note any statistics or recommendations found (e.g., "69% of visitors use cars", "VisitScotland recommends car touring")
-
-   d. **Seasonal accessibility in alternative cities** (especially if travel dates include holidays/closures):
-      - For each nearby city identified, search: "what's open in [City] on [Holiday/Date]" or "[City] Christmas Day attractions open"
-      - Research ungated attractions that remain accessible regardless of closure schedules: churches, cathedrals, rivers, parks, public squares, outdoor monuments, waterfront areas, scenic viewpoints
-      - Note: Larger cities may have more venues that remain open even if they also have more venues closed. Research actual open attractions, not just closure counts.
-      - Document what IS accessible in each city, not just what's closed
-
-   e. **Evaluate whether alternative destination-level plans warrant presentation**:
-      Document findings for potential alternatives (car-based regional vs city-based), then assess comparative value using these criteria:
-
-      **Value Assessment Criteria:**
-      - **Variety**: Access to different cities/regions has inherent value even if individual attractions are similar (e.g., outdoor walks in multiple cities > outdoor walks in one city)
-      - **Seasonal closures context**: When primary city has limited options (holidays/closures), car access to MULTIPLE limited-option cities compounds options rather than diluting them
-      - **Travel time**: Car travel is transport overhead (like flights), NOT lost activity time. Don't penalize car options for drive time when comparing activity value.
-      - **Practical benefits**: Children resting in car during drives, avoiding hotel changes for early flights, luggage flexibility, weather protection
-      - **Cost factors**: Airport hotels often significantly cheaper than city hotels; free parking vs city parking fees
-      - **Traveler composition**: Families with children benefit more from car flexibility than solo travelers
-
-      **Threshold Application:**
-      - If alternative offers ~90%+ value of primary: Present both with trade-offs
-      - If alternative could offer 150%+ value for travelers with specific interests: Present with that caveat (Example: Cotswolds from London - not in any "sane" standard plan as it's 2+ hours away, but could be 150%+ value for travelers specifically interested in English countryside villages)
-      - If alternative offers only ~60% value: Note alternatives exist but don't detail ("Alternative regional touring considered but offers limited value given constraints")
-
-      Per-day alternatives are helpful when day-level choices have comparable value.
-
-   Document this analysis - Phase 6 will use these findings for accommodation strategies, and Phase 7 will generate detailed plans only for alternatives warranting presentation.
-
-   f. **Document transport mode decision for final itinerary**:
-
-   Based on the regional accessibility research above, conclude whether car rental is recommended and provide explicit reasoning. This conclusion must appear in the final itinerary to demonstrate the transport strategy was evaluated, not overlooked.
-
-   Example conclusion formats:
-   - "Car rental not recommended: Amsterdam's compact historic center is best explored on foot or by tram, with excellent public transport (metro, tram, buses) connecting all major museums and attractions. Parking is extremely limited and expensive (€50+/day), and most streets are narrow or pedestrian-only. All planned activities accessible via public transport within 15-20 minutes."
-   - "Car rental recommended: Gold Coast attractions are spread along 50km of coastline with limited public transport between key destinations. Major attractions (theme parks, beaches, hinterland) require 20-40 min drives between them. Car provides flexibility for beach hopping and visiting multiple parks without tour group constraints. Airport pickup convenient, free parking at most attractions."
+2. **Research Airport Positioning and Regional Accessibility** - *Follow same methodology as adult-only planning above, with additional child-specific value criteria noted in section 2e*
 
 3. **Research Seasonal Events and Festivals**
 
@@ -923,24 +869,7 @@ When constraints exist (e.g., limited Christmas Day dining), research WHAT is ac
 
 ### Checkpoint: Itinerary Planning Complete
 
-- Traveller composition identified (children detected or not)
-- Traveller split patterns identified (if applicable)
-- Existing event commitments identified and categorised as anchors
-- Seasonal context established (travel dates, season, sunrise/sunset times)
-- Seasonal festivals and limited-time events researched and highlighted
-- Weekly closure patterns for attractions researched and documented
-- Day-of-week activity matrix created for multi-day stays
-- Arrival and departure timing analysed with appropriate strategies
-- Existing content reviewed and understood
-- Destinations researched with appropriate activity types and seasonal appropriateness
-- Activities clustered geographically around event anchors and operating day patterns
-- Conference/event accommodation requirements identified
-- Accommodation strategy developed (IHG prioritised with realistic fallbacks when children present, conference proximity prioritised when applicable)
-- Transport accessibility evaluated
-- Day-by-day recommendations prepared with fixed commitments, seasonal events, and operating schedules noted
-- Traveller-specific plans prepared (when travellers split)
-- Structured recommendations ready for document integration
-- Update mode respected: existing valid plans preserved, only needed changes proposed
+All research phases completed: traveller composition identified, event anchors categorised, seasonal context established, activities clustered geographically with operating schedules verified, accommodation strategy developed (IHG prioritised for children, conference proximity where applicable), day-by-day recommendations prepared, update mode respected.
 
 ## Procedure 2: Mental Journey Simulation and Completeness Evaluation
 
@@ -1235,12 +1164,7 @@ pdftotext "/path/to/Fares/2025-12-23 [Ryanair] Seville-Edinburgh FR1073 JQ3BFI.p
 
 ### Checkpoint: Completeness Evaluation Complete
 
-- All legs of journey have been evaluated
-- Gaps have been categorised appropriately
-- Genuine gaps distinguished from acceptable gaps
-- Date continuity verified even for acceptable transport methods
-- Evaluation granularity matches travel complexity
-- Mental model discarded, only problems documented
+All journey legs evaluated, gaps categorised (genuine vs acceptable), date continuity verified, mental model discarded.
 
 ## Procedure 3: Itinerary Document Creation/Update with Completeness Assessment
 
@@ -1643,24 +1567,7 @@ This integration ensures the day-by-day view and the completeness assessment are
 
 ### Checkpoint: Itinerary Document Complete
 
-- Existing Itinerary.md read and considered (if present)
-- Previous suggestions cross-referenced with current bookings
-- **To-do items updated**: Booked items marked complete (☑), unbooked items marked active (☐)
-- **Accommodation section reflects actual bookings** where they exist, suggestions where they don't
-- **Day-by-day timeline uses actual hotel locations** (not suggestions) when bookings exist
-- Activity recommendations from Procedure 1 integrated into day-by-day timeline
-- Accommodation strategy from Procedure 1 reflected in document (updated if actual bookings differ)
-- Completeness Checklist integrated with findings from Procedure 1, Procedure 2, and folder management email checking
-- Checklist concise (under half page, ~10 items maximum)
-- Gaps categorised by priority with contextual reasoning
-- Booking guidance provided for genuine gaps with specific hotel suggestions
-- Missing invoices listed with provider details
-- Key Transportation Segments table includes all intercity transport
-- All destination cities from checklist appear in transportation table
-- Day-by-day timeline includes estimated timestamps using methodology
-- Critical transitions documented with time allowances
-- Gaps referenced inline in day-by-day timeline
-- Document saved as Itinerary.md in journey folder
+Existing Itinerary.md reviewed, to-do items updated (☑ for booked, ☐ for pending), accommodation reflects actual bookings, day-by-day timeline uses actual hotel locations, completeness checklist integrated (concise, under half page), transportation table complete with all intercity segments, gaps referenced inline, document saved.
 
 ## Procedure 4: Quality Control Checklist and Iteration
 
@@ -1765,11 +1672,7 @@ Review the generated itinerary against each item below. For each item, verify PA
 
 ### Checkpoint: Quality Control Complete
 
-- All 10 QC checklist items verified as PASS
-- Any failures identified were corrected through iteration
-- Itinerary meets creator role (not advisor role)
-- All key decisions documented with reasoning
-- Document is complete and actionable for traveller
+All 10 QC items verified PASS, failures corrected through iteration, creator role fulfilled, key decisions documented with reasoning.
 
 ## Appendix: Contextual Reasoning Guidelines
 
@@ -1987,68 +1890,7 @@ Even when transport method is reasonable, always verify dates align:
 
 ## RUN Re-runnability Checklist
 
-This checklist verifies that RUN execution is properly idempotent, enabling multiple passes through the same journey folder without duplication or unnecessary work. Use this checklist to confirm re-runnability is maintained as the SOP evolves.
-
-### Re-runnability Verification Points
-
-**1. Itinerary Planning (Procedure 1)**
-- ✓ Existing Itinerary.md is read before planning updates
-- ✓ Valid existing plans and bookings are preserved
-- ✓ Only needed changes or additions are proposed
-- ✓ Update mode is primary workflow (90% of usage)
-- ✓ Child detection logic applied consistently
-
-**2. Itinerary.md Updates (Procedure 3)**
-- ✓ Existing Itinerary.md is read before updating
-- ✓ Updates preserve existing accurate content
-- ✓ New information is integrated incrementally
-- ✓ Resolved gaps are removed from completeness checklist
-- ✓ Newly identified gaps are added to completeness checklist
-- ✓ Multiple RUN executions refine the itinerary without duplication
-
-**3. Gap Evaluation (Procedure 2)**
-- ✓ Evaluation considers current folder state (includes new bookings)
-- ✓ Cancelled bookings (with "(Cancelled)" prefix) are excluded from evaluation
-- ✓ Gap categorisation is consistent across multiple runs
-- ✓ Contextual reasoning applied consistently
-
-**4. Consistency Across Multiple Runs**
-- ✓ Running RUN once produces the same result as running it twice consecutively
-- ✓ Itinerary refinements are incremental, not duplicative
-- ✓ Completeness checklist shrinks as gaps are resolved
-- ✓ Final RUN with no new bookings confirms all gaps addressed
-
-**4. State Preservation**
-- ✓ Previous itinerary content is not overwritten inappropriately
-- ✓ Resolved gaps do not reappear
-- ✓ Booking guidance remains consistent unless circumstances change
-
-### Expected Behaviour Across Multiple RUNs
-
-**First RUN (new journey folder)**:
-- Detect traveller composition (children present or not)
-- Research destinations and create activity recommendations
-- Develop accommodation strategy with reasoning
-- Evaluate all bookings through mental simulation
-- Identify all gaps (genuine, acceptable, verification needed)
-- Generate complete Itinerary.md with comprehensive planning and completeness checklist
-
-**Second RUN (after new booking added or itinerary update requested)**:
-- Review existing plans and preserve valid content
-- Update activity recommendations based on new bookings or changed circumstances
-- Re-evaluate journey considering new information
-- Update Itinerary.md to include new bookings and plans in timeline
-- Remove resolved gaps from completeness checklist
-- Add any new gaps discovered
-- Update transportation table
-
-**Third RUN (no changes)**:
-- Planning review confirms existing recommendations remain valid
-- Mental simulation confirms previous evaluation remains valid
-- Itinerary.md review shows no changes needed
-- Completeness checklist unchanged
-
-This re-runnable design ensures that each RUN builds on previous work, incorporating new bookings and updated plans whilst preserving completed evaluation tasks, enabling the itinerary to evolve naturally as the journey develops.
+Verify RUN is properly idempotent: existing Itinerary.md read before updates, valid plans preserved, only needed changes proposed, resolved gaps removed, new gaps added, cancelled bookings excluded, state preserved across runs. First RUN creates complete plan; subsequent RUNs incrementally refine based on new bookings without duplication.
 
 ---
 
