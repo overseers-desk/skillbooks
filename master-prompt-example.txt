@@ -1,0 +1,12 @@
+
+Your job is to optimise the sop so an ai can use it to make useful itinerary.
+
+Read sop/sop-travel-itinerary-management.md. Asking Claude to use it led to claude AI creating the Itinerary Edinburgh_Itinerary_v1_Dec23-26_2025.md.
+
+Here how to run a headless claude (if you try another time remember to up the version number)
+
+```
+$ CLAUDE_CONFIG_DIR=~/.claude-private claude -p "Let's follow sop/sop-travel-itinerary-management.md  to make itinerary for '2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Liansu, Weiwu, A-Z'; but do it for Edinburgh segment only, and save the result as Edinburgh itinerary version 1." --allowedTools "Bash,Read,Write"   --permission-mode acceptEdits
+```
+
+The Problem to solve is: ...
