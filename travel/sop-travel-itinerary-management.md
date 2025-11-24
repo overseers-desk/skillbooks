@@ -627,16 +627,100 @@ The comprehensive research requirements in this phase (sunset times, museum open
    - Ensure high-priority attractions are scheduled for days when they're actually open
 
 3. **Assess Transport Within and Between Clusters**
-   
-   **Within Clusters:**
-   - Walking distance between activities (consider time with children)
-   - Public transport connections
-   - Taxi/ride-hailing availability
-   
-   **Between Clusters:**
-   - Transport time from hotel to cluster
+
+   **Objective**: Research actual available transport modes and compare costs, time efficiency, and suitability for traveler composition
+
+   **A. Research Available Transport Modes**
+
+   For movement between hotel and activity clusters, research what transport options actually exist in this destination:
+
+   1. **Public Transport Research**
+      - Search: "[City] public transport", "[City] getting around", "[City] metro/tram/bus map"
+      - Identify available modes: metro, trams, buses, ferries, water buses, cable cars, etc.
+      - Note: "Public transport" is not generic - Venice has vaporetti, Brisbane has river ferries, some cities have no metro
+      - Document ticket pricing: single ticket, day pass, multi-day pass
+      - Check if children travel free or reduced fare
+
+   2. **Private Transport Research**
+      - Search: "[City] taxi prices", "[City] water taxi" (if applicable), "[City] rideshare availability"
+      - Identify available modes: taxis, rideshare (Uber/Bolt), private boats/water taxis, car hire with driver
+      - Document pricing structure: per vehicle (typical for taxis) vs per person (some boats)
+      - Check typical journey costs for key routes (hotel to main attractions)
+
+   3. **Walking Assessment**
+      - Map walking distances between hotel and activity clusters
+      - Consider: distance, terrain (hills, stairs, cobblestones), weather, child-friendliness
+      - Note if city is genuinely walkable or if transport is necessary
+
+   **B. Compare Transport Modes for Family Logistics**
+
+   For each major transport need (hotel to cluster, between clusters), calculate and compare:
+
+   1. **Cost Comparison**
+      - Public transport: Cost per person × number of paying travelers (account for children's fares)
+      - Private transport: Cost per vehicle (often fixed regardless of 2 or 4 passengers)
+      - Example: Venice vaporetto €9.50/person × 2 adults = €19 vs water taxi €60-80 total for family of 4
+      - Calculate for typical daily usage (multiple trips per day)
+      - Consider multi-day passes vs single tickets
+
+   2. **Time Efficiency**
+      - Public transport: Journey time + waiting time (frequency matters) + potential transfers
+      - Private transport: Direct journey time, typically faster but more expensive
+      - Example: Venice water taxi 10 min direct vs vaporetto 20 min + 10 min wait = 30 min total
+      - Consider if time savings justify cost premium
+
+   3. **Practical Factors for Families**
+      - Crowding: Can family of 4 with children sit together? (important for child supervision)
+      - Luggage: Relevant for arrival/departure days or if carrying bags between activities
+      - Children's comfort: Can children rest during journey, or must they stand in crowded conditions?
+      - Stress level: Complex transfers with children vs direct door-to-door service
+      - Safety: Child supervision easier in private vehicle vs crowded public transport
+
+   **C. Within Clusters**
+
+   Once at a cluster, assess movement between activities:
+   - Walking distance between activities (consider time with children, terrain, weather)
+   - If cluster is large, note internal transport options (e.g., park shuttles, local buses)
+   - Identify rest points between activities (cafes, parks where children can break)
+
+   **D. Between Clusters**
+
+   For movement from hotel to clusters and between different clusters:
+   - Transport time from hotel to each cluster (using most practical mode researched above)
    - Example consideration: Lisbon east (aquarium, MEO arena) to centre = 30+ minutes despite <10km
-   - May need to plan multi-day stays in different areas rather than daily cross-city transport
+   - If transport time > 30 min each way with children, consider if multi-day stays in different areas are more practical than daily cross-city transport
+   - Daily commute of 1+ hour round-trip consumes ~25% of children's effective activity time (~4 hours/day)
+
+   **E. Document Recommendations**
+
+   In the itinerary, present transport mode recommendations with reasoning:
+
+   **Format:**
+   ```
+   **Hotel to [Cluster Name] Transport**
+
+   Available options:
+   - [Mode 1]: [Cost for family], [Time], [Frequency/Availability]
+   - [Mode 2]: [Cost for family], [Time], [Frequency/Availability]
+
+   Recommended: [Mode X]
+   Reasoning: [Brief explanation of why this mode is most suitable - cost-effective, time-efficient, family-friendly, etc.]
+   ```
+
+   **Example:**
+   ```
+   **Sant'Elena Hotel to St Mark's Square Transport**
+
+   Available options:
+   - Vaporetto Line 1: €19 for 2 adults (children under 6 free), ~20 min journey + 5-10 min wait, frequent service
+   - Water taxi: €60-80 for family of 4, ~10 min direct, book on demand
+
+   Recommended: Vaporetto Line 1
+   Reasoning: Cost-effective for short 1-day visit (€19 vs €60-80). Time difference modest (30 min total vs 10 min).
+   Consider water taxi only if very tight schedule or children very young/tired.
+
+   Alternative: 24-hour vaporetto pass (€25/adult = €50 total) if making 3+ trips in day.
+   ```
 
 ### Phase 6: Accommodation Selection Strategy
 
