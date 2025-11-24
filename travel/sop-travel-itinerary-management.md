@@ -75,6 +75,33 @@ A journey folder contains all documentation for a specific trip, including trans
 
 A **RUN** is a complete itinerary management pass through a journey folder, executing itinerary creation and planning, mental journey simulation validation, and itinerary document generation to provide comprehensive travel documentation.
 
+**CRITICAL PREREQUISITE - Folder Location:**
+
+This SOP assumes the folder management SOP has already been executed and the journey folder exists with organized booking documents.
+
+**Before executing any procedures:**
+
+1. **Read `travel/sop-travel-folder-management.md` (first 100 lines) to determine:**
+   - Default folder location path (typically `~/Dropbox/0. Travel Admin/`)
+   - Journey folder naming convention
+   - Expected subfolder structure (Fares, Accommodations, Passes)
+
+2. **Locate the journey folder** using the information from step 1:
+   - Extract journey name from user request (format: "YYYY-MM-DD [Destination] - [Travelers]")
+   - Construct full path: `[default-location]/[journey-name]/`
+   - Example: `~/Dropbox/0. Travel Admin/2025-11-29 Venice - Liansu, Weiwu, A-Z/`
+
+3. **Verify folder exists and contains booking documents:**
+   ```bash
+   ls ~/Dropbox/0.\ Travel\ Admin/[journey-name]/
+   ```
+   - If folder exists: Proceed with RUN using this folder as the working directory
+   - If folder not found: Stop and ask user to confirm folder location or run folder management SOP first
+
+4. **Set working context for all procedures:**
+   - All Read, Glob, Grep operations target: `[journey-folder]/Fares/`, `[journey-folder]/Accommodations/`, `[journey-folder]/Passes/`
+   - Generated Itinerary.md saves to: `[journey-folder]/Itinerary.md`
+
 **RUN Workflow:**
 
 1. **Itinerary Creation and Planning** (Procedure 1): Create or update travel plans with activity recommendations, accommodation selection, and child-specific considerations when applicable
