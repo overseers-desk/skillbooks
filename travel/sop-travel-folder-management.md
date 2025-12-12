@@ -241,6 +241,14 @@ Fully organized journey folder with all files compliant to naming conventions
      - Verify each file begins with YYYY-MM-DD date format
      - Check for files without date prefix (orphaned files)
      - Identify files with incorrect date formats (e.g., DD-MM-YYYY, MM/DD/YYYY)
+     - For orphaned files or files requiring content verification, extract text:
+       - PDF files: Use `pdftotext "filename.pdf" -`
+       - Image files (JPG/PNG/JPEG): Use `tesseract "filename.jpg" -` for OCR
+     - Verify file content matches the subfolder purpose:
+       - **Fares**: Transport documents (flights, trains, buses, car rentals). Indicators: flight numbers, PNR codes, airport codes, departure/arrival times
+       - **Passes**: Event tickets, museum entries, activity passes. Indicators: event names, venue names, admission tickets
+       - **Accommodations**: Hotel/lodging reservations. Indicators: check-in/check-out dates, room details, hotel names
+     - Flag misplaced files for moving to correct subfolder (e.g., a boarding pass in Passes folder should move to Fares)
 
 3. **Fare File Convention Verification**
    - For each file in Fares folder:
@@ -261,7 +269,9 @@ Fully organized journey folder with all files compliant to naming conventions
    For files requiring correction:
 
    **a. Information Extraction**
-   - Open PDF using text extraction tool (pdftotext or equivalent)
+   - Extract text from the document:
+     - PDF files: Use `pdftotext "filename.pdf" -`
+     - Image files (JPG/PNG/JPEG): Use `tesseract "filename.jpg" -` for OCR
    - Extract the following information:
      - **Cancellation status**: Check if document or related emails indicate this booking was cancelled
      - **Date**: Use the travel/use date, NOT the purchase/booking date (verify by checking flight dates in document)
@@ -309,7 +319,7 @@ Fully organized journey folder with all files compliant to naming conventions
      - FF points notation in parentheses (if applicable): `(Qantas +3500)` or `(Qantas!)`
      - Space (if passengers included)
      - Passenger names (if applicable)
-     - File extension: `.pdf`
+     - File extension: Preserve original (`.pdf`, `.jpg`, `.jpeg`, `.png`)
 
    **f. Format Validation**
    - Verify filename matches convention exactly
@@ -320,12 +330,14 @@ Fully organized journey folder with all files compliant to naming conventions
    - Ensure booking reference is present
 
 6. **Reorganization Actions**
+   - Move misplaced files to correct subfolders based on content (as identified in Step 2)
    - Move orphaned files to appropriate subfolders with correct date prefix
    - Rename files with incorrect date formats (use date from document content, not filename)
    - Apply fare file naming correction as described in Step 5
    - For reimbursement files requiring naming correction, apply Helper Procedure A
 
 7. **Checkpoint: Organization and Naming Complete**
+   - All files are in correct subfolders based on content type
    - All files follow YYYY-MM-DD date format prefix
    - All fare files include airline name in square brackets
    - All fare files include booking reference
