@@ -113,6 +113,16 @@ For cancelled bookings: `(Cancelled) YYYY-MM-DD [Airline/Transport] Origin-Desti
 - **Frequent Flyer points**: In parentheses, e.g., `(Qantas +3500)` for claimed points, `(Qantas!)` for unclaimed but eligible
 - **Passengers**: Comma-separated, no spaces, e.g., `Liansu,Weiwu,Alice,Zoe` or abbreviated `A-Z` when appropriate
 
+**Multi-segment and Round-trip Bookings:**
+
+When a single booking confirmation contains multiple flight segments (connecting flights or round-trip journeys), keep as a single file using these conventions:
+
+- **Connecting flights (one-way)**: Use first flight number only: `2025-06-15 [Qantas] Singapore-Melbourne-Sydney QF52 ABCDEF.pdf` (connecting via Melbourne)
+- **Round-trip bookings**: Use "Return" with primary outbound/inbound flight numbers separated by slash: `2025-03-20 [Lufthansa] London-Tokyo Return LH920/LH456 XYZ123 Liansu.pdf` (outbound: LH920 to Frankfurt, LH456 to Tokyo; return similar pattern)
+- **Complex multi-segment**: If booking contains 4+ flights, use first outbound and first inbound flight numbers: `2025-08-10 [Emirates] Paris-Dubai-Paris EK073/EK076 PQR789 Weiwu.pdf`
+
+The date used should always be the departure date of the first outbound flight.
+
 **Examples:**
 
 - `2025-11-15 [Ryanair] Seville-Porto FR2323 DTF7HZ Liansu,Weiwu,Alice,Zoe.pdf`
@@ -842,7 +852,7 @@ Properly named file following convention:
 
 ### Incorrect Fare File Naming Examples
 
-❌ `2023-03-30 Aiqin's tourist ticket from Lanzhou to Tbilisi - South China Airline.pdf`
+❌ `2023-03-30 Aiqin's tourist ticket from Beijing to Moscow - China Southern.pdf`
 - Missing airline brackets
 - Using "to" instead of hyphen
 - Missing flight number
