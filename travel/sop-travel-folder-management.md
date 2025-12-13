@@ -494,6 +494,7 @@ Action list for user confirmation containing:
    - **Hotel Booking Confirmation**:
      - Subject typically: "Booking confirmation", "Reservation confirmed", "Your booking at [Hotel Name]"
      - Contains booking reference, hotel name, check-in/check-out dates
+     - **CRITICAL: Verify check-in date falls within journey date range** (from earliest travel date to latest travel date + 7 days). If check-in is outside this range, this booking belongs to a different journey - skip it.
      - **Action**: Verify if already saved in Accommodations folder. If not, flag for saving.
      - **Check for invoice**: Examine if the email contains an invoice attachment or invoice information
    
