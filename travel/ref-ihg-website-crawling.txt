@@ -1,32 +1,53 @@
-# IHG Website Crawling Reference Guide
+# IHG Website Browser Automation Reference
 
-This reference documents the browser automation steps for searching IHG hotels with specific criteria (3+ guests, date ranges). Created from actual browser interaction on 15 December 2025.
+This reference documents browser automation patterns for IHG hotel research, including search queries, hotel detail pages, and room specifications. Created from actual MCP browser sessions.
 
 ---
 
-## Quick Reference: IHG Search URL Parameters
+## IHG Website Structure Overview
 
-The IHG hotel search can be accessed directly via URL with query parameters, which is faster than manual form interaction:
+The IHG website has two main navigation paths relevant to hotel research:
+
+1. **Hotel Search** - Find hotels by destination, dates, and guest count
+2. **Hotel Detail Pages** - View room specifications for a specific property
+
+Both paths have direct URL access patterns, which should always be the first approach. Manual form interaction is a fallback when URLs redirect unexpectedly.
+
+**Critical behaviour:** The IHG website frequently redirects invalid or unfamiliar URLs to a generic explore page (`https://www.ihg.com/explore`). If the browser lands on this page unexpectedly, the URL was incorrect or the website rejected the request.
+
+---
+
+## Hotel Search: Direct URL Construction
+
+Direct URL access is faster and more reliable than manual form filling. Construct search URLs using this pattern:
 
 ```
 https://www.ihg.com/hotels/gb/en/find-hotels/hotel-search?
   qDest=Vienna,%20Austria          # Destination (URL encoded)
   &qCiD=01                         # Check-in day (2 digits)
-  &qCiMy=002026                    # Check-in month/year (MMYYYY, 0-indexed: Jan=00, Feb=01, ..., Dec=11)
+  &qCiMy=002026                    # Check-in month/year (0-indexed)
   &qCoD=05                         # Check-out day (2 digits)
-  &qCoMy=002026                    # Check-out month/year (same 0-indexed format)
+  &qCoMy=002026                    # Check-out month/year (0-indexed)
   &qRms=1                          # Number of rooms
   &qAdlt=2                         # Number of adults
   &qChld=1                         # Number of children
-  &qChAge=8                        # Child age(s), comma-separated if multiple
+  &qChAge=8                        # Child age(s), comma-separated
 ```
 
-**Month codes (0-indexed):**
-- January = 00, February = 01, March = 02, April = 03
-- May = 04, June = 05, July = 06, August = 07
-- September = 08, October = 09, November = 10, December = 11
+### Month Encoding (0-indexed)
 
-**Common mistake:** Using `012026` for January (wrong) instead of `002026` (correct).
+The month parameter uses a non-standard 0-indexed format combined with year:
+
+| Month | Code | Month | Code |
+|-------|------|-------|------|
+| January | 00 | July | 06 |
+| February | 01 | August | 07 |
+| March | 02 | September | 08 |
+| April | 03 | October | 09 |
+| May | 04 | November | 10 |
+| June | 05 | December | 11 |
+
+**Common error:** Using `012026` for January 2026 instead of correct `002026`.
 
 ### Example URLs
 
@@ -42,171 +63,198 @@ https://www.ihg.com/hotels/gb/en/find-hotels/hotel-search?qDest=Budapest,%20Hung
 
 ---
 
-## Manual Form Interaction Steps
+## Hotel Search: Manual Form Interaction (Fallback)
 
-If direct URL access fails, use these steps to fill the IHG search form:
+Use manual form interaction only if direct URL access fails or redirects to the explore page.
 
-### 1. Navigate to IHG Homepage
+### Step 1: Navigate to Search Page
 
 ```
-URL: https://www.ihg.com/hotels/gb/en/reservation
+https://www.ihg.com/hotels/us/en/reservation
 ```
 
-The homepage contains a search form with these key elements:
-- Destination combobox (autocomplete field)
-- Check In / Check Out date fields (calendar picker)
-- Rooms & Guests selector (dropdown)
-- Search button
+A language/country banner may appear on first visit. Click "Yes" to accept English, or the banner will persist and obstruct interaction.
 
-### 2. Fill Destination Field
+### Step 2: Destination Field
 
-1. Click on the Destination combobox
-2. Type the city name (e.g., "Vienna")
-3. Wait 1-2 seconds for autocomplete suggestions to appear
-4. Select the appropriate option from dropdown (e.g., "Vienna, Austria")
+1. Click the Destination combobox (element typically labelled "Destination")
+2. Type the city name slowly (e.g., "Vienna")
+3. **Wait 2-3 seconds** for autocomplete suggestions to load
+4. Click the appropriate suggestion from the dropdown
 
-**Key observation:** The autocomplete dropdown only appears after typing; it's not a simple dropdown selection.
+**Key behaviour:** The autocomplete requires a delay after typing. Proceeding too quickly results in no suggestions appearing.
 
-### 3. Set Check-In and Check-Out Dates
+### Step 3: Date Selection
 
-1. Click on the Check In date field
-2. A dual-calendar picker opens showing current month + next month
-3. Navigate to the target month if needed (use Next/Prev buttons)
-4. Click on the check-in date
-5. The check-out field automatically becomes active
-6. Click on the check-out date
+1. Click the Check In date field to open the calendar picker
+2. The calendar shows two months side-by-side
+3. Navigate months using Previous/Next buttons if needed
+4. Click the check-in date
+5. The check-out field activates automatically
+6. Click the check-out date
 
-**Key observation:** The calendar shows two months side-by-side. For Jan 2026 dates, December 2025 and January 2026 are typically visible together.
+### Step 4: Guest Configuration
 
-### 4. Set Guests (3+ People)
+1. Click the "Rooms & Guests" selector (default shows "1 Room, 1 Guest")
+2. Use +/- buttons to set Adults count
+3. Use +/- buttons to add Children
+4. **For each child added, an age selector appears** - this must be completed
+5. Select each child's age from the dropdown
 
-1. Click on "Rooms & Guests" selector (shows default "1 Room, 1 Guest")
-2. A dropdown menu appears with:
-   - Rooms counter (with +/- buttons)
-   - Adults counter (with +/- buttons)
-   - Children counter (with +/- buttons)
-3. Click the "+" button for Adults to increase to desired number
-4. Click the "+" button for Children to add children
-5. For each child added, an age selector dropdown appears
-6. Select the child's age from the dropdown (options: <1, 1-17)
+**Mandatory requirement:** Child ages must be selected before the search form will submit.
 
-**Key observation:** Child ages are required before searching. The form will not submit without selecting ages for all children.
-
-### 5. Execute Search
+### Step 5: Execute Search
 
 1. Click the "Search" button
-2. Wait for results page to load (3-5 seconds typically)
-3. The results page shows: Hotel count, hotel cards with pricing
+2. Wait 3-5 seconds for results to load fully
+3. Verify results by checking the hotel count message
+
+---
+
+## Hotel Detail Pages: Room Specifications
+
+To view room types and sizes for a specific hotel, use the hotel detail rooms page.
+
+### URL Pattern
+
+```
+https://www.ihg.com/[brand]/hotels/us/en/[city]/[hotel-code]/hoteldetail/rooms
+```
+
+**Important:** Use `/us/en/` in the path for hotel detail pages. The `/gb/en/` variant used for search may redirect to the explore page for hotel detail URLs.
+
+### Brand Codes
+
+| Brand | URL Segment |
+|-------|-------------|
+| InterContinental | `intercontinental` |
+| Crowne Plaza | `crowneplaza` |
+| Holiday Inn | `holidayinn` |
+| Kimpton | `kimptonhotels` |
+| Vignette Collection | `vignettecollection` |
+| Hotel Indigo | `hotelindigo` |
+| voco | `voco` |
+| Garner | `garner-hotels` |
+
+### Hotel Codes (Examples)
+
+Hotel codes are property-specific identifiers:
+- InterContinental Vienna: `vieha`
+- InterContinental Budapest: `budhb`
+
+**Common error:** Similar-looking codes exist for different properties. Vienna has codes like `vieha`, `viehc`, etc. for different hotels. Using the wrong code redirects to the explore page.
+
+### Working Examples
+
+```
+InterContinental Vienna:
+https://www.ihg.com/intercontinental/hotels/us/en/vienna/vieha/hoteldetail/rooms
+
+InterContinental Budapest:
+https://www.ihg.com/intercontinental/hotels/us/en/budapest/budhb/hoteldetail/rooms
+```
+
+### Page Content
+
+The rooms page displays:
+- **Room categories:** Separate "Our rooms" and "Our suites" sections
+- **Room size:** In square metres (e.g., "Room Size: 45 sq. m. – 45 sq. m.")
+- **Bed configuration:** (e.g., "Beds: 1 King Bed" or "Beds: 2 Twin Beds, or 1 King Bed")
+- **Amenities:** Listed under "may include" (e.g., Lounge Access, Single Sofa Bed, River View, City View)
+- **Photo carousel:** Multiple images per room type
+
+### Critical Limitation: No Guest Capacity Display
+
+**The rooms page does NOT show maximum guest occupancy.** This is the most significant limitation for family booking research.
+
+To determine guest capacity:
+
+1. **Booking flow method:** Search with specific guest count (e.g., 3 guests) and observe which rooms appear as available
+2. **Web search:** Query "[Hotel name] [room type] guest capacity" - third-party sites sometimes publish this data
+3. **Call the hotel:** Most reliable method, especially for edge cases like adding rollaway beds
 
 ---
 
 ## Interpreting Search Results
 
-### Hotel Availability Indicators
+### Availability Indicators
 
-The search results show these status indicators:
+| Status | Display | Meaning |
+|--------|---------|---------|
+| Available | "Only a few left from [price] per night" with active "Select Hotel" button | Room matching guest count exists |
+| Unavailable | "No rooms available for selected dates" with "View Available Dates" button | No rooms for this guest count on any date in range |
+| External | "Book on hotel site" | Non-IHG booking; rewards may not apply |
+| Future | "OPENING SOON" badge | Hotel not yet operational |
 
-1. **Available with pricing:**
-   - Shows "Only a few left from [price] per night"
-   - "Select Hotel" button is active
-   - Price displayed in selected currency (default may be INR, can change to Hotel Currency)
+### 3+ Guest Search Behaviour
 
-2. **No availability:**
-   - Shows "No rooms available for selected dates"
-   - "View Available Dates" button appears instead
-   - This means no 3+ person rooms exist for ANY date in the range
-
-3. **External booking:**
-   - Some hotels (e.g., Ruby Hotels) show "Book on hotel site"
-   - Note: "IHG One Rewards benefits are coming soon, but not yet available"
-   - These hotels don't participate in IHG rewards yet
-
-4. **Opening soon:**
-   - Shows "OPENING SOON" badge
-   - "No rooms available until [date]"
-
-### Critical Finding: 3+ Guest Search Behaviour
-
-**Important:** When searching with 3+ guests, the results only show hotels with rooms that accommodate 3+ people. Hotels that only have 2-person rooms will either:
-- Not appear in results at all
+When searching with 3+ guests, results only show hotels with rooms accommodating that number. Hotels with only 2-person rooms either:
+- Do not appear in results
 - Show "No rooms available for selected dates"
 
-This means a hotel like InterContinental Vienna can appear in a 2-person search but show "No rooms available" in a 3-person search.
+**Implication:** A hotel may appear available for 2 guests but unavailable for 3 guests. This indicates no family rooms exist, not that the hotel is fully booked.
+
+### Currency Display
+
+- Default currency varies by session/location (may show INR, EUR, etc.)
+- Use "Hotel Currency" filter option for local pricing
+- Prices are per night for the room, not per person
 
 ---
 
-## Currency and Pricing Notes
+## Room Specifications Reference
 
-- Default display currency varies by user location/session (may show INR, EUR, etc.)
-- To see hotel-local pricing, use the "Hotel Currency" option in the search filters
-- Prices shown are typically per night for the room (not per person)
-- "Includes taxes and fees" checkbox affects displayed prices
+### InterContinental Vienna Suites
 
-### Currency Conversion Reference (approximate, Dec 2025)
-- 1 EUR ≈ 92 INR
-- 26,000 INR ≈ €283
-- 80,000 INR ≈ €870
-- 125,000 INR ≈ €1,360
+| Suite Type | Size | Bed | Sofa Bed |
+|------------|------|-----|----------|
+| Junior Suite (entry-level) | 45 sq.m. | 1 King | No |
+| One Bedroom Suite | 50 sq.m. | 1 King | No |
+| Senior Suite | 70 sq.m. | 1 King | No |
+| Presidential Suite | 170 sq.m. | 1 King | No |
 
----
+### InterContinental Budapest Suites
 
-## Lessons Learned from This Crawling Session
+| Suite Type | Size | Bed | Sofa Bed |
+|------------|------|-----|----------|
+| Junior Suite (entry-level) | 29-39 sq.m. | 1 King/Queen | No |
+| Grand Castle Suite | 48-51 sq.m. | 1 King | Yes |
+| Presidential Suite | 100 sq.m. | 1 King | Yes |
 
-### What Worked Well
+### Comparison Insight
 
-1. **Direct URL access** - Constructing the search URL with parameters is faster than manual form filling
-2. **Snapshot analysis** - Taking page snapshots reveals element references for programmatic interaction
-3. **3+ guest filter** - Searching with actual guest count immediately filters to relevant hotels
-
-### Challenges Encountered
-
-1. **Autocomplete timing** - Need to wait after typing in destination field for suggestions
-2. **Child age requirement** - Cannot search without selecting child ages
-3. **Calendar navigation** - Need to identify correct date cells by their aria labels (e.g., "01/01/2026")
-4. **Results loading** - Results take 3-5 seconds to fully load; premature snapshots may miss hotel data
-
-### Recommended Approach for Future Searches
-
-1. **Start with direct URL** - Use query parameters for destination, dates, and guests
-2. **Verify guest count** - Check that "1 Room, 3 Guests" (or similar) appears in form
-3. **Check hotel count** - Alert message shows "X Hotels Found" - use this to verify results loaded
-4. **Scroll for all hotels** - Some hotels may be below the fold; scroll to capture full list
-5. **Note availability status** - Record which hotels show pricing vs "No rooms available"
+Vienna's entry-level Junior Suite (45 sq.m.) is larger than Budapest's (29-39 sq.m.), yet the IHG booking system may show Vienna's as 2-guest capacity while Budapest's Grand Castle Suite (with sofa bed) accommodates 3+. Room size alone does not determine guest capacity in IHG's system - the sofa bed presence is the key differentiator for 3+ guest accommodation.
 
 ---
 
-## Sample Data: Vienna and Budapest (Jan 2026)
+## Sample Search Data (January 2026)
 
-### Vienna - Jan 1-5, 2026 (4 nights, 3 guests)
+### Vienna - Jan 3-5, 2026 (3 guests)
 
-| Hotel | Availability | Notes |
-|-------|-------------|-------|
-| Grand Hotel Wien | ✅ Available | Vignette Collection, 82,813 INR/night |
-| InterContinental Vienna | ❌ No rooms | Had availability for 2 guests but NOT 3 |
-| Holiday Inn Vienna City | ❌ No rooms | |
-| Hotel Indigo Vienna | ❌ No rooms | |
-| Garner Hotels (2 locations) | ❌ No rooms | |
-| Holiday Inn - the niu, Franz | ❌ No rooms | |
-| voco Vienna Prater | ❌ No rooms | |
+| Hotel | Availability | Price/Night |
+|-------|-------------|-------------|
+| InterContinental Vienna | ✅ Available | ~€513 |
+| Holiday Inn Vienna City | ✅ Available | ~€194 |
+| Garner Hotel Vienna | ✅ Available | ~€131 |
+| Holiday Inn - the niu | ✅ Available | ~€127 |
+| Grand Hotel Wien (Vignette) | ✅ Available | ~€574 |
+| Hotel Indigo Vienna | ❌ No rooms | - |
 
-**Key insight:** Only 1 of 10 Vienna IHG hotels had 3-guest capacity for Jan 1-5!
+### Budapest - Jan 1-5, 2026 (3 guests)
 
-### Budapest - Jan 2-5, 2026 (3 nights, 3 guests)
-
-| Hotel | Price/Night | Status |
-|-------|-------------|--------|
-| Kimpton BEM Budapest | 25,108 INR (~€273) | ✅ Available |
-| Vignette Verno House | 26,227 INR (~€285) | ✅ Available |
-| Crowne Plaza Budapest | 26,930 INR (~€293) | ✅ Available |
-| InterContinental Budapest | 124,695 INR (~€1,356) | ✅ Available (expensive!) |
-| Holiday Inn Budaörs | 16,256 INR (~€177) | ✅ Available (10km out) |
-
-**Key insight:** Budapest has 5 hotels with 3-guest availability, including budget options.
+| Hotel | Availability | Price/Night |
+|-------|-------------|-------------|
+| InterContinental Budapest | ✅ Available | ~€223 |
+| Kimpton BEM Budapest | ✅ Available | ~€270 |
+| Vignette Verno House | ✅ Available | ~€285 |
+| Crowne Plaza Budapest | ✅ Available | ~€290 |
+| Holiday Inn Budaörs | ✅ Available | ~€175 (10km from centre) |
 
 ---
 
 ## File Information
 
 - Created: 15 December 2025
-- Purpose: Reference for IHG hotel availability searches via browser automation
-- Related SOP: travel/sop-ihg-family-room-booking.md
+- Last updated: 16 December 2025
+- Purpose: MCP browser automation reference for IHG hotel research
+- Related: travel/sop-ihg-family-room-booking.md
