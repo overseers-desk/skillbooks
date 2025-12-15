@@ -1,0 +1,205 @@
+# IHG Website Crawling Reference Guide
+
+This reference documents the browser automation steps for searching IHG hotels with specific criteria (3+ guests, date ranges). Created from actual browser interaction on 15 December 2025.
+
+---
+
+## Quick Reference: IHG Search URL Parameters
+
+The IHG hotel search can be accessed directly via URL with query parameters, which is faster than manual form interaction:
+
+```
+https://www.ihg.com/hotels/gb/en/find-hotels/hotel-search?
+  qDest=Vienna,%20Austria          # Destination (URL encoded)
+  &qCiD=01                         # Check-in day (2 digits)
+  &qCiMy=002026                    # Check-in month/year (00YYYY format, month is position 1-2)
+  &qCoD=05                         # Check-out day (2 digits)
+  &qCoMy=002026                    # Check-out month/year
+  &qRms=1                          # Number of rooms
+  &qAdlt=2                         # Number of adults
+  &qChld=1                         # Number of children
+  &qChAge=8                        # Child age(s), comma-separated if multiple
+```
+
+### Example URLs
+
+Vienna, Jan 1-5 2026, 2 adults + 1 child (age 8):
+```
+https://www.ihg.com/hotels/gb/en/find-hotels/hotel-search?qDest=Vienna,%20Austria&qCiD=01&qCiMy=002026&qCoD=05&qCoMy=002026&qRms=1&qAdlt=2&qChld=1&qChAge=8
+```
+
+Budapest, Jan 2-5 2026, 2 adults + 1 child (age 8):
+```
+https://www.ihg.com/hotels/gb/en/find-hotels/hotel-search?qDest=Budapest,%20Hungary&qCiD=02&qCiMy=002026&qCoD=05&qCoMy=002026&qRms=1&qAdlt=2&qChld=1&qChAge=8
+```
+
+---
+
+## Manual Form Interaction Steps
+
+If direct URL access fails, use these steps to fill the IHG search form:
+
+### 1. Navigate to IHG Homepage
+
+```
+URL: https://www.ihg.com/hotels/gb/en/reservation
+```
+
+The homepage contains a search form with these key elements:
+- Destination combobox (autocomplete field)
+- Check In / Check Out date fields (calendar picker)
+- Rooms & Guests selector (dropdown)
+- Search button
+
+### 2. Fill Destination Field
+
+1. Click on the Destination combobox
+2. Type the city name (e.g., "Vienna")
+3. Wait 1-2 seconds for autocomplete suggestions to appear
+4. Select the appropriate option from dropdown (e.g., "Vienna, Austria")
+
+**Key observation:** The autocomplete dropdown only appears after typing; it's not a simple dropdown selection.
+
+### 3. Set Check-In and Check-Out Dates
+
+1. Click on the Check In date field
+2. A dual-calendar picker opens showing current month + next month
+3. Navigate to the target month if needed (use Next/Prev buttons)
+4. Click on the check-in date
+5. The check-out field automatically becomes active
+6. Click on the check-out date
+
+**Key observation:** The calendar shows two months side-by-side. For Jan 2026 dates, December 2025 and January 2026 are typically visible together.
+
+### 4. Set Guests (3+ People)
+
+1. Click on "Rooms & Guests" selector (shows default "1 Room, 1 Guest")
+2. A dropdown menu appears with:
+   - Rooms counter (with +/- buttons)
+   - Adults counter (with +/- buttons)
+   - Children counter (with +/- buttons)
+3. Click the "+" button for Adults to increase to desired number
+4. Click the "+" button for Children to add children
+5. For each child added, an age selector dropdown appears
+6. Select the child's age from the dropdown (options: <1, 1-17)
+
+**Key observation:** Child ages are required before searching. The form will not submit without selecting ages for all children.
+
+### 5. Execute Search
+
+1. Click the "Search" button
+2. Wait for results page to load (3-5 seconds typically)
+3. The results page shows: Hotel count, hotel cards with pricing
+
+---
+
+## Interpreting Search Results
+
+### Hotel Availability Indicators
+
+The search results show these status indicators:
+
+1. **Available with pricing:**
+   - Shows "Only a few left from [price] per night"
+   - "Select Hotel" button is active
+   - Price displayed in selected currency (default may be INR, can change to Hotel Currency)
+
+2. **No availability:**
+   - Shows "No rooms available for selected dates"
+   - "View Available Dates" button appears instead
+   - This means no 3+ person rooms exist for ANY date in the range
+
+3. **External booking:**
+   - Some hotels (e.g., Ruby Hotels) show "Book on hotel site"
+   - Note: "IHG One Rewards benefits are coming soon, but not yet available"
+   - These hotels don't participate in IHG rewards yet
+
+4. **Opening soon:**
+   - Shows "OPENING SOON" badge
+   - "No rooms available until [date]"
+
+### Critical Finding: 3+ Guest Search Behaviour
+
+**Important:** When searching with 3+ guests, the results only show hotels with rooms that accommodate 3+ people. Hotels that only have 2-person rooms will either:
+- Not appear in results at all
+- Show "No rooms available for selected dates"
+
+This means a hotel like InterContinental Vienna can appear in a 2-person search but show "No rooms available" in a 3-person search.
+
+---
+
+## Currency and Pricing Notes
+
+- Default display currency varies by user location/session (may show INR, EUR, etc.)
+- To see hotel-local pricing, use the "Hotel Currency" option in the search filters
+- Prices shown are typically per night for the room (not per person)
+- "Includes taxes and fees" checkbox affects displayed prices
+
+### Currency Conversion Reference (approximate, Dec 2025)
+- 1 EUR ≈ 92 INR
+- 26,000 INR ≈ €283
+- 80,000 INR ≈ €870
+- 125,000 INR ≈ €1,360
+
+---
+
+## Lessons Learned from This Crawling Session
+
+### What Worked Well
+
+1. **Direct URL access** - Constructing the search URL with parameters is faster than manual form filling
+2. **Snapshot analysis** - Taking page snapshots reveals element references for programmatic interaction
+3. **3+ guest filter** - Searching with actual guest count immediately filters to relevant hotels
+
+### Challenges Encountered
+
+1. **Autocomplete timing** - Need to wait after typing in destination field for suggestions
+2. **Child age requirement** - Cannot search without selecting child ages
+3. **Calendar navigation** - Need to identify correct date cells by their aria labels (e.g., "01/01/2026")
+4. **Results loading** - Results take 3-5 seconds to fully load; premature snapshots may miss hotel data
+
+### Recommended Approach for Future Searches
+
+1. **Start with direct URL** - Use query parameters for destination, dates, and guests
+2. **Verify guest count** - Check that "1 Room, 3 Guests" (or similar) appears in form
+3. **Check hotel count** - Alert message shows "X Hotels Found" - use this to verify results loaded
+4. **Scroll for all hotels** - Some hotels may be below the fold; scroll to capture full list
+5. **Note availability status** - Record which hotels show pricing vs "No rooms available"
+
+---
+
+## Sample Data: Vienna and Budapest (Jan 2026)
+
+### Vienna - Jan 1-5, 2026 (4 nights, 3 guests)
+
+| Hotel | Availability | Notes |
+|-------|-------------|-------|
+| Grand Hotel Wien | ✅ Available | Vignette Collection, 82,813 INR/night |
+| InterContinental Vienna | ❌ No rooms | Had availability for 2 guests but NOT 3 |
+| Holiday Inn Vienna City | ❌ No rooms | |
+| Hotel Indigo Vienna | ❌ No rooms | |
+| Garner Hotels (2 locations) | ❌ No rooms | |
+| Holiday Inn - the niu, Franz | ❌ No rooms | |
+| voco Vienna Prater | ❌ No rooms | |
+
+**Key insight:** Only 1 of 10 Vienna IHG hotels had 3-guest capacity for Jan 1-5!
+
+### Budapest - Jan 2-5, 2026 (3 nights, 3 guests)
+
+| Hotel | Price/Night | Status |
+|-------|-------------|--------|
+| Kimpton BEM Budapest | 25,108 INR (~€273) | ✅ Available |
+| Vignette Verno House | 26,227 INR (~€285) | ✅ Available |
+| Crowne Plaza Budapest | 26,930 INR (~€293) | ✅ Available |
+| InterContinental Budapest | 124,695 INR (~€1,356) | ✅ Available (expensive!) |
+| Holiday Inn Budaörs | 16,256 INR (~€177) | ✅ Available (10km out) |
+
+**Key insight:** Budapest has 5 hotels with 3-guest availability, including budget options.
+
+---
+
+## File Information
+
+- Created: 15 December 2025
+- Purpose: Reference for IHG hotel availability searches via browser automation
+- Related SOP: travel/sop-ihg-family-room-booking.md
