@@ -36,6 +36,8 @@ The detailed research instructions should NOT result in pedantic, overly precise
 - Recognise that travel is dynamic and plans will inevitably change
 - Present information that supports decision-making during the journey, not a strict script to follow
 
+The itinerary document is an operational reference that may be read first by staff as well as by the traveller. Therefore, avoid second-person conversational phrasing ("you", "your", "if you"). Write in a role-neutral voice that refers to the traveller(s) by name (e.g., "Weiwu") or as "the traveller".
+
 The person requesting this itinerary is not seeking perfection or orderliness—they are seeking comprehensive information that helps navigate the chaos of travel with children and multiple commitments.
 
 ## Scope
@@ -1977,6 +1979,15 @@ For each child-friendly activity identified:
 - Late night arrivals (after 22:00): Public transport may be unavailable, private transfer likely needed
 - Early morning departures (before 06:00): May require pre-booked transport or overnight stay near airport
 - Rush hours: Add buffer time for ground transport
+
+**Time Zone and Body Clock Factors**:
+
+- When comparing options for travel from A to B, evaluate whether the travel period falls in the traveller's expected sleep window based on their current body clock (often still anchored to the previous city), not only the departure city's local time
+- For Weiwu specifically: default to avoiding overnight travel (night trains, overnight buses, red-eye flights) because it is disproportionately tiring and often degrades the following day
+- Exception: an overnight-in-local-time journey can be acceptable when it occurs during body-clock daytime (i.e., it is not "overnight" for the traveller)
+- Exception: business class (or other lie-flat seating or sleeper berth in a train) can make overnight flights acceptable
+- In the itinerary, state the recommendation explicitly and include brief reasoning that references local time and body clock alignment (e.g., "local night, but body-clock daytime")
+- If the journey crosses a large time zone gap (rule of thumb: \u2265 5 hours difference between the starting location and destination, or intercontinental travel), add a table that converts each long-haul leg's local departure/arrival times into the traveller's starting time zone ("bio-clock time") so the fatigue impact is explicit
 
 **Traveller Composition Factors**:
 - Children: Require car seats, may need more comfortable transport, slower pace

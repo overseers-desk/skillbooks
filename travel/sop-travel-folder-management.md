@@ -174,6 +174,15 @@ For cancelled bookings: `(Cancelled) YYYY-MM-DD Event/Activity Name [Location] B
 - `2025-11-18 Louvre Museum [Paris] LV-987654.pdf`
 - `(Cancelled) 2025-11-15 Concert [Porto] TKT-456789.pdf`
 
+**Boarding Passes:**
+
+For boarding passes, use format: `Boarding Pass - YYYY-MM-DD [Airline] Origin-Destination PNR.extension`
+
+- Include the PNR/booking reference to link to the corresponding booking in Fares folder
+- Examples:
+  - `Boarding Pass - 2025-12-01 [Pegasus] Seville-Istanbul 1F6QUT.pdf`
+  - `Boarding Pass - 2025-12-04 [IndiGo] Tbilisi-Mumbai XEIUME.jpeg`
+
 ### Reimbursement Folders (in journey folder root)
 
 **Format for pending reimbursement folders:**
