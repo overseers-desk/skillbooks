@@ -12,14 +12,21 @@ The IHG hotel search can be accessed directly via URL with query parameters, whi
 https://www.ihg.com/hotels/gb/en/find-hotels/hotel-search?
   qDest=Vienna,%20Austria          # Destination (URL encoded)
   &qCiD=01                         # Check-in day (2 digits)
-  &qCiMy=002026                    # Check-in month/year (00YYYY format, month is position 1-2)
+  &qCiMy=002026                    # Check-in month/year (MMYYYY, 0-indexed: Jan=00, Feb=01, ..., Dec=11)
   &qCoD=05                         # Check-out day (2 digits)
-  &qCoMy=002026                    # Check-out month/year
+  &qCoMy=002026                    # Check-out month/year (same 0-indexed format)
   &qRms=1                          # Number of rooms
   &qAdlt=2                         # Number of adults
   &qChld=1                         # Number of children
   &qChAge=8                        # Child age(s), comma-separated if multiple
 ```
+
+**Month codes (0-indexed):**
+- January = 00, February = 01, March = 02, April = 03
+- May = 04, June = 05, July = 06, August = 07
+- September = 08, October = 09, November = 10, December = 11
+
+**Common mistake:** Using `012026` for January (wrong) instead of `002026` (correct).
 
 ### Example URLs
 
