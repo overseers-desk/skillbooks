@@ -117,11 +117,12 @@
   - Travel Vienna → Budapest by train on Jan 1 morning (2h 40min)
   - Options: Crowne Plaza (2 Twin Deluxe City View €354 → 1 King Premium City View €412, only €58/night difference) or Kimpton (Essential Room €270 → Premium King Room €304, only €34/night difference)
   - **Voucher not worth using here:** Upgrade price differences too small (€34-€58/night)
-- **Jan 3-5:** Vienna InterContinental (2 nights) - **use Confirmable Suite Upgrade voucher here**
+- **Jan 3-5:** Vienna InterContinental (2 nights) - **❌ VOUCHER WILL NOT WORK**
   - Travel Budapest → Vienna by train on Jan 3 (2h 40min)
-  - Base: 3-guest room ~€513/night (~€1,026 for 2 nights)
-  - Target upgrade: Senior Suite
-  - **Voucher will be used here:** InterContinental Vienna is premium brand with best upgrade potential
+  - **VERIFIED 15 Dec 2025:** Only the Senior Suite (70 sq.m., 4 guests, €669/night) accommodates 3+ guests
+  - Entry-level suite (Junior Suite, 45 sq.m.) only accommodates 2 guests
+  - **Voucher limitation:** Voucher gives entry-level suite which does NOT solve family accommodation
+  - **Alternative:** Book Senior Suite directly at ~€669/night, or use Strategy 2 (negotiation) to request Senior Suite upgrade
 - **Jan 5:** Already in Vienna, easy airport transfer
 
 **Budapest Jan 1-3 Pricing (2+ guest rooms only):**
@@ -225,55 +226,11 @@ All prices below are for **3 guests (2 adults + 1 child)** - verified available:
 
 ---
 
-## IHG Confirmable Suite Upgrade Voucher Details
+## IHG Confirmable Suite Upgrade Voucher
 
-**Based on IHG One Rewards Terms & Conditions:**
+See [sop-ihg-family-room-booking.md](./travel/sop-ihg-family-room-booking.md) for full voucher terms and procedure.
 
-**How It Works:**
-
-1. Pick destination and stay dates (up to 5 nights maximum)
-2. Book with **refundable rate** at IHG property
-3. **Between 14 days before check-in and 24 hours before check-in:** Call **IHG Customer Care** (NOT the hotel directly) to redeem voucher
-4. IHG Customer Care will coordinate with the hotel to confirm suite upgrade (subject to availability)
-5. Upgrade is guaranteed once confirmed by IHG Customer Care
-
-**Important:** IHG Customer Care is the centralized customer service department for IHG (the parent company), separate from individual hotels. They handle all Confirmable Suite Upgrade requests and coordinate with properties.
-
-**Key Terms:**
-
-- Valid for one room, up to maximum of 5 nights per stay
-- Upgrade to entry-level suite or premium room only
-- Must call IHG Customer Care (cannot be applied online)
-- **Booking window:** 14 days before stay (minimum) to 24 hours before check-in (maximum)
-- The sooner you call within the window, the better suite availability
-- If you cancel per hotel's cancellation policy, voucher returns to Rewards Wallet within 5 business days
-
-**Eligible Rate Types:**
-
-- ✅ Best Flexible Rate
-- ✅ Member Discount Rate
-- ✅ Reward Night
-- ✅ Government Rate
-- ✅ Select Corporate and Package Rates
-
-**INELIGIBLE Rate Types:**
-
-- ❌ Group rates, package tours, convention rates (third party payment)
-- ❌ Non-Qualified rates (Wholesale, OTA)
-- ❌ Employee Rates
-- ❌ Prepaid rates if deposit already applied
-
-**Participating Brands:**
-✅ **Available at:** InterContinental, REGENT, Vignette, Hualuxe, Hotel Indigo, voco, Crowne Plaza, Even, Holiday Inn, Kimpton, Garner Hotels
-
-❌ **NOT Available at:** avid hotels, Atwell Suites, IHG Army Hotels, IHG Residences (InterContinental Residences, voco Residences, Crowne Plaza Residences), Six Senses Hotels Resort Spas, InterContinental Alliance Resorts (Macau), Iberostar Beachfront Resorts
-
-**Important Notes:**
-
-- Voucher valid until 12/12/2026
-- Cannot be stacked with other guaranteed upgrades
-- Subject to suite availability (exceptions during special events/high demand)
-- Upgrade only applies to Member's room (non-transferable)
+**Trip-specific note:** Current voucher expires 12/12/2026.
 
 ---
 
@@ -356,11 +313,14 @@ All prices below are for **3 guests (2 adults + 1 child)** - verified available:
 - [x] **Budapest Jan 1-3** (2 nights) - pay standard rate, no voucher:
   - Kimpton Budapest: ~€270/night (~€540 for 2 nights)
   - Crowne Plaza Budapest: ~€290/night (~€580 for 2 nights)
-- [x] **InterContinental Vienna Jan 3-5** (2 nights) - **use voucher here:**
-  - Base: ~€513/night for 3 guests (~€1,026 for 2 nights)
-  - Target upgrade: Senior Suite
+- [x] **InterContinental Vienna Jan 3-5** (2 nights) - **❌ VOUCHER NOT VIABLE:**
+  - **VERIFIED 15 Dec 2025:** Only Senior Suite (€669/night) accommodates 3+ guests
+  - Entry-level suite (Junior Suite) only holds 2 guests—voucher does not help
+  - **Options:**
+    1. Book Senior Suite directly (~€669/night × 2 = €1,338)
+    2. Use Strategy 2 (call hotel, negotiate Senior Suite at lower rate)
+    3. Choose different Vienna hotel with family rooms
   - Club Lounge benefits: Breakfast, evening drinks/snacks (already included with Platinum)
-  - Participating brand: ✅ InterContinental
 
 **Strategy 3 - Budapest 3N + Vienna 1N:**
 
