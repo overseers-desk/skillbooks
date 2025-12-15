@@ -8,24 +8,28 @@
 
 **Browser-verified IHG availability for 3 guests (2 adults + 1 child):**
 
-### Vienna (Jan 3-5, 2026)
+### Vienna (Jan 2-5, 2026) ⭐ UPDATED
 
 | Hotel | Price/Night | Notes |
 |-------|-------------|-------|
-| InterContinental Vienna | ~€513 | ✅ Available - but voucher won't help (entry suite = 2 guests only) |
+| InterContinental Vienna | ~€513 | ✅ **Jan 2-5 available** - Junior Suite + rollaway = 3 guests ✅ |
 | Holiday Inn Vienna City | ~€194 | ✅ Available |
 | Garner Hotel Vienna | ~€131 | ✅ Available |
 | Holiday Inn - the niu | ~€127 | ✅ Available |
 | Grand Hotel Wien (Vignette) | ~€574 | ✅ Available - expensive |
 | Hotel Indigo Vienna | ❌ No rooms | No 3-guest capacity |
 
-### Budapest (Jan 1-3 and Jan 2-5, 2026) - GOOD AVAILABILITY
+**☎️ PHONE VERIFICATION (16 Dec 2025):** Called InterContinental Vienna - confirmed:
 
-**Note:** Pricing is consistent across both date ranges (verified 16 Dec 2025).
+- Junior Suite (45 sq.m.) **CAN accommodate 3 guests** with rollaway bed on request
+- Availability for **Jan 2-5** (not just Jan 3-5 as previously thought)
+- Rollaway bed available for this room type
+
+### Budapest (Jan 1-2, 2026) - 1 NIGHT ONLY
 
 | Hotel | Price/Night | Notes |
 |-------|-------------|-------|
-| InterContinental Budapest | ~€223 | ✅ Available - best for voucher |
+| InterContinental Budapest | ~€223 | ✅ Available |
 | Kimpton BEM Budapest | ~€270 | ✅ Best city-centre value |
 | Vignette Verno House | ~€285 | ✅ Available |
 | Crowne Plaza Budapest | ~€290 | ✅ Available |
@@ -34,12 +38,14 @@
 ---
 
 **📋 EXECUTIVE SUMMARY:**
+
 - **Dec 31 (NYE):** Book separate non-IHG hotel in Vienna (IHG options too expensive/sold out)
-- **Jan 1-5:** Choose from 3 viable strategies
-- **Key insight:** Use voucher in **Budapest**, not Vienna. Vienna InterContinental's entry-level suite only holds 2 guests, so voucher doesn't solve family accommodation there.
-- **Budapest prices:** Same for Jan 1-3 and Jan 2-5 (~€220-290/night). Choose dates based on logistics, not pricing.
+- **Jan 1-2:** Budapest (1 night) - explore Budapest
+- **Jan 2-5:** Vienna InterContinental (3 nights) - **USE VOUCHER HERE** ⭐
+- **Key insight (UPDATED):** Use voucher in **Vienna**, not Budapest. Phone call confirmed Vienna IC Junior Suite can accommodate 3 guests with rollaway bed.
+- **Voucher value:** 3 nights in Vienna = maximum upgrade value
 - **Train options:** Vienna → Bratislava (1h), Budapest (2h 40min), Brno (1h 30min) - can skip rental car!
-- **⏰ URGENT:** Must book and call IHG Customer Care by Dec 18 (Strategy 2 Budapest) or Dec 19 (Strategy 3)
+- **⏰ URGENT:** Must book and call IHG Customer Care by **Dec 19** (14 days before Jan 2 check-in)
 
 ---
 
@@ -107,126 +113,96 @@
 
 ---
 
-### Strategy 2: Budapest 2N (Jan 1-3) + Vienna 2N (Jan 3-5) + Confirmable Suite Upgrade Voucher
+### Strategy 2: Budapest 1N (Jan 1-2) + Vienna 3N (Jan 2-5) + Confirmable Suite Upgrade Voucher ⭐ RECOMMENDED
 
-**✅ STATUS: VIABLE - Verified availability 15 Dec 2025**
+**✅ STATUS: OPTIMAL - Phone-verified 16 Dec 2025**
 
-**Concept:** Ideally would stay in Vienna Jan 1-5 to maximise voucher use (4 nights) and stability, BUT no IHG hotels in Vienna have 3-person room availability for Jan 1-3. This strategy works around the constraint by splitting: Budapest for unavailable dates, then Vienna when rooms become available on Jan 3.
+**Concept:** Maximise voucher value by using it at InterContinental Vienna for 3 nights. Phone call confirmed Junior Suite can accommodate 3 guests with rollaway bed. Budapest reduced to 1 night for sightseeing.
 
 **Accommodation Plan:**
 
 - **Dec 31:** Vienna non-IHG hotel (handled separately)
-- **Jan 1-3:** Budapest IHG hotel (2 nights) - voucher CAN be used here
+- **Jan 1-2:** Budapest IHG hotel (1 night) - NO voucher here
   - Travel Vienna → Budapest by train on Jan 1 morning (2h 40min)
-  - Options: Kimpton (~€270/night), Vignette (~€285/night), Crowne Plaza (~€290/night)
-  - **Voucher option:** Can use voucher for 2 nights in Budapest (saves ~€150-500 depending on hotel's suite pricing)
-  - **Trade-off:** Using voucher here means only 2 nights of upgrade vs 3 nights in Strategy 3
-- **Jan 3-5:** Vienna InterContinental (2 nights) - **❌ VOUCHER WILL NOT WORK**
-  - Travel Budapest → Vienna by train on Jan 3 (2h 40min)
-  - **VERIFIED 15 Dec 2025:** Only the Senior Suite (70 sq.m., 4 guests, €669/night) accommodates 3+ guests
-  - Entry-level suite (Junior Suite, 45 sq.m.) only accommodates 2 guests
-  - **Voucher limitation:** Voucher gives entry-level suite which does NOT solve family accommodation
-  - **Alternative:** Book Senior Suite directly at ~€669/night, or use Strategy 2 (negotiation) to request Senior Suite upgrade
+  - Options: Kimpton (~€270), InterContinental (~€223), Crowne Plaza (~€290)
+  - Purpose: See Budapest, then return to Vienna for voucher stay
+- **Jan 2-5:** Vienna InterContinental (3 nights) - **✅ USE VOUCHER HERE**
+  - Travel Budapest → Vienna by train on Jan 2 (2h 40min)
+  - **☎️ PHONE VERIFIED 16 Dec 2025:** Junior Suite (45 sq.m.) + rollaway bed = 3 guests ✅
+  - Base rate: ~€513/night × 3 = ~€1,539
+  - With voucher: Upgraded to Junior Suite at base room rate
+  - **Rollaway bed:** Available on request for this room type
+  - **Club Lounge access:** Included with Platinum status
 - **Jan 5:** Already in Vienna, easy airport transfer
 
-**Budapest Jan 1-3 Pricing (3 guests, verified 16 Dec 2025):**
-- Kimpton BEM Budapest: ~€270/night base
-- Vignette Collection Verno House: ~€285/night base
-- Crowne Plaza Budapest: ~€290/night base
-- InterContinental Budapest: ~€223/night base (but suite pricing varies significantly)
-- **Note:** Prices are similar to Jan 2-5; voucher CAN be used here for 2 nights of upgrade value
+**Pricing Summary:**
+
+- Budapest 1 night: ~€223-290
+- Vienna IC 3 nights (base rate, before voucher upgrade): ~€1,539
+- **Voucher saves:** Suite upgrade value (typically €100-200/night = €300-600 total)
 
 **Day trips:**
 
-- From Budapest (Jan 1-2): Explore Budapest
-- From Vienna (Jan 4): Bratislava, Brno possible by train
+- From Budapest (Jan 1): Explore Budapest (1 full day + evening)
+- From Vienna (Jan 3-4): Bratislava, Brno possible by train
 
 **Pros:**
 
-- Ends in Vienna (easy for Jan 5 airport departure)
-- Works around Vienna IHG room availability constraint for Jan 1-3
-- Gets Budapest time (2 full days)
-- Train travel between cities (no driving needed)
-- **Club Lounge access** with Platinum status at InterContinental Vienna
+- **Maximum voucher value:** 3 nights of suite upgrade in Vienna ⭐
+- **Ends in Vienna:** Easy airport transfer on Jan 5
+- **Best hotel:** InterContinental Vienna is premium property
+- **Club Lounge access:** Breakfast + evening drinks/snacks (Platinum status)
+- **Stability:** 3 consecutive nights in same hotel
+- **Train travel:** No driving needed between cities
 
 **Cons:**
 
-- **Fewer voucher nights:** Only 2 nights vs 3 nights in Strategy 3
 - **3 hotel check-ins:** NYE hotel + Budapest + Vienna
-- **Two train transfers:** Jan 1 and Jan 3 with all luggage and kids
-- More complex logistics than staying in one place
-- **CRITICAL TIMING:** Voucher requires calling IHG Customer Care 14 days before check-in (Dec 18 for Jan 1 Budapest check-in, Dec 20 for Jan 3 Vienna check-in)
+- **One train transfer with luggage:** Budapest → Vienna on Jan 2
+- **Less Budapest time:** Only 1 night vs 2-3 nights in other strategies
+- **CRITICAL TIMING:** Must call IHG Customer Care by **Dec 19** (14 days before Jan 2 Vienna check-in)
 
 ---
 
-### Strategy 3: Budapest 3 Nights + Vienna 1 Night + Confirmable Suite Upgrade Voucher
+### Strategy 3: Budapest 3 Nights + Vienna 1 Night + Confirmable Suite Upgrade Voucher (Alternative)
 
-**✅ STATUS: VIABLE - Verified availability 15 Dec 2025**
+**⚠️ STATUS: VIABLE but NOT OPTIMAL - Strategy 2 now preferred**
 
-**Concept:** Split between Vienna and Budapest, use voucher for Budapest suite
+**Concept:** Split between Vienna and Budapest, use voucher for Budapest suite. Now superseded by Strategy 2 which offers same voucher nights (3) but at the superior InterContinental Vienna.
 
-**Accommodation Plan:**
+**Why Strategy 2 is now better:**
+
+- Phone call confirmed Vienna IC Junior Suite accommodates 3 guests with rollaway
+- Vienna IC is a more premium property than Budapest options
+- Strategy 2 ends in Vienna (no 2h 40min transfer on departure day)
+- Same voucher value (3 nights) but better hotel and logistics
+
+**Accommodation Plan (if still preferred):**
 
 - **Dec 31:** Vienna non-IHG hotel (handled separately)
 - **Jan 1:** Vienna (1 night - can be basic hotel or same as NYE hotel)
 - **Jan 2-5:** Budapest IHG hotel (3 nights - book refundable rate, call IHG Customer Care 14 days before to apply voucher)
 - **Jan 5:** Drive/train from Budapest to Vienna airport (2h 40min), depart for Warsaw at 19:45
 
-**Budapest IHG Hotel Options (Verified Availability 15 Dec 2025):**
+**Budapest IHG Hotel Options:**
 
-**Approach:** Book one hotel with refundable rate, call IHG Customer Care to request suite upgrade. If upgrade fails, cancel and try another option.
-
-All prices below are for **3 guests (2 adults + 1 child)** - verified available:
-
-1. **Kimpton BEM Budapest** ⭐ RECOMMENDED
-   - Base room: ~€270/night (~€810 for 3 nights)
-   - Rating: 5/5, LOW CARBON HOTEL designation
-   - Best value for city-centre location (2.16 km from centre)
-
-2. **Vignette Collection Verno House Budapest**
-   - Base room: ~€285/night (~€855 for 3 nights)
-   - Rating: 5/5 (55 reviews)
-   - Target upgrade: Bedroom Suite City View at €359/night
-   - Price difference if upgraded: ~€74/night (~€222 total)
-
-3. **Crowne Plaza Budapest**
-   - Base room: ~€290/night (~€870 for 3 nights) - verified 15 Dec 2025
-   - Rating: 5/5 (394 reviews), CERTIFIED hotel
-   - 0.91 km from city centre
-   - Target upgrade: 1 King Bed Family Suite With Sofa Beds And Living Area
-
-4. **InterContinental Budapest**
-   - Base room: ~€223/night (~€669 for 3 nights) - verified 16 Dec 2025
-   - Rating: 4.5/5 (2458 reviews)
-   - 1.6 km from city centre
-   - Good option for voucher use (participating brand)
-
-5. **Holiday Inn Budapest - Budaörs** 💰 BUDGET OPTION
-   - Base room: ~€175/night (~€525 for 3 nights) - verified 15 Dec 2025
-   - Rating: 4.5/5 (452 reviews)
-   - **Note:** 10.04 km from city centre - far from central Budapest
-   - Good budget option if willing to commute
-
-**Day trips:**
-
-- From Vienna (Jan 1): Bratislava day trip possible
-- From Budapest: Explore Budapest itself (large city, lots to see per Lia)
+1. **InterContinental Budapest** - ~€223/night (~€669 for 3 nights)
+2. **Kimpton BEM Budapest** - ~€270/night (~€810 for 3 nights)
+3. **Vignette Collection Verno House Budapest** - ~€285/night (~€855 for 3 nights)
+4. **Crowne Plaza Budapest** - ~€290/night (~€870 for 3 nights)
 
 **Pros:**
 
-- More time in Budapest (2.5 full days vs 2 nights in Strategy 1)
-- Uses Confirmable Suite Upgrade voucher for 3 nights (maximises voucher value)
-- Budapest accommodation base rates lower than Vienna (~€220-290/night vs ~€513/night for 3 guests)
-- Budapest IHG hotels have availability for family suites with sofa beds
-- Post-New Year dates may have lower demand in Budapest
+- More time in Budapest (2.5 full days)
+- Uses voucher for 3 nights (same as Strategy 2)
+- Budapest base rates lower than Vienna (~€220-290/night vs ~€513/night)
 
 **Cons:**
 
-- **CRITICAL TIMING:** Need to book Budapest hotel with refundable rate and call IHG Customer Care by **Dec 19** (14 days before Jan 2 check-in)
-- Multiple hotel check-ins: NYE hotel + Jan 1 hotel + Budapest hotel = 3 hotels total (or 2 if same hotel for NYE and Jan 1)
-- Mid-trip hotel change with all luggage and children (Jan 1 → Jan 2)
-- Budapest to Vienna airport is 2h 40min drive on departure day (need to leave Budapest by ~3pm for 19:45 flight)
-- Need separate Vienna accommodation for Dec 31 and Jan 1
+- **Departure day stress:** Budapest to Vienna airport = 2h 40min on Jan 5
+- **Lower quality hotel:** Budapest IC/Kimpton vs Vienna IC
+- **No Club Lounge advantage:** Budapest hotels less premium
+- **Same voucher deadline:** Dec 19 (no benefit over Strategy 2)
 
 ---
 
@@ -242,23 +218,27 @@ See [sop-ihg-family-room-booking.md](./travel/sop-ihg-family-room-booking.md) fo
 
 **Note:** All strategies require separate booking for Dec 31 (NYE) in Vienna with non-IHG hotel. The comparison below is for Jan 1-5 only (4 nights).
 
-| Factor                  | Strategy 1: Bratislava Base | Strategy 2: Budapest 2N + Vienna 2N | Strategy 3: Budapest 3N + Vienna 1N |
-| ----------------------- | --------------------------- | ----------------------------------- | ----------------------------------- |
-| **Viability**           | ✓ Viable                    | ✓ Viable                            | ✓ Viable                            |
-| **Hotel check-ins**     | 3-4 times (NYE + 2-3 more)  | 3 times (NYE + Budapest + Vienna)   | 2-3 times (NYE + Jan 1 + Budapest)  |
-| **Transportation**      | Daily driving required      | Trains available (car optional)     | One transfer + trains available     |
-| **Voucher value**       | Not used                    | 2 nights Budapest upgrade           | 3 nights Budapest upgrade           |
-| **Upgrade benefit**     | N/A                         | Suite for 3+ people (2 nights)      | Suite for 3+ people (3 nights)      |
-| **Time pressure**       | Can book anytime            | **URGENT - Dec 18 deadline** ⚠️     | **URGENT - Dec 19 deadline** ⚠️     |
-| **Budapest time**       | 2 nights                    | 2 nights                            | 2.5 days                            |
-| **Stability for kids**  | Low (3-4 hotels)            | Medium (3 hotels)                   | Medium (2-3 hotels)                 |
-| **Club Lounge**         | Depends on hotel            | Yes (Platinum, IC/CP)               | Yes (Platinum, IC/CP)               |
-| **Total cost (est.)**   | Low-Medium                  | Medium (~€1,000-1,200 base)         | Medium (~€850-950 base)             |
-| **Complexity**          | High (multiple bookings)    | Medium (2 main bookings)            | Medium (multiple bookings)          |
+| Factor                  | Strategy 1: Bratislava Base | Strategy 2: Budapest 1N + Vienna 3N ⭐ | Strategy 3: Budapest 3N + Vienna 1N |
+| ----------------------- | --------------------------- | -------------------------------------- | ----------------------------------- |
+| **Viability**           | ✓ Viable                    | ⭐ **RECOMMENDED**                     | ✓ Viable (but not optimal)          |
+| **Hotel check-ins**     | 3-4 times (NYE + 2-3 more)  | 3 times (NYE + Budapest + Vienna)      | 2-3 times (NYE + Jan 1 + Budapest)  |
+| **Transportation**      | Daily driving required      | Trains available (car optional)        | One transfer + trains available     |
+| **Voucher location**    | Not used                    | **Vienna IC** (3 nights) ⭐            | Budapest (3 nights)                 |
+| **Voucher value**       | N/A                         | 3 nights suite upgrade                 | 3 nights suite upgrade              |
+| **Time pressure**       | Can book anytime            | **URGENT - Dec 19 deadline** ⚠️        | **URGENT - Dec 19 deadline** ⚠️     |
+| **Budapest time**       | 2 nights                    | 1 night + 1 day                        | 2.5 days                            |
+| **Vienna time**         | 1 night (NYE only)          | 3 nights (Jan 2-5)                     | 1 night (Jan 1)                     |
+| **Stability for kids**  | Low (3-4 hotels)            | **High (3 nights same hotel)** ⭐      | Medium (2-3 hotels)                 |
+| **Club Lounge**         | Depends on hotel            | **Yes - Vienna IC** ⭐                 | Yes (Budapest IC/CP)                |
+| **Departure logistics** | Return to Vienna airport    | **Already in Vienna** ⭐               | 2h 40min Budapest→Vienna            |
+| **Total cost (est.)**   | Low-Medium                  | ~€1,750-1,850 base                     | ~€850-950 base                      |
+| **Hotel quality**       | Varies                      | **Premium (Vienna IC)** ⭐             | Good (Budapest options)             |
 
-**Note:** Club Lounge access is included with Platinum status at InterContinental and Crowne Plaza (not an additional benefit from suite upgrade).
+**☎️ UPDATED 16 Dec 2025 - Phone Verification:**
 
-**Voucher clarification (updated 16 Dec 2025):** Vienna InterContinental's entry-level suite only holds 2 guests, so the voucher does NOT solve the family accommodation problem there. Both Strategy 2 and 3 should use the voucher in Budapest where entry-level suites accommodate 3+ guests.
+- InterContinental Vienna confirmed Junior Suite (45 sq.m.) can accommodate 3 guests with rollaway bed
+- Vienna IC has Jan 2-5 availability (not just Jan 3-5)
+- **Strategy 2 now optimal:** 3 nights voucher value at premium Vienna property, ends in Vienna for easy airport departure
 
 ---
 
@@ -314,55 +294,34 @@ See [sop-ihg-family-room-booking.md](./travel/sop-ihg-family-room-booking.md) fo
   - Standard room and suite pricing at IHG properties
   - Alternative: negotiate suite upgrade by calling before booking
 
-**Strategy 2 - Budapest 2N (Jan 1-3) + Vienna 2N (Jan 3-5):**
+**Strategy 2 - Budapest 1N (Jan 1-2) + Vienna 3N (Jan 2-5) ⭐ RECOMMENDED:**
 
-- [x] **Budapest Jan 1-3** (2 nights) - voucher CAN be used here:
-  - Kimpton Budapest: ~€270/night (~€540 for 2 nights)
-  - Vignette Collection: ~€285/night (~€570 for 2 nights)
-  - Crowne Plaza Budapest: ~€290/night (~€580 for 2 nights)
-  - InterContinental Budapest: ~€223/night (~€446 for 2 nights)
-  - **Voucher value:** 2 nights of suite upgrade (saves ~€150-400 depending on hotel)
-- [x] **InterContinental Vienna Jan 3-5** (2 nights) - **❌ VOUCHER NOT VIABLE:**
-  - **VERIFIED 15 Dec 2025:** Only Senior Suite (€669/night) accommodates 3+ guests
-  - Entry-level suite (Junior Suite) only holds 2 guests—voucher does not help
-  - **Options:**
-    1. Book Senior Suite directly (~€669/night × 2 = €1,338)
-    2. Use Strategy 2 (call hotel, negotiate Senior Suite at lower rate)
-    3. Choose different Vienna hotel with family rooms
-  - Club Lounge benefits: Breakfast, evening drinks/snacks (already included with Platinum)
+- [ ] **Budapest Jan 1-2** (1 night) - NO voucher:
+  - InterContinental Budapest: ~€223 (1 night)
+  - Kimpton Budapest: ~€270 (1 night)
+  - Crowne Plaza Budapest: ~€290 (1 night)
+  - **Purpose:** See Budapest, then return to Vienna for voucher stay
+- [x] **InterContinental Vienna Jan 2-5** (3 nights) - **✅ VOUCHER HERE:**
+  - **☎️ PHONE VERIFIED 16 Dec 2025:** Junior Suite + rollaway = 3 guests ✅
+  - Base rate: ~€513/night × 3 = ~€1,539
+  - With voucher: Upgraded to Junior Suite (45 sq.m.) at base room rate
+  - **Rollaway bed:** Confirmed available on request
+  - **Voucher value:** 3 nights of suite upgrade at premium Vienna property
+  - Club Lounge benefits: Breakfast, evening drinks/snacks (Platinum status)
 
-**Strategy 3 - Budapest 3N + Vienna 1N:**
+**Strategy 3 - Budapest 3N + Vienna 1N (Alternative - not recommended):**
 
 - [ ] Vienna hotel Jan 1 (1 night) - can extend NYE booking or book separately
-- [x] Budapest IHG hotels Jan 2-5 (3 nights) with suite options - **UPDATED PRICING (16 Dec 2025):**
+- [x] Budapest IHG hotels Jan 2-5 (3 nights) with suite options:
 
-  **Budapest IHG Hotel Options (all confirmed participating in Confirmable Suite Upgrade):**
+  **Budapest IHG Hotel Options:**
 
-  Base prices are similar to Jan 1-3 (prices are for 3 guests):
+  1. **InterContinental Budapest** - ~€223/night (~€669 total)
+  2. **Kimpton BEM Budapest** - ~€270/night (~€810 total)
+  3. **Vignette Collection Verno House Budapest** - ~€285/night (~€855 total)
+  4. **Crowne Plaza Budapest** - ~€290/night (~€870 total)
 
-  1. **Kimpton BEM Budapest** ⭐ RECOMMENDED
-     - Base: ~€270/night (~€810 total)
-     - Participating brand: ✅ Kimpton
-     - Best city-centre value
-
-  2. **Vignette Collection Verno House Budapest**
-     - Base: ~€285/night (~€855 total) → Suite: ~€359/night
-     - Price difference if upgraded: ~€74/night (~€222 total)
-     - Participating brand: ✅ Vignette
-
-  3. **Crowne Plaza Budapest**
-     - Base: ~€290/night (~€870 total) → Family Suite: ~€380/night
-     - Price difference if upgraded: ~€90/night (~€270 total)
-     - Participating brand: ✅ Crowne Plaza
-
-  4. **InterContinental Budapest**
-     - Base: ~€223/night (~€669 total)
-     - Participating brand: ✅ InterContinental
-     - Note: Suite upgrade difference varies by room type
-
-**Approach:** Book one hotel with refundable rate, call IHG Customer Care. If upgrade fails, cancel and try another option.
-
-**Note:** Previous pricing (€105-189/night) was incorrect—likely based on 2-guest search or different room availability. Prices are consistent between Jan 1-3 and Jan 2-5.
+**Note:** Strategy 2 now preferred - same voucher nights (3) but at premium Vienna IC with better departure logistics.
 
 ### Transportation Costs
 
@@ -463,37 +422,37 @@ See [sop-ihg-family-room-booking.md](./travel/sop-ihg-family-room-booking.md) fo
 
 ### Family Preferences to Discuss:
 
-**Note:** All 3 strategies are now viable for Jan 1-5. Dec 31 (NYE) will use separate non-IHG hotel in Vienna for all strategies.
+**Note:** Strategy 2 is now recommended. Dec 31 (NYE) will use separate non-IHG hotel in Vienna for all strategies.
 
 1. **Budapest priority:** How important is spending quality time in Budapest?
 
-   - Strategy 3: 2.5 days in Budapest with suite upgrade
-   - Strategy 2: 2 nights in Budapest + 2 nights Vienna
+   - Strategy 2 (recommended): 1 night + 1 full day in Budapest
+   - Strategy 3: 2.5 days in Budapest
    - Strategy 1: 2 nights in Budapest
 
-2. **Stability vs exploration:** What's more important?
+2. **Stability vs exploration:**
 
-   - Strategy 3: 2-3 hotels (NYE + Jan 1 + Budapest) - medium stability
-   - Strategy 2: 3 hotels (NYE + Budapest + Vienna) - medium stability
-   - Strategy 1: 3-4 hotels - most exploration
+   - **Strategy 2 (recommended):** 3 consecutive nights at Vienna IC = highest stability ⭐
+   - Strategy 3: 3 nights Budapest = good stability but departure day stress
+   - Strategy 1: 3-4 hotels - most exploration, lowest stability
 
 3. **Budget vs comfort:**
 
    - Strategy 1: Bratislava base (lowest cost, but voucher not used)
-   - Strategy 2: Budapest 2N + Vienna 2N (~€1,000-1,200 base, voucher for Budapest upgrade)
+   - **Strategy 2 (recommended):** Budapest 1N + Vienna 3N (~€1,750-1,850 base, voucher for Vienna upgrade)
    - Strategy 3: Budapest 3N + Vienna 1N (~€850-950 base, voucher for Budapest upgrade)
 
 4. **Voucher value:**
 
-   - Strategy 1: Not using voucher (voucher expires, only get 2 per year)
-   - Strategy 2: 2 nights Budapest upgrade = family suite with sofa beds
-   - Strategy 3: 3 nights Budapest upgrade = family suite with sofa beds (better value)
+   - Strategy 1: Not using voucher (wasted - only get 2 per year)
+   - **Strategy 2 (recommended):** 3 nights Vienna IC upgrade = premium suite at premium hotel ⭐
+   - Strategy 3: 3 nights Budapest upgrade = suite at good hotel
 
 5. **Travel convenience:**
 
-   - Strategy 3: One move from Vienna to Budapest on Jan 2
-   - Strategy 2: Move Vienna → Budapest Jan 1, Budapest → Vienna Jan 3
-   - Strategy 1: Move to Bratislava Jan 1, then Budapest Jan 4
+   - **Strategy 2 (recommended):** Vienna → Budapest Jan 1, Budapest → Vienna Jan 2, already in Vienna for Jan 5 flight ⭐
+   - Strategy 3: Vienna → Budapest Jan 2, 2h 40min Budapest → Vienna airport on departure day
+   - Strategy 1: Multiple moves, ends far from Vienna airport
 
 ### Weather Consideration:
 
@@ -510,30 +469,29 @@ See [sop-ihg-family-room-booking.md](./travel/sop-ihg-family-room-booking.md) fo
 
 ## Next Steps
 
-**Today (URGENT):**
+**Today (URGENT) - Execute Strategy 2:**
 
-1. ✅ Check calendar - what is today's date?
-2. ✅ Calculate voucher deadlines:
-   - ⚠️ **Dec 20** for Vienna Jan 3 check-in (Strategy 2)
-   - ⚠️ **Dec 19** for Budapest Jan 2 check-in (Strategy 3)
-   - Strategy 1: No deadline (no voucher used)
-3. 🎯 **DECISION NEEDED:** Choose between 3 viable strategies
-4. ⚠️ **ACTION REQUIRED IMMEDIATELY:**
-   - **If Strategy 2:** Book Budapest (Jan 1-3) + InterContinental Vienna (Jan 3-5) by Dec 20
-   - **If Strategy 3:** Book Budapest IHG hotel (Jan 2-5) by Dec 19
-   - **All strategies:** Book non-IHG hotel for Vienna Dec 31 (NYE)
+1. ✅ Check calendar - today is Dec 16, 2025
+2. ✅ Phone-verified Vienna IC Junior Suite accommodates 3 guests with rollaway
+3. ✅ Vienna IC has Jan 2-5 availability
+4. ⚠️ **Voucher deadline: Dec 19** (14 days before Jan 2 check-in)
+5. 🎯 **DECISION MADE:** Strategy 2 is optimal (Budapest 1N + Vienna 3N)
+6. ⚠️ **ACTION REQUIRED BY DEC 19:**
+   - [ ] Book InterContinental Vienna (Jan 2-5) - 3 nights, refundable rate
+   - [ ] Book Budapest IHG hotel (Jan 1-2) - 1 night
+   - [ ] Call IHG Customer Care to apply voucher for Vienna booking
+   - [ ] Book non-IHG hotel for Vienna Dec 31 (NYE)
 
 **This Week:**
 
-1. ✅ Vienna IHG pricing confirmed (InterContinental: ~€513/night for 3 guests, Jan 3-5)
-2. ✅ Budapest IHG pricing confirmed (~€220-290/night base rates for 3 guests, updated 16 Dec)
-3. [ ] Find non-IHG hotel in Vienna for Dec 31 (NYE)
-4. [ ] If Strategy 3: Find hotel for Vienna Jan 1
-5. [ ] Calculate total costs (accommodation + transportation) for all 3 strategies
-6. [ ] Discuss with Liansu: Vienna vs Budapest priority, stability vs exploration
-7. Execute bookings:
-   - Vienna Dec 31: Non-IHG hotel (all strategies)
-   - Main booking: IHG hotel with voucher OR Bratislava base (by deadline)
+1. ✅ Vienna IC pricing confirmed (~€513/night for 3 guests, Jan 2-5 available)
+2. ✅ Vienna IC Junior Suite + rollaway = 3 guests (phone-verified)
+3. ✅ Budapest pricing confirmed (~€220-290/night for 1 night)
+4. [ ] Find non-IHG hotel in Vienna for Dec 31 (NYE)
+5. [ ] Execute Strategy 2 bookings:
+   - Vienna Dec 31: Non-IHG hotel
+   - Budapest Jan 1-2: IHG hotel (1 night)
+   - Vienna IC Jan 2-5: Book + apply voucher by Dec 19
 
 **Before Dec 23 Departure:**
 
@@ -545,6 +503,6 @@ See [sop-ihg-family-room-booking.md](./travel/sop-ihg-family-room-booking.md) fo
 ---
 
 **Document created:** 2025-12-15
-**Last updated:** 2025-12-16 (pricing verification and voucher strategy correction)
+**Last updated:** 2025-12-16 (phone-verified Vienna IC accommodates 3 guests with rollaway; Strategy 2 now optimal)
 **For trip:** December 31, 2025 - January 5, 2026
 **Travelers:** Liansu, Weiwu, Alice, Zoe
