@@ -994,296 +994,81 @@ All research phases completed: traveller composition identified, event anchors c
 
 ### Purpose
 
-Evaluate travel completeness through sophisticated contextual reasoning, employing mental journey simulation as an analytical tool to discover gaps, validate logical continuity, and assess planning quality. This procedure requires the reader to synthesise geographic knowledge, temporal reasoning, and situational awareness to distinguish genuine problems from acceptable gaps.
+Validate the itinerary by walking through it as if you are the traveller. This procedure delegates to a separate Mental Journey Simulation SOP that produces a narrative walkthrough revealing gaps, timing issues, and logistical problems.
 
 ### Input
 
-All documents within journey folder (Fares, Passes, Accommodations subfolders)
+- Itinerary.md from journey folder (or booking documents if no itinerary yet)
+- Journey folder path
 
 ### Output
 
-Identified gaps and issues with contextual assessment, categorised by severity and type. These findings feed directly into Procedure 3 for integration into the Itinerary.md document.
+- Journey narrative identifying issues
+- Categorised list of problems (Critical/Significant/Minor/Verify)
+- Recommendations for fixes
 
-### Phase 1: Chronological Reconstruction
+### Execution
 
-**Objective**: Synthesise all booking documents into a coherent temporal sequence
+**Step 1: Launch Mental Journey Simulation**
 
-**IMPORTANT**: Use `pdftotext` to extract detailed information from all PDF booking documents. Do not rely solely on filenames. PDFs contain critical details like exact times, flight numbers, terminal information, and special notes that are essential for accurate journey simulation.
+Run the mental journey simulation SOP on the current itinerary:
 
-**Example usage**:
 ```bash
-pdftotext "/path/to/Fares/2025-12-23 [Ryanair] Seville-Edinburgh FR1073 JQ3BFI.pdf" -
+claude -p "Follow travel/sop-mental-journey-simulation.md to simulate the journey in [JOURNEY_FOLDER_PATH]/Itinerary.md" --allowedTools "Read,Glob,Grep,WebSearch,WebFetch" --permission-mode acceptEdits
 ```
 
-1. **Document Compilation**
-   - Extract all booking information from Fares folder (excluding files with "(Cancelled)" prefix)
-   - **Use pdftotext on each PDF to extract**: departure times, arrival times, flight/train numbers, terminal information, baggage allowances, and any special notes
-   - Extract all accommodation details from Accommodations folder (excluding files with "(Cancelled)" prefix)
-   - **Use pdftotext on accommodation PDFs to extract**: check-in times, check-out times, hotel addresses, special arrangements
-   - Extract all event/activity tickets from Passes folder (excluding files with "(Cancelled)" prefix)
-   - **Use pdftotext on event PDFs to extract**: event start times, venue addresses, entry requirements
-   - Extract any transport documents (train, bus, car rental) from Fares folder (excluding cancelled bookings)
-   - Note any documents that mention dates, times, or locations
-   - **Important**: Files prefixed with "(Cancelled)" should be ignored for journey simulation purposes, as these bookings did not happen
+Replace `[JOURNEY_FOLDER_PATH]` with the actual journey folder path.
 
-2. **Timeline Construction**
-   - Create chronological sequence of all bookings
-   - Establish departure date and initial location
-   - Map each subsequent booking to its position in the timeline
-   - Identify all cities and destinations visited
-   - Note any gaps in the timeline (dates with no bookings)
+**Step 2: Review Simulation Output**
 
-3. **Geographic Mapping**
-   - Map each booking to its geographic location
-   - Identify airport codes used (verify if multiple airports exist in same city)
-   - Note inter-city movements
-   - Identify regional groupings (e.g., multiple Balkan cities, multiple Middle East destinations)
+The simulation produces:
+- **Journey Narrative**: Story-format walkthrough from traveller's perspective
+- **Issues Summary**: Problems categorised by severity
+- **Verdict**: GREEN (minor issues only) / YELLOW (significant but sound) / RED (critical problems)
 
-### Phase 2: Mental Journey Simulation
+**Step 3: Iterate Until Reasonably Good**
 
-**Objective**: Imagine yourself as the traveller and step through the journey, evaluating each transition for logical continuity and identifying potential problems
+If the simulation verdict is RED or YELLOW with critical issues:
 
-**Methodology**: Approach this as a problem-solving exercise where you are physically present at each location and must determine how to proceed to the next destination.
+1. Address the critical issues identified in the simulation
+2. Update Itinerary.md with fixes (missing bookings noted, timing adjusted, etc.)
+3. Re-run the mental journey simulation
+4. Repeat until verdict is GREEN or YELLOW with only acceptable issues
 
-1. **Initialisation**
-   - Begin at departure point (first flight origin)
-   - Note date, time, and airport of departure
-   - Establish traveller composition (number of travellers, presence of children, elderly, special needs)
+**Iteration Stopping Criteria:**
+- All CRITICAL issues resolved or documented as to-do items
+- SIGNIFICANT issues either resolved or have clear mitigation plans
+- Verdict is GREEN, or YELLOW with justified remaining issues
 
-2. **Flight Leg Evaluation**
-   - **Read the booking PDF with pdftotext** to extract exact departure time, arrival time, flight number, terminal information
-   - **Board plane**: Note departure airport code, terminal, and departure time
-   - **Land plane**: Note arrival airport code, terminal, and arrival time
-   - **Critical question**: Is the next connection in the same airport or a different airport?
-   
-3. **Airport Connection Analysis** (If different airports)
+**Step 4: Extract Findings for Procedure 3**
 
-   Apply contextual reasoning to evaluate transport needs:
+From the final simulation, extract:
+- Gaps requiring booking (add to Completeness Checklist)
+- Timing issues (note in day-by-day timeline)
+- Verification items (add to checklist)
 
-   **a. Geographic Proximity Assessment**
-   - Determine distance between airports
-   - Recognise close airports (e.g., Abu Dhabi AUH and Dubai DXB are ~100km apart)
-   - Close airports → ground transport expected, not a missing flight
-   - Research actual distance and available transport options
+### Issue Categories (from Simulation SOP)
 
-   **b. Temporal Context Evaluation**
-   - Consider time of arrival (late night? early morning?)
-   - Evaluate public transport availability at that time
-   - Assess if time of day affects transport choice (e.g., late night arrivals may require pre-booked transport)
-   - Consider safety implications of transport timing
+**Critical** - Journey may fail:
+- Missing transport/accommodation booking
+- Impossible connection
 
-   **c. Traveller Composition Consideration**
-   - Presence of children affects transport choice (may require car seats, comfort considerations)
-   - Elderly travellers may need assistance, affecting transport suitability
-   - Special needs may require specific transport arrangements
-   - Number of travellers affects cost-effectiveness of transport options (group may prefer private transfer)
+**Significant** - Major discomfort/risk:
+- 4+ hours without food for children
+- Midnight hotel arrival with children
+- Activity during closure hours
 
-   **d. Transport Mode Assessment**
-   - Evaluate distance: walkable? requires taxi? train available?
-   - Check for direct connections (airport-to-airport shuttles, trains)
-   - Assess if public transport is practical given time and traveller composition
-   - Consider if hired car/private transfer is more appropriate
+**Minor** - Inconvenience:
+- Early hotel arrival before check-in
+- Tight but achievable connection
 
-   **e. Regional Pattern Recognition**
-   - Recognise regional travel patterns:
-     - Balkan countries: Multiple cities typically traversed by hired car, not flights
-     - Middle East: Close airports (Abu Dhabi-Dubai) use ground transport
-     - European cities: Train connections common between close airports
-   - If hired car booking exists for regional travel, verify dates align with itinerary
+**Verify** - Confirmation needed:
+- Operating hours not confirmed
+- Booking status unclear
 
-   **f. Research Methodology** (Act as if you're already at that location)
-   - Use Google search as if you're physically present at the arrival airport
-   - Research: "How to get from [Airport A] to [Airport B]"
-   - Check train schedules, maintenance schedules, service disruptions
-   - Verify transport availability at specific arrival time
-   - Check airport transfer options, booking requirements, pricing
+### Checkpoint: Mental Journey Simulation Complete
 
-4. **Same Airport Connection Analysis**
-
-   If next connection is in same airport:
-   - Verify layover time adequacy
-   - Check if terminal change is required
-   - Assess if layover allows for customs/immigration if needed
-   - Consider if time is sufficient for traveller composition (children need more time)
-
-5. **Airport-to-Hotel Transport Evaluation** (First-Mile/Last-Mile Analysis)
-
-   For families with children and luggage, the choice between public transport and taxi/rideshare is a significant practical decision that must be reasoned through, not assumed. This evaluation applies to each arrival at a destination city where accommodation must be reached: flight arrivals at airports, train arrivals at stations, or any transport arrival requiring onward journey to hotel.
-
-   Walk through the physical journey as if you are the traveller:
-
-   a. **Identify the transport options**:
-      - Research: "How to get from [Airport] to [City Center]" or "[Airport] to city transport options"
-      - Identify: Public transport options (metro, train, bus), taxi/rideshare, private transfer, car rental
-      - Document costs for EACH option
-
-   b. **Calculate cost per party vs per person**:
-      - Public transport: Typically priced per person (€4-10 per adult, children may be reduced/free)
-      - Taxi/rideshare: Typically priced per vehicle (€25-50 for airport run, accommodates 4 passengers + luggage)
-      - For a family of 4, multiply per-person costs by number of paying passengers
-      - Example: Public transport €4/person × 4 = €16 total vs Taxi €35 for whole family
-      - Cost difference may be smaller than it appears when calculated per person vs per vehicle
-
-   c. **Walk through the physical journey with luggage and children**:
-
-      **Public Transport Journey Simulation**:
-      - You've just landed, collected luggage, 2 children in tow
-      - Navigate airport to find correct train/metro platform (signage, elevators vs stairs)
-      - Purchase tickets at vending machine or counter (queue time, payment method, ticket validation)
-      - Carry luggage down to platform (are there elevators? or stairs/escalators?)
-      - Wait for train/metro (frequency: every 10 min? every 30 min?)
-      - Board train with luggage and children (rush hour crowding? luggage space? keeping children safe)
-      - Monitor stops, manage children during journey (duration: 20 min? 45 min?)
-      - Potentially transfer to different line (more stairs, more platforms, more coordination)
-      - Exit at destination station (more elevators/stairs with luggage)
-      - Walk from station to hotel (100m? 500m? dragging luggage, managing tired children)
-
-      **Taxi/Rideshare Journey Simulation**:
-      - You've just landed, collected luggage, 2 children in tow
-      - Navigate to taxi rank or rideshare pickup point (usually well-signed)
-      - Queue for taxi or request rideshare (wait time: 5-15 min typically)
-      - Load luggage in trunk, children buckle in back seat (children can rest during journey)
-      - Driver takes you directly to hotel door (no transfers, no stairs, no navigation)
-      - Unload at hotel entrance
-
-   d. **Evaluate city-specific transport quality**:
-
-      Exceptional public transport (rare - genuinely superior to taxis):
-      - Beijing Capital Airport Express: Dedicated fast train, 20 min to city, faster than taxi in traffic, very clean, luggage space, cheap
-      - Hong Kong Airport Express: Similar quality, faster and more reliable than road transport
-      - London Heathrow Express/Elizabeth Line: Fast, frequent, reliable (but consider Heathrow is far from most hotels, may still need taxi from Paddington)
-      - These are EXCEPTIONS, not the norm
-      - Even in these cases, verify hotel location relative to train terminus
-
-      Good public transport (most European cities):
-      - Berlin, Munich, Vienna, Amsterdam, Copenhagen have excellent metro/S-Bahn systems
-      - However: Still involves stairs/escalators, transfers, walking with luggage, managing children in stations
-      - Consider whether moderate cost saving (€16 vs €35) justifies the physical effort with 2 children and luggage
-
-      Adequate public transport (requires evaluation):
-      - Many cities have airport buses/trains but they're slower, less frequent, or require awkward transfers
-      - Research actual journey time vs taxi time
-      - Research if hotel is genuinely near a station (walking distance with luggage)
-
-      Poor or complex public transport (taxi clearly better):
-      - Requires multiple transfers
-      - Infrequent service (every 30-60 min)
-      - No direct route to hotel area
-      - Airport far from city with limited public transport
-
-   e. **Consider contextual factors**:
-      - Time of day: Late night/early morning arrivals may have limited public transport
-      - Hotel location: Is hotel right at metro exit (5 min walk) or 15 min walk from station uphill?
-      - Weather: Rainy/snowy conditions make public transport with luggage more challenging
-      - Traveller energy: After long flight, children tired, parents tired - physical effort matters more
-      - Departure timing: For departure, very early flights may require pre-booked taxi (public transport not running)
-
-   f. **Document the recommendation with reasoning**:
-
-      The mental journey evaluation above should result in a clear recommendation with reasoning that demonstrates practical logistics were considered. The itinerary should present:
-      - The recommended transport mode
-      - Brief reasoning showing why it was chosen (not just stating it exists)
-      - Evidence that alternatives were considered (implied by the reasoning)
-
-      Example recommendation formats:
-
-      Public transport context:
-      "Take Airport Express train to Central Station (€4/person, 25 min). Recommended as hotel is 5-min walk from station exit, making this more convenient than taxi despite family of 4. Total cost ~€16 vs ~€35 for taxi."
-
-      Taxi context:
-      "Pre-book taxi for airport pickup (€35-40, 30 min direct to hotel). Recommended for family with luggage as hotel is 15-min walk from nearest S-Bahn station, and cost difference vs public transport is minimal (€35 taxi vs ~€20 S-Bahn for 4 people)."
-
-      Exceptional public transport context:
-      "Take Airport Express train (¥25/person, 20 min). Despite luggage hassle for family of 4, train is significantly faster than taxi during daytime (20 min vs 60 min in Beijing traffic) and more reliable. Consider taxi only for late night arrivals when roads are clear."
-
-      The reasoning makes clear that options were evaluated and a thoughtful choice was made, without requiring a bulleted comparison table.
-
-6. **Accommodation Timing Verification**
-   - For each accommodation booking:
-     - Determine estimated arrival time at hotel (based on flight arrival + transport time)
-     - Compare with hotel check-in time
-     - Verify if arrival time is reasonable (too early? hotel may not be ready)
-     - Check if late arrival requires special arrangements (after-hours check-in)
-
-6. **Event/Activity Alignment Check**
-   - For each event or activity in Passes folder:
-     - Verify timing aligns with location
-     - Check if traveller can realistically reach event from previous location
-     - Assess if sufficient time exists between activities
-   - Identify if events require advance booking that may be missing
-
-7. **City Transition Evaluation**
-   - For transitions between cities (not airports):
-     - Identify transport method (flight? train? hired car? bus?)
-     - Verify booking exists for that transport
-     - If hired car: Verify it covers the date range needed
-     - If train: Verify schedule availability and booking
-     - Assess if transport is appropriate for distance and traveller composition
-
-### Phase 3: Contextual Gap Analysis
-
-**Objective**: Categorise discovered issues using sophisticated judgement that distinguishes genuine problems from acceptable gaps
-
-1. **Gap Categorisation**
-
-   **a. Genuine Gaps** (Critical - require action)
-   - Missing hotel booking for a night (traveller has no accommodation)
-   - Missing flight segment that is not explainable by ground transport
-   - Missing critical connection where no alternative transport exists
-   - Date misalignment (e.g., flight arrives day 1 but hotel booking starts day 2, with no accommodation for night 1)
-   - Timing incompatibility (e.g., flight arrives after hotel check-in closes with no after-hours arrangement)
-
-   **b. Acceptable Gaps** (Verify dates align, but transport method is reasonable)
-   - Ground transport between close airports (Abu Dhabi-Dubai, etc.)
-   - Regional car hire for multiple destinations (Balkan countries, etc.) - verify dates cover the travel period
-   - Walk-up tickets (trains, buses) where booking in advance is not standard practice
-   - Direct bookings made outside the folder system
-
-   **c. Verification Needed** (Uncertain - requires investigation)
-   - Unclear transport method between locations
-   - Date alignment concerns (dates may work but need verification)
-   - Timing concerns (arrival times may be too tight)
-   - Missing information that could indicate a gap or intentional choice
-
-2. **Intentional Gap Recognition**
-   - Distinguish intentional gaps from problems:
-     - Direct bookings (traveller booked directly, confirmation not in folder)
-     - Walk-up purchases (tickets bought on-site, not pre-booked)
-     - Intentional free time (no activities planned, by design)
-     - Cancelled bookings (marked with "(Cancelled)" prefix - these should not be treated as gaps)
-   - Only flag as problem if evidence suggests oversight rather than intentional choice
-
-3. **Date Continuity Verification**
-   - Even when transport method is reasonable (e.g., hired car), verify dates align:
-     - Car hire start date should be before or on first use date
-     - Car hire end date should be after or on last use date
-     - If dates don't align, this becomes a genuine gap
-
-4. **Dynamic Granularity Application**
-   - Match evaluation depth to travel complexity:
-     - **Simple round trip**: Basic verification (two flights, one accommodation)
-     - **Complex multi-city**: Detailed simulation (events, hired cars, airport transfers, multiple destinations)
-   - More complexity = more detailed mental simulation required
-   - If travel includes events, hired cars, or multi-city routes, apply deeper analysis
-
-### Phase 4: Mental Model Discard
-
-**Objective**: Extract only the problems discovered, not the simulation process itself
-
-1. **Problem Documentation**
-   - Document only the identified gaps and issues
-   - Note the category (genuine gap, acceptable gap with verification needed, etc.)
-   - Include rationale for categorisation
-   - Do not document the mental journey simulation steps themselves
-
-2. **Discard Simulation**
-   - The mental journey is a tool for problem discovery
-   - After identifying issues, discard the simulation process
-   - Retain only the outcomes: problems found, gaps identified, recommendations needed
-
-### Checkpoint: Completeness Evaluation Complete
-
-All journey legs evaluated, gaps categorised (genuine vs acceptable), date continuity verified, mental model discarded.
+Simulation run at least once, critical issues addressed or documented, findings extracted for integration into Itinerary.md.
 
 ## Procedure 3: Itinerary Document Creation/Update with Completeness Assessment
 
