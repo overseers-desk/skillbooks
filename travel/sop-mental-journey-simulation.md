@@ -17,6 +17,11 @@ The output is a **story-like narrative** written from the traveller's perspectiv
 2. **Issues Discovered** - Categorized list of problems found
 3. **Recommendations** - Suggested fixes for each issue
 
+**Output Location**:
+- When run as part of master orchestration: `build/validation/journey-simulation.md`
+- When run standalone for testing: caller specifies output path (e.g., `travel/test/`)
+- The output is a single markdown file containing all sections below
+
 ---
 
 ## Simulation Process
