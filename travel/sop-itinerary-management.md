@@ -1,8 +1,18 @@
-# Travel Itinerary Management Standard Operating Procedure
+# Itinerary Management Standard Operating Procedure
+
+**Part of**: `sop-travel-master.md` orchestration system
+
+**Relationship to other SOPs**:
+- Orchestrated by: `sop-travel-master.md`
+- Depends on: `build/extraction/*.yaml` (from `sop-booking-extraction.md`)
+- Depends on: `build/research/*.md` (from `sop-destination-research.md`)
+- Validated by: `sop-mental-journey-simulation.md`
 
 ## Purpose Statement
 
-This Standard Operating Procedure establishes the methodology for evaluating travel completeness and generating comprehensive itinerary documents. The SOP enables systematic assessment of journey readiness through sophisticated contextual reasoning—employing mental journey simulation to identify gaps, validate logical continuity, and assess planning quality whilst distinguishing genuine problems from acceptable gaps.
+This Standard Operating Procedure assembles extraction and research outputs into a comprehensive Itinerary.md document. When run standalone (without pre-built extraction/research), it performs all phases internally. When run as part of the master orchestration, it consumes `build/` artifacts produced by upstream SOPs.
+
+The SOP enables systematic assessment of journey readiness through sophisticated contextual reasoning—employing mental journey simulation to identify gaps, validate logical continuity, and assess planning quality whilst distinguishing genuine problems from acceptable gaps.
 
 ## Role Definition - Critical Understanding
 
