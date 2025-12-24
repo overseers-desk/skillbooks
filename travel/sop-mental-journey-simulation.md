@@ -9,6 +9,7 @@ The output is a **story-like narrative** written from the traveller's perspectiv
 ## Input
 
 - **Required:** Path to an Itinerary.md file OR a journey folder containing booking documents
+- **Required:** Segment to simulate (e.g., "Edinburgh", "Great Ocean Road")
 - **Optional:** Traveller composition (defaults to "family with 2 young children" if not stated)
 
 ## Output
@@ -18,9 +19,9 @@ The output is a **story-like narrative** written from the traveller's perspectiv
 3. **Recommendations** - Suggested fixes for each issue
 
 **Output Location**:
-- When run as part of master orchestration: `build/validation/journey-simulation.md`
-- When run standalone for testing: caller specifies output path (e.g., `travel/test/`)
-- The output is a single markdown file containing all sections below
+- When run as part of master orchestration: `build/test/{N}.{Segment}.md` (one file per segment)
+- When run standalone for testing: caller specifies output path
+- Each output is a markdown file containing all sections below for that segment
 
 ---
 
@@ -88,7 +89,8 @@ At each checkpoint, answer briefly in narrative form:
 - Luggage storage if room not ready?
 
 ### Activities
-- Energy levels after rest?
+- Energy levels: demanding activity following another demanding activity?
+- Recovery opportunity before next activity?
 - Fits within daylight/opening hours?
 - Transport to/from?
 - Food timing?
@@ -119,6 +121,10 @@ Flag issues inline as you write:
 **[VERIFY]** Confirmation needed
 - Operating hours not confirmed
 - Booking status unclear
+
+**[ENERGY]** Scheduling mismatch
+- Demanding activity followed by another without recovery
+- Meal location assumes energy that may not exist
 
 ---
 
@@ -201,8 +207,10 @@ Flag issues inline as you write:
 
 ### Young Children
 - Cannot go 4+ hours without food
-- Need 30-60 min rest between activities
+- Need recovery time after demanding activities (exploration, walking, sustained attention)
+- Meal/rest location should suit current state, not next destination (if tired after morning museum, question whether lunch 30 min away is sensible vs lunch nearby or hotel return)
 - Everything takes longer
+- Plan to the youngest child's limits
 
 ### Multi-City
 - Transition days = minimal activities
