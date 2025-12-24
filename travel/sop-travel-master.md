@@ -11,7 +11,7 @@ This is the master orchestrator for travel planning. It defines interfaces betwe
 | `sop-booking-extraction.md` | Parse PDFs from Fares/Accommodations/Passes | Journey folder path | `build/extraction/*.yaml` |
 | `sop-destination-research.md` | Research cities for activities, transport, accommodation | City name, dates, traveller composition | `build/research/{N}.{City}.md` |
 | `sop-itinerary-management.md` | Assemble research into Itinerary.md | All build/ artifacts | `Itinerary.md` |
-| `sop-mental-journey-simulation.md` | Validate itinerary via narrative walkthrough | Itinerary.md | `build/validation/journey-simulation.md` |
+| `sop-mental-journey-simulation.md` | Test itinerary via narrative walkthrough | Itinerary.md, segment | `build/test/{N}.{Segment}.md` |
 
 ## Build Directory Structure
 
@@ -36,8 +36,10 @@ All generated intermediate files reside in `build/` within the journey folder:
 │   │   ├── 2.Berlin.md
 │   │   └── ...
 │   │
-│   └── validation/                  # From sop-mental-journey-simulation
-│       └── journey-simulation.md
+│   └── test/                        # From sop-mental-journey-simulation
+│       ├── 1.Edinburgh.md           # Simulation for segment 1
+│       ├── 2.Berlin.md              # Simulation for segment 2
+│       └── ...
 │
 └── Itinerary.md                     # Final deliverable
 ```
@@ -264,21 +266,21 @@ All planned activity clusters accessible within 20 minutes by metro.
 
 ---
 
-### Interface: Validation Output
+### Interface: Test Output
 
-**File**: `build/validation/journey-simulation.md`
+**File**: `build/test/{N}.{Segment}.md`
 
-See `sop-mental-journey-simulation.md` for full specification. Summary:
+Each segment gets its own simulation file, matching the research convention. See `sop-mental-journey-simulation.md` for full specification. Summary:
 
 ```markdown
-# Journey Simulation: [Journey Name]
+# Journey Simulation: [Segment] - [dates]
 
 **Travellers**: [composition]
-**Dates**: [start - end]
+**Dates**: [segment dates]
 **Verdict**: GREEN / YELLOW / RED
 
 ## Day-by-Day Narrative
-[Story-format walkthrough with [CRITICAL], [SIGNIFICANT], [MINOR], [VERIFY] markers]
+[Story-format walkthrough with [CRITICAL], [SIGNIFICANT], [MINOR], [VERIFY], [ENERGY] markers]
 
 ## Issues Summary
 
@@ -292,6 +294,9 @@ See `sop-mental-journey-simulation.md` for full specification. Summary:
 ...
 
 ### Verify
+...
+
+### Energy
 ...
 ```
 
@@ -341,9 +346,9 @@ Research files depend on:
 - If `build/extraction/{N}.{City}.yaml` is newer than research file → re-run research
 - Otherwise → skip research, use cached results
 
-#### Validation Phase
+#### Test Phase
 
-Always re-run after Itinerary.md changes.
+Re-run for a segment after its portion of Itinerary.md changes.
 
 ---
 
@@ -379,15 +384,15 @@ RUN: Travel Management
    → Input: all build/extraction/*.yaml + build/research/*.md
    → Creates/Updates: Itinerary.md
 
-6. VALIDATE
-   → Run: sop-mental-journey-simulation.md
-   → Input: Itinerary.md
-   → Creates: build/validation/journey-simulation.md
+6. TEST (can run in parallel per segment)
+   → Run: sop-mental-journey-simulation.md for each segment
+   → Input: Itinerary.md, segment
+   → Creates: build/test/{N}.{Segment}.md
 
-7. IF validation verdict is RED:
+7. IF test verdict is RED:
    - Review critical issues
    - Update Itinerary.md to address issues
-   - Re-run validation (step 6)
+   - Re-run test (step 6) for affected segments
    - Repeat until GREEN or YELLOW with acceptable issues
 
 8. QUALITY CONTROL
