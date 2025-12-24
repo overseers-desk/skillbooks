@@ -10,8 +10,8 @@ This is the master orchestrator for travel planning. It defines interfaces betwe
 |-----|---------|-------|--------|
 | `sop-booking-extraction.md` | Parse PDFs from Fares/Accommodations/Passes | Journey folder path | `build/extraction/*.yaml` |
 | `sop-destination-research.md` | Research cities for activities, transport, accommodation | City name, dates, traveller composition | `build/research/{N}.{City}.md` |
-| `sop-itinerary-management.md` | Assemble research into Itinerary.md | All build/ artifacts | `Itinerary.md` |
-| `sop-mental-journey-simulation.md` | Test itinerary via narrative walkthrough | Itinerary.md, segment | `build/test/{N}.{Segment}.md` |
+| `sop-itinerary-management.md` | Assemble research into a destination-level itinerary | All build/ artifacts | `[Itinerary-File].md` |
+| `sop-mental-journey-simulation.md` | Test itinerary via narrative walkthrough | `[Itinerary-File].md`, segment | `build/test/{N}.{Segment}.md` |
 
 ## Build Directory Structure
 
@@ -41,8 +41,15 @@ All generated intermediate files reside in `build/` within the journey folder:
 │       ├── 2.Berlin.md              # Simulation for segment 2
 │       └── ...
 │
-└── Itinerary.md                     # Final deliverable
+└── [Start Date] - [End Date] [Destination]_Itinerary.md  # Final deliverable
 ```
+
+### Itinerary Naming Convention
+
+The Master SOP identifies segments or "clusters" within a journey (e.g., a 2-week trip might have 3 destination clusters). Each cluster receives its own itinerary file named:
+`[YYYY-MM-DD] - [YYYY-MM-DD] [Cluster-Name]_Itinerary.md`
+
+This prevents a single massive document for complex multi-country journeys and allows focused planning for each segment.
 
 ### Sequence Numbering Convention
 
@@ -382,16 +389,16 @@ RUN: Travel Management
 5. ASSEMBLE itinerary
    → Run: sop-itinerary-management.md
    → Input: all build/extraction/*.yaml + build/research/*.md
-   → Creates/Updates: Itinerary.md
+   → Creates/Updates: `[YYYY-MM-DD] - [YYYY-MM-DD] [Cluster-Name]_Itinerary.md`
 
 6. TEST (can run in parallel per segment)
    → Run: sop-mental-journey-simulation.md for each segment
-   → Input: Itinerary.md, segment
+   → Input: Cluster itinerary file, segment
    → Creates: build/test/{N}.{Segment}.md
 
 7. IF test verdict is RED:
    - Review critical issues
-   - Update Itinerary.md to address issues
+   - Update the cluster itinerary to address issues
    - Re-run test (step 6) for affected segments
    - Repeat until GREEN or YELLOW with acceptable issues
 

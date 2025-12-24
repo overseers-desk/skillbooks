@@ -10,7 +10,7 @@
 
 ## Purpose Statement
 
-This Standard Operating Procedure assembles extraction and research outputs into a comprehensive Itinerary.md document. When run standalone (without pre-built extraction/research), it performs all phases internally. When run as part of the master orchestration, it consumes `build/` artifacts produced by upstream SOPs.
+This Standard Operating Procedure assembles extraction and research outputs into a comprehensive itinerary document. When run standalone (without pre-built extraction/research), it performs all phases internally. When run as part of the master orchestration, it consumes `build/` artifacts produced by upstream SOPs.
 
 The SOP enables systematic assessment of journey readiness through sophisticated contextual reasoning—employing mental journey simulation to identify gaps, validate logical continuity, and assess planning quality whilst distinguishing genuine problems from acceptable gaps.
 
@@ -112,13 +112,13 @@ This SOP assumes the folder management SOP has already been executed and the jou
 
 4. **Set working context for all procedures:**
    - All Read, Glob, Grep operations target: `[journey-folder]/Fares/`, `[journey-folder]/Accommodations/`, `[journey-folder]/Passes/`
-   - Generated Itinerary.md saves to: `[journey-folder]/Itinerary.md`
+   - Generated itinerary document saves to: `[journey-folder]/[Itinerary-File].md` (filename determined by master SOP)
 
 **RUN Workflow:**
 
 1. **Itinerary Creation and Planning** (Procedure 1): Create or update travel plans with activity recommendations, accommodation selection, and child-specific considerations when applicable
 2. **Mental Journey Simulation and Completeness Evaluation** (Procedure 2): Execute mental journey simulation to validate plans, identify gaps, verify transport connections, assess accommodation continuity, and categorise issues by severity
-3. **Itinerary Document Creation/Update** (Procedure 3): Generate or update Itinerary.md with integrated completeness checklist, transportation table, and day-by-day timeline
+3. **Itinerary Document Creation/Update** (Procedure 3): Generate or update the cluster-level itinerary with integrated completeness checklist, transportation table, and day-by-day timeline
 4. **Quality Control and Iteration** (Procedure 4): Verify itinerary against 10-item QC checklist, iterate to fix any failures, ensure creator role (not advisor), confirm all key decisions documented
 
 **Triggering:**
@@ -132,12 +132,15 @@ This RUN is typically triggered after folder management RUN completes, or separa
 
 **Re-runnability by Design:**
 
-RUN is designed to be executed multiple times as new bookings arrive or information changes:
+A RUN is designed to be executed multiple times as new bookings arrive or information changes. However, it MUST maintain document cohesiveness:
 
-- Itinerary.md is read and revised incrementally, not regenerated from scratch
-- Resolved gaps are removed from completeness checklist
-- Newly identified gaps are added
-- Subsequent RUN executions build on previous work without duplication
+- Each edit of the itinerary should be made cohesively and holistically written, as if the author already considered all points of the document at the outset.
+- Each fact, number, and point should be mentioned only once, in the most appropriate place.
+- Do NOT use incremental patching or scattered updates throughout the document. Very often, "Critical", "Important" keywords indicate not criticality or important but a missing point that was later addressed in a patch or revision. If you see those, you know the rule is probably broken.
+- **Revision History Restriction**: A "Revision History" or "Version Updates" section should not exist nor added during the planning phase. It consumes tokens and reduces clarity.
+- Revision history is ONLY needed for updates that occur *after* the journey has started then changes were introduced.
+- Resolved gaps are removed from the completeness checklist entirely, not marked as "fixed".
+- Newly identified gaps are integrated into the existing structure.
 
 **Relationship to Folder Management:**
 
@@ -159,7 +162,7 @@ Create or update travel itineraries by researching destinations, identifying sui
 ### Input
 
 - All travel documents from journey folder (Fares, Accommodations, Passes)
-- Existing Itinerary.md (if present, for revision)
+- Existing itinerary document (if present, for revision)
 - Journey folder name (to extract traveller composition)
 
 ### Output
@@ -233,7 +236,7 @@ Create or update travel itineraries by researching destinations, identifying sui
 
 **Objective**: Read and understand current state to enable update/optimisation mode
 
-1. **Read Existing Itinerary.md (if present)**
+1. **Read Existing Itinerary Document (if present)**
    - Extract existing activity plans and recommendations
    - Note current accommodation bookings and their locations
    - **Note suggested accommodations in to-do items** (these are recommendations, not yet booked)
@@ -946,7 +949,7 @@ When constraints exist (e.g., limited Christmas Day dining), research WHAT is ac
 
 ### Phase 8: Document Integration Preparation
 
-**Objective**: Prepare structured recommendations for integration into Itinerary.md
+**Objective**: Prepare structured recommendations for integration into the itinerary document
 
 1. **Structure Recommendations**
    
@@ -1008,7 +1011,7 @@ Validate the itinerary by walking through it as if you are the traveller. This p
 
 ### Input
 
-- Itinerary.md from journey folder (or booking documents if no itinerary yet)
+- Previous or existing itinerary document from journey folder
 - Journey folder path
 
 ### Output
@@ -1024,7 +1027,7 @@ Validate the itinerary by walking through it as if you are the traveller. This p
 Run the mental journey simulation SOP on the current itinerary:
 
 ```bash
-claude -p "Follow travel/sop-mental-journey-simulation.md to simulate the journey in [JOURNEY_FOLDER_PATH]/Itinerary.md" --allowedTools "Read,Glob,Grep,WebSearch,WebFetch" --permission-mode acceptEdits
+claude -p "Follow travel/sop-mental-journey-simulation.md to simulate the journey in [JOURNEY_FOLDER_PATH]/[Itinerary-File].md" --allowedTools "Read,Glob,Grep,WebSearch,WebFetch" --permission-mode acceptEdits
 ```
 
 Replace `[JOURNEY_FOLDER_PATH]` with the actual journey folder path.
@@ -1041,7 +1044,7 @@ The simulation produces:
 If the simulation verdict is RED or YELLOW with critical issues:
 
 1. Address the critical issues identified in the simulation
-2. Update Itinerary.md with fixes (missing bookings noted, timing adjusted, etc.)
+2. Update the itinerary with fixes (missing bookings noted, timing adjusted, etc.)
 3. Re-run the mental journey simulation
 4. Repeat until verdict is GREEN or YELLOW with only acceptable issues
 
@@ -1078,13 +1081,13 @@ From the final simulation, extract:
 
 ### Checkpoint: Mental Journey Simulation Complete
 
-Simulation run at least once, critical issues addressed or documented, findings extracted for integration into Itinerary.md.
+Simulation run at least once, critical issues addressed or documented, findings extracted for integration into the itinerary.
 
 ## Procedure 3: Itinerary Document Creation/Update with Completeness Assessment
 
 ### Purpose
 
-Create or update the comprehensive Itinerary.md document within the journey folder, integrating completeness findings from mental journey simulation with detailed travel information. The document serves as the definitive reference for travellers, synthesising gap analysis, booking recommendations, transportation overview, and day-by-day timeline into one cohesive resource.
+Create or update the comprehensive itinerary document within the journey folder, integrating completeness findings from mental journey simulation with detailed travel information. The document serves as the definitive reference for travellers, synthesising gap analysis, booking recommendations, transportation overview, and day-by-day timeline into one cohesive resource.
 
 ### Input
 
@@ -1092,25 +1095,25 @@ Create or update the comprehensive Itinerary.md document within the journey fold
 - Results from Procedure 1 (Itinerary Creation and Planning)
 - Results from Procedure 2 (Mental Journey Simulation and Completeness Evaluation)
 - Results from folder management email checking (including missing invoice identification)
-- Existing Itinerary.md (if present, for revision)
+- Existing itinerary document (if present, for revision)
 
 ### Output
 
-Itinerary.md file (Markdown format) in the journey folder, containing integrated completeness assessment and comprehensive travel timeline
+Itinerary markdown file in the journey folder, containing integrated completeness assessment and comprehensive travel timeline. Filename follows the convention: `[Start Date] - [End Date] [Destination]_Itinerary.md`
 
 ### Process Overview
 
-This procedure generates or updates Itinerary.md through an incremental revision approach:
+This procedure generates or updates the itinerary document through a holistic revision approach:
 
-1. **If Itinerary.md already exists**: Read the existing document first, then revise it based on new findings from the current RUN. Preserve existing content where still accurate, update sections with new information, and integrate newly discovered gaps or bookings.
+1. **If the document already exists**: Read the existing contents first, then rewrite it to ensure a single, cohesive narrative. Every update must be integrated as if it were part of the original design. Eliminate any transitional phrasing like "Update:" or "New:".
 
-2. **If Itinerary.md does not exist**: Generate the complete document from scratch based on current folder contents and evaluation results.
+2. **If the document does not exist**: Generate the complete document from scratch based on current folder contents and evaluation results.
 
-This revision-based approach ensures re-runnability, allowing multiple RUN executions to build incrementally on previous work without duplication.
+This approach ensures the document remains an elegant, authoritative source of truth, rather than an accumulation of patches. Documentation of the "planning history" is prohibited.
 
 ### Document Structure
 
-The Itinerary.md document comprises three integrated components:
+The itinerary document comprises three integrated components:
 
 ---
 
@@ -1128,16 +1131,9 @@ This section appears at the beginning of the document and provides a concise ass
    - List critical missing bookings requiring immediate action
    - Include date ranges and destination information
    - **Include specific hotel suggestions with reasoning**
-   - Example: "Book accommodation in Lisbon (Nov 17-18) - Suggested: InterContinental Lisbon (IHG Platinum upgrade potential, near conference venue, 15-min walk to MEO Arena)"
+   - Example: "☐ Book accommodation in Lisbon (Nov 17-18) - Suggested: InterContinental Lisbon (IHG Platinum upgrade potential, near conference venue, 15-min walk to MEO Arena)"
    - **Format for unbooked accommodations**: "☐ Book [Hotel Name] for [dates] - [brief reasoning]"
-   - **Note**: The ☐ checkbox indicates "not yet complete" status
-
-2. **Recently Booked Items** (Informational - mark as complete):
-   - List items that were suggestions in previous RUN but are now booked
-   - **Format for booked accommodations**: "☑ Accommodation booked for [dates]: [Actual Hotel Name] (was: [Suggested Hotel Name if different])"
-   - If actual booking matches suggestion: "☑ Accommodation booked for Nov 17-18: InterContinental Lisbon (as suggested)"
-   - If actual booking differs from suggestion: "☑ Accommodation booked for Nov 17-18: Holiday Inn Lisbon (note: originally suggested InterContinental, Holiday Inn is 5-min closer to conference venue)"
-   - **Critical**: When actual booking differs, include brief note explaining implications (e.g., location difference, upgrade potential lost/gained)
+   - **Note**: The ☐ checkbox indicates "not yet complete" status. Once booked, this item should be REMOVED from the checklist entirely, and the booking should be integrated into the main itinerary timeline.
 
 3. **Verification Items** (Medium Priority):
    - Transport methods requiring confirmation (e.g., ground transport between airports, hired car date alignment)
@@ -1421,7 +1417,7 @@ This integration ensures the day-by-day view and the completeness assessment are
 
 ### Implementation Steps
 
-1. **Read Existing Itinerary.md (if present)**
+1. **Read Existing Itinerary Document (if present)**
    - Extract current completeness checklist
    - **Note which items are marked complete (☑) vs incomplete (☐)**
    - Note current transportation table
@@ -1473,7 +1469,7 @@ This integration ensures the day-by-day view and the completeness assessment are
    - Integrate gaps inline with references to checklist
    - Mark free time vs uncertain gaps clearly
 
-6. **Write/Update Itinerary.md**
+6. **Write/Update Itinerary Document**
    - Assemble all three components in order
    - Ensure completeness checklist references are consistent with day-by-day timeline
    - Verify transportation table matches timeline
@@ -1481,7 +1477,7 @@ This integration ensures the day-by-day view and the completeness assessment are
 
 ### Checkpoint: Itinerary Document Complete
 
-Existing Itinerary.md reviewed, to-do items updated (☑ for booked, ☐ for pending), accommodation reflects actual bookings, day-by-day timeline uses actual hotel locations, completeness checklist integrated (concise, under half page), transportation table complete with all intercity segments, gaps referenced inline, document saved.
+Existing itinerary reviewed, to-do items updated (☑ for booked, ☐ for pending), accommodation reflects actual bookings, day-by-day timeline uses actual hotel locations, completeness checklist integrated (concise, under half page), transportation table complete with all intercity segments, gaps referenced inline, document saved.
 
 **Critical output quality verified:**
 - Day-by-day section uses **actual calendar dates** (not "Day 1, Day 2", but "December 26, 2025 (Friday), December 27, 2025 (Saturday)")
@@ -1498,7 +1494,7 @@ Verify that the generated itinerary meets all quality standards and completeness
 
 ### Input
 
-- Completed Itinerary.md document from Procedure 3
+- Completed itinerary document from Procedure 3
 - Research and analysis from Procedures 1 and 2
 
 ### Output
@@ -1820,7 +1816,7 @@ Even when transport method is reasonable, always verify dates align:
 
 ## RUN Re-runnability Checklist
 
-Verify RUN is properly idempotent: existing Itinerary.md read before updates, valid plans preserved, only needed changes proposed, resolved gaps removed, new gaps added, cancelled bookings excluded, state preserved across runs. First RUN creates complete plan; subsequent RUNs incrementally refine based on new bookings without duplication.
+Verify RUN is properly idempotent: existing itinerary read before updates, valid plans preserved, only needed changes proposed, resolved gaps removed, new gaps added, cancelled bookings excluded, state preserved across runs. First RUN creates complete plan; subsequent RUNs incrementally refine based on new bookings without duplication.
 
 ---
 
