@@ -52,7 +52,7 @@ The person requesting this itinerary is not seeking perfection or orderliness—
 
 ## Scope
 
-This SOP applies to the creation, planning, evaluation, and documentation of travel journeys within the Dropbox "Travel Admin" folder. The procedure focuses on:
+This SOP applies to the creation, planning, evaluation, and documentation of travel journeys within the "Travel Admin" folder (see `sop-travel-folder-access.md` for access methods). The procedure focuses on:
 
 - Creating and planning travel itineraries with activity recommendations and accommodation selection
 - Applying child-specific planning considerations when children are detected in the travel party
@@ -81,7 +81,7 @@ The folder management SOP (`travel-admin-folder-management.md`) must be complete
 
 A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are organised with a date-prefixed naming structure (e.g., "2025-11-15 Lisbon - Weiwu, Liansu, A-Z") and contain standardised subfolders: Fares, Accommodations, Passes, and optionally Reimbursement folders.
 
-**Default Location**: Journey folders reside in `Dropbox/0. Travel Admin` under user's home directory unless explicitly specified otherwise.
+**Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access methods (MCP preferred, filesystem mount fallback) and is the single source of truth for folder location.
 
 ## RUN: Itinerary Management Execution
 
@@ -93,20 +93,17 @@ This SOP assumes the folder management SOP has already been executed and the jou
 
 **Before executing any procedures:**
 
-1. **Read `travel/sop-travel-folder-management.md` (first 100 lines) to determine:**
-   - Default folder location path (typically `~/Dropbox/0. Travel Admin/`)
-   - Journey folder naming convention
-   - Expected subfolder structure (Fares, Accommodations, Passes)
+1. **Access travel folders** following `sop-travel-folder-access.md`:
+   - Use MCP method (preferred) or filesystem mount (fallback) as defined in that SOP
+   - The access SOP is the single source of truth for folder location and access methods
 
-2. **Locate the journey folder** using the information from step 1:
+2. **Locate the journey folder**:
    - Extract journey name from user request (format: "YYYY-MM-DD [Destination] - [Travelers]")
-   - Construct full path: `[default-location]/[journey-name]/`
-   - Example: `~/Dropbox/0. Travel Admin/2025-11-29 Venice - Liansu, Weiwu, A-Z/`
+   - Use the access method established in step 1 to find the journey folder within `0. Travel Admin/`
+   - Example journey folder: `2025-11-29 Venice - Liansu, Weiwu, A-Z`
 
 3. **Verify folder exists and contains booking documents:**
-   ```bash
-   ls ~/Dropbox/0.\ Travel\ Admin/[journey-name]/
-   ```
+   - Using the established access method, list the journey folder contents
    - If folder exists: Proceed with RUN using this folder as the working directory
    - If folder not found: Stop and ask user to confirm folder location or run folder management SOP first
 

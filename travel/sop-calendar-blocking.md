@@ -6,7 +6,7 @@ This Standard Operating Procedure establishes the methodology for calculating ca
 
 ## Scope
 
-This SOP applies to calendar blocking calculations for air travel documented in journey folders within the Dropbox "Travel Admin" structure.
+This SOP applies to calendar blocking calculations for air travel documented in journey folders. See `sop-travel-folder-access.md` for how to access travel folders.
 
 **Important Boundaries:**
 
@@ -34,7 +34,7 @@ This SOP applies to calendar blocking calculations for air travel documented in 
 
 ### Input
 
-Journey folder path (absolute or relative to `~/Dropbox/0. Travel Admin/`)
+Journey folder path (use access method from `sop-travel-folder-access.md` to locate the folder)
 
 ### Output
 

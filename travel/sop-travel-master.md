@@ -366,7 +366,8 @@ RUN: Travel Management
 
 1. LOCATE journey folder
    - Parse journey name from user request
-   - Verify folder exists at ~/Dropbox/0. Travel Admin/[journey-name]/
+   - Access travel folders following `sop-travel-folder-access.md` (MCP preferred, mount fallback)
+   - Verify journey folder exists within `0. Travel Admin/`
 
 2. CHECK extraction freshness
    - Compare source PDF timestamps vs build/extraction/ timestamps
@@ -432,11 +433,16 @@ claude -p "Follow travel/sop-booking-extraction.md for journey folder '2025-12-2
 
 ## Appendix: Journey Folder Location
 
-Default path: `~/Dropbox/0. Travel Admin/`
+See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines:
+
+- Access methods (MCP preferred, filesystem mount fallback)
+- Folder location within cloud storage
+- Error handling when access fails
 
 Journey folder naming convention: `YYYY-MM-DD [Destination(s)] - [Travellers]`
 
 Examples:
+
 - `2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Liansu, Weiwu, A-Z`
 - `2025-11-29 Venice - Liansu, Weiwu, A-Z`
 

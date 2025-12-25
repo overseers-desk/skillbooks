@@ -2,13 +2,13 @@
 
 ## Purpose Statement
 
-This Standard Operating Procedure establishes the methodology for managing the Travel Admin Dropbox folder structure and file organization. The SOP ensures systematic organization through proper folder structure verification, intelligent file naming conventions, and email synchronization to guarantee that all booking confirmations are saved and properly named.
+This Standard Operating Procedure establishes the methodology for managing the Travel Admin folder structure and file organization. The SOP ensures systematic organization through proper folder structure verification, intelligent file naming conventions, and email synchronization to guarantee that all booking confirmations are saved and properly named.
 
 The procedure transforms chaotic travel documentation into a well-organized system where files follow consistent naming patterns, emails are synchronized with folder contents, and reimbursement documents are properly categorized—creating a reliable foundation for subsequent journey evaluation and itinerary generation (see Travel Itinerary Management SOP).
 
 ## Scope
 
-This SOP applies to file organization and email synchronization within the Dropbox "Travel Admin" folder. The procedure focuses exclusively on:
+This SOP applies to file organization and email synchronization within the "Travel Admin" folder (see `sop-travel-folder-access.md` for access methods). The procedure focuses exclusively on:
 
 - Verifying file organization and naming compliance
 - Extracting booking information and applying correct naming conventions
@@ -33,7 +33,7 @@ The execution can be performed on:
 
 A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are organized with a date-prefixed naming structure (e.g., "2025-11-15 Lisbon - Weiwu, Liansu, A-Z") and contain standardized subfolders: Fares, Accommodations, Passes, and optionally Reimbursement folders.
 
-**Default Location**: Journey folders reside in `Dropbox/0. Travel Admin` under user's home directory unless explicitly specified otherwise. This is the parent directory of all journey folders. When processing a journey, if only the folder name is provided, the system assumes it is located within this default parent directory.
+**Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access methods (MCP preferred, filesystem mount fallback) and is the single source of truth for folder location. When processing a journey, if only the folder name is provided, the system assumes it is located within the Travel Admin parent directory.
 
 ### RUN: Folder Management Execution
 
@@ -70,7 +70,10 @@ The separation allows automated systems to run folder management independently, 
 Before executing procedures (individually or as a complete RUN), ensure:
 
 1. **Access to Travel Admin folder ("0. Travel Admin"):**
-   - Access the `Dropbox` folder in the user's home, inside there is a `0. Travel Admin` folder. Do not use "find(1)" command in any other folder than "0. Travel Admin"  (10k+ files exist in Dropbox, top level board searches will take a day). This including do not use find(1) comamnd to find "0. Travel Admin" folder itself, it's guaranteed there and never changes names. If it failes the whole process should fail becuase it means Dropbox is not mounted.
+   - Follow `sop-travel-folder-access.md` to access travel folders (MCP preferred, filesystem mount fallback)
+   - Do not use `find(1)` command in any folder other than `0. Travel Admin` (10k+ files exist in cloud storage; broad searches take excessive time)
+   - Do not use `find(1)` to locate `0. Travel Admin` itself—the folder location is defined in the access SOP and is guaranteed to exist
+   - If access fails via both methods, the whole process should fail
    - Ability to read and modify files within journey folders
    - Permission to create or update Itinerary.md documents
 
@@ -231,7 +234,7 @@ Ensure all files within a journey folder follow established naming conventions a
 
 ### Input
 
-Journey folder in Travel Admin Dropbox (e.g., "2025-01-01 Gold Coast - Liansu; Amsterdam - Liansu, Weiwu, A-Z")
+Journey folder (e.g., "2025-01-01 Gold Coast - Liansu; Amsterdam - Liansu, Weiwu, A-Z"). Access via `sop-travel-folder-access.md`.
 
 ### Output
 
@@ -362,13 +365,13 @@ Verify that all booking confirmation emails (transport and accommodation) have b
 
 ### Prerequisites
 
-- Navigate to "0. Travel Admin" directory first
+- Access travel folders following `sop-travel-folder-access.md`
 - The `imap-mcp` MCP server must be pre-configured and working in Cursor to access the email inbox
 - **Check current date** at the start of execution (use system date/time information available in the environment)
 
 ### Input
 
-Journey folder in Travel Admin Dropbox
+Journey folder (access via `sop-travel-folder-access.md`)
 
 ### Output
 
