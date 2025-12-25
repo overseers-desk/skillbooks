@@ -364,10 +364,10 @@ Re-run for a segment after its portion of Itinerary.md changes.
 ```
 RUN: Travel Management
 
-1. LOCATE journey folder
-   - Parse journey name from user request
-   - Access travel folders following `sop-travel-folder-access.md` (MCP preferred, mount fallback)
-   - Verify journey folder exists within `0. Travel Admin/`
+1. **Access Data: Examine Online Travel Folder**
+   - Parse journey name from user request.
+   - Follow `sop-travel-folder-access.md` for access instructions.
+   - Verify journey folder exists within `0. Travel Admin/` in the "online" storage.
 
 2. CHECK extraction freshness
    - Compare source PDF timestamps vs build/extraction/ timestamps

@@ -93,9 +93,8 @@ This SOP assumes the folder management SOP has already been executed and the jou
 
 **Before executing any procedures:**
 
-1. **Access travel folders** following `sop-travel-folder-access.md`:
-   - Use MCP method (preferred) or filesystem mount (fallback) as defined in that SOP
-   - The access SOP is the single source of truth for folder location and access methods
+1. **Access Data: Examine Online Travel Folder**:
+   - Follow `sop-travel-folder-access.md` for access instructions. This document is the single source of truth for "online" data location and access methods.
 
 2. **Locate the journey folder**:
    - Extract journey name from user request (format: "YYYY-MM-DD [Destination] - [Travelers]")

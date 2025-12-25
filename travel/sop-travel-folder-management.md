@@ -41,7 +41,13 @@ A **RUN** is a complete folder management pass through a journey folder, executi
 
 **RUN Workflow:**
 
-1. **File Organization and Naming** (Procedure 1): Verify folder structure, ensure naming convention compliance, extract information from booking documents, apply correct naming conventions, move orphaned files, and apply reimbursement file naming where needed
+0. **Access Data: Examine Online Travel Folder** (Prerequisite):
+   - Follow `sop-travel-folder-access.md` for instructions on how to access the travel data.
+   - This ensures the online data source exists.
+
+1. **File Organization and Naming** (Procedure 1): Verify folder structure, ensure naming convention compliance, extract information from booking documents, apply correct naming conventions, move orphaned files, and apply reimbursement file naming where needed.
+   - **Crucial**: The `Fares`, `Accommodations`, and `Passes` folders MUST have a flat structure. No subfolders are permitted.
+
 2. **Email Checking and File Saving** (Procedure 2): Search inbox for booking confirmations, identify missing files, save invoices to reimbursement folders, and flag promotional emails for deletion
 
 **Re-runnability by Design:**
@@ -251,6 +257,7 @@ Fully organized journey folder with all files compliant to naming conventions
    - Verify existence of required subfolders: Fares, Passes, Accommodations
    - Note presence of Reimbursement folder(s) if applicable
    - Identify any files at the root level of the journey folder that should be moved to subfolders
+   - **Check for messy subfolders**: Look inside `Fares`, `Passes`, and `Accommodations`. These folders should be flat. If you find any sub-subfolders inside them, it means the folder is messy and needs to be cleaned up.
 
 2. **Systematic File Review**
    - For each subfolder (Fares, Passes, Accommodations):
@@ -361,6 +368,7 @@ Fully organized journey folder with all files compliant to naming conventions
    - Rename files with incorrect date formats (use date from document content, not filename)
    - Apply fare file naming correction as described in Step 5
    - For reimbursement files requiring naming correction, apply Helper Procedure A
+   - **Clean up messy subfolders**: If you found any sub-subfolders in Step 1, move everything out of them into the main category folder (like `Passes`). Once the subfolders are empty, delete them so the category folder stays flat.
 
 7. **Checkpoint: Organization and Naming Complete**
    - All files are in correct subfolders based on content type
