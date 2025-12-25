@@ -1615,7 +1615,7 @@ When children (Alice and Zoe, or others detected via ticket indicators) are part
 - **Important**: Car travel time (e.g., 45-minute drive to another city) should be categorized as transport overhead similar to flights or trains, NOT as a reduction from the 4-hour activity budget. The 4-hour estimate already accounts for children's reduced energy compared to full daylight hours.
 
 **Activity Duration Limits:**
-- On-foot activities: Maximum 1.5 hours before children need to return to hotel for rest
+- On-foot activities: Maximum 1.5 hours before children need to return to hotel or at least in car for rest
 - Indoor activities: Up to 2 hours possible with appropriate breaks
 - Multiple short outings per day more successful than one long outing
 
