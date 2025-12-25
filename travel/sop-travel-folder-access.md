@@ -56,9 +56,9 @@ Use `DROPBOX_DOWNLOAD_FILE_FROM_PATH` to retrieve file contents.
 - Direct API access to cloud storage
 - Not affected by selective sync settings
 
-### Method 2: Filesystem Mount (Fallback)
+### Method 2: Filesystem Mount (Fallback - Not Preferred)
 
-If MCP access fails, the Dropbox folder may be mounted locally at `~/Dropbox/`. It is a secondary choice because mount points are known to stale.
+If MCP access fails, the Dropbox folder may be mounted locally at `~/Dropbox/`. It is a secondary choice because mount points are known to stale. **It's MANDANTORY that you only use this if mcp method above failed.**
 
 **Checking if Mounted:**
 
