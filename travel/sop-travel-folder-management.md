@@ -128,10 +128,15 @@ The date used should always be the departure date of the first outbound flight.
 
 **Examples:**
 
+**Flights and trains:**
 - `2025-11-15 [Ryanair] Seville-Porto FR2323 DTF7HZ Liansu,Weiwu,Alice,Zoe.pdf`
 - `2025-11-17 [CP] Vila Nova de Gaia-Devesas-Lisbon Santa Apolonia IC130 3835-13392495 Weiwu.pdf`
 - `(Cancelled) 2025-11-20 [Ryanair] Porto-Seville FR5544 ABC123.pdf`
-- `2025-11-22 [Enterprise] Lisbon-Porto-Lisbon ABC123 Weiwu.pdf` (car rental - no flight number)
+
+**Car rentals** (no flight/train number, use location names):
+- `2025-12-25 [Sixt] Edinburgh Airport 9729023889 Liansu.pdf` (same-location rental)
+- `2025-11-22 [Enterprise] Lisbon-Porto ABC123 Weiwu.pdf` (multi-city rental)
+- `2025-12-26 [Hertz] Berlin Hauptbahnhof-München Airport 30586488 Liansu,Weiwu.pdf` (different pickup/return locations)
 
 ### Accommodation Files (in Accommodations folder)
 
@@ -286,19 +291,28 @@ Fully organized journey folder with all files compliant to naming conventions
      - Image files (JPG/PNG/JPEG): Use `tesseract "filename.jpg" -` for OCR
    - Extract the following information:
      - **Cancellation status**: Check if document or related emails indicate this booking was cancelled
-     - **Date**: Use the travel/use date, NOT the purchase/booking date (verify by checking flight dates in document)
-     - **Airline name**: Identify from document header, company field, or flight code prefix
-     - **Route**: Determine origin and destination airports/cities
-     - **Flight/Train number**: Extract flight number (e.g., FR1073, SQ265) or train number (e.g., IC130, AVE2991). For buses, car rentals, or transport without fixed numbers, this will be omitted.
+     - **Date**: Use the travel/use date, NOT the purchase/booking date
+       - For flights/trains: Departure date
+       - For car rentals: Pickup date
+     - **Transport provider**: 
+       - Airlines: Airline name from document header or flight code prefix
+       - Trains: Railway company (e.g., CP, DB, SNCF)
+       - Car rentals: Company name (e.g., Enterprise, Hertz, Sixt, Avis)
+     - **Route**: Determine origin and destination
+       - Flights/trains: Airport/station codes or city names
+       - Car rentals: Pickup and return locations (may be same)
+     - **Flight/Train number**: Extract flight number (e.g., FR1073, SQ265) or train number (e.g., IC130, AVE2991). For buses, car rentals, or transport without fixed numbers, omit this component.
      - **Booking reference**: Extract PNR, confirmation code, or ticket number
      - **Passenger names**: Identify if multiple travelers on same ticket
-     - **Frequent flyer program eligibility**: Note flight details for potential FF points verification
+     - **Frequent flyer program eligibility**: Note flight details for potential FF points verification (flights only, not applicable to car rentals)
 
    **b. Route Standardization**
    - Format route as: `Origin-Destination` using hyphens
    - For multi-segment routes: `Origin-Stop-Destination` (use hyphens between segments)
    - For return flights: `Origin-Destination Return`
-   - Use full city names or standard abbreviations (e.g., "Singapore-Brisbane" not "SIN-BNE" unless airport codes are standard convention)
+   - For car rentals with same pickup/return location: Use location name once (no hyphen)
+   - Use full city names or recognizable location names (e.g., "Edinburgh Airport", "Berlin Hauptbahnhof")
+   - For flights/trains, airport/station codes are acceptable if they're standard convention (e.g., "Singapore-Brisbane" not "SIN-BNE" unless widely recognized)
 
    **c. Frequent Flyer Points Assessment** (Optional)
    - If FF transaction history available, check if flight is recorded:
@@ -436,14 +450,28 @@ Action list for user confirmation containing:
    - **Sender examples**: Airline/transport name or abbreviation (e.g., "Ryanair", "cp.pt")
    - **Fallback text search**: Use PNR codes or ticket IDs from Fares folder
 
-   **b. Accommodation Bookings**:
+   **b. Car Rental Bookings**:
+   - **Purpose**: Find car rental bookings that may not yet be saved to Fares folder
+   - **Common providers to search**: Enterprise, Hertz, Sixt, Avis, Budget, Europcar, Alamo, National
+   - **Search method**: Search by sender for each provider separately
+     - `criteria: "from"`, `query: "enterprise"` 
+     - `criteria: "from"`, `query: "hertz"`
+     - `criteria: "from"`, `query: "sixt"`
+     - `criteria: "from"`, `query: "avis"`
+     - `criteria: "from"`, `query: "budget"`
+     - Continue for other major providers as needed
+   - **Subject keywords specific to car rentals**: "rental agreement", "booking confirmed", "reservation", "rental confirmation"
+   - **Date filtering**: Apply journey date range filtering (booking date or rental dates within journey range)
+   - **Note**: Car rentals may be same-location (pickup and return at same place) or multi-city. Both types should be captured.
+
+   **c. Accommodation Bookings**:
    - Extract hotel names and booking references from Accommodations folder filenames
    - **Subject keywords specific to accommodation**: "booking", "confirmation", "reservation", "hotel", **"invoice", "folio"**
    - **Sender examples**: Hotel names or booking platform names (e.g., "IHG", "Booking.com", "ihg.com"). Try both commercial name and domain name. **Also search for hotel-specific emails** by searching for any emails from a hotel domain.
    - **Fallback text search**: Use booking references from Accommodations folder
    - **CRITICAL**: Search for BOTH booking confirmations AND invoices. Hotels often send invoices from different email addresses (front desk emails) than booking confirmations. Booking confirmations show what was planned; invoices show what was actually charged.
 
-   **c. Taxi and Ride-Hailing Invoices** (Reimbursement Filing Only):
+   **d. Taxi and Ride-Hailing Invoices** (Reimbursement Filing Only):
    - **Purpose**: Find all taxi/ride-hailing trip receipts and invoices within the journey date range for reimbursement filing
    - **Timing context**: Taxi trips are not typically pre-planned, so search must cover the entire journey date range (from earliest travel date to latest travel date)
    - **Subject keywords specific to taxi/ride-hailing**: "receipt", "invoice", "trip", "ride"
@@ -464,10 +492,11 @@ Action list for user confirmation containing:
 
 5. **Categorize Each Email**
    
-   For each email found (from airline/transport, accommodation, and taxi/ride-hailing searches), determine:
+   For each email found (from airline/transport, car rental, accommodation, and taxi/ride-hailing searches), determine:
 
    **a. Is it related to this journey?**
    - **Manual matching**: Read the email content (subject and body) and check if it contains any PNR codes from the reference list (Step 2) or accommodation booking references from the accommodation reference list (Step 3)
+   - **For car rental emails**: Check if the rental dates (pickup or return date) fall within the journey date range (from earliest travel date minus 7 days to latest travel date plus 7 days). Car rentals are often booked slightly before or after main journey dates.
    - **For taxi/ride-hailing emails**: Check if the trip date falls within the journey date range (from earliest travel date to latest travel date)
 
    **b. What type of email is it?**
@@ -501,6 +530,59 @@ Action list for user confirmation containing:
      - Subject typically: "Important update", "Flight change", "Schedule modification"
      - Contains critical information about booking changes
      - **Action**: Always verify if saved. If travel has passed and no changes were made, can flag for deletion.
+   
+   **For Car Rental Bookings:**
+   - **Rental Agreement / Booking Confirmation**:
+     - Subject typically: "Rental Agreement", "Booking confirmed", "Your reservation", "Confirmation #"
+     - Contains booking reference, pickup/return dates and locations, vehicle details
+     - **Extract key information**:
+       - Booking reference/confirmation number
+       - Pickup date and location
+       - Return date and location (may be same as pickup)
+       - Company name (Enterprise, Hertz, Sixt, etc.)
+       - Passenger/renter name
+     - **Action**: Check Fares folder for duplicate using multiple criteria:
+       - **Primary check**: Search for any file containing the booking reference in its filename
+       - **Secondary check** (if no booking ref match): Search for files matching BOTH:
+         - The pickup date (YYYY-MM-DD format at start of filename)
+         - AND the company name (e.g., "Sixt", "Enterprise", "Hertz", case-insensitive)
+       - **If found with correct name** (matching convention below): Skip saving
+       - **If found with incorrect name**: Flag for renaming instead of saving, note what was found
+       - **If not found by either check**: Flag for saving using car rental naming convention (see below)
+     - **Example duplicate detection**:
+       - Email has: Sixt booking #9729023889, pickup 2025-12-25, Edinburgh Airport
+       - Fares folder has: `2025-12-25 Sixt Car Rental.pdf` (incomplete name)
+       - Result: Match found via date+company → Flag for renaming to `2025-12-25 [Sixt] Edinburgh Airport 9729023889 Liansu.pdf`
+   
+   - **Prepayment Invoice**:
+     - Subject typically: "Prepayment invoice", "Invoice for booking"
+     - Contains invoice details for a car rental booking
+     - **Action**: May contain same information as booking confirmation. If booking confirmation already saved, skip. Otherwise, save as booking confirmation.
+   
+   - **Promotional / Reminder Emails**:
+     - Subject typically: "Check in before pickup", "Access code", "Questions about your rental"
+     - Does NOT contain full booking details
+     - **Action**: If journey is past, flag for deletion. If future, retain.
+   
+   **Car Rental Filename Convention**:
+   When saving car rental bookings, apply this naming format:
+   ```
+   YYYY-MM-DD [Company] PickupLocation-ReturnLocation BookingRef Passengers.pdf
+   ```
+   
+   **Special cases**:
+   - If pickup and return locations are the same:
+     ```
+     YYYY-MM-DD [Company] Location BookingRef Passengers.pdf
+     ```
+   - Use pickup date as the YYYY-MM-DD prefix
+   - Use recognizable location names (e.g., "Edinburgh Airport" not "EDI T1 Desk 5")
+   - Omit flight/train number component (car rentals don't have these)
+   
+   **Examples**:
+   - `2025-12-25 [Sixt] Edinburgh Airport 9729023889 Liansu.pdf` (same-location rental)
+   - `2025-12-26 [Enterprise] Berlin-Munich 26LGYL Weiwu.pdf` (multi-city rental)
+   - `2025-12-29 [Hertz] Vienna Airport-Warsaw Airport 30586488 Liansu,Weiwu.pdf` (airport-to-airport)
    
    **For Accommodation Bookings:**
    - **Hotel Booking Confirmation**:
@@ -573,13 +655,17 @@ Action list for user confirmation containing:
    Create list with sufficient detail for execution without re-searching. For each action, provide:
 
    **For Saving Files**:
-   - **Re-runnability check**: Before flagging a file for saving, check if a file already exists at the target location with the correct name
+   - **Re-runnability check**: Before flagging a file for saving, check if the booking already exists in the target folder using multiple criteria
+     - **For flights/trains**: Search Fares folder for files containing the booking reference/PNR OR (date + airline/rail company match)
+     - **For car rentals**: Search Fares folder for files containing the booking reference OR (pickup date + company name match)
+     - **For accommodation bookings**: Search Accommodations folder for files containing the booking reference OR (check-in date + hotel name match)
+     - **For reimbursement files**: Search reimbursement folders for files matching (vendor + date) OR (vendor + amount)
    - **If file exists with correct name**: Skip saving (file was saved in a previous RUN, no action needed)
-   - **If file exists with incorrect name**: Flag for renaming instead of saving
-   - **If file does not exist**: Flag for saving
+   - **If file exists with incorrect name**: Flag for renaming instead of saving, include current filename in action
+   - **If file does not exist by any check**: Flag for saving
    - UID: [number] and Folder: [folder name] (to locate the email)
    - Target: [folder path]/[filename following naming convention]
-   - Special notes: [if needed, e.g., "Create reimbursement folder if needed"]
+   - Special notes: [if needed, e.g., "Create reimbursement folder if needed", "Rename existing file [current name]"]
    
    **For Renaming Files**:
    - Current: [folder path]/[current filename]
