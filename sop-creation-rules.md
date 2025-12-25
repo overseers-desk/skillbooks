@@ -1,6 +1,12 @@
 # Rules for Creating SOPs
 
-These rules guide the creation and update of SOPs. They are not an SOP themselves but a meta-guide for the AI creating SOPs.
+These rules govern how SOPs are created and updated. They are not an SOP; they’re a meta-guide for the AI that creates SOPs.
+
+## Scope
+
+The AI - upon reading this document - may update the entire SOP it’s asked to update, instead of only making the changes needed to handle the new problem/edge case. This is a spotlight-effect failure mode.
+
+When a user asks to update an SOP using this guide, apply it only to the parts that must change to address the problem—unless the user explicitly wants an overhaul.
 
 ## 1. Do Not Infantize the AI
 - **Assumption**: The AI executing the SOP is capable and intelligent.
