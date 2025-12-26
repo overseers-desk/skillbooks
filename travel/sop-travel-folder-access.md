@@ -6,7 +6,9 @@ This SOP is the single source of truth for accessing travel folders. All other t
 
 ## Travel Folder Location
 
-Travel folders reside in `0. Travel Admin/` within the cloud storage. Each journey folder follows the naming convention:
+Travel folders reside in `0. Travel Admin/` within the cloud storage, accessed via MCP or filesystem mount. **Travel data is never in the local git repository.** The git repo contains only SOPs and test artifacts - do not search the current working directory for travel files.
+
+Each journey folder follows the naming convention:
 
 `YYYY-MM-DD [Destination(s)] - [Travellers]`
 
