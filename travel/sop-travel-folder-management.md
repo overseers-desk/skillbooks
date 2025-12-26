@@ -33,6 +33,8 @@ The execution can be performed on:
 
 A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are organized with a date-prefixed naming structure (e.g., "2025-11-15 Lisbon - Weiwu, Liansu, A-Z") and contain standardized subfolders: Fares, Accommodations, Passes, and optionally Reimbursement folders.
 
+Files may originate from various sources: email confirmations, WhatsApp messages, photographs of physical documents (boarding passes, receipts), or forwarded from other travelers' mailboxes. The source doesn't affect how files are processed—all files in the folder are organised and named according to the same conventions regardless of origin.
+
 **Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access methods (MCP preferred, filesystem mount fallback) and is the single source of truth for folder location. When processing a journey, if only the folder name is provided, the system assumes it is located within the Travel Admin parent directory.
 
 ### RUN: Folder Management Execution
@@ -468,7 +470,10 @@ Action list for user confirmation containing:
      - `criteria: "from"`, `query: "avis"`
      - `criteria: "from"`, `query: "budget"`
      - Continue for other major providers as needed
-   - **Subject keywords specific to car rentals**: "rental agreement", "booking confirmed", "reservation", "rental confirmation"
+   - **Also search by subject** for generic car rental terms:
+     - `criteria: "subject"`, `query: "car hire"` (common UK/EU term)
+     - `criteria: "subject"`, `query: "car rental"`
+   - **Confirmation priority**: If both an OTA confirmation (e.g., Expedia) and a direct provider confirmation (e.g., Avis) exist for the same booking, prefer the direct provider confirmation.
    - **Date filtering**: Apply journey date range filtering (booking date or rental dates within journey range)
    - **Note**: Car rentals may be same-location (pickup and return at same place) or multi-city. Both types should be captured.
 
@@ -541,13 +546,15 @@ Action list for user confirmation containing:
    
    **For Car Rental Bookings:**
    - **Rental Agreement / Booking Confirmation**:
-     - Subject typically: "Rental Agreement", "Booking confirmed", "Your reservation", "Confirmation #"
+     - Subject typically: "Rental Agreement", "Booking confirmed", "Your reservation", "Confirmation #", "car hire confirmation"
      - Contains booking reference, pickup/return dates and locations, vehicle details
+     - **Attachments**: If the email has attachments, extract and examine them for booking details.
+     - **Confirmation priority**: If both an OTA confirmation (e.g., Expedia) and a direct provider confirmation (e.g., from Avis itself) exist for the same booking, prefer the direct provider confirmation.
      - **Extract key information**:
-       - Booking reference/confirmation number
+       - Booking reference/confirmation number (use the car rental company's reference, not OTA's)
        - Pickup date and location
        - Return date and location (may be same as pickup)
-       - Company name (Enterprise, Hertz, Sixt, etc.)
+       - Company name (the actual car rental company, e.g., Avis, not the OTA)
        - Passenger/renter name
      - **Action**: Check Fares folder for duplicate using multiple criteria:
        - **Primary check**: Search for any file containing the booking reference in its filename
@@ -628,37 +635,31 @@ Action list for user confirmation containing:
        - Flag for saving to appropriate reimbursement folder
        - Apply Helper Procedure A for file naming
    
-6. **Identify Missing Invoices**
+6. **Cross-Reference Files with Emails**
 
-   After processing all emails, cross-reference bookings in the Fares and Accommodations folders against emails found:
+   After processing all emails, note which files in the journey folder have no corresponding email. This is informational tracking only—files without emails are valid and should not be deleted or flagged as problems.
 
-   **For Transport Bookings:**
-   - For each booking file in the Fares folder (excluding cancelled bookings):
-     - Check if a corresponding booking confirmation email was found
-     - If NO email was found for this booking:
-       - **Flag as missing invoice**: The journey happened (or is planned) but no confirmation email exists in inbox
-       - **Possible reasons**: 
-         - Provider never sent the confirmation
-         - Confirmation was sent but deleted by mistake
-         - Confirmation sent to different email address
-       - **Action**: Flag for the report as "Missing invoice for [booking reference]"
+   For each file in Fares, Accommodations, and Passes folders (excluding cancelled bookings):
 
-   **For Accommodation Bookings:**
-   - For each booking file in the Accommodations folder (excluding cancelled bookings):
-     - Check if a corresponding booking confirmation email was found
-     - If NO email was found for this booking:
-       - **Flag as missing invoice**: The accommodation was booked but no confirmation email exists in inbox
-       - **Possible reasons**: 
-         - Hotel/booking platform never sent confirmation
-         - Confirmation was sent but deleted by mistake
-         - Confirmation sent to different email address
-       - **Action**: Flag for the report as "Missing invoice for [hotel name and booking reference]"
+   - Check if a corresponding email was found during the searches above
+   - If no email was found, note in the report: "No email match for [filename]"
+   - This is expected when files were saved from WhatsApp, photographed from physical documents, forwarded from another traveler's mailbox, or when the confirmation email was deleted or sent to a different account
 
    **Note on Cancellations:**
-   - Cancelled bookings (with "(Cancelled)" prefix) are excluded from missing invoice checks
+
+   - Cancelled bookings (with "(Cancelled)" prefix) are excluded from this cross-reference
    - However, if a cancellation email mentions an invoice (refund details, cancellation fees), this should still be saved
 
-7. **Generate Action List**
+7. **Identify Missing Invoices**
+
+   For bookings that require reimbursement, check whether the tax invoice (not just the booking confirmation) has been saved. A tax invoice is a document showing VAT/GST/IVA breakdown—booking confirmations, tickets, and reservation details are not invoices.
+
+   - For each booking in a journey with active reimbursement folders:
+     - Check if a corresponding tax invoice exists in the reimbursement folder
+     - If no invoice exists: note in the report as "Missing invoice for [booking reference]"
+   - Common cases: hotel invoices (sent after checkout), airline invoices (for business travel), car rental invoices
+
+8. **Generate Action List**
 
    Create list with sufficient detail for execution without re-searching. For each action, provide:
 
@@ -683,20 +684,25 @@ Action list for user confirmation containing:
    - UID: [number] and Folder: [folder name]
    - Reason: [e.g., "Promotional - journey completed"]
    
-   **For Missing Invoices** (informational):
+   **For Files Without Email Match** (informational only):
+   - File: [filename] in [folder]
+   - Note: No corresponding email found (file may have been saved from WhatsApp, photo, or another source)
+   
+   **For Missing Invoices** (for reimbursement tracking):
    - Booking: [reference] in [folder]
-   - Issue: No confirmation email found
+   - Issue: No tax invoice found in reimbursement folder
    
    **Notes on file naming**:
-   - Apply Procedure 2 for Fare files
+   - Apply Procedure 1 naming conventions for Fare files
    - Apply accommodation naming convention for hotel bookings
    - Apply Helper Procedure A for reimbursement files (hotel invoices, taxi invoices)
    - Taxi invoices: `Travel - [Provider] [Date] €[Amount].(VAT=€X.XX or Receipt).pdf`
 
-8. **Present Action List to User**
-   - Group actions by type: File Saves | File Renames | Email Deletions | Missing Invoices
+9. **Execute Actions**
+   - Group actions by type: File Saves | File Renames | Email Deletions | Files Without Email Match | Missing Invoices
    - Include journey status (past/current/future) in summary
-   - Request user confirmation before executing any actions
+   - Execute file saves and renames
+   - Report what was done
 
 ### Important Notes
 
@@ -706,8 +712,7 @@ Action list for user confirmation containing:
 - **Retain "Important Update" emails** - these may contain critical information about changes
 - **Cancellations require file renaming** - when a cancellation email is found, rename the corresponding booking file with "(Cancelled)" prefix
 - **Cancellation invoices should still be saved** - even if a booking is cancelled, save any invoice that comes with the cancellation (refund details, cancellation fees). This is especially common with airlines
-- **Report missing invoices** - when a booking file exists in Fares or Accommodations folder but no corresponding email was found in inbox, flag this in the report as a missing invoice
-- **Action list must be self-contained** - include UID and folder (to locate email) and target folder/filename (where to save). File naming follows existing procedures (Procedure 2 for fares, Helper Procedure A for reimbursements).
+- **Action list must be self-contained** - include UID and folder (to locate email) and target folder/filename (where to save). File naming follows existing procedures (Procedure 1 for fares, Helper Procedure A for reimbursements).
 - **Invoice extraction**: When processing accommodation emails with invoices, extract the company name from the invoice document itself, not from the email subject or hotel brand name. The company name is the legal billing entity shown on the invoice.
 - **Reimbursement folder naming**: Use exact company name from invoice when creating or identifying reimbursement folders. Multiple hotels may be billed by the same company, so multiple hotel invoices may go into the same reimbursement folder.
 - **Date range filtering for accommodation searches**: Use journey date range ± 60 days to filter accommodation emails, reducing false positives from unrelated bookings from different trips.
@@ -726,7 +731,8 @@ Action list for user confirmation containing:
 - All emails categorized appropriately (transport, accommodation, and taxi/ride-hailing)
 - Taxi/ride-hailing invoices identified within journey date range
 - Cancellation emails identified and corresponding files flagged for renaming
-- Missing invoices identified and flagged for report
+- Files without email match noted for informational tracking
+- Missing invoices identified for reimbursement tracking
 - Hotel invoices identified and company names extracted
 - Taxi/ride-hailing invoices assigned to appropriate reimbursement folders (considering multiple folder scenarios)
 - Reimbursement folders identified or flagged for creation
@@ -745,7 +751,7 @@ Correctly name reimbursement files following the established convention with acc
 
 This helper procedure is called from:
 - Procedure 1 (File Organization): When reimbursement files exist but require correct naming
-- Procedure 3 (Email Checking): When saving hotel invoices or taxi invoices from emails to reimbursement folders
+- Procedure 2 (Email Checking): When saving hotel invoices or taxi invoices from emails to reimbursement folders
 
 **Input**
 
