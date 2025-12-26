@@ -434,55 +434,91 @@ Action list for user confirmation containing:
 
 4. **Search Emails for Travel Bookings and Taxi Invoices**
 
-   **Search Method**:
-   
-   General approach for all searches (you wont save any time by writing a script to search here):
-   
-   - **Performance**: Use `from` and `subject` criteria first (faster than `text` search). The `from` criteria searches only email headers, while `text` searches full email body content. Only fallback to `text` search if results are incomplete.
-   - **CRITICAL - Multiple name variations**: If a company has multiple names (e.g., "CP" vs "Comboios de Portugal"), run SEPARATE searches for each variation. DO NOT combine variations in one search string (e.g., searching "CP Comboios" only matches if both words appear together - net in 0 results. Search "CP" separately, then search "Comboios" separately.)
-   - **Date filtering**: Only examine emails where the email date is within or near the journey date range (from earliest travel date minus 120 days to latest travel date plus 7 days). This reduces false positives from unrelated bookings.
-   - **Search limit**: Use reasonable limit (50 emails per provider should be sufficient)
-   - **INBOX Sanity Check** (if multiple searches return empty):
-     - If 3 or more consecutive searches return empty results `[]`, perform sanity check:
-       - Search for common word: `criteria: "subject"`, `query: "the"`, `limit: 10`
-       - If this returns empty `[]`: **BAIL OUT** - cite abnormal INBOX behavior, INBOX may be empty or IMAP server may be malfunctioning
-       - If this returns results: Continue with procedure, empty results were legitimate
-     - This check prevents wasting time on a non-functional INBOX
-   
-   For each search:
-   - **By subject**: `criteria: "subject"` with provider/hotel name or common keywords
-   - **By sender**: `criteria: "from"` with provider/hotel name or domain
-   - **Fallback**: `criteria: "text"` with booking references (slower, use only if needed)
+   **Hybrid Search Strategy (City Names + Keywords)**:
 
-   **a. Airlines and Transport Providers**:
-   - Extract provider names from Fares folder filenames (text within square brackets)
-   - **Subject keywords specific to transport**: "Tickets", "Ticket", "Itinerary", "booking", "confirmation"
-   - **Sender examples**: Airline/transport name or abbreviation (e.g., "Ryanair", "cp.pt")
-   - **Fallback text search**: Use PNR codes or ticket IDs from Fares folder
+   You cannot enumerate all airlines, hotels, or car rental companies. A targeted search for known providers will miss bookings from unknown providers (OTAs like Expedia, Trip.com). A keyword-only search misses non-standard bookings (local attractions, parking, experiences with subjects like "Standard Ticket" or "Order #12345").
 
-   **b. Car Rental Bookings**:
-   - **Purpose**: Find car rental bookings that may not yet be saved to Fares folder
-   - **Common providers to search**: Enterprise, Hertz, Sixt, Avis, Budget, Europcar, Alamo, National
-   - **Search method**: Search by sender for each provider separately
-     - `criteria: "from"`, `query: "enterprise"` 
-     - `criteria: "from"`, `query: "hertz"`
-     - `criteria: "from"`, `query: "sixt"`
-     - `criteria: "from"`, `query: "avis"`
-     - `criteria: "from"`, `query: "budget"`
-     - Continue for other major providers as needed
-   - **Also search by subject** for generic car rental terms:
-     - `criteria: "subject"`, `query: "car hire"` (common UK/EU term)
-     - `criteria: "subject"`, `query: "car rental"`
-   - **Confirmation priority**: If both an OTA confirmation (e.g., Expedia) and a direct provider confirmation (e.g., Avis) exist for the same booking, prefer the direct provider confirmation.
-   - **Date filtering**: Apply journey date range filtering (booking date or rental dates within journey range)
-   - **Note**: Car rentals may be same-location (pickup and return at same place) or multi-city. Both types should be captured.
+   The solution: **combine destination city names with booking keywords** in a single comprehensive search. City names catch location-specific bookings regardless of how they're worded; keywords catch standard confirmations regardless of destination.
 
-   **c. Accommodation Bookings**:
-   - Extract hotel names and booking references from Accommodations folder filenames
-   - **Subject keywords specific to accommodation**: "booking", "confirmation", "reservation", "hotel", **"invoice", "folio"**
-   - **Sender examples**: Hotel names or booking platform names (e.g., "IHG", "Booking.com", "ihg.com"). Try both commercial name and domain name. **Also search for hotel-specific emails** by searching for any emails from a hotel domain.
-   - **Fallback text search**: Use booking references from Accommodations folder
-   - **CRITICAL**: Search for BOTH booking confirmations AND invoices. Hotels often send invoices from different email addresses (front desk emails) than booking confirmations. Booking confirmations show what was planned; invoices show what was actually charged.
+   **Step 4a: Extract City Names from Journey Folder**
+
+   Parse the journey folder name to extract destination cities. The folder name format is:
+   ```
+   YYYY-MM-DD [Destination(s)] - [Travellers]
+   ```
+
+   Example: `2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Liansu, Weiwu, A-Z`
+   - Extract: Edinburgh, Berlin, Munich, Vienna, Warsaw
+
+   These city names form the location component of your search.
+
+   **Step 4b: Construct IMAP OR Search**
+
+   IMAP uses Polish (prefix) notation for OR queries. The pattern is:
+   ```
+   OR (term1) OR (term2) OR (term3) (term4)
+   ```
+
+   This means: term1 OR term2 OR term3 OR term4
+
+   Combine city names with booking keywords into a single search using `criteria="raw"`:
+
+   **City names** (from folder): Each destination needs `FROM "CityName"` AND `SUBJECT "CityName"` because vendors may include the city in their sender name (e.g., "Berlin TV Tower <bookings@tv-turm.de>") or in the subject line.
+
+   **Booking keywords** (in SUBJECT): itinerary, booking, confirmation, e-ticket, reservation, receipt, ticket, order
+
+   **Full query pattern**:
+   ```
+   OR FROM "City1" OR FROM "City2" OR SUBJECT "City1" OR SUBJECT "City2" OR SUBJECT "booking" OR SUBJECT "confirmation" OR SUBJECT "itinerary" OR SUBJECT "e-ticket" OR SUBJECT "reservation" OR SUBJECT "receipt" OR SUBJECT "ticket" SUBJECT "order"
+   ```
+
+   **Important**: Do NOT use `TEXT` - it doesn't work with `criteria="raw"`. Use only `FROM` and `SUBJECT`.
+
+   **Step 4c: Apply Date Range Filter**
+
+   **Date range for all searches**: Only examine emails within: **earliest travel date minus 120 days** to **latest travel date plus 7 days**. Without this filter, city name searches like `TEXT "Berlin"` would return years of unrelated emails.
+
+   **Step 4d: Execute Single Comprehensive Search**
+
+   Use `criteria="raw"` with Polish notation OR to combine all terms in ONE search:
+
+   ```
+   search_emails(
+     query='OR FROM "Berlin" OR FROM "Edinburgh" OR SUBJECT "Berlin" OR SUBJECT "Edinburgh" OR SUBJECT "booking" OR SUBJECT "confirmation" OR SUBJECT "itinerary" OR SUBJECT "e-ticket" OR SUBJECT "reservation" OR SUBJECT "receipt" OR SUBJECT "ticket" SUBJECT "order"',
+     criteria="raw",
+     folder="INBOX",
+     limit=100
+   )
+   ```
+
+   **Important**: Use `FROM` and `SUBJECT` only - do NOT use `TEXT` as it doesn't work with `criteria="raw"`.
+
+   This single search catches:
+   - Standard airline/train/hotel confirmations (via SUBJECT keywords)
+   - OTA bookings like Expedia, Trip.com (via SUBJECT keywords)
+   - Local attraction tickets with city in sender name (via FROM) - e.g., "Berlin TV Tower" with subject "Standard Ticket"
+   - Museum passes, parking, local experiences
+
+   **Step 4e: Categorise Results**
+
+   Review results and categorise into:
+   - **Airlines/Transport**: Flight confirmations, train tickets, bus bookings
+   - **Car Rentals**: Rental agreements, vehicle reservations
+   - **Accommodations**: Hotel confirmations, lodging reservations
+   - **Passes/Activities**: Attraction tickets, museum entries, parking, experiences
+   - **Taxi/Ride-hailing**: Uber/Bolt receipts within journey dates
+
+   **Step 4f: Targeted Follow-up (Optional)**
+
+   For providers already known from Fares/Accommodations folder filenames, optionally search by sender to find related emails (promotional, updates, invoices):
+   - `from: "ryanair"`, `from: "ihg"`, etc.
+   - This catches promotional emails for deletion (past journeys) and invoices for reimbursement
+
+   **Fallback**: If a file exists in the folder but no email was found, search `text` for the PNR/booking reference directly.
+
+   **Notes on OTA Bookings**:
+   - If both an OTA confirmation (e.g., Expedia) and a direct provider confirmation exist for the same booking, prefer the direct provider confirmation.
+   - OTA emails often contain the city name but not provider-specific keywords, making city-based search essential.
 
    **d. Taxi and Ride-Hailing Invoices** (Reimbursement Filing Only):
    - **Purpose**: Find all taxi/ride-hailing trip receipts and invoices within the journey date range for reimbursement filing
@@ -503,9 +539,22 @@ Action list for user confirmation containing:
        - Save the taxi invoice to that company's reimbursement folder
    - **Saving format**: Apply Helper Procedure A for file naming (see Helper Procedure A for detailed naming conventions)
 
-5. **Categorize Each Email**
-   
-   For each email found (from airline/transport, car rental, accommodation, and taxi/ride-hailing searches), determine:
+5. **Tabulate All Booking Emails Found**
+
+   **Before categorising or cross-referencing, create a complete list of all booking emails.**
+
+   From the hybrid search results (Step 4), extract every email that is or might be a booking confirmation. Create a table with:
+
+   | UID | Sender | Subject | Booking Ref (if visible) | Category | Target Folder |
+   |-----|--------|---------|--------------------------|----------|---------------|
+
+   Categories: Fare, Accommodation, Pass/Activity, Taxi/Invoice, Promotional
+
+   **Include all emails that could be bookings**, even if subjects are generic ("Standard Ticket", "Order Receipt", "Acknowledgement Email"). These are often real bookings for attractions, parking, or experiences caught by the city-name search.
+
+   This table becomes the authoritative list for Check A in Step 6. Every booking email in this table must be checked against files in Dropbox.
+
+   **For each email, determine:**
 
    **a. Is it related to this journey?**
    - **Manual matching**: Read the email content (subject and body) and check if it contains any PNR codes from the reference list (Step 2) or accommodation booking references from the accommodation reference list (Step 3)
@@ -635,19 +684,45 @@ Action list for user confirmation containing:
        - Flag for saving to appropriate reimbursement folder
        - Apply Helper Procedure A for file naming
    
-6. **Cross-Reference Files with Emails**
+6. **Cross-Reference Emails and Files (Bidirectional)**
 
-   After processing all emails, note which files in the journey folder have no corresponding email. This is informational tracking only—files without emails are valid and should not be deleted or flagged as problems.
+   This step performs THREE checks. Check A discovers NEW bookings not yet saved. Check B tracks file origins. Check C finds misplaced files.
+
+   **Check A: Emails → Files (find missing files)**
+
+   Use the booking email table from Step 5. For each row in that table (excluding Promotional), check if a corresponding file exists in Dropbox:
+
+   1. Take each booking email from the Step 5 table
+   2. For that email:
+      - Target folder from the table: Fares/, Accommodations/, or Passes/
+      - Search that folder for a file matching the booking reference OR (date + provider name)
+      - **If no file found → flag for saving** (this is a missing booking)
+      - If file found with wrong name → flag for renaming
+
+   **Example**: If the Step 5 table has:
+   | UID | Sender | Subject | Booking Ref | Category | Target Folder |
+   |-----|--------|---------|-------------|----------|---------------|
+   | 10298 | bookings@tv-turm.de | Standard Ticket | PK9MYND4 | Pass/Activity | Passes/ |
+
+   Then Check A must search Passes/ for a file containing "PK9MYND4" or "TV Tower" + the event date. If not found, flag UID 10298 for saving.
+
+   **Check B: Files → Emails (informational only)**
 
    For each file in Fares, Accommodations, and Passes folders (excluding cancelled bookings):
-
    - Check if a corresponding email was found during the searches above
    - If no email was found, note in the report: "No email match for [filename]"
    - This is expected when files were saved from WhatsApp, photographed from physical documents, forwarded from another traveler's mailbox, or when the confirmation email was deleted or sent to a different account
 
+   **Check C: Root-level files (find misplaced files)**
+
+   Scan the journey folder root for files that should be in subfolders:
+   - Image files (*.png, *.jpg) of tickets/passes → should be in Passes/
+   - PDF booking confirmations → should be in Fares/, Accommodations/, or Passes/
+   - Flag misplaced files for moving to correct subfolder
+
    **Note on Cancellations:**
 
-   - Cancelled bookings (with "(Cancelled)" prefix) are excluded from this cross-reference
+   - Cancelled bookings (with "(Cancelled)" prefix) are excluded from Check B
    - However, if a cancellation email mentions an invoice (refund details, cancellation fees), this should still be saved
 
 7. **Identify Missing Invoices**
