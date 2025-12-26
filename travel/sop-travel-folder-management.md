@@ -542,7 +542,7 @@ Action list for user confirmation containing:
    - **Important Updates** (Flight changes, schedule modifications):
      - Subject typically: "Important update", "Flight change", "Schedule modification"
      - Contains critical information about booking changes
-     - **Action**: Always verify if saved. If travel has passed and no changes were made, can flag for deletion.
+     - **Action**: Retain these emails (they may contain critical information about changes that affected the journey).
    
    **For Car Rental Bookings:**
    - **Rental Agreement / Booking Confirmation**:
@@ -703,22 +703,6 @@ Action list for user confirmation containing:
    - Include journey status (past/current/future) in summary
    - Execute file saves and renames
    - Report what was done
-
-### Important Notes
-
-- **Search performance**: The `from` and `subject` criteria are faster than `text` search. Always use `from`/`subject` first, only fallback to `text` search when specific emails appear to be missing from header-based searches.
-- **Never delete emails for current or future travel** - only delete promotional/informational emails for completed journeys
-- **Always retain booking confirmations** - even for past travel, these are records (both transport and accommodation)
-- **Retain "Important Update" emails** - these may contain critical information about changes
-- **Cancellations require file renaming** - when a cancellation email is found, rename the corresponding booking file with "(Cancelled)" prefix
-- **Cancellation invoices should still be saved** - even if a booking is cancelled, save any invoice that comes with the cancellation (refund details, cancellation fees). This is especially common with airlines
-- **Action list must be self-contained** - include UID and folder (to locate email) and target folder/filename (where to save). File naming follows existing procedures (Procedure 1 for fares, Helper Procedure A for reimbursements).
-- **Invoice extraction**: When processing accommodation emails with invoices, extract the company name from the invoice document itself, not from the email subject or hotel brand name. The company name is the legal billing entity shown on the invoice.
-- **Reimbursement folder naming**: Use exact company name from invoice when creating or identifying reimbursement folders. Multiple hotels may be billed by the same company, so multiple hotel invoices may go into the same reimbursement folder.
-- **Date range filtering for accommodation searches**: Use journey date range ± 60 days to filter accommodation emails, reducing false positives from unrelated bookings from different trips.
-- **Empty INBOX detection**: If multiple searches return empty and the sanity check (searching for "the" in subject) also returns empty, the INBOX is genuinely empty or IMAP is malfunctioning. Do not continue the procedure.
-- **Taxi/ride-hailing invoices**: These are specific to reimbursement filing and are not pre-planned bookings. Search for these across the entire journey date range. Invoices often lack company/organisation names, which is acceptable - save them anyway.
-- **Multiple reimbursement folders (rare)**: If multiple active reimbursement folders exist when saving taxi invoices, determine which company should reimburse by checking which company paid for the hotel on the same date as the taxi trip.
 
 ### Checkpoint: Email Verification Complete
 
