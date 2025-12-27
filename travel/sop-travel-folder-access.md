@@ -26,30 +26,78 @@ Two access methods are available: MCP (preferred) and filesystem mount (fallback
 
 The Rube MCP server provides Dropbox integration. Use this method for all travel folder access.
 
+**First-Time Setup (per session):**
+
+Before using Dropbox tools, discover them via Rube MCP and establish a session:
+
+```
+Tool: RUBE_SEARCH_TOOLS
+Arguments: { 
+  "queries": [{"use_case": "list files in a Dropbox folder"}],
+  "session": {"generate_id": true}
+}
+```
+
+This returns a `session_id` (e.g., "herd") that must be passed to all subsequent Rube tool calls. It also confirms Dropbox is connected and returns the tool schemas including `DROPBOX_LIST_FILES_IN_FOLDER`, `DROPBOX_SEARCH_FILE_OR_FOLDER`, etc.
+
 **Listing Journey Folders:**
 
 ```
-Tool: DROPBOX_LIST_FILES_IN_FOLDER
-Arguments: { "path": "/0. Travel Admin", "limit": 100, "recursive": false }
+Tool: RUBE_MULTI_EXECUTE_TOOL
+Arguments: {
+  "session_id": "herd",
+  "memory": {},
+  "sync_response_to_workbench": false,
+  "thought": "Listing travel admin folder to find journey folders",
+  "tools": [{
+    "tool_slug": "DROPBOX_LIST_FILES_IN_FOLDER",
+    "arguments": {"path": "/0. Travel Admin", "limit": 100, "recursive": false}
+  }]
+}
 ```
 
 **Finding a Specific Journey Folder:**
 
 ```
-Tool: DROPBOX_SEARCH_FILE_OR_FOLDER
-Arguments: { "query": "2025-12-23 Edinburgh", "options": { "path": "/0. Travel Admin" } }
+Tool: RUBE_MULTI_EXECUTE_TOOL
+Arguments: {
+  "session_id": "herd",
+  "memory": {},
+  "sync_response_to_workbench": false,
+  "thought": "Searching for specific journey folder",
+  "tools": [{
+    "tool_slug": "DROPBOX_SEARCH_FILE_OR_FOLDER",
+    "arguments": {
+      "query": "2025-12-23 Edinburgh",
+      "options": {"path": "/0. Travel Admin"}
+    }
+  }]
+}
 ```
 
 **Listing Contents of a Journey Folder:**
 
 ```
-Tool: DROPBOX_LIST_FILES_IN_FOLDER
-Arguments: { "path": "/0. Travel Admin/2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Liansu, Weiwu, A-Z", "recursive": false }
+Tool: RUBE_MULTI_EXECUTE_TOOL
+Arguments: {
+  "session_id": "herd",
+  "memory": {},
+  "sync_response_to_workbench": false,
+  "thought": "Listing journey folder contents",
+  "tools": [{
+    "tool_slug": "DROPBOX_LIST_FILES_IN_FOLDER",
+    "arguments": {
+      "path": "/0. Travel Admin/2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Liansu, Weiwu, A-Z",
+      "limit": 100,
+      "recursive": false
+    }
+  }]
+}
 ```
 
 **Reading a File:**
 
-Use `DROPBOX_DOWNLOAD_FILE_FROM_PATH` to retrieve file contents.
+Use `DROPBOX_READ_FILE` via `RUBE_MULTI_EXECUTE_TOOL`. Note that Dropbox PDFs should be downloaded first, then read using the `read_file` tool on the local copy.
 
 **Advantages of MCP method:**
 
