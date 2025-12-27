@@ -1471,9 +1471,13 @@ This integration ensures the day-by-day view and the completeness assessment are
    - Verify transportation table matches timeline
    - Save to journey folder root
 
+7. **Sync to Dropbox Paper**
+   - Follow the "Itinerary Paper Document Sync Procedure" in `sop-travel-folder-access.md`
+   - This creates a `.paper` version of the itinerary for mobile reading
+
 ### Checkpoint: Itinerary Document Complete
 
-Existing itinerary reviewed, to-do items updated (☑ for booked, ☐ for pending), accommodation reflects actual bookings, day-by-day timeline uses actual hotel locations, completeness checklist integrated (concise, under half page), transportation table complete with all intercity segments, gaps referenced inline, document saved.
+Existing itinerary reviewed, to-do items updated (☑ for booked, ☐ for pending), accommodation reflects actual bookings, day-by-day timeline uses actual hotel locations, completeness checklist integrated (concise, under half page), transportation table complete with all intercity segments, gaps referenced inline, document saved, Paper version synced.
 
 **Critical output quality verified:**
 - Day-by-day section uses **actual calendar dates** (not "Day 1, Day 2", but "December 26, 2025 (Friday), December 27, 2025 (Saturday)")

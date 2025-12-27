@@ -142,6 +142,53 @@ find ~/Dropbox -name "*.pdf"
 find ~/Dropbox/0.\ Travel\ Admin/ -name "*.pdf"
 ```
 
+## Itinerary Paper Document Sync Procedure
+
+Every Markdown itinerary file should have a corresponding Dropbox Paper document for mobile reading. Use this procedure when asked to "sync an itinerary to Paper".
+
+**Step 1 - Locate the itinerary .md file:**
+
+```
+Tool: DROPBOX_LIST_FILES_IN_FOLDER
+Arguments: { "path": "[journey folder path]", "recursive": false }
+```
+
+Identify the file matching `*[Destination]_Itinerary.md`.
+
+**Step 2 - Read the markdown content:**
+
+```
+Tool: DROPBOX_READ_FILE
+Arguments: { "path": "[full path to the .md file]" }
+```
+
+**Step 3 - Delete any existing Paper (required because the create tool cannot overwrite):**
+
+```
+Tool: DROPBOX_SEARCH_FILE_OR_FOLDER
+Arguments: { "query": "[filename].paper", "options": { "path": "[journey folder]" } }
+```
+
+If a match is found:
+
+```
+Tool: DROPBOX_DELETE_FILE_OR_FOLDER
+Arguments: { "path": "[path from search result]" }
+```
+
+**Step 4 - Create the Paper document:**
+
+```
+Tool: DROPBOX_CREATE_PAPER
+Arguments: {
+  "path": "[same directory]/[same filename but .paper instead of .md]",
+  "content": "[markdown content from Step 2]",
+  "import_format": "markdown"
+}
+```
+
+The path MUST include the `.paper` extension.
+
 ## Error Handling
 
 If both MCP and mount fail:
