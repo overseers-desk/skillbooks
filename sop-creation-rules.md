@@ -24,6 +24,8 @@ When a user asks to update an SOP using this guide, apply it only to the parts t
 - **Rule**: Do not put the expected result or the new rule *into the test prompt*. The test prompt should be minimal to see if the SOP *itself* guides the agent to the right result.
 - **Bad Test Prompt**: "Run the SOP and ensure you flatten the folder structure." (This passes even with a bad SOP).
 - **Good Test Prompt**: "Run the SOP on this folder." (This only passes if the SOP effectively guides the flattening).
+- **AI Role Clarification**: When asked to test/update an SOP, the AI's goal is to produce a WORKING SOP, not to solve the problem directly. The AI should author/fix the SOP and test it by invoking another agent (e.g., `claude -p "Follow sop.md..." > output.log 2>&1`), then analyze the captured output to identify failures. The AI should never directly execute the SOP steps itself - that defeats the purpose of testing whether the SOP is written clearly enough for another AI to follow.
+- **Practical Constraint**: Long-running SOPs will hit tool timeout limits when invoked. Capture output to a file for later analysis rather than trying to monitor in real-time. The authoring process aims to produce working SOPs, not to solve immediate problems.
 
 ## 4. No Cheating (Avoid Overfitting)
 - **Rule**: Do not use the exact data from the test case as the example in the SOP.
