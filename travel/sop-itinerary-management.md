@@ -114,7 +114,7 @@ This SOP assumes the folder management SOP has already been executed and the jou
 
 1. **Itinerary Creation and Planning** (Procedure 1): Create or update travel plans with activity recommendations, accommodation selection, and child-specific considerations when applicable
 2. **Mental Journey Simulation and Completeness Evaluation** (Procedure 2): Execute mental journey simulation to validate plans, identify gaps, verify transport connections, assess accommodation continuity, and categorise issues by severity
-3. **Itinerary Document Creation/Update** (Procedure 3): Generate or update the cluster-level itinerary with integrated completeness checklist, transportation table, and day-by-day timeline
+3. **Itinerary Document Creation/Update and Paper Sync** (Procedure 3): Generate or update the cluster-level itinerary with integrated completeness checklist, transportation table, and day-by-day timeline, then sync to Dropbox Paper for mobile reading
 4. **Quality Control and Iteration** (Procedure 4): Verify itinerary against 10-item QC checklist, iterate to fix any failures, ensure creator role (not advisor), confirm all key decisions documented
 
 **Triggering:**
@@ -257,6 +257,16 @@ Create or update travel itineraries by researching destinations, identifying sui
       - **Suggestion matched**: Suggested hotel was booked → mark to-do as complete
       - **Different hotel booked**: Alternative hotel chosen → mark to-do as complete, update itinerary to reflect actual booking
       - **Still unbooked**: No accommodation found for those dates → keep as active to-do, review if suggestion still valid
+
+   d. **Verify Apparent Gaps with Email Check**
+
+      When an accommodation gap is identified (dates with transport but no accommodation file), verify before marking as "missing":
+
+      - Search email for booking confirmations matching the gap dates (e.g., "IHG reservation December 29" or hotel name + city)
+      - If email confirmation found but not in folder: This is a **sync issue**, not a missing booking. Note in the itinerary: "Accommodation booked ([Hotel Name] #[Ref]) - confirmation email found but PDF not in Accommodations folder. Run folder management SOP to sync."
+      - If no email confirmation found: This is a **genuine gap** - proceed with accommodation recommendation
+
+      This step prevents the common failure mode where a booking exists but the folder management SOP hasn't been run to sync the PDF to the folder.
 
 3. **Assess What Needs Planning**
    - Identify days with no planned activities
@@ -1079,11 +1089,11 @@ From the final simulation, extract:
 
 Simulation run at least once, critical issues addressed or documented, findings extracted for integration into the itinerary.
 
-## Procedure 3: Itinerary Document Creation/Update with Completeness Assessment
+## Procedure 3: Itinerary Document Creation/Update and Paper Sync
 
 ### Purpose
 
-Create or update the comprehensive itinerary document within the journey folder, integrating completeness findings from mental journey simulation with detailed travel information. The document serves as the definitive reference for travellers, synthesising gap analysis, booking recommendations, transportation overview, and day-by-day timeline into one cohesive resource.
+Create or update the comprehensive itinerary document within the journey folder, integrating completeness findings from mental journey simulation with detailed travel information, then sync to Dropbox Paper for mobile reading. The document serves as the definitive reference for travellers, synthesising gap analysis, booking recommendations, transportation overview, and day-by-day timeline into one cohesive resource.
 
 ### Input
 
@@ -1095,7 +1105,8 @@ Create or update the comprehensive itinerary document within the journey folder,
 
 ### Output
 
-Itinerary markdown file in the journey folder, containing integrated completeness assessment and comprehensive travel timeline. Filename follows the convention: `[Start Date] - [End Date] [Destination]_Itinerary.md`
+- Itinerary markdown file in the journey folder, containing integrated completeness assessment and comprehensive travel timeline. Filename follows the convention: `[Start Date] - [End Date] [Destination]_Itinerary.md`
+- Corresponding Dropbox Paper file (`.paper`) for mobile reading, synced from the markdown
 
 ### Process Overview
 
@@ -1130,6 +1141,12 @@ This section appears at the beginning of the document and provides a concise ass
    - Example: "☐ Book accommodation in Lisbon (Nov 17-18) - Suggested: InterContinental Lisbon (IHG Platinum upgrade potential, near conference venue, 15-min walk to MEO Arena)"
    - **Format for unbooked accommodations**: "☐ Book [Hotel Name] for [dates] - [brief reasoning]"
    - **Note**: The ☐ checkbox indicates "not yet complete" status. Once booked, this item should be REMOVED from the checklist entirely, and the booking should be integrated into the main itinerary timeline.
+
+2. **Booked but Not Synced** (Folder Sync Issue - Action Required):
+   - Bookings found in email but PDF not in Accommodations folder
+   - Example: "☐ Sync to folder: Holiday Inn Munich - Leuchtenbergring #84893158 (Dec 29-30) - email confirmation found, run folder management SOP to download PDF"
+   - These are NOT missing bookings - they exist but need folder sync
+   - Once synced, remove from checklist and integrate into timeline
 
 3. **Verification Items** (Medium Priority):
    - Transport methods requiring confirmation (e.g., ground transport between airports, hired car date alignment)
