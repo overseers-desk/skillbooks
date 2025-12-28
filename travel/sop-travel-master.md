@@ -9,7 +9,7 @@ This is the master orchestrator for travel planning. It defines interfaces betwe
 | SOP | Purpose | Input | Output |
 |-----|---------|-------|--------|
 | `sop-booking-extraction.md` | Parse PDFs from Fares/Accommodations/Passes | Journey folder path | `build/extraction/*.yaml` |
-| `sop-destination-research.md` | Research cities for activities, transport, accommodation | City name, dates, traveller composition | `build/research/{N}.{City}.md` |
+| `sop-cluster-research.md` | Research geographic cluster, attractions, suitability | City name, dates, traveller composition | `build/research/{city}-cluster.md` |
 | `sop-itinerary-management.md` | Assemble research into a destination-level itinerary | All build/ artifacts | `[Itinerary-File].md` |
 | `sop-mental-journey-simulation.md` | Test itinerary via narrative walkthrough | `[Itinerary-File].md`, segment | `build/test/{N}.{Segment}.md` |
 
@@ -31,9 +31,9 @@ All generated intermediate files reside in `build/` within the journey folder:
 │   │   ├── 2.Berlin.yaml
 │   │   └── ...
 │   │
-│   ├── research/                    # From sop-destination-research
-│   │   ├── 1.Edinburgh.md           # All research for Edinburgh
-│   │   ├── 2.Berlin.md
+│   ├── research/                    # From sop-cluster-research
+│   │   ├── edinburgh-cluster.md     # Cluster research for Edinburgh segment
+│   │   ├── berlin-cluster.md
 │   │   └── ...
 │   │
 │   └── test/                        # From sop-mental-journey-simulation
@@ -159,11 +159,11 @@ segments:
 
 ---
 
-### Interface: Destination Research Output
+### Interface: Cluster Research Output
 
-**File**: `build/research/{N}.{City}.md`
+**File**: `build/research/{city}-cluster.md`
 
-Each city research file contains ALL research for that city segment in a single document:
+Each cluster research file contains ALL research for that city segment in a single document:
 
 ```markdown
 # {City} Research - {dates}
@@ -349,7 +349,7 @@ Research files depend on:
 2. Travel dates (for seasonal research)
 
 **Decision logic**:
-- If `build/research/{N}.{City}.md` does not exist → run research
+- If `build/research/{city}-cluster.md` does not exist → run research
 - If `build/extraction/{N}.{City}.yaml` is newer than research file → re-run research
 - Otherwise → skip research, use cached results
 
@@ -381,11 +381,11 @@ RUN: Travel Management
    - Determine ordered list of cities: [Edinburgh, Berlin, Munich, ...]
 
 4. FOR EACH city (can run in parallel):
-   - Check if build/research/{N}.{City}.md exists and is fresh
+   - Check if build/research/{city}-cluster.md exists and is fresh
    - If stale or missing:
-     → Run: sop-destination-research.md for {City}
+     → Run: sop-cluster-research.md for {City}
      → Input: extraction data, dates, traveller composition
-     → Creates: build/research/{N}.{City}.md
+     → Creates: build/research/{city}-cluster.md
 
 5. ASSEMBLE itinerary
    → Run: sop-itinerary-management.md
@@ -419,7 +419,7 @@ claude -p "Follow travel/sop-travel-master.md for journey '2025-12-23 Edinburgh,
 
 **Research only for one city**:
 ```bash
-claude -p "Follow travel/sop-destination-research.md for Berlin, Dec 26-29 2025, family with 2 children. Save to build/research/2.Berlin.md" \
+claude -p "Follow travel/sop-cluster-research.md for Berlin, Dec 26-29 2025, family with 2 children. Save to build/research/berlin-cluster.md" \
   --allowedTools "WebSearch,WebFetch,Read,Write"
 ```
 
