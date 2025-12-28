@@ -5,7 +5,8 @@
 **Relationship to other SOPs**:
 - Orchestrated by: `sop-travel-master.md`
 - Depends on: `build/extraction/*.yaml` (from `sop-booking-extraction.md`)
-- Depends on: `build/research/*.md` (from `sop-destination-research.md`)
+- Depends on: `build/research/*-cluster.md` (from `sop-cluster-research.md`)
+- Depends on: `build/research/[destination]-cluster.md` (from `sop-cluster-research.md`)
 - Validated by: `sop-mental-journey-simulation.md`
 
 ## Purpose Statement
@@ -86,6 +87,10 @@ A journey folder contains all documentation for a specific trip, including trans
 ## RUN: Itinerary Management Execution
 
 A **RUN** is a complete itinerary management pass through a journey folder, executing itinerary creation and planning, mental journey simulation validation, and itinerary document generation to provide comprehensive travel documentation.
+
+**EXECUTION MODE: Proceed without asking questions.**
+
+When following this SOP, execute all steps and produce the output. Do not stop to ask clarifying questions about structure (master vs separate files, which format, etc.). The SOP specifies the output: a separate itinerary file per destination, named `[Start Date] - [End Date] [Destination]_Itinerary.md`. Always create this file, regardless of whether a master itinerary exists.
 
 **CRITICAL PREREQUISITE - Folder Location:**
 
@@ -348,282 +353,72 @@ This will extract text including flight numbers, departure times, arrival times,
    - Early checkout, proceed to departure point
    - Perhaps breakfast near hotel before departure
 
-### Phase 4: Destination Research and Activity Identification
+### Phase 4: Apply Cluster Research and Select Activities
 
-**Objective**: Research destinations and identify suitable activities based on traveller composition, existing anchors, and seasonal factors
+**Objective**: Use the cluster research to select which destinations and attractions to include in the itinerary
 
-**Scope Interpretation:**
+**Input**: Read `build/research/[destination]-cluster.md` (produced by `sop-cluster-research.md`)
 
-When asked to create an itinerary for a city (e.g., "make Edinburgh itinerary"), interpret this broadly to include nearby accessible regions when appropriate:
-- If children are present: nearby destinations within reasonable driving distance can be considered as day trips
-- If purpose is leisure: regional exploration may be more suitable than staying within city limits
-- If purpose is business/conference: focus remains on the named city
+The cluster research document provides:
+- Geographic cluster map (what destinations are accessible)
+- Seasonal events at each destination
+- Attractions inventory with suitability ratings for travel group
+- Operating schedules and closure patterns
+- Transport mode recommendation
+- Rebase opportunities and day trip options
 
-This broader interpretation allows evaluation of car-based regional travel vs city-based walking travel as strategic alternatives.
+**This phase does NOT re-research attractions** - that research is in the cluster document. This phase evaluates and selects what to include based on journey constraints.
 
-**Purpose of Detailed Research:**
+1. **Review Cluster Research**
+   - Read `build/research/[destination]-cluster.md` for the destination being planned
+   - Note seasonal events during travel dates (these become planning anchors)
+   - Note attractions rated ⭐⭐⭐ for the travel group
+   - Note operating schedule constraints (closures, holidays)
 
-The comprehensive research requirements in this phase (sunset times, museum opening hours, seasonal events, weekly closure patterns) are designed to **build a knowledge base that compensates for travel randomness**, not to create rigid schedules. This research enables flexible decision-making during the journey—knowing that a museum closes on Mondays helps avoid wasted trips, knowing sunset times helps plan outdoor activities appropriately, but this information should inform recommendations rather than dictate minute-by-minute plans. The output should present this information as context and options, not as a strict timetable to follow.
+2. **Evaluate Rebase Opportunities**
 
-1. **Identify Destinations and Seasonal Context**
-   - Extract cities from Fares and Accommodations folders
-   - Note duration of stay in each city
-   - **Identify travel dates and season**: Winter, Spring, Summer, Autumn
-   - **Research sunrise and sunset times** for the travel dates in each destination
-     - Winter: shorter days, sunset as early as 16:00-17:00 in some locations
-     - Summer: longer days, sunset as late as 21:00-22:00 in some locations
-     - Affects viable activity hours and types
-   - Cross-reference with existing event commitments from Phase 1
-
-2. **Research Airport Positioning and Regional Accessibility**
-
-   For the arrival and departure airports, conduct web searches and document findings:
-
-   a. **Geographic position**:
-      - Search: "Where is [Airport Name] located [Country/Region]?" and "What cities are near [Airport Name]?"
-      - Document the airport's geographic position with specific details (distance from main city, highway access, position between multiple cities)
-      - Example finding: "Edinburgh Airport is located 5.8 miles west of Edinburgh city centre, at M8/M9 motorway junction, positioned between Edinburgh and Glasgow"
-
-   b. **Nearby destinations within 60 minutes**:
-      - Search: "cities within 60 minutes drive [Airport Name]" or "day trips from [City] driving distance"
-      - List all cities/towns within 60-minute drive
-      - Document approximate driving times (e.g., "Glasgow 45 min, Stirling 60 min, Linlithgow 30 min")
-
-   c. **Regional travel patterns**:
-      - Search: "is [Region/Country] good for road trips" or "do tourists explore [Region] by car"
-      - Document whether car-based touring is common
-      - Note any statistics or recommendations found (e.g., "69% of visitors use cars", "VisitScotland recommends car touring")
-
-   d. **Seasonal accessibility in alternative cities** (especially if travel dates include holidays/closures):
-      - For each nearby city identified, search: "what's open in [City] on [Holiday/Date]" or "[City] Christmas Day attractions open"
-      - Research ungated attractions that remain accessible regardless of closure schedules: churches, cathedrals, rivers, parks, public squares, outdoor monuments, waterfront areas, scenic viewpoints
-      - Note: Larger cities may have more venues that remain open even if they also have more venues closed. Research actual open attractions, not just closure counts.
-      - Document what IS accessible in each city, not just what's closed
-
-   e. **Evaluate whether alternative destination-level plans warrant presentation**:
-      Document findings for potential alternatives (car-based regional vs city-based), then assess comparative value using these criteria:
-
-      **Value Assessment Criteria:**
-      - **Variety**: Access to different cities/regions has inherent value even if individual attractions are similar (e.g., outdoor walks in multiple cities > outdoor walks in one city)
-      - **Seasonal closures context**: When primary city has limited options (holidays/closures), car access to MULTIPLE limited-option cities compounds options rather than diluting them
-      - **Travel time**: Car travel is transport overhead (like flights), NOT lost activity time. Don't penalize car options for drive time when comparing activity value.
-      - **Practical benefits**: Children resting in car during drives, avoiding hotel changes for early flights, luggage flexibility, weather protection
-      - **Cost factors**: Airport hotels often significantly cheaper than city hotels; free parking vs city parking fees
-      - **Traveler composition**: Families with children benefit more from car flexibility than solo travelers
-
-      **Threshold Application:**
-      - If alternative offers ~90%+ value of primary: Present both with trade-offs
-      - If alternative could offer 150%+ value for travelers with specific interests: Present with that caveat (Example: Cotswolds from London - not in any "sane" standard plan as it's 2+ hours away, but could be 150%+ value for travelers specifically interested in English countryside villages)
-      - If alternative offers only ~60% value: Note alternatives exist but don't detail ("Alternative regional touring considered but offers limited value given constraints")
-
-      Per-day alternatives are helpful when day-level choices have comparable value.
-
-   Document this analysis - Phase 6 will use these findings for accommodation strategies, and Phase 7 will generate detailed plans only for alternatives warranting presentation.
-
-   f. **Document transport mode decision for final itinerary**:
-
-   Based on the regional accessibility research above, conclude whether car rental is recommended and provide explicit reasoning. This conclusion must appear in the final itinerary to demonstrate the transport strategy was evaluated, not overlooked.
-
-   Example conclusion formats:
-   - "Car rental not recommended: Amsterdam's compact historic center is best explored on foot or by tram, with excellent public transport (metro, tram, buses) connecting all major museums and attractions. Parking is extremely limited and expensive (€50+/day), and most streets are narrow or pedestrian-only. All planned activities accessible via public transport within 15-20 minutes."
-   - "Car rental recommended: Gold Coast attractions are spread along 50km of coastline with limited public transport between key destinations. Major attractions (theme parks, beaches, hinterland) require 20-40 min drives between them. Car provides flexibility for beach hopping and visiting multiple parks without tour group constraints. Airport pickup convenient, free parking at most attractions."
-
-3. **Research Seasonal Events and Festivals**
+   From the cluster research, assess whether rebase opportunities add value:
    
-   **Critical**: Limited-time seasonal events should be prioritised as they define unique opportunities
+   - **If hotels are already changing**: The logistics barrier is low - rebase to a different city costs only train fare
+   - **If schedule is flexible**: Overnight excursions to nearby cities become practical
+   - **If cluster member offers unique value**: Budapest's thermal baths, Bratislava's different country stamp
    
-   a. **Check for Major Seasonal Events:**
-   
-   **Winter (December-February):**
-   - Christmas markets (typically late November through December)
-   - New Year's Eve celebrations and parties (31 December)
-   - Winter festivals, ice skating rinks, holiday light displays
-   - Winter sports opportunities (if destinations include mountain/ski areas)
-   
-   **Spring (March-May):**
-   - Spring festivals, flower displays (tulips, cherry blossoms)
-   - Easter events and markets
-   - Local cultural festivals (research specific to destination)
-   
-   **Summer (June-August):**
-   - Outdoor music festivals, food festivals
-   - Beach and water activities
-   - Extended opening hours for attractions (summer schedules)
-   - Outdoor cinema, evening events (taking advantage of long daylight)
-   
-   **Autumn (September-November):**
-   - Harvest festivals, wine festivals
-   - Autumn foliage viewing (particularly in parks and gardens)
-   - Cultural season begins (opera, theatre, concerts)
-   
-   b. **Research City-Specific "What's On" for Travel Dates:**
-   - Search: "[City name] events [Month Year]"
-   - Check city tourism websites, event calendars
-   - Note any major festivals, parades, special exhibitions
-   - **Flag limited-time events prominently** (these create planning anchors similar to booked events)
-   - **If no significant events found**: Explicitly document this finding ("No major events or festivals scheduled during [dates]") to distinguish researched absence from overlooked research
+   Decision: Include rebase opportunity in itinerary? If yes, note which night(s).
 
-4. **Research General Activities with Seasonal Appropriateness**
-   - Research major attractions and points of interest
-   - Consider cultural sites, museums, landmarks, restaurants
-   - Note opening hours and booking requirements
-   - **Check winter vs summer hours** (many attractions have different schedules)
-   - **Prioritise activities near existing event anchors** (conferences, booked attractions)
-   - **Consider seasonal appropriateness:**
-     - Winter: indoor activities more prominent (museums, galleries, cafes, indoor markets)
-     - Summer: outdoor activities (parks, walking tours, outdoor dining, river cruises)
-     - Rainy season: backup indoor options needed
+3. **Evaluate Day Trip Options**
 
-5. **Research Attraction Operating Schedules**
+   From the cluster research, assess which day trips warrant inclusion:
    
-   **Critical for Multi-Day Stays:**
-   
-   a. **Identify Weekly Closure Patterns:**
-   - Many museums close on Mondays (very common in Europe)
-   - Some close on Tuesdays instead
-   - Religious sites may have restricted hours on religious days
-   - Markets typically operate on specific days (e.g., Sunday markets, Saturday markets)
-   
-   b. **Create Day-of-Week Activity Matrix** (for multi-day city stays):
-   - List all desired attractions
-   - Note which days each is open
-   - Note which days each is closed
-   - **Plan activities for days when they're actually open**
-   - Example: "Museum A closed Monday, Museum B closed Tuesday, Market on Sunday only"
-   
-   c. **Flag Public Holidays and Special Closures:**
-   - Check if travel dates coincide with local public holidays
-   - Many attractions close on public holidays or have reduced hours
-   - Some attractions have special extended hours on certain days
+   - Does the day trip offer something the main destination lacks?
+   - Is the travel time acceptable for the group (especially with children)?
+   - Which day works best considering operating schedules?
 
-**For Journeys WITH Children:**
+4. **Select Attractions**
 
-1. **Identify Destinations and Seasonal Context (Child-Specific Notes)**
-   - Extract cities from Fares and Accommodations folders
-   - Note which travellers (including which children) are present for each segment
-   - Calculate available activity time per day: ~4 hours actual exploring time in typical 12-hour day
-   - **Identify travel dates, season, and research sunrise/sunset times**
-     - **Critical with children**: Winter sunset at 16:00-17:00 means afternoon activities must finish earlier
-     - Adjust activity timing to account for available daylight; winter limits evening activities
-   - Cross-reference with existing event commitments from Phase 1
+   From the cluster research attraction inventory, select what to include:
+   
+   a. **Must-include**: ⭐⭐⭐ rated attractions that are open during travel dates
+   b. **Strong candidates**: ⭐⭐ rated attractions if time permits
+   c. **Backup options**: For bad weather or when primary attractions are closed
+   
+   Cross-reference with operating schedules - don't select Monday activities that are closed Mondays.
 
-2. **Research Airport Positioning and Regional Accessibility** - *Follow same methodology as adult-only planning above, with additional child-specific value criteria noted in section 2e*
+5. **Document Transport Mode Decision**
 
-3. **Research Seasonal Events and Festivals**
-
-   **Critical**: Children often enjoy seasonal events more than standard attractions
-   
-   a. **Check for Family-Friendly Seasonal Events:**
-   
-   **Winter (December-February):**
-   - **Christmas markets**: Usually very child-friendly (lights, treats, entertainment)
-   - Ice skating rinks and winter playgrounds
-   - Holiday light displays and decorations (children find these captivating)
-   - Santa visits and holiday-themed attractions
-   - New Year's celebrations (note: late-night events may not suit young children)
-   
-   **Spring (March-May):**
-   - Spring festivals with outdoor activities
-   - Easter egg hunts and Easter markets
-   - Flower displays and gardens (children enjoy running in gardens)
-   
-   **Summer (June-August):**
-   - Outdoor water features and splash pads (crucial for cooling down)
-   - Beach activities and water parks
-   - Outdoor playgrounds and parks (longer daylight = more playground time)
-   - Outdoor festivals with family zones
-   
-   **Autumn (September-November):**
-   - Harvest festivals (pumpkin patches, apple picking)
-   - Halloween events (if appropriate for children's age)
-   - Parks with autumn foliage (children enjoy leaf piles)
-   
-   b. **Research City-Specific "What's On" for Families:**
-   - Search: "[City name] family events [Month Year]"
-   - Check city tourism websites for family-specific calendars
-   - **Flag limited-time events prominently** (these are prioritised over standard attractions)
-
-4. **Research Child-Friendly Activities with Seasonal Appropriateness**
-
-   **Prioritization Principle:**
-
-   Prioritize unique local experiences over generic attractions. Zoos and science museums are common globally - unless world-class or EU top (e.g., London Natural History Museum, Vienna Schönbrunn Zoo), they serve as "filler material" for activity clusters. Unique sights specific to the city that can't be found elsewhere should be prioritized.
-
-   Examples: Edinburgh Forth Bridges and Arthur's Seat (unique) vs Edinburgh Zoo (generic). Include zoos/science museums only when: world-class attraction, child specifically requests, unique attractions exhausted, or backup needed for closures.
-
-   **Priority Categories (in order):**
-   1. Unique local landmarks: Castles, fortifications, architectural marvels, UNESCO sites, natural wonders specific to the region
-   2. Distinctive natural scenery: Parks, beaches, gardens, viewpoints unique to the region (not generic city parks)
-   3. Interactive cultural sites: Hands-on museums with local/national focus, child-oriented exhibits about regional history/culture
-   4. Seasonal-specific experiences: Christmas markets, ice skating, water parks - often unique to how the region celebrates
-   5. World-class museums/attractions: Include only if genuinely world-class or EU top-tier
-   6. Generic attractions as filler: Aquariums, science museums, zoos - use only when unique options exhausted or as backup
-
-5. **Research Attraction Operating Schedules**
-
-   **Critical for Multi-Day Stays with Children:**
-   
-   a. **Identify Weekly Closure Patterns:**
-   - Many children's museums and aquariums have limited closures (often open 7 days)
-   - Science museums may close on Mondays
-   - Zoos typically open daily but check winter schedules
-   - Outdoor attractions may close for winter season entirely
-   
-   b. **Create Day-of-Week Activity Matrix** (for multi-day city stays):
-   - List all desired child-friendly attractions
-   - Note which days each is open
-   - Note which days each is closed
-   - **Plan museum/indoor visits for days when they're open**
-   - **Plan outdoor/playground days for days when primary attractions are closed**
-   - Example: "Aquarium closed Monday → Monday is playground + park day; Aquarium Tuesday"
-   
-   c. **Check Seasonal Operating Schedules:**
-   - Outdoor attractions may close in winter or have reduced hours
-   - Indoor attractions may have extended summer hours
-   - Some attractions have winter closures (November-March)
-   - Flag if attraction is closed during entire travel period
-
-6. **Practical Considerations for Each Activity**
-   
-   For each identified activity, research:
-   
-   **Availability:**
-   - Opening hours on travel dates (check specific dates, not just general hours)
-   - Days closed per week (Monday closures, weekly patterns)
-   - **Seasonal schedule changes** (winter vs summer hours)
-   - Seasonal closures or off-season periods
-   
-   **Booking Requirements:**
-   - Pre-booking required or walk-up available
-   - Ticket purchase process (online, on-site, timed entry)
-   - Lead time needed for booking
-   
-   **Duration and Energy Requirements:**
-   - On-foot activities: max 1.5 hours recommended before rest needed
-   - Indoor activities: up to 2 hours possible with breaks
-   - Outdoor activities: variable, weather-dependent
-   - **Adjust for daylight available**: Winter activities must finish before early sunset
-   
-   **Accessibility:**
-   - Stroller-friendly or walking-only
-   - Stairs, elevators, accessibility facilities
-   - Rest areas and amenities (toilets, food, seating)
-   
-   **Weather Considerations:**
-   - Indoor backup options for rainy days
-   - Outdoor activities suitable for cold weather (with appropriate clothing)
-   - Summer heat considerations (shaded areas, water access)
+   Use the transport mode recommendation from cluster research. This must appear in the final itinerary:
+   - "Car rental not recommended: [Reasoning from cluster research]"
+   - "Car rental recommended: [Reasoning from cluster research]"
 
 ### Phase 5: Geographic Clustering
 
 **Objective**: Group activities into geographic clusters to minimise transport time and maximise time at destinations
 
 1. **Map Activities Geographically**
-   - Plot identified activities on mental map of each city
-   - **Plot existing event anchors first** (conferences, booked attractions, seasonal festivals)
+   - Plot selected activities (from Phase 4) on mental map of each city
+   - **Plot existing event anchors first** (conferences, booked attractions, seasonal festivals from cluster research)
    - Note distances between activities
    - Identify natural groupings based on proximity
-   - Consider whether activities span multiple nearby cities or regions that might be better connected by car than by changing hotels
+   - **For multi-city plans**: Reference cluster research for activities in rebase destinations and day trips
 
 2. **Create Activity Clusters**
    
@@ -747,7 +542,7 @@ The comprehensive research requirements in this phase (sunset times, museum open
 
 **Objective**: Evaluate existing accommodation bookings or present accommodation strategies based on activity clusters, event anchors, and airport positioning research
 
-Review Phase 4 Section 2 findings. If multiple destination-level plans warrant presentation (comparable value ~90%+ or potential 150%+ for specific interests), present accommodation options for each. For each plan, specify hotel location strategy, parking considerations, and how it serves activities. If alternative plans don't meet value threshold, present single primary strategy with brief note that alternatives were considered.
+Review the cluster research (`build/research/[destination]-cluster.md`) and Phase 4 selections. If the itinerary includes rebase opportunities or day trips, present accommodation options that support visiting them. For each accommodation strategy, specify hotel location, parking considerations, and how it serves activities across the cluster. If cluster members weren't selected, present single primary strategy with brief note that alternatives were considered.
 
 **For Journeys WITHOUT Children:**
 
@@ -836,7 +631,7 @@ Review Phase 4 Section 2 findings. If multiple destination-level plans warrant p
 
 **Alternative Plan Approach:**
 
-Based on Phase 4 Section 2 value assessment and Phase 6 accommodation strategies, generate detailed itineraries for plans that warrant presentation (comparable value ~90%+ or potential 150%+ for specific interests). For each plan presented, provide day-by-day recommendations showing how that strategy works. If alternatives don't meet value threshold, present single primary plan with brief note that alternatives were considered but offer limited value. Per-day alternatives can be provided when day-level choices have comparable value (e.g., "Day 3 Option A: Edinburgh" vs "Day 3 Option B: Glasgow day trip").
+Based on the cluster analysis and Phase 6 accommodation strategies, generate detailed itineraries that incorporate relevant cluster members (rebase opportunities, day trips). If a cluster member warrants inclusion, provide day-by-day recommendations showing how to visit it. If cluster members don't add sufficient value, present single primary plan with brief note that alternatives were considered. Per-day alternatives can be provided when day-level choices have comparable value (e.g., "Day 3 Option A: Edinburgh" vs "Day 3 Option B: Glasgow day trip").
 
 **Output Style Requirements:**
 
@@ -980,9 +775,9 @@ When constraints exist (e.g., limited Christmas Day dining), research WHAT is ac
       - Transport accessibility notes
       - IHG upgrade potential notes (when applicable)
 
-   d. **Regional Transport Mode Decision** (from Phase 4 Section 2f)
-      - Document the conclusion about car rental vs public transport for this destination
-      - Include explicit reasoning based on regional accessibility research
+   d. **Regional Transport Mode Decision** (from cluster analysis)
+      - Document the conclusion about car rental vs public transport for this cluster
+      - Include explicit reasoning from the cluster analysis transport mode recommendation
       - This demonstrates the transport strategy was evaluated, not overlooked
 
    e. **Day-by-Day Plan Outline**
@@ -1535,7 +1330,7 @@ Review the generated itinerary against each item below. For each item, verify PA
 ☐ **Car rental vs public transport decision is explicitly documented with reasoning**
 - PASS: Itinerary contains a statement like "Car rental not recommended: [City] has excellent public transport..." OR "Car rental recommended: Attractions spread across region..."
 - FAIL: No mention of whether car was considered, or only mentions public transport options without explaining why car wasn't chosen
-- If FAIL: Add transport mode decision section with reasoning based on Phase 4 Section 2 research
+- If FAIL: Add transport mode decision section with reasoning from cluster analysis
 - Location: Should appear in "Seasonal Context" or "Transport Strategy" or "Accommodation Strategy" section
 
 #### 3. Airport/Station-to-Hotel Transport Reasoning
@@ -1759,27 +1554,9 @@ For each child-friendly activity identified:
 
 ### Geographic Proximity Judgement
 
-**Close Airports (Ground Transport Expected)**:
-- Abu Dhabi (AUH) ↔ Dubai (DXB): ~100km, ground transport expected
-- Istanbul Sabiha Gökçen (SAW) ↔ Istanbul Atatürk (IST): ~50km, ground transport expected
-- Paris Charles de Gaulle (CDG) ↔ Paris Orly (ORY): ~40km, ground transport expected
+**Reference cluster research** (`build/research/[destination]-cluster.md`) for detailed regional travel patterns and transport mode recommendations. The cluster SOP researches how destinations in the journey's geographic cluster are typically connected.
 
-**When evaluating gaps**: If travel involves close airports, expect ground transport booking, not a missing flight. Verify ground transport exists or can be arranged.
-
-### Regional Travel Patterns
-
-**Balkan Countries**:
-- Multiple cities typically traversed by hired car, not individual flights
-- If hired car booking exists, verify it covers the date range of multi-city travel
-- Individual flights between Balkan cities are unusual unless distance is significant
-
-**Middle East Connections**:
-- Close airports (Abu Dhabi-Dubai) use ground transport
-- Research airport transfer services, taxis, or shuttles
-
-**European Inter-City**:
-- Train connections common for distances under 500km
-- High-speed rail often preferred over flights for environmental and convenience reasons
+**When evaluating gaps**: If travel involves close airports (e.g., Abu Dhabi ↔ Dubai at ~100km), expect ground transport booking, not a missing flight. The cluster analysis documents these connections.
 
 ### Transport Mode Considerations
 
