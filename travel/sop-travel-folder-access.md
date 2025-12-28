@@ -26,15 +26,21 @@ Two access methods are available: MCP (preferred) and filesystem mount (fallback
 
 The Rube MCP server provides Dropbox integration. Use this method for all travel folder access.
 
+**IMPORTANT**: Do NOT use `list_mcp_resources` or other generic MCP tools. You MUST use the specific Rube tools documented below.
+
 **First-Time Setup (per session):**
 
-Before using Dropbox tools, discover them via Rube MCP and establish a session:
+Before using Dropbox tools, discover them via Rube MCP and establish a session.
+
+**Use this exact tool call:**
 
 ```
-Tool: RUBE_SEARCH_TOOLS
+Tool: mcp_rube_RUBE_SEARCH_TOOLS
 Arguments: { 
-  "queries": [{"use_case": "list files in a Dropbox folder"}],
-  "session": {"generate_id": true}
+  "params": {
+    "queries": [{"use_case": "list files in a Dropbox folder"}],
+    "session": {"generate_id": true}
+  }
 }
 ```
 
@@ -43,55 +49,61 @@ This returns a `session_id` (e.g., "herd") that must be passed to all subsequent
 **Listing Journey Folders:**
 
 ```
-Tool: RUBE_MULTI_EXECUTE_TOOL
+Tool: mcp_rube_RUBE_MULTI_EXECUTE_TOOL
 Arguments: {
-  "session_id": "herd",
-  "memory": {},
-  "sync_response_to_workbench": false,
-  "thought": "Listing travel admin folder to find journey folders",
-  "tools": [{
-    "tool_slug": "DROPBOX_LIST_FILES_IN_FOLDER",
-    "arguments": {"path": "/0. Travel Admin", "limit": 100, "recursive": false}
-  }]
+  "params": {
+    "session_id": "herd",
+    "memory": {},
+    "sync_response_to_workbench": false,
+    "thought": "Listing travel admin folder to find journey folders",
+    "tools": [{
+      "tool_slug": "DROPBOX_LIST_FILES_IN_FOLDER",
+      "arguments": {"path": "/0. Travel Admin", "limit": 100, "recursive": false}
+    }]
+  }
 }
 ```
 
 **Finding a Specific Journey Folder:**
 
 ```
-Tool: RUBE_MULTI_EXECUTE_TOOL
+Tool: mcp_rube_RUBE_MULTI_EXECUTE_TOOL
 Arguments: {
-  "session_id": "herd",
-  "memory": {},
-  "sync_response_to_workbench": false,
-  "thought": "Searching for specific journey folder",
-  "tools": [{
-    "tool_slug": "DROPBOX_SEARCH_FILE_OR_FOLDER",
-    "arguments": {
-      "query": "2025-12-23 Edinburgh",
-      "options": {"path": "/0. Travel Admin"}
-    }
-  }]
+  "params": {
+    "session_id": "herd",
+    "memory": {},
+    "sync_response_to_workbench": false,
+    "thought": "Searching for specific journey folder",
+    "tools": [{
+      "tool_slug": "DROPBOX_SEARCH_FILE_OR_FOLDER",
+      "arguments": {
+        "query": "2025-12-23 Edinburgh",
+        "options": {"path": "/0. Travel Admin"}
+      }
+    }]
+  }
 }
 ```
 
 **Listing Contents of a Journey Folder:**
 
 ```
-Tool: RUBE_MULTI_EXECUTE_TOOL
+Tool: mcp_rube_RUBE_MULTI_EXECUTE_TOOL
 Arguments: {
-  "session_id": "herd",
-  "memory": {},
-  "sync_response_to_workbench": false,
-  "thought": "Listing journey folder contents",
-  "tools": [{
-    "tool_slug": "DROPBOX_LIST_FILES_IN_FOLDER",
-    "arguments": {
-      "path": "/0. Travel Admin/2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Liansu, Weiwu, A-Z",
-      "limit": 100,
-      "recursive": false
-    }
-  }]
+  "params": {
+    "session_id": "herd",
+    "memory": {},
+    "sync_response_to_workbench": false,
+    "thought": "Listing journey folder contents",
+    "tools": [{
+      "tool_slug": "DROPBOX_LIST_FILES_IN_FOLDER",
+      "arguments": {
+        "path": "/0. Travel Admin/2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Liansu, Weiwu, A-Z",
+        "limit": 100,
+        "recursive": false
+      }
+    }]
+  }
 }
 ```
 
@@ -144,11 +156,22 @@ ls ~/Dropbox/0.\ Travel\ Admin/2025-12-23\ Edinburgh,\ Berlin,\ Munich,\ Vienna,
 
 When a user specifies a journey by partial name (e.g., "Edinburgh trip" or "Venice journey"):
 
-**Using MCP:**
+**Finding a Journey Folder:**
 
 ```
-Tool: DROPBOX_LIST_FILES_IN_FOLDER
-Arguments: { "path": "/0. Travel Admin", "limit": 100, "recursive": false }
+Tool: mcp_rube_RUBE_MULTI_EXECUTE_TOOL
+Arguments: {
+  "params": {
+    "session_id": "herd",
+    "memory": {},
+    "sync_response_to_workbench": false,
+    "thought": "Listing all journey folders to find match",
+    "tools": [{
+      "tool_slug": "DROPBOX_LIST_FILES_IN_FOLDER",
+      "arguments": {"path": "/0. Travel Admin", "limit": 100, "recursive": false}
+    }]
+  }
+}
 ```
 
 Then filter results by matching the destination name or date.
@@ -197,8 +220,19 @@ Every Markdown itinerary file should have a corresponding Dropbox Paper document
 **Step 1 - Locate the itinerary .md file:**
 
 ```
-Tool: DROPBOX_LIST_FILES_IN_FOLDER
-Arguments: { "path": "[journey folder path]", "recursive": false }
+Tool: mcp_rube_RUBE_MULTI_EXECUTE_TOOL
+Arguments: {
+  "params": {
+    "session_id": "herd",
+    "memory": {},
+    "sync_response_to_workbench": false,
+    "thought": "Listing journey folder to find itinerary markdown file",
+    "tools": [{
+      "tool_slug": "DROPBOX_LIST_FILES_IN_FOLDER",
+      "arguments": {"path": "[journey folder path]", "recursive": false}
+    }]
+  }
+}
 ```
 
 Identify the file matching `*[Destination]_Itinerary.md`.
@@ -206,32 +240,79 @@ Identify the file matching `*[Destination]_Itinerary.md`.
 **Step 2 - Read the markdown content:**
 
 ```
-Tool: DROPBOX_READ_FILE
-Arguments: { "path": "[full path to the .md file]" }
+Tool: mcp_rube_RUBE_MULTI_EXECUTE_TOOL
+Arguments: {
+  "params": {
+    "session_id": "herd",
+    "memory": {},
+    "sync_response_to_workbench": false,
+    "thought": "Reading itinerary markdown file",
+    "tools": [{
+      "tool_slug": "DROPBOX_READ_FILE",
+      "arguments": {"path": "[full path to the .md file]"}
+    }]
+  }
+}
 ```
 
 **Step 3 - Delete any existing Paper (required because the create tool cannot overwrite):**
 
 ```
-Tool: DROPBOX_SEARCH_FILE_OR_FOLDER
-Arguments: { "query": "[filename].paper", "options": { "path": "[journey folder]" } }
+Tool: mcp_rube_RUBE_MULTI_EXECUTE_TOOL
+Arguments: {
+  "params": {
+    "session_id": "herd",
+    "memory": {},
+    "sync_response_to_workbench": false,
+    "thought": "Searching for existing Paper document",
+    "tools": [{
+      "tool_slug": "DROPBOX_SEARCH_FILE_OR_FOLDER",
+      "arguments": {
+        "query": "[filename].paper",
+        "options": {"path": "[journey folder]"}
+      }
+    }]
+  }
+}
 ```
 
 If a match is found:
 
 ```
-Tool: DROPBOX_DELETE_FILE_OR_FOLDER
-Arguments: { "path": "[path from search result]" }
+Tool: mcp_rube_RUBE_MULTI_EXECUTE_TOOL
+Arguments: {
+  "params": {
+    "session_id": "herd",
+    "memory": {},
+    "sync_response_to_workbench": false,
+    "thought": "Deleting old Paper document before creating new one",
+    "tools": [{
+      "tool_slug": "DROPBOX_DELETE_FILE_OR_FOLDER",
+      "arguments": {"path": "[path from search result]"}
+    }]
+  }
+}
 ```
 
 **Step 4 - Create the Paper document:**
 
 ```
-Tool: DROPBOX_CREATE_PAPER
+Tool: mcp_rube_RUBE_MULTI_EXECUTE_TOOL
 Arguments: {
-  "path": "[same directory]/[same filename but .paper instead of .md]",
-  "content": "[markdown content from Step 2]",
-  "import_format": "markdown"
+  "params": {
+    "session_id": "herd",
+    "memory": {},
+    "sync_response_to_workbench": false,
+    "thought": "Creating Paper document from markdown",
+    "tools": [{
+      "tool_slug": "DROPBOX_CREATE_PAPER",
+      "arguments": {
+        "path": "[same directory]/[same filename but .paper instead of .md]",
+        "content": "[markdown content from Step 2]",
+        "import_format": "markdown"
+      }
+    }]
+  }
 }
 ```
 
