@@ -28,7 +28,7 @@ This SOP researches the geographic cluster for a journey and what each destinati
 
 A cluster is a group of destinations accessible from each other within practical travel time. Examples:
 
-- **City cluster**: Brisbane, Gold Coast, Sunshine Coast - three cities within 1-2 hours of each other by train
+- **City cluster**: Three capitals within 2-3 hours of each other by train
 - **Airport-destination cluster**: Glasgow (arrival airport), Edinburgh (destination), Stirling (day trip) - Central Scotland cluster
 - **City-region cluster**: Sydney and Blue Mountains - a city with an accessible natural region
 - **Multi-city route**: A→B→C where each leg is under 4 hours forms a linear cluster
@@ -67,7 +67,6 @@ This SOP does NOT:
 
 A cluster research document per destination segment, saved to `build/research/[destination]-cluster.md`. For example:
 - `build/research/edinburgh-cluster.md` (covers Edinburgh, Glasgow, Stirling)
-- `build/research/brisbane-cluster.md` (covers Brisbane, Gold Coast, Noosa)
 
 Each document contains:
 
@@ -154,7 +153,21 @@ For each city:
 
 Document destinations within approximately 1-1.5 hours travel. These work for day trips (up to 3 hours round trip is acceptable).
 
-**2.3 Airport Positioning**
+**2.3 Transit Hub Candidates**
+
+A nearby city may be valuable not just as a destination, but as a **transit hub** that opens access to more distant destinations.
+
+For each city within 1.5 hours of the base:
+
+- Search: "cities near [Nearby City]" and "[Nearby City] to [Distant City] train/drive"
+- Check whether this nearby city is positioned between the base and other destinations
+- Evaluate whether an overnight stay there enables efficient multi-destination routing
+
+**Example reasoning**: If City A (base) → City B (1h) → City C (2.5h from B), staying overnight in City B enables visiting both B and C without returning to A between them. City B serves as a transit hub even if it only has half a day's worth of attractions itself.
+
+**Why this matters**: Travel time calculations from the base city alone miss routing efficiencies. A 1-hour-away city classified as "day trip only" might actually be a better overnight base for reaching destinations beyond it.
+
+**2.4 Airport Positioning**
 
 For arrival and departure airports:
 
@@ -272,7 +285,6 @@ Research attractions in these categories:
 
 Prioritise unique local experiences over generic attractions:
 - Edinburgh: Arthur's Seat and Forth Bridges (unique) over Edinburgh Zoo (generic)
-- Brisbane: Story Bridge and South Bank (unique) over generic shopping malls
 - Include generic attractions only as backup or if world-class
 
 **5.3 For Each Attraction, Research:**
@@ -367,7 +379,8 @@ Compile all findings into `build/research/[destination]-cluster.md`:
 |-------------|------|-------------|-----------|
 | [City] | Booked (n nights) | - | Primary base |
 | [City] | Overnight candidate | 2h train | [Brief reason] |
-| [City] | Day trip | 45min | [Brief reason] |
+| [City] | Day trip or transit hub | 45min | [Brief reason] |
+| [City] | Day trip | 1h 30min | [Brief reason] |
 
 ### Transport Mode Recommendation
 
@@ -426,6 +439,18 @@ Compile all findings into `build/research/[destination]-cluster.md`:
 
 ---
 
+## Transit Hub Opportunities
+
+### [Nearby City] as Transit Hub
+
+**Position**: [Time] from [base], [Time] to [distant destination]
+**Transit value**: Overnight here enables visiting both [nearby] and [distant destination] efficiently
+**What [nearby] offers**: [Brief attractions - may be half-day only]
+**Routing example**: Base → Nearby (explore) → overnight → Distant (full day) → return to Base
+**Considerations**: [Practical notes, car hire implications]
+
+---
+
 ## Day Trip Options
 
 ### [Destination] - Day Trip
@@ -440,141 +465,11 @@ Compile all findings into `build/research/[destination]-cluster.md`:
 
 Save the document to: `[journey-folder]/build/research/[destination]-cluster.md`
 
-Where `[destination]` is the primary city name in lowercase (e.g., `brisbane-cluster.md`, `edinburgh-cluster.md`).
+Where `[destination]` is the primary city name in lowercase (e.g., `edinburgh-cluster.md`).
 
-For a multi-city journey like `2025-03-15 Brisbane, Sydney, Melbourne - Smith Family`:
-- Run this SOP once per destination segment
-- Produces: `build/research/brisbane-cluster.md`, `build/research/sydney-cluster.md`, `build/research/melbourne-cluster.md`
+For a multi-city journey, run this SOP once per destination segment.
 
 Each file is consumed by `sop-itinerary-management.md` when generating the itinerary for that segment.
-
----
-
-## Example Output
-
-```markdown
-# Cluster Research: Queensland - Brisbane Region
-
-**Journey**: 2025-07-10 - 2025-07-17
-**Travellers**: Smith Family (2 adults, 2 children ages 7 and 10)
-**Season**: Winter (Southern Hemisphere), sunset ~17:15
-
-## Cluster Overview
-
-**Booked destinations**: Brisbane (4 nights), Gold Coast (3 nights)
-**Arrival**: Brisbane Airport
-**Departure**: Gold Coast Airport
-
-### Cluster Members
-
-| Destination | Type | Travel Time | Why Visit |
-|-------------|------|-------------|-----------|
-| Brisbane | Booked (4 nights) | - | Queensland capital, cultural hub |
-| Gold Coast | Booked (3 nights) | 1h train | Theme parks, beaches |
-| Noosa | Day trip | 2h drive | Beaches, national park |
-| Sunshine Coast | Day trip | 1.5h drive | Australia Zoo, beaches |
-
-### Transport Mode Recommendation
-
-**Car recommended**: While trains connect Brisbane to Gold Coast, a rental car provides flexibility for day trips to Noosa and Sunshine Coast. Theme parks also easier with car.
-
----
-
-## Brisbane
-
-### Seasonal Events
-
-**During travel dates (Jul 10 - Jul 14):**
-- **Ekka (Royal Queensland Show)**: Not during these dates (August)
-- **Brisbane Festival**: Not during these dates (September)
-
-**Holiday considerations:**
-- No public holidays during travel dates
-- Normal operating hours apply
-
-### Attractions
-
-#### Must-See (Unique to Region)
-
-**South Bank Parklands** ⭐⭐⭐
-- What: Urban beach, gardens, cultural precinct along Brisbane River
-- Hours: Open 24 hours (facilities 6:00-22:00)
-- Duration: 2-4 hours
-- Booking: Not required
-- Cost: Free (some attractions have fees)
-- Suitability: Streets Beach perfect for children - safe swimming, lifeguards on duty. Playground and water features.
-
-**Lone Pine Koala Sanctuary** ⭐⭐⭐
-- What: World's first and largest koala sanctuary
-- Hours: 9:00-17:00 daily
-- Duration: 2-3 hours
-- Booking: Recommended for koala holds
-- Cost: Adults $49, Children 3-13 $35
-- Suitability: Excellent for children - koala cuddles, kangaroo feeding. Unique Australian wildlife experience.
-
-**Story Bridge Adventure Climb** ⭐⭐
-- What: Guided climb of Brisbane's iconic bridge
-- Hours: Dawn, day, twilight, and night climbs
-- Duration: 2 hours
-- Booking: Required
-- Cost: Adults from $139, minimum age 10
-- Suitability: Great for older child (10), but 7-year-old cannot participate due to age restriction.
-
-#### Worth Visiting
-
-**Queensland Museum** ⭐⭐⭐
-- What: Natural history and science museum
-- Hours: 9:30-17:00 daily
-- Duration: 2 hours
-- Cost: Free entry (some exhibitions extra)
-- Suitability: Excellent for children - dinosaur garden, hands-on science centre.
-
-**City Botanic Gardens** ⭐⭐
-- What: Historic gardens on Brisbane River
-- Hours: 24 hours
-- Duration: 1 hour
-- Cost: Free
-- Suitability: Good for a relaxed walk, but less engaging for children than South Bank.
-
-### Operating Schedule Summary
-
-| Attraction | Mon | Tue | Wed | Thu | Fri | Sat | Sun |
-|------------|-----|-----|-----|-----|-----|-----|-----|
-| South Bank | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Lone Pine | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Qld Museum | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-
----
-
-## Rebase Opportunities
-
-### Noosa - Overnight Excursion
-
-**Travel**: 2h drive from Brisbane, or 2.5h train+bus
-**Why visit**: Beautiful beaches, Noosa National Park coastal walk, relaxed beach town atmosphere
-**Rebase benefit**: One night in Noosa allows early morning national park walk before crowds, sunset on beach
-**Considerations**: Adds accommodation cost but provides change of pace from city
-
-**Noosa attractions (if overnight):**
-- Noosa National Park ⭐⭐⭐ - coastal walk, koala spotting
-- Main Beach ⭐⭐⭐ - calm surf, family-friendly
-- Hastings Street ⭐⭐ - cafes, shopping
-
----
-
-## Day Trip Options
-
-### Sunshine Coast - Australia Zoo Day Trip
-
-**Travel**: 1.5h drive from Brisbane
-**Why visit**: Steve Irwin's Australia Zoo - world-famous wildlife park
-**Best for**: Full day excursion, wildlife enthusiasts
-**When to go**: Weekday to avoid weekend crowds
-
-**Sunshine Coast attractions:**
-- Australia Zoo ⭐⭐⭐ - crocodile shows, animal encounters
-- Mooloolaba Beach ⭐⭐ - combine with zoo for beach afternoon
-```
 
 ---
 
