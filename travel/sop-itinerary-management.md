@@ -1357,10 +1357,10 @@ Review the generated itinerary against each item below. For each item, verify PA
 
 #### 6. Activity Operating Hours and Closures
 
-☐ **Weekly closure patterns documented and activities scheduled accordingly**
-- PASS: "Museum A CLOSED Mondays - scheduled for Tuesday" with Monday-appropriate alternative activities identified
-- FAIL: Suggests Monday museum visit without noting Monday closure, OR doesn't plan for Monday closures
-- If FAIL: Cross-check all suggested activities against day-of-week, add closure notes, reschedule conflicts
+☐ **Weekly closure patterns mapped to actual travel dates and activities scheduled accordingly**
+- PASS: "Natural History Museum CLOSED Tue - Dec 31 is Wed so museum OPEN, scheduled for Dec 31" with date-specific mapping
+- FAIL: Generic "CLOSED Mondays" without mapping to actual travel dates, OR schedules activity on a closed day
+- If FAIL: Map each attraction's closure days to actual calendar dates of the journey, verify no conflicts
 
 #### 7. Cost Information Completeness
 
