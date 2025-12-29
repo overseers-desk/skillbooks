@@ -28,7 +28,7 @@ This SOP researches the geographic cluster for a journey and what each destinati
 
 A cluster is a group of destinations accessible from each other within practical travel time. Examples:
 
-- **City cluster**: Vienna, Budapest, Bratislava - three capitals within 2-3 hours of each other by train
+- **City cluster**: Brisbane, Gold Coast, Sunshine Coast - three cities within 1-2 hours of each other by train
 - **Airport-destination cluster**: Glasgow (arrival airport), Edinburgh (destination), Stirling (day trip) - Central Scotland cluster
 - **City-region cluster**: Sydney and Blue Mountains - a city with an accessible natural region
 - **Multi-city route**: A→B→C where each leg is under 4 hours forms a linear cluster
@@ -67,7 +67,7 @@ This SOP does NOT:
 
 A cluster research document per destination segment, saved to `build/research/[destination]-cluster.md`. For example:
 - `build/research/edinburgh-cluster.md` (covers Edinburgh, Glasgow, Stirling)
-- `build/research/vienna-cluster.md` (covers Vienna, Budapest, Bratislava)
+- `build/research/brisbane-cluster.md` (covers Brisbane, Gold Coast, Noosa)
 
 Each document contains:
 
@@ -272,7 +272,7 @@ Research attractions in these categories:
 
 Prioritise unique local experiences over generic attractions:
 - Edinburgh: Arthur's Seat and Forth Bridges (unique) over Edinburgh Zoo (generic)
-- Vienna: Schönbrunn Palace (unique) over generic city aquarium
+- Brisbane: Story Bridge and South Bank (unique) over generic shopping malls
 - Include generic attractions only as backup or if world-class
 
 **5.3 For Each Attraction, Research:**
@@ -440,11 +440,11 @@ Compile all findings into `build/research/[destination]-cluster.md`:
 
 Save the document to: `[journey-folder]/build/research/[destination]-cluster.md`
 
-Where `[destination]` is the primary city name in lowercase (e.g., `vienna-cluster.md`, `edinburgh-cluster.md`).
+Where `[destination]` is the primary city name in lowercase (e.g., `brisbane-cluster.md`, `edinburgh-cluster.md`).
 
-For a multi-city journey like `2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw`:
+For a multi-city journey like `2025-03-15 Brisbane, Sydney, Melbourne - Smith Family`:
 - Run this SOP once per destination segment
-- Produces: `build/research/edinburgh-cluster.md`, `build/research/berlin-cluster.md`, `build/research/munich-cluster.md`, `build/research/vienna-cluster.md`, `build/research/warsaw-cluster.md`
+- Produces: `build/research/brisbane-cluster.md`, `build/research/sydney-cluster.md`, `build/research/melbourne-cluster.md`
 
 Each file is consumed by `sop-itinerary-management.md` when generating the itinerary for that segment.
 
@@ -453,135 +453,127 @@ Each file is consumed by `sop-itinerary-management.md` when generating the itine
 ## Example Output
 
 ```markdown
-# Cluster Research: Central Europe - Vienna Region
+# Cluster Research: Queensland - Brisbane Region
 
-**Journey**: 2025-12-31 - 2026-01-05
-**Travellers**: Weiwu, Liansu, Alice (age 8), Zoe (age 5)
-**Season**: Winter, sunset ~16:15
+**Journey**: 2025-07-10 - 2025-07-17
+**Travellers**: Smith Family (2 adults, 2 children ages 7 and 10)
+**Season**: Winter (Southern Hemisphere), sunset ~17:15
 
 ## Cluster Overview
 
-**Booked destinations**: Vienna (5 nights across 2 hotels)
-**Arrival**: Munich (train from Berlin)
-**Departure**: Vienna (flight to Warsaw)
+**Booked destinations**: Brisbane (4 nights), Gold Coast (3 nights)
+**Arrival**: Brisbane Airport
+**Departure**: Gold Coast Airport
 
 ### Cluster Members
 
 | Destination | Type | Travel Time | Why Visit |
 |-------------|------|-------------|-----------|
-| Vienna | Booked (5 nights) | - | Primary base, Austrian capital |
-| Budapest | Overnight candidate | 2h 40min train | Hungarian capital, thermal baths |
-| Bratislava | Day trip | 1h train | Slovak capital, compact old town |
-| Salzburg | Day trip | 2h 25min train | Mozart, Sound of Music |
+| Brisbane | Booked (4 nights) | - | Queensland capital, cultural hub |
+| Gold Coast | Booked (3 nights) | 1h train | Theme parks, beaches |
+| Noosa | Day trip | 2h drive | Beaches, national park |
+| Sunshine Coast | Day trip | 1.5h drive | Australia Zoo, beaches |
 
 ### Transport Mode Recommendation
 
-**Public transport sufficient**: Vienna region has excellent rail connections. Direct trains to Budapest (hourly), Bratislava (hourly), Salzburg (frequent). No car needed in winter.
+**Car recommended**: While trains connect Brisbane to Gold Coast, a rental car provides flexibility for day trips to Noosa and Sunshine Coast. Theme parks also easier with car.
 
 ---
 
-## Vienna
+## Brisbane
 
 ### Seasonal Events
 
-**During travel dates (Dec 31 - Jan 5):**
-- **Schönbrunn Christmas Market**: Open until Jan 6, evening only Dec 31
-- **New Year's Concert** (Musikverein): Jan 1, sold out but broadcast on screens
-- **Silvesterpfad**: New Year's Eve trail through city centre
+**During travel dates (Jul 10 - Jul 14):**
+- **Ekka (Royal Queensland Show)**: Not during these dates (August)
+- **Brisbane Festival**: Not during these dates (September)
 
 **Holiday considerations:**
-- Jan 1: Many museums closed, but Schönbrunn Palace open
-- Most attractions resume normal hours Jan 2
+- No public holidays during travel dates
+- Normal operating hours apply
 
 ### Attractions
 
 #### Must-See (Unique to Region)
 
-**Schönbrunn Palace** ⭐⭐⭐
-- What: Habsburg imperial summer residence, UNESCO World Heritage Site
-- Hours: 9:00-17:00 daily (including Jan 1)
-- Duration: 2-3 hours (palace + gardens)
-- Booking: Recommended online
-- Cost: Adults €24, Children 6-18 €15, Under 6 free
-- Suitability: Children's Museum inside specifically designed for ages 4-12. Interactive exhibits let children dress as princes/princesses.
-
-**St. Stephen's Cathedral** ⭐⭐⭐
-- What: Gothic cathedral, Vienna's symbol
-- Hours: 6:00-22:00 daily
-- Duration: 30-60 minutes
-- Booking: Not required (tower climb separate)
-- Cost: Free entry, tower €6
-- Suitability: Quick visit, impressive interior. Tower climb not suitable for young children.
-
-**Natural History Museum** ⭐⭐⭐
-- What: World-class natural history collection including dinosaurs
-- Hours: 9:00-18:30 (Wed until 21:00), CLOSED TUESDAY
-- Duration: 2 hours
+**South Bank Parklands** ⭐⭐⭐
+- What: Urban beach, gardens, cultural precinct along Brisbane River
+- Hours: Open 24 hours (facilities 6:00-22:00)
+- Duration: 2-4 hours
 - Booking: Not required
-- Cost: Adults €16, Under 19 FREE
-- Suitability: Excellent for children - dinosaur skeletons, interactive exhibits. Free for children under 19.
+- Cost: Free (some attractions have fees)
+- Suitability: Streets Beach perfect for children - safe swimming, lifeguards on duty. Playground and water features.
+
+**Lone Pine Koala Sanctuary** ⭐⭐⭐
+- What: World's first and largest koala sanctuary
+- Hours: 9:00-17:00 daily
+- Duration: 2-3 hours
+- Booking: Recommended for koala holds
+- Cost: Adults $49, Children 3-13 $35
+- Suitability: Excellent for children - koala cuddles, kangaroo feeding. Unique Australian wildlife experience.
+
+**Story Bridge Adventure Climb** ⭐⭐
+- What: Guided climb of Brisbane's iconic bridge
+- Hours: Dawn, day, twilight, and night climbs
+- Duration: 2 hours
+- Booking: Required
+- Cost: Adults from $139, minimum age 10
+- Suitability: Great for older child (10), but 7-year-old cannot participate due to age restriction.
 
 #### Worth Visiting
 
-**Prater & Giant Ferris Wheel** ⭐⭐⭐
-- What: Historic amusement park with iconic Riesenrad
-- Hours: Ferris wheel 10:00-21:45
-- Duration: 1-2 hours
-- Cost: Ferris wheel Adults €15, Children €7
-- Suitability: Children love it. Amusement park rides open in winter.
-
-**Technical Museum** ⭐⭐
-- What: Science and technology museum
-- Hours: 9:00-18:00, CLOSED MONDAY (except holidays)
+**Queensland Museum** ⭐⭐⭐
+- What: Natural history and science museum
+- Hours: 9:30-17:00 daily
 - Duration: 2 hours
-- Cost: Adults €16, Under 19 FREE
-- Suitability: Interactive exhibits, good for children but less unique than Natural History.
+- Cost: Free entry (some exhibitions extra)
+- Suitability: Excellent for children - dinosaur garden, hands-on science centre.
 
-#### Backup Options (Indoor/Bad Weather)
-
-**Haus des Meeres** (Aquarium) ⭐⭐
-- Generic aquarium but good rainy day option
-- Hours: 9:00-18:00 daily
-- Cost: Adults €23, Children 6-15 €10
+**City Botanic Gardens** ⭐⭐
+- What: Historic gardens on Brisbane River
+- Hours: 24 hours
+- Duration: 1 hour
+- Cost: Free
+- Suitability: Good for a relaxed walk, but less engaging for children than South Bank.
 
 ### Operating Schedule Summary
 
-| Attraction | Mon | Tue | Wed | Thu | Fri | Sat | Sun | Jan 1 |
-|------------|-----|-----|-----|-----|-----|-----|-----|-------|
-| Schönbrunn | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Natural History | ✓ | ❌ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Technical Museum | ❌ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Attraction | Mon | Tue | Wed | Thu | Fri | Sat | Sun |
+|------------|-----|-----|-----|-----|-----|-----|-----|
+| South Bank | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Lone Pine | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Qld Museum | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
 ---
 
 ## Rebase Opportunities
 
-### Budapest - Overnight Excursion
+### Noosa - Overnight Excursion
 
-**Travel**: 2h 40min by direct train (Railjet), departures hourly, ~€20-40
-**Why visit**: Hungarian capital with completely different character from Vienna - thermal baths, ruin bars, Danube views, Hungarian cuisine. Children would enjoy Széchenyi Baths (outdoor pools even in winter).
-**Rebase benefit**: One night in Budapest = 2h 40min travel. Day trip would be 5h 20min round trip - impractical with children.
-**Considerations**: Hotels change anyway on Jan 1 (Radisson RED → InterContinental). Could stay Budapest night of Jan 1 instead, returning Jan 2. Would add Hungarian capital to trip for cost of train tickets only.
+**Travel**: 2h drive from Brisbane, or 2.5h train+bus
+**Why visit**: Beautiful beaches, Noosa National Park coastal walk, relaxed beach town atmosphere
+**Rebase benefit**: One night in Noosa allows early morning national park walk before crowds, sunset on beach
+**Considerations**: Adds accommodation cost but provides change of pace from city
 
-**Budapest attractions (if overnight):**
-- Széchenyi Thermal Baths ⭐⭐⭐ - outdoor pools, children love it
-- Buda Castle ⭐⭐ - funicular ride up, views
-- Central Market Hall ⭐⭐ - food, atmosphere
+**Noosa attractions (if overnight):**
+- Noosa National Park ⭐⭐⭐ - coastal walk, koala spotting
+- Main Beach ⭐⭐⭐ - calm surf, family-friendly
+- Hastings Street ⭐⭐ - cafes, shopping
 
 ---
 
 ## Day Trip Options
 
-### Bratislava - Day Trip
+### Sunshine Coast - Australia Zoo Day Trip
 
-**Travel**: 1h by train, 2h round trip
-**Why visit**: Different country, compact historic centre, castle with views
-**Best for**: Half-day excursion, morning in Vienna then afternoon Bratislava or vice versa
-**When to go**: Any day (no major Monday closures)
+**Travel**: 1.5h drive from Brisbane
+**Why visit**: Steve Irwin's Australia Zoo - world-famous wildlife park
+**Best for**: Full day excursion, wildlife enthusiasts
+**When to go**: Weekday to avoid weekend crowds
 
-**Bratislava attractions:**
-- Bratislava Castle ⭐⭐ - hilltop castle, city views
-- Old Town ⭐⭐ - compact, walkable, quirky statues children enjoy
+**Sunshine Coast attractions:**
+- Australia Zoo ⭐⭐⭐ - crocodile shows, animal encounters
+- Mooloolaba Beach ⭐⭐ - combine with zoo for beach afternoon
 ```
 
 ---
