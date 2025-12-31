@@ -104,6 +104,8 @@ Before executing procedures (individually or as a complete RUN), ensure:
 
 These naming conventions apply across multiple procedures and must be followed consistently.
 
+**Acceptable file extensions**: `.pdf` for new saves; `.jpg`, `.jpeg`, `.png` only for existing files (e.g., human-saved boarding pass photos that should be renamed, not replaced). Text files (`.txt`) are NEVER acceptable—they represent AI-generated summaries rather than primary source documents.
+
 ### Fare Files (in Fares folder)
 
 Format: `YYYY-MM-DD [Airline/Transport] Origin-Destination FlightNumber BookingRef [Optional FF Points] [Optional Passengers].pdf`
@@ -381,11 +383,19 @@ Fully organized journey folder with all files compliant to naming conventions
    - Email account usage (where visible) matches handbook rules
    - All files are correctly named and readable
 
-## Procedure 2: Checking Email and Ensuring Files Are Saved
+## Procedure 2: Checking Email and Ensuring Records Are Saved
 
 ### Purpose
 
 Verify that all booking confirmation emails (transport and accommodation) have been saved to the journey folder, identify and save airline and hotel invoices to appropriate reimbursement folders, and identify promotional/informational emails that can be deleted for journeys that have already occurred.
+
+**CRITICAL RULE: Output must be PDF. Save primary source documents only.** When saving booking confirmations from email:
+
+- **Always check for PDF attachments first** using `list_attachments` MCP tool
+- **Save the PDF attachment** (voucher, confirmation, e-ticket) when present—this is the authoritative document
+- If no PDF attachment exists, export the email HTML to PDF—do not create text summaries
+- **NEVER create `.txt` files** containing extracted or summarised booking information
+- The goal is to preserve the original document exactly as issued by the booking provider
 
 ### Prerequisites
 
@@ -567,7 +577,8 @@ Action list for user confirmation containing:
    - **Booking Confirmation** (Travel Itinerary, Reservation Confirmation, Invoice with PNR):
      - Subject typically: "Travel Itinerary", "Booking Confirmation", "Invoice [number]"
      - Contains full booking details
-     - **Action**: Verify if already saved in Fares folder. If not, flag for saving.
+     - **Attachments (CRITICAL)**: Use `list_attachments` MCP tool to check for PDF attachments. If PDF attachment exists (e-ticket, itinerary, confirmation), save the attachment as the primary source. Do NOT create text summaries of email content when an attachment exists.
+     - **Action**: Verify if already saved in Fares folder. If not, flag for saving (specifying the attachment to save).
    
    - **Cancellation Confirmation**:
      - Subject typically: "Cancellation confirmed", "Booking cancelled", "Refund processed"
@@ -597,7 +608,7 @@ Action list for user confirmation containing:
    - **Rental Agreement / Booking Confirmation**:
      - Subject typically: "Rental Agreement", "Booking confirmed", "Your reservation", "Confirmation #", "car hire confirmation"
      - Contains booking reference, pickup/return dates and locations, vehicle details
-     - **Attachments**: If the email has attachments, extract and examine them for booking details.
+     - **Attachments (CRITICAL)**: Use `list_attachments` MCP tool to check for PDF attachments. If PDF attachment exists (voucher, rental agreement, confirmation), this is the primary source document to save. Do NOT extract email body text as a substitute when an attachment exists.
      - **Confirmation priority**: If both an OTA confirmation (e.g., Expedia) and a direct provider confirmation (e.g., from Avis itself) exist for the same booking, prefer the direct provider confirmation.
      - **Extract key information**:
        - Booking reference/confirmation number (use the car rental company's reference, not OTA's)
@@ -652,8 +663,9 @@ Action list for user confirmation containing:
    - **Hotel Booking Confirmation**:
      - Subject typically: "Booking confirmation", "Reservation confirmed", "Your booking at [Hotel Name]"
      - Contains booking reference, hotel name, check-in/check-out dates
+     - **Attachments (CRITICAL)**: Use `list_attachments` MCP tool to check for PDF attachments. If PDF attachment exists (confirmation, voucher), save the attachment as the primary source. Do NOT create text summaries of email content when an attachment exists.
      - **CRITICAL: Verify check-in date falls within journey date range** (from earliest travel date to latest travel date + 7 days). If check-in is outside this range, this booking belongs to a different journey - skip it.
-     - **Action**: Verify if already saved in Accommodations folder. If not, flag for saving.
+     - **Action**: Verify if already saved in Accommodations folder. If not, flag for saving (specifying the attachment to save).
      - **Check for invoice**: Examine if the email contains an invoice attachment or invoice information
    
    - **Cancellation Confirmation**:
@@ -738,16 +750,35 @@ Action list for user confirmation containing:
 
    Create list with sufficient detail for execution without re-searching. For each action, provide:
 
-   **For Saving Files**:
-   - **Re-runnability check**: Before flagging a file for saving, check if the booking already exists in the target folder using multiple criteria
-     - **For flights/trains**: Search Fares folder for files containing the booking reference/PNR OR (date + airline/rail company match)
-     - **For car rentals**: Search Fares folder for files containing the booking reference OR (pickup date + company name match)
-     - **For accommodation bookings**: Search Accommodations folder for files containing the booking reference OR (check-in date + hotel name match)
-     - **For reimbursement files**: Search reimbursement folders for files matching (vendor + date) OR (vendor + amount)
+   **For Saving Booking Records** (output must be PDF):
+   
+   **CRITICAL: Save primary source documents as PDF. NEVER create text summaries.**
+   - New files saved by this SOP MUST be PDF format (`.pdf`)
+   - NEVER create `.txt` files containing extracted or summarised booking information
+   - The saved file must be the original document from the email, not AI-generated content
+   
+   **Source hierarchy** (in order of preference):
+   1. **PDF attachment**: If the email has a PDF attachment (voucher, confirmation, e-ticket), save the attachment directly
+   2. **HTML email body converted to PDF**: If no PDF attachment exists but the email body contains the booking confirmation, export the email HTML using the `export_email_html` MCP tool, then convert to PDF
+   3. **NEVER**: Do not create text files summarising email content. If none of the above sources produce a usable PDF, flag the email for manual review rather than creating a summary
+   
+   **Note on existing image files**: Image files (`.jpg`, `.jpeg`, `.png`) may already exist in the folder—for example, a human may have saved a boarding pass photo. Do not replace these with inferior versions; simply rename them to follow naming conventions.
+   
+   **Re-runnability check**: Before flagging a file for saving, check if the booking already exists in the target folder using multiple criteria:
+
+   - **For flights/trains**: Search Fares folder for files containing the booking reference/PNR OR (date + airline/rail company match)
+   - **For car rentals**: Search Fares folder for files containing the booking reference OR (pickup date + company name match)
+   - **For accommodation bookings**: Search Accommodations folder for files containing the booking reference OR (check-in date + hotel name match)
+   - **For reimbursement files**: Search reimbursement folders for files matching (vendor + date) OR (vendor + amount)
+   
+   **Duplicate handling**:
    - **If file exists with correct name**: Skip saving (file was saved in a previous RUN, no action needed)
    - **If file exists with incorrect name**: Flag for renaming instead of saving, include current filename in action
    - **If file does not exist by any check**: Flag for saving
+   
+   **Action record format**:
    - UID: [number] and Folder: [folder name] (to locate the email)
+   - Source: [attachment name] OR [HTML export] (specify what is being saved)
    - Target: [folder path]/[filename following naming convention]
    - Special notes: [if needed, e.g., "Create reimbursement folder if needed", "Rename existing file [current name]"]
    
@@ -788,6 +819,8 @@ Action list for user confirmation containing:
 - Current date determined and journey status assessed
 - Search strategy applied: `from`/`subject` criteria used first, `text` search used as fallback only when needed
 - All emails categorized appropriately (transport, accommodation, and taxi/ride-hailing)
+- **All emails with attachments had attachments checked** using `list_attachments` MCP tool
+- **All file saves produce PDF output** (from PDF attachment or HTML-to-PDF conversion—no text summaries created)
 - Taxi/ride-hailing invoices identified within journey date range
 - Cancellation emails identified and corresponding files flagged for renaming
 - Files without email match noted for informational tracking
