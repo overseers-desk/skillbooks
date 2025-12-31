@@ -10,6 +10,7 @@ This is the master orchestrator for travel planning. It defines interfaces betwe
 |-----|---------|-------|--------|
 | `sop-booking-extraction.md` | Parse PDFs from Fares/Accommodations/Passes | Journey folder path | `build/extraction/*.yaml` |
 | `sop-cluster-research.md` | Research geographic cluster, attractions, suitability | City name, dates, traveller composition | `build/research/{city}-cluster.md` |
+| `sop-twinyo.md` | Date-specific constraint analysis and opportunity discovery | Journey folder + cluster research | `build/research/{journey}-twinyo.md` |
 | `sop-itinerary-management.md` | Assemble research into a destination-level itinerary | All build/ artifacts | `[Itinerary-File].md` |
 | `sop-mental-journey-simulation.md` | Test itinerary via narrative walkthrough | `[Itinerary-File].md`, segment | `build/test/{N}.{Segment}.md` |
 
@@ -31,9 +32,10 @@ All generated intermediate files reside in `build/` within the journey folder:
 │   │   ├── 2.Berlin.yaml
 │   │   └── ...
 │   │
-│   ├── research/                    # From sop-cluster-research
+│   ├── research/                    # From sop-cluster-research and sop-twinyo
 │   │   ├── edinburgh-cluster.md     # Cluster research for Edinburgh segment
 │   │   ├── berlin-cluster.md
+│   │   ├── 2025-12-23-edinburgh-twinyo.md  # TWINYO analysis for complex scenarios
 │   │   └── ...
 │   │
 │   └── test/                        # From sop-mental-journey-simulation
@@ -387,23 +389,31 @@ RUN: Travel Management
      → Input: extraction data, dates, traveller composition
      → Creates: build/research/{city}-cluster.md
 
-5. ASSEMBLE itinerary
+5. TWINYO ANALYSIS (when required)
+   - Check if complex scenario (peak travel, constraints, multiple options)
+   - If TWINYO required:
+     → Run: sop-twinyo.md
+     → Input: journey folder + build/research/{city}-cluster.md
+     → Creates: build/research/{journey-start-date}-{city}-twinyo.md
+   - Skip for simple journeys with abundant availability
+
+6. ASSEMBLE itinerary
    → Run: sop-itinerary-management.md
-   → Input: all build/extraction/*.yaml + build/research/*.md
+   → Input: all build/extraction/*.yaml + build/research/*.md (including TWINYO if exists)
    → Creates/Updates: `[YYYY-MM-DD] - [YYYY-MM-DD] [Cluster-Name]_Itinerary.md`
 
-6. TEST (can run in parallel per segment)
+7. TEST (can run in parallel per segment)
    → Run: sop-mental-journey-simulation.md for each segment
    → Input: Cluster itinerary file, segment
    → Creates: build/test/{N}.{Segment}.md
 
-7. IF test verdict is RED:
+8. IF test verdict is RED:
    - Review critical issues
    - Update the cluster itinerary to address issues
-   - Re-run test (step 6) for affected segments
+   - Re-run test (step 7) for affected segments
    - Repeat until GREEN or YELLOW with acceptable issues
 
-8. QUALITY CONTROL
+9. QUALITY CONTROL
    - Run 10-item QC checklist from sop-itinerary-management.md
    - Iterate until all items PASS
 ```
