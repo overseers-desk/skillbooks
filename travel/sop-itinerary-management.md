@@ -5,8 +5,8 @@
 **Relationship to other SOPs**:
 - Orchestrated by: `sop-travel-master.md`
 - Depends on: `build/extraction/*.yaml` (from `sop-booking-extraction.md`)
-- Depends on: `build/research/*-cluster.md` (from `sop-cluster-research.md`)
 - Depends on: `build/research/[destination]-cluster.md` (from `sop-cluster-research.md`)
+- Depends on: `build/research/[journey]-twinyo.md` (from `sop-twinyo-analysis.md`) - constraint analysis and recommended strategy
 - Validated by: `sop-mental-journey-simulation.md`
 
 ## Purpose Statement
@@ -117,6 +117,11 @@ This SOP assumes the folder management SOP has already been executed and the jou
 
 **RUN Workflow:**
 
+0. **Prerequisites Check**: Verify upstream outputs exist before starting
+   - `build/research/[destination]-cluster.md` (from `sop-cluster-research.md`)
+   - `build/research/[journey]-twinyo.md` (from `sop-twinyo-analysis.md`) - if complex scenario
+   - If prerequisites missing, run upstream SOPs first
+
 1. **Itinerary Creation and Planning** (Procedure 1): Create or update travel plans with activity recommendations, accommodation selection, and child-specific considerations when applicable
 2. **Mental Journey Simulation and Completeness Evaluation** (Procedure 2): Execute mental journey simulation to validate plans, identify gaps, verify transport connections, assess accommodation continuity, and categorise issues by severity
 3. **Itinerary Document Creation/Update and Paper Sync** (Procedure 3): Generate or update the cluster-level itinerary with integrated completeness checklist, transportation table, and day-by-day timeline, then sync to Dropbox Paper for mobile reading
@@ -130,6 +135,23 @@ This RUN is typically triggered after folder management RUN completes, or separa
 - Journey evaluation is needed before departure
 - Itinerary updates are required due to booking changes
 - User requests completeness assessment
+
+**TWINYO Integration (When Required):**
+
+For complex scenarios, the TWINYO analysis SOP ([`sop-twinyo-analysis.md`](sop-twinyo-analysis.md)) should be executed BEFORE this RUN:
+
+**Require TWINYO when:**
+- Peak travel periods (New Year's, Christmas, summer holidays)
+- Multiple destination evaluation (which city to visit when?)
+- Travel with constraints (children, elderly, accessibility needs)
+- Complex logistics requiring trade-off analysis (multiple transport modes, hotel changes)
+- Significant closures or special events during travel dates
+
+**TWINYO provides:** Date-specific operating schedules, availability verification, opportunity inventory (events, concerts, festivals), feasibility matrix, and recommended strategy
+
+**This SOP then:** Adopts TWINYO recommendation, integrates discovered opportunities into day-by-day plans, provides booking guidance, and produces the final traveller-facing itinerary
+
+**Skip TWINYO for:** Simple round-trip travel, flexible low-season dates, single destination with abundant availability
 
 **Re-runnability by Design:**
 
@@ -198,36 +220,40 @@ Create or update travel itineraries by researching destinations, identifying sui
 
 4. **Identify Existing Event Commitments (Planning Anchors)**
    
-   **Objective**: Events and conferences establish fixed points around which other activities must be planned
+   **Objective**: Events establish fixed points around which other activities must be planned
    
-   a. **Scan Passes Folder**
+   **Two sources of event anchors:**
+   
+   a. **Scan Passes Folder** (booked events)
       - List all files in Passes folder
       - Extract event names, dates, locations from filenames
-      - Note which travellers are included in each event (check ticket details)
+      - Note which travellers are included in each event
    
-   b. **Categorise Events as Planning Anchors**
+   b. **TWINYO Opportunity Inventory** (discovered events)
+      - If TWINYO analysis exists, read Stage 3 output
+      - Events, concerts, festivals discovered by TWINYO are planning anchors
+      - These are NOT optional - they define what makes THIS trip unique
+   
+   c. **Categorise All Events as Planning Anchors**
       
       **Conference/Business Events:**
       - Multi-day conferences establish location and accommodation requirements
-      - Hotels should be near conference venue if possible (prioritise this over other considerations)
-      - Daily activities should be planned near conference location (attendees may have limited time)
-      - Check conference schedule: full-day events leave minimal time for other activities
-      - Note: Conference attendees vs non-attendees may have different activity plans
+      - Hotels should be near conference venue (prioritise this over other considerations)
+      - Daily activities planned near conference location
       
-      **Timed Events/Attractions:**
-      - Museum bookings, show tickets, restaurant reservations establish time anchors
+      **Timed Events/Attractions (booked or discovered):**
+      - Museum bookings, show tickets, restaurant reservations, concerts, street festivals
       - These fix the traveller's location at specific date/time
       - Plan other activities around these fixed points
-      - Consider travel time to reach timed events
       
       **Multi-Day Events:**
       - Events spanning multiple days establish multi-day location requirements
-      - Accommodation should remain consistent near event venue (avoid hotel changes mid-event)
+      - Accommodation should remain consistent near event venue
    
-   c. **Use Events to Establish Geographic Clusters**
+   d. **Use Events to Establish Geographic Clusters**
       - Events define "must be here" locations
       - Build activity clusters around event locations
-      - If multiple events in different areas, create separate clusters for each
+      - TWINYO-discovered opportunities (Silvesterpfad, concerts) anchor days just like booked events
 
 5. **Default to Adult-Only Planning**
    - If no children detected, proceed with standard planning (skip child-specific phases)
@@ -289,6 +315,8 @@ Create or update travel itineraries by researching destinations, identifying sui
 ### Phase 3: Arrival and Departure Timing Analysis
 
 **Objective**: Determine first-day and last-day activity feasibility based on flight/transport arrival and departure times
+
+**TWINYO Relationship**: If TWINYO analysis exists, it has already performed route feasibility assessment (Stage 5-6). This phase focuses on arrival/departure logistics within the strategy TWINYO recommended. Do not re-evaluate alternative routes - adopt TWINYO's recommended strategy.
 
 **IMPORTANT**: Use `pdftotext` to extract booking details from PDF files in the Fares folder. Flight times, train times, and other transport details are reliably available in the booking confirmations. Do not guess or leave times as "TBC" when PDFs are available.
 
@@ -355,19 +383,33 @@ This will extract text including flight numbers, departure times, arrival times,
 
 ### Phase 4: Apply Cluster Research and Select Activities
 
-**Objective**: Use the cluster research to select which destinations and attractions to include in the itinerary
+**Objective**: Use cluster research and TWINYO analysis to select which destinations and attractions to include in the itinerary
 
-**Input**: Read `build/research/[destination]-cluster.md` (produced by `sop-cluster-research.md`)
+**Input**: 
+- `build/research/[destination]-cluster.md` (from `sop-cluster-research.md`) - attractions inventory, operating patterns
+- `build/research/[journey]-twinyo.md` (from `sop-twinyo-analysis.md`) - date-specific availability, discovered opportunities, recommended strategy
 
-The cluster research document provides:
+**TWINYO Integration (Critical)**:
+
+When TWINYO analysis exists, this phase MUST consume:
+
+1. **Stage 2 output - Date-mapped operating schedules**: Use instead of applying operating patterns yourself. TWINYO has already mapped "closed Mondays" to "Dec 29 = CLOSED".
+
+2. **Stage 3 output - Opportunity inventory**: Events, concerts, performances discovered by TWINYO become **planning anchors**. These are NOT optional suggestions - they represent unique opportunities that define THIS trip. Build the day-by-day plan around these anchors.
+
+3. **Stage 4 output - Availability verification**: Accommodation options verified by TWINYO. Do not search for alternatives outside what TWINYO verified as available.
+
+4. **Stage 8 output - Recommended strategy**: ADOPT this recommendation. The itinerary SOP builds the execution plan, not a different strategy.
+
+**Cluster research provides:**
 - Geographic cluster map (what destinations are accessible)
-- Seasonal events at each destination
+- Event patterns (what typically happens in each season)
 - Attractions inventory with suitability ratings for travel group
-- Operating schedules and closure patterns
+- Operating hour patterns (closed Mondays, winter hours)
 - Transport mode recommendation
 - Rebase opportunities and day trip options
 
-**This phase does NOT re-research attractions** - that research is in the cluster document. This phase evaluates and selects what to include based on journey constraints.
+**This phase does NOT re-research attractions or verify availability** - cluster research provides the inventory, TWINYO verifies what's actually available on travel dates. This phase selects and schedules.
 
 1. **Review Cluster Research**
    - Read `build/research/[destination]-cluster.md` for the destination being planned
@@ -542,7 +584,9 @@ The cluster research document provides:
 
 **Objective**: Evaluate existing accommodation bookings or present accommodation strategies based on activity clusters, event anchors, and airport positioning research
 
-Review the cluster research (`build/research/[destination]-cluster.md`) and Phase 4 selections. If the itinerary includes rebase opportunities or day trips, present accommodation options that support visiting them. For each accommodation strategy, specify hotel location, parking considerations, and how it serves activities across the cluster. If cluster members weren't selected, present single primary strategy with brief note that alternatives were considered.
+**TWINYO Constraint**: If TWINYO analysis exists, accommodation options are constrained to what TWINYO Stage 4 (Availability Verification) confirmed as available. Do not search for alternatives outside TWINYO-verified options - TWINYO already performed availability searches for this journey's specific dates and traveller composition.
+
+Review the cluster research (`build/research/[destination]-cluster.md`) and Phase 4 selections. If TWINYO exists, read Stage 4 for verified accommodation options with availability status. For each accommodation strategy, specify hotel location, parking considerations, and how it serves activities across the cluster.
 
 **For Journeys WITHOUT Children:**
 
@@ -1342,6 +1386,11 @@ Review the generated itinerary against each item below. For each item, verify PA
 - If FAIL: Add reasoning that demonstrates mental journey evaluation (cost per family, hotel location, luggage handling)
 
 #### 4. Events and Festivals
+
+☐ **TWINYO opportunity inventory is integrated into itinerary (if TWINYO exists)**
+- PASS: Events from TWINYO Stage 3 (Opportunity Discovery) appear in day-by-day timeline as planning anchors
+- FAIL: TWINYO found events (Silvesterpfad, concerts, markets) but itinerary doesn't reference them
+- If FAIL: Add TWINYO-discovered events to relevant days as planning anchors
 
 ☐ **Seasonal events/festivals are documented, OR absence is explicitly stated**
 - PASS: Lists events found ("Christmas markets open Dec 1-24 at...") OR states "No major events or festivals scheduled during [dates]"
