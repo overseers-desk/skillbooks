@@ -442,112 +442,30 @@ Action list for user confirmation containing:
    - **Create an accommodation reference list** before proceeding to email search
    - Note the start and end dates of the journey (earliest check-in to latest check-out or travel end)
 
-4. **Search Emails for Travel Bookings and Taxi Invoices**
+4. **Search Emails for All Bookings**
 
-   **Hybrid Search Strategy (City Names + Keywords)**:
+   Execute a single comprehensive IMAP search combining city names with booking keywords. This catches all booking types in one query.
 
-   You cannot enumerate all airlines, hotels, or car rental companies. A targeted search for known providers will miss bookings from unknown providers (OTAs like Expedia, Trip.com). A keyword-only search misses non-standard bookings (local attractions, parking, experiences with subjects like "Standard Ticket" or "Order #12345").
+   **Build the search query:**
 
-   The solution: **combine destination city names with booking keywords** in a single comprehensive search. City names catch location-specific bookings regardless of how they're worded; keywords catch standard confirmations regardless of destination.
+   1. Extract city names from folder (e.g., `2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Liansu, Weiwu, A-Z` → Edinburgh, Berlin, Munich, Vienna, Warsaw)
+   2. Use IMAP Polish notation to OR all terms together
 
-   **Step 4a: Extract City Names from Journey Folder**
-
-   Parse the journey folder name to extract destination cities. The folder name format is:
-   ```
-   YYYY-MM-DD [Destination(s)] - [Travellers]
-   ```
-
-   Example: `2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Liansu, Weiwu, A-Z`
-   - Extract: Edinburgh, Berlin, Munich, Vienna, Warsaw
-
-   These city names form the location component of your search.
-
-   **Step 4b: Construct IMAP OR Search**
-
-   IMAP uses Polish (prefix) notation for OR queries. The pattern is:
-   ```
-   OR (term1) OR (term2) OR (term3) (term4)
-   ```
-
-   This means: term1 OR term2 OR term3 OR term4
-
-   Combine city names with booking keywords into a single search using `criteria="raw"`:
-
-   **City names** (from folder): Each destination needs `FROM "CityName"` AND `SUBJECT "CityName"` because vendors may include the city in their sender name (e.g., "Berlin TV Tower <bookings@tv-turm.de>") or in the subject line.
-
-   **Booking keywords** (in SUBJECT): itinerary, booking, confirmation, e-ticket, reservation, receipt, ticket, order
-
-   **Full query pattern**:
-   ```
-   OR FROM "City1" OR FROM "City2" OR SUBJECT "City1" OR SUBJECT "City2" OR SUBJECT "booking" OR SUBJECT "confirmation" OR SUBJECT "itinerary" OR SUBJECT "e-ticket" OR SUBJECT "reservation" OR SUBJECT "receipt" OR SUBJECT "ticket" SUBJECT "order"
-   ```
-
-   **Important**: Do NOT use `TEXT` - it doesn't work with `criteria="raw"`. Use only `FROM` and `SUBJECT`.
-
-   **Step 4c: Apply Date Range Filter**
-
-   **Date range for all searches**: Only examine emails within: **earliest travel date minus 120 days** to **latest travel date plus 7 days**. Without this filter, city name searches like `TEXT "Berlin"` would return years of unrelated emails.
-
-   **Step 4d: Execute Single Comprehensive Search**
-
-   Use `criteria="raw"` with Polish notation OR to combine all terms in ONE search:
-
+   **Search pattern:**
    ```
    search_emails(
-     query='OR FROM "Berlin" OR FROM "Edinburgh" OR SUBJECT "Berlin" OR SUBJECT "Edinburgh" OR SUBJECT "booking" OR SUBJECT "confirmation" OR SUBJECT "itinerary" OR SUBJECT "e-ticket" OR SUBJECT "reservation" OR SUBJECT "receipt" OR SUBJECT "ticket" SUBJECT "order"',
+     query='OR FROM "City1" OR FROM "City2" ... OR SUBJECT "City1" OR SUBJECT "City2" ... OR SUBJECT "booking" OR SUBJECT "confirmation" OR SUBJECT "reservation" OR SUBJECT "itinerary" OR SUBJECT "e-ticket" OR SUBJECT "receipt" OR SUBJECT "ticket" OR SUBJECT "car rental" OR SUBJECT "car hire" SUBJECT "order"',
      criteria="raw",
      folder="INBOX",
      limit=100
    )
    ```
 
-   **Important**: Use `FROM` and `SUBJECT` only - do NOT use `TEXT` as it doesn't work with `criteria="raw"`.
+   This single search catches flights, hotels, car rentals, trains, passes, parking, taxi receipts, and local attractions. Use `FROM` and `SUBJECT` only—`TEXT` doesn't work with `criteria="raw"`.
 
-   This single search catches:
-   - Standard airline/train/hotel confirmations (via SUBJECT keywords)
-   - OTA bookings like Expedia, Trip.com (via SUBJECT keywords)
-   - Local attraction tickets with city in sender name (via FROM) - e.g., "Berlin TV Tower" with subject "Standard Ticket"
-   - Museum passes, parking, local experiences
+   **Date filtering**: After search, filter results to journey date range (earliest travel date minus 120 days to latest travel date plus 7 days).
 
-   **Step 4e: Categorise Results**
-
-   Review results and categorise into:
-   - **Airlines/Transport**: Flight confirmations, train tickets, bus bookings
-   - **Car Rentals**: Rental agreements, vehicle reservations
-   - **Accommodations**: Hotel confirmations, lodging reservations
-   - **Passes/Activities**: Attraction tickets, museum entries, parking, experiences
-   - **Taxi/Ride-hailing**: Uber/Bolt receipts within journey dates
-
-   **Step 4f: Targeted Follow-up (Optional)**
-
-   For providers already known from Fares/Accommodations folder filenames, optionally search by sender to find related emails (promotional, updates, invoices):
-   - `from: "ryanair"`, `from: "ihg"`, etc.
-   - This catches promotional emails for deletion (past journeys) and invoices for reimbursement
-
-   **Fallback**: If a file exists in the folder but no email was found, search `text` for the PNR/booking reference directly.
-
-   **Notes on OTA Bookings**:
-   - If both an OTA confirmation (e.g., Expedia) and a direct provider confirmation exist for the same booking, prefer the direct provider confirmation.
-   - OTA emails often contain the city name but not provider-specific keywords, making city-based search essential.
-
-   **d. Taxi and Ride-Hailing Invoices** (Reimbursement Filing Only):
-   - **Purpose**: Find all taxi/ride-hailing trip receipts and invoices within the journey date range for reimbursement filing
-   - **Timing context**: Taxi trips are not typically pre-planned, so search must cover the entire journey date range (from earliest travel date to latest travel date)
-   - **Subject keywords specific to taxi/ride-hailing**: "receipt", "invoice", "trip", "ride"
-   - **Sender examples**: Ride-hailing app names or domains (e.g., "Uber", "uber.com", "Bolt")
-   - **Search each provider separately**: 
-     - Search "Uber" by sender (criteria: "from", query: "uber")
-     - Search "Bolt" by sender (criteria: "from", query: "bolt")
-   - **Date filtering**: Only examine emails where the trip date falls within the journey date range (from earliest travel date to latest travel date)
-  - **Special Case - Bolt invoice downloads**: 
-    Bolt invoices are typically provided as download links in the email body, not as attachments. For each Bolt email UID, use the MCP `extract_email_links` tool (parameters: folder and uids) to get all links from the emails in one batch, identify the Bolt invoice URL (look for URLs containing "bolt" and "invoice" or "receipt"), then download the invoice using wget or similar download tool to the reimbursement folder before extracting invoice details and renaming per Helper Procedure A.
-   - **Organisation name handling**:
-     - If taxi invoices do NOT include organisation/company names, save these invoices to the reimbursement folder still. This is because most countries allow small invoices to not mention client company name.
-     - **If there are multiple active reimbursement folders** (rare case where 2 companies are involved):
-       - Check which company paid for the hotel accommodation on the same date as the taxi trip
-       - The company paying the hotel that day is the company that should reimburse the taxi trip
-       - Save the taxi invoice to that company's reimbursement folder
-   - **Saving format**: Apply Helper Procedure A for file naming (see Helper Procedure A for detailed naming conventions)
+   **Bolt invoice handling**: Bolt invoices are download links, not attachments. Use `extract_email_links` MCP tool to get the invoice URL, then download.
 
 5. **Tabulate All Booking Emails Found**
 
@@ -558,18 +476,26 @@ Action list for user confirmation containing:
    | UID | Sender | Subject | Booking Ref (if visible) | Category | Target Folder |
    |-----|--------|---------|--------------------------|----------|---------------|
 
-   Categories: Fare, Accommodation, Pass/Activity, Taxi/Invoice, Promotional
+   Categories: Fare, Car Rental, Accommodation, Pass/Activity, Taxi/Invoice, Promotional
+   
+   Target folders follow the structure in `sop-travel-folder-access.md`. Taxi invoices go to reimbursement folders, not the journey root.
 
    **Include all emails that could be bookings**, even if subjects are generic ("Standard Ticket", "Order Receipt", "Acknowledgement Email"). These are often real bookings for attractions, parking, or experiences caught by the city-name search.
+
+   **Identifying Car Rental Emails**: Any email with "car rental", "car hire", "rental car", or "vehicle reservation" in the subject is a car rental booking. These emails may come from OTAs/brokers rather than the actual rental company—the sender name doesn't matter for identification. When saving, extract the actual rental company name from the voucher/confirmation (e.g., "Enterprise", "Sixt") for the filename, not the broker name.
 
    This table becomes the authoritative list for Check A in Step 6. Every booking email in this table must be checked against files in Dropbox.
 
    **For each email, determine:**
 
    **a. Is it related to this journey?**
-   - **Manual matching**: Read the email content (subject and body) and check if it contains any PNR codes from the reference list (Step 2) or accommodation booking references from the accommodation reference list (Step 3)
-   - **For car rental emails**: Check if the rental dates (pickup or return date) fall within the journey date range (from earliest travel date minus 7 days to latest travel date plus 7 days). Car rentals are often booked slightly before or after main journey dates.
-   - **For taxi/ride-hailing emails**: Check if the trip date falls within the journey date range (from earliest travel date to latest travel date)
+   
+   Check dates first, then verify against existing files:
+   
+   - **For transport bookings** (flights, trains, buses): Check if the travel date falls within the journey date range. Optionally verify against PNR codes from the Fares folder reference list.
+   - **For accommodation bookings**: Check if the check-in date falls within the journey date range (earliest travel date to latest travel date + 7 days). The hotel may be in a nearby city not listed in the folder name.
+   - **For car rental emails**: Check if the pickup date falls within the journey date range (earliest travel date minus 7 days to latest travel date plus 7 days).
+   - **For taxi/ride-hailing emails**: Check if the trip date falls within the journey date range.
 
    **b. What type of email is it?**
    
@@ -700,9 +626,9 @@ Action list for user confirmation containing:
 
    This step performs THREE checks. Check A discovers NEW bookings not yet saved. Check B tracks file origins. Check C finds misplaced files.
 
-   **Check A: Emails → Files (find missing files)**
+   **Check A: Emails → Files (find missing files)** — this is the primary check
 
-   Use the booking email table from Step 5. For each row in that table (excluding Promotional), check if a corresponding file exists in Dropbox:
+   Use the booking email table from Step 5. For EVERY row in that table (excluding Promotional), check if a corresponding file exists in Dropbox. Do not skip rows because similar bookings (same company or same category) already exist—each booking email represents a potentially distinct booking that needs its own file.
 
    1. Take each booking email from the Step 5 table
    2. For that email:
@@ -718,12 +644,14 @@ Action list for user confirmation containing:
 
    Then Check A must search Passes/ for a file containing "PK9MYND4" or "TV Tower" + the event date. If not found, flag UID 10298 for saving.
 
-   **Check B: Files → Emails (informational only)**
+   **Check B: Files → Emails (informational only — does NOT find missing bookings)**
 
    For each file in Fares, Accommodations, and Passes folders (excluding cancelled bookings):
    - Check if a corresponding email was found during the searches above
    - If no email was found, note in the report: "No email match for [filename]"
    - This is expected when files were saved from WhatsApp, photographed from physical documents, forwarded from another traveler's mailbox, or when the confirmation email was deleted or sent to a different account
+   
+   **Important**: Check B alone cannot verify completeness. A folder may have 3 car rental files (all matched to emails) while a 4th car rental email exists without a file. Only Check A detects missing files.
 
    **Check C: Root-level files (find misplaced files)**
 
@@ -760,7 +688,7 @@ Action list for user confirmation containing:
    **Source hierarchy** (in order of preference):
    1. **PDF attachment**: If the email has a PDF attachment (voucher, confirmation, e-ticket), save the attachment directly
    2. **HTML email body converted to PDF**: If no PDF attachment exists but the email body contains the booking confirmation, export the email HTML using the `export_email_html` MCP tool, then convert to PDF
-   3. **NEVER**: Do not create text files summarising email content. If none of the above sources produce a usable PDF, flag the email for manual review rather than creating a summary
+   3. **NEVER**: Do not create text files summarising email content. If none of the above sources produce a usable PDF, do step 2 (export email then convert to pdf)
    
    **Note on existing image files**: Image files (`.jpg`, `.jpeg`, `.png`) may already exist in the folder—for example, a human may have saved a boarding pass photo. Do not replace these with inferior versions; simply rename them to follow naming conventions.
    
@@ -779,12 +707,12 @@ Action list for user confirmation containing:
    **Action record format**:
    - UID: [number] and Folder: [folder name] (to locate the email)
    - Source: [attachment name] OR [HTML export] (specify what is being saved)
-   - Target: [folder path]/[filename following naming convention]
+   - Target: `/0. Travel Admin/[journey-folder]/[subfolder]/[filename]`
    - Special notes: [if needed, e.g., "Create reimbursement folder if needed", "Rename existing file [current name]"]
    
    **For Renaming Files**:
-   - Current: [folder path]/[current filename]
-   - New: [folder path]/[new filename]
+   - Current: `/0. Travel Admin/[journey-folder]/[subfolder]/[current filename]`
+   - New: `/0. Travel Admin/[journey-folder]/[subfolder]/[new filename]`
    
    **For Deleting Emails**:
    - UID: [number] and Folder: [folder name]
