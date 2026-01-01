@@ -16,7 +16,7 @@ This SOP applies to file organization and email synchronization within the "Trav
 - Organizing reimbursement documents with proper categorization
 - Managing promotional email cleanup for completed journeys
 
-**Important Boundaries:**
+**Boundaries:**
 
 - This SOP is **NOT** for journey completeness evaluation. It does not assess travel gaps, evaluate transport connections, or verify accommodation continuity.
 - This SOP is **NOT** for itinerary generation. It does not create travel timelines or generate itinerary documents.
@@ -389,7 +389,7 @@ Fully organized journey folder with all files compliant to naming conventions
 
 Verify that all booking confirmation emails (transport and accommodation) have been saved to the journey folder, identify and save airline and hotel invoices to appropriate reimbursement folders, and identify promotional/informational emails that can be deleted for journeys that have already occurred.
 
-**CRITICAL RULE: Output must be PDF. Save primary source documents only.** When saving booking confirmations from email:
+Output must be PDF—save primary source documents only. When saving booking confirmations from email:
 
 - **Always check for PDF attachments first** using `list_attachments` MCP tool
 - **Save the PDF attachment** (voucher, confirmation, e-ticket) when present—this is the authoritative document
@@ -409,7 +409,7 @@ Journey folder (access via `sop-travel-folder-access.md`)
 
 ### Output
 
-Action list for user confirmation containing:
+Actions to execute (proceed without confirmation):
 
 - Emails to delete (with UID, folder, subject for execution without re-searching)
 - Missing transport booking confirmations to save
@@ -448,7 +448,7 @@ Action list for user confirmation containing:
 
    **Build the search query:**
 
-   1. Extract city names from folder (e.g., `2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Liansu, Weiwu, A-Z` → Edinburgh, Berlin, Munich, Vienna, Warsaw)
+   1. Extract city names from folder (e.g., `2025-06-15 Porto, Lisbon - Weiwu, Liansu` → Porto, Lisbon)
    2. Use IMAP Polish notation to OR all terms together
 
    **Search pattern:**
@@ -503,7 +503,7 @@ Action list for user confirmation containing:
    - **Booking Confirmation** (Travel Itinerary, Reservation Confirmation, Invoice with PNR):
      - Subject typically: "Travel Itinerary", "Booking Confirmation", "Invoice [number]"
      - Contains full booking details
-     - **Attachments (CRITICAL)**: Use `list_attachments` MCP tool to check for PDF attachments. If PDF attachment exists (e-ticket, itinerary, confirmation), save the attachment as the primary source. Do NOT create text summaries of email content when an attachment exists.
+     - **Attachments**: Check for PDF attachments using `list_attachments` MCP tool. If a PDF attachment exists (e-ticket, itinerary, confirmation), save the attachment as the primary source.
      - **Action**: Verify if already saved in Fares folder. If not, flag for saving (specifying the attachment to save).
    
    - **Cancellation Confirmation**:
@@ -534,7 +534,7 @@ Action list for user confirmation containing:
    - **Rental Agreement / Booking Confirmation**:
      - Subject typically: "Rental Agreement", "Booking confirmed", "Your reservation", "Confirmation #", "car hire confirmation"
      - Contains booking reference, pickup/return dates and locations, vehicle details
-     - **Attachments (CRITICAL)**: Use `list_attachments` MCP tool to check for PDF attachments. If PDF attachment exists (voucher, rental agreement, confirmation), this is the primary source document to save. Do NOT extract email body text as a substitute when an attachment exists.
+     - **Attachments**: Check for PDF attachments using `list_attachments` MCP tool. If a PDF attachment exists (voucher, rental agreement, confirmation), this is the primary source document to save.
      - **Confirmation priority**: If both an OTA confirmation (e.g., Expedia) and a direct provider confirmation (e.g., from Avis itself) exist for the same booking, prefer the direct provider confirmation.
      - **Extract key information**:
        - Booking reference/confirmation number (use the car rental company's reference, not OTA's)
@@ -583,14 +583,14 @@ Action list for user confirmation containing:
    **Examples**:
    - `2025-12-25 [Sixt] Edinburgh Airport 9729023889 Liansu.pdf` (same-location rental)
    - `2025-12-26 [Enterprise] Berlin-Munich 26LGYL Weiwu.pdf` (multi-city rental)
-   - `2025-12-29 [Hertz] Vienna Airport-Warsaw Airport 30586488 Liansu,Weiwu.pdf` (airport-to-airport)
+   - `2025-07-15 [Hertz] Frankfurt Airport-Paris CDG 30586488 Liansu,Weiwu.pdf` (airport-to-airport)
    
    **For Accommodation Bookings:**
    - **Hotel Booking Confirmation**:
      - Subject typically: "Booking confirmation", "Reservation confirmed", "Your booking at [Hotel Name]"
      - Contains booking reference, hotel name, check-in/check-out dates
-     - **Attachments (CRITICAL)**: Use `list_attachments` MCP tool to check for PDF attachments. If PDF attachment exists (confirmation, voucher), save the attachment as the primary source. Do NOT create text summaries of email content when an attachment exists.
-     - **CRITICAL: Verify check-in date falls within journey date range** (from earliest travel date to latest travel date + 7 days). If check-in is outside this range, this booking belongs to a different journey - skip it.
+     - **Attachments**: Check for PDF attachments using `list_attachments` MCP tool. If a PDF attachment exists (confirmation, voucher), save the attachment as the primary source.
+     - Verify check-in date falls within journey date range (earliest travel date to latest travel date + 7 days). If check-in is outside this range, this booking belongs to a different journey—skip it.
      - **Action**: Verify if already saved in Accommodations folder. If not, flag for saving (specifying the attachment to save).
      - **Check for invoice**: Examine if the email contains an invoice attachment or invoice information
    
@@ -651,7 +651,7 @@ Action list for user confirmation containing:
    - If no email was found, note in the report: "No email match for [filename]"
    - This is expected when files were saved from WhatsApp, photographed from physical documents, forwarded from another traveler's mailbox, or when the confirmation email was deleted or sent to a different account
    
-   **Important**: Check B alone cannot verify completeness. A folder may have 3 car rental files (all matched to emails) while a 4th car rental email exists without a file. Only Check A detects missing files.
+   Check B alone cannot verify completeness. A folder may have 3 car rental files (all matched to emails) while a 4th car rental email exists without a file. Only Check A detects missing files.
 
    **Check C: Root-level files (find misplaced files)**
 
@@ -680,10 +680,7 @@ Action list for user confirmation containing:
 
    **For Saving Booking Records** (output must be PDF):
    
-   **CRITICAL: Save primary source documents as PDF. NEVER create text summaries.**
-   - New files saved by this SOP MUST be PDF format (`.pdf`)
-   - NEVER create `.txt` files containing extracted or summarised booking information
-   - The saved file must be the original document from the email, not AI-generated content
+   New files saved by this SOP must be PDF format (`.pdf`). The saved file must be the original document from the email, not AI-generated content.
    
    **Source hierarchy** (in order of preference):
    1. **PDF attachment**: If the email has a PDF attachment (voucher, confirmation, e-ticket), save the attachment directly
@@ -733,9 +730,11 @@ Action list for user confirmation containing:
    - Taxi invoices: `Travel - [Provider] [Date] €[Amount].(VAT=€X.XX or Receipt).pdf`
 
 9. **Execute Actions**
-   - Group actions by type: File Saves | File Renames | Email Deletions | Files Without Email Match | Missing Invoices
-   - Include journey status (past/current/future) in summary
-   - Execute file saves and renames
+   
+   Execute all identified actions immediately—do not wait for confirmation:
+   - Save missing booking PDFs to appropriate folders
+   - Rename incorrectly named files
+   - Delete promotional emails (past journeys only)
    - Report what was done
 
 ### Checkpoint: Email Verification Complete
@@ -757,7 +756,7 @@ Action list for user confirmation containing:
 - Taxi/ride-hailing invoices assigned to appropriate reimbursement folders (considering multiple folder scenarios)
 - Reimbursement folders identified or flagged for creation
 - Action list generated with sufficient detail for execution
-- User confirmation requested before any actions
+- Actions executed automatically
 
 ## Helper Procedures
 
@@ -811,12 +810,11 @@ Properly named file following convention:
    
    **Key distinction**: If tax amount is separately itemised, it's an invoice. If tax is only mentioned as "included" without breakdown, it's a receipt.
    
-   **CRITICAL: NEVER rename a receipt to appear as an invoice**
-   - If a document is a receipt (no tax breakdown), it MUST be named with `(Receipt)` suffix
-   - If a document is an invoice (has tax breakdown), it MUST be named with `(VAT=€X.XX)` or `(GST=€X.XX)` suffix
-   - NEVER change `(Receipt)` to `(VAT=€0.00)` or vice versa
-   - The document type determines the naming, not your preference or interpretation
-   - Even if you think a receipt "should" show tax, if the document doesn't itemise it, it remains a receipt
+   Receipts must remain receipts; invoices must remain invoices. The document type determines the naming:
+   
+   - If a document is a receipt (no tax breakdown), name it with `(Receipt)` suffix
+   - If a document is an invoice (has tax breakdown), name it with `(VAT=€X.XX)` or `(GST=€X.XX)` suffix
+   - Do not change `(Receipt)` to `(VAT=€0.00)` or vice versa
 
 4. **Manual Tax Amount Extraction**
 
@@ -887,7 +885,7 @@ Properly named file following convention:
    
    Based on vendor type and document content, categorise as:
    - **Travel**: Flights, train tickets, bus tickets, car rentals, taxis (unless taxi is private hire)
-   - **Accommodation**: Hotels, lodging, rental properties. **IMPORTANT**: Hotel folios that include accommodation charges plus incidental meals/minibar/etc should be categorised as Accommodation, not Meal. The primary service (accommodation) determines the category.
+   - **Accommodation**: Hotels, lodging, rental properties. Hotel folios that include accommodation charges plus incidental meals/minibar/etc should be categorised as Accommodation, not Meal—the primary service determines the category.
    - **Conference**: Business conferences, trade shows, professional event fees
    - **Meal**: Restaurants, food expenses, catering (standalone meal charges, not part of hotel folio)
    - **Other**: Parking, tolls, visas, incidentals, taxi (private hire)
