@@ -26,7 +26,7 @@ Two access methods are available: MCP (preferred) and filesystem mount (fallback
 
 The Rube MCP server provides Dropbox integration. Use this method for all travel folder access.
 
-**IMPORTANT**: Do NOT use `list_mcp_resources` or other generic MCP tools. You MUST use the specific Rube tools documented below.
+Do not use `list_mcp_resources` or other generic MCP tools—use the specific Rube tools documented below.
 
 **First-Time Setup (per session):**
 

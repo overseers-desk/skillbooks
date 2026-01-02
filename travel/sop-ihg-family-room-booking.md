@@ -93,7 +93,7 @@ When travelling across multiple cities:
 
 **When**: Total booking savings >€250, IHG Platinum status with voucher available, stay ≤5 nights.
 
-**Critical limitation**: The voucher upgrades to **entry-level suite or premium room only**—not any suite. Before planning to use the voucher for family accommodation, verify that the hotel's entry-level suite accommodates 3+ guests. If the entry-level suite is limited to 2 people, the voucher will not solve the family room problem for that hotel.
+The voucher upgrades to **entry-level suite or premium room only**—not any suite. Before planning to use the voucher for family accommodation, verify that the hotel's entry-level suite accommodates 3+ guests. If the entry-level suite is limited to 2 people, the voucher will not solve the family room problem for that hotel.
 
 **Constraints**:
 

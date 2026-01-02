@@ -213,7 +213,7 @@ Based on cluster geography, conclude:
 
 ### Phase 4: Research Seasonal Events
 
-**Critical**: Limited-time seasonal events should be prioritised as they define unique opportunities that won't exist on other trips.
+Limited-time seasonal events should be prioritised as they define unique opportunities that won't exist on other trips.
 
 **Scope Boundary**: This phase documents event PATTERNS and typical schedules (e.g., "Christmas markets typically Nov 25 - Dec 23", "Vienna Silvesterpfad Dec 31 annually"). Date-specific verification (is this event actually happening on Dec 31 2025? At what times?) is performed by `sop-twinyo-analysis.md`.
 
