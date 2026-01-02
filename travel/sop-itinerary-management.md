@@ -34,7 +34,7 @@ The goal: The itinerary you create should be usable by the traveller during thei
 
 The procedure synthesizes multiple information sources—booking confirmations, accommodation details, event tickets, and transport documents—into a coherent assessment of travel readiness, producing actionable itinerary documents that integrate gap analysis, booking recommendations, and day-by-day timelines into one cohesive resource for travellers.
 
-**Critical Understanding: Purpose of Detailed Research**
+**Purpose of Detailed Research**
 
 The detailed research requirements in this SOP (checking sunset times, museum opening hours, seasonality, transport options, etc.) serve a specific purpose: **to compensate for the inherent randomness and hectic nature of travel, not to create perfect, rigid schedules**. Travel is unpredictable—delays occur, energy levels vary, weather changes, children's needs fluctuate. The comprehensive research provides a foundation of knowledge that enables flexible adaptation during the journey, not a minute-by-minute prescription that must be followed precisely.
 
@@ -62,7 +62,7 @@ This SOP applies to the creation, planning, evaluation, and documentation of tra
 - Providing booking recommendations for identified gaps
 - Creating day-by-day timelines with timestamp estimation
 
-**Important Boundaries:**
+**Boundaries:**
 
 - This SOP is **NOT** for file organisation or naming. For folder structure verification, file naming conventions, and email synchronisation, see the Travel Admin Folder Management SOP (`travel-admin-folder-management.md`).
 - This SOP **CAN** recommend bookings. When gaps are identified, the procedure suggests what needs to be booked and provides guidance on options, formatted as: "To book this, you need to do X. There are certain options: A, B, C..." with considerations for each option.
@@ -92,7 +92,7 @@ A **RUN** is a complete itinerary management pass through a journey folder, exec
 
 When following this SOP, execute all steps and produce the output. Do not stop to ask clarifying questions about structure (master vs separate files, which format, etc.). The SOP specifies the output: a separate itinerary file per destination, named `[Start Date] - [End Date] [Destination]_Itinerary.md`. Always create this file, regardless of whether a master itinerary exists.
 
-**CRITICAL PREREQUISITE - Folder Location:**
+**Prerequisite - Folder Location:**
 
 This SOP assumes the folder management SOP has already been executed and the journey folder exists with organized booking documents.
 
@@ -199,9 +199,20 @@ Create or update travel itineraries by researching destinations, identifying sui
 
 **Objective**: Determine traveller composition, identify existing commitments, and establish planning anchors
 
+0. **Enumerate ALL Bookings from ALL Folders (FIRST)**
+
+   Before any other analysis, list every booking file from every folder. This is the foundation for all planning.
+
+   a. **List Fares folder** → enumerate ALL transport bookings (flights, trains, ferries, car rentals)
+   b. **List Accommodations folder** → enumerate ALL hotel bookings
+   c. **List Passes folder** → enumerate ALL event/attraction bookings
+
+   For each file, extract from the filename: date, provider/venue name, booking reference, passengers (if present).
+
+   **Output**: A complete booking inventory showing every confirmed booking across the entire journey. This inventory is the source of truth - if a booking file exists, it is confirmed and must appear in the itinerary.
+
 1. **Check Passenger Names in Fares Folder**
-   - List all files in Fares folder
-   - Extract passenger names from filenames (comma-separated list after booking reference)
+   - From the Fares inventory (step 0a above), extract passenger names from filenames
    - Check for known child names: "Alice" and "Zoe" (or variations: "A-Z", "Alice,Zoe")
    - If found, flag journey as **"with children"**
 
@@ -212,7 +223,7 @@ Create or update travel itineraries by researching destinations, identifying sui
    - If child indicators found, flag journey as **"with children"**
 
 3. **Identify Traveller Split Patterns**
-   - **Important**: Not all travellers travel together all the time
+   - Not all travellers travel together all the time
    - Check if different tickets have different passenger combinations
    - Note where travellers split or rejoin (e.g., one person departs earlier, others stay longer)
    - Identify which travellers are present for which segments of the journey
@@ -272,11 +283,11 @@ Create or update travel itineraries by researching destinations, identifying sui
 
 2. **Cross-Reference Suggestions with Actual Bookings**
    
-   **Critical for Re-runnability**: Suggested accommodations in previous itinerary may now be booked
+   Suggested accommodations in previous itinerary may now be booked. This must be verified to ensure re-runnability.
    
-   a. **Read Accommodations Folder**
-      - List all accommodation booking files
-      - Extract hotel names, dates, locations from filenames
+   a. **Use Accommodations Inventory from Phase 1 Step 0**
+      - The complete accommodation booking list was already enumerated in Phase 1 step 0b
+      - Use that inventory - do not re-read the folder
    
    b. **Compare Suggestions to Actual Bookings**
       - For each suggested accommodation in previous itinerary:
@@ -318,7 +329,7 @@ Create or update travel itineraries by researching destinations, identifying sui
 
 **TWINYO Relationship**: If TWINYO analysis exists, it has already performed route feasibility assessment (Stage 5-6). This phase focuses on arrival/departure logistics within the strategy TWINYO recommended. Do not re-evaluate alternative routes - adopt TWINYO's recommended strategy.
 
-**IMPORTANT**: Use `pdftotext` to extract booking details from PDF files in the Fares folder. Flight times, train times, and other transport details are reliably available in the booking confirmations. Do not guess or leave times as "TBC" when PDFs are available.
+Use `pdftotext` to extract booking details from PDF files in the Fares folder. Flight times, train times, and other transport details are reliably available in the booking confirmations. Do not guess or leave times as "TBC" when PDFs are available.
 
 **Purpose of Timing Analysis:**
 
@@ -326,7 +337,7 @@ This phase establishes feasibility windows and general timing constraints, NOT p
 
 **Example usage**:
 ```bash
-pdftotext "/path/to/Fares/2025-12-23 [Ryanair] Seville-Edinburgh FR1073 JQ3BFI.pdf" -
+pdftotext "/path/to/Fares/2025-06-15 [Ryanair] Seville-Porto FR2323 DTF7HZ.pdf" -
 ```
 
 This will extract text including flight numbers, departure times, arrival times, and other booking details needed for accurate itinerary planning.
@@ -357,7 +368,7 @@ This will extract text including flight numbers, departure times, arrival times,
    - Activities could include: sightseeing, breakfast/lunch, light exploration
    - Return to hotel around 15:00 to complete check-in and access room
    - Optional second outing after check-in if energy permits
-   - **Critical**: Keep morning activities near hotel (luggage is there, need to return by 15:00)
+   - Keep morning activities near hotel (luggage is there, need to return by 15:00)
 
 2. **Analyse Last Day Departure**
 
@@ -423,7 +434,7 @@ When TWINYO analysis exists, this phase MUST consume:
    
    - **If hotels are already changing**: The logistics barrier is low - rebase to a different city costs only train fare
    - **If schedule is flexible**: Overnight excursions to nearby cities become practical
-   - **If cluster member offers unique value**: Budapest's thermal baths, Bratislava's different country stamp
+   - **If cluster member offers unique value**: Porto's wine cellars, Salamanca's historic university district
    
    Decision: Include rebase opportunity in itinerary? If yes, note which night(s).
 
@@ -621,7 +632,7 @@ Review the cluster research (`build/research/[destination]-cluster.md`) and Phas
    
    **Primary Objective**: Select hotels that are reasonably close or reasonably accessible to activity clusters
    
-   **Critical Constraint**: IHG hotels are LIMITED in many cities
+   **Constraint**: IHG hotels are LIMITED in many cities
    
    **Anchor Considerations:**
    - **If conference exists**: Conference location overrides other considerations (adult attendee needs daily access)
@@ -738,7 +749,7 @@ When constraints exist (e.g., limited Christmas Day dining), research WHAT is ac
       - Evening settling time (with children: significant time needed)
       - **Note seasonal festivals and events scheduled for this day**
       - **Note separate plans for split travellers** (e.g., "Parent at conference, other parent with children visiting aquarium")
-      - **IMPORTANT**: Present these as flexible time estimates and general patterns, NOT rigid minute-by-minute schedules. Use ranges and approximate times (e.g., "morning", "early afternoon", "around 15:00") rather than precise timestamps.
+      - Present these as flexible time estimates and general patterns, not rigid minute-by-minute schedules. Use ranges and approximate times (e.g., "morning", "early afternoon", "around 15:00") rather than precise timestamps.
    
    d. **Provide Booking Guidance**
       - List activities requiring advance booking
@@ -842,7 +853,7 @@ When constraints exist (e.g., limited Christmas Day dining), research WHAT is ac
 
 All research phases completed: traveller composition identified, event anchors categorised, seasonal context established, activities clustered geographically with operating schedules verified, accommodation strategy developed (IHG prioritised for children, conference proximity where applicable), day-by-day recommendations prepared, update mode respected.
 
-**Critical quality requirements verified:**
+**Quality requirements verified:**
 - Seasonal festivals researched with **specific dates** (not "likely open", but "open Dec 1-24, CLOSES Dec 30")
 - Weekly closure patterns documented with **day-of-week mapped to travel dates** (not "Monday closures", but "Dec 29 is Monday - Museum X CLOSED")
 - Operating hours researched with **date-specific schedules** (not "special Christmas hours", but "Dec 24: 10:00-14:00, Dec 25: CLOSED, Dec 26: 10:00-18:00")
@@ -983,7 +994,7 @@ This section appears at the beginning of the document and provides a concise ass
 
 2. **Booked but Not Synced** (Folder Sync Issue - Action Required):
    - Bookings found in email but PDF not in Accommodations folder
-   - Example: "☐ Sync to folder: Holiday Inn Munich - Leuchtenbergring #84893158 (Dec 29-30) - email confirmation found, run folder management SOP to download PDF"
+   - Example: "☐ Sync to folder: Holiday Inn Express Lisbon Alfragide #83910822 (Nov 17-18) - email confirmation found, run folder management SOP to download PDF"
    - These are NOT missing bookings - they exist but need folder sync
    - Once synced, remove from checklist and integrate into timeline
 
@@ -1060,7 +1071,7 @@ This section provides a flexible daily guide organized around key events and fea
 
 **Purpose**: Serve as a flexible reference that helps travellers make decisions during the journey by providing context, options, and feasibility windows rather than a rigid timeline to follow.
 
-**Critical Output Style Requirement:**
+**Output Style Requirement:**
 
 **ABSOLUTELY DO NOT create schedules like this (BAD EXAMPLE):**
 ```
@@ -1112,7 +1123,7 @@ Early dinner and bedtime routine (children need good rest after travel day)
 - Emphasize FLEXIBILITY and ADAPTABILITY
 - Acknowledge that plans WILL change based on energy, weather, children's moods
 
-**IMPORTANT EXCEPTIONS - When to Use Exact Times:**
+**Exceptions - When to Use Exact Times:**
 - ✓ Booked transport: Flights, trains, buses (show exact departure/arrival times)
 - ✓ Timed events: Ballet, concerts, museum bookings with specific entry times
 - ✓ Critical deadlines: "Must leave hotel by 05:15 to catch 07:15 flight"
@@ -1335,11 +1346,11 @@ This integration ensures the day-by-day view and the completeness assessment are
 
 Existing itinerary reviewed, to-do items updated (☑ for booked, ☐ for pending), accommodation reflects actual bookings, day-by-day timeline uses actual hotel locations, completeness checklist integrated (concise, under half page), transportation table complete with all intercity segments, gaps referenced inline, document saved, Paper version synced.
 
-**Critical output quality verified:**
+**Output quality verified:**
 - Day-by-day section uses **actual calendar dates** (not "Day 1, Day 2", but "December 26, 2025 (Friday), December 27, 2025 (Saturday)")
 - Seasonal events documented with **specific closure dates** (not "some markets close Dec 24-25", but "Alexanderplatz market: Nov 24-Dec 30, CLOSES Dec 30 - last day for Dec 29 travelers")
 - Activity operating hours include **date-specific schedules** mapped to actual travel dates
-- Accommodation to-do items include **specific hotel names with reasoning** (not "book accommodation", but "Book InterContinental Berlin - near Alexanderplatz, IHG Platinum upgrade potential")
+- Accommodation to-do items include **specific hotel names with reasoning** (not "book accommodation", but "Book InterContinental Lisbon - near Rossio, IHG Platinum upgrade potential")
 - Transport costs documented as **family totals with children's fare policies** (not "€9.50/adult", but "€12.30/adult, children 6-14 free with adult pass, family of 4 = €24.60/day")
 
 ## Procedure 4: Quality Control Checklist and Iteration
@@ -1473,7 +1484,7 @@ When children (Alice and Zoe, or others detected via ticket indicators) are part
 - In a typical 12-hour day (e.g., 7am-7pm), actual exploring time is approximately 4 hours
 - Represents roughly one-third of the day
 - Remaining time consumed by: morning routine, meals, transport, rest periods, evening routine
-- **Important**: Car travel time (e.g., 45-minute drive to another city) should be categorized as transport overhead similar to flights or trains, NOT as a reduction from the 4-hour activity budget. The 4-hour estimate already accounts for children's reduced energy compared to full daylight hours.
+- Car travel time (e.g., 45-minute drive to another city) should be categorized as transport overhead similar to flights or trains, not as a reduction from the 4-hour activity budget. The 4-hour estimate already accounts for children's reduced energy compared to full daylight hours.
 
 **Activity Duration Limits:**
 - On-foot activities: Maximum 1.5 hours before children need to return to hotel or at least in car for rest
@@ -1521,7 +1532,7 @@ When children (Alice and Zoe, or others detected via ticket indicators) are part
 
 #### Transport Time Impact
 
-**Critical Understanding:**
+**Key Principle:**
 - Every minute spent on transport is time NOT spent exploring or resting
 - Children's limited daily energy makes transport time particularly costly
 - Example: 30-minute journey to attraction + 30-minute return = 1 hour lost = 25% of effective activity time

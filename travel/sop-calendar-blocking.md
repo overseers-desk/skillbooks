@@ -8,7 +8,7 @@ This Standard Operating Procedure establishes the methodology for calculating ca
 
 This SOP applies to calendar blocking calculations for air travel documented in journey folders. See `sop-travel-folder-access.md` for how to access travel folders.
 
-**Important Boundaries:**
+**Boundaries:**
 
 - For journey planning and itinerary creation, see Travel Itinerary Management SOP
 - For file organization and email synchronization, see Travel Admin Folder Management SOP
@@ -199,7 +199,7 @@ Structured calendar block specifications:
 
 ### Privacy Requirements
 
-**CRITICAL**: Calendar event summaries must NOT contain location information for privacy reasons.
+Calendar event summaries must not contain location information for privacy reasons.
 
 - **Allowed titles**: "Blocked Time"
 - **NOT allowed**: "Flight to Paris", "NYC Trip", "London → Dubai", city names, airport codes

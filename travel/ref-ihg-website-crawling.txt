@@ -13,7 +13,7 @@ The IHG website has two main navigation paths relevant to hotel research:
 
 Both paths have direct URL access patterns, which should always be the first approach. Manual form interaction is a fallback when URLs redirect unexpectedly.
 
-**Critical behaviour:** The IHG website frequently redirects invalid or unfamiliar URLs to a generic explore page (`https://www.ihg.com/explore`). If the browser lands on this page unexpectedly, the URL was incorrect or the website rejected the request.
+The IHG website frequently redirects invalid or unfamiliar URLs to a generic explore page (`https://www.ihg.com/explore`). If the browser lands on this page unexpectedly, the URL was incorrect or the website rejected the request.
 
 ---
 
@@ -121,7 +121,7 @@ To view room types and sizes for a specific hotel, use the hotel detail rooms pa
 https://www.ihg.com/[brand]/hotels/us/en/[city]/[hotel-code]/hoteldetail/rooms
 ```
 
-**Important:** Use `/us/en/` in the path for hotel detail pages. The `/gb/en/` variant used for search may redirect to the explore page for hotel detail URLs.
+Use `/us/en/` in the path for hotel detail pages. The `/gb/en/` variant used for search may redirect to the explore page for hotel detail URLs.
 
 ### Brand Codes
 

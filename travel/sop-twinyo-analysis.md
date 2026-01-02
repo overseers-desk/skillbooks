@@ -66,7 +66,7 @@ A car is NOT a faster train. A car enables multi-stop journeys, access to places
 - Can outbound and return routes differ (loop)?
 - Are there UNESCO sites, national parks, or child-friendly stops along the route?
 
-Example: Vienna→Bratislava by car should consider: Eisenstadt (Esterházy Palace), Rust (stork town), Podersdorf (PODOplay playground), Lake Neusiedl region, Carnuntum Roman ruins — not just drive direct.
+Example: Lisbon→Porto by car should consider: Óbidos (walled medieval town), Nazaré (dramatic waves, fishing village), Alcobaça (UNESCO monastery), Batalha (UNESCO monastery), Coimbra (university town) — not just drive direct.
 
 **Output requirement**: Either list specific opportunities found OR document "no events found after searching [sources]".
 

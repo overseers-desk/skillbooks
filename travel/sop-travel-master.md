@@ -320,7 +320,7 @@ Each segment gets its own simulation file, matching the research convention. See
 
 ### Incremental Execution Strategy
 
-**Critical**: Sub-SOPs should only re-run when source data has changed.
+Sub-SOPs should only re-run when source data has changed.
 
 #### Extraction Phase Caching
 

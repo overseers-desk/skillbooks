@@ -144,9 +144,9 @@ The date used should always be the departure date of the first outbound flight.
 - `(Cancelled) 2025-11-20 [Ryanair] Porto-Seville FR5544 ABC123.pdf`
 
 **Car rentals** (no flight/train number, use location names):
-- `2025-12-25 [Sixt] Edinburgh Airport 9729023889 Liansu.pdf` (same-location rental)
+- `2025-06-15 [Sixt] Lisbon Airport 9729023889 Liansu.pdf` (same-location rental)
 - `2025-11-22 [Enterprise] Lisbon-Porto ABC123 Weiwu.pdf` (multi-city rental)
-- `2025-12-26 [Hertz] Berlin Hauptbahnhof-München Airport 30586488 Liansu,Weiwu.pdf` (different pickup/return locations)
+- `2025-07-15 [Hertz] Frankfurt Airport-Paris CDG 30586488 Liansu,Weiwu.pdf` (different pickup/return locations)
 
 ### Accommodation Files (in Accommodations folder)
 
@@ -322,7 +322,7 @@ Fully organized journey folder with all files compliant to naming conventions
    - For multi-segment routes: `Origin-Stop-Destination` (use hyphens between segments)
    - For return flights: `Origin-Destination Return`
    - For car rentals with same pickup/return location: Use location name once (no hyphen)
-   - Use full city names or recognizable location names (e.g., "Edinburgh Airport", "Berlin Hauptbahnhof")
+   - Use full city names or recognizable location names (e.g., "Lisbon Airport", "Porto Campanhã")
    - For flights/trains, airport/station codes are acceptable if they're standard convention (e.g., "Singapore-Brisbane" not "SIN-BNE" unless widely recognized)
 
    **c. Frequent Flyer Points Assessment** (Optional)
@@ -551,9 +551,9 @@ Actions to execute (proceed without confirmation):
        - **If found with incorrect name**: Flag for renaming instead of saving, note what was found
        - **If not found by either check**: Flag for saving using car rental naming convention (see below)
      - **Example duplicate detection**:
-       - Email has: Sixt booking #9729023889, pickup 2025-12-25, Edinburgh Airport
-       - Fares folder has: `2025-12-25 Sixt Car Rental.pdf` (incomplete name)
-       - Result: Match found via date+company → Flag for renaming to `2025-12-25 [Sixt] Edinburgh Airport 9729023889 Liansu.pdf`
+       - Email has: Sixt booking #9729023889, pickup 2025-06-15, Lisbon Airport
+       - Fares folder has: `2025-06-15 Sixt Car Rental.pdf` (incomplete name)
+       - Result: Match found via date+company → Flag for renaming to `2025-06-15 [Sixt] Lisbon Airport 9729023889 Liansu.pdf`
    
    - **Prepayment Invoice**:
      - Subject typically: "Prepayment invoice", "Invoice for booking"
@@ -577,12 +577,12 @@ Actions to execute (proceed without confirmation):
      YYYY-MM-DD [Company] Location BookingRef Passengers.pdf
      ```
    - Use pickup date as the YYYY-MM-DD prefix
-   - Use recognizable location names (e.g., "Edinburgh Airport" not "EDI T1 Desk 5")
+   - Use recognizable location names (e.g., "Lisbon Airport" not "LIS T1 Desk 5")
    - Omit flight/train number component (car rentals don't have these)
    
    **Examples**:
-   - `2025-12-25 [Sixt] Edinburgh Airport 9729023889 Liansu.pdf` (same-location rental)
-   - `2025-12-26 [Enterprise] Berlin-Munich 26LGYL Weiwu.pdf` (multi-city rental)
+   - `2025-06-15 [Sixt] Lisbon Airport 9729023889 Liansu.pdf` (same-location rental)
+   - `2025-06-18 [Enterprise] Porto-Faro 26LGYL Weiwu.pdf` (multi-city rental)
    - `2025-07-15 [Hertz] Frankfurt Airport-Paris CDG 30586488 Liansu,Weiwu.pdf` (airport-to-airport)
    
    **For Accommodation Bookings:**
