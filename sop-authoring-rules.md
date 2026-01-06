@@ -39,7 +39,7 @@ When a user asks to update an SOP using this guide, apply it only to the parts t
 
 ## 6. Prevent Spotlight Effect
 - **Definition**: The tendency to over-correct or over-emphasize a rule because a specific problem was just discovered.
-- **Signs**: Adding massive blocks of text for a small fix, or using words like "Critically", "Importantly", "You MUST".
+- **Signs**: Adding massive blocks of text for a small fix, or using words like "**Critical**", "Importantly", "You MUST".
 - **Rule**: Fix the problem proportionally. Often, a subtle change (like renaming a title or adjusting a sentence) is enough. If not, sometimes re-ordering the sop so important / critical components appear earlier, so the AI reading it gets to know at the outset rather than mis-understanding an SOP only to be corrected in later text of somethign "critical" and "important".
 - **Guideline**: Improving the structure or context is better than shouting with "CRITICAL" tags.
 - **Existing patchwork**: Sections like "Important Notes" or "Critical Reminders" are often symptoms of past spotlight effect. When such a section contains bullets related to the problem being solved, absorb those specific bullets into the relevant procedure steps and delete them from the patchwork section. Do not overhaul the entire section unless the user explicitly wants an overhaul.
