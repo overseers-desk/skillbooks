@@ -387,21 +387,14 @@ Fully organized journey folder with all files compliant to naming conventions
 
 ### Purpose
 
-Verify that all booking confirmation emails (transport and accommodation) have been saved to the journey folder, identify and save airline and hotel invoices to appropriate reimbursement folders, and identify promotional/informational emails that can be deleted for journeys that have already occurred.
-
-Output must be PDF—save primary source documents only. When saving booking confirmations from email:
-
-- **Always check for PDF attachments first** using `list_attachments` MCP tool
-- **Save the PDF attachment** (voucher, confirmation, e-ticket) when present—this is the authoritative document
-- If no PDF attachment exists, export the email HTML to PDF—do not create text summaries
-- **NEVER create `.txt` files** containing extracted or summarised booking information
-- The goal is to preserve the original document exactly as issued by the booking provider
+Verify that all booking confirmation emails have been saved to the journey folder, identify and save invoices to reimbursement folders, and flag promotional emails for deletion (past journeys only). Output must be PDF—preserve original documents as issued by booking providers.
 
 ### Prerequisites
 
 - Access travel folders following `sop-travel-folder-access.md`
-- The `imap-mcp` MCP server must be pre-configured and working in Cursor to access the email inbox
-- **Check current date** at the start of execution (use system date/time information available in the environment)
+- The `imap-mcp` MCP server must be pre-configured for searching emails
+- IMAP credentials available in `imap-mcp/config.yaml` for workbench attachment downloads
+- Note the current date at execution start
 
 ### Input
 
@@ -731,11 +724,56 @@ Actions to execute (proceed without confirmation):
 
 9. **Execute Actions**
    
-   Execute all identified actions immediately—do not wait for confirmation:
-   - Save missing booking PDFs to appropriate folders
-   - Rename incorrectly named files
-   - Delete promotional emails (past journeys only)
-   - Report what was done
+   Execute all identified actions immediately—do not wait for confirmation.
+
+   **Saving Email Attachments to Dropbox:**
+   
+   Use `RUBE_REMOTE_WORKBENCH` to download attachments via IMAP and upload to Dropbox. The workbench has network access and can connect to IMAP directly. IMAP credentials are in the imap-mcp config file (`/home/weiwu/code/imap-mcp/config.yaml`).
+
+   ```python
+   import imaplib
+   import email
+
+   # Connect to IMAP
+   imap = imaplib.IMAP4_SSL(IMAP_SERVER, 993)
+   imap.login(EMAIL_USER, EMAIL_PASS)
+   imap.select('INBOX')
+
+   # Search for the email
+   status, messages = imap.search(None, 'FROM', '"sender@example.com"')
+   email_id = messages[0].split()[-1]
+   status, msg_data = imap.fetch(email_id, '(RFC822)')
+   msg = email.message_from_bytes(msg_data[0][1])
+
+   # Extract and upload PDF attachment
+   for part in msg.walk():
+       if part.get_content_type() == 'application/pdf':
+           content = part.get_payload(decode=True)
+           with open('/tmp/attachment.pdf', 'wb') as f:
+               f.write(content)
+           
+           # Stage and upload
+           result, error = upload_local_file('/tmp/attachment.pdf')
+           if not error:
+               run_composio_tool("DROPBOX_UPLOAD_FILE", {
+                   "path": "/0. Travel Admin/[journey]/[folder]/[filename].pdf",
+                   "content": {"name": "[filename].pdf", "mimetype": "application/pdf", "s3key": result["s3key"]}
+               })
+           break
+
+   imap.close()
+   imap.logout()
+   ```
+
+   **Renaming Files:**
+   
+   Use `DROPBOX_MOVE_FILE_OR_FOLDER` via `RUBE_MULTI_EXECUTE_TOOL` (see `sop-travel-folder-access.md`).
+
+   **Deleting Emails:**
+   
+   Use `delete_email` from imap-mcp for promotional emails (past journeys only).
+
+   **Report what was done** after all actions complete.
 
 ### Checkpoint: Email Verification Complete
 
