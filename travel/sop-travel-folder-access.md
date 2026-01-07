@@ -111,6 +111,51 @@ Arguments: {
 
 Use `DROPBOX_READ_FILE` via `RUBE_MULTI_EXECUTE_TOOL`. Note that Dropbox PDFs should be downloaded first, then read using the `read_file` tool on the local copy.
 
+**Uploading Files to Dropbox:**
+
+Uploading requires the Rube Remote Workbench because Dropbox uploads need file staging. The workbench's `upload_local_file()` helper stages files and returns an s3key for use with `DROPBOX_UPLOAD_FILE`.
+
+To upload a file that exists in the workbench sandbox:
+
+```python
+# In RUBE_REMOTE_WORKBENCH code
+result, error = upload_local_file("/tmp/document.pdf")
+if not error:
+    upload_result, upload_error = run_composio_tool(
+        "DROPBOX_UPLOAD_FILE",
+        {
+            "path": "/0. Travel Admin/[journey-folder]/[subfolder]/filename.pdf",
+            "content": {
+                "name": "filename.pdf",
+                "mimetype": "application/pdf",
+                "s3key": result["s3key"]
+            },
+            "mode": "add"
+        }
+    )
+```
+
+**Renaming/Moving Files:**
+
+```
+Tool: mcp_rube_RUBE_MULTI_EXECUTE_TOOL
+Arguments: {
+  "params": {
+    "session_id": "herd",
+    "memory": {},
+    "sync_response_to_workbench": false,
+    "thought": "Renaming file to correct naming convention",
+    "tools": [{
+      "tool_slug": "DROPBOX_MOVE_FILE_OR_FOLDER",
+      "arguments": {
+        "from_path": "/0. Travel Admin/[journey]/[folder]/old_name.pdf",
+        "to_path": "/0. Travel Admin/[journey]/[folder]/new_name.pdf"
+      }
+    }]
+  }
+}
+```
+
 **Advantages of MCP method:**
 
 - More stable than filesystem mount

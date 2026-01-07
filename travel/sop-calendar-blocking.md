@@ -1,12 +1,34 @@
-# Travel Calendar Blocking Standard Operating Procedure
+# Travel Calendar Standard Operating Procedure
 
 ## Purpose Statement
 
-This Standard Operating Procedure establishes the methodology for calculating calendar blocks for travel periods when the traveler is unavailable for meetings or work commitments. The SOP accounts for flight times, airport transfers, hotel check-in procedures, and layover availability rules to generate accurate time blocks that reflect real-world travel constraints.
+This Standard Operating Procedure establishes the methodology for creating calendar entries for travel events. It supports two modes: **detail mode** (default) shows flight numbers, times, and routes; **blocking mode** creates privacy-preserving "Blocked Time" entries.
+
+## Calendar Mode
+
+**Default: Detail mode**
+
+- **Detail mode**: Calendar entries include specific information (flight numbers, routes, event names). Use when the calendar is private or sharing specifics is acceptable.
+- **Blocking mode**: Calendar entries show only "Blocked Time" with no location or travel details. Use when privacy is required.
+
+If the user doesn't specify, use detail mode.
+
+## What Gets Calendar Entries
+
+Create calendar entries for:
+
+- Flights (each segment or journey block)
+- Train journeys
+- Car rental pickup and return appointments
+- Event tickets (museums, shows, concerts, attractions)
+
+Do NOT create calendar entries for:
+
+- Hotel bookings (arrival/departure handled by flight entries already)
 
 ## Scope
 
-This SOP applies to calendar blocking calculations for air travel documented in journey folders. See `sop-travel-folder-access.md` for how to access travel folders.
+This SOP applies to calendar entries for travel documented in journey folders. See `sop-travel-folder-access.md` for how to access travel folders.
 
 **Boundaries:**
 
@@ -189,27 +211,18 @@ Structured calendar block specifications:
 
 ---
 
-## Procedure: Update Google Calendar with Travel Blocks
+## Procedure: Update Google Calendar
 
 ### Prerequisites
 
 - Google Calendar MCP server configured and accessible
-- Calendar block specifications generated (from main procedure above)
+- Travel data extracted (flight segments, train bookings, car rentals, event tickets)
 - Access to target calendar (typically primary calendar)
-
-### Privacy Requirements
-
-Calendar event summaries must not contain location information for privacy reasons.
-
-- **Allowed titles**: "Blocked Time"
-- **NOT allowed**: "Flight to Paris", "NYC Trip", "London → Dubai", city names, airport codes
 
 ### Input
 
-Structured calendar block data with:
-- Start datetime (ISO 8601 with timezone)
-- End datetime (ISO 8601 with timezone)
-- Block number/identifier
+- Calendar mode (detail or blocking; default: detail)
+- Structured travel data with start/end datetimes (ISO 8601 with timezone)
 
 ### Steps
 
@@ -218,36 +231,38 @@ Structured calendar block data with:
 
 2. **List Existing Events**
    - Use `mcp__google-calendar-mcp__list-events` for the travel date range
-   - Search for existing travel blocks using `mcp__google-calendar-mcp__search-events` with query "Blocked Time"
+   - Check for existing entries that might duplicate
 
-3. **Identify Conflicts and Existing Blocks**
-   - Check if travel blocks already exist for these times
-   - Note any meetings that conflict with travel times
-   - **Conflicts do NOT prevent block creation** - create blocks regardless of conflicts, then report them
+3. **Create Calendar Entries**
 
-4. **Create or Update Calendar Blocks**
+   For each travel item, use `mcp__google-calendar-mcp__create-event` with:
+   - `calendarId`: "primary" (or specific calendar ID)
+   - `start`: ISO datetime string
+   - `end`: ISO datetime string
+   - `timeZone`: IANA timezone of departure/event location
+   - `transparency`: "opaque" (shows as busy)
+   - `summary`: see table below
+   - `location`: see table below (web search for terminal if not in booking)
 
-   For each block specification:
+   **Detail mode (default):**
 
-   **Always create new blocks** (even if conflicts exist):
-   - Use `mcp__google-calendar-mcp__create-event` with:
-     - `calendarId`: "primary" (or specific calendar ID)
-     - `summary`: "Blocked Time" (NO location details)
-     - `start`: ISO datetime string
-     - `end`: ISO datetime string
-     - `timeZone`: IANA timezone of departure location
-     - `transparency`: "opaque" (shows as busy)
-     - `visibility`: "private"
-     - `allowDuplicates`: true (to bypass duplicate detection if needed)
+   | Item Type | Summary | Location |
+   |-----------|---------|----------|
+   | Flight | `✈ [Flight#] [Origin]-[Dest]` | `[Airport Name] Terminal [X]` |
+   | Multi-segment flight | `✈ [Flight#] [Origin]-[Connection]-[Dest]` | `[First Airport Name] Terminal [X]` |
+   | Train | `🚄 [Operator] [Origin]-[Dest]` | `[Station Name]` |
+   | Car rental pickup | `🚗 Pickup: [Company] [Location]` | `[Airport/City] [Company] [Branch]` |
+   | Car rental return | `🚗 Return: [Company] [Location]` | `[Airport/City] [Company] [Branch]` |
+   | Event/ticket | `🎫 [Event name]` | `[Venue Name]` |
 
-   **If existing travel block needs time adjustment:**
-   - Use `mcp__google-calendar-mcp__update-event` with:
-     - `calendarId`: calendar ID
-     - `eventId`: existing event ID
-     - Updated `start` and/or `end` times
+   **Blocking mode:**
 
-5. **Report Conflicts**
-   - List any meetings that fall within travel block times
+   | Item Type | Summary | Location |
+   |-----------|---------|----------|
+   | All items | `Blocked Time` | (omit) |
+
+4. **Report Conflicts**
+   - List any existing meetings that fall within travel entry times
    - Recommend declining or rescheduling conflicting events
 
 ### Output Format
@@ -256,23 +271,17 @@ Structured calendar block data with:
 CALENDAR UPDATE SUMMARY
 =======================
 
-Created Blocks:
-- [Block N]: [Start datetime] → [End datetime] (Event ID: xxx)
-
-Updated Blocks:
-- [Block N]: [Previous times] → [New times] (Event ID: xxx)
+Created Entries:
+- [Summary]: [Start datetime] → [End datetime] (Event ID: xxx)
 
 Conflicts Detected:
 - [Meeting name] at [time] - recommend: [decline/reschedule]
-
-No Action Needed:
-- [Block N]: Already correctly blocked
 ```
 
 ### Checkpoint
 
-- All future travel blocks created/updated in calendar
-- Event titles contain NO location information
+- All future travel items have calendar entries
+- Entry titles follow mode-appropriate format
 - Events marked as "busy" (opaque)
 - Conflicting meetings identified and reported
 
