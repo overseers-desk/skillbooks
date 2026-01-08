@@ -18,6 +18,7 @@ If the user doesn't specify, use detail mode.
 Create calendar entries for:
 
 - Flights (each segment or journey block)
+- Online check-in appointments (per flight segment where available)
 - Train journeys
 - Car rental pickup and return appointments
 - Event tickets (museums, shows, concerts, attractions)
@@ -45,10 +46,12 @@ This SOP applies to calendar entries for travel documented in journey folders. S
 
 ## Layover Availability Rule
 
-**Threshold: 5 hours**
+**Applies to blocking mode only.** In detail mode, create separate entries for each flight segment regardless of layover duration.
 
-- **Layover ≥ 5 hours**: Traveler available for lounge work. Split calendar block into two segments with gap representing availability.
-- **Layover < 5 hours**: Traveler unavailable. Create continuous block covering entire journey.
+**Blocking mode threshold: 5 hours**
+
+- **Layover ≥ 5 hours**: Split into separate blocked time entries with gap for lounge availability
+- **Layover < 5 hours**: Single blocked time entry covering entire journey
 
 **Rationale**: Layovers under 5 hours involve too much movement (deplaning, finding lounge, security dynamics, boarding) to sustain productive work.
 
@@ -75,6 +78,7 @@ Structured calendar block specifications:
 2. **Extract Flight Details and Filter by Actual Flight Dates**
    - Use `pdftotext` on each PDF
    - Parse ALL flight segments in each booking:
+     - **PNR/booking reference** (for check-in events)
      - Flight numbers, airport codes, departure/arrival times **with full dates**, durations
      - **Return/round-trip bookings**: Extract BOTH outbound AND return segments - these are in the same PDF
    - **Filter by actual flight date**: For each flight segment, check if segment date < current date
@@ -102,35 +106,37 @@ Structured calendar block specifications:
    - Hotel check-in: 30min
    - Sum all components
 
-5. **Apply Layover Rule**
+5. **Determine Calendar Entry Structure**
 
-   For multi-segment journeys:
+   **Detail mode**: Create separate calendar entries for each flight segment, regardless of layover duration. Each segment includes terminal information and specific flight details.
 
-   **If layover ≥ 5h:**
-   - Segment 1: (Departure - pre-buffer) → (First arrival + immigration only)
-   - GAP: Lounge availability
-   - Segment 2: (Second departure - 1h) → (Final arrival + full post-buffer)
+   **Blocking mode**: Apply layover rule for multi-segment journeys:
+   - **If layover ≥ 5h**: Segment 1 → GAP → Segment 2
+   - **If layover < 5h**: Single continuous block
 
-   **If layover < 5h:**
-   - Single block: (Departure - pre-buffer) → (Final arrival + full post-buffer)
+6. **Calculate Entry Timestamps**
 
-6. **Calculate Block Timestamps**
+   **Detail mode** (per flight segment):
+   - First segment: Start = Departure - pre-departure buffer; End = Arrival + immigration only
+   - Middle segments: Start = Departure - 1h; End = Arrival + immigration only
+   - Final segment: Start = Departure - 1h; End = Arrival + full post-arrival buffer
+   
+   **Blocking mode**:
    - Start: `Departure time - Pre-departure buffer` (in departure timezone)
    - End: `Arrival time + Post-arrival buffer` (in arrival timezone)
-   - Express with IANA timezone identifiers
+   
+   Express with IANA timezone identifiers
 
-7. **Format Block Specifications**
+7. **Format Specifications for Planning Output**
+
+   Document the travel structure (this informs calendar entry creation):
 
    ```
-   **BLOCK [N]: [Origin] → [Destination]**
-   - **Start:** [Day], [Date] at [HH:MM] ([TZ], UTC±X)
-   - **End:** [Day], [Date] at [HH:MM] ([TZ], UTC±X)
-   - **Flight segments:**
-     - [Flight]: Depart [HH:MM], Arrive [HH:MM] ([Origin]-[Dest])
-     - Layover: [Duration] ([< or ≥] 5h)
-     - [Flight]: Depart [HH:MM], Arrive [HH:MM] ([Origin]-[Dest])
-   - **Total unavailable:** [Duration]
-   - **Notes:** [Layover handling, terminal changes]
+   **Flight [N]: [Flight#] [Origin] → [Destination]**
+   - **Departure:** [Day], [Date] at [HH:MM] ([TZ], UTC±X)
+   - **Arrival:** [Day], [Date] at [HH:MM] ([TZ], UTC±X)
+   - **Terminal:** [Terminal info]
+   - **Calendar entry:** [Start time] → [End time] (with buffers)
    ```
 
 8. **Generate Summary**
@@ -143,11 +149,11 @@ Structured calendar block specifications:
 
 - Future bookings identified (past travel excluded)
 - Flight details extracted with times, airports, durations
-- Airport distances determined for all locations
+- Airport distances determined for origin and final destination
 - Buffers calculated based on distance and flight type
-- Layover rule applied at 5h threshold
-- Blocks formatted with timezone-aware timestamps
-- Summary generated
+- Entry structure determined (separate segments for detail mode; layover rule for blocking mode)
+- Specifications formatted with timezone-aware timestamps
+- Planning output generated
 
 ## Helper Procedure A: Airport Distance Lookup
 
@@ -174,40 +180,11 @@ Structured calendar block specifications:
 - **Australia/Sydney** (SYD): UTC+10/+11
 - **Australia/Melbourne** (MEL): UTC+10/+11
 
-## Appendix B: Validation Examples
+## Appendix B: Mode Comparison
 
-### Example 1: Short Layover - Continuous Block
+**Detail mode**: Each flight segment becomes a separate calendar entry with flight number, route, and terminal information. Apply buffers per Step 6.
 
-**Journey**: Singapore → Tokyo → Los Angeles (hypothetical Dec 10-11)
-- SIN-NRT: 08:00 - 16:15 (7h 15m)
-- Layover: 3h 45m (< 5h)
-- NRT-LAX: 20:00 - 14:30 (9h 30m)
-
-**Result**: Single block
-- Start: Dec 10, 05:00 SGT (3h before international departure, NRT is ~60km from Tokyo)
-- End: Dec 11, 16:30 PST (45min immigration + 60min travel for LAX ~45km + 30min check-in)
-- Duration: Approximately 27h 30m unavailable
-
-### Example 2: Long Layover - Split Block
-
-**Journey**: London → Dubai → Sydney (hypothetical Mar 15-16)
-- LHR-DXB: 22:00 (Mar 15) - 08:30 (Mar 16) (6h 30m)
-- Layover: 6h 15m (≥ 5h)
-- DXB-SYD: 14:45 (Mar 16) - 10:30 (Mar 17) (13h 45m)
-
-**Result**: Two blocks with gap
-
-**Block 1**: London → Dubai
-- Start: Mar 15, 19:00 GMT (3h before departure)
-- End: Mar 16, 09:15 GST (45min immigration only, staying in airport)
-- Duration: Approximately 10h 15m unavailable
-
-**GAP**: Mar 16, 09:15 - 13:45 GST (~4h 30min lounge availability)
-
-**Block 2**: Dubai → Sydney
-- Start: Mar 16, 13:45 GST (1h before departure, already in airport)
-- End: Mar 17, 12:15 AEDT (45min immigration + 60min travel for SYD ~20km + 30min check-in)
-- Duration: Approximately 16h 30m unavailable
+**Blocking mode**: Multi-segment journeys are combined based on layover duration (5h threshold). All entries show "Blocked Time" without specifics.
 
 ---
 
@@ -237,19 +214,21 @@ Structured calendar block specifications:
 
    For each travel item, use `mcp__google-calendar-mcp__create-event` with:
    - `calendarId`: "primary" (or specific calendar ID)
-   - `start`: ISO datetime string
-   - `end`: ISO datetime string
+   - `start`: ISO datetime string (with buffers per Step 6)
+   - `end`: ISO datetime string (with buffers per Step 6)
    - `timeZone`: IANA timezone of departure/event location
-   - `transparency`: "opaque" (shows as busy)
+   - `transparency`: "opaque" for flights/trains/events; "transparent" for online check-in
    - `summary`: see table below
    - `location`: see table below (web search for terminal if not in booking)
 
    **Detail mode (default):**
 
+   Create separate calendar entries for each flight segment with terminal details.
+
    | Item Type | Summary | Location |
    |-----------|---------|----------|
-   | Flight | `✈ [Flight#] [Origin]-[Dest]` | `[Airport Name] Terminal [X]` |
-   | Multi-segment flight | `✈ [Flight#] [Origin]-[Connection]-[Dest]` | `[First Airport Name] Terminal [X]` |
+   | Flight segment | `✈ [Flight#] [Origin]-[Dest]` | `[Airport Name] Terminal [X]` |
+   | Online check-in | `📱 Check-in PNR: [PNR] ([Flight1]+[Flight2]+...)` | (omit) |
    | Train | `🚄 [Operator] [Origin]-[Dest]` | `[Station Name]` |
    | Car rental pickup | `🚗 Pickup: [Company] [Location]` | `[Airport/City] [Company] [Branch]` |
    | Car rental return | `🚗 Return: [Company] [Location]` | `[Airport/City] [Company] [Branch]` |
@@ -257,11 +236,32 @@ Structured calendar block specifications:
 
    **Blocking mode:**
 
+   Apply 5h layover rule. Create one or more "Blocked Time" entries depending on layover duration.
+
    | Item Type | Summary | Location |
    |-----------|---------|----------|
    | All items | `Blocked Time` | (omit) |
 
-4. **Report Conflicts**
+4. **Create Online Check-in Events**
+
+   In detail mode only, create one check-in event per booking (not per flight segment):
+
+   a. **Group flights by booking**: Flights on the same booking/PNR check in together. Extract the PNR and all flight numbers from each booking PDF.
+
+   b. **For each booking's first flight**:
+      - Research airline check-in policy: Web search `[airline] online check-in window hours`
+      - Check country availability: Web search `[airline] online check-in [origin country]` to verify availability (some China and India flights don't offer it)
+   
+   c. **Create event if available**: One event per booking spanning the check-in window:
+      - Summary: `📱 Check-in PNR: [PNR] ([Flight1]+[Flight2]+...)`
+      - Start: When check-in opens (per airline policy)
+      - End: When check-in closes (per airline policy, for the first flight)
+      - `transparency`: "transparent"
+      - Use first flight's departure timezone
+
+   Skip this step in blocking mode.
+
+5. **Report Conflicts**
    - List any existing meetings that fall within travel entry times
    - Recommend declining or rescheduling conflicting events
 
@@ -272,7 +272,7 @@ CALENDAR UPDATE SUMMARY
 =======================
 
 Created Entries:
-- [Summary]: [Start datetime] → [End datetime] (Event ID: xxx)
+- [Summary]: [Start datetime] → [End datetime] ([transparency]) (Event ID: xxx)
 
 Conflicts Detected:
 - [Meeting name] at [time] - recommend: [decline/reschedule]
@@ -281,8 +281,9 @@ Conflicts Detected:
 ### Checkpoint
 
 - All future travel items have calendar entries
+- Online check-in events created per booking where airline policy allows (detail mode only, marked as transparent)
 - Entry titles follow mode-appropriate format
-- Events marked as "busy" (opaque)
+- Travel events marked as "busy" (opaque); check-in events marked as "free" (transparent)
 - Conflicting meetings identified and reported
 
 ---
