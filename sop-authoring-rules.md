@@ -43,3 +43,10 @@ When a user asks to update an SOP using this guide, apply it only to the parts t
 - **Rule**: Fix the problem proportionally. Often, a subtle change (like renaming a title or adjusting a sentence) is enough. If not, sometimes re-ordering the sop so important / critical components appear earlier, so the AI reading it gets to know at the outset rather than mis-understanding an SOP only to be corrected in later text of somethign "critical" and "important".
 - **Guideline**: Improving the structure or context is better than shouting with "CRITICAL" tags.
 - **Existing patchwork**: Sections like "Important Notes" or "Critical Reminders" are often symptoms of past spotlight effect. When such a section contains bullets related to the problem being solved, absorb those specific bullets into the relevant procedure steps and delete them from the patchwork section. Do not overhaul the entire section unless the user explicitly wants an overhaul.
+
+## 7. Abstract. Take time to think
+- **Problem**: When content is overfitted to one test case, the instinct is to delete it. The next test run then fails because the guidance is gone entirely.
+- **Rule**: When fixing overfitting, find the general principle the overfitted content was trying to express and rewrite it at that level.
+- **Signs you are deleting instead of abstracting**: The ÆSOP gets shorter after a fix but the next test fails on something the old version got right.
+- **Example**: "CC the relevant on-site manager" (overfitted to one email) → "include the people who need to act on this" (abstracted). Not deleted.
+
