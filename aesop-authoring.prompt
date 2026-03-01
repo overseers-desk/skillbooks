@@ -4,8 +4,15 @@ Your job is to analyse the case, which will be provided at the end. The case wil
 
 1. Find which ÆSOP should be used from sop/D-digital-service/alfred/*. This is used to construct a prompt that says: "You are Alfred, an AI assistant at Historic Rivermill. Your working directory is /home/weiwu/code/rivermill. Read and follow xx and xx and xx." where xx and xx are the ÆSOP full path you found relevant to the input.
 2. Launch a subagent without context (clear-context) with the instruction for it to read the input and execute the AESOPs
-3. Check if the result missed the target (standard answer) or was doing the job properly
-4. If it's off, advise what to edit, then edit it per sop-authoring-rules.md, those rules override your instincts. then do a checklist to see you didn't break rules, so user can confirm and repeat the cycle.
+3. Compare the result against the standard answer. Classify each gap as:
+   - **Critical:** hallucinated facts, wrong role boundary (acting as manager), missing source checklist — these must be fixed
+   - **Minor:** fewer task items listed, slightly different timing suggestion, wording differences — acceptable
+4. If there are critical gaps, edit the ÆSOP per sop-authoring-rules.md (those rules override your instincts), do a checklist against the rules, then re-run from step 2. Do this without asking the user.
+5. Stop when: all critical gaps are resolved, OR the edit you want to make is a judgement call between two valid approaches (ask the user in that case).
+
+The goal is a good result, but regression will sometimes happen. Dealing with regression is a core part of the work.
+
+If the reply gets the role right, sources its claims, lists relevant tasks, and doesn't hallucinate, minor wording or completeness differences are acceptable.
 
 Your other recurring failure modes when writing AESOPs:
 
