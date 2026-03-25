@@ -159,7 +159,7 @@ The output of R is a revised connection strategy: updated angle priorities, adju
 
 This methodology does not replace any existing document. It provides the conceptual framework from which specific AESOPs are derived:
 
-- **AESOP-S** (`aesop-S-search.md`) — the operational procedure for search and discovery, generalising the iterative discovery model from rivermill's earlier æsop-D51 (now superseded) and the research phase from opensource.foundation's direct-outreach-pipeline.
+- **AESOP-S** (`aesop-S-search.md`) — the operational procedure for search and discovery. Generalises iterative discovery techniques first developed in project-specific SOPs and the research phase of a foundation's direct-outreach-pipeline into a campaign-agnostic procedure.
 - **AESOP-P** (`aesop-P-profile.md`) — the operational procedure for profile building, generalising the personalization SOP's research phase into a standalone profiling step that does not also draft messages.
 - **One AESOP for A** — the operational procedure for drafting connection messages, including the A1/A2 sparring loop, generalising the personalization SOP's drafting phase (Phases 2–3) with the addition of communication-log cross-referencing and band-ordered processing.
 - **R is not an AESOP** — it is a human review process. Its inputs and outputs are defined here; its execution is not automatable.
