@@ -1,4 +1,4 @@
-# AESOP-P: Profile Building
+# SPAR-P: Profile Building
 
 **Applies to:** AI agents (Sonnet tier) performing the P phase of the SPAR outreach methodology
 **Prerequisite reading:** The campaign's angle table (defines what relevance looks like for this campaign) and the SPAR methodology (`spar-methodology.md`, P section)

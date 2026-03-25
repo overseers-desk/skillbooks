@@ -159,9 +159,9 @@ The output of R is a revised connection strategy: updated angle priorities, adju
 
 This methodology does not replace any existing document. It provides the conceptual framework from which specific AESOPs are derived:
 
-- **AESOP-S** (`aesop-S-search.md`) — the operational procedure for search and discovery. Generalises iterative discovery techniques first developed in project-specific SOPs and the research phase of a foundation's direct-outreach-pipeline into a campaign-agnostic procedure.
-- **AESOP-P** (`aesop-P-profile.md`) — the operational procedure for profile building, generalising the personalization SOP's research phase into a standalone profiling step that does not also draft messages.
-- **One AESOP for A** — the operational procedure for drafting connection messages, including the A1/A2 sparring loop, generalising the personalization SOP's drafting phase (Phases 2–3) with the addition of communication-log cross-referencing and band-ordered processing.
-- **R is not an AESOP** — it is a human review process. Its inputs and outputs are defined here; its execution is not automatable.
+- **SPAR-S** (`spar-S-search.md`) — the operational procedure for search and discovery. Generalises iterative discovery techniques first developed in project-specific SOPs and the research phase of a foundation's direct-outreach-pipeline into a campaign-agnostic procedure.
+- **SPAR-P** (`spar-P-profile.md`) — the operational procedure for profile building, generalising the personalization SOP's research phase into a standalone profiling step that does not also draft messages.
+- **SPAR-A** (not yet written) — the operational procedure for drafting connection messages, including the A1/A2 sparring loop, generalising the personalization SOP's drafting phase (Phases 2–3) with the addition of communication-log cross-referencing and band-ordered processing.
+- **R has no procedure document** — it is a human review process. Its inputs and outputs are defined here; its execution is not automatable.
 
 Domain-specific content — target segments, angle tables, roster schemas, conversion benchmarks, funnel math — remains in the campaign plan for each project (e.g. `opensource.foundation/outreach/direct-outreach-pipeline.md` for the foundation, `rivermill/management-outreach/` for Rivermill). SPAR defines the method; the campaign plan defines the targets.
