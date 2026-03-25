@@ -4,36 +4,6 @@ This is a temporary working document. It collects procedural details that must b
 
 When an AESOP is written and the relevant items are incorporated, remove them from this list.
 
-## For the S (Search) AESOP
-
-### Named-contact resolution rule
-Every roster row must have a named person. A row with only an organisation name is not a contact. If a source lists only an organisation, the agent must exhaust these sources in order before omitting the entry: (1) the organisation's website (About/Team/Contact page), (2) LinkedIn people search, (3) Facebook page About section, (4) Instagram profile bio, (5) Google search for the organisation name plus role keywords ("owner", "director", "organiser", "coordinator"). If all five return no named individual, the organisation is omitted entirely.
-
-**Source:** rivermill æsop-D51 §3, confirmed effective in iteration results (37 organisations removed after exhausting all 5 sources, 1 resolved).
-
-### CRM gap analysis technique
-When a CRM or existing contact database is used as a seed source, S should compare the CRM entries against web research results to identify structurally invisible segments — contacts that exist in the CRM but cannot be found by any web search query. The gap analysis involves: (1) categorise the unmatched CRM entries by why they are invisible (different self-description vocabulary, weak web presence, B2B rather than B2C, etc.), (2) determine whether the invisible segment is reachable through alternative search vocabulary or whether it is structurally inaccessible to web discovery and the CRM is the only path.
-
-**Source:** rivermill iteration results, domestic-tour-operator channel. 35 of 54 CRM entries were invisible to web research. The gap fell into seven categories: coach/charter companies marketing as transport not tours (9), travel wholesalers (6), small operators with weak web presence (7), niche/specialist operators (4), food/drink experience operators (4), adventure activity operators (3), regional operators outside search radius (2).
-
-### Channel types and their effect on iteration count
-Channels fall into three types that affect how S is seeded and how quickly the roster reaches its target:
-
-- **Registry channels** (e.g. schools, aged care, childcare): a government registry provides a near-complete list. S typically reaches target in 1–2 iterations. SP₃ for a registry channel is mostly P work.
-- **Directory channels** (e.g. wedding planners, tour operators): an industry directory provides a partial list. S typically reaches target in 2–3 iterations.
-- **Informal channels** (e.g. community groups, mothers' groups, open source maintainers): no central listing exists. S may not reach target even after 3 iterations; the roster continues to grow during AR as conversations surface referrals.
-
-The AESOP should allow early termination of the S component within an SP iteration when the stopping criteria are met, while P continues on accumulated contacts.
-
-**Source:** rivermill æsop-D51 §4, confirmed in iteration results (community-group reached 27% of target after 3 iterations; wedding-planner reached 100%).
-
-### Subagent delegation rules
-Social media profile checks (LinkedIn, Facebook, Instagram) must run sequentially, one at a time. Concurrent requests trigger rate limiting and may result in account restrictions. When the S or P AESOP delegates work to subagents, it must spawn them sequentially for social media lookups. Non-social-media searches (web, registry, GitHub) can run concurrently.
-
-The AESOP should not prescribe how to access social media; each operator uses their own method and tooling. The AESOP prescribes the sequencing constraint only.
-
-**Source:** rivermill æsop-D51 §7.
-
 ## For the P (Profile) AESOP
 
 ### Profile richness classification
