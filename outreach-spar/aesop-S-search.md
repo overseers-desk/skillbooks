@@ -10,9 +10,9 @@ Use this procedure whenever a campaign needs a list of named people to contact. 
 
 Campaigns may define two types of targets, or only one:
 
-**Cue-required targets** are people who might send the campaign business, make introductions, or amplify its message if they knew about it — wedding planners, tour operators, open source maintainers, conference organisers. They need a cue (evidence they care about something the campaign offers) before contact; without one, the message is cold spam. The cue is collected during the P phase, not during S. S discovers the names; P determines whether a cue exists.
+**Cue-required targets** are people who might send the campaign business, make introductions, or amplify its message if they knew about it — referral partners, community organisers, industry connectors, conference speakers. They need a cue (evidence they care about something the campaign offers) before contact; without one, the message is cold spam. The cue is collected during the P phase, not during S. S discovers the names; P determines whether a cue exists.
 
-**Qualification-only targets** are organisations that are potential customers or members — aged care centres booking group outings, schools booking excursions, companies with regulatory compliance exposure. They qualify by role and geography (or role and sector) alone and enter the outreach sequence without requiring a cue or detailed profile. P may be minimal or skipped entirely for these targets — the campaign plan specifies whether full profiling is needed.
+**Qualification-only targets** are organisations that are potential customers or members — they qualify by role and geography (or role and sector) alone and enter the outreach sequence without requiring a cue or detailed profile. P may be minimal or skipped entirely for these targets — the campaign plan specifies whether full profiling is needed.
 
 The discovery steps are the same for both types. The differences — whether P is required, which roster columns apply, what the handoff looks like — are defined by the campaign plan, not by this AESOP.
 
@@ -56,8 +56,8 @@ These columns are standard across all campaigns. Every roster produced by this A
 6. **linkedin_url**
 7. **facebook_url**
 8. **discovery_iteration** — which SP pass added or last updated this row
-9. **discovered_via** — the source that led to this contact. For seeds: the source name (e.g. "QLD school directory", "Google Maps", "ATEC member directory"). For social-graph contacts: the `contact_name` of the person whose profile surfaced this entry, creating a referral chain traceable to the original seed.
-10. **discovery_source** — the specific mechanism (e.g. "LinkedIn comment", "Facebook group co-admin", "LinkedIn People Also Viewed", "WebSearch: birdwatching tour Gold Coast hinterland")
+9. **discovered_via** — the source that led to this contact. For seeds: the source name (e.g. "government school directory", "Google Maps", "industry association member list"). For social-graph contacts: the `contact_name` of the person whose profile surfaced this entry, creating a referral chain traceable to the original seed.
+10. **discovery_source** — the specific mechanism (e.g. "LinkedIn comment", "Facebook group co-admin", "LinkedIn People Also Viewed", "WebSearch: [expanded keyword query]")
 11. **verified** — yes/no — role confirmed via social profile or other independent source
 12. **date_found_invalid** — ISO date (YYYY-MM-DD) when the contact was confirmed unreachable or no longer in a relevant role. The date rather than a flag allows periodic re-checking — a person with no LinkedIn in March may have one by September.
 
@@ -154,11 +154,26 @@ The stale contact's date allows periodic re-checking — a person who left a rol
 
 ## 9. Cross-lead capture
 
-During S (and more commonly during P), names may surface that belong to a different channel or segment from the one being researched. While searching for hackathon organisers, S might find an aged care coordinator mentioned in a comment thread — a contact relevant to a different campaign channel entirely.
+During S (and more commonly during P), names may surface that belong to a different channel or segment from the one being researched — a contact relevant to a different campaign channel entirely.
 
 These cross-leads must not be discarded because they fall outside the current channel's scope. Record them in the roster with `discovered_via` pointing to the originating contact and tag them with the destination channel (using whatever channel-tagging mechanism the campaign plan defines). The S phase of the appropriate channel picks them up in its next iteration. In campaigns with multiple channels running concurrently, cross-lead capture is one of the primary mechanisms by which channels inform each other.
 
-## 10. Subagent delegation
+## 10. Quality checklist
+
+Run this checklist against all roster files after each iteration. Each check is a pass/fail assertion on the TSV data.
+
+1. **Column count:** every row has the expected number of tab-separated fields (core columns from §4.1 plus any campaign-specific columns from §4.2).
+2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)").
+3. **No duplicate contacts:** no two rows in the same roster file share the same (`contact_name`, `organisation`) pair (case-insensitive). Multiple contacts at the same organisation is permitted.
+4. **Reachable:** every row has at least one of email, `linkedin_url`, or `facebook_url` populated. Phone alone is insufficient for campaigns that begin with a written introduction.
+5. **Iteration recorded:** every row has a `discovery_iteration` value.
+6. **Channel matches file:** if the roster uses a `channel` column, the value on every row matches the roster filename.
+7. **Verified contacts still current:** no contact marked `verified=yes` has a notes field indicating they left the role or changed organisation.
+8. **Target progress:** for each roster, total rows divided by the campaign plan's target. Flag any channel below 50% that has not completed three iterations.
+
+Campaign-specific checks (e.g. "every outreach row has a non-empty cue field") are defined by the campaign plan, not by this AESOP.
+
+## 11. Subagent delegation
 
 When an AI agent delegates discovery work to a subagent, the prompt must tell the subagent to read this file rather than transcribing roster format definitions or iteration rules. The prompt should contain:
 
