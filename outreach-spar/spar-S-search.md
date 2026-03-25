@@ -1,4 +1,4 @@
-# AESOP-S: Search and Discovery
+# SPAR-S: Search and Discovery
 
 **Applies to:** AI agents (Sonnet tier) performing the S phase of the SPAR outreach methodology
 
@@ -182,7 +182,7 @@ When an AI agent delegates discovery work to a subagent, the prompt must tell th
 - The specific task (which channel, which iteration, what to search for)
 - The campaign plan path
 
-Do not replicate AESOP-S content in prompts — copies drift and cannot be corrected.
+Do not replicate SPAR-S content in prompts — copies drift and cannot be corrected.
 
 **Sequencing constraint:** Social media profile checks (LinkedIn, Facebook, Instagram) must run sequentially, one at a time. Concurrent requests trigger rate limiting and may result in account restrictions. When delegating to subagents, spawn them sequentially for social media lookups. Non-social-media searches (web, registry, GitHub, conference directories) can run concurrently.
 
