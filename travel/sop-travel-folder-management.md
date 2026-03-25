@@ -31,7 +31,7 @@ The execution can be performed on:
 
 ### Journey Folders
 
-A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are organized with a date-prefixed naming structure (e.g., "2025-11-15 Lisbon - Weiwu, Liansu, A-Z") and contain standardized subfolders: Fares, Accommodations, Passes, and optionally Reimbursement folders.
+A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are organised with a date-prefixed naming structure (e.g., "2025-11-15 Lisbon - Weiwu, Liansu, A-Z") and contain standardised subfolders: Fares, Accommodations, Passes, and optionally a Reimbursement folder (created when reimbursable invoices exist).
 
 Files may originate from various sources: email confirmations, WhatsApp messages, photographs of physical documents (boarding passes, receipts), or forwarded from other travelers' mailboxes. The source doesn't affect how files are processed—all files in the folder are organised and named according to the same conventions regardless of origin.
 
@@ -203,18 +203,70 @@ For boarding passes, use format: `Boarding Pass - YYYY-MM-DD [Airline] Origin-De
 
 ### Reimbursement Folders (in journey folder root)
 
-**Format for pending reimbursement folders:**
+**What Is Reimbursable**
 
-`Reimburse-Pending (Company Name)`
+Only travel-related business expenses qualify for reimbursement. Entertainment expenses are NOT reimbursable.
 
-**Format for completed reimbursement folders:**
+**Reimbursable (travel-related):**
 
-`Reimbursed YYYY-MM-DD €Amount (Company Name)`
+- Flights, trains, buses, car rentals, taxis
+- Accommodation (hotels, lodging)
+- Business conferences and trade shows (e.g., Web Summit, tech expos)
+- Professional seminars and workshops
+- Meals during business travel
+- Parking, tolls, visas
+
+**NOT Reimbursable (entertainment):**
+
+- Museum entries (Louvre, Prado, etc.)
+- Amusement parks and theme parks
+- Castle and palace visits (tourist attractions)
+- Concerts and entertainment shows
+- Zoo and aquarium admissions
+- Sightseeing tours (hop-on-hop-off buses, river cruises)
+- Any leisure activity without business purpose
+
+The distinction is business purpose: a ticket to a tech expo (Web Summit) is reimbursable because it serves a professional purpose; a ticket to a castle or museum is entertainment and stays in the Passes folder without reimbursement.
+
+**Folder Structure**
+
+By default, reimbursable invoices go into a single `Reimbursement` folder. If no reimbursement folder exists and reimbursable invoices are identified, create the folder.
+
+**Format for reimbursement folder:**
+
+`Reimbursement`
+
+**Format for completed reimbursement folder** (after reimbursement is processed):
+
+`Reimbursed YYYY-MM-DD €Amount`
+
+**Multiple Reimbursement Folders (Company-Specific)**
+
+Some journeys may have expenses billable to different entities (e.g., personal company vs employer, or two different client projects). In these cases, human-created company-specific folders may exist:
+
+- `Reimbursement (Company A)`
+- `Reimbursement (Company B)`
+
+**When multiple folders exist, the AI does NOT decide which folder an invoice belongs to.** This is a human decision based on business rules the AI cannot know (which client to bill, which entity is paying, internal accounting policies). The AI's role when multiple folders exist:
+
+1. **Do not automatically save invoices** to either folder
+2. **Flag the invoice for human decision**: Note the invoice details and that it requires manual placement
+3. **Still check completeness**: Verify the invoice exists in one of the folders (see Completeness Check below)
+
+**Completeness Check**
+
+Regardless of folder structure, the AI must verify that every reimbursable invoice is saved somewhere. An invoice should be in exactly one reimbursement folder—not missing from all folders.
+
+- **Single folder**: Save reimbursable invoices to `Reimbursement`
+- **Multiple folders**: Check if invoice exists in any reimbursement folder; if not, flag as "Missing - requires human placement"
+- **No folder (and reimbursable items exist)**: Create `Reimbursement` folder and save invoices there
 
 **Examples:**
 
-- `Reimburse-Pending (Palacio Bizcocheros SL)` - pending reimbursement folder
-- `Reimbursed 2025-11-18 €120.99 (Palacio Bizcocheros SL)` - completed reimbursement folder
+- `Reimbursement` - default reimbursement folder
+- `Reimbursed 2025-11-18 €120.99` - completed reimbursement
+- `Reimbursement (Palacio Bizcocheros SL)` - company-specific folder (human-created)
+- `Reimbursement (Employer Inc)` - another company-specific folder (human-created)
 
 ### Files in Reimbursement Folders
 
@@ -597,9 +649,10 @@ Actions to execute (proceed without confirmation):
    
    - **Hotel Booking with Invoice**:
      - If email contains an invoice (as attachment or embedded):
-       - **Extract company name** from invoice (billing entity, not hotel brand name)
-       - **Check for existing reimbursement folder**: Look for folder named `Reimburse-Pending (Company Name)` in the journey folder. If any completed reimbursement folders exist with format `Reimbursed YYYY-MM-DD €Amount (Company Name)`, check those as well to see if the invoice has already been downloaded. Skip downloading if the invoice already exists in any reimbursement folder.
-       - **Action**: Flag for saving invoice to appropriate reimbursement folder (create folder if needed), unless invoice already exists
+       - **Check for existing reimbursement folder(s)**: Look for `Reimbursement` folder or any company-specific folders (e.g., `Reimbursement (Company Name)`) in the journey folder. Also check completed folders with format `Reimbursed YYYY-MM-DD €Amount` or `Reimbursed YYYY-MM-DD €Amount (Company Name)`. Skip downloading if the invoice already exists in any reimbursement folder.
+       - **Single or no reimbursement folder**: Save to `Reimbursement` folder (create if needed)
+       - **Multiple reimbursement folders**: Do NOT automatically save. Flag the invoice for human decision: "Hotel invoice [details] requires manual placement - multiple reimbursement folders exist"
+       - **Action**: Flag for saving invoice to appropriate reimbursement folder (create folder if needed), or flag for human placement if multiple folders exist
    
    - **Hotel Promotional/Marketing**:
      - Subject typically: "Special offers", "Upcoming stay", "Rate your stay", "Earn bonus points"
@@ -612,7 +665,8 @@ Actions to execute (proceed without confirmation):
      - Contains trip details: date, origin, destination, fare amount
      - **Action**:
        - Verify trip date falls within journey date range
-       - Flag for saving to appropriate reimbursement folder
+       - **Single or no reimbursement folder**: Save to `Reimbursement` folder (create if needed)
+       - **Multiple reimbursement folders**: Do NOT automatically save. Flag for human decision: "Taxi invoice [date, amount] requires manual placement - multiple reimbursement folders exist"
        - Apply Helper Procedure A for file naming
    
 6. **Cross-Reference Emails and Files (Bidirectional)**
@@ -658,14 +712,27 @@ Actions to execute (proceed without confirmation):
    - Cancelled bookings (with "(Cancelled)" prefix) are excluded from Check B
    - However, if a cancellation email mentions an invoice (refund details, cancellation fees), this should still be saved
 
-7. **Identify Missing Invoices**
+7. **Identify Missing Invoices and Verify Reimbursement Completeness**
 
    For bookings that require reimbursement, check whether the tax invoice (not just the booking confirmation) has been saved. A tax invoice is a document showing VAT/GST/IVA breakdown—booking confirmations, tickets, and reservation details are not invoices.
 
-   - For each booking in a journey with active reimbursement folders:
-     - Check if a corresponding tax invoice exists in the reimbursement folder
-     - If no invoice exists: note in the report as "Missing invoice for [booking reference]"
-   - Common cases: hotel invoices (sent after checkout), airline invoices (for business travel), car rental invoices
+   **Reimbursable vs Non-Reimbursable Check:**
+   
+   Before flagging a missing invoice, verify the expense is reimbursable (see Reimbursement Folders section for criteria). Entertainment expenses (museums, amusement parks, castles, tourist attractions) are NOT reimbursable and do not require invoices in the reimbursement folder.
+
+   **Completeness Check:**
+   
+   Every reimbursable invoice must exist in exactly one reimbursement folder. This check ensures nothing falls through the cracks.
+
+   - **List all reimbursement folders**: Find `Reimbursement`, any `Reimbursement (Company Name)` folders, and any `Reimbursed YYYY-MM-DD €Amount` completed folders
+   - **For each reimbursable booking** (hotels, flights, car rentals, taxis, business conferences):
+     - Search ALL reimbursement folders for a corresponding invoice
+     - If invoice found in one folder: ✓ Complete
+     - If invoice found in multiple folders: Flag as "Duplicate invoice - exists in [Folder A] and [Folder B]"
+     - If invoice not found in any folder: Flag as "Missing invoice for [booking reference] - not in any reimbursement folder"
+   - **For non-reimbursable items** (museums, amusement parks, castles): Do not flag as missing—these do not require reimbursement invoices
+
+   Common reimbursable cases: hotel invoices (sent after checkout), airline invoices (for business travel), car rental invoices, taxi receipts, conference registration invoices
 
 8. **Generate Action List**
 
@@ -698,7 +765,7 @@ Actions to execute (proceed without confirmation):
    - UID: [number] and Folder: [folder name] (to locate the email)
    - Source: [attachment name] OR [HTML export] (specify what is being saved)
    - Target: `/0. Travel Admin/[journey-folder]/[subfolder]/[filename]`
-   - Special notes: [if needed, e.g., "Create reimbursement folder if needed", "Rename existing file [current name]"]
+   - Special notes: [if needed, e.g., "Create Reimbursement folder", "Rename existing file [current name]", "Requires human placement - multiple reimbursement folders exist"]
    
    **For Renaming Files**:
    - Current: `/0. Travel Admin/[journey-folder]/[subfolder]/[current filename]`
@@ -783,16 +850,18 @@ Actions to execute (proceed without confirmation):
 - Journey date range established
 - Current date determined and journey status assessed
 - Search strategy applied: `from`/`subject` criteria used first, `text` search used as fallback only when needed
-- All emails categorized appropriately (transport, accommodation, and taxi/ride-hailing)
+- All emails categorised appropriately (transport, accommodation, and taxi/ride-hailing)
 - **All emails with attachments had attachments checked** using `list_attachments` MCP tool
 - **All file saves produce PDF output** (from PDF attachment or HTML-to-PDF conversion—no text summaries created)
 - Taxi/ride-hailing invoices identified within journey date range
 - Cancellation emails identified and corresponding files flagged for renaming
 - Files without email match noted for informational tracking
-- Missing invoices identified for reimbursement tracking
-- Hotel invoices identified and company names extracted
-- Taxi/ride-hailing invoices assigned to appropriate reimbursement folders (considering multiple folder scenarios)
-- Reimbursement folders identified or flagged for creation
+- **Reimbursable vs non-reimbursable distinction applied** (travel/business vs entertainment)
+- **Reimbursement completeness verified**: Every reimbursable invoice exists in exactly one reimbursement folder
+- Hotel invoices identified for reimbursement (if reimbursable)
+- Taxi/ride-hailing invoices assigned to Reimbursement folder (or flagged for human placement if multiple folders exist)
+- Reimbursement folder created if needed (when single folder expected)
+- Items requiring human placement flagged (when multiple reimbursement folders exist)
 - Action list generated with sufficient detail for execution
 - Actions executed automatically
 
@@ -922,11 +991,14 @@ Properly named file following convention:
 6. **Determine Accounting Category**
    
    Based on vendor type and document content, categorise as:
+
    - **Travel**: Flights, train tickets, bus tickets, car rentals, taxis (unless taxi is private hire)
    - **Accommodation**: Hotels, lodging, rental properties. Hotel folios that include accommodation charges plus incidental meals/minibar/etc should be categorised as Accommodation, not Meal—the primary service determines the category.
-   - **Conference**: Business conferences, trade shows, professional event fees
+   - **Conference**: Business conferences, trade shows, professional event fees, tech expos (e.g., Web Summit). This category is for events with a business/professional purpose.
    - **Meal**: Restaurants, food expenses, catering (standalone meal charges, not part of hotel folio)
    - **Other**: Parking, tolls, visas, incidentals, taxi (private hire)
+   
+   **Important**: This categorisation applies only to reimbursable items. Entertainment expenses (museums, amusement parks, castles, tourist attractions) do not belong in reimbursement folders and should not be processed by this helper procedure. If an invoice is for a non-reimbursable entertainment item, do not save it to the Reimbursement folder—it remains associated with its booking in the Passes folder only.
 
 7. **Tax Type Normalisation**
    
