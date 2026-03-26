@@ -6,12 +6,10 @@ This method involves processing large DOM outputs (1-20MB per page). **Spawn a S
 
 ## Prerequisites
 
-- Chromium must be installed (snap: `/snap/bin/chromium`)
-- The user must have a Chromium profile with an active LinkedIn session (logged in). If the DOM returns a login page (title contains "Sign In", "Log In", or "Iniciar sesión"), the user needs to log in to Chromium first.
-- **Chromium must NOT be running.** Headless mode cannot use a profile while Chromium holds the SingletonLock. If Chromium is running, ask the user to close all Chromium windows first.
-- Only one headless Chromium instance can use a `--user-data-dir` at a time. Do not run multiple fetches in parallel.
+- A headless browser with a logged-in LinkedIn session. LinkedIn requires authentication to view full profiles; without a logged-in session the server returns an auth wall. If the DOM returns a login page (title contains "Sign In", "Log In", or "Iniciar sesión"), the user needs to log in interactively first.
+- Browser command, profile path, and concurrency handling (e.g. `flock`) are machine-specific — refer to `~/.claude/CLAUDE.md` for the local configuration.
 
-## Chromium flags
+## Browser flags
 
 All `--dump-dom` commands in this workflow use the following flags:
 
@@ -19,32 +17,22 @@ All `--dump-dom` commands in this workflow use the following flags:
 |------|---------|
 | `--virtual-time-budget=3000` | Gives the page 3 seconds of virtual time to execute JavaScript before dumping the DOM. Without this, `--dump-dom` fires on the `load` event, which on LinkedIn is before content has rendered. On slow connections, increase to 45000 or 60000. |
 | `--window-size=1920,10000` | Forces a tall viewport so lazy-loaded content below the fold renders. |
-| `--user-data-dir="$HOME/snap/chromium/common/chromium"` | Uses the snap Chromium profile where LinkedIn is logged in. |
-
-## Step 0: Check Chromium is not running
-
-```bash
-pgrep -f chromium --list-full 2>/dev/null | grep -v pgrep || echo "NO_CHROMIUM_RUNNING"
-```
-
-If Chromium is running, ask the user to close it. If there's a stale SingletonLock after Chromium is closed:
-
-```bash
-rm -f "$HOME/snap/chromium/common/chromium/SingletonLock"
-```
+| `--user-data-dir=PROFILE_DIR` | Points to a browser profile that has an active LinkedIn session (cookies). Required — without it, the browser starts anonymous and LinkedIn returns the auth wall. |
 
 ## Step 1: Search LinkedIn
 
 Use **people search** (`/search/results/people/`), not "all" search — it returns fewer results but they are cleaner profile cards. Skip profile selection — there is only one profile (Default).
 
 ```bash
-chromium --headless --dump-dom \
+BROWSER --headless --dump-dom \
   --virtual-time-budget=3000 \
   --window-size=1920,10000 \
-  --user-data-dir="$HOME/snap/chromium/common/chromium" \
+  --user-data-dir=PROFILE_DIR \
   "https://www.linkedin.com/search/results/people/?keywords=SEARCH_TERMS&origin=GLOBAL_SEARCH_HEADER" \
   2>/dev/null > /tmp/linkedin-search-results.html
 ```
+
+Substitute `BROWSER` and `PROFILE_DIR` from the local configuration in `~/.claude/CLAUDE.md`.
 
 Replace `SEARCH_TERMS` with URL-encoded name (spaces become `%20`).
 
@@ -62,7 +50,7 @@ If the first search returns no matches, try these variants in order. A search re
 ## Step 2: Extract profile URLs and identify candidates
 
 ```bash
-python3 ~/code/weiwu/linkedin-lookup-method/parse-search.py /tmp/linkedin-search-results.html
+python3 parse-search.py /tmp/linkedin-search-results.html
 ```
 
 This outputs each profile URL with its headline. Use this to identify which profiles to fetch.
@@ -70,10 +58,10 @@ This outputs each profile URL with its headline. Use this to identify which prof
 ## Step 3: Fetch a specific profile
 
 ```bash
-chromium --headless --dump-dom \
+BROWSER --headless --dump-dom \
   --virtual-time-budget=3000 \
   --window-size=1920,10000 \
-  --user-data-dir="$HOME/snap/chromium/common/chromium" \
+  --user-data-dir=PROFILE_DIR \
   "https://www.linkedin.com/in/USERNAME/" \
   2>/dev/null > /tmp/linkedin-profile.html
 ```
@@ -81,7 +69,7 @@ chromium --headless --dump-dom \
 ## Step 4: Parse profile details
 
 ```bash
-python3 ~/code/weiwu/linkedin-lookup-method/parse-profile.py /tmp/linkedin-profile.html
+python3 parse-profile.py /tmp/linkedin-profile.html
 ```
 
 This extracts name, headline, location, and visible text blocks (experience, about, education). See the script for details on how it handles LinkedIn's obfuscated DOM.
@@ -91,7 +79,7 @@ This extracts name, headline, location, and visible text blocks (experience, abo
 If you need to check whether a profile mentions specific terms:
 
 ```bash
-python3 ~/code/weiwu/linkedin-lookup-method/keyword-search.py /tmp/linkedin-profile.html ASME property Australia tourism
+python3 keyword-search.py /tmp/linkedin-profile.html ASME property Australia tourism
 ```
 
 ## Why LinkedIn DOM parsing is hard
