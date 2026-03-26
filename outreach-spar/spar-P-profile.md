@@ -84,7 +84,34 @@ This step is critical for targets whose personal public statements are thin but 
 
 If the employer's website reveals programmes or focus areas relevant to the campaign, record them in a dedicated section of the profile document ("Institutional context" or similar, under the domain-specific operational context section). Note which programmes the target is personally involved in versus which are run by their team or organisation more broadly.
 
-### 4.4 Web search for public activity beyond LinkedIn
+### 4.4 Check email history (IMAP)
+
+Before profiling public sources, check whether the campaign's organisation has prior correspondence with this contact. The campaign plan specifies which email accounts to search (e.g. admin and director IMAP accounts).
+
+**Search each account for:**
+
+- The contact's email address (if known) — search by `from` field
+- The contact's full name — search by `subject` field (as a proxy; full-text body search may not be available on all mail servers)
+- The organisation name — search by `subject` field
+
+**Record in the profile document:**
+
+- Whether prior correspondence exists (yes/no per account)
+- If yes: dates, topics discussed, any commitments made, and direct quotes from the contact that reveal what they care about
+- The warmth level this implies (see table below)
+
+| Level | Criteria |
+|---|---|
+| Existing relationship | Substantive prior correspondence across multiple threads, or CRM records prior bookings |
+| Prior contact | Brief or one-off correspondence (enquiry, event RSVP, introduction) |
+| Known-of | No direct correspondence, but discovered via a mutual connection, shared network, or industry event |
+| Cold | No prior contact, no shared context |
+
+**Update the roster:** Add IMAP findings to `p_note` so the A phase knows the warmth level without re-querying email. Example: `warm (director IMAP: discussed coach access Nov 2025)` or `cold (no IMAP history)`.
+
+This step is critical because warmth level determines how the A phase opens the message. A contact with prior correspondence gets a thread-referencing opener; a cold contact gets a situational opener. If this step is skipped, the A phase cannot distinguish between the two.
+
+### 4.5 Web search for public activity beyond LinkedIn
 
 Search for the target's name plus campaign-relevant terms, excluding LinkedIn:
 
@@ -95,7 +122,7 @@ Search for the target's name plus campaign-relevant terms, excluding LinkedIn:
 
 This catches conference talks, blog posts, published papers, media quotes, and GitHub activity that do not appear on LinkedIn. If nothing turns up, note "no public activity found beyond LinkedIn" — the absence is informative for richness classification.
 
-### 4.5 Record what the target has said publicly
+### 4.6 Record what the target has said publicly
 
 For each substantive public statement found (LinkedIn posts, blog posts, conference talks, tweets, mailing list messages), record:
 - The quote or close paraphrase
@@ -106,7 +133,7 @@ When the target has published an article or given a talk, extract specific recom
 
 Do not invent or infer statements. If the target has not said anything about a topic, record that absence explicitly: "No public statements on [topic]." This prevents the A phase from fabricating a connection that does not exist.
 
-### 4.6 Record who the target knows
+### 4.7 Record who the target knows
 
 From LinkedIn posts (names mentioned or tagged), profile connections visible in the parse, and web search results, identify people connected to the target who are relevant to the campaign. For each:
 - Name and their role/organisation
@@ -117,7 +144,7 @@ This is where the "network / connection value" angle is assessed. A target may h
 
 **New names for the roster:** Any person found in this step who is not already in the roster and who is relevant to the campaign (by role, organisation, or community membership) should be added to the roster as a new contact. Record `discovered_via` as the target being profiled and `discovery_source` as the specific mechanism (e.g. "tagged in LinkedIn post about FOSSASIA Summit 2024").
 
-### 4.7 Identify applicable angles
+### 4.8 Identify applicable angles
 
 Read the campaign's angle table. For each angle, assess whether the profile provides evidence for it:
 - **Direct evidence:** The target has said or done something that maps to this angle. Quote the evidence.
@@ -130,7 +157,7 @@ For each applicable angle, note:
 - The specific ask it implies (working group participation, advisory board, membership, introductions, conference partnership)
 - Whether the ask is a cold open (requires the conversation to surface interest) or a warm open (can reference something the target has already said)
 
-### 4.8 Assign ratings
+### 4.9 Assign ratings
 
 **Star rating (1–5):** How interesting is this contact to the campaign?
 
@@ -160,7 +187,7 @@ Factors that decrease likelihood:
 
 State the estimate as a range or point estimate with a one-sentence rationale.
 
-### 4.9 Classify profile richness
+### 4.10 Classify profile richness
 
 Count substantive data points. The following all qualify as data points: (a) public statements with extractable quotes, (b) specific recommendations or proposals the target has made, (c) career history entries that demonstrate relevant domain experience (e.g. cybersecurity crisis communications background at a consultancy), (d) current institutional context that creates campaign-relevant access (e.g. employer runs policy education programmes for government staff, or operates a technology convening series), (e) named connections relevant to the campaign, (f) recent activity indicating current engagement (posts, conference appearances, publications within the past 12 months). Do not count only quoted public statements — a target who has said little publicly but whose employer operates a programme directly relevant to the campaign has more data points than a narrow reading would suggest.
 
@@ -170,7 +197,7 @@ Count substantive data points. The following all qualify as data points: (a) pub
 
 Record the classification and the count in the profile header.
 
-### 4.10 Check for verification corrections
+### 4.11 Check for verification corrections
 
 Compare what the profile reveals against what the roster entry says. If any of the following has changed, update the roster:
 - The person has left the organisation listed in the roster
@@ -190,6 +217,11 @@ Record all corrections in the profile document under a "Verification corrections
 **Profile date:** [YYYY-MM-DD]
 **Source:** [LinkedIn URL, web search, other sources used]
 **Richness classification:** [Rich/Medium/Thin] ([N] data points)
+
+## Prior correspondence (IMAP)
+
+**Warmth level:** [Existing relationship / Prior contact / Known-of / Cold]
+[Summary of IMAP findings per account, or "No prior correspondence found in any account"]
 
 ## Current role
 
