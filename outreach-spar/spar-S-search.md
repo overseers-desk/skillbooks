@@ -76,9 +76,9 @@ The campaign plan defines which additional columns apply and what they mean. Thi
 
 Channels fall into three types that affect how S is seeded and how quickly the roster reaches its target:
 
-- **Registry channels** (e.g. schools, childcare centres, aged care centres): A government registry or official database provides a near-complete list. S typically reaches the 80% target in 1–2 iterations. SP₃ for a registry channel is mostly P work, not S work.
+- **Registry channels** (e.g. schools, childcare centres, aged care centres): A government registry or official database provides a near-complete list. S typically exhausts the registry in 1–2 iterations. SP₃ for a registry channel is mostly P work, not S work.
 
-- **Directory channels** (e.g. wedding planners, tour operators, professional associations, industry member directories): An industry directory provides a partial list. S typically reaches target in 2–3 iterations.
+- **Directory channels** (e.g. wedding planners, tour operators, professional associations, industry member directories): An industry directory provides a partial list. S typically exhausts known directories in 2–3 iterations.
 
 - **Informal channels** (e.g. community groups, mothers' groups, open source maintainers, meetup organisers): No central listing exists. S may not reach target even after 3 iterations; the roster continues to grow during AR as conversations surface referrals. Accept whatever count is reached.
 
@@ -119,7 +119,6 @@ Run any expanded keyword queries identified by the reverse-search diagnostic fro
 
 Stop discovery for a channel when any of these is met:
 
-- The roster reaches 80% of the estimated universe for that channel.
 - The last iteration added fewer than 5 new contacts.
 - Three iterations have been completed (for informal channels, accept whatever count is reached).
 
@@ -168,7 +167,7 @@ Run this checklist against all roster files after each iteration. Each check is 
 5. **Iteration recorded:** every row has a `discovery_iteration` value.
 6. **Channel matches file:** if the roster uses a `channel` column, the value on every row matches the roster filename.
 7. **Verified contacts still current:** no contact marked `verified=yes` has a `p_note` or `date_found_invalid` indicating they left the role or changed organisation.
-8. **Target progress:** for each roster, total rows divided by the campaign plan's target. Flag any channel below 50% that has not completed three iterations.
+8. **Iteration progress:** for each roster, confirm that `discovery_iteration` is populated on every row and that the stopping criteria in §6 have been evaluated.
 
 Campaign-specific checks (e.g. "every outreach row has a non-empty p_note") are defined by the campaign plan, not by this AESOP.
 

@@ -33,6 +33,8 @@ SP₁ → SP₂ → SP₃ → [human review of profiles and roster]
                     AR₇₀ → ...
 ```
 
+For a compact notation to track a campaign's position in this flow, see [`spar-stage-notation.md`](spar-stage-notation.md).
+
 ## Prong 1: SP in detail
 
 ### S — Search
@@ -60,7 +62,6 @@ Each iteration applies the appropriate search methods:
 **SP₃ (Snowball and refine):** Repeat verify-and-expand on SP₂ additions. Yield will decline. Run any expanded keyword queries identified by the reverse-search diagnostic. Accept whatever count is reached if yield falls below the stopping threshold.
 
 Stopping criteria for S (any of these triggers stop):
-- Roster reaches 80% of estimated universe for the channel
 - Fewer than 5 new contacts in the last iteration
 - Three iterations complete
 
@@ -154,6 +155,10 @@ The output of R is a revised connection strategy: updated angle priorities, adju
 | A1 (draft) | Opus | Connection messages must not read as mechanical. Tone, angle selection, and cross-referencing prior relationships require judgement. |
 | A2 (spar) | Opus | Simulating a recipient personality and evaluating message credibility requires the same level of judgement as writing the message. |
 | R | Human | Strategy revision based on observed responses is a judgement that should not be automated. The human decides what the deviations mean and how to adjust. |
+
+## Cross-project validation of model tiering
+
+The SP = Sonnet / AR = Opus allocation has been independently validated outside outreach. In the job-seeking pipeline (`~/code/career-development/method/listing-pipeline.md`), the GRADE stage — scoring job listings against a structured rubric on two axes (star value and candidacy percentage) — was run by four parallel Sonnet agents across 19 listings on 2026-03-25. The scores required no Opus-level correction: influence/knowledge gestalt judgments, hard-gate identification, and percentage amplification were all consistent with the rubric's intent. This confirms the general principle: when a rubric does the intellectual heavy lifting (defines the dimensions, provides anchor examples, specifies the formula), Sonnet applies it reliably. Opus is needed when the task requires generating the rubric, resolving ambiguity not covered by the rubric, or making judgment calls that trade off unstated considerations (i.e. the AR-tier work).
 
 ## Relationship to existing documents
 
