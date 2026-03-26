@@ -185,3 +185,23 @@ Do not replicate SPAR-S content in prompts — copies drift and cannot be correc
 **Sequencing constraint:** Social media profile checks (LinkedIn, Facebook, Instagram) must run sequentially, one at a time. Concurrent requests trigger rate limiting and may result in account restrictions. When delegating to subagents, spawn them sequentially for social media lookups. Non-social-media searches (web, registry, GitHub, conference directories) can run concurrently.
 
 This AESOP does not prescribe how to access social media; each operator uses their own method and tooling. The sequencing constraint is the only requirement.
+
+**Context management for web page fetching:** When a subagent fetches web pages (organisation websites, employer About pages, registry directories), the raw HTML or even processed HTML consumes far more context tokens than the facts it yields. A single About page can return thousands of tokens; a subagent processing 20 websites in one session will exhaust its context on page content before it finishes.
+
+To prevent this, always convert fetched HTML to plain text or markdown before bringing content into the conversation:
+
+```bash
+# Preferred: chromium fetch → pandoc → plain text (discards all markup)
+/snap/bin/chromium --headless --dump-dom \
+  --virtual-time-budget=5000 --window-size=1920,3000 \
+  --user-data-dir="$HOME/snap/chromium/common/chromium" \
+  "URL" 2>/dev/null \
+  | pandoc -f html -t plain --wrap=none > /tmp/page-text.txt
+
+# Then extract the needed fact from the plain text file
+grep -i 'founder\|director\|owner\|manager' /tmp/page-text.txt
+```
+
+For batch website lookups (e.g. resolving contact names for 20 organisations), process one page at a time: fetch, extract the fact, discard the page content, then fetch the next. Do not fetch multiple pages in parallel via WebFetch — the results all land in context simultaneously and cannot be discarded.
+
+If the subagent uses `WebFetch` (the built-in tool) instead of headless Chromium, write a tight extraction prompt that returns only the specific fact needed (e.g. "Return only the owner or director's full name and role, nothing else"). Even with a tight prompt, WebFetch results are large enough that more than 5–6 pages in one session will strain context.
