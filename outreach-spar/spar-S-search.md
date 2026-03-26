@@ -63,13 +63,12 @@ These columns are standard across all campaigns. Every roster produced by this A
 
 ### 4.2 Campaign-specific columns
 
-The campaign plan may add columns beyond the core set. Common additions include:
+The campaign plan may add columns beyond the core set. The core columns, including the phase handover notes (s_note, p_note, a_note, r_note) and ratings (star_rating, response_likelihood), are defined in `spar-roster-format.md`. Common campaign-specific additions include:
 
 - **channel** — when the campaign has multiple channels in a single roster or needs to tag cross-leads
 - **postcode** or **address** — for geographic filtering
-- **cue** — evidence of interest (for cue-required targets; populated during P, left blank during S)
-- **star_rating** — assigned during P, not S
-- **notes** — free-text observations
+- **type** — contact category within a channel
+- **source_url** — the specific page that justified inclusion
 
 The campaign plan defines which additional columns apply and what they mean. This AESOP does not prescribe them.
 
@@ -168,10 +167,10 @@ Run this checklist against all roster files after each iteration. Each check is 
 4. **Reachable:** every row has at least one of email, `linkedin_url`, or `facebook_url` populated. Phone alone is insufficient for campaigns that begin with a written introduction.
 5. **Iteration recorded:** every row has a `discovery_iteration` value.
 6. **Channel matches file:** if the roster uses a `channel` column, the value on every row matches the roster filename.
-7. **Verified contacts still current:** no contact marked `verified=yes` has a notes field indicating they left the role or changed organisation.
+7. **Verified contacts still current:** no contact marked `verified=yes` has a `p_note` or `date_found_invalid` indicating they left the role or changed organisation.
 8. **Target progress:** for each roster, total rows divided by the campaign plan's target. Flag any channel below 50% that has not completed three iterations.
 
-Campaign-specific checks (e.g. "every outreach row has a non-empty cue field") are defined by the campaign plan, not by this AESOP.
+Campaign-specific checks (e.g. "every outreach row has a non-empty p_note") are defined by the campaign plan, not by this AESOP.
 
 ## 11. Subagent delegation
 
