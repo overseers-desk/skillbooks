@@ -90,22 +90,38 @@ Select the primary angle. Record the rationale.
 
 Write the connection message (LinkedIn note, email, or phone script) using the profile, warmth level, angle, and channel.
 
-**The core principle: presuppose, don't narrate.**
+**The core principle: presuppose, don't narrate — about the recipient.**
 
-Every sentence should either advance the proposition or provide context the recipient needs. If a sentence exists to signal "I did my homework", it reveals the formula and should be cut. The recipient can tell you understand their world from the specificity of your proposition, not from being told what they already know.
+This rule applies to the recipient's own situation: do not tell them what they do for a living, do not recite their company history back to them, do not signal "I did my homework" as a separate display. The recipient can tell you understand their world from the specificity of your proposition, not from being told what they already know.
 
-Examples:
+This rule does NOT apply to introducing yourself or your venue. A cold recipient has never heard of you. You must tell them who you are and what you offer. Omitting self-introduction is not presupposing — it is failing to communicate. The distinction:
 
-- Narrating: "Your Springbrook retreats run a residential format that suits the Theosophical Centre well. I am not approaching you about that."
-  Presupposing: "I'm not trying to compete with Springbrook for your residential retreats. What I'm curious about is whether your Mt Cotton students ever ask about day events outside the studio."
+- Narrating the recipient (avoid): "Your Springbrook retreats run a residential format."
+- Introducing yourself (required): "I run a heritage tourism venue on the Coomera River in the Gold Coast hinterland."
+
+Examples of presupposing (the recipient's situation) vs narrating:
 
 - Narrating: "MAD has been running corporate destination programs across Australia for nearly 30 years."
   Presupposing: "Do any of your multi-city incentive programs include a Gold Coast leg?"
 
 - Narrating: "You mentioned on your site you enjoy discovering new locations."
-  Presupposing: "We're inviting a few planners to visit a heritage venue in Gilston they may not have seen. Stone buildings, river frontage, and a farmhouse, all on one site."
+  Presupposing: "We're inviting a few planners to visit a heritage venue in Gilston they may not have seen."
 
-In each case, the knowledge is in the ask or the framing, not displayed as a separate element.
+In each case, the knowledge of the recipient's world is in the ask or the framing, not displayed as a separate element.
+
+**Self-introduction and USP selection:**
+
+Every first-touch email must establish who the sender is and why the venue is worth the recipient's attention. But not every USP is relevant to every recipient. Select USPs based on what the recipient's segment cares about.
+
+The venue's USP reference document is at `research-weddings/2025-04-20-wedding-position-and-usp.md` in the campaign repository. Read the ranked USP list there. Then select 1–3 USPs that connect to the recipient's segment and angle. For example:
+
+- A wedding planner cares about photography circuits, accommodation, and ceremony options — not revenue figures.
+- A tour operator cares about group capacity, drive time from the coast, and what the experience includes.
+- A community group organiser cares about accessibility, catering for 30+, and whether the venue suits older visitors.
+
+For cold contacts, almost always include the Instagram link (https://rivermill.au/ig, which redirects to the Instagram page with 38,000+ followers). A strong visual presence is the fastest way for a stranger to decide whether the venue is credible. Embed it naturally, not as a bullet point — e.g. "You can see the grounds at rivermill.au/ig" or as a sign-off line.
+
+For warm contacts (prior correspondence, existing relationship), the Instagram link is less important — they may already follow or have visited.
 
 **Other principles to keep in mind:**
 
@@ -130,23 +146,29 @@ Anti-patterns to avoid in drafted messages:
 
 ### 4.6 Spar the message (A2)
 
-A2 tests whether the draft would land well with the recipient. The number of A1-A2 rounds depends on profile richness (classified in the profile document):
+A2 tests whether the draft would land well with the recipient AND whether the draft contains factual errors.
+
+**A2 is mandatory for all contacts.** Thin profiles need sparring more than rich ones — less evidence means more room for the drafter to hallucinate relevance. The number of rounds depends on profile richness:
 
 - **Rich profile** (6+ data points): up to 3 rounds
 - **Medium profile** (3–5 data points): 1 round
-- **Thin profile** (<3 data points): skip A2 entirely
+- **Thin profile** (<3 data points): 1 round (mandatory, not skipped)
 
-**A2 procedure:**
+**A2 procedure — two-step, single subagent:**
 
-1. Spawn a second agent (C2) with the full profile document and the draft message. C2's instruction: "You are [contact name]. You have just received this message. Based on your profile, respond honestly. Would you engage? What feels off? What would make you more or less likely to respond?"
+Spawn one subagent (C2) that performs two sequential steps. Use a model suited to persona simulation (e.g. Sonnet-class rather than Opus-class — research indicates less capable models shift behaviour more authentically under persona instructions).
 
-2. C2 responds in character, using the profile to ground its reactions. If the profile is in a non-English language context and the message was drafted in that language, C2 responds in the same language.
+**Step 1 — Role-play (context-isolated).** C2 receives ONLY the profile content and the draft message. No campaign files, no venue files, no method files. C2 reacts in character as the recipient, who has never heard of the sender or their venue. No rubric, no structured "What works / What could be improved" format — just a natural reaction. If the profile is in a non-English language context and the message was drafted in that language, C2 responds in that language.
 
-3. A1 reads C2's response. If C2 identifies a misalignment (wrong angle, wrong tone, assumed a concern the contact does not have, used flattery that feels transparent, made an ask that is too vague or too presumptuous), A1 revises.
+**Step 2 — Fact-check.** After recording the in-character reaction, C2 breaks character and reads the campaign's source files (USP document, goal file, venue description). It checks every factual claim in the draft email against these sources and appends corrections as: "P.S. I noticed: [claim] — [what the source actually says or that no source exists]."
 
-4. Repeat until rounds are exhausted or C2 signals the message is credible.
+The two steps must be sequential within one subagent call. The role-play must complete before the fact-check begins — this prevents source-file knowledge from contaminating the persona simulation.
 
-Record all drafts and C2 responses in the comms file. The human reviewer needs to see how the message evolved, not just the final version.
+A1 reads both the role-play reaction and the fact-check corrections. If C2 identifies a misalignment (wrong angle, wrong tone, assumed a concern the contact does not have, used flattery that feels transparent, made an ask that is too vague or too presumptuous) or a factual error, A1 revises.
+
+Repeat until rounds are exhausted or C2 signals the message is credible and factually correct.
+
+Record all drafts and C2 responses (both steps) in the comms file. The human reviewer needs to see how the message evolved, not just the final version.
 
 ### 4.7 Assemble the final output
 
