@@ -10,7 +10,7 @@ claude -p --dangerously-skip-permissions "$(cat "$prompt_file")"
 
 `--dangerously-skip-permissions` is required because the project `settings.json` has an explicit allow-list that overrides the global `bypassPermissions` default for tools not on the list. The flag bypasses the allow-list check entirely. Without it, file writes and Grep calls inside the subagent prompt for permission and stall.
 
-Prompts are written to `/tmp/spar-a-YYYYMMDD/prompts/` as numbered text files. Logs go to `/tmp/spar-a-YYYYMMDD/logs/`. The batch script skips contacts whose approach file already exists.
+The prompt template is the heredoc inside `spar-a-batch.sh` (lines 110–179 at time of writing). Per-contact prompts are rendered from that template and written to `/tmp/spar-a-YYYYMMDD/prompts/` as numbered text files (ephemeral). Logs go to `/tmp/spar-a-YYYYMMDD/logs/`. The batch script skips contacts whose approach file already exists.
 
 ## Problems found
 
