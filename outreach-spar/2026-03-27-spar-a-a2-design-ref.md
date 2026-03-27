@@ -1,5 +1,17 @@
 # SPAR-A A2 design: problems, options, and decisions (2026-03-27)
 
+## Batch execution pattern
+
+Each contact's prompt is written to a file by `spar-a-batch.sh`, then executed by `spar-a-worker.sh` via GNU parallel (8 concurrent jobs):
+
+```bash
+claude -p --dangerously-skip-permissions "$(cat "$prompt_file")"
+```
+
+`--dangerously-skip-permissions` is required because the project `settings.json` has an explicit allow-list that overrides the global `bypassPermissions` default for tools not on the list. The flag bypasses the allow-list check entirely. Without it, file writes and Grep calls inside the subagent prompt for permission and stall.
+
+Prompts are written to `/tmp/spar-a-YYYYMMDD/prompts/` as numbered text files. Logs go to `/tmp/spar-a-YYYYMMDD/logs/`. The batch script skips contacts whose approach file already exists.
+
 ## Problems found
 
 Reviewing the first batch of 78 approach files revealed four distinct failures:
