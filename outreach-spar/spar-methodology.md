@@ -15,31 +15,31 @@ The methodology applies to any outreach campaign — membership recruitment for 
 
 SPAR divides into two prongs that run sequentially, not concurrently.
 
-**Prong 1: SP (Search + Profile)** is iterative knowledge accumulation. It runs in up to three iterations — SP₁, SP₂, SP₃ — each expanding the roster and deepening profiles. SP is Sonnet-tier work: high volume, pattern-following, economical. SP completes before Prong 2 begins.
+**Prong 1: S&P (Search + Profile)** is iterative knowledge accumulation. It runs in up to three iterations — S&P₁, S&P₂, S&P₃ — each expanding the roster and deepening profiles. S&P is Sonnet-tier work: high volume, pattern-following, economical. S&P completes before Prong 2 begins.
 
 **Prong 2: AR (Approach + Revise)** is feedback-controlled engagement. It runs in bands ordered by estimated response likelihood — AR₉₀ (contacts rated ≥90% likely to respond), then AR₈₀, then AR₇₀, and so on. Between bands, a human reviews the communication logs from the prior band, identifies what targets actually responded to (which may differ from what the campaign plan assumed), and revises the connection strategy before the next band begins. AR is Opus-tier work for the approach drafting, and human work for the revision.
 
-The normal flow is SP feeding AR: SP₁ through SP₃ run autonomously, then AR begins. However, AR is not a dead end. The R (Revise) phase reviews connection messages and responses, and in doing so reliably surfaces a small number of new names — a respondent mentions a colleague, a connection message reveals a relevant person in the same organisation, a revised strategy identifies a segment not covered by SP₁–SP₃. These names are few per band (typically single digits) but they appear with high probability. In practice, SP₄ is more often needed than not.
+The normal flow is S&P feeding AR: S&P₁ through S&P₃ run autonomously, then AR begins. However, AR is not a dead end. The R (Revise) phase reviews connection messages and responses, and in doing so reliably surfaces a small number of new names — a respondent mentions a colleague, a connection message reveals a relevant person in the same organisation, a revised strategy identifies a segment not covered by S&P₁–S&P₃. These names are few per band (typically single digits) but they appear with high probability. In practice, S&P₄ is more often needed than not.
 
-The design accommodates this by treating SP₁–SP₃ as the autonomous pre-run: these iterations execute without human intervention, following the stopping criteria defined below. Any SP iteration beyond SP₃ is human-initiated, triggered by names accumulated during AR. The new names enter the roster at iteration number max(current) + 1, go through the same S and P steps as any other contact, and their profiles feed back into subsequent AR bands. The quantity is small enough that SP₄ (or SP₅) is a lightweight pass, not a full discovery cycle.
+The design accommodates this by treating S&P₁–S&P₃ as the autonomous pre-run: these iterations execute without human intervention, following the stopping criteria defined below. Any S&P iteration beyond S&P₃ is human-initiated, triggered by names accumulated during AR. The new names enter the roster at iteration number max(current) + 1, go through the same S and P steps as any other contact, and their profiles feed back into subsequent AR bands. The quantity is small enough that S&P₄ (or S&P₅) is a lightweight pass, not a full discovery cycle.
 
 ```
-SP₁ → SP₂ → SP₃ → [human review of profiles and roster]
-                          ↓
-                    AR₉₀ → review → strategy revision → new names? → SP₄
-                          ↓                                              ↓
-                    AR₈₀ → review → strategy revision → new names? → SP₅
-                          ↓
-                    AR₇₀ → ...
+S&P₁ → S&P₂ → S&P₃ → [human review of profiles and roster]
+                            ↓
+                      AR₉₀ → review → strategy revision → new names? → S&P₄
+                            ↓                                                ↓
+                      AR₈₀ → review → strategy revision → new names? → S&P₅
+                            ↓
+                      AR₇₀ → ...
 ```
 
 For a compact notation to track a campaign's position in this flow, see [`spar-stage-notation.md`](spar-stage-notation.md).
 
-## Prong 1: SP in detail
+## Prong 1: S&P in detail
 
 ### S — Search
 
-Each SP iteration begins with discovery. S casts a wide net across all available sources. The source mix varies by campaign but the method is constant: exhaust the most direct source first, then broaden.
+Each S&P iteration begins with discovery. S casts a wide net across all available sources. The source mix varies by campaign but the method is constant: exhaust the most direct source first, then broaden.
 
 Sources (not exhaustive; the campaign plan specifies which apply):
 
@@ -51,15 +51,15 @@ Sources (not exhaustive; the campaign plan specifies which apply):
 - GitHub contributor data, package dependency graphs
 - Conference speaker lists and attendee directories
 - Facebook groups, Instagram location tags, community forums
-- Reverse-search diagnostic (from SP₂ onward): search known contacts by name, note co-occurring keywords in results, then search by those keywords alone to test whether they surface contacts invisible to the original search vocabulary
+- Reverse-search diagnostic (from S&P₂ onward): search known contacts by name, note co-occurring keywords in results, then search by those keywords alone to test whether they surface contacts invisible to the original search vocabulary
 
 Each iteration applies the appropriate search methods:
 
-**SP₁ (Seed):** Build the initial roster from the most direct source. For a registry channel, export the registry. For a LinkedIn-network campaign, export direct and 2nd-degree connections. For a web-sourced campaign, run the seed queries defined in the campaign plan.
+**S&P₁ (Seed):** Build the initial roster from the most direct source. For a registry channel, export the registry. For a LinkedIn-network campaign, export direct and 2nd-degree connections. For a web-sourced campaign, run the seed queries defined in the campaign plan.
 
-**SP₂ (Verify and expand):** Verify each SP₁ contact's current role and activity. Expand via social graph: who commented on their posts, who are co-admins of their groups, who appears in "People Also Viewed." Run the reverse-search diagnostic on the SP₁ roster to discover vocabulary gaps. New names found during verification enter the roster with `discovered_via` tracing the referral chain.
+**S&P₂ (Verify and expand):** Verify each S&P₁ contact's current role and activity. Expand via social graph: who commented on their posts, who are co-admins of their groups, who appears in "People Also Viewed." Run the reverse-search diagnostic on the S&P₁ roster to discover vocabulary gaps. New names found during verification enter the roster with `discovered_via` tracing the referral chain.
 
-**SP₃ (Snowball and refine):** Repeat verify-and-expand on SP₂ additions. Yield will decline. Run any expanded keyword queries identified by the reverse-search diagnostic. Accept whatever count is reached if yield falls below the stopping threshold.
+**S&P₃ (Snowball and refine):** Repeat verify-and-expand on S&P₂ additions. Yield will decline. Run any expanded keyword queries identified by the reverse-search diagnostic. Accept whatever count is reached if yield falls below the stopping threshold.
 
 Stopping criteria for S (any of these triggers stop):
 - Fewer than 5 new contacts in the last iteration
@@ -67,7 +67,7 @@ Stopping criteria for S (any of these triggers stop):
 
 ### P — Profile
 
-P runs within each SP iteration, on the contacts discovered in that iteration's S phase. P produces two outputs:
+P runs within each S&P iteration, on the contacts discovered in that iteration's S phase. P produces two outputs:
 
 1. **A profile document** for each contact. The profile records: what the person has said publicly (with quotes and sources), who they know (connections relevant to the campaign), their current role and organisation, any evidence of alignment or misalignment with the campaign's offering, and two ratings:
    - **Star rating** (1–5): how interesting this contact is to us — does their role, geography, and activity suggest a plausible relationship?
@@ -83,12 +83,12 @@ The profile document is the primary artefact that Prong 2 consumes. Its quality 
 
 ### Human review checkpoint
 
-After SP₃, the human reviews:
+After S&P₃, the human reviews:
 - The roster: coverage by segment, quality of contacts, any gaps
 - The profiles: are star ratings and response-likelihood estimates plausible?
 - Whether the campaign plan's assumptions about what targets care about still hold, given what P found them actually saying
 
-This checkpoint is the boundary between Prong 1 and Prong 2. No Opus tokens are spent until the human is satisfied with the SP output.
+This checkpoint is the boundary between Prong 1 and Prong 2. No Opus tokens are spent until the human is satisfied with the S&P output.
 
 ## Prong 2: AR in detail
 
@@ -144,7 +144,7 @@ The output of R is a revised connection strategy: updated angle priorities, adju
 | Communication logs (`ID-person-name-org-comms.md`) | A | R, subsequent A runs (via index) | Campaign directory |
 | Communication index (`comms-index.md`) | A (append) | A (read) | Campaign directory |
 | Strategy revision notes (`strategy-revision-[band].md`) | R (human) | A (next band) | Campaign directory |
-| Channel summary (search vocabulary, invisible segments) | SP₃ | Future SP runs on same channel | Campaign directory |
+| Channel summary (search vocabulary, invisible segments) | S&P₃ | Future S&P runs on same channel | Campaign directory |
 
 ## Model assignment
 
@@ -158,7 +158,7 @@ The output of R is a revised connection strategy: updated angle priorities, adju
 
 ## Cross-project validation of model tiering
 
-The SP = Sonnet / AR = Opus allocation has been independently validated outside outreach. In the job-seeking pipeline (`~/code/career-development/method/listing-pipeline.md`), the GRADE stage — scoring job listings against a structured rubric on two axes (star value and candidacy percentage) — was run by four parallel Sonnet agents across 19 listings on 2026-03-25. The scores required no Opus-level correction: influence/knowledge gestalt judgments, hard-gate identification, and percentage amplification were all consistent with the rubric's intent. This confirms the general principle: when a rubric does the intellectual heavy lifting (defines the dimensions, provides anchor examples, specifies the formula), Sonnet applies it reliably. Opus is needed when the task requires generating the rubric, resolving ambiguity not covered by the rubric, or making judgment calls that trade off unstated considerations (i.e. the AR-tier work).
+The S&P = Sonnet / AR = Opus allocation has been independently validated outside outreach. In the job-seeking pipeline (`~/code/career-development/method/listing-pipeline.md`), the GRADE stage — scoring job listings against a structured rubric on two axes (star value and candidacy percentage) — was run by four parallel Sonnet agents across 19 listings on 2026-03-25. The scores required no Opus-level correction: influence/knowledge gestalt judgments, hard-gate identification, and percentage amplification were all consistent with the rubric's intent. This confirms the general principle: when a rubric does the intellectual heavy lifting (defines the dimensions, provides anchor examples, specifies the formula), Sonnet applies it reliably. Opus is needed when the task requires generating the rubric, resolving ambiguity not covered by the rubric, or making judgment calls that trade off unstated considerations (i.e. the AR-tier work).
 
 ## Relationship to existing documents
 
