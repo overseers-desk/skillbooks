@@ -6,7 +6,7 @@
 
 One TSV file per channel. TSV, not CSV — roster fields contain quoted speech, URLs, and free-text that cause quoting problems with commas.
 
-Every row must have a `contact_name`. A row without a named person is not a contact. Each SP iteration updates the same file via the `discovery_iteration` column; do not create separate files per iteration. Filename convention is defined by the campaign plan (e.g. `roster-[channel-name].tsv`).
+Every row must have a `contact_name`. A row without a named person is not a contact. Each S&P iteration updates the same file via the `sweep_iteration` column; do not create separate files per iteration. Filename convention is defined by the campaign plan (e.g. `roster-[channel-name].tsv`).
 
 **Delimiter and line-break conventions:** Tab (`\t`) separates fields; newline (`\n`) separates rows. Neither may appear inside a field value. When a field needs to represent a line break within its content (e.g. a multi-sentence note), use carriage return (`\r`) instead of newline. Standard tools (LibreOffice, Python `csv` with `delimiter='\t'`, pandas) read `\r` inside a field without treating it as a row boundary.
 
@@ -45,7 +45,7 @@ Every row must have at least one of email, linkedin_url, or facebook_url populat
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
-| 8 | discovery_iteration | integer | S | Human review | Which SP pass added this row |
+| 8 | sweep_iteration | integer | S | Human review | Which sweep iteration added this row |
 | 9 | discovered_via | text | S; P for new names found during profiling | Human review, future S | Referral chain traceable to the original seed source |
 | 10 | discovery_source | text | S | Human review | Specific mechanism: "LinkedIn comment", "Facebook group co-admin", "WebSearch: [query]" |
 
@@ -67,7 +67,7 @@ Each SPAR phase has one note column. Only that phase writes to it. Subsequent ph
 | 15 | star_rating | 1–5 | P | A (band ordering), human review | Strategic value: how interesting this contact is to the campaign. Scale defined in SPAR-P. |
 | 16 | response_likelihood | percentage | P | A (band ordering) | Estimated probability the contact responds to outreach. |
 | 17 | a_note | short text | A only | R (human review), subsequent A bands | Angle used, key hook referenced, outcome. Lets R scan a band's results from the roster without opening every comms file. |
-| 18 | r_note | short text | R (human) only | Subsequent A bands, SP₄+ | Per-contact observation from response review: what worked, what did not, new leads mentioned, channel adjustment. |
+| 18 | r_note | short text | R (human) only | Subsequent A bands, S&P₄+ | Per-contact observation from response review: what worked, what did not, new leads mentioned, channel adjustment. |
 
 Columns 15–18 are empty during S and populated progressively as the contact moves through P, A, and R. Empty columns are expected; not every contact reaches every phase.
 
@@ -101,7 +101,7 @@ These assertions apply to the core columns. Campaign-specific checks are defined
 2. Every row has the expected number of tab-separated fields.
 3. No two rows share the same (`contact_name`, `organisation`) pair (case-insensitive).
 4. Every row has at least one of email, `linkedin_url`, or `facebook_url`.
-5. Every row has a `discovery_iteration` value.
+5. Every row has a `sweep_iteration` value.
 6. No contact marked `verified=yes` has a `p_note` or `date_found_invalid` indicating they left the role.
 7. Every row with a `star_rating` also has a `response_likelihood` (both are P outputs; one should not exist without the other).
 

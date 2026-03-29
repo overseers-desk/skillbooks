@@ -5,7 +5,7 @@
 
 ## 1. When to use this procedure
 
-Use this procedure when the SP prong is complete (or the human has approved early engagement), the contact has a profile document, and the campaign is ready to begin outreach. A processes contacts in bands ordered by response likelihood, as defined in the methodology.
+Use this procedure when the S&P prong is complete (or the human has approved early engagement), the contact has a profile document, and the campaign is ready to begin outreach. A processes contacts in bands ordered by response likelihood, as defined in the methodology.
 
 A produces drafts for human review. A does not send messages. The director approves, edits, or rejects every draft before anything is sent.
 

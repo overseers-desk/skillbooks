@@ -45,7 +45,7 @@ Recommendation: cluster by angle, since the comm logs are most useful when A can
 
 R is not an AESOP (it is a human review process), but the following items should be formalised as a checklist for the human reviewer:
 
-### Quality checklist for SP output
+### Quality checklist for S&P output
 Before AR begins, verify per roster:
 
 1. Every row has a named contact (no organisation-only rows)
@@ -68,7 +68,7 @@ After each AR band completes and responses are collected:
 2. Categorise responses by which angle generated engagement
 3. Note angles that generated no engagement or negative responses
 4. Record unexpected themes or concerns raised by respondents
-5. List any new names surfaced (for SP₄+)
+5. List any new names surfaced (for S&P₄+)
 6. List any warm leads offered (introductions, referrals) — these bypass the pipeline
 7. Draft revised connection strategy for the next band, specifying which angles to emphasise, which to drop, and any new hooks from the comm log to reference
 8. Record the revision in `strategy-revision-[band].md`

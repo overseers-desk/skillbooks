@@ -5,7 +5,7 @@
 
 ## 1. When to use this procedure
 
-Use this procedure when you have a roster entry — a name, an organisation, and optionally a LinkedIn URL or other seed data — and need to produce a profile document that the A (Approach) phase can consume. P runs within each SP iteration on the contacts discovered in that iteration's S phase.
+Use this procedure when you have a roster entry — a name, an organisation, and optionally a LinkedIn URL or other seed data — and need to produce a profile document that the A (Approach) phase can consume. P runs within each S&P iteration on the contacts discovered in that iteration's S phase.
 
 ## 2. Inputs
 

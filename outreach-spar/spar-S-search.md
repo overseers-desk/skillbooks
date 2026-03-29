@@ -20,13 +20,13 @@ The discovery steps are the same for both types. The differences — whether P i
 
 - **Campaign plan:** Specifies channels, estimated universe sizes, catchment area, seed sources, and search queries. The plan may also define campaign-specific roster columns beyond the core set defined in §4.
 - **Existing roster (if any):** Check whether a roster file already exists for the channel. If one exists, continue from where it left off — do not create a new file.
-- **SPAR methodology:** `spar-methodology.md` — for context on how S feeds P and how SP iterations work.
+- **SPAR methodology:** `spar-methodology.md` — for context on how S feeds P and how S&P iterations work.
 
 ## 3. Outputs
 
 - **Roster TSV file:** One file per channel, in the location specified by the campaign plan. Contains every discovered contact with metadata tracking how and when they were found.
 - **Channel summary file:** `summary-[channel-name].md` in the same directory as the roster. Written when discovery is complete for a channel. Preserves the search vocabulary so that future work starts from the full keyword set rather than rediscovering it.
-- **New names for P:** Contacts discovered during S enter P within the same SP iteration. Names that belong to a different channel are tagged with the destination channel and picked up by that channel's next S phase.
+- **New names for P:** Contacts discovered during S enter P within the same S&P iteration. Names that belong to a different channel are tagged with the destination channel and picked up by that channel's next S phase.
 
 ## 4. Roster file format
 
@@ -42,7 +42,7 @@ Every row must have a **contact_name**. A row without a named person is not a co
 
 If all five return no named individual, omit the organisation entirely.
 
-Each SP iteration updates the same file via the `discovery_iteration` column. Do not create separate files per iteration.
+Each S&P iteration updates the same file via the `sweep_iteration` column. Do not create separate files per iteration.
 
 ### 4.1 Core columns
 
@@ -55,7 +55,7 @@ These columns are standard across all campaigns. Every roster produced by this A
 5. **email**
 6. **linkedin_url**
 7. **facebook_url**
-8. **discovery_iteration** — which SP pass added or last updated this row
+8. **sweep_iteration** — which sweep iteration added or last updated this row
 9. **discovered_via** — the source that led to this contact. For seeds: the source name (e.g. "government school directory", "Google Maps", "industry association member list"). For social-graph contacts: the `contact_name` of the person whose profile surfaced this entry, creating a referral chain traceable to the original seed.
 10. **discovery_source** — the specific mechanism (e.g. "LinkedIn comment", "Facebook group co-admin", "LinkedIn People Also Viewed", "WebSearch: [expanded keyword query]")
 11. **verified** — yes/no — role confirmed via social profile or other independent source
@@ -76,7 +76,7 @@ The campaign plan defines which additional columns apply and what they mean. Thi
 
 Channels fall into three types that affect how S is seeded and how quickly the roster reaches its target:
 
-- **Registry channels** (e.g. schools, childcare centres, aged care centres): A government registry or official database provides a near-complete list. S typically exhausts the registry in 1–2 iterations. SP₃ for a registry channel is mostly P work, not S work.
+- **Registry channels** (e.g. schools, childcare centres, aged care centres): A government registry or official database provides a near-complete list. S typically exhausts the registry in 1–2 iterations. S&P₃ for a registry channel is mostly P work, not S work.
 
 - **Directory channels** (e.g. wedding planners, tour operators, professional associations, industry member directories): An industry directory provides a partial list. S typically exhausts known directories in 2–3 iterations.
 
@@ -88,32 +88,32 @@ The campaign plan specifies which type each channel is. If the plan does not cla
 
 Discovery progresses through iterations that expand the roster in two ways: **social-graph expansion** (following referral chains from known contacts to their peers) and **semantic expansion** (broadening search queries based on how discovered contacts describe themselves and their industry).
 
-### SP₁: Seed
+### S&P₁: Seed
 
 Build the initial roster from the most direct source available. For registry channels, export the registry and resolve named contacts. For directory channels, pull from the directory and search LinkedIn for individuals. For informal channels, use the keyword searches defined in the campaign plan, recording the query in `discovered_via`.
 
 When a CRM or existing contact database is available as a seed source, use it — but also run a **CRM gap analysis** after web research is complete. Compare CRM entries against web research results to identify structurally invisible segments — contacts that exist in the CRM but cannot be found by any web search query. Categorise the unmatched entries by why they are invisible (different self-description vocabulary, weak web presence, B2B rather than B2C, niche specialisation, outside search radius). This analysis reveals whether the invisible segment is reachable through alternative search vocabulary or whether the CRM is the only path to them.
 
-### SP₂: Verify and expand
+### S&P₂: Verify and expand
 
-For each SP₁ contact, verify their current role and activity via their LinkedIn profile or Facebook page:
+For each S&P₁ contact, verify their current role and activity via their LinkedIn profile or Facebook page:
 
 - **Role confirmation:** Does their current title match the roster entry? If they have moved on, find their replacement at the same organisation.
 - **Activity confirmation:** Have they posted or commented on topics relevant to the campaign? (Note: detailed activity research, cue collection, and profiling are P-phase work. S confirms identity and detects role changes; P builds the full profile.)
 
 Then expand via social graph: on LinkedIn, check who commented on or shared their posts — commenters are likely peers at other organisations. On Facebook, check co-admins, regular commenters, and linked groups. On Instagram, check tagged collaborators and location tags at similar venues or events.
 
-Run the **reverse-search diagnostic** on the SP₁ roster: search known contacts by name, note what co-occurring keywords appear in the results, then search by those keywords alone (hiding the names) to test whether they surface contacts invisible to the original search vocabulary. This catches vocabulary gaps — segments that use different terms to describe themselves.
+Run the **reverse-search diagnostic** on the S&P₁ roster: search known contacts by name, note what co-occurring keywords appear in the results, then search by those keywords alone (hiding the names) to test whether they surface contacts invisible to the original search vocabulary. This catches vocabulary gaps — segments that use different terms to describe themselves.
 
 New names found during verification and expansion enter the roster with `discovered_via` tracing the referral chain to the originating contact.
 
-### SP₃: Snowball and refine queries
+### S&P₃: Snowball and refine queries
 
-Repeat the verify-and-expand step on contacts added in SP₂. Each round yields fewer contacts as the social graph is exhausted.
+Repeat the verify-and-expand step on contacts added in S&P₂. Each round yields fewer contacts as the social graph is exhausted.
 
 At the same time, review the descriptors discovered contacts use for themselves. If the initial queries were for one set of terms but discovered contacts describe themselves differently, add those terms as queries for the current iteration. This **semantic expansion** reaches segments invisible to the original search vocabulary — people who do not use the seed keywords but who operate in the same space or serve overlapping audiences. Record expanded queries in `discovered_via`.
 
-Run any expanded keyword queries identified by the reverse-search diagnostic from SP₂.
+Run any expanded keyword queries identified by the reverse-search diagnostic from S&P₂.
 
 ### Stopping criteria
 
@@ -122,17 +122,17 @@ Stop discovery for a channel when any of these is met:
 - The last iteration added fewer than 5 new contacts.
 - Three iterations have been completed (for informal channels, accept whatever count is reached).
 
-S may terminate early within an SP iteration once the stopping criteria are met, while P continues on accumulated contacts.
+S may terminate early within an S&P iteration once the stopping criteria are met, while P continues on accumulated contacts.
 
-### SP₄+ (human-initiated)
+### S&P₄+ (human-initiated)
 
-SP₁ through SP₃ run autonomously. Any iteration beyond SP₃ is human-initiated, triggered by names accumulated during AR (the R phase reliably surfaces a small number of new names per band — respondents mention colleagues, connections reveal relevant people, revised strategy identifies uncovered segments). These names enter the roster at iteration number max(current) + 1, go through the same S steps as any other contact, and their profiles feed back into subsequent AR bands. The quantity is typically small enough that SP₄ or SP₅ is a lightweight pass, not a full discovery cycle.
+S&P₁ through S&P₃ run autonomously. Any iteration beyond S&P₃ is human-initiated, triggered by names accumulated during AR (the R phase reliably surfaces a small number of new names per band — respondents mention colleagues, connections reveal relevant people, revised strategy identifies uncovered segments). These names enter the roster at iteration number max(current) + 1, go through the same S steps as any other contact, and their profiles feed back into subsequent AR bands. The quantity is typically small enough that S&P₄ or S&P₅ is a lightweight pass, not a full discovery cycle.
 
 ## 7. Channel summary
 
 When discovery is complete for a channel, write a summary file alongside the roster: `summary-[channel-name].md` in the same directory. The summary records:
 
-- The seed queries used in SP₁
+- The seed queries used in S&P₁
 - The expanded queries discovered during later iterations (from semantic expansion and reverse-search diagnostic)
 - Any segments that proved invisible to web search, and why (vocabulary gap, weak web presence, B2B-only, etc.)
 - The CRM gap analysis results, if a CRM was used as a seed source
@@ -164,10 +164,10 @@ Run this checklist against all roster files after each iteration. Each check is 
 2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)").
 3. **No duplicate contacts:** no two rows in the same roster file share the same (`contact_name`, `organisation`) pair (case-insensitive). Multiple contacts at the same organisation is permitted.
 4. **Reachable:** every row has at least one of email, `linkedin_url`, or `facebook_url` populated. Phone alone is insufficient for campaigns that begin with a written introduction.
-5. **Iteration recorded:** every row has a `discovery_iteration` value.
+5. **Iteration recorded:** every row has a `sweep_iteration` value.
 6. **Channel matches file:** if the roster uses a `channel` column, the value on every row matches the roster filename.
 7. **Verified contacts still current:** no contact marked `verified=yes` has a `p_note` or `date_found_invalid` indicating they left the role or changed organisation.
-8. **Iteration progress:** for each roster, confirm that `discovery_iteration` is populated on every row and that the stopping criteria in §6 have been evaluated.
+8. **Iteration progress:** for each roster, confirm that `sweep_iteration` is populated on every row and that the stopping criteria in §6 have been evaluated.
 
 Campaign-specific checks (e.g. "every outreach row has a non-empty p_note") are defined by the campaign plan, not by this AESOP.
 
