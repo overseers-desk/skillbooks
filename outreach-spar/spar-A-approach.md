@@ -1,6 +1,6 @@
-# SPAR-A: Approach
+# SPAR-A: Approach (draft + separate-agent spar)
 
-**Applies to:** AI agents (Opus tier) performing the A phase of the SPAR outreach methodology
+**Applies to:** AI agents (Opus tier) performing the A phase of the SPAR outreach methodology. "A" means draft then spar, where the spar is a context-cleared, separate agent (not self-review within the drafting agent).
 **Prerequisite reading:** The profile document for the contact being approached, the campaign plan (defines segments, approach sequencing, and angle tables), and the SPAR methodology (`spar-methodology.md`, A section)
 
 ## 1. When to use this procedure
@@ -144,9 +144,9 @@ Anti-patterns to avoid in drafted messages:
 - **No "I'd love to..."** Sounds performative. Say what you want directly.
 - **No "synergy", "explore", "touch base", "circle back", "leverage".** Corporate filler that signals a template.
 
-### 4.6 Spar the message (A2)
+### 4.6 Spar the message (A2) — separate agent, not self-review
 
-A2 tests whether the draft would land well with the recipient AND whether the draft contains factual errors.
+A2 tests whether the draft would land well with the recipient AND whether the draft contains factual errors. A2 must run as a **separate agent process** with its own context — not as a self-review step within the A1 drafting agent. The drafting agent must not role-play as the recipient; a fresh agent with no campaign context does the role-play. This is what "spar" means in SPAR: an adversarial check by a context-isolated counterpart.
 
 **A2 is mandatory for all contacts.** Thin profiles need sparring more than rich ones — less evidence means more room for the drafter to hallucinate relevance. The number of rounds depends on profile richness:
 
