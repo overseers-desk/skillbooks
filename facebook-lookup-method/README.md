@@ -6,44 +6,30 @@ This method involves processing large DOM outputs (1-15MB per page). **Spawn a S
 
 ## Prerequisites
 
-- Chromium must be installed (snap: `/snap/bin/chromium`)
-- The user must have a Chromium profile with an active Facebook session (logged in). If the DOM returns a login page (title contains "Log in" or "Log into Facebook"), the user needs to log in to Chromium first.
-- **Chromium must NOT be running.** Headless mode cannot use a profile while Chromium holds the SingletonLock. If Chromium is running, ask the user to close all Chromium windows first.
-- Only one headless Chromium instance can use a `--user-data-dir` at a time. Do not run multiple fetches in parallel.
+- A headless browser with a logged-in Facebook session. Facebook requires authentication for most profile data. If the DOM returns a login page (title contains "Log in" or "Log into Facebook"), the user needs to log in interactively first.
+- Browser command, profile path, and concurrency handling (e.g. `flock`) are machine-specific — refer to `~/.claude/CLAUDE.md` for the local configuration.
 - Facebook may serve different DOM structures depending on whether the viewer is logged in, the privacy settings of the target profile, and the locale of the session.
 
-## Chromium flags
+## Browser flags
 
 All `--dump-dom` commands in this workflow use the following flags:
 
 | Flag | Purpose |
 |------|---------|
 | `--window-size=1920,10000` | Forces a tall viewport so lazy-loaded content below the fold renders. |
-| `--user-data-dir="$HOME/snap/chromium/common/chromium"` | Uses the snap Chromium profile where Facebook is logged in. |
-
-## Step 0: Check Chromium is not running
-
-```bash
-pgrep -f chromium --list-full 2>/dev/null | grep -v pgrep || echo "NO_CHROMIUM_RUNNING"
-```
-
-If Chromium is running, ask the user to close it. If there's a stale SingletonLock after Chromium is closed:
-
-```bash
-rm -f "$HOME/snap/chromium/common/chromium/SingletonLock"
-```
+| `--user-data-dir=PROFILE_DIR` | Points to a browser profile that has an active Facebook session (cookies). Required — without it, the browser starts anonymous. |
 
 ## Step 1: Search Facebook for people
 
 ```bash
-chromium --headless --dump-dom \
+BROWSER --headless --dump-dom \
   --window-size=1920,10000 \
-  --user-data-dir="$HOME/snap/chromium/common/chromium" \
+  --user-data-dir=PROFILE_DIR \
   "https://www.facebook.com/search/people/?q=SEARCH_TERMS" \
   2>/dev/null > /tmp/facebook-search-results.html
 ```
 
-Replace `SEARCH_TERMS` with URL-encoded name (spaces become `%20`).
+Substitute `BROWSER` and `PROFILE_DIR` from the local configuration in `~/.claude/CLAUDE.md`. Replace `SEARCH_TERMS` with URL-encoded name (spaces become `%20`).
 
 ### Search strategy for hard-to-find people
 
@@ -57,7 +43,7 @@ If the first search returns no matches, try these variants in order:
 ## Step 2: Extract profile URLs and identify candidates
 
 ```bash
-python3 ~/code/weiwu/facebook-lookup-method/parse-search.py /tmp/facebook-search-results.html
+python3 parse-search.py /tmp/facebook-search-results.html
 ```
 
 This outputs each profile URL with nearby visible text (name, location, mutual friends). Use this to identify which profile to fetch.
@@ -67,9 +53,9 @@ This outputs each profile URL with nearby visible text (name, location, mutual f
 For a username-based profile:
 
 ```bash
-chromium --headless --dump-dom \
+BROWSER --headless --dump-dom \
   --window-size=1920,10000 \
-  --user-data-dir="$HOME/snap/chromium/common/chromium" \
+  --user-data-dir=PROFILE_DIR \
   "https://www.facebook.com/USERNAME" \
   2>/dev/null > /tmp/facebook-profile.html
 ```
@@ -77,9 +63,9 @@ chromium --headless --dump-dom \
 For a numeric-ID profile:
 
 ```bash
-chromium --headless --dump-dom \
+BROWSER --headless --dump-dom \
   --window-size=1920,10000 \
-  --user-data-dir="$HOME/snap/chromium/common/chromium" \
+  --user-data-dir=PROFILE_DIR \
   "https://www.facebook.com/profile.php?id=NUMERIC_ID" \
   2>/dev/null > /tmp/facebook-profile.html
 ```
@@ -87,9 +73,9 @@ chromium --headless --dump-dom \
 ### Optional: Fetch the About page for richer bio data
 
 ```bash
-chromium --headless --dump-dom \
+BROWSER --headless --dump-dom \
   --window-size=1920,10000 \
-  --user-data-dir="$HOME/snap/chromium/common/chromium" \
+  --user-data-dir=PROFILE_DIR \
   "https://www.facebook.com/USERNAME/about" \
   2>/dev/null > /tmp/facebook-about.html
 ```
@@ -103,7 +89,7 @@ https://www.facebook.com/profile.php?id=NUMERIC_ID&sk=about
 ## Step 4: Parse profile details
 
 ```bash
-python3 ~/code/weiwu/facebook-lookup-method/parse-profile.py /tmp/facebook-profile.html
+python3 parse-profile.py /tmp/facebook-profile.html
 ```
 
 This extracts name, bio/intro, and visible text blocks (work, education, location, etc.).
@@ -111,7 +97,7 @@ This extracts name, bio/intro, and visible text blocks (work, education, locatio
 Optionally parse the about page too:
 
 ```bash
-python3 ~/code/weiwu/facebook-lookup-method/parse-profile.py /tmp/facebook-about.html
+python3 parse-profile.py /tmp/facebook-about.html
 ```
 
 ## Step 5: Parse recent posts (optional)
@@ -119,7 +105,7 @@ python3 ~/code/weiwu/facebook-lookup-method/parse-profile.py /tmp/facebook-about
 To extract recent posts with their text content, hashtags, and tagged/mentioned people or pages:
 
 ```bash
-python3 ~/code/weiwu/facebook-lookup-method/parse-posts.py /tmp/facebook-profile.html
+python3 parse-posts.py /tmp/facebook-profile.html
 ```
 
 This uses the same profile HTML fetched in Step 3 (no additional fetch needed). It extracts:
@@ -132,7 +118,7 @@ This uses the same profile HTML fetched in Step 3 (no additional fetch needed). 
 The script auto-detects the profile owner's ID to exclude self-references. To override:
 
 ```bash
-python3 ~/code/weiwu/facebook-lookup-method/parse-posts.py /tmp/facebook-profile.html --owner-id 100006232604720
+python3 parse-posts.py /tmp/facebook-profile.html --owner-id 100006232604720
 ```
 
 The output includes per-post detail and a summary of all hashtags and tagged entities across posts.
@@ -144,7 +130,7 @@ The output includes per-post detail and a summary of all hashtags and tagged ent
 If you need to check whether a profile mentions specific terms:
 
 ```bash
-python3 ~/code/weiwu/facebook-lookup-method/keyword-search.py /tmp/facebook-profile.html India Mumbai engineer
+python3 keyword-search.py /tmp/facebook-profile.html India Mumbai engineer
 ```
 
 ## Why Facebook DOM parsing is hard
