@@ -59,7 +59,7 @@ These columns are standard across all campaigns. Every roster produced by this A
 9. **discovered_via** — the source that led to this contact. For seeds: the source name (e.g. "government school directory", "Google Maps", "industry association member list"). For social-graph contacts: the `contact_name` of the person whose profile surfaced this entry, creating a referral chain traceable to the original seed.
 10. **discovery_source** — the specific mechanism (e.g. "LinkedIn comment", "Facebook group co-admin", "LinkedIn People Also Viewed", "WebSearch: [expanded keyword query]")
 11. **verified** — yes/no — role confirmed via social profile or other independent source
-12. **date_found_invalid** — ISO date (YYYY-MM-DD) when the contact was confirmed unreachable or no longer in a relevant role. The date rather than a flag allows periodic re-checking — a person with no LinkedIn in March may have one by September.
+12. **date_found_invalid** — ISO date (YYYY-MM-DD) when the contact was confirmed unreachable or no longer in a relevant role. The date rather than a flag allows periodic re-checking — a person with no LinkedIn in March may have one by September. The profiling will skip entries that are already found invalid - although most entries are found invalid during profiling stage (P) hence profile is created anyway.
 
 ### 4.2 Campaign-specific columns
 
