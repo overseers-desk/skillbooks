@@ -159,7 +159,7 @@ For each applicable angle, note:
 
 ### 4.9 Assign ratings
 
-**Star rating (1–5):** How interesting is this contact to the campaign?
+**Star rating (0–5):** How interesting is this contact to the campaign?
 
 | Rating | Criteria |
 |---|---|
@@ -168,6 +168,9 @@ For each applicable angle, note:
 | 3 | Right role and area, no specific evidence of alignment or connection value |
 | 2 | Tangentially relevant, weak connection path |
 | 1 | Roster only, no clear relevance |
+| 0 | Invalid — not a campaign target. Set `date_found_invalid` to today's date and write the reason in `p_note`. |
+
+If profiling reveals that the contact is not a viable campaign target — for example, the contact is a direct competitor with no cooperation incentive, or the profile's angle assessment concludes there is no actionable approach — set `star_rating` to 0 and `date_found_invalid` to today's date. Write the reason in `p_note`. Do not produce a profile document for contacts assessed at 0; the roster entry is sufficient. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
 
 Note that network/connection value can support a 5-star rating when the connection paths are specific and high-value (e.g. bridges to a target community the campaign has no other path into), not merely when the person has a large network.
 
