@@ -1,0 +1,72 @@
+# Keyword ledger for event discovery
+# The sweep agent may add, remove, or re-rank entries here based on what
+# actually produces useful results. This file is a living resource, not a spec.
+#
+# productivity: how useful this query has been historically (high/medium/low/untested)
+
+keywords:
+
+  # ── AI + speaking ──────────────────────────────────────────
+  - query: "AI conference Europe 2026 speaking opportunity"
+    surfaces: EU AI events with open speaker calls
+    productivity: high
+
+  - query: "AI summit Spain 2026"
+    surfaces: Spain-native AI events
+    productivity: high
+
+  - query: "AI conference Singapore 2026"
+    surfaces: Singapore AI events
+    productivity: high
+
+  - query: "AI conference London Paris 2026"
+    surfaces: proximity destination AI events
+    productivity: high
+
+  - query: "AI conference Rome Milan 2026"
+    surfaces: Italy proximity AI events
+    productivity: medium
+
+  # ── Angel investing + fund raising ─────────────────────────
+  - query: "angel investor meetup Europe 2026"
+    surfaces: European angel investor calendar
+    productivity: high
+
+  - query: "angel investor event Australia 2026"
+    surfaces: Australian angel investor events
+    productivity: medium
+
+  - query: "startup fund raising event Europe 2026"
+    surfaces: fund-raising opportunities
+    productivity: high
+
+  - query: "startup pitch investor event Singapore 2026"
+    surfaces: Singapore investor events
+    productivity: high
+
+  - query: "startup pitch investor Gold Coast Brisbane 2026"
+    surfaces: Australia base investor events
+    productivity: medium
+
+  - query: "angel investor forum meetup China 2026"
+    surfaces: China-leg events
+    productivity: untested
+
+  - query: "EBAN Congress 2026"
+    surfaces: angel network congress updates
+    productivity: high
+
+  # ── Tourism + tech ─────────────────────────────────────────
+  - query: "Tourism Innovation Summit 2026"
+    surfaces: tourism + tech overlap
+    productivity: high
+
+  - query: "tourism AI technology conference 2026"
+    surfaces: tourism + AI overlap globally
+    productivity: low
+    note: too generic; better with specific region
+
+  # ── Personal / cultural ────────────────────────────────────
+  - query: "equestrian event Spain Andalusia 2026"
+    surfaces: horse riding events near home base
+    productivity: medium

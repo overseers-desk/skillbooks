@@ -1,0 +1,476 @@
+# Almanac event list — 2026
+# Generated: 2026-03-31
+# Last sweep: 2026-03-31
+#
+# participation.status: null | ticket | speaker | rejected | waitlist | closed
+# speaker.too_late: whether the speaker application window has passed
+
+events:
+
+  # ── 5-star ─────────────────────────────────────────────────
+
+  - id: south_summit_madrid_2026
+    name: South Summit Madrid 2026
+    date_start: 2026-06-03
+    date_end: 2026-06-05
+    location:
+      city: Madrid
+      country: Spain
+    categories: [investor-event, speaking-opportunity, angel-fund-raising]
+    stars: 5
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+      apply_url: https://www.southsummit.io/e/madrid
+    url: https://www.southsummit.io/e/madrid
+    notes: 430 speakers, 140 investment funds, 17 unicorns; Madrid hub rank 2
+
+  - id: superai_singapore_2026
+    name: SuperAI Singapore 2026
+    date_start: 2026-06-10
+    date_end: 2026-06-11
+    location:
+      city: Singapore
+      country: Singapore
+    categories: [ai-conference, ai-company, speaking-opportunity]
+    stars: 5
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+      apply_contact: speakers@superai.com
+    url: https://www.superai.com
+    notes: 1,500 AI companies; 10,000 attendees; frequent destination
+
+  - id: tis_seville_2026
+    name: Tourism Innovation Summit (TIS) 2026
+    date_start: 2026-10-06
+    date_end: 2026-10-08
+    location:
+      city: Seville
+      country: Spain
+    categories: [tourism-industry, speaking-opportunity]
+    stars: 5
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+      apply_url: https://www.tisglobalsummit.com
+    url: https://www.tisglobalsummit.com
+    notes: 697 speakers; AI in tourism; Seville hub rank 1 — home region
+
+  - id: eban_congress_2026
+    name: EBAN Congress 2026
+    date_start: 2026-06-01
+    date_end: 2026-06-02
+    location:
+      city: Vilnius
+      country: Lithuania
+    categories: [investor-event, angel-fund-raising]
+    stars: 5
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.ebancongress.com
+    notes: Europe's premier angel congress; 500+ angels from 45+ countries
+
+  - id: ai_summit_london_2026
+    name: AI Summit London 2026
+    date_start: 2026-06-10
+    date_end: 2026-06-11
+    location:
+      city: London
+      country: UK
+    categories: [ai-conference, speaking-opportunity, ai-company]
+    stars: 5
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://london.theaisummit.com
+    notes: 300+ speakers; 10th anniversary; London proximity destination
+
+  - id: raise_summit_paris_2026
+    name: RAISE Summit Paris 2026
+    date_start: 2026-07-08
+    date_end: 2026-07-09
+    location:
+      city: Paris
+      country: France
+    categories: [ai-conference, investor-event, angel-fund-raising]
+    stars: 5
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.raisesummit.com
+    notes: Investors managing €570B+ assets; €10M+ startup competition; Paris proximity destination
+
+  # ── 4-star ─────────────────────────────────────────────────
+
+  - id: atx_enterprise_singapore_2026
+    name: ATxEnterprise / ATxSummit 2026
+    date_start: 2026-05-20
+    date_end: 2026-05-22
+    location:
+      city: Singapore
+      country: Singapore
+    categories: [ai-conference, speaking-opportunity]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://asiatechxsg.com
+    notes: 450 speakers; agentic AI, governance; Singapore govt backed
+
+  - id: investfest_gold_coast_2026
+    name: InvestFest Gold Coast 2026
+    date_start: null  # TBC
+    date_end: null
+    location:
+      city: Gold Coast
+      country: Australia
+    categories: [investor-event, angel-fund-raising]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://cohortspace.com.au/investfest
+    notes: 30 investors; 175 one-on-one VC/founder meetings; on Gold Coast base
+
+  - id: data_ai_conference_london_2026
+    name: Data & AI Conference Europe 2026
+    date_start: 2026-11-03
+    date_end: 2026-11-04
+    location:
+      city: London
+      country: UK
+    categories: [ai-conference, speaking-opportunity]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: 2026-04-17
+      apply_url: https://irmuk.co.uk/cfs-data-ai-conference-2026
+    url: https://irmuk.co.uk/data-ai-conference-2026
+    notes: Speaker call deadline 17 Apr 2026 — imminent; London proximity
+
+  - id: world_summit_ai_2026
+    name: World Summit AI 2026
+    date_start: 2026-10-05
+    date_end: 2026-10-09
+    location:
+      city: Amsterdam
+      country: Netherlands
+    categories: [ai-conference, ai-company]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://worldsummit.ai
+    notes: 10th anniversary; Yann LeCun, Yoshua Bengio alumni
+
+  - id: ai_engineer_europe_2026
+    name: AI Engineer Europe 2026
+    date_start: 2026-04-08
+    date_end: 2026-04-10
+    location:
+      city: London
+      country: UK
+    categories: [ai-conference, speaking-opportunity]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+      note: sold out — waitlist only
+    speaker:
+      too_late: true
+      deadline: null
+    url: https://www.ai.engineer/europe
+    notes: 100+ speakers, 11 tracks; sold out but waitlist/livestream available
+
+  - id: startup_world_cup_sydney_2026
+    name: Startup World Cup — Sydney 2026
+    date_start: 2026-06-17
+    date_end: 2026-06-17
+    location:
+      city: Sydney
+      country: Australia
+    categories: [investor-event]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.startupworldcup.io
+    notes: Pitch competition; winner to SF finale; Sydney frequent destination; Jun = AU window
+
+  - id: feria_del_caballo_2026
+    name: Feria del Caballo 2026
+    date_start: 2026-05-09
+    date_end: 2026-05-16
+    location:
+      city: Jerez de la Frontera
+      country: Spain
+    categories: [horse-riding, cultural]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.turismojerez.com/en/event-detail/the-horse-fair
+    notes: Home city; flagship equestrian event; zero travel cost
+
+  - id: feria_de_abril_2026
+    name: Feria de Abril 2026
+    date_start: 2026-04-21
+    date_end: 2026-04-26
+    location:
+      city: Seville
+      country: Spain
+    categories: [cultural]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.andalucia.com/festival/seville-feria.htm
+    notes: Seville hub rank 1; 1.2M+ attendees; Andalusian cultural flagship
+
+  - id: bienal_flamenco_2026
+    name: Bienal de Flamenco de Sevilla 2026
+    date_start: 2026-09-09
+    date_end: 2026-10-03
+    location:
+      city: Seville
+      country: Spain
+    categories: [cultural]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.labienal.com
+    notes: Biennial; 72 shows, 22 world premieres; Seville hub; zero travel cost
+
+  - id: eu_startups_summit_2026
+    name: EU-Startups Summit 2026
+    date_start: 2026-05-07
+    date_end: 2026-05-08
+    location:
+      city: Valletta
+      country: Malta
+    categories: [investor-event, angel-fund-raising]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: true
+      deadline: null
+    url: https://www.eu-startups.com/summit
+    notes: 2,500 founders + VCs; €1M pitch prize; Mediterranean, accessible from Spain
+
+  # ── 3-star ─────────────────────────────────────────────────
+
+  - id: ai_summit_barcelona_2026
+    name: AI Summit Barcelona 2026
+    date_start: null  # Oct 2026, exact TBC
+    date_end: null
+    location:
+      city: Barcelona
+      country: Spain
+    categories: [ai-conference, speaking-opportunity]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://aisummitbarcelona.com
+    notes: 10,000+ attendees; €5M startup prize; date TBC
+
+  - id: gen_ai_summit_valencia_2026
+    name: Gen AI Summit EU 2026
+    date_start: 2026-04-17
+    date_end: 2026-04-18
+    location:
+      city: Valencia
+      country: Spain
+    categories: [ai-conference, speaking-opportunity]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: true
+      deadline: null
+    url: https://genaisummit.eu/en
+    notes: 30+ speakers; close to Jerez; too late for speaker slot
+
+  - id: bansea_singapore_2026
+    name: BANSEA Events 2026
+    date_start: null  # rolling events throughout 2026
+    date_end: null
+    location:
+      city: Singapore
+      country: Singapore
+    categories: [investor-event, angel-fund-raising]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.bansea.org
+    notes: SEA angel network; rolling meetups; contact info@bansea.org
+
+  - id: startup_world_cup_brisbane_2026
+    name: Startup World Cup — Brisbane 2026
+    date_start: 2026-07-15
+    date_end: 2026-07-15
+    location:
+      city: Brisbane
+      country: Australia
+    categories: [investor-event]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.startupworldcup.io
+    notes: Pitch competition; Brisbane hub rank 1; winner to SF finale
+
+  - id: ai_week_milan_2026
+    name: AI Week Milan 2026
+    date_start: 2026-05-19
+    date_end: 2026-05-20
+    location:
+      city: Milan
+      country: Italy
+    categories: [ai-conference, speaking-opportunity]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: true
+      deadline: null
+    url: https://www.aiweek.it/en
+    notes: 700+ speakers, 25,000+ attendees; Rome proximity extends to Milan
+
+  - id: travel_tech_asia_2026
+    name: Travel Tech Asia + ITB Asia 2026
+    date_start: 2026-10-21
+    date_end: 2026-10-23
+    location:
+      city: Singapore
+      country: Singapore
+    categories: [tourism-industry, ai-conference]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.traveltechasia.com
+    notes: 260+ speakers; AI + travel tech; Singapore frequent destination
+
+  # ── 2-star ─────────────────────────────────────────────────
+
+  - id: angel_investor_summit_uk_2026
+    name: Angel Investor Summit UK 2026
+    date_start: 2026-09-10
+    date_end: 2026-09-10
+    location:
+      city: Brighton
+      country: UK
+    categories: [investor-event]
+    stars: 2
+    participation:
+      status: null
+      confirmed_date: null
+      note: invite/approval-only
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.angelinvestorsummit.co.uk
+    notes: Curated angel investor list; Brighton not London but near
+
+  - id: ijcai_ecai_2026
+    name: IJCAI-ECAI 2026
+    date_start: 2026-08-15
+    date_end: 2026-08-21
+    location:
+      city: Bremen
+      country: Germany
+    categories: [ai-conference]
+    stars: 2
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: true
+      deadline: null
+      note: academic paper track; submission deadline passed
+    url: https://2026.ijcai.org
+    notes: World's leading academic AI conference; 3,500–4,000 AI experts
+
+  # ── 1-star ─────────────────────────────────────────────────
+
+  - id: ate26_adelaide_2026
+    name: Australian Tourism Exchange 2026
+    date_start: 2026-05-10
+    date_end: 2026-05-14
+    location:
+      city: Adelaide
+      country: Australia
+    categories: [tourism-industry]
+    stars: 1
+    participation:
+      status: closed
+      confirmed_date: null
+      note: registration cut-off was Nov 2025
+    speaker:
+      too_late: true
+      deadline: null
+    url: https://www.tourism.australia.com/en/news-and-events/events/tourism-australia-industry-events/ate-2026.html
+    notes: Participation window closed; included for future-year tracking

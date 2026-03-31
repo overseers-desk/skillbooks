@@ -1,0 +1,98 @@
+profile:
+  name: Weiwu
+  default_base: spain
+
+bases:
+  spain:
+    home_city: Jerez de la Frontera
+    hubs:
+      - city: Seville
+        rank: 1
+      - city: Madrid
+        rank: 2
+    timezone: Europe/Madrid
+    visa:
+      zone: Schengen
+      rule: Permanent Resident
+    event_radius_km: 600
+
+  australia:
+    home_city: Gold Coast
+    hubs:
+      - city: Brisbane
+        rank: 1
+    timezone: Australia/Brisbane
+    visa: citizen
+    companion_preference: family
+    event_radius_km: 1000
+    lead_time_days: 14
+
+interests:
+  - id: artificial_intelligence
+    type: professional
+  - id: tourism
+    type: professional
+  - id: business_connections
+    type: professional
+  - id: horse_riding
+    type: personal
+  - id: culture_australian
+    type: cultural
+    region: Australia
+    salience: away
+  - id: culture_spanish
+    type: cultural
+    region: Spain
+    salience: away
+  - id: culture_latino
+    type: cultural
+    region: Latin America
+    salience: always
+
+seasonal_presence:
+  - base: australia
+    months: [6, 7, 8]
+    certainty: high
+    trigger: school_holidays
+    companion_model: family
+  - base: spain
+    default: true
+    certainty: probable
+
+pull_events:
+  - id: angel_investor_events
+    weight: override
+    description: Angel investor meetups or introductions
+  - id: angel_fund_raising
+    weight: override
+    description: Opportunities to raise angel or early-stage funding
+  - id: ai_speaking_opportunity
+    weight: override
+    description: Speaking slots at AI conferences or forums
+  - id: ai_company_engagement
+    weight: override
+    description: Meetings with AI companies or research labs
+
+frequent_destinations:
+  - place: Singapore
+    reason: explicit
+    interests: [artificial_intelligence]
+  - place: China
+    reason: explicit
+  - place: Georgia
+    reason: implicit # if a journey is planned through there, do not cite reason
+  - place: Sydney
+    reason: explicit
+    base: australia
+  - place: Paris
+    reason: proximity
+    base: spain
+    note: short-haul from Seville airport
+  - place: London
+    reason: proximity
+    base: spain
+    note: short-haul from Seville airport
+  - place: Rome
+    reason: proximity
+    base: spain
+    note: short-haul from Seville airport
