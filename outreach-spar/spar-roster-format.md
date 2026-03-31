@@ -54,7 +54,7 @@ Every row must have at least one of email, linkedin_url, or facebook_url populat
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
 | 11 | verified | yes/no | S initial; P confirms or corrects | A, quality check | Role confirmed via independent source |
-| 12 | date_found_invalid | ISO date (YYYY-MM-DD) | S or P | S (skips row), A (skips row), human review | Marks stale contacts without deleting them. The date rather than a flag allows periodic re-checking. |
+| 12 | date_found_invalid | ISO date (YYYY-MM-DD) | S, P, or A | S (skips row), A (skips row), human review | Marks stale contacts without deleting them. The date rather than a flag allows periodic re-checking. Set when the person has left the relevant role entirely (retired, changed industry), or when profiling or approach drafting determines the contact is not a campaign target (e.g. operates a competing venue with no cooperation incentive, or the profile concludes there is no viable approach angle). |
 
 ### Phase handover
 
@@ -64,7 +64,7 @@ Each SPAR phase has one note column. Only that phase writes to it. Subsequent ph
 |---|-------|------|------------|---------|---------|
 | 13 | s_note | short text | S only; frozen after discovery | P, A | Why S included this person — the source statement, event, or signal that justified the entry. P reads this before profiling to check whether the person matches the rationale. |
 | 14 | p_note | short text | P only | A, human review | What P found: the verified evidence of interest, the recommended angle, any cautions for A. Broader than evidence of interest alone — includes corrections, routing advice, and warnings. |
-| 15 | star_rating | 1–5 | P | A (band ordering), human review | Strategic value: how interesting this contact is to the campaign. Scale defined in SPAR-P. |
+| 15 | star_rating | 0–5 | P; A may set to 0 | A (band ordering), human review | Strategic value: how interesting this contact is to the campaign. Scale defined in SPAR-P. A value of 0 means "invalid — not a campaign target." When star_rating is set to 0, date_found_invalid must also be set. The date_found_invalid field records when the determination was made; p_note or a_note records the reason. A star_rating of 0 is distinct from 1: a 1-star contact is low-priority but targetable; a 0-star contact is excluded from the pipeline entirely. |
 | 16 | response_likelihood | percentage | P | A (band ordering) | Estimated probability the contact responds to outreach. |
 | 17 | a_note | short text | A only | R (human review), subsequent A bands | Angle used, key hook referenced, outcome. Lets R scan a band's results from the roster without opening every comms file. |
 | 18 | r_note | short text | R (human) only | Subsequent A bands, S&P₄+ | Per-contact observation from response review: what worked, what did not, new leads mentioned, channel adjustment. |
@@ -104,6 +104,7 @@ These assertions apply to the core columns. Campaign-specific checks are defined
 5. Every row has a `sweep_iteration` value.
 6. No contact marked `verified=yes` has a `p_note` or `date_found_invalid` indicating they left the role.
 7. Every row with a `star_rating` also has a `response_likelihood` (both are P outputs; one should not exist without the other).
+8. Every row with `star_rating = 0` has a non-empty `date_found_invalid`.
 
 ## Relationship to other documents
 

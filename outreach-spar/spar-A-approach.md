@@ -27,6 +27,16 @@ A produces drafts for human review. A does not send messages. The director appro
 
 ## 4. Procedure
 
+### 4.0 Confirm target validity
+
+Before drafting, verify that this contact is a valid campaign target:
+
+1. Check the roster: `star_rating` must be ≥ 1 and `date_found_invalid` must be empty. If either condition fails, skip this contact.
+2. Read the profile's angle assessment. If the profile states or implies the contact should not be approached (e.g. "not a Phase 1 contact", "deferred", "competing venue"), do not draft. Instead: set `star_rating` to 0, set `date_found_invalid` to today's date, write the reason in `a_note`, and move to the next contact.
+3. If `star_rating` is 1 or 2, request explicit human confirmation before proceeding. Low-star contacts rarely justify the drafting cost; the human may prefer to skip or re-profile.
+
+This gate exists because the A phase is the first point where profile content and campaign goals are jointly evaluated. P assesses the contact's relevance to the campaign in general; A assesses whether a specific approach is viable. A contact may pass P's filter but fail A's — for example, a strategically interesting person (high star from P) for whom no viable first-touch exists.
+
 ### 4.1 Read warmth level from the profile
 
 The P phase has already checked IMAP and assigned a warmth level (see SPAR-P §4.4). Read it from the profile document's "Prior correspondence (IMAP)" section and from `p_note` in the roster.
