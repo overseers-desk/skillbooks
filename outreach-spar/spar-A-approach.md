@@ -119,7 +119,7 @@ This is the default, not a rigid rule. When the angle requires context before th
 
 Not every USP is relevant to every recipient. Select USPs based on what the recipient's segment cares about.
 
-The venue's USP reference document is at `research-weddings/2025-04-20-wedding-position-and-usp.md` in the campaign repository. Read the ranked USP list there. Then select 1–3 USPs that connect to the recipient's segment and angle. For example:
+Each campaign declares its USP reference document in the campaign YAML (`usp_document` field). Read the USP list there. Then select 1–3 USPs that connect to the recipient's segment and angle. For example:
 
 - A wedding planner cares about photography circuits, accommodation, and ceremony options — not revenue figures.
 - A tour operator cares about group capacity, drive time from the coast, and what the experience includes.
