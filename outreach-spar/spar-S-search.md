@@ -40,7 +40,7 @@ Every row must have a **contact_name**. A row without a named person is not a co
 4. Instagram profile bio
 5. Google search for the organisation name plus role keywords ("owner", "director", "organiser", "coordinator")
 
-If all five return no named individual, omit the organisation entirely.
+If all five return no named individual, the organisation may be retained as a nameless row with `date_found_invalid` set to today's date and a note such as "no named contact found after exhausting all sources." Leave `contact_name` blank. This acts as a negative-cache entry: future sweep iterations will see the row, recognise it as already investigated, and not re-add the organisation. Do not omit the organisation silently — a missing row cannot prevent re-discovery.
 
 Each S&P iteration updates the same file via the `sweep_iteration` column. Do not create separate files per iteration.
 
@@ -161,7 +161,7 @@ These cross-leads must not be discarded because they fall outside the current ch
 Run this checklist against all roster files after each iteration. Each check is a pass/fail assertion on the TSV data.
 
 1. **Column count:** every row has the expected number of tab-separated fields (core columns from §4.1 plus any campaign-specific columns from §4.2).
-2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)").
+2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)"). Exception: rows where all five name-resolution sources were exhausted and no individual could be found may have a blank `contact_name`, provided `date_found_invalid` is set. These are negative-cache entries (see §4); they are excluded from all pipeline metrics.
 3. **No duplicate contacts:** no two rows in the same roster file share the same (`contact_name`, `organisation`) pair (case-insensitive). Multiple contacts at the same organisation is permitted.
 4. **Reachable:** every row has at least one of email, `linkedin_url`, or `facebook_url` populated. Phone alone is insufficient for campaigns that begin with a written introduction.
 5. **Iteration recorded:** every row has a `sweep_iteration` value.
