@@ -178,6 +178,8 @@ Record all drafts and C2 responses (both steps) in the comms file. The human rev
 
 ### 4.7 Assemble the final output
 
+Read the campaign YAML (`campaign*.yaml` in the campaign root) for the sender address and BCC address before assembling output.
+
 **For LinkedIn + email + phone contacts:**
 
 ```
