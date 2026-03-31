@@ -109,9 +109,15 @@ Examples of presupposing (the recipient's situation) vs narrating:
 
 In each case, the knowledge of the recipient's world is in the ask or the framing, not displayed as a separate element.
 
-**Self-introduction and USP selection:**
+**Element ordering — ask before justification:**
 
-Every first-touch email must establish who the sender is and why the venue is worth the recipient's attention. But not every USP is relevant to every recipient. Select USPs based on what the recipient's segment cares about.
+Every first-touch email must contain three elements: (a) self-introduction, (b) the concrete ask, and (c) USPs that justify a yes. The default ordering should be a→b→c: introduce yourself, make the ask, then give the recipient the reasons to say yes. This front-loads the proposition so the reader knows what you want before deciding whether to keep reading. The USPs that follow serve as evidence, not preamble.
+
+This is the default, not a rigid rule. When the angle requires context before the ask makes sense (e.g. explaining an event format that does not yet exist), provide that context first. But when the ask is self-explanatory ("Would you consider holding your next event here?"), lead with it immediately after the self-introduction.
+
+**USP selection:**
+
+Not every USP is relevant to every recipient. Select USPs based on what the recipient's segment cares about.
 
 The venue's USP reference document is at `research-weddings/2025-04-20-wedding-position-and-usp.md` in the campaign repository. Read the ranked USP list there. Then select 1–3 USPs that connect to the recipient's segment and angle. For example:
 
@@ -248,7 +254,6 @@ Between bands, read the latest strategy revision note before processing the next
 # Approach: [Full Name], [Organisation]
 
 **Contact:** [Name], [Role], [Organisation]
-**Profile:** [path to profile document]
 **Band:** AR[n] ([response-likelihood]%, [star-rating]★)
 **Warmth level:** [existing relationship / prior contact / known-of / cold] (from profile §IMAP)
 **Channel:** [LinkedIn + email / email only / phone + follow-up email]
