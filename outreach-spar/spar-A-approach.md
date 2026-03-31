@@ -166,7 +166,7 @@ Spawn one subagent (C2) that performs two sequential steps. Use a model suited t
 
 **Step 1 — Role-play (context-isolated).** C2 receives ONLY the profile content and the draft message. No campaign files, no venue files, no method files. C2 reacts in character as the recipient, who has never heard of the sender or their venue. No rubric, no structured "What works / What could be improved" format — just a natural reaction. If the profile is in a non-English language context and the message was drafted in that language, C2 responds in that language.
 
-**Step 2 — Fact-check.** After recording the in-character reaction, C2 breaks character and reads the campaign's source files (USP document, goal file, venue description). It checks every factual claim in the draft email against these sources and appends corrections as: "P.S. I noticed: [claim] — [what the source actually says or that no source exists]."
+**Step 2 — Fact-check.** After recording the in-character reaction, C2 breaks character and reads the campaign's source files (USP document, goal file, venue description). It checks every factual claim in the draft email against these sources and appends corrections as: "P.S. I noticed: [claim] — [what the source actually says or that no source exists]." Do not cite file paths or file names in corrections — state what the source says, not where it was found.
 
 The two steps must be sequential within one subagent call. The role-play must complete before the fact-check begins — this prevents source-file knowledge from contaminating the persona simulation.
 
