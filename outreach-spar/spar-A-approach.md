@@ -263,6 +263,8 @@ Between bands, read the latest strategy revision note before processing the next
 **Angle:** [Primary angle] ([one-sentence rationale])
 **Profile richness:** [Rich/Medium/Thin] ([N] A2 rounds)
 
+Note: sent date is NOT a header field intentionally.
+
 ## Angle selection rationale
 
 [Why this angle, referencing specific profile evidence. Why not the alternatives.]
