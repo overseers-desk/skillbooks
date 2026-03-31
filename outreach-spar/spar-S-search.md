@@ -30,7 +30,7 @@ The discovery steps are the same for both types. The differences — whether P i
 
 ## 4. Roster file format
 
-Store one TSV file per channel. Use TSV, not CSV — roster fields frequently contain quoted speech, URLs, and free-text notes that cause quoting problems with commas. Filename convention is defined by the campaign plan (e.g. `roster-[channel-name].tsv`).
+Store one TSV file per channel. Use TSV, not CSV — roster fields frequently contain quoted speech, URLs, and free-text notes that cause quoting problems with commas. The file is named `roster.tsv` and lives inside the channel's own directory (e.g. `wedding-planner/roster.tsv`). Do not embed the channel name in the filename — the directory already carries that context.
 
 Every row must have a **contact_name**. A row without a named person is not a contact. If a source lists only an organisation, resolve a named individual by exhausting these sources in order:
 
