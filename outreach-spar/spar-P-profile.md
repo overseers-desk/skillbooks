@@ -185,7 +185,17 @@ Factors that decrease likelihood:
 - Current priorities are far from the campaign's domain
 - Senior enough that unsolicited messages are filtered
 
-State the estimate as a range or point estimate with a one-sentence rationale.
+State the estimate as a whole-number percentage with a one-sentence rationale.
+
+**Write both values to the roster TSV — do not record them in the profile document.** The roster is the single source of truth for star_rating and response_likelihood. Use `trdsql` to update the contact's row in-place:
+
+```bash
+trdsql -id "\t" -ih -od "\t" -oh \
+  "SELECT channel, organisation, contact_name, role, phone, email, postcode, linkedin_url, facebook_url, sweep_iteration, discovered_via, discovery_source, verified, p_note, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'STAR' ELSE star_rating END, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'PCT' ELSE response_likelihood END, s_note, date_found_invalid FROM roster.tsv" \
+  > roster-tmp.tsv && mv roster-tmp.tsv roster.tsv
+```
+
+Replace NAME, ORG, STAR, and PCT with the actual values. The column order in that SELECT must match the roster exactly (see the roster header). If the roster lacks a `response_likelihood` column, add it after `star_rating` using `trdsql` with an `ALTER`-equivalent SELECT before running the update.
 
 ### 4.10 Classify profile richness
 
@@ -272,12 +282,6 @@ Record all corrections in the profile document under a "Verification corrections
 2. **[Secondary angle]** — [Assessment]
 
 [Continue as needed]
-
-## Ratings
-
-**Star rating:** [1–5] — [One-sentence rationale]
-
-**Response likelihood:** [Percentage] — [One-sentence rationale citing specific factors]
 
 ## Verification corrections
 

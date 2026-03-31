@@ -12,7 +12,7 @@ A produces drafts for human review. A does not send messages. The director appro
 ## 2. Inputs
 
 - **Profile document:** The full profile produced by SPAR-P for this contact.
-- **Roster entry:** The contact's row in the roster TSV, including s_note, p_note, star_rating, and response_likelihood.
+- **Roster entry:** The contact's row in the roster TSV, including s_note, p_note, star_rating, and response_likelihood. These two rating columns are the single source of truth — do not duplicate them in the comms file.
 - **Campaign plan:** Defines segments, approach sequencing per segment (which goal file to consult), and any campaign-specific rules (language, collateral prerequisites, channel preferences).
 - **Segment goal file:** Each segment has a goal file that specifies the approach type (FAM invitation, phone call, personal email, etc.) and the collateral sequencing (approach first vs. collateral required). Read the relevant goal file before drafting.
 - **Communication index:** `comms-index.md`, the running index of all prior A outputs. Read this before drafting to find cross-references, shared connections, and angles that have already been used with related contacts.
@@ -254,7 +254,7 @@ Between bands, read the latest strategy revision note before processing the next
 # Approach: [Full Name], [Organisation]
 
 **Contact:** [Name], [Role], [Organisation]
-**Band:** AR[n] ([response-likelihood]%, [star-rating]★)
+**Band:** AR[n]
 **Warmth level:** [existing relationship / prior contact / known-of / cold] (from profile §IMAP)
 **Channel:** [LinkedIn + email / email only / phone + follow-up email]
 **Language:** [English / other, with rationale]
