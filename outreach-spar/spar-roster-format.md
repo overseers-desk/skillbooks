@@ -6,7 +6,7 @@
 
 One TSV file per channel. TSV, not CSV — roster fields contain quoted speech, URLs, and free-text that cause quoting problems with commas.
 
-Every row must have a `contact_name`. A row without a named person is not a contact. Each S&P iteration updates the same file via the `sweep_iteration` column; do not create separate files per iteration. Filename convention is defined by the campaign plan (e.g. `roster-[channel-name].tsv`).
+Every row must have a `contact_name`. A row without a named person is not a contact. Each S&P iteration updates the same file via the `sweep_iteration` column; do not create separate files per iteration. The file is named `roster.tsv` and lives inside the channel's own directory (e.g. `wedding-planner/roster.tsv`). Do not embed the channel name in the filename — the directory already carries that context.
 
 **Delimiter and line-break conventions:** Tab (`\t`) separates fields; newline (`\n`) separates rows. Neither may appear inside a field value. When a field needs to represent a line break within its content (e.g. a multi-sentence note), use carriage return (`\r`) instead of newline. Standard tools (LibreOffice, Python `csv` with `delimiter='\t'`, pandas) read `\r` inside a field without treating it as a row boundary.
 
