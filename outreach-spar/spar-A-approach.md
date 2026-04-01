@@ -139,6 +139,12 @@ For cold contacts, almost always include the Instagram link (https://rivermill.a
 
 For warm contacts (prior correspondence, existing relationship), the Instagram link is less important — they may already follow or have visited.
 
+**Subject line — at least one specific element per recipient.**
+
+Every subject line must contain at least one element that distinguishes it from every other subject line in the campaign. Identical subjects across recipients cause Gmail to group unrelated threads, which makes tracking difficult. More importantly, a specific subject signals to the recipient that the email is about them, not a mass send.
+
+The strongest differentiator is a keyword tied to the recipient's activity or offer — "sourdough workshops", "beekeeping", "plein air session" — because it tells the reader the email is about their business. When the activity itself is generic (a group outing is a group outing), the organisation name or brand serves the same purpose — "for Robina Lions", "for HMFC". A geographic anchor works when proximity is the selling point — "your neighbour in 4211", "15 min from Mudgeeraba". The person's name is a last resort: it solves the deduplication problem without adding attention value.
+
 **Other principles to keep in mind:**
 
 - If prior correspondence exists, open with the thread. It is a stronger opener than anything you can construct.
