@@ -55,7 +55,7 @@ Sources (not exhaustive; the campaign plan specifies which apply):
 
 Each iteration applies the appropriate search methods:
 
-**S&P₁ (Seed):** Build the initial roster from the most direct source. For a registry channel, export the registry. For a LinkedIn-network campaign, export direct and 2nd-degree connections. For a web-sourced campaign, run the seed queries defined in the campaign plan.
+**S&P₁ (Seed):** Build the initial roster from the most direct source. For a registry segment, export the registry. For a LinkedIn-network campaign, export direct and 2nd-degree connections. For a web-sourced campaign, run the seed queries defined in the campaign plan.
 
 **S&P₂ (Verify and expand):** Verify each S&P₁ contact's current role and activity. Expand via social graph: who commented on their posts, who are co-admins of their groups, who appears in "People Also Viewed." Run the reverse-search diagnostic on the S&P₁ roster to discover vocabulary gaps. New names found during verification enter the roster with `discovered_via` tracing the referral chain.
 
@@ -75,7 +75,7 @@ P runs within each S&P iteration, on the contacts discovered in that iteration's
 
 2. **New names** discovered during profiling. While checking A's LinkedIn profile, P may find that B commented on A's post and B is a relevant contact not yet in the roster. B enters the roster for the next iteration's S phase (or the current iteration, if S is still running). This is the social-graph expansion mechanism — it occurs during P, not during S, because it requires examining individual profiles rather than running search queries.
 
-   New names may belong to a different channel or segment from the contact being profiled. While profiling a hackathon organiser, P might discover that an aged care coordinator liked their post — a contact relevant to a different campaign channel entirely. These cross-leads must not be discarded because they fall outside the current channel's scope. P records them in the roster with `discovered_via` pointing to the originating contact, and tags them with the channel they belong to. The S phase of the appropriate channel picks them up in its next iteration. In campaigns with multiple channels running concurrently, cross-lead capture is one of the primary mechanisms by which channels inform each other.
+   New names may belong to a different segment from the contact being profiled. While profiling a hackathon organiser, P might discover that an aged care coordinator liked their post — a contact relevant to a different campaign segment entirely. These cross-leads must not be discarded because they fall outside the current segment's scope. P records them in the roster with `discovered_via` pointing to the originating contact, and tags them with the segment they belong to. The S phase of the appropriate segment picks them up in its next iteration. In campaigns with multiple segments running concurrently, cross-lead capture is one of the primary mechanisms by which segments inform each other.
 
 P will routinely discover that a contact is stale: the person has left the organisation, changed roles, or retired from the field. A stale contact is not simply removed. P marks the contact with a `date_found_invalid` and the reason, then attempts to find the replacement — the person who now holds the role that made the original contact relevant. The replacement enters the roster as a new contact in the current iteration, with `discovered_via` recording that they were found as a replacement for the stale contact. If no replacement can be found (the organisation has closed, the role no longer exists), the stale contact is left marked and no replacement is added. The stale contact's date allows periodic re-checking — a person who left a role in March may have taken a relevant role elsewhere by September.
 
@@ -144,7 +144,7 @@ The output of R is a revised connection strategy: updated angle priorities, adju
 | Communication logs (`ID-person-name-org-comms.md`) | A | R, subsequent A runs (via index) | Campaign directory |
 | Communication index (`comms-index.md`) | A (append) | A (read) | Campaign directory |
 | Strategy revision notes (`strategy-revision-[band].md`) | R (human) | A (next band) | Campaign directory |
-| Channel summary (search vocabulary, invisible segments) | S&P₃ | Future S&P runs on same channel | Campaign directory |
+| Segment summary (search vocabulary, invisible segments) | S&P₃ | Future S&P runs on same segment | Campaign directory |
 
 ## Model assignment
 
@@ -168,5 +168,6 @@ This methodology does not replace any existing document. It provides the concept
 - **SPAR-P** (`spar-P-profile.md`) — the operational procedure for profile building, generalising the personalization SOP's research phase into a standalone profiling step that does not also draft messages.
 - **SPAR-A** (not yet written) — the operational procedure for drafting connection messages, including the A1/A2 sparring loop, generalising the personalization SOP's drafting phase (Phases 2–3) with the addition of communication-log cross-referencing and band-ordered processing.
 - **R has no procedure document** — it is a human review process. Its inputs and outputs are defined here; its execution is not automatable.
+- **Segment categorisation** (`spar-segment-categorisation.md`) — criteria for deciding when contacts belong in one segment versus two, when to merge or split segments, and how to handle sub-segments and cross-segment duplicates.
 
 Domain-specific content — target segments, angle tables, roster schemas, conversion benchmarks, funnel math — remains in the campaign plan for each project (e.g. `opensource.foundation/outreach/direct-outreach-pipeline.md` for the foundation, `rivermill/management-outreach/` for Rivermill). SPAR defines the method; the campaign plan defines the targets.

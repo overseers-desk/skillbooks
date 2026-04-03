@@ -9,8 +9,8 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 
 ## 2. Inputs
 
-- **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, channel, discovered_via)
-- **Campaign goal document:** The document (typically `goal.md` or equivalent) that defines the campaign's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the channel — independent of their domain relevance, seniority, or star rating.
+- **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, segment, discovered_via)
+- **Campaign goal document:** The document (typically `goal.md` or equivalent) that defines the campaign's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
 - **Campaign angle table:** The list of angles defined by the campaign plan, with descriptions of when each applies. Read this before profiling — it defines what "relevant" means for this campaign.
 - **Campaign context documents:** The campaign plan names specific documents (mission statement, project pages, segment definitions) that explain the campaign's offering. Read the angle table first; read context documents only for angles that seem relevant to the target.
 - **LinkedIn lookup method:** `~/code/aesop/linkedin-lookup-method/README.md` — read this before the first LinkedIn fetch in a session. It specifies Chromium flags, sequencing constraints, and parsing scripts.
@@ -29,7 +29,7 @@ Additionally, P produces:
 
 Before any research, read the campaign goal document and answer one question: can this contact deliver the outcome the goal describes, through the mechanism the goal describes?
 
-This is a structural check, not a relevance check. A contact may be in the right domain, at the right seniority, with strong apparent fit — and still be the wrong type of contact for the channel. The goal document specifies a mechanism: the particular way a contact is expected to act on the campaign's behalf. The check is whether this contact operates through that mechanism. A contact who is adjacent to the mechanism — who knows the right people, or works in the same field, or whose platform could theoretically be adapted — does not pass the check unless the goal explicitly includes that adjacent role.
+This is a structural check, not a relevance check. A contact may be in the right domain, at the right seniority, with strong apparent fit — and still be the wrong type of contact for the segment. The goal document specifies a mechanism: the particular way a contact is expected to act on the campaign's behalf. The check is whether this contact operates through that mechanism. A contact who is adjacent to the mechanism — who knows the right people, or works in the same field, or whose platform could theoretically be adapted — does not pass the check unless the goal explicitly includes that adjacent role.
 
 If the contact cannot deliver the outcome through the mechanism the goal assumes, set `date_found_invalid` to today's date and record the reason in `p_note`. Do not proceed to §4.1. Do not produce a profile document.
 
@@ -207,7 +207,7 @@ State the estimate as a whole-number percentage with a one-sentence rationale.
 
 ```bash
 trdsql -id "\t" -ih -od "\t" -oh \
-  "SELECT channel, organisation, contact_name, role, phone, email, postcode, linkedin_url, facebook_url, sweep_iteration, discovered_via, discovery_source, verified, p_note, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'STAR' ELSE star_rating END, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'PCT' ELSE response_likelihood END, s_note, date_found_invalid FROM roster.tsv" \
+  "SELECT segment, organisation, contact_name, role, phone, email, postcode, linkedin_url, facebook_url, sweep_iteration, discovered_via, discovery_source, verified, p_note, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'STAR' ELSE star_rating END, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'PCT' ELSE response_likelihood END, s_note, date_found_invalid FROM roster.tsv" \
   > roster-tmp.tsv && mv roster-tmp.tsv roster.tsv
 ```
 

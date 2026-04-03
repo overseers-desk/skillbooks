@@ -50,13 +50,13 @@ Before AR begins, verify per roster:
 
 1. Every row has a named contact (no organisation-only rows)
 2. No duplicate contacts within the roster
-3. No duplicate contacts across rosters (if multi-channel campaign)
+3. No duplicate contacts across rosters (if multi-segment campaign)
 4. Every contact has at least one reachable channel (email, LinkedIn, or Facebook open for messages)
 5. Star ratings are plausible (geographic proximity alone does not establish fit; a referral path must be plausible)
 6. Response likelihood estimates are consistent with profile richness (a thin profile cannot support a 90% estimate)
 7. Stale contacts are marked and replacements attempted
 8. Profile richness classification (rich/medium/thin) is recorded
-9. Cross-leads are tagged with correct destination channel
+9. Cross-leads are tagged with correct destination segment
 10. `discovered_via` chains are traceable to a seed source
 
 **Source:** rivermill iteration results, quality checklist (25 March 2026). Adapted to be campaign-agnostic.

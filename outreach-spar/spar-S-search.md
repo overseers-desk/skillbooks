@@ -2,11 +2,11 @@
 
 **Applies to:** AI agents (Sonnet tier) performing the S phase of the SPAR outreach methodology
 
-**Prerequisite reading:** The campaign plan for the channel being researched (defines channels, estimated universe sizes, catchment area, seed sources, and search queries) and the SPAR methodology (`spar-methodology.md`, S section)
+**Prerequisite reading:** The campaign plan for the segment being researched (defines segments, estimated universe sizes, catchment area, seed sources, and search queries) and the SPAR methodology (`spar-methodology.md`, S section)
 
 ## 1. When to use this procedure
 
-Use this procedure whenever a campaign needs a list of named people to contact. It applies to any outreach or sales campaign — membership recruitment, hospitality sales, community building, investor outreach — provided the campaign plan defines the target channels and estimated universe.
+Use this procedure whenever a campaign needs a list of named people to contact. It applies to any outreach or sales campaign — membership recruitment, hospitality sales, community building, investor outreach — provided the campaign plan defines the target segments and estimated universe.
 
 Campaigns may define two types of targets, or only one:
 
@@ -18,19 +18,19 @@ The discovery steps are the same for both types. The differences — whether P i
 
 ## 2. Inputs
 
-- **Campaign plan:** Specifies channels, estimated universe sizes, catchment area, seed sources, and search queries. The plan may also define campaign-specific roster columns beyond the core set defined in §4.
-- **Existing roster (if any):** Check whether a roster file already exists for the channel. If one exists, continue from where it left off — do not create a new file.
+- **Campaign plan:** Specifies segments, estimated universe sizes, catchment area, seed sources, and search queries. The plan may also define campaign-specific roster columns beyond the core set defined in §4.
+- **Existing roster (if any):** Check whether a roster file already exists for the segment. If one exists, continue from where it left off — do not create a new file.
 - **SPAR methodology:** `spar-methodology.md` — for context on how S feeds P and how S&P iterations work.
 
 ## 3. Outputs
 
-- **Roster TSV file:** One file per channel, in the location specified by the campaign plan. Contains every discovered contact with metadata tracking how and when they were found.
-- **Channel summary file:** `summary-[channel-name].md` in the same directory as the roster. Written when discovery is complete for a channel. Preserves the search vocabulary so that future work starts from the full keyword set rather than rediscovering it.
-- **New names for P:** Contacts discovered during S enter P within the same S&P iteration. Names that belong to a different channel are tagged with the destination channel and picked up by that channel's next S phase.
+- **Roster TSV file:** One file per segment, in the location specified by the campaign plan. Contains every discovered contact with metadata tracking how and when they were found.
+- **Segment summary file:** `summary-[segment-name].md` in the same directory as the roster. Written when discovery is complete for a segment. Preserves the search vocabulary so that future work starts from the full keyword set rather than rediscovering it.
+- **New names for P:** Contacts discovered during S enter P within the same S&P iteration. Names that belong to a different segment are tagged with the destination segment and picked up by that segment's next S phase.
 
 ## 4. Roster file format
 
-Store one TSV file per channel. Use TSV, not CSV — roster fields frequently contain quoted speech, URLs, and free-text notes that cause quoting problems with commas. The file is named `roster.tsv` and lives inside the channel's own directory (e.g. `wedding-planner/roster.tsv`). Do not embed the channel name in the filename — the directory already carries that context.
+Store one TSV file per segment. Use TSV, not CSV — roster fields frequently contain quoted speech, URLs, and free-text notes that cause quoting problems with commas. The file is named `roster.tsv` and lives inside the segment's own directory (e.g. `wedding-planner/roster.tsv`). Do not embed the segment name in the filename — the directory already carries that context.
 
 Every row must have a **contact_name**. A row without a named person is not a contact. If a source lists only an organisation, resolve a named individual by exhausting these sources in order:
 
@@ -65,24 +65,24 @@ These columns are standard across all campaigns. Every roster produced by this A
 
 The campaign plan may add columns beyond the core set. The core columns, including the phase handover notes (s_note, p_note, a_note, r_note) and ratings (star_rating, response_likelihood), are defined in `spar-roster-format.md`. Common campaign-specific additions include:
 
-- **channel** — when the campaign has multiple channels in a single roster or needs to tag cross-leads
+- **segment** — when the campaign has multiple segments in a single roster or needs to tag cross-leads
 - **postcode** or **address** — for geographic filtering
-- **type** — contact category within a channel
+- **type** — contact category within a segment
 - **source_url** — the specific page that justified inclusion
 
 The campaign plan defines which additional columns apply and what they mean. This AESOP does not prescribe them.
 
-## 5. Channel types
+## 5. Segment types
 
-Channels fall into three types that affect how S is seeded and how quickly the roster reaches its target:
+Segments fall into three types that affect how S is seeded and how quickly the roster reaches its target:
 
-- **Registry channels** (e.g. schools, childcare centres, aged care centres): A government registry or official database provides a near-complete list. S typically exhausts the registry in 1–2 iterations. S&P₃ for a registry channel is mostly P work, not S work.
+- **Registry segments** (e.g. schools, childcare centres, aged care centres): A government registry or official database provides a near-complete list. S typically exhausts the registry in 1–2 iterations. S&P₃ for a registry segment is mostly P work, not S work.
 
-- **Directory channels** (e.g. wedding planners, tour operators, professional associations, industry member directories): An industry directory provides a partial list. S typically exhausts known directories in 2–3 iterations.
+- **Directory segments** (e.g. wedding planners, tour operators, professional associations, industry member directories): An industry directory provides a partial list. S typically exhausts known directories in 2–3 iterations.
 
-- **Informal channels** (e.g. community groups, mothers' groups, open source maintainers, meetup organisers): No central listing exists. S may not reach target even after 3 iterations; the roster continues to grow during AR as conversations surface referrals. Accept whatever count is reached.
+- **Informal segments** (e.g. community groups, mothers' groups, open source maintainers, meetup organisers): No central listing exists. S may not reach target even after 3 iterations; the roster continues to grow during AR as conversations surface referrals. Accept whatever count is reached.
 
-The campaign plan specifies which type each channel is. If the plan does not classify channels explicitly, determine the type from the seed sources: if the plan names a government registry, it is a registry channel; if it names an industry directory, it is a directory channel; if it names only keyword searches, it is an informal channel.
+The campaign plan specifies which type each segment is. If the plan does not classify segments explicitly, determine the type from the seed sources: if the plan names a government registry, it is a registry segment; if it names an industry directory, it is a directory segment; if it names only keyword searches, it is an informal segment.
 
 ## 6. Discovery iterations
 
@@ -90,7 +90,7 @@ Discovery progresses through iterations that expand the roster in two ways: **so
 
 ### S&P₁: Seed
 
-Build the initial roster from the most direct source available. For registry channels, export the registry and resolve named contacts. For directory channels, pull from the directory and search LinkedIn for individuals. For informal channels, use the keyword searches defined in the campaign plan, recording the query in `discovered_via`.
+Build the initial roster from the most direct source available. For registry segments, export the registry and resolve named contacts. For directory segments, pull from the directory and search LinkedIn for individuals. For informal segments, use the keyword searches defined in the campaign plan, recording the query in `discovered_via`.
 
 When a CRM or existing contact database is available as a seed source, use it — but also run a **CRM gap analysis** after web research is complete. Compare CRM entries against web research results to identify structurally invisible segments — contacts that exist in the CRM but cannot be found by any web search query. Categorise the unmatched entries by why they are invisible (different self-description vocabulary, weak web presence, B2B rather than B2C, niche specialisation, outside search radius). This analysis reveals whether the invisible segment is reachable through alternative search vocabulary or whether the CRM is the only path to them.
 
@@ -117,10 +117,10 @@ Run any expanded keyword queries identified by the reverse-search diagnostic fro
 
 ### Stopping criteria
 
-Stop discovery for a channel when any of these is met:
+Stop discovery for a segment when any of these is met:
 
 - The last iteration added fewer than 5 new contacts.
-- Three iterations have been completed (for informal channels, accept whatever count is reached).
+- Three iterations have been completed (for informal segments, accept whatever count is reached).
 
 S may terminate early within an S&P iteration once the stopping criteria are met, while P continues on accumulated contacts.
 
@@ -128,16 +128,16 @@ S may terminate early within an S&P iteration once the stopping criteria are met
 
 S&P₁ through S&P₃ run autonomously. Any iteration beyond S&P₃ is human-initiated, triggered by names accumulated during AR (the R phase reliably surfaces a small number of new names per band — respondents mention colleagues, connections reveal relevant people, revised strategy identifies uncovered segments). These names enter the roster at iteration number max(current) + 1, go through the same S steps as any other contact, and their profiles feed back into subsequent AR bands. The quantity is typically small enough that S&P₄ or S&P₅ is a lightweight pass, not a full discovery cycle.
 
-## 7. Channel summary
+## 7. Segment summary
 
-When discovery is complete for a channel, write a summary file alongside the roster: `summary-[channel-name].md` in the same directory. The summary records:
+When discovery is complete for a segment, write a summary file alongside the roster: `summary-[segment-name].md` in the same directory. The summary records:
 
 - The seed queries used in S&P₁
 - The expanded queries discovered during later iterations (from semantic expansion and reverse-search diagnostic)
 - Any segments that proved invisible to web search, and why (vocabulary gap, weak web presence, B2B-only, etc.)
 - The CRM gap analysis results, if a CRM was used as a seed source
 
-This file preserves the search vocabulary so that future work on the same channel — whether re-checking stale contacts, running a new campaign, or onboarding a new team member — starts from the full keyword set rather than rediscovering it.
+This file preserves the search vocabulary so that future work on the same segment — whether re-checking stale contacts, running a new campaign, or onboarding a new team member — starts from the full keyword set rather than rediscovering it.
 
 ## 8. Stale contact handling
 
@@ -152,9 +152,9 @@ The stale contact's date allows periodic re-checking — a person who left a rol
 
 ## 9. Cross-lead capture
 
-During S (and more commonly during P), names may surface that belong to a different channel or segment from the one being researched — a contact relevant to a different campaign channel entirely.
+During S (and more commonly during P), names may surface that belong to a different segment from the one being researched — a contact relevant to a different campaign segment entirely.
 
-These cross-leads must not be discarded because they fall outside the current channel's scope. Record them in the roster with `discovered_via` pointing to the originating contact and tag them with the destination channel (using whatever channel-tagging mechanism the campaign plan defines). The S phase of the appropriate channel picks them up in its next iteration. In campaigns with multiple channels running concurrently, cross-lead capture is one of the primary mechanisms by which channels inform each other.
+These cross-leads must not be discarded because they fall outside the current segment's scope. Record them in the roster with `discovered_via` pointing to the originating contact and tag them with the destination segment (using whatever segment-tagging mechanism the campaign plan defines). The S phase of the appropriate segment picks them up in its next iteration. In campaigns with multiple segments running concurrently, cross-lead capture is one of the primary mechanisms by which segments inform each other.
 
 ## 10. Quality checklist
 
@@ -165,7 +165,7 @@ Run this checklist against all roster files after each iteration. Each check is 
 3. **No duplicate contacts:** no two rows in the same roster file share the same (`contact_name`, `organisation`) pair (case-insensitive). Multiple contacts at the same organisation is permitted.
 4. **Reachable:** every row has at least one of email, `linkedin_url`, or `facebook_url` populated. Phone alone is insufficient for campaigns that begin with a written introduction.
 5. **Iteration recorded:** every row has a `sweep_iteration` value.
-6. **Channel matches file:** if the roster uses a `channel` column, the value on every row matches the roster filename.
+6. **Segment matches file:** if the roster uses a `segment` column, the value on every row matches the roster filename.
 7. **Verified contacts still current:** no contact marked `verified=yes` has a `p_note` or `date_found_invalid` indicating they left the role or changed organisation.
 8. **Iteration progress:** for each roster, confirm that `sweep_iteration` is populated on every row and that the stopping criteria in §6 have been evaluated.
 
@@ -177,7 +177,7 @@ When an AI agent delegates discovery work to a subagent, the prompt must tell th
 
 - The file path to this AESOP
 - The roster file path
-- The specific task (which channel, which iteration, what to search for)
+- The specific task (which segment, which iteration, what to search for)
 - The campaign plan path
 
 Do not replicate SPAR-S content in prompts — copies drift and cannot be corrected.
