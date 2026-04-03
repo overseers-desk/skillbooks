@@ -172,10 +172,6 @@ For each applicable angle, note:
 
 If profiling reveals that the contact is not a viable campaign target — for example, the contact is a direct competitor with no cooperation incentive, or the profile's angle assessment concludes there is no actionable approach — set `star_rating` to 0 and `date_found_invalid` to today's date. Write the reason in `p_note`. Do not produce a profile document for contacts assessed at 0; the roster entry is sufficient. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
 
-**The primary fit test is goal.md.** Before assigning a star rating, read the channel's `goal.md` and ask: can this contact deliver the outcome in the way goal.md assumes? The outcome varies by channel — it may be venue hire revenue, a supplier relationship, a PR endorsement, a referral pipeline, or something else. Use what goal.md actually describes, not a generic revenue assumption. A contact who could deliver value through a different mechanism (e.g. a booking platform where the channel needs tour operators) still fails the test.
-
-**Do not delete invalid rows.** Rosters are re-swept periodically. A deleted entry will be re-discovered and risks being admitted as valid if a future P pass misses the same issue. The `date_found_invalid` date is the permanent record that this contact was assessed and excluded — set it and leave the row in place.
-
 Note that network/connection value can support a 5-star rating when the connection paths are specific and high-value (e.g. bridges to a target community the campaign has no other path into), not merely when the person has a large network.
 
 **Response likelihood (percentage estimate):** How likely is this person to respond to an approach from the campaign?
