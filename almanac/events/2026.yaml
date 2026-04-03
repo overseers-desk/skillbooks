@@ -1,6 +1,6 @@
 # Almanac event list — 2026
 # Generated: 2026-03-31
-# Last sweep: 2026-03-31
+# Last sweep: 2026-03-31T23:59+02:00
 #
 # participation.status: null | ticket | speaker | rejected | waitlist | closed
 # speaker.too_late: whether the speaker application window has passed
@@ -24,9 +24,9 @@ events:
     speaker:
       too_late: false
       deadline: null
-      apply_url: https://www.southsummit.io/e/madrid
+      apply_url: https://southsummit.typeform.com/to/ssZ33piE
     url: https://www.southsummit.io/e/madrid
-    notes: 430 speakers, 140 investment funds, 17 unicorns; Madrid hub rank 2
+    notes: 430 speakers, 140 investment funds, 17 unicorns; Madrid hub rank 2; speaker application open (no stated deadline)
 
   - id: superai_singapore_2026
     name: SuperAI Singapore 2026
@@ -82,7 +82,7 @@ events:
       too_late: false
       deadline: null
     url: https://www.ebancongress.com
-    notes: Europe's premier angel congress; 500+ angels from 45+ countries
+    notes: Europe's premier angel congress; 500+ angels from 45+ countries; Radisson Blu Vilnius; early-bird €299 congress / €399 w/ gala; side events May 31 + Jun 3
 
   - id: ai_summit_london_2026
     name: AI Summit London 2026
@@ -99,8 +99,10 @@ events:
     speaker:
       too_late: false
       deadline: null
+      apply_url: https://london.theaisummit.com/conference-speakers/submit-speaker/
+      note: rolling review — submit ASAP
     url: https://london.theaisummit.com
-    notes: 300+ speakers; 10th anniversary; London proximity destination
+    notes: 300+ speakers; 4,500 attendees; 10th anniversary; passes £25–£1,399; London proximity destination
 
   - id: raise_summit_paris_2026
     name: RAISE Summit Paris 2026
@@ -117,8 +119,9 @@ events:
     speaker:
       too_late: false
       deadline: null
+      apply_url: https://www.raisesummit.com
     url: https://www.raisesummit.com
-    notes: Investors managing €570B+ assets; €10M+ startup competition; Paris proximity destination
+    notes: 9,000+ attendees; 360+ speakers; investors managing €570B+; €10M+ startup competition (apply by 1 Jun); PRO ticket €999 early-bird; Paris proximity destination
 
   # ── 4-star ─────────────────────────────────────────────────
 
@@ -137,8 +140,10 @@ events:
     speaker:
       too_late: false
       deadline: null
+      apply_url: https://asiatechxsg.com/call-for-speakers/
+      note: call open, limited slots — submit promptly
     url: https://asiatechxsg.com
-    notes: 450 speakers; agentic AI, governance; Singapore govt backed
+    notes: 450 speakers; agentic AI, governance; Singapore govt backed; ATxSummit 20–21 May at Capella
 
   - id: investfest_gold_coast_2026
     name: InvestFest Gold Coast 2026
@@ -175,12 +180,12 @@ events:
       deadline: 2026-04-17
       apply_url: https://irmuk.co.uk/cfs-data-ai-conference-2026
     url: https://irmuk.co.uk/data-ai-conference-2026
-    notes: Speaker call deadline 17 Apr 2026 — imminent; London proximity
+    notes: Speaker call deadline 17 Apr 2026 midnight — 17 days away; London proximity; workshops 2/5/6 Nov
 
   - id: world_summit_ai_2026
     name: World Summit AI 2026
-    date_start: 2026-10-05
-    date_end: 2026-10-09
+    date_start: 2026-10-07
+    date_end: 2026-10-08
     location:
       city: Amsterdam
       country: Netherlands
@@ -189,11 +194,13 @@ events:
     participation:
       status: null
       confirmed_date: null
+      note: Expo+Content €699, VIP €1,199
     speaker:
       too_late: false
       deadline: null
+      note: members get first access to community-led stage
     url: https://worldsummit.ai
-    notes: 10th anniversary; Yann LeCun, Yoshua Bengio alumni
+    notes: 10th anniversary; World AI Week Oct 5–9; 120+ speakers; Yann LeCun, Yoshua Bengio alumni
 
   - id: ai_engineer_europe_2026
     name: AI Engineer Europe 2026
@@ -304,7 +311,116 @@ events:
     url: https://www.eu-startups.com/summit
     notes: 2,500 founders + VCs; €1M pitch prize; Mediterranean, accessible from Spain
 
+  - id: vivatech_paris_2026
+    name: VivaTech 2026
+    date_start: 2026-06-17
+    date_end: 2026-06-20
+    location:
+      city: Paris
+      country: France
+    categories: [ai-conference, investor-event, speaking-opportunity]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://vivatech.com
+    notes: 10th anniversary; 180,000 attendees; 3,600 investors; 14,000 startups; 450 speakers; Paris proximity destination
+
+  - id: london_tech_week_2026
+    name: London Tech Week 2026
+    date_start: 2026-06-08
+    date_end: 2026-06-10
+    location:
+      city: London
+      country: UK
+    categories: [ai-conference, investor-event, speaking-opportunity]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://londontechweek.com
+    notes: 30,000+ attendees; 400+ speakers; 5,500 startups; Founders Angels Forum alongside; Olympia London; fringe events Jun 8–12; London proximity destination
+
   # ── 3-star ─────────────────────────────────────────────────
+
+  - id: echelon_singapore_2026
+    name: Echelon Singapore 2026
+    date_start: 2026-06-03
+    date_end: 2026-06-04
+    location:
+      city: Singapore
+      country: Singapore
+    categories: [investor-event, ai-conference]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://echelon.e27.co
+    notes: 8,000+ attendees; AI + deep-tech focus; investor matchmaking; Singapore frequent destination
+
+  - id: ai_pulse_paris_2026
+    name: ai-PULSE 2026
+    date_start: 2026-10-13
+    date_end: 2026-10-13
+    location:
+      city: Paris
+      country: France
+    categories: [ai-conference, ai-company]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.ai-pulse.eu
+    notes: One-day at Station F; Yann LeCun confirmed; organised by Scaleway; Paris proximity destination
+
+  - id: gtwt_tbilisi_2026
+    name: Global Tech Weekend Tbilisi 2026
+    date_start: 2026-06-19
+    date_end: 2026-06-21
+    location:
+      city: Tbilisi
+      country: Georgia
+    categories: [ai-conference, investor-event]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+      apply_url: https://docs.google.com/forms/d/e/1FAIpQLSd5fUQvx0kqe33W1cAp12636xeoxGL7EaumuDuwDH44WiTduw/viewform
+    url: https://gtwt.ge
+    notes: 40,000+ participants; 200+ side events; speaker applications open; Georgia frequent destination
+
+  - id: sifted_summit_london_2026
+    name: Sifted Summit 2026
+    date_start: 2026-09-30
+    date_end: 2026-10-01
+    location:
+      city: London
+      country: UK
+    categories: [investor-event, angel-fund-raising]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://summit.sifted.eu
+    notes: 3,000+ founders, investors, operators; backed by Financial Times; Magazine London; London proximity
 
   - id: ai_summit_barcelona_2026
     name: AI Summit Barcelona 2026
@@ -453,6 +569,43 @@ events:
       note: academic paper track; submission deadline passed
     url: https://2026.ijcai.org
     notes: World's leading academic AI conference; 3,500–4,000 AI experts
+
+  - id: web_summit_lisbon_2026
+    name: Web Summit Lisbon 2026
+    date_start: 2026-11-09
+    date_end: 2026-11-12
+    location:
+      city: Lisbon
+      country: Portugal
+    categories: [ai-conference, investor-event]
+    stars: 2
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://websummit.com
+    notes: 70,000+ attendees; ALPHA startup programme for pre-investment stage; massive but generic
+
+  - id: ieee_cai_granada_2026
+    name: IEEE CAI 2026
+    date_start: 2026-05-08
+    date_end: 2026-05-10
+    location:
+      city: Granada
+      country: Spain
+    categories: [ai-conference]
+    stars: 2
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: true
+      deadline: null
+      note: academic paper track; submission deadline passed
+    url: https://ieeecai2026.org
+    notes: IEEE AI conference; Granada Conference Centre; late registration until Apr 30; Andalusia — accessible from Jerez
 
   # ── 1-star ─────────────────────────────────────────────────
 

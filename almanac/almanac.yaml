@@ -30,6 +30,7 @@ bases:
 interests:
   - id: artificial_intelligence
     type: professional
+    scope: AI research, applied AI startups, and AI product companies. Not generic IT/enterprise conferences that happen to have an AI track.
   - id: tourism
     type: professional
   - id: business_connections

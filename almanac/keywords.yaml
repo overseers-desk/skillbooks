@@ -66,6 +66,47 @@ keywords:
     productivity: low
     note: too generic; better with specific region
 
+  # ── Broader tech + startup ─────────────────────────────────
+  - query: "VivaTech Paris 2026"
+    surfaces: Paris mega tech event with investor focus
+    productivity: high
+
+  - query: "London Tech Week 2026 angel investor startup"
+    surfaces: London Tech Week investor-adjacent events
+    productivity: high
+
+  - query: "Sifted Summit 2026 London startup investor"
+    surfaces: European startup/VC summit
+    productivity: high
+
+  - query: "Web Summit Lisbon 2026"
+    surfaces: largest European tech conference
+    productivity: medium
+    note: huge but generic; useful for ALPHA startup programme
+
+  - query: "Echelon Asia Summit Singapore 2026"
+    surfaces: SE Asia startup + investor event
+    productivity: high
+
+  - query: "ai-PULSE 2026 Paris Station F"
+    surfaces: focused AI practitioner event
+    productivity: medium
+
+  - query: "Gartner IT Symposium Gold Coast 2026"
+    surfaces: enterprise IT event on home base
+    productivity: medium
+
+  # ── Georgia ───────────────────────────────────────────────
+  - query: "AI conference Georgia Tbilisi 2026"
+    surfaces: Georgia tech events
+    productivity: medium
+    note: found Global Tech Weekend Tbilisi
+
+  # ── Academic AI in Spain ──────────────────────────────────
+  - query: "IEEE CAI 2026 Granada Spain"
+    surfaces: academic AI conferences in Andalusia
+    productivity: medium
+
   # ── Personal / cultural ────────────────────────────────────
   - query: "equestrian event Spain Andalusia 2026"
     surfaces: horse riding events near home base
