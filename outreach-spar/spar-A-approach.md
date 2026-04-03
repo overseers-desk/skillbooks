@@ -313,6 +313,9 @@ Subject: [subject]
 
 [Body]
 
+After the email is sent, rename the heading to `### Email (Sent YYYY-MM-DD)`.
+After a phone call is made, rename `### Phone follow-up` to `### Phone follow-up (Called YYYY-MM-DD)`.
+
 ## Roster a_note
 
 [The one-liner that will be written to the roster]
