@@ -10,6 +10,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 ## 2. Inputs
 
 - **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, channel, discovered_via)
+- **Campaign goal document:** The document (typically `goal.md` or equivalent) that defines the campaign's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the channel — independent of their domain relevance, seniority, or star rating.
 - **Campaign angle table:** The list of angles defined by the campaign plan, with descriptions of when each applies. Read this before profiling — it defines what "relevant" means for this campaign.
 - **Campaign context documents:** The campaign plan names specific documents (mission statement, project pages, segment definitions) that explain the campaign's offering. Read the angle table first; read context documents only for angles that seem relevant to the target.
 - **LinkedIn lookup method:** `~/code/aesop/linkedin-lookup-method/README.md` — read this before the first LinkedIn fetch in a session. It specifies Chromium flags, sequencing constraints, and parsing scripts.
@@ -23,6 +24,18 @@ Additionally, P produces:
 - **New names:** If profiling surfaces names not already in the roster, add them to the roster with `discovered_via` pointing to the target being profiled and `discovery_source` describing how they were found (e.g. "LinkedIn post commenter", "co-admin of Facebook group", "named in FOSSASIA Summit post").
 
 ## 4. Procedure
+
+### 4.0 Validate fit against campaign goal
+
+Before any research, read the campaign goal document and answer one question: can this contact deliver the outcome the goal describes, through the mechanism the goal describes?
+
+This is a structural check, not a relevance check. A contact may be in the right domain, at the right seniority, with strong apparent fit — and still be the wrong type of contact for the channel. The goal document specifies a mechanism: the particular way a contact is expected to act on the campaign's behalf. The check is whether this contact operates through that mechanism. A contact who is adjacent to the mechanism — who knows the right people, or works in the same field, or whose platform could theoretically be adapted — does not pass the check unless the goal explicitly includes that adjacent role.
+
+If the contact cannot deliver the outcome through the mechanism the goal assumes, set `date_found_invalid` to today's date and record the reason in `p_note`. Do not proceed to §4.1. Do not produce a profile document.
+
+**Do not delete the roster row.** The roster is append-only. Deletion causes re-discovery in the next sweep, where the entry may be incorrectly validated if the profile stage repeats the same error. The `date_found_invalid` date is the permanent record that this contact was assessed and excluded.
+
+If an invalid entry has already passed Profile and reached the approach queue, the failure is at the P stage. The question to ask is whether the campaign goal document was specific enough to make the §4.0 check possible. If the exclusion was not obvious from goal.md, the goal document may need a discovery criteria section that names the contact types that do not belong, so future sweeps and profile runs do not repeat the error.
 
 ### 4.1 Fetch and parse the LinkedIn profile
 
@@ -168,9 +181,9 @@ For each applicable angle, note:
 | 3 | Right role and area, no specific evidence of alignment or connection value |
 | 2 | Tangentially relevant, weak connection path |
 | 1 | Roster only, no clear relevance |
-| 0 | Invalid — not a campaign target. Set `date_found_invalid` to today's date and write the reason in `p_note`. |
+| 0 | Invalid — not a campaign target. Set `date_found_invalid` to today's date and write the reason in `p_note`. Do not delete the row (see §4.0). |
 
-If profiling reveals that the contact is not a viable campaign target — for example, the contact is a direct competitor with no cooperation incentive, or the profile's angle assessment concludes there is no actionable approach — set `star_rating` to 0 and `date_found_invalid` to today's date. Write the reason in `p_note`. Do not produce a profile document for contacts assessed at 0; the roster entry is sufficient. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
+If profiling reveals that the contact cannot deliver the campaign's intended outcome through the mechanism the goal assumes — including cases where §4.0 was not run before profiling began — set `star_rating` to 0 and `date_found_invalid` to today's date. Write the reason in `p_note`. Do not produce a profile document for contacts assessed at 0; the roster entry is sufficient. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
 
 Note that network/connection value can support a 5-star rating when the connection paths are specific and high-value (e.g. bridges to a target community the campaign has no other path into), not merely when the person has a large network.
 
