@@ -313,8 +313,38 @@ Subject: [subject]
 
 [Body]
 
-After the email is sent, rename the heading to `### Email (Sent YYYY-MM-DD)`.
-After a phone call is made, rename `### Phone follow-up` to `### Phone follow-up (Called YYYY-MM-DD)`.
+### Lifecycle (post-draft)
+
+When outreach is actioned, the heading of the relevant method is modified once:
+
+```
+### Email (Sent 2026-03-31)
+### LinkedIn connection note (Sent 2026-03-31)
+### Phone follow-up (Called 2026-03-31)
+### Phone script (Called 2026-03-31)
+```
+
+When a reply is received, a new section is appended (not editing any existing heading):
+
+```
+### Email Replied (2026-04-03)
+
+{paste or summary of reply}
+
+### LinkedIn Replied (2026-04-05)
+
+{paste or summary of reply}
+```
+
+Multiple replies produce multiple appended sections. No heading is edited more than once.
+
+### Detection patterns (used by `check-campaign-progress.py`)
+
+| State | Grep pattern |
+|---|---|
+| Approach written | file exists in `{segment}/approach/` |
+| Actioned (sent/called) | `^### .+\((Sent\|Called) \d{4}-\d{2}-\d{2}\)` |
+| Replied | `^### .+ Replied\b` |
 
 ## Roster a_note
 
