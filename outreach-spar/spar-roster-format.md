@@ -112,7 +112,7 @@ This document defines the roster schema. The operational procedures for populati
 
 - **SPAR-S** (`spar-S-search.md`) — populates columns 1–13
 - **SPAR-P** (`spar-P-profile.md`) — populates columns 14–16, corrects columns 2–7 and 11–12
-- **SPAR-A** (not yet written) — populates column 17
+- **SPAR-A** (`spar-A-approach.md`) — populates column 17
 - **R** (human, no procedure document) — populates column 18
 
 SPAR-S §4 currently contains a roster format definition that predates this document. When SPAR-S is next revised, §4 should reference this document rather than defining the format inline.

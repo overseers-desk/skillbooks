@@ -166,7 +166,7 @@ This methodology does not replace any existing document. It provides the concept
 
 - **SPAR-S** (`spar-S-search.md`) — the operational procedure for search and discovery. Generalises iterative discovery techniques first developed in project-specific SOPs and the research phase of a foundation's direct-outreach-pipeline into a campaign-agnostic procedure.
 - **SPAR-P** (`spar-P-profile.md`) — the operational procedure for profile building, generalising the personalization SOP's research phase into a standalone profiling step that does not also draft messages.
-- **SPAR-A** (not yet written) — the operational procedure for drafting connection messages, including the A1/A2 sparring loop, generalising the personalization SOP's drafting phase (Phases 2–3) with the addition of communication-log cross-referencing and band-ordered processing.
+- **SPAR-A** (`spar-A-approach.md`) — the operational procedure for drafting connection messages, including the A1/A2 sparring loop, generalising the personalization SOP's drafting phase (Phases 2–3) with the addition of communication-log cross-referencing and band-ordered processing.
 - **R has no procedure document** — it is a human review process. Its inputs and outputs are defined here; its execution is not automatable.
 - **Segment categorisation** (`spar-segment-categorisation.md`) — criteria for deciding when contacts belong in one segment versus two, when to merge or split segments, and how to handle sub-segments and cross-segment duplicates.
 
