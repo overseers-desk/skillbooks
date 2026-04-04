@@ -6,10 +6,25 @@ SOPs written for AI agents to follow autonomously. These are not documentation f
 
 ## Structure
 
+### Methodologies
+
+- `outreach-spar/` — SPAR: outreach discovery and engagement (Search → Profile → Approach → Revise)
+- `correspondence-tend/` — TEND: correspondence processing (Thread → Evaluate → Notify → Dispatch)
+- `listing-sift/` — SIFT: listing evaluation and response (Sweep → Investigate → Fit → Target)
+
+### Reference methods
+
+- `linkedin-lookup-method/` — LinkedIn profile lookup via headless browser
+- `facebook-lookup-method/` — Facebook profile lookup via headless browser
+
+### Other
+
 - `travel/` — Travel planning and itinerary management
-- `tests/` — Test cases and results for validating SOPs through iterative rounds
-- `articles/` — Lessons learned from building and testing AESOPs
+- `events/` — Event discovery and tracking
+- `almanac/` — Event almanac and calendar
 - `roster/` — Roster management research
+- `articles/` — Lessons learned from building and testing AESOPs
+- `tests/` — Test cases and results for validating SOPs through iterative rounds
 - `sop-authoring-rules.md` — Meta-guide for creating and updating SOPs
 - `aesop-authoring.prompt` — Prompt for AI-assisted SOP authoring with built-in testing methodology
 
