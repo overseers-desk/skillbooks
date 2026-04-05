@@ -1,17 +1,32 @@
 # Webworks: Programmatic Website Access
 
-When a website blocks programmatic access (403, bot detection, empty responses), follow this method to diagnose the cause and find a working access path.
+This method covers two situations:
+
+1. **First access** — a website blocks programmatic access and you need to find a working path.
+2. **Broken skill** — an existing skill that used to work has stopped working and needs fixing.
 
 ## Important: Spawn a subagent
 
-Website debugging involves many tool calls and large outputs. Spawn a subagent to execute this workflow. Include the full text of the diagnostic procedure below in the subagent prompt, followed by the goal.
+Website debugging involves many tool calls and large outputs. Spawn a subagent to execute this workflow. Include the relevant procedure text below in the subagent prompt, followed by the goal.
 
 ## Prerequisites
 
 - A headless browser. Refer to `~/.claude/CLAUDE.md` for the local browser command, profile path, and concurrency handling.
 - curl
 
-## The diagnostic procedure
+## When an existing skill breaks
+
+Before diagnosing anything, test every capability the skill claims to have. Produce a table:
+
+| Capability | Status | Notes |
+|---|---|---|
+| (each capability from the skill) | WORKS / BROKEN | (error message or data returned) |
+
+Only then diagnose the broken capabilities using the diagnostic procedure below. Do not re-investigate capabilities that still work. The delta between what works and what doesn't tells you what changed on the website's side — that is where the fix is needed.
+
+A single broken endpoint does not mean the site "blocks everything now." WAF rules are per-path. An API endpoint can be newly protected while the headless browser approach still works, or vice versa. Test each path independently.
+
+## The diagnostic procedure (first access and broken capabilities)
 
 Include this text verbatim in the subagent prompt:
 
