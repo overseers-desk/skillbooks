@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 """Show outreach pipeline progress per segment, and update reply status from mailroom.
 
 Each column (except Valid) shows count and percentage of its denominator:
