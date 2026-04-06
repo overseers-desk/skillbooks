@@ -86,7 +86,6 @@ A phase note should answer: "what does the next phase need to know about this co
 
 Campaigns may append columns after column 18. The campaign plan defines them. Common additions include:
 
-- **segment** — when the campaign has multiple segments in a single roster or needs to tag cross-leads
 - **postcode** or **location** — for geographic filtering
 - **type** — contact category within a segment (e.g. "strategic", "corporate", "community")
 - **source_url** — the specific page that justified inclusion
