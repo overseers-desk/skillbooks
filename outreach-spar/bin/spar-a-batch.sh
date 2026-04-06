@@ -147,12 +147,12 @@ for segment in "${SEGMENTS[@]}"; do
 
     mkdir -p "$BASE/$segment/approach"
 
-    while IFS="$SOH" read -r segment org name role phone email postcode linkedin facebook \
+    while IFS="$SOH" read -r _roster_seg org name role phone email postcode linkedin facebook \
         disc_iter disc_via disc_src verified p_note star response_likelihood s_note date_invalid; do
         date_invalid="${date_invalid%$'\r'}"
 
         # Skip header and malformed rows
-        [[ "$segment" == "segment" ]] && continue
+        [[ "$_roster_seg" == "segment" ]] && continue
         [[ -n "$name" ]] || continue
         [[ -n "$org" ]] || continue
 
