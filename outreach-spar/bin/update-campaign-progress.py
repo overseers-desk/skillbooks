@@ -87,7 +87,7 @@ SKIP: set[str] = set()
 if args.skip:
     SKIP.update(args.skip)
 
-YAML_SEGMENTS: list[str] | None = None  # None = no YAML found; fall back to recursive scan
+YAML_SEGMENTS: list[str] | None = None  # None = no YAML found; fall back to directory scan
 _reply_check: dict = {}  # populated from campaign YAML reply_check section
 _sender_email: str = ""  # populated from campaign YAML sender.email
 
@@ -121,11 +121,11 @@ if _campaign_yaml and _campaign_yaml.exists():
                 _sender_email = (_cdata["sender"].get("email") or "").strip()
         print(f"Campaign:    {_cdata.get('campaign', _campaign_yaml.name)}", file=sys.stderr)
     except ImportError:
-        print("Warning: PyYAML not installed; falling back to recursive roster scan.", file=sys.stderr)
+        print("Warning: PyYAML not installed; falling back to directory roster scan.", file=sys.stderr)
     except Exception as e:
         print(f"Warning: could not parse {_campaign_yaml.name}: {e}", file=sys.stderr)
 else:
-    print("Warning: no campaign YAML found; falling back to recursive roster scan.", file=sys.stderr)
+    print("Warning: no campaign YAML found; falling back to directory roster scan.", file=sys.stderr)
 
 
 def normalise_name(s: str) -> str:
@@ -237,13 +237,13 @@ if YAML_SEGMENTS is not None:
         segments.append((seg_dir, roster))
     # Warn about roster.tsv files on disk not listed in the YAML
     yaml_set = set(YAML_SEGMENTS) | SKIP
-    for roster_path in sorted(BASE.rglob("roster.tsv")):
+    for roster_path in sorted(BASE.glob("*/roster.tsv")):
         rel = str(roster_path.parent.relative_to(BASE))
-        if rel not in yaml_set and "/" not in rel:  # top-level segment dirs only
+        if rel not in yaml_set:
             print(f"  WARNING: {rel}/roster.tsv exists but is not listed in campaign YAML", file=sys.stderr)
 else:
-    # Fallback: recursive scan (no YAML available)
-    for roster_path in sorted(BASE.rglob("roster.tsv")):
+    # Fallback: scan direct child directories only (subfolders are not segments)
+    for roster_path in sorted(BASE.glob("*/roster.tsv")):
         segment_dir = roster_path.parent
         rel = segment_dir.relative_to(BASE)
         if str(rel) in SKIP:
