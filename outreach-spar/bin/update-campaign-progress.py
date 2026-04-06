@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Show outreach pipeline progress per segment.
+"""Show outreach pipeline progress per segment, and update reply status from mailroom.
 
 Each column (except Valid) shows count and percentage of its denominator:
   Valid     — roster rows where date_found_invalid is blank
@@ -9,6 +9,11 @@ Each column (except Valid) shows count and percentage of its denominator:
   Approach  — approach files in approach/ (/ 3★+)
   Sent      — approach files with a sent date (/ Approach)
   Repl      — approach files with a reply marker (/ Sent)
+
+After printing the file-based progress table, checks the campaign's mailroom
+account for new replies and appends '### Email Replied (date)' sections to
+matching approach files.  Uses a date high-water mark per approach file to
+avoid re-processing already-recorded replies.
 
 Optional --missing [S|P|A] prints per-entry detail for actionable gaps.
 """
@@ -54,6 +59,11 @@ parser.add_argument(
     default=None,
     help="Segment directory names to skip. If a campaign.yaml exists in the campaign dir, skip_segments from it are also used.",
 )
+parser.add_argument(
+    "--no-mailroom",
+    action="store_true",
+    help="Skip mailroom reply checking.",
+)
 args = parser.parse_args()
 
 BASE = Path(args.campaign_dir).resolve()
@@ -77,6 +87,8 @@ if args.skip:
     SKIP.update(args.skip)
 
 YAML_SEGMENTS: list[str] | None = None  # None = no YAML found; fall back to recursive scan
+_reply_check: dict = {}  # populated from campaign YAML reply_check section
+_sender_email: str = ""  # populated from campaign YAML sender.email
 
 if args.campaign:
     _campaign_yaml = Path(args.campaign).resolve()
@@ -102,6 +114,10 @@ if _campaign_yaml and _campaign_yaml.exists():
                 SKIP.update(_cdata["skip_segments"])
             if isinstance(_cdata.get("segments"), list):
                 YAML_SEGMENTS = _cdata["segments"]
+            if isinstance(_cdata.get("reply_check"), dict):
+                _reply_check = _cdata["reply_check"]
+            if isinstance(_cdata.get("sender"), dict):
+                _sender_email = (_cdata["sender"].get("email") or "").strip()
         print(f"Campaign:    {_cdata.get('campaign', _campaign_yaml.name)}", file=sys.stderr)
     except ImportError:
         print("Warning: PyYAML not installed; falling back to recursive roster scan.", file=sys.stderr)
@@ -281,6 +297,9 @@ missing_sweep: list[tuple[str, int]] = []
 missing_profile: list[tuple[str, str, str]] = []
 missing_approach: list[tuple[str, str, str, str]] = []
 
+# Cached roster counts for potential reprint after mailroom update
+segment_roster_data: list[tuple[str, int, int, int, int]] = []
+
 for segment_dir, roster_path in segments:
     label = str(segment_dir.relative_to(BASE))
     profiles_dir = segment_dir / "profiles"
@@ -353,6 +372,8 @@ for segment_dir, roster_path in segments:
         f"|{fmt_cell(appr_sent, appr_total)}"
         f"|{fmt_cell(appr_replied, appr_sent)}"
     )
+
+    segment_roster_data.append((label, n, profiled, n_star3, has_email))
 
     # --missing collection
     if "S" in missing_stages:
@@ -484,3 +505,335 @@ if "A" in missing_stages and missing_approach:
     print("-" * 72)
     for label, contact, org, reason in missing_approach:
         print(f"  [{label}]  {contact} \u2014 {org}  ({reason})")
+
+# =============================================================================
+# Reply update via mailroom
+# =============================================================================
+
+
+def extract_email_address(header: str) -> str:
+    """Extract bare email from 'Name <email>' or bare 'email' format."""
+    m = re.search(r"<([^>]+)>", header)
+    if m:
+        return m.group(1).lower()
+    return header.strip().lower()
+
+
+def html_to_text(body: str) -> str:
+    """Strip HTML to plain text, excluding quoted-original blockquotes."""
+    from html import unescape
+    from html.parser import HTMLParser
+
+    class Stripper(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.parts: list[str] = []
+            self._bq_depth = 0
+
+        def handle_starttag(self, tag, attrs):
+            if tag == "blockquote":
+                self._bq_depth += 1
+            elif self._bq_depth == 0:
+                if tag == "br":
+                    self.parts.append("\n")
+                elif tag in ("div", "p"):
+                    if self.parts and self.parts[-1] not in ("\n", ""):
+                        self.parts.append("\n")
+
+        def handle_endtag(self, tag):
+            if tag == "blockquote":
+                self._bq_depth = max(0, self._bq_depth - 1)
+
+        def handle_data(self, data):
+            if self._bq_depth == 0:
+                self.parts.append(data)
+
+    s = Stripper()
+    s.feed(unescape(body))
+    text = "".join(s.parts)
+    # Trim at forwarded-original markers and quoted text
+    lines = text.split("\n")
+    clean = []
+    for line in lines:
+        if re.match(r"^From:\s", line):
+            break
+        if re.match(r"^-{5,}.*Original Message", line):
+            break
+        if re.match(r"^>\s", line):
+            break
+        clean.append(line)
+    text = "\n".join(clean)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
+
+
+def normalise_subject(s: str) -> str:
+    """Strip Re:/RE:/Fwd:/FW: prefixes, collapse whitespace, lowercase."""
+    s = re.sub(r"^(Re|RE|Fwd|FW)\s*:\s*", "", s)
+    s = re.sub(r"\s+", " ", s)
+    return s.lower().strip()
+
+
+def collect_sent_approach_data(
+    segments: list, base: Path
+) -> tuple[dict[str, list[tuple[Path, str | None]]], dict[str, list[tuple[Path, str, str | None]]]]:
+    """Build lookup maps for sent approach files.
+
+    Returns (by_email, by_subject):
+      by_email:   {to_email_lower: [(approach_path, latest_reply_date), ...]}
+      by_subject: {normalised_subject: [(approach_path, to_email_lower, latest_reply_date), ...]}
+    """
+    by_email: dict[str, list[tuple[Path, str | None]]] = {}
+    by_subject: dict[str, list[tuple[Path, str, str | None]]] = {}
+    for segment_dir, _ in segments:
+        approach_dir = segment_dir / "approach"
+        if not approach_dir.is_dir():
+            continue
+        for md in approach_dir.glob("approach-*.md"):
+            content = md.read_text(encoding="utf-8", errors="replace")
+            if not re.search(
+                r"^### .+\((Sent|Called) \d{4}-\d{2}-\d{2}\)", content, re.MULTILINE
+            ):
+                continue
+            fd = re.search(r"^## Final draft", content, re.MULTILINE)
+            if not fd:
+                continue
+            after = content[fd.start() :]
+            to_m = re.search(r"^To: (.+)$", after, re.MULTILINE)
+            if not to_m:
+                continue
+            to_email = to_m.group(1).strip().lower()
+            subj_m = re.search(r"^Subject: (.+)$", after, re.MULTILINE)
+            subject = subj_m.group(1).strip() if subj_m else ""
+            reply_dates = re.findall(
+                r"^### .+ Replied \((\d{4}-\d{2}-\d{2})\)", content, re.MULTILINE
+            )
+            latest = max(reply_dates) if reply_dates else None
+            by_email.setdefault(to_email, []).append((md, latest))
+            if subject:
+                ns = normalise_subject(subject)
+                by_subject.setdefault(ns, []).append((md, to_email, latest))
+    return by_email, by_subject
+
+
+def update_replies_from_mailroom(
+    segments: list,
+    base: Path,
+    mailroom_account: str,
+    mailroom_folder: str,
+    sender_email: str,
+) -> int:
+    """Fetch replies from mailroom, append Replied sections. Return new-reply count, or -1 on error."""
+    import json
+    import subprocess
+
+    by_email, by_subject = collect_sent_approach_data(segments, base)
+    if not by_email:
+        return 0
+
+    try:
+        result = subprocess.run(
+            [
+                "mailroom", "-a", mailroom_account,
+                "search", "-f", mailroom_folder, "--limit", "500",
+            ],
+            capture_output=True, text=True, timeout=30,
+        )
+    except FileNotFoundError:
+        print(
+            "Warning: mailroom CLI not found. Install mailroom to enable reply checking.",
+            file=sys.stderr,
+        )
+        return -1
+    except subprocess.TimeoutExpired:
+        print("Warning: mailroom search timed out.", file=sys.stderr)
+        return -1
+
+    if result.returncode != 0:
+        print(f"Warning: mailroom search failed: {result.stderr.strip()}", file=sys.stderr)
+        return -1
+
+    try:
+        messages = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        print("Warning: could not parse mailroom output.", file=sys.stderr)
+        return -1
+
+    sender_lower = sender_email.lower()
+
+    # Filter to incoming replies.
+    # A message is outgoing if from == sender without DMARC rewrite ("via").
+    # A message is incoming if to contains the sender address AND it's not outgoing.
+    incoming = []
+    for msg in messages:
+        from_header = msg.get("from", "")
+        from_email = extract_email_address(from_header)
+        if from_email == sender_lower and " via " not in from_header:
+            continue  # outgoing message from the campaign sender
+        to_addrs = [extract_email_address(a) for a in (msg.get("to") or [])]
+        if sender_lower in to_addrs:
+            incoming.append(msg)
+
+    # Sort by date ascending so high-water marks update in order
+    incoming.sort(key=lambda m: m.get("date", ""))
+
+    new_replies = 0
+    unmatched = []
+    for msg in incoming:
+        from_email = extract_email_address(msg.get("from", ""))
+        date_str = msg.get("date", "")
+        date_match = re.match(r"(\d{4}-\d{2}-\d{2})", date_str)
+        if not date_match:
+            continue
+        msg_date = date_match.group(1)
+
+        # Match by sender email (normal case)
+        matched_entries = by_email.get(from_email, [])
+
+        # Fallback: match by subject (DMARC-rewritten replies)
+        if not matched_entries:
+            subj = normalise_subject(msg.get("subject", ""))
+            if subj:
+                matched_entries = [
+                    (path, latest) for path, _email, latest in by_subject.get(subj, [])
+                ]
+
+        if not matched_entries:
+            # Unknown reply — warn if it looks like a real reply (has Re: prefix)
+            raw_subj = msg.get("subject", "")
+            if re.match(r"(?i)^(Re|RE|Fwd|FW)\s*:", raw_subj):
+                unmatched.append((from_email, raw_subj, msg_date))
+            continue
+
+        for approach_path, latest_reply_date in matched_entries:
+            if latest_reply_date and msg_date <= latest_reply_date:
+                continue
+
+            # Fetch reply content
+            uid = msg.get("uid")
+            reply_text = ""
+            try:
+                read_result = subprocess.run(
+                    [
+                        "mailroom", "-a", mailroom_account,
+                        "read", "-f", mailroom_folder, "-u", str(uid),
+                    ],
+                    capture_output=True, text=True, timeout=15,
+                )
+                if read_result.returncode == 0:
+                    email_data = json.loads(read_result.stdout)
+                    body = email_data.get("body", "")
+                    reply_text = html_to_text(body) if body else "(no text content)"
+                else:
+                    reply_text = (
+                        f"(mailroom read failed -- review manually:\n"
+                        f"  mailroom -a {mailroom_account} read -f {mailroom_folder} -u {uid})"
+                    )
+            except Exception:
+                reply_text = (
+                    f"(could not fetch -- review manually:\n"
+                    f"  mailroom -a {mailroom_account} read -f {mailroom_folder} -u {uid})"
+                )
+
+            from_display = msg.get("from", from_email)
+            section = (
+                f"\n\n### Email Replied ({msg_date})\n\n"
+                f"From: {from_display}\n\n"
+                f"{reply_text}\n"
+            )
+            with open(approach_path, "a", encoding="utf-8") as f:
+                f.write(section)
+
+            # Update high-water mark in memory
+            entries = by_email.get(from_email, [])
+            for i, (p, _d) in enumerate(entries):
+                if p == approach_path:
+                    entries[i] = (p, msg_date)
+                    break
+
+            new_replies += 1
+            label = str(approach_path.parent.parent.relative_to(base))
+            print(f"  + {label}/{approach_path.name}: reply from {from_email} ({msg_date})")
+
+    if unmatched:
+        print()
+        print("  Unmatched incoming replies (no approach file found):")
+        for addr, subj, dt in unmatched:
+            print(f"    {addr}  {subj}  ({dt})")
+
+    return new_replies
+
+
+def print_updated_table(
+    segment_roster_data: list[tuple[str, int, int, int, int]],
+    segments: list,
+    base: Path,
+):
+    """Reprint progress table with updated reply counts from approach files."""
+    print()
+    print("Updated progress:")
+    print(HDR)
+    print(SEP)
+    gt_v = gt_p = gt_s = gt_e = gt_a = gt_sn = gt_r = 0
+    for (label, n, profiled, n_star3, has_email), (segment_dir, _) in zip(
+        segment_roster_data, segments
+    ):
+        approach_dir = segment_dir / "approach"
+        appr_total, appr_sent, appr_replied, _, _ = scan_approach_dir(approach_dir)
+        print(
+            f"{label:<35}|{n:>5}"
+            f"|{fmt_cell(profiled, n)}"
+            f"|{fmt_cell(n_star3, n)}"
+            f"|{fmt_cell(has_email, n_star3)}"
+            f"|{fmt_cell(appr_total, n_star3)}"
+            f"|{fmt_cell(appr_sent, appr_total)}"
+            f"|{fmt_cell(appr_replied, appr_sent)}"
+        )
+        gt_v += n; gt_p += profiled; gt_s += n_star3; gt_e += has_email
+        gt_a += appr_total; gt_sn += appr_sent; gt_r += appr_replied
+    print(SEP)
+    print(
+        f"{'TOTAL':<35}|{gt_v:>5}"
+        f"|{fmt_cell(gt_p, gt_v)}"
+        f"|{fmt_cell(gt_s, gt_v)}"
+        f"|{fmt_cell(gt_e, gt_s)}"
+        f"|{fmt_cell(gt_a, gt_s)}"
+        f"|{fmt_cell(gt_sn, gt_a)}"
+        f"|{fmt_cell(gt_r, gt_sn)}"
+    )
+
+
+# --- Run mailroom reply check ---
+
+if args.no_mailroom:
+    pass
+elif not _reply_check:
+    print()
+    print(
+        "Note: no reply_check section in campaign YAML. "
+        "Add reply_check.mailroom_account and reply_check.folder to enable reply checking.",
+        file=sys.stderr,
+    )
+elif not _sender_email:
+    print()
+    print("Note: no sender.email in campaign YAML; cannot check replies.", file=sys.stderr)
+else:
+    mr_account = _reply_check.get("mailroom_account", "")
+    mr_folder = _reply_check.get("folder", "")
+    if not mr_account or not mr_folder:
+        print()
+        print(
+            "Note: reply_check.mailroom_account and reply_check.folder must both be set.",
+            file=sys.stderr,
+        )
+    else:
+        print()
+        print(f"Checking email replies ({mr_account}, folder: {mr_folder})...")
+        n_new = update_replies_from_mailroom(
+            segments, BASE, mr_account, mr_folder, _sender_email
+        )
+        if n_new > 0:
+            print(f"  {n_new} new repl{'ies' if n_new != 1 else 'y'} recorded.")
+            print_updated_table(segment_roster_data, segments, BASE)
+        elif n_new == 0:
+            print("  No new replies.")

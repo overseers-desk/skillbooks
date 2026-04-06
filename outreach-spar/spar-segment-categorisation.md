@@ -74,7 +74,7 @@ The solution is not to merge the segments but to coordinate the approaches. Thre
 
 **Roster cross-reference.** At minimum, add a note in both roster rows indicating the cross-segment appearance. This ensures that anyone reviewing one segment's roster is aware of the other segment's claim on the same contact.
 
-The duplicate-contacts section of the progress script (`check-campaign-progress.py`) flags cross-segment duplicates by name and by email. These flags are not errors to be fixed by merging; they are coordination points to be resolved by one of the three mechanisms above.
+The duplicate-contacts section of the progress script (`update-campaign-progress.py`) flags cross-segment duplicates by name and by email. These flags are not errors to be fixed by merging; they are coordination points to be resolved by one of the three mechanisms above.
 
 ## 7. When to revisit the segment structure
 
