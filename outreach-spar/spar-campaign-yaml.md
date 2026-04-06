@@ -1,6 +1,6 @@
 # SPAR Campaign YAML Schema
 
-**Applies to:** all SPAR campaigns. The `campaign.yaml` file is the entry point for batch scripts (`bin/spar-a-batch.sh`, `bin/spar-p-batch.sh`, `bin/check-campaign-progress.py`).
+**Applies to:** all SPAR campaigns. The `campaign.yaml` file is the entry point for batch scripts (`bin/spar-a-batch.sh`, `bin/spar-p-batch.sh`, `bin/update-campaign-progress.py`).
 
 ## Location
 
@@ -45,8 +45,10 @@ One file per campaign run, in the campaign root directory. Named `campaign.yaml`
 | `sender.bcc` | string | (none) | BCC address for outgoing emails |
 | `antifacts` | path | (none) | Path to the antifact/fact-check document. When present, the A2 challenger fact-checks the draft against this file. When absent, fact-check uses only the overview and goal documents. Relative to the YAML file's directory. |
 | `campaign_principles` | path | (none) | Path to campaign-level principles document. When present, A1 reads it before drafting. When absent, A1 relies on the method document and goal file alone. Relative to the YAML file's directory. |
-| `skip_segments` | list of strings | (none) | Segment directory names to exclude from `check-campaign-progress.py`. Useful for closed campaigns or non-standard directories that should not appear in the progress report. |
+| `skip_segments` | list of strings | (none) | Segment directory names to exclude from `update-campaign-progress.py`. Useful for closed campaigns or non-standard directories that should not appear in the progress report. |
 | `ses_region` | string | `ap-southeast-2` | AWS SES region for email sending |
+| `reply_check.mailroom_account` | string | (none) | Mailroom account name for reply detection. When present (with `reply_check.folder`), `update-campaign-progress.py` queries this IMAP account for incoming replies and appends `### Email Replied` sections to matching approach files. |
+| `reply_check.folder` | string | (none) | IMAP folder to search for replies (e.g. `Partnerships`). |
 
 ## Path resolution
 

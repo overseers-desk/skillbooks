@@ -338,7 +338,7 @@ When a reply is received, a new section is appended (not editing any existing he
 
 Multiple replies produce multiple appended sections. No heading is edited more than once.
 
-### Detection patterns (used by `check-campaign-progress.py`)
+### Detection patterns (used by `update-campaign-progress.py`)
 
 | State | Grep pattern |
 |---|---|
