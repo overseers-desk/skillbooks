@@ -254,7 +254,7 @@ has_over_100 = False
 
 
 def fmt_cell(count: int, denom: int) -> str:
-    """Format 'count pct%' with fixed sub-field widths: 3 + 1 + 5 = 9 chars."""
+    """Format 'count pct%' compactly for table cells."""
     global has_over_100
     if denom:
         pct_val = count / denom * 100
@@ -262,25 +262,44 @@ def fmt_cell(count: int, denom: int) -> str:
             has_over_100 = True
             pct = f"{pct_val:3.0f}%†"
         else:
-            pct = f"{pct_val:3.0f}% "
+            pct = f"{pct_val:3.0f}%"
     else:
-        pct = "   - "
+        pct = "   -"
     return f"{count:>3} {pct}"
 
 
-HDR = (
-    f"{'Segment':<35}|{'Valid':>5}"
-    f"|{'Profile':>9}"
-    f"|{'3*+':>9}"
-    f"|{'w. Email':>9}"
-    f"|{'Approach':>9}"
-    f"|{'Sent':>9}"
-    f"|{'Repl':>9}"
-)
-SEP = "-" * len(HDR)
+TABLE_HEADERS = ['Segment', 'Valid', 'Profile', '3★+', 'w. Email', 'Approach', 'Sent', 'Repl']
+TABLE_ALIGNS = ['l', 'r', 'r', 'r', 'r', 'r', 'r', 'r']
 
-print(HDR)
-print(SEP)
+
+def print_md_table(headers: list[str], rows: list[list[str]], aligns: list[str] | None = None) -> None:
+    """Print a packed, aligned Markdown table."""
+    if aligns is None:
+        aligns = ['l'] + ['r'] * (len(headers) - 1)
+    widths = [len(h) for h in headers]
+    for row in rows:
+        for i, cell in enumerate(row):
+            widths[i] = max(widths[i], len(cell))
+
+    def fmt_row(cells: list[str]) -> str:
+        parts = []
+        for cell, w, a in zip(cells, widths, aligns):
+            parts.append(cell.rjust(w) if a == 'r' else cell.ljust(w))
+        return '|' + '|'.join(parts) + '|'
+
+    def sep_row() -> str:
+        parts = []
+        for w, a in zip(widths, aligns):
+            parts.append('-' * (w - 1) + ':' if a == 'r' else ':' + '-' * (w - 1))
+        return '|' + '|'.join(parts) + '|'
+
+    print(fmt_row(headers))
+    print(sep_row())
+    for row in rows:
+        print(fmt_row(row))
+
+
+table_rows: list[list[str]] = []
 
 gt_valid = gt_prof = gt_star = gt_has_email = gt_appr = gt_sent = gt_replied = 0
 
@@ -364,15 +383,16 @@ for segment_dir, roster_path in segments:
 
     n = len(valid_rows)
 
-    print(
-        f"{label:<35}|{n:>5}"
-        f"|{fmt_cell(profiled, n)}"
-        f"|{fmt_cell(n_star3, n)}"
-        f"|{fmt_cell(has_email, n_star3)}"
-        f"|{fmt_cell(appr_total, n_star3)}"
-        f"|{fmt_cell(appr_sent, appr_total)}"
-        f"|{fmt_cell(appr_replied, appr_sent)}"
-    )
+    table_rows.append([
+        label,
+        str(n),
+        fmt_cell(profiled, n),
+        fmt_cell(n_star3, n),
+        fmt_cell(has_email, n_star3),
+        fmt_cell(appr_total, n_star3),
+        fmt_cell(appr_sent, appr_total),
+        fmt_cell(appr_replied, appr_sent),
+    ])
 
     segment_roster_data.append((label, n, profiled, n_star3, has_email))
 
@@ -422,90 +442,98 @@ for segment_dir, roster_path in segments:
     gt_sent += appr_sent
     gt_replied += appr_replied
 
-print(SEP)
-print(
-    f"{'TOTAL':<35}|{gt_valid:>5}"
-    f"|{fmt_cell(gt_prof, gt_valid)}"
-    f"|{fmt_cell(gt_star, gt_valid)}"
-    f"|{fmt_cell(gt_has_email, gt_star)}"
-    f"|{fmt_cell(gt_appr, gt_star)}"
-    f"|{fmt_cell(gt_sent, gt_appr)}"
-    f"|{fmt_cell(gt_replied, gt_sent)}"
-)
+table_rows.append([
+    'TOTAL',
+    str(gt_valid),
+    fmt_cell(gt_prof, gt_valid),
+    fmt_cell(gt_star, gt_valid),
+    fmt_cell(gt_has_email, gt_star),
+    fmt_cell(gt_appr, gt_star),
+    fmt_cell(gt_sent, gt_appr),
+    fmt_cell(gt_replied, gt_sent),
+])
+print_md_table(TABLE_HEADERS, table_rows, TABLE_ALIGNS)
 
 if has_over_100:
     print()
-    print("† Exceeds 100% because approach files exist for entries that were")
-    print("  subsequently invalidated or rated below the 3★ threshold.")
+    print("**†** Exceeds 100% because approach files exist for entries that were subsequently invalidated or rated below the 3★ threshold.")
 
 # Duplicate recipient report (only flag actual email addresses, skip placeholders)
 dups = {addr: entries for addr, entries in all_to_map.items() if len(entries) > 1 and "@" in addr}
 if dups:
     print()
-    print("DUPLICATE RECIPIENTS (same To: address in multiple approach files):")
-    print("-" * 72)
+    print("## Duplicate recipients")
+    print()
+    print("Same To: address in multiple approach files.")
+    print()
     for addr, entries in sorted(dups.items()):
-        print(f"  {addr}")
+        print(f"- **{addr}**")
         for segment_label, fname in entries:
-            print(f"    {segment_label}/{fname}")
+            print(f"  - {segment_label}/{fname}")
 
 # Cross-segment duplicates by name
 name_dups = {k: v for k, v in all_contacts_by_name.items() if len(set(ch for ch, *_ in v)) > 1}
 if name_dups:
     print()
-    print("DUPLICATE CONTACTS BY NAME (same person in multiple segments):")
-    print("-" * 72)
+    print("## Duplicate contacts by name")
+    print()
+    print("Same person in multiple segments.")
+    print()
     for nk, entries in sorted(name_dups.items(), key=lambda x: x[0]):
         display_name = entries[0][1]
-        print(f"  {display_name}")
+        print(f"- **{display_name}**")
         for ch, _name, org, email in entries:
-            print(f"    [{ch}] {org}" + (f"  <{email}>" if email else ""))
+            print(f"  - [{ch}] {org}" + (f"  <{email}>" if email else ""))
 
 # Cross-segment duplicates by email
 email_dups = {k: v for k, v in all_contacts_by_email.items() if len(set(ch for ch, *_ in v)) > 1}
 if email_dups:
     print()
-    print("DUPLICATE CONTACTS BY EMAIL (same email in multiple segments):")
-    print("-" * 72)
+    print("## Duplicate contacts by email")
+    print()
+    print("Same email in multiple segments.")
+    print()
     for addr, entries in sorted(email_dups.items()):
-        print(f"  {addr}")
+        print(f"- **{addr}**")
         for ch, contact, org in entries:
-            print(f"    [{ch}] {contact} - {org}")
+            print(f"  - [{ch}] {contact} — {org}")
 
 # Duplicate subject lines among unsent approach files
 subj_dups = {s: entries for s, entries in all_unsent_subjects.items() if len(entries) > 1}
 if subj_dups:
     print()
-    print("IDENTICAL SUBJECT LINES IN UNSENT APPROACHES:")
-    print("-" * 72)
+    print("## Identical subject lines in unsent approaches")
+    print()
     for subj, entries in sorted(subj_dups.items()):
-        print(f"  Subject: {subj}")
+        print(f"- **Subject:** {subj}")
         for segment_label, fname in entries:
-            print(f"    {segment_label}/{fname}")
+            print(f"  - {segment_label}/{fname}")
 
 # --missing detail sections
 if "S" in missing_stages and missing_sweep:
     print()
-    print("SWEEP COVERAGE (S) \u2014 max sweep_iteration per segment:")
-    print("-" * 50)
-    for label, max_sweep in missing_sweep:
-        print(f"  {label:<35} sweep {max_sweep}")
+    print("## Sweep coverage (S)")
     print()
-    print("  Caveat: cannot distinguish 'not yet swept' from 'swept with no result'.")
+    print("Max sweep_iteration per segment.")
+    print()
+    for label, max_sweep in missing_sweep:
+        print(f"- {label} \u2014 sweep {max_sweep}")
+    print()
+    print("> Caveat: cannot distinguish 'not yet swept' from 'swept with no result'.")
 
 if "P" in missing_stages and missing_profile:
     print()
-    print(f"MISSING PROFILES (P) \u2014 {len(missing_profile)} valid entries with no profile:")
-    print("-" * 72)
+    print(f"## Missing profiles (P) \u2014 {len(missing_profile)} valid entries with no profile")
+    print()
     for label, contact, org in missing_profile:
-        print(f"  [{label}]  {contact or '(no contact)'} \u2014 {org}")
+        print(f"- [{label}] {contact or '(no contact)'} \u2014 {org}")
 
 if "A" in missing_stages and missing_approach:
     print()
-    print(f"MISSING/UNSENT APPROACHES (A) \u2014 {len(missing_approach)} entries:")
-    print("-" * 72)
+    print(f"## Missing/unsent approaches (A) \u2014 {len(missing_approach)} entries")
+    print()
     for label, contact, org, reason in missing_approach:
-        print(f"  [{label}]  {contact} \u2014 {org}  ({reason})")
+        print(f"- [{label}] {contact} \u2014 {org} ({reason})")
 
 # =============================================================================
 # Reply update via mailroom
@@ -773,35 +801,36 @@ def print_updated_table(
     """Reprint progress table with updated reply counts from approach files."""
     print()
     print("Updated progress:")
-    print(HDR)
-    print(SEP)
+    rows: list[list[str]] = []
     gt_v = gt_p = gt_s = gt_e = gt_a = gt_sn = gt_r = 0
     for (label, n, profiled, n_star3, has_email), (segment_dir, _) in zip(
         segment_roster_data, segments
     ):
         approach_dir = segment_dir / "approach"
         appr_total, appr_sent, appr_replied, _, _ = scan_approach_dir(approach_dir)
-        print(
-            f"{label:<35}|{n:>5}"
-            f"|{fmt_cell(profiled, n)}"
-            f"|{fmt_cell(n_star3, n)}"
-            f"|{fmt_cell(has_email, n_star3)}"
-            f"|{fmt_cell(appr_total, n_star3)}"
-            f"|{fmt_cell(appr_sent, appr_total)}"
-            f"|{fmt_cell(appr_replied, appr_sent)}"
-        )
+        rows.append([
+            label,
+            str(n),
+            fmt_cell(profiled, n),
+            fmt_cell(n_star3, n),
+            fmt_cell(has_email, n_star3),
+            fmt_cell(appr_total, n_star3),
+            fmt_cell(appr_sent, appr_total),
+            fmt_cell(appr_replied, appr_sent),
+        ])
         gt_v += n; gt_p += profiled; gt_s += n_star3; gt_e += has_email
         gt_a += appr_total; gt_sn += appr_sent; gt_r += appr_replied
-    print(SEP)
-    print(
-        f"{'TOTAL':<35}|{gt_v:>5}"
-        f"|{fmt_cell(gt_p, gt_v)}"
-        f"|{fmt_cell(gt_s, gt_v)}"
-        f"|{fmt_cell(gt_e, gt_s)}"
-        f"|{fmt_cell(gt_a, gt_s)}"
-        f"|{fmt_cell(gt_sn, gt_a)}"
-        f"|{fmt_cell(gt_r, gt_sn)}"
-    )
+    rows.append([
+        'TOTAL',
+        str(gt_v),
+        fmt_cell(gt_p, gt_v),
+        fmt_cell(gt_s, gt_v),
+        fmt_cell(gt_e, gt_s),
+        fmt_cell(gt_a, gt_s),
+        fmt_cell(gt_sn, gt_a),
+        fmt_cell(gt_r, gt_sn),
+    ])
+    print_md_table(TABLE_HEADERS, rows, TABLE_ALIGNS)
 
 
 # --- Run mailroom reply check ---
