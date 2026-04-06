@@ -203,7 +203,7 @@ Factors that decrease likelihood:
 
 State the estimate as a whole-number percentage with a one-sentence rationale.
 
-**Write both values to the roster TSV — do not record them in the profile document.** The roster is the single source of truth for star_rating and response_likelihood. Use `trdsql` to update the contact's row in-place:
+**Write both values to the roster TSV — do not record them in the profile document or in any summary document.** The roster is the single source of truth for star_rating and response_likelihood. Response likelihood changes as outreach proceeds; recording it in markdown creates stale data and noisy git commits. Use `trdsql` to update the contact's row in-place:
 
 ```bash
 trdsql -id "\t" -ih -od "\t" -oh \
@@ -232,6 +232,8 @@ Compare what the profile reveals against what the roster entry says. If any of t
 - Contact details (email, LinkedIn URL) need correction
 
 If the person has left the relevant role entirely (e.g. left the industry, retired), mark the roster entry with `date_found_invalid` and the reason, then search for their replacement at the same organisation. The replacement enters the roster as a new contact with `discovered_via` recording they were found as a replacement.
+
+**Person vs. company:** Ask whether the campaign wants this person or the person currently in this role at this company. If the answer is the role — which is true for most contacts discovered via directories or company listings — and profiling shows someone else now holds it, the roster entry is wrong. Invalidate it, add the current person, and do not pass the displaced entry to the A phase. Delete any existing profile for them; git history preserves it.
 
 Record all corrections in the profile document under a "Verification corrections" section so the change history is traceable.
 
