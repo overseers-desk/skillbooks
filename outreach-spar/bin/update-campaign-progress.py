@@ -271,7 +271,7 @@ def fmt_cell(count: int, denom: int) -> str:
     return f"{count:>3} {pct}"
 
 
-TABLE_HEADERS = ['Segment', 'Valid', 'Profile', '3★+', 'E', 'L', 'F', '\u260eonly', 'Approach', 'Sent', 'Repl']
+TABLE_HEADERS = ['Segment', 'Valid', 'Profile', '3★+', 'Email', 'LinkedIn', 'Facebook', 'Phone-only', 'Approach', 'Sent', 'Repl']
 TABLE_ALIGNS = ['l', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r']
 
 
