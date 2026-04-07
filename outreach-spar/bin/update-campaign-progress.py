@@ -850,12 +850,18 @@ else:
         )
     else:
         print()
-        print(f"Checking email replies ({mr_account}, folder: {mr_folder})...")
-        n_new = update_replies_from_mailroom(
-            segments, BASE, mr_account, mr_folder, _sender_email
-        )
-        if n_new > 0:
-            print(f"  {n_new} new repl{'ies' if n_new != 1 else 'y'} recorded.")
-            print_updated_table(segment_roster_data, segments, BASE)
-        elif n_new == 0:
-            print("  No new replies.")
+        try:
+            answer = input("Update reply status from mailroom? [y/N] ").strip().lower()
+        except EOFError:
+            print("No input — you're probably a bot, that's fine. Mailroom skipped, progress is above.")
+            answer = ""
+        if answer == "y":
+            print(f"Checking email replies ({mr_account}, folder: {mr_folder})...")
+            n_new = update_replies_from_mailroom(
+                segments, BASE, mr_account, mr_folder, _sender_email
+            )
+            if n_new > 0:
+                print(f"  {n_new} new repl{'ies' if n_new != 1 else 'y'} recorded.")
+                print_updated_table(segment_roster_data, segments, BASE)
+            elif n_new == 0:
+                print("  No new replies.")
