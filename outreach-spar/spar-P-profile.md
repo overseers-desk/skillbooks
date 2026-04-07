@@ -20,7 +20,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 A markdown file: `profile-[name-slug]-[org-slug].md` in the campaign's profile directory. The file follows the structure defined in §5 below.
 
 Additionally, P produces:
-- **Roster corrections:** If the target's role, organisation, or contact details have changed, update the roster entry directly.
+- **Roster updates:** If the target's role, organisation, or contact details have changed or were missing and are now known, update the roster entry directly (see §4.11).
 - **New names:** If profiling surfaces names not already in the roster, add them to the roster with `discovered_via` pointing to the target being profiled and `discovery_source` describing how they were found (e.g. "LinkedIn post commenter", "co-admin of Facebook group", "named in FOSSASIA Summit post").
 
 ## 4. Procedure
@@ -263,16 +263,31 @@ Record the classification and the count in the profile header.
 ### 4.11 Check for verification corrections
 
 Compare what the profile reveals against what the roster entry says. If any of the following has changed, update the roster:
+
 - The person has left the organisation listed in the roster
 - Their role title is different from what the roster says
 - Their location has changed
-- Contact details (email, LinkedIn URL) need correction
+- Contact details (email, LinkedIn URL, Facebook URL) are incorrect — update the wrong value
+
+**Backfill empty contact fields.** If the roster entry has a blank `email`, `linkedin_url`, or `facebook_url` and profiling discovers a value for it, that is not a correction — it is a backfill, and it is equally required. The sweep phase often finds only a phone number; the profile phase researches the person and their organisation in depth and routinely surfaces emails (from company websites, directories, ABN records) and social URLs (from Facebook pages, LinkedIn search) that the sweep did not capture. These must be written back to the roster, not left only in the profile prose.
+
+For each empty contact field where a value was discovered, update the roster using `trdsql`:
+
+```bash
+trdsql -id "\t" -ih -od "\t" -oh \
+  "SELECT organisation, contact_name, role, phone, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'NEW_EMAIL' ELSE email END, postcode, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'NEW_LINKEDIN' ELSE linkedin_url END, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'NEW_FACEBOOK' ELSE facebook_url END, sweep_iteration, discovered_via, discovery_source, verified, p_note, star_rating, response_likelihood, s_note, date_found_invalid FROM roster.tsv" \
+  > roster-tmp.tsv && mv roster-tmp.tsv roster.tsv
+```
+
+Replace NAME, ORG, and NEW_EMAIL / NEW_LINKEDIN / NEW_FACEBOOK with actual values. For fields that remain empty, use the original column name (e.g. `email`) in place of the CASE expression — do not write empty-string literals. The column order must match the roster header exactly, as in §4.9.
+
+Only backfill emails that belong to the contact or their organisation. An email discovered for a different person mentioned in the profile (e.g. a successor, a co-admin) belongs in that person's roster row, not this one.
 
 If the person has left the relevant role entirely (e.g. left the industry, retired), mark the roster entry with `date_found_invalid` and the reason, then search for their replacement at the same organisation. The replacement enters the roster as a new contact with `discovered_via` recording they were found as a replacement.
 
 **Person vs. company:** Ask whether the campaign wants this person or the person currently in this role at this company. If the answer is the role — which is true for most contacts discovered via directories or company listings — and profiling shows someone else now holds it, the roster entry is wrong. Invalidate it, add the current person, and do not pass the displaced entry to the A phase. Delete any existing profile for them; git history preserves it.
 
-Record all corrections in the profile document under a "Verification corrections" section so the change history is traceable.
+Record all corrections and backfills in the profile document under a "Verification corrections" section so the change history is traceable.
 
 ## 5. Profile document structure
 
