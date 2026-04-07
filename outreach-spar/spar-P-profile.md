@@ -9,7 +9,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 
 ## 2. Inputs
 
-- **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, segment, discovered_via)
+- **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, segment, discovered_via). **The `contact_name` field must be populated for the campaign pipeline to count this entry as valid.** If the roster entry has no contact name, finding one is the first task of this phase — see §4.0b.
 - **Campaign goal document:** The document (typically `goal.md` or equivalent) that defines the campaign's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
 - **Campaign angle table:** The list of angles defined by the campaign plan, with descriptions of when each applies. Read this before profiling — it defines what "relevant" means for this campaign.
 - **Campaign context documents:** The campaign plan names specific documents (mission statement, project pages, segment definitions) that explain the campaign's offering. Read the angle table first; read context documents only for angles that seem relevant to the target.
@@ -24,6 +24,29 @@ Additionally, P produces:
 - **New names:** If profiling surfaces names not already in the roster, add them to the roster with `discovered_via` pointing to the target being profiled and `discovery_source` describing how they were found (e.g. "LinkedIn post commenter", "co-admin of Facebook group", "named in FOSSASIA Summit post").
 
 ## 4. Procedure
+
+### 4.0b Resolve contact name (run before §4.0 when roster has no contact_name)
+
+If the roster entry has no `contact_name`, the entry is pipeline-invalid regardless of star rating, email, or any other field — the campaign script excludes nameless rows from all counts. This step must be completed before §4.0 can proceed.
+
+**Name discovery sources, in order:**
+
+1. **Company website** — About, Team, or Contact pages often name the owner or manager.
+2. **Facebook** — Small operators frequently maintain their primary presence here. Search for the company name; check the About section and any "Run by" attribution. Use the Facebook skill if available.
+3. **LinkedIn** — Search for the company; check the People section for the managing director or owner. Use the LinkedIn skill if available.
+4. **ABN registry** — For sole traders and small Pty Ltd companies, the ABN Lookup may name an individual.
+5. **Yellow Pages, TrueLocal, Google Maps reviews** — Reviews and listings sometimes name the owner.
+6. **Web search** — `"[company name]" owner OR director OR founder OR operator`.
+
+**If a name is found:**
+- Update `contact_name` in the roster.
+- If the entry had `date_found_invalid` set **solely because it lacked a contact name**, clear `date_found_invalid` and re-run §4.0 (the structural validation check). The entry may be revalidated if it passes §4.0.
+- If `date_found_invalid` was set for a structural reason (contact type does not fit the campaign mechanism), finding a name does not revalidate the entry — the structural reason stands.
+
+**If no name is found after exhausting all sources:**
+- Record in `p_note`: "name search attempted [date]: no individual identified via website, Facebook, LinkedIn, ABN, web search."
+- Set `date_found_invalid` to today if not already set, with reason "nameless — pipeline invalid; name search exhausted."
+- Do not proceed to §4.0 or produce a profile document. The roster entry is the permanent record.
 
 ### 4.0 Validate fit against campaign goal
 
