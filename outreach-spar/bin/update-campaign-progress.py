@@ -6,7 +6,10 @@ Each column (except Valid) shows count and percentage of its denominator:
   Valid     — roster rows where date_found_invalid is blank
   Profile   — valid entries with a matching profile file (/ Valid)
   3★+       — valid rows with star_rating >= 3 (/ Valid)
-  w.✉       — 3★+ rows with an email address (/ 3★+)
+  E         — 3★+ rows with an email address (/ 3★+)
+  L         — 3★+ rows with a linkedin_url (/ 3★+)
+  F         — 3★+ rows with a facebook_url (/ 3★+)
+  ☎only     — 3★+ rows with only phone (no email, linkedin, or facebook) (/ 3★+)
   Approach  — approach files in approach/ (/ 3★+)
   Sent      — approach files with a sent date (/ Approach)
   Repl      — approach files with a reply marker (/ Sent)
@@ -240,7 +243,7 @@ if YAML_SEGMENTS is not None:
     for roster_path in sorted(BASE.glob("*/roster.tsv")):
         rel = str(roster_path.parent.relative_to(BASE))
         if rel not in yaml_set:
-            print(f"  WARNING: {rel}/roster.tsv exists but is not listed in campaign YAML", file=sys.stderr)
+            print(f"  NOTE: {rel}/roster.tsv exists but is not in this campaign", file=sys.stderr)
 else:
     # Fallback: scan direct child directories only (subfolders are not segments)
     for roster_path in sorted(BASE.glob("*/roster.tsv")):
@@ -268,8 +271,8 @@ def fmt_cell(count: int, denom: int) -> str:
     return f"{count:>3} {pct}"
 
 
-TABLE_HEADERS = ['Segment', 'Valid', 'Profile', '3★+', 'w. Email', 'Approach', 'Sent', 'Repl']
-TABLE_ALIGNS = ['l', 'r', 'r', 'r', 'r', 'r', 'r', 'r']
+TABLE_HEADERS = ['Segment', 'Valid', 'Profile', '3★+', 'E', 'L', 'F', '\u260eonly', 'Approach', 'Sent', 'Repl']
+TABLE_ALIGNS = ['l', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r']
 
 
 def print_md_table(headers: list[str], rows: list[list[str]], aligns: list[str] | None = None) -> None:
@@ -299,9 +302,49 @@ def print_md_table(headers: list[str], rows: list[list[str]], aligns: list[str] 
         print(fmt_row(row))
 
 
-table_rows: list[list[str]] = []
+def build_progress_rows(
+    segment_roster_data: list[tuple[str, int, int, int, int, int, int, int]],
+    segments: list,
+) -> list[list[str]]:
+    """Build table rows (including TOTAL) from cached roster data and current approach files."""
+    rows: list[list[str]] = []
+    gt_v = gt_p = gt_s = gt_e = gt_l = gt_f = gt_po = gt_a = gt_sn = gt_r = 0
+    for (label, n, profiled, n_star3, has_email, has_li, has_fb, has_phone_only), (segment_dir, _) in zip(
+        segment_roster_data, segments
+    ):
+        approach_dir = segment_dir / "approach"
+        appr_total, appr_sent, appr_replied, _, _ = scan_approach_dir(approach_dir)
+        rows.append([
+            label,
+            str(n),
+            fmt_cell(profiled, n),
+            fmt_cell(n_star3, n),
+            fmt_cell(has_email, n_star3),
+            fmt_cell(has_li, n_star3),
+            fmt_cell(has_fb, n_star3),
+            fmt_cell(has_phone_only, n_star3),
+            fmt_cell(appr_total, n_star3),
+            fmt_cell(appr_sent, appr_total),
+            fmt_cell(appr_replied, appr_sent),
+        ])
+        gt_v += n; gt_p += profiled; gt_s += n_star3; gt_e += has_email
+        gt_l += has_li; gt_f += has_fb; gt_po += has_phone_only
+        gt_a += appr_total; gt_sn += appr_sent; gt_r += appr_replied
+    rows.append([
+        'TOTAL',
+        str(gt_v),
+        fmt_cell(gt_p, gt_v),
+        fmt_cell(gt_s, gt_v),
+        fmt_cell(gt_e, gt_s),
+        fmt_cell(gt_l, gt_s),
+        fmt_cell(gt_f, gt_s),
+        fmt_cell(gt_po, gt_s),
+        fmt_cell(gt_a, gt_s),
+        fmt_cell(gt_sn, gt_a),
+        fmt_cell(gt_r, gt_sn),
+    ])
+    return rows
 
-gt_valid = gt_prof = gt_star = gt_has_email = gt_appr = gt_sent = gt_replied = 0
 
 # {to_address: [(segment_label, filename), ...]} — for duplicate detection
 all_to_map: dict[str, list[tuple[str, str]]] = {}
@@ -318,7 +361,7 @@ missing_profile: list[tuple[str, str, str]] = []
 missing_approach: list[tuple[str, str, str, str]] = []
 
 # Cached roster counts for potential reprint after mailroom update
-segment_roster_data: list[tuple[str, int, int, int, int]] = []
+segment_roster_data: list[tuple[str, int, int, int, int, int, int, int]] = []
 
 for segment_dir, roster_path in segments:
     label = str(segment_dir.relative_to(BASE))
@@ -361,6 +404,12 @@ for segment_dir, roster_path in segments:
 
     star3 = [r for r in valid_rows if parse_star(r.get("star_rating") or "") >= 3]
     has_email = sum(1 for r in star3 if (r.get("email") or "").strip())
+    has_li = sum(1 for r in star3 if (r.get("linkedin_url") or "").strip())
+    has_fb = sum(1 for r in star3 if (r.get("facebook_url") or "").strip())
+    has_phone_only = sum(1 for r in star3 if (r.get("phone") or "").strip()
+                        and not (r.get("email") or "").strip()
+                        and not (r.get("linkedin_url") or "").strip()
+                        and not (r.get("facebook_url") or "").strip())
     n_star3 = len(star3)
 
     appr_total, appr_sent, appr_replied, to_map, unsent_subjs = scan_approach_dir(approach_dir)
@@ -383,18 +432,7 @@ for segment_dir, roster_path in segments:
 
     n = len(valid_rows)
 
-    table_rows.append([
-        label,
-        str(n),
-        fmt_cell(profiled, n),
-        fmt_cell(n_star3, n),
-        fmt_cell(has_email, n_star3),
-        fmt_cell(appr_total, n_star3),
-        fmt_cell(appr_sent, appr_total),
-        fmt_cell(appr_replied, appr_sent),
-    ])
-
-    segment_roster_data.append((label, n, profiled, n_star3, has_email))
+    segment_roster_data.append((label, n, profiled, n_star3, has_email, has_li, has_fb, has_phone_only))
 
     # --missing collection
     if "S" in missing_stages:
@@ -434,29 +472,12 @@ for segment_dir, roster_path in segments:
             elif not matched[2]:
                 missing_approach.append((label, contact, org, "not yet sent"))
 
-    gt_valid += n
-    gt_prof += profiled
-    gt_star += n_star3
-    gt_has_email += has_email
-    gt_appr += appr_total
-    gt_sent += appr_sent
-    gt_replied += appr_replied
-
-table_rows.append([
-    'TOTAL',
-    str(gt_valid),
-    fmt_cell(gt_prof, gt_valid),
-    fmt_cell(gt_star, gt_valid),
-    fmt_cell(gt_has_email, gt_star),
-    fmt_cell(gt_appr, gt_star),
-    fmt_cell(gt_sent, gt_appr),
-    fmt_cell(gt_replied, gt_sent),
-])
+table_rows = build_progress_rows(segment_roster_data, segments)
 print_md_table(TABLE_HEADERS, table_rows, TABLE_ALIGNS)
 
 if has_over_100:
     print()
-    print("**†** Exceeds 100% because approach files exist for entries that were subsequently invalidated or rated below the 3★ threshold.")
+    print("† Exceeds 100% because approach files exist for entries that were subsequently invalidated or rated below the 3★ threshold.")
 
 # Duplicate recipient report (only flag actual email addresses, skip placeholders)
 dups = {addr: entries for addr, entries in all_to_map.items() if len(entries) > 1 and "@" in addr}
@@ -794,43 +815,14 @@ def update_replies_from_mailroom(
 
 
 def print_updated_table(
-    segment_roster_data: list[tuple[str, int, int, int, int]],
+    segment_roster_data: list[tuple[str, int, int, int, int, int, int, int]],
     segments: list,
     base: Path,
 ):
     """Reprint progress table with updated reply counts from approach files."""
     print()
     print("Updated progress:")
-    rows: list[list[str]] = []
-    gt_v = gt_p = gt_s = gt_e = gt_a = gt_sn = gt_r = 0
-    for (label, n, profiled, n_star3, has_email), (segment_dir, _) in zip(
-        segment_roster_data, segments
-    ):
-        approach_dir = segment_dir / "approach"
-        appr_total, appr_sent, appr_replied, _, _ = scan_approach_dir(approach_dir)
-        rows.append([
-            label,
-            str(n),
-            fmt_cell(profiled, n),
-            fmt_cell(n_star3, n),
-            fmt_cell(has_email, n_star3),
-            fmt_cell(appr_total, n_star3),
-            fmt_cell(appr_sent, appr_total),
-            fmt_cell(appr_replied, appr_sent),
-        ])
-        gt_v += n; gt_p += profiled; gt_s += n_star3; gt_e += has_email
-        gt_a += appr_total; gt_sn += appr_sent; gt_r += appr_replied
-    rows.append([
-        'TOTAL',
-        str(gt_v),
-        fmt_cell(gt_p, gt_v),
-        fmt_cell(gt_s, gt_v),
-        fmt_cell(gt_e, gt_s),
-        fmt_cell(gt_a, gt_s),
-        fmt_cell(gt_sn, gt_a),
-        fmt_cell(gt_r, gt_sn),
-    ])
-    print_md_table(TABLE_HEADERS, rows, TABLE_ALIGNS)
+    print_md_table(TABLE_HEADERS, build_progress_rows(segment_roster_data, segments), TABLE_ALIGNS)
 
 
 # --- Run mailroom reply check ---
