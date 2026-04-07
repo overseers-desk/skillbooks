@@ -92,6 +92,15 @@ Discovery progresses through iterations that expand the roster in two ways: **so
 
 Build the initial roster from the most direct source available. For registry segments, export the registry and resolve named contacts. For directory segments, pull from the directory and search LinkedIn for individuals. For informal segments, use the keyword searches defined in the campaign plan, recording the query in `discovered_via`.
 
+**Facebook keyword search (for segments where targets can be reasonably expected to be active on Facebook):**
+
+If the campaign targets can be reasonably expected to be active on Facebook, run direct Facebook searches by keyword alongside other seed searches:
+
+- Search Facebook groups and pages by campaign keywords
+- From each result, extract the page/group name and identify administrators or organisers from the About section
+- Note contact details found (email, phone, website link)
+- Add discovered contacts to the roster with `discovered_via` recording the Facebook search query
+
 When a CRM or existing contact database is available as a seed source, use it — but also run a **CRM gap analysis** after web research is complete. Compare CRM entries against web research results to identify structurally invisible segments — contacts that exist in the CRM but cannot be found by any web search query. Categorise the unmatched entries by why they are invisible (different self-description vocabulary, weak web presence, B2B rather than B2C, niche specialisation, outside search radius). This analysis reveals whether the invisible segment is reachable through alternative search vocabulary or whether the CRM is the only path to them.
 
 ### S&P₂: Verify and expand
