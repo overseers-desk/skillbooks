@@ -157,6 +157,23 @@ This is where the "network / connection value" angle is assessed. A target may h
 
 **New names for the roster:** Any person found in this step who is not already in the roster and who is relevant to the campaign (by role, organisation, or community membership) should be added to the roster as a new contact. Record `discovered_via` as the target being profiled and `discovery_source` as the specific mechanism (e.g. "tagged in LinkedIn post about FOSSASIA Summit 2024").
 
+After completing all social media fetches for the current target, profile each newly added contact immediately by spawning a P subagent — do not defer to a future sweep, which may never run. The sequential constraint in §7 applies: do not run social media fetches concurrently. If the seed data for a new contact is too thin to produce a meaningful profile (name only, no organisation or role), write the roster entry and accept it will not be profiled in this session.
+
+### 4.7a Cross-reference people already in the system
+
+When profiling surfaces a name — a replacement, a predecessor, a person previously in the current target's role, a connection whose background is relevant — grep the campaign's profiles directory and roster for that name before continuing.
+
+```bash
+grep -ril "PERSON NAME" /path/to/profiles/ /path/to/roster.tsv
+```
+
+If the person is already in the system:
+
+- **They have a profile:** Update that profile to record the new information. Examples: "this person was replaced at [org] by [target] as of [date]" (useful for inferring the departing person's industry experience); or "this person is the predecessor of [target] at [org], whose background may inform [target]'s approach." Prior industry experience — especially if the person came from the operator side of the same industry — changes the register of any approach written for them. A profile that records only the current role and misses a relevant predecessor role causes the A phase to write to a stranger who already speaks the trade's language.
+- **They are in the roster but have no profile yet:** Note in the current profile that the cross-reference exists. The next P run for that contact will pick it up.
+
+Do not touch approach files. Approach regeneration in response to a cross-reference update is a graph-type transition that the batch pipeline does not currently handle — see SmartLayer/aesop#4.
+
 ### 4.8 Identify applicable angles
 
 Read the campaign's angle table. For each angle, assess whether the profile provides evidence for it:
