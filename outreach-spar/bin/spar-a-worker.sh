@@ -284,7 +284,7 @@ if [[ -f "$OUTFILE" ]]; then
                     "SELECT ${_select_list} FROM \"${roster_path}\"" > "$_tmp" \
                     && mv "$_tmp" "$roster_path" \
                     && echo "  roster update: ${contact_name} → response_likelihood=${band_likelihood}%"
-            ) 200>"${roster_path}.lock"
+            ) 200>"/tmp/spar-roster-$(echo "$roster_path" | md5sum | cut -c1-8).lock"
         fi
     fi
 else
