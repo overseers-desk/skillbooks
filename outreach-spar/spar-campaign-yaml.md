@@ -4,7 +4,7 @@
 
 ## Location
 
-One file per campaign run, in the campaign root directory. Named `campaign.yaml` or `campaign-{qualifier}.yaml` (e.g. `campaign-2026-04-all.yaml`). Multiple YAML files may coexist when different filter settings are needed for different runs against the same segments.
+One file per campaign, in the campaign root directory. Named `campaign.yaml` or `campaign-{date}.yaml` (e.g. `campaign-2026-04.yaml`). One campaign in business terms means one YAML file — do not create variants or copies to change filter settings. Edit the existing file instead.
 
 ## Fields
 
