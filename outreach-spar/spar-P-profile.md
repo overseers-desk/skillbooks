@@ -13,7 +13,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 - **Campaign goal document:** The document (typically `goal.md` or equivalent) that defines the campaign's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
 - **Campaign angle table:** The list of angles defined by the campaign plan, with descriptions of when each applies. Read this before profiling — it defines what "relevant" means for this campaign.
 - **Campaign context documents:** The campaign plan names specific documents (mission statement, project pages, segment definitions) that explain the campaign's offering. Read the angle table first; read context documents only for angles that seem relevant to the target.
-- **LinkedIn lookup method:** `~/code/aesop/linkedin-lookup-method/README.md` — read this before the first LinkedIn fetch in a session. It specifies Chromium flags, sequencing constraints, and parsing scripts.
+- **LinkedIn lookup method:** Use the LinkedIn skill or MCP available in your environment. Read its documentation before the first fetch in a session — it specifies sequencing constraints and any parsing scripts.
 
 ## 3. Output
 
@@ -39,25 +39,9 @@ If an invalid entry has already passed Profile and reached the approach queue, t
 
 ### 4.1 Fetch and parse the LinkedIn profile
 
-If the roster provides a LinkedIn URL, fetch and parse it. If no URL is provided, search for the person first (Step 1 of the LinkedIn lookup method), identify the correct profile, then fetch it.
+If the roster provides a LinkedIn URL, fetch and parse it. If no URL is provided, search for the person by name and location first, identify the correct profile, then fetch it.
 
-**Chromium settings:** Use `--virtual-time-budget=30000` (30 seconds) to account for slow connections. All other flags as specified in the LinkedIn lookup method README.
-
-```bash
-# Check Chromium is not running
-pgrep -f chromium --list-full 2>/dev/null | grep -v pgrep || echo "NO_CHROMIUM_RUNNING"
-
-# Fetch profile
-/snap/bin/chromium --headless --dump-dom \
-  --virtual-time-budget=30000 \
-  --window-size=1920,10000 \
-  --user-data-dir="$HOME/snap/chromium/common/chromium" \
-  "LINKEDIN_URL" \
-  2>/dev/null > /tmp/linkedin-profile-TARGET.html
-
-# Parse profile
-python3 ~/code/aesop/linkedin-lookup-method/parse-profile.py /tmp/linkedin-profile-TARGET.html
-```
+Use the LinkedIn skill or MCP available in your environment. If neither is available, use whatever headless browser tooling is configured locally — do not hardcode paths here; consult your local `CLAUDE.md` or equivalent configuration document for browser binary, profile directory, and required flags.
 
 **From the parsed profile, extract:**
 - Current role and organisation
@@ -66,16 +50,29 @@ python3 ~/code/aesop/linkedin-lookup-method/parse-profile.py /tmp/linkedin-profi
 - Volunteer and mentorship roles
 - Location
 
+### 4.1b Fetch and parse the Facebook profile
+
+Run this step after §4.1, sequentially — do not fetch LinkedIn and Facebook concurrently.
+
+Use the Facebook skill or MCP available in your environment. Consult your local configuration document for browser and session details.
+
+The purpose of this step is twofold: (1) verify the person found is the same individual as on LinkedIn, and (2) collect details not available on LinkedIn, in particular current workplace, community affiliations, and recent activity. Fetch both the main profile page and the About page.
+
+**Verification:** Before recording any data, confirm the match. A match requires at least two corroborating signals: same name, same location (city/region), same employer as other sources, or profile photo consistent with other known images. If the match cannot be confirmed, record "Facebook: no verified match found" in the profile and do not use unverified data.
+
+**If match confirmed, extract:**
+- Current workplace and role (often more current than LinkedIn)
+- Location
+- Community groups or pages they admin or follow (relevant to campaign angles)
+- Any public posts relevant to the campaign
+
 **Important:** LinkedIn's DOM parser sometimes returns category labels (e.g. "Startup") rather than company names, and when a person lists multiple roles at the same organisation, the parser may present them as separate entries. Cross-reference roles by date overlap and description content to identify entries that belong to the same organisation. If a "Co-Founder" entry describes a crowdfunding platform and a "Business Development Manager" entry is at "Startup" during the same period, these are almost certainly the same company.
 
 ### 4.2 Keyword search for campaign-relevant terms
 
 Run keyword searches on the saved HTML using the terms from the campaign's angle table. This determines which angles have direct evidence and which do not.
 
-```bash
-python3 ~/code/aesop/linkedin-lookup-method/keyword-search.py /tmp/linkedin-profile-TARGET.html \
-  "KEYWORD1" "KEYWORD2" "KEYWORD3" ...
-```
+Use the keyword-search tool from the LinkedIn skill or MCP in your environment, passing the saved profile HTML and the keyword list.
 
 **Choose keywords from two sources:**
 
