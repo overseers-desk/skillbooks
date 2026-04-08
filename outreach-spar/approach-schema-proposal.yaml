@@ -14,7 +14,7 @@
 #   - contact name, role, organisation → filename + roster
 #   - response_likelihood, star_rating → roster only (SPAR-A §2)
 #   - max_rounds → deterministic from profile_richness (SPAR-A §4.6)
-#   - sender address → campaign YAML
+#   - sender address → campaign YAML default; approach records the chosen sender
 #   - channel sequencing/timing → methodology (SPAR-A §4.2) or campaign YAML
 #   - angles list → profile "Angles" section (approach records which
 #     one was selected, not the full list)
@@ -39,12 +39,10 @@ decisions:
   channel: LinkedIn + email + phone           # decided per SPAR-A §4.2 decision tree
   language: English                           # decided per §4.3; available languages defined in campaign YAML
   angle: ...                                  # selected from profile's ordered angle list per §4.4
-  # sender — only present when overriding the campaign default sender.
-  # The default sender is defined in the campaign YAML.
-  # sender:
-  #   name: (override name)
-  #   email: (override address)
-  #   note: (reason for override)
+  sender:
+    name: Lia Movsisyan                       # chosen sender for this approach
+    email: partnerships@rivermill.au          # resolved from campaign default or overridden
+    # note: (present only when overriding the campaign default — reason for override)
 
 # ---------------------------------------------------------------------------
 # ANGLE SELECTION RATIONALE — the AI's reasoning for the decisions above
@@ -98,7 +96,6 @@ rounds:
 
       - channel: email
         director_note: ...                    # pre-send instruction for human reviewer; optional
-        # from: resolved at send time from campaign YAML (not stored here)
         to: ...                               # from roster; AI may choose which address
         subject: ...
         body: |

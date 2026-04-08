@@ -177,52 +177,97 @@ def parse_star(val: str) -> int:
 
 
 def scan_approach_dir(approach_dir: Path) -> tuple[int, int, int, dict, list]:
-    """Return (total, sent, replied, to_map, unsent_subjects) from approach files.
+    """Return (total, sent, replied, to_map, unsent_subjects) from approach YAML files.
 
-    to_map maps filename → To address extracted from the Final draft section.
+    to_map maps filename → To address from the final round.
     unsent_subjects is a list of (filename, subject) for files not yet sent.
     """
+    import yaml as _yaml
     total = sent = replied = 0
     to_map: dict[str, str] = {}
     unsent_subjects: list[tuple[str, str]] = []
     if not approach_dir.is_dir():
         return total, sent, replied, to_map, unsent_subjects
-    for md in approach_dir.glob("approach-*.md"):
+    for yf in approach_dir.glob("*.yaml"):
         total += 1
-        content = md.read_text(encoding="utf-8", errors="replace")
-        is_sent = bool(re.search(r"^### .+\((Sent|Called) \d{4}-\d{2}-\d{2}\)", content, re.MULTILINE))
+        try:
+            data = _yaml.safe_load(yf.read_text(encoding="utf-8", errors="replace"))
+        except Exception:
+            continue
+        if not isinstance(data, dict):
+            continue
+        is_sent = False
+        is_replied = False
+        final_to = None
+        final_subject = None
+        for r in data.get("rounds", []):
+            if r.get("type") == "final":
+                for msg in r.get("messages", []):
+                    ad = msg.get("actioned_date")
+                    if ad and str(ad) not in ("~", "None", "null"):
+                        is_sent = True
+                    rd = msg.get("replied_date")
+                    if rd and str(rd) not in ("~", "None", "null"):
+                        is_replied = True
+                    if msg.get("channel") == "email":
+                        if msg.get("to") and not final_to:
+                            final_to = str(msg["to"]).strip()
+                        if msg.get("subject") and not final_subject:
+                            final_subject = str(msg["subject"]).strip()
+                for reply in r.get("replies", []):
+                    if reply.get("direction") == "received":
+                        is_replied = True
         if is_sent:
             sent += 1
-        if re.search(r"^### .+ Replied\b", content, re.MULTILINE):
+        if is_replied:
             replied += 1
-        fd = re.search(r"^## Final draft", content, re.MULTILINE)
-        if fd:
-            after = content[fd.start():]
-            m = re.search(r"^To: (.+)$", after, re.MULTILINE)
-            if m:
-                to_map[md.name] = m.group(1).strip()
-            if not is_sent:
-                sm = re.search(r"^Subject: (.+)$", after, re.MULTILINE)
-                if sm:
-                    unsent_subjects.append((md.name, sm.group(1).strip()))
+        if final_to:
+            to_map[yf.name] = final_to
+        if not is_sent and final_subject:
+            unsent_subjects.append((yf.name, final_subject))
     return total, sent, replied, to_map, unsent_subjects
 
 
 def build_approach_contact_index(approach_dir: Path) -> dict[str, tuple[str, str, bool]]:
-    """Return {normalised_contact: (raw_name, raw_org, is_sent)} from approach headings."""
+    """Return {normalised_contact: (raw_name, raw_org, is_sent)} from approach YAML files.
+
+    Extracts contact name/org from the roster_note or filename slug.
+    """
+    import yaml as _yaml
     index: dict[str, tuple[str, str, bool]] = {}
     if not approach_dir.is_dir():
         return index
-    sent_pat = re.compile(r"^### .+\((Sent|Called) \d{4}-\d{2}-\d{2}\)", re.MULTILINE)
-    for md in approach_dir.glob("approach-*.md"):
-        content = md.read_text(encoding="utf-8", errors="replace")
-        heading = re.match(r"^# Approach:\s*(.+?),\s*(.+)$", content, re.MULTILINE)
-        if not heading:
-            continue
-        name = heading.group(1).strip()
-        org = heading.group(2).strip()
-        is_sent = bool(sent_pat.search(content))
-        index[normalise_name(name)] = (name, org, is_sent)
+    # Build a profile heading index for name/org lookup
+    profile_dir = approach_dir.parent / "profiles"
+    slug_to_nameorg: dict[str, tuple[str, str]] = {}
+    if profile_dir.is_dir():
+        for pf in profile_dir.glob("profile-*.md"):
+            content = pf.read_text(encoding="utf-8", errors="replace")
+            heading = re.search(r"^#\s+(?:Profile:\s*)?(.+?),\s*(.+)$", content, re.MULTILINE)
+            if heading:
+                slug = pf.stem.removeprefix("profile-")
+                slug_to_nameorg[slug] = (heading.group(1).strip(), heading.group(2).strip())
+    for yf in approach_dir.glob("*.yaml"):
+        slug = yf.stem
+        name, org = slug_to_nameorg.get(slug, ("", ""))
+        if not name:
+            tokens = slug.split("-")
+            name = " ".join(t.title() for t in tokens[:2])
+            org = " ".join(t.title() for t in tokens[2:])
+        is_sent = False
+        try:
+            data = _yaml.safe_load(yf.read_text(encoding="utf-8", errors="replace"))
+            if isinstance(data, dict):
+                for r in data.get("rounds", []):
+                    if r.get("type") == "final":
+                        for msg in r.get("messages", []):
+                            ad = msg.get("actioned_date")
+                            if ad and str(ad) not in ("~", "None", "null"):
+                                is_sent = True
+        except Exception:
+            pass
+        if name:
+            index[normalise_name(name)] = (name, org, is_sent)
     return index
 
 
