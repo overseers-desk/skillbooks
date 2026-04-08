@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 # Part of the SPAR outreach methodology. See ../../README.md before using.
-# spar-a-send.py — Send approved SPAR-A final-round emails via AWS SES
+# spar-a-send.py — Send approved SPAR-A final-round emails via AWS SES CLI
 #
 # Usage:
 #   python3 spar-a-send.py <campaign.yaml> [--segments seg1,seg2,...] [--dry-run] [-y]
 #
 # Reads the campaign YAML, walks approach files for the given segments, finds
 # final-round email messages where actioned_date is null, and sends them via
-# AWS SES.  After a successful send, stamps actioned_date in the approach file.
+# `aws ses send-email`.  After a successful send, stamps actioned_date in the
+# approach file.
+#
+# The sender is BCC'd on every email so a copy appears in the sender's inbox
+# (SES does not populate a Sent folder).
 #
 # Flags:
 #   --segments seg1,seg2   Comma-separated segments to process (default: all in campaign)
@@ -19,10 +23,13 @@
 #   - Messages where actioned_date is already set
 #   - Approach files with no final round
 #
-# Requires: pyyaml, ruamel.yaml, boto3
+# Requires: pyyaml, ruamel.yaml, aws CLI (configured with credentials)
 
 import argparse
+import json
+import subprocess
 import sys
+import time
 from datetime import date
 from pathlib import Path
 
@@ -30,11 +37,6 @@ try:
     import yaml
 except ImportError:
     sys.exit("pyyaml not found: pip install pyyaml")
-
-try:
-    import boto3
-except ImportError:
-    sys.exit("boto3 not found: pip install boto3")
 
 try:
     from ruamel.yaml import YAML as RuamelYAML
@@ -89,26 +91,37 @@ def stamp_actioned_date(approach_path: Path, today: str) -> bool:
     return changed
 
 
-def send_ses(client, from_addr: str, to_addr: str, bcc_addr: str,
+def send_ses(region: str, from_addr: str, to_addr: str, bcc_addr: str,
              subject: str, body: str) -> str:
-    """Send via SES. Returns message ID."""
-    dest: dict = {"ToAddresses": [to_addr]}
-    if bcc_addr and bcc_addr != to_addr:
-        dest["BccAddresses"] = [bcc_addr]
-    resp = client.send_email(
-        Source=from_addr,
-        Destination=dest,
-        Message={
-            "Subject": {"Data": subject, "Charset": "UTF-8"},
-            "Body": {"Text": {"Data": body, "Charset": "UTF-8"}},
-        },
+    """Call `aws ses send-email`. Returns message ID."""
+    destination = {"ToAddresses": [to_addr]}
+    if bcc_addr:
+        destination["BccAddresses"] = [bcc_addr]
+    message = {
+        "Subject": {"Data": subject, "Charset": "UTF-8"},
+        "Body": {"Text": {"Data": body, "Charset": "UTF-8"}},
+    }
+    result = subprocess.run(
+        [
+            "aws", "ses", "send-email",
+            "--region", region,
+            "--from", from_addr,
+            "--destination", json.dumps(destination),
+            "--message", json.dumps(message),
+        ],
+        capture_output=True, text=True, timeout=30,
     )
-    return resp["MessageId"]
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip() or f"aws ses exited {result.returncode}")
+    try:
+        return json.loads(result.stdout).get("MessageId", "?")
+    except (json.JSONDecodeError, AttributeError):
+        return "?"
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Send approved SPAR-A approach emails via AWS SES",
+        description="Send approved SPAR-A approach emails via AWS SES CLI",
     )
     parser.add_argument("campaign", help="Path to campaign YAML")
     parser.add_argument(
@@ -135,7 +148,7 @@ def main():
     sender_name = campaign["sender"].get("name", "")
     sender_email = campaign["sender"]["email"]
     from_addr = f"{sender_name} <{sender_email}>" if sender_name else sender_email
-    bcc_addr = campaign["sender"].get("bcc", "")
+    bcc_addr = campaign["sender"].get("bcc", sender_email)
     ses_region = campaign.get("ses_region", "ap-southeast-2")
 
     all_segments = campaign.get("segments", [])
@@ -149,18 +162,22 @@ def main():
         segments = all_segments
 
     # Collect pending sends
-    pending: list[tuple[Path, dict, str]] = []  # (approach_path, msg, segment)
+    pending: list[tuple[Path, dict, str]] = []
+    seg_counts: dict[str, int] = {}
     for seg in segments:
         approach_dir = base / seg / "approach"
         if not approach_dir.is_dir():
             print(f"  [{seg}] no approach/ directory — skipping", file=sys.stderr)
             continue
+        count = 0
         for yaml_file in sorted(approach_dir.glob("*.yaml")):
             data = load_yaml(yaml_file)
             if not isinstance(data, dict):
                 continue
             for msg in find_unsent_emails(data):
                 pending.append((yaml_file, msg, seg))
+                count += 1
+        seg_counts[seg] = count
 
     if not pending:
         print("Nothing to send.")
@@ -169,6 +186,10 @@ def main():
     # Preview
     label = "DRY RUN — " if args.dry_run else ""
     print(f"{label}{len(pending)} email(s) pending\n")
+    for seg in segments:
+        if seg_counts.get(seg, 0) > 0:
+            print(f"  {seg}: {seg_counts[seg]}")
+    print()
     for path, msg, seg in pending:
         print(f"  [{seg}] {path.stem}")
         print(f"    To:      {msg.get('to', '?')}")
@@ -189,7 +210,6 @@ def main():
             return
 
     today = date.today().isoformat()
-    ses = boto3.client("ses", region_name=ses_region)
     sent = 0
     failed = 0
 
@@ -201,13 +221,14 @@ def main():
             print(f"  SKIP [{seg}] {approach_path.stem}: missing to/subject/body", file=sys.stderr)
             continue
         try:
-            msg_id = send_ses(ses, from_addr, to_addr, bcc_addr, subject, body)
+            msg_id = send_ses(ses_region, from_addr, to_addr, bcc_addr, subject, body)
             stamp_actioned_date(approach_path, today)
             print(f"  SENT [{seg}] {approach_path.stem} → {to_addr} ({msg_id})")
             sent += 1
         except Exception as exc:
             print(f"  FAIL [{seg}] {approach_path.stem}: {exc}", file=sys.stderr)
             failed += 1
+        time.sleep(0.1)
 
     print(f"\nDone. Sent: {sent}  Failed: {failed}")
     if failed:
