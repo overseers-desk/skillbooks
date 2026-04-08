@@ -18,9 +18,11 @@
 #
 #   - sender           → campaign YAML (segment records override only)
 #   - language          → campaign YAML (segment records override only)
-#   - USP definitions   → campaign USP document
-#   - USP identifiers   → segment selects from campaign USP document
+#   - USP id + label    → campaign YAML usps registry
+#   - USP prose         → campaign USP document (usp_document field)
+#   - USP selection     → segment selects by id from the registry
 #   - USP framing       → segment provides segment-specific framing
+#   - USP type          → segment declares emotional/functional per segment
 #   - chosen_usps       → approach file (per-contact selection)
 #   - contact details   → roster
 #   - profile data      → profile files
@@ -58,16 +60,24 @@ objective: |
 # ---------------------------------------------------------------------------
 
 usps:
-  - id: U4                                        # identifier from campaign USP document
-    type: emotional                                # emotional or functional
+  - id: U4                                        # identifier from campaign USP registry
+    type: emotional                                # emotional or functional (segment-specific)
     framing: |
       (Prose. Why this USP matters to contacts in this segment.
-      This is the segment-specific argument, not the generic USP text.)
+      This is the segment-specific argument, not the generic USP text.
+      The USP label and definition live in the campaign YAML registry.)
 
   - id: U9
     type: functional
     framing: |
       (Prose. Segment-specific framing.)
+
+  # Segment-specific USPs that are not in the campaign registry use
+  # label instead of id. These are local to this segment.
+  # - label: Private or reserved space
+  #   type: functional
+  #   framing: |
+  #     (Prose.)
 
 # ---------------------------------------------------------------------------
 # APPROACH MESSAGE GOAL — the outcome the first message aims for
