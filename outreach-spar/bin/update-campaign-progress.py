@@ -1039,7 +1039,7 @@ def update_replies_from_mailroom(
 
             new_replies += 1
             label = str(approach_path.parent.parent.relative_to(base))
-                print(f"  + {label}/{approach_path.name}: reply from {from_email} ({date_str})")
+            print(f"  + {label}/{approach_path.name}: reply from {from_email} ({date_str})")
 
     return new_replies
 
