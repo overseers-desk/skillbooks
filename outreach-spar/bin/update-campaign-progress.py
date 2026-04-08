@@ -6,13 +6,14 @@ Each column (except Valid) shows count and percentage of its denominator:
   Valid     — roster rows where date_found_invalid is blank
   Profile   — valid entries with a matching profile file (/ Valid)
   3★+       — valid rows with star_rating >= 3 (/ Valid)
-  E         — 3★+ rows with an email address (/ 3★+)
-  L         — 3★+ rows with a linkedin_url (/ 3★+)
-  F         — 3★+ rows with a facebook_url (/ 3★+)
-  ☎only     — 3★+ rows with only phone (no email, linkedin, or facebook) (/ 3★+)
-  Approach  — approach files in approach/ (/ 3★+)
-  Sent      — approach files with a sent date (/ Approach)
-  Repl      — approach files with a reply marker (/ Sent)
+  A/3★+     — approach files matched to 3★+ contacts (/ 3★+)
+  Email     — 3★+ rows with an email address (/ 3★+)
+  A/Eml     — approach files matched to 3★+ contacts who have email (/ Email)
+  LinkedIn  — 3★+ rows with a linkedin_url (/ 3★+)
+  Facebook  — 3★+ rows with a facebook_url (/ 3★+)
+  Phone-only— 3★+ rows with only phone (no email, linkedin, or facebook) (/ 3★+)
+  Sent      — matched approach files with a sent date (/ A/3★+)
+  Repl      — matched approach files with a reply marker (/ Sent)
 
 After printing the file-based progress table, checks the campaign's mailroom
 account for new replies and appends '### Email Replied (date)' sections to
@@ -191,10 +192,11 @@ def _approach_status(path: Path) -> tuple[bool, bool]:
 
 class ApproachStats:
     """Result of classify_approach_gaps for a single segment."""
-    __slots__ = ("matched", "sent", "replied", "missing_file", "unsent")
+    __slots__ = ("matched", "matched_with_email", "sent", "replied", "missing_file", "unsent")
 
     def __init__(self):
         self.matched: int = 0
+        self.matched_with_email: int = 0
         self.sent: int = 0
         self.replied: int = 0
         self.missing_file: list[tuple[str, str]] = []
@@ -265,6 +267,8 @@ def classify_approach_gaps(
             stats.missing_file.append((name, org))
         else:
             stats.matched += 1
+            if (r.get("email") or "").strip():
+                stats.matched_with_email += 1
             stem = matched[idx]
             is_sent, is_replied = _approach_status(all_stems[stem])
             if is_sent:
@@ -440,8 +444,8 @@ def fmt_cell(count: int, denom: int) -> str:
     return f"{count:>3} {pct}"
 
 
-TABLE_HEADERS = ['Segment', 'Valid', 'Profile', '3★+', 'Email', 'LinkedIn', 'Facebook', 'Phone-only', 'Approach', 'Sent', 'Repl']
-TABLE_ALIGNS = ['l', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r']
+TABLE_HEADERS = ['Segment', 'Valid', 'Profile', '3★+', 'A/3★+', 'Email', 'A/Eml', 'LinkedIn', 'Facebook', 'Phone-only', 'Sent', 'Repl']
+TABLE_ALIGNS = ['l', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r']
 
 
 def print_md_table(headers: list[str], rows: list[list[str]], aligns: list[str] | None = None) -> None:
@@ -477,7 +481,7 @@ def build_progress_rows(
 ) -> list[list[str]]:
     """Build table rows (including TOTAL) from cached roster data and approach stats."""
     rows: list[list[str]] = []
-    gt_v = gt_p = gt_s = gt_e = gt_l = gt_f = gt_po = gt_a = gt_sn = gt_r = 0
+    gt_v = gt_p = gt_s = gt_e = gt_l = gt_f = gt_po = gt_a = gt_ae = gt_sn = gt_r = 0
     for (label, n, profiled, n_star3, has_email, has_li, has_fb, has_phone_only), astats in zip(
         segment_roster_data, approach_stats_list
     ):
@@ -486,27 +490,30 @@ def build_progress_rows(
             str(n),
             fmt_cell(profiled, n),
             fmt_cell(n_star3, n),
+            fmt_cell(astats.matched, n_star3),
             fmt_cell(has_email, n_star3),
+            fmt_cell(astats.matched_with_email, has_email),
             fmt_cell(has_li, n_star3),
             fmt_cell(has_fb, n_star3),
             fmt_cell(has_phone_only, n_star3),
-            fmt_cell(astats.matched, n_star3),
             fmt_cell(astats.sent, astats.matched),
             fmt_cell(astats.replied, astats.sent),
         ])
         gt_v += n; gt_p += profiled; gt_s += n_star3; gt_e += has_email
         gt_l += has_li; gt_f += has_fb; gt_po += has_phone_only
-        gt_a += astats.matched; gt_sn += astats.sent; gt_r += astats.replied
+        gt_a += astats.matched; gt_ae += astats.matched_with_email
+        gt_sn += astats.sent; gt_r += astats.replied
     rows.append([
         'TOTAL',
         str(gt_v),
         fmt_cell(gt_p, gt_v),
         fmt_cell(gt_s, gt_v),
+        fmt_cell(gt_a, gt_s),
         fmt_cell(gt_e, gt_s),
+        fmt_cell(gt_ae, gt_e),
         fmt_cell(gt_l, gt_s),
         fmt_cell(gt_f, gt_s),
         fmt_cell(gt_po, gt_s),
-        fmt_cell(gt_a, gt_s),
         fmt_cell(gt_sn, gt_a),
         fmt_cell(gt_r, gt_sn),
     ])
@@ -646,12 +653,13 @@ if args.legend:
     print("  Valid      — roster rows where date_found_invalid is blank (/ total roster rows)")
     print("  Profile    — valid entries with a matching profile file (/ Valid)")
     print("  3★+        — valid rows with star_rating >= 3 (/ Valid)")
+    print("  A/3★+      — 3★+ contacts matched to an approach file by name (/ 3★+)")
     print("  Email      — 3★+ rows with an email address (/ 3★+)")
+    print("  A/Eml      — approach files for 3★+ contacts who have email (/ Email)")
     print("  LinkedIn   — 3★+ rows with a linkedin_url (/ 3★+)")
     print("  Facebook   — 3★+ rows with a facebook_url (/ 3★+)")
     print("  Phone-only — 3★+ rows with only phone (no email, LinkedIn, or Facebook) (/ 3★+)")
-    print("  Approach   — 3★+ contacts matched to an approach file by name (/ 3★+)")
-    print("  Sent       — matched approach files with an actioned final round (/ Approach)")
+    print("  Sent       — matched approach files with an actioned final round (/ A/3★+)")
     print("  Repl       — matched approach files with a reply marker (/ Sent)")
     print()
     print("Approach matching uses the contact name slug as a prefix against approach filenames.")
