@@ -26,10 +26,14 @@
 # Requires: pyyaml, ruamel.yaml, aws CLI (configured with credentials)
 
 import argparse
+import csv
+import io
 import json
+import re
 import subprocess
 import sys
 import time
+import unicodedata
 from datetime import date
 from pathlib import Path
 
@@ -51,6 +55,96 @@ def load_yaml(path: Path) -> dict:
 
 def _is_null(val) -> bool:
     return val is None or str(val).strip() in ("~", "None", "null", "")
+
+
+# ---------------------------------------------------------------------------
+# Roster helpers — match the logic in update-campaign-progress.py
+# ---------------------------------------------------------------------------
+
+def slugify(s: str) -> str:
+    """Lowercase, non-alphanumeric → hyphen, collapse, strip."""
+    s = unicodedata.normalize("NFD", s)
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    s = s.lower()
+    s = re.sub(r"[^a-z0-9]+", "-", s)
+    return s.strip("-")
+
+
+def parse_star(val: str) -> int:
+    val = val.strip()
+    return int(val) if val.isdigit() else 0
+
+
+def load_roster(roster_path: Path) -> list[dict]:
+    """Read roster.tsv, return rows with at least one non-empty value."""
+    raw = roster_path.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    reader = csv.DictReader(
+        io.TextIOWrapper(io.BytesIO(raw), encoding="utf-8"), delimiter="\t"
+    )
+    return [r for r in reader if any(v for v in r.values() if v)]
+
+
+def build_qualified_stems(roster_rows: list[dict], approach_dir: Path,
+                          filters: dict) -> set[str]:
+    """Return the set of approach file stems that match a qualifying roster contact.
+
+    A contact qualifies when it passes every active filter:
+      exclude_invalid  — date_found_invalid must be blank
+      min_star         — star_rating >= threshold
+      require_email    — email field non-blank in roster
+      require_profile  — (not enforced here; approach files already imply profiling)
+    """
+    min_star = filters.get("min_star", 0)
+    require_email = filters.get("require_email", False)
+    exclude_invalid = filters.get("exclude_invalid", False)
+
+    # Filter roster to qualifying rows
+    qualified: list[dict] = []
+    for r in roster_rows:
+        name = (r.get("contact_name") or "").strip()
+        if not name:
+            continue
+        if exclude_invalid and (r.get("date_found_invalid") or "").strip():
+            continue
+        if min_star and parse_star(r.get("star_rating") or "") < min_star:
+            continue
+        if require_email and "@" not in (r.get("email") or ""):
+            continue
+        qualified.append(r)
+
+    if not approach_dir.is_dir():
+        return set()
+
+    all_stems = {yf.stem for yf in approach_dir.glob("*.yaml")}
+    claimed: set[str] = set()
+
+    rows_with_slugs = [(r, slugify(r["contact_name"].strip())) for r in qualified]
+
+    # Pass 1: full slug_name prefix match
+    matched_stems: set[str] = set()
+    matched_idx: set[int] = set()
+    for idx, (r, slug_name) in enumerate(rows_with_slugs):
+        for stem in all_stems:
+            if stem not in claimed and (stem == slug_name or stem.startswith(slug_name + "-")):
+                matched_stems.add(stem)
+                claimed.add(stem)
+                matched_idx.add(idx)
+                break
+
+    # Pass 2: first-name-only prefix for unmatched contacts
+    for idx, (r, slug_name) in enumerate(rows_with_slugs):
+        if idx in matched_idx:
+            continue
+        tokens = slug_name.split("-")
+        if len(tokens) < 2:
+            continue
+        first = tokens[0]
+        candidates = [s for s in all_stems if s not in claimed and s.startswith(first + "-")]
+        if len(candidates) == 1:
+            matched_stems.add(candidates[0])
+            claimed.add(candidates[0])
+
+    return matched_stems
 
 
 def find_unsent_emails(approach_data: dict) -> list[dict]:
@@ -161,16 +255,35 @@ def main():
     else:
         segments = all_segments
 
+    # Campaign filters (from the filter: block in campaign YAML)
+    filters = campaign.get("filter", {})
+
     # Collect pending sends
     pending: list[tuple[Path, dict, str]] = []
+    skipped_by_filter: dict[str, int] = {}
     seg_counts: dict[str, int] = {}
     for seg in segments:
         approach_dir = base / seg / "approach"
         if not approach_dir.is_dir():
             print(f"  [{seg}] no approach/ directory — skipping", file=sys.stderr)
             continue
+
+        roster_path = base / seg / "roster.tsv"
+        if not roster_path.exists():
+            print(f"  [{seg}] no roster.tsv — skipping", file=sys.stderr)
+            continue
+
+        roster_rows = load_roster(roster_path)
+        qualified = build_qualified_stems(roster_rows, approach_dir, filters)
+
         count = 0
+        seg_skipped = 0
         for yaml_file in sorted(approach_dir.glob("*.yaml")):
+            if yaml_file.stem not in qualified:
+                unsent = find_unsent_emails(load_yaml(yaml_file) or {})
+                if unsent:
+                    seg_skipped += len(unsent)
+                continue
             data = load_yaml(yaml_file)
             if not isinstance(data, dict):
                 continue
@@ -178,6 +291,8 @@ def main():
                 pending.append((yaml_file, msg, seg))
                 count += 1
         seg_counts[seg] = count
+        if seg_skipped:
+            skipped_by_filter[seg] = seg_skipped
 
     if not pending:
         print("Nothing to send.")
@@ -188,7 +303,8 @@ def main():
     print(f"{label}{len(pending)} email(s) pending\n")
     for seg in segments:
         if seg_counts.get(seg, 0) > 0:
-            print(f"  {seg}: {seg_counts[seg]}")
+            skip_note = f"  ({skipped_by_filter[seg]} skipped by filter)" if seg in skipped_by_filter else ""
+            print(f"  {seg}: {seg_counts[seg]}{skip_note}")
     print()
     for path, msg, seg in pending:
         print(f"  [{seg}] {path.stem}")
