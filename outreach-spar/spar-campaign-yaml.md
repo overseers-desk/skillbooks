@@ -19,7 +19,7 @@ One file per campaign, in the campaign root directory. Named `campaign.yaml` or 
 | `method` | path | Path to the SPAR-A procedure document (e.g. `../aesop/outreach-spar/spar-A-approach.md`). Relative to the YAML file's directory. |
 | `usp_document` | path | Path to the organisation overview / USP document. Relative to the YAML file's directory. This is the ground truth about the organisation that A1 reads before drafting. |
 | `language` | string | Language code: `en-gb`, `en-au`, `en`, or a BCP-47 code |
-| `segments` | list of strings | Segment directory names to include in batch processing. Use `.` for a single-segment campaign where roster and goal live in the campaign root (see `spar-campaign-directory.md`). |
+| `segments` | list of strings | Segment directory names to include in batch processing. Use `.` for a single-segment campaign where roster and segment.yaml live in the campaign root (see `spar-campaign-directory.md`). |
 | `approach_filename` | string | Template for approach filenames. Variables: `{slug_name}`, `{slug_org}`, `{star}`. Example: `approach-{slug_name}-{slug_org}.md` |
 
 ### Required (filter)
@@ -43,8 +43,8 @@ One file per campaign, in the campaign root directory. Named `campaign.yaml` or 
 |---|---|---|---|
 | `sender.organisation` | string | (none) | Organisation name for prompt text (e.g. "Historic Rivermill"). When absent, prompts use the sender's name and role without an org name. |
 | `sender.bcc` | string | (none) | BCC address for outgoing emails |
-| `antifacts` | path | (none) | Path to the antifact/fact-check document. When present, the A2 challenger fact-checks the draft against this file. When absent, fact-check uses only the overview and goal documents. Relative to the YAML file's directory. |
-| `campaign_principles` | path | (none) | Path to campaign-level principles document. When present, A1 reads it before drafting. When absent, A1 relies on the method document and goal file alone. Relative to the YAML file's directory. |
+| `antifacts` | path | (none) | Path to the antifact/fact-check document. When present, the A2 challenger fact-checks the draft against this file. When absent, fact-check uses only the overview and segment file. Relative to the YAML file's directory. |
+| `campaign_principles` | path | (none) | Path to campaign-level principles document. When present, A1 reads it before drafting. When absent, A1 relies on the method document and segment file alone. Relative to the YAML file's directory. |
 | `skip_segments` | list of strings | (none) | Segment directory names to exclude from `update-campaign-progress.py`. Useful for closed campaigns or non-standard directories that should not appear in the progress report. |
 | `ses_region` | string | `ap-southeast-2` | AWS SES region for email sending |
 | `reply_check.mailroom_account` | string | (none) | Mailroom account name for reply detection. When present (with `reply_check.folder`), `update-campaign-progress.py` queries this IMAP account for incoming replies and appends `### Email Replied` sections to matching approach files. |

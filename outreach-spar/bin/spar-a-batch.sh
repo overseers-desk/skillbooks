@@ -140,7 +140,8 @@ SOH=$(printf '\x01')
 
 for segment in "${SEGMENTS[@]}"; do
     roster="$BASE/$segment/roster.tsv"
-    goal="$BASE/$segment/goal.md"
+    goal="$BASE/$segment/segment.yaml"
+    [[ -f "$goal" ]] || goal="$BASE/$segment/goal.md"  # fallback during migration
     profile_dir="$BASE/$segment/profiles"
     [[ -f "$roster" ]] || continue
     [[ -f "$goal" ]] || continue
@@ -254,9 +255,9 @@ METAENV
 
         # --- Build conditional file-reading instructions ---
         _file_items="1. Method: $METHOD — read §4.1 through §4.5 (warmth, channel, language, angle, draft). Skip §4.6 (spar) — that is handled separately.
-2. Organisation overview: $OVERVIEW — read in full. This is the ground truth about the organisation. The segment goal file lists which USPs apply to this segment and whether each is functional or emotional. Use those USPs, do not invent your own from the overview.
+2. Organisation overview: $OVERVIEW — read in full. This is the ground truth about the organisation. The segment file lists which USPs apply to this segment and whether each is functional or emotional. Use those USPs, do not invent your own from the overview.
 $profile_a1_instruction
-4. Segment goal: $goal — read the \"Approach message goal\" section for the specific objective this message must achieve (e.g. secure a FAM visit, collect a roster expression of interest). The \"Objective\" section is the long-term commercial goal, not what this message asks for. Read \"The first ask\" for approach style guidance."
+4. Segment file: $goal — read the \"message_goal\" field for the specific objective this message must achieve (e.g. secure a FAM visit, collect a roster expression of interest). The \"objective\" field is the long-term commercial goal, not what this message asks for. Read \"first_ask\" for approach style guidance. If the segment has subsegments, determine which subsegment applies to this contact and use its overrides where present."
         _item_num=5
         if [[ -n "$ANTIFACTS" ]]; then
             _file_items+="
@@ -294,7 +295,7 @@ $channel_desc
 
 - The sender is $_sender_line.
 - The email must stand alone for a recipient who has never heard of the sender's organisation. Introduce who you are, what the organisation is, and why you are writing.
-- Read the goal file to determine the correct approach type. Do not default to a generic email.
+- Read the segment file to determine the correct approach type. Do not default to a generic email.
 - $LANG_INSTRUCTION
 - No emoji.
 

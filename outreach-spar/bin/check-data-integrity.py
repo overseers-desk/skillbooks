@@ -361,11 +361,13 @@ for segment_dir, roster_path in segments:
     else:
         ck.passed("Every row has sweep_iteration")
 
-    # ── Check 9: goal.md exists ────────────────────────────────────────
-    if (segment_dir / "goal.md").exists():
-        ck.passed("goal.md exists")
+    # ── Check 9: segment.yaml (or legacy goal.md) exists ────────────────
+    if (segment_dir / "segment.yaml").exists():
+        ck.passed("segment.yaml exists")
+    elif (segment_dir / "goal.md").exists():
+        ck.passed("goal.md exists (legacy — migrate to segment.yaml)")
     else:
-        ck.warn("goal.md missing")
+        ck.warn("segment.yaml missing")
 
     # ── Check 10: summary file exists ──────────────────────────────────
     seg_slug = segment_dir.name

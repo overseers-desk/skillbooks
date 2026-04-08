@@ -12,7 +12,7 @@ campaign-root/
   [campaign-principles.md]        # optional campaign-level rules (referenced by YAML)
   {segment}/                      # one directory per segment
     roster.tsv                    # SPAR roster (schema: spar-roster-format.md)
-    goal.md                       # segment objective, USPs, first ask, conversion funnel
+    segment.yaml                  # segment objective, USPs, first ask, conversion funnel (schema: segment-schema-proposal.yaml)
     profiles/                     # SPAR-P profile documents
       profile-{slug-name}-{slug-org}.md
     approach/                     # SPAR-A approach/comms files
@@ -27,14 +27,14 @@ For small campaigns with one segment, set `segments: ["."]` in the campaign YAML
 campaign-root/
   campaign.yaml
   roster.tsv
-  goal.md
+  segment.yaml
   profiles/
     profile-{slug-name}-{slug-org}.md
   approach/
     approach-{slug-name}-{slug-org}.md
 ```
 
-All batch scripts resolve `.` as the campaign root directory. When a campaign outgrows a single segment, create segment subdirectories, move the files, and update the `segments` list in the YAML.
+All batch scripts resolve `.` as the campaign root directory. When a campaign outgrows a single segment, create segment subdirectories, move the files, and update the `segments` list in the YAML. The segment file schema is defined in `segment-schema-proposal.yaml`.
 
 ## Conventions
 
@@ -42,7 +42,7 @@ All batch scripts resolve `.` as the campaign root directory. When a campaign ou
 
 **One roster per segment.** The file is always `roster.tsv` — the directory carries the segment context. Do not embed the segment name in the roster filename. The roster schema is defined in `spar-roster-format.md`.
 
-**One goal file per segment.** The file is always `goal.md`. It contains: the outreach objective, the USPs relevant to this segment, the approach message goal (what the first message asks for), the first ask (how to phrase it), the conversion funnel, and approach sequencing. See any existing goal file for the structure.
+**One segment file per segment.** The file is always `segment.yaml`. It contains: the outreach objective, the USPs relevant to this segment (by identifier, with segment-specific framing), the approach message goal, the first ask, the conversion funnel, approach sequencing, and optional subsegments. The schema is defined in `segment-schema-proposal.yaml`.
 
 **Profile filenames** follow the pattern `profile-{slug-name}-{slug-org}.md`, where slugs are lowercase-hyphenated. Batch scripts match roster entries to profiles by slug prefix, so the profile filename must contain the contact's slugified name.
 

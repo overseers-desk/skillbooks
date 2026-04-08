@@ -1,0 +1,203 @@
+# =============================================================================
+# SPAR segment file — YAML schema proposal
+#
+# Defines the structure for segment.yaml, the segment-level file used
+# by the SPAR methodology. Each segment directory contains one
+# segment.yaml describing the outreach objective, USP selection, ask
+# patterns, and conversion funnel for that segment.
+#
+# Campaign-agnostic: the same schema applies to any SPAR deployment,
+# regardless of industry.
+#
+# Position in the hierarchy:
+#
+#   campaign YAML  →  segment.yaml        →  per-contact approach YAML
+#   (run-level)       (this file)            (contact-level)
+#
+# Single source of truth rules:
+#
+#   - sender           → campaign YAML (segment records override only)
+#   - language          → campaign YAML (segment records override only)
+#   - USP definitions   → campaign USP document
+#   - USP identifiers   → segment selects from campaign USP document
+#   - USP framing       → segment provides segment-specific framing
+#   - chosen_usps       → approach file (per-contact selection)
+#   - contact details   → roster
+#   - profile data      → profile files
+#   - proof points      → campaign principles or campaign data file
+#     (segment references which proof points are relevant, does not
+#     repeat the data)
+#   - methodology rules → methodology document
+#   - filter criteria   → campaign YAML
+#
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# IDENTITY — what this segment is
+# ---------------------------------------------------------------------------
+
+title: ...                                        # human-readable segment name
+priority: Tier 2                                  # Tier 1 / Tier 2 / Tier 3
+date: 2026-03-30                                  # date this segment file was last substantively revised
+
+# ---------------------------------------------------------------------------
+# OBJECTIVE — what the outreach aims to achieve
+# ---------------------------------------------------------------------------
+
+objective: |
+  (Prose block. What the campaign operator is trying to accomplish with
+  this segment. Should be expressible in 1-3 sentences.)
+
+# ---------------------------------------------------------------------------
+# USPs — which campaign USPs apply to this segment and why
+#
+# Each entry references a USP identifier from the campaign USP document
+# and provides a segment-specific framing that explains why this USP
+# matters to contacts in this segment. The framing is original content;
+# the USP definition is not repeated.
+# ---------------------------------------------------------------------------
+
+usps:
+  - id: U4                                        # identifier from campaign USP document
+    type: emotional                                # emotional or functional
+    framing: |
+      (Prose. Why this USP matters to contacts in this segment.
+      This is the segment-specific argument, not the generic USP text.)
+
+  - id: U9
+    type: functional
+    framing: |
+      (Prose. Segment-specific framing.)
+
+# ---------------------------------------------------------------------------
+# APPROACH MESSAGE GOAL — the outcome the first message aims for
+#
+# This is the segment-level default. Subsegments may override it.
+# ---------------------------------------------------------------------------
+
+message_goal: |
+  (Prose. What response the outreach message is designed to produce.
+  E.g. "agree to a site visit", "express interest in joining the roster",
+  "accept a complimentary visit".)
+
+# ---------------------------------------------------------------------------
+# FIRST ASK — template or example of the initial outreach message
+#
+# This is the segment-level default. Subsegments may override it.
+# When the segment has no subsegments, this is the only first_ask.
+# When the segment has subsegments that do not override first_ask,
+# this applies to all of them.
+# ---------------------------------------------------------------------------
+
+first_ask: |
+  (Prose. The model message or message pattern for first contact.
+  May contain placeholders like [product], [market], [specific discipline]
+  that the A-stage AI fills from the contact profile.)
+
+# ---------------------------------------------------------------------------
+# CONVERSION FUNNEL — the sequence from first contact to outcome
+#
+# This is the segment-level default. Subsegments may override it.
+# ---------------------------------------------------------------------------
+
+conversion_funnel:
+  - step: 1
+    name: Initial approach
+    description: |
+      (Prose. What happens at this step.)
+  - step: 2
+    name: Site visit
+    description: |
+      (Prose.)
+  - step: 3
+    name: Trial
+    description: |
+      (Prose.)
+
+# ---------------------------------------------------------------------------
+# SUBSEGMENTS — optional variations within the segment
+#
+# A subsegment shares the segment's objective and USPs but may override
+# message_goal, first_ask, conversion_funnel, and discovery_criteria.
+# Only fields that differ from the segment-level defaults need to appear.
+#
+# When subsegments are absent, the segment-level fields apply uniformly
+# to all contacts. When present, the A-stage AI determines which
+# subsegment a contact belongs to (from the profile or roster) and
+# uses the subsegment's overrides where they exist, falling back to
+# the segment-level defaults for fields not overridden.
+#
+# The degree of override is visible in the file: a subsegment that
+# overrides only first_ask is a light variation; one that overrides
+# the entire conversion_funnel is a structurally different path.
+# ---------------------------------------------------------------------------
+
+# subsegments:
+#   - name: ...                                   # descriptive label
+#     message_goal: |                             # optional override
+#       (Prose.)
+#     first_ask: |                                # optional override
+#       (Prose.)
+#     conversion_funnel:                          # optional override
+#       - step: 1
+#         name: ...
+#         description: |
+#           (Prose.)
+#     discovery_criteria: |                       # optional override
+#       (Prose.)
+#
+#   - name: ...
+#     first_ask: |                                # only first_ask differs
+#       (Prose.)
+
+# ---------------------------------------------------------------------------
+# APPROACH SEQUENCING — operational order of actions for this segment
+# ---------------------------------------------------------------------------
+
+approach_sequencing:
+  - step: 1
+    action: |
+      (Prose. What to do first.)
+  - step: 2
+    action: |
+      (Prose. What to do next.)
+
+# ---------------------------------------------------------------------------
+# OPTIONAL SECTIONS — include only when applicable
+# ---------------------------------------------------------------------------
+
+# --- Sender override (only if this segment uses a different sender
+#     than the campaign default) ---
+
+# sender:
+#   name: ...
+#   email: ...
+#   note: ...                                     # reason for override
+
+# --- Discovery criteria (segment-level default — defines what
+#     constitutes a valid roster contact for this segment. Include
+#     when the boundary is non-obvious and invalid contacts are a
+#     known risk. Subsegments may override this.) ---
+
+# discovery_criteria: |
+#   (Prose. What makes a contact valid or invalid for this segment.)
+
+# --- Scope note (boundary conditions with other segments or
+#     exclusions from this segment's scope) ---
+
+# scope_note: |
+#   (Prose. What is excluded and why, or how this segment relates
+#   to adjacent segments.)
+
+# --- Geographic catchment (only if different from campaign default) ---
+
+# geographic_catchment: |
+#   (Prose. Geographic scope for this segment's outreach.)
+
+# --- Proof points (references to campaign-level proof points that
+#     are relevant to this segment — do not repeat the data) ---
+
+# proof_points:
+#   - id: cowboys-day-2026-03
+#     relevance: |
+#       (Why this proof point matters to contacts in this segment.)

@@ -38,7 +38,8 @@ done
 SEGMENT_DIR=$(cd "$SEGMENT_DIR" && pwd)
 ROSTER="$SEGMENT_DIR/roster.tsv"
 PROFILE_DIR="$SEGMENT_DIR/profiles"
-GOAL="$SEGMENT_DIR/goal.md"
+GOAL="$SEGMENT_DIR/segment.yaml"
+[[ -f "$GOAL" ]] || GOAL="$SEGMENT_DIR/goal.md"  # fallback during migration
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # SPAR-P procedure doc is co-located with this script (one level up from bin/)
