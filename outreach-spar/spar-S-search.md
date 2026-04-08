@@ -172,13 +172,30 @@ Run this checklist against all roster files after each iteration. Each check is 
 1. **Column count:** every row has the expected number of tab-separated fields (core columns from §4.1 plus any campaign-specific columns from §4.2).
 2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)"). Exception: rows where all five name-resolution sources were exhausted and no individual could be found may have a blank `contact_name`, provided `date_found_invalid` is set. These are negative-cache entries (see §4); they are excluded from all pipeline metrics.
 3. **No duplicate contacts:** no two rows in the same roster file share the same (`contact_name`, `organisation`) pair (case-insensitive). Multiple contacts at the same organisation is permitted.
-4. **Reachable:** every row has at least one of email, `linkedin_url`, or `facebook_url` populated. Phone alone is insufficient for campaigns that begin with a written introduction.
-5. **Iteration recorded:** every row has a `sweep_iteration` value.
-6. **Segment matches file:** if the roster uses a `segment` column, the value on every row matches the roster filename.
-7. **Verified contacts still current:** no contact marked `verified=yes` has a `p_note` or `date_found_invalid` indicating they left the role or changed organisation.
-8. **Iteration progress:** for each roster, confirm that `sweep_iteration` is populated on every row and that the stopping criteria in §6 have been evaluated.
+4. **Email format:** every non-empty `email` field contains an `@` sign. Strings like `via website`, `(07) 5572 3588`, or `[email obtained during call]` are not email addresses and must not pass validation. This is the gate that prevents non-email strings from inflating counts downstream.
+5. **Reachable:** every row has at least one of email (valid, per check 4), `linkedin_url`, or `facebook_url` populated. Phone alone is insufficient for campaigns that begin with a written introduction.
+6. **Iteration recorded:** every row has a `sweep_iteration` value.
+7. **Segment matches file:** if the roster uses a `segment` column, the value on every row matches the roster filename.
+8. **Verified contacts still current:** no contact marked `verified=yes` has a `p_note` or `date_found_invalid` indicating they left the role or changed organisation.
+9. **Iteration progress:** for each roster, confirm that `sweep_iteration` is populated on every row and that the stopping criteria in §6 have been evaluated.
 
 Campaign-specific checks (e.g. "every outreach row has a non-empty p_note") are defined by the campaign plan, not by this AESOP.
+
+### 10.1 Approach file validation
+
+Run this checklist against all approach YAML files after A-phase processing completes for a segment. Each check is a pass/warn/fail assertion on the YAML data in `{segment}/approach/*.yaml`. The automated checker is `bin/spar-A-validate.py`, which takes the same campaign YAML and `--skip` arguments as `bin/spar-S-validate.py`.
+
+```
+python3 bin/spar-A-validate.py campaign.yaml
+```
+
+1. **Email to: address validity:** For every email-channel message in a final round, the `to:` field must contain a deliverable email address (i.e. must contain `@` with a valid user@domain.tld shape). Placeholders (`[email obtained during call]`, `[confirmed email]`), contact form URLs (`via website...`), phone numbers, tildes, and empty values are flagged. This catches the class of issue described in issue #11: non-email strings that pass naive non-empty checks but are not sendable.
+2. **Required top-level keys:** Every approach file must have `decisions` and `rounds` at the top level.
+3. **Final round exists:** Every approach file must contain exactly one round with `type: final`. A file without a final round is structurally incomplete per the approach schema.
+4. **Round structure:** Each round must have `type` (one of `draft`, `review`, `final`) and `number` (for draft and review). Draft and final rounds must have a non-empty `messages` list. Each message must have a `channel` field.
+5. **Channel-roster consistency:** When the approach `decisions.channel` includes email but the roster's `email` field for the same contact does not contain a valid email address, flag the mismatch. This catches cases where the A phase assumed an email channel but no deliverable address exists in the roster.
+
+The script also performs a cross-segment check: email addresses targeted by final-round messages in multiple segments are flagged as warnings, since the same person receiving approach emails from two segments may see contradictory messaging.
 
 ## 11. Subagent delegation
 

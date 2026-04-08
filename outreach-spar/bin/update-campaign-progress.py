@@ -597,11 +597,11 @@ for segment_dir, roster_path in segments:
     )
 
     star3 = [r for r in valid_rows if parse_star(r.get("star_rating") or "") >= 3]
-    has_email = sum(1 for r in star3 if (r.get("email") or "").strip())
+    has_email = sum(1 for r in star3 if "@" in (r.get("email") or ""))
     has_li = sum(1 for r in star3 if (r.get("linkedin_url") or "").strip())
     has_fb = sum(1 for r in star3 if (r.get("facebook_url") or "").strip())
     has_phone_only = sum(1 for r in star3 if (r.get("phone") or "").strip()
-                        and not (r.get("email") or "").strip()
+                        and "@" not in (r.get("email") or "")
                         and not (r.get("linkedin_url") or "").strip()
                         and not (r.get("facebook_url") or "").strip())
     n_star3 = len(star3)
