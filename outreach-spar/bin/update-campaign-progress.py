@@ -68,6 +68,11 @@ parser.add_argument(
     action="store_true",
     help="Skip mailroom reply checking.",
 )
+parser.add_argument(
+    "--legend",
+    action="store_true",
+    help="Print column legend after the progress table.",
+)
 args = parser.parse_args()
 
 BASE = Path(args.campaign_dir).resolve()
@@ -93,6 +98,7 @@ if args.skip:
 YAML_SEGMENTS: list[str] | None = None  # None = no YAML found; fall back to directory scan
 _reply_check: dict = {}  # populated from campaign YAML reply_check section
 _sender_email: str = ""  # populated from campaign YAML sender.email
+_approach_filename_template: str = ""  # populated from campaign YAML approach_filename
 
 if args.campaign:
     _campaign_yaml = Path(args.campaign).resolve()
@@ -122,6 +128,7 @@ if _campaign_yaml and _campaign_yaml.exists():
                 _reply_check = _cdata["reply_check"]
             if isinstance(_cdata.get("sender"), dict):
                 _sender_email = (_cdata["sender"].get("email") or "").strip()
+            _approach_filename_template: str = (_cdata.get("approach_filename") or "").strip()
         print(f"Campaign:    {_cdata.get('campaign', _campaign_yaml.name)}", file=sys.stderr)
     except ImportError:
         print("Warning: PyYAML not installed; falling back to directory roster scan.", file=sys.stderr)
@@ -142,6 +149,127 @@ def normalise_name(s: str) -> str:
     # Normalise separators: —, /, &, - to space
     s = re.sub(r"[/&\u2014\u2013-]+", " ", s)
     return re.sub(r"\s+", " ", s).strip()
+
+
+def slugify(s: str) -> str:
+    """Match the bash slugify: lowercase, non-alphanumeric → hyphen, collapse, strip."""
+    s = unicodedata.normalize("NFD", s)
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    s = s.lower()
+    s = re.sub(r"[^a-z0-9]+", "-", s)
+    return s.strip("-")
+
+
+def _approach_status(path: Path) -> tuple[bool, bool]:
+    """Return (is_sent, is_replied) for an approach YAML file."""
+    import yaml as _yaml
+    is_sent = is_replied = False
+    try:
+        data = _yaml.safe_load(path.read_text(encoding="utf-8", errors="replace"))
+        if isinstance(data, dict):
+            for r in data.get("rounds", []):
+                if r.get("type") == "final":
+                    for msg in r.get("messages", []):
+                        ad = msg.get("actioned_date")
+                        if ad and str(ad) not in ("~", "None", "null"):
+                            is_sent = True
+                        rd = msg.get("replied_date")
+                        if rd and str(rd) not in ("~", "None", "null"):
+                            is_replied = True
+                    for reply in r.get("replies", []):
+                        if reply.get("direction") == "received":
+                            is_replied = True
+    except Exception:
+        pass
+    return is_sent, is_replied
+
+
+class ApproachStats:
+    """Result of classify_approach_gaps for a single segment."""
+    __slots__ = ("matched", "sent", "replied", "missing_file", "unsent")
+
+    def __init__(self):
+        self.matched: int = 0
+        self.sent: int = 0
+        self.replied: int = 0
+        self.missing_file: list[tuple[str, str]] = []
+        self.unsent: list[tuple[str, str]] = []
+
+
+def classify_approach_gaps(
+    star3_rows: list[dict],
+    approach_dir: Path,
+) -> ApproachStats:
+    """Match 3★+ contacts to approach files and return stats + gap lists.
+
+    Matching strategy (both passes use the approach file stem):
+      Pass 1 — full slug_name prefix: stem == slug_name or stem.startswith(slug_name + "-")
+      Pass 2 — first-name-only prefix for contacts unmatched in pass 1, accepted only when
+               exactly one unclaimed stem starts with first_name + "-"
+
+    This handles two naming conventions:
+      New: {slug_name}-{slug_org_possibly_abbrev}.yaml  (full first+last name)
+      Old: {slug_first}-{slug_org_possibly_abbrev}.yaml  (first name only)
+    """
+    stats = ApproachStats()
+
+    if not approach_dir.is_dir():
+        stats.missing_file = [
+            (r.get("contact_name", "").strip(), r.get("organisation", "").strip())
+            for r in star3_rows if r.get("contact_name", "").strip()
+        ]
+        return stats
+
+    all_stems: dict[str, Path] = {yf.stem: yf for yf in approach_dir.glob("*.yaml")}
+    claimed: set[str] = set()  # stems already assigned to a contact
+
+    # Build slug_name for each row
+    rows_with_slugs: list[tuple[dict, str]] = []
+    for r in star3_rows:
+        name = r.get("contact_name", "").strip()
+        if not name:
+            continue
+        rows_with_slugs.append((r, slugify(name)))
+
+    # Pass 1: match by full slug_name prefix
+    matched: dict[int, str] = {}  # row index → stem
+    for idx, (r, slug_name) in enumerate(rows_with_slugs):
+        for stem in all_stems:
+            if stem not in claimed and (stem == slug_name or stem.startswith(slug_name + "-")):
+                matched[idx] = stem
+                claimed.add(stem)
+                break
+
+    # Pass 2: first-name-only prefix for unmatched contacts
+    for idx, (r, slug_name) in enumerate(rows_with_slugs):
+        if idx in matched:
+            continue
+        tokens = slug_name.split("-")
+        if len(tokens) < 2:
+            continue  # single-token name — can't do first-name-only safely
+        first = tokens[0]
+        candidates = [s for s in all_stems if s not in claimed and s.startswith(first + "-")]
+        if len(candidates) == 1:
+            matched[idx] = candidates[0]
+            claimed.add(candidates[0])
+
+    for idx, (r, _) in enumerate(rows_with_slugs):
+        name = r.get("contact_name", "").strip()
+        org = r.get("organisation", "").strip()
+        if idx not in matched:
+            stats.missing_file.append((name, org))
+        else:
+            stats.matched += 1
+            stem = matched[idx]
+            is_sent, is_replied = _approach_status(all_stems[stem])
+            if is_sent:
+                stats.sent += 1
+            else:
+                stats.unsent.append((name, org))
+            if is_replied:
+                stats.replied += 1
+
+    return stats
 
 
 def build_profile_index(profiles_dir: Path) -> dict[str, str]:
@@ -298,19 +426,10 @@ else:
             continue
         segments.append((segment_dir, roster_path))
 
-has_over_100 = False
-
-
 def fmt_cell(count: int, denom: int) -> str:
     """Format 'count pct%' compactly for table cells."""
-    global has_over_100
     if denom:
-        pct_val = count / denom * 100
-        if pct_val > 100:
-            has_over_100 = True
-            pct = f"{pct_val:3.0f}%†"
-        else:
-            pct = f"{pct_val:3.0f}%"
+        pct = f"{count / denom * 100:3.0f}%"
     else:
         pct = "   -"
     return f"{count:>3} {pct}"
@@ -349,16 +468,14 @@ def print_md_table(headers: list[str], rows: list[list[str]], aligns: list[str] 
 
 def build_progress_rows(
     segment_roster_data: list[tuple[str, int, int, int, int, int, int, int]],
-    segments: list,
+    approach_stats_list: list[ApproachStats],
 ) -> list[list[str]]:
-    """Build table rows (including TOTAL) from cached roster data and current approach files."""
+    """Build table rows (including TOTAL) from cached roster data and approach stats."""
     rows: list[list[str]] = []
     gt_v = gt_p = gt_s = gt_e = gt_l = gt_f = gt_po = gt_a = gt_sn = gt_r = 0
-    for (label, n, profiled, n_star3, has_email, has_li, has_fb, has_phone_only), (segment_dir, _) in zip(
-        segment_roster_data, segments
+    for (label, n, profiled, n_star3, has_email, has_li, has_fb, has_phone_only), astats in zip(
+        segment_roster_data, approach_stats_list
     ):
-        approach_dir = segment_dir / "approach"
-        appr_total, appr_sent, appr_replied, _, _ = scan_approach_dir(approach_dir)
         rows.append([
             label,
             str(n),
@@ -368,13 +485,13 @@ def build_progress_rows(
             fmt_cell(has_li, n_star3),
             fmt_cell(has_fb, n_star3),
             fmt_cell(has_phone_only, n_star3),
-            fmt_cell(appr_total, n_star3),
-            fmt_cell(appr_sent, appr_total),
-            fmt_cell(appr_replied, appr_sent),
+            fmt_cell(astats.matched, n_star3),
+            fmt_cell(astats.sent, astats.matched),
+            fmt_cell(astats.replied, astats.sent),
         ])
         gt_v += n; gt_p += profiled; gt_s += n_star3; gt_e += has_email
         gt_l += has_li; gt_f += has_fb; gt_po += has_phone_only
-        gt_a += appr_total; gt_sn += appr_sent; gt_r += appr_replied
+        gt_a += astats.matched; gt_sn += astats.sent; gt_r += astats.replied
     rows.append([
         'TOTAL',
         str(gt_v),
@@ -403,10 +520,13 @@ all_unsent_subjects: dict[str, list[tuple[str, str]]] = {}
 # --missing collectors
 missing_sweep: list[tuple[str, int]] = []
 missing_profile: list[tuple[str, str, str]] = []
-missing_approach: list[tuple[str, str, str, str]] = []
+missing_approach_file: list[tuple[str, str, str]] = []   # no file at all
+missing_approach_sent: list[tuple[str, str, str]] = []   # file exists but not sent
 
-# Cached roster counts for potential reprint after mailroom update
+# Cached roster counts, approach stats, and star3 rows for potential reprint after mailroom update
 segment_roster_data: list[tuple[str, int, int, int, int, int, int, int]] = []
+segment_approach_stats: list[ApproachStats] = []
+segment_star3_rows: list[list[dict]] = []
 
 for segment_dir, roster_path in segments:
     label = str(segment_dir.relative_to(BASE))
@@ -457,7 +577,13 @@ for segment_dir, roster_path in segments:
                         and not (r.get("facebook_url") or "").strip())
     n_star3 = len(star3)
 
-    appr_total, appr_sent, appr_replied, to_map, unsent_subjs = scan_approach_dir(approach_dir)
+    # Approach: match files to qualifying contacts (not raw file count)
+    segment_star3_rows.append(star3)
+    appr_stats = classify_approach_gaps(star3, approach_dir)
+    segment_approach_stats.append(appr_stats)
+
+    # Still need scan_approach_dir for duplicate recipient / subject tracking
+    _, _, _, to_map, unsent_subjs = scan_approach_dir(approach_dir)
     for fname, addr in to_map.items():
         all_to_map.setdefault(addr, []).append((label, fname))
     for fname, subj in unsent_subjs:
@@ -497,32 +623,34 @@ for segment_dir, roster_path in segments:
             missing_profile.append((label, contact, org))
 
     if "A" in missing_stages:
-        appr_idx = build_approach_contact_index(approach_dir)
-        for r in star3:
-            contact = (r.get("contact_name") or "").strip()
-            org = (r.get("organisation") or "").strip()
-            if not contact:
-                continue
-            nc = normalise_name(contact)
-            matched = None
-            if nc in appr_idx:
-                matched = appr_idx[nc]
-            else:
-                for k in appr_idx:
-                    if k.startswith(nc) or nc.startswith(k):
-                        matched = appr_idx[k]
-                        break
-            if matched is None:
-                missing_approach.append((label, contact, org, "no approach file"))
-            elif not matched[2]:
-                missing_approach.append((label, contact, org, "not yet sent"))
+        for contact, org in appr_stats.missing_file:
+            missing_approach_file.append((label, contact, org))
+        for contact, org in appr_stats.unsent:
+            missing_approach_sent.append((label, contact, org))
 
-table_rows = build_progress_rows(segment_roster_data, segments)
+table_rows = build_progress_rows(segment_roster_data, segment_approach_stats)
 print_md_table(TABLE_HEADERS, table_rows, TABLE_ALIGNS)
 
-if has_over_100:
+if not args.legend:
     print()
-    print("† Exceeds 100% because approach files exist for entries that were subsequently invalidated or rated below the 3★ threshold.")
+    print("Run with --legend to see column definitions.")
+
+if args.legend:
+    print()
+    print("Column legend:")
+    print("  Valid      — roster rows where date_found_invalid is blank (/ total roster rows)")
+    print("  Profile    — valid entries with a matching profile file (/ Valid)")
+    print("  3★+        — valid rows with star_rating >= 3 (/ Valid)")
+    print("  Email      — 3★+ rows with an email address (/ 3★+)")
+    print("  LinkedIn   — 3★+ rows with a linkedin_url (/ 3★+)")
+    print("  Facebook   — 3★+ rows with a facebook_url (/ 3★+)")
+    print("  Phone-only — 3★+ rows with only phone (no email, LinkedIn, or Facebook) (/ 3★+)")
+    print("  Approach   — 3★+ contacts matched to an approach file by name (/ 3★+)")
+    print("  Sent       — matched approach files with an actioned final round (/ Approach)")
+    print("  Repl       — matched approach files with a reply marker (/ Sent)")
+    print()
+    print("Approach matching uses the contact name slug as a prefix against approach filenames.")
+    print("Orphaned files (for invalidated or downgraded contacts) are not counted.")
 
 # Duplicate recipient report (only flag actual email addresses, skip placeholders)
 dups = {addr: entries for addr, entries in all_to_map.items() if len(entries) > 1 and "@" in addr}
@@ -594,12 +722,19 @@ if "P" in missing_stages and missing_profile:
     for label, contact, org in missing_profile:
         print(f"- [{label}] {contact or '(no contact)'} \u2014 {org}")
 
-if "A" in missing_stages and missing_approach:
+if "A" in missing_stages and missing_approach_file:
     print()
-    print(f"## Missing/unsent approaches (A) \u2014 {len(missing_approach)} entries")
+    print(f"## Missing approach files (A) \u2014 {len(missing_approach_file)} contacts with no file")
     print()
-    for label, contact, org, reason in missing_approach:
-        print(f"- [{label}] {contact} \u2014 {org} ({reason})")
+    for label, contact, org in missing_approach_file:
+        print(f"- [{label}] {contact} \u2014 {org}")
+
+if "A" in missing_stages and missing_approach_sent:
+    print()
+    print(f"## Unsent approaches (A) \u2014 {len(missing_approach_sent)} files not yet sent")
+    print()
+    for label, contact, org in missing_approach_sent:
+        print(f"- [{label}] {contact} \u2014 {org}")
 
 # =============================================================================
 # Reply update via mailroom
@@ -864,10 +999,15 @@ def print_updated_table(
     segments: list,
     base: Path,
 ):
-    """Reprint progress table with updated reply counts from approach files."""
+    """Reprint progress table with recomputed approach stats (picks up new replies)."""
+    global segment_approach_stats
+    segment_approach_stats = [
+        classify_approach_gaps(star3, seg_dir / "approach")
+        for star3, (seg_dir, _) in zip(segment_star3_rows, segments)
+    ]
     print()
     print("Updated progress:")
-    print_md_table(TABLE_HEADERS, build_progress_rows(segment_roster_data, segments), TABLE_ALIGNS)
+    print_md_table(TABLE_HEADERS, build_progress_rows(segment_roster_data, segment_approach_stats), TABLE_ALIGNS)
 
 
 # --- Run mailroom reply check ---

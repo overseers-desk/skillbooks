@@ -136,8 +136,6 @@ get_max_rounds() {
 
 count=0
 skipped=0
-SOH=$(printf '\x01')
-
 for segment in "${SEGMENTS[@]}"; do
     roster="$BASE/$segment/roster.tsv"
     goal="$BASE/$segment/segment.yaml"
@@ -148,7 +146,7 @@ for segment in "${SEGMENTS[@]}"; do
 
     mkdir -p "$BASE/$segment/approach"
 
-    while IFS="$SOH" read -r org name role phone email postcode linkedin facebook \
+    while IFS=$'\t' read -r org name role phone email postcode linkedin facebook \
         disc_iter disc_via disc_src verified p_note star response_likelihood s_note date_invalid; do
         date_invalid="${date_invalid%$'\r'}"
 
@@ -180,8 +178,12 @@ for segment in "${SEGMENTS[@]}"; do
         outfile_name="${outfile_name//\{slug_org\}/$slug_org}"
         outfile="$BASE/$segment/approach/$outfile_name"
 
-        # Skip if approach file already exists
+        # Skip if approach file already exists (exact or name-prefix match)
         if [[ -f "$outfile" ]]; then
+            skipped=$((skipped + 1))
+            continue
+        fi
+        if compgen -G "$BASE/$segment/approach/${slug_name}-*.yaml" > /dev/null 2>&1; then
             skipped=$((skipped + 1))
             continue
         fi
@@ -376,7 +378,7 @@ C2PROMPT
         # --- profile-content.txt: for reference ---
         echo "$profile_content" > "$prompt_dir/profile-content.txt"
 
-    done < <(awk -F'\t' -v OFS="$SOH" '{$1=$1; print}' "$roster")
+    done < "$roster"
 done
 
 echo "Generated $count prompt files in $PROMPTS/"
