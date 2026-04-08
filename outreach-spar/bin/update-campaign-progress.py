@@ -5,15 +5,15 @@ from __future__ import annotations
 Each column (except Valid) shows count and percentage of its denominator:
   Valid     — roster rows where date_found_invalid is blank
   Profile   — valid entries with a matching profile file (/ Valid)
-  3★+       — valid rows with star_rating >= 3 (/ Valid)
-  A/3★+     — approach files matched to 3★+ contacts (/ 3★+)
-  Email     — 3★+ rows with an email address (/ 3★+)
-  A/Eml     — approach files matched to 3★+ contacts who have email (/ Email)
-  LinkedIn  — 3★+ rows with a linkedin_url (/ 3★+)
-  Facebook  — 3★+ rows with a facebook_url (/ 3★+)
-  Phone-only— 3★+ rows with only phone (no email, linkedin, or facebook) (/ 3★+)
-  Sent      — matched approach files with a sent date (/ A/3★+)
-  Repl      — matched approach files with a reply marker (/ Sent)
+  3+★        — valid rows with star_rating >= 3 (/ Valid)
+  A/3+★      — approach files matched to 3+★  contacts (/ 3+★ )
+  Email     — 3+★  rows with an email address (/ 3+★ )
+  A/Eml     — approach files matched to 3+★  contacts who have email (/ Email)
+  LinkedIn  — 3+★  rows with a linkedin_url (/ 3+★ )
+  Facebook  — 3+★  rows with a facebook_url (/ 3+★ )
+  Only ☎    — 3+★  rows with only phone (no email, linkedin, or facebook) (/ 3+★ )
+  ✉ Sent   — approach files with an actioned email in the final round, 3+★  only (/ A/Eml)
+  ✉ Repl   — matched approach files with a reply marker (/ ✉ Sent)
 
 After printing the file-based progress table, checks the campaign's mailroom
 account for new replies and appends '### Email Replied (date)' sections to
@@ -166,10 +166,15 @@ def slugify(s: str) -> str:
     return s.strip("-")
 
 
-def _approach_status(path: Path) -> tuple[bool, bool]:
-    """Return (is_sent, is_replied) for an approach YAML file."""
+def _approach_status(path: Path) -> tuple[bool, bool, bool]:
+    """Return (is_sent, is_email_sent, is_replied) for an approach YAML file.
+
+    is_sent       — any final-round message has actioned_date (any channel)
+    is_email_sent — a final-round email message has actioned_date
+    is_replied    — a final-round message has replied_date or a received reply
+    """
     import yaml as _yaml
-    is_sent = is_replied = False
+    is_sent = is_email_sent = is_replied = False
     try:
         data = _yaml.safe_load(path.read_text(encoding="utf-8", errors="replace"))
         if isinstance(data, dict):
@@ -179,6 +184,8 @@ def _approach_status(path: Path) -> tuple[bool, bool]:
                         ad = msg.get("actioned_date")
                         if ad and str(ad) not in ("~", "None", "null"):
                             is_sent = True
+                            if msg.get("channel") == "email":
+                                is_email_sent = True
                         rd = msg.get("replied_date")
                         if rd and str(rd) not in ("~", "None", "null"):
                             is_replied = True
@@ -187,17 +194,18 @@ def _approach_status(path: Path) -> tuple[bool, bool]:
                             is_replied = True
     except Exception:
         pass
-    return is_sent, is_replied
+    return is_sent, is_email_sent, is_replied
 
 
 class ApproachStats:
     """Result of classify_approach_gaps for a single segment."""
-    __slots__ = ("matched", "matched_with_email", "sent", "replied", "missing_file", "unsent")
+    __slots__ = ("matched", "matched_with_email", "sent", "email_sent", "replied", "missing_file", "unsent")
 
     def __init__(self):
         self.matched: int = 0
         self.matched_with_email: int = 0
         self.sent: int = 0
+        self.email_sent: int = 0
         self.replied: int = 0
         self.missing_file: list[tuple[str, str]] = []
         self.unsent: list[tuple[str, str]] = []
@@ -207,7 +215,7 @@ def classify_approach_gaps(
     star3_rows: list[dict],
     approach_dir: Path,
 ) -> ApproachStats:
-    """Match 3★+ contacts to approach files and return stats + gap lists.
+    """Match 3+★  contacts to approach files and return stats + gap lists.
 
     Matching strategy (both passes use the approach file stem):
       Pass 1 — full slug_name prefix: stem == slug_name or stem.startswith(slug_name + "-")
@@ -270,10 +278,12 @@ def classify_approach_gaps(
             if (r.get("email") or "").strip():
                 stats.matched_with_email += 1
             stem = matched[idx]
-            is_sent, is_replied = _approach_status(all_stems[stem])
+            is_sent, is_email_sent, is_replied = _approach_status(all_stems[stem])
             if is_sent:
                 stats.sent += 1
-            else:
+            if is_email_sent:
+                stats.email_sent += 1
+            if not is_sent:
                 stats.unsent.append((name, org))
             if is_replied:
                 stats.replied += 1
@@ -451,7 +461,7 @@ def fmt_cell(count: int, denom: int) -> str:
     return f"{count:>3} {pct}"
 
 
-TABLE_HEADERS = ['Segment', 'Valid', 'Profile', '3★+', 'A/3★+', 'Email', 'A/Eml', 'LinkedIn', 'Facebook', 'Phone-only', 'Sent', 'Repl']
+TABLE_HEADERS = ['Segment', 'Valid', 'Profile', '3+★ ', 'A/3+★ ', 'Email', 'A/Eml', 'LinkedIn', 'Facebook', 'Only ☎ ', '✉ Sent', '✉ Repl']
 TABLE_ALIGNS = ['l', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r']
 
 
@@ -488,7 +498,7 @@ def build_progress_rows(
 ) -> list[list[str]]:
     """Build table rows (including TOTAL) from cached roster data and approach stats."""
     rows: list[list[str]] = []
-    gt_v = gt_p = gt_s = gt_e = gt_l = gt_f = gt_po = gt_a = gt_ae = gt_sn = gt_r = 0
+    gt_v = gt_p = gt_s = gt_e = gt_l = gt_f = gt_po = gt_a = gt_ae = gt_es = gt_r = 0
     for (label, n, profiled, n_star3, has_email, has_li, has_fb, has_phone_only), astats in zip(
         segment_roster_data, approach_stats_list
     ):
@@ -503,13 +513,13 @@ def build_progress_rows(
             fmt_cell(has_li, n_star3),
             fmt_cell(has_fb, n_star3),
             fmt_cell(has_phone_only, n_star3),
-            fmt_cell(astats.sent, astats.matched),
-            fmt_cell(astats.replied, astats.sent),
+            fmt_cell(astats.email_sent, astats.matched_with_email),
+            fmt_cell(astats.replied, astats.email_sent),
         ])
         gt_v += n; gt_p += profiled; gt_s += n_star3; gt_e += has_email
         gt_l += has_li; gt_f += has_fb; gt_po += has_phone_only
         gt_a += astats.matched; gt_ae += astats.matched_with_email
-        gt_sn += astats.sent; gt_r += astats.replied
+        gt_es += astats.email_sent; gt_r += astats.replied
     rows.append([
         'TOTAL',
         str(gt_v),
@@ -521,8 +531,8 @@ def build_progress_rows(
         fmt_cell(gt_l, gt_s),
         fmt_cell(gt_f, gt_s),
         fmt_cell(gt_po, gt_s),
-        fmt_cell(gt_sn, gt_a),
-        fmt_cell(gt_r, gt_sn),
+        fmt_cell(gt_es, gt_ae),
+        fmt_cell(gt_r, gt_es),
     ])
     return rows
 
@@ -659,15 +669,15 @@ if args.legend:
     print("Column legend:")
     print("  Valid      — roster rows where date_found_invalid is blank (/ total roster rows)")
     print("  Profile    — valid entries with a matching profile file (/ Valid)")
-    print("  3★+        — valid rows with star_rating >= 3 (/ Valid)")
-    print("  A/3★+      — 3★+ contacts matched to an approach file by name (/ 3★+)")
-    print("  Email      — 3★+ rows with an email address (/ 3★+)")
-    print("  A/Eml      — approach files for 3★+ contacts who have email (/ Email)")
-    print("  LinkedIn   — 3★+ rows with a linkedin_url (/ 3★+)")
-    print("  Facebook   — 3★+ rows with a facebook_url (/ 3★+)")
-    print("  Phone-only — 3★+ rows with only phone (no email, LinkedIn, or Facebook) (/ 3★+)")
-    print("  Sent       — matched approach files with an actioned final round (/ A/3★+)")
-    print("  Repl       — matched approach files with a reply marker (/ Sent)")
+    print("  3+★         — valid rows with star_rating >= 3 (/ Valid)")
+    print("  A/3+★       — 3+★  contacts matched to an approach file by name (/ 3+★ )")
+    print("  Email      — 3+★  rows with an email address (/ 3+★ )")
+    print("  A/Eml      — approach files for 3+★  contacts who have email (/ Email)")
+    print("  LinkedIn   — 3+★  rows with a linkedin_url (/ 3+★ )")
+    print("  Facebook   — 3+★  rows with a facebook_url (/ 3+★ )")
+    print("  Only ☎     — 3+★  rows with only phone (no email, LinkedIn, or Facebook) (/ 3+★ )")
+    print("  ✉ Sent    — approach files with an actioned email in the final round, 3+★  only (/ A/Eml)")
+    print("  Repl       — matched approach files with a reply marker (/ ✉ Sent)")
     print()
     print("Approach matching uses the contact name slug as a prefix against approach filenames.")
     print("Orphaned files (for invalidated or downgraded contacts) are not counted.")
