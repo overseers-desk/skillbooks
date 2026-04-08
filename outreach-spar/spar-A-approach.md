@@ -138,7 +138,7 @@ A1 reads both steps. If C2 identifies a misalignment or a factual error, A1 revi
 
 ### 4.7 Assemble and validate the approach file
 
-Write the approach file as `{id}-{slug}.yaml` following the schema in `approach-schema-proposal.yaml`. Before presenting for human review, validate the file against the schema and confirm:
+Write the approach file as `{id}-{slug}.yaml` following the schema in `approach-schema-proposal.yaml`. Before presenting for human review, run `bin/validate-approach-yaml.py` against the file to check structural validity, then confirm:
 
 - All required fields are present.
 - `chosen_usps` is populated for each draft and final round.
