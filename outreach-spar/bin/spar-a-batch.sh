@@ -146,8 +146,15 @@ for segment in "${SEGMENTS[@]}"; do
 
     mkdir -p "$BASE/$segment/approach"
 
-    while IFS=$'\t' read -r org name role phone email postcode linkedin facebook \
-        disc_iter disc_via disc_src verified p_note star response_likelihood s_note date_invalid; do
+    while IFS= read -r _raw_line; do
+        # bash `read` with IFS=$'\t' collapses consecutive empty fields because tab is
+        # a whitespace IFS character. Use awk to split so empty fields are preserved.
+        mapfile -t _f < <(printf '%s' "$_raw_line" | awk -F'\t' '{for(i=1;i<=17;i++) print $i}')
+        org="${_f[0]:-}"; name="${_f[1]:-}"; role="${_f[2]:-}"; phone="${_f[3]:-}"
+        email="${_f[4]:-}"; postcode="${_f[5]:-}"; linkedin="${_f[6]:-}"; facebook="${_f[7]:-}"
+        disc_iter="${_f[8]:-}"; disc_via="${_f[9]:-}"; disc_src="${_f[10]:-}"; verified="${_f[11]:-}"
+        p_note="${_f[12]:-}"; star="${_f[13]:-}"; response_likelihood="${_f[14]:-}"
+        s_note="${_f[15]:-}"; date_invalid="${_f[16]:-}"
         date_invalid="${date_invalid%$'\r'}"
 
         # Skip header and malformed rows
