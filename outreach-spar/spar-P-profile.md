@@ -144,6 +144,18 @@ Before profiling public sources, check whether the campaign's organisation has p
 
 This step is critical because warmth level determines how the A phase opens the message. A contact with prior correspondence gets a thread-referencing opener; a cold contact gets a situational opener. If this step is skipped, the A phase cannot distinguish between the two.
 
+### 4.4a Source contact email
+
+Skip if the roster `email` field already contains a valid address (has `@`). Otherwise, search in order:
+
+1. Organisation website contact/about/team page (§4.3 already visited the site)
+2. Web search: `"{contact name}" "{organisation}" email`
+3. Industry directories: ABN Lookup, Yellow Pages, TrueLocal
+
+If found, check whether the name associated with the email (from the email prefix, contact page, or directory listing) matches the roster contact. If it does not — e.g. roster says "Jess" but the contact page email is `athena@example.com` — treat this as a §4.11 "Person vs. company" trigger: investigate who currently runs the business before writing the email to the roster.
+
+If the email passes both the format gate (§4.11) and the name check, write to roster via `trdsql` (§4.11 method). If not found, record in `p_note`: "email search attempted [date]: no public email found."
+
 ### 4.5 Web search for public activity beyond LinkedIn
 
 Search for the target's name plus campaign-relevant terms, excluding LinkedIn:
@@ -269,7 +281,7 @@ Compare what the profile reveals against what the roster entry says. If any of t
 - Their location has changed
 - Contact details (email, LinkedIn URL, Facebook URL) are incorrect — update the wrong value
 
-**Backfill empty contact fields.** If the roster entry has a blank `email`, `linkedin_url`, or `facebook_url` and profiling discovers a value for it, that is not a correction — it is a backfill, and it is equally required. The sweep phase often finds only a phone number; the profile phase researches the person and their organisation in depth and routinely surfaces emails (from company websites, directories, ABN records) and social URLs (from Facebook pages, LinkedIn search) that the sweep did not capture. These must be written back to the roster, not left only in the profile prose.
+**Backfill empty contact fields.** If the roster entry has a blank `email`, `linkedin_url`, or `facebook_url` and profiling discovers a value for it, that is not a correction — it is a backfill, and it is equally required. For `email` specifically, §4.4a runs a dedicated search earlier in the procedure; this backfill clause covers emails discovered incidentally during later steps (§4.5 web search, §4.7 connections) that §4.4a did not find. The sweep phase often finds only a phone number; the profile phase researches the person and their organisation in depth and routinely surfaces emails (from company websites, directories, ABN records) and social URLs (from Facebook pages, LinkedIn search) that the sweep did not capture. These must be written back to the roster, not left only in the profile prose.
 
 **Email format gate.** Before writing any value to the `email` column, verify it contains an `@` sign with a plausible user@domain shape. Contact form URLs (`via website...`), phone numbers, placeholders (`[email obtained during call]`), and descriptive text are not email addresses and must not be written to the email field. If the only contact method found is a web form or phone number, record it in `p_note` instead. This gate matches the validation in `bin/spar-S-validate.py` §10 check 4 and prevents non-email strings from inflating downstream counts in `update-campaign-progress.py` and `spar-a-send.py`.
 
