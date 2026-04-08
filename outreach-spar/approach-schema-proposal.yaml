@@ -79,6 +79,9 @@ angle_rationale: |
 # Each entry is one step in the A1→A2→A1→A2→...→final sequence.
 # "type" is one of: draft, review, final.
 #
+# CONSTRAINT: the rounds list MUST contain exactly one round with
+# type: final. An approach file without a final round is invalid.
+#
 # Message list order implies the send sequence. Timing rules between
 # messages (e.g. wait N days) are defined in the methodology or
 # campaign YAML, not repeated here.
