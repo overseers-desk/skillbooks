@@ -1,5 +1,7 @@
 #!/bin/bash
+# Part of the SPAR outreach methodology. See ../../README.md before using.
 # spar-a-batch.sh — Generate SPAR-A approach files from a campaign YAML
+# This script drafts and spars approach files. It does NOT send emails — use spar-a-send.py for that.
 # Usage: bash spar-a-batch.sh <campaign.yaml> [--dry-run]
 #   --dry-run   generate prompt files only, do not run claude
 #
