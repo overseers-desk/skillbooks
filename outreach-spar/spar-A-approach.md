@@ -12,7 +12,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 - **Profile document:** The full profile produced by SPAR-P for this contact.
 - **Roster entry:** The contact's row in the roster TSV, including `s_note`, `p_note`, `star_rating`, and `response_likelihood`. These two rating columns are the single source of truth — do not duplicate them in the approach file.
 - **Campaign plan:** Defines segments, approach sequencing per segment, and campaign-specific rules (language, collateral prerequisites, channel preferences).
-- **Segment goal file:** Specifies the approach type (FAM invitation, phone call, personal email, etc.) and any collateral prerequisites. Read this before drafting.
+- **Segment file:** (`segment.yaml`) Specifies the approach type (FAM invitation, phone call, personal email, etc.) and any collateral prerequisites. Read this before drafting.
 - **Communication index:** `comms-index.md`, the running index of all prior A outputs. Read this before drafting to find cross-references, shared connections, and angles already used with related contacts.
 - **Strategy revision notes:** If this is not the first AR band, read the most recent `strategy-revision-[band].md` for revised angle priorities and messaging guidance from R.
 
@@ -51,7 +51,7 @@ If the profile does not contain a warmth assessment, flag it for the human. Do n
 
 ### 4.2 Select channel
 
-Read the segment goal file for the prescribed approach type. Then check what channels are available in the roster (email, linkedin_url, facebook_url, phone, etc.) and whether email is verified.
+Read the segment file for the prescribed approach type. Then check what channels are available in the roster (email, linkedin_url, facebook_url, phone, etc.) and whether email is verified.
 
 Channel selection rules, in priority order:
 
@@ -130,7 +130,7 @@ Spawn one subagent (C2) to perform two sequential steps. Use a Sonnet-class mode
 
 **Step 1 — Role-play (context-isolated).** C2 receives only the profile and the draft. No campaign files, no method files. C2 reacts in character as the recipient — a stranger who has never heard of the sender. No rubric, no structured format: a natural reaction. If the message is in a non-default language, C2 responds in that language.
 
-**Step 2 — Fact-check.** C2 breaks character and reads the campaign's source files (USP document, goal file, offering description). It checks every factual claim in the draft and appends corrections. Do not cite file paths in corrections — state what the source says.
+**Step 2 — Fact-check.** C2 breaks character and reads the campaign's source files (USP document, segment file, offering description). It checks every factual claim in the draft and appends corrections. Do not cite file paths in corrections — state what the source says.
 
 The two steps must be sequential: role-play before fact-check, so source-file knowledge does not contaminate the persona.
 
@@ -182,7 +182,7 @@ Before presenting an approach file for human review:
 
 ## 8. Segment-specific approach types
 
-The segment goal file defines the approach type for each segment. Common patterns across campaigns:
+The segment file defines the approach type for each segment. Common patterns across campaigns:
 
 - **FAM invitation:** An invitation to experience the offering firsthand. The ask is a visit date, not a commitment.
 - **Personal email with collateral:** A short message with attached or linked materials. The collateral must exist before the message is sent.
@@ -190,7 +190,7 @@ The segment goal file defines the approach type for each segment. Common pattern
 - **Exhibitor or participation enquiry:** An enquiry to an organiser about joining their event or programme.
 - **Interest gauge:** An open question — "Is this something your group does?" — used when no booking history exists to validate the fit.
 
-Do not default to a generic email when the goal file prescribes a specific format.
+Do not default to a generic email when the segment file prescribes a specific format.
 
 ## 9. Subagent delegation
 

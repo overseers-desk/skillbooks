@@ -10,7 +10,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 ## 2. Inputs
 
 - **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, segment, discovered_via). **The `contact_name` field must be populated for the campaign pipeline to count this entry as valid.** If the roster entry has no contact name, finding one is the first task of this phase — see §4.0b.
-- **Campaign goal document:** The document (typically `goal.md` or equivalent) that defines the campaign's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
+- **Segment file:** The file (typically `segment.yaml`) that defines the segment's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
 - **Campaign angle table:** The list of angles defined by the campaign plan, with descriptions of when each applies. Read this before profiling — it defines what "relevant" means for this campaign.
 - **Campaign context documents:** The campaign plan names specific documents (mission statement, project pages, segment definitions) that explain the campaign's offering. Read the angle table first; read context documents only for angles that seem relevant to the target.
 - **LinkedIn lookup method:** Use the LinkedIn skill or MCP available in your environment. Read its documentation before the first fetch in a session — it specifies sequencing constraints and any parsing scripts.
@@ -48,17 +48,17 @@ If the roster entry has no `contact_name`, the entry is pipeline-invalid regardl
 - Set `date_found_invalid` to today if not already set, with reason "nameless — pipeline invalid; name search exhausted."
 - Do not proceed to §4.0 or produce a profile document. The roster entry is the permanent record.
 
-### 4.0 Validate fit against campaign goal
+### 4.0 Validate fit against segment file
 
-Before any research, read the campaign goal document and answer one question: can this contact deliver the outcome the goal describes, through the mechanism the goal describes?
+Before any research, read the segment file and answer one question: can this contact deliver the outcome the segment describes, through the mechanism the segment describes?
 
-This is a structural check, not a relevance check. A contact may be in the right domain, at the right seniority, with strong apparent fit — and still be the wrong type of contact for the segment. The goal document specifies a mechanism: the particular way a contact is expected to act on the campaign's behalf. The check is whether this contact operates through that mechanism. A contact who is adjacent to the mechanism — who knows the right people, or works in the same field, or whose platform could theoretically be adapted — does not pass the check unless the goal explicitly includes that adjacent role.
+This is a structural check, not a relevance check. A contact may be in the right domain, at the right seniority, with strong apparent fit — and still be the wrong type of contact for the segment. The segment file specifies a mechanism: the particular way a contact is expected to act on the campaign's behalf. The check is whether this contact operates through that mechanism. A contact who is adjacent to the mechanism — who knows the right people, or works in the same field, or whose platform could theoretically be adapted — does not pass the check unless the segment file explicitly includes that adjacent role.
 
-If the contact cannot deliver the outcome through the mechanism the goal assumes, set `date_found_invalid` to today's date and record the reason in `p_note`. Do not proceed to §4.1. Do not produce a profile document.
+If the contact cannot deliver the outcome through the mechanism the segment describes, set `date_found_invalid` to today's date and record the reason in `p_note`. Do not proceed to §4.1. Do not produce a profile document.
 
 **Do not delete the roster row.** The roster is append-only. Deletion causes re-discovery in the next sweep, where the entry may be incorrectly validated if the profile stage repeats the same error. The `date_found_invalid` date is the permanent record that this contact was assessed and excluded.
 
-If an invalid entry has already passed Profile and reached the approach queue, the failure is at the P stage. The question to ask is whether the campaign goal document was specific enough to make the §4.0 check possible. If the exclusion was not obvious from goal.md, the goal document may need a discovery criteria section that names the contact types that do not belong, so future sweeps and profile runs do not repeat the error.
+If an invalid entry has already passed Profile and reached the approach queue, the failure is at the P stage. The question to ask is whether the segment file was specific enough to make the §4.0 check possible. If the exclusion was not obvious from the segment file, the segment file may need a discovery_criteria section that names the contact types that do not belong, so future sweeps and profile runs do not repeat the error.
 
 ### 4.1 Fetch and parse the LinkedIn profile
 
