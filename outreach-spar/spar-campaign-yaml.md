@@ -21,6 +21,7 @@ One file per campaign, in the campaign root directory. Named `campaign.yaml` or 
 | `language` | string | Language code: `en-gb`, `en-au`, `en`, or a BCP-47 code |
 | `segments` | list of strings | Segment directory names to include in batch processing. Use `.` for a single-segment campaign where roster and segment.yaml live in the campaign root (see `spar-campaign-directory.md`). |
 | `approach_filename` | string | Template for approach filenames. Variables: `{slug_name}`, `{slug_org}`, `{star}`. Example: `approach-{slug_name}-{slug_org}.md` |
+| `usps` | map | USP registry: maps each USP identifier to its human-readable label. This is the single source of truth for USP names. Segment files reference USPs by `id`; the label is resolved from this registry. The full USP prose lives in the `usp_document`. |
 
 ### Required (filter)
 
@@ -72,6 +73,19 @@ antifacts: ../overview-antifacts.md
 campaign_principles: goal-campaign-principles.md
 
 language: en-gb
+
+usps:
+  U1:  Scenic riverside setting on the Coomera River
+  U2:  Peruvian Paso horses
+  U3:  Interactive animal experiences
+  U4:  Heritage character
+  U5:  On-site cafe with group catering
+  U6:  30 minutes from central Gold Coast
+  U7:  Six-bedroom farmstay
+  U8:  Best of Queensland Experience 2025 (TEQ credential)
+  U9:  Cowboys Day proof point
+  U10: Instagram visual credibility
+  U11: 6.2-hectare grounds with 200+ car parks
 
 segments:
   - animal-event
