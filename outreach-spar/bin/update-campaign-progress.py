@@ -422,18 +422,25 @@ if YAML_SEGMENTS is not None:
         segments.append((seg_dir, roster))
     # Warn about roster.tsv files on disk not listed in the YAML
     yaml_set = set(YAML_SEGMENTS) | SKIP
-    for roster_path in sorted(BASE.glob("*/roster.tsv")):
-        rel = str(roster_path.parent.relative_to(BASE))
-        if rel not in yaml_set:
-            print(f"  NOTE: {rel}/roster.tsv exists but is not in this campaign", file=sys.stderr)
+    for child in sorted(BASE.iterdir()):
+        if child.name.startswith(".") or not child.is_dir():
+            continue
+        roster_path = child / "roster.tsv"
+        if roster_path.exists():
+            rel = str(child.relative_to(BASE))
+            if rel not in yaml_set:
+                print(f"  NOTE: {rel}/roster.tsv exists but is not in this campaign", file=sys.stderr)
 else:
     # Fallback: scan direct child directories only (subfolders are not segments)
-    for roster_path in sorted(BASE.glob("*/roster.tsv")):
-        segment_dir = roster_path.parent
-        rel = segment_dir.relative_to(BASE)
-        if str(rel) in SKIP:
+    for child in sorted(BASE.iterdir()):
+        if child.name.startswith(".") or not child.is_dir():
             continue
-        segments.append((segment_dir, roster_path))
+        roster_path = child / "roster.tsv"
+        if not roster_path.exists():
+            continue
+        if child.name in SKIP:
+            continue
+        segments.append((child, roster_path))
 
 def fmt_cell(count: int, denom: int) -> str:
     """Format 'count pct%' compactly for table cells."""
@@ -869,7 +876,8 @@ def _fingerprint_match(existing: set[str], from_email: str, timestamp: str) -> b
 
     Exact match on full timestamp, or prefix match for legacy date-only entries
     (a legacy '2026-04-07' matches any timestamp starting with that date from
-    the same sender).
+    the same sender).  Also matches entries with an empty from-address (manually
+    added replies that omitted the from field).
     """
     candidate = f"{from_email}|{timestamp}"
     if candidate in existing:
@@ -878,6 +886,10 @@ def _fingerprint_match(existing: set[str], from_email: str, timestamp: str) -> b
     date_only = f"{from_email}|{timestamp[:10]}"
     if date_only in existing:
         return True
+    # Legacy: existing entry may have empty from_addr
+    if from_email:
+        if f"|{timestamp}" in existing or f"|{timestamp[:10]}" in existing:
+            return True
     return False
 
 
@@ -989,42 +1001,44 @@ def update_replies_from_mailroom(
             if not re.match(r"\d{4}-\d{2}-\d{2}", date_str):
                 continue
 
-            for approach_path, fingerprints in approach_entries:
-                if _fingerprint_match(fingerprints, from_email, date_str):
-                    continue
+            # If ANY approach file sharing this to_email already has the reply, skip
+            if any(_fingerprint_match(fps, from_email, date_str)
+                   for _, fps in approach_entries):
+                continue
 
-                # Fetch reply content
-                uid = msg.get("uid")
-                reply_text = ""
-                try:
-                    read_result = subprocess.run(
-                        [
-                            "mailroom", "-a", mailroom_account,
-                            "read", "-f", mailroom_folder, "-u", str(uid),
-                        ],
-                        capture_output=True, text=True, timeout=15,
-                    )
-                    if read_result.returncode == 0:
-                        email_data = json.loads(read_result.stdout)
-                        body = email_data.get("body", "")
-                        reply_text = html_to_text(body) if body else "(no text content)"
-                    else:
-                        reply_text = (
-                            f"(mailroom read failed -- review manually:\n"
-                            f"  mailroom -a {mailroom_account} read -f {mailroom_folder} -u {uid})"
-                        )
-                except Exception:
+            # Fetch reply content once, add to first approach file only
+            uid = msg.get("uid")
+            reply_text = ""
+            try:
+                read_result = subprocess.run(
+                    [
+                        "mailroom", "-a", mailroom_account,
+                        "read", "-f", mailroom_folder, "-u", str(uid),
+                    ],
+                    capture_output=True, text=True, timeout=15,
+                )
+                if read_result.returncode == 0:
+                    email_data = json.loads(read_result.stdout)
+                    body = email_data.get("body", "")
+                    reply_text = html_to_text(body) if body else "(no text content)"
+                else:
                     reply_text = (
-                        f"(could not fetch -- review manually:\n"
+                        f"(mailroom read failed -- review manually:\n"
                         f"  mailroom -a {mailroom_account} read -f {mailroom_folder} -u {uid})"
                     )
+            except Exception:
+                reply_text = (
+                    f"(could not fetch -- review manually:\n"
+                    f"  mailroom -a {mailroom_account} read -f {mailroom_folder} -u {uid})"
+                )
 
-                from_display = msg.get("from", from_email)
-                _append_reply_to_yaml(approach_path, date_str, from_display, reply_text)
-                fingerprints.add(f"{from_email}|{date_str}")
+            approach_path, fingerprints = approach_entries[0]
+            from_display = msg.get("from", from_email)
+            _append_reply_to_yaml(approach_path, date_str, from_display, reply_text)
+            fingerprints.add(f"{from_email}|{date_str}")
 
-                new_replies += 1
-                label = str(approach_path.parent.parent.relative_to(base))
+            new_replies += 1
+            label = str(approach_path.parent.parent.relative_to(base))
                 print(f"  + {label}/{approach_path.name}: reply from {from_email} ({date_str})")
 
     return new_replies
