@@ -69,6 +69,11 @@ parser.add_argument(
     help="Skip mailroom reply checking.",
 )
 parser.add_argument(
+    "--update",
+    action="store_true",
+    help="Update approach files from mailroom without prompting.",
+)
+parser.add_argument(
     "--legend",
     action="store_true",
     help="Print column legend after the progress table.",
@@ -804,46 +809,100 @@ def normalise_subject(s: str) -> str:
     return s.lower().strip()
 
 
-def collect_sent_approach_data(
+def collect_sent_approaches(
     segments: list, base: Path
-) -> tuple[dict[str, list[tuple[Path, str | None]]], dict[str, list[tuple[Path, str, str | None]]]]:
-    """Build lookup maps for sent approach files.
+) -> list[tuple[Path, str, set[str]]]:
+    """Return [(approach_path, to_email, existing_fingerprints)] for sent approaches.
 
-    Returns (by_email, by_subject):
-      by_email:   {to_email_lower: [(approach_path, latest_reply_date), ...]}
-      by_subject: {normalised_subject: [(approach_path, to_email_lower, latest_reply_date), ...]}
+    Each fingerprint is (from_email_lower, date_string) joined with '|'.
+    Legacy date-only values are stored as-is; a legacy fingerprint 'x|2026-04-07'
+    matches any message from x on that date (see _fingerprint_match).
     """
-    by_email: dict[str, list[tuple[Path, str | None]]] = {}
-    by_subject: dict[str, list[tuple[Path, str, str | None]]] = {}
+    import yaml as _yaml
+    results: list[tuple[Path, str, set[str]]] = []
     for segment_dir, _ in segments:
         approach_dir = segment_dir / "approach"
         if not approach_dir.is_dir():
             continue
-        for md in approach_dir.glob("approach-*.md"):
-            content = md.read_text(encoding="utf-8", errors="replace")
-            if not re.search(
-                r"^### .+\((Sent|Called) \d{4}-\d{2}-\d{2}\)", content, re.MULTILINE
-            ):
+        for yf in approach_dir.glob("*.yaml"):
+            try:
+                data = _yaml.safe_load(yf.read_text(encoding="utf-8", errors="replace"))
+            except Exception:
                 continue
-            fd = re.search(r"^## Final draft", content, re.MULTILINE)
-            if not fd:
+            if not isinstance(data, dict):
                 continue
-            after = content[fd.start() :]
-            to_m = re.search(r"^To: (.+)$", after, re.MULTILINE)
-            if not to_m:
+            is_sent = False
+            to_email = ""
+            fingerprints: set[str] = set()
+            for r in data.get("rounds", []):
+                if r.get("type") != "final":
+                    continue
+                for msg in r.get("messages", []):
+                    ad = msg.get("actioned_date")
+                    if ad and str(ad) not in ("~", "None", "null"):
+                        is_sent = True
+                    if msg.get("channel") == "email":
+                        if msg.get("to") and not to_email:
+                            to_email = str(msg["to"]).strip().lower()
+                for reply in r.get("replies", []):
+                    rd = reply.get("date")
+                    rf = reply.get("from", "")
+                    if rd:
+                        from_addr = extract_email_address(rf) if rf else ""
+                        fingerprints.add(f"{from_addr}|{str(rd)}")
+            if not is_sent or not to_email:
                 continue
-            to_email = to_m.group(1).strip().lower()
-            subj_m = re.search(r"^Subject: (.+)$", after, re.MULTILINE)
-            subject = subj_m.group(1).strip() if subj_m else ""
-            reply_dates = re.findall(
-                r"^### .+ Replied \((\d{4}-\d{2}-\d{2})\)", content, re.MULTILINE
-            )
-            latest = max(reply_dates) if reply_dates else None
-            by_email.setdefault(to_email, []).append((md, latest))
-            if subject:
-                ns = normalise_subject(subject)
-                by_subject.setdefault(ns, []).append((md, to_email, latest))
-    return by_email, by_subject
+            results.append((yf, to_email, fingerprints))
+    return results
+
+
+def _fingerprint_match(existing: set[str], from_email: str, timestamp: str) -> bool:
+    """Check if a message is already recorded.
+
+    Exact match on full timestamp, or prefix match for legacy date-only entries
+    (a legacy '2026-04-07' matches any timestamp starting with that date from
+    the same sender).
+    """
+    candidate = f"{from_email}|{timestamp}"
+    if candidate in existing:
+        return True
+    # Legacy: existing entry may be date-only
+    date_only = f"{from_email}|{timestamp[:10]}"
+    if date_only in existing:
+        return True
+    return False
+
+
+def _append_reply_to_yaml(approach_path: Path, msg_timestamp: str, from_display: str, reply_text: str) -> None:
+    """Append a received reply to the final round's replies list in a YAML approach file."""
+    import yaml as _yaml
+    data = _yaml.safe_load(approach_path.read_text(encoding="utf-8", errors="replace"))
+    if not isinstance(data, dict):
+        return
+    final_round = None
+    for r in data.get("rounds", []):
+        if r.get("type") == "final":
+            final_round = r
+    if final_round is None:
+        return
+    if "replies" not in final_round:
+        final_round["replies"] = []
+    final_round["replies"].append({
+        "direction": "received",
+        "date": msg_timestamp,
+        "from": from_display,
+        "body": reply_text,
+    })
+    # Also set replied_date on email messages in the final round if not already set
+    for msg in final_round.get("messages", []):
+        if msg.get("channel") == "email":
+            rd = msg.get("replied_date")
+            if not rd or str(rd) in ("~", "None", "null"):
+                msg["replied_date"] = msg_timestamp[:10]
+    approach_path.write_text(
+        _yaml.dump(data, default_flow_style=False, allow_unicode=True, sort_keys=False, width=200),
+        encoding="utf-8",
+    )
 
 
 def update_replies_from_mailroom(
@@ -853,143 +912,112 @@ def update_replies_from_mailroom(
     mailroom_folder: str,
     sender_email: str,
 ) -> int:
-    """Fetch replies from mailroom, append Replied sections. Return new-reply count, or -1 on error."""
+    """Sync replies per-contact via mailroom. Return new-reply count, or -1 on error.
+
+    Thread-based approach: for each sent approach, query mailroom for messages
+    from the contact's email address. Dedup by (from, timestamp) fingerprint
+    rather than a high-water mark, so no replies are missed due to clock skew
+    or same-day collisions.
+    """
     import json
     import subprocess
 
-    by_email, by_subject = collect_sent_approach_data(segments, base)
-    if not by_email:
+    approaches = collect_sent_approaches(segments, base)
+    if not approaches:
         return 0
 
+    # Check mailroom is available
     try:
-        result = subprocess.run(
-            [
-                "mailroom", "-a", mailroom_account,
-                "search", "-f", mailroom_folder, "--limit", "500",
-            ],
-            capture_output=True, text=True, timeout=30,
-        )
+        subprocess.run(["mailroom", "--help"], capture_output=True, timeout=5)
     except FileNotFoundError:
         print(
             "Warning: mailroom CLI not found. Install mailroom to enable reply checking.",
             file=sys.stderr,
         )
         return -1
-    except subprocess.TimeoutExpired:
-        print("Warning: mailroom search timed out.", file=sys.stderr)
-        return -1
-
-    if result.returncode != 0:
-        print(f"Warning: mailroom search failed: {result.stderr.strip()}", file=sys.stderr)
-        return -1
-
-    try:
-        messages = json.loads(result.stdout)
-    except json.JSONDecodeError:
-        print("Warning: could not parse mailroom output.", file=sys.stderr)
-        return -1
 
     sender_lower = sender_email.lower()
-
-    # Filter to incoming replies.
-    # A message is outgoing if from == sender without DMARC rewrite ("via").
-    # A message is incoming if to contains the sender address AND it's not outgoing.
-    incoming = []
-    for msg in messages:
-        from_header = msg.get("from", "")
-        from_email = extract_email_address(from_header)
-        if from_email == sender_lower and " via " not in from_header:
-            continue  # outgoing message from the campaign sender
-        to_addrs = [extract_email_address(a) for a in (msg.get("to") or [])]
-        if sender_lower in to_addrs:
-            incoming.append(msg)
-
-    # Sort by date ascending so high-water marks update in order
-    incoming.sort(key=lambda m: m.get("date", ""))
-
     new_replies = 0
-    unmatched = []
-    for msg in incoming:
-        from_email = extract_email_address(msg.get("from", ""))
-        date_str = msg.get("date", "")
-        date_match = re.match(r"(\d{4}-\d{2}-\d{2})", date_str)
-        if not date_match:
+
+    # Group approaches by to_email to avoid duplicate queries
+    by_to: dict[str, list[tuple[Path, set[str]]]] = {}
+    for approach_path, to_email, fingerprints in approaches:
+        by_to.setdefault(to_email, []).append((approach_path, fingerprints))
+
+    for to_email, approach_entries in by_to.items():
+        try:
+            result = subprocess.run(
+                [
+                    "mailroom", "-a", mailroom_account,
+                    "search", "-f", mailroom_folder,
+                    "--limit", "50",
+                    f"from:{to_email}",
+                ],
+                capture_output=True, text=True, timeout=15,
+            )
+        except subprocess.TimeoutExpired:
+            print(f"  Warning: mailroom search timed out for {to_email}", file=sys.stderr)
             continue
-        msg_date = date_match.group(1)
-
-        # Match by sender email (normal case)
-        matched_entries = by_email.get(from_email, [])
-
-        # Fallback: match by subject (DMARC-rewritten replies)
-        if not matched_entries:
-            subj = normalise_subject(msg.get("subject", ""))
-            if subj:
-                matched_entries = [
-                    (path, latest) for path, _email, latest in by_subject.get(subj, [])
-                ]
-
-        if not matched_entries:
-            # Unknown reply — warn if it looks like a real reply (has Re: prefix)
-            raw_subj = msg.get("subject", "")
-            if re.match(r"(?i)^(Re|RE|Fwd|FW)\s*:", raw_subj):
-                unmatched.append((from_email, raw_subj, msg_date))
+        if result.returncode != 0:
             continue
 
-        for approach_path, latest_reply_date in matched_entries:
-            if latest_reply_date and msg_date <= latest_reply_date:
+        try:
+            messages = json.loads(result.stdout)
+        except json.JSONDecodeError:
+            continue
+
+        # Filter to messages addressed to the sender (not forwarded elsewhere)
+        incoming = []
+        for msg in messages:
+            to_addrs = [extract_email_address(a) for a in (msg.get("to") or [])]
+            if sender_lower in to_addrs:
+                incoming.append(msg)
+
+        incoming.sort(key=lambda m: m.get("date", ""))
+
+        for msg in incoming:
+            from_email = extract_email_address(msg.get("from", ""))
+            date_str = msg.get("date", "")
+            if not re.match(r"\d{4}-\d{2}-\d{2}", date_str):
                 continue
 
-            # Fetch reply content
-            uid = msg.get("uid")
-            reply_text = ""
-            try:
-                read_result = subprocess.run(
-                    [
-                        "mailroom", "-a", mailroom_account,
-                        "read", "-f", mailroom_folder, "-u", str(uid),
-                    ],
-                    capture_output=True, text=True, timeout=15,
-                )
-                if read_result.returncode == 0:
-                    email_data = json.loads(read_result.stdout)
-                    body = email_data.get("body", "")
-                    reply_text = html_to_text(body) if body else "(no text content)"
-                else:
+            for approach_path, fingerprints in approach_entries:
+                if _fingerprint_match(fingerprints, from_email, date_str):
+                    continue
+
+                # Fetch reply content
+                uid = msg.get("uid")
+                reply_text = ""
+                try:
+                    read_result = subprocess.run(
+                        [
+                            "mailroom", "-a", mailroom_account,
+                            "read", "-f", mailroom_folder, "-u", str(uid),
+                        ],
+                        capture_output=True, text=True, timeout=15,
+                    )
+                    if read_result.returncode == 0:
+                        email_data = json.loads(read_result.stdout)
+                        body = email_data.get("body", "")
+                        reply_text = html_to_text(body) if body else "(no text content)"
+                    else:
+                        reply_text = (
+                            f"(mailroom read failed -- review manually:\n"
+                            f"  mailroom -a {mailroom_account} read -f {mailroom_folder} -u {uid})"
+                        )
+                except Exception:
                     reply_text = (
-                        f"(mailroom read failed -- review manually:\n"
+                        f"(could not fetch -- review manually:\n"
                         f"  mailroom -a {mailroom_account} read -f {mailroom_folder} -u {uid})"
                     )
-            except Exception:
-                reply_text = (
-                    f"(could not fetch -- review manually:\n"
-                    f"  mailroom -a {mailroom_account} read -f {mailroom_folder} -u {uid})"
-                )
 
-            from_display = msg.get("from", from_email)
-            section = (
-                f"\n\n### Email Replied ({msg_date})\n\n"
-                f"From: {from_display}\n\n"
-                f"{reply_text}\n"
-            )
-            with open(approach_path, "a", encoding="utf-8") as f:
-                f.write(section)
+                from_display = msg.get("from", from_email)
+                _append_reply_to_yaml(approach_path, date_str, from_display, reply_text)
+                fingerprints.add(f"{from_email}|{date_str}")
 
-            # Update high-water mark in memory
-            entries = by_email.get(from_email, [])
-            for i, (p, _d) in enumerate(entries):
-                if p == approach_path:
-                    entries[i] = (p, msg_date)
-                    break
-
-            new_replies += 1
-            label = str(approach_path.parent.parent.relative_to(base))
-            print(f"  + {label}/{approach_path.name}: reply from {from_email} ({msg_date})")
-
-    if unmatched:
-        print()
-        print("  Unmatched incoming replies (no approach file found):")
-        for addr, subj, dt in unmatched:
-            print(f"    {addr}  {subj}  ({dt})")
+                new_replies += 1
+                label = str(approach_path.parent.parent.relative_to(base))
+                print(f"  + {label}/{approach_path.name}: reply from {from_email} ({date_str})")
 
     return new_replies
 
@@ -1034,12 +1062,15 @@ else:
             file=sys.stderr,
         )
     else:
-        print()
-        try:
-            answer = input("Update reply status from mailroom? [y/N] ").strip().lower()
-        except EOFError:
-            print("No input — you're probably a bot, that's fine. Mailroom skipped, progress is above.")
-            answer = ""
+        if args.update:
+            answer = "y"
+        else:
+            print()
+            try:
+                answer = input("Update reply status from mailroom? [y/N] ").strip().lower()
+            except EOFError:
+                print("No input — you're probably a bot, that's fine. Mailroom skipped, progress is above.")
+                answer = ""
         if answer == "y":
             print(f"Checking email replies ({mr_account}, folder: {mr_folder})...")
             n_new = update_replies_from_mailroom(
