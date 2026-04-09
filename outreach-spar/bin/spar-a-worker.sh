@@ -242,7 +242,10 @@ Follow §6 structure exactly. Include contact header, angle rationale, A1 Draft 
 
 Run §7 quality checklist before writing. Fix any failures in the final draft.
 
-After writing, print: DONE: $CONTACT_SUMMARY | $OUTFILE
+After writing, estimate the response likelihood for this contact as a whole-number percentage, based on warmth level, angle quality, challenger verdict, and channel availability. Print exactly:
+RESPONSE_LIKELIHOOD: {n}%
+
+Then print: DONE: $CONTACT_SUMMARY | $OUTFILE
 ASSPROMPT
 
 invoke_claude "assembly" "$assembly_log" \
@@ -259,14 +262,14 @@ if [[ -f "$OUTFILE" ]]; then
     # Update roster response_likelihood from the Response likelihood field written by assembly.
     # Uses trdsql to rewrite the TSV cleanly (avoids field-alignment errors).
     # flock on a .lock file serialises concurrent workers sharing the same roster.
-    band_likelihood=$(grep '^\*\*Response likelihood:\*\*' "$OUTFILE" | grep -oP '\d+(?=%)' | head -1)
+    band_likelihood=$(grep '^RESPONSE_LIKELIHOOD:' "$assembly_log" | grep -oP '\d+' | head -1)
     if [[ -n "$band_likelihood" ]]; then
         roster_path="$(dirname "$(dirname "$OUTFILE")")/roster.tsv"
         contact_name=$(echo "$CONTACT_SUMMARY" | cut -d'|' -f1 | sed 's/^ *//;s/ *$//')
         if [[ -f "$roster_path" ]]; then
             # Build a SELECT that substitutes response_likelihood for the matching row.
             # Column list is derived from the header row so it works for any roster schema.
-            IFS=$'\t' read -ra _cols < "$roster_path"
+            mapfile -t _cols < <(head -1 "$roster_path" | tr -d '\r' | tr '\t' '\n')
             _safe_name="${contact_name//\'/\'\'}"
             _select_list=""
             for _col in "${_cols[@]}"; do
