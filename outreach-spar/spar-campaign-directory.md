@@ -50,7 +50,7 @@ All batch scripts resolve `.` as the campaign root directory. When a campaign ou
 
 ## Discovery by batch scripts
 
-`update-campaign-progress.py` and `spar-a-batch.sh` both read the `segments` list from `campaign.yaml`. Only listed segments are processed. `update-campaign-progress.py` warns about any `roster.tsv` files found on disk that are not listed in the YAML. Directories in `skip_segments` are excluded.
+`update-campaign.py` and `spar-a-batch.sh` both read the `segments` list from `campaign.yaml`. Only listed segments are processed. `update-campaign.py` warns about any `roster.tsv` files found on disk that are not listed in the YAML. Directories in `skip_segments` are excluded.
 
 `spar-p-batch.sh` operates on a single segment directory passed as an argument.
 
