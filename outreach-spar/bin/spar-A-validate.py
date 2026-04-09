@@ -17,6 +17,8 @@ import re
 import sys
 from pathlib import Path
 
+import spar_lib
+
 parser = argparse.ArgumentParser(
     description="Check SPAR campaign approach file integrity.",
     formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -51,41 +53,12 @@ else:
     BASE = Path(".").resolve()
 
 # ── Locate and read campaign YAML ─────────────────────────────────────────
-SKIP: set[str] = set()
-if args.skip:
-    SKIP.update(args.skip)
-
-YAML_SEGMENTS: list[str] | None = None
-
-if args.campaign and Path(args.campaign).resolve().is_file():
-    _campaign_yaml = Path(args.campaign).resolve()
-else:
-    _campaign_yaml = BASE / "campaign.yaml"
-    if not _campaign_yaml.exists():
-        _candidates = sorted(BASE.glob("campaign*.yaml"))
-        if _candidates:
-            _campaign_yaml = _candidates[-1]
-        else:
-            _campaign_yaml = None
-
-if _campaign_yaml and _campaign_yaml.exists():
-    try:
-        import yaml
-        with open(_campaign_yaml) as _f:
-            _cdata = yaml.safe_load(_f)
-        if _cdata:
-            if isinstance(_cdata.get("skip_segments"), list):
-                SKIP.update(_cdata["skip_segments"])
-            if isinstance(_cdata.get("segments"), list):
-                YAML_SEGMENTS = _cdata["segments"]
-        print(f"Campaign:    {_cdata.get('campaign', _campaign_yaml.name)}", file=sys.stderr)
-    except ImportError:
-        print("Warning: PyYAML not installed; cannot parse campaign YAML or approach files.",
-              file=sys.stderr)
-        sys.exit(1)
-    except Exception as e:
-        print(f"Warning: could not parse {_campaign_yaml.name}: {e}", file=sys.stderr)
-else:
+_campaign_yaml = spar_lib.discover_campaign_yaml(BASE, args.campaign)
+_cdata = spar_lib.load_campaign_yaml(_campaign_yaml) if _campaign_yaml else None
+YAML_SEGMENTS, SKIP, _cdata = spar_lib.extract_campaign_context(_cdata, args.skip)
+if _cdata and _campaign_yaml:
+    print(f"Campaign:    {_cdata.get('campaign', _campaign_yaml.name)}", file=sys.stderr)
+elif not _campaign_yaml:
     print("Warning: no campaign YAML found; falling back to directory scan.",
           file=sys.stderr)
 
@@ -154,52 +127,17 @@ def extract_contact_name_from_filename(filename: str) -> str:
     return filename.replace(".yaml", "").replace("-", " ").lower()
 
 
-# ── Checker class (same pattern as check-data-integrity.py) ──────────────
+# ── Checker class (from spar_lib) ────────────────────────────────────────
 
-class Checker:
-    """Accumulates PASS/WARN/FAIL results for a segment."""
-
-    def __init__(self, label: str):
-        self.label = label
-        self.results: list[tuple[str, str]] = []  # (level, message)
-
-    def _add(self, level: str, msg: str):
-        self.results.append((level, msg))
-
-    def passed(self, msg: str):
-        self._add("PASS", msg)
-
-    def warn(self, msg: str):
-        self._add("WARN", msg)
-
-    def fail(self, msg: str):
-        self._add("FAIL", msg)
-
-    def print_section(self):
-        print(f"\n── {self.label} ──")
-        for level, msg in self.results:
-            print(f"  [{level}] {msg}")
+Checker = spar_lib.Checker
 
 
 # ── Discover segments ─────────────────────────────────────────────────────
-segments: list[Path] = []
-if YAML_SEGMENTS is not None:
-    for seg_name in YAML_SEGMENTS:
-        if seg_name in SKIP:
-            continue
-        seg_dir = BASE / seg_name
-        approach_dir = seg_dir / "approach"
-        if not approach_dir.is_dir():
-            # Segment exists but has no approach files yet — not an error
-            continue
-        segments.append(seg_dir)
-else:
-    for approach_dir in sorted(BASE.glob("*/approach")):
-        segment_dir = approach_dir.parent
-        rel = str(segment_dir.relative_to(BASE))
-        if rel in SKIP:
-            continue
-        segments.append(segment_dir)
+segments: list[Path] = [
+    seg_dir for seg_dir, _ in spar_lib.discover_segments(
+        BASE, YAML_SEGMENTS, SKIP, require="approach"
+    )
+]
 
 
 # ── Per-segment checks ────────────────────────────────────────────────────

@@ -169,7 +169,7 @@ The file ID uses a segment prefix and sequential number: `TOR-001-peter-myers.ya
 
 Before presenting an approach file for human review:
 
-1. **YAML validation.** Run `bin/validate-approach-yaml.py` against the file. Fix any structural errors before proceeding.
+1. **YAML validation.** Run `bin/spar-A-validate.py` against the file. Fix any structural errors before proceeding.
 2. **Required fields.** All required fields are present: `chosen_usps` populated for each draft and final round, `fact_provenance` covers every factual claim in the final draft, `roster_note` is complete.
 3. **Presupposition test.** Does any sentence tell the recipient something they already know about themselves? If so, restructure.
 4. **Manufactured-connection test.** Is every claim of shared interest traceable to a specific profile data point? Check against the absent-themes section.

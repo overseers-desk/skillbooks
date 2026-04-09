@@ -18,6 +18,8 @@ import sys
 import unicodedata
 from pathlib import Path
 
+import spar_lib
+
 # ── Required columns (from spar-roster-format.md §Core columns) ──────────
 REQUIRED_COLUMNS = [
     "organisation",
@@ -68,78 +70,21 @@ else:
     BASE = Path(".").resolve()
 
 # ── Locate and read campaign YAML ─────────────────────────────────────────
-SKIP: set[str] = set()
-if args.skip:
-    SKIP.update(args.skip)
-
-YAML_SEGMENTS: list[str] | None = None
-
-if args.campaign and Path(args.campaign).resolve().is_file():
-    _campaign_yaml = Path(args.campaign).resolve()
-else:
-    _campaign_yaml = BASE / "campaign.yaml"
-    if not _campaign_yaml.exists():
-        _candidates = sorted(BASE.glob("campaign*.yaml"))
-        if _candidates:
-            _campaign_yaml = _candidates[-1]
-        else:
-            _campaign_yaml = None
-
-if _campaign_yaml and _campaign_yaml.exists():
-    try:
-        import yaml
-        with open(_campaign_yaml) as _f:
-            _cdata = yaml.safe_load(_f)
-        if _cdata:
-            if isinstance(_cdata.get("skip_segments"), list):
-                SKIP.update(_cdata["skip_segments"])
-            if isinstance(_cdata.get("segments"), list):
-                YAML_SEGMENTS = _cdata["segments"]
-        print(f"Campaign:    {_cdata.get('campaign', _campaign_yaml.name)}", file=sys.stderr)
-    except ImportError:
-        print("Warning: PyYAML not installed; falling back to directory roster scan.",
-              file=sys.stderr)
-    except Exception as e:
-        print(f"Warning: could not parse {_campaign_yaml.name}: {e}", file=sys.stderr)
-else:
+_campaign_yaml = spar_lib.discover_campaign_yaml(BASE, args.campaign)
+_cdata = spar_lib.load_campaign_yaml(_campaign_yaml) if _campaign_yaml else None
+YAML_SEGMENTS, SKIP, _cdata = spar_lib.extract_campaign_context(_cdata, args.skip)
+if _cdata and _campaign_yaml:
+    print(f"Campaign:    {_cdata.get('campaign', _campaign_yaml.name)}", file=sys.stderr)
+elif not _campaign_yaml:
     print("Warning: no campaign YAML found; falling back to directory roster scan.",
           file=sys.stderr)
 
 
-# ── Helpers ───────────────────────────────────────────────────────────────
+# ── Helpers (delegated to spar_lib) ──────────────────────────────────────
 
-def normalise_name(s: str) -> str:
-    """Strip accents, hyphens, separators; collapse whitespace; lowercase."""
-    s = unicodedata.normalize("NFD", s)
-    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
-    s = s.lower()
-    s = re.sub(r"\(.*?\)", "", s)
-    s = re.sub(r"[/&\u2014\u2013-]+", " ", s)
-    return re.sub(r"\s+", " ", s).strip()
-
-
-def build_profile_index(profiles_dir: Path) -> dict[str, str]:
-    """Returns {normalised_name: filename} for all profiles in the dir."""
-    index = {}
-    for md in profiles_dir.glob("profile-*.md"):
-        with md.open(encoding="utf-8") as f:
-            for line in f:
-                m = re.match(r"^# Profile:\s*(.+)", line)
-                if m:
-                    name = normalise_name(m.group(1))
-                    index[name] = md.name
-                    break
-    return index
-
-
-def name_matches(contact: str, profile_index: dict[str, str]) -> bool:
-    c = normalise_name(contact)
-    if c in profile_index:
-        return True
-    for k in profile_index:
-        if k.startswith(c) or c.startswith(k):
-            return True
-    return False
+normalise_name = spar_lib.normalise_name
+build_profile_index = spar_lib.build_profile_index
+name_matches = spar_lib.name_matches
 
 
 HEADER_FRAGMENTS = {
@@ -152,52 +97,12 @@ HEADER_FRAGMENTS = {
 
 
 # ── Discover segments ─────────────────────────────────────────────────────
-segments: list[tuple[Path, Path]] = []
-if YAML_SEGMENTS is not None:
-    for seg_name in YAML_SEGMENTS:
-        if seg_name in SKIP:
-            continue
-        seg_dir = BASE / seg_name
-        roster = seg_dir / "roster.tsv"
-        if not roster.exists():
-            print(f"  WARNING: segment '{seg_name}' listed in YAML but roster.tsv not found",
-                  file=sys.stderr)
-            continue
-        segments.append((seg_dir, roster))
-else:
-    for roster_path in sorted(BASE.glob("*/roster.tsv")):
-        segment_dir = roster_path.parent
-        rel = str(segment_dir.relative_to(BASE))
-        if rel in SKIP:
-            continue
-        segments.append((segment_dir, roster_path))
+segments = spar_lib.discover_segments(BASE, YAML_SEGMENTS, SKIP, require="roster")
 
 
 # ── Per-segment checks ────────────────────────────────────────────────────
 
-class Checker:
-    """Accumulates PASS/WARN/FAIL results for a segment."""
-
-    def __init__(self, label: str):
-        self.label = label
-        self.results: list[tuple[str, str]] = []  # (level, message)
-
-    def _add(self, level: str, msg: str):
-        self.results.append((level, msg))
-
-    def passed(self, msg: str):
-        self._add("PASS", msg)
-
-    def warn(self, msg: str):
-        self._add("WARN", msg)
-
-    def fail(self, msg: str):
-        self._add("FAIL", msg)
-
-    def print_section(self):
-        print(f"\n── {self.label} ──")
-        for level, msg in self.results:
-            print(f"  [{level}] {msg}")
+Checker = spar_lib.Checker
 
 
 # Cross-segment accumulators
@@ -232,7 +137,7 @@ for segment_dir, roster_path in segments:
 
     n_cols = len(headers)
 
-    # Parse data via csv.DictReader (same approach as update-campaign-progress.py)
+    # Parse data via csv.DictReader (same approach as update-campaign.py)
     reader = csv.DictReader(
         io.TextIOWrapper(io.BytesIO(raw), encoding="utf-8"), delimiter="\t"
     )
