@@ -37,6 +37,9 @@ from pathlib import Path
 
 import spar_lib
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+_APPROACH_SCHEMA_PATH = SCRIPT_DIR.parent / "approach-schema.yaml"
+
 
 def _send_ses(region: str, from_addr: str, to_addr: str, bcc_addr: str,
               subject: str, body: str) -> str:
@@ -436,49 +439,6 @@ def main():
         return total, sent, replied, to_map, unsent_subjects
 
 
-    def build_approach_contact_index(approach_dir: Path) -> dict[str, tuple[str, str, bool]]:
-        """Return {normalised_contact: (raw_name, raw_org, is_sent)} from approach YAML files.
-
-        Extracts contact name/org from the roster_note or filename slug.
-        """
-        import yaml as _yaml
-        index: dict[str, tuple[str, str, bool]] = {}
-        if not approach_dir.is_dir():
-            return index
-        # Build a profile heading index for name/org lookup
-        profile_dir = approach_dir.parent / "profiles"
-        slug_to_nameorg: dict[str, tuple[str, str]] = {}
-        if profile_dir.is_dir():
-            for pf in profile_dir.glob("profile-*.md"):
-                content = pf.read_text(encoding="utf-8", errors="replace")
-                heading = re.search(r"^#\s+(?:Profile:\s*)?(.+?),\s*(.+)$", content, re.MULTILINE)
-                if heading:
-                    slug = pf.stem.removeprefix("profile-")
-                    slug_to_nameorg[slug] = (heading.group(1).strip(), heading.group(2).strip())
-        for yf in approach_dir.glob("*.yaml"):
-            slug = yf.stem
-            name, org = slug_to_nameorg.get(slug, ("", ""))
-            if not name:
-                tokens = slug.split("-")
-                name = " ".join(t.title() for t in tokens[:2])
-                org = " ".join(t.title() for t in tokens[2:])
-            is_sent = False
-            try:
-                data = _yaml.safe_load(yf.read_text(encoding="utf-8", errors="replace"))
-                if isinstance(data, dict):
-                    for r in data.get("rounds", []):
-                        if r.get("type") == "final":
-                            for msg in r.get("messages", []):
-                                ad = msg.get("actioned_date")
-                                if not spar_lib.is_null(ad):
-                                    is_sent = True
-            except Exception:
-                pass
-            if name:
-                index[normalise_name(name)] = (name, org, is_sent)
-        return index
-
-
     # --- Discover segments ---
     segments = spar_lib.discover_segments(BASE, YAML_SEGMENTS, SKIP, require="roster")
     if YAML_SEGMENTS is not None:
@@ -606,6 +566,15 @@ def main():
     missing_approach_file: list[tuple[str, str, str]] = []   # no file at all
     missing_approach_sent: list[tuple[str, str, str]] = []   # file exists but not sent
 
+    # Schema validation errors: [(segment, filename, error_message)]
+    schema_errors: list[tuple[str, str, str]] = []
+    _approach_schema = None
+    if _APPROACH_SCHEMA_PATH.exists():
+        import yaml as _yaml_schema
+        _approach_schema = _yaml_schema.safe_load(
+            _APPROACH_SCHEMA_PATH.read_text(encoding="utf-8")
+        )
+
     # Cached roster counts, approach stats, and star3 rows for potential reprint after mailroom update
     segment_roster_data: list[tuple[str, int, int, int, int, int, int, int]] = []
     segment_approach_stats: list[ApproachStats] = []
@@ -667,6 +636,24 @@ def main():
             all_to_map.setdefault(addr, []).append((label, fname))
         for fname, subj in unsent_subjs:
             all_unsent_subjects.setdefault(subj, []).append((label, fname))
+
+        # Schema validation of approach files
+        if _approach_schema and approach_dir.is_dir():
+            import jsonschema as _jsonschema
+            import yaml as _yaml_v
+            for yf in sorted(approach_dir.glob("*.yaml")):
+                try:
+                    data = _yaml_v.safe_load(yf.read_text(encoding="utf-8", errors="replace"))
+                except Exception as e:
+                    schema_errors.append((label, yf.name, f"YAML parse error: {e}"))
+                    continue
+                if not isinstance(data, dict):
+                    schema_errors.append((label, yf.name, "file does not parse as a YAML mapping"))
+                    continue
+                try:
+                    _jsonschema.validate(data, _approach_schema)
+                except _jsonschema.ValidationError as e:
+                    schema_errors.append((label, yf.name, e.message))
 
         for r in valid_rows:
             contact = (r.get("contact_name") or "").strip()
@@ -815,6 +802,14 @@ def main():
         print()
         for label, contact, org in missing_approach_sent:
             print(f"- [{label}] {contact} \u2014 {org}")
+
+    # Schema validation errors
+    if schema_errors:
+        print()
+        print(f"## Schema validation errors \u2014 {len(schema_errors)} approach file(s)")
+        print()
+        for label, fname, msg in schema_errors:
+            print(f"- [{label}] {fname}: {msg}")
 
     # =============================================================================
     # Reply update via mailroom

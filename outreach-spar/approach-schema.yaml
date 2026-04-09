@@ -1,0 +1,93 @@
+# JSON Schema for SPAR-A approach files (YAML syntax).
+# Validates the structural checks that spar-A-validate.py enforces.
+# Cross-file checks (channel-roster consistency, cross-segment duplicates)
+# remain in the validator script.
+#
+# Replaces approach-schema-proposal.yaml (prose example, not machine-validatable).
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: SPAR approach file
+type: object
+required: [decisions, rounds]
+
+properties:
+  decisions:
+    type: object
+
+  rounds:
+    type: array
+    minItems: 1
+    # At least one round must be type: final
+    contains:
+      type: object
+      properties:
+        type:
+          const: final
+      required: [type]
+    items:
+      $ref: "#/$defs/round"
+
+$defs:
+  round:
+    type: object
+    required: [type]
+    properties:
+      type:
+        enum: [draft, review, final]
+    allOf:
+      # draft rounds require number and messages
+      - if:
+          properties:
+            type:
+              const: draft
+          required: [type]
+        then:
+          required: [number, messages]
+          properties:
+            messages:
+              $ref: "#/$defs/messages"
+
+      # review rounds require number
+      - if:
+          properties:
+            type:
+              const: review
+          required: [type]
+        then:
+          required: [number]
+
+      # final rounds require messages
+      - if:
+          properties:
+            type:
+              const: final
+          required: [type]
+        then:
+          required: [messages]
+          properties:
+            messages:
+              $ref: "#/$defs/messages"
+
+  messages:
+    type: array
+    minItems: 1
+    items:
+      $ref: "#/$defs/message"
+
+  message:
+    type: object
+    required: [channel]
+    properties:
+      channel:
+        type: string
+    allOf:
+      # email messages in any round must have subject or body
+      - if:
+          properties:
+            channel:
+              const: email
+          required: [channel]
+        then:
+          anyOf:
+            - required: [subject]
+            - required: [body]

@@ -83,9 +83,7 @@ fi
 mkdir -p "$PROMPTS"
 [[ -z "$USER_LOGS" ]] && mkdir -p "$LOGS"
 
-slugify() {
-    echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g; s/--*/-/g; s/^-//; s/-$//'
-}
+source "$SCRIPT_DIR/spar-lib.sh"
 
 profile_exists_for_name() {
     # Returns 0 if a profile exists for this contact name.
