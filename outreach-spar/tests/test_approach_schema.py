@@ -122,24 +122,24 @@ class TestRoundStructure:
         with pytest.raises(jsonschema.ValidationError, match="'number' is a required property"):
             jsonschema.validate(data, schema)
 
-    def test_draft_missing_messages(self, schema):
+    def test_draft_without_messages_valid(self, schema):
+        """Delta-note drafts may omit messages."""
         data = {
             "decisions": {},
             "rounds": [
-                {"type": "draft", "number": 1},
+                {"type": "draft", "number": 1, "notes": "delta note"},
                 {"type": "final", "messages": [{"channel": "email", "subject": "x"}]},
             ],
         }
-        with pytest.raises(jsonschema.ValidationError, match="'messages' is a required property"):
-            jsonschema.validate(data, schema)
+        jsonschema.validate(data, schema)
 
-    def test_final_missing_messages(self, schema):
+    def test_final_without_messages_valid(self, schema):
+        """Archived contacts may have finals without messages."""
         data = {
             "decisions": {},
-            "rounds": [{"type": "final"}],
+            "rounds": [{"type": "final", "note": "No draft produced"}],
         }
-        with pytest.raises(jsonschema.ValidationError, match="'messages' is a required property"):
-            jsonschema.validate(data, schema)
+        jsonschema.validate(data, schema)
 
 
 class TestMessageStructure:
