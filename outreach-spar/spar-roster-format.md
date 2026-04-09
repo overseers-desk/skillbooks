@@ -16,7 +16,7 @@ Every row must have a `contact_name`. A row without a named person is not a cont
 - `trdsql` correctly quotes fields containing `\r` on output and reads both quoted and bare forms. `q` does not quote such fields on output and then cannot parse its own output (row count increases).
 - Double round-trip through `trdsql` is byte-identical; `q` corrupts on the first pass.
 
-Standard invocation for reading: `trdsql -id "\t" -ih "SELECT ... FROM roster.tsv"`. For writing back: `trdsql -id "\t" -ih -od "\t" -oh "SELECT ... FROM roster.tsv" > roster-new.tsv`. For cell-level updates, use `CASE WHEN` expressions in the SELECT. For inserting `\r` in SQL strings, use `char(13)`. Tested 2026-03-26 on the Singapore activation `outreach-ready.tsv`.
+Standard invocation for reading: `trdsql -id "\t" -ih "SELECT ... FROM roster.tsv"`. For writing back: `trdsql -id "\t" -ih -od "\t" -oh "SELECT ... FROM roster.tsv" > /tmp/roster-new.tsv && mv /tmp/roster-new.tsv roster.tsv`. For cell-level updates, use `CASE WHEN` expressions in the SELECT. Do not use SQL DML statements (UPDATE, INSERT, DELETE) — trdsql imports file sources into a temporary in-memory database, so DML modifies the temp copy and exits 0 without touching the source file. The silent success is a trap; always use SELECT + redirect + mv instead. For inserting `\r` in SQL strings, use `char(13)`. Do not use Python's `csv` module — its writer re-quotes every field, producing a noisy diff where every line appears changed. Tested 2026-03-26 on the Singapore activation `outreach-ready.tsv`.
 
 ## Core columns
 
