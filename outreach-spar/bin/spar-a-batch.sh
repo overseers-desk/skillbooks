@@ -103,9 +103,7 @@ echo ""
 mkdir -p "$PROMPTS"
 [[ -z "$USER_LOGS" ]] && mkdir -p "$LOGS"
 
-slugify() {
-    echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g; s/--*/-/g; s/^-//; s/-$//'
-}
+source "$SCRIPT_DIR/spar-lib.sh"
 
 find_profile() {
     local profile_dir="$1" slug_name="$2" slug_org="$3"
