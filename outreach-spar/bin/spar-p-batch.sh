@@ -124,16 +124,23 @@ profile_exists_for_org_same_initial() {
     return 1
 }
 
-# Detect column layout from header (standard has 'segment' as col 1; Singapore has 'contact_name')
+# Detect column layout from header:
+#   "segment"      → standard layout with leading segment col
+#   "organisation" → segment-free layout (all standard per-segment rosters)
+#   "contact_name" → Singapore layout (one-off campaigns)
 HEADER=$(head -1 "$ROSTER" | tr -d '\r')
-HAS_SEGMENT_COL=$(echo "$HEADER" | awk -F'\t' '{print ($1=="segment") ? "yes" : "no"}')
+LAYOUT=$(echo "$HEADER" | awk -F'\t' '{
+    if ($1=="segment") print "segment"
+    else if ($1=="organisation") print "org"
+    else print "singapore"
+}')
 
 count=0
 skipped=0
 SOH=$(printf '\x01')
 
 while IFS="$SOH" read -r f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21; do
-    if [[ "$HAS_SEGMENT_COL" == "yes" ]]; then
+    if [[ "$LAYOUT" == "segment" ]]; then
         # Standard layout: segment org name role phone email postcode linkedin facebook
         #                  sweep_iter disc_via disc_src verified p_note star s_note date_invalid
         segment="$f1"; org="$f2"; name="$f3"; role="$f4"; phone="$f5"; email="$f6"
@@ -141,6 +148,14 @@ while IFS="$SOH" read -r f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 
         date_invalid="${f18%$'\r'}"
         [[ "$segment" == "segment" ]] && continue  # skip header
         [[ -n "$segment" ]] || continue             # skip blank rows
+    elif [[ "$LAYOUT" == "org" ]]; then
+        # Segment-free layout: org name role phone email postcode linkedin facebook
+        #                      sweep_iter disc_via disc_src verified p_note star response_likelihood s_note date_found_invalid
+        org="$f1"; name="$f2"; role="$f3"; phone="$f4"; email="$f5"
+        linkedin="$f7"; facebook="$f8"; p_note="$f13"; s_note="$f16"
+        date_invalid="${f17%$'\r'}"
+        [[ "$org" == "organisation" ]] && continue  # skip header
+        [[ -n "$org" ]] || continue                  # skip blank rows
     else
         # Singapore layout: name org role phone email linkedin facebook sweep disc_via disc_src verified date_invalid ...
         name="$f1"; org="$f2"; role="$f3"; phone="$f4"; email="$f5"
