@@ -35,14 +35,14 @@ $defs:
       type:
         enum: [draft, review, final]
     allOf:
-      # draft rounds require number and messages
+      # draft rounds require number; messages are optional (delta-note drafts may omit them)
       - if:
           properties:
             type:
               const: draft
           required: [type]
         then:
-          required: [number, messages]
+          required: [number]
           properties:
             messages:
               $ref: "#/$defs/messages"
@@ -56,14 +56,13 @@ $defs:
         then:
           required: [number]
 
-      # final rounds require messages
+      # final rounds: messages are validated if present, but blocked/no-draft contacts may omit them
       - if:
           properties:
             type:
               const: final
           required: [type]
         then:
-          required: [messages]
           properties:
             messages:
               $ref: "#/$defs/messages"
