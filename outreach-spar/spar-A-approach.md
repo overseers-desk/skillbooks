@@ -10,7 +10,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 ## 2. Inputs
 
 - **Profile document:** The full profile produced by SPAR-P for this contact.
-- **Roster entry:** The contact's row in the roster TSV, including `s_note`, `p_note`, `star_rating`, and `response_likelihood`. These two rating columns are the single source of truth — do not duplicate them in the approach file.
+- **Roster entry:** The contact's row in the roster TSV, including `s_note`, `p_note`, and `star_rating`. Do not duplicate `star_rating` in the approach file — read it from the roster but do not write it (P owns that field). `response_likelihood` is set by A and written to the roster at §4.8.
 - **Campaign plan:** Defines segments, approach sequencing per segment, and campaign-specific rules (language, collateral prerequisites, channel preferences).
 - **Segment file:** (`segment.yaml`) Specifies the approach type (FAM invitation, phone call, personal email, etc.) and any collateral prerequisites. Read this before drafting.
 - **Communication index:** `comms-index.md`, the running index of all prior A outputs. Read this before drafting to find cross-references, shared connections, and angles already used with related contacts.
@@ -136,20 +136,15 @@ The two steps must be sequential: role-play before fact-check, so source-file kn
 
 A1 reads both steps. If C2 identifies a misalignment or a factual error, A1 revises and the round repeats. Record all drafts and C2 responses in the approach file — the human needs to see how the message evolved.
 
-### 4.7 Assemble and validate the approach file
+### 4.7 Assemble the approach file
 
-Write the approach file as `{id}-{slug}.yaml` following the schema in `approach-schema-proposal.yaml`. Before presenting for human review, run `bin/validate-approach-yaml.py` against the file to check structural validity, then confirm:
-
-- All required fields are present.
-- `chosen_usps` is populated for each draft and final round.
-- `fact_provenance` covers every factual claim in the final draft.
-- `roster_note` is complete and ready to copy to `a_note`.
+Write the approach file as `{id}-{slug}.yaml` following the schema in `approach-schema-proposal.yaml`. Run the §7 quality checklist before presenting for human review.
 
 Read the campaign YAML for the sender address and BCC address. These are not stored in the approach file — they are resolved at send time.
 
 ### 4.8 Update the roster and communication index
 
-**Roster:** Copy `roster_note` from the approach file into the `a_note` column of the roster TSV.
+**Roster:** Copy `roster_note` from the approach file into the `a_note` column of the roster TSV. Also write `response_likelihood` (the percentage estimate from the approach file's contact header) to the roster's `response_likelihood` column. Use `trdsql` for both updates to avoid field-alignment errors.
 
 **Communication index:** Append one line to `comms-index.md`: contact ID, name, organisation, segment, angle used, key relationship hooks, channel selection.
 
@@ -174,11 +169,13 @@ The file ID uses a segment prefix and sequential number: `TOR-001-peter-myers.ya
 
 Before presenting an approach file for human review:
 
-1. **Presupposition test.** Does any sentence tell the recipient something they already know about themselves? If so, restructure.
-2. **Manufactured-connection test.** Is every claim of shared interest traceable to a specific profile data point? Check against the absent-themes section.
-3. **Concreteness.** Can the recipient answer the ask in one sentence?
-4. **Channel character limits.** Where the channel imposes a character limit (e.g. 300 characters for a LinkedIn connection note), verify compliance.
-5. **Band-level pattern check.** Read the openers of all messages in the band sequentially. If they sound like variations of the same template, revise.
+1. **YAML validation.** Run `bin/validate-approach-yaml.py` against the file. Fix any structural errors before proceeding.
+2. **Required fields.** All required fields are present: `chosen_usps` populated for each draft and final round, `fact_provenance` covers every factual claim in the final draft, `roster_note` is complete.
+3. **Presupposition test.** Does any sentence tell the recipient something they already know about themselves? If so, restructure.
+4. **Manufactured-connection test.** Is every claim of shared interest traceable to a specific profile data point? Check against the absent-themes section.
+5. **Concreteness.** Can the recipient answer the ask in one sentence?
+6. **Channel character limits.** Where the channel imposes a character limit (e.g. 300 characters for a LinkedIn connection note), verify compliance.
+7. **Band-level pattern check.** Read the openers of all messages in the band sequentially. If they sound like variations of the same template, revise.
 
 ## 8. Segment-specific approach types
 

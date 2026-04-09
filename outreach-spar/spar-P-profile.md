@@ -221,7 +221,7 @@ For each applicable angle, note:
 
 ### 4.9 Assign ratings
 
-**Star rating (0–5):** How interesting is this contact to the campaign?
+**Star rating (0–5):** How interesting is this contact to the campaign? Assigning this rating is P's responsibility. Any value already in the roster's `star_rating` column was written before profiling and must be ignored — it carries no authority. Derive the rating solely from what profiling reveals.
 
 | Rating | Criteria |
 |---|---|
@@ -236,31 +236,15 @@ If profiling reveals that the contact cannot deliver the campaign's intended out
 
 Note that network/connection value can support a 5-star rating when the connection paths are specific and high-value (e.g. bridges to a target community the campaign has no other path into), not merely when the person has a large network.
 
-**Response likelihood (percentage estimate):** How likely is this person to respond to an approach from the campaign?
-
-Factors that increase likelihood:
-- Reachable through a warm introduction (named mutual connection already in campaign's network)
-- Active on LinkedIn (regular posts, high connection count)
-- Role involves partnerships, community, or business development (professionally incentivised to engage with new initiatives)
-- Evidence of interest in the campaign's domain (even indirect)
-
-Factors that decrease likelihood:
-- No warm introduction path available (cold outreach only)
-- Inactive on LinkedIn or social media
-- Current priorities are far from the campaign's domain
-- Senior enough that unsolicited messages are filtered
-
-State the estimate as a whole-number percentage with a one-sentence rationale.
-
-**Write both values to the roster TSV — do not record them in the profile document or in any summary document.** The roster is the single source of truth for star_rating and response_likelihood. Response likelihood changes as outreach proceeds; recording it in markdown creates stale data and noisy git commits. Use `trdsql` to update the contact's row in-place:
+**Write `star_rating` to the roster TSV — do not record it in the profile document or in any summary document.** `response_likelihood` is set by the A phase, not P; do not write it here. Use `trdsql` to update the contact's row in-place:
 
 ```bash
 trdsql -id "\t" -ih -od "\t" -oh \
-  "SELECT segment, organisation, contact_name, role, phone, email, postcode, linkedin_url, facebook_url, sweep_iteration, discovered_via, discovery_source, verified, p_note, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'STAR' ELSE star_rating END, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'PCT' ELSE response_likelihood END, s_note, date_found_invalid FROM roster.tsv" \
+  "SELECT segment, organisation, contact_name, role, phone, email, postcode, linkedin_url, facebook_url, sweep_iteration, discovered_via, discovery_source, verified, p_note, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'STAR' ELSE star_rating END, response_likelihood, s_note, date_found_invalid FROM roster.tsv" \
   > roster-tmp.tsv && mv roster-tmp.tsv roster.tsv
 ```
 
-Replace NAME, ORG, STAR, and PCT with the actual values. The column order in that SELECT must match the roster exactly (see the roster header). If the roster lacks a `response_likelihood` column, add it after `star_rating` using `trdsql` with an `ALTER`-equivalent SELECT before running the update.
+Replace NAME, ORG, and STAR with the actual values. The column order in that SELECT must match the roster exactly (see the roster header).
 
 ### 4.10 Classify profile richness
 
