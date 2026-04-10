@@ -13,9 +13,11 @@ campaign-root/
   {segment}/                      # one directory per segment
     roster.tsv                    # SPAR roster (schema: spar-roster-format.md)
     segment.yaml                  # segment objective, USPs, first ask, conversion funnel (schema: segment-schema-proposal.yaml)
-    profiles/                     # SPAR-P profile documents
+    [profiles-summary.md]         # optional segment-level profile summary (lives here, NOT inside profiles/)
+    [comms-index.md]              # optional communication index (lives here, NOT inside approach/)
+    profiles/                     # SPAR-P profile documents ONLY — no summary or meta files
       profile-{slug-name}-{slug-org}.md
-    approach/                     # SPAR-A approach/comms files
+    approach/                     # SPAR-A approach/comms files ONLY — no index or meta files
       approach-{slug-name}-{slug-org}.md
 ```
 
@@ -28,6 +30,8 @@ campaign-root/
   campaign.yaml
   roster.tsv
   segment.yaml
+  [profiles-summary.md]
+  [comms-index.md]
   profiles/
     profile-{slug-name}-{slug-org}.md
   approach/
