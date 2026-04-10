@@ -68,6 +68,8 @@ Each SPAR phase has one note column. Only that phase writes to it. Subsequent ph
 | 16 | response_likelihood | percentage | P | A (band ordering) | Estimated probability the contact responds to outreach. |
 | 17 | a_note | short text | A only | R (human review), subsequent A bands | Angle used, key hook referenced, outcome. Lets R scan a band's results from the roster without opening every comms file. |
 | 18 | r_note | short text | R (human) only | Subsequent A bands, S&P₄+ | Per-contact observation from response review: what worked, what did not, new leads mentioned, channel adjustment. |
+| 19 | profile_stem | filename stem | spar-p-batch (at profile creation) | spar-state.tcl | Stem of the profile document for this contact — filename without path or `.md` extension (e.g. `profile-sarah-chen-bridal-expo`). Empty until P creates the profile. Written once at creation time; updated if the profile file is renamed. The state machine reads this field to locate the profile file: `profiles/{profile_stem}.md`. |
+| 20 | approach_stem | filename stem | spar-a-worker (at approach creation) | spar-state.tcl | Stem of the approach document for this contact — filename without path or `.yaml` extension (e.g. `sarah-chen-bridal-expo`). Empty until A creates the approach. Written once at creation time. The state machine reads this field to locate the approach file: `approach/{approach_stem}.yaml`. Must be empty when `profile_stem` is empty. |
 
 Columns 15–18 are empty during S and populated progressively as the contact moves through P, A, and R. Empty columns are expected; not every contact reaches every phase.
 
@@ -104,14 +106,19 @@ These assertions apply to the core columns. Campaign-specific checks are defined
 6. No contact marked `verified=yes` has a `p_note` or `date_found_invalid` indicating they left the role.
 7. Every row with a `star_rating` also has a `response_likelihood` (both are P outputs; one should not exist without the other).
 8. Every row with `star_rating = 0` has a non-empty `date_found_invalid`.
+9. Every row with a non-empty `profile_stem` has a corresponding `profiles/{profile_stem}.md` file in the segment directory.
+10. Every row with a non-empty `approach_stem` has a corresponding `approach/{approach_stem}.yaml` file in the segment directory.
+11. `approach_stem` must be empty whenever `profile_stem` is empty.
+12. The roster file must contain both `profile_stem` and `approach_stem` column headers. A roster lacking either column is rejected by the state machine (`spar-state.tcl`) at load time with a schema error. This is a hard failure, not a warning.
 
 ## Relationship to other documents
 
 This document defines the roster schema. The operational procedures for populating it are:
 
 - **SPAR-S** (`spar-S-search.md`) — populates columns 1–13
-- **SPAR-P** (`spar-P-profile.md`) — populates columns 14–16, corrects columns 2–7 and 11–12
-- **SPAR-A** (`spar-A-approach.md`) — populates column 17
+- **SPAR-P** (`spar-P-profile.md`) — populates columns 14–16, corrects columns 2–7 and 11–12; writes `profile_stem` (column 19) at profile creation
+- **SPAR-A** (`spar-A-approach.md`) — populates column 17; writes `approach_stem` (column 20) at approach creation
 - **R** (human, no procedure document) — populates column 18
+- **spar-state.tcl** — reads `profile_stem` and `approach_stem` to classify contact state; never writes to the roster
 
 SPAR-S §4 currently contains a roster format definition that predates this document. When SPAR-S is next revised, §4 should reference this document rather than defining the format inline.
