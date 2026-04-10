@@ -563,25 +563,26 @@ proc draw_legend {c} {
 ttk::labelframe ${cpanel}.progress -text "Progress"
 pack ${cpanel}.progress -fill both -expand 1 -padx 8 -pady {2 2}
 
-# Treeview column definitions: id, heading, width (pixels), anchor
+# Treeview column definitions: id, heading, anchor
 # Each data column combines count + pct into one cell ("123 45%")
+# Widths are computed from content after population, not hardcoded.
 set ptree_cols {
-    valid    "Valid"      52  e
-    profiled "Profile"   68  e
-    star3    "3+\u2605"  68  e
-    astar    "A/3+\u2605" 68  e
-    email    "Email"     68  e
-    aeml     "A/Eml"     68  e
-    linkedin "LinkedIn"  68  e
-    facebook "Facebook"  68  e
-    phone    "Only \u260e" 68 e
-    sent     "\u2709 Sent" 68 e
-    repl     "\u2709 Repl" 68 e
+    valid    "Valid"       e
+    profiled "Profile"    e
+    star3    "3+\u2605"   e
+    astar    "A/3+\u2605" e
+    email    "Email"      e
+    aeml     "A/Eml"      e
+    linkedin "LinkedIn"   e
+    facebook "Facebook"   e
+    phone    "Only \u260e" e
+    sent     "\u2709 Sent" e
+    repl     "\u2709 Repl" e
 }
 
 # Extract just column IDs for -columns
 set ptree_col_ids {}
-foreach {id heading width anchor} $ptree_cols { lappend ptree_col_ids $id }
+foreach {id heading anchor} $ptree_cols { lappend ptree_col_ids $id }
 
 set ptree ${cpanel}.progress.tree
 ttk::treeview $ptree \
@@ -591,16 +592,19 @@ ttk::treeview $ptree \
     -yscrollcommand [list ${cpanel}.progress.vsb set]
 
 ttk::scrollbar ${cpanel}.progress.vsb -orient vertical -command [list $ptree yview]
-pack ${cpanel}.progress.vsb -side right -fill y -pady {2 2}
-pack $ptree -side left -fill both -expand 1 -padx {2 0} -pady {2 2}
 
-# Tree column (#0): segment name with ✓/☐ prefix
-$ptree column #0 -width 195 -stretch 0 -anchor w
+grid $ptree                 -in ${cpanel}.progress -row 0 -column 0 -sticky nsew -padx {2 0} -pady {2 2}
+grid ${cpanel}.progress.vsb -in ${cpanel}.progress -row 0 -column 1 -sticky ns   -pady {2 2}
+grid rowconfigure    ${cpanel}.progress 0 -weight 1
+grid columnconfigure ${cpanel}.progress 0 -weight 1
 
-# Data columns
-foreach {id heading width anchor} $ptree_cols {
+# Tree column (#0): segment name — stretches to fill extra window space
+$ptree column #0 -stretch 1 -anchor w -minwidth 120
+
+# Data columns: fixed width (computed from content), never stretch
+foreach {id heading anchor} $ptree_cols {
     $ptree heading $id -text $heading -anchor $anchor
-    $ptree column  $id -width $width  -stretch 0 -anchor $anchor
+    $ptree column  $id -stretch 0 -anchor $anchor -minwidth 10
 }
 
 # Tags: muted for skip segments, totals row styling
@@ -655,13 +659,12 @@ proc populate_progress_tree {} {
         # Build values list for treeview columns (formatted cells)
         set values {}
         set ci 0
-        foreach {id heading width anchor} $ptree_cols {
+        foreach {id heading anchor} $ptree_cols {
             set count [lindex $counts $ci]
             set pid [dict get $denom_parent $id]
             if {$pid eq ""} {
                 lappend values $count
             } else {
-                # Find parent col index
                 set pidx [lsearch $ptree_col_ids $pid]
                 set denom [lindex $counts $pidx]
                 lappend values [fmt_cell $count $denom]
@@ -675,7 +678,6 @@ proc populate_progress_tree {} {
 
         if {$is_campaign} {
             set seg_checked($seg_name) 1
-            # Store raw counts for totals recalc
             set ci 0
             foreach id $ptree_col_ids {
                 dict set seg_counts $seg_name $id [lindex $counts $ci]
@@ -689,6 +691,39 @@ proc populate_progress_tree {} {
         -values [lrepeat [llength $ptree_col_ids] ""] -tags totals
 
     recalc_totals
+    after idle autosize_progress_tree
+}
+
+# autosize_progress_tree -- measure content and set column widths.
+# Called after idle so row geometry is finalised.
+proc autosize_progress_tree {} {
+    global ptree ptree_col_ids ptree_cols
+
+    set font TkDefaultFont
+    set pad 12   ;# horizontal cell padding (pixels)
+
+    # Column #0: measure heading + all row texts
+    set max0 [font measure $font "Segment"]
+    foreach item [$ptree children {}] {
+        set txt [$ptree item $item -text]
+        set w [font measure $font $txt]
+        if {$w > $max0} { set max0 $w }
+    }
+    $ptree column #0 -minwidth [expr {$max0 + $pad}]
+
+    # Data columns: measure heading + all cell values
+    set ci 0
+    foreach {id heading anchor} $ptree_cols {
+        set maxw [font measure $font $heading]
+        foreach item [$ptree children {}] {
+            set val [lindex [$ptree item $item -values] $ci]
+            set w [font measure $font $val]
+            if {$w > $maxw} { set maxw $w }
+        }
+        set colw [expr {$maxw + $pad}]
+        $ptree column $id -width $colw -minwidth $colw
+        incr ci
+    }
 }
 
 proc recalc_totals {} {
@@ -707,7 +742,7 @@ proc recalc_totals {} {
 
     # Format totals values
     set values {}
-    foreach {id heading width anchor} $ptree_cols {
+    foreach {id heading anchor} $ptree_cols {
         set count [dict get $sums $id]
         set pid [dict get $denom_parent $id]
         if {$pid eq ""} {
