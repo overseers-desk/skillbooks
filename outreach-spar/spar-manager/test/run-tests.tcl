@@ -673,6 +673,507 @@ set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result has_email] 0 "email without @ → has_email=0"
 
 # ════════════════════════════════════════════════════════════════════════
+# 9. detect_duplicates
+# ════════════════════════════════════════════════════════════════════════
+section "9. detect_duplicates"
+
+# 9a. duplicate_email: same email in two contacts from different segments → flagged
+set seg1 [make_temp_segment]
+set seg2 [make_temp_segment]
+
+write_roster_tsv $seg1 $::std_headers [list \
+    [make_base_row {contact_name "Alice One" email "shared@example.com" profile_stem "" approach_stem ""}] \
+]
+write_roster_tsv $seg2 $::std_headers [list \
+    [make_base_row {contact_name "Alice Two" email "shared@example.com" profile_stem "" approach_stem ""}] \
+]
+
+set c1 [spar::classify_segment $seg1]
+set c2 [spar::classify_segment $seg2]
+set all_contacts [concat $c1 $c2]
+set dups [spar::detect_duplicates $all_contacts]
+assert_eq [expr {[llength [dict get $dups duplicate_email]] > 0}] 1 \
+    "duplicate_email: same email in different segments → flagged"
+
+# 9b. duplicate_email: same email in two contacts from the SAME segment → not flagged
+set seg3 [make_temp_segment]
+write_roster_tsv $seg3 $::std_headers [list \
+    [make_base_row {contact_name "Bob One" email "bob@example.com" profile_stem "" approach_stem ""}] \
+    [make_base_row {contact_name "Bob Two" email "bob@example.com" profile_stem "" approach_stem ""}] \
+]
+set c3 [spar::classify_segment $seg3]
+set dups3 [spar::detect_duplicates $c3]
+assert_eq [llength [dict get $dups3 duplicate_email]] 0 \
+    "duplicate_email: same email within one segment → not flagged"
+
+# 9c. duplicate_email: one contact per email → not flagged
+set seg4 [make_temp_segment]
+set seg5 [make_temp_segment]
+write_roster_tsv $seg4 $::std_headers [list \
+    [make_base_row {contact_name "Carol" email "carol@example.com" profile_stem "" approach_stem ""}] \
+]
+write_roster_tsv $seg5 $::std_headers [list \
+    [make_base_row {contact_name "Diana" email "diana@example.com" profile_stem "" approach_stem ""}] \
+]
+set c4 [spar::classify_segment $seg4]
+set c5 [spar::classify_segment $seg5]
+set dups45 [spar::detect_duplicates [concat $c4 $c5]]
+assert_eq [llength [dict get $dups45 duplicate_email]] 0 \
+    "duplicate_email: unique emails → not flagged"
+
+# 9d. duplicate_name: same normalised name across two different segments → flagged
+set seg6 [make_temp_segment]
+set seg7 [make_temp_segment]
+write_roster_tsv $seg6 $::std_headers [list \
+    [make_base_row {contact_name "John Smith" email "john1@example.com" profile_stem "" approach_stem ""}] \
+]
+write_roster_tsv $seg7 $::std_headers [list \
+    [make_base_row {contact_name "John Smith" email "john2@example.com" profile_stem "" approach_stem ""}] \
+]
+set c6 [spar::classify_segment $seg6]
+set c7 [spar::classify_segment $seg7]
+set dups67 [spar::detect_duplicates [concat $c6 $c7]]
+assert_eq [expr {[llength [dict get $dups67 duplicate_name]] > 0}] 1 \
+    "duplicate_name: same name in different segments → flagged"
+
+# 9e. duplicate_name: same name within one segment → not flagged
+set seg8 [make_temp_segment]
+write_roster_tsv $seg8 $::std_headers [list \
+    [make_base_row {contact_name "Jane Doe" email "jane1@example.com" profile_stem "" approach_stem ""}] \
+    [make_base_row {contact_name "Jane Doe" email "jane2@example.com" profile_stem "" approach_stem ""}] \
+]
+set c8 [spar::classify_segment $seg8]
+set dups8 [spar::detect_duplicates $c8]
+assert_eq [llength [dict get $dups8 duplicate_name]] 0 \
+    "duplicate_name: same name within one segment → not flagged"
+
+# 9f. duplicate_to: same To: address in final-round messages of two approach files → flagged
+set seg9 [make_temp_segment]
+set seg10 [make_temp_segment]
+
+write_profile $seg9 "dup-to-a"
+write_approach_yaml $seg9 "dup-to-a" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: recipient@example.com
+    subject: Hello A
+    body: Body A
+    actioned_date: 2026-04-01
+    replied_date: null
+}
+write_roster_tsv $seg9 $::std_headers [list \
+    [make_base_row {contact_name "To Dup A" email "a@example.com" profile_stem "dup-to-a" approach_stem "dup-to-a"}] \
+]
+
+write_profile $seg10 "dup-to-b"
+write_approach_yaml $seg10 "dup-to-b" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: recipient@example.com
+    subject: Hello B
+    body: Body B
+    actioned_date: 2026-04-02
+    replied_date: null
+}
+write_roster_tsv $seg10 $::std_headers [list \
+    [make_base_row {contact_name "To Dup B" email "b@example.com" profile_stem "dup-to-b" approach_stem "dup-to-b"}] \
+]
+
+set c9 [spar::classify_segment $seg9]
+set c10 [spar::classify_segment $seg10]
+set dups910 [spar::detect_duplicates [concat $c9 $c10]]
+assert_eq [expr {[llength [dict get $dups910 duplicate_to]] > 0}] 1 \
+    "duplicate_to: same To: address in two approach files → flagged"
+
+# 9g. duplicate_to: unique To: addresses → not flagged
+set seg11 [make_temp_segment]
+set seg12 [make_temp_segment]
+
+write_profile $seg11 "uniq-to-a"
+write_approach_yaml $seg11 "uniq-to-a" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: unique-a@example.com
+    subject: Hello A
+    body: Body A
+    actioned_date: 2026-04-01
+    replied_date: null
+}
+write_roster_tsv $seg11 $::std_headers [list \
+    [make_base_row {contact_name "Uniq A" email "a@example.com" profile_stem "uniq-to-a" approach_stem "uniq-to-a"}] \
+]
+
+write_profile $seg12 "uniq-to-b"
+write_approach_yaml $seg12 "uniq-to-b" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: unique-b@example.com
+    subject: Hello B
+    body: Body B
+    actioned_date: 2026-04-01
+    replied_date: null
+}
+write_roster_tsv $seg12 $::std_headers [list \
+    [make_base_row {contact_name "Uniq B" email "b@example.com" profile_stem "uniq-to-b" approach_stem "uniq-to-b"}] \
+]
+
+set c11 [spar::classify_segment $seg11]
+set c12 [spar::classify_segment $seg12]
+set dups1112 [spar::detect_duplicates [concat $c11 $c12]]
+assert_eq [llength [dict get $dups1112 duplicate_to]] 0 \
+    "duplicate_to: unique addresses → not flagged"
+
+# 9h. identical_subject: same subject in two unsent approach files → flagged
+set seg13 [make_temp_segment]
+set seg14 [make_temp_segment]
+
+write_profile $seg13 "subj-dup-a"
+write_approach_yaml $seg13 "subj-dup-a" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: x@example.com
+    subject: Shared Subject Line
+    body: Body A
+    actioned_date: null
+    replied_date: null
+}
+write_roster_tsv $seg13 $::std_headers [list \
+    [make_base_row {contact_name "Subj A" email "sa@example.com" profile_stem "subj-dup-a" approach_stem "subj-dup-a"}] \
+]
+
+write_profile $seg14 "subj-dup-b"
+write_approach_yaml $seg14 "subj-dup-b" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: y@example.com
+    subject: Shared Subject Line
+    body: Body B
+    actioned_date: null
+    replied_date: null
+}
+write_roster_tsv $seg14 $::std_headers [list \
+    [make_base_row {contact_name "Subj B" email "sb@example.com" profile_stem "subj-dup-b" approach_stem "subj-dup-b"}] \
+]
+
+set c13 [spar::classify_segment $seg13]
+set c14 [spar::classify_segment $seg14]
+set dups1314 [spar::detect_duplicates [concat $c13 $c14]]
+assert_eq [expr {[llength [dict get $dups1314 identical_subject]] > 0}] 1 \
+    "identical_subject: same subject in two unsent approaches → flagged"
+
+# 9i. identical_subject: sent messages with same subject → not flagged (unsent_subjects only collects unsent)
+set seg15 [make_temp_segment]
+set seg16 [make_temp_segment]
+
+write_profile $seg15 "subj-sent-a"
+write_approach_yaml $seg15 "subj-sent-a" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: x@example.com
+    subject: Already Sent Subject
+    body: Body A
+    actioned_date: 2026-04-01
+    replied_date: null
+}
+write_roster_tsv $seg15 $::std_headers [list \
+    [make_base_row {contact_name "Sent Subj A" email "ssa@example.com" profile_stem "subj-sent-a" approach_stem "subj-sent-a"}] \
+]
+
+write_profile $seg16 "subj-sent-b"
+write_approach_yaml $seg16 "subj-sent-b" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: y@example.com
+    subject: Already Sent Subject
+    body: Body B
+    actioned_date: 2026-04-02
+    replied_date: null
+}
+write_roster_tsv $seg16 $::std_headers [list \
+    [make_base_row {contact_name "Sent Subj B" email "ssb@example.com" profile_stem "subj-sent-b" approach_stem "subj-sent-b"}] \
+]
+
+set c15 [spar::classify_segment $seg15]
+set c16 [spar::classify_segment $seg16]
+set dups1516 [spar::detect_duplicates [concat $c15 $c16]]
+assert_eq [llength [dict get $dups1516 identical_subject]] 0 \
+    "identical_subject: sent messages with same subject → not flagged"
+
+# ════════════════════════════════════════════════════════════════════════
+# 10. T8 transition eligibility
+# ════════════════════════════════════════════════════════════════════════
+section "10. T8 transition eligibility"
+
+# 10a. T8: linkedin_sent=1, email_sent=0 → appears in T8 list
+set seg_t8 [make_temp_segment]
+write_profile $seg_t8 "t8-linkedin-only"
+write_approach_yaml $seg_t8 "t8-linkedin-only" [approach_yaml_final_multi_channel]
+write_roster_tsv $seg_t8 $::std_headers [list \
+    [make_base_row {contact_name "LI Sent" email "li@example.com" \
+        linkedin_url "https://linkedin.com/in/li" \
+        profile_stem "t8-linkedin-only" approach_stem "t8-linkedin-only" star_rating "4"}] \
+]
+
+set ct8 [spar::classify_segment $seg_t8]
+set t8_results [spar::transition_eligible $ct8 "T8"]
+set t8_names [lmap c $t8_results {dict get $c contact_name}]
+assert_eq [expr {"LI Sent" in $t8_names}] 1 \
+    "T8: linkedin_sent=1, email_sent=0 → eligible"
+# Verify task_state is pending
+set t8_entry [lindex $t8_results 0]
+assert_eq [dict get $t8_entry task_state] "pending" \
+    "T8: task_state is pending"
+
+# 10b. T8: email_sent=1 → does NOT appear in T8 list
+set seg_t8b [make_temp_segment]
+write_profile $seg_t8b "t8-both-sent"
+write_approach_yaml $seg_t8b "t8-both-sent" {decisions:
+  channel: linkedin_then_email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: linkedin
+    body: Hi, I would like to connect
+    actioned_date: 2026-04-01
+    replied_date: null
+  - channel: email
+    to: test@example.com
+    subject: Following up
+    body: Hello there
+    actioned_date: 2026-04-03
+    replied_date: null
+}
+write_roster_tsv $seg_t8b $::std_headers [list \
+    [make_base_row {contact_name "Both Sent" email "both@example.com" \
+        linkedin_url "https://linkedin.com/in/both" \
+        profile_stem "t8-both-sent" approach_stem "t8-both-sent" star_rating "4"}] \
+]
+
+set ct8b [spar::classify_segment $seg_t8b]
+set t8b_results [spar::transition_eligible $ct8b "T8"]
+set t8b_names [lmap c $t8b_results {dict get $c contact_name}]
+assert_eq [expr {"Both Sent" in $t8b_names}] 0 \
+    "T8: email_sent=1 → not eligible for T8"
+
+# ════════════════════════════════════════════════════════════════════════
+# 11. validate_campaign
+# ════════════════════════════════════════════════════════════════════════
+section "11. validate_campaign"
+
+proc issues_with_code {issues code} {
+    set result {}
+    foreach issue $issues { if {[dict get $issue code] eq $code} { lappend result $issue } }
+    return $result
+}
+
+# 11a. placeholder_to triggered: approach file with to: PLACEHOLDER → one issue
+set seg_v1 [make_temp_segment]
+write_profile $seg_v1 "v-placeholder"
+write_approach_yaml $seg_v1 "v-placeholder" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: PLACEHOLDER
+    subject: Test subject
+    body: Hello there
+    actioned_date: null
+    replied_date: null
+}
+write_roster_tsv $seg_v1 $::std_headers [list \
+    [make_base_row {contact_name "Placeholder Pete" email "pete@example.com" \
+        profile_stem "v-placeholder" approach_stem "v-placeholder"}] \
+]
+set cv1 [spar::classify_segment $seg_v1]
+set issues_v1 [spar::validate_campaign $cv1]
+set pt_issues [issues_with_code $issues_v1 placeholder_to]
+assert_eq [llength $pt_issues] 1 "placeholder_to: PLACEHOLDER in to: → one issue"
+
+# 11b. placeholder_to not triggered: valid email in to:
+set seg_v2 [make_temp_segment]
+write_profile $seg_v2 "v-valid-to"
+write_approach_yaml $seg_v2 "v-valid-to" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: foo@bar.com
+    subject: Test subject
+    body: Hello there
+    actioned_date: null
+    replied_date: null
+}
+write_roster_tsv $seg_v2 $::std_headers [list \
+    [make_base_row {contact_name "Valid Vic" email "foo@bar.com" \
+        profile_stem "v-valid-to" approach_stem "v-valid-to"}] \
+]
+set cv2 [spar::classify_segment $seg_v2]
+set issues_v2 [spar::validate_campaign $cv2]
+set pt_issues2 [issues_with_code $issues_v2 placeholder_to]
+assert_eq [llength $pt_issues2] 0 "placeholder_to: valid email in to: → zero issues"
+
+# 11c. email_desync triggered: roster email differs from approach to:
+set seg_v3 [make_temp_segment]
+write_profile $seg_v3 "v-desync"
+write_approach_yaml $seg_v3 "v-desync" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: alice@old.com
+    subject: Test subject
+    body: Hello there
+    actioned_date: null
+    replied_date: null
+}
+write_roster_tsv $seg_v3 $::std_headers [list \
+    [make_base_row {contact_name "Desync Alice" email "alice@new.com" \
+        profile_stem "v-desync" approach_stem "v-desync"}] \
+]
+set cv3 [spar::classify_segment $seg_v3]
+set issues_v3 [spar::validate_campaign $cv3]
+set ed_issues [issues_with_code $issues_v3 email_desync]
+assert_eq [llength $ed_issues] 1 "email_desync: roster email differs from approach to: → one issue"
+
+# 11d. email_desync not triggered: roster email matches approach to: (case-insensitive)
+set seg_v4 [make_temp_segment]
+write_profile $seg_v4 "v-sync"
+write_approach_yaml $seg_v4 "v-sync" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: Bob@Example.COM
+    subject: Test subject
+    body: Hello there
+    actioned_date: null
+    replied_date: null
+}
+write_roster_tsv $seg_v4 $::std_headers [list \
+    [make_base_row {contact_name "Sync Bob" email "bob@example.com" \
+        profile_stem "v-sync" approach_stem "v-sync"}] \
+]
+set cv4 [spar::classify_segment $seg_v4]
+set issues_v4 [spar::validate_campaign $cv4]
+set ed_issues2 [issues_with_code $issues_v4 email_desync]
+assert_eq [llength $ed_issues2] 0 "email_desync: matching emails (case-insensitive) → zero issues"
+
+# 11e. merged_contact_name triggered: contact_name contains ' & '
+set seg_v5 [make_temp_segment]
+write_roster_tsv $seg_v5 $::std_headers [list \
+    [make_base_row {contact_name "Anthony O'Flynn & Nina Hansen" \
+        profile_stem "" approach_stem ""}] \
+]
+set cv5 [spar::classify_segment $seg_v5]
+set issues_v5 [spar::validate_campaign $cv5]
+set mc_issues [issues_with_code $issues_v5 merged_contact_name]
+assert_eq [llength $mc_issues] 1 "merged_contact_name: name with ' & ' → one issue"
+
+# 11f. merged_contact_name not triggered: normal contact_name
+set seg_v6 [make_temp_segment]
+write_roster_tsv $seg_v6 $::std_headers [list \
+    [make_base_row {contact_name "Normal Name" \
+        profile_stem "" approach_stem ""}] \
+]
+set cv6 [spar::classify_segment $seg_v6]
+set issues_v6 [spar::validate_campaign $cv6]
+set mc_issues2 [issues_with_code $issues_v6 merged_contact_name]
+assert_eq [llength $mc_issues2] 0 "merged_contact_name: normal name → zero issues"
+
+# 11g. orphan_profile triggered: .md file in profiles/ not referenced by roster
+set seg_v7 [make_temp_segment]
+write_profile $seg_v7 "referenced-profile"
+write_profile $seg_v7 "orphan-profile"
+write_roster_tsv $seg_v7 $::std_headers [list \
+    [make_base_row {contact_name "Ref Contact" \
+        profile_stem "referenced-profile" approach_stem ""}] \
+]
+set cv7 [spar::classify_segment $seg_v7]
+set issues_v7 [spar::validate_campaign $cv7]
+set op_issues [issues_with_code $issues_v7 orphan_profile]
+assert_eq [llength $op_issues] 1 "orphan_profile: unreferenced .md file → one issue"
+
+# 11h. orphan_profile not triggered: all .md files referenced
+set seg_v8 [make_temp_segment]
+write_profile $seg_v8 "used-profile"
+write_roster_tsv $seg_v8 $::std_headers [list \
+    [make_base_row {contact_name "Used Contact" \
+        profile_stem "used-profile" approach_stem ""}] \
+]
+set cv8 [spar::classify_segment $seg_v8]
+set issues_v8 [spar::validate_campaign $cv8]
+set op_issues2 [issues_with_code $issues_v8 orphan_profile]
+assert_eq [llength $op_issues2] 0 "orphan_profile: all .md files referenced → zero issues"
+
+# 11i. orphan_approach triggered: .yaml file in approach/ not referenced by roster
+set seg_v9 [make_temp_segment]
+write_profile $seg_v9 "ref-approach-contact"
+write_approach_yaml $seg_v9 "ref-approach-contact" [approach_yaml_final_unsent]
+write_approach_yaml $seg_v9 "orphan-approach" [approach_yaml_final_unsent]
+write_roster_tsv $seg_v9 $::std_headers [list \
+    [make_base_row {contact_name "Ref Approach" \
+        profile_stem "ref-approach-contact" approach_stem "ref-approach-contact"}] \
+]
+set cv9 [spar::classify_segment $seg_v9]
+set issues_v9 [spar::validate_campaign $cv9]
+set oa_issues [issues_with_code $issues_v9 orphan_approach]
+assert_eq [llength $oa_issues] 1 "orphan_approach: unreferenced .yaml file → one issue"
+
+# 11j. orphan_approach not triggered: all .yaml files referenced
+set seg_v10 [make_temp_segment]
+write_profile $seg_v10 "used-approach-contact"
+write_approach_yaml $seg_v10 "used-approach-contact" [approach_yaml_final_unsent]
+write_roster_tsv $seg_v10 $::std_headers [list \
+    [make_base_row {contact_name "Used Approach" \
+        profile_stem "used-approach-contact" approach_stem "used-approach-contact"}] \
+]
+set cv10 [spar::classify_segment $seg_v10]
+set issues_v10 [spar::validate_campaign $cv10]
+set oa_issues2 [issues_with_code $issues_v10 orphan_approach]
+assert_eq [llength $oa_issues2] 0 "orphan_approach: all .yaml files referenced → zero issues"
+
+# ════════════════════════════════════════════════════════════════════════
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
 cleanup_temps

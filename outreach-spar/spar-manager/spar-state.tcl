@@ -7,7 +7,8 @@ source [file join [file dirname [file normalize [info script]]] spar-lib.tcl]
 
 namespace eval spar {
     namespace export classify_contact classify_segment \
-        transition_eligible detect_duplicates progress_counts
+        transition_eligible detect_duplicates progress_counts \
+        validate_campaign
 }
 
 # parse_star — extract integer star rating from a roster field.
@@ -724,6 +725,140 @@ proc spar::progress_counts {classified_contacts} {
         has_phone_only $has_phone_only \
         email_sent $n_email_sent \
         email_replied $n_email_replied]
+}
+
+# validate_campaign -- run validation checks across all classified contacts.
+#
+# all_classified_contacts  flat list from classify_segment across one or more segments
+#                          (each dict has _segment_dir set)
+#
+# Returns a list of issue dicts, each with keys:
+#   severity, code, segment, contact_name, message
+#
+proc spar::validate_campaign {all_classified_contacts} {
+    set issues {}
+
+    # Collect per-segment data for orphan checks
+    array set seg_profile_stems {}   ;# segment_dir → list of profile_stem values
+    array set seg_approach_stems {}  ;# segment_dir → list of approach_stem values
+    array set seg_dirs_seen {}       ;# segment_dir → 1
+
+    set email_re {^[^@\s]+@[^@\s]+\.[^@\s]+$}
+
+    foreach contact $all_classified_contacts {
+        set state [spar::dict_get_default $contact state ""]
+        set segment_dir [spar::dict_get_default $contact _segment_dir ""]
+        set segment [file tail $segment_dir]
+        set contact_name [spar::dict_get_default $contact contact_name ""]
+        set roster_email [string trim [spar::dict_get_default $contact email ""]]
+        set profile_stem [string trim [spar::dict_get_default $contact profile_stem ""]]
+        set approach_stem [string trim [spar::dict_get_default $contact approach_stem ""]]
+
+        # Track segment directories and stems for orphan checks
+        set seg_dirs_seen($segment_dir) 1
+        if {$profile_stem ne ""} {
+            lappend seg_profile_stems($segment_dir) $profile_stem
+        }
+        if {$approach_stem ne ""} {
+            lappend seg_approach_stems($segment_dir) $approach_stem
+        }
+
+        # Skip INVALID contacts for checks 1, 2, 3
+        if {$state eq "INVALID"} continue
+
+        # Check 3: merged_contact_name
+        if {[string first " & " $contact_name] >= 0} {
+            lappend issues [dict create \
+                severity warning \
+                code merged_contact_name \
+                segment $segment \
+                contact_name $contact_name \
+                message "Contact name contains ' & ' — may be two people entered as one row"]
+        }
+
+        # Checks 1 and 2: read approach file for to_addresses
+        set approach_path [spar::dict_get_default $contact approach_path ""]
+        if {$approach_path eq "" || ![file exists $approach_path]} continue
+
+        set approach_data [spar::read_approach_yaml $approach_path]
+        if {$approach_data eq ""} continue
+
+        set fr [spar::analyse_final_round $approach_data]
+        set to_addresses [dict get $fr to_addresses]
+
+        foreach addr $to_addresses {
+            set addr_trimmed [string trim $addr]
+            if {$addr_trimmed eq ""} continue
+
+            if {![regexp $email_re $addr_trimmed]} {
+                # Check 1: placeholder_to
+                lappend issues [dict create \
+                    severity error \
+                    code placeholder_to \
+                    segment $segment \
+                    contact_name $contact_name \
+                    message "Approach file has non-email to: address '$addr_trimmed'"]
+            } else {
+                # Valid email — check 2: email_desync
+                if {$roster_email ne "" && [string first "@" $roster_email] >= 0} {
+                    if {[string tolower $addr_trimmed] ne [string tolower $roster_email]} {
+                        lappend issues [dict create \
+                            severity warning \
+                            code email_desync \
+                            segment $segment \
+                            contact_name $contact_name \
+                            message "Approach to: '$addr_trimmed' differs from roster email '$roster_email'"]
+                    }
+                }
+            }
+        }
+    }
+
+    # Check 4: orphan_profile
+    foreach segment_dir [array names seg_dirs_seen] {
+        set segment [file tail $segment_dir]
+        set profile_dir [file join $segment_dir profiles]
+        set known_stems {}
+        if {[info exists seg_profile_stems($segment_dir)]} {
+            set known_stems $seg_profile_stems($segment_dir)
+        }
+
+        foreach f [glob -nocomplain [file join $profile_dir *.md]] {
+            set stem [file rootname [file tail $f]]
+            if {$stem ni $known_stems} {
+                lappend issues [dict create \
+                    severity warning \
+                    code orphan_profile \
+                    segment $segment \
+                    contact_name "" \
+                    message "Profile file '${stem}.md' not referenced by any roster row"]
+            }
+        }
+    }
+
+    # Check 5: orphan_approach
+    foreach segment_dir [array names seg_dirs_seen] {
+        set segment [file tail $segment_dir]
+        set approach_dir [file join $segment_dir approach]
+        set known_stems {}
+        if {[info exists seg_approach_stems($segment_dir)]} {
+            set known_stems $seg_approach_stems($segment_dir)
+        }
+
+        foreach f [glob -nocomplain [file join $approach_dir *.yaml]] {
+            set stem [file rootname [file tail $f]]
+            if {$stem ni $known_stems} {
+                lappend issues [dict create \
+                    severity warning \
+                    code orphan_approach \
+                    segment $segment \
+                    contact_name "" \
+                    message "Approach file '${stem}.yaml' not referenced by any roster row"]
+            }
+        }
+    }
+
+    return $issues
 }
 
 package provide spar-state 1.0
