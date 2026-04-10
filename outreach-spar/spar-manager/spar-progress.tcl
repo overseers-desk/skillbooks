@@ -1,65 +1,74 @@
 #!/usr/bin/env tclsh
 # spar-progress.tcl — Campaign progress table and duplicate detection (CLI)
 # Tcl replacement for: python3 ../bin/update-campaign.py --no-mailroom
-# Usage: tclsh spar-progress.tcl [campaign_dir] [--campaign=YAML] [--no-mailroom]
+# Usage: tclsh spar-progress.tcl [campaign_dir_or_yaml] [--campaign=YAML] [--no-mailroom] [--json]
+# Positional arg may be a directory or a campaign YAML file (directory derived from YAML path).
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
 
 # --- Argument parsing ---
-set campaign_dir "."
+set campaign_dir ""
 set campaign_file ""
-
+set json_mode 0
 foreach arg $argv {
     switch -glob -- $arg {
         --campaign=*  { set campaign_file [string range $arg 11 end] }
+        --json        { set json_mode 1 }
         --no-mailroom {}
         --legend      {}
         --*           { puts stderr "Unknown flag: $arg"; exit 1 }
-        default       { set campaign_dir $arg }
+        default       {
+            set norm [file normalize $arg]
+            if {[file isfile $norm] && [string match *.yaml $norm]} {
+                set campaign_file $norm
+                set campaign_dir [file dirname $norm]
+            } else {
+                set campaign_dir $arg
+            }
+        }
     }
 }
 
+if {$campaign_file ne "" && $campaign_dir eq ""} {
+    set campaign_dir [file dirname [file normalize $campaign_file]]
+}
+if {$campaign_dir eq ""} {
+    set campaign_dir "."
+}
 set campaign_dir [file normalize $campaign_dir]
 
 # --- Discover campaign YAML ---
 if {$campaign_file ne ""} {
     set yaml_path [file normalize $campaign_file]
 } else {
-    # Auto-discover: campaign.yaml or last campaign*.yaml by sort order
     set yaml_path [file join $campaign_dir campaign.yaml]
     if {![file exists $yaml_path]} {
         set candidates [lsort [glob -nocomplain [file join $campaign_dir campaign*.yaml]]]
-        if {[llength $candidates] > 0} {
-            set yaml_path [lindex $candidates end]
-        } else {
-            set yaml_path ""
-        }
+        set yaml_path [expr {[llength $candidates] > 0 ? [lindex $candidates end] : ""}]
     }
 }
 
 # --- Load campaign YAML ---
 set segments_list {}
 set skip_set {}
+set campaign_name [file tail $campaign_dir]
+set min_star 0
 
 if {$yaml_path ne "" && [file exists $yaml_path]} {
     set cdata [spar::load_campaign $yaml_path]
-    puts stderr "Campaign:    [spar::dict_get_default $cdata campaign [file tail $yaml_path]]"
-
-    # Extract segments list
+    set campaign_name [spar::dict_get_default $cdata campaign [file tail $yaml_path]]
+    if {[dict exists $cdata filter]} {
+        set min_star [spar::dict_get_default [dict get $cdata filter] min_star 0]
+    }
     if {[dict exists $cdata segments]} {
         set segments_list [dict get $cdata segments]
     }
-
-    # Extract skip_segments
     if {[dict exists $cdata skip_segments]} {
-        foreach s [dict get $cdata skip_segments] {
-            lappend skip_set $s
-        }
+        set skip_set [dict get $cdata skip_segments]
     }
 } else {
     puts stderr "Warning: no campaign YAML found; falling back to directory roster scan."
-    # Discover all directories with roster.tsv
     foreach child [lsort [glob -nocomplain [file join $campaign_dir *]]] {
         if {[file isdirectory $child] && [file exists [file join $child roster.tsv]]} {
             lappend segments_list [file tail $child]
@@ -94,12 +103,106 @@ foreach item $segment_paths {
         puts stderr "Error in $label: $err"
         continue
     }
-    foreach c $classified {
-        lappend all_contacts $c
-    }
-    set counts [spar::progress_counts $classified]
-    lappend segment_counts [list $label $counts]
+    lappend all_contacts {*}$classified
+    lappend segment_counts [list $label [spar::progress_counts $classified]]
 }
+
+# --- JSON mode ---
+if {$json_mode} {
+    package require json::write
+
+    proc _cn {n d} {
+        ::json::write object count $n pct [expr {$d > 0 ? [format "%.1f" [expr {$n*100.0/$d}]] : "null"}]
+    }
+    proc _counts_tree {c} {
+        dict with c {}
+        ::json::write object \
+            valid [::json::write string $valid] \
+            profiled [_cn $profiled $valid] \
+            qualified [::json::write object \
+                count [::json::write string $star3] \
+                pct [expr {$valid>0 ? [format "%.1f" [expr {$star3*100.0/$valid}]] : "null"}] \
+                approached [_cn $approached_star3 $star3] \
+                email [::json::write object \
+                    count [::json::write string $has_email] \
+                    pct [expr {$star3>0 ? [format "%.1f" [expr {$has_email*100.0/$star3}]] : "null"}] \
+                    approached [::json::write object \
+                        count [::json::write string $approached_email] \
+                        pct [expr {$has_email>0 ? [format "%.1f" [expr {$approached_email*100.0/$has_email}]] : "null"}] \
+                        sent [::json::write object \
+                            count [::json::write string $email_sent] \
+                            pct [expr {$approached_email>0 ? [format "%.1f" [expr {$email_sent*100.0/$approached_email}]] : "null"}] \
+                            replied [_cn $email_replied $email_sent]]]] \
+                linkedin [_cn $has_linkedin $star3] \
+                facebook [_cn $has_facebook $star3] \
+                phone_only [_cn $has_phone_only $star3]]
+    }
+    proc progress_to_json {progress_dict} {
+        set seg_list {}
+        foreach s [dict get $progress_dict segments] {
+            lappend seg_list [::json::write object \
+                name [::json::write string [dict get $s name]] \
+                active [expr {[dict get $s active] ? "true" : "false"}] \
+                counts [_counts_tree [dict get $s counts]]]
+        }
+        set tr_list {}
+        foreach t [dict get $progress_dict transitions] {
+            lappend tr_list [::json::write object \
+                label [::json::write string [dict get $t label]] count [dict get $t count]]
+        }
+        set w [dict get $progress_dict warnings]
+        set v [dict get $progress_dict validation]
+        set nerr 0; set nwarn 0
+        foreach i $v { if {[dict get $i severity] eq "error"} {incr nerr} else {incr nwarn} }
+
+        ::json::write object \
+            campaign [::json::write string [dict get $progress_dict campaign]] \
+            min_star [dict get $progress_dict min_star] \
+            segments [::json::write array {*}$seg_list] \
+            totals [_counts_tree [dict get $progress_dict totals]] \
+            warnings [::json::write object \
+                duplicate_to [llength [dict get $w duplicate_to]] \
+                duplicate_name [llength [dict get $w duplicate_name]] \
+                duplicate_email [llength [dict get $w duplicate_email]] \
+                identical_subject [llength [dict get $w identical_subject]]] \
+            validation [::json::write object errors $nerr warnings $nwarn] \
+            transitions [::json::write array {*}$tr_list]
+    }
+
+    # Build the progress dict
+    set seg_results {}
+    foreach item $segment_counts {
+        lassign $item label counts
+        lappend seg_results [dict create name $label active 1 counts $counts]
+    }
+    set totals [dict create valid 0 profiled 0 star3 0 approached_star3 0 \
+        has_email 0 approached_email 0 has_linkedin 0 has_facebook 0 \
+        has_phone_only 0 email_sent 0 email_replied 0]
+    foreach seg_info $seg_results {
+        set sc [dict get $seg_info counts]
+        dict for {k v} $sc { dict set totals $k [expr {[dict get $totals $k] + $v}] }
+    }
+    set transition_defs {
+        T1 "Sweep \u2192 Profile"   T2 "Profile \u2192 Approach"
+        T3 "Approach \u2192 Send"   T4 "Send \u2192 Reply"
+        T5 "Flag invalid"           T6 "Stale \u2192 Re-profile"
+        T7 "Re-profile \u2192 Re-approach" T8 "LinkedIn \u2192 Email follow-up"
+    }
+    set transitions {}
+    dict for {tid tlabel} $transition_defs {
+        set tasks [spar::transition_eligible $all_contacts $tid]
+        lappend transitions [dict create label "$tid: $tlabel" count [llength $tasks] tasks $tasks]
+    }
+    puts [progress_to_json [dict create campaign $campaign_name min_star $min_star \
+        segments $seg_results totals $totals \
+        warnings [spar::detect_duplicates $all_contacts] \
+        validation [spar::validate_campaign $all_contacts] \
+        transitions $transitions]]
+    exit 0
+}
+
+# --- Human-readable output ---
+puts stderr "Campaign:    $campaign_name"
 
 # --- Format progress table ---
 proc fmt_cell {count denom} {

@@ -3,9 +3,14 @@
 
 package require Tk
 
-# Accept campaign directory as argument, default to current directory
-set campaign_dir [expr {[llength $argv] > 0 ? [lindex $argv 0] : "."}]
-set campaign_dir [file normalize $campaign_dir]
+# Accept campaign directory or YAML file as argument, default to current directory
+set _arg [expr {[llength $argv] > 0 ? [lindex $argv 0] : "."}]
+set _norm [file normalize $_arg]
+if {[file isfile $_norm] && [string match *.yaml $_norm]} {
+    set campaign_dir [file dirname $_norm]
+} else {
+    set campaign_dir $_norm
+}
 
 # Source backend libraries
 set script_dir [file dirname [file normalize [info script]]]
@@ -22,8 +27,8 @@ proc _find_campaign_yaml {dir} {
 }
 if {[_find_campaign_yaml $campaign_dir] eq ""} {
     puts stderr "spar-ui: no campaign YAML found in $campaign_dir"
-    puts stderr "Usage: wish9.0 spar-ui.tcl <campaign-dir>"
-    puts stderr "  campaign-dir must contain campaign.yaml or campaign*.yaml"
+    puts stderr "Usage: wish9.0 spar-ui.tcl <campaign-dir-or-yaml>"
+    puts stderr "  Argument may be a directory containing campaign*.yaml, or a YAML file directly"
     exit 1
 }
 
