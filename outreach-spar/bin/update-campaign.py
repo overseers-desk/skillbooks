@@ -1045,7 +1045,8 @@ def main():
             incoming = []
             for msg in messages:
                 to_addrs = [extract_email_address(a) for a in (msg.get("to") or [])]
-                if sender_lower in to_addrs:
+                cc_addrs = [extract_email_address(a) for a in (msg.get("cc") or [])]
+                if sender_lower in to_addrs or sender_lower in cc_addrs:
                     incoming.append(msg)
 
             incoming.sort(key=lambda m: m.get("date", ""))
