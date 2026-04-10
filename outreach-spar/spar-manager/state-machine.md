@@ -35,11 +35,11 @@ A contact's state is inferred from the presence and content of files in the segm
 | State | Condition |
 |-------|-----------|
 | `INVALID` | Roster: `date_found_invalid` non-empty |
-| `DISCOVERED` | Valid (not invalid), `profile_stem` roster field empty |
-| `PROFILED` | Valid, `profile_stem` non-empty, file `profiles/{profile_stem}.md` exists, not stale |
-| `PROFILE_STALE` | Valid, `profile_stem` non-empty, profile file exists, but stale — see §Staleness |
-| `APPROACHED` | Profiled, `approach_stem` roster field non-empty, file `approach/{approach_stem}.yaml` exists, no final-round message with `actioned_date` set |
-| `SENT` | `approach_stem` non-empty, approach file exists, final round has at least one message with `actioned_date` non-null |
+| `DISCOVERED` | Valid (not invalid), file `profiles/profile-{stem}.md` does not exist |
+| `PROFILED` | Valid, file `profiles/profile-{stem}.md` exists, not stale |
+| `PROFILE_STALE` | Valid, `profiles/profile-{stem}.md` exists, but stale — see §Staleness |
+| `APPROACHED` | Profiled, file `approach/{stem}.yaml` exists, no final-round message with `actioned_date` set |
+| `SENT` | `approach/{stem}.yaml` exists, final round has at least one message with `actioned_date` non-null |
 | `REPLIED` | `SENT`, and final round has a message with `replied_date` non-null, or a reply with `direction: received` |
 
 Evaluation order: `INVALID` is checked first. A contact that is `INVALID` is never checked for any other state. States 2–7 are evaluated in order; the first match wins.
@@ -74,13 +74,13 @@ The approach YAML's final round can contain multiple messages (e.g., one LinkedI
 
 ## Schema validation
 
-`classify_segment` validates the roster schema before classifying any contacts. If the loaded roster lacks either the `profile_stem` or `approach_stem` column, `classify_segment` returns an error and halts — it does not silently produce wrong results.
+`classify_segment` validates the roster schema before classifying any contacts. If the loaded roster lacks a `stem` column, `classify_segment` returns an error and halts — it does not silently produce wrong results.
 
 ```
-Error: roster missing required column 'profile_stem' — run schema migration before using spar-state.tcl
+Error: roster missing required column 'stem' — run schema migration before using spar-state.tcl
 ```
 
-This is a hard failure, not a warning. A roster without these columns cannot be classified without the legacy filesystem-matching algorithm, which defeats the single-source-of-truth design. The schema migration (backfill) must run once against existing rosters before the state machine can operate.
+This is a hard failure, not a warning. Contact state is determined by file presence on disk (`profiles/profile-{stem}.md`, `approach/{stem}.yaml`); without `stem` those paths cannot be constructed.
 
 ---
 
@@ -89,11 +89,10 @@ This is a hard failure, not a warning. A roster without these columns cannot be 
 ```tcl
 # classify_contact -- classify one contact's state.
 #
-# roster_row   dict with TSV fields (contact_name, date_found_invalid,
-#              star_rating, email, linkedin_url, facebook_url, phone,
-#              profile_stem, approach_stem, ...)
-#              profile_stem and approach_stem are required; classify_segment
-#              validates their presence before calling this proc.
+# roster_row   dict with TSV fields (stem, contact_name, date_found_invalid,
+#              star_rating, email, linkedin_url, facebook_url, phone, ...)
+#              stem is required; classify_segment validates its presence
+#              before calling this proc.
 # segment_dir  absolute path to the segment directory
 #
 # Returns a dict:
@@ -266,7 +265,7 @@ Key locations in `../bin/update-campaign.py` and their redesign counterparts:
 | `classify_approach_gaps()` (line 343) | Matches 3+★ contacts to approach files; detects missing/unsent | Folded into `classify_contact` — approach state is per-contact, not a gap analysis |
 | `scan_approach_dir()` (line 390) | Scans approach directory for sent/replied/to-address | Replaced by reading the approach YAML once per contact in `classify_contact`; per-segment aggregation in `classify_segment` |
 | Segment loop (line 583–696) | Iterates over segments, accumulates 8-tuple of counts | Replaced by `classify_segment` returning a list of contact dicts; progress table columns are projections, computed on demand |
-| `build_profile_index()` (via spar_lib) | Builds a dict of all profile files in a directory for fast lookup | **Not used in spar-state.tcl.** Profile identity is read directly from `profile_stem` in the roster row; no scan of the profiles directory is needed. `spar::build_profile_index` remains in spar-lib.tcl for other callers (e.g., spar-p-batch) but is not called during state classification. |
+| `build_profile_index()` (via spar_lib) | Builds a dict of all profile files in a directory for fast lookup | **Not used in spar-state.tcl.** Profile presence is determined by checking `profiles/profile-{stem}.md` directly using the `stem` from the roster row; no directory scan is needed. `spar::build_profile_index` remains in spar-lib.tcl for other callers (e.g., spar-p-batch) but is not called during state classification. |
 | Duplicate detection (lines 554–668) | Accumulates email/name/subject maps across segments | Becomes a cross-segment pass over the full classified-contacts list |
 
 **What the Python code does not have (new in the redesign):**
