@@ -43,10 +43,11 @@ proc discover_campaign_yaml {campaign_dir} {
     return ""
 }
 
-proc load_campaign_data {} {
+# Load campaign YAML config and discover segments.
+# Sets config globals; returns 1 on success, 0 on error.
+proc load_campaign_config {} {
     global campaign_dir campaign_name sender_text method_ref filter_desc
-    global segments segments_data warnings transitions
-    global cdata yaml_path all_contacts segment_order skip_set
+    global cdata yaml_path segment_order skip_set segment_paths
 
     set yaml_path [discover_campaign_yaml $campaign_dir]
     if {$yaml_path eq ""} {
@@ -56,12 +57,9 @@ proc load_campaign_data {} {
         set sender_text ""
         set method_ref ""
         set filter_desc ""
-        set segments {}
-        set warnings {}
-        set transitions {}
-        set all_contacts {}
         set segment_order {}
-        return
+        set segment_paths {}
+        return 0
     }
 
     if {[catch {set cdata [spar::load_campaign $yaml_path]} err]} {
@@ -71,12 +69,9 @@ proc load_campaign_data {} {
         set sender_text ""
         set method_ref ""
         set filter_desc ""
-        set segments {}
-        set warnings {}
-        set transitions {}
-        set all_contacts {}
         set segment_order {}
-        return
+        set segment_paths {}
+        return 0
     }
 
     # --- Campaign config values ---
@@ -146,7 +141,88 @@ proc load_campaign_data {} {
         }
     }
 
-    # --- Classify all segments ---
+    return 1
+}
+
+# Fast startup load: campaign config + roster TSV counts only.
+# Filesystem-dependent columns (Profile, A/3+★, A/Eml, Sent, Repl) are
+# deferred to schedule_async_load.
+proc load_campaign_data_fast {} {
+    global segments warnings transitions
+    global all_contacts skip_set segment_paths
+    global segment_paths_for_async full_load_done
+
+    set full_load_done 0
+    set segment_paths_for_async {}
+
+    if {![load_campaign_config]} {
+        set segments {}
+        set warnings {}
+        set transitions {}
+        set all_contacts {}
+        set full_load_done 1
+        return
+    }
+
+    set all_contacts {}
+    set segments {}
+
+    foreach item $segment_paths {
+        lassign $item label seg_dir
+        set is_active [expr {$label ni $skip_set}]
+
+        lappend segment_paths_for_async [list $label $seg_dir $is_active]
+
+        if {[catch {set rcounts [spar::roster_counts $seg_dir]} err]} {
+            set zero_data [list 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {}]
+            lappend segments [list $label $is_active $zero_data]
+            continue
+        }
+
+        set v  [dict get $rcounts valid]
+        set s3 [dict get $rcounts star3]
+        set e  [dict get $rcounts has_email]
+        set l  [dict get $rcounts has_linkedin]
+        set f  [dict get $rcounts has_facebook]
+        set po [dict get $rcounts has_phone_only]
+
+        # TSV-derivable columns filled; filesystem columns placeholder (0)
+        set raw_data [list \
+            $v {} \
+            0 {} \
+            $s3 [format_pct $s3 $v] \
+            0 {} \
+            $e [format_pct $e $s3] \
+            0 {} \
+            $l [format_pct $l $s3] \
+            $f [format_pct $f $s3] \
+            $po [format_pct $po $s3] \
+            0 {} \
+            0 {}]
+
+        lappend segments [list $label $is_active $raw_data]
+    }
+
+    set warnings {}
+    set transitions {}
+}
+
+# Full synchronous load (used by Refresh).
+proc load_campaign_data_full {} {
+    global segments warnings transitions
+    global all_contacts skip_set segment_paths
+    global full_load_done
+
+    set full_load_done 1
+
+    if {![load_campaign_config]} {
+        set segments {}
+        set warnings {}
+        set transitions {}
+        set all_contacts {}
+        return
+    }
+
     set all_contacts {}
     set segments {}
 
@@ -157,7 +233,6 @@ proc load_campaign_data {} {
         if {[catch {
             set classified [spar::classify_segment $seg_dir]
         } err]} {
-            # On error, add a zero-count row
             set zero_data [list 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {}]
             lappend segments [list $label $is_active $zero_data]
             continue
@@ -171,8 +246,6 @@ proc load_campaign_data {} {
 
         set counts [spar::progress_counts $classified]
 
-        # Build the raw_data list: {count pct count pct ...} matching mock-ui format
-        # Column order: Valid, Profile, 3+star, A/3+star, Email, A/Eml, LinkedIn, Facebook, Only-phone, Sent, Repl
         set v [dict get $counts valid]
         set p [dict get $counts profiled]
         set s3 [dict get $counts star3]
@@ -201,10 +274,7 @@ proc load_campaign_data {} {
         lappend segments [list $label $is_active $raw_data]
     }
 
-    # --- Warnings ---
     set warnings [build_warnings $all_contacts]
-
-    # --- Transitions ---
     set transitions [build_transitions $all_contacts]
 }
 
@@ -214,6 +284,113 @@ proc format_pct {num denom} {
     }
     set pct [expr {$num * 100 / $denom}]
     return "${pct}%"
+}
+
+# --- Async loading state ---
+set full_load_done 1
+set async_after_ids {}
+set segment_paths_for_async {}
+set async_segments_remaining 0
+
+# Filesystem-dependent column IDs (shown as "\u2026" until full load)
+set fs_dependent_cols {profiled astar aeml sent repl}
+
+# Column ID -> progress_counts dict key
+set col_count_keys [dict create \
+    valid valid  profiled profiled  star3 star3 \
+    astar approached_star3  email has_email  aeml approached_email \
+    linkedin has_linkedin  facebook has_facebook  phone has_phone_only \
+    sent email_sent  repl email_replied]
+
+proc cancel_async_load {} {
+    global async_after_ids
+    foreach id $async_after_ids {
+        after cancel $id
+    }
+    set async_after_ids {}
+}
+
+proc schedule_async_load {} {
+    global segment_paths_for_async async_after_ids async_segments_remaining
+    global full_load_done
+    cancel_async_load
+    set async_segments_remaining [llength $segment_paths_for_async]
+    if {$async_segments_remaining == 0} {
+        set full_load_done 1
+        recalc_totals
+        return
+    }
+    # Use timer (not after idle) so Tk renders the window between segments
+    lappend async_after_ids [after 1 _async_load_next]
+}
+
+proc _async_load_next {} {
+    global segment_paths_for_async async_after_ids async_segments_remaining
+    global full_load_done ptree ptree_col_ids ptree_cols
+    global seg_counts all_contacts col_count_keys denom_parent
+    global warnings transitions
+
+    if {[llength $segment_paths_for_async] == 0} return
+
+    set item [lindex $segment_paths_for_async 0]
+    set segment_paths_for_async [lrange $segment_paths_for_async 1 end]
+    lassign $item seg_name seg_dir is_active
+
+    if {![catch {set classified [spar::classify_segment $seg_dir]} err]} {
+        if {$is_active} {
+            foreach c $classified { lappend all_contacts $c }
+        }
+
+        set cdict [spar::progress_counts $classified]
+
+        if {[$ptree exists $seg_name]} {
+            set counts {}
+            foreach id $ptree_col_ids {
+                set key [dict get $col_count_keys $id]
+                lappend counts [dict get $cdict $key]
+            }
+
+            if {$is_active} {
+                set ci 0
+                foreach id $ptree_col_ids {
+                    dict set seg_counts $seg_name $id [lindex $counts $ci]
+                    incr ci
+                }
+            }
+
+            # Build formatted values for this row
+            set values {}
+            set ci 0
+            foreach {id heading anchor} $ptree_cols {
+                set count [lindex $counts $ci]
+                set pid [dict get $denom_parent $id]
+                if {$pid eq ""} {
+                    lappend values $count
+                } else {
+                    set pidx [lsearch $ptree_col_ids $pid]
+                    set denom [lindex $counts $pidx]
+                    lappend values [fmt_cell $count $denom]
+                }
+                incr ci
+            }
+            $ptree item $seg_name -values $values
+        }
+    }
+
+    incr async_segments_remaining -1
+
+    if {[llength $segment_paths_for_async] > 0} {
+        lappend async_after_ids [after 1 _async_load_next]
+    } else {
+        set full_load_done 1
+        recalc_totals
+        after idle autosize_progress_tree
+
+        set warnings [build_warnings $all_contacts]
+        set transitions [build_transitions $all_contacts]
+        rebuild_warnings
+        rebuild_transitions
+    }
 }
 
 proc build_warnings {all_contacts} {
@@ -327,8 +504,8 @@ proc build_transitions {all_contacts} {
     return $result
 }
 
-# --- Load data ---
-load_campaign_data
+# --- Load data (fast: TSV only, filesystem deferred) ---
+load_campaign_data_fast
 
 # ============================================================
 # Colour palette
@@ -456,7 +633,8 @@ proc do_refresh {} {
     global cf cpanel wframe tpanel
 
     # Reload all data
-    load_campaign_data
+    cancel_async_load
+    load_campaign_data_full
 
     # Update config labels
     ${cf}.v1 configure -text $campaign_name
@@ -638,7 +816,8 @@ proc fmt_cell {count denom} {
 }
 
 proc populate_progress_tree {} {
-    global ptree ptree_col_ids ptree_cols segments seg_counts seg_checked denom_parent
+    global ptree ptree_col_ids ptree_cols segments seg_counts seg_checked
+    global denom_parent full_load_done fs_dependent_cols
 
     $ptree delete [$ptree children {}]
     set seg_counts [dict create]
@@ -670,6 +849,17 @@ proc populate_progress_tree {} {
                 lappend values [fmt_cell $count $denom]
             }
             incr ci
+        }
+
+        # During async load, show "…" for filesystem-dependent columns
+        if {!$full_load_done} {
+            set vi 0
+            foreach {id heading anchor} $ptree_cols {
+                if {$id in $fs_dependent_cols} {
+                    lset values $vi "\u2026"
+                }
+                incr vi
+            }
         }
 
         set cb [expr {$is_campaign ? "\u2611" : "  "}]
@@ -727,7 +917,8 @@ proc autosize_progress_tree {} {
 }
 
 proc recalc_totals {} {
-    global ptree ptree_col_ids ptree_cols seg_counts seg_checked denom_parent
+    global ptree ptree_col_ids ptree_cols seg_counts seg_checked
+    global denom_parent full_load_done fs_dependent_cols
 
     # Sum counts for checked segments
     set sums [dict create]
@@ -750,6 +941,17 @@ proc recalc_totals {} {
         } else {
             set denom [dict get $sums $pid]
             lappend values [fmt_cell $count $denom]
+        }
+    }
+
+    # During async load, show "…" for filesystem-dependent totals
+    if {!$full_load_done} {
+        set vi 0
+        foreach {id heading anchor} $ptree_cols {
+            if {$id in $fs_dependent_cols} {
+                lset values $vi "\u2026"
+            }
+            incr vi
         }
     }
 
@@ -1100,3 +1302,7 @@ bind .tabs.tab_current.pw <Map> {
     }
     bind .tabs.tab_current.pw <Map> {}
 }
+
+# Schedule async loading of filesystem-dependent columns.
+# Use a timer (not after idle) so the window renders first.
+after 1 schedule_async_load
