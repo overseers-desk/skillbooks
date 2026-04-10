@@ -9,7 +9,7 @@ namespace eval spar {
     namespace export classify_contact classify_segment \
         transition_eligible detect_duplicates progress_counts \
         roster_counts \
-        validate_campaign validate_approach
+        validate_campaign validate_approach build_warnings
 }
 
 # parse_star — extract integer star rating from a roster field.
@@ -913,6 +913,108 @@ proc spar::validate_campaign {all_classified_contacts} {
     }
 
     return $issues
+}
+
+# build_warnings -- combined duplicates + validation as displayable strings.
+#
+# all_classified_contacts  flat list from classify_segment across segments
+#
+# Returns a dict:
+#   messages           — flat list of human-readable warning strings
+#   duplicate_to       — count of duplicate To: address warnings
+#   duplicate_name     — count of duplicate name warnings
+#   duplicate_email    — count of duplicate email warnings
+#   identical_subject  — count of identical subject warnings
+#   validation_errors  — count of validation errors
+#   validation_warnings — count of validation warnings
+#
+proc spar::build_warnings {all_classified_contacts} {
+    set messages {}
+    set dup_to_count 0
+    set dup_name_count 0
+    set dup_email_count 0
+    set dup_subject_count 0
+    set val_errors 0
+    set val_warnings 0
+
+    if {[llength $all_classified_contacts] == 0} {
+        return [dict create messages {} \
+            duplicate_to 0 duplicate_name 0 duplicate_email 0 \
+            identical_subject 0 validation_errors 0 validation_warnings 0]
+    }
+
+    # Duplicates
+    set dups [spar::detect_duplicates $all_classified_contacts]
+
+    foreach item [dict get $dups duplicate_to] {
+        set addr [dict get $item address]
+        set files [dict get $item files]
+        set locs {}
+        foreach f $files {
+            lassign $f seg filename
+            lappend locs "$seg/$filename"
+        }
+        lappend messages "Duplicate To: $addr in [join $locs {, }]"
+        incr dup_to_count
+    }
+
+    foreach item [dict get $dups duplicate_name] {
+        set entries [dict get $item entries]
+        set display_name [lindex [lindex $entries 0] 1]
+        set parts {}
+        foreach entry $entries {
+            lassign $entry seg cname org email
+            lappend parts "$seg ($org)"
+        }
+        lappend messages "Duplicate name: $display_name in [join $parts { and }]"
+        incr dup_name_count
+    }
+
+    foreach item [dict get $dups duplicate_email] {
+        set addr [dict get $item email]
+        set entries [dict get $item entries]
+        set parts {}
+        foreach entry $entries {
+            lassign $entry seg cname org
+            lappend parts "$seg ($cname)"
+        }
+        lappend messages "Duplicate email: $addr in [join $parts { and }]"
+        incr dup_email_count
+    }
+
+    foreach item [dict get $dups identical_subject] {
+        set subj [dict get $item subject]
+        set files [dict get $item files]
+        set locs {}
+        foreach f $files {
+            lassign $f seg filename
+            lappend locs "$seg/$filename"
+        }
+        lappend messages "Identical subject: \"$subj\" in [join $locs {, }]"
+        incr dup_subject_count
+    }
+
+    # Validation
+    foreach issue [spar::validate_campaign $all_classified_contacts] {
+        set sev [dict get $issue severity]
+        set seg [spar::dict_get_default $issue segment ""]
+        set cname [spar::dict_get_default $issue contact_name ""]
+        set msg [dict get $issue message]
+        set prefix "\[[string toupper $sev]\]"
+        if {$seg ne ""} { append prefix " $seg" }
+        if {$cname ne ""} { append prefix " ($cname)" }
+        lappend messages "$prefix: $msg"
+        if {$sev eq "error"} {
+            incr val_errors
+        } else {
+            incr val_warnings
+        }
+    }
+
+    return [dict create messages $messages \
+        duplicate_to $dup_to_count duplicate_name $dup_name_count \
+        duplicate_email $dup_email_count identical_subject $dup_subject_count \
+        validation_errors $val_errors validation_warnings $val_warnings]
 }
 
 package provide spar-state 1.0

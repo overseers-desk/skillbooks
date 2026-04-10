@@ -399,77 +399,7 @@ proc _async_load_next {} {
 }
 
 proc build_warnings {all_contacts} {
-    set result {}
-
-    # Duplicate detection
-    if {[llength $all_contacts] > 0} {
-        set dups [spar::detect_duplicates $all_contacts]
-
-        # Duplicate To
-        foreach item [dict get $dups duplicate_to] {
-            set addr [dict get $item address]
-            set files [dict get $item files]
-            set locs {}
-            foreach f $files {
-                lassign $f seg filename
-                lappend locs "$seg/$filename"
-            }
-            lappend result "Duplicate To: $addr in [join $locs {, }]"
-        }
-
-        # Duplicate name
-        foreach item [dict get $dups duplicate_name] {
-            set entries [dict get $item entries]
-            set display_name [lindex [lindex $entries 0] 1]
-            set parts {}
-            foreach entry $entries {
-                lassign $entry seg cname org email
-                lappend parts "$seg ($org)"
-            }
-            lappend result "Duplicate name: $display_name in [join $parts { and }]"
-        }
-
-        # Duplicate email
-        foreach item [dict get $dups duplicate_email] {
-            set addr [dict get $item email]
-            set entries [dict get $item entries]
-            set parts {}
-            foreach entry $entries {
-                lassign $entry seg cname org
-                lappend parts "$seg ($cname)"
-            }
-            lappend result "Duplicate email: $addr in [join $parts { and }]"
-        }
-
-        # Identical subject
-        foreach item [dict get $dups identical_subject] {
-            set subj [dict get $item subject]
-            set files [dict get $item files]
-            set locs {}
-            foreach f $files {
-                lassign $f seg filename
-                lappend locs "$seg/$filename"
-            }
-            lappend result "Identical subject: \"$subj\" in [join $locs {, }]"
-        }
-    }
-
-    # Validation
-    if {[llength $all_contacts] > 0} {
-        set issues [spar::validate_campaign $all_contacts]
-        foreach issue $issues {
-            set sev [dict get $issue severity]
-            set seg [spar::dict_get_default $issue segment ""]
-            set cname [spar::dict_get_default $issue contact_name ""]
-            set msg [dict get $issue message]
-            set prefix "\[[string toupper $sev]\]"
-            if {$seg ne ""} { append prefix " $seg" }
-            if {$cname ne ""} { append prefix " ($cname)" }
-            lappend result "$prefix: $msg"
-        }
-    }
-
-    return $result
+    return [dict get [spar::build_warnings $all_contacts] messages]
 }
 
 proc build_transitions {all_contacts} {
