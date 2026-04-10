@@ -8,6 +8,7 @@ source [file join [file dirname [file normalize [info script]]] spar-lib.tcl]
 namespace eval spar {
     namespace export classify_contact classify_segment \
         transition_eligible detect_duplicates progress_counts \
+        roster_counts \
         validate_campaign validate_approach
 }
 
@@ -689,6 +690,79 @@ proc spar::progress_counts {classified_contacts} {
         has_phone_only $has_phone_only \
         email_sent $n_email_sent \
         email_replied $n_email_replied]
+}
+
+# roster_counts -- compute progress counts from roster TSV alone (no filesystem).
+#
+# segment_dir  absolute path to the segment directory
+#
+# Returns a dict with the six TSV-derivable counts:
+#   valid, star3, has_email, has_linkedin, has_facebook, has_phone_only
+# These correspond to columns that do not require profile/approach file access.
+# Counts not computable from the TSV alone (profiled, approached_star3,
+# approached_email, email_sent, email_replied) are omitted.
+#
+proc spar::roster_counts {segment_dir} {
+    set roster_path [file join $segment_dir roster.tsv]
+    set rows [spar::load_roster $roster_path]
+
+    set valid 0
+    set star3 0
+    set has_email 0
+    set has_linkedin 0
+    set has_facebook 0
+    set has_phone_only 0
+
+    foreach row $rows {
+        set contact_name [string trim [spar::dict_get_default $row contact_name ""]]
+        if {$contact_name eq ""} continue
+
+        if {[dict exists $row stem]} {
+            set stem [string trim [dict get $row stem]]
+        } else {
+            continue
+        }
+
+        set date_invalid [string trim [spar::dict_get_default $row date_found_invalid ""]]
+        if {[regexp {^"(.*)"$} $date_invalid -> inner]} {
+            set date_invalid [string trim $inner]
+        }
+        if {![spar::is_null $date_invalid]} continue
+
+        incr valid
+
+        set star [spar::parse_star [spar::dict_get_default $row star_rating ""]]
+
+        set email [string trim [spar::dict_get_default $row email ""]]
+        if {[regexp {^"(.*)"$} $email -> inner]} { set email [string trim $inner] }
+        set linkedin [string trim [spar::dict_get_default $row linkedin_url ""]]
+        if {[regexp {^"(.*)"$} $linkedin -> inner]} { set linkedin [string trim $inner] }
+        set facebook [string trim [spar::dict_get_default $row facebook_url ""]]
+        if {[regexp {^"(.*)"$} $facebook -> inner]} { set facebook [string trim $inner] }
+        set phone [string trim [spar::dict_get_default $row phone ""]]
+        if {[regexp {^"(.*)"$} $phone -> inner]} { set phone [string trim $inner] }
+
+        set c_has_email [expr {[string first "@" $email] >= 0}]
+        set c_has_linkedin [expr {$linkedin ne ""}]
+        set c_has_facebook [expr {$facebook ne ""}]
+        set c_has_phone_only [expr {$phone ne "" && !$c_has_email && !$c_has_linkedin && !$c_has_facebook}]
+
+        if {$star >= 3} {
+            incr star3
+            if {$c_has_email} { incr has_email }
+            if {$c_has_linkedin} { incr has_linkedin }
+            if {$c_has_facebook} { incr has_facebook }
+            if {$c_has_phone_only} { incr has_phone_only }
+        }
+    }
+
+    return [dict create \
+        valid $valid \
+        star3 $star3 \
+        has_email $has_email \
+        has_linkedin $has_linkedin \
+        has_facebook $has_facebook \
+        has_phone_only $has_phone_only]
 }
 
 # validate_approach -- check a single approach file against guard rails.
