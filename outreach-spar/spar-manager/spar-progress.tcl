@@ -111,31 +111,24 @@ foreach item $segment_paths {
 if {$json_mode} {
     package require json::write
 
-    proc _cn {n d} {
-        ::json::write object count $n pct [expr {$d > 0 ? [format "%.1f" [expr {$n*100.0/$d}]] : "null"}]
-    }
     proc _counts_tree {c} {
         dict with c {}
         ::json::write object \
-            valid [::json::write string $valid] \
-            profiled [_cn $profiled $valid] \
+            valid     $valid \
+            profiled  $profiled \
             qualified [::json::write object \
-                count [::json::write string $star3] \
-                pct [expr {$valid>0 ? [format "%.1f" [expr {$star3*100.0/$valid}]] : "null"}] \
-                approached [_cn $approached_star3 $star3] \
-                email [::json::write object \
-                    count [::json::write string $has_email] \
-                    pct [expr {$star3>0 ? [format "%.1f" [expr {$has_email*100.0/$star3}]] : "null"}] \
+                count     $star3 \
+                approached $approached_star3 \
+                email     [::json::write object \
+                    count     $has_email \
                     approached [::json::write object \
-                        count [::json::write string $approached_email] \
-                        pct [expr {$has_email>0 ? [format "%.1f" [expr {$approached_email*100.0/$has_email}]] : "null"}] \
-                        sent [::json::write object \
-                            count [::json::write string $email_sent] \
-                            pct [expr {$approached_email>0 ? [format "%.1f" [expr {$email_sent*100.0/$approached_email}]] : "null"}] \
-                            replied [_cn $email_replied $email_sent]]]] \
-                linkedin [_cn $has_linkedin $star3] \
-                facebook [_cn $has_facebook $star3] \
-                phone_only [_cn $has_phone_only $star3]]
+                        count $approached_email \
+                        sent  [::json::write object \
+                            count   $email_sent \
+                            replied $email_replied]]] \
+                linkedin  $has_linkedin \
+                facebook  $has_facebook \
+                phone_only $has_phone_only]
     }
     proc progress_to_json {progress_dict} {
         set seg_list {}
