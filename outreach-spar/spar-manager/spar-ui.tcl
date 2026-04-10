@@ -11,6 +11,22 @@ set campaign_dir [file normalize $campaign_dir]
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
 
+# Pre-widget startup check: if no campaign YAML exists, print a helpful
+# message and exit before spawning any Tk windows.
+proc _find_campaign_yaml {dir} {
+    set p [file join $dir campaign.yaml]
+    if {[file exists $p]} { return $p }
+    set cs [lsort [glob -nocomplain [file join $dir campaign*.yaml]]]
+    if {[llength $cs]} { return [lindex $cs end] }
+    return ""
+}
+if {[_find_campaign_yaml $campaign_dir] eq ""} {
+    puts stderr "spar-ui: no campaign YAML found in $campaign_dir"
+    puts stderr "Usage: wish9.0 spar-ui.tcl <campaign-dir>"
+    puts stderr "  campaign-dir must contain campaign.yaml or campaign*.yaml"
+    exit 1
+}
+
 # ============================================================
 # Load campaign data
 # ============================================================
@@ -382,7 +398,7 @@ grid ${cf}.l2 ${cf}.v2 -sticky w -padx {6 4} -pady 1
 grid ${cf}.l3 ${cf}.v3 -sticky w -padx {6 4} -pady 1
 grid ${cf}.l4 ${cf}.v4 -sticky w -padx {6 4} -pady 1
 
-# Toolbar: Check Email, Refresh, Legend
+# Toolbar: Check Email, Refresh, Legend, Select All/None
 ttk::frame ${cpanel}.toolbar
 pack ${cpanel}.toolbar -fill x -padx 8 -pady {2 2}
 
@@ -394,6 +410,26 @@ pack ${cpanel}.toolbar.refresh -side right -padx {0 4}
 
 ttk::button ${cpanel}.toolbar.legend -text "Legend" -command show_legend_window
 pack ${cpanel}.toolbar.legend -side right -padx {0 4}
+
+ttk::button ${cpanel}.toolbar.selall -text "All" -width 4 -command {
+    global seg_checked ptree
+    foreach seg [array names ::seg_checked] {
+        set ::seg_checked($seg) 1
+        $ptree item $seg -text "\u2611  $seg"
+    }
+    recalc_totals
+}
+pack ${cpanel}.toolbar.selall -side left
+
+ttk::button ${cpanel}.toolbar.selnone -text "None" -width 4 -command {
+    global seg_checked ptree
+    foreach seg [array names ::seg_checked] {
+        set ::seg_checked($seg) 0
+        $ptree item $seg -text "\u2610  $seg"
+    }
+    recalc_totals
+}
+pack ${cpanel}.toolbar.selnone -side left -padx {2 0}
 
 proc do_check_email {} {
     global script_dir
@@ -527,260 +563,185 @@ proc draw_legend {c} {
 ttk::labelframe ${cpanel}.progress -text "Progress"
 pack ${cpanel}.progress -fill both -expand 1 -padx 8 -pady {2 2}
 
-# Column layout (identical to mock-ui.tcl)
-set sep_cols {2 5 8 13 18 25}
-set ci_to_gcols {
-    0 {3 4}    1 {6 7}    2 {9 10}   3 {11 12}  4 {14 15}
-    5 {16 17}  6 {19 20}  7 {21 22}  8 {23 24}  9 {26 27}  10 {28 29}
-}
-set header_gcols_list {3 6 9 11 14 16 19 21 23 26 28}
-
-set col_cb_w 24
-set col_seg_w 180
-set col_num_w 30
-set col_pct_w 40
-set col_sep_w 1
-
-proc configure_table_columns {frame} {
-    global sep_cols ci_to_gcols col_cb_w col_seg_w col_num_w col_pct_w col_sep_w
-    grid columnconfigure $frame 0 -minsize $col_cb_w -weight 0
-    grid columnconfigure $frame 1 -minsize $col_seg_w -weight 1
-    foreach sc $sep_cols {
-        grid columnconfigure $frame $sc -minsize $col_sep_w -weight 0
-    }
-    dict for {ci gcpair} $ci_to_gcols {
-        lassign $gcpair ng pg
-        grid columnconfigure $frame $ng -minsize $col_num_w -weight 0
-        grid columnconfigure $frame $pg -minsize $col_pct_w -weight 0
-    }
+# Treeview column definitions: id, heading, width (pixels), anchor
+# Each data column combines count + pct into one cell ("123 45%")
+set ptree_cols {
+    valid    "Valid"      52  e
+    profiled "Profile"   68  e
+    star3    "3+\u2605"  68  e
+    astar    "A/3+\u2605" 68  e
+    email    "Email"     68  e
+    aeml     "A/Eml"     68  e
+    linkedin "LinkedIn"  68  e
+    facebook "Facebook"  68  e
+    phone    "Only \u260e" 68 e
+    sent     "\u2709 Sent" 68 e
+    repl     "\u2709 Repl" 68 e
 }
 
-# --- Header frame ---
-set phdr ${cpanel}.progress.hdr
-ttk::frame $phdr
-pack $phdr -fill x -padx 2 -pady {2 0}
-configure_table_columns $phdr
+# Extract just column IDs for -columns
+set ptree_col_ids {}
+foreach {id heading width anchor} $ptree_cols { lappend ptree_col_ids $id }
 
-set header_labels {"Segment" "Valid" "Profile" "3+\u2605" "A/3+\u2605" "Email" "A/Eml" "LinkedIn" "Facebook" "Only \u260e" "\u2709 Sent" "\u2709 Repl"}
-set header_gcols_span {1 3 6 9 11 14 16 19 21 23 26 28}
+set ptree ${cpanel}.progress.tree
+ttk::treeview $ptree \
+    -columns $ptree_col_ids \
+    -show {tree headings} \
+    -selectmode none \
+    -yscrollcommand [list ${cpanel}.progress.vsb set]
 
-ttk::label ${phdr}.hdr_cb -text "\u2611" -background $::colours(hdr_bottom) -anchor center -relief groove -borderwidth 1
-grid ${phdr}.hdr_cb -row 0 -column 0 -sticky nsew
+ttk::scrollbar ${cpanel}.progress.vsb -orient vertical -command [list $ptree yview]
+pack ${cpanel}.progress.vsb -side right -fill y -pady {2 2}
+pack $ptree -side left -fill both -expand 1 -padx {2 0} -pady {2 2}
 
-set lbl_i 0
-foreach lbl $header_labels gc $header_gcols_span {
-    set safe [string map {" " _ "\u2605" star "\u260e" phone "\u2709" env "/" slash "+" plus} $lbl]
-    ttk::label ${phdr}.hdr_${safe} -text $lbl -background $::colours(hdr_bottom) \
-        -anchor center -relief groove -borderwidth 1 -font "TkDefaultFont 8 bold"
-    if {$lbl_i == 0} {
-        grid ${phdr}.hdr_${safe} -row 0 -column $gc -sticky nsew
-    } else {
-        grid ${phdr}.hdr_${safe} -row 0 -column $gc -columnspan 2 -sticky nsew
-    }
-    incr lbl_i
+# Tree column (#0): segment name with ✓/☐ prefix
+$ptree column #0 -width 195 -stretch 0 -anchor w
+
+# Data columns
+foreach {id heading width anchor} $ptree_cols {
+    $ptree heading $id -text $heading -anchor $anchor
+    $ptree column  $id -width $width  -stretch 0 -anchor $anchor
 }
 
-# Header separators
-foreach sc $sep_cols {
-    ttk::separator ${phdr}.sep_${sc} -orient vertical
-    grid ${phdr}.sep_${sc} -row 0 -column $sc -sticky ns
+# Tags: muted for skip segments, totals row styling
+$ptree tag configure muted   -foreground $::colours(muted_fg)
+$ptree tag configure totals  -font "TkDefaultFont 9 bold" \
+    -background $::colours(totals_bg)
+
+# Denominator parent col-id for percentage (empty = no pct)
+set denom_parent {
+    valid    {}
+    profiled valid
+    star3    valid
+    astar    star3
+    email    star3
+    aeml     email
+    linkedin star3
+    facebook star3
+    phone    star3
+    sent     aeml
+    repl     sent
 }
 
-# --- Scrollable data area ---
-set scroll_frame ${cpanel}.progress.sf
-ttk::frame $scroll_frame
-pack $scroll_frame -fill both -expand 1 -padx 2
-
-canvas ${scroll_frame}.canvas -highlightthickness 0 -borderwidth 0 -height 100
-ttk::scrollbar ${scroll_frame}.vsb -orient vertical -command [list ${scroll_frame}.canvas yview]
-${scroll_frame}.canvas configure -yscrollcommand [list ${scroll_frame}.vsb set]
-
-pack ${scroll_frame}.vsb -side right -fill y
-pack ${scroll_frame}.canvas -side left -fill both -expand 1
-
-set ptable ${scroll_frame}.canvas.data
-ttk::frame $ptable
-${scroll_frame}.canvas create window 0 0 -anchor nw -window $ptable -tags datawin
-configure_table_columns $ptable
-
-# Data-area separators
-foreach sc $sep_cols {
-    ttk::separator ${ptable}.sep_${sc} -orient vertical
-    grid ${ptable}.sep_${sc} -row 0 -column $sc -rowspan 30 -sticky ns
-}
-
-# --- Populate data rows ---
+# Per-segment raw counts, keyed by segment name
+set seg_counts [dict create]
 array set seg_checked {}
-set data_cells [dict create]
 
-proc populate_data_rows {} {
-    global ptable segments seg_checked data_cells ci_to_gcols colours
+# Format a single cell: "123 45%" or just "123" when no denominator
+proc fmt_cell {count denom} {
+    if {$denom eq "" || $denom == 0} { return $count }
+    return [format "%d %d%%" $count [expr {$count * 100 / $denom}]]
+}
 
-    # Clear existing data widgets (not separators)
-    foreach child [winfo children $ptable] {
-        if {[string match "*sep_*" $child]} continue
-        destroy $child
-    }
+proc populate_progress_tree {} {
+    global ptree ptree_col_ids ptree_cols segments seg_counts seg_checked denom_parent
+
+    $ptree delete [$ptree children {}]
+    set seg_counts [dict create]
     array unset seg_checked
-    set data_cells [dict create]
 
-    set seg_index 0
     foreach seg_entry $segments {
         lassign $seg_entry seg_name is_campaign raw_data
-        set grow $seg_index
+        set tags {}
+        if {!$is_campaign} { lappend tags muted }
+
+        # raw_data is flat list: count {} count pct count pct ...
+        # ci 0 = valid (no pct), ci 1..10 = count pct pairs
+        set counts {}
+        for {set ci 0} {$ci < 11} {incr ci} {
+            lappend counts [lindex $raw_data [expr {$ci * 2}]]
+        }
+
+        # Build values list for treeview columns (formatted cells)
+        set values {}
+        set ci 0
+        foreach {id heading width anchor} $ptree_cols {
+            set count [lindex $counts $ci]
+            set pid [dict get $denom_parent $id]
+            if {$pid eq ""} {
+                lappend values $count
+            } else {
+                # Find parent col index
+                set pidx [lsearch $ptree_col_ids $pid]
+                set denom [lindex $counts $pidx]
+                lappend values [fmt_cell $count $denom]
+            }
+            incr ci
+        }
+
+        set cb [expr {$is_campaign ? "\u2611" : "  "}]
+        $ptree insert {} end -id $seg_name -text "$cb  $seg_name" \
+            -values $values -tags $tags
 
         if {$is_campaign} {
             set seg_checked($seg_name) 1
-            ttk::checkbutton ${ptable}.cb_${seg_index} -variable seg_checked($seg_name) \
-                -command recalc_totals
-            grid ${ptable}.cb_${seg_index} -row $grow -column 0 -sticky nsew
-        }
-
-        set lbl_opts [list -anchor w -padding {4 1}]
-        set cnt_opts [list -anchor e -padding {2 1 1 1}]
-        set pct_opts [list -anchor e -padding {0 1 2 1}]
-        if {!$is_campaign} {
-            lappend lbl_opts -foreground $colours(muted_fg)
-            lappend cnt_opts -foreground $colours(muted_fg)
-            lappend pct_opts -foreground $colours(muted_fg)
-        }
-
-        ttk::label ${ptable}.seg_${seg_index} -text $seg_name {*}$lbl_opts
-        grid ${ptable}.seg_${seg_index} -row $grow -column 1 -sticky nsew
-
-        for {set ci 0} {$ci < 11} {incr ci} {
-            set count [lindex $raw_data [expr {$ci * 2}]]
-            set pct   [lindex $raw_data [expr {$ci * 2 + 1}]]
-            lassign [dict get $ci_to_gcols $ci] ng pg
-
-            ttk::label ${ptable}.dn_${seg_index}_${ci} -text $count {*}$cnt_opts
-            grid ${ptable}.dn_${seg_index}_${ci} -row $grow -column $ng -sticky nsew
-
-            set pct_text ""
-            if {$pct ne "{}" && $pct ne ""} {
-                set pct_text $pct
-            }
-            ttk::label ${ptable}.dp_${seg_index}_${ci} -text $pct_text {*}$pct_opts
-            grid ${ptable}.dp_${seg_index}_${ci} -row $grow -column $pg -sticky nsew
-
-            if {$is_campaign} {
-                dict set data_cells $seg_name $ci count $count
+            # Store raw counts for totals recalc
+            set ci 0
+            foreach id $ptree_col_ids {
+                dict set seg_counts $seg_name $id [lindex $counts $ci]
+                incr ci
             }
         }
-
-        incr seg_index
     }
 
-    # Re-add ScrollData bindtag to new children
-    after idle [list apply {{ptable} {
-        foreach child [winfo children $ptable] {
-            set tags [bindtags $child]
-            if {"ScrollData" ni $tags} {
-                bindtags $child [linsert $tags 1 ScrollData]
-            }
-        }
-    }} $ptable]
+    # Insert totals row (updated by recalc_totals)
+    $ptree insert {} end -id __totals__ -text "  TOTAL" \
+        -values [lrepeat [llength $ptree_col_ids] ""] -tags totals
+
+    recalc_totals
 }
-
-populate_data_rows
-
-# Update canvas scroll region and width tracking
-proc update_data_scroll {} {
-    global scroll_frame ptable
-    set canvas ${scroll_frame}.canvas
-    update idletasks
-    set bbox [$canvas bbox all]
-    $canvas configure -scrollregion $bbox
-    $canvas configure -width [winfo reqwidth $ptable]
-}
-
-bind ${scroll_frame}.canvas <Configure> [list apply {{canvas ptable} {
-    $canvas itemconfigure datawin -width [winfo width $canvas]
-}} ${scroll_frame}.canvas $ptable]
-
-# Mouse wheel scrolling
-set scroll_canvas ${scroll_frame}.canvas
-bind ScrollData <Button-4> [list $scroll_canvas yview scroll -3 units]
-bind ScrollData <Button-5> [list $scroll_canvas yview scroll 3 units]
-bind ScrollData <MouseWheel> [string map [list %CANVAS% $scroll_canvas] {
-    %CANVAS% yview scroll [expr {-%D/120}] units
-}]
-
-foreach w [list $scroll_canvas $ptable] {
-    bindtags $w [linsert [bindtags $w] 1 ScrollData]
-}
-after idle [list apply {{ptable} {
-    foreach child [winfo children $ptable] {
-        bindtags $child [linsert [bindtags $child] 1 ScrollData]
-    }
-}} $ptable]
-
-# --- Totals frame ---
-set ptotals ${cpanel}.progress.totals
-ttk::frame $ptotals
-pack $ptotals -fill x -padx 2 -pady {0 2}
-configure_table_columns $ptotals
-
-ttk::label ${ptotals}.tot_lbl -text "TOTAL" -anchor w -font "TkDefaultFont 9 bold" \
-    -background $::colours(totals_bg) -padding {4 2}
-grid ${ptotals}.tot_lbl -row 0 -column 0 -columnspan 2 -sticky nsew
-
-for {set ci 0} {$ci < 11} {incr ci} {
-    lassign [dict get $ci_to_gcols $ci] ng pg
-    ttk::label ${ptotals}.tn_${ci} -text "" -anchor e -font "TkDefaultFont 9 bold" \
-        -background $::colours(totals_bg) -padding {2 2 1 2}
-    grid ${ptotals}.tn_${ci} -row 0 -column $ng -sticky nsew
-    ttk::label ${ptotals}.tp_${ci} -text "" -anchor e -font "TkDefaultFont 9 bold" \
-        -background $::colours(totals_bg) -padding {0 2 2 2}
-    grid ${ptotals}.tp_${ci} -row 0 -column $pg -sticky nsew
-}
-
-# Totals separators
-foreach sc $sep_cols {
-    ttk::separator ${ptotals}.sep_${sc} -orient vertical
-    grid ${ptotals}.sep_${sc} -row 0 -column $sc -sticky ns
-}
-
-# Denominator parent indices for percentage
-set denom_parent {-1 0 0 2 2 4 2 2 2 5 9}
 
 proc recalc_totals {} {
-    global seg_checked data_cells segments ptotals ci_to_gcols denom_parent
+    global ptree ptree_col_ids ptree_cols seg_counts seg_checked denom_parent
 
-    set sums [list 0 0 0 0 0 0 0 0 0 0 0]
-    foreach seg_entry $segments {
-        lassign $seg_entry seg_name is_campaign raw_data
-        if {!$is_campaign} continue
-        if {![info exists ::seg_checked($seg_name)] || ![set ::seg_checked($seg_name)]} continue
-        for {set ci 0} {$ci < 11} {incr ci} {
-            if {[dict exists $data_cells $seg_name $ci count]} {
-                lset sums $ci [expr {[lindex $sums $ci] + [dict get $data_cells $seg_name $ci count]}]
-            }
+    # Sum counts for checked segments
+    set sums [dict create]
+    foreach id $ptree_col_ids { dict set sums $id 0 }
+
+    dict for {seg_name counts} $seg_counts {
+        if {![info exists ::seg_checked($seg_name)] || !$::seg_checked($seg_name)} continue
+        foreach id $ptree_col_ids {
+            dict set sums $id [expr {[dict get $sums $id] + [dict get $counts $id]}]
         }
     }
 
-    for {set ci 0} {$ci < 11} {incr ci} {
-        set count [lindex $sums $ci]
-        set pi [lindex $denom_parent $ci]
-        lassign [dict get $ci_to_gcols $ci] ng pg
-        if {$pi == -1} {
-            ${ptotals}.tn_${ci} configure -text $count
-            ${ptotals}.tp_${ci} configure -text ""
+    # Format totals values
+    set values {}
+    foreach {id heading width anchor} $ptree_cols {
+        set count [dict get $sums $id]
+        set pid [dict get $denom_parent $id]
+        if {$pid eq ""} {
+            lappend values $count
         } else {
-            set denom [lindex $sums $pi]
-            ${ptotals}.tn_${ci} configure -text $count
-            if {$denom == 0} {
-                ${ptotals}.tp_${ci} configure -text "-"
-            } else {
-                set pct [expr {$count * 100 / $denom}]
-                ${ptotals}.tp_${ci} configure -text "${pct}%"
-            }
+            set denom [dict get $sums $pid]
+            lappend values [fmt_cell $count $denom]
+        }
+    }
+
+    $ptree item __totals__ -values $values
+}
+
+# Toggle segment inclusion on click of column #0
+bind $ptree <Button-1> {
+    set _clicked_col [%W identify column %x %y]
+    set _clicked_row [%W identify row %x %y]
+    if {$_clicked_col eq "#0" && $_clicked_row ne "" && $_clicked_row ne "__totals__"} {
+        set _seg $_clicked_row
+        if {[info exists ::seg_checked($_seg)]} {
+            set ::seg_checked($_seg) [expr {!$::seg_checked($_seg)}]
+            set _cb [expr {$::seg_checked($_seg) ? "\u2611" : "\u2610"}]
+            %W item $_seg -text "$_cb  $_seg"
+            recalc_totals
         }
     }
 }
 
-recalc_totals
-after idle update_data_scroll
+# Mouse wheel scrolling
+bind $ptree <Button-4>   { %W yview scroll -3 units }
+bind $ptree <Button-5>   { %W yview scroll  3 units }
+bind $ptree <MouseWheel> { %W yview scroll [expr {-%D/120}] units }
+
+populate_progress_tree
 
 # --- 2.3 Warnings (collapsed by default) ---
 
@@ -1072,10 +1033,7 @@ show_dispatch_bar
 # ============================================================
 
 proc rebuild_progress_table {} {
-    global ptable segments
-    populate_data_rows
-    recalc_totals
-    after idle update_data_scroll
+    populate_progress_tree
 }
 
 proc rebuild_warnings {} {
