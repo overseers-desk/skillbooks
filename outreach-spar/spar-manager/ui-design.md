@@ -87,7 +87,7 @@ Each row represents one segment. Segments fall into two categories:
 
 The final row is a **Totals** row that sums only the checked campaign segments. It updates dynamically when checkboxes change.
 
-Cell values show count and percentage as in the CLI output (e.g. "14 100%").
+Each data column is split into two sub-columns: one for the count (right-aligned) and one for the percentage (right-aligned). The header label for each data column spans both sub-columns, so the divider within a pair is invisible. Separators between column groups remain visible. This ensures counts and percentages align vertically across rows regardless of digit count.
 
 ### 2.3 Warnings
 
@@ -98,7 +98,7 @@ Below the progress table, a warnings area displays issues detected during the fi
 - Duplicate contacts by email (same email in multiple segments)
 - Identical subject lines in unsent approaches
 
-These mirror the warnings produced by `bin/update-campaign.py`. Each warning is a single line. The area is collapsible and shows a count badge when collapsed (e.g. "⚠ 4 warnings").
+These mirror the warnings produced by `bin/update-campaign.py`. Each warning is a single line. The area is collapsed by default and shows a summary when collapsed (e.g. "▶ ⚠ 7 warnings (5 duplicate email, 1 duplicate name, 1 identical subject)"). Clicking the toggle button expands the full warning list.
 
 ### 2.4 Check email button
 
@@ -228,9 +228,9 @@ Each node label is accompanied by its denominator in smaller grey text (e.g. "/ 
 
 The canvas is not embedded above the table. The table header is a single row; the legend is on-demand.
 
-### Progress table: single grid frame
+### Progress table: three-frame layout with scrollable data
 
-The progress table uses one `ttk::frame` for both the column header row and all data rows. This guarantees column alignment without any post-layout synchronisation. The table is not independently scrollable; the paned window boundary gives the user control over how much vertical space the campaign panel receives.
+The progress table uses three separate frames: a fixed header frame, a scrollable data frame (embedded in a canvas with a vertical scrollbar), and a fixed totals frame. All three frames use identical `grid columnconfigure -minsize` values to ensure column alignment. The header row and totals row remain visible at all times; the data rows between them scroll vertically when there are more segments than fit in the available space. Mouse wheel scrolling is handled via a `ScrollData` bindtag applied to the canvas and all child widgets.
 
 ### Log panel removed from main window
 
@@ -240,7 +240,7 @@ The log panel (zone 4) is not a persistent zone. Log output is only relevant dur
 
 Three scrollbars in the application:
 
-- **Segment data rows** — vertical scrollbar on the data canvas if the table is taller than the available pane height (deferred; in the current mock the table is not wrapped in a scroll canvas).
+- **Segment data rows** — vertical scrollbar on the data canvas, between the fixed header row and the fixed totals row. The canvas requests a small height (100px) so the scrollbar engages whenever the data exceeds the paned-window allocation.
 - **Transition treeview** — vertical scrollbar on the treeview widget itself.
 - **Log window** — vertical scrollbar on the log text widget inside the log toplevel.
 
