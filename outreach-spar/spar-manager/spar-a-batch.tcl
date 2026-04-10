@@ -229,6 +229,7 @@ s_note: $s_note"
         puts $fd "ANTIFACTS=$antifacts"
         puts $fd "GOAL=$goal_path"
         puts $fd "CONTACT_SUMMARY=$name | $org | $segment"
+        puts $fd "ROSTER_EMAIL=$email"
         puts $fd "CHALLENGER_MODEL=sonnet"
         close $fd
 

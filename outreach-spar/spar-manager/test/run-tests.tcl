@@ -1174,6 +1174,93 @@ set oa_issues2 [issues_with_code $issues_v10 orphan_approach]
 assert_eq [llength $oa_issues2] 0 "orphan_approach: all .yaml files referenced → zero issues"
 
 # ════════════════════════════════════════════════════════════════════════
+# 12. validate_approach (per-file guard rail)
+# ════════════════════════════════════════════════════════════════════════
+section "validate_approach"
+
+# 12a. Valid email in to: field → no errors
+set seg_va1 [make_temp_segment]
+set va1_path [write_approach_yaml $seg_va1 "va-valid" [approach_yaml_final_unsent]]
+set va1_issues [spar::validate_approach $va1_path "test@example.com" "VA Contact"]
+assert_eq [llength $va1_issues] 0 "validate_approach: valid email → no issues"
+
+# 12b. Placeholder to: field → placeholder_to error
+set seg_va2 [make_temp_segment]
+set va2_path [write_approach_yaml $seg_va2 "va-placeholder" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: PLACEHOLDER
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}]
+set va2_issues [spar::validate_approach $va2_path "real@example.com" "VA Placeholder"]
+set va2_errors [issues_with_code $va2_issues placeholder_to]
+assert_eq [llength $va2_errors] 1 "validate_approach: placeholder to: → placeholder_to error"
+assert_eq [dict get [lindex $va2_errors 0] severity] "error" "validate_approach: placeholder_to severity is error"
+
+# 12c. to: differs from roster email → email_desync warning
+set seg_va3 [make_temp_segment]
+set va3_path [write_approach_yaml $seg_va3 "va-desync" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: wrong@example.com
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}]
+set va3_issues [spar::validate_approach $va3_path "correct@example.com" "VA Desync"]
+set va3_warnings [issues_with_code $va3_issues email_desync]
+assert_eq [llength $va3_warnings] 1 "validate_approach: to: differs from roster email → email_desync warning"
+assert_eq [dict get [lindex $va3_warnings 0] severity] "warning" "validate_approach: email_desync severity is warning"
+
+# 12d. No final round → no errors
+set seg_va4 [make_temp_segment]
+set va4_path [write_approach_yaml $seg_va4 "va-nofinal" [approach_yaml_no_final]]
+set va4_issues [spar::validate_approach $va4_path "test@example.com" "VA NoFinal"]
+assert_eq [llength $va4_issues] 0 "validate_approach: no final round → no issues"
+
+# 12e. Nonexistent file → no errors (graceful)
+set va5_issues [spar::validate_approach "/tmp/nonexistent-approach.yaml" "test@example.com" "VA Missing"]
+assert_eq [llength $va5_issues] 0 "validate_approach: nonexistent file → no issues"
+
+# 12f. validate_campaign still produces same results via delegation
+# Reuse seg_va2 (placeholder) through classify_segment path
+set seg_va6 [make_temp_segment]
+write_profile $seg_va6 "va-campaign-check"
+write_approach_yaml $seg_va6 "va-campaign-check" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: PLACEHOLDER_EMAIL
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}
+write_roster_tsv $seg_va6 $::std_headers [list \
+    [make_base_row {contact_name "Campaign Check" email "real@example.com" \
+        profile_stem "va-campaign-check" approach_stem "va-campaign-check"}] \
+]
+set cv_va6 [spar::classify_segment $seg_va6]
+set issues_va6 [spar::validate_campaign $cv_va6]
+set pt_va6 [issues_with_code $issues_va6 placeholder_to]
+assert_eq [llength $pt_va6] 1 "validate_campaign: still detects placeholder_to via validate_approach delegation"
+
+# ════════════════════════════════════════════════════════════════════════
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
 cleanup_temps

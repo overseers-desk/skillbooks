@@ -8,7 +8,7 @@ source [file join [file dirname [file normalize [info script]]] spar-lib.tcl]
 namespace eval spar {
     namespace export classify_contact classify_segment \
         transition_eligible detect_duplicates progress_counts \
-        validate_campaign
+        validate_campaign validate_approach
 }
 
 # parse_star — extract integer star rating from a roster field.
@@ -727,6 +727,57 @@ proc spar::progress_counts {classified_contacts} {
         email_replied $n_email_replied]
 }
 
+# validate_approach -- check a single approach file against guard rails.
+#
+# approach_path   path to the approach YAML file
+# roster_email    email field from the roster row (may be empty)
+# contact_name    for error messages
+#
+# Returns a list of issue dicts, each with keys:
+#   severity, code, contact_name, message
+#
+proc spar::validate_approach {approach_path roster_email contact_name} {
+    set issues {}
+
+    if {$approach_path eq "" || ![file exists $approach_path]} {
+        return $issues
+    }
+
+    set approach_data [spar::read_approach_yaml $approach_path]
+    if {$approach_data eq ""} {
+        return $issues
+    }
+
+    set email_re {^[^@\s]+@[^@\s]+\.[^@\s]+$}
+    set fr [spar::analyse_final_round $approach_data]
+    set to_addresses [dict get $fr to_addresses]
+
+    foreach addr $to_addresses {
+        set addr_trimmed [string trim $addr]
+        if {$addr_trimmed eq ""} continue
+
+        if {![regexp $email_re $addr_trimmed]} {
+            lappend issues [dict create \
+                severity error \
+                code placeholder_to \
+                contact_name $contact_name \
+                message "Approach file has non-email to: address '$addr_trimmed'"]
+        } else {
+            if {$roster_email ne "" && [string first "@" $roster_email] >= 0} {
+                if {[string tolower $addr_trimmed] ne [string tolower $roster_email]} {
+                    lappend issues [dict create \
+                        severity warning \
+                        code email_desync \
+                        contact_name $contact_name \
+                        message "Approach to: '$addr_trimmed' differs from roster email '$roster_email'"]
+                }
+            }
+        }
+    }
+
+    return $issues
+}
+
 # validate_campaign -- run validation checks across all classified contacts.
 #
 # all_classified_contacts  flat list from classify_segment across one or more segments
@@ -742,8 +793,6 @@ proc spar::validate_campaign {all_classified_contacts} {
     array set seg_profile_stems {}   ;# segment_dir → list of profile_stem values
     array set seg_approach_stems {}  ;# segment_dir → list of approach_stem values
     array set seg_dirs_seen {}       ;# segment_dir → 1
-
-    set email_re {^[^@\s]+@[^@\s]+\.[^@\s]+$}
 
     foreach contact $all_classified_contacts {
         set state [spar::dict_get_default $contact state ""]
@@ -776,41 +825,11 @@ proc spar::validate_campaign {all_classified_contacts} {
                 message "Contact name contains ' & ' — may be two people entered as one row"]
         }
 
-        # Checks 1 and 2: read approach file for to_addresses
+        # Checks 1 and 2: delegate to validate_approach
         set approach_path [spar::dict_get_default $contact approach_path ""]
-        if {$approach_path eq "" || ![file exists $approach_path]} continue
-
-        set approach_data [spar::read_approach_yaml $approach_path]
-        if {$approach_data eq ""} continue
-
-        set fr [spar::analyse_final_round $approach_data]
-        set to_addresses [dict get $fr to_addresses]
-
-        foreach addr $to_addresses {
-            set addr_trimmed [string trim $addr]
-            if {$addr_trimmed eq ""} continue
-
-            if {![regexp $email_re $addr_trimmed]} {
-                # Check 1: placeholder_to
-                lappend issues [dict create \
-                    severity error \
-                    code placeholder_to \
-                    segment $segment \
-                    contact_name $contact_name \
-                    message "Approach file has non-email to: address '$addr_trimmed'"]
-            } else {
-                # Valid email — check 2: email_desync
-                if {$roster_email ne "" && [string first "@" $roster_email] >= 0} {
-                    if {[string tolower $addr_trimmed] ne [string tolower $roster_email]} {
-                        lappend issues [dict create \
-                            severity warning \
-                            code email_desync \
-                            segment $segment \
-                            contact_name $contact_name \
-                            message "Approach to: '$addr_trimmed' differs from roster email '$roster_email'"]
-                    }
-                }
-            }
+        foreach issue [spar::validate_approach $approach_path $roster_email $contact_name] {
+            dict set issue segment $segment
+            lappend issues $issue
         }
     }
 
