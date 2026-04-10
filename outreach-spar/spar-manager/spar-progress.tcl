@@ -151,9 +151,6 @@ if {$json_mode} {
                 label [::json::write string [dict get $t label]] count [dict get $t count]]
         }
         set w [dict get $progress_dict warnings]
-        set v [dict get $progress_dict validation]
-        set nerr 0; set nwarn 0
-        foreach i $v { if {[dict get $i severity] eq "error"} {incr nerr} else {incr nwarn} }
 
         ::json::write object \
             campaign [::json::write string [dict get $progress_dict campaign]] \
@@ -161,11 +158,13 @@ if {$json_mode} {
             segments [::json::write array {*}$seg_list] \
             totals [_counts_tree [dict get $progress_dict totals]] \
             warnings [::json::write object \
-                duplicate_to [llength [dict get $w duplicate_to]] \
-                duplicate_name [llength [dict get $w duplicate_name]] \
-                duplicate_email [llength [dict get $w duplicate_email]] \
-                identical_subject [llength [dict get $w identical_subject]]] \
-            validation [::json::write object errors $nerr warnings $nwarn] \
+                duplicate_to [dict get $w duplicate_to] \
+                duplicate_name [dict get $w duplicate_name] \
+                duplicate_email [dict get $w duplicate_email] \
+                identical_subject [dict get $w identical_subject]] \
+            validation [::json::write object \
+                errors [dict get $w validation_errors] \
+                warnings [dict get $w validation_warnings]] \
             transitions [::json::write array {*}$tr_list]
     }
 
@@ -195,8 +194,7 @@ if {$json_mode} {
     }
     puts [progress_to_json [dict create campaign $campaign_name min_star $min_star \
         segments $seg_results totals $totals \
-        warnings [spar::detect_duplicates $all_contacts] \
-        validation [spar::validate_campaign $all_contacts] \
+        warnings [spar::build_warnings $all_contacts] \
         transitions $transitions]]
     exit 0
 }
@@ -320,71 +318,12 @@ foreach row $data_rows {
 
 puts "\nRun with --legend to see column definitions."
 
-# --- Duplicate detection ---
-set dups [spar::detect_duplicates $all_contacts]
-
-# Duplicate To: addresses
-set dup_to [dict get $dups duplicate_to]
-if {[llength $dup_to] > 0} {
-    puts "\n## Duplicate recipients\n"
-    puts "Same To: address in multiple approach files.\n"
-    foreach item $dup_to {
-        set addr [dict get $item address]
-        set files [dict get $item files]
-        puts "- **$addr**"
-        foreach f $files {
-            lassign $f seg filename
-            puts "  - $seg/$filename"
-        }
-    }
-}
-
-# Duplicate names
-set dup_name [dict get $dups duplicate_name]
-if {[llength $dup_name] > 0} {
-    puts "\n## Duplicate contacts by name\n"
-    puts "Same person in multiple segments.\n"
-    foreach item $dup_name {
-        set entries [dict get $item entries]
-        # Display using the first entry's original name
-        set display_name [lindex [lindex $entries 0] 1]
-        puts "- **$display_name**"
-        foreach entry $entries {
-            lassign $entry seg cname org email
-            set email_str ""
-            if {$email ne ""} { set email_str "  <$email>" }
-            puts "  - \[$seg\] $org$email_str"
-        }
-    }
-}
-
-# Duplicate emails
-set dup_email [dict get $dups duplicate_email]
-if {[llength $dup_email] > 0} {
-    puts "\n## Duplicate contacts by email\n"
-    puts "Same email in multiple segments.\n"
-    foreach item $dup_email {
-        set addr [dict get $item email]
-        set entries [dict get $item entries]
-        puts "- **$addr**"
-        foreach entry $entries {
-            lassign $entry seg cname org
-            puts "  - \[$seg\] $cname — $org"
-        }
-    }
-}
-
-# Identical subjects
-set dup_subject [dict get $dups identical_subject]
-if {[llength $dup_subject] > 0} {
-    puts "\n## Identical subject lines in unsent approaches\n"
-    foreach item $dup_subject {
-        set subj [dict get $item subject]
-        set files [dict get $item files]
-        puts "- **Subject:** $subj"
-        foreach f $files {
-            lassign $f seg filename
-            puts "  - $seg/$filename"
-        }
+# --- Warnings and validation ---
+set warn_result [spar::build_warnings $all_contacts]
+set warn_messages [dict get $warn_result messages]
+if {[llength $warn_messages] > 0} {
+    puts "\n## Warnings\n"
+    foreach msg $warn_messages {
+        puts "- $msg"
     }
 }
