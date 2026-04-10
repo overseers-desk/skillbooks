@@ -1250,6 +1250,162 @@ set pt_va6 [issues_with_code $issues_va6 placeholder_to]
 assert_eq [llength $pt_va6] 1 "validate_campaign: still detects placeholder_to via validate_approach delegation"
 
 # ════════════════════════════════════════════════════════════════════════
+# 13. Golden snapshot (real campaign data)
+# ════════════════════════════════════════════════════════════════════════
+section "13. Golden snapshot (real campaign data)"
+
+set campaign_dir [file normalize [file join $script_dir .. .. .. .. rivermill segments-outreach.spar]]
+if {![file isdirectory $campaign_dir]} {
+    puts "  SKIP: campaign directory not found ($campaign_dir)"
+} else {
+    # 13a. line-dance segment
+    set ld_seg [file join $campaign_dir line-dance]
+    set ld_contacts [spar::classify_segment $ld_seg]
+    set ld_counts [spar::progress_counts $ld_contacts]
+    assert_eq [dict get $ld_counts valid] 12 "golden line-dance: valid=12"
+    assert_eq [dict get $ld_counts profiled] 12 "golden line-dance: profiled=12"
+    assert_eq [dict get $ld_counts star3] 10 "golden line-dance: star3=10"
+
+    # 13b. community-organisation segment
+    set co_seg [file join $campaign_dir community-organisation]
+    set co_contacts [spar::classify_segment $co_seg]
+    set co_counts [spar::progress_counts $co_contacts]
+    assert_eq [dict get $co_counts valid] 73 "golden community-organisation: valid=73"
+    assert_eq [dict get $co_counts profiled] 73 "golden community-organisation: profiled=73"
+}
+
+# ════════════════════════════════════════════════════════════════════════
+# 14. T5 transition eligibility
+# ════════════════════════════════════════════════════════════════════════
+section "14. T5 transition eligibility"
+
+set seg_t5 [make_temp_segment]
+write_profile $seg_t5 "t5-profiled"
+write_roster_tsv $seg_t5 $::std_headers [list \
+    [make_base_row {contact_name "Inv Irene" date_found_invalid "2026-01-01" stem ""}] \
+    [make_base_row {contact_name "Disco Dan" stem ""}] \
+    [make_base_row {contact_name "Prof Pat" stem "t5-profiled"}] \
+]
+set ct5 [spar::classify_segment $seg_t5]
+set t5_results [spar::transition_eligible $ct5 "T5"]
+set t5_names [lmap c $t5_results {dict get $c contact_name}]
+
+assert_eq [expr {"Inv Irene" in $t5_names}] 0 \
+    "T5: INVALID contact not in list"
+assert_eq [expr {"Disco Dan" in $t5_names}] 1 \
+    "T5: DISCOVERED contact in list"
+assert_eq [expr {"Prof Pat" in $t5_names}] 1 \
+    "T5: PROFILED contact in list"
+
+# Verify task_state is ready for eligible contacts
+foreach c $t5_results {
+    set n [dict get $c contact_name]
+    if {$n eq "Disco Dan"} {
+        assert_eq [dict get $c task_state] "ready" "T5: DISCOVERED task_state=ready"
+    }
+    if {$n eq "Prof Pat"} {
+        assert_eq [dict get $c task_state] "ready" "T5: PROFILED task_state=ready"
+    }
+}
+
+# ════════════════════════════════════════════════════════════════════════
+# 15. T6/T7 zero tasks (PROFILE_STALE undefined)
+# ════════════════════════════════════════════════════════════════════════
+section "15. T6/T7 zero tasks (PROFILE_STALE undefined)"
+
+set seg_t67 [make_temp_segment]
+write_profile $seg_t67 "t67-profiled"
+write_profile $seg_t67 "t67-approached"
+write_approach_yaml $seg_t67 "t67-approached" [approach_yaml_final_unsent]
+write_profile $seg_t67 "t67-sent"
+write_approach_yaml $seg_t67 "t67-sent" [approach_yaml_final_sent_email]
+write_roster_tsv $seg_t67 $::std_headers [list \
+    [make_base_row {contact_name "Disco" stem ""}] \
+    [make_base_row {contact_name "Prof" stem "t67-profiled"}] \
+    [make_base_row {contact_name "App" stem "t67-approached"}] \
+    [make_base_row {contact_name "Sent" stem "t67-sent"}] \
+]
+set ct67 [spar::classify_segment $seg_t67]
+
+set t6_results [spar::transition_eligible $ct67 "T6"]
+assert_eq [llength $t6_results] 0 "T6: zero tasks (PROFILE_STALE undefined)"
+
+set t7_results [spar::transition_eligible $ct67 "T7"]
+assert_eq [llength $t7_results] 0 "T7: zero tasks (PROFILE_STALE undefined)"
+
+# ════════════════════════════════════════════════════════════════════════
+# 16. progress_counts edge cases
+# ════════════════════════════════════════════════════════════════════════
+section "16. progress_counts edge cases"
+
+# 16a. Empty segment (headers only, no data rows) → all counts = 0
+set seg_empty [make_temp_segment]
+write_roster_tsv $seg_empty $::std_headers [list]
+set c_empty [spar::classify_segment $seg_empty]
+set counts_empty [spar::progress_counts $c_empty]
+assert_eq [dict get $counts_empty valid] 0 "empty segment: valid=0"
+assert_eq [dict get $counts_empty profiled] 0 "empty segment: profiled=0"
+assert_eq [dict get $counts_empty star3] 0 "empty segment: star3=0"
+assert_eq [dict get $counts_empty approached_star3] 0 "empty segment: approached_star3=0"
+assert_eq [dict get $counts_empty email_sent] 0 "empty segment: email_sent=0"
+assert_eq [dict get $counts_empty email_replied] 0 "empty segment: email_replied=0"
+
+# 16b. All INVALID contacts → valid=0, all other counts=0
+set seg_inv [make_temp_segment]
+write_roster_tsv $seg_inv $::std_headers [list \
+    [make_base_row {contact_name "Inv A" date_found_invalid "2026-01-01" stem ""}] \
+    [make_base_row {contact_name "Inv B" date_found_invalid "2026-02-01" stem ""}] \
+]
+set c_inv [spar::classify_segment $seg_inv]
+set counts_inv [spar::progress_counts $c_inv]
+assert_eq [dict get $counts_inv valid] 0 "all invalid: valid=0"
+assert_eq [dict get $counts_inv profiled] 0 "all invalid: profiled=0"
+assert_eq [dict get $counts_inv star3] 0 "all invalid: star3=0"
+
+# 16c. Contact with star_rating=2 → counted in valid and profiled but NOT star3
+set seg_lo [make_temp_segment]
+write_profile $seg_lo "lo-star"
+write_roster_tsv $seg_lo $::std_headers [list \
+    [make_base_row {contact_name "Lo Star" stem "lo-star" star_rating "2" email "lo@example.com"}] \
+]
+set c_lo [spar::classify_segment $seg_lo]
+set counts_lo [spar::progress_counts $c_lo]
+assert_eq [dict get $counts_lo valid] 1 "star=2: valid=1"
+assert_eq [dict get $counts_lo profiled] 1 "star=2: profiled=1"
+assert_eq [dict get $counts_lo star3] 0 "star=2: star3=0"
+assert_eq [dict get $counts_lo approached_star3] 0 "star=2: approached_star3=0"
+
+# ════════════════════════════════════════════════════════════════════════
+# 17. normalise_name
+# ════════════════════════════════════════════════════════════════════════
+section "17. normalise_name"
+
+assert_eq [spar::normalise_name "John Smith"] "john smith" \
+    "normalise: John Smith → john smith"
+assert_eq [spar::normalise_name "JOHN SMITH"] "john smith" \
+    "normalise: JOHN SMITH → john smith"
+assert_eq [spar::normalise_name "John (Johnny) Smith"] "john smith" \
+    "normalise: parenthetical stripped"
+assert_eq [spar::normalise_name "Smith/Jones"] "smith jones" \
+    "normalise: slash → space"
+assert_eq [spar::normalise_name "Smith & Jones"] "smith jones" \
+    "normalise: ampersand → space"
+assert_eq [spar::normalise_name "  John   Smith  "] "john smith" \
+    "normalise: whitespace collapsed and trimmed"
+
+# ════════════════════════════════════════════════════════════════════════
+# 18. parse_star
+# ════════════════════════════════════════════════════════════════════════
+section "18. parse_star"
+
+assert_eq [spar::parse_star "5"] 5 "parse_star: 5 → 5"
+assert_eq [spar::parse_star "3"] 3 "parse_star: 3 → 3"
+assert_eq [spar::parse_star ""] 0 "parse_star: empty → 0"
+assert_eq [spar::parse_star "abc"] 0 "parse_star: abc → 0"
+assert_eq [spar::parse_star "3+"] 3 "parse_star: 3+ → 3"
+assert_eq [spar::parse_star "0"] 0 "parse_star: 0 → 0"
+
+# ════════════════════════════════════════════════════════════════════════
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
 cleanup_temps
