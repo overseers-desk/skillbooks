@@ -1406,6 +1406,107 @@ assert_eq [spar::parse_star "3+"] 3 "parse_star: 3+ → 3"
 assert_eq [spar::parse_star "0"] 0 "parse_star: 0 → 0"
 
 # ════════════════════════════════════════════════════════════════════════
+# 19. roster_counts
+# ════════════════════════════════════════════════════════════════════════
+section "19. roster_counts"
+
+# 19a. Basic roster_counts with mixed contacts
+set seg [make_temp_segment]
+write_roster_tsv $seg $::std_headers [list \
+    [make_base_row {stem "alice" star_rating "5" email "a@test.com" linkedin_url "" facebook_url "" phone ""}] \
+    [make_base_row {stem "bob" star_rating "3" email "" linkedin_url "https://li.com/bob" facebook_url "" phone ""}] \
+    [make_base_row {stem "carol" star_rating "2" email "c@test.com" linkedin_url "" facebook_url "" phone ""}] \
+    [make_base_row {stem "dave" star_rating "4" email "" linkedin_url "" facebook_url "" phone "0400000000"}] \
+    [make_base_row {stem "eve" star_rating "3" email "" linkedin_url "" facebook_url "https://fb.com/eve" phone ""}] \
+]
+set rc [spar::roster_counts $seg]
+assert_eq [dict get $rc valid] 5 "roster_counts: 5 valid contacts"
+assert_eq [dict get $rc star3] 4 "roster_counts: 4 contacts with star >= 3"
+assert_eq [dict get $rc has_email] 1 "roster_counts: 1 star3+ with email"
+assert_eq [dict get $rc has_linkedin] 1 "roster_counts: 1 star3+ with linkedin"
+assert_eq [dict get $rc has_facebook] 1 "roster_counts: 1 star3+ with facebook"
+assert_eq [dict get $rc has_phone_only] 1 "roster_counts: 1 star3+ phone only"
+
+# 19b. roster_counts with invalid contact excluded
+set seg [make_temp_segment]
+write_roster_tsv $seg $::std_headers [list \
+    [make_base_row {stem "alice" star_rating "5" email "a@test.com"}] \
+    [make_base_row {stem "bob" star_rating "3" date_found_invalid "2026-01-01"}] \
+]
+set rc [spar::roster_counts $seg]
+assert_eq [dict get $rc valid] 1 "roster_counts: invalid contact excluded"
+assert_eq [dict get $rc star3] 1 "roster_counts: only valid star3 counted"
+
+# 19c. roster_counts with empty roster
+set seg [make_temp_segment]
+write_roster_tsv $seg $::std_headers {}
+set rc [spar::roster_counts $seg]
+assert_eq [dict get $rc valid] 0 "roster_counts: empty roster → 0 valid"
+assert_eq [dict get $rc star3] 0 "roster_counts: empty roster → 0 star3"
+
+# ════════════════════════════════════════════════════════════════════════
+# 20. --json integration test (spar-progress.tcl)
+# ════════════════════════════════════════════════════════════════════════
+section "20. --json integration test"
+
+package require json
+
+proc make_temp_campaign {} {
+    set base [file join /tmp "spar-campaign-test-[pid]-[clock microseconds]"]
+    file mkdir $base
+    lappend ::cleanup_dirs $base
+    return $base
+}
+
+proc write_campaign_yaml {campaign_dir content} {
+    set path [file join $campaign_dir campaign.yaml]
+    set fd [open $path w]
+    puts -nonewline $fd $content
+    close $fd
+    return $path
+}
+
+set cdir [make_temp_campaign]
+set seg_a [file join $cdir seg-a]
+file mkdir $seg_a
+file mkdir [file join $seg_a profiles]
+file mkdir [file join $seg_a approach]
+write_roster_tsv $seg_a $::std_headers [list \
+    [make_base_row {stem "alice" contact_name "Alice" star_rating "5" email "a@test.com"}] \
+    [make_base_row {stem "bob" contact_name "Bob" star_rating "3" email "b@test.com"}] \
+]
+write_profile $seg_a "alice"
+write_campaign_yaml $cdir "campaign: Test Campaign\nsegments:\n  - seg-a\nfilter:\n  min_star: 3\n"
+
+set progress_script [file join $script_dir .. spar-progress.tcl]
+set json_str [exec tclsh $progress_script $cdir --json 2>/dev/null]
+set parsed [::json::json2dict $json_str]
+
+assert_eq [dict get $parsed campaign] "Test Campaign" "json: campaign value"
+assert_eq [dict exists $parsed totals] 1 "json: has totals"
+set jtotals [dict get $parsed totals]
+assert_eq [dict exists $jtotals qualified] 1 "json: totals has qualified"
+set jq [dict get $jtotals qualified]
+assert_eq [dict exists $jq email] 1 "json: qualified has email"
+set je [dict get $jq email]
+assert_eq [dict exists $je approached] 1 "json: email has approached"
+set ja [dict get $je approached]
+assert_eq [dict exists $ja sent] 1 "json: approached has sent"
+set js [dict get $ja sent]
+assert_eq [dict exists $js replied] 1 "json: sent has replied"
+assert_eq [dict exists $parsed segments] 1 "json: has segments"
+assert_eq [llength [dict get $parsed segments]] 1 "json: one segment"
+assert_eq [dict exists $parsed transitions] 1 "json: has transitions"
+assert_eq [llength [dict get $parsed transitions]] 8 "json: 8 transitions"
+assert_eq [dict exists $parsed warnings] 1 "json: has warnings"
+assert_eq [dict exists $parsed validation] 1 "json: has validation"
+
+# Test YAML-as-positional-arg
+set json_str2 [exec tclsh $progress_script [file join $cdir campaign.yaml] --json 2>/dev/null]
+set parsed2 [::json::json2dict $json_str2]
+assert_eq [dict get $parsed2 campaign] "Test Campaign" "json: YAML as positional arg"
+
+# ════════════════════════════════════════════════════════════════════════
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
 cleanup_temps
