@@ -99,7 +99,7 @@ proc write_roster_tsv {segment_dir headers rows} {
 
 # write_profile -- create a minimal profile .md file.
 proc write_profile {segment_dir stem} {
-    set path [file join $segment_dir profiles "${stem}.md"]
+    set path [file join $segment_dir profiles "profile-${stem}.md"]
     set fd [open $path w]
     puts $fd "# Profile: $stem"
     puts $fd "Richness: Thin"
@@ -120,7 +120,7 @@ proc write_approach_yaml {segment_dir stem content} {
 # Standard roster headers for most tests.
 set ::std_headers {
     contact_name organisation_name email linkedin_url facebook_url phone
-    star_rating date_found_invalid profile_stem approach_stem
+    star_rating date_found_invalid stem
 }
 
 # make_base_row -- return a dict with default valid values.
@@ -134,8 +134,7 @@ proc make_base_row {{overrides {}}} {
         phone           "" \
         star_rating     "3" \
         date_found_invalid "" \
-        profile_stem    "" \
-        approach_stem   "" \
+        stem            "" \
     ]
     dict for {k v} $overrides {
         dict set row $k $v
@@ -280,30 +279,30 @@ set row [make_base_row {date_found_invalid "2026-01-15"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result state] "INVALID" "date_found_invalid → INVALID"
 
-# 1b. Valid contact, profile_stem="" → DISCOVERED
+# 1b. Valid contact, stem="" → DISCOVERED
 set seg [make_temp_segment]
-set row [make_base_row {profile_stem ""}]
+set row [make_base_row {stem ""}]
 set result [spar::classify_contact $row $seg]
-assert_eq [dict get $result state] "DISCOVERED" "no profile_stem → DISCOVERED"
+assert_eq [dict get $result state] "DISCOVERED" "no profile file → DISCOVERED"
 
-# 1c. Valid contact, profile_stem set, profile file exists → PROFILED
+# 1c. Valid contact, stem set, profile file exists → PROFILED
 set seg [make_temp_segment]
 write_profile $seg "alice-smith-acme"
-set row [make_base_row {profile_stem "alice-smith-acme"}]
+set row [make_base_row {stem "alice-smith-acme"}]
 set result [spar::classify_contact $row $seg]
-assert_eq [dict get $result state] "PROFILED" "profile_stem + file exists → PROFILED"
+assert_eq [dict get $result state] "PROFILED" "stem + file exists → PROFILED"
 
-# 1d. Valid contact, profile_stem set, profile file MISSING → DISCOVERED
+# 1d. Valid contact, stem set, profile file MISSING → DISCOVERED
 set seg [make_temp_segment]
-set row [make_base_row {profile_stem "nonexistent-profile"}]
+set row [make_base_row {stem "nonexistent-profile"}]
 set result [spar::classify_contact $row $seg]
-assert_eq [dict get $result state] "DISCOVERED" "profile_stem + file missing → DISCOVERED"
+assert_eq [dict get $result state] "DISCOVERED" "stem + file missing → DISCOVERED"
 
-# 1e. Valid, profile+approach stems set, approach file exists, no final round → APPROACHED
+# 1e. Valid, stem set, profile+approach files exist, no final round → APPROACHED
 set seg [make_temp_segment]
 write_profile $seg "bob-jones-widgets"
 write_approach_yaml $seg "bob-jones-widgets" [approach_yaml_no_final]
-set row [make_base_row {profile_stem "bob-jones-widgets" approach_stem "bob-jones-widgets"}]
+set row [make_base_row {stem "bob-jones-widgets"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result state] "APPROACHED" "approach exists, no final round → APPROACHED"
 
@@ -311,7 +310,7 @@ assert_eq [dict get $result state] "APPROACHED" "approach exists, no final round
 set seg [make_temp_segment]
 write_profile $seg "carol-lee-bigco"
 write_approach_yaml $seg "carol-lee-bigco" [approach_yaml_final_unsent]
-set row [make_base_row {profile_stem "carol-lee-bigco" approach_stem "carol-lee-bigco"}]
+set row [make_base_row {stem "carol-lee-bigco"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result state] "APPROACHED" "final round, no actioned_date → APPROACHED"
 
@@ -319,7 +318,7 @@ assert_eq [dict get $result state] "APPROACHED" "final round, no actioned_date �
 set seg [make_temp_segment]
 write_profile $seg "dave-kim-techcorp"
 write_approach_yaml $seg "dave-kim-techcorp" [approach_yaml_final_sent_email]
-set row [make_base_row {profile_stem "dave-kim-techcorp" approach_stem "dave-kim-techcorp"}]
+set row [make_base_row {stem "dave-kim-techcorp"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result state] "SENT" "final round, actioned_date set → SENT"
 
@@ -327,7 +326,7 @@ assert_eq [dict get $result state] "SENT" "final round, actioned_date set → SE
 set seg [make_temp_segment]
 write_profile $seg "eve-tanaka-globalinc"
 write_approach_yaml $seg "eve-tanaka-globalinc" [approach_yaml_final_replied]
-set row [make_base_row {profile_stem "eve-tanaka-globalinc" approach_stem "eve-tanaka-globalinc"}]
+set row [make_base_row {stem "eve-tanaka-globalinc"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result state] "REPLIED" "final round, replied_date set → REPLIED"
 
@@ -335,7 +334,7 @@ assert_eq [dict get $result state] "REPLIED" "final round, replied_date set → 
 set seg [make_temp_segment]
 write_profile $seg "frank-wu-pacific"
 write_approach_yaml $seg "frank-wu-pacific" [approach_yaml_final_reply_received]
-set row [make_base_row {profile_stem "frank-wu-pacific" approach_stem "frank-wu-pacific"}]
+set row [make_base_row {stem "frank-wu-pacific"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result state] "REPLIED" "final round, direction=received reply → REPLIED"
 
@@ -405,7 +404,7 @@ section "3. Channel properties"
 set seg [make_temp_segment]
 write_profile $seg "ch-email-sent"
 write_approach_yaml $seg "ch-email-sent" [approach_yaml_final_sent_email]
-set row [make_base_row {profile_stem "ch-email-sent" approach_stem "ch-email-sent"}]
+set row [make_base_row {stem "ch-email-sent"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result email_sent] 1 "final email actioned → email_sent=1"
 
@@ -413,7 +412,7 @@ assert_eq [dict get $result email_sent] 1 "final email actioned → email_sent=1
 set seg [make_temp_segment]
 write_profile $seg "ch-linkedin-sent"
 write_approach_yaml $seg "ch-linkedin-sent" [approach_yaml_final_sent_linkedin]
-set row [make_base_row {profile_stem "ch-linkedin-sent" approach_stem "ch-linkedin-sent"}]
+set row [make_base_row {stem "ch-linkedin-sent"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result linkedin_sent] 1 "final linkedin actioned → linkedin_sent=1"
 
@@ -421,7 +420,7 @@ assert_eq [dict get $result linkedin_sent] 1 "final linkedin actioned → linked
 set seg [make_temp_segment]
 write_profile $seg "ch-unsent"
 write_approach_yaml $seg "ch-unsent" [approach_yaml_final_unsent]
-set row [make_base_row {profile_stem "ch-unsent" approach_stem "ch-unsent"}]
+set row [make_base_row {stem "ch-unsent"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result email_sent] 0 "final email not actioned → email_sent=0"
 
@@ -429,7 +428,7 @@ assert_eq [dict get $result email_sent] 0 "final email not actioned → email_se
 set seg [make_temp_segment]
 write_profile $seg "ch-replied"
 write_approach_yaml $seg "ch-replied" [approach_yaml_final_replied]
-set row [make_base_row {profile_stem "ch-replied" approach_stem "ch-replied"}]
+set row [make_base_row {stem "ch-replied"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result email_replied] 1 "final replied_date → email_replied=1"
 
@@ -437,7 +436,7 @@ assert_eq [dict get $result email_replied] 1 "final replied_date → email_repli
 set seg [make_temp_segment]
 write_profile $seg "ch-recv"
 write_approach_yaml $seg "ch-recv" [approach_yaml_final_reply_received]
-set row [make_base_row {profile_stem "ch-recv" approach_stem "ch-recv"}]
+set row [make_base_row {stem "ch-recv"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result email_replied] 1 "direction=received → email_replied=1"
 
@@ -445,7 +444,7 @@ assert_eq [dict get $result email_replied] 1 "direction=received → email_repli
 set seg [make_temp_segment]
 write_profile $seg "ch-multi"
 write_approach_yaml $seg "ch-multi" [approach_yaml_final_multi_channel]
-set row [make_base_row {profile_stem "ch-multi" approach_stem "ch-multi"}]
+set row [make_base_row {stem "ch-multi"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result linkedin_sent] 1 "multi-channel: linkedin_sent=1"
 assert_eq [dict get $result email_sent] 0 "multi-channel: email_sent=0 (not actioned)"
@@ -466,11 +465,11 @@ write_approach_yaml $seg "sent-one" [approach_yaml_final_sent_email]
 
 set headers $::std_headers
 set rows [list \
-    [make_base_row {contact_name "Invalid Irene" date_found_invalid "2026-01-01" profile_stem "" approach_stem ""}] \
-    [make_base_row {contact_name "Discovered Dan" profile_stem "" approach_stem ""}] \
-    [make_base_row {contact_name "Profiled Pat" profile_stem "profiled-one" approach_stem ""}] \
-    [make_base_row {contact_name "Approached Ann" profile_stem "approached-one" approach_stem "approached-one"}] \
-    [make_base_row {contact_name "Sent Steve" profile_stem "sent-one" approach_stem "sent-one"}] \
+    [make_base_row {contact_name "Invalid Irene" date_found_invalid "2026-01-01" stem ""}] \
+    [make_base_row {contact_name "Discovered Dan" stem ""}] \
+    [make_base_row {contact_name "Profiled Pat" stem "profiled-one"}] \
+    [make_base_row {contact_name "Approached Ann" stem "approached-one"}] \
+    [make_base_row {contact_name "Sent Steve" stem "sent-one"}] \
 ]
 write_roster_tsv $seg $headers $rows
 
@@ -490,25 +489,15 @@ foreach c $contacts {
     }
 }
 
-# 4b. Schema validation: roster missing profile_stem column → error
+# 4b. Schema validation: roster missing stem column → error
 set seg [make_temp_segment]
 set bad_headers {contact_name organisation_name email star_rating}
 set bad_rows [list [dict create contact_name "Test" organisation_name "Org" email "a@b.com" star_rating "3"]]
 write_roster_tsv $seg $bad_headers $bad_rows
 
 assert_error {spar::classify_segment $seg} \
-    "*missing required column*profile_stem*" \
-    "missing profile_stem column → error"
-
-# 4c. Schema validation: roster missing approach_stem column → error
-set seg [make_temp_segment]
-set bad_headers2 {contact_name organisation_name email star_rating profile_stem}
-set bad_rows2 [list [dict create contact_name "Test" organisation_name "Org" email "a@b.com" star_rating "3" profile_stem ""]]
-write_roster_tsv $seg $bad_headers2 $bad_rows2
-
-assert_error {spar::classify_segment $seg} \
-    "*missing required column*approach_stem*" \
-    "missing approach_stem column → error"
+    "*missing required column*stem*" \
+    "missing stem column → error"
 
 # ════════════════════════════════════════════════════════════════════════
 # 5. progress_counts tests
@@ -528,11 +517,11 @@ write_approach_yaml $seg "p-dave" [approach_yaml_final_replied]
 
 set headers $::std_headers
 set rows [list \
-    [make_base_row {contact_name "Alice" star_rating "4" email "alice@example.com" profile_stem "p-alice" approach_stem ""}] \
-    [make_base_row {contact_name "Bob" star_rating "5" email "bob@example.com" profile_stem "p-bob" approach_stem "p-bob"}] \
-    [make_base_row {contact_name "Carol" star_rating "3" email "carol@example.com" profile_stem "p-carol" approach_stem "p-carol"}] \
-    [make_base_row {contact_name "Dave" star_rating "3" email "dave@example.com" profile_stem "p-dave" approach_stem "p-dave"}] \
-    [make_base_row {contact_name "Ed" star_rating "2" email "" profile_stem "" approach_stem "" date_found_invalid "2026-01-01"}] \
+    [make_base_row {contact_name "Alice" star_rating "4" email "alice@example.com" stem "p-alice"}] \
+    [make_base_row {contact_name "Bob" star_rating "5" email "bob@example.com" stem "p-bob"}] \
+    [make_base_row {contact_name "Carol" star_rating "3" email "carol@example.com" stem "p-carol"}] \
+    [make_base_row {contact_name "Dave" star_rating "3" email "dave@example.com" stem "p-dave"}] \
+    [make_base_row {contact_name "Ed" star_rating "2" email "" stem "" date_found_invalid "2026-01-01"}] \
 ]
 write_roster_tsv $seg $headers $rows
 
@@ -575,12 +564,12 @@ write_approach_yaml $seg "t-sent" [approach_yaml_final_sent_email]
 
 set headers $::std_headers
 set rows [list \
-    [make_base_row {contact_name "Disco Dan" profile_stem "" approach_stem "" star_rating "4" email "dan@example.com"}] \
-    [make_base_row {contact_name "Prof Hi" profile_stem "t-profiled-hi" approach_stem "" star_rating "4" email "hi@example.com"}] \
-    [make_base_row {contact_name "Prof Lo" profile_stem "t-profiled-lo" approach_stem "" star_rating "2" email "lo@example.com"}] \
-    [make_base_row {contact_name "App Email" profile_stem "t-approached-email" approach_stem "t-approached-email" star_rating "3" email "app@example.com"}] \
-    [make_base_row {contact_name "App NoEmail" profile_stem "t-approached-noemail" approach_stem "t-approached-noemail" star_rating "3" email ""}] \
-    [make_base_row {contact_name "Sent Sam" profile_stem "t-sent" approach_stem "t-sent" star_rating "3" email "sent@example.com"}] \
+    [make_base_row {contact_name "Disco Dan" stem "" star_rating "4" email "dan@example.com"}] \
+    [make_base_row {contact_name "Prof Hi" stem "t-profiled-hi" star_rating "4" email "hi@example.com"}] \
+    [make_base_row {contact_name "Prof Lo" stem "t-profiled-lo" star_rating "2" email "lo@example.com"}] \
+    [make_base_row {contact_name "App Email" stem "t-approached-email" star_rating "3" email "app@example.com"}] \
+    [make_base_row {contact_name "App NoEmail" stem "t-approached-noemail" star_rating "3" email ""}] \
+    [make_base_row {contact_name "Sent Sam" stem "t-sent" star_rating "3" email "sent@example.com"}] \
 ]
 write_roster_tsv $seg $headers $rows
 
@@ -629,36 +618,36 @@ section "7. Path properties in classify_contact result"
 set seg [make_temp_segment]
 set pp [write_profile $seg "path-test"]
 set ap [write_approach_yaml $seg "path-test" [approach_yaml_final_unsent]]
-set row [make_base_row {profile_stem "path-test" approach_stem "path-test"}]
+set row [make_base_row {stem "path-test"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result profile_path] $pp "profile_path points to correct file"
 assert_eq [dict get $result approach_path] $ap "approach_path points to correct file"
 
-# Empty paths when stems are empty
-set row2 [make_base_row {profile_stem "" approach_stem ""}]
+# Empty paths when stem is empty
+set row2 [make_base_row {stem ""}]
 set result2 [spar::classify_contact $row2 $seg]
-assert_eq [dict get $result2 profile_path] "" "no profile_stem → profile_path empty"
-assert_eq [dict get $result2 approach_path] "" "no approach_stem → approach_path empty"
+assert_eq [dict get $result2 profile_path] "" "no profile file → profile_path empty"
+assert_eq [dict get $result2 approach_path] "" "no profile file → approach_path empty"
 
 # ════════════════════════════════════════════════════════════════════════
 # 8. Edge cases
 # ════════════════════════════════════════════════════════════════════════
 section "8. Edge cases"
 
-# 8a. INVALID takes priority even if profile_stem and approach_stem are set
+# 8a. INVALID takes priority even if stem is set and files exist
 set seg [make_temp_segment]
 write_profile $seg "invalid-priority"
 write_approach_yaml $seg "invalid-priority" [approach_yaml_final_sent_email]
-set row [make_base_row {date_found_invalid "2026-03-01" profile_stem "invalid-priority" approach_stem "invalid-priority"}]
+set row [make_base_row {date_found_invalid "2026-03-01" stem "invalid-priority"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result state] "INVALID" "INVALID wins over SENT when date_found_invalid set"
 
-# 8b. approach_stem set but no approach file → stays PROFILED
+# 8b. profile file exists but no approach file → stays PROFILED
 set seg [make_temp_segment]
 write_profile $seg "no-approach-file"
-set row [make_base_row {profile_stem "no-approach-file" approach_stem "missing-approach"}]
+set row [make_base_row {stem "no-approach-file"}]
 set result [spar::classify_contact $row $seg]
-assert_eq [dict get $result state] "PROFILED" "approach_stem set but file missing → PROFILED"
+assert_eq [dict get $result state] "PROFILED" "profile exists but no approach file → PROFILED"
 
 # 8c. star_rating with non-numeric value → star=0
 set seg [make_temp_segment]
@@ -682,10 +671,10 @@ set seg1 [make_temp_segment]
 set seg2 [make_temp_segment]
 
 write_roster_tsv $seg1 $::std_headers [list \
-    [make_base_row {contact_name "Alice One" email "shared@example.com" profile_stem "" approach_stem ""}] \
+    [make_base_row {contact_name "Alice One" email "shared@example.com" stem ""}] \
 ]
 write_roster_tsv $seg2 $::std_headers [list \
-    [make_base_row {contact_name "Alice Two" email "shared@example.com" profile_stem "" approach_stem ""}] \
+    [make_base_row {contact_name "Alice Two" email "shared@example.com" stem ""}] \
 ]
 
 set c1 [spar::classify_segment $seg1]
@@ -698,8 +687,8 @@ assert_eq [expr {[llength [dict get $dups duplicate_email]] > 0}] 1 \
 # 9b. duplicate_email: same email in two contacts from the SAME segment → not flagged
 set seg3 [make_temp_segment]
 write_roster_tsv $seg3 $::std_headers [list \
-    [make_base_row {contact_name "Bob One" email "bob@example.com" profile_stem "" approach_stem ""}] \
-    [make_base_row {contact_name "Bob Two" email "bob@example.com" profile_stem "" approach_stem ""}] \
+    [make_base_row {contact_name "Bob One" email "bob@example.com" stem ""}] \
+    [make_base_row {contact_name "Bob Two" email "bob@example.com" stem ""}] \
 ]
 set c3 [spar::classify_segment $seg3]
 set dups3 [spar::detect_duplicates $c3]
@@ -710,10 +699,10 @@ assert_eq [llength [dict get $dups3 duplicate_email]] 0 \
 set seg4 [make_temp_segment]
 set seg5 [make_temp_segment]
 write_roster_tsv $seg4 $::std_headers [list \
-    [make_base_row {contact_name "Carol" email "carol@example.com" profile_stem "" approach_stem ""}] \
+    [make_base_row {contact_name "Carol" email "carol@example.com" stem ""}] \
 ]
 write_roster_tsv $seg5 $::std_headers [list \
-    [make_base_row {contact_name "Diana" email "diana@example.com" profile_stem "" approach_stem ""}] \
+    [make_base_row {contact_name "Diana" email "diana@example.com" stem ""}] \
 ]
 set c4 [spar::classify_segment $seg4]
 set c5 [spar::classify_segment $seg5]
@@ -725,10 +714,10 @@ assert_eq [llength [dict get $dups45 duplicate_email]] 0 \
 set seg6 [make_temp_segment]
 set seg7 [make_temp_segment]
 write_roster_tsv $seg6 $::std_headers [list \
-    [make_base_row {contact_name "John Smith" email "john1@example.com" profile_stem "" approach_stem ""}] \
+    [make_base_row {contact_name "John Smith" email "john1@example.com" stem ""}] \
 ]
 write_roster_tsv $seg7 $::std_headers [list \
-    [make_base_row {contact_name "John Smith" email "john2@example.com" profile_stem "" approach_stem ""}] \
+    [make_base_row {contact_name "John Smith" email "john2@example.com" stem ""}] \
 ]
 set c6 [spar::classify_segment $seg6]
 set c7 [spar::classify_segment $seg7]
@@ -739,8 +728,8 @@ assert_eq [expr {[llength [dict get $dups67 duplicate_name]] > 0}] 1 \
 # 9e. duplicate_name: same name within one segment → not flagged
 set seg8 [make_temp_segment]
 write_roster_tsv $seg8 $::std_headers [list \
-    [make_base_row {contact_name "Jane Doe" email "jane1@example.com" profile_stem "" approach_stem ""}] \
-    [make_base_row {contact_name "Jane Doe" email "jane2@example.com" profile_stem "" approach_stem ""}] \
+    [make_base_row {contact_name "Jane Doe" email "jane1@example.com" stem ""}] \
+    [make_base_row {contact_name "Jane Doe" email "jane2@example.com" stem ""}] \
 ]
 set c8 [spar::classify_segment $seg8]
 set dups8 [spar::detect_duplicates $c8]
@@ -766,7 +755,7 @@ rounds:
     replied_date: null
 }
 write_roster_tsv $seg9 $::std_headers [list \
-    [make_base_row {contact_name "To Dup A" email "a@example.com" profile_stem "dup-to-a" approach_stem "dup-to-a"}] \
+    [make_base_row {contact_name "To Dup A" email "a@example.com" stem "dup-to-a"}] \
 ]
 
 write_profile $seg10 "dup-to-b"
@@ -784,7 +773,7 @@ rounds:
     replied_date: null
 }
 write_roster_tsv $seg10 $::std_headers [list \
-    [make_base_row {contact_name "To Dup B" email "b@example.com" profile_stem "dup-to-b" approach_stem "dup-to-b"}] \
+    [make_base_row {contact_name "To Dup B" email "b@example.com" stem "dup-to-b"}] \
 ]
 
 set c9 [spar::classify_segment $seg9]
@@ -812,7 +801,7 @@ rounds:
     replied_date: null
 }
 write_roster_tsv $seg11 $::std_headers [list \
-    [make_base_row {contact_name "Uniq A" email "a@example.com" profile_stem "uniq-to-a" approach_stem "uniq-to-a"}] \
+    [make_base_row {contact_name "Uniq A" email "a@example.com" stem "uniq-to-a"}] \
 ]
 
 write_profile $seg12 "uniq-to-b"
@@ -830,7 +819,7 @@ rounds:
     replied_date: null
 }
 write_roster_tsv $seg12 $::std_headers [list \
-    [make_base_row {contact_name "Uniq B" email "b@example.com" profile_stem "uniq-to-b" approach_stem "uniq-to-b"}] \
+    [make_base_row {contact_name "Uniq B" email "b@example.com" stem "uniq-to-b"}] \
 ]
 
 set c11 [spar::classify_segment $seg11]
@@ -858,7 +847,7 @@ rounds:
     replied_date: null
 }
 write_roster_tsv $seg13 $::std_headers [list \
-    [make_base_row {contact_name "Subj A" email "sa@example.com" profile_stem "subj-dup-a" approach_stem "subj-dup-a"}] \
+    [make_base_row {contact_name "Subj A" email "sa@example.com" stem "subj-dup-a"}] \
 ]
 
 write_profile $seg14 "subj-dup-b"
@@ -876,7 +865,7 @@ rounds:
     replied_date: null
 }
 write_roster_tsv $seg14 $::std_headers [list \
-    [make_base_row {contact_name "Subj B" email "sb@example.com" profile_stem "subj-dup-b" approach_stem "subj-dup-b"}] \
+    [make_base_row {contact_name "Subj B" email "sb@example.com" stem "subj-dup-b"}] \
 ]
 
 set c13 [spar::classify_segment $seg13]
@@ -904,7 +893,7 @@ rounds:
     replied_date: null
 }
 write_roster_tsv $seg15 $::std_headers [list \
-    [make_base_row {contact_name "Sent Subj A" email "ssa@example.com" profile_stem "subj-sent-a" approach_stem "subj-sent-a"}] \
+    [make_base_row {contact_name "Sent Subj A" email "ssa@example.com" stem "subj-sent-a"}] \
 ]
 
 write_profile $seg16 "subj-sent-b"
@@ -922,7 +911,7 @@ rounds:
     replied_date: null
 }
 write_roster_tsv $seg16 $::std_headers [list \
-    [make_base_row {contact_name "Sent Subj B" email "ssb@example.com" profile_stem "subj-sent-b" approach_stem "subj-sent-b"}] \
+    [make_base_row {contact_name "Sent Subj B" email "ssb@example.com" stem "subj-sent-b"}] \
 ]
 
 set c15 [spar::classify_segment $seg15]
@@ -943,7 +932,7 @@ write_approach_yaml $seg_t8 "t8-linkedin-only" [approach_yaml_final_multi_channe
 write_roster_tsv $seg_t8 $::std_headers [list \
     [make_base_row {contact_name "LI Sent" email "li@example.com" \
         linkedin_url "https://linkedin.com/in/li" \
-        profile_stem "t8-linkedin-only" approach_stem "t8-linkedin-only" star_rating "4"}] \
+        stem "t8-linkedin-only" star_rating "4"}] \
 ]
 
 set ct8 [spar::classify_segment $seg_t8]
@@ -979,7 +968,7 @@ rounds:
 write_roster_tsv $seg_t8b $::std_headers [list \
     [make_base_row {contact_name "Both Sent" email "both@example.com" \
         linkedin_url "https://linkedin.com/in/both" \
-        profile_stem "t8-both-sent" approach_stem "t8-both-sent" star_rating "4"}] \
+        stem "t8-both-sent" star_rating "4"}] \
 ]
 
 set ct8b [spar::classify_segment $seg_t8b]
@@ -1017,7 +1006,7 @@ rounds:
 }
 write_roster_tsv $seg_v1 $::std_headers [list \
     [make_base_row {contact_name "Placeholder Pete" email "pete@example.com" \
-        profile_stem "v-placeholder" approach_stem "v-placeholder"}] \
+        stem "v-placeholder"}] \
 ]
 set cv1 [spar::classify_segment $seg_v1]
 set issues_v1 [spar::validate_campaign $cv1]
@@ -1042,7 +1031,7 @@ rounds:
 }
 write_roster_tsv $seg_v2 $::std_headers [list \
     [make_base_row {contact_name "Valid Vic" email "foo@bar.com" \
-        profile_stem "v-valid-to" approach_stem "v-valid-to"}] \
+        stem "v-valid-to"}] \
 ]
 set cv2 [spar::classify_segment $seg_v2]
 set issues_v2 [spar::validate_campaign $cv2]
@@ -1067,7 +1056,7 @@ rounds:
 }
 write_roster_tsv $seg_v3 $::std_headers [list \
     [make_base_row {contact_name "Desync Alice" email "alice@new.com" \
-        profile_stem "v-desync" approach_stem "v-desync"}] \
+        stem "v-desync"}] \
 ]
 set cv3 [spar::classify_segment $seg_v3]
 set issues_v3 [spar::validate_campaign $cv3]
@@ -1092,7 +1081,7 @@ rounds:
 }
 write_roster_tsv $seg_v4 $::std_headers [list \
     [make_base_row {contact_name "Sync Bob" email "bob@example.com" \
-        profile_stem "v-sync" approach_stem "v-sync"}] \
+        stem "v-sync"}] \
 ]
 set cv4 [spar::classify_segment $seg_v4]
 set issues_v4 [spar::validate_campaign $cv4]
@@ -1103,7 +1092,7 @@ assert_eq [llength $ed_issues2] 0 "email_desync: matching emails (case-insensiti
 set seg_v5 [make_temp_segment]
 write_roster_tsv $seg_v5 $::std_headers [list \
     [make_base_row {contact_name "Anthony O'Flynn & Nina Hansen" \
-        profile_stem "" approach_stem ""}] \
+        stem ""}] \
 ]
 set cv5 [spar::classify_segment $seg_v5]
 set issues_v5 [spar::validate_campaign $cv5]
@@ -1114,7 +1103,7 @@ assert_eq [llength $mc_issues] 1 "merged_contact_name: name with ' & ' → one i
 set seg_v6 [make_temp_segment]
 write_roster_tsv $seg_v6 $::std_headers [list \
     [make_base_row {contact_name "Normal Name" \
-        profile_stem "" approach_stem ""}] \
+        stem ""}] \
 ]
 set cv6 [spar::classify_segment $seg_v6]
 set issues_v6 [spar::validate_campaign $cv6]
@@ -1127,7 +1116,7 @@ write_profile $seg_v7 "referenced-profile"
 write_profile $seg_v7 "orphan-profile"
 write_roster_tsv $seg_v7 $::std_headers [list \
     [make_base_row {contact_name "Ref Contact" \
-        profile_stem "referenced-profile" approach_stem ""}] \
+        stem "referenced-profile"}] \
 ]
 set cv7 [spar::classify_segment $seg_v7]
 set issues_v7 [spar::validate_campaign $cv7]
@@ -1139,7 +1128,7 @@ set seg_v8 [make_temp_segment]
 write_profile $seg_v8 "used-profile"
 write_roster_tsv $seg_v8 $::std_headers [list \
     [make_base_row {contact_name "Used Contact" \
-        profile_stem "used-profile" approach_stem ""}] \
+        stem "used-profile"}] \
 ]
 set cv8 [spar::classify_segment $seg_v8]
 set issues_v8 [spar::validate_campaign $cv8]
@@ -1153,7 +1142,7 @@ write_approach_yaml $seg_v9 "ref-approach-contact" [approach_yaml_final_unsent]
 write_approach_yaml $seg_v9 "orphan-approach" [approach_yaml_final_unsent]
 write_roster_tsv $seg_v9 $::std_headers [list \
     [make_base_row {contact_name "Ref Approach" \
-        profile_stem "ref-approach-contact" approach_stem "ref-approach-contact"}] \
+        stem "ref-approach-contact"}] \
 ]
 set cv9 [spar::classify_segment $seg_v9]
 set issues_v9 [spar::validate_campaign $cv9]
@@ -1166,7 +1155,7 @@ write_profile $seg_v10 "used-approach-contact"
 write_approach_yaml $seg_v10 "used-approach-contact" [approach_yaml_final_unsent]
 write_roster_tsv $seg_v10 $::std_headers [list \
     [make_base_row {contact_name "Used Approach" \
-        profile_stem "used-approach-contact" approach_stem "used-approach-contact"}] \
+        stem "used-approach-contact"}] \
 ]
 set cv10 [spar::classify_segment $seg_v10]
 set issues_v10 [spar::validate_campaign $cv10]
@@ -1253,7 +1242,7 @@ rounds:
 }
 write_roster_tsv $seg_va6 $::std_headers [list \
     [make_base_row {contact_name "Campaign Check" email "real@example.com" \
-        profile_stem "va-campaign-check" approach_stem "va-campaign-check"}] \
+        stem "va-campaign-check"}] \
 ]
 set cv_va6 [spar::classify_segment $seg_va6]
 set issues_va6 [spar::validate_campaign $cv_va6]

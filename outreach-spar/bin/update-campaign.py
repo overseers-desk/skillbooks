@@ -119,7 +119,7 @@ def _run_send_mode(args, segments, base: Path, cdata: dict | None) -> None:
             continue
 
         roster_rows = spar_lib.load_roster(roster_path)
-        matched, claimed = spar_lib.match_roster_to_approach_stems(
+        matched, claimed = spar_lib.match_roster_to_stems(
             roster_rows, approach_dir, filters
         )
         qualified_stems = set(claimed)
@@ -355,7 +355,7 @@ def main():
             return stats
 
         all_stems: dict[str, Path] = {yf.stem: yf for yf in approach_dir.glob("*.yaml")}
-        matched, claimed = spar_lib.match_roster_to_approach_stems(star3_rows, approach_dir)
+        matched, claimed = spar_lib.match_roster_to_stems(star3_rows, approach_dir)
 
         for idx, r in enumerate(star3_rows):
             name = r.get("contact_name", "").strip()

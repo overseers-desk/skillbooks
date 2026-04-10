@@ -274,7 +274,7 @@ Key locations in `../bin/update-campaign.py` and their redesign counterparts:
 - Transition eligibility as a derived view of state. The Python `--missing` flag is the closest analogue, but it lists gaps, not transition tasks.
 - The T4/T6/T7/T8 transitions have no Python equivalent at all.
 
-**Related Python library:** `../bin/spar_lib.py` — contains `load_roster`, `slugify`, `profile_exists`, `approach_final_round_status`, `match_roster_to_approach_stems`. The Tcl equivalents already exist in `spar-lib.tcl`; `spar-state.tcl` builds on them.
+**Related Python library:** `../bin/spar_lib.py` — contains `load_roster`, `slugify`, `profile_exists`, `approach_final_round_status`, `match_roster_to_stems`. The Tcl equivalents already exist in `spar-lib.tcl`; `spar-state.tcl` builds on them.
 
 ---
 
