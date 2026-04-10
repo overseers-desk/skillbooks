@@ -245,3 +245,33 @@ Three scrollbars in the application:
 - **Log window** — vertical scrollbar on the log text widget inside the log toplevel.
 
 No scrollbar wraps a whole zone or the campaign panel.
+
+## Development notes
+
+### Running the mock
+
+```bash
+wish9.0 spar-manager/mock-ui.tcl
+```
+
+### Screenshot debug cycle (Wayland + XWayland)
+
+`wish9.0` uses Tk, which runs on X11. Under a Wayland compositor it runs via XWayland, not as a native Wayland client. This means `ydotool` (which operates on Wayland input events and cannot query X11 window IDs) does not apply. Use `xdotool` to find the window ID and ImageMagick `import` to capture it:
+
+```bash
+wish9.0 spar-manager/mock-ui.tcl &
+PID=$!
+sleep 2
+WID=$(xdotool search --name "SPAR Campaign Manager" | head -1)
+import -window "$WID" /tmp/screenshot.png
+kill $PID
+```
+
+To capture a specific popup (e.g. the legend window), use its title:
+
+```bash
+WID=$(xdotool search --name "Column Denominator Tree" | head -1)
+import -window "$WID" /tmp/legend.png
+```
+
+Requires `imagemagick` and `xdotool`. Both were present on the development machine.
