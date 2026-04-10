@@ -258,73 +258,119 @@ proc draw_legend {c} {
 
 
 # --- 2.2 Progress table ---
-# The table has two parts: fixed headers (always visible) and scrollable data rows.
+# Three frames: header (fixed), data rows (scrollable canvas), totals (fixed).
+# Each data column is split into two sub-columns (count, pct) for alignment.
+# Headers span both sub-columns so the divider within a pair is invisible.
 
 ttk::labelframe ${cpanel}.progress -text "Progress"
 pack ${cpanel}.progress -fill both -expand 1 -padx 8 -pady {2 2}
 
-# Grid column layout (shared between header and data frames):
-# gcol 0: checkbox, 1: segment name
-# gcol 2,4,6,9,11,13,16: separators
-# gcol 3: Valid, 5: Profile, 7: N+star, 8: A/N+star
-# gcol 10: Email, 12: A/Eml, 14: Sent, 15: Repl
-# gcol 17: LinkedIn, 18: Facebook, 19: Only phone
+# Column layout (shared across header, data, totals frames):
+# gcol 0: checkbox (width 24)
+# gcol 1: segment name (width 180)
+# gcol 2: separator
+# For each data column pair: count_col, pct_col, then separator
+# 11 data columns => 22 sub-columns + 7 group separators
+#
+# Mapping: data column index ci -> (count_gcol, pct_gcol)
+# We lay out: [cb=0] [seg=1] [sep=2] [valid_n=3 valid_p=4] [sep=5] [profile_n=6 profile_p=7]
+#   [sep=8] [star_n=9 star_p=10] [astar_n=11 astar_p=12] [sep=13] [email_n=14 email_p=15]
+#   [aeml_n=16 aeml_p=17] [sep=18] [linkedin_n=19 linkedin_p=20] [facebook_n=21 facebook_p=22]
+#   [phone_n=23 phone_p=24] [sep=25] [sent_n=26 sent_p=27] [repl_n=28 repl_p=29]
 
-set sep_cols {2 4 6 9 11 13 16}
-set col_gcols_list {3 5 7 8 10 12 17 18 19 14 15}
-
-# Single grid frame for headers + data + totals (columns align naturally)
-set ptable ${cpanel}.progress.grid
-ttk::frame $ptable
-pack $ptable -fill x -padx 2 -pady 2
-
-# Configure grid columns
-foreach sc $sep_cols {
-    grid columnconfigure $ptable $sc -minsize 1 -weight 0
+set sep_cols {2 5 8 13 18 25}
+# ci -> {count_gcol pct_gcol}
+set ci_to_gcols {
+    0 {3 4}    1 {6 7}    2 {9 10}   3 {11 12}  4 {14 15}
+    5 {16 17}  6 {19 20}  7 {21 22}  8 {23 24}  9 {26 27}  10 {28 29}
 }
-grid columnconfigure $ptable 0 -weight 0
-grid columnconfigure $ptable 1 -weight 0
-foreach gc {3 5 7 8 10 12 17 18 19 14 15} {
-    grid columnconfigure $ptable $gc -minsize 70 -weight 0
+# For header spanning: ci -> count_gcol (span 2 columns)
+set header_gcols_list {3 6 9 11 14 16 19 21 23 26 28}
+
+# Column widths
+set col_cb_w 24
+set col_seg_w 180
+set col_num_w 30
+set col_pct_w 40
+set col_sep_w 1
+
+proc configure_table_columns {frame} {
+    global sep_cols ci_to_gcols col_cb_w col_seg_w col_num_w col_pct_w col_sep_w
+    grid columnconfigure $frame 0 -minsize $col_cb_w -weight 0
+    grid columnconfigure $frame 1 -minsize $col_seg_w -weight 1
+    foreach sc $sep_cols {
+        grid columnconfigure $frame $sc -minsize $col_sep_w -weight 0
+    }
+    dict for {ci gcpair} $ci_to_gcols {
+        lassign $gcpair ng pg
+        grid columnconfigure $frame $ng -minsize $col_num_w -weight 0
+        grid columnconfigure $frame $pg -minsize $col_pct_w -weight 0
+    }
 }
 
-# --- Column header row (row 0) ---
+# --- Header frame ---
+set phdr ${cpanel}.progress.hdr
+ttk::frame $phdr
+pack $phdr -fill x -padx 2 -pady {2 0}
+configure_table_columns $phdr
+
 set header_labels {"Segment" "Valid" "Profile" "3+\u2605" "A/3+\u2605" "Email" "A/Eml" "LinkedIn" "Facebook" "Only \u260e" "\u2709 Sent" "\u2709 Repl"}
-set header_gcols {1 3 5 7 8 10 12 17 18 19 14 15}
+# gcol for each header; "Segment" maps to column 1, data headers to their count sub-column (spanning 2)
+set header_gcols_span {1 3 6 9 11 14 16 19 21 23 26 28}
 
-ttk::label ${ptable}.hdr_cb -text "\u2611" -background $::colours(hdr_bottom) -anchor center -relief groove -borderwidth 1
-grid ${ptable}.hdr_cb -row 0 -column 0 -sticky nsew
+ttk::label ${phdr}.hdr_cb -text "\u2611" -background $::colours(hdr_bottom) -anchor center -relief groove -borderwidth 1
+grid ${phdr}.hdr_cb -row 0 -column 0 -sticky nsew
 
-foreach lbl $header_labels gc $header_gcols {
+set lbl_i 0
+foreach lbl $header_labels gc $header_gcols_span {
     set safe [string map {" " _ "\u2605" star "\u260e" phone "\u2709" env "/" slash "+" plus} $lbl]
-    ttk::label ${ptable}.hdr_${safe} -text $lbl -background $::colours(hdr_bottom) \
+    ttk::label ${phdr}.hdr_${safe} -text $lbl -background $::colours(hdr_bottom) \
         -anchor center -relief groove -borderwidth 1 -font "TkDefaultFont 8 bold"
-    grid ${ptable}.hdr_${safe} -row 0 -column $gc -sticky nsew
+    if {$lbl_i == 0} {
+        grid ${phdr}.hdr_${safe} -row 0 -column $gc -sticky nsew
+    } else {
+        grid ${phdr}.hdr_${safe} -row 0 -column $gc -columnspan 2 -sticky nsew
+    }
+    incr lbl_i
 }
 
-# Vertical separators spanning full height
-set max_rows 30
+# Header separators
+foreach sc $sep_cols {
+    ttk::separator ${phdr}.sep_${sc} -orient vertical
+    grid ${phdr}.sep_${sc} -row 0 -column $sc -sticky ns
+}
+
+# --- Scrollable data area ---
+set scroll_frame ${cpanel}.progress.sf
+ttk::frame $scroll_frame
+pack $scroll_frame -fill both -expand 1 -padx 2
+
+canvas ${scroll_frame}.canvas -highlightthickness 0 -borderwidth 0 -height 100
+ttk::scrollbar ${scroll_frame}.vsb -orient vertical -command [list ${scroll_frame}.canvas yview]
+${scroll_frame}.canvas configure -yscrollcommand [list ${scroll_frame}.vsb set]
+
+pack ${scroll_frame}.vsb -side right -fill y
+pack ${scroll_frame}.canvas -side left -fill both -expand 1
+
+set ptable ${scroll_frame}.canvas.data
+ttk::frame $ptable
+${scroll_frame}.canvas create window 0 0 -anchor nw -window $ptable -tags datawin
+configure_table_columns $ptable
+
+# Data-area separators
 foreach sc $sep_cols {
     ttk::separator ${ptable}.sep_${sc} -orient vertical
-    grid ${ptable}.sep_${sc} -row 0 -column $sc -rowspan $max_rows -sticky ns
+    grid ${ptable}.sep_${sc} -row 0 -column $sc -rowspan 30 -sticky ns
 }
 
-# --- Data rows (starting at row 1) ---
-set data_start_row 1
+# --- Data rows ---
 array set seg_checked {}
 set data_cells [dict create]
-
-proc format_cell {count pct} {
-    if {$pct eq "{}" || $pct eq ""} {
-        return $count
-    }
-    return "$count $pct"
-}
 
 set seg_index 0
 foreach seg_entry $segments {
     lassign $seg_entry seg_name is_campaign raw_data
-    set grow [expr {$data_start_row + $seg_index}]
+    set grow $seg_index
 
     if {$is_campaign} {
         set seg_checked($seg_name) 1
@@ -334,24 +380,31 @@ foreach seg_entry $segments {
     }
 
     set lbl_opts [list -anchor w -padding {4 1}]
-    set cell_opts [list -anchor e -padding {2 1 4 1}]
+    set cnt_opts [list -anchor e -padding {2 1 1 1}]
+    set pct_opts [list -anchor e -padding {0 1 2 1}]
     if {!$is_campaign} {
         lappend lbl_opts -foreground $::colours(muted_fg)
-        lappend cell_opts -foreground $::colours(muted_fg)
+        lappend cnt_opts -foreground $::colours(muted_fg)
+        lappend pct_opts -foreground $::colours(muted_fg)
     }
 
     ttk::label ${ptable}.seg_${seg_index} -text $seg_name {*}$lbl_opts
     grid ${ptable}.seg_${seg_index} -row $grow -column 1 -sticky nsew
 
-    set col_gcols {3 5 7 8 10 12 17 18 19 14 15}
     for {set ci 0} {$ci < 11} {incr ci} {
         set count [lindex $raw_data [expr {$ci * 2}]]
         set pct   [lindex $raw_data [expr {$ci * 2 + 1}]]
-        set gc    [lindex $col_gcols $ci]
-        set cell_text [format_cell $count $pct]
+        lassign [dict get $ci_to_gcols $ci] ng pg
 
-        ttk::label ${ptable}.d_${seg_index}_${ci} -text $cell_text {*}$cell_opts
-        grid ${ptable}.d_${seg_index}_${ci} -row $grow -column $gc -sticky nsew
+        ttk::label ${ptable}.dn_${seg_index}_${ci} -text $count {*}$cnt_opts
+        grid ${ptable}.dn_${seg_index}_${ci} -row $grow -column $ng -sticky nsew
+
+        set pct_text ""
+        if {$pct ne "{}" && $pct ne ""} {
+            set pct_text $pct
+        }
+        ttk::label ${ptable}.dp_${seg_index}_${ci} -text $pct_text {*}$pct_opts
+        grid ${ptable}.dp_${seg_index}_${ci} -row $grow -column $pg -sticky nsew
 
         if {$is_campaign} {
             dict set data_cells $seg_name $ci count $count
@@ -361,18 +414,65 @@ foreach seg_entry $segments {
     incr seg_index
 }
 
-# --- Totals row ---
-set totals_row [expr {$data_start_row + $seg_index}]
+# Update canvas scroll region and width tracking
+proc update_data_scroll {} {
+    global scroll_frame ptable
+    set canvas ${scroll_frame}.canvas
+    update idletasks
+    set bbox [$canvas bbox all]
+    $canvas configure -scrollregion $bbox
+    # Match canvas width to the data frame
+    $canvas configure -width [winfo reqwidth $ptable]
+}
 
-ttk::label ${ptable}.tot_lbl -text "TOTAL" -anchor w -font "TkDefaultFont 9 bold" \
+bind ${scroll_frame}.canvas <Configure> [list apply {{canvas ptable} {
+    # Keep the embedded frame as wide as the canvas
+    $canvas itemconfigure datawin -width [winfo width $canvas]
+}} ${scroll_frame}.canvas $ptable]
+
+# Mouse wheel scrolling — use a bindtag so all child widgets scroll the canvas
+set scroll_canvas ${scroll_frame}.canvas
+bind ScrollData <Button-4> [list $scroll_canvas yview scroll -3 units]
+bind ScrollData <Button-5> [list $scroll_canvas yview scroll 3 units]
+bind ScrollData <MouseWheel> [string map [list %CANVAS% $scroll_canvas] {
+    %CANVAS% yview scroll [expr {-%D/120}] units
+}]
+
+# Add ScrollData tag to canvas and data frame (covers child widgets via propagation)
+foreach w [list $scroll_canvas $ptable] {
+    bindtags $w [linsert [bindtags $w] 1 ScrollData]
+}
+# Also add to all child widgets of the data frame after they're created
+after idle [list apply {{ptable} {
+    foreach child [winfo children $ptable] {
+        bindtags $child [linsert [bindtags $child] 1 ScrollData]
+    }
+}} $ptable]
+
+# --- Totals frame (fixed below scroll area) ---
+set ptotals ${cpanel}.progress.totals
+ttk::frame $ptotals
+pack $ptotals -fill x -padx 2 -pady {0 2}
+configure_table_columns $ptotals
+
+ttk::label ${ptotals}.tot_lbl -text "TOTAL" -anchor w -font "TkDefaultFont 9 bold" \
     -background $::colours(totals_bg) -padding {4 2}
-grid ${ptable}.tot_lbl -row $totals_row -column 0 -columnspan 2 -sticky nsew
+grid ${ptotals}.tot_lbl -row 0 -column 0 -columnspan 2 -sticky nsew
 
 for {set ci 0} {$ci < 11} {incr ci} {
-    set gc [lindex $col_gcols_list $ci]
-    ttk::label ${ptable}.tot_${ci} -text "" -anchor e -font "TkDefaultFont 9 bold" \
-        -background $::colours(totals_bg) -padding {2 2 4 2}
-    grid ${ptable}.tot_${ci} -row $totals_row -column $gc -sticky nsew
+    lassign [dict get $ci_to_gcols $ci] ng pg
+    ttk::label ${ptotals}.tn_${ci} -text "" -anchor e -font "TkDefaultFont 9 bold" \
+        -background $::colours(totals_bg) -padding {2 2 1 2}
+    grid ${ptotals}.tn_${ci} -row 0 -column $ng -sticky nsew
+    ttk::label ${ptotals}.tp_${ci} -text "" -anchor e -font "TkDefaultFont 9 bold" \
+        -background $::colours(totals_bg) -padding {0 2 2 2}
+    grid ${ptotals}.tp_${ci} -row 0 -column $pg -sticky nsew
+}
+
+# Totals separators
+foreach sc $sep_cols {
+    ttk::separator ${ptotals}.sep_${sc} -orient vertical
+    grid ${ptotals}.sep_${sc} -row 0 -column $sc -sticky ns
 }
 
 # Denominator parent indices for percentage:
@@ -382,7 +482,7 @@ for {set ci 0} {$ci < 11} {incr ci} {
 set denom_parent {-1 0 0 2 2 4 2 2 2 5 9}
 
 proc recalc_totals {} {
-    global seg_checked data_cells segments ptable col_gcols_list denom_parent
+    global seg_checked data_cells segments ptotals ci_to_gcols denom_parent
 
     set sums [list 0 0 0 0 0 0 0 0 0 0 0]
     foreach seg_entry $segments {
@@ -397,38 +497,93 @@ proc recalc_totals {} {
     for {set ci 0} {$ci < 11} {incr ci} {
         set count [lindex $sums $ci]
         set pi [lindex $denom_parent $ci]
+        lassign [dict get $ci_to_gcols $ci] ng pg
         if {$pi == -1} {
-            set cell_text $count
+            ${ptotals}.tn_${ci} configure -text $count
+            ${ptotals}.tp_${ci} configure -text ""
         } else {
             set denom [lindex $sums $pi]
+            ${ptotals}.tn_${ci} configure -text $count
             if {$denom == 0} {
-                set cell_text "$count -"
+                ${ptotals}.tp_${ci} configure -text "-"
             } else {
                 set pct [expr {$count * 100 / $denom}]
-                set cell_text "$count ${pct}%"
+                ${ptotals}.tp_${ci} configure -text "${pct}%"
             }
         }
-        ${ptable}.tot_${ci} configure -text $cell_text
     }
 }
 
 recalc_totals
 
-# --- 2.3 Warnings ---
-ttk::labelframe ${cpanel}.warnings -text "\u26a0 [llength $warnings] warnings"
+# Initialise scroll region after layout
+after idle update_data_scroll
+
+# --- 2.3 Warnings (collapsed by default) ---
+
+# Summarise warnings by category
+set warn_dup_email 0
+set warn_dup_name 0
+set warn_dup_subject 0
+set warn_other 0
+foreach w $warnings {
+    if {[string match "*Duplicate To:*" $w] || [string match "*Duplicate email:*" $w]} {
+        incr warn_dup_email
+    } elseif {[string match "*Duplicate name:*" $w]} {
+        incr warn_dup_name
+    } elseif {[string match "*Identical subject:*" $w]} {
+        incr warn_dup_subject
+    } else {
+        incr warn_other
+    }
+}
+set warn_parts {}
+if {$warn_dup_email > 0} { lappend warn_parts "${warn_dup_email} duplicate email" }
+if {$warn_dup_name > 0}  { lappend warn_parts "${warn_dup_name} duplicate name" }
+if {$warn_dup_subject > 0} { lappend warn_parts "${warn_dup_subject} identical subject" }
+if {$warn_other > 0}     { lappend warn_parts "${warn_other} other" }
+set warn_summary [join $warn_parts ", "]
+
+set warnings_expanded 0
+
+ttk::frame ${cpanel}.warnings
 pack ${cpanel}.warnings -fill x -padx 8 -pady {2 4}
 
 set wframe ${cpanel}.warnings
 
+ttk::button ${wframe}.toggle -text "\u25b6 \u26a0 [llength $warnings] warnings ($warn_summary)" \
+    -command toggle_warnings -style Toolbutton
+pack ${wframe}.toggle -fill x -anchor w
+
 text ${wframe}.txt -height 5 -wrap word -font "TkDefaultFont 8" -state disabled \
     -background "#fff8e1" -relief flat
-pack ${wframe}.txt -fill x -padx 4 -pady 2
+# Not packed initially — collapsed by default
 
+${wframe}.txt tag configure bold -font "TkDefaultFont 8 bold"
 ${wframe}.txt configure -state normal
 foreach w $warnings {
-    ${wframe}.txt insert end "\u2022 $w\n"
+    set colon [string first ":" $w]
+    if {$colon >= 0} {
+        ${wframe}.txt insert end "\u2022 " {} [string range $w 0 $colon] bold [string range $w [expr {$colon+1}] end] {}
+    } else {
+        ${wframe}.txt insert end "\u2022 $w"
+    }
+    ${wframe}.txt insert end "\n"
 }
 ${wframe}.txt configure -state disabled
+
+proc toggle_warnings {} {
+    global warnings_expanded wframe warnings warn_summary
+    if {$warnings_expanded} {
+        pack forget ${wframe}.txt
+        ${wframe}.toggle configure -text "\u25b6 \u26a0 [llength $warnings] warnings ($warn_summary)"
+        set warnings_expanded 0
+    } else {
+        pack ${wframe}.txt -fill x -padx 4 -pady 2
+        ${wframe}.toggle configure -text "\u25bc \u26a0 [llength $warnings] warnings ($warn_summary)"
+        set warnings_expanded 1
+    }
+}
 
 # ============================================================
 # Zone 3: Transition manager
@@ -564,3 +719,16 @@ bind $tree <<TreeviewSelect>> [list apply {{tree play} {
 
 # Show the dispatch bar for the mock so the user can see it
 show_dispatch_bar
+
+# Set initial sash position so the campaign/progress table gets most of the space.
+# The canvas requests only 100px, so weight-based allocation under-sizes the campaign
+# panel.  Use a <Map> binding so the window is fully realised before we read its height.
+bind .tabs.tab_current.pw <Map> {
+    after 50 {
+        set h [winfo height .tabs.tab_current.pw]
+        if {$h > 100} {
+            .tabs.tab_current.pw sashpos 0 [expr {int($h * 0.65)}]
+        }
+    }
+    bind .tabs.tab_current.pw <Map> {}
+}
