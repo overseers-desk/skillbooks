@@ -149,7 +149,9 @@ proc spar::analyse_final_round {data} {
 #
 # roster_row   dict with TSV fields (contact_name, date_found_invalid,
 #              star_rating, email, linkedin_url, facebook_url, phone,
-#              profile_stem, approach_stem, ...)
+#              stem, ...)
+#              stem is required; classify_segment validates its presence
+#              before calling this proc.
 # segment_dir  absolute path to the segment directory
 #
 # Returns a dict:
@@ -172,8 +174,7 @@ proc spar::classify_contact {roster_row segment_dir} {
     # quoted-empty-or-whitespace string (e.g. `" "` or `""`), collapse to "".
     # This happens when TSV was edited with a tool that CSV-quotes blank fields.
     set date_invalid [string trim [spar::dict_get_default $roster_row date_found_invalid ""]]
-    set profile_stem [string trim [spar::dict_get_default $roster_row profile_stem ""]]
-    set approach_stem [string trim [spar::dict_get_default $roster_row approach_stem ""]]
+    set stem [string trim [spar::dict_get_default $roster_row stem ""]]
     set star_raw [spar::dict_get_default $roster_row star_rating ""]
     set email [string trim [spar::dict_get_default $roster_row email ""]]
     set linkedin [string trim [spar::dict_get_default $roster_row linkedin_url ""]]
@@ -181,7 +182,7 @@ proc spar::classify_contact {roster_row segment_dir} {
     set phone [string trim [spar::dict_get_default $roster_row phone ""]]
 
     # Strip TSV quote artifacts: `" "`, `""`, `" "` → ""
-    foreach var {date_invalid profile_stem approach_stem email linkedin facebook phone} {
+    foreach var {date_invalid stem email linkedin facebook phone} {
         upvar 0 $var v
         if {[regexp {^"(.*)"$} $v -> inner]} {
             set v [string trim $inner]
@@ -222,26 +223,9 @@ proc spar::classify_contact {roster_row segment_dir} {
             email_replied $email_replied]
     }
 
-    # 2. DISCOVERED — profile_stem empty
-    if {[spar::is_null $profile_stem]} {
-        return [dict create \
-            state DISCOVERED \
-            profile_path $profile_path \
-            approach_path $approach_path \
-            star $star \
-            has_email $has_email \
-            has_linkedin $has_linkedin \
-            has_facebook $has_facebook \
-            has_phone_only $has_phone_only \
-            email_sent $email_sent \
-            linkedin_sent $linkedin_sent \
-            email_replied $email_replied]
-    }
-
-    # Profile file check
-    set profile_path [file join $segment_dir profiles "${profile_stem}.md"]
+    # 2. DISCOVERED — profile file does not exist
+    set profile_path [file join $segment_dir profiles "profile-${stem}.md"]
     if {![file exists $profile_path]} {
-        # profile_stem set but file missing — treat as DISCOVERED
         set profile_path ""
         return [dict create \
             state DISCOVERED \
@@ -257,26 +241,9 @@ proc spar::classify_contact {roster_row segment_dir} {
             email_replied $email_replied]
     }
 
-    # 3. PROFILED (PROFILE_STALE deferred — all profiled are non-stale)
-    # Check if there is an approach file
-    if {[spar::is_null $approach_stem]} {
-        return [dict create \
-            state PROFILED \
-            profile_path $profile_path \
-            approach_path $approach_path \
-            star $star \
-            has_email $has_email \
-            has_linkedin $has_linkedin \
-            has_facebook $has_facebook \
-            has_phone_only $has_phone_only \
-            email_sent $email_sent \
-            linkedin_sent $linkedin_sent \
-            email_replied $email_replied]
-    }
-
-    set approach_path [file join $segment_dir approach "${approach_stem}.yaml"]
+    # 3. PROFILED — profile exists, approach file does not
+    set approach_path [file join $segment_dir approach "${stem}.yaml"]
     if {![file exists $approach_path]} {
-        # approach_stem set but file missing — still PROFILED
         set approach_path ""
         return [dict create \
             state PROFILED \
@@ -363,14 +330,11 @@ proc spar::classify_segment {segment_dir} {
 
     set rows [spar::load_roster $roster_path]
 
-    # Schema validation: check that profile_stem and approach_stem columns exist
+    # Schema validation: check that stem column exists
     if {[llength $rows] > 0} {
         set first_row [lindex $rows 0]
-        if {![dict exists $first_row profile_stem]} {
-            error "Error: roster missing required column 'profile_stem' — run schema migration before using spar-state.tcl"
-        }
-        if {![dict exists $first_row approach_stem]} {
-            error "Error: roster missing required column 'approach_stem' — run schema migration before using spar-state.tcl"
+        if {![dict exists $first_row stem]} {
+            error "Error: roster missing required column 'stem' — run schema migration before using spar-state.tcl"
         }
     }
 
@@ -790,8 +754,7 @@ proc spar::validate_campaign {all_classified_contacts} {
     set issues {}
 
     # Collect per-segment data for orphan checks
-    array set seg_profile_stems {}   ;# segment_dir → list of profile_stem values
-    array set seg_approach_stems {}  ;# segment_dir → list of approach_stem values
+    array set seg_stems {}   ;# segment_dir → list of stem values
     array set seg_dirs_seen {}       ;# segment_dir → 1
 
     foreach contact $all_classified_contacts {
@@ -800,16 +763,12 @@ proc spar::validate_campaign {all_classified_contacts} {
         set segment [file tail $segment_dir]
         set contact_name [spar::dict_get_default $contact contact_name ""]
         set roster_email [string trim [spar::dict_get_default $contact email ""]]
-        set profile_stem [string trim [spar::dict_get_default $contact profile_stem ""]]
-        set approach_stem [string trim [spar::dict_get_default $contact approach_stem ""]]
+        set stem [string trim [spar::dict_get_default $contact stem ""]]
 
         # Track segment directories and stems for orphan checks
         set seg_dirs_seen($segment_dir) 1
-        if {$profile_stem ne ""} {
-            lappend seg_profile_stems($segment_dir) $profile_stem
-        }
-        if {$approach_stem ne ""} {
-            lappend seg_approach_stems($segment_dir) $approach_stem
+        if {$stem ne ""} {
+            lappend seg_stems($segment_dir) $stem
         }
 
         # Skip INVALID contacts for checks 1, 2, 3
@@ -837,20 +796,22 @@ proc spar::validate_campaign {all_classified_contacts} {
     foreach segment_dir [array names seg_dirs_seen] {
         set segment [file tail $segment_dir]
         set profile_dir [file join $segment_dir profiles]
-        set known_stems {}
-        if {[info exists seg_profile_stems($segment_dir)]} {
-            set known_stems $seg_profile_stems($segment_dir)
+        set known_profile_names {}
+        if {[info exists seg_stems($segment_dir)]} {
+            foreach s $seg_stems($segment_dir) {
+                lappend known_profile_names "profile-${s}"
+            }
         }
 
         foreach f [glob -nocomplain [file join $profile_dir *.md]] {
-            set stem [file rootname [file tail $f]]
-            if {$stem ni $known_stems} {
+            set filestem [file rootname [file tail $f]]
+            if {$filestem ni $known_profile_names} {
                 lappend issues [dict create \
                     severity warning \
                     code orphan_profile \
                     segment $segment \
                     contact_name "" \
-                    message "Profile file '${stem}.md' not referenced by any roster row"]
+                    message "Profile file '${filestem}.md' not referenced by any roster row"]
             }
         }
     }
@@ -860,19 +821,19 @@ proc spar::validate_campaign {all_classified_contacts} {
         set segment [file tail $segment_dir]
         set approach_dir [file join $segment_dir approach]
         set known_stems {}
-        if {[info exists seg_approach_stems($segment_dir)]} {
-            set known_stems $seg_approach_stems($segment_dir)
+        if {[info exists seg_stems($segment_dir)]} {
+            set known_stems $seg_stems($segment_dir)
         }
 
         foreach f [glob -nocomplain [file join $approach_dir *.yaml]] {
-            set stem [file rootname [file tail $f]]
-            if {$stem ni $known_stems} {
+            set filestem [file rootname [file tail $f]]
+            if {$filestem ni $known_stems} {
                 lappend issues [dict create \
                     severity warning \
                     code orphan_approach \
                     segment $segment \
                     contact_name "" \
-                    message "Approach file '${stem}.yaml' not referenced by any roster row"]
+                    message "Approach file '${filestem}.yaml' not referenced by any roster row"]
             }
         }
     }

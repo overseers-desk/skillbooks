@@ -208,7 +208,7 @@ def is_null(val) -> bool:
     return val is None or str(val).strip() in ("~", "None", "null", "")
 
 
-def match_roster_to_approach_stems(
+def match_roster_to_stems(
     rows: list[dict],
     approach_dir: Path,
     filters: dict | None = None,

@@ -296,10 +296,10 @@ class TestProfileIndex:
         assert spar_lib.build_profile_index(d) == {}
 
 
-# ── match_roster_to_approach_stems ───────────────────────────────────────
+# ── match_roster_to_stems ───────────────────────────────────────
 
 
-class TestMatchRosterToApproachStems:
+class TestMatchRosterToStems:
     def _make_approach_dir(self, tmp_path, stems: list[str]) -> Path:
         d = tmp_path / "approach"
         d.mkdir(exist_ok=True)
@@ -310,32 +310,32 @@ class TestMatchRosterToApproachStems:
     def test_pass1_exact(self, tmp_path):
         rows = [{"contact_name": "Alice Johnson"}]
         d = self._make_approach_dir(tmp_path, ["alice-johnson-acme"])
-        matched, claimed = spar_lib.match_roster_to_approach_stems(rows, d)
+        matched, claimed = spar_lib.match_roster_to_stems(rows, d)
         assert matched == {0: "alice-johnson-acme"}
 
     def test_pass1_exact_equal(self, tmp_path):
         rows = [{"contact_name": "Alice Johnson"}]
         d = self._make_approach_dir(tmp_path, ["alice-johnson"])
-        matched, claimed = spar_lib.match_roster_to_approach_stems(rows, d)
+        matched, claimed = spar_lib.match_roster_to_stems(rows, d)
         assert matched == {0: "alice-johnson"}
 
     def test_pass2_first_name(self, tmp_path):
         rows = [{"contact_name": "Alice Johnson"}]
         # No full-name match, but one first-name match
         d = self._make_approach_dir(tmp_path, ["alice-acme-corp"])
-        matched, claimed = spar_lib.match_roster_to_approach_stems(rows, d)
+        matched, claimed = spar_lib.match_roster_to_stems(rows, d)
         assert matched == {0: "alice-acme-corp"}
 
     def test_pass2_ambiguous_no_match(self, tmp_path):
         rows = [{"contact_name": "Alice Johnson"}]
         d = self._make_approach_dir(tmp_path, ["alice-acme", "alice-beta"])
-        matched, _ = spar_lib.match_roster_to_approach_stems(rows, d)
+        matched, _ = spar_lib.match_roster_to_stems(rows, d)
         assert 0 not in matched
 
     def test_pass2_single_token_skipped(self, tmp_path):
         rows = [{"contact_name": "Madonna"}]
         d = self._make_approach_dir(tmp_path, ["madonna-corp"])
-        matched, _ = spar_lib.match_roster_to_approach_stems(rows, d)
+        matched, _ = spar_lib.match_roster_to_stems(rows, d)
         # Single-token name: pass 1 matches "madonna" prefix in "madonna-corp"
         assert matched == {0: "madonna-corp"}
 
@@ -345,7 +345,7 @@ class TestMatchRosterToApproachStems:
             {"contact_name": "Alice Brown"},
         ]
         d = self._make_approach_dir(tmp_path, ["alice-johnson-acme"])
-        matched, _ = spar_lib.match_roster_to_approach_stems(rows, d)
+        matched, _ = spar_lib.match_roster_to_stems(rows, d)
         assert matched == {0: "alice-johnson-acme"}
         assert 1 not in matched
 
@@ -355,7 +355,7 @@ class TestMatchRosterToApproachStems:
             {"contact_name": "Bob", "star_rating": "4"},
         ]
         d = self._make_approach_dir(tmp_path, ["alice-corp", "bob-corp"])
-        matched, _ = spar_lib.match_roster_to_approach_stems(
+        matched, _ = spar_lib.match_roster_to_stems(
             rows, d, filters={"min_star": 3}
         )
         assert 0 not in matched
@@ -367,7 +367,7 @@ class TestMatchRosterToApproachStems:
             {"contact_name": "Bob", "email": "bob@b.com"},
         ]
         d = self._make_approach_dir(tmp_path, ["alice-corp", "bob-corp"])
-        matched, _ = spar_lib.match_roster_to_approach_stems(
+        matched, _ = spar_lib.match_roster_to_stems(
             rows, d, filters={"require_email": True}
         )
         assert 0 not in matched
@@ -379,7 +379,7 @@ class TestMatchRosterToApproachStems:
             {"contact_name": "Bob", "date_found_invalid": ""},
         ]
         d = self._make_approach_dir(tmp_path, ["alice-corp", "bob-corp"])
-        matched, _ = spar_lib.match_roster_to_approach_stems(
+        matched, _ = spar_lib.match_roster_to_stems(
             rows, d, filters={"exclude_invalid": True}
         )
         assert 0 not in matched
@@ -388,7 +388,7 @@ class TestMatchRosterToApproachStems:
     def test_missing_approach_dir(self, tmp_path):
         rows = [{"contact_name": "Alice"}]
         d = tmp_path / "no-such-dir"
-        matched, claimed = spar_lib.match_roster_to_approach_stems(rows, d)
+        matched, claimed = spar_lib.match_roster_to_stems(rows, d)
         assert matched == {}
         assert claimed == set()
 
