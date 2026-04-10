@@ -1,0 +1,247 @@
+# SPAR Campaign Manager — UI Design
+
+## Overview
+
+A desktop application that provides a campaign dashboard and task dispatch interface for the SPAR outreach pipeline. The application reads campaign YAML files and the filesystem state (roster TSVs, profile files, approach files) to derive contact states and present actionable transitions.
+
+Use ttk widgets throughout. Use Tcl 9.
+
+## Layout
+
+The window is divided into four vertical zones, top to bottom:
+
+1. Tab bar (campaign selector)
+2. Campaign panel: config summary + progress table
+3. Transition manager: treeview + task detail
+4. Log panel
+
+A ttk::panedwindow separates zones 2, 3, and 4 so the user can drag the boundaries.
+
+## 1. Tab bar
+
+Each tab corresponds to a campaign YAML file found in the campaign directory. Tabs are ordered by filename, e.g. `campaign-2026-04.yaml` leads to a tab called "2026-04". The rightmost (most recent) tab is selected by default.
+
+Switching tabs reloads the campaign config, progress table, and transition treeview for that campaign.
+
+## 2. Campaign panel
+
+### 2.1 Config summary
+
+Displayed as a read-only block at the top of the tab. Fields drawn from the campaign YAML:
+
+- Campaign name (`campaign:`)
+- Sender name, role, email (`sender:`)
+- Method reference (`method:`)
+- Filter settings (`filter:`)
+
+This is a compact summary, not an editor. Campaign YAML editing is a planned feature, not in scope for this version.
+
+### 2.2 Progress table
+
+A table built with the grid geometry manager, using ttk::Label widgets for cells and ttk::Checkbutton for the segment selection column. All columns are visible without horizontal scrolling; column widths are sized to fit the window. This reproduces the output of `bin/update-campaign.py`.
+
+**Why grid, not ttk::treeview.** The progress table requires multi-level grouped column headers (§2.2 "Column header grouping"), per-cell background colouring for denominator bands, and checkbox widgets in the segment column. ttk::Treeview does not support any of these: it cannot span or group column headings, cannot colour individual cells, and cannot embed widgets in cells. The grid geometry manager with individual ttk::Label and ttk::Checkbutton widgets provides full control over cell appearance, spanning headers, and per-cell styling. The transition manager (§3) uses ttk::treeview because it has a genuine parent-child hierarchy (transition types containing tasks), which is what treeview is designed for.
+
+Columns:
+
+| Segment | Valid | Profile | 3+★ | A/3+★ | Email | A/Eml | LinkedIn | Facebook | Only ☎ | ✉ Sent | ✉ Repl |
+
+The star threshold (3+★) is drawn from the campaign configuration (`filter.min_star`). All column headers and groupings adjust when this value changes.
+
+#### Column header grouping
+
+Each column's percentage is relative to a parent column, forming a denominator tree:
+
+```
+Valid
+├── Profile         (/ Valid)
+└── N+★             (/ Valid)
+    ├── A/N+★       (/ N+★)
+    ├── Email       (/ N+★)
+    │   └── A/Eml   (/ Email)
+    │       └── ✉ Sent  (/ A/Eml)
+    │           └── ✉ Repl  (/ ✉ Sent)
+    ├── LinkedIn    (/ N+★)
+    ├── Facebook    (/ N+★)
+    └── Only ☎     (/ N+★)
+```
+
+This hierarchy is communicated visually using multi-level header rows above the treeview. Each row is a strip of ttk::Label widgets spanning the columns that share a denominator. From top to bottom:
+
+```
+|                  | ← / Valid → |                              ← / N+★ →                                |
+|                  |             |            |← / Email →|                             |                  |
+|                  |             |            |           |← / A/Eml →|                 |                  |
+|                  |             |            |           |           |← / ✉ Sent →|    |                  |
+| Segment   | Valid|  Profile    | N+★ | A/N+★|   Email   |    A/Eml  |  ✉ Sent| ✉ Repl| LinkedIn|Facebook| Only ☎|
+```
+
+The spanning labels are sized to match the combined width of their child columns. When columns are resized, the spanning labels resize to match. Each level may use a subtle background tint to reinforce the grouping.
+
+Vertical separators (ttk::Separator or label borders) are placed at group boundaries — without them, a spanning header label has no visible edges and the reader cannot tell which columns it covers. The separators run the full height of the header area and continue through the data rows to maintain visual alignment.
+
+Each row represents one segment. Segments fall into two categories:
+
+- **Campaign segments** — listed in the campaign YAML's `segments:` key. These rows have a checkbox. All checkboxes are checked by default. Unchecking a segment excludes it from the totals row and from the transition treeview below. The checkbox state does not persist across sessions; it is a transient filter.
+- **Non-campaign segments** — segment directories that exist in the campaign folder but are not listed in `segments:` (e.g. `bridal-expo`). These rows are displayed in a muted style (greyed out text, no checkbox). They appear in the table for awareness but do not contribute to the totals row or the transition treeview, and cannot be selected.
+
+The final row is a **Totals** row that sums only the checked campaign segments. It updates dynamically when checkboxes change.
+
+Cell values show count and percentage as in the CLI output (e.g. "14 100%").
+
+### 2.3 Warnings
+
+Below the progress table, a warnings area displays issues detected during the filesystem scan:
+
+- Duplicate recipients (same email address in multiple approach files)
+- Duplicate contacts by name (same person in multiple segments)
+- Duplicate contacts by email (same email in multiple segments)
+- Identical subject lines in unsent approaches
+
+These mirror the warnings produced by `bin/update-campaign.py`. Each warning is a single line. The area is collapsible and shows a count badge when collapsed (e.g. "⚠ 4 warnings").
+
+### 2.4 Check email button
+
+A button labelled "Check Email" in the toolbar area of the campaign panel. Clicking it queries the campaign's configured mailroom account for new replies and updates approach files with reply markers. The button is disabled while a check is in progress. Results appear in the log panel (§4) and the progress table refreshes afterward.
+
+## 3. Transition manager
+
+A single ttk::treeview with `selectmode extended`. Top-level items are the fixed set of transition types. Each top-level item shows a task count and can be expanded (via the disclosure triangle ▶) to reveal the individual contact tasks as child items.
+
+### 3.1 Transition types (top-level items)
+
+The fixed transition types:
+
+| ID | Label | From state | To state |
+|----|-------|-----------|----------|
+| T1 | Sweep → Profile | DISCOVERED | PROFILED |
+| T2 | Profile → Approach | PROFILED | APPROACHED |
+| T3 | Approach → Send | APPROACHED | SENT |
+| T4 | Send → Reply | SENT | REPLIED |
+| T5 | Flag invalid | Any | INVALID |
+| T6 | Stale → Re-profile | PROFILE_STALE | PROFILED |
+| T7 | Re-profile → Re-approach | PROFILED (rebuilt) | APPROACHED |
+| T8 | LinkedIn → Email follow-up | SENT (LinkedIn) | APPROACHED (email) |
+
+Each top-level row displays: the transition label and the count of tasks (e.g. "Profile → Approach (23)"). Counts update dynamically when the user changes segment checkboxes in the progress table.
+
+T4 (Send → Reply) and T8 (LinkedIn → Email follow-up) are monitoring transitions — there is no action to dispatch, only a waiting state. They are displayed but have no play button.
+
+### 3.2 Tasks (child items)
+
+Expanding a transition type reveals its individual tasks as child rows. Each child row has columns:
+
+- Contact name
+- Organisation
+- Segment
+- Task state: **ready**, **pending**, or **done**
+- Pending reason (if pending) — a short text explaining what blocks the transition
+
+Examples of pending reasons:
+
+- "No email address" (T3, channel is email but contact has no email)
+- "Waiting for credit window" (any dispatched transition, API budget exhausted)
+- "Profile stale — cross-ref update from [other contact]" (T6)
+- "LinkedIn request sent 2 days ago, waiting until day 5" (T8)
+- "Waiting for reply" (T4)
+
+Tasks in the **done** state are shown greyed out. A "Show completed" checkbox above the treeview toggles their visibility.
+
+### 3.3 Dispatch controls
+
+A toolbar below the transition treeview with:
+
+- **Play button** (▶) — dispatches all **ready** tasks for the selected transition type(s). The play button is disabled when no transition type is selected or when the selected types have zero ready tasks.
+- **Stop button** (⏹) — cancels a running dispatch. Tasks already completed within the batch remain completed; remaining tasks return to ready state.
+
+### 3.4 Progress bar
+
+When a dispatch is running, a progress bar appears below the toolbar for each active transition type. The progress bar advances block by block, one block per task. Each block is coloured green on success or red on failure. The overall label shows "N / M completed".
+
+The task child items update in real time as individual tasks complete (state changes from ready to done) or fail (state changes to pending with an error reason).
+
+If the block-by-block segmented progress bar is not achievable with ttk::progressbar, a standard determinate progress bar with a numeric label is acceptable as a fallback.
+
+### 3.5 Interaction between progress table and transition manager
+
+The two zones are linked by the segment checkboxes:
+
+1. User unchecks "wedding-planner" in the progress table.
+2. Totals row recalculates excluding wedding-planner.
+3. Transition treeview counts recalculate excluding wedding-planner contacts.
+4. If a transition type is expanded, wedding-planner contacts disappear from its child items.
+
+This filtering is immediate and does not require a refresh button.
+
+## 4. Log panel
+
+A text widget at the bottom of the window displaying timestamped log entries. All subprocess output (from dispatch actions, email checks, filesystem scans) is appended here. The log panel is scrollable and has a "Clear" button.
+
+Error messages from failed tasks appear here with the contact name and transition type, providing detail beyond what the red progress block and pending reason convey.
+
+## State derivation
+
+Contact states are derived from the filesystem, not stored in a separate database. The derivation rules:
+
+| State | Condition |
+|-------|-----------|
+| DISCOVERED | Roster row exists, no profile file |
+| PROFILED | Profile file exists, no approach file |
+| APPROACHED | Approach file exists, no `actioned_date` in final round |
+| SENT | `actioned_date` present in final round |
+| REPLIED | Reply marker present in approach file |
+| INVALID | `date_found_invalid` set in roster |
+| PROFILE_STALE | `profile_stale_date` set in roster (new column) |
+
+The application scans the filesystem on startup and when the user triggers a refresh (via the Check Email button or after a dispatch completes). If the platform provides a filesystem monitoring facility, use it to trigger automatic refreshes; otherwise rely on manual refresh.
+
+## Scope exclusions (planned for future versions)
+
+- Campaign YAML editing from within the UI
+- Segment configuration pop-up (gear icon per segment)
+
+## Column header approach: legend popup (chosen)
+
+The multi-level spanning header rows (§2.2) were prototyped but abandoned: placing headers and data rows in separate grid frames prevented column alignment without complex post-layout width synchronisation, and the five header rows consumed vertical space without solving the alignment problem reliably.
+
+The chosen approach uses a single-row column header directly above the data rows, with denominator relationships explained in a separate legend popup rather than embedded in the table header area.
+
+### Legend button and popup window
+
+A **Legend** button in the campaign toolbar opens a `toplevel` window titled "Column Denominator Tree". The window contains a `canvas` widget that draws the denominator tree as connecting lines between node labels:
+
+```
+                         Valid
+                        ╱     ╲
+                   Profile    N+★
+                            ╱  |  ╲        ╲
+                        A/N+★ Email LinkedIn Facebook Only☎
+                              |
+                             A/Eml
+                              |
+                            ✉ Sent
+                              |
+                            ✉ Repl
+```
+
+Each node label is accompanied by its denominator in smaller grey text (e.g. "/ Valid", "/ 3+★"). The canvas redraws on `<Configure>` so it adapts to the window being resized. Closing the legend window withdraws it rather than destroying it; reopening raises and deiconifies the existing window.
+
+The canvas is not embedded above the table. The table header is a single row; the legend is on-demand.
+
+### Progress table: single grid frame
+
+The progress table uses one `ttk::frame` for both the column header row and all data rows. This guarantees column alignment without any post-layout synchronisation. The table is not independently scrollable; the paned window boundary gives the user control over how much vertical space the campaign panel receives.
+
+### Log panel removed from main window
+
+The log panel (zone 4) is not a persistent zone. Log output is only relevant during a dispatch run. When a dispatch is active, a progress bar and a **Log…** button appear in the dispatch toolbar. The Log… button opens a separate `toplevel` window with a scrollable text widget. This window persists across dispatches within a session.
+
+### Scrollbars
+
+Three scrollbars in the application:
+
+- **Segment data rows** — vertical scrollbar on the data canvas if the table is taller than the available pane height (deferred; in the current mock the table is not wrapped in a scroll canvas).
+- **Transition treeview** — vertical scrollbar on the treeview widget itself.
+- **Log window** — vertical scrollbar on the log text widget inside the log toplevel.
+
+No scrollbar wraps a whole zone or the campaign panel.
