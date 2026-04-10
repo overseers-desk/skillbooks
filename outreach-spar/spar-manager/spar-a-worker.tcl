@@ -8,11 +8,8 @@
 # Usage: tclsh spar-a-worker.tcl <prompt-dir> <log-dir>
 #   <prompt-dir> contains: author-draft.txt, challenger-template.txt, meta.env
 
-package require json
-package require json::write
-
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir spar-lib.tcl]
+source [file join $script_dir spar-state.tcl]
 
 if {[llength $argv] < 2} {
     puts stderr "Usage: tclsh spar-a-worker.tcl <prompt-dir> <log-dir>"
@@ -43,6 +40,7 @@ set antifacts [spar::dict_get_default $meta ANTIFACTS]
 set goal_path [dict get $meta GOAL]
 set contact_summary [dict get $meta CONTACT_SUMMARY]
 set challenger_model [spar::dict_get_default $meta CHALLENGER_MODEL sonnet]
+set roster_email [spar::dict_get_default $meta ROSTER_EMAIL ""]
 
 set log_prefix [file join $log_dir $slug]
 set cost_log [file join $log_dir "$slug-cost.jsonl"]
@@ -178,6 +176,59 @@ proc write_file {path content} {
     set fd [open $path w]
     puts -nonewline $fd $content
     close $fd
+}
+
+# validate_and_correct -- validate approach file post-assembly, retry on error.
+# Attempts 1-2: current model. Attempt 3: opus. Returns 0 if valid, 1 if failed.
+proc validate_and_correct {outfile roster_email contact_name session_id log_prefix slug} {
+    set max_fix 3
+
+    for {set attempt 1} {$attempt <= $max_fix} {incr attempt} {
+        set errors [spar::validate_approach $outfile $roster_email $contact_name]
+        set hard {}
+        foreach e $errors {
+            if {[dict get $e severity] eq "error"} {
+                lappend hard $e
+            }
+        }
+
+        if {[llength $hard] == 0} {
+            if {$attempt > 1} {
+                puts "\[$slug\] Validation passed after $attempt attempt(s)."
+            }
+            return 0
+        }
+
+        set lines {}
+        foreach e $hard {
+            lappend lines "- \[[dict get $e code]\] [dict get $e message]"
+        }
+        set error_text [join $lines \n]
+        puts "\[$slug\] Validation failed (attempt $attempt/$max_fix):\n$error_text"
+
+        set fix_log "${log_prefix}-fix${attempt}.log"
+        set fix_prompt "The approach file you just wrote failed validation:\n\n$error_text\n\nRewrite the file at $outfile to fix these errors. The to: field in each email message must be a real email address (not a placeholder). It must match the roster email: $roster_email"
+
+        set model_args {}
+        if {$attempt == 3} {
+            set model_args [list --model opus]
+        }
+
+        if {[invoke_claude "fix${attempt}" $fix_log \
+                --resume $session_id {*}$model_args $fix_prompt]} {
+            return 1
+        }
+    }
+
+    # Final check after last correction
+    set errors [spar::validate_approach $outfile $roster_email $contact_name]
+    foreach e $errors {
+        if {[dict get $e severity] eq "error"} {
+            puts "FAIL (validation failed after $max_fix retries): $slug"
+            return 1
+        }
+    }
+    return 0
 }
 
 # ── Author: draft ──────────────────────────────────────────────────────
@@ -343,6 +394,16 @@ write_file [file join $prompt_dir assembly.txt] $assembly_prompt
 if {[invoke_claude "assembly" $assembly_log \
         --resume $author_session $assembly_prompt]} {
     exit 1
+}
+
+# ── Post-assembly validation ──────────────────────────────────────────
+
+set contact_name [string trim [lindex [split $contact_summary |] 0]]
+if {[file exists $outfile]} {
+    if {[validate_and_correct $outfile $roster_email $contact_name \
+            $author_session $log_prefix $slug]} {
+        exit 1
+    }
 }
 
 # ── Summary ────────────────────────────────────────────────────────────
