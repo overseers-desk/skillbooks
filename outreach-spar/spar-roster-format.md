@@ -57,7 +57,7 @@ Every row must have at least one of email, linkedin_url, or facebook_url populat
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
 | 12 | verified | yes/no | S initial; P confirms or corrects | A, quality check | Role confirmed via independent source |
-| 13 | date_found_invalid | ISO date (YYYY-MM-DD) | S, P, or A | S (skips row), A (skips row), human review | Marks stale contacts without deleting them. The date rather than a flag allows periodic re-checking. Set when the person has left the relevant role entirely (retired, changed industry), or when profiling or approach drafting determines the contact is not a campaign target (e.g. operates a competing venue with no cooperation incentive, or the profile concludes there is no viable approach angle). |
+| 13 | date_found_invalid | ISO date (YYYY-MM-DD) | S, P, or A | S (skips row), A (skips row), human review | Marks stale contacts without deleting them. The date rather than a flag allows periodic re-checking. Set when the person has left the relevant role entirely (retired, changed industry), or when profiling or approach drafting determines the contact is not a campaign target (e.g. operates a competing venue with no cooperation incentive, or the profile concludes there is no viable approach angle). The roster carries only the date; the reasoning lives in the profile document (see §Artefact retention below). |
 
 ### Phase handover
 
@@ -84,6 +84,14 @@ Columns 15–19 are empty during S and populated progressively as the contact mo
 | R | Strategy revision notes (`strategy-revision-[band].md`) | r_note: per-contact observation from the human reviewer |
 
 A phase note should answer: "what does the next phase need to know about this contact from my phase, in one line?" If the observation requires more than a short sentence, it belongs in the full artefact, not in the note column.
+
+## Artefact retention
+
+Profile and approach files must not be deleted when a contact is invalidated or replaced. The roster's `date_found_invalid` field records *when* the determination was made, but the *reason* — why the contact is not a campaign target, or why a different person now holds the role — lives only in the profile document. Deleting it loses that reasoning. A future sweep agent that rediscovers the same name will find no record of the prior evaluation and repeat the work.
+
+The same applies when a contact is replaced (e.g. a new person takes over the role): the old contact's profile should be kept. It documents who held the role before, what was found during profiling, and why outreach did not proceed. The replacement contact's profile is a separate file.
+
+Old-slug duplicates — where the same content exists under two filenames due to a rename or slug normalisation — may be deleted. The test is whether the content is reachable from any current roster row's `stem` field. If it is, the other copy is redundant. If neither copy is reachable, the content is an orphan and should be linked to a roster row or investigated, not deleted.
 
 ## Campaign-specific columns
 
