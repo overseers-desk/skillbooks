@@ -158,7 +158,7 @@ Never write a masked or redacted email address (e.g. `b***@example.com`) to the 
 
 If found, check whether the name associated with the email (from the email prefix, contact page, or directory listing) matches the roster contact. If it does not — e.g. roster says "Jess" but the contact page email is `athena@example.com` — treat this as a §4.11 "Person vs. company" trigger: investigate who currently runs the business before writing the email to the roster.
 
-If the email passes both the format gate (§4.11) and the name check, write to roster via `trdsql` (§4.11 method). If not found, record in `p_note`: "email search attempted [date]: no public email found."
+If the email passes both the format gate (§4.11) and the name check, write to roster via sqlite3 (§4.11 method). If not found, record in `p_note`: "email search attempted [date]: no public email found."
 
 ### 4.5 Web search for public activity beyond LinkedIn
 
@@ -240,15 +240,7 @@ If profiling reveals that the contact cannot deliver the campaign's intended out
 
 Note that network/connection value can support a 5-star rating when the connection paths are specific and high-value (e.g. bridges to a target community the campaign has no other path into), not merely when the person has a large network.
 
-**Write `star_rating` to the roster TSV — do not record it in the profile document or in any summary document.** `response_likelihood` is set by the A phase, not P; do not write it here. Use `trdsql` to update the contact's row in-place:
-
-```bash
-trdsql -id "\t" -ih -od "\t" -oh \
-  "SELECT segment, organisation, contact_name, role, phone, email, postcode, linkedin_url, facebook_url, sweep_iteration, discovered_via, discovery_source, verified, p_note, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'STAR' ELSE star_rating END, response_likelihood, s_note, date_found_invalid FROM roster.tsv" \
-  > roster-tmp.tsv && mv roster-tmp.tsv roster.tsv
-```
-
-Replace NAME, ORG, and STAR with the actual values. The column order in that SELECT must match the roster exactly (see the roster header).
+**Write `star_rating` to the roster TSV — do not record it in the profile document or in any summary document.** `response_likelihood` is set by the A phase, not P; do not write it here. Use `sqlite3` to update the contact's row in-place.
 
 ### 4.10 Classify profile richness
 
@@ -273,15 +265,7 @@ Compare what the profile reveals against what the roster entry says. If any of t
 
 **Email format gate.** Before writing any value to the `email` column, verify it contains an `@` sign with a plausible user@domain shape. Contact form URLs (`via website...`), phone numbers, placeholders (`[email obtained during call]`), and descriptive text are not email addresses and must not be written to the email field. If the only contact method found is a web form or phone number, record it in `p_note` instead. This gate matches the validation in `bin/spar-S-validate.py` §10 check 4 and prevents non-email strings from inflating downstream counts in `update-campaign.py`.
 
-For each empty contact field where a value was discovered, update the roster using `trdsql`:
-
-```bash
-trdsql -id "\t" -ih -od "\t" -oh \
-  "SELECT organisation, contact_name, role, phone, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'NEW_EMAIL' ELSE email END, postcode, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'NEW_LINKEDIN' ELSE linkedin_url END, CASE WHEN contact_name='NAME' AND organisation='ORG' THEN 'NEW_FACEBOOK' ELSE facebook_url END, sweep_iteration, discovered_via, discovery_source, verified, p_note, star_rating, response_likelihood, s_note, date_found_invalid FROM roster.tsv" \
-  > roster-tmp.tsv && mv roster-tmp.tsv roster.tsv
-```
-
-Replace NAME, ORG, and NEW_EMAIL / NEW_LINKEDIN / NEW_FACEBOOK with actual values. For fields that remain empty, use the original column name (e.g. `email`) in place of the CASE expression — do not write empty-string literals. The column order must match the roster header exactly, as in §4.9.
+For each empty contact field where a value was discovered, update the roster using `sqlite3`.
 
 Only backfill emails that belong to the contact or their organisation. An email discovered for a different person mentioned in the profile (e.g. a successor, a co-admin) belongs in that person's roster row, not this one.
 

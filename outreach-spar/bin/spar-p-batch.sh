@@ -44,6 +44,9 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # SPAR-P procedure doc is co-located with this script (one level up from bin/)
 SPAR_P="$SCRIPT_DIR/../spar-P-profile.md"
+SQLITE3_SKILL="$SCRIPT_DIR/../SQLITE3_SKILL.md"
+SQLITE3_SKILL_TEXT=""
+[[ -f "$SQLITE3_SKILL" ]] && SQLITE3_SKILL_TEXT=$(<"$SQLITE3_SKILL")
 
 # Resolve paths from campaign YAML or flags
 _resolve_from() { local base="$1" p="$2"; [[ "$p" == /* ]] && echo "$p" || echo "$base/$p"; }
@@ -201,6 +204,8 @@ Roster file: $ROSTER
 
 Follow SPAR-P §5 profile structure exactly. After writing the profile, follow SPAR-P §4.9 to write star_rating and response_likelihood to the roster TSV (not to the profile document). Then follow §4.11 to backfill any missing contact details (email, linkedin_url, facebook_url) and replace stale contacts discovered during research with the person currently in the role.
 Web search is the primary research method. Use Chromium only when the target has a LinkedIn or Facebook URL and WebFetch returns insufficient data. Wrap Chromium with flock: flock /tmp/chromium.lock /snap/bin/chromium --headless --dump-dom --virtual-time-budget=30000 --window-size=1920,10000 --user-data-dir="\$HOME/snap/chromium/common/chromium" "URL" 2>/dev/null
+
+$SQLITE3_SKILL_TEXT
 PROMPT
 
 done < <(awk -F'\t' -v OFS="$SOH" '{$1=$1; print}' "$ROSTER")

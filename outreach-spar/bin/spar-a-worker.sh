@@ -260,32 +260,26 @@ if [[ -f "$OUTFILE" ]]; then
     echo "DONE: $slug ($round round(s), verdict=$verdict, cost=\$$total_cost)"
 
     # Update roster response_likelihood from the Response likelihood field written by assembly.
-    # Uses trdsql to rewrite the TSV cleanly (avoids field-alignment errors).
+    # sqlite3 UPDATE touches only the named column — no column enumeration needed.
     # flock on a .lock file serialises concurrent workers sharing the same roster.
     band_likelihood=$(grep '^RESPONSE_LIKELIHOOD:' "$assembly_log" | grep -oP '\d+' | head -1)
     if [[ -n "$band_likelihood" ]]; then
         roster_path="$(dirname "$(dirname "$OUTFILE")")/roster.tsv"
         contact_name=$(echo "$CONTACT_SUMMARY" | cut -d'|' -f1 | sed 's/^ *//;s/ *$//')
         if [[ -f "$roster_path" ]]; then
-            # Build a SELECT that substitutes response_likelihood for the matching row.
-            # Column list is derived from the header row so it works for any roster schema.
-            mapfile -t _cols < <(head -1 "$roster_path" | tr -d '\r' | tr '\t' '\n')
             _safe_name="${contact_name//\'/\'\'}"
-            _select_list=""
-            for _col in "${_cols[@]}"; do
-                [[ -n "$_select_list" ]] && _select_list+=","
-                if [[ "$_col" == "response_likelihood" ]]; then
-                    _select_list+="CASE WHEN contact_name='${_safe_name}' THEN '${band_likelihood}' ELSE \"response_likelihood\" END AS \"response_likelihood\""
-                else
-                    _select_list+="\"${_col}\""
-                fi
-            done
             _tmp=$(mktemp)
             (
                 flock -x 200
-                trdsql -ih -oh -id $'\t' -od $'\t' \
-                    "SELECT ${_select_list} FROM \"${roster_path}\"" > "$_tmp" \
-                    && mv "$_tmp" "$roster_path" \
+                sqlite3 :memory: <<SQEOF
+.mode tabs
+.import ${roster_path} tbl
+UPDATE tbl SET response_likelihood='${band_likelihood}' WHERE contact_name='${_safe_name}';
+.headers on
+.output ${_tmp}
+SELECT * FROM tbl;
+SQEOF
+                mv "$_tmp" "$roster_path" \
                     && echo "  roster update: ${contact_name} → response_likelihood=${band_likelihood}%"
             ) 200>"/tmp/spar-roster-$(echo "$roster_path" | md5sum | cut -c1-8).lock"
         fi
