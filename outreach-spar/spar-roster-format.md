@@ -10,13 +10,7 @@ Every row must have a `contact_name`. A row without a named person is not a cont
 
 **Delimiter and line-break conventions:** Tab (`\t`) separates fields; newline (`\n`) separates rows. Neither may appear inside a field value. When a field needs to represent a line break within its content (e.g. a multi-sentence note), use carriage return (`\r`) instead of newline. Standard tools (LibreOffice, Python `csv` with `delimiter='\t'`, pandas) read `\r` inside a field without treating it as a row boundary.
 
-**Programmatic access:** Use `trdsql` (not `q`) for SQL operations on roster files. Both tools run SQL against flat files, but they differ on `\r` handling, which matters because roster fields use `\r` for in-field line breaks:
-
-- `trdsql` treats bare `\r` as in-field data and preserves it on round-trip. `q` treats `\r` as a record separator (splitting one row into two) and converts `\r` to `\n` on output.
-- `trdsql` correctly quotes fields containing `\r` on output and reads both quoted and bare forms. `q` does not quote such fields on output and then cannot parse its own output (row count increases).
-- Double round-trip through `trdsql` is byte-identical; `q` corrupts on the first pass.
-
-Standard invocation for reading: `trdsql -id "\t" -ih "SELECT ... FROM roster.tsv"`. For writing back: `trdsql -id "\t" -ih -od "\t" -oh "SELECT ... FROM roster.tsv" > /tmp/roster-new.tsv && mv /tmp/roster-new.tsv roster.tsv`. For cell-level updates, use `CASE WHEN` expressions in the SELECT. Do not use SQL DML statements (UPDATE, INSERT, DELETE) — trdsql imports file sources into a temporary in-memory database, so DML modifies the temp copy and exits 0 without touching the source file. The silent success is a trap; always use SELECT + redirect + mv instead. For inserting `\r` in SQL strings, use `char(13)`. Do not use Python's `csv` module — its writer re-quotes every field, producing a noisy diff where every line appears changed. Tested 2026-03-26 on the Singapore activation `outreach-ready.tsv`.
+**Programmatic access:** Use `sqlite3` for SQL operations on roster files. Do not use `trdsql`, `q`, `csvq`, or Python's `csv` module — they apply CSV quoting rules to TSV output, corrupting fields that contain double quotes.
 
 ## Core columns
 

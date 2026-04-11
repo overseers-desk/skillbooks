@@ -144,7 +144,7 @@ Read the campaign YAML for the sender address and BCC address. These are not sto
 
 ### 4.8 Update the roster and communication index
 
-**Roster:** Copy `roster_note` from the approach file into the `a_note` column of the roster TSV. Also write `response_likelihood` (the percentage estimate from the approach file's contact header) to the roster's `response_likelihood` column. Use `trdsql` for both updates to avoid field-alignment errors.
+**Roster:** Copy `roster_note` from the approach file into the `a_note` column of the roster TSV. Also write `response_likelihood` (the percentage estimate from the approach file's contact header) to the roster's `response_likelihood` column. Use `sqlite3` for both updates.
 
 **Communication index:** Append one line to `comms-index.md`: contact ID, name, organisation, segment, angle used, key relationship hooks, channel selection.
 

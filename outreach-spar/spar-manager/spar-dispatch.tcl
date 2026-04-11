@@ -46,6 +46,13 @@ proc spar::dispatch_profiles {segment_dir opts on_progress on_complete} {
 
     set script_dir [file dirname [file normalize [info script]]]
     set spar_p [file normalize [file join $script_dir .. spar-P-profile.md]]
+    set sqlite3_skill [file normalize [file join $script_dir .. SQLITE3_SKILL.md]]
+    set sqlite3_skill_text ""
+    if {[file exists $sqlite3_skill]} {
+        set _fd [open $sqlite3_skill r]
+        set sqlite3_skill_text [read $_fd]
+        close $_fd
+    }
 
     # --- Resolve overview/antifacts ---
     set overview ""
@@ -153,7 +160,9 @@ Output file: $outfile
 Roster file: $roster_path
 
 Follow SPAR-P §5 profile structure exactly. After writing the profile, follow SPAR-P §4.9 to write star_rating and response_likelihood to the roster TSV (not to the profile document). Then follow §4.11 to backfill any missing contact details (email, linkedin_url, facebook_url) and replace stale contacts discovered during research with the person currently in the role. Never write a masked or redacted email address (e.g. 'b***@example.com') to the roster — if the only email found is masked, leave the field empty.
-Web search is the primary research method. Use Chromium only when the target has a LinkedIn or Facebook URL and WebFetch returns insufficient data. Wrap Chromium with flock: flock /tmp/chromium.lock /snap/bin/chromium --headless --dump-dom --virtual-time-budget=30000 --window-size=1920,10000 --user-data-dir=\"\$HOME/snap/chromium/common/chromium\" \"URL\" 2>/dev/null"
+Web search is the primary research method. Use Chromium only when the target has a LinkedIn or Facebook URL and WebFetch returns insufficient data. Wrap Chromium with flock: flock /tmp/chromium.lock /snap/bin/chromium --headless --dump-dom --virtual-time-budget=30000 --window-size=1920,10000 --user-data-dir=\"\$HOME/snap/chromium/common/chromium\" \"URL\" 2>/dev/null
+
+$sqlite3_skill_text"
 
         set fd [open $prompt_file w]
         puts $fd $prompt

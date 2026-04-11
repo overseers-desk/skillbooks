@@ -425,7 +425,7 @@ if {[file exists $cost_log]} {
 if {[file exists $outfile]} {
     puts "DONE: $slug ($round round(s), verdict=$verdict, cost=\$$total_cost)"
 
-    # Update roster response_likelihood via trdsql
+    # Update roster response_likelihood via sqlite3
     set assembly_text [read_file $assembly_log]
     set band_likelihood ""
     foreach line [split $assembly_text \n] {
@@ -439,32 +439,21 @@ if {[file exists $outfile]} {
         set contact_name [string trim $contact_name]
 
         if {[file exists $roster_path]} {
-            # Read header columns to build SELECT
-            set fd [open $roster_path r]
-            set header_line [gets $fd]
-            close $fd
-            set header_line [string trimright $header_line \r]
-            set cols [split $header_line \t]
-
             set safe_name [string map {' ''} $contact_name]
-            set select_parts {}
-            foreach col $cols {
-                if {$col eq "response_likelihood"} {
-                    lappend select_parts "CASE WHEN contact_name='${safe_name}' THEN '${band_likelihood}' ELSE \"response_likelihood\" END AS \"response_likelihood\""
-                } else {
-                    lappend select_parts "\"${col}\""
-                }
-            }
-            set select_list [join $select_parts ,]
-
             set tmp [exec mktemp]
             set lock_hash [lindex [split [exec echo $roster_path | md5sum] " "] 0]
             set lock_file "/tmp/spar-roster-[string range $lock_hash 0 7].lock"
 
             if {[catch {
                 exec flock -x $lock_file \
-                    trdsql -ih -oh -id \t -od \t \
-                    "SELECT ${select_list} FROM \"${roster_path}\"" > $tmp
+                    sqlite3 :memory: << "EOF"
+.mode tabs
+.import ${roster_path} tbl
+UPDATE tbl SET response_likelihood='${band_likelihood}' WHERE contact_name='${safe_name}';
+.headers on
+.output ${tmp}
+SELECT * FROM tbl;
+EOF
                 file rename -force $tmp $roster_path
                 puts "  roster update: ${contact_name} → response_likelihood=${band_likelihood}%"
             } err]} {

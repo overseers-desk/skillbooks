@@ -10,12 +10,7 @@ Every row must have an `id` and a `url`. A row without these is not a listing. T
 
 **Delimiter and line-break conventions:** Tab (`\t`) separates fields; newline (`\n`) separates rows. Neither may appear inside a field value. When a field needs to represent a line break within its content (e.g. a multi-sentence note), use carriage return (`\r`) instead of newline. Standard tools (LibreOffice, Python `csv` with `delimiter='\t'`, pandas) read `\r` inside a field without treating it as a row boundary.
 
-**Programmatic access:** Use `trdsql` (not `q`) for SQL operations on registry files. Both tools run SQL against flat files, but they differ on `\r` handling, which matters because registry fields use `\r` for in-field line breaks:
-
-- `trdsql` treats bare `\r` as in-field data and preserves it on round-trip. `q` treats `\r` as a record separator and converts `\r` to `\n` on output.
-- Double round-trip through `trdsql` is byte-identical; `q` corrupts on the first pass.
-
-Standard invocation for reading: `trdsql -id "\t" -ih "SELECT ... FROM registry.tsv"`. For writing back: `trdsql -id "\t" -ih -od "\t" -oh "SELECT ... FROM registry.tsv" > registry-new.tsv`.
+**Programmatic access:** Use `sqlite3` for SQL operations on registry files. Do not use `trdsql`, `q`, `csvq`, or Python's `csv` module — they apply CSV quoting rules to TSV output, corrupting fields that contain double quotes.
 
 ## Core columns
 
