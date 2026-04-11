@@ -1,6 +1,5 @@
 #!/usr/bin/env tclsh
-# spar-a-worker.tcl — Process one SPAR-A approach: author drafts, challenger spars
-# Tcl port of ../bin/spar-a-worker.sh
+# spar-a-worker.tcl — Single-contact approach worker: author drafts, challenger spars, assembly
 #
 # The author runs as a single resumed session (draft → revise → assemble).
 # The challenger runs as fresh context-isolated sessions (one per spar round).

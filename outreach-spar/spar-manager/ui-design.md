@@ -38,7 +38,7 @@ This is a compact summary, not an editor. Campaign YAML editing is a planned fea
 
 ### 2.2 Progress table
 
-A table built with the grid geometry manager, using ttk::Label widgets for cells and ttk::Checkbutton for the segment selection column. All columns are visible without horizontal scrolling; column widths are sized to fit the window. This reproduces the output of `bin/update-campaign.py`.
+A table built with the grid geometry manager, using ttk::Label widgets for cells and ttk::Checkbutton for the segment selection column. All columns are visible without horizontal scrolling; column widths are sized to fit the window. This reproduces the output of `spar-progress.tcl`.
 
 **Why grid, not ttk::treeview.** The progress table requires multi-level grouped column headers (§2.2 "Column header grouping"), per-cell background colouring for denominator bands, and checkbox widgets in the segment column. ttk::Treeview does not support any of these: it cannot span or group column headings, cannot colour individual cells, and cannot embed widgets in cells. The grid geometry manager with individual ttk::Label and ttk::Checkbutton widgets provides full control over cell appearance, spanning headers, and per-cell styling. The transition manager (§3) uses ttk::treeview because it has a genuine parent-child hierarchy (transition types containing tasks), which is what treeview is designed for.
 
@@ -98,7 +98,7 @@ Below the progress table, a warnings area displays issues detected during the fi
 - Duplicate contacts by email (same email in multiple segments)
 - Identical subject lines in unsent approaches
 
-These mirror the warnings produced by `bin/update-campaign.py`. Each warning is a single line. The area is collapsed by default and shows a summary when collapsed (e.g. "▶ ⚠ 7 warnings (5 duplicate email, 1 duplicate name, 1 identical subject)"). Clicking the toggle button expands the full warning list.
+These mirror the warnings produced by `spar::build_warnings` (spar-state.tcl). Each warning is a single line. The area is collapsed by default and shows a summary when collapsed (e.g. "▶ ⚠ 7 warnings (5 duplicate email, 1 duplicate name, 1 identical subject)"). Clicking the toggle button expands the full warning list.
 
 ### 2.4 Check email button
 

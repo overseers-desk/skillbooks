@@ -259,6 +259,8 @@ This test requires the campaign data directory to be present. It is marked as an
 
 ## Reference: existing Python implementation (not a port — a redesign)
 
+**Note (2026-04):** The bin/ Python code referenced below has been removed (v0.1-pre-tcl-migration). This section is retained as design rationale for the Tcl reimplementation.
+
 The progress-scanning and state-detection logic currently lives in `../bin/update-campaign.py`. The Tcl implementation is a **redesign around the state machine model**, not a line-by-line port. The Python code is the reference for what conditions matter; the Tcl design replaces its structure.
 
 Key locations in `../bin/update-campaign.py` and their redesign counterparts:
