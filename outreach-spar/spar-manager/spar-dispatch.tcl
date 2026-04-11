@@ -152,7 +152,7 @@ $antifacts_line
 Output file: $outfile
 Roster file: $roster_path
 
-Follow SPAR-P §5 profile structure exactly. After writing the profile, follow SPAR-P §4.9 to write star_rating and response_likelihood to the roster TSV (not to the profile document). Then follow §4.11 to backfill any missing contact details (email, linkedin_url, facebook_url) and replace stale contacts discovered during research with the person currently in the role.
+Follow SPAR-P §5 profile structure exactly. After writing the profile, follow SPAR-P §4.9 to write star_rating and response_likelihood to the roster TSV (not to the profile document). Then follow §4.11 to backfill any missing contact details (email, linkedin_url, facebook_url) and replace stale contacts discovered during research with the person currently in the role. Never write a masked or redacted email address (e.g. 'b***@example.com') to the roster — if the only email found is masked, leave the field empty.
 Web search is the primary research method. Use Chromium only when the target has a LinkedIn or Facebook URL and WebFetch returns insufficient data. Wrap Chromium with flock: flock /tmp/chromium.lock /snap/bin/chromium --headless --dump-dom --virtual-time-budget=30000 --window-size=1920,10000 --user-data-dir=\"\$HOME/snap/chromium/common/chromium\" \"URL\" 2>/dev/null"
 
         set fd [open $prompt_file w]
@@ -189,6 +189,7 @@ Web search is the primary research method. Use Chromium only when the target has
     set _p_state($sid,on_progress) $on_progress
     set _p_state($sid,on_complete) $on_complete
     set _p_state($sid,result) $result
+    set _p_state($sid,segment_dir) $segment_dir
 
     _p_start_next $sid
     return $result
@@ -233,6 +234,10 @@ proc spar::_p_on_worker_done {sid pipe slug} {
                 {*}$_p_state($sid,on_progress) $slug failed "rc=$rc"
                 incr _p_state($sid,failed)
             } else {
+                # Post-profile guardrail: blank masked emails in roster.
+                # Uses spar::is_masked_email — same check that
+                # validate_campaign/spar-progress.tcl reports on.
+                _p_sanitise_roster_email $sid $slug
                 {*}$_p_state($sid,on_progress) $slug done ""
                 incr _p_state($sid,completed)
             }
@@ -243,6 +248,40 @@ proc spar::_p_on_worker_done {sid pipe slug} {
         catch {close $pipe}
         incr _p_state($sid,active) -1
         _p_start_next $sid
+    }
+}
+
+# _p_sanitise_roster_email — after a P-stage worker succeeds, check whether
+# the email it wrote to the roster is masked (e.g. "b***@foo.com").  If so,
+# blank it — a masked address is worse than empty because it inflates the
+# "has email" count and can propagate into approach files.
+#
+# Detection delegates to spar::is_masked_email (spar-state.tcl) — the same
+# function that validate_campaign / spar-progress.tcl uses for reporting.
+proc spar::_p_sanitise_roster_email {sid slug} {
+    variable _p_state
+    set seg_dir $_p_state($sid,segment_dir)
+    set roster [file join $seg_dir roster.tsv]
+    if {![file exists $roster]} return
+
+    set rows [spar::load_roster $roster]
+    set dirty 0
+    set updated {}
+    foreach row $rows {
+        set stem [spar::dict_get_default $row stem ""]
+        if {$stem eq $slug} {
+            set email [string trim [spar::dict_get_default $row email ""]]
+            if {[spar::is_masked_email $email]} {
+                puts "\[$slug\] Guardrail: blanked masked email '$email' in roster"
+                dict set row email ""
+                set dirty 1
+            }
+        }
+        lappend updated $row
+    }
+
+    if {$dirty} {
+        spar::write_roster $roster $updated
     }
 }
 

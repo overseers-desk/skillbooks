@@ -147,11 +147,14 @@ This step is critical because warmth level determines how the A phase opens the 
 
 ### 4.4a Source contact email
 
-Skip if the roster `email` field already contains a valid address (has `@`). Otherwise, search in order:
+Skip if the roster `email` field already contains a valid, unmasked address (has `@` and does not contain `*`). Otherwise, search in order:
 
 1. Organisation website contact/about/team page (§4.3 already visited the site)
 2. Web search: `"{contact name}" "{organisation}" email`
 3. Industry directories: ABN Lookup, Yellow Pages, TrueLocal
+4. Pattern guess + verify: construct `firstname@domain` from the contact name and the organisation's website domain, then web-search the guessed address in quotes. Data-broker sites (ZoomInfo, RocketReach) often confirm or mask real addresses — a masked result like `s***@domain.com` that matches the guess validates the pattern. Also check `whois` for the domain's email convention.
+
+Never write a masked or redacted email address (e.g. `b***@example.com`) to the roster. If a data-broker result is masked and the unmasked form cannot be verified, leave the field empty. The post-profile guardrail will blank any masked email that slips through.
 
 If found, check whether the name associated with the email (from the email prefix, contact page, or directory listing) matches the roster contact. If it does not — e.g. roster says "Jess" but the contact page email is `athena@example.com` — treat this as a §4.11 "Person vs. company" trigger: investigate who currently runs the business before writing the email to the roster.
 
