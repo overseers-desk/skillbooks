@@ -175,11 +175,7 @@ Campaign-specific checks (e.g. "every outreach row has a non-empty p_note") are 
 
 ### 10.1 Approach file validation
 
-Run this checklist against all approach YAML files after A-phase processing completes for a segment. Each check is a pass/warn/fail assertion on the YAML data in `{segment}/approach/*.yaml`. The automated checker is `bin/spar-A-validate.py`, which takes the same campaign YAML and `--skip` arguments as `bin/spar-S-validate.py`.
-
-```
-python3 bin/spar-A-validate.py campaign.yaml
-```
+Run this checklist against all approach YAML files after A-phase processing completes for a segment. Each check is a pass/warn/fail assertion on the YAML data in `{segment}/approach/*.yaml`. The dispatcher runs guard-rail checks (check 1) post-assembly in `spar-a-worker.tcl`. Campaign-wide validation and cross-segment duplicate detection are reported by `spar-progress.tcl`. Structural checks 2–5 are defined by `approach-schema.yaml` and tracked for Tcl implementation in issue #34.
 
 1. **Email to: address validity:** For every email-channel message in a final round, the `to:` field must contain a deliverable email address (i.e. must contain `@` with a valid user@domain.tld shape). Placeholders (`[email obtained during call]`, `[confirmed email]`), contact form URLs (`via website...`), phone numbers, tildes, and empty values are flagged. This catches the class of issue described in issue #11: non-email strings that pass naive non-empty checks but are not sendable.
 2. **Required top-level keys:** Every approach file must have `decisions` and `rounds` at the top level.
@@ -187,7 +183,7 @@ python3 bin/spar-A-validate.py campaign.yaml
 4. **Round structure:** Each round must have `type` (one of `draft`, `review`, `final`) and `number` (for draft and review). Draft and final rounds must have a non-empty `messages` list. Each message must have a `channel` field.
 5. **Channel-roster consistency:** When the approach `decisions.channel` includes email but the roster's `email` field for the same contact does not contain a valid email address, flag the mismatch. This catches cases where the A phase assumed an email channel but no deliverable address exists in the roster.
 
-The script also performs a cross-segment check: email addresses targeted by final-round messages in multiple segments are flagged as warnings, since the same person receiving approach emails from two segments may see contradictory messaging.
+Cross-segment check: email addresses targeted by final-round messages in multiple segments are flagged as warnings, since the same person receiving approach emails from two segments may see contradictory messaging.
 
 ## 11. Subagent delegation
 

@@ -54,9 +54,9 @@ All batch scripts resolve `.` as the campaign root directory. When a campaign ou
 
 ## Discovery by batch scripts
 
-`update-campaign.py` and `spar-a-batch.sh` both read the `segments` list from `campaign.yaml`. Only listed segments are processed. `update-campaign.py` warns about any `roster.tsv` files found on disk that are not listed in the YAML. Directories in `skip_segments` are excluded.
+`spar-progress.tcl` and `spar-a-batch.tcl` both read the `segments` list from `campaign.yaml`. Only listed segments are processed. `spar-progress.tcl` warns about any `roster.tsv` files found on disk that are not listed in the YAML. Directories in `skip_segments` are excluded.
 
-`spar-p-batch.sh` operates on a single segment directory passed as an argument.
+`spar-p-batch.tcl` operates on a single segment directory passed as an argument.
 
 ## Organisation-level documents
 
@@ -65,7 +65,7 @@ The `usp_document` (organisation overview) and `antifacts` (fact-check document)
 ## What does not belong in the campaign directory
 
 - **Raw data exports** (CSV dumps, CRM exports) — place in a `data/` directory excluded by `.gitignore`
-- **Scripts** — the SPAR batch scripts live in `aesop/outreach-spar/bin/`, not in the campaign directory. Campaign-specific helper scripts (e.g. IMAP search, email enrichment) may live in the campaign directory if they are not reusable.
+- **Scripts** — the SPAR batch tools live in `aesop/outreach-spar/spar-manager/`, not in the campaign directory. Campaign-specific helper scripts (e.g. IMAP search, email enrichment) may live in the campaign directory if they are not reusable.
 - **Methodology documents** — live in `aesop/outreach-spar/`, not duplicated per campaign
 
 ## Relationship to other documents

@@ -12,8 +12,7 @@ namespace eval spar {
         profile_exists get_max_rounds lang_instruction channel_desc
 }
 
-# slugify — lowercase, non-alnum to hyphens, collapse, strip edges
-# Port of bin/spar-lib.sh slugify()
+# slugify — lowercase, strip accents, collapse to hyphens
 proc spar::slugify {s} {
     set s [string tolower $s]
     regsub -all -- {[^a-z0-9]} $s {-} s

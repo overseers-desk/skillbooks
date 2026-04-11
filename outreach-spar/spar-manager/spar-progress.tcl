@@ -1,6 +1,5 @@
 #!/usr/bin/env tclsh
 # spar-progress.tcl — Campaign progress table and duplicate detection (CLI)
-# Tcl replacement for: python3 ../bin/update-campaign.py --no-mailroom
 # Usage: tclsh spar-progress.tcl [campaign_dir_or_yaml] [--campaign=YAML] [--no-mailroom] [--json]
 # Positional arg may be a directory or a campaign YAML file (directory derived from YAML path).
 
