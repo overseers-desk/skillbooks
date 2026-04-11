@@ -12,6 +12,13 @@ namespace eval spar {
         validate_campaign validate_approach build_warnings
 }
 
+# is_masked_email — return 1 if email looks redacted (contains '*').
+# No legitimate email address contains '*'.  Used by validate_campaign
+# (reporting) and the P-stage post-profile guardrail (blanking).
+proc spar::is_masked_email {email} {
+    return [expr {$email ne "" && [string first "*" $email] >= 0}]
+}
+
 # parse_star — extract integer star rating from a roster field.
 # "5" → 5, "3+" → 3, "" → 0, non-numeric → 0.
 proc spar::parse_star {val} {
@@ -192,7 +199,7 @@ proc spar::classify_contact {roster_row segment_dir} {
 
     # Secondary properties
     set star [spar::parse_star $star_raw]
-    set has_email [expr {[string first "@" $email] >= 0}]
+    set has_email [expr {[string first "@" $email] >= 0 && ![spar::is_masked_email $email]}]
     set has_linkedin [expr {$linkedin ne ""}]
     set has_facebook [expr {$facebook ne ""}]
     set has_phone_only [expr {$phone ne "" && !$has_email && !$has_linkedin && !$has_facebook}]
@@ -772,7 +779,7 @@ proc spar::roster_counts {segment_dir} {
         set phone [string trim [spar::dict_get_default $row phone ""]]
         if {[regexp {^"(.*)"$} $phone -> inner]} { set phone [string trim $inner] }
 
-        set c_has_email [expr {[string first "@" $email] >= 0}]
+        set c_has_email [expr {[string first "@" $email] >= 0 && ![spar::is_masked_email $email]}]
         set c_has_linkedin [expr {$linkedin ne ""}]
         set c_has_facebook [expr {$facebook ne ""}]
         set c_has_phone_only [expr {$phone ne "" && !$c_has_email && !$c_has_linkedin && !$c_has_facebook}]
@@ -886,6 +893,16 @@ proc spar::validate_campaign {all_classified_contacts} {
                 segment $segment \
                 contact_name $contact_name \
                 message "Contact name contains ' & ' — may be two people entered as one row"]
+        }
+
+        # Check 6: masked_email — roster email contains * (redacted/masked)
+        if {[spar::is_masked_email $roster_email]} {
+            lappend issues [dict create \
+                severity error \
+                code masked_email \
+                segment $segment \
+                contact_name $contact_name \
+                message "Roster email '$roster_email' appears masked (contains '*')"]
         }
 
         # Checks 1 and 2: delegate to validate_approach

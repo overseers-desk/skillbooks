@@ -103,6 +103,31 @@ proc spar::load_roster {tsv_path} {
     return $rows
 }
 
+# write_roster — write rows back to a roster TSV, preserving column order.
+# Reads the existing header line to determine column order, then overwrites.
+proc spar::write_roster {tsv_path rows} {
+    if {[llength $rows] == 0} return
+
+    set fd [open $tsv_path r]
+    fconfigure $fd -translation binary
+    gets $fd header_line
+    close $fd
+    set header_line [string map {\r\n "" \r ""} $header_line]
+    set headers [split $header_line \t]
+
+    set fd [open $tsv_path w]
+    fconfigure $fd -translation lf
+    puts $fd [join $headers \t]
+    foreach row $rows {
+        set fields {}
+        foreach h $headers {
+            lappend fields [spar::dict_get_default $row $h ""]
+        }
+        puts $fd [join $fields \t]
+    }
+    close $fd
+}
+
 # find_profile — find a profile file matching name/org slugs
 # Port of spar-a-batch.sh lines 108-117
 # Returns the path if found, empty string otherwise
