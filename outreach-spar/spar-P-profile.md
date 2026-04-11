@@ -9,7 +9,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 
 ## 2. Inputs
 
-- **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, segment, discovered_via). **The `contact_name` field must be populated for the campaign pipeline to count this entry as valid.** If the roster entry has no contact name, finding one is the first task of this phase — see §4.0b.
+- **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, segment, discovered_via). If the roster entry has no `contact_name`, resolving one is the first task of this phase — see §4.0b. Nameless entries are P-phase leads, not invalid data.
 - **Segment file:** The file (typically `segment.yaml`) that defines the segment's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
 - **Campaign angle table:** The list of angles defined by the campaign plan, with descriptions of when each applies. Read this before profiling — it defines what "relevant" means for this campaign.
 - **Campaign context documents:** The campaign plan names specific documents (mission statement, project pages, segment definitions) that explain the campaign's offering. Read the angle table first; read context documents only for angles that seem relevant to the target.
@@ -27,7 +27,7 @@ Additionally, P produces:
 
 ### 4.0b Resolve contact name (run before §4.0 when roster has no contact_name)
 
-If the roster entry has no `contact_name`, the entry is pipeline-invalid regardless of star rating, email, or any other field — the campaign script excludes nameless rows from all counts. This step must be completed before §4.0 can proceed.
+If the roster entry has no `contact_name`, the entry is in the NAMELESS state — it has been discovered by sweep but no individual has been identified. The campaign pipeline tracks these entries separately from the main pipeline counts. This step must be completed before §4.0 can proceed.
 
 **Name discovery sources, in order:**
 
@@ -44,8 +44,9 @@ If the roster entry has no `contact_name`, the entry is pipeline-invalid regardl
 - If `date_found_invalid` was set for a structural reason (contact type does not fit the campaign mechanism), finding a name does not revalidate the entry — the structural reason stands.
 
 **If no name is found after exhausting all sources:**
+- If the roster entry has no `stem`, write one using the organisation slug (e.g. `a-team-coaches` for "A-Team Coaches"). This ensures the row is identifiable in the state machine.
 - Record in `p_note`: "name search attempted [date]: no individual identified via website, Facebook, LinkedIn, ABN, web search."
-- Set `date_found_invalid` to today if not already set, with reason "nameless — pipeline invalid; name search exhausted."
+- Set `date_found_invalid` to today with reason "nameless — name search exhausted ([date])." This is the P-phase's responsibility — sweep does not set `date_found_invalid` for nameless entries.
 - Do not proceed to §4.0 or produce a profile document. The roster entry is the permanent record.
 
 ### 4.0 Validate fit against segment file

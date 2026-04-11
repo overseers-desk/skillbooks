@@ -35,14 +35,15 @@ A contact's state is inferred from the presence and content of files in the segm
 | State | Condition |
 |-------|-----------|
 | `INVALID` | Roster: `date_found_invalid` non-empty |
-| `DISCOVERED` | Valid (not invalid), file `profiles/profile-{stem}.md` does not exist |
+| `NAMELESS` | Not invalid, `contact_name` is empty — organisation identified but no individual resolved yet |
+| `DISCOVERED` | Valid (not invalid, not nameless), file `profiles/profile-{stem}.md` does not exist |
 | `PROFILED` | Valid, file `profiles/profile-{stem}.md` exists, not stale |
 | `PROFILE_STALE` | Valid, `profiles/profile-{stem}.md` exists, but stale — see §Staleness |
 | `APPROACHED` | Profiled, file `approach/{stem}.yaml` exists, no final-round message with `actioned_date` set |
 | `SENT` | `approach/{stem}.yaml` exists, final round has at least one message with `actioned_date` non-null |
 | `REPLIED` | `SENT`, and final round has a message with `replied_date` non-null, or a reply with `direction: received` |
 
-Evaluation order: `INVALID` is checked first. A contact that is `INVALID` is never checked for any other state. States 2–7 are evaluated in order; the first match wins.
+Evaluation order: `INVALID` is checked first, then `NAMELESS`. A contact that is `INVALID` or `NAMELESS` is never checked for any other state. States 3–8 are evaluated in order; the first match wins.
 
 ### Secondary properties
 
@@ -96,7 +97,7 @@ This is a hard failure, not a warning. Contact state is determined by file prese
 # segment_dir  absolute path to the segment directory
 #
 # Returns a dict:
-#   state         one of: INVALID DISCOVERED PROFILED PROFILE_STALE
+#   state         one of: INVALID NAMELESS DISCOVERED PROFILED PROFILE_STALE
 #                         APPROACHED SENT REPLIED
 #   profile_path  path to profile file, or empty string
 #   approach_path path to approach YAML, or empty string
@@ -117,7 +118,7 @@ A second proc aggregates across all contacts in a segment:
 ```tcl
 # classify_segment -- load roster and classify all contacts.
 #
-# Returns a list of dicts, one per valid+named roster row,
+# Returns a list of dicts, one per roster row (including NAMELESS),
 # each being the result of classify_contact plus the original roster_row.
 #
 proc spar::classify_segment {segment_dir} { ... }
@@ -131,7 +132,7 @@ The progress table columns are counts derived from running `classify_segment` ac
 
 | Column | What it counts | Denominator | Filter |
 |--------|----------------|-------------|--------|
-| Valid | not INVALID | total roster rows | — |
+| Valid | not INVALID and not NAMELESS | total roster rows | — |
 | Profile | PROFILED or above | Valid | — |
 | 3+★ | Valid and star≥3 | Valid | — |
 | A/3+★ | APPROACHED or above, star≥3 | 3+★ | — |
@@ -161,6 +162,7 @@ The transition manager filters `classify_segment` output by eligibility conditio
 
 | # | Label | Eligible contacts | Dispatch | Dispatch status |
 |---|-------|-------------------|----------|-----------------|
+| T0 | Identify contact → Discover | state = NAMELESS | spar-p-batch.tcl (§4.0b) | available |
 | T1 | Sweep → Profile | state = DISCOVERED | spar-p-batch.tcl | available |
 | T2 | Profile → Approach | state = PROFILED, star≥3 | spar-a-batch.tcl | available |
 | T3 | Approach → Send | state = APPROACHED or SENT, has_email, not email_sent | email send (SES) | not-implemented |
@@ -208,6 +210,7 @@ For filesystem-touching tests (profile/approach file detection), use `file tempf
 | Input condition | Expected state |
 |-----------------|----------------|
 | `date_found_invalid` set | INVALID |
+| `contact_name` empty, `date_found_invalid` empty | NAMELESS |
 | Valid, profiles/ absent | DISCOVERED |
 | Valid, profiles/ exists but no match | DISCOVERED |
 | Valid, profile file matches by name+org slug | PROFILED |
