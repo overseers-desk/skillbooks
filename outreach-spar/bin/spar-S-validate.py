@@ -200,17 +200,22 @@ for segment_dir, roster_path in segments:
     # Use all_rows_raw (non-blank rows) for content checks
     rows = all_rows_raw
 
-    # ── Check 5: every row has contact_name (unless date_found_invalid) ─
-    nameless = 0
+    # ── Check 5: nameless rows (contact_name blank) ────────────────────
+    nameless_leads = 0
+    nameless_invalid = 0
     for r in rows:
         name = (r.get("contact_name") or "").strip()
         dfi = (r.get("date_found_invalid") or "").strip()
         if not name and not dfi:
-            nameless += 1
-    if nameless:
-        ck.fail(f"{nameless} row(s) missing contact_name without date_found_invalid")
+            nameless_leads += 1
+        elif not name and dfi:
+            nameless_invalid += 1
+    if nameless_leads:
+        ck.passed(f"{nameless_leads} row(s) awaiting P-phase name resolution (contact_name blank, no date_found_invalid)")
+    elif nameless_invalid:
+        ck.passed(f"Every nameless row has date_found_invalid ({nameless_invalid} invalidated by P-phase)")
     else:
-        ck.passed("Every row has contact_name (or is a negative-cache entry)")
+        ck.passed("Every row has contact_name")
 
     # ── Check 6: duplicate (contact_name, organisation) pairs ──────────
     seen_pairs: dict[tuple[str, str], int] = {}

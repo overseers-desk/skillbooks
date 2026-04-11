@@ -156,7 +156,7 @@ proc spar::analyse_final_round {data} {
 # segment_dir  absolute path to the segment directory
 #
 # Returns a dict:
-#   state         one of: INVALID DISCOVERED PROFILED PROFILE_STALE
+#   state         one of: INVALID NAMELESS DISCOVERED PROFILED PROFILE_STALE
 #                         APPROACHED SENT REPLIED
 #   profile_path  path to profile file, or empty string
 #   approach_path path to approach YAML, or empty string
@@ -222,6 +222,23 @@ proc spar::classify_contact {roster_row segment_dir} {
             email_sent $email_sent \
             linkedin_sent $linkedin_sent \
             email_replied $email_replied]
+    }
+
+    # 1.5. NAMELESS — contact_name is empty, not invalid
+    set contact_name_val [string trim [spar::dict_get_default $roster_row contact_name ""]]
+    if {$contact_name_val eq ""} {
+        return [dict create \
+            state NAMELESS \
+            profile_path "" \
+            approach_path "" \
+            star $star \
+            has_email $has_email \
+            has_linkedin $has_linkedin \
+            has_facebook $has_facebook \
+            has_phone_only $has_phone_only \
+            email_sent 0 \
+            linkedin_sent 0 \
+            email_replied 0]
     }
 
     # 2. DISCOVERED — profile file does not exist
@@ -341,10 +358,6 @@ proc spar::classify_segment {segment_dir} {
 
     set results {}
     foreach row $rows {
-        # Skip rows with empty contact_name
-        set contact_name [string trim [spar::dict_get_default $row contact_name ""]]
-        if {$contact_name eq ""} continue
-
         set classified [spar::classify_contact $row $segment_dir]
 
         # Merge: original roster_row + classified result (classified wins on overlap)
@@ -385,6 +398,21 @@ proc spar::transition_eligible {classified_contacts transition} {
         set email_replied [dict get $contact email_replied]
 
         switch -- $transition {
+            T0 {
+                # Identify contact → Discover: state = NAMELESS
+                if {$state eq "NAMELESS"} {
+                    set phone [spar::dict_get_default $contact phone ""]
+                    if {$phone ne "" || $has_email} {
+                        lappend results [dict create \
+                            contact_name "(nameless)" organisation $org segment $segment \
+                            task_state ready reason ""]
+                    } else {
+                        lappend results [dict create \
+                            contact_name "(nameless)" organisation $org segment $segment \
+                            task_state pending reason "No phone or email to identify contact"]
+                    }
+                }
+            }
             T1 {
                 # Sweep → Profile: state = DISCOVERED
                 if {$state eq "DISCOVERED"} {
@@ -620,8 +648,8 @@ proc spar::progress_counts {classified_contacts} {
         set c_email_sent [dict get $contact email_sent]
         set c_email_replied [dict get $contact email_replied]
 
-        # Valid: not INVALID
-        if {$state ne "INVALID"} {
+        # Valid: not INVALID and not NAMELESS
+        if {$state ni {INVALID NAMELESS}} {
             incr valid
         } else {
             continue
@@ -714,20 +742,22 @@ proc spar::roster_counts {segment_dir} {
     set has_phone_only 0
 
     foreach row $rows {
-        set contact_name [string trim [spar::dict_get_default $row contact_name ""]]
-        if {$contact_name eq ""} continue
-
         if {[dict exists $row stem]} {
             set stem [string trim [dict get $row stem]]
         } else {
             continue
         }
 
+        # Skip INVALID (date_found_invalid set)
         set date_invalid [string trim [spar::dict_get_default $row date_found_invalid ""]]
         if {[regexp {^"(.*)"$} $date_invalid -> inner]} {
             set date_invalid [string trim $inner]
         }
         if {![spar::is_null $date_invalid]} continue
+
+        # Skip NAMELESS (contact_name empty, not invalid)
+        set contact_name [string trim [spar::dict_get_default $row contact_name ""]]
+        if {$contact_name eq ""} continue
 
         incr valid
 
@@ -845,8 +875,8 @@ proc spar::validate_campaign {all_classified_contacts} {
             lappend seg_stems($segment_dir) $stem
         }
 
-        # Skip INVALID contacts for checks 1, 2, 3
-        if {$state eq "INVALID"} continue
+        # Skip INVALID and NAMELESS contacts for checks 1, 2, 3
+        if {$state in {INVALID NAMELESS}} continue
 
         # Check 3: merged_contact_name
         if {[string first " & " $contact_name] >= 0} {

@@ -1497,7 +1497,7 @@ assert_eq [dict exists $js replied] 1 "json: sent has replied"
 assert_eq [dict exists $parsed segments] 1 "json: has segments"
 assert_eq [llength [dict get $parsed segments]] 1 "json: one segment"
 assert_eq [dict exists $parsed transitions] 1 "json: has transitions"
-assert_eq [llength [dict get $parsed transitions]] 8 "json: 8 transitions"
+assert_eq [llength [dict get $parsed transitions]] 9 "json: 9 transitions"
 assert_eq [dict exists $parsed warnings] 1 "json: has warnings"
 assert_eq [dict exists $parsed validation] 1 "json: has validation"
 
@@ -1507,6 +1507,79 @@ set parsed2 [::json::json2dict $json_str2]
 assert_eq [dict get $parsed2 campaign] "Test Campaign" "json: YAML as positional arg"
 
 # ════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════
+# 13. NAMELESS state
+# ════════════════════════════════════════════════════════════════════════
+section "NAMELESS state"
+
+# 13a. contact_name empty, date_found_invalid empty → NAMELESS
+set seg_n1 [make_temp_segment]
+write_roster_tsv $seg_n1 $::std_headers [list \
+    [make_base_row {contact_name "" stem "acme-tours" \
+        organisation_name "Acme Tours" phone "07 5555 1234" \
+        email "info@acmetours.com" date_found_invalid ""}] \
+]
+set cn1 [spar::classify_segment $seg_n1]
+assert_eq [llength $cn1] 1 "NAMELESS: segment includes nameless row"
+assert_eq [dict get [lindex $cn1 0] state] "NAMELESS" "NAMELESS: contact_name empty + no date_found_invalid → NAMELESS"
+
+# 13b. contact_name empty, date_found_invalid set → INVALID (not NAMELESS)
+set seg_n2 [make_temp_segment]
+write_roster_tsv $seg_n2 $::std_headers [list \
+    [make_base_row {contact_name "" stem "defunct-co" \
+        date_found_invalid "2026-04-07"}] \
+]
+set cn2 [spar::classify_segment $seg_n2]
+assert_eq [llength $cn2] 1 "INVALID: segment includes nameless-but-invalidated row"
+assert_eq [dict get [lindex $cn2 0] state] "INVALID" "INVALID: contact_name empty + date_found_invalid set → INVALID"
+
+# 13c. progress_counts excludes NAMELESS from Valid
+set seg_n3 [make_temp_segment]
+write_roster_tsv $seg_n3 $::std_headers [list \
+    [make_base_row {contact_name "Named Contact" stem "named-contact"}] \
+    [make_base_row {contact_name "" stem "nameless-org" \
+        organisation_name "Nameless Org" date_found_invalid ""}] \
+]
+set cn3 [spar::classify_segment $seg_n3]
+assert_eq [llength $cn3] 2 "NAMELESS progress: segment has 2 rows"
+set pc3 [spar::progress_counts $cn3]
+assert_eq [dict get $pc3 valid] 1 "NAMELESS progress: Valid count excludes NAMELESS"
+
+# 13d. orphan_profile not triggered for NAMELESS row with matching profile
+set seg_n4 [make_temp_segment]
+write_profile $seg_n4 "nameless-company"
+write_roster_tsv $seg_n4 $::std_headers [list \
+    [make_base_row {contact_name "" stem "nameless-company" \
+        date_found_invalid ""}] \
+]
+set cn4 [spar::classify_segment $seg_n4]
+set issues_n4 [spar::validate_campaign $cn4]
+set op_n4 [issues_with_code $issues_n4 orphan_profile]
+assert_eq [llength $op_n4] 0 "NAMELESS orphan: profile for nameless row is NOT orphaned"
+
+# 13e. T0 transition eligible for NAMELESS with phone/email
+set seg_n5 [make_temp_segment]
+write_roster_tsv $seg_n5 $::std_headers [list \
+    [make_base_row {contact_name "" stem "contactable-co" \
+        organisation_name "Contactable Co" phone "07 5555 9999" \
+        email "" date_found_invalid ""}] \
+    [make_base_row {contact_name "" stem "unreachable-co" \
+        organisation_name "Unreachable Co" phone "" \
+        email "" date_found_invalid ""}] \
+]
+set cn5 [spar::classify_segment $seg_n5]
+set t0_tasks [spar::transition_eligible $cn5 T0]
+assert_eq [llength $t0_tasks] 2 "T0: both NAMELESS contacts appear"
+# The one with phone should be ready, the one without should be pending
+set t0_ready 0
+set t0_pending 0
+foreach t $t0_tasks {
+    if {[dict get $t task_state] eq "ready"} { incr t0_ready }
+    if {[dict get $t task_state] eq "pending"} { incr t0_pending }
+}
+assert_eq $t0_ready 1 "T0: one contact is ready (has phone)"
+assert_eq $t0_pending 1 "T0: one contact is pending (no contact method)"
+
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
 cleanup_temps
