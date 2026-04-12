@@ -381,7 +381,8 @@ proc spar::_approach_validation_error {contact} {
     if {$ap eq "" || ![file exists $ap]} { return "" }
     set roster_email [string trim [spar::dict_get_default $contact email ""]]
     set cname [spar::dict_get_default $contact contact_name ""]
-    foreach issue [spar::validate_approach $ap $roster_email $cname] {
+    set corg  [spar::dict_get_default $contact organisation ""]
+    foreach issue [spar::validate_approach $ap $roster_email $cname $corg] {
         if {[dict get $issue severity] eq "error"} {
             return [dict get $issue message]
         }
@@ -844,13 +845,14 @@ proc spar::roster_counts {segment_dir} {
 # Per issue SmartLayer/aesop#43.
 proc spar::_approach_canonical_keys {} {
     return [dict create \
-        root {decisions rounds profile_date profile_richness angle_rationale roster_note fact_provenance quality_checklist response_likelihood} \
+        root {decisions rounds profile_date profile_richness angle_rationale roster_note fact_provenance quality_checklist response_likelihood generated_for} \
         decisions {warmth channel language angle sender warmth_detail channel_detail subsegment} \
         round {type number messages verdict fact_check in_character chosen_usps revision_note notes replies antifact_check} \
         message {channel subject body to actioned_date replied_date reply_summary script text char_count bcc cc director_note to_note phone_note} \
         fact_provenance_item {claim source} \
         fact_check_item {claim source result note correction} \
-        script_item {point text}]
+        script_item {point text} \
+        generated_for {contact_name organisation}]
 }
 
 # _check_unknown_keys -- emit unknown_key_<level> or wrong_level issues for a parsed dict.
@@ -887,14 +889,16 @@ proc spar::_check_unknown_keys {data level contact_name} {
 
 # validate_approach -- check a single approach file against guard rails.
 #
-# approach_path   path to the approach YAML file
-# roster_email    email field from the roster row (may be empty)
-# contact_name    for error messages
+# approach_path         path to the approach YAML file
+# roster_email          email field from the roster row (may be empty)
+# contact_name          roster contact_name (used for messages and, when
+#                       generated_for is present, the name_desync comparison)
+# roster_organisation   roster organisation (optional, used for org_desync)
 #
 # Returns a list of issue dicts, each with keys:
 #   severity, code, contact_name, message
 #
-proc spar::validate_approach {approach_path roster_email contact_name} {
+proc spar::validate_approach {approach_path roster_email contact_name {roster_organisation ""}} {
     set issues {}
 
     if {$approach_path eq "" || ![file exists $approach_path]} {
@@ -919,6 +923,13 @@ proc spar::validate_approach {approach_path roster_email contact_name} {
     if {[dict exists $approach_data decisions]} {
         set _dec [dict get $approach_data decisions]
         lappend issues {*}[spar::_check_unknown_keys $_dec decisions $contact_name]
+    }
+
+    if {[dict exists $approach_data generated_for]} {
+        set _gf [dict get $approach_data generated_for]
+        if {[llength $_gf] % 2 == 0} {
+            lappend issues {*}[spar::_check_unknown_keys $_gf generated_for $contact_name]
+        }
     }
 
     if {[dict exists $approach_data rounds]} {
@@ -1065,6 +1076,45 @@ proc spar::validate_approach {approach_path roster_email contact_name} {
                 }
             }
         }
+    }
+
+    # ── generated_for guard rail (issue #30) ──
+    # Recorded at generation; compared against current roster values to
+    # detect roster edits that post-date the approach file.
+    if {[dict exists $approach_data generated_for]} {
+        set _gf [dict get $approach_data generated_for]
+        set _gf_name ""
+        set _gf_org  ""
+        if {[llength $_gf] % 2 == 0} {
+            if {[dict exists $_gf contact_name]} {
+                set _gf_name [string trim [dict get $_gf contact_name]]
+            }
+            if {[dict exists $_gf organisation]} {
+                set _gf_org [string trim [dict get $_gf organisation]]
+            }
+        }
+        if {$_gf_name ne "" && $contact_name ne "" \
+                && [string tolower $_gf_name] ne [string tolower $contact_name]} {
+            lappend issues [dict create \
+                severity warning \
+                code name_desync \
+                contact_name $contact_name \
+                message "Approach generated_for.contact_name '$_gf_name' differs from roster contact_name '$contact_name'"]
+        }
+        if {$_gf_org ne "" && $roster_organisation ne "" \
+                && [string tolower $_gf_org] ne [string tolower $roster_organisation]} {
+            lappend issues [dict create \
+                severity warning \
+                code org_desync \
+                contact_name $contact_name \
+                message "Approach generated_for.organisation '$_gf_org' differs from roster organisation '$roster_organisation'"]
+        }
+    } else {
+        lappend issues [dict create \
+            severity error \
+            code missing_generated_for \
+            contact_name $contact_name \
+            message "Approach file missing required 'generated_for' key (see spar-A-approach.md §6)"]
     }
 
     return $issues
@@ -1405,6 +1455,7 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1} {incl
         set segment [file tail $segment_dir]
         set contact_name [spar::dict_get_default $contact contact_name ""]
         set roster_email [string trim [spar::dict_get_default $contact email ""]]
+        set roster_org [string trim [spar::dict_get_default $contact organisation ""]]
         set stem [string trim [spar::dict_get_default $contact stem ""]]
 
         # Track segment directories and stems for orphan checks
@@ -1439,7 +1490,7 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1} {incl
         # Checks 1 and 2: delegate to validate_approach (skipped when include_approach=0)
         if {$include_approach} {
             set approach_path [spar::dict_get_default $contact approach_path ""]
-            foreach issue [spar::validate_approach $approach_path $roster_email $contact_name] {
+            foreach issue [spar::validate_approach $approach_path $roster_email $contact_name $roster_org] {
                 dict set issue segment $segment
                 lappend issues $issue
             }
@@ -1599,11 +1650,27 @@ proc spar::validate_roster {segment_contacts} {
                 message "Contact is verified=yes but has date_excluded set"]
         }
 
+        # Assertion 6 (cont.): verified=yes but p_note indicates role exit
+        set p_note [string trim [spar::dict_get_default $contact p_note ""]]
+        if {[string tolower $verified] eq "yes" && $p_note ne ""} {
+            if {[regexp -nocase {\y(no longer|left|departed|replaced by|moved to)\y} $p_note]} {
+                lappend issues [dict create \
+                    severity warning \
+                    code roster_verified_but_departed \
+                    segment $segment \
+                    contact_name $contact_name \
+                    message "Contact is verified=yes but p_note indicates role exit"]
+            }
+        }
+
         # Skip EXCLUDED for assertions that require a valid contact
         if {$state eq "EXCLUDED"} continue
 
-        # Assertion 1: non-empty contact_name, not a placeholder
-        if {$contact_name eq "" || [string tolower $contact_name] in {unknown n/a tbd placeholder}} {
+        # Assertion 1: non-empty contact_name (unless blank + org known — P §4.0b will resolve),
+        # and not a placeholder
+        set is_blank_with_org [expr {$contact_name eq "" && $org ne ""}]
+        if {(!$is_blank_with_org && $contact_name eq "") \
+                || [string tolower $contact_name] in {unknown n/a tbd placeholder}} {
             lappend issues [dict create \
                 severity warning \
                 code roster_placeholder_name \

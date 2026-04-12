@@ -36,6 +36,7 @@ set outfile [dict get $meta OUTFILE]
 set contact_summary [dict get $meta CONTACT_SUMMARY]
 set challenger_model [spar::dict_get_default $meta CHALLENGER_MODEL sonnet]
 set roster_email [spar::dict_get_default $meta ROSTER_EMAIL ""]
+set roster_organisation [spar::dict_get_default $meta ROSTER_ORGANISATION ""]
 
 set log_prefix [file join $log_dir $slug]
 file mkdir $log_dir
@@ -48,13 +49,13 @@ oo::class create spar::ApproachHarness {
     # validate_and_correct -- DbC-Post loop for approach files. Attempts
     # 1-2 use the current model; attempt 3 escalates to opus. Returns 0 on
     # clean validation, 1 if still broken after max_fix fix rounds.
-    method validate_and_correct {outfile roster_email contact_name} {
+    method validate_and_correct {outfile roster_email contact_name {roster_organisation ""}} {
         set max_fix 3
         set slug [my slug]
         set lp   [my log_prefix]
 
         for {set attempt 1} {$attempt <= $max_fix} {incr attempt} {
-            set errors [spar::validate_approach $outfile $roster_email $contact_name]
+            set errors [spar::validate_approach $outfile $roster_email $contact_name $roster_organisation]
             set hard {}
             foreach e $errors {
                 if {[dict get $e severity] eq "error"} { lappend hard $e }
@@ -85,7 +86,7 @@ oo::class create spar::ApproachHarness {
             }
         }
 
-        set errors [spar::validate_approach $outfile $roster_email $contact_name]
+        set errors [spar::validate_approach $outfile $roster_email $contact_name $roster_organisation]
         foreach e $errors {
             if {[dict get $e severity] eq "error"} {
                 puts "FAIL (validation failed after $max_fix retries): $slug"
@@ -247,6 +248,14 @@ Write the complete approach file to: $outfile
 
 Follow §6 structure exactly. Include contact header, angle rationale, A1 Draft 1, all A2 responses, revision drafts, final draft, fact provenance table, and roster a_note line. The contact header fields are: Contact, Response likelihood ({n}%, from the response_likelihood value in the contact details above), Warmth level, Channel, Language, Angle, Profile richness.
 
+The YAML MUST include a top-level generated_for block recording the roster contact_name and organisation as of generation time:
+
+generated_for:
+  contact_name: <contact name from Contact details>
+  organisation: <organisation from Contact details>
+
+This block is used to detect roster edits that post-date the approach file. Write the values exactly as given in the Contact details section.
+
 Run §7 quality checklist before writing. Fix any failures in the final draft.
 
 After writing, estimate the response likelihood for this contact as a whole-number percentage, based on warmth level, angle quality, challenger verdict, and channel availability. Print exactly:
@@ -266,9 +275,31 @@ set assembly_log "${log_prefix}-author-assembly.log"
 spar::write_file [file join $prompt_dir assembly.txt] $assembly_prompt
 
 # DbC-Pre: pre-conditions for assembly are that the upstream draft / spar /
-# revision logs all exist (those AI calls only mutate workdir log files, not
-# project state, so they do not need their own DbC pairs). The approach file
-# does not yet exist; the assembly call is what creates it.
+# revision logs all exist and are non-empty (those AI calls only mutate
+# workdir log files, not project state, so they do not need their own DbC
+# pairs). The approach file does not yet exist; the assembly call is what
+# creates it. Assert rather than trust — a silently empty prior log would
+# otherwise feed assembly malformed input and be misattributed.
+set required_logs [list "${log_prefix}-author-draft.log"]
+for {set r 1} {$r <= $round} {incr r} {
+    lappend required_logs "${log_prefix}-challenger-round${r}.log"
+}
+# Revision logs exist for each round whose verdict was REVISE. The final
+# round breaks out on DONE without writing a rev log.
+set rev_rounds [expr {$verdict eq "DONE" ? $round - 1 : $round}]
+for {set r 1} {$r <= $rev_rounds} {incr r} {
+    lappend required_logs "${log_prefix}-author-rev${r}.log"
+}
+foreach _log $required_logs {
+    if {![file exists $_log]} {
+        puts "FAIL (DbC-Pre: assembly precondition log missing: $_log): $slug"
+        exit 1
+    }
+    if {[file size $_log] == 0} {
+        puts "FAIL (DbC-Pre: assembly precondition log empty: $_log): $slug"
+        exit 1
+    }
+}
 if {[$harness resume "assembly" $assembly_log $assembly_prompt]} {
     exit 1
 }
@@ -281,7 +312,7 @@ if {[$harness resume "assembly" $assembly_log $assembly_prompt]} {
 # (this is the "blame the renter" half of the contract).
 set contact_name [string trim [lindex [split $contact_summary |] 0]]
 if {[file exists $outfile]} {
-    if {[$harness validate_and_correct $outfile $roster_email $contact_name]} {
+    if {[$harness validate_and_correct $outfile $roster_email $contact_name $roster_organisation]} {
         exit 1
     }
 }

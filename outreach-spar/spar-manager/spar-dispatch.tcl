@@ -315,19 +315,64 @@ $sqlite3_skill_text"
     #
     # DbC-Pre: roster integrity for this segment was validated above
     # (load_roster enforces field-count assertion; required input files
-    # existence-checked). The agent inherits a roster known to be
-    # well-formed; the harness's DbC-Post validate_and_correct
-    # attributes any damage to the agent.
+    # existence-checked). Snapshot validate_roster output keyed by
+    # "stem|code" so the DbC-Post wrapper can surface any new issues
+    # as a per-slug regression attributed to the agent.
+    set pre_snapshot [dict create]
+    if {[catch {
+        set _pre_contacts [spar::classify_segment $segment_dir]
+        foreach _issue [spar::validate_roster $_pre_contacts] {
+            set _cn [dict get $_issue contact_name]
+            set _cd [dict get $_issue code]
+            # Key by contact_name|code — stem isn't on the issue dict, and
+            # (contact_name, code) is stable enough to filter pre-existing
+            # issues from agent regressions.
+            dict set pre_snapshot "${_cn}|${_cd}" 1
+        }
+    } _snap_err]} {
+        # Snapshot is best-effort; a failure here shouldn't block dispatch.
+        {*}$on_progress "_dbc_pre" warning "snapshot failed: $_snap_err"
+    }
     set prompt_dirs [lsort [glob -nocomplain -type d [file join $prompts_dir *]]]
 
     variable ::spar::dispatch_script_dir
     set script_dir $::spar::dispatch_script_dir
     set harness [file join $script_dir spar-p-harness.tcl]
 
+    # DbC-Post wrapper: on each harness completion, re-validate the roster
+    # and emit any new (contact_name, code) pairs as a regression warning
+    # for the completed slug. Pre-existing issues from pre_snapshot are
+    # filtered out so only agent-caused regressions surface.
+    set wrapped_progress [list spar::_p_dbc_post_progress \
+        $on_progress $segment_dir $pre_snapshot]
+
     set disp [spar::Dispatcher new $jobs $logs_dir $harness \
-        $on_progress $on_complete $result]
+        $wrapped_progress $on_complete $result]
     $disp run $prompt_dirs
     return $result
+}
+
+# Internal: on-progress wrapper that runs DbC-Post validation when a slug
+# completes. Emits new roster issues (not in pre_snapshot) to the caller's
+# on_progress as severity "warning" with code prefix "regression:".
+proc spar::_p_dbc_post_progress {orig_progress segment_dir pre_snapshot slug status message} {
+    {*}$orig_progress $slug $status $message
+    if {$status ne "done"} return
+    if {[catch {
+        set _post_contacts [spar::classify_segment $segment_dir]
+        set _post_issues [spar::validate_roster $_post_contacts]
+    } _post_err]} {
+        {*}$orig_progress $slug warning "DbC-Post validate_roster failed: $_post_err"
+        return
+    }
+    foreach _issue $_post_issues {
+        set _cn [dict get $_issue contact_name]
+        set _cd [dict get $_issue code]
+        set _key "${_cn}|${_cd}"
+        if {[dict exists $pre_snapshot $_key]} continue
+        set _msg [dict get $_issue message]
+        {*}$orig_progress $slug warning "regression: $_cd ($_cn): $_msg"
+    }
 }
 
 
@@ -555,6 +600,7 @@ s_note: $s_note"
             puts $fd "GOAL=$goal_path"
             puts $fd "CONTACT_SUMMARY=$name | $org | $segment"
             puts $fd "ROSTER_EMAIL=$email"
+            puts $fd "ROSTER_ORGANISATION=$org"
             puts $fd "CHALLENGER_MODEL=sonnet"
             close $fd
 
