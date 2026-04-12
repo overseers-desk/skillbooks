@@ -9,7 +9,7 @@ namespace eval spar {
     namespace export classify_contact classify_segment \
         transition_eligible detect_duplicates progress_counts \
         roster_counts \
-        validate_campaign validate_approach build_warnings
+        validate_campaign validate_campaign_semantics validate_approach build_warnings
 }
 
 # is_masked_email — return 1 if email looks redacted (contains '*').
@@ -381,6 +381,22 @@ proc spar::classify_segment {segment_dir} {
     return $results
 }
 
+# _approach_validation_error -- return first error-severity validation message for
+# a contact's approach file, or "" if clean. Used by transition_eligible to gate
+# approach-dependent transitions (T3, T4, T8) on structural validity (#43 principle 7).
+proc spar::_approach_validation_error {contact} {
+    set ap [spar::dict_get_default $contact approach_path ""]
+    if {$ap eq "" || ![file exists $ap]} { return "" }
+    set roster_email [string trim [spar::dict_get_default $contact email ""]]
+    set cname [spar::dict_get_default $contact contact_name ""]
+    foreach issue [spar::validate_approach $ap $roster_email $cname] {
+        if {[dict get $issue severity] eq "error"} {
+            return [dict get $issue message]
+        }
+    }
+    return ""
+}
+
 # transition_eligible -- filter classified contacts by transition eligibility.
 #
 # classified_contacts  output of classify_segment
@@ -437,12 +453,21 @@ proc spar::transition_eligible {classified_contacts transition} {
                 }
             }
             T3 {
-                # Approach → Send: state in {APPROACHED,SENT}, has_email, not email_sent
+                # Approach → Send: state in {APPROACHED,SENT}, has_email, not email_sent.
+                # Gate on approach-YAML validity (#43 principle 7) — broken files
+                # surface as pending:invalid_approach_yaml instead of ready.
                 if {$state eq "APPROACHED" || $state eq "SENT"} {
+                    set vmsg [spar::_approach_validation_error $contact]
                     if {$has_email && !$email_sent} {
-                        lappend results [dict create \
-                            contact_name $name organisation $org segment $segment \
-                            task_state ready reason ""]
+                        if {$vmsg ne ""} {
+                            lappend results [dict create \
+                                contact_name $name organisation $org segment $segment \
+                                task_state pending reason "invalid_approach_yaml: $vmsg"]
+                        } else {
+                            lappend results [dict create \
+                                contact_name $name organisation $org segment $segment \
+                                task_state ready reason ""]
+                        }
                     } elseif {!$has_email} {
                         lappend results [dict create \
                             contact_name $name organisation $org segment $segment \
@@ -456,9 +481,16 @@ proc spar::transition_eligible {classified_contacts transition} {
                 # carry email_sent=true from before invalidation, but monitoring
                 # for a reply is not meaningful once we've decided not to pursue.
                 if {$state ne "INVALID" && $email_sent && !$email_replied} {
-                    lappend results [dict create \
-                        contact_name $name organisation $org segment $segment \
-                        task_state pending reason "Waiting for reply"]
+                    set vmsg [spar::_approach_validation_error $contact]
+                    if {$vmsg ne ""} {
+                        lappend results [dict create \
+                            contact_name $name organisation $org segment $segment \
+                            task_state pending reason "invalid_approach_yaml: $vmsg"]
+                    } else {
+                        lappend results [dict create \
+                            contact_name $name organisation $org segment $segment \
+                            task_state pending reason "Waiting for reply"]
+                    }
                 }
             }
             T5 {
@@ -484,11 +516,19 @@ proc spar::transition_eligible {classified_contacts transition} {
             }
             T8 {
                 # LinkedIn → Email follow-up: linkedin_sent, not email_sent.
-                # Skip INVALID for the same reason as T4.
+                # Skip INVALID for the same reason as T4. Gate on approach-YAML
+                # validity (#43 principle 7).
                 if {$state ne "INVALID" && $linkedin_sent && !$email_sent} {
-                    lappend results [dict create \
-                        contact_name $name organisation $org segment $segment \
-                        task_state pending reason "LinkedIn sent, awaiting acceptance before email follow-up"]
+                    set vmsg [spar::_approach_validation_error $contact]
+                    if {$vmsg ne ""} {
+                        lappend results [dict create \
+                            contact_name $name organisation $org segment $segment \
+                            task_state pending reason "invalid_approach_yaml: $vmsg"]
+                    } else {
+                        lappend results [dict create \
+                            contact_name $name organisation $org segment $segment \
+                            task_state pending reason "LinkedIn sent, awaiting acceptance before email follow-up"]
+                    }
                 }
             }
         }
@@ -812,6 +852,52 @@ proc spar::roster_counts {segment_dir} {
         has_phone_only $has_phone_only]
 }
 
+# _approach_canonical_keys -- single source of truth for approach YAML vocabulary.
+# Keyed by level; must stay in sync with approach-schema.yaml's additionalProperties.
+# Per issue SmartLayer/aesop#43.
+proc spar::_approach_canonical_keys {} {
+    return [dict create \
+        root {decisions rounds profile_date profile_richness angle_rationale roster_note fact_provenance quality_checklist response_likelihood} \
+        decisions {warmth channel language angle sender warmth_detail channel_detail subsegment} \
+        round {type number messages verdict fact_check in_character chosen_usps revision_note notes replies antifact_check} \
+        message {channel subject body to actioned_date replied_date reply_summary script text char_count bcc cc director_note to_note phone_note} \
+        fact_provenance_item {claim source} \
+        fact_check_item {claim source result note correction} \
+        script_item {point text}]
+}
+
+# _check_unknown_keys -- emit unknown_key_<level> or wrong_level issues for a parsed dict.
+# If an unknown key is canonical at another level, emit wrong_level with a pointer.
+proc spar::_check_unknown_keys {data level contact_name} {
+    set issues {}
+    set canon [spar::_approach_canonical_keys]
+    if {![dict exists $canon $level]} { return $issues }
+    set known [dict get $canon $level]
+    if {[llength $data] % 2 != 0} { return $issues }
+    foreach {k _v} $data {
+        if {$k in $known} continue
+        set found_at ""
+        dict for {lvl keys} $canon {
+            if {$lvl eq $level} continue
+            if {$k in $keys} { set found_at $lvl; break }
+        }
+        if {$found_at ne ""} {
+            lappend issues [dict create \
+                severity error \
+                code wrong_level \
+                contact_name $contact_name \
+                message "'$k' at $level belongs at $found_at; move it there"]
+        } else {
+            lappend issues [dict create \
+                severity error \
+                code unknown_key_$level \
+                contact_name $contact_name \
+                message "unknown key '$k' at $level — not in canonical vocabulary"]
+        }
+    }
+    return $issues
+}
+
 # validate_approach -- check a single approach file against guard rails.
 #
 # approach_path   path to the approach YAML file
@@ -836,6 +922,48 @@ proc spar::validate_approach {approach_path roster_email contact_name} {
             contact_name $contact_name \
             message "Approach file could not be parsed as YAML"]
         return $issues
+    }
+
+    # ── Closed-vocabulary walk (approach-schema.yaml) ──
+    # Emits unknown_key_<level> / wrong_level issues. Per #43 principle 1.
+
+    lappend issues {*}[spar::_check_unknown_keys $approach_data root $contact_name]
+
+    if {[dict exists $approach_data decisions]} {
+        set _dec [dict get $approach_data decisions]
+        lappend issues {*}[spar::_check_unknown_keys $_dec decisions $contact_name]
+    }
+
+    if {[dict exists $approach_data rounds]} {
+        foreach _round [dict get $approach_data rounds] {
+            if {[llength $_round] % 2 != 0} continue
+            lappend issues {*}[spar::_check_unknown_keys $_round round $contact_name]
+            if {[dict exists $_round messages]} {
+                foreach _msg [dict get $_round messages] {
+                    if {[llength $_msg] % 2 != 0} continue
+                    lappend issues {*}[spar::_check_unknown_keys $_msg message $contact_name]
+                    if {[dict exists $_msg script]} {
+                        foreach _item [dict get $_msg script] {
+                            if {[llength $_item] % 2 != 0} continue
+                            lappend issues {*}[spar::_check_unknown_keys $_item script_item $contact_name]
+                        }
+                    }
+                }
+            }
+            if {[dict exists $_round fact_check]} {
+                foreach _item [dict get $_round fact_check] {
+                    if {[llength $_item] % 2 != 0} continue
+                    lappend issues {*}[spar::_check_unknown_keys $_item fact_check_item $contact_name]
+                }
+            }
+        }
+    }
+
+    if {[dict exists $approach_data fact_provenance]} {
+        foreach _item [dict get $approach_data fact_provenance] {
+            if {[llength $_item] % 2 != 0} continue
+            lappend issues {*}[spar::_check_unknown_keys $_item fact_provenance_item $contact_name]
+        }
     }
 
     # ── Structural checks (approach-schema.yaml) ──
@@ -955,15 +1083,24 @@ proc spar::validate_approach {approach_path roster_email contact_name} {
     return $issues
 }
 
+# validate_campaign_semantics -- cross-file checks only; no per-file approach validation.
+# Used by progress/warnings paths where per-file schema validation is out of scope
+# (per issue SmartLayer/aesop#43 principle 6).
+proc spar::validate_campaign_semantics {all_classified_contacts} {
+    return [spar::validate_campaign $all_classified_contacts 0]
+}
+
 # validate_campaign -- run validation checks across all classified contacts.
 #
 # all_classified_contacts  flat list from classify_segment across one or more segments
 #                          (each dict has _segment_dir set)
+# include_approach         when 1 (default), delegate per-file validation to
+#                          validate_approach. When 0, skip — used by progress.
 #
 # Returns a list of issue dicts, each with keys:
 #   severity, code, segment, contact_name, message
 #
-proc spar::validate_campaign {all_classified_contacts} {
+proc spar::validate_campaign {all_classified_contacts {include_approach 1}} {
     set issues {}
 
     # Collect per-segment data for orphan checks
@@ -1007,11 +1144,13 @@ proc spar::validate_campaign {all_classified_contacts} {
                 message "Roster email '$roster_email' appears masked (contains '*')"]
         }
 
-        # Checks 1 and 2: delegate to validate_approach
-        set approach_path [spar::dict_get_default $contact approach_path ""]
-        foreach issue [spar::validate_approach $approach_path $roster_email $contact_name] {
-            dict set issue segment $segment
-            lappend issues $issue
+        # Checks 1 and 2: delegate to validate_approach (skipped when include_approach=0)
+        if {$include_approach} {
+            set approach_path [spar::dict_get_default $contact approach_path ""]
+            foreach issue [spar::validate_approach $approach_path $roster_email $contact_name] {
+                dict set issue segment $segment
+                lappend issues $issue
+            }
         }
     }
 
@@ -1303,8 +1442,9 @@ proc spar::build_warnings {all_classified_contacts} {
         incr dup_subject_count
     }
 
-    # Validation
-    foreach issue [spar::validate_campaign $all_classified_contacts] {
+    # Validation — semantics only (cross-file). Per-file approach schema
+    # validation is a transition dependency, not a progress concern (#43 principle 6).
+    foreach issue [spar::validate_campaign_semantics $all_classified_contacts] {
         set sev [dict get $issue severity]
         set seg [spar::dict_get_default $issue segment ""]
         set cname [spar::dict_get_default $issue contact_name ""]
