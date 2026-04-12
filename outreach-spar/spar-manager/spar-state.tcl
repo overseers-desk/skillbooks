@@ -479,15 +479,6 @@ proc spar::transition_eligible {classified_contacts transition} {
                     }
                 }
             }
-            T5 {
-                # Flag invalid: any valid contact (not EXCLUDED)
-                if {$state ne "EXCLUDED"} {
-                    lappend results [dict create \
-                        contact_name $name organisation $org segment $segment \
-                        stem $stem _segment_dir $segment_dir \
-                        task_state ready reason ""]
-                }
-            }
             T6 {
                 # Stale → Re-profile: state = PROFILE_STALE
                 # Zero tasks until PROFILE_STALE defined
