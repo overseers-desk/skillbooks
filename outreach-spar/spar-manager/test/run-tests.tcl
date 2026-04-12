@@ -928,6 +928,83 @@ set dups1516 [spar::detect_duplicates [concat $c15 $c16]]
 assert_eq [llength [dict get $dups1516 identical_subject]] 0 \
     "identical_subject: sent messages with same subject → not flagged"
 
+# 9j. INVALID contact does not contribute to duplicate_name
+set seg_inv1 [make_temp_segment]
+set seg_inv2 [make_temp_segment]
+write_roster_tsv $seg_inv1 $::std_headers [list \
+    [make_base_row {contact_name "Ghost Person" email "ghost1@example.com" \
+        stem "" date_found_invalid "2026-04-01"}] \
+]
+write_roster_tsv $seg_inv2 $::std_headers [list \
+    [make_base_row {contact_name "Ghost Person" email "ghost2@example.com" stem ""}] \
+]
+set cinv1 [spar::classify_segment $seg_inv1]
+set cinv2 [spar::classify_segment $seg_inv2]
+set dups_inv [spar::detect_duplicates [concat $cinv1 $cinv2]]
+assert_eq [llength [dict get $dups_inv duplicate_name]] 0 \
+    "duplicate_name: INVALID contact does not contribute → not flagged"
+
+# 9k. INVALID contact does not contribute to duplicate_email
+set seg_inv3 [make_temp_segment]
+set seg_inv4 [make_temp_segment]
+write_roster_tsv $seg_inv3 $::std_headers [list \
+    [make_base_row {contact_name "Invalid One" email "shared-inv@example.com" \
+        stem "" date_found_invalid "2026-04-02"}] \
+]
+write_roster_tsv $seg_inv4 $::std_headers [list \
+    [make_base_row {contact_name "Active Two" email "shared-inv@example.com" stem ""}] \
+]
+set cinv3 [spar::classify_segment $seg_inv3]
+set cinv4 [spar::classify_segment $seg_inv4]
+set dups_inv2 [spar::detect_duplicates [concat $cinv3 $cinv4]]
+assert_eq [llength [dict get $dups_inv2 duplicate_email]] 0 \
+    "duplicate_email: INVALID contact does not contribute → not flagged"
+
+# 9l. INVALID contact's approach file does not contribute to duplicate_to
+set seg_inv5 [make_temp_segment]
+set seg_inv6 [make_temp_segment]
+write_profile $seg_inv5 "inv-approach-a"
+write_approach_yaml $seg_inv5 "inv-approach-a" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: collide@example.com
+    subject: Invalid Contact Approach
+    body: Body A
+    actioned_date: null
+    replied_date: null
+}
+write_roster_tsv $seg_inv5 $::std_headers [list \
+    [make_base_row {contact_name "Was Invalid" email "wasinv@example.com" \
+        stem "inv-approach-a" date_found_invalid "2026-04-03"}] \
+]
+write_profile $seg_inv6 "active-approach-b"
+write_approach_yaml $seg_inv6 "active-approach-b" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: collide@example.com
+    subject: Active Contact Approach
+    body: Body B
+    actioned_date: null
+    replied_date: null
+}
+write_roster_tsv $seg_inv6 $::std_headers [list \
+    [make_base_row {contact_name "Still Active" email "active@example.com" \
+        stem "active-approach-b"}] \
+]
+set cinv5 [spar::classify_segment $seg_inv5]
+set cinv6 [spar::classify_segment $seg_inv6]
+set dups_inv3 [spar::detect_duplicates [concat $cinv5 $cinv6]]
+assert_eq [llength [dict get $dups_inv3 duplicate_to]] 0 \
+    "duplicate_to: INVALID contact's approach file does not contribute → not flagged"
+
 # ════════════════════════════════════════════════════════════════════════
 # 10. T8 transition eligibility
 # ════════════════════════════════════════════════════════════════════════
@@ -984,6 +1061,45 @@ set t8b_results [spar::transition_eligible $ct8b "T8"]
 set t8b_names [lmap c $t8b_results {dict get $c contact_name}]
 assert_eq [expr {"Both Sent" in $t8b_names}] 0 \
     "T8: email_sent=1 → not eligible for T8"
+
+# 10c. T4: INVALID contact with email_sent=1 → not eligible for T4 monitoring
+set seg_t4_inv [make_temp_segment]
+write_profile $seg_t4_inv "t4-invalidated"
+write_approach_yaml $seg_t4_inv "t4-invalidated" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: sent-then-invalid@example.com
+    subject: Sent before invalidation
+    body: Hello
+    actioned_date: 2026-04-01
+    replied_date: null
+}
+write_roster_tsv $seg_t4_inv $::std_headers [list \
+    [make_base_row {contact_name "Sent Then Invalid" email "sti@example.com" \
+        stem "t4-invalidated" star_rating "4" date_found_invalid "2026-04-05"}] \
+]
+set ct4_inv [spar::classify_segment $seg_t4_inv]
+set t4_inv_results [spar::transition_eligible $ct4_inv "T4"]
+assert_eq [llength $t4_inv_results] 0 \
+    "T4: INVALID contact with email_sent=1 → not eligible"
+
+# 10d. T8: INVALID contact with linkedin_sent=1 → not eligible for T8
+set seg_t8_inv [make_temp_segment]
+write_profile $seg_t8_inv "t8-invalidated"
+write_approach_yaml $seg_t8_inv "t8-invalidated" [approach_yaml_final_multi_channel]
+write_roster_tsv $seg_t8_inv $::std_headers [list \
+    [make_base_row {contact_name "LI Sent Then Invalid" email "lsti@example.com" \
+        linkedin_url "https://linkedin.com/in/lsti" \
+        stem "t8-invalidated" star_rating "4" date_found_invalid "2026-04-05"}] \
+]
+set ct8_inv [spar::classify_segment $seg_t8_inv]
+set t8_inv_results [spar::transition_eligible $ct8_inv "T8"]
+assert_eq [llength $t8_inv_results] 0 \
+    "T8: INVALID contact with linkedin_sent=1 → not eligible"
 
 # ════════════════════════════════════════════════════════════════════════
 # 11. validate_campaign

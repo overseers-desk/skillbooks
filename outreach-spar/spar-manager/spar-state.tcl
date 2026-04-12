@@ -451,8 +451,11 @@ proc spar::transition_eligible {classified_contacts transition} {
                 }
             }
             T4 {
-                # Send → Reply: email_sent, not email_replied (monitoring only)
-                if {$email_sent && !$email_replied} {
+                # Send → Reply: email_sent, not email_replied (monitoring only).
+                # Skip INVALID — an invalidated contact's approach file may still
+                # carry email_sent=true from before invalidation, but monitoring
+                # for a reply is not meaningful once we've decided not to pursue.
+                if {$state ne "INVALID" && $email_sent && !$email_replied} {
                     lappend results [dict create \
                         contact_name $name organisation $org segment $segment \
                         task_state pending reason "Waiting for reply"]
@@ -480,8 +483,9 @@ proc spar::transition_eligible {classified_contacts transition} {
                 # Would require PROFILE_STALE + re-profiling detection
             }
             T8 {
-                # LinkedIn → Email follow-up: linkedin_sent, not email_sent
-                if {$linkedin_sent && !$email_sent} {
+                # LinkedIn → Email follow-up: linkedin_sent, not email_sent.
+                # Skip INVALID for the same reason as T4.
+                if {$state ne "INVALID" && $linkedin_sent && !$email_sent} {
                     lappend results [dict create \
                         contact_name $name organisation $org segment $segment \
                         task_state pending reason "LinkedIn sent, awaiting acceptance before email follow-up"]
@@ -520,6 +524,12 @@ proc spar::detect_duplicates {all_classified_contacts} {
         set approach_path [dict get $contact approach_path]
         set state [dict get $contact state]
         set email_sent_flag [dict get $contact email_sent]
+
+        # INVALID contacts cannot be acted on — no transition dispatches them and
+        # validate_campaign skips them. Their roster fields and approach files
+        # must not feed duplicate-detection maps, or they fire warnings about
+        # collisions that the rest of the state machine has already routed around.
+        if {$state eq "INVALID"} continue
 
         if {$name eq ""} continue
 
