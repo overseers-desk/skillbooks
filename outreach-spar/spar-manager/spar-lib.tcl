@@ -264,7 +264,7 @@ proc spar::channel_desc {linkedin phone} {
 }
 
 # extract_between — extract text between marker lines (exclusive)
-# Port of spar-a-worker.sh extract_between()
+# Port of the earlier shell-based extract_between() used by the A harness.
 proc spar::extract_between {text start_marker end_marker} {
     set lines [split $text \n]
     set collecting 0

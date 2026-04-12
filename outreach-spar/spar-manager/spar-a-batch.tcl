@@ -43,7 +43,7 @@ proc cli_on_progress {slug status message} {
         done    { }
         failed  { puts "  \[FAIL\] $slug" }
         started {
-            # Forward worker output lines (message contains the line)
+            # Forward harness output lines (message contains the line)
             if {$message ne ""} {
                 puts "  $message"
             }

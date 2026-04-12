@@ -60,19 +60,19 @@ if {[llength $issues] > 0} { ... resume agent with the diff ... }
 
 1. `DbC-Pre` and `DbC-Post` always appear in pairs. A `DbC-Pre` without a matching `DbC-Post` (or vice versa) is a defect — `grep -c DbC-Pre` and `grep -c DbC-Post` should return equal counts in the orchestration code.
 2. The pair count equals the number of AI invocation sites, **not** the number of validation checks. A single `validate_campaign` call may run 10+ checks; that is one pre/post pair, not ten.
-3. Markers live in **orchestration logic** (dispatch scripts, worker scripts), not in validation procs. The validation library does not know whether it is being called pre or post.
+3. Markers live in **orchestration logic** (dispatch scripts, harness scripts), not in validation procs. The validation library does not know whether it is being called pre or post.
 4. The two halves of a pair must call equivalent validation. Adding a check to the pre side without adding it to the post side breaks the contract — agent regressions slip through silently.
-5. Failure handling differs: pre-failure refuses to start; post-failure resumes the agent with the diff for correction (see `validate_and_correct` in `spar-a-worker.tcl` for the established pattern).
+5. Failure handling differs: pre-failure refuses to start; post-failure resumes the agent with the diff for correction (see `spar::Harness` subclasses' `validate_and_correct` method, implemented by `spar::ApproachHarness` in `spar-a-harness.tcl` and `spar::ProfileHarness` in `spar-p-harness.tcl`).
 
 ### Where pairs live
 
 | AI call | Orchestration site | Pre-check | Post-check |
 |---|---|---|---|
-| P-phase profile generation | `spar-dispatch.tcl::_p_start_next` | `validate_roster` on segment | `validate_roster` + `_p_sanitise_roster_email` + `validate_profile` |
-| A-phase author draft | `spar-a-worker.tcl` author section | meta.env + roster row complete | draft markers extractable |
-| A-phase challenger spar | `spar-a-worker.tcl` spar loop | profile + draft accessible | verdict marker extractable |
-| A-phase author revision | `spar-a-worker.tcl` rev loop | challenger feedback present | draft + rationale markers extractable |
-| A-phase assembly | `spar-a-worker.tcl` assembly | all logs present | `validate_approach` (existing — `validate_and_correct`) |
+| P-phase profile generation | `spar-p-harness.tcl` | roster row well-formed (dispatcher-enforced) | `sanitise_roster_email` + `ProfileHarness::validate_and_correct` (`validate_profile` + resume-to-fix) |
+| A-phase author draft | `spar-a-harness.tcl` author section | meta.env + roster row complete | draft markers extractable |
+| A-phase challenger spar | `spar-a-harness.tcl` spar loop | profile + draft accessible | verdict marker extractable |
+| A-phase author revision | `spar-a-harness.tcl` rev loop | challenger feedback present | draft + rationale markers extractable |
+| A-phase assembly | `spar-a-harness.tcl` assembly | all logs present | `ApproachHarness::validate_and_correct` (`validate_approach` + resume-to-fix) |
 
 Missing or unpaired markers should be tracked as data-integrity issues under #4.
 
