@@ -317,7 +317,7 @@ Grouped by validator proc. All line numbers are in `spar-state.tcl`.
 | roster_verified_but_invalid     | warning | `verified=yes` ∧ `date_excluded≠""`                   | —                   | 1592 |
 | roster_placeholder_name         | warning | contact_name empty or in {unknown,n/a,tbd,placeholder}| EXCLUDED            | 1604 |
 | roster_duplicate_name_org       | warning | (name,org) pair repeats in segment                    | EXCLUDED            | 1614 |
-| roster_no_channel               | warning | ¬has_email ∧ ¬has_linkedin ∧ ¬has_facebook            | EXCLUDED            | 1626 |
+| roster_no_channel               | warning | ¬has_email ∧ ¬has_linkedin ∧ ¬has_facebook ∧ phone="" | EXCLUDED            | 1626 |
 | roster_no_sweep_iteration       | warning | sweep_iteration empty                                 | EXCLUDED            | 1636 |
 | roster_likelihood_without_star  | warning | response_likelihood set, star_rating empty            | EXCLUDED            | 1646 |
 | roster_zero_star_no_invalid     | warning | star=0 ∧ date_excluded empty                          | EXCLUDED            | 1658 |
@@ -383,7 +383,7 @@ Categories (applied in the rightmost column):
 
 ### Known gaps surfaced by this cross-check
 
-1. **`roster_no_channel` fires on pre-P rows.** Condition is P's responsibility per spar-P-profile.md §4.11 (exclude on unreachability). Skip list should add the unprofiled case (star_rating blank) in addition to EXCLUDED. For post-P rows, the check becomes a canary that P's §4.11 rule was followed.
+1. **`roster_no_channel` is a canary for P's §4.4a rule.** Condition now matches P's DbC-Post (`profile_unreachable_without_exclusion`): no email, LinkedIn, Facebook, or phone. Firing on a non-EXCLUDED row means P's §4.4a was bypassed (legacy profile pre-dating the guard, or guard regression) — profile should be redone or `date_excluded` set.
 2. **T2 has no channel gate.** `state==PROFILED ∧ star≥3` is insufficient; a P bug letting a no-channel contact through would reach A. Either add `has_email ∨ has_linkedin ∨ has_facebook` to T2, or rely wholly on P's §4.11. Cleanest: both.
 3. **T9, T10 not wired.** `transition_eligible` has no branches for them despite being listed under "Transition manager derivation". `secondary_ready` / `tertiary_ready` are computed but have no consumer.
 4. **`roster_zero_star_no_invalid` is obsolete.** spar-P-profile.md line 387 states star_rating=0 should not appear on the roster (exclusion is carried by `date_excluded` alone). Candidate for deletion.
