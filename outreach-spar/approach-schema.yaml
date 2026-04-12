@@ -1,10 +1,8 @@
 # JSON Schema for SPAR-A approach files (YAML syntax).
-# Validates the structural checks that spar-A-validate.py enforces.
-# Cross-file checks (channel-roster consistency, cross-segment duplicates)
-# remain in the validator script.
-#
 # Closed vocabulary per issue SmartLayer/aesop#43. additionalProperties: false
 # at every level — unknown keys are validation errors, not silently accepted.
+# Runtime validation lives in spar::validate_approach (spar-manager/spar-state.tcl),
+# which mirrors this schema's vocabulary via spar::_approach_canonical_keys.
 
 $schema: "https://json-schema.org/draft/2020-12/schema"
 title: SPAR approach file
