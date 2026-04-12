@@ -16,7 +16,6 @@ One file per campaign, in the campaign root directory. Named `campaign.yaml` or 
 | `sender.name` | string | Sender's display name for outgoing messages |
 | `sender.role` | string | Sender's role title |
 | `sender.email` | string | Sender's email address (used as From: address) |
-| `method` | path | Path to the SPAR-A procedure document (e.g. `../aesop/outreach-spar/spar-A-approach.md`). Relative to the YAML file's directory. |
 | `usp_document` | path | Path to the organisation overview / USP document. Relative to the YAML file's directory. This is the ground truth about the organisation that A1 reads before drafting. |
 | `language` | string | Language code: `en-gb`, `en-au`, `en`, or a BCP-47 code |
 | `segments` | list of strings | Segment directory names to include in batch processing. Use `.` for a single-segment campaign where roster and segment.yaml live in the campaign root (see `spar-campaign-directory.md`). |
@@ -64,24 +63,24 @@ Channel vocabulary: `email`, `phone`, `linkedin`, `facebook`. A channel not name
 | `ses_region` | string | `ap-southeast-2` | AWS SES region for email sending |
 | `reply_check.mailroom_account` | string | (none) | Mailroom account name for reply detection. When present (with `reply_check.folder`), the reply checker queries this IMAP account for incoming replies and appends `### Email Replied` sections to matching approach files. |
 | `reply_check.folder` | string | (none) | IMAP folder to search for replies (e.g. `Partnerships`). |
+| `prompt_appendices` | map | (none) | Per-agent appendix text appended verbatim to the composed prompt at dispatch time. Closed vocabulary — allowed sub-keys: `p_author`, `a_author`, `a_challenger`, `a_assembly`. Any other sub-key is rejected by the campaign loader. Each value is an inline string; empty string or missing key = no appendix. Use this slot for campaign-specific tone guidance, exclusion rules, or strategy-revision notes that must not pollute the methodology documents. |
 
 ## Path resolution
 
-All path fields (`method`, `usp_document`, `antifacts`, `campaign_principles`) are resolved relative to the YAML file's parent directory. Absolute paths are used as-is. This allows the campaign YAML to reference documents in sibling repositories (e.g. `../aesop/outreach-spar/spar-A-approach.md`).
+Path fields (`usp_document`, `antifacts`, `campaign_principles`) are resolved relative to the YAML file's parent directory. Absolute paths are used as-is. The SPAR-A procedure document is resolved by the dispatcher as a sibling of its own script (`../spar-A-approach.md`) and is not a campaign-level path.
 
 ## Example
 
 ```yaml
-campaign: 2026-04 Partnership Outreach (3+ star, profile required)
+campaign: 2026-04 Example Outreach (3+ star, profile required)
 
 sender:
-  name: Lia Movsisyan
+  name: Example Sender
   role: Partnership Manager
-  organisation: Historic Rivermill
-  email: partnerships@rivermill.au
-  bcc: partnerships@rivermill.au
+  organisation: Example Org
+  email: partnerships@example.com
+  bcc: partnerships@example.com
 
-method: ../aesop/outreach-spar/spar-A-approach.md
 usp_document: ../overview.md
 antifacts: ../overview-antifacts.md
 campaign_principles: goal-campaign-principles.md
@@ -95,23 +94,13 @@ secondary_channel:
   wait_condition: no_reply
 
 usps:
-  U1:  Scenic riverside setting on the Coomera River
-  U2:  Peruvian Paso horses
-  U3:  Interactive animal experiences
-  U4:  Heritage character
-  U5:  On-site cafe with group catering
-  U6:  30 minutes from central Gold Coast
-  U7:  Six-bedroom farmstay
-  U8:  Best of Queensland Experience 2025 (TEQ credential)
-  U9:  Cowboys Day proof point
-  U10: Instagram visual credibility
-  U11: 6.2-hectare grounds with 200+ car parks
+  U1: Example USP one
+  U2: Example USP two
+  U3: Example USP three
 
 segments:
-  - animal-event
-  - car-boot-market
-  - community-organisation
-  - wedding-planner
+  - segment-a
+  - segment-b
 
 filter:
   skip_excluded: true
@@ -120,14 +109,17 @@ filter:
 
 approach_filename: "approach-{slug_name}-{slug_org}.md"
 
-skip_segments:
-  - 2026-03-Singapore-investor-outreach
-
 ses_region: ap-southeast-2
+
+prompt_appendices:
+  p_author: ""
+  a_author: ""
+  a_challenger: ""
+  a_assembly: ""
 ```
 
 ## Relationship to other documents
 
 - `spar-campaign-directory.md` — defines the directory structure that the YAML references
 - `spar-roster-format.md` — defines the roster schema consumed by the batch dispatch tools
-- `spar-A-approach.md` — the procedure document typically referenced by `method`
+- `spar-A-approach.md` — the procedure document the A-phase dispatcher resolves automatically as a sibling of its own script

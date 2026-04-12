@@ -51,7 +51,7 @@ proc discover_campaign_yaml {campaign_dir} {
 # Load campaign YAML config and discover segments.
 # Sets config globals; returns 1 on success, 0 on error.
 proc load_campaign_config {} {
-    global campaign_dir campaign_name sender_text method_ref filter_desc
+    global campaign_dir campaign_name sender_text filter_desc
     global cdata yaml_path segment_order skip_set segment_paths
 
     set yaml_path [discover_campaign_yaml $campaign_dir]
@@ -60,7 +60,6 @@ proc load_campaign_config {} {
             -message "No campaign YAML found in:\n$campaign_dir"
         set campaign_name "(no campaign)"
         set sender_text ""
-        set method_ref ""
         set filter_desc ""
         set segment_order {}
         set segment_paths {}
@@ -72,7 +71,6 @@ proc load_campaign_config {} {
             -message "Error loading campaign:\n$err"
         set campaign_name "(error)"
         set sender_text ""
-        set method_ref ""
         set filter_desc ""
         set segment_order {}
         set segment_paths {}
@@ -94,9 +92,6 @@ proc load_campaign_config {} {
         if {$s_email ne ""} { lappend sender_parts "($s_email)" }
     }
     set sender_text [join $sender_parts ", "]
-
-    # Method
-    set method_ref [spar::dict_get_default $cdata method ""]
 
     # Filter
     set filter_desc ""
@@ -500,14 +495,11 @@ ttk::label ${cf}.l1 -text "Campaign:" -font "TkDefaultFont 9 bold"
 ttk::label ${cf}.v1 -text $campaign_name
 ttk::label ${cf}.l2 -text "Sender:" -font "TkDefaultFont 9 bold"
 ttk::label ${cf}.v2 -text $sender_text
-ttk::label ${cf}.l3 -text "Method:" -font "TkDefaultFont 9 bold"
-ttk::label ${cf}.v3 -text $method_ref
 ttk::label ${cf}.l4 -text "Filter:" -font "TkDefaultFont 9 bold"
 ttk::label ${cf}.v4 -text $filter_desc
 
 grid ${cf}.l1 ${cf}.v1 -sticky w -padx {6 4} -pady 1
 grid ${cf}.l2 ${cf}.v2 -sticky w -padx {6 4} -pady 1
-grid ${cf}.l3 ${cf}.v3 -sticky w -padx {6 4} -pady 1
 grid ${cf}.l4 ${cf}.v4 -sticky w -padx {6 4} -pady 1
 
 # Toolbar: Check Email, Refresh, Legend, Select All/None
@@ -563,7 +555,7 @@ proc do_check_email {} {
 }
 
 proc do_refresh {} {
-    global campaign_name sender_text method_ref filter_desc
+    global campaign_name sender_text filter_desc
     global segments warnings transitions
     global cf cpanel wframe tpanel
 
@@ -574,7 +566,6 @@ proc do_refresh {} {
     # Update config labels
     ${cf}.v1 configure -text $campaign_name
     ${cf}.v2 configure -text $sender_text
-    ${cf}.v3 configure -text $method_ref
     ${cf}.v4 configure -text $filter_desc
 
     # Update window title

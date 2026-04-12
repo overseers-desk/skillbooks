@@ -254,6 +254,14 @@ RESPONSE_LIKELIHOOD: {n}%
 
 Then print: DONE: $contact_summary | $outfile"
 
+set appendix_path [file join $prompt_dir appendix-assembly.txt]
+if {[file exists $appendix_path]} {
+    set appendix_text [spar::read_file $appendix_path]
+    if {[string trim $appendix_text] ne ""} {
+        append assembly_prompt "\n\n$appendix_text"
+    }
+}
+
 set assembly_log "${log_prefix}-author-assembly.log"
 spar::write_file [file join $prompt_dir assembly.txt] $assembly_prompt
 
