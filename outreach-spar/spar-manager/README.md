@@ -36,7 +36,7 @@ wish9.0 spar-ui.tcl /path/to/campaign-dir
 tclsh spar-progress.tcl /path/to/campaign-dir
 
 # Profile generation (dry run)
-tclsh spar-p-batch.tcl --campaign=/path/to/campaign.yaml /path/to/segment-dir --dry-run
+tclsh spar-transitions.tcl /path/to/campaign.yaml --tid=T1 --execute --dry-run
 
 # Approach generation (dry run)
 tclsh spar-a-batch.tcl /path/to/campaign.yaml --dry-run

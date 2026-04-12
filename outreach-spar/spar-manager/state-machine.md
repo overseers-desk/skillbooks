@@ -221,12 +221,12 @@ The transition manager filters `classify_segment` output by eligibility conditio
 
 | # | Label | Eligible contacts | Dispatch | Dispatch status |
 |---|-------|-------------------|----------|-----------------|
-| T1 | Sweep → Profile | state = DISCOVERED | spar-p-batch.tcl (runs §4.0b first if `contact_name` is blank, else §4.1+) | available |
+| T1 | Sweep → Profile | state = DISCOVERED | spar-transitions.tcl --tid=T1 --execute (runs §4.0b first if `contact_name` is blank, else §4.1+) | available |
 | T2 | Profile → Approach | state = PROFILED, star≥3 | spar-a-batch.tcl | available |
 | T3 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | email send (SES) | not-implemented |
 | T4 | Send → Reply | email_sent, not email_replied | none (monitoring only) | n/a |
 | T5 | Flag invalid | state = any valid | roster TSV update | not-implemented |
-| T6 | Stale → Re-profile | state = PROFILE_STALE | spar-p-batch.tcl | available (zero tasks until PROFILE_STALE defined) |
+| T6 | Stale → Re-profile | state = PROFILE_STALE | spar-transitions.tcl --tid=T6 --execute | available (zero tasks until PROFILE_STALE defined) |
 | T7 | Re-profile → Re-approach | re-PROFILED after stale (see note) | spar-a-batch.tcl | available (zero tasks until PROFILE_STALE defined) |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
 | T9 | Secondary follow-up | `secondary_ready` | render script + manual marker | manual |
@@ -469,7 +469,7 @@ Key locations in `../bin/update-campaign.py` and their redesign counterparts:
 | `classify_approach_gaps()` (line 343) | Matches 3+★ contacts to approach files; detects missing/unsent | Folded into `classify_contact` — approach state is per-contact, not a gap analysis |
 | `scan_approach_dir()` (line 390) | Scans approach directory for sent/replied/to-address | Replaced by reading the approach YAML once per contact in `classify_contact`; per-segment aggregation in `classify_segment` |
 | Segment loop (line 583–696) | Iterates over segments, accumulates 8-tuple of counts | Replaced by `classify_segment` returning a list of contact dicts; progress table columns are projections, computed on demand |
-| `build_profile_index()` (via spar_lib) | Builds a dict of all profile files in a directory for fast lookup | **Not used in spar-state.tcl.** Profile presence is determined by checking `profiles/{stem}.md` directly using the `stem` from the roster row; no directory scan is needed. `spar::build_profile_index` remains in spar-lib.tcl for other callers (e.g., spar-p-batch) but is not called during state classification. |
+| `build_profile_index()` (via spar_lib) | Builds a dict of all profile files in a directory for fast lookup | **Not used in spar-state.tcl.** Profile presence is determined by checking `profiles/{stem}.md` directly using the `stem` from the roster row; no directory scan is needed. `spar::build_profile_index` remains in spar-lib.tcl as a utility. |
 | Duplicate detection (lines 554–668) | Accumulates email/name/subject maps across segments | Becomes a cross-segment pass over the full classified-contacts list |
 
 **What the Python code does not have (new in the redesign):**

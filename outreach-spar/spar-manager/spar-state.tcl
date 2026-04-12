@@ -403,6 +403,7 @@ proc spar::transition_eligible {classified_contacts transition} {
     foreach contact $classified_contacts {
         set name [spar::dict_get_default $contact contact_name ""]
         set org [spar::dict_get_default $contact organisation ""]
+        set stem [spar::dict_get_default $contact stem ""]
         set segment_dir [spar::dict_get_default $contact _segment_dir ""]
         set segment [file tail $segment_dir]
         set state [dict get $contact state]
@@ -418,6 +419,7 @@ proc spar::transition_eligible {classified_contacts transition} {
                 if {$state eq "DISCOVERED"} {
                     lappend results [dict create \
                         contact_name $name organisation $org segment $segment \
+                        stem $stem _segment_dir $segment_dir \
                         task_state ready reason ""]
                 }
             }
@@ -426,6 +428,7 @@ proc spar::transition_eligible {classified_contacts transition} {
                 if {$state eq "PROFILED" && $star >= 3} {
                     lappend results [dict create \
                         contact_name $name organisation $org segment $segment \
+                        stem $stem _segment_dir $segment_dir \
                         task_state ready reason ""]
                 }
             }
@@ -439,15 +442,18 @@ proc spar::transition_eligible {classified_contacts transition} {
                         if {$vmsg ne ""} {
                             lappend results [dict create \
                                 contact_name $name organisation $org segment $segment \
+                                stem $stem _segment_dir $segment_dir \
                                 task_state pending reason "invalid_approach_yaml: $vmsg"]
                         } else {
                             lappend results [dict create \
                                 contact_name $name organisation $org segment $segment \
+                                stem $stem _segment_dir $segment_dir \
                                 task_state ready reason ""]
                         }
                     } elseif {!$has_email} {
                         lappend results [dict create \
                             contact_name $name organisation $org segment $segment \
+                            stem $stem _segment_dir $segment_dir \
                             task_state pending reason "No email address"]
                     }
                 }
@@ -462,10 +468,12 @@ proc spar::transition_eligible {classified_contacts transition} {
                     if {$vmsg ne ""} {
                         lappend results [dict create \
                             contact_name $name organisation $org segment $segment \
+                            stem $stem _segment_dir $segment_dir \
                             task_state pending reason "invalid_approach_yaml: $vmsg"]
                     } else {
                         lappend results [dict create \
                             contact_name $name organisation $org segment $segment \
+                            stem $stem _segment_dir $segment_dir \
                             task_state pending reason "Waiting for reply"]
                     }
                 }
@@ -475,6 +483,7 @@ proc spar::transition_eligible {classified_contacts transition} {
                 if {$state ne "EXCLUDED"} {
                     lappend results [dict create \
                         contact_name $name organisation $org segment $segment \
+                        stem $stem _segment_dir $segment_dir \
                         task_state ready reason ""]
                 }
             }
@@ -484,6 +493,7 @@ proc spar::transition_eligible {classified_contacts transition} {
                 if {$state eq "PROFILE_STALE"} {
                     lappend results [dict create \
                         contact_name $name organisation $org segment $segment \
+                        stem $stem _segment_dir $segment_dir \
                         task_state ready reason ""]
                 }
             }
@@ -500,10 +510,12 @@ proc spar::transition_eligible {classified_contacts transition} {
                     if {$vmsg ne ""} {
                         lappend results [dict create \
                             contact_name $name organisation $org segment $segment \
+                            stem $stem _segment_dir $segment_dir \
                             task_state pending reason "invalid_approach_yaml: $vmsg"]
                     } else {
                         lappend results [dict create \
                             contact_name $name organisation $org segment $segment \
+                            stem $stem _segment_dir $segment_dir \
                             task_state pending reason "LinkedIn sent, awaiting acceptance before email follow-up"]
                     }
                 }
