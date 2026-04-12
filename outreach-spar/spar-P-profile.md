@@ -40,13 +40,13 @@ If the roster entry has no `contact_name`, the entry is in the NAMELESS state �
 
 **If a name is found:**
 - Update `contact_name` in the roster.
-- If the entry had `date_found_invalid` set **solely because it lacked a contact name**, clear `date_found_invalid` and re-run §4.0 (the structural validation check). The entry may be revalidated if it passes §4.0.
-- If `date_found_invalid` was set for a structural reason (contact type does not fit the campaign mechanism), finding a name does not revalidate the entry — the structural reason stands.
+- If the entry had `date_excluded` set **solely because it lacked a contact name**, clear `date_excluded` and re-run §4.0 (the structural validation check). The entry may be revalidated if it passes §4.0.
+- If `date_excluded` was set for a structural reason (contact type does not fit the campaign mechanism), finding a name does not revalidate the entry — the structural reason stands.
 
 **If no name is found after exhausting all sources:**
 - If the roster entry has no `stem`, write one using the organisation slug (e.g. `a-team-coaches` for "A-Team Coaches"). This ensures the row is identifiable in the state machine.
 - Record in `p_note`: "name search attempted [date]: no individual identified via website, Facebook, LinkedIn, ABN, web search."
-- Set `date_found_invalid` to today with reason "nameless — name search exhausted ([date])." This is the P-phase's responsibility — sweep does not set `date_found_invalid` for nameless entries.
+- Set `date_excluded` to today with reason "nameless — name search exhausted ([date])." This is the P-phase's responsibility — sweep does not set `date_excluded` for nameless entries.
 - Do not proceed to §4.0 or produce a profile document. The roster entry is the permanent record.
 
 ### 4.0 Validate fit against segment file
@@ -55,9 +55,9 @@ Before any research, read the segment file and answer one question: can this con
 
 This is a structural check, not a relevance check. A contact may be in the right domain, at the right seniority, with strong apparent fit — and still be the wrong type of contact for the segment. The segment file specifies a mechanism: the particular way a contact is expected to act on the campaign's behalf. The check is whether this contact operates through that mechanism. A contact who is adjacent to the mechanism — who knows the right people, or works in the same field, or whose platform could theoretically be adapted — does not pass the check unless the segment file explicitly includes that adjacent role.
 
-If the contact cannot deliver the outcome through the mechanism the segment describes, set `date_found_invalid` to today's date and record the reason in `p_note`. Do not proceed to §4.1. Do not produce a profile document.
+If the contact cannot deliver the outcome through the mechanism the segment describes, set `date_excluded` to today's date and record the reason in `p_note`. Do not proceed to §4.1. Do not produce a profile document.
 
-**Do not delete the roster row.** The roster is append-only. Deletion causes re-discovery in the next sweep, where the entry may be incorrectly validated if the profile stage repeats the same error. The `date_found_invalid` date is the permanent record that this contact was assessed and excluded.
+**Do not delete the roster row.** The roster is append-only. Deletion causes re-discovery in the next sweep, where the entry may be incorrectly validated if the profile stage repeats the same error. The `date_excluded` date is the permanent record that this contact was assessed and excluded.
 
 If an invalid entry has already passed Profile and reached the approach queue, the failure is at the P stage. The question to ask is whether the segment file was specific enough to make the §4.0 check possible. If the exclusion was not obvious from the segment file, the segment file may need a discovery_criteria section that names the contact types that do not belong, so future sweeps and profile runs do not repeat the error.
 
@@ -234,9 +234,9 @@ For each applicable angle, note:
 | 3 | Right role and area, no specific evidence of alignment or connection value |
 | 2 | Tangentially relevant, weak connection path |
 | 1 | Roster only, no clear relevance |
-| 0 | Invalid — not a campaign target. Set `date_found_invalid` to today's date and write the reason in `p_note`. Do not delete the row (see §4.0). |
+| 0 | Invalid — not a campaign target. Set `date_excluded` to today's date and write the reason in `p_note`. Do not delete the row (see §4.0). |
 
-If profiling reveals that the contact cannot deliver the campaign's intended outcome through the mechanism the goal assumes — including cases where §4.0 was not run before profiling began — set `star_rating` to 0 and `date_found_invalid` to today's date. Write the reason in `p_note`. Do not produce a profile document for contacts assessed at 0; the roster entry is sufficient. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
+If profiling reveals that the contact cannot deliver the campaign's intended outcome through the mechanism the goal assumes — including cases where §4.0 was not run before profiling began — set `star_rating` to 0 and `date_excluded` to today's date. Write the reason in `p_note`. Do not produce a profile document for contacts assessed at 0; the roster entry is sufficient. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
 
 Note that network/connection value can support a 5-star rating when the connection paths are specific and high-value (e.g. bridges to a target community the campaign has no other path into), not merely when the person has a large network.
 
@@ -269,7 +269,7 @@ For each empty contact field where a value was discovered, update the roster usi
 
 Only backfill emails that belong to the contact or their organisation. An email discovered for a different person mentioned in the profile (e.g. a successor, a co-admin) belongs in that person's roster row, not this one.
 
-If the person has left the relevant role entirely (e.g. left the industry, retired), mark the roster entry with `date_found_invalid` and the reason, then search for their replacement at the same organisation. The replacement enters the roster as a new contact with `discovered_via` recording they were found as a replacement.
+If the person has left the relevant role entirely (e.g. left the industry, retired), mark the roster entry with `date_excluded` and the reason, then search for their replacement at the same organisation. The replacement enters the roster as a new contact with `discovered_via` recording they were found as a replacement.
 
 **Person vs. company:** Ask whether the campaign wants this person or the person currently in this role at this company. If the answer is the role — which is true for most contacts discovered via directories or company listings — and profiling shows someone else now holds it, the roster entry is wrong. Invalidate it, add the current person, and do not pass the displaced entry to the A phase. Delete any existing profile for them; git history preserves it.
 

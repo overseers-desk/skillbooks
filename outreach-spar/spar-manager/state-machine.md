@@ -84,7 +84,7 @@ A contact's state is inferred from the presence and content of files in the segm
 
 | State | Condition |
 |-------|-----------|
-| `INVALID` | Roster: `date_found_invalid` non-empty |
+| `EXCLUDED` | Roster: `date_excluded` non-empty |
 | `NAMELESS` | Not invalid, `contact_name` is empty — organisation identified but no individual resolved yet |
 | `DISCOVERED` | Valid (not invalid, not nameless), file `profiles/profile-{stem}.md` does not exist |
 | `PROFILED` | Valid, file `profiles/profile-{stem}.md` exists, not stale |
@@ -93,7 +93,7 @@ A contact's state is inferred from the presence and content of files in the segm
 | `SENT` | `approach/{stem}.yaml` exists, final round has at least one message with `actioned_date` non-null |
 | `REPLIED` | `SENT`, and final round has a message with `replied_date` non-null, or a reply with `direction: received` |
 
-Evaluation order: `INVALID` is checked first, then `NAMELESS`. A contact that is `INVALID` or `NAMELESS` is never checked for any other state. States 3–8 are evaluated in order; the first match wins.
+Evaluation order: `EXCLUDED` is checked first, then `NAMELESS`. A contact that is `EXCLUDED` or `NAMELESS` is never checked for any other state. States 3–8 are evaluated in order; the first match wins.
 
 ### Secondary properties
 
@@ -143,14 +143,14 @@ This is a hard failure, not a warning. Contact state is determined by file prese
 ```tcl
 # classify_contact -- classify one contact's state.
 #
-# roster_row   dict with TSV fields (stem, contact_name, date_found_invalid,
+# roster_row   dict with TSV fields (stem, contact_name, date_excluded,
 #              star_rating, email, linkedin_url, facebook_url, phone, ...)
 #              stem is required; classify_segment validates its presence
 #              before calling this proc.
 # segment_dir  absolute path to the segment directory
 #
 # Returns a dict:
-#   state         one of: INVALID NAMELESS DISCOVERED PROFILED PROFILE_STALE
+#   state         one of: EXCLUDED NAMELESS DISCOVERED PROFILED PROFILE_STALE
 #                         APPROACHED SENT REPLIED
 #   profile_path  path to profile file, or empty string
 #   approach_path path to approach YAML, or empty string
@@ -185,7 +185,7 @@ The progress table columns are counts derived from running `classify_segment` ac
 
 | Column | What it counts | Denominator | Filter |
 |--------|----------------|-------------|--------|
-| Valid | not INVALID and not NAMELESS | total roster rows | — |
+| Valid | not EXCLUDED and not NAMELESS | total roster rows | — |
 | Profile | PROFILED or above | Valid | — |
 | 3+★ | Valid and star≥3 | Valid | — |
 | A/3+★ | APPROACHED or above, star≥3 | 3+★ | — |
@@ -265,8 +265,8 @@ For filesystem-touching tests (profile/approach file detection), use `file tempf
 
 | Input condition | Expected state |
 |-----------------|----------------|
-| `date_found_invalid` set | INVALID |
-| `contact_name` empty, `date_found_invalid` empty | NAMELESS |
+| `date_excluded` set | EXCLUDED |
+| `contact_name` empty, `date_excluded` empty | NAMELESS |
 | Valid, profiles/ absent | DISCOVERED |
 | Valid, profiles/ exists but no match | DISCOVERED |
 | Valid, profile file matches by name+org slug | PROFILED |

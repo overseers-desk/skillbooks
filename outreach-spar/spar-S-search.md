@@ -32,7 +32,7 @@ The discovery steps are the same for both types. The differences — whether P i
 
 Store one TSV file per segment. Use TSV, not CSV — roster fields frequently contain quoted speech, URLs, and free-text notes that cause quoting problems with commas. The file is named `roster.tsv` and lives inside the segment's own directory (e.g. `wedding-planner/roster.tsv`). Do not embed the segment name in the filename — the directory already carries that context.
 
-Every row should have a **contact_name** where one can be identified. If a source lists only an organisation and a quick check of the organisation's website, LinkedIn, and Facebook does not surface a named individual, retain the organisation as a nameless row: leave `contact_name` blank, write a provisional `stem` using the organisation slug, and leave `date_found_invalid` empty. Do not set `date_found_invalid` during sweep — the P-phase §4.0b procedure is responsible for the exhaustive name search and for invalidating entries where no individual can be found. The nameless row ensures future sweep iterations recognise the organisation as already discovered and do not re-add it.
+Every row should have a **contact_name** where one can be identified. If a source lists only an organisation and a quick check of the organisation's website, LinkedIn, and Facebook does not surface a named individual, retain the organisation as a nameless row: leave `contact_name` blank, write a provisional `stem` using the organisation slug, and leave `date_excluded` empty. Do not set `date_excluded` during sweep — the P-phase §4.0b procedure is responsible for the exhaustive name search and for invalidating entries where no individual can be found. The nameless row ensures future sweep iterations recognise the organisation as already discovered and do not re-add it.
 
 Each S&P iteration updates the same file via the `sweep_iteration` column. Do not create separate files per iteration.
 
@@ -51,7 +51,7 @@ These columns are standard across all campaigns. Every roster produced by this A
 9. **discovered_via** — the source that led to this contact. For seeds: the source name (e.g. "government school directory", "Google Maps", "industry association member list"). For social-graph contacts: the `contact_name` of the person whose profile surfaced this entry, creating a referral chain traceable to the original seed.
 10. **discovery_source** — the specific mechanism (e.g. "LinkedIn comment", "Facebook group co-admin", "LinkedIn People Also Viewed", "WebSearch: [expanded keyword query]")
 11. **verified** — yes/no — role confirmed via social profile or other independent source
-12. **date_found_invalid** — ISO date (YYYY-MM-DD) when the contact was confirmed unreachable or no longer in a relevant role. The date rather than a flag allows periodic re-checking — a person with no LinkedIn in March may have one by September. The profiling will skip entries that are already found invalid - although most entries are found invalid during profiling stage (P) hence profile is created anyway.
+12. **date_excluded** — ISO date (YYYY-MM-DD) when the contact was confirmed unreachable or no longer in a relevant role. The date rather than a flag allows periodic re-checking — a person with no LinkedIn in March may have one by September. The profiling will skip entries that are already found invalid - although most entries are found invalid during profiling stage (P) hence profile is created anyway.
 
 ### 4.2 Campaign-specific columns
 
@@ -144,7 +144,7 @@ This file preserves the search vocabulary so that future work on the same segmen
 
 S will routinely discover that a contact is stale: the person has left the organisation, changed roles, or retired from the field. A stale contact is not simply removed from the roster. The procedure is:
 
-1. Mark the contact with `date_found_invalid` and record the reason in notes.
+1. Mark the contact with `date_excluded` and record the reason in `s_note` (e.g. "current team page no longer lists this person, [date]" or "LinkedIn shows role ended [date]"). S's observations belong in `s_note`; `p_note` is written only by P.
 2. Attempt to find the replacement — the person who now holds the role that made the original contact relevant.
 3. The replacement enters the roster as a new contact in the current iteration, with `discovered_via` recording that they were found as a replacement for the stale contact.
 4. If no replacement can be found (the organisation has closed, the role no longer exists), the stale contact is left marked and no replacement is added.
@@ -162,13 +162,13 @@ These cross-leads must not be discarded because they fall outside the current se
 Run this checklist against all roster files after each iteration. Each check is a pass/fail assertion on the TSV data.
 
 1. **Column count:** every row has the expected number of tab-separated fields (core columns from §4.1 plus any campaign-specific columns from §4.2).
-2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)"), or has a blank `contact_name` with a provisional organisation-slug stem. Rows with blank `contact_name` and no `date_found_invalid` are P-phase leads awaiting §4.0b name resolution — they are not errors.
+2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)"), or has a blank `contact_name` with a provisional organisation-slug stem. Rows with blank `contact_name` and no `date_excluded` are P-phase leads awaiting §4.0b name resolution — they are not errors.
 3. **No duplicate contacts:** no two rows in the same roster file share the same (`contact_name`, `organisation`) pair (case-insensitive). Multiple contacts at the same organisation is permitted.
 4. **Email format:** every non-empty `email` field contains an `@` sign. Strings like `via website`, `(07) 5572 3588`, or `[email obtained during call]` are not email addresses and must not pass validation. This is the gate that prevents non-email strings from inflating counts downstream.
 5. **Reachable:** every row has at least one of email (valid, per check 4), `linkedin_url`, or `facebook_url` populated. Phone alone is insufficient for campaigns that begin with a written introduction.
 6. **Iteration recorded:** every row has a `sweep_iteration` value.
 7. **Segment matches file:** if the roster uses a `segment` column, the value on every row matches the roster filename.
-8. **Verified contacts still current:** no contact marked `verified=yes` has a `p_note` or `date_found_invalid` indicating they left the role or changed organisation.
+8. **Verified contacts still current:** no contact marked `verified=yes` has a `p_note` or `date_excluded` indicating they left the role or changed organisation.
 9. **Iteration progress:** for each roster, confirm that `sweep_iteration` is populated on every row and that the stopping criteria in §6 have been evaluated.
 
 Campaign-specific checks (e.g. "every outreach row has a non-empty p_note") are defined by the campaign plan, not by this AESOP.

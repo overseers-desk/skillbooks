@@ -155,7 +155,7 @@ proc spar::analyse_final_round {data} {
 
 # classify_contact -- classify one contact's state.
 #
-# roster_row   dict with TSV fields (contact_name, date_found_invalid,
+# roster_row   dict with TSV fields (contact_name, date_excluded,
 #              star_rating, email, linkedin_url, facebook_url, phone,
 #              stem, ...)
 #              stem is required; classify_segment validates its presence
@@ -163,7 +163,7 @@ proc spar::analyse_final_round {data} {
 # segment_dir  absolute path to the segment directory
 #
 # Returns a dict:
-#   state         one of: INVALID NAMELESS DISCOVERED PROFILED PROFILE_STALE
+#   state         one of: EXCLUDED NAMELESS DISCOVERED PROFILED PROFILE_STALE
 #                         APPROACHED SENT REPLIED
 #   profile_path  path to profile file, or empty string
 #   approach_path path to approach YAML, or empty string
@@ -181,7 +181,7 @@ proc spar::classify_contact {roster_row segment_dir} {
     # strip_tsv_field: trim whitespace, and if the remaining value is a
     # quoted-empty-or-whitespace string (e.g. `" "` or `""`), collapse to "".
     # This happens when TSV was edited with a tool that CSV-quotes blank fields.
-    set date_invalid [string trim [spar::dict_get_default $roster_row date_found_invalid ""]]
+    set date_invalid [string trim [spar::dict_get_default $roster_row date_excluded ""]]
     set stem [string trim [spar::dict_get_default $roster_row stem ""]]
     set star_raw [spar::dict_get_default $roster_row star_rating ""]
     set email [string trim [spar::dict_get_default $roster_row email ""]]
@@ -215,10 +215,10 @@ proc spar::classify_contact {roster_row segment_dir} {
 
     # State evaluation (ordered — first match wins)
 
-    # 1. INVALID
+    # 1. EXCLUDED
     if {![spar::is_null $date_invalid]} {
         return [dict create \
-            state INVALID \
+            state EXCLUDED \
             profile_path $profile_path \
             approach_path $approach_path \
             star $star \
@@ -477,10 +477,10 @@ proc spar::transition_eligible {classified_contacts transition} {
             }
             T4 {
                 # Send → Reply: email_sent, not email_replied (monitoring only).
-                # Skip INVALID — an invalidated contact's approach file may still
+                # Skip EXCLUDED — an invalidated contact's approach file may still
                 # carry email_sent=true from before invalidation, but monitoring
                 # for a reply is not meaningful once we've decided not to pursue.
-                if {$state ne "INVALID" && $email_sent && !$email_replied} {
+                if {$state ne "EXCLUDED" && $email_sent && !$email_replied} {
                     set vmsg [spar::_approach_validation_error $contact]
                     if {$vmsg ne ""} {
                         lappend results [dict create \
@@ -494,8 +494,8 @@ proc spar::transition_eligible {classified_contacts transition} {
                 }
             }
             T5 {
-                # Flag invalid: any valid contact (not INVALID)
-                if {$state ne "INVALID"} {
+                # Flag invalid: any valid contact (not EXCLUDED)
+                if {$state ne "EXCLUDED"} {
                     lappend results [dict create \
                         contact_name $name organisation $org segment $segment \
                         task_state ready reason ""]
@@ -516,9 +516,9 @@ proc spar::transition_eligible {classified_contacts transition} {
             }
             T8 {
                 # LinkedIn → Email follow-up: linkedin_sent, not email_sent.
-                # Skip INVALID for the same reason as T4. Gate on approach-YAML
+                # Skip EXCLUDED for the same reason as T4. Gate on approach-YAML
                 # validity (#43 principle 7).
-                if {$state ne "INVALID" && $linkedin_sent && !$email_sent} {
+                if {$state ne "EXCLUDED" && $linkedin_sent && !$email_sent} {
                     set vmsg [spar::_approach_validation_error $contact]
                     if {$vmsg ne ""} {
                         lappend results [dict create \
@@ -565,11 +565,11 @@ proc spar::detect_duplicates {all_classified_contacts} {
         set state [dict get $contact state]
         set email_sent_flag [dict get $contact email_sent]
 
-        # INVALID contacts cannot be acted on — no transition dispatches them and
+        # EXCLUDED contacts cannot be acted on — no transition dispatches them and
         # validate_campaign skips them. Their roster fields and approach files
         # must not feed duplicate-detection maps, or they fire warnings about
         # collisions that the rest of the state machine has already routed around.
-        if {$state eq "INVALID"} continue
+        if {$state eq "EXCLUDED"} continue
 
         if {$name eq ""} continue
 
@@ -705,8 +705,8 @@ proc spar::progress_counts {classified_contacts} {
         set c_email_sent [dict get $contact email_sent]
         set c_email_replied [dict get $contact email_replied]
 
-        # Valid: not INVALID and not NAMELESS
-        if {$state ni {INVALID NAMELESS}} {
+        # Valid: not EXCLUDED and not NAMELESS
+        if {$state ni {EXCLUDED NAMELESS}} {
             incr valid
         } else {
             continue
@@ -805,8 +805,8 @@ proc spar::roster_counts {segment_dir} {
             continue
         }
 
-        # Skip INVALID (date_found_invalid set)
-        set date_invalid [string trim [spar::dict_get_default $row date_found_invalid ""]]
+        # Skip EXCLUDED (date_excluded set)
+        set date_invalid [string trim [spar::dict_get_default $row date_excluded ""]]
         if {[regexp {^"(.*)"$} $date_invalid -> inner]} {
             set date_invalid [string trim $inner]
         }
@@ -1121,8 +1121,8 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1}} {
             lappend seg_stems($segment_dir) $stem
         }
 
-        # Skip INVALID and NAMELESS contacts for checks 1, 2, 3
-        if {$state in {INVALID NAMELESS}} continue
+        # Skip EXCLUDED and NAMELESS contacts for checks 1, 2, 3
+        if {$state in {EXCLUDED NAMELESS}} continue
 
         # Check 3: merged_contact_name
         if {[string first " & " $contact_name] >= 0} {
@@ -1243,7 +1243,7 @@ proc spar::validate_roster {segment_contacts} {
         set facebook [string trim [spar::dict_get_default $contact facebook_url ""]]
         set sweep [string trim [spar::dict_get_default $contact sweep_iteration ""]]
         set verified [string trim [spar::dict_get_default $contact verified ""]]
-        set date_invalid [string trim [spar::dict_get_default $contact date_found_invalid ""]]
+        set date_invalid [string trim [spar::dict_get_default $contact date_excluded ""]]
         set star [string trim [spar::dict_get_default $contact star_rating ""]]
         set response_likelihood [string trim [spar::dict_get_default $contact response_likelihood ""]]
         set stem [string trim [spar::dict_get_default $contact stem ""]]
@@ -1282,18 +1282,18 @@ proc spar::validate_roster {segment_contacts} {
             lappend seen_stems $stem
         }
 
-        # Assertion 6: verified=yes without conflicting date_found_invalid
+        # Assertion 6: verified=yes without conflicting date_excluded
         if {[string tolower $verified] eq "yes" && $date_invalid ne ""} {
             lappend issues [dict create \
                 severity warning \
                 code roster_verified_but_invalid \
                 segment $segment \
                 contact_name $contact_name \
-                message "Contact is verified=yes but has date_found_invalid set"]
+                message "Contact is verified=yes but has date_excluded set"]
         }
 
-        # Skip NAMELESS and INVALID for assertions that require a named, valid contact
-        if {$state in {NAMELESS INVALID}} continue
+        # Skip NAMELESS and EXCLUDED for assertions that require a named, valid contact
+        if {$state in {NAMELESS EXCLUDED}} continue
 
         # Assertion 1: non-empty contact_name, not a placeholder
         if {$contact_name eq "" || [string tolower $contact_name] in {unknown n/a tbd placeholder}} {
@@ -1349,14 +1349,14 @@ proc spar::validate_roster {segment_contacts} {
             }
         }
 
-        # Assertion 8: star_rating=0 implies date_found_invalid
+        # Assertion 8: star_rating=0 implies date_excluded
         if {[string is integer -strict $star] && $star == 0 && $date_invalid eq ""} {
             lappend issues [dict create \
                 severity warning \
                 code roster_zero_star_no_invalid \
                 segment $segment \
                 contact_name $contact_name \
-                message "Contact has star_rating=0 but no date_found_invalid"]
+                message "Contact has star_rating=0 but no date_excluded"]
         }
     }
 
