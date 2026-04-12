@@ -165,7 +165,8 @@ Approach files are YAML documents with a **closed vocabulary** — any key outsi
 
 **Canonical keys by level:**
 
-- Root: `decisions`, `rounds`, `profile_date`, `profile_richness`, `angle_rationale`, `roster_note`, `fact_provenance`, `quality_checklist`, `response_likelihood`
+- Root: `decisions`, `rounds`, `profile_date`, `profile_richness`, `angle_rationale`, `roster_note`, `fact_provenance`, `quality_checklist`, `response_likelihood`, `generated_for`
+- `generated_for`: `contact_name`, `organisation` — required. Records the roster values at generation time so `spar::validate_approach` can detect roster edits that post-date the approach file (emits `name_desync` / `org_desync` when they diverge).
 - `decisions`: `warmth`, `channel`, `language`, `angle`, `sender`, `warmth_detail`, `channel_detail`, `subsegment`
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
 - `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `replied_date`, `reply_summary`, `script`, `text`, `char_count`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`
@@ -177,6 +178,9 @@ Approach files are YAML documents with a **closed vocabulary** — any key outsi
 **Example skeleton — terse, but covers every canonical key so you never need to invent one:**
 
 ```yaml
+generated_for:
+  contact_name: Jane Doe
+  organisation: Acme Venues
 profile_date: 2026-04-12
 profile_richness: Medium
 decisions:

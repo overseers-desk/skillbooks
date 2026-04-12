@@ -209,7 +209,10 @@ proc make_base_row {{overrides {}}} {
 
 # Approach YAML templates
 proc approach_yaml_no_final {} {
-    return {decisions:
+    return {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+decisions:
   channel: email
 rounds:
 - type: draft
@@ -222,7 +225,10 @@ rounds:
 }
 
 proc approach_yaml_final_unsent {} {
-    return {decisions:
+    return {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+decisions:
   channel: email
 rounds:
 - type: final
@@ -238,7 +244,10 @@ rounds:
 }
 
 proc approach_yaml_final_sent_email {} {
-    return {decisions:
+    return {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+decisions:
   channel: email
 rounds:
 - type: final
@@ -254,7 +263,10 @@ rounds:
 }
 
 proc approach_yaml_final_replied {} {
-    return {decisions:
+    return {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+decisions:
   channel: email
 rounds:
 - type: final
@@ -270,7 +282,10 @@ rounds:
 }
 
 proc approach_yaml_final_reply_received {} {
-    return {decisions:
+    return {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+decisions:
   channel: email
 rounds:
 - type: final
@@ -290,7 +305,10 @@ rounds:
 }
 
 proc approach_yaml_final_sent_linkedin {} {
-    return {decisions:
+    return {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+decisions:
   channel: linkedin
 rounds:
 - type: final
@@ -304,7 +322,10 @@ rounds:
 }
 
 proc approach_yaml_final_multi_channel {} {
-    return {decisions:
+    return {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+decisions:
   channel: linkedin_then_email
 rounds:
 - type: final
@@ -1359,7 +1380,7 @@ section "validate_approach"
 # 12a. Valid email in to: field → no errors
 set seg_va1 [make_temp_segment]
 set va1_path [write_approach_yaml $seg_va1 "va-valid" [approach_yaml_final_unsent]]
-set va1_issues [spar::validate_approach $va1_path "test@example.com" "VA Contact"]
+set va1_issues [spar::validate_approach $va1_path "test@example.com" "Test Contact"]
 assert_eq [llength $va1_issues] 0 "validate_approach: valid email → no issues"
 
 # 12b. Placeholder to: field → placeholder_to error
@@ -1405,8 +1426,96 @@ assert_eq [dict get [lindex $va3_warnings 0] severity] "warning" "validate_appro
 # 12d. No final round → structural error (no_final_round)
 set seg_va4 [make_temp_segment]
 set va4_path [write_approach_yaml $seg_va4 "va-nofinal" [approach_yaml_no_final]]
-set va4_issues [spar::validate_approach $va4_path "test@example.com" "VA NoFinal"]
+set va4_issues [spar::validate_approach $va4_path "test@example.com" "Test Contact"]
 assert_eq [has_issue $va4_issues no_final_round] 1 "validate_approach: no final round → no_final_round error"
+
+# 12d1. Missing generated_for → error (issue #30)
+set seg_va_mgf [make_temp_segment]
+set va_mgf_path [write_approach_yaml $seg_va_mgf "va-mgf" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@example.com
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}]
+set va_mgf_issues [spar::validate_approach $va_mgf_path "test@example.com" "VA MGF" "Some Org"]
+set va_mgf_errors [issues_with_code $va_mgf_issues missing_generated_for]
+assert_eq [llength $va_mgf_errors] 1 "validate_approach: missing generated_for → missing_generated_for error"
+assert_eq [dict get [lindex $va_mgf_errors 0] severity] "error" "validate_approach: missing_generated_for severity is error"
+
+# 12d2. generated_for.contact_name differs from roster → name_desync warning
+set seg_va_nd [make_temp_segment]
+set va_nd_path [write_approach_yaml $seg_va_nd "va-nd" {generated_for:
+  contact_name: Jane Old
+  organisation: Acme Co
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@example.com
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}]
+set va_nd_issues [spar::validate_approach $va_nd_path "test@example.com" "Jane New" "Acme Co"]
+set va_nd_warnings [issues_with_code $va_nd_issues name_desync]
+assert_eq [llength $va_nd_warnings] 1 "validate_approach: generated_for.contact_name differs → name_desync warning"
+assert_eq [dict get [lindex $va_nd_warnings 0] severity] "warning" "validate_approach: name_desync severity is warning"
+
+# 12d3. generated_for.organisation differs from roster → org_desync warning
+set seg_va_od [make_temp_segment]
+set va_od_path [write_approach_yaml $seg_va_od "va-od" {generated_for:
+  contact_name: Jane Doe
+  organisation: Old Co
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@example.com
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}]
+set va_od_issues [spar::validate_approach $va_od_path "test@example.com" "Jane Doe" "New Co"]
+set va_od_warnings [issues_with_code $va_od_issues org_desync]
+assert_eq [llength $va_od_warnings] 1 "validate_approach: generated_for.organisation differs → org_desync warning"
+assert_eq [dict get [lindex $va_od_warnings 0] severity] "warning" "validate_approach: org_desync severity is warning"
+
+# 12d4. generated_for matching roster → no desync
+set seg_va_ok [make_temp_segment]
+set va_ok_path [write_approach_yaml $seg_va_ok "va-ok" {generated_for:
+  contact_name: Jane Doe
+  organisation: Acme Co
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@example.com
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}]
+set va_ok_issues [spar::validate_approach $va_ok_path "test@example.com" "Jane Doe" "Acme Co"]
+assert_eq [has_issue $va_ok_issues name_desync] 0 "validate_approach: matching name → no name_desync"
+assert_eq [has_issue $va_ok_issues org_desync] 0 "validate_approach: matching org → no org_desync"
 
 # 12e. Nonexistent file → no errors (graceful)
 set va5_issues [spar::validate_approach "/tmp/nonexistent-approach.yaml" "test@example.com" "VA Missing"]
@@ -1989,6 +2098,34 @@ set issues_vr6 [vr_issues $seg_vr6]
 assert_eq [has_issue $issues_vr6 roster_verified_but_invalid] 1 \
     "A6: verified=yes with date_excluded flagged"
 
+# ── Assertion 6 (cont.): verified=yes but p_note indicates role exit ──
+set seg_vr6b [make_temp_segment]
+write_roster_tsv $seg_vr6b $::vr_headers [list \
+    [make_vr_row {stem s1 verified yes p_note "no longer at the company"}] \
+    [make_vr_row {stem s2 verified yes p_note "replaced by Jane Smith"}] \
+]
+set issues_vr6b [vr_issues $seg_vr6b]
+assert_eq [has_issue $issues_vr6b roster_verified_but_departed] 1 \
+    "A6b: verified=yes with role-exit p_note flagged"
+
+# ── Negative: benign p_note does not trigger A6b ──
+set seg_vr6c [make_temp_segment]
+write_roster_tsv $seg_vr6c $::vr_headers [list \
+    [make_vr_row {stem s1 verified yes p_note "great contact, very responsive"}] \
+]
+set issues_vr6c [vr_issues $seg_vr6c]
+assert_eq [has_issue $issues_vr6c roster_verified_but_departed] 0 \
+    "A6c: benign p_note does not trigger roster_verified_but_departed"
+
+# ── Assertion 1 (cont.): blank contact_name with organisation is allowed ──
+set seg_vr1b [make_temp_segment]
+write_roster_tsv $seg_vr1b $::vr_headers [list \
+    [make_vr_row {stem s1 contact_name "" organisation "Known Org" email a@b.com}] \
+]
+set issues_vr1b [vr_issues $seg_vr1b]
+assert_eq [has_issue $issues_vr1b roster_placeholder_name] 0 \
+    "A1b: blank contact_name + non-empty organisation exempt (P §4.0b case)"
+
 # ── Assertion 7: response_likelihood without star_rating ──
 set seg_vr7 [make_temp_segment]
 write_roster_tsv $seg_vr7 $::vr_headers [list \
@@ -2153,6 +2290,9 @@ assert_eq [has_issue $issues_ec email_missing_content] 1 \
 
 # ── Negative test: valid approach has no structural issues ──
 set issues_valid [va_issues {
+generated_for:
+  contact_name: Test
+  organisation: Test Org
 decisions:
   channel: email
 rounds:
