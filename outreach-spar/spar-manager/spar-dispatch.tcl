@@ -346,7 +346,6 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
     # Filters
     set filter [spar::dict_get_default $cdata filter [dict create]]
     set filter_require_email [string is true -strict [spar::dict_get_default $filter require_email false]]
-    set filter_require_no_linkedin [string is true -strict [spar::dict_get_default $filter require_no_linkedin false]]
     set filter_exclude_invalid [string is true -strict [spar::dict_get_default $filter exclude_invalid true]]
     set filter_min_star [spar::dict_get_default $filter min_star 0]
     set filter_require_profile [string is true -strict [spar::dict_get_default $filter require_profile false]]
@@ -389,7 +388,7 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
 
     # --- Campaign summary data ---
     set campaign_name [spar::dict_get_default $cdata campaign]
-    set filter_desc "email=$filter_require_email no_linkedin=$filter_require_no_linkedin valid_only=$filter_exclude_invalid min_star=$filter_min_star require_profile=$filter_require_profile"
+    set filter_desc "email=$filter_require_email valid_only=$filter_exclude_invalid min_star=$filter_min_star require_profile=$filter_require_profile"
 
     # --- Build sender line ---
     set sender_line "$sender_name, $sender_role"
@@ -438,7 +437,6 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
 
             # Campaign filters
             if {$filter_require_email && ![string match *@* $email]} continue
-            if {$filter_require_no_linkedin && $linkedin ne ""} continue
             if {$filter_exclude_invalid && $date_invalid ne ""} continue
             if {$filter_min_star > 0} {
                 if {![string is integer -strict $star] || $star < $filter_min_star} continue
