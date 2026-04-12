@@ -1756,8 +1756,8 @@ proc va_issues {yaml_content {roster_email "test@example.com"} {contact_name "Te
 
 # ── invalid_yaml: unparseable file ──
 set issues_inv [va_issues "- \[unclosed"]
-assert_eq [has_issue $issues_inv yaml_parse_failed] 1 \
-    "yaml_parse_failed: unparseable YAML flagged as warning"
+assert_eq [has_issue $issues_inv invalid_yaml] 1 \
+    "invalid_yaml: unparseable YAML (fails both Tcl and Python) flagged as error"
 
 # ── missing_decisions: no decisions key ──
 set issues_md [va_issues {
