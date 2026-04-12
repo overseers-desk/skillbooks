@@ -34,7 +34,6 @@ One file per campaign, in the campaign root directory. Named `campaign.yaml` or 
 
 | Field | Type | Default | Purpose |
 |---|---|---|---|
-| `filter.require_no_linkedin` | boolean | false | Skip entries that have a LinkedIn URL (used when targeting email-only contacts) |
 | `filter.min_star` | integer | 0 | Skip entries with `star_rating` below this threshold |
 | `filter.require_profile` | boolean | false | Skip entries that have no matching profile document |
 
