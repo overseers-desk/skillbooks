@@ -216,8 +216,10 @@ proc spar::dispatch_profiles {segment_dir opts on_progress on_complete} {
         set p_note [string trim [spar::dict_get_default $row p_note]]
         set stem [string trim [spar::dict_get_default $row stem ""]]
 
-        # Skip header fragments, blank rows, invalidated entries
-        if {$name eq "" || $name eq "contact_name" || $name eq "organisation"} continue
+        # Skip header fragments and invalidated entries.
+        # Blank contact_name is allowed through: P §4.0b resolves the name
+        # when organisation is identified but no individual is yet known.
+        if {$name eq "contact_name" || $name eq "organisation"} continue
         if {$org eq ""} continue
         if {$date_invalid ne ""} continue
         if {$stem eq ""} continue

@@ -9,7 +9,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 
 ## 2. Inputs
 
-- **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, segment, discovered_via). If the roster entry has no `contact_name`, resolving one is the first task of this phase — see §4.0b. Nameless entries are P-phase leads, not invalid data.
+- **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, segment, discovered_via). If the roster entry has no `contact_name`, resolving one is the first task of this phase — see §4.0b. Entries with a blank `contact_name` are P-phase leads, not invalid data.
 - **Segment file:** The file (typically `segment.yaml`) that defines the segment's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
 - **Campaign angle table:** The list of angles defined by the campaign plan, with descriptions of when each applies. Read this before profiling — it defines what "relevant" means for this campaign.
 - **Campaign context documents:** The campaign plan names specific documents (mission statement, project pages, segment definitions) that explain the campaign's offering. Read the angle table first; read context documents only for angles that seem relevant to the target.
@@ -27,7 +27,7 @@ Additionally, P produces:
 
 ### 4.0b Resolve contact name (run before §4.0 when roster has no contact_name)
 
-If the roster entry has no `contact_name`, the entry is in the NAMELESS state — it has been discovered by sweep but no individual has been identified. The campaign pipeline tracks these entries separately from the main pipeline counts. This step must be completed before §4.0 can proceed.
+If the roster entry has no `contact_name`, the organisation has been discovered by sweep but no individual has been identified. This step must be completed before §4.0 can proceed.
 
 **Name discovery sources, in order:**
 
@@ -46,7 +46,7 @@ If the roster entry has no `contact_name`, the entry is in the NAMELESS state �
 **If no name is found after exhausting all sources:**
 - If the roster entry has no `stem`, write one using the organisation slug (e.g. `a-team-coaches` for "A-Team Coaches"). This ensures the row is identifiable in the state machine.
 - Record in `p_note`: "name search attempted [date]: no individual identified via website, Facebook, LinkedIn, ABN, web search."
-- Set `date_excluded` to today with reason "nameless — name search exhausted ([date])." This is the P-phase's responsibility — sweep does not set `date_excluded` for nameless entries.
+- Set `date_excluded` to today with reason "name search exhausted ([date])." This is the P-phase's responsibility — sweep does not set `date_excluded` for entries whose individual was never identified.
 - Do not proceed to §4.0 or produce a profile document. The roster entry is the permanent record.
 
 ### 4.0 Validate fit against segment file
@@ -270,6 +270,8 @@ For each empty contact field where a value was discovered, update the roster usi
 Only backfill emails that belong to the contact or their organisation. An email discovered for a different person mentioned in the profile (e.g. a successor, a co-admin) belongs in that person's roster row, not this one.
 
 If the person has left the relevant role entirely (e.g. left the industry, retired), mark the roster entry with `date_excluded` and the reason, then search for their replacement at the same organisation. The replacement enters the roster as a new contact with `discovered_via` recording they were found as a replacement.
+
+If after §4.4a the entry still has no email, no `linkedin_url`, and no `facebook_url`, the contact is unreachable through any messaging channel. Mark the roster entry with `date_excluded` and reason "no reachable channel ([date])." Do not produce a profile document. Phone-only contacts are not excluded here — they continue via the phone path (state-machine `has_phone_only`).
 
 **Person vs. company:** Ask whether the campaign wants this person or the person currently in this role at this company. If the answer is the role — which is true for most contacts discovered via directories or company listings — and profiling shows someone else now holds it, the roster entry is wrong. Invalidate it, add the current person, and do not pass the displaced entry to the A phase. Delete any existing profile for them; git history preserves it.
 

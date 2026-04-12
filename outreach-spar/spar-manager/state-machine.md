@@ -85,15 +85,14 @@ A contact's state is inferred from the presence and content of files in the segm
 | State | Condition |
 |-------|-----------|
 | `EXCLUDED` | Roster: `date_excluded` non-empty |
-| `NAMELESS` | Not invalid, `contact_name` is empty — organisation identified but no individual resolved yet |
-| `DISCOVERED` | Valid (not invalid, not nameless), file `profiles/{stem}.md` does not exist |
+| `DISCOVERED` | Valid (not excluded), file `profiles/{stem}.md` does not exist. Blank `contact_name` is permitted — P §4.0b resolves it before §4.1 profiling |
 | `PROFILED` | Valid, file `profiles/{stem}.md` exists, not stale |
 | `PROFILE_STALE` | Valid, `profiles/{stem}.md` exists, but stale — see §Staleness |
 | `APPROACHED` | Profiled, file `approach/{stem}.yaml` exists, no final-round message with `actioned_date` set |
 | `SENT` | `approach/{stem}.yaml` exists, final round has at least one message with `actioned_date` non-null |
 | `REPLIED` | `SENT`, and final round has a message with `replied_date` non-null, or a reply with `direction: received` |
 
-Evaluation order: `EXCLUDED` is checked first, then `NAMELESS`. A contact that is `EXCLUDED` or `NAMELESS` is never checked for any other state. States 3–8 are evaluated in order; the first match wins.
+Evaluation order: `EXCLUDED` is checked first. A contact that is `EXCLUDED` is never checked for any other state. States 2–7 are evaluated in order; the first match wins.
 
 ### Secondary properties
 
@@ -157,7 +156,7 @@ This is a hard failure, not a warning. Contact state is determined by file prese
 # segment_dir  absolute path to the segment directory
 #
 # Returns a dict:
-#   state         one of: EXCLUDED NAMELESS DISCOVERED PROFILED PROFILE_STALE
+#   state         one of: EXCLUDED DISCOVERED PROFILED PROFILE_STALE
 #                         APPROACHED SENT REPLIED
 #   profile_path  path to profile file, or empty string
 #   approach_path path to approach YAML, or empty string
@@ -178,8 +177,8 @@ A second proc aggregates across all contacts in a segment:
 ```tcl
 # classify_segment -- load roster and classify all contacts.
 #
-# Returns a list of dicts, one per roster row (including NAMELESS),
-# each being the result of classify_contact plus the original roster_row.
+# Returns a list of dicts, one per roster row, each being the result of
+# classify_contact plus the original roster_row.
 #
 proc spar::classify_segment {segment_dir} { ... }
 ```
@@ -192,7 +191,7 @@ The progress table columns are counts derived from running `classify_segment` ac
 
 | Column | What it counts | Denominator | Filter |
 |--------|----------------|-------------|--------|
-| Valid | not EXCLUDED and not NAMELESS | total roster rows | — |
+| Valid | not EXCLUDED | total roster rows | — |
 | Profile | PROFILED or above | Valid | — |
 | 3+★ | Valid and star≥3 | Valid | — |
 | A/3+★ | APPROACHED or above, star≥3 | 3+★ | — |
@@ -222,8 +221,7 @@ The transition manager filters `classify_segment` output by eligibility conditio
 
 | # | Label | Eligible contacts | Dispatch | Dispatch status |
 |---|-------|-------------------|----------|-----------------|
-| T0 | Identify contact → Discover | state = NAMELESS | spar-p-batch.tcl (§4.0b) | available |
-| T1 | Sweep → Profile | state = DISCOVERED | spar-p-batch.tcl | available |
+| T1 | Sweep → Profile | state = DISCOVERED | spar-p-batch.tcl (runs §4.0b first if `contact_name` is blank, else §4.1+) | available |
 | T2 | Profile → Approach | state = PROFILED, star≥3 | spar-a-batch.tcl | available |
 | T3 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | email send (SES) | not-implemented |
 | T4 | Send → Reply | email_sent, not email_replied | none (monitoring only) | n/a |
@@ -256,6 +254,144 @@ Each contact in a transition has one of:
 
 ---
 
+## State diagram
+
+```
+  DISCOVERED ──T1──▶ PROFILED ──T2──▶ APPROACHED ──T3──▶ SENT ──T4──▶ REPLIED
+                         │
+                         ▼
+                   PROFILE_STALE ──T6──▶ PROFILED (re-written)
+                                   ──T7──▶ APPROACHED (re-approached, deferred)
+
+  EXCLUDED — terminal; reached from any non-terminal state by setting date_excluded.
+             T4, T8, detect_duplicates skip EXCLUDED. T2 cannot reach EXCLUDED
+             because its gate requires PROFILED.
+
+  T5 — flag-invalid transition from any non-EXCLUDED state into EXCLUDED.
+  T8 — LinkedIn→Email cross-message transition within APPROACHED/SENT (same primary state).
+  T9, T10 — secondary/tertiary follow-ups (documented but not wired in transition_eligible).
+```
+
+---
+
+## Warnings catalog and cross-check with transition gates
+
+The state machine has two classes of "something is wrong" signal: **transition gates** that block a T from firing until a precondition holds, and **warnings/errors** from validator procs that surface on every `spar-progress` run. The two classes should be aligned: anything severe enough to be a warning should either (a) correspond to a gate that prevents the trouble, or (b) be flagging a condition a gate cannot reach.
+
+This section inventories both, and cross-checks them so misalignments surface.
+
+### Transition gates (formal)
+
+Each T has a state predicate plus zero or more secondary predicates that must all hold for `task_state: ready`. Where the code takes a different branch (typically `task_state: pending` with a reason), that branch is noted. `A(path)` = `_approach_validation_error(path) == ""` (approach YAML validates).
+
+| T   | State                | Secondary predicates (all, for ready)                   | Pending branch                                                 | Source            |
+|-----|----------------------|---------------------------------------------------------|----------------------------------------------------------------|-------------------|
+| T1  | DISCOVERED           | —                                                       | —                                                              | spar-state.tcl:448 |
+| T2  | PROFILED             | star ≥ 3                                                | —                                                              | spar-state.tcl:456 |
+| T3  | APPROACHED ∨ SENT    | has_email ∧ ¬email_sent ∧ A(approach_path)              | ¬has_email: "No email address". ¬A: "invalid_approach_yaml"    | spar-state.tcl:464 |
+| T4  | any ≠ EXCLUDED       | email_sent ∧ ¬email_replied ∧ A(approach_path)          | monitoring: always pending ("Waiting for reply" or invalid)    | spar-state.tcl:487 |
+| T5  | any ≠ EXCLUDED       | —                                                       | manual                                                         | spar-state.tcl:505 |
+| T6  | PROFILE_STALE        | —                                                       | PROFILE_STALE classifier not yet assigned → zero tasks         | spar-state.tcl:513 |
+| T7  | —                    | deferred                                                | zero tasks                                                     | spar-state.tcl:522 |
+| T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always pending: awaiting acceptance                            | spar-state.tcl:526 |
+| T9  | —                    | `secondary_ready` (defined in §States)                  | **Not implemented in `transition_eligible`**                   | —                  |
+| T10 | —                    | `tertiary_ready` (defined in §States)                   | **Not implemented in `transition_eligible`**                   | —                  |
+
+**Conditions no T-gate checks** (relevant for the cross-check below):
+
+- `has_email ∨ has_linkedin ∨ has_facebook` — unchecked from DISCOVERED through SENT. A PROFILED star≥3 contact with zero channels passes T2 and reaches A. A's spec §4.2 line 63 tells A to "flag for human resolution", but the state machine itself does not prevent A-dispatch.
+- `contact_name` quality — T1 has no placeholder check. A DISCOVERED row with `contact_name="Unknown"` dispatches P.
+- `validate_profile` passing — T2 asserts PROFILED by file existence, not by profile-YAML validity.
+
+### Warnings catalog
+
+Grouped by validator proc. All line numbers are in `spar-state.tcl`.
+
+#### `validate_roster` (per-segment roster quality)
+
+| Code                            | Sev     | Trigger                                               | Skipped states      | Line |
+|---------------------------------|---------|-------------------------------------------------------|---------------------|------|
+| roster_empty_stem               | error   | `stem == ""`                                          | —                   | 1569 |
+| roster_duplicate_stem           | error   | stem repeats within segment                           | —                   | 1580 |
+| roster_extra_fields             | warning | TSV row has extra columns                             | —                   | 1559 |
+| roster_verified_but_invalid     | warning | `verified=yes` ∧ `date_excluded≠""`                   | —                   | 1592 |
+| roster_placeholder_name         | warning | contact_name empty or in {unknown,n/a,tbd,placeholder}| EXCLUDED            | 1604 |
+| roster_duplicate_name_org       | warning | (name,org) pair repeats in segment                    | EXCLUDED            | 1614 |
+| roster_no_channel               | warning | ¬has_email ∧ ¬has_linkedin ∧ ¬has_facebook            | EXCLUDED            | 1626 |
+| roster_no_sweep_iteration       | warning | sweep_iteration empty                                 | EXCLUDED            | 1636 |
+| roster_likelihood_without_star  | warning | response_likelihood set, star_rating empty            | EXCLUDED            | 1646 |
+| roster_zero_star_no_invalid     | warning | star=0 ∧ date_excluded empty                          | EXCLUDED            | 1658 |
+
+#### `validate_campaign` (cross-file campaign checks)
+
+| Code                    | Sev     | Trigger                                    | Skipped states      | Line |
+|-------------------------|---------|--------------------------------------------|---------------------|------|
+| merged_contact_name     | warning | contact_name contains ` & `                | EXCLUDED            | 1419 |
+| masked_email            | error   | roster email contains `*`                  | EXCLUDED            | 1429 |
+| orphan_profile          | warning | profile file stem not in roster            | —                   | 1488 |
+| orphan_approach         | warning | approach file stem not in roster           | —                   | 1510 |
+
+#### `validate_approach` (per approach YAML, only when file exists)
+
+Codes: `invalid_yaml`, `unknown_key_<level>`, `wrong_level`, `missing_decisions`, `missing_rounds`, `no_final_round`, `draft_missing_number`, `review_missing_number`, `email_missing_content`, `placeholder_to`, `email_desync`. All errors except the `*_missing_number`, `email_missing_content`, `email_desync` warnings.
+
+#### `validate_profile` (per profile file, only when file exists)
+
+Codes: `invalid_front_matter`, `unknown_key_<level>`, `wrong_level`, `missing_<key>` (×7 required keys), `invalid_richness`, `invalid_warmth_finding`, `invalid_star_rating`, `richness_count_mismatch` (warning), `stale_<field>` (×3 warnings), `stale_date_excluded` (warning).
+
+#### `detect_duplicates` (cross-segment; skips EXCLUDED)
+
+| Code              | Sev     | Trigger                                                          |
+|-------------------|---------|------------------------------------------------------------------|
+| duplicate_to      | warning | same to-address in ≥2 approach files                             |
+| duplicate_name    | warning | same normalised name in ≥2 segments                              |
+| duplicate_email   | warning | same roster email in ≥2 segments                                 |
+| identical_subject | warning | same subject line in ≥2 unsent approach files                    |
+
+### Cross-check: warnings vs downstream gates
+
+Categories (applied in the rightmost column):
+
+- **REAL** — catches a lifecycle violation no T-gate catches. Keep.
+- **MISALIGNED** — fires in states where the condition is pending work, not trouble. Either narrow the skip list, or move the check into a downstream T-gate.
+- **OBSOLETE** — superseded by later spec changes. Delete.
+- **GAP** — condition is genuine but the check belongs in a T-gate, not a post-hoc warning. Move.
+- **AUDIT / WORK-HYGIENE / SCHEMA-DRIFT** — operator-signal, not transition-trouble. Keep at warning severity.
+- **TROUBLE** — would cause a bad outgoing action if ignored. Keep or turn into a T-gate block.
+- **HARD** — error severity; halts.
+- **REDUNDANT** — another gate catches the same condition. Safe to delete but harmless.
+
+| Code                            | States where it currently fires         | Catching T-gate                 | Category         |
+|---------------------------------|-----------------------------------------|---------------------------------|------------------|
+| roster_empty_stem               | all                                     | schema pre-check (column-level) | HARD             |
+| roster_duplicate_stem           | all                                     | —                               | HARD             |
+| roster_extra_fields             | all                                     | —                               | SCHEMA-DRIFT     |
+| roster_verified_but_invalid     | all                                     | —                               | AUDIT            |
+| roster_placeholder_name         | DISCOVERED → REPLIED                    | T1 does not gate on name        | GAP              |
+| roster_duplicate_name_org       | DISCOVERED → REPLIED                    | —                               | AUDIT            |
+| roster_no_channel               | DISCOVERED → REPLIED                    | no T-gate; P §4.11 now excludes | MISALIGNED       |
+| roster_no_sweep_iteration       | DISCOVERED → REPLIED                    | —                               | AUDIT            |
+| roster_likelihood_without_star  | DISCOVERED → REPLIED                    | —                               | REAL             |
+| roster_zero_star_no_invalid     | DISCOVERED → REPLIED                    | n/a                             | OBSOLETE         |
+| merged_contact_name             | DISCOVERED → REPLIED                    | —                               | WORK-HYGIENE     |
+| masked_email                    | DISCOVERED → REPLIED                    | T3: has_email excludes masked   | REDUNDANT        |
+| orphan_profile                  | n/a (file-scan)                         | —                               | AUDIT            |
+| orphan_approach                 | n/a (file-scan)                         | —                               | AUDIT            |
+| duplicate_to                    | APPROACHED, SENT                        | —                               | TROUBLE          |
+| duplicate_email / duplicate_name| all non-EXCLUDED                        | —                               | TROUBLE or AUDIT |
+| identical_subject               | APPROACHED (unsent)                     | —                               | WORK-HYGIENE     |
+
+### Known gaps surfaced by this cross-check
+
+1. **`roster_no_channel` fires on pre-P rows.** Condition is P's responsibility per spar-P-profile.md §4.11 (exclude on unreachability). Skip list should add the unprofiled case (star_rating blank) in addition to EXCLUDED. For post-P rows, the check becomes a canary that P's §4.11 rule was followed.
+2. **T2 has no channel gate.** `state==PROFILED ∧ star≥3` is insufficient; a P bug letting a no-channel contact through would reach A. Either add `has_email ∨ has_linkedin ∨ has_facebook` to T2, or rely wholly on P's §4.11. Cleanest: both.
+3. **T9, T10 not wired.** `transition_eligible` has no branches for them despite being listed under "Transition manager derivation". `secondary_ready` / `tertiary_ready` are computed but have no consumer.
+4. **`roster_zero_star_no_invalid` is obsolete.** spar-P-profile.md line 387 states star_rating=0 should not appear on the roster (exclusion is carried by `date_excluded` alone). Candidate for deletion.
+5. **T1 does not gate on name quality.** A DISCOVERED row with placeholder contact_name passes T1 and dispatches P on "Unknown". Either T1 should gate, or P's §4.0b should accept placeholders as input and resolve them (it does — so the current path works, but the warning is still a useful audit-signal).
+6. **T2 does not gate on `validate_profile` passing.** A malformed profile YAML is classified PROFILED and star≥3 can be whatever's in the front matter; T2 would mark it ready even though the profile file is broken. Parallel to T3's A(approach_path) check — missing symmetric P(profile_path) check at T2.
+
+---
+
 ## Testing strategy — first task
 
 Tests live in `spar-manager/test/`. The test runner is a standalone `tclsh` script: `test/run-tests.tcl`.
@@ -273,8 +409,8 @@ For filesystem-touching tests (profile/approach file detection), use `file tempf
 | Input condition | Expected state |
 |-----------------|----------------|
 | `date_excluded` set | EXCLUDED |
-| `contact_name` empty, `date_excluded` empty | NAMELESS |
 | Valid, profiles/ absent | DISCOVERED |
+| `contact_name` empty, `date_excluded` empty, profiles/ absent | DISCOVERED |
 | Valid, profiles/ exists but no match | DISCOVERED |
 | Valid, profile file matches by name+org slug | PROFILED |
 | Valid, profile matches by name-prefix only | PROFILED |

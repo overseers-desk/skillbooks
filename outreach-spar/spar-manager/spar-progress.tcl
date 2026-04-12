@@ -174,7 +174,6 @@ if {$json_mode} {
         dict for {k v} $sc { dict set totals $k [expr {[dict get $totals $k] + $v}] }
     }
     set transition_defs {
-        T0 "Identify contact \u2192 Discover"
         T1 "Sweep \u2192 Profile"   T2 "Profile \u2192 Approach"
         T3 "Approach \u2192 Send"   T4 "Send \u2192 Reply"
         T5 "Flag invalid"           T6 "Stale \u2192 Re-profile"
