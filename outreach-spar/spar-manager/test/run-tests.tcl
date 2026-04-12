@@ -1580,6 +1580,164 @@ foreach t $t0_tasks {
 assert_eq $t0_ready 1 "T0: one contact is ready (has phone)"
 assert_eq $t0_pending 1 "T0: one contact is pending (no contact method)"
 
+# ════════════════════════════════════════════════════════════════════════
+section "21. validate_roster — roster quality-checklist assertions"
+# ════════════════════════════════════════════════════════════════════════
+
+# Full headers matching the real roster format for validate_roster tests
+set ::vr_headers {
+    stem contact_name organisation role phone email linkedin_url facebook_url
+    sweep_iteration discovered_via discovery_source verified date_found_invalid
+    s_note p_note star_rating response_likelihood a_note r_note
+}
+
+proc make_vr_row {{overrides {}}} {
+    set row [dict create \
+        stem              "test-contact-test-org" \
+        contact_name      "Test Contact" \
+        organisation      "Test Org" \
+        role              "Manager" \
+        phone             "" \
+        email             "test@example.com" \
+        linkedin_url      "" \
+        facebook_url      "" \
+        sweep_iteration   "1" \
+        discovered_via    "" \
+        discovery_source  "" \
+        verified          "" \
+        date_found_invalid "" \
+        s_note            "" \
+        p_note            "" \
+        star_rating       "3" \
+        response_likelihood "" \
+        a_note            "" \
+        r_note            "" \
+    ]
+    dict for {k v} $overrides {
+        dict set row $k $v
+    }
+    return $row
+}
+
+# Helper: classify a segment and run validate_roster, return issues
+proc vr_issues {segment_dir} {
+    set contacts [spar::classify_segment $segment_dir]
+    return [spar::validate_roster $contacts]
+}
+
+# Helper: check that a specific issue code appears in the issues list
+proc has_issue {issues code} {
+    foreach i $issues {
+        if {[dict get $i code] eq $code} { return 1 }
+    }
+    return 0
+}
+
+# ── Assertion 1: placeholder contact_name ──
+set seg_vr1 [make_temp_segment]
+write_roster_tsv $seg_vr1 $::vr_headers [list \
+    [make_vr_row {stem s1 contact_name "Unknown" email a@b.com}] \
+    [make_vr_row {stem s2 contact_name "Test Real" email c@d.com}] \
+]
+set issues_vr1 [vr_issues $seg_vr1]
+assert_eq [has_issue $issues_vr1 roster_placeholder_name] 1 \
+    "A1: placeholder contact_name 'Unknown' flagged"
+
+# ── Assertion 3: duplicate (contact_name, organisation) pair ──
+set seg_vr3 [make_temp_segment]
+write_roster_tsv $seg_vr3 $::vr_headers [list \
+    [make_vr_row {stem s1 contact_name "Jane Doe" organisation "Acme" email a@b.com}] \
+    [make_vr_row {stem s2 contact_name "Jane Doe" organisation "Acme" email c@d.com}] \
+]
+set issues_vr3 [vr_issues $seg_vr3]
+assert_eq [has_issue $issues_vr3 roster_duplicate_name_org] 1 \
+    "A3: duplicate (name, org) pair flagged"
+
+# ── Assertion 4: no channel ──
+set seg_vr4 [make_temp_segment]
+write_roster_tsv $seg_vr4 $::vr_headers [list \
+    [make_vr_row {stem s1 email "" linkedin_url "" facebook_url ""}] \
+]
+set issues_vr4 [vr_issues $seg_vr4]
+assert_eq [has_issue $issues_vr4 roster_no_channel] 1 \
+    "A4: contact with no email/linkedin/facebook flagged"
+
+# ── Assertion 5: missing sweep_iteration ──
+set seg_vr5 [make_temp_segment]
+write_roster_tsv $seg_vr5 $::vr_headers [list \
+    [make_vr_row {stem s1 sweep_iteration ""}] \
+]
+set issues_vr5 [vr_issues $seg_vr5]
+assert_eq [has_issue $issues_vr5 roster_no_sweep_iteration] 1 \
+    "A5: missing sweep_iteration flagged"
+
+# ── Assertion 6: verified=yes but date_found_invalid set ──
+set seg_vr6 [make_temp_segment]
+write_roster_tsv $seg_vr6 $::vr_headers [list \
+    [make_vr_row {stem s1 verified yes date_found_invalid 2026-04-01}] \
+]
+set issues_vr6 [vr_issues $seg_vr6]
+assert_eq [has_issue $issues_vr6 roster_verified_but_invalid] 1 \
+    "A6: verified=yes with date_found_invalid flagged"
+
+# ── Assertion 7: response_likelihood without star_rating ──
+set seg_vr7 [make_temp_segment]
+write_roster_tsv $seg_vr7 $::vr_headers [list \
+    [make_vr_row {stem s1 star_rating "" response_likelihood "80"}] \
+]
+set issues_vr7 [vr_issues $seg_vr7]
+assert_eq [has_issue $issues_vr7 roster_likelihood_without_star] 1 \
+    "A7: response_likelihood without star_rating flagged"
+
+# ── Assertion 8: star_rating=0 without date_found_invalid ──
+set seg_vr8 [make_temp_segment]
+write_roster_tsv $seg_vr8 $::vr_headers [list \
+    [make_vr_row {stem s1 star_rating 0 date_found_invalid ""}] \
+]
+set issues_vr8 [vr_issues $seg_vr8]
+assert_eq [has_issue $issues_vr8 roster_zero_star_no_invalid] 1 \
+    "A8: star_rating=0 without date_found_invalid flagged"
+
+# ── Assertion 9: empty stem ──
+set seg_vr9 [make_temp_segment]
+write_roster_tsv $seg_vr9 $::vr_headers [list \
+    [make_vr_row {stem ""}] \
+]
+set issues_vr9 [vr_issues $seg_vr9]
+assert_eq [has_issue $issues_vr9 roster_empty_stem] 1 \
+    "A9: empty stem flagged as error"
+
+# ── Assertion 10: duplicate stems ──
+set seg_vr10 [make_temp_segment]
+write_roster_tsv $seg_vr10 $::vr_headers [list \
+    [make_vr_row {stem same-stem contact_name "Alice" email a@b.com}] \
+    [make_vr_row {stem same-stem contact_name "Bob" email c@d.com}] \
+]
+set issues_vr10 [vr_issues $seg_vr10]
+assert_eq [has_issue $issues_vr10 roster_duplicate_stem] 1 \
+    "A10: duplicate stems flagged as error"
+
+# ── Assertion 2: truncated row (hard error in load_roster) ──
+set seg_vr2 [make_temp_segment]
+set vr2_path [file join $seg_vr2 roster.tsv]
+set fd [open $vr2_path w]
+puts $fd [join $::vr_headers \t]
+# Write a truncated row (only 3 fields instead of 20)
+puts $fd "short-stem\tShort Name\tShort Org"
+close $fd
+assert_error {spar::load_roster $vr2_path} "*truncated row*" \
+    "A2: truncated row causes hard error in load_roster"
+
+# ── Negative test: clean roster has no validate_roster issues ──
+set seg_vr_clean [make_temp_segment]
+write_roster_tsv $seg_vr_clean $::vr_headers [list \
+    [make_vr_row {stem a1 contact_name "Alice" email a@b.com sweep_iteration 1}] \
+    [make_vr_row {stem b2 contact_name "Bob" email c@d.com sweep_iteration 1}] \
+]
+set issues_vr_clean [vr_issues $seg_vr_clean]
+assert_eq [llength $issues_vr_clean] 0 \
+    "Clean roster: no validate_roster issues"
+
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
 cleanup_temps
