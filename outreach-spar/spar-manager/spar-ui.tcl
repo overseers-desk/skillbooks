@@ -398,6 +398,7 @@ proc build_warnings {all_contacts} {
 }
 
 proc build_transitions {all_contacts} {
+    global cdata
     set labels {
         "Sweep \u2192 Profile"
         "Profile \u2192 Approach"
@@ -409,12 +410,17 @@ proc build_transitions {all_contacts} {
     }
     set tids {T1 T2 T3 T4 T6 T7 T8}
 
+    set primary_channel ""
+    if {[info exists cdata]} {
+        set primary_channel [spar::campaign_primary_channel $cdata]
+    }
+
     set result {}
     for {set i 0} {$i < [llength $labels]} {incr i} {
         set label [lindex $labels $i]
         set tid [lindex $tids $i]
 
-        set eligible [spar::transition_eligible $all_contacts $tid]
+        set eligible [spar::transition_eligible $all_contacts $tid $primary_channel]
         set count [llength $eligible]
 
         set tasks {}

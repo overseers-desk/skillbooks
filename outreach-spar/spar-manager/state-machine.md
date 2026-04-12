@@ -289,13 +289,15 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 |-----|----------------------|---------------------------------------------------------|----------------------------------------------------------------|-------------------|
 | T1  | DISCOVERED           | —                                                       | —                                                              | spar-state.tcl:448 |
 | T2  | PROFILED             | star ≥ 3                                                | —                                                              | spar-state.tcl:456 |
-| T3  | APPROACHED ∨ SENT    | has_email ∧ ¬email_sent ∧ A(approach_path)              | ¬has_email: "No email address". ¬A: "invalid_approach_yaml"    | spar-state.tcl:464 |
+| T3  | APPROACHED ∨ SENT    | primary_channel = email ∧ has_email ∧ ¬email_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬A: "invalid_approach_yaml". primary_channel ≠ email: row is omitted entirely | spar-state.tcl:464 |
 | T4  | any ≠ EXCLUDED       | email_sent ∧ ¬email_replied ∧ A(approach_path)          | monitoring: always pending ("Waiting for reply" or invalid)    | spar-state.tcl:487 |
 | T6  | PROFILE_STALE        | —                                                       | PROFILE_STALE classifier not yet assigned → zero tasks         | spar-state.tcl:513 |
 | T7  | —                    | deferred                                                | zero tasks                                                     | spar-state.tcl:522 |
 | T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always pending: awaiting acceptance                            | spar-state.tcl:526 |
 | T9  | —                    | `secondary_ready` (defined in §States)                  | **Not implemented in `transition_eligible`**                   | —                  |
 | T10 | —                    | `tertiary_ready` (defined in §States)                   | **Not implemented in `transition_eligible`**                   | —                  |
+
+[†] T3's `primary_channel = email` gate is an interim measure (issue [#49](https://github.com/SmartLayer/aesop/issues/49)). The correct long-term rule routes each unsent final-round message to T3, T8, T9, or T10 based on its slot in the primary/secondary/tertiary structure — not on channel alone. Until per-message routing is implemented, T3 conservatively refuses campaigns whose primary channel is not email, even when they carry an unsent email for the secondary/tertiary slot.
 
 **Conditions no T-gate checks** (relevant for the cross-check below):
 

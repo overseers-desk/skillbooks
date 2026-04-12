@@ -394,11 +394,18 @@ proc spar::_approach_validation_error {contact} {
 #
 # classified_contacts  output of classify_segment
 # transition           transition name: T1, T2, ... T8
+# primary_channel      campaign primary channel (bare string, e.g. "email").
+#                      Empty string = unknown; T3 conservatively yields nothing.
+#                      TODO(#49): this arg is an interim gate. Correct
+#                      per-message eligibility must route each unsent final-
+#                      round message to T3/T8/T9/T10 based on its slot in the
+#                      primary/secondary/tertiary structure, not on channel
+#                      alone. See issue #49 for acceptance criteria.
 #
 # Returns a list of dicts with keys:
 #   contact_name, organisation, segment, task_state (ready/pending/done), reason
 #
-proc spar::transition_eligible {classified_contacts transition} {
+proc spar::transition_eligible {classified_contacts transition {primary_channel ""}} {
     set results {}
 
     foreach contact $classified_contacts {
@@ -437,6 +444,14 @@ proc spar::transition_eligible {classified_contacts transition} {
                 # Approach → Send: state in {APPROACHED,SENT}, has_email, not email_sent.
                 # Gate on approach-YAML validity (#43 principle 7) — broken files
                 # surface as pending:invalid_approach_yaml instead of ready.
+                #
+                # TODO(#49): per-message routing. T3 should fire only for the
+                # primary-channel email message; email-as-secondary belongs to
+                # T9/T10 with wait_days/wait_condition gating. Until that is
+                # resolved, require primary_channel == "email" — empty or any
+                # other value yields zero tasks so a caller that forgets to
+                # pass it fails safe rather than sending.
+                if {$primary_channel ne "email"} continue
                 if {$state eq "APPROACHED" || $state eq "SENT"} {
                     set vmsg [spar::_approach_validation_error $contact]
                     if {$has_email && !$email_sent} {

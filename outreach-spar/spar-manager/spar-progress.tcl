@@ -53,10 +53,12 @@ set segments_list {}
 set skip_set {}
 set campaign_name [file tail $campaign_dir]
 set min_star 0
+set primary_channel ""
 
 if {$yaml_path ne "" && [file exists $yaml_path]} {
     set cdata [spar::load_campaign $yaml_path]
     set campaign_name [spar::dict_get_default $cdata campaign [file tail $yaml_path]]
+    set primary_channel [spar::campaign_primary_channel $cdata]
     if {[dict exists $cdata filter]} {
         set min_star [spar::dict_get_default [dict get $cdata filter] min_star 0]
     }
@@ -181,7 +183,7 @@ if {$json_mode} {
     }
     set transitions {}
     dict for {tid tlabel} $transition_defs {
-        set tasks [spar::transition_eligible $all_contacts $tid]
+        set tasks [spar::transition_eligible $all_contacts $tid $primary_channel]
         lappend transitions [dict create label "$tid: $tlabel" count [llength $tasks] tasks $tasks]
     }
     puts [progress_to_json [dict create campaign $campaign_name min_star $min_star \
