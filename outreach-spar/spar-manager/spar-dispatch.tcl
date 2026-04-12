@@ -430,6 +430,7 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
             set response_likelihood [string trim [spar::dict_get_default $row response_likelihood]]
             set s_note [string trim [spar::dict_get_default $row s_note]]
             set date_invalid [string trim [spar::dict_get_default $row date_found_invalid]]
+            set stem [string trim [spar::dict_get_default $row stem ""]]
 
             # Skip header and malformed rows
             if {$org eq "organisation" || $name eq ""} continue
@@ -457,7 +458,7 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
                 {*}$on_progress "${slug_name}-${slug_org}" skipped "approach exists"
                 continue
             }
-            if {[llength [glob -nocomplain [file join $base $segment approach "${slug_name}-*.yaml"]]] > 0} {
+            if {$stem ne "" && [file exists [file join $base $segment approach "${stem}.yaml"]]} {
                 incr skipped
                 {*}$on_progress "${slug_name}-${slug_org}" skipped "approach exists"
                 continue
