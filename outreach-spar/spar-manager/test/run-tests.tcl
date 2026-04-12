@@ -117,6 +117,14 @@ proc write_approach_yaml {segment_dir stem content} {
     return $path
 }
 
+# has_issue -- check that a specific issue code appears in an issues list.
+proc has_issue {issues code} {
+    foreach i $issues {
+        if {[dict get $i code] eq $code} { return 1 }
+    }
+    return 0
+}
+
 # Standard roster headers for most tests.
 set ::std_headers {
     contact_name organisation_name email linkedin_url facebook_url phone
@@ -1213,11 +1221,11 @@ set va3_warnings [issues_with_code $va3_issues email_desync]
 assert_eq [llength $va3_warnings] 1 "validate_approach: to: differs from roster email → email_desync warning"
 assert_eq [dict get [lindex $va3_warnings 0] severity] "warning" "validate_approach: email_desync severity is warning"
 
-# 12d. No final round → no errors
+# 12d. No final round → structural error (no_final_round)
 set seg_va4 [make_temp_segment]
 set va4_path [write_approach_yaml $seg_va4 "va-nofinal" [approach_yaml_no_final]]
 set va4_issues [spar::validate_approach $va4_path "test@example.com" "VA NoFinal"]
-assert_eq [llength $va4_issues] 0 "validate_approach: no final round → no issues"
+assert_eq [has_issue $va4_issues no_final_round] 1 "validate_approach: no final round → no_final_round error"
 
 # 12e. Nonexistent file → no errors (graceful)
 set va5_issues [spar::validate_approach "/tmp/nonexistent-approach.yaml" "test@example.com" "VA Missing"]
@@ -1625,13 +1633,6 @@ proc vr_issues {segment_dir} {
     return [spar::validate_roster $contacts]
 }
 
-# Helper: check that a specific issue code appears in the issues list
-proc has_issue {issues code} {
-    foreach i $issues {
-        if {[dict get $i code] eq $code} { return 1 }
-    }
-    return 0
-}
 
 # ── Assertion 1: placeholder contact_name ──
 set seg_vr1 [make_temp_segment]
@@ -1737,6 +1738,131 @@ write_roster_tsv $seg_vr_clean $::vr_headers [list \
 set issues_vr_clean [vr_issues $seg_vr_clean]
 assert_eq [llength $issues_vr_clean] 0 \
     "Clean roster: no validate_roster issues"
+
+# ════════════════════════════════════════════════════════════════════════
+section "22. validate_approach — structural validation (approach-schema.yaml)"
+# ════════════════════════════════════════════════════════════════════════
+
+# Helper: write YAML content to a temp file and call validate_approach
+proc va_issues {yaml_content {roster_email "test@example.com"} {contact_name "Test"}} {
+    set path [file tempfile tmpf ".yaml"]
+    set fd [open $path w]
+    puts $fd $yaml_content
+    close $fd
+    set result [spar::validate_approach $path $roster_email $contact_name]
+    file delete $path
+    return $result
+}
+
+# ── invalid_yaml: unparseable file ──
+set issues_inv [va_issues "- \[unclosed"]
+assert_eq [has_issue $issues_inv invalid_yaml] 1 \
+    "invalid_yaml: unparseable YAML flagged"
+
+# ── missing_decisions: no decisions key ──
+set issues_md [va_issues {
+rounds:
+  - type: final
+    messages:
+      - channel: email
+        subject: Hi
+        body: Hello
+}]
+assert_eq [has_issue $issues_md missing_decisions] 1 \
+    "missing_decisions: absent decisions key flagged"
+
+# ── missing_rounds: no rounds key ──
+set issues_mr [va_issues {
+decisions:
+  channel: email
+}]
+assert_eq [has_issue $issues_mr missing_rounds] 1 \
+    "missing_rounds: absent rounds key flagged"
+
+# ── no_final_round: rounds exist but none is type: final ──
+set issues_nf [va_issues {
+decisions: {}
+rounds:
+  - type: draft
+    number: 1
+    messages:
+      - channel: email
+        subject: Draft
+        body: Draft body
+}]
+assert_eq [has_issue $issues_nf no_final_round] 1 \
+    "no_final_round: no round with type=final flagged"
+
+# ── draft_missing_number: draft round without number field ──
+set issues_dn [va_issues {
+decisions: {}
+rounds:
+  - type: draft
+    messages:
+      - channel: email
+        subject: Draft
+        body: Draft body
+  - type: final
+    messages:
+      - channel: email
+        subject: Final
+        body: Final body
+        to: test@example.com
+}]
+assert_eq [has_issue $issues_dn draft_missing_number] 1 \
+    "draft_missing_number: draft round without number flagged"
+
+# ── review_missing_number: review round without number field ──
+set issues_rn [va_issues {
+decisions: {}
+rounds:
+  - type: review
+    messages:
+      - channel: email
+        subject: Review
+        body: Review body
+  - type: final
+    messages:
+      - channel: email
+        subject: Final
+        body: Final body
+        to: test@example.com
+}]
+assert_eq [has_issue $issues_rn review_missing_number] 1 \
+    "review_missing_number: review round without number flagged"
+
+# ── email_missing_content: email message with neither subject nor body ──
+set issues_ec [va_issues {
+decisions: {}
+rounds:
+  - type: final
+    messages:
+      - channel: email
+        to: test@example.com
+}]
+assert_eq [has_issue $issues_ec email_missing_content] 1 \
+    "email_missing_content: email without subject or body flagged"
+
+# ── Negative test: valid approach has no structural issues ──
+set issues_valid [va_issues {
+decisions:
+  channel: email
+rounds:
+  - type: draft
+    number: 1
+    messages:
+      - channel: email
+        subject: Draft subject
+        body: Draft body
+  - type: final
+    messages:
+      - channel: email
+        subject: Final subject
+        body: Final body
+        to: test@example.com
+}]
+assert_eq [llength $issues_valid] 0 \
+    "Valid approach: no structural issues"
 
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
