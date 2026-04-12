@@ -1548,6 +1548,50 @@ set vp14_sem [spar::validate_campaign_semantics $vp13_contacts]
 assert_eq [has_issue $vp14_sem stale_contact_name] 0 \
     "validate_campaign_semantics: skips profile checks (include_profile=0)"
 
+# 12p-q. #39 R1: profile exists but no channels and no date_excluded → error
+set seg_vp15 [make_temp_segment]
+set vp15_path [write_profile $seg_vp15 "vp-unreachable"]
+set vp15_row [dict create stem "vp-unreachable" contact_name "X" organisation "Y" \
+    role "Z" email "" linkedin_url "" facebook_url "" phone "" date_excluded ""]
+set vp15_issues [spar::validate_profile $vp15_path $vp15_row "VP Unreachable"]
+assert_eq [has_issue $vp15_issues profile_unreachable_without_exclusion] 1 \
+    "validate_profile: profile + all channels empty + no date_excluded → profile_unreachable_without_exclusion"
+
+# 12p-r. #39 R1: date_excluded set → no error (P honoured §4.4a)
+set seg_vp16 [make_temp_segment]
+set vp16_path [write_profile $seg_vp16 "vp-excluded" -date_excluded "2026-04-12"]
+set vp16_row [dict create stem "vp-excluded" contact_name "X" organisation "Y" \
+    role "Z" email "" linkedin_url "" facebook_url "" phone "" date_excluded "2026-04-12"]
+set vp16_issues [spar::validate_profile $vp16_path $vp16_row "VP Excluded"]
+assert_eq [has_issue $vp16_issues profile_unreachable_without_exclusion] 0 \
+    "validate_profile: all channels empty but date_excluded set → no R1 error"
+
+# 12p-s. #39 R1: phone-only contact is reachable (phone path per §4.4a)
+set seg_vp17 [make_temp_segment]
+set vp17_path [write_profile $seg_vp17 "vp-phoneonly"]
+set vp17_row [dict create stem "vp-phoneonly" contact_name "X" organisation "Y" \
+    role "Z" email "" linkedin_url "" facebook_url "" phone "0400000000" date_excluded ""]
+set vp17_issues [spar::validate_profile $vp17_path $vp17_row "VP PhoneOnly"]
+assert_eq [has_issue $vp17_issues profile_unreachable_without_exclusion] 0 \
+    "validate_profile: phone-only contact → no R1 error"
+
+# 12p-t. #39 R1: one channel present → no error
+set seg_vp18 [make_temp_segment]
+set vp18_path [write_profile $seg_vp18 "vp-haslinkedin"]
+set vp18_row [dict create stem "vp-haslinkedin" contact_name "X" organisation "Y" \
+    role "Z" email "" linkedin_url "https://linkedin.com/in/x" facebook_url "" \
+    phone "" date_excluded ""]
+set vp18_issues [spar::validate_profile $vp18_path $vp18_row "VP HasLinkedIn"]
+assert_eq [has_issue $vp18_issues profile_unreachable_without_exclusion] 0 \
+    "validate_profile: LinkedIn present → no R1 error"
+
+# 12p-u. #39 R1: empty roster_row (orphan) → no R1 error (orphan is separate check)
+set seg_vp19 [make_temp_segment]
+set vp19_path [write_profile $seg_vp19 "vp-orphan"]
+set vp19_issues [spar::validate_profile $vp19_path [dict create] "VP Orphan"]
+assert_eq [has_issue $vp19_issues profile_unreachable_without_exclusion] 0 \
+    "validate_profile: empty roster_row → no R1 error (orphan check is separate)"
+
 # ════════════════════════════════════════════════════════════════════════
 # 13. Golden snapshot (real campaign data)
 # ════════════════════════════════════════════════════════════════════════
