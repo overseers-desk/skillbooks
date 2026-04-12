@@ -121,25 +121,34 @@ proc spar::dispatch_profiles {segment_dir opts on_progress on_complete} {
         set date_invalid [string trim [spar::dict_get_default $row date_excluded]]
         set s_note [string trim [spar::dict_get_default $row s_note]]
         set p_note [string trim [spar::dict_get_default $row p_note]]
+        set stem [string trim [spar::dict_get_default $row stem ""]]
 
         # Skip header fragments, blank rows, invalidated entries
         if {$name eq "" || $name eq "contact_name" || $name eq "organisation"} continue
         if {$org eq ""} continue
         if {$date_invalid ne ""} continue
+        if {$stem eq ""} continue
 
         set slug_name [spar::slugify $name]
         set slug_org [spar::slugify $org]
-        set outfile [file join $profile_dir "profile-${slug_name}-${slug_org}.md"]
+        set outfile [file join $profile_dir "${stem}.md"]
+        # Legacy path: profiles authored before SmartLayer/aesop#45. Still
+        # counts as "profile exists" until migration is complete.
+        set legacy_outfile [file join $profile_dir "profile-${stem}.md"]
 
         # Skip if profile already exists
-        if {[file exists $outfile] || [spar::profile_exists $profile_dir $slug_name $slug_org]} {
+        if {[file exists $outfile] || [file exists $legacy_outfile]} {
             incr skipped
-            {*}$on_progress "${slug_name}-${slug_org}" skipped "profile exists"
+            {*}$on_progress $stem skipped "profile exists"
             continue
         }
 
         incr count
-        set prompt_slug [format "%03d-%s-%s" $count $slug_name $slug_org]
+        # Prompt filename = stem. Keeping slug == stem makes the DbC-Post
+        # handler's roster-row lookup and validate_profile lookup trivial
+        # (no slug → stem decoding required). Prompt files are processed in
+        # alphabetical order rather than insertion order; fine for P batches.
+        set prompt_slug $stem
         set prompt_file [file join $prompts_dir "${prompt_slug}.txt"]
 
         set antifacts_line ""
@@ -158,8 +167,9 @@ $antifacts_line
 
 Output file: $outfile
 Roster file: $roster_path
+Roster stem (file must be named exactly {stem}.md): $stem
 
-Follow SPAR-P §5 profile structure exactly. After writing the profile, follow SPAR-P §4.9 to write star_rating to the roster TSV (not to the profile document). Then follow §4.11 to backfill any missing contact details (email, linkedin_url, facebook_url) and replace stale contacts discovered during research with the person currently in the role. Never write a masked or redacted email address (e.g. 'b***@example.com') to the roster — if the only email found is masked, leave the field empty.
+Follow SPAR-P §5 profile structure exactly. The profile MUST begin with a YAML front-matter block (see §5.1) carrying profile_date, star_rating, richness, richness_count, warmth_finding, applicable_angles, and a dependent_data snapshot of contact_name, organisation, role, and date_excluded from the roster. After writing the profile, follow SPAR-P §4.9 to write star_rating to the roster TSV as well (both the profile front matter and the TSV carry it — the profile is the authorial home, the TSV is the query-optimised copy). Then follow §4.11 to backfill any missing contact details (email, linkedin_url, facebook_url) and replace stale contacts discovered during research with the person currently in the role. Never write a masked or redacted email address (e.g. 'b***@example.com') to the roster — if the only email found is masked, leave the field empty.
 Web search is the primary research method. Use Chromium only when the target has a LinkedIn or Facebook URL and WebFetch returns insufficient data. Wrap Chromium with flock: flock /tmp/chromium.lock /snap/bin/chromium --headless --dump-dom --virtual-time-budget=30000 --window-size=1920,10000 --user-data-dir=\"\$HOME/snap/chromium/common/chromium\" \"URL\" 2>/dev/null
 
 $sqlite3_skill_text"
@@ -248,14 +258,22 @@ proc spar::_p_on_worker_done {sid pipe slug} {
                 incr _p_state($sid,failed)
             } else {
                 # DbC-Post: pair for the launch in _p_start_next. Re-check what
-                # the agent wrote — masked emails in the roster are the most
-                # common P-phase regression. Uses spar::is_masked_email, the same
-                # check that validate_campaign/spar-progress.tcl reports on.
-                # Currently scoped to email only; broader post-validation
-                # (re-run validate_roster on the affected row) is a known gap.
+                # the agent wrote. Two checks, in order:
+                #   1. Masked-email guardrail on the roster row (historical).
+                #   2. validate_profile on the written {stem}.md — structural
+                #      + staleness check per spar-P-profile.md §5.1/§5.3
+                #      (SmartLayer/aesop#45). An error-severity issue here is
+                #      agent-introduced damage; mark the worker failed so the
+                #      human sees the specific reason.
                 _p_sanitise_roster_email $sid $slug
-                {*}$_p_state($sid,on_progress) $slug done ""
-                incr _p_state($sid,completed)
+                set verr [_p_profile_validation_error $sid $slug]
+                if {$verr ne ""} {
+                    {*}$_p_state($sid,on_progress) $slug failed "invalid_profile: $verr"
+                    incr _p_state($sid,failed)
+                } else {
+                    {*}$_p_state($sid,on_progress) $slug done ""
+                    incr _p_state($sid,completed)
+                }
             }
         }
         return
@@ -299,6 +317,37 @@ proc spar::_p_sanitise_roster_email {sid slug} {
     if {$dirty} {
         spar::write_roster $roster $updated
     }
+}
+
+# _p_profile_validation_error — DbC-Post half-pair for the P AI call. Given
+# a worker that just wrote profiles/{slug}.md, validate it against the
+# front-matter contract (see spar-state.tcl::validate_profile and
+# spar-P-profile.md §5.1). Returns the first error-severity message, or "" if
+# the profile validates clean. Staleness warnings are not returned as errors
+# — fresh profiles from a current roster should not be stale.
+proc spar::_p_profile_validation_error {sid slug} {
+    variable _p_state
+    set seg_dir $_p_state($sid,segment_dir)
+    set profile_path [file join $seg_dir profiles "${slug}.md"]
+    if {![file exists $profile_path]} {
+        return "worker exited cleanly but ${slug}.md was not produced"
+    }
+    set roster [file join $seg_dir roster.tsv]
+    set row [dict create]
+    if {[file exists $roster]} {
+        foreach r [spar::load_roster $roster] {
+            if {[spar::dict_get_default $r stem ""] eq $slug} {
+                set row $r
+                break
+            }
+        }
+    }
+    foreach issue [spar::validate_profile $profile_path $row $slug] {
+        if {[dict get $issue severity] eq "error"} {
+            return [dict get $issue message]
+        }
+    }
+    return ""
 }
 
 proc spar::_p_cleanup {sid} {
@@ -471,8 +520,16 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
                 continue
             }
 
-            # Profile lookup
-            set profile_path [spar::find_profile $profile_dir $slug_name $slug_org]
+            # Profile lookup — {stem}.md (post SmartLayer/aesop#45). Legacy
+            # profile-{stem}.md files are ignored by the dispatcher; migrate them
+            # via spar-manager/migrate-profile-naming.tcl.
+            set profile_path ""
+            if {$stem ne ""} {
+                set candidate [file join $profile_dir "${stem}.md"]
+                if {[file exists $candidate]} {
+                    set profile_path $candidate
+                }
+            }
             set max_rounds 1
             if {$profile_path ne ""} {
                 set profile_a1_instruction "3. Profile: $profile_path"

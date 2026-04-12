@@ -20,12 +20,12 @@ Columns are ordered left-to-right by pipeline stage: identity, contact channels,
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
-| 1 | stem | filename stem (mandatory) | S | P, A, state machine | Unique contact ID, set at discovery. Slug form: `firstname-lastname-organisation`. Derives file paths: profile at `profiles/profile-{stem}.md`, approach at `approach/{stem}.yaml`. Must be unique within the segment. Never changes after creation. |
+| 1 | stem | filename stem (mandatory) | S | P, A, state machine | Unique contact ID, set at discovery. Slug form: `firstname-lastname-organisation`. Derives file paths: profile at `profiles/{stem}.md`, approach at `approach/{stem}.yaml`. Must be unique within the segment. Never changes after creation. |
 | 2 | contact_name | text (mandatory) | S | P, A, R | Identity anchor — no row without this |
 | 3 | organisation | text | S; P corrects | P, A | Org at discovery time; P updates if stale |
 | 4 | role | text | S; P corrects | P, A | Title at discovery time; P updates if stale |
 
-**Design note:** `stem` is set at sweep time — not at profile creation — so that it is the stable primary key throughout the entire pipeline. Because `stem` exists from the moment a contact enters the roster, SPAR-P and SPAR-A do not write back to the roster to record their artefact names; they simply create their files at the paths derived from the pre-existing `stem` (`profiles/profile-{stem}.md` and `approach/{stem}.yaml` respectively). Contact state is therefore determined by file existence on disk, not by TSV field values.
+**Design note:** `stem` is set at sweep time — not at profile creation — so that it is the stable primary key throughout the entire pipeline. Because `stem` exists from the moment a contact enters the roster, SPAR-P and SPAR-A do not write back to the roster to record their artefact names; they simply create their files at the paths derived from the pre-existing `stem` (`profiles/{stem}.md` and `approach/{stem}.yaml` respectively). Contact state is therefore determined by file existence on disk, not by TSV field values.
 
 ### Contact channels
 
@@ -73,7 +73,7 @@ Columns 15–19 are empty during S and populated progressively as the contact mo
 | Phase | Full artefact | Note column |
 |---|---|---|
 | S | Roster row (this is S's primary output) | s_note: why this person was included |
-| P | Profile document (`profile-name-org.md`) | p_note: one-line relevance summary and routing for A |
+| P | Profile document (`profiles/{stem}.md` with YAML front matter) | p_note: one-line relevance summary and routing for A |
 | A | Approach file (`{stem}.yaml`) and comms index entry | a_note: angle and outcome summary for R |
 | R | Strategy revision notes (`strategy-revision-[band].md`) | r_note: per-contact observation from the human reviewer |
 
@@ -118,9 +118,9 @@ These assertions apply to the core columns. Campaign-specific checks are defined
 This document defines the roster schema. The operational procedures for populating it are:
 
 - **SPAR-S** (`spar-S-search.md`) — populates columns 1–14 (including `stem` at discovery)
-- **SPAR-P** (`spar-P-profile.md`) — populates columns 15–17, corrects columns 3–8 and 12–13; creates `profiles/profile-{stem}.md` using the pre-existing `stem` but does not write back to the roster
+- **SPAR-P** (`spar-P-profile.md`) — populates columns 15–17, corrects columns 3–8 and 12–13; creates `profiles/{stem}.md` using the pre-existing `stem` but does not write back to the roster
 - **SPAR-A** (`spar-A-approach.md`) — populates column 18; creates `approach/{stem}.yaml` using the pre-existing `stem` but does not write back to the roster
 - **R** (human, no procedure document) — populates column 19
-- **spar-state.tcl** — reads `stem` from the roster and checks for the presence of `profiles/profile-{stem}.md` and `approach/{stem}.yaml` on disk to classify contact state; never writes to the roster
+- **spar-state.tcl** — reads `stem` from the roster and checks for the presence of `profiles/{stem}.md` and `approach/{stem}.yaml` on disk to classify contact state; never writes to the roster
 
 SPAR-S §4 currently contains a roster format definition that predates this document. When SPAR-S is next revised, §4 should reference this document rather than defining the format inline.

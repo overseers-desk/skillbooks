@@ -68,7 +68,7 @@ if {[llength $issues] > 0} { ... resume agent with the diff ... }
 
 | AI call | Orchestration site | Pre-check | Post-check |
 |---|---|---|---|
-| P-phase profile generation | `spar-dispatch.tcl::_p_start_next` | `validate_roster` on segment | `validate_roster` + `_p_sanitise_roster_email` |
+| P-phase profile generation | `spar-dispatch.tcl::_p_start_next` | `validate_roster` on segment | `validate_roster` + `_p_sanitise_roster_email` + `validate_profile` |
 | A-phase author draft | `spar-a-worker.tcl` author section | meta.env + roster row complete | draft markers extractable |
 | A-phase challenger spar | `spar-a-worker.tcl` spar loop | profile + draft accessible | verdict marker extractable |
 | A-phase author revision | `spar-a-worker.tcl` rev loop | challenger feedback present | draft + rationale markers extractable |
@@ -86,9 +86,9 @@ A contact's state is inferred from the presence and content of files in the segm
 |-------|-----------|
 | `EXCLUDED` | Roster: `date_excluded` non-empty |
 | `NAMELESS` | Not invalid, `contact_name` is empty — organisation identified but no individual resolved yet |
-| `DISCOVERED` | Valid (not invalid, not nameless), file `profiles/profile-{stem}.md` does not exist |
-| `PROFILED` | Valid, file `profiles/profile-{stem}.md` exists, not stale |
-| `PROFILE_STALE` | Valid, `profiles/profile-{stem}.md` exists, but stale — see §Staleness |
+| `DISCOVERED` | Valid (not invalid, not nameless), file `profiles/{stem}.md` does not exist |
+| `PROFILED` | Valid, file `profiles/{stem}.md` exists, not stale |
+| `PROFILE_STALE` | Valid, `profiles/{stem}.md` exists, but stale — see §Staleness |
 | `APPROACHED` | Profiled, file `approach/{stem}.yaml` exists, no final-round message with `actioned_date` set |
 | `SENT` | `approach/{stem}.yaml` exists, final round has at least one message with `actioned_date` non-null |
 | `REPLIED` | `SENT`, and final round has a message with `replied_date` non-null, or a reply with `direction: received` |
@@ -122,7 +122,14 @@ The approach YAML's final round can contain multiple messages (e.g., one LinkedI
 
 ### Staleness
 
-`PROFILE_STALE` condition is not yet formally defined. The mock UI shows it as a manually identified state (e.g., "cross-ref update from another contact"). Defer to a later design decision; for now, treat all profiled contacts as non-stale.
+`PROFILE_STALE` is raised when the profile's front-matter `dependent_data` snapshot diverges from the current roster row. The profile document captures, at generation time, the roster fields whose subsequent change should invalidate P's assessment; comparing the snapshot against the live roster row is the staleness test.
+
+**Snapshotted fields and divergence rules** (full spec in `spar-P-profile.md` §5.3):
+
+- `contact_name`, `organisation`, `role` — any difference is staleness.
+- `date_excluded` — **asymmetric**. Stale iff snapshot holds a date and current value is empty (contact was re-validated after exclusion). The reverse (empty → date) is not staleness — EXCLUDED state supersedes.
+
+A profile missing its front matter, or with unparseable front matter, is classified as `PROFILED` at the file-existence level but `validate_profile` emits an error; it is not marked `PROFILE_STALE`. Staleness is about roster-vs-snapshot divergence, not file integrity.
 
 ---
 
@@ -134,7 +141,7 @@ The approach YAML's final round can contain multiple messages (e.g., one LinkedI
 Error: roster missing required column 'stem' — run schema migration before using spar-state.tcl
 ```
 
-This is a hard failure, not a warning. Contact state is determined by file presence on disk (`profiles/profile-{stem}.md`, `approach/{stem}.yaml`); without `stem` those paths cannot be constructed.
+This is a hard failure, not a warning. Contact state is determined by file presence on disk (`profiles/{stem}.md`, `approach/{stem}.yaml`); without `stem` those paths cannot be constructed.
 
 ---
 
@@ -326,7 +333,7 @@ Key locations in `../bin/update-campaign.py` and their redesign counterparts:
 | `classify_approach_gaps()` (line 343) | Matches 3+★ contacts to approach files; detects missing/unsent | Folded into `classify_contact` — approach state is per-contact, not a gap analysis |
 | `scan_approach_dir()` (line 390) | Scans approach directory for sent/replied/to-address | Replaced by reading the approach YAML once per contact in `classify_contact`; per-segment aggregation in `classify_segment` |
 | Segment loop (line 583–696) | Iterates over segments, accumulates 8-tuple of counts | Replaced by `classify_segment` returning a list of contact dicts; progress table columns are projections, computed on demand |
-| `build_profile_index()` (via spar_lib) | Builds a dict of all profile files in a directory for fast lookup | **Not used in spar-state.tcl.** Profile presence is determined by checking `profiles/profile-{stem}.md` directly using the `stem` from the roster row; no directory scan is needed. `spar::build_profile_index` remains in spar-lib.tcl for other callers (e.g., spar-p-batch) but is not called during state classification. |
+| `build_profile_index()` (via spar_lib) | Builds a dict of all profile files in a directory for fast lookup | **Not used in spar-state.tcl.** Profile presence is determined by checking `profiles/{stem}.md` directly using the `stem` from the roster row; no directory scan is needed. `spar::build_profile_index` remains in spar-lib.tcl for other callers (e.g., spar-p-batch) but is not called during state classification. |
 | Duplicate detection (lines 554–668) | Accumulates email/name/subject maps across segments | Becomes a cross-segment pass over the full classified-contacts list |
 
 **What the Python code does not have (new in the redesign):**

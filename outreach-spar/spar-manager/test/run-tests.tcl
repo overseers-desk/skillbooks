@@ -97,12 +97,69 @@ proc write_roster_tsv {segment_dir headers rows} {
     return $path
 }
 
-# write_profile -- create a minimal profile .md file.
-proc write_profile {segment_dir stem} {
-    set path [file join $segment_dir profiles "profile-${stem}.md"]
+# write_profile -- create a profile .md file with valid YAML front matter.
+# The dependent_data block is emitted as an empty mapping by default; the
+# staleness check in classify_contact / validate_profile skips fields absent
+# from the snapshot, so an empty dependent_data never flags stale. Tests that
+# exercise staleness populate the snapshot explicitly via args, e.g.:
+#   write_profile $seg alice -contact_name "Alice Smith" -organisation "Acme"
+# Keys accepted in args:
+#   -profile_date -star_rating -richness -richness_count -warmth_finding
+#   -applicable_angle   (single slug; default "default-angle")
+#   -contact_name -organisation -role -date_excluded  (snapshot fields)
+proc write_profile {segment_dir stem args} {
+    set path [file join $segment_dir profiles "${stem}.md"]
+    array set opts {
+        -profile_date    2026-04-12
+        -star_rating     4
+        -richness        thin
+        -richness_count  2
+        -warmth_finding  cold
+        -applicable_angle default-angle
+    }
+    array set snap {}
+    foreach {k v} $args {
+        if {$k in {-contact_name -organisation -role -date_excluded}} {
+            set snap([string range $k 1 end]) $v
+        } else {
+            set opts($k) $v
+        }
+    }
+
     set fd [open $path w]
+    puts $fd "---"
+    puts $fd "profile_date: $opts(-profile_date)"
+    puts $fd "star_rating: $opts(-star_rating)"
+    puts $fd "richness: $opts(-richness)"
+    puts $fd "richness_count: $opts(-richness_count)"
+    puts $fd "warmth_finding: $opts(-warmth_finding)"
+    puts $fd "applicable_angles:"
+    puts $fd "  - $opts(-applicable_angle)"
+    if {[array size snap] == 0} {
+        puts $fd "dependent_data: {}"
+    } else {
+        puts $fd "dependent_data:"
+        foreach k {contact_name organisation role date_excluded} {
+            if {[info exists snap($k)]} {
+                puts $fd "  ${k}: $snap($k)"
+            }
+        }
+    }
+    puts $fd "---"
+    puts $fd ""
     puts $fd "# Profile: $stem"
-    puts $fd "Richness: Thin"
+    puts $fd ""
+    puts $fd "Minimal body for test fixture."
+    close $fd
+    return $path
+}
+
+# write_profile_raw -- write exact raw content to profiles/{stem}.md. For tests
+# that need a deliberately malformed profile (missing fences, bad YAML, etc.).
+proc write_profile_raw {segment_dir stem content} {
+    set path [file join $segment_dir profiles "${stem}.md"]
+    set fd [open $path w]
+    puts -nonewline $fd $content
     close $fd
     return $path
 }
@@ -1372,6 +1429,124 @@ set cv_va6 [spar::classify_segment $seg_va6]
 set issues_va6 [spar::validate_campaign $cv_va6]
 set pt_va6 [issues_with_code $issues_va6 placeholder_to]
 assert_eq [llength $pt_va6] 1 "validate_campaign: still detects placeholder_to via validate_approach delegation"
+
+# ════════════════════════════════════════════════════════════════════════
+# 12p. validate_profile (per-file front-matter check, SmartLayer/aesop#45)
+# ════════════════════════════════════════════════════════════════════════
+section "validate_profile"
+
+# 12p-a. Valid front matter → no errors
+set seg_vp1 [make_temp_segment]
+set vp1_path [write_profile $seg_vp1 "vp-valid"]
+set vp1_row [make_base_row {stem "vp-valid"}]
+set vp1_issues [spar::validate_profile $vp1_path $vp1_row "VP Valid"]
+assert_eq [llength $vp1_issues] 0 "validate_profile: valid front matter → no issues"
+
+# 12p-b. Missing fences → invalid_front_matter error
+set seg_vp2 [make_temp_segment]
+set vp2_path [write_profile_raw $seg_vp2 "vp-nofm" "# Profile\n\nNo front matter here.\n"]
+set vp2_issues [spar::validate_profile $vp2_path [make_base_row] "VP NoFM"]
+assert_eq [has_issue $vp2_issues invalid_front_matter] 1 "validate_profile: missing fences → invalid_front_matter"
+
+# 12p-c. Unparseable YAML in front matter → invalid_front_matter error
+# Use a structure YAML cannot parse: mismatched indentation with a block seq inside a mapping.
+set seg_vp3 [make_temp_segment]
+set vp3_path [write_profile_raw $seg_vp3 "vp-badyaml" "---\nkey: value\n  - broken\n \tmixed indent with tab\n---\nbody"]
+set vp3_issues [spar::validate_profile $vp3_path [make_base_row] "VP BadYAML"]
+assert_eq [has_issue $vp3_issues invalid_front_matter] 1 "validate_profile: unparseable YAML → invalid_front_matter"
+
+# 12p-d. Unknown top-level key → unknown_key_root error
+set seg_vp4 [make_temp_segment]
+set vp4_path [write_profile_raw $seg_vp4 "vp-unknown" "---\nprofile_date: 2026-04-12\nstar_rating: 3\nrichness: thin\nrichness_count: 2\nwarmth_finding: cold\napplicable_angles:\n  - foo\ndependent_data: {}\nrogue_key: oops\n---\nbody"]
+set vp4_issues [spar::validate_profile $vp4_path [make_base_row] "VP Unknown"]
+assert_eq [has_issue $vp4_issues unknown_key_root] 1 "validate_profile: unknown root key → unknown_key_root"
+
+# 12p-e. invalid_richness — value outside enum
+set seg_vp5 [make_temp_segment]
+set vp5_path [write_profile $seg_vp5 "vp-rich" -richness "sparkly"]
+set vp5_issues [spar::validate_profile $vp5_path [make_base_row] "VP Richness"]
+assert_eq [has_issue $vp5_issues invalid_richness] 1 "validate_profile: richness 'sparkly' → invalid_richness"
+
+# 12p-f. invalid_warmth_finding
+set seg_vp6 [make_temp_segment]
+set vp6_path [write_profile $seg_vp6 "vp-warm" -warmth_finding "lukewarm"]
+set vp6_issues [spar::validate_profile $vp6_path [make_base_row] "VP Warmth"]
+assert_eq [has_issue $vp6_issues invalid_warmth_finding] 1 "validate_profile: warmth_finding 'lukewarm' → invalid_warmth_finding"
+
+# 12p-g. invalid_star_rating (0 must not appear)
+set seg_vp7 [make_temp_segment]
+set vp7_path [write_profile $seg_vp7 "vp-star0" -star_rating 0]
+set vp7_issues [spar::validate_profile $vp7_path [make_base_row] "VP Star0"]
+assert_eq [has_issue $vp7_issues invalid_star_rating] 1 "validate_profile: star_rating 0 → invalid_star_rating"
+
+# 12p-h. Missing required key (richness omitted)
+set seg_vp8 [make_temp_segment]
+set vp8_path [write_profile_raw $seg_vp8 "vp-miss" "---\nprofile_date: 2026-04-12\nstar_rating: 3\nrichness_count: 2\nwarmth_finding: cold\napplicable_angles:\n  - foo\ndependent_data: {}\n---\nbody"]
+set vp8_issues [spar::validate_profile $vp8_path [make_base_row] "VP Missing"]
+assert_eq [has_issue $vp8_issues missing_richness] 1 "validate_profile: missing richness → missing_richness"
+
+# 12p-i. Staleness — snapshot contact_name differs from roster
+set seg_vp9 [make_temp_segment]
+set vp9_path [write_profile $seg_vp9 "vp-stale-name" \
+    -contact_name "Old Name" -organisation "SomeOrg" -role "SomeRole" -date_excluded null]
+set vp9_row [dict create stem "vp-stale-name" contact_name "New Name" \
+    organisation "SomeOrg" role "SomeRole" date_excluded ""]
+set vp9_issues [spar::validate_profile $vp9_path $vp9_row "VP StaleName"]
+assert_eq [has_issue $vp9_issues stale_contact_name] 1 "validate_profile: contact_name drift → stale_contact_name"
+
+# 12p-j. Staleness — date_excluded asymmetric: date → empty = stale
+set seg_vp10 [make_temp_segment]
+set vp10_path [write_profile $seg_vp10 "vp-stale-date" \
+    -contact_name "Same" -organisation "Same" -role "Same" -date_excluded 2026-01-01]
+set vp10_row [dict create stem "vp-stale-date" contact_name "Same" \
+    organisation "Same" role "Same" date_excluded ""]
+set vp10_issues [spar::validate_profile $vp10_path $vp10_row "VP StaleDate"]
+assert_eq [has_issue $vp10_issues stale_date_excluded] 1 \
+    "validate_profile: snapshot date_excluded set, current empty → stale_date_excluded"
+
+# 12p-k. Staleness — date_excluded asymmetric: empty → date = NOT stale (EXCLUDED supersedes)
+set seg_vp11 [make_temp_segment]
+set vp11_path [write_profile $seg_vp11 "vp-not-stale" \
+    -contact_name "Same" -organisation "Same" -role "Same" -date_excluded null]
+set vp11_row [dict create stem "vp-not-stale" contact_name "Same" \
+    organisation "Same" role "Same" date_excluded "2026-04-10"]
+set vp11_issues [spar::validate_profile $vp11_path $vp11_row "VP NotStale"]
+assert_eq [has_issue $vp11_issues stale_date_excluded] 0 \
+    "validate_profile: snapshot empty, current has date → NOT stale (reverse direction)"
+
+# 12p-l. Nonexistent file → no issues (graceful, mirrors validate_approach)
+set vp12_issues [spar::validate_profile "/tmp/nonexistent-profile.md" [make_base_row] "VP Missing"]
+assert_eq [llength $vp12_issues] 0 "validate_profile: nonexistent file → no issues"
+
+# 12p-m. PROFILE_STALE classification via classify_contact
+set seg_vp13 [make_temp_segment]
+write_profile $seg_vp13 "vp-classify-stale" \
+    -contact_name "Was Called This" -organisation "Same Org" -role "Same Role"
+set vp13_roster [list stem contact_name organisation role date_excluded email]
+set vp13_tsv [file join $seg_vp13 roster.tsv]
+set fd [open $vp13_tsv w]
+puts $fd [join $vp13_roster \t]
+puts $fd [join [list "vp-classify-stale" "Is Called This Now" "Same Org" "Same Role" "" "x@y.com"] \t]
+close $fd
+set vp13_contacts [spar::classify_segment $seg_vp13]
+set vp13_state [dict get [lindex $vp13_contacts 0] state]
+assert_eq $vp13_state "PROFILE_STALE" "classify_contact: snapshot ≠ roster → PROFILE_STALE"
+
+# 12p-n. PROFILE_STALE appears as T6 transition target
+set vp13_t6 [spar::transition_eligible $vp13_contacts "T6"]
+set vp13_t6_names [lmap c $vp13_t6 {dict get $c contact_name}]
+assert_eq [expr {"Is Called This Now" in $vp13_t6_names}] 1 \
+    "T6: PROFILE_STALE contact is eligible for re-profile"
+
+# 12p-o. validate_campaign integration: staleness warning flows through
+set vp14_issues [spar::validate_campaign $vp13_contacts]
+assert_eq [has_issue $vp14_issues stale_contact_name] 1 \
+    "validate_campaign: profile staleness surfaces through include_profile path"
+
+# 12p-p. validate_campaign_semantics skips include_profile (progress-only path)
+set vp14_sem [spar::validate_campaign_semantics $vp13_contacts]
+assert_eq [has_issue $vp14_sem stale_contact_name] 0 \
+    "validate_campaign_semantics: skips profile checks (include_profile=0)"
 
 # ════════════════════════════════════════════════════════════════════════
 # 13. Golden snapshot (real campaign data)
