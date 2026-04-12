@@ -22,8 +22,8 @@ namespace eval spar {
 #                 status is one of: started, done, failed, skipped
 # on_complete   callback prefix: {total_done total_failed}
 #
-# Returns immediately after launching the first batch of workers (or after
-# dry-run scan). Calls on_complete when all workers finish.
+# Returns immediately after launching the first batch of harnesses (or
+# after dry-run scan). Calls on_complete when all harnesses finish.
 #
 proc spar::dispatch_profiles {segment_dir opts on_progress on_complete} {
     set segment_dir [file normalize $segment_dir]
@@ -129,8 +129,6 @@ proc spar::dispatch_profiles {segment_dir opts on_progress on_complete} {
         if {$date_invalid ne ""} continue
         if {$stem eq ""} continue
 
-        set slug_name [spar::slugify $name]
-        set slug_org [spar::slugify $org]
         set outfile [file join $profile_dir "${stem}.md"]
         # Legacy path: profiles authored before SmartLayer/aesop#45. Still
         # counts as "profile exists" until migration is complete.
@@ -144,12 +142,10 @@ proc spar::dispatch_profiles {segment_dir opts on_progress on_complete} {
         }
 
         incr count
-        # Prompt filename = stem. Keeping slug == stem makes the DbC-Post
-        # handler's roster-row lookup and validate_profile lookup trivial
-        # (no slug → stem decoding required). Prompt files are processed in
-        # alphabetical order rather than insertion order; fine for P batches.
-        set prompt_slug $stem
-        set prompt_file [file join $prompts_dir "${prompt_slug}.txt"]
+        # Prompt-dir == stem. Matches the A-phase convention and makes the
+        # harness's roster-row lookup (by stem) direct.
+        set pdir [file join $prompts_dir $stem]
+        file mkdir $pdir
 
         set antifacts_line ""
         if {$antifacts ne ""} {
@@ -174,8 +170,14 @@ Web search is the primary research method. Use Chromium only when the target has
 
 $sqlite3_skill_text"
 
-        set fd [open $prompt_file w]
+        set fd [open [file join $pdir prompt.txt] w]
         puts $fd $prompt
+        close $fd
+
+        set fd [open [file join $pdir meta.env] w]
+        puts $fd "STEM=\"$stem\""
+        puts $fd "OUTFILE=\"$outfile\""
+        puts $fd "ROSTER_PATH=\"$roster_path\""
         close $fd
     }
 
@@ -193,18 +195,22 @@ $sqlite3_skill_text"
     }
 
     # --- Concurrent dispatch via event loop ---
-    set prompt_files [lsort [glob -nocomplain [file join $prompts_dir *.txt]]]
+    set prompt_dirs [lsort [glob -nocomplain -type d [file join $prompts_dir *]]]
+
+    set script_dir [file dirname [file normalize [info script]]]
+    set harness [file join $script_dir spar-p-harness.tcl]
 
     # Use a namespace variable dict to hold dispatch state
     variable _p_state
     set sid [incr _p_state(next_id)]
-    set _p_state($sid,queue) $prompt_files
+    set _p_state($sid,queue) $prompt_dirs
     set _p_state($sid,queue_idx) 0
     set _p_state($sid,active) 0
     set _p_state($sid,completed) 0
     set _p_state($sid,failed) 0
     set _p_state($sid,jobs) $jobs
     set _p_state($sid,logs_dir) $logs_dir
+    set _p_state($sid,harness) $harness
     set _p_state($sid,on_progress) $on_progress
     set _p_state($sid,on_complete) $on_complete
     set _p_state($sid,result) $result
@@ -219,20 +225,25 @@ proc spar::_p_start_next {sid} {
 
     while {$_p_state($sid,queue_idx) < [llength $_p_state($sid,queue)] \
            && $_p_state($sid,active) < $_p_state($sid,jobs)} {
-        set pfile [lindex $_p_state($sid,queue) $_p_state($sid,queue_idx)]
+        set pdir [lindex $_p_state($sid,queue) $_p_state($sid,queue_idx)]
         incr _p_state($sid,queue_idx)
-        set slug [file rootname [file tail $pfile]]
-        set logfile [file join $_p_state($sid,logs_dir) "${slug}.log"]
+        set slug [file tail $pdir]
 
         {*}$_p_state($sid,on_progress) $slug started ""
 
         # DbC-Pre: roster integrity for this segment was validated at
-        # dispatch_profiles entry (load_roster enforces field-count assertion #2;
-        # all required files exist per lines ~75-83). The agent inherits a roster
-        # known to be well-formed; any post-call corruption is the agent's fault.
-        set pipe [open "| /bin/sh -c {cat \"$pfile\" | claude -p --dangerously-skip-permissions --model sonnet --max-budget-usd 3.00 > \"$logfile\" 2>&1; echo \"EXIT:\$?\"}" r]
+        # dispatch_profiles entry (load_roster enforces field-count
+        # assertion; required input files existence-checked there). The
+        # agent inherits a roster known to be well-formed; the harness's
+        # DbC-Post validate_and_correct attributes any damage to the agent.
+        set cmd [list tclsh $_p_state($sid,harness) $pdir $_p_state($sid,logs_dir)]
+        if {[catch {open "| $cmd 2>@1" r} pipe]} {
+            {*}$_p_state($sid,on_progress) $slug failed "could not start harness: $pipe"
+            incr _p_state($sid,failed)
+            continue
+        }
         fconfigure $pipe -blocking 0 -buffering line
-        fileevent $pipe readable [list spar::_p_on_worker_done $sid $pipe $slug]
+        fileevent $pipe readable [list spar::_p_on_harness_output $sid $pipe $slug]
         incr _p_state($sid,active)
     }
 
@@ -247,107 +258,25 @@ proc spar::_p_start_next {sid} {
     }
 }
 
-proc spar::_p_on_worker_done {sid pipe slug} {
+proc spar::_p_on_harness_output {sid pipe slug} {
     variable _p_state
 
     if {[gets $pipe line] >= 0} {
-        if {[string match "EXIT:*" $line]} {
-            set rc [string range $line 5 end]
-            if {$rc ne "0"} {
-                {*}$_p_state($sid,on_progress) $slug failed "rc=$rc"
-                incr _p_state($sid,failed)
-            } else {
-                # DbC-Post: pair for the launch in _p_start_next. Re-check what
-                # the agent wrote. Two checks, in order:
-                #   1. Masked-email guardrail on the roster row (historical).
-                #   2. validate_profile on the written {stem}.md — structural
-                #      + staleness check per spar-P-profile.md §5.1/§5.3
-                #      (SmartLayer/aesop#45). An error-severity issue here is
-                #      agent-introduced damage; mark the worker failed so the
-                #      human sees the specific reason.
-                _p_sanitise_roster_email $sid $slug
-                set verr [_p_profile_validation_error $sid $slug]
-                if {$verr ne ""} {
-                    {*}$_p_state($sid,on_progress) $slug failed "invalid_profile: $verr"
-                    incr _p_state($sid,failed)
-                } else {
-                    {*}$_p_state($sid,on_progress) $slug done ""
-                    incr _p_state($sid,completed)
-                }
-            }
-        }
+        # Forward harness stdout as progress messages.
+        {*}$_p_state($sid,on_progress) $slug started $line
         return
     }
     if {[eof $pipe]} {
-        catch {close $pipe}
+        if {[catch {close $pipe} err]} {
+            {*}$_p_state($sid,on_progress) $slug failed $err
+            incr _p_state($sid,failed)
+        } else {
+            {*}$_p_state($sid,on_progress) $slug done ""
+            incr _p_state($sid,completed)
+        }
         incr _p_state($sid,active) -1
         _p_start_next $sid
     }
-}
-
-# _p_sanitise_roster_email — after a P-stage worker succeeds, check whether
-# the email it wrote to the roster is masked (e.g. "b***@foo.com").  If so,
-# blank it — a masked address is worse than empty because it inflates the
-# "has email" count and can propagate into approach files.
-#
-# Detection delegates to spar::is_masked_email (spar-state.tcl) — the same
-# function that validate_campaign / spar-progress.tcl uses for reporting.
-proc spar::_p_sanitise_roster_email {sid slug} {
-    variable _p_state
-    set seg_dir $_p_state($sid,segment_dir)
-    set roster [file join $seg_dir roster.tsv]
-    if {![file exists $roster]} return
-
-    set rows [spar::load_roster $roster]
-    set dirty 0
-    set updated {}
-    foreach row $rows {
-        set stem [spar::dict_get_default $row stem ""]
-        if {$stem eq $slug} {
-            set email [string trim [spar::dict_get_default $row email ""]]
-            if {[spar::is_masked_email $email]} {
-                puts "\[$slug\] Guardrail: blanked masked email '$email' in roster"
-                dict set row email ""
-                set dirty 1
-            }
-        }
-        lappend updated $row
-    }
-
-    if {$dirty} {
-        spar::write_roster $roster $updated
-    }
-}
-
-# _p_profile_validation_error — DbC-Post half-pair for the P AI call. Given
-# a worker that just wrote profiles/{slug}.md, validate it against the
-# front-matter contract (see spar-state.tcl::validate_profile and
-# spar-P-profile.md §5.1). Returns the first error-severity message, or "" if
-# the profile validates clean. Staleness warnings are not returned as errors
-# — fresh profiles from a current roster should not be stale.
-proc spar::_p_profile_validation_error {sid slug} {
-    variable _p_state
-    set seg_dir $_p_state($sid,segment_dir)
-    set profile_path [file join $seg_dir profiles "${slug}.md"]
-    if {![file exists $profile_path]} {
-        return "worker exited cleanly but ${slug}.md was not produced"
-    }
-    set roster [file join $seg_dir roster.tsv]
-    set row [dict create]
-    if {[file exists $roster]} {
-        foreach r [spar::load_roster $roster] {
-            if {[spar::dict_get_default $r stem ""] eq $slug} {
-                set row $r
-                break
-            }
-        }
-    }
-    foreach issue [spar::validate_profile $profile_path $row $slug] {
-        if {[dict get $issue severity] eq "error"} {
-            return [dict get $issue message]
-        }
-    }
-    return ""
 }
 
 proc spar::_p_cleanup {sid} {
@@ -375,8 +304,8 @@ namespace eval spar {
 #                  status is one of: started, done, failed, skipped
 # on_complete    callback prefix: {total_done total_failed}
 #
-# Returns immediately after launching the first batch of workers (or after
-# dry-run scan). Calls on_complete when all workers finish.
+# Returns immediately after launching the first batch of harnesses (or
+# after dry-run scan). Calls on_complete when all harnesses finish.
 #
 proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
     set dry_run [spar::dict_get_default $opts dry_run 0]
@@ -726,9 +655,9 @@ Emit VERDICT: DONE if the draft is credible (the persona reacted naturally witho
         return $result
     }
 
-    # --- Dispatch workers ---
+    # --- Dispatch harnesses ---
     set script_dir [file dirname [file normalize [info script]]]
-    set worker [file join $script_dir spar-a-worker.tcl]
+    set harness [file join $script_dir spar-a-harness.tcl]
 
     set prompt_dirs [lsort [glob -nocomplain -type d [file join $prompts_dir *]]]
     # Shuffle for load balancing (Fisher-Yates)
@@ -750,7 +679,7 @@ Emit VERDICT: DONE if the draft is credible (the persona reacted naturally witho
     set _a_state($sid,failed) 0
     set _a_state($sid,jobs) $jobs
     set _a_state($sid,logs_dir) $logs_dir
-    set _a_state($sid,worker) $worker
+    set _a_state($sid,harness) $harness
     set _a_state($sid,on_progress) $on_progress
     set _a_state($sid,on_complete) $on_complete
     set _a_state($sid,result) $result
@@ -770,14 +699,14 @@ proc spar::_a_start_next {sid} {
 
         {*}$_a_state($sid,on_progress) $slug started ""
 
-        set cmd [list tclsh $_a_state($sid,worker) $pdir $_a_state($sid,logs_dir)]
+        set cmd [list tclsh $_a_state($sid,harness) $pdir $_a_state($sid,logs_dir)]
         if {[catch {open "| $cmd 2>@1" r} pipe]} {
-            {*}$_a_state($sid,on_progress) $slug failed "could not start worker: $pipe"
+            {*}$_a_state($sid,on_progress) $slug failed "could not start harness: $pipe"
             incr _a_state($sid,failed)
             continue
         }
         fconfigure $pipe -blocking 0 -buffering line
-        fileevent $pipe readable [list spar::_a_on_worker_output $sid $pipe $slug]
+        fileevent $pipe readable [list spar::_a_on_harness_output $sid $pipe $slug]
         incr _a_state($sid,active)
     }
 
@@ -792,11 +721,11 @@ proc spar::_a_start_next {sid} {
     }
 }
 
-proc spar::_a_on_worker_output {sid pipe slug} {
+proc spar::_a_on_harness_output {sid pipe slug} {
     variable _a_state
 
     if {[gets $pipe line] >= 0} {
-        # Forward worker output as progress messages
+        # Forward harness output as progress messages
         {*}$_a_state($sid,on_progress) $slug started $line
         return
     }

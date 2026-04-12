@@ -14,12 +14,12 @@ Tcl libraries and GUI for managing SPAR outreach campaigns. Provides a state mac
 
 | Tool | Used by | Purpose |
 |------|---------|---------|
-| `claude` | `spar-dispatch.tcl`, `spar-a-worker.tcl` | Claude Code CLI for profile/approach generation |
+| `claude` | `spar-claude.tcl` (harness) | Claude Code CLI for profile/approach generation |
 | `aws` | `spar-email.tcl` | `aws ses send-email` for sending outreach emails |
 | `mailroom` | `spar-email.tcl` | Query email account for reply checking |
-| `flock` | `spar-a-worker.tcl` | File locking for concurrent roster TSV writes |
-| `md5sum` | `spar-a-worker.tcl` | Lock file path derivation |
-| `mktemp` | `spar-a-worker.tcl` | Temporary file creation during roster update |
+| `flock` | `spar-a-harness.tcl` | File locking for concurrent roster TSV writes |
+| `md5sum` | `spar-a-harness.tcl` | Lock file path derivation |
+| `mktemp` | `spar-a-harness.tcl` | Temporary file creation during roster update |
 
 ### Optional
 
