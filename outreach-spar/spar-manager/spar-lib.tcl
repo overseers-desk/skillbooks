@@ -73,6 +73,11 @@ proc spar::load_roster {tsv_path} {
     set raw [read $fd]
     close $fd
 
+    # TSV is UTF-8; binary translation read it as bytes, so decode explicitly.
+    # Without this, non-ASCII names (e.g. "Söderbom", "Café") round-trip as
+    # Latin-1 and emerge as mojibake on a UTF-8 stdout.
+    set raw [encoding convertfrom utf-8 $raw]
+
     # Normalise line endings: CRLF → LF, bare CR → LF
     set raw [string map {\r\n \n \r \n} $raw]
     set lines [split $raw \n]
