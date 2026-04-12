@@ -216,6 +216,10 @@ proc spar::_p_start_next {sid} {
 
         {*}$_p_state($sid,on_progress) $slug started ""
 
+        # DbC-Pre: roster integrity for this segment was validated at
+        # dispatch_profiles entry (load_roster enforces field-count assertion #2;
+        # all required files exist per lines ~75-83). The agent inherits a roster
+        # known to be well-formed; any post-call corruption is the agent's fault.
         set pipe [open "| /bin/sh -c {cat \"$pfile\" | claude -p --dangerously-skip-permissions --model sonnet --max-budget-usd 3.00 > \"$logfile\" 2>&1; echo \"EXIT:\$?\"}" r]
         fconfigure $pipe -blocking 0 -buffering line
         fileevent $pipe readable [list spar::_p_on_worker_done $sid $pipe $slug]
@@ -243,9 +247,12 @@ proc spar::_p_on_worker_done {sid pipe slug} {
                 {*}$_p_state($sid,on_progress) $slug failed "rc=$rc"
                 incr _p_state($sid,failed)
             } else {
-                # Post-profile guardrail: blank masked emails in roster.
-                # Uses spar::is_masked_email — same check that
-                # validate_campaign/spar-progress.tcl reports on.
+                # DbC-Post: pair for the launch in _p_start_next. Re-check what
+                # the agent wrote — masked emails in the roster are the most
+                # common P-phase regression. Uses spar::is_masked_email, the same
+                # check that validate_campaign/spar-progress.tcl reports on.
+                # Currently scoped to email only; broader post-validation
+                # (re-run validate_roster on the affected row) is a known gap.
                 _p_sanitise_roster_email $sid $slug
                 {*}$_p_state($sid,on_progress) $slug done ""
                 incr _p_state($sid,completed)

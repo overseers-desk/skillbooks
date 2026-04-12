@@ -183,6 +183,10 @@ proc validate_and_correct {outfile roster_email contact_name session_id log_pref
     set max_fix 3
 
     for {set attempt 1} {$attempt <= $max_fix} {incr attempt} {
+        # DbC-Pre: validate the file the previous AI call (assembly or prior
+        # fix attempt) wrote. If clean, no fix call is made — the contract
+        # already holds. If not clean, the errors describe the exact regression
+        # that the agent must correct on this attempt.
         set errors [spar::validate_approach $outfile $roster_email $contact_name]
         set hard {}
         foreach e $errors {
@@ -219,7 +223,9 @@ proc validate_and_correct {outfile roster_email contact_name session_id log_pref
         }
     }
 
-    # Final check after last correction
+    # DbC-Post: terminal pair-half for the loop above. After max_fix attempts,
+    # confirm the file is clean. Any remaining error is an unrecoverable
+    # agent failure — surface it loudly rather than silently shipping bad data.
     set errors [spar::validate_approach $outfile $roster_email $contact_name]
     foreach e $errors {
         if {[dict get $e severity] eq "error"} {
@@ -390,6 +396,10 @@ Then print: DONE: $contact_summary | $outfile"
 set assembly_log "${log_prefix}-author-assembly.log"
 write_file [file join $prompt_dir assembly.txt] $assembly_prompt
 
+# DbC-Pre: pre-conditions for assembly are that the upstream draft / spar /
+# revision logs all exist (those AI calls only mutate workdir log files, not
+# project state, so they do not need their own DbC pairs). The approach file
+# does not yet exist; the assembly call is what creates it.
 if {[invoke_claude "assembly" $assembly_log \
         --resume $author_session $assembly_prompt]} {
     exit 1
@@ -397,6 +407,10 @@ if {[invoke_claude "assembly" $assembly_log \
 
 # ── Post-assembly validation ──────────────────────────────────────────
 
+# DbC-Post: pair for the assembly call above. validate_and_correct runs
+# spar::validate_approach on the file the agent just wrote (structural checks
+# from #34 + email guard rails). On error it resumes the agent with the
+# specific failure (this is the "blame the renter" half of the contract).
 set contact_name [string trim [lindex [split $contact_summary |] 0]]
 if {[file exists $outfile]} {
     if {[validate_and_correct $outfile $roster_email $contact_name \

@@ -28,6 +28,56 @@ The transition table carries a `dispatch_status` per transition type. The state 
 
 ---
 
+## Design by Contract: pre/post validation around AI calls
+
+Every AI invocation is wrapped in a **pre/post validation pair**, like a car-rental damage check: document the state before handing the keys over, document the state on return, attribute any new damage to the renter.
+
+### The principle
+
+Before dispatch launches a Claude session that mutates project state (roster TSV, profile files, approach files), the orchestration code runs the relevant validation. If validation fails, the AI call does not happen — the inputs were already broken, so no agent can be blamed and none should be charged tokens to work on bad data.
+
+After the AI session returns, the *same* validation runs again. Any new failure is the agent's fault. The orchestrator can then resume the agent (`claude --resume`) with a specific message: "you broke X, fix it" — the agent cannot deny responsibility because the pre-check passed.
+
+This is a pre/post-condition contract in the Design by Contract sense (Meyer, Eiffel). The contract holds an invariant: project state remains valid across each AI invocation. The orchestration layer enforces the contract; the validation library (`spar-state.tcl`) defines what "valid" means.
+
+### Coding standard: `DbC-Pre` / `DbC-Post` markers
+
+Every AI invocation site in the orchestration code carries a paired comment marker:
+
+```tcl
+# DbC-Pre: validate roster integrity before P-phase dispatch
+set issues [spar::validate_roster $contacts]
+if {[llength $issues] > 0} { ... refuse to dispatch ... }
+
+# ... build prompt, launch claude session ...
+
+# DbC-Post: re-validate after agent returns; agent-introduced issues blame the agent
+set issues [spar::validate_roster [spar::classify_segment $segment_dir]]
+if {[llength $issues] > 0} { ... resume agent with the diff ... }
+```
+
+**Rules:**
+
+1. `DbC-Pre` and `DbC-Post` always appear in pairs. A `DbC-Pre` without a matching `DbC-Post` (or vice versa) is a defect — `grep -c DbC-Pre` and `grep -c DbC-Post` should return equal counts in the orchestration code.
+2. The pair count equals the number of AI invocation sites, **not** the number of validation checks. A single `validate_campaign` call may run 10+ checks; that is one pre/post pair, not ten.
+3. Markers live in **orchestration logic** (dispatch scripts, worker scripts), not in validation procs. The validation library does not know whether it is being called pre or post.
+4. The two halves of a pair must call equivalent validation. Adding a check to the pre side without adding it to the post side breaks the contract — agent regressions slip through silently.
+5. Failure handling differs: pre-failure refuses to start; post-failure resumes the agent with the diff for correction (see `validate_and_correct` in `spar-a-worker.tcl` for the established pattern).
+
+### Where pairs live
+
+| AI call | Orchestration site | Pre-check | Post-check |
+|---|---|---|---|
+| P-phase profile generation | `spar-dispatch.tcl::_p_start_next` | `validate_roster` on segment | `validate_roster` + `_p_sanitise_roster_email` |
+| A-phase author draft | `spar-a-worker.tcl` author section | meta.env + roster row complete | draft markers extractable |
+| A-phase challenger spar | `spar-a-worker.tcl` spar loop | profile + draft accessible | verdict marker extractable |
+| A-phase author revision | `spar-a-worker.tcl` rev loop | challenger feedback present | draft + rationale markers extractable |
+| A-phase assembly | `spar-a-worker.tcl` assembly | all logs present | `validate_approach` (existing — `validate_and_correct`) |
+
+Missing or unpaired markers should be tracked as data-integrity issues under #4.
+
+---
+
 ## States
 
 A contact's state is inferred from the presence and content of files in the segment directory and from fields in its roster TSV row. States are mutually exclusive and ordered.
