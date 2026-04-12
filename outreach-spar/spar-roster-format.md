@@ -51,7 +51,7 @@ Every row must have at least one of email, linkedin_url, or facebook_url populat
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
 | 12 | verified | yes/no | S initial; P confirms or corrects | A, quality check | Role confirmed via independent source |
-| 13 | date_excluded | ISO date (YYYY-MM-DD) | S, P, or A | S (skips row), A (skips row), human review | Marks contacts that should not be advanced further, without deleting them. The date rather than a flag allows periodic re-checking. Set when the person has left the relevant role entirely (retired, changed industry), when profiling determines the contact is not a campaign target (wrong mechanism, nameless after exhaustive search, or low relevance), or when approach drafting concludes no viable angle exists. The roster carries the date; the reason lives in the writing agent's note column — `s_note` for S-authored exclusions (stale contacts discovered during sweep), `p_note` for P-authored exclusions, `a_note` for A-authored exclusions. See §Artefact retention below. |
+| 13 | date_excluded | ISO date (YYYY-MM-DD) | S, P, or A | S (skips row), A (skips row), human review | Marks contacts that should not be advanced further, without deleting them. The date rather than a flag allows periodic re-checking. Set when the person has left the relevant role entirely (retired, changed industry), when profiling determines the contact is not a campaign target (wrong mechanism, no individual identifiable after exhaustive search, or low relevance), or when approach drafting concludes no viable angle exists. The roster carries the date; the reason lives in the writing agent's note column — `s_note` for S-authored exclusions (stale contacts discovered during sweep), `p_note` for P-authored exclusions, `a_note` for A-authored exclusions. See §Artefact retention below. |
 
 ### Phase handover
 
@@ -101,7 +101,7 @@ Campaign-specific columns must not duplicate core columns under different names.
 
 These assertions apply to the core columns. Campaign-specific checks are defined by the campaign plan.
 
-1. Every non-NAMELESS row has a non-empty `contact_name` that is not a placeholder. NAMELESS entries (organisation identified, person unknown) are exempt.
+1. Every row has a non-empty `contact_name` that is not a placeholder, or has a blank `contact_name` that P §4.0b will resolve (organisation identified, person not yet found).
 2. Every row has the expected number of tab-separated fields.
 3. No two rows share the same (`contact_name`, `organisation`) pair (case-insensitive).
 4. Every row has at least one of email, `linkedin_url`, or `facebook_url`.
