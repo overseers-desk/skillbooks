@@ -73,11 +73,21 @@ proc spar::load_roster {tsv_path} {
     set header_line [lindex $lines 0]
     set headers [split $header_line \t]
 
+    set header_count [llength $headers]
     set rows {}
+    set line_num 1
     foreach line [lrange $lines 1 end] {
+        incr line_num
         if {$line eq ""} continue
         set fields [split $line \t]
+        set field_count [llength $fields]
+        if {$field_count < $header_count} {
+            error "Error: roster $tsv_path line $line_num has $field_count fields, expected $header_count — truncated row"
+        }
         set row [dict create]
+        if {$field_count > $header_count} {
+            dict set row _field_count_warning "line $line_num has $field_count fields, expected $header_count"
+        }
         set i 0
         foreach h $headers {
             if {$i < [llength $fields]} {

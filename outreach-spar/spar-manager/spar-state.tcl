@@ -913,6 +913,18 @@ proc spar::validate_campaign {all_classified_contacts} {
         }
     }
 
+    # Roster quality-checklist assertions (per-segment)
+    array set seg_contacts {}
+    foreach contact $all_classified_contacts {
+        set sd [spar::dict_get_default $contact _segment_dir ""]
+        lappend seg_contacts($sd) $contact
+    }
+    foreach sd [array names seg_contacts] {
+        foreach issue [spar::validate_roster $seg_contacts($sd)] {
+            lappend issues $issue
+        }
+    }
+
     # Check 4: orphan_profile
     foreach segment_dir [array names seg_dirs_seen] {
         set segment [file tail $segment_dir]
@@ -956,6 +968,154 @@ proc spar::validate_campaign {all_classified_contacts} {
                     contact_name "" \
                     message "Approach file '${filestem}.yaml' not referenced by any roster row"]
             }
+        }
+    }
+
+    return $issues
+}
+
+# validate_roster -- roster quality-checklist assertions (spar-roster-format.md §Quality checklist).
+#
+# segment_contacts  list of classified contact dicts for ONE segment
+#                   (each dict has _segment_dir, state, and all roster fields)
+#
+# Returns a list of issue dicts, same format as validate_campaign.
+#
+proc spar::validate_roster {segment_contacts} {
+    set issues {}
+    if {[llength $segment_contacts] == 0} {
+        return $issues
+    }
+    set segment_dir [spar::dict_get_default [lindex $segment_contacts 0] _segment_dir ""]
+    set segment [file tail $segment_dir]
+
+    # Accumulators for cross-row checks
+    set seen_name_org {}  ;# list of "name|org" keys (lowercased)
+    set seen_stems {}     ;# list of stem values
+
+    foreach contact $segment_contacts {
+        set state [spar::dict_get_default $contact state ""]
+        set contact_name [string trim [spar::dict_get_default $contact contact_name ""]]
+        set org [string trim [spar::dict_get_default $contact organisation ""]]
+        set email [string trim [spar::dict_get_default $contact email ""]]
+        set linkedin [string trim [spar::dict_get_default $contact linkedin_url ""]]
+        set facebook [string trim [spar::dict_get_default $contact facebook_url ""]]
+        set sweep [string trim [spar::dict_get_default $contact sweep_iteration ""]]
+        set verified [string trim [spar::dict_get_default $contact verified ""]]
+        set date_invalid [string trim [spar::dict_get_default $contact date_found_invalid ""]]
+        set star [string trim [spar::dict_get_default $contact star_rating ""]]
+        set response_likelihood [string trim [spar::dict_get_default $contact response_likelihood ""]]
+        set stem [string trim [spar::dict_get_default $contact stem ""]]
+        set field_count_warning [spar::dict_get_default $contact _field_count_warning ""]
+
+        # Assertion 2: extra fields (truncated rows are hard errors in load_roster)
+        if {$field_count_warning ne ""} {
+            lappend issues [dict create \
+                severity warning \
+                code roster_extra_fields \
+                segment $segment \
+                contact_name $contact_name \
+                message "Roster row $field_count_warning"]
+        }
+
+        # Assertion 9: non-empty stem (hard error)
+        if {$stem eq ""} {
+            lappend issues [dict create \
+                severity error \
+                code roster_empty_stem \
+                segment $segment \
+                contact_name $contact_name \
+                message "Roster row has empty stem"]
+        }
+
+        # Assertion 10: duplicate stems
+        if {$stem ne ""} {
+            if {$stem in $seen_stems} {
+                lappend issues [dict create \
+                    severity error \
+                    code roster_duplicate_stem \
+                    segment $segment \
+                    contact_name $contact_name \
+                    message "Duplicate stem '$stem' in segment"]
+            }
+            lappend seen_stems $stem
+        }
+
+        # Assertion 6: verified=yes without conflicting date_found_invalid
+        if {[string tolower $verified] eq "yes" && $date_invalid ne ""} {
+            lappend issues [dict create \
+                severity warning \
+                code roster_verified_but_invalid \
+                segment $segment \
+                contact_name $contact_name \
+                message "Contact is verified=yes but has date_found_invalid set"]
+        }
+
+        # Skip NAMELESS and INVALID for assertions that require a named, valid contact
+        if {$state in {NAMELESS INVALID}} continue
+
+        # Assertion 1: non-empty contact_name, not a placeholder
+        if {$contact_name eq "" || [string tolower $contact_name] in {unknown n/a tbd placeholder}} {
+            lappend issues [dict create \
+                severity warning \
+                code roster_placeholder_name \
+                segment $segment \
+                contact_name $contact_name \
+                message "Contact name is empty or a placeholder"]
+        }
+
+        # Assertion 3: duplicate (contact_name, organisation) pair
+        set name_org_key "[string tolower $contact_name]|[string tolower $org]"
+        if {$name_org_key in $seen_name_org} {
+            lappend issues [dict create \
+                severity warning \
+                code roster_duplicate_name_org \
+                segment $segment \
+                contact_name $contact_name \
+                message "Duplicate (contact_name, organisation) pair in segment"]
+        }
+        lappend seen_name_org $name_org_key
+
+        # Assertion 4: at least one of email, linkedin_url, facebook_url
+        if {![string match *@* $email] && $linkedin eq "" && $facebook eq ""} {
+            lappend issues [dict create \
+                severity warning \
+                code roster_no_channel \
+                segment $segment \
+                contact_name $contact_name \
+                message "Contact has no email, LinkedIn, or Facebook"]
+        }
+
+        # Assertion 5: sweep_iteration has a value
+        if {$sweep eq ""} {
+            lappend issues [dict create \
+                severity warning \
+                code roster_no_sweep_iteration \
+                segment $segment \
+                contact_name $contact_name \
+                message "Contact has no sweep_iteration value"]
+        }
+
+        # Assertion 7: response_likelihood implies star_rating
+        if {$response_likelihood ne "" && $response_likelihood ne "0"} {
+            if {$star eq ""} {
+                lappend issues [dict create \
+                    severity warning \
+                    code roster_likelihood_without_star \
+                    segment $segment \
+                    contact_name $contact_name \
+                    message "Contact has response_likelihood but no star_rating"]
+            }
+        }
+
+        # Assertion 8: star_rating=0 implies date_found_invalid
+        if {[string is integer -strict $star] && $star == 0 && $date_invalid eq ""} {
+            lappend issues [dict create \
+                severity warning \
+                code roster_zero_star_no_invalid \
+                segment $segment \
+                contact_name $contact_name \
+                message "Contact has star_rating=0 but no date_found_invalid"]
         }
     }
 
