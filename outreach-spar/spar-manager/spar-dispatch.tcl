@@ -2,10 +2,100 @@
 # Callable from both tclsh (CLI) and wish (GUI).
 # Does NOT call vwait — the caller's event loop handles that.
 
+package require TclOO
+
 source [file join [file dirname [file normalize [info script]]] spar-lib.tcl]
 
 namespace eval spar {
     namespace export dispatch_profiles dispatch_approaches
+}
+
+# spar::Dispatcher — async queue of child harness processes.
+#
+# Takes a list of prompt_dirs and runs up to Jobs concurrent
+# `tclsh HarnessPath <prompt_dir> LogsDir` children. Each line of a
+# child's stdout is forwarded as an OnProgress "started" message; pipe
+# close determines done/failed. When the queue drains and no children
+# are active, OnComplete is called with {done failed result}, after
+# which the object destroys itself.
+#
+# Used by dispatch_profiles, dispatch_approaches, and (per aesop#35)
+# dispatch_sweeps. The per-phase facades build the prompt_dirs; the
+# Dispatcher owns everything from spawn to completion.
+
+oo::class create spar::Dispatcher {
+    variable Queue QueueIdx Active Completed Failed
+    variable Jobs LogsDir HarnessPath OnProgress OnComplete Result
+
+    constructor {jobs logs_dir harness_path on_progress on_complete result} {
+        set Jobs $jobs
+        set LogsDir $logs_dir
+        set HarnessPath $harness_path
+        set OnProgress $on_progress
+        set OnComplete $on_complete
+        set Result $result
+        set Queue {}
+        set QueueIdx 0
+        set Active 0
+        set Completed 0
+        set Failed 0
+    }
+
+    method run {prompt_dirs} {
+        set Queue $prompt_dirs
+        my start_next
+    }
+
+    # start_next and on_harness_output are dispatched externally (from
+    # fileevent, and via the [self] command from the start_next tail) so
+    # they cannot use a leading-underscore private naming convention —
+    # TclOO would not export them.
+    method start_next {} {
+        while {$QueueIdx < [llength $Queue] && $Active < $Jobs} {
+            set pdir [lindex $Queue $QueueIdx]
+            incr QueueIdx
+            set slug [file tail $pdir]
+
+            {*}$OnProgress $slug started ""
+
+            set cmd [list tclsh $HarnessPath $pdir $LogsDir]
+            if {[catch {open "| $cmd 2>@1" r} pipe]} {
+                {*}$OnProgress $slug failed "could not start harness: $pipe"
+                incr Failed
+                continue
+            }
+            fconfigure $pipe -blocking 0 -buffering line
+            fileevent $pipe readable [list [self] on_harness_output $pipe $slug]
+            incr Active
+        }
+
+        if {$Active == 0 && $QueueIdx >= [llength $Queue]} {
+            set cb $OnComplete
+            set done $Completed
+            set fail $Failed
+            set result $Result
+            [self] destroy
+            {*}$cb $done $fail $result
+        }
+    }
+
+    method on_harness_output {pipe slug} {
+        if {[gets $pipe line] >= 0} {
+            {*}$OnProgress $slug started $line
+            return
+        }
+        if {[eof $pipe]} {
+            if {[catch {close $pipe} err]} {
+                {*}$OnProgress $slug failed $err
+                incr Failed
+            } else {
+                {*}$OnProgress $slug done ""
+                incr Completed
+            }
+            incr Active -1
+            my start_next
+        }
+    }
 }
 
 # dispatch_profiles — build SPAR-P profiles for roster entries without existing profiles.
@@ -195,101 +285,21 @@ $sqlite3_skill_text"
     }
 
     # --- Concurrent dispatch via event loop ---
+    #
+    # DbC-Pre: roster integrity for this segment was validated above
+    # (load_roster enforces field-count assertion; required input files
+    # existence-checked). The agent inherits a roster known to be
+    # well-formed; the harness's DbC-Post validate_and_correct
+    # attributes any damage to the agent.
     set prompt_dirs [lsort [glob -nocomplain -type d [file join $prompts_dir *]]]
 
     set script_dir [file dirname [file normalize [info script]]]
     set harness [file join $script_dir spar-p-harness.tcl]
 
-    # Use a namespace variable dict to hold dispatch state
-    variable _p_state
-    set sid [incr _p_state(next_id)]
-    set _p_state($sid,queue) $prompt_dirs
-    set _p_state($sid,queue_idx) 0
-    set _p_state($sid,active) 0
-    set _p_state($sid,completed) 0
-    set _p_state($sid,failed) 0
-    set _p_state($sid,jobs) $jobs
-    set _p_state($sid,logs_dir) $logs_dir
-    set _p_state($sid,harness) $harness
-    set _p_state($sid,on_progress) $on_progress
-    set _p_state($sid,on_complete) $on_complete
-    set _p_state($sid,result) $result
-    set _p_state($sid,segment_dir) $segment_dir
-
-    _p_start_next $sid
+    set disp [spar::Dispatcher new $jobs $logs_dir $harness \
+        $on_progress $on_complete $result]
+    $disp run $prompt_dirs
     return $result
-}
-
-proc spar::_p_start_next {sid} {
-    variable _p_state
-
-    while {$_p_state($sid,queue_idx) < [llength $_p_state($sid,queue)] \
-           && $_p_state($sid,active) < $_p_state($sid,jobs)} {
-        set pdir [lindex $_p_state($sid,queue) $_p_state($sid,queue_idx)]
-        incr _p_state($sid,queue_idx)
-        set slug [file tail $pdir]
-
-        {*}$_p_state($sid,on_progress) $slug started ""
-
-        # DbC-Pre: roster integrity for this segment was validated at
-        # dispatch_profiles entry (load_roster enforces field-count
-        # assertion; required input files existence-checked there). The
-        # agent inherits a roster known to be well-formed; the harness's
-        # DbC-Post validate_and_correct attributes any damage to the agent.
-        set cmd [list tclsh $_p_state($sid,harness) $pdir $_p_state($sid,logs_dir)]
-        if {[catch {open "| $cmd 2>@1" r} pipe]} {
-            {*}$_p_state($sid,on_progress) $slug failed "could not start harness: $pipe"
-            incr _p_state($sid,failed)
-            continue
-        }
-        fconfigure $pipe -blocking 0 -buffering line
-        fileevent $pipe readable [list spar::_p_on_harness_output $sid $pipe $slug]
-        incr _p_state($sid,active)
-    }
-
-    if {$_p_state($sid,active) == 0 \
-        && $_p_state($sid,queue_idx) >= [llength $_p_state($sid,queue)]} {
-        set done $_p_state($sid,completed)
-        set fail $_p_state($sid,failed)
-        set result $_p_state($sid,result)
-        set cb $_p_state($sid,on_complete)
-        _p_cleanup $sid
-        {*}$cb $done $fail $result
-    }
-}
-
-proc spar::_p_on_harness_output {sid pipe slug} {
-    variable _p_state
-
-    if {[gets $pipe line] >= 0} {
-        # Forward harness stdout as progress messages.
-        {*}$_p_state($sid,on_progress) $slug started $line
-        return
-    }
-    if {[eof $pipe]} {
-        if {[catch {close $pipe} err]} {
-            {*}$_p_state($sid,on_progress) $slug failed $err
-            incr _p_state($sid,failed)
-        } else {
-            {*}$_p_state($sid,on_progress) $slug done ""
-            incr _p_state($sid,completed)
-        }
-        incr _p_state($sid,active) -1
-        _p_start_next $sid
-    }
-}
-
-proc spar::_p_cleanup {sid} {
-    variable _p_state
-    foreach key [array names _p_state ${sid},*] {
-        unset _p_state($key)
-    }
-}
-
-# Initialise the ID counter
-namespace eval spar {
-    variable _p_state
-    set _p_state(next_id) 0
 }
 
 
@@ -669,90 +679,10 @@ Emit VERDICT: DONE if the draft is credible (the persona reacted naturally witho
         lset prompt_dirs $j $tmp
     }
 
-    # Use a namespace variable dict to hold dispatch state
-    variable _a_state
-    set sid [incr _a_state(next_id)]
-    set _a_state($sid,queue) $prompt_dirs
-    set _a_state($sid,queue_idx) 0
-    set _a_state($sid,active) 0
-    set _a_state($sid,completed) 0
-    set _a_state($sid,failed) 0
-    set _a_state($sid,jobs) $jobs
-    set _a_state($sid,logs_dir) $logs_dir
-    set _a_state($sid,harness) $harness
-    set _a_state($sid,on_progress) $on_progress
-    set _a_state($sid,on_complete) $on_complete
-    set _a_state($sid,result) $result
-
-    _a_start_next $sid
+    set disp [spar::Dispatcher new $jobs $logs_dir $harness \
+        $on_progress $on_complete $result]
+    $disp run $prompt_dirs
     return $result
-}
-
-proc spar::_a_start_next {sid} {
-    variable _a_state
-
-    while {$_a_state($sid,queue_idx) < [llength $_a_state($sid,queue)] \
-           && $_a_state($sid,active) < $_a_state($sid,jobs)} {
-        set pdir [lindex $_a_state($sid,queue) $_a_state($sid,queue_idx)]
-        incr _a_state($sid,queue_idx)
-        set slug [file tail $pdir]
-
-        {*}$_a_state($sid,on_progress) $slug started ""
-
-        set cmd [list tclsh $_a_state($sid,harness) $pdir $_a_state($sid,logs_dir)]
-        if {[catch {open "| $cmd 2>@1" r} pipe]} {
-            {*}$_a_state($sid,on_progress) $slug failed "could not start harness: $pipe"
-            incr _a_state($sid,failed)
-            continue
-        }
-        fconfigure $pipe -blocking 0 -buffering line
-        fileevent $pipe readable [list spar::_a_on_harness_output $sid $pipe $slug]
-        incr _a_state($sid,active)
-    }
-
-    if {$_a_state($sid,active) == 0 \
-        && $_a_state($sid,queue_idx) >= [llength $_a_state($sid,queue)]} {
-        set done $_a_state($sid,completed)
-        set fail $_a_state($sid,failed)
-        set result $_a_state($sid,result)
-        set cb $_a_state($sid,on_complete)
-        _a_cleanup $sid
-        {*}$cb $done $fail $result
-    }
-}
-
-proc spar::_a_on_harness_output {sid pipe slug} {
-    variable _a_state
-
-    if {[gets $pipe line] >= 0} {
-        # Forward harness output as progress messages
-        {*}$_a_state($sid,on_progress) $slug started $line
-        return
-    }
-    if {[eof $pipe]} {
-        if {[catch {close $pipe} err]} {
-            {*}$_a_state($sid,on_progress) $slug failed ""
-            incr _a_state($sid,failed)
-        } else {
-            {*}$_a_state($sid,on_progress) $slug done ""
-            incr _a_state($sid,completed)
-        }
-        incr _a_state($sid,active) -1
-        _a_start_next $sid
-    }
-}
-
-proc spar::_a_cleanup {sid} {
-    variable _a_state
-    foreach key [array names _a_state ${sid},*] {
-        unset _a_state($key)
-    }
-}
-
-# Initialise the ID counter
-namespace eval spar {
-    variable _a_state
-    set _a_state(next_id) 0
 }
 
 package provide spar-dispatch 1.0
