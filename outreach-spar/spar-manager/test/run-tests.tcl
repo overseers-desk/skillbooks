@@ -1980,6 +1980,118 @@ rounds:
 assert_eq [llength $issues_valid] 0 \
     "Valid approach: no structural issues"
 
+# ════════════════════════════════════════════════════════════════════════
+section "23. validate_approach — closed vocabulary (issue #43)"
+# ════════════════════════════════════════════════════════════════════════
+
+# ── unknown_key_root: invented top-level key rejected ──
+set issues_ur [va_issues {
+decisions: {}
+rounds:
+  - type: final
+    messages:
+      - channel: email
+        subject: Hi
+        body: Hello
+        to: test@example.com
+discovery:
+  catchment: Sydney
+}]
+assert_eq [has_issue $issues_ur unknown_key_root] 1 \
+    "unknown_key_root: invented key 'discovery' at root flagged"
+
+# ── unknown_key_decisions: minority spelling 'channel_note' rejected ──
+set issues_ud [va_issues {
+decisions:
+  channel: email
+  channel_note: secondary
+rounds:
+  - type: final
+    messages:
+      - channel: email
+        subject: Hi
+        body: Hello
+        to: test@example.com
+}]
+assert_eq [has_issue $issues_ud unknown_key_decisions] 1 \
+    "unknown_key_decisions: 'channel_note' in decisions flagged"
+
+# ── wrong_level: chosen_usps at root should be per-round ──
+set issues_wl [va_issues {
+decisions: {}
+chosen_usps:
+  - First USP
+rounds:
+  - type: final
+    messages:
+      - channel: email
+        subject: Hi
+        body: Hello
+        to: test@example.com
+}]
+assert_eq [has_issue $issues_wl wrong_level] 1 \
+    "wrong_level: chosen_usps at root points to round level"
+
+# ── wrong_level at message: 'note' is canonical at fact_check_item, not message ──
+set issues_wm [va_issues {
+decisions: {}
+rounds:
+  - type: final
+    messages:
+      - channel: email
+        subject: Hi
+        body: Hello
+        to: test@example.com
+        note: Remember to follow up
+}]
+assert_eq [has_issue $issues_wm wrong_level] 1 \
+    "wrong_level: 'note' in message points to fact_check_item"
+
+# ── unknown_key_message: a key not canonical anywhere is rejected as unknown ──
+set issues_um [va_issues {
+decisions: {}
+rounds:
+  - type: final
+    messages:
+      - channel: email
+        subject: Hi
+        body: Hello
+        to: test@example.com
+        invented_field: nonsense
+}]
+assert_eq [has_issue $issues_um unknown_key_message] 1 \
+    "unknown_key_message: 'invented_field' in message flagged"
+
+# ── Negative test: valid closed-vocabulary file produces no vocab issues ──
+set issues_ok [va_issues {
+decisions:
+  channel: email
+  warmth: warm
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps:
+      - point one
+    messages:
+      - channel: email
+        subject: Draft subject
+        body: Draft body
+        director_note: internal
+  - type: final
+    messages:
+      - channel: email
+        subject: Final subject
+        body: Final body
+        to: test@example.com
+fact_provenance:
+  - claim: Example
+    source: URL
+}]
+assert_eq [has_issue $issues_ok unknown_key_root] 0 \
+    "closed vocab: clean file has no unknown_key_root"
+assert_eq [has_issue $issues_ok wrong_level] 0 \
+    "closed vocab: clean file has no wrong_level"
+
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
 cleanup_temps

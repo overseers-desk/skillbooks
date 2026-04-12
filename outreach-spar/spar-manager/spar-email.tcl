@@ -94,9 +94,28 @@ proc spar::fingerprint_match {existing from_email timestamp} {
     return 0
 }
 
+# _dbc_errors -- return only error-severity issues from validate_approach.
+proc spar::_dbc_errors {approach_path} {
+    set errs {}
+    foreach issue [spar::validate_approach $approach_path "" ""] {
+        if {[dict get $issue severity] eq "error"} {
+            lappend errs [dict get $issue message]
+        }
+    }
+    return $errs
+}
+
 # append_reply_to_yaml -- append a received reply to the final round in a YAML approach file.
 # Also sets replied_date on email messages in the final round if not already set.
 proc spar::append_reply_to_yaml {approach_path timestamp from_display reply_text} {
+    # DbC-Pre: refuse to write if the file already has structural errors.
+    set pre_errs [spar::_dbc_errors $approach_path]
+    if {[llength $pre_errs] > 0} {
+        puts stderr "append_reply_to_yaml: refusing to modify $approach_path — pre-validation failed:"
+        foreach e $pre_errs { puts stderr "  - $e" }
+        return
+    }
+
     set fd [open $approach_path r]
     set content [read $fd]
     close $fd
@@ -179,6 +198,15 @@ proc spar::append_reply_to_yaml {approach_path timestamp from_display reply_text
         puts $fd ""
     }
     close $fd
+
+    # DbC-Post: re-validate. New errors indicate a code bug in the reply-append
+    # logic, which would silently corrupt data if ignored.
+    set post_errs [spar::_dbc_errors $approach_path]
+    if {[llength $post_errs] > 0} {
+        puts stderr "append_reply_to_yaml: post-validation failed for $approach_path:"
+        foreach e $post_errs { puts stderr "  - $e" }
+        error "append_reply_to_yaml produced invalid YAML at $approach_path"
+    }
 }
 
 # _indent_body -- indent each line of body text to the given level for YAML literal block.
@@ -274,6 +302,14 @@ proc spar::send_email {opts} {
 # Returns 1 if file was modified, 0 otherwise.
 #
 proc spar::stamp_actioned_date {approach_path today} {
+    # DbC-Pre: refuse to write if the file already has structural errors.
+    set pre_errs [spar::_dbc_errors $approach_path]
+    if {[llength $pre_errs] > 0} {
+        puts stderr "stamp_actioned_date: refusing to modify $approach_path — pre-validation failed:"
+        foreach e $pre_errs { puts stderr "  - $e" }
+        return 0
+    }
+
     set fd [open $approach_path r]
     set content [read $fd]
     close $fd
@@ -351,6 +387,14 @@ proc spar::stamp_actioned_date {approach_path today} {
         set fd [open $approach_path w]
         puts -nonewline $fd [join $result \n]
         close $fd
+
+        # DbC-Post: re-validate. New errors indicate a regex-bug in the stamp logic.
+        set post_errs [spar::_dbc_errors $approach_path]
+        if {[llength $post_errs] > 0} {
+            puts stderr "stamp_actioned_date: post-validation failed for $approach_path:"
+            foreach e $post_errs { puts stderr "  - $e" }
+            error "stamp_actioned_date produced invalid YAML at $approach_path"
+        }
     }
 
     return $changed

@@ -3,21 +3,21 @@
 # Cross-file checks (channel-roster consistency, cross-segment duplicates)
 # remain in the validator script.
 #
-# Replaces approach-schema-proposal.yaml (prose example, not machine-validatable).
+# Closed vocabulary per issue SmartLayer/aesop#43. additionalProperties: false
+# at every level — unknown keys are validation errors, not silently accepted.
 
 $schema: "https://json-schema.org/draft/2020-12/schema"
 title: SPAR approach file
 type: object
 required: [decisions, rounds]
+additionalProperties: false
 
 properties:
   decisions:
-    type: object
-
+    $ref: "#/$defs/decisions"
   rounds:
     type: array
     minItems: 1
-    # At least one round must be type: final
     contains:
       type: object
       properties:
@@ -26,14 +26,52 @@ properties:
       required: [type]
     items:
       $ref: "#/$defs/round"
+  profile_date: {}
+  profile_richness: {}
+  angle_rationale: {}
+  roster_note: {}
+  fact_provenance:
+    type: array
+    items:
+      $ref: "#/$defs/fact_provenance_item"
+  quality_checklist: {}
+  response_likelihood: {}
 
 $defs:
+  decisions:
+    type: object
+    additionalProperties: false
+    properties:
+      warmth: {}
+      channel: {}
+      language: {}
+      angle: {}
+      sender: {}
+      warmth_detail: {}
+      channel_detail: {}
+      subsegment: {}
+
   round:
     type: object
     required: [type]
+    additionalProperties: false
     properties:
       type:
         enum: [draft, review, final]
+      number: {}
+      messages:
+        $ref: "#/$defs/messages"
+      verdict: {}
+      fact_check:
+        type: array
+        items:
+          $ref: "#/$defs/fact_check_item"
+      in_character: {}
+      chosen_usps: {}
+      revision_note: {}
+      notes: {}
+      replies: {}
+      antifact_check: {}
     allOf:
       # draft rounds require number; messages are optional (delta-note drafts may omit them)
       - if:
@@ -43,9 +81,6 @@ $defs:
           required: [type]
         then:
           required: [number]
-          properties:
-            messages:
-              $ref: "#/$defs/messages"
 
       # review rounds require number
       - if:
@@ -56,17 +91,6 @@ $defs:
         then:
           required: [number]
 
-      # final rounds: messages are validated if present, but blocked/no-draft contacts may omit them
-      - if:
-          properties:
-            type:
-              const: final
-          required: [type]
-        then:
-          properties:
-            messages:
-              $ref: "#/$defs/messages"
-
   messages:
     type: array
     minItems: 1
@@ -76,9 +100,27 @@ $defs:
   message:
     type: object
     required: [channel]
+    additionalProperties: false
     properties:
       channel:
         type: string
+      subject: {}
+      body: {}
+      to: {}
+      actioned_date: {}
+      replied_date: {}
+      reply_summary: {}
+      script:
+        type: array
+        items:
+          $ref: "#/$defs/script_item"
+      text: {}
+      char_count: {}
+      bcc: {}
+      cc: {}
+      director_note: {}
+      to_note: {}
+      phone_note: {}
     allOf:
       # email messages in any round must have subject or body
       - if:
@@ -90,3 +132,27 @@ $defs:
           anyOf:
             - required: [subject]
             - required: [body]
+
+  fact_provenance_item:
+    type: object
+    additionalProperties: false
+    properties:
+      claim: {}
+      source: {}
+
+  fact_check_item:
+    type: object
+    additionalProperties: false
+    properties:
+      claim: {}
+      source: {}
+      result: {}
+      note: {}
+      correction: {}
+
+  script_item:
+    type: object
+    additionalProperties: false
+    properties:
+      point: {}
+      text: {}
