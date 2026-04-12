@@ -23,11 +23,26 @@ One file per campaign, in the campaign root directory. Named `campaign.yaml` or 
 | `approach_filename` | string | Template for approach filenames. Variables: `{slug_name}`, `{slug_org}`, `{star}`. Example: `approach-{slug_name}-{slug_org}.md` |
 | `usps` | map | USP registry: maps each USP identifier to its human-readable label. This is the single source of truth for USP names. Segment files reference USPs by `id`; the label is resolved from this registry. The full USP prose lives in the `usp_document`. |
 
+### Required (channels)
+
+The campaign declares which outreach channels are in scope and the cadence between them. Three named slots are available: `primary_channel`, `secondary_channel`, `tertiary_channel`. Only `primary_channel` is required.
+
+| Field | Type | Purpose |
+|---|---|---|
+| `primary_channel` | string or map | The first touch. Bare channel name (e.g. `email`) is the short form; the map form `{channel: email}` is available for forward compatibility. |
+| `secondary_channel` | map | Contingent follow-up. Requires `channel`, `wait_days`, `wait_condition`. Omit the slot for campaigns that do not follow up. |
+| `tertiary_channel` | map | Second contingent follow-up, same shape as secondary. Omit if unused. |
+
+Channel vocabulary: `email`, `phone`, `linkedin`, `facebook`. A channel not named in any slot is out of scope for this campaign — contacts whose only channel is out of scope are filtered at dispatch time, not marked invalid.
+
+`wait_condition` values defined today:
+
+- `no_reply` — the follow-up fires only if the preceding channel has no `replied_date` after `wait_days` have elapsed since its `actioned_date`.
+
 ### Required (filter)
 
 | Field | Type | Default | Purpose |
 |---|---|---|---|
-| `filter.require_email` | boolean | false | Skip roster entries without an email address |
 | `filter.exclude_invalid` | boolean | true | Skip roster entries with a non-empty `date_found_invalid` |
 
 ### Optional (filter)
@@ -73,6 +88,12 @@ campaign_principles: goal-campaign-principles.md
 
 language: en-gb
 
+primary_channel: email
+secondary_channel:
+  channel: phone
+  wait_days: 3
+  wait_condition: no_reply
+
 usps:
   U1:  Scenic riverside setting on the Coomera River
   U2:  Peruvian Paso horses
@@ -93,7 +114,6 @@ segments:
   - wedding-planner
 
 filter:
-  require_email: false
   exclude_invalid: true
   min_star: 3
   require_profile: true

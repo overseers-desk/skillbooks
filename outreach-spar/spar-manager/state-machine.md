@@ -106,6 +106,9 @@ These are orthogonal to primary state. They filter eligibility for specific tran
 | `has_linkedin` | Roster: `linkedin_url` non-empty |
 | `has_facebook` | Roster: `facebook_url` non-empty |
 | `has_phone_only` | Roster: `phone` non-empty AND no email, LinkedIn, or Facebook |
+| `in_scope` | Roster contains a non-empty field for at least one channel named in the campaign's `primary_channel` / `secondary_channel` / `tertiary_channel` slots |
+| `secondary_ready` | Campaign has `secondary_channel`; the approach file's final round contains a sent message for `primary_channel` (`actioned_date` non-null) with `actioned_date` ≥ `secondary_channel.wait_days` days ago; the `wait_condition` holds (e.g. `no_reply` requires `replied_date` null); the final round contains a pending message for `secondary_channel.channel` (`actioned_date` null) |
+| `tertiary_ready` | Same as `secondary_ready`, one slot further along — gated on the secondary message rather than the primary |
 
 ### Channel properties of the approach (for APPROACHED/SENT contacts)
 
@@ -215,15 +218,18 @@ The transition manager filters `classify_segment` output by eligibility conditio
 | T0 | Identify contact → Discover | state = NAMELESS | spar-p-batch.tcl (§4.0b) | available |
 | T1 | Sweep → Profile | state = DISCOVERED | spar-p-batch.tcl | available |
 | T2 | Profile → Approach | state = PROFILED, star≥3 | spar-a-batch.tcl | available |
-| T3 | Approach → Send | state = APPROACHED or SENT, has_email, not email_sent | email send (SES) | not-implemented |
+| T3 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | email send (SES) | not-implemented |
 | T4 | Send → Reply | email_sent, not email_replied | none (monitoring only) | n/a |
 | T5 | Flag invalid | state = any valid | roster TSV update | not-implemented |
 | T6 | Stale → Re-profile | state = PROFILE_STALE | spar-p-batch.tcl | available (zero tasks until PROFILE_STALE defined) |
 | T7 | Re-profile → Re-approach | re-PROFILED after stale (see note) | spar-a-batch.tcl | available (zero tasks until PROFILE_STALE defined) |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
+| T9 | Secondary follow-up | `secondary_ready` | render script + manual marker | manual |
+| T10 | Tertiary follow-up | `tertiary_ready` | render script + manual marker | manual |
 
 Dispatch statuses:
 - **available** — dispatch implemented and operational
+- **manual** — the dispatch is not automated by design. The UI renders the script or content and exposes a "mark actioned" button that writes `actioned_date` on the message. Distinct from `not-implemented` (which means "should be automated but isn't yet")
 - **not-implemented** — dispatch not yet written; UI shows the task list but disables the play button with a tooltip explaining why
 - **blocked** — dispatch exists in principle but depends on a feature (e.g., PROFILE_STALE detection) that is not yet defined; treated as not-implemented until unblocked
 - **n/a** — monitoring transition; no dispatch action exists by design
