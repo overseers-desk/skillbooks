@@ -18,7 +18,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 
 ## 3. Outputs
 
-- **Approach file:** `{id}-{slug}.yaml` in the campaign's approach directory, following the schema in `approach-schema-proposal.yaml`. The ID uses a segment prefix and sequential number (e.g. `TOR-001-peter-myers-pineapple-tours.yaml`). Contains the angle selection rationale, all A1/A2 drafts and responses, chosen USP identifiers per round, and the final send-ready messages.
+- **Approach file:** `{id}-{slug}.yaml` in the campaign's approach directory, following the schema in `approach-schema.yaml`. The ID uses a segment prefix and sequential number (e.g. `TOR-001-peter-myers-pineapple-tours.yaml`). Contains the angle selection rationale, all A1/A2 drafts and responses, chosen USP identifiers per round, and the final send-ready messages.
 - **Communication index entry:** One line appended to `comms-index.md`: contact name, organisation, segment, angle used, key relationship hooks, channel selection.
 - **Roster update:** Populate the `a_note` column with: angle used, channel selected, warmth level, language, and any notable drafting consideration.
 
@@ -138,7 +138,7 @@ A1 reads both steps. If C2 identifies a misalignment or a factual error, A1 revi
 
 ### 4.7 Assemble the approach file
 
-Write the approach file as `{id}-{slug}.yaml` following the schema in `approach-schema-proposal.yaml`. Run the §7 quality checklist before presenting for human review.
+Write the approach file as `{id}-{slug}.yaml` following the schema in `approach-schema.yaml`. Run the §7 quality checklist before presenting for human review.
 
 Read the campaign YAML for the sender address and BCC address. These are not stored in the approach file — they are resolved at send time.
 
@@ -161,7 +161,7 @@ Read the latest strategy revision note before starting each new band. It may cha
 
 ## 6. Approach file structure
 
-Approach files are YAML documents following the schema in `approach-schema-proposal.yaml`, which is the single source of truth for field definitions, provenance rules, and lifecycle tracking fields (`actioned_date`, `replied_date`, `reply_summary`). Read the schema before producing any approach file.
+Approach files are YAML documents following the schema in `approach-schema.yaml`, which is the single source of truth for field definitions, provenance rules, and lifecycle tracking fields (`actioned_date`, `replied_date`, `reply_summary`). Read the schema before producing any approach file.
 
 The file ID uses a segment prefix and sequential number: `TOR-001-peter-myers.yaml`. Place it in the campaign's approach directory.
 
