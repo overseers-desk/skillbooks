@@ -1291,6 +1291,28 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
         }
     }
 
+    # Reachability (#39 R1): a profile exists only if P honoured §4.4a —
+    # either the roster row has a reachable channel (email, linkedin_url,
+    # facebook_url, or phone for the phone-only path) or date_excluded is
+    # set. A profile next to an all-empty row means P produced a profile
+    # for an unreachable contact without recording the exclusion.
+    # Skip when called without a matching roster row (orphan profiles are
+    # reported by a separate check).
+    if {[dict size $roster_row] > 0} {
+        set _email [spar::_roster_field_current $roster_row email]
+        set _li    [spar::_roster_field_current $roster_row linkedin_url]
+        set _fb    [spar::_roster_field_current $roster_row facebook_url]
+        set _ph    [spar::_roster_field_current $roster_row phone]
+        set _excl  [spar::_roster_field_current $roster_row date_excluded]
+        if {![string match *@* $_email] && $_li eq "" && $_fb eq "" \
+            && $_ph eq "" && $_excl eq ""} {
+            lappend issues [dict create severity error \
+                code profile_unreachable_without_exclusion \
+                contact_name $contact_name \
+                message "Profile exists but roster row has no email/LinkedIn/Facebook/phone and no date_excluded — SPAR-P §4.4a requires either setting date_excluded='no reachable channel (YYYY-MM-DD)' or backfilling a channel"]
+        }
+    }
+
     # Staleness: compare dependent_data snapshot to the current roster row.
     if {[dict exists $fm dependent_data]} {
         set dep [dict get $fm dependent_data]

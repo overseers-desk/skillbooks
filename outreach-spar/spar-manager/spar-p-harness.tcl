@@ -124,7 +124,7 @@ oo::class create spar::ProfileHarness {
             puts "\[$slug\] Validation failed (attempt $attempt/$max_fix):\n$error_text"
 
             set fix_log "${lp}-fix${attempt}.log"
-            set fix_prompt "The profile file you just wrote ($outfile) failed validation:\n\n$error_text\n\nRewrite the file to fix these errors. The YAML front matter (SPAR-P §5.1) is required and must carry profile_date, star_rating, richness, richness_count, warmth_finding, applicable_angles, and a dependent_data snapshot of contact_name/organisation/role/date_excluded from the roster. Do not remove or rename any front-matter key."
+            set fix_prompt "The profile for $slug failed post-validation:\n\n$error_text\n\nFor errors in the profile file (malformed/missing front matter, missing required keys, invalid enum values, stale dependent_data) rewrite $outfile per SPAR-P §5 — the YAML front matter §5.1 is required and must carry profile_date, star_rating, richness, richness_count, warmth_finding, applicable_angles, and a dependent_data snapshot of contact_name/organisation/role/date_excluded; do not remove or rename any front-matter key.\n\nFor errors about the roster row (profile_unreachable_without_exclusion) edit the roster TSV for stem '$slug' per SPAR-P §4.4a/§4.11 using sqlite3 — either set date_excluded='no reachable channel (YYYY-MM-DD)' if the contact has no email, LinkedIn, Facebook, or phone and cannot be researched, or backfill a channel by further research."
 
             set model_args {}
             if {$attempt == 3} { set model_args [list --model opus] }
@@ -163,8 +163,10 @@ if {[$harness call "profile" $draft_log $prompt]} {
 }
 
 # DbC-Post: sanitise masked emails written to the roster, then run
-# validate_profile on the front matter — agent-introduced damage fails
-# the harness with a specific reason after max_fix retries.
+# validate_profile on both the front matter and roster-row invariants
+# (#39 R1: profile_unreachable_without_exclusion — profile exists iff the
+# row has a reachable channel or date_excluded is set). Agent-introduced
+# damage fails the harness with a specific reason after max_fix retries.
 $harness sanitise_roster_email $roster_path $slug
 
 if {[$harness validate_and_correct $outfile $roster_path]} {
