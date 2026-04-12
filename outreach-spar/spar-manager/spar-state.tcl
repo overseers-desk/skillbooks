@@ -820,8 +820,100 @@ proc spar::validate_approach {approach_path roster_email contact_name} {
 
     set approach_data [spar::read_approach_yaml $approach_path]
     if {$approach_data eq ""} {
+        lappend issues [dict create \
+            severity error \
+            code invalid_yaml \
+            contact_name $contact_name \
+            message "Approach file could not be parsed as YAML"]
         return $issues
     }
+
+    # ── Structural checks (approach-schema.yaml) ──
+
+    # decisions key must exist
+    if {![dict exists $approach_data decisions]} {
+        lappend issues [dict create \
+            severity error \
+            code missing_decisions \
+            contact_name $contact_name \
+            message "Approach file missing required 'decisions' key"]
+    }
+
+    # rounds key must exist and be non-empty
+    if {![dict exists $approach_data rounds]} {
+        lappend issues [dict create \
+            severity error \
+            code missing_rounds \
+            contact_name $contact_name \
+            message "Approach file missing required 'rounds' key"]
+        return $issues
+    }
+    set rounds [dict get $approach_data rounds]
+    if {[llength $rounds] == 0} {
+        lappend issues [dict create \
+            severity error \
+            code missing_rounds \
+            contact_name $contact_name \
+            message "Approach file has empty 'rounds' array"]
+        return $issues
+    }
+
+    # At least one round must have type: final
+    set has_final 0
+    foreach round $rounds {
+        if {[dict exists $round type] && [dict get $round type] eq "final"} {
+            set has_final 1
+            break
+        }
+    }
+    if {!$has_final} {
+        lappend issues [dict create \
+            severity error \
+            code no_final_round \
+            contact_name $contact_name \
+            message "Approach file has no round with type: final"]
+    }
+
+    # Per-round checks
+    foreach round $rounds {
+        set rtype ""
+        if {[dict exists $round type]} {
+            set rtype [dict get $round type]
+        }
+
+        # Draft and review rounds require number
+        if {$rtype eq "draft" && ![dict exists $round number]} {
+            lappend issues [dict create \
+                severity warning \
+                code draft_missing_number \
+                contact_name $contact_name \
+                message "Draft round missing required 'number' field"]
+        }
+        if {$rtype eq "review" && ![dict exists $round number]} {
+            lappend issues [dict create \
+                severity warning \
+                code review_missing_number \
+                contact_name $contact_name \
+                message "Review round missing required 'number' field"]
+        }
+
+        # Email messages must have subject or body
+        if {[dict exists $round messages]} {
+            foreach msg [dict get $round messages] {
+                if {[dict exists $msg channel] && [dict get $msg channel] eq "email"} {
+                    if {![dict exists $msg subject] && ![dict exists $msg body]} {
+                        lappend issues [dict create \
+                            severity warning \
+                            code email_missing_content \
+                            contact_name $contact_name \
+                            message "Email message missing both 'subject' and 'body'"]
+                    }
+                }
+            }
+        }
+    }
+
+    # ── Email guard rails (existing checks) ──
 
     set email_re {^[^@\s]+@[^@\s]+\.[^@\s]+$}
     set fr [spar::analyse_final_round $approach_data]
