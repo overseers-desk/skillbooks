@@ -354,7 +354,7 @@ for {set r 1} {$r <= $round} {incr r} {
 set initial_draft [spar::extract_between [read_file "${log_prefix}-author-draft.log"] "DRAFT_START" "DRAFT_END"]
 set final_draft [read_file [file join $prompt_dir draft-current.txt]]
 
-set assembly_prompt "Write the final comms file. You have the method, overview, antifacts, goal, and profile from your drafting context. Refer to §6 (comms file structure) and §7 (quality checklist) in the method file.
+set assembly_prompt "Write the final approach file. You have the method, overview, antifacts, goal, and profile from your drafting context. Refer to §6 (approach file structure) and §7 (quality checklist) in the method file.
 
 ## Contact details
 
@@ -376,7 +376,7 @@ $final_draft
 
 ## Instructions
 
-Write the complete comms file to: $outfile
+Write the complete approach file to: $outfile
 
 Follow §6 structure exactly. Include contact header, angle rationale, A1 Draft 1, all A2 responses, revision drafts, final draft, fact provenance table, and roster a_note line. The contact header fields are: Contact, Response likelihood ({n}%, from the response_likelihood value in the contact details above), Warmth level, Channel, Language, Angle, Profile richness.
 

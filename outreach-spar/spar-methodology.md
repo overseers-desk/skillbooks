@@ -69,9 +69,10 @@ Stopping criteria for S (any of these triggers stop):
 
 P runs within each S&P iteration, on the contacts discovered in that iteration's S phase. P produces two outputs:
 
-1. **A profile document** for each contact. The profile records: what the person has said publicly (with quotes and sources), who they know (connections relevant to the campaign), their current role and organisation, any evidence of alignment or misalignment with the campaign's offering, and two ratings:
+1. **A profile document** for each contact. The profile records: what the person has said publicly (with quotes and sources), who they know (connections relevant to the campaign), their current role and organisation, any evidence of alignment or misalignment with the campaign's offering, and a rating:
    - **Star rating** (1–5): how interesting this contact is to us — does their role, geography, and activity suggest a plausible relationship?
-   - **Response likelihood** (percentage estimate): how interesting are we to them — based on what P learns about their business model, stated concerns, and current priorities. This rating is only assessable at P stage, when the contact's situation is understood in enough detail to judge.
+   
+   The profile also documents factors bearing on response likelihood (the contact's stated concerns, business model, current priorities), but does not assign a numeric **response likelihood** estimate. That percentage is set by the A phase, because it depends on the approach angle chosen — the same contact may have different response probabilities under different framings.
 
 2. **New names** discovered during profiling. While checking A's LinkedIn profile, P may find that B commented on A's post and B is a relevant contact not yet in the roster. B enters the roster for the next iteration's S phase (or the current iteration, if S is still running). This is the social-graph expansion mechanism — it occurs during P, not during S, because it requires examining individual profiles rather than running search queries.
 
@@ -120,9 +121,9 @@ A has two sub-phases:
 - **Medium profile** (3–5 data points): 1 round. C2 can give a directional reaction — whether the angle feels relevant, whether the tone is off — but lacks the depth for iterative refinement. A1 incorporates C2's single response and finalises.
 - **Thin profile** (fewer than 3 data points): A2 is skipped. C2 cannot roleplay convincingly with so little to work from; the simulation would be two instances of Opus guessing at each other. A1's first draft stands.
 
-**Output:** An `ID-person-name-org-comms.md` file. The ID uses a segment prefix and sequential number (e.g. `STR-001-jane-doe-huawei-comms.md` for the first strategic-tier contact, `CRP-015-karl-mueller-siemens-comms.md` for the fifteenth corporate-tier contact). The file contains: the profile summary, the angle chosen, the A1/A2 iteration history (all drafts and C2 responses, so the human can see how the message evolved), the final message, and the contact method.
+**Output:** An approach file at `approach/{stem}.yaml`. The file contains: the profile summary, the angle chosen, the A1/A2 iteration history (all drafts and C2 responses, so the human can see how the message evolved), the final message, and the contact method.
 
-A also appends a one-line entry to a communication index file (`comms-index.md`): target name, organisation, segment, angle used, key relationship hooks. This index is what subsequent A runs read to find cross-references, rather than reading all prior comm logs in full.
+A also appends a one-line entry to a communication index file (`comms-index.md`): target name, organisation, segment, angle used, key relationship hooks. This index is what subsequent A runs read to find cross-references, rather than reading all prior approach files in full.
 
 ### R — Revise
 
@@ -141,7 +142,7 @@ The output of R is a revised connection strategy: updated angle priorities, adju
 |---|---|---|---|
 | Roster (TSV or markdown, schema defined by campaign plan) | S | P, A | Campaign directory |
 | Profile documents | P | A, human review | Campaign directory |
-| Communication logs (`ID-person-name-org-comms.md`) | A | R, subsequent A runs (via index) | Campaign directory |
+| Approach files (`{stem}.yaml`) | A | R, subsequent A runs (via index) | Campaign directory |
 | Communication index (`comms-index.md`) | A (append) | A (read) | Campaign directory |
 | Strategy revision notes (`strategy-revision-[band].md`) | R (human) | A (next band) | Campaign directory |
 | Segment summary (search vocabulary, invisible segments) | S&P₃ | Future S&P runs on same segment | Campaign directory |
