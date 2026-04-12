@@ -77,10 +77,12 @@ if {$campaign_file ne ""} {
 set segments_list {}
 set skip_set {}
 set campaign_name [file tail $campaign_dir]
+set primary_channel ""
 
 if {$yaml_path ne "" && [file exists $yaml_path]} {
     set cdata [spar::load_campaign $yaml_path]
     set campaign_name [spar::dict_get_default $cdata campaign [file tail $yaml_path]]
+    set primary_channel [spar::campaign_primary_channel $cdata]
     if {[dict exists $cdata segments]} {
         set segments_list [dict get $cdata segments]
     }
@@ -167,7 +169,7 @@ if {$execute_mode} {
     # Collect ready tasks per TID
     set ready_by_tid [dict create]
     foreach tid $active_tids {
-        set eligible [spar::transition_eligible $all_contacts $tid]
+        set eligible [spar::transition_eligible $all_contacts $tid $primary_channel]
         set ready_list {}
         foreach c $eligible {
             if {[dict get $c task_state] eq "ready"} {
@@ -274,7 +276,7 @@ for {set i 0} {$i < [llength $tids]} {incr i} {
     if {$tid ni $active_tids} continue
     set label [lindex $tlabels $i]
 
-    set eligible [spar::transition_eligible $all_contacts $tid]
+    set eligible [spar::transition_eligible $all_contacts $tid $primary_channel]
     if {[llength $eligible] == 0} continue
 
     set ready_list  {}

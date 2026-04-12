@@ -675,7 +675,8 @@ assert_eq [expr {"Prof Lo" in $t2_names}] 0 "T2: PROFILED star<3 not eligible"
 
 # T3: Approach → Send: APPROACHED, has_email, not email_sent → ready
 # also: SENT + has_email + not email_sent (multi-channel case)
-set t3 [spar::transition_eligible $contacts "T3"]
+# primary_channel="email" required — see issue #49 interim gate.
+set t3 [spar::transition_eligible $contacts "T3" "email"]
 set t3_names [lmap c $t3 {dict get $c contact_name}]
 set t3_ready_names {}
 set t3_pending {}
@@ -690,6 +691,12 @@ assert_eq [expr {"App Email" in $t3_ready_names}] 1 "T3: APPROACHED+email → re
 assert_eq [expr {"App NoEmail" in $t3_pending}] 1 "T3: APPROACHED no email → pending"
 assert_eq [expr {"Sent Sam" in $t3_ready_names || "Sent Sam" in $t3_pending}] 0 \
     "T3: SENT+email_sent already → not in T3 list"
+
+# T3 primary_channel gate (issue #49): non-email or unspecified → zero tasks.
+set t3_lk [spar::transition_eligible $contacts "T3" "linkedin"]
+assert_eq [llength $t3_lk] 0 "T3: primary_channel=linkedin → zero tasks"
+set t3_u [spar::transition_eligible $contacts "T3"]
+assert_eq [llength $t3_u] 0 "T3: primary_channel unknown → zero tasks"
 
 # T4: Send → Reply: email_sent, not email_replied → pending (monitoring)
 set t4 [spar::transition_eligible $contacts "T4"]

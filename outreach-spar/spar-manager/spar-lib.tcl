@@ -9,7 +9,19 @@ package require json::write
 
 namespace eval spar {
     namespace export slugify load_campaign load_roster find_profile \
-        profile_exists get_max_rounds lang_instruction channel_desc
+        profile_exists get_max_rounds lang_instruction channel_desc \
+        campaign_primary_channel
+}
+
+# campaign_primary_channel — extract the primary channel name from a loaded
+# campaign dict, normalising the bare-string and map forms documented in
+# spar-campaign-yaml.md §Channels. Returns "" when unset or unparseable.
+proc spar::campaign_primary_channel {cdata} {
+    if {![dict exists $cdata primary_channel]} { return "" }
+    set pc [dict get $cdata primary_channel]
+    if {[llength $pc] <= 1} { return $pc }
+    if {[dict exists $pc channel]} { return [dict get $pc channel] }
+    return ""
 }
 
 # slugify — lowercase, strip accents, collapse to hyphens
