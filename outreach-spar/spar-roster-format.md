@@ -55,15 +55,15 @@ Every row must have at least one of email, linkedin_url, or facebook_url populat
 
 ### Phase handover
 
-Each SPAR phase has one note column. Only that phase writes to it. Subsequent phases read it as context before doing their work. Notes are roster-level summaries, not replacements for full artefacts (profile documents, comms files, strategy revision notes).
+Each SPAR phase has one note column. Only that phase writes to it. Subsequent phases read it as context before doing their work. Notes are roster-level summaries, not replacements for full artefacts (profile documents, approach files, strategy revision notes).
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
 | 14 | s_note | short text | S only; frozen after discovery | P, A | Why S included this person — the source statement, event, or signal that justified the entry. P reads this before profiling to check whether the person matches the rationale. |
 | 15 | p_note | short text | P only | A, human review | What P found: the verified evidence of interest, the recommended angle, any cautions for A. Broader than evidence of interest alone — includes corrections, routing advice, and warnings. |
 | 16 | star_rating | 0–5 | P; A may set to 0 | A (band ordering), human review | Strategic value: how interesting this contact is to the campaign. Scale defined in SPAR-P. A value of 0 means "invalid — not a campaign target." When star_rating is set to 0, date_found_invalid must also be set. The date_found_invalid field records when the determination was made; p_note or a_note records the reason. A star_rating of 0 is distinct from 1: a 1-star contact is low-priority but targetable; a 0-star contact is excluded from the pipeline entirely. |
-| 17 | response_likelihood | percentage | P | A (band ordering) | Estimated probability the contact responds to outreach. |
-| 18 | a_note | short text | A only | R (human review), subsequent A bands | Angle used, key hook referenced, outcome. Lets R scan a band's results from the roster without opening every comms file. |
+| 17 | response_likelihood | percentage | A | A (band ordering) | Estimated probability the contact responds to outreach. Set by A because it depends on the approach angle chosen. |
+| 18 | a_note | short text | A only | R (human review), subsequent A bands | Angle used, key hook referenced, outcome. Lets R scan a band's results from the roster without opening every approach file. |
 | 19 | r_note | short text | R (human) only | Subsequent A bands, S&P₄+ | Per-contact observation from response review: what worked, what did not, new leads mentioned, channel adjustment. |
 
 Columns 15–19 are empty during S and populated progressively as the contact moves through P, A, and R. Empty columns are expected; not every contact reaches every phase.
@@ -74,7 +74,7 @@ Columns 15–19 are empty during S and populated progressively as the contact mo
 |---|---|---|
 | S | Roster row (this is S's primary output) | s_note: why this person was included |
 | P | Profile document (`profile-name-org.md`) | p_note: one-line relevance summary and routing for A |
-| A | Communication log (`ID-name-org-comms.md`) and comms index entry | a_note: angle and outcome summary for R |
+| A | Approach file (`{stem}.yaml`) and comms index entry | a_note: angle and outcome summary for R |
 | R | Strategy revision notes (`strategy-revision-[band].md`) | r_note: per-contact observation from the human reviewer |
 
 A phase note should answer: "what does the next phase need to know about this contact from my phase, in one line?" If the observation requires more than a short sentence, it belongs in the full artefact, not in the note column.
@@ -107,7 +107,7 @@ These assertions apply to the core columns. Campaign-specific checks are defined
 4. Every row has at least one of email, `linkedin_url`, or `facebook_url`.
 5. Every row has a `sweep_iteration` value.
 6. No contact marked `verified=yes` has a `p_note` or `date_found_invalid` indicating they left the role.
-7. Every row with a `star_rating` also has a `response_likelihood` (both are P outputs; one should not exist without the other).
+7. Every row with a `response_likelihood` also has a `star_rating` (`star_rating` is a P output; `response_likelihood` is an A output. P runs before A, so `response_likelihood` implies `star_rating`).
 8. Every row with `star_rating = 0` has a non-empty `date_found_invalid`.
 9. Every row has a non-empty `stem`.
 10. No two rows share the same `stem` (it is the primary key of the segment roster).

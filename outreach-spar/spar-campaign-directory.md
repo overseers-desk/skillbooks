@@ -17,8 +17,8 @@ campaign-root/
     [comms-index.md]              # optional communication index (lives here, NOT inside approach/)
     profiles/                     # SPAR-P profile documents ONLY — no summary or meta files
       profile-{slug-name}-{slug-org}.md
-    approach/                     # SPAR-A approach/comms files ONLY — no index or meta files
-      approach-{slug-name}-{slug-org}.md
+    approach/                     # SPAR-A approach files ONLY — no index or meta files
+      {stem}.yaml
 ```
 
 ## Single-segment (flat) layout
