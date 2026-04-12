@@ -35,7 +35,7 @@ proc spar::load_campaign {yaml_path} {
     set data [::yaml::yaml2dict $raw]
 
     # Resolve path fields relative to YAML directory
-    foreach key {method usp_document antifacts campaign_principles} {
+    foreach key {usp_document antifacts campaign_principles} {
         if {[dict exists $data $key]} {
             set val [dict get $data $key]
             if {$val ne "" && $val ne "~" && $val ne "null"} {
@@ -44,6 +44,17 @@ proc spar::load_campaign {yaml_path} {
                 }
             } else {
                 dict set data $key ""
+            }
+        }
+    }
+
+    # Validate prompt_appendices (closed vocabulary)
+    if {[dict exists $data prompt_appendices]} {
+        set app [dict get $data prompt_appendices]
+        set allowed {p_author a_author a_challenger a_assembly}
+        dict for {k v} $app {
+            if {$k ni $allowed} {
+                error "Campaign $yaml_path: unknown prompt_appendices key '$k' (allowed: $allowed)"
             }
         }
     }

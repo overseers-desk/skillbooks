@@ -31,7 +31,6 @@ Displayed as a read-only block at the top of the tab. Fields drawn from the camp
 
 - Campaign name (`campaign:`)
 - Sender name, role, email (`sender:`)
-- Method reference (`method:`)
 - Filter settings (`filter:`)
 
 This is a compact summary, not an editor. Campaign YAML editing is a planned feature, not in scope for this version.

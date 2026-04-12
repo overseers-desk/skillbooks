@@ -69,7 +69,6 @@ if {[catch {
 # --- Print campaign summary ---
 puts "Campaign:    [dict get $result campaign]"
 puts "Sender:      [dict get $result sender_name] <[dict get $result sender_email]>"
-puts "Method:      [dict get $result method]"
 puts "Language:    [dict get $result language]"
 puts "Segments:    [dict get $result segments]"
 puts "Filters:     [dict get $result filter_desc]"

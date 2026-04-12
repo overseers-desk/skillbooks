@@ -148,10 +148,13 @@ proc spar::dispatch_profiles {segment_dir opts on_progress on_complete} {
     set overview ""
     set antifacts ""
 
+    set appendix_p_author ""
     if {$campaign_file ne ""} {
         set cdata [spar::load_campaign $campaign_file]
         set overview [spar::dict_get_default $cdata usp_document]
         set antifacts [spar::dict_get_default $cdata antifacts]
+        set appendices [spar::dict_get_default $cdata prompt_appendices [dict create]]
+        set appendix_p_author [spar::dict_get_default $appendices p_author ""]
     } elseif {$user_overview ne ""} {
         set overview [file normalize $user_overview]
         if {$user_antifacts ne ""} {
@@ -260,6 +263,10 @@ Web search is the primary research method. Use Chromium only when the target has
 
 $sqlite3_skill_text"
 
+        if {$appendix_p_author ne ""} {
+            append prompt "\n\n$appendix_p_author"
+        }
+
         set fd [open [file join $pdir prompt.txt] w]
         puts $fd $prompt
         close $fd
@@ -332,7 +339,12 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
     set sender_org [spar::dict_get_default [dict get $cdata sender] organisation]
     set language [dict get $cdata language]
     set approach_pattern [dict get $cdata approach_filename]
-    set method [dict get $cdata method]
+    set script_dir [file dirname [file normalize [info script]]]
+    set method [file normalize [file join $script_dir .. spar-A-approach.md]]
+    set appendices [spar::dict_get_default $cdata prompt_appendices [dict create]]
+    set appendix_a_author [spar::dict_get_default $appendices a_author ""]
+    set appendix_a_challenger [spar::dict_get_default $appendices a_challenger ""]
+    set appendix_a_assembly [spar::dict_get_default $appendices a_assembly ""]
     set overview [dict get $cdata usp_document]
     set antifacts [spar::dict_get_default $cdata antifacts]
     set campaign_principles [spar::dict_get_default $cdata campaign_principles]
@@ -524,6 +536,12 @@ s_note: $s_note"
             puts $fd "CHALLENGER_MODEL=sonnet"
             close $fd
 
+            if {$appendix_a_assembly ne ""} {
+                set fd [open [file join $prompt_dir appendix-assembly.txt] w]
+                puts -nonewline $fd $appendix_a_assembly
+                close $fd
+            }
+
             # --- Build file-reading instructions ---
             set file_items "1. Method: $method — read §4.1 through §4.5 (warmth, channel, language, angle, draft). Skip §4.6 (spar) — that is handled separately.
 2. Organisation overview: $overview — read in full. This is the ground truth about the organisation. The segment file lists which USPs apply to this segment and whether each is functional or emotional. Use those USPs, do not invent your own from the overview.
@@ -581,6 +599,10 @@ DRAFT_START
 DRAFT_END
 
 Do NOT write any files. Only output text to stdout with the markers above."
+            if {$appendix_a_author ne ""} {
+                puts $fd ""
+                puts $fd $appendix_a_author
+            }
             close $fd
 
             # --- Build challenger fact-check section ---
@@ -637,6 +659,10 @@ VERDICT: DONE
 VERDICT: REVISE
 
 Emit VERDICT: DONE if the draft is credible (the persona reacted naturally without major objections) and factually correct. Emit VERDICT: REVISE if the persona had significant concerns or if fact-check found errors that must be fixed."
+            if {$appendix_a_challenger ne ""} {
+                puts $fd ""
+                puts $fd $appendix_a_challenger
+            }
             close $fd
 
             # --- profile-content.txt ---
@@ -651,7 +677,6 @@ Emit VERDICT: DONE if the draft is credible (the persona reacted naturally witho
         campaign $campaign_name \
         sender_name $sender_name \
         sender_email $sender_email \
-        method $method \
         language $language \
         segments $segments \
         filter_desc $filter_desc \
