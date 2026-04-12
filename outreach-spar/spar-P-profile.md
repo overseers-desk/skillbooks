@@ -17,7 +17,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 
 ## 3. Output
 
-A markdown file: `profile-[name-slug]-[org-slug].md` in the campaign's profile directory. The file follows the structure defined in §5 below.
+A markdown file named `{stem}.md` in the campaign's `profiles/` directory, where `{stem}` is the roster row's `stem` column value. The file opens with a YAML front-matter block carrying machine-read fields, followed by a markdown body. Structure defined in §5 below.
 
 Additionally, P produces:
 - **Roster updates:** If the target's role, organisation, or contact details have changed or were missing and are now known, update the roster entry directly (see §4.11).
@@ -240,7 +240,7 @@ If profiling reveals that the contact cannot deliver the campaign's intended out
 
 Note that network/connection value can support a 5-star rating when the connection paths are specific and high-value (e.g. bridges to a target community the campaign has no other path into), not merely when the person has a large network.
 
-**Write `star_rating` to the roster TSV — do not record it in the profile document or in any summary document.** `response_likelihood` is set by the A phase, not P; do not write it here. Use `sqlite3` to update the contact's row in-place.
+**Write `star_rating` in two places: the profile front matter (`star_rating:`) and the roster TSV column.** The profile is the authorial home — it is where P records the assessment and where git history preserves it across later roster edits. The TSV column is the query-optimised copy used by the state machine, band filters, and progress counts. Both must be written by the same P run; `sqlite3` updates the roster row in-place. `response_likelihood` is set by the A phase, not P; do not write it here.
 
 ### 4.10 Classify profile richness
 
@@ -250,7 +250,7 @@ Count substantive data points. The following all qualify as data points: (a) pub
 - **Medium** (3–5 data points): The A phase can run 1 round of A1/A2.
 - **Thin** (<3 data points): The A phase skips A2 entirely.
 
-Record the classification and the count in the profile header.
+Record the classification (`richness: rich|medium|thin`) and the count (`richness_count: N`) in the profile front matter. See §5.1.
 
 ### 4.11 Check for verification corrections
 
@@ -277,17 +277,44 @@ Record all corrections and backfills in the profile document under a "Verificati
 
 ## 5. Profile document structure
 
+A profile file has two parts: a YAML **front matter** block (machine-read) and a markdown **body** (read by the A-phase agent and by humans).
+
+### 5.1 Front matter
+
+Delimited by `---` fences at the very top of the file, standard Jekyll/Hugo/Pandoc convention. All listed fields are required; the validator rejects files with missing or unknown keys.
+
+```yaml
+---
+profile_date: 2026-04-12            # ISO date this profile was generated
+star_rating: 4                      # 1–5; 0 never appears here (excluded contacts have no profile — see §4.0, §4.0b, §4.9)
+richness: rich                      # rich | medium | thin
+richness_count: 7                   # integer — substantive data points counted per §4.10
+warmth_finding: cold                # existing | prior | known-of | cold — IMAP-derived per §4.4
+applicable_angles:                  # ordered by strength of evidence per §4.8; slugs only, evidence stays in the body
+  - certification-gap
+  - network-connection-value
+dependent_data:                     # snapshot of roster fields whose change invalidates this profile (see §5.3)
+  contact_name: Kara Struckman
+  organisation: Wilson Center
+  role: Director, Environmental Change and Security Program
+  date_excluded: null
+---
+```
+
+**Field ownership.** `profile_date`, `star_rating`, `richness`, `richness_count`, `warmth_finding`, `applicable_angles` are P-authored at profile generation time. They are not copies of roster values — they are the authorial record of P's assessment. If the roster is later hand-edited, git history of this profile preserves what P originally decided.
+
+**What is *not* in the front matter.** Approach-time decisions (`channel`, chosen `angle`, `sender`, `language`, `response_likelihood`) belong in the approach YAML, authored by A. Contact channels (`email`, `linkedin_url`, `facebook_url`, `phone`) belong in the roster TSV. Do not duplicate them here.
+
+### 5.2 Body
+
+The body is prose that the A-phase agent reads to select an angle and draft a message. Section order is fixed; the validator does not check body content, but A-phase readers expect this layout.
+
 ```markdown
 # Profile: [Full Name]
 
-**Profile date:** [YYYY-MM-DD]
-**Source:** [LinkedIn URL, web search, other sources used]
-**Richness classification:** [Rich/Medium/Thin] ([N] data points)
-
 ## Prior correspondence (IMAP)
 
-**Warmth level:** [Existing relationship / Prior contact / Known-of / Cold]
-[Summary of IMAP findings per account, or "No prior correspondence found in any account"]
+[Summary of IMAP findings per account, or "No prior correspondence found in any account". Evidence for `warmth_finding`.]
 
 ## Current role
 
@@ -343,6 +370,21 @@ Record all corrections and backfills in the profile document under a "Verificati
 
 [Any corrections made to the roster entry during profiling, or "None — roster entry confirmed accurate"]
 ```
+
+### 5.3 `dependent_data` and staleness
+
+The `dependent_data` block is a snapshot, taken at profile-generation time, of roster fields whose subsequent change should invalidate this profile. The state-machine compares these values against the current roster row and raises `PROFILE_STALE` on divergence; the A phase must not consume a stale profile.
+
+**Snapshotted fields and divergence rules:**
+
+- `contact_name`, `organisation`, `role` — any change is staleness. A renamed contact, a moved org, or a new role all invalidate the profile's angle assessment.
+- `date_excluded` — asymmetric. If the snapshot holds a date and the current value is empty, the contact was re-validated after a period of exclusion; treat as stale so P can re-assess. The reverse direction (empty → date) is not staleness; the contact is now `EXCLUDED` and the state supersedes.
+
+If the contact's name, organisation, or role was corrected *during this profile run* (see §4.11), snapshot the corrected values — not the pre-correction values. The snapshot's purpose is to detect *future* drift, not to preserve history.
+
+### 5.4 Excluded contacts have no profile
+
+Per §4.0, §4.0b, §4.9 and §4.11, contacts with `date_excluded` set do not receive a profile document. The presence of a profile file is itself a claim that the contact is valid. No `excluded: true` field, no `star_rating: 0`. The roster's `date_excluded` column carries that state.
 
 ## 6. Guidance for avoiding common errors
 

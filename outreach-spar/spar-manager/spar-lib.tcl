@@ -209,35 +209,26 @@ proc spar::profile_exists {profile_dir slug_name slug_org} {
     return 0
 }
 
-# get_max_rounds — determine max A2 spar rounds from profile richness
-# Port of spar-a-batch.sh lines 120-135
+# get_max_rounds — determine max A2 spar rounds from profile richness.
+# Reads the profile's YAML front matter (see spar-P-profile.md §5.1 and
+# SmartLayer/aesop#45) for the canonical `richness` value. Returns 3 for rich,
+# 1 for medium/thin, 1 for anything unparseable.
 proc spar::get_max_rounds {profile_path} {
     if {$profile_path eq "" || ![file exists $profile_path]} {
         return 1
     }
-    set fd [open $profile_path r]
-    set content [read $fd]
-    close $fd
-
-    # Find the first line containing "richness" and extract the classification word.
-    # The bash original has a bug: grep -qi 'rich' matches "Richness" itself,
-    # so Thin profiles get 3 rounds. We fix this by checking for the classification
-    # value after the colon, not a substring of the label.
-    foreach line [split $content \n] {
-        if {[string match -nocase *richness* $line]} {
-            # Extract classification value, stripping markdown bold markers
-            set val ""
-            if {[regexp -nocase {:\s*\**\s*(.+)} $line -> val]} {
-                set val [string trim $val "* "]
-            }
-            if {[string match -nocase "Rich*" $val]} {
-                return 3
-            } elseif {[string match -nocase "Medium*" $val] || [string match -nocase "Moderate*" $val]} {
-                return 1
-            } else {
-                return 1
-            }
-        }
+    # read_profile_front_matter lives in spar-state.tcl; guard for callers that
+    # source only spar-lib.tcl.
+    if {[info procs spar::read_profile_front_matter] eq ""} {
+        return 1
+    }
+    set fm [spar::read_profile_front_matter $profile_path]
+    if {$fm eq "" || ![dict exists $fm richness]} {
+        return 1
+    }
+    set r [string tolower [dict get $fm richness]]
+    if {$r eq "rich"} {
+        return 3
     }
     return 1
 }

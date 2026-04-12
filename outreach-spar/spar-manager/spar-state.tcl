@@ -9,7 +9,8 @@ namespace eval spar {
     namespace export classify_contact classify_segment \
         transition_eligible detect_duplicates progress_counts \
         roster_counts \
-        validate_campaign validate_campaign_semantics validate_approach build_warnings
+        validate_campaign validate_campaign_semantics validate_approach \
+        validate_profile read_profile_front_matter build_warnings
 }
 
 # is_masked_email — return 1 if email looks redacted (contains '*').
@@ -249,7 +250,7 @@ proc spar::classify_contact {roster_row segment_dir} {
     }
 
     # 2. DISCOVERED — profile file does not exist
-    set profile_path [file join $segment_dir profiles "profile-${stem}.md"]
+    set profile_path [file join $segment_dir profiles "${stem}.md"]
     if {![file exists $profile_path]} {
         set profile_path ""
         return [dict create \
@@ -266,12 +267,20 @@ proc spar::classify_contact {roster_row segment_dir} {
             email_replied $email_replied]
     }
 
-    # 3. PROFILED — profile exists, approach file does not
+    # 3. PROFILED / PROFILE_STALE — profile exists. Determine which by comparing
+    # the profile's front-matter dependent_data snapshot to the current roster row.
+    # Malformed front matter does not flip to STALE — validate_profile catches that
+    # separately; staleness is about roster-vs-snapshot divergence only.
+    set profile_state PROFILED
+    if {[spar::_profile_is_stale $profile_path $roster_row]} {
+        set profile_state PROFILE_STALE
+    }
+
     set approach_path [file join $segment_dir approach "${stem}.yaml"]
     if {![file exists $approach_path]} {
         set approach_path ""
         return [dict create \
-            state PROFILED \
+            state $profile_state \
             profile_path $profile_path \
             approach_path $approach_path \
             star $star \
@@ -1083,24 +1092,307 @@ proc spar::validate_approach {approach_path roster_email contact_name} {
     return $issues
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Profile validation (SmartLayer/aesop#45)
+# Mirrors the approach validator: closed-vocabulary front matter + staleness
+# check against the current roster row. Per state-machine.md §Design by
+# Contract, this is the post-check for the P-phase AI call.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# _profile_canonical_keys -- single source of truth for profile front-matter vocabulary.
+# Keyed by level; must stay in sync with spar-P-profile.md §5.1.
+proc spar::_profile_canonical_keys {} {
+    return [dict create \
+        root {profile_date star_rating richness richness_count warmth_finding applicable_angles dependent_data} \
+        dependent_data {contact_name organisation role date_excluded}]
+}
+
+# _check_profile_unknown_keys -- mirror of _check_unknown_keys, profile vocabulary.
+proc spar::_check_profile_unknown_keys {data level contact_name} {
+    set issues {}
+    set canon [spar::_profile_canonical_keys]
+    if {![dict exists $canon $level]} { return $issues }
+    set known [dict get $canon $level]
+    if {[llength $data] % 2 != 0} { return $issues }
+    foreach {k _v} $data {
+        if {$k in $known} continue
+        set found_at ""
+        dict for {lvl keys} $canon {
+            if {$lvl eq $level} continue
+            if {$k in $keys} { set found_at $lvl; break }
+        }
+        if {$found_at ne ""} {
+            lappend issues [dict create \
+                severity error \
+                code wrong_level \
+                contact_name $contact_name \
+                message "'$k' at $level belongs at $found_at; move it there"]
+        } else {
+            lappend issues [dict create \
+                severity error \
+                code unknown_key_$level \
+                contact_name $contact_name \
+                message "unknown key '$k' at $level — not in canonical vocabulary"]
+        }
+    }
+    return $issues
+}
+
+# read_profile_front_matter -- extract and parse the YAML front-matter block
+# of a profile file. Returns parsed dict, or "" on any failure (missing file,
+# missing fences, YAML parse error).
+proc spar::read_profile_front_matter {path} {
+    if {![file exists $path]} { return "" }
+    set fd {}
+    if {[catch {
+        set fd [open $path r]
+        fconfigure $fd -encoding utf-8
+        set raw [read $fd]
+        close $fd
+        set fd {}
+    } err]} {
+        if {$fd ne ""} { catch {close $fd} }
+        return ""
+    }
+    set lines [split $raw \n]
+    if {[llength $lines] < 2} { return "" }
+    if {[string trim [lindex $lines 0]] ne "---"} { return "" }
+    set fm_lines {}
+    set closed 0
+    for {set i 1} {$i < [llength $lines]} {incr i} {
+        set line [lindex $lines $i]
+        if {[string trim $line] eq "---"} {
+            set closed 1
+            break
+        }
+        lappend fm_lines $line
+    }
+    if {!$closed} { return "" }
+    set fm_text [join $fm_lines \n]
+    set data ""
+    if {[catch { set data [::yaml::yaml2dict $fm_text] } err]} {
+        return ""
+    }
+    return $data
+}
+
+# _roster_field_current -- fetch and de-quote a roster field from a row dict.
+# TSV loaders sometimes wrap blanks in `""`; strip the artifact.
+proc spar::_roster_field_current {row field} {
+    set v [string trim [spar::dict_get_default $row $field ""]]
+    if {[regexp {^"(.*)"$} $v -> inner]} {
+        set v [string trim $inner]
+    }
+    return $v
+}
+
+# _profile_is_stale -- return 1 iff any dependent_data field in the profile's
+# front matter diverges from the corresponding roster field. Used by
+# classify_contact to decide PROFILED vs PROFILE_STALE. Missing/malformed
+# front matter returns 0 (validate_profile reports malformed separately).
+proc spar::_profile_is_stale {profile_path roster_row} {
+    if {$profile_path eq "" || ![file exists $profile_path]} { return 0 }
+    set fm [spar::read_profile_front_matter $profile_path]
+    if {$fm eq "" || ![dict exists $fm dependent_data]} { return 0 }
+    set dep [dict get $fm dependent_data]
+    if {[llength $dep] % 2 != 0} { return 0 }
+
+    foreach field {contact_name organisation role} {
+        if {![dict exists $dep $field]} continue
+        set snap [dict get $dep $field]
+        if {[spar::is_null $snap]} { set snap "" }
+        set cur [spar::_roster_field_current $roster_row $field]
+        if {$snap ne $cur} { return 1 }
+    }
+    # date_excluded: asymmetric — stale only when snapshot had a date and
+    # current is empty (contact was re-validated after an exclusion episode).
+    if {[dict exists $dep date_excluded]} {
+        set snap [dict get $dep date_excluded]
+        set cur [spar::_roster_field_current $roster_row date_excluded]
+        set snap_has_date [expr {![spar::is_null $snap] && $snap ne ""}]
+        set cur_has_date [expr {![spar::is_null $cur] && $cur ne ""}]
+        if {$snap_has_date && !$cur_has_date} { return 1 }
+    }
+    return 0
+}
+
+# validate_profile -- check a single profile file against the front-matter
+# contract. Emits malformed (errors) and stale (warnings) issues.
+#
+# profile_path   path to the profile .md file
+# roster_row     dict of the contact's roster row (for dependent_data comparison)
+# contact_name   for error messages
+#
+# Returns a list of issue dicts with keys: severity, code, contact_name, message.
+#
+proc spar::validate_profile {profile_path roster_row contact_name} {
+    set issues {}
+    if {$profile_path eq "" || ![file exists $profile_path]} {
+        return $issues
+    }
+
+    # Read raw to distinguish "missing fences" from "YAML parse failure".
+    set fd {}
+    set raw ""
+    if {[catch {
+        set fd [open $profile_path r]
+        fconfigure $fd -encoding utf-8
+        set raw [read $fd]
+        close $fd
+        set fd {}
+    } err]} {
+        if {$fd ne ""} { catch {close $fd} }
+        lappend issues [dict create severity error code invalid_front_matter \
+            contact_name $contact_name \
+            message "Profile file could not be read: $err"]
+        return $issues
+    }
+
+    set lines [split $raw \n]
+    if {[llength $lines] < 2 || [string trim [lindex $lines 0]] ne "---"} {
+        lappend issues [dict create severity error code invalid_front_matter \
+            contact_name $contact_name \
+            message "Profile missing YAML front matter — first line must be '---'"]
+        return $issues
+    }
+
+    set fm [spar::read_profile_front_matter $profile_path]
+    if {$fm eq ""} {
+        lappend issues [dict create severity error code invalid_front_matter \
+            contact_name $contact_name \
+            message "Profile front matter fences malformed or YAML did not parse"]
+        return $issues
+    }
+
+    # Closed-vocabulary walk.
+    lappend issues {*}[spar::_check_profile_unknown_keys $fm root $contact_name]
+    if {[dict exists $fm dependent_data]} {
+        set _dep [dict get $fm dependent_data]
+        if {[llength $_dep] % 2 == 0} {
+            lappend issues {*}[spar::_check_profile_unknown_keys $_dep dependent_data $contact_name]
+        }
+    }
+
+    # Required keys at root.
+    foreach req {profile_date star_rating richness richness_count warmth_finding applicable_angles dependent_data} {
+        if {![dict exists $fm $req]} {
+            lappend issues [dict create severity error code missing_${req} \
+                contact_name $contact_name \
+                message "Profile front matter missing required key '${req}'"]
+        }
+    }
+
+    # Enum checks.
+    if {[dict exists $fm richness]} {
+        set r [dict get $fm richness]
+        if {$r ni {rich medium thin}} {
+            lappend issues [dict create severity error code invalid_richness \
+                contact_name $contact_name \
+                message "richness '$r' — must be rich, medium, or thin"]
+        }
+    }
+    if {[dict exists $fm warmth_finding]} {
+        set w [dict get $fm warmth_finding]
+        if {$w ni {existing prior known-of cold}} {
+            lappend issues [dict create severity error code invalid_warmth_finding \
+                contact_name $contact_name \
+                message "warmth_finding '$w' — must be existing, prior, known-of, or cold"]
+        }
+    }
+    if {[dict exists $fm star_rating]} {
+        set s [dict get $fm star_rating]
+        if {![string is integer -strict $s] || $s < 1 || $s > 5} {
+            lappend issues [dict create severity error code invalid_star_rating \
+                contact_name $contact_name \
+                message "star_rating '$s' — must be integer 1..5 (0 never appears; excluded contacts have no profile)"]
+        }
+    }
+
+    # richness/richness_count consistency (warning).
+    if {[dict exists $fm richness] && [dict exists $fm richness_count]} {
+        set r [dict get $fm richness]
+        set rc [dict get $fm richness_count]
+        if {[string is integer -strict $rc]} {
+            set mismatch 0
+            if {$r eq "thin"   && $rc >= 5} { set mismatch 1 }
+            if {$r eq "medium" && ($rc < 3 || $rc > 7)} { set mismatch 1 }
+            if {$r eq "rich"   && $rc < 6} { set mismatch 1 }
+            if {$mismatch} {
+                lappend issues [dict create severity warning code richness_count_mismatch \
+                    contact_name $contact_name \
+                    message "richness '$r' inconsistent with richness_count $rc"]
+            }
+        }
+    }
+
+    # Staleness: compare dependent_data snapshot to the current roster row.
+    if {[dict exists $fm dependent_data]} {
+        set dep [dict get $fm dependent_data]
+        if {[llength $dep] % 2 == 0} {
+            foreach field {contact_name organisation role} {
+                if {![dict exists $dep $field]} continue
+                set snap [dict get $dep $field]
+                if {[spar::is_null $snap]} { set snap "" }
+                set cur [spar::_roster_field_current $roster_row $field]
+                if {$snap ne $cur} {
+                    lappend issues [dict create severity warning code stale_${field} \
+                        contact_name $contact_name \
+                        message "snapshot ${field} '$snap' ≠ current roster '$cur' — profile may be stale"]
+                }
+            }
+            if {[dict exists $dep date_excluded]} {
+                set snap [dict get $dep date_excluded]
+                set cur [spar::_roster_field_current $roster_row date_excluded]
+                set snap_has_date [expr {![spar::is_null $snap] && $snap ne ""}]
+                set cur_has_date [expr {![spar::is_null $cur] && $cur ne ""}]
+                if {$snap_has_date && !$cur_has_date} {
+                    lappend issues [dict create severity warning code stale_date_excluded \
+                        contact_name $contact_name \
+                        message "profile snapshot had date_excluded='$snap'; roster now empty — contact re-validated, re-profile"]
+                }
+            }
+        }
+    }
+
+    return $issues
+}
+
+# _profile_validation_error -- return first error-severity validation message for
+# the profile of a classified contact, or "" if none. Mirrors
+# _approach_validation_error. Used by DbC-Post handlers and by downstream
+# gatekeeping (not currently wired to any T-transition, but available).
+proc spar::_profile_validation_error {contact} {
+    set pp [spar::dict_get_default $contact profile_path ""]
+    if {$pp eq ""} { return "" }
+    set cname [spar::dict_get_default $contact contact_name ""]
+    foreach issue [spar::validate_profile $pp $contact $cname] {
+        if {[dict get $issue severity] eq "error"} {
+            return [dict get $issue message]
+        }
+    }
+    return ""
+}
+
 # validate_campaign_semantics -- cross-file checks only; no per-file approach validation.
 # Used by progress/warnings paths where per-file schema validation is out of scope
 # (per issue SmartLayer/aesop#43 principle 6).
 proc spar::validate_campaign_semantics {all_classified_contacts} {
-    return [spar::validate_campaign $all_classified_contacts 0]
+    return [spar::validate_campaign $all_classified_contacts 0 0]
 }
 
 # validate_campaign -- run validation checks across all classified contacts.
 #
 # all_classified_contacts  flat list from classify_segment across one or more segments
 #                          (each dict has _segment_dir set)
-# include_approach         when 1 (default), delegate per-file validation to
+# include_approach         when 1 (default), delegate per-file approach validation to
 #                          validate_approach. When 0, skip — used by progress.
+# include_profile          when 1 (default), delegate per-file profile validation to
+#                          validate_profile. When 0, skip — used by progress.
 #
 # Returns a list of issue dicts, each with keys:
 #   severity, code, segment, contact_name, message
 #
-proc spar::validate_campaign {all_classified_contacts {include_approach 1}} {
+proc spar::validate_campaign {all_classified_contacts {include_approach 1} {include_profile 1}} {
     set issues {}
 
     # Collect per-segment data for orphan checks
@@ -1152,6 +1444,17 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1}} {
                 lappend issues $issue
             }
         }
+
+        # Profile validation (skipped when include_profile=0). State PROFILE_STALE
+        # still emits through validate_profile's stale_* warnings; DISCOVERED has
+        # no profile file so validate_profile no-ops.
+        if {$include_profile} {
+            set profile_path [spar::dict_get_default $contact profile_path ""]
+            foreach issue [spar::validate_profile $profile_path $contact $contact_name] {
+                dict set issue segment $segment
+                lappend issues $issue
+            }
+        }
     }
 
     # Roster quality-checklist assertions (per-segment)
@@ -1173,12 +1476,15 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1}} {
         set known_profile_names {}
         if {[info exists seg_stems($segment_dir)]} {
             foreach s $seg_stems($segment_dir) {
-                lappend known_profile_names "profile-${s}"
+                lappend known_profile_names $s
             }
         }
 
         foreach f [glob -nocomplain [file join $profile_dir *.md]] {
             set filestem [file rootname [file tail $f]]
+            # Skip legacy profile-* files during migration window — they are reference
+            # artefacts, not authoritative profiles. The classifier reads {stem}.md only.
+            if {[string match "profile-*" $filestem]} continue
             if {$filestem ni $known_profile_names} {
                 lappend issues [dict create \
                     severity warning \
