@@ -403,12 +403,11 @@ proc build_transitions {all_contacts} {
         "Profile \u2192 Approach"
         "Approach \u2192 Send"
         "Send \u2192 Reply"
-        "Flag invalid"
         "Stale \u2192 Re-profile"
         "Re-profile \u2192 Re-approach"
         "LinkedIn \u2192 Email follow-up"
     }
-    set tids {T1 T2 T3 T4 T5 T6 T7 T8}
+    set tids {T1 T2 T3 T4 T6 T7 T8}
 
     set result {}
     for {set i 0} {$i < [llength $labels]} {incr i} {

@@ -225,7 +225,6 @@ The transition manager filters `classify_segment` output by eligibility conditio
 | T2 | Profile → Approach | state = PROFILED, star≥3 | spar-a-batch.tcl | available |
 | T3 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | email send (SES) | not-implemented |
 | T4 | Send → Reply | email_sent, not email_replied | none (monitoring only) | n/a |
-| T5 | Flag invalid | state = any valid | roster TSV update | not-implemented |
 | T6 | Stale → Re-profile | state = PROFILE_STALE | spar-transitions.tcl --tid=T6 --execute | available (zero tasks until PROFILE_STALE defined) |
 | T7 | Re-profile → Re-approach | re-PROFILED after stale (see note) | spar-a-batch.tcl | available (zero tasks until PROFILE_STALE defined) |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
@@ -263,11 +262,13 @@ Each contact in a transition has one of:
                    PROFILE_STALE ──T6──▶ PROFILED (re-written)
                                    ──T7──▶ APPROACHED (re-approached, deferred)
 
-  EXCLUDED — terminal; reached from any non-terminal state by setting date_excluded.
+  EXCLUDED — terminal; reached as an in-process outcome of S (sweep), P (profile),
+             or A (approach) writing `date_excluded` on the roster row, per the rules
+             in spar-S-search.md, spar-P-profile.md §§4.0/4.0b/4.9/4.11, and
+             spar-A-approach.md §4.0 step 2. There is no operator-initiated arrow.
              T4, T8, detect_duplicates skip EXCLUDED. T2 cannot reach EXCLUDED
              because its gate requires PROFILED.
 
-  T5 — flag-invalid transition from any non-EXCLUDED state into EXCLUDED.
   T8 — LinkedIn→Email cross-message transition within APPROACHED/SENT (same primary state).
   T9, T10 — secondary/tertiary follow-ups (documented but not wired in transition_eligible).
 ```
@@ -290,7 +291,6 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 | T2  | PROFILED             | star ≥ 3                                                | —                                                              | spar-state.tcl:456 |
 | T3  | APPROACHED ∨ SENT    | has_email ∧ ¬email_sent ∧ A(approach_path)              | ¬has_email: "No email address". ¬A: "invalid_approach_yaml"    | spar-state.tcl:464 |
 | T4  | any ≠ EXCLUDED       | email_sent ∧ ¬email_replied ∧ A(approach_path)          | monitoring: always pending ("Waiting for reply" or invalid)    | spar-state.tcl:487 |
-| T5  | any ≠ EXCLUDED       | —                                                       | manual                                                         | spar-state.tcl:505 |
 | T6  | PROFILE_STALE        | —                                                       | PROFILE_STALE classifier not yet assigned → zero tasks         | spar-state.tcl:513 |
 | T7  | —                    | deferred                                                | zero tasks                                                     | spar-state.tcl:522 |
 | T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always pending: awaiting acceptance                            | spar-state.tcl:526 |

@@ -1735,40 +1735,6 @@ if {![file isdirectory $campaign_dir]} {
 }
 
 # ════════════════════════════════════════════════════════════════════════
-# 14. T5 transition eligibility
-# ════════════════════════════════════════════════════════════════════════
-section "14. T5 transition eligibility"
-
-set seg_t5 [make_temp_segment]
-write_profile $seg_t5 "t5-profiled"
-write_roster_tsv $seg_t5 $::std_headers [list \
-    [make_base_row {contact_name "Inv Irene" date_excluded "2026-01-01" stem ""}] \
-    [make_base_row {contact_name "Disco Dan" stem ""}] \
-    [make_base_row {contact_name "Prof Pat" stem "t5-profiled"}] \
-]
-set ct5 [spar::classify_segment $seg_t5]
-set t5_results [spar::transition_eligible $ct5 "T5"]
-set t5_names [lmap c $t5_results {dict get $c contact_name}]
-
-assert_eq [expr {"Inv Irene" in $t5_names}] 0 \
-    "T5: EXCLUDED contact not in list"
-assert_eq [expr {"Disco Dan" in $t5_names}] 1 \
-    "T5: DISCOVERED contact in list"
-assert_eq [expr {"Prof Pat" in $t5_names}] 1 \
-    "T5: PROFILED contact in list"
-
-# Verify task_state is ready for eligible contacts
-foreach c $t5_results {
-    set n [dict get $c contact_name]
-    if {$n eq "Disco Dan"} {
-        assert_eq [dict get $c task_state] "ready" "T5: DISCOVERED task_state=ready"
-    }
-    if {$n eq "Prof Pat"} {
-        assert_eq [dict get $c task_state] "ready" "T5: PROFILED task_state=ready"
-    }
-}
-
-# ════════════════════════════════════════════════════════════════════════
 # 15. T6/T7 zero tasks (PROFILE_STALE undefined)
 # ════════════════════════════════════════════════════════════════════════
 section "15. T6/T7 zero tasks (PROFILE_STALE undefined)"
@@ -1957,7 +1923,7 @@ assert_eq [dict exists $js replied] 1 "json: sent has replied"
 assert_eq [dict exists $parsed segments] 1 "json: has segments"
 assert_eq [llength [dict get $parsed segments]] 1 "json: one segment"
 assert_eq [dict exists $parsed transitions] 1 "json: has transitions"
-assert_eq [llength [dict get $parsed transitions]] 8 "json: 8 transitions"
+assert_eq [llength [dict get $parsed transitions]] 7 "json: 7 transitions"
 assert_eq [dict exists $parsed warnings] 1 "json: has warnings"
 assert_eq [dict exists $parsed validation] 1 "json: has validation"
 

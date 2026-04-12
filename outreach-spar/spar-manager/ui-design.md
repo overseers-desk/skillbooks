@@ -117,7 +117,6 @@ The fixed transition types:
 | T2 | Profile → Approach | PROFILED | APPROACHED |
 | T3 | Approach → Send | APPROACHED | SENT |
 | T4 | Send → Reply | SENT | REPLIED |
-| T5 | Flag excluded | Any | EXCLUDED |
 | T6 | Stale → Re-profile | PROFILE_STALE | PROFILED |
 | T7 | Re-profile → Re-approach | PROFILED (rebuilt) | APPROACHED |
 | T8 | LinkedIn → Email follow-up | SENT (LinkedIn) | APPROACHED (email) |

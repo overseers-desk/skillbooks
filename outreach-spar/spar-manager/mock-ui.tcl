@@ -76,7 +76,6 @@ set transitions {
         {"Yuki Tanaka" "Japan Travel Bureau" "tour-operator-inbound" "pending" "Waiting for reply"}
         {"Ben Crawford" "Line Dance Australia" "line-dance" "done" ""}
     }}
-    {"Flag invalid" 0 {}}
     {"Stale \u2192 Re-profile" 3 {
         {"Greg Palmer" "Outback Adventures" "tour-operator-domestic" "ready" ""}
         {"Linda Voss" "Hinterland Weddings" "wedding-planner" "ready" ""}

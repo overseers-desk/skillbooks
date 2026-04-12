@@ -9,9 +9,9 @@
 #   tclsh spar-transitions.tcl <campaign_dir_or_yaml> --tid=Tn --execute
 #       [--segment=<name> ...] [--stem=<stem> ...] [--jobs=N] [--dry-run]
 #
-# T1 and T6 route to spar::dispatch_profiles (P harness). T2–T5, T7, T8 execution
-# is not yet wired; --execute on those TIDs fails loudly rather than silently
-# skipping.
+# T1 and T6 route to spar::dispatch_profiles (P harness). T2, T3, T4, T7, T8
+# execution is not yet wired; --execute on those TIDs fails loudly rather than
+# silently skipping.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
@@ -140,13 +140,12 @@ if {[llength $filter_stems] > 0} {
 }
 
 # --- Transition definitions ---
-set tids    {T1 T2 T3 T4 T5 T6 T7 T8}
+set tids    {T1 T2 T3 T4 T6 T7 T8}
 set tlabels {
     "Sweep \u2192 Profile"
     "Profile \u2192 Approach"
     "Approach \u2192 Send"
     "Send \u2192 Reply"
-    "Flag invalid"
     "Stale \u2192 Re-profile"
     "Re-profile \u2192 Re-approach"
     "LinkedIn \u2192 Email follow-up"
@@ -163,7 +162,7 @@ if {[llength $filter_tid] == 0} {
 # ────────────────────────────────────────────────────────────────────────
 if {$execute_mode} {
     set profile_tids {T1 T6}
-    set unimplemented_tids {T2 T3 T4 T5 T7 T8}
+    set unimplemented_tids {T2 T3 T4 T7 T8}
 
     # Collect ready tasks per TID
     set ready_by_tid [dict create]
@@ -192,7 +191,7 @@ if {$execute_mode} {
             set n [llength [dict get $ready_by_tid $tid]]
             puts stderr "Error: --execute for $tid is not yet wired ($n ready task(s))."
             puts stderr "  T2/T7 → use spar-a-batch.tcl for now."
-            puts stderr "  T3/T4/T5/T8 → no harness exists yet."
+            puts stderr "  T3/T4/T8 → no harness exists yet."
             exit 1
         }
     }

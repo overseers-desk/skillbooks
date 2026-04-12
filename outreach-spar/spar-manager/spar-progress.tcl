@@ -176,7 +176,7 @@ if {$json_mode} {
     set transition_defs {
         T1 "Sweep \u2192 Profile"   T2 "Profile \u2192 Approach"
         T3 "Approach \u2192 Send"   T4 "Send \u2192 Reply"
-        T5 "Flag invalid"           T6 "Stale \u2192 Re-profile"
+        T6 "Stale \u2192 Re-profile"
         T7 "Re-profile \u2192 Re-approach" T8 "LinkedIn \u2192 Email follow-up"
     }
     set transitions {}
