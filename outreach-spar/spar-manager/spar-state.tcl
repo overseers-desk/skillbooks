@@ -821,10 +821,10 @@ proc spar::validate_approach {approach_path roster_email contact_name} {
     set approach_data [spar::read_approach_yaml $approach_path]
     if {$approach_data eq ""} {
         lappend issues [dict create \
-            severity warning \
-            code yaml_parse_failed \
+            severity error \
+            code invalid_yaml \
             contact_name $contact_name \
-            message "Approach file could not be parsed by Tcl YAML library (may still be valid YAML)"]
+            message "Approach file could not be parsed as YAML"]
         return $issues
     }
 
