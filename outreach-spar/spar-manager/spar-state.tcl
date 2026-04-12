@@ -1535,6 +1535,7 @@ proc spar::validate_roster {segment_contacts} {
         set email [string trim [spar::dict_get_default $contact email ""]]
         set linkedin [string trim [spar::dict_get_default $contact linkedin_url ""]]
         set facebook [string trim [spar::dict_get_default $contact facebook_url ""]]
+        set phone [string trim [spar::dict_get_default $contact phone ""]]
         set sweep [string trim [spar::dict_get_default $contact sweep_iteration ""]]
         set verified [string trim [spar::dict_get_default $contact verified ""]]
         set date_invalid [string trim [spar::dict_get_default $contact date_excluded ""]]
@@ -1611,14 +1612,14 @@ proc spar::validate_roster {segment_contacts} {
         }
         lappend seen_name_org $name_org_key
 
-        # Assertion 4: at least one of email, linkedin_url, facebook_url
-        if {![string match *@* $email] && $linkedin eq "" && $facebook eq ""} {
+        # Assertion 4: at least one of email, linkedin_url, facebook_url, phone
+        if {![string match *@* $email] && $linkedin eq "" && $facebook eq "" && $phone eq ""} {
             lappend issues [dict create \
                 severity warning \
                 code roster_no_channel \
                 segment $segment \
                 contact_name $contact_name \
-                message "Contact has no email, LinkedIn, or Facebook"]
+                message "Profile has no email, LinkedIn, Facebook, or phone"]
         }
 
         # Assertion 5: sweep_iteration has a value
