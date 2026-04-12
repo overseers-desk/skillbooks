@@ -128,7 +128,7 @@ proc has_issue {issues code} {
 # Standard roster headers for most tests.
 set ::std_headers {
     contact_name organisation_name email linkedin_url facebook_url phone
-    star_rating date_found_invalid stem
+    star_rating date_excluded stem
 }
 
 # make_base_row -- return a dict with default valid values.
@@ -141,7 +141,7 @@ proc make_base_row {{overrides {}}} {
         facebook_url    "" \
         phone           "" \
         star_rating     "3" \
-        date_found_invalid "" \
+        date_excluded "" \
         stem            "" \
     ]
     dict for {k v} $overrides {
@@ -281,11 +281,11 @@ proc cleanup_temps {} {
 # ════════════════════════════════════════════════════════════════════════
 section "1. Primary state classification"
 
-# 1a. date_found_invalid set → INVALID
+# 1a. date_excluded set → EXCLUDED
 set seg [make_temp_segment]
-set row [make_base_row {date_found_invalid "2026-01-15"}]
+set row [make_base_row {date_excluded "2026-01-15"}]
 set result [spar::classify_contact $row $seg]
-assert_eq [dict get $result state] "INVALID" "date_found_invalid → INVALID"
+assert_eq [dict get $result state] "EXCLUDED" "date_excluded → EXCLUDED"
 
 # 1b. Valid contact, stem="" → DISCOVERED
 set seg [make_temp_segment]
@@ -473,7 +473,7 @@ write_approach_yaml $seg "sent-one" [approach_yaml_final_sent_email]
 
 set headers $::std_headers
 set rows [list \
-    [make_base_row {contact_name "Invalid Irene" date_found_invalid "2026-01-01" stem ""}] \
+    [make_base_row {contact_name "Invalid Irene" date_excluded "2026-01-01" stem ""}] \
     [make_base_row {contact_name "Discovered Dan" stem ""}] \
     [make_base_row {contact_name "Profiled Pat" stem "profiled-one"}] \
     [make_base_row {contact_name "Approached Ann" stem "approached-one"}] \
@@ -489,7 +489,7 @@ foreach c $contacts {
     set name [dict get $c contact_name]
     set state [dict get $c state]
     switch -- $name {
-        "Invalid Irene"   { assert_eq $state "INVALID"     "segment: $name → INVALID" }
+        "Invalid Irene"   { assert_eq $state "EXCLUDED"     "segment: $name → EXCLUDED" }
         "Discovered Dan"  { assert_eq $state "DISCOVERED"  "segment: $name → DISCOVERED" }
         "Profiled Pat"    { assert_eq $state "PROFILED"    "segment: $name → PROFILED" }
         "Approached Ann"  { assert_eq $state "APPROACHED"  "segment: $name → APPROACHED" }
@@ -529,14 +529,14 @@ set rows [list \
     [make_base_row {contact_name "Bob" star_rating "5" email "bob@example.com" stem "p-bob"}] \
     [make_base_row {contact_name "Carol" star_rating "3" email "carol@example.com" stem "p-carol"}] \
     [make_base_row {contact_name "Dave" star_rating "3" email "dave@example.com" stem "p-dave"}] \
-    [make_base_row {contact_name "Ed" star_rating "2" email "" stem "" date_found_invalid "2026-01-01"}] \
+    [make_base_row {contact_name "Ed" star_rating "2" email "" stem "" date_excluded "2026-01-01"}] \
 ]
 write_roster_tsv $seg $headers $rows
 
 set contacts [spar::classify_segment $seg]
 set counts [spar::progress_counts $contacts]
 
-# Ed is INVALID → Valid = 4
+# Ed is EXCLUDED → Valid = 4
 assert_eq [dict get $counts valid] 4 "progress: valid=4"
 # Alice(PROFILED) + Bob(APPROACHED) + Carol(SENT) + Dave(REPLIED) = 4 profiled-or-above
 assert_eq [dict get $counts profiled] 4 "progress: profiled=4"
@@ -642,13 +642,13 @@ assert_eq [dict get $result2 approach_path] "" "no profile file → approach_pat
 # ════════════════════════════════════════════════════════════════════════
 section "8. Edge cases"
 
-# 8a. INVALID takes priority even if stem is set and files exist
+# 8a. EXCLUDED takes priority even if stem is set and files exist
 set seg [make_temp_segment]
 write_profile $seg "invalid-priority"
 write_approach_yaml $seg "invalid-priority" [approach_yaml_final_sent_email]
-set row [make_base_row {date_found_invalid "2026-03-01" stem "invalid-priority"}]
+set row [make_base_row {date_excluded "2026-03-01" stem "invalid-priority"}]
 set result [spar::classify_contact $row $seg]
-assert_eq [dict get $result state] "INVALID" "INVALID wins over SENT when date_found_invalid set"
+assert_eq [dict get $result state] "EXCLUDED" "EXCLUDED wins over SENT when date_excluded set"
 
 # 8b. profile file exists but no approach file → stays PROFILED
 set seg [make_temp_segment]
@@ -928,12 +928,12 @@ set dups1516 [spar::detect_duplicates [concat $c15 $c16]]
 assert_eq [llength [dict get $dups1516 identical_subject]] 0 \
     "identical_subject: sent messages with same subject → not flagged"
 
-# 9j. INVALID contact does not contribute to duplicate_name
+# 9j. EXCLUDED contact does not contribute to duplicate_name
 set seg_inv1 [make_temp_segment]
 set seg_inv2 [make_temp_segment]
 write_roster_tsv $seg_inv1 $::std_headers [list \
     [make_base_row {contact_name "Ghost Person" email "ghost1@example.com" \
-        stem "" date_found_invalid "2026-04-01"}] \
+        stem "" date_excluded "2026-04-01"}] \
 ]
 write_roster_tsv $seg_inv2 $::std_headers [list \
     [make_base_row {contact_name "Ghost Person" email "ghost2@example.com" stem ""}] \
@@ -942,14 +942,14 @@ set cinv1 [spar::classify_segment $seg_inv1]
 set cinv2 [spar::classify_segment $seg_inv2]
 set dups_inv [spar::detect_duplicates [concat $cinv1 $cinv2]]
 assert_eq [llength [dict get $dups_inv duplicate_name]] 0 \
-    "duplicate_name: INVALID contact does not contribute → not flagged"
+    "duplicate_name: EXCLUDED contact does not contribute → not flagged"
 
-# 9k. INVALID contact does not contribute to duplicate_email
+# 9k. EXCLUDED contact does not contribute to duplicate_email
 set seg_inv3 [make_temp_segment]
 set seg_inv4 [make_temp_segment]
 write_roster_tsv $seg_inv3 $::std_headers [list \
     [make_base_row {contact_name "Invalid One" email "shared-inv@example.com" \
-        stem "" date_found_invalid "2026-04-02"}] \
+        stem "" date_excluded "2026-04-02"}] \
 ]
 write_roster_tsv $seg_inv4 $::std_headers [list \
     [make_base_row {contact_name "Active Two" email "shared-inv@example.com" stem ""}] \
@@ -958,9 +958,9 @@ set cinv3 [spar::classify_segment $seg_inv3]
 set cinv4 [spar::classify_segment $seg_inv4]
 set dups_inv2 [spar::detect_duplicates [concat $cinv3 $cinv4]]
 assert_eq [llength [dict get $dups_inv2 duplicate_email]] 0 \
-    "duplicate_email: INVALID contact does not contribute → not flagged"
+    "duplicate_email: EXCLUDED contact does not contribute → not flagged"
 
-# 9l. INVALID contact's approach file does not contribute to duplicate_to
+# 9l. EXCLUDED contact's approach file does not contribute to duplicate_to
 set seg_inv5 [make_temp_segment]
 set seg_inv6 [make_temp_segment]
 write_profile $seg_inv5 "inv-approach-a"
@@ -979,7 +979,7 @@ rounds:
 }
 write_roster_tsv $seg_inv5 $::std_headers [list \
     [make_base_row {contact_name "Was Invalid" email "wasinv@example.com" \
-        stem "inv-approach-a" date_found_invalid "2026-04-03"}] \
+        stem "inv-approach-a" date_excluded "2026-04-03"}] \
 ]
 write_profile $seg_inv6 "active-approach-b"
 write_approach_yaml $seg_inv6 "active-approach-b" {decisions:
@@ -1003,7 +1003,7 @@ set cinv5 [spar::classify_segment $seg_inv5]
 set cinv6 [spar::classify_segment $seg_inv6]
 set dups_inv3 [spar::detect_duplicates [concat $cinv5 $cinv6]]
 assert_eq [llength [dict get $dups_inv3 duplicate_to]] 0 \
-    "duplicate_to: INVALID contact's approach file does not contribute → not flagged"
+    "duplicate_to: EXCLUDED contact's approach file does not contribute → not flagged"
 
 # ════════════════════════════════════════════════════════════════════════
 # 10. T8 transition eligibility
@@ -1062,7 +1062,7 @@ set t8b_names [lmap c $t8b_results {dict get $c contact_name}]
 assert_eq [expr {"Both Sent" in $t8b_names}] 0 \
     "T8: email_sent=1 → not eligible for T8"
 
-# 10c. T4: INVALID contact with email_sent=1 → not eligible for T4 monitoring
+# 10c. T4: EXCLUDED contact with email_sent=1 → not eligible for T4 monitoring
 set seg_t4_inv [make_temp_segment]
 write_profile $seg_t4_inv "t4-invalidated"
 write_approach_yaml $seg_t4_inv "t4-invalidated" {decisions:
@@ -1080,26 +1080,26 @@ rounds:
 }
 write_roster_tsv $seg_t4_inv $::std_headers [list \
     [make_base_row {contact_name "Sent Then Invalid" email "sti@example.com" \
-        stem "t4-invalidated" star_rating "4" date_found_invalid "2026-04-05"}] \
+        stem "t4-invalidated" star_rating "4" date_excluded "2026-04-05"}] \
 ]
 set ct4_inv [spar::classify_segment $seg_t4_inv]
 set t4_inv_results [spar::transition_eligible $ct4_inv "T4"]
 assert_eq [llength $t4_inv_results] 0 \
-    "T4: INVALID contact with email_sent=1 → not eligible"
+    "T4: EXCLUDED contact with email_sent=1 → not eligible"
 
-# 10d. T8: INVALID contact with linkedin_sent=1 → not eligible for T8
+# 10d. T8: EXCLUDED contact with linkedin_sent=1 → not eligible for T8
 set seg_t8_inv [make_temp_segment]
 write_profile $seg_t8_inv "t8-invalidated"
 write_approach_yaml $seg_t8_inv "t8-invalidated" [approach_yaml_final_multi_channel]
 write_roster_tsv $seg_t8_inv $::std_headers [list \
     [make_base_row {contact_name "LI Sent Then Invalid" email "lsti@example.com" \
         linkedin_url "https://linkedin.com/in/lsti" \
-        stem "t8-invalidated" star_rating "4" date_found_invalid "2026-04-05"}] \
+        stem "t8-invalidated" star_rating "4" date_excluded "2026-04-05"}] \
 ]
 set ct8_inv [spar::classify_segment $seg_t8_inv]
 set t8_inv_results [spar::transition_eligible $ct8_inv "T8"]
 assert_eq [llength $t8_inv_results] 0 \
-    "T8: INVALID contact with linkedin_sent=1 → not eligible"
+    "T8: EXCLUDED contact with linkedin_sent=1 → not eligible"
 
 # ════════════════════════════════════════════════════════════════════════
 # 11. validate_campaign
@@ -1406,7 +1406,7 @@ section "14. T5 transition eligibility"
 set seg_t5 [make_temp_segment]
 write_profile $seg_t5 "t5-profiled"
 write_roster_tsv $seg_t5 $::std_headers [list \
-    [make_base_row {contact_name "Inv Irene" date_found_invalid "2026-01-01" stem ""}] \
+    [make_base_row {contact_name "Inv Irene" date_excluded "2026-01-01" stem ""}] \
     [make_base_row {contact_name "Disco Dan" stem ""}] \
     [make_base_row {contact_name "Prof Pat" stem "t5-profiled"}] \
 ]
@@ -1415,7 +1415,7 @@ set t5_results [spar::transition_eligible $ct5 "T5"]
 set t5_names [lmap c $t5_results {dict get $c contact_name}]
 
 assert_eq [expr {"Inv Irene" in $t5_names}] 0 \
-    "T5: INVALID contact not in list"
+    "T5: EXCLUDED contact not in list"
 assert_eq [expr {"Disco Dan" in $t5_names}] 1 \
     "T5: DISCOVERED contact in list"
 assert_eq [expr {"Prof Pat" in $t5_names}] 1 \
@@ -1474,11 +1474,11 @@ assert_eq [dict get $counts_empty approached_star3] 0 "empty segment: approached
 assert_eq [dict get $counts_empty email_sent] 0 "empty segment: email_sent=0"
 assert_eq [dict get $counts_empty email_replied] 0 "empty segment: email_replied=0"
 
-# 16b. All INVALID contacts → valid=0, all other counts=0
+# 16b. All EXCLUDED contacts → valid=0, all other counts=0
 set seg_inv [make_temp_segment]
 write_roster_tsv $seg_inv $::std_headers [list \
-    [make_base_row {contact_name "Inv A" date_found_invalid "2026-01-01" stem ""}] \
-    [make_base_row {contact_name "Inv B" date_found_invalid "2026-02-01" stem ""}] \
+    [make_base_row {contact_name "Inv A" date_excluded "2026-01-01" stem ""}] \
+    [make_base_row {contact_name "Inv B" date_excluded "2026-02-01" stem ""}] \
 ]
 set c_inv [spar::classify_segment $seg_inv]
 set counts_inv [spar::progress_counts $c_inv]
@@ -1555,7 +1555,7 @@ assert_eq [dict get $rc has_phone_only] 1 "roster_counts: 1 star3+ phone only"
 set seg [make_temp_segment]
 write_roster_tsv $seg $::std_headers [list \
     [make_base_row {stem "alice" star_rating "5" email "a@test.com"}] \
-    [make_base_row {stem "bob" star_rating "3" date_found_invalid "2026-01-01"}] \
+    [make_base_row {stem "bob" star_rating "3" date_excluded "2026-01-01"}] \
 ]
 set rc [spar::roster_counts $seg]
 assert_eq [dict get $rc valid] 1 "roster_counts: invalid contact excluded"
@@ -1636,33 +1636,33 @@ assert_eq [dict get $parsed2 campaign] "Test Campaign" "json: YAML as positional
 # ════════════════════════════════════════════════════════════════════════
 section "NAMELESS state"
 
-# 13a. contact_name empty, date_found_invalid empty → NAMELESS
+# 13a. contact_name empty, date_excluded empty → NAMELESS
 set seg_n1 [make_temp_segment]
 write_roster_tsv $seg_n1 $::std_headers [list \
     [make_base_row {contact_name "" stem "acme-tours" \
         organisation_name "Acme Tours" phone "07 5555 1234" \
-        email "info@acmetours.com" date_found_invalid ""}] \
+        email "info@acmetours.com" date_excluded ""}] \
 ]
 set cn1 [spar::classify_segment $seg_n1]
 assert_eq [llength $cn1] 1 "NAMELESS: segment includes nameless row"
-assert_eq [dict get [lindex $cn1 0] state] "NAMELESS" "NAMELESS: contact_name empty + no date_found_invalid → NAMELESS"
+assert_eq [dict get [lindex $cn1 0] state] "NAMELESS" "NAMELESS: contact_name empty + no date_excluded → NAMELESS"
 
-# 13b. contact_name empty, date_found_invalid set → INVALID (not NAMELESS)
+# 13b. contact_name empty, date_excluded set → EXCLUDED (not NAMELESS)
 set seg_n2 [make_temp_segment]
 write_roster_tsv $seg_n2 $::std_headers [list \
     [make_base_row {contact_name "" stem "defunct-co" \
-        date_found_invalid "2026-04-07"}] \
+        date_excluded "2026-04-07"}] \
 ]
 set cn2 [spar::classify_segment $seg_n2]
-assert_eq [llength $cn2] 1 "INVALID: segment includes nameless-but-invalidated row"
-assert_eq [dict get [lindex $cn2 0] state] "INVALID" "INVALID: contact_name empty + date_found_invalid set → INVALID"
+assert_eq [llength $cn2] 1 "EXCLUDED: segment includes nameless-but-invalidated row"
+assert_eq [dict get [lindex $cn2 0] state] "EXCLUDED" "EXCLUDED: contact_name empty + date_excluded set → EXCLUDED"
 
 # 13c. progress_counts excludes NAMELESS from Valid
 set seg_n3 [make_temp_segment]
 write_roster_tsv $seg_n3 $::std_headers [list \
     [make_base_row {contact_name "Named Contact" stem "named-contact"}] \
     [make_base_row {contact_name "" stem "nameless-org" \
-        organisation_name "Nameless Org" date_found_invalid ""}] \
+        organisation_name "Nameless Org" date_excluded ""}] \
 ]
 set cn3 [spar::classify_segment $seg_n3]
 assert_eq [llength $cn3] 2 "NAMELESS progress: segment has 2 rows"
@@ -1674,7 +1674,7 @@ set seg_n4 [make_temp_segment]
 write_profile $seg_n4 "nameless-company"
 write_roster_tsv $seg_n4 $::std_headers [list \
     [make_base_row {contact_name "" stem "nameless-company" \
-        date_found_invalid ""}] \
+        date_excluded ""}] \
 ]
 set cn4 [spar::classify_segment $seg_n4]
 set issues_n4 [spar::validate_campaign $cn4]
@@ -1686,10 +1686,10 @@ set seg_n5 [make_temp_segment]
 write_roster_tsv $seg_n5 $::std_headers [list \
     [make_base_row {contact_name "" stem "contactable-co" \
         organisation_name "Contactable Co" phone "07 5555 9999" \
-        email "" date_found_invalid ""}] \
+        email "" date_excluded ""}] \
     [make_base_row {contact_name "" stem "unreachable-co" \
         organisation_name "Unreachable Co" phone "" \
-        email "" date_found_invalid ""}] \
+        email "" date_excluded ""}] \
 ]
 set cn5 [spar::classify_segment $seg_n5]
 set t0_tasks [spar::transition_eligible $cn5 T0]
@@ -1711,7 +1711,7 @@ section "21. validate_roster — roster quality-checklist assertions"
 # Full headers matching the real roster format for validate_roster tests
 set ::vr_headers {
     stem contact_name organisation role phone email linkedin_url facebook_url
-    sweep_iteration discovered_via discovery_source verified date_found_invalid
+    sweep_iteration discovered_via discovery_source verified date_excluded
     s_note p_note star_rating response_likelihood a_note r_note
 }
 
@@ -1729,7 +1729,7 @@ proc make_vr_row {{overrides {}}} {
         discovered_via    "" \
         discovery_source  "" \
         verified          "" \
-        date_found_invalid "" \
+        date_excluded "" \
         s_note            "" \
         p_note            "" \
         star_rating       "3" \
@@ -1788,14 +1788,14 @@ set issues_vr5 [vr_issues $seg_vr5]
 assert_eq [has_issue $issues_vr5 roster_no_sweep_iteration] 1 \
     "A5: missing sweep_iteration flagged"
 
-# ── Assertion 6: verified=yes but date_found_invalid set ──
+# ── Assertion 6: verified=yes but date_excluded set ──
 set seg_vr6 [make_temp_segment]
 write_roster_tsv $seg_vr6 $::vr_headers [list \
-    [make_vr_row {stem s1 verified yes date_found_invalid 2026-04-01}] \
+    [make_vr_row {stem s1 verified yes date_excluded 2026-04-01}] \
 ]
 set issues_vr6 [vr_issues $seg_vr6]
 assert_eq [has_issue $issues_vr6 roster_verified_but_invalid] 1 \
-    "A6: verified=yes with date_found_invalid flagged"
+    "A6: verified=yes with date_excluded flagged"
 
 # ── Assertion 7: response_likelihood without star_rating ──
 set seg_vr7 [make_temp_segment]
@@ -1806,14 +1806,14 @@ set issues_vr7 [vr_issues $seg_vr7]
 assert_eq [has_issue $issues_vr7 roster_likelihood_without_star] 1 \
     "A7: response_likelihood without star_rating flagged"
 
-# ── Assertion 8: star_rating=0 without date_found_invalid ──
+# ── Assertion 8: star_rating=0 without date_excluded ──
 set seg_vr8 [make_temp_segment]
 write_roster_tsv $seg_vr8 $::vr_headers [list \
-    [make_vr_row {stem s1 star_rating 0 date_found_invalid ""}] \
+    [make_vr_row {stem s1 star_rating 0 date_excluded ""}] \
 ]
 set issues_vr8 [vr_issues $seg_vr8]
 assert_eq [has_issue $issues_vr8 roster_zero_star_no_invalid] 1 \
-    "A8: star_rating=0 without date_found_invalid flagged"
+    "A8: star_rating=0 without date_excluded flagged"
 
 # ── Assertion 9: empty stem ──
 set seg_vr9 [make_temp_segment]

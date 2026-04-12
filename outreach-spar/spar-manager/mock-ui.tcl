@@ -17,7 +17,7 @@ set sender_name   "Lia Movsisyan"
 set sender_role   "Partnership Manager"
 set sender_email  "partnerships@rivermill.au"
 set method_ref    "spar-A-approach.md"
-set filter_desc   "min_star=3  require_email=true  require_profile=true  exclude_invalid=true"
+set filter_desc   "min_star=3  require_email=true  require_profile=true  skip_excluded=true"
 
 set segments {
     {animal-event 1 {14 {} 14 100% 14 100% 14 100% 13 93% 13 100% 4 29% 11 79% 0 0% 0 0% 0 -}}

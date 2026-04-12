@@ -118,7 +118,7 @@ The fixed transition types:
 | T2 | Profile → Approach | PROFILED | APPROACHED |
 | T3 | Approach → Send | APPROACHED | SENT |
 | T4 | Send → Reply | SENT | REPLIED |
-| T5 | Flag invalid | Any | INVALID |
+| T5 | Flag excluded | Any | EXCLUDED |
 | T6 | Stale → Re-profile | PROFILE_STALE | PROFILED |
 | T7 | Re-profile → Re-approach | PROFILED (rebuilt) | APPROACHED |
 | T8 | LinkedIn → Email follow-up | SENT (LinkedIn) | APPROACHED (email) |
@@ -190,7 +190,7 @@ Contact states are derived from the filesystem, not stored in a separate databas
 | APPROACHED | Approach file exists, no `actioned_date` in final round |
 | SENT | `actioned_date` present in final round |
 | REPLIED | Reply marker present in approach file |
-| INVALID | `date_found_invalid` set in roster |
+| EXCLUDED | `date_excluded` set in roster |
 | PROFILE_STALE | `profile_stale_date` set in roster (new column) |
 
 The application scans the filesystem on startup and when the user triggers a refresh (via the Check Email button or after a dispatch completes). If the platform provides a filesystem monitoring facility, use it to trigger automatic refreshes; otherwise rely on manual refresh.

@@ -118,7 +118,7 @@ proc spar::dispatch_profiles {segment_dir opts on_progress on_complete} {
         set email [string trim [spar::dict_get_default $row email]]
         set linkedin [string trim [spar::dict_get_default $row linkedin_url]]
         set facebook [string trim [spar::dict_get_default $row facebook_url]]
-        set date_invalid [string trim [spar::dict_get_default $row date_found_invalid]]
+        set date_invalid [string trim [spar::dict_get_default $row date_excluded]]
         set s_note [string trim [spar::dict_get_default $row s_note]]
         set p_note [string trim [spar::dict_get_default $row p_note]]
 
@@ -353,7 +353,7 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
     # Filters
     set filter [spar::dict_get_default $cdata filter [dict create]]
     set filter_require_email [string is true -strict [spar::dict_get_default $filter require_email false]]
-    set filter_exclude_invalid [string is true -strict [spar::dict_get_default $filter exclude_invalid true]]
+    set filter_skip_excluded [string is true -strict [spar::dict_get_default $filter skip_excluded true]]
     set filter_min_star [spar::dict_get_default $filter min_star 0]
     set filter_require_profile [string is true -strict [spar::dict_get_default $filter require_profile false]]
 
@@ -395,7 +395,7 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
 
     # --- Campaign summary data ---
     set campaign_name [spar::dict_get_default $cdata campaign]
-    set filter_desc "email=$filter_require_email valid_only=$filter_exclude_invalid min_star=$filter_min_star require_profile=$filter_require_profile"
+    set filter_desc "email=$filter_require_email skip_excluded=$filter_skip_excluded min_star=$filter_min_star require_profile=$filter_require_profile"
 
     # --- Build sender line ---
     set sender_line "$sender_name, $sender_role"
@@ -436,7 +436,7 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
             set star [string trim [spar::dict_get_default $row star_rating]]
             set response_likelihood [string trim [spar::dict_get_default $row response_likelihood]]
             set s_note [string trim [spar::dict_get_default $row s_note]]
-            set date_invalid [string trim [spar::dict_get_default $row date_found_invalid]]
+            set date_invalid [string trim [spar::dict_get_default $row date_excluded]]
             set stem [string trim [spar::dict_get_default $row stem ""]]
 
             # Skip header and malformed rows
@@ -445,7 +445,7 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
 
             # Campaign filters
             if {$filter_require_email && ![string match *@* $email]} continue
-            if {$filter_exclude_invalid && $date_invalid ne ""} continue
+            if {$filter_skip_excluded && $date_invalid ne ""} continue
             if {$filter_min_star > 0} {
                 if {![string is integer -strict $star] || $star < $filter_min_star} continue
             }

@@ -43,7 +43,7 @@ Channel vocabulary: `email`, `phone`, `linkedin`, `facebook`. A channel not name
 
 | Field | Type | Default | Purpose |
 |---|---|---|---|
-| `filter.exclude_invalid` | boolean | true | Skip roster entries with a non-empty `date_found_invalid` |
+| `filter.skip_excluded` | boolean | true | Skip roster entries with a non-empty `date_excluded` |
 
 ### Optional (filter)
 
@@ -114,7 +114,7 @@ segments:
   - wedding-planner
 
 filter:
-  exclude_invalid: true
+  skip_excluded: true
   min_star: 3
   require_profile: true
 
