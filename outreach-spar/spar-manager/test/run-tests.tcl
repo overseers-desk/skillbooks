@@ -675,6 +675,14 @@ set t4 [spar::transition_eligible $contacts "T4"]
 set t4_names [lmap c $t4 {dict get $c contact_name}]
 assert_eq [expr {"Sent Sam" in $t4_names}] 1 "T4: SENT+email_sent → in monitoring list"
 
+# transition_eligible result dicts must carry stem and _segment_dir so
+# downstream callers (spar-transitions.tcl --execute) can route without
+# re-classifying.
+set t1_first [lindex $t1 0]
+assert_eq [dict exists $t1_first stem] 1 "transition_eligible: result has stem key"
+assert_eq [dict exists $t1_first _segment_dir] 1 "transition_eligible: result has _segment_dir key"
+assert_eq [dict get $t1_first _segment_dir] $seg "transition_eligible: _segment_dir matches input"
+
 # ════════════════════════════════════════════════════════════════════════
 # 7. Profile path and approach path in result
 # ════════════════════════════════════════════════════════════════════════
@@ -2275,6 +2283,68 @@ assert_eq [has_issue $issues_ok unknown_key_root] 0 \
     "closed vocab: clean file has no unknown_key_root"
 assert_eq [has_issue $issues_ok wrong_level] 0 \
     "closed vocab: clean file has no wrong_level"
+
+# ════════════════════════════════════════════════════════════════════════
+# 24. dispatch_profiles — stems selector narrows the work queue
+# ════════════════════════════════════════════════════════════════════════
+section "24. dispatch_profiles — stems selector"
+
+source [file join $script_dir .. spar-dispatch.tcl]
+
+set dp_seg [make_temp_segment]
+set dp_headers {stem contact_name organisation role phone email linkedin_url facebook_url sweep_iteration date_excluded}
+write_roster_tsv $dp_seg $dp_headers [list \
+    [dict create stem alpha contact_name "A One"   organisation "Org A" sweep_iteration 1] \
+    [dict create stem beta  contact_name "B Two"   organisation "Org B" sweep_iteration 1] \
+    [dict create stem gamma contact_name "C Three" organisation "Org C" sweep_iteration 1] \
+]
+
+set dp_segyaml [file join $dp_seg segment.yaml]
+set fd [open $dp_segyaml w]
+puts $fd "objective: test"
+puts $fd "message_goal: test"
+close $fd
+
+set dp_overview [file join $dp_seg overview.md]
+set fd [open $dp_overview w]
+puts $fd "# Test overview"
+close $fd
+
+# Baseline: no stems → all three rows queued
+set dp_count_all -1
+set dp_r1 [spar::dispatch_profiles $dp_seg \
+    [dict create dry_run 1 overview $dp_overview] \
+    {apply {args {}}} \
+    {apply {{d f res} {set ::dp_count_all [dict get $res count]}}}]
+assert_eq $dp_count_all 3 "dispatch_profiles: no stems → 3 queued"
+
+# Narrowed: stems={beta} → only beta queued
+file delete -force [file join $dp_seg profiles]
+file mkdir [file join $dp_seg profiles]
+set dp_count_one -1
+set dp_r2 [spar::dispatch_profiles $dp_seg \
+    [dict create dry_run 1 overview $dp_overview stems {beta}] \
+    {apply {args {}}} \
+    {apply {{d f res} {set ::dp_count_one [dict get $res count]}}}]
+assert_eq $dp_count_one 1 "dispatch_profiles: stems={beta} → 1 queued"
+
+# stems selector bypasses profile-exists skip (caller pre-deleted old profile).
+# Re-run with an existing profiles/beta.md on disk → still 1, not 0.
+write_profile $dp_seg beta
+set dp_count_rebuild -1
+set dp_r3 [spar::dispatch_profiles $dp_seg \
+    [dict create dry_run 1 overview $dp_overview stems {beta}] \
+    {apply {args {}}} \
+    {apply {{d f res} {set ::dp_count_rebuild [dict get $res count]}}}]
+assert_eq $dp_count_rebuild 1 "dispatch_profiles: stems+existing profile → rebuild queued"
+
+# Without stems, existing profile is skipped.
+set dp_count_skip -1
+set dp_r4 [spar::dispatch_profiles $dp_seg \
+    [dict create dry_run 1 overview $dp_overview] \
+    {apply {args {}}} \
+    {apply {{d f res} {set ::dp_count_skip [dict get $res count]}}}]
+assert_eq $dp_count_skip 2 "dispatch_profiles: no stems + 1 profile exists → 2 queued"
 
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════

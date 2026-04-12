@@ -1,23 +1,45 @@
 #!/usr/bin/env tclsh
-# spar-transitions.tcl — transition eligibility table (CLI, no GUI)
-# Usage: tclsh spar-transitions.tcl [campaign_dir_or_yaml] [--tid=T3] [--pending] [--ready]
+# spar-transitions.tcl — transition eligibility report and executor (CLI)
+#
+# Report mode (default):
+#   tclsh spar-transitions.tcl [campaign_dir_or_yaml] [--tid=T3 ...]
+#       [--segment=<name> ...] [--stem=<roster-stem> ...] [--pending|--ready]
+#
+# Execute mode:
+#   tclsh spar-transitions.tcl <campaign_dir_or_yaml> --tid=Tn --execute
+#       [--segment=<name> ...] [--stem=<stem> ...] [--jobs=N] [--dry-run]
+#
+# T1 and T6 route to spar::dispatch_profiles (P harness). T2–T5, T7, T8 execution
+# is not yet wired; --execute on those TIDs fails loudly rather than silently
+# skipping.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
+source [file join $script_dir spar-dispatch.tcl]
 
 # --- Argument parsing ---
 set campaign_dir ""
 set campaign_file ""
 set filter_tid {}
 set filter_state {}   ;# "ready", "pending", or empty (all)
+set filter_segments {}
+set filter_stems {}
+set execute_mode 0
+set dry_run 0
+set jobs 4
 
 foreach arg $argv {
     switch -glob -- $arg {
-        --tid=*   { lappend filter_tid [string range $arg 6 end] }
-        --pending { set filter_state pending }
-        --ready   { set filter_state ready }
-        --*       { puts stderr "Unknown flag: $arg"; exit 1 }
-        default   {
+        --tid=*     { lappend filter_tid [string range $arg 6 end] }
+        --segment=* { lappend filter_segments [string range $arg 10 end] }
+        --stem=*    { lappend filter_stems [string range $arg 7 end] }
+        --jobs=*    { set jobs [string range $arg 7 end] }
+        --pending   { set filter_state pending }
+        --ready     { set filter_state ready }
+        --execute   { set execute_mode 1 }
+        --dry-run   { set dry_run 1 }
+        --*         { puts stderr "Unknown flag: $arg"; exit 1 }
+        default     {
             set norm [file normalize $arg]
             if {[file isfile $norm] && [string match *.yaml $norm]} {
                 set campaign_file $norm
@@ -27,6 +49,11 @@ foreach arg $argv {
             }
         }
     }
+}
+
+if {$execute_mode && $filter_state eq "pending"} {
+    puts stderr "Error: --execute requires --ready (default); --pending has no executable work."
+    exit 1
 }
 
 if {$campaign_file ne "" && $campaign_dir eq ""} {
@@ -69,10 +96,16 @@ if {$yaml_path ne "" && [file exists $yaml_path]} {
     }
 }
 
-# --- Build segment paths ---
+if {$execute_mode && $yaml_path eq ""} {
+    puts stderr "Error: --execute requires a campaign YAML (P harness needs usp_document/antifacts)."
+    exit 1
+}
+
+# --- Build segment paths (honour --segment filter) ---
 set segment_paths {}
 foreach seg $segments_list {
     if {$seg in $skip_set} continue
+    if {[llength $filter_segments] > 0 && $seg ni $filter_segments} continue
     set seg_dir [file join $campaign_dir $seg]
     if {[file isdirectory $seg_dir] && [file exists [file join $seg_dir roster.tsv]]} {
         lappend segment_paths [list $seg $seg_dir]
@@ -84,7 +117,7 @@ if {[llength $segment_paths] == 0} {
     exit 1
 }
 
-# --- Classify all contacts ---
+# --- Classify all contacts, then apply --stem filter ---
 set all_contacts {}
 foreach item $segment_paths {
     lassign $item label seg_dir
@@ -93,6 +126,17 @@ foreach item $segment_paths {
         continue
     }
     lappend all_contacts {*}$c
+}
+
+if {[llength $filter_stems] > 0} {
+    set filtered {}
+    foreach c $all_contacts {
+        set s [spar::dict_get_default $c stem ""]
+        if {$s in $filter_stems} {
+            lappend filtered $c
+        }
+    }
+    set all_contacts $filtered
 }
 
 # --- Transition definitions ---
@@ -114,6 +158,115 @@ if {[llength $filter_tid] == 0} {
     set active_tids $filter_tid
 }
 
+# ────────────────────────────────────────────────────────────────────────
+# Execute mode — route ready tasks to dispatchers
+# ────────────────────────────────────────────────────────────────────────
+if {$execute_mode} {
+    set profile_tids {T1 T6}
+    set unimplemented_tids {T2 T3 T4 T5 T7 T8}
+
+    # Collect ready tasks per TID
+    set ready_by_tid [dict create]
+    foreach tid $active_tids {
+        set eligible [spar::transition_eligible $all_contacts $tid]
+        set ready_list {}
+        foreach c $eligible {
+            if {[dict get $c task_state] eq "ready"} {
+                lappend ready_list $c
+            }
+        }
+        if {[llength $ready_list] > 0} {
+            dict set ready_by_tid $tid $ready_list
+        }
+    }
+
+    if {[dict size $ready_by_tid] == 0} {
+        puts "Campaign: $campaign_name"
+        puts "No ready tasks for the requested transitions."
+        exit 0
+    }
+
+    # Fail loudly for unimplemented TIDs with ready work
+    foreach tid $unimplemented_tids {
+        if {[dict exists $ready_by_tid $tid]} {
+            set n [llength [dict get $ready_by_tid $tid]]
+            puts stderr "Error: --execute for $tid is not yet wired ($n ready task(s))."
+            puts stderr "  T2/T7 → use spar-a-batch.tcl for now."
+            puts stderr "  T3/T4/T5/T8 → no harness exists yet."
+            exit 1
+        }
+    }
+
+    # Dispatch T1/T6 per segment
+    puts "Campaign: $campaign_name"
+    if {$dry_run} { puts "(dry run — prompts written, no harnesses spawned)" }
+
+    set ::_pending_dispatchers 0
+    set ::_total_done 0
+    set ::_total_failed 0
+
+    proc exec_on_progress {slug status message} {
+        switch -- $status {
+            started { puts "  \[START\] $slug" }
+            done    { puts "  \[DONE \] $slug" }
+            failed  { puts "  \[FAIL \] $slug ($message)" }
+            skipped { puts "  \[SKIP \] $slug ($message)" }
+        }
+    }
+
+    proc exec_on_complete {done failed result} {
+        incr ::_total_done $done
+        incr ::_total_failed $failed
+        incr ::_pending_dispatchers -1
+        if {$::_pending_dispatchers <= 0} {
+            set ::_alldone 1
+        }
+    }
+
+    foreach tid $profile_tids {
+        if {![dict exists $ready_by_tid $tid]} continue
+        set tasks [dict get $ready_by_tid $tid]
+
+        # Group by _segment_dir
+        set by_segdir [dict create]
+        foreach c $tasks {
+            set sd [dict get $c _segment_dir]
+            dict lappend by_segdir $sd [dict get $c stem]
+        }
+
+        dict for {segdir stems} $by_segdir {
+            puts "$tid @ [file tail $segdir]: [llength $stems] task(s) — [join $stems {, }]"
+            set opts [dict create \
+                campaign_file $yaml_path \
+                dry_run $dry_run \
+                jobs $jobs \
+                stems $stems]
+            incr ::_pending_dispatchers
+            if {[catch {
+                spar::dispatch_profiles $segdir $opts exec_on_progress exec_on_complete
+            } err]} {
+                puts stderr "  dispatch error: $err"
+                incr ::_pending_dispatchers -1
+                incr ::_total_failed [llength $stems]
+            }
+        }
+    }
+
+    if {$::_pending_dispatchers > 0} {
+        vwait ::_alldone
+    }
+
+    puts ""
+    puts "=== Summary ==="
+    puts "Done:   $::_total_done"
+    puts "Failed: $::_total_failed"
+    if {$::_total_failed > 0} { exit 1 }
+    exit 0
+}
+
+# ────────────────────────────────────────────────────────────────────────
+# Report mode (original behaviour, now honouring --segment / --stem)
+# ────────────────────────────────────────────────────────────────────────
 puts "Campaign: $campaign_name\n"
 
 set any_output 0

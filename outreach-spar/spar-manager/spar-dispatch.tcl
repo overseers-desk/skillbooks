@@ -8,6 +8,10 @@ source [file join [file dirname [file normalize [info script]]] spar-lib.tcl]
 
 namespace eval spar {
     namespace export dispatch_profiles dispatch_approaches
+    # Captured at source time — `info script` inside a proc reflects the
+    # *calling* script at invocation, not this file, which broke path
+    # resolution when dispatch_profiles was called from a test one dir deeper.
+    variable dispatch_script_dir [file dirname [file normalize [info script]]]
 }
 
 # spar::Dispatcher — async queue of child harness processes.
@@ -108,6 +112,13 @@ oo::class create spar::Dispatcher {
 #                 dry_run        (bool, default 0)
 #                 jobs           (int, default 4)
 #                 logs_dir       (string, optional — override log directory)
+#                 stems          (list, optional — when set, only rows whose stem
+#                                 is in the list are processed, and the
+#                                 "profile already exists" skip is bypassed so
+#                                 a caller that has pre-deleted the old profile
+#                                 can force a rebuild. When empty/absent,
+#                                 default behaviour applies: build for every
+#                                 roster row without an existing profile file.)
 # on_progress   callback prefix: {slug status message}
 #                 status is one of: started, done, failed, skipped
 # on_complete   callback prefix: {total_done total_failed}
@@ -125,6 +136,7 @@ proc spar::dispatch_profiles {segment_dir opts on_progress on_complete} {
     set campaign_file [spar::dict_get_default $opts campaign_file ""]
     set user_overview [spar::dict_get_default $opts overview ""]
     set user_antifacts [spar::dict_get_default $opts antifacts ""]
+    set sel_stems [spar::dict_get_default $opts stems {}]
 
     # --- Resolve required paths ---
     set roster_path [file join $segment_dir roster.tsv]
@@ -134,7 +146,8 @@ proc spar::dispatch_profiles {segment_dir opts on_progress on_complete} {
         set goal_path [file join $segment_dir goal.md]
     }
 
-    set script_dir [file dirname [file normalize [info script]]]
+    variable ::spar::dispatch_script_dir
+    set script_dir $::spar::dispatch_script_dir
     set spar_p [file normalize [file join $script_dir .. spar-P-profile.md]]
     set sqlite3_skill [file normalize [file join $script_dir .. SQLITE3_SKILL.md]]
     set sqlite3_skill_text ""
@@ -224,13 +237,18 @@ proc spar::dispatch_profiles {segment_dir opts on_progress on_complete} {
         if {$date_invalid ne ""} continue
         if {$stem eq ""} continue
 
+        if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
+
         set outfile [file join $profile_dir "${stem}.md"]
         # Legacy path: profiles authored before SmartLayer/aesop#45. Still
         # counts as "profile exists" until migration is complete.
         set legacy_outfile [file join $profile_dir "profile-${stem}.md"]
 
-        # Skip if profile already exists
-        if {[file exists $outfile] || [file exists $legacy_outfile]} {
+        # Skip if profile already exists — unless caller supplied an explicit
+        # stems list, in which case they have accepted responsibility for
+        # pre-deleting the old profile and want a rebuild.
+        if {[llength $sel_stems] == 0 \
+            && ([file exists $outfile] || [file exists $legacy_outfile])} {
             incr skipped
             {*}$on_progress $stem skipped "profile exists"
             continue
@@ -302,7 +320,8 @@ $sqlite3_skill_text"
     # attributes any damage to the agent.
     set prompt_dirs [lsort [glob -nocomplain -type d [file join $prompts_dir *]]]
 
-    set script_dir [file dirname [file normalize [info script]]]
+    variable ::spar::dispatch_script_dir
+    set script_dir $::spar::dispatch_script_dir
     set harness [file join $script_dir spar-p-harness.tcl]
 
     set disp [spar::Dispatcher new $jobs $logs_dir $harness \
@@ -341,7 +360,8 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
     set sender_org [spar::dict_get_default [dict get $cdata sender] organisation]
     set language [dict get $cdata language]
     set approach_pattern [dict get $cdata approach_filename]
-    set script_dir [file dirname [file normalize [info script]]]
+    variable ::spar::dispatch_script_dir
+    set script_dir $::spar::dispatch_script_dir
     set method [file normalize [file join $script_dir .. spar-A-approach.md]]
     set appendices [spar::dict_get_default $cdata prompt_appendices [dict create]]
     set appendix_a_author [spar::dict_get_default $appendices a_author ""]
@@ -693,7 +713,8 @@ Emit VERDICT: DONE if the draft is credible (the persona reacted naturally witho
     }
 
     # --- Dispatch harnesses ---
-    set script_dir [file dirname [file normalize [info script]]]
+    variable ::spar::dispatch_script_dir
+    set script_dir $::spar::dispatch_script_dir
     set harness [file join $script_dir spar-a-harness.tcl]
 
     set prompt_dirs [lsort [glob -nocomplain -type d [file join $prompts_dir *]]]
