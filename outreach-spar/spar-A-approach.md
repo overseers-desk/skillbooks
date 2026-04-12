@@ -18,7 +18,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 
 ## 3. Outputs
 
-- **Approach file:** `{id}-{slug}.yaml` in the campaign's approach directory, following the schema in `approach-schema.yaml`. The ID uses a segment prefix and sequential number (e.g. `TOR-001-peter-myers-pineapple-tours.yaml`). Contains the angle selection rationale, all A1/A2 drafts and responses, chosen USP identifiers per round, and the final send-ready messages.
+- **Approach file:** `{id}-{slug}.yaml` in the campaign's approach directory, following the structure shown in §6. The ID uses a segment prefix and sequential number (e.g. `TOR-001-peter-myers-pineapple-tours.yaml`). Contains the angle selection rationale, all A1/A2 drafts and responses, chosen USP identifiers per round, and the final send-ready messages.
 - **Communication index entry:** One line appended to `comms-index.md`: contact name, organisation, segment, angle used, key relationship hooks, channel selection.
 - **Roster update:** Populate the `a_note` column with: angle used, channel selected, warmth level, language, and any notable drafting consideration.
 
@@ -138,7 +138,7 @@ A1 reads both steps. If C2 identifies a misalignment or a factual error, A1 revi
 
 ### 4.7 Assemble the approach file
 
-Write the approach file as `{id}-{slug}.yaml` following the schema in `approach-schema.yaml`. Run the §7 quality checklist before presenting for human review.
+Write the approach file as `{id}-{slug}.yaml` following the structure shown in §6. Run the §7 quality checklist before presenting for human review.
 
 Read the campaign YAML for the sender address and BCC address. These are not stored in the approach file — they are resolved at send time.
 
@@ -161,7 +161,100 @@ Read the latest strategy revision note before starting each new band. It may cha
 
 ## 6. Approach file structure
 
-Approach files are YAML documents following the schema in `approach-schema.yaml`, which is the single source of truth for field definitions, provenance rules, and lifecycle tracking fields (`actioned_date`, `replied_date`, `reply_summary`). Read the schema before producing any approach file.
+Approach files are YAML documents with a **closed vocabulary** — any key outside the set below is rejected by the runtime validator (`spar::validate_approach` in `spar-manager/spar-state.tcl`). The validator emits plain-language errors such as `unknown key 'X' at <level>` or `'X' at <level> belongs at <other_level>`.
+
+**Canonical keys by level:**
+
+- Root: `decisions`, `rounds`, `profile_date`, `profile_richness`, `angle_rationale`, `roster_note`, `fact_provenance`, `quality_checklist`, `response_likelihood`
+- `decisions`: `warmth`, `channel`, `language`, `angle`, `sender`, `warmth_detail`, `channel_detail`, `subsegment`
+- `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
+- `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `replied_date`, `reply_summary`, `script`, `text`, `char_count`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`
+- `fact_provenance` / `fact_check` items: `claim`, `source` (plus `result`, `note`, `correction` for `fact_check` only)
+- `script` items (inside a message): `point`, `text`
+
+**Structural rules:** At least one round must have `type: final`. Draft and review rounds require `number`. Email messages must have `subject` or `body`.
+
+**Example skeleton — terse, but covers every canonical key so you never need to invent one:**
+
+```yaml
+profile_date: 2026-04-12
+profile_richness: Medium
+decisions:
+  warmth: cold
+  warmth_detail: No prior contact; found via segment sweep.
+  channel: email
+  channel_detail: Email primary, phone fallback.
+  language: en
+  angle: shared-venue-history
+  sender:
+    name: Director
+    email: director@example.com
+  subsegment: boutique-operator
+angle_rationale: Why this angle fits this contact.
+roster_note: Anything the roster row should record post-approach.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [U2, U4]
+    notes: Draft-stage freeform notes.
+    messages:
+      - channel: email
+        to: recipient@example.com
+        cc: colleague@example.com
+        bcc: archive@example.com
+        subject: Draft subject
+        body: |
+          Draft body.
+        char_count: 412
+        director_note: Internal-only guidance about the draft.
+        to_note: If the to-address is provisional, explain here.
+      - channel: phone
+        to: +61-400-000-000
+        text: Brief description of the intended call.
+        script:
+          - point: Opening hook
+            text: "Hi — calling from ..."
+          - point: Ask
+            text: "Would Tuesday work for a site visit?"
+        phone_note: Best time to call is Tuesday morning.
+  - type: review
+    number: 1
+    verdict: DONE
+    in_character: How the recipient would react in their own voice.
+    fact_check:
+      - claim: Fact asserted in the draft.
+        source: URL or profile reference.
+        result: verified
+        note: Clarification about the check.
+        correction: Amended wording if the claim was wrong.
+    antifact_check: Counter-check against manufactured claims.
+    revision_note: What changed between draft and final.
+    notes: Reviewer-stage freeform notes.
+  - type: final
+    chosen_usps: [U2, U4]
+    messages:
+      - channel: email
+        to: recipient@example.com
+        subject: Final subject
+        body: |
+          Final body.
+        actioned_date: null
+        replied_date: null
+        reply_summary: Populated after a reply is received.
+    replies:
+      - direction: received
+        date: "2026-04-15T10:00:00"
+        from: "Name <email@example.com>"
+        body: |
+          Reply body (ingested mechanically by spar-email.tcl).
+fact_provenance:
+  - claim: Fact asserted somewhere in the file.
+    source: URL or profile reference.
+quality_checklist: Notes on §7 checks passed or flagged.
+response_likelihood: 55
+```
+
+Lifecycle fields (`actioned_date`, `replied_date`, `reply_summary`) are written by the dispatcher and reply-ingest stages — start them as `null` (or omit). Entries under `replies` are ingested by `spar-email.tcl`; its item shape (`direction`, `date`, `from`, `body`) is mechanical, not part of the AI-authored vocabulary.
 
 The file ID uses a segment prefix and sequential number: `TOR-001-peter-myers.yaml`. Place it in the campaign's approach directory.
 
