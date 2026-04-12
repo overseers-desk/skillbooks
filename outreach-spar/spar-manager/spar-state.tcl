@@ -63,7 +63,14 @@ proc spar::read_approach_yaml {path} {
         if {$fd ne ""} {
             catch {close $fd}
         }
-        return ""
+        # Tcl yaml library has known limitations (e.g. *word* treated as anchor).
+        # Fall back to Python yaml→json→Tcl json path.
+        if {[catch {
+            set json_out [exec python3 -c {import yaml,json,sys; print(json.dumps(yaml.safe_load(open(sys.argv[1]))))} $path]
+            set data [::json::json2dict $json_out]
+        } py_err]} {
+            return ""
+        }
     }
     return $data
 }
@@ -821,10 +828,10 @@ proc spar::validate_approach {approach_path roster_email contact_name} {
     set approach_data [spar::read_approach_yaml $approach_path]
     if {$approach_data eq ""} {
         lappend issues [dict create \
-            severity warning \
-            code yaml_parse_failed \
+            severity error \
+            code invalid_yaml \
             contact_name $contact_name \
-            message "Approach file could not be parsed by Tcl YAML library (may still be valid YAML)"]
+            message "Approach file could not be parsed as YAML"]
         return $issues
     }
 
