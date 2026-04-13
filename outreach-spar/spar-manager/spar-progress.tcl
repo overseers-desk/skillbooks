@@ -1,6 +1,6 @@
-#!/usr/bin/env tclsh
+#!/usr/bin/env tclsh9.0
 # spar-progress.tcl — Campaign progress table and duplicate detection (CLI)
-# Usage: tclsh spar-progress.tcl [campaign_dir_or_yaml] [--campaign=YAML] [--no-mailroom] [--json]
+# Usage: tclsh9.0 spar-progress.tcl [campaign_dir_or_yaml] [--campaign=YAML] [--no-mailroom] [--json]
 # Positional arg may be a directory or a campaign YAML file (directory derived from YAML path).
 
 set script_dir [file dirname [file normalize [info script]]]

@@ -1,12 +1,12 @@
-#!/usr/bin/env tclsh
+#!/usr/bin/env tclsh9.0
 # spar-transitions.tcl — transition eligibility report and executor (CLI)
 #
 # Report mode (default):
-#   tclsh spar-transitions.tcl [campaign_dir_or_yaml] [--tid=T3 ...]
+#   tclsh9.0 spar-transitions.tcl [campaign_dir_or_yaml] [--tid=T3 ...]
 #       [--segment=<name> ...] [--stem=<roster-stem> ...] [--pending|--ready]
 #
 # Execute mode:
-#   tclsh spar-transitions.tcl <campaign_dir_or_yaml> --tid=Tn --execute
+#   tclsh9.0 spar-transitions.tcl <campaign_dir_or_yaml> --tid=Tn --execute
 #       [--segment=<name> ...] [--stem=<stem> ...] [--jobs=N] [--delay=N]
 #       [--yes] [--dry-run]
 #
@@ -43,7 +43,7 @@ proc print_help {} {
     puts {spar-transitions.tcl — report and execute SPAR state transitions.
 
 USAGE
-    tclsh spar-transitions.tcl [campaign_dir_or_yaml] [options]
+    tclsh9.0 spar-transitions.tcl [campaign_dir_or_yaml] [options]
 
 OPTIONS
     --tid=Tn          filter by transition id (repeatable); default: all
@@ -74,26 +74,26 @@ TRANSITIONS
 
 COMMON WORKFLOWS
     # Report: what's ready across all transitions?
-    tclsh spar-transitions.tcl path/to/campaign --ready
+    tclsh9.0 spar-transitions.tcl path/to/campaign --ready
 
     # Create all missing profiles (T1) in a campaign
-    tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute
 
     # Make all missing approaches (T2) — separate tool:
-    tclsh spar-a-batch.tcl path/to/campaign.yaml
+    tclsh9.0 spar-a-batch.tcl path/to/campaign.yaml
 
     # Send all approach-ready emails (T3) — dry-run first, then live
-    tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T3 --execute --dry-run
-    tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T3 --execute
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T3 --execute --dry-run
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T3 --execute
 
     # Limit to one segment or one stem
-    tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute \
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute \
         --segment=vic --stem=jane-doe
 
     # Drive the offline state machine until convergence (no email):
     # T1+T6 generate profiles, T2+T7 generate approaches, looping with
     # re-classification until nothing new is ready.
-    tclsh spar-transitions.tcl path/to/campaign.yaml --execute --auto}
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --execute --auto}
 }
 
 foreach arg $argv {

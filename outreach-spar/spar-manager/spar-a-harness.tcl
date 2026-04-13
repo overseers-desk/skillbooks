@@ -1,10 +1,10 @@
-#!/usr/bin/env tclsh
+#!/usr/bin/env tclsh9.0
 # spar-a-harness.tcl — Approach-phase harness. One process per contact.
 #
 # Wraps the author's single resumed session (draft → revise → assemble) plus
 # context-isolated challenger rounds, with DbC-Post validate_and_correct.
 #
-# Usage: tclsh spar-a-harness.tcl <prompt-dir> <log-dir>
+# Usage: tclsh9.0 spar-a-harness.tcl <prompt-dir> <log-dir>
 #   <prompt-dir> contains: author-draft.txt, challenger-template.txt, meta.env
 
 set script_dir [file dirname [file normalize [info script]]]
@@ -12,7 +12,7 @@ source [file join $script_dir spar-state.tcl]
 source [file join $script_dir spar-claude.tcl]
 
 if {[llength $argv] < 2} {
-    puts stderr "Usage: tclsh spar-a-harness.tcl <prompt-dir> <log-dir>"
+    puts stderr "Usage: tclsh9.0 spar-a-harness.tcl <prompt-dir> <log-dir>"
     exit 1
 }
 
@@ -343,16 +343,18 @@ if {[file exists $outfile]} {
             set lock_hash [lindex [split [exec echo $roster_path | md5sum] " "] 0]
             set lock_file "/tmp/spar-roster-[string range $lock_hash 0 7].lock"
 
+            # Tcl's `exec << value` takes the next token as the stdin
+            # string — it is NOT a bash heredoc. Use a braced block via
+            # [subst] so the SQL reads like a heredoc while vars still
+            # substitute.
             if {[catch {
-                exec flock -x $lock_file \
-                    sqlite3 :memory: << "EOF"
-.mode tabs
-.import ${roster_path} tbl
-UPDATE tbl SET response_likelihood='${band_likelihood}' WHERE contact_name='${safe_name}';
+                exec flock -x $lock_file sqlite3 :memory: << [subst -nocommands {.mode tabs
+.import $roster_path tbl
+UPDATE tbl SET response_likelihood='$band_likelihood' WHERE contact_name='$safe_name';
 .headers on
-.output ${tmp}
+.output $tmp
 SELECT * FROM tbl;
-EOF
+}]
                 file rename -force $tmp $roster_path
                 puts "  roster update: ${contact_name} → response_likelihood=${band_likelihood}%"
             } err]} {

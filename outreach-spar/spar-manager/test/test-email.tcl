@@ -1,7 +1,7 @@
-#!/usr/bin/env tclsh
+#!/usr/bin/env tclsh9.0
 # test-email.tcl — Test suite for spar-email.tcl
 #
-# Run:  tclsh test/test-email.tcl
+# Run:  tclsh9.0 test/test-email.tcl
 # Exit: 0 on all pass, 1 on any failure.
 
 package require yaml

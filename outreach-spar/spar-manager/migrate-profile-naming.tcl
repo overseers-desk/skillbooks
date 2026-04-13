@@ -1,4 +1,4 @@
-#!/usr/bin/env tclsh
+#!/usr/bin/env tclsh9.0
 # migrate-profile-naming.tcl — one-shot migration for SmartLayer/aesop#45.
 #
 # Converts legacy profiles/profile-{stem}.md files to profiles/{stem}.md with
@@ -7,7 +7,7 @@
 # profile-*.md files once satisfied.
 #
 # Usage:
-#   tclsh migrate-profile-naming.tcl <segment-dir> [--dry-run] [--force]
+#   tclsh9.0 migrate-profile-naming.tcl <segment-dir> [--dry-run] [--force]
 #
 # --dry-run  write nothing; print a per-file summary of what would be written
 # --force    overwrite existing {stem}.md files (default: skip if new file exists)
@@ -41,7 +41,7 @@ foreach arg $argv {
 }
 
 if {$segment_dir eq ""} {
-    puts stderr "usage: tclsh migrate-profile-naming.tcl <segment-dir> \[--dry-run\] \[--force\]"
+    puts stderr "usage: tclsh9.0 migrate-profile-naming.tcl <segment-dir> \[--dry-run\] \[--force\]"
     exit 2
 }
 

@@ -1,7 +1,7 @@
-#!/usr/bin/env tclsh
+#!/usr/bin/env tclsh9.0
 # run-tests.tcl — Test suite for spar-state.tcl (SPAR campaign state machine)
 #
-# Run:  tclsh test/run-tests.tcl
+# Run:  tclsh9.0 test/run-tests.tcl
 # Exit: 0 on all pass, 1 on any failure.
 
 package require yaml
@@ -1950,7 +1950,7 @@ write_profile $seg_a "alice"
 write_campaign_yaml $cdir "campaign: Test Campaign\nsegments:\n  - seg-a\nfilter:\n  min_star: 3\n"
 
 set progress_script [file join $script_dir .. spar-progress.tcl]
-set json_str [exec tclsh $progress_script $cdir --json 2>/dev/null]
+set json_str [exec tclsh9.0 $progress_script $cdir --json 2>/dev/null]
 set parsed [::json::json2dict $json_str]
 
 assert_eq [dict get $parsed campaign] "Test Campaign" "json: campaign value"
@@ -1973,7 +1973,7 @@ assert_eq [dict exists $parsed warnings] 1 "json: has warnings"
 assert_eq [dict exists $parsed validation] 1 "json: has validation"
 
 # Test YAML-as-positional-arg
-set json_str2 [exec tclsh $progress_script [file join $cdir campaign.yaml] --json 2>/dev/null]
+set json_str2 [exec tclsh9.0 $progress_script [file join $cdir campaign.yaml] --json 2>/dev/null]
 set parsed2 [::json::json2dict $json_str2]
 assert_eq [dict get $parsed2 campaign] "Test Campaign" "json: YAML as positional arg"
 
