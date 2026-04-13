@@ -28,8 +28,57 @@ set execute_mode 0
 set dry_run 0
 set jobs 4
 
+proc print_help {} {
+    puts {spar-transitions.tcl — report and execute SPAR state transitions.
+
+USAGE
+    tclsh spar-transitions.tcl [campaign_dir_or_yaml] [options]
+
+OPTIONS
+    --tid=Tn          filter by transition id (repeatable); default: all
+    --segment=NAME    restrict to segment (repeatable)
+    --stem=STEM       restrict to contact stem (repeatable)
+    --pending         show/act on pending tasks only
+    --ready           show/act on ready tasks only
+    --execute         run the transition (T1/T6 only); default is report-only
+    --dry-run         with --execute: write prompts, spawn no harnesses
+    --jobs=N          parallel jobs for --execute (default 4)
+    -h, --help        show this help
+
+TRANSITIONS
+    T1  Sweep → Profile           (execute: wired here)
+    T2  Profile → Approach        (execute: use spar-a-batch.tcl)
+    T3  Approach → Send           (execute: not wired — use the GUI)
+    T4  Send → Reply              (execute: not wired)
+    T6  Stale → Re-profile        (execute: wired here)
+    T7  Re-profile → Re-approach  (execute: use spar-a-batch.tcl)
+    T8  LinkedIn → Email          (execute: not wired)
+
+COMMON WORKFLOWS
+    # Report: what's ready across all transitions?
+    tclsh spar-transitions.tcl path/to/campaign --ready
+
+    # Create all missing profiles (T1) in a campaign
+    tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute
+
+    # Dry-run first to inspect prompts, then execute
+    tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute --dry-run
+
+    # Limit to one segment or one stem
+    tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute \
+        --segment=vic --stem=jane-doe
+
+    # Make all missing approaches (T2) — separate tool:
+    tclsh spar-a-batch.tcl path/to/campaign.yaml
+
+    # Send all approach-ready emails (T3) — no CLI yet; open the GUI:
+    wish9.0 spar-ui.tcl path/to/campaign}
+}
+
 foreach arg $argv {
     switch -glob -- $arg {
+        -h        -
+        --help      { print_help; exit 0 }
         --tid=*     { lappend filter_tid [string range $arg 6 end] }
         --segment=* { lappend filter_segments [string range $arg 10 end] }
         --stem=*    { lappend filter_stems [string range $arg 7 end] }
@@ -38,7 +87,7 @@ foreach arg $argv {
         --ready     { set filter_state ready }
         --execute   { set execute_mode 1 }
         --dry-run   { set dry_run 1 }
-        --*         { puts stderr "Unknown flag: $arg"; exit 1 }
+        --*         { puts stderr "Unknown flag: $arg (try --help)"; exit 1 }
         default     {
             set norm [file normalize $arg]
             if {[file isfile $norm] && [string match *.yaml $norm]} {
