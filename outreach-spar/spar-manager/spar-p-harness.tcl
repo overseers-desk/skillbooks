@@ -58,23 +58,18 @@ oo::class create spar::ProfileHarness {
     # DbC-Post: if the agent wrote a masked email (e.g. "b***@foo.com") to
     # the roster, blank the field. A masked address is worse than empty —
     # it inflates "has email" counts and propagates into approach files.
+    # Emits a ROSTER_UPDATE marker per match; the dispatcher applies it.
     method sanitise_roster_email {roster_path slug} {
         if {![file exists $roster_path]} { return }
-        set rows [spar::load_roster $roster_path]
-        set dirty 0
-        set updated {}
-        foreach row $rows {
-            if {[spar::dict_get_default $row stem ""] eq $slug} {
-                set email [string trim [spar::dict_get_default $row email ""]]
-                if {[spar::is_masked_email $email]} {
-                    puts "\[[my slug]\] Guardrail: blanked masked email '$email' in roster"
-                    dict set row email ""
-                    set dirty 1
-                }
+        foreach row [spar::load_roster $roster_path] {
+            if {[spar::dict_get_default $row stem ""] ne $slug} continue
+            set email [string trim [spar::dict_get_default $row email ""]]
+            if {[spar::is_masked_email $email]} {
+                puts "\[[my slug]\] Guardrail: blanked masked email '$email' in roster"
+                puts "ROSTER_UPDATE\t$roster_path\tstem\t$slug\temail\t"
+                flush stdout
             }
-            lappend updated $row
         }
-        if {$dirty} { spar::write_roster $roster_path $updated }
     }
 
     # DbC-Post loop for profile files. Attempts 1-2 use the current model;

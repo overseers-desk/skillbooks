@@ -336,14 +336,10 @@ if {[file exists $outfile]} {
         set roster_path [file join [file dirname [file dirname $outfile]] roster.tsv]
         set contact_name [string trim [lindex [split $contact_summary |] 0]]
         if {[file exists $roster_path]} {
-            if {[catch {
-                spar::update_roster_field $roster_path \
-                    contact_name $contact_name \
-                    response_likelihood $band_likelihood
-                puts "  roster update: ${contact_name} → response_likelihood=${band_likelihood}%"
-            } err]} {
-                puts "  roster update failed: $err"
-            }
+            # Emit a ROSTER_UPDATE marker; the dispatcher applies it from
+            # its single-threaded event loop (no flock from here).
+            puts "ROSTER_UPDATE\t$roster_path\tcontact_name\t$contact_name\tresponse_likelihood\t$band_likelihood"
+            flush stdout
         }
     }
 } else {
