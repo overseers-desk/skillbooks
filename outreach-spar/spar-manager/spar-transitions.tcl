@@ -7,15 +7,18 @@
 #
 # Execute mode:
 #   tclsh spar-transitions.tcl <campaign_dir_or_yaml> --tid=Tn --execute
-#       [--segment=<name> ...] [--stem=<stem> ...] [--jobs=N] [--dry-run]
+#       [--segment=<name> ...] [--stem=<stem> ...] [--jobs=N] [--delay=N]
+#       [--yes] [--dry-run]
 #
-# T1 and T6 route to spar::dispatch_profiles (P harness). T2, T3, T4, T7, T8
-# execution is not yet wired; --execute on those TIDs fails loudly rather than
-# silently skipping.
+# T1/T6 route to spar::dispatch_profiles (P harness). T3 sends via AWS SES
+# (spar::send_email) serially with --delay pacing. T2/T4/T7/T8 execution is
+# not wired here; --execute on those TIDs fails loudly rather than silently
+# skipping.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
 source [file join $script_dir spar-dispatch.tcl]
+source [file join $script_dir spar-email.tcl]
 
 # --- Argument parsing ---
 set campaign_dir ""
@@ -27,6 +30,8 @@ set filter_stems {}
 set execute_mode 0
 set dry_run 0
 set jobs 4
+set delay 2
+set assume_yes 0
 
 proc print_help {} {
     puts {spar-transitions.tcl — report and execute SPAR state transitions.
@@ -40,16 +45,18 @@ OPTIONS
     --stem=STEM       restrict to contact stem (repeatable)
     --pending         show/act on pending tasks only
     --ready           show/act on ready tasks only
-    --execute         run the transition (T1/T6 only); default is report-only
-    --dry-run         with --execute: write prompts, spawn no harnesses
-    --jobs=N          parallel jobs for --execute (default 4)
+    --execute         run the transition (T1/T3/T6); default is report-only
+    --dry-run         with --execute: write prompts / skip SES, no harnesses
+    --jobs=N          parallel jobs for T1/T6 --execute (default 4)
+    --delay=N         seconds between T3 sends (default 2, serial)
+    --yes             skip the "send N emails? [y/N]" confirmation
     -h, --help        show this help
 
 TRANSITIONS
     T1  Sweep → Profile           (execute: wired here)
     T2  Profile → Approach        (execute: use spar-a-batch.tcl)
-    T3  Approach → Send           (execute: not wired — use the GUI)
-    T4  Send → Reply              (execute: not wired)
+    T3  Approach → Send           (execute: wired here, via AWS SES)
+    T4  Send → Reply              (execute: not wired — monitoring-only TID)
     T6  Stale → Re-profile        (execute: wired here)
     T7  Re-profile → Re-approach  (execute: use spar-a-batch.tcl)
     T8  LinkedIn → Email          (execute: not wired)
@@ -61,18 +68,16 @@ COMMON WORKFLOWS
     # Create all missing profiles (T1) in a campaign
     tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute
 
-    # Dry-run first to inspect prompts, then execute
-    tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute --dry-run
-
-    # Limit to one segment or one stem
-    tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute \
-        --segment=vic --stem=jane-doe
-
     # Make all missing approaches (T2) — separate tool:
     tclsh spar-a-batch.tcl path/to/campaign.yaml
 
-    # Send all approach-ready emails (T3) — no CLI yet; open the GUI:
-    wish9.0 spar-ui.tcl path/to/campaign}
+    # Send all approach-ready emails (T3) — dry-run first, then live
+    tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T3 --execute --dry-run
+    tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T3 --execute
+
+    # Limit to one segment or one stem
+    tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute \
+        --segment=vic --stem=jane-doe}
 }
 
 foreach arg $argv {
@@ -83,6 +88,8 @@ foreach arg $argv {
         --segment=* { lappend filter_segments [string range $arg 10 end] }
         --stem=*    { lappend filter_stems [string range $arg 7 end] }
         --jobs=*    { set jobs [string range $arg 7 end] }
+        --delay=*   { set delay [string range $arg 8 end] }
+        --yes       { set assume_yes 1 }
         --pending   { set filter_state pending }
         --ready     { set filter_state ready }
         --execute   { set execute_mode 1 }
@@ -213,7 +220,8 @@ if {[llength $filter_tid] == 0} {
 # ────────────────────────────────────────────────────────────────────────
 if {$execute_mode} {
     set profile_tids {T1 T6}
-    set unimplemented_tids {T2 T3 T4 T7 T8}
+    set email_tids {T3}
+    set unimplemented_tids {T2 T4 T7 T8}
 
     # Collect ready tasks per TID
     set ready_by_tid [dict create]
@@ -242,7 +250,7 @@ if {$execute_mode} {
             set n [llength [dict get $ready_by_tid $tid]]
             puts stderr "Error: --execute for $tid is not yet wired ($n ready task(s))."
             puts stderr "  T2/T7 → use spar-a-batch.tcl for now."
-            puts stderr "  T3/T4/T8 → no harness exists yet."
+            puts stderr "  T4/T8 → no harness exists yet."
             exit 1
         }
     }
@@ -304,6 +312,131 @@ if {$execute_mode} {
 
     if {$::_pending_dispatchers > 0} {
         vwait ::_alldone
+    }
+
+    # ── T3: send approach-ready emails via AWS SES ─────────────────────
+    if {[dict exists $ready_by_tid T3]} {
+        set t3_tasks [dict get $ready_by_tid T3]
+
+        # Resolve campaign-level defaults.
+        set camp_sender [spar::dict_get_default $cdata sender [dict create]]
+        set camp_from_name  [spar::dict_get_default $camp_sender name ""]
+        set camp_from_email [spar::dict_get_default $camp_sender email ""]
+        set camp_bcc        [spar::dict_get_default $camp_sender bcc ""]
+        set ses_region      [spar::dict_get_default $cdata ses_region "ap-southeast-2"]
+
+        set n_t3 [llength $t3_tasks]
+        puts ""
+        puts "T3: Approach → Send — $n_t3 email(s) ready"
+
+        # Confirmation unless --dry-run or --yes.
+        if {!$dry_run && !$assume_yes} {
+            puts -nonewline "Send $n_t3 email(s) live via SES (region $ses_region)? \[y/N\] "
+            flush stdout
+            set reply [string trim [gets stdin]]
+            if {[string tolower $reply] ne "y" && [string tolower $reply] ne "yes"} {
+                puts "Aborted — no emails sent."
+                exit 1
+            }
+        }
+
+        set first 1
+        foreach c $t3_tasks {
+            if {!$first && !$dry_run} { after [expr {$delay * 1000}] }
+            set first 0
+
+            set stem      [dict get $c stem]
+            set seg_dir   [dict get $c _segment_dir]
+            set slug      "[file tail $seg_dir]/$stem"
+            set approach_path [file join $seg_dir approach "${stem}.yaml"]
+
+            puts "  \[START\] $slug"
+
+            if {![file exists $approach_path]} {
+                puts "  \[FAIL \] $slug (approach file missing: $approach_path)"
+                incr ::_total_failed
+                continue
+            }
+
+            set approach_data [spar::read_approach_yaml $approach_path]
+            set msg [spar::final_email_message $approach_data]
+            if {$msg eq ""} {
+                puts "  \[FAIL \] $slug (no email message in final round)"
+                incr ::_total_failed
+                continue
+            }
+
+            set to      [string trim [spar::dict_get_default $msg to ""]]
+            set cc      [string trim [spar::dict_get_default $msg cc ""]]
+            set bcc     [string trim [spar::dict_get_default $msg bcc ""]]
+            set subject [spar::dict_get_default $msg subject ""]
+            set body    [spar::dict_get_default $msg body ""]
+
+            if {$to eq "" || $subject eq "" || $body eq ""} {
+                puts "  \[FAIL \] $slug (message missing to/subject/body)"
+                incr ::_total_failed
+                continue
+            }
+
+            # Sender: approach decisions.sender first, campaign fallback.
+            set from_name  $camp_from_name
+            set from_email $camp_from_email
+            if {[dict exists $approach_data decisions]} {
+                set ad_sender [spar::dict_get_default [dict get $approach_data decisions] sender [dict create]]
+                set ad_name  [spar::dict_get_default $ad_sender name ""]
+                set ad_email [spar::dict_get_default $ad_sender email ""]
+                if {$ad_email ne ""} {
+                    set from_email $ad_email
+                    if {$ad_name ne ""} { set from_name $ad_name }
+                }
+            }
+            if {$from_email eq ""} {
+                puts "  \[FAIL \] $slug (no sender: neither approach decisions.sender.email nor campaign sender.email set)"
+                incr ::_total_failed
+                continue
+            }
+            set from_hdr [expr {$from_name ne "" ? "$from_name <$from_email>" : $from_email}]
+
+            # BCC: message-level first, campaign sender.bcc fallback.
+            if {$bcc eq ""} { set bcc $camp_bcc }
+
+            set send_opts [dict create \
+                region  $ses_region \
+                from    $from_hdr \
+                to      $to \
+                subject $subject \
+                body    $body \
+                dry_run $dry_run]
+            if {$cc ne ""}  { dict set send_opts cc  $cc  }
+            if {$bcc ne ""} { dict set send_opts bcc $bcc }
+
+            if {[catch {set result [spar::send_email $send_opts]} err]} {
+                puts "  \[FAIL \] $slug (send_email threw: $err)"
+                incr ::_total_failed
+                continue
+            }
+
+            if {![dict get $result ok]} {
+                puts "  \[FAIL \] $slug ([dict get $result message_id])"
+                incr ::_total_failed
+                continue
+            }
+
+            # Stamp actioned_date on success. Under the ≤1-email invariant
+            # (too_many_final_emails in validate_approach), stamping all
+            # unsent emails stamps exactly the one we just sent.
+            if {!$dry_run} {
+                set today [clock format [clock seconds] -format "%Y-%m-%d"]
+                if {[catch {spar::stamp_actioned_date $approach_path $today} err]} {
+                    puts "  \[FAIL \] $slug (sent ok but stamp failed: $err)"
+                    incr ::_total_failed
+                    continue
+                }
+            }
+
+            puts "  \[DONE \] $slug ([dict get $result message_id])"
+            incr ::_total_done
+        }
     }
 
     puts ""

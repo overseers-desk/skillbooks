@@ -228,6 +228,7 @@ proc spar::_indent_body {text indent_spaces} {
 #   region       AWS region (default: ap-southeast-2)
 #   from         From address (e.g. "Name <email>" or bare email)
 #   to           To address
+#   cc           CC address (optional, empty string to skip)
 #   bcc          BCC address (optional, empty string to skip)
 #   subject      Subject line
 #   body         Body text (plain text)
@@ -241,6 +242,7 @@ proc spar::send_email {opts} {
     set region  [dict_get_default $opts region "ap-southeast-2"]
     set from    [dict get $opts from]
     set to      [dict get $opts to]
+    set cc      [dict_get_default $opts cc ""]
     set bcc     [dict_get_default $opts bcc ""]
     set subject [dict get $opts subject]
     set body    [dict get $opts body]
@@ -252,14 +254,17 @@ proc spar::send_email {opts} {
 
     # Build destination JSON
     ::json::write indented 0
-    set to_list [::json::write array [::json::write string $to]]
-    if {$bcc ne ""} {
-        set dest_json [::json::write object \
-            ToAddresses $to_list \
-            BccAddresses [::json::write array [::json::write string $bcc]]]
-    } else {
-        set dest_json [::json::write object ToAddresses $to_list]
+    set dest_fields [list ToAddresses \
+        [::json::write array [::json::write string $to]]]
+    if {$cc ne ""} {
+        lappend dest_fields CcAddresses \
+            [::json::write array [::json::write string $cc]]
     }
+    if {$bcc ne ""} {
+        lappend dest_fields BccAddresses \
+            [::json::write array [::json::write string $bcc]]
+    }
+    set dest_json [::json::write object {*}$dest_fields]
 
     # Build message JSON
     set subj_obj [::json::write object \
