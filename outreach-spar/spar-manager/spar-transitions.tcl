@@ -11,9 +11,13 @@
 #       [--yes] [--dry-run]
 #
 # T1/T6 route to spar::dispatch_profiles (P harness). T3 sends via AWS SES
-# (spar::send_email) serially with --delay pacing. T2/T4/T7/T8 execution is
-# not wired here; --execute on those TIDs fails loudly rather than silently
-# skipping.
+# (spar::send_email) serially with --delay pacing. T2/T7 are wired only
+# through --auto (via spar::dispatch_approaches); explicit --tid=T2/T7
+# without --auto fails loudly. T4/T8 execution has no harness yet.
+#
+# --auto runs T1+T2+T6+T7 as a state machine: classify, dispatch ready
+# work, re-classify, repeat until no new work is ready. T3 is excluded
+# from --auto unconditionally — auto must never send email.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
@@ -28,6 +32,7 @@ set filter_state {}   ;# "ready", "pending", or empty (all)
 set filter_segments {}
 set filter_stems {}
 set execute_mode 0
+set auto_mode 0
 set dry_run 0
 set jobs 4
 set delay 2
@@ -47,6 +52,10 @@ OPTIONS
     --pending         show/act on pending tasks only
     --ready           show/act on ready tasks only
     --execute         run the transition (T1/T3/T6); default is report-only
+    --auto            with --execute: drive the offline state machine
+                      (T1+T2+T6+T7) until convergence. Excludes T3 — never
+                      sends email. Re-classifies between iterations so T1
+                      output feeds T2 and T6 output feeds T7 in one run.
     --dry-run         with --execute: write prompts / skip SES, no harnesses
     --jobs=N          parallel jobs for T1/T6 --execute (default 4)
     --delay=N         seconds between T3 sends (default 2, serial)
@@ -79,7 +88,12 @@ COMMON WORKFLOWS
 
     # Limit to one segment or one stem
     tclsh spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute \
-        --segment=vic --stem=jane-doe}
+        --segment=vic --stem=jane-doe
+
+    # Drive the offline state machine until convergence (no email):
+    # T1+T6 generate profiles, T2+T7 generate approaches, looping with
+    # re-classification until nothing new is ready.
+    tclsh spar-transitions.tcl path/to/campaign.yaml --execute --auto}
 }
 
 foreach arg $argv {
@@ -95,6 +109,7 @@ foreach arg $argv {
         --pending   { set filter_state pending }
         --ready     { set filter_state ready }
         --execute   { set execute_mode 1 }
+        --auto      { set auto_mode 1 }
         --dry-run   { set dry_run 1 }
         -v          -
         --verbose   { set verbose 1 }
@@ -113,6 +128,17 @@ foreach arg $argv {
 
 if {$execute_mode && $filter_state eq "pending"} {
     puts stderr "Error: --execute requires --ready (default); --pending has no executable work."
+    exit 1
+}
+
+if {$auto_mode && !$execute_mode} {
+    puts stderr "Error: --auto only applies with --execute."
+    exit 1
+}
+
+# Email safety: --auto never sends. Refuse rather than silently dropping T3.
+if {$auto_mode && "T3" in $filter_tid} {
+    puts stderr "Error: --auto excludes T3 (no email sends). Drop --tid=T3 or drop --auto."
     exit 1
 }
 
@@ -219,49 +245,25 @@ if {[llength $filter_tid] == 0} {
     set active_tids $filter_tid
 }
 
+# --auto drives the offline state machine. T3 (email send) is excluded
+# unconditionally; T4/T8 are not wired anywhere yet.
+set auto_wired_tids {T1 T2 T6 T7}
+if {$auto_mode} {
+    set filtered_active {}
+    foreach t $active_tids {
+        if {$t in $auto_wired_tids} { lappend filtered_active $t }
+    }
+    set active_tids $filtered_active
+}
+
 # ────────────────────────────────────────────────────────────────────────
 # Execute mode — route ready tasks to dispatchers
 # ────────────────────────────────────────────────────────────────────────
 if {$execute_mode} {
     set profile_tids {T1 T6}
+    set approach_tids {T2 T7}
     set email_tids {T3}
     set unimplemented_tids {T2 T4 T7 T8}
-
-    # Collect ready tasks per TID
-    set ready_by_tid [dict create]
-    foreach tid $active_tids {
-        set eligible [spar::transition_eligible $all_contacts $tid $primary_channel]
-        set ready_list {}
-        foreach c $eligible {
-            if {[dict get $c task_state] eq "ready"} {
-                lappend ready_list $c
-            }
-        }
-        if {[llength $ready_list] > 0} {
-            dict set ready_by_tid $tid $ready_list
-        }
-    }
-
-    if {[dict size $ready_by_tid] == 0} {
-        puts "Campaign: $campaign_name"
-        puts "No ready tasks for the requested transitions."
-        exit 0
-    }
-
-    # Fail loudly for unimplemented TIDs with ready work
-    foreach tid $unimplemented_tids {
-        if {[dict exists $ready_by_tid $tid]} {
-            set n [llength [dict get $ready_by_tid $tid]]
-            puts stderr "Error: --execute for $tid is not yet wired ($n ready task(s))."
-            puts stderr "  T2/T7 → use spar-a-batch.tcl for now."
-            puts stderr "  T4/T8 → no harness exists yet."
-            exit 1
-        }
-    }
-
-    # Dispatch T1/T6 per segment
-    puts "Campaign: $campaign_name"
-    if {$dry_run} { puts "(dry run — prompts written, no harnesses spawned)" }
 
     set ::_pending_dispatchers 0
     set ::_total_done 0
@@ -285,38 +287,222 @@ if {$execute_mode} {
         }
     }
 
-    foreach tid $profile_tids {
-        if {![dict exists $ready_by_tid $tid]} continue
-        set tasks [dict get $ready_by_tid $tid]
-
-        # Group by _segment_dir
-        set by_segdir [dict create]
-        foreach c $tasks {
-            set sd [dict get $c _segment_dir]
-            dict lappend by_segdir $sd [dict get $c stem]
+    # ── Helper: classify segments → all_contacts (honours --stem filter).
+    # Used at startup and again before each --auto iteration so disk
+    # changes from the previous pass (new profiles, new approaches) feed
+    # the next round of transition eligibility.
+    proc reclassify_contacts {segment_paths filter_stems} {
+        set out {}
+        foreach item $segment_paths {
+            lassign $item label seg_dir
+            if {[catch {set c [spar::classify_segment $seg_dir]} err]} {
+                puts stderr "Error in $label: $err"
+                continue
+            }
+            lappend out {*}$c
         }
+        if {[llength $filter_stems] > 0} {
+            set filtered {}
+            foreach c $out {
+                if {[dict get $c stem] in $filter_stems} {
+                    lappend filtered $c
+                }
+            }
+            set out $filtered
+        }
+        return $out
+    }
 
-        dict for {segdir stems} $by_segdir {
-            puts "$tid @ [file tail $segdir]: [llength $stems] task(s) — [join $stems {, }]"
-            set opts [dict create \
-                campaign_file $yaml_path \
-                dry_run $dry_run \
-                jobs $jobs \
-                stems $stems]
-            incr ::_pending_dispatchers
-            if {[catch {
-                spar::dispatch_profiles $segdir $opts exec_on_progress exec_on_complete
-            } err]} {
-                puts stderr "  dispatch error: $err"
-                incr ::_pending_dispatchers -1
-                incr ::_total_failed [llength $stems]
+    # ── Helper: compute ready tasks per TID for the given contacts.
+    proc compute_ready_by_tid {all_contacts active_tids primary_channel} {
+        set ready_by_tid [dict create]
+        foreach tid $active_tids {
+            set eligible [spar::transition_eligible $all_contacts $tid $primary_channel]
+            set ready_list {}
+            foreach c $eligible {
+                if {[dict get $c task_state] eq "ready"} {
+                    lappend ready_list $c
+                }
+            }
+            if {[llength $ready_list] > 0} {
+                dict set ready_by_tid $tid $ready_list
             }
         }
+        return $ready_by_tid
     }
 
-    if {$::_pending_dispatchers > 0} {
-        vwait ::_alldone
+    # ── Helper: dispatch profile-class transitions (T1, T6) per segment.
+    # Sets ::_pending_dispatchers and ::_alldone for the caller to vwait.
+    proc dispatch_profile_tids {ready_by_tid profile_tids active_tids \
+                                 yaml_path dry_run jobs} {
+        set ::_pending_dispatchers 0
+        set ::_alldone 0
+        foreach tid $profile_tids {
+            if {$tid ni $active_tids} continue
+            if {![dict exists $ready_by_tid $tid]} continue
+            set tasks [dict get $ready_by_tid $tid]
+            set by_segdir [dict create]
+            foreach c $tasks {
+                set sd [dict get $c _segment_dir]
+                dict lappend by_segdir $sd [dict get $c stem]
+            }
+            dict for {segdir stems} $by_segdir {
+                puts "$tid @ [file tail $segdir]: [llength $stems] task(s) — [join $stems {, }]"
+                set opts [dict create \
+                    campaign_file $yaml_path \
+                    dry_run $dry_run \
+                    jobs $jobs \
+                    stems $stems]
+                incr ::_pending_dispatchers
+                if {[catch {
+                    spar::dispatch_profiles $segdir $opts \
+                        exec_on_progress exec_on_complete
+                } err]} {
+                    puts stderr "  dispatch error: $err"
+                    incr ::_pending_dispatchers -1
+                    incr ::_total_failed [llength $stems]
+                }
+            }
+        }
+        if {$::_pending_dispatchers > 0} {
+            vwait ::_alldone
+        }
     }
+
+    # ── Helper: dispatch approach-class transitions (T2, T7) campaign-wide.
+    # spar::dispatch_approaches is campaign-scoped; we pass our segment/stem
+    # filters through so --segment / --stem on the CLI take effect here too.
+    proc dispatch_approach_tids {ready_by_tid approach_tids active_tids \
+                                  yaml_path dry_run jobs \
+                                  filter_segments filter_stems} {
+        set need 0
+        foreach tid $approach_tids {
+            if {$tid ni $active_tids} continue
+            if {[dict exists $ready_by_tid $tid]} {
+                set need 1
+                set n [llength [dict get $ready_by_tid $tid]]
+                puts "$tid: $n task(s) ready (campaign-wide pass)"
+            }
+        }
+        if {!$need} return
+
+        set ::_pending_dispatchers 1
+        set ::_alldone 0
+        set a_opts [dict create dry_run $dry_run jobs $jobs]
+        if {[llength $filter_segments] > 0} {
+            dict set a_opts segments $filter_segments
+        }
+        if {[llength $filter_stems] > 0} {
+            dict set a_opts stems $filter_stems
+        }
+        if {[catch {
+            spar::dispatch_approaches $yaml_path $a_opts \
+                exec_on_progress exec_on_complete
+        } err]} {
+            puts stderr "  dispatch_approaches error: $err"
+            incr ::_pending_dispatchers -1
+            set ::_alldone 1
+        }
+        if {$::_pending_dispatchers > 0} {
+            vwait ::_alldone
+        }
+    }
+
+    # ────────────────────────────────────────────────────────────────────
+    # --auto: state-machine loop. Re-classify between iterations so
+    # T1 → T2 and T6 → T7 happen in a single invocation, without
+    # asking the user to rerun the script.
+    # ────────────────────────────────────────────────────────────────────
+    if {$auto_mode} {
+        puts "Campaign: $campaign_name"
+        if {$dry_run} { puts "(dry run — prompts written, no harnesses spawned)" }
+
+        set MAX_ITER 8
+        set last_signature ""
+        set iter 1
+        while {$iter <= $MAX_ITER} {
+            set all_contacts [reclassify_contacts $segment_paths $filter_stems]
+            set ready_by_tid [compute_ready_by_tid \
+                $all_contacts $active_tids $primary_channel]
+
+            if {[dict size $ready_by_tid] == 0} {
+                if {$iter == 1} {
+                    puts "No ready tasks for the requested transitions."
+                } else {
+                    puts ""
+                    puts "Iteration $iter: nothing left — converged."
+                }
+                break
+            }
+
+            # Convergence guard: if the same set of tasks is ready as
+            # last iteration, we made no progress (something is wedged).
+            set signature ""
+            foreach tid [lsort [dict keys $ready_by_tid]] {
+                set keys [list]
+                foreach c [dict get $ready_by_tid $tid] {
+                    lappend keys "[dict get $c _segment_dir]:[dict get $c stem]"
+                }
+                append signature "${tid}=[lsort $keys];"
+            }
+            if {$signature eq $last_signature} {
+                puts ""
+                puts "Iteration $iter: ready set unchanged — stopping (wedged)."
+                break
+            }
+            set last_signature $signature
+
+            puts ""
+            puts "── Iteration $iter ──"
+
+            dispatch_profile_tids $ready_by_tid $profile_tids $active_tids \
+                $yaml_path $dry_run $jobs
+            dispatch_approach_tids $ready_by_tid $approach_tids $active_tids \
+                $yaml_path $dry_run $jobs $filter_segments $filter_stems
+
+            incr iter
+        }
+        if {$iter > $MAX_ITER} {
+            puts ""
+            puts "Hit MAX_ITERATIONS ($MAX_ITER) — stopping. Investigate."
+        }
+
+        puts ""
+        puts "=== Summary ==="
+        puts "Done:   $::_total_done"
+        puts "Failed: $::_total_failed"
+        if {$::_total_failed > 0} { exit 1 }
+        exit 0
+    }
+
+    # ────────────────────────────────────────────────────────────────────
+    # Non-auto execute (single pass, explicit --tid).
+    # ────────────────────────────────────────────────────────────────────
+    set ready_by_tid [compute_ready_by_tid \
+        $all_contacts $active_tids $primary_channel]
+
+    if {[dict size $ready_by_tid] == 0} {
+        puts "Campaign: $campaign_name"
+        puts "No ready tasks for the requested transitions."
+        exit 0
+    }
+
+    # Fail loudly for unimplemented TIDs with ready work.
+    foreach tid $unimplemented_tids {
+        if {[dict exists $ready_by_tid $tid]} {
+            set n [llength [dict get $ready_by_tid $tid]]
+            puts stderr "Error: --execute for $tid is not yet wired ($n ready task(s))."
+            puts stderr "  T2/T7 → use spar-a-batch.tcl, or use --auto."
+            puts stderr "  T4/T8 → no harness exists yet."
+            exit 1
+        }
+    }
+
+    puts "Campaign: $campaign_name"
+    if {$dry_run} { puts "(dry run — prompts written, no harnesses spawned)" }
+
+    dispatch_profile_tids $ready_by_tid $profile_tids $active_tids \
+        $yaml_path $dry_run $jobs
 
     # ── T3: send approach-ready emails via AWS SES ─────────────────────
     if {[dict exists $ready_by_tid T3]} {

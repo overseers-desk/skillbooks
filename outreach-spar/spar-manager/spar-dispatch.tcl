@@ -383,6 +383,10 @@ proc spar::_p_dbc_post_progress {orig_progress segment_dir pre_snapshot slug sta
 #                  dry_run   (bool, default 0)
 #                  jobs      (int, default 8)
 #                  logs_dir  (string, optional — override log directory)
+#                  segments  (list, optional — when set, only segments
+#                             whose name is in the list are processed)
+#                  stems     (list, optional — when set, only roster rows
+#                             whose stem is in the list are processed)
 # on_progress    callback prefix: {slug status message}
 #                  status is one of: started, done, failed, skipped
 # on_complete    callback prefix: {total_done total_failed}
@@ -394,6 +398,8 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
     set dry_run [spar::dict_get_default $opts dry_run 0]
     set jobs [spar::dict_get_default $opts jobs 8]
     set user_logs [spar::dict_get_default $opts logs_dir ""]
+    set sel_segments [spar::dict_get_default $opts segments {}]
+    set sel_stems [spar::dict_get_default $opts stems {}]
 
     # --- Read campaign YAML ---
     set cdata [spar::load_campaign $campaign_file]
@@ -416,6 +422,13 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
     set antifacts [spar::dict_get_default $cdata antifacts]
     set campaign_principles [spar::dict_get_default $cdata campaign_principles]
     set segments [dict get $cdata segments]
+    if {[llength $sel_segments] > 0} {
+        set _filtered {}
+        foreach _s $segments {
+            if {$_s in $sel_segments} { lappend _filtered $_s }
+        }
+        set segments $_filtered
+    }
 
     # Filters
     set filter [spar::dict_get_default $cdata filter [dict create]]
@@ -509,6 +522,9 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
             # Skip header and malformed rows
             if {$org eq "organisation" || $name eq ""} continue
             if {$org eq ""} continue
+
+            # Caller-supplied stem filter (independent of campaign-level filters).
+            if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
 
             # Campaign filters
             if {$filter_require_email && ![string match *@* $email]} continue
