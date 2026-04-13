@@ -111,7 +111,7 @@ These are orthogonal to primary state. They filter eligibility for specific tran
 
 ### Channel properties of the approach (for APPROACHED/SENT contacts)
 
-The approach YAML's final round can contain multiple messages (e.g., one LinkedIn, one email). These determine T3 and T8 eligibility.
+The approach YAML's final round can contain multiple messages across channels (e.g., one LinkedIn, one email, one phone), but **at most one `channel: email` message** — enforced by `validate_approach` (`too_many_final_emails`). Sequential email follow-ups belong in subsequent rounds; additional recipients belong in `cc`/`bcc`. These messages determine T3 and T8 eligibility.
 
 | Property | Condition |
 |----------|-----------|
@@ -223,7 +223,7 @@ The transition manager filters `classify_segment` output by eligibility conditio
 |---|-------|-------------------|----------|-----------------|
 | T1 | Sweep → Profile | state = DISCOVERED | spar-transitions.tcl --tid=T1 --execute (runs §4.0b first if `contact_name` is blank, else §4.1+) | available |
 | T2 | Profile → Approach | state = PROFILED, star≥3 | spar-a-batch.tcl | available |
-| T3 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | email send (SES) | not-implemented |
+| T3 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | spar-transitions.tcl --tid=T3 --execute (AWS SES, serial with --delay) | available |
 | T4 | Send → Reply | email_sent, not email_replied | none (monitoring only) | n/a |
 | T6 | Stale → Re-profile | state = PROFILE_STALE | spar-transitions.tcl --tid=T6 --execute | available (zero tasks until PROFILE_STALE defined) |
 | T7 | Re-profile → Re-approach | re-PROFILED after stale (see note) | spar-a-batch.tcl | available (zero tasks until PROFILE_STALE defined) |

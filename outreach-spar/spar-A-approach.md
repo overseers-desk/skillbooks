@@ -273,6 +273,7 @@ Before presenting an approach file for human review:
 5. **Concreteness.** Can the recipient answer the ask in one sentence?
 6. **Channel character limits.** Where the channel imposes a character limit (e.g. 300 characters for a LinkedIn connection note), verify compliance.
 7. **Band-level pattern check.** Read the openers of all messages in the band sequentially. If they sound like variations of the same template, revise.
+8. **Final round email cardinality.** The `final` round contains at most one message with `channel: email`. Sequential email follow-ups belong in subsequent rounds; additional recipients belong in `cc`/`bcc`. Multi-channel finals (e.g. one email + one phone) are fine — the cap is on emails only. Enforced by `validate_approach` (`too_many_final_emails`).
 
 ## 8. Segment-specific approach types
 

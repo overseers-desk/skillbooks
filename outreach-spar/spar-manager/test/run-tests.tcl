@@ -2261,6 +2261,62 @@ rounds:
 assert_eq [has_issue $issues_ec email_missing_content] 1 \
     "email_missing_content: email without subject or body flagged"
 
+# ── too_many_final_emails: final round with 2 email messages rejected ──
+set issues_tme [va_issues {
+decisions: {}
+rounds:
+  - type: final
+    messages:
+      - channel: email
+        to: a@example.com
+        subject: First
+        body: One
+      - channel: email
+        to: b@example.com
+        subject: Second
+        body: Two
+}]
+assert_eq [has_issue $issues_tme too_many_final_emails] 1 \
+    "too_many_final_emails: two emails in final flagged"
+
+# ── Negative: zero emails in final (e.g. phone-only) passes cap check ──
+set issues_zf [va_issues {
+generated_for:
+  contact_name: Test
+  organisation: Test Org
+decisions:
+  channel: phone
+rounds:
+  - type: final
+    messages:
+      - channel: phone
+        to: "+61-400-000-000"
+        text: Call script.
+}]
+assert_eq [has_issue $issues_zf too_many_final_emails] 0 \
+    "too_many_final_emails: zero-email final not flagged"
+
+# ── Negative: one email + one phone in final (mixed-channel) passes cap check ──
+set issues_mf [va_issues {
+generated_for:
+  contact_name: Test
+  organisation: Test Org
+decisions:
+  channel: email
+rounds:
+  - type: final
+    messages:
+      - channel: email
+        to: test@example.com
+        subject: Final
+        body: Body
+      - channel: phone
+        to: "+61-400-000-000"
+        text: Call script.
+}]
+assert_eq [has_issue $issues_mf too_many_final_emails] 0 \
+    "too_many_final_emails: one email + one phone not flagged"
+
 # ── Negative test: valid approach has no structural issues ──
 set issues_valid [va_issues {
 generated_for:

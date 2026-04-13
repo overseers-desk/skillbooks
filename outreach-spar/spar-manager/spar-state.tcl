@@ -10,7 +10,8 @@ namespace eval spar {
         transition_eligible detect_duplicates progress_counts \
         roster_counts \
         validate_campaign validate_campaign_semantics validate_approach \
-        validate_profile read_profile_front_matter build_warnings
+        validate_profile read_profile_front_matter build_warnings \
+        final_email_message
 }
 
 # is_masked_email — return 1 if email looks redacted (contains '*').
@@ -67,6 +68,27 @@ proc spar::read_approach_yaml {path} {
         return ""
     }
     return $data
+}
+
+# final_email_message — return the sole final-round email message dict, or ""
+# if the final round has no email message. Callers rely on the ≤1 invariant
+# enforced by validate_approach (too_many_final_emails). If multiple are
+# present (validator bypass or malformed file), returns the first to fail
+# safe rather than silently mis-targeting a send.
+proc spar::final_email_message {data} {
+    if {$data eq "" || ![dict exists $data rounds]} { return "" }
+    foreach round [dict get $data rounds] {
+        if {![dict exists $round type]} continue
+        if {[dict get $round type] ne "final"} continue
+        if {![dict exists $round messages]} { return "" }
+        foreach msg [dict get $round messages] {
+            if {[spar::dict_get_default $msg channel ""] eq "email"} {
+                return $msg
+            }
+        }
+        return ""
+    }
+    return ""
 }
 
 # analyse_final_round — extract state and channel properties from approach YAML data.
@@ -1040,6 +1062,7 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
         }
 
         # Email messages must have subject or body
+        set final_email_count 0
         if {[dict exists $round messages]} {
             foreach msg [dict get $round messages] {
                 if {[dict exists $msg channel] && [dict get $msg channel] eq "email"} {
@@ -1050,8 +1073,19 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
                             contact_name $contact_name \
                             message "Email message missing both 'subject' and 'body'"]
                     }
+                    if {$rtype eq "final"} { incr final_email_count }
                 }
             }
+        }
+
+        # Final round may have at most one email message. Follow-ups belong
+        # in subsequent rounds; multi-recipient belongs in cc/bcc.
+        if {$rtype eq "final" && $final_email_count > 1} {
+            lappend issues [dict create \
+                severity error \
+                code too_many_final_emails \
+                contact_name $contact_name \
+                message "Final round has $final_email_count email messages; maximum is 1"]
         }
     }
 
