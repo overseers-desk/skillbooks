@@ -140,7 +140,7 @@ A1 reads both steps. If C2 identifies a misalignment or a factual error, A1 revi
 
 Write the approach file as `{id}-{slug}.yaml` following the structure shown in §6. Run the §7 quality checklist before presenting for human review.
 
-Read the campaign YAML for the sender address and BCC address. These are not stored in the approach file — they are resolved at send time.
+The default sender and BCC address come from the campaign YAML (`sender.name`, `sender.email`, `sender.bcc`) and do not need to be written into the approach file. Write a `decisions.sender` block only when this specific outreach should go from someone other than the campaign's default sender — e.g. a colleague with a prior relationship to the contact. When present, `decisions.sender.email` (and optional `sender.name`) overrides the campaign sender for this contact; per-message `bcc` / `cc` likewise override `sender.bcc`. All of this is resolved by the T3 dispatcher at send time.
 
 ### 4.8 Update the roster and communication index
 
@@ -167,7 +167,7 @@ Approach files are YAML documents with a **closed vocabulary** — any key outsi
 
 - Root: `decisions`, `rounds`, `profile_date`, `profile_richness`, `angle_rationale`, `roster_note`, `fact_provenance`, `quality_checklist`, `response_likelihood`, `generated_for`
 - `generated_for`: `contact_name`, `organisation` — required. Records the roster values at generation time so `spar::validate_approach` can detect roster edits that post-date the approach file (emits `name_desync` / `org_desync` when they diverge).
-- `decisions`: `warmth`, `channel`, `language`, `angle`, `sender`, `warmth_detail`, `channel_detail`, `subsegment`
+- `decisions`: `warmth`, `channel`, `language`, `angle`, `sender`, `warmth_detail`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
 - `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `replied_date`, `reply_summary`, `script`, `text`, `char_count`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`
 - `fact_provenance` / `fact_check` items: `claim`, `source` (plus `result`, `note`, `correction` for `fact_check` only)

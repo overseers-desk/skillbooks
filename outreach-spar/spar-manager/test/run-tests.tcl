@@ -193,7 +193,7 @@ proc make_base_row {{overrides {}}} {
     set row [dict create \
         contact_name    "Test Contact" \
         organisation_name "Test Org" \
-        email           "test@example.com" \
+        email           "test@acme-venues.au" \
         linkedin_url    "" \
         facebook_url    "" \
         phone           "" \
@@ -235,7 +235,7 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: test@example.com
+    to: test@acme-venues.au
     subject: Test subject
     body: Hello there
     actioned_date: null
@@ -254,7 +254,7 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: test@example.com
+    to: test@acme-venues.au
     subject: Test subject
     body: Hello there
     actioned_date: 2026-04-01
@@ -273,7 +273,7 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: test@example.com
+    to: test@acme-venues.au
     subject: Test subject
     body: Hello there
     actioned_date: 2026-04-01
@@ -292,7 +292,7 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: test@example.com
+    to: test@acme-venues.au
     subject: Test subject
     body: Hello there
     actioned_date: 2026-04-01
@@ -300,7 +300,7 @@ rounds:
   replies:
   - direction: received
     date: 2026-04-05
-    from: test@example.com
+    from: test@acme-venues.au
 }
 }
 
@@ -336,7 +336,7 @@ rounds:
     actioned_date: 2026-04-01
     replied_date: null
   - channel: email
-    to: test@example.com
+    to: test@acme-venues.au
     subject: Following up
     body: Hello there
     actioned_date: null
@@ -603,10 +603,10 @@ write_approach_yaml $seg "p-dave" [approach_yaml_final_replied]
 
 set headers $::std_headers
 set rows [list \
-    [make_base_row {contact_name "Alice" star_rating "4" email "alice@example.com" stem "p-alice"}] \
-    [make_base_row {contact_name "Bob" star_rating "5" email "bob@example.com" stem "p-bob"}] \
-    [make_base_row {contact_name "Carol" star_rating "3" email "carol@example.com" stem "p-carol"}] \
-    [make_base_row {contact_name "Dave" star_rating "3" email "dave@example.com" stem "p-dave"}] \
+    [make_base_row {contact_name "Alice" star_rating "4" email "alice@acme-venues.au" stem "p-alice"}] \
+    [make_base_row {contact_name "Bob" star_rating "5" email "bob@acme-venues.au" stem "p-bob"}] \
+    [make_base_row {contact_name "Carol" star_rating "3" email "carol@acme-venues.au" stem "p-carol"}] \
+    [make_base_row {contact_name "Dave" star_rating "3" email "dave@acme-venues.au" stem "p-dave"}] \
     [make_base_row {contact_name "Ed" star_rating "2" email "" stem "" date_excluded "2026-01-01"}] \
 ]
 write_roster_tsv $seg $headers $rows
@@ -650,12 +650,12 @@ write_approach_yaml $seg "t-sent" [approach_yaml_final_sent_email]
 
 set headers $::std_headers
 set rows [list \
-    [make_base_row {contact_name "Disco Dan" stem "" star_rating "4" email "dan@example.com"}] \
-    [make_base_row {contact_name "Prof Hi" stem "t-profiled-hi" star_rating "4" email "hi@example.com"}] \
-    [make_base_row {contact_name "Prof Lo" stem "t-profiled-lo" star_rating "2" email "lo@example.com"}] \
-    [make_base_row {contact_name "App Email" stem "t-approached-email" star_rating "3" email "app@example.com"}] \
+    [make_base_row {contact_name "Disco Dan" stem "" star_rating "4" email "dan@acme-venues.au"}] \
+    [make_base_row {contact_name "Prof Hi" stem "t-profiled-hi" star_rating "4" email "hi@acme-venues.au"}] \
+    [make_base_row {contact_name "Prof Lo" stem "t-profiled-lo" star_rating "2" email "lo@acme-venues.au"}] \
+    [make_base_row {contact_name "App Email" stem "t-approached-email" star_rating "3" email "app@acme-venues.au"}] \
     [make_base_row {contact_name "App NoEmail" stem "t-approached-noemail" star_rating "3" email ""}] \
-    [make_base_row {contact_name "Sent Sam" stem "t-sent" star_rating "3" email "sent@example.com"}] \
+    [make_base_row {contact_name "Sent Sam" stem "t-sent" star_rating "3" email "sent@acme-venues.au"}] \
 ]
 write_roster_tsv $seg $headers $rows
 
@@ -772,10 +772,10 @@ set seg1 [make_temp_segment]
 set seg2 [make_temp_segment]
 
 write_roster_tsv $seg1 $::std_headers [list \
-    [make_base_row {contact_name "Alice One" email "shared@example.com" stem ""}] \
+    [make_base_row {contact_name "Alice One" email "shared@acme-venues.au" stem ""}] \
 ]
 write_roster_tsv $seg2 $::std_headers [list \
-    [make_base_row {contact_name "Alice Two" email "shared@example.com" stem ""}] \
+    [make_base_row {contact_name "Alice Two" email "shared@acme-venues.au" stem ""}] \
 ]
 
 set c1 [spar::classify_segment $seg1]
@@ -788,8 +788,8 @@ assert_eq [expr {[llength [dict get $dups duplicate_email]] > 0}] 1 \
 # 9b. duplicate_email: same email in two contacts from the SAME segment → not flagged
 set seg3 [make_temp_segment]
 write_roster_tsv $seg3 $::std_headers [list \
-    [make_base_row {contact_name "Bob One" email "bob@example.com" stem ""}] \
-    [make_base_row {contact_name "Bob Two" email "bob@example.com" stem ""}] \
+    [make_base_row {contact_name "Bob One" email "bob@acme-venues.au" stem ""}] \
+    [make_base_row {contact_name "Bob Two" email "bob@acme-venues.au" stem ""}] \
 ]
 set c3 [spar::classify_segment $seg3]
 set dups3 [spar::detect_duplicates $c3]
@@ -800,10 +800,10 @@ assert_eq [llength [dict get $dups3 duplicate_email]] 0 \
 set seg4 [make_temp_segment]
 set seg5 [make_temp_segment]
 write_roster_tsv $seg4 $::std_headers [list \
-    [make_base_row {contact_name "Carol" email "carol@example.com" stem ""}] \
+    [make_base_row {contact_name "Carol" email "carol@acme-venues.au" stem ""}] \
 ]
 write_roster_tsv $seg5 $::std_headers [list \
-    [make_base_row {contact_name "Diana" email "diana@example.com" stem ""}] \
+    [make_base_row {contact_name "Diana" email "diana@acme-venues.au" stem ""}] \
 ]
 set c4 [spar::classify_segment $seg4]
 set c5 [spar::classify_segment $seg5]
@@ -815,10 +815,10 @@ assert_eq [llength [dict get $dups45 duplicate_email]] 0 \
 set seg6 [make_temp_segment]
 set seg7 [make_temp_segment]
 write_roster_tsv $seg6 $::std_headers [list \
-    [make_base_row {contact_name "John Smith" email "john1@example.com" stem ""}] \
+    [make_base_row {contact_name "John Smith" email "john1@acme-venues.au" stem ""}] \
 ]
 write_roster_tsv $seg7 $::std_headers [list \
-    [make_base_row {contact_name "John Smith" email "john2@example.com" stem ""}] \
+    [make_base_row {contact_name "John Smith" email "john2@acme-venues.au" stem ""}] \
 ]
 set c6 [spar::classify_segment $seg6]
 set c7 [spar::classify_segment $seg7]
@@ -829,8 +829,8 @@ assert_eq [expr {[llength [dict get $dups67 duplicate_name]] > 0}] 1 \
 # 9e. duplicate_name: same name within one segment → not flagged
 set seg8 [make_temp_segment]
 write_roster_tsv $seg8 $::std_headers [list \
-    [make_base_row {contact_name "Jane Doe" email "jane1@example.com" stem ""}] \
-    [make_base_row {contact_name "Jane Doe" email "jane2@example.com" stem ""}] \
+    [make_base_row {contact_name "Jane Doe" email "jane1@acme-venues.au" stem ""}] \
+    [make_base_row {contact_name "Jane Doe" email "jane2@acme-venues.au" stem ""}] \
 ]
 set c8 [spar::classify_segment $seg8]
 set dups8 [spar::detect_duplicates $c8]
@@ -849,14 +849,14 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: recipient@example.com
+    to: recipient@acme-venues.au
     subject: Hello A
     body: Body A
     actioned_date: 2026-04-01
     replied_date: null
 }
 write_roster_tsv $seg9 $::std_headers [list \
-    [make_base_row {contact_name "To Dup A" email "a@example.com" stem "dup-to-a"}] \
+    [make_base_row {contact_name "To Dup A" email "a@acme-venues.au" stem "dup-to-a"}] \
 ]
 
 write_profile $seg10 "dup-to-b"
@@ -867,14 +867,14 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: recipient@example.com
+    to: recipient@acme-venues.au
     subject: Hello B
     body: Body B
     actioned_date: 2026-04-02
     replied_date: null
 }
 write_roster_tsv $seg10 $::std_headers [list \
-    [make_base_row {contact_name "To Dup B" email "b@example.com" stem "dup-to-b"}] \
+    [make_base_row {contact_name "To Dup B" email "b@acme-venues.au" stem "dup-to-b"}] \
 ]
 
 set c9 [spar::classify_segment $seg9]
@@ -895,14 +895,14 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: unique-a@example.com
+    to: unique-a@acme-venues.au
     subject: Hello A
     body: Body A
     actioned_date: 2026-04-01
     replied_date: null
 }
 write_roster_tsv $seg11 $::std_headers [list \
-    [make_base_row {contact_name "Uniq A" email "a@example.com" stem "uniq-to-a"}] \
+    [make_base_row {contact_name "Uniq A" email "a@acme-venues.au" stem "uniq-to-a"}] \
 ]
 
 write_profile $seg12 "uniq-to-b"
@@ -913,14 +913,14 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: unique-b@example.com
+    to: unique-b@acme-venues.au
     subject: Hello B
     body: Body B
     actioned_date: 2026-04-01
     replied_date: null
 }
 write_roster_tsv $seg12 $::std_headers [list \
-    [make_base_row {contact_name "Uniq B" email "b@example.com" stem "uniq-to-b"}] \
+    [make_base_row {contact_name "Uniq B" email "b@acme-venues.au" stem "uniq-to-b"}] \
 ]
 
 set c11 [spar::classify_segment $seg11]
@@ -941,14 +941,14 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: x@example.com
+    to: x@acme-venues.au
     subject: Shared Subject Line
     body: Body A
     actioned_date: null
     replied_date: null
 }
 write_roster_tsv $seg13 $::std_headers [list \
-    [make_base_row {contact_name "Subj A" email "sa@example.com" stem "subj-dup-a"}] \
+    [make_base_row {contact_name "Subj A" email "sa@acme-venues.au" stem "subj-dup-a"}] \
 ]
 
 write_profile $seg14 "subj-dup-b"
@@ -959,14 +959,14 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: y@example.com
+    to: y@acme-venues.au
     subject: Shared Subject Line
     body: Body B
     actioned_date: null
     replied_date: null
 }
 write_roster_tsv $seg14 $::std_headers [list \
-    [make_base_row {contact_name "Subj B" email "sb@example.com" stem "subj-dup-b"}] \
+    [make_base_row {contact_name "Subj B" email "sb@acme-venues.au" stem "subj-dup-b"}] \
 ]
 
 set c13 [spar::classify_segment $seg13]
@@ -987,14 +987,14 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: x@example.com
+    to: x@acme-venues.au
     subject: Already Sent Subject
     body: Body A
     actioned_date: 2026-04-01
     replied_date: null
 }
 write_roster_tsv $seg15 $::std_headers [list \
-    [make_base_row {contact_name "Sent Subj A" email "ssa@example.com" stem "subj-sent-a"}] \
+    [make_base_row {contact_name "Sent Subj A" email "ssa@acme-venues.au" stem "subj-sent-a"}] \
 ]
 
 write_profile $seg16 "subj-sent-b"
@@ -1005,14 +1005,14 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: y@example.com
+    to: y@acme-venues.au
     subject: Already Sent Subject
     body: Body B
     actioned_date: 2026-04-02
     replied_date: null
 }
 write_roster_tsv $seg16 $::std_headers [list \
-    [make_base_row {contact_name "Sent Subj B" email "ssb@example.com" stem "subj-sent-b"}] \
+    [make_base_row {contact_name "Sent Subj B" email "ssb@acme-venues.au" stem "subj-sent-b"}] \
 ]
 
 set c15 [spar::classify_segment $seg15]
@@ -1025,11 +1025,11 @@ assert_eq [llength [dict get $dups1516 identical_subject]] 0 \
 set seg_inv1 [make_temp_segment]
 set seg_inv2 [make_temp_segment]
 write_roster_tsv $seg_inv1 $::std_headers [list \
-    [make_base_row {contact_name "Ghost Person" email "ghost1@example.com" \
+    [make_base_row {contact_name "Ghost Person" email "ghost1@acme-venues.au" \
         stem "" date_excluded "2026-04-01"}] \
 ]
 write_roster_tsv $seg_inv2 $::std_headers [list \
-    [make_base_row {contact_name "Ghost Person" email "ghost2@example.com" stem ""}] \
+    [make_base_row {contact_name "Ghost Person" email "ghost2@acme-venues.au" stem ""}] \
 ]
 set cinv1 [spar::classify_segment $seg_inv1]
 set cinv2 [spar::classify_segment $seg_inv2]
@@ -1041,11 +1041,11 @@ assert_eq [llength [dict get $dups_inv duplicate_name]] 0 \
 set seg_inv3 [make_temp_segment]
 set seg_inv4 [make_temp_segment]
 write_roster_tsv $seg_inv3 $::std_headers [list \
-    [make_base_row {contact_name "Invalid One" email "shared-inv@example.com" \
+    [make_base_row {contact_name "Invalid One" email "shared-inv@acme-venues.au" \
         stem "" date_excluded "2026-04-02"}] \
 ]
 write_roster_tsv $seg_inv4 $::std_headers [list \
-    [make_base_row {contact_name "Active Two" email "shared-inv@example.com" stem ""}] \
+    [make_base_row {contact_name "Active Two" email "shared-inv@acme-venues.au" stem ""}] \
 ]
 set cinv3 [spar::classify_segment $seg_inv3]
 set cinv4 [spar::classify_segment $seg_inv4]
@@ -1064,14 +1064,14 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: collide@example.com
+    to: collide@acme-venues.au
     subject: Invalid Contact Approach
     body: Body A
     actioned_date: null
     replied_date: null
 }
 write_roster_tsv $seg_inv5 $::std_headers [list \
-    [make_base_row {contact_name "Was Invalid" email "wasinv@example.com" \
+    [make_base_row {contact_name "Was Invalid" email "wasinv@acme-venues.au" \
         stem "inv-approach-a" date_excluded "2026-04-03"}] \
 ]
 write_profile $seg_inv6 "active-approach-b"
@@ -1082,14 +1082,14 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: collide@example.com
+    to: collide@acme-venues.au
     subject: Active Contact Approach
     body: Body B
     actioned_date: null
     replied_date: null
 }
 write_roster_tsv $seg_inv6 $::std_headers [list \
-    [make_base_row {contact_name "Still Active" email "active@example.com" \
+    [make_base_row {contact_name "Still Active" email "active@acme-venues.au" \
         stem "active-approach-b"}] \
 ]
 set cinv5 [spar::classify_segment $seg_inv5]
@@ -1108,7 +1108,7 @@ set seg_t8 [make_temp_segment]
 write_profile $seg_t8 "t8-linkedin-only"
 write_approach_yaml $seg_t8 "t8-linkedin-only" [approach_yaml_final_multi_channel]
 write_roster_tsv $seg_t8 $::std_headers [list \
-    [make_base_row {contact_name "LI Sent" email "li@example.com" \
+    [make_base_row {contact_name "LI Sent" email "li@acme-venues.au" \
         linkedin_url "https://linkedin.com/in/li" \
         stem "t8-linkedin-only" star_rating "4"}] \
 ]
@@ -1137,14 +1137,14 @@ rounds:
     actioned_date: 2026-04-01
     replied_date: null
   - channel: email
-    to: test@example.com
+    to: test@acme-venues.au
     subject: Following up
     body: Hello there
     actioned_date: 2026-04-03
     replied_date: null
 }
 write_roster_tsv $seg_t8b $::std_headers [list \
-    [make_base_row {contact_name "Both Sent" email "both@example.com" \
+    [make_base_row {contact_name "Both Sent" email "both@acme-venues.au" \
         linkedin_url "https://linkedin.com/in/both" \
         stem "t8-both-sent" star_rating "4"}] \
 ]
@@ -1165,14 +1165,14 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: sent-then-invalid@example.com
+    to: sent-then-invalid@acme-venues.au
     subject: Sent before invalidation
     body: Hello
     actioned_date: 2026-04-01
     replied_date: null
 }
 write_roster_tsv $seg_t4_inv $::std_headers [list \
-    [make_base_row {contact_name "Sent Then Invalid" email "sti@example.com" \
+    [make_base_row {contact_name "Sent Then Invalid" email "sti@acme-venues.au" \
         stem "t4-invalidated" star_rating "4" date_excluded "2026-04-05"}] \
 ]
 set ct4_inv [spar::classify_segment $seg_t4_inv]
@@ -1185,7 +1185,7 @@ set seg_t8_inv [make_temp_segment]
 write_profile $seg_t8_inv "t8-invalidated"
 write_approach_yaml $seg_t8_inv "t8-invalidated" [approach_yaml_final_multi_channel]
 write_roster_tsv $seg_t8_inv $::std_headers [list \
-    [make_base_row {contact_name "LI Sent Then Invalid" email "lsti@example.com" \
+    [make_base_row {contact_name "LI Sent Then Invalid" email "lsti@acme-venues.au" \
         linkedin_url "https://linkedin.com/in/lsti" \
         stem "t8-invalidated" star_rating "4" date_excluded "2026-04-05"}] \
 ]
@@ -1222,7 +1222,7 @@ rounds:
     replied_date: null
 }
 write_roster_tsv $seg_v1 $::std_headers [list \
-    [make_base_row {contact_name "Placeholder Pete" email "pete@example.com" \
+    [make_base_row {contact_name "Placeholder Pete" email "pete@acme-venues.au" \
         stem "v-placeholder"}] \
 ]
 set cv1 [spar::classify_segment $seg_v1]
@@ -1290,14 +1290,14 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: Bob@Example.COM
+    to: Bob@Acme-Venues.AU
     subject: Test subject
     body: Hello there
     actioned_date: null
     replied_date: null
 }
 write_roster_tsv $seg_v4 $::std_headers [list \
-    [make_base_row {contact_name "Sync Bob" email "bob@example.com" \
+    [make_base_row {contact_name "Sync Bob" email "bob@acme-venues.au" \
         stem "v-sync"}] \
 ]
 set cv4 [spar::classify_segment $seg_v4]
@@ -1387,7 +1387,7 @@ section "validate_approach"
 # 12a. Valid email in to: field → no errors
 set seg_va1 [make_temp_segment]
 set va1_path [write_approach_yaml $seg_va1 "va-valid" [approach_yaml_final_unsent]]
-set va1_issues [spar::validate_approach $va1_path "test@example.com" "Test Contact"]
+set va1_issues [spar::validate_approach $va1_path "test@acme-venues.au" "Test Contact"]
 assert_eq [llength $va1_issues] 0 "validate_approach: valid email → no issues"
 
 # 12b. Placeholder to: field → placeholder_to error
@@ -1405,10 +1405,48 @@ rounds:
     actioned_date: null
     replied_date: null
 }]
-set va2_issues [spar::validate_approach $va2_path "real@example.com" "VA Placeholder"]
+set va2_issues [spar::validate_approach $va2_path "real@acme-venues.au" "VA Placeholder"]
 set va2_errors [issues_with_code $va2_issues placeholder_to]
 assert_eq [llength $va2_errors] 1 "validate_approach: placeholder to: → placeholder_to error"
 assert_eq [dict get [lindex $va2_errors 0] severity] "error" "validate_approach: placeholder_to severity is error"
+
+# 12b2. Syntactically-valid placeholder domain (RFC 2606) → placeholder_to error
+set seg_va2b [make_temp_segment]
+set va2b_path [write_approach_yaml $seg_va2b "va-rfc-placeholder" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: recipient@example.com
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}]
+set va2b_issues [spar::validate_approach $va2b_path "recipient@example.com" "VA RFC Placeholder"]
+set va2b_errors [issues_with_code $va2b_issues placeholder_to]
+assert_eq [llength $va2b_errors] 1 "validate_approach: @example.com to: → placeholder_to error"
+
+# 12b3. Stub local-part (e.g. todo@real.com) → placeholder_to error
+set seg_va2c [make_temp_segment]
+set va2c_path [write_approach_yaml $seg_va2c "va-stub-local" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: todo@acme-venues.au
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}]
+set va2c_issues [spar::validate_approach $va2c_path "todo@acme-venues.au" "VA Stub Local"]
+set va2c_errors [issues_with_code $va2c_issues placeholder_to]
+assert_eq [llength $va2c_errors] 1 "validate_approach: stub local-part → placeholder_to error"
 
 # 12c. to: differs from roster email → email_desync warning
 set seg_va3 [make_temp_segment]
@@ -1419,13 +1457,13 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: wrong@example.com
+    to: wrong@acme-venues.au
     subject: Test
     body: Hello
     actioned_date: null
     replied_date: null
 }]
-set va3_issues [spar::validate_approach $va3_path "correct@example.com" "VA Desync"]
+set va3_issues [spar::validate_approach $va3_path "correct@acme-venues.au" "VA Desync"]
 set va3_warnings [issues_with_code $va3_issues email_desync]
 assert_eq [llength $va3_warnings] 1 "validate_approach: to: differs from roster email → email_desync warning"
 assert_eq [dict get [lindex $va3_warnings 0] severity] "warning" "validate_approach: email_desync severity is warning"
@@ -1433,7 +1471,7 @@ assert_eq [dict get [lindex $va3_warnings 0] severity] "warning" "validate_appro
 # 12d. No final round → structural error (no_final_round)
 set seg_va4 [make_temp_segment]
 set va4_path [write_approach_yaml $seg_va4 "va-nofinal" [approach_yaml_no_final]]
-set va4_issues [spar::validate_approach $va4_path "test@example.com" "Test Contact"]
+set va4_issues [spar::validate_approach $va4_path "test@acme-venues.au" "Test Contact"]
 assert_eq [has_issue $va4_issues no_final_round] 1 "validate_approach: no final round → no_final_round error"
 
 # 12d1. Missing generated_for → error (issue #30)
@@ -1445,13 +1483,13 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: test@example.com
+    to: test@acme-venues.au
     subject: Test
     body: Hello
     actioned_date: null
     replied_date: null
 }]
-set va_mgf_issues [spar::validate_approach $va_mgf_path "test@example.com" "VA MGF" "Some Org"]
+set va_mgf_issues [spar::validate_approach $va_mgf_path "test@acme-venues.au" "VA MGF" "Some Org"]
 set va_mgf_errors [issues_with_code $va_mgf_issues missing_generated_for]
 assert_eq [llength $va_mgf_errors] 1 "validate_approach: missing generated_for → missing_generated_for error"
 assert_eq [dict get [lindex $va_mgf_errors 0] severity] "error" "validate_approach: missing_generated_for severity is error"
@@ -1468,13 +1506,13 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: test@example.com
+    to: test@acme-venues.au
     subject: Test
     body: Hello
     actioned_date: null
     replied_date: null
 }]
-set va_nd_issues [spar::validate_approach $va_nd_path "test@example.com" "Jane New" "Acme Co"]
+set va_nd_issues [spar::validate_approach $va_nd_path "test@acme-venues.au" "Jane New" "Acme Co"]
 set va_nd_warnings [issues_with_code $va_nd_issues name_desync]
 assert_eq [llength $va_nd_warnings] 1 "validate_approach: generated_for.contact_name differs → name_desync warning"
 assert_eq [dict get [lindex $va_nd_warnings 0] severity] "warning" "validate_approach: name_desync severity is warning"
@@ -1491,13 +1529,13 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: test@example.com
+    to: test@acme-venues.au
     subject: Test
     body: Hello
     actioned_date: null
     replied_date: null
 }]
-set va_od_issues [spar::validate_approach $va_od_path "test@example.com" "Jane Doe" "New Co"]
+set va_od_issues [spar::validate_approach $va_od_path "test@acme-venues.au" "Jane Doe" "New Co"]
 set va_od_warnings [issues_with_code $va_od_issues org_desync]
 assert_eq [llength $va_od_warnings] 1 "validate_approach: generated_for.organisation differs → org_desync warning"
 assert_eq [dict get [lindex $va_od_warnings 0] severity] "warning" "validate_approach: org_desync severity is warning"
@@ -1514,18 +1552,18 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: test@example.com
+    to: test@acme-venues.au
     subject: Test
     body: Hello
     actioned_date: null
     replied_date: null
 }]
-set va_ok_issues [spar::validate_approach $va_ok_path "test@example.com" "Jane Doe" "Acme Co"]
+set va_ok_issues [spar::validate_approach $va_ok_path "test@acme-venues.au" "Jane Doe" "Acme Co"]
 assert_eq [has_issue $va_ok_issues name_desync] 0 "validate_approach: matching name → no name_desync"
 assert_eq [has_issue $va_ok_issues org_desync] 0 "validate_approach: matching org → no org_desync"
 
 # 12e. Nonexistent file → no errors (graceful)
-set va5_issues [spar::validate_approach "/tmp/nonexistent-approach.yaml" "test@example.com" "VA Missing"]
+set va5_issues [spar::validate_approach "/tmp/nonexistent-approach.yaml" "test@acme-venues.au" "VA Missing"]
 assert_eq [llength $va5_issues] 0 "validate_approach: nonexistent file → no issues"
 
 # 12f. validate_campaign still produces same results via delegation
@@ -1546,7 +1584,7 @@ rounds:
     replied_date: null
 }
 write_roster_tsv $seg_va6 $::std_headers [list \
-    [make_base_row {contact_name "Campaign Check" email "real@example.com" \
+    [make_base_row {contact_name "Campaign Check" email "real@acme-venues.au" \
         stem "va-campaign-check"}] \
 ]
 set cv_va6 [spar::classify_segment $seg_va6]
@@ -1799,7 +1837,7 @@ assert_eq [dict get $counts_inv star3] 0 "all invalid: star3=0"
 set seg_lo [make_temp_segment]
 write_profile $seg_lo "lo-star"
 write_roster_tsv $seg_lo $::std_headers [list \
-    [make_base_row {contact_name "Lo Star" stem "lo-star" star_rating "2" email "lo@example.com"}] \
+    [make_base_row {contact_name "Lo Star" stem "lo-star" star_rating "2" email "lo@acme-venues.au"}] \
 ]
 set c_lo [spar::classify_segment $seg_lo]
 set counts_lo [spar::progress_counts $c_lo]
@@ -1996,7 +2034,7 @@ proc make_vr_row {{overrides {}}} {
         organisation      "Test Org" \
         role              "Manager" \
         phone             "" \
-        email             "test@example.com" \
+        email             "test@acme-venues.au" \
         linkedin_url      "" \
         facebook_url      "" \
         sweep_iteration   "1" \
@@ -2162,7 +2200,7 @@ section "22. validate_approach — structural validation (approach-schema.yaml)"
 # ════════════════════════════════════════════════════════════════════════
 
 # Helper: write YAML content to a temp file and call validate_approach
-proc va_issues {yaml_content {roster_email "test@example.com"} {contact_name "Test"}} {
+proc va_issues {yaml_content {roster_email "test@acme-venues.au"} {contact_name "Test"}} {
     set path [file tempfile tmpf ".yaml"]
     set fd [open $path w]
     puts $fd $yaml_content
@@ -2225,7 +2263,7 @@ rounds:
       - channel: email
         subject: Final
         body: Final body
-        to: test@example.com
+        to: test@acme-venues.au
 }]
 assert_eq [has_issue $issues_dn draft_missing_number] 1 \
     "draft_missing_number: draft round without number flagged"
@@ -2244,7 +2282,7 @@ rounds:
       - channel: email
         subject: Final
         body: Final body
-        to: test@example.com
+        to: test@acme-venues.au
 }]
 assert_eq [has_issue $issues_rn review_missing_number] 1 \
     "review_missing_number: review round without number flagged"
@@ -2256,7 +2294,7 @@ rounds:
   - type: final
     messages:
       - channel: email
-        to: test@example.com
+        to: test@acme-venues.au
 }]
 assert_eq [has_issue $issues_ec email_missing_content] 1 \
     "email_missing_content: email without subject or body flagged"
@@ -2268,11 +2306,11 @@ rounds:
   - type: final
     messages:
       - channel: email
-        to: a@example.com
+        to: a@acme-venues.au
         subject: First
         body: One
       - channel: email
-        to: b@example.com
+        to: b@acme-venues.au
         subject: Second
         body: Two
 }]
@@ -2307,7 +2345,7 @@ rounds:
   - type: final
     messages:
       - channel: email
-        to: test@example.com
+        to: test@acme-venues.au
         subject: Final
         body: Body
       - channel: phone
@@ -2336,7 +2374,7 @@ rounds:
       - channel: email
         subject: Final subject
         body: Final body
-        to: test@example.com
+        to: test@acme-venues.au
 }]
 assert_eq [llength $issues_valid] 0 \
     "Valid approach: no structural issues"
@@ -2354,7 +2392,7 @@ rounds:
       - channel: email
         subject: Hi
         body: Hello
-        to: test@example.com
+        to: test@acme-venues.au
 discovery:
   catchment: Sydney
 }]
@@ -2372,7 +2410,7 @@ rounds:
       - channel: email
         subject: Hi
         body: Hello
-        to: test@example.com
+        to: test@acme-venues.au
 }]
 assert_eq [has_issue $issues_ud unknown_key_decisions] 1 \
     "unknown_key_decisions: 'channel_note' in decisions flagged"
@@ -2388,7 +2426,7 @@ rounds:
       - channel: email
         subject: Hi
         body: Hello
-        to: test@example.com
+        to: test@acme-venues.au
 }]
 assert_eq [has_issue $issues_wl wrong_level] 1 \
     "wrong_level: chosen_usps at root points to round level"
@@ -2402,7 +2440,7 @@ rounds:
       - channel: email
         subject: Hi
         body: Hello
-        to: test@example.com
+        to: test@acme-venues.au
         note: Remember to follow up
 }]
 assert_eq [has_issue $issues_wm wrong_level] 1 \
@@ -2417,7 +2455,7 @@ rounds:
       - channel: email
         subject: Hi
         body: Hello
-        to: test@example.com
+        to: test@acme-venues.au
         invented_field: nonsense
 }]
 assert_eq [has_issue $issues_um unknown_key_message] 1 \
@@ -2443,7 +2481,7 @@ rounds:
       - channel: email
         subject: Final subject
         body: Final body
-        to: test@example.com
+        to: test@acme-venues.au
 fact_provenance:
   - claim: Example
     source: URL
