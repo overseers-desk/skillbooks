@@ -1092,6 +1092,17 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
     # ── Email guard rails (existing checks) ──
 
     set email_re {^[^@\s]+@[^@\s]+\.[^@\s]+$}
+    # RFC 2606 reserves example.{com,org,net,edu}, test.*, invalid.*, localhost.*
+    # for documentation and testing. Plus common stub domains humans type as
+    # placeholders. Kept deliberately short — false positives here reject
+    # legitimate sends.
+    set placeholder_domains {example.com example.org example.net example.edu
+        domain.com fake.com placeholder.com email.com yourcompany.com}
+    # Local-part placeholders that are too generic to be real addresses.
+    # Avoid common-English words ("test", "name", "unknown") — they match
+    # legitimate mailbox conventions.
+    set placeholder_locals {todo placeholder xxx tbd fixme placeholder-email
+        your-email-here}
     set fr [spar::analyse_final_round $approach_data]
     set to_addresses [dict get $fr to_addresses]
 
@@ -1105,15 +1116,29 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
                 code placeholder_to \
                 contact_name $contact_name \
                 message "Approach file has non-email to: address '$addr_trimmed'"]
-        } else {
-            if {$roster_email ne "" && [string first "@" $roster_email] >= 0} {
-                if {[string tolower $addr_trimmed] ne [string tolower $roster_email]} {
-                    lappend issues [dict create \
-                        severity warning \
-                        code email_desync \
-                        contact_name $contact_name \
-                        message "Approach to: '$addr_trimmed' differs from roster email '$roster_email'"]
-                }
+            continue
+        }
+
+        set addr_lc [string tolower $addr_trimmed]
+        set at_idx [string first "@" $addr_lc]
+        set local  [string range $addr_lc 0 [expr {$at_idx - 1}]]
+        set domain [string range $addr_lc [expr {$at_idx + 1}] end]
+        if {$domain in $placeholder_domains || $local in $placeholder_locals} {
+            lappend issues [dict create \
+                severity error \
+                code placeholder_to \
+                contact_name $contact_name \
+                message "Approach to: '$addr_trimmed' looks like a placeholder (reserved domain or stub local-part)"]
+            continue
+        }
+
+        if {$roster_email ne "" && [string first "@" $roster_email] >= 0} {
+            if {[string tolower $addr_trimmed] ne [string tolower $roster_email]} {
+                lappend issues [dict create \
+                    severity warning \
+                    code email_desync \
+                    contact_name $contact_name \
+                    message "Approach to: '$addr_trimmed' differs from roster email '$roster_email'"]
             }
         }
     }
