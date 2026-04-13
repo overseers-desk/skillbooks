@@ -343,18 +343,18 @@ if {[file exists $outfile]} {
             set lock_hash [lindex [split [exec echo $roster_path | md5sum] " "] 0]
             set lock_file "/tmp/spar-roster-[string range $lock_hash 0 7].lock"
 
-            # Tcl's `exec << value` takes the next token as the stdin
-            # string — it is NOT a bash heredoc. Use a braced block via
-            # [subst] so the SQL reads like a heredoc while vars still
-            # substitute.
-            if {[catch {
-                exec flock -x $lock_file sqlite3 :memory: << [subst -nocommands {.mode tabs
-.import $roster_path tbl
-UPDATE tbl SET response_likelihood='$band_likelihood' WHERE contact_name='$safe_name';
+            # Tcl's `exec << value` takes the literal next token as stdin —
+            # it is NOT a bash heredoc. Build the sqlite script as a string
+            # and pass it in.
+            set sql ".mode tabs
+.import ${roster_path} tbl
+UPDATE tbl SET response_likelihood='${band_likelihood}' WHERE contact_name='${safe_name}';
 .headers on
-.output $tmp
+.output ${tmp}
 SELECT * FROM tbl;
-}]
+"
+            if {[catch {
+                exec flock -x $lock_file sqlite3 :memory: << $sql
                 file rename -force $tmp $roster_path
                 puts "  roster update: ${contact_name} → response_likelihood=${band_likelihood}%"
             } err]} {
