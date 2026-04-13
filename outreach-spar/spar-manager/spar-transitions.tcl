@@ -32,6 +32,7 @@ set dry_run 0
 set jobs 4
 set delay 2
 set assume_yes 0
+set verbose 0
 
 proc print_help {} {
     puts {spar-transitions.tcl — report and execute SPAR state transitions.
@@ -50,6 +51,7 @@ OPTIONS
     --jobs=N          parallel jobs for T1/T6 --execute (default 4)
     --delay=N         seconds between T3 sends (default 2, serial)
     --yes             skip the "send N emails? [y/N]" confirmation
+    -v, --verbose     in report mode, list each contact (default: counts only)
     -h, --help        show this help
 
 TRANSITIONS
@@ -94,6 +96,8 @@ foreach arg $argv {
         --ready     { set filter_state ready }
         --execute   { set execute_mode 1 }
         --dry-run   { set dry_run 1 }
+        -v          -
+        --verbose   { set verbose 1 }
         --*         { puts stderr "Unknown flag: $arg (try --help)"; exit 1 }
         default     {
             set norm [file normalize $arg]
@@ -397,8 +401,11 @@ if {$execute_mode} {
             }
             set from_hdr [expr {$from_name ne "" ? "$from_name <$from_email>" : $from_email}]
 
-            # BCC: message-level first, campaign sender.bcc fallback.
+            # BCC: message-level first, then campaign sender.bcc, else
+            # self-BCC the effective From address so every send leaves an
+            # archive copy in the sender's own mailbox.
             if {$bcc eq ""} { set bcc $camp_bcc }
+            if {$bcc eq ""} { set bcc $from_email }
 
             set send_opts [dict create \
                 region  $ses_region \
@@ -480,11 +487,11 @@ for {set i 0} {$i < [llength $tids]} {incr i} {
     set total [expr {$nr + $np}]
 
     if {$filter_state eq ""} {
-        puts "${tid}: ${label} — $total total ($nr ready, $np pending)"
+        puts [format "%-3s %-26s — %3d total (%3d ready, %3d pending)" "${tid}:" $label $total $nr $np]
     } elseif {$filter_state eq "ready"} {
-        puts "${tid}: ${label} — $nr ready"
+        puts [format "%-3s %-26s — %3d ready" "${tid}:" $label $nr]
     } else {
-        puts "${tid}: ${label} — $np pending"
+        puts [format "%-3s %-26s — %3d pending" "${tid}:" $label $np]
     }
 
     proc print_contacts {clist} {
@@ -501,24 +508,28 @@ for {set i 0} {$i < [llength $tids]} {incr i} {
         }
     }
 
-    if {$filter_state eq "pending"} {
-        print_contacts $pending_list
-    } elseif {$filter_state eq "ready"} {
-        print_contacts $ready_list
-    } else {
-        if {[llength $ready_list] > 0} {
-            puts "  ready:"
-            foreach c $ready_list { print_contacts [list $c] }
+    if {$verbose} {
+        if {$filter_state eq "pending"} {
+            print_contacts $pending_list
+        } elseif {$filter_state eq "ready"} {
+            print_contacts $ready_list
+        } else {
+            if {[llength $ready_list] > 0} {
+                puts "  ready:"
+                foreach c $ready_list { print_contacts [list $c] }
+            }
+            if {[llength $pending_list] > 0} {
+                puts "  pending:"
+                foreach c $pending_list { print_contacts [list $c] }
+            }
         }
-        if {[llength $pending_list] > 0} {
-            puts "  pending:"
-            foreach c $pending_list { print_contacts [list $c] }
-        }
+        puts ""
     }
-    puts ""
     set any_output 1
 }
 
 if {!$any_output} {
     puts "No matching transitions found."
+} elseif {!$verbose} {
+    puts "(pass --verbose / -v to list individual contacts)"
 }
