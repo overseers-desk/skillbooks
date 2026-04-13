@@ -85,7 +85,16 @@ oo::class create spar::Dispatcher {
 
     method on_harness_output {pipe slug} {
         if {[gets $pipe line] >= 0} {
-            {*}$OnProgress $slug started $line
+            # Children emit ROSTER_UPDATE marker lines (tab-separated) to
+            # request TSV mutations. The dispatcher applies them serially
+            # from its single event loop — that is the synchronisation that
+            # replaces the per-harness flock. Non-marker lines are forwarded
+            # as ordinary progress.
+            if {[string match "ROSTER_UPDATE\t*" $line]} {
+                my handle_roster_update $slug $line
+            } else {
+                {*}$OnProgress $slug started $line
+            }
             return
         }
         if {[eof $pipe]} {
@@ -99,6 +108,25 @@ oo::class create spar::Dispatcher {
             incr Active -1
             my start_next
         }
+    }
+
+    # Parse ROSTER_UPDATE<TAB>roster_path<TAB>key_col<TAB>key_val<TAB>field<TAB>new_val
+    # and apply via spar::update_roster_field. Failure is non-fatal: emit a
+    # warning progress event and carry on.
+    method handle_roster_update {slug line} {
+        set parts [split $line \t]
+        if {[llength $parts] != 6} {
+            {*}$OnProgress $slug warning "malformed ROSTER_UPDATE (expected 6 fields, got [llength $parts])"
+            return
+        }
+        lassign $parts _ roster_path key_col key_val field new_val
+        if {[catch {
+            spar::update_roster_field $roster_path $key_col $key_val $field $new_val
+        } err]} {
+            {*}$OnProgress $slug warning "roster update failed ($key_col=$key_val $field=$new_val): $err"
+            return
+        }
+        {*}$OnProgress $slug started "roster: $key_col=$key_val $field=$new_val"
     }
 }
 
