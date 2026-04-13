@@ -1,4 +1,4 @@
-#!/usr/bin/env tclsh
+#!/usr/bin/env tclsh9.0
 # spar-state.tcl — State machine library for SPAR campaign manager
 # Pure read-only library: reads filesystem and TSV, returns current state.
 # Sourced by both wish (GUI) and tclsh (CLI).

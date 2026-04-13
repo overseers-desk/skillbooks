@@ -6,8 +6,8 @@ Tcl libraries and GUI for managing SPAR outreach campaigns. Provides a state mac
 
 ### Tcl/Tk
 
-- `tclsh` 8.6+ (CLI tools, tests)
-- `wish` 9.0+ (GUI) — `wish9.0` or `wish`
+- `tclsh9.0` (CLI tools, tests) — scripts use `#!/usr/bin/env tclsh9.0` shebang
+- `wish9.0` (GUI)
 - tcllib packages: `yaml`, `json`, `json::write` — typically installed via `apt install tcllib` or equivalent
 
 ### External CLI tools
@@ -33,15 +33,15 @@ Tcl libraries and GUI for managing SPAR outreach campaigns. Provides a state mac
 wish9.0 spar-ui.tcl /path/to/campaign-dir
 
 # CLI progress table
-tclsh spar-progress.tcl /path/to/campaign-dir
+tclsh9.0 spar-progress.tcl /path/to/campaign-dir
 
 # Profile generation (dry run)
-tclsh spar-transitions.tcl /path/to/campaign.yaml --tid=T1 --execute --dry-run
+tclsh9.0 spar-transitions.tcl /path/to/campaign.yaml --tid=T1 --execute --dry-run
 
 # Approach generation (dry run)
-tclsh spar-a-batch.tcl /path/to/campaign.yaml --dry-run
+tclsh9.0 spar-a-batch.tcl /path/to/campaign.yaml --dry-run
 
 # Tests
-tclsh test/run-tests.tcl
-tclsh test/test-email.tcl
+tclsh9.0 test/run-tests.tcl
+tclsh9.0 test/test-email.tcl
 ```

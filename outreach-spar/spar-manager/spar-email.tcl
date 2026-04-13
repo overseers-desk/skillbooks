@@ -1,4 +1,4 @@
-#!/usr/bin/env tclsh
+#!/usr/bin/env tclsh9.0
 # spar-email.tcl — Email operations for SPAR campaign manager
 # Handles sending via AWS SES and reply checking via mailroom CLI.
 

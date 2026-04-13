@@ -1,4 +1,4 @@
-#!/usr/bin/env tclsh
+#!/usr/bin/env tclsh9.0
 # spar-lib.tcl — Shared library for SPAR batch scripts (Tcl port)
 # Source this file or package require spar-lib.
 # Works under both tclsh (CLI) and wish (GUI).

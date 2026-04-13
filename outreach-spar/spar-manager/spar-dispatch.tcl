@@ -62,7 +62,7 @@ oo::class create spar::Dispatcher {
 
             {*}$OnProgress $slug started ""
 
-            set cmd [list tclsh $HarnessPath $pdir $LogsDir]
+            set cmd [list tclsh9.0 $HarnessPath $pdir $LogsDir]
             if {[catch {open "| $cmd 2>@1" r} pipe]} {
                 {*}$OnProgress $slug failed "could not start harness: $pipe"
                 incr Failed
