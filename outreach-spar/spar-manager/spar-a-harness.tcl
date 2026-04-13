@@ -334,32 +334,15 @@ if {[file exists $outfile]} {
     }
     if {$band_likelihood ne ""} {
         set roster_path [file join [file dirname [file dirname $outfile]] roster.tsv]
-        set contact_name [lindex [split $contact_summary |] 0]
-        set contact_name [string trim $contact_name]
-
+        set contact_name [string trim [lindex [split $contact_summary |] 0]]
         if {[file exists $roster_path]} {
-            set safe_name [string map {' ''} $contact_name]
-            set tmp [exec mktemp]
-            set lock_hash [lindex [split [exec echo $roster_path | md5sum] " "] 0]
-            set lock_file "/tmp/spar-roster-[string range $lock_hash 0 7].lock"
-
-            # Tcl's `exec << value` takes the literal next token as stdin —
-            # it is NOT a bash heredoc. Build the sqlite script as a string
-            # and pass it in.
-            set sql ".mode tabs
-.import ${roster_path} tbl
-UPDATE tbl SET response_likelihood='${band_likelihood}' WHERE contact_name='${safe_name}';
-.headers on
-.output ${tmp}
-SELECT * FROM tbl;
-"
             if {[catch {
-                exec flock -x $lock_file sqlite3 :memory: << $sql
-                file rename -force $tmp $roster_path
+                spar::update_roster_field $roster_path \
+                    contact_name $contact_name \
+                    response_likelihood $band_likelihood
                 puts "  roster update: ${contact_name} → response_likelihood=${band_likelihood}%"
             } err]} {
                 puts "  roster update failed: $err"
-                catch {file delete $tmp}
             }
         }
     }

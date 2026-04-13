@@ -140,17 +140,21 @@ proc spar::load_roster {tsv_path} {
     return $rows
 }
 
-# write_roster — write rows back to a roster TSV, preserving column order.
-# Reads the existing header line to determine column order, then overwrites.
-proc spar::write_roster {tsv_path rows} {
+# write_roster — write rows back to a TSV, preserving column order.
+# If $headers is empty, reads the header line from $tsv_path (the classic
+# same-file rewrite). Pass $headers explicitly when writing to a tmp file
+# for atomic rename (the target doesn't exist yet).
+proc spar::write_roster {tsv_path rows {headers {}}} {
     if {[llength $rows] == 0} return
 
-    set fd [open $tsv_path r]
-    fconfigure $fd -translation binary
-    gets $fd header_line
-    close $fd
-    set header_line [string map {\r\n "" \r ""} $header_line]
-    set headers [split $header_line \t]
+    if {[llength $headers] == 0} {
+        set fd [open $tsv_path r]
+        fconfigure $fd -translation binary
+        gets $fd header_line
+        close $fd
+        set header_line [string map {\r\n "" \r ""} $header_line]
+        set headers [split $header_line \t]
+    }
 
     set fd [open $tsv_path w]
     fconfigure $fd -translation lf
@@ -163,6 +167,61 @@ proc spar::write_roster {tsv_path rows} {
         puts $fd [join $fields \t]
     }
     close $fd
+}
+
+# update_roster_field — set one field on the row matching key_col=key_val.
+# Atomic: write to sibling tmp + rename. Serialised across processes via a
+# child shell under flock(2): the shell echoes "locked" once the kernel has
+# granted the lock (we read that line before entering the critical section,
+# so `open` returning is not mistaken for lock-held), then blocks on `cat`.
+# Closing the pipe sends EOF; cat exits; shell exits; flock releases.
+# Inherits flock's crash-safety (kernel releases on process death).
+# Returns the count of rows updated. Errors if no row matches.
+proc spar::update_roster_field {tsv_path key_col key_val field_col new_val} {
+    if {![file exists $tsv_path]} {
+        error "roster not found: $tsv_path"
+    }
+    set lock_hash [lindex [split [exec echo $tsv_path | md5sum] " "] 0]
+    set lock_file "/tmp/spar-roster-[string range $lock_hash 0 7].lock"
+    set lock_pipe [open "|flock -x $lock_file sh -c {echo locked; cat}" r+]
+    fconfigure $lock_pipe -buffering line
+    if {[gets $lock_pipe line] < 0 || $line ne "locked"} {
+        catch {close $lock_pipe}
+        error "failed to acquire lock on $lock_file"
+    }
+    set tmp ""
+    try {
+        set fd [open $tsv_path r]
+        fconfigure $fd -translation binary
+        gets $fd header_line
+        close $fd
+        set header_line [string map {\r\n "" \r ""} $header_line]
+        set headers [split $header_line \t]
+
+        set rows [spar::load_roster $tsv_path]
+        set updated 0
+        set out_rows {}
+        foreach row $rows {
+            if {[dict exists $row $key_col] \
+                && [dict get $row $key_col] eq $key_val} {
+                dict set row $field_col $new_val
+                incr updated
+            }
+            lappend out_rows $row
+        }
+        if {$updated == 0} {
+            error "no row matched $key_col='$key_val' in $tsv_path"
+        }
+
+        set tmp [exec mktemp "${tsv_path}.XXXXXX"]
+        spar::write_roster $tmp $out_rows $headers
+        file rename -force $tmp $tsv_path
+        set tmp ""
+        return $updated
+    } finally {
+        if {$tmp ne "" && [file exists $tmp]} { catch {file delete $tmp} }
+        catch {close $lock_pipe}
+    }
 }
 
 # find_profile — find a profile file matching name/org slugs
