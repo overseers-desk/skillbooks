@@ -438,7 +438,10 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
     set sender_email [dict get $cdata sender email]
     set sender_org [spar::dict_get_default [dict get $cdata sender] organisation]
     set language [dict get $cdata language]
-    set approach_pattern [dict get $cdata approach_filename]
+    # approach_filename in campaign YAML is retained for backwards compat but
+    # no longer consulted: the authoritative slug is the roster `stem`, and
+    # approach files are always written to {stem}.yaml so classify_segment
+    # can find them by the same key it looks up profiles by.
     variable ::spar::dispatch_script_dir
     set script_dir $::spar::dispatch_script_dir
     set method [file normalize [file join $script_dir .. spar-A-approach.md]]
@@ -564,21 +567,19 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
             set slug_name [spar::slugify $name]
             set slug_org [spar::slugify $org]
 
-            # Build output filename from YAML pattern
-            set outfile_name [string map \
-                [list \{star\} $star \{slug_name\} $slug_name \{slug_org\} $slug_org] \
-                $approach_pattern]
-            set outfile [file join $base $segment approach $outfile_name]
-
-            # Skip if approach file already exists
-            if {[file exists $outfile]} {
+            # Approach file is always {stem}.yaml (stem is authoritative —
+            # classify_segment reads it from the same path). Rows without
+            # a stem are sweep artefacts and cannot be approached.
+            if {$stem eq ""} {
                 incr skipped
-                {*}$on_progress "${slug_name}-${slug_org}" skipped "approach exists"
+                {*}$on_progress "${slug_name}-${slug_org}" skipped "no stem"
                 continue
             }
-            if {$stem ne "" && [file exists [file join $base $segment approach "${stem}.yaml"]]} {
+            set outfile [file join $base $segment approach "${stem}.yaml"]
+
+            if {[file exists $outfile]} {
                 incr skipped
-                {*}$on_progress "${slug_name}-${slug_org}" skipped "approach exists"
+                {*}$on_progress $stem skipped "approach exists"
                 continue
             }
 
@@ -602,7 +603,7 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
             } else {
                 if {$filter_require_profile} {
                     incr skipped
-                    {*}$on_progress "${slug_name}-${slug_org}" skipped "no profile"
+                    {*}$on_progress $stem skipped "no profile"
                     continue
                 }
                 set profile_a1_instruction "3. No profile document exists for this contact. Treat as Thin profile. Use the roster p_note and s_note below as the primary source for angle selection and drafting."
