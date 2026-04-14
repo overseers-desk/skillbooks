@@ -2195,6 +2195,97 @@ set issues_vr_clean [vr_issues $seg_vr_clean]
 assert_eq [llength $issues_vr_clean] 0 \
     "Clean roster: no validate_roster issues"
 
+# ── Helper: find first issue with given code, return its severity/category ──
+proc issue_severity {issues code} {
+    foreach i $issues {
+        if {[dict get $i code] eq $code} { return [dict get $i severity] }
+    }
+    return ""
+}
+proc issue_category {issues code} {
+    foreach i $issues {
+        if {[dict get $i code] eq $code} {
+            if {[dict exists $i category]} { return [dict get $i category] }
+            return ""
+        }
+    }
+    return ""
+}
+proc count_issues {issues code} {
+    set n 0
+    foreach i $issues {
+        if {[dict get $i code] eq $code} { incr n }
+    }
+    return $n
+}
+
+# ── case_1 (issue #5): roster_duplicate_name_org is now error severity ──
+set seg_c1 [make_temp_segment]
+write_roster_tsv $seg_c1 $::vr_headers [list \
+    [make_vr_row {stem s1 contact_name "Jane Doe" organisation "Acme" email a@b.com}] \
+    [make_vr_row {stem s2 contact_name "Jane Doe" organisation "Acme" email c@d.com}] \
+]
+set issues_c1 [vr_issues $seg_c1]
+assert_eq [issue_severity $issues_c1 roster_duplicate_name_org] "error" \
+    "case_1: roster_duplicate_name_org promoted to error severity"
+assert_eq [issue_category $issues_c1 roster_duplicate_name_org] "case_1" \
+    "case_1: roster_duplicate_name_org carries category=case_1"
+
+# ── case_2 (issue #5): shared org inbox, different contacts ──
+set seg_c2 [make_temp_segment]
+write_roster_tsv $seg_c2 $::vr_headers [list \
+    [make_vr_row {stem s1 contact_name "Mike Carlson" organisation "Pony Club Queensland" email "admin@ponyclubqld.com.au"}] \
+    [make_vr_row {stem s2 contact_name "Sarah Standen" organisation "Pony Club Queensland" email "admin@ponyclubqld.com.au"}] \
+]
+set issues_c2 [vr_issues $seg_c2]
+assert_eq [has_issue $issues_c2 roster_shared_inbox_collision] 1 \
+    "case_2: shared-inbox collision flagged"
+assert_eq [issue_severity $issues_c2 roster_shared_inbox_collision] "error" \
+    "case_2: roster_shared_inbox_collision is error severity"
+assert_eq [issue_category $issues_c2 roster_shared_inbox_collision] "case_2" \
+    "case_2: carries category=case_2"
+assert_eq [count_issues $issues_c2 roster_shared_inbox_collision] 2 \
+    "case_2: fires for both colliding rows"
+
+# ── case_3 (issue #5): same person, different organisations, shared personal email ──
+set seg_c3 [make_temp_segment]
+write_roster_tsv $seg_c3 $::vr_headers [list \
+    [make_vr_row {stem s1 contact_name "Colin Batt" organisation "Rotary Club of Nerang" email "revcolinbatt@gmail.com"}] \
+    [make_vr_row {stem s2 contact_name "Colin Batt" organisation "Nerang Uniting Church" email "revcolinbatt@gmail.com"}] \
+]
+set issues_c3 [vr_issues $seg_c3]
+assert_eq [has_issue $issues_c3 roster_personal_email_reused] 1 \
+    "case_3: personal email reuse flagged"
+assert_eq [issue_severity $issues_c3 roster_personal_email_reused] "warning" \
+    "case_3: roster_personal_email_reused is warning severity"
+assert_eq [issue_category $issues_c3 roster_personal_email_reused] "case_3" \
+    "case_3: carries category=case_3"
+# case_3 must not masquerade as case_2
+assert_eq [has_issue $issues_c3 roster_shared_inbox_collision] 0 \
+    "case_3: does not trigger case_2 when orgs differ"
+
+# ── Negative: single email, single row → no email-collision codes ──
+set seg_cn [make_temp_segment]
+write_roster_tsv $seg_cn $::vr_headers [list \
+    [make_vr_row {stem s1 contact_name "Alice" organisation "Acme" email "a@b.com"}] \
+    [make_vr_row {stem s2 contact_name "Bob" organisation "Beeco" email "c@d.com"}] \
+]
+set issues_cn [vr_issues $seg_cn]
+assert_eq [has_issue $issues_cn roster_shared_inbox_collision] 0 \
+    "negative: distinct emails do not trigger case_2"
+assert_eq [has_issue $issues_cn roster_personal_email_reused] 0 \
+    "negative: distinct emails do not trigger case_3"
+
+# ── Negative: EXCLUDED rows are skipped ──
+set seg_cx [make_temp_segment]
+write_roster_tsv $seg_cx $::vr_headers [list \
+    [make_vr_row {stem s1 contact_name "Mike" organisation "Acme" email "admin@acme.com" date_excluded "2026-04-01"}] \
+    [make_vr_row {stem s2 contact_name "Sarah" organisation "Acme" email "admin@acme.com"}] \
+]
+set issues_cx [vr_issues $seg_cx]
+assert_eq [has_issue $issues_cx roster_shared_inbox_collision] 0 \
+    "EXCLUDED rows do not participate in case_2"
+
 # ════════════════════════════════════════════════════════════════════════
 section "22. validate_approach — structural validation (approach-schema.yaml)"
 # ════════════════════════════════════════════════════════════════════════

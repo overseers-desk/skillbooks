@@ -1744,15 +1744,20 @@ proc spar::validate_roster {segment_contacts} {
                 message "Contact name is empty or a placeholder"]
         }
 
-        # Assertion 3: duplicate (contact_name, organisation) pair
+        # Assertion 3: duplicate (contact_name, organisation) pair.
+        # Within-segment case 1 (issue #5): same person, same org ⇒ true
+        # duplicate. Error severity so ProfileHarness::validate_and_correct
+        # refuses to ship the second profile; human resolves by excluding
+        # or merging one row.
         set name_org_key "[string tolower $contact_name]|[string tolower $org]"
         if {$name_org_key in $seen_name_org} {
             lappend issues [dict create \
-                severity warning \
+                severity error \
                 code roster_duplicate_name_org \
+                category case_1 \
                 segment $segment \
                 contact_name $contact_name \
-                message "Duplicate (contact_name, organisation) pair in segment"]
+                message "True duplicate: (contact_name, organisation) pair repeats in segment"]
         }
         lappend seen_name_org $name_org_key
 
@@ -1796,6 +1801,77 @@ proc spar::validate_roster {segment_contacts} {
                 segment $segment \
                 contact_name $contact_name \
                 message "Contact has star_rating=0 but no date_excluded"]
+        }
+    }
+
+    # Within-segment email categorisation (issue #5).
+    # Scope is deliberately segment-local in this pass; cross-segment is
+    # tracked as follow-up. Groups rows sharing the same normalised email,
+    # then classifies each group:
+    #   case_2 (error): same org, different name → shared org inbox.
+    #                   Resolved per spar-P-profile.md §4.11 shared-inbox
+    #                   rule (find a non-shared alternate, or leave empty).
+    #   case_3 (warning): same normalised name, different org → same
+    #                   person reached via multiple affiliations sharing
+    #                   one personal email. Human judgement; not solved.
+    # case_1 (same name + same org) is already caught above as
+    # roster_duplicate_name_org.
+    array set _email_group {}
+    foreach contact $segment_contacts {
+        set state [spar::dict_get_default $contact state ""]
+        if {$state eq "EXCLUDED"} continue
+        set _name [string trim [spar::dict_get_default $contact contact_name ""]]
+        if {$_name eq ""} continue
+        set _org [string trim [spar::dict_get_default $contact organisation ""]]
+        set _email [string trim [string tolower [spar::dict_get_default $contact email ""]]]
+        if {$_email eq "" || [string first "@" $_email] < 0} continue
+        lappend _email_group($_email) [list $_name $_org]
+    }
+    foreach _email [array names _email_group] {
+        set _rows $_email_group($_email)
+        if {[llength $_rows] < 2} continue
+        foreach _row $_rows {
+            lassign $_row _name _org
+            set _name_norm [spar::normalise_name $_name]
+            set _org_norm [string tolower $_org]
+            set _saw_shared_inbox 0
+            set _saw_personal_reuse 0
+            foreach _other $_rows {
+                if {$_other eq $_row} continue
+                lassign $_other _oname _oorg
+                set _oname_norm [spar::normalise_name $_oname]
+                set _oorg_norm [string tolower $_oorg]
+                if {$_name_norm eq $_oname_norm && $_org_norm eq $_oorg_norm} {
+                    # Same (name, org) — already flagged as case_1 above; skip.
+                    continue
+                }
+                if {$_org_norm eq $_oorg_norm && $_name_norm ne $_oname_norm} {
+                    set _saw_shared_inbox 1
+                    continue
+                }
+                if {$_name_norm eq $_oname_norm && $_org_norm ne $_oorg_norm} {
+                    set _saw_personal_reuse 1
+                    continue
+                }
+            }
+            if {$_saw_shared_inbox} {
+                lappend issues [dict create \
+                    severity error \
+                    code roster_shared_inbox_collision \
+                    category case_2 \
+                    segment $segment \
+                    contact_name $_name \
+                    message "Shared inbox: '$_email' is also used by another contact at the same organisation in this segment"]
+            }
+            if {$_saw_personal_reuse} {
+                lappend issues [dict create \
+                    severity warning \
+                    code roster_personal_email_reused \
+                    category case_3 \
+                    segment $segment \
+                    contact_name $_name \
+                    message "Personal email reused: '$_email' is also used by the same person under a different organisation in this segment"]
+            }
         }
     }
 
