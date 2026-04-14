@@ -318,7 +318,9 @@ Grouped by validator proc. All line numbers are in `spar-state.tcl`.
 | roster_extra_fields             | warning | TSV row has extra columns                             | —                   | 1559 |
 | roster_verified_but_invalid     | warning | `verified=yes` ∧ `date_excluded≠""`                   | —                   | 1592 |
 | roster_placeholder_name         | warning | contact_name empty or in {unknown,n/a,tbd,placeholder}| EXCLUDED            | 1604 |
-| roster_duplicate_name_org       | warning | (name,org) pair repeats in segment                    | EXCLUDED            | 1614 |
+| roster_duplicate_name_org       | error   | (name,org) pair repeats in segment (case_1, issue #5) | EXCLUDED            | 1614 |
+| roster_shared_inbox_collision   | error   | same email at same org, different names (case_2)      | EXCLUDED            | —    |
+| roster_personal_email_reused    | warning | same email, same name, different orgs (case_3)        | EXCLUDED            | —    |
 | roster_no_channel               | warning | ¬has_email ∧ ¬has_linkedin ∧ ¬has_facebook ∧ phone="" | EXCLUDED            | 1626 |
 | roster_no_sweep_iteration       | warning | sweep_iteration empty                                 | EXCLUDED            | 1636 |
 | roster_likelihood_without_star  | warning | response_likelihood set, star_rating empty            | EXCLUDED            | 1646 |
@@ -370,7 +372,9 @@ Categories (applied in the rightmost column):
 | roster_extra_fields             | all                                     | —                               | SCHEMA-DRIFT     |
 | roster_verified_but_invalid     | all                                     | —                               | AUDIT            |
 | roster_placeholder_name         | DISCOVERED → REPLIED                    | T1 does not gate on name        | GAP              |
-| roster_duplicate_name_org       | DISCOVERED → REPLIED                    | —                               | AUDIT            |
+| roster_duplicate_name_org       | DISCOVERED → REPLIED                    | P-harness validate_and_correct  | TROUBLE (case_1) |
+| roster_shared_inbox_collision   | DISCOVERED → REPLIED                    | P-harness validate_and_correct  | TROUBLE (case_2) |
+| roster_personal_email_reused    | DISCOVERED → REPLIED                    | —                               | AUDIT (case_3)   |
 | roster_no_channel               | DISCOVERED → REPLIED                    | no T-gate; P §4.11 now excludes | MISALIGNED       |
 | roster_no_sweep_iteration       | DISCOVERED → REPLIED                    | —                               | AUDIT            |
 | roster_likelihood_without_star  | DISCOVERED → REPLIED                    | —                               | REAL             |

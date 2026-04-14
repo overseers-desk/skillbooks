@@ -99,6 +99,24 @@ oo::class create spar::ProfileHarness {
 
             set row [my _roster_row $roster_path $slug]
             set errors [spar::validate_profile $outfile $row $slug]
+            # Also run segment-scoped roster checks and surface any
+            # error-severity issue whose contact_name matches this slug.
+            # This is how within-segment duplicate categories
+            # (roster_duplicate_name_org = case_1,
+            #  roster_shared_inbox_collision = case_2) reach the
+            # per-harness resume loop.
+            set my_cname [string trim [spar::dict_get_default $row contact_name ""]]
+            set segment_dir [file dirname $roster_path]
+            if {$my_cname ne ""} {
+                if {[catch {spar::classify_segment $segment_dir} seg_contacts]} {
+                    set seg_contacts {}
+                }
+                foreach ri [spar::validate_roster $seg_contacts] {
+                    if {[dict get $ri severity] ne "error"} continue
+                    if {[dict get $ri contact_name] ne $my_cname} continue
+                    lappend errors $ri
+                }
+            }
             set hard {}
             foreach e $errors {
                 if {[dict get $e severity] eq "error"} { lappend hard $e }
@@ -119,7 +137,7 @@ oo::class create spar::ProfileHarness {
             puts "\[$slug\] Validation failed (attempt $attempt/$max_fix):\n$error_text"
 
             set fix_log "${lp}-fix${attempt}.log"
-            set fix_prompt "The profile for $slug failed post-validation:\n\n$error_text\n\nFor errors in the profile file (malformed/missing front matter, missing required keys, invalid enum values, stale dependent_data) rewrite $outfile per SPAR-P §5 — the YAML front matter §5.1 is required and must carry profile_date, star_rating, richness, richness_count, warmth_finding, applicable_angles, and a dependent_data snapshot of contact_name/organisation/role/date_excluded; do not remove or rename any front-matter key.\n\nFor errors about the roster row (profile_unreachable_without_exclusion) edit the roster TSV for stem '$slug' per SPAR-P §4.4a/§4.11 using sqlite3 — either set date_excluded='no reachable channel (YYYY-MM-DD)' if the contact has no email, LinkedIn, Facebook, or phone and cannot be researched, or backfill a channel by further research."
+            set fix_prompt "The profile for $slug failed post-validation:\n\n$error_text\n\nFor errors in the profile file (malformed/missing front matter, missing required keys, invalid enum values, stale dependent_data) rewrite $outfile per SPAR-P §5 — the YAML front matter §5.1 is required and must carry profile_date, star_rating, richness, richness_count, warmth_finding, applicable_angles, and a dependent_data snapshot of contact_name/organisation/role/date_excluded; do not remove or rename any front-matter key.\n\nFor errors about the roster row (profile_unreachable_without_exclusion) edit the roster TSV for stem '$slug' per SPAR-P §4.4a/§4.11 using sqlite3 — either set date_excluded='no reachable channel (YYYY-MM-DD)' if the contact has no email, LinkedIn, Facebook, or phone and cannot be researched, or backfill a channel by further research.\n\nFor roster_shared_inbox_collision: the email you wrote is already used by another contact at the same organisation in this segment. Per SPAR-P §4.11 shared-inbox rule, either (1) research a non-shared personal or direct email address for this contact and write that instead, or (2) leave this contact's email field empty (sqlite3 UPDATE … SET email='') and allow the approach to proceed via LinkedIn or phone. Do not overwrite the other contact's email.\n\nFor roster_duplicate_name_org: the roster already contains another row with the same contact_name and organisation in this segment. The two rows are a true duplicate. Set date_excluded on the row for stem '$slug' with reason 'duplicate of existing row ([date])' and do not produce a profile; the existing row's profile stands."
 
             set model_args {}
             if {$attempt == 3} { set model_args [list --model opus] }
