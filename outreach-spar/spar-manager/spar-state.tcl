@@ -93,7 +93,9 @@ proc spar::final_email_message {data} {
 
 # analyse_final_round — extract state and channel properties from approach YAML data.
 # Returns dict with keys: has_final, any_sent, email_sent, linkedin_sent,
-#   email_replied, to_addresses, unsent_subjects.
+#   email_replied, to_addresses, unsent_subjects, messages.
+# `messages` is a list of per-message dicts {channel actioned_date replied_date
+#   is_actioned is_replied} used by T9/T10 channel-readiness evaluation.
 proc spar::analyse_final_round {data} {
     set result [dict create \
         has_final 0 \
@@ -102,7 +104,8 @@ proc spar::analyse_final_round {data} {
         linkedin_sent 0 \
         email_replied 0 \
         to_addresses {} \
-        unsent_subjects {}]
+        unsent_subjects {} \
+        messages {}]
 
     if {$data eq "" || ![dict exists $data rounds]} {
         return $result
@@ -160,6 +163,19 @@ proc spar::analyse_final_round {data} {
                         dict set result unsent_subjects $subjs
                     }
                 }
+
+                # Append to per-message list for T9/T10 gating. Normalised
+                # nulls so downstream code can rely on an empty string.
+                set actioned_norm [expr {$is_actioned ? $actioned : ""}]
+                set replied_norm  [expr {$is_replied ? $replied : ""}]
+                set msgs [dict get $result messages]
+                lappend msgs [dict create \
+                    channel $channel \
+                    actioned_date $actioned_norm \
+                    replied_date $replied_norm \
+                    is_actioned $is_actioned \
+                    is_replied $is_replied]
+                dict set result messages $msgs
             }
         }
 
@@ -395,6 +411,171 @@ proc spar::classify_segment {segment_dir} {
     return $results
 }
 
+# _final_round_messages_for_contact -- parse the contact's approach file
+# and return the per-message list from analyse_final_round, or {} if no
+# approach file exists. Convenience wrapper to avoid re-parsing the YAML
+# at each caller.
+proc spar::_final_round_messages_for_contact {contact} {
+    set ap [spar::dict_get_default $contact approach_path ""]
+    if {$ap eq "" || ![file exists $ap]} { return {} }
+    set adata [spar::read_approach_yaml $ap]
+    if {$adata eq ""} { return {} }
+    set fr [spar::analyse_final_round $adata]
+    return [dict get $fr messages]
+}
+
+# _channel_slot_wait_days -- extract wait_days from a channel slot dict
+# (spar-campaign-yaml.md §Required channels). Returns "" if missing.
+proc spar::_channel_slot_wait_days {slot} {
+    if {$slot eq ""} { return "" }
+    if {[llength $slot] <= 1} { return "" }
+    return [spar::dict_get_default $slot wait_days ""]
+}
+
+# _channel_slot_wait_condition -- extract wait_condition. Returns "" if missing.
+proc spar::_channel_slot_wait_condition {slot} {
+    if {$slot eq ""} { return "" }
+    if {[llength $slot] <= 1} { return "" }
+    return [spar::dict_get_default $slot wait_condition ""]
+}
+
+# _channel_slot_as_map -- return the raw slot value (bare string or map)
+# directly from a campaign dict. Used by T9/T10 to reach wait_days /
+# wait_condition without re-implementing the normalisation logic.
+proc spar::_campaign_slot {cdata key} {
+    if {![dict exists $cdata $key]} { return "" }
+    return [dict get $cdata $key]
+}
+
+# _days_since -- integer days from a date to today (or the supplied
+# reference date). `date` may be ISO "YYYY-MM-DD" OR an epoch-seconds
+# integer — the YAML parser in the approach-file path eagerly converts
+# bare YAML date literals to epoch seconds, so both forms appear in
+# classified contacts. Negative if the reference date is before `date`.
+# Returns "" on parse failure.
+proc spar::_days_since {date {today ""}} {
+    if {$date eq "" || [spar::is_null $date]} { return "" }
+    if {[string is integer -strict $date]} {
+        set then_sec $date
+    } elseif {[catch {clock scan $date -format "%Y-%m-%d" -timezone :UTC} then_sec]} {
+        return ""
+    }
+    if {$today eq ""} {
+        set now_sec [clock seconds]
+    } elseif {[string is integer -strict $today]} {
+        set now_sec $today
+    } elseif {[catch {clock scan $today -format "%Y-%m-%d" -timezone :UTC} now_sec]} {
+        return ""
+    }
+    return [expr {($now_sec - $then_sec) / 86400}]
+}
+
+# _channel_readiness -- evaluate secondary_ready / tertiary_ready for
+# one contact given the campaign's channel slots. Returns a dict:
+#   {secondary_ready bool tertiary_ready bool
+#    secondary_reason "" tertiary_reason ""}
+#
+# Rules (spar-manager/state-machine.md §States, §Transition manager):
+#  - The slot must be declared in the campaign.
+#  - Final round must contain a sent message for the *preceding* channel
+#    (actioned_date non-null) whose actioned_date is ≥ wait_days old.
+#  - wait_condition must hold — today we implement only `no_reply`:
+#    preceding message's replied_date must be null.
+#  - Final round must contain a pending message (actioned_date null) for
+#    the slot's own channel.
+# Reason strings describe why a slot is NOT ready (empty when it is).
+#
+# today_iso — ISO YYYY-MM-DD reference date. Optional; defaults to today.
+proc spar::_channel_readiness {contact cdata {today_iso ""}} {
+    set out [dict create \
+        secondary_ready 0 tertiary_ready 0 \
+        secondary_reason "" tertiary_reason ""]
+    set primary [spar::campaign_primary_channel $cdata]
+    if {$primary eq ""} { return $out }
+    set secondary_slot [spar::_campaign_slot $cdata secondary_channel]
+    set secondary_ch [spar::_campaign_channel_slot $cdata secondary_channel]
+    if {$secondary_ch eq ""} { return $out }
+
+    set messages [spar::_final_round_messages_for_contact $contact]
+    if {[llength $messages] == 0} {
+        dict set out secondary_reason "no approach/final round"
+        return $out
+    }
+
+    # Helper: find first message for a given channel in the list.
+    set find_msg {
+        apply {{msgs ch} {
+            foreach m $msgs {
+                if {[dict get $m channel] eq $ch} { return $m }
+            }
+            return {}
+        }}
+    }
+
+    # Secondary: gated on the primary channel's sent message.
+    set primary_msg [{*}$find_msg $messages $primary]
+    set secondary_msg [{*}$find_msg $messages $secondary_ch]
+    set wait_days [spar::_channel_slot_wait_days $secondary_slot]
+    set wait_cond [spar::_channel_slot_wait_condition $secondary_slot]
+    set sec_reason [spar::_evaluate_slot_readiness \
+        $primary_msg $secondary_msg $wait_days $wait_cond $secondary_ch $today_iso]
+    if {$sec_reason eq ""} {
+        dict set out secondary_ready 1
+    } else {
+        dict set out secondary_reason $sec_reason
+    }
+
+    # Tertiary: gated on the secondary channel's sent message.
+    set tertiary_slot [spar::_campaign_slot $cdata tertiary_channel]
+    set tertiary_ch [spar::_campaign_channel_slot $cdata tertiary_channel]
+    if {$tertiary_ch eq ""} { return $out }
+
+    set tertiary_msg [{*}$find_msg $messages $tertiary_ch]
+    set t_wait_days [spar::_channel_slot_wait_days $tertiary_slot]
+    set t_wait_cond [spar::_channel_slot_wait_condition $tertiary_slot]
+    set ter_reason [spar::_evaluate_slot_readiness \
+        $secondary_msg $tertiary_msg $t_wait_days $t_wait_cond $tertiary_ch $today_iso]
+    if {$ter_reason eq ""} {
+        dict set out tertiary_ready 1
+    } else {
+        dict set out tertiary_reason $ter_reason
+    }
+    return $out
+}
+
+# _evaluate_slot_readiness -- helper for _channel_readiness. Given the
+# preceding-slot message and the own-slot message, return "" if this
+# slot is ready, or a human-readable reason if not.
+proc spar::_evaluate_slot_readiness {preceding_msg own_msg wait_days wait_cond own_channel today_iso} {
+    if {[llength $preceding_msg] == 0} {
+        return "preceding channel has no message in final round"
+    }
+    if {![dict get $preceding_msg is_actioned]} {
+        return "preceding channel not yet sent"
+    }
+    if {$wait_days ne ""} {
+        set days [spar::_days_since [dict get $preceding_msg actioned_date] $today_iso]
+        if {$days eq ""} {
+            return "preceding actioned_date unparseable"
+        }
+        if {$days < $wait_days} {
+            return "waiting until day $wait_days (currently day $days since preceding send)"
+        }
+    }
+    if {$wait_cond eq "no_reply"} {
+        if {[dict get $preceding_msg is_replied]} {
+            return "preceding channel received a reply (no_reply condition failed)"
+        }
+    }
+    if {[llength $own_msg] == 0} {
+        return "no '$own_channel' message drafted in final round"
+    }
+    if {[dict get $own_msg is_actioned]} {
+        return "own '$own_channel' message already sent"
+    }
+    return ""
+}
+
 # _approach_validation_error -- return first error-severity validation message for
 # a contact's approach file, or "" if clean. Used by transition_eligible to gate
 # approach-dependent transitions (T3, T4, T8) on structural validity (#43 principle 7).
@@ -427,7 +608,7 @@ proc spar::_approach_validation_error {contact} {
 # Returns a list of dicts with keys:
 #   contact_name, organisation, segment, task_state (ready/pending/done), reason
 #
-proc spar::transition_eligible {classified_contacts transition {primary_channel ""}} {
+proc spar::transition_eligible {classified_contacts transition {primary_channel ""} {cdata {}} {today_iso ""}} {
     set results {}
 
     foreach contact $classified_contacts {
@@ -546,6 +727,78 @@ proc spar::transition_eligible {classified_contacts transition {primary_channel 
                             contact_name $name organisation $org segment $segment \
                             stem $stem _segment_dir $segment_dir \
                             task_state pending reason "LinkedIn sent, awaiting acceptance before email follow-up"]
+                    }
+                }
+            }
+            T9 {
+                # Secondary follow-up (issue #41). Campaign must declare a
+                # secondary_channel slot; contact must be APPROACHED or SENT
+                # (primary was drafted). Gated on `secondary_ready`:
+                # preceding primary is sent ≥ wait_days ago, wait_condition
+                # holds, and the secondary-channel message is still pending.
+                # Dispatch status is `manual` (state-machine.md §Transition
+                # manager) — the UI exposes a render-script + actioned-date
+                # button rather than spawning a harness. Skip EXCLUDED.
+                if {$state eq "EXCLUDED"} continue
+                if {$state ne "APPROACHED" && $state ne "SENT"} continue
+                if {[llength $cdata] == 0} continue
+                set vmsg [spar::_approach_validation_error $contact]
+                if {$vmsg ne ""} {
+                    lappend results [dict create \
+                        contact_name $name organisation $org segment $segment \
+                        stem $stem _segment_dir $segment_dir \
+                        task_state pending reason "invalid_approach_yaml: $vmsg"]
+                    continue
+                }
+                set r [spar::_channel_readiness $contact $cdata $today_iso]
+                if {[dict get $r secondary_ready]} {
+                    lappend results [dict create \
+                        contact_name $name organisation $org segment $segment \
+                        stem $stem _segment_dir $segment_dir \
+                        task_state ready reason ""]
+                } elseif {[dict get $r secondary_reason] ne ""} {
+                    # Emit pending only for contacts whose primary channel
+                    # was drafted — otherwise T9 has nothing to wait for.
+                    set reason [dict get $r secondary_reason]
+                    if {![string match "preceding channel has no message*" $reason] \
+                        && ![string match "no approach*" $reason] \
+                        && ![string match "preceding channel not yet sent*" $reason]} {
+                        lappend results [dict create \
+                            contact_name $name organisation $org segment $segment \
+                            stem $stem _segment_dir $segment_dir \
+                            task_state pending reason $reason]
+                    }
+                }
+            }
+            T10 {
+                # Tertiary follow-up (issue #41). Same shape as T9 but
+                # gated on `tertiary_ready` (preceding = secondary).
+                if {$state eq "EXCLUDED"} continue
+                if {$state ne "APPROACHED" && $state ne "SENT"} continue
+                if {[llength $cdata] == 0} continue
+                set vmsg [spar::_approach_validation_error $contact]
+                if {$vmsg ne ""} {
+                    lappend results [dict create \
+                        contact_name $name organisation $org segment $segment \
+                        stem $stem _segment_dir $segment_dir \
+                        task_state pending reason "invalid_approach_yaml: $vmsg"]
+                    continue
+                }
+                set r [spar::_channel_readiness $contact $cdata $today_iso]
+                if {[dict get $r tertiary_ready]} {
+                    lappend results [dict create \
+                        contact_name $name organisation $org segment $segment \
+                        stem $stem _segment_dir $segment_dir \
+                        task_state ready reason ""]
+                } elseif {[dict get $r tertiary_reason] ne ""} {
+                    set reason [dict get $r tertiary_reason]
+                    if {![string match "preceding channel has no message*" $reason] \
+                        && ![string match "no approach*" $reason] \
+                        && ![string match "preceding channel not yet sent*" $reason]} {
+                        lappend results [dict create \
+                            contact_name $name organisation $org segment $segment \
+                            stem $stem _segment_dir $segment_dir \
+                            task_state pending reason $reason]
                     }
                 }
             }

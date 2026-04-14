@@ -2696,6 +2696,204 @@ assert_eq [spar::roster_row_has_in_scope_channel $c41_row_none {}] 1 \
     "row_has_in_scope: empty channel list → row passes (legacy fallback)"
 
 # ════════════════════════════════════════════════════════════════════════
+section "26. T9 / T10 secondary / tertiary channel eligibility (issue #41)"
+# ════════════════════════════════════════════════════════════════════════
+
+# Approach-YAML helper for a final round with primary email (sent on $primary_date,
+# optionally replied on $replied_date, or null) + a pending secondary phone
+# message. Produces the shape state-machine.md §States expects for T9.
+proc t9_yaml_primary_email_sent_secondary_phone_pending {primary_date {replied_date null}} {
+    return "generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Hello
+    body: body
+    actioned_date: $primary_date
+    replied_date: $replied_date
+  - channel: phone
+    to: \"0412 000 000\"
+    phone_note: |
+        text: \"Hi…\"
+    actioned_date: null
+    replied_date: null
+"
+}
+
+proc t9_yaml_primary_unsent {} {
+    return {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Hello
+    body: body
+    actioned_date: null
+    replied_date: null
+  - channel: phone
+    to: "0412 000 000"
+    phone_note: |
+        text: "Hi…"
+    actioned_date: null
+    replied_date: null
+}
+}
+
+# Campaign dict with primary=email, secondary=phone@7d no_reply
+set t9_cdata [dict create \
+    primary_channel email \
+    secondary_channel [dict create channel phone wait_days 7 wait_condition no_reply]]
+
+# Today for deterministic wait-day math.
+set t9_today 2026-04-15
+
+# ── T9 ready: primary email sent 10d ago, no reply, secondary phone pending ──
+set t9_seg [make_temp_segment]
+write_profile $t9_seg "contact-1"
+write_approach_yaml $t9_seg "contact-1" [t9_yaml_primary_email_sent_secondary_phone_pending 2026-04-05]
+set t9_headers $::std_headers
+set t9_rows [list \
+    [make_base_row {contact_name "C1" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-1"}] \
+]
+write_roster_tsv $t9_seg $t9_headers $t9_rows
+set t9_contacts [spar::classify_segment $t9_seg]
+set t9_ready [spar::transition_eligible $t9_contacts "T9" email $t9_cdata $t9_today]
+assert_eq [llength $t9_ready] 1 \
+    "T9 ready: primary sent 10d ago, no reply, phone pending → 1 task"
+assert_eq [dict get [lindex $t9_ready 0] task_state] "ready" \
+    "T9 ready: task_state=ready"
+
+# ── T9 pending: primary sent 3d ago (< 7d wait) ──
+set t9_seg2 [make_temp_segment]
+write_profile $t9_seg2 "contact-2"
+write_approach_yaml $t9_seg2 "contact-2" [t9_yaml_primary_email_sent_secondary_phone_pending 2026-04-12]
+write_roster_tsv $t9_seg2 $t9_headers [list \
+    [make_base_row {contact_name "C2" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-2"}]]
+set t9_contacts2 [spar::classify_segment $t9_seg2]
+set t9_pend [spar::transition_eligible $t9_contacts2 "T9" email $t9_cdata $t9_today]
+assert_eq [llength $t9_pend] 1 "T9 pending: primary sent 3d ago → 1 pending task"
+assert_eq [dict get [lindex $t9_pend 0] task_state] "pending" \
+    "T9 pending: task_state=pending"
+assert_match [dict get [lindex $t9_pend 0] reason] "*waiting until day 7*" \
+    "T9 pending reason names the wait threshold"
+
+# ── T9 not visible: primary got a reply → state=REPLIED → T9 skips ──
+# (REPLIED state already expresses that outreach succeeded; the wait_condition
+# check is redundant with state gating for the primary-reply case.)
+set t9_seg3 [make_temp_segment]
+write_profile $t9_seg3 "contact-3"
+write_approach_yaml $t9_seg3 "contact-3" [t9_yaml_primary_email_sent_secondary_phone_pending 2026-04-05 2026-04-06]
+write_roster_tsv $t9_seg3 $t9_headers [list \
+    [make_base_row {contact_name "C3" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-3"}]]
+set t9_contacts3 [spar::classify_segment $t9_seg3]
+set t9_blocked [spar::transition_eligible $t9_contacts3 "T9" email $t9_cdata $t9_today]
+assert_eq [llength $t9_blocked] 0 \
+    "T9 state-gated: contact in REPLIED (primary replied) → no T9 row"
+
+# ── T9 not visible: primary not sent yet (no preceding signal to wait on) ──
+set t9_seg4 [make_temp_segment]
+write_profile $t9_seg4 "contact-4"
+write_approach_yaml $t9_seg4 "contact-4" [t9_yaml_primary_unsent]
+write_roster_tsv $t9_seg4 $t9_headers [list \
+    [make_base_row {contact_name "C4" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-4"}]]
+set t9_contacts4 [spar::classify_segment $t9_seg4]
+set t9_noop [spar::transition_eligible $t9_contacts4 "T9" email $t9_cdata $t9_today]
+assert_eq [llength $t9_noop] 0 \
+    "T9 none: primary unsent → no T9 row (don't show 'preceding not yet sent' noise)"
+
+# ── T9 zero without cdata ──
+set t9_no_cdata [spar::transition_eligible $t9_contacts "T9" email]
+assert_eq [llength $t9_no_cdata] 0 \
+    "T9 zero when cdata omitted (back-compat with pre-#41 callers)"
+
+# ── T9 zero when campaign lacks secondary_channel ──
+set t9_primary_only_cdata [dict create primary_channel email]
+set t9_zero [spar::transition_eligible $t9_contacts "T9" email $t9_primary_only_cdata $t9_today]
+assert_eq [llength $t9_zero] 0 \
+    "T9 zero when campaign has no secondary_channel slot"
+
+# ── T10: tertiary, gated on secondary-channel message ──
+# Campaign primary=email, secondary=phone@3d, tertiary=linkedin@5d.
+# Final round: email actioned_date=2026-04-01, phone actioned_date=2026-04-05,
+# linkedin pending. Today=2026-04-15. Phone was sent 10d ago, wait_days=5,
+# no reply on phone → tertiary_ready=1.
+set t10_cdata [dict create \
+    primary_channel email \
+    secondary_channel [dict create channel phone wait_days 3 wait_condition no_reply] \
+    tertiary_channel  [dict create channel linkedin wait_days 5 wait_condition no_reply]]
+
+proc t10_yaml_primary_sent_secondary_sent_tertiary_pending {primary_date secondary_date} {
+    return "generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Hello
+    body: body
+    actioned_date: $primary_date
+    replied_date: null
+  - channel: phone
+    to: \"0412 000 000\"
+    phone_note: |
+        text: \"Hi…\"
+    actioned_date: $secondary_date
+    replied_date: null
+  - channel: linkedin
+    body: Linkedin follow-up
+    actioned_date: null
+    replied_date: null
+"
+}
+
+set t10_seg [make_temp_segment]
+write_profile $t10_seg "contact-10"
+write_approach_yaml $t10_seg "contact-10" [t10_yaml_primary_sent_secondary_sent_tertiary_pending 2026-04-01 2026-04-05]
+write_roster_tsv $t10_seg $t9_headers [list \
+    [make_base_row {contact_name "C10" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" linkedin_url "https://linkedin.com/in/c10" stem "contact-10"}]]
+set t10_contacts [spar::classify_segment $t10_seg]
+set t10_ready [spar::transition_eligible $t10_contacts "T10" email $t10_cdata $t9_today]
+assert_eq [llength $t10_ready] 1 \
+    "T10 ready: secondary sent 10d ago, wait=5d, linkedin pending → 1 task"
+assert_eq [dict get [lindex $t10_ready 0] task_state] "ready" \
+    "T10 ready: task_state=ready"
+
+# ── T10 pending: secondary sent 2d ago (< 5d wait) ──
+set t10_seg2 [make_temp_segment]
+write_profile $t10_seg2 "contact-11"
+write_approach_yaml $t10_seg2 "contact-11" [t10_yaml_primary_sent_secondary_sent_tertiary_pending 2026-04-01 2026-04-13]
+write_roster_tsv $t10_seg2 $t9_headers [list \
+    [make_base_row {contact_name "C11" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" linkedin_url "https://linkedin.com/in/c11" stem "contact-11"}]]
+set t10_contacts2 [spar::classify_segment $t10_seg2]
+set t10_pend [spar::transition_eligible $t10_contacts2 "T10" email $t10_cdata $t9_today]
+assert_eq [llength $t10_pend] 1 "T10 pending: secondary sent 2d ago → 1 pending"
+assert_match [dict get [lindex $t10_pend 0] reason] "*waiting until day 5*" \
+    "T10 pending names the wait threshold"
+
+# ── T10 zero if tertiary slot absent ──
+set t10_no_tert [spar::transition_eligible $t10_contacts "T10" email $t9_cdata $t9_today]
+assert_eq [llength $t10_no_tert] 0 \
+    "T10 zero when campaign has no tertiary_channel slot"
+
+# ════════════════════════════════════════════════════════════════════════
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
 cleanup_temps

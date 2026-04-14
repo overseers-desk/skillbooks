@@ -164,6 +164,7 @@ set segments_list {}
 set skip_set {}
 set campaign_name [file tail $campaign_dir]
 set primary_channel ""
+set cdata [dict create]
 
 if {$yaml_path ne "" && [file exists $yaml_path]} {
     set cdata [spar::load_campaign $yaml_path]
@@ -228,7 +229,7 @@ if {[llength $filter_stems] > 0} {
 }
 
 # --- Transition definitions ---
-set tids    {T1 T2 T3 T4 T6 T7 T8}
+set tids    {T1 T2 T3 T4 T6 T7 T8 T9 T10}
 set tlabels {
     "Sweep \u2192 Profile"
     "Profile \u2192 Approach"
@@ -237,6 +238,8 @@ set tlabels {
     "Stale \u2192 Re-profile"
     "Re-profile \u2192 Re-approach"
     "LinkedIn \u2192 Email follow-up"
+    "Secondary follow-up"
+    "Tertiary follow-up"
 }
 
 if {[llength $filter_tid] == 0} {
@@ -314,10 +317,12 @@ if {$execute_mode} {
     }
 
     # ── Helper: compute ready tasks per TID for the given contacts.
-    proc compute_ready_by_tid {all_contacts active_tids primary_channel} {
+    # `cdata` is the full campaign dict — T9/T10 need it to read
+    # secondary/tertiary channel slots; earlier Ts ignore it.
+    proc compute_ready_by_tid {all_contacts active_tids primary_channel {cdata {}}} {
         set ready_by_tid [dict create]
         foreach tid $active_tids {
-            set eligible [spar::transition_eligible $all_contacts $tid $primary_channel]
+            set eligible [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
             set ready_list {}
             foreach c $eligible {
                 if {[dict get $c task_state] eq "ready"} {
@@ -479,7 +484,7 @@ if {$execute_mode} {
     # Non-auto execute (single pass, explicit --tid).
     # ────────────────────────────────────────────────────────────────────
     set ready_by_tid [compute_ready_by_tid \
-        $all_contacts $active_tids $primary_channel]
+        $all_contacts $active_tids $primary_channel $cdata]
 
     if {[dict size $ready_by_tid] == 0} {
         puts "Campaign: $campaign_name"
@@ -651,7 +656,7 @@ for {set i 0} {$i < [llength $tids]} {incr i} {
     if {$tid ni $active_tids} continue
     set label [lindex $tlabels $i]
 
-    set eligible [spar::transition_eligible $all_contacts $tid $primary_channel]
+    set eligible [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
     if {[llength $eligible] == 0} continue
 
     set ready_list  {}
