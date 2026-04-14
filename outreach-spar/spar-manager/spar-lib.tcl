@@ -10,18 +10,81 @@ package require json::write
 namespace eval spar {
     namespace export slugify load_campaign load_roster find_profile \
         profile_exists get_max_rounds lang_instruction channel_desc \
-        campaign_primary_channel
+        campaign_primary_channel campaign_secondary_channel \
+        campaign_tertiary_channel campaign_in_scope_channels \
+        roster_row_has_in_scope_channel
 }
 
-# campaign_primary_channel — extract the primary channel name from a loaded
-# campaign dict, normalising the bare-string and map forms documented in
-# spar-campaign-yaml.md §Channels. Returns "" when unset or unparseable.
-proc spar::campaign_primary_channel {cdata} {
-    if {![dict exists $cdata primary_channel]} { return "" }
-    set pc [dict get $cdata primary_channel]
+# _campaign_channel_slot — internal shared implementation for
+# campaign_{primary,secondary,tertiary}_channel. Normalises the bare-string
+# and map forms documented in spar-campaign-yaml.md §Channels. Returns ""
+# when the slot is unset or unparseable.
+proc spar::_campaign_channel_slot {cdata key} {
+    if {![dict exists $cdata $key]} { return "" }
+    set pc [dict get $cdata $key]
     if {[llength $pc] <= 1} { return $pc }
     if {[dict exists $pc channel]} { return [dict get $pc channel] }
     return ""
+}
+
+proc spar::campaign_primary_channel {cdata} {
+    return [spar::_campaign_channel_slot $cdata primary_channel]
+}
+
+proc spar::campaign_secondary_channel {cdata} {
+    return [spar::_campaign_channel_slot $cdata secondary_channel]
+}
+
+proc spar::campaign_tertiary_channel {cdata} {
+    return [spar::_campaign_channel_slot $cdata tertiary_channel]
+}
+
+# campaign_in_scope_channels — list of channel names configured on a
+# campaign via the primary/secondary/tertiary slots, in that order. Empty
+# slots are omitted. Used by dispatch to decide whether a roster row has
+# at least one field populated that the campaign cares about.
+proc spar::campaign_in_scope_channels {cdata} {
+    set out {}
+    foreach key {primary_channel secondary_channel tertiary_channel} {
+        set ch [spar::_campaign_channel_slot $cdata $key]
+        if {$ch ne "" && $ch ni $out} { lappend out $ch }
+    }
+    return $out
+}
+
+# roster_row_has_in_scope_channel — a roster row is dispatchable for A
+# when it has at least one field populated for a channel that the
+# campaign has declared in its primary/secondary/tertiary slots. Empty
+# channel list (campaign declares no slots) returns 1 so pre-#41
+# campaigns that relied on the old filter.require_email gate don't
+# suddenly block everything.
+#
+# row        dict with roster fields (email, linkedin_url, facebook_url, phone)
+# channels   list from campaign_in_scope_channels; values are the
+#            documented channel names: email, linkedin, facebook, phone.
+proc spar::roster_row_has_in_scope_channel {row channels} {
+    if {[llength $channels] == 0} { return 1 }
+    foreach ch $channels {
+        switch -- $ch {
+            email {
+                set v [string trim [spar::dict_get_default $row email ""]]
+                if {[string match *@* $v]} { return 1 }
+            }
+            linkedin {
+                set v [string trim [spar::dict_get_default $row linkedin_url ""]]
+                if {$v ne ""} { return 1 }
+            }
+            facebook {
+                set v [string trim [spar::dict_get_default $row facebook_url ""]]
+                if {$v ne ""} { return 1 }
+            }
+            phone {
+                set v [string trim [spar::dict_get_default $row phone ""]]
+                if {$v ne ""} { return 1 }
+            }
+        }
+    }
+    return 0
 }
 
 # slugify — lowercase, strip accents, collapse to hyphens

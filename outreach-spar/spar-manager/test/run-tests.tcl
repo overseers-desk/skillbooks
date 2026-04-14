@@ -2644,6 +2644,58 @@ set dp_r4 [spar::dispatch_profiles $dp_seg \
     {apply {{d f res} {set ::dp_count_skip [dict get $res count]}}}]
 assert_eq $dp_count_skip 2 "dispatch_profiles: no stems + 1 profile exists → 2 queued"
 
+# ════════════════════════════════════════════════════════════════════════
+section "25. Campaign channel slots (issue #41)"
+# ════════════════════════════════════════════════════════════════════════
+
+# ── campaign_in_scope_channels: empty, single, multi, map form ──
+assert_eq [spar::campaign_in_scope_channels [dict create]] {} \
+    "in_scope_channels: empty dict → {}"
+assert_eq [spar::campaign_in_scope_channels \
+    [dict create primary_channel email]] {email} \
+    "in_scope_channels: primary only (bare string)"
+assert_eq [spar::campaign_in_scope_channels \
+    [dict create primary_channel email \
+                 secondary_channel [dict create channel phone wait_days 7 wait_condition no_reply]]] \
+    {email phone} \
+    "in_scope_channels: primary bare + secondary map"
+assert_eq [spar::campaign_in_scope_channels \
+    [dict create primary_channel email \
+                 secondary_channel phone \
+                 tertiary_channel linkedin]] \
+    {email phone linkedin} \
+    "in_scope_channels: all three slots"
+# De-duplication — a slot repeating the same channel appears once
+assert_eq [spar::campaign_in_scope_channels \
+    [dict create primary_channel email \
+                 secondary_channel email]] {email} \
+    "in_scope_channels: duplicates collapsed"
+
+# ── roster_row_has_in_scope_channel ──
+set c41_row_email    [dict create email alice@example.com linkedin_url "" facebook_url "" phone ""]
+set c41_row_phone    [dict create email "" linkedin_url "" facebook_url "" phone "0412 000 000"]
+set c41_row_linkedin [dict create email "" linkedin_url "https://linkedin.com/in/x" facebook_url "" phone ""]
+set c41_row_none     [dict create email "" linkedin_url "" facebook_url "" phone ""]
+
+assert_eq [spar::roster_row_has_in_scope_channel $c41_row_email {email}] 1 \
+    "row_has_in_scope: email row passes {email}"
+assert_eq [spar::roster_row_has_in_scope_channel $c41_row_phone {email}] 0 \
+    "row_has_in_scope: phone-only row fails {email}"
+assert_eq [spar::roster_row_has_in_scope_channel $c41_row_phone {email phone}] 1 \
+    "row_has_in_scope: phone-only row passes {email phone} (secondary wins)"
+assert_eq [spar::roster_row_has_in_scope_channel $c41_row_linkedin {email phone}] 0 \
+    "row_has_in_scope: linkedin-only row fails {email phone}"
+assert_eq [spar::roster_row_has_in_scope_channel $c41_row_linkedin {linkedin}] 1 \
+    "row_has_in_scope: linkedin-only row passes {linkedin}"
+assert_eq [spar::roster_row_has_in_scope_channel $c41_row_none {email phone linkedin facebook}] 0 \
+    "row_has_in_scope: all-blank row fails every channel"
+
+# Empty channel list (campaign declares no slots) — everything passes
+# (legacy fallback: absent an explicit constraint, do not block).
+assert_eq [spar::roster_row_has_in_scope_channel $c41_row_none {}] 1 \
+    "row_has_in_scope: empty channel list → row passes (legacy fallback)"
+
+# ════════════════════════════════════════════════════════════════════════
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
 cleanup_temps
