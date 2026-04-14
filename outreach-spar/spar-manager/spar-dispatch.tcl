@@ -218,8 +218,10 @@ proc spar::dispatch_profiles {segment_dir opts on_progress on_complete} {
     file mkdir $profile_dir
 
     # --- Working directories ---
-    set datestamp [clock format [clock seconds] -format %Y%m%d%H%M]
-    set workdir "/tmp/spar-p-[file tail $segment_dir]-$datestamp"
+    # Seconds + pid so re-entry (e.g. --auto re-entering after its first
+    # iteration) never shares a workdir with a previous call.
+    set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
+    set workdir "/tmp/spar-p-[file tail $segment_dir]-$datestamp-[pid]"
     set prompts_dir [file join $workdir prompts]
     file mkdir $prompts_dir
 
@@ -485,8 +487,11 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
     }
 
     # --- Working directories ---
-    set datestamp [clock format [clock seconds] -format %Y%m%d]
-    set workdir "/tmp/spar-a-$datestamp"
+    # Seconds resolution and a pid suffix so repeat calls within the same
+    # invocation (e.g. --auto's state-machine loop) never share a workdir
+    # with a previous run whose prompt dirs would then be re-dispatched.
+    set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
+    set workdir "/tmp/spar-a-$datestamp-[pid]"
     set prompts_dir [file join $workdir prompts]
     file mkdir $prompts_dir
 
@@ -518,6 +523,7 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
     # --- Process segments ---
     set count 0
     set skipped 0
+    set fresh_prompt_dirs {}
 
     foreach segment $segments {
         set roster_path [file join $base $segment roster.tsv]
@@ -634,6 +640,7 @@ s_note: $s_note"
             set prompt_slug [format "%03d-%s-%s" $count $slug_name $slug_org]
             set prompt_dir [file join $prompts_dir $prompt_slug]
             file mkdir $prompt_dir
+            lappend fresh_prompt_dirs $prompt_dir
 
             # --- meta.env ---
             set fd [open [file join $prompt_dir meta.env] w]
@@ -808,7 +815,10 @@ Emit VERDICT: DONE if the draft is credible (the persona reacted naturally witho
     set script_dir $::spar::dispatch_script_dir
     set harness [file join $script_dir spar-a-harness.tcl]
 
-    set prompt_dirs [lsort [glob -nocomplain -type d [file join $prompts_dir *]]]
+    # Dispatch only the prompt dirs we created this invocation — never glob
+    # the workdir, since a previous call within the same process may have
+    # left prompt dirs there and the harness would re-run them.
+    set prompt_dirs $fresh_prompt_dirs
     # Shuffle for load balancing (Fisher-Yates)
     set n [llength $prompt_dirs]
     for {set i [expr {$n - 1}]} {$i > 0} {incr i -1} {
