@@ -463,12 +463,18 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
         set segments $_filtered
     }
 
-    # Filters
+    # Filters. Per issue #41 the legacy `filter.require_email` binary flag
+    # is superseded by an in-scope-channel check derived from the
+    # campaign's primary / secondary / tertiary_channel slots. A roster
+    # row is dispatchable for A when it has at least one populated field
+    # for a channel the campaign declares. If the campaign declares no
+    # channel slots, every row passes the channel gate (legacy behaviour
+    # absent any explicit constraint).
     set filter [spar::dict_get_default $cdata filter [dict create]]
-    set filter_require_email [string is true -strict [spar::dict_get_default $filter require_email false]]
     set filter_skip_excluded [string is true -strict [spar::dict_get_default $filter skip_excluded true]]
     set filter_min_star [spar::dict_get_default $filter min_star 0]
     set filter_require_profile [string is true -strict [spar::dict_get_default $filter require_profile false]]
+    set in_scope_channels [spar::campaign_in_scope_channels $cdata]
 
     set lang_inst [spar::lang_instruction $language]
 
@@ -511,7 +517,7 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
 
     # --- Campaign summary data ---
     set campaign_name [spar::dict_get_default $cdata campaign]
-    set filter_desc "email=$filter_require_email skip_excluded=$filter_skip_excluded min_star=$filter_min_star require_profile=$filter_require_profile"
+    set filter_desc "in_scope_channels=\{[join $in_scope_channels { }]\} skip_excluded=$filter_skip_excluded min_star=$filter_min_star require_profile=$filter_require_profile"
 
     # --- Build sender line ---
     set sender_line "$sender_name, $sender_role"
@@ -564,7 +570,7 @@ proc spar::dispatch_approaches {campaign_file opts on_progress on_complete} {
             if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
 
             # Campaign filters
-            if {$filter_require_email && ![string match *@* $email]} continue
+            if {![spar::roster_row_has_in_scope_channel $row $in_scope_channels]} continue
             if {$filter_skip_excluded && $date_invalid ne ""} continue
             if {$filter_min_star > 0} {
                 if {![string is integer -strict $star] || $star < $filter_min_star} continue
