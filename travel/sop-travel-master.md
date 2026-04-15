@@ -445,7 +445,7 @@ claude -p "Follow travel/sop-booking-extraction.md for journey folder '2025-12-2
 
 See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines:
 
-- Access methods (MCP preferred, filesystem mount fallback)
+- Access method (rclone)
 - Folder location within cloud storage
 - Error handling when access fails
 
