@@ -35,7 +35,7 @@ A journey folder contains all documentation for a specific trip, including trans
 
 Files may originate from various sources: email confirmations, WhatsApp messages, photographs of physical documents (boarding passes, receipts), or forwarded from other travelers' mailboxes. The source doesn't affect how files are processed—all files in the folder are organised and named according to the same conventions regardless of origin.
 
-**Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access methods (MCP preferred, filesystem mount fallback) and is the single source of truth for folder location. When processing a journey, if only the folder name is provided, the system assumes it is located within the Travel Admin parent directory.
+**Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access method (rclone) and is the single source of truth for folder location. When processing a journey, if only the folder name is provided, the system assumes it is located within the Travel Admin parent directory.
 
 ### RUN: Folder Management Execution
 
@@ -78,7 +78,7 @@ The separation allows automated systems to run folder management independently, 
 Before executing procedures (individually or as a complete RUN), ensure:
 
 1. **Access to Travel Admin folder ("0. Travel Admin"):**
-   - Follow `sop-travel-folder-access.md` to access travel folders (MCP preferred, filesystem mount fallback)
+   - Follow `sop-travel-folder-access.md` to access travel folders (rclone)
    - Do not use `find(1)` command in any folder other than `0. Travel Admin` (10k+ files exist in cloud storage; broad searches take excessive time)
    - Do not use `find(1)` to locate `0. Travel Admin` itself—the folder location is defined in the access SOP and is guaranteed to exist
    - If access fails via both methods, the whole process should fail
@@ -444,8 +444,7 @@ Verify that all booking confirmation emails have been saved to the journey folde
 ### Prerequisites
 
 - Access travel folders following `sop-travel-folder-access.md`
-- The `imap-mcp` MCP server must be pre-configured for searching emails
-- IMAP credentials available in `imap-mcp/config.yaml` for workbench attachment downloads
+- The `mailroom` CLI must be available for searching emails and downloading attachments
 - Note the current date at execution start
 
 ### Input
@@ -510,7 +509,7 @@ Actions to execute (proceed without confirmation):
 
    **Date filtering**: After search, filter results to journey date range (earliest travel date minus 120 days to latest travel date plus 7 days).
 
-   **Bolt invoice handling**: Bolt invoices are download links, not attachments. Use `extract_email_links` MCP tool to get the invoice URL, then download.
+   **Bolt invoice handling**: Bolt invoices are download links, not attachments. Use `mailroom links -f FOLDER -u UID` to extract the invoice URL, then download.
 
 5. **Tabulate All Booking Emails Found**
 
@@ -548,7 +547,7 @@ Actions to execute (proceed without confirmation):
    - **Booking Confirmation** (Travel Itinerary, Reservation Confirmation, Invoice with PNR):
      - Subject typically: "Travel Itinerary", "Booking Confirmation", "Invoice [number]"
      - Contains full booking details
-     - **Attachments**: Check for PDF attachments using `list_attachments` MCP tool. If a PDF attachment exists (e-ticket, itinerary, confirmation), save the attachment as the primary source.
+     - **Attachments**: Check for PDF attachments using `mailroom attachments -f FOLDER -u UID`. If a PDF attachment exists (e-ticket, itinerary, confirmation), save the attachment as the primary source.
      - **Action**: Verify if already saved in Fares folder. If not, flag for saving (specifying the attachment to save).
    
    - **Cancellation Confirmation**:
@@ -579,7 +578,7 @@ Actions to execute (proceed without confirmation):
    - **Rental Agreement / Booking Confirmation**:
      - Subject typically: "Rental Agreement", "Booking confirmed", "Your reservation", "Confirmation #", "car hire confirmation"
      - Contains booking reference, pickup/return dates and locations, vehicle details
-     - **Attachments**: Check for PDF attachments using `list_attachments` MCP tool. If a PDF attachment exists (voucher, rental agreement, confirmation), this is the primary source document to save.
+     - **Attachments**: Check for PDF attachments using `mailroom attachments -f FOLDER -u UID`. If a PDF attachment exists (voucher, rental agreement, confirmation), this is the primary source document to save.
      - **Confirmation priority**: If both an OTA confirmation (e.g., Expedia) and a direct provider confirmation (e.g., from Avis itself) exist for the same booking, prefer the direct provider confirmation.
      - **Extract key information**:
        - Booking reference/confirmation number (use the car rental company's reference, not OTA's)
@@ -634,7 +633,7 @@ Actions to execute (proceed without confirmation):
    - **Hotel Booking Confirmation**:
      - Subject typically: "Booking confirmation", "Reservation confirmed", "Your booking at [Hotel Name]"
      - Contains booking reference, hotel name, check-in/check-out dates
-     - **Attachments**: Check for PDF attachments using `list_attachments` MCP tool. If a PDF attachment exists (confirmation, voucher), save the attachment as the primary source.
+     - **Attachments**: Check for PDF attachments using `mailroom attachments -f FOLDER -u UID`. If a PDF attachment exists (confirmation, voucher), save the attachment as the primary source.
      - Verify check-in date falls within journey date range (earliest travel date to latest travel date + 7 days). If check-in is outside this range, this booking belongs to a different journey—skip it.
      - **Action**: Verify if already saved in Accommodations folder. If not, flag for saving (specifying the attachment to save).
      - **Check for invoice**: Examine if the email contains an invoice attachment or invoice information
@@ -744,7 +743,7 @@ Actions to execute (proceed without confirmation):
    
    **Source hierarchy** (in order of preference):
    1. **PDF attachment**: If the email has a PDF attachment (voucher, confirmation, e-ticket), save the attachment directly
-   2. **HTML email body converted to PDF**: If no PDF attachment exists but the email body contains the booking confirmation, export the email HTML using the `export_email_html` MCP tool, then convert to PDF
+   2. **HTML email body converted to PDF**: If no PDF attachment exists but the email body contains the booking confirmation, export with `mailroom export -f FOLDER -u UID -o /tmp/booking.html`, then convert with `weasyprint /tmp/booking.html /tmp/booking.pdf`
    3. **NEVER**: Do not create text files summarising email content. If none of the above sources produce a usable PDF, do step 2 (export email then convert to pdf)
    
    **Note on existing image files**: Image files (`.jpg`, `.jpeg`, `.png`) may already exist in the folder—for example, a human may have saved a boarding pass photo. Do not replace these with inferior versions; simply rename them to follow naming conventions.
@@ -794,51 +793,30 @@ Actions to execute (proceed without confirmation):
    Execute all identified actions immediately—do not wait for confirmation.
 
    **Saving Email Attachments to Dropbox:**
-   
-   Use `RUBE_REMOTE_WORKBENCH` to download attachments via IMAP and upload to Dropbox. The workbench has network access and can connect to IMAP directly. IMAP credentials are in the imap-mcp config file (`/home/weiwu/code/imap-mcp/config.yaml`).
 
-   ```python
-   import imaplib
-   import email
+   ```bash
+   # Download attachment to /tmp
+   mailroom -a me-weiwu-id-au save -f INBOX -u UID -i attachment.pdf -o /tmp/attachment.pdf
 
-   # Connect to IMAP
-   imap = imaplib.IMAP4_SSL(IMAP_SERVER, 993)
-   imap.login(EMAIL_USER, EMAIL_PASS)
-   imap.select('INBOX')
-
-   # Search for the email
-   status, messages = imap.search(None, 'FROM', '"sender@example.com"')
-   email_id = messages[0].split()[-1]
-   status, msg_data = imap.fetch(email_id, '(RFC822)')
-   msg = email.message_from_bytes(msg_data[0][1])
-
-   # Extract and upload PDF attachment
-   for part in msg.walk():
-       if part.get_content_type() == 'application/pdf':
-           content = part.get_payload(decode=True)
-           with open('/tmp/attachment.pdf', 'wb') as f:
-               f.write(content)
-           
-           # Stage and upload
-           result, error = upload_local_file('/tmp/attachment.pdf')
-           if not error:
-               run_composio_tool("DROPBOX_UPLOAD_FILE", {
-                   "path": "/0. Travel Admin/[journey]/[folder]/[filename].pdf",
-                   "content": {"name": "[filename].pdf", "mimetype": "application/pdf", "s3key": result["s3key"]}
-               })
-           break
-
-   imap.close()
-   imap.logout()
+   # Upload to Dropbox
+   rclone copyto /tmp/attachment.pdf "Dropbox:0. Travel Admin/[journey]/[subfolder]/[filename].pdf"
    ```
 
+   If no PDF attachment exists, export the email body and convert (see `sop-travel-folder-access.md`).
+
    **Renaming Files:**
-   
-   Use `DROPBOX_MOVE_FILE_OR_FOLDER` via `RUBE_MULTI_EXECUTE_TOOL` (see `sop-travel-folder-access.md`).
+
+   ```bash
+   rclone moveto \
+     "Dropbox:0. Travel Admin/[journey]/[subfolder]/old_name.pdf" \
+     "Dropbox:0. Travel Admin/[journey]/[subfolder]/new_name.pdf"
+   ```
 
    **Deleting Emails:**
-   
-   Use `delete_email` from imap-mcp for promotional emails (past journeys only).
+
+   ```bash
+   mailroom -a me-weiwu-id-au delete -f INBOX -u UID
+   ```
 
    **Report what was done** after all actions complete.
 
@@ -851,7 +829,7 @@ Actions to execute (proceed without confirmation):
 - Current date determined and journey status assessed
 - Search strategy applied: `from`/`subject` criteria used first, `text` search used as fallback only when needed
 - All emails categorised appropriately (transport, accommodation, and taxi/ride-hailing)
-- **All emails with attachments had attachments checked** using `list_attachments` MCP tool
+- **All emails with attachments had attachments checked** using `mailroom attachments -f FOLDER -u UID`
 - **All file saves produce PDF output** (from PDF attachment or HTML-to-PDF conversion—no text summaries created)
 - Taxi/ride-hailing invoices identified within journey date range
 - Cancellation emails identified and corresponding files flagged for renaming
