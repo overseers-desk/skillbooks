@@ -37,15 +37,19 @@ The sexp format gives these as named fields, so there is no comma-splitting ambi
 
 ## 5. Identity
 
-Self addresses — those that identify "me" rather than a contact:
+Self addresses — those that identify "me" (Alex) rather than a contact. Messages to/from these are treated as self-addressed and excluded from graph edges:
 
 - a@colourful.land
 - me@example.au
 - me@example.eu
+- booking@example.com
 - w@example.io
 - alexchen@example.biz
 - alexchen@example.cn (historical)
 - director@oldmill.example
+- admin@oldmill.example
+
+`partner@example.com` is a separate mailbox (Sam, human_id=2) indexed in the same mu store. Messages in that account where partner@example.com appears as recipient are not self-addressed; they are inbound to Sam. The plugin must handle per-account identity: for the `partner-example-com` account, partner@example.com is the account owner, not "me."
 
 Loaded from a single config location read by this plugin. Other plugins carry their own identity config, since the notion of "me" is plugin-specific.
 
