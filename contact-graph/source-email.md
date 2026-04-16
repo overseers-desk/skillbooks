@@ -61,14 +61,18 @@ The header parse captures who sent what to whom. The body of an email may also n
 
 Self addresses — those that identify "me" (Weiwu) rather than a contact. Messages to/from these are treated as self-addressed and excluded from graph edges:
 
+- zhangweiwu@realss.com
 - a@colourful.land
+- director@rivermill.au
 - me@weiwu.au
 - me@weiwu.eu
 - me@weiwu.id.au
+- amanuensis@weiwu.au
 - w@smarttokenlabs.com
-- zhangweiwu@realss.com
+- weiwu.zhang@alphawallet.com
+- weiwu.zhang@awallet.io
+- zhangweiwu@yahoo.com
 - zhangweiwu@private.21cn.com (historical)
-- director@rivermill.au
 
 `yuliansu@gmail.com` is a separate mailbox (Liansu, human_id=2) indexed in the same mu store. Messages in that account where yuliansu@gmail.com appears as recipient are not self-addressed; they are inbound to Liansu. The plugin must handle per-account identity: for the `yuliansu-gmail-com` account, yuliansu@gmail.com is the account owner, not "me."
 
