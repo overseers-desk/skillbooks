@@ -47,7 +47,6 @@ Self addresses — those that identify "me" (Alex) rather than a contact. Messag
 - alexchen@example.biz
 - alexchen@example.cn (historical)
 - director@oldmill.example
-- admin@oldmill.example
 
 `partner@example.com` is a separate mailbox (Sam, human_id=2) indexed in the same mu store. Messages in that account where partner@example.com appears as recipient are not self-addressed; they are inbound to Sam. The plugin must handle per-account identity: for the `partner-example-com` account, partner@example.com is the account owner, not "me."
 
