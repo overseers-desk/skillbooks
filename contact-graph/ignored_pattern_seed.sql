@@ -1,6 +1,12 @@
 -- Seed data for ignored_pattern
 -- Derived from manual study of the email corpus across 2001–2026.
 --
+-- Coverage: derived from director-rivermill-au only. The three other indexed
+-- accounts (admin-rivermill-au, me-weiwu-id-au, yuliansu-gmail-com) have not
+-- been analyzed. Automated senders unique to those accounts are not yet
+-- captured here. A corpus pass against those accounts is needed before
+-- ingestion runs on them.
+--
 -- Two tiers:
 --
 --   Tier 1 — local-part regex patterns, domain-agnostic.
