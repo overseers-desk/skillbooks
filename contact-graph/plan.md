@@ -137,6 +137,7 @@ Database: `contact_graph` on the local PostgreSQL instance.
 | **linkedin_connection** | second-degree edges from profile browsing; human_id nullable for unresolved nodes | human_id_a, linkedin_url_a, human_id_b, linkedin_url_b, discovered_via_human_id, scraped_at |
 | **processing_queue** | unified job queue for AI tagging and LinkedIn enrichment | human_id, job_type (tag/linkedin), priority_score, queued_at, processed_at, model_used |
 | **reconnect_schedule** | computed next-prompt date per human; decay score not stored, computed on demand | human_id, next_prompt_date, last_prompted_at, computed_at |
+| **email_address_candidate** | bootstrap staging: candidate addresses extracted from the mu corpus before identity resolution; cleared as candidates are resolved or confirmed as noise | address (PK), display_name |
 
 ---
 

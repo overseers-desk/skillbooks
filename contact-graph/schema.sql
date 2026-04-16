@@ -247,3 +247,15 @@ CREATE TABLE reconnect_schedule (
     last_prompted_at TEXT,             -- YYYY-MM-DD
     computed_at     INTEGER            -- Unix timestamp
 );
+
+-- ---------------------------------------------------------------------------
+-- Bootstrap staging
+-- ---------------------------------------------------------------------------
+
+-- Candidate email addresses extracted from the mu corpus before identity
+-- resolution. Populated once during initial import; cleared as candidates
+-- are resolved to human records or confirmed as noise.
+CREATE TABLE email_address_candidate (
+    address      TEXT NOT NULL PRIMARY KEY,
+    display_name TEXT NOT NULL DEFAULT ''
+);
