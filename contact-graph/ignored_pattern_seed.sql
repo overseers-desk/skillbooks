@@ -1,11 +1,11 @@
 -- Seed data for ignored_pattern
 -- Derived from manual study of the email corpus across 2001–2026.
 --
--- Coverage: derived from director-rivermill-au only. The three other indexed
--- accounts (admin-rivermill-au, me-weiwu-id-au, yuliansu-gmail-com) have not
--- been analyzed. Automated senders unique to those accounts are not yet
--- captured here. A corpus pass against those accounts is needed before
--- ingestion runs on them.
+-- Coverage: all four indexed accounts studied —
+--   director-rivermill-au  (manual study, 2001–2026)
+--   admin-rivermill-au     (automated random-sample sweep, 2026-04-16)
+--   me-weiwu-id-au         (automated random-sample sweep, 2026-04-16)
+--   yuliansu-gmail-com     (automated random-sample sweep, 2026-04-16)
 --
 -- Two tiers:
 --
@@ -165,3 +165,76 @@ INSERT INTO ignored_pattern (pattern, pattern_type, reason) VALUES
 -- =========================================================================
 ('^AUTO RENEW NOTICE',             'subject', 'Domain registrar auto-renewal notices — sender varies across registrars'),
 ('certificate.*expir',             'subject', 'SSL/TLS certificate expiry alerts from CAs — sender varies across RapidSSL, CAcert, StartSSL, etc.');
+
+-- =========================================================================
+-- Patterns added from automated random-sample sweep of three accounts
+-- (admin-rivermill-au, me-weiwu-id-au, yuliansu-gmail-com), 2026-04-16
+-- =========================================================================
+
+INSERT INTO ignored_pattern (pattern, pattern_type, reason) VALUES
+
+-- -------------------------------------------------------------------------
+-- Tier 1: additional local-part regex patterns
+-- -------------------------------------------------------------------------
+('^automated@',                    'regex', 'Automated transactional mail prefix — Airbnb uses this for all system-triggered mail (account alerts, booking confirmations, security codes)'),
+('^calendar-notification@',        'regex', 'Google Calendar automated event notification sender — not covered by no-reply patterns'),
+('^autorenewals@',                 'regex', 'Automated renewal billing robot — observed at opentable.com and similar billing systems'),
+('^workcover\.premiumupdate@',     'regex', 'WorkCover Queensland premium and certificate renewal robot — domain-agnostic in case sending domain changes'),
+
+-- -------------------------------------------------------------------------
+-- Tier 2: accounting and invoicing SaaS relay domains
+-- -------------------------------------------------------------------------
+('apps.myob.com',                  'domain', 'MYOB AccountRight invoice relay — real vendor in display name; AccountRight@ and Invoices@ are the only local parts'),
+('notification.intuit.com',        'domain', 'QuickBooks invoice notification relay subdomain — human Intuit staff use @intuit.com'),
+('post.servicem8.com',             'domain', 'ServiceM8 trade services job relay — messaging-service@ is the sole local part; tradesperson in display name'),
+('sent-via.netsuite.com',          'domain', 'Oracle NetSuite ERP document relay — system@ is the sole local part; real sender identity in display name only'),
+('notification.netsuite.com',      'domain', 'NetSuite automated notification relay — nlmailer@ and similar system-generated local parts'),
+('getinvoicesimple.com',           'domain', 'Invoice Simple relay — local parts are random alphanumeric hashes; tradesperson in display name'),
+
+-- -------------------------------------------------------------------------
+-- Tier 2: travel and hospitality relay domains
+-- -------------------------------------------------------------------------
+('nor1upgrades.com',               'domain', 'Nor1 hospitality upsell platform — local parts are hotel property name slugs; used by Hilton, IHG pre-arrival upgrade offers'),
+('tx.ihg.com',                     'domain', 'IHG booking confirmation relay subdomain — all local parts are brand robots (CrownePlaza@, HolidayInn@, etc.); human IHG staff use @ihg.com'),
+('mc.ihg.com',                     'domain', 'IHG pre-stay details relay subdomain — same brand-robot local parts as tx.ihg.com, different use (upcoming-stay reminders)'),
+('express.medallia.com',           'domain', 'Medallia post-stay guest survey relay — used by IHG, Avis, Airbnb; medallia.com has human staff so only the subdomain is blocked'),
+('property.booking.com',           'domain', 'Booking.com property-side messaging relay — local parts are {reservation-id}-{hash}; hotel staff compose via Booking.com extranet'),
+
+-- -------------------------------------------------------------------------
+-- Tier 2: payment and commerce relay domains
+-- -------------------------------------------------------------------------
+('messaging.squareup.com',         'domain', 'Square POS notification relay subdomain — noreply@, invoicing@, feedback@ are all automated; human Square staff use @squareup.com'),
+('squareup.narvar.com',            'domain', 'Square parcel delivery tracking relay — squareup@squareup.narvar.com only; Narvar is a post-purchase logistics platform'),
+('shopifyemail.com',               'domain', 'Shopify transactional and marketing relay — all local parts are store+{shop-id}@ tokens; covers g/t/m.shopifyemail.com subdomains'),
+('email.amexnetwork.com',          'domain', 'American Express Offers marketing relay domain — all senders are automated bulk-marketing; no human uses this domain'),
+('bmsend.com',                     'domain', 'Bulk mail sending infrastructure — envelope sender is a convoluted relay address; used by newsletter/spam blast services'),
+
+-- -------------------------------------------------------------------------
+-- Tier 2: ESP and newsletter relay additions
+-- -------------------------------------------------------------------------
+('mail.beehiiv.com',               'domain', 'Beehiiv newsletter ESP relay subdomain — human authors use their own domain as display name; @mail.beehiiv.com is the relay only'),
+('blogtrottr.com',                 'domain', 'RSS-to-email relay — busybee@blogtrottr.com is the sole sender for all RSS digests; same category as followistic.com in the existing seed'),
+('zapiermail.com',                 'domain', 'Zapier workflow automation relay — local part encodes a Zapier-internal workflow identifier; no human sender possible'),
+('luma-mail.com',                  'domain', 'Luma event-management platform relay — covers luma-mail.com and subdomains (user.luma-mail.com, calendar.luma-mail.com) via suffix match'),
+
+-- -------------------------------------------------------------------------
+-- Tier 2: Australian services additions
+-- -------------------------------------------------------------------------
+('edm.themeparks.com.au',          'domain', 'Village Roadshow Theme Parks EDM relay subdomain — all senders are brand automation robots; human staff use @themeparks.com.au'),
+('services.kidsoft.com.au',        'domain', 'Kidsoft childcare management platform relay — local parts are 8-digit numeric system IDs; used by OSHCLUB and school care programs'),
+
+-- -------------------------------------------------------------------------
+-- Tier 2: other vertical SaaS and messaging relay
+-- -------------------------------------------------------------------------
+('app.ezyvet.com',                 'domain', 'EzyVet veterinary practice management relay — no-reply@app.ezyvet.com only; vet clinic in display name'),
+('txt.voice.google.com',           'domain', 'Google Voice SMS-to-email relay — local parts are phone-number + timestamp + random token; no human sender possible'),
+
+-- -------------------------------------------------------------------------
+-- Specific addresses from sweep (domain too broad to filter)
+-- -------------------------------------------------------------------------
+('Itinerary@ryanair.com',          'address', 'Ryanair itinerary robot — capitalised static local part; ryanair.com has human customer service staff'),
+('6EGSTInvoice@goindigo.in',       'address', 'IndiGo airline GST tax invoice robot — local part encodes legal entity code; goindigo.in has real support addresses'),
+('discover@airbnb.com',            'address', 'Airbnb editorial/marketing automation — @airbnb.com is too broad to block; this specific local part is purely promotional'),
+('googlebusinessprofile-support@google.com', 'address', 'Google Business Profile automated ticket bot — canned auto-response system, not a Google employee'),
+('SIA_AutoResponse@singaporeair.com',   'address', 'Singapore Airlines auto-responder robot — singaporeair.com has human senders so domain cannot be blocked'),
+('SIA_AutoResponse@singaporeair.com.sg','address', 'Singapore Airlines auto-responder robot, .com.sg variant — same local part, alternate sending domain');

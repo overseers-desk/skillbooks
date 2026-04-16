@@ -47,7 +47,6 @@ Self addresses — those that identify "me" (Weiwu) rather than a contact. Messa
 - zhangweiwu@realss.com
 - zhangweiwu@private.21cn.com (historical)
 - director@rivermill.au
-- admin@rivermill.au
 
 `yuliansu@gmail.com` is a separate mailbox (Liansu, human_id=2) indexed in the same mu store. Messages in that account where yuliansu@gmail.com appears as recipient are not self-addressed; they are inbound to Liansu. The plugin must handle per-account identity: for the `yuliansu-gmail-com` account, yuliansu@gmail.com is the account owner, not "me."
 
