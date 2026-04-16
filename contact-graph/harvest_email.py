@@ -1,33 +1,33 @@
 #!/usr/bin/env python3
 """
-harvest_email.py
+harvest_email.py — Thread-centric email harvest pipeline.
 
-Email harvest and entity extraction pipeline for contact-graph.
+Three phases:
+  1. Harvest message headers from mu → email_message
+  2. Group messages into threads using mu's thread_id → email_thread
+  3. Resolve participants to humans → email_thread_participant
 
-Reads emails from the local mu/Maildir index, inserts header data into
-email_message and item_participant, then calls `claude -p` per email to
-extract named entities into item_entity.
+No AI calls. ~80 seconds for the full corpus.
 
 Usage:
-  python3 harvest_email.py                              # full run, all accounts
-  python3 harvest_email.py --sample 200 --out /tmp/s   # 200 emails → JSON files, no DB
-  python3 harvest_email.py --sample 50                  # 50 emails → DB
-  python3 harvest_email.py --accounts director-rivermill-au  # one account only
-  python3 harvest_email.py --dry-run                    # parse only, no DB or claude
+  python3 harvest_email.py                          # all phases, all accounts
+  python3 harvest_email.py --phase 1 --limit 200    # Phase 1 only, 200/account
+  python3 harvest_email.py --phase 3 --workers 8    # Phase 3 with 8 workers
+  python3 harvest_email.py --wipe                    # wipe tables, then full run
 """
 
 import argparse
-import email as email_lib
-import email.policy
 import json
+import logging
 import os
 import re
 import subprocess
-import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import psycopg2
+import psycopg2.extras
 from dotenv import load_dotenv
 
 # ---------------------------------------------------------------------------
@@ -39,61 +39,17 @@ load_dotenv(SCRIPT_DIR / '.env')
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
-ACCOUNTS = [
+ACTIVE_ACCOUNTS = [
     'director-rivermill-au',
     'admin-rivermill-au',
-    'me-weiwu-id-au',
     'yuliansu-gmail-com',
 ]
 
-HEAD_STOP_AFTER = 3       # consecutive already-seen messages before ending head phase
 DATE_MIN = 1
-DATE_MAX = 4_102_444_800  # year 2100
+DATE_MAX = 4_102_444_800  # 2100-01-01
+BATCH_SIZE = 5000
 
-RATE_LIMIT_WAIT = 900     # seconds to wait on credit exhaustion
-
-MODEL = 'claude-haiku-4-5-20251001'
-
-EXTRACTION_SYSTEM_PROMPT = """\
-You are an entity extractor for a contact relationship graph system. Given an email \
-(headers + body), extract named entities from the body text and output a single JSON object.
-
-Output format:
-{"entities": [{"type": "...", "value": "...", "context": "..."}]}
-
-Entity types and rules:
-
-person_mentioned — a real person named in the body who is NEITHER the sender NOR any \
-recipient (addresses in FROM, TO, or CC). Exclude names that appear only in email \
-signatures. Exclude generic role titles without a person's name. Exclude the email \
-account owner if they appear as an addressee.
-
-organisation — a company, agency, software platform, government department, or \
-industry body explicitly named in the body. Skip if the organisation is the sender's \
-own employer.
-
-project — a named initiative, program, effort, or project referenced in the body.
-
-product — a named physical or digital product, asset, or offering (e.g. a horse, \
-a software feature, a menu item, a vehicle, a tour activity). Must be a proper name, \
-not a generic description.
-
-domain — activity classification of this email. Use only these exact values, include \
-1-3 that best describe the main subject matter:
-  operations, hr, safety, compliance, legal, finance, sales, marketing, \
-product-development, procurement, governance, systems-technology, crisis-pr, \
-external-relations, sop, product, events
-
-Use crisis-pr only when the email is explicitly about managing a reputational threat \
-or public crisis. Routine complaints or pending approvals are operations, not crisis-pr.
-
-General rules:
-- Only extract what is clearly stated in the body; do not infer or speculate.
-- Skip content that is clearly CSS, HTML artifacts, code, or boilerplate text.
-- context: a brief phrase explaining relevance, or null.
-- Return {"entities": []} when nothing substantive applies.
-- Output valid JSON only. No preamble, no explanation, no markdown fences.
-"""
+log = logging.getLogger('harvest')
 
 # ---------------------------------------------------------------------------
 # Runtime state (loaded from DB at startup)
@@ -102,7 +58,7 @@ General rules:
 INTERNAL_ADDRESSES: set[str] = set()
 IGNORED_DOMAINS: set[str] = set()
 IGNORED_ADDRESSES: set[str] = set()
-IGNORED_REGEXES: list[str] = []
+IGNORED_REGEXES: list[re.Pattern] = []
 IGNORED_SUBJECTS: list[str] = []
 
 
@@ -117,8 +73,8 @@ def db_connect():
 
 
 def load_runtime_state(conn):
+    """Load ignored patterns and internal addresses from DB."""
     with conn.cursor() as cur:
-        # Internal addresses
         cur.execute("""
             SELECT ea.address FROM email_address ea
             JOIN human h ON h.id = ea.human_id
@@ -127,27 +83,31 @@ def load_runtime_state(conn):
         for (addr,) in cur.fetchall():
             INTERNAL_ADDRESSES.add(addr.lower())
 
-        # Ignored patterns
-        cur.execute("SELECT pattern, pattern_type FROM ignored_pattern")
+        cur.execute("SELECT pattern, pattern_type FROM email_ignored_pattern")
         for pattern, ptype in cur.fetchall():
             if ptype == 'domain':
                 IGNORED_DOMAINS.add(pattern.lower())
             elif ptype == 'address':
                 IGNORED_ADDRESSES.add(pattern.lower())
             elif ptype == 'regex':
-                IGNORED_REGEXES.append(pattern)
+                try:
+                    IGNORED_REGEXES.append(re.compile(pattern))
+                except re.error:
+                    log.warning("Bad regex in email_ignored_pattern: %s", pattern)
             elif ptype == 'subject':
                 IGNORED_SUBJECTS.append(pattern.lower())
 
-    print(
-        f"Loaded {len(INTERNAL_ADDRESSES)} internal addrs, "
-        f"{len(IGNORED_DOMAINS)} ignored domains, "
-        f"{len(IGNORED_ADDRESSES)} ignored addrs, "
-        f"{len(IGNORED_REGEXES)} ignored regexes, "
-        f"{len(IGNORED_SUBJECTS)} ignored subjects",
-        flush=True,
+    log.info(
+        "Runtime state: %d internal addrs, %d ignored domains, "
+        "%d ignored addrs, %d ignored regexes, %d ignored subjects",
+        len(INTERNAL_ADDRESSES), len(IGNORED_DOMAINS),
+        len(IGNORED_ADDRESSES), len(IGNORED_REGEXES), len(IGNORED_SUBJECTS),
     )
 
+
+# ---------------------------------------------------------------------------
+# Filter helpers
+# ---------------------------------------------------------------------------
 
 def is_ignored_address(addr: str) -> bool:
     a = addr.lower()
@@ -160,11 +120,8 @@ def is_ignored_address(addr: str) -> bool:
         if domain.endswith('.' + d):
             return True
     for rx in IGNORED_REGEXES:
-        try:
-            if re.search(rx, a):
-                return True
-        except re.error:
-            pass
+        if rx.search(a):
+            return True
     return False
 
 
@@ -175,62 +132,74 @@ def is_ignored_subject(subject: str) -> bool:
     return any(p in sl for p in IGNORED_SUBJECTS)
 
 
-def msg_exists(cur, message_id: str) -> bool:
-    cur.execute("SELECT 1 FROM email_message WHERE message_id = %s", (message_id,))
-    return cur.fetchone() is not None
-
-
-def get_coverage(cur, account: str) -> tuple:
-    cur.execute("""
-        SELECT newest_scanned_id, oldest_scanned_id FROM source_coverage
-        WHERE source_kind = 'email' AND source_ref = %s
-    """, (account,))
-    row = cur.fetchone()
-    return (row[0], row[1]) if row else (None, None)
-
-
-def upsert_coverage(cur, account, newest_id, oldest_id):
-    """
-    Update coverage: newest_scanned_id is set once (first time only, since we scan
-    head-first and the very first message of the very first run is the newest).
-    oldest_scanned_id always advances toward older messages.
-    """
-    now = int(time.time())
-    cur.execute("""
-        INSERT INTO source_coverage
-            (source_kind, source_ref, newest_scanned_id, oldest_scanned_id, last_checked_at)
-        VALUES ('email', %s, %s, %s, %s)
-        ON CONFLICT (source_kind, source_ref) DO UPDATE SET
-            newest_scanned_id = COALESCE(source_coverage.newest_scanned_id,
-                                         EXCLUDED.newest_scanned_id),
-            oldest_scanned_id = EXCLUDED.oldest_scanned_id,
-            last_checked_at   = EXCLUDED.last_checked_at
-    """, (account, newest_id, oldest_id, now))
-
-
 # ---------------------------------------------------------------------------
-# mu query
+# mu helpers
 # ---------------------------------------------------------------------------
 
 def mu_query_account(account: str) -> list[dict]:
-    """Return messages for account sorted newest-first."""
+    """Return messages for one account sorted newest-first (JSON)."""
     cmd = ['mu', 'find', f'maildir:/{account}/*',
            '--format=json', '--sortfield=date', '--reverse']
-    result = subprocess.run(cmd, capture_output=True, text=True, errors='replace', timeout=120)
+    result = subprocess.run(
+        cmd, capture_output=True, text=True, errors='replace', timeout=300,
+    )
     raw = result.stdout
     if not raw.strip() or raw.strip() == '[]':
         return []
-    # Sanitise control characters that break JSON parsing
     clean = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', raw)
     try:
         return json.JSONDecoder(strict=False).decode(clean)
     except json.JSONDecodeError as exc:
-        print(f"  Warning: JSON parse error for {account}: {exc}", flush=True)
+        log.warning("JSON parse error for %s: %s", account, exc)
         return []
 
 
+def mu_query_thread_map(accounts: list[str]) -> dict[str, str]:
+    """Query mu for message_id -> thread_id mapping across all accounts.
+
+    Runs two parallel mu queries (fields="i" and fields="w") with identical
+    sort order and --skip-dups, then zips the results line by line.
+    """
+    query = ' OR '.join(f'maildir:/{a}/*' for a in accounts)
+    base = ['mu', 'find', query, '--format=plain', '--skip-dups',
+            '--sortfield=date', '--reverse']
+
+    proc_i = subprocess.Popen(
+        base + ['--fields=i'],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        text=True, errors='replace',
+    )
+    proc_w = subprocess.Popen(
+        base + ['--fields=w'],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        text=True, errors='replace',
+    )
+
+    out_i, _ = proc_i.communicate(timeout=300)
+    out_w, _ = proc_w.communicate(timeout=300)
+
+    lines_i = [l for l in out_i.strip().split('\n') if l.strip()]
+    lines_w = [l for l in out_w.strip().split('\n') if l.strip()]
+
+    if len(lines_i) != len(lines_w):
+        raise RuntimeError(
+            f"mu field query mismatch: {len(lines_i)} message_ids "
+            f"vs {len(lines_w)} thread_ids"
+        )
+
+    thread_map = {}
+    for mid_line, tid_line in zip(lines_i, lines_w):
+        mid = mid_line.strip()
+        tid = tid_line.strip()
+        if mid and tid:
+            thread_map[mid] = tid
+
+    log.info("Thread map: %d message->thread pairs from mu", len(thread_map))
+    return thread_map
+
+
 def parse_addrs(field) -> list[tuple[str, str]]:
-    """Parse a mu JSON address field → list of (email, display_name)."""
+    """Parse a mu JSON address field -> [(email, display_name)]."""
     if not field:
         return []
     if isinstance(field, dict):
@@ -247,400 +216,443 @@ def parse_addrs(field) -> list[tuple[str, str]]:
 
 
 # ---------------------------------------------------------------------------
-# Body extraction
+# Phase 1: Message harvest
 # ---------------------------------------------------------------------------
 
-def extract_body(path: str, max_chars: int = 1500) -> str:
-    if not path:
-        return ''
+def _flush_message_batch(conn, batch: list[tuple]):
+    with conn.cursor() as cur:
+        psycopg2.extras.execute_values(
+            cur,
+            """INSERT INTO email_message (message_id, account, date, date_anomaly, subject)
+               VALUES %s ON CONFLICT (message_id) DO NOTHING""",
+            batch,
+            page_size=BATCH_SIZE,
+        )
+    conn.commit()
+
+
+def _update_coverage(conn, account: str, newest_id: str, oldest_id: str):
+    now = int(time.time())
+    with conn.cursor() as cur:
+        cur.execute("""
+            INSERT INTO email_source_coverage
+                (source_kind, source_ref, newest_scanned_id,
+                 oldest_scanned_id, last_checked_at)
+            VALUES ('email', %s, %s, %s, %s)
+            ON CONFLICT (source_kind, source_ref) DO UPDATE SET
+                newest_scanned_id = COALESCE(
+                    email_source_coverage.newest_scanned_id,
+                    EXCLUDED.newest_scanned_id),
+                oldest_scanned_id = EXCLUDED.oldest_scanned_id,
+                last_checked_at = EXCLUDED.last_checked_at
+        """, (account, newest_id, oldest_id, now))
+    conn.commit()
+
+
+def phase1_harvest_account(
+    account: str, limit: int | None,
+) -> tuple[int, int, dict]:
+    """Harvest one account. Returns (total, skipped, local_addr_map)."""
+    conn = db_connect()
     try:
-        with open(path, 'rb') as f:
-            msg = email_lib.message_from_binary_file(f, policy=email.policy.default)
-        # Prefer text/plain
-        for part in msg.walk():
-            if part.get_content_type() == 'text/plain':
-                try:
-                    payload = part.get_content()
-                    if payload and payload.strip():
-                        return payload[:max_chars]
-                except Exception:
-                    pass
-        # Fall back to text/html
-        for part in msg.walk():
-            if part.get_content_type() == 'text/html':
-                try:
-                    payload = part.get_content()
-                    if payload:
-                        # Remove <style> and <script> blocks before tag stripping
-                        text = re.sub(r'<(style|script)[^>]*>.*?</(style|script)>',
-                                      ' ', payload, flags=re.DOTALL | re.IGNORECASE)
-                        text = re.sub(r'<[^>]+>', ' ', text)
-                        text = re.sub(r'\s+', ' ', text).strip()
-                        return text[:max_chars]
-                except Exception:
-                    pass
-    except Exception:
-        pass
-    return ''
+        messages = mu_query_account(account)
+        if limit:
+            messages = messages[:limit]
+        log.info("[%s] %d messages from mu", account, len(messages))
+
+        local_addr_map: dict[str, dict] = {}
+        batch: list[tuple] = []
+        total = 0
+        skipped_subj = 0
+        newest_id = None
+        oldest_id = None
+
+        for msg in messages:
+            message_id = (msg.get(':message-id') or '').strip()
+            if not message_id:
+                continue
+
+            subject = (msg.get(':subject') or '').strip()
+            if is_ignored_subject(subject):
+                skipped_subj += 1
+                continue
+
+            date_unix = msg.get(':date-unix') or 0
+            date_anomaly = not (DATE_MIN < date_unix < DATE_MAX)
+            if date_anomaly:
+                date_unix = 1
+
+            local_addr_map[message_id] = {
+                'from': parse_addrs(msg.get(':from')),
+                'to': parse_addrs(msg.get(':to')),
+                'cc': parse_addrs(msg.get(':cc')),
+                'date': date_unix,
+            }
+
+            batch.append((message_id, account, date_unix, date_anomaly, subject))
+            total += 1
+            if newest_id is None:
+                newest_id = message_id
+            oldest_id = message_id
+
+            if len(batch) >= BATCH_SIZE:
+                _flush_message_batch(conn, batch)
+                log.info("[%s] %d messages flushed", account, total)
+                batch.clear()
+
+        if batch:
+            _flush_message_batch(conn, batch)
+
+        if newest_id and oldest_id:
+            _update_coverage(conn, account, newest_id, oldest_id)
+
+        log.info("[%s] %d harvested, %d skipped (subject)", account, total, skipped_subj)
+        return total, skipped_subj, local_addr_map
+    finally:
+        conn.close()
+
+
+def phase1_harvest(accounts: list[str], limit: int | None) -> dict:
+    """Run Phase 1 for all accounts in parallel. Returns combined addr_map."""
+    log.info(
+        "Phase 1: harvesting %d accounts%s",
+        len(accounts),
+        f" (limit {limit}/account)" if limit else "",
+    )
+
+    addr_map: dict[str, dict] = {}
+    total_all = 0
+
+    with ThreadPoolExecutor(max_workers=len(accounts)) as pool:
+        futures = {
+            pool.submit(phase1_harvest_account, acct, limit): acct
+            for acct in accounts
+        }
+        for future in as_completed(futures):
+            acct = futures[future]
+            try:
+                n, _, local_map = future.result()
+                total_all += n
+                addr_map.update(local_map)
+            except Exception:
+                log.exception("Phase 1 failed for %s", acct)
+                raise
+
+    log.info("Phase 1 complete: %d messages harvested, %d in addr_map",
+             total_all, len(addr_map))
+    return addr_map
 
 
 # ---------------------------------------------------------------------------
-# Claude entity extraction
+# Phase 2: Thread grouping
 # ---------------------------------------------------------------------------
 
-class RateLimitError(Exception):
-    pass
+def phase2_thread_grouping(
+    conn, accounts: list[str],
+) -> dict[str, list[str]]:
+    """Create email_thread rows and UPDATE email_message.thread_id.
+
+    Returns thread_messages: {thread_id -> [message_ids]}.
+    """
+    log.info("Phase 2: building thread map from mu")
+    raw_map = mu_query_thread_map(accounts)
+
+    # Load unthreaded messages from DB
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT message_id, date FROM email_message WHERE thread_id IS NULL"
+        )
+        db_messages = dict(cur.fetchall())
+    log.info("Phase 2: %d unthreaded messages in DB", len(db_messages))
+
+    # Filter thread map to messages actually in DB
+    valid_map = {mid: tid for mid, tid in raw_map.items() if mid in db_messages}
+    log.info("Phase 2: %d matched", len(valid_map))
+
+    if not valid_map:
+        log.info("Phase 2: nothing to thread")
+        return {}
+
+    # Build thread_data: thread_id -> [(message_id, date)]
+    thread_data: dict[str, list[tuple[str, int]]] = {}
+    for mid, tid in valid_map.items():
+        thread_data.setdefault(tid, []).append((mid, db_messages[mid]))
+
+    log.info("Phase 2: %d threads", len(thread_data))
+
+    # Batch-insert email_thread rows
+    thread_rows = []
+    for tid, msgs in thread_data.items():
+        dates = [d for _, d in msgs]
+        thread_rows.append((tid, min(dates), max(dates), 'pending'))
+
+    with conn.cursor() as cur:
+        for i in range(0, len(thread_rows), BATCH_SIZE):
+            psycopg2.extras.execute_values(
+                cur,
+                """INSERT INTO email_thread
+                       (thread_id, first_message_at, last_message_at, status)
+                   VALUES %s ON CONFLICT (thread_id) DO NOTHING""",
+                thread_rows[i:i + BATCH_SIZE],
+                page_size=BATCH_SIZE,
+            )
+    conn.commit()
+    log.info("Phase 2: email_thread rows inserted")
+
+    # Bulk UPDATE email_message.thread_id via temp table
+    with conn.cursor() as cur:
+        cur.execute(
+            "CREATE TEMP TABLE _thread_map "
+            "(message_id TEXT PRIMARY KEY, thread_id TEXT NOT NULL)"
+        )
+        pairs = list(valid_map.items())
+        for i in range(0, len(pairs), BATCH_SIZE):
+            psycopg2.extras.execute_values(
+                cur,
+                "INSERT INTO _thread_map (message_id, thread_id) VALUES %s",
+                pairs[i:i + BATCH_SIZE],
+                page_size=BATCH_SIZE,
+            )
+        cur.execute("""
+            UPDATE email_message m
+            SET thread_id = t.thread_id
+            FROM _thread_map t
+            WHERE m.message_id = t.message_id AND m.thread_id IS NULL
+        """)
+        updated = cur.rowcount
+        cur.execute("DROP TABLE _thread_map")
+    conn.commit()
+    log.info(
+        "Phase 2 complete: %d messages threaded into %d threads",
+        updated, len(thread_data),
+    )
+
+    return {tid: [mid for mid, _ in msgs] for tid, msgs in thread_data.items()}
 
 
-def run_extraction(subject: str, body: str, from_line: str, to_line: str) -> list[dict]:
+# ---------------------------------------------------------------------------
+# Phase 3: Participant resolution
+# ---------------------------------------------------------------------------
+
+def _load_email_to_human(conn) -> dict[str, int]:
+    """Load lowercase(address) -> human_id for all resolved addresses."""
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT lower(address), human_id FROM email_address "
+            "WHERE human_id IS NOT NULL"
+        )
+        return dict(cur.fetchall())
+
+
+def _load_internal_human_ids(conn) -> set[int]:
+    with conn.cursor() as cur:
+        cur.execute("SELECT id FROM human WHERE internal = TRUE")
+        return {row[0] for row in cur.fetchall()}
+
+
+def _resolve_thread(
+    thread_id: str,
+    message_ids: list[str],
+    addr_map: dict,
+    email_to_human: dict[str, int],
+    internal_ids: set[int],
+) -> list[tuple]:
+    """Resolve one thread's participants.
+
+    Returns list of (thread_id, human_id, roles_list, first_seen_at).
+    Empty list means all-internal or no resolvable participants.
     """
-    Call `claude -p` and return list of {type, value, context} dicts.
-    Returns [] on non-rate-limit failure.
-    Raises RateLimitError when credit window is exhausted.
-    """
-    if not body.strip() and not subject.strip():
+    human_roles: dict[int, dict] = {}
+
+    for mid in message_ids:
+        msg_data = addr_map.get(mid)
+        if not msg_data:
+            continue
+        msg_date = msg_data['date']
+
+        for role_name, addrs in [('from', msg_data['from']),
+                                  ('to', msg_data['to']),
+                                  ('cc', msg_data['cc'])]:
+            for addr, _ in addrs:
+                if is_ignored_address(addr):
+                    continue
+                human_id = email_to_human.get(addr)
+                if human_id is None:
+                    continue
+                if human_id not in human_roles:
+                    human_roles[human_id] = {
+                        'roles': set(), 'min_date': msg_date,
+                    }
+                human_roles[human_id]['roles'].add(role_name)
+                if msg_date < human_roles[human_id]['min_date']:
+                    human_roles[human_id]['min_date'] = msg_date
+
+    # All-internal threads produce no participant rows
+    if human_roles and all(h in internal_ids for h in human_roles):
         return []
 
-    user_prompt = f"FROM: {from_line}\nTO: {to_line}\nSUBJECT: {subject}\n\n{body}"
-    # Strip null bytes — they are valid in email bodies but kill subprocess on Linux
-    user_prompt = user_prompt.replace('\x00', '')
-
-    cmd = [
-        'claude', '-p',
-        '--model', MODEL,
-        '--output-format', 'json',
-        '--system-prompt', EXTRACTION_SYSTEM_PROMPT,
-        user_prompt,
+    return [
+        (thread_id, hid, sorted(data['roles']), data['min_date'])
+        for hid, data in human_roles.items()
     ]
 
-    try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
-    except subprocess.TimeoutExpired:
-        print("  Warning: claude timed out", flush=True)
-        return []
-    except ValueError as exc:
-        print(f"  Warning: subprocess ValueError (null byte?): {exc}", flush=True)
-        return []
 
-    if proc.returncode != 0:
-        err = (proc.stderr or '').lower()
-        if any(x in err for x in ['rate limit', 'credit', 'quota', 'overload', 'usage limit',
-                                   '429', 'too many']):
-            raise RateLimitError(proc.stderr.strip()[:200])
-        # Non-rate-limit error: log and skip
-        print(f"  Warning: claude error (rc={proc.returncode}): {proc.stderr.strip()[:100]}",
-              flush=True)
-        return []
-
-    # Parse the --output-format json envelope
-    try:
-        envelope = json.loads(proc.stdout)
-    except json.JSONDecodeError:
-        return []
-
-    if envelope.get('is_error'):
-        msg = str(envelope).lower()
-        if any(x in msg for x in ['rate limit', 'credit', 'quota', 'overload']):
-            raise RateLimitError(str(envelope)[:200])
-        return []
-
-    result_text = (envelope.get('result') or '').strip()
-
-    # Strip accidental markdown fences
-    result_text = re.sub(r'^```(?:json)?\s*', '', result_text)
-    result_text = re.sub(r'\s*```$', '', result_text.strip())
-
-    try:
-        parsed = json.loads(result_text)
-    except json.JSONDecodeError:
-        return []
-
-    VALID_TYPES = {'person_mentioned', 'organisation', 'project', 'product', 'domain'}
-    result = []
-    for e in parsed.get('entities', []):
-        if not isinstance(e, dict):
-            continue
-        if e.get('type') not in VALID_TYPES:
-            continue
-        val = e.get('value')
-        # Normalise: model occasionally returns a list instead of a string
-        if isinstance(val, list):
-            val = ', '.join(str(v) for v in val if v)
-        val = str(val).strip() if val is not None else ''
-        if val:
-            e['value'] = val
-            result.append(e)
-    return result
-
-
-def extract_with_retry(subject, body, from_line, to_line) -> list[dict]:
-    """Run extraction with indefinite rate-limit retry."""
-    while True:
-        try:
-            return run_extraction(subject, body, from_line, to_line)
-        except RateLimitError as exc:
-            print(
-                f"  [rate-limit] {str(exc)[:120]} "
-                f"— waiting {RATE_LIMIT_WAIT}s before retry",
-                flush=True,
-            )
-            time.sleep(RATE_LIMIT_WAIT)
-
-
-# ---------------------------------------------------------------------------
-# Process one message
-# ---------------------------------------------------------------------------
-
-def process_one(conn, msg: dict, account: str, dry_run: bool, out_dir: Path | None) -> str:
-    """
-    Process a single mu message dict.
-    Returns: 'processed' | 'skipped:already-exists' | 'skipped:ignored-subject'
-             | 'skipped:date-anomaly' | 'skipped:no-id'
-    """
-    message_id = (msg.get(':message-id') or '').strip()
-    if not message_id:
-        return 'skipped:no-id'
-
-    subject = (msg.get(':subject') or '').strip()
-    if is_ignored_subject(subject):
-        return 'skipped:ignored-subject'
-
-    date_unix = msg.get(':date-unix') or 0
-    date_anomaly = not (DATE_MIN < date_unix < DATE_MAX)
-    if date_anomaly:
-        date_unix = 1
-
-    path = msg.get(':path', '')
-    from_addrs = parse_addrs(msg.get(':from'))
-    to_addrs = parse_addrs(msg.get(':to'))
-    cc_addrs = parse_addrs(msg.get(':cc'))
-
-    with conn.cursor() as cur:
-        if msg_exists(cur, message_id):
-            return 'skipped:already-exists'
-
-    from_line = ', '.join(f"{n} <{e}>" if n else e for e, n in from_addrs)
-    to_line = ', '.join(
-        f"{n} <{e}>" if n else e for e, n in (to_addrs + cc_addrs)
-    )
-
-    body = extract_body(path) if not dry_run else ''
-    entities: list[dict] = []
-    if not dry_run:
-        entities = extract_with_retry(subject, body, from_line, to_line)
-
-    if out_dir:
-        safe_id = re.sub(r'[^\w@.=-]', '_', message_id)[:120]
-        record = {
-            'message_id': message_id,
-            'account': account,
-            'date_unix': date_unix,
-            'subject': subject,
-            'from': from_line,
-            'to': to_line,
-            'body_preview': body[:400],
-            'entities': entities,
-        }
-        (out_dir / f"{safe_id}.json").write_text(
-            json.dumps(record, indent=2, ensure_ascii=False)
-        )
-
-    if not dry_run and out_dir is None:
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO email_message (message_id, account, date, subject, date_anomaly)
-                VALUES (%s, %s, %s, %s, %s)
-                ON CONFLICT (message_id) DO NOTHING
-            """, (message_id, account, date_unix, subject, date_anomaly))
-
-            for addr, _ in from_addrs:
-                if not is_ignored_address(addr):
-                    cur.execute("""
-                        INSERT INTO item_participant
-                            (source_kind, external_item_id, identifier_ref, role)
-                        VALUES ('email', %s, %s, 'from')
-                        ON CONFLICT DO NOTHING
-                    """, (message_id, addr))
-
-            for addr, _ in to_addrs:
-                if not is_ignored_address(addr):
-                    cur.execute("""
-                        INSERT INTO item_participant
-                            (source_kind, external_item_id, identifier_ref, role)
-                        VALUES ('email', %s, %s, 'to')
-                        ON CONFLICT DO NOTHING
-                    """, (message_id, addr))
-
-            for addr, _ in cc_addrs:
-                if not is_ignored_address(addr):
-                    cur.execute("""
-                        INSERT INTO item_participant
-                            (source_kind, external_item_id, identifier_ref, role)
-                        VALUES ('email', %s, %s, 'cc')
-                        ON CONFLICT DO NOTHING
-                    """, (message_id, addr))
-
-            now = int(time.time())
-            for ent in entities:
-                etype = ent.get('type', '')
-                value = (ent.get('value') or '').strip()
-                context = ent.get('context') or None
-                if etype and value:
-                    cur.execute("""
-                        INSERT INTO item_entity
-                            (source_kind, external_item_id, entity_type, value,
-                             context, extracted_at)
-                        VALUES ('email', %s, %s, %s, %s, %s)
-                        ON CONFLICT DO NOTHING
-                    """, (message_id, etype, value, context, now))
-
-        conn.commit()
-
-    n_ents = len(entities)
-    import datetime
-    try:
-        dt = datetime.datetime.fromtimestamp(date_unix).strftime('%Y-%m-%d')
-    except Exception:
-        dt = '????-??-??'
-    mid_short = message_id[:40]
-    subj_short = subject[:50]
-    print(f"  [{account}] {dt}  {mid_short!r:44}  subj={subj_short!r:52}  entities={n_ents}",
-          flush=True)
-
-    return 'processed'
-
-
-# ---------------------------------------------------------------------------
-# Account scan (head + tail phases)
-# ---------------------------------------------------------------------------
-
-def scan_account(conn, account: str, dry_run: bool, out_dir: Path | None):
-    """
-    Scan one account: head phase (newest → 3 consecutive seen) then tail
-    (continues processing everything older not yet seen).
-    """
-    print(f"\n=== {account} ===", flush=True)
-    messages = mu_query_account(account)
-    if not messages:
-        print("  mu returned no messages", flush=True)
-        return 0, 0
-
-    print(f"  {len(messages)} messages loaded from mu", flush=True)
-
-    with conn.cursor() as cur:
-        _, oldest_cov = get_coverage(cur, account)
-    has_history = oldest_cov is not None
-
-    processed = 0
-    skipped_seen = 0
-    other_skipped = 0
-    consecutive_seen = 0
-    head_done = False
-    newest_processed_id = None
-    oldest_processed_id = None
-
-    for msg in messages:
-        msg_id = (msg.get(':message-id') or '').strip()
-        if not msg_id:
-            continue
-
-        # HEAD PHASE: stop once we hit N consecutive already-seen messages
-        # (only applicable once we have history — first run processes everything)
-        if not head_done and has_history:
-            with conn.cursor() as cur:
-                already = msg_exists(cur, msg_id)
-            if already:
-                consecutive_seen += 1
-                skipped_seen += 1
-                if consecutive_seen >= HEAD_STOP_AFTER:
-                    print(f"  Head phase complete ({consecutive_seen} consecutive seen)",
-                          flush=True)
-                    head_done = True
-                    # Continue into tail phase — keep iterating the list
-                continue
-            else:
-                consecutive_seen = 0
-
-        status = process_one(conn, msg, account, dry_run, out_dir)
-
-        if status == 'processed':
-            processed += 1
-            if newest_processed_id is None:
-                newest_processed_id = msg_id
-            oldest_processed_id = msg_id
-        elif status == 'skipped:already-exists':
-            skipped_seen += 1
-        else:
-            other_skipped += 1
-
-    if not dry_run and out_dir is None and (newest_processed_id or oldest_processed_id):
-        with conn.cursor() as cur:
-            upsert_coverage(
-                cur, account,
-                newest_processed_id or oldest_cov,
-                oldest_processed_id,
-            )
-        conn.commit()
-
-    print(
-        f"  processed={processed} skipped_seen={skipped_seen} other_skipped={other_skipped}",
-        flush=True,
-    )
-    return processed, skipped_seen
-
-
-# ---------------------------------------------------------------------------
-# Sample mode (spread across accounts and date range)
-# ---------------------------------------------------------------------------
-
-def scan_sample(conn, accounts: list[str], n: int, dry_run: bool, out_dir: Path | None):
-    """
-    Process N messages spread evenly across accounts and across each account's date
-    range (not just newest). Useful for prompt quality review.
-    """
-    per_account = max(1, n // len(accounts))
-    total_processed = 0
-
+def _rebuild_addr_map(accounts: list[str]) -> dict:
+    """Re-load participant addresses from mu JSON (standalone Phase 3)."""
+    log.info("Rebuilding addr_map from mu (standalone mode)")
+    addr_map: dict[str, dict] = {}
     for account in accounts:
-        print(f"\n=== {account} (sample={per_account}) ===", flush=True)
         messages = mu_query_account(account)
-        if not messages:
-            print("  mu returned no messages", flush=True)
-            continue
+        for msg in messages:
+            mid = (msg.get(':message-id') or '').strip()
+            if not mid:
+                continue
+            date_unix = msg.get(':date-unix') or 0
+            if not (DATE_MIN < date_unix < DATE_MAX):
+                date_unix = 1
+            addr_map[mid] = {
+                'from': parse_addrs(msg.get(':from')),
+                'to': parse_addrs(msg.get(':to')),
+                'cc': parse_addrs(msg.get(':cc')),
+                'date': date_unix,
+            }
+    log.info("addr_map rebuilt: %d messages", len(addr_map))
+    return addr_map
 
-        # Spread sample across time: thirds of the date-sorted list
-        all_ids_paths = messages  # already newest-first
-        total = len(all_ids_paths)
-        print(f"  {total} messages loaded", flush=True)
 
-        chunk = per_account // 3
-        remainder = per_account - 3 * chunk
-        if chunk > 0:
-            indices = (
-                list(range(0, min(chunk, total))) +
-                list(range(max(0, total // 3), min(total // 3 + chunk, total))) +
-                list(range(max(0, total - chunk - remainder), total))
+def phase3_participant_resolution(
+    conn,
+    accounts: list[str],
+    thread_messages: dict[str, list[str]] | None,
+    addr_map: dict | None,
+    workers: int,
+):
+    """Resolve participants for all pending threads."""
+    email_to_human = _load_email_to_human(conn)
+    internal_ids = _load_internal_human_ids(conn)
+    log.info(
+        "Phase 3: %d address->human mappings, %d internal humans",
+        len(email_to_human), len(internal_ids),
+    )
+
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT thread_id FROM email_thread WHERE status = 'pending'"
+        )
+        pending = [row[0] for row in cur.fetchall()]
+    log.info("Phase 3: %d pending threads", len(pending))
+
+    if not pending:
+        log.info("Phase 3: nothing to process")
+        return
+
+    # Rebuild data if not provided (standalone phase run)
+    if addr_map is None:
+        addr_map = _rebuild_addr_map(accounts)
+    if thread_messages is None:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT message_id, thread_id FROM email_message "
+                "WHERE thread_id IS NOT NULL"
             )
-        else:
-            indices = list(range(min(per_account, total)))
+            thread_messages = {}
+            for mid, tid in cur.fetchall():
+                thread_messages.setdefault(tid, []).append(mid)
 
-        seen_ids: set[str] = set()
-        sample_msgs = []
-        for i in indices:
-            mid = (messages[i].get(':message-id') or '').strip()
-            if mid and mid not in seen_ids:
-                seen_ids.add(mid)
-                sample_msgs.append(messages[i])
+    def process_chunk(chunk: list[str]) -> tuple[int, int, int]:
+        """Resolve a chunk of threads and write results to DB."""
+        participant_rows: list[tuple] = []
+        done_threads: list[str] = []
+        error_threads: list[tuple[str, str]] = []
 
-        print(f"  {len(sample_msgs)} sampled for processing", flush=True)
+        for tid in chunk:
+            msg_ids = thread_messages.get(tid, [])
+            if not msg_ids:
+                done_threads.append(tid)
+                continue
+            try:
+                rows = _resolve_thread(
+                    tid, msg_ids, addr_map, email_to_human, internal_ids,
+                )
+                participant_rows.extend(rows)
+                done_threads.append(tid)
+            except Exception as e:
+                error_threads.append((tid, str(e)[:200]))
 
-        for msg in sample_msgs:
-            status = process_one(conn, msg, account, dry_run, out_dir)
-            if status == 'processed':
-                total_processed += 1
+        wconn = db_connect()
+        try:
+            with wconn.cursor() as cur:
+                if participant_rows:
+                    psycopg2.extras.execute_values(
+                        cur,
+                        """INSERT INTO email_thread_participant
+                               (thread_id, human_id, roles, first_seen_at)
+                           VALUES %s
+                           ON CONFLICT (thread_id, human_id) DO NOTHING""",
+                        participant_rows,
+                        page_size=BATCH_SIZE,
+                    )
+                now = int(time.time())
+                if done_threads:
+                    cur.execute(
+                        "UPDATE email_thread "
+                        "SET status = 'done', last_processed_at = %s "
+                        "WHERE thread_id = ANY(%s)",
+                        (now, done_threads),
+                    )
+                for tid, err_msg in error_threads:
+                    cur.execute(
+                        "UPDATE email_thread "
+                        "SET status = 'error', error_message = %s "
+                        "WHERE thread_id = %s",
+                        (err_msg, tid),
+                    )
+            wconn.commit()
+        finally:
+            wconn.close()
 
-    print(f"\nSample run complete: {total_processed} processed", flush=True)
-    return total_processed
+        return len(participant_rows), len(done_threads), len(error_threads)
+
+    # Partition into chunks, one per worker
+    chunk_size = max(1, len(pending) // workers)
+    chunks = [pending[i:i + chunk_size]
+              for i in range(0, len(pending), chunk_size)]
+    log.info("Phase 3: %d chunks across %d workers", len(chunks), workers)
+
+    total_p, total_d, total_e = 0, 0, 0
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = [pool.submit(process_chunk, ch) for ch in chunks]
+        for future in as_completed(futures):
+            p, d, e = future.result()
+            total_p += p
+            total_d += d
+            total_e += e
+
+    log.info(
+        "Phase 3 complete: %d participant rows, %d threads done, %d errors",
+        total_p, total_d, total_e,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Wipe
+# ---------------------------------------------------------------------------
+
+def wipe_tables(conn):
+    """Truncate email pipeline tables (single statement for FK safety)."""
+    tables = [
+        'email_thread_participant',
+        'email_message',
+        'email_thread',
+        'email_source_coverage',
+    ]
+    with conn.cursor() as cur:
+        for t in tables:
+            cur.execute(f"SELECT count(*) FROM {t}")
+            log.info("  %s: %d rows", t, cur.fetchone()[0])
+        cur.execute("TRUNCATE " + ", ".join(tables))
+    conn.commit()
+    log.info("Truncated all email tables")
 
 
 # ---------------------------------------------------------------------------
@@ -648,60 +660,64 @@ def scan_sample(conn, accounts: list[str], n: int, dry_run: bool, out_dir: Path 
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description='Email harvest and entity extraction')
-    parser.add_argument('--sample', type=int, metavar='N',
-                        help='Sample N emails across accounts (spread over date range)')
-    parser.add_argument('--out', metavar='DIR',
-                        help='Write extraction JSON files to DIR instead of DB')
-    parser.add_argument('--dry-run', action='store_true',
-                        help='No DB writes and no claude calls; parse headers only')
-    parser.add_argument('--accounts', nargs='+', metavar='ACCT',
-                        help='Restrict to specific accounts (default: all four)')
+    parser = argparse.ArgumentParser(
+        description='Thread-centric email harvest pipeline',
+    )
+    parser.add_argument(
+        '--phase', choices=['1', '2', '3', 'all'], default='all',
+        help='Run one phase or all (default: all)',
+    )
+    parser.add_argument(
+        '--accounts', nargs='+', metavar='ACCT',
+        help='Accounts to process (default: all active)',
+    )
+    parser.add_argument(
+        '--limit', type=int, metavar='N',
+        help='Phase 1: max N messages per account',
+    )
+    parser.add_argument(
+        '--workers', type=int, default=4, metavar='N',
+        help='Phase 3: worker threads (default: 4)',
+    )
+    parser.add_argument(
+        '--wipe', action='store_true',
+        help='Truncate email tables before running',
+    )
     args = parser.parse_args()
 
-    accounts = args.accounts or ACCOUNTS
-    out_dir = Path(args.out) if args.out else None
-    if out_dir:
-        out_dir.mkdir(parents=True, exist_ok=True)
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)s %(message)s',
+        datefmt='%H:%M:%S',
+    )
 
-    # out_dir mode: skip DB writes for entities/messages (still need DB for state checks)
-    db_write = not args.dry_run and out_dir is None
-
+    accounts = args.accounts or ACTIVE_ACCOUNTS
     conn = db_connect()
+
+    if args.wipe:
+        wipe_tables(conn)
 
     load_runtime_state(conn)
 
-    run_id = None
-    if db_write:
-        with conn.cursor() as cur:
-            cur.execute(
-                "INSERT INTO harvest_run (started_at) VALUES (%s) RETURNING id",
-                (int(time.time()),)
-            )
-            run_id = cur.fetchone()[0]
-        conn.commit()
-        print(f"Harvest run #{run_id} started", flush=True)
+    phase = args.phase
+    addr_map = None
+    thread_messages = None
+    t0 = time.time()
 
-    total_processed = 0
+    if phase in ('1', 'all'):
+        addr_map = phase1_harvest(accounts, args.limit)
 
-    if args.sample:
-        total_processed = scan_sample(conn, accounts, args.sample, args.dry_run, out_dir)
-    else:
-        for account in accounts:
-            n, _ = scan_account(conn, account, args.dry_run, out_dir)
-            total_processed += n
+    if phase in ('2', 'all'):
+        thread_messages = phase2_thread_grouping(conn, accounts)
 
-    if run_id:
-        with conn.cursor() as cur:
-            cur.execute(
-                "UPDATE harvest_run SET completed_at=%s, items_processed=%s WHERE id=%s",
-                (int(time.time()), total_processed, run_id),
-            )
-        conn.commit()
-        print(f"\nHarvest run #{run_id} done: {total_processed} processed", flush=True)
+    if phase in ('3', 'all'):
+        phase3_participant_resolution(
+            conn, accounts, thread_messages, addr_map, args.workers,
+        )
 
+    elapsed = time.time() - t0
+    log.info("Done in %.1fs", elapsed)
     conn.close()
-    print("Done.", flush=True)
 
 
 if __name__ == '__main__':

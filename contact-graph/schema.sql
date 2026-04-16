@@ -130,6 +130,11 @@ CREATE TABLE email_address_candidate (
     human_id_resolved INTEGER REFERENCES human (id)
 );
 
+-- Plugin: email — indexes for harvest pipeline performance
+CREATE INDEX idx_email_message_thread_id ON email_message (thread_id);
+CREATE INDEX idx_email_thread_status ON email_thread (status)
+    WHERE status = 'pending';
+
 -- ---------------------------------------------------------------------------
 -- Meeting plugin
 -- ---------------------------------------------------------------------------

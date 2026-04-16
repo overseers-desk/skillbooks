@@ -282,3 +282,91 @@ Tables retained from previous sessions: `human` (7,868 rows), `email_address` (2
 | `contact-graph/plan.md` | Email plugin tables removed; edge/coappearance updated to views; item_participant → meeting_participant; harvest_run removed |
 | `contact-graph/source-email.md` | §3 scan strategy rewritten for multi-account coordinator; §7 thread-based edges; §9 tables updated; SES mutation rationale added |
 | `contact-graph/WORKLOG.md` | This entry |
+
+---
+
+## Session 5 — Thread-centric harvest pipeline implementation
+
+### harvest_email.py rewrite
+
+Full rewrite of `harvest_email.py` from message-granularity (sessions 2-3) to thread-centric design (session 4 spec). No AI calls — pure mu queries + PostgreSQL batch operations.
+
+**Three-phase pipeline:**
+
+1. **Phase 1 (message harvest):** Queries mu JSON per account in parallel (`ThreadPoolExecutor`, 3 workers). Parses headers (message_id, date, subject, from/to/cc). Batch-inserts into `email_message` via `execute_values` (5000 rows/batch). Keeps participant addresses in memory for Phase 3. Updates `email_source_coverage`.
+
+2. **Phase 2 (thread grouping):** Discovers mu thread_ids via two parallel `mu find --format=plain` queries (`--fields="i"` and `--fields="w"` with `--skip-dups`), zipped line-by-line. Creates `email_thread` rows. Bulk-updates `email_message.thread_id` via temp table + UPDATE-FROM-JOIN.
+
+3. **Phase 3 (participant resolution):** For each pending thread, resolves participant email addresses to `human_id` via `email_address` table lookup. Writes `email_thread_participant` with accumulated roles (`TEXT[]`). Parallel workers (`ThreadPoolExecutor`, configurable via `--workers`). Sets `email_thread.status = 'done'`.
+
+**Key finding: mu thread_id extraction.** The spec (source-email.md §9) claimed thread_id comes from mu's sexp `:thread-id` field. Testing showed this field does not appear in sexp or JSON output (`mu info fields` shows `sexp: no`). Thread_id is available only via `--format=plain --fields="w"`. Multi-field queries concatenate without separator, so two separate queries must be zipped.
+
+**CLI flags:** `--phase 1|2|3|all`, `--accounts`, `--limit N`, `--workers N`, `--wipe`.
+
+### Performance
+
+Full corpus (347k messages from mu, 272k unique after cross-account dedup) processed in ~30 seconds:
+
+| Phase | Time | Output |
+|---|---|---|
+| Phase 1 | ~14s | 271,957 messages |
+| Phase 2 | ~8s | 152,324 threads |
+| Phase 3 | ~8s | 198,772 participant rows |
+
+### Testing completed
+
+- Small subset (200 msgs, single account): correct
+- Full corpus (all 3 accounts): correct
+- Resume (re-run without wipe): idempotent, no duplicates
+- Parallelism (workers=1 vs workers=4): identical row counts (198,772)
+- Phased execution (--phase 1, then 2, then 3): correct, standalone Phase 3 rebuilds addr_map from mu
+
+### Schema changes
+
+Added two indexes to `schema.sql` and live DB:
+- `idx_email_message_thread_id ON email_message (thread_id)`
+- `idx_email_thread_status ON email_thread (status) WHERE status = 'pending'`
+
+### source-email.md corrections
+
+- §3: thread_id extraction method corrected (plain format, not sexp)
+- §9 note: added detail about `mu info fields` showing `sexp: no` for thread field
+
+### Known edge cases
+
+- 1 unthreaded message out of 271,957 (the very newest message in director account; mu `--skip-dups` query returns 271,956 vs 271,957 in DB — a timing/edge case between Phase 1 and Phase 2 mu queries)
+- Standalone Phase 3 produces ~19 more participant rows than all-in-one mode (0.01% difference) due to cross-account duplicate messages having different headers depending on which account's copy is used for the addr_map
+
+### Production DB state
+
+| Table | Rows |
+|---|---|
+| email_message | 271,957 |
+| email_thread | 152,324 (all done) |
+| email_thread_participant | 198,791 |
+| email_source_coverage | 3 accounts |
+
+### Files modified
+
+| File | Change |
+|---|---|
+| `contact-graph/harvest_email.py` | Full rewrite: three-phase thread-centric pipeline |
+| `contact-graph/schema.sql` | Added indexes for email_message.thread_id and email_thread.status |
+| `contact-graph/source-email.md` | Corrected thread_id extraction method (§3, §9) |
+| `contact-graph/WORKLOG.md` | This entry |
+
+### Gap to tail-only concurrent processing
+
+The spec's thread worker (source-email.md §3, line 19) does two things per thread: participant resolution and body entity extraction. This session implemented participant resolution only. The remaining pieces before the pipeline matches the spec's description of a concurrent tail worker:
+
+1. **Body extraction.** Read the maildir file for each message in the thread. Prefer text/plain, fall back to text/html with style/script block removal and tag stripping. The old code had `extract_body()` which was dropped in the rewrite; it needs to be reintroduced.
+
+2. **Quoted-content stripping.** Lines starting with `>` (plain-text quoting) and `<blockquote>` elements (HTML) must be removed before sending to AI. Quoted material was already captured when the original message was processed; re-extracting it would attribute entities to the wrong message.
+
+3. **AI extraction call.** `claude -p` with the entity extraction prompt. The old code's prompt (person_mentioned, organisation, project, product, domain) and batch logic can be adapted. The spec says this is budget-controlled — stop after N tokens or dollars per run. Throughput was ~28s per email in session 2 (11s Node.js startup + 15s API); batching (4 emails per call) improved this.
+
+4. **Advisory locks.** `pg_try_advisory_lock(hashtext(thread_id))` to prevent two concurrent workers from processing the same thread. Pure SQL, straightforward to add. Not needed during the bulk import (single process), but required when head and tail workers run concurrently, or when multiple tail workers process different thread ranges.
+
+5. **Thread status integration.** Currently Phase 3 sets all threads to `done` after participant resolution. With entity extraction added, `done` should mean both resolution and extraction are complete. Either extend Phase 3 or add a separate extraction phase that processes `done` threads that lack `item_entity` rows.
+
+The entity extraction is the slow and expensive part (AI calls). Participant resolution for the full 152k-thread corpus takes 8 seconds; entity extraction at 4 emails/batch will take days for the full corpus. This is why the spec describes budget-controlled runs and why concurrent tail workers matter — multiple workers processing different thread ranges in parallel, each with its own `claude` subprocess, with advisory locks preventing collision.
