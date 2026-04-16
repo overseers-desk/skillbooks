@@ -61,14 +61,18 @@ The header parse captures who sent what to whom. The body of an email may also n
 
 Self addresses — those that identify "me" (Alex) rather than a contact. Messages to/from these are treated as self-addressed and excluded from graph edges:
 
+- alexchen@example.biz
 - a@colourful.land
+- director@oldmill.example
 - me@example.au
 - me@example.eu
 - booking@example.com
+- assistant@example.au
 - w@example.io
-- alexchen@example.biz
+- alex.chen@example.io
+- alex.chen@example.net
+- alexchen@example.org
 - alexchen@example.cn (historical)
-- director@oldmill.example
 
 `partner@example.com` is a separate mailbox (Sam, human_id=2) indexed in the same mu store. Messages in that account where partner@example.com appears as recipient are not self-addressed; they are inbound to Sam. The plugin must handle per-account identity: for the `partner-example-com` account, partner@example.com is the account owner, not "me."
 
