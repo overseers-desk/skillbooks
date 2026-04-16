@@ -8,7 +8,7 @@ human tables. Run once after the staging table is populated; safe to re-run
 
 Phases:
   0  Seed ignored_pattern (if empty)
-  1  Prune candidates (already resolved / ignore patterns / self-addresses)
+  1  Prune candidates (already resolved / ignore patterns / internal addresses)
   2  Display name enrichment via mu/Xapian (up to 200 blanks)
   3  Display name clustering → match existing humans / auto-create personal
   4  Domain ownership rules
@@ -46,8 +46,8 @@ SEED_SQL = SCRIPT_DIR / 'ignored_pattern_seed.sql'
 MU_ENRICH_CAP = 200   # max Xapian calls in Phase 2
 DRY_RUN = '--dry-run' in sys.argv
 
-# Self-addresses (source-email.md § 5) — excluded from graph
-SELF_ADDRESSES = {
+# Internal addresses (source-email.md § 5) — excluded from graph
+INTERNAL_ADDRESSES = {
     'zhangweiwu@realss.com',
     'a@colourful.land',
     'director@rivermill.au',
@@ -237,13 +237,13 @@ def phase1_prune(cur):
     """)
     log(f"  1a already-resolved:   -{cur.rowcount}")
 
-    # 1b. Self-addresses
-    placeholders = ','.join(['%s'] * len(SELF_ADDRESSES))
+    # 1b. Internal addresses
+    placeholders = ','.join(['%s'] * len(INTERNAL_ADDRESSES))
     cur.execute(
         f"DELETE FROM email_address_candidate WHERE address IN ({placeholders})",
-        list(SELF_ADDRESSES)
+        list(INTERNAL_ADDRESSES)
     )
-    log(f"  1b self-addresses:     -{cur.rowcount}")
+    log(f"  1b internal-addresses: -{cur.rowcount}")
 
     # 1c. Plus-tag normalisation: foo+tag@domain → foo@domain
     #     Runs before ignore-pattern pruning so normalised forms
@@ -253,8 +253,8 @@ def phase1_prune(cur):
     renamed = merged_perm = merged_cand = 0
     for addr, disp in tagged_rows:
         base = _strip_plus_tag(addr)
-        # Base is a self-address → delete
-        if base in SELF_ADDRESSES:
+        # Base is an internal address → delete
+        if base in INTERNAL_ADDRESSES:
             cur.execute("DELETE FROM email_address_candidate WHERE address = %s", (addr,))
             merged_perm += 1
             continue

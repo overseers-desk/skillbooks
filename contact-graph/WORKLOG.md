@@ -46,10 +46,10 @@ Seeded 31 humans with explicit IDs (inner circle first, then management):
 
 `email_address` table seeded with canonical addresses for all 31 humans (45 rows total, covering aliases and role emails).
 
-### Source-email.md (§5 self-address list)
+### Source-email.md (§5 internal-address list)
 
-Expanded and corrected self-address list:
-- `admin@rivermill.au` is Priyanka's account (not self), excluded from self-addresses.
+Expanded and corrected internal-address list:
+- `admin@rivermill.au` is Priyanka's account (not internal to Weiwu), excluded from internal addresses.
 - `yuliansu@gmail.com` documented as Liansu's separate mailbox; per-account identity model documented in §6.
 - Role-email model documented: `human_id` always points to current holder; former holders of role addresses get their own human records.
 
@@ -82,7 +82,7 @@ Seven-phase pipeline written to resolve the 30,375 candidates into permanent tab
 
 **Phase 1** — prunes candidates in three passes:
 1. Already-resolved (addresses already in `email_address`): -44
-2. Self-addresses: -1
+2. Internal addresses: -1
 3. Ignore patterns (address/domain/regex types): -2743 (address: 12, domain: 572, regex: 2159)
 → 27,587 remaining
 
@@ -138,7 +138,7 @@ Alternatively, run a second pass with an expanded corporate-token list once the 
 |------|--------|
 | `contact-graph/schema.sql` | PostgreSQL migration (all 20 tables) |
 | `contact-graph/plan.md` | PostgreSQL references, table listing updated |
-| `contact-graph/source-email.md` | Self-address list corrected; role-email model documented |
+| `contact-graph/source-email.md` | Internal-address list corrected; role-email model documented |
 | `contact-graph/ignored_pattern_seed.sql` | Expanded to 98 patterns across all four accounts |
 | `contact-graph/resolve_candidates.py` | New — 7-phase candidate resolution pipeline |
 | `contact-graph/.env` | DB credentials (gitignored) |

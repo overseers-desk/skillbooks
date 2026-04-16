@@ -50,9 +50,9 @@ Profile is built incrementally: source plugins give identifiers and display name
 
 Two kinds:
 
-**Self ↔ person edges** (primary): directed. You initiated contact with them, or they initiated with you. The ratio reveals who initiates. Edge weight is interaction count plus timestamps (first seen, last seen). Not all sources produce directed edges — sources without a sender/recipient distinction contribute only coappearance edges.
+**Internal ↔ external edges** (primary): directed. An internal human initiated contact with an external, or vice versa. The ratio reveals who initiates. Edge weight is interaction count plus timestamps (first seen, last seen). Not all sources produce directed edges — sources without a sender/recipient distinction contribute only coappearance edges.
 
-**Person ↔ person edges** (secondary): when two non-self people appear together on an item you are party to, they have a co-appearance edge. This enables "do A and B already know each other" before making an introduction, and surfaces mutual connections for the Argentine artist case.
+**Person ↔ person edges** (secondary): when two non-internal people appear together on an item, they have a co-appearance edge. This enables "do A and B already know each other" before making an introduction, and surfaces mutual connections for the Argentine artist case.
 
 ### Topic nodes
 
@@ -121,12 +121,12 @@ Database: `contact_graph` on the local PostgreSQL instance.
 
 | Table | Relationship / purpose | Fields |
 |---|---|---|
-| **human** | one row per real human; `internal` flags self and team members | id, display_name, linkedin_url, internal, notes |
+| **human** | one row per real human; `internal` flags Rivermill team members and household | id, display_name, linkedin_url, internal, notes |
 | **organisation** | canonical organisation node; created when a new org name appears in role or item_entity resolution | id, name, notes |
 | **role** | a human holds a role at an organisation; the role owns its email address | id, human_id, organisation_id (FK→organisation), title, email_address_id |
 | **item_participant** | normalised participants produced by each plugin's enumerate_items(); source-agnostic so edge and coappearance queries need no UNION | source_kind, external_item_id, identifier_ref, role |
 | **edge** | cached directed human→human counts, rebuilt in full at the end of every harvest run; derived from item_participant | from_human_id, to_human_id, message_count, first_seen, last_seen |
-| **coappearance** | cached undirected co-presence on items, rebuilt in full at the end of every harvest run; derived from item_participant | human_id_a, human_id_b, thread_count |
+| **coappearance** | cached undirected co-presence on items, rebuilt in full at the end of every harvest run; derived from item_participant | human_id_a, human_id_b, thread_count, first_seen, last_seen |
 | **harvest_run** | one row per completed harvest run; source of truth for "when were edge/coappearance last rebuilt" | id, started_at, completed_at, items_processed |
 | **item_entity** | named entities extracted from item bodies by AI; the DB equivalent of meeting YAML frontmatter, populated for both sources; answers "what did this message/meeting discuss?" rather than "who participated?"; FK columns are populated by a post-extraction resolution pass | source_kind, external_item_id, entity_type ('person_mentioned'/'organisation'/'project'/'product'/'domain'), value, context (nullable), human_id (nullable FK→human), organisation_id (nullable FK→organisation), project_id (nullable FK→project), extracted_at; natural unique key (source_kind, external_item_id, entity_type, value) |
 | **tag** | normalised concept labels shared across humans and projects | id, label, category |

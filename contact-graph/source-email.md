@@ -59,7 +59,9 @@ The header parse captures who sent what to whom. The body of an email may also n
 
 ## 5. Identity
 
-Self addresses — those that identify "me" (Weiwu) rather than a contact. Messages to/from these are treated as self-addressed and excluded from graph edges:
+Internal addresses — addresses belonging to internal humans (`internal = TRUE` in the `human` table). A message where all participants are internal is excluded from graph edges. The account owner for each mu account is identified by their internal address(es).
+
+Weiwu's addresses:
 
 - zhangweiwu@realss.com
 - a@colourful.land
@@ -74,9 +76,9 @@ Self addresses — those that identify "me" (Weiwu) rather than a contact. Messa
 - zhangweiwu@yahoo.com
 - zhangweiwu@private.21cn.com (historical)
 
-`yuliansu@gmail.com` is a separate mailbox (Liansu, human_id=2) indexed in the same mu store. Messages in that account where yuliansu@gmail.com appears as recipient are not self-addressed; they are inbound to Liansu. The plugin must handle per-account identity: for the `yuliansu-gmail-com` account, yuliansu@gmail.com is the account owner, not "me."
+`yuliansu@gmail.com` is a separate mailbox (Liansu, human_id=2) indexed in the same mu store. Messages in that account where yuliansu@gmail.com appears as recipient are inbound to Liansu. The plugin must handle per-account identity: for the `yuliansu-gmail-com` account, yuliansu@gmail.com is the account owner.
 
-Loaded from a single config location read by this plugin. Other plugins carry their own identity config, since the notion of "me" is plugin-specific.
+Loaded from a single config location read by this plugin. Other plugins carry their own identity config keyed to the account being processed.
 
 ## 6. Participant resolution
 
