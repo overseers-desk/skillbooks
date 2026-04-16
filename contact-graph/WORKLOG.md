@@ -1,6 +1,7 @@
 # Contact Graph — Session Worklog
 
-Session ID: `eca27164-5b9e-42e7-a8b1-19034fcd2ef0`
+Session ID: `eca27164-5b9e-42e7-a8b1-19034fcd2ef0` (session 1)
+Session ID: `2d115f4b-e62c-4899-a1eb-e9986601b580` (session 2)
 
 ---
 
@@ -143,3 +144,59 @@ Alternatively, run a second pass with an expanded corporate-token list once the 
 | `contact-graph/resolve_candidates.py` | New — 7-phase candidate resolution pipeline |
 | `contact-graph/.env` | DB credentials (gitignored) |
 | `contact-graph/.gitignore` | `.env` entry |
+
+---
+
+## Session 2 — Email harvest pipeline
+
+### Schema additions (applied to live DB)
+
+Three tables added to the live DB that were already in schema.sql:
+- `organisation` — canonical organisation nodes (was inline `TEXT` in `role`, now a proper FK table)
+- `harvest_run` — audit log per pipeline run
+- `item_entity` — AI-extracted named entities from email/meeting bodies
+
+Two columns added:
+- `coappearance.first_seen`, `coappearance.last_seen` — timestamps for co-presence edges
+- `role.organisation_id` — FK to `organisation` (old `organisation TEXT` column left in place, empty)
+
+### harvest_email.py
+
+New script covering the full email harvest pipeline. Designed for unattended continuous operation.
+
+**What it does:**
+1. On startup: loads ignored patterns and internal addresses from DB
+2. For each account (all four): queries mu index (`maildir:/account/*` with `--format=json`)
+3. Per-message header harvest → `email_message` + `item_participant`
+4. Per-message body entity extraction → calls `claude -p --model claude-haiku-4-5-20251001` as subprocess → `item_entity`
+5. Updates `source_coverage` for resume-safe operation
+6. On rate limit: waits 900s and retries indefinitely
+
+**Key design decisions:**
+- mu output uses `--format=json` with `JSONDecoder(strict=False)` to handle control characters in subject fields
+- Head phase stops after 3 consecutive already-seen messages (incremental run efficiency)
+- All DB writes use `ON CONFLICT DO NOTHING` — safe to restart mid-run
+- HTML body stripping removes `<style>`/`<script>` blocks before tag stripping
+- Entity extraction skipped when body is empty
+
+**Extraction prompt:** Haiku extracts `person_mentioned`, `organisation`, `project`, `product`, `domain` from email body. Domain vocabulary matches source-meeting.md. Tested on 200-email sample: quality confirmed acceptable.
+
+**Throughput:** ~28s per email (11s Node.js startup + 15s API) — inherent to `claude -p` subprocess model without `--bare`.
+
+**Flags:**
+- `--sample N`: process N emails spread across accounts (time-range spread)
+- `--out DIR`: write extraction results as JSON files instead of DB
+- `--dry-run`: parse headers only, no DB writes, no claude calls
+- `--accounts ACCT ...`: restrict to specific accounts
+
+### Post-test DB state (after 3 test cycles, each 100 emails)
+
+(To be filled after test runs complete.)
+
+### Files created / modified
+
+| File | Change |
+|------|--------|
+| `contact-graph/schema.sql` | Added `organisation`, `harvest_run`, `item_entity`; altered `coappearance`, `role` |
+| `contact-graph/harvest_email.py` | New — complete email harvest + entity extraction pipeline |
+| `contact-graph/WORKLOG.md` | This entry |
