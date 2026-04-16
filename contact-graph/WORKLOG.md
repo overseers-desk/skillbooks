@@ -370,3 +370,74 @@ The spec's thread worker (source-email.md §3, line 19) does two things per thre
 5. **Thread status integration.** Currently Phase 3 sets all threads to `done` after participant resolution. With entity extraction added, `done` should mean both resolution and extraction are complete. Either extend Phase 3 or add a separate extraction phase that processes `done` threads that lack `item_entity` rows.
 
 The entity extraction is the slow and expensive part (AI calls). Participant resolution for the full 152k-thread corpus takes 8 seconds; entity extraction at 4 emails/batch will take days for the full corpus. This is why the spec describes budget-controlled runs and why concurrent tail workers matter — multiple workers processing different thread ranges in parallel, each with its own `claude` subprocess, with advisory locks preventing collision.
+
+---
+
+## Session 6 — Entity extraction pipeline
+
+### extract_email_entities.py
+
+New standalone script implementing the five items listed in session 5's "Gap to tail-only concurrent processing." Separate from harvest_email.py because extraction runs for hours/days vs the 30-second harvest pipeline.
+
+**What it does:**
+
+1. Builds a message_id→file_path map from mu (two parallel `mu find --fields="i"` / `--fields="l"` queries, zipped — same pattern as Phase 2 thread mapping). ~3s for full corpus.
+2. Queries for threads with unextracted messages, ordered by `priority_score DESC, last_message_at DESC`.
+3. Per thread: acquires PostgreSQL advisory lock (`pg_try_advisory_lock(hashtext(thread_id))`), reads maildir files via Python `email` stdlib, strips quoted content (`>` lines for plain text, `<blockquote>` for HTML), batches up to 4 messages per `claude -p` call.
+4. Writes `item_entity` rows (ON CONFLICT DO NOTHING) and `email_extraction_log` tracking rows in one transaction per batch.
+5. Budget control stops the run when estimated spend reaches the `--budget` threshold.
+
+**Extraction tracking:** New `email_extraction_log` table (message_id PK, status, extracted_at, tokens_in/out, error_detail). Status values: `done` (entities written), `empty` (body empty or AI returned nothing), `error`, `skipped`. Separates "processed, nothing found" from "not yet processed" — essential for budget-controlled runs that restart repeatedly.
+
+**Design decisions:**
+
+- Extraction is per-message (each body is distinct) but concurrency is per-thread (advisory lock). A worker locks a thread, processes all its unextracted messages, releases the lock.
+- Progress tracked in `email_extraction_log`, not `email_thread.status`. Thread status remains `done` from Phase 3 (participant resolution). Extraction has its own tracking because it runs independently, on a different schedule, and messages within a thread can be partially extracted.
+- Uses `claude -p --model claude-haiku-4-5-20251001 --output-format json --system-prompt PROMPT`. The Claude Code system prompt overhead (~55k cached tokens per call) roughly triples cost vs direct API; switching to direct API calls via `requests` + `ANTHROPIC_API_KEY` would reduce this if needed.
+
+**CLI:**
+```
+python3 extract_email_entities.py                    # 4 workers, no limit
+python3 extract_email_entities.py --budget 5.00      # stop after ~$5
+python3 extract_email_entities.py --workers 8
+python3 extract_email_entities.py --limit 100        # max 100 threads
+python3 extract_email_entities.py --dry-run
+python3 extract_email_entities.py --thread TID
+python3 extract_email_entities.py --recompute-priority
+```
+
+### Schema additions
+
+Applied to live DB and added to `schema.sql`:
+- `organisation` table (was in schema.sql but not live DB; required by `item_entity` FK)
+- `project` table (same)
+- `item_entity` table (same)
+- `email_extraction_log` table (new)
+
+### Testing completed
+
+| Test | Result |
+|------|--------|
+| Single thread (7 messages) | 4 empty, 3 done, 6 entities |
+| Idempotent re-run | "Nothing to process" |
+| Multi-worker 4 threads, 10 threads | 0 lock collisions |
+| Kill mid-flight + resume | 0 duplicates, picks up remaining |
+| Budget stop ($0.20) | Stops near limit |
+| Budget resume | Processes fresh messages |
+| Concurrent 4 workers + budget | 0 lock-skipped, stops mid-thread |
+| Duplicate check across all runs | 0 in both tables |
+
+### Production DB state after tests
+
+| Table | Rows |
+|---|---|
+| email_extraction_log | 88 (66 done, 22 empty) |
+| item_entity | 320 (email source_kind) |
+
+### Files created / modified
+
+| File | Change |
+|---|---|
+| `contact-graph/extract_email_entities.py` | New — standalone entity extraction pipeline |
+| `contact-graph/schema.sql` | Added `email_extraction_log` table |
+| `contact-graph/WORKLOG.md` | This entry |
