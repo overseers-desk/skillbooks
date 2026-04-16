@@ -74,13 +74,9 @@ Life changes are stored as timestamped facts on person nodes, not as overwritten
 
 Two plugins ship from the start: email and knowledge-capture (meeting notes). Additional sources — LinkedIn messages, calendar, SMS — can be added later following the same structure. Each plugin is fully specified in its own document: [source-email.md](source-email.md) and [source-meeting.md](source-meeting.md).
 
-A source is anything with a stable per-item id that the graph can consume. Each source plugin implements `enumerate_items()`, which returns all items the plugin knows about — each with its stable id, participants, timestamp, and participant roles. The ingestion core diffs the returned items against existing `item_participant` entries by `(source_kind, external_item_id)` and processes only new or changed items. How the plugin internally enumerates (cursor-based iteration, directory listing, API pagination) is its own concern.
+A source is anything with a stable per-item id that the graph can consume. Each plugin writes participants to its own prefixed table (`email_thread_participant` for email, `meeting_participant` for meetings) after identity resolution. The `edge` and `coappearance` views union across plugin participant tables; whether edges are directed or undirected depends on the participant roles the source provides.
 
-The ingestion loop is source-agnostic. For each new item it:
-- Upserts participant entries in `item_participant` with source-specific roles
-- Derives edges and coappearances from `item_participant`. Whether edges are directed or undirected depends on the participant roles the source provides.
-
-When the same real-world interaction is captured by multiple sources (an email thread about a meeting, plus the meeting note itself), each source produces its own `item_participant` entries independently. This is intentional: an email after a meeting is one more signal of the relationship, not a duplicate.
+When the same real-world interaction is captured by multiple sources (an email thread about a meeting, plus the meeting note itself), each source produces its own participant rows independently. This is intentional: an email after a meeting is one more signal of the relationship, not a duplicate.
 
 ### 2. AI tagger
 
@@ -124,10 +120,9 @@ Database: `contact_graph` on the local PostgreSQL instance.
 | **human** | one row per real human; `internal` flags Rivermill team members and household | id, display_name, linkedin_url, internal, notes |
 | **organisation** | canonical organisation node; created when a new org name appears in role or item_entity resolution | id, name, notes |
 | **role** | a human holds a role at an organisation; the role owns its email address | id, human_id, organisation_id (FK→organisation), title, email_address_id |
-| **item_participant** | normalised participants produced by each plugin's enumerate_items(); source-agnostic so edge and coappearance queries need no UNION | source_kind, external_item_id, identifier_ref, role |
-| **edge** | cached directed human→human counts, rebuilt in full at the end of every harvest run; derived from item_participant | from_human_id, to_human_id, message_count, first_seen, last_seen |
-| **coappearance** | cached undirected co-presence on items, rebuilt in full at the end of every harvest run; derived from item_participant | human_id_a, human_id_b, thread_count, first_seen, last_seen |
-| **harvest_run** | one row per completed harvest run; source of truth for "when were edge/coappearance last rebuilt" | id, started_at, completed_at, items_processed |
+| **meeting_participant** | meeting plugin participant log; one row per attendee per meeting item; source for coappearance and edge views for meeting items | source_kind, external_item_id, identifier_ref, role |
+| **edge** | view: directed human→human interaction count, derived from plugin participant tables (email_thread_participant, meeting_participant); no stored rows | from_human_id, to_human_id, thread_count, first_seen, last_seen |
+| **coappearance** | view: undirected co-presence on items, derived from plugin participant tables; no stored rows | human_id_a, human_id_b, thread_count, first_seen, last_seen |
 | **item_entity** | named entities extracted from item bodies by AI; the DB equivalent of meeting YAML frontmatter, populated for both sources; answers "what did this message/meeting discuss?" rather than "who participated?"; FK columns are populated by a post-extraction resolution pass | source_kind, external_item_id, entity_type ('person_mentioned'/'organisation'/'project'/'product'/'domain'), value, context (nullable), human_id (nullable FK→human), organisation_id (nullable FK→organisation), project_id (nullable FK→project), extracted_at; natural unique key (source_kind, external_item_id, entity_type, value) |
 | **tag** | normalised concept labels shared across humans and projects | id, label, category |
 | **tag_evidence** | each observation of a tag tied to the identifier it was derived from (email_address_id for the email plugin, linkedin_url for LinkedIn); never stored against human_id directly, so repointing an identifier to a different human is free; date is a documented read-optimisation copy of the immutable source item date | tag_id, source_type (email/linkedin/manual), identifier_ref, source_item_id, date, snippet, valid |
@@ -139,7 +134,6 @@ Database: `contact_graph` on the local PostgreSQL instance.
 | **linkedin_connection** | second-degree edges from profile browsing; human_id nullable for unresolved nodes | human_id_a, linkedin_url_a, human_id_b, linkedin_url_b, discovered_via_human_id, scraped_at |
 | **processing_queue** | unified job queue for AI tagging and LinkedIn enrichment; rebuilt in priority order (by edge count desc) after each harvest run so insertion order encodes priority — no stored score needed | human_id, job_type (tag/linkedin), queued_at, processed_at, model_used |
 | **reconnect_schedule** | computed next-prompt date per human; decay score not stored, computed on demand | human_id, next_prompt_date, last_prompted_at, computed_at |
-| **email_address_candidate** | bootstrap staging: candidate addresses extracted from the mu corpus before identity resolution; cleared as candidates are resolved or confirmed as noise | address (PK), display_name |
 
 ---
 

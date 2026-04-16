@@ -12,18 +12,15 @@ Message-ID from email headers. Available as a named field in mu's sexp output.
 
 ## 3. Scan strategy
 
-Cursor-based, head-first. Each run processes in two phases:
+**Coordinator** reads all active accounts in parallel. Active accounts are listed in config; `me-weiwu-id-au` is excluded (no real humans write to it). For each account: read the mu index from `newest_scanned_id` backward until N=3 consecutive Message-IDs are already in the DB, then update `email_source_coverage`. Messages are deduplicated across accounts on Message-ID (globally unique per RFC 2822 — the same message appearing in two accounts is one row in `email_message`).
 
-1. **Head (newest to already-seen).** Start from the latest message in mu's index and work backward until N=3 consecutive Message-IDs are already in the DB. This catches everything mu has indexed since the last run. A message with an old date but a new mu index position (late delivery, restored backup) appears at the head and is caught here.
-2. **Tail (oldest known to further back).** Continue from the earliest known boundary and work backward, consuming available processing budget. Stops when the budget is exhausted or the source end is reached.
+After harvest, messages are grouped into threads using mu's thread grouping. Thread identity is taken from mu's `:thread-id` field in sexp output rather than derived from the References chain directly; see §9 for rationale. For each thread with unprocessed messages (no `email_thread` row yet, or `last_processed_at` < newest message date), the coordinator acquires a per-thread lock (PostgreSQL advisory lock keyed on thread_id hash), collects all messages for that thread across all accounts, then dispatches to a worker.
 
-The task is closed by: (1) head must be fully processed every run, (2) tail processing consumes up to a token/credit budget per run, so available resources are used without exhausting the processing window.
+**Worker** (amend-always): receives thread_id and the set of unprocessed message_ids (all messages on first run; delta on subsequent runs). Strips quoted content from each message body (see §4b). Sends thread to `claude -p`. Writes `email_thread_participant` rows and `item_entity` rows. Sets `email_thread.last_processed_at`. Amend-always means there is one code path: the first run processes all messages in a thread; later runs process only the messages added since `last_processed_at`. The per-thread lock prevents two account-harvest workers from racing on the same cross-account thread.
 
-N=3 consecutive already-seen items is the stopping condition for the head phase. It tolerates one missing item without loss of correctness.
+`email_source_coverage` stores `newest_scanned_id` and `oldest_scanned_id` per account. The DB's own contents are the truth; the coverage record is a cache to avoid re-scanning, not a correctness constraint — losing it forces a re-scan but does not corrupt the graph.
 
-The `source_coverage` table stores `newest_scanned_id` and `oldest_scanned_id` per account. The DB's own contents are the truth; the coverage record is a cache to skip re-scanning, not a correctness constraint — losing it forces a re-scan but does not corrupt the graph.
-
-Historical imports (old Gmail takeouts, PST archives) are handled by the tail phase without special case.
+Tail scan (oldest known to further back) consumes available processing budget per run, enabling incremental historical import without blocking head processing.
 
 ## 4. Parse output
 
@@ -49,7 +46,7 @@ The header parse captures who sent what to whom. The body of an email may also n
 | `product` | Named assets, offerings, or products discussed — e.g. horses, software products, menu items |
 | `domain` | Activity classification from the domain taxonomy (same fixed vocabulary as the meeting plugin) |
 
-**Input to the model:** subject line plus body text (truncated to a reasonable window if long). The prompt requests the same structured fields as the meeting frontmatter schema.
+**Input to the model:** subject line plus body text (truncated to a reasonable window if long). Quoted content is stripped before extraction: lines starting with `>` (plain-text quoting) and `<blockquote>` elements (HTML mail) are removed. Quoted material was already captured when the original message was processed; re-extracting it would attribute entities to the wrong message. The prompt requests the same structured fields as the meeting frontmatter schema.
 
 **Quality note:** Email bodies are shorter and more contextual than meeting transcripts; entity extraction is noisier. The `context` field is often blank or low-confidence. Extraction should be treated as soft signal — the same entity appearing across multiple emails to/from the same person strengthens the association.
 
@@ -92,11 +89,11 @@ The `identifier_ref` column in `item_participant` holds the email address for it
 
 ## 7. Edge semantics
 
-Directed edges: sender -> each recipient. Stored in the `edge` table as `(from_human_id, to_human_id)` with `message_count`, `first_seen`, `last_seen`. The ratio of outbound to inbound edges reveals who initiates.
+Thread is the unit, not the message. The worker populates `email_thread_participant` with one row per (thread, human) pair after identity resolution. Directed edges and coappearances are views derived from that table — this plugin writes no rows to `edge` or `coappearance` directly.
 
-Co-appearance edges: when two non-self participants appear on the same message, they get an undirected entry in `coappearance`. This enables "do A and B already know each other" before making an introduction.
+Directed: a sender-role participant in a thread has a directed edge to each non-sender participant in the same thread. Edge weight = number of threads with that directed pair (`thread_count`), not number of messages. The ratio of outbound to inbound thread_count reveals who initiates conversations.
 
-CC-to-CC coappearance (two people both CC'd, neither the sender) is included, probably at lower weight than sender-to-recipient.
+Undirected (coappearance): any two non-self participants in the same thread get an undirected coappearance entry. This includes CC-to-CC pairs. Weighting differences between sender-recipient and CC-to-CC pairs are a query-layer concern, not stored in the view.
 
 ## 8. Deduplication
 
@@ -106,17 +103,22 @@ By Message-ID in the `email_message` table. The N-consecutive-seen stopping rule
 
 | Table | Fields |
 |-------|--------|
-| **email_address** | address, human_id, is_canonical, source |
-| **email_message** | message_id is the natural PK (Message-ID header; globally unique per RFC 2822); no surrogate id | message_id (PK), account, date, subject |
-| **ignored_pattern** | pattern, pattern_type (address/domain/subject), reason |
-| **source_coverage** | source_kind, source_ref, newest_scanned_id, oldest_scanned_id, last_checked_at |
+| **email_address** | address, human_id, is_canonical, source, display_name_raw |
+| **email_message** | message_id (PK — Message-ID header, globally unique per RFC 2822), thread_id (FK→email_thread), account, date, date_anomaly, subject |
+| **email_thread** | thread_id (PK — mu's internal `:thread-id`; see note below), first_message_at, last_message_at, last_processed_at, status ('pending'/'done'/'error'), priority_score, error_message |
+| **email_thread_participant** | thread_id (FK→email_thread), human_id (FK→human), roles TEXT[], first_seen_at — unique (thread_id, human_id) |
+| **email_ignored_pattern** | id, pattern, pattern_type (address/domain/subject/regex), reason |
+| **email_source_coverage** | source_kind, source_ref, newest_scanned_id, oldest_scanned_id, last_checked_at |
+| **email_address_candidate** | bootstrap staging: candidate addresses from mu corpus before identity resolution; cleared once candidates are resolved or confirmed noise | address (PK), display_name |
+
+**Note on thread_id.** `email_thread.thread_id` is mu's internal thread identifier rather than a root message_id derived from the References chain. Outbound messages sent via Amazon SES have their Message-ID rewritten before delivery. The sent copy in the maildir carries the original (pre-SES) ID; recipients' In-Reply-To headers reference the SES-assigned ID. These never match, so a References-chain walk splits one conversation into two disconnected fragments. mu uses subject-line normalisation as a threading fallback that reconnects these fragments. This fallback is not detectable from headers alone and cannot be reimplemented without replicating mu's algorithm. Thread identity therefore comes from mu's Xapian index. On laptop migration, thread_ids can be remapped by querying mu on the new machine for any known message_id in each thread.
 
 `email_address` is also referenced by the generic `role` table (a role owns its email address).
 
 ## 10. Open questions
 
 - CC-to-CC coappearance weight: what discount relative to sender-to-recipient coappearance?
-- `ignored_pattern` scope: is subject-line filtering actually needed, or is address/domain sufficient?
+- `email_ignored_pattern` scope: is subject-line filtering actually needed, or is address/domain sufficient?
 
 ---
 

@@ -200,3 +200,85 @@ New script covering the full email harvest pipeline. Designed for unattended con
 | `contact-graph/schema.sql` | Added `organisation`, `harvest_run`, `item_entity`; altered `coappearance`, `role` |
 | `contact-graph/harvest_email.py` | New — complete email harvest + entity extraction pipeline |
 | `contact-graph/WORKLOG.md` | This entry |
+
+---
+
+## Session 3 — Parallel accounts + batched extraction
+
+### Fixes applied to harvest_email.py
+
+- **Null byte crash**: `extract_body` can return content with `\x00` bytes which kills `subprocess.run` on Linux. Fixed by stripping `\x00` from `user_prompt` before building the command, and catching `ValueError` as a non-fatal warning.
+- **Committed** with session ID `2d115f4b-e62c-4899-a1eb-e9986601b580` (commit `e88c2a0`).
+
+### Parallel account processing
+
+- `main()` now runs all 4 accounts in parallel via `ThreadPoolExecutor(max_workers=len(accounts))`, each account in its own thread with its own DB connection.
+- Within each account, the message list is still walked sequentially (single thread), preserving head-phase stop logic and coverage tracking.
+- 4× throughput vs original sequential account processing.
+
+### Batched extraction (4 emails per claude call)
+
+- Added `BATCH_SIZE = 4` constant.
+- Added `EXTRACTION_BATCH_SYSTEM_PROMPT`: same entity rules, but expects N emails separated by `=== Email N ===` and returns a JSON array of N objects.
+- Added `run_extraction_batch(emails)` / `extract_batch_with_retry(emails)`: one `claude -p` call for up to 4 emails; falls back to empty lists on parse error or length mismatch.
+- Rewrote `scan_account` inner loop: accumulates eligible messages into `pending[]`, flushes via `flush_batch()` every `BATCH_SIZE` messages. Head phase and coverage tracking unchanged.
+- Timeout scaled to `120 + 30 * batch_size` seconds for batch calls.
+
+### Design decision confirmed
+
+Within-account sub-workers (2 workers per account) were considered and rejected: the head-phase stop rule (3 consecutive seen) and `source_coverage` both require a single thread walking the message list in order per account. Breaking this order breaks resumability. Final design: 4 account threads × 1 sequential worker each × 4-email batches.
+
+### Formal run state
+
+- Formal run started, processed ~483 emails across all 4 accounts before being stopped for the batching redesign.
+- DB truncation not done — those 483 rows remain. On restart, `msg_exists` will skip them; has_history will be False (no coverage row saved since no account completed a full scan). First new emails picked up cleanly.
+- **To restart**: `python3 harvest_email.py` (no flags) from `contact-graph/` directory.
+
+### Files modified this session
+
+| File | Change |
+|------|--------|
+| `contact-graph/harvest_email.py` | Null byte fix; parallel accounts; batch extraction; scan_account rewrite |
+| `contact-graph/WORKLOG.md` | This entry |
+
+---
+
+## Session 4 — Thread-centric redesign and schema rebuild
+
+Session ID: `2353c9a2-a33f-4de4-8c1b-7e395523f803`
+
+### Design decisions
+
+**Thread as graph unit.** The previous design built graph edges at message granularity (one edge increment per message). The redesign makes the thread the unit: co-participation in a thread produces one edge regardless of how many messages are exchanged. `edge` and `coappearance` become SQL views derived from plugin participant tables, eliminating stored aggregates with opaque counts.
+
+**mu thread_id.** Thread identity comes from mu's internal `:thread-id` (Xapian database) rather than the root message_id derived from the References chain. Reason: outbound messages from `director@rivermill.au` sent via Amazon SES have their Message-ID rewritten before delivery. The sent copy in the maildir carries the original ID; recipients' In-Reply-To headers reference the SES-assigned ID. A References-chain walk splits one conversation into two disconnected fragments. mu uses subject-line normalisation as a threading fallback that reconnects them. This cannot be reproduced without mu. On laptop migration, thread_ids can be remapped by querying mu on the new machine for any known message_id in each thread.
+
+**Thread state machine.** Tail processing will run for months. `email_thread.status` (`pending`/`done`/`error`) enables resume-safe operation across restarts. `priority_score` orders the tail queue (threads with known-human participants processed first). `error_message` captures failures without losing state.
+
+**Plugin naming convention.** All plugin-owned tables are prefixed with the plugin name (`email_*`, `meeting_*`). Generic/cross-plugin tables carry no prefix.
+
+**Amend-always worker.** Single code path: process all messages for a thread since `last_processed_at`. First run processes all messages; subsequent runs process only the delta. No separate full-rebuild mode.
+
+**Multi-account coordinator.** Three accounts processed (me-weiwu-id-au excluded via config). Harvest all accounts in parallel; dedup on message_id; group by mu thread_id; dispatch per-thread workers with advisory locks.
+
+### Live DB changes
+
+19 tables dropped; `ignored_pattern` renamed to `email_ignored_pattern`. 4 new tables created:
+
+| Table | Purpose |
+|---|---|
+| `email_thread` | One row per mu thread; carries status, priority_score, error_message |
+| `email_message` | One row per message; thread_id FK nullable (populated after threading) |
+| `email_thread_participant` | One row per (thread, resolved human); primary source for edge view |
+| `email_source_coverage` | Per-account scan cursor (renamed from source_coverage) |
+
+Tables retained from previous sessions: `human` (7,868 rows), `email_address` (27,520 rows), `email_address_candidate` (27,587 rows), `email_ignored_pattern` (98 rows).
+
+### Files modified
+
+| File | Change |
+|---|---|
+| `contact-graph/schema.sql` | Full rewrite: new email plugin tables, plugin naming, edge/coappearance as views, meeting_participant replaces item_participant |
+| `contact-graph/plan.md` | Email plugin tables removed; edge/coappearance updated to views; item_participant → meeting_participant; harvest_run removed |
+| `contact-graph/source-email.md` | §3 scan strategy rewritten for multi-account coordinator; §7 thread-based edges; §9 tables updated; SES mutation rationale added |
+| `contact-graph/WORKLOG.md` | This entry |
