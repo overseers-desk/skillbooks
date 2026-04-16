@@ -216,6 +216,17 @@ def phase0_seed(cur):
 # Phase 1 — Prune candidates
 # ---------------------------------------------------------------------------
 
+def _strip_plus_tag(addr: str) -> str:
+    """foo+tag@domain → foo@domain.
+    Only strips when the local part before + is a normal identifier
+    (letters/digits/dots/dashes/underscores). Quoted local parts and
+    addresses where the local part is not a clean identifier are returned
+    unchanged.
+    """
+    m = re.match(r'^([a-zA-Z0-9._-]+)\+[^@]+(@.+)$', addr)
+    return (m.group(1) + m.group(2)) if m else addr
+
+
 def phase1_prune(cur):
     log("Phase 1: pruning candidates …")
 
@@ -234,7 +245,47 @@ def phase1_prune(cur):
     )
     log(f"  1b self-addresses:     -{cur.rowcount}")
 
-    # 1c. Ignore patterns
+    # 1c. Plus-tag normalisation: foo+tag@domain → foo@domain
+    #     Runs before ignore-pattern pruning so normalised forms
+    #     (e.g. bounces@zohoforms.com.au) become prunable.
+    cur.execute("SELECT address, display_name FROM email_address_candidate")
+    tagged_rows = [(a, d) for a, d in cur.fetchall() if _strip_plus_tag(a) != a]
+    renamed = merged_perm = merged_cand = 0
+    for addr, disp in tagged_rows:
+        base = _strip_plus_tag(addr)
+        # Base is a self-address → delete
+        if base in SELF_ADDRESSES:
+            cur.execute("DELETE FROM email_address_candidate WHERE address = %s", (addr,))
+            merged_perm += 1
+            continue
+        # Base already in permanent table → delete tagged candidate
+        cur.execute("SELECT 1 FROM email_address WHERE address = %s", (base,))
+        if cur.fetchone():
+            cur.execute("DELETE FROM email_address_candidate WHERE address = %s", (addr,))
+            merged_perm += 1
+            continue
+        # Base already in candidate table → merge display name, delete tagged
+        cur.execute("SELECT display_name FROM email_address_candidate WHERE address = %s", (base,))
+        row = cur.fetchone()
+        if row:
+            if not row[0] and disp:
+                cur.execute(
+                    "UPDATE email_address_candidate SET display_name = %s WHERE address = %s",
+                    (disp, base)
+                )
+            cur.execute("DELETE FROM email_address_candidate WHERE address = %s", (addr,))
+            merged_cand += 1
+        else:
+            # Base not seen anywhere — rename tagged to base
+            cur.execute(
+                "UPDATE email_address_candidate SET address = %s WHERE address = %s",
+                (base, addr)
+            )
+            renamed += 1
+    log(f"  1c plus-tag renamed:   {renamed}")
+    log(f"  1c plus-tag merged:    {merged_perm + merged_cand} ({merged_perm} into perm, {merged_cand} into cand)")
+
+    # 1d. Ignore patterns
     cur.execute("SELECT pattern, pattern_type FROM ignored_pattern WHERE pattern_type != 'subject'")
     patterns = cur.fetchall()
     deleted_by_type = defaultdict(int)
@@ -260,7 +311,7 @@ def phase1_prune(cur):
             )
         deleted_by_type[ptype] += cur.rowcount
     for ptype, n in sorted(deleted_by_type.items()):
-        log(f"  1c ignored ({ptype:8s}): -{n}")
+        log(f"  1d ignored ({ptype:8s}): -{n}")
 
     cur.execute("SELECT COUNT(*) FROM email_address_candidate")
     log(f"  → {cur.fetchone()[0]} candidates remaining")
@@ -293,14 +344,15 @@ def phase2_enrich(cur):
 # Phase 3 — Display name clustering
 # ---------------------------------------------------------------------------
 
-def phase3_cluster(cur):
+def phase3_cluster(cur, resolution: dict) -> None:
+    """Populate resolution {addr: human_id} via display-name clustering."""
     log("Phase 3: display name clustering …")
 
     # Load existing humans for matching
     cur.execute("SELECT id, display_name FROM human")
     raw_humans = [(row[0], row[1]) for row in cur.fetchall() if row[1]]
     existing_humans = {normalize_name(name): hid for hid, name in raw_humans}
-    # Token-set index for subset matching (e.g. "Liansu Yu" ⊆ tokens of existing human)
+    # Token-set index for subset matching (e.g. "Bárbara Quiñones" ⊆ "Bárbara Quiñones Vásquez")
     human_tokensets = [(hid, set(normalize_name(name).split())) for hid, name in raw_humans]
 
     # Load all candidates with a display name
@@ -319,25 +371,19 @@ def phase3_cluster(cur):
     matched = 0
 
     for norm, addrs in clusters.items():
-        # Skip if any address in cluster already has a resolved human
-        cur.execute(
-            "SELECT human_id_resolved FROM email_address_candidate WHERE address = ANY(%s) AND human_id_resolved IS NOT NULL LIMIT 1",
-            (addrs,)
-        )
-        if cur.fetchone():
+        # Skip cluster if already resolved
+        if any(a in resolution for a in addrs):
             continue
 
-        # Match against existing humans — exact normalized match first
+        # Exact normalized match against existing humans
         if norm in existing_humans:
             hid = existing_humans[norm]
-            cur.execute(
-                "UPDATE email_address_candidate SET human_id_resolved = %s WHERE address = ANY(%s)",
-                (hid, addrs)
-            )
+            for a in addrs:
+                resolution[a] = hid
             matched += len(addrs)
             continue
 
-        # Subset match — cluster tokens ⊆ existing human tokens (min 2 tokens required)
+        # Subset match — cluster tokens ⊆ existing human tokens (min 2 tokens)
         cluster_tokens = set(norm.split())
         if len(cluster_tokens) >= 2:
             best_hid = None
@@ -347,10 +393,8 @@ def phase3_cluster(cur):
                     best_overlap = len(htokens)
                     best_hid = hid
             if best_hid:
-                cur.execute(
-                    "UPDATE email_address_candidate SET human_id_resolved = %s WHERE address = ANY(%s)",
-                    (best_hid, addrs)
-                )
+                for a in addrs:
+                    resolution[a] = best_hid
                 matched += len(addrs)
                 continue
 
@@ -365,7 +409,7 @@ def phase3_cluster(cur):
             continue
 
         # Auto-create human
-        best_name = raw_name  # use raw name from first address in cluster
+        best_name = raw_name
         if DRY_RUN:
             log(f"  [dry-run] would create human: {best_name!r} ({len(addrs)} addr)")
             new_humans += 1
@@ -377,10 +421,8 @@ def phase3_cluster(cur):
         )
         hid = cur.fetchone()[0]
         existing_humans[norm] = hid
-        cur.execute(
-            "UPDATE email_address_candidate SET human_id_resolved = %s WHERE address = ANY(%s)",
-            (hid, addrs)
-        )
+        for a in addrs:
+            resolution[a] = hid
         new_humans += 1
 
     log(f"  matched to existing humans: {matched} addresses")
@@ -391,15 +433,17 @@ def phase3_cluster(cur):
 # Phase 4 — Domain ownership rules
 # ---------------------------------------------------------------------------
 
-def phase4_domain(cur):
+def phase4_domain(cur, resolution: dict) -> None:
+    """Populate resolution {addr: human_id} via domain ownership rules."""
     log("Phase 4: domain ownership rules …")
     assigned = 0
 
-    # Load unresolved candidates
-    cur.execute("SELECT address, display_name FROM email_address_candidate WHERE human_id_resolved IS NULL")
+    cur.execute("SELECT address, display_name FROM email_address_candidate")
     rows = cur.fetchall()
 
     for addr, disp in rows:
+        if addr in resolution:
+            continue
         dom = domain_of(addr)
         if not dom:
             continue
@@ -408,10 +452,7 @@ def phase4_domain(cur):
         matched = False
         for pattern, hid, _ in DOMAIN_OWNERSHIP:
             if re.search(pattern, dom):
-                cur.execute(
-                    "UPDATE email_address_candidate SET human_id_resolved = %s WHERE address = %s",
-                    (hid, addr)
-                )
+                resolution[addr] = hid
                 assigned += 1
                 matched = True
                 break
@@ -421,32 +462,19 @@ def phase4_domain(cur):
         # colourful.land / colorful.land → Weiwu unless display name suggests Liansu
         if dom in ('colourful.land', 'colorful.land') or dom.endswith('.colourful.land') or dom.endswith('.colorful.land'):
             disp_lower = disp.lower()
-            if 'liansu' in disp_lower or 'yu lian' in disp_lower:
-                hid = 2  # Liansu
-            else:
-                hid = 1  # Weiwu
-            cur.execute(
-                "UPDATE email_address_candidate SET human_id_resolved = %s WHERE address = %s",
-                (hid, addr)
-            )
+            hid = 2 if ('liansu' in disp_lower or 'yu lian' in disp_lower) else 1
+            resolution[addr] = hid
             assigned += 1
             continue
 
         # realss.com — match display name against known realss humans
         if dom == 'realss.com':
             norm = normalize_name(disp) if disp else ''
-            hid = None
             for key, kid in REALSS_NAMES.items():
                 if key in norm:
-                    hid = kid
+                    resolution[addr] = kid
+                    assigned += 1
                     break
-            if hid:
-                cur.execute(
-                    "UPDATE email_address_candidate SET human_id_resolved = %s WHERE address = %s",
-                    (hid, addr)
-                )
-                assigned += 1
-            continue
 
     log(f"  domain-assigned: {assigned} addresses")
 
@@ -455,16 +483,18 @@ def phase4_domain(cur):
 # Phase 5 — Insert into email_address
 # ---------------------------------------------------------------------------
 
-def phase5_insert(cur):
+def phase5_insert(cur, resolution: dict) -> None:
+    """Insert all surviving candidates into email_address."""
     log("Phase 5: inserting into email_address …")
-    cur.execute("SELECT address, display_name, human_id_resolved FROM email_address_candidate")
+    cur.execute("SELECT address, display_name FROM email_address_candidate")
     rows = cur.fetchall()
 
     inserted_resolved = 0
     inserted_unresolved = 0
     skipped = 0
 
-    for addr, disp, hid in rows:
+    for addr, disp in rows:
+        hid = resolution.get(addr)
         cur.execute(
             """
             INSERT INTO email_address (address, human_id, is_canonical, source, display_name_raw)
@@ -574,18 +604,21 @@ def main():
     cur = conn.cursor()
 
     try:
-        # Ensure staging table has resolution column
+        # Drop leftover human_id_resolved column if it exists from a prior run
         cur.execute("""
             ALTER TABLE email_address_candidate
-            ADD COLUMN IF NOT EXISTS human_id_resolved INTEGER REFERENCES human(id)
+            DROP COLUMN IF EXISTS human_id_resolved
         """)
+
+        # addr → human_id: resolution state carried in memory between phases 3–5
+        resolution: dict = {}
 
         phase0_seed(cur)
         phase1_prune(cur)
         phase2_enrich(cur)
-        phase3_cluster(cur)
-        phase4_domain(cur)
-        phase5_insert(cur)
+        phase3_cluster(cur, resolution)
+        phase4_domain(cur, resolution)
+        phase5_insert(cur, resolution)
         phase6_aiqin(cur)
         phase7_report(cur)
 
