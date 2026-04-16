@@ -2,7 +2,7 @@
 
 ## 1. Source description
 
-Reads the mu email index. The corpus across all accounts is ~350k messages from ~15,000 unique email addresses. Most are one-off contacts, bulk senders, or automated addresses. A single account (director@rivermill.au) yields ~450 meaningful contacts; the full set is probably a few hundred to a few thousand worth maintaining.
+Reads the mu email index. The corpus spans multiple accounts; most addresses are one-off contacts, bulk senders, or automated addresses.
 
 Curation is done by connectivity: contacts with more edges to the user, or who appear on more threads with multiple known contacts, rank higher. The AI tagging pipeline processes in this priority order so the most-connected people are profiled first.
 

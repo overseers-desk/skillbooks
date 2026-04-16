@@ -122,11 +122,13 @@ Database: `contact_graph` on the local PostgreSQL instance.
 | Table | Relationship / purpose | Fields |
 |---|---|---|
 | **human** | one row per real human; `internal` flags self and team members | id, display_name, linkedin_url, internal, notes |
-| **role** | a human holds a role at an organisation; the role owns its email address | id, human_id, title, organisation, email_address_id |
+| **organisation** | canonical organisation node; created when a new org name appears in role or item_entity resolution | id, name, notes |
+| **role** | a human holds a role at an organisation; the role owns its email address | id, human_id, organisation_id (FK→organisation), title, email_address_id |
 | **item_participant** | normalised participants produced by each plugin's enumerate_items(); source-agnostic so edge and coappearance queries need no UNION | source_kind, external_item_id, identifier_ref, role |
-| **edge** | cached directed human→human counts, maintained by harvest; derived from item_participant for sources with sender/recipient distinction | from_human_id, to_human_id, message_count, first_seen, last_seen, computed_at |
-| **coappearance** | cached undirected co-presence on items; derived from item_participant | human_id_a, human_id_b, thread_count, computed_at |
-| **item_entity** | named entities extracted from item bodies by AI; the DB equivalent of meeting YAML frontmatter, populated for both sources; answers "what did this message/meeting discuss?" rather than "who participated?"; human_id is populated when a person_mentioned entry resolves to a known human | source_kind, external_item_id, entity_type ('person_mentioned'/'organisation'/'project'/'product'/'domain'), value, context (nullable), human_id (nullable FK→human), extracted_at; natural unique key (source_kind, external_item_id, entity_type, value) |
+| **edge** | cached directed human→human counts, rebuilt in full at the end of every harvest run; derived from item_participant | from_human_id, to_human_id, message_count, first_seen, last_seen |
+| **coappearance** | cached undirected co-presence on items, rebuilt in full at the end of every harvest run; derived from item_participant | human_id_a, human_id_b, thread_count |
+| **harvest_run** | one row per completed harvest run; source of truth for "when were edge/coappearance last rebuilt" | id, started_at, completed_at, items_processed |
+| **item_entity** | named entities extracted from item bodies by AI; the DB equivalent of meeting YAML frontmatter, populated for both sources; answers "what did this message/meeting discuss?" rather than "who participated?"; FK columns are populated by a post-extraction resolution pass | source_kind, external_item_id, entity_type ('person_mentioned'/'organisation'/'project'/'product'/'domain'), value, context (nullable), human_id (nullable FK→human), organisation_id (nullable FK→organisation), project_id (nullable FK→project), extracted_at; natural unique key (source_kind, external_item_id, entity_type, value) |
 | **tag** | normalised concept labels shared across humans and projects | id, label, category |
 | **tag_evidence** | each observation of a tag tied to the identifier it was derived from (email_address_id for the email plugin, linkedin_url for LinkedIn); never stored against human_id directly, so repointing an identifier to a different human is free; date is a documented read-optimisation copy of the immutable source item date | tag_id, source_type (email/linkedin/manual), identifier_ref, source_item_id, date, snippet, valid |
 | **project** | project nodes connectable to humans and tags | id, name, status, started_at |
@@ -135,7 +137,7 @@ Database: `contact_graph` on the local PostgreSQL instance.
 | **linkedin_snapshot** | versioned profile captures; source of truth from which contact_events are derived | id, human_id, scraped_at, url, headline, location, summary |
 | **human_event** | timestamped life-change facts derived from snapshot diffs | human_id, event_type, description, source_snapshot_id, event_date |
 | **linkedin_connection** | second-degree edges from profile browsing; human_id nullable for unresolved nodes | human_id_a, linkedin_url_a, human_id_b, linkedin_url_b, discovered_via_human_id, scraped_at |
-| **processing_queue** | unified job queue for AI tagging and LinkedIn enrichment | human_id, job_type (tag/linkedin), priority_score, queued_at, processed_at, model_used |
+| **processing_queue** | unified job queue for AI tagging and LinkedIn enrichment; rebuilt in priority order (by edge count desc) after each harvest run so insertion order encodes priority — no stored score needed | human_id, job_type (tag/linkedin), queued_at, processed_at, model_used |
 | **reconnect_schedule** | computed next-prompt date per human; decay score not stored, computed on demand | human_id, next_prompt_date, last_prompted_at, computed_at |
 | **email_address_candidate** | bootstrap staging: candidate addresses extracted from the mu corpus before identity resolution; cleared as candidates are resolved or confirmed as noise | address (PK), display_name |
 
