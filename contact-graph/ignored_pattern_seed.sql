@@ -12,7 +12,7 @@
 --             github.com, etc.) are excluded — they have human staff, and
 --             their automated addresses are caught by Tier 1.
 --
--- Note: SQLite REGEXP is case-sensitive by default. Patterns use (?i) where
+-- Note: PostgreSQL ~ is case-sensitive by default. Patterns use (?i) where
 -- case variance was observed in the corpus.
 
 INSERT INTO ignored_pattern (pattern, pattern_type, reason) VALUES

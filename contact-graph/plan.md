@@ -4,7 +4,7 @@
 
 A personal relationship operating system built from communication history and external profile data. It stores a graph of people, projects, and topics with edges between them, and uses an AI layer to do the associative reasoning that human memory does unreliably at scale.
 
-The substrate is a SQLite graph whose nodes are people, projects, and topics, and whose edges record that two things are connected, when, and in what context. The value compounds as the graph grows: the richer the node profiles, the more associations the AI can surface.
+The substrate is a PostgreSQL graph whose nodes are people, projects, and topics, and whose edges record that two things are connected, when, and in what context. The value compounds as the graph grows: the richer the node profiles, the more associations the AI can surface.
 
 ---
 
@@ -117,7 +117,7 @@ For the relationship-maintenance use case: runs daily, computes edge scores with
 
 ## Database
 
-Location: `~/.local/share/aesop/contact-graph.db`
+Database: `contact_graph` on the local PostgreSQL instance.
 
 | Table | Relationship / purpose | Fields |
 |---|---|---|
@@ -145,4 +145,4 @@ Location: `~/.local/share/aesop/contact-graph.db`
 - What triggers the daily decay prompt — cron, morning aesop run, or MCP tool?
 - How are topic nodes created and merged? Free-form tags from AI will drift; needs a normalisation pass.
 - How is identity resolution triggered? Name similarity plus domain patterns as a starting heuristic, confirmed manually or via LinkedIn.
-- At what scale does SQLite become the wrong engine? LinkedIn second-degree connections, if pursued, could push tag_evidence past 50M rows — the threshold at which PostgreSQL becomes appropriate.
+- At what scale should streaming replication be configured? The schema is replication-ready (all tables have primary keys); the decision is operational, not structural.
