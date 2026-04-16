@@ -1,0 +1,248 @@
+-- Contact Graph schema
+-- SQLite 3
+-- Table ownership is noted per plugin where relevant.
+-- Generic tables (no plugin comment) are owned by the ingestion core.
+
+-- ---------------------------------------------------------------------------
+-- People
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE human (
+    id              INTEGER PRIMARY KEY,
+    display_name    TEXT    NOT NULL,
+    linkedin_url    TEXT,
+    internal        INTEGER NOT NULL DEFAULT 0 CHECK (internal IN (0, 1)),
+    notes           TEXT
+);
+
+-- A human holds a role at an organisation; the role owns its email address.
+CREATE TABLE role (
+    id               INTEGER PRIMARY KEY,
+    human_id         INTEGER NOT NULL REFERENCES human (id),
+    title            TEXT,
+    organisation     TEXT,
+    email_address_id INTEGER REFERENCES email_address (id)
+);
+
+-- ---------------------------------------------------------------------------
+-- Email plugin
+-- ---------------------------------------------------------------------------
+
+-- Plugin: email
+CREATE TABLE email_address (
+    id               INTEGER PRIMARY KEY,
+    address          TEXT    NOT NULL UNIQUE,
+    human_id         INTEGER REFERENCES human (id),
+    is_canonical     INTEGER NOT NULL DEFAULT 0 CHECK (is_canonical IN (0, 1)),
+    source           TEXT    NOT NULL,  -- e.g. 'email_from', 'email_to', 'manual'
+    display_name_raw TEXT              -- raw display name from email headers before relay stripping,
+                                       -- e.g. "'Alex Macpherson, Kudosity' via Marketing"
+);
+
+-- Plugin: email
+-- date anomalies: the corpus contains ~18 messages with epoch (1970-01-01) or
+-- far-future (year 2600+) dates from corrupted headers. Ingestion should skip
+-- or flag these; the CHECK below rejects clearly invalid values.
+CREATE TABLE email_message (
+    message_id    TEXT    NOT NULL PRIMARY KEY,
+    account       TEXT    NOT NULL,
+    date          INTEGER NOT NULL CHECK (date > 0 AND date < 4102444800),  -- 1970–2100 range
+    date_anomaly  INTEGER NOT NULL DEFAULT 0,  -- 1 if date was corrected or flagged during ingest
+    subject       TEXT
+);
+
+-- Plugin: email
+-- Domains, addresses, subject patterns, or regex patterns to exclude from
+-- graph ingestion.
+--   address : exact address match
+--   domain  : all addresses at this domain
+--   subject : subject line contains this string
+--   regex   : REGEXP match against the full address (for wildcard/dynamic patterns)
+CREATE TABLE ignored_pattern (
+    id           INTEGER PRIMARY KEY,
+    pattern      TEXT    NOT NULL,
+    pattern_type TEXT    NOT NULL CHECK (pattern_type IN ('address', 'domain', 'subject', 'regex')),
+    reason       TEXT    NOT NULL,
+    UNIQUE (pattern, pattern_type)
+);
+
+-- Plugin: email
+-- Cursor state for the email plugin's head-first/tail scan.
+-- One row per email account (source_ref = account address).
+-- The meeting plugin uses whole-directory diff and does not use this table.
+CREATE TABLE source_coverage (
+    source_kind        TEXT    NOT NULL,
+    source_ref         TEXT    NOT NULL,
+    newest_scanned_id  TEXT,
+    oldest_scanned_id  TEXT,
+    last_checked_at    INTEGER,  -- Unix timestamp
+    PRIMARY KEY (source_kind, source_ref)
+);
+
+-- ---------------------------------------------------------------------------
+-- Ingestion core: normalised participant log
+-- ---------------------------------------------------------------------------
+
+-- One row per (item, participant address/name).
+-- source_kind: 'email' | 'meeting'
+-- role: source-specific participant role, e.g. 'from', 'to', 'cc' for email;
+--       'attendee' for meeting.
+-- identifier_ref: email address for the email plugin; display name as written
+--                 in the meeting heading for the meeting plugin.
+CREATE TABLE item_participant (
+    id               INTEGER PRIMARY KEY,
+    source_kind      TEXT    NOT NULL,
+    external_item_id TEXT    NOT NULL,
+    identifier_ref   TEXT    NOT NULL,
+    role             TEXT    NOT NULL,
+    UNIQUE (source_kind, external_item_id, identifier_ref, role)
+);
+
+-- ---------------------------------------------------------------------------
+-- Derived graph edges
+-- ---------------------------------------------------------------------------
+
+-- Directed human-to-human interaction counts, cached by harvest.
+-- Derived from item_participant for sources with sender/recipient distinction.
+CREATE TABLE edge (
+    from_human_id INTEGER NOT NULL REFERENCES human (id),
+    to_human_id   INTEGER NOT NULL REFERENCES human (id),
+    message_count INTEGER NOT NULL DEFAULT 0,
+    first_seen    INTEGER,  -- Unix timestamp
+    last_seen     INTEGER,  -- Unix timestamp
+    computed_at   INTEGER,  -- Unix timestamp
+    PRIMARY KEY (from_human_id, to_human_id)
+);
+
+-- Undirected co-presence on items (email thread, meeting).
+-- human_id_a < human_id_b by convention to avoid duplicate reverse rows.
+CREATE TABLE coappearance (
+    human_id_a   INTEGER NOT NULL REFERENCES human (id),
+    human_id_b   INTEGER NOT NULL REFERENCES human (id),
+    thread_count INTEGER NOT NULL DEFAULT 0,
+    computed_at  INTEGER,  -- Unix timestamp
+    PRIMARY KEY (human_id_a, human_id_b),
+    CHECK (human_id_a < human_id_b)
+);
+
+-- ---------------------------------------------------------------------------
+-- Tags
+-- ---------------------------------------------------------------------------
+
+-- Normalised concept labels shared across humans and projects.
+CREATE TABLE tag (
+    id       INTEGER PRIMARY KEY,
+    label    TEXT    NOT NULL UNIQUE,
+    category TEXT    NOT NULL  -- e.g. 'industry', 'location', 'language', 'topic'
+);
+
+-- Each observation of a tag tied to the identifier it was derived from.
+-- identifier_ref: email address for email-derived tags; linkedin_url for LinkedIn.
+-- date is a read-optimisation copy of the immutable source item date.
+CREATE TABLE tag_evidence (
+    id             INTEGER PRIMARY KEY,
+    tag_id         INTEGER NOT NULL REFERENCES tag (id),
+    source_type    TEXT    NOT NULL CHECK (source_type IN ('email', 'linkedin', 'manual')),
+    identifier_ref TEXT    NOT NULL,
+    source_item_id TEXT,
+    date           INTEGER,  -- Unix timestamp; read-optimisation copy
+    snippet        TEXT,
+    valid          INTEGER NOT NULL DEFAULT 1 CHECK (valid IN (0, 1))
+);
+
+-- ---------------------------------------------------------------------------
+-- Projects
+-- ---------------------------------------------------------------------------
+
+-- type values from meeting frontmatter taxonomy:
+-- development, purchase, campaign, event, initiative, investigation, crisis
+CREATE TABLE project (
+    id         INTEGER PRIMARY KEY,
+    name       TEXT    NOT NULL,
+    type       TEXT,    -- from taxonomy; NULL for projects not sourced from meeting notes
+    status     TEXT    NOT NULL,
+    started_at INTEGER  -- Unix timestamp
+);
+
+-- A human is relevant to a project.
+CREATE TABLE project_human (
+    project_id INTEGER NOT NULL REFERENCES project (id),
+    human_id   INTEGER NOT NULL REFERENCES human (id),
+    reason     TEXT,
+    added_at   INTEGER,  -- Unix timestamp
+    PRIMARY KEY (project_id, human_id)
+);
+
+-- A project is associated with a tag; enables associative discovery.
+CREATE TABLE project_tag (
+    project_id INTEGER NOT NULL REFERENCES project (id),
+    tag_id     INTEGER NOT NULL REFERENCES tag (id),
+    added_at   INTEGER,  -- Unix timestamp
+    PRIMARY KEY (project_id, tag_id)
+);
+
+-- ---------------------------------------------------------------------------
+-- LinkedIn enrichment
+-- ---------------------------------------------------------------------------
+
+-- Versioned profile captures; source of truth from which human_event rows
+-- are derived.
+CREATE TABLE linkedin_snapshot (
+    id          INTEGER PRIMARY KEY,
+    human_id    INTEGER NOT NULL REFERENCES human (id),
+    scraped_at  INTEGER NOT NULL,  -- Unix timestamp
+    url         TEXT    NOT NULL,
+    headline    TEXT,
+    location    TEXT,
+    summary     TEXT
+);
+
+-- Timestamped life-change facts derived from linkedin_snapshot diffs.
+CREATE TABLE human_event (
+    id                 INTEGER PRIMARY KEY,
+    human_id           INTEGER NOT NULL REFERENCES human (id),
+    event_type         TEXT    NOT NULL,
+    description        TEXT,
+    source_snapshot_id INTEGER REFERENCES linkedin_snapshot (id),
+    event_date         TEXT    NOT NULL  -- YYYY-MM-DD
+);
+
+-- Second-degree edges from LinkedIn profile browsing.
+-- human_id columns are nullable for unresolved nodes.
+CREATE TABLE linkedin_connection (
+    id                    INTEGER PRIMARY KEY,
+    human_id_a            INTEGER REFERENCES human (id),
+    linkedin_url_a        TEXT    NOT NULL,
+    human_id_b            INTEGER REFERENCES human (id),
+    linkedin_url_b        TEXT    NOT NULL,
+    discovered_via_human_id INTEGER REFERENCES human (id),
+    scraped_at            INTEGER NOT NULL,  -- Unix timestamp
+    UNIQUE (linkedin_url_a, linkedin_url_b)
+);
+
+-- ---------------------------------------------------------------------------
+-- Processing queue
+-- ---------------------------------------------------------------------------
+
+-- Unified job queue for AI tagging and LinkedIn enrichment.
+CREATE TABLE processing_queue (
+    id            INTEGER PRIMARY KEY,
+    human_id      INTEGER NOT NULL REFERENCES human (id),
+    job_type      TEXT    NOT NULL CHECK (job_type IN ('tag', 'linkedin')),
+    priority_score REAL   NOT NULL DEFAULT 0.0,
+    queued_at     INTEGER NOT NULL,  -- Unix timestamp
+    processed_at  INTEGER,           -- Unix timestamp; NULL = pending
+    model_used    TEXT
+);
+
+-- ---------------------------------------------------------------------------
+-- Decay scheduler
+-- ---------------------------------------------------------------------------
+
+-- Computed next-prompt date per human; decay score is computed on demand.
+CREATE TABLE reconnect_schedule (
+    human_id        INTEGER NOT NULL PRIMARY KEY REFERENCES human (id),
+    next_prompt_date TEXT   NOT NULL,  -- YYYY-MM-DD
+    last_prompted_at TEXT,             -- YYYY-MM-DD
+    computed_at     INTEGER            -- Unix timestamp
+);
