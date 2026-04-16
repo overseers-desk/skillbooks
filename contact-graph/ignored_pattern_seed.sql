@@ -158,7 +158,7 @@ INSERT INTO ignored_pattern (pattern, pattern_type, reason) VALUES
 ('int-renew@thawte.com',           'address', 'Thawte SSL renewal blast — Verisign bulk commercial'),
 ('ibanking.alert@dbs.com',         'address', 'DBS bank transaction alert robot'),
 ('NetBankNotification@cba.com.au', 'address', 'CBA bank automated transaction alert — no Reply-To'),
-('expiry@letsencrypt.org',         'address', "Let's Encrypt certificate expiry bot"),
+('expiry@letsencrypt.org',         'address', 'Let''s Encrypt certificate expiry bot'),
 
 -- =========================================================================
 -- Subject patterns (sender address varies, subject is the stable signal)
@@ -237,4 +237,11 @@ INSERT INTO ignored_pattern (pattern, pattern_type, reason) VALUES
 ('discover@airbnb.com',            'address', 'Airbnb editorial/marketing automation — @airbnb.com is too broad to block; this specific local part is purely promotional'),
 ('googlebusinessprofile-support@google.com', 'address', 'Google Business Profile automated ticket bot — canned auto-response system, not a Google employee'),
 ('SIA_AutoResponse@singaporeair.com',   'address', 'Singapore Airlines auto-responder robot — singaporeair.com has human senders so domain cannot be blocked'),
-('SIA_AutoResponse@singaporeair.com.sg','address', 'Singapore Airlines auto-responder robot, .com.sg variant — same local part, alternate sending domain');
+('SIA_AutoResponse@singaporeair.com.sg','address', 'Singapore Airlines auto-responder robot, .com.sg variant — same local part, alternate sending domain'),
+
+-- -------------------------------------------------------------------------
+-- Infrastructure domains discovered during candidate resolution
+-- -------------------------------------------------------------------------
+('amzses.rivermill.au',  'domain', 'Amazon SES bounce envelope domain for Rivermill — local parts are UUID message IDs, no human sender'),
+('email.dropbox.com',    'domain', 'Dropbox notification relay — local parts are UUID tokens; no human sender possible'),
+('members.ebay.com',     'domain', 'eBay member ID relay — local parts are hex member IDs; resolved to display name in headers, not a personal address');
