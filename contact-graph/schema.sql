@@ -79,7 +79,8 @@ CREATE TABLE email_message (
     account       TEXT    NOT NULL,
     date          INTEGER NOT NULL CHECK (date > 0 AND date < 4102444800),
     date_anomaly  BOOLEAN NOT NULL DEFAULT FALSE,
-    subject       TEXT
+    subject       TEXT,
+    is_spam       BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- Plugin: email
@@ -227,6 +228,19 @@ CREATE TABLE item_entity (
     project_id       INTEGER REFERENCES project (id),
     extracted_at     INTEGER,
     UNIQUE (source_kind, external_item_id, entity_type, value)
+);
+
+-- Plugin: email
+-- Tracks which messages have been through entity extraction.
+-- Separates "processed, nothing found" (empty) from "not yet processed"
+-- (no row), enabling budget-controlled runs to resume without reprocessing.
+CREATE TABLE email_extraction_log (
+    message_id   TEXT    NOT NULL PRIMARY KEY REFERENCES email_message (message_id),
+    status       TEXT    NOT NULL CHECK (status IN ('done', 'empty', 'error', 'skipped')),
+    extracted_at INTEGER NOT NULL,
+    tokens_in    INTEGER,
+    tokens_out   INTEGER,
+    error_detail TEXT
 );
 
 -- ---------------------------------------------------------------------------
