@@ -203,7 +203,12 @@ By filename. On each directory scan, if a filename already exists as an `externa
 
 ## 9. Tables owned
 
-None. The meeting plugin uses only generic tables (`item_participant`, `coappearance`). If metadata storage beyond what `item_participant` provides becomes necessary, a `meeting_note` table analogous to `email_message` could be added.
+None. The meeting plugin uses only generic tables. During ingestion, the plugin populates:
+
+- `item_participant` — one row per participant per meeting (coappearance derived from this)
+- `item_entity` — one row per entity from the frontmatter `people_mentioned`, `organisations`, `projects`, `products`, and `domains` fields; `source_kind = 'meeting'`, `external_item_id = filename`
+
+If metadata storage beyond what these generic tables provide becomes necessary, a `meeting_note` table analogous to `email_message` could be added.
 
 ## 10. Known difficulty
 

@@ -35,6 +35,28 @@ From mu sexp format:
 
 The sexp format gives these as named fields, so there is no comma-splitting ambiguity.
 
+## 4b. Body entity extraction
+
+The header parse captures who sent what to whom. The body of an email may also name people not in the headers, reference organisations and projects, discuss business domains, or mention named products. This is the same information that meeting YAML frontmatter captures for meetings; for emails it is extracted by AI and stored in the generic `item_entity` table.
+
+**What is extracted:**
+
+| Entity type | Description |
+|-------------|-------------|
+| `person_mentioned` | People named in the body who are not the sender or recipients — e.g. "I spoke with John Edwards about this" |
+| `organisation` | Companies, agencies, platforms, bodies named in the body — e.g. "Xero is showing the wrong figure" |
+| `project` | Named initiatives or efforts referred to — e.g. "the kitchen grant application" |
+| `product` | Named assets, offerings, or products discussed — e.g. horses, software products, menu items |
+| `domain` | Activity classification from the domain taxonomy (same fixed vocabulary as the meeting plugin) |
+
+**Input to the model:** subject line plus body text (truncated to a reasonable window if long). The prompt requests the same structured fields as the meeting frontmatter schema.
+
+**Quality note:** Email bodies are shorter and more contextual than meeting transcripts; entity extraction is noisier. The `context` field is often blank or low-confidence. Extraction should be treated as soft signal — the same entity appearing across multiple emails to/from the same person strengthens the association.
+
+**When it runs:** As a separate budget-controlled pass, not during harvest. Unprocessed messages are swept in date order (newest first), bounded by a token/cost budget per run. The `email_message` table is the source of truth for what needs processing; `item_entity` records its own `extracted_at` timestamp so the sweep can skip already-processed messages.
+
+**Storage:** Rows go into `item_entity` with `source_kind = 'email'` and `external_item_id = message_id`. When a `person_mentioned` value resolves to a known `human`, the `human_id` FK is populated. Resolution uses the same name-matching logic as meeting participant resolution.
+
 ## 5. Identity
 
 Self addresses — those that identify "me" (Weiwu) rather than a contact. Messages to/from these are treated as self-addressed and excluded from graph edges:
@@ -55,6 +77,8 @@ Loaded from a single config location read by this plugin. Other plugins carry th
 ## 6. Participant resolution
 
 Email addresses are exact identifiers. Resolution to human nodes is via `email_address.human_id`. No fuzzy matching is needed.
+
+**Role email addresses.** Some addresses are role-based rather than personal (e.g. `manager@rivermill.au`). The `email_address.human_id` link always points to the current holder of the role. Historical messages sent to that address when a different person held the role are semantically addressed to a different human, but the address record cannot carry that history — only the current assignment is stored. The previous holder should have their own `human` record linked to their personal address (if known); the role address is not backlinked to them.
 
 Merging two humans who turn out to be the same person requires only updating `email_address.human_id`; all downstream tables reference `human_id` and resolve automatically.
 
@@ -77,7 +101,7 @@ By Message-ID in the `email_message` table. The N-consecutive-seen stopping rule
 | Table | Fields |
 |-------|--------|
 | **email_address** | address, human_id, is_canonical, source |
-| **email_message** | message_id, account, date, subject |
+| **email_message** | message_id is the natural PK (Message-ID header; globally unique per RFC 2822); no surrogate id | message_id (PK), account, date, subject |
 | **ignored_pattern** | pattern, pattern_type (address/domain/subject), reason |
 | **source_coverage** | source_kind, source_ref, newest_scanned_id, oldest_scanned_id, last_checked_at |
 
