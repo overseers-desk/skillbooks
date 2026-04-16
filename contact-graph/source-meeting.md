@@ -14,11 +14,172 @@ Whole-directory diff. On each run, the plugin lists all files in the staging dir
 
 ## 4. Parse output
 
+### 4a. Basic parse (heading-only)
+
+For files without frontmatter, the basic parse extracts:
+
 - Date: first 10 characters of the filename (`YYYY-MM-DD`)
 - Participants: names listed after the `—` in the `# Title — Name1, Name2, Name3` heading
 - Content: the markdown body (available for AI tagging, not used for graph structure)
 
 There is no sender/recipient distinction.
+
+### 4b. Enriched parse (YAML frontmatter)
+
+Each staging file carries YAML frontmatter populated by LLM extraction. The frontmatter is the structured representation of the meeting; the markdown body remains the clean transcript. Ingestion reads the frontmatter for graph construction; the transcript body is available for AI tagging and full-text search but does not drive graph structure directly.
+
+When frontmatter is present, it is authoritative — the heading participant list is not re-parsed.
+
+**Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `date` | `YYYY-MM-DD` | From filename; duplicated for tool convenience |
+| `title` | string | Descriptive meeting title |
+| `participants` | list | People present in the meeting (note-taker included or omitted per convention; ingestion treats the note-taker as implicitly present regardless) |
+| `participants[].name` | string | Full name as spoken or written |
+| `participants[].title` | string | Job title or organisational role (optional; aids identity resolution for first-name-only participants) |
+| `people_mentioned` | list | People referenced in discussion but not present |
+| `people_mentioned[].name` | string | Full name, or first name if surname unknown |
+| `people_mentioned[].context` | string | Who they are or why mentioned — aids identity resolution and tag generation (e.g. "journalist, Gold Coast Bulletin" gives both role and org affiliation) |
+| `organisations` | list | Companies, agencies, software platforms, industry bodies |
+| `organisations[].name` | string | Organisation name as commonly used |
+| `organisations[].context` | string | Relationship to discussion (optional) |
+| `projects` | list | Named initiatives or identifiable efforts discussed in the meeting |
+| `projects[].name` | string | Project name if named; descriptive label if unnamed (e.g. "inventory tracking system") |
+| `projects[].type` | enum | See project type taxonomy below |
+| `products` | list | Named products, assets, or offerings discussed (horses, software products, menu items, vehicles — anything with a name that the business operates, sells, or maintains) |
+| `products[].name` | string | Product or asset name |
+| `products[].context` | string | What it is and why discussed (optional) |
+| `domains` | list | Activity classification; one or more from domain taxonomy below |
+
+**Project type taxonomy:**
+
+| Type | Scope |
+|------|-------|
+| `development` | Building or creating something new |
+| `purchase` | Acquiring equipment, services, or property |
+| `campaign` | Marketing, sales, or PR effort |
+| `event` | One-off event being planned or reviewed |
+| `initiative` | Ongoing programme without a fixed end |
+| `investigation` | Inquiry, audit, or review |
+| `crisis` | Reactive response to an incident or threat |
+
+**Domain taxonomy:**
+
+| Domain | Scope |
+|--------|-------|
+| `operations` | Day-to-day running, scheduling, logistics |
+| `hr` | Hiring, performance, workplace relations, training |
+| `safety` | Workplace safety, animal welfare, incident response |
+| `compliance` | Regulatory requirements, licensing, audits |
+| `legal` | Contracts, disputes, liability |
+| `finance` | Budget, pricing, payroll, cash management |
+| `sales` | Revenue, bookings, customer acquisition |
+| `marketing` | Promotion, branding, non-crisis PR |
+| `product-development` | New offerings, menu or experience design |
+| `procurement` | Purchasing, vendor selection, equipment |
+| `governance` | Strategy, board decisions, organisational structure |
+| `systems-technology` | IT, integrations, software, AI tools |
+| `crisis-pr` | Crisis communication, reputation management |
+| `external-relations` | Government, industry bodies, partnerships |
+| `sop` | Process design, documentation, standard procedures |
+| `product` | Discussion of specific products, assets, or offerings (menu items, horses, software features) |
+| `events` | Event planning, venue hire, weddings |
+
+**Example** (for a systems-integration meeting):
+
+```yaml
+---
+date: 2026-02-11
+title: Payroll-roster-booking-POS multi-system integration
+
+participants:
+  - name: Weiwu Zhang
+    title: director
+  - name: Marco
+    title: systems architect
+
+people_mentioned:
+  - name: Edrian
+    context: BPO digital service provider
+  - name: Belinda
+    context: weddings coordinator, raised booking-roster constraint gap
+
+organisations:
+  - name: Deputy
+    context: rostering platform, broken integration with Xero
+  - name: Xero
+    context: payroll system
+  - name: Rezdy
+    context: booking system, no constraint communication with Deputy
+
+projects:
+  - name: payroll-roster integration
+    type: development
+  - name: inventory tracking system
+    type: development
+  - name: AI-assisted rostering
+    type: investigation
+
+domains:
+  - systems-technology
+  - operations
+  - finance
+---
+```
+
+**Example** (for a crisis-response board meeting):
+
+```yaml
+---
+date: 2026-01-24
+title: Emergency board meeting — animal welfare media response
+
+participants:
+  - name: Weizhu Zhang
+    title: director
+  - name: Liansu Yu
+    title: co-director
+  - name: Michal Janalik
+    title: board member
+  - name: John Edwards
+    title: operations manager
+
+people_mentioned:
+  - name: Till Cordwell
+    context: former contractor, alleged animal neglect
+  - name: Sarah
+    context: equestrian manager, found unsuitable for horse work
+  - name: Crystal Fox
+    context: journalist, Gold Coast Bulletin
+
+organisations:
+  - name: Gold Coast Bulletin
+    context: newspaper publishing animal abuse allegations
+  - name: RSPCA
+    context: animal welfare authority, potential involvement
+
+projects:
+  - name: animal welfare media response
+    type: crisis
+  - name: equestrian SOP overhaul
+    type: initiative
+
+products:
+  - name: Bella
+    context: horse that spooked and injured a child
+  - name: Sombra
+    context: horse alleged to have been neglected under previous contractor
+
+domains:
+  - crisis-pr
+  - safety
+  - legal
+  - governance
+  - product
+---
+```
 
 ## 5. Identity
 
