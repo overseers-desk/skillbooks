@@ -1,8 +1,27 @@
 # Webworks: Programmatic Website Access
 
+**Scope:** Direct programmatic access to a site's own API or DOM. Not for general web search or third-party aggregators.
+
 Method for finding and maintaining programmatic access to websites. Covers both first-time access and repairing skills that have broken.
 
 Spawn a subagent for this work — it involves many tool calls and large outputs. Include the diagnostic procedure in the subagent prompt.
+
+## How to write a skill as a modular skill, not as a prompt to the AI that overshadows other skills
+
+A skill covers only what the target site's own API or DOM can do. Rules:
+
+- Do not list capabilities that belong to other skills, even as a fallback or suggestion.
+- Do not mention what the AI should do when this skill cannot fulfil the request.
+- Do not assume or name the tools, browsers, or environment the user has — those are defined in `CLAUDE.md`.
+- Do not list a missing capability as a capability. If the site cannot provide it, say nothing.
+
+The Known access patterns section below is for hints when building access to a new site — not instructions for accessing any specific site. Entries are examples; they must not grow into full access guides.
+
+## How to get access to a website without the early false conclusion such as thinking a 403 response means TLS-level blocking
+
+A response code is an observation, not a diagnosis. A 403 means the server rejected the request. It does not reveal why — the cause could be a User-Agent string, a missing header, a TLS fingerprint, an unsolved JS challenge, an IP block, or something else entirely. Each cause requires a different fix, and they must be distinguished by evidence, not by inference.
+
+Do not write a causal explanation into a skill or access pattern unless you have verified it with a test that would have produced a different result if the cause were different. An unverified explanation written into a file becomes a false premise for every future session that reads it.
 
 ## Prerequisites
 
@@ -80,6 +99,5 @@ Check before running any test. Left column = cargo cult sign, right column = wha
 
 ### Marriott (marriott.com)
 
-- **Block mechanism:** Akamai Bot Manager blocks `/search/` and hotel-detail pages at TLS level — UA override alone is insufficient. Homepage and `/mi/` API paths pass with `sec-ch-ua` headers.
-- **Open API endpoints:** Apollo GraphQL at `POST https://www.marriott.com/mi/v1/graph/query/`. Operation safelisting enforced; homepage-client signatures work for `suggestedPlaces`, `suggestedPlaceDetails`, `PropertiesByIds`. Pricing queries (`searchByDestination`) need search-page signatures, which are inaccessible.
-- **Pricing fallback:** Google Hotels via headless Chrome returns Marriott Bonvoy properties with prices.
+- **Open API endpoints:** Apollo GraphQL with operation safelisting — only pre-registered (name + query text + signature hash) tuples execute. Homepage-client signatures are accessible; search-page signatures (needed for pricing) are not.
+- **Blocked paths:** `/search/` and hotel-detail pages return 403 for both curl and direct HTTP requests. Cause undiagnosed.
