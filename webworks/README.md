@@ -80,8 +80,6 @@ Check before running any test. Left column = cargo cult sign, right column = wha
 
 ### Marriott (marriott.com)
 
-- **Block mechanism:** Akamai Bot Manager. Homepage/API paths pass with full `sec-ch-ua` + `sec-fetch-*` headers. Search/hotel pages require JS challenge (`_abck` cookie with sensor data).
-- **API:** Apollo GraphQL at `POST https://www.marriott.com/mi/v1/graph/query/`. No API key; uses operation safelisting (operation name + query text + 64-char hex signature must match a registered tuple).
-- **Working queries:** `suggestedPlaces` (destination autocomplete), `suggestedPlaceDetails` (coordinates), `PropertiesByIds` (hotel info by MARSHA code, up to 200 per call). All from the `phoenix_homepage` client.
-- **Blocked queries:** `searchByDestination` / `searchByLocation` (availability + pricing). Signatures live in the `phoenix_search` client's JS bundles, behind the Akamai JS challenge.
-- **Framework:** Next.js SPA. `--dump-dom` works with `--virtual-time-budget=15000` for content rendering, but Akamai challenge blocks search pages regardless.
+- **Block mechanism:** Akamai Bot Manager blocks `/search/` and hotel-detail pages at TLS level — UA override alone is insufficient. Homepage and `/mi/` API paths pass with `sec-ch-ua` headers.
+- **Open API endpoints:** Apollo GraphQL at `POST https://www.marriott.com/mi/v1/graph/query/`. Operation safelisting enforced; homepage-client signatures work for `suggestedPlaces`, `suggestedPlaceDetails`, `PropertiesByIds`. Pricing queries (`searchByDestination`) need search-page signatures, which are inaccessible.
+- **Pricing fallback:** Google Hotels via headless Chrome returns Marriott Bonvoy properties with prices.
