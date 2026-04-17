@@ -55,7 +55,7 @@ CREATE TABLE role (
 --
 -- status state machine: pending → done | error
 -- priority_score: higher = process first during tail scan; scored from
---   known-human sender heuristic after harvest; 0 = not yet scored.
+--   known-human sender heuristic after ingest; 0 = not yet scored.
 CREATE TABLE email_thread (
     thread_id         TEXT    NOT NULL PRIMARY KEY,
     first_message_at  INTEGER,           -- Unix timestamp
@@ -72,7 +72,7 @@ CREATE TABLE email_thread (
 -- far-future (year 2600+) dates from corrupted headers; the CHECK rejects
 -- clearly invalid values.
 -- thread_id is nullable: populated in Phase 2 after mu thread grouping;
--- NULL means the message has been harvested but not yet threaded.
+-- NULL means the message has been ingested but not yet threaded.
 CREATE TABLE email_message (
     message_id    TEXT    NOT NULL PRIMARY KEY,
     thread_id     TEXT    REFERENCES email_thread (thread_id),
@@ -131,7 +131,7 @@ CREATE TABLE email_address_candidate (
     human_id_resolved INTEGER REFERENCES human (id)
 );
 
--- Plugin: email — indexes for harvest pipeline performance
+-- Plugin: email — indexes for ingest pipeline performance
 CREATE INDEX idx_email_message_thread_id ON email_message (thread_id);
 CREATE INDEX idx_email_thread_status ON email_thread (status)
     WHERE status = 'pending';
@@ -142,7 +142,7 @@ CREATE INDEX idx_email_thread_status ON email_thread (status)
 
 -- Plugin: meeting
 -- One row per attendee per meeting. Meetings have no sub-item structure so
--- this table is both the raw harvest log and the participant record.
+-- this table is both the raw ingest log and the participant record.
 -- identifier_ref: display name as written in the meeting heading.
 CREATE TABLE meeting_participant (
     source_kind      TEXT    NOT NULL,

@@ -5,8 +5,8 @@ extract_email_entities.py — Budget-controlled AI entity extraction from email 
 Reads maildir files, strips quoted content, calls claude to extract named entities
 (person_mentioned, organisation, project, product, domain), writes to item_entity.
 
-Separate from harvest_email.py: this is the slow, expensive phase (hours/days)
-vs the 30-second harvest pipeline.
+Separate from ingest_email.py: this is the slow, expensive phase (hours/days)
+vs the 30-second ingest pipeline.
 
 Usage:
   python3 extract_email_entities.py                        # 4 workers, no limit
