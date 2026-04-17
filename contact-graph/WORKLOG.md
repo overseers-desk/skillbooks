@@ -441,3 +441,64 @@ Applied to live DB and added to `schema.sql`:
 | `contact-graph/extract_email_entities.py` | New — standalone entity extraction pipeline |
 | `contact-graph/schema.sql` | Added `email_extraction_log` table |
 | `contact-graph/WORKLOG.md` | This entry |
+
+---
+
+## Session 6 — Overnight run #1 (2026-04-17)
+
+### Run parameters
+
+4 concurrent workers, no budget cap, started 02:49 AEST after a 1.5h scheduled sleep, stopped manually at 11:04 AEST. Total extraction time: **8h 15m**.
+
+### Throughput by hour
+
+| Hour | Window | Messages processed | Rate/hr |
+|------|--------|--------------------|---------|
+| 1 | 02:49–03:58 | 619 | 619 |
+| 2 | 03:58–04:59 | 680 | 680 |
+| 3 | 04:59–06:00 | 661 | 661 |
+| 4 | 06:00–07:00 | 613 | 613 |
+| 5 | 07:00–08:01 | 672 | 672 |
+| 6 | 08:01–09:02 | 686 | 686 |
+| 7 | 09:02–10:03 | 656 | 656 |
+| 8 | 10:03–11:04 | 616 | 616 |
+| **Total** | **8h 15m** | **5,203** | **~650/hr avg** |
+
+(Pre-run test sessions account for the remaining ~1,100 rows in email_extraction_log.)
+
+### Final DB state
+
+| Table | Metric | Count |
+|---|---|---|
+| email_extraction_log | done | 4,617 |
+| email_extraction_log | empty (no body / AI returned nothing) | 1,617 |
+| email_extraction_log | skipped (spam) | 78 |
+| email_extraction_log | **total logged** | **6,312** |
+| item_entity | **entities extracted** | **18,642** |
+| email_message | is_spam = TRUE | 78 |
+
+### Entity type breakdown
+
+| Type | Count |
+|---|---|
+| domain | 8,383 |
+| organisation | 3,873 |
+| person_mentioned | 3,621 |
+| product | 1,677 |
+| project | 1,088 |
+| **Total** | **18,642** |
+
+### Corpus coverage
+
+6,312 of ~272,000 messages logged = **2.3%** of corpus. At ~650/hr with 4 workers, full corpus would take ~420 hours of extraction time. Run is resumable at any time: `python3 extract_email_entities.py --workers 4`. Already-logged messages are skipped automatically.
+
+### Warnings during run
+
+10 individual warning events, all handled gracefully:
+- 9 × `Claude call timed out` (single-message to 4-message batches; affected messages logged as `empty`)
+- 1 × `Batch parse failed for 2 messages` (model returned malformed JSON; fell back to empty)
+- No rate-limit errors, no unhandled exceptions, no data corruption
+
+### Notes on cost
+
+`claude -p` without `--bare` loads ~55k tokens of Claude Code system context per call. With the prompt cache warm, this costs ~$0.004/call overhead on top of ~$0.002/call for actual extraction content — roughly tripling cost vs direct API. Switching to `requests` + `ANTHROPIC_API_KEY` would reduce per-call cost to ~$0.002. No API key is currently configured; this remains a future optimisation.
