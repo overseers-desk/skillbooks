@@ -77,3 +77,11 @@ Check before running any test. Left column = cargo cult sign, right column = wha
 - **Block mechanism:** Akamai reads the User-Agent. Headless Chrome sends `HeadlessChrome/...`. Override with `--user-agent`.
 - **Open API endpoints:** `apis.ihg.com/availability/v3/hotels/offers` and `apis.ihg.com/locations/v1/destinations` work via curl. GraphQL is WAF-protected.
 - **API key:** Static client-side key `se9ym5iAzaW8pxfBjkmgbuGjJcr3Pj6Y`.
+
+### Marriott (marriott.com)
+
+- **Block mechanism:** Akamai Bot Manager. Homepage/API paths pass with full `sec-ch-ua` + `sec-fetch-*` headers. Search/hotel pages require JS challenge (`_abck` cookie with sensor data).
+- **API:** Apollo GraphQL at `POST https://www.marriott.com/mi/v1/graph/query/`. No API key; uses operation safelisting (operation name + query text + 64-char hex signature must match a registered tuple).
+- **Working queries:** `suggestedPlaces` (destination autocomplete), `suggestedPlaceDetails` (coordinates), `PropertiesByIds` (hotel info by MARSHA code, up to 200 per call). All from the `phoenix_homepage` client.
+- **Blocked queries:** `searchByDestination` / `searchByLocation` (availability + pricing). Signatures live in the `phoenix_search` client's JS bundles, behind the Akamai JS challenge.
+- **Framework:** Next.js SPA. `--dump-dom` works with `--virtual-time-budget=15000` for content rendering, but Akamai challenge blocks search pages regardless.
