@@ -20,7 +20,7 @@ Session ID: `2d115f4b-e62c-4899-a1eb-e9986601b580` (session 2)
   - Boolean columns → native `BOOLEAN`.
   - `REAL` → `DOUBLE PRECISION`.
   - Table ordering: `email_address` defined before `role` to satisfy the FK dependency.
-- Added `email_address_candidate` bootstrap staging table (address PK, display_name). No freq column — frequency is computed from `item_participant`, not stored.
+- Added `email_address_candidate` bootstrap staging table (address PK, display_name). No freq column — frequency is derived at query time, not stored.
 - `plan.md` and `source-email.md` updated to reflect PostgreSQL (not SQLite).
 
 ### Human seeding
@@ -147,109 +147,13 @@ Alternatively, run a second pass with an expanded corporate-token list once the 
 
 ---
 
-## Session 2 — Email harvest pipeline
-
-### Schema additions (applied to live DB)
-
-Three tables added to the live DB that were already in schema.sql:
-- `organisation` — canonical organisation nodes (was inline `TEXT` in `role`, now a proper FK table)
-- `harvest_run` — audit log per pipeline run
-- `item_entity` — AI-extracted named entities from email/meeting bodies
-
-Two columns added:
-- `coappearance.first_seen`, `coappearance.last_seen` — timestamps for co-presence edges
-- `role.organisation_id` — FK to `organisation` (old `organisation TEXT` column left in place, empty)
-
-### harvest_email.py
-
-New script covering the full email harvest pipeline. Designed for unattended continuous operation.
-
-**What it does:**
-1. On startup: loads ignored patterns and internal addresses from DB
-2. For each account (all four): queries mu index (`maildir:/account/*` with `--format=json`)
-3. Per-message header harvest → `email_message` + `item_participant`
-4. Per-message body entity extraction → calls `claude -p --model claude-haiku-4-5-20251001` as subprocess → `item_entity`
-5. Updates `source_coverage` for resume-safe operation
-6. On rate limit: waits 900s and retries indefinitely
-
-**Key design decisions:**
-- mu output uses `--format=json` with `JSONDecoder(strict=False)` to handle control characters in subject fields
-- Head phase stops after 3 consecutive already-seen messages (incremental run efficiency)
-- All DB writes use `ON CONFLICT DO NOTHING` — safe to restart mid-run
-- HTML body stripping removes `<style>`/`<script>` blocks before tag stripping
-- Entity extraction skipped when body is empty
-
-**Extraction prompt:** Haiku extracts `person_mentioned`, `organisation`, `project`, `product`, `domain` from email body. Domain vocabulary matches source-meeting.md. Tested on 200-email sample: quality confirmed acceptable.
-
-**Throughput:** ~28s per email (11s Node.js startup + 15s API) — inherent to `claude -p` subprocess model without `--bare`.
-
-**Flags:**
-- `--sample N`: process N emails spread across accounts (time-range spread)
-- `--out DIR`: write extraction results as JSON files instead of DB
-- `--dry-run`: parse headers only, no DB writes, no claude calls
-- `--accounts ACCT ...`: restrict to specific accounts
-
-### Post-test DB state (after 3 test cycles, each 100 emails)
-
-(To be filled after test runs complete.)
-
-### Files created / modified
-
-| File | Change |
-|------|--------|
-| `contact-graph/schema.sql` | Added `organisation`, `harvest_run`, `item_entity`; altered `coappearance`, `role` |
-| `contact-graph/harvest_email.py` | New — complete email harvest + entity extraction pipeline |
-| `contact-graph/WORKLOG.md` | This entry |
-
----
-
-## Session 3 — Parallel accounts + batched extraction
-
-### Fixes applied to harvest_email.py
-
-- **Null byte crash**: `extract_body` can return content with `\x00` bytes which kills `subprocess.run` on Linux. Fixed by stripping `\x00` from `user_prompt` before building the command, and catching `ValueError` as a non-fatal warning.
-- **Committed** with session ID `2d115f4b-e62c-4899-a1eb-e9986601b580` (commit `e88c2a0`).
-
-### Parallel account processing
-
-- `main()` now runs all 4 accounts in parallel via `ThreadPoolExecutor(max_workers=len(accounts))`, each account in its own thread with its own DB connection.
-- Within each account, the message list is still walked sequentially (single thread), preserving head-phase stop logic and coverage tracking.
-- 4× throughput vs original sequential account processing.
-
-### Batched extraction (4 emails per claude call)
-
-- Added `BATCH_SIZE = 4` constant.
-- Added `EXTRACTION_BATCH_SYSTEM_PROMPT`: same entity rules, but expects N emails separated by `=== Email N ===` and returns a JSON array of N objects.
-- Added `run_extraction_batch(emails)` / `extract_batch_with_retry(emails)`: one `claude -p` call for up to 4 emails; falls back to empty lists on parse error or length mismatch.
-- Rewrote `scan_account` inner loop: accumulates eligible messages into `pending[]`, flushes via `flush_batch()` every `BATCH_SIZE` messages. Head phase and coverage tracking unchanged.
-- Timeout scaled to `120 + 30 * batch_size` seconds for batch calls.
-
-### Design decision confirmed
-
-Within-account sub-workers (2 workers per account) were considered and rejected: the head-phase stop rule (3 consecutive seen) and `source_coverage` both require a single thread walking the message list in order per account. Breaking this order breaks resumability. Final design: 4 account threads × 1 sequential worker each × 4-email batches.
-
-### Formal run state
-
-- Formal run started, processed ~483 emails across all 4 accounts before being stopped for the batching redesign.
-- DB truncation not done — those 483 rows remain. On restart, `msg_exists` will skip them; has_history will be False (no coverage row saved since no account completed a full scan). First new emails picked up cleanly.
-- **To restart**: `python3 harvest_email.py` (no flags) from `contact-graph/` directory.
-
-### Files modified this session
-
-| File | Change |
-|------|--------|
-| `contact-graph/harvest_email.py` | Null byte fix; parallel accounts; batch extraction; scan_account rewrite |
-| `contact-graph/WORKLOG.md` | This entry |
-
----
-
 ## Session 4 — Thread-centric redesign and schema rebuild
 
 Session ID: `2353c9a2-a33f-4de4-8c1b-7e395523f803`
 
 ### Design decisions
 
-**Thread as graph unit.** The previous design built graph edges at message granularity (one edge increment per message). The redesign makes the thread the unit: co-participation in a thread produces one edge regardless of how many messages are exchanged. `edge` and `coappearance` become SQL views derived from plugin participant tables, eliminating stored aggregates with opaque counts.
+**Thread as graph unit.** The thread is the unit: co-participation in a thread produces one edge regardless of how many messages are exchanged. `edge` and `coappearance` become SQL views derived from plugin participant tables, eliminating stored aggregates with opaque counts.
 
 **mu thread_id.** Thread identity comes from mu's internal `:thread-id` (Xapian database) rather than the root message_id derived from the References chain. Reason: outbound messages from `director@rivermill.au` sent via Amazon SES have their Message-ID rewritten before delivery. The sent copy in the maildir carries the original ID; recipients' In-Reply-To headers reference the SES-assigned ID. A References-chain walk splits one conversation into two disconnected fragments. mu uses subject-line normalisation as a threading fallback that reconnects them. This cannot be reproduced without mu. On laptop migration, thread_ids can be remapped by querying mu on the new machine for any known message_id in each thread.
 
@@ -259,7 +163,7 @@ Session ID: `2353c9a2-a33f-4de4-8c1b-7e395523f803`
 
 **Amend-always worker.** Single code path: process all messages for a thread since `last_processed_at`. First run processes all messages; subsequent runs process only the delta. No separate full-rebuild mode.
 
-**Multi-account coordinator.** Three accounts processed (me-weiwu-id-au excluded via config). Harvest all accounts in parallel; dedup on message_id; group by mu thread_id; dispatch per-thread workers with advisory locks.
+**Multi-account coordinator.** Three accounts processed (me-weiwu-id-au excluded via config). Ingest all accounts in parallel; dedup on message_id; group by mu thread_id; dispatch per-thread workers with advisory locks.
 
 ### Live DB changes
 
@@ -270,7 +174,7 @@ Session ID: `2353c9a2-a33f-4de4-8c1b-7e395523f803`
 | `email_thread` | One row per mu thread; carries status, priority_score, error_message |
 | `email_message` | One row per message; thread_id FK nullable (populated after threading) |
 | `email_thread_participant` | One row per (thread, resolved human); primary source for edge view |
-| `email_source_coverage` | Per-account scan cursor (renamed from source_coverage) |
+| `email_source_coverage` | Per-account scan cursor |
 
 Tables retained from previous sessions: `human` (7,868 rows), `email_address` (27,520 rows), `email_address_candidate` (27,587 rows), `email_ignored_pattern` (98 rows).
 
@@ -278,22 +182,22 @@ Tables retained from previous sessions: `human` (7,868 rows), `email_address` (2
 
 | File | Change |
 |---|---|
-| `contact-graph/schema.sql` | Full rewrite: new email plugin tables, plugin naming, edge/coappearance as views, meeting_participant replaces item_participant |
-| `contact-graph/plan.md` | Email plugin tables removed; edge/coappearance updated to views; item_participant → meeting_participant; harvest_run removed |
+| `contact-graph/schema.sql` | Full rewrite: email plugin tables, plugin naming, edge/coappearance as views |
+| `contact-graph/plan.md` | Email plugin tables; edge/coappearance as views |
 | `contact-graph/source-email.md` | §3 scan strategy rewritten for multi-account coordinator; §7 thread-based edges; §9 tables updated; SES mutation rationale added |
 | `contact-graph/WORKLOG.md` | This entry |
 
 ---
 
-## Session 5 — Thread-centric harvest pipeline implementation
+## Session 5 — Thread-centric ingest pipeline implementation
 
-### harvest_email.py rewrite
+### ingest_email.py rewrite
 
-Full rewrite of `harvest_email.py` from message-granularity (sessions 2-3) to thread-centric design (session 4 spec). No AI calls — pure mu queries + PostgreSQL batch operations.
+Full rewrite of `ingest_email.py` from message-granularity (sessions 2-3) to thread-centric design (session 4 spec). No AI calls — pure mu queries + PostgreSQL batch operations.
 
 **Three-phase pipeline:**
 
-1. **Phase 1 (message harvest):** Queries mu JSON per account in parallel (`ThreadPoolExecutor`, 3 workers). Parses headers (message_id, date, subject, from/to/cc). Batch-inserts into `email_message` via `execute_values` (5000 rows/batch). Keeps participant addresses in memory for Phase 3. Updates `email_source_coverage`.
+1. **Phase 1 (message ingest):** Queries mu JSON per account in parallel (`ThreadPoolExecutor`, 3 workers). Parses headers (message_id, date, subject, from/to/cc). Batch-inserts into `email_message` via `execute_values` (5000 rows/batch). Keeps participant addresses in memory for Phase 3. Updates `email_source_coverage`.
 
 2. **Phase 2 (thread grouping):** Discovers mu thread_ids via two parallel `mu find --format=plain` queries (`--fields="i"` and `--fields="w"` with `--skip-dups`), zipped line-by-line. Creates `email_thread` rows. Bulk-updates `email_message.thread_id` via temp table + UPDATE-FROM-JOIN.
 
@@ -350,7 +254,7 @@ Added two indexes to `schema.sql` and live DB:
 
 | File | Change |
 |---|---|
-| `contact-graph/harvest_email.py` | Full rewrite: three-phase thread-centric pipeline |
+| `contact-graph/ingest_email.py` | Full rewrite: three-phase thread-centric pipeline |
 | `contact-graph/schema.sql` | Added indexes for email_message.thread_id and email_thread.status |
 | `contact-graph/source-email.md` | Corrected thread_id extraction method (§3, §9) |
 | `contact-graph/WORKLOG.md` | This entry |
@@ -377,7 +281,7 @@ The entity extraction is the slow and expensive part (AI calls). Participant res
 
 ### extract_email_entities.py
 
-New standalone script implementing the five items listed in session 5's "Gap to tail-only concurrent processing." Separate from harvest_email.py because extraction runs for hours/days vs the 30-second harvest pipeline.
+New standalone script implementing the five items listed in session 5's "Gap to tail-only concurrent processing." Separate from ingest_email.py because extraction runs for hours/days vs the 30-second ingest pipeline.
 
 **What it does:**
 

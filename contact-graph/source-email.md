@@ -14,9 +14,9 @@ Message-ID from email headers. Available as a named field in mu's sexp output.
 
 **Coordinator** reads all active accounts in parallel. Active accounts are listed in config; `me-weiwu-id-au` is excluded (no real humans write to it). For each account: read the mu index from `newest_scanned_id` backward until N=3 consecutive Message-IDs are already in the DB, then update `email_source_coverage`. Messages are deduplicated across accounts on Message-ID (globally unique per RFC 2822 — the same message appearing in two accounts is one row in `email_message`).
 
-After harvest, messages are grouped into threads using mu's thread grouping. Thread identity is extracted via `mu find --format=plain --fields="w"` (the thread field is not available in JSON or sexp output; two parallel plain-format queries with `--fields="i"` and `--fields="w"` using identical sort order and `--skip-dups` are zipped to produce the message_id→thread_id mapping). See §9 for rationale. For each thread with unprocessed messages (no `email_thread` row yet, or `last_processed_at` < newest message date), the coordinator acquires a per-thread lock (PostgreSQL advisory lock keyed on thread_id hash), collects all messages for that thread across all accounts, then dispatches to a worker.
+After ingest, messages are grouped into threads using mu's thread grouping. Thread identity is extracted via `mu find --format=plain --fields="w"` (the thread field is not available in JSON or sexp output; two parallel plain-format queries with `--fields="i"` and `--fields="w"` using identical sort order and `--skip-dups` are zipped to produce the message_id→thread_id mapping). See §9 for rationale. For each thread with unprocessed messages (no `email_thread` row yet, or `last_processed_at` < newest message date), the coordinator acquires a per-thread lock (PostgreSQL advisory lock keyed on thread_id hash), collects all messages for that thread across all accounts, then dispatches to a worker.
 
-**Worker** (amend-always): receives thread_id and the set of unprocessed message_ids (all messages on first run; delta on subsequent runs). Strips quoted content from each message body (see §4b). Sends thread to `claude -p`. Writes `email_thread_participant` rows and `item_entity` rows. Sets `email_thread.last_processed_at`. Amend-always means there is one code path: the first run processes all messages in a thread; later runs process only the messages added since `last_processed_at`. The per-thread lock prevents two account-harvest workers from racing on the same cross-account thread.
+**Worker** (amend-always): receives thread_id and the set of unprocessed message_ids (all messages on first run; delta on subsequent runs). Strips quoted content from each message body (see §4b). Sends thread to `claude -p`. Writes `email_thread_participant` rows and `item_entity` rows. Sets `email_thread.last_processed_at`. Amend-always means there is one code path: the first run processes all messages in a thread; later runs process only the messages added since `last_processed_at`. The per-thread lock prevents two account-ingest workers from racing on the same cross-account thread.
 
 `email_source_coverage` stores `newest_scanned_id` and `oldest_scanned_id` per account. The DB's own contents are the truth; the coverage record is a cache to avoid re-scanning, not a correctness constraint — losing it forces a re-scan but does not corrupt the graph.
 
@@ -50,7 +50,7 @@ The header parse captures who sent what to whom. The body of an email may also n
 
 **Quality note:** Email bodies are shorter and more contextual than meeting transcripts; entity extraction is noisier. The `context` field is often blank or low-confidence. Extraction should be treated as soft signal — the same entity appearing across multiple emails to/from the same person strengthens the association.
 
-**When it runs:** As a separate budget-controlled pass, not during harvest. Unprocessed messages are swept in date order (newest first), bounded by a token/cost budget per run. The `email_message` table is the source of truth for what needs processing; `item_entity` records its own `extracted_at` timestamp so the sweep can skip already-processed messages.
+**When it runs:** As a separate budget-controlled pass, not during ingest. Unprocessed messages are swept in date order (newest first), bounded by a token/cost budget per run. The `email_message` table is the source of truth for what needs processing; `item_entity` records its own `extracted_at` timestamp so the sweep can skip already-processed messages.
 
 **Storage:** Rows go into `item_entity` with `source_kind = 'email'` and `external_item_id = message_id`. When a `person_mentioned` value resolves to a known `human`, the `human_id` FK is populated. Resolution uses the same name-matching logic as meeting participant resolution.
 
@@ -84,9 +84,6 @@ Email addresses are exact identifiers. Resolution to human nodes is via `email_a
 **Role email addresses.** Some addresses are role-based rather than personal (e.g. `manager@rivermill.au`). The `email_address.human_id` link always points to the current holder of the role. Historical messages sent to that address when a different person held the role are semantically addressed to a different human, but the address record cannot carry that history — only the current assignment is stored. The previous holder should have their own `human` record linked to their personal address (if known); the role address is not backlinked to them.
 
 Merging two humans who turn out to be the same person requires only updating `email_address.human_id`; all downstream tables reference `human_id` and resolve automatically.
-
-The `identifier_ref` column in `item_participant` holds the email address for items produced by this plugin.
-
 ## 7. Edge semantics
 
 Thread is the unit, not the message. The worker populates `email_thread_participant` with one row per (thread, human) pair after identity resolution. Directed edges and coappearances are views derived from that table — this plugin writes no rows to `edge` or `coappearance` directly.

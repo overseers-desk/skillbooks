@@ -70,7 +70,17 @@ Life changes are stored as timestamped facts on person nodes, not as overwritten
 
 ## Components
 
-### 1. Source plugins (harvest + incremental update)
+### Pipeline terminology
+
+Each source plugin runs two kinds of work against its upstream store.
+
+**Ingest** — pull structured metadata from the upstream source into the plugin's owned tables. No model calls, no body reading, no reasoning. Cheap enough to re-run on every new item; idempotent on the item's stable id. The email plugin's ingest reads mu headers; the meeting plugin's ingest reads the meeting file's frontmatter.
+
+**Extract** — read the body/content of an item and call a model to produce structured entities. Expensive, budget-controlled, runs on its own schedule. Writes to `item_entity`.
+
+Ingest is fast and precedes extract; an item must be ingested before it can be extracted. The two are separate scripts on separate schedules because their cost and cadence differ by two orders of magnitude.
+
+### 1. Source plugins (ingest + incremental update)
 
 Two plugins ship from the start: email and knowledge-capture (meeting notes). Additional sources — LinkedIn messages, calendar, SMS — can be added later following the same structure. Each plugin is fully specified in its own document: [source-email.md](source-email.md) and [source-meeting.md](source-meeting.md).
 
@@ -132,7 +142,7 @@ Database: `contact_graph` on the local PostgreSQL instance.
 | **linkedin_snapshot** | versioned profile captures; source of truth from which contact_events are derived | id, human_id, scraped_at, url, headline, location, summary |
 | **human_event** | timestamped life-change facts derived from snapshot diffs | human_id, event_type, description, source_snapshot_id, event_date |
 | **linkedin_connection** | second-degree edges from profile browsing; human_id nullable for unresolved nodes | human_id_a, linkedin_url_a, human_id_b, linkedin_url_b, discovered_via_human_id, scraped_at |
-| **processing_queue** | unified job queue for AI tagging and LinkedIn enrichment; rebuilt in priority order (by edge count desc) after each harvest run so insertion order encodes priority — no stored score needed | human_id, job_type (tag/linkedin), queued_at, processed_at, model_used |
+| **processing_queue** | unified job queue for AI tagging and LinkedIn enrichment; rebuilt in priority order (by edge count desc) after each ingest run so insertion order encodes priority — no stored score needed | human_id, job_type (tag/linkedin), queued_at, processed_at, model_used |
 | **reconnect_schedule** | computed next-prompt date per human; decay score not stored, computed on demand | human_id, next_prompt_date, last_prompted_at, computed_at |
 
 ---

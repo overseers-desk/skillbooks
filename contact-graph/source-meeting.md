@@ -10,7 +10,7 @@ The filename: `YYYY-MM-DD-slug.md`. The filename is the canonical identifier for
 
 ## 3. Scan strategy
 
-Whole-directory diff. On each run, the plugin lists all files in the staging directory and compares the listing against known filenames (by `external_item_id` in `item_participant` where `source_kind = 'meeting'`). Any file not already present, or whose content has changed, is processed. There is no cursor and no directionality — insertion order is irrelevant. A backdated meeting note (`2025-01-15-old-meeting.md` added in April 2026) is discovered on the next run without special handling.
+Whole-directory diff. On each run, the plugin lists all files in the staging directory and compares the listing against known filenames (by `external_item_id` in `meeting_participant`). Any file not already present, or whose content has changed, is processed. There is no cursor and no directionality — insertion order is irrelevant. A backdated meeting note (`2025-01-15-old-meeting.md` added in April 2026) is discovered on the next run without special handling.
 
 ## 4. Parse output
 
@@ -189,9 +189,9 @@ The note-taker is implicitly "me." The participant heading lists the other peopl
 
 Resolution happens at staging time, not at graph-ingest time. The staging file maker queries the database (or the capture-correction index) to find the canonical name before writing the heading. The staging file therefore contains resolved names — either a full name matching an existing `human.display_name`, or a name qualified by organisation (e.g. "Alice Chen (Rivermill)") when disambiguation is needed.
 
-The graph ingest reads the staging file and matches the name exactly against the database. If the person is not in the database, a new `human` row is created. This means duplicates can occur when the staging process fails to match a name that already exists under a different form. Unlike the email case (where merging is a single `email_address.human_id` update), merging duplicate humans requires updating `item_participant` rows across all meetings referencing the duplicate, plus derived edges and coappearances. This is expensive and handled manually.
+The graph ingest reads the staging file and matches the name exactly against the database. If the person is not in the database, a new `human` row is created. This means duplicates can occur when the staging process fails to match a name that already exists under a different form. Unlike the email case (where merging is a single `email_address.human_id` update), merging duplicate humans requires updating `meeting_participant` rows across all meetings referencing the duplicate, plus derived edges and coappearances. This is expensive and handled manually.
 
-The `identifier_ref` column in `item_participant` holds the display name as written in the heading. After initial resolution, `identifier_ref` is inert — it records what the source said, not what the graph uses for joins. A later name change does not break existing rows.
+The `identifier_ref` column in `meeting_participant` holds the display name as written in the heading. After initial resolution, `identifier_ref` is inert — it records what the source said, not what the graph uses for joins. A later name change does not break existing rows.
 
 ## 7. Edge semantics
 
@@ -199,17 +199,17 @@ Undirected coappearance only. All participants are co-attendees; there is no fro
 
 ## 8. Deduplication
 
-By filename. On each directory scan, if a filename already exists as an `external_item_id` in `item_participant` with `source_kind = 'meeting'` and the file content has not changed, the item is skipped. If the content has changed (detected by modification time or hash), all `item_participant` rows for that filename are replaced wholesale and edges re-derived.
+By filename. On each directory scan, if a filename already exists as an `external_item_id` in `meeting_participant` and the file content has not changed, the item is skipped. If the content has changed (detected by modification time or hash), all `meeting_participant` rows for that filename are replaced wholesale and edges re-derived.
 
 ## 9. Tables owned
 
-None. The meeting plugin uses only generic tables. During ingestion, the plugin populates:
+The meeting plugin owns one table. During ingestion, the plugin populates:
 
-- `item_participant` — one row per participant per meeting (coappearance derived from this)
+- `meeting_participant` — one row per participant per meeting (coappearance derived from this)
 - `item_entity` — one row per entity from the frontmatter `people_mentioned`, `organisations`, `projects`, `products`, and `domains` fields; `source_kind = 'meeting'`, `external_item_id = filename`
 
 If metadata storage beyond what these generic tables provide becomes necessary, a `meeting_note` table analogous to `email_message` could be added.
 
 ## 10. Known difficulty
 
-**Human deduplication.** When the staging process fails to match a name to an existing human — a new person, a misspelling, a name variant the correction index does not cover — a new `human` row is created. If that person already exists under a different name, the database has a duplicate. Merging requires updating `item_participant` rows across all meetings referencing the duplicate, plus re-deriving edges and coappearances. This is manually resolvable but expensive. The staging-time query and the correction index reduce the frequency; automated merge logic is not justified by the expected occurrence rate.
+**Human deduplication.** When the staging process fails to match a name to an existing human — a new person, a misspelling, a name variant the correction index does not cover — a new `human` row is created. If that person already exists under a different name, the database has a duplicate. Merging requires updating `meeting_participant` rows across all meetings referencing the duplicate, plus re-deriving edges and coappearances. This is manually resolvable but expensive. The staging-time query and the correction index reduce the frequency; automated merge logic is not justified by the expected occurrence rate.
