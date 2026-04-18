@@ -35,7 +35,15 @@ Zero bleeds, zero chrome-as-data, correct name/stem alignment on every row. The 
 
 **Formal re-fetch run** launched via `refetch-tier23.py`: iterates the 108 `v2-tier[23]` URLs from `search-log.tsv`, skips any already-archived, writes fresh HTML to the archive, parses the full set, emits a deduped TSV. Polite pacing at ~4.5s per URL; ETA ~8 min end-to-end. At worklog write time: 38 files archived, progress log shows 30/108 fetches done, rate 0.29 fetches/s, ETA 271s, no failures.
 
-**Pending after the run:** merge the deduped TSV back into `roster.tsv`, replacing the 315 `discovered_via=v2-matrix-t23` rows with the cleanly-parsed set. Then (and only then) the P-dispatcher can be relaunched on a queue that will not jam its workers.
+**Pending after the run:** merge the deduped TSV back into `roster.tsv`, replacing the 315 `discovered_via=v2-matrix-t23` rows with the cleanly-parsed set.
+
+## Handoff state
+
+Weiwu paused the campaign on 2026-04-18 for travel to Spain. Before pausing, a progress email went to Chris Graham (MessageId `<177649386252.49125.17190145228061669112@rivermill.au>`) with the current 106 profiles as a PDF index + a TSV, asking him to sample the top star-rated candidates and confirm whether the rating model is calibrated against his view of fit. Typical first batch is 100–150 emails; the sweep overall is expected to support 2–3 batches. The A phase (drafting approach messages) requires a working session with Chris because it depends on what NRS is actually selling, which has not been shared. S&P deliberately ran product-blind.
+
+Next agent: perform the merge described in `search-plan.md` *Current position*, then stop. Do not relaunch the P-dispatcher — it would profile up to 346 more rows against a rating rubric Chris has not yet validated, and Opus tokens spent there are wasted if the rubric needs revision after his reply.
+
+Two minor inconsistencies worth an eyeball when Weiwu returns: Lindsay Partridge AM and Matt Adams have `date_excluded: 2026-04-18` in their profile YAML but an empty `date_excluded` in the roster row; they are currently included in the 106 as 0★. Decide whether the YAML exclusion was intentional and propagate it back to the roster if so.
 
 ## Durable artefacts
 

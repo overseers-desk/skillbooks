@@ -28,10 +28,11 @@ Final report at `retrospective/roster-gap-report.md`: tally of rows per warmth t
 ## Current position
 
 ```
-iteration: DONE-v2-complete
-phase: complete
-last_action: v2-matrix tier-2/3 (36 queries, 315 rows) executed; 8 junk rows cleaned; S5 cross-lead cascade yielded 31 rows; P4-v2-t23 dispatcher launched (319 tasks, 4 parallel jobs, running at time of report); gap report updated
-next_action: none (S&P scope complete; P4-v2-t23 running in background; A-phase disabled for this campaign)
+iteration: 4-v2
+phase: S-complete, P-partial (paused)
+last_action: v2-matrix tier-2/3 rebuilt. The S-phase subagent that originally produced the 315 discovered_via=v2-matrix-t23 rows used text-heuristic extraction and corrupted ~42% of them. The 108 source URLs were re-fetched via refetch-tier23.py into html-archive/2026-04-18/ and re-parsed with parse-linkedin-search.py (structural per-listitem selectors). Clean output: logs/refetch-tier23-20260418-155926-dedup.tsv — 250 unique stems. 106 profiles already written during earlier sessions are unaffected and remain valid.
+next_action: MERGE — replace the 315 discovered_via=v2-matrix-t23 rows in roster.tsv with the 250 rows from logs/refetch-tier23-20260418-155926-dedup.tsv. Preserve non-t23 rows (tier-1, cross-leads, registry, 1st-degree) untouched. Schema mapping: dedup TSV columns are (stem, contact_name, role, organisation, headline, location, country, degree); roster columns include those plus sweep_iteration=4, discovered_via=v2-matrix-t23, discovery_source='linkedin-search v2-tier[23]', verified=no. After merge, check stem uniqueness.
+blocked_by: DO NOT relaunch the P-dispatcher after the merge without explicit user go-ahead. Weiwu paused for travel on 2026-04-18 and sent Chris Graham the current 106 profiles (PDF + TSV) for star-rating review. Re-running P before that review returns is wasted Opus budget if ratings need recalibration. Email MessageId: <177649386252.49125.17190145228061669112@rivermill.au>.
 ```
 
 (Updated by each tick. The `next_action` field is the dispatcher signal.)
