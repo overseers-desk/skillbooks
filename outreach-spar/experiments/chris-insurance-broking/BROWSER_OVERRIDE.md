@@ -57,11 +57,13 @@ flock /tmp/chromium.lock timeout 30 chromium \
 
 **Why this is mandatory.** On 2026-04-18 the tier-2/3 search subagent streamed 108 LinkedIn pages to `/tmp/linkedin-v2-t23-*.html`, parsed them in-process, and wrote 315 rows to `roster.tsv`. `/tmp` was cleaned after the session; ~132 of the 315 rows were parse-corrupt (Spanish UI strings in the organisation field, LinkedIn URL slugs appended to contact names, adjacent-row name bleed). Because the HTML was gone, re-parsing with a fixed parser was impossible — only re-fetching. Parser bugs recur in different forms; keeping the raw HTML is the only cheap insurance against the next one.
 
-**Locale defensiveness.** Chris's LinkedIn *account* (not browser) is set to Spanish, so LinkedIn renders UI chrome as `contactos más en común`, `seguidores`, `Sídney y alrededores`, `Anterior`, etc. No `--lang` or `Accept-Language` flag overrides a logged-in user's account language — this is a LinkedIn account setting. Parsers that extract fields from the DOM must therefore:
+**Parse structurally, not textually.** The 2026-04-18 corruption was not fundamentally a language problem — the chromium snap profile had been running under a Spanish locale at first LinkedIn sign-in, so LinkedIn persists a Spanish-rendering cookie for Chris's session, and UI chrome comes back as `contactos más en común`, `seguidores`, `Sídney y alrededores`, `Anterior`. But LinkedIn's DOM structure is language-invariant: class names (`entity-result__title-text`, `entity-result__primary-subtitle`, `entity-result__secondary-subtitle`), `data-test-*` attributes, and the card hierarchy are the same in every locale. The subagent that parsed tier-2/3 results was doing text-heuristic extraction — walking the flattened text of each card and guessing which substring was the name / organisation / role by order or by keyword — and those guesses broke systematically when the rendered text turned out to be Spanish UI chrome instead of English data.
 
-1. Never accept an `organisation` value that matches a Spanish-UI lexicon (`seguidores`, `contactos`, `común`, `alrededores`, `mutuos`, `Anterior`, `Siguiente`, `grado`, `conexiones`).
-2. Never accept a `contact_name` that ends with the LinkedIn URL slug (e.g. `Troy Clarry 8032339`).
-3. Anchor field extraction to a single result-card DOM node per row; do not walk parallel selector lists that can drift out of alignment.
-4. Reject any row where `contact_name` tokens share no prefix with the stem.
+Parsers that extract fields from the DOM must therefore:
 
-If Chris is willing, changing his LinkedIn account language to English would eliminate class (1). Until then, the parser carries the burden.
+1. Anchor on one result-card DOM node per row and extract each field from its structurally-defined slot (title-text span for name, primary-subtitle span for role/headline, secondary-subtitle span for location, etc.). Do not walk parallel text lists that can drift out of alignment and produce adjacent-row name bleed.
+2. Never accept a `contact_name` that ends with the LinkedIn URL slug (e.g. `Troy Clarry 8032339`) — that is the stem concatenated onto the name, a textual-extraction artefact.
+3. Reject any row where `contact_name` tokens share no prefix with the stem.
+4. As a belt-and-suspenders sanity check against any unexpected locale rendering, refuse an `organisation` value that matches known UI-chrome phrases in any language (`seguidores`, `contactos`, `común`, `alrededores`, `mutuos`, `Anterior`, `Siguiente`, `grado`, `conexiones`, `followers`, `mutual connections`, `Previous`, `Next`, etc.).
+
+Forcing a specific chromium locale (`LANG=en_US.UTF-8` env + `--lang=en-US` flag, or a fresh sign-in under an en-US locale to rewrite the cookie) is optional hardening. It is not load-bearing once the parser is structural.
