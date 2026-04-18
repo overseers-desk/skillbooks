@@ -1,4 +1,4 @@
-# SPAR-S: Search and Discovery
+# SPAR-S: Sweep and Discovery
 
 **Applies to:** AI agents (Sonnet tier) performing the S phase of the SPAR outreach methodology
 
