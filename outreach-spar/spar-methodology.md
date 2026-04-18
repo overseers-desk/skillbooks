@@ -4,7 +4,7 @@
 
 SPAR is a four-phase methodology for building a contact pipeline and engaging targets through personalised outreach. The name is an acronym:
 
-- **S** — Search. Discover names from all available sources.
+- **S** — Sweep. Discover names from all available sources.
 - **P** — Profile. Research each discovered contact to build a dossier of what they have said, who they know, and what they care about.
 - **A** — Approach. Write a non-mechanical connection message tailored to the profile, tested against a simulated recipient personality.
 - **R** — Revise. Review responses from the current band, identify deviations between assumed and actual motivations, adjust the connection strategy, then approach the next band.
@@ -15,7 +15,7 @@ The methodology applies to any outreach campaign — membership recruitment for 
 
 SPAR divides into two prongs that run sequentially, not concurrently.
 
-**Prong 1: S&P (Search + Profile)** is iterative knowledge accumulation. It runs in up to three iterations — S&P₁, S&P₂, S&P₃ — each expanding the roster and deepening profiles. S&P is Sonnet-tier work: high volume, pattern-following, economical. S&P completes before Prong 2 begins.
+**Prong 1: S&P (Sweep + Profile)** is iterative knowledge accumulation. It runs in up to three iterations — S&P₁, S&P₂, S&P₃ — each expanding the roster and deepening profiles. S&P is Sonnet-tier work: high volume, pattern-following, economical. S&P completes before Prong 2 begins.
 
 **Prong 2: AR (Approach + Revise)** is feedback-controlled engagement. It runs in bands ordered by estimated response likelihood — AR₉₀ (contacts rated ≥90% likely to respond), then AR₈₀, then AR₇₀, and so on. Between bands, a human reviews the communication logs from the prior band, identifies what targets actually responded to (which may differ from what the campaign plan assumed), and revises the connection strategy before the next band begins. AR is Opus-tier work for the approach drafting, and human work for the revision.
 
@@ -37,7 +37,7 @@ For a compact notation to track a campaign's position in this flow, see [`spar-s
 
 ## Prong 1: S&P in detail
 
-### S — Search
+### S — Sweep
 
 Each S&P iteration begins with discovery. S casts a wide net across all available sources. The source mix varies by campaign but the method is constant: exhaust the most direct source first, then broaden.
 
@@ -165,7 +165,7 @@ The S&P = Sonnet / AR = Opus allocation has been independently validated outside
 
 This methodology does not replace any existing document. It provides the conceptual framework from which specific AESOPs are derived:
 
-- **SPAR-S** (`spar-S-search.md`) — the operational procedure for search and discovery. Generalises iterative discovery techniques first developed in project-specific SOPs and the research phase of a foundation's direct-outreach-pipeline into a campaign-agnostic procedure.
+- **SPAR-S** (`spar-S-search.md`) — the operational procedure for the sweep phase. Generalises iterative discovery techniques first developed in project-specific SOPs and the research phase of a foundation's direct-outreach-pipeline into a campaign-agnostic procedure.
 - **SPAR-P** (`spar-P-profile.md`) — the operational procedure for profile building, generalising the personalization SOP's research phase into a standalone profiling step that does not also draft messages.
 - **SPAR-A** (`spar-A-approach.md`) — the operational procedure for drafting connection messages, including the A1/A2 sparring loop, generalising the personalization SOP's drafting phase (Phases 2–3) with the addition of communication-log cross-referencing and band-ordered processing.
 - **R has no procedure document** — it is a human review process. Its inputs and outputs are defined here; its execution is not automatable.
