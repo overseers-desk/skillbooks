@@ -1,5 +1,7 @@
 # Roster gap report — chris-insurance-broking
 
+> **Stale as of session 2 (2026-04-18 afternoon).** The numbers below were written before the session-2 worklog discovered ~23 visibly corrupt rows plus an unknown tail of name/org-swapped rows from the v2-matrix tier-2/3 parse-search output. A coherence sweep on `roster.tsv` is pending before these tallies can be treated as final. See `worklog-2026-04-18-session2.md`.
+
 v2-matrix seeding complete — final stats as of 2026-04-18. Covers all S&P sweeps: S1/P1 (150 rows via 1B keyword search + registry + 1st-degree), S2/P2 cross-leads (8 rows), S3/P3 conference-speaker expansion (3 rows), S4 Weiwu re-sweep (6 rows), S4 v2-matrix tier-1 (100 rows), S4 v2-matrix tier-2/3 (315 rows), S5 cross-lead cascade from tier-1 profiles (31 rows). Total roster: 621 rows. P4-v2-t23 dispatcher running at time of report (319 tasks, ~4 parallel jobs).
 
 ---

@@ -23,7 +23,7 @@ Aggregate roster.tsv by `discovered_via` to reveal the gap between Chris's netwo
 
 During P phase, cross-check every cold-discovered contact against Chris's connections (LinkedIn profile's "mutual connections" count > 0 upgrades them to `2nd-degree-via-mutuals`).
 
-Final report at `roster-gap-report.md`: tally of rows per warmth tier, and a named list of target-industry companies discovered via registry/association but where no LinkedIn C-suite could be resolved (the invisible end of the gap).
+Final report at `retrospective/roster-gap-report.md`: tally of rows per warmth tier, and a named list of target-industry companies discovered via registry/association but where no LinkedIn C-suite could be resolved (the invisible end of the gap).
 
 ## Current position
 
