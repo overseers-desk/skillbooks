@@ -6,9 +6,13 @@ package require Tk
 # Accept campaign directory or YAML file as argument, default to current directory.
 # Arg ending in .yaml is treated as an explicit YAML path (must exist).
 # Otherwise it is treated as a directory; campaign*.yaml is sought inside.
+#
+# Resolution happens exactly ONCE here — $campaign_file is authoritative for
+# the life of the process. Reloading is allowed (the YAML on disk may
+# change), but re-resolving is not: a second campaign*.yaml appearing in
+# the directory at runtime must not swap the target under running ops.
 set _arg [expr {[llength $argv] > 0 ? [lindex $argv 0] : "."}]
 set _norm [file normalize $_arg]
-set campaign_file ""
 if {[string match *.yaml $_arg]} {
     if {![file isfile $_norm]} {
         puts stderr "spar-ui: campaign YAML not found: $_arg"
@@ -18,59 +22,69 @@ if {[string match *.yaml $_arg]} {
     set campaign_dir [file dirname $_norm]
 } else {
     set campaign_dir $_norm
+    set _p [file join $campaign_dir campaign.yaml]
+    if {[file exists $_p]} {
+        set campaign_file $_p
+    } else {
+        set _cs [lsort [glob -nocomplain [file join $campaign_dir campaign*.yaml]]]
+        if {[llength $_cs]} {
+            set campaign_file [lindex $_cs end]
+        } else {
+            set campaign_file ""
+        }
+    }
+    if {$campaign_file eq ""} {
+        puts stderr "spar-ui: no campaign YAML found in $campaign_dir"
+        puts stderr "Usage: wish9.0 spar-ui.tcl <campaign-dir-or-yaml> \[flags\]"
+        puts stderr "  Argument may be a directory containing campaign*.yaml, or a YAML file directly"
+        puts stderr "Flags (non-interactive / debug):"
+        puts stderr "  --tid=T2              dispatch this transition after async load completes"
+        puts stderr "  --stems=a,b,c         narrow --tid dispatch to these roster stems"
+        puts stderr "  --autoquit            exit after dispatch completes (exit status = failed count, clamped to 0/1)"
+        puts stderr "  --log-stderr          mirror UI log lines to stderr regardless of --autoquit"
+        exit 1
+    }
+}
+
+# Non-interactive / debug flags: parse remaining argv (everything after the
+# positional campaign argument).
+set auto_tid ""
+set auto_stems {}
+set auto_quit 0
+set log_to_stderr 0
+foreach _a [lrange $argv 1 end] {
+    if {[regexp {^--tid=(.+)$} $_a -> v]} { set auto_tid $v; continue }
+    if {[regexp {^--stems=(.+)$} $_a -> v]} { set auto_stems [split $v ,]; continue }
+    if {$_a eq "--autoquit"}    { set auto_quit 1; set log_to_stderr 1; continue }
+    if {$_a eq "--log-stderr"}  { set log_to_stderr 1; continue }
+    puts stderr "spar-ui: unrecognised argument: $_a"
+    exit 1
+}
+if {[llength $auto_stems] > 0 && $auto_tid eq ""} {
+    puts stderr "spar-ui: --stems requires --tid"
+    exit 1
 }
 
 # Source backend libraries
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
 
-# Pre-widget startup check: if no campaign YAML exists, print a helpful
-# message and exit before spawning any Tk windows.
-proc _find_campaign_yaml {dir} {
-    set p [file join $dir campaign.yaml]
-    if {[file exists $p]} { return $p }
-    set cs [lsort [glob -nocomplain [file join $dir campaign*.yaml]]]
-    if {[llength $cs]} { return [lindex $cs end] }
-    return ""
-}
-if {$campaign_file eq "" && [_find_campaign_yaml $campaign_dir] eq ""} {
-    puts stderr "spar-ui: no campaign YAML found in $campaign_dir"
-    puts stderr "Usage: wish9.0 spar-ui.tcl <campaign-dir-or-yaml>"
-    puts stderr "  Argument may be a directory containing campaign*.yaml, or a YAML file directly"
-    exit 1
-}
-
 # ============================================================
 # Load campaign data
 # ============================================================
 
-proc discover_campaign_yaml {campaign_dir} {
-    global campaign_file
-    if {[info exists campaign_file] && $campaign_file ne ""} {
-        return $campaign_file
-    }
-    set yaml_path [file join $campaign_dir campaign.yaml]
-    if {[file exists $yaml_path]} {
-        return $yaml_path
-    }
-    set candidates [lsort [glob -nocomplain [file join $campaign_dir campaign*.yaml]]]
-    if {[llength $candidates] > 0} {
-        return [lindex $candidates end]
-    }
-    return ""
-}
-
 # Load campaign YAML config and discover segments.
 # Sets config globals; returns 1 on success, 0 on error.
+# Re-reads $campaign_file from disk; does not re-resolve which file to use.
 proc load_campaign_config {} {
     global campaign_dir campaign_name sender_text filter_desc
-    global cdata yaml_path segment_order skip_set segment_paths
+    global cdata yaml_path segment_order skip_set segment_paths campaign_file
 
-    set yaml_path [discover_campaign_yaml $campaign_dir]
-    if {$yaml_path eq ""} {
-        tk_messageBox -icon error -title "No Campaign" \
-            -message "No campaign YAML found in:\n$campaign_dir"
-        set campaign_name "(no campaign)"
+    set yaml_path $campaign_file
+    if {![file exists $yaml_path]} {
+        tk_messageBox -icon error -title "Campaign Missing" \
+            -message "Campaign YAML no longer exists:\n$yaml_path"
+        set campaign_name "(missing)"
         set sender_text ""
         set filter_desc ""
         set segment_order {}
@@ -402,6 +416,14 @@ proc _async_load_next {} {
         set transitions [build_transitions $all_contacts]
         rebuild_warnings
         rebuild_transitions
+
+        # Headless / self-debug hook: if --tid was given on the command
+        # line, drive the dispatch programmatically once the tree is
+        # populated. after idle so the UI finishes laying out.
+        global auto_tid
+        if {$auto_tid ne ""} {
+            after idle auto_dispatch
+        }
     }
 }
 
@@ -438,11 +460,12 @@ proc build_transitions {all_contacts} {
         set tasks {}
         foreach contact $eligible {
             set cname [dict get $contact contact_name]
+            set cstem [spar::dict_get_default $contact stem ""]
             set org [dict get $contact organisation]
             set seg [dict get $contact segment]
             set tstate [dict get $contact task_state]
             set reason [dict get $contact reason]
-            lappend tasks [list $cname $org $seg $tstate $reason]
+            lappend tasks [list $cname $cstem $org $seg $tstate $reason]
         }
 
         lappend result [list $label $count $tasks]
@@ -1013,7 +1036,9 @@ pack ${tpanel}.toolbar.showcomplete -side left
 ttk::frame ${tpanel}.treeframe
 pack ${tpanel}.treeframe -fill both -expand 1 -padx 4 -pady 2
 
-ttk::treeview ${tpanel}.treeframe.tree -columns {org segment state reason} \
+ttk::treeview ${tpanel}.treeframe.tree \
+    -columns {stem org segment state reason} \
+    -displaycolumns {org segment state reason} \
     -show {tree headings} -selectmode extended
 ttk::scrollbar ${tpanel}.treeframe.vsb -orient vertical \
     -command [list ${tpanel}.treeframe.tree yview]
@@ -1052,7 +1077,7 @@ proc populate_transitions {} {
         $tree insert {} end -id $parent_id -text "$tlabel ($tcount)" -open false
 
         foreach task $ttasks {
-            lassign $task tname torg tseg tstate treason
+            lassign $task tname tstem torg tseg tstate treason
             set tags {}
             if {$tstate eq "done"} {
                 set tags {done}
@@ -1060,7 +1085,7 @@ proc populate_transitions {} {
                 set tags {pending}
             }
             $tree insert $parent_id end -text $tname \
-                -values [list $torg $tseg $tstate $treason] -tags $tags
+                -values [list $tstem $torg $tseg $tstate $treason] -tags $tags
         }
 
         incr ti
@@ -1121,7 +1146,12 @@ proc show_log_window {} {
 }
 
 proc log_message {msg} {
+    global log_to_stderr
     set ts [clock format [clock seconds] -format "%H:%M:%S"]
+    if {$log_to_stderr} {
+        puts stderr "$ts $msg"
+        flush stderr
+    }
     # Ensure log window exists
     if {![winfo exists .logwin]} {
         show_log_window
@@ -1148,9 +1178,87 @@ proc ui_on_complete {done failed result} {
         bindtags $tree $saved_tree_bindtags
         set saved_tree_bindtags {}
     }
-    log_message "Dispatch completed: $done done, $failed failed."
+    set skipped [spar::dict_get_default $result skipped 0]
+    set count   [spar::dict_get_default $result count 0]
+    set tail ""
+    if {$skipped ne "" && $skipped > 0} { append tail ", $skipped skipped" }
+    if {$count ne "" && $count == 0 && $done == 0 && $failed == 0} {
+        append tail " (no rows matched the runner's filters — check in-scope channel, min_star, or that the approach file already exists)"
+    }
+    log_message "Dispatch completed: $done done, $failed failed$tail."
     do_refresh
     event generate $tree <<TreeviewSelect>>
+
+    global auto_quit
+    if {$auto_quit} {
+        # Exit with 1 if anything failed, else 0. Flush any pending Tk
+        # work first so the log line actually reaches stderr.
+        update
+        exit [expr {$failed > 0 ? 1 : 0}]
+    }
+}
+
+# Headless / self-debug entry point: called from _async_load_next after
+# the tree is populated when --tid was given on the command line. Maps
+# --tid to the parent tree node, optionally narrows to --stems, and
+# fires do_dispatch via the normal selection path so the new code
+# exercises the same code path the user exercises manually.
+proc auto_dispatch {} {
+    global tree auto_tid auto_stems auto_quit
+    set tids {T1 T2 T3 T4 T6 T7 T8}
+    set idx [lsearch -exact $tids $auto_tid]
+    if {$idx < 0} {
+        puts stderr "spar-ui: --tid=$auto_tid is not one of: [join $tids {, }]"
+        if {$auto_quit} { exit 1 }
+        return
+    }
+    set parent "t$idx"
+    if {![$tree exists $parent]} {
+        puts stderr "spar-ui: transition $auto_tid has no tree row (not populated?)"
+        if {$auto_quit} { exit 1 }
+        return
+    }
+    set children [$tree children $parent]
+    if {[llength $children] == 0} {
+        puts stderr "spar-ui: transition $auto_tid has zero eligible contacts"
+        if {$auto_quit} { exit 0 }
+        return
+    }
+
+    if {[llength $auto_stems] > 0} {
+        # Narrow to children whose stashed stem matches.
+        set matches {}
+        set all_stems {}
+        foreach c $children {
+            set s [$tree set $c stem]
+            lappend all_stems $s
+            if {$s in $auto_stems} { lappend matches $c }
+        }
+        if {[llength $matches] == 0} {
+            puts stderr "spar-ui: none of --stems=[join $auto_stems ,] matched the $auto_tid tree."
+            puts stderr "spar-ui: available stems under $auto_tid: [join $all_stems {, }]"
+            if {$auto_quit} { exit 1 }
+            return
+        }
+        # Report missing stems so the caller notices typos.
+        set missing {}
+        foreach s $auto_stems {
+            set found 0
+            foreach c $matches {
+                if {[$tree set $c stem] eq $s} { set found 1; break }
+            }
+            if {!$found} { lappend missing $s }
+        }
+        if {[llength $missing] > 0} {
+            puts stderr "spar-ui: --stems not found under $auto_tid: [join $missing {, }]"
+        }
+        $tree selection set $matches
+    } else {
+        $tree selection set [list $parent]
+    }
+    event generate $tree <<TreeviewSelect>>
+    update
+    do_dispatch
 }
 
 proc do_dispatch {} {
@@ -1161,15 +1269,24 @@ proc do_dispatch {} {
     set sel [$tree selection]
     if {[llength $sel] == 0} return
 
-    # Determine which transition is selected
-    set parent ""
+    # Gather the parent node(s) spanned by the selection. A child-only
+    # selection implies its parent. More than one distinct parent means
+    # the user crossed transitions — refuse. The binding should have
+    # disabled the button in that case, but guard against stale state.
+    set parents {}
+    set child_items {}
     foreach item $sel {
-        if {[$tree parent $item] eq ""} {
-            set parent $item
-            break
+        set p [$tree parent $item]
+        if {$p eq ""} {
+            lappend parents $item
+        } else {
+            lappend parents $p
+            lappend child_items $item
         }
     }
-    if {$parent eq ""} return
+    set parents [lsort -unique $parents]
+    if {[llength $parents] != 1} return
+    set parent [lindex $parents 0]
 
     set label [$tree item $parent -text]
 
@@ -1208,6 +1325,20 @@ proc do_dispatch {} {
         dict set opts confirmed 1
     }
 
+    # Narrow dispatch to the selected children, if any. Empty list ⇒
+    # current (parent-only) behaviour: runner processes all ready rows.
+    if {[llength $child_items] > 0} {
+        set sel_stems {}
+        foreach c $child_items {
+            set s [$tree set $c stem]
+            if {$s ne ""} { lappend sel_stems $s }
+        }
+        if {[llength $sel_stems] > 0} {
+            dict set opts stems $sel_stems
+            log_message "Dispatch narrowed to [llength $sel_stems] selected stem(s): [join $sel_stems {, }]"
+        }
+    }
+
     set dispatching 1
     ${tpanel}.dispatch.play configure -state disabled
     $tree state disabled
@@ -1232,20 +1363,63 @@ proc do_dispatch {} {
 
 bind $tree <<TreeviewSelect>> [list apply {{tree play} {
     set sel [$tree selection]
-    set enable 0
-    set label ""
+    set parents {}
+    set children {}
     foreach item $sel {
-        if {[$tree parent $item] eq "" && [$tree children $item] ne ""} {
-            set enable 1
-            set label [$tree item $item -text]
-            regsub {\s*\(\d+\)\s*$} $label "" label
-            break
+        set p [$tree parent $item]
+        if {$p eq ""} {
+            lappend parents $item
+        } else {
+            lappend parents $p
+            lappend children $item
         }
     }
-    if {$enable} {
-        $play configure -state normal -text "\u25b6 $label"
-    } else {
+    set parents [lsort -unique $parents]
+
+    # Mixed parents, or nothing selected ⇒ disable.
+    if {[llength $parents] != 1} {
         $play configure -state disabled -text "\u25b6 Dispatch"
+        return
+    }
+    set parent [lindex $parents 0]
+    # Empty transition (no children at all) ⇒ nothing to dispatch.
+    if {[$tree children $parent] eq ""} {
+        $play configure -state disabled -text "\u25b6 Dispatch"
+        return
+    }
+
+    set label [$tree item $parent -text]
+    regsub {\s*\(\d+\)\s*$} $label "" label
+
+    set nchild [llength $children]
+
+    # When children are selected and the runner is ::spar::p::run
+    # (T1/T6), passing stems bypasses the "profile exists" skip — i.e.
+    # re-authors. Reflect that in the verb so the user sees the action
+    # before firing.
+    set verb "Dispatch"
+    if {$nchild > 0} {
+        set tnum [string range $parent 1 end]
+        set tids {T1 T2 T3 T4 T6 T7 T8}
+        set tid [lindex $tids $tnum]
+        if {[spar::has_transition_runner $tid]} {
+            set runner [spar::transition_runner $tid]
+            if {$runner eq "::spar::p::run"} {
+                foreach c $children {
+                    if {[$tree set $c state] eq "done"} {
+                        set verb "Re-author"
+                        break
+                    }
+                }
+            }
+        }
+    }
+
+    if {$nchild > 0} {
+        $play configure -state normal \
+            -text "\u25b6 ${verb}: $label ($nchild)"
+    } else {
+        $play configure -state normal -text "\u25b6 Dispatch: $label"
     }
 }} $tree ${tpanel}.dispatch.play]
 
