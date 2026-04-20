@@ -1135,8 +1135,26 @@ proc log_message {msg} {
 set dispatching 0
 set saved_tree_bindtags {}
 
+proc ui_on_progress {slug status message} {
+    log_message "  \[$status\] $slug $message"
+}
+
+proc ui_on_complete {done failed result} {
+    global dispatching tpanel tree saved_tree_bindtags
+    set dispatching 0
+    ${tpanel}.dispatch.play configure -state normal
+    $tree state !disabled
+    if {$saved_tree_bindtags ne {}} {
+        bindtags $tree $saved_tree_bindtags
+        set saved_tree_bindtags {}
+    }
+    log_message "Dispatch completed: $done done, $failed failed."
+    do_refresh
+    event generate $tree <<TreeviewSelect>>
+}
+
 proc do_dispatch {} {
-    global tree tpanel script_dir dispatching saved_tree_bindtags
+    global tree tpanel script_dir dispatching saved_tree_bindtags campaign_file
 
     if {$dispatching} return
 
@@ -1155,13 +1173,39 @@ proc do_dispatch {} {
 
     set label [$tree item $parent -text]
 
-    set tid $parent  ;# e.g. "t0", "t1", ...
-    set tnum [string range $tid 1 end]
+    # Tree item id (t0..t6) to T-id. The ordering must match
+    # build_transitions above.
+    set tnum [string range $parent 1 end]
+    set tids {T1 T2 T3 T4 T6 T7 T8}
+    set tid [lindex $tids $tnum]
 
-    set dispatch_lib [file join $script_dir spar-dispatch.tcl]
-    if {![file exists $dispatch_lib]} {
-        log_message "Dispatch library not available (spar-dispatch.tcl not found)."
+    # Ensure backend libraries are loaded.
+    foreach lib {spar-dispatch.tcl spar-email.tcl} {
+        set path [file join $script_dir $lib]
+        if {![file exists $path]} {
+            log_message "Dispatch library not available ($lib not found)."
+            return
+        }
+        if {[catch {source $path} err]} {
+            log_message "Error loading $lib: $err"
+            return
+        }
+    }
+
+    if {![spar::has_transition_runner $tid]} {
+        log_message "Dispatch for $tid not implemented."
         return
+    }
+    set runner [spar::transition_runner $tid]
+
+    set opts [dict create \
+        campaign_file $campaign_file \
+        dry_run 0 \
+        jobs 4]
+    if {$runner eq "::spar::email::run"} {
+        # UI has its own flow — no tty prompt.
+        dict set opts delay_seconds 0
+        dict set opts confirmed 1
     }
 
     set dispatching 1
@@ -1171,43 +1215,18 @@ proc do_dispatch {} {
     bindtags $tree [list $tree .]
     update idletasks
 
-    try {
-        show_dispatch_bar
-        log_message "Dispatch requested: $label"
+    show_dispatch_bar
+    log_message "Dispatch requested: $label ($tid)"
 
-        if {[catch {source $dispatch_lib} err]} {
-            log_message "Error loading spar-dispatch.tcl: $err"
-            return
-        }
-
-        switch -- $tnum {
-            0 {
-                # T1: Sweep -> Profile
-                if {[catch {spar::dispatch_profiles} err]} {
-                    log_message "T1 dispatch error: $err"
-                } else {
-                    log_message "T1 dispatch completed."
-                }
-            }
-            1 {
-                # T2: Profile -> Approach
-                if {[catch {spar::dispatch_approaches} err]} {
-                    log_message "T2 dispatch error: $err"
-                } else {
-                    log_message "T2 dispatch completed."
-                }
-            }
-            default {
-                log_message "Dispatch for transition T[expr {$tnum + 1}] not implemented."
-            }
-        }
-
-        do_refresh
-    } finally {
+    if {[catch {$runner $opts ui_on_progress ui_on_complete} err]} {
+        log_message "$tid dispatch error: $err"
         set dispatching 0
+        ${tpanel}.dispatch.play configure -state normal
         $tree state !disabled
-        bindtags $tree $saved_tree_bindtags
-        event generate $tree <<TreeviewSelect>>
+        if {$saved_tree_bindtags ne {}} {
+            bindtags $tree $saved_tree_bindtags
+            set saved_tree_bindtags {}
+        }
     }
 }
 

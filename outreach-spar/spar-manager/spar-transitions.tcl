@@ -10,14 +10,17 @@
 #       [--segment=<name> ...] [--stem=<stem> ...] [--jobs=N] [--delay=N]
 #       [--yes] [--dry-run]
 #
-# T1/T6 route to spar::dispatch_profiles (P harness). T3 sends via AWS SES
-# (spar::send_email) serially with --delay pacing. T2/T7 are wired only
-# through --auto (via spar::dispatch_approaches); explicit --tid=T2/T7
-# without --auto fails loudly. T4/T8 execution has no harness yet.
+# T-id routing is authored once in spar-state.tcl (spar::transition_runners):
+# T1/T6 → spar::p::run, T2/T7 → spar::a::run. T4/T8 have no runner —
+# has_transition_runner returns 0 and the CLI skips them.
+#
+# T3 (Approach → Send) is not in the routing table. Its mechanics differ
+# from the Dispatcher-based runners (serial SES sends, interactive [y/N]
+# prompt, --delay pacing) and it is handled inline below. T3 is excluded
+# from --auto unconditionally — auto must never send email.
 #
 # --auto runs T1+T2+T6+T7 as a state machine: classify, dispatch ready
-# work, re-classify, repeat until no new work is ready. T3 is excluded
-# from --auto unconditionally — auto must never send email.
+# work, re-classify, repeat until no new work is ready.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
@@ -64,12 +67,12 @@ OPTIONS
     -h, --help        show this help
 
 TRANSITIONS
-    T1  Sweep → Profile           (execute: wired here)
-    T2  Profile → Approach        (execute: use spar-a-batch.tcl)
-    T3  Approach → Send           (execute: wired here, via AWS SES)
+    T1  Sweep → Profile           (execute: wired)
+    T2  Profile → Approach        (execute: wired)
+    T3  Approach → Send           (execute: wired, via AWS SES)
     T4  Send → Reply              (execute: not wired — monitoring-only TID)
-    T6  Stale → Re-profile        (execute: wired here)
-    T7  Re-profile → Re-approach  (execute: use spar-a-batch.tcl)
+    T6  Stale → Re-profile        (execute: wired)
+    T7  Re-profile → Re-approach  (execute: wired)
     T8  LinkedIn → Email          (execute: not wired)
 
 COMMON WORKFLOWS
@@ -79,8 +82,8 @@ COMMON WORKFLOWS
     # Create all missing profiles (T1) in a campaign
     tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute
 
-    # Make all missing approaches (T2) — separate tool:
-    tclsh9.0 spar-a-batch.tcl path/to/campaign.yaml
+    # Make all missing approaches (T2)
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T2 --execute
 
     # Send all approach-ready emails (T3) — dry-run first, then live
     tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T3 --execute --dry-run
@@ -260,24 +263,20 @@ if {$auto_mode} {
 }
 
 # ────────────────────────────────────────────────────────────────────────
-# Execute mode — route ready tasks to dispatchers
+# Execute mode — dispatch ready tasks through the routing table.
 # ────────────────────────────────────────────────────────────────────────
 if {$execute_mode} {
-    set profile_tids {T1 T6}
-    set approach_tids {T2 T7}
-    set email_tids {T3}
-    set unimplemented_tids {T2 T4 T7 T8}
-
     set ::_pending_dispatchers 0
     set ::_total_done 0
     set ::_total_failed 0
 
     proc exec_on_progress {slug status message} {
         switch -- $status {
-            started { puts "  \[START\] $slug" }
-            done    { puts "  \[DONE \] $slug" }
+            started { if {$message eq ""} { puts "  \[START\] $slug" } }
+            done    { puts "  \[DONE \] $slug [expr {$message ne "" ? "($message)" : ""}]" }
             failed  { puts "  \[FAIL \] $slug ($message)" }
             skipped { puts "  \[SKIP \] $slug ($message)" }
+            warning { puts stderr "  \[WARN \] $slug: $message" }
         }
     }
 
@@ -290,10 +289,9 @@ if {$execute_mode} {
         }
     }
 
-    # ── Helper: classify segments → all_contacts (honours --stem filter).
-    # Used at startup and again before each --auto iteration so disk
-    # changes from the previous pass (new profiles, new approaches) feed
-    # the next round of transition eligibility.
+    # Classify segments → contacts (honours --stem filter). Used at startup
+    # and again before each --auto iteration so disk changes from the
+    # previous pass feed the next round of transition eligibility.
     proc reclassify_contacts {segment_paths filter_stems} {
         set out {}
         foreach item $segment_paths {
@@ -307,116 +305,81 @@ if {$execute_mode} {
         if {[llength $filter_stems] > 0} {
             set filtered {}
             foreach c $out {
-                if {[dict get $c stem] in $filter_stems} {
-                    lappend filtered $c
-                }
+                if {[dict get $c stem] in $filter_stems} { lappend filtered $c }
             }
             set out $filtered
         }
         return $out
     }
 
-    # ── Helper: compute ready tasks per TID for the given contacts.
-    # `cdata` is the full campaign dict — T9/T10 need it to read
-    # secondary/tertiary channel slots; earlier Ts ignore it.
+    # Compute ready tasks per TID. cdata is full campaign dict — T9/T10
+    # need it to read secondary/tertiary channel slots.
     proc compute_ready_by_tid {all_contacts active_tids primary_channel {cdata {}}} {
         set ready_by_tid [dict create]
         foreach tid $active_tids {
             set eligible [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
             set ready_list {}
             foreach c $eligible {
-                if {[dict get $c task_state] eq "ready"} {
-                    lappend ready_list $c
-                }
+                if {[dict get $c task_state] eq "ready"} { lappend ready_list $c }
             }
-            if {[llength $ready_list] > 0} {
-                dict set ready_by_tid $tid $ready_list
-            }
+            if {[llength $ready_list] > 0} { dict set ready_by_tid $tid $ready_list }
         }
         return $ready_by_tid
     }
 
-    # ── Helper: dispatch profile-class transitions (T1, T6) per segment.
-    # Sets ::_pending_dispatchers and ::_alldone for the caller to vwait.
-    proc dispatch_profile_tids {ready_by_tid profile_tids active_tids \
-                                 yaml_path dry_run jobs} {
+    # Dispatch every ready T-id through its runner. Runners run concurrently;
+    # exec_on_complete decrements ::_pending_dispatchers and the outer vwait
+    # blocks until all have drained.
+    proc dispatch_ready {ready_by_tid active_tids yaml_path cdata \
+                         dry_run jobs delay \
+                         filter_segments filter_stems assume_yes} {
         set ::_pending_dispatchers 0
         set ::_alldone 0
-        foreach tid $profile_tids {
-            if {$tid ni $active_tids} continue
+        foreach tid $active_tids {
+            if {![spar::has_transition_runner $tid]} continue
             if {![dict exists $ready_by_tid $tid]} continue
+            set runner [spar::transition_runner $tid]
             set tasks [dict get $ready_by_tid $tid]
-            set by_segdir [dict create]
-            foreach c $tasks {
-                set sd [dict get $c _segment_dir]
-                dict lappend by_segdir $sd [dict get $c stem]
-            }
-            dict for {segdir stems} $by_segdir {
-                puts "$tid @ [file tail $segdir]: [llength $stems] task(s) — [join $stems {, }]"
-                set opts [dict create \
-                    campaign_file $yaml_path \
-                    dry_run $dry_run \
-                    jobs $jobs \
-                    stems $stems]
-                incr ::_pending_dispatchers
-                if {[catch {
-                    spar::dispatch_profiles $segdir $opts \
-                        exec_on_progress exec_on_complete
-                } err]} {
-                    puts stderr "  dispatch error: $err"
-                    incr ::_pending_dispatchers -1
-                    incr ::_total_failed [llength $stems]
+            set opts [dict create \
+                campaign_file $yaml_path \
+                dry_run $dry_run \
+                jobs $jobs]
+            # Derive per-runner opts from ready tasks and CLI filters.
+            if {$runner eq "::spar::p::run"} {
+                # Pass stems of ready rows so the runner rebuilds exactly
+                # those profiles (bypassing the "profile exists" skip).
+                set stems {}
+                foreach c $tasks { lappend stems [dict get $c stem] }
+                if {[llength $filter_stems] > 0} { set stems $filter_stems }
+                dict set opts stems $stems
+                set segs [dict create]
+                foreach c $tasks {
+                    dict set segs [file tail [dict get $c _segment_dir]] 1
                 }
+                dict set opts segments [dict keys $segs]
+                puts "$tid: [llength $tasks] task(s) across [llength [dict keys $segs]] segment(s)"
+            } elseif {$runner eq "::spar::a::run"} {
+                if {[llength $filter_segments] > 0} {
+                    dict set opts segments $filter_segments
+                }
+                if {[llength $filter_stems] > 0} {
+                    dict set opts stems $filter_stems
+                }
+                puts "$tid: [llength $tasks] task(s) ready (campaign-wide pass)"
+            }
+            incr ::_pending_dispatchers
+            if {[catch {$runner $opts exec_on_progress exec_on_complete} err]} {
+                puts stderr "  $tid dispatch error: $err"
+                incr ::_pending_dispatchers -1
+                incr ::_total_failed [llength $tasks]
             }
         }
-        if {$::_pending_dispatchers > 0} {
-            vwait ::_alldone
-        }
-    }
-
-    # ── Helper: dispatch approach-class transitions (T2, T7) campaign-wide.
-    # spar::dispatch_approaches is campaign-scoped; we pass our segment/stem
-    # filters through so --segment / --stem on the CLI take effect here too.
-    proc dispatch_approach_tids {ready_by_tid approach_tids active_tids \
-                                  yaml_path dry_run jobs \
-                                  filter_segments filter_stems} {
-        set need 0
-        foreach tid $approach_tids {
-            if {$tid ni $active_tids} continue
-            if {[dict exists $ready_by_tid $tid]} {
-                set need 1
-                set n [llength [dict get $ready_by_tid $tid]]
-                puts "$tid: $n task(s) ready (campaign-wide pass)"
-            }
-        }
-        if {!$need} return
-
-        set ::_pending_dispatchers 1
-        set ::_alldone 0
-        set a_opts [dict create dry_run $dry_run jobs $jobs]
-        if {[llength $filter_segments] > 0} {
-            dict set a_opts segments $filter_segments
-        }
-        if {[llength $filter_stems] > 0} {
-            dict set a_opts stems $filter_stems
-        }
-        if {[catch {
-            spar::dispatch_approaches $yaml_path $a_opts \
-                exec_on_progress exec_on_complete
-        } err]} {
-            puts stderr "  dispatch_approaches error: $err"
-            incr ::_pending_dispatchers -1
-            set ::_alldone 1
-        }
-        if {$::_pending_dispatchers > 0} {
-            vwait ::_alldone
-        }
+        if {$::_pending_dispatchers > 0} { vwait ::_alldone }
     }
 
     # ────────────────────────────────────────────────────────────────────
-    # --auto: state-machine loop. Re-classify between iterations so
-    # T1 → T2 and T6 → T7 happen in a single invocation, without
-    # asking the user to rerun the script.
+    # --auto: state-machine loop. Re-classify between iterations so T1→T2
+    # and T6→T7 happen in a single invocation.
     # ────────────────────────────────────────────────────────────────────
     if {$auto_mode} {
         puts "Campaign: $campaign_name"
@@ -428,7 +391,7 @@ if {$execute_mode} {
         while {$iter <= $MAX_ITER} {
             set all_contacts [reclassify_contacts $segment_paths $filter_stems]
             set ready_by_tid [compute_ready_by_tid \
-                $all_contacts $active_tids $primary_channel]
+                $all_contacts $active_tids $primary_channel $cdata]
 
             if {[dict size $ready_by_tid] == 0} {
                 if {$iter == 1} {
@@ -440,8 +403,8 @@ if {$execute_mode} {
                 break
             }
 
-            # Convergence guard: if the same set of tasks is ready as
-            # last iteration, we made no progress (something is wedged).
+            # Convergence guard: if the same set of tasks is ready as last
+            # iteration, we made no progress (something is wedged).
             set signature ""
             foreach tid [lsort [dict keys $ready_by_tid]] {
                 set keys [list]
@@ -460,10 +423,9 @@ if {$execute_mode} {
             puts ""
             puts "── Iteration $iter ──"
 
-            dispatch_profile_tids $ready_by_tid $profile_tids $active_tids \
-                $yaml_path $dry_run $jobs
-            dispatch_approach_tids $ready_by_tid $approach_tids $active_tids \
-                $yaml_path $dry_run $jobs $filter_segments $filter_stems
+            dispatch_ready $ready_by_tid $active_tids \
+                $yaml_path $cdata $dry_run $jobs $delay \
+                $filter_segments $filter_stems $assume_yes
 
             incr iter
         }
@@ -481,7 +443,7 @@ if {$execute_mode} {
     }
 
     # ────────────────────────────────────────────────────────────────────
-    # Non-auto execute (single pass, explicit --tid).
+    # Non-auto execute (single pass, explicit or default --tid).
     # ────────────────────────────────────────────────────────────────────
     set ready_by_tid [compute_ready_by_tid \
         $all_contacts $active_tids $primary_channel $cdata]
@@ -492,28 +454,26 @@ if {$execute_mode} {
         exit 0
     }
 
-    # Fail loudly for unimplemented TIDs with ready work.
-    foreach tid $unimplemented_tids {
-        if {[dict exists $ready_by_tid $tid]} {
+    # Warn (don't fail) for ready work on unwired TIDs. T4/T8 are
+    # monitoring-only in the current design.
+    foreach tid [dict keys $ready_by_tid] {
+        if {![spar::has_transition_runner $tid]} {
             set n [llength [dict get $ready_by_tid $tid]]
-            puts stderr "Error: --execute for $tid is not yet wired ($n ready task(s))."
-            puts stderr "  T2/T7 → use spar-a-batch.tcl, or use --auto."
-            puts stderr "  T4/T8 → no harness exists yet."
-            exit 1
+            puts stderr "Note: $tid has $n ready task(s) but no runner is wired — skipping."
         }
     }
 
     puts "Campaign: $campaign_name"
     if {$dry_run} { puts "(dry run — prompts written, no harnesses spawned)" }
 
-    dispatch_profile_tids $ready_by_tid $profile_tids $active_tids \
-        $yaml_path $dry_run $jobs
+    dispatch_ready $ready_by_tid $active_tids \
+        $yaml_path $cdata $dry_run $jobs $delay \
+        $filter_segments $filter_stems $assume_yes
 
     # ── T3: send approach-ready emails via AWS SES ─────────────────────
-    if {[dict exists $ready_by_tid T3]} {
+    if {[dict exists $ready_by_tid T3] && T3 in $active_tids} {
         set t3_tasks [dict get $ready_by_tid T3]
 
-        # Resolve campaign-level defaults.
         set camp_sender [spar::dict_get_default $cdata sender [dict create]]
         set camp_from_name  [spar::dict_get_default $camp_sender name ""]
         set camp_from_email [spar::dict_get_default $camp_sender email ""]
@@ -524,7 +484,6 @@ if {$execute_mode} {
         puts ""
         puts "T3: Approach → Send — $n_t3 email(s) ready"
 
-        # Confirmation unless --dry-run or --yes.
         if {!$dry_run && !$assume_yes} {
             puts -nonewline "Send $n_t3 email(s) live via SES (region $ses_region)? \[y/N\] "
             flush stdout
@@ -573,7 +532,6 @@ if {$execute_mode} {
                 continue
             }
 
-            # Sender: approach decisions.sender first, campaign fallback.
             set from_name  $camp_from_name
             set from_email $camp_from_email
             if {[dict exists $approach_data decisions]} {
@@ -592,9 +550,6 @@ if {$execute_mode} {
             }
             set from_hdr [expr {$from_name ne "" ? "$from_name <$from_email>" : $from_email}]
 
-            # BCC: message-level first, then campaign sender.bcc, else
-            # self-BCC the effective From address so every send leaves an
-            # archive copy in the sender's own mailbox.
             if {$bcc eq ""} { set bcc $camp_bcc }
             if {$bcc eq ""} { set bcc $from_email }
 
@@ -620,9 +575,6 @@ if {$execute_mode} {
                 continue
             }
 
-            # Stamp actioned_date on success. Under the ≤1-email invariant
-            # (too_many_final_emails in validate_approach), stamping all
-            # unsent emails stamps exactly the one we just sent.
             if {!$dry_run} {
                 set today [clock format [clock seconds] -format "%Y-%m-%d"]
                 if {[catch {spar::stamp_actioned_date $approach_path $today} err]} {

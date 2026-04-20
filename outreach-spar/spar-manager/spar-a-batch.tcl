@@ -1,9 +1,10 @@
 #!/usr/bin/env tclsh9.0
 # spar-a-batch.tcl — Generate SPAR-A approach files from a campaign YAML
-# Thin CLI wrapper around spar::dispatch_approaches (spar-dispatch.tcl)
+# Thin CLI wrapper around spar::a::run (spar-dispatch.tcl)
 # Usage: tclsh9.0 spar-a-batch.tcl <campaign.yaml> [--dry-run] [--jobs=N] [--logs=DIR]
 
 set script_dir [file dirname [file normalize [info script]]]
+source [file join $script_dir spar-state.tcl]
 source [file join $script_dir spar-dispatch.tcl]
 
 # --- Argument parsing ---
@@ -33,6 +34,7 @@ if {![file exists $campaign_file]} {
 
 # --- Build opts dict ---
 set opts [dict create \
+    campaign_file $campaign_file \
     dry_run $dry_run \
     jobs $jobs]
 if {$user_logs ne ""} { dict set opts logs_dir $user_logs }
@@ -60,7 +62,7 @@ proc cli_on_complete {total_done total_failed result} {
 
 # --- Dispatch ---
 if {[catch {
-    set result [spar::dispatch_approaches $campaign_file $opts cli_on_progress cli_on_complete]
+    set result [spar::a::run $opts cli_on_progress cli_on_complete]
 } err]} {
     puts stderr $err
     exit 1
