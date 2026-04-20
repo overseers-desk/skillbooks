@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 3
-richness: thin
+richness: limited
 richness_count: 2
 warmth_finding: cold
 applicable_angles: []
@@ -90,4 +90,4 @@ When angles are defined, the natural fit for this contact will be a size-appropr
 
 - **findability_score:** 2
 - **query_used:** `"Managing Director" "paint and render" Somerton wholesale accessories Australia`
-- **note:** Rohan's LinkedIn and iQuip website were the #1 and #3 results without using his name — high discoverability driven by a distinctive niche/locale combination, but his personal public voice is thin, so the discoverability is reputational rather than attitudinal.
+- **note:** Rohan's LinkedIn and iQuip website were the #1 and #3 results without using his name — high discoverability driven by a distinctive niche/locale combination, but his personal public voice is limited, so the discoverability is reputational rather than attitudinal.

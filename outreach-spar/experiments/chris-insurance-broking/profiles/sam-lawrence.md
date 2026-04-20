@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 0
-richness: thin
+richness: limited
 richness_count: 2
 warmth_finding: cold
 applicable_angles: []
@@ -83,4 +83,4 @@ None applicable — contact is structurally invalid for the segment.
 
 findability_score: 1
 query_used: `"Insure Group" "Palmerston North" managing director`
-note: Discoverable by role + company + city without his name, but his public footprint beyond the company listing is thin; cue-building for approach would be difficult even if he were a valid target.
+note: Discoverable by role + company + city without his name, but his public footprint beyond the company listing is limited; cue-building for approach would be difficult even if he were a valid target.

@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 0
-richness: thin
+richness: limited
 richness_count: 2
 warmth_finding: cold
 applicable_angles: []
@@ -71,4 +71,4 @@ None. Contact excluded at §4.0 / §4.11 stage.
 
 - findability_score: 0
 - query_used: `"Andrew Blachura" Sydney "General Manager"` (initial: `Managing Director manufacturing Sydney electrical`)
-- note: Name-free inferred-key queries do not surface him in the first 20 results; his public footprint is too thin and his current role title too generic for re-discovery without a name.
+- note: Name-free inferred-key queries do not surface him in the first 20 results; his public footprint is too limited and his current role title too generic for re-discovery without a name.

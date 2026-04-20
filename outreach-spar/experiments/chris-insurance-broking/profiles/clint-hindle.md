@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 0
-richness: thin
+richness: limited
 richness_count: 2
 warmth_finding: cold
 applicable_angles: []
@@ -67,4 +67,4 @@ None — excluded.
 
 findability_score: 0
 query_used: "Clint Hindle" QA Insurance Melbourne
-note: Namesake-style collision risk is low (unique name), but his public footprint is thin outside LinkedIn/adviserratings — limited non-name hooks for cue-building, and irrelevant here given exclusion.
+note: Namesake-style collision risk is low (unique name), but his public footprint is limited outside LinkedIn/adviserratings — limited non-name hooks for cue-building, and irrelevant here given exclusion.

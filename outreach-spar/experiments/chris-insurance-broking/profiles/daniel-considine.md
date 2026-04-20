@@ -93,4 +93,4 @@ Secon Freight Logistics: port-to-door container cartage, warehousing (35,000 m²
 
 - **findability_score:** 2
 - **query_used:** `"Secon Freight Logistics" CEO Melbourne`
-- **note:** Daniel surfaces in the first page on the generic role+company+city query (Prime Mover Magazine announcement, CEO Magazine interview, company site) — high public visibility despite thin topical posting.
+- **note:** Daniel surfaces in the first page on the generic role+company+city query (Prime Mover Magazine announcement, CEO Magazine interview, company site) — high public visibility despite limited topical posting.

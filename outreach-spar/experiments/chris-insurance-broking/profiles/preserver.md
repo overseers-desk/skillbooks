@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 3
-richness: thin
+richness: limited
 richness_count: 2
 warmth_finding: cold
 applicable_angles:
@@ -84,7 +84,7 @@ The roster entry was materially wrong on sweep discovery and has been corrected 
 
 Monte Huebsch is not a campaign target (real-estate software, not logistics; fails rule 3) and is not added to the roster as a separate row.
 
-No `date_excluded` is set — Rick Celik is a valid (if thin-data) target under sweep_iteration 4 rules.
+No `date_excluded` is set — Rick Celik is a valid (if limited-data) target under sweep_iteration 4 rules.
 
 ## Findability probe
 

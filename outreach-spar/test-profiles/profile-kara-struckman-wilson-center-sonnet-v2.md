@@ -75,7 +75,7 @@ Note: A Wilderness Medical Associates International logo appeared in the LinkedI
 
 ## Institutional context (Meridian International Center, Center for Technology, Innovation & Space)
 
-The institutional context at Meridian is material to this profile because Kara's personal public statements on campaign-relevant topics are thin (one XZ Utils article from April 2024) but her institutional position creates specific access paths.
+The institutional context at Meridian is material to this profile because Kara's personal public statements on campaign-relevant topics are limited (one XZ Utils article from April 2024) but her institutional position creates specific access paths.
 
 **What Meridian's Center for Technology, Innovation & Space does:**
 - Runs the **AI Tech Labs** series — a free, nonpartisan six-week programme for Hill staff and Executive Branch officials, covering national security, Chinese AI development, and emerging research. Previously run at Wilson Center; relocated to Meridian in March 2025 with SeedAI as a partner.

@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 0
-richness: thin
+richness: limited
 richness_count: 2
 warmth_finding: cold
 applicable_angles: []
@@ -30,7 +30,7 @@ Company registry: AXM SOLUTIONS PTY LTD, ABN 12 650 836 909, ACN 650 836 909, Au
 |---|---|---|---|
 | Current | Director | AXM Solutions Pty Ltd | Sydney, NSW. Confirmed via LinkedIn header card. |
 
-LinkedIn served a thin/restricted profile view (no Experience block rendered in the DOM dump); dated career history not available without an authenticated re-fetch under a connected account. A stale RocketReach record suggested a transition to "Living Water Aquaculture" — contradicted by the current LinkedIn and treated as out of date.
+LinkedIn served a limited/restricted profile view (no Experience block rendered in the DOM dump); dated career history not available without an authenticated re-fetch under a connected account. A stale RocketReach record suggested a transition to "Living Water Aquaculture" — contradicted by the current LinkedIn and treated as out of date.
 
 ## Certifications and education
 

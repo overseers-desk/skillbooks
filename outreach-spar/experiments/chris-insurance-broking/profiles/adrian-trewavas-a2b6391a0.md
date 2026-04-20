@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 3
-richness: thin
+richness: limited
 richness_count: 2
 warmth_finding: cold
 applicable_angles:

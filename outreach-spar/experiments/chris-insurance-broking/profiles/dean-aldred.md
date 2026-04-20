@@ -114,4 +114,4 @@ Network / connection value — low. Dean is a co-C-suite of an already-profiled 
 
 - findability_score: 2
 - query_used: `"Dean Aldred" CIO logistics New Zealand`
-- note: Dean's LinkedIn header ("Dean Aldred — Chief Information Officer | LinkedIn") surfaces in the first three Google results from a role+industry+geography query without his name-quote requirement doing the work, and the booths.co.nz bio is also first-page. High discoverability despite a thin content footprint — role + company + country alone identify him uniquely.
+- note: Dean's LinkedIn header ("Dean Aldred — Chief Information Officer | LinkedIn") surfaces in the first three Google results from a role+industry+geography query without his name-quote requirement doing the work, and the booths.co.nz bio is also first-page. High discoverability despite a limited content footprint — role + company + country alone identify him uniquely.

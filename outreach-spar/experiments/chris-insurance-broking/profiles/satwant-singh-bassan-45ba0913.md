@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 0
-richness: thin
+richness: limited
 richness_count: 2
 warmth_finding: cold
 applicable_angles: []
@@ -94,4 +94,4 @@ None applicable under current campaign scope. Satwant is excluded.
 
 - findability_score: 0
 - query_used: `"Satwant Singh Bassan" CFO Sydney` (initial), then `"Satwant Singh Bassan" "Fantastic Furniture"` (refinement)
-- note: Public footprint is minimal — web search surfaces the LinkedIn profile itself and data-broker (ZoomInfo / RocketReach / SignalHire) stubs keyed off the LinkedIn URN, but no authored content, press quotes, conference listings, or company-page named appearances. Low public visibility; consistent with the thin LinkedIn top-card (three-letter headline, no About content rendered). For a campaign targeting him in a *future* scope that admitted IT-services CFOs, there would be little on-topic cue material to build warmth from — the Chris-Graham mutual connection would carry the opener, not any statement he has made.
+- note: Public footprint is minimal — web search surfaces the LinkedIn profile itself and data-broker (ZoomInfo / RocketReach / SignalHire) stubs keyed off the LinkedIn URN, but no authored content, press quotes, conference listings, or company-page named appearances. Low public visibility; consistent with the limited LinkedIn top-card (three-letter headline, no About content rendered). For a campaign targeting him in a *future* scope that admitted IT-services CFOs, there would be little on-topic cue material to build warmth from — the Chris-Graham mutual connection would carry the opener, not any statement he has made.

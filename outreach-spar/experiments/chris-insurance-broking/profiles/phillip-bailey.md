@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 0
-richness: thin
+richness: limited
 richness_count: 2
 warmth_finding: cold
 applicable_angles: []
@@ -81,4 +81,4 @@ Even if a particular VA Partners client engagement happened to be at a target-ve
 
 - `findability_score: 0`
 - `query_used: "Interim CFO" "VA Partners" Wellington`
-- `note: Common name plus a thin web footprint — generic role+company+geo query did not surface him in the first 20 results; only his own LinkedIn URL appears, and namesake collisions dominate. Low public visibility consistent with an interim-services consultant who works through referrals rather than published thought leadership.`
+- `note: Common name plus a limited web footprint — generic role+company+geo query did not surface him in the first 20 results; only his own LinkedIn URL appears, and namesake collisions dominate. Low public visibility consistent with an interim-services consultant who works through referrals rather than published thought leadership.`

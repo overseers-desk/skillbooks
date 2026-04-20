@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 0
-richness: thin
+richness: limited
 richness_count: 1
 warmth_finding: cold
 applicable_angles: []
@@ -41,7 +41,7 @@ Not captured — Experience/Volunteer sections not rendered in fetch.
 
 ## What they have said publicly
 
-No public statements captured. Profile fetch thin; no web search run because entry fails §4.0 structural check.
+No public statements captured. Profile fetch limited; no web search run because entry fails §4.0 structural check.
 
 **Absent themes:** insurance, risk, renewal, claim, broker, D&O, cyber policy, business interruption, policy wording. None appear on the parsed profile.
 

@@ -86,7 +86,7 @@ Middy's Electrical (MEC Group) is the largest privately owned electrical wholesa
 
 2. **new-ceo-program-review** (secondary) — Two-year-tenure CEO, first non-family occupant, with governance training completed before elevation. The natural inflection to commission an independent review of the inherited program (authority, wordings, broker performance). Cold open; warm angle would require an IMAP or network-introduction hook that does not currently exist.
 
-3. **family-owned-governance** (tertiary) — Answers to two family co-directors; D&O and management liability wording at family-controlled private companies has specific features (controlling-shareholder exclusions, insured-vs-insured, related-party claims). AICD training suggests receptivity. Thin on its own; bundle with the primary angle rather than lead with it.
+3. **family-owned-governance** (tertiary) — Answers to two family co-directors; D&O and management liability wording at family-controlled private companies has specific features (controlling-shareholder exclusions, insured-vs-insured, related-party claims). AICD training suggests receptivity. Limited on its own; bundle with the primary angle rather than lead with it.
 
 ## Verification corrections
 

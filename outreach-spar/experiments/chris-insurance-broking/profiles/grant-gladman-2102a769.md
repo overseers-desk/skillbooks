@@ -75,7 +75,7 @@ None of these are brokers or insurance-industry contacts — this is an intra-or
 
 ## Relevance assessment
 
-**What they have NOT said:** anything publicly about insurance, risk, brokers, claims, renewals, governance, or industry forums. Gladman's public footprint is thin and operational; he is a long-tenure operator promoted to CEO rather than a publicly visible industry commentator.
+**What they have NOT said:** anything publicly about insurance, risk, brokers, claims, renewals, governance, or industry forums. Gladman's public footprint is limited and operational; he is a long-tenure operator promoted to CEO rather than a publicly visible industry commentator.
 
 **What IS relevant:**
 

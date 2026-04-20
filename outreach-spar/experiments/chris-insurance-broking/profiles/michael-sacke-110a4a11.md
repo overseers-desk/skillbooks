@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 3
-richness: thin
+richness: limited
 richness_count: 2
 warmth_finding: cold
 applicable_angles:
@@ -104,4 +104,4 @@ All three angles are structural/inferential. Sacke has expressed nothing publicl
 
 - `findability_score: 2`
 - `query_used: "CFO" Attach2 Masterton`
-- `note: Surfaces in the first results via role + employer + city without using his name; high public visibility through the company's web/profile footprint despite his own thin public posting record.`
+- `note: Surfaces in the first results via role + employer + city without using his name; high public visibility through the company's web/profile footprint despite his own limited public posting record.`

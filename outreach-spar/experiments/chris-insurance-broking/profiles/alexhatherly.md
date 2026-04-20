@@ -117,4 +117,4 @@ No technical/direct-evidence angle available — Hatherly has made no public sta
 
 - `findability_score: 0`
 - `query_used: organics recycling CEO NSW "circular economy" FOGO Kembla Grange appointment`
-- `note: Two non-name queries (role+industry+geography, then refined with Kembla Grange + "circular economy" + appointment) failed to surface Hatherly in the first 20 results — his name is the primary retrieval key; without it he is not re-findable from inferred public-role cues, suggesting low non-name-search visibility and a thin cue stack for a warm opener.
+- `note: Two non-name queries (role+industry+geography, then refined with Kembla Grange + "circular economy" + appointment) failed to surface Hatherly in the first 20 results — his name is the primary retrieval key; without it he is not re-findable from inferred public-role cues, suggesting low non-name-search visibility and a limited cue stack for a warm opener.

@@ -32,7 +32,7 @@ No prior correspondence between NRS (chris@nationalrisksolutions.com.au) and the
 | current | Chief Executive Officer | Bidfood Australia (Bidcorp) | Tenure predates 2019 — quoted as CEO in Dec 2019 cage-free-egg announcement; quoted in the 2025 "30 years" retrospective |
 | prior | — | — | Not recoverable from public sources; LinkedIn profile `/in/rachel-ruggiero-55314b45/` exists per Google but returns 404 from this session. Equilar/Bloomberg/TheOrg all list only the current Bidcorp position with no dated history |
 
-Career history is thin because the LinkedIn profile is either locked or vanity-URL changed; data-broker pages show only the current role.
+Career history is limited because the LinkedIn profile is either locked or vanity-URL changed; data-broker pages show only the current role.
 
 ## Certifications and education
 

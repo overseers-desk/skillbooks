@@ -84,7 +84,7 @@ Same risk footprint as the Dallas Vince and Craig Booth profiles describe — he
 5. **Not excluded by rules 5–6.** Not in insurance/finance/law/consulting; not a Risk Manager / Head of Risk / CRO.
 6. **Operational step-back caveat.** Waterford Press confirms Craig and Trevor no longer make day-to-day operational decisions. Tempers urgency: Trevor is not the renewal buyer; he is a family-principal stakeholder.
 7. **FMCG-prior background.** His pre-2009 FMCG career gives him an outside-logistics view of supplier and partner selection — a lens that generalises from vendor management to broker selection. Indirect only (no quote); relevant as context for how to frame a broker conversation.
-8. **No direct email, no phone, no Facebook, LinkedIn thin.** Reachable channels are thinner than Dallas's — LinkedIn URL is the strongest direct channel; email would need to be pattern-guessed.
+8. **No direct email, no phone, no Facebook, LinkedIn limited.** Reachable channels are thinner than Dallas's — LinkedIn URL is the strongest direct channel; email would need to be pattern-guessed.
 
 ## Angles (ordered by fit)
 

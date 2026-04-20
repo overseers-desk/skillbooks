@@ -81,7 +81,7 @@ Same risk footprint as the Dallas Vince profile describes — motor fleet (400�
 4. **Insurance-adjacent public posture (rule 4 relaxed in S&P₂).** No direct keyword match; indirect evidence via culture/relationship framing of equipment partnerships — suggests a "partner who fits our DNA" lens that a director-led broker model can speak to.
 5. **Not excluded by rules 5–6.** Not in insurance/finance/law/consulting; not a Risk Manager / Head of Risk / CRO.
 6. **Operational step-back caveat.** Waterford Press confirms Craig and Trevor no longer make day-to-day operational decisions. Tempers urgency: Craig is not the renewal buyer; he is a family-principal stakeholder.
-7. **No LinkedIn, no direct email published.** Reachable channels are thin — office@booths.co.nz (shared; already pointed at Booth's org for campaign purposes via Dallas's row), pattern-guess `craig.booth@booths.co.nz` (unverified), or physical/postal Napier HQ. This weakens the approach channel.
+7. **No LinkedIn, no direct email published.** Reachable channels are limited — office@booths.co.nz (shared; already pointed at Booth's org for campaign purposes via Dallas's row), pattern-guess `craig.booth@booths.co.nz` (unverified), or physical/postal Napier HQ. This weakens the approach channel.
 
 ## Angles (ordered by fit)
 

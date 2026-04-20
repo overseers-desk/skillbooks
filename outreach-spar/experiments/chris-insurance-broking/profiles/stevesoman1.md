@@ -84,7 +84,7 @@ The institutional position is broker-relevant; the personal public footprint on 
 2. **Personally controls the insurance decision.** Founder/owner with no Risk Manager apparent in the org structure (segment rule 6 satisfied — not an excluded role; no head-of-risk competing for authority).
 3. **Finance-discipline background.** Banking & Finance Oath signatory; 18+ years in commercial finance. A finance-literate buyer thinks about insurance as a balance-sheet decision rather than a procurement line — useful framing for any later A-phase outreach.
 4. **Multi-entity insurance footprint.** Core Link (fleet/operations), Hubbe (lender), GVP (investor) — three distinct insurance touchpoints across a single contact.
-5. **Discoverability is name-dependent.** Findability score 1 (see probe below) — he does not surface on generic role+industry queries; Core Link itself has very thin Google footprint. This caps the cold-cue surface area available to A-phase.
+5. **Discoverability is name-dependent.** Findability score 1 (see probe below) — he does not surface on generic role+industry queries; Core Link itself has very limited Google footprint. This caps the cold-cue surface area available to A-phase.
 
 Rule 4 (public insurance signal) is **not satisfied.** This roster row entered via S&P₂ (`discovered_via=v2-matrix`), where rule 4 is relaxed; the structural fit (rules 1–3, 5–6) carries.
 

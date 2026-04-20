@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 1
-richness: thin
+richness: limited
 richness_count: 2
 warmth_finding: cold
 applicable_angles: []
@@ -80,4 +80,4 @@ None applicable — contact excluded on structural grounds before angle assessme
 
 - findability_score: 0
 - query_used: `"Coleman Drafting" Sydney Managing Director` (initial); `"CLMN" "Coleman Drafting" Sydney` (refined)
-- note: neither query surfaced Brad Coleman in the first 20 results — the business has minimal public web footprint beyond LinkedIn and ABR; low public visibility, consistent with the thin profile and cold warmth.
+- note: neither query surfaced Brad Coleman in the first 20 results — the business has minimal public web footprint beyond LinkedIn and ABR; low public visibility, consistent with the limited profile and cold warmth.

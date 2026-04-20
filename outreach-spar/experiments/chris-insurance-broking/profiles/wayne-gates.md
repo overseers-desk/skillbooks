@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 3
-richness: thin
+richness: limited
 richness_count: 2
 warmth_finding: cold
 applicable_angles:
@@ -56,7 +56,7 @@ No high-value bridges to target communities surfaced.
 
 ## Relevance assessment
 
-**What they have NOT said:** Nothing on insurance, risk, brokers, claims, or any procurement / governance topic. Public footprint is thin and product-marketing oriented.
+**What they have NOT said:** Nothing on insurance, risk, brokers, claims, or any procurement / governance topic. Public footprint is limited and product-marketing oriented.
 
 **What IS relevant:**
 1. Industry fit — wholesale (segment rule 3) with marine/automotive product liability and importer exposure that plausibly drives broker engagement.

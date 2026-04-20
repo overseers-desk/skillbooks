@@ -100,7 +100,7 @@ Rule 4 (public insurance-engagement signal) is **not met** — no insurance/risk
 
 2. **corporate-insurance-program-control** (secondary) — founder-MD with no Risk Manager layer, personally owns the insurance program at a Pty Ltd / trustee-trust-structured operator. The ask is a structured program review: motor fleet + marine cargo + warehouseman's + BI + D&O + cyber as a single program rather than fragmented policies. Cold open.
 
-3. **growth-stage-program-review** (tertiary) — 24/7 ops restored, major new volume contract, post-2023 rebuild of systems. A Big Rigs quote ("no real room for error" when money is on the line) is the only thin warm hook into a program-review conversation framed around the cost of operational error translating to premium and claims experience.
+3. **growth-stage-program-review** (tertiary) — 24/7 ops restored, major new volume contract, post-2023 rebuild of systems. A Big Rigs quote ("no real room for error" when money is on the line) is the only limited warm hook into a program-review conversation framed around the cost of operational error translating to premium and claims experience.
 
 4. **freight-forwarder-exposure** (quaternary, indirect) — Trusted Trader, S77G depot, excise storage, AQIS biosecurity classes, fumigation licence — SWL's customs/biosecurity capabilities sit adjacent to freight-forwarder exposures (cargo in custody, under-bond time, regulatory liability). Useful as evidence of program complexity; not a standalone angle.
 

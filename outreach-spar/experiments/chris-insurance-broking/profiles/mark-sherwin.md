@@ -48,7 +48,7 @@ Self-described scope per LinkedIn headline: "CFO | High Growth Businesses | Fina
 
 ## What they have said publicly
 
-**Absent themes:** No public LinkedIn posts, press quotes, or conference talks surfaced on insurance, D&O, cyber, business interruption, claims, renewal, policy wording, or broker relationships. Public footprint is thin — standard corporate appointments disclosures only.
+**Absent themes:** No public LinkedIn posts, press quotes, or conference talks surfaced on insurance, D&O, cyber, business interruption, claims, renewal, policy wording, or broker relationships. Public footprint is limited — standard corporate appointments disclosures only.
 
 ## Who they know (connections relevant to campaign)
 

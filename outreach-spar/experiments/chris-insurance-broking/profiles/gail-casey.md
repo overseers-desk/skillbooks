@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 3
-richness: thin
+richness: limited
 richness_count: 3
 warmth_finding: cold
 applicable_angles:
@@ -54,7 +54,7 @@ No prior employment surfaces on the public web. Given 45+ years as a founder-own
 | Person | Relationship | Relevance to campaign |
 |---|---|---|
 | Steve Skinner | Co-founder / fellow Director at Team Transport & Logistics | The other half of the founding pair; any insurance-program decision routes through one or both of them. Already in the roster (profile: steve-skinner.md). |
-| Tony Casey | Projects Manager at Team Transport & Logistics; shared surname suggests family (unverified) | If family, indicates a second-generation transition underway in operations — the sort of moment when the insurance program gets re-examined. Not currently in the roster; evidence is too thin (no relationship confirmation) to add without more signal. |
+| Tony Casey | Projects Manager at Team Transport & Logistics; shared surname suggests family (unverified) | If family, indicates a second-generation transition underway in operations — the sort of moment when the insurance program gets re-examined. Not currently in the roster; evidence is too limited (no relationship confirmation) to add without more signal. |
 
 ## Institutional context
 

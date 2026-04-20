@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 0
-richness: thin
+richness: limited
 richness_count: 1
 warmth_finding: cold
 applicable_angles: []
@@ -72,4 +72,4 @@ A possible further correction — that Joe McCabe now holds the CEO role — was
 
 - `findability_score: 0`
 - `query_used: "Chief Executive Officer" "Townsville City Council" 2026`
-- `note: Neither the generic `CEO "Townsville City Council"` query nor the year-refined query surfaced Lindsay in the first page of Google results; Joe McCabe appeared instead, suggesting Lindsay has departed or her public footprint in this role is thin. Out-of-scope either way.`
+- `note: Neither the generic `CEO "Townsville City Council"` query nor the year-refined query surfaced Lindsay in the first page of Google results; Joe McCabe appeared instead, suggesting Lindsay has departed or her public footprint in this role is limited. Out-of-scope either way.`

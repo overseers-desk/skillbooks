@@ -77,7 +77,7 @@ SEKO Logistics is a global freight-forwarding and ecommerce-logistics network wi
 
 ## Relevance assessment
 
-**What they have NOT said:** Nothing public about insurance, broker selection, D&O, cyber, cargo, or the recap/acquisition as insurance events. Any approach has to work from role + moment, not from anything he has said. The public trail is thin — a regional MD who operates internally rather than in trade-press.
+**What they have NOT said:** Nothing public about insurance, broker selection, D&O, cyber, cargo, or the recap/acquisition as insurance events. Any approach has to work from role + moment, not from anything he has said. The public trail is limited — a regional MD who operates internally rather than in trade-press.
 
 **What IS relevant:**
 1. Role and scope — Managing Director of ANZ operations for a global freight-forwarder/3PL/ecommerce logistics network. Whatever portion of the insurance program is regionally controlled, it routes through him (no separate ANZ risk manager is publicly identified).
