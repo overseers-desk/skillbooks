@@ -11,7 +11,7 @@ The A phase scales its A2 (sparring) rounds based on profile richness. P must th
 
 - **Rich** (6+ substantive data points): public statements with quotes, known positions on relevant topics, project affiliations, stated concerns, named connections, recent activity
 - **Medium** (3–5 data points): enough for a directional assessment but not enough for iterative simulation
-- **Thin** (<3 data points): bare LinkedIn, no public writing, no known connections
+- **Limited** (<3 data points): bare LinkedIn, no public writing, no known connections
 
 The classification is recorded in the profile document so that A can read it without re-evaluating richness.
 
@@ -53,9 +53,9 @@ Before AR begins, verify per roster:
 3. No duplicate contacts across rosters (if multi-segment campaign)
 4. Every contact has at least one reachable channel (email, LinkedIn, or Facebook open for messages)
 5. Star ratings are plausible (geographic proximity alone does not establish fit; a referral path must be plausible)
-6. Response likelihood estimates are consistent with profile richness (a thin profile cannot support a 90% estimate)
+6. Response likelihood estimates are consistent with profile richness (a limited profile cannot support a 90% estimate)
 7. Stale contacts are marked and replacements attempted
-8. Profile richness classification (rich/medium/thin) is recorded
+8. Profile richness classification (rich/medium/limited) is recorded
 9. Cross-leads are tagged with correct destination segment
 10. `discovered_via` chains are traceable to a seed source
 
