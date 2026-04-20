@@ -959,7 +959,7 @@ proc compute_warning_summary {} {
 
 set warn_summary [compute_warning_summary]
 
-ttk::button ${wframe}.toggle -text "\u25b6 \u26a0 [llength $warnings] warnings ($warn_summary)" \
+ttk::button ${wframe}.toggle -text "\u25b8 \u26a0 [llength $warnings] warnings ($warn_summary)" \
     -command toggle_warnings -style Toolbutton
 pack ${wframe}.toggle -fill x -anchor w
 
@@ -989,11 +989,11 @@ proc toggle_warnings {} {
     global warnings_expanded wframe warnings warn_summary
     if {$warnings_expanded} {
         pack forget ${wframe}.txt
-        ${wframe}.toggle configure -text "\u25b6 \u26a0 [llength $warnings] warnings ($warn_summary)"
+        ${wframe}.toggle configure -text "\u25b8 \u26a0 [llength $warnings] warnings ($warn_summary)"
         set warnings_expanded 0
     } else {
         pack ${wframe}.txt -fill x -padx 4 -pady 2
-        ${wframe}.toggle configure -text "\u25bc \u26a0 [llength $warnings] warnings ($warn_summary)"
+        ${wframe}.toggle configure -text "\u25be \u26a0 [llength $warnings] warnings ($warn_summary)"
         set warnings_expanded 1
     }
 }
@@ -1074,7 +1074,7 @@ $tree tag configure pending -foreground #cc6600
 
 # Dispatch controls
 ttk::frame ${tpanel}.dispatch
-pack ${tpanel}.dispatch -fill x -padx 4 -pady {0 4}
+pack ${tpanel}.dispatch -side bottom -fill x -padx 4 -pady {0 4} -before ${tpanel}.treeframe
 
 ttk::button ${tpanel}.dispatch.play -text "\u25b6 Dispatch" -state disabled -command do_dispatch
 ttk::button ${tpanel}.dispatch.stop -text "\u23f9 Stop"     -state disabled
@@ -1222,9 +1222,9 @@ proc rebuild_warnings {} {
     populate_warnings_text
     # Update toggle button text
     if {$warnings_expanded} {
-        ${wframe}.toggle configure -text "\u25bc \u26a0 [llength $warnings] warnings ($warn_summary)"
+        ${wframe}.toggle configure -text "\u25be \u26a0 [llength $warnings] warnings ($warn_summary)"
     } else {
-        ${wframe}.toggle configure -text "\u25b6 \u26a0 [llength $warnings] warnings ($warn_summary)"
+        ${wframe}.toggle configure -text "\u25b8 \u26a0 [llength $warnings] warnings ($warn_summary)"
     }
 }
 
