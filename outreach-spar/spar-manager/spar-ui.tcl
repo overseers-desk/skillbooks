@@ -1132,8 +1132,13 @@ proc log_message {msg} {
     .logwin.txt configure -state disabled
 }
 
+set dispatching 0
+set saved_tree_bindtags {}
+
 proc do_dispatch {} {
-    global tree tpanel script_dir
+    global tree tpanel script_dir dispatching saved_tree_bindtags
+
+    if {$dispatching} return
 
     set sel [$tree selection]
     if {[llength $sel] == 0} return
@@ -1150,10 +1155,6 @@ proc do_dispatch {} {
 
     set label [$tree item $parent -text]
 
-    show_dispatch_bar
-    log_message "Dispatch requested: $label"
-
-    # Determine transition type from parent id
     set tid $parent  ;# e.g. "t0", "t1", ...
     set tnum [string range $tid 1 end]
 
@@ -1163,34 +1164,51 @@ proc do_dispatch {} {
         return
     }
 
-    if {[catch {source $dispatch_lib} err]} {
-        log_message "Error loading spar-dispatch.tcl: $err"
-        return
-    }
+    set dispatching 1
+    ${tpanel}.dispatch.play configure -state disabled
+    $tree state disabled
+    set saved_tree_bindtags [bindtags $tree]
+    bindtags $tree [list $tree .]
+    update idletasks
 
-    switch -- $tnum {
-        0 {
-            # T1: Sweep -> Profile
-            if {[catch {spar::dispatch_profiles} err]} {
-                log_message "T1 dispatch error: $err"
-            } else {
-                log_message "T1 dispatch completed."
+    try {
+        show_dispatch_bar
+        log_message "Dispatch requested: $label"
+
+        if {[catch {source $dispatch_lib} err]} {
+            log_message "Error loading spar-dispatch.tcl: $err"
+            return
+        }
+
+        switch -- $tnum {
+            0 {
+                # T1: Sweep -> Profile
+                if {[catch {spar::dispatch_profiles} err]} {
+                    log_message "T1 dispatch error: $err"
+                } else {
+                    log_message "T1 dispatch completed."
+                }
+            }
+            1 {
+                # T2: Profile -> Approach
+                if {[catch {spar::dispatch_approaches} err]} {
+                    log_message "T2 dispatch error: $err"
+                } else {
+                    log_message "T2 dispatch completed."
+                }
+            }
+            default {
+                log_message "Dispatch for transition T[expr {$tnum + 1}] not implemented."
             }
         }
-        1 {
-            # T2: Profile -> Approach
-            if {[catch {spar::dispatch_approaches} err]} {
-                log_message "T2 dispatch error: $err"
-            } else {
-                log_message "T2 dispatch completed."
-            }
-        }
-        default {
-            log_message "Dispatch for transition T[expr {$tnum + 1}] not implemented."
-        }
-    }
 
-    do_refresh
+        do_refresh
+    } finally {
+        set dispatching 0
+        $tree state !disabled
+        bindtags $tree $saved_tree_bindtags
+        event generate $tree <<TreeviewSelect>>
+    }
 }
 
 bind $tree <<TreeviewSelect>> [list apply {{tree play} {
