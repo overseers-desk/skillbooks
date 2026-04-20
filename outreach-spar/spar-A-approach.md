@@ -120,7 +120,7 @@ Anti-patterns to avoid in all drafted messages:
 
 A2 tests whether the draft would land well with the recipient and whether it contains factual errors. A2 must run as a separate agent process with its own context — not as self-review within the A1 agent.
 
-**A2 is mandatory for all contacts.** Thin profiles need sparring more than rich ones: less evidence means more room to hallucinate relevance. Rounds are budgeted by profile richness:
+**A2 is mandatory for all contacts.** Low-yield profiles need sparring more than high-yield ones: less evidence means more room to hallucinate relevance. Rounds are budgeted by profile yield:
 
 - **Rich** (6+ data points): up to 3 rounds
 - **Medium** (3–5 data points): 1 round
@@ -165,7 +165,7 @@ Approach files are YAML documents with a **closed vocabulary** — any key outsi
 
 **Canonical keys by level:**
 
-- Root: `decisions`, `rounds`, `profile_date`, `profile_richness`, `angle_rationale`, `roster_note`, `fact_provenance`, `quality_checklist`, `response_likelihood`, `generated_for`
+- Root: `decisions`, `rounds`, `profile_date`, `profile_yield`, `angle_rationale`, `roster_note`, `fact_provenance`, `quality_checklist`, `response_likelihood`, `generated_for`
 - `generated_for`: `contact_name`, `organisation` — required. Records the roster values at generation time so `spar::validate_approach` can detect roster edits that post-date the approach file (emits `name_desync` / `org_desync` when they diverge).
 - `decisions`: `warmth`, `channel`, `language`, `angle`, `sender`, `warmth_detail`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
@@ -182,7 +182,7 @@ generated_for:
   contact_name: Jane Doe
   organisation: Acme Venues
 profile_date: 2026-04-12
-profile_richness: Medium
+profile_yield: 4
 decisions:
   warmth: cold
   warmth_detail: No prior contact; found via segment sweep.
