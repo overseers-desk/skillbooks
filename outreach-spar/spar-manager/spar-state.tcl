@@ -605,6 +605,49 @@ proc spar::_evaluate_slot_readiness {preceding_msg own_msg wait_days wait_cond o
     return ""
 }
 
+# _approach_dispatch_gate -- SSOT for the campaign-wide gates that both
+# transition_eligible (T2/T7) and spar::a::run apply when deciding
+# whether a roster row may be approached. Returns "" if the row passes;
+# otherwise a human-readable reason. Takes either a raw roster row or a
+# classified contact — classify_segment merges row fields in, so both
+# dicts expose star_rating, date_excluded, email, linkedin_url, etc.
+#
+# Gates (resolves #56):
+#   - skip_excluded:   filter.skip_excluded (default true) + date_excluded
+#   - in_scope_channel: roster_row_has_in_scope_channel against campaign slots
+#   - min_star:        filter.min_star (default 3) vs parsed star_rating
+#
+# When cdata is empty (tests, legacy callers), falls back to the pre-#56
+# T2 hardcode — star >= 3 + skip excluded — so run-tests.tcl T2 assertions
+# keep passing without threading cdata through.
+proc spar::_approach_dispatch_gate {row cdata} {
+    set has_cdata [expr {[llength $cdata] > 0}]
+    set date_ex [string trim [spar::dict_get_default $row date_excluded ""]]
+    set skip_excluded 1
+    set min_star 3
+    set in_scope {}
+    if {$has_cdata} {
+        set filter [spar::dict_get_default $cdata filter [dict create]]
+        set skip_excluded [string is true -strict \
+            [spar::dict_get_default $filter skip_excluded true]]
+        set min_star [spar::dict_get_default $filter min_star 3]
+        set in_scope [spar::campaign_in_scope_channels $cdata]
+    }
+    if {$skip_excluded && $date_ex ne ""} {
+        return "excluded on $date_ex"
+    }
+    if {![spar::roster_row_has_in_scope_channel $row $in_scope]} {
+        return "no in-scope channel (campaign: [join $in_scope {, }])"
+    }
+    if {$min_star > 0} {
+        set star [spar::parse_star [spar::dict_get_default $row star_rating ""]]
+        if {$star < $min_star} {
+            return "star $star below min_star $min_star"
+        }
+    }
+    return ""
+}
+
 # _approach_validation_error -- return first error-severity validation message for
 # a contact's approach file, or "" if clean. Used by transition_eligible to gate
 # approach-dependent transitions (T3, T4, T8) on structural validity (#43 principle 7).
@@ -664,8 +707,12 @@ proc spar::transition_eligible {classified_contacts transition {primary_channel 
                 }
             }
             T2 {
-                # Profile → Approach: state = PROFILED, star≥3
-                if {$state eq "PROFILED" && $star >= 3} {
+                # Profile → Approach: state = PROFILED + campaign-wide
+                # approach-dispatch gates (min_star, in_scope_channel,
+                # skip_excluded). Gate is SSOT (#56) — spar::a::run
+                # consults the same proc.
+                if {$state eq "PROFILED" && \
+                    [spar::_approach_dispatch_gate $contact $cdata] eq ""} {
                     lappend results [dict create \
                         contact_name $name organisation $org segment $segment \
                         stem $stem _segment_dir $segment_dir \

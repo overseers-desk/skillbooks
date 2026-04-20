@@ -182,7 +182,7 @@ if {$json_mode} {
     }
     set transitions {}
     dict for {tid tlabel} $transition_defs {
-        set tasks [spar::transition_eligible $all_contacts $tid $primary_channel]
+        set tasks [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
         lappend transitions [dict create label "$tid: $tlabel" count [llength $tasks] tasks $tasks]
     }
     puts [progress_to_json [dict create campaign $campaign_name min_star $min_star \
