@@ -454,7 +454,7 @@ proc build_transitions {all_contacts} {
         set label [lindex $labels $i]
         set tid [lindex $tids $i]
 
-        set eligible [spar::transition_eligible $all_contacts $tid $primary_channel]
+        set eligible [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
         set count [llength $eligible]
 
         set tasks {}

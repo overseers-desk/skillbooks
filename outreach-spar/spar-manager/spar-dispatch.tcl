@@ -593,10 +593,17 @@ proc spar::a::run {opts on_progress on_complete} {
 
             if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
 
-            if {![spar::roster_row_has_in_scope_channel $row $in_scope_channels]} continue
-            if {$filter_skip_excluded && $date_invalid ne ""} continue
-            if {$filter_min_star > 0} {
-                if {![string is integer -strict $star] || $star < $filter_min_star} continue
+            # SSOT for approach-dispatch gates (#56): shared with
+            # spar::transition_eligible T2 so the UI tree and this loop
+            # can never disagree about who is dispatchable.
+            set gate_reason [spar::_approach_dispatch_gate $row $cdata]
+            if {$gate_reason ne ""} {
+                incr skipped
+                set label [expr {$stem ne "" \
+                    ? $stem \
+                    : "[spar::slugify $name]-[spar::slugify $org]"}]
+                {*}$on_progress $label skipped $gate_reason
+                continue
             }
 
             set slug_name [spar::slugify $name]
