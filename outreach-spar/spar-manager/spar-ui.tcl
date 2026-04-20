@@ -1196,13 +1196,20 @@ proc do_dispatch {} {
 bind $tree <<TreeviewSelect>> [list apply {{tree play} {
     set sel [$tree selection]
     set enable 0
+    set label ""
     foreach item $sel {
         if {[$tree parent $item] eq "" && [$tree children $item] ne ""} {
             set enable 1
+            set label [$tree item $item -text]
+            regsub {\s*\(\d+\)\s*$} $label "" label
             break
         }
     }
-    $play configure -state [expr {$enable ? "normal" : "disabled"}]
+    if {$enable} {
+        $play configure -state normal -text "\u25b6 $label"
+    } else {
+        $play configure -state disabled -text "\u25b6 Dispatch"
+    }
 }} $tree ${tpanel}.dispatch.play]
 
 # Show the dispatch bar
