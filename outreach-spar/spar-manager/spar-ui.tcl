@@ -1182,6 +1182,8 @@ set dispatching 0
 set paused 0
 set cohort_in_flight [dict create]
 set row_names [dict create]
+set row_phase [dict create]
+set slug_to_row [dict create]
 set cohort_frames [list \u29d6 \u29d7]
 set cohort_tick 0
 set cohort_after ""
@@ -1207,7 +1209,7 @@ proc do_cancel {} {
 }
 
 proc cohort_animate {} {
-    global tree cohort_in_flight row_names cohort_tick cohort_after cohort_frames
+    global tree cohort_in_flight row_names row_phase cohort_tick cohort_after cohort_frames
     if {[dict size $cohort_in_flight] == 0} {
         set cohort_after ""
         return
@@ -1216,14 +1218,16 @@ proc cohort_animate {} {
     dict for {row_id _} $cohort_in_flight {
         if {![$tree exists $row_id]} continue
         set name [expr {[dict exists $row_names $row_id] ? [dict get $row_names $row_id] : ""}]
-        $tree item $row_id -text "$frame $name"
+        set phase [expr {[dict exists $row_phase $row_id] ? [dict get $row_phase $row_id] : ""}]
+        set suffix [expr {$phase eq "" ? "" : " \u2014 $phase"}]
+        $tree item $row_id -text "$frame $name$suffix"
     }
     incr cohort_tick
     set cohort_after [after 500 cohort_animate]
 }
 
 proc clear_cohort {} {
-    global tree cohort_in_flight cohort_after row_names
+    global tree cohort_in_flight cohort_after row_names row_phase slug_to_row
     if {$cohort_after ne ""} {
         after cancel $cohort_after
         set cohort_after ""
@@ -1239,9 +1243,32 @@ proc clear_cohort {} {
         $tree item $row_id -text "  $name"
     }
     set cohort_in_flight [dict create]
+    set row_phase [dict create]
+    set slug_to_row [dict create]
 }
 
 proc ui_on_progress {slug status message} {
+    global slug_to_row row_phase tree row_names cohort_frames cohort_tick
+    # Phase markers ([phase: drafting], [phase: challenger 1/2], ...) are
+    # row state, not log events — they update the in-flight row's sub-phase
+    # text and don't reach the log. Human-readable companion lines
+    # ([$slug] Author: drafting...) still arrive as separate started events
+    # and log normally.
+    if {[regexp {\[phase:\s*([^\]]+)\]} $message -> phase]} {
+        set phase [string trim $phase]
+        if {[dict exists $slug_to_row $slug]} {
+            set row_id [dict get $slug_to_row $slug]
+            dict set row_phase $row_id $phase
+            if {[$tree exists $row_id]} {
+                set frame [lindex $cohort_frames \
+                    [expr {$cohort_tick % [llength $cohort_frames]}]]
+                set name [expr {[dict exists $row_names $row_id] \
+                    ? [dict get $row_names $row_id] : ""}]
+                $tree item $row_id -text "$frame $name \u2014 $phase"
+            }
+        }
+        return
+    }
     log_message "  \[$status\] $slug $message"
 }
 
@@ -1337,7 +1364,7 @@ proc auto_dispatch {} {
 }
 
 proc do_dispatch {} {
-    global tree tpanel script_dir dispatching cohort_in_flight campaign_file
+    global tree tpanel script_dir dispatching cohort_in_flight slug_to_row row_phase campaign_file
 
     if {$dispatching} return
 
@@ -1402,12 +1429,15 @@ proc do_dispatch {} {
 
     # Narrow dispatch to the selected children, if any. Empty list ⇒
     # current (parent-only) behaviour: runner processes all ready rows.
+    set slug_to_row [dict create]
+    set row_phase [dict create]
     if {[llength $child_items] > 0} {
         set sel_stems {}
         foreach c $child_items {
             set s [$tree set $c stem]
             if {$s ne ""} { lappend sel_stems $s }
             dict set cohort_in_flight $c [expr {$s ne "" ? $s : 1}]
+            if {$s ne ""} { dict set slug_to_row $s $c }
             set tags [$tree item $c -tags]
             if {[lsearch -exact $tags in_cohort] < 0} {
                 $tree item $c -tags [concat $tags in_cohort]
