@@ -406,3 +406,75 @@ Applied to live DB and added to `schema.sql`:
 ### Notes on cost
 
 `claude -p` without `--bare` loads ~55k tokens of Claude Code system context per call. With the prompt cache warm, this costs ~$0.004/call overhead on top of ~$0.002/call for actual extraction content — roughly tripling cost vs direct API. Switching to `requests` + `ANTHROPIC_API_KEY` would reduce per-call cost to ~$0.002. No API key is currently configured; this remains a future optimisation.
+
+---
+
+## Session 7 — Design probe: what shape does TEND need from contact-graph?
+
+### Why this session
+
+Sessions 1–6 built the producer side (ingest, thread, participant resolution, entity extraction). Nothing yet consumes the output. 18,642 `item_entity` rows and 152,324 resolved threads sit unread. The [TEND methodology](../correspondence-tend/tend-methodology.md) defines a downstream consumer but is unbuilt. Before implementing either the TEND consumer or further producer work, the question worth asking is: **does contact-graph's current output match the shape a TEND run would want for one real incoming email?** This session is a single-case design probe, not an implementation task.
+
+No code was changed. No files were created. No pipeline was executed. Everything below is observation of the live DB plus one hand-walked worked example.
+
+### What the DB currently holds (probed)
+
+- 271,957 messages, 152,324 threads, 198,791 participant rows, 6,312 extraction-log rows (2.3 % of corpus), 18,642 entities.
+- Priority-score skew is working as designed: processed threads average `priority_score = 6.2`, unprocessed `1.2`. Admin mailbox has 5.7 % extraction coverage; director has 0.36 % despite being 3× larger. The extracted 2.3 % is the inner-circle-dense head, not a random sample.
+- Per-account date range:
+
+  | Account | Messages | Oldest (excl. date_anomaly) | Newest | Extraction window |
+  |---|---:|---|---|---|
+  | director-rivermill-au | 176,865 | 1998-03-14 20:38 AEST | 2026-04-16 21:01 AEST | 2017-10-03 → 2026-04-16 |
+  | admin-rivermill-au | 52,380 | 2022-01-30 19:17 AEST | 2026-04-16 19:35 AEST | 2022-01-30 → 2026-04-16 |
+  | yuliansu-gmail-com | 42,712 | 2006-03-23 22:46 AEST | 2026-04-16 21:33 AEST | 2017-10-03 → 2026-04-16 |
+
+  7 messages across the corpus have `date = 1` (epoch-zero + 1s), all flagged `date_anomaly = TRUE`; excluded from the table above.
+
+- **Ingest lag.** DB newest is 2026-04-16 21:33 AEST. mu has roughly 60 further messages (observed to 2026-04-17 11:26 AEST at time of probe). The pipeline has not been re-run this morning. Any use of contact-graph as a TEND data source would need a re-ingest step first, or a fallback to mu-direct for messages arriving after the last cursor.
+
+### Worked example
+
+Picked `5c188793-de65-4047-8c74-77947797ff02@email.android.com` — Casey Armstrong of Drayhorse Shires replying to `partnerships@rivermill.au` at 2026-04-17 06:53 AEST. Chosen because: (a) post-ingest-cutoff, so it exercises the "new message arriving" case; (b) five-message thread already in DB for the older messages; (c) one participant (`info@drayhorseshires.com`) is an unresolved address (`human_id = NULL`); (d) the latest-message content looks like closure on its own but is `awaiting-us` in thread context — the stage-detection case TEND is designed to solve.
+
+Thread reconstructed via `mu find msgid:… --include-related` + Python `email` parse of the maildir files. The contact-graph DB held the first three messages; the last two post-date the ingest cutoff.
+
+### What the consumer (TEND, in this case) needs from contact-graph
+
+The [correspondence-tend worklog session 1](../correspondence-tend/WORKLOG.md) records the TEND-side findings. The feedback for contact-graph is:
+
+1. **A render surface that turns DB state into a single document per thread.** Methodology §T calls for "a single document: the complete conversation, oldest to newest, with each message's sender, date, and body". Contact-graph has all the parts (messages, thread_id, participant resolution, body files via mu) but no renderer that assembles them. This is a contact-graph deliverable because TEND is one of several consumers — SPAR follow-up, reporting, dashboards would want the same view.
+
+2. **Computed signals, not just raw facts.** The diagram I sketched in-chat listed three derivations that any consumer will want pre-computed on the producer side:
+   - `prior_interactions`: how many threads the director-side has with this human, or with any address at this domain, before this thread. For the Drayhorse case: zero. Signals "cold contact, SPAR-opened" vs "re-engaging existing supplier".
+   - `initiator_internal`: was the first message of the thread sent from an internal address? Distinguishes outbound-originated threads (SPAR) from cold inbound.
+   - `inter_message_gap`: time between each consecutive message. Surfaces stalls (Apr 9 → Apr 15 was six days of quiet, which is why Priyanka nudged).
+
+   These are facts about the graph and the thread. They belong in the render surface, not re-computed by every consumer.
+
+3. **Handling of un-ingested newer messages.** Either trigger re-ingest before rendering, or render from mu + DB merge when the message_id predates the cursor. Either works; the choice needs to be explicit.
+
+4. **Unresolved-address propagation.** The render should mark `human_id = NULL` addresses explicitly so the consumer knows to propose a new human (TEND might forward to admin to backfill; SPAR might skip). Current schema captures this but the renderer would need to surface it.
+
+### What this session did not do
+
+- Did not run `extract_email_entities.py --thread …` on the Drayhorse thread. The diagram's entity list ("Drayhorse Shires", "horse-drawn carriage", etc.) was hand-composed, not pipeline-produced. `item_entity` for this thread is empty.
+- Did not re-ingest to pick up the 16-hour lag.
+- Did not write the render surface. This session's output is the spec above, not code.
+- Did not persist the mermaid diagram to a file. It lives only in the chat transcript of session `eca27164-…` (pending — ask at commit).
+
+### Proposed next contact-graph task
+
+Write a `render_thread.py` that takes a `thread_id` and produces:
+- Prose T document (chronological, bodies with quoted content stripped, sender resolved to `human.display_name` where possible).
+- Graph sidebar (participants + their `human_id` / unresolved flag, organisation mentions if extracted, the three computed signals above).
+- Output format TBD — Markdown is probably right for human + LLM consumption; JSON for programmatic consumers.
+
+This deliverable is reusable across TEND, SPAR, reporting. It is not TEND work.
+
+### Files modified
+
+| File | Change |
+|---|---|
+| `contact-graph/WORKLOG.md` | This entry |
+| `correspondence-tend/WORKLOG.md` | Created — TEND-side findings from the same probe |
