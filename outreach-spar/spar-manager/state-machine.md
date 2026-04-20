@@ -85,7 +85,7 @@ A contact's state is inferred from the presence and content of files in the segm
 | State | Condition |
 |-------|-----------|
 | `EXCLUDED` | Roster: `date_excluded` non-empty |
-| `DISCOVERED` | Valid (not excluded), file `profiles/{stem}.md` does not exist. Blank `contact_name` is permitted — P §4.0b resolves it before §4.1 profiling |
+| `DISCOVERED` | Valid (not excluded), file `profiles/{stem}.md` does not exist. Blank `contact_name` is permitted — P §4.1 resolves it before the rest of profiling |
 | `PROFILED` | Valid, file `profiles/{stem}.md` exists, not stale |
 | `PROFILE_STALE` | Valid, `profiles/{stem}.md` exists, but stale — see §Staleness |
 | `APPROACHED` | Profiled, file `approach/{stem}.yaml` exists, no final-round message with `actioned_date` set |
@@ -221,7 +221,7 @@ The transition manager filters `classify_segment` output by eligibility conditio
 
 | # | Label | Eligible contacts | Dispatch | Dispatch status |
 |---|-------|-------------------|----------|-----------------|
-| T1 | Sweep → Profile | state = DISCOVERED | spar-transitions.tcl --tid=T1 --execute (runs §4.0b first if `contact_name` is blank, else §4.1+) | available |
+| T1 | Sweep → Profile | state = DISCOVERED | spar-transitions.tcl --tid=T1 --execute (runs §4.1 first if `contact_name` is blank, else §4.2+) | available |
 | T2 | Profile → Approach | state = PROFILED, star≥3 | spar-a-batch.tcl | available |
 | T3 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | spar-transitions.tcl --tid=T3 --execute (AWS SES, serial with --delay) | available |
 | T4 | Send → Reply | email_sent, not email_replied | none (monitoring only) | n/a |
@@ -264,7 +264,7 @@ Each contact in a transition has one of:
 
   EXCLUDED — terminal; reached as an in-process outcome of S (sweep), P (profile),
              or A (approach) writing `date_excluded` on the roster row, per the rules
-             in spar-S-search.md, spar-P-profile.md §§4.0/4.0b/4.9/4.11, and
+             in spar-S-search.md, spar-P-profile.md §§4.1/4.2/4.13/4.15, and
              spar-A-approach.md §4.0 step 2. There is no operator-initiated arrow.
              T4, T8, detect_duplicates skip EXCLUDED. T2 cannot reach EXCLUDED
              because its gate requires PROFILED.
@@ -375,7 +375,7 @@ Categories (applied in the rightmost column):
 | roster_duplicate_name_org       | DISCOVERED → REPLIED                    | P-harness validate_and_correct  | TROUBLE (case_1) |
 | roster_shared_inbox_collision   | DISCOVERED → REPLIED                    | P-harness validate_and_correct  | TROUBLE (case_2) |
 | roster_personal_email_reused    | DISCOVERED → REPLIED                    | —                               | AUDIT (case_3)   |
-| roster_no_channel               | DISCOVERED → REPLIED                    | no T-gate; P §4.11 now excludes | MISALIGNED       |
+| roster_no_channel               | DISCOVERED → REPLIED                    | no T-gate; P §4.15 now excludes | MISALIGNED       |
 | roster_no_sweep_iteration       | DISCOVERED → REPLIED                    | —                               | AUDIT            |
 | roster_likelihood_without_star  | DISCOVERED → REPLIED                    | —                               | REAL             |
 | roster_zero_star_no_invalid     | DISCOVERED → REPLIED                    | n/a                             | OBSOLETE         |
@@ -389,11 +389,11 @@ Categories (applied in the rightmost column):
 
 ### Known gaps surfaced by this cross-check
 
-1. **`roster_no_channel` is a canary for P's §4.4a rule.** Condition now matches P's DbC-Post (`profile_unreachable_without_exclusion`): no email, LinkedIn, Facebook, or phone. Firing on a non-EXCLUDED row means P's §4.4a was bypassed (legacy profile pre-dating the guard, or guard regression) — profile should be redone or `date_excluded` set.
-2. **T2 has no channel gate.** `state==PROFILED ∧ star≥3` is insufficient; a P bug letting a no-channel contact through would reach A. Either add `has_email ∨ has_linkedin ∨ has_facebook` to T2, or rely wholly on P's §4.11. Cleanest: both.
+1. **`roster_no_channel` is a canary for P's §4.8 rule.** Condition now matches P's DbC-Post (`profile_unreachable_without_exclusion`): no email, LinkedIn, Facebook, or phone. Firing on a non-EXCLUDED row means P's §4.8 was bypassed (legacy profile pre-dating the guard, or guard regression) — profile should be redone or `date_excluded` set.
+2. **T2 has no channel gate.** `state==PROFILED ∧ star≥3` is insufficient; a P bug letting a no-channel contact through would reach A. Either add `has_email ∨ has_linkedin ∨ has_facebook` to T2, or rely wholly on P's §4.15. Cleanest: both.
 3. **T9, T10 wired in `transition_eligible` (issue #41).** Branches take the full campaign dict as an optional 4th arg and compute `secondary_ready` / `tertiary_ready` per contact using the per-message final-round list returned by `analyse_final_round`. Dispatch status remains `manual` — the UI still has to render a script and surface an "actioned" button; see `dispatch_status` in the transition table.
-4. **`roster_zero_star_no_invalid` is obsolete.** spar-P-profile.md line 387 states star_rating=0 should not appear on the roster (exclusion is carried by `date_excluded` alone). Candidate for deletion.
-5. **T1 does not gate on name quality.** A DISCOVERED row with placeholder contact_name passes T1 and dispatches P on "Unknown". Either T1 should gate, or P's §4.0b should accept placeholders as input and resolve them (it does — so the current path works, but the warning is still a useful audit-signal).
+4. **`roster_zero_star_no_invalid` is obsolete.** spar-P-profile.md §5.4 states star_rating=0 should not appear on the roster (exclusion is carried by `date_excluded` alone). Candidate for deletion.
+5. **T1 does not gate on name quality.** A DISCOVERED row with placeholder contact_name passes T1 and dispatches P on "Unknown". Either T1 should gate, or P's §4.1 should accept placeholders as input and resolve them (it does — so the current path works, but the warning is still a useful audit-signal).
 6. **T2 does not gate on `validate_profile` passing.** A malformed profile YAML is classified PROFILED and star≥3 can be whatever's in the front matter; T2 would mark it ready even though the profile file is broken. Parallel to T3's A(approach_path) check — missing symmetric P(profile_path) check at T2.
 
 ---

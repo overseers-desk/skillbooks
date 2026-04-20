@@ -101,7 +101,7 @@ Campaign-specific columns must not duplicate core columns under different names.
 
 These assertions apply to the core columns. Campaign-specific checks are defined by the campaign plan.
 
-1. Every row has a non-empty `contact_name` that is not a placeholder, or has a blank `contact_name` that P §4.0b will resolve (organisation identified, person not yet found).
+1. Every row has a non-empty `contact_name` that is not a placeholder, or has a blank `contact_name` that P §4.1 will resolve (organisation identified, person not yet found).
 2. Every row has the expected number of tab-separated fields.
 3. No two rows share the same (`contact_name`, `organisation`) pair (case-insensitive).
 4. Every row has at least one of email, `linkedin_url`, or `facebook_url`.

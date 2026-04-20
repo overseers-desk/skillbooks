@@ -1768,7 +1768,7 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
         }
     }
 
-    # Reachability (#39 R1): a profile exists only if P honoured §4.4a —
+    # Reachability (#39 R1): a profile exists only if P honoured §4.15 —
     # either the roster row has a reachable channel (email, linkedin_url,
     # facebook_url, or phone for the phone-only path) or date_excluded is
     # set. A profile next to an all-empty row means P produced a profile
@@ -1786,7 +1786,7 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
             lappend issues [dict create severity error \
                 code profile_unreachable_without_exclusion \
                 contact_name $contact_name \
-                message "Profile exists but roster row has no email/LinkedIn/Facebook/phone and no date_excluded — SPAR-P §4.4a requires either setting date_excluded='no reachable channel (YYYY-MM-DD)' or backfilling a channel"]
+                message "Profile exists but roster row has no email/LinkedIn/Facebook/phone and no date_excluded — SPAR-P §4.15 requires either setting date_excluded='no reachable channel (YYYY-MM-DD)' or backfilling a channel"]
         }
     }
 
@@ -2081,7 +2081,7 @@ proc spar::validate_roster {segment_contacts} {
         # Skip EXCLUDED for assertions that require a valid contact
         if {$state eq "EXCLUDED"} continue
 
-        # Assertion 1: non-empty contact_name (unless blank + org known — P §4.0b will resolve),
+        # Assertion 1: non-empty contact_name (unless blank + org known — P §4.1 will resolve),
         # and not a placeholder
         set is_blank_with_org [expr {$contact_name eq "" && $org ne ""}]
         if {(!$is_blank_with_org && $contact_name eq "") \
@@ -2159,7 +2159,7 @@ proc spar::validate_roster {segment_contacts} {
     # tracked as follow-up. Groups rows sharing the same normalised email,
     # then classifies each group:
     #   case_2 (error): same org, different name → shared org inbox.
-    #                   Resolved per spar-P-profile.md §4.11 shared-inbox
+    #                   Resolved per spar-P-profile.md §4.8 shared-inbox
     #                   rule (find a non-shared alternate, or leave empty).
     #   case_3 (warning): same normalised name, different org → same
     #                   person reached via multiple affiliations sharing
