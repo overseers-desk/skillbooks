@@ -18,10 +18,9 @@ foreach arg $argv {
         --legend      {}
         --*           { puts stderr "Unknown flag: $arg"; exit 1 }
         default       {
-            set norm [file normalize $arg]
-            if {[file isfile $norm] && [string match *.yaml $norm]} {
-                set campaign_file $norm
-                set campaign_dir [file dirname $norm]
+            if {[string match *.yaml $arg]} {
+                set campaign_file [file normalize $arg]
+                set campaign_dir [file dirname $campaign_file]
             } else {
                 set campaign_dir $arg
             }
@@ -55,26 +54,26 @@ set campaign_name [file tail $campaign_dir]
 set min_star 0
 set primary_channel ""
 
-if {$yaml_path ne "" && [file exists $yaml_path]} {
-    set cdata [spar::load_campaign $yaml_path]
-    set campaign_name [spar::dict_get_default $cdata campaign [file tail $yaml_path]]
-    set primary_channel [spar::campaign_primary_channel $cdata]
-    if {[dict exists $cdata filter]} {
-        set min_star [spar::dict_get_default [dict get $cdata filter] min_star 0]
+if {$yaml_path eq "" || ![file exists $yaml_path]} {
+    if {$campaign_file ne ""} {
+        puts stderr "Campaign YAML not found: $campaign_file"
+    } else {
+        puts stderr "No campaign YAML found in $campaign_dir"
     }
-    if {[dict exists $cdata segments]} {
-        set segments_list [dict get $cdata segments]
-    }
-    if {[dict exists $cdata skip_segments]} {
-        set skip_set [dict get $cdata skip_segments]
-    }
-} else {
-    puts stderr "Warning: no campaign YAML found; falling back to directory roster scan."
-    foreach child [lsort [glob -nocomplain [file join $campaign_dir *]]] {
-        if {[file isdirectory $child] && [file exists [file join $child roster.tsv]]} {
-            lappend segments_list [file tail $child]
-        }
-    }
+    exit 1
+}
+
+set cdata [spar::load_campaign $yaml_path]
+set campaign_name [spar::dict_get_default $cdata campaign [file tail $yaml_path]]
+set primary_channel [spar::campaign_primary_channel $cdata]
+if {[dict exists $cdata filter]} {
+    set min_star [spar::dict_get_default [dict get $cdata filter] min_star 0]
+}
+if {[dict exists $cdata segments]} {
+    set segments_list [dict get $cdata segments]
+}
+if {[dict exists $cdata skip_segments]} {
+    set skip_set [dict get $cdata skip_segments]
 }
 
 # --- Build segment paths ---

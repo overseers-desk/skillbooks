@@ -3,10 +3,18 @@
 
 package require Tk
 
-# Accept campaign directory or YAML file as argument, default to current directory
+# Accept campaign directory or YAML file as argument, default to current directory.
+# Arg ending in .yaml is treated as an explicit YAML path (must exist).
+# Otherwise it is treated as a directory; campaign*.yaml is sought inside.
 set _arg [expr {[llength $argv] > 0 ? [lindex $argv 0] : "."}]
 set _norm [file normalize $_arg]
-if {[file isfile $_norm] && [string match *.yaml $_norm]} {
+set campaign_file ""
+if {[string match *.yaml $_arg]} {
+    if {![file isfile $_norm]} {
+        puts stderr "spar-ui: campaign YAML not found: $_arg"
+        exit 1
+    }
+    set campaign_file $_norm
     set campaign_dir [file dirname $_norm]
 } else {
     set campaign_dir $_norm
@@ -25,7 +33,7 @@ proc _find_campaign_yaml {dir} {
     if {[llength $cs]} { return [lindex $cs end] }
     return ""
 }
-if {[_find_campaign_yaml $campaign_dir] eq ""} {
+if {$campaign_file eq "" && [_find_campaign_yaml $campaign_dir] eq ""} {
     puts stderr "spar-ui: no campaign YAML found in $campaign_dir"
     puts stderr "Usage: wish9.0 spar-ui.tcl <campaign-dir-or-yaml>"
     puts stderr "  Argument may be a directory containing campaign*.yaml, or a YAML file directly"
@@ -37,6 +45,10 @@ if {[_find_campaign_yaml $campaign_dir] eq ""} {
 # ============================================================
 
 proc discover_campaign_yaml {campaign_dir} {
+    global campaign_file
+    if {[info exists campaign_file] && $campaign_file ne ""} {
+        return $campaign_file
+    }
     set yaml_path [file join $campaign_dir campaign.yaml]
     if {[file exists $yaml_path]} {
         return $yaml_path
