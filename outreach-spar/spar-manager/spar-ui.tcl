@@ -619,8 +619,6 @@ proc do_refresh {} {
 
     # Rebuild transitions
     rebuild_transitions
-
-    log_message "Refreshed campaign data."
 }
 
 # Legend window — identical to mock-ui.tcl
@@ -1112,12 +1110,16 @@ pack ${tpanel}.dispatch.play   -side left -padx {0 4}
 pack ${tpanel}.dispatch.pause  -side left -padx {0 4}
 pack ${tpanel}.dispatch.cancel -side left -padx {0 8}
 
-ttk::progressbar ${tpanel}.dispatch.pbar -mode determinate -value 0
+ttk::frame       ${tpanel}.dispatch.progress
+ttk::progressbar ${tpanel}.dispatch.progress.bar -mode determinate -value 0
+ttk::label       ${tpanel}.dispatch.progress.status -text "" -anchor w
+pack ${tpanel}.dispatch.progress.bar    -fill x -expand 1
+pack ${tpanel}.dispatch.progress.status -fill x
 ttk::button ${tpanel}.dispatch.logbtn -text "Log\u2026" -command show_log_window
 
 proc show_dispatch_bar {} {
     global tpanel
-    pack ${tpanel}.dispatch.pbar -side left -fill x -expand 1 -padx {8 4}
+    pack ${tpanel}.dispatch.progress -side left -fill x -expand 1 -padx {8 4}
     pack ${tpanel}.dispatch.logbtn -side left
 }
 
@@ -1125,7 +1127,9 @@ set log_buffer {}
 
 # Log window
 proc show_log_window {} {
-    global log_buffer
+    global log_buffer log_unread
+    set log_unread 0
+    update_log_badge
     if {[winfo exists .logwin]} {
         wm deiconify .logwin
         raise .logwin
@@ -1180,13 +1184,24 @@ proc log_message {msg} {
 
 set dispatching 0
 set paused 0
-set cohort_in_flight [dict create]
-set row_names [dict create]
-set row_phase [dict create]
-set slug_to_row [dict create]
-set cohort_frames [list \u29d6 \u29d7]
-set cohort_tick 0
-set cohort_after ""
+set log_unread 0
+
+# Cohort state, keyed on stem. Persists across do_refresh so terminal
+# per-row glyphs stay visible from end-of-dispatch until the next
+# dispatch clears them. slug_to_row is the stem → current tree row_id
+# map; rebuilt by reapply_cohort_after_refresh because do_refresh
+# assigns fresh row ids.
+set cohort_stems {}
+set cohort_state  [dict create]
+set cohort_reason [dict create]
+set cohort_phase  [dict create]
+set slug_to_row   [dict create]
+set row_names     [dict create]
+
+# Braille-dot spinner frames for the aggregate progress status line.
+set aggregate_frames [list \u280b \u2819 \u2839 \u2838 \u283c \u2834 \u2826 \u2827 \u2807 \u280f]
+set aggregate_tick 0
+set aggregate_after ""
 
 proc do_pause {} {
     global paused tpanel
@@ -1208,31 +1223,86 @@ proc do_cancel {} {
     log_message "Dispatch cancelled: queued items skipped; in-flight items finish normally."
 }
 
-proc cohort_animate {} {
-    global tree cohort_in_flight row_names row_phase cohort_tick cohort_after cohort_frames
-    if {[dict size $cohort_in_flight] == 0} {
-        set cohort_after ""
+# Render one cohort row from stem-keyed state. Row #0 text becomes
+# "● <name>  <glyph> <label>" — the ● marker persists through all states
+# and through tree refresh.
+proc render_row {row_id} {
+    global tree cohort_state cohort_reason cohort_phase row_names
+    if {![$tree exists $row_id]} return
+    set stem [$tree set $row_id stem]
+    if {$stem eq "" || ![dict exists $cohort_state $stem]} return
+    set state  [dict get $cohort_state $stem]
+    set reason [expr {[dict exists $cohort_reason $stem] ? [dict get $cohort_reason $stem] : ""}]
+    set phase  [expr {[dict exists $cohort_phase  $stem] ? [dict get $cohort_phase  $stem] : ""}]
+    set name   [expr {[dict exists $row_names    $row_id] ? [dict get $row_names    $row_id] : ""}]
+    switch -- $state {
+        queued    { set suffix "\u25cb queued" }
+        running   {
+            set label [expr {$phase ne "" ? $phase : "running"}]
+            set suffix "\u25d0 $label"
+        }
+        done      { set suffix "\u2713 done $reason" }
+        failed    { set suffix "\u2717 failed: $reason" }
+        skipped   { set suffix "\u2298 skipped: $reason" }
+        cancelled { set suffix "\u2298 cancelled" }
+        default   { set suffix "" }
+    }
+    $tree item $row_id -text "\u25cf $name  $suffix"
+}
+
+proc update_progress_display {} {
+    global tpanel cohort_stems cohort_state aggregate_frames aggregate_tick dispatching
+    set total [llength $cohort_stems]
+    if {$total == 0} {
+        ${tpanel}.dispatch.progress.bar configure -value 0
+        ${tpanel}.dispatch.progress.status configure -text ""
         return
     }
-    set frame [lindex $cohort_frames [expr {$cohort_tick % [llength $cohort_frames]}]]
-    dict for {row_id _} $cohort_in_flight {
-        if {![$tree exists $row_id]} continue
-        set name [expr {[dict exists $row_names $row_id] ? [dict get $row_names $row_id] : ""}]
-        set phase [expr {[dict exists $row_phase $row_id] ? [dict get $row_phase $row_id] : ""}]
-        set suffix [expr {$phase eq "" ? "" : " \u2014 $phase"}]
-        $tree item $row_id -text "$frame $name$suffix"
+    set done 0; set failed 0; set running 0; set skipped 0; set cancelled 0
+    foreach s $cohort_stems {
+        switch -- [dict get $cohort_state $s] {
+            done      { incr done }
+            failed    { incr failed }
+            running   { incr running }
+            skipped   { incr skipped }
+            cancelled { incr cancelled }
+        }
     }
-    incr cohort_tick
-    set cohort_after [after 500 cohort_animate]
+    set finished [expr {$done + $failed + $skipped + $cancelled}]
+    ${tpanel}.dispatch.progress.bar configure -value [expr {100.0 * $finished / $total}]
+    set prefix ""
+    if {$dispatching} {
+        set frame [lindex $aggregate_frames [expr {$aggregate_tick % [llength $aggregate_frames]}]]
+        set prefix "$frame "
+    }
+    set text "${prefix}$done of $total done"
+    if {$failed    > 0} { append text " \u00b7 $failed failed" }
+    if {$running   > 0} { append text " \u00b7 $running running" }
+    if {$skipped   > 0} { append text " \u00b7 $skipped skipped" }
+    if {$cancelled > 0} { append text " \u00b7 $cancelled cancelled" }
+    ${tpanel}.dispatch.progress.status configure -text $text
+}
+
+proc aggregate_animate {} {
+    global dispatching aggregate_tick aggregate_after
+    if {!$dispatching} { set aggregate_after ""; return }
+    incr aggregate_tick
+    update_progress_display
+    set aggregate_after [after 150 aggregate_animate]
 }
 
 proc clear_cohort {} {
-    global tree cohort_in_flight cohort_after row_names row_phase slug_to_row
-    if {$cohort_after ne ""} {
-        after cancel $cohort_after
-        set cohort_after ""
+    global tree cohort_stems cohort_state cohort_reason cohort_phase slug_to_row row_names
+    global aggregate_after aggregate_tick
+    if {$aggregate_after ne ""} {
+        after cancel $aggregate_after
+        set aggregate_after ""
     }
-    dict for {row_id _} $cohort_in_flight {
+    set aggregate_tick 0
+    # Restore previous-cohort rows to plain text.
+    foreach s $cohort_stems {
+        if {![dict exists $slug_to_row $s]} continue
+        set row_id [dict get $slug_to_row $s]
         if {![$tree exists $row_id]} continue
         set tags [$tree item $row_id -tags]
         set idx [lsearch -exact $tags in_cohort]
@@ -1242,44 +1312,133 @@ proc clear_cohort {} {
         set name [expr {[dict exists $row_names $row_id] ? [dict get $row_names $row_id] : ""}]
         $tree item $row_id -text "  $name"
     }
-    set cohort_in_flight [dict create]
-    set row_phase [dict create]
+    set cohort_stems  {}
+    set cohort_state  [dict create]
+    set cohort_reason [dict create]
+    set cohort_phase  [dict create]
+    set slug_to_row   [dict create]
+    update_progress_display
+}
+
+# After do_refresh rebuilds the tree (new row ids), reconnect slug_to_row
+# and re-render cohort members so terminal glyphs survive the refresh.
+proc reapply_cohort_after_refresh {} {
+    global tree cohort_stems slug_to_row
     set slug_to_row [dict create]
+    if {[llength $cohort_stems] == 0} return
+    foreach parent [$tree children {}] {
+        foreach row [$tree children $parent] {
+            set s [$tree set $row stem]
+            if {$s eq ""} continue
+            if {[lsearch -exact $cohort_stems $s] < 0} continue
+            dict set slug_to_row $s $row
+            set tags [$tree item $row -tags]
+            if {[lsearch -exact $tags in_cohort] < 0} {
+                $tree item $row -tags [concat $tags in_cohort]
+            }
+            render_row $row
+        }
+    }
+}
+
+proc update_log_badge {} {
+    global tpanel log_unread
+    set text [expr {$log_unread ? "Log\u2026 \u2022" : "Log\u2026"}]
+    ${tpanel}.dispatch.logbtn configure -text $text
 }
 
 proc ui_on_progress {slug status message} {
-    global slug_to_row row_phase tree row_names cohort_frames cohort_tick
-    # Phase markers ([phase: drafting], [phase: challenger 1/2], ...) are
-    # row state, not log events — they update the in-flight row's sub-phase
-    # text and don't reach the log. Human-readable companion lines
-    # ([$slug] Author: drafting...) still arrive as separate started events
-    # and log normally.
+    global cohort_state cohort_reason cohort_phase slug_to_row log_unread
+    global aggregate_after
+    # Phase markers are row state, not log events.
     if {[regexp {\[phase:\s*([^\]]+)\]} $message -> phase]} {
-        set phase [string trim $phase]
-        if {[dict exists $slug_to_row $slug]} {
-            set row_id [dict get $slug_to_row $slug]
-            dict set row_phase $row_id $phase
-            if {[$tree exists $row_id]} {
-                set frame [lindex $cohort_frames \
-                    [expr {$cohort_tick % [llength $cohort_frames]}]]
-                set name [expr {[dict exists $row_names $row_id] \
-                    ? [dict get $row_names $row_id] : ""}]
-                $tree item $row_id -text "$frame $name \u2014 $phase"
+        if {[dict exists $cohort_state $slug]} {
+            dict set cohort_phase $slug [string trim $phase]
+            if {[dict exists $slug_to_row $slug]} {
+                render_row [dict get $slug_to_row $slug]
             }
         }
         return
     }
-    log_message "  \[$status\] $slug $message"
+    # Runner iterates the whole segment and emits "skipped" for rows it
+    # pre-filters (approach exists, excluded, wrong channel). When the
+    # user narrowed to a cohort, these non-cohort skips are noise —
+    # suppress them from the log entirely.
+    if {$status eq "skipped" && ![dict exists $cohort_state $slug]} {
+        return
+    }
+    # slug == stem during a run; non-cohort events (e.g. the
+    # {slug_name}-{slug_org} "no stem" skip) skip row rendering.
+    if {[dict exists $cohort_state $slug]} {
+        set prev [dict get $cohort_state $slug]
+        set changed 0
+        switch -- $status {
+            started {
+                if {$prev ne "running"} {
+                    dict set cohort_state $slug running
+                    set changed 1
+                    if {$aggregate_after eq ""} { aggregate_animate }
+                }
+                set m [string trim $message]
+                if {$m ne ""} { dict set cohort_reason $slug $m }
+            }
+            done {
+                dict set cohort_state $slug done
+                dict set cohort_reason $slug [clock format [clock seconds] -format "%H:%M"]
+                set changed 1
+            }
+            failed {
+                dict set cohort_state $slug failed
+                set r [string trim $message]
+                if {$r eq ""} {
+                    set r [expr {[dict exists $cohort_reason $slug] ? [dict get $cohort_reason $slug] : "unknown"}]
+                }
+                if {[string length $r] > 80} { set r "[string range $r 0 77]\u2026" }
+                dict set cohort_reason $slug $r
+                set log_unread 1
+                set changed 1
+            }
+            skipped {
+                if {[string trim $message] eq "cancelled"} {
+                    dict set cohort_state $slug cancelled
+                } else {
+                    dict set cohort_state $slug skipped
+                    dict set cohort_reason $slug [string trim $message]
+                }
+                set changed 1
+            }
+            warning {
+                set log_unread 1
+            }
+        }
+        if {$changed && [dict exists $slug_to_row $slug]} {
+            render_row [dict get $slug_to_row $slug]
+        }
+    } elseif {$status eq "warning" || $status eq "failed"} {
+        set log_unread 1
+    }
+    update_progress_display
+    update_log_badge
+    # Suppress the dispatcher's empty "started" kickoff from the log —
+    # already reflected in the row's running state. Log everything else.
+    if {!($status eq "started" && $message eq "")} {
+        log_message "  \[$status\] $slug $message"
+    }
 }
 
 proc ui_on_complete {done failed result} {
-    global dispatching paused tpanel tree
+    global dispatching paused tpanel tree aggregate_after
     set dispatching 0
     set paused 0
     ${tpanel}.dispatch.play configure -state normal
     ${tpanel}.dispatch.pause configure -state disabled -text "\u23f8 Pause"
     ${tpanel}.dispatch.cancel configure -state disabled
-    clear_cohort
+    # Stop the aggregate spinner but keep cohort_* dicts so the terminal
+    # per-row glyphs persist. The next do_dispatch calls clear_cohort.
+    if {$aggregate_after ne ""} {
+        after cancel $aggregate_after
+        set aggregate_after ""
+    }
     set skipped [spar::dict_get_default $result skipped 0]
     set count   [spar::dict_get_default $result count 0]
     set tail ""
@@ -1289,6 +1448,8 @@ proc ui_on_complete {done failed result} {
     }
     log_message "Dispatch completed: $done done, $failed failed$tail."
     do_refresh
+    reapply_cohort_after_refresh
+    update_progress_display
     event generate $tree <<TreeviewSelect>>
 
     global auto_quit
@@ -1364,7 +1525,7 @@ proc auto_dispatch {} {
 }
 
 proc do_dispatch {} {
-    global tree tpanel script_dir dispatching cohort_in_flight slug_to_row row_phase campaign_file
+    global tree tpanel script_dir dispatching cohort_stems cohort_state slug_to_row campaign_file
 
     if {$dispatching} return
 
@@ -1427,21 +1588,24 @@ proc do_dispatch {} {
         dict set opts confirmed 1
     }
 
-    # Narrow dispatch to the selected children, if any. Empty list ⇒
-    # current (parent-only) behaviour: runner processes all ready rows.
-    set slug_to_row [dict create]
-    set row_phase [dict create]
+    # Clear the previous cohort so its terminal glyphs are wiped before
+    # the new run begins. Stem-less rows can't be dispatched (the runner
+    # skips them server-side), so they're excluded from the cohort.
+    clear_cohort
     if {[llength $child_items] > 0} {
         set sel_stems {}
         foreach c $child_items {
             set s [$tree set $c stem]
-            if {$s ne ""} { lappend sel_stems $s }
-            dict set cohort_in_flight $c [expr {$s ne "" ? $s : 1}]
-            if {$s ne ""} { dict set slug_to_row $s $c }
+            if {$s eq ""} continue
+            lappend sel_stems $s
+            lappend cohort_stems $s
+            dict set cohort_state $s queued
+            dict set slug_to_row  $s $c
             set tags [$tree item $c -tags]
             if {[lsearch -exact $tags in_cohort] < 0} {
                 $tree item $c -tags [concat $tags in_cohort]
             }
+            render_row $c
         }
         if {[llength $sel_stems] > 0} {
             dict set opts stems $sel_stems
@@ -1454,10 +1618,9 @@ proc do_dispatch {} {
     ${tpanel}.dispatch.play configure -state disabled
     ${tpanel}.dispatch.pause configure -state normal -text "\u23f8 Pause"
     ${tpanel}.dispatch.cancel configure -state normal
-    if {[dict size $cohort_in_flight] > 0} {
-        set ::cohort_tick 0
-        cohort_animate
-    }
+    set ::aggregate_tick 0
+    update_progress_display
+    aggregate_animate
     update idletasks
 
     show_dispatch_bar
