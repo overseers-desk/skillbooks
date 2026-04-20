@@ -32,7 +32,7 @@ The discovery steps are the same for both types. The differences — whether P i
 
 Store one TSV file per segment. Use TSV, not CSV — roster fields frequently contain quoted speech, URLs, and free-text notes that cause quoting problems with commas. The file is named `roster.tsv` and lives inside the segment's own directory (e.g. `wedding-planner/roster.tsv`). Do not embed the segment name in the filename — the directory already carries that context.
 
-Every row should have a **contact_name** where one can be identified. If a source lists only an organisation and a quick check of the organisation's website, LinkedIn, and Facebook does not surface a named individual, retain the organisation as a row with a blank `contact_name`: write a provisional `stem` using the organisation slug, and leave `date_excluded` empty. Do not set `date_excluded` during sweep — the P-phase §4.0b procedure is responsible for the exhaustive name search and for invalidating entries where no individual can be found. The blank-name row ensures future sweep iterations recognise the organisation as already discovered and do not re-add it.
+Every row should have a **contact_name** where one can be identified. If a source lists only an organisation and a quick check of the organisation's website, LinkedIn, and Facebook does not surface a named individual, retain the organisation as a row with a blank `contact_name`: write a provisional `stem` using the organisation slug, and leave `date_excluded` empty. Do not set `date_excluded` during sweep — the P-phase §4.1 procedure is responsible for the exhaustive name search and for invalidating entries where no individual can be found. The blank-name row ensures future sweep iterations recognise the organisation as already discovered and do not re-add it.
 
 Each S&P iteration updates the same file via the `sweep_iteration` column. Do not create separate files per iteration.
 
@@ -40,7 +40,7 @@ Each S&P iteration updates the same file via the `sweep_iteration` column. Do no
 
 These columns are standard across all campaigns. Every roster produced by this AESOP includes them:
 
-1. **contact_name** — person's name (blank if no individual identified yet — the P-phase §4.0b procedure will attempt resolution)
+1. **contact_name** — person's name (blank if no individual identified yet — the P-phase §4.1 procedure will attempt resolution)
 2. **organisation** — business, group, or institution name
 3. **role** — title or function
 4. **phone**
@@ -162,7 +162,7 @@ These cross-leads must not be discarded because they fall outside the current se
 Run this checklist against all roster files after each iteration. Each check is a pass/fail assertion on the TSV data.
 
 1. **Column count:** every row has the expected number of tab-separated fields (core columns from §4.1 plus any campaign-specific columns from §4.2).
-2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)"), or has a blank `contact_name` with a provisional organisation-slug stem. Rows with blank `contact_name` and no `date_excluded` are P-phase leads awaiting §4.0b name resolution — they are not errors.
+2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)"), or has a blank `contact_name` with a provisional organisation-slug stem. Rows with blank `contact_name` and no `date_excluded` are P-phase leads awaiting §4.1 name resolution — they are not errors.
 3. **No duplicate contacts:** no two rows in the same roster file share the same (`contact_name`, `organisation`) pair (case-insensitive). Multiple contacts at the same organisation is permitted.
 4. **Email format:** every non-empty `email` field contains an `@` sign. Strings like `via website`, `(07) 5572 3588`, or `[email obtained during call]` are not email addresses and must not pass validation. This is the gate that prevents non-email strings from inflating counts downstream.
 5. **Reachable:** every row has at least one of email (valid, per check 4), `linkedin_url`, or `facebook_url` populated. Phone alone is insufficient for campaigns that begin with a written introduction.

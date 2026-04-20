@@ -1719,7 +1719,7 @@ set vp15_issues [spar::validate_profile $vp15_path $vp15_row "VP Unreachable"]
 assert_eq [has_issue $vp15_issues profile_unreachable_without_exclusion] 1 \
     "validate_profile: profile + all channels empty + no date_excluded → profile_unreachable_without_exclusion"
 
-# 12p-r. #39 R1: date_excluded set → no error (P honoured §4.4a)
+# 12p-r. #39 R1: date_excluded set → no error (P honoured §4.15)
 set seg_vp16 [make_temp_segment]
 set vp16_path [write_profile $seg_vp16 "vp-excluded" -date_excluded "2026-04-12"]
 set vp16_row [dict create stem "vp-excluded" contact_name "X" organisation "Y" \
@@ -1728,7 +1728,7 @@ set vp16_issues [spar::validate_profile $vp16_path $vp16_row "VP Excluded"]
 assert_eq [has_issue $vp16_issues profile_unreachable_without_exclusion] 0 \
     "validate_profile: all channels empty but date_excluded set → no R1 error"
 
-# 12p-s. #39 R1: phone-only contact is reachable (phone path per §4.4a)
+# 12p-s. #39 R1: phone-only contact is reachable (phone path per §4.15)
 set seg_vp17 [make_temp_segment]
 set vp17_path [write_profile $seg_vp17 "vp-phoneonly"]
 set vp17_row [dict create stem "vp-phoneonly" contact_name "X" organisation "Y" \
@@ -2135,7 +2135,7 @@ write_roster_tsv $seg_vr1b $::vr_headers [list \
 ]
 set issues_vr1b [vr_issues $seg_vr1b]
 assert_eq [has_issue $issues_vr1b roster_placeholder_name] 0 \
-    "A1b: blank contact_name + non-empty organisation exempt (P §4.0b case)"
+    "A1b: blank contact_name + non-empty organisation exempt (P §4.1 case)"
 
 # ── Assertion 7: response_likelihood without star_rating ──
 set seg_vr7 [make_temp_segment]

@@ -36,7 +36,7 @@ This gate exists because A is the first point where profile content and campaign
 
 ### 4.1 Read warmth level from the profile
 
-The P phase has already assessed prior correspondence and assigned a warmth level (see SPAR-P §4.4). Read it from the profile document and from `p_note` in the roster.
+The P phase has already assessed prior correspondence and assigned a warmth level (see SPAR-P §4.7). Read it from the profile document and from `p_note` in the roster.
 
 | Level | Opener style |
 |---|---|
