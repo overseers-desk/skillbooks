@@ -20,6 +20,11 @@ namespace eval spar {
     # calling script at invocation, not this file, which breaks path
     # resolution when run from a test one dir deeper.
     variable dispatch_script_dir [file dirname [file normalize [info script]]]
+    # Registry of live Dispatcher instances. Populated by the constructor,
+    # drained by the destructor. UI layer walks this to pause/resume/cancel
+    # every in-flight dispatch — a single segment run spawns one Dispatcher,
+    # a multi-segment P-phase run spawns several in parallel.
+    variable live_dispatchers [list]
 }
 namespace eval spar::p {}
 namespace eval spar::a {}
@@ -39,6 +44,7 @@ namespace eval spar::a {}
 oo::class create spar::Dispatcher {
     variable Queue QueueIdx Active Completed Failed
     variable Jobs LogsDir HarnessPath OnProgress OnComplete Result
+    variable Paused
 
     constructor {jobs logs_dir harness_path on_progress on_complete result} {
         set Jobs $jobs
@@ -52,6 +58,29 @@ oo::class create spar::Dispatcher {
         set Active 0
         set Completed 0
         set Failed 0
+        set Paused 0
+        lappend ::spar::live_dispatchers [self]
+    }
+
+    destructor {
+        set idx [lsearch -exact $::spar::live_dispatchers [self]]
+        if {$idx >= 0} {
+            set ::spar::live_dispatchers \
+                [lreplace $::spar::live_dispatchers $idx $idx]
+        }
+    }
+
+    method pause {}  { set Paused 1 }
+    method resume {} { set Paused 0; my start_next }
+
+    method cancel {} {
+        while {$QueueIdx < [llength $Queue]} {
+            set pdir [lindex $Queue $QueueIdx]
+            incr QueueIdx
+            {*}$OnProgress [file tail $pdir] skipped "cancelled"
+        }
+        set Paused 0
+        my start_next
     }
 
     method run {prompt_dirs} {
@@ -64,6 +93,7 @@ oo::class create spar::Dispatcher {
     # they cannot use a leading-underscore private naming convention —
     # TclOO would not export them.
     method start_next {} {
+        if {!$Paused} {
         while {$QueueIdx < [llength $Queue] && $Active < $Jobs} {
             set pdir [lindex $Queue $QueueIdx]
             incr QueueIdx
@@ -80,6 +110,7 @@ oo::class create spar::Dispatcher {
             fconfigure $pipe -blocking 0 -buffering line
             fileevent $pipe readable [list [self] on_harness_output $pipe $slug]
             incr Active
+        }
         }
 
         if {$Active == 0 && $QueueIdx >= [llength $Queue]} {
@@ -138,6 +169,16 @@ oo::class create spar::Dispatcher {
         {*}$OnProgress $slug started "roster: $key_col=$key_val $field=$new_val"
     }
 }
+
+proc spar::_for_live {verb} {
+    variable live_dispatchers
+    foreach d $live_dispatchers {
+        if {[info object isa object $d]} { $d $verb }
+    }
+}
+proc spar::pause_all  {} { spar::_for_live pause }
+proc spar::resume_all {} { spar::_for_live resume }
+proc spar::cancel_all {} { spar::_for_live cancel }
 
 # ════════════════════════════════════════════════════════════════════════
 # spar::p::run — SPAR-P phase runner (profile dispatch).
