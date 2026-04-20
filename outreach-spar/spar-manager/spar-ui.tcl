@@ -1062,12 +1062,13 @@ $tree column state  -width 70  -minwidth 50
 $tree column reason -width 300 -minwidth 100
 
 proc populate_transitions {} {
-    global tree transitions
+    global tree transitions row_names
 
     # Clear existing items
     foreach item [$tree children {}] {
         $tree delete $item
     }
+    set row_names [dict create]
 
     set ti 0
     foreach tentry $transitions {
@@ -1084,8 +1085,9 @@ proc populate_transitions {} {
             } elseif {$tstate eq "pending"} {
                 set tags {pending}
             }
-            $tree insert $parent_id end -text $tname \
-                -values [list $tstem $torg $tseg $tstate $treason] -tags $tags
+            set row_id [$tree insert $parent_id end -text "  $tname" \
+                -values [list $tstem $torg $tseg $tstate $treason] -tags $tags]
+            dict set row_names $row_id $tname
         }
 
         incr ti
@@ -1094,18 +1096,21 @@ proc populate_transitions {} {
 
 populate_transitions
 
-$tree tag configure done    -foreground #999999
-$tree tag configure pending -foreground #cc6600
+$tree tag configure done      -foreground #999999
+$tree tag configure pending   -foreground #cc6600
+$tree tag configure in_cohort -background #e8f0fa
 
 # Dispatch controls
 ttk::frame ${tpanel}.dispatch
 pack ${tpanel}.dispatch -side bottom -fill x -padx 4 -pady {0 4} -before ${tpanel}.treeframe
 
-ttk::button ${tpanel}.dispatch.play -text "\u25b6 Dispatch" -state disabled -command do_dispatch
-ttk::button ${tpanel}.dispatch.stop -text "\u23f9 Stop"     -state disabled
+ttk::button ${tpanel}.dispatch.play   -text "\u25b6 Dispatch" -state disabled -command do_dispatch
+ttk::button ${tpanel}.dispatch.pause  -text "\u23f8 Pause"    -state disabled -command do_pause
+ttk::button ${tpanel}.dispatch.cancel -text "\u2715 Cancel"   -state disabled -command do_cancel
 
-pack ${tpanel}.dispatch.play -side left -padx {0 4}
-pack ${tpanel}.dispatch.stop -side left -padx {0 8}
+pack ${tpanel}.dispatch.play   -side left -padx {0 4}
+pack ${tpanel}.dispatch.pause  -side left -padx {0 4}
+pack ${tpanel}.dispatch.cancel -side left -padx {0 8}
 
 ttk::progressbar ${tpanel}.dispatch.pbar -mode determinate -value 0
 ttk::button ${tpanel}.dispatch.logbtn -text "Log\u2026" -command show_log_window
@@ -1116,8 +1121,11 @@ proc show_dispatch_bar {} {
     pack ${tpanel}.dispatch.logbtn -side left
 }
 
+set log_buffer {}
+
 # Log window
 proc show_log_window {} {
+    global log_buffer
     if {[winfo exists .logwin]} {
         wm deiconify .logwin
         raise .logwin
@@ -1129,6 +1137,7 @@ proc show_log_window {} {
     ttk::frame .logwin.bar
     pack .logwin.bar -fill x -padx 4 -pady {4 0}
     ttk::button .logwin.bar.clear -text "Clear" -command {
+        set ::log_buffer {}
         .logwin.txt configure -state normal
         .logwin.txt delete 1.0 end
         .logwin.txt configure -state disabled
@@ -1142,42 +1151,108 @@ proc show_log_window {} {
     pack .logwin.sb -side right -fill y -padx {0 4} -pady {0 4}
     pack .logwin.txt -fill both -expand 1 -padx {4 0} -pady {0 4}
 
+    .logwin.txt configure -state normal
+    foreach line $log_buffer {
+        .logwin.txt insert end "$line\n"
+    }
+    .logwin.txt see end
+    .logwin.txt configure -state disabled
+
     wm protocol .logwin WM_DELETE_WINDOW {wm withdraw .logwin}
 }
 
 proc log_message {msg} {
-    global log_to_stderr
+    global log_to_stderr log_buffer
     set ts [clock format [clock seconds] -format "%H:%M:%S"]
+    set line "$ts $msg"
     if {$log_to_stderr} {
-        puts stderr "$ts $msg"
+        puts stderr $line
         flush stderr
     }
-    # Ensure log window exists
-    if {![winfo exists .logwin]} {
-        show_log_window
+    lappend log_buffer $line
+    if {[winfo exists .logwin]} {
+        .logwin.txt configure -state normal
+        .logwin.txt insert end "$line\n"
+        .logwin.txt see end
+        .logwin.txt configure -state disabled
     }
-    .logwin.txt configure -state normal
-    .logwin.txt insert end "$ts $msg\n"
-    .logwin.txt see end
-    .logwin.txt configure -state disabled
 }
 
 set dispatching 0
-set saved_tree_bindtags {}
+set paused 0
+set cohort_in_flight [dict create]
+set row_names [dict create]
+set cohort_frames [list \u29d6 \u29d7]
+set cohort_tick 0
+set cohort_after ""
+
+proc do_pause {} {
+    global paused tpanel
+    if {!$paused} {
+        spar::pause_all
+        set paused 1
+        ${tpanel}.dispatch.pause configure -text "\u25b6 Resume"
+        log_message "Dispatch paused: queued items held; in-flight items finish normally."
+    } else {
+        spar::resume_all
+        set paused 0
+        ${tpanel}.dispatch.pause configure -text "\u23f8 Pause"
+        log_message "Dispatch resumed."
+    }
+}
+
+proc do_cancel {} {
+    spar::cancel_all
+    log_message "Dispatch cancelled: queued items skipped; in-flight items finish normally."
+}
+
+proc cohort_animate {} {
+    global tree cohort_in_flight row_names cohort_tick cohort_after cohort_frames
+    if {[dict size $cohort_in_flight] == 0} {
+        set cohort_after ""
+        return
+    }
+    set frame [lindex $cohort_frames [expr {$cohort_tick % [llength $cohort_frames]}]]
+    dict for {row_id _} $cohort_in_flight {
+        if {![$tree exists $row_id]} continue
+        set name [expr {[dict exists $row_names $row_id] ? [dict get $row_names $row_id] : ""}]
+        $tree item $row_id -text "$frame $name"
+    }
+    incr cohort_tick
+    set cohort_after [after 500 cohort_animate]
+}
+
+proc clear_cohort {} {
+    global tree cohort_in_flight cohort_after row_names
+    if {$cohort_after ne ""} {
+        after cancel $cohort_after
+        set cohort_after ""
+    }
+    dict for {row_id _} $cohort_in_flight {
+        if {![$tree exists $row_id]} continue
+        set tags [$tree item $row_id -tags]
+        set idx [lsearch -exact $tags in_cohort]
+        if {$idx >= 0} {
+            $tree item $row_id -tags [lreplace $tags $idx $idx]
+        }
+        set name [expr {[dict exists $row_names $row_id] ? [dict get $row_names $row_id] : ""}]
+        $tree item $row_id -text "  $name"
+    }
+    set cohort_in_flight [dict create]
+}
 
 proc ui_on_progress {slug status message} {
     log_message "  \[$status\] $slug $message"
 }
 
 proc ui_on_complete {done failed result} {
-    global dispatching tpanel tree saved_tree_bindtags
+    global dispatching paused tpanel tree
     set dispatching 0
+    set paused 0
     ${tpanel}.dispatch.play configure -state normal
-    $tree state !disabled
-    if {$saved_tree_bindtags ne {}} {
-        bindtags $tree $saved_tree_bindtags
-        set saved_tree_bindtags {}
-    }
+    ${tpanel}.dispatch.pause configure -state disabled -text "\u23f8 Pause"
+    ${tpanel}.dispatch.cancel configure -state disabled
+    clear_cohort
     set skipped [spar::dict_get_default $result skipped 0]
     set count   [spar::dict_get_default $result count 0]
     set tail ""
@@ -1262,7 +1337,7 @@ proc auto_dispatch {} {
 }
 
 proc do_dispatch {} {
-    global tree tpanel script_dir dispatching saved_tree_bindtags campaign_file
+    global tree tpanel script_dir dispatching cohort_in_flight campaign_file
 
     if {$dispatching} return
 
@@ -1332,6 +1407,11 @@ proc do_dispatch {} {
         foreach c $child_items {
             set s [$tree set $c stem]
             if {$s ne ""} { lappend sel_stems $s }
+            dict set cohort_in_flight $c [expr {$s ne "" ? $s : 1}]
+            set tags [$tree item $c -tags]
+            if {[lsearch -exact $tags in_cohort] < 0} {
+                $tree item $c -tags [concat $tags in_cohort]
+            }
         }
         if {[llength $sel_stems] > 0} {
             dict set opts stems $sel_stems
@@ -1340,10 +1420,14 @@ proc do_dispatch {} {
     }
 
     set dispatching 1
+    set ::paused 0
     ${tpanel}.dispatch.play configure -state disabled
-    $tree state disabled
-    set saved_tree_bindtags [bindtags $tree]
-    bindtags $tree [list $tree .]
+    ${tpanel}.dispatch.pause configure -state normal -text "\u23f8 Pause"
+    ${tpanel}.dispatch.cancel configure -state normal
+    if {[dict size $cohort_in_flight] > 0} {
+        set ::cohort_tick 0
+        cohort_animate
+    }
     update idletasks
 
     show_dispatch_bar
@@ -1352,16 +1436,19 @@ proc do_dispatch {} {
     if {[catch {$runner $opts ui_on_progress ui_on_complete} err]} {
         log_message "$tid dispatch error: $err"
         set dispatching 0
+        set ::paused 0
         ${tpanel}.dispatch.play configure -state normal
-        $tree state !disabled
-        if {$saved_tree_bindtags ne {}} {
-            bindtags $tree $saved_tree_bindtags
-            set saved_tree_bindtags {}
-        }
+        ${tpanel}.dispatch.pause configure -state disabled -text "\u23f8 Pause"
+        ${tpanel}.dispatch.cancel configure -state disabled
+        clear_cohort
     }
 }
 
 bind $tree <<TreeviewSelect>> [list apply {{tree play} {
+    if {$::dispatching == 1} {
+        $play configure -state disabled -text "\u25b6 Dispatch"
+        return
+    }
     set sel [$tree selection]
     set parents {}
     set children {}
