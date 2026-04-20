@@ -163,6 +163,7 @@ oo::class create spar::ProfileHarness {
 
 set harness [spar::ProfileHarness new $slug $log_prefix]
 
+puts "\[$slug\] \[phase: researching\]"
 puts "\[$slug\] Profile: researching..."
 set draft_log "${log_prefix}-profile.log"
 set prompt [spar::read_file [file join $prompt_dir prompt.txt]]

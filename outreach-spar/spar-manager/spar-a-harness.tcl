@@ -101,6 +101,7 @@ set harness [spar::ApproachHarness new $slug $log_prefix]
 
 # ── Author: draft ──────────────────────────────────────────────────────
 
+puts "\[$slug\] \[phase: drafting\]"
 puts "\[$slug\] Author: drafting..."
 set author_draft_log "${log_prefix}-author-draft.log"
 set author_prompt [spar::read_file [file join $prompt_dir author-draft.txt]]
@@ -131,6 +132,7 @@ set verdict "REVISE"
 
 while {$round < $max_rounds && $verdict eq "REVISE"} {
     incr round
+    puts "\[$slug\] \[phase: challenger $round/$max_rounds\]"
     puts "\[$slug\] Challenger round $round/$max_rounds..."
 
     set challenger_template [spar::read_file [file join $prompt_dir challenger-template.txt]]
@@ -162,6 +164,7 @@ while {$round < $max_rounds && $verdict eq "REVISE"} {
         break
     }
 
+    puts "\[$slug\] \[phase: revising $round\]"
     puts "\[$slug\] Challenger round $round: REVISE — author revising..."
 
     set author_rev_log "${log_prefix}-author-rev${round}.log"
@@ -198,6 +201,7 @@ Output the revised draft between DRAFT_START and DRAFT_END markers. Output any u
 
 # ── Author: assemble ───────────────────────────────────────────────────
 
+puts "\[$slug\] \[phase: assembling\]"
 puts "\[$slug\] Author: assembling..."
 
 set all_challenger ""
