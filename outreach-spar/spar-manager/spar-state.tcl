@@ -243,6 +243,8 @@ proc spar::analyse_final_round {data} {
 #   email_sent    bool
 #   linkedin_sent bool
 #   email_replied bool
+#   to_addresses     list of final-round email To: addresses (empty if no approach)
+#   unsent_subjects  list of final-round unsent email subjects (empty if no approach)
 #
 proc spar::classify_contact {roster_row segment_dir} {
     # Extract roster fields with safe defaults.
@@ -277,6 +279,12 @@ proc spar::classify_contact {roster_row segment_dir} {
     set linkedin_sent 0
     set email_replied 0
 
+    # Approach-derived fields carried through for detect_duplicates, so the
+    # YAML is parsed once per contact rather than a second time during the
+    # duplicate scan. Empty for states that never parse an approach YAML.
+    set to_addresses {}
+    set unsent_subjects {}
+
     # Paths
     set profile_path ""
     set approach_path ""
@@ -296,7 +304,9 @@ proc spar::classify_contact {roster_row segment_dir} {
             has_phone_only $has_phone_only \
             email_sent $email_sent \
             linkedin_sent $linkedin_sent \
-            email_replied $email_replied]
+            email_replied $email_replied \
+            to_addresses $to_addresses \
+            unsent_subjects $unsent_subjects]
     }
 
     # 2. DISCOVERED — profile file does not exist
@@ -314,7 +324,9 @@ proc spar::classify_contact {roster_row segment_dir} {
             has_phone_only $has_phone_only \
             email_sent $email_sent \
             linkedin_sent $linkedin_sent \
-            email_replied $email_replied]
+            email_replied $email_replied \
+            to_addresses $to_addresses \
+            unsent_subjects $unsent_subjects]
     }
 
     # 3. PROFILED / PROFILE_STALE — profile exists. Determine which by comparing
@@ -340,7 +352,9 @@ proc spar::classify_contact {roster_row segment_dir} {
             has_phone_only $has_phone_only \
             email_sent $email_sent \
             linkedin_sent $linkedin_sent \
-            email_replied $email_replied]
+            email_replied $email_replied \
+            to_addresses $to_addresses \
+            unsent_subjects $unsent_subjects]
     }
 
     # Approach file exists — parse it for state determination
@@ -350,6 +364,8 @@ proc spar::classify_contact {roster_row segment_dir} {
     set email_sent [dict get $fr email_sent]
     set linkedin_sent [dict get $fr linkedin_sent]
     set email_replied [dict get $fr email_replied]
+    set to_addresses [dict get $fr to_addresses]
+    set unsent_subjects [dict get $fr unsent_subjects]
 
     # 6. REPLIED — SENT and (replied_date or reply with direction:received)
     if {[dict get $fr any_sent] && [dict get $fr email_replied]} {
@@ -364,7 +380,9 @@ proc spar::classify_contact {roster_row segment_dir} {
             has_phone_only $has_phone_only \
             email_sent $email_sent \
             linkedin_sent $linkedin_sent \
-            email_replied $email_replied]
+            email_replied $email_replied \
+            to_addresses $to_addresses \
+            unsent_subjects $unsent_subjects]
     }
 
     # 5. SENT — final round has at least one message with actioned_date
@@ -380,7 +398,9 @@ proc spar::classify_contact {roster_row segment_dir} {
             has_phone_only $has_phone_only \
             email_sent $email_sent \
             linkedin_sent $linkedin_sent \
-            email_replied $email_replied]
+            email_replied $email_replied \
+            to_addresses $to_addresses \
+            unsent_subjects $unsent_subjects]
     }
 
     # 4. APPROACHED — approach file exists, no final-round message with actioned_date
@@ -395,7 +415,9 @@ proc spar::classify_contact {roster_row segment_dir} {
         has_phone_only $has_phone_only \
         email_sent $email_sent \
         linkedin_sent $linkedin_sent \
-        email_replied $email_replied]
+        email_replied $email_replied \
+        to_addresses $to_addresses \
+        unsent_subjects $unsent_subjects]
 }
 
 # classify_segment -- load roster and classify all contacts.
@@ -931,17 +953,16 @@ proc spar::detect_duplicates {all_classified_contacts} {
             lappend email_map($email) [list $segment $name $org]
         }
 
-        # Approach-file-based checks: only if approach file exists
+        # Approach-file-based checks: only if approach file exists.
+        # to_addresses and unsent_subjects come from the classify_contact
+        # pass that already parsed this YAML — reusing them avoids a second
+        # read+parse per contact on cold load.
         if {$approach_path eq "" || ![file exists $approach_path]} continue
 
-        set approach_data [spar::read_approach_yaml $approach_path]
-        if {$approach_data eq ""} continue
-
-        set fr [spar::analyse_final_round $approach_data]
         set filename [file tail $approach_path]
 
         # To: address duplicates
-        foreach addr [dict get $fr to_addresses] {
+        foreach addr [spar::dict_get_default $contact to_addresses {}] {
             set addr_lower [string tolower [string trim $addr]]
             if {$addr_lower ne "" && [string first "@" $addr_lower] >= 0} {
                 lappend to_map($addr_lower) [list $segment $filename]
@@ -949,7 +970,7 @@ proc spar::detect_duplicates {all_classified_contacts} {
         }
 
         # Identical subject lines in unsent approach files
-        foreach subj [dict get $fr unsent_subjects] {
+        foreach subj [spar::dict_get_default $contact unsent_subjects {}] {
             if {$subj ne ""} {
                 lappend subject_map($subj) [list $segment $filename]
             }
