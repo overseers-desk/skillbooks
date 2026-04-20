@@ -609,7 +609,6 @@ for {set i 0} {$i < [llength $tids]} {incr i} {
     set label [lindex $tlabels $i]
 
     set eligible [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
-    if {[llength $eligible] == 0} continue
 
     set ready_list  {}
     set pending_list {}
@@ -621,7 +620,9 @@ for {set i 0} {$i < [llength $tids]} {incr i} {
         }
     }
 
-    # Apply state filter
+    # Apply state filter — only omits rows when a state filter is set and
+    # the relevant bucket is empty. With no state filter, zero-count rows
+    # still print so the reader can see the full transition ladder.
     if {$filter_state eq "ready"   && [llength $ready_list]  == 0} continue
     if {$filter_state eq "pending" && [llength $pending_list] == 0} continue
 
