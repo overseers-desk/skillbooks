@@ -80,7 +80,7 @@ P runs within each S&P iteration, on the contacts discovered in that iteration's
 
 P will routinely discover that a contact is stale: the person has left the organisation, changed roles, or retired from the field. A stale contact is not simply removed. P marks the contact with a `date_excluded` and the reason, then attempts to find the replacement — the person who now holds the role that made the original contact relevant. The replacement enters the roster as a new contact in the current iteration, with `discovered_via` recording that they were found as a replacement for the stale contact. If no replacement can be found (the organisation has closed, the role no longer exists), the stale contact is left marked and no replacement is added. The stale contact's date allows periodic re-checking — a person who left a role in March may have taken a relevant role elsewhere by September.
 
-The profile document is the primary artefact that Prong 2 consumes. Its quality determines whether the Approach phase can produce a non-mechanical message. A thin profile (no public statements, no known connections, bare LinkedIn) limits what Approach can do; the Approach phase should recognise this and adjust expectations accordingly.
+The profile document is the primary artefact that Prong 2 consumes. Its quality determines whether the Approach phase can produce a non-mechanical message. A low-yield profile (no public statements, no known connections, bare LinkedIn) limits what Approach can do; the Approach phase should recognise this and adjust expectations accordingly.
 
 ### Human review checkpoint
 
@@ -115,11 +115,11 @@ A has two sub-phases:
 
 **A1 (Draft):** Opus writes the connection message. The message must be specific to what the target has said or done, not a template with the name swapped in. The message may reference prior relationships from the communication log where doing so is genuine and relevant.
 
-**A2 (Spar):** Opus spawns a simulated personality based on the profile — a second agent (C2) who has read the same profile and attempts to respond as the target would, honestly. A1 reads C2's response. If C2's response reveals that the message missed the mark (wrong angle, wrong tone, assumed a concern the target does not have), A1 revises. The number of A1↔C2 rounds scales with profile richness:
+**A2 (Spar):** Opus spawns a simulated personality based on the profile — a second agent (C2) who has read the same profile and attempts to respond as the target would, honestly. A1 reads C2's response. If C2's response reveals that the message missed the mark (wrong angle, wrong tone, assumed a concern the target does not have), A1 revises. The number of A1↔C2 rounds scales with profile yield:
 
 - **Rich profile** (6+ substantive data points — public statements, known positions, project affiliations, stated concerns, named connections, recent activity): up to 3 rounds. C2 has enough material to respond in character and surface non-obvious mismatches in tone or framing.
 - **Medium profile** (3–5 data points): 1 round. C2 can give a directional reaction — whether the angle feels relevant, whether the tone is off — but lacks the depth for iterative refinement. A1 incorporates C2's single response and finalises.
-- **Thin profile** (fewer than 3 data points): A2 is skipped. C2 cannot roleplay convincingly with so little to work from; the simulation would be two instances of Opus guessing at each other. A1's first draft stands.
+- **Yield < 3** (fewer than 3 data points): A2 is skipped. C2 cannot roleplay convincingly with so little to work from; the simulation would be two instances of Opus guessing at each other. A1's first draft stands.
 
 **Output:** An approach file at `approach/{stem}.yaml`. The file contains: the profile summary, the angle chosen, the A1/A2 iteration history (all drafts and C2 responses, so the human can see how the message evolved), the final message, and the contact method.
 

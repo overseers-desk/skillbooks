@@ -114,7 +114,7 @@ Visit the website of the target's current employer (and previous employer if the
 - Named leaders (the target's direct supervisor or programme director)
 - Any institutional assets that create campaign-relevant access (e.g. the employer runs policy education for government staff, or convenes industry standards discussions, or operates a conference series)
 
-This step is critical for targets whose personal public statements are thin but whose institutional position creates value. A junior programme officer who has written one relevant article may appear low-value if assessed on personal statements alone, but may be high-value if their employer runs a technology policy education programme for lawmakers. The A phase needs the institutional context to frame the outreach correctly — as an institutional proposition rather than a personal one.
+This step is critical for targets whose personal public statements are limited but whose institutional position creates value. A junior programme officer who has written one relevant article may appear low-value if assessed on personal statements alone, but may be high-value if their employer runs a technology policy education programme for lawmakers. The A phase needs the institutional context to frame the outreach correctly — as an institutional proposition rather than a personal one.
 
 If the employer's website reveals programmes or focus areas relevant to the campaign, record them in a dedicated section of the profile document ("Institutional context" or similar, under the domain-specific operational context section). Note which programmes the target is personally involved in versus which are run by their team or organisation more broadly.
 
@@ -169,7 +169,7 @@ Search for the target's name plus campaign-relevant terms, excluding LinkedIn:
 "[Full Name]" [organisation name]
 ```
 
-This catches conference talks, blog posts, published papers, media quotes, and GitHub activity that do not appear on LinkedIn. If nothing turns up, note "no public activity found beyond LinkedIn" — the absence is informative for richness classification.
+This catches conference talks, blog posts, published papers, media quotes, and GitHub activity that do not appear on LinkedIn. If nothing turns up, note "no public activity found beyond LinkedIn" — the absence is informative for yield.
 
 ### 4.6 Record what the target has said publicly
 
@@ -193,7 +193,7 @@ This is where the "network / connection value" angle is assessed. A target may h
 
 **New names for the roster:** Any person found in this step who is not already in the roster and who is relevant to the campaign (by role, organisation, or community membership) should be added to the roster as a new contact. Record `discovered_via` as the target being profiled and `discovery_source` as the specific mechanism (e.g. "tagged in LinkedIn post about FOSSASIA Summit 2024").
 
-After completing all social media fetches for the current target, profile each newly added contact immediately by spawning a P subagent — do not defer to a future sweep, which may never run. The sequential constraint in §7 applies: do not run social media fetches concurrently. If the seed data for a new contact is too thin to produce a meaningful profile (name only, no organisation or role), write the roster entry and accept it will not be profiled in this session.
+After completing all social media fetches for the current target, profile each newly added contact immediately by spawning a P subagent — do not defer to a future sweep, which may never run. The sequential constraint in §7 applies: do not run social media fetches concurrently. If the seed data for a new contact is insufficient to produce a meaningful profile (name only, no organisation or role), write the roster entry and accept it will not be profiled in this session.
 
 ### 4.7a Cross-reference people already in the system
 
@@ -242,15 +242,11 @@ Note that network/connection value can support a 5-star rating when the connecti
 
 **Write `star_rating` in two places: the profile front matter (`star_rating:`) and the roster TSV column.** The profile is the authorial home — it is where P records the assessment and where git history preserves it across later roster edits. The TSV column is the query-optimised copy used by the state machine, band filters, and progress counts. Both must be written by the same P run; `sqlite3` updates the roster row in-place. `response_likelihood` is set by the A phase, not P; do not write it here.
 
-### 4.10 Classify profile richness
+### 4.10 Record profile yield
 
 Count substantive data points. The following all qualify as data points: (a) public statements with extractable quotes, (b) specific recommendations or proposals the target has made, (c) career history entries that demonstrate relevant domain experience (e.g. cybersecurity crisis communications background at a consultancy), (d) current institutional context that creates campaign-relevant access (e.g. employer runs policy education programmes for government staff, or operates a technology convening series), (e) named connections relevant to the campaign, (f) recent activity indicating current engagement (posts, conference appearances, publications within the past 12 months). Do not count only quoted public statements — a target who has said little publicly but whose employer operates a programme directly relevant to the campaign has more data points than a narrow reading would suggest.
 
-- **Rich** (6+ data points): The A phase can run up to 3 rounds of A1/A2 sparring.
-- **Medium** (3–5 data points): The A phase can run 1 round of A1/A2.
-- **Thin** (<3 data points): The A phase skips A2 entirely.
-
-Record the classification (`richness: rich|medium|thin`) and the count (`richness_count: N`) in the profile front matter. See §5.1.
+Record the count as `yield: N` in the profile front matter. Downstream consumers derive behaviour from the count; thresholds belong in the A-phase AESOP, not here. For guidance, common A-phase practice has been: yield ≥ 6 supports up to 3 rounds of A1/A2 sparring; yield 3–5 supports 1 round; yield < 3 implies A2 sparring adds little value. These thresholds live with A, not with P — P reports the count, A decides how to use it.
 
 ### 4.11 Check for verification corrections
 
@@ -291,8 +287,7 @@ Delimited by `---` fences at the very top of the file, standard Jekyll/Hugo/Pand
 ---
 profile_date: 2026-04-12            # ISO date this profile was generated
 star_rating: 4                      # 1–5; 0 never appears here (excluded contacts have no profile — see §4.0, §4.0b, §4.9)
-richness: rich                      # rich | medium | thin
-richness_count: 7                   # integer — substantive data points counted per §4.10
+yield: 7                            # integer — substantive data points counted per §4.10
 warmth_finding: cold                # existing | prior | known-of | cold — IMAP-derived per §4.4
 applicable_angles:                  # ordered by strength of evidence per §4.8; slugs only, evidence stays in the body
   - certification-gap
@@ -305,7 +300,7 @@ dependent_data:                     # snapshot of roster fields whose change inv
 ---
 ```
 
-**Field ownership.** `profile_date`, `star_rating`, `richness`, `richness_count`, `warmth_finding`, `applicable_angles` are P-authored at profile generation time. They are not copies of roster values — they are the authorial record of P's assessment. If the roster is later hand-edited, git history of this profile preserves what P originally decided.
+**Field ownership.** `profile_date`, `star_rating`, `yield`, `warmth_finding`, `applicable_angles` are P-authored at profile generation time. They are not copies of roster values — they are the authorial record of P's assessment. If the roster is later hand-edited, git history of this profile preserves what P originally decided.
 
 **What is *not* in the front matter.** Approach-time decisions (`channel`, chosen `angle`, `sender`, `language`, `response_likelihood`) belong in the approach YAML, authored by A. Contact channels (`email`, `linkedin_url`, `facebook_url`, `phone`) belong in the roster TSV. Do not duplicate them here.
 

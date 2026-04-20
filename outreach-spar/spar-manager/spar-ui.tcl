@@ -1592,6 +1592,12 @@ proc do_dispatch {} {
     # the new run begins. Stem-less rows can't be dispatched (the runner
     # skips them server-side), so they're excluded from the cohort.
     clear_cohort
+    # Parent-only selection: the implicit cohort is every child under it.
+    # With no cohort, update_progress_display and render_row silently
+    # no-op — the aggregate caption stays blank and no row gets ◐/✓.
+    if {[llength $child_items] == 0} {
+        set child_items [$tree children $parent]
+    }
     if {[llength $child_items] > 0} {
         set sel_stems {}
         foreach c $child_items {
@@ -1609,7 +1615,7 @@ proc do_dispatch {} {
         }
         if {[llength $sel_stems] > 0} {
             dict set opts stems $sel_stems
-            log_message "Dispatch narrowed to [llength $sel_stems] selected stem(s): [join $sel_stems {, }]"
+            log_message "Dispatch cohort: [llength $sel_stems] stem(s)"
         }
     }
 
