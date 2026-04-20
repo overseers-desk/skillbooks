@@ -1197,6 +1197,10 @@ set cohort_reason [dict create]
 set cohort_phase  [dict create]
 set slug_to_row   [dict create]
 set row_names     [dict create]
+# Snapshot of a cohort row's classify state/reason columns, taken when
+# the row enters the cohort. clear_cohort restores from this so the
+# classify view re-appears for rows dropped from the next cohort.
+set classify_snapshot [dict create]
 
 # Braille-dot spinner frames for the aggregate progress status line.
 set aggregate_frames [list \u280b \u2819 \u2839 \u2838 \u283c \u2834 \u2826 \u2827 \u2807 \u280f]
@@ -1223,11 +1227,10 @@ proc do_cancel {} {
     log_message "Dispatch cancelled: queued items skipped; in-flight items finish normally."
 }
 
-# Render one cohort row from stem-keyed state. Row #0 text becomes
-# "● <name>  <glyph> <label>" — the ● marker persists through all states
-# and through tree refresh.
+# Render one cohort row: #0 text = plain name, state column = dispatch
+# glyph+label, reason column = phase/time/reason detail.
 proc render_row {row_id} {
-    global tree cohort_state cohort_reason cohort_phase row_names
+    global tree cohort_state cohort_reason cohort_phase cohort_stems row_names
     if {![$tree exists $row_id]} return
     set stem [$tree set $row_id stem]
     if {$stem eq "" || ![dict exists $cohort_state $stem]} return
@@ -1236,18 +1239,40 @@ proc render_row {row_id} {
     set phase  [expr {[dict exists $cohort_phase  $stem] ? [dict get $cohort_phase  $stem] : ""}]
     set name   [expr {[dict exists $row_names    $row_id] ? [dict get $row_names    $row_id] : ""}]
     switch -- $state {
-        queued    { set suffix "\u25cb queued" }
-        running   {
-            set label [expr {$phase ne "" ? $phase : "running"}]
-            set suffix "\u25d0 $label"
+        queued {
+            set pos   [expr {[lsearch -exact $cohort_stems $stem] + 1}]
+            set total [llength $cohort_stems]
+            set state_text "\u25cb queued #$pos/$total"
+            set reason_text ""
         }
-        done      { set suffix "\u2713 done $reason" }
-        failed    { set suffix "\u2717 failed: $reason" }
-        skipped   { set suffix "\u2298 skipped: $reason" }
-        cancelled { set suffix "\u2298 cancelled" }
-        default   { set suffix "" }
+        running {
+            set state_text  "\u25d0 running"
+            set reason_text $phase
+        }
+        done {
+            set state_text  "\u2713 done"
+            set reason_text $reason
+        }
+        failed {
+            set state_text  "\u2717 failed"
+            set reason_text $reason
+        }
+        skipped {
+            set state_text  "\u2298 skipped"
+            set reason_text $reason
+        }
+        cancelled {
+            set state_text  "\u2298 cancelled"
+            set reason_text ""
+        }
+        default {
+            set state_text  ""
+            set reason_text ""
+        }
     }
-    $tree item $row_id -text "\u25cf $name  $suffix"
+    $tree item $row_id -text "  $name"
+    $tree set $row_id state  $state_text
+    $tree set $row_id reason $reason_text
 }
 
 proc update_progress_display {} {
@@ -1293,13 +1318,14 @@ proc aggregate_animate {} {
 
 proc clear_cohort {} {
     global tree cohort_stems cohort_state cohort_reason cohort_phase slug_to_row row_names
-    global aggregate_after aggregate_tick
+    global classify_snapshot aggregate_after aggregate_tick
     if {$aggregate_after ne ""} {
         after cancel $aggregate_after
         set aggregate_after ""
     }
     set aggregate_tick 0
-    # Restore previous-cohort rows to plain text.
+    # Restore previous-cohort rows: drop in_cohort tag, reset #0 text,
+    # and restore the state/reason columns from the classify snapshot.
     foreach s $cohort_stems {
         if {![dict exists $slug_to_row $s]} continue
         set row_id [dict get $slug_to_row $s]
@@ -1311,20 +1337,27 @@ proc clear_cohort {} {
         }
         set name [expr {[dict exists $row_names $row_id] ? [dict get $row_names $row_id] : ""}]
         $tree item $row_id -text "  $name"
+        if {[dict exists $classify_snapshot $s]} {
+            lassign [dict get $classify_snapshot $s] cs cr
+            $tree set $row_id state  $cs
+            $tree set $row_id reason $cr
+        }
     }
-    set cohort_stems  {}
-    set cohort_state  [dict create]
-    set cohort_reason [dict create]
-    set cohort_phase  [dict create]
-    set slug_to_row   [dict create]
+    set cohort_stems       {}
+    set cohort_state       [dict create]
+    set cohort_reason      [dict create]
+    set cohort_phase       [dict create]
+    set slug_to_row        [dict create]
+    set classify_snapshot  [dict create]
     update_progress_display
 }
 
 # After do_refresh rebuilds the tree (new row ids), reconnect slug_to_row
 # and re-render cohort members so terminal glyphs survive the refresh.
 proc reapply_cohort_after_refresh {} {
-    global tree cohort_stems slug_to_row
-    set slug_to_row [dict create]
+    global tree cohort_stems slug_to_row classify_snapshot
+    set slug_to_row       [dict create]
+    set classify_snapshot [dict create]
     if {[llength $cohort_stems] == 0} return
     foreach parent [$tree children {}] {
         foreach row [$tree children $parent] {
@@ -1332,6 +1365,11 @@ proc reapply_cohort_after_refresh {} {
             if {$s eq ""} continue
             if {[lsearch -exact $cohort_stems $s] < 0} continue
             dict set slug_to_row $s $row
+            # Re-snapshot classify state/reason from the freshly-rebuilt
+            # tree so clear_cohort can restore to current classify values.
+            dict set classify_snapshot $s [list \
+                [$tree set $row state] \
+                [$tree set $row reason]]
             set tags [$tree item $row -tags]
             if {[lsearch -exact $tags in_cohort] < 0} {
                 $tree item $row -tags [concat $tags in_cohort]
@@ -1525,7 +1563,7 @@ proc auto_dispatch {} {
 }
 
 proc do_dispatch {} {
-    global tree tpanel script_dir dispatching cohort_stems cohort_state slug_to_row campaign_file
+    global tree tpanel script_dir dispatching cohort_stems cohort_state slug_to_row classify_snapshot campaign_file
 
     if {$dispatching} return
 
@@ -1607,6 +1645,9 @@ proc do_dispatch {} {
             lappend cohort_stems $s
             dict set cohort_state $s queued
             dict set slug_to_row  $s $c
+            dict set classify_snapshot $s [list \
+                [$tree set $c state] \
+                [$tree set $c reason]]
             set tags [$tree item $c -tags]
             if {[lsearch -exact $tags in_cohort] < 0} {
                 $tree item $c -tags [concat $tags in_cohort]
