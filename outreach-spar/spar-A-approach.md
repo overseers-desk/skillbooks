@@ -266,7 +266,7 @@ The file ID uses a segment prefix and sequential number: `TOR-001-peter-myers.ya
 
 Before presenting an approach file for human review:
 
-1. **YAML validation.** Verify the approach file passes structural validation (required keys, final round present, email address validity). The dispatcher runs guard-rail checks post-assembly; campaign-wide validation is reported by `spar-progress.tcl`. Fix any structural errors before proceeding.
+1. **YAML structure self-check.** The dispatcher runs `spar::validate_approach` automatically post-assembly; if the file is malformed it loops you back with the exact errors. Do **not** invoke `tclsh`, `spar::validate_approach`, or any validator subprocess yourself — `tclsh -c` is not a valid flag and the call blocks indefinitely on stdin, which wedges the whole harness chain. Your self-check is mental: root keys drawn from §6's canonical set; every round has `type` and `number`; the `final` round contains ≤1 `channel: email` message; email addresses are real (not placeholders). Campaign-wide validation is reported separately by `spar-progress.tcl`.
 2. **Required fields.** All required fields are present: `chosen_usps` populated for each draft and final round, `fact_provenance` covers every factual claim in the final draft, `roster_note` is complete.
 3. **Presupposition test.** Does any sentence tell the recipient something they already know about themselves? If so, restructure.
 4. **Manufactured-connection test.** Is every claim of shared interest traceable to a specific profile data point? Check against the absent-themes section.
