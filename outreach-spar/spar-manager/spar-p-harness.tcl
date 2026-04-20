@@ -168,7 +168,7 @@ set draft_log "${log_prefix}-profile.log"
 set prompt [spar::read_file [file join $prompt_dir prompt.txt]]
 
 # DbC-Pre: roster integrity for this segment was validated at
-# dispatch_profiles entry (load_roster enforces field-count assertion;
+# spar::p::_run_segment entry (load_roster enforces field-count assertion;
 # required input files existence-checked there). The agent inherits a
 # roster known to be well-formed.
 if {[$harness call "profile" $draft_log $prompt]} {

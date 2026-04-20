@@ -2583,13 +2583,21 @@ assert_eq [has_issue $issues_ok wrong_level] 0 \
     "closed vocab: clean file has no wrong_level"
 
 # ════════════════════════════════════════════════════════════════════════
-# 24. dispatch_profiles — stems selector narrows the work queue
+# 24. spar::p::run — stems selector narrows the work queue
 # ════════════════════════════════════════════════════════════════════════
-section "24. dispatch_profiles — stems selector"
+section "24. spar::p::run — stems selector"
 
 source [file join $script_dir .. spar-dispatch.tcl]
 
-set dp_seg [make_temp_segment]
+# Build a minimal campaign: one segment with three roster rows, an
+# overview.md promoted to usp_document, a segment.yaml goal, and a
+# top-level campaign.yaml.
+set dp_base [make_temp_campaign]
+set dp_seg_name "seg-a"
+set dp_seg [file join $dp_base $dp_seg_name]
+file mkdir $dp_seg
+file mkdir [file join $dp_seg profiles]
+
 set dp_headers {stem contact_name organisation role phone email linkedin_url facebook_url sweep_iteration date_excluded}
 write_roster_tsv $dp_seg $dp_headers [list \
     [dict create stem alpha contact_name "A One"   organisation "Org A" sweep_iteration 1] \
@@ -2597,52 +2605,86 @@ write_roster_tsv $dp_seg $dp_headers [list \
     [dict create stem gamma contact_name "C Three" organisation "Org C" sweep_iteration 1] \
 ]
 
-set dp_segyaml [file join $dp_seg segment.yaml]
-set fd [open $dp_segyaml w]
+set fd [open [file join $dp_seg segment.yaml] w]
 puts $fd "objective: test"
 puts $fd "message_goal: test"
 close $fd
 
-set dp_overview [file join $dp_seg overview.md]
+set dp_overview [file join $dp_base overview.md]
 set fd [open $dp_overview w]
 puts $fd "# Test overview"
 close $fd
 
+set dp_yaml [file join $dp_base campaign.yaml]
+set fd [open $dp_yaml w]
+puts $fd "campaign: Test"
+puts $fd "usp_document: overview.md"
+puts $fd "segments:"
+puts $fd "  - $dp_seg_name"
+close $fd
+
+# Drive spar::p::run and capture the segment's count via on_complete.
+proc _dp_run_count {opts} {
+    set ::dp_last -1
+    spar::p::run $opts \
+        {apply {args {}}} \
+        {apply {{d f res} {
+            set results [dict get $res results]
+            if {[llength $results] > 0} {
+                set ::dp_last [dict get [lindex $results 0] count]
+            } else {
+                set ::dp_last 0
+            }
+        }}}
+    return $::dp_last
+}
+
 # Baseline: no stems → all three rows queued
-set dp_count_all -1
-set dp_r1 [spar::dispatch_profiles $dp_seg \
-    [dict create dry_run 1 overview $dp_overview] \
-    {apply {args {}}} \
-    {apply {{d f res} {set ::dp_count_all [dict get $res count]}}}]
-assert_eq $dp_count_all 3 "dispatch_profiles: no stems → 3 queued"
+set dp_count_all [_dp_run_count [dict create \
+    campaign_file $dp_yaml dry_run 1]]
+assert_eq $dp_count_all 3 "spar::p::run: no stems → 3 queued"
 
 # Narrowed: stems={beta} → only beta queued
 file delete -force [file join $dp_seg profiles]
 file mkdir [file join $dp_seg profiles]
-set dp_count_one -1
-set dp_r2 [spar::dispatch_profiles $dp_seg \
-    [dict create dry_run 1 overview $dp_overview stems {beta}] \
-    {apply {args {}}} \
-    {apply {{d f res} {set ::dp_count_one [dict get $res count]}}}]
-assert_eq $dp_count_one 1 "dispatch_profiles: stems={beta} → 1 queued"
+set dp_count_one [_dp_run_count [dict create \
+    campaign_file $dp_yaml dry_run 1 stems {beta}]]
+assert_eq $dp_count_one 1 "spar::p::run: stems={beta} → 1 queued"
 
 # stems selector bypasses profile-exists skip (caller pre-deleted old profile).
 # Re-run with an existing profiles/beta.md on disk → still 1, not 0.
 write_profile $dp_seg beta
-set dp_count_rebuild -1
-set dp_r3 [spar::dispatch_profiles $dp_seg \
-    [dict create dry_run 1 overview $dp_overview stems {beta}] \
-    {apply {args {}}} \
-    {apply {{d f res} {set ::dp_count_rebuild [dict get $res count]}}}]
-assert_eq $dp_count_rebuild 1 "dispatch_profiles: stems+existing profile → rebuild queued"
+set dp_count_rebuild [_dp_run_count [dict create \
+    campaign_file $dp_yaml dry_run 1 stems {beta}]]
+assert_eq $dp_count_rebuild 1 "spar::p::run: stems+existing profile → rebuild queued"
 
 # Without stems, existing profile is skipped.
-set dp_count_skip -1
-set dp_r4 [spar::dispatch_profiles $dp_seg \
-    [dict create dry_run 1 overview $dp_overview] \
-    {apply {args {}}} \
-    {apply {{d f res} {set ::dp_count_skip [dict get $res count]}}}]
-assert_eq $dp_count_skip 2 "dispatch_profiles: no stems + 1 profile exists → 2 queued"
+set dp_count_skip [_dp_run_count [dict create \
+    campaign_file $dp_yaml dry_run 1]]
+assert_eq $dp_count_skip 2 "spar::p::run: no stems + 1 profile exists → 2 queued"
+
+# ════════════════════════════════════════════════════════════════════════
+# 24b. T-id → runner routing table
+# ════════════════════════════════════════════════════════════════════════
+section "24b. transition runner routing"
+
+assert_eq [spar::has_transition_runner T1] 1 "routing: T1 is wired"
+assert_eq [spar::has_transition_runner T2] 1 "routing: T2 is wired"
+assert_eq [spar::has_transition_runner T6] 1 "routing: T6 is wired"
+assert_eq [spar::has_transition_runner T7] 1 "routing: T7 is wired"
+assert_eq [spar::has_transition_runner T3] 0 "routing: T3 is handled inline (not routed)"
+assert_eq [spar::has_transition_runner T4] 0 "routing: T4 is not wired"
+assert_eq [spar::has_transition_runner T8] 0 "routing: T8 is not wired"
+assert_eq [spar::has_transition_runner T9] 0 "routing: T9 is not wired"
+
+assert_eq [spar::transition_runner T1] ::spar::p::run "routing: T1 → spar::p::run"
+assert_eq [spar::transition_runner T6] ::spar::p::run "routing: T6 → spar::p::run"
+assert_eq [spar::transition_runner T2] ::spar::a::run "routing: T2 → spar::a::run"
+assert_eq [spar::transition_runner T7] ::spar::a::run "routing: T7 → spar::a::run"
+
+set _routing_err ""
+catch {spar::transition_runner T4} _routing_err
+assert_match $_routing_err "no runner*" "routing: T4 lookup errors"
 
 # ════════════════════════════════════════════════════════════════════════
 section "25. Campaign channel slots (issue #41)"

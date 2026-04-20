@@ -11,7 +11,36 @@ namespace eval spar {
         roster_counts \
         validate_campaign validate_campaign_semantics validate_approach \
         validate_profile read_profile_front_matter build_warnings \
-        final_email_message
+        final_email_message \
+        has_transition_runner transition_runner
+
+    # T-id → runner proc name. Authored here alongside transition_eligible
+    # because the routing fact is the same kind as the eligibility fact:
+    # "what does this T-id mean, and who handles it." Absent entries mean
+    # the T-id is unwired — has_transition_runner returns 0, callers skip.
+    # Consumed by spar-transitions.tcl, spar-ui.tcl, and (per #54) the
+    # orchestrator library unchanged.
+    variable transition_runners [dict create \
+        T1 ::spar::p::run \
+        T6 ::spar::p::run \
+        T2 ::spar::a::run \
+        T7 ::spar::a::run]
+}
+
+# has_transition_runner -- 1 if the T-id has a wired runner, else 0.
+proc spar::has_transition_runner {tid} {
+    variable transition_runners
+    return [dict exists $transition_runners $tid]
+}
+
+# transition_runner -- proc name that handles the given T-id.
+# Errors if the T-id is unwired — callers should gate via has_transition_runner.
+proc spar::transition_runner {tid} {
+    variable transition_runners
+    if {![dict exists $transition_runners $tid]} {
+        error "no runner for $tid"
+    }
+    return [dict get $transition_runners $tid]
 }
 
 # is_masked_email — return 1 if email looks redacted (contains '*').
