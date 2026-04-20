@@ -187,7 +187,9 @@ proc spar::cancel_all {} { spar::_for_live cancel }
 # opts dict keys:
 #   campaign_file  (required) path to campaign YAML
 #   dry_run        (bool, default 0) write prompts but don't spawn harnesses
-#   jobs           (int, default 4)  max concurrent harnesses per segment
+#   jobs           (int, default 4)  max concurrent harnesses across the
+#                                    whole campaign (global cap — see
+#                                    _prepare_segment for setup split)
 #   logs_dir       (string, optional) override log directory base
 #   segments       (list, optional) only process named segments
 #   stems          (list, optional) only process rows with matching stems;
@@ -197,14 +199,21 @@ proc spar::cancel_all {} { spar::_for_live cancel }
 #               status ∈ {started, done, failed, skipped, warning}
 # on_complete — callback prefix: {total_done total_failed result}
 #
-# Returns immediately after launching the first batch per segment.
-# on_complete fires once when every segment's Dispatcher has drained.
+# Setup (roster read, YAML validation, prompt assembly, DbC-Pre snapshot)
+# runs per-segment in _prepare_segment and returns a prompt_dirs list.
+# p::run aggregates those lists and hands one flat list to a single
+# Dispatcher, so `jobs=N` bounds total live harnesses across the campaign.
+# Same shape as spar::a::run.
 
 proc spar::p::run {opts on_progress on_complete} {
     set campaign_file [spar::dict_get_default $opts campaign_file ""]
     if {$campaign_file eq ""} {
         error "spar::p::run: opts.campaign_file is required"
     }
+    set dry_run [spar::dict_get_default $opts dry_run 0]
+    set jobs [spar::dict_get_default $opts jobs 4]
+    set user_logs [spar::dict_get_default $opts logs_dir ""]
+
     set cdata [spar::load_campaign $campaign_file]
     set base [dict get $cdata _base]
     set segments [dict get $cdata segments]
@@ -218,66 +227,88 @@ proc spar::p::run {opts on_progress on_complete} {
         set segments $_filtered
     }
 
-    # Per-call aggregator state. A unique suffix per invocation so nested
-    # or overlapping runs don't clobber each other's counters.
-    set token [format "%d_%d" [clock microseconds] [pid]]
-    set state_var ::spar::p::_run_$token
-    upvar #0 $state_var S
-    array set S {pending 0 done 0 failed 0 results {}}
-    set S(on_complete) $on_complete
+    # One campaign-wide logs_dir, mirroring spar::a::run. Per-slug log
+    # files inside are named by stem, so they don't collide unless two
+    # segments share a stem (documented limitation).
+    set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
+    if {$user_logs ne ""} {
+        if {![file isdirectory $user_logs]} {
+            error "Log directory not found: $user_logs"
+        }
+        set logs_dir $user_logs
+    } elseif {[file isdirectory /var/local/logs/spar]} {
+        set logs_dir "/var/local/logs/spar/spar-p-$datestamp"
+    } else {
+        set logs_dir "$::env(HOME)/logs/spar/spar-p-$datestamp"
+    }
+    if {$user_logs eq ""} {
+        file mkdir $logs_dir
+    }
+
+    # Gather prompt_dirs across segments and build a slug → per-segment
+    # context map for DbC-Post attribution. _prepare_segment emits
+    # "skipped profile exists" events synchronously through on_progress.
+    set all_prompt_dirs {}
+    set slug_ctx [dict create]
+    set per_seg_results {}
+    set total_count 0
+    set total_skipped 0
 
     foreach segment $segments {
         set segdir [file join $base $segment]
         if {![file exists [file join $segdir roster.tsv]]} continue
-        incr S(pending)
         if {[catch {
-            spar::p::_run_segment $segdir $cdata $opts \
-                $on_progress \
-                [list spar::p::_on_segment_complete $state_var]
+            set seg [spar::p::_prepare_segment \
+                $segdir $cdata $opts $datestamp $on_progress]
         } err]} {
             {*}$on_progress "_segment_${segment}" failed "setup error: $err"
-            incr S(pending) -1
+            continue
+        }
+        lappend per_seg_results [dict get $seg result]
+        incr total_count   [dict get $seg result count]
+        incr total_skipped [dict get $seg result skipped]
+        foreach pdir [dict get $seg prompt_dirs] {
+            lappend all_prompt_dirs $pdir
+            dict set slug_ctx [file tail $pdir] \
+                [list $segdir [dict get $seg pre_snapshot]]
         }
     }
 
-    # If every _run_segment finished synchronously (dry_run path), the
-    # aggregator has already fired on_complete and unset $state_var — check
-    # with info exists before re-firing. The branch below only matters when
-    # the loop body queued zero segments (no roster.tsv anywhere).
-    if {[info exists $state_var] && $S(pending) == 0} {
-        set cb $S(on_complete)
-        unset -nocomplain $state_var
-        {*}$cb 0 0 [dict create segments 0 done 0 failed 0 results {}]
+    set agg_result [dict create \
+        campaign [spar::dict_get_default $cdata campaign ""] \
+        count $total_count \
+        skipped $total_skipped \
+        logs_dir $logs_dir \
+        segments [llength $per_seg_results] \
+        results $per_seg_results]
+
+    if {$dry_run || [llength $all_prompt_dirs] == 0} {
+        {*}$on_complete 0 0 $agg_result
+        return
     }
+
+    variable ::spar::dispatch_script_dir
+    set harness [file join $::spar::dispatch_script_dir spar-p-harness.tcl]
+
+    set wrapped_progress [list spar::p::_dbc_post_progress \
+        $on_progress $slug_ctx]
+
+    set disp [spar::Dispatcher new $jobs $logs_dir $harness \
+        $wrapped_progress $on_complete $agg_result]
+    $disp run $all_prompt_dirs
     return
 }
 
-proc spar::p::_on_segment_complete {state_var done failed result} {
-    upvar #0 $state_var S
-    incr S(done) $done
-    incr S(failed) $failed
-    lappend S(results) $result
-    incr S(pending) -1
-    if {$S(pending) <= 0} {
-        set cb $S(on_complete)
-        set d $S(done)
-        set f $S(failed)
-        set agg [dict create \
-            segments [llength $S(results)] \
-            done $d failed $f \
-            results $S(results)]
-        unset -nocomplain $state_var
-        {*}$cb $d $f $agg
-    }
-}
-
-# spar::p::_run_segment — per-segment prompt assembly and Dispatcher launch.
-proc spar::p::_run_segment {segment_dir cdata opts on_progress on_complete} {
+# _prepare_segment — per-segment setup. Reads the roster, writes prompt
+# dirs, captures a DbC-Pre snapshot. Returns
+#   {result <per-segment result dict>
+#    prompt_dirs <list of prompt dirs this invocation created>
+#    pre_snapshot <dict of pre-existing roster issues>}
+# "skipped profile exists" events are emitted synchronously via
+# on_progress during the row loop.
+proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
     set segment_dir [file normalize $segment_dir]
 
-    set dry_run [spar::dict_get_default $opts dry_run 0]
-    set jobs [spar::dict_get_default $opts jobs 4]
-    set user_logs [spar::dict_get_default $opts logs_dir ""]
     set sel_stems [spar::dict_get_default $opts stems {}]
 
     set roster_path [file join $segment_dir roster.tsv]
@@ -315,25 +346,11 @@ proc spar::p::_run_segment {segment_dir cdata opts on_progress on_complete} {
     file mkdir $profile_dir
 
     # Seconds + pid so re-entry (e.g. --auto after its first iteration)
-    # never shares a workdir with a previous call.
-    set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
+    # never shares a workdir with a previous call. Workdir stays
+    # per-segment — only logs_dir collapses to campaign-wide.
     set workdir "/tmp/spar-p-[file tail $segment_dir]-$datestamp-[pid]"
     set prompts_dir [file join $workdir prompts]
     file mkdir $prompts_dir
-
-    if {$user_logs ne ""} {
-        if {![file isdirectory $user_logs]} {
-            error "Log directory not found: $user_logs"
-        }
-        set logs_dir $user_logs
-    } elseif {[file isdirectory /var/local/logs/spar]} {
-        set logs_dir "/var/local/logs/spar/spar-p-[file tail $segment_dir]-$datestamp"
-    } else {
-        set logs_dir "$::env(HOME)/logs/spar/spar-p-[file tail $segment_dir]-$datestamp"
-    }
-    if {$user_logs eq ""} {
-        file mkdir $logs_dir
-    }
 
     set rows [spar::load_roster $roster_path]
 
@@ -424,46 +441,41 @@ $sqlite3_skill_text"
         segment [file tail $segment_dir] \
         count $count \
         skipped $skipped \
-        prompts_dir $prompts_dir \
-        logs_dir $logs_dir]
-
-    if {$dry_run || $count == 0} {
-        {*}$on_complete $count 0 $result
-        return $result
-    }
+        prompts_dir $prompts_dir]
 
     # DbC-Pre: snapshot roster issues so DbC-Post can attribute new ones
-    # to the agent that just ran.
+    # to the agent that just ran. Skip when count==0: nothing will run.
     set pre_snapshot [dict create]
-    if {[catch {
-        set _pre_contacts [spar::classify_segment $segment_dir]
-        foreach _issue [spar::validate_roster $_pre_contacts] {
-            set _cn [dict get $_issue contact_name]
-            set _cd [dict get $_issue code]
-            dict set pre_snapshot "${_cn}|${_cd}" 1
+    if {$count > 0} {
+        if {[catch {
+            set _pre_contacts [spar::classify_segment $segment_dir]
+            foreach _issue [spar::validate_roster $_pre_contacts] {
+                set _cn [dict get $_issue contact_name]
+                set _cd [dict get $_issue code]
+                dict set pre_snapshot "${_cn}|${_cd}" 1
+            }
+        } _snap_err]} {
+            {*}$on_progress "_dbc_pre" warning "snapshot failed: $_snap_err"
         }
-    } _snap_err]} {
-        {*}$on_progress "_dbc_pre" warning "snapshot failed: $_snap_err"
     }
+
     set prompt_dirs [lsort [glob -nocomplain -type d [file join $prompts_dir *]]]
 
-    set harness [file join $script_dir spar-p-harness.tcl]
-
-    set wrapped_progress [list spar::p::_dbc_post_progress \
-        $on_progress $segment_dir $pre_snapshot]
-
-    set disp [spar::Dispatcher new $jobs $logs_dir $harness \
-        $wrapped_progress $on_complete $result]
-    $disp run $prompt_dirs
-    return $result
+    return [dict create \
+        result $result \
+        prompt_dirs $prompt_dirs \
+        pre_snapshot $pre_snapshot]
 }
 
 # on-progress wrapper that runs DbC-Post validation when a slug completes.
-# Emits new roster issues (not in pre_snapshot) as severity "warning" with
+# slug_ctx: dict slug → {segment_dir pre_snapshot}. Emits new roster
+# issues (not in the slug's pre_snapshot) as severity "warning" with
 # code prefix "regression:".
-proc spar::p::_dbc_post_progress {orig_progress segment_dir pre_snapshot slug status message} {
+proc spar::p::_dbc_post_progress {orig_progress slug_ctx slug status message} {
     {*}$orig_progress $slug $status $message
     if {$status ne "done"} return
+    if {![dict exists $slug_ctx $slug]} return
+    lassign [dict get $slug_ctx $slug] segment_dir pre_snapshot
     if {[catch {
         set _post_contacts [spar::classify_segment $segment_dir]
         set _post_issues [spar::validate_roster $_post_contacts]
