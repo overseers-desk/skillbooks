@@ -250,23 +250,20 @@ oo::class create spar::ui::TransitionTree {
 
         set nchild [llength $children]
 
-        # When children are selected and the runner is ::spar::p::run
-        # (T1/T6), passing stems bypasses the "profile exists" skip —
-        # i.e. re-authors. Reflect that in the verb so the user sees the
-        # action before firing.
+        # When children are selected and the runner supports re-author
+        # (currently T1/T6 — profile runners), passing stems bypasses the
+        # "profile exists" skip. Reflect that in the verb so the user
+        # sees the action before firing.
         set verb "Dispatch"
         if {$nchild > 0} {
             set tnum [string range $parent 1 end]
-            set tids {T1 T2 T3 T4 T6 T7 T8}
+            set tids [spar::ui_transition_tids]
             set tid [lindex $tids $tnum]
-            if {[spar::has_transition_runner $tid]} {
-                set runner [spar::transition_runner $tid]
-                if {$runner eq "::spar::p::run"} {
-                    foreach c $children {
-                        if {[$Tree set $c state] eq "done"} {
-                            set verb "Re-author"
-                            break
-                        }
+            if {[spar::transition_supports_reauthor $tid]} {
+                foreach c $children {
+                    if {[$Tree set $c state] eq "done"} {
+                        set verb "Re-author"
+                        break
                     }
                 }
             }

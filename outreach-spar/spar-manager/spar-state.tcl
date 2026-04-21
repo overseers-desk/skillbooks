@@ -12,36 +12,199 @@ namespace eval spar {
         validate_campaign validate_campaign_semantics validate_approach \
         validate_profile read_profile_front_matter build_warnings \
         final_email_message \
-        has_transition_runner transition_runner
+        has_transition_runner transition_runner \
+        transition_label transition_auto_safe transition_dispatch_status \
+        transition_opts_builder transition_supports_reauthor \
+        transition_tids ui_transition_tids
 
-    # T-id → runner proc name. Authored here alongside transition_eligible
-    # because the routing fact is the same kind as the eligibility fact:
-    # "what does this T-id mean, and who handles it." Absent entries mean
-    # the T-id is unwired — has_transition_runner returns 0, callers skip.
-    # Consumed by spar-transitions.tcl, spar-ui.tcl, and (per #54) the
-    # orchestrator library unchanged.
-    variable transition_runners [dict create \
-        T1 ::spar::p::run \
-        T6 ::spar::p::run \
-        T2 ::spar::a::run \
-        T7 ::spar::a::run \
-        T4 ::spar::r::run]
+    # Per-T-id metadata. Single source of truth consumed by the CLI
+    # dispatcher, the report printer, the UI tree builder, and the
+    # progress tool. Empty `runner` means the T-id is unwired; callers
+    # gate via has_transition_runner. Keys in insertion order drive
+    # transition ordering everywhere (dict keys returns insertion order).
+    #
+    # Fields:
+    #   runner             fully-qualified proc name (empty if unwired)
+    #   label              human-readable edge name
+    #   auto_safe          1 if --auto may drive this transition (T1/T2/T6/T7)
+    #   dispatch_status    available | manual | not-implemented
+    #   opts_builder       proc name that builds per-runner opts from ready
+    #                      tasks and CLI filters (empty if not dispatchable)
+    #   ui_tree_row        1 if the transition appears in the GUI tree
+    #   supports_reauthor  1 if passing stems to the runner re-authors
+    #                      (currently only profile runners do this)
+    variable transition_defs [dict create \
+        T1  [dict create runner ::spar::p::run \
+                         label "Sweep → Profile" \
+                         auto_safe 1 dispatch_status available \
+                         opts_builder ::spar::opts::for_profile \
+                         ui_tree_row 1 supports_reauthor 1] \
+        T2  [dict create runner ::spar::a::run \
+                         label "Profile → Approach" \
+                         auto_safe 1 dispatch_status available \
+                         opts_builder ::spar::opts::for_approach \
+                         ui_tree_row 1 supports_reauthor 0] \
+        T3  [dict create runner "" \
+                         label "Approach → Send" \
+                         auto_safe 0 dispatch_status available \
+                         opts_builder "" \
+                         ui_tree_row 1 supports_reauthor 0] \
+        T4  [dict create runner ::spar::r::run \
+                         label "Send → Reply" \
+                         auto_safe 0 dispatch_status available \
+                         opts_builder ::spar::opts::for_reply_check \
+                         ui_tree_row 1 supports_reauthor 0] \
+        T6  [dict create runner ::spar::p::run \
+                         label "Stale → Re-profile" \
+                         auto_safe 1 dispatch_status available \
+                         opts_builder ::spar::opts::for_profile \
+                         ui_tree_row 1 supports_reauthor 1] \
+        T7  [dict create runner ::spar::a::run \
+                         label "Re-profile → Re-approach" \
+                         auto_safe 1 dispatch_status available \
+                         opts_builder ::spar::opts::for_approach \
+                         ui_tree_row 1 supports_reauthor 0] \
+        T8  [dict create runner "" \
+                         label "LinkedIn → Email follow-up" \
+                         auto_safe 0 dispatch_status not-implemented \
+                         opts_builder "" \
+                         ui_tree_row 1 supports_reauthor 0] \
+        T9  [dict create runner "" \
+                         label "Secondary follow-up" \
+                         auto_safe 0 dispatch_status manual \
+                         opts_builder "" \
+                         ui_tree_row 0 supports_reauthor 0] \
+        T10 [dict create runner "" \
+                         label "Tertiary follow-up" \
+                         auto_safe 0 dispatch_status manual \
+                         opts_builder "" \
+                         ui_tree_row 0 supports_reauthor 0]]
 }
 
 # has_transition_runner -- 1 if the T-id has a wired runner, else 0.
 proc spar::has_transition_runner {tid} {
-    variable transition_runners
-    return [dict exists $transition_runners $tid]
+    variable transition_defs
+    if {![dict exists $transition_defs $tid]} { return 0 }
+    return [expr {[dict get $transition_defs $tid runner] ne ""}]
 }
 
 # transition_runner -- proc name that handles the given T-id.
 # Errors if the T-id is unwired — callers should gate via has_transition_runner.
 proc spar::transition_runner {tid} {
-    variable transition_runners
-    if {![dict exists $transition_runners $tid]} {
-        error "no runner for $tid"
+    variable transition_defs
+    if {![dict exists $transition_defs $tid]} {
+        error "unknown transition: $tid"
     }
-    return [dict get $transition_runners $tid]
+    set runner [dict get $transition_defs $tid runner]
+    if {$runner eq ""} { error "no runner for $tid" }
+    return $runner
+}
+
+# transition_label -- human-readable edge name for a T-id.
+proc spar::transition_label {tid} {
+    variable transition_defs
+    return [dict get $transition_defs $tid label]
+}
+
+# transition_auto_safe -- 1 if --auto may drive this transition.
+proc spar::transition_auto_safe {tid} {
+    variable transition_defs
+    if {![dict exists $transition_defs $tid]} { return 0 }
+    return [dict get $transition_defs $tid auto_safe]
+}
+
+# transition_dispatch_status -- "available", "manual", "not-implemented",
+# or "unknown" for an unregistered T-id.
+proc spar::transition_dispatch_status {tid} {
+    variable transition_defs
+    if {![dict exists $transition_defs $tid]} { return "unknown" }
+    return [dict get $transition_defs $tid dispatch_status]
+}
+
+# transition_opts_builder -- name of the proc that constructs per-runner
+# opts from ready tasks and CLI filters. Empty for unwired / manual T-ids.
+proc spar::transition_opts_builder {tid} {
+    variable transition_defs
+    if {![dict exists $transition_defs $tid]} { return "" }
+    return [dict get $transition_defs $tid opts_builder]
+}
+
+# transition_supports_reauthor -- 1 if passing stems to the runner
+# re-authors existing artefacts (profile runners bypass the "profile
+# exists" skip). Flag removed in commit 2 once the class hook lands.
+proc spar::transition_supports_reauthor {tid} {
+    variable transition_defs
+    if {![dict exists $transition_defs $tid]} { return 0 }
+    return [dict get $transition_defs $tid supports_reauthor]
+}
+
+# transition_tids -- all registered T-ids in registration order.
+proc spar::transition_tids {} {
+    variable transition_defs
+    return [dict keys $transition_defs]
+}
+
+# ui_transition_tids -- T-ids shown as rows in the transition tree.
+# Excludes manual transitions (T9/T10), which in the current UI have no
+# tree presence. Used by dispatch-controller, transition-tree, and
+# campaign-model so all three agree on ordering.
+proc spar::ui_transition_tids {} {
+    variable transition_defs
+    set out {}
+    dict for {tid meta} $transition_defs {
+        if {[dict get $meta ui_tree_row]} { lappend out $tid }
+    }
+    return $out
+}
+
+# ──────────────────────────────────────────────────────────────────────
+# Opts-builders: per-runner adapters from (ready tasks, filters) to the
+# extra opts the runner expects on top of the common {campaign_file
+# dry_run jobs} dict. Each returns a dict; a `log_message` key is the
+# one-line summary printed before dispatch. Referenced by name from
+# transition_defs.opts_builder.
+# ──────────────────────────────────────────────────────────────────────
+namespace eval ::spar::opts {}
+
+proc ::spar::opts::for_profile {tid tasks filter_segments filter_stems} {
+    set stems {}
+    foreach c $tasks { lappend stems [dict get $c stem] }
+    if {[llength $filter_stems] > 0} { set stems $filter_stems }
+    set segs [dict create]
+    foreach c $tasks {
+        dict set segs [file tail [dict get $c _segment_dir]] 1
+    }
+    set segments_list [dict keys $segs]
+    return [dict create \
+        stems $stems \
+        segments $segments_list \
+        log_message "$tid: [llength $tasks] task(s) across [llength $segments_list] segment(s)"]
+}
+
+proc ::spar::opts::for_approach {tid tasks filter_segments filter_stems} {
+    set result [dict create \
+        log_message "$tid: [llength $tasks] task(s) ready (campaign-wide pass)"]
+    if {[llength $filter_segments] > 0} {
+        dict set result segments $filter_segments
+    }
+    if {[llength $filter_stems] > 0} {
+        dict set result stems $filter_stems
+    }
+    return $result
+}
+
+proc ::spar::opts::for_reply_check {tid tasks filter_segments filter_stems} {
+    set segs [dict create]
+    set stems {}
+    foreach c $tasks {
+        dict set segs [dict get $c _segment_dir] 1
+        lappend stems [dict get $c stem]
+    }
+    set segments_list [dict keys $segs]
+    return [dict create \
+        segments $segments_list \
+        stems $stems \
+        log_message "$tid: [llength $tasks] task(s) across [llength $segments_list] segment(s) (mailroom pass)"]
 }
 
 # is_masked_email — return 1 if email looks redacted (contains '*').

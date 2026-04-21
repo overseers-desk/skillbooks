@@ -10,14 +10,17 @@
 #       [--segment=<name> ...] [--stem=<stem> ...] [--jobs=N] [--delay=N]
 #       [--yes] [--dry-run]
 #
-# T-id routing is authored once in spar-state.tcl (spar::transition_runners):
-# T1/T6 → spar::p::run, T2/T7 → spar::a::run, T4 → spar::r::run. T8 has no
-# runner — has_transition_runner returns 0 and the CLI skips it.
+# T-id metadata is authored once in spar-state.tcl (spar::transition_defs):
+# runner, label, auto_safe, dispatch_status, opts_builder. The CLI reads
+# that dict via spar::transition_tids, spar::transition_runner, and the
+# other accessors; per-runner opts building is delegated to the proc
+# named in the `opts_builder` field (see ::spar::opts::for_profile etc.).
 #
-# T3 (Approach → Send) is not in the routing table. Its mechanics differ
-# from the Dispatcher-based runners (serial SES sends, interactive [y/N]
-# prompt, --delay pacing) and it is handled inline below. T3 is excluded
-# from --auto unconditionally — auto must never send email.
+# T3 (Approach → Send) is listed in transition_defs with an empty runner
+# and is handled inline below — its mechanics differ from the Dispatcher-
+# based runners (serial SES sends, interactive [y/N] prompt, --delay
+# pacing). T3 is excluded from --auto unconditionally — auto must never
+# send email.
 #
 # --auto runs T1+T2+T6+T7 as a state machine: classify, dispatch ready
 # work, re-classify, repeat until no new work is ready.
@@ -250,33 +253,22 @@ if {[llength $filter_stems] > 0} {
 }
 
 # --- Transition definitions ---
-set tids    {T1 T2 T3 T4 T6 T7 T8 T9 T10}
-set tlabels {
-    "Sweep \u2192 Profile"
-    "Profile \u2192 Approach"
-    "Approach \u2192 Send"
-    "Send \u2192 Reply"
-    "Stale \u2192 Re-profile"
-    "Re-profile \u2192 Re-approach"
-    "LinkedIn \u2192 Email follow-up"
-    "Secondary follow-up"
-    "Tertiary follow-up"
-}
-
+# All T-ids, labels, and auto-safety come from spar-state.tcl's
+# transition_defs dict. No parallel list is maintained here.
 if {[llength $filter_tid] == 0} {
-    set active_tids $tids
+    set active_tids [spar::transition_tids]
 } else {
     set active_tids $filter_tid
 }
 
-# --auto drives the offline state machine. T3 (email send) is excluded
-# unconditionally. T4 has a runner but is kept out of --auto so the loop
-# stays offline; invoke it explicitly via --tid=T4. T8 has no runner yet.
-set auto_wired_tids {T1 T2 T6 T7}
+# --auto drives the offline state machine. Included T-ids are those
+# whose metadata declares auto_safe=1 (T1/T2/T6/T7). T3 (email send) is
+# excluded because auto_safe=0; T4 has a runner but is kept out for the
+# same reason so the loop stays offline.
 if {$auto_mode} {
     set filtered_active {}
     foreach t $active_tids {
-        if {$t in $auto_wired_tids} { lappend filtered_active $t }
+        if {[spar::transition_auto_safe $t]} { lappend filtered_active $t }
     }
     set active_tids $filtered_active
 }
@@ -363,41 +355,18 @@ if {$execute_mode} {
                 campaign_file $yaml_path \
                 dry_run $dry_run \
                 jobs $jobs]
-            # Derive per-runner opts from ready tasks and CLI filters.
-            if {$runner eq "::spar::p::run"} {
-                # Pass stems of ready rows so the runner rebuilds exactly
-                # those profiles (bypassing the "profile exists" skip).
-                set stems {}
-                foreach c $tasks { lappend stems [dict get $c stem] }
-                if {[llength $filter_stems] > 0} { set stems $filter_stems }
-                dict set opts stems $stems
-                set segs [dict create]
-                foreach c $tasks {
-                    dict set segs [file tail [dict get $c _segment_dir]] 1
+            # Per-runner opts are built by the proc named in the T-id's
+            # opts_builder metadata field. The builder returns a dict to
+            # merge into opts; its log_message key is the one-line summary
+            # printed before dispatch.
+            set builder [spar::transition_opts_builder $tid]
+            if {$builder ne ""} {
+                set extra [$builder $tid $tasks $filter_segments $filter_stems]
+                if {[dict exists $extra log_message]} {
+                    puts [dict get $extra log_message]
+                    set extra [dict remove $extra log_message]
                 }
-                dict set opts segments [dict keys $segs]
-                puts "$tid: [llength $tasks] task(s) across [llength [dict keys $segs]] segment(s)"
-            } elseif {$runner eq "::spar::a::run"} {
-                if {[llength $filter_segments] > 0} {
-                    dict set opts segments $filter_segments
-                }
-                if {[llength $filter_stems] > 0} {
-                    dict set opts stems $filter_stems
-                }
-                puts "$tid: [llength $tasks] task(s) ready (campaign-wide pass)"
-            } elseif {$runner eq "::spar::r::run"} {
-                # T4 reply-check: derive segments + stems from the ready
-                # set so --segment / --stem filters flow through naturally
-                # (upstream segment_paths already honours --segment).
-                set segs  [dict create]
-                set stems {}
-                foreach c $tasks {
-                    dict set segs [dict get $c _segment_dir] 1
-                    lappend stems [dict get $c stem]
-                }
-                dict set opts segments [dict keys $segs]
-                dict set opts stems    $stems
-                puts "$tid: [llength $tasks] task(s) across [llength [dict keys $segs]] segment(s) (mailroom pass)"
+                set opts [dict merge $opts $extra]
             }
             incr ::_pending_dispatchers
             if {[catch {$runner $opts exec_on_progress exec_on_complete} err]} {
@@ -635,10 +604,9 @@ if {$execute_mode} {
 puts "Campaign: $campaign_name\n"
 
 set any_output 0
-for {set i 0} {$i < [llength $tids]} {incr i} {
-    set tid [lindex $tids $i]
+foreach tid [spar::transition_tids] {
     if {$tid ni $active_tids} continue
-    set label [lindex $tlabels $i]
+    set label [spar::transition_label $tid]
 
     set eligible [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
 
