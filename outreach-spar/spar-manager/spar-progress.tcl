@@ -4,7 +4,6 @@
 # Positional arg may be a directory or a campaign YAML file (directory derived from YAML path).
 #
 # --no-reply-check omits the T4 (reply-check) row from the transition list.
-# The legacy name --no-mailroom is accepted with a deprecation warning.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
@@ -21,10 +20,6 @@ foreach arg $argv {
         --campaign=*     { set campaign_file [string range $arg 11 end] }
         --json           { set json_mode 1 }
         --no-reply-check { set skip_reply_check 1 }
-        --no-mailroom    {
-            puts stderr "Warning: --no-mailroom is deprecated; use --no-reply-check instead."
-            set skip_reply_check 1
-        }
         --legend         {}
         --*              { puts stderr "Unknown flag: $arg"; exit 1 }
         default          {
