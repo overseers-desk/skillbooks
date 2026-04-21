@@ -171,8 +171,9 @@ oo::class create spar::ui::DispatchController {
         set label [$tree item $parent -text]
 
         # Tree item id (t0..t6) to T-id. Ordering is driven by the
-        # transition_defs dict in spar-state.tcl — CampaignModel's
-        # _build_transitions reads the same list.
+        # transition registry in spar-state.tcl (populated from the
+        # per-class files) — CampaignModel's _build_transitions reads
+        # the same list.
         set tnum [string range $parent 1 end]
         set tids [spar::ui_transition_tids]
         set tid [lindex $tids $tnum]
@@ -247,7 +248,7 @@ oo::class create spar::ui::DispatchController {
 
         my _fire dispatch-started $tid
 
-        if {[catch {$runner $opts \
+        if {[catch {{*}$runner $opts \
                 [list [self] on_progress] \
                 [list [self] on_complete]} err]} {
             $Log log "$tid dispatch error: $err"
