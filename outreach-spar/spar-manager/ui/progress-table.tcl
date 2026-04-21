@@ -83,16 +83,20 @@ oo::class create spar::ui::ProgressTable {
         # Build the widget inside the parent labelframe.
         set PTree ${parent_frame}.tree
         set vsb   ${parent_frame}.vsb
+        set hsb   ${parent_frame}.hsb
         ttk::treeview $PTree \
             -columns $PtreeColIds \
             -show {tree headings} \
             -selectmode none \
-            -yscrollcommand [list $vsb set]
+            -yscrollcommand [list $vsb set] \
+            -xscrollcommand [list $hsb set]
 
-        ttk::scrollbar $vsb -orient vertical -command [list $PTree yview]
+        ttk::scrollbar $vsb -orient vertical   -command [list $PTree yview]
+        ttk::scrollbar $hsb -orient horizontal -command [list $PTree xview]
 
-        grid $PTree -in $parent_frame -row 0 -column 0 -sticky nsew -padx {2 0} -pady {2 2}
-        grid $vsb   -in $parent_frame -row 0 -column 1 -sticky ns   -pady {2 2}
+        grid $PTree -in $parent_frame -row 0 -column 0 -sticky nsew -padx {2 0} -pady {2 0}
+        grid $vsb   -in $parent_frame -row 0 -column 1 -sticky ns   -pady {2 0}
+        grid $hsb   -in $parent_frame -row 1 -column 0 -sticky ew   -padx {2 0}
         grid rowconfigure    $parent_frame 0 -weight 1
         grid columnconfigure $parent_frame 0 -weight 1
 
