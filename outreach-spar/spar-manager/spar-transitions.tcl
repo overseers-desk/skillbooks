@@ -10,17 +10,19 @@
 #       [--segment=<name> ...] [--stem=<stem> ...] [--jobs=N] [--delay=N]
 #       [--yes] [--dry-run]
 #
-# T-id metadata is authored once in spar-state.tcl (spar::transition_defs):
-# runner, label, auto_safe, dispatch_status, opts_builder. The CLI reads
-# that dict via spar::transition_tids, spar::transition_runner, and the
-# other accessors; per-runner opts building is delegated to the proc
-# named in the `opts_builder` field (see ::spar::opts::for_profile etc.).
+# Each T-id is represented by a Transition class in
+# spar-manager/transitions/; registration happens at source time and
+# this file reads the registry via spar::transition_tids / _runner /
+# _label / etc. Per-runner opts come from each class's `build_opts`
+# method, not from proc-name lookups.
 #
-# T3 (Approach → Send) is listed in transition_defs with an empty runner
-# and is handled inline below — its mechanics differ from the Dispatcher-
-# based runners (serial SES sends, interactive [y/N] prompt, --delay
-# pacing). T3 is excluded from --auto unconditionally — auto must never
-# send email.
+# T3 (Approach → Send) goes through dispatch_ready like any other
+# available transition; its SendEmailTransition::run owns the serial
+# SES sends and --delay pacing. The interactive [y/N] confirmation
+# still lives here, just before dispatch_ready, so the GUI path — which
+# already confirmed via its own buttons — doesn't prompt on stdin.
+# T3 is excluded from --auto unconditionally — auto must never send
+# email — because its class declares auto_safe=0.
 #
 # --auto runs T1+T2+T6+T7 as a state machine: classify, dispatch ready
 # work, re-classify, repeat until no new work is ready.
@@ -253,8 +255,9 @@ if {[llength $filter_stems] > 0} {
 }
 
 # --- Transition definitions ---
-# All T-ids, labels, and auto-safety come from spar-state.tcl's
-# transition_defs dict. No parallel list is maintained here.
+# All T-ids, labels, and auto-safety come from the transition registry
+# populated at load time by spar-manager/transitions/*.tcl. No parallel
+# list is maintained here.
 if {[llength $filter_tid] == 0} {
     set active_tids [spar::transition_tids]
 } else {
@@ -354,22 +357,21 @@ if {$execute_mode} {
             set opts [dict create \
                 campaign_file $yaml_path \
                 dry_run $dry_run \
-                jobs $jobs]
-            # Per-runner opts are built by the proc named in the T-id's
-            # opts_builder metadata field. The builder returns a dict to
-            # merge into opts; its log_message key is the one-line summary
-            # printed before dispatch.
-            set builder [spar::transition_opts_builder $tid]
-            if {$builder ne ""} {
-                set extra [$builder $tid $tasks $filter_segments $filter_stems]
-                if {[dict exists $extra log_message]} {
-                    puts [dict get $extra log_message]
-                    set extra [dict remove $extra log_message]
-                }
-                set opts [dict merge $opts $extra]
+                jobs $jobs \
+                delay $delay]
+            # Per-runner opts come from the transition class's build_opts
+            # method. It returns a dict to merge onto opts; the
+            # log_message key is the one-line summary printed before
+            # dispatch.
+            set cls [::spar::transitions::get $tid]
+            set extra [$cls build_opts $tasks $filter_segments $filter_stems]
+            if {[dict exists $extra log_message]} {
+                puts [dict get $extra log_message]
+                set extra [dict remove $extra log_message]
             }
+            set opts [dict merge $opts $extra]
             incr ::_pending_dispatchers
-            if {[catch {$runner $opts exec_on_progress exec_on_complete} err]} {
+            if {[catch {{*}$runner $opts exec_on_progress exec_on_complete} err]} {
                 puts stderr "  $tid dispatch error: $err"
                 incr ::_pending_dispatchers -1
                 incr ::_total_failed [llength $tasks]
@@ -467,128 +469,25 @@ if {$execute_mode} {
     puts "Campaign: $campaign_name"
     if {$dry_run} { puts "(dry run — writes disabled)" }
 
+    # T3 confirmation lives at the CLI layer (not inside
+    # SendEmailTransition::run) so the GUI path — which has already
+    # confirmed via its own buttons — doesn't prompt on stdin.
+    if {[dict exists $ready_by_tid T3] && "T3" in $active_tids \
+        && !$dry_run && !$assume_yes} {
+        set n_t3 [llength [dict get $ready_by_tid T3]]
+        set ses_region [spar::dict_get_default $cdata ses_region "ap-southeast-2"]
+        puts -nonewline "Send $n_t3 email(s) live via SES (region $ses_region)? \[y/N\] "
+        flush stdout
+        set reply [string trim [gets stdin]]
+        if {[string tolower $reply] ne "y" && [string tolower $reply] ne "yes"} {
+            puts "Aborted — no emails sent."
+            exit 1
+        }
+    }
+
     dispatch_ready $ready_by_tid $active_tids \
         $yaml_path $cdata $dry_run $jobs $delay \
         $filter_segments $filter_stems $assume_yes
-
-    # ── T3: send approach-ready emails via AWS SES ─────────────────────
-    if {[dict exists $ready_by_tid T3] && "T3" in $active_tids} {
-        set t3_tasks [dict get $ready_by_tid T3]
-
-        set camp_sender [spar::dict_get_default $cdata sender [dict create]]
-        set camp_from_name  [spar::dict_get_default $camp_sender name ""]
-        set camp_from_email [spar::dict_get_default $camp_sender email ""]
-        set camp_bcc        [spar::dict_get_default $camp_sender bcc ""]
-        set ses_region      [spar::dict_get_default $cdata ses_region "ap-southeast-2"]
-
-        set n_t3 [llength $t3_tasks]
-        puts ""
-        puts "T3: Approach → Send — $n_t3 email(s) ready"
-
-        if {!$dry_run && !$assume_yes} {
-            puts -nonewline "Send $n_t3 email(s) live via SES (region $ses_region)? \[y/N\] "
-            flush stdout
-            set reply [string trim [gets stdin]]
-            if {[string tolower $reply] ne "y" && [string tolower $reply] ne "yes"} {
-                puts "Aborted — no emails sent."
-                exit 1
-            }
-        }
-
-        set first 1
-        foreach c $t3_tasks {
-            if {!$first && !$dry_run} { after [expr {$delay * 1000}] }
-            set first 0
-
-            set stem      [dict get $c stem]
-            set seg_dir   [dict get $c _segment_dir]
-            set slug      "[file tail $seg_dir]/$stem"
-            set approach_path [file join $seg_dir approach "${stem}.yaml"]
-
-            puts "  \[START\] $slug"
-
-            if {![file exists $approach_path]} {
-                puts "  \[FAIL \] $slug (approach file missing: $approach_path)"
-                incr ::_total_failed
-                continue
-            }
-
-            set approach_data [spar::read_approach_yaml $approach_path]
-            set msg [spar::final_email_message $approach_data]
-            if {$msg eq ""} {
-                puts "  \[FAIL \] $slug (no email message in final round)"
-                incr ::_total_failed
-                continue
-            }
-
-            set to      [string trim [spar::dict_get_default $msg to ""]]
-            set cc      [string trim [spar::dict_get_default $msg cc ""]]
-            set bcc     [string trim [spar::dict_get_default $msg bcc ""]]
-            set subject [spar::dict_get_default $msg subject ""]
-            set body    [spar::dict_get_default $msg body ""]
-
-            if {$to eq "" || $subject eq "" || $body eq ""} {
-                puts "  \[FAIL \] $slug (message missing to/subject/body)"
-                incr ::_total_failed
-                continue
-            }
-
-            set from_name  $camp_from_name
-            set from_email $camp_from_email
-            if {[dict exists $approach_data decisions]} {
-                set ad_sender [spar::dict_get_default [dict get $approach_data decisions] sender [dict create]]
-                set ad_name  [spar::dict_get_default $ad_sender name ""]
-                set ad_email [spar::dict_get_default $ad_sender email ""]
-                if {$ad_email ne ""} {
-                    set from_email $ad_email
-                    if {$ad_name ne ""} { set from_name $ad_name }
-                }
-            }
-            if {$from_email eq ""} {
-                puts "  \[FAIL \] $slug (no sender: neither approach decisions.sender.email nor campaign sender.email set)"
-                incr ::_total_failed
-                continue
-            }
-            set from_hdr [expr {$from_name ne "" ? "$from_name <$from_email>" : $from_email}]
-
-            if {$bcc eq ""} { set bcc $camp_bcc }
-            if {$bcc eq ""} { set bcc $from_email }
-
-            set send_opts [dict create \
-                region  $ses_region \
-                from    $from_hdr \
-                to      $to \
-                subject $subject \
-                body    $body \
-                dry_run $dry_run]
-            if {$cc ne ""}  { dict set send_opts cc  $cc  }
-            if {$bcc ne ""} { dict set send_opts bcc $bcc }
-
-            if {[catch {set result [spar::send_email $send_opts]} err]} {
-                puts "  \[FAIL \] $slug (send_email threw: $err)"
-                incr ::_total_failed
-                continue
-            }
-
-            if {![dict get $result ok]} {
-                puts "  \[FAIL \] $slug ([dict get $result message_id])"
-                incr ::_total_failed
-                continue
-            }
-
-            if {!$dry_run} {
-                set today [clock format [clock seconds] -format "%Y-%m-%d"]
-                if {[catch {spar::stamp_actioned_date $approach_path $today} err]} {
-                    puts "  \[FAIL \] $slug (sent ok but stamp failed: $err)"
-                    incr ::_total_failed
-                    continue
-                }
-            }
-
-            puts "  \[DONE \] $slug ([dict get $result message_id])"
-            incr ::_total_done
-        }
-    }
 
     puts ""
     puts "=== Summary ==="

@@ -176,8 +176,9 @@ if {$json_mode} {
         set sc [dict get $seg_info counts]
         dict for {k v} $sc { dict set totals $k [expr {[dict get $totals $k] + $v}] }
     }
-    # Transition labels come from spar-state.tcl's transition_defs
-    # dict; progress JSON includes the same T-ids as the UI tree.
+    # Transition labels come from the transition registry via
+    # spar::transition_label; progress JSON includes the same T-ids as
+    # the UI tree.
     set transitions {}
     foreach tid [spar::ui_transition_tids] {
         set tlabel [spar::transition_label $tid]
