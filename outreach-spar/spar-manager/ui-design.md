@@ -8,26 +8,19 @@ Use ttk widgets throughout. Use Tcl 9.
 
 ## Layout
 
-The window is divided into four vertical zones, top to bottom:
+The window is divided into three vertical zones, top to bottom:
 
-1. Tab bar (campaign selector)
-2. Campaign panel: config summary + progress table
-3. Transition manager: treeview + task detail
-4. Log panel
+1. Campaign panel: config summary + progress table
+2. Transition manager: treeview + task detail
+3. Log panel
 
-A ttk::panedwindow separates zones 2, 3, and 4 so the user can drag the boundaries.
+A ttk::panedwindow separates the three zones so the user can drag the boundaries.
 
-## 1. Tab bar
+## 1. Campaign panel
 
-Each tab corresponds to a campaign YAML file found in the campaign directory. Tabs are ordered by filename, e.g. `campaign-2026-04.yaml` leads to a tab called "2026-04". The rightmost (most recent) tab is selected by default.
+### 1.1 Config summary
 
-Switching tabs reloads the campaign config, progress table, and transition treeview for that campaign.
-
-## 2. Campaign panel
-
-### 2.1 Config summary
-
-Displayed as a read-only block at the top of the tab. Fields drawn from the campaign YAML:
+Displayed as a read-only block at the top of the campaign panel. Fields drawn from the campaign YAML:
 
 - Campaign name (`campaign:`)
 - Sender name, role, email (`sender:`)
@@ -35,11 +28,11 @@ Displayed as a read-only block at the top of the tab. Fields drawn from the camp
 
 This is a compact summary, not an editor. Campaign YAML editing is a planned feature, not in scope for this version.
 
-### 2.2 Progress table
+### 1.2 Progress table
 
 A table built with the grid geometry manager, using ttk::Label widgets for cells and ttk::Checkbutton for the segment selection column. All columns are visible without horizontal scrolling; column widths are sized to fit the window. This reproduces the output of `spar-progress.tcl`.
 
-**Why grid, not ttk::treeview.** The progress table requires multi-level grouped column headers (§2.2 "Column header grouping"), per-cell background colouring for denominator bands, and checkbox widgets in the segment column. ttk::Treeview does not support any of these: it cannot span or group column headings, cannot colour individual cells, and cannot embed widgets in cells. The grid geometry manager with individual ttk::Label and ttk::Checkbutton widgets provides full control over cell appearance, spanning headers, and per-cell styling. The transition manager (§3) uses ttk::treeview because it has a genuine parent-child hierarchy (transition types containing tasks), which is what treeview is designed for.
+**Why grid, not ttk::treeview.** The progress table requires multi-level grouped column headers (§1.2 "Column header grouping"), per-cell background colouring for denominator bands, and checkbox widgets in the segment column. ttk::Treeview does not support any of these: it cannot span or group column headings, cannot colour individual cells, and cannot embed widgets in cells. The grid geometry manager with individual ttk::Label and ttk::Checkbutton widgets provides full control over cell appearance, spanning headers, and per-cell styling. The transition manager (§2) uses ttk::treeview because it has a genuine parent-child hierarchy (transition types containing tasks), which is what treeview is designed for.
 
 Columns:
 
@@ -88,7 +81,7 @@ The final row is a **Totals** row that sums only the checked campaign segments. 
 
 Each data column is split into two sub-columns: one for the count (right-aligned) and one for the percentage (right-aligned). The header label for each data column spans both sub-columns, so the divider within a pair is invisible. Separators between column groups remain visible. This ensures counts and percentages align vertically across rows regardless of digit count.
 
-### 2.3 Warnings
+### 1.3 Warnings
 
 Below the progress table, a warnings area displays issues detected during the filesystem scan:
 
@@ -99,15 +92,15 @@ Below the progress table, a warnings area displays issues detected during the fi
 
 These mirror the warnings produced by `spar::build_warnings` (spar-state.tcl). Each warning is a single line. The area is collapsed by default and shows a summary when collapsed (e.g. "▶ ⚠ 7 warnings (5 duplicate email, 1 duplicate name, 1 identical subject)"). Clicking the toggle button expands the full warning list.
 
-### 2.4 Check email button
+### 1.4 Check email button
 
-A button labelled "Check Email" in the toolbar area of the campaign panel. Clicking it queries the campaign's configured mailroom account for new replies and updates approach files with reply markers. The button is disabled while a check is in progress. Results appear in the log panel (§4) and the progress table refreshes afterward.
+A button labelled "Check Email" in the toolbar area of the campaign panel. Clicking it queries the campaign's configured mailroom account for new replies and updates approach files with reply markers. The button is disabled while a check is in progress. Results appear in the log panel (§3) and the progress table refreshes afterward.
 
-## 3. Transition manager
+## 2. Transition manager
 
 A single ttk::treeview with `selectmode extended`. Top-level items are the fixed set of transition types. Each top-level item shows a task count and can be expanded (via the disclosure triangle ▶) to reveal the individual contact tasks as child items.
 
-### 3.1 Transition types (top-level items)
+### 2.1 Transition types (top-level items)
 
 The fixed transition types:
 
@@ -125,7 +118,7 @@ Each top-level row displays: the transition label and the count of tasks (e.g. "
 
 T4 (Send → Reply) and T8 (LinkedIn → Email follow-up) are monitoring transitions — there is no action to dispatch, only a waiting state. They are displayed but have no play button.
 
-### 3.2 Tasks (child items)
+### 2.2 Tasks (child items)
 
 Expanding a transition type reveals its individual tasks as child rows. Each child row has columns:
 
@@ -145,14 +138,14 @@ Examples of pending reasons:
 
 Tasks in the **done** state are shown greyed out. A "Show completed" checkbox above the treeview toggles their visibility.
 
-### 3.3 Dispatch controls
+### 2.3 Dispatch controls
 
 A toolbar below the transition treeview with:
 
 - **Play button** (▶) — dispatches all **ready** tasks for the selected transition type(s). The play button is disabled when no transition type is selected or when the selected types have zero ready tasks.
 - **Stop button** (⏹) — cancels a running dispatch. Tasks already completed within the batch remain completed; remaining tasks return to ready state.
 
-### 3.4 Progress bar
+### 2.4 Progress bar
 
 When a dispatch is running, a progress bar appears below the toolbar for each active transition type. The progress bar advances block by block, one block per task. Each block is coloured green on success or red on failure. The overall label shows "N / M completed".
 
@@ -160,7 +153,7 @@ The task child items update in real time as individual tasks complete (state cha
 
 If the block-by-block segmented progress bar is not achievable with ttk::progressbar, a standard determinate progress bar with a numeric label is acceptable as a fallback.
 
-### 3.5 Interaction between progress table and transition manager
+### 2.5 Interaction between progress table and transition manager
 
 The two zones are linked by the segment checkboxes:
 
@@ -171,7 +164,7 @@ The two zones are linked by the segment checkboxes:
 
 This filtering is immediate and does not require a refresh button.
 
-## 4. Log panel
+## 3. Log panel
 
 A text widget at the bottom of the window displaying timestamped log entries. All subprocess output (from dispatch actions, email checks, filesystem scans) is appended here. The log panel is scrollable and has a "Clear" button.
 
@@ -200,7 +193,7 @@ The application scans the filesystem on startup and when the user triggers a ref
 
 ## Column header approach: legend popup (chosen)
 
-The multi-level spanning header rows (§2.2) were prototyped but abandoned: placing headers and data rows in separate grid frames prevented column alignment without complex post-layout width synchronisation, and the five header rows consumed vertical space without solving the alignment problem reliably.
+The multi-level spanning header rows (§1.2) were prototyped but abandoned: placing headers and data rows in separate grid frames prevented column alignment without complex post-layout width synchronisation, and the five header rows consumed vertical space without solving the alignment problem reliably.
 
 The chosen approach uses a single-row column header directly above the data rows, with denominator relationships explained in a separate legend popup rather than embedded in the table header area.
 
@@ -232,7 +225,7 @@ The progress table uses three separate frames: a fixed header frame, a scrollabl
 
 ### Log panel removed from main window
 
-The log panel (zone 4) is not a persistent zone. Log output is only relevant during a dispatch run. When a dispatch is active, a progress bar and a **Log…** button appear in the dispatch toolbar. The Log… button opens a separate `toplevel` window with a scrollable text widget. This window persists across dispatches within a session.
+The log panel (zone 3) is not a persistent zone. Log output is only relevant during a dispatch run. When a dispatch is active, a progress bar and a **Log…** button appear in the dispatch toolbar. The Log… button opens a separate `toplevel` window with a scrollable text widget. This window persists across dispatches within a session.
 
 ### Scrollbars
 
@@ -273,3 +266,11 @@ import -window "$WID" /tmp/legend.png
 ```
 
 Requires `imagemagick` and `xdotool`. Both were present on the development machine.
+
+## Appendix A: Potential future features
+
+### A.1 Campaign tab bar
+
+A tab bar at the top of the window, with one tab per campaign YAML file in the campaign directory, would let the user switch between campaigns within a single running application. Selecting a tab would reload the campaign config, progress table, and transition treeview for that campaign.
+
+This is not part of the current design. It was never explicitly requested; the single-campaign-at-a-time model covers the workflows the tool was built for. Partial scaffolding exists in `spar-ui.tcl` (a `.tabs` notebook with a placeholder `tab_old` and an active `tab_current`) as a carryover from an earlier prototype and can be removed or retained at the point this feature is reconsidered.
