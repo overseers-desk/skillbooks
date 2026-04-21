@@ -374,16 +374,7 @@ oo::class create spar::ui::CampaignModel {
     # ─── Internal: transition build ───────────────────────────────────────
 
     method _build_transitions {} {
-        set labels {
-            "Sweep → Profile"
-            "Profile → Approach"
-            "Approach → Send"
-            "Send → Reply"
-            "Stale → Re-profile"
-            "Re-profile → Re-approach"
-            "LinkedIn → Email follow-up"
-        }
-        set tids {T1 T2 T3 T4 T6 T7 T8}
+        set tids [spar::ui_transition_tids]
 
         set primary_channel ""
         if {[dict size $Cdata] > 0} {
@@ -391,9 +382,8 @@ oo::class create spar::ui::CampaignModel {
         }
 
         set result {}
-        for {set i 0} {$i < [llength $labels]} {incr i} {
-            set label [lindex $labels $i]
-            set tid   [lindex $tids $i]
+        foreach tid $tids {
+            set label [spar::transition_label $tid]
 
             set eligible [spar::transition_eligible $AllContacts $tid $primary_channel $Cdata]
             set count [llength $eligible]

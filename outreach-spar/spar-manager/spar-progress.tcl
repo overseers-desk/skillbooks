@@ -176,14 +176,11 @@ if {$json_mode} {
         set sc [dict get $seg_info counts]
         dict for {k v} $sc { dict set totals $k [expr {[dict get $totals $k] + $v}] }
     }
-    set transition_defs {
-        T1 "Sweep \u2192 Profile"   T2 "Profile \u2192 Approach"
-        T3 "Approach \u2192 Send"   T4 "Send \u2192 Reply"
-        T6 "Stale \u2192 Re-profile"
-        T7 "Re-profile \u2192 Re-approach" T8 "LinkedIn \u2192 Email follow-up"
-    }
+    # Transition labels come from spar-state.tcl's transition_defs
+    # dict; progress JSON includes the same T-ids as the UI tree.
     set transitions {}
-    dict for {tid tlabel} $transition_defs {
+    foreach tid [spar::ui_transition_tids] {
+        set tlabel [spar::transition_label $tid]
         set tasks [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
         lappend transitions [dict create label "$tid: $tlabel" count [llength $tasks] tasks $tasks]
     }

@@ -170,10 +170,11 @@ oo::class create spar::ui::DispatchController {
 
         set label [$tree item $parent -text]
 
-        # Tree item id (t0..t6) to T-id. Must match CampaignModel's
-        # _build_transitions ordering.
+        # Tree item id (t0..t6) to T-id. Ordering is driven by the
+        # transition_defs dict in spar-state.tcl — CampaignModel's
+        # _build_transitions reads the same list.
         set tnum [string range $parent 1 end]
-        set tids {T1 T2 T3 T4 T6 T7 T8}
+        set tids [spar::ui_transition_tids]
         set tid [lindex $tids $tnum]
 
         foreach lib {spar-dispatch.tcl spar-email.tcl} {
@@ -198,10 +199,6 @@ oo::class create spar::ui::DispatchController {
             campaign_file $CampaignFile \
             dry_run $dry_run \
             jobs 4]
-        if {$runner eq "::spar::email::run"} {
-            dict set opts delay_seconds 0
-            dict set opts confirmed 1
-        }
 
         # Clear the previous cohort so its terminal glyphs are wiped.
         my clear
@@ -295,7 +292,7 @@ oo::class create spar::ui::DispatchController {
     # fully-loaded event handler when --tid was given on the command line.
     method auto_dispatch {} {
         set tree [$Transitions get_tree_widget]
-        set tids {T1 T2 T3 T4 T6 T7 T8}
+        set tids [spar::ui_transition_tids]
         set idx [lsearch -exact $tids $AutoTid]
         if {$idx < 0} {
             puts stderr "spar-ui: --tid=$AutoTid is not one of: [join $tids {, }]"
