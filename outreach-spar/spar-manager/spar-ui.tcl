@@ -71,6 +71,7 @@ source [file join $script_dir spar-state.tcl]
 source [file join $script_dir ui campaign-model.tcl]
 source [file join $script_dir ui log-window.tcl]
 source [file join $script_dir ui progress-table.tcl]
+source [file join $script_dir ui transition-tree.tcl]
 
 # ============================================================
 # Load campaign data
@@ -358,80 +359,21 @@ proc toggle_warnings {} {
 # Zone 3: Transition manager
 # ============================================================
 
-ttk::frame ${tpanel}.toolbar
-pack ${tpanel}.toolbar -fill x -padx 4 -pady {4 0}
-
-set show_completed 1
-ttk::checkbutton ${tpanel}.toolbar.showcomplete -text "Show completed" \
-    -variable show_completed
-pack ${tpanel}.toolbar.showcomplete -side left
-
-ttk::frame ${tpanel}.treeframe
-pack ${tpanel}.treeframe -fill both -expand 1 -padx 4 -pady 2
-
-ttk::treeview ${tpanel}.treeframe.tree \
-    -columns {stem org segment state reason} \
-    -displaycolumns {org segment state reason} \
-    -show {tree headings} -selectmode extended
-ttk::scrollbar ${tpanel}.treeframe.vsb -orient vertical \
-    -command [list ${tpanel}.treeframe.tree yview]
-${tpanel}.treeframe.tree configure -yscrollcommand [list ${tpanel}.treeframe.vsb set]
-
-pack ${tpanel}.treeframe.vsb -side right -fill y
-pack ${tpanel}.treeframe.tree -fill both -expand 1
-
-set tree ${tpanel}.treeframe.tree
-
-$tree heading #0    -text "Transition / Contact"
-$tree heading org   -text "Organisation"
-$tree heading segment -text "Segment"
-$tree heading state -text "State"
-$tree heading reason -text "Pending Reason"
-
-$tree column #0     -width 250 -minwidth 150
-$tree column org    -width 200 -minwidth 100
-$tree column segment -width 150 -minwidth 80
-$tree column state  -width 70  -minwidth 50
-$tree column reason -width 300 -minwidth 100
-
-proc populate_transitions {} {
-    global tree transitions row_names
-
-    # Clear existing items
-    foreach item [$tree children {}] {
-        $tree delete $item
-    }
-    set row_names [dict create]
-
-    set ti 0
-    foreach tentry $transitions {
-        lassign $tentry tlabel tcount ttasks
-
-        set parent_id "t$ti"
-        $tree insert {} end -id $parent_id -text "$tlabel ($tcount)" -open false
-
-        foreach task $ttasks {
-            lassign $task tname tstem torg tseg tstate treason
-            set tags {}
-            if {$tstate eq "done"} {
-                set tags {done}
-            } elseif {$tstate eq "pending"} {
-                set tags {pending}
-            }
-            set row_id [$tree insert $parent_id end -text "  $tname" \
-                -values [list $tstem $torg $tseg $tstate $treason] -tags $tags]
-            dict set row_names $row_id $tname
-        }
-
-        incr ti
-    }
-}
-
-populate_transitions
-
-$tree tag configure done      -foreground #999999
-$tree tag configure pending   -foreground #cc6600
-$tree tag configure in_cohort -background #e8f0fa
+# TransitionTree encapsulates the transition treeview, the row_id →
+# contact_name map, the stem → row_id map, the Show-completed
+# checkbox, and <<TreeviewSelect>> / <Double-1> bindings. It
+# subscribes to the CampaignModel's `refreshed` event in its
+# constructor so refreshes rebuild the tree without extra wiring.
+#
+# Commit-5 cleanup target: the class mirrors its Tree widget path into
+# the top-level `tree` global and its SlugToRow dict into
+# `slug_to_row` because the still-procedural dispatch procs in this
+# file (clear_cohort, reapply_cohort_after_refresh, ui_on_progress,
+# do_dispatch, auto_dispatch, ui_on_complete) still read them
+# directly. Commit 5 (DispatchController) replaces every shim read
+# with a method call and drops both globals.
+set tree_obj [spar::ui::TransitionTree new $campaign $tpanel]
+$tree_obj populate
 
 # Dispatch controls
 ttk::frame ${tpanel}.dispatch
@@ -471,15 +413,14 @@ set paused 0
 
 # Cohort state, keyed on stem. Persists across do_refresh so terminal
 # per-row glyphs stay visible from end-of-dispatch until the next
-# dispatch clears them. slug_to_row is the stem → current tree row_id
-# map; rebuilt by reapply_cohort_after_refresh because do_refresh
-# assigns fresh row ids.
+# dispatch clears them. slug_to_row and row_names are owned by the
+# TransitionTree class (Commit 4); it writes them as shim globals on
+# every populate so the still-procedural dispatch procs below can
+# continue to read them until Commit 5.
 set cohort_stems {}
 set cohort_state  [dict create]
 set cohort_reason [dict create]
 set cohort_phase  [dict create]
-set slug_to_row   [dict create]
-set row_names     [dict create]
 # Snapshot of a cohort row's classify state/reason columns, taken when
 # the row enters the cohort. clear_cohort restores from this so the
 # classify view re-appears for rows dropped from the next cohort.
@@ -513,13 +454,14 @@ proc do_cancel {} {
 # Render one cohort row: #0 text = plain name, state column = dispatch
 # glyph+label, reason column = phase/time/reason detail.
 proc render_row {row_id} {
-    global tree cohort_state cohort_reason cohort_phase cohort_stems row_names
+    global tree cohort_state cohort_reason cohort_phase cohort_stems tree_obj
     if {![$tree exists $row_id]} return
     set stem [$tree set $row_id stem]
     if {$stem eq "" || ![dict exists $cohort_state $stem]} return
     set state  [dict get $cohort_state $stem]
     set reason [expr {[dict exists $cohort_reason $stem] ? [dict get $cohort_reason $stem] : ""}]
     set phase  [expr {[dict exists $cohort_phase  $stem] ? [dict get $cohort_phase  $stem] : ""}]
+    set row_names [$tree_obj get_row_names]
     set name   [expr {[dict exists $row_names    $row_id] ? [dict get $row_names    $row_id] : ""}]
     switch -- $state {
         queued {
@@ -600,13 +542,14 @@ proc aggregate_animate {} {
 }
 
 proc clear_cohort {} {
-    global tree cohort_stems cohort_state cohort_reason cohort_phase slug_to_row row_names
+    global tree cohort_stems cohort_state cohort_reason cohort_phase slug_to_row tree_obj
     global classify_snapshot aggregate_after aggregate_tick
     if {$aggregate_after ne ""} {
         after cancel $aggregate_after
         set aggregate_after ""
     }
     set aggregate_tick 0
+    set row_names [$tree_obj get_row_names]
     # Restore previous-cohort rows: drop in_cohort tag, reset #0 text,
     # and restore the state/reason columns from the classify snapshot.
     foreach s $cohort_stems {
@@ -958,71 +901,23 @@ proc do_dispatch {} {
     }
 }
 
-bind $tree <<TreeviewSelect>> [list apply {{tree play} {
-    if {$::dispatching == 1} {
-        $play configure -state disabled -text "\u25b6 Dispatch"
+# TransitionTree fires dispatch-target-changed whenever the selection
+# shifts in a way that affects the Dispatch button. The inline logic
+# that used to walk parents/children and poke $play now lives in
+# TransitionTree::_resolve_target; the subscriber below just applies
+# the resolved {parent nchild label verb} tuple to the button.
+$tree_obj subscribe dispatch-target-changed [list apply {{play parent nchild label verb} {
+    if {$parent eq ""} {
+        $play configure -state disabled -text "▶ Dispatch"
         return
     }
-    set sel [$tree selection]
-    set parents {}
-    set children {}
-    foreach item $sel {
-        set p [$tree parent $item]
-        if {$p eq ""} {
-            lappend parents $item
-        } else {
-            lappend parents $p
-            lappend children $item
-        }
-    }
-    set parents [lsort -unique $parents]
-
-    # Mixed parents, or nothing selected ⇒ disable.
-    if {[llength $parents] != 1} {
-        $play configure -state disabled -text "\u25b6 Dispatch"
-        return
-    }
-    set parent [lindex $parents 0]
-    # Empty transition (no children at all) ⇒ nothing to dispatch.
-    if {[$tree children $parent] eq ""} {
-        $play configure -state disabled -text "\u25b6 Dispatch"
-        return
-    }
-
-    set label [$tree item $parent -text]
-    regsub {\s*\(\d+\)\s*$} $label "" label
-
-    set nchild [llength $children]
-
-    # When children are selected and the runner is ::spar::p::run
-    # (T1/T6), passing stems bypasses the "profile exists" skip — i.e.
-    # re-authors. Reflect that in the verb so the user sees the action
-    # before firing.
-    set verb "Dispatch"
-    if {$nchild > 0} {
-        set tnum [string range $parent 1 end]
-        set tids {T1 T2 T3 T4 T6 T7 T8}
-        set tid [lindex $tids $tnum]
-        if {[spar::has_transition_runner $tid]} {
-            set runner [spar::transition_runner $tid]
-            if {$runner eq "::spar::p::run"} {
-                foreach c $children {
-                    if {[$tree set $c state] eq "done"} {
-                        set verb "Re-author"
-                        break
-                    }
-                }
-            }
-        }
-    }
-
     if {$nchild > 0} {
         $play configure -state normal \
-            -text "\u25b6 ${verb}: $label ($nchild)"
+            -text "▶ ${verb}: $label ($nchild)"
     } else {
-        $play configure -state normal -text "\u25b6 Dispatch: $label"
+        $play configure -state normal -text "▶ Dispatch: $label"
     }
-}} $tree ${tpanel}.dispatch.play]
+}} ${tpanel}.dispatch.play]
 
 # Show the dispatch bar
 show_dispatch_bar
@@ -1067,7 +962,7 @@ $campaign subscribe fully-loaded [list apply {{} {
         ${wframe}.toggle configure -text "▸ ⚠ [llength $::warnings] warnings ($warn_summary)"
     }
 
-    populate_transitions
+    $::tree_obj populate
 
     # Headless / self-debug hook: if --tid was given on the command
     # line, drive the dispatch programmatically once the tree is
@@ -1104,7 +999,8 @@ $campaign subscribe refreshed [list apply {{} {
         ${wframe}.toggle configure -text "▸ ⚠ [llength $::warnings] warnings ($warn_summary)"
     }
 
-    populate_transitions
+    # TransitionTree self-subscribes to `refreshed` and rebuilds its tree;
+    # no populate call needed here.
 }}]
 
 $campaign subscribe log-message [list $log log]
