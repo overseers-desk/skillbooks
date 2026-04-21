@@ -200,3 +200,92 @@ namespace eval ::spar::ui::legend {
         $c create line $x_sent  [expr {$y4+$g}] $x_repl [expr {$y5-$gt}] -fill $line_colour
     }
 }
+
+namespace eval ::spar::ui::inspector_widgets {
+
+    # collapsible parent name header_text expanded_default — construct a
+    # collapsible section as $parent.$name with a toggle button and a
+    # $parent.$name.body frame the caller populates. Returns the outer
+    # frame path. The body frame is always $outer.body regardless of
+    # expanded_default.
+    proc collapsible {parent name header_text expanded_default} {
+        set f ${parent}.${name}
+        ttk::frame $f
+        set glyph [expr {$expanded_default ? "▾" : "▸"}]
+        ttk::button ${f}.hdr -text "$glyph  $header_text" -style Toolbutton \
+            -command [list ::spar::ui::inspector_widgets::_toggle $f]
+        ttk::frame ${f}.body
+        pack ${f}.hdr -fill x -anchor w
+        if {$expanded_default} {
+            pack ${f}.body -fill x -padx {12 0} -pady {2 4}
+        }
+        return $f
+    }
+
+    proc _toggle {f} {
+        if {[winfo ismapped ${f}.body]} {
+            pack forget ${f}.body
+            set cur [${f}.hdr cget -text]
+            ${f}.hdr configure -text [string map {▾ ▸} $cur]
+        } else {
+            pack ${f}.body -fill x -padx {12 0} -pady {2 4}
+            set cur [${f}.hdr cget -text]
+            ${f}.hdr configure -text [string map {▸ ▾} $cur]
+        }
+    }
+
+    # Like collapsible, but also invokes $on_toggle_cb (a script prefix)
+    # after the body flips. Callback receives one boolean arg: 1 expanded,
+    # 0 collapsed. Used by the Approach renderer to persist per-round
+    # collapse state into the Inspector's CollapseMemory.
+    proc collapsible_cb {parent name header_text expanded_default on_toggle_cb} {
+        set f [collapsible $parent $name $header_text $expanded_default]
+        ${f}.hdr configure -command \
+            [list ::spar::ui::inspector_widgets::_toggle_cb $f $on_toggle_cb]
+        return $f
+    }
+
+    proc _toggle_cb {f cb} {
+        _toggle $f
+        set expanded [winfo ismapped ${f}.body]
+        {*}$cb $expanded
+    }
+
+    # kv_row parent key value indent — pack one key/value row. indent=0
+    # is a top-level row; indent=1 is padded for list items and dict
+    # sub-rows. Wraps long values at the enclosing inner-frame width via
+    # the common inspector-canvas <Configure> path (which sets the inner
+    # frame's width); individual rows rely on -wraplength 1 with
+    # expand-on-pack.
+    proc kv_row {parent key value {indent 0}} {
+        set row ${parent}.[_uniq row]
+        ttk::frame $row
+        pack $row -fill x -anchor w
+        set lpad [expr {$indent * 16}]
+        ttk::label ${row}.k -text $key -width 22 -anchor w
+        pack ${row}.k -side left -padx [list $lpad 4]
+        ttk::label ${row}.v -text $value -anchor w -justify left -wraplength 600
+        pack ${row}.v -side left -fill x -expand 1
+        return $row
+    }
+
+    variable _uniq_ctr 0
+    proc _uniq {prefix} {
+        variable _uniq_ctr
+        incr _uniq_ctr
+        return "${prefix}${_uniq_ctr}"
+    }
+
+    # bind_mousewheel_recursive canvas widget — bind wheel events on
+    # $widget and all its descendants to scroll $canvas. Called after
+    # each render pass so newly-added widgets participate.
+    proc bind_mousewheel_recursive {canvas widget} {
+        bind $widget <Button-4> [list $canvas yview scroll -3 units]
+        bind $widget <Button-5> [list $canvas yview scroll  3 units]
+        bind $widget <MouseWheel> \
+            [list apply {{c D} { $c yview scroll [expr {-$D/30}] units }} $canvas %D]
+        foreach child [winfo children $widget] {
+            bind_mousewheel_recursive $canvas $child
+        }
+    }
+}

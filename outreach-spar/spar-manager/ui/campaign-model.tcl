@@ -80,6 +80,14 @@ oo::class create spar::ui::CampaignModel {
     method get_warnings        {} { return $Warnings }
     method get_full_load_done  {} { return $FullLoadDone }
 
+    method get_contact {stem} {
+        if {$stem eq "" || [llength $AllContacts] == 0} { return "" }
+        foreach c $AllContacts {
+            if {[spar::dict_get_default $c stem ""] eq $stem} { return $c }
+        }
+        return ""
+    }
+
     # ─── Public entry points ──────────────────────────────────────────────
 
     # load — config parse + TSV-only fast pass. Called once at startup

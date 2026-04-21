@@ -1680,6 +1680,40 @@ proc spar::read_profile_front_matter {path} {
     return $data
 }
 
+# read_profile_body -- return the text after the closing `---` fence of the
+# front-matter block. Returns "" for a missing file. When no opening fence is
+# present, returns the whole file (tolerates legacy/malformed profiles). When
+# an opening fence is present but the closing fence is missing, returns ""
+# (matches read_profile_front_matter's strictness).
+proc spar::read_profile_body {path} {
+    if {![file exists $path]} { return "" }
+    set fd {}
+    if {[catch {
+        set fd [open $path r]
+        fconfigure $fd -encoding utf-8
+        set raw [read $fd]
+        close $fd
+        set fd {}
+    } err]} {
+        if {$fd ne ""} { catch {close $fd} }
+        return ""
+    }
+    set lines [split $raw \n]
+    if {[llength $lines] < 2 || [string trim [lindex $lines 0]] ne "---"} {
+        return $raw
+    }
+    for {set i 1} {$i < [llength $lines]} {incr i} {
+        if {[string trim [lindex $lines $i]] eq "---"} {
+            set body [join [lrange $lines [expr {$i + 1}] end] \n]
+            if {[string index $body 0] eq "\n"} {
+                set body [string range $body 1 end]
+            }
+            return $body
+        }
+    }
+    return ""
+}
+
 # _roster_field_current -- fetch and de-quote a roster field from a row dict.
 # TSV loaders sometimes wrap blanks in `""`; strip the artifact.
 proc spar::_roster_field_current {row field} {
