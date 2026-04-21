@@ -32,9 +32,10 @@ oo::class create ::spar::transitions::CheckRepliesDriver {
     variable CurrentTo CurrentEntries
     variable NewReplies Errors
     variable ReportedStems IterReplyStems
+    variable Tid StepCallback SearchTotal SearchIdx
 
     constructor {account folder sender campaign_dir dry_run stems cohort_set \
-                 by_to on_progress on_complete} {
+                 by_to on_progress on_complete {tid ""} {step_callback ""}} {
         set Account     $account
         set Folder      $folder
         set Sender      $sender
@@ -45,6 +46,8 @@ oo::class create ::spar::transitions::CheckRepliesDriver {
         set ByTo        $by_to
         set OnProgress  $on_progress
         set OnComplete  $on_complete
+        set Tid         $tid
+        set StepCallback $step_callback
 
         set Paused 0
         set Cancelled 0
@@ -59,9 +62,11 @@ oo::class create ::spar::transitions::CheckRepliesDriver {
 
         set JobQueue {}
         set JobIdx 0
+        set SearchIdx 0
         foreach to_email [dict keys $ByTo] {
             lappend JobQueue [list search $to_email]
         }
+        set SearchTotal [llength $JobQueue]
 
         lappend ::spar::live_dispatchers [self]
     }
@@ -112,7 +117,19 @@ oo::class create ::spar::transitions::CheckRepliesDriver {
         set kind [lindex $job 0]
 
         switch -- $kind {
-            search { my do_search [lindex $job 1] }
+            search {
+                incr SearchIdx
+                if {$StepCallback ne ""} {
+                    set to_email [lindex $job 1]
+                    set verdict [{*}$StepCallback $Tid $to_email \
+                        $SearchIdx $SearchTotal]
+                    if {$verdict eq "abort"} {
+                        my finish
+                        return
+                    }
+                }
+                my do_search [lindex $job 1]
+            }
             read   { my do_read  $job }
             end_to { my do_end_to [lindex $job 1] }
             default { my start_next }
@@ -419,6 +436,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         set dry_run       [spar::dict_get_default $opts dry_run 0]
         set segments      [spar::dict_get_default $opts segments {}]
         set stems         [spar::dict_get_default $opts stems    {}]
+        set step_callback [spar::dict_get_default $opts step_callback ""]
 
         # Emit started per-slug so UI rows leave their initial state
         # before the collection pass (YAML parsing) starts.
@@ -490,7 +508,8 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
 
         set driver [::spar::transitions::CheckRepliesDriver new \
             $account $folder $sender $campaign_dir $dry_run \
-            $stems $cohort_set $by_to $on_progress $on_complete]
+            $stems $cohort_set $by_to $on_progress $on_complete \
+            [my tid] $step_callback]
         $driver kick
     }
 }

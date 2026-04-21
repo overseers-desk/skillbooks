@@ -39,11 +39,12 @@ oo::class create ::spar::transitions::Transition {
         return $default
     }
 
-    method label              {} { my param -label "" }
-    method auto_safe          {} { my param -auto-safe 0 }
-    method dispatch_status    {} { my param -dispatch-status available }
-    method supports_reauthor  {} { my param -supports-reauthor 0 }
-    method ui_tree_row        {} { my param -ui-tree-row 1 }
+    method label                      {} { my param -label "" }
+    method auto_safe                  {} { my param -auto-safe 0 }
+    method dispatch_status            {} { my param -dispatch-status available }
+    method supports_reauthor          {} { my param -supports-reauthor 0 }
+    method ui_tree_row                {} { my param -ui-tree-row 1 }
+    method requires_send_confirmation {} { my param -requires-send-confirmation 0 }
 
     # Default build_opts — no extra opts. Subclasses that need per-runner
     # setup override.
