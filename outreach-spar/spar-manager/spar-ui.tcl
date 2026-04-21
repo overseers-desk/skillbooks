@@ -70,6 +70,7 @@ set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
 source [file join $script_dir ui campaign-model.tcl]
 source [file join $script_dir ui log-window.tcl]
+source [file join $script_dir ui progress-table.tcl]
 
 # ============================================================
 # Load campaign data
@@ -97,19 +98,6 @@ set all_contacts   [$campaign get_all_contacts]
 set warnings       [$campaign get_warnings]
 set transitions    [$campaign get_transitions]
 set full_load_done [$campaign get_full_load_done]
-
-# Filesystem-dependent column IDs (shown as "…" until full load).
-# Used by populate_progress_tree and by the segment-loaded subscriber
-# at the bottom of this file; moves to ProgressTable in a later commit.
-set fs_dependent_cols {profiled astar aeml sent repl}
-
-# Column ID -> progress_counts dict key. Used by the segment-loaded
-# subscriber. Moves to ProgressTable in a later commit.
-set col_count_keys [dict create \
-    valid valid  profiled profiled  star3 star3 \
-    astar approached_star3  email has_email  aeml approached_email \
-    linkedin has_linkedin  facebook has_facebook  phone has_phone_only \
-    sent email_sent  repl email_replied]
 
 # ============================================================
 # Colour palette
@@ -189,24 +177,12 @@ pack ${cpanel}.toolbar.refresh -side right -padx {0 4}
 ttk::button ${cpanel}.toolbar.legend -text "Legend" -command show_legend_window
 pack ${cpanel}.toolbar.legend -side right -padx {0 4}
 
-ttk::button ${cpanel}.toolbar.selall -text "All" -width 4 -command {
-    global seg_checked ptree
-    foreach seg [array names ::seg_checked] {
-        set ::seg_checked($seg) 1
-        $ptree item $seg -text "\u2611  $seg"
-    }
-    recalc_totals
-}
+ttk::button ${cpanel}.toolbar.selall -text "All" -width 4 \
+    -command [list apply {{} { $::progress set_all 1 }}]
 pack ${cpanel}.toolbar.selall -side left
 
-ttk::button ${cpanel}.toolbar.selnone -text "None" -width 4 -command {
-    global seg_checked ptree
-    foreach seg [array names ::seg_checked] {
-        set ::seg_checked($seg) 0
-        $ptree item $seg -text "\u2610  $seg"
-    }
-    recalc_totals
-}
+ttk::button ${cpanel}.toolbar.selnone -text "None" -width 4 \
+    -command [list apply {{} { $::progress set_all 0 }}]
 pack ${cpanel}.toolbar.selnone -side left -padx {2 0}
 
 
@@ -294,244 +270,14 @@ proc draw_legend {c} {
 ttk::labelframe ${cpanel}.progress -text "Progress"
 pack ${cpanel}.progress -fill both -expand 1 -padx 8 -pady {2 2}
 
-# Treeview column definitions: id, heading, anchor
-# Each data column combines count + pct into one cell ("123 45%")
-# Widths are computed from content after population, not hardcoded.
-set ptree_cols {
-    valid    "Valid"       e
-    profiled "Profile"    e
-    star3    "3+\u2605"   e
-    astar    "A/3+\u2605" e
-    email    "Email"      e
-    aeml     "A/Eml"      e
-    linkedin "LinkedIn"   e
-    facebook "Facebook"   e
-    phone    "Only \u260e" e
-    sent     "\u2709 Sent" e
-    repl     "\u2709 Repl" e
-}
-
-# Extract just column IDs for -columns
-set ptree_col_ids {}
-foreach {id heading anchor} $ptree_cols { lappend ptree_col_ids $id }
-
-set ptree ${cpanel}.progress.tree
-ttk::treeview $ptree \
-    -columns $ptree_col_ids \
-    -show {tree headings} \
-    -selectmode none \
-    -yscrollcommand [list ${cpanel}.progress.vsb set]
-
-ttk::scrollbar ${cpanel}.progress.vsb -orient vertical -command [list $ptree yview]
-
-grid $ptree                 -in ${cpanel}.progress -row 0 -column 0 -sticky nsew -padx {2 0} -pady {2 2}
-grid ${cpanel}.progress.vsb -in ${cpanel}.progress -row 0 -column 1 -sticky ns   -pady {2 2}
-grid rowconfigure    ${cpanel}.progress 0 -weight 1
-grid columnconfigure ${cpanel}.progress 0 -weight 1
-
-# Tree column (#0): segment name — stretches to fill extra window space
-$ptree column #0 -stretch 1 -anchor w -minwidth 120
-
-# Data columns: fixed width (computed from content), never stretch
-foreach {id heading anchor} $ptree_cols {
-    $ptree heading $id -text $heading -anchor $anchor
-    $ptree column  $id -stretch 0 -anchor $anchor -minwidth 10
-}
-
-# Tags: muted for skip segments, totals row styling
-$ptree tag configure muted   -foreground $::colours(muted_fg)
-$ptree tag configure totals  -font "TkDefaultFont 9 bold" \
-    -background $::colours(totals_bg)
-
-# Denominator parent col-id for percentage (empty = no pct)
-set denom_parent {
-    valid    {}
-    profiled valid
-    star3    valid
-    astar    star3
-    email    star3
-    aeml     email
-    linkedin star3
-    facebook star3
-    phone    star3
-    sent     aeml
-    repl     sent
-}
-
-# Per-segment raw counts, keyed by segment name
-set seg_counts [dict create]
-array set seg_checked {}
-
-# Format a single cell: "123 45%" or just "123" when no denominator
-proc fmt_cell {count denom} {
-    if {$denom eq "" || $denom == 0} { return $count }
-    return [format "%d %d%%" $count [expr {$count * 100 / $denom}]]
-}
-
-proc populate_progress_tree {} {
-    global ptree ptree_col_ids ptree_cols segments seg_counts seg_checked
-    global denom_parent full_load_done fs_dependent_cols
-
-    $ptree delete [$ptree children {}]
-    set seg_counts [dict create]
-    array unset seg_checked
-
-    foreach seg_entry $segments {
-        lassign $seg_entry seg_name is_campaign raw_data
-        set tags {}
-        if {!$is_campaign} { lappend tags muted }
-
-        # raw_data is flat list: count {} count pct count pct ...
-        # ci 0 = valid (no pct), ci 1..10 = count pct pairs
-        set counts {}
-        for {set ci 0} {$ci < 11} {incr ci} {
-            lappend counts [lindex $raw_data [expr {$ci * 2}]]
-        }
-
-        # Build values list for treeview columns (formatted cells)
-        set values {}
-        set ci 0
-        foreach {id heading anchor} $ptree_cols {
-            set count [lindex $counts $ci]
-            set pid [dict get $denom_parent $id]
-            if {$pid eq ""} {
-                lappend values $count
-            } else {
-                set pidx [lsearch $ptree_col_ids $pid]
-                set denom [lindex $counts $pidx]
-                lappend values [fmt_cell $count $denom]
-            }
-            incr ci
-        }
-
-        # During async load, show "…" for filesystem-dependent columns
-        if {!$full_load_done} {
-            set vi 0
-            foreach {id heading anchor} $ptree_cols {
-                if {$id in $fs_dependent_cols} {
-                    lset values $vi "\u2026"
-                }
-                incr vi
-            }
-        }
-
-        set cb [expr {$is_campaign ? "\u2611" : "  "}]
-        $ptree insert {} end -id $seg_name -text "$cb  $seg_name" \
-            -values $values -tags $tags
-
-        if {$is_campaign} {
-            set seg_checked($seg_name) 1
-            set ci 0
-            foreach id $ptree_col_ids {
-                dict set seg_counts $seg_name $id [lindex $counts $ci]
-                incr ci
-            }
-        }
-    }
-
-    # Insert totals row (updated by recalc_totals)
-    $ptree insert {} end -id __totals__ -text "  TOTAL" \
-        -values [lrepeat [llength $ptree_col_ids] ""] -tags totals
-
-    recalc_totals
-    after idle autosize_progress_tree
-}
-
-# autosize_progress_tree -- measure content and set column widths.
-# Called after idle so row geometry is finalised.
-proc autosize_progress_tree {} {
-    global ptree ptree_col_ids ptree_cols
-
-    set font TkDefaultFont
-    set pad 12   ;# horizontal cell padding (pixels)
-
-    # Column #0: measure heading + all row texts
-    set max0 [font measure $font "Segment"]
-    foreach item [$ptree children {}] {
-        set txt [$ptree item $item -text]
-        set w [font measure $font $txt]
-        if {$w > $max0} { set max0 $w }
-    }
-    $ptree column #0 -minwidth [expr {$max0 + $pad}]
-
-    # Data columns: measure heading + all cell values
-    set ci 0
-    foreach {id heading anchor} $ptree_cols {
-        set maxw [font measure $font $heading]
-        foreach item [$ptree children {}] {
-            set val [lindex [$ptree item $item -values] $ci]
-            set w [font measure $font $val]
-            if {$w > $maxw} { set maxw $w }
-        }
-        set colw [expr {$maxw + $pad}]
-        $ptree column $id -width $colw -minwidth $colw
-        incr ci
-    }
-}
-
-proc recalc_totals {} {
-    global ptree ptree_col_ids ptree_cols seg_counts seg_checked
-    global denom_parent full_load_done fs_dependent_cols
-
-    # Sum counts for checked segments
-    set sums [dict create]
-    foreach id $ptree_col_ids { dict set sums $id 0 }
-
-    dict for {seg_name counts} $seg_counts {
-        if {![info exists ::seg_checked($seg_name)] || !$::seg_checked($seg_name)} continue
-        foreach id $ptree_col_ids {
-            dict set sums $id [expr {[dict get $sums $id] + [dict get $counts $id]}]
-        }
-    }
-
-    # Format totals values
-    set values {}
-    foreach {id heading anchor} $ptree_cols {
-        set count [dict get $sums $id]
-        set pid [dict get $denom_parent $id]
-        if {$pid eq ""} {
-            lappend values $count
-        } else {
-            set denom [dict get $sums $pid]
-            lappend values [fmt_cell $count $denom]
-        }
-    }
-
-    # During async load, show "…" for filesystem-dependent totals
-    if {!$full_load_done} {
-        set vi 0
-        foreach {id heading anchor} $ptree_cols {
-            if {$id in $fs_dependent_cols} {
-                lset values $vi "\u2026"
-            }
-            incr vi
-        }
-    }
-
-    $ptree item __totals__ -values $values
-}
-
-# Toggle segment inclusion on click of column #0
-bind $ptree <Button-1> {
-    set _clicked_col [%W identify column %x %y]
-    set _clicked_row [%W identify row %x %y]
-    if {$_clicked_col eq "#0" && $_clicked_row ne "" && $_clicked_row ne "__totals__"} {
-        set _seg $_clicked_row
-        if {[info exists ::seg_checked($_seg)]} {
-            set ::seg_checked($_seg) [expr {!$::seg_checked($_seg)}]
-            set _cb [expr {$::seg_checked($_seg) ? "\u2611" : "\u2610"}]
-            %W item $_seg -text "$_cb  $_seg"
-            recalc_totals
-        }
-    }
-}
-
-# Mouse wheel scrolling
-bind $ptree <Button-4>   { %W yview scroll -3 units }
-bind $ptree <Button-5>   { %W yview scroll  3 units }
-bind $ptree <MouseWheel> { %W yview scroll [expr {-%D/120}] units }
-
-populate_progress_tree
+# ProgressTable encapsulates the progress treeview, its column config,
+# per-segment count snapshots, checkbox state, totals row, and the
+# "..." placeholders that display while async classification is in
+# flight. It subscribes to the CampaignModel's segment-loaded /
+# fully-loaded / refreshed events in its constructor, so refreshes
+# propagate without extra wiring here.
+set progress [spar::ui::ProgressTable new $campaign ${cpanel}.progress]
+$progress populate
 
 # --- 2.3 Warnings (collapsed by default) ---
 
@@ -1306,47 +1052,11 @@ bind .tabs.tab_current.pw <Map> {
 # class in later commits, its subscriber inlines into the class's own
 # event handler and the shim globals disappear.
 
-# Per-segment async row update. Mirror of the per-segment block that
-# previously lived in _async_load_next.
-$campaign subscribe segment-loaded [list apply {{seg cdict is_active} {
-    global ptree ptree_col_ids ptree_cols seg_counts col_count_keys denom_parent
-    if {![$ptree exists $seg]} return
-    set counts {}
-    foreach id $ptree_col_ids {
-        set key [dict get $col_count_keys $id]
-        lappend counts [dict get $cdict $key]
-    }
-    if {$is_active} {
-        set ci 0
-        foreach id $ptree_col_ids {
-            dict set seg_counts $seg $id [lindex $counts $ci]
-            incr ci
-        }
-    }
-    set values {}
-    set ci 0
-    foreach {id heading anchor} $ptree_cols {
-        set count [lindex $counts $ci]
-        set pid [dict get $denom_parent $id]
-        if {$pid eq ""} {
-            lappend values $count
-        } else {
-            set pidx [lsearch $ptree_col_ids $pid]
-            set denom [lindex $counts $pidx]
-            lappend values [fmt_cell $count $denom]
-        }
-        incr ci
-    }
-    $ptree item $seg -values $values
-}}]
-
 $campaign subscribe fully-loaded [list apply {{} {
     set ::all_contacts   [$::campaign get_all_contacts]
     set ::warnings       [$::campaign get_warnings]
     set ::transitions    [$::campaign get_transitions]
     set ::full_load_done [$::campaign get_full_load_done]
-    recalc_totals
-    after idle autosize_progress_tree
 
     global wframe warn_summary warnings_expanded
     set warn_summary [compute_warning_summary]
@@ -1384,8 +1094,6 @@ $campaign subscribe refreshed [list apply {{} {
     ${cf}.v2 configure -text $::sender_text
     ${cf}.v4 configure -text $::filter_desc
     wm title . "SPAR Campaign Manager — $::campaign_name"
-
-    populate_progress_tree
 
     global wframe warn_summary warnings_expanded
     set warn_summary [compute_warning_summary]
