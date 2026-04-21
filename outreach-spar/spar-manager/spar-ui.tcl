@@ -40,6 +40,7 @@ if {[string match *.yaml $_arg]} {
         puts stderr "Flags (non-interactive / debug):"
         puts stderr "  --tid=T2              dispatch this transition after async load completes"
         puts stderr "  --stems=a,b,c         narrow --tid dispatch to these roster stems"
+        puts stderr "  --dry-run             dispatch with writes disabled (applies to --tid or right-click menu)"
         puts stderr "  --autoquit            exit after dispatch completes (exit status = failed count, clamped to 0/1)"
         puts stderr "  --log-stderr          mirror UI log lines to stderr regardless of --autoquit"
         exit 1
@@ -51,10 +52,12 @@ if {[string match *.yaml $_arg]} {
 set auto_tid ""
 set auto_stems {}
 set auto_quit 0
+set auto_dry_run 0
 set log_to_stderr 0
 foreach _a [lrange $argv 1 end] {
     if {[regexp {^--tid=(.+)$} $_a -> v]} { set auto_tid $v; continue }
     if {[regexp {^--stems=(.+)$} $_a -> v]} { set auto_stems [split $v ,]; continue }
+    if {$_a eq "--dry-run"}     { set auto_dry_run 1; continue }
     if {$_a eq "--autoquit"}    { set auto_quit 1; set log_to_stderr 1; continue }
     if {$_a eq "--log-stderr"}  { set log_to_stderr 1; continue }
     puts stderr "spar-ui: unrecognised argument: $_a"
@@ -62,6 +65,10 @@ foreach _a [lrange $argv 1 end] {
 }
 if {[llength $auto_stems] > 0 && $auto_tid eq ""} {
     puts stderr "spar-ui: --stems requires --tid"
+    exit 1
+}
+if {$auto_dry_run && $auto_tid eq ""} {
+    puts stderr "spar-ui: --dry-run only affects the --tid auto-dispatch path; right-click the Play button for the interactive dry-run menu"
     exit 1
 }
 
@@ -255,7 +262,7 @@ set dispatch [spar::ui::DispatchController new \
     ${tpanel}.dispatch.cancel \
     ${tpanel}.dispatch.progress \
     $script_dir $campaign_file \
-    $auto_tid $auto_stems $auto_quit]
+    $auto_tid $auto_stems $auto_quit $auto_dry_run]
 
 $tree_obj set_dispatch $dispatch
 

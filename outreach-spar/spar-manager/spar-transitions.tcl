@@ -63,7 +63,11 @@ OPTIONS
                       (T1+T2+T6+T7) until convergence. Excludes T3 — never
                       sends email. Re-classifies between iterations so T1
                       output feeds T2 and T6 output feeds T7 in one run.
-    --dry-run         with --execute: write prompts / skip SES, no harnesses
+    --dry-run         run the transition with writes disabled (implies
+                      execute-mode; pass alone, not with --execute).
+                      T1/T2/T6/T7: write prompts, skip harnesses.
+                      T3: skip SES send, skip stamp.
+                      T4: query mailbox, skip reply append.
     --jobs=N          parallel jobs for T1/T6 --execute (default 4)
     --delay=N         seconds between T3 sends (default 2, serial)
     --yes             skip the "send N emails? [y/N]" confirmation
@@ -90,7 +94,7 @@ COMMON WORKFLOWS
     tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T2 --execute
 
     # Send all approach-ready emails (T3) — dry-run first, then live
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T3 --execute --dry-run
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T3 --dry-run
     tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T3 --execute
 
     # Limit to one segment or one stem
@@ -133,13 +137,23 @@ foreach arg $argv {
     }
 }
 
+if {$dry_run && $execute_mode} {
+    puts stderr "Error: --dry-run and --execute are mutually exclusive."
+    puts stderr "  --dry-run   runs the transition with writes disabled"
+    puts stderr "  --execute   runs the transition live (with writes)"
+    puts stderr "Pick one."
+    exit 1
+}
+# --dry-run is its own execute mode — no need to pass --execute alongside.
+if {$dry_run} { set execute_mode 1 }
+
 if {$execute_mode && $filter_state eq "pending"} {
     puts stderr "Error: --execute requires --ready (default); --pending has no executable work."
     exit 1
 }
 
 if {$auto_mode && !$execute_mode} {
-    puts stderr "Error: --auto only applies with --execute."
+    puts stderr "Error: --auto only applies with --execute (or --dry-run)."
     exit 1
 }
 
@@ -401,7 +415,7 @@ if {$execute_mode} {
     # ────────────────────────────────────────────────────────────────────
     if {$auto_mode} {
         puts "Campaign: $campaign_name"
-        if {$dry_run} { puts "(dry run — prompts written, no harnesses spawned)" }
+        if {$dry_run} { puts "(dry run — writes disabled)" }
 
         set MAX_ITER 8
         set last_signature ""
@@ -482,7 +496,7 @@ if {$execute_mode} {
     }
 
     puts "Campaign: $campaign_name"
-    if {$dry_run} { puts "(dry run — prompts written, no harnesses spawned)" }
+    if {$dry_run} { puts "(dry run — writes disabled)" }
 
     dispatch_ready $ready_by_tid $active_tids \
         $yaml_path $cdata $dry_run $jobs $delay \
