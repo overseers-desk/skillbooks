@@ -1,8 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 2
-richness: rich
-richness_count: 6
+yield: 6
 warmth_finding: cold
 applicable_angles:
   - cold-open-hospitality-qsr

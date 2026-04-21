@@ -1,8 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 3
-richness: medium
-richness_count: 5
+yield: 5
 warmth_finding: cold
 applicable_angles:
   - multi-site-program-complexity

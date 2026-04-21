@@ -1,8 +1,7 @@
 ---
 profile_date: 2026-04-17
 star_rating: 1
-richness: medium
-richness_count: 4
+yield: 4
 warmth_finding: cold
 applicable_angles:
   - network-connection-value

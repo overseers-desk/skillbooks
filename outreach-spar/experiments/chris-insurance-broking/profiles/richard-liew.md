@@ -1,8 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 0
-richness: limited
-richness_count: 4
+yield: 4
 warmth_finding: existing
 applicable_angles: []
 dependent_data:

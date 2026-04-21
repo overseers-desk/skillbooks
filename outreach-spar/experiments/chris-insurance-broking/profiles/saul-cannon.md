@@ -1,8 +1,7 @@
 ---
 profile_date: 2026-04-17
 star_rating: 5
-richness: rich
-richness_count: 8
+yield: 8
 warmth_finding: cold
 applicable_angles:
   - insurance-program-authority

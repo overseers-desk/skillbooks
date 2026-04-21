@@ -1,8 +1,7 @@
 ---
 profile_date: 2026-04-18
 star_rating: 3
-richness: rich
-richness_count: 7
+yield: 7
 warmth_finding: cold
 applicable_angles:
   - event-cancellation-and-liability
