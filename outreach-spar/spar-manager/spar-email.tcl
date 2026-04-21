@@ -741,6 +741,23 @@ proc spar::r::run {opts on_progress on_complete} {
     set sender  [dict get $cdata sender email]
     set campaign_dir [file dirname $campaign_file]
 
+    # Default segments to "all campaign segment dirs" when the caller
+    # passed none. Mirrors spar::p::run's full-campaign default. The CLI
+    # (spar-transitions.tcl) already derives opts.segments from the ready
+    # set; the UI's DispatchController does not, and without this fallback
+    # collect_sent_approaches returns empty and the mailbox query is
+    # silently skipped.
+    if {[llength $segments] == 0} {
+        set skip_set [spar::dict_get_default $cdata skip_segments {}]
+        foreach seg [spar::dict_get_default $cdata segments {}] {
+            if {$seg in $skip_set} continue
+            set seg_path [file join $campaign_dir $seg]
+            if {[file isdirectory $seg_path]} {
+                lappend segments $seg_path
+            }
+        }
+    }
+
     # Reset accumulator; r::run is not concurrent with itself (T4 is not in
     # auto_wired_tids), so a namespace variable is sufficient.
     set reported_stems {}
