@@ -69,6 +69,7 @@ if {[llength $auto_stems] > 0 && $auto_tid eq ""} {
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
 source [file join $script_dir ui campaign-model.tcl]
+source [file join $script_dir ui log-window.tcl]
 
 # ============================================================
 # Load campaign data
@@ -81,6 +82,11 @@ source [file join $script_dir ui campaign-model.tcl]
 # commit removes one zone's shim reads as that zone becomes a class.
 set campaign [spar::ui::CampaignModel new $campaign_file $script_dir]
 $campaign load
+
+# LogWindow owns the dispatch log buffer, the optional toplevel, and the
+# unread counter. Construction takes log_to_stderr as config (never
+# mutated internally). The toolbar badge subscribes to unread-changed.
+set log [spar::ui::LogWindow new $log_to_stderr]
 
 set cdata          [$campaign get_cdata]
 set campaign_name  [$campaign get_campaign_name]
@@ -698,7 +704,15 @@ ttk::progressbar ${tpanel}.dispatch.progress.bar -mode determinate -value 0
 ttk::label       ${tpanel}.dispatch.progress.status -text "" -anchor w
 pack ${tpanel}.dispatch.progress.bar    -fill x -expand 1
 pack ${tpanel}.dispatch.progress.status -fill x
-ttk::button ${tpanel}.dispatch.logbtn -text "Log\u2026" -command show_log_window
+ttk::button ${tpanel}.dispatch.logbtn -text "Log\u2026" -command [list $log show]
+
+# Badge: LogWindow fires unread-changed whenever the count shifts.
+# Toolbar button text flips between plain and bullet-dotted.
+$log subscribe unread-changed [list apply {{count} {
+    global tpanel
+    set text [expr {$count ? "Log\u2026 \u2022" : "Log\u2026"}]
+    ${tpanel}.dispatch.logbtn configure -text $text
+}}]
 
 proc show_dispatch_bar {} {
     global tpanel
@@ -706,68 +720,8 @@ proc show_dispatch_bar {} {
     pack ${tpanel}.dispatch.logbtn -side left
 }
 
-set log_buffer {}
-
-# Log window
-proc show_log_window {} {
-    global log_buffer log_unread
-    set log_unread 0
-    update_log_badge
-    if {[winfo exists .logwin]} {
-        wm deiconify .logwin
-        raise .logwin
-        return
-    }
-    toplevel .logwin
-    wm title .logwin "Dispatch Log"
-
-    ttk::frame .logwin.bar
-    pack .logwin.bar -fill x -padx 4 -pady {4 0}
-    ttk::button .logwin.bar.clear -text "Clear" -command {
-        set ::log_buffer {}
-        .logwin.txt configure -state normal
-        .logwin.txt delete 1.0 end
-        .logwin.txt configure -state disabled
-    }
-    pack .logwin.bar.clear -side right
-
-    text .logwin.txt -wrap word -font "TkFixedFont 8" -state disabled
-    ttk::scrollbar .logwin.sb -orient vertical -command {.logwin.txt yview}
-    .logwin.txt configure -yscrollcommand {.logwin.sb set}
-
-    pack .logwin.sb -side right -fill y -padx {0 4} -pady {0 4}
-    pack .logwin.txt -fill both -expand 1 -padx {4 0} -pady {0 4}
-
-    .logwin.txt configure -state normal
-    foreach line $log_buffer {
-        .logwin.txt insert end "$line\n"
-    }
-    .logwin.txt see end
-    .logwin.txt configure -state disabled
-
-    wm protocol .logwin WM_DELETE_WINDOW {wm withdraw .logwin}
-}
-
-proc log_message {msg} {
-    global log_to_stderr log_buffer
-    set ts [clock format [clock seconds] -format "%H:%M:%S"]
-    set line "$ts $msg"
-    if {$log_to_stderr} {
-        puts stderr $line
-        flush stderr
-    }
-    lappend log_buffer $line
-    if {[winfo exists .logwin]} {
-        .logwin.txt configure -state normal
-        .logwin.txt insert end "$line\n"
-        .logwin.txt see end
-        .logwin.txt configure -state disabled
-    }
-}
-
 set dispatching 0
 set paused 0
-set log_unread 0
 
 # Cohort state, keyed on stem. Persists across do_refresh so terminal
 # per-row glyphs stay visible from end-of-dispatch until the next
@@ -796,18 +750,18 @@ proc do_pause {} {
         spar::pause_all
         set paused 1
         ${tpanel}.dispatch.pause configure -text "\u25b6 Resume"
-        log_message "Dispatch paused: queued items held; in-flight items finish normally."
+        $::log log "Dispatch paused: queued items held; in-flight items finish normally."
     } else {
         spar::resume_all
         set paused 0
         ${tpanel}.dispatch.pause configure -text "\u23f8 Pause"
-        log_message "Dispatch resumed."
+        $::log log "Dispatch resumed."
     }
 }
 
 proc do_cancel {} {
     spar::cancel_all
-    log_message "Dispatch cancelled: queued items skipped; in-flight items finish normally."
+    $::log log "Dispatch cancelled: queued items skipped; in-flight items finish normally."
 }
 
 # Render one cohort row: #0 text = plain name, state column = dispatch
@@ -962,14 +916,9 @@ proc reapply_cohort_after_refresh {} {
     }
 }
 
-proc update_log_badge {} {
-    global tpanel log_unread
-    set text [expr {$log_unread ? "Log\u2026 \u2022" : "Log\u2026"}]
-    ${tpanel}.dispatch.logbtn configure -text $text
-}
 
 proc ui_on_progress {slug status message} {
-    global cohort_state cohort_reason cohort_phase slug_to_row log_unread
+    global cohort_state cohort_reason cohort_phase slug_to_row
     global aggregate_after
     # Phase markers are row state, not log events.
     if {[regexp {\[phase:\s*([^\]]+)\]} $message -> phase]} {
@@ -1016,7 +965,6 @@ proc ui_on_progress {slug status message} {
                 }
                 if {[string length $r] > 80} { set r "[string range $r 0 77]\u2026" }
                 dict set cohort_reason $slug $r
-                set log_unread 1
                 set changed 1
             }
             skipped {
@@ -1029,21 +977,18 @@ proc ui_on_progress {slug status message} {
                 set changed 1
             }
             warning {
-                set log_unread 1
+                # LogWindow.log will bump unread on its own.
             }
         }
         if {$changed && [dict exists $slug_to_row $slug]} {
             render_row [dict get $slug_to_row $slug]
         }
-    } elseif {$status eq "warning" || $status eq "failed"} {
-        set log_unread 1
     }
     update_progress_display
-    update_log_badge
     # Suppress the dispatcher's empty "started" kickoff from the log —
     # already reflected in the row's running state. Log everything else.
     if {!($status eq "started" && $message eq "")} {
-        log_message "  \[$status\] $slug $message"
+        $::log log "  \[$status\] $slug $message"
     }
 }
 
@@ -1067,7 +1012,7 @@ proc ui_on_complete {done failed result} {
     if {$count ne "" && $count == 0 && $done == 0 && $failed == 0} {
         append tail " (no rows matched the runner's filters — check in-scope channel, min_star, or that the approach file already exists)"
     }
-    log_message "Dispatch completed: $done done, $failed failed$tail."
+    $::log log "Dispatch completed: $done done, $failed failed$tail."
     $::campaign refresh
     reapply_cohort_after_refresh
     update_progress_display
@@ -1184,17 +1129,17 @@ proc do_dispatch {} {
     foreach lib {spar-dispatch.tcl spar-email.tcl} {
         set path [file join $script_dir $lib]
         if {![file exists $path]} {
-            log_message "Dispatch library not available ($lib not found)."
+            $::log log "Dispatch library not available ($lib not found)."
             return
         }
         if {[catch {source $path} err]} {
-            log_message "Error loading $lib: $err"
+            $::log log "Error loading $lib: $err"
             return
         }
     }
 
     if {![spar::has_transition_runner $tid]} {
-        log_message "Dispatch for $tid not implemented."
+        $::log log "Dispatch for $tid not implemented."
         return
     }
     set runner [spar::transition_runner $tid]
@@ -1239,7 +1184,7 @@ proc do_dispatch {} {
         }
         if {[llength $sel_stems] > 0} {
             dict set opts stems $sel_stems
-            log_message "Dispatch cohort: [llength $sel_stems] stem(s)"
+            $::log log "Dispatch cohort: [llength $sel_stems] stem(s)"
         }
     }
 
@@ -1254,10 +1199,10 @@ proc do_dispatch {} {
     update idletasks
 
     show_dispatch_bar
-    log_message "Dispatch requested: $label ($tid)"
+    $::log log "Dispatch requested: $label ($tid)"
 
     if {[catch {$runner $opts ui_on_progress ui_on_complete} err]} {
-        log_message "$tid dispatch error: $err"
+        $::log log "$tid dispatch error: $err"
         set dispatching 0
         set ::paused 0
         ${tpanel}.dispatch.play configure -state normal
@@ -1454,7 +1399,7 @@ $campaign subscribe refreshed [list apply {{} {
     populate_transitions
 }}]
 
-$campaign subscribe log-message [list apply {{msg} { log_message $msg }}]
+$campaign subscribe log-message [list $log log]
 
 # Start async loading of filesystem-dependent columns. Use a timer
 # (not after idle) so the window renders first.
