@@ -101,21 +101,11 @@ oo::class create spar::ui::CampaignModel {
         my _fire refreshed
     }
 
-    # check_email — source the email library on demand and dispatch the
-    # T4 reply-check runner across the full campaign (no cohort stems —
-    # this is the "Check Email" toolbar sweep, not a transition-tree
-    # dispatch). on_complete fires the refresh so the progress table
-    # reflects any newly-ingested replies.
+    # check_email — dispatch the T4 reply-check runner across the full
+    # campaign (no cohort stems — this is the "Check Email" toolbar
+    # sweep, not a transition-tree dispatch). on_complete fires the
+    # refresh so the progress table reflects any newly-ingested replies.
     method check_email {} {
-        set email_lib [file join $ScriptDir spar-email.tcl]
-        if {![file exists $email_lib]} {
-            my _fire log-message "Email checking not available (spar-email.tcl not found)."
-            return
-        }
-        if {[catch {uplevel #0 [list source $email_lib]} err]} {
-            my _fire log-message "Error loading spar-email.tcl: $err"
-            return
-        }
         if {![spar::has_transition_runner T4]} {
             my _fire log-message "T4 runner not registered — email-check unavailable."
             return
@@ -134,7 +124,7 @@ oo::class create spar::ui::CampaignModel {
             stems {}]
 
         set runner [spar::transition_runner T4]
-        if {[catch {$runner $opts \
+        if {[catch {{*}$runner $opts \
                 [list [self] _email_progress] \
                 [list [self] _email_complete]} err]} {
             my _fire log-message "Email check error: $err"

@@ -835,8 +835,9 @@ proc spar::transition_eligible {classified_contacts transition {primary_channel 
             }
             T4 {
                 # Send → Reply: email_sent, not email_replied. Dispatched
-                # through ::spar::r::run, which queries mailroom and appends
-                # replies to the approach YAML. Skip EXCLUDED — an invalidated
+                # through ::spar::transitions::CheckRepliesTransition, which
+                # queries the configured inbox and appends replies to the
+                # approach YAML. Skip EXCLUDED — an invalidated
                 # contact's approach file may still carry email_sent=true from
                 # before invalidation, but polling for a reply is not
                 # meaningful once we've decided not to pursue.

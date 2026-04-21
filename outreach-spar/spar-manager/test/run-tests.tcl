@@ -2638,18 +2638,30 @@ section "24b. transition runner routing"
 
 assert_eq [spar::has_transition_runner T1] 1 "routing: T1 is wired"
 assert_eq [spar::has_transition_runner T2] 1 "routing: T2 is wired"
+assert_eq [spar::has_transition_runner T3] 1 "routing: T3 is wired"
 assert_eq [spar::has_transition_runner T4] 1 "routing: T4 is wired"
 assert_eq [spar::has_transition_runner T6] 1 "routing: T6 is wired"
 assert_eq [spar::has_transition_runner T7] 1 "routing: T7 is wired"
-assert_eq [spar::has_transition_runner T3] 0 "routing: T3 is handled inline (not routed)"
 assert_eq [spar::has_transition_runner T8] 0 "routing: T8 is not wired"
 assert_eq [spar::has_transition_runner T9] 0 "routing: T9 is not wired"
 
-assert_eq [spar::transition_runner T1] ::spar::p::run "routing: T1 → spar::p::run"
-assert_eq [spar::transition_runner T6] ::spar::p::run "routing: T6 → spar::p::run"
-assert_eq [spar::transition_runner T2] ::spar::a::run "routing: T2 → spar::a::run"
-assert_eq [spar::transition_runner T7] ::spar::a::run "routing: T7 → spar::a::run"
-assert_eq [spar::transition_runner T4] ::spar::r::run "routing: T4 → spar::r::run"
+# transition_runner returns a command prefix [list $obj run]. The object
+# is a TclOO instance of the class registered against the T-id, so shape
+# checks are "second element is `run`" and "class name matches".
+proc _runner_class {tid} {
+    set runner [spar::transition_runner $tid]
+    return [info object class [lindex $runner 0]]
+}
+assert_eq [_runner_class T1] ::spar::transitions::ProfileTransition "routing: T1 → ProfileTransition"
+assert_eq [_runner_class T6] ::spar::transitions::ProfileTransition "routing: T6 → ProfileTransition"
+assert_eq [_runner_class T2] ::spar::transitions::ApproachTransition "routing: T2 → ApproachTransition"
+assert_eq [_runner_class T7] ::spar::transitions::ApproachTransition "routing: T7 → ApproachTransition"
+assert_eq [_runner_class T3] ::spar::transitions::SendEmailTransition "routing: T3 → SendEmailTransition"
+assert_eq [_runner_class T4] ::spar::transitions::CheckRepliesTransition "routing: T4 → CheckRepliesTransition"
+foreach _tid {T1 T2 T3 T4 T6 T7} {
+    assert_eq [lindex [spar::transition_runner $_tid] 1] run \
+        "routing: $_tid runner verb is `run`"
+}
 
 set _routing_err ""
 catch {spar::transition_runner T8} _routing_err

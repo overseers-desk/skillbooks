@@ -240,7 +240,6 @@ oo::class create spar::ui::DispatchController {
         set AggregateTick 0
         my _update_progress_display
         my aggregate_animate
-        update idletasks
 
         my show_dispatch_bar
         set mode_tag [expr {$dry_run ? " (DRY RUN — writes disabled)" : ""}]
