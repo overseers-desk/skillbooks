@@ -73,8 +73,7 @@ source [file join $script_dir ui log-window.tcl]
 source [file join $script_dir ui progress-table.tcl]
 source [file join $script_dir ui transition-tree.tcl]
 source [file join $script_dir ui dispatch-controller.tcl]
-source [file join $script_dir ui warnings.tcl]
-source [file join $script_dir ui legend.tcl]
+source [file join $script_dir ui utils.tcl]
 source [file join $script_dir ui inspector.tcl]
 
 # ============================================================
@@ -200,11 +199,11 @@ $progress populate
 
 # --- 2.3 Warnings (collapsed by default) ---
 #
-# Namespace module, not a class — the zone's state is just
-# expanded-flag, cached summary, frame path. `init` builds the widget
-# tree and subscribes to the Campaign's refreshed + fully-loaded events
-# so the warning count / summary auto-update.
-::spar::ui::warnings::init $campaign $cpanel
+# Stateless namespace helper (ui/ns.tcl). `build` constructs the widget
+# tree and self-subscribes to the Campaign's refreshed + fully-loaded
+# events so the warning count / summary auto-update. No state lives in
+# the namespace; frame + campaign flow through closures.
+::spar::ui::warnings::build $campaign $cpanel
 
 
 # ============================================================
