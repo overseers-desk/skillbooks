@@ -114,17 +114,23 @@ wm title . "SPAR Campaign Manager \u2014 $campaign_name"
 # Main layout
 # ============================================================
 
-ttk::panedwindow .pw -orient vertical
+ttk::panedwindow .pw -orient horizontal
 pack .pw -fill both -expand 1
 
-ttk::frame .pw.campaign
-.pw add .pw.campaign -weight 3
+ttk::panedwindow .pw.main -orient vertical
+.pw add .pw.main -weight 1
 
-ttk::frame .pw.transitions
-.pw add .pw.transitions -weight 2
+ttk::frame .pw.main.campaign
+.pw.main add .pw.main.campaign -weight 3
 
-set cpanel .pw.campaign
-set tpanel .pw.transitions
+ttk::frame .pw.main.transitions
+.pw.main add .pw.main.transitions -weight 2
+
+ttk::frame .pw.right
+.pw add .pw.right -weight 0
+
+set cpanel .pw.main.campaign
+set tpanel .pw.main.transitions
 
 # ============================================================
 # Zone 2: Campaign panel
@@ -268,12 +274,22 @@ set inspector [spar::ui::Inspector new $campaign $tree_obj .pw]
 
 bind .pw <Map> {
     after 50 {
-        set h [winfo height .pw]
-        if {$h > 100} {
-            .pw sashpos 0 [expr {int($h * 0.65)}]
+        set w [winfo width .pw]
+        if {$w > 100} {
+            .pw sashpos 0 $w
         }
     }
     bind .pw <Map> {}
+}
+
+bind .pw.main <Map> {
+    after 50 {
+        set h [winfo height .pw.main]
+        if {$h > 100} {
+            .pw.main sashpos 0 [expr {int($h * 0.65)}]
+        }
+    }
+    bind .pw.main <Map> {}
 }
 
 # ============================================================
