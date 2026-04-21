@@ -181,7 +181,7 @@ Contact states are derived from the filesystem, not stored in a separate databas
 | SENT | `actioned_date` present in final round |
 | REPLIED | Reply marker present in approach file |
 | EXCLUDED | `date_excluded` set in roster |
-| PROFILE_STALE | `profile_stale_date` set in roster (new column) |
+| PROFILE_STALE | Profile file exists; its front-matter `dependent_data` snapshot diverges from the current roster row |
 
 The application scans the filesystem on startup and when the user triggers a refresh (via the Check Email button or after a dispatch completes). If the platform provides a filesystem monitoring facility, use it to trigger automatic refreshes; otherwise rely on manual refresh.
 
