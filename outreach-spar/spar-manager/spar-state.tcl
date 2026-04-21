@@ -24,7 +24,8 @@ namespace eval spar {
         T1 ::spar::p::run \
         T6 ::spar::p::run \
         T2 ::spar::a::run \
-        T7 ::spar::a::run]
+        T7 ::spar::a::run \
+        T4 ::spar::r::run]
 }
 
 # has_transition_runner -- 1 if the T-id has a wired runner, else 0.
@@ -776,10 +777,12 @@ proc spar::transition_eligible {classified_contacts transition {primary_channel 
                 }
             }
             T4 {
-                # Send → Reply: email_sent, not email_replied (monitoring only).
-                # Skip EXCLUDED — an invalidated contact's approach file may still
-                # carry email_sent=true from before invalidation, but monitoring
-                # for a reply is not meaningful once we've decided not to pursue.
+                # Send → Reply: email_sent, not email_replied. Dispatched
+                # through ::spar::r::run, which queries mailroom and appends
+                # replies to the approach YAML. Skip EXCLUDED — an invalidated
+                # contact's approach file may still carry email_sent=true from
+                # before invalidation, but polling for a reply is not
+                # meaningful once we've decided not to pursue.
                 if {$state ne "EXCLUDED" && $email_sent && !$email_replied} {
                     set vmsg [spar::_approach_validation_error $contact]
                     if {$vmsg ne ""} {
@@ -791,7 +794,7 @@ proc spar::transition_eligible {classified_contacts transition {primary_channel 
                         lappend results [dict create \
                             contact_name $name organisation $org segment $segment \
                             stem $stem _segment_dir $segment_dir \
-                            task_state pending reason "Waiting for reply"]
+                            task_state ready reason ""]
                     }
                 }
             }

@@ -224,7 +224,7 @@ The transition manager filters `classify_segment` output by eligibility conditio
 | T1 | Sweep → Profile | state = DISCOVERED | spar-transitions.tcl --tid=T1 --execute (runs §4.1 first if `contact_name` is blank, else §4.2+) | available |
 | T2 | Profile → Approach | state = PROFILED, star≥3 | spar-a-batch.tcl | available |
 | T3 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | spar-transitions.tcl --tid=T3 --execute (AWS SES, serial with --delay) | available |
-| T4 | Send → Reply | email_sent, not email_replied | none (monitoring only) | n/a |
+| T4 | Send → Reply | email_sent, not email_replied | spar-transitions.tcl --tid=T4 --execute (mailroom reply-check, appends replies to approach YAML) | available |
 | T6 | Stale → Re-profile | state = PROFILE_STALE | spar-transitions.tcl --tid=T6 --execute | available (zero tasks until PROFILE_STALE defined) |
 | T7 | Re-profile → Re-approach | re-PROFILED after stale (see note) | spar-a-batch.tcl | available (zero tasks until PROFILE_STALE defined) |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
@@ -290,7 +290,7 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 | T1  | DISCOVERED           | —                                                       | —                                                              | spar-state.tcl:448 |
 | T2  | PROFILED             | star ≥ 3                                                | —                                                              | spar-state.tcl:456 |
 | T3  | APPROACHED ∨ SENT    | primary_channel = email ∧ has_email ∧ ¬email_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬A: "invalid_approach_yaml". primary_channel ≠ email: row is omitted entirely | spar-state.tcl:464 |
-| T4  | any ≠ EXCLUDED       | email_sent ∧ ¬email_replied ∧ A(approach_path)          | monitoring: always pending ("Waiting for reply" or invalid)    | spar-state.tcl:487 |
+| T4  | any ≠ EXCLUDED       | email_sent ∧ ¬email_replied ∧ A(approach_path)          | A invalid → "invalid_approach_yaml". Ready rows dispatch through spar::r::run (mailroom reply-check) | spar-state.tcl:487 |
 | T6  | PROFILE_STALE        | —                                                       | PROFILE_STALE classifier not yet assigned → zero tasks         | spar-state.tcl:513 |
 | T7  | —                    | deferred                                                | zero tasks                                                     | spar-state.tcl:522 |
 | T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always pending: awaiting acceptance                            | spar-state.tcl:526 |

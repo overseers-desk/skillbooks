@@ -7,6 +7,8 @@ set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
 
 # --- Argument parsing ---
+# Hand-rolled (not tcllib cmdline) for style consistency with
+# spar-transitions.tcl — see that file for the rationale.
 set campaign_dir ""
 set campaign_file ""
 set json_mode 0

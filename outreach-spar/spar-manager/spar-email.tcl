@@ -9,6 +9,10 @@ namespace eval spar {
         check_replies_mailroom collect_sent_approaches
 }
 
+namespace eval spar::r {
+    variable reported_stems {}
+}
+
 # ── Helpers (not exported) ─────────────────────────────────────────────
 
 # extract_email_address -- extract bare email from "Name <email>" or bare email.
@@ -144,46 +148,71 @@ proc spar::append_reply_to_yaml {approach_path timestamp from_display reply_text
     append reply_block "    from: \"$from_display\"\n"
     append reply_block "    body: |\n$escaped_body"
 
-    # Strategy: check if "replies:" section already exists in the final round.
-    # If it does, append the new reply entry after the last reply.
-    # If not, add "replies:" before the file ends (after the last round content).
-
+    # Locate the final round's extent so the replies block lands inside it,
+    # not at EOF. Files typically have top-level keys (fact_provenance,
+    # a_note, …) after `rounds:` — appending at EOF orphans the replies at
+    # the wrong indent level, corrupting the YAML.
+    #
+    # Algorithm: find `- type: final` (or the nested `  type: final`
+    # variant). Walk subsequent lines; any line indented strictly deeper
+    # than the round marker belongs to the round. Stop at the first line
+    # with ≤ marker indent — that's either the next round or a new
+    # top-level key.
     set lines [split $content \n]
-    set result_lines {}
-    set in_final_round 0
+    set final_end -1
+    set final_indent -1
+    set in_final 0
     set has_replies_section 0
-    set last_replies_line -1
-    set in_replies 0
-    set indent_depth 0
 
-    # First pass: find if there's a replies: section in the final round
-    set line_idx 0
+    set idx 0
     foreach line $lines {
-        if {[regexp {^- type:\s*final} $line] || [regexp {^  type:\s*final} $line]} {
-            set in_final_round 1
-        }
-        if {$in_final_round && [regexp {^\s*replies:\s*$} $line]} {
-            set has_replies_section 1
-        }
-        if {$in_final_round && $has_replies_section} {
-            # Track the last line that belongs to replies section
-            if {[regexp {^\s*-\s+direction:} $line] || [regexp {^\s{4,}\S} $line]} {
-                set last_replies_line $line_idx
+        if {!$in_final
+            && [regexp {^(\s*)- type:\s*final} $line -> lead]} {
+            set final_indent [string length $lead]
+            set final_end $idx
+            set in_final 1
+        } elseif {$in_final} {
+            set trimmed [string trim $line]
+            if {$trimmed eq ""} {
+                # Blank line — provisionally inside the round; extend end.
+                set final_end $idx
+            } elseif {[regexp {^(\s*)\S} $line -> ind]} {
+                if {[string length $ind] > $final_indent} {
+                    set final_end $idx
+                    if {[regexp {^\s+replies:\s*$} $line]} {
+                        set has_replies_section 1
+                    }
+                } else {
+                    # Shallower or equal indent — left the final round.
+                    set in_final 0
+                }
             }
         }
-        incr line_idx
+        incr idx
     }
 
-    # Second approach: simpler text-based strategy
-    # Find the end of the file content, append replies section or entries
-    set content_trimmed [string trimright $content "\n"]
-
-    if {$has_replies_section} {
-        # Append the new reply entry at the end of the file
-        set new_content "${content_trimmed}\n${reply_block}"
+    if {$final_end < 0} {
+        # No final round found — fall back to appending at EOF so we don't
+        # silently drop the reply; DbC-Post will surface any corruption.
+        set content_trimmed [string trimright $content "\n"]
+        if {$has_replies_section} {
+            set new_content "${content_trimmed}\n${reply_block}"
+        } else {
+            set new_content "${content_trimmed}\n  replies:\n${reply_block}"
+        }
     } else {
-        # Add "replies:" header then the entry
-        set new_content "${content_trimmed}\n  replies:\n${reply_block}"
+        # Insert after final_end. reply_block is multi-line text with a
+        # trailing newline; split into lines and splice.
+        set insertion {}
+        if {!$has_replies_section} {
+            lappend insertion "  replies:"
+        }
+        foreach bl [split [string trimright $reply_block "\n"] "\n"] {
+            lappend insertion $bl
+        }
+        set before [lrange $lines 0 $final_end]
+        set after  [lrange $lines [expr {$final_end + 1}] end]
+        set new_content [join [concat $before $insertion $after] "\n"]
     }
 
     # Also set replied_date on email messages if not already set
@@ -192,6 +221,11 @@ proc spar::append_reply_to_yaml {approach_path timestamp from_display reply_text
     regsub -all {replied_date:\s*null} $new_content "replied_date: $reply_date" new_content
 
     set fd [open $approach_path w]
+    # Tolerate characters that cannot round-trip through strict UTF-8 (e.g.
+    # raw bytes that slipped in via mailroom's exec output). Tcl 9's default
+    # profile is strict and aborts the write; -profile replace substitutes
+    # U+FFFD on malformed output. Encoding stays at the channel default.
+    fconfigure $fd -profile replace
     puts -nonewline $fd $new_content
     # Ensure trailing newline
     if {[string index $new_content end] ne "\n"} {
@@ -634,6 +668,102 @@ proc spar::check_replies_mailroom {campaign_dir segments mailroom_account mailro
     }
 
     return [dict create new_replies $new_replies errors $errors]
+}
+
+# spar::r::run -- T4 transition runner (Send → Reply).
+#
+# Wraps spar::check_replies_mailroom in the standard runner contract so
+# dispatch_ready can invoke it like any other T-id. Reads
+# reply_check.{mailroom_account,folder} and sender.email from the
+# campaign YAML; missing config is surfaced via on_progress + on_complete.
+#
+# opts dict keys consumed:
+#   campaign_file   campaign YAML path
+#   dry_run         1 to skip the mailroom query and file writes
+#   segments        list of segment directory paths
+#   stems           approach stems in the T4 ready set; receive per-slug
+#                   progress events so UI rows reach a terminal state
+#
+# Progress adapter: check_replies_mailroom fires
+#   {to_email stem "reply" message}
+# the runner rewrites that to the runner-standard
+#   {stem done message}
+# so ProgressTable treats the event as a known terminal status. Stems
+# not reported during the sweep receive a final {stem skipped "no reply yet"}.
+proc spar::r::run {opts on_progress on_complete} {
+    variable reported_stems
+
+    set campaign_file [dict get $opts campaign_file]
+    set dry_run       [spar::dict_get_default $opts dry_run 0]
+    set segments      [spar::dict_get_default $opts segments {}]
+    set stems         [spar::dict_get_default $opts stems    {}]
+
+    # Emit started per-slug so UI rows leave their initial state.
+    if {$on_progress ne ""} {
+        foreach s $stems {
+            {*}$on_progress $s started ""
+        }
+    }
+
+    set cdata [spar::load_campaign $campaign_file]
+    if {![dict exists $cdata reply_check mailroom_account] \
+        || ![dict exists $cdata reply_check folder]} {
+        if {$on_progress ne ""} {
+            {*}$on_progress "" failed \
+                "campaign YAML missing reply_check.mailroom_account or reply_check.folder"
+        }
+        {*}$on_complete 0 1 {}
+        return
+    }
+    if {![dict exists $cdata sender email]} {
+        if {$on_progress ne ""} {
+            {*}$on_progress "" failed "campaign YAML missing sender.email"
+        }
+        {*}$on_complete 0 1 {}
+        return
+    }
+
+    set account [dict get $cdata reply_check mailroom_account]
+    set folder  [dict get $cdata reply_check folder]
+    set sender  [dict get $cdata sender email]
+    set campaign_dir [file dirname $campaign_file]
+
+    if {$dry_run} {
+        if {$on_progress ne ""} {
+            foreach s $stems {
+                {*}$on_progress $s skipped "dry-run (no mailroom query)"
+            }
+        }
+        {*}$on_complete 0 0 [dict create new_replies 0 errors 0]
+        return
+    }
+
+    # Reset accumulator; r::run is not concurrent with itself (T4 is not in
+    # auto_wired_tids), so a namespace variable is sufficient.
+    set reported_stems {}
+    set adapter [list apply {{outer_on_progress to_email stem status message} {
+        lappend ::spar::r::reported_stems $stem
+        set mapped [expr {$status eq "reply" ? "done" : $status}]
+        if {$outer_on_progress ne ""} {
+            {*}$outer_on_progress $stem $mapped $message
+        }
+    }} $on_progress]
+
+    set result [spar::check_replies_mailroom \
+        $campaign_dir $segments $account $folder $sender $adapter]
+
+    # Emit skipped for stems that did not receive a reply.
+    if {$on_progress ne ""} {
+        foreach s $stems {
+            if {$s ni $reported_stems} {
+                {*}$on_progress $s skipped "no reply yet"
+            }
+        }
+    }
+
+    set new_replies [spar::dict_get_default $result new_replies 0]
+    set errors      [spar::dict_get_default $result errors      0]
+    {*}$on_complete $new_replies $errors $result
 }
 
 package provide spar-email 1.0
