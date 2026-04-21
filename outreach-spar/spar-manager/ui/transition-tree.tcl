@@ -7,14 +7,11 @@
 # CampaignModel's `refreshed` event so the tree rebuilds after each
 # refresh without extra wiring here.
 #
-# The current dispatch code (clear_cohort, reapply_cohort_after_refresh,
-# ui_on_progress, do_dispatch, ui_on_complete, auto_dispatch) still
-# reads `$tree` and `slug_to_row` directly — those procs move into
-# DispatchController in Commit 5. To keep Commit 4 minimal, the class
-# mirrors its Tree widget path into the top-level `tree` global and its
-# SlugToRow dict into the top-level `slug_to_row` global (same shim
-# pattern Commit 1 used for `segments`/`all_contacts`). Commit 5
-# replaces every shim read with a method call and drops both globals.
+# DispatchController (Commit 5) consults this class via get_tree_widget,
+# get_row_names, get_slug_to_row, and update_row. _resolve_target
+# consults DispatchController's is_dispatching via a back-reference
+# wired post-construction by set_dispatch — we can't take it at
+# construction time because DispatchController needs this tree too.
 #
 # Events fired:
 #   selection-changed {stem}
@@ -25,9 +22,8 @@
 #       subscribe in #66.
 #   dispatch-target-changed {parent nchild label verb}
 #       emitted whenever the selection changes in a way that affects
-#       the Dispatch button's state/label. DispatchController (or, for
-#       Commit 4, the inline wiring that owns the $play button)
-#       subscribes to drive $play configure.
+#       the Dispatch button's state/label. DispatchController subscribes
+#       in its constructor to drive the Play button.
 
 package require Tk
 package require TclOO
@@ -36,6 +32,7 @@ namespace eval spar::ui {}
 
 oo::class create spar::ui::TransitionTree {
     variable Campaign Tree RowNames SlugToRow ShowCompleted
+    variable Dispatch
     variable Subs
 
     constructor {campaign parent_frame} {
@@ -43,6 +40,7 @@ oo::class create spar::ui::TransitionTree {
         set RowNames      [dict create]
         set SlugToRow     [dict create]
         set ShowCompleted 1
+        set Dispatch      ""
         set Subs          [dict create]
 
         # Toolbar with Show-completed checkbox.
@@ -94,13 +92,13 @@ oo::class create spar::ui::TransitionTree {
 
         # Subscribe to refreshed — refreshed rebuilds the tree in place.
         $Campaign subscribe refreshed [list [self] on_refreshed]
-
-        # Commit-5 cleanup target: shim global mirrors. Still read by
-        # clear_cohort / reapply_cohort_after_refresh / ui_on_progress /
-        # do_dispatch / auto_dispatch / ui_on_complete in spar-ui.tcl.
-        set ::tree        $Tree
-        set ::slug_to_row $SlugToRow
     }
+
+    # set_dispatch — called after DispatchController is constructed to
+    # close the circular wire. Needed because _resolve_target must
+    # consult the controller's is_dispatching flag, and the controller
+    # itself needs this tree at construction time.
+    method set_dispatch {dispatch} { set Dispatch $dispatch }
 
     # ─── Subscription ─────────────────────────────────────────────────────
     method subscribe {event cb} { dict lappend Subs $event $cb }
@@ -119,10 +117,9 @@ oo::class create spar::ui::TransitionTree {
     # ─── Public entry points ──────────────────────────────────────────────
 
     # populate — rebuild the treeview from the Campaign's current
-    # transitions. Resets RowNames / SlugToRow and mirrors both to the
-    # Commit-5 shim globals. Public because auto_dispatch and the
+    # transitions. Resets RowNames / SlugToRow. Public because the
     # CampaignModel `fully-loaded` / `refreshed` wiring in spar-ui.tcl
-    # call it directly via [$tree_obj populate].
+    # and the auto_dispatch path call it directly via [$tree_obj populate].
     method populate {} {
         set transitions [$Campaign get_transitions]
 
@@ -157,11 +154,6 @@ oo::class create spar::ui::TransitionTree {
 
             incr ti
         }
-
-        # Commit-5 cleanup target: keep shim globals in sync so the
-        # still-procedural dispatch code sees fresh row ids.
-        set ::row_names   $RowNames
-        set ::slug_to_row $SlugToRow
     }
 
     # rebuild — alias for populate.
@@ -224,12 +216,8 @@ oo::class create spar::ui::TransitionTree {
     # {parent nchild label verb} quadruple the dispatch button needs.
     # Returns {"" 0 "" ""} when the selection is not dispatchable (mixed
     # parents, empty transition, or dispatching in progress).
-    #
-    # The ::dispatching global read is a Commit-5 target: once
-    # DispatchController exists, the subscriber will query
-    # `[$dispatch is_dispatching]`. For Commit 4 it still lives here.
     method _resolve_target {} {
-        if {[info exists ::dispatching] && $::dispatching == 1} {
+        if {$Dispatch ne "" && [$Dispatch is_dispatching]} {
             return [list "" 0 "" ""]
         }
         set sel [$Tree selection]
