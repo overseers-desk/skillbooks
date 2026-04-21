@@ -558,7 +558,15 @@ proc spar::check_replies_mailroom {campaign_dir segments mailroom_account mailro
         dict lappend by_to $to_email $entry
     }
 
+    # Tk event loop pump: the mailroom sweep is a tight loop of
+    # synchronous `exec` calls, each ~1-2s. Without yielding between
+    # iterations the UI main thread freezes for the duration of the
+    # sweep (4+ minutes for a 164-contact campaign). `update` is only
+    # defined when Tk is loaded, so headless CLI callers see no-op.
+    set has_update [expr {[info commands update] ne ""}]
+
     dict for {to_email approach_entries} $by_to {
+        if {$has_update} { update idletasks }
         # Search mailroom for messages from this contact
         set code [catch {
             exec mailroom -a $mailroom_account \
