@@ -16,16 +16,20 @@
 # _label / etc. Per-runner opts come from each class's `build_opts`
 # method, not from proc-name lookups.
 #
-# T3 (Approach → Send) goes through dispatch_ready like any other
-# available transition; its SendEmailTransition::run owns the serial
-# SES sends and --delay pacing. The interactive [y/N] confirmation
-# still lives here, just before dispatch_ready, so the GUI path — which
-# already confirmed via its own buttons — doesn't prompt on stdin.
-# T3 is excluded from --auto unconditionally — auto must never send
-# email — because its class declares auto_safe=0.
+# Transitions that declare requires_send_confirmation surface an
+# up-front [y/N] here (CLI layer) so the GUI path — which confirms
+# via its own buttons — doesn't prompt on stdin.
 #
-# --auto runs T1+T2+T6+T7 as a state machine: classify, dispatch ready
-# work, re-classify, repeat until no new work is ready.
+# --auto drives auto_safe=1 transitions as a state machine: classify,
+# dispatch ready work, re-classify, repeat until no new work is ready.
+# Transitions with external-action side-effects (e.g. SES send)
+# declare auto_safe=0 and are filtered out; passing one via --tid=
+# alongside --auto is a hard error.
+#
+# --jobs=0 activates stepping: worker parallelism drops to 1 and a
+# stdin [y/N] gate fires before each item. The gate is generic — the
+# dispatcher / driver invokes a callback between items and the
+# transition class does not know what the callback does.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
@@ -50,6 +54,7 @@ set jobs 4
 set delay 2
 set assume_yes 0
 set verbose 0
+set stepping 0
 
 proc print_help {} {
     puts {spar-transitions.tcl — report and execute SPAR state transitions.
@@ -63,52 +68,63 @@ OPTIONS
     --stem=STEM       restrict to contact stem (repeatable)
     --pending         show/act on pending tasks only
     --ready           show/act on ready tasks only
-    --execute         run the transition (T1/T3/T6); default is report-only
+    --execute         run the transition; default is report-only
     --auto            with --execute: drive the offline state machine
-                      (T1+T2+T6+T7) until convergence. Excludes T3 — never
-                      sends email. Re-classifies between iterations so T1
-                      output feeds T2 and T6 output feeds T7 in one run.
+                      (all auto_safe=1 transitions) until convergence.
+                      Re-classifies between iterations so upstream
+                      output feeds downstream transitions in one run.
+                      Refuses if any --tid= names an auto_safe=0
+                      transition.
     --dry-run         run the transition with writes disabled (implies
                       execute-mode; pass alone, not with --execute).
-                      T1/T2/T6/T7: write prompts, skip harnesses.
-                      T3: skip SES send, skip stamp.
-                      T4: query mailbox, skip reply append.
-    --jobs=N          parallel jobs for T1/T6 --execute (default 4)
-    --delay=N         seconds between T3 sends (default 2, serial)
-    --yes             skip the "send N emails? [y/N]" confirmation
+                      Harness-backed transitions write prompts, skip
+                      children; send-type transitions skip the external
+                      action and any stamp that follows it.
+    --jobs=N          parallel jobs for --execute (default 4); pass
+                      --jobs=0 to step one item at a time with a
+                      stdin [y/N] gate before each item.
+    --delay=N         seconds between sends for send-type transitions
+                      (default 2); ignored when --jobs=0.
+    --yes             skip any up-front confirmation prompt
     -v, --verbose     in report mode, list each contact (default: counts only)
     -h, --help        show this help
 
-TRANSITIONS
-    T1  Sweep → Profile           (execute: wired)
-    T2  Profile → Approach        (execute: wired)
-    T3  Approach → Send           (execute: wired, via send-email transition)
-    T4  Send → Reply              (execute: wired, via reply-check transition)
-    T6  Stale → Re-profile        (execute: wired)
-    T7  Re-profile → Re-approach  (execute: wired)
-    T8  LinkedIn → Email          (execute: not wired)
-
+TRANSITIONS}
+    foreach tid [spar::transition_tids] {
+        set t [::spar::transitions::get $tid]
+        set status [$t dispatch_status]
+        set mark $status
+        switch -- $status {
+            available       { set mark "execute: wired" }
+            not-implemented { set mark "execute: not wired" }
+            manual          { set mark "manual" }
+            blocked         { set mark "blocked" }
+            n/a             { set mark "n/a" }
+        }
+        puts [format "    %-3s %-28s (%s)" $tid [$t label] $mark]
+    }
+    puts {
 COMMON WORKFLOWS
     # Report: what's ready across all transitions?
     tclsh9.0 spar-transitions.tcl path/to/campaign --ready
 
-    # Create all missing profiles (T1) in a campaign
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute
+    # Execute one transition's ready work
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=Tn --execute
 
-    # Make all missing approaches (T2)
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T2 --execute
+    # Step through one transition's ready work, confirming each item
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=Tn \
+        --execute --jobs=0
 
-    # Send all approach-ready emails (T3) — dry-run first, then live
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T3 --dry-run
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T3 --execute
+    # Dry-run first, then live
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=Tn --dry-run
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=Tn --execute
 
     # Limit to one segment or one stem
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=T1 --execute \
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=Tn --execute \
         --segment=vic --stem=jane-doe
 
-    # Drive the offline state machine until convergence (no email):
-    # T1+T6 generate profiles, T2+T7 generate approaches, looping with
-    # re-classification until nothing new is ready.
+    # Drive the offline state machine (auto_safe transitions) until
+    # convergence, re-classifying between iterations.
     tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --execute --auto}
 }
 
@@ -162,10 +178,43 @@ if {$auto_mode && !$execute_mode} {
     exit 1
 }
 
-# Email safety: --auto never sends. Refuse rather than silently dropping T3.
-if {$auto_mode && "T3" in $filter_tid} {
-    puts stderr "Error: --auto excludes T3 (no email sends). Drop --tid=T3 or drop --auto."
-    exit 1
+# --jobs=0 is the stepping signal: one item at a time, gated by a
+# stdin [y/N] callback installed below. Parallelism and pacing both
+# become meaningless once the user's keystroke is the pace.
+if {$jobs == 0} {
+    set stepping 1
+    set jobs 1
+    set delay 0
+}
+
+# Safety: --auto refuses any transition whose class declares
+# auto_safe=0 (e.g. live SES send). The check is against class
+# metadata, not T-id literals, so new auto-unsafe transitions are
+# refused without touching this file.
+if {$auto_mode && [llength $filter_tid] > 0} {
+    set unsafe {}
+    foreach tid $filter_tid {
+        if {[catch {set t [::spar::transitions::get $tid]}]} continue
+        if {![$t auto_safe]} { lappend unsafe "$tid ([$t label])" }
+    }
+    if {[llength $unsafe] > 0} {
+        puts stderr "Error: --auto excludes [join $unsafe {, }]. Drop those --tid= values or drop --auto."
+        exit 1
+    }
+}
+
+# step_prompt -- stdin [y/N] gate, installed as the step_callback
+# when --jobs=0. Generic: the caller passes the current transition's
+# tid and the item label; this proc carries no T-id-specific logic.
+proc step_prompt {tid slug idx total} {
+    set label ""
+    catch {set label [::spar::transition_label $tid]}
+    set desc [expr {$label ne "" ? "$tid ($label)" : $tid}]
+    puts -nonewline stderr "\[y/N\] $desc: $slug ($idx/$total)? "
+    flush stderr
+    set reply [string trim [gets stdin]]
+    if {[string tolower $reply] in {y yes}} { return continue }
+    return abort
 }
 
 if {$campaign_file ne "" && $campaign_dir eq ""} {
@@ -346,7 +395,8 @@ if {$execute_mode} {
     # blocks until all have drained.
     proc dispatch_ready {ready_by_tid active_tids yaml_path cdata \
                          dry_run jobs delay \
-                         filter_segments filter_stems assume_yes} {
+                         filter_segments filter_stems assume_yes \
+                         step_callback} {
         set ::_pending_dispatchers 0
         set ::_alldone 0
         foreach tid $active_tids {
@@ -358,7 +408,11 @@ if {$execute_mode} {
                 campaign_file $yaml_path \
                 dry_run $dry_run \
                 jobs $jobs \
-                delay $delay]
+                delay $delay \
+                tid $tid]
+            if {$step_callback ne ""} {
+                dict set opts step_callback $step_callback
+            }
             # Per-runner opts come from the transition class's build_opts
             # method. It returns a dict to merge onto opts; the
             # log_message key is the one-line summary printed before
@@ -428,7 +482,8 @@ if {$execute_mode} {
 
             dispatch_ready $ready_by_tid $active_tids \
                 $yaml_path $cdata $dry_run $jobs $delay \
-                $filter_segments $filter_stems $assume_yes
+                $filter_segments $filter_stems $assume_yes \
+                [expr {$stepping ? "step_prompt" : ""}]
 
             incr iter
         }
@@ -469,25 +524,32 @@ if {$execute_mode} {
     puts "Campaign: $campaign_name"
     if {$dry_run} { puts "(dry run — writes disabled)" }
 
-    # T3 confirmation lives at the CLI layer (not inside
-    # SendEmailTransition::run) so the GUI path — which has already
-    # confirmed via its own buttons — doesn't prompt on stdin.
-    if {[dict exists $ready_by_tid T3] && "T3" in $active_tids \
-        && !$dry_run && !$assume_yes} {
-        set n_t3 [llength [dict get $ready_by_tid T3]]
-        set ses_region [spar::dict_get_default $cdata ses_region "ap-southeast-2"]
-        puts -nonewline "Send $n_t3 email(s) live via SES (region $ses_region)? \[y/N\] "
-        flush stdout
-        set reply [string trim [gets stdin]]
-        if {[string tolower $reply] ne "y" && [string tolower $reply] ne "yes"} {
-            puts "Aborted — no emails sent."
-            exit 1
+    # Up-front confirmation lives at the CLI layer (not inside the
+    # transition class) so the GUI path — which has already confirmed
+    # via its own buttons — doesn't prompt on stdin. Any transition
+    # whose class declares requires_send_confirmation=1 gates here.
+    # Skipped under --dry-run, --yes, or --jobs=0 (stepping supplies
+    # its own per-item gate).
+    if {!$dry_run && !$assume_yes && !$stepping} {
+        foreach tid $active_tids {
+            if {![dict exists $ready_by_tid $tid]} continue
+            set t [::spar::transitions::get $tid]
+            if {![$t requires_send_confirmation]} continue
+            set n [llength [dict get $ready_by_tid $tid]]
+            puts -nonewline "$tid ([$t label]): proceed with $n live action(s)? \[y/N\] "
+            flush stdout
+            set reply [string trim [gets stdin]]
+            if {[string tolower $reply] ni {y yes}} {
+                puts "Aborted."
+                exit 1
+            }
         }
     }
 
     dispatch_ready $ready_by_tid $active_tids \
         $yaml_path $cdata $dry_run $jobs $delay \
-        $filter_segments $filter_stems $assume_yes
+        $filter_segments $filter_stems $assume_yes \
+        [expr {$stepping ? "step_prompt" : ""}]
 
     puts ""
     puts "=== Summary ==="

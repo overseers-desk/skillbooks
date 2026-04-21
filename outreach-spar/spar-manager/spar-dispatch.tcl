@@ -45,14 +45,18 @@ oo::class create spar::Dispatcher {
     variable Queue QueueIdx Active Completed Failed
     variable Jobs LogsDir HarnessPath OnProgress OnComplete Result
     variable Paused
+    variable Tid StepCallback
 
-    constructor {jobs logs_dir harness_path on_progress on_complete result} {
+    constructor {jobs logs_dir harness_path on_progress on_complete result \
+                 {tid ""} {step_callback ""}} {
         set Jobs $jobs
         set LogsDir $logs_dir
         set HarnessPath $harness_path
         set OnProgress $on_progress
         set OnComplete $on_complete
         set Result $result
+        set Tid $tid
+        set StepCallback $step_callback
         set Queue {}
         set QueueIdx 0
         set Active 0
@@ -98,6 +102,20 @@ oo::class create spar::Dispatcher {
             set pdir [lindex $Queue $QueueIdx]
             incr QueueIdx
             set slug [file tail $pdir]
+
+            if {$StepCallback ne ""} {
+                set verdict [{*}$StepCallback $Tid $slug \
+                    $QueueIdx [llength $Queue]]
+                if {$verdict eq "abort"} {
+                    {*}$OnProgress $slug skipped "aborted"
+                    while {$QueueIdx < [llength $Queue]} {
+                        set next_pdir [lindex $Queue $QueueIdx]
+                        incr QueueIdx
+                        {*}$OnProgress [file tail $next_pdir] skipped "aborted"
+                    }
+                    break
+                }
+            }
 
             {*}$OnProgress $slug started ""
 
@@ -213,6 +231,8 @@ proc spar::p::run {opts on_progress on_complete} {
     set dry_run [spar::dict_get_default $opts dry_run 0]
     set jobs [spar::dict_get_default $opts jobs 4]
     set user_logs [spar::dict_get_default $opts logs_dir ""]
+    set tid [spar::dict_get_default $opts tid ""]
+    set step_callback [spar::dict_get_default $opts step_callback ""]
 
     set cdata [spar::load_campaign $campaign_file]
     set base [dict get $cdata _base]
@@ -294,7 +314,7 @@ proc spar::p::run {opts on_progress on_complete} {
         $on_progress $slug_ctx]
 
     set disp [spar::Dispatcher new $jobs $logs_dir $harness \
-        $wrapped_progress $on_complete $agg_result]
+        $wrapped_progress $on_complete $agg_result $tid $step_callback]
     $disp run $all_prompt_dirs
     return
 }
@@ -519,6 +539,8 @@ proc spar::a::run {opts on_progress on_complete} {
     set user_logs [spar::dict_get_default $opts logs_dir ""]
     set sel_segments [spar::dict_get_default $opts segments {}]
     set sel_stems [spar::dict_get_default $opts stems {}]
+    set tid [spar::dict_get_default $opts tid ""]
+    set step_callback [spar::dict_get_default $opts step_callback ""]
 
     set cdata [spar::load_campaign $campaign_file]
     set base [dict get $cdata _base]
@@ -904,7 +926,7 @@ Emit VERDICT: DONE if the draft is credible (the persona reacted naturally witho
     }
 
     set disp [spar::Dispatcher new $jobs $logs_dir $harness \
-        $on_progress $on_complete $result]
+        $on_progress $on_complete $result $tid $step_callback]
     $disp run $prompt_dirs
     return $result
 }

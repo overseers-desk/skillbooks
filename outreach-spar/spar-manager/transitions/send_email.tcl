@@ -33,9 +33,10 @@ oo::class create ::spar::transitions::SendEmailDriver {
     variable CurrentSlug CurrentApproachPath
     variable DelayTimer
     variable Done Failed
+    variable Tid StepCallback
 
     constructor {tasks delay dry_run ses_region camp_sender \
-                 on_progress on_complete} {
+                 on_progress on_complete {tid ""} {step_callback ""}} {
         set Tasks        $tasks
         set TaskIdx      0
         set Delay        $delay
@@ -48,6 +49,8 @@ oo::class create ::spar::transitions::SendEmailDriver {
 
         set OnProgress $on_progress
         set OnComplete $on_complete
+        set Tid $tid
+        set StepCallback $step_callback
 
         set Paused 0
         set Cancelled 0
@@ -107,6 +110,14 @@ oo::class create ::spar::transitions::SendEmailDriver {
 
         set CurrentSlug $slug
         set CurrentApproachPath $approach_path
+
+        if {$StepCallback ne ""} {
+            set verdict [{*}$StepCallback $Tid $slug $TaskIdx [llength $Tasks]]
+            if {$verdict eq "abort"} {
+                my finish
+                return
+            }
+        }
 
         if {$OnProgress ne ""} {
             {*}$OnProgress $slug started ""
@@ -318,6 +329,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
         set dry_run       [spar::dict_get_default $opts dry_run 0]
         set tasks         [spar::dict_get_default $opts tasks {}]
         set delay         [spar::dict_get_default $opts delay 2]
+        set step_callback [spar::dict_get_default $opts step_callback ""]
 
         set cdata [spar::load_campaign $campaign_file]
         set camp_sender [spar::dict_get_default $cdata sender [dict create]]
@@ -325,7 +337,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
 
         set driver [::spar::transitions::SendEmailDriver new \
             $tasks $delay $dry_run $ses_region $camp_sender \
-            $on_progress $on_complete]
+            $on_progress $on_complete [my tid] $step_callback]
         $driver kick
     }
 }
@@ -336,4 +348,5 @@ oo::class create ::spar::transitions::SendEmailTransition {
     -label "Approach → Send" \
     -auto-safe 0 \
     -dispatch-status available \
+    -requires-send-confirmation 1 \
     -ui-tree-row 1
