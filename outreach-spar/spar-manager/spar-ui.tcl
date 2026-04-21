@@ -73,16 +73,18 @@ source [file join $script_dir ui log-window.tcl]
 source [file join $script_dir ui progress-table.tcl]
 source [file join $script_dir ui transition-tree.tcl]
 source [file join $script_dir ui dispatch-controller.tcl]
+source [file join $script_dir ui warnings.tcl]
+source [file join $script_dir ui legend.tcl]
+source [file join $script_dir ui inspector.tcl]
 
 # ============================================================
 # Load campaign data
 # ============================================================
 
 # The CampaignModel owns campaign config, segment data, async-load state,
-# and per-contact classification. This bootstrap instantiates it and
-# populates shim top-level vars (segments, all_contacts, warnings, …)
-# that the still-procedural UI zones read. Each subsequent refactor
-# commit removes one zone's shim reads as that zone becomes a class.
+# and per-contact classification. Zones (ProgressTable, TransitionTree,
+# DispatchController, warnings module, Inspector) subscribe to its events
+# and call its accessors directly; no shim globals remain.
 set campaign [spar::ui::CampaignModel new $campaign_file $script_dir]
 $campaign load
 
@@ -91,15 +93,9 @@ $campaign load
 # mutated internally). The toolbar badge subscribes to unread-changed.
 set log [spar::ui::LogWindow new $log_to_stderr]
 
-set cdata          [$campaign get_cdata]
 set campaign_name  [$campaign get_campaign_name]
 set sender_text    [$campaign get_sender_text]
 set filter_desc    [$campaign get_filter_desc]
-set segments       [$campaign get_segments]
-set all_contacts   [$campaign get_all_contacts]
-set warnings       [$campaign get_warnings]
-set transitions    [$campaign get_transitions]
-set full_load_done [$campaign get_full_load_done]
 
 # ============================================================
 # Colour palette
@@ -176,7 +172,8 @@ pack ${cpanel}.toolbar.checkemail -side right
 ttk::button ${cpanel}.toolbar.refresh -text "Refresh" -command [list $campaign refresh]
 pack ${cpanel}.toolbar.refresh -side right -padx {0 4}
 
-ttk::button ${cpanel}.toolbar.legend -text "Legend" -command show_legend_window
+ttk::button ${cpanel}.toolbar.legend -text "Legend" \
+    -command ::spar::ui::legend::show
 pack ${cpanel}.toolbar.legend -side right -padx {0 4}
 
 ttk::button ${cpanel}.toolbar.selall -text "All" -width 4 \
@@ -187,86 +184,6 @@ ttk::button ${cpanel}.toolbar.selnone -text "None" -width 4 \
     -command [list apply {{} { $::progress set_all 0 }}]
 pack ${cpanel}.toolbar.selnone -side left -padx {2 0}
 
-
-# Legend window — identical to mock-ui.tcl
-proc show_legend_window {} {
-    if {[winfo exists .legendwin]} {
-        wm deiconify .legendwin
-        raise .legendwin
-        return
-    }
-    toplevel .legendwin
-    wm title .legendwin "Column Denominator Tree"
-    canvas .legendwin.c -width 750 -height 220 -highlightthickness 0
-    pack .legendwin.c -fill both -expand 1
-    bind .legendwin.c <Configure> {draw_legend .legendwin.c}
-    wm protocol .legendwin WM_DELETE_WINDOW {wm withdraw .legendwin}
-}
-
-proc draw_legend {c} {
-    $c delete all
-    set bfont "TkDefaultFont 9 bold"
-    set afont "TkDefaultFont 8"
-    set line_colour "#888888"
-    set acolour "#666666"
-
-    set w [winfo width $c]
-    if {$w < 10} {set w 700}
-
-    set dy 34
-    set y0 14
-    set y1 [expr {$y0 + $dy}]
-    set y2 [expr {$y0 + 2*$dy}]
-    set y3 [expr {$y0 + 3*$dy}]
-    set y4 [expr {$y0 + 4*$dy}]
-    set y5 [expr {$y0 + 5*$dy}]
-
-    set margin 50
-    set span [expr {$w - 2*$margin}]
-    set x_valid    [expr {$w / 2}]
-    set x_profile  [expr {$margin + $span * 0.0}]
-    set x_star     [expr {$margin + $span * 0.50}]
-    set x_astar    [expr {$margin + $span * 0.10}]
-    set x_email    [expr {$margin + $span * 0.30}]
-    set x_linkedin [expr {$margin + $span * 0.55}]
-    set x_facebook [expr {$margin + $span * 0.75}]
-    set x_phone    [expr {$margin + $span * 0.95}]
-    set x_aeml     [expr {$margin + $span * 0.40}]
-    set x_sent     [expr {$margin + $span * 0.50}]
-    set x_repl     [expr {$margin + $span * 0.60}]
-
-    set nodes [list \
-        "Valid"       ""         $x_valid    $y0 \
-        "Profile"     "/ Valid"  $x_profile  $y1 \
-        "3+\u2605"    "/ Valid"  $x_star     $y1 \
-        "A/3+\u2605"  "/ 3+\u2605" $x_astar $y2 \
-        "Email"       "/ 3+\u2605" $x_email $y2 \
-        "LinkedIn"    "/ 3+\u2605" $x_linkedin $y2 \
-        "Facebook"    "/ 3+\u2605" $x_facebook $y2 \
-        "Only \u260e" "/ 3+\u2605" $x_phone $y2 \
-        "A/Eml"       "/ Email" $x_aeml     $y3 \
-        "\u2709 Sent" "/ A/Eml" $x_sent     $y4 \
-        "\u2709 Repl" "/ Sent"  $x_repl     $y5 \
-    ]
-
-    foreach {lbl denom x y} $nodes {
-        $c create text $x $y -text $lbl -font $bfont -anchor center
-        if {$denom ne ""} {
-            $c create text $x [expr {$y + 11}] -text $denom -font $afont -fill $acolour -anchor center
-        }
-    }
-
-    set g 14
-    set gt 9
-    $c create line $x_valid [expr {$y0+$gt}]  $x_profile [expr {$y1-$gt}] -fill $line_colour
-    $c create line $x_valid [expr {$y0+$gt}]  $x_star    [expr {$y1-$gt}] -fill $line_colour
-    foreach xc [list $x_astar $x_email $x_linkedin $x_facebook $x_phone] {
-        $c create line $x_star [expr {$y1+$g}] $xc [expr {$y2-$gt}] -fill $line_colour
-    }
-    $c create line $x_email [expr {$y2+$g}] $x_aeml [expr {$y3-$gt}] -fill $line_colour
-    $c create line $x_aeml  [expr {$y3+$g}] $x_sent [expr {$y4-$gt}] -fill $line_colour
-    $c create line $x_sent  [expr {$y4+$g}] $x_repl [expr {$y5-$gt}] -fill $line_colour
-}
 
 # --- 2.2 Progress table ---
 ttk::labelframe ${cpanel}.progress -text "Progress"
@@ -282,79 +199,13 @@ set progress [spar::ui::ProgressTable new $campaign ${cpanel}.progress]
 $progress populate
 
 # --- 2.3 Warnings (collapsed by default) ---
+#
+# Namespace module, not a class — the zone's state is just
+# expanded-flag, cached summary, frame path. `init` builds the widget
+# tree and subscribes to the Campaign's refreshed + fully-loaded events
+# so the warning count / summary auto-update.
+::spar::ui::warnings::init $campaign $cpanel
 
-set warnings_expanded 0
-
-ttk::frame ${cpanel}.warnings
-pack ${cpanel}.warnings -fill x -padx 8 -pady {2 4}
-
-set wframe ${cpanel}.warnings
-
-proc compute_warning_summary {} {
-    global warnings
-    set warn_dup_email 0
-    set warn_dup_name 0
-    set warn_dup_subject 0
-    set warn_other 0
-    foreach w $warnings {
-        if {[string match "*Duplicate To:*" $w] || [string match "*Duplicate email:*" $w]} {
-            incr warn_dup_email
-        } elseif {[string match "*Duplicate name:*" $w]} {
-            incr warn_dup_name
-        } elseif {[string match "*Identical subject:*" $w]} {
-            incr warn_dup_subject
-        } else {
-            incr warn_other
-        }
-    }
-    set parts {}
-    if {$warn_dup_email > 0} { lappend parts "${warn_dup_email} duplicate email" }
-    if {$warn_dup_name > 0}  { lappend parts "${warn_dup_name} duplicate name" }
-    if {$warn_dup_subject > 0} { lappend parts "${warn_dup_subject} identical subject" }
-    if {$warn_other > 0}     { lappend parts "${warn_other} other" }
-    return [join $parts ", "]
-}
-
-set warn_summary [compute_warning_summary]
-
-ttk::button ${wframe}.toggle -text "\u25b8 \u26a0 [llength $warnings] warnings ($warn_summary)" \
-    -command toggle_warnings -style Toolbutton
-pack ${wframe}.toggle -fill x -anchor w
-
-text ${wframe}.txt -height 5 -wrap word -font "TkDefaultFont 8" -state disabled \
-    -background "#fff8e1" -relief flat
-
-proc populate_warnings_text {} {
-    global wframe warnings
-    ${wframe}.txt tag configure bold -font "TkDefaultFont 8 bold"
-    ${wframe}.txt configure -state normal
-    ${wframe}.txt delete 1.0 end
-    foreach w $warnings {
-        set colon [string first ":" $w]
-        if {$colon >= 0} {
-            ${wframe}.txt insert end "\u2022 " {} [string range $w 0 $colon] bold [string range $w [expr {$colon+1}] end] {}
-        } else {
-            ${wframe}.txt insert end "\u2022 $w"
-        }
-        ${wframe}.txt insert end "\n"
-    }
-    ${wframe}.txt configure -state disabled
-}
-
-populate_warnings_text
-
-proc toggle_warnings {} {
-    global warnings_expanded wframe warnings warn_summary
-    if {$warnings_expanded} {
-        pack forget ${wframe}.txt
-        ${wframe}.toggle configure -text "\u25b8 \u26a0 [llength $warnings] warnings ($warn_summary)"
-        set warnings_expanded 0
-    } else {
-        pack ${wframe}.txt -fill x -padx 4 -pady 2
-        ${wframe}.toggle configure -text "\u25be \u26a0 [llength $warnings] warnings ($warn_summary)"
-        set warnings_expanded 1
-    }
-}
 
 # ============================================================
 # Zone 3: Transition manager
@@ -420,6 +271,12 @@ $tree_obj set_dispatch $dispatch
 
 $dispatch show_dispatch_bar
 
+# Inspector scaffold (#66). Subscribes to TransitionTree's
+# selection-changed and double-clicked events so the wiring exists
+# from day one; the actual pane construction + render methods are
+# issue #66 and are empty stubs in the scaffold.
+set inspector [spar::ui::Inspector new $campaign $tree_obj .tabs.tab_current.pw]
+
 
 # ============================================================
 # Initial sash position
@@ -439,61 +296,23 @@ bind .tabs.tab_current.pw <Map> {
 # Model subscriptions
 # ============================================================
 #
-# Each subscriber pulls fresh data from the CampaignModel's accessors,
-# mirrors the data into shim globals the still-procedural populate /
-# recalc procs read, then invokes those procs. As each zone becomes a
-# class in later commits, its subscriber inlines into the class's own
-# event handler and the shim globals disappear.
+# Every refactored zone self-subscribes to the Campaign events it cares
+# about. The two things left here are:
+#   - the config-summary labels (cf.v1/v2/v4) + window title, which
+#     belong to this bootstrap and have no owning class;
+#   - a kick to TransitionTree on `fully-loaded` (it self-subscribes to
+#     `refreshed` but not `fully-loaded`, and the first populate against
+#     the post-async transitions list lives here).
+# log-message is piped straight into the LogWindow.
 
-$campaign subscribe fully-loaded [list apply {{} {
-    set ::all_contacts   [$::campaign get_all_contacts]
-    set ::warnings       [$::campaign get_warnings]
-    set ::transitions    [$::campaign get_transitions]
-    set ::full_load_done [$::campaign get_full_load_done]
-
-    global wframe warn_summary warnings_expanded
-    set warn_summary [compute_warning_summary]
-    populate_warnings_text
-    if {$warnings_expanded} {
-        ${wframe}.toggle configure -text "▾ ⚠ [llength $::warnings] warnings ($warn_summary)"
-    } else {
-        ${wframe}.toggle configure -text "▸ ⚠ [llength $::warnings] warnings ($warn_summary)"
-    }
-
-    $::tree_obj populate
-
-    # Headless / self-debug hook (--tid) is driven by DispatchController's
-    # own fully-loaded subscription; no wiring needed here.
-}}]
+$campaign subscribe fully-loaded [list $tree_obj populate]
 
 $campaign subscribe refreshed [list apply {{} {
-    set ::cdata          [$::campaign get_cdata]
-    set ::campaign_name  [$::campaign get_campaign_name]
-    set ::sender_text    [$::campaign get_sender_text]
-    set ::filter_desc    [$::campaign get_filter_desc]
-    set ::segments       [$::campaign get_segments]
-    set ::all_contacts   [$::campaign get_all_contacts]
-    set ::warnings       [$::campaign get_warnings]
-    set ::transitions    [$::campaign get_transitions]
-    set ::full_load_done [$::campaign get_full_load_done]
-
     global cf
-    ${cf}.v1 configure -text $::campaign_name
-    ${cf}.v2 configure -text $::sender_text
-    ${cf}.v4 configure -text $::filter_desc
-    wm title . "SPAR Campaign Manager — $::campaign_name"
-
-    global wframe warn_summary warnings_expanded
-    set warn_summary [compute_warning_summary]
-    populate_warnings_text
-    if {$warnings_expanded} {
-        ${wframe}.toggle configure -text "▾ ⚠ [llength $::warnings] warnings ($warn_summary)"
-    } else {
-        ${wframe}.toggle configure -text "▸ ⚠ [llength $::warnings] warnings ($warn_summary)"
-    }
-
-    # TransitionTree self-subscribes to `refreshed` and rebuilds its tree;
-    # no populate call needed here.
+    ${cf}.v1 configure -text [$::campaign get_campaign_name]
+    ${cf}.v2 configure -text [$::campaign get_sender_text]
+    ${cf}.v4 configure -text [$::campaign get_filter_desc]
+    wm title . "SPAR Campaign Manager — [$::campaign get_campaign_name]"
 }}]
 
 $campaign subscribe log-message [list $log log]
