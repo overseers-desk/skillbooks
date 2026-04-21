@@ -68,414 +68,42 @@ if {[llength $auto_stems] > 0 && $auto_tid eq ""} {
 # Source backend libraries
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
+source [file join $script_dir ui campaign-model.tcl]
 
 # ============================================================
 # Load campaign data
 # ============================================================
 
-# Load campaign YAML config and discover segments.
-# Sets config globals; returns 1 on success, 0 on error.
-# Re-reads $campaign_file from disk; does not re-resolve which file to use.
-proc load_campaign_config {} {
-    global campaign_dir campaign_name sender_text filter_desc
-    global cdata yaml_path segment_order skip_set segment_paths campaign_file
+# The CampaignModel owns campaign config, segment data, async-load state,
+# and per-contact classification. This bootstrap instantiates it and
+# populates shim top-level vars (segments, all_contacts, warnings, …)
+# that the still-procedural UI zones read. Each subsequent refactor
+# commit removes one zone's shim reads as that zone becomes a class.
+set campaign [spar::ui::CampaignModel new $campaign_file $script_dir]
+$campaign load
 
-    set yaml_path $campaign_file
-    if {![file exists $yaml_path]} {
-        tk_messageBox -icon error -title "Campaign Missing" \
-            -message "Campaign YAML no longer exists:\n$yaml_path"
-        set campaign_name "(missing)"
-        set sender_text ""
-        set filter_desc ""
-        set segment_order {}
-        set segment_paths {}
-        return 0
-    }
+set cdata          [$campaign get_cdata]
+set campaign_name  [$campaign get_campaign_name]
+set sender_text    [$campaign get_sender_text]
+set filter_desc    [$campaign get_filter_desc]
+set segments       [$campaign get_segments]
+set all_contacts   [$campaign get_all_contacts]
+set warnings       [$campaign get_warnings]
+set transitions    [$campaign get_transitions]
+set full_load_done [$campaign get_full_load_done]
 
-    if {[catch {set cdata [spar::load_campaign $yaml_path]} err]} {
-        tk_messageBox -icon error -title "Campaign Load Error" \
-            -message "Error loading campaign:\n$err"
-        set campaign_name "(error)"
-        set sender_text ""
-        set filter_desc ""
-        set segment_order {}
-        set segment_paths {}
-        return 0
-    }
-
-    # --- Campaign config values ---
-    set campaign_name [spar::dict_get_default $cdata campaign [file tail $yaml_path]]
-
-    # Sender
-    set sender_parts {}
-    if {[dict exists $cdata sender]} {
-        set sender_d [dict get $cdata sender]
-        set s_name [spar::dict_get_default $sender_d name ""]
-        set s_role [spar::dict_get_default $sender_d role ""]
-        set s_email [spar::dict_get_default $sender_d email ""]
-        if {$s_name ne ""} { lappend sender_parts $s_name }
-        if {$s_role ne ""} { lappend sender_parts $s_role }
-        if {$s_email ne ""} { lappend sender_parts "($s_email)" }
-    }
-    set sender_text [join $sender_parts ", "]
-
-    # Filter
-    set filter_desc ""
-    if {[dict exists $cdata filter]} {
-        set filt [dict get $cdata filter]
-        set filter_parts {}
-        if {[catch {
-            dict for {k v} $filt {
-                lappend filter_parts "${k}=${v}"
-            }
-        }]} {
-            set filter_desc "$filt"
-        } else {
-            set filter_desc [join $filter_parts "  "]
-        }
-    }
-
-    # --- Discover segments ---
-    set segments_list {}
-    if {[dict exists $cdata segments]} {
-        set segments_list [dict get $cdata segments]
-    }
-    set skip_set {}
-    if {[dict exists $cdata skip_segments]} {
-        foreach s [dict get $cdata skip_segments] {
-            lappend skip_set $s
-        }
-    }
-
-    # If no segments in YAML, fall back to directory scan
-    if {[llength $segments_list] == 0} {
-        foreach child [lsort [glob -nocomplain [file join $campaign_dir *]]] {
-            if {[file isdirectory $child] && [file exists [file join $child roster.tsv]]} {
-                lappend segments_list [file tail $child]
-            }
-        }
-    }
-
-    # Build segment paths (include skipped segments so they appear muted)
-    set segment_order {}
-    set segment_paths {}
-    foreach seg $segments_list {
-        set seg_dir [file join $campaign_dir $seg]
-        if {[file isdirectory $seg_dir] && [file exists [file join $seg_dir roster.tsv]]} {
-            lappend segment_order $seg
-            lappend segment_paths [list $seg $seg_dir]
-        }
-    }
-
-    return 1
-}
-
-# Fast startup load: campaign config + roster TSV counts only.
-# Filesystem-dependent columns (Profile, A/3+★, A/Eml, Sent, Repl) are
-# deferred to schedule_async_load.
-proc load_campaign_data_fast {} {
-    global segments warnings transitions
-    global all_contacts skip_set segment_paths
-    global segment_paths_for_async full_load_done
-
-    set full_load_done 0
-    set segment_paths_for_async {}
-
-    if {![load_campaign_config]} {
-        set segments {}
-        set warnings {}
-        set transitions {}
-        set all_contacts {}
-        set full_load_done 1
-        return
-    }
-
-    set all_contacts {}
-    set segments {}
-
-    foreach item $segment_paths {
-        lassign $item label seg_dir
-        set is_active [expr {$label ni $skip_set}]
-
-        lappend segment_paths_for_async [list $label $seg_dir $is_active]
-
-        if {[catch {set rcounts [spar::roster_counts $seg_dir]} err]} {
-            set zero_data [list 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {}]
-            lappend segments [list $label $is_active $zero_data]
-            continue
-        }
-
-        set v  [dict get $rcounts valid]
-        set s3 [dict get $rcounts star3]
-        set e  [dict get $rcounts has_email]
-        set l  [dict get $rcounts has_linkedin]
-        set f  [dict get $rcounts has_facebook]
-        set po [dict get $rcounts has_phone_only]
-
-        # TSV-derivable columns filled; filesystem columns placeholder (0)
-        set raw_data [list \
-            $v {} \
-            0 {} \
-            $s3 [format_pct $s3 $v] \
-            0 {} \
-            $e [format_pct $e $s3] \
-            0 {} \
-            $l [format_pct $l $s3] \
-            $f [format_pct $f $s3] \
-            $po [format_pct $po $s3] \
-            0 {} \
-            0 {}]
-
-        lappend segments [list $label $is_active $raw_data]
-    }
-
-    set warnings {}
-    set transitions {}
-}
-
-# Full synchronous load (used by Refresh).
-proc load_campaign_data_full {} {
-    global segments warnings transitions
-    global all_contacts skip_set segment_paths
-    global full_load_done
-
-    set full_load_done 1
-
-    if {![load_campaign_config]} {
-        set segments {}
-        set warnings {}
-        set transitions {}
-        set all_contacts {}
-        return
-    }
-
-    set all_contacts {}
-    set segments {}
-
-    foreach item $segment_paths {
-        lassign $item label seg_dir
-        set is_active [expr {$label ni $skip_set}]
-
-        if {[catch {
-            set classified [spar::classify_segment $seg_dir]
-        } err]} {
-            set zero_data [list 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {}]
-            lappend segments [list $label $is_active $zero_data]
-            continue
-        }
-
-        if {$is_active} {
-            foreach c $classified {
-                lappend all_contacts $c
-            }
-        }
-
-        set counts [spar::progress_counts $classified]
-
-        set v [dict get $counts valid]
-        set p [dict get $counts profiled]
-        set s3 [dict get $counts star3]
-        set a3 [dict get $counts approached_star3]
-        set e [dict get $counts has_email]
-        set ae [dict get $counts approached_email]
-        set l [dict get $counts has_linkedin]
-        set f [dict get $counts has_facebook]
-        set po [dict get $counts has_phone_only]
-        set es [dict get $counts email_sent]
-        set er [dict get $counts email_replied]
-
-        set raw_data [list \
-            $v {} \
-            $p [format_pct $p $v] \
-            $s3 [format_pct $s3 $v] \
-            $a3 [format_pct $a3 $s3] \
-            $e [format_pct $e $s3] \
-            $ae [format_pct $ae $e] \
-            $l [format_pct $l $s3] \
-            $f [format_pct $f $s3] \
-            $po [format_pct $po $s3] \
-            $es [format_pct $es $ae] \
-            $er [format_pct $er $es]]
-
-        lappend segments [list $label $is_active $raw_data]
-    }
-
-    set warnings [build_warnings $all_contacts]
-    set transitions [build_transitions $all_contacts]
-}
-
-proc format_pct {num denom} {
-    if {$denom == 0} {
-        return "-"
-    }
-    set pct [expr {$num * 100 / $denom}]
-    return "${pct}%"
-}
-
-# --- Async loading state ---
-set full_load_done 1
-set async_after_ids {}
-set segment_paths_for_async {}
-set async_segments_remaining 0
-
-# Filesystem-dependent column IDs (shown as "\u2026" until full load)
+# Filesystem-dependent column IDs (shown as "…" until full load).
+# Used by populate_progress_tree and by the segment-loaded subscriber
+# at the bottom of this file; moves to ProgressTable in a later commit.
 set fs_dependent_cols {profiled astar aeml sent repl}
 
-# Column ID -> progress_counts dict key
+# Column ID -> progress_counts dict key. Used by the segment-loaded
+# subscriber. Moves to ProgressTable in a later commit.
 set col_count_keys [dict create \
     valid valid  profiled profiled  star3 star3 \
     astar approached_star3  email has_email  aeml approached_email \
     linkedin has_linkedin  facebook has_facebook  phone has_phone_only \
     sent email_sent  repl email_replied]
-
-proc cancel_async_load {} {
-    global async_after_ids
-    foreach id $async_after_ids {
-        after cancel $id
-    }
-    set async_after_ids {}
-}
-
-proc schedule_async_load {} {
-    global segment_paths_for_async async_after_ids async_segments_remaining
-    global full_load_done
-    cancel_async_load
-    set async_segments_remaining [llength $segment_paths_for_async]
-    if {$async_segments_remaining == 0} {
-        set full_load_done 1
-        recalc_totals
-        return
-    }
-    # Use timer (not after idle) so Tk renders the window between segments
-    lappend async_after_ids [after 1 _async_load_next]
-}
-
-proc _async_load_next {} {
-    global segment_paths_for_async async_after_ids async_segments_remaining
-    global full_load_done ptree ptree_col_ids ptree_cols
-    global seg_counts all_contacts col_count_keys denom_parent
-    global warnings transitions
-
-    if {[llength $segment_paths_for_async] == 0} return
-
-    set item [lindex $segment_paths_for_async 0]
-    set segment_paths_for_async [lrange $segment_paths_for_async 1 end]
-    lassign $item seg_name seg_dir is_active
-
-    if {![catch {set classified [spar::classify_segment $seg_dir]} err]} {
-        if {$is_active} {
-            foreach c $classified { lappend all_contacts $c }
-        }
-
-        set cdict [spar::progress_counts $classified]
-
-        if {[$ptree exists $seg_name]} {
-            set counts {}
-            foreach id $ptree_col_ids {
-                set key [dict get $col_count_keys $id]
-                lappend counts [dict get $cdict $key]
-            }
-
-            if {$is_active} {
-                set ci 0
-                foreach id $ptree_col_ids {
-                    dict set seg_counts $seg_name $id [lindex $counts $ci]
-                    incr ci
-                }
-            }
-
-            # Build formatted values for this row
-            set values {}
-            set ci 0
-            foreach {id heading anchor} $ptree_cols {
-                set count [lindex $counts $ci]
-                set pid [dict get $denom_parent $id]
-                if {$pid eq ""} {
-                    lappend values $count
-                } else {
-                    set pidx [lsearch $ptree_col_ids $pid]
-                    set denom [lindex $counts $pidx]
-                    lappend values [fmt_cell $count $denom]
-                }
-                incr ci
-            }
-            $ptree item $seg_name -values $values
-        }
-    }
-
-    incr async_segments_remaining -1
-
-    if {[llength $segment_paths_for_async] > 0} {
-        lappend async_after_ids [after 1 _async_load_next]
-    } else {
-        set full_load_done 1
-        recalc_totals
-        after idle autosize_progress_tree
-
-        set warnings [build_warnings $all_contacts]
-        set transitions [build_transitions $all_contacts]
-        rebuild_warnings
-        rebuild_transitions
-
-        # Headless / self-debug hook: if --tid was given on the command
-        # line, drive the dispatch programmatically once the tree is
-        # populated. after idle so the UI finishes laying out.
-        global auto_tid
-        if {$auto_tid ne ""} {
-            after idle auto_dispatch
-        }
-    }
-}
-
-proc build_warnings {all_contacts} {
-    return [dict get [spar::build_warnings $all_contacts] messages]
-}
-
-proc build_transitions {all_contacts} {
-    global cdata
-    set labels {
-        "Sweep \u2192 Profile"
-        "Profile \u2192 Approach"
-        "Approach \u2192 Send"
-        "Send \u2192 Reply"
-        "Stale \u2192 Re-profile"
-        "Re-profile \u2192 Re-approach"
-        "LinkedIn \u2192 Email follow-up"
-    }
-    set tids {T1 T2 T3 T4 T6 T7 T8}
-
-    set primary_channel ""
-    if {[info exists cdata]} {
-        set primary_channel [spar::campaign_primary_channel $cdata]
-    }
-
-    set result {}
-    for {set i 0} {$i < [llength $labels]} {incr i} {
-        set label [lindex $labels $i]
-        set tid [lindex $tids $i]
-
-        set eligible [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
-        set count [llength $eligible]
-
-        set tasks {}
-        foreach contact $eligible {
-            set cname [dict get $contact contact_name]
-            set cstem [spar::dict_get_default $contact stem ""]
-            set org [dict get $contact organisation]
-            set seg [dict get $contact segment]
-            set tstate [dict get $contact task_state]
-            set reason [dict get $contact reason]
-            lappend tasks [list $cname $cstem $org $seg $tstate $reason]
-        }
-
-        lappend result [list $label $count $tasks]
-    }
-
-    return $result
-}
-
-# --- Load data (fast: TSV only, filesystem deferred) ---
-load_campaign_data_fast
 
 # ============================================================
 # Colour palette
@@ -546,10 +174,10 @@ grid ${cf}.l4 ${cf}.v4 -sticky w -padx {6 4} -pady 1
 ttk::frame ${cpanel}.toolbar
 pack ${cpanel}.toolbar -fill x -padx 8 -pady {2 2}
 
-ttk::button ${cpanel}.toolbar.checkemail -text "Check Email" -command do_check_email
+ttk::button ${cpanel}.toolbar.checkemail -text "Check Email" -command [list $campaign check_email]
 pack ${cpanel}.toolbar.checkemail -side right
 
-ttk::button ${cpanel}.toolbar.refresh -text "Refresh" -command do_refresh
+ttk::button ${cpanel}.toolbar.refresh -text "Refresh" -command [list $campaign refresh]
 pack ${cpanel}.toolbar.refresh -side right -padx {0 4}
 
 ttk::button ${cpanel}.toolbar.legend -text "Legend" -command show_legend_window
@@ -575,51 +203,6 @@ ttk::button ${cpanel}.toolbar.selnone -text "None" -width 4 -command {
 }
 pack ${cpanel}.toolbar.selnone -side left -padx {2 0}
 
-proc do_check_email {} {
-    global script_dir
-    set email_lib [file join $script_dir spar-email.tcl]
-    if {[file exists $email_lib]} {
-        if {[catch {source $email_lib} err]} {
-            log_message "Error loading spar-email.tcl: $err"
-            return
-        }
-        if {[catch {spar::check_replies_mailroom} err]} {
-            log_message "Email check error: $err"
-        } else {
-            log_message "Email check completed."
-        }
-        do_refresh
-    } else {
-        log_message "Email checking not available (spar-email.tcl not found)."
-    }
-}
-
-proc do_refresh {} {
-    global campaign_name sender_text filter_desc
-    global segments warnings transitions
-    global cf cpanel wframe tpanel
-
-    # Reload all data
-    cancel_async_load
-    load_campaign_data_full
-
-    # Update config labels
-    ${cf}.v1 configure -text $campaign_name
-    ${cf}.v2 configure -text $sender_text
-    ${cf}.v4 configure -text $filter_desc
-
-    # Update window title
-    wm title . "SPAR Campaign Manager \u2014 $campaign_name"
-
-    # Rebuild progress table
-    rebuild_progress_table
-
-    # Rebuild warnings
-    rebuild_warnings
-
-    # Rebuild transitions
-    rebuild_transitions
-}
 
 # Legend window — identical to mock-ui.tcl
 proc show_legend_window {} {
@@ -1485,7 +1068,7 @@ proc ui_on_complete {done failed result} {
         append tail " (no rows matched the runner's filters — check in-scope channel, min_star, or that the approach file already exists)"
     }
     log_message "Dispatch completed: $done done, $failed failed$tail."
-    do_refresh
+    $::campaign refresh
     reapply_cohort_after_refresh
     update_progress_display
     event generate $tree <<TreeviewSelect>>
@@ -1753,29 +1336,6 @@ bind $tree <<TreeviewSelect>> [list apply {{tree play} {
 # Show the dispatch bar
 show_dispatch_bar
 
-# ============================================================
-# Rebuild procedures for Refresh
-# ============================================================
-
-proc rebuild_progress_table {} {
-    populate_progress_tree
-}
-
-proc rebuild_warnings {} {
-    global wframe warnings warn_summary warnings_expanded
-    set warn_summary [compute_warning_summary]
-    populate_warnings_text
-    # Update toggle button text
-    if {$warnings_expanded} {
-        ${wframe}.toggle configure -text "\u25be \u26a0 [llength $warnings] warnings ($warn_summary)"
-    } else {
-        ${wframe}.toggle configure -text "\u25b8 \u26a0 [llength $warnings] warnings ($warn_summary)"
-    }
-}
-
-proc rebuild_transitions {} {
-    populate_transitions
-}
 
 # ============================================================
 # Initial sash position
@@ -1791,6 +1351,111 @@ bind .tabs.tab_current.pw <Map> {
     bind .tabs.tab_current.pw <Map> {}
 }
 
-# Schedule async loading of filesystem-dependent columns.
-# Use a timer (not after idle) so the window renders first.
-after 1 schedule_async_load
+# ============================================================
+# Model subscriptions
+# ============================================================
+#
+# Each subscriber pulls fresh data from the CampaignModel's accessors,
+# mirrors the data into shim globals the still-procedural populate /
+# recalc procs read, then invokes those procs. As each zone becomes a
+# class in later commits, its subscriber inlines into the class's own
+# event handler and the shim globals disappear.
+
+# Per-segment async row update. Mirror of the per-segment block that
+# previously lived in _async_load_next.
+$campaign subscribe segment-loaded [list apply {{seg cdict is_active} {
+    global ptree ptree_col_ids ptree_cols seg_counts col_count_keys denom_parent
+    if {![$ptree exists $seg]} return
+    set counts {}
+    foreach id $ptree_col_ids {
+        set key [dict get $col_count_keys $id]
+        lappend counts [dict get $cdict $key]
+    }
+    if {$is_active} {
+        set ci 0
+        foreach id $ptree_col_ids {
+            dict set seg_counts $seg $id [lindex $counts $ci]
+            incr ci
+        }
+    }
+    set values {}
+    set ci 0
+    foreach {id heading anchor} $ptree_cols {
+        set count [lindex $counts $ci]
+        set pid [dict get $denom_parent $id]
+        if {$pid eq ""} {
+            lappend values $count
+        } else {
+            set pidx [lsearch $ptree_col_ids $pid]
+            set denom [lindex $counts $pidx]
+            lappend values [fmt_cell $count $denom]
+        }
+        incr ci
+    }
+    $ptree item $seg -values $values
+}}]
+
+$campaign subscribe fully-loaded [list apply {{} {
+    set ::all_contacts   [$::campaign get_all_contacts]
+    set ::warnings       [$::campaign get_warnings]
+    set ::transitions    [$::campaign get_transitions]
+    set ::full_load_done [$::campaign get_full_load_done]
+    recalc_totals
+    after idle autosize_progress_tree
+
+    global wframe warn_summary warnings_expanded
+    set warn_summary [compute_warning_summary]
+    populate_warnings_text
+    if {$warnings_expanded} {
+        ${wframe}.toggle configure -text "▾ ⚠ [llength $::warnings] warnings ($warn_summary)"
+    } else {
+        ${wframe}.toggle configure -text "▸ ⚠ [llength $::warnings] warnings ($warn_summary)"
+    }
+
+    populate_transitions
+
+    # Headless / self-debug hook: if --tid was given on the command
+    # line, drive the dispatch programmatically once the tree is
+    # populated.
+    global auto_tid
+    if {$auto_tid ne ""} {
+        after idle auto_dispatch
+    }
+}}]
+
+$campaign subscribe refreshed [list apply {{} {
+    set ::cdata          [$::campaign get_cdata]
+    set ::campaign_name  [$::campaign get_campaign_name]
+    set ::sender_text    [$::campaign get_sender_text]
+    set ::filter_desc    [$::campaign get_filter_desc]
+    set ::segments       [$::campaign get_segments]
+    set ::all_contacts   [$::campaign get_all_contacts]
+    set ::warnings       [$::campaign get_warnings]
+    set ::transitions    [$::campaign get_transitions]
+    set ::full_load_done [$::campaign get_full_load_done]
+
+    global cf
+    ${cf}.v1 configure -text $::campaign_name
+    ${cf}.v2 configure -text $::sender_text
+    ${cf}.v4 configure -text $::filter_desc
+    wm title . "SPAR Campaign Manager — $::campaign_name"
+
+    populate_progress_tree
+
+    global wframe warn_summary warnings_expanded
+    set warn_summary [compute_warning_summary]
+    populate_warnings_text
+    if {$warnings_expanded} {
+        ${wframe}.toggle configure -text "▾ ⚠ [llength $::warnings] warnings ($warn_summary)"
+    } else {
+        ${wframe}.toggle configure -text "▸ ⚠ [llength $::warnings] warnings ($warn_summary)"
+    }
+
+    populate_transitions
+}}]
+
+$campaign subscribe log-message [list apply {{msg} { log_message $msg }}]
+
+# Start async loading of filesystem-dependent columns. Use a timer
+# (not after idle) so the window renders first.
+after 1 [list $campaign start_async]
