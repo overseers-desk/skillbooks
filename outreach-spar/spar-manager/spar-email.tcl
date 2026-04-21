@@ -1,16 +1,16 @@
 #!/usr/bin/env tclsh9.0
-# spar-email.tcl — Email operations for SPAR campaign manager
-# Handles sending via AWS SES and reply checking via mailroom CLI.
+# spar-email.tcl — Shared helpers for the email send/reply-check transitions.
+#
+# The SES integration lives in transitions/send_email.tcl and the inbox
+# integration lives in transitions/check_replies.tcl. This file keeps only
+# pure helpers that both classes (and the CLI/tests) need: email-address
+# extraction, HTML-to-text cleanup, reply-fingerprint matching, approach
+# YAML reply append, sent-approach collection, and the actioned_date stamp.
 
 source [file join [file dirname [file normalize [info script]]] spar-lib.tcl]
 
 namespace eval spar {
-    namespace export send_email stamp_actioned_date \
-        check_replies_mailroom collect_sent_approaches
-}
-
-namespace eval spar::r {
-    variable reported_stems {}
+    namespace export stamp_actioned_date collect_sent_approaches
 }
 
 # ── Helpers (not exported) ─────────────────────────────────────────────
@@ -222,7 +222,7 @@ proc spar::append_reply_to_yaml {approach_path timestamp from_display reply_text
 
     set fd [open $approach_path w]
     # Tolerate characters that cannot round-trip through strict UTF-8 (e.g.
-    # raw bytes that slipped in via mailroom's exec output). Tcl 9's default
+    # raw bytes that slipped in from upstream inbox output). Tcl 9's default
     # profile is strict and aborts the write; -profile replace substitutes
     # U+FFFD on malformed output. Encoding stays at the channel default.
     fconfigure $fd -profile replace
@@ -255,83 +255,6 @@ proc spar::_indent_body {text indent_spaces} {
 }
 
 # ── Exported procs ─────────────────────────────────────────────────────
-
-# spar::send_email -- send one email via AWS SES.
-#
-# opts dict keys:
-#   region       AWS region (default: ap-southeast-2)
-#   from         From address (e.g. "Name <email>" or bare email)
-#   to           To address
-#   cc           CC address (optional, empty string to skip)
-#   bcc          BCC address (optional, empty string to skip)
-#   subject      Subject line
-#   body         Body text (plain text)
-#   dry_run      If true, return without sending
-#
-# Returns dict:
-#   ok           bool (1 on success, 0 on failure)
-#   message_id   SES MessageId on success, error message on failure
-#
-proc spar::send_email {opts} {
-    set region  [dict_get_default $opts region "ap-southeast-2"]
-    set from    [dict get $opts from]
-    set to      [dict get $opts to]
-    set cc      [dict_get_default $opts cc ""]
-    set bcc     [dict_get_default $opts bcc ""]
-    set subject [dict get $opts subject]
-    set body    [dict get $opts body]
-    set dry_run [dict_get_default $opts dry_run 0]
-
-    if {$dry_run} {
-        return [dict create ok 1 message_id "dry-run"]
-    }
-
-    # Build destination JSON
-    ::json::write indented 0
-    set dest_fields [list ToAddresses \
-        [::json::write array [::json::write string $to]]]
-    if {$cc ne ""} {
-        lappend dest_fields CcAddresses \
-            [::json::write array [::json::write string $cc]]
-    }
-    if {$bcc ne ""} {
-        lappend dest_fields BccAddresses \
-            [::json::write array [::json::write string $bcc]]
-    }
-    set dest_json [::json::write object {*}$dest_fields]
-
-    # Build message JSON
-    set subj_obj [::json::write object \
-        Data [::json::write string $subject] \
-        Charset [::json::write string "UTF-8"]]
-    set body_obj [::json::write object \
-        Text [::json::write object \
-            Data [::json::write string $body] \
-            Charset [::json::write string "UTF-8"]]]
-    set msg_json [::json::write object \
-        Subject $subj_obj \
-        Body $body_obj]
-
-    # Call AWS SES
-    set code [catch {
-        exec aws ses send-email \
-            --region $region \
-            --from $from \
-            --destination $dest_json \
-            --message $msg_json
-    } output]
-
-    if {$code != 0} {
-        return [dict create ok 0 message_id $output]
-    }
-
-    # Parse JSON response to extract MessageId
-    if {[catch {set parsed [::json::json2dict $output]} err]} {
-        return [dict create ok 1 message_id "?"]
-    }
-    set mid [dict_get_default $parsed MessageId "?"]
-    return [dict create ok 1 message_id $mid]
-}
 
 # spar::stamp_actioned_date -- set actioned_date on unsent final-round email messages.
 #
@@ -451,21 +374,11 @@ proc spar::stamp_actioned_date {approach_path today} {
 proc spar::collect_sent_approaches {segments} {
     set results {}
 
-    # Tcllib's pure-Tcl YAML parser is slow (~1s per 100KB approach
-    # file). For a 164-contact campaign the aggregate can exceed a
-    # minute — long enough that the Tk event loop sits dark and the
-    # window looks frozen before the mailroom sweep even starts.
-    # Pump every N files so the UI keeps repainting.
-    set has_update [expr {[info commands update] ne ""}]
-    set parsed 0
-
     foreach seg_dir $segments {
         set approach_dir [file join $seg_dir approach]
         if {![file isdirectory $approach_dir]} continue
 
         foreach yf [lsort [glob -nocomplain -directory $approach_dir *.yaml]] {
-            incr parsed
-            if {$has_update && ($parsed % 10 == 0)} { update idletasks }
             if {[catch {
                 set fd [open $yf r]
                 set raw [read $fd]
@@ -522,324 +435,6 @@ proc spar::collect_sent_approaches {segments} {
     }
 
     return $results
-}
-
-# spar::check_replies_mailroom -- check mailroom for new replies to sent approaches.
-#
-# campaign_dir    base directory of the campaign
-# segments        list of segment directory paths to check
-# mailroom_account  mailroom account name
-# mailroom_folder   mailroom folder name
-# sender_email    the campaign sender's email address
-# on_progress     callback proc name: called with {to_email approach_stem status message}
-# dry_run         1 to skip append_reply_to_yaml (still queries mailbox,
-#                 still emits progress events, still returns new_replies count).
-#
-# Returns dict:
-#   new_replies   count of new replies found (in dry-run: count of replies
-#                 that WOULD have been appended).
-#   errors        count of errors
-#
-proc spar::check_replies_mailroom {campaign_dir segments mailroom_account mailroom_folder sender_email on_progress {dry_run 0}} {
-    set new_replies 0
-    set errors 0
-    set sender_lower [string tolower $sender_email]
-
-    # Check mailroom is available
-    if {[catch {exec mailroom --help} _]} {
-        if {$on_progress ne ""} {
-            {*}$on_progress "" "" "error" "mailroom CLI not found"
-        }
-        return [dict create new_replies 0 errors 1]
-    }
-
-    set approaches [collect_sent_approaches $segments]
-    if {[llength $approaches] == 0} {
-        return [dict create new_replies 0 errors 0]
-    }
-
-    # Group by to_email to avoid duplicate queries
-    set by_to [dict create]
-    foreach entry $approaches {
-        set to_email [dict get $entry to_email]
-        if {![dict exists $by_to $to_email]} {
-            dict set by_to $to_email {}
-        }
-        dict lappend by_to $to_email $entry
-    }
-
-    # Tk event loop pump: the mailroom sweep is a tight loop of
-    # synchronous `exec` calls, each ~1-2s. Without yielding between
-    # iterations the UI main thread freezes for the duration of the
-    # sweep (4+ minutes for a 164-contact campaign). `update` is only
-    # defined when Tk is loaded, so headless CLI callers see no-op.
-    set has_update [expr {[info commands update] ne ""}]
-
-    dict for {to_email approach_entries} $by_to {
-        if {$has_update} { update idletasks }
-        # Tracks stems that got a reply event in this iteration, so the
-        # tail-of-iteration skipped burst below knows who to skip.
-        set iter_reply_stems {}
-        # Search mailroom for messages from this contact
-        set code [catch {
-            exec mailroom -a $mailroom_account \
-                search -f $mailroom_folder \
-                --limit 50 \
-                "from:$to_email"
-        } search_output]
-
-        if {$code != 0} {
-            incr errors
-            continue
-        }
-
-        if {[catch {set messages [::json::json2dict $search_output]} err]} {
-            incr errors
-            continue
-        }
-
-        # Filter to messages addressed to the sender (check to/cc)
-        set incoming {}
-        foreach msg $messages {
-            set to_addrs {}
-            set cc_addrs {}
-            if {[dict exists $msg to]} {
-                foreach a [dict get $msg to] {
-                    lappend to_addrs [extract_email_address $a]
-                }
-            }
-            if {[dict exists $msg cc]} {
-                foreach a [dict get $msg cc] {
-                    lappend cc_addrs [extract_email_address $a]
-                }
-            }
-            if {$sender_lower in $to_addrs || $sender_lower in $cc_addrs} {
-                lappend incoming $msg
-            }
-        }
-
-        # Sort by date
-        set incoming [lsort -command {apply {{a b} {
-            set da [spar::dict_get_default $a date ""]
-            set db [spar::dict_get_default $b date ""]
-            return [string compare $da $db]
-        }}} $incoming]
-
-        foreach msg $incoming {
-            set from_email_addr [extract_email_address [dict_get_default $msg from ""]]
-            set date_str [dict_get_default $msg date ""]
-
-            # Validate date format
-            if {![regexp {^\d{4}-\d{2}-\d{2}} $date_str]} continue
-
-            # Check if ANY approach file sharing this to_email already has the reply
-            set already_recorded 0
-            foreach entry $approach_entries {
-                set fps [dict get $entry fingerprints]
-                if {[fingerprint_match $fps $from_email_addr $date_str]} {
-                    set already_recorded 1
-                    break
-                }
-            }
-            if {$already_recorded} continue
-
-            # Fetch reply content
-            set uid [dict_get_default $msg uid ""]
-            set reply_text ""
-            set fetch_code [catch {
-                exec mailroom -a $mailroom_account \
-                    read -f $mailroom_folder \
-                    -u $uid
-            } read_output]
-
-            if {$fetch_code == 0} {
-                if {[catch {set email_data [::json::json2dict $read_output]}]} {
-                    set reply_text "(could not parse reply -- review manually:\n  mailroom -a $mailroom_account read -f $mailroom_folder -u $uid)"
-                } else {
-                    set body [dict_get_default $email_data body ""]
-                    if {$body ne ""} {
-                        set reply_text [html_to_text $body]
-                    } else {
-                        set reply_text "(no text content)"
-                    }
-                }
-            } else {
-                set reply_text "(mailroom read failed -- review manually:\n  mailroom -a $mailroom_account read -f $mailroom_folder -u $uid)"
-            }
-
-            # Add reply to first approach file (skipped in dry-run).
-            set first_entry [lindex $approach_entries 0]
-            set approach_path [dict get $first_entry approach_path]
-            set from_display [dict_get_default $msg from $from_email_addr]
-
-            if {!$dry_run} {
-                append_reply_to_yaml $approach_path $date_str $from_display $reply_text
-            }
-
-            # Update fingerprints in memory for dedup within this batch.
-            # Runs in dry-run too, otherwise a single mailbox reply visible
-            # to multiple approaches sharing a to_email would be counted N
-            # times in the summary.
-            set fps [dict get $first_entry fingerprints]
-            lappend fps "${from_email_addr}|${date_str}"
-            dict set first_entry fingerprints $fps
-            lset approach_entries 0 $first_entry
-            dict set by_to $to_email $approach_entries
-
-            incr new_replies
-
-            # Call progress callback
-            if {$on_progress ne ""} {
-                set stem [file rootname [file tail $approach_path]]
-                lappend iter_reply_stems $stem
-                set tag [expr {$dry_run ? "would-append reply" : "reply"}]
-                {*}$on_progress $to_email $stem "reply" "$tag from $from_email_addr ($date_str)"
-            }
-        }
-
-        # Per-contact skipped events. Without this, progress stays at
-        # 0/N for the whole sweep and only jumps at the end when
-        # spar::r::run's tail loop fires skipped in a burst. Fire here
-        # instead so the progress bar advances contact-by-contact.
-        if {$on_progress ne ""} {
-            foreach entry $approach_entries {
-                set stem [file rootname [file tail [dict get $entry approach_path]]]
-                if {$stem ni $iter_reply_stems} {
-                    {*}$on_progress $to_email $stem "skipped" "no reply yet"
-                }
-            }
-        }
-    }
-
-    return [dict create new_replies $new_replies errors $errors]
-}
-
-# spar::r::run -- T4 transition runner (Send → Reply).
-#
-# Wraps spar::check_replies_mailroom in the standard runner contract so
-# dispatch_ready can invoke it like any other T-id. Reads
-# reply_check.{mailroom_account,folder} and sender.email from the
-# campaign YAML; missing config is surfaced via on_progress + on_complete.
-#
-# opts dict keys consumed:
-#   campaign_file   campaign YAML path
-#   dry_run         1 to query the mailbox but skip reply-append writes.
-#                   Unlike T1/T2/T3 (where dry-run short-circuits the work),
-#                   T4 dry-run still runs the mailroom query — that's the
-#                   whole point: see which contacts would transition without
-#                   persisting anything.
-#   segments        list of segment directory paths
-#   stems           approach stems in the T4 ready set; receive per-slug
-#                   progress events so UI rows reach a terminal state
-#
-# Progress adapter: check_replies_mailroom fires
-#   {to_email stem "reply" message}
-# the runner rewrites that to the runner-standard
-#   {stem done message}
-# so ProgressTable treats the event as a known terminal status. Stems
-# not reported during the sweep receive a final {stem skipped "no reply yet"}.
-proc spar::r::run {opts on_progress on_complete} {
-    variable reported_stems
-
-    set campaign_file [dict get $opts campaign_file]
-    set dry_run       [spar::dict_get_default $opts dry_run 0]
-    set segments      [spar::dict_get_default $opts segments {}]
-    set stems         [spar::dict_get_default $opts stems    {}]
-
-    set has_update [expr {[info commands update] ne ""}]
-
-    # Emit started per-slug so UI rows leave their initial state.
-    # Pump once after the burst so "queued" glyphs flip to "running"
-    # before the long collect_sent_approaches YAML pass starts.
-    if {$on_progress ne ""} {
-        foreach s $stems {
-            {*}$on_progress $s started ""
-        }
-        if {$has_update} { update idletasks }
-    }
-
-    set cdata [spar::load_campaign $campaign_file]
-    if {$has_update} { update idletasks }
-    if {![dict exists $cdata reply_check mailroom_account] \
-        || ![dict exists $cdata reply_check folder]} {
-        if {$on_progress ne ""} {
-            {*}$on_progress "" failed \
-                "campaign YAML missing reply_check.mailroom_account or reply_check.folder"
-        }
-        {*}$on_complete 0 1 {}
-        return
-    }
-    if {![dict exists $cdata sender email]} {
-        if {$on_progress ne ""} {
-            {*}$on_progress "" failed "campaign YAML missing sender.email"
-        }
-        {*}$on_complete 0 1 {}
-        return
-    }
-
-    set account [dict get $cdata reply_check mailroom_account]
-    set folder  [dict get $cdata reply_check folder]
-    set sender  [dict get $cdata sender email]
-    set campaign_dir [file dirname $campaign_file]
-
-    # Default segments to "all campaign segment dirs" when the caller
-    # passed none. Mirrors spar::p::run's full-campaign default. The CLI
-    # (spar-transitions.tcl) already derives opts.segments from the ready
-    # set; the UI's DispatchController does not, and without this fallback
-    # collect_sent_approaches returns empty and the mailbox query is
-    # silently skipped.
-    if {[llength $segments] == 0} {
-        set skip_set [spar::dict_get_default $cdata skip_segments {}]
-        foreach seg [spar::dict_get_default $cdata segments {}] {
-            if {$seg in $skip_set} continue
-            set seg_path [file join $campaign_dir $seg]
-            if {[file isdirectory $seg_path]} {
-                lappend segments $seg_path
-            }
-        }
-    }
-
-    # Reset accumulator; r::run is not concurrent with itself (T4 is not in
-    # auto_wired_tids), so a namespace variable is sufficient.
-    set reported_stems {}
-
-    # Cohort-membership filter for the adapter. check_replies_mailroom
-    # now emits per-contact "skipped" events (so progress advances
-    # during the sweep), but it emits them for every approach file it
-    # finds — including stems outside the caller's cohort (e.g. extra
-    # approaches in the same segment). Non-cohort skipped events would
-    # create stray log lines in the CLI and, more importantly, confuse
-    # the end-of-sweep reported_stems check. Drop them here.
-    set cohort_set [dict create]
-    foreach s $stems { dict set cohort_set $s 1 }
-
-    set adapter [list apply {{outer_on_progress cohort_set to_email stem status message} {
-        if {$status eq "skipped" && [dict size $cohort_set] > 0 \
-                && ![dict exists $cohort_set $stem]} {
-            return
-        }
-        lappend ::spar::r::reported_stems $stem
-        set mapped [expr {$status eq "reply" ? "done" : $status}]
-        if {$outer_on_progress ne ""} {
-            {*}$outer_on_progress $stem $mapped $message
-        }
-    }} $on_progress $cohort_set]
-
-    set result [spar::check_replies_mailroom \
-        $campaign_dir $segments $account $folder $sender $adapter $dry_run]
-
-    # Emit skipped for stems that did not receive a reply.
-    if {$on_progress ne ""} {
-        foreach s $stems {
-            if {$s ni $reported_stems} {
-                {*}$on_progress $s skipped "no reply yet"
-            }
-        }
-    }
-
-    set new_replies [spar::dict_get_default $result new_replies 0]
-    set errors      [spar::dict_get_default $result errors      0]
-    {*}$on_complete $new_replies $errors $result
 }
 
 package provide spar-email 1.0

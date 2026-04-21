@@ -82,8 +82,8 @@ OPTIONS
 TRANSITIONS
     T1  Sweep → Profile           (execute: wired)
     T2  Profile → Approach        (execute: wired)
-    T3  Approach → Send           (execute: wired, via AWS SES)
-    T4  Send → Reply              (execute: wired, via mailroom reply-check)
+    T3  Approach → Send           (execute: wired, via send-email transition)
+    T4  Send → Reply              (execute: wired, via reply-check transition)
     T6  Stale → Re-profile        (execute: wired)
     T7  Re-profile → Re-approach  (execute: wired)
     T8  LinkedIn → Email          (execute: not wired)

@@ -190,31 +190,11 @@ assert_eq [spar::fingerprint_match {} "alice@example.com" "2026-04-05"] 0 \
     "empty fingerprint set → no match"
 
 # ════════════════════════════════════════════════════════════════════════
-# 4. send_email (dry_run)
+# 4. send_email (removed)
 # ════════════════════════════════════════════════════════════════════════
-section "4. send_email (dry_run)"
-
-set result [spar::send_email [dict create \
-    from "Sender <sender@example.com>" \
-    to "recipient@example.com" \
-    subject "Test subject" \
-    body "Test body" \
-    dry_run 1 \
-]]
-
-assert_eq [dict get $result ok] 1 "dry_run returns ok=1"
-assert_eq [dict get $result message_id] "dry-run" "dry_run returns message_id=dry-run"
-
-# With bcc
-set result2 [spar::send_email [dict create \
-    from "sender@example.com" \
-    to "recipient@example.com" \
-    bcc "bcc@example.com" \
-    subject "Test" \
-    body "Body" \
-    dry_run 1 \
-]]
-assert_eq [dict get $result2 ok] 1 "dry_run with bcc returns ok=1"
+# The SES send flow lives on ::spar::transitions::SendEmailDriver now;
+# its dry-run path is covered by the end-to-end dispatch tests rather
+# than a unit test here.
 
 # ════════════════════════════════════════════════════════════════════════
 # 5. stamp_actioned_date

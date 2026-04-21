@@ -1,7 +1,10 @@
 #!/usr/bin/env tclsh9.0
 # spar-progress.tcl — Campaign progress table and duplicate detection (CLI)
-# Usage: tclsh9.0 spar-progress.tcl [campaign_dir_or_yaml] [--campaign=YAML] [--no-mailroom] [--json]
+# Usage: tclsh9.0 spar-progress.tcl [campaign_dir_or_yaml] [--campaign=YAML] [--no-reply-check] [--json]
 # Positional arg may be a directory or a campaign YAML file (directory derived from YAML path).
+#
+# --no-reply-check omits the T4 (reply-check) row from the transition list.
+# The legacy name --no-mailroom is accepted with a deprecation warning.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
@@ -12,14 +15,19 @@ source [file join $script_dir spar-state.tcl]
 set campaign_dir ""
 set campaign_file ""
 set json_mode 0
+set skip_reply_check 0
 foreach arg $argv {
     switch -glob -- $arg {
-        --campaign=*  { set campaign_file [string range $arg 11 end] }
-        --json        { set json_mode 1 }
-        --no-mailroom {}
-        --legend      {}
-        --*           { puts stderr "Unknown flag: $arg"; exit 1 }
-        default       {
+        --campaign=*     { set campaign_file [string range $arg 11 end] }
+        --json           { set json_mode 1 }
+        --no-reply-check { set skip_reply_check 1 }
+        --no-mailroom    {
+            puts stderr "Warning: --no-mailroom is deprecated; use --no-reply-check instead."
+            set skip_reply_check 1
+        }
+        --legend         {}
+        --*              { puts stderr "Unknown flag: $arg"; exit 1 }
+        default          {
             if {[string match *.yaml $arg]} {
                 set campaign_file [file normalize $arg]
                 set campaign_dir [file dirname $campaign_file]
@@ -178,9 +186,10 @@ if {$json_mode} {
     }
     # Transition labels come from the transition registry via
     # spar::transition_label; progress JSON includes the same T-ids as
-    # the UI tree.
+    # the UI tree. --no-reply-check omits T4 from the output.
     set transitions {}
     foreach tid [spar::ui_transition_tids] {
+        if {$skip_reply_check && $tid eq "T4"} continue
         set tlabel [spar::transition_label $tid]
         set tasks [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
         lappend transitions [dict create label "$tid: $tlabel" count [llength $tasks] tasks $tasks]
