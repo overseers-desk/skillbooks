@@ -104,7 +104,7 @@ proc write_roster_tsv {segment_dir headers rows} {
 # exercise staleness populate the snapshot explicitly via args, e.g.:
 #   write_profile $seg alice -contact_name "Alice Smith" -organisation "Acme"
 # Keys accepted in args:
-#   -profile_date -star_rating -richness -richness_count -warmth_finding
+#   -profile_date -star_rating -yield -warmth_finding
 #   -applicable_angle   (single slug; default "default-angle")
 #   -contact_name -organisation -role -date_excluded  (snapshot fields)
 proc write_profile {segment_dir stem args} {
@@ -112,8 +112,7 @@ proc write_profile {segment_dir stem args} {
     array set opts {
         -profile_date    2026-04-12
         -star_rating     4
-        -richness        thin
-        -richness_count  2
+        -yield           2
         -warmth_finding  cold
         -applicable_angle default-angle
     }
@@ -130,8 +129,7 @@ proc write_profile {segment_dir stem args} {
     puts $fd "---"
     puts $fd "profile_date: $opts(-profile_date)"
     puts $fd "star_rating: $opts(-star_rating)"
-    puts $fd "richness: $opts(-richness)"
-    puts $fd "richness_count: $opts(-richness_count)"
+    puts $fd "yield: $opts(-yield)"
     puts $fd "warmth_finding: $opts(-warmth_finding)"
     puts $fd "applicable_angles:"
     puts $fd "  - $opts(-applicable_angle)"
@@ -1619,15 +1617,15 @@ assert_eq [has_issue $vp3_issues invalid_front_matter] 1 "validate_profile: unpa
 
 # 12p-d. Unknown top-level key → unknown_key_root error
 set seg_vp4 [make_temp_segment]
-set vp4_path [write_profile_raw $seg_vp4 "vp-unknown" "---\nprofile_date: 2026-04-12\nstar_rating: 3\nrichness: thin\nrichness_count: 2\nwarmth_finding: cold\napplicable_angles:\n  - foo\ndependent_data: {}\nrogue_key: oops\n---\nbody"]
+set vp4_path [write_profile_raw $seg_vp4 "vp-unknown" "---\nprofile_date: 2026-04-12\nstar_rating: 3\nyield: 2\nwarmth_finding: cold\napplicable_angles:\n  - foo\ndependent_data: {}\nrogue_key: oops\n---\nbody"]
 set vp4_issues [spar::validate_profile $vp4_path [make_base_row] "VP Unknown"]
 assert_eq [has_issue $vp4_issues unknown_key_root] 1 "validate_profile: unknown root key → unknown_key_root"
 
-# 12p-e. invalid_richness — value outside enum
+# 12p-e. invalid_yield — non-integer value
 set seg_vp5 [make_temp_segment]
-set vp5_path [write_profile $seg_vp5 "vp-rich" -richness "sparkly"]
-set vp5_issues [spar::validate_profile $vp5_path [make_base_row] "VP Richness"]
-assert_eq [has_issue $vp5_issues invalid_richness] 1 "validate_profile: richness 'sparkly' → invalid_richness"
+set vp5_path [write_profile $seg_vp5 "vp-yield" -yield "sparkly"]
+set vp5_issues [spar::validate_profile $vp5_path [make_base_row] "VP Yield"]
+assert_eq [has_issue $vp5_issues invalid_yield] 1 "validate_profile: yield 'sparkly' → invalid_yield"
 
 # 12p-f. invalid_warmth_finding
 set seg_vp6 [make_temp_segment]
@@ -1641,11 +1639,11 @@ set vp7_path [write_profile $seg_vp7 "vp-star0" -star_rating 0]
 set vp7_issues [spar::validate_profile $vp7_path [make_base_row] "VP Star0"]
 assert_eq [has_issue $vp7_issues invalid_star_rating] 1 "validate_profile: star_rating 0 → invalid_star_rating"
 
-# 12p-h. Missing required key (richness omitted)
+# 12p-h. Missing required key (yield omitted)
 set seg_vp8 [make_temp_segment]
-set vp8_path [write_profile_raw $seg_vp8 "vp-miss" "---\nprofile_date: 2026-04-12\nstar_rating: 3\nrichness_count: 2\nwarmth_finding: cold\napplicable_angles:\n  - foo\ndependent_data: {}\n---\nbody"]
+set vp8_path [write_profile_raw $seg_vp8 "vp-miss" "---\nprofile_date: 2026-04-12\nstar_rating: 3\nwarmth_finding: cold\napplicable_angles:\n  - foo\ndependent_data: {}\n---\nbody"]
 set vp8_issues [spar::validate_profile $vp8_path [make_base_row] "VP Missing"]
-assert_eq [has_issue $vp8_issues missing_richness] 1 "validate_profile: missing richness → missing_richness"
+assert_eq [has_issue $vp8_issues missing_yield] 1 "validate_profile: missing yield → missing_yield"
 
 # 12p-i. Staleness — snapshot contact_name differs from roster
 set seg_vp9 [make_temp_segment]
@@ -2023,7 +2021,7 @@ section "21. validate_roster — roster quality-checklist assertions"
 # Full headers matching the real roster format for validate_roster tests
 set ::vr_headers {
     stem contact_name organisation role phone email linkedin_url facebook_url
-    sweep_iteration discovered_via discovery_source verified date_excluded
+    sweep_iteration discovered_via date_excluded
     s_note p_note star_rating response_likelihood a_note r_note
 }
 
@@ -2039,8 +2037,6 @@ proc make_vr_row {{overrides {}}} {
         facebook_url      "" \
         sweep_iteration   "1" \
         discovered_via    "" \
-        discovery_source  "" \
-        verified          "" \
         date_excluded "" \
         s_note            "" \
         p_note            "" \
@@ -2099,34 +2095,6 @@ write_roster_tsv $seg_vr5 $::vr_headers [list \
 set issues_vr5 [vr_issues $seg_vr5]
 assert_eq [has_issue $issues_vr5 roster_no_sweep_iteration] 1 \
     "A5: missing sweep_iteration flagged"
-
-# ── Assertion 6: verified=yes but date_excluded set ──
-set seg_vr6 [make_temp_segment]
-write_roster_tsv $seg_vr6 $::vr_headers [list \
-    [make_vr_row {stem s1 verified yes date_excluded 2026-04-01}] \
-]
-set issues_vr6 [vr_issues $seg_vr6]
-assert_eq [has_issue $issues_vr6 roster_verified_but_invalid] 1 \
-    "A6: verified=yes with date_excluded flagged"
-
-# ── Assertion 6 (cont.): verified=yes but p_note indicates role exit ──
-set seg_vr6b [make_temp_segment]
-write_roster_tsv $seg_vr6b $::vr_headers [list \
-    [make_vr_row {stem s1 verified yes p_note "no longer at the company"}] \
-    [make_vr_row {stem s2 verified yes p_note "replaced by Jane Smith"}] \
-]
-set issues_vr6b [vr_issues $seg_vr6b]
-assert_eq [has_issue $issues_vr6b roster_verified_but_departed] 1 \
-    "A6b: verified=yes with role-exit p_note flagged"
-
-# ── Negative: benign p_note does not trigger A6b ──
-set seg_vr6c [make_temp_segment]
-write_roster_tsv $seg_vr6c $::vr_headers [list \
-    [make_vr_row {stem s1 verified yes p_note "great contact, very responsive"}] \
-]
-set issues_vr6c [vr_issues $seg_vr6c]
-assert_eq [has_issue $issues_vr6c roster_verified_but_departed] 0 \
-    "A6c: benign p_note does not trigger roster_verified_but_departed"
 
 # ── Assertion 1 (cont.): blank contact_name with organisation is allowed ──
 set seg_vr1b [make_temp_segment]

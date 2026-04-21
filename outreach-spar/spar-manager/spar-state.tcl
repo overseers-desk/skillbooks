@@ -1223,7 +1223,7 @@ proc spar::roster_counts {segment_dir} {
 # Per issue SmartLayer/aesop#43.
 proc spar::_approach_canonical_keys {} {
     return [dict create \
-        root {decisions rounds profile_date profile_richness angle_rationale roster_note fact_provenance quality_checklist response_likelihood generated_for} \
+        root {decisions rounds profile_date profile_yield angle_rationale a_note fact_provenance quality_checklist response_likelihood generated_for} \
         decisions {warmth channel language angle sender warmth_detail channel_detail subsegment} \
         round {type number messages verdict fact_check in_character chosen_usps revision_note notes replies antifact_check} \
         message {channel subject body to actioned_date replied_date reply_summary script text char_count bcc cc director_note to_note phone_note} \
@@ -1546,7 +1546,7 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
 # Keyed by level; must stay in sync with spar-P-profile.md §5.1.
 proc spar::_profile_canonical_keys {} {
     return [dict create \
-        root {profile_date star_rating richness richness_count warmth_finding applicable_angles dependent_data} \
+        root {profile_date star_rating yield warmth_finding applicable_angles dependent_data} \
         dependent_data {contact_name organisation role date_excluded}]
 }
 
@@ -1717,7 +1717,7 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
     }
 
     # Required keys at root.
-    foreach req {profile_date star_rating richness richness_count warmth_finding applicable_angles dependent_data} {
+    foreach req {profile_date star_rating yield warmth_finding applicable_angles dependent_data} {
         if {![dict exists $fm $req]} {
             lappend issues [dict create severity error code missing_${req} \
                 contact_name $contact_name \
@@ -1726,12 +1726,12 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
     }
 
     # Enum checks.
-    if {[dict exists $fm richness]} {
-        set r [dict get $fm richness]
-        if {$r ni {rich medium thin}} {
-            lappend issues [dict create severity error code invalid_richness \
+    if {[dict exists $fm yield]} {
+        set y [dict get $fm yield]
+        if {![string is integer -strict $y] || $y < 0} {
+            lappend issues [dict create severity error code invalid_yield \
                 contact_name $contact_name \
-                message "richness '$r' — must be rich, medium, or thin"]
+                message "yield '$y' — must be a non-negative integer (data-point count per SPAR-P §4.14)"]
         }
     }
     if {[dict exists $fm warmth_finding]} {
@@ -1748,23 +1748,6 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
             lappend issues [dict create severity error code invalid_star_rating \
                 contact_name $contact_name \
                 message "star_rating '$s' — must be integer 1..5 (0 never appears; excluded contacts have no profile)"]
-        }
-    }
-
-    # richness/richness_count consistency (warning).
-    if {[dict exists $fm richness] && [dict exists $fm richness_count]} {
-        set r [dict get $fm richness]
-        set rc [dict get $fm richness_count]
-        if {[string is integer -strict $rc]} {
-            set mismatch 0
-            if {$r eq "thin"   && $rc >= 5} { set mismatch 1 }
-            if {$r eq "medium" && ($rc < 3 || $rc > 7)} { set mismatch 1 }
-            if {$r eq "rich"   && $rc < 6} { set mismatch 1 }
-            if {$mismatch} {
-                lappend issues [dict create severity warning code richness_count_mismatch \
-                    contact_name $contact_name \
-                    message "richness '$r' inconsistent with richness_count $rc"]
-            }
         }
     }
 
@@ -2015,7 +1998,6 @@ proc spar::validate_roster {segment_contacts} {
         set facebook [string trim [spar::dict_get_default $contact facebook_url ""]]
         set phone [string trim [spar::dict_get_default $contact phone ""]]
         set sweep [string trim [spar::dict_get_default $contact sweep_iteration ""]]
-        set verified [string trim [spar::dict_get_default $contact verified ""]]
         set date_invalid [string trim [spar::dict_get_default $contact date_excluded ""]]
         set star [string trim [spar::dict_get_default $contact star_rating ""]]
         set response_likelihood [string trim [spar::dict_get_default $contact response_likelihood ""]]
@@ -2053,29 +2035,6 @@ proc spar::validate_roster {segment_contacts} {
                     message "Duplicate stem '$stem' in segment"]
             }
             lappend seen_stems $stem
-        }
-
-        # Assertion 6: verified=yes without conflicting date_excluded
-        if {[string tolower $verified] eq "yes" && $date_invalid ne ""} {
-            lappend issues [dict create \
-                severity warning \
-                code roster_verified_but_invalid \
-                segment $segment \
-                contact_name $contact_name \
-                message "Contact is verified=yes but has date_excluded set"]
-        }
-
-        # Assertion 6 (cont.): verified=yes but p_note indicates role exit
-        set p_note [string trim [spar::dict_get_default $contact p_note ""]]
-        if {[string tolower $verified] eq "yes" && $p_note ne ""} {
-            if {[regexp -nocase {\y(no longer|left|departed|replaced by|moved to)\y} $p_note]} {
-                lappend issues [dict create \
-                    severity warning \
-                    code roster_verified_but_departed \
-                    segment $segment \
-                    contact_name $contact_name \
-                    message "Contact is verified=yes but p_note indicates role exit"]
-            }
         }
 
         # Skip EXCLUDED for assertions that require a valid contact

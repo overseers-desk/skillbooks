@@ -316,7 +316,6 @@ Grouped by validator proc. All line numbers are in `spar-state.tcl`.
 | roster_empty_stem               | error   | `stem == ""`                                          | —                   | 1569 |
 | roster_duplicate_stem           | error   | stem repeats within segment                           | —                   | 1580 |
 | roster_extra_fields             | warning | TSV row has extra columns                             | —                   | 1559 |
-| roster_verified_but_invalid     | warning | `verified=yes` ∧ `date_excluded≠""`                   | —                   | 1592 |
 | roster_placeholder_name         | warning | contact_name empty or in {unknown,n/a,tbd,placeholder}| EXCLUDED            | 1604 |
 | roster_duplicate_name_org       | error   | (name,org) pair repeats in segment (case_1, issue #5) | EXCLUDED            | 1614 |
 | roster_shared_inbox_collision   | error   | same email at same org, different names (case_2)      | EXCLUDED            | —    |
@@ -341,7 +340,7 @@ Codes: `invalid_yaml`, `unknown_key_<level>`, `wrong_level`, `missing_decisions`
 
 #### `validate_profile` (per profile file, only when file exists)
 
-Codes: `invalid_front_matter`, `unknown_key_<level>`, `wrong_level`, `missing_<key>` (×7 required keys), `invalid_richness`, `invalid_warmth_finding`, `invalid_star_rating`, `richness_count_mismatch` (warning), `stale_<field>` (×3 warnings), `stale_date_excluded` (warning).
+Codes: `invalid_front_matter`, `unknown_key_<level>`, `wrong_level`, `missing_<key>` (×6 required keys), `invalid_yield`, `invalid_warmth_finding`, `invalid_star_rating`, `stale_<field>` (×3 warnings), `stale_date_excluded` (warning).
 
 #### `detect_duplicates` (cross-segment; skips EXCLUDED)
 
@@ -370,7 +369,6 @@ Categories (applied in the rightmost column):
 | roster_empty_stem               | all                                     | schema pre-check (column-level) | HARD             |
 | roster_duplicate_stem           | all                                     | —                               | HARD             |
 | roster_extra_fields             | all                                     | —                               | SCHEMA-DRIFT     |
-| roster_verified_but_invalid     | all                                     | —                               | AUDIT            |
 | roster_placeholder_name         | DISCOVERED → REPLIED                    | T1 does not gate on name        | GAP              |
 | roster_duplicate_name_org       | DISCOVERED → REPLIED                    | P-harness validate_and_correct  | TROUBLE (case_1) |
 | roster_shared_inbox_collision   | DISCOVERED → REPLIED                    | P-harness validate_and_correct  | TROUBLE (case_2) |

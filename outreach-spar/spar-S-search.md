@@ -49,9 +49,7 @@ These columns are standard across all campaigns. Every roster produced by this A
 7. **facebook_url**
 8. **sweep_iteration** — which sweep iteration added or last updated this row
 9. **discovered_via** — the source that led to this contact. For seeds: the source name (e.g. "government school directory", "Google Maps", "industry association member list"). For social-graph contacts: the `contact_name` of the person whose profile surfaced this entry, creating a referral chain traceable to the original seed.
-10. **discovery_source** — the specific mechanism (e.g. "LinkedIn comment", "Facebook group co-admin", "LinkedIn People Also Viewed", "WebSearch: [expanded keyword query]")
-11. **verified** — yes/no — role confirmed via social profile or other independent source
-12. **date_excluded** — ISO date (YYYY-MM-DD) when the contact was confirmed unreachable or no longer in a relevant role. The date rather than a flag allows periodic re-checking — a person with no LinkedIn in March may have one by September. The profiling will skip entries that are already found invalid - although most entries are found invalid during profiling stage (P) hence profile is created anyway.
+10. **date_excluded** — ISO date (YYYY-MM-DD) when the contact was confirmed unreachable or no longer in a relevant role. The date rather than a flag allows periodic re-checking — a person with no LinkedIn in March may have one by September. The profiling will skip entries that are already found invalid - although most entries are found invalid during profiling stage (P) hence profile is created anyway.
 
 ### 4.2 Campaign-specific columns
 
@@ -168,8 +166,7 @@ Run this checklist against all roster files after each iteration. Each check is 
 5. **Reachable:** every row has at least one of email (valid, per check 4), `linkedin_url`, or `facebook_url` populated. Phone alone is insufficient for campaigns that begin with a written introduction.
 6. **Iteration recorded:** every row has a `sweep_iteration` value.
 7. **Segment matches file:** if the roster uses a `segment` column, the value on every row matches the roster filename.
-8. **Verified contacts still current:** no contact marked `verified=yes` has a `p_note` or `date_excluded` indicating they left the role or changed organisation.
-9. **Iteration progress:** for each roster, confirm that `sweep_iteration` is populated on every row and that the stopping criteria in §6 have been evaluated.
+8. **Iteration progress:** for each roster, confirm that `sweep_iteration` is populated on every row and that the stopping criteria in §6 have been evaluated.
 
 Campaign-specific checks (e.g. "every outreach row has a non-empty p_note") are defined by the campaign plan, not by this AESOP.
 

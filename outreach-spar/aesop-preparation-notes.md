@@ -6,14 +6,14 @@ When an AESOP is written and the relevant items are incorporated, remove them fr
 
 ## For the P (Profile) AESOP
 
-### Profile richness classification
-The A phase scales its A2 (sparring) rounds based on profile richness. P must therefore classify each profile into one of three tiers as part of its output:
+### Profile yield count
+The A phase scales its A2 (sparring) rounds based on profile yield. P must therefore count substantive data points per SPAR-P §4.14 and record the integer in the profile front matter:
 
-- **Rich** (6+ substantive data points): public statements with quotes, known positions on relevant topics, project affiliations, stated concerns, named connections, recent activity
-- **Medium** (3–5 data points): enough for a directional assessment but not enough for iterative simulation
-- **Limited** (<3 data points): bare LinkedIn, no public writing, no known connections
+- yield ≥ 6: public statements with quotes, known positions on relevant topics, project affiliations, stated concerns, named connections, recent activity
+- yield 3–5: enough for a directional assessment but not enough for iterative simulation
+- yield < 3: bare LinkedIn, no public writing, no known connections
 
-The classification is recorded in the profile document so that A can read it without re-evaluating richness.
+The count is recorded in the profile document so that A can read it without re-evaluating yield.
 
 **Source:** methodology discussion, derived from the A2 round-scaling design.
 
@@ -53,9 +53,9 @@ Before AR begins, verify per roster:
 3. No duplicate contacts across rosters (if multi-segment campaign)
 4. Every contact has at least one reachable channel (email, LinkedIn, or Facebook open for messages)
 5. Star ratings are plausible (geographic proximity alone does not establish fit; a referral path must be plausible)
-6. Response likelihood estimates are consistent with profile richness (a limited profile cannot support a 90% estimate)
+6. Response likelihood estimates are consistent with profile yield (a yield < 3 profile cannot support a 90% estimate)
 7. Stale contacts are marked and replacements attempted
-8. Profile richness classification (rich/medium/limited) is recorded
+8. Profile yield (integer data-point count) is recorded
 9. Cross-leads are tagged with correct destination segment
 10. `discovered_via` chains are traceable to a seed source
 

@@ -14,7 +14,7 @@
 #
 # Behaviour per legacy profile:
 #   • Extract stem from filename (strip "profile-" prefix).
-#   • Parse Profile date / Richness classification / Warmth level from the
+#   • Parse Profile date / data-point count / Warmth level from the
 #     markdown body (best-effort regex; missing fields seed defaults).
 #   • Read roster row for contact_name / organisation / role / date_excluded /
 #     star_rating.
@@ -85,16 +85,7 @@ proc normalise_warmth {raw} {
     return "cold"
 }
 
-proc normalise_richness {raw} {
-    set r [string tolower [string trim $raw]]
-    if {[string match "rich*"     $r]} { return "rich" }
-    if {[string match "medium*"   $r]} { return "medium" }
-    if {[string match "moderate*" $r]} { return "medium" }
-    if {[string match "thin*"     $r]} { return "thin" }
-    return "thin"
-}
-
-proc extract_richness_count {raw} {
+proc extract_yield {raw} {
     # "Rich (8+ data points)" → 8; "Medium (5 data points)" → 5.
     # Prefer the count inside "(N data points)" if present, otherwise first
     # digit sequence, otherwise 0.
@@ -121,7 +112,7 @@ proc strip_legacy_headers {text} {
     set out {}
     foreach line $lines {
         if {[regexp -nocase {^\s*\*\*Profile date:\*\*} $line]} continue
-        if {[regexp -nocase {^\s*\*\*Richness classification:\*\*} $line]} continue
+        if {[regexp -nocase {^\s*\*\*(Richness classification|Profile yield):\*\*} $line]} continue
         if {[regexp -nocase {^\s*\*\*Warmth level:\*\*} $line]} continue
         lappend out $line
     }
@@ -151,9 +142,8 @@ foreach old_path [lsort [glob -nocomplain [file join $profile_dir profile-*.md]]
     set profile_date [extract_field $body {^\s*\*\*Profile date:\*\*\s*(.+)$}]
     if {$profile_date eq ""} { set profile_date [clock format [clock seconds] -format %Y-%m-%d] }
 
-    set richness_raw [extract_field $body {^\s*\*\*Richness classification:\*\*\s*(.+)$}]
-    set richness [normalise_richness $richness_raw]
-    set richness_count [extract_richness_count $richness_raw]
+    set yield_raw [extract_field $body {^\s*\*\*(?:Richness classification|Profile yield):\*\*\s*(.+)$}]
+    set yield [extract_yield $yield_raw]
 
     set warmth_raw [extract_field $body {^\s*\*\*Warmth level:\*\*\s*(.+)$}]
     set warmth_finding [normalise_warmth $warmth_raw]
@@ -184,8 +174,7 @@ foreach old_path [lsort [glob -nocomplain [file join $profile_dir profile-*.md]]
     lappend fm "---"
     lappend fm "profile_date: $profile_date"
     lappend fm "star_rating: $star_rating"
-    lappend fm "richness: $richness"
-    lappend fm "richness_count: $richness_count"
+    lappend fm "yield: $yield"
     lappend fm "warmth_finding: $warmth_finding"
     lappend fm "applicable_angles:"
     lappend fm "  - to-be-reviewed"
@@ -201,7 +190,7 @@ foreach old_path [lsort [glob -nocomplain [file join $profile_dir profile-*.md]]
 
     if {$dry_run} {
         puts "DRYRUN $stem → $new_path"
-        puts "       profile_date=$profile_date star=$star_rating richness=$richness count=$richness_count warmth=$warmth_finding"
+        puts "       profile_date=$profile_date star=$star_rating yield=$yield warmth=$warmth_finding"
     } else {
         set fd [open $new_path w]
         fconfigure $fd -encoding utf-8
