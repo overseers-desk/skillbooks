@@ -114,32 +114,17 @@ wm title . "SPAR Campaign Manager \u2014 $campaign_name"
 # Main layout
 # ============================================================
 
-ttk::notebook .tabs
-pack .tabs -fill both -expand 1
+ttk::panedwindow .pw -orient vertical
+pack .pw -fill both -expand 1
 
-# Placeholder tab
-ttk::frame .tabs.tab_old
-.tabs add .tabs.tab_old -text "2026-03"
-ttk::label .tabs.tab_old.lbl -text "(No data loaded)" -foreground #999
-pack .tabs.tab_old.lbl -expand 1
+ttk::frame .pw.campaign
+.pw add .pw.campaign -weight 3
 
-# Active tab
-ttk::frame .tabs.tab_current
-.tabs add .tabs.tab_current -text [expr {[info exists campaign_name] && $campaign_name ne "" ? [string range $campaign_name 0 6] : "Current"}]
-.tabs select .tabs.tab_current
+ttk::frame .pw.transitions
+.pw add .pw.transitions -weight 2
 
-# Paned window inside active tab
-ttk::panedwindow .tabs.tab_current.pw -orient vertical
-pack .tabs.tab_current.pw -fill both -expand 1
-
-ttk::frame .tabs.tab_current.pw.campaign
-.tabs.tab_current.pw add .tabs.tab_current.pw.campaign -weight 3
-
-ttk::frame .tabs.tab_current.pw.transitions
-.tabs.tab_current.pw add .tabs.tab_current.pw.transitions -weight 2
-
-set cpanel .tabs.tab_current.pw.campaign
-set tpanel .tabs.tab_current.pw.transitions
+set cpanel .pw.campaign
+set tpanel .pw.transitions
 
 # ============================================================
 # Zone 2: Campaign panel
@@ -274,21 +259,21 @@ $dispatch show_dispatch_bar
 # selection-changed and double-clicked events so the wiring exists
 # from day one; the actual pane construction + render methods are
 # issue #66 and are empty stubs in the scaffold.
-set inspector [spar::ui::Inspector new $campaign $tree_obj .tabs.tab_current.pw]
+set inspector [spar::ui::Inspector new $campaign $tree_obj .pw]
 
 
 # ============================================================
 # Initial sash position
 # ============================================================
 
-bind .tabs.tab_current.pw <Map> {
+bind .pw <Map> {
     after 50 {
-        set h [winfo height .tabs.tab_current.pw]
+        set h [winfo height .pw]
         if {$h > 100} {
-            .tabs.tab_current.pw sashpos 0 [expr {int($h * 0.65)}]
+            .pw sashpos 0 [expr {int($h * 0.65)}]
         }
     }
-    bind .tabs.tab_current.pw <Map> {}
+    bind .pw <Map> {}
 }
 
 # ============================================================

@@ -265,11 +265,3 @@ import -window "$WID" /tmp/legend.png
 ```
 
 Requires `imagemagick` and `xdotool`. Both were present on the development machine.
-
-## Appendix A: Potential future features
-
-### A.1 Campaign tab bar
-
-A tab bar at the top of the window, with one tab per campaign YAML file in the campaign directory, would let the user switch between campaigns within a single running application. Selecting a tab would reload the campaign config, progress table, and transition treeview for that campaign.
-
-This is not part of the current design. It was never explicitly requested; the single-campaign-at-a-time model covers the workflows the tool was built for. Partial scaffolding exists in `spar-ui.tcl` (a `.tabs` notebook with a placeholder `tab_old` and an active `tab_current`) as a carryover from an earlier prototype and can be removed or retained at the point this feature is reconsidered.
