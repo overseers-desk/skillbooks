@@ -40,7 +40,8 @@ namespace eval spar::ui {}
 oo::class create spar::ui::DispatchController {
     variable Campaign Transitions Log
     variable PlayBtn PauseBtn CancelBtn ProgressFrame
-    variable AutoTid AutoStems AutoQuit ScriptDir CampaignFile
+    variable AutoTid AutoStems AutoQuit AutoDryRun ScriptDir CampaignFile
+    variable PlayMenu LastWasDryRun
 
     variable CohortStems CohortState CohortReason CohortPhase
     variable ClassifySnapshot
@@ -51,7 +52,7 @@ oo::class create spar::ui::DispatchController {
     constructor {campaign transitions log \
                  play_btn pause_btn cancel_btn progress_frame \
                  script_dir campaign_file \
-                 auto_tid auto_stems auto_quit} {
+                 auto_tid auto_stems auto_quit {auto_dry_run 0}} {
         set Campaign       $campaign
         set Transitions    $transitions
         set Log            $log
@@ -64,6 +65,8 @@ oo::class create spar::ui::DispatchController {
         set AutoTid        $auto_tid
         set AutoStems      $auto_stems
         set AutoQuit       $auto_quit
+        set AutoDryRun     $auto_dry_run
+        set LastWasDryRun  0
 
         set CohortStems      {}
         set CohortState      [dict create]
@@ -85,6 +88,19 @@ oo::class create spar::ui::DispatchController {
         $PlayBtn   configure -command [list [self] dispatch]
         $PauseBtn  configure -command [list [self] pause]
         $CancelBtn configure -command [list [self] cancel]
+
+        # Right-click on the Play button opens a menu with live/dry-run
+        # variants. Dry-run is not a common need, so we keep it off the
+        # primary button surface. `<Button-3>` on a ttk::button still
+        # fires bindings regardless of the button's enabled state; the
+        # handler checks is_dispatching / the Play state before popping.
+        set PlayMenu ${play_btn}.menu
+        menu $PlayMenu -tearoff 0
+        $PlayMenu add command -label "Dispatch (live)" \
+            -command [list [self] dispatch 0]
+        $PlayMenu add command -label "Dispatch (dry run — writes disabled)" \
+            -command [list [self] dispatch 1]
+        bind $PlayBtn <Button-3> [list [self] on_play_menu %X %Y]
 
         # Subscribe to Campaign lifecycle.
         $Campaign subscribe refreshed    [list [self] on_refreshed]
@@ -124,8 +140,14 @@ oo::class create spar::ui::DispatchController {
 
     # dispatch — replaces do_dispatch. Reads tree selection, builds
     # cohort, invokes the runner for the selected transition.
-    method dispatch {} {
+    #
+    # dry_run (default 0): when 1, runners receive dry_run=1 and skip
+    # their write side (email send, YAML append, profile write, etc.)
+    # while still producing per-row progress so the cohort view shows
+    # what WOULD transition.
+    method dispatch {{dry_run 0}} {
         if {$Dispatching} return
+        set LastWasDryRun $dry_run
 
         set tree [$Transitions get_tree_widget]
         set sel [$tree selection]
@@ -174,7 +196,7 @@ oo::class create spar::ui::DispatchController {
 
         set opts [dict create \
             campaign_file $CampaignFile \
-            dry_run 0 \
+            dry_run $dry_run \
             jobs 4]
         if {$runner eq "::spar::email::run"} {
             dict set opts delay_seconds 0
@@ -223,7 +245,8 @@ oo::class create spar::ui::DispatchController {
         update idletasks
 
         my show_dispatch_bar
-        $Log log "Dispatch requested: $label ($tid)"
+        set mode_tag [expr {$dry_run ? " (DRY RUN — writes disabled)" : ""}]
+        $Log log "Dispatch requested: $label ($tid)$mode_tag"
 
         my _fire dispatch-started $tid
 
@@ -323,7 +346,16 @@ oo::class create spar::ui::DispatchController {
         }
         event generate $tree <<TreeviewSelect>>
         update
-        my dispatch
+        my dispatch $AutoDryRun
+    }
+
+    # on_play_menu — right-click handler on the Play button. Pops the
+    # live/dry-run menu, but only when there is something dispatchable
+    # (mirrors the Play button's own enabled state).
+    method on_play_menu {x_screen y_screen} {
+        if {$Dispatching} return
+        if {[$PlayBtn cget -state] ne "normal"} return
+        tk_popup $PlayMenu $x_screen $y_screen
     }
 
     # on_progress — Dispatcher callback. Status ∈ {started, done, failed,
@@ -423,7 +455,8 @@ oo::class create spar::ui::DispatchController {
         if {$count ne "" && $count == 0 && $done == 0 && $failed == 0} {
             append tail " (no rows matched the runner's filters — check in-scope channel, min_star, or that the approach file already exists)"
         }
-        $Log log "Dispatch completed: $done done, $failed failed$tail."
+        set mode_tag [expr {$LastWasDryRun ? " (dry run — no writes)" : ""}]
+        $Log log "Dispatch completed: $done done, $failed failed$tail$mode_tag."
 
         $Campaign refresh
         my reapply_cohort

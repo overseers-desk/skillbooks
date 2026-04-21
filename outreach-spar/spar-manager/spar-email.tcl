@@ -522,12 +522,15 @@ proc spar::collect_sent_approaches {segments} {
 # mailroom_folder   mailroom folder name
 # sender_email    the campaign sender's email address
 # on_progress     callback proc name: called with {to_email approach_stem status message}
+# dry_run         1 to skip append_reply_to_yaml (still queries mailbox,
+#                 still emits progress events, still returns new_replies count).
 #
 # Returns dict:
-#   new_replies   count of new replies found
+#   new_replies   count of new replies found (in dry-run: count of replies
+#                 that WOULD have been appended).
 #   errors        count of errors
 #
-proc spar::check_replies_mailroom {campaign_dir segments mailroom_account mailroom_folder sender_email on_progress} {
+proc spar::check_replies_mailroom {campaign_dir segments mailroom_account mailroom_folder sender_email on_progress {dry_run 0}} {
     set new_replies 0
     set errors 0
     set sender_lower [string tolower $sender_email]
@@ -643,14 +646,19 @@ proc spar::check_replies_mailroom {campaign_dir segments mailroom_account mailro
                 set reply_text "(mailroom read failed -- review manually:\n  mailroom -a $mailroom_account read -f $mailroom_folder -u $uid)"
             }
 
-            # Add reply to first approach file
+            # Add reply to first approach file (skipped in dry-run).
             set first_entry [lindex $approach_entries 0]
             set approach_path [dict get $first_entry approach_path]
             set from_display [dict_get_default $msg from $from_email_addr]
 
-            append_reply_to_yaml $approach_path $date_str $from_display $reply_text
+            if {!$dry_run} {
+                append_reply_to_yaml $approach_path $date_str $from_display $reply_text
+            }
 
-            # Update fingerprints in memory for dedup within this batch
+            # Update fingerprints in memory for dedup within this batch.
+            # Runs in dry-run too, otherwise a single mailbox reply visible
+            # to multiple approaches sharing a to_email would be counted N
+            # times in the summary.
             set fps [dict get $first_entry fingerprints]
             lappend fps "${from_email_addr}|${date_str}"
             dict set first_entry fingerprints $fps
@@ -662,7 +670,8 @@ proc spar::check_replies_mailroom {campaign_dir segments mailroom_account mailro
             # Call progress callback
             if {$on_progress ne ""} {
                 set stem [file rootname [file tail $approach_path]]
-                {*}$on_progress $to_email $stem "reply" "reply from $from_email_addr ($date_str)"
+                set tag [expr {$dry_run ? "would-append reply" : "reply"}]
+                {*}$on_progress $to_email $stem "reply" "$tag from $from_email_addr ($date_str)"
             }
         }
     }
@@ -679,7 +688,11 @@ proc spar::check_replies_mailroom {campaign_dir segments mailroom_account mailro
 #
 # opts dict keys consumed:
 #   campaign_file   campaign YAML path
-#   dry_run         1 to skip the mailroom query and file writes
+#   dry_run         1 to query the mailbox but skip reply-append writes.
+#                   Unlike T1/T2/T3 (where dry-run short-circuits the work),
+#                   T4 dry-run still runs the mailroom query — that's the
+#                   whole point: see which contacts would transition without
+#                   persisting anything.
 #   segments        list of segment directory paths
 #   stems           approach stems in the T4 ready set; receive per-slug
 #                   progress events so UI rows reach a terminal state
@@ -728,16 +741,6 @@ proc spar::r::run {opts on_progress on_complete} {
     set sender  [dict get $cdata sender email]
     set campaign_dir [file dirname $campaign_file]
 
-    if {$dry_run} {
-        if {$on_progress ne ""} {
-            foreach s $stems {
-                {*}$on_progress $s skipped "dry-run (no mailroom query)"
-            }
-        }
-        {*}$on_complete 0 0 [dict create new_replies 0 errors 0]
-        return
-    }
-
     # Reset accumulator; r::run is not concurrent with itself (T4 is not in
     # auto_wired_tids), so a namespace variable is sufficient.
     set reported_stems {}
@@ -750,7 +753,7 @@ proc spar::r::run {opts on_progress on_complete} {
     }} $on_progress]
 
     set result [spar::check_replies_mailroom \
-        $campaign_dir $segments $account $folder $sender $adapter]
+        $campaign_dir $segments $account $folder $sender $adapter $dry_run]
 
     # Emit skipped for stems that did not receive a reply.
     if {$on_progress ne ""} {

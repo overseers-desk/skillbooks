@@ -2638,10 +2638,10 @@ section "24b. transition runner routing"
 
 assert_eq [spar::has_transition_runner T1] 1 "routing: T1 is wired"
 assert_eq [spar::has_transition_runner T2] 1 "routing: T2 is wired"
+assert_eq [spar::has_transition_runner T4] 1 "routing: T4 is wired"
 assert_eq [spar::has_transition_runner T6] 1 "routing: T6 is wired"
 assert_eq [spar::has_transition_runner T7] 1 "routing: T7 is wired"
 assert_eq [spar::has_transition_runner T3] 0 "routing: T3 is handled inline (not routed)"
-assert_eq [spar::has_transition_runner T4] 0 "routing: T4 is not wired"
 assert_eq [spar::has_transition_runner T8] 0 "routing: T8 is not wired"
 assert_eq [spar::has_transition_runner T9] 0 "routing: T9 is not wired"
 
@@ -2649,10 +2649,11 @@ assert_eq [spar::transition_runner T1] ::spar::p::run "routing: T1 → spar::p::
 assert_eq [spar::transition_runner T6] ::spar::p::run "routing: T6 → spar::p::run"
 assert_eq [spar::transition_runner T2] ::spar::a::run "routing: T2 → spar::a::run"
 assert_eq [spar::transition_runner T7] ::spar::a::run "routing: T7 → spar::a::run"
+assert_eq [spar::transition_runner T4] ::spar::r::run "routing: T4 → spar::r::run"
 
 set _routing_err ""
-catch {spar::transition_runner T4} _routing_err
-assert_match $_routing_err "no runner*" "routing: T4 lookup errors"
+catch {spar::transition_runner T8} _routing_err
+assert_match $_routing_err "no runner*" "routing: T8 lookup errors"
 
 # ════════════════════════════════════════════════════════════════════════
 section "25. Campaign channel slots (issue #41)"
