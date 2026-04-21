@@ -116,7 +116,7 @@ The fixed transition types:
 
 Each top-level row displays: the transition label and the count of tasks (e.g. "Profile → Approach (23)"). Counts update dynamically when the user changes segment checkboxes in the progress table.
 
-T4 (Send → Reply) and T8 (LinkedIn → Email follow-up) are monitoring transitions — there is no action to dispatch, only a waiting state. They are displayed but have no play button.
+T4 (Send → Reply) dispatches through `spar::r::run`: it queries the campaign's mailroom account and appends received replies to the corresponding approach YAMLs (same code path as the toolbar "Check Email" button). T8 (LinkedIn → Email follow-up) remains a monitoring transition — displayed but with no play button.
 
 ### 2.2 Tasks (child items)
 
@@ -134,7 +134,6 @@ Examples of pending reasons:
 - "Waiting for credit window" (any dispatched transition, API budget exhausted)
 - "Profile stale — cross-ref update from [other contact]" (T6)
 - "LinkedIn request sent 2 days ago, waiting until day 5" (T8)
-- "Waiting for reply" (T4)
 
 Tasks in the **done** state are shown greyed out. A "Show completed" checkbox above the treeview toggles their visibility.
 

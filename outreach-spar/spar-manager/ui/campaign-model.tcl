@@ -101,9 +101,11 @@ oo::class create spar::ui::CampaignModel {
         my _fire refreshed
     }
 
-    # check_email — source the email library on demand, run the reply
-    # check, then refresh. log-message events are fired for each line the
-    # wiring should surface.
+    # check_email — source the email library on demand and dispatch the
+    # T4 reply-check runner across the full campaign (no cohort stems —
+    # this is the "Check Email" toolbar sweep, not a transition-tree
+    # dispatch). on_complete fires the refresh so the progress table
+    # reflects any newly-ingested replies.
     method check_email {} {
         set email_lib [file join $ScriptDir spar-email.tcl]
         if {![file exists $email_lib]} {
@@ -114,11 +116,44 @@ oo::class create spar::ui::CampaignModel {
             my _fire log-message "Error loading spar-email.tcl: $err"
             return
         }
-        if {[catch {spar::check_replies_mailroom} err]} {
-            my _fire log-message "Email check error: $err"
-        } else {
-            my _fire log-message "Email check completed."
+        if {![spar::has_transition_runner T4]} {
+            my _fire log-message "T4 runner not registered — email-check unavailable."
+            return
         }
+
+        set seg_dirs {}
+        foreach item $SegmentPaths {
+            lassign $item label seg_dir
+            lappend seg_dirs $seg_dir
+        }
+
+        set opts [dict create \
+            campaign_file $CampaignFile \
+            dry_run 0 \
+            segments $seg_dirs \
+            stems {}]
+
+        set runner [spar::transition_runner T4]
+        if {[catch {$runner $opts \
+                [list [self] _email_progress] \
+                [list [self] _email_complete]} err]} {
+            my _fire log-message "Email check error: $err"
+        }
+    }
+
+    method _email_progress {slug status message} {
+        set prefix [expr {$slug ne "" ? "\[$slug\] " : ""}]
+        my _fire log-message "${prefix}$status[expr {$message ne "" ? ": $message" : ""}]"
+    }
+
+    method _email_complete {done failed result} {
+        set new_replies 0
+        set errors      0
+        if {$result ne ""} {
+            set new_replies [spar::dict_get_default $result new_replies 0]
+            set errors      [spar::dict_get_default $result errors      0]
+        }
+        my _fire log-message "Email check completed: $new_replies new reply(ies), $errors error(s)."
         my refresh
     }
 

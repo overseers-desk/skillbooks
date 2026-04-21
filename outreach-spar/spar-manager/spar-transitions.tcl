@@ -11,8 +11,8 @@
 #       [--yes] [--dry-run]
 #
 # T-id routing is authored once in spar-state.tcl (spar::transition_runners):
-# T1/T6 → spar::p::run, T2/T7 → spar::a::run. T4/T8 have no runner —
-# has_transition_runner returns 0 and the CLI skips them.
+# T1/T6 → spar::p::run, T2/T7 → spar::a::run, T4 → spar::r::run. T8 has no
+# runner — has_transition_runner returns 0 and the CLI skips it.
 #
 # T3 (Approach → Send) is not in the routing table. Its mechanics differ
 # from the Dispatcher-based runners (serial SES sends, interactive [y/N]
@@ -28,6 +28,10 @@ source [file join $script_dir spar-dispatch.tcl]
 source [file join $script_dir spar-email.tcl]
 
 # --- Argument parsing ---
+# Hand-rolled rather than tcllib cmdline because --tid, --segment, --stem
+# are repeatable; cmdline::getoptions and tcl::OptProc both overwrite on
+# repeat. Third-party parse_args/argparse support accumulation but aren't
+# installed. Tradeoff: we only accept --flag=value, not --flag value.
 set campaign_dir ""
 set campaign_file ""
 set filter_tid {}
@@ -70,7 +74,7 @@ TRANSITIONS
     T1  Sweep → Profile           (execute: wired)
     T2  Profile → Approach        (execute: wired)
     T3  Approach → Send           (execute: wired, via AWS SES)
-    T4  Send → Reply              (execute: not wired — monitoring-only TID)
+    T4  Send → Reply              (execute: wired, via mailroom reply-check)
     T6  Stale → Re-profile        (execute: wired)
     T7  Re-profile → Re-approach  (execute: wired)
     T8  LinkedIn → Email          (execute: not wired)
@@ -252,7 +256,8 @@ if {[llength $filter_tid] == 0} {
 }
 
 # --auto drives the offline state machine. T3 (email send) is excluded
-# unconditionally; T4/T8 are not wired anywhere yet.
+# unconditionally. T4 has a runner but is kept out of --auto so the loop
+# stays offline; invoke it explicitly via --tid=T4. T8 has no runner yet.
 set auto_wired_tids {T1 T2 T6 T7}
 if {$auto_mode} {
     set filtered_active {}
@@ -366,6 +371,19 @@ if {$execute_mode} {
                     dict set opts stems $filter_stems
                 }
                 puts "$tid: [llength $tasks] task(s) ready (campaign-wide pass)"
+            } elseif {$runner eq "::spar::r::run"} {
+                # T4 reply-check: derive segments + stems from the ready
+                # set so --segment / --stem filters flow through naturally
+                # (upstream segment_paths already honours --segment).
+                set segs  [dict create]
+                set stems {}
+                foreach c $tasks {
+                    dict set segs [dict get $c _segment_dir] 1
+                    lappend stems [dict get $c stem]
+                }
+                dict set opts segments [dict keys $segs]
+                dict set opts stems    $stems
+                puts "$tid: [llength $tasks] task(s) across [llength [dict keys $segs]] segment(s) (mailroom pass)"
             }
             incr ::_pending_dispatchers
             if {[catch {$runner $opts exec_on_progress exec_on_complete} err]} {
@@ -454,8 +472,8 @@ if {$execute_mode} {
         exit 0
     }
 
-    # Warn (don't fail) for ready work on unwired TIDs. T4/T8 are
-    # monitoring-only in the current design.
+    # Warn (don't fail) for ready work on unwired TIDs. T8 is the only
+    # remaining monitoring-only TID.
     foreach tid [dict keys $ready_by_tid] {
         if {![spar::has_transition_runner $tid]} {
             set n [llength [dict get $ready_by_tid $tid]]
@@ -471,7 +489,7 @@ if {$execute_mode} {
         $filter_segments $filter_stems $assume_yes
 
     # ── T3: send approach-ready emails via AWS SES ─────────────────────
-    if {[dict exists $ready_by_tid T3] && T3 in $active_tids} {
+    if {[dict exists $ready_by_tid T3] && "T3" in $active_tids} {
         set t3_tasks [dict get $ready_by_tid T3]
 
         set camp_sender [spar::dict_get_default $cdata sender [dict create]]
