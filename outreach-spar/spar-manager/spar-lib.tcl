@@ -350,10 +350,10 @@ proc spar::profile_exists {profile_dir slug_name slug_org} {
     return 0
 }
 
-# get_max_rounds — determine max A2 spar rounds from profile richness.
-# Reads the profile's YAML front matter (see spar-P-profile.md §5.1 and
-# SmartLayer/aesop#45) for the canonical `richness` value. Returns 3 for rich,
-# 1 for medium/thin, 1 for anything unparseable.
+# get_max_rounds — determine max A2 spar rounds from profile yield.
+# Reads the profile's YAML front matter (see spar-P-profile.md §5.1) for the
+# canonical `yield` integer (substantive data points). Returns 3 when yield ≥ 6,
+# 1 otherwise (including when the profile is missing or unparseable).
 proc spar::get_max_rounds {profile_path} {
     if {$profile_path eq "" || ![file exists $profile_path]} {
         return 1
@@ -364,11 +364,11 @@ proc spar::get_max_rounds {profile_path} {
         return 1
     }
     set fm [spar::read_profile_front_matter $profile_path]
-    if {$fm eq "" || ![dict exists $fm richness]} {
+    if {$fm eq "" || ![dict exists $fm yield]} {
         return 1
     }
-    set r [string tolower [dict get $fm richness]]
-    if {$r eq "rich"} {
+    set y [dict get $fm yield]
+    if {[string is integer -strict $y] && $y >= 6} {
         return 3
     }
     return 1
@@ -393,9 +393,9 @@ proc spar::channel_desc {linkedin phone} {
 
     if {$has_linkedin} {
         if {$has_phone} {
-            return "Per SPAR-A §4.2: LinkedIn + verified email + phone = prepare (1) LinkedIn connection note, (2) email after acceptance or 5 days, (3) phone follow-up if no email reply after 3 days."
+            return "Per SPAR-A §4.2: LinkedIn + email + phone = prepare (1) LinkedIn connection note, (2) email after acceptance or 5 days, (3) phone follow-up if no email reply after 3 days."
         } else {
-            return "Per SPAR-A §4.2: LinkedIn + verified email = prepare (1) LinkedIn connection note, (2) email after acceptance or 5 days."
+            return "Per SPAR-A §4.2: LinkedIn + email = prepare (1) LinkedIn connection note, (2) email after acceptance or 5 days."
         }
     } elseif {$has_phone} {
         return "Per SPAR-A §4.2: email + phone, no LinkedIn = prepare (1) email, (2) phone follow-up script."

@@ -417,7 +417,7 @@ Output file: $outfile
 Roster file: $roster_path
 Roster stem (file must be named exactly {stem}.md): $stem
 
-Follow SPAR-P §5 profile structure exactly. The profile MUST begin with a YAML front-matter block (see §5.1) carrying profile_date, star_rating, richness, richness_count, warmth_finding, applicable_angles, and a dependent_data snapshot of contact_name, organisation, role, and date_excluded from the roster. After writing the profile, follow SPAR-P §4.13 to write star_rating to the roster TSV as well (both the profile front matter and the TSV carry it — the profile is the authorial home, the TSV is the query-optimised copy). Then follow §4.15 to backfill any missing contact details (email, linkedin_url, facebook_url) and replace stale contacts discovered during research with the person currently in the role. Never write a masked or redacted email address (e.g. 'b***@example.com') to the roster — if the only email found is masked, leave the field empty.
+Follow SPAR-P §5 profile structure exactly. The profile MUST begin with a YAML front-matter block (see §5.1) carrying profile_date, star_rating, yield, warmth_finding, applicable_angles, and a dependent_data snapshot of contact_name, organisation, role, and date_excluded from the roster. After writing the profile, follow SPAR-P §4.13 to write star_rating to the roster TSV as well (both the profile front matter and the TSV carry it — the profile is the authorial home, the TSV is the query-optimised copy). Then follow §4.15 to backfill any missing contact details (email, linkedin_url, facebook_url) and replace stale contacts discovered during research with the person currently in the role. Never write a masked or redacted email address (e.g. 'b***@example.com') to the roster — if the only email found is masked, leave the field empty.
 Web search is the primary research method. Use Chromium only when the target has a LinkedIn or Facebook URL and WebFetch returns insufficient data. Wrap Chromium with flock: flock /tmp/chromium.lock /snap/bin/chromium --headless --dump-dom --virtual-time-budget=30000 --window-size=1920,10000 --user-data-dir=\"\$HOME/snap/chromium/common/chromium\" \"URL\" 2>/dev/null
 
 $sqlite3_skill_text"
@@ -633,7 +633,6 @@ proc spar::a::run {opts on_progress on_complete} {
             set email [string trim [spar::dict_get_default $row email]]
             set linkedin [string trim [spar::dict_get_default $row linkedin_url]]
             set facebook [string trim [spar::dict_get_default $row facebook_url]]
-            set verified [string trim [spar::dict_get_default $row verified]]
             set p_note [string trim [spar::dict_get_default $row p_note]]
             set star [string trim [spar::dict_get_default $row star_rating]]
             set response_likelihood [string trim [spar::dict_get_default $row response_likelihood]]
@@ -701,7 +700,7 @@ proc spar::a::run {opts on_progress on_complete} {
                     {*}$on_progress $stem skipped "no profile"
                     continue
                 }
-                set profile_a1_instruction "3. No profile document exists for this contact. Treat as Thin profile. Use the roster p_note and s_note below as the primary source for angle selection and drafting."
+                set profile_a1_instruction "3. No profile document exists for this contact. Treat as yield 0 (no data points). Use the roster p_note and s_note below as the primary source for angle selection and drafting."
                 set profile_content "No profile document. Roster notes only:
 p_note: $p_note
 s_note: $s_note"
@@ -719,7 +718,6 @@ LinkedIn: $linkedin
 Facebook: $facebook
 Star rating: $star
 Response likelihood: $response_likelihood
-Verified: $verified
 p_note: $p_note
 s_note: $s_note"
 

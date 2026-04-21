@@ -51,16 +51,16 @@ If the profile does not contain a warmth assessment, flag it for the human. Do n
 
 ### 4.2 Select channel
 
-Read the segment file for the prescribed approach type. Then check what channels are available in the roster (email, linkedin_url, facebook_url, phone, etc.) and whether email is verified.
+Read the segment file for the prescribed approach type. Then check what channels are available in the roster (email, linkedin_url, facebook_url, phone, etc.). An email is usable when the `email` column contains a deliverable `user@domain` value (the §4.8 format gate); masked or placeholder values do not count.
 
 Channel selection rules, in priority order:
 
-- **Connection channel + verified email + phone:** Prepare three pieces in sequence: (1) connection message, (2) email after the connection is accepted or after 4–5 days, (3) phone follow-up if the email gets no reply after 3 days.
-- **Verified email + phone, no connection channel:** Email first, phone follow-up if no reply after 3 days.
-- **Verified email only:** Email only.
-- **Connection channel, no verified email:** Connection message only, with slightly more context than usual since there is no email follow-up.
+- **Connection channel + email + phone:** Prepare three pieces in sequence: (1) connection message, (2) email after the connection is accepted or after 4–5 days, (3) phone follow-up if the email gets no reply after 3 days.
+- **Email + phone, no connection channel:** Email first, phone follow-up if no reply after 3 days.
+- **Email only:** Email only.
+- **Connection channel, no email:** Connection message only, with slightly more context than usual since there is no email follow-up.
 - **Phone only:** Phone script as primary, plus a follow-up email template to send once an address is obtained. This is the only scenario where phone is the first touch.
-- **No verified channel:** Flag for human resolution.
+- **No reachable channel:** Flag for human resolution.
 
 The approach file includes all pieces for the selected combination. Sequencing and timing between pieces (days to wait, conditions to trigger each step) follow methodology rules and are not restated per contact.
 
@@ -122,9 +122,9 @@ A2 tests whether the draft would land well with the recipient and whether it con
 
 **A2 is mandatory for all contacts.** Low-yield profiles need sparring more than high-yield ones: less evidence means more room to hallucinate relevance. Rounds are budgeted by profile yield:
 
-- **Rich** (6+ data points): up to 3 rounds
-- **Medium** (3–5 data points): 1 round
-- **Thin** (<3 data points): 1 round
+- yield ≥ 6: up to 3 rounds
+- yield 3–5: 1 round
+- yield < 3: 1 round
 
 Spawn one subagent (C2) to perform two sequential steps. Use a Sonnet-class model — less capable models shift behaviour more authentically under persona instructions.
 
@@ -144,7 +144,7 @@ The default sender and BCC address come from the campaign YAML (`sender.name`, `
 
 ### 4.8 Update the roster and communication index
 
-**Roster:** Copy `roster_note` from the approach file into the `a_note` column of the roster TSV. Also write `response_likelihood` (the percentage estimate from the approach file's contact header) to the roster's `response_likelihood` column. Use `sqlite3` for both updates.
+**Roster:** Copy `a_note` from the approach file into the `a_note` column of the roster TSV. Also write `response_likelihood` (the percentage estimate from the approach file's contact header) to the roster's `response_likelihood` column. Use `sqlite3` for both updates.
 
 **Communication index:** Append one line to `comms-index.md`: contact ID, name, organisation, segment, angle used, key relationship hooks, channel selection.
 
@@ -165,7 +165,7 @@ Approach files are YAML documents with a **closed vocabulary** — any key outsi
 
 **Canonical keys by level:**
 
-- Root: `decisions`, `rounds`, `profile_date`, `profile_yield`, `angle_rationale`, `roster_note`, `fact_provenance`, `quality_checklist`, `response_likelihood`, `generated_for`
+- Root: `decisions`, `rounds`, `profile_date`, `profile_yield`, `angle_rationale`, `a_note`, `fact_provenance`, `quality_checklist`, `response_likelihood`, `generated_for`
 - `generated_for`: `contact_name`, `organisation` — required. Records the roster values at generation time so `spar::validate_approach` can detect roster edits that post-date the approach file (emits `name_desync` / `org_desync` when they diverge).
 - `decisions`: `warmth`, `channel`, `language`, `angle`, `sender`, `warmth_detail`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
@@ -195,7 +195,7 @@ decisions:
     email: director@example.com
   subsegment: boutique-operator
 angle_rationale: Why this angle fits this contact.
-roster_note: Anything the roster row should record post-approach.
+a_note: Anything the roster row should record post-approach.
 rounds:
   - type: draft
     number: 1
@@ -267,7 +267,7 @@ The file ID uses a segment prefix and sequential number: `TOR-001-peter-myers.ya
 Before presenting an approach file for human review:
 
 1. **YAML structure self-check.** The dispatcher runs `spar::validate_approach` automatically post-assembly; if the file is malformed it loops you back with the exact errors. Do **not** invoke `tclsh`, `spar::validate_approach`, or any validator subprocess yourself — `tclsh -c` is not a valid flag and the call blocks indefinitely on stdin, which wedges the whole harness chain. Your self-check is mental: root keys drawn from §6's canonical set; every round has `type` and `number`; the `final` round contains ≤1 `channel: email` message; email addresses are real (not placeholders). Campaign-wide validation is reported separately by `spar-progress.tcl`.
-2. **Required fields.** All required fields are present: `chosen_usps` populated for each draft and final round, `fact_provenance` covers every factual claim in the final draft, `roster_note` is complete.
+2. **Required fields.** All required fields are present: `chosen_usps` populated for each draft and final round, `fact_provenance` covers every factual claim in the final draft, `a_note` is complete.
 3. **Presupposition test.** Does any sentence tell the recipient something they already know about themselves? If so, restructure.
 4. **Manufactured-connection test.** Is every claim of shared interest traceable to a specific profile data point? Check against the absent-themes section.
 5. **Concreteness.** Can the recipient answer the ask in one sentence?

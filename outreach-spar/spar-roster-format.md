@@ -44,14 +44,12 @@ Every row must have at least one of email, linkedin_url, or facebook_url populat
 |---|-------|------|------------|---------|---------|
 | 9 | sweep_iteration | integer | S | Human review | Which sweep iteration added this row |
 | 10 | discovered_via | text | S; P for new names found during profiling | Human review, future S | Referral chain traceable to the original seed source |
-| 11 | discovery_source | text | S | Human review | Specific mechanism: "LinkedIn comment", "Facebook group co-admin", "WebSearch: [query]" |
 
 ### Validation
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
-| 12 | verified | yes/no | S initial; P confirms or corrects | A, quality check | Role confirmed via independent source |
-| 13 | date_excluded | ISO date (YYYY-MM-DD) | S, P, or A | S (skips row), A (skips row), human review | Marks contacts that should not be advanced further, without deleting them. The date rather than a flag allows periodic re-checking. Set when the person has left the relevant role entirely (retired, changed industry), when profiling determines the contact is not a campaign target (wrong mechanism, no individual identifiable after exhaustive search, or low relevance), or when approach drafting concludes no viable angle exists. The roster carries the date; the reason lives in the writing agent's note column — `s_note` for S-authored exclusions (stale contacts discovered during sweep), `p_note` for P-authored exclusions, `a_note` for A-authored exclusions. See §Artefact retention below. |
+| 11 | date_excluded | ISO date (YYYY-MM-DD) | S, P, or A | S (skips row), A (skips row), human review | Marks contacts that should not be advanced further, without deleting them. The date rather than a flag allows periodic re-checking. Set when the person has left the relevant role entirely (retired, changed industry), when profiling determines the contact is not a campaign target (wrong mechanism, no individual identifiable after exhaustive search, or low relevance), or when approach drafting concludes no viable angle exists. The roster carries the date; the reason lives in the writing agent's note column — `s_note` for S-authored exclusions (stale contacts discovered during sweep), `p_note` for P-authored exclusions, `a_note` for A-authored exclusions. See §Artefact retention below. |
 
 ### Phase handover
 
@@ -59,14 +57,14 @@ Each SPAR phase has one note column. Only that phase writes to it. Subsequent ph
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
-| 14 | s_note | short text | S only; frozen after discovery | P, A | Why S included this person — the source statement, event, or signal that justified the entry. P reads this before profiling to check whether the person matches the rationale. |
-| 15 | p_note | short text | P only | A, human review | What P found: the verified evidence of interest, the recommended angle, any cautions for A. Broader than evidence of interest alone — includes corrections, routing advice, and warnings. |
-| 16 | star_rating | 0–5 | P; A may set to 0 | A (band ordering), human review | Strategic value: how interesting this contact is to the campaign. Scale defined in SPAR-P. A value of 0 means "excluded — not a campaign target." When star_rating is set to 0, date_excluded must also be set. The date_excluded field records when the determination was made; p_note or a_note records the reason. A star_rating of 0 is distinct from 1: a 1-star contact is low-priority but targetable; a 0-star contact is excluded from the pipeline entirely. |
-| 17 | response_likelihood | percentage | A | A (band ordering) | Estimated probability the contact responds to outreach. Set by A because it depends on the approach angle chosen. |
-| 18 | a_note | short text | A only | R (human review), subsequent A bands | Angle used, key hook referenced, outcome. Lets R scan a band's results from the roster without opening every approach file. |
-| 19 | r_note | short text | R (human) only | Subsequent A bands, S&P₄+ | Per-contact observation from response review: what worked, what did not, new leads mentioned, channel adjustment. |
+| 12 | s_note | short text | S only; frozen after discovery | P, A | Why S included this person — the source statement, event, or signal that justified the entry. P reads this before profiling to check whether the person matches the rationale. |
+| 13 | p_note | short text | P only | A, human review | What P found: the evidence of interest, the recommended angle, any cautions for A. Broader than evidence of interest alone — includes corrections, routing advice, and warnings. |
+| 14 | star_rating | 0–5 | P; A may set to 0 | A (band ordering), human review | Strategic value: how interesting this contact is to the campaign. Scale defined in SPAR-P. A value of 0 means "excluded — not a campaign target." When star_rating is set to 0, date_excluded must also be set. The date_excluded field records when the determination was made; p_note or a_note records the reason. A star_rating of 0 is distinct from 1: a 1-star contact is low-priority but targetable; a 0-star contact is excluded from the pipeline entirely. |
+| 15 | response_likelihood | percentage | A | A (band ordering) | Estimated probability the contact responds to outreach. Set by A because it depends on the approach angle chosen. |
+| 16 | a_note | short text | A only | R (human review), subsequent A bands | Angle used, key hook referenced, outcome. Lets R scan a band's results from the roster without opening every approach file. |
+| 17 | r_note | short text | R (human) only | Subsequent A bands, S&P₄+ | Per-contact observation from response review: what worked, what did not, new leads mentioned, channel adjustment. |
 
-Columns 15–19 are empty during S and populated progressively as the contact moves through P, A, and R. Empty columns are expected; not every contact reaches every phase.
+Columns 13–17 are empty during S and populated progressively as the contact moves through P, A, and R. Empty columns are expected; not every contact reaches every phase.
 
 ## Phase notes vs full artefacts
 
@@ -89,7 +87,7 @@ Old-slug duplicates — where the same content exists under two filenames due to
 
 ## Campaign-specific columns
 
-Campaigns may append columns after column 19. The campaign plan defines them. Common additions include:
+Campaigns may append columns after column 17. The campaign plan defines them. Common additions include:
 
 - **postcode** or **location** — for geographic filtering
 - **type** — contact category within a segment (e.g. "strategic", "corporate", "community")
@@ -106,21 +104,20 @@ These assertions apply to the core columns. Campaign-specific checks are defined
 3. No two rows share the same (`contact_name`, `organisation`) pair (case-insensitive).
 4. Every row has at least one of email, `linkedin_url`, or `facebook_url`.
 5. Every row has a `sweep_iteration` value.
-6. No contact marked `verified=yes` has a `p_note` or `date_excluded` indicating they left the role.
-7. Every row with a `response_likelihood` also has a `star_rating` (`star_rating` is a P output; `response_likelihood` is an A output. P runs before A, so `response_likelihood` implies `star_rating`).
-8. Every row with `star_rating = 0` has a non-empty `date_excluded`.
-9. Every row has a non-empty `stem`.
-10. No two rows share the same `stem` (it is the primary key of the segment roster).
-11. The roster file must contain a `stem` column header. A roster lacking it is rejected by the state machine (`spar-state.tcl`) at load time with a schema error. This is a hard failure, not a warning.
+6. Every row with a `response_likelihood` also has a `star_rating` (`star_rating` is a P output; `response_likelihood` is an A output. P runs before A, so `response_likelihood` implies `star_rating`).
+7. Every row with `star_rating = 0` has a non-empty `date_excluded`.
+8. Every row has a non-empty `stem`.
+9. No two rows share the same `stem` (it is the primary key of the segment roster).
+10. The roster file must contain a `stem` column header. A roster lacking it is rejected by the state machine (`spar-state.tcl`) at load time with a schema error. This is a hard failure, not a warning.
 
 ## Relationship to other documents
 
 This document defines the roster schema. The operational procedures for populating it are:
 
-- **SPAR-S** (`spar-S-search.md`) — populates columns 1–14 (including `stem` at discovery)
-- **SPAR-P** (`spar-P-profile.md`) — populates columns 15–17, corrects columns 3–8 and 12–13; creates `profiles/{stem}.md` using the pre-existing `stem` but does not write back to the roster
-- **SPAR-A** (`spar-A-approach.md`) — populates column 18; creates `approach/{stem}.yaml` using the pre-existing `stem` but does not write back to the roster
-- **R** (human, no procedure document) — populates column 19
+- **SPAR-S** (`spar-S-search.md`) — populates columns 1–12 (including `stem` at discovery)
+- **SPAR-P** (`spar-P-profile.md`) — populates columns 13–14, corrects columns 3–8 and 11; creates `profiles/{stem}.md` using the pre-existing `stem` but does not write back to the roster
+- **SPAR-A** (`spar-A-approach.md`) — populates column 16; creates `approach/{stem}.yaml` using the pre-existing `stem` but does not write back to the roster
+- **R** (human, no procedure document) — populates column 17
 - **spar-state.tcl** — reads `stem` from the roster and checks for the presence of `profiles/{stem}.md` and `approach/{stem}.yaml` on disk to classify contact state; never writes to the roster
 
 SPAR-S §4 currently contains a roster format definition that predates this document. When SPAR-S is next revised, §4 should reference this document rather than defining the format inline.
