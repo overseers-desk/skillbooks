@@ -112,9 +112,14 @@ set colours(totals_bg)   "#e2e2e2"
 set colours(muted_fg)    "#999999"
 
 # ============================================================
-# Window title
+# Window title and icon
 # ============================================================
 
+set _icon_path [file join $script_dir icon.svg]
+if {[file exists $_icon_path]} {
+    image create photo ::spar_icon -format svg -file $_icon_path
+    wm iconphoto . -default ::spar_icon
+}
 wm title . "SPAR Campaign Manager \u2014 $campaign_name"
 
 # ============================================================
