@@ -451,11 +451,21 @@ proc spar::stamp_actioned_date {approach_path today} {
 proc spar::collect_sent_approaches {segments} {
     set results {}
 
+    # Tcllib's pure-Tcl YAML parser is slow (~1s per 100KB approach
+    # file). For a 164-contact campaign the aggregate can exceed a
+    # minute — long enough that the Tk event loop sits dark and the
+    # window looks frozen before the mailroom sweep even starts.
+    # Pump every N files so the UI keeps repainting.
+    set has_update [expr {[info commands update] ne ""}]
+    set parsed 0
+
     foreach seg_dir $segments {
         set approach_dir [file join $seg_dir approach]
         if {![file isdirectory $approach_dir]} continue
 
         foreach yf [lsort [glob -nocomplain -directory $approach_dir *.yaml]] {
+            incr parsed
+            if {$has_update && ($parsed % 10 == 0)} { update idletasks }
             if {[catch {
                 set fd [open $yf r]
                 set raw [read $fd]
@@ -567,6 +577,9 @@ proc spar::check_replies_mailroom {campaign_dir segments mailroom_account mailro
 
     dict for {to_email approach_entries} $by_to {
         if {$has_update} { update idletasks }
+        # Tracks stems that got a reply event in this iteration, so the
+        # tail-of-iteration skipped burst below knows who to skip.
+        set iter_reply_stems {}
         # Search mailroom for messages from this contact
         set code [catch {
             exec mailroom -a $mailroom_account \
@@ -678,8 +691,22 @@ proc spar::check_replies_mailroom {campaign_dir segments mailroom_account mailro
             # Call progress callback
             if {$on_progress ne ""} {
                 set stem [file rootname [file tail $approach_path]]
+                lappend iter_reply_stems $stem
                 set tag [expr {$dry_run ? "would-append reply" : "reply"}]
                 {*}$on_progress $to_email $stem "reply" "$tag from $from_email_addr ($date_str)"
+            }
+        }
+
+        # Per-contact skipped events. Without this, progress stays at
+        # 0/N for the whole sweep and only jumps at the end when
+        # spar::r::run's tail loop fires skipped in a burst. Fire here
+        # instead so the progress bar advances contact-by-contact.
+        if {$on_progress ne ""} {
+            foreach entry $approach_entries {
+                set stem [file rootname [file tail [dict get $entry approach_path]]]
+                if {$stem ni $iter_reply_stems} {
+                    {*}$on_progress $to_email $stem "skipped" "no reply yet"
+                }
             }
         }
     }
@@ -719,14 +746,20 @@ proc spar::r::run {opts on_progress on_complete} {
     set segments      [spar::dict_get_default $opts segments {}]
     set stems         [spar::dict_get_default $opts stems    {}]
 
+    set has_update [expr {[info commands update] ne ""}]
+
     # Emit started per-slug so UI rows leave their initial state.
+    # Pump once after the burst so "queued" glyphs flip to "running"
+    # before the long collect_sent_approaches YAML pass starts.
     if {$on_progress ne ""} {
         foreach s $stems {
             {*}$on_progress $s started ""
         }
+        if {$has_update} { update idletasks }
     }
 
     set cdata [spar::load_campaign $campaign_file]
+    if {$has_update} { update idletasks }
     if {![dict exists $cdata reply_check mailroom_account] \
         || ![dict exists $cdata reply_check folder]} {
         if {$on_progress ne ""} {
@@ -769,13 +802,28 @@ proc spar::r::run {opts on_progress on_complete} {
     # Reset accumulator; r::run is not concurrent with itself (T4 is not in
     # auto_wired_tids), so a namespace variable is sufficient.
     set reported_stems {}
-    set adapter [list apply {{outer_on_progress to_email stem status message} {
+
+    # Cohort-membership filter for the adapter. check_replies_mailroom
+    # now emits per-contact "skipped" events (so progress advances
+    # during the sweep), but it emits them for every approach file it
+    # finds — including stems outside the caller's cohort (e.g. extra
+    # approaches in the same segment). Non-cohort skipped events would
+    # create stray log lines in the CLI and, more importantly, confuse
+    # the end-of-sweep reported_stems check. Drop them here.
+    set cohort_set [dict create]
+    foreach s $stems { dict set cohort_set $s 1 }
+
+    set adapter [list apply {{outer_on_progress cohort_set to_email stem status message} {
+        if {$status eq "skipped" && [dict size $cohort_set] > 0 \
+                && ![dict exists $cohort_set $stem]} {
+            return
+        }
         lappend ::spar::r::reported_stems $stem
         set mapped [expr {$status eq "reply" ? "done" : $status}]
         if {$outer_on_progress ne ""} {
             {*}$outer_on_progress $stem $mapped $message
         }
-    }} $on_progress]
+    }} $on_progress $cohort_set]
 
     set result [spar::check_replies_mailroom \
         $campaign_dir $segments $account $folder $sender $adapter $dry_run]
