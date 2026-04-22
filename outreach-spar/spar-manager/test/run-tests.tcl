@@ -226,6 +226,7 @@ proc approach_yaml_final_unsent {} {
     return {generated_for:
   contact_name: Test Contact
   organisation: Test Org
+response_likelihood: 50
 decisions:
   channel: email
 rounds:
@@ -245,6 +246,7 @@ proc approach_yaml_final_sent_email {} {
     return {generated_for:
   contact_name: Test Contact
   organisation: Test Org
+response_likelihood: 50
 decisions:
   channel: email
 rounds:
@@ -264,6 +266,7 @@ proc approach_yaml_final_replied {} {
     return {generated_for:
   contact_name: Test Contact
   organisation: Test Org
+response_likelihood: 50
 decisions:
   channel: email
 rounds:
@@ -283,6 +286,7 @@ proc approach_yaml_final_reply_received {} {
     return {generated_for:
   contact_name: Test Contact
   organisation: Test Org
+response_likelihood: 50
 decisions:
   channel: email
 rounds:
@@ -306,6 +310,7 @@ proc approach_yaml_final_sent_linkedin {} {
     return {generated_for:
   contact_name: Test Contact
   organisation: Test Org
+response_likelihood: 50
 decisions:
   channel: linkedin
 rounds:
@@ -323,6 +328,7 @@ proc approach_yaml_final_multi_channel {} {
     return {generated_for:
   contact_name: Test Contact
   organisation: Test Org
+response_likelihood: 50
 decisions:
   channel: linkedin_then_email
 rounds:
@@ -1492,6 +1498,29 @@ set va_mgf_errors [issues_with_code $va_mgf_issues missing_generated_for]
 assert_eq [llength $va_mgf_errors] 1 "validate_approach: missing generated_for → missing_generated_for error"
 assert_eq [dict get [lindex $va_mgf_errors 0] severity] "error" "validate_approach: missing_generated_for severity is error"
 
+# 12d1b. Missing response_likelihood → error (issue #69)
+set seg_va_mrl [make_temp_segment]
+set va_mrl_path [write_approach_yaml $seg_va_mrl "va-mrl" {generated_for:
+  contact_name: VA MRL
+  organisation: Some Org
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}]
+set va_mrl_issues [spar::validate_approach $va_mrl_path "test@acme-venues.au" "VA MRL" "Some Org"]
+set va_mrl_errors [issues_with_code $va_mrl_issues missing_response_likelihood]
+assert_eq [llength $va_mrl_errors] 1 "validate_approach: missing response_likelihood → missing_response_likelihood error"
+assert_eq [dict get [lindex $va_mrl_errors 0] severity] "error" "validate_approach: missing_response_likelihood severity is error"
+
 # 12d2. generated_for.contact_name differs from roster → name_desync warning
 set seg_va_nd [make_temp_segment]
 set va_nd_path [write_approach_yaml $seg_va_nd "va-nd" {generated_for:
@@ -2419,6 +2448,7 @@ set issues_valid [va_issues {
 generated_for:
   contact_name: Test
   organisation: Test Org
+response_likelihood: 50
 decisions:
   channel: email
 rounds:
@@ -2729,6 +2759,7 @@ proc t9_yaml_primary_email_sent_secondary_phone_pending {primary_date {replied_d
     return "generated_for:
   contact_name: Test Contact
   organisation: Test Org
+response_likelihood: 50
 decisions:
   channel: email
 rounds:
@@ -2754,6 +2785,7 @@ proc t9_yaml_primary_unsent {} {
     return {generated_for:
   contact_name: Test Contact
   organisation: Test Org
+response_likelihood: 50
 decisions:
   channel: email
 rounds:
@@ -2862,6 +2894,7 @@ proc t10_yaml_primary_sent_secondary_sent_tertiary_pending {primary_date seconda
     return "generated_for:
   contact_name: Test Contact
   organisation: Test Org
+response_likelihood: 50
 decisions:
   channel: email
 rounds:
