@@ -133,18 +133,18 @@ oo::class create spar::ui::CampaignModel {
 
         set runner [spar::transition_runner T4]
         if {[catch {{*}$runner $opts \
-                [list [self] _email_progress] \
-                [list [self] _email_complete]} err]} {
+                [list [self] email_progress] \
+                [list [self] email_complete]} err]} {
             my _fire log-message "Email check error: $err"
         }
     }
 
-    method _email_progress {slug status message} {
+    method email_progress {slug status message} {
         set prefix [expr {$slug ne "" ? "\[$slug\] " : ""}]
         my _fire log-message "${prefix}$status[expr {$message ne "" ? ": $message" : ""}]"
     }
 
-    method _email_complete {done failed result} {
+    method email_complete {done failed result} {
         set new_replies 0
         set errors      0
         if {$result ne ""} {
