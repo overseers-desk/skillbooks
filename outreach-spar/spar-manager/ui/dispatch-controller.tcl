@@ -201,6 +201,23 @@ oo::class create spar::ui::DispatchController {
             dry_run $dry_run \
             jobs 4]
 
+        # Call build_opts so transition-specific keys (e.g. T3's `tasks`)
+        # are populated — mirrors the CLI's dispatch_ready path.
+        set cdata [$Campaign get_cdata]
+        set primary_channel ""
+        if {[dict size $cdata] > 0} {
+            set primary_channel [spar::campaign_primary_channel $cdata]
+        }
+        set eligible [spar::transition_eligible \
+            [$Campaign get_all_contacts] $tid $primary_channel $cdata]
+        set cls [::spar::transitions::get $tid]
+        set extra [$cls build_opts $eligible {} {}]
+        if {[dict exists $extra log_message]} {
+            $Log log [dict get $extra log_message]
+            set extra [dict remove $extra log_message]
+        }
+        set opts [dict merge $opts $extra]
+
         # Clear the previous cohort so its terminal glyphs are wiped.
         my clear
 
