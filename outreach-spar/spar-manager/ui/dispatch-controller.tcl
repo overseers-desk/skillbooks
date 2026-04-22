@@ -453,11 +453,15 @@ oo::class create spar::ui::DispatchController {
             append tail " (no rows matched the runner's filters — check in-scope channel, min_star, or that the approach file already exists)"
         }
         set mode_tag [expr {$LastWasDryRun ? " (dry run — no writes)" : ""}]
-        $Log log "Dispatch completed: $done done, $failed failed$tail$mode_tag."
+        set summary "Dispatch completed: $done done, $failed failed$tail$mode_tag."
+        $Log log $summary
+
+        # Pop up a summary before resetting the progress bar.
+        tk_messageBox -title "Dispatch Complete" \
+            -icon info -type ok -message $summary
 
         $Campaign refresh
-        my reapply_cohort
-        my _update_progress_display
+        my clear
 
         # Kick the tree so the dispatch-target-changed subscriber
         # re-evaluates the Play button now that Dispatching is 0.
