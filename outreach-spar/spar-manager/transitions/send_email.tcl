@@ -221,6 +221,22 @@ oo::class create ::spar::transitions::SendEmailDriver {
             return
         }
 
+        # GUI confirmation: show email details and let the user approve
+        # or skip before hitting the wire.
+        set preview "To: $to\nSubject: $subject\n\n[string range $body 0 499]"
+        if {[string length $body] > 500} { append preview "\n…" }
+        set answer [tk_messageBox -title "Send Email — $stem" \
+            -icon question -type yesno \
+            -message "Send this email?" \
+            -detail $preview]
+        if {$answer ne "yes"} {
+            if {$OnProgress ne ""} {
+                {*}$OnProgress $CurrentSlug skipped "user declined"
+            }
+            my start_next
+            return
+        }
+
         if {$CampSmtpHost eq ""} {
             my fail_task "sender.smtp_host not set in campaign"
             return
