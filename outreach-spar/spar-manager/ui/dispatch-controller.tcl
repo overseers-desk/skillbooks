@@ -169,6 +169,7 @@ oo::class create spar::ui::DispatchController {
         set parent [lindex $parents 0]
 
         set label [$tree item $parent -text]
+        regsub {\s*\(\d+\)\s*$} $label "" label
 
         # Tree item id (t0..t6) to T-id. Ordering is driven by the
         # transition registry in spar-state.tcl (populated from the
@@ -201,23 +202,6 @@ oo::class create spar::ui::DispatchController {
             dry_run $dry_run \
             jobs 4]
 
-        # Call build_opts so transition-specific keys (e.g. T3's `tasks`)
-        # are populated — mirrors the CLI's dispatch_ready path.
-        set cdata [$Campaign get_cdata]
-        set primary_channel ""
-        if {[dict size $cdata] > 0} {
-            set primary_channel [spar::campaign_primary_channel $cdata]
-        }
-        set eligible [spar::transition_eligible \
-            [$Campaign get_all_contacts] $tid $primary_channel $cdata]
-        set cls [::spar::transitions::get $tid]
-        set extra [$cls build_opts $eligible {} {}]
-        if {[dict exists $extra log_message]} {
-            $Log log [dict get $extra log_message]
-            set extra [dict remove $extra log_message]
-        }
-        set opts [dict merge $opts $extra]
-
         # Clear the previous cohort so its terminal glyphs are wiped.
         my clear
 
@@ -246,6 +230,54 @@ oo::class create spar::ui::DispatchController {
             if {[llength $sel_stems] > 0} {
                 dict set opts stems $sel_stems
                 $Log log "Dispatch cohort: [llength $sel_stems] stem(s)"
+            }
+        }
+
+        # Call build_opts so transition-specific keys (e.g. T3's `tasks`)
+        # are populated — mirrors the CLI's dispatch_ready path. Filter
+        # eligible contacts down to the selected stems so only the
+        # user's selection is dispatched, not the entire campaign.
+        set cdata [$Campaign get_cdata]
+        set primary_channel ""
+        if {[dict size $cdata] > 0} {
+            set primary_channel [spar::campaign_primary_channel $cdata]
+        }
+        set eligible [spar::transition_eligible \
+            [$Campaign get_all_contacts] $tid $primary_channel $cdata]
+        if {[llength $sel_stems] > 0} {
+            set stem_set [dict create]
+            foreach s $sel_stems { dict set stem_set $s 1 }
+            set filtered {}
+            foreach c $eligible {
+                if {[dict exists $stem_set [spar::dict_get_default $c stem ""]]} {
+                    lappend filtered $c
+                }
+            }
+            set eligible $filtered
+        }
+        set cls [::spar::transitions::get $tid]
+        set extra [$cls build_opts $eligible {} {}]
+        if {[dict exists $extra log_message]} {
+            $Log log [dict get $extra log_message]
+            set extra [dict remove $extra log_message]
+        }
+        set opts [dict merge $opts $extra]
+
+        # Batch confirmation for transitions that send externally (e.g. T3
+        # email). One dialog for the whole cohort instead of per-item popups.
+        if {!$dry_run} {
+            set cls [::spar::transitions::get $tid]
+            if {[$cls requires_send_confirmation]} {
+                set n [llength $CohortStems]
+                set answer [tk_messageBox -title "Confirm Send" \
+                    -icon question -type yesno \
+                    -message "Send $n email(s) via $label ($tid)?" \
+                    -detail "Press Yes to proceed, No to cancel."]
+                if {$answer ne "yes"} {
+                    $Log log "Dispatch cancelled by user."
+                    my clear
+                    return
+                }
             }
         }
 
