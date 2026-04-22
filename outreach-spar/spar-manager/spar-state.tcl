@@ -744,9 +744,12 @@ proc spar::_approach_validation_error {contact} {
     set cname [spar::dict_get_default $contact contact_name ""]
     set corg  [spar::dict_get_default $contact organisation ""]
     foreach issue [spar::validate_approach $ap $roster_email $cname $corg] {
-        if {[dict get $issue severity] eq "error"} {
-            return [dict get $issue message]
-        }
+        if {[dict get $issue severity] ne "error"} continue
+        # missing_response_likelihood is enforced at the A-phase harness (#69),
+        # but not gated at dispatch — pre-existing approach files that lack the
+        # field must remain sendable without re-running A.
+        if {[dict get $issue code] eq "missing_response_likelihood"} continue
+        return [dict get $issue message]
     }
     return ""
 }
