@@ -340,10 +340,10 @@ oo::class create ::spar::transitions::SendEmailDriver {
             my start_next
             return
         }
-        set DelayTimer [after $delay_ms [list [self] _delay_fired]]
+        set DelayTimer [after $delay_ms [list [self] delay_fired]]
     }
 
-    method _delay_fired {} {
+    method delay_fired {} {
         set DelayTimer ""
         my start_next
     }
