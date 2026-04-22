@@ -44,7 +44,7 @@ oo::class create spar::ui::ProgressTable {
             star3    "3+★"    e
             astar    "A/3+★"  e
             email    "Email"       e
-            aeml     "A/Eml"       e
+            aeml     "A/✉"       e
             linkedin "LinkedIn"    e
             facebook "Facebook"    e
             phone    "Only ☎" e
