@@ -151,7 +151,7 @@ oo::class create ::spar::transitions::CheckRepliesDriver {
         if {[catch {open "| $cmd 2>@1" r} pipe]} {
             incr Errors
             if {$OnProgress ne ""} {
-                {*}$OnProgress $to_email "" error "mailbox search failed to start: $pipe"
+                {*}$OnProgress $to_email error "mailbox search failed to start: $pipe"
             }
             my emit_iter_skipped
             set CurrentPipe ""
@@ -177,7 +177,7 @@ oo::class create ::spar::transitions::CheckRepliesDriver {
                 # 2>@1), so a non-zero exit is real. Record and move on.
                 incr Errors
                 if {$OnProgress ne ""} {
-                    {*}$OnProgress $CurrentTo "" error "mailbox search failed: $close_err"
+                    {*}$OnProgress $CurrentTo error "mailbox search failed: $close_err"
                 }
                 set CurrentPipe ""
                 my emit_iter_skipped
@@ -189,7 +189,7 @@ oo::class create ::spar::transitions::CheckRepliesDriver {
             if {[catch {set messages [::json::json2dict $CurrentBuf]} perr]} {
                 incr Errors
                 if {$OnProgress ne ""} {
-                    {*}$OnProgress $CurrentTo "" error "mailbox search JSON parse: $perr"
+                    {*}$OnProgress $CurrentTo error "mailbox search JSON parse: $perr"
                 }
                 my emit_iter_skipped
                 my start_next
