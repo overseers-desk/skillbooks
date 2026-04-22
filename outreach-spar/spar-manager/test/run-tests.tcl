@@ -1521,6 +1521,14 @@ set va_mrl_errors [issues_with_code $va_mrl_issues missing_response_likelihood]
 assert_eq [llength $va_mrl_errors] 1 "validate_approach: missing response_likelihood → missing_response_likelihood error"
 assert_eq [dict get [lindex $va_mrl_errors 0] severity] "error" "validate_approach: missing_response_likelihood severity is error"
 
+# 12d1c. Send-path carve-out: _approach_validation_error must not block dispatch
+# on missing_response_likelihood alone (#69 — pre-existing approach files
+# authored before the check must remain sendable).
+set va_mrl_contact [dict create approach_path $va_mrl_path \
+    email "test@acme-venues.au" contact_name "VA MRL" organisation "Some Org"]
+assert_eq [spar::_approach_validation_error $va_mrl_contact] "" \
+    "_approach_validation_error: missing_response_likelihood alone → not a dispatch blocker"
+
 # 12d2. generated_for.contact_name differs from roster → name_desync warning
 set seg_va_nd [make_temp_segment]
 set va_nd_path [write_approach_yaml $seg_va_nd "va-nd" {generated_for:
