@@ -1,9 +1,9 @@
 # spar-manager/transitions/send_email.tcl
 #
 # SendEmailTransition (T3, Approach → Send). Sends the final-round email
-# message of each approach YAML via AWS SES. Owns the SES integration
-# end-to-end: request JSON construction, async pipe to `aws ses
-# send-email`, response parsing, and the actioned_date stamp on success.
+# message of each approach YAML via SES SMTP. Uses smtp_send.tcl, a
+# hand-rolled SMTP client that captures the "250 Ok <id>" tracking token
+# that tcllib smtp discards. actioned_date is stamped on success.
 #
 # Sends are serial with a pacing delay (opts.delay, default 2s) to stay
 # under SES rate limits. Pacing uses `after $delay_ms cmd`, not a
@@ -16,8 +16,44 @@
 #   delay          seconds between sends (default 2)
 
 package require TclOO
-package require json
-package require json::write
+
+namespace eval ::spar::transitions {
+    variable send_email_dir [file dirname [file normalize [info script]]]
+}
+
+# spar::smtp_credentials -- fetch SMTP user+pass from the OS secret store.
+# Entry name: "spar-smtp".
+# macOS:    security add-generic-password -s spar-smtp -a USER -w PASS -U
+# Linux:    secret-tool store --label="SPAR SMTP user" service spar-smtp key user
+#           secret-tool store --label="SPAR SMTP pass" service spar-smtp key pass
+# Windows:  New-Object Windows.Security.Credentials.PasswordVault then .Add(...)
+# Returns a dict: user pass
+proc ::spar::smtp_credentials {} {
+    global tcl_platform
+    switch $tcl_platform(os) {
+        "Darwin" {
+            set pass [string trim [exec security find-generic-password -s spar-smtp -w]]
+            set info [exec security find-generic-password -s spar-smtp]
+            if {![regexp {"acct"<blob>="([^"]+)"} $info _ user]} {
+                error "cannot read account from keychain entry spar-smtp"
+            }
+        }
+        "Linux" {
+            set user [string trim [exec secret-tool lookup service spar-smtp key user]]
+            set pass [string trim [exec secret-tool lookup service spar-smtp key pass]]
+        }
+        "Windows NT" {
+            set script {[void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime]; $vault = New-Object Windows.Security.Credentials.PasswordVault; $cred = $vault.FindAllByResource('spar-smtp') | Select-Object -First 1; $cred.RetrievePassword(); $cred.UserName; $cred.Password}
+            set lines [split [string trim [exec powershell -NoProfile -NonInteractive -Command $script]] "\n"]
+            set user [string trim [lindex $lines 0]]
+            set pass [string trim [lindex $lines 1]]
+        }
+        default {
+            error "smtp_credentials: unsupported platform \"$tcl_platform(os)\""
+        }
+    }
+    return [dict create user $user pass $pass]
+}
 
 # ── SendEmailDriver ──────────────────────────────────────────────────
 # Per-dispatch instance. Created by SendEmailTransition::run, lives
@@ -28,24 +64,25 @@ oo::class create ::spar::transitions::SendEmailDriver {
     variable Paused Cancelled
     variable OnProgress OnComplete
     variable Tasks TaskIdx Delay DryRun
-    variable SesRegion CampSender CampFromName CampFromEmail CampBcc
-    variable CurrentPipe CurrentBuf
+    variable CampSender CampFromName CampFromEmail CampBcc CampSmtpHost CampSmtpPort
+    variable CurrentPipe CurrentBuf TmpFile
     variable CurrentSlug CurrentApproachPath
     variable DelayTimer
     variable Done Failed
     variable Tid StepCallback
 
-    constructor {tasks delay dry_run ses_region camp_sender \
+    constructor {tasks delay dry_run camp_sender \
                  on_progress on_complete {tid ""} {step_callback ""}} {
         set Tasks        $tasks
         set TaskIdx      0
         set Delay        $delay
         set DryRun       $dry_run
-        set SesRegion    $ses_region
         set CampSender   $camp_sender
         set CampFromName  [spar::dict_get_default $camp_sender name ""]
         set CampFromEmail [spar::dict_get_default $camp_sender email ""]
         set CampBcc       [spar::dict_get_default $camp_sender bcc ""]
+        set CampSmtpHost  [spar::dict_get_default $camp_sender smtp_host ""]
+        set CampSmtpPort  [spar::dict_get_default $camp_sender smtp_port 587]
 
         set OnProgress $on_progress
         set OnComplete $on_complete
@@ -56,6 +93,7 @@ oo::class create ::spar::transitions::SendEmailDriver {
         set Cancelled 0
         set CurrentPipe ""
         set CurrentBuf ""
+        set TmpFile ""
         set CurrentSlug ""
         set CurrentApproachPath ""
         set DelayTimer ""
@@ -87,6 +125,7 @@ oo::class create ::spar::transitions::SendEmailDriver {
             catch {close $CurrentPipe}
             set CurrentPipe ""
         }
+        if {$TmpFile ne ""} { catch {file delete $TmpFile}; set TmpFile "" }
         my finish
     }
 
@@ -182,38 +221,48 @@ oo::class create ::spar::transitions::SendEmailDriver {
             return
         }
 
-        ::json::write indented 0
-        set dest_fields [list ToAddresses \
-            [::json::write array [::json::write string $to]]]
-        if {$cc ne ""} {
-            lappend dest_fields CcAddresses \
-                [::json::write array [::json::write string $cc]]
+        if {$CampSmtpHost eq ""} {
+            my fail_task "sender.smtp_host not set in campaign"
+            return
         }
-        if {$bcc ne ""} {
-            lappend dest_fields BccAddresses \
-                [::json::write array [::json::write string $bcc]]
+        if {[catch {set creds [::spar::smtp_credentials]} err]} {
+            my fail_task "keychain lookup failed: $err"
+            return
         }
-        set dest_json [::json::write object {*}$dest_fields]
 
-        set subj_obj [::json::write object \
-            Data [::json::write string $subject] \
-            Charset [::json::write string "UTF-8"]]
-        set body_obj [::json::write object \
-            Text [::json::write object \
-                Data [::json::write string $body] \
-                Charset [::json::write string "UTF-8"]]]
-        set msg_json [::json::write object \
-            Subject $subj_obj \
-            Body $body_obj]
+        set params [dict create \
+            smtp_host  $CampSmtpHost \
+            smtp_port  $CampSmtpPort \
+            smtp_user  [dict get $creds user] \
+            smtp_pass  [dict get $creds pass] \
+            from_email $from_email \
+            from_name  $from_name \
+            to         $to \
+            cc         $cc \
+            bcc        $bcc \
+            subject    $subject \
+            body       $body]
 
-        set cmd [list aws ses send-email \
-            --region $SesRegion \
-            --from $from_hdr \
-            --destination $dest_json \
-            --message $msg_json]
+        if {[catch {set TmpFile [exec mktemp]} err]} {
+            my fail_task "tempfile error: $err"
+            return
+        }
+        if {[catch {
+            set f [open $TmpFile w]
+            puts $f $params
+            close $f
+        } err]} {
+            catch {file delete $TmpFile}; set TmpFile ""
+            my fail_task "tempfile write error: $err"
+            return
+        }
+
+        set helper [file join $::spar::transitions::send_email_dir smtp_send.tcl]
+        set cmd [list tclsh9.0 $helper $TmpFile]
 
         set CurrentBuf ""
         if {[catch {open "| $cmd 2>@1" r} pipe]} {
+            catch {file delete $TmpFile}; set TmpFile ""
             my fail_task "send failed to start: $pipe"
             return
         }
@@ -232,20 +281,16 @@ oo::class create ::spar::transitions::SendEmailDriver {
             set close_err ""
             set failed [catch {close $pipe} close_err]
             set CurrentPipe ""
+            if {$TmpFile ne ""} { catch {file delete $TmpFile}; set TmpFile "" }
 
             if {$failed} {
-                my fail_task "send error: $close_err"
+                my fail_task "send error: [string trim $CurrentBuf]"
                 return
             }
 
-            set message_id "?"
-            if {[catch {set parsed [::json::json2dict $CurrentBuf]}]} {
-                # Successful sends emit JSON; anything else with exit=0
-                # is still treated as success but with unknown MessageId.
-                set message_id "?"
-            } else {
-                set message_id [spar::dict_get_default $parsed MessageId "?"]
-            }
+            # smtp_send.tcl prints the bare SES tracking token on stdout
+            set message_id [string trim $CurrentBuf]
+            if {$message_id eq ""} { set message_id "?" }
 
             set today [clock format [clock seconds] -format "%Y-%m-%d"]
             if {[catch {spar::stamp_actioned_date $CurrentApproachPath $today} serr]} {
@@ -333,10 +378,9 @@ oo::class create ::spar::transitions::SendEmailTransition {
 
         set cdata [spar::load_campaign $campaign_file]
         set camp_sender [spar::dict_get_default $cdata sender [dict create]]
-        set ses_region  [spar::dict_get_default $cdata ses_region "ap-southeast-2"]
 
         set driver [::spar::transitions::SendEmailDriver new \
-            $tasks $delay $dry_run $ses_region $camp_sender \
+            $tasks $delay $dry_run $camp_sender \
             $on_progress $on_complete [my tid] $step_callback]
         $driver kick
     }
