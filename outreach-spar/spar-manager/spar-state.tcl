@@ -1599,6 +1599,21 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
             message "Approach file missing required 'generated_for' key (see spar-A-approach.md §6)"]
     }
 
+    # ── response_likelihood required (issue #69) ──
+    # A authors it; without it the roster column stays empty and downstream
+    # band-ordering silently omits the contact from its sort key.
+    set _rl ""
+    if {[dict exists $approach_data response_likelihood]} {
+        set _rl [string trim [dict get $approach_data response_likelihood]]
+    }
+    if {$_rl eq ""} {
+        lappend issues [dict create \
+            severity error \
+            code missing_response_likelihood \
+            contact_name $contact_name \
+            message "Approach file missing required 'response_likelihood' key (see spar-A-approach.md §4.8)"]
+    }
+
     return $issues
 }
 
