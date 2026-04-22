@@ -311,6 +311,9 @@ proc spar::classify_contact {roster_row segment_dir} {
     # This happens when TSV was edited with a tool that CSV-quotes blank fields.
     set date_invalid [string trim [spar::dict_get_default $roster_row date_excluded ""]]
     set stem [string trim [spar::dict_get_default $roster_row stem ""]]
+    # P-authored (see spar-P-profile.md §5.1). Roster column is a query-
+    # optimised cache for band filters and state predicates; the authorial
+    # home is the profile front matter. Not an input to profiling.
     set star_raw [spar::dict_get_default $roster_row star_rating ""]
     set email [string trim [spar::dict_get_default $roster_row email ""]]
     set linkedin [string trim [spar::dict_get_default $roster_row linkedin_url ""]]
@@ -720,6 +723,9 @@ proc spar::_approach_dispatch_gate {row cdata} {
         return "no in-scope channel (campaign: [join $in_scope {, }])"
     }
     if {$min_star > 0} {
+        # star_rating is P-authored (spar-P-profile.md §5.1); the roster
+        # column is a cache so this band filter can scan without parsing
+        # profiles. Pre-P rows carry 0 and fail the filter by design.
         set star [spar::parse_star [spar::dict_get_default $row star_rating ""]]
         if {$star < $min_star} {
             return "star $star below min_star $min_star"
