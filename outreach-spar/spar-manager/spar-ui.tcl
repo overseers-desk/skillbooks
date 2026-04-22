@@ -81,6 +81,7 @@ source [file join $script_dir ui progress-table.tcl]
 source [file join $script_dir ui transition-tree.tcl]
 source [file join $script_dir ui dispatch-controller.tcl]
 source [file join $script_dir ui utils.tcl]
+source [file join $script_dir ui collapsible.tcl]
 source [file join $script_dir ui inspector.tcl]
 
 # ============================================================
@@ -117,7 +118,7 @@ set colours(muted_fg)    "#999999"
 
 set _icon_path [file join $script_dir icon.svg]
 if {[file exists $_icon_path]} {
-    image create photo ::spar_icon -format svg -file $_icon_path
+    image create photo ::spar_icon -format {svg -scaletoheight 128} -file $_icon_path
     wm iconphoto . -default ::spar_icon
 }
 wm title . "SPAR Campaign Manager \u2014 $campaign_name"

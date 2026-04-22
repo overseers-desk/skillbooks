@@ -4,6 +4,11 @@
 # Each sub-namespace groups a small set of procs; all state flows
 # through explicit arguments. If a helper grows state, it should
 # graduate to its own class file under the design criterion in #67.
+#
+# Widgets: use ttk::*. Classic tk widgets ignore the theme. For a
+# readonly selectable field (Ctrl-C copy), use ttk::entry with the
+# Flat.TEntry style — see copy_text below. Don't specify -font; users
+# expect ours to match other apps on their system.
 
 package require Tk
 
@@ -203,60 +208,41 @@ namespace eval ::spar::ui::legend {
 
 namespace eval ::spar::ui::inspector_widgets {
 
-    # collapsible parent name header_text expanded_default — construct a
-    # collapsible section as $parent.$name with a toggle button and a
-    # $parent.$name.body frame the caller populates. Returns the outer
-    # frame path. The body frame is always $outer.body regardless of
-    # expanded_default.
-    proc collapsible {parent name header_text expanded_default} {
-        set f ${parent}.${name}
-        ttk::frame $f
-        set glyph [expr {$expanded_default ? "▾" : "▸"}]
-        ttk::button ${f}.hdr -text "$glyph  $header_text" -style Toolbutton \
-            -command [list ::spar::ui::inspector_widgets::_toggle $f]
-        ttk::frame ${f}.body
-        pack ${f}.hdr -fill x -anchor w
-        if {$expanded_default} {
-            pack ${f}.body -fill x -padx {12 0} -pady {2 4}
-        }
-        return $f
-    }
+    # scrollable parent — attach a canvas + vertical scrollbar inside
+    # $parent and return an inner ttk::frame the caller populates. The
+    # inner frame's width tracks the canvas width so children reflow;
+    # scrollregion updates on both canvas and inner-frame size changes.
+    proc scrollable {parent} {
+        set sc ${parent}.sc
+        ttk::frame $sc
+        pack $sc -fill both -expand 1
 
-    proc _toggle {f} {
-        if {[winfo ismapped ${f}.body]} {
-            pack forget ${f}.body
-            set cur [${f}.hdr cget -text]
-            ${f}.hdr configure -text [string map {▾ ▸} $cur]
-        } else {
-            pack ${f}.body -fill x -padx {12 0} -pady {2 4}
-            set cur [${f}.hdr cget -text]
-            ${f}.hdr configure -text [string map {▸ ▾} $cur]
-        }
-    }
+        set cv ${sc}.cv
+        canvas $cv -highlightthickness 0 \
+            -yscrollcommand [list ${sc}.vsb set]
+        ttk::scrollbar ${sc}.vsb -orient vertical -command [list $cv yview]
+        pack ${sc}.vsb -side right -fill y
+        pack $cv -side left -fill both -expand 1
 
-    # Like collapsible, but also invokes $on_toggle_cb (a script prefix)
-    # after the body flips. Callback receives one boolean arg: 1 expanded,
-    # 0 collapsed. Used by the Approach renderer to persist per-round
-    # collapse state into the Inspector's CollapseMemory.
-    proc collapsible_cb {parent name header_text expanded_default on_toggle_cb} {
-        set f [collapsible $parent $name $header_text $expanded_default]
-        ${f}.hdr configure -command \
-            [list ::spar::ui::inspector_widgets::_toggle_cb $f $on_toggle_cb]
-        return $f
-    }
+        set body ${cv}.inner
+        ttk::frame $body
+        $cv create window 0 0 -window $body -anchor nw -tags inner
 
-    proc _toggle_cb {f cb} {
-        _toggle $f
-        set expanded [winfo ismapped ${f}.body]
-        {*}$cb $expanded
+        bind $cv <Configure> [list apply {{cv w} {
+            $cv itemconfigure inner -width $w
+            $cv configure -scrollregion [$cv bbox all]
+        }} $cv %w]
+        bind $body <Configure> [list apply {{cv} {
+            $cv configure -scrollregion [$cv bbox all]
+        }} $cv]
+        return $body
     }
 
     # kv_row parent key value indent — pack one key/value row. indent=0
     # is a top-level row; indent=1 is padded for list items and dict
-    # sub-rows. Wraps long values at the enclosing inner-frame width via
-    # the common inspector-canvas <Configure> path (which sets the inner
-    # frame's width); individual rows rely on -wraplength 1 with
-    # expand-on-pack.
+    # sub-rows. The value side is a readonly classic entry styled flat so
+    # it reads as a label but supports mouse selection and Ctrl-C. No
+    # wrapping (entries are single-line); long values scroll horizontally.
     proc kv_row {parent key value {indent 0}} {
         set row ${parent}.[_uniq row]
         ttk::frame $row
@@ -264,10 +250,37 @@ namespace eval ::spar::ui::inspector_widgets {
         set lpad [expr {$indent * 16}]
         ttk::label ${row}.k -text $key -width 22 -anchor w
         pack ${row}.k -side left -padx [list $lpad 4]
-        ttk::label ${row}.v -text $value -anchor w -justify left -wraplength 600
+        copy_text ${row}.v $value
         pack ${row}.v -side left -fill x -expand 1
         return $row
     }
+
+    # copy_text path value — construct a flat readonly ttk::entry that
+    # looks like a label but supports text selection. Reusable for header
+    # strings and any other place a label could have gone. Uses the
+    # Flat.TEntry style (configured once, below).
+    proc copy_text {path value} {
+        ttk::entry $path -style Flat.TEntry -takefocus 0
+        $path insert 0 $value
+        $path configure -state readonly
+        return $path
+    }
+
+    # copy_text_set path value — update a copy_text entry's content.
+    proc copy_text_set {path value} {
+        $path configure -state normal
+        $path delete 0 end
+        $path insert 0 $value
+        $path configure -state readonly
+    }
+
+    # Flat.TEntry — a borderless, padding-less ttk::entry style whose
+    # field background matches the root window, so a readonly entry
+    # renders as a flat selectable label. Configured at source-time (Tk
+    # is up by the time utils.tcl is loaded from spar-ui.tcl).
+    ttk::style configure Flat.TEntry -borderwidth 0 -relief flat -padding 0
+    ttk::style map Flat.TEntry \
+        -fieldbackground [list readonly [. cget -background]]
 
     variable _uniq_ctr 0
     proc _uniq {prefix} {
