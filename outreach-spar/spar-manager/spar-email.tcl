@@ -10,7 +10,8 @@
 source [file join [file dirname [file normalize [info script]]] spar-lib.tcl]
 
 namespace eval spar {
-    namespace export stamp_actioned_date collect_sent_approaches
+    namespace export stamp_actioned_date collect_sent_approaches \
+        filter_approaches_by_stems
 }
 
 # ── Helpers (not exported) ─────────────────────────────────────────────
@@ -438,6 +439,28 @@ proc spar::collect_sent_approaches {segments} {
     }
 
     return $results
+}
+
+# spar::filter_approaches_by_stems -- narrow an approach list to a cohort.
+#
+# approaches    list of dicts from collect_sent_approaches
+# stems         cohort stems; empty means "no filter" (return input as-is)
+#
+# The stem is derived from the approach filename (basename without .yaml),
+# matching the convention used in check_replies.tcl (driver's reply-log
+# output) and the roster's stem column.
+proc spar::filter_approaches_by_stems {approaches stems} {
+    if {[llength $stems] == 0} {
+        return $approaches
+    }
+    set wanted [dict create]
+    foreach s $stems { dict set wanted $s 1 }
+    set out {}
+    foreach entry $approaches {
+        set stem [file rootname [file tail [dict get $entry approach_path]]]
+        if {[dict exists $wanted $stem]} { lappend out $entry }
+    }
+    return $out
 }
 
 package provide spar-email 1.0

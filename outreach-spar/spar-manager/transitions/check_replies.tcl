@@ -484,6 +484,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         }
 
         set approaches [spar::collect_sent_approaches $segments]
+        set approaches [spar::filter_approaches_by_stems $approaches $stems]
         if {[llength $approaches] == 0} {
             if {$on_progress ne ""} {
                 foreach s $stems {

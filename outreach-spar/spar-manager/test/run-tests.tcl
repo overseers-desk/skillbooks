@@ -2706,6 +2706,45 @@ catch {spar::transition_runner T8} _routing_err
 assert_match $_routing_err "no runner*" "routing: T8 lookup errors"
 
 # ════════════════════════════════════════════════════════════════════════
+# 24c. spar::filter_approaches_by_stems — T4 cohort narrowing (issue #73)
+# ════════════════════════════════════════════════════════════════════════
+section "24c. spar::filter_approaches_by_stems — T4 cohort narrowing"
+
+source [file join $script_dir .. spar-email.tcl]
+
+set fas_inputs [list \
+    [dict create approach_path /x/approach/alpha.yaml      to_email a@x fingerprints {}] \
+    [dict create approach_path /x/approach/beta.yaml       to_email b@x fingerprints {}] \
+    [dict create approach_path /x/approach/gamma.yaml      to_email c@x fingerprints {}]]
+
+# Empty stems → no filter
+set fas_all [spar::filter_approaches_by_stems $fas_inputs {}]
+assert_eq [llength $fas_all] 3 "filter: empty stems → all 3 kept"
+
+# Narrow to one stem
+set fas_one [spar::filter_approaches_by_stems $fas_inputs {beta}]
+assert_eq [llength $fas_one] 1 "filter: stems={beta} → 1 kept"
+assert_eq [dict get [lindex $fas_one 0] to_email] b@x \
+    "filter: stems={beta} → kept entry is beta"
+
+# Multiple stems, mixed presence
+set fas_two [spar::filter_approaches_by_stems $fas_inputs {alpha gamma unknown}]
+assert_eq [llength $fas_two] 2 "filter: stems={alpha,gamma,unknown} → 2 kept (unknown ignored)"
+
+# Shared inbox: two approaches with the same to_email, one in cohort.
+set fas_shared [list \
+    [dict create approach_path /x/approach/jane-duo.yaml   to_email shared@x fingerprints {}] \
+    [dict create approach_path /x/approach/john-duo.yaml   to_email shared@x fingerprints {}]]
+set fas_s1 [spar::filter_approaches_by_stems $fas_shared {jane-duo}]
+assert_eq [llength $fas_s1] 1 "filter: shared inbox, one in cohort → that one kept"
+assert_eq [dict get [lindex $fas_s1 0] approach_path] /x/approach/jane-duo.yaml \
+    "filter: shared inbox → kept entry is jane-duo"
+
+# No-match stems
+set fas_none [spar::filter_approaches_by_stems $fas_inputs {nobody}]
+assert_eq [llength $fas_none] 0 "filter: stems={nobody} → 0 kept"
+
+# ════════════════════════════════════════════════════════════════════════
 section "25. Campaign channel slots (issue #41)"
 # ════════════════════════════════════════════════════════════════════════
 
