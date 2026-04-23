@@ -25,8 +25,8 @@ namespace eval ::spar::ui::settings {
     # Textvariables for dialog entries — persist across dialog hide/show.
     variable SmtpUserVar ""
     variable SmtpPassVar ""
-    variable ClaudeVar   ""
-    variable MroomVar    ""
+    variable claudeVar   ""
+    variable mroomVar    ""
 }
 
 # ── Config persistence ───────────────────────────────────────────────────
@@ -169,6 +169,7 @@ proc ::spar::ui::settings::show_dialog {} {
         _refresh_dialog
         wm deiconify .sparconfig
         raise .sparconfig
+        grab set .sparconfig
         return
     }
 
@@ -176,7 +177,8 @@ proc ::spar::ui::settings::show_dialog {} {
     wm title .sparconfig "SPAR Settings"
     wm resizable .sparconfig 0 0
     wm transient .sparconfig .
-    wm protocol .sparconfig WM_DELETE_WINDOW {wm withdraw .sparconfig}
+    wm protocol .sparconfig WM_DELETE_WINDOW \
+        {grab release .sparconfig; wm withdraw .sparconfig}
 
     set f [ttk::frame .sparconfig.f -padding {12 10}]
     pack $f -fill both -expand 1
@@ -187,14 +189,12 @@ proc ::spar::ui::settings::show_dialog {} {
 
     ttk::frame ${f}.btns
     pack ${f}.btns -fill x -pady {4 0}
-    ttk::button ${f}.btns.cancel -text "Cancel" \
-        -command {wm withdraw .sparconfig}
-    ttk::button ${f}.btns.save -text "Save" \
-        -command ::spar::ui::settings::dialog_save
-    pack ${f}.btns.save   -side right
-    pack ${f}.btns.cancel -side right -padx {0 4}
+    ttk::button ${f}.btns.close -text "Close" \
+        -command {grab release .sparconfig; wm withdraw .sparconfig}
+    pack ${f}.btns.close -side right
 
     _refresh_dialog
+    grab set .sparconfig
 }
 
 proc ::spar::ui::settings::_build_smtp_section {f campaign} {
@@ -280,13 +280,19 @@ proc ::spar::ui::settings::_build_tool_section {f id label cfg_key} {
 }
 
 proc ::spar::ui::settings::_update_tool_status {id s} {
+    variable Cfg
     if {![winfo exists ${s}.st]} return
-    set varname ::spar::ui::settings::${id}Var
-    set path [string trim [set $varname]]
-
-    set titles [dict create claude "Claude CLI" mroom "Mailroom CLI"]
-    set base [dict get $titles $id]
+    set varname   ::spar::ui::settings::${id}Var
+    set path      [string trim [set $varname]]
+    set cfg_keys  [dict create claude claude_path mroom mailroom_path]
+    set cfg_key   [dict get $cfg_keys $id]
+    set titles    [dict create claude "Claude CLI" mroom "Mailroom CLI"]
+    set base      [dict get $titles $id]
     set tool_name [expr {$id eq "mroom" ? "mailroom" : $id}]
+
+    # Auto-save: always persist the current entry value (empty or not).
+    dict set Cfg $cfg_key $path
+    save_config
 
     if {$path ne "" && [file executable $path]} {
         ${s}.st configure -text "✓ Found: $path" -foreground "#2a7a2a"
@@ -304,6 +310,7 @@ proc ::spar::ui::settings::_update_tool_status {id s} {
             $s configure -text "⚠ $base"
         }
     }
+    recheck
 }
 
 proc ::spar::ui::settings::_browse_tool {id} {
@@ -319,8 +326,8 @@ proc ::spar::ui::settings::_refresh_dialog {} {
     variable Cfg
     variable SmtpUserVar
     variable SmtpPassVar
-    variable ClaudeVar
-    variable MroomVar
+    variable claudeVar
+    variable mroomVar
 
     # SMTP: try to pre-fill username from keychain (never pre-fill password)
     set SmtpPassVar ""
@@ -342,8 +349,8 @@ proc ::spar::ui::settings::_refresh_dialog {} {
     _update_smtp_status
 
     # Tool paths: pre-fill from stored config
-    set ClaudeVar [spar::dict_get_default $Cfg claude_path  ""]
-    set MroomVar  [spar::dict_get_default $Cfg mailroom_path ""]
+    set claudeVar [spar::dict_get_default $Cfg claude_path  ""]
+    set mroomVar  [spar::dict_get_default $Cfg mailroom_path ""]
 
     after idle [list ::spar::ui::settings::_update_tool_status claude .sparconfig.f.claude]
     after idle [list ::spar::ui::settings::_update_tool_status mroom  .sparconfig.f.mroom]
@@ -475,17 +482,6 @@ proc ::spar::ui::settings::_restore_test_btn {} {
     }
 }
 
-proc ::spar::ui::settings::dialog_save {} {
-    variable Cfg
-    variable ClaudeVar
-    variable MroomVar
-    dict set Cfg claude_path   [string trim $ClaudeVar]
-    dict set Cfg mailroom_path [string trim $MroomVar]
-    save_config
-    recheck
-    wm withdraw .sparconfig
-}
-
 # ── Keychain write ────────────────────────────────────────────────────────
 
 proc ::spar::ui::settings::store_smtp_credentials {user pass} {
@@ -496,6 +492,9 @@ proc ::spar::ui::settings::store_smtp_credentials {user pass} {
                 -a $user -w $pass -U
         }
         "Linux" {
+            if {[auto_execok secret-tool] eq ""} {
+                error "secret-tool not installed — run: sudo apt install libsecret-tools"
+            }
             set fd [open [list | secret-tool store \
                 --label {SPAR SMTP user} service spar-smtp key user] w]
             puts $fd $user; close $fd
