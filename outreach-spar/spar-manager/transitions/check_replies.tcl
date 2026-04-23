@@ -146,7 +146,18 @@ oo::class create ::spar::transitions::CheckRepliesDriver {
         set IterReplyStems {}
         set CurrentBuf ""
 
-        set cmd [list mailroom -a $Account search -f $Folder \
+        set mailroom_bin [spar::find_tool mailroom]
+        if {$mailroom_bin eq ""} {
+            incr Errors
+            if {$OnProgress ne ""} {
+                {*}$OnProgress $to_email error "mailroom not found — check Settings"
+            }
+            my emit_iter_skipped
+            set CurrentPipe ""
+            my start_next
+            return
+        }
+        set cmd [list $mailroom_bin -a $Account search -f $Folder \
             --limit 50 "from:$to_email"]
         if {[catch {open "| $cmd 2>@1" r} pipe]} {
             incr Errors
@@ -276,10 +287,16 @@ oo::class create ::spar::transitions::CheckRepliesDriver {
             from_display    $from_display \
             uid             $uid]
 
-        set cmd [list mailroom -a $Account read -f $Folder -u $uid]
+        set mailroom_bin [spar::find_tool mailroom]
+        if {$mailroom_bin eq ""} {
+            my handle_read_failure $ReadCtx "(mailroom not found — check Settings)"
+            my start_next
+            return
+        }
+        set cmd [list $mailroom_bin -a $Account read -f $Folder -u $uid]
         if {[catch {open "| $cmd 2>@1" r} pipe]} {
             my handle_read_failure $ReadCtx \
-                "(inbox read failed -- review manually:\n  mailroom -a $Account read -f $Folder -u $uid)"
+                "(inbox read failed -- review manually:\n  $mailroom_bin -a $Account read -f $Folder -u $uid)"
             my start_next
             return
         }

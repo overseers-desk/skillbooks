@@ -101,6 +101,19 @@ proc spar::ui_transition_tids {} {
     return $out
 }
 
+# tool_overrides -- dict populated by ui/settings.tcl in UI mode with
+# user-configured tool paths.  CLI mode leaves it empty; auto_execok is
+# the fallback in both modes.
+namespace eval spar { variable tool_overrides [dict create] }
+
+# find_tool -- resolve a tool name to an absolute path.  Checks
+# tool_overrides first (key: ${name}_path), then auto_execok.
+proc spar::find_tool {name} {
+    set p [spar::dict_get_default $::spar::tool_overrides ${name}_path ""]
+    if {$p ne "" && [file executable $p]} { return $p }
+    return [auto_execok $name]
+}
+
 # is_masked_email — return 1 if email looks redacted (contains '*').
 # No legitimate email address contains '*'.  Used by validate_campaign
 # (reporting) and the P-stage post-profile guardrail (blanking).

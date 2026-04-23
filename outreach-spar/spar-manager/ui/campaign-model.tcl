@@ -80,6 +80,11 @@ oo::class create spar::ui::CampaignModel {
     method get_warnings        {} { return $Warnings }
     method get_full_load_done  {} { return $FullLoadDone }
 
+    method get_smtp_host {} {
+        if {![dict exists $Cdata sender]} { return "" }
+        return [spar::dict_get_default [dict get $Cdata sender] smtp_host ""]
+    }
+
     method get_contact {stem} {
         if {$stem eq "" || [llength $AllContacts] == 0} { return "" }
         foreach c $AllContacts {
