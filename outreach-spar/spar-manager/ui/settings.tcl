@@ -221,56 +221,78 @@ proc ::spar::ui::settings::_build_smtp_section {f campaign} {
     set s ${f}.smtp
     ttk::labelframe $s -padding {8 4}
     pack $s -fill x -pady {0 8}
+    grid columnconfigure $s 1 -weight 1
 
     set smtp_host ""
     catch { set smtp_host [$campaign get_smtp_host] }
+    set host_text [expr {$smtp_host ne "" ? $smtp_host : "(not set in campaign YAML)"}]
 
-    # Host row — always shown.
+    set keychain_ok [_keychain_available]
+
+    # Keychain-absent banner is the first block — it owns the section.
+    if {!$keychain_ok} {
+        $s configure -text "⚠ Email (SMTP)"
+        ttk::label ${s}.warn -foreground "#b8860b" -anchor w -justify left \
+            -text "⚠ Keychain tool not installed.\nRun: [_keychain_install_hint]\nClose and reopen this dialog after installing."
+        grid ${s}.warn - -sticky w -padx {4 4} -pady {6 4}
+        ttk::separator ${s}.sep -orient horizontal
+        grid ${s}.sep - -sticky ew -padx {4 4} -pady {2 4}
+    } else {
+        $s configure -text "Email (SMTP)"
+    }
+
+    # Host row — always shown, read-only.
     ttk::label ${s}.hl -text "SMTP host" -anchor w
     ttk::entry ${s}.hv -state readonly -style Flat.TEntry -takefocus 0
     ${s}.hv configure -state normal
-    ${s}.hv insert 0 [expr {$smtp_host ne "" ? $smtp_host : "(not set in campaign YAML)"}]
+    ${s}.hv insert 0 $host_text
     ${s}.hv configure -state readonly
     grid ${s}.hl ${s}.hv -sticky ew -padx {4 4} -pady 2
-    grid columnconfigure $s 1 -weight 1
 
-    # If the keychain tool is absent, say so and stop — no credential fields.
-    if {![_keychain_available]} {
-        $s configure -text "⚠ Email (SMTP)"
-        ttk::label ${s}.warn \
-            -text "⚠ Keychain tool not installed.\nRun: [_keychain_install_hint]" \
-            -foreground "#b8860b" -anchor w -justify left
-        grid ${s}.warn - -sticky w -padx {4 4} -pady {6 4}
-        return
-    }
-
-    $s configure -text "Email (SMTP)"
+    # Credentials — present in both branches, disabled when keychain absent.
+    set field_state [expr {$keychain_ok ? "normal" : "disabled"}]
 
     ttk::label ${s}.ul -text "Username" -anchor w
-    ttk::entry ${s}.ue -textvariable ::spar::ui::settings::SmtpUserVar
+    ttk::entry ${s}.ue -textvariable ::spar::ui::settings::SmtpUserVar \
+        -state $field_state
+    grid ${s}.ul ${s}.ue -sticky ew -padx {4 4} -pady 2
 
     ttk::label ${s}.pl -text "Password" -anchor w
-    ttk::entry ${s}.pe -textvariable ::spar::ui::settings::SmtpPassVar -show •
-
-    ttk::label  ${s}.st
-    ttk::frame  ${s}.btns
-    ttk::button ${s}.btns.store -text "Store credentials in keychain" \
-        -command ::spar::ui::settings::dialog_store_creds
-    ttk::button ${s}.btns.test -text "Test connection" \
-        -command ::spar::ui::settings::dialog_test_smtp
-
-    grid ${s}.ul ${s}.ue -sticky ew -padx {4 4} -pady 2
+    ttk::entry ${s}.pe -textvariable ::spar::ui::settings::SmtpPassVar \
+        -show • -state $field_state
     grid ${s}.pl ${s}.pe -sticky ew -padx {4 4} -pady 2
-    grid ${s}.st  -      -sticky w  -padx {4 4} -pady {2 0}
-    grid ${s}.btns -     -sticky e  -padx {4 4} -pady {4 2}
 
+    # Status label belongs to the keychain-present branch only; the banner
+    # subsumes its role in the absent state.
+    if {$keychain_ok} {
+        ttk::label ${s}.st
+        grid ${s}.st - -sticky w -padx {4 4} -pady {2 0}
+    }
+
+    ttk::frame ${s}.btns
+    if {$keychain_ok} {
+        ttk::button ${s}.btns.store -text "Store credentials in keychain" \
+            -command ::spar::ui::settings::dialog_store_creds
+        ttk::button ${s}.btns.test -text "Test connection" \
+            -command ::spar::ui::settings::dialog_test_smtp
+    } else {
+        ttk::button ${s}.btns.store -text "Store credentials in keychain" \
+            -state disabled
+        ttk::button ${s}.btns.test -text "Test connection" \
+            -state disabled
+    }
+    grid ${s}.btns - -sticky e -padx {4 4} -pady {4 2}
     pack ${s}.btns.store -side left
     pack ${s}.btns.test  -side left -padx {4 0}
 
-    trace add variable ::spar::ui::settings::SmtpUserVar write \
-        [list apply {{args} {::spar::ui::settings::_update_store_btn}}]
-    trace add variable ::spar::ui::settings::SmtpPassVar write \
-        [list apply {{args} {::spar::ui::settings::_update_store_btn}}]
+    # Write-traces drive the Store button's dynamic enable. They must not
+    # run in the keychain-absent branch, where Store is a permanent stub.
+    if {$keychain_ok} {
+        trace add variable ::spar::ui::settings::SmtpUserVar write \
+            [list apply {{args} {::spar::ui::settings::_update_store_btn}}]
+        trace add variable ::spar::ui::settings::SmtpPassVar write \
+            [list apply {{args} {::spar::ui::settings::_update_store_btn}}]
+    }
 }
 
 proc ::spar::ui::settings::_update_store_btn {} {
@@ -278,6 +300,8 @@ proc ::spar::ui::settings::_update_store_btn {} {
     variable SmtpPassVar
     variable Campaign
     if {![winfo exists .sparconfig.f.smtp.btns.store]} return
+    # Keychain-absent branch: both buttons are permanently disabled stubs.
+    if {![_keychain_available]} return
     set host ""
     catch { set host [$Campaign get_smtp_host] }
     set have_creds  [expr {$SmtpUserVar ne "" && $SmtpPassVar ne ""}]
