@@ -83,6 +83,7 @@ source [file join $script_dir ui dispatch-controller.tcl]
 source [file join $script_dir ui utils.tcl]
 source [file join $script_dir ui collapsible.tcl]
 source [file join $script_dir ui inspector.tcl]
+source [file join $script_dir ui settings.tcl]
 
 # ============================================================
 # Load campaign data
@@ -165,12 +166,11 @@ grid ${cf}.l1 ${cf}.v1 -sticky w -padx {6 4} -pady 1
 grid ${cf}.l2 ${cf}.v2 -sticky w -padx {6 4} -pady 1
 grid ${cf}.l4 ${cf}.v4 -sticky w -padx {6 4} -pady 1
 
-# Toolbar: Check Email, Refresh, Legend, Select All/None
+# Toolbar: Refresh, Legend, Select All/None, gear + status (via settings module)
 ttk::frame ${cpanel}.toolbar
 pack ${cpanel}.toolbar -fill x -padx 8 -pady {2 2}
 
-ttk::button ${cpanel}.toolbar.checkemail -text "Check Email" -command [list $campaign check_email]
-pack ${cpanel}.toolbar.checkemail -side right
+::spar::ui::settings::build_status $campaign ${cpanel}.toolbar
 
 ttk::button ${cpanel}.toolbar.refresh -text "Refresh" -command [list $campaign refresh]
 pack ${cpanel}.toolbar.refresh -side right -padx {0 4}

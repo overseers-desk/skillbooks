@@ -77,7 +77,12 @@ oo::class create spar::Harness {
         while {1} {
             incr attempt
 
-            set cmd [list claude -p --output-format json --dangerously-skip-permissions]
+            set claude_bin [spar::find_tool claude]
+            if {$claude_bin eq ""} {
+                puts "FAIL ($stage: claude not found — check Settings): $Slug"
+                return 1
+            }
+            set cmd [list $claude_bin -p --output-format json --dangerously-skip-permissions]
             set cmd [concat $cmd $args [list $prompt]]
 
             if {[catch {
