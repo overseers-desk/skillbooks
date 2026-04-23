@@ -160,6 +160,26 @@ proc ::spar::ui::settings::recheck {} {
     }
 }
 
+# _keychain_available -- 1 if the platform keychain CLI is present.
+proc ::spar::ui::settings::_keychain_available {} {
+    global tcl_platform
+    switch $tcl_platform(os) {
+        "Darwin"     { return [expr {[auto_execok security]     ne ""}] }
+        "Linux"      { return [expr {[auto_execok secret-tool]  ne ""}] }
+        "Windows NT" { return 1 }
+        default      { return 0 }
+    }
+}
+
+# _keychain_install_hint -- human-readable install instruction when unavailable.
+proc ::spar::ui::settings::_keychain_install_hint {} {
+    global tcl_platform
+    switch $tcl_platform(os) {
+        "Linux"  { return "sudo apt install libsecret-tools" }
+        default  { return "(no keychain tool available on this platform)" }
+    }
+}
+
 # ── Settings dialog ───────────────────────────────────────────────────────
 
 proc ::spar::ui::settings::show_dialog {} {
@@ -205,11 +225,26 @@ proc ::spar::ui::settings::_build_smtp_section {f campaign} {
     set smtp_host ""
     catch { set smtp_host [$campaign get_smtp_host] }
 
+    # Host row — always shown.
     ttk::label ${s}.hl -text "SMTP host" -anchor w
     ttk::entry ${s}.hv -state readonly -style Flat.TEntry -takefocus 0
     ${s}.hv configure -state normal
     ${s}.hv insert 0 [expr {$smtp_host ne "" ? $smtp_host : "(not set in campaign YAML)"}]
     ${s}.hv configure -state readonly
+    grid ${s}.hl ${s}.hv -sticky ew -padx {4 4} -pady 2
+    grid columnconfigure $s 1 -weight 1
+
+    # If the keychain tool is absent, say so and stop — no credential fields.
+    if {![_keychain_available]} {
+        $s configure -text "⚠ Email (SMTP)"
+        ttk::label ${s}.warn \
+            -text "⚠ Keychain tool not installed.\nRun: [_keychain_install_hint]" \
+            -foreground "#b8860b" -anchor w -justify left
+        grid ${s}.warn - -sticky w -padx {4 4} -pady {6 4}
+        return
+    }
+
+    $s configure -text "Email (SMTP)"
 
     ttk::label ${s}.ul -text "Username" -anchor w
     ttk::entry ${s}.ue -textvariable ::spar::ui::settings::SmtpUserVar
@@ -224,12 +259,10 @@ proc ::spar::ui::settings::_build_smtp_section {f campaign} {
     ttk::button ${s}.btns.test -text "Test connection" \
         -command ::spar::ui::settings::dialog_test_smtp
 
-    grid ${s}.hl ${s}.hv -sticky ew -padx {4 4} -pady 2
     grid ${s}.ul ${s}.ue -sticky ew -padx {4 4} -pady 2
     grid ${s}.pl ${s}.pe -sticky ew -padx {4 4} -pady 2
     grid ${s}.st  -      -sticky w  -padx {4 4} -pady {2 0}
     grid ${s}.btns -     -sticky e  -padx {4 4} -pady {4 2}
-    grid columnconfigure $s 1 -weight 1
 
     pack ${s}.btns.store -side left
     pack ${s}.btns.test  -side left -padx {4 0}
