@@ -21,46 +21,53 @@ namespace eval ::spar::transitions {
     variable send_email_dir [file dirname [file normalize [info script]]]
 }
 
-# spar::smtp_credentials host user -- fetch SMTP password from the OS
-# secret store, keyed by (host, user) — the native compound-key idiom on
-# both macOS Keychain and Linux libsecret. Username lives in campaign
-# YAML, not in the keychain.
+# spar::smtp_credentials host user ?cdata? -- resolve the SMTP password.
+# Lookup order:
+#   1. OS keychain, keyed by (host, user) — native compound-key idiom on
+#      macOS Keychain, Linux libsecret, and Windows PasswordVault.
+#   2. YAML fallback: sender.smtp_pass in the passed campaign dict.
+#   3. Error.
 #
-# macOS:    security add-generic-password -s <host> -a <user> -w <pass> -U
-# Linux:    secret-tool store --label "…" protocol smtp server <host> user <user>
-# Windows:  PasswordVault keyed on Resource=<host>, UserName=<user>.
-# Returns the password string; throws on lookup failure.
-proc ::spar::smtp_credentials {host user} {
+# Keychain always wins when a match exists, so migrating from YAML to
+# keychain is a one-way ratchet; the user removes the YAML field after
+# storing.  Callers that already know they have no keychain (e.g. tests)
+# can pass a cdata with smtp_pass and the lookup still resolves.
+proc ::spar::smtp_credentials {host user {cdata ""}} {
     global tcl_platform
     if {$host eq "" || $user eq ""} {
         error "smtp_credentials: host and user required"
     }
-    switch $tcl_platform(os) {
-        "Darwin" {
-            if {[catch {exec security find-generic-password \
-                    -s $host -a $user -w} pass]} {
-                error "no keychain entry for ($host, $user) — store via Settings"
+    set pass ""
+    if {[spar::keychain_available]} {
+        catch {
+            switch $tcl_platform(os) {
+                "Darwin" {
+                    set pass [string trim [exec security find-generic-password \
+                        -s $host -a $user -w]]
+                }
+                "Linux" {
+                    set pass [string trim [exec secret-tool lookup \
+                        protocol smtp server $host user $user]]
+                }
+                "Windows NT" {
+                    set script "\$v = New-Object Windows.Security.Credentials.PasswordVault; \$c = \$v.Retrieve('$host','$user'); \$c.RetrievePassword(); \$c.Password"
+                    set pass [string trim [exec powershell -NoProfile -NonInteractive -Command $script]]
+                }
             }
-            return [string trim $pass]
         }
-        "Linux" {
-            if {[catch {exec secret-tool lookup \
-                    protocol smtp server $host user $user} pass]} {
-                error "no keychain entry for ($host, $user) — store via Settings"
-            }
-            set pass [string trim $pass]
-            if {$pass eq ""} {
-                error "no keychain entry for ($host, $user) — store via Settings"
-            }
-            return $pass
-        }
-        "Windows NT" {
-            set script "\$vault = New-Object Windows.Security.Credentials.PasswordVault; \$c = \$vault.Retrieve('$host','$user'); \$c.RetrievePassword(); \$c.Password"
-            return [string trim [exec powershell -NoProfile -NonInteractive -Command $script]]
-        }
-        default {
-            error "smtp_credentials: unsupported platform \"$tcl_platform(os)\""
-        }
+    }
+    if {$pass ne ""} { return $pass }
+
+    # YAML fallback.
+    if {$cdata ne "" && [dict exists $cdata sender smtp_pass]} {
+        set yaml_pass [dict get $cdata sender smtp_pass]
+        if {$yaml_pass ne ""} { return $yaml_pass }
+    }
+
+    if {[spar::keychain_available]} {
+        error "no keychain entry for ($host, $user) — store via Settings, or add sender.smtp_pass to campaign.yaml"
+    } else {
+        error "keychain not available on this host and sender.smtp_pass is not set in campaign.yaml"
     }
 }
 
@@ -239,8 +246,10 @@ oo::class create ::spar::transitions::SendEmailDriver {
             my fail_task "sender.smtp_user not set in campaign — required (keychain is keyed by host+user)"
             return
         }
-        if {[catch {set pass [::spar::smtp_credentials $CampSmtpHost $CampSmtpUser]} err]} {
-            my fail_task "keychain lookup failed for ($CampSmtpHost, $CampSmtpUser): $err"
+        set _cdata_for_lookup [dict create sender $CampSender]
+        if {[catch {set pass [::spar::smtp_credentials \
+                $CampSmtpHost $CampSmtpUser $_cdata_for_lookup]} err]} {
+            my fail_task "SMTP password lookup failed for ($CampSmtpHost, $CampSmtpUser): $err"
             return
         }
 

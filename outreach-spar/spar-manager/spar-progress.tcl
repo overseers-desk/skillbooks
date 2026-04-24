@@ -191,7 +191,7 @@ if {$json_mode} {
     }
     puts [progress_to_json [dict create campaign $campaign_name min_star $min_star \
         segments $seg_results totals $totals \
-        warnings [spar::build_warnings $all_contacts] \
+        warnings [spar::build_warnings $all_contacts $cdata] \
         transitions $transitions]]
     exit 0
 }
@@ -316,7 +316,7 @@ foreach row $data_rows {
 puts "\nRun with --legend to see column definitions."
 
 # --- Warnings and validation ---
-set warn_result [spar::build_warnings $all_contacts]
+set warn_result [spar::build_warnings $all_contacts $cdata]
 set warn_messages [dict get $warn_result messages]
 if {[llength $warn_messages] > 0} {
     puts "\n## Warnings\n"

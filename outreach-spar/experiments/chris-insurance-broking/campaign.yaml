@@ -15,6 +15,8 @@ sender:
   role: Director
   organisation: National Risk Solutions
   email: chris@nationalrisksolutions.com.au
+  smtp_host: email-smtp.ap-southeast-2.amazonaws.com
+  smtp_user: AKIA3WNHDIAELM35RFS5
 
 usp_document: ../nrs-overview.md
 

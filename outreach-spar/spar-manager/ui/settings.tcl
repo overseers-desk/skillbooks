@@ -25,42 +25,32 @@ namespace eval ::spar::ui::settings {
     variable SmtpPassVar ""
 }
 
-# ── Keychain availability ────────────────────────────────────────────────
-
-proc ::spar::ui::settings::_keychain_available {} {
-    global tcl_platform
-    switch $tcl_platform(os) {
-        "Darwin"     { return [expr {[auto_execok security]    ne ""}] }
-        "Linux"      { return [expr {[auto_execok secret-tool] ne ""}] }
-        "Windows NT" { return 1 }
-        default      { return 0 }
-    }
-}
+# ── Keychain install hint (platform-specific, Linux has an actionable one) ──
 
 proc ::spar::ui::settings::_keychain_install_hint {} {
     global tcl_platform
     switch $tcl_platform(os) {
         "Linux"  { return "sudo apt install libsecret-tools" }
-        default  { return "(no keychain tool available on this platform)" }
+        default  { return "" }
     }
 }
 
 # ── Preflight checks ────────────────────────────────────────────────────
 
 # check_smtp_creds host user -- 1 iff the keychain holds a password at (host, user).
+# Returns 0 on keychain-unavailable hosts regardless of (host, user).
 proc ::spar::ui::settings::check_smtp_creds {host user} {
     global tcl_platform
     if {$host eq "" || $user eq ""} { return 0 }
+    if {![spar::keychain_available]} { return 0 }
     switch $tcl_platform(os) {
         "Darwin" {
-            if {[auto_execok security] eq ""} { return 0 }
             if {[catch {exec security find-generic-password -s $host -a $user -w} val]} {
                 return 0
             }
             return [expr {[string trim $val] ne ""}]
         }
         "Linux" {
-            if {[auto_execok secret-tool] eq ""} { return 0 }
             if {[catch {exec secret-tool lookup \
                     protocol smtp server $host user $user} val]} {
                 return 0
@@ -80,16 +70,24 @@ proc ::spar::ui::settings::check_smtp_creds {host user} {
 
 # check_issues campaign -- ordered list of issue strings, highest priority first.
 # Ordering preserved: claude → SMTP → mailroom.
+# SMTP is "configured" when either:
+#   (a) keychain_available + (host,user) in YAML + entry in keychain, OR
+#   (b) keychain_unavailable + host+user+smtp_pass all in YAML.
 proc ::spar::ui::settings::check_issues {campaign} {
     set issues {}
     if {[spar::find_tool claude] eq ""} { lappend issues "claude not found" }
     set smtp_ok 0
     if {$campaign ne ""} {
         catch {
-            set host [$campaign get_smtp_host]
-            set user [$campaign get_smtp_user]
+            set host     [$campaign get_smtp_host]
+            set user     [$campaign get_smtp_user]
+            set has_pass [$campaign get_has_smtp_pass]
             if {$host ne "" && $user ne ""} {
-                set smtp_ok [check_smtp_creds $host $user]
+                if {[spar::keychain_available]} {
+                    set smtp_ok [check_smtp_creds $host $user]
+                } else {
+                    set smtp_ok $has_pass
+                }
             }
         }
     }
@@ -186,16 +184,23 @@ proc ::spar::ui::settings::show_dialog {} {
     grab set .sparconfig
 }
 
-# _build_smtp_section -- the only section. Renders five states:
-#   A: host+user in YAML, keychain present, no password stored   (prompt)
-#   B: host+user in YAML, keychain present, password stored      (✓)
-#   C: host or user missing from YAML                            (banner)
-#   D: keychain tool missing                                     (banner)
-#   E (flag): sender.smtp_pass present in YAML                   (banner)
+# _build_smtp_section -- the only section. Renders different UIs for two
+# top-level branches:
 #
-# Banners stack at the top; D subsumes the others (the user cannot act on
-# them without the keychain). State E stacks above the other applicable
-# banner when D does not apply.
+# KEYCHAIN-AVAILABLE branch (macOS, Linux-with-secret-tool, Windows-with-
+# PasswordVault) — five states:
+#   A: host+user in YAML, no password stored yet                 (prompt)
+#   B: host+user in YAML, password stored                        (✓)
+#   C: host or user missing from YAML                            (banner)
+#   E (flag): sender.smtp_pass present in YAML                   (banner;
+#             new copy references AI-agent scraping risk)
+#
+# KEYCHAIN-UNAVAILABLE branch (Linux-without-secret-tool, Windows-without-
+# PasswordVault) — two states, no Store / Test buttons at all:
+#   F: smtp_pass in YAML — the happy path on this branch         (info)
+#   G: smtp_pass missing — broken, YAML edit required            (banner)
+#
+# Banners stack at the top when more than one applies.
 proc ::spar::ui::settings::_build_smtp_section {f campaign} {
     variable SmtpPassVar
 
@@ -211,50 +216,49 @@ proc ::spar::ui::settings::_build_smtp_section {f campaign} {
         set has_pass_in_yaml [$campaign get_has_smtp_pass]
     }
 
-    set keychain_ok [_keychain_available]
-    set fields_ok   [expr {$keychain_ok && $smtp_host ne "" && $smtp_user ne ""}]
+    set keychain_ok [spar::keychain_available]
 
-    # ─── Banner stack ────────────────────────────────────────────────
-    set banner_shown 0
-    if {!$keychain_ok} {
-        $s configure -text "⚠ Email (SMTP)"
-        ttk::label ${s}.warn -foreground "#b8860b" -anchor w -justify left \
-            -text "⚠ Keychain tool not installed.\nRun: [_keychain_install_hint]\nClose and reopen this dialog after installing."
-        grid ${s}.warn - -sticky w -padx {4 4} -pady {6 4}
-        set banner_shown 1
+    if {$keychain_ok} {
+        _build_smtp_section_keychain $s $campaign $smtp_host $smtp_user $has_pass_in_yaml
     } else {
-        # State E: insecure secret — stacks above any other warning.
-        if {$has_pass_in_yaml} {
-            ttk::label ${s}.ewarn -foreground "#b8860b" -anchor w -justify left \
-                -text "⚠ Insecure: sender.smtp_pass is in campaign.yaml.\nPasswords must live in the OS keychain, not YAML.\nStore a password below, then delete smtp_pass from campaign.yaml."
-            grid ${s}.ewarn - -sticky w -padx {4 4} -pady {6 4}
-            set banner_shown 1
-        }
-        # State C: YAML missing host and/or user.
-        if {$smtp_host eq "" || $smtp_user eq ""} {
-            set missing {}
-            if {$smtp_host eq ""} { lappend missing "sender.smtp_host" }
-            if {$smtp_user eq ""} { lappend missing "sender.smtp_user" }
-            set miss [join $missing " and "]
-            ttk::label ${s}.cwarn -foreground "#b8860b" -anchor w -justify left \
-                -text "⚠ Campaign YAML is missing $miss.\nEdit campaign.yaml, add the field(s) under sender:,\nthen close and reopen this dialog."
-            grid ${s}.cwarn - -sticky w -padx {4 4} -pady {6 4}
-            set banner_shown 1
-        }
-        # Labelframe title ⚠ iff any banner shown in the present branch.
-        if {$banner_shown} {
-            $s configure -text "⚠ Email (SMTP)"
-        } else {
-            $s configure -text "Email (SMTP)"
-        }
+        _build_smtp_section_yaml $s $smtp_host $smtp_user $has_pass_in_yaml
     }
+}
 
+# _build_smtp_section_keychain -- states A/B/C/E (keychain-available).
+proc ::spar::ui::settings::_build_smtp_section_keychain {s campaign smtp_host smtp_user has_pass_in_yaml} {
+    variable SmtpPassVar
+
+    set fields_ok [expr {$smtp_host ne "" && $smtp_user ne ""}]
+    set banner_shown 0
+
+    # State E banner: sender.smtp_pass is in YAML — AI-leak warning.
+    if {$has_pass_in_yaml} {
+        ttk::label ${s}.ewarn -foreground "#b8860b" -anchor w -justify left \
+            -text "⚠ Insecure: sender.smtp_pass is in campaign.yaml.\nYAML files are often read by AI agents and leaked to AI companies.\nStore a password below, then delete smtp_pass from campaign.yaml."
+        grid ${s}.ewarn - -sticky w -padx {4 4} -pady {6 4}
+        set banner_shown 1
+    }
+    # State C banner: host or user missing.
+    if {$smtp_host eq "" || $smtp_user eq ""} {
+        set missing {}
+        if {$smtp_host eq ""} { lappend missing "sender.smtp_host" }
+        if {$smtp_user eq ""} { lappend missing "sender.smtp_user" }
+        set miss [join $missing " and "]
+        ttk::label ${s}.cwarn -foreground "#b8860b" -anchor w -justify left \
+            -text "⚠ Campaign YAML is missing $miss.\nEdit campaign.yaml, add the field(s) under sender:,\nthen close and reopen this dialog."
+        grid ${s}.cwarn - -sticky w -padx {4 4} -pady {6 4}
+        set banner_shown 1
+    }
     if {$banner_shown} {
+        $s configure -text "⚠ Email (SMTP)"
         ttk::separator ${s}.sep -orient horizontal
         grid ${s}.sep - -sticky ew -padx {4 4} -pady {2 4}
+    } else {
+        $s configure -text "Email (SMTP)"
     }
 
-    # ─── Body: host / user / password / buttons ─────────────────────
+    # Body.
     set host_text [expr {$smtp_host ne "" ? $smtp_host : "(not set in campaign YAML)"}]
     set user_text [expr {$smtp_user ne "" ? $smtp_user : "(not set in campaign YAML)"}]
 
@@ -270,7 +274,6 @@ proc ::spar::ui::settings::_build_smtp_section {f campaign} {
     ${s}.uv configure -state readonly
     grid ${s}.ul ${s}.uv -sticky ew -padx {4 4} -pady 2
 
-    # Password entry: enabled only when host+user known and keychain present.
     set SmtpPassVar ""
     set pe_state [expr {$fields_ok ? "normal" : "disabled"}]
     ttk::label ${s}.pl -text "Password" -anchor w
@@ -278,8 +281,6 @@ proc ::spar::ui::settings::_build_smtp_section {f campaign} {
         -show • -state $pe_state
     grid ${s}.pl ${s}.pe -sticky ew -padx {4 4} -pady 2
 
-    # Status line — only rendered in states A/B (fields_ok). Otherwise
-    # the banner above says everything there is to say.
     if {$fields_ok} {
         ttk::label ${s}.st
         grid ${s}.st - -sticky w -padx {4 4} -pady {2 0}
@@ -290,7 +291,6 @@ proc ::spar::ui::settings::_build_smtp_section {f campaign} {
         }
     }
 
-    # Buttons row.
     ttk::frame ${s}.btns
     if {$fields_ok} {
         ttk::button ${s}.btns.store -text "Store password" \
@@ -310,6 +310,52 @@ proc ::spar::ui::settings::_build_smtp_section {f campaign} {
             [list apply {{args} {::spar::ui::settings::_refresh_button_states}}]
         _refresh_button_states
     }
+}
+
+# _build_smtp_section_yaml -- states F (happy) and G (broken) when no
+# keychain is available on this host. No Store/Test buttons; the only
+# way to configure is to edit campaign.yaml directly.
+proc ::spar::ui::settings::_build_smtp_section_yaml {s smtp_host smtp_user has_pass_in_yaml} {
+    set linux_hint [_keychain_install_hint]
+
+    if {$has_pass_in_yaml} {
+        # State F — the only working state on a no-keychain host.
+        $s configure -text "Email (SMTP)"
+        set info "ℹ Password read from campaign.yaml.\nKeychain not available on this system."
+        if {$linux_hint ne ""} {
+            append info "\n($linux_hint would enable the keychain path.)"
+        }
+        ttk::label ${s}.info -foreground "#555555" -anchor w -justify left \
+            -text $info
+        grid ${s}.info - -sticky w -padx {4 4} -pady {6 4}
+    } else {
+        # State G — broken. No password anywhere.
+        $s configure -text "⚠ Email (SMTP)"
+        set warn "⚠ Keychain not available on this system, and sender.smtp_pass is not in campaign.yaml.\nAdd smtp_pass under sender: to enable sending.\nThis is a security risk — protect the YAML file."
+        if {$linux_hint ne ""} {
+            append warn "\n($linux_hint would enable the secure keychain path instead.)"
+        }
+        ttk::label ${s}.gwarn -foreground "#b8860b" -anchor w -justify left \
+            -text $warn
+        grid ${s}.gwarn - -sticky w -padx {4 4} -pady {6 4}
+        ttk::separator ${s}.sep -orient horizontal
+        grid ${s}.sep - -sticky ew -padx {4 4} -pady {2 4}
+    }
+
+    set host_text [expr {$smtp_host ne "" ? $smtp_host : "(not set in campaign YAML)"}]
+    set user_text [expr {$smtp_user ne "" ? $smtp_user : "(not set in campaign YAML)"}]
+
+    ttk::label ${s}.hl -text "SMTP host" -anchor w
+    ttk::entry ${s}.hv -style Flat.TEntry -takefocus 0
+    ${s}.hv insert 0 $host_text
+    ${s}.hv configure -state readonly
+    grid ${s}.hl ${s}.hv -sticky ew -padx {4 4} -pady 2
+
+    ttk::label ${s}.ul -text "Username" -anchor w
+    ttk::entry ${s}.uv -style Flat.TEntry -takefocus 0
+    ${s}.uv insert 0 $user_text
+    ${s}.uv configure -state readonly
+    grid ${s}.ul ${s}.uv -sticky ew -padx {4 4} -pady 2
 }
 
 # _refresh_button_states -- drive store/test enable state from current
