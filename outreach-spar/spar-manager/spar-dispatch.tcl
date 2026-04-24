@@ -249,17 +249,23 @@ proc spar::p::run {opts on_progress on_complete} {
 
     # One campaign-wide logs_dir, mirroring spar::a::run. Per-slug log
     # files inside are named by stem, so they don't collide unless two
-    # segments share a stem (documented limitation).
+    # segments share a stem (documented limitation). Folder name encodes
+    # the campaign yaml's directory and stem so sibling campaigns don't
+    # pile into ambiguous sibling folders.
     set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
+    set _campaign_stem [file rootname [file tail $campaign_file]]
+    set _dir_slug [string map {/ -} \
+        [file dirname [file normalize $campaign_file]]]
+    set _folder "${_dir_slug}-${_campaign_stem}-p-${datestamp}"
     if {$user_logs ne ""} {
         if {![file isdirectory $user_logs]} {
             error "Log directory not found: $user_logs"
         }
         set logs_dir $user_logs
     } elseif {[file isdirectory /var/local/logs/spar]} {
-        set logs_dir "/var/local/logs/spar/spar-p-$datestamp"
+        set logs_dir "/var/local/logs/spar/$_folder"
     } else {
-        set logs_dir "$::env(HOME)/logs/spar/spar-p-$datestamp"
+        set logs_dir "$::env(HOME)/logs/spar/$_folder"
     }
     if {$user_logs eq ""} {
         file mkdir $logs_dir
@@ -606,15 +612,19 @@ proc spar::a::run {opts on_progress on_complete} {
     set prompts_dir [file join $workdir prompts]
     file mkdir $prompts_dir
 
+    set _campaign_stem [file rootname [file tail $campaign_file]]
+    set _dir_slug [string map {/ -} \
+        [file dirname [file normalize $campaign_file]]]
+    set _folder "${_dir_slug}-${_campaign_stem}-a-${datestamp}"
     if {$user_logs ne ""} {
         if {![file isdirectory $user_logs]} {
             error "Log directory not found: $user_logs"
         }
         set logs_dir $user_logs
     } elseif {[file isdirectory /var/local/logs/spar]} {
-        set logs_dir "/var/local/logs/spar/spar-a-$datestamp"
+        set logs_dir "/var/local/logs/spar/$_folder"
     } else {
-        set logs_dir "$::env(HOME)/logs/spar/spar-a-$datestamp"
+        set logs_dir "$::env(HOME)/logs/spar/$_folder"
     }
     if {$user_logs eq ""} {
         file mkdir $logs_dir
