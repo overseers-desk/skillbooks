@@ -27,6 +27,7 @@ namespace eval spar {
     namespace export classify_contact classify_segment \
         transition_eligible detect_duplicates progress_counts \
         roster_counts \
+        keychain_available \
         validate_campaign validate_campaign_semantics validate_sender_block \
         validate_approach validate_profile read_profile_front_matter build_warnings \
         final_email_message \
@@ -106,6 +107,40 @@ proc spar::ui_transition_tids {} {
 # that condition rather than probe for a user-configurable override.
 proc spar::find_tool {name} {
     return [auto_execok $name]
+}
+
+# keychain_available -- 1 iff this host can store SMTP passwords in an
+# OS-native secret store. macOS always has `security`; Linux depends on
+# libsecret-tools being installed; Windows is runtime-probed exactly
+# once (PowerShell PasswordVault is built in from Windows 8 onwards, but
+# can fail on locked-down hosts).  Result is cached in a namespace var.
+namespace eval spar { variable _keychain_probe "" }
+proc spar::keychain_available {} {
+    variable _keychain_probe
+    if {$_keychain_probe ne ""} { return $_keychain_probe }
+    global tcl_platform
+    switch $tcl_platform(os) {
+        "Darwin" {
+            set _keychain_probe [expr {[auto_execok security] ne ""}]
+        }
+        "Linux" {
+            set _keychain_probe [expr {[auto_execok secret-tool] ne ""}]
+        }
+        "Windows NT" {
+            if {[auto_execok powershell] eq ""} {
+                set _keychain_probe 0
+            } else {
+                set script "try { \[void\](New-Object Windows.Security.Credentials.PasswordVault); 'ok' } catch { 'fail' }"
+                if {[catch {exec powershell -NoProfile -NonInteractive -Command $script} out]} {
+                    set _keychain_probe 0
+                } else {
+                    set _keychain_probe [expr {[string trim $out] eq "ok"}]
+                }
+            }
+        }
+        default { set _keychain_probe 0 }
+    }
+    return $_keychain_probe
 }
 
 # is_masked_email — return 1 if email looks redacted (contains '*').
@@ -1947,11 +1982,12 @@ proc spar::_profile_validation_error {contact} {
     return ""
 }
 
-# validate_sender_block -- campaign-level sender schema checks. Returns a
-# list of issue dicts in the same shape as validate_campaign, but with
+# validate_sender_block -- campaign-level sender schema checks. Pure
+# schema validation, platform-agnostic — smtp_pass in YAML is not
+# flagged here (environmental concern, handled in build_warnings /
+# the gear dialog where the platform's keychain capability is known).
+# Returns issue dicts in the same shape as validate_campaign, with
 # empty segment/contact_name (these are campaign-level, not per-contact).
-# Takes the parsed campaign dict (from spar::load_campaign), not the
-# classified contact list.
 proc spar::validate_sender_block {cdata} {
     set issues {}
     if {![dict exists $cdata sender]} {
@@ -1978,12 +2014,6 @@ proc spar::validate_sender_block {cdata} {
             severity error code smtp_user_missing \
             segment "" contact_name "" \
             message "sender.smtp_user not set — required for sending; the keychain is keyed by (host, user)."]
-    }
-    if {[dict exists $sender smtp_pass]} {
-        lappend issues [dict create \
-            severity error code secret_in_yaml \
-            segment "" contact_name "" \
-            message "sender.smtp_pass is in campaign.yaml — passwords must live in the OS keychain, not YAML. Store via Settings, then delete this field."]
     }
     if {$smtp_port ne "" && ![string is integer -strict $smtp_port]} {
         lappend issues [dict create \
@@ -2384,7 +2414,9 @@ proc spar::build_warnings {all_classified_contacts {cdata {}}} {
 
     # Campaign-level sender-block issues run even if the contact list is
     # empty (e.g. an unreadable campaign). Merge them into the messages
-    # list first so they appear at the top.
+    # list first so they appear at the top.  The validator is platform-
+    # agnostic; environmental (keychain-dependent) advice is the gear
+    # dialog's job, not this utility.
     if {[llength $cdata] > 0} {
         foreach issue [spar::validate_sender_block $cdata] {
             set sev [dict get $issue severity]

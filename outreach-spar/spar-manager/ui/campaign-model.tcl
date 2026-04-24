@@ -16,8 +16,8 @@
 #   refreshed
 #       a full synchronous refresh has completed; every accessor is fresh
 #   log-message {msg}
-#       the model wants a line logged (used by check_email wiring since the
-#       model does not own the log window directly)
+#       the model wants a line logged (piped to LogWindow by the caller;
+#       the model does not own the log window directly)
 
 package require TclOO
 
@@ -129,52 +129,6 @@ oo::class create spar::ui::CampaignModel {
         my _cancel_async
         my _load_full
         my _fire refreshed
-    }
-
-    # check_email — dispatch the T4 reply-check runner across the full
-    # campaign (no cohort stems — this is the "Check Email" toolbar
-    # sweep, not a transition-tree dispatch). on_complete fires the
-    # refresh so the progress table reflects any newly-ingested replies.
-    method check_email {} {
-        if {![spar::has_transition_runner T4]} {
-            my _fire log-message "T4 runner not registered — email-check unavailable."
-            return
-        }
-
-        set seg_dirs {}
-        foreach item $SegmentPaths {
-            lassign $item label seg_dir
-            lappend seg_dirs $seg_dir
-        }
-
-        set opts [dict create \
-            campaign_file $CampaignFile \
-            dry_run 0 \
-            segments $seg_dirs \
-            stems {}]
-
-        set runner [spar::transition_runner T4]
-        if {[catch {{*}$runner $opts \
-                [list [self] email_progress] \
-                [list [self] email_complete]} err]} {
-            my _fire log-message "Email check error: $err"
-        }
-    }
-
-    method email_progress {slug status message} {
-        set prefix [expr {$slug ne "" ? "\[$slug\] " : ""}]
-        my _fire log-message "${prefix}$status[expr {$message ne "" ? ": $message" : ""}]"
-    }
-
-    method email_complete {done failed result} {
-        set new_replies 0
-        set errors      0
-        if {$result ne ""} {
-            set new_replies [spar::dict_get_default $result new_replies 0]
-            set errors      [spar::dict_get_default $result errors      0]
-        }
-        my _fire log-message "Email check completed: $new_replies new reply(ies), $errors error(s)."
-        my refresh
     }
 
     # ─── Internal: helpers ────────────────────────────────────────────────
