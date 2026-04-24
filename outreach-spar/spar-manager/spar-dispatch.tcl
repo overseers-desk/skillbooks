@@ -709,13 +709,13 @@ proc spar::a::run {opts on_progress on_complete} {
                     set profile_path $candidate
                 }
             }
-            set max_rounds 1
+            set max_passes 1
             if {$profile_path ne ""} {
                 set profile_a1_instruction "3. Profile: $profile_path"
                 set fd [open $profile_path r]
                 set profile_content [read $fd]
                 close $fd
-                set max_rounds [spar::get_max_rounds $profile_path]
+                set max_passes [spar::get_max_passes $profile_path]
             } else {
                 if {$filter_require_profile} {
                     incr skipped
@@ -726,7 +726,7 @@ proc spar::a::run {opts on_progress on_complete} {
                 set profile_content "No profile document. Roster notes only:
 p_note: $p_note
 s_note: $s_note"
-                set max_rounds 1
+                set max_passes 1
             }
 
             set channel_d [spar::channel_desc $linkedin $phone]
@@ -750,7 +750,7 @@ s_note: $s_note"
             lappend fresh_prompt_dirs $prompt_dir
 
             set fd [open [file join $prompt_dir meta.env] w]
-            puts $fd "MAX_ROUNDS=$max_rounds"
+            puts $fd "MAX_PASSES=$max_passes"
             puts $fd "OUTFILE=$outfile"
             puts $fd "METHOD=$method"
             puts $fd "OVERVIEW=$overview"
