@@ -67,6 +67,28 @@ The `usp_document` (organisation overview) and `antifacts` (fact-check document)
 - **Raw data exports** (CSV dumps, CRM exports) — place in a `data/` directory excluded by `.gitignore`
 - **Scripts** — the SPAR batch tools live in `aesop/outreach-spar/spar-manager/`, not in the campaign directory. Campaign-specific helper scripts (e.g. IMAP search, email enrichment) may live in the campaign directory if they are not reusable.
 - **Methodology documents** — live in `aesop/outreach-spar/`, not duplicated per campaign
+- **`README.md`** — the `campaign:` display-name field and the top-of-file banner comment in `campaign.yaml` already introduce the campaign for humans. A README duplicates that and drifts out of sync.
+- **Principles or policy prose that duplicates YAML content** — when you feel the pull to write a `goal-campaign-principles.md` or similar, first put the content into the campaign YAML's `prompt_appendices` block (`p_author`, `a_author`, `a_challenger`, `a_assembly`) or into the segment YAML's `discovery_criteria`. Those are the designed homes. The `campaign_principles:` path field is for content that genuinely cannot fit into the YAML — a long prose document, a principle set shared across multiple unrelated campaigns — not as a default container.
+
+## Single source of truth — fact-to-home table
+
+Every fact about the campaign has one authoritative home. Before creating any new file in a campaign directory, locate the fact you are about to write on this table. If the designated home already exists, edit it; do not add a parallel file.
+
+| Fact | Authoritative home |
+|---|---|
+| Campaign display name, sender, channels, filters | `campaign.yaml` |
+| USP labels | `campaign.yaml` `usps:` map |
+| USP prose | the file named in `usp_document:` |
+| Anti-claims / do-not-say list | the file named in `antifacts:` |
+| Segment objective, USP framings, message goal, first ask, funnel | `{segment}/segment.yaml` |
+| Segment-level qualification gates | `{segment}/segment.yaml` `discovery_criteria:` |
+| A-phase and P-phase prompt guidance (reminders, rules, apology behaviour) | `campaign.yaml` `prompt_appendices:` |
+| Per-contact data | `{segment}/roster.tsv` |
+| Per-contact profile | `{segment}/profiles/profile-{slug}.md` |
+| Per-contact approach draft | `{segment}/approach/{stem}.yaml` |
+| Campaign intro for human readers | `campaign:` display-name field + top-of-file banner comment in `campaign.yaml` |
+
+**Pattern-matching warning.** An existing campaign in the repository may contain files that predate this guidance (for example `spar-campaigns/goal-campaign-principles.md`). Those are legacy; their existence is not a template for new campaigns. When the spec and a neighbouring example disagree, follow the spec.
 
 ## Relationship to other documents
 
