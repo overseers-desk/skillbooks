@@ -21,38 +21,47 @@ namespace eval ::spar::transitions {
     variable send_email_dir [file dirname [file normalize [info script]]]
 }
 
-# spar::smtp_credentials -- fetch SMTP user+pass from the OS secret store.
-# Entry name: "spar-smtp".
-# macOS:    security add-generic-password -s spar-smtp -a USER -w PASS -U
-# Linux:    secret-tool store --label="SPAR SMTP user" service spar-smtp key user
-#           secret-tool store --label="SPAR SMTP pass" service spar-smtp key pass
-# Windows:  New-Object Windows.Security.Credentials.PasswordVault then .Add(...)
-# Returns a dict: user pass
-proc ::spar::smtp_credentials {} {
+# spar::smtp_credentials host user -- fetch SMTP password from the OS
+# secret store, keyed by (host, user) — the native compound-key idiom on
+# both macOS Keychain and Linux libsecret. Username lives in campaign
+# YAML, not in the keychain.
+#
+# macOS:    security add-generic-password -s <host> -a <user> -w <pass> -U
+# Linux:    secret-tool store --label "…" protocol smtp server <host> user <user>
+# Windows:  PasswordVault keyed on Resource=<host>, UserName=<user>.
+# Returns the password string; throws on lookup failure.
+proc ::spar::smtp_credentials {host user} {
     global tcl_platform
+    if {$host eq "" || $user eq ""} {
+        error "smtp_credentials: host and user required"
+    }
     switch $tcl_platform(os) {
         "Darwin" {
-            set pass [string trim [exec security find-generic-password -s spar-smtp -w]]
-            set info [exec security find-generic-password -s spar-smtp]
-            if {![regexp {"acct"<blob>="([^"]+)"} $info _ user]} {
-                error "cannot read account from keychain entry spar-smtp"
+            if {[catch {exec security find-generic-password \
+                    -s $host -a $user -w} pass]} {
+                error "no keychain entry for ($host, $user) — store via Settings"
             }
+            return [string trim $pass]
         }
         "Linux" {
-            set user [string trim [exec secret-tool lookup service spar-smtp key user]]
-            set pass [string trim [exec secret-tool lookup service spar-smtp key pass]]
+            if {[catch {exec secret-tool lookup \
+                    protocol smtp server $host user $user} pass]} {
+                error "no keychain entry for ($host, $user) — store via Settings"
+            }
+            set pass [string trim $pass]
+            if {$pass eq ""} {
+                error "no keychain entry for ($host, $user) — store via Settings"
+            }
+            return $pass
         }
         "Windows NT" {
-            set script {[void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime]; $vault = New-Object Windows.Security.Credentials.PasswordVault; $cred = $vault.FindAllByResource('spar-smtp') | Select-Object -First 1; $cred.RetrievePassword(); $cred.UserName; $cred.Password}
-            set lines [split [string trim [exec powershell -NoProfile -NonInteractive -Command $script]] "\n"]
-            set user [string trim [lindex $lines 0]]
-            set pass [string trim [lindex $lines 1]]
+            set script "\$vault = New-Object Windows.Security.Credentials.PasswordVault; \$c = \$vault.Retrieve('$host','$user'); \$c.RetrievePassword(); \$c.Password"
+            return [string trim [exec powershell -NoProfile -NonInteractive -Command $script]]
         }
         default {
             error "smtp_credentials: unsupported platform \"$tcl_platform(os)\""
         }
     }
-    return [dict create user $user pass $pass]
 }
 
 # ── SendEmailDriver ──────────────────────────────────────────────────
@@ -64,7 +73,7 @@ oo::class create ::spar::transitions::SendEmailDriver {
     variable Paused Cancelled
     variable OnProgress OnComplete
     variable Tasks TaskIdx Delay DryRun
-    variable CampSender CampFromName CampFromEmail CampBcc CampSmtpHost CampSmtpPort
+    variable CampSender CampFromName CampFromEmail CampBcc CampSmtpHost CampSmtpPort CampSmtpUser
     variable CurrentPipe CurrentBuf TmpFile
     variable CurrentSlug CurrentApproachPath
     variable DelayTimer
@@ -83,6 +92,7 @@ oo::class create ::spar::transitions::SendEmailDriver {
         set CampBcc       [spar::dict_get_default $camp_sender bcc ""]
         set CampSmtpHost  [spar::dict_get_default $camp_sender smtp_host ""]
         set CampSmtpPort  [spar::dict_get_default $camp_sender smtp_port 587]
+        set CampSmtpUser  [spar::dict_get_default $camp_sender smtp_user ""]
 
         set OnProgress $on_progress
         set OnComplete $on_complete
@@ -225,16 +235,20 @@ oo::class create ::spar::transitions::SendEmailDriver {
             my fail_task "sender.smtp_host not set in campaign"
             return
         }
-        if {[catch {set creds [::spar::smtp_credentials]} err]} {
-            my fail_task "keychain lookup failed: $err"
+        if {$CampSmtpUser eq ""} {
+            my fail_task "sender.smtp_user not set in campaign — required (keychain is keyed by host+user)"
+            return
+        }
+        if {[catch {set pass [::spar::smtp_credentials $CampSmtpHost $CampSmtpUser]} err]} {
+            my fail_task "keychain lookup failed for ($CampSmtpHost, $CampSmtpUser): $err"
             return
         }
 
         set params [dict create \
             smtp_host  $CampSmtpHost \
             smtp_port  $CampSmtpPort \
-            smtp_user  [dict get $creds user] \
-            smtp_pass  [dict get $creds pass] \
+            smtp_user  $CampSmtpUser \
+            smtp_pass  $pass \
             from_email $from_email \
             from_name  $from_name \
             to         $to \

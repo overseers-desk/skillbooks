@@ -27,8 +27,8 @@ namespace eval spar {
     namespace export classify_contact classify_segment \
         transition_eligible detect_duplicates progress_counts \
         roster_counts \
-        validate_campaign validate_campaign_semantics validate_approach \
-        validate_profile read_profile_front_matter build_warnings \
+        validate_campaign validate_campaign_semantics validate_sender_block \
+        validate_approach validate_profile read_profile_front_matter build_warnings \
         final_email_message \
         has_transition_runner transition_runner \
         transition_label transition_auto_safe transition_dispatch_status \
@@ -101,16 +101,10 @@ proc spar::ui_transition_tids {} {
     return $out
 }
 
-# tool_overrides -- dict populated by ui/settings.tcl in UI mode with
-# user-configured tool paths.  CLI mode leaves it empty; auto_execok is
-# the fallback in both modes.
-namespace eval spar { variable tool_overrides [dict create] }
-
-# find_tool -- resolve a tool name to an absolute path.  Checks
-# tool_overrides first (key: ${name}_path), then auto_execok.
+# find_tool -- resolve a tool name to an absolute path via $PATH.
+# Returns "" if the tool is not on PATH; callers are expected to flag
+# that condition rather than probe for a user-configurable override.
 proc spar::find_tool {name} {
-    set p [spar::dict_get_default $::spar::tool_overrides ${name}_path ""]
-    if {$p ne "" && [file executable $p]} { return $p }
     return [auto_execok $name]
 }
 
@@ -1953,6 +1947,53 @@ proc spar::_profile_validation_error {contact} {
     return ""
 }
 
+# validate_sender_block -- campaign-level sender schema checks. Returns a
+# list of issue dicts in the same shape as validate_campaign, but with
+# empty segment/contact_name (these are campaign-level, not per-contact).
+# Takes the parsed campaign dict (from spar::load_campaign), not the
+# classified contact list.
+proc spar::validate_sender_block {cdata} {
+    set issues {}
+    if {![dict exists $cdata sender]} {
+        lappend issues [dict create \
+            severity error code sender_missing \
+            segment "" contact_name "" \
+            message "sender: block missing from campaign.yaml — required for sending."]
+        return $issues
+    }
+    set sender [dict get $cdata sender]
+
+    set smtp_host [string trim [spar::dict_get_default $sender smtp_host ""]]
+    set smtp_user [string trim [spar::dict_get_default $sender smtp_user ""]]
+    set smtp_port [spar::dict_get_default $sender smtp_port ""]
+
+    if {$smtp_host eq ""} {
+        lappend issues [dict create \
+            severity error code smtp_host_missing \
+            segment "" contact_name "" \
+            message "sender.smtp_host not set — required for sending."]
+    }
+    if {$smtp_user eq ""} {
+        lappend issues [dict create \
+            severity error code smtp_user_missing \
+            segment "" contact_name "" \
+            message "sender.smtp_user not set — required for sending; the keychain is keyed by (host, user)."]
+    }
+    if {[dict exists $sender smtp_pass]} {
+        lappend issues [dict create \
+            severity error code secret_in_yaml \
+            segment "" contact_name "" \
+            message "sender.smtp_pass is in campaign.yaml — passwords must live in the OS keychain, not YAML. Store via Settings, then delete this field."]
+    }
+    if {$smtp_port ne "" && ![string is integer -strict $smtp_port]} {
+        lappend issues [dict create \
+            severity warning code smtp_port_non_numeric \
+            segment "" contact_name "" \
+            message "sender.smtp_port '$smtp_port' is not numeric — expected an integer port (e.g. 587)."]
+    }
+    return $issues
+}
+
 # validate_campaign_semantics -- cross-file checks only; no per-file approach validation.
 # Used by progress/warnings paths where per-file schema validation is out of scope
 # (per issue SmartLayer/aesop#43 principle 6).
@@ -2332,7 +2373,7 @@ proc spar::validate_roster {segment_contacts} {
 #   validation_errors  — count of validation errors
 #   validation_warnings — count of validation warnings
 #
-proc spar::build_warnings {all_classified_contacts} {
+proc spar::build_warnings {all_classified_contacts {cdata {}}} {
     set messages {}
     set dup_to_count 0
     set dup_name_count 0
@@ -2341,10 +2382,23 @@ proc spar::build_warnings {all_classified_contacts} {
     set val_errors 0
     set val_warnings 0
 
+    # Campaign-level sender-block issues run even if the contact list is
+    # empty (e.g. an unreadable campaign). Merge them into the messages
+    # list first so they appear at the top.
+    if {[llength $cdata] > 0} {
+        foreach issue [spar::validate_sender_block $cdata] {
+            set sev [dict get $issue severity]
+            set msg [dict get $issue message]
+            lappend messages "\[[string toupper $sev]\]: $msg"
+            if {$sev eq "error"} { incr val_errors } else { incr val_warnings }
+        }
+    }
+
     if {[llength $all_classified_contacts] == 0} {
-        return [dict create messages {} \
+        return [dict create messages $messages \
             duplicate_to 0 duplicate_name 0 duplicate_email 0 \
-            identical_subject 0 validation_errors 0 validation_warnings 0]
+            identical_subject 0 validation_errors $val_errors \
+            validation_warnings $val_warnings]
     }
 
     # Duplicates
