@@ -564,6 +564,7 @@ proc spar::a::run {opts on_progress on_complete} {
     set overview [dict get $cdata usp_document]
     set antifacts [spar::dict_get_default $cdata antifacts]
     set campaign_principles [spar::dict_get_default $cdata campaign_principles]
+    set a_max_passes_ceiling [spar::dict_get_default $cdata a_max_passes 3]
     set segments [dict get $cdata segments]
     if {[llength $sel_segments] > 0} {
         set _filtered {}
@@ -727,6 +728,10 @@ proc spar::a::run {opts on_progress on_complete} {
 p_note: $p_note
 s_note: $s_note"
                 set max_passes 1
+            }
+            # Apply campaign-level hard ceiling (a_max_passes, default 3).
+            if {$max_passes > $a_max_passes_ceiling} {
+                set max_passes $a_max_passes_ceiling
             }
 
             set channel_d [spar::channel_desc $linkedin $phone]
