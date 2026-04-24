@@ -9,7 +9,7 @@ package require json::write
 
 namespace eval spar {
     namespace export slugify load_campaign load_roster find_profile \
-        profile_exists get_max_rounds lang_instruction channel_desc \
+        profile_exists get_max_passes lang_instruction channel_desc \
         campaign_primary_channel campaign_secondary_channel \
         campaign_tertiary_channel campaign_in_scope_channels \
         roster_row_has_in_scope_channel
@@ -350,11 +350,11 @@ proc spar::profile_exists {profile_dir slug_name slug_org} {
     return 0
 }
 
-# get_max_rounds — determine max A2 spar rounds from profile yield.
+# get_max_passes — determine max A2 spar passes from profile yield.
 # Reads the profile's YAML front matter (see spar-P-profile.md §5.1) for the
 # canonical `yield` integer (substantive data points). Returns 3 when yield ≥ 6,
 # 1 otherwise (including when the profile is missing or unparseable).
-proc spar::get_max_rounds {profile_path} {
+proc spar::get_max_passes {profile_path} {
     if {$profile_path eq "" || ![file exists $profile_path]} {
         return 1
     }

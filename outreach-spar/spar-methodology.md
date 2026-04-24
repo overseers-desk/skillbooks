@@ -115,10 +115,10 @@ A has two sub-phases:
 
 **A1 (Draft):** Opus writes the connection message. The message must be specific to what the target has said or done, not a template with the name swapped in. The message may reference prior relationships from the communication log where doing so is genuine and relevant.
 
-**A2 (Spar):** Opus spawns a simulated personality based on the profile — a second agent (C2) who has read the same profile and attempts to respond as the target would, honestly. A1 reads C2's response. If C2's response reveals that the message missed the mark (wrong angle, wrong tone, assumed a concern the target does not have), A1 revises. The number of A1↔C2 rounds scales with profile yield:
+**A2 (Spar):** Opus spawns a simulated personality based on the profile — a second agent (C2) who has read the same profile and attempts to respond as the target would, honestly. A1 reads C2's response. If C2's response reveals that the message missed the mark (wrong angle, wrong tone, assumed a concern the target does not have), A1 revises. The number of A1↔C2 passes scales with profile yield:
 
-- **Yield ≥ 6** (substantive data points — public statements, known positions, project affiliations, stated concerns, named connections, recent activity): up to 3 rounds. C2 has enough material to respond in character and surface non-obvious mismatches in tone or framing.
-- **Yield 3–5**: 1 round. C2 can give a directional reaction — whether the angle feels relevant, whether the tone is off — but lacks the depth for iterative refinement. A1 incorporates C2's single response and finalises.
+- **Yield ≥ 6** (substantive data points — public statements, known positions, project affiliations, stated concerns, named connections, recent activity): up to 3 passes. C2 has enough material to respond in character and surface non-obvious mismatches in tone or framing.
+- **Yield 3–5**: 1 pass. C2 can give a directional reaction — whether the angle feels relevant, whether the tone is off — but lacks the depth for iterative refinement. A1 incorporates C2's single response and finalises.
 - **Yield < 3**: A2 is skipped. C2 cannot roleplay convincingly with so little to work from; the simulation would be two instances of Opus guessing at each other. A1's first draft stands.
 
 **Output:** An approach file at `approach/{stem}.yaml`. The file contains: the profile summary, the angle chosen, the A1/A2 iteration history (all drafts and C2 responses, so the human can see how the message evolved), the final message, and the contact method.

@@ -120,11 +120,11 @@ Anti-patterns to avoid in all drafted messages:
 
 A2 tests whether the draft would land well with the recipient and whether it contains factual errors. A2 must run as a separate agent process with its own context — not as self-review within the A1 agent.
 
-**A2 is mandatory for all contacts.** Low-yield profiles need sparring more than high-yield ones: less evidence means more room to hallucinate relevance. Rounds are budgeted by profile yield:
+**A2 is mandatory for all contacts.** Low-yield profiles need sparring more than high-yield ones: less evidence means more room to hallucinate relevance. Passes are budgeted by profile yield:
 
-- yield ≥ 6: up to 3 rounds
-- yield 3–5: 1 round
-- yield < 3: 1 round
+- yield ≥ 6: up to 3 passes
+- yield 3–5: 1 pass
+- yield < 3: 1 pass
 
 Spawn one subagent (C2) to perform two sequential steps. Use a Sonnet-class model — less capable models shift behaviour more authentically under persona instructions.
 
@@ -134,7 +134,7 @@ Spawn one subagent (C2) to perform two sequential steps. Use a Sonnet-class mode
 
 The two steps must be sequential: role-play before fact-check, so source-file knowledge does not contaminate the persona.
 
-A1 reads both steps. If C2 identifies a misalignment or a factual error, A1 revises and the round repeats. Record all drafts and C2 responses in the approach file — the human needs to see how the message evolved.
+A1 reads both steps. If C2 identifies a misalignment or a factual error, A1 revises and the pass repeats. Record all drafts and C2 responses in the approach file — the human needs to see how the message evolved.
 
 ### 4.7 Assemble the approach file
 

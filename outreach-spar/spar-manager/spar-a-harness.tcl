@@ -31,7 +31,7 @@ while {[gets $fd line] >= 0} {
 }
 close $fd
 
-set max_rounds [dict get $meta MAX_ROUNDS]
+set max_passes [dict get $meta MAX_PASSES]
 set outfile [dict get $meta OUTFILE]
 set contact_summary [dict get $meta CONTACT_SUMMARY]
 set challenger_model [spar::dict_get_default $meta CHALLENGER_MODEL sonnet]
@@ -123,17 +123,17 @@ spar::write_file [file join $prompt_dir rationale.txt] $rationale
 
 # ── Spar loop ──────────────────────────────────────────────────────────
 #
-# The challenger runs fresh each round (context-isolated), so it uses its
+# The challenger runs fresh each pass (context-isolated), so it uses its
 # own short-lived harness. The author is the persistent $harness — its
 # session_id is what gets resumed.
 
-set round 0
+set pass 0
 set verdict "REVISE"
 
-while {$round < $max_rounds && $verdict eq "REVISE"} {
-    incr round
-    puts "\[$slug\] \[phase: challenger $round/$max_rounds\]"
-    puts "\[$slug\] Challenger round $round/$max_rounds..."
+while {$pass < $max_passes && $verdict eq "REVISE"} {
+    incr pass
+    puts "\[$slug\] \[phase: challenger $pass/$max_passes\]"
+    puts "\[$slug\] Challenger pass $pass/$max_passes..."
 
     set challenger_template [spar::read_file [file join $prompt_dir challenger-template.txt]]
     set current_draft [spar::read_file [file join $prompt_dir draft-current.txt]]
@@ -143,12 +143,12 @@ while {$round < $max_rounds && $verdict eq "REVISE"} {
     # session_id on the first successful call, so subsequent `call`
     # invocations are context-isolated but still accumulate cost to the
     # shared ledger.
-    set challenger_log "${log_prefix}-challenger-round${round}.log"
-    if {[$harness call "challenger-round${round}" $challenger_log $challenger_prompt --model $challenger_model]} {
+    set challenger_log "${log_prefix}-challenger-pass${pass}.log"
+    if {[$harness call "challenger-pass${pass}" $challenger_log $challenger_prompt --model $challenger_model]} {
         exit 1
     }
 
-    file copy -force $challenger_log [file join $prompt_dir "challenger-round${round}.txt"]
+    file copy -force $challenger_log [file join $prompt_dir "challenger-pass${pass}.txt"]
 
     set challenger_text [spar::read_file $challenger_log]
     set verdict ""
@@ -160,19 +160,19 @@ while {$round < $max_rounds && $verdict eq "REVISE"} {
     if {$verdict eq ""} { set verdict "REVISE" }
 
     if {$verdict eq "DONE"} {
-        puts "\[$slug\] Challenger round $round: DONE"
+        puts "\[$slug\] Challenger pass $pass: DONE"
         break
     }
 
-    puts "\[$slug\] \[phase: revising $round\]"
-    puts "\[$slug\] Challenger round $round: REVISE — author revising..."
+    puts "\[$slug\] \[phase: revising $pass\]"
+    puts "\[$slug\] Challenger pass $pass: REVISE — author revising..."
 
-    set author_rev_log "${log_prefix}-author-rev${round}.log"
-    set challenger_feedback [spar::read_file [file join $prompt_dir "challenger-round${round}.txt"]]
+    set author_rev_log "${log_prefix}-author-rev${pass}.log"
+    set challenger_feedback [spar::read_file [file join $prompt_dir "challenger-pass${pass}.txt"]]
 
-    set rev_prompt "This is revision round $round. A challenger (context-isolated, playing the recipient) reacted to your draft and fact-checked it.
+    set rev_prompt "This is revision pass $pass. A challenger (context-isolated, playing the recipient) reacted to your draft and fact-checked it.
 
-## Challenger feedback (round $round)
+## Challenger feedback (pass $pass)
 
 $challenger_feedback
 
@@ -182,9 +182,9 @@ Revise the draft to address valid concerns. Do not over-correct. If the reaction
 
 Output the revised draft between DRAFT_START and DRAFT_END markers. Output any updated rationale between RATIONALE_START and RATIONALE_END."
 
-    spar::write_file [file join $prompt_dir "author-rev${round}.txt"] $rev_prompt
+    spar::write_file [file join $prompt_dir "author-rev${pass}.txt"] $rev_prompt
 
-    if {[$harness resume "author-rev${round}" $author_rev_log $rev_prompt]} {
+    if {[$harness resume "author-rev${pass}" $author_rev_log $rev_prompt]} {
         exit 1
     }
 
@@ -205,15 +205,15 @@ puts "\[$slug\] \[phase: assembling\]"
 puts "\[$slug\] Author: assembling..."
 
 set all_challenger ""
-for {set r 1} {$r <= $round} {incr r} {
-    set cfile [file join $prompt_dir "challenger-round${r}.txt"]
+for {set r 1} {$r <= $pass} {incr r} {
+    set cfile [file join $prompt_dir "challenger-pass${r}.txt"]
     if {[file exists $cfile]} {
         append all_challenger "\n### A2 Response $r\n\n[spar::read_file $cfile]\n"
     }
 }
 
 set all_revisions ""
-for {set r 1} {$r <= $round} {incr r} {
+for {set r 1} {$r <= $pass} {incr r} {
     set rev_log "${log_prefix}-author-rev${r}.log"
     if {[file exists $rev_log]} {
         set rev_draft [spar::extract_between [spar::read_file $rev_log] "DRAFT_START" "DRAFT_END"]
@@ -285,13 +285,13 @@ spar::write_file [file join $prompt_dir assembly.txt] $assembly_prompt
 # creates it. Assert rather than trust — a silently empty prior log would
 # otherwise feed assembly malformed input and be misattributed.
 set required_logs [list "${log_prefix}-author-draft.log"]
-for {set r 1} {$r <= $round} {incr r} {
-    lappend required_logs "${log_prefix}-challenger-round${r}.log"
+for {set r 1} {$r <= $pass} {incr r} {
+    lappend required_logs "${log_prefix}-challenger-pass${r}.log"
 }
-# Revision logs exist for each round whose verdict was REVISE. The final
-# round breaks out on DONE without writing a rev log.
-set rev_rounds [expr {$verdict eq "DONE" ? $round - 1 : $round}]
-for {set r 1} {$r <= $rev_rounds} {incr r} {
+# Revision logs exist for each pass whose verdict was REVISE. The final
+# pass breaks out on DONE without writing a rev log.
+set rev_passes [expr {$verdict eq "DONE" ? $pass - 1 : $pass}]
+for {set r 1} {$r <= $rev_passes} {incr r} {
     lappend required_logs "${log_prefix}-author-rev${r}.log"
 }
 foreach _log $required_logs {
@@ -326,7 +326,7 @@ if {[file exists $outfile]} {
 set total_cost [$harness cost_total]
 
 if {[file exists $outfile]} {
-    puts "DONE: $slug ($round round(s), verdict=$verdict, cost=\$$total_cost)"
+    puts "DONE: $slug ($pass pass(es), verdict=$verdict, cost=\$$total_cost)"
 
     # Update roster response_likelihood via sqlite3
     set assembly_text [spar::read_file $assembly_log]
