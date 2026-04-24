@@ -134,6 +134,17 @@ proc spar::load_campaign {yaml_path} {
         }
     }
 
+    # Validate a_max_passes (hard ceiling on A-phase challenger passes).
+    # Integer ≥ 0. 0 disables the challenger entirely (initial draft flows
+    # straight to assembly with no fact-check). Absent = default 3, applied
+    # at dispatch time.
+    if {[dict exists $data a_max_passes]} {
+        set v [dict get $data a_max_passes]
+        if {![string is integer -strict $v] || $v < 0} {
+            error "Campaign $yaml_path: a_max_passes must be an integer ≥ 0 (got '$v')"
+        }
+    }
+
     # Store base directory for later use
     dict set data _base $base
 
