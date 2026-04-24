@@ -85,6 +85,23 @@ oo::class create spar::ui::CampaignModel {
         return [spar::dict_get_default [dict get $Cdata sender] smtp_host ""]
     }
 
+    method get_smtp_user {} {
+        if {![dict exists $Cdata sender]} { return "" }
+        return [spar::dict_get_default [dict get $Cdata sender] smtp_user ""]
+    }
+
+    method get_smtp_port {} {
+        if {![dict exists $Cdata sender]} { return 587 }
+        return [spar::dict_get_default [dict get $Cdata sender] smtp_port 587]
+    }
+
+    # get_has_smtp_pass -- 1 if the YAML insecurely embeds a password.
+    # Presence of the key is the signal — value is not returned.
+    method get_has_smtp_pass {} {
+        if {![dict exists $Cdata sender]} { return 0 }
+        return [dict exists [dict get $Cdata sender] smtp_pass]
+    }
+
     method get_contact {stem} {
         if {$stem eq "" || [llength $AllContacts] == 0} { return "" }
         foreach c $AllContacts {
@@ -370,7 +387,7 @@ oo::class create spar::ui::CampaignModel {
             lappend Segments [list $label $is_active $raw_data]
         }
 
-        set Warnings    [dict get [spar::build_warnings $AllContacts] messages]
+        set Warnings    [dict get [spar::build_warnings $AllContacts $Cdata] messages]
         set Transitions [my _build_transitions]
     }
 
@@ -447,7 +464,7 @@ oo::class create spar::ui::CampaignModel {
             lappend AsyncAfterIds [after 1 [list [self] async_next]]
         } else {
             set FullLoadDone 1
-            set Warnings    [dict get [spar::build_warnings $AllContacts] messages]
+            set Warnings    [dict get [spar::build_warnings $AllContacts $Cdata] messages]
             set Transitions [my _build_transitions]
             my _fire fully-loaded
         }
