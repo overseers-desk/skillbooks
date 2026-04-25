@@ -58,6 +58,15 @@ oo::class create ::spar::transitions::Transition {
         {*}$on_complete 0 0 [dict create \
             message "[my tid] ([my label]): dispatch_status=[my dispatch_status]"]
     }
+
+    # Default eligible — zero tasks. Subclasses that have eligibility
+    # criteria (T1, T2, T3, T4, T6, T8, T9, T10) override. Method name has
+    # no leading underscore: TclOO would unexport it and the dispatcher in
+    # spar::transition_eligible reaches it via the registered object
+    # command, which is an external call.
+    method eligible {contact primary_channel cdata today_iso} {
+        return {}
+    }
 }
 
 # register — construct a subclass instance and record it under its T-id.
@@ -129,4 +138,76 @@ proc ::spar::transitions::assert_matches_doc {doc_path} {
     if {[llength $missing_in_reg] > 0 || [llength $missing_in_doc] > 0} {
         error "transition registry drift: missing_in_registry=[lsort $missing_in_reg] missing_in_doc=[lsort $missing_in_doc]"
     }
+}
+
+# ── spar::* accessors ─────────────────────────────────────────────────
+# Thin delegators around the registry. Live here, alongside the registry
+# itself, rather than in spar-state.tcl — every consumer that wants the
+# accessors already sources transitions/base.tcl (transitively, via
+# spar-state.tcl), and keeping them next to the registry makes the
+# dependency obvious.
+
+# has_transition_runner -- 1 if the T-id's class has dispatch_status
+# "available" (i.e. the Dispatch button should fire a runner). Manual
+# and not-implemented transitions return 0 here so callers gate cleanly.
+proc spar::has_transition_runner {tid} {
+    if {$tid ni [::spar::transitions::all]} { return 0 }
+    return [expr {[[::spar::transitions::get $tid] dispatch_status] eq "available"}]
+}
+
+# transition_runner -- command prefix that invokes the T-id's run method.
+# Callers expand with {*}$runner $opts $on_progress $on_complete. Errors
+# if the T-id is unregistered or non-dispatchable — gate via
+# has_transition_runner.
+proc spar::transition_runner {tid} {
+    if {$tid ni [::spar::transitions::all]} {
+        error "unknown transition: $tid"
+    }
+    if {![spar::has_transition_runner $tid]} {
+        error "no runner for $tid"
+    }
+    return [list [::spar::transitions::get $tid] run]
+}
+
+# transition_label -- human-readable edge name.
+proc spar::transition_label {tid} {
+    return [[::spar::transitions::get $tid] label]
+}
+
+# transition_auto_safe -- 1 if --auto may drive this transition.
+proc spar::transition_auto_safe {tid} {
+    if {$tid ni [::spar::transitions::all]} { return 0 }
+    return [[::spar::transitions::get $tid] auto_safe]
+}
+
+# transition_dispatch_status -- "available", "manual", "not-implemented",
+# or "unknown" for an unregistered T-id.
+proc spar::transition_dispatch_status {tid} {
+    if {$tid ni [::spar::transitions::all]} { return "unknown" }
+    return [[::spar::transitions::get $tid] dispatch_status]
+}
+
+# transition_supports_reauthor -- 1 if passing stems to the runner
+# re-authors existing artefacts (profile runners bypass the "profile
+# exists" skip).
+proc spar::transition_supports_reauthor {tid} {
+    if {$tid ni [::spar::transitions::all]} { return 0 }
+    return [[::spar::transitions::get $tid] supports_reauthor]
+}
+
+# transition_tids -- all registered T-ids in registration order.
+proc spar::transition_tids {} {
+    return [::spar::transitions::all]
+}
+
+# ui_transition_tids -- T-ids shown as rows in the transition tree.
+# Excludes manual transitions (T9/T10) whose UI presence is the per-
+# contact inspector, not the tree. Used by dispatch-controller,
+# transition-tree, and campaign-model so all three agree on ordering.
+proc spar::ui_transition_tids {} {
+    set out {}
+    foreach t [::spar::transitions::all] {
+        if {[[::spar::transitions::get $t] ui_tree_row]} { lappend out $t }
+    }
+    return $out
 }

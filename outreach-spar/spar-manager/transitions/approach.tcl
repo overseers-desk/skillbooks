@@ -22,6 +22,18 @@ oo::class create ::spar::transitions::ApproachTransition {
     method run {opts on_progress on_complete} {
         ::spar::a::run $opts $on_progress $on_complete
     }
+
+    # T2: PROFILED contacts that pass the campaign-wide approach-dispatch
+    # gate (min_star, in_scope_channel, skip_excluded — SSOT with
+    # spar::a::run per #56).  T7 is deferred (zero tasks) until
+    # PROFILE_STALE re-profiling detection lands.
+    method eligible {contact primary_channel cdata today_iso} {
+        if {[my tid] ne "T2"} { return {} }
+        set state [dict get $contact state]
+        if {$state ne "PROFILED"} { return {} }
+        if {[spar::_approach_dispatch_gate $contact $cdata] ne ""} { return {} }
+        return [list [spar::_task $contact ready ""]]
+    }
 }
 
 ::spar::transitions::register \

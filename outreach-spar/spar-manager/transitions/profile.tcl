@@ -26,6 +26,20 @@ oo::class create ::spar::transitions::ProfileTransition {
     method run {opts on_progress on_complete} {
         ::spar::p::run $opts $on_progress $on_complete
     }
+
+    # T1 fires from DISCOVERED, T6 fires from PROFILE_STALE — same class,
+    # entry state distinguished via [my tid].
+    method eligible {contact primary_channel cdata today_iso} {
+        set state [dict get $contact state]
+        set tid [my tid]
+        if {$tid eq "T1" && $state eq "DISCOVERED"} {
+            return [list [spar::_task $contact ready ""]]
+        }
+        if {$tid eq "T6" && $state eq "PROFILE_STALE"} {
+            return [list [spar::_task $contact ready ""]]
+        }
+        return {}
+    }
 }
 
 ::spar::transitions::register \
