@@ -1,0 +1,6 @@
+{"type":"user","message":{"role":"user","content":[{"type":"text","text":"Profile this contact"}]}}
+{"type":"assistant","message":{"role":"assistant","model":"claude-opus-4-7","content":[{"type":"text","text":"I will look up LinkedIn first."},{"type":"tool_use","id":"toolu_01","name":"Skill","input":{"skill":"linkedin","args":"fetch profile https://linkedin.com/in/example"}}]}}
+{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01","content":"Profile loaded."}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Now Facebook."},{"type":"tool_use","id":"toolu_02","name":"Skill","input":{"skill":"facebook","args":"search example"}}]}}
+{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_02","content":"No verified match found."}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Done."}]}}

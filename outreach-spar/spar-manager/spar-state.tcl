@@ -29,7 +29,8 @@ namespace eval spar {
         roster_counts \
         keychain_available \
         validate_campaign validate_campaign_semantics validate_sender_block \
-        validate_approach validate_profile read_profile_front_matter build_warnings \
+        validate_approach validate_profile audit_skills_in_transcript \
+        read_profile_front_matter build_warnings \
         final_email_message \
         has_transition_runner transition_runner \
         transition_label transition_auto_safe transition_dispatch_status \
@@ -1818,6 +1819,75 @@ proc spar::_profile_is_stale {profile_path roster_row} {
         if {$snap_has_date && !$cur_has_date} { return 1 }
     }
     return 0
+}
+
+# audit_skills_in_transcript -- count Skill tool_use invocations in a
+# Claude session transcript. Returns a list of issue dicts (same shape
+# as validate_profile output) with code "<skill>_lookup_missing" for
+# each required skill that has zero invocations. If the transcript file
+# is missing, returns a single warning-severity issue with code
+# transcript_not_found rather than masquerading as a skill miss — a
+# future Claude storage-layout change should not loop the agent.
+#
+# session_id      UUID returned by claude --output-format json
+# required_skills list of skill IDs (e.g. {linkedin facebook})
+# contact_name    for issue dicts (consumed by validate_and_correct)
+#
+# Glob by session_id rather than reconstructing the project_dir from
+# pwd: the dispatcher does not chdir per-job, claude inherits the
+# spar-manager launch cwd which is not deterministic from here. UUID
+# v4 collision risk is negligible.
+proc spar::audit_skills_in_transcript {session_id required_skills contact_name {transcripts_root ""}} {
+    set issues {}
+    if {$transcripts_root eq ""} {
+        set transcripts_root [file join $::env(HOME) .claude projects]
+    }
+    set matches [glob -nocomplain \
+        -directory $transcripts_root \
+        -types f -- */${session_id}.jsonl]
+    if {[llength $matches] == 0} {
+        return [list [dict create severity warning code transcript_not_found \
+            contact_name $contact_name \
+            message "Session transcript $session_id.jsonl not found under ~/.claude/projects/*/ — audit skipped"]]
+    }
+    set transcript [lindex $matches 0]
+
+    set counts [dict create]
+    foreach s $required_skills { dict set counts $s 0 }
+
+    set fd [open $transcript r]
+    fconfigure $fd -encoding utf-8
+    while {[gets $fd line] >= 0} {
+        # Cheap prefilter — long P sessions are 100s KB to a few MB and
+        # json::json2dict is slow per line. Skip lines that cannot
+        # contain a Skill tool_use.
+        if {![string match {*"name":"Skill"*} $line]} continue
+        if {[catch {set d [::json::json2dict $line]}]} continue
+        set msg [spar::dict_get_default $d message [dict create]]
+        set content [spar::dict_get_default $msg content {}]
+        foreach blk $content {
+            if {[spar::dict_get_default $blk type ""] ne "tool_use"} continue
+            if {[spar::dict_get_default $blk name ""] ne "Skill"} continue
+            set input [spar::dict_get_default $blk input [dict create]]
+            set sk [spar::dict_get_default $input skill ""]
+            if {[dict exists $counts $sk]} {
+                dict incr counts $sk
+            }
+        }
+    }
+    close $fd
+
+    set sec [dict create linkedin §4.3 facebook §4.4]
+    foreach s $required_skills {
+        if {[dict get $counts $s] == 0} {
+            set sref [spar::dict_get_default $sec $s "(spec)"]
+            lappend issues [dict create severity error \
+                code "${s}_lookup_missing" \
+                contact_name $contact_name \
+                message "SPAR-P $sref requires the $s skill; transcript shows zero Skill invocations with input.skill=$s."]
+        }
+    }
+    return $issues
 }
 
 # validate_profile -- check a single profile file against the front-matter
