@@ -495,4 +495,23 @@ proc spar::resolve_logs_dir {campaign_file phase datestamp user_logs} {
     return $logs_dir
 }
 
+# Path conventions for stem-keyed artefacts. SSOT: every consumer that
+# resolves a profile or approach by stem uses these. Layout per
+# spar-roster-format.md / SmartLayer/aesop#45.
+proc spar::profile_dir_for_segment {segment_dir} {
+    return [file join $segment_dir profiles]
+}
+proc spar::approach_dir_for_segment {segment_dir} {
+    return [file join $segment_dir approach]
+}
+proc spar::profile_path_for_stem {segment_dir stem} {
+    return [file join [spar::profile_dir_for_segment $segment_dir] "${stem}.md"]
+}
+proc spar::legacy_profile_path_for_stem {segment_dir stem} {
+    return [file join [spar::profile_dir_for_segment $segment_dir] "profile-${stem}.md"]
+}
+proc spar::approach_path_for_stem {segment_dir stem} {
+    return [file join [spar::approach_dir_for_segment $segment_dir] "${stem}.yaml"]
+}
+
 package provide spar-lib 1.0

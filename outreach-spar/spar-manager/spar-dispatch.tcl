@@ -42,260 +42,8 @@ proc spar::load_prompt_template {name} {
     return [string trimright $s "\n"]
 }
 
-# ── Mailroom prefetch ─────────────────────────────────────────────────
-# Builds the "## Mailroom — prefetched by dispatcher" block injected
-# into SPAR-P and SPAR-A prompts: list-accounts header (cached) plus a
-# per-contact correspondence cascade. Goal: kill redundant per-agent
-# list-accounts calls and the email_search/email-search guess pattern
-# observed in mailroom #13. Cascade per SPAR-P §4.7 — pass 1 by email
-# (from/to), pass 2 by subject for name and organisation. Uses
-# `mailroom -A` (multi-account) with `--format text`; both shipped in
-# mailroom 1.0.3 along with the [Gmail]/All Mail folder default and
-# exit-1-on-empty.
-namespace eval spar::mailroom {
-    variable accounts_block_cache ""
-}
-
-proc spar::mailroom::accounts_block {} {
-    variable accounts_block_cache
-    if {$accounts_block_cache ne ""} { return $accounts_block_cache }
-    set mr [auto_execok mailroom]
-    if {$mr eq ""} { return "" }
-    if {[catch {set out [exec {*}$mr list-accounts]}]} { return "" }
-    set hdr "## Mailroom — prefetched by dispatcher\n\n"
-    append hdr "The commands and outputs below were already run for you. **Do not re-run `mailroom list-accounts` and do not search for this contact's email / name / organisation** — the results are below. If you need a different search, use the account names shown and invoke `mailroom -A search '<query>' --format text` directly.\n\n"
-    append hdr "\$ mailroom list-accounts\n[string trim $out]\n"
-    set accounts_block_cache $hdr
-    return $hdr
-}
-
-proc spar::mailroom::contact_block {name org email} {
-    set name  [string trim $name]
-    set org   [string trim $org]
-    set email [string trim $email]
-    if {$name eq "" && $org eq "" && $email eq ""} { return "" }
-    if {[auto_execok mailroom] eq ""} { return "" }
-
-    set who $name
-    if {$who eq ""} { set who "(unnamed)" }
-    if {$org ne ""} { append who " ($org)" }
-    set out "\n### Prior correspondence with $who\n\n"
-
-    set pass1_hit 0
-    if {$email ne ""} {
-        set q1 "from:$email OR to:$email"
-        append out "# Pass 1 — email lookup\n\$ mailroom -A search '$q1' --format text --limit 10\n"
-        lassign [spar::mailroom::_run $q1] rc text
-        append out "$text\n"
-        if {$rc == 0} { set pass1_hit 1 }
-    } else {
-        append out "(Pass 1 — email lookup — skipped: no email on roster.)\n"
-    }
-    if {$pass1_hit} {
-        append out "\n(Pass 1 hit — pass 2 skipped per cascade rule.)\n"
-        return $out
-    }
-
-    set q2_parts {}
-    if {$name ne ""} { lappend q2_parts "subject:\"$name\"" }
-    if {$org  ne ""} { lappend q2_parts "subject:\"$org\"" }
-    if {[llength $q2_parts] == 0} {
-        append out "\n(Pass 2 skipped: no name or organisation to search on.)\n"
-        return $out
-    }
-    set q2 [join $q2_parts " OR "]
-    append out "\n# Pass 2 — subject-line search for name and organisation (SPAR-P §4.7)\n"
-    append out "\$ mailroom -A search '$q2' --format text --limit 10\n"
-    lassign [spar::mailroom::_run $q2] rc text
-    append out "$text\n"
-    return $out
-}
-
-proc spar::mailroom::_run {query} {
-    set mr [auto_execok mailroom]
-    set tmp "/tmp/spar-mr-[pid]-[clock microseconds]"
-    set status [catch {exec {*}$mr -A search --format text --limit 10 $query > $tmp.out 2> $tmp.err} _ opts]
-    if {$status == 0} {
-        set rc 0
-    } else {
-        set ec [dict get $opts -errorcode]
-        set rc [expr {[lindex $ec 0] eq "CHILDSTATUS" ? [lindex $ec 2] : -1}]
-    }
-    set fd [open $tmp.out r]; set sout [read $fd]; close $fd
-    set fd [open $tmp.err r]; set serr [read $fd]; close $fd
-    catch {file delete -- $tmp.out $tmp.err}
-    if {$rc == 0 || $rc == 1} { return [list $rc [string trim $sout]] }
-    return [list $rc "(search failed: [lindex [split [string trim $serr] \n] 0])"]
-}
-
-# spar::Dispatcher — async queue of child harness processes.
-#
-# Takes a list of prompt_dirs and runs up to Jobs concurrent
-# `tclsh HarnessPath <prompt_dir> LogsDir` children. Each line of a
-# child's stdout is forwarded as an OnProgress "started" message; pipe
-# close determines done/failed. When the queue drains and no children
-# are active, OnComplete is called with {done failed result}, after
-# which the object destroys itself.
-#
-# Used by the phase runners (spar::p::run, spar::a::run, below) and
-# (per aesop#35) any future phase runner that drives a harness.
-
-oo::class create spar::Dispatcher {
-    variable Queue QueueIdx Active Completed Failed
-    variable Jobs LogsDir HarnessPath OnProgress OnComplete Result
-    variable Paused
-    variable Tid StepCallback
-
-    constructor {jobs logs_dir harness_path on_progress on_complete result \
-                 {tid ""} {step_callback ""}} {
-        set Jobs $jobs
-        set LogsDir $logs_dir
-        set HarnessPath $harness_path
-        set OnProgress $on_progress
-        set OnComplete $on_complete
-        set Result $result
-        set Tid $tid
-        set StepCallback $step_callback
-        set Queue {}
-        set QueueIdx 0
-        set Active 0
-        set Completed 0
-        set Failed 0
-        set Paused 0
-        lappend ::spar::live_dispatchers [self]
-    }
-
-    destructor {
-        set idx [lsearch -exact $::spar::live_dispatchers [self]]
-        if {$idx >= 0} {
-            set ::spar::live_dispatchers \
-                [lreplace $::spar::live_dispatchers $idx $idx]
-        }
-    }
-
-    method pause {}  { set Paused 1 }
-    method resume {} { set Paused 0; my start_next }
-
-    method cancel {} {
-        while {$QueueIdx < [llength $Queue]} {
-            set pdir [lindex $Queue $QueueIdx]
-            incr QueueIdx
-            {*}$OnProgress [file tail $pdir] skipped "cancelled"
-        }
-        set Paused 0
-        my start_next
-    }
-
-    method run {prompt_dirs} {
-        set Queue $prompt_dirs
-        my start_next
-    }
-
-    # start_next and on_harness_output are dispatched externally (from
-    # fileevent, and via the [self] command from the start_next tail) so
-    # they cannot use a leading-underscore private naming convention —
-    # TclOO would not export them.
-    method start_next {} {
-        if {!$Paused} {
-        while {$QueueIdx < [llength $Queue] && $Active < $Jobs} {
-            set pdir [lindex $Queue $QueueIdx]
-            incr QueueIdx
-            set slug [file tail $pdir]
-
-            if {$StepCallback ne ""} {
-                set verdict [{*}$StepCallback $Tid $slug \
-                    $QueueIdx [llength $Queue]]
-                if {$verdict eq "abort"} {
-                    {*}$OnProgress $slug skipped "aborted"
-                    while {$QueueIdx < [llength $Queue]} {
-                        set next_pdir [lindex $Queue $QueueIdx]
-                        incr QueueIdx
-                        {*}$OnProgress [file tail $next_pdir] skipped "aborted"
-                    }
-                    break
-                }
-            }
-
-            {*}$OnProgress $slug started ""
-
-            set cmd [list tclsh9.0 $HarnessPath $pdir $LogsDir]
-            if {[catch {open "| $cmd 2>@1" r} pipe]} {
-                {*}$OnProgress $slug failed "could not start harness: $pipe"
-                incr Failed
-                continue
-            }
-            fconfigure $pipe -blocking 0 -buffering line
-            fileevent $pipe readable [list [self] on_harness_output $pipe $slug]
-            incr Active
-        }
-        }
-
-        if {$Active == 0 && $QueueIdx >= [llength $Queue]} {
-            set cb $OnComplete
-            set done $Completed
-            set fail $Failed
-            set result $Result
-            [self] destroy
-            {*}$cb $done $fail $result
-        }
-    }
-
-    method on_harness_output {pipe slug} {
-        if {[gets $pipe line] >= 0} {
-            # Children emit ROSTER_UPDATE marker lines (tab-separated) to
-            # request TSV mutations. The dispatcher applies them serially
-            # from its single event loop — that is the synchronisation that
-            # replaces the per-harness flock. Non-marker lines are forwarded
-            # as ordinary progress.
-            if {[string match "ROSTER_UPDATE\t*" $line]} {
-                my handle_roster_update $slug $line
-            } else {
-                {*}$OnProgress $slug started $line
-            }
-            return
-        }
-        if {[eof $pipe]} {
-            if {[catch {close $pipe} err]} {
-                {*}$OnProgress $slug failed $err
-                incr Failed
-            } else {
-                {*}$OnProgress $slug done ""
-                incr Completed
-            }
-            incr Active -1
-            my start_next
-        }
-    }
-
-    # Parse ROSTER_UPDATE<TAB>roster_path<TAB>key_col<TAB>key_val<TAB>field<TAB>new_val
-    # and apply via spar::update_roster_field. Failure is non-fatal: emit a
-    # warning progress event and carry on.
-    method handle_roster_update {slug line} {
-        set parts [split $line \t]
-        if {[llength $parts] != 6} {
-            {*}$OnProgress $slug warning "malformed ROSTER_UPDATE (expected 6 fields, got [llength $parts])"
-            return
-        }
-        lassign $parts _ roster_path key_col key_val field new_val
-        if {[catch {
-            spar::update_roster_field $roster_path $key_col $key_val $field $new_val
-        } err]} {
-            {*}$OnProgress $slug warning "roster update failed ($key_col=$key_val $field=$new_val): $err"
-            return
-        }
-        {*}$OnProgress $slug started "roster: $key_col=$key_val $field=$new_val"
-    }
-}
-
-proc spar::_for_live {verb} {
-    variable live_dispatchers
-    foreach d $live_dispatchers {
-        if {[info object isa object $d]} { $d $verb }
-    }
-}
-proc spar::pause_all  {} { spar::_for_live pause }
-proc spar::resume_all {} { spar::_for_live resume }
-proc spar::cancel_all {} { spar::_for_live cancel }
+source [file join $::spar::dispatch_script_dir spar-mailroom.tcl]
+source [file join $::spar::dispatch_script_dir spar-dispatcher.tcl]
 
 # ════════════════════════════════════════════════════════════════════════
 # spar::p::run — SPAR-P phase runner (profile dispatch).
@@ -413,7 +161,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
     set sel_stems [spar::dict_get_default $opts stems {}]
 
     set roster_path [file join $segment_dir roster.tsv]
-    set profile_dir [file join $segment_dir profiles]
+    set profile_dir [spar::profile_dir_for_segment $segment_dir]
     set goal_path [file join $segment_dir segment.yaml]
     if {![file exists $goal_path]} {
         set goal_path [file join $segment_dir goal.md]
@@ -481,10 +229,10 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
 
         if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
 
-        set outfile [file join $profile_dir "${stem}.md"]
+        set outfile [spar::profile_path_for_stem $segment_dir $stem]
         # Legacy path: profiles authored before SmartLayer/aesop#45. Still
         # counts as "profile exists" until migration completes.
-        set legacy_outfile [file join $profile_dir "profile-${stem}.md"]
+        set legacy_outfile [spar::legacy_profile_path_for_stem $segment_dir $stem]
 
         # Skip existing profile unless caller supplied an explicit stems
         # list — then they have accepted responsibility for pre-deleting
@@ -711,12 +459,13 @@ proc spar::a::run {opts on_progress on_complete} {
         if {![file exists $goal_path]} {
             set goal_path [file join $base $segment goal.md]
         }
-        set profile_dir [file join $base $segment profiles]
+        set seg_dir [file join $base $segment]
+        set profile_dir [spar::profile_dir_for_segment $seg_dir]
 
         if {![file exists $roster_path]} continue
         if {![file exists $goal_path]} continue
 
-        file mkdir [file join $base $segment approach]
+        file mkdir [spar::approach_dir_for_segment $seg_dir]
 
         set rows [spar::load_roster $roster_path]
 
@@ -764,7 +513,7 @@ proc spar::a::run {opts on_progress on_complete} {
                 {*}$on_progress "${slug_name}-${slug_org}" skipped "no stem"
                 continue
             }
-            set outfile [file join $base $segment approach "${stem}.yaml"]
+            set outfile [spar::approach_path_for_stem $seg_dir $stem]
 
             if {[file exists $outfile]} {
                 incr skipped
@@ -777,7 +526,7 @@ proc spar::a::run {opts on_progress on_complete} {
             # migrate them via spar-manager/migrate-profile-naming.tcl.
             set profile_path ""
             if {$stem ne ""} {
-                set candidate [file join $profile_dir "${stem}.md"]
+                set candidate [spar::profile_path_for_stem $seg_dir $stem]
                 if {[file exists $candidate]} {
                     set profile_path $candidate
                 }
