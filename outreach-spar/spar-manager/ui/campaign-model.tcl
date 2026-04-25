@@ -27,7 +27,8 @@ oo::class create spar::ui::CampaignModel {
     variable CampaignFile CampaignDir CampaignName SenderText FilterDesc
     variable Cdata SegmentOrder SkipSet SegmentPaths
     variable Segments AllContacts Transitions Warnings
-    variable FullLoadDone AsyncAfterIds SegmentPathsForAsync AsyncSegmentsRemaining
+    variable FullLoadDone SegmentPathsForAsync
+    variable LoaderCoro LoaderAfterId
     variable ScriptDir
     variable Subs
 
@@ -47,14 +48,14 @@ oo::class create spar::ui::CampaignModel {
         set Transitions  {}
         set Warnings     {}
         set FullLoadDone 1
-        set AsyncAfterIds         {}
         set SegmentPathsForAsync  {}
-        set AsyncSegmentsRemaining 0
+        set LoaderCoro    ""
+        set LoaderAfterId ""
         set Subs [dict create]
     }
 
     destructor {
-        my _cancel_async
+        my _cancel_loader
     }
 
     # ─── Subscription ─────────────────────────────────────────────────────
@@ -121,12 +122,24 @@ oo::class create spar::ui::CampaignModel {
 
     # start_async — kick off async filesystem-dependent load. Each
     # segment fires segment-loaded; the last also fires fully-loaded.
-    method start_async {} { my _schedule_async }
+    # Runs as a coroutine that yields back to the event loop between
+    # segments and around the post-loop warnings/transitions build, so
+    # the UI stays responsive throughout.
+    method start_async {} {
+        my _cancel_loader
+        if {[llength $SegmentPathsForAsync] == 0} {
+            set FullLoadDone 1
+            my _fire fully-loaded
+            return
+        }
+        set LoaderCoro [info object namespace [self]]::loader#[clock microseconds]
+        coroutine $LoaderCoro [self] loader_body
+    }
 
     # refresh — cancel any pending async, do a full synchronous pass,
     # fire refreshed.
     method refresh {} {
-        my _cancel_async
+        my _cancel_loader
         my _load_full
         my _fire refreshed
     }
@@ -379,48 +392,53 @@ oo::class create spar::ui::CampaignModel {
         return $result
     }
 
-    # ─── Internal: async loader ───────────────────────────────────────────
+    # ─── Internal: async loader (coroutine) ───────────────────────────────
 
-    method _cancel_async {} {
-        foreach id $AsyncAfterIds { after cancel $id }
-        set AsyncAfterIds {}
-    }
-
-    method _schedule_async {} {
-        my _cancel_async
-        set AsyncSegmentsRemaining [llength $SegmentPathsForAsync]
-        if {$AsyncSegmentsRemaining == 0} {
-            set FullLoadDone 1
-            my _fire fully-loaded
-            return
+    method _cancel_loader {} {
+        if {$LoaderAfterId ne ""} {
+            after cancel $LoaderAfterId
+            set LoaderAfterId ""
         }
-        lappend AsyncAfterIds [after 1 [list [self] async_next]]
+        if {$LoaderCoro ne "" && [llength [info commands $LoaderCoro]]} {
+            rename $LoaderCoro ""
+        }
+        set LoaderCoro ""
     }
 
-    method async_next {} {
-        if {[llength $SegmentPathsForAsync] == 0} return
+    method _yield_loop {} {
+        # `after 1` (not `after 0`) so Tk's idle-priority redraws get a
+        # chance to run between resumes. With `after 0` the timer queue
+        # stays continuously full, idle handlers starve, and the UI does
+        # not paint until the coroutine completes.
+        set LoaderAfterId [after 1 [info coroutine]]
+        yield
+        set LoaderAfterId ""
+    }
 
-        set item [lindex $SegmentPathsForAsync 0]
-        set SegmentPathsForAsync [lrange $SegmentPathsForAsync 1 end]
-        lassign $item seg_name seg_dir is_active
+    method loader_body {} {
+        foreach item $SegmentPathsForAsync {
+            my _yield_loop
+            lassign $item seg_name seg_dir is_active
 
-        if {![catch {set classified [spar::classify_segment $seg_dir]} err]} {
-            if {$is_active} {
-                foreach c $classified { lappend AllContacts $c }
+            if {![catch {set classified [spar::classify_segment $seg_dir]} err]} {
+                if {$is_active} {
+                    foreach c $classified { lappend AllContacts $c }
+                }
+                set cdict [spar::progress_counts $classified]
+                my _fire segment-loaded $seg_name $cdict $is_active
             }
-            set cdict [spar::progress_counts $classified]
-            my _fire segment-loaded $seg_name $cdict $is_active
         }
+        set SegmentPathsForAsync {}
 
-        incr AsyncSegmentsRemaining -1
+        my _yield_loop
+        set Warnings [dict get [spar::build_warnings $AllContacts $Cdata] messages]
 
-        if {[llength $SegmentPathsForAsync] > 0} {
-            lappend AsyncAfterIds [after 1 [list [self] async_next]]
-        } else {
-            set FullLoadDone 1
-            set Warnings    [dict get [spar::build_warnings $AllContacts $Cdata] messages]
-            set Transitions [my _build_transitions]
-            my _fire fully-loaded
-        }
+        my _yield_loop
+        set Transitions [my _build_transitions]
+
+        my _yield_loop
+        set FullLoadDone 1
+        set LoaderCoro ""
+        my _fire fully-loaded
     }
 }
