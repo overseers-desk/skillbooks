@@ -553,6 +553,7 @@ $sqlite3_skill_text"
         puts $fd "STEM=\"$stem\""
         puts $fd "OUTFILE=\"$outfile\""
         puts $fd "ROSTER_PATH=\"$roster_path\""
+        puts $fd "P_STRICT=\"[expr {[spar::dict_get_default $cdata p_strict 0] ? 1 : 0}]\""
         close $fd
     }
 

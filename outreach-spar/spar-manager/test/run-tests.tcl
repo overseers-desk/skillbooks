@@ -2997,6 +2997,43 @@ assert_eq [llength $t10_no_tert] 0 \
     "T10 zero when campaign has no tertiary_channel slot"
 
 # ════════════════════════════════════════════════════════════════════════
+# audit_skills_in_transcript (issue #76)
+# ════════════════════════════════════════════════════════════════════════
+puts "\n── audit_skills_in_transcript ─────────────────────────────────────"
+
+set audit_root [file join $script_dir fixtures transcripts]
+
+# Both skills present → no issues.
+set au_both [spar::audit_skills_in_transcript "sess-both" {linkedin facebook} "Test Contact" $audit_root]
+assert_eq [llength $au_both] 0 "audit: both skills present → 0 issues"
+
+# Neither skill present → 2 issues with the right codes.
+set au_none [spar::audit_skills_in_transcript "sess-none" {linkedin facebook} "Test Contact" $audit_root]
+assert_eq [llength $au_none] 2 "audit: neither skill present → 2 issues"
+set au_codes {}
+foreach _i $au_none { lappend au_codes [dict get $_i code] }
+set au_codes [lsort $au_codes]
+assert_eq $au_codes {facebook_lookup_missing linkedin_lookup_missing} \
+    "audit: codes are linkedin_lookup_missing and facebook_lookup_missing"
+assert_eq [dict get [lindex $au_none 0] severity] "error" \
+    "audit: missing-skill issues are severity=error"
+assert_eq [dict get [lindex $au_none 0] contact_name] "Test Contact" \
+    "audit: contact_name carried through"
+
+# Asymmetric: only linkedin required, sess-both has both — must yield 0.
+set au_one [spar::audit_skills_in_transcript "sess-both" {linkedin} "Test Contact" $audit_root]
+assert_eq [llength $au_one] 0 "audit: required={linkedin}, present={linkedin,facebook} → 0 issues"
+
+# Missing transcript → single warning, not an error (so the harness's
+# severity=error filter drops it; plumbing failure must not loop the agent).
+set au_miss [spar::audit_skills_in_transcript "no-such-session" {linkedin facebook} "Test Contact" $audit_root]
+assert_eq [llength $au_miss] 1 "audit: missing transcript → 1 issue"
+assert_eq [dict get [lindex $au_miss 0] code] "transcript_not_found" \
+    "audit: missing transcript → code=transcript_not_found"
+assert_eq [dict get [lindex $au_miss 0] severity] "warning" \
+    "audit: missing transcript → severity=warning"
+
+# ════════════════════════════════════════════════════════════════════════
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
 cleanup_temps

@@ -36,6 +36,7 @@ close $fd
 set outfile [dict get $meta OUTFILE]
 set roster_path [dict get $meta ROSTER_PATH]
 set stem [dict get $meta STEM]
+set p_strict [spar::dict_get_default $meta P_STRICT 0]
 
 set log_prefix [file join $log_dir $slug]
 file mkdir $log_dir
@@ -74,8 +75,9 @@ oo::class create spar::ProfileHarness {
 
     # DbC-Post loop for profile files. Attempts 1-2 use the current model;
     # attempt 3 escalates to opus. Returns 0 on clean validation, 1 if
-    # still broken after max_fix rounds.
-    method validate_and_correct {outfile roster_path} {
+    # still broken after max_fix rounds. p_strict opts into the §4.3/§4.4
+    # mandatory-skill audit (issue #76).
+    method validate_and_correct {outfile roster_path p_strict} {
         set max_fix 3
         set slug [my slug]
         set lp   [my log_prefix]
@@ -117,6 +119,23 @@ oo::class create spar::ProfileHarness {
                     lappend errors $ri
                 }
             }
+
+            # Issue #76: transcript-based audit that the agent invoked the
+            # mandatory linkedin and facebook skills (SPAR-P §4.3, §4.4).
+            # Skipped when p_strict is off, the row is legitimately
+            # excluded (date_excluded set per §4.1/§4.2/§4.8), or
+            # session_id was never captured. transcript_not_found is
+            # returned at warning severity and falls through the existing
+            # error-only filter below.
+            if {$p_strict eq "1" \
+                    && [string trim [spar::dict_get_default $row date_excluded ""]] eq "" \
+                    && [my session_id] ne ""} {
+                foreach ai [spar::audit_skills_in_transcript \
+                                [my session_id] {linkedin facebook} $my_cname] {
+                    lappend errors $ai
+                }
+            }
+
             set hard {}
             foreach e $errors {
                 if {[dict get $e severity] eq "error"} { lappend hard $e }
@@ -137,7 +156,31 @@ oo::class create spar::ProfileHarness {
             puts "\[$slug\] Validation failed (attempt $attempt/$max_fix):\n$error_text"
 
             set fix_log "${lp}-fix${attempt}.log"
-            set fix_prompt "The profile for $slug failed post-validation:\n\n$error_text\n\nFor errors in the profile file (malformed/missing front matter, missing required keys, invalid enum values, stale dependent_data) rewrite $outfile per SPAR-P §5 — the YAML front matter §5.1 is required and must carry profile_date, star_rating, yield, warmth_finding, applicable_angles, and a dependent_data snapshot of contact_name/organisation/role/date_excluded; do not remove or rename any front-matter key.\n\nFor errors about the roster row (profile_unreachable_without_exclusion) edit the roster TSV for stem '$slug' per SPAR-P §4.8/§4.15 using sqlite3 — either set date_excluded='no reachable channel (YYYY-MM-DD)' if the contact has no email, LinkedIn, Facebook, or phone and cannot be researched, or backfill a channel by further research.\n\nFor roster_shared_inbox_collision: the email you wrote is already used by another contact at the same organisation in this segment. Per SPAR-P §4.8 shared-inbox rule, either (1) research a non-shared personal or direct email address for this contact and write that instead, or (2) leave this contact's email field empty (sqlite3 UPDATE … SET email='') and allow the approach to proceed via LinkedIn or phone. Do not overwrite the other contact's email.\n\nFor roster_duplicate_name_org: the roster already contains another row with the same contact_name and organisation in this segment. The two rows are a true duplicate. Set date_excluded on the row for stem '$slug' with reason 'duplicate of existing row ([date])' and do not produce a profile; the existing row's profile stands."
+
+            # When the §4.3/§4.4 audit fires, prepend a single high-priority
+            # instruction so the agent does not bury the skill invocation
+            # under the rest of the error bag.
+            set audit_preamble ""
+            set audit_present {}
+            foreach e $hard {
+                set _c [dict get $e code]
+                if {$_c eq "linkedin_lookup_missing" || $_c eq "facebook_lookup_missing"} {
+                    lappend audit_present $_c
+                }
+            }
+            if {[llength $audit_present] > 0} {
+                set _parts {}
+                foreach _c $audit_present {
+                    if {$_c eq "linkedin_lookup_missing"} {
+                        lappend _parts "invoke the linkedin skill (Skill tool with skill=linkedin) to fetch and parse the LinkedIn profile per SPAR-P §4.3"
+                    } else {
+                        lappend _parts "invoke the facebook skill (Skill tool with skill=facebook) to fetch and parse the Facebook profile per SPAR-P §4.4"
+                    }
+                }
+                set audit_preamble "FIRST: [join $_parts { AND }]. Then re-derive any front-matter fields whose values depend on that data (warmth_finding, applicable_angles).\n\n"
+            }
+
+            set fix_prompt "${audit_preamble}The profile for $slug failed post-validation:\n\n$error_text\n\nFor errors in the profile file (malformed/missing front matter, missing required keys, invalid enum values, stale dependent_data) rewrite $outfile per SPAR-P §5 — the YAML front matter §5.1 is required and must carry profile_date, star_rating, yield, warmth_finding, applicable_angles, and a dependent_data snapshot of contact_name/organisation/role/date_excluded; do not remove or rename any front-matter key.\n\nFor errors about the roster row (profile_unreachable_without_exclusion) edit the roster TSV for stem '$slug' per SPAR-P §4.8/§4.15 using sqlite3 — either set date_excluded='no reachable channel (YYYY-MM-DD)' if the contact has no email, LinkedIn, Facebook, or phone and cannot be researched, or backfill a channel by further research.\n\nFor roster_shared_inbox_collision: the email you wrote is already used by another contact at the same organisation in this segment. Per SPAR-P §4.8 shared-inbox rule, either (1) research a non-shared personal or direct email address for this contact and write that instead, or (2) leave this contact's email field empty (sqlite3 UPDATE … SET email='') and allow the approach to proceed via LinkedIn or phone. Do not overwrite the other contact's email.\n\nFor roster_duplicate_name_org: the roster already contains another row with the same contact_name and organisation in this segment. The two rows are a true duplicate. Set date_excluded on the row for stem '$slug' with reason 'duplicate of existing row ([date])' and do not produce a profile; the existing row's profile stands."
 
             set model_args {}
             if {$attempt == 3} { set model_args [list --model opus] }
@@ -183,7 +226,7 @@ if {[$harness call "profile" $draft_log $prompt]} {
 # damage fails the harness with a specific reason after max_fix retries.
 $harness sanitise_roster_email $roster_path $slug
 
-if {[$harness validate_and_correct $outfile $roster_path]} {
+if {[$harness validate_and_correct $outfile $roster_path $p_strict]} {
     exit 1
 }
 

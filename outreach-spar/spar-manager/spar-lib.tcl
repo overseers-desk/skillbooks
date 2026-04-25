@@ -145,6 +145,16 @@ proc spar::load_campaign {yaml_path} {
         }
     }
 
+    # Validate p_strict (opt-in transcript-based audit that the P-stage
+    # invoked the linkedin and facebook skills per SPAR-P §4.3 / §4.4).
+    # Default off for back-compat; enforcement lives in the harness.
+    if {[dict exists $data p_strict]} {
+        set v [dict get $data p_strict]
+        if {![string is boolean -strict $v]} {
+            error "Campaign $yaml_path: p_strict must be a boolean (got '$v')"
+        }
+    }
+
     # Store base directory for later use
     dict set data _base $base
 

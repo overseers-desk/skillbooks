@@ -29,7 +29,7 @@ Additionally, P produces:
 
 If the roster entry has no `contact_name`, the organisation has been discovered by sweep but no individual has been identified. This step must complete before §4.2.
 
-**If the roster entry carries `linkedin_url`, fetch that profile first.** A direct profile view is not subject to LinkedIn's search-rate protections, so when the URL is already known the fetch is cheap, the name resolves immediately, and the profile yields organisation, community, and collaborator names that seed later keyword and cross-platform work. A fetch that runs here also satisfies §4.3 — do not re-fetch.
+**If the roster entry carries `linkedin_url`, fetch that profile first** using the LinkedIn skill. A direct profile view is not subject to LinkedIn's search-rate protections, so when the URL is already known the fetch is cheap, the name resolves immediately, and the profile yields organisation, community, and collaborator names that seed later keyword and cross-platform work. A skill-driven fetch that runs here also satisfies §4.3 — do not re-fetch. A fetch via WebFetch, raw chromium, or any other channel does **not** satisfy §4.3; the skill must still run.
 
 **Otherwise, search these sources in order:**
 
@@ -69,7 +69,7 @@ If §4.1 already fetched the profile via the roster's `linkedin_url`, the data i
 
 Otherwise: if the roster provides a LinkedIn URL, fetch and parse it. If no URL is provided, search for the person by name and location first, identify the correct profile, then fetch it.
 
-Use the LinkedIn skill or MCP available in your environment. If neither is available, use whatever headless browser tooling is configured locally — do not hardcode paths here; consult your local `CLAUDE.md` or equivalent configuration document for browser binary, profile directory, and required flags.
+Use the LinkedIn skill — it is the canonical lookup method for this campaign system. WebFetch, raw chromium, or any other channel is not a substitute. If the skill is genuinely unavailable in your environment, halt this profile and report it as a setup issue rather than improvising with raw browser commands.
 
 **From the parsed profile, extract:**
 - Current role and organisation
@@ -84,7 +84,7 @@ Social media fetches run sequentially — see §6.
 
 ### 4.4 Fetch and parse the Facebook profile
 
-Run this step after §4.3. Use the Facebook skill or MCP available in your environment. Consult your local configuration document for browser and session details.
+Run this step after §4.3. Use the Facebook skill, under the same constraint as §4.3 (no WebFetch or raw-browser substitute; halt and report if the skill is genuinely unavailable). "No verified match found" (see Verification, below) is a legitimate outcome of having invoked the skill on a candidate profile, not a substitute for invoking it.
 
 The purpose of this step is twofold: (1) verify the person found is the same individual as on LinkedIn, and (2) collect details not available on LinkedIn, in particular current workplace, community affiliations, and recent activity. Fetch both the main profile page and the About page.
 
