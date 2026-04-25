@@ -29,6 +29,19 @@ namespace eval spar {
 namespace eval spar::p {}
 namespace eval spar::a {}
 
+# ── Prompt templates ──────────────────────────────────────────────────
+# Prompts live as standalone files under prompts/ with __PLACEHOLDER__
+# markers. Loader trims the trailing newline a text editor adds, so the
+# substituted result is byte-identical to the previous heredocs.
+proc spar::load_prompt_template {name} {
+    variable dispatch_script_dir
+    set path [file join $dispatch_script_dir prompts $name]
+    set fd [open $path r]
+    set s [read $fd]
+    close $fd
+    return [string trimright $s "\n"]
+}
+
 # ── Mailroom prefetch ─────────────────────────────────────────────────
 # Builds the "## Mailroom — prefetched by dispatcher" block injected
 # into SPAR-P and SPAR-A prompts: list-accounts header (cached) plus a
@@ -325,37 +338,13 @@ proc spar::p::run {opts on_progress on_complete} {
     set segments [dict get $cdata segments]
 
     set sel_segments [spar::dict_get_default $opts segments {}]
-    if {[llength $sel_segments] > 0} {
-        set _filtered {}
-        foreach _s $segments {
-            if {$_s in $sel_segments} { lappend _filtered $_s }
-        }
-        set segments $_filtered
-    }
+    set segments [spar::filter_segments $segments $sel_segments]
 
-    # One campaign-wide logs_dir, mirroring spar::a::run. Per-slug log
-    # files inside are named by stem, so they don't collide unless two
-    # segments share a stem (documented limitation). Folder name encodes
-    # the campaign yaml's directory and stem so sibling campaigns don't
-    # pile into ambiguous sibling folders.
+    # Per-slug log files inside logs_dir are named by stem, so they
+    # don't collide unless two segments share a stem (documented
+    # limitation).
     set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
-    set _campaign_stem [file rootname [file tail $campaign_file]]
-    set _dir_slug [string map {/ -} \
-        [file dirname [file normalize $campaign_file]]]
-    set _folder "${_dir_slug}-${_campaign_stem}-p-${datestamp}"
-    if {$user_logs ne ""} {
-        if {![file isdirectory $user_logs]} {
-            error "Log directory not found: $user_logs"
-        }
-        set logs_dir $user_logs
-    } elseif {[file isdirectory /var/local/logs/spar]} {
-        set logs_dir "/var/local/logs/spar/$_folder"
-    } else {
-        set logs_dir "$::env(HOME)/logs/spar/$_folder"
-    }
-    if {$user_logs eq ""} {
-        file mkdir $logs_dir
-    }
+    set logs_dir [spar::resolve_logs_dir $campaign_file p $datestamp $user_logs]
 
     # Gather prompt_dirs across segments and build a slug → per-segment
     # context map for DbC-Post attribution. _prepare_segment emits
@@ -516,23 +505,25 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
             set antifacts_line "Antifact checklist: read $antifacts — flag any claims not supported by these sources."
         }
 
-        set prompt "Follow the SPAR-P procedure at $spar_p.
-
-Target: $name at $org, role: $role. Phone: $phone. Email: $email. LinkedIn: $linkedin. Facebook: $facebook.
-Roster notes — s_note: $s_note, p_note: $p_note.
-
-Campaign context: read $goal_path for the segment's objective, USPs, and angle table.
-Organisation overview: read $overview for ground truth about the organisation.
-$antifacts_line
-
-Output file: $outfile
-Roster file: $roster_path
-Roster stem (file must be named exactly {stem}.md): $stem
-
-Follow SPAR-P §5 profile structure exactly. The profile MUST begin with a YAML front-matter block (see §5.1) carrying profile_date, star_rating, yield, warmth_finding, applicable_angles, and a dependent_data snapshot of contact_name, organisation, role, and date_excluded from the roster. After writing the profile, follow SPAR-P §4.13 to write star_rating to the roster TSV as well (both the profile front matter and the TSV carry it — the profile is the authorial home, the TSV is the query-optimised copy). Then follow §4.15 to backfill any missing contact details (email, linkedin_url, facebook_url) and replace stale contacts discovered during research with the person currently in the role. Never write a masked or redacted email address (e.g. 'b***@example.com') to the roster — if the only email found is masked, leave the field empty.
-Web search is the primary research method. Use Chromium only when the target has a LinkedIn or Facebook URL and WebFetch returns insufficient data. Wrap Chromium with flock: flock /tmp/chromium.lock /snap/bin/chromium --headless --dump-dom --virtual-time-budget=30000 --window-size=1920,10000 --user-data-dir=\"\$HOME/snap/chromium/common/chromium\" \"URL\" 2>/dev/null
-
-$sqlite3_skill_text"
+        set prompt [string map [list \
+            __SPAR_P_PATH__   $spar_p \
+            __NAME__          $name \
+            __ORG__           $org \
+            __ROLE__          $role \
+            __PHONE__         $phone \
+            __EMAIL__         $email \
+            __LINKEDIN__      $linkedin \
+            __FACEBOOK__      $facebook \
+            __S_NOTE__        $s_note \
+            __P_NOTE__        $p_note \
+            __GOAL_PATH__     $goal_path \
+            __OVERVIEW__      $overview \
+            __ANTIFACTS_LINE__ $antifacts_line \
+            __OUTFILE__       $outfile \
+            __ROSTER_PATH__   $roster_path \
+            __STEM__          $stem \
+            __SQLITE3_SKILL__ $sqlite3_skill_text \
+        ] [spar::load_prompt_template spar-p.txt]]
 
         set _mr_hdr [spar::mailroom::accounts_block]
         if {$_mr_hdr ne ""} {
@@ -665,14 +656,7 @@ proc spar::a::run {opts on_progress on_complete} {
     set antifacts [spar::dict_get_default $cdata antifacts]
     set campaign_principles [spar::dict_get_default $cdata campaign_principles]
     set a_max_passes_ceiling [spar::dict_get_default $cdata a_max_passes 3]
-    set segments [dict get $cdata segments]
-    if {[llength $sel_segments] > 0} {
-        set _filtered {}
-        foreach _s $segments {
-            if {$_s in $sel_segments} { lappend _filtered $_s }
-        }
-        set segments $_filtered
-    }
+    set segments [spar::filter_segments [dict get $cdata segments] $sel_segments]
 
     # Campaign filters (issue #41 in-scope-channel gate replaces
     # filter.require_email). A roster row is dispatchable for A when it
@@ -706,23 +690,7 @@ proc spar::a::run {opts on_progress on_complete} {
     set prompts_dir [file join $workdir prompts]
     file mkdir $prompts_dir
 
-    set _campaign_stem [file rootname [file tail $campaign_file]]
-    set _dir_slug [string map {/ -} \
-        [file dirname [file normalize $campaign_file]]]
-    set _folder "${_dir_slug}-${_campaign_stem}-a-${datestamp}"
-    if {$user_logs ne ""} {
-        if {![file isdirectory $user_logs]} {
-            error "Log directory not found: $user_logs"
-        }
-        set logs_dir $user_logs
-    } elseif {[file isdirectory /var/local/logs/spar]} {
-        set logs_dir "/var/local/logs/spar/$_folder"
-    } else {
-        set logs_dir "$::env(HOME)/logs/spar/$_folder"
-    }
-    if {$user_logs eq ""} {
-        file mkdir $logs_dir
-    }
+    set logs_dir [spar::resolve_logs_dir $campaign_file a $datestamp $user_logs]
 
     set campaign_name [spar::dict_get_default $cdata campaign]
     set filter_desc "in_scope_channels=\{[join $in_scope_channels { }]\} skip_excluded=$filter_skip_excluded min_star=$filter_min_star require_profile=$filter_require_profile"
@@ -900,47 +868,17 @@ ${item_num}. Antifact checklist: $antifacts — check your draft against every f
 ${item_num}. Campaign principles: $campaign_principles — read the \"Profile-informed approaches\" section. Do not ask the recipient for information already captured in their profile."
             }
 
+            set author_prompt [string map [list \
+                __FILE_ITEMS__       $file_items \
+                __CONTACT_SUMMARY__  $contact_summary \
+                __MAILROOM_SECTION__ $mailroom_section \
+                __CHANNEL_DESC__     $channel_d \
+                __SENDER_LINE__      $sender_line \
+                __LANG_INSTRUCTION__ $lang_inst \
+            ] [spar::load_prompt_template spar-a-author.txt]]
+
             set fd [open [file join $prompt_dir author-draft.txt] w]
-            puts $fd "You are executing SPAR-A Stage 1 (drafting) for one contact. Your task is to draft the approach message(s) and angle rationale. You do NOT perform the A2 spar — that runs in a separate, context-isolated process.
-
-## Files to read before drafting
-
-Read ALL of these files carefully before writing anything.
-
-$file_items
-
-## Contact details from roster
-
-$contact_summary
-$mailroom_section
-
-## Channel selection
-
-$channel_d
-
-## Key constraints
-
-- The sender is $sender_line.
-- The email must stand alone for a recipient who has never heard of the sender's organisation. Introduce who you are, what the organisation is, and why you are writing.
-- Read the segment file to determine the correct approach type. Do not default to a generic email.
-- $lang_inst
-- No emoji.
-
-## Output format
-
-Output your angle selection rationale between these markers:
-
-RATIONALE_START
-\[your rationale here\]
-RATIONALE_END
-
-Output your draft message(s) between these markers:
-
-DRAFT_START
-\[your draft messages here — email, LinkedIn note, phone script as applicable per channel\]
-DRAFT_END
-
-Do NOT write any files. Only output text to stdout with the markers above."
+            puts $fd $author_prompt
             if {$appendix_a_author ne ""} {
                 puts $fd ""
                 puts $fd $appendix_a_author
@@ -956,49 +894,24 @@ Do NOT write any files. Only output text to stdout with the markers above."
             }
 
             if {$antifacts ne "" || [file exists $overview]} {
-                set factcheck_section "## Step 2: Fact-check (break character)
-
-Break character. Now read the following files and check every factual claim in the draft message against them. Flag any errors or claims that cannot be verified.
-
-$factcheck_files
-Do not flag drive-time or distance claims (e.g. \"X minutes from Y\"). These are approximate figures and do not need fact-check verification.
-
-For each issue found, write: \"FACTCHECK: \[claim in draft\] — \[what the source says or that no source exists\]\"
-
-## Step 3: Verdict
-
-After completing Steps 1 and 2, emit exactly one of these lines as the very last line of your output:"
+                set factcheck_section [string map [list \
+                    __FACTCHECK_FILES__ $factcheck_files \
+                ] [spar::load_prompt_template spar-a-factcheck.txt]]
             } else {
                 set factcheck_section "## Step 2: Verdict
 
 Emit exactly one of these lines as the very last line of your output:"
             }
 
+            # __DRAFT_PLACEHOLDER__ is intentionally left in place — the
+            # harness substitutes it after Stage 1 produces a draft.
+            set challenger_prompt [string map [list \
+                __PROFILE_CONTENT__   $profile_content \
+                __FACTCHECK_SECTION__ $factcheck_section \
+            ] [spar::load_prompt_template spar-a-challenger.txt]]
+
             set fd [open [file join $prompt_dir challenger-template.txt] w]
-            puts $fd "You have sequential tasks. Complete Step 1 fully before proceeding.
-
-## Step 1: Role-play as the recipient
-
-You are the following person. React to the email draft below as if you received it cold — you have never heard of the sender or their organisation. Give a natural, in-character reaction. Do NOT use a rubric or structured format. Just react as a person would.
-
-### Your profile
-
-$profile_content
-
-### The message you received
-
-__DRAFT_PLACEHOLDER__
-
----
-
-Give your in-character reaction now. When done, proceed.
-
-$factcheck_section
-
-VERDICT: DONE
-VERDICT: REVISE
-
-Emit VERDICT: DONE if the draft is credible (the persona reacted naturally without major objections) and factually correct. Emit VERDICT: REVISE if the persona had significant concerns or if fact-check found errors that must be fixed."
+            puts $fd $challenger_prompt
             if {$appendix_a_challenger ne ""} {
                 puts $fd ""
                 puts $fd $appendix_a_challenger

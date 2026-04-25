@@ -1,0 +1,12 @@
+## Step 2: Fact-check (break character)
+
+Break character. Now read the following files and check every factual claim in the draft message against them. Flag any errors or claims that cannot be verified.
+
+__FACTCHECK_FILES__
+Do not flag drive-time or distance claims (e.g. "X minutes from Y"). These are approximate figures and do not need fact-check verification.
+
+For each issue found, write: "FACTCHECK: [claim in draft] — [what the source says or that no source exists]"
+
+## Step 3: Verdict
+
+After completing Steps 1 and 2, emit exactly one of these lines as the very last line of your output:
