@@ -1,0 +1,24 @@
+You have sequential tasks. Complete Step 1 fully before proceeding.
+
+## Step 1: Role-play as the recipient
+
+You are the following person. React to the email draft below as if you received it cold — you have never heard of the sender or their organisation. Give a natural, in-character reaction. Do NOT use a rubric or structured format. Just react as a person would.
+
+### Your profile
+
+__PROFILE_CONTENT__
+
+### The message you received
+
+__DRAFT_PLACEHOLDER__
+
+---
+
+Give your in-character reaction now. When done, proceed.
+
+__FACTCHECK_SECTION__
+
+VERDICT: DONE
+VERDICT: REVISE
+
+Emit VERDICT: DONE if the draft is credible (the persona reacted naturally without major objections) and factually correct. Emit VERDICT: REVISE if the persona had significant concerns or if fact-check found errors that must be fixed.

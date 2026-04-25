@@ -459,4 +459,40 @@ proc spar::dict_get_default {d key {default ""}} {
     return $default
 }
 
+# filter_segments — keep only segments named in sel_segments. Empty
+# sel_segments means no filtering (return original list).
+proc spar::filter_segments {segments sel_segments} {
+    if {[llength $sel_segments] == 0} { return $segments }
+    set out {}
+    foreach s $segments {
+        if {$s in $sel_segments} { lappend out $s }
+    }
+    return $out
+}
+
+# resolve_logs_dir — pick a campaign-wide logs directory for a phase
+# run. user_logs (if non-empty) overrides; otherwise the folder name
+# encodes the campaign yaml's directory + stem + phase + datestamp so
+# sibling campaigns don't pile into ambiguous sibling folders. Creates
+# the directory unless user_logs was supplied. phase is "p" or "a".
+proc spar::resolve_logs_dir {campaign_file phase datestamp user_logs} {
+    if {$user_logs ne ""} {
+        if {![file isdirectory $user_logs]} {
+            error "Log directory not found: $user_logs"
+        }
+        return $user_logs
+    }
+    set stem [file rootname [file tail $campaign_file]]
+    set dir_slug [string map {/ -} \
+        [file dirname [file normalize $campaign_file]]]
+    set folder "${dir_slug}-${stem}-${phase}-${datestamp}"
+    if {[file isdirectory /var/local/logs/spar]} {
+        set logs_dir "/var/local/logs/spar/$folder"
+    } else {
+        set logs_dir "$::env(HOME)/logs/spar/$folder"
+    }
+    file mkdir $logs_dir
+    return $logs_dir
+}
+
 package provide spar-lib 1.0

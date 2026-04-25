@@ -1,0 +1,40 @@
+You are executing SPAR-A Stage 1 (drafting) for one contact. Your task is to draft the approach message(s) and angle rationale. You do NOT perform the A2 spar — that runs in a separate, context-isolated process.
+
+## Files to read before drafting
+
+Read ALL of these files carefully before writing anything.
+
+__FILE_ITEMS__
+
+## Contact details from roster
+
+__CONTACT_SUMMARY__
+__MAILROOM_SECTION__
+
+## Channel selection
+
+__CHANNEL_DESC__
+
+## Key constraints
+
+- The sender is __SENDER_LINE__.
+- The email must stand alone for a recipient who has never heard of the sender's organisation. Introduce who you are, what the organisation is, and why you are writing.
+- Read the segment file to determine the correct approach type. Do not default to a generic email.
+- __LANG_INSTRUCTION__
+- No emoji.
+
+## Output format
+
+Output your angle selection rationale between these markers:
+
+RATIONALE_START
+[your rationale here]
+RATIONALE_END
+
+Output your draft message(s) between these markers:
+
+DRAFT_START
+[your draft messages here — email, LinkedIn note, phone script as applicable per channel]
+DRAFT_END
+
+Do NOT write any files. Only output text to stdout with the markers above.

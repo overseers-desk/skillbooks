@@ -1,0 +1,17 @@
+Follow the SPAR-P procedure at __SPAR_P_PATH__.
+
+Target: __NAME__ at __ORG__, role: __ROLE__. Phone: __PHONE__. Email: __EMAIL__. LinkedIn: __LINKEDIN__. Facebook: __FACEBOOK__.
+Roster notes — s_note: __S_NOTE__, p_note: __P_NOTE__.
+
+Campaign context: read __GOAL_PATH__ for the segment's objective, USPs, and angle table.
+Organisation overview: read __OVERVIEW__ for ground truth about the organisation.
+__ANTIFACTS_LINE__
+
+Output file: __OUTFILE__
+Roster file: __ROSTER_PATH__
+Roster stem (file must be named exactly {stem}.md): __STEM__
+
+Follow SPAR-P §5 profile structure exactly. The profile MUST begin with a YAML front-matter block (see §5.1) carrying profile_date, star_rating, yield, warmth_finding, applicable_angles, and a dependent_data snapshot of contact_name, organisation, role, and date_excluded from the roster. After writing the profile, follow SPAR-P §4.13 to write star_rating to the roster TSV as well (both the profile front matter and the TSV carry it — the profile is the authorial home, the TSV is the query-optimised copy). Then follow §4.15 to backfill any missing contact details (email, linkedin_url, facebook_url) and replace stale contacts discovered during research with the person currently in the role. Never write a masked or redacted email address (e.g. 'b***@example.com') to the roster — if the only email found is masked, leave the field empty.
+Web search is the primary research method. Use Chromium only when the target has a LinkedIn or Facebook URL and WebFetch returns insufficient data. Wrap Chromium with flock: flock /tmp/chromium.lock /snap/bin/chromium --headless --dump-dom --virtual-time-budget=30000 --window-size=1920,10000 --user-data-dir="$HOME/snap/chromium/common/chromium" "URL" 2>/dev/null
+
+__SQLITE3_SKILL__
