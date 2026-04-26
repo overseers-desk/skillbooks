@@ -11,6 +11,12 @@
 #   segment-loaded {segment counts_dict is_active}
 #       one segment of the async pass has finished classifying; payload is
 #       the segment name, its spar::progress_counts dict, and its active flag
+#   transition-loaded {tid label tasks}
+#       one transition's eligibility has been computed during the async
+#       pass; payload is the tid string, its display label, and the list
+#       of task tuples (one per eligible contact). Fires per tid in
+#       ui_transition_tids order so subscribers can append incrementally
+#       without waiting for fully-loaded.
 #   fully-loaded
 #       all async segments done; warnings and transitions are now populated
 #   refreshed
@@ -360,35 +366,33 @@ oo::class create spar::ui::CampaignModel {
 
     # ─── Internal: transition build ───────────────────────────────────────
 
+    method _primary_channel {} {
+        if {[dict size $Cdata] == 0} { return "" }
+        return [spar::campaign_primary_channel $Cdata]
+    }
+
+    method _transition_entry {tid primary_channel} {
+        set label [spar::transition_label $tid]
+        set eligible [spar::transition_eligible $AllContacts $tid $primary_channel $Cdata]
+        set tasks {}
+        foreach contact $eligible {
+            set cname  [dict get $contact contact_name]
+            set cstem  [spar::dict_get_default $contact stem ""]
+            set org    [dict get $contact organisation]
+            set seg    [dict get $contact segment]
+            set tstate [dict get $contact task_state]
+            set reason [dict get $contact reason]
+            lappend tasks [list $cname $cstem $org $seg $tstate $reason]
+        }
+        return [list $label [llength $eligible] $tasks]
+    }
+
     method _build_transitions {} {
-        set tids [spar::ui_transition_tids]
-
-        set primary_channel ""
-        if {[dict size $Cdata] > 0} {
-            set primary_channel [spar::campaign_primary_channel $Cdata]
-        }
-
+        set primary_channel [my _primary_channel]
         set result {}
-        foreach tid $tids {
-            set label [spar::transition_label $tid]
-
-            set eligible [spar::transition_eligible $AllContacts $tid $primary_channel $Cdata]
-            set count [llength $eligible]
-
-            set tasks {}
-            foreach contact $eligible {
-                set cname  [dict get $contact contact_name]
-                set cstem  [spar::dict_get_default $contact stem ""]
-                set org    [dict get $contact organisation]
-                set seg    [dict get $contact segment]
-                set tstate [dict get $contact task_state]
-                set reason [dict get $contact reason]
-                lappend tasks [list $cname $cstem $org $seg $tstate $reason]
-            }
-
-            lappend result [list $label $count $tasks]
+        foreach tid [spar::ui_transition_tids] {
+            lappend result [my _transition_entry $tid $primary_channel]
         }
-
         return $result
     }
 
@@ -417,7 +421,6 @@ oo::class create spar::ui::CampaignModel {
 
     method loader_body {} {
         foreach item $SegmentPathsForAsync {
-            my _yield_loop
             lassign $item seg_name seg_dir is_active
 
             if {![catch {set classified [spar::classify_segment $seg_dir]} err]} {
@@ -427,16 +430,26 @@ oo::class create spar::ui::CampaignModel {
                 set cdict [spar::progress_counts $classified]
                 my _fire segment-loaded $seg_name $cdict $is_active
             }
+            my _yield_loop
         }
         set SegmentPathsForAsync {}
 
-        my _yield_loop
         set Warnings [dict get [spar::build_warnings $AllContacts $Cdata] messages]
-
         my _yield_loop
-        set Transitions [my _build_transitions]
 
-        my _yield_loop
+        # Per-tid transition build. Yielding between tids lets the tree
+        # render each branch as it lands rather than all at once when
+        # fully-loaded fires.
+        set primary_channel [my _primary_channel]
+        set Transitions {}
+        foreach tid [spar::ui_transition_tids] {
+            set entry [my _transition_entry $tid $primary_channel]
+            lappend Transitions $entry
+            lassign $entry tlabel _ ttasks
+            my _fire transition-loaded $tid $tlabel $ttasks
+            my _yield_loop
+        }
+
         set FullLoadDone 1
         set LoaderCoro ""
         my _fire fully-loaded
