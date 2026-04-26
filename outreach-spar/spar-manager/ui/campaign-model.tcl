@@ -11,10 +11,19 @@
 #   segment-loaded {segment counts_dict is_active}
 #       one segment of the async pass has finished classifying; payload is
 #       the segment name, its spar::progress_counts dict, and its active flag
+#   transition-loaded {tid label tasks}
+#       one transition's eligibility has been computed during the async
+#       pass; payload is the tid string, its display label, and the list
+#       of task tuples (one per eligible contact). Fires per tid in
+#       ui_transition_tids order so subscribers can append incrementally
+#       without waiting for fully-loaded.
+#   reloading
+#       refresh has reset Segments to TSV-only counts and emptied
+#       AllContacts/Transitions/Warnings; subscribers should clear
+#       their views. Fired before start_async kicks off; fully-loaded
+#       fires when the post-reload coroutine completes.
 #   fully-loaded
 #       all async segments done; warnings and transitions are now populated
-#   refreshed
-#       a full synchronous refresh has completed; every accessor is fresh
 #   log-message {msg}
 #       the model wants a line logged (piped to LogWindow by the caller;
 #       the model does not own the log window directly)
@@ -27,7 +36,8 @@ oo::class create spar::ui::CampaignModel {
     variable CampaignFile CampaignDir CampaignName SenderText FilterDesc
     variable Cdata SegmentOrder SkipSet SegmentPaths
     variable Segments AllContacts Transitions Warnings
-    variable FullLoadDone AsyncAfterIds SegmentPathsForAsync AsyncSegmentsRemaining
+    variable FullLoadDone SegmentPathsForAsync
+    variable LoaderCoro LoaderAfterId
     variable ScriptDir
     variable Subs
 
@@ -47,14 +57,14 @@ oo::class create spar::ui::CampaignModel {
         set Transitions  {}
         set Warnings     {}
         set FullLoadDone 1
-        set AsyncAfterIds         {}
         set SegmentPathsForAsync  {}
-        set AsyncSegmentsRemaining 0
+        set LoaderCoro    ""
+        set LoaderAfterId ""
         set Subs [dict create]
     }
 
     destructor {
-        my _cancel_async
+        my _cancel_loader
     }
 
     # ─── Subscription ─────────────────────────────────────────────────────
@@ -121,14 +131,27 @@ oo::class create spar::ui::CampaignModel {
 
     # start_async — kick off async filesystem-dependent load. Each
     # segment fires segment-loaded; the last also fires fully-loaded.
-    method start_async {} { my _schedule_async }
+    # Runs as a coroutine that yields back to the event loop between
+    # segments and around the post-loop warnings/transitions build, so
+    # the UI stays responsive throughout.
+    method start_async {} {
+        my _cancel_loader
+        if {[llength $SegmentPathsForAsync] == 0} {
+            set FullLoadDone 1
+            my _fire fully-loaded
+            return
+        }
+        set LoaderCoro [info object namespace [self]]::loader#[clock microseconds]
+        coroutine $LoaderCoro [self] loader_body
+    }
 
-    # refresh — cancel any pending async, do a full synchronous pass,
-    # fire refreshed.
+    # refresh — reload from disk. Resets state to the TSV-only pass,
+    # fires `reloading` so views can clear, then re-runs the same
+    # coroutine load() uses. fully-loaded fires when filling completes.
     method refresh {} {
-        my _cancel_async
-        my _load_full
-        my _fire refreshed
+        my _load_fast
+        my _fire reloading
+        my start_async
     }
 
     # ─── Internal: helpers ────────────────────────────────────────────────
@@ -282,145 +305,94 @@ oo::class create spar::ui::CampaignModel {
         set Transitions {}
     }
 
-    # ─── Internal: full synchronous load ──────────────────────────────────
-
-    method _load_full {} {
-        set FullLoadDone 1
-
-        if {![my _load_config]} {
-            set Segments    {}
-            set Warnings    {}
-            set Transitions {}
-            set AllContacts {}
-            return
-        }
-
-        set AllContacts {}
-        set Segments    {}
-
-        foreach item $SegmentPaths {
-            lassign $item label seg_dir
-            set is_active [expr {$label ni $SkipSet}]
-
-            if {[catch {set classified [spar::classify_segment $seg_dir]} err]} {
-                lappend Segments [list $label $is_active [my _zero_row]]
-                continue
-            }
-
-            if {$is_active} {
-                foreach c $classified { lappend AllContacts $c }
-            }
-
-            set counts [spar::progress_counts $classified]
-
-            set v  [dict get $counts valid]
-            set p  [dict get $counts profiled]
-            set s3 [dict get $counts star3]
-            set a3 [dict get $counts approached_star3]
-            set e  [dict get $counts has_email]
-            set ae [dict get $counts approached_email]
-            set l  [dict get $counts has_linkedin]
-            set f  [dict get $counts has_facebook]
-            set po [dict get $counts has_phone_only]
-            set es [dict get $counts email_sent]
-            set er [dict get $counts email_replied]
-
-            set raw_data [list \
-                $v  {} \
-                $p  [my _format_pct $p  $v] \
-                $s3 [my _format_pct $s3 $v] \
-                $a3 [my _format_pct $a3 $s3] \
-                $e  [my _format_pct $e  $s3] \
-                $ae [my _format_pct $ae $e] \
-                $l  [my _format_pct $l  $s3] \
-                $f  [my _format_pct $f  $s3] \
-                $po [my _format_pct $po $s3] \
-                $es [my _format_pct $es $ae] \
-                $er [my _format_pct $er $es]]
-
-            lappend Segments [list $label $is_active $raw_data]
-        }
-
-        set Warnings    [dict get [spar::build_warnings $AllContacts $Cdata] messages]
-        set Transitions [my _build_transitions]
-    }
-
     # ─── Internal: transition build ───────────────────────────────────────
 
+    method _primary_channel {} {
+        if {[dict size $Cdata] == 0} { return "" }
+        return [spar::campaign_primary_channel $Cdata]
+    }
+
+    method _transition_entry {tid primary_channel} {
+        set label [spar::transition_label $tid]
+        set eligible [spar::transition_eligible $AllContacts $tid $primary_channel $Cdata]
+        set tasks {}
+        foreach contact $eligible {
+            set cname  [dict get $contact contact_name]
+            set cstem  [spar::dict_get_default $contact stem ""]
+            set org    [dict get $contact organisation]
+            set seg    [dict get $contact segment]
+            set tstate [dict get $contact task_state]
+            set reason [dict get $contact reason]
+            lappend tasks [list $cname $cstem $org $seg $tstate $reason]
+        }
+        return [list $label [llength $eligible] $tasks]
+    }
+
     method _build_transitions {} {
-        set tids [spar::ui_transition_tids]
-
-        set primary_channel ""
-        if {[dict size $Cdata] > 0} {
-            set primary_channel [spar::campaign_primary_channel $Cdata]
-        }
-
+        set primary_channel [my _primary_channel]
         set result {}
-        foreach tid $tids {
-            set label [spar::transition_label $tid]
-
-            set eligible [spar::transition_eligible $AllContacts $tid $primary_channel $Cdata]
-            set count [llength $eligible]
-
-            set tasks {}
-            foreach contact $eligible {
-                set cname  [dict get $contact contact_name]
-                set cstem  [spar::dict_get_default $contact stem ""]
-                set org    [dict get $contact organisation]
-                set seg    [dict get $contact segment]
-                set tstate [dict get $contact task_state]
-                set reason [dict get $contact reason]
-                lappend tasks [list $cname $cstem $org $seg $tstate $reason]
-            }
-
-            lappend result [list $label $count $tasks]
+        foreach tid [spar::ui_transition_tids] {
+            lappend result [my _transition_entry $tid $primary_channel]
         }
-
         return $result
     }
 
-    # ─── Internal: async loader ───────────────────────────────────────────
+    # ─── Internal: async loader (coroutine) ───────────────────────────────
 
-    method _cancel_async {} {
-        foreach id $AsyncAfterIds { after cancel $id }
-        set AsyncAfterIds {}
-    }
-
-    method _schedule_async {} {
-        my _cancel_async
-        set AsyncSegmentsRemaining [llength $SegmentPathsForAsync]
-        if {$AsyncSegmentsRemaining == 0} {
-            set FullLoadDone 1
-            my _fire fully-loaded
-            return
+    method _cancel_loader {} {
+        if {$LoaderAfterId ne ""} {
+            after cancel $LoaderAfterId
+            set LoaderAfterId ""
         }
-        lappend AsyncAfterIds [after 1 [list [self] async_next]]
+        if {$LoaderCoro ne "" && [llength [info commands $LoaderCoro]]} {
+            rename $LoaderCoro ""
+        }
+        set LoaderCoro ""
     }
 
-    method async_next {} {
-        if {[llength $SegmentPathsForAsync] == 0} return
+    method _yield_loop {} {
+        # `after 1` (not `after 0`) so Tk's idle-priority redraws get a
+        # chance to run between resumes. With `after 0` the timer queue
+        # stays continuously full, idle handlers starve, and the UI does
+        # not paint until the coroutine completes.
+        set LoaderAfterId [after 1 [info coroutine]]
+        yield
+        set LoaderAfterId ""
+    }
 
-        set item [lindex $SegmentPathsForAsync 0]
-        set SegmentPathsForAsync [lrange $SegmentPathsForAsync 1 end]
-        lassign $item seg_name seg_dir is_active
+    method loader_body {} {
+        foreach item $SegmentPathsForAsync {
+            lassign $item seg_name seg_dir is_active
 
-        if {![catch {set classified [spar::classify_segment $seg_dir]} err]} {
-            if {$is_active} {
-                foreach c $classified { lappend AllContacts $c }
+            if {![catch {set classified [spar::classify_segment $seg_dir]} err]} {
+                if {$is_active} {
+                    foreach c $classified { lappend AllContacts $c }
+                }
+                set cdict [spar::progress_counts $classified]
+                my _fire segment-loaded $seg_name $cdict $is_active
             }
-            set cdict [spar::progress_counts $classified]
-            my _fire segment-loaded $seg_name $cdict $is_active
+            my _yield_loop
+        }
+        set SegmentPathsForAsync {}
+
+        set Warnings [dict get [spar::build_warnings $AllContacts $Cdata] messages]
+        my _yield_loop
+
+        # Per-tid transition build. Yielding between tids lets the tree
+        # render each branch as it lands rather than all at once when
+        # fully-loaded fires.
+        set primary_channel [my _primary_channel]
+        set Transitions {}
+        foreach tid [spar::ui_transition_tids] {
+            set entry [my _transition_entry $tid $primary_channel]
+            lappend Transitions $entry
+            lassign $entry tlabel _ ttasks
+            my _fire transition-loaded $tid $tlabel $ttasks
+            my _yield_loop
         }
 
-        incr AsyncSegmentsRemaining -1
-
-        if {[llength $SegmentPathsForAsync] > 0} {
-            lappend AsyncAfterIds [after 1 [list [self] async_next]]
-        } else {
-            set FullLoadDone 1
-            set Warnings    [dict get [spar::build_warnings $AllContacts $Cdata] messages]
-            set Transitions [my _build_transitions]
-            my _fire fully-loaded
-        }
+        set FullLoadDone 1
+        set LoaderCoro ""
+        my _fire fully-loaded
     }
 }

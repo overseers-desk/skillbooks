@@ -4,8 +4,9 @@
 #
 # Encapsulates the tree widget, the row_id → contact_name map, the
 # stem → row_id map, and the Show-completed toggle. Subscribes to the
-# CampaignModel's `refreshed` event so the tree rebuilds after each
-# refresh without extra wiring here.
+# CampaignModel's `reloading` event (clears the tree at the start of
+# a refresh) and `transition-loaded` events (fills incrementally as
+# the loader coroutine produces tids).
 #
 # DispatchController (Commit 5) consults this class via get_tree_widget,
 # get_row_names, get_slug_to_row, and update_row. _resolve_target
@@ -32,16 +33,17 @@ namespace eval spar::ui {}
 
 oo::class create spar::ui::TransitionTree {
     variable Campaign Tree RowNames SlugToRow ShowCompleted
-    variable Dispatch
+    variable Dispatch NextTransitionIdx
     variable Subs
 
     constructor {campaign parent_frame} {
-        set Campaign      $campaign
-        set RowNames      [dict create]
-        set SlugToRow     [dict create]
-        set ShowCompleted 1
-        set Dispatch      ""
-        set Subs          [dict create]
+        set Campaign           $campaign
+        set RowNames           [dict create]
+        set SlugToRow          [dict create]
+        set ShowCompleted      1
+        set Dispatch           ""
+        set NextTransitionIdx  0
+        set Subs               [dict create]
 
         # Toolbar with Show-completed checkbox.
         ttk::frame ${parent_frame}.toolbar
@@ -90,8 +92,13 @@ oo::class create spar::ui::TransitionTree {
         bind $Tree <<TreeviewSelect>> [list [self] on_select]
         bind $Tree <Double-1>         [list [self] on_double_click]
 
-        # Subscribe to refreshed — refreshed rebuilds the tree in place.
-        $Campaign subscribe refreshed [list [self] on_refreshed]
+        # Subscribe to reloading — refresh has reset the model; clear
+        # the tree so transition-loaded events refill it cleanly.
+        $Campaign subscribe reloading [list [self] on_reloading]
+
+        # Subscribe to transition-loaded — loader coroutine fires this
+        # once per tid so the tree fills in steps.
+        $Campaign subscribe transition-loaded [list [self] on_transition_loaded]
     }
 
     # set_dispatch — called after DispatchController is constructed to
@@ -117,43 +124,53 @@ oo::class create spar::ui::TransitionTree {
     # ─── Public entry points ──────────────────────────────────────────────
 
     # populate — rebuild the treeview from the Campaign's current
-    # transitions. Resets RowNames / SlugToRow. Public because the
-    # CampaignModel `fully-loaded` / `refreshed` wiring in spar-ui.tcl
-    # and the auto_dispatch path call it directly via [$tree_obj populate].
+    # transitions. Resets RowNames / SlugToRow / NextTransitionIdx.
+    # Used by the initial empty render in spar-ui.tcl and by
+    # on_reloading (where Transitions is empty, so the call effectively
+    # clears). The loader coroutine fills the tree incrementally via
+    # on_transition_loaded.
     method populate {} {
         set transitions [$Campaign get_transitions]
 
         foreach item [$Tree children {}] {
             $Tree delete $item
         }
-        set RowNames  [dict create]
-        set SlugToRow [dict create]
+        set RowNames          [dict create]
+        set SlugToRow         [dict create]
+        set NextTransitionIdx 0
 
-        set ti 0
         foreach tentry $transitions {
             lassign $tentry tlabel tcount ttasks
-
-            set parent_id "t$ti"
-            $Tree insert {} end -id $parent_id -text "$tlabel ($tcount)" -open false
-
-            foreach task $ttasks {
-                lassign $task tname tstem torg tseg tstate treason
-                set tags {}
-                if {$tstate eq "done"} {
-                    set tags {done}
-                } elseif {$tstate eq "pending"} {
-                    set tags {pending}
-                }
-                set row_id [$Tree insert $parent_id end -text "  $tname" \
-                    -values [list $tstem $torg $tseg $tstate $treason] -tags $tags]
-                dict set RowNames $row_id $tname
-                if {$tstem ne ""} {
-                    dict set SlugToRow $tstem $row_id
-                }
-            }
-
-            incr ti
+            my _insert_transition $tlabel $ttasks
         }
+    }
+
+    # _insert_transition — append one transition branch (parent + child
+    # rows) to the tree. Shared by populate and on_transition_loaded;
+    # parent_id is derived from NextTransitionIdx so async-appended ids
+    # match the `t$idx` shape the dispatch path's auto_dispatch expects.
+    method _insert_transition {tlabel ttasks} {
+        set parent_id "t$NextTransitionIdx"
+        set tcount [llength $ttasks]
+        $Tree insert {} end -id $parent_id -text "$tlabel ($tcount)" -open false
+
+        foreach task $ttasks {
+            lassign $task tname tstem torg tseg tstate treason
+            set tags {}
+            if {$tstate eq "done"} {
+                set tags {done}
+            } elseif {$tstate eq "pending"} {
+                set tags {pending}
+            }
+            set row_id [$Tree insert $parent_id end -text "  $tname" \
+                -values [list $tstem $torg $tseg $tstate $treason] -tags $tags]
+            dict set RowNames $row_id $tname
+            if {$tstem ne ""} {
+                dict set SlugToRow $tstem $row_id
+            }
+        }
+
+        incr NextTransitionIdx
     }
 
     # rebuild — alias for populate.
@@ -205,9 +222,19 @@ oo::class create spar::ui::TransitionTree {
         }
     }
 
-    # on_refreshed — CampaignModel fired `refreshed`. Rebuild the tree.
-    method on_refreshed {} {
+    # on_reloading — CampaignModel reset its state at the start of a
+    # refresh. populate against the now-empty Transitions clears the
+    # tree; transition-loaded events will refill it.
+    method on_reloading {} {
         my populate
+    }
+
+    # on_transition_loaded — CampaignModel fired `transition-loaded` for
+    # one tid during the async pass. Append its branch in place. tid
+    # arrives in the payload for debugging; the visual position comes
+    # from NextTransitionIdx, which is in lockstep with tid order.
+    method on_transition_loaded {tid tlabel ttasks} {
+        my _insert_transition $tlabel $ttasks
     }
 
     # ─── Internal helpers ─────────────────────────────────────────────────

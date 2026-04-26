@@ -63,7 +63,7 @@ oo::class create spar::ui::Inspector {
 
         $Tree subscribe selection-changed [list [self] on_selection_changed]
         $Tree subscribe double-clicked    [list [self] on_double_clicked]
-        $Campaign subscribe refreshed     [list [self] on_refreshed]
+        $Campaign subscribe fully-loaded  [list [self] on_fully_loaded]
     }
 
     # ─── Subscription / accessors ─────────────────────────────────────────
@@ -93,7 +93,7 @@ oo::class create spar::ui::Inspector {
         my show
     }
 
-    method on_refreshed {} { if {$Visible} { my render } }
+    method on_fully_loaded {} { if {$Visible} { my render } }
 
     # ─── Visibility control ───────────────────────────────────────────────
 
