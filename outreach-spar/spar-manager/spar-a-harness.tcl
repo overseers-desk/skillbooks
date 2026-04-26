@@ -10,6 +10,7 @@
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
 source [file join $script_dir spar-claude.tcl]
+package require sha256
 
 if {[llength $argv] < 2} {
     puts stderr "Usage: tclsh9.0 spar-a-harness.tcl <prompt-dir> <log-dir>"
@@ -226,6 +227,21 @@ for {set r 1} {$r <= $pass} {incr r} {
 set initial_draft [spar::extract_between [spar::read_file "${log_prefix}-author-draft.log"] "DRAFT_START" "DRAFT_END"]
 set final_draft [spar::read_file [file join $prompt_dir draft-current.txt]]
 
+# profile_hash linkage (#63): compute the SHA-256 of the profile file
+# we just consulted. Inlined into the assembly prompt as a fixed string
+# A copies verbatim, so A never has to compute a hash. The path mirrors
+# spar::approach_path_for_stem / profile_path_for_stem: outfile is
+# <segment_dir>/approach/<stem>.yaml, profile is at
+# <segment_dir>/profiles/<stem>.md.
+set _seg_dir [file dirname [file dirname $outfile]]
+set _stem [file rootname [file tail $outfile]]
+set _profile_path [file join $_seg_dir profiles "${_stem}.md"]
+set profile_hash_line ""
+if {[file exists $_profile_path]} {
+    set _hash [::sha2::sha256 -hex -file $_profile_path]
+    set profile_hash_line "profile_hash: sha256:$_hash"
+}
+
 set assembly_prompt "Write the final approach file. You have the method, overview, antifacts, goal, and profile from your drafting context. Refer to §6 (approach file structure) and §7 (quality checklist) in the method file.
 
 ## Contact details
@@ -250,15 +266,11 @@ $final_draft
 
 Write the complete approach file to: $outfile
 
-Follow §6 structure exactly. Include contact header, angle rationale, A1 Draft 1, all A2 responses, revision drafts, final draft, fact provenance table, and roster a_note line. The contact header fields are: Contact, Response likelihood ({n}%, from the response_likelihood value in the contact details above), Warmth level, Channel, Language, Angle, Profile yield.
+Follow §6 structure exactly. Include contact header, angle rationale, A1 Draft 1, all A2 responses, revision drafts, final draft, fact provenance table, and roster a_note line. The contact header fields are: Contact, Channel, Language, Angle.
 
-The YAML MUST include a top-level generated_for block recording the roster contact_name and organisation as of generation time:
+The YAML MUST include a top-level profile_hash recording the SHA-256 of the profile file at generation time. Copy this line verbatim into the approach root (do not recompute it):
 
-generated_for:
-  contact_name: <contact name from Contact details>
-  organisation: <organisation from Contact details>
-
-This block is used to detect roster edits that post-date the approach file. Write the values exactly as given in the Contact details section.
+$profile_hash_line
 
 Run §7 quality checklist before writing. Fix any failures in the final draft.
 
