@@ -16,6 +16,7 @@ Usage:
   python3 extract_email_entities.py --dry-run              # show queue, no calls
   python3 extract_email_entities.py --thread TID           # single thread (debug)
   python3 extract_email_entities.py --recompute-priority
+  python3 extract_email_entities.py --tail                 # oldest first (run alongside default head)
 """
 
 import argparse
@@ -303,8 +304,9 @@ def build_work_queue(
     conn,
     limit: int | None = None,
     thread_id: str | None = None,
+    tail: bool = False,
 ) -> list[tuple[str, list[str]]]:
-    """Return [(thread_id, [unextracted_message_ids])] ordered by priority."""
+    """Return [(thread_id, [unextracted_message_ids])] ordered by priority (head) or oldest-first (tail)."""
     with conn.cursor() as cur:
         if thread_id:
             cur.execute(
@@ -314,7 +316,11 @@ def build_work_queue(
             )
             thread_ids = [row[0] for row in cur.fetchall()]
         else:
-            q = """
+            order_by = (
+                "ORDER BY et.last_message_at ASC" if tail
+                else "ORDER BY et.priority_score DESC, et.last_message_at DESC"
+            )
+            q = f"""
                 SELECT et.thread_id
                 FROM email_thread et
                 WHERE EXISTS (
@@ -325,7 +331,7 @@ def build_work_queue(
                           WHERE el.message_id = em.message_id
                       )
                 )
-                ORDER BY et.priority_score DESC, et.last_message_at DESC
+                {order_by}
             """
             if limit:
                 # Limit threads, not messages — but approximate
@@ -861,6 +867,10 @@ def main():
         '--recompute-priority', action='store_true',
         help='Recompute thread priority scores before extraction',
     )
+    parser.add_argument(
+        '--tail', action='store_true',
+        help='Process oldest threads first (backfill); designed to run alongside default head',
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -878,7 +888,7 @@ def main():
     log.info("Building path map from mu...")
     path_map = build_path_map(ACTIVE_ACCOUNTS)
 
-    queue = build_work_queue(conn, limit=args.limit, thread_id=args.thread)
+    queue = build_work_queue(conn, limit=args.limit, thread_id=args.thread, tail=args.tail)
     if not queue:
         log.info("Nothing to process")
         conn.close()
