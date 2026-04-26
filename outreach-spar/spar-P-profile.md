@@ -226,18 +226,11 @@ For each applicable angle, note:
 
 ### 4.13 Assign ratings
 
-**Star rating (0–5):** How interesting is this contact to the campaign? Assigning this rating is P's responsibility. Any value already in the roster's `star_rating` column was written before profiling and must be ignored — it carries no authority. Derive the rating solely from what profiling reveals.
+**Star rating (0–5):** How useful is this contact to the campaign's management in this segment, today? Assigning this rating is P's responsibility. Any value already in the roster's `star_rating` column was written before profiling and must be ignored — it carries no authority. Derive the rating solely from what profiling reveals.
 
-| Rating | Criteria |
-|---|---|
-| 5 | Direct evidence of engagement with the campaign's core themes, OR occupies a network position that connects to multiple high-value targets or communities the campaign cannot reach otherwise |
-| 4 | Strong fit by role, geography, and network position; indirect evidence of relevance; plausible connection path |
-| 3 | Right role and area, no specific evidence of alignment or connection value |
-| 2 | Tangentially relevant, weak connection path |
-| 1 | Roster only, no clear relevance |
-| 0 | Invalid — not a campaign target. Exclude per §4.2 (set `date_excluded` to today, reason in `p_note`, do not delete). |
+If the segment file carries a `rating_rubric`, apply it as written. If it does not, role-play as the campaign's management — using the campaign's USP document, the segment's objective, the segment's conversion funnel, and any subsegments as the standard for "useful" — and answer the usefulness question directly. Do not import anchors from other segments; segments differ in what useful means, and a rubric specific to one segment is wrong for the next. If the question cannot be answered with confidence from the segment file alone, that is an instruction to deepen profiling, not to default to a middle value.
 
-If profiling reveals that the contact cannot deliver the campaign's intended outcome through the mechanism the goal assumes — including cases where §4.2 was not run before profiling began — set `star_rating` to 0 and exclude per §4.2. Do not produce a profile document for contacts assessed at 0; the roster entry is sufficient. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
+If profiling reveals that the contact cannot deliver the segment's intended outcome through the mechanism the segment describes — including cases where §4.2 was not run before profiling began — set `star_rating` to 0 and exclude per §4.2. Do not produce a profile document for contacts assessed at 0; the roster entry is sufficient. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
 
 **Write `star_rating` in two places: the profile front matter (`star_rating:`) and the roster TSV column.** The profile is the authorial home — it is where P records the assessment and where git history preserves it across later roster edits. The TSV column is the query-optimised copy used by the state machine, band filters, and progress counts. Both must be written by the same P run; `sqlite3` updates the roster row in-place. `response_likelihood` is set by the A phase, not P; do not write it here.
 
