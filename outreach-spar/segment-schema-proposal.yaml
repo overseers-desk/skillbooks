@@ -192,6 +192,19 @@ approach_sequencing:
 # discovery_criteria: |
 #   (Prose. What makes a contact valid or invalid for this segment.)
 
+# --- Rating rubric (segment-specific guidance for star_rating
+#     beyond the methodology's third-party-introduction test.
+#     Optional; when absent, P role-plays as the campaign's
+#     management per spar-methodology.md (P section). Use sparingly
+#     — only when the segment has an axis the role-play would not
+#     surface, or when finer discrimination above the 3-star floor
+#     is wanted. Keep terse: prose, not anchor tables; no signals
+#     written in segment-portable language, since "portable" is
+#     how the previous global rubric failed.) ---
+
+# rating_rubric: |
+#   (Prose. Brief, segment-specific.)
+
 # --- Scope note (boundary conditions with other segments or
 #     exclusions from this segment's scope) ---
 

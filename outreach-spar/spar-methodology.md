@@ -70,7 +70,7 @@ Stopping criteria for S (any of these triggers stop):
 P runs within each S&P iteration, on the contacts discovered in that iteration's S phase. P produces two outputs:
 
 1. **A profile document** for each contact. The profile records: what the person has said publicly (with quotes and sources), who they know (connections relevant to the campaign), their current role and organisation, any evidence of alignment or misalignment with the campaign's offering, and a rating:
-   - **Star rating** (1–5): how interesting this contact is to us — does their role, geography, and activity suggest a plausible relationship?
+   - **Star rating** (1–5): how useful this contact is to us in this segment, today. The segment file's `rating_rubric` (when present) governs; absent that, the agent role-plays as the campaign's management — reading the USP document, segment objective, and conversion funnel — and answers the usefulness question directly, without importing anchors from other segments. One sharpening of the question: imagine a person — synthesised from those materials — who knows both the target and the campaign; would they say these two should be working together (or re-engaged, if a prior relationship has lapsed), and that an introduction is warranted? Yes is a floor of 3.
    
    The profile also documents factors bearing on response likelihood (the contact's stated concerns, business model, current priorities), but does not assign a numeric **response likelihood** estimate. That percentage is set by the A phase, because it depends on the approach angle chosen — the same contact may have different response probabilities under different framings.
 
