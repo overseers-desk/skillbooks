@@ -7,6 +7,8 @@
 # — thin wrappers used by the per-class transition `eligible` methods to
 # pre-flight an approach/profile before reporting a contact as ready.
 
+package require sha256
+
 # _approach_validation_error -- return first error-severity validation message for
 # a contact's approach file, or "" if clean. Used by transition_eligible to gate
 # approach-dependent transitions (T3, T4, T8) on structural validity (#43 principle 7).
@@ -18,10 +20,6 @@ proc spar::_approach_validation_error {contact} {
     set corg  [spar::dict_get_default $contact organisation ""]
     foreach issue [spar::validate_approach $ap $roster_email $cname $corg] {
         if {[dict get $issue severity] ne "error"} continue
-        # missing_response_likelihood is enforced at the A-phase harness (#69),
-        # but not gated at dispatch — pre-existing approach files that lack the
-        # field must remain sendable without re-running A.
-        if {[dict get $issue code] eq "missing_response_likelihood"} continue
         return [dict get $issue message]
     }
     return ""
@@ -40,19 +38,18 @@ proc spar::_issue {severity code contact_name message {extra {}}} {
 }
 
 # _approach_canonical_keys -- single source of truth for approach YAML vocabulary.
-# Keyed by level; must stay in sync with approach-schema.yaml's additionalProperties.
-# Per issue SmartLayer/aesop#43.
+# Per issues SmartLayer/aesop#43 (closed vocabulary) and #63 (replicas retired in
+# favour of profile_hash linkage).
 proc spar::_approach_canonical_keys {} {
     return [dict create \
-        root {decisions rounds profile_date profile_yield angle_rationale a_note fact_provenance quality_checklist response_likelihood generated_for} \
-        decisions {warmth channel language angle sender warmth_detail channel_detail subsegment} \
+        root {decisions rounds angle_rationale a_note fact_provenance quality_checklist profile_hash} \
+        decisions {channel language angle sender channel_detail subsegment} \
         round {type number messages verdict fact_check in_character chosen_usps revision_note notes replies antifact_check} \
         message {channel subject body to actioned_date replied_date reply_summary script text char_count bcc cc director_note to_note phone_note mode parent reply_all} \
         parent {account folder uid message_id references subject from to cc} \
         fact_provenance_item {claim source} \
         fact_check_item {claim source result note correction} \
-        script_item {point text} \
-        generated_for {contact_name organisation}]
+        script_item {point text}]
 }
 
 # _check_unknown_keys -- emit unknown_key_<level> or wrong_level issues for a parsed dict.
@@ -114,13 +111,6 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
     if {[dict exists $approach_data decisions]} {
         set _dec [dict get $approach_data decisions]
         lappend issues {*}[spar::_check_unknown_keys $_dec decisions $contact_name]
-    }
-
-    if {[dict exists $approach_data generated_for]} {
-        set _gf [dict get $approach_data generated_for]
-        if {[llength $_gf] % 2 == 0} {
-            lappend issues {*}[spar::_check_unknown_keys $_gf generated_for $contact_name]
-        }
     }
 
     if {[dict exists $approach_data rounds]} {
@@ -299,46 +289,32 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
         }
     }
 
-    # ── generated_for guard rail (issue #30) ──
-    # Recorded at generation; compared against current roster values to
-    # detect roster edits that post-date the approach file.
-    if {[dict exists $approach_data generated_for]} {
-        set _gf [dict get $approach_data generated_for]
-        set _gf_name ""
-        set _gf_org  ""
-        if {[llength $_gf] % 2 == 0} {
-            if {[dict exists $_gf contact_name]} {
-                set _gf_name [string trim [dict get $_gf contact_name]]
+    # ── profile_hash linkage (issue #63) ──
+    # When the approach carries profile_hash and the source profile is
+    # present, mismatch is an error: the profile was rebuilt or edited
+    # after the approach was drafted, so the approach references stale
+    # angle evidence. profile_hash is optional — manually-authored
+    # approaches and any path that did not read a profile have no hash
+    # to record. Absent profile (no file at the expected path) is not
+    # an error here; the state machine routes that through T6 → T7.
+    if {[dict exists $approach_data profile_hash]} {
+        set _stored [string trim [dict get $approach_data profile_hash]]
+        set _stored_hex $_stored
+        if {[regexp {^sha256:([0-9a-fA-F]+)$} $_stored -> _hex]} {
+            set _stored_hex [string tolower $_hex]
+        } else {
+            set _stored_hex [string tolower $_stored]
+        }
+        set _seg_dir [file dirname [file dirname $approach_path]]
+        set _stem [file rootname [file tail $approach_path]]
+        set _profile_path [file join $_seg_dir profiles "${_stem}.md"]
+        if {[file exists $_profile_path]} {
+            set _actual [string tolower [::sha2::sha256 -hex -file $_profile_path]]
+            if {$_actual ne $_stored_hex} {
+                lappend issues [spar::_issue error profile_hash_mismatch $contact_name \
+                    "Approach profile_hash 'sha256:$_stored_hex' does not match profile file (current sha256:$_actual) — re-approach required"]
             }
-            if {[dict exists $_gf organisation]} {
-                set _gf_org [string trim [dict get $_gf organisation]]
-            }
         }
-        if {$_gf_name ne "" && $contact_name ne "" \
-                && [string tolower $_gf_name] ne [string tolower $contact_name]} {
-            lappend issues [spar::_issue warning name_desync $contact_name \
-                "Approach generated_for.contact_name '$_gf_name' differs from roster contact_name '$contact_name'"]
-        }
-        if {$_gf_org ne "" && $roster_organisation ne "" \
-                && [string tolower $_gf_org] ne [string tolower $roster_organisation]} {
-            lappend issues [spar::_issue warning org_desync $contact_name \
-                "Approach generated_for.organisation '$_gf_org' differs from roster organisation '$roster_organisation'"]
-        }
-    } else {
-        lappend issues [spar::_issue error missing_generated_for $contact_name \
-            "Approach file missing required 'generated_for' key (see spar-A-approach.md §6)"]
-    }
-
-    # ── response_likelihood required (issue #69) ──
-    # A authors it; without it the roster column stays empty and downstream
-    # band-ordering silently omits the contact from its sort key.
-    set _rl ""
-    if {[dict exists $approach_data response_likelihood]} {
-        set _rl [string trim [dict get $approach_data response_likelihood]]
-    }
-    if {$_rl eq ""} {
-        lappend issues [spar::_issue error missing_response_likelihood $contact_name \
-            "Approach file missing required 'response_likelihood' key (see spar-A-approach.md §4.8)"]
     }
 
     return $issues

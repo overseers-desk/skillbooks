@@ -202,14 +202,10 @@ proc spar::fingerprint_match {existing from_email timestamp} {
 }
 
 # _dbc_errors -- return only error-severity issues from validate_approach.
-# Skips missing_response_likelihood: enforced at the A-phase harness (#69)
-# but not gated at send time — pre-existing approach files without the field
-# must remain sendable.
 proc spar::_dbc_errors {approach_path} {
     set errs {}
     foreach issue [spar::validate_approach $approach_path "" ""] {
         if {[dict get $issue severity] ne "error"} continue
-        if {[dict get $issue code] eq "missing_response_likelihood"} continue
         lappend errs [dict get $issue message]
     }
     return $errs
