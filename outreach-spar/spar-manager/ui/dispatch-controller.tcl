@@ -102,8 +102,8 @@ oo::class create spar::ui::DispatchController {
             -command [list [self] dispatch 1]
         bind $PlayBtn <Button-3> [list [self] on_play_menu %X %Y]
 
-        # Subscribe to Campaign lifecycle.
-        $Campaign subscribe refreshed    [list [self] on_refreshed]
+        # Subscribe to Campaign lifecycle. reapply_cohort runs from
+        # on_fully_loaded since it needs the tree to be fully populated.
         $Campaign subscribe fully-loaded [list [self] on_fully_loaded]
 
         # Subscribe to TransitionTree selection shifts — drives the Play
@@ -339,24 +339,28 @@ oo::class create spar::ui::DispatchController {
 
     # auto_dispatch — headless / self-debug entry point. Called from the
     # fully-loaded event handler when --tid was given on the command line.
+    # Consumes AutoTid so subsequent fully-loaded events (post-dispatch
+    # refresh) do not retrigger.
     method auto_dispatch {} {
+        set target $AutoTid
+        set AutoTid ""
         set tree [$Transitions get_tree_widget]
         set tids [spar::ui_transition_tids]
-        set idx [lsearch -exact $tids $AutoTid]
+        set idx [lsearch -exact $tids $target]
         if {$idx < 0} {
-            puts stderr "spar-ui: --tid=$AutoTid is not one of: [join $tids {, }]"
+            puts stderr "spar-ui: --tid=$target is not one of: [join $tids {, }]"
             if {$AutoQuit} { exit 1 }
             return
         }
         set parent "t$idx"
         if {![$tree exists $parent]} {
-            puts stderr "spar-ui: transition $AutoTid has no tree row (not populated?)"
+            puts stderr "spar-ui: transition $target has no tree row (not populated?)"
             if {$AutoQuit} { exit 1 }
             return
         }
         set children [$tree children $parent]
         if {[llength $children] == 0} {
-            puts stderr "spar-ui: transition $AutoTid has zero eligible contacts"
+            puts stderr "spar-ui: transition $target has zero eligible contacts"
             if {$AutoQuit} { exit 0 }
             return
         }
@@ -370,8 +374,8 @@ oo::class create spar::ui::DispatchController {
                 if {$s in $AutoStems} { lappend matches $c }
             }
             if {[llength $matches] == 0} {
-                puts stderr "spar-ui: none of --stems=[join $AutoStems ,] matched the $AutoTid tree."
-                puts stderr "spar-ui: available stems under $AutoTid: [join $all_stems {, }]"
+                puts stderr "spar-ui: none of --stems=[join $AutoStems ,] matched the $target tree."
+                puts stderr "spar-ui: available stems under $target: [join $all_stems {, }]"
                 if {$AutoQuit} { exit 1 }
                 return
             }
@@ -384,7 +388,7 @@ oo::class create spar::ui::DispatchController {
                 if {!$found} { lappend missing $s }
             }
             if {[llength $missing] > 0} {
-                puts stderr "spar-ui: --stems not found under $AutoTid: [join $missing {, }]"
+                puts stderr "spar-ui: --stems not found under $target: [join $missing {, }]"
             }
             $tree selection set $matches
         } else {
@@ -604,16 +608,13 @@ oo::class create spar::ui::DispatchController {
 
     # ─── Event handlers (subscriptions) ───────────────────────────────────
 
-    # on_refreshed — Campaign fired `refreshed`. TransitionTree already
-    # rebuilt itself; we re-thread the cohort onto the new row ids.
-    method on_refreshed {} {
-        my reapply_cohort
-    }
-
-    # on_fully_loaded — Campaign fired `fully-loaded`. If --tid was given
-    # on the command line, drive the dispatch programmatically once the
-    # tree is populated.
+    # on_fully_loaded — Campaign fired `fully-loaded`. The tree is now
+    # populated, so re-thread any in-flight cohort onto the new row
+    # ids. If --tid was given on the command line, drive the dispatch
+    # programmatically (auto_dispatch consumes AutoTid one-shot so the
+    # post-dispatch refresh's fully-loaded does not retrigger it).
     method on_fully_loaded {} {
+        my reapply_cohort
         if {$AutoTid ne ""} {
             after idle [list [self] auto_dispatch]
         }
