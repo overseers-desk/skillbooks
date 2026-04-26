@@ -207,10 +207,7 @@ proc make_base_row {{overrides {}}} {
 
 # Approach YAML templates
 proc approach_yaml_no_final {} {
-    return {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-decisions:
+    return {decisions:
   channel: email
 rounds:
 - type: draft
@@ -223,11 +220,7 @@ rounds:
 }
 
 proc approach_yaml_final_unsent {} {
-    return {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+    return {decisions:
   channel: email
 rounds:
 - type: final
@@ -243,11 +236,7 @@ rounds:
 }
 
 proc approach_yaml_final_sent_email {} {
-    return {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+    return {decisions:
   channel: email
 rounds:
 - type: final
@@ -263,11 +252,7 @@ rounds:
 }
 
 proc approach_yaml_final_replied {} {
-    return {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+    return {decisions:
   channel: email
 rounds:
 - type: final
@@ -283,11 +268,7 @@ rounds:
 }
 
 proc approach_yaml_final_reply_received {} {
-    return {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+    return {decisions:
   channel: email
 rounds:
 - type: final
@@ -307,11 +288,7 @@ rounds:
 }
 
 proc approach_yaml_final_sent_linkedin {} {
-    return {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+    return {decisions:
   channel: linkedin
 rounds:
 - type: final
@@ -325,11 +302,7 @@ rounds:
 }
 
 proc approach_yaml_final_multi_channel {} {
-    return {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+    return {decisions:
   channel: linkedin_then_email
 rounds:
 - type: final
@@ -1478,9 +1451,13 @@ set va4_path [write_approach_yaml $seg_va4 "va-nofinal" [approach_yaml_no_final]
 set va4_issues [spar::validate_approach $va4_path "test@acme-venues.au" "Test Contact"]
 assert_eq [has_issue $va4_issues no_final_round] 1 "validate_approach: no final round → no_final_round error"
 
-# 12d1. Missing generated_for → error (issue #30)
-set seg_va_mgf [make_temp_segment]
-set va_mgf_path [write_approach_yaml $seg_va_mgf "va-mgf" {decisions:
+# 12d1. profile_hash matches profile bytes → no issue (issue #63)
+set seg_va_ph_ok [make_temp_segment]
+write_profile $seg_va_ph_ok "va-ph-ok"
+set _ph_ok_profile [file join $seg_va_ph_ok profiles "va-ph-ok.md"]
+set _ph_ok_hex [string tolower [::sha2::sha256 -hex -file $_ph_ok_profile]]
+set va_ph_ok_path [write_approach_yaml $seg_va_ph_ok "va-ph-ok" "profile_hash: sha256:$_ph_ok_hex
+decisions:
   channel: email
 rounds:
 - type: final
@@ -1492,17 +1469,15 @@ rounds:
     body: Hello
     actioned_date: null
     replied_date: null
-}]
-set va_mgf_issues [spar::validate_approach $va_mgf_path "test@acme-venues.au" "VA MGF" "Some Org"]
-set va_mgf_errors [issues_with_code $va_mgf_issues missing_generated_for]
-assert_eq [llength $va_mgf_errors] 1 "validate_approach: missing generated_for → missing_generated_for error"
-assert_eq [dict get [lindex $va_mgf_errors 0] severity] "error" "validate_approach: missing_generated_for severity is error"
+"]
+set va_ph_ok_issues [spar::validate_approach $va_ph_ok_path "test@acme-venues.au" "VA PH OK" "Some Org"]
+assert_eq [has_issue $va_ph_ok_issues profile_hash_mismatch] 0 \
+    "validate_approach: profile_hash matches profile bytes → no profile_hash_mismatch"
 
-# 12d1b. Missing response_likelihood → error (issue #69)
-set seg_va_mrl [make_temp_segment]
-set va_mrl_path [write_approach_yaml $seg_va_mrl "va-mrl" {generated_for:
-  contact_name: VA MRL
-  organisation: Some Org
+# 12d2. profile_hash differs from profile bytes → profile_hash_mismatch error
+set seg_va_ph_bad [make_temp_segment]
+write_profile $seg_va_ph_bad "va-ph-bad"
+set va_ph_bad_path [write_approach_yaml $seg_va_ph_bad "va-ph-bad" {profile_hash: sha256:0000000000000000000000000000000000000000000000000000000000000000
 decisions:
   channel: email
 rounds:
@@ -1516,24 +1491,37 @@ rounds:
     actioned_date: null
     replied_date: null
 }]
-set va_mrl_issues [spar::validate_approach $va_mrl_path "test@acme-venues.au" "VA MRL" "Some Org"]
-set va_mrl_errors [issues_with_code $va_mrl_issues missing_response_likelihood]
-assert_eq [llength $va_mrl_errors] 1 "validate_approach: missing response_likelihood → missing_response_likelihood error"
-assert_eq [dict get [lindex $va_mrl_errors 0] severity] "error" "validate_approach: missing_response_likelihood severity is error"
+set va_ph_bad_issues [spar::validate_approach $va_ph_bad_path "test@acme-venues.au" "VA PH BAD" "Some Org"]
+set va_ph_bad_errors [issues_with_code $va_ph_bad_issues profile_hash_mismatch]
+assert_eq [llength $va_ph_bad_errors] 1 \
+    "validate_approach: profile_hash diverges from profile bytes → profile_hash_mismatch error"
+assert_eq [dict get [lindex $va_ph_bad_errors 0] severity] "error" \
+    "validate_approach: profile_hash_mismatch severity is error"
 
-# 12d1c. Send-path carve-out: _approach_validation_error must not block dispatch
-# on missing_response_likelihood alone (#69 — pre-existing approach files
-# authored before the check must remain sendable).
-set va_mrl_contact [dict create approach_path $va_mrl_path \
-    email "test@acme-venues.au" contact_name "VA MRL" organisation "Some Org"]
-assert_eq [spar::_approach_validation_error $va_mrl_contact] "" \
-    "_approach_validation_error: missing_response_likelihood alone → not a dispatch blocker"
+# 12d3. Approach without profile_hash → no issue (optional field)
+set seg_va_ph_none [make_temp_segment]
+write_profile $seg_va_ph_none "va-ph-none"
+set va_ph_none_path [write_approach_yaml $seg_va_ph_none "va-ph-none" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}]
+set va_ph_none_issues [spar::validate_approach $va_ph_none_path "test@acme-venues.au" "VA PH NONE" "Some Org"]
+assert_eq [has_issue $va_ph_none_issues profile_hash_mismatch] 0 \
+    "validate_approach: no profile_hash → no profile_hash_mismatch (optional)"
 
-# 12d2. generated_for.contact_name differs from roster → name_desync warning
-set seg_va_nd [make_temp_segment]
-set va_nd_path [write_approach_yaml $seg_va_nd "va-nd" {generated_for:
-  contact_name: Jane Old
-  organisation: Acme Co
+# 12d4. Approach with profile_hash but profile file absent → no error
+# (state machine routes via T6 → T7; validator does not block).
+set seg_va_ph_abs [make_temp_segment]
+set va_ph_abs_path [write_approach_yaml $seg_va_ph_abs "va-ph-abs" {profile_hash: sha256:1111111111111111111111111111111111111111111111111111111111111111
 decisions:
   channel: email
 rounds:
@@ -1547,55 +1535,9 @@ rounds:
     actioned_date: null
     replied_date: null
 }]
-set va_nd_issues [spar::validate_approach $va_nd_path "test@acme-venues.au" "Jane New" "Acme Co"]
-set va_nd_warnings [issues_with_code $va_nd_issues name_desync]
-assert_eq [llength $va_nd_warnings] 1 "validate_approach: generated_for.contact_name differs → name_desync warning"
-assert_eq [dict get [lindex $va_nd_warnings 0] severity] "warning" "validate_approach: name_desync severity is warning"
-
-# 12d3. generated_for.organisation differs from roster → org_desync warning
-set seg_va_od [make_temp_segment]
-set va_od_path [write_approach_yaml $seg_va_od "va-od" {generated_for:
-  contact_name: Jane Doe
-  organisation: Old Co
-decisions:
-  channel: email
-rounds:
-- type: final
-  number: 1
-  messages:
-  - channel: email
-    to: test@acme-venues.au
-    subject: Test
-    body: Hello
-    actioned_date: null
-    replied_date: null
-}]
-set va_od_issues [spar::validate_approach $va_od_path "test@acme-venues.au" "Jane Doe" "New Co"]
-set va_od_warnings [issues_with_code $va_od_issues org_desync]
-assert_eq [llength $va_od_warnings] 1 "validate_approach: generated_for.organisation differs → org_desync warning"
-assert_eq [dict get [lindex $va_od_warnings 0] severity] "warning" "validate_approach: org_desync severity is warning"
-
-# 12d4. generated_for matching roster → no desync
-set seg_va_ok [make_temp_segment]
-set va_ok_path [write_approach_yaml $seg_va_ok "va-ok" {generated_for:
-  contact_name: Jane Doe
-  organisation: Acme Co
-decisions:
-  channel: email
-rounds:
-- type: final
-  number: 1
-  messages:
-  - channel: email
-    to: test@acme-venues.au
-    subject: Test
-    body: Hello
-    actioned_date: null
-    replied_date: null
-}]
-set va_ok_issues [spar::validate_approach $va_ok_path "test@acme-venues.au" "Jane Doe" "Acme Co"]
-assert_eq [has_issue $va_ok_issues name_desync] 0 "validate_approach: matching name → no name_desync"
-assert_eq [has_issue $va_ok_issues org_desync] 0 "validate_approach: matching org → no org_desync"
+set va_ph_abs_issues [spar::validate_approach $va_ph_abs_path "test@acme-venues.au" "VA PH ABS" "Some Org"]
+assert_eq [has_issue $va_ph_abs_issues profile_hash_mismatch] 0 \
+    "validate_approach: profile_hash with absent profile → no error (state machine handles)"
 
 # 12e. Nonexistent file → no errors (graceful)
 set va5_issues [spar::validate_approach "/tmp/nonexistent-approach.yaml" "test@acme-venues.au" "VA Missing"]
@@ -2415,9 +2357,6 @@ assert_eq [has_issue $issues_tme too_many_final_emails] 1 \
 
 # ── Negative: zero emails in final (e.g. phone-only) passes cap check ──
 set issues_zf [va_issues {
-generated_for:
-  contact_name: Test
-  organisation: Test Org
 decisions:
   channel: phone
 rounds:
@@ -2432,9 +2371,6 @@ assert_eq [has_issue $issues_zf too_many_final_emails] 0 \
 
 # ── Negative: one email + one phone in final (mixed-channel) passes cap check ──
 set issues_mf [va_issues {
-generated_for:
-  contact_name: Test
-  organisation: Test Org
 decisions:
   channel: email
 rounds:
@@ -2453,10 +2389,6 @@ assert_eq [has_issue $issues_mf too_many_final_emails] 0 \
 
 # ── Negative test: valid approach has no structural issues ──
 set issues_valid [va_issues {
-generated_for:
-  contact_name: Test
-  organisation: Test Org
-response_likelihood: 50
 decisions:
   channel: email
 rounds:
@@ -2562,7 +2494,6 @@ assert_eq [has_issue $issues_um unknown_key_message] 1 \
 set issues_ok [va_issues {
 decisions:
   channel: email
-  warmth: warm
 rounds:
   - type: draft
     number: 1
@@ -2803,11 +2734,7 @@ section "26. T9 / T10 secondary / tertiary channel eligibility (issue #41)"
 # optionally replied on $replied_date, or null) + a pending secondary phone
 # message. Produces the shape state-machine.md §States expects for T9.
 proc t9_yaml_primary_email_sent_secondary_phone_pending {primary_date {replied_date null}} {
-    return "generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+    return "decisions:
   channel: email
 rounds:
 - type: final
@@ -2829,11 +2756,7 @@ rounds:
 }
 
 proc t9_yaml_primary_unsent {} {
-    return {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+    return {decisions:
   channel: email
 rounds:
 - type: final
@@ -2938,11 +2861,7 @@ set t10_cdata [dict create \
     tertiary_channel  [dict create channel linkedin wait_days 5 wait_condition no_reply]]
 
 proc t10_yaml_primary_sent_secondary_sent_tertiary_pending {primary_date secondary_date} {
-    return "generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+    return "decisions:
   channel: email
 rounds:
 - type: final
@@ -3130,11 +3049,7 @@ proc issues_with_severity {issues sev} {
 
 # 26a. mode: reply with complete parent block → no errors.
 set seg_rv1 [make_temp_segment]
-set rv1_path [write_approach_yaml $seg_rv1 "rv-reply-ok" {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+set rv1_path [write_approach_yaml $seg_rv1 "rv-reply-ok" {decisions:
   channel: email
 rounds:
 - type: final
@@ -3163,11 +3078,7 @@ assert_eq [llength $rv1_errors] 0 \
 
 # 26b. Subject may be omitted from the message under mode: reply.
 set seg_rv2 [make_temp_segment]
-set rv2_path [write_approach_yaml $seg_rv2 "rv-reply-no-subject" {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+set rv2_path [write_approach_yaml $seg_rv2 "rv-reply-no-subject" {decisions:
   channel: email
 rounds:
 - type: final
@@ -3188,11 +3099,7 @@ assert_eq [llength $rv2_missing] 0 \
 
 # 26c. mode: reply but no body → email_missing_content (body still required).
 set seg_rv3 [make_temp_segment]
-set rv3_path [write_approach_yaml $seg_rv3 "rv-reply-no-body" {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+set rv3_path [write_approach_yaml $seg_rv3 "rv-reply-no-body" {decisions:
   channel: email
 rounds:
 - type: final
@@ -3212,11 +3119,7 @@ assert_eq [llength $rv3_missing] 1 \
 
 # 26d. mode: reply but parent.message_id missing → reply_missing_parent_message_id.
 set seg_rv4 [make_temp_segment]
-set rv4_path [write_approach_yaml $seg_rv4 "rv-reply-no-mid" {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+set rv4_path [write_approach_yaml $seg_rv4 "rv-reply-no-mid" {decisions:
   channel: email
 rounds:
 - type: final
@@ -3239,11 +3142,7 @@ assert_eq [llength $rv4_errors] 1 \
 
 # 26e. parent block with unknown key → unknown_key_parent.
 set seg_rv5 [make_temp_segment]
-set rv5_path [write_approach_yaml $seg_rv5 "rv-reply-unknown" {generated_for:
-  contact_name: Test Contact
-  organisation: Test Org
-response_likelihood: 50
-decisions:
+set rv5_path [write_approach_yaml $seg_rv5 "rv-reply-unknown" {decisions:
   channel: email
 rounds:
 - type: final

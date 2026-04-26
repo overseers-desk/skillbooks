@@ -10,7 +10,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 ## 2. Inputs
 
 - **Profile document:** The full profile produced by SPAR-P for this contact.
-- **Roster entry:** The contact's row in the roster TSV, including `s_note`, `p_note`, and `star_rating`. Do not duplicate `star_rating` in the approach file — read it from the roster but do not write it (P owns that field). `response_likelihood` is set by A and written to the roster at §4.8.
+- **Roster entry:** The contact's row in the roster TSV, including `s_note`, `p_note`, and `star_rating`. Do not duplicate `star_rating` in the approach file — read it from the roster but do not write it (P owns that field). `response_likelihood` is set by A on the roster at §4.8 (it is a roster column, not an approach field).
 - **Campaign plan:** Defines segments, approach sequencing per segment, and campaign-specific rules (language, collateral prerequisites, channel preferences).
 - **Segment file:** (`segment.yaml`) Specifies the approach type (FAM invitation, phone call, personal email, etc.) and any collateral prerequisites. Read this before drafting.
 - **Communication index:** `comms-index.md`, the running index of all prior A outputs. Read this before drafting to find cross-references, shared connections, and angles already used with related contacts.
@@ -180,9 +180,9 @@ Approach files are YAML documents with a **closed vocabulary** — any key outsi
 
 **Canonical keys by level:**
 
-- Root: `decisions`, `rounds`, `profile_date`, `profile_yield`, `angle_rationale`, `a_note`, `fact_provenance`, `quality_checklist`, `response_likelihood`, `generated_for`
-- `generated_for`: `contact_name`, `organisation` — required. Records the roster values at generation time so `spar::validate_approach` can detect roster edits that post-date the approach file (emits `name_desync` / `org_desync` when they diverge).
-- `decisions`: `warmth`, `channel`, `language`, `angle`, `sender`, `warmth_detail`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7.
+- Root: `decisions`, `rounds`, `angle_rationale`, `a_note`, `fact_provenance`, `quality_checklist`, `profile_hash`
+- `profile_hash`: `sha256:<64-hex>` — SHA-256 of the profile file's bytes at generation time, prefixed `sha256:`. Computed by the A harness; A copies the value verbatim. Optional in the schema: manually-authored approaches and any path that did not read a profile have no hash to record. When present and the profile exists, mismatch is an error (`profile_hash_mismatch`) — the source profile was rebuilt or edited, and the approach must be regenerated. When absent, `validate_approach` accepts the file and the state machine routes any divergence (deleted / edited profile) through T6/T7 instead.
+- `decisions`: `channel`, `language`, `angle`, `sender`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7. Warmth comes from the profile front matter (`warmth_finding`); it is not duplicated on the approach.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
 - `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `replied_date`, `reply_summary`, `script`, `text`, `char_count`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`, `mode`, `parent`, `reply_all`
 - `parent` (only inside a `mode: reply` message): `account`, `folder`, `uid`, `message_id`, `references`, `subject`, `from`, `to`, `cc`. Captured verbatim from `mailroom read` on the parent message; T3 derives In-Reply-To, References, the `Re:` Subject, and the To/Cc set from these fields at send time.
@@ -194,14 +194,8 @@ Approach files are YAML documents with a **closed vocabulary** — any key outsi
 **Example skeleton — terse, but covers every canonical key so you never need to invent one:**
 
 ```yaml
-generated_for:
-  contact_name: Jane Doe
-  organisation: Acme Venues
-profile_date: 2026-04-12
-profile_yield: 4
+profile_hash: sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
 decisions:
-  warmth: cold
-  warmth_detail: No prior contact; found via segment sweep.
   channel: email
   channel_detail: Email primary, phone fallback.
   language: en
@@ -271,7 +265,6 @@ fact_provenance:
   - claim: Fact asserted somewhere in the file.
     source: URL or profile reference.
 quality_checklist: Notes on §7 checks passed or flagged.
-response_likelihood: 55
 ```
 
 Lifecycle fields (`actioned_date`, `replied_date`, `reply_summary`) are written by the dispatcher and reply-ingest stages — start them as `null` (or omit). Entries under `replies` are ingested by `spar-email.tcl`; its item shape (`direction`, `date`, `from`, `body`) is mechanical, not part of the AI-authored vocabulary.
