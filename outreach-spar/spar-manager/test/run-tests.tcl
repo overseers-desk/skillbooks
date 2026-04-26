@@ -401,6 +401,95 @@ set row [make_base_row {stem "frank-wu-pacific"}]
 set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result state] "REPLIED" "final round, direction=received reply → REPLIED"
 
+# 1j. Approach exists, profile MISSING → PROFILE_STALE (issue #63).
+# Re-profile required before re-approach. Legacy DISCOVERED behaviour
+# (skipping the approach entirely) would silently lose the work.
+set seg [make_temp_segment]
+write_approach_yaml $seg "ghost-profile-stem" [approach_yaml_final_unsent]
+set row [make_base_row {stem "ghost-profile-stem"}]
+set result [spar::classify_contact $row $seg]
+assert_eq [dict get $result state] "PROFILE_STALE" \
+    "approach references missing profile → PROFILE_STALE (#63)"
+
+# 1k. Approach with profile_hash matching profile bytes → APPROACHED (#63)
+set seg [make_temp_segment]
+write_profile $seg "hash-ok"
+set _ph_match [string tolower [::sha2::sha256 -hex -file [file join $seg profiles "hash-ok.md"]]]
+write_approach_yaml $seg "hash-ok" "profile_hash: sha256:$_ph_match
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+"
+set row [make_base_row {stem "hash-ok"}]
+set result [spar::classify_contact $row $seg]
+assert_eq [dict get $result state] "APPROACHED" \
+    "approach + profile_hash match → APPROACHED"
+
+# 1l. Approach with profile_hash MISMATCHING profile bytes → APPROACH_STALE (#63)
+set seg [make_temp_segment]
+write_profile $seg "hash-bad"
+write_approach_yaml $seg "hash-bad" {profile_hash: sha256:0000000000000000000000000000000000000000000000000000000000000000
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}
+set row [make_base_row {stem "hash-bad"}]
+set result [spar::classify_contact $row $seg]
+assert_eq [dict get $result state] "APPROACH_STALE" \
+    "approach + profile_hash mismatch → APPROACH_STALE (#63)"
+
+# 1m. Approach without profile_hash (legacy / pre-#63) → APPROACHED.
+# Without a stored hash the state machine cannot prove staleness; the
+# contact stays APPROACHED until rebuilt through A.
+set seg [make_temp_segment]
+write_profile $seg "hash-absent"
+write_approach_yaml $seg "hash-absent" [approach_yaml_final_unsent]
+set row [make_base_row {stem "hash-absent"}]
+set result [spar::classify_contact $row $seg]
+assert_eq [dict get $result state] "APPROACHED" \
+    "legacy approach (no profile_hash) → APPROACHED"
+
+# 1n. SENT supersedes APPROACH_STALE: an engaged contact is not re-approached
+# on hash mismatch alone — would clobber the send history.
+set seg [make_temp_segment]
+write_profile $seg "hash-bad-sent"
+write_approach_yaml $seg "hash-bad-sent" {profile_hash: sha256:0000000000000000000000000000000000000000000000000000000000000000
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test
+    body: Hello
+    actioned_date: 2026-04-01
+    replied_date: null
+}
+set row [make_base_row {stem "hash-bad-sent"}]
+set result [spar::classify_contact $row $seg]
+assert_eq [dict get $result state] "SENT" \
+    "SENT supersedes APPROACH_STALE (engaged contact not re-approached)"
+
 # ════════════════════════════════════════════════════════════════════════
 # 2. Secondary properties
 # ════════════════════════════════════════════════════════════════════════
@@ -1759,8 +1848,10 @@ if {![file isdirectory $campaign_dir]} {
 # ════════════════════════════════════════════════════════════════════════
 # 15. T6/T7 zero tasks (PROFILE_STALE undefined)
 # ════════════════════════════════════════════════════════════════════════
-section "15. T6/T7 zero tasks (PROFILE_STALE undefined)"
+section "15. T6/T7 routing (#63)"
 
+# Baseline: a healthy mix (DISCOVERED, PROFILED, APPROACHED, SENT) yields
+# zero T6 and zero T7 tasks — re-profile/re-approach only fire on staleness.
 set seg_t67 [make_temp_segment]
 write_profile $seg_t67 "t67-profiled"
 write_profile $seg_t67 "t67-approached"
@@ -1776,10 +1867,51 @@ write_roster_tsv $seg_t67 $::std_headers [list \
 set ct67 [spar::classify_segment $seg_t67]
 
 set t6_results [spar::transition_eligible $ct67 "T6"]
-assert_eq [llength $t6_results] 0 "T6: zero tasks (PROFILE_STALE undefined)"
+assert_eq [llength $t6_results] 0 "T6: zero tasks when no contact is PROFILE_STALE"
 
 set t7_results [spar::transition_eligible $ct67 "T7"]
-assert_eq [llength $t7_results] 0 "T7: zero tasks (PROFILE_STALE undefined)"
+assert_eq [llength $t7_results] 0 "T7: zero tasks when no contact is APPROACH_STALE"
+
+# T6: missing-profile-with-approach lands in PROFILE_STALE → 1 T6 task.
+set seg_t6 [make_temp_segment]
+write_approach_yaml $seg_t6 "needs-reprofile" [approach_yaml_final_unsent]
+write_roster_tsv $seg_t6 $::std_headers [list \
+    [make_base_row {contact_name "Needs Reprofile" star_rating 4 stem "needs-reprofile"}] \
+]
+set ct6 [spar::classify_segment $seg_t6]
+set t6_ready [spar::transition_eligible $ct6 "T6"]
+assert_eq [llength $t6_ready] 1 \
+    "T6: approach references missing profile → 1 ready task"
+
+# T7: APPROACH_STALE (hash mismatch) → 1 T7 task; T2 still sees zero.
+set seg_t7 [make_temp_segment]
+write_profile $seg_t7 "hash-stale"
+write_approach_yaml $seg_t7 "hash-stale" {profile_hash: sha256:0000000000000000000000000000000000000000000000000000000000000000
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}
+write_roster_tsv $seg_t7 $::std_headers [list \
+    [make_base_row {contact_name "Hash Stale" star_rating 4 email "test@acme-venues.au" stem "hash-stale"}] \
+]
+set ct7 [spar::classify_segment $seg_t7]
+# Use the campaign-aware form so the dispatch gate (in_scope_channel) accepts it.
+set t7_cdata [dict create primary_channel email]
+set t7_ready [spar::transition_eligible $ct7 "T7" email $t7_cdata 2026-04-15]
+assert_eq [llength $t7_ready] 1 \
+    "T7: APPROACH_STALE → 1 ready task (#63)"
+set t2_zero [spar::transition_eligible $ct7 "T2" email $t7_cdata 2026-04-15]
+assert_eq [llength $t2_zero] 0 \
+    "T2: APPROACH_STALE not eligible for T2 (T7's territory)"
 
 # ════════════════════════════════════════════════════════════════════════
 # 16. progress_counts edge cases

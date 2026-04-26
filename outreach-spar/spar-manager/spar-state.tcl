@@ -268,7 +268,7 @@ proc spar::analyse_final_round {data} {
 #
 # Returns a dict:
 #   state         one of: EXCLUDED DISCOVERED PROFILED PROFILE_STALE
-#                         APPROACHED SENT REPLIED
+#                         APPROACHED APPROACH_STALE SENT REPLIED
 #   profile_path  path to profile file, or empty string
 #   approach_path path to approach YAML, or empty string
 #   star          integer (0 if blank/unparseable)
@@ -341,25 +341,37 @@ proc spar::classify_contact {roster_row segment_dir} {
         return $base
     }
 
-    # 2. DISCOVERED — profile file does not exist
+    # 2. DISCOVERED — profile file does not exist AND no approach exists.
+    #    If an approach exists pointing at a missing profile, the contact
+    #    needs re-profiling, not first-time profiling — fall through to
+    #    PROFILE_STALE below so T6 picks it up. After T6 re-profiles, the
+    #    approach's stored profile_hash will mismatch the freshly-written
+    #    profile and T7 will route the re-approach (#63).
     set profile_path [spar::profile_path_for_stem $segment_dir $stem]
-    if {![file exists $profile_path]} {
+    set approach_path [spar::approach_path_for_stem $segment_dir $stem]
+    set profile_exists [file exists $profile_path]
+    set approach_exists [file exists $approach_path]
+    if {!$profile_exists && !$approach_exists} {
         dict set base state DISCOVERED
         return $base
     }
-    dict set base profile_path $profile_path
+    if {$profile_exists} {
+        dict set base profile_path $profile_path
+    }
 
-    # 3. PROFILED / PROFILE_STALE — profile exists. Determine which by comparing
-    # the profile's front-matter dependent_data snapshot to the current roster row.
-    # Malformed front matter does not flip to STALE — validate_profile catches that
-    # separately; staleness is about roster-vs-snapshot divergence only.
+    # 3. PROFILED / PROFILE_STALE — determine whether the profile is fresh,
+    # missing-but-needed (approach exists), or divergent from the roster
+    # snapshot. Malformed front matter does not flip to STALE —
+    # validate_profile catches that separately; staleness here is only
+    # about roster-vs-snapshot divergence and approach-references-missing.
     set profile_state PROFILED
-    if {[spar::_profile_is_stale $profile_path $roster_row]} {
+    if {!$profile_exists} {
+        set profile_state PROFILE_STALE
+    } elseif {[spar::_profile_is_stale $profile_path $roster_row]} {
         set profile_state PROFILE_STALE
     }
 
-    set approach_path [spar::approach_path_for_stem $segment_dir $stem]
-    if {![file exists $approach_path]} {
+    if {!$approach_exists} {
         dict set base state $profile_state
         return $base
     }
@@ -374,15 +386,36 @@ proc spar::classify_contact {roster_row segment_dir} {
     dict set base to_addresses    [dict get $fr to_addresses]
     dict set base unsent_subjects [dict get $fr unsent_subjects]
 
+    # If the approach references a missing profile, route via T6 first.
+    # The approach is preserved on disk; T6 re-profiles, then the next
+    # sweep observes the hash mismatch (or, if no hash was stored, the
+    # operator runs T7 manually) and re-approaches.
+    if {!$profile_exists} {
+        dict set base state PROFILE_STALE
+        return $base
+    }
+
     # 6. REPLIED — SENT and (replied_date or reply with direction:received)
     if {[dict get $fr any_sent] && [dict get $fr email_replied]} {
         dict set base state REPLIED
         return $base
     }
 
-    # 5. SENT — final round has at least one message with actioned_date
+    # 5. SENT — final round has at least one message with actioned_date.
+    # SENT/REPLIED supersede APPROACH_STALE: a contact already engaged is
+    # not re-approached on hash mismatch alone (would clobber send history).
     if {[dict get $fr any_sent]} {
         dict set base state SENT
+        return $base
+    }
+
+    # 4a. APPROACH_STALE — approach references a profile whose bytes have
+    # changed since the approach was drafted (#63). T7 picks these up and
+    # re-runs A. Skipped silently when the approach lacks profile_hash;
+    # legacy approaches drafted before the hash was introduced remain
+    # APPROACHED until rebuilt.
+    if {[spar::_approach_hash_mismatch $profile_path $approach_data]} {
+        dict set base state APPROACH_STALE
         return $base
     }
 
@@ -844,9 +877,9 @@ proc spar::progress_counts {classified_contacts} {
     set n_email_replied 0
 
     # States that are "profiled or above"
-    set profiled_plus {PROFILED PROFILE_STALE APPROACHED SENT REPLIED}
+    set profiled_plus {PROFILED PROFILE_STALE APPROACHED APPROACH_STALE SENT REPLIED}
     # States that are "approached or above"
-    set approached_plus {APPROACHED SENT REPLIED}
+    set approached_plus {APPROACHED APPROACH_STALE SENT REPLIED}
 
     foreach contact $classified_contacts {
         set state [dict get $contact state]
@@ -1081,6 +1114,24 @@ proc spar::_roster_field_current {row field} {
         set v [string trim $inner]
     }
     return $v
+}
+
+# _approach_hash_mismatch -- return 1 iff the approach carries profile_hash
+# and its sha256 differs from the profile file's bytes. Returns 0 when the
+# approach has no profile_hash (legacy / manually-authored case — the state
+# machine cannot prove staleness without a hash, and the contact stays
+# APPROACHED). Used by classify_contact to raise APPROACH_STALE for #63.
+# Caller has already confirmed both files exist.
+proc spar::_approach_hash_mismatch {profile_path approach_data} {
+    if {![dict exists $approach_data profile_hash]} { return 0 }
+    set stored [string trim [dict get $approach_data profile_hash]]
+    if {[regexp {^sha256:([0-9a-fA-F]+)$} $stored -> hex]} {
+        set stored [string tolower $hex]
+    } else {
+        set stored [string tolower $stored]
+    }
+    set actual [string tolower [::sha2::sha256 -hex -file $profile_path]]
+    return [expr {$actual ne $stored}]
 }
 
 # _profile_is_stale -- return 1 iff any dependent_data field in the profile's

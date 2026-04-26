@@ -85,10 +85,11 @@ A contact's state is inferred from the presence and content of files in the segm
 | State | Condition |
 |-------|-----------|
 | `EXCLUDED` | Roster: `date_excluded` non-empty |
-| `DISCOVERED` | Valid (not excluded), file `profiles/{stem}.md` does not exist. Blank `contact_name` is permitted — P §4.1 resolves it before the rest of profiling |
+| `DISCOVERED` | Valid (not excluded), neither `profiles/{stem}.md` nor `approach/{stem}.yaml` exists. Blank `contact_name` is permitted — P §4.1 resolves it before the rest of profiling |
 | `PROFILED` | Valid, file `profiles/{stem}.md` exists, not stale |
-| `PROFILE_STALE` | Valid, `profiles/{stem}.md` exists, but stale — see §Staleness |
-| `APPROACHED` | Profiled, file `approach/{stem}.yaml` exists, no final-round message with `actioned_date` set |
+| `PROFILE_STALE` | Valid, profile is missing-but-needed (an `approach/{stem}.yaml` references it) OR profile exists with snapshot diverging from the roster — see §Staleness |
+| `APPROACHED` | Profiled (fresh), file `approach/{stem}.yaml` exists, no final-round message with `actioned_date` set, profile_hash either matches or is absent |
+| `APPROACH_STALE` | Profiled (fresh), `approach/{stem}.yaml` exists with a `profile_hash` that diverges from the current profile bytes (#63). T7 re-runs A. Routed to APPROACHED-equivalent only — SENT/REPLIED supersede so engaged contacts are never re-approached on hash mismatch alone |
 | `SENT` | `approach/{stem}.yaml` exists, final round has at least one message with `actioned_date` non-null |
 | `REPLIED` | `SENT`, and final round has a message with `replied_date` non-null, or a reply with `direction: received` |
 
@@ -121,14 +122,19 @@ The approach YAML's final round can contain multiple messages across channels (e
 
 ### Staleness
 
-`PROFILE_STALE` is raised when the profile's front-matter `dependent_data` snapshot diverges from the current roster row. The profile document captures, at generation time, the roster fields whose subsequent change should invalidate P's assessment; comparing the snapshot against the live roster row is the staleness test.
+`PROFILE_STALE` is raised in two situations:
+
+1. **Snapshot divergence.** The profile's front-matter `dependent_data` snapshot diverges from the current roster row. The profile document captures, at generation time, the roster fields whose subsequent change should invalidate P's assessment; comparing the snapshot against the live roster row is the staleness test.
+2. **Approach references a missing profile.** An `approach/{stem}.yaml` exists but the corresponding `profiles/{stem}.md` has been deleted. This is the missing-profile half of #63: re-profile is required (T6) before the approach can be re-considered. After T6 writes a fresh profile, the approach's stored `profile_hash` will mismatch the new bytes and the contact lands in `APPROACH_STALE` for T7.
 
 **Snapshotted fields and divergence rules** (full spec in `spar-P-profile.md` §5.3):
 
 - `contact_name`, `organisation`, `role` — any difference is staleness.
 - `date_excluded` — **asymmetric**. Stale iff snapshot holds a date and current value is empty (contact was re-validated after exclusion). The reverse (empty → date) is not staleness — EXCLUDED state supersedes.
 
-A profile missing its front matter, or with unparseable front matter, is classified as `PROFILED` at the file-existence level but `validate_profile` emits an error; it is not marked `PROFILE_STALE`. Staleness is about roster-vs-snapshot divergence, not file integrity.
+A profile missing its front matter, or with unparseable front matter, is classified as `PROFILED` at the file-existence level but `validate_profile` emits an error; it is not marked `PROFILE_STALE`. Staleness is about roster-vs-snapshot divergence (or missing-profile-with-approach), not file integrity.
+
+`APPROACH_STALE` is raised when the approach's stored `profile_hash` diverges from the current profile file's sha256 (#63). The hash is recorded by the A harness at generation time and verified by `classify_contact`. Approaches without `profile_hash` (legacy or manually authored) are classified `APPROACHED` and never raise `APPROACH_STALE` — without a stored hash, the state machine cannot prove staleness. Once such an approach is re-run through A, the new file carries a hash and re-enters the staleness loop.
 
 ---
 
@@ -157,7 +163,7 @@ This is a hard failure, not a warning. Contact state is determined by file prese
 #
 # Returns a dict:
 #   state         one of: EXCLUDED DISCOVERED PROFILED PROFILE_STALE
-#                         APPROACHED SENT REPLIED
+#                         APPROACHED APPROACH_STALE SENT REPLIED
 #   profile_path  path to profile file, or empty string
 #   approach_path path to approach YAML, or empty string
 #   star          integer (0 if blank/unparseable)
@@ -225,8 +231,8 @@ The transition manager filters `classify_segment` output by eligibility conditio
 | T2 | Profile → Approach | state = PROFILED, star≥3 | spar-a-batch.tcl | available |
 | T3 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | spar-transitions.tcl --tid=T3 --execute (AWS SES, serial with --delay) | available |
 | T4 | Send → Reply | email_sent, not email_replied | spar-transitions.tcl --tid=T4 --execute (mailroom reply-check, appends replies to approach YAML) | available |
-| T6 | Stale → Re-profile | state = PROFILE_STALE | spar-transitions.tcl --tid=T6 --execute | available (zero tasks until PROFILE_STALE defined) |
-| T7 | Re-profile → Re-approach | re-PROFILED after stale (see note) | spar-a-batch.tcl | available (zero tasks until PROFILE_STALE defined) |
+| T6 | Stale → Re-profile | state = PROFILE_STALE | spar-transitions.tcl --tid=T6 --execute | available |
+| T7 | Re-profile → Re-approach | state = APPROACH_STALE (profile_hash mismatch, #63) | spar-a-batch.tcl | available |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
 | T9 | Secondary follow-up | `secondary_ready` | render script + manual marker | manual |
 | T10 | Tertiary follow-up | `tertiary_ready` | render script + manual marker | manual |
@@ -238,7 +244,7 @@ Dispatch statuses:
 - **blocked** — dispatch exists in principle but depends on a feature (e.g., PROFILE_STALE detection) that is not yet defined; treated as not-implemented until unblocked
 - **n/a** — monitoring transition; no dispatch action exists by design
 
-**T7 note:** "Re-profiled after stale" requires knowing that the profile was updated after the approach was created. Requires comparing file modification times or a staleness marker. Defer until PROFILE_STALE is formally defined.
+**T7 note:** Resolved as of #63. The approach records `profile_hash: sha256:<hex>` at generation time; `classify_contact` re-hashes the profile file and assigns `APPROACH_STALE` on mismatch. T7 picks those up and re-runs A. SENT/REPLIED supersede `APPROACH_STALE` so already-engaged contacts are never re-approached on hash mismatch alone.
 
 ### Task states per contact in the transition manager
 
@@ -257,10 +263,13 @@ Each contact in a transition has one of:
 
 ```
   DISCOVERED ──T1──▶ PROFILED ──T2──▶ APPROACHED ──T3──▶ SENT ──T4──▶ REPLIED
-                         │
-                         ▼
-                   PROFILE_STALE ──T6──▶ PROFILED (re-written)
-                                   ──T7──▶ APPROACHED (re-approached, deferred)
+                         │                  │
+                         ▼                  ▼
+                   PROFILE_STALE       APPROACH_STALE ──T7──▶ APPROACHED (re-approached, #63)
+                       │
+                       ▼
+                   T6 ──▶ PROFILED (re-written; downstream APPROACH_STALE follows
+                                    via profile_hash mismatch on the next sweep)
 
   EXCLUDED — terminal; reached as an in-process outcome of S (sweep), P (profile),
              or A (approach) writing `date_excluded` on the roster row, per the rules
@@ -291,8 +300,8 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 | T2  | PROFILED             | star ≥ 3                                                | —                                                              | spar-state.tcl:456 |
 | T3  | APPROACHED ∨ SENT    | primary_channel = email ∧ has_email ∧ ¬email_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬A: "invalid_approach_yaml". primary_channel ≠ email: row is omitted entirely | spar-state.tcl:464 |
 | T4  | any ≠ EXCLUDED       | email_sent ∧ ¬email_replied ∧ A(approach_path)          | A invalid → "invalid_approach_yaml". Ready rows dispatch through spar::r::run (mailroom reply-check) | spar-state.tcl:487 |
-| T6  | PROFILE_STALE        | —                                                       | PROFILE_STALE classifier not yet assigned → zero tasks         | spar-state.tcl:513 |
-| T7  | —                    | deferred                                                | zero tasks                                                     | spar-state.tcl:522 |
+| T6  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
+| T7  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
 | T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always pending: awaiting acceptance                            | spar-state.tcl:526 |
 | T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | spar-state.tcl:T9 branch |
 | T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | spar-state.tcl:T10 branch |

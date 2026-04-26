@@ -25,12 +25,21 @@ oo::class create ::spar::transitions::ApproachTransition {
 
     # T2: PROFILED contacts that pass the campaign-wide approach-dispatch
     # gate (min_star, in_scope_channel, skip_excluded — SSOT with
-    # spar::a::run per #56).  T7 is deferred (zero tasks) until
-    # PROFILE_STALE re-profiling detection lands.
+    # spar::a::run per #56).
+    # T7: APPROACH_STALE contacts. classify_contact assigns this state when
+    # the approach's profile_hash diverges from the current profile bytes
+    # (#63); T7 re-runs A on those, dispatching through the same gate so
+    # filter rules stay symmetric with T2.
     method eligible {contact primary_channel cdata today_iso} {
-        if {[my tid] ne "T2"} { return {} }
+        set tid [my tid]
         set state [dict get $contact state]
-        if {$state ne "PROFILED"} { return {} }
+        if {$tid eq "T2"} {
+            if {$state ne "PROFILED"} { return {} }
+        } elseif {$tid eq "T7"} {
+            if {$state ne "APPROACH_STALE"} { return {} }
+        } else {
+            return {}
+        }
         if {[spar::_approach_dispatch_gate $contact $cdata] ne ""} { return {} }
         return [list [spar::_task $contact ready ""]]
     }
