@@ -4,8 +4,9 @@
 #
 # Encapsulates the tree widget, the row_id → contact_name map, the
 # stem → row_id map, and the Show-completed toggle. Subscribes to the
-# CampaignModel's `refreshed` event so the tree rebuilds after each
-# refresh without extra wiring here.
+# CampaignModel's `reloading` event (clears the tree at the start of
+# a refresh) and `transition-loaded` events (fills incrementally as
+# the loader coroutine produces tids).
 #
 # DispatchController (Commit 5) consults this class via get_tree_widget,
 # get_row_names, get_slug_to_row, and update_row. _resolve_target
@@ -91,12 +92,12 @@ oo::class create spar::ui::TransitionTree {
         bind $Tree <<TreeviewSelect>> [list [self] on_select]
         bind $Tree <Double-1>         [list [self] on_double_click]
 
-        # Subscribe to refreshed — refreshed rebuilds the tree in place.
-        $Campaign subscribe refreshed [list [self] on_refreshed]
+        # Subscribe to reloading — refresh has reset the model; clear
+        # the tree so transition-loaded events refill it cleanly.
+        $Campaign subscribe reloading [list [self] on_reloading]
 
-        # Subscribe to transition-loaded — async loader fires this once
-        # per tid so the tree fills in steps instead of all at once when
-        # fully-loaded arrives.
+        # Subscribe to transition-loaded — loader coroutine fires this
+        # once per tid so the tree fills in steps.
         $Campaign subscribe transition-loaded [list [self] on_transition_loaded]
     }
 
@@ -123,10 +124,11 @@ oo::class create spar::ui::TransitionTree {
     # ─── Public entry points ──────────────────────────────────────────────
 
     # populate — rebuild the treeview from the Campaign's current
-    # transitions. Resets RowNames / SlugToRow. Used by the synchronous
-    # `refreshed` path (full rebuild) and the initial empty render in
-    # spar-ui.tcl. The async loader path fills the tree incrementally
-    # via on_transition_loaded instead.
+    # transitions. Resets RowNames / SlugToRow / NextTransitionIdx.
+    # Used by the initial empty render in spar-ui.tcl and by
+    # on_reloading (where Transitions is empty, so the call effectively
+    # clears). The loader coroutine fills the tree incrementally via
+    # on_transition_loaded.
     method populate {} {
         set transitions [$Campaign get_transitions]
 
@@ -220,8 +222,10 @@ oo::class create spar::ui::TransitionTree {
         }
     }
 
-    # on_refreshed — CampaignModel fired `refreshed`. Rebuild the tree.
-    method on_refreshed {} {
+    # on_reloading — CampaignModel reset its state at the start of a
+    # refresh. populate against the now-empty Transitions clears the
+    # tree; transition-loaded events will refill it.
+    method on_reloading {} {
         my populate
     }
 

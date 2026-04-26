@@ -17,10 +17,13 @@
 #       of task tuples (one per eligible contact). Fires per tid in
 #       ui_transition_tids order so subscribers can append incrementally
 #       without waiting for fully-loaded.
+#   reloading
+#       refresh has reset Segments to TSV-only counts and emptied
+#       AllContacts/Transitions/Warnings; subscribers should clear
+#       their views. Fired before start_async kicks off; fully-loaded
+#       fires when the post-reload coroutine completes.
 #   fully-loaded
 #       all async segments done; warnings and transitions are now populated
-#   refreshed
-#       a full synchronous refresh has completed; every accessor is fresh
 #   log-message {msg}
 #       the model wants a line logged (piped to LogWindow by the caller;
 #       the model does not own the log window directly)
@@ -142,12 +145,13 @@ oo::class create spar::ui::CampaignModel {
         coroutine $LoaderCoro [self] loader_body
     }
 
-    # refresh — cancel any pending async, do a full synchronous pass,
-    # fire refreshed.
+    # refresh — reload from disk. Resets state to the TSV-only pass,
+    # fires `reloading` so views can clear, then re-runs the same
+    # coroutine load() uses. fully-loaded fires when filling completes.
     method refresh {} {
-        my _cancel_loader
-        my _load_full
-        my _fire refreshed
+        my _load_fast
+        my _fire reloading
+        my start_async
     }
 
     # ─── Internal: helpers ────────────────────────────────────────────────
@@ -299,69 +303,6 @@ oo::class create spar::ui::CampaignModel {
 
         set Warnings    {}
         set Transitions {}
-    }
-
-    # ─── Internal: full synchronous load ──────────────────────────────────
-
-    method _load_full {} {
-        set FullLoadDone 1
-
-        if {![my _load_config]} {
-            set Segments    {}
-            set Warnings    {}
-            set Transitions {}
-            set AllContacts {}
-            return
-        }
-
-        set AllContacts {}
-        set Segments    {}
-
-        foreach item $SegmentPaths {
-            lassign $item label seg_dir
-            set is_active [expr {$label ni $SkipSet}]
-
-            if {[catch {set classified [spar::classify_segment $seg_dir]} err]} {
-                lappend Segments [list $label $is_active [my _zero_row]]
-                continue
-            }
-
-            if {$is_active} {
-                foreach c $classified { lappend AllContacts $c }
-            }
-
-            set counts [spar::progress_counts $classified]
-
-            set v  [dict get $counts valid]
-            set p  [dict get $counts profiled]
-            set s3 [dict get $counts star3]
-            set a3 [dict get $counts approached_star3]
-            set e  [dict get $counts has_email]
-            set ae [dict get $counts approached_email]
-            set l  [dict get $counts has_linkedin]
-            set f  [dict get $counts has_facebook]
-            set po [dict get $counts has_phone_only]
-            set es [dict get $counts email_sent]
-            set er [dict get $counts email_replied]
-
-            set raw_data [list \
-                $v  {} \
-                $p  [my _format_pct $p  $v] \
-                $s3 [my _format_pct $s3 $v] \
-                $a3 [my _format_pct $a3 $s3] \
-                $e  [my _format_pct $e  $s3] \
-                $ae [my _format_pct $ae $e] \
-                $l  [my _format_pct $l  $s3] \
-                $f  [my _format_pct $f  $s3] \
-                $po [my _format_pct $po $s3] \
-                $es [my _format_pct $es $ae] \
-                $er [my _format_pct $er $es]]
-
-            lappend Segments [list $label $is_active $raw_data]
-        }
-
-        set Warnings    [dict get [spar::build_warnings $AllContacts $Cdata] messages]
-        set Transitions [my _build_transitions]
     }
 
     # ─── Internal: transition build ───────────────────────────────────────

@@ -5,7 +5,7 @@
 # Encapsulates column config, per-segment count snapshots, per-segment
 # inclusion (checkbox) state, the "…" placeholder policy for
 # filesystem-dependent columns, and the totals row. Subscribes to the
-# CampaignModel's segment-loaded / fully-loaded / refreshed events so
+# CampaignModel's segment-loaded / fully-loaded / reloading events so
 # rows update as async loads complete.
 #
 # Consumers call `populate`, `set_all`, `get_checked_segments` as
@@ -17,7 +17,7 @@
 #       emitted whenever the set of checked segments changes — either
 #       because the user toggled a row, or because `set_all` was called
 #       from the All/None toolbar buttons, or because `populate` seeded
-#       new defaults from a refreshed model.
+#       new defaults from a reloaded model.
 
 package require Tk
 package require TclOO
@@ -125,7 +125,7 @@ oo::class create spar::ui::ProgressTable {
         # Subscribe to the Campaign's lifecycle events.
         $Campaign subscribe segment-loaded [list [self] on_segment_loaded]
         $Campaign subscribe fully-loaded   [list [self] on_fully_loaded]
-        $Campaign subscribe refreshed      [list [self] on_refreshed]
+        $Campaign subscribe reloading      [list [self] on_reloading]
     }
 
     # ─── Subscription ─────────────────────────────────────────────────────
@@ -148,9 +148,9 @@ oo::class create spar::ui::ProgressTable {
     # ─── Public entry points ──────────────────────────────────────────────
 
     # populate — rebuild the treeview from the Campaign's current
-    # segments. Called once at startup and again after each `refreshed`
-    # event. Resets SegCounts / SegChecked from the fresh segment list
-    # and fires segments-changed with the resulting default.
+    # segments. Called once at startup and again on each `reloading`.
+    # Resets SegCounts / SegChecked from the fresh segment list and
+    # fires segments-changed with the resulting default.
     method populate {} {
         set segments       [$Campaign get_segments]
         set full_load_done [$Campaign get_full_load_done]
@@ -340,9 +340,10 @@ oo::class create spar::ui::ProgressTable {
         after idle [list [self] autosize]
     }
 
-    # on_refreshed — a full synchronous refresh completed. Rebuild the
-    # table from scratch against the fresh model.
-    method on_refreshed {} {
+    # on_reloading — refresh has reset Segments to TSV-only counts;
+    # populate re-renders against the placeholders. segment-loaded
+    # events will then fill in the filesystem-dependent columns.
+    method on_reloading {} {
         my populate
     }
 
