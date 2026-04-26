@@ -436,15 +436,12 @@ proc ::spar::ui::build_loaded_body {path} {
     # ============================================================
     #
     # Every refactored zone self-subscribes to the Campaign events it
-    # cares about. The two things left here are:
-    #   - the config-summary labels (cf.v1/v2/v4) + window title, which
-    #     belong to this bootstrap and have no owning class;
-    #   - a kick to TransitionTree on `fully-loaded` (it self-subscribes
-    #     to `refreshed` but not `fully-loaded`, and the first populate
-    #     against the post-async transitions list lives here).
-    # log-message is piped straight into the LogWindow.
-
-    $campaign subscribe fully-loaded [list $tree_obj populate]
+    # cares about. The only things left here are the config-summary
+    # labels (cf.v1/v2/v4) + window title, which belong to this
+    # bootstrap and have no owning class. log-message is piped straight
+    # into the LogWindow. TransitionTree fills incrementally via
+    # `transition-loaded` during the async pass and rebuilds on
+    # `refreshed`, so no fully-loaded wiring is needed here.
 
     $campaign subscribe refreshed [list apply {{} {
         global cf
