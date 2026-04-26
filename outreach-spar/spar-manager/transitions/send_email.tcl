@@ -201,11 +201,9 @@ oo::class create ::spar::transitions::SendEmailDriver {
         set subject [spar::dict_get_default $msg subject ""]
         set body    [spar::dict_get_default $msg body ""]
 
-        if {$to eq "" || $subject eq "" || $body eq ""} {
-            my fail_task "message missing to/subject/body"
-            return
-        }
-
+        # Sender resolution. Done before any reply-header derivation because
+        # build_reply_headers needs the chosen sender address to drop it
+        # from the original recipient set when reply_all is true.
         set from_name  $CampFromName
         set from_email $CampFromEmail
         if {[dict exists $approach_data decisions]} {
@@ -224,6 +222,35 @@ oo::class create ::spar::transitions::SendEmailDriver {
             return
         }
         set from_hdr [expr {$from_name ne "" ? "$from_name <$from_email>" : $from_email}]
+
+        # Reply mode (issue #79). The To/Subject/Cc and threading headers
+        # are derived from the captured parent block; the message itself
+        # only carries the body. Validator gates have already required
+        # parent.message_id to be present, but we re-check defensively.
+        set in_reply_to ""
+        set references ""
+        set is_reply [expr {[spar::dict_get_default $msg mode ""] eq "reply"}]
+        if {$is_reply} {
+            set parent [spar::dict_get_default $msg parent [dict create]]
+            set parent_mid [string trim [spar::dict_get_default $parent message_id ""]]
+            if {$parent_mid eq ""} {
+                my fail_task "reply mode but parent.message_id is empty; \
+                    cannot construct In-Reply-To"
+                return
+            }
+            set reply_all [spar::dict_get_default $msg reply_all 0]
+            set rh [spar::build_reply_headers $parent $from_email $reply_all]
+            set to          [dict get $rh to]
+            set cc          [dict get $rh cc]
+            set subject     [dict get $rh subject]
+            set in_reply_to [dict get $rh in_reply_to]
+            set references  [dict get $rh references]
+        }
+
+        if {$to eq "" || $subject eq "" || $body eq ""} {
+            my fail_task "message missing to/subject/body"
+            return
+        }
 
         if {$bcc eq ""} { set bcc $CampBcc }
         if {$bcc eq ""} { set bcc $from_email }
@@ -254,17 +281,19 @@ oo::class create ::spar::transitions::SendEmailDriver {
         }
 
         set params [dict create \
-            smtp_host  $CampSmtpHost \
-            smtp_port  $CampSmtpPort \
-            smtp_user  $CampSmtpUser \
-            smtp_pass  $pass \
-            from_email $from_email \
-            from_name  $from_name \
-            to         $to \
-            cc         $cc \
-            bcc        $bcc \
-            subject    $subject \
-            body       $body]
+            smtp_host    $CampSmtpHost \
+            smtp_port    $CampSmtpPort \
+            smtp_user    $CampSmtpUser \
+            smtp_pass    $pass \
+            from_email   $from_email \
+            from_name    $from_name \
+            to           $to \
+            cc           $cc \
+            bcc          $bcc \
+            subject      $subject \
+            body         $body \
+            in_reply_to  $in_reply_to \
+            references   $references]
 
         if {[catch {set TmpFile [exec mktemp]} err]} {
             my fail_task "tempfile error: $err"

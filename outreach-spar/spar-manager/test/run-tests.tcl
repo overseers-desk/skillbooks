@@ -3034,6 +3034,236 @@ assert_eq [dict get [lindex $au_miss 0] severity] "warning" \
     "audit: missing transcript → severity=warning"
 
 # ════════════════════════════════════════════════════════════════════════
+# 25. spar::build_reply_headers — reply header derivation (issue #79)
+# ════════════════════════════════════════════════════════════════════════
+section "25. spar::build_reply_headers — reply header derivation"
+
+# Parent dict captured at A-time from `mailroom read`.
+set brh_parent_root [dict create \
+    account admin-rivermill-au \
+    folder {[Gmail]/All Mail} \
+    uid 34937 \
+    message_id "<root@example.com>" \
+    references {} \
+    subject "Requirement of Chef" \
+    from "Andrew Kerby <andrew@chefsontherun.example>" \
+    to {director@rivermill.au} \
+    cc {}]
+
+# 25a. Plain reply (not reply-all) — To = parent.from; Cc empty.
+set brh1 [spar::build_reply_headers $brh_parent_root director@rivermill.au 0]
+assert_eq [dict get $brh1 to] "andrew@chefsontherun.example" \
+    "build_reply_headers: To derived from parent.from (email-only)"
+assert_eq [dict get $brh1 cc] "" \
+    "build_reply_headers: Cc empty when reply_all=0"
+assert_eq [dict get $brh1 subject] "Re: Requirement of Chef" \
+    "build_reply_headers: Subject prepends Re:"
+assert_eq [dict get $brh1 in_reply_to] "<root@example.com>" \
+    "build_reply_headers: In-Reply-To = parent.message_id"
+assert_eq [dict get $brh1 references] "<root@example.com>" \
+    "build_reply_headers: References = parent.message_id alone for thread root"
+
+# 25b. Reply-all — Cc preserves the rest of the recipient set, minus sender.
+set brh_parent_multi [dict create \
+    message_id "<thread2@example.com>" \
+    references {<root2@example.com>} \
+    subject "demi-chef" \
+    from "Tania Flint <tania@chefsontherun.example>" \
+    to {director@rivermill.au, ops@chefsontherun.example} \
+    cc {colleague@rivermill.au}]
+set brh2 [spar::build_reply_headers $brh_parent_multi director@rivermill.au 1]
+assert_eq [dict get $brh2 to] "tania@chefsontherun.example" \
+    "build_reply_headers: reply-all keeps To = parent.from"
+# Cc is comma+space-joined; sender (director@rivermill.au) and the new To
+# (tania@chefsontherun.example) are excluded.
+assert_match [dict get $brh2 cc] "*ops@chefsontherun.example*" \
+    "build_reply_headers: reply-all Cc keeps original other recipients"
+assert_match [dict get $brh2 cc] "*colleague@rivermill.au*" \
+    "build_reply_headers: reply-all Cc keeps original Cc"
+assert_eq [string match "*director@rivermill.au*" [dict get $brh2 cc]] 0 \
+    "build_reply_headers: reply-all Cc excludes the sender's own address"
+
+# 25c. References chain — append parent.message_id to existing chain.
+assert_eq [dict get $brh2 references] "<root2@example.com> <thread2@example.com>" \
+    "build_reply_headers: References = chain + parent.message_id"
+
+# 25d. Re: dedup — parent already starts with Re: → don't double-prefix.
+set brh_parent_re [dict create \
+    message_id "<m@x>" \
+    subject "RE: Requirement of Chef" \
+    from "andrew@example.com" \
+    references {}]
+set brh3 [spar::build_reply_headers $brh_parent_re director@rivermill.au 0]
+assert_eq [dict get $brh3 subject] "RE: Requirement of Chef" \
+    "build_reply_headers: Subject preserves existing Re: prefix (no double Re:)"
+
+# 25e. Re[2]: dedup — bracketed counter form is also a Re prefix.
+set brh_parent_re2 [dict create \
+    message_id "<m@x>" \
+    subject "Re\[2\]: Requirement of Chef" \
+    from "andrew@example.com" \
+    references {}]
+set brh4 [spar::build_reply_headers $brh_parent_re2 director@rivermill.au 0]
+assert_eq [dict get $brh4 subject] "Re\[2\]: Requirement of Chef" \
+    "build_reply_headers: Subject preserves Re\[N\]: prefix"
+
+# 25f. parent.references already ends with parent.message_id → don't duplicate.
+set brh_parent_dup [dict create \
+    message_id "<m@x>" \
+    references {<a@x> <m@x>} \
+    subject "X" \
+    from "a@b.com"]
+set brh5 [spar::build_reply_headers $brh_parent_dup director@rivermill.au 0]
+assert_eq [dict get $brh5 references] "<a@x> <m@x>" \
+    "build_reply_headers: References does not duplicate parent.message_id"
+
+# ════════════════════════════════════════════════════════════════════════
+# 26. validate_approach — reply-mode messages (issue #79)
+# ════════════════════════════════════════════════════════════════════════
+section "26. validate_approach — reply-mode messages"
+
+proc issues_with_severity {issues sev} {
+    set result {}
+    foreach issue $issues { if {[dict get $issue severity] eq $sev} { lappend result $issue } }
+    return $result
+}
+
+# 26a. mode: reply with complete parent block → no errors.
+set seg_rv1 [make_temp_segment]
+set rv1_path [write_approach_yaml $seg_rv1 "rv-reply-ok" {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+response_likelihood: 50
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    mode: reply
+    reply_all: false
+    body: Following up on the Chef requirement we discussed.
+    actioned_date: null
+    replied_date: null
+    parent:
+      account: admin-rivermill-au
+      folder: "[Gmail]/All Mail"
+      uid: 34937
+      message_id: "<root@example.com>"
+      subject: Requirement of Chef
+      from: Andrew Kerby <andrew@example.com>
+}]
+set rv1_issues [spar::validate_approach $rv1_path "andrew@example.com" "Test Contact"]
+# Reply mode: To/Subject/desync checks don't apply (To is derived). Only
+# structural and reply-specific gates run.
+set rv1_errors [issues_with_severity $rv1_issues error]
+assert_eq [llength $rv1_errors] 0 \
+    "validate_approach: reply mode with full parent block → no errors"
+
+# 26b. Subject may be omitted from the message under mode: reply.
+set seg_rv2 [make_temp_segment]
+set rv2_path [write_approach_yaml $seg_rv2 "rv-reply-no-subject" {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+response_likelihood: 50
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    mode: reply
+    body: Continuing the thread.
+    parent:
+      message_id: "<root@example.com>"
+      subject: Original
+      from: andrew@example.com
+}]
+set rv2_issues [spar::validate_approach $rv2_path "andrew@example.com" "Test Contact"]
+set rv2_missing [issues_with_code $rv2_issues email_missing_content]
+assert_eq [llength $rv2_missing] 0 \
+    "validate_approach: reply mode without subject → no email_missing_content"
+
+# 26c. mode: reply but no body → email_missing_content (body still required).
+set seg_rv3 [make_temp_segment]
+set rv3_path [write_approach_yaml $seg_rv3 "rv-reply-no-body" {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+response_likelihood: 50
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    mode: reply
+    parent:
+      message_id: "<root@example.com>"
+      subject: Original
+      from: andrew@example.com
+}]
+set rv3_issues [spar::validate_approach $rv3_path "andrew@example.com" "Test Contact"]
+set rv3_missing [issues_with_code $rv3_issues email_missing_content]
+assert_eq [llength $rv3_missing] 1 \
+    "validate_approach: reply mode without body → email_missing_content"
+
+# 26d. mode: reply but parent.message_id missing → reply_missing_parent_message_id.
+set seg_rv4 [make_temp_segment]
+set rv4_path [write_approach_yaml $seg_rv4 "rv-reply-no-mid" {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+response_likelihood: 50
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    mode: reply
+    body: text
+    parent:
+      account: a
+      folder: f
+      uid: 1
+      subject: x
+      from: andrew@example.com
+}]
+set rv4_issues [spar::validate_approach $rv4_path "andrew@example.com" "Test Contact"]
+set rv4_errors [issues_with_code $rv4_issues reply_missing_parent_message_id]
+assert_eq [llength $rv4_errors] 1 \
+    "validate_approach: reply with no parent.message_id → reply_missing_parent_message_id"
+
+# 26e. parent block with unknown key → unknown_key_parent.
+set seg_rv5 [make_temp_segment]
+set rv5_path [write_approach_yaml $seg_rv5 "rv-reply-unknown" {generated_for:
+  contact_name: Test Contact
+  organisation: Test Org
+response_likelihood: 50
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    mode: reply
+    body: text
+    parent:
+      message_id: "<root@example.com>"
+      subject: x
+      from: andrew@example.com
+      bogus_key: nope
+}]
+set rv5_issues [spar::validate_approach $rv5_path "andrew@example.com" "Test Contact"]
+set rv5_unknown [issues_with_code $rv5_issues unknown_key_parent]
+assert_eq [llength $rv5_unknown] 1 \
+    "validate_approach: parent with unknown key → unknown_key_parent"
+
+# ════════════════════════════════════════════════════════════════════════
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
 cleanup_temps

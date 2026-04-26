@@ -24,6 +24,108 @@ proc spar::extract_email_address {header} {
     return [string tolower [string trim $header]]
 }
 
+# build_reply_headers -- derive the headers needed to thread a reply onto an
+# existing IMAP message. Pure function: takes the parent block captured at
+# A-time (see SPAR-A §6 `parent` keyset, populated from `mailroom read`) plus
+# the sender's address and reply_all flag, returns a dict with `to`, `cc`,
+# `subject`, `in_reply_to`, `references` ready to drop into the SMTP path.
+#
+# The parent dict is captured from `mailroom read` at A-time and frozen into
+# the approach YAML; we deliberately do not re-fetch at send time, so the
+# reply still threads correctly even if the parent UID has shifted in the
+# meantime (Gmail label cleanups, server migrations).
+#
+# parent dict keys consumed: message_id, subject, from, to, cc, references.
+# Any may be missing or empty; the only one strictly required for threading
+# is `message_id` (the caller is responsible for rejecting empty).
+#
+# sender_email is the bare address chosen for this send (campaign default or
+# decisions.sender override). It is removed from the resulting To/Cc set so
+# we do not accidentally email ourselves.
+proc spar::build_reply_headers {parent sender_email reply_all} {
+    set sender_lc [string tolower [string trim $sender_email]]
+    set parent_msg_id [spar::dict_get_default $parent message_id ""]
+    set parent_subject [spar::dict_get_default $parent subject ""]
+    set parent_from [spar::dict_get_default $parent from ""]
+    set parent_to [spar::dict_get_default $parent to ""]
+    set parent_cc [spar::dict_get_default $parent cc ""]
+    set parent_references [spar::dict_get_default $parent references ""]
+
+    # To: the sender of the parent. Reply-all preserves the rest of the
+    # original recipient set in Cc, minus our own address.
+    set to_addr [spar::extract_email_address $parent_from]
+
+    set cc_addrs {}
+    if {$reply_all} {
+        foreach raw [list {*}[spar::_split_address_list $parent_to] \
+                          {*}[spar::_split_address_list $parent_cc]] {
+            set bare [spar::extract_email_address $raw]
+            if {$bare eq "" || $bare eq $sender_lc || $bare eq $to_addr} continue
+            if {$bare in $cc_addrs} continue
+            lappend cc_addrs $bare
+        }
+    }
+    set cc_joined [join $cc_addrs ", "]
+
+    # Subject: prepend "Re: " unless the parent already carries an RFC 5322
+    # reply prefix (Re: / RE: / Re[2]: / Re : etc.). Match case-insensitively
+    # at the start of the trimmed subject.
+    set sub_trim [string trim $parent_subject]
+    if {[regexp -nocase {^re(\[\d+\])?\s*:} $sub_trim]} {
+        set subject $sub_trim
+    } else {
+        set subject "Re: $sub_trim"
+    }
+
+    # References: append parent.message_id to the captured chain. RFC 2822
+    # gives References as a space-separated list of msg-id tokens. Avoid
+    # double-listing if the chain already ends with the parent message_id.
+    set ref_tokens {}
+    foreach r $parent_references {
+        set rt [string trim $r]
+        if {$rt ne ""} { lappend ref_tokens $rt }
+    }
+    set parent_msg_id_trim [string trim $parent_msg_id]
+    if {$parent_msg_id_trim ne ""} {
+        if {[llength $ref_tokens] == 0 || \
+                [lindex $ref_tokens end] ne $parent_msg_id_trim} {
+            lappend ref_tokens $parent_msg_id_trim
+        }
+    }
+    set references [join $ref_tokens " "]
+
+    return [dict create \
+        to $to_addr \
+        cc $cc_joined \
+        subject $subject \
+        in_reply_to $parent_msg_id_trim \
+        references $references]
+}
+
+# _split_address_list -- split a comma-separated address header into entries.
+# YAML parses `to: addr` and `to: a@x, b@y` as strings; `to: [a@x, b@y]`
+# parses as a Tcl list. Detect comma-separated headers by the literal comma
+# (a Tcl list of addresses contains no commas after parsing); otherwise treat
+# the value as a (possibly single-element) Tcl list.
+proc spar::_split_address_list {value} {
+    set s [string trim $value]
+    if {$s eq ""} { return {} }
+    if {[string first "," $s] >= 0} {
+        set out {}
+        foreach part [split $s ","] {
+            set p [string trim $part]
+            if {$p ne ""} { lappend out $p }
+        }
+        return $out
+    }
+    set out {}
+    foreach addr $s {
+        set a [string trim $addr]
+        if {$a ne ""} { lappend out $a }
+    }
+    return $out
+}
+
 # html_to_text -- strip HTML to plain text, skipping blockquote content.
 # Truncates at forwarded-message markers.
 proc spar::html_to_text {body} {

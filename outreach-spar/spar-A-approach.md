@@ -49,6 +49,21 @@ When a first-channel contact (e.g. a connection request) is accepted before the 
 
 If the profile does not contain a warmth assessment, flag it for the human. Do not guess.
 
+### 4.1.1 Reply-vs-new-thread decision
+
+If the warmth is `existing` or `prior` and the contact still has a live email thread on a topic compatible with the campaign offer, replying on that thread keeps the message in the recipient's existing inbox conversation, preserves any cc'd parties, and signals continuity. A fresh subject from a long-quiet contact reads as a cold approach even when it is not.
+
+Apply the rule below; on the false branch, default to a fresh subject.
+
+- **Reply on the existing thread when** warmth ∈ {existing, prior} AND a current thread exists in the dispatcher prefetch AND the contact's roster email (or a same-domain colleague address — admin/partnerships/director, etc.) appears in that chain.
+- **Otherwise** open a new subject with an optional in-body reference to the prior touchpoint.
+
+If frequent prior correspondence already establishes that the contact knows the sender, a fresh subject is acceptable — the recipient will recognise the sender regardless. The reply-on-thread rule matters most for sparse or long-quiet relationships where a new subject would read as cold.
+
+**Parent-thread selection.** When several candidate threads exist, pick the most recent message in the most-substantive thread, where substantive means the largest message count combined with recency. The dispatcher prefetch (`mailroom -A search ... --format text`) groups hits by date; cluster mentally by stripping `Re:`/`Fwd:` prefixes and matching the participant set within a 30-day window.
+
+**Capturing the parent.** The dispatcher prefetch carries an `id:` line per hit (the parent's Message-ID) — that alone is enough to thread the reply. To capture the rest of the threading state for the approach YAML, run a single `mailroom -a <ACCOUNT> read --folder <FOLDER> --uid <UID>` on the chosen parent and record `message_id`, `references`, `subject`, `from`, `to`, `cc` into the message's `parent` block (see §6). Subject and Cc are derived at send time from those fields; the message itself only carries the body.
+
 ### 4.2 Select channel
 
 Read the segment file for the prescribed approach type. Then check what channels are available in the roster (email, linkedin_url, facebook_url, phone, etc.). An email is usable when the `email` column contains a deliverable `user@domain` value (the §4.8 format gate); masked or placeholder values do not count.
@@ -169,11 +184,12 @@ Approach files are YAML documents with a **closed vocabulary** — any key outsi
 - `generated_for`: `contact_name`, `organisation` — required. Records the roster values at generation time so `spar::validate_approach` can detect roster edits that post-date the approach file (emits `name_desync` / `org_desync` when they diverge).
 - `decisions`: `warmth`, `channel`, `language`, `angle`, `sender`, `warmth_detail`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
-- `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `replied_date`, `reply_summary`, `script`, `text`, `char_count`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`
+- `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `replied_date`, `reply_summary`, `script`, `text`, `char_count`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`, `mode`, `parent`, `reply_all`
+- `parent` (only inside a `mode: reply` message): `account`, `folder`, `uid`, `message_id`, `references`, `subject`, `from`, `to`, `cc`. Captured verbatim from `mailroom read` on the parent message; T3 derives In-Reply-To, References, the `Re:` Subject, and the To/Cc set from these fields at send time.
 - `fact_provenance` / `fact_check` items: `claim`, `source` (plus `result`, `note`, `correction` for `fact_check` only)
 - `script` items (inside a message): `point`, `text`
 
-**Structural rules:** At least one round must have `type: final`. Draft and review rounds require `number`. Email messages must have `subject` or `body`.
+**Structural rules:** At least one round must have `type: final`. Draft and review rounds require `number`. Ordinary email messages must have `subject` or `body`. Reply-mode messages (`mode: reply`) need only `body` — the Subject is derived from `parent.subject` — and must carry a non-empty `parent.message_id` so T3 can construct the threading headers.
 
 **Example skeleton — terse, but covers every canonical key so you never need to invent one:**
 
@@ -259,6 +275,36 @@ response_likelihood: 55
 ```
 
 Lifecycle fields (`actioned_date`, `replied_date`, `reply_summary`) are written by the dispatcher and reply-ingest stages — start them as `null` (or omit). Entries under `replies` are ingested by `spar-email.tcl`; its item shape (`direction`, `date`, `from`, `body`) is mechanical, not part of the AI-authored vocabulary.
+
+**Reply-mode email skeleton** (issue #79). When the §4.1.1 rule selects reply-on-thread, the final email message replaces `subject` and `to` with a `parent` block carrying the captured threading state:
+
+```yaml
+rounds:
+  - type: final
+    chosen_usps: [U2]
+    messages:
+      - channel: email
+        mode: reply
+        reply_all: true
+        body: |
+          Following up on the Chef requirement we discussed in August.
+          ...
+        actioned_date: null
+        replied_date: null
+        parent:
+          account: admin-rivermill-au
+          folder: "[Gmail]/All Mail"
+          uid: 34937
+          message_id: "<CADxn=...example.com>"
+          references:
+            - "<earlier-thread-root@example.com>"
+          subject: Requirement of Chef
+          from: Andrew Kerby <andrew@chefsontherun.example>
+          to: director@rivermill.au
+          cc: ""
+```
+
+Omit `subject`/`to` from the message when `mode: reply` is set — T3 derives them. `reply_all: true` preserves the original Cc set (minus the chosen sender's own address); `reply_all: false` (default) replies to the parent's From only.
 
 The file ID uses a segment prefix and sequential number: `TOR-001-peter-myers.yaml`. Place it in the campaign's approach directory.
 
