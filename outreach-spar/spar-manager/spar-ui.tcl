@@ -332,7 +332,7 @@ proc ::spar::ui::build_loaded_body {path} {
     # config, per-segment count snapshots, checkbox state, totals row,
     # and the "..." placeholders shown while async classification is
     # in flight. It subscribes to the CampaignModel's segment-loaded /
-    # fully-loaded / refreshed events in its constructor, so refreshes
+    # fully-loaded / reloading events in its constructor, so refreshes
     # propagate without extra wiring here.
     set progress [spar::ui::ProgressTable new $campaign ${cpanel}.progress]
     $progress populate
@@ -347,8 +347,9 @@ proc ::spar::ui::build_loaded_body {path} {
     # TransitionTree encapsulates the transition treeview, the row_id
     # → contact_name map, the stem → row_id map, the Show-completed
     # checkbox, and <<TreeviewSelect>> / <Double-1> bindings. It
-    # subscribes to the CampaignModel's `refreshed` event in its
-    # constructor so refreshes rebuild the tree without extra wiring.
+    # subscribes to the CampaignModel's `reloading` and
+    # `transition-loaded` events so the tree clears and refills as the
+    # loader coroutine produces tids.
     set tree_obj [spar::ui::TransitionTree new $campaign $tpanel]
     $tree_obj populate
 
@@ -381,8 +382,8 @@ proc ::spar::ui::build_loaded_body {path} {
     # DispatchController owns the cohort dicts, dispatch lifecycle,
     # progress-bar animation, pause/cancel, and the headless
     # auto_dispatch entry point. It wires the Play / Pause / Cancel
-    # buttons in its constructor and subscribes to Campaign (refreshed,
-    # fully-loaded) and TransitionTree (dispatch-target-changed) for
+    # buttons in its constructor and subscribes to Campaign
+    # (fully-loaded) and TransitionTree (dispatch-target-changed) for
     # its own lifecycle.
     #
     # Circular wire: TransitionTree's _resolve_target needs to read
@@ -436,17 +437,12 @@ proc ::spar::ui::build_loaded_body {path} {
     # ============================================================
     #
     # Every refactored zone self-subscribes to the Campaign events it
-    # cares about. The two things left here are:
-    #   - the config-summary labels (cf.v1/v2/v4) + window title, which
-    #     belong to this bootstrap and have no owning class;
-    #   - a kick to TransitionTree on `fully-loaded` (it self-subscribes
-    #     to `refreshed` but not `fully-loaded`, and the first populate
-    #     against the post-async transitions list lives here).
-    # log-message is piped straight into the LogWindow.
+    # cares about. The only thing left here is the config-summary
+    # labels (cf.v1/v2/v4) + window title, which belong to this
+    # bootstrap and have no owning class. log-message is piped straight
+    # into the LogWindow.
 
-    $campaign subscribe fully-loaded [list $tree_obj populate]
-
-    $campaign subscribe refreshed [list apply {{} {
+    $campaign subscribe reloading [list apply {{} {
         global cf
         ${cf}.v1 configure -text [$::campaign get_campaign_name]
         ${cf}.v2 configure -text [$::campaign get_sender_text]

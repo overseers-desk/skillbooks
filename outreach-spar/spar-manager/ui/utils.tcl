@@ -37,7 +37,9 @@ namespace eval ::spar::ui::warnings {
             -state disabled -background "#fff8e1" -relief flat
         populate_text $campaign $f
 
-        $campaign subscribe refreshed    [list ::spar::ui::warnings::rebuild $campaign $f]
+        # rebuild on reloading clears the panel (Warnings is empty
+        # post-reset); rebuild on fully-loaded refills it.
+        $campaign subscribe reloading    [list ::spar::ui::warnings::rebuild $campaign $f]
         $campaign subscribe fully-loaded [list ::spar::ui::warnings::rebuild $campaign $f]
 
         return $f
