@@ -47,7 +47,8 @@ proc spar::_approach_canonical_keys {} {
         root {decisions rounds profile_date profile_yield angle_rationale a_note fact_provenance quality_checklist response_likelihood generated_for} \
         decisions {warmth channel language angle sender warmth_detail channel_detail subsegment} \
         round {type number messages verdict fact_check in_character chosen_usps revision_note notes replies antifact_check} \
-        message {channel subject body to actioned_date replied_date reply_summary script text char_count bcc cc director_note to_note phone_note} \
+        message {channel subject body to actioned_date replied_date reply_summary script text char_count bcc cc director_note to_note phone_note mode parent reply_all} \
+        parent {account folder uid message_id references subject from to cc} \
         fact_provenance_item {claim source} \
         fact_check_item {claim source result note correction} \
         script_item {point text} \
@@ -136,6 +137,12 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
                             lappend issues {*}[spar::_check_unknown_keys $_item script_item $contact_name]
                         }
                     }
+                    if {[dict exists $_msg parent]} {
+                        set _parent [dict get $_msg parent]
+                        if {[llength $_parent] % 2 == 0} {
+                            lappend issues {*}[spar::_check_unknown_keys $_parent parent $contact_name]
+                        }
+                    }
                 }
             }
             if {[dict exists $_round fact_check]} {
@@ -205,14 +212,34 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
                 "Review round missing required 'number' field"]
         }
 
-        # Email messages must have subject or body
+        # Email messages must have content. For ordinary sends that means
+        # both subject and body; for `mode: reply` the subject is derived
+        # from the parent thread (Re: <parent.subject>), so only body is
+        # required at the message level. A reply must carry a parent block
+        # with a non-empty message_id — without it T3 cannot construct the
+        # In-Reply-To / References headers that join the thread.
         set final_email_count 0
         if {[dict exists $round messages]} {
             foreach msg [dict get $round messages] {
                 if {[dict exists $msg channel] && [dict get $msg channel] eq "email"} {
-                    if {![dict exists $msg subject] && ![dict exists $msg body]} {
-                        lappend issues [spar::_issue warning email_missing_content $contact_name \
-                            "Email message missing both 'subject' and 'body'"]
+                    set is_reply [expr {[dict exists $msg mode] && \
+                        [dict get $msg mode] eq "reply"}]
+                    if {$is_reply} {
+                        if {![dict exists $msg body]} {
+                            lappend issues [spar::_issue warning email_missing_content $contact_name \
+                                "Reply email message missing 'body'"]
+                        }
+                        set _parent [spar::dict_get_default $msg parent ""]
+                        set _pmid [spar::dict_get_default $_parent message_id ""]
+                        if {[string trim $_pmid] eq ""} {
+                            lappend issues [spar::_issue error reply_missing_parent_message_id $contact_name \
+                                "Reply email message has no parent.message_id; cannot thread the reply"]
+                        }
+                    } else {
+                        if {![dict exists $msg subject] && ![dict exists $msg body]} {
+                            lappend issues [spar::_issue warning email_missing_content $contact_name \
+                                "Email message missing both 'subject' and 'body'"]
+                        }
                     }
                     if {$rtype eq "final"} { incr final_email_count }
                 }

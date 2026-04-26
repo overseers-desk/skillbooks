@@ -12,6 +12,10 @@
 # params_file must contain a Tcl dict with keys:
 #   smtp_host  smtp_port  smtp_user  smtp_pass
 #   from_email  from_name  to  cc  bcc  subject  body
+# Optional reply-threading keys (issue #79):
+#   in_reply_to  references
+# When non-empty, both are written as RFC 2822 headers so the recipient's
+# MUA threads the message under the parent. References is space-separated.
 
 package require base64
 package require tls
@@ -44,17 +48,19 @@ proc smtp_write_hdr {sock name val} {
 }
 
 proc smtp_run {params} {
-    set host       [dict get $params smtp_host]
-    set port       [dict get $params smtp_port]
-    set user       [dict get $params smtp_user]
-    set pass       [dict get $params smtp_pass]
-    set from_email [dict get $params from_email]
-    set from_name  [dict get $params from_name]
-    set to         [dict get $params to]
-    set cc         [dict get $params cc]
-    set bcc        [dict get $params bcc]
-    set subject    [dict get $params subject]
-    set body       [dict get $params body]
+    set host        [dict get $params smtp_host]
+    set port        [dict get $params smtp_port]
+    set user        [dict get $params smtp_user]
+    set pass        [dict get $params smtp_pass]
+    set from_email  [dict get $params from_email]
+    set from_name   [dict get $params from_name]
+    set to          [dict get $params to]
+    set cc          [dict get $params cc]
+    set bcc         [dict get $params bcc]
+    set subject     [dict get $params subject]
+    set body        [dict get $params body]
+    set in_reply_to [expr {[dict exists $params in_reply_to] ? [dict get $params in_reply_to] : ""}]
+    set references  [expr {[dict exists $params references]  ? [dict get $params references]  : ""}]
 
     set from_hdr [expr {$from_name ne "" ? "$from_name <$from_email>" : $from_email}]
 
@@ -98,6 +104,12 @@ proc smtp_run {params} {
     smtp_write_hdr $sock "To"                        $to
     if {$cc ne ""}  { smtp_write_hdr $sock "Cc"      $cc }
     smtp_write_hdr $sock "Subject"                   $subject
+    if {$in_reply_to ne ""} {
+        smtp_write_hdr $sock "In-Reply-To"            $in_reply_to
+    }
+    if {$references ne ""} {
+        smtp_write_hdr $sock "References"             $references
+    }
     smtp_write_hdr $sock "MIME-Version"              "1.0"
     smtp_write_hdr $sock "Content-Type"              "text/plain; charset=utf-8"
     smtp_write_hdr $sock "Content-Transfer-Encoding" "8bit"
