@@ -34,7 +34,16 @@ oo::class create spar::ui::Inspector {
         set CollapseMemory  [dict create]
         set Subs            [dict create]
 
-        set Right ${Pane}.right
+        # Own a sub-frame inside .pw.right so SegmentViewer can pack a
+        # peer sub-frame in the same pane and the two can swap visibility
+        # without their widget trees colliding. Pack the sub-frame at
+        # construction so .pw.right contributes its natural width to the
+        # toplevel's initial layout — otherwise the window opens narrower
+        # and the half-of-current-width sash math shrinks .pw.main more
+        # than it did before this refactor.
+        set Right ${Pane}.right.insp
+        ttk::frame $Right
+        pack $Right -fill both -expand 1
 
         ttk::frame ${Right}.hdr
         pack ${Right}.hdr -fill x -side top
@@ -98,6 +107,10 @@ oo::class create spar::ui::Inspector {
     # ─── Visibility control ───────────────────────────────────────────────
 
     method show {} {
+        # Fire `shown` first so any peer viewer pack-forgets its
+        # sub-frame before we pack ours and slide the sash open.
+        my fire shown
+        pack $Right -fill both -expand 1
         set Visible 1
         set w [winfo width $Pane]
         if {$SashPos <= 0 || $SashPos >= $w} {
@@ -109,7 +122,17 @@ oo::class create spar::ui::Inspector {
 
     method hide {} {
         catch { set SashPos [$Pane sashpos 0] }
+        pack forget $Right
         catch { $Pane sashpos 0 [winfo width $Pane] }
+        set Visible 0
+    }
+
+    # displace — peer viewer is taking the pane. Pack-forget our
+    # sub-frame but leave the sash position alone; the peer's show()
+    # will set it. Distinct from `hide` (which retracts the sash) so
+    # the show→displace→pack→sashpos flow doesn't fight itself.
+    method displace {} {
+        pack forget $Right
         set Visible 0
     }
 
