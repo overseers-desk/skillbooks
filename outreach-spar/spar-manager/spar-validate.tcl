@@ -9,16 +9,24 @@
 
 package require sha256
 
-# _approach_validation_error -- return first error-severity validation message for
-# a contact's approach file, or "" if clean. Used by transition_eligible to gate
-# approach-dependent transitions (T6, T7, T8) on structural validity (#43 principle 7).
-proc spar::_approach_validation_error {contact} {
+# approach_validation_error -- return first error-severity validation message for
+# a contact's approach file, or "" if clean. Used by transition `eligible` methods
+# to gate approach-dependent transitions (T6, T7, T8, T9, T10) on structural
+# validity (#43 principle 7). Routes through approach_summary so the parse is
+# shared with classify_contact and channel_readiness on the same render.
+oo::define spar::State method approach_validation_error {contact} {
     set ap [spar::dict_get_default $contact approach_path ""]
     if {$ap eq "" || ![file exists $ap]} { return "" }
     set roster_email [string trim [spar::dict_get_default $contact email ""]]
     set cname [spar::dict_get_default $contact contact_name ""]
     set corg  [spar::dict_get_default $contact organisation ""]
-    foreach issue [spar::validate_approach $ap $roster_email $cname $corg] {
+    set adata [my approach_summary $contact]
+    if {$adata eq ""} {
+        # Parse failure is itself an error, mirroring validate_approach_path's
+        # invalid_yaml issue on a fresh parse miss.
+        return "Approach file could not be parsed as YAML"
+    }
+    foreach issue [spar::validate_approach_data $adata $ap $roster_email $cname $corg] {
         if {[dict get $issue severity] ne "error"} continue
         return [dict get $issue message]
     }
@@ -89,6 +97,12 @@ proc spar::_check_unknown_keys {data level contact_name} {
 # Returns a list of issue dicts, each with keys:
 #   severity, code, contact_name, message
 #
+# Path form: parses the YAML on every call. Used by CLI / harness
+# callers (spar-a-harness.tcl) that don't construct a State and so
+# can't share a cached projection. Render-path callers go through
+# spar::State approach_validation_error → validate_approach_data, which
+# reuses the cached projection.
+#
 proc spar::validate_approach {approach_path roster_email contact_name {roster_organisation ""}} {
     set issues {}
 
@@ -102,6 +116,22 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
             "Approach file could not be parsed as YAML"]
         return $issues
     }
+
+    return [spar::validate_approach_data $approach_data $approach_path \
+        $roster_email $contact_name $roster_organisation]
+}
+
+# validate_approach_data -- guts of validate_approach over an already-
+# parsed dict. Render-path callers (the State's approach_validation_error)
+# pass the projection from approach_summary so the parse is shared with
+# the rest of the render. The approach_path argument is needed for the
+# profile_hash position and profile-file mismatch checks (file-system
+# reads, not dict reads); pass "" if the caller has no path on hand
+# (validation will then skip those file-bound checks).
+#
+proc spar::validate_approach_data {approach_data approach_path roster_email \
+        contact_name {roster_organisation ""}} {
+    set issues {}
 
     # ── Closed-vocabulary walk (approach-schema.yaml) ──
     # Emits unknown_key_<level> / wrong_level issues. Per #43 principle 1.
@@ -303,7 +333,12 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
     # to detect APPROACH_STALE without parsing the YAML; the migration
     # script and the A harness both place the hash on line 1, and this
     # check catches drift if anything edits the file out of order.
-    if {[dict exists $approach_data profile_hash]} {
+    #
+    # File-bound checks (line-1 position, profile-file sha256 compare)
+    # only run when an approach_path was supplied — pure dict callers
+    # (test fixtures with synthetic data) opt out of these checks by
+    # passing "".
+    if {$approach_path ne "" && [dict exists $approach_data profile_hash]} {
         set _stored [string trim [dict get $approach_data profile_hash]]
         set _stored_hex $_stored
         if {[regexp {^sha256:([0-9a-fA-F]+)$} $_stored -> _hex]} {

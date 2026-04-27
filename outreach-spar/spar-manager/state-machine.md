@@ -152,13 +152,15 @@ This is a hard failure, not a warning. Contact state is determined by file prese
 
 ## Core function signature
 
+Classification lives on `spar::State`, a TclOO class whose lifetime matches a unit of work. Each top-level entry point (CampaignModel, the CLI scripts, the harnesses) constructs one and threads it through to consumers. Per-instance method calls (rather than free procs) host the per-instance approach-summary cache that issue #84 lands.
+
 ```tcl
 # classify_contact -- classify one contact's state.
 #
 # roster_row   dict with TSV fields (stem, contact_name, date_excluded,
 #              star_rating, email, linkedin_url, facebook_url, phone, ...)
 #              stem is required; classify_segment validates its presence
-#              before calling this proc.
+#              before calling this method.
 # segment_dir  absolute path to the segment directory
 #
 # Returns a dict:
@@ -175,10 +177,10 @@ This is a hard failure, not a warning. Contact state is determined by file prese
 #   linkedin_sent bool
 #   email_replied bool
 #
-proc spar::classify_contact {roster_row segment_dir} { ... }
+oo::define spar::State method classify_contact {roster_row segment_dir} { ... }
 ```
 
-A second proc aggregates across all contacts in a segment:
+A second method aggregates across all contacts in a segment:
 
 ```tcl
 # classify_segment -- load roster and classify all contacts.
@@ -186,7 +188,7 @@ A second proc aggregates across all contacts in a segment:
 # Returns a list of dicts, one per roster row, each being the result of
 # classify_contact plus the original roster_row.
 #
-proc spar::classify_segment {segment_dir} { ... }
+oo::define spar::State method classify_segment {segment_dir} { ... }
 ```
 
 ---

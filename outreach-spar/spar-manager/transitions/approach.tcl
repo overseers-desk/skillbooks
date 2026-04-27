@@ -30,7 +30,7 @@ oo::class create ::spar::transitions::ApproachTransition {
     # the approach's profile_hash diverges from the current profile bytes
     # (#63); T4 re-runs A on those, dispatching through the same gate so
     # filter rules stay symmetric with T2.
-    method eligible {contact primary_channel cdata today_iso} {
+    method eligible {state contact primary_channel cdata today_iso} {
         set tid [my tid]
         set state [dict get $contact state]
         if {$tid eq "T2"} {

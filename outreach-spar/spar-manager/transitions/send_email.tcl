@@ -441,17 +441,17 @@ oo::class create ::spar::transitions::SendEmailTransition {
     # primary_channel == "email" until per-message routing (#49) lands —
     # email-as-secondary belongs to T9/T10 with wait_days/wait_condition.
     # Approach-YAML structural validity is a hard gate (#43 principle 7).
-    method eligible {contact primary_channel cdata today_iso} {
+    method eligible {state contact primary_channel cdata today_iso} {
         if {$primary_channel ne "email"} { return {} }
-        set state [dict get $contact state]
-        if {$state ne "APPROACHED" && $state ne "SENT"} { return {} }
+        set cstate [dict get $contact state]
+        if {$cstate ne "APPROACHED" && $cstate ne "SENT"} { return {} }
         set has_email   [dict get $contact has_email]
         set email_sent  [dict get $contact email_sent]
         if {!$has_email} {
             return [list [spar::_task $contact pending "No email address"]]
         }
         if {$email_sent} { return {} }
-        set vmsg [spar::_approach_validation_error $contact]
+        set vmsg [$state approach_validation_error $contact]
         if {$vmsg ne ""} {
             return [list [spar::_task $contact pending "invalid_approach_yaml: $vmsg"]]
         }

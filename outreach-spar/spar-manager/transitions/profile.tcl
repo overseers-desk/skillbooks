@@ -3,7 +3,7 @@
 # ProfileTransition — T1 (Sweep → Profile) and T3 (Stale → Re-profile).
 # Both dispatch through ::spar::p::run; the only difference is entry state
 # (DISCOVERED for T1, PROFILE_STALE for T3), which is handled by
-# spar::transition_eligible.
+# spar::State's transition_eligible.
 
 oo::class create ::spar::transitions::ProfileTransition {
     superclass ::spar::transitions::Transition
@@ -29,7 +29,7 @@ oo::class create ::spar::transitions::ProfileTransition {
 
     # T1 fires from DISCOVERED, T3 fires from PROFILE_STALE — same class,
     # entry state distinguished via [my tid].
-    method eligible {contact primary_channel cdata today_iso} {
+    method eligible {state contact primary_channel cdata today_iso} {
         set state [dict get $contact state]
         set tid [my tid]
         if {$tid eq "T1" && $state eq "DISCOVERED"} {

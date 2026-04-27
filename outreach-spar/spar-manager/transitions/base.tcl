@@ -62,9 +62,13 @@ oo::class create ::spar::transitions::Transition {
     # Default eligible — zero tasks. Subclasses that have eligibility
     # criteria (T1, T2, T3, T4, T6, T7, T8, T9, T10) override. Method name has
     # no leading underscore: TclOO would unexport it and the dispatcher in
-    # spar::transition_eligible reaches it via the registered object
+    # spar::State's transition_eligible reaches it via the registered object
     # command, which is an external call.
-    method eligible {contact primary_channel cdata today_iso} {
+    #
+    # state — the spar::State driving this pass. Phase A threads it through;
+    # Phase B uses it to pull cached approach summaries instead of re-parsing
+    # the YAML at each gate.
+    method eligible {state contact primary_channel cdata today_iso} {
         return {}
     }
 }

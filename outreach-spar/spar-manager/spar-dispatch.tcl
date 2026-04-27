@@ -302,7 +302,11 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
     set pre_snapshot [dict create]
     if {$count > 0} {
         if {[catch {
-            set _pre_contacts [spar::classify_segment $segment_dir]
+            # DbC-Pre bypass: fresh State so any Phase B cache cannot
+            # carry stale entries into the snapshot the post-pass diffs against.
+            set _pre_state [spar::State new]
+            set _pre_contacts [$_pre_state classify_segment $segment_dir]
+            $_pre_state destroy
             foreach _issue [spar::validate_roster $_pre_contacts] {
                 set _cn [dict get $_issue contact_name]
                 set _cd [dict get $_issue code]
@@ -331,7 +335,10 @@ proc spar::p::_dbc_post_progress {orig_progress slug_ctx slug status message} {
     if {![dict exists $slug_ctx $slug]} return
     lassign [dict get $slug_ctx $slug] segment_dir pre_snapshot
     if {[catch {
-        set _post_contacts [spar::classify_segment $segment_dir]
+        # DbC-Post bypass: fresh State, same rationale as the pre snapshot.
+        set _post_state [spar::State new]
+        set _post_contacts [$_post_state classify_segment $segment_dir]
+        $_post_state destroy
         set _post_issues [spar::validate_roster $_post_contacts]
     } _post_err]} {
         {*}$orig_progress $slug warning "DbC-Post validate_roster failed: $_post_err"
@@ -485,8 +492,8 @@ proc spar::a::run {opts on_progress on_complete} {
             if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
 
             # SSOT for approach-dispatch gates (#56): shared with
-            # spar::transition_eligible T2 so the UI tree and this loop
-            # can never disagree about who is dispatchable.
+            # spar::State's transition_eligible T2 so the UI tree and this
+            # loop can never disagree about who is dispatchable.
             set gate_reason [spar::_approach_dispatch_gate $row $cdata]
             if {$gate_reason ne ""} {
                 incr skipped

@@ -49,6 +49,21 @@ file mkdir $log_dir
 oo::class create spar::ProfileHarness {
     superclass spar::Harness
 
+    variable State
+
+    method state {} {
+        if {![info exists State] || $State eq ""} {
+            set State [spar::State new]
+        }
+        return $State
+    }
+
+    destructor {
+        if {[info exists State] && $State ne "" && [info commands $State] ne ""} {
+            $State destroy
+        }
+    }
+
     # Load the current roster row for this slug. Used by both validation
     # and the masked-email sanitiser.
     method _roster_row {roster_path slug} {
@@ -113,7 +128,7 @@ oo::class create spar::ProfileHarness {
             set my_cname [string trim [spar::dict_get_default $row contact_name ""]]
             set segment_dir [file dirname $roster_path]
             if {$my_cname ne ""} {
-                if {[catch {spar::classify_segment $segment_dir} seg_contacts]} {
+                if {[catch {[my state] classify_segment $segment_dir} seg_contacts]} {
                     set seg_contacts {}
                 }
                 foreach ri [spar::validate_roster $seg_contacts] {

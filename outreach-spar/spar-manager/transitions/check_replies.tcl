@@ -534,12 +534,12 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
     # T7: email was sent, no reply yet, contact still in scope (not
     # EXCLUDED).  Gated on approach-YAML structural validity (#43
     # principle 7).
-    method eligible {contact primary_channel cdata today_iso} {
-        set state [dict get $contact state]
-        if {$state eq "EXCLUDED"} { return {} }
+    method eligible {state contact primary_channel cdata today_iso} {
+        set cstate [dict get $contact state]
+        if {$cstate eq "EXCLUDED"} { return {} }
         if {![dict get $contact email_sent]} { return {} }
         if {[dict get $contact email_replied]} { return {} }
-        set vmsg [spar::_approach_validation_error $contact]
+        set vmsg [$state approach_validation_error $contact]
         if {$vmsg ne ""} {
             return [list [spar::_task $contact pending "invalid_approach_yaml: $vmsg"]]
         }

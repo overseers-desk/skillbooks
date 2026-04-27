@@ -5,6 +5,8 @@ source [file join $script_dir .. spar-state.tcl]
 source [file join $script_dir .. spar-email.tcl]
 source [file join $script_dir test-helpers.tcl]
 
+set State [spar::State new]
+
 # ════════════════════════════════════════════════════════════════════════
 # 12. validate_approach (per-file guard rail)
 # ════════════════════════════════════════════════════════════════════════
@@ -241,6 +243,56 @@ assert_eq [has_issue $va_ph_none2_issues profile_hash_misplaced] 0 \
 set va5_issues [spar::validate_approach "/tmp/nonexistent-approach.yaml" "test@acme-venues.au" "VA Missing"]
 assert_eq [llength $va5_issues] 0 "validate_approach: nonexistent file → no issues"
 
+# 12e2. Unknown key inside script_item is reported when the validator
+# operates on the projection from approach_summary (Phase B field-set
+# audit). project_approach_data preserves script_item key skeleton —
+# only `text` is blanked, other keys (canonical or unknown) flow
+# through — so _check_unknown_keys at script_item level still rejects
+# drift. Without this preservation, a typo'd script_item key would slip
+# silently past the render-path validator.
+set seg_va_si [make_temp_segment]
+write_profile $seg_va_si "va-si-unknown"
+set _va_si_ppath [file join $seg_va_si profiles "va-si-unknown.md"]
+set _va_si_hash [::sha2::sha256 -hex -file $_va_si_ppath]
+set va_si_path [write_approach_yaml $seg_va_si "va-si-unknown" \
+"profile_hash: sha256:$_va_si_hash
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+    script:
+    - point: opener
+      text: Hi there
+      bogus_field: should_be_rejected
+"]
+write_roster_tsv $seg_va_si $::std_headers [list \
+    [make_base_row {contact_name "Script Drift" email "test@acme-venues.au" \
+        stem "va-si-unknown"}]]
+set cv_va_si [$State classify_segment $seg_va_si]
+set _va_si_contact ""
+foreach _c $cv_va_si {
+    if {[dict get $_c stem] eq "va-si-unknown"} { set _va_si_contact $_c; break }
+}
+# Render-path: drive validation through the projection (approach_summary
+# → validate_approach_data) the way T6/T7/T9/T10 do via
+# approach_validation_error.
+set _va_si_proj [$State approach_summary $_va_si_contact]
+set _va_si_issues [spar::validate_approach_data $_va_si_proj $va_si_path \
+    "test@acme-venues.au" "Script Drift" "Some Org"]
+set _va_si_unknown [issues_with_code $_va_si_issues unknown_key_script_item]
+assert_eq [llength $_va_si_unknown] 1 \
+    "validate_approach_data via projection: unknown key 'bogus_field' in script_item → unknown_key_script_item"
+assert_eq [dict get [lindex $_va_si_unknown 0] severity] "error" \
+    "validate_approach_data via projection: unknown_key_script_item severity is error"
+
 # 12f. validate_campaign still produces same results via delegation
 # Reuse seg_va2 (placeholder) through classify_segment path
 set seg_va6 [make_temp_segment]
@@ -262,7 +314,7 @@ write_roster_tsv $seg_va6 $::std_headers [list \
     [make_base_row {contact_name "Campaign Check" email "real@acme-venues.au" \
         stem "va-campaign-check"}] \
 ]
-set cv_va6 [spar::classify_segment $seg_va6]
+set cv_va6 [$State classify_segment $seg_va6]
 set issues_va6 [spar::validate_campaign $cv_va6]
 set pt_va6 [issues_with_code $issues_va6 placeholder_to]
 assert_eq [llength $pt_va6] 1 "validate_campaign: still detects placeholder_to via validate_approach delegation"
@@ -365,12 +417,12 @@ set fd [open $vp13_tsv w]
 puts $fd [join $vp13_roster \t]
 puts $fd [join [list "vp-classify-stale" "Is Called This Now" "Same Org" "Same Role" "" "x@y.com"] \t]
 close $fd
-set vp13_contacts [spar::classify_segment $seg_vp13]
+set vp13_contacts [$State classify_segment $seg_vp13]
 set vp13_state [dict get [lindex $vp13_contacts 0] state]
 assert_eq $vp13_state "PROFILE_STALE" "classify_contact: snapshot ≠ roster → PROFILE_STALE"
 
 # 12p-n. PROFILE_STALE appears as T3 transition target
-set vp13_t3 [spar::transition_eligible $vp13_contacts "T3"]
+set vp13_t3 [$State transition_eligible $vp13_contacts "T3"]
 set vp13_t3_names [lmap c $vp13_t3 {dict get $c contact_name}]
 assert_eq [expr {"Is Called This Now" in $vp13_t3_names}] 1 \
     "T3: PROFILE_STALE contact is eligible for re-profile"

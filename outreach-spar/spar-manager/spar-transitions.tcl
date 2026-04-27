@@ -283,13 +283,21 @@ if {[llength $segment_paths] == 0} {
 
 # --- Classify all contacts, then apply --stem filter ---
 # In --auto mode, T1/T2/T3/T4 are the only active transitions and none of
-# them read parsed-approach fields (#63). Skip the YAML parse on the
-# initial pass too — the auto loop reclassifies cheaply each iteration.
-set _classify_full [expr {$auto_mode ? 0 : 1}]
+# them read parsed-approach fields (#63). Skip the refine pass too —
+# cheap classify_segment is enough.  Non-auto needs refined fields for
+# T6+ progress reporting; refine via the State's cache so any later
+# transition_eligible call hits the same projection.
+# One State for the whole CLI run — its lifetime matches this script's.
+set State [spar::State new]
 set all_contacts {}
 foreach item $segment_paths {
     lassign $item label seg_dir
-    if {[catch {set c [spar::classify_segment $seg_dir $_classify_full]} err]} {
+    if {[catch {
+        set c [$State classify_segment $seg_dir]
+        if {!$auto_mode} {
+            set c [$State refine_segment $c]
+        }
+    } err]} {
         puts stderr "Error in $label: $err"
         continue
     }
@@ -361,17 +369,23 @@ if {$execute_mode} {
     # previous pass feed the next round of transition eligibility.
     #
     # In --auto mode the only active T-ids are T1/T2/T3/T4 (auto_safe=1),
-    # none of which read the parsed-approach fields (email_sent /
-    # linkedin_sent / email_replied / to_addresses / unsent_subjects). We
-    # opt into classify_segment's cheap mode (full=0) so each iteration
-    # skips read_approach_yaml + analyse_final_round per contact —
-    # that's the latency that previously made --auto silent for several
-    # seconds before the first dispatch (#63).
-    proc reclassify_contacts {segment_paths filter_stems {full 1}} {
+    # none of which read the refined approach fields (email_sent /
+    # linkedin_sent / email_replied / to_addresses / unsent_subjects).
+    # Cheap classify_segment is the natural fit — transition_eligible
+    # refines each contact lazily on demand, and APPROACH_STALE is
+    # detected from the line-1 hash without parsing the YAML body. The
+    # parse-skipping is what made --auto's first dispatch responsive
+    # (#63).
+    proc reclassify_contacts {state segment_paths filter_stems {refine 0}} {
         set out {}
         foreach item $segment_paths {
             lassign $item label seg_dir
-            if {[catch {set c [spar::classify_segment $seg_dir $full]} err]} {
+            if {[catch {
+                set c [$state classify_segment $seg_dir]
+                if {$refine} {
+                    set c [$state refine_segment $c]
+                }
+            } err]} {
                 puts stderr "Error in $label: $err"
                 continue
             }
@@ -389,10 +403,10 @@ if {$execute_mode} {
 
     # Compute ready tasks per TID. cdata is full campaign dict — T9/T10
     # need it to read secondary/tertiary channel slots.
-    proc compute_ready_by_tid {all_contacts active_tids primary_channel {cdata {}}} {
+    proc compute_ready_by_tid {state all_contacts active_tids primary_channel {cdata {}}} {
         set ready_by_tid [dict create]
         foreach tid $active_tids {
-            set eligible [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
+            set eligible [$state transition_eligible $all_contacts $tid $primary_channel $cdata]
             set ready_list {}
             foreach c $eligible {
                 if {[dict get $c task_state] eq "ready"} { lappend ready_list $c }
@@ -458,9 +472,9 @@ if {$execute_mode} {
         set last_signature ""
         set iter 1
         while {$iter <= $MAX_ITER} {
-            set all_contacts [reclassify_contacts $segment_paths $filter_stems 0]
+            set all_contacts [reclassify_contacts $State $segment_paths $filter_stems 0]
             set ready_by_tid [compute_ready_by_tid \
-                $all_contacts $active_tids $primary_channel $cdata]
+                $State $all_contacts $active_tids $primary_channel $cdata]
 
             if {[dict size $ready_by_tid] == 0} {
                 if {$iter == 1} {
@@ -516,7 +530,7 @@ if {$execute_mode} {
     # Non-auto execute (single pass, explicit or default --tid).
     # ────────────────────────────────────────────────────────────────────
     set ready_by_tid [compute_ready_by_tid \
-        $all_contacts $active_tids $primary_channel $cdata]
+        $State $all_contacts $active_tids $primary_channel $cdata]
 
     if {[dict size $ready_by_tid] == 0} {
         puts "Campaign: $campaign_name"
@@ -581,7 +595,7 @@ foreach tid [spar::transition_tids] {
     if {$tid ni $active_tids} continue
     set label [spar::transition_label $tid]
 
-    set eligible [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
+    set eligible [$State transition_eligible $all_contacts $tid $primary_channel $cdata]
 
     set ready_list  {}
     set pending_list {}

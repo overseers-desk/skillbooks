@@ -242,7 +242,7 @@ oo::class create spar::ui::DispatchController {
         if {[dict size $cdata] > 0} {
             set primary_channel [spar::campaign_primary_channel $cdata]
         }
-        set eligible [spar::transition_eligible \
+        set eligible [[$Campaign get_state] transition_eligible \
             [$Campaign get_all_contacts] $tid $primary_channel $cdata]
         if {[llength $sel_stems] > 0} {
             set stem_set [dict create]

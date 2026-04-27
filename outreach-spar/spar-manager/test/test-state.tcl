@@ -4,6 +4,8 @@ set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir .. spar-state.tcl]
 source [file join $script_dir test-helpers.tcl]
 
+set State [spar::State new]
+
 # ════════════════════════════════════════════════════════════════════════
 # 1. Primary state classification
 # ════════════════════════════════════════════════════════════════════════
@@ -12,26 +14,26 @@ section "1. Primary state classification"
 # 1a. date_excluded set → EXCLUDED
 set seg [make_temp_segment]
 set row [make_base_row {date_excluded "2026-01-15"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result state] "EXCLUDED" "date_excluded → EXCLUDED"
 
 # 1b. Valid contact, stem="" → DISCOVERED
 set seg [make_temp_segment]
 set row [make_base_row {stem ""}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result state] "DISCOVERED" "no profile file → DISCOVERED"
 
 # 1c. Valid contact, stem set, profile file exists → PROFILED
 set seg [make_temp_segment]
 write_profile $seg "alice-smith-acme"
 set row [make_base_row {stem "alice-smith-acme"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result state] "PROFILED" "stem + file exists → PROFILED"
 
 # 1d. Valid contact, stem set, profile file MISSING → DISCOVERED
 set seg [make_temp_segment]
 set row [make_base_row {stem "nonexistent-profile"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result state] "DISCOVERED" "stem + file missing → DISCOVERED"
 
 # 1e. Valid, stem set, profile+approach files exist, no final round → APPROACHED
@@ -39,7 +41,7 @@ set seg [make_temp_segment]
 write_profile $seg "bob-jones-widgets"
 write_approach_yaml $seg "bob-jones-widgets" [approach_yaml_no_final]
 set row [make_base_row {stem "bob-jones-widgets"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result state] "APPROACHED" "approach exists, no final round → APPROACHED"
 
 # 1f. Valid, approach with final round but unsent → APPROACHED
@@ -47,15 +49,15 @@ set seg [make_temp_segment]
 write_profile $seg "carol-lee-bigco"
 write_approach_yaml $seg "carol-lee-bigco" [approach_yaml_final_unsent]
 set row [make_base_row {stem "carol-lee-bigco"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result state] "APPROACHED" "final round, no actioned_date → APPROACHED"
 
-# 1g. Valid, approach with final round, actioned_date set → SENT
+# 1g. Valid, approach with final round, actioned_date set → SENT (after refine)
 set seg [make_temp_segment]
 write_profile $seg "dave-kim-techcorp"
 write_approach_yaml $seg "dave-kim-techcorp" [approach_yaml_final_sent_email]
 set row [make_base_row {stem "dave-kim-techcorp"}]
-set result [spar::classify_contact $row $seg]
+set result [$State refine_contact [$State classify_contact $row $seg]]
 assert_eq [dict get $result state] "SENT" "final round, actioned_date set → SENT"
 
 # 1h. Valid, approach with final round, actioned_date+replied_date set → REPLIED
@@ -63,7 +65,7 @@ set seg [make_temp_segment]
 write_profile $seg "eve-tanaka-globalinc"
 write_approach_yaml $seg "eve-tanaka-globalinc" [approach_yaml_final_replied]
 set row [make_base_row {stem "eve-tanaka-globalinc"}]
-set result [spar::classify_contact $row $seg]
+set result [$State refine_contact [$State classify_contact $row $seg]]
 assert_eq [dict get $result state] "REPLIED" "final round, replied_date set → REPLIED"
 
 # 1i. Valid, approach with final round, reply with direction=received → REPLIED
@@ -71,7 +73,7 @@ set seg [make_temp_segment]
 write_profile $seg "frank-wu-pacific"
 write_approach_yaml $seg "frank-wu-pacific" [approach_yaml_final_reply_received]
 set row [make_base_row {stem "frank-wu-pacific"}]
-set result [spar::classify_contact $row $seg]
+set result [$State refine_contact [$State classify_contact $row $seg]]
 assert_eq [dict get $result state] "REPLIED" "final round, direction=received reply → REPLIED"
 
 # 1j. Approach exists, profile MISSING → PROFILE_STALE (issue #63).
@@ -80,7 +82,7 @@ assert_eq [dict get $result state] "REPLIED" "final round, direction=received re
 set seg [make_temp_segment]
 write_approach_yaml $seg "ghost-profile-stem" [approach_yaml_final_unsent]
 set row [make_base_row {stem "ghost-profile-stem"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result state] "PROFILE_STALE" \
     "approach references missing profile → PROFILE_STALE (#63)"
 
@@ -103,7 +105,7 @@ rounds:
     replied_date: null
 "
 set row [make_base_row {stem "hash-ok"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result state] "APPROACHED" \
     "approach + profile_hash match → APPROACHED"
 
@@ -125,7 +127,7 @@ rounds:
     replied_date: null
 }
 set row [make_base_row {stem "hash-bad"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result state] "APPROACH_STALE" \
     "approach + profile_hash mismatch → APPROACH_STALE (#63)"
 
@@ -136,26 +138,27 @@ set seg [make_temp_segment]
 write_profile $seg "hash-absent"
 write_approach_yaml $seg "hash-absent" [approach_yaml_final_unsent]
 set row [make_base_row {stem "hash-absent"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result state] "APPROACHED" \
     "legacy approach (no profile_hash) → APPROACHED"
 
-# 1m2. classify_contact full=0 (cheap mode, #63): SENT/REPLIED collapse to
-# APPROACHED so --auto can skip the YAML parse. Auto-safe transitions
+# 1m2. classify_contact (cheap by design, post-#84): SENT/REPLIED collapse
+# to APPROACHED until refine_contact is called. Auto-safe transitions
 # (T1/T2/T3/T4) never read email_sent/replied/etc., so the lossy mapping
-# is safe for that scope.
+# is safe for that scope and the parse stays skipped.
 set seg [make_temp_segment]
 write_profile $seg "cheap-sent"
 write_approach_yaml $seg "cheap-sent" [approach_yaml_final_sent_email]
 set row [make_base_row {stem "cheap-sent"}]
-set cheap [spar::classify_contact $row $seg 0]
-set full  [spar::classify_contact $row $seg 1]
+set cheap [$State classify_contact $row $seg]
+set refined [$State refine_contact $cheap]
 assert_eq [dict get $cheap state] "APPROACHED" \
-    "classify_contact full=0: SENT contact reports as APPROACHED (no parse)"
-assert_eq [dict get $full  state] "SENT" \
-    "classify_contact full=1: SENT contact reports as SENT (parse path unchanged)"
+    "classify_contact: SENT contact reports as APPROACHED (no parse)"
+assert_eq [dict get $refined state] "SENT" \
+    "refine_contact: SENT contact reports as SENT (parse path)"
 
-# 1m3. classify_contact full=0 still detects APPROACH_STALE via line-1 hash.
+# 1m3. classify_contact still detects APPROACH_STALE via line-1 hash
+# without parsing the YAML body.
 set seg [make_temp_segment]
 write_profile $seg "cheap-stale"
 write_approach_yaml $seg "cheap-stale" {profile_hash: sha256:0000000000000000000000000000000000000000000000000000000000000000
@@ -173,16 +176,16 @@ rounds:
     replied_date: null
 }
 set row [make_base_row {stem "cheap-stale"}]
-assert_eq [dict get [spar::classify_contact $row $seg 0] state] "APPROACH_STALE" \
-    "classify_contact full=0: line-1 hash mismatch → APPROACH_STALE"
+assert_eq [dict get [$State classify_contact $row $seg] state] "APPROACH_STALE" \
+    "classify_contact: line-1 hash mismatch → APPROACH_STALE (no parse)"
 
-# 1m4. classify_contact full=0: legacy approach without profile_hash → APPROACHED.
+# 1m4. classify_contact: legacy approach without profile_hash → APPROACHED.
 set seg [make_temp_segment]
 write_profile $seg "cheap-legacy"
 write_approach_yaml $seg "cheap-legacy" [approach_yaml_final_unsent]
 set row [make_base_row {stem "cheap-legacy"}]
-assert_eq [dict get [spar::classify_contact $row $seg 0] state] "APPROACHED" \
-    "classify_contact full=0: legacy approach (no hash) → APPROACHED"
+assert_eq [dict get [$State classify_contact $row $seg] state] "APPROACHED" \
+    "classify_contact: legacy approach (no hash) → APPROACHED"
 
 # 1n. SENT supersedes APPROACH_STALE: an engaged contact is not re-approached
 # on hash mismatch alone — would clobber the send history.
@@ -203,7 +206,7 @@ rounds:
     replied_date: null
 }
 set row [make_base_row {stem "hash-bad-sent"}]
-set result [spar::classify_contact $row $seg]
+set result [$State refine_contact [$State classify_contact $row $seg]]
 assert_eq [dict get $result state] "SENT" \
     "SENT supersedes APPROACH_STALE (engaged contact not re-approached)"
 
@@ -216,52 +219,52 @@ set seg [make_temp_segment]
 
 # 2a. has_email: email with @ → 1
 set row [make_base_row {email "foo@bar.com"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result has_email] 1 "email foo@bar.com → has_email=1"
 
 # 2b. has_email: empty email → 0
 set row [make_base_row {email ""}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result has_email] 0 "email empty → has_email=0"
 
 # 2c. has_linkedin
 set row [make_base_row {linkedin_url "https://linkedin.com/in/x"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result has_linkedin] 1 "linkedin_url set → has_linkedin=1"
 
 # 2d. has_linkedin empty
 set row [make_base_row {linkedin_url ""}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result has_linkedin] 0 "linkedin_url empty → has_linkedin=0"
 
 # 2e. has_phone_only: phone set, no email/linkedin/facebook
 set row [make_base_row {phone "0412000000" email "" linkedin_url "" facebook_url ""}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result has_phone_only] 1 "phone only → has_phone_only=1"
 
 # 2f. has_phone_only: phone set but email present → 0
 set row [make_base_row {phone "0412000000" email "foo@bar.com"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result has_phone_only] 0 "phone+email → has_phone_only=0"
 
 # 2g. star_rating "5" → star=5
 set row [make_base_row {star_rating "5"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result star] 5 "star_rating 5 → star=5"
 
 # 2h. star_rating "" → star=0
 set row [make_base_row {star_rating ""}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result star] 0 "star_rating empty → star=0"
 
 # 2i. star_rating "3" → star=3
 set row [make_base_row {star_rating "3"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result star] 3 "star_rating 3 → star=3"
 
 # 2j. has_facebook
 set row [make_base_row {facebook_url "https://facebook.com/someone"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result has_facebook] 1 "facebook_url set → has_facebook=1"
 
 # ════════════════════════════════════════════════════════════════════════
@@ -274,7 +277,7 @@ set seg [make_temp_segment]
 write_profile $seg "ch-email-sent"
 write_approach_yaml $seg "ch-email-sent" [approach_yaml_final_sent_email]
 set row [make_base_row {stem "ch-email-sent"}]
-set result [spar::classify_contact $row $seg]
+set result [$State refine_contact [$State classify_contact $row $seg]]
 assert_eq [dict get $result email_sent] 1 "final email actioned → email_sent=1"
 
 # 3b. Approach with final round linkedin message, actioned_date set → linkedin_sent=1
@@ -282,7 +285,7 @@ set seg [make_temp_segment]
 write_profile $seg "ch-linkedin-sent"
 write_approach_yaml $seg "ch-linkedin-sent" [approach_yaml_final_sent_linkedin]
 set row [make_base_row {stem "ch-linkedin-sent"}]
-set result [spar::classify_contact $row $seg]
+set result [$State refine_contact [$State classify_contact $row $seg]]
 assert_eq [dict get $result linkedin_sent] 1 "final linkedin actioned → linkedin_sent=1"
 
 # 3c. email_sent=0 when approach unsent
@@ -290,7 +293,7 @@ set seg [make_temp_segment]
 write_profile $seg "ch-unsent"
 write_approach_yaml $seg "ch-unsent" [approach_yaml_final_unsent]
 set row [make_base_row {stem "ch-unsent"}]
-set result [spar::classify_contact $row $seg]
+set result [$State refine_contact [$State classify_contact $row $seg]]
 assert_eq [dict get $result email_sent] 0 "final email not actioned → email_sent=0"
 
 # 3d. Approach with final round, replied_date set → email_replied=1
@@ -298,7 +301,7 @@ set seg [make_temp_segment]
 write_profile $seg "ch-replied"
 write_approach_yaml $seg "ch-replied" [approach_yaml_final_replied]
 set row [make_base_row {stem "ch-replied"}]
-set result [spar::classify_contact $row $seg]
+set result [$State refine_contact [$State classify_contact $row $seg]]
 assert_eq [dict get $result email_replied] 1 "final replied_date → email_replied=1"
 
 # 3e. direction=received → email_replied=1
@@ -306,7 +309,7 @@ set seg [make_temp_segment]
 write_profile $seg "ch-recv"
 write_approach_yaml $seg "ch-recv" [approach_yaml_final_reply_received]
 set row [make_base_row {stem "ch-recv"}]
-set result [spar::classify_contact $row $seg]
+set result [$State refine_contact [$State classify_contact $row $seg]]
 assert_eq [dict get $result email_replied] 1 "direction=received → email_replied=1"
 
 # 3f. Multi-channel: linkedin sent, email not sent
@@ -314,7 +317,7 @@ set seg [make_temp_segment]
 write_profile $seg "ch-multi"
 write_approach_yaml $seg "ch-multi" [approach_yaml_final_multi_channel]
 set row [make_base_row {stem "ch-multi"}]
-set result [spar::classify_contact $row $seg]
+set result [$State refine_contact [$State classify_contact $row $seg]]
 assert_eq [dict get $result linkedin_sent] 1 "multi-channel: linkedin_sent=1"
 assert_eq [dict get $result email_sent] 0 "multi-channel: email_sent=0 (not actioned)"
 
@@ -342,7 +345,7 @@ set rows [list \
 ]
 write_roster_tsv $seg $headers $rows
 
-set contacts [spar::classify_segment $seg]
+set contacts [$State refine_segment [$State classify_segment $seg]]
 assert_eq [llength $contacts] 5 "classify_segment returns 5 contacts"
 
 # Verify each contact's state by name
@@ -364,7 +367,7 @@ set bad_headers {contact_name organisation_name email star_rating}
 set bad_rows [list [dict create contact_name "Test" organisation_name "Org" email "a@b.com" star_rating "3"]]
 write_roster_tsv $seg $bad_headers $bad_rows
 
-assert_error {spar::classify_segment $seg} \
+assert_error {$State classify_segment $seg} \
     "*missing required column*stem*" \
     "missing stem column → error"
 
@@ -394,7 +397,7 @@ set rows [list \
 ]
 write_roster_tsv $seg $headers $rows
 
-set contacts [spar::classify_segment $seg]
+set contacts [$State refine_segment [$State classify_segment $seg]]
 set counts [spar::progress_counts $contacts]
 
 # Ed is EXCLUDED → Valid = 4
@@ -442,16 +445,16 @@ set rows [list \
 ]
 write_roster_tsv $seg $headers $rows
 
-set contacts [spar::classify_segment $seg]
+set contacts [$State classify_segment $seg]
 
 # T1: Sweep → Profile: contact in DISCOVERED → ready
-set t1 [spar::transition_eligible $contacts "T1"]
+set t1 [$State transition_eligible $contacts "T1"]
 set t1_names [lmap c $t1 {dict get $c contact_name}]
 assert_eq [expr {"Disco Dan" in $t1_names}] 1 "T1: DISCOVERED contact is eligible"
 assert_eq [expr {"Prof Hi" in $t1_names}] 0 "T1: PROFILED contact not eligible"
 
 # T2: Profile → Approach: PROFILED + star≥3 → ready; star<3 → not in list
-set t2 [spar::transition_eligible $contacts "T2"]
+set t2 [$State transition_eligible $contacts "T2"]
 set t2_names [lmap c $t2 {dict get $c contact_name}]
 assert_eq [expr {"Prof Hi" in $t2_names}] 1 "T2: PROFILED star≥3 is eligible"
 assert_eq [expr {"Prof Lo" in $t2_names}] 0 "T2: PROFILED star<3 not eligible"
@@ -459,7 +462,7 @@ assert_eq [expr {"Prof Lo" in $t2_names}] 0 "T2: PROFILED star<3 not eligible"
 # T6: Approach → Send: APPROACHED, has_email, not email_sent → ready
 # also: SENT + has_email + not email_sent (multi-channel case)
 # primary_channel="email" required — see issue #49 interim gate.
-set t6 [spar::transition_eligible $contacts "T6" "email"]
+set t6 [$State transition_eligible $contacts "T6" "email"]
 set t6_names [lmap c $t6 {dict get $c contact_name}]
 set t6_ready_names {}
 set t6_pending {}
@@ -476,13 +479,13 @@ assert_eq [expr {"Sent Sam" in $t6_ready_names || "Sent Sam" in $t6_pending}] 0 
     "T6: SENT+email_sent already → not in T6 list"
 
 # T6 primary_channel gate (issue #49): non-email or unspecified → zero tasks.
-set t6_lk [spar::transition_eligible $contacts "T6" "linkedin"]
+set t6_lk [$State transition_eligible $contacts "T6" "linkedin"]
 assert_eq [llength $t6_lk] 0 "T6: primary_channel=linkedin → zero tasks"
-set t6_u [spar::transition_eligible $contacts "T6"]
+set t6_u [$State transition_eligible $contacts "T6"]
 assert_eq [llength $t6_u] 0 "T6: primary_channel unknown → zero tasks"
 
 # T7: Send → Reply: email_sent, not email_replied → pending (monitoring)
-set t7 [spar::transition_eligible $contacts "T7"]
+set t7 [$State transition_eligible $contacts "T7"]
 set t7_names [lmap c $t7 {dict get $c contact_name}]
 assert_eq [expr {"Sent Sam" in $t7_names}] 1 "T7: SENT+email_sent → in monitoring list"
 
@@ -503,13 +506,13 @@ set seg [make_temp_segment]
 set pp [write_profile $seg "path-test"]
 set ap [write_approach_yaml $seg "path-test" [approach_yaml_final_unsent]]
 set row [make_base_row {stem "path-test"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result profile_path] $pp "profile_path points to correct file"
 assert_eq [dict get $result approach_path] $ap "approach_path points to correct file"
 
 # Empty paths when stem is empty
 set row2 [make_base_row {stem ""}]
-set result2 [spar::classify_contact $row2 $seg]
+set result2 [$State classify_contact $row2 $seg]
 assert_eq [dict get $result2 profile_path] "" "no profile file → profile_path empty"
 assert_eq [dict get $result2 approach_path] "" "no profile file → approach_path empty"
 
@@ -523,26 +526,26 @@ set seg [make_temp_segment]
 write_profile $seg "invalid-priority"
 write_approach_yaml $seg "invalid-priority" [approach_yaml_final_sent_email]
 set row [make_base_row {date_excluded "2026-03-01" stem "invalid-priority"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result state] "EXCLUDED" "EXCLUDED wins over SENT when date_excluded set"
 
 # 8b. profile file exists but no approach file → stays PROFILED
 set seg [make_temp_segment]
 write_profile $seg "no-approach-file"
 set row [make_base_row {stem "no-approach-file"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result state] "PROFILED" "profile exists but no approach file → PROFILED"
 
 # 8c. star_rating with non-numeric value → star=0
 set seg [make_temp_segment]
 set row [make_base_row {star_rating "abc"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result star] 0 "non-numeric star_rating → star=0"
 
 # 8d. email without @ → has_email=0
 set seg [make_temp_segment]
 set row [make_base_row {email "not-an-email"}]
-set result [spar::classify_contact $row $seg]
+set result [$State classify_contact $row $seg]
 assert_eq [dict get $result has_email] 0 "email without @ → has_email=0"
 
 # ════════════════════════════════════════════════════════════════════════
@@ -560,8 +563,8 @@ write_roster_tsv $seg_t8 $::std_headers [list \
         stem "t8-linkedin-only" star_rating "4"}] \
 ]
 
-set ct8 [spar::classify_segment $seg_t8]
-set t8_results [spar::transition_eligible $ct8 "T8"]
+set ct8 [$State classify_segment $seg_t8]
+set t8_results [$State transition_eligible $ct8 "T8"]
 set t8_names [lmap c $t8_results {dict get $c contact_name}]
 assert_eq [expr {"LI Sent" in $t8_names}] 1 \
     "T8: linkedin_sent=1, email_sent=0 → eligible"
@@ -596,8 +599,8 @@ write_roster_tsv $seg_t8b $::std_headers [list \
         stem "t8-both-sent" star_rating "4"}] \
 ]
 
-set ct8b [spar::classify_segment $seg_t8b]
-set t8b_results [spar::transition_eligible $ct8b "T8"]
+set ct8b [$State classify_segment $seg_t8b]
+set t8b_results [$State transition_eligible $ct8b "T8"]
 set t8b_names [lmap c $t8b_results {dict get $c contact_name}]
 assert_eq [expr {"Both Sent" in $t8b_names}] 0 \
     "T8: email_sent=1 → not eligible for T8"
@@ -622,8 +625,8 @@ write_roster_tsv $seg_t7_inv $::std_headers [list \
     [make_base_row {contact_name "Sent Then Invalid" email "sti@acme-venues.au" \
         stem "t7-invalidated" star_rating "4" date_excluded "2026-04-05"}] \
 ]
-set ct7_inv [spar::classify_segment $seg_t7_inv]
-set t7_inv_results [spar::transition_eligible $ct7_inv "T7"]
+set ct7_inv [$State classify_segment $seg_t7_inv]
+set t7_inv_results [$State transition_eligible $ct7_inv "T7"]
 assert_eq [llength $t7_inv_results] 0 \
     "T7: EXCLUDED contact with email_sent=1 → not eligible"
 
@@ -636,8 +639,8 @@ write_roster_tsv $seg_t8_inv $::std_headers [list \
         linkedin_url "https://linkedin.com/in/lsti" \
         stem "t8-invalidated" star_rating "4" date_excluded "2026-04-05"}] \
 ]
-set ct8_inv [spar::classify_segment $seg_t8_inv]
-set t8_inv_results [spar::transition_eligible $ct8_inv "T8"]
+set ct8_inv [$State classify_segment $seg_t8_inv]
+set t8_inv_results [$State transition_eligible $ct8_inv "T8"]
 assert_eq [llength $t8_inv_results] 0 \
     "T8: EXCLUDED contact with linkedin_sent=1 → not eligible"
 
@@ -660,12 +663,12 @@ write_roster_tsv $seg_t34 $::std_headers [list \
     [make_base_row {contact_name "App" stem "t34-approached"}] \
     [make_base_row {contact_name "Sent" stem "t34-sent"}] \
 ]
-set ct34 [spar::classify_segment $seg_t34]
+set ct34 [$State classify_segment $seg_t34]
 
-set t3_results [spar::transition_eligible $ct34 "T3"]
+set t3_results [$State transition_eligible $ct34 "T3"]
 assert_eq [llength $t3_results] 0 "T3: zero tasks when no contact is PROFILE_STALE"
 
-set t4_results [spar::transition_eligible $ct34 "T4"]
+set t4_results [$State transition_eligible $ct34 "T4"]
 assert_eq [llength $t4_results] 0 "T4: zero tasks when no contact is APPROACH_STALE"
 
 # T3: missing-profile-with-approach lands in PROFILE_STALE → 1 T3 task.
@@ -674,8 +677,8 @@ write_approach_yaml $seg_t3 "needs-reprofile" [approach_yaml_final_unsent]
 write_roster_tsv $seg_t3 $::std_headers [list \
     [make_base_row {contact_name "Needs Reprofile" star_rating 4 stem "needs-reprofile"}] \
 ]
-set ct3 [spar::classify_segment $seg_t3]
-set t3_ready [spar::transition_eligible $ct3 "T3"]
+set ct3 [$State classify_segment $seg_t3]
+set t3_ready [$State transition_eligible $ct3 "T3"]
 assert_eq [llength $t3_ready] 1 \
     "T3: approach references missing profile → 1 ready task"
 
@@ -699,13 +702,13 @@ rounds:
 write_roster_tsv $seg_t4 $::std_headers [list \
     [make_base_row {contact_name "Hash Stale" star_rating 4 email "test@acme-venues.au" stem "hash-stale"}] \
 ]
-set ct4 [spar::classify_segment $seg_t4]
+set ct4 [$State classify_segment $seg_t4]
 # Use the campaign-aware form so the dispatch gate (in_scope_channel) accepts it.
 set t4_cdata [dict create primary_channel email]
-set t4_ready [spar::transition_eligible $ct4 "T4" email $t4_cdata 2026-04-15]
+set t4_ready [$State transition_eligible $ct4 "T4" email $t4_cdata 2026-04-15]
 assert_eq [llength $t4_ready] 1 \
     "T4: APPROACH_STALE → 1 ready task (#63)"
-set t2_zero [spar::transition_eligible $ct4 "T2" email $t4_cdata 2026-04-15]
+set t2_zero [$State transition_eligible $ct4 "T2" email $t4_cdata 2026-04-15]
 assert_eq [llength $t2_zero] 0 \
     "T2: APPROACH_STALE not eligible for T2 (T4's territory)"
 
@@ -717,7 +720,7 @@ section "16. progress_counts edge cases"
 # 16a. Empty segment (headers only, no data rows) → all counts = 0
 set seg_empty [make_temp_segment]
 write_roster_tsv $seg_empty $::std_headers [list]
-set c_empty [spar::classify_segment $seg_empty]
+set c_empty [$State classify_segment $seg_empty]
 set counts_empty [spar::progress_counts $c_empty]
 assert_eq [dict get $counts_empty valid] 0 "empty segment: valid=0"
 assert_eq [dict get $counts_empty profiled] 0 "empty segment: profiled=0"
@@ -732,7 +735,7 @@ write_roster_tsv $seg_inv $::std_headers [list \
     [make_base_row {contact_name "Inv A" date_excluded "2026-01-01" stem ""}] \
     [make_base_row {contact_name "Inv B" date_excluded "2026-02-01" stem ""}] \
 ]
-set c_inv [spar::classify_segment $seg_inv]
+set c_inv [$State classify_segment $seg_inv]
 set counts_inv [spar::progress_counts $c_inv]
 assert_eq [dict get $counts_inv valid] 0 "all invalid: valid=0"
 assert_eq [dict get $counts_inv profiled] 0 "all invalid: profiled=0"
@@ -744,7 +747,7 @@ write_profile $seg_lo "lo-star"
 write_roster_tsv $seg_lo $::std_headers [list \
     [make_base_row {contact_name "Lo Star" stem "lo-star" star_rating "2" email "lo@acme-venues.au"}] \
 ]
-set c_lo [spar::classify_segment $seg_lo]
+set c_lo [$State classify_segment $seg_lo]
 set counts_lo [spar::progress_counts $c_lo]
 assert_eq [dict get $counts_lo valid] 1 "star=2: valid=1"
 assert_eq [dict get $counts_lo profiled] 1 "star=2: profiled=1"
@@ -764,7 +767,7 @@ write_roster_tsv $seg_n1 $::std_headers [list \
         organisation_name "Acme Tours" phone "07 5555 1234" \
         email "info@acmetours.com" date_excluded ""}] \
 ]
-set cn1 [spar::classify_segment $seg_n1]
+set cn1 [$State classify_segment $seg_n1]
 assert_eq [llength $cn1] 1 "blank-name: segment includes row"
 assert_eq [dict get [lindex $cn1 0] state] "DISCOVERED" "blank-name: contact_name empty + no profile → DISCOVERED"
 
@@ -774,7 +777,7 @@ write_roster_tsv $seg_n2 $::std_headers [list \
     [make_base_row {contact_name "" stem "defunct-co" \
         date_excluded "2026-04-07"}] \
 ]
-set cn2 [spar::classify_segment $seg_n2]
+set cn2 [$State classify_segment $seg_n2]
 assert_eq [llength $cn2] 1 "blank-name excluded: segment includes row"
 assert_eq [dict get [lindex $cn2 0] state] "EXCLUDED" "blank-name + date_excluded → EXCLUDED"
 
@@ -785,7 +788,7 @@ write_roster_tsv $seg_n3 $::std_headers [list \
     [make_base_row {contact_name "" stem "nameless-org" \
         organisation_name "Nameless Org" date_excluded ""}] \
 ]
-set cn3 [spar::classify_segment $seg_n3]
+set cn3 [$State classify_segment $seg_n3]
 assert_eq [llength $cn3] 2 "blank-name progress: segment has 2 rows"
 set pc3 [spar::progress_counts $cn3]
 assert_eq [dict get $pc3 valid] 2 "blank-name progress: Valid counts blank-name rows"
@@ -829,7 +832,8 @@ proc make_vr_row {{overrides {}}} {
 
 # Helper: classify a segment and run validate_roster, return issues
 proc vr_issues {segment_dir} {
-    set contacts [spar::classify_segment $segment_dir]
+    global State
+    set contacts [$State classify_segment $segment_dir]
     return [spar::validate_roster $contacts]
 }
 
