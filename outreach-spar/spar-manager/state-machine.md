@@ -409,7 +409,7 @@ Categories (applied in the rightmost column):
 
 ## Testing strategy — first task
 
-Tests live in `spar-manager/test/`. The test runner is a standalone `tclsh` script: `test/run-tests.tcl`.
+Tests live in `spar-manager/test/`, one file per module (`test-state.tcl`, `test-validate-approach.tcl`, …). `test/run.tcl` dispatches them in parallel via tpool; `SPAR_TEST_JOBS=1` forces serial.
 
 ### Approach
 
@@ -499,7 +499,7 @@ Key locations in `../bin/update-campaign.py` and their redesign counterparts:
 
 ## Implementation plan
 
-1. **Write tests first** (`test/run-tests.tcl` with fixture-based unit tests)
+1. **Write tests first** (per-module `test/test-*.tcl` with fixture-based unit tests)
 2. **Implement `spar::classify_contact`** in `spar-state.tcl`
 3. **Implement `spar::classify_segment`** — loop + aggregate
 4. **Implement duplicate detection procs** (cross-segment email/name/subject checks)
