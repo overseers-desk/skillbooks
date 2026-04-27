@@ -15,7 +15,7 @@ Tcl libraries and GUI for managing SPAR outreach campaigns. Provides a state mac
 
 | Tool | Used by | Purpose |
 |------|---------|---------|
-| `claude` | `spar-claude.tcl` (harness) | Claude Code CLI for profile/approach generation |
+| `claude` | `spar-harness.tcl` (harness) | Claude Code CLI for profile/approach generation |
 | `mailroom` | `spar-email.tcl` | Query email account for reply checking |
 | `flock` | `spar-a-harness.tcl` | File locking for concurrent roster TSV writes |
 | `md5sum` | `spar-a-harness.tcl` | Lock file path derivation |
