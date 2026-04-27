@@ -282,6 +282,7 @@ set t9_rows [list \
 ]
 write_roster_tsv $t9_seg $t9_headers $t9_rows
 set t9_contacts [$State classify_segment $t9_seg]
+set t9_contacts [$State refine_segment $t9_contacts]
 set t9_ready [$State transition_eligible $t9_contacts "T9" email $t9_cdata $t9_today]
 assert_eq [llength $t9_ready] 1 \
     "T9 ready: primary sent 10d ago, no reply, phone pending → 1 task"
@@ -295,6 +296,7 @@ write_approach_yaml $t9_seg2 "contact-2" [t9_yaml_primary_email_sent_secondary_p
 write_roster_tsv $t9_seg2 $t9_headers [list \
     [make_base_row {contact_name "C2" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-2"}]]
 set t9_contacts2 [$State classify_segment $t9_seg2]
+set t9_contacts2 [$State refine_segment $t9_contacts2]
 set t9_pend [$State transition_eligible $t9_contacts2 "T9" email $t9_cdata $t9_today]
 assert_eq [llength $t9_pend] 1 "T9 pending: primary sent 3d ago → 1 pending task"
 assert_eq [dict get [lindex $t9_pend 0] task_state] "pending" \
@@ -311,6 +313,7 @@ write_approach_yaml $t9_seg3 "contact-3" [t9_yaml_primary_email_sent_secondary_p
 write_roster_tsv $t9_seg3 $t9_headers [list \
     [make_base_row {contact_name "C3" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-3"}]]
 set t9_contacts3 [$State classify_segment $t9_seg3]
+set t9_contacts3 [$State refine_segment $t9_contacts3]
 set t9_blocked [$State transition_eligible $t9_contacts3 "T9" email $t9_cdata $t9_today]
 assert_eq [llength $t9_blocked] 0 \
     "T9 state-gated: contact in REPLIED (primary replied) → no T9 row"
@@ -322,6 +325,7 @@ write_approach_yaml $t9_seg4 "contact-4" [t9_yaml_primary_unsent]
 write_roster_tsv $t9_seg4 $t9_headers [list \
     [make_base_row {contact_name "C4" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-4"}]]
 set t9_contacts4 [$State classify_segment $t9_seg4]
+set t9_contacts4 [$State refine_segment $t9_contacts4]
 set t9_noop [$State transition_eligible $t9_contacts4 "T9" email $t9_cdata $t9_today]
 assert_eq [llength $t9_noop] 0 \
     "T9 none: primary unsent → no T9 row (don't show 'preceding not yet sent' noise)"
@@ -379,6 +383,7 @@ write_approach_yaml $t10_seg "contact-10" [t10_yaml_primary_sent_secondary_sent_
 write_roster_tsv $t10_seg $t9_headers [list \
     [make_base_row {contact_name "C10" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" linkedin_url "https://linkedin.com/in/c10" stem "contact-10"}]]
 set t10_contacts [$State classify_segment $t10_seg]
+set t10_contacts [$State refine_segment $t10_contacts]
 set t10_ready [$State transition_eligible $t10_contacts "T10" email $t10_cdata $t9_today]
 assert_eq [llength $t10_ready] 1 \
     "T10 ready: secondary sent 10d ago, wait=5d, linkedin pending → 1 task"
@@ -392,6 +397,7 @@ write_approach_yaml $t10_seg2 "contact-11" [t10_yaml_primary_sent_secondary_sent
 write_roster_tsv $t10_seg2 $t9_headers [list \
     [make_base_row {contact_name "C11" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" linkedin_url "https://linkedin.com/in/c11" stem "contact-11"}]]
 set t10_contacts2 [$State classify_segment $t10_seg2]
+set t10_contacts2 [$State refine_segment $t10_contacts2]
 set t10_pend [$State transition_eligible $t10_contacts2 "T10" email $t10_cdata $t9_today]
 assert_eq [llength $t10_pend] 1 "T10 pending: secondary sent 2d ago → 1 pending"
 assert_match [dict get [lindex $t10_pend 0] reason] "*waiting until day 5*" \
@@ -422,6 +428,7 @@ write_roster_tsv $t6a_seg $::std_headers [list \
     [make_base_row {contact_name "T6A" stem "t6a" email "test@acme-venues.au" star_rating 4}] \
 ]
 set t6a_c [$State classify_segment $t6a_seg]
+set t6a_c [$State refine_segment $t6a_c]
 set t6a_tasks [$State transition_eligible $t6a_c "T6" "email"]
 assert_eq [llength $t6a_tasks] 1 "T6: APPROACHED+email+unsent → 1 task"
 assert_eq [dict get [lindex $t6a_tasks 0] task_state] "ready" \
@@ -436,6 +443,7 @@ write_roster_tsv $t6b_seg $::std_headers [list \
         linkedin_url "https://linkedin.com/in/t6b" star_rating 4}] \
 ]
 set t6b_c [$State classify_segment $t6b_seg]
+set t6b_c [$State refine_segment $t6b_c]
 set t6b_tasks [$State transition_eligible $t6b_c "T6" "email"]
 assert_eq [llength $t6b_tasks] 1 "T6: APPROACHED+no-email → 1 task"
 assert_eq [dict get [lindex $t6b_tasks 0] task_state] "pending" \
@@ -451,6 +459,7 @@ write_roster_tsv $t6c_seg $::std_headers [list \
     [make_base_row {contact_name "T6C" stem "t6c" email "test@acme-venues.au" star_rating 4}] \
 ]
 set t6c_c [$State classify_segment $t6c_seg]
+set t6c_c [$State refine_segment $t6c_c]
 set t6c_tasks [$State transition_eligible $t6c_c "T6" "email"]
 assert_eq [llength $t6c_tasks] 0 \
     "T6: APPROACHED+email+already-sent → 0 tasks (refine sees email_sent=1)"
@@ -464,6 +473,7 @@ write_roster_tsv $t6d_seg $::std_headers [list \
     [make_base_row {contact_name "T6D" stem "t6d" email "test@acme-venues.au" star_rating 4}] \
 ]
 set t6d_c [$State classify_segment $t6d_seg]
+set t6d_c [$State refine_segment $t6d_c]
 set t6d_tasks [$State transition_eligible $t6d_c "T6" "linkedin"]
 assert_eq [llength $t6d_tasks] 0 \
     "T6: primary_channel=linkedin → 0 tasks"
@@ -490,6 +500,7 @@ write_roster_tsv $t6e_seg $::std_headers [list \
     [make_base_row {contact_name "T6E" stem "t6e" email "test@acme-venues.au" star_rating 4}] \
 ]
 set t6e_c [$State classify_segment $t6e_seg]
+set t6e_c [$State refine_segment $t6e_c]
 set t6e_tasks [$State transition_eligible $t6e_c "T6" "email"]
 assert_eq [llength $t6e_tasks] 1 "T6: invalid YAML → 1 task"
 assert_eq [dict get [lindex $t6e_tasks 0] task_state] "pending" \
@@ -507,6 +518,7 @@ write_roster_tsv $t7a_seg $::std_headers [list \
     [make_base_row {contact_name "T7A" stem "t7a" email "test@acme-venues.au" star_rating 4}] \
 ]
 set t7a_c [$State classify_segment $t7a_seg]
+set t7a_c [$State refine_segment $t7a_c]
 set t7a_tasks [$State transition_eligible $t7a_c "T7"]
 assert_eq [llength $t7a_tasks] 1 "T7: SENT+no-reply → 1 task"
 assert_eq [dict get [lindex $t7a_tasks 0] task_state] "ready" \
@@ -520,6 +532,7 @@ write_roster_tsv $t7b_seg $::std_headers [list \
     [make_base_row {contact_name "T7B" stem "t7b" email "test@acme-venues.au" star_rating 4}] \
 ]
 set t7b_c [$State classify_segment $t7b_seg]
+set t7b_c [$State refine_segment $t7b_c]
 set t7b_tasks [$State transition_eligible $t7b_c "T7"]
 assert_eq [llength $t7b_tasks] 0 \
     "T7: REPLIED → 0 tasks (already replied, no monitoring needed)"
@@ -533,6 +546,7 @@ write_roster_tsv $t7c_seg $::std_headers [list \
     [make_base_row {contact_name "T7C" stem "t7c" email "test@acme-venues.au" star_rating 4}] \
 ]
 set t7c_c [$State classify_segment $t7c_seg]
+set t7c_c [$State refine_segment $t7c_c]
 set t7c_tasks [$State transition_eligible $t7c_c "T7"]
 assert_eq [llength $t7c_tasks] 0 \
     "T7: APPROACHED+unsent → 0 tasks (no email_sent yet)"
@@ -548,6 +562,7 @@ write_roster_tsv $t7d_seg $::std_headers [list \
         star_rating 4 date_excluded "2026-04-05"}] \
 ]
 set t7d_c [$State classify_segment $t7d_seg]
+set t7d_c [$State refine_segment $t7d_c]
 set t7d_tasks [$State transition_eligible $t7d_c "T7"]
 assert_eq [llength $t7d_tasks] 0 \
     "T7: EXCLUDED → 0 tasks (regardless of prior email_sent)"
@@ -575,6 +590,7 @@ write_roster_tsv $t7e_seg $::std_headers [list \
     [make_base_row {contact_name "T7E" stem "t7e" email "test@acme-venues.au" star_rating 4}] \
 ]
 set t7e_c [$State classify_segment $t7e_seg]
+set t7e_c [$State refine_segment $t7e_c]
 set t7e_tasks [$State transition_eligible $t7e_c "T7"]
 assert_eq [llength $t7e_tasks] 1 "T7: SENT+invalid YAML → 1 task"
 assert_eq [dict get [lindex $t7e_tasks 0] task_state] "pending" \

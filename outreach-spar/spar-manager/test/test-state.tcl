@@ -445,7 +445,7 @@ set rows [list \
 ]
 write_roster_tsv $seg $headers $rows
 
-set contacts [$State classify_segment $seg]
+set contacts [$State refine_segment [$State classify_segment $seg]]
 
 # T1: Sweep → Profile: contact in DISCOVERED → ready
 set t1 [$State transition_eligible $contacts "T1"]
@@ -563,7 +563,7 @@ write_roster_tsv $seg_t8 $::std_headers [list \
         stem "t8-linkedin-only" star_rating "4"}] \
 ]
 
-set ct8 [$State classify_segment $seg_t8]
+set ct8 [$State refine_segment [$State classify_segment $seg_t8]]
 set t8_results [$State transition_eligible $ct8 "T8"]
 set t8_names [lmap c $t8_results {dict get $c contact_name}]
 assert_eq [expr {"LI Sent" in $t8_names}] 1 \
@@ -599,7 +599,7 @@ write_roster_tsv $seg_t8b $::std_headers [list \
         stem "t8-both-sent" star_rating "4"}] \
 ]
 
-set ct8b [$State classify_segment $seg_t8b]
+set ct8b [$State refine_segment [$State classify_segment $seg_t8b]]
 set t8b_results [$State transition_eligible $ct8b "T8"]
 set t8b_names [lmap c $t8b_results {dict get $c contact_name}]
 assert_eq [expr {"Both Sent" in $t8b_names}] 0 \
@@ -625,7 +625,7 @@ write_roster_tsv $seg_t7_inv $::std_headers [list \
     [make_base_row {contact_name "Sent Then Invalid" email "sti@acme-venues.au" \
         stem "t7-invalidated" star_rating "4" date_excluded "2026-04-05"}] \
 ]
-set ct7_inv [$State classify_segment $seg_t7_inv]
+set ct7_inv [$State refine_segment [$State classify_segment $seg_t7_inv]]
 set t7_inv_results [$State transition_eligible $ct7_inv "T7"]
 assert_eq [llength $t7_inv_results] 0 \
     "T7: EXCLUDED contact with email_sent=1 → not eligible"
@@ -639,7 +639,7 @@ write_roster_tsv $seg_t8_inv $::std_headers [list \
         linkedin_url "https://linkedin.com/in/lsti" \
         stem "t8-invalidated" star_rating "4" date_excluded "2026-04-05"}] \
 ]
-set ct8_inv [$State classify_segment $seg_t8_inv]
+set ct8_inv [$State refine_segment [$State classify_segment $seg_t8_inv]]
 set t8_inv_results [$State transition_eligible $ct8_inv "T8"]
 assert_eq [llength $t8_inv_results] 0 \
     "T8: EXCLUDED contact with linkedin_sent=1 → not eligible"

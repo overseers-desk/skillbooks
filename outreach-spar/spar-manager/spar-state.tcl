@@ -1128,7 +1128,18 @@ proc spar::_task {contact task_state {reason ""}} {
 
 # transition_eligible -- filter classified contacts by transition eligibility.
 #
-# classified_contacts  output of classify_segment
+# classified_contacts  output of classify_segment, optionally followed by
+#                      refine_segment. Parse-TIDs (T6+) require refined
+#                      input — they read email_sent / email_replied /
+#                      to_addresses / unsent_subjects and the SENT/REPLIED
+#                      state upgrade that refine_contact installs. Cheap-
+#                      TIDs (T1..T4) accept either form: their `eligible`
+#                      methods read only state, star_rating, date_excluded,
+#                      email, linkedin_url — all populated by the cheap
+#                      classify path. Callers that mix TIDs (the loader,
+#                      spar-progress, spar-transitions non-auto) refine
+#                      once before calling here and reuse the refined list
+#                      across every TID.
 # transition           transition name: T1, T2, ... T10
 # primary_channel      campaign primary channel (bare string, e.g. "email").
 #                      Empty string = unknown; T6 conservatively yields nothing.
@@ -1151,15 +1162,7 @@ oo::define spar::State method transition_eligible {classified_contacts transitio
     set t [::spar::transitions::get $transition]
     set out {}
     foreach contact $classified_contacts {
-        # refine_contact short-circuits for cheap-tier states (DISCOVERED /
-        # PROFILED / EXCLUDED / etc.) so they pay zero parse cost; only
-        # APPROACHED / APPROACH_STALE contacts route through approach_summary,
-        # whose cache means the parse runs at most once per State lifetime.
-        # Refining here makes the cheap/full distinction implicit at the
-        # T-id `eligible` boundary — eligible always sees populated refined
-        # fields when the contact is in a state that has them.
-        set refined [my refine_contact $contact]
-        foreach task [$t eligible [self] $refined $primary_channel $cdata $today_iso] {
+        foreach task [$t eligible [self] $contact $primary_channel $cdata $today_iso] {
             lappend out $task
         }
     }
