@@ -12,11 +12,19 @@
 #       one segment of the async pass has finished classifying; payload is
 #       the segment name, its spar::progress_counts dict, and its active flag
 #   transition-loaded {tid label tasks}
-#       one transition's eligibility has been computed during the async
-#       pass; payload is the tid string, its display label, and the list
-#       of task tuples (one per eligible contact). Fires per tid in
-#       ui_transition_tids order so subscribers can append incrementally
-#       without waiting for fully-loaded.
+#       one transition's eligibility has been computed; payload is the
+#       tid string, its display label, and the list of task tuples (one
+#       per eligible contact). Cheap-eligibility TIDs (T1..T4, no
+#       approach-YAML parse needed) fire after Phase 1; parse TIDs (T6..T8)
+#       fire after Phase 2 enrichment completes. Subscribers append
+#       incrementally — `transition-loaded` arrival order matches
+#       numeric T-id order under #82's loader phasing.
+#   contact-finalised {stem}
+#       a single contact's approach YAML has been parsed and the
+#       SENT/REPLIED/to_addresses/unsent_subjects fields overlaid onto
+#       its dict in AllContacts. Fires in Phase 2; payload is the stem
+#       (lookup key for get_contact). No subscribers required — the event
+#       is forward-leaning for #84's per-contact projection consumers.
 #   reloading
 #       refresh has reset Segments to TSV-only counts and emptied
 #       AllContacts/Transitions/Warnings; subscribers should clear
@@ -361,35 +369,112 @@ oo::class create spar::ui::CampaignModel {
     }
 
     method loader_body {} {
-        foreach item $SegmentPathsForAsync {
+        # Phase 1 — cheap classify per segment. classify_segment ... 0
+        # skips the approach-YAML parse (#63 fast path) so first paint
+        # depends only on roster + file-presence reads. SENT/REPLIED
+        # contacts are reported as APPROACHED here; Phase 2 corrects them.
+        #
+        # Track each segment's range in AllContacts so Phase 2 can enrich
+        # in-place per segment and re-fire segment-loaded with corrected
+        # right-column counts.
+        set seg_paths $SegmentPathsForAsync
+        set SegmentPathsForAsync {}
+        set seg_ranges {}
+        foreach item $seg_paths {
             lassign $item seg_name seg_dir is_active
+            set start [llength $AllContacts]
 
-            if {![catch {set classified [spar::classify_segment $seg_dir]} err]} {
+            if {![catch {set classified [spar::classify_segment $seg_dir 0]} err]} {
                 if {$is_active} {
                     foreach c $classified { lappend AllContacts $c }
                 }
                 set cdict [spar::progress_counts $classified]
+                # email_sent / email_replied are uniformly 0 in cheap mode
+                # (no YAML parsed). Sentinel "" tells the progress table to
+                # preserve the "…" placeholder until Phase 2 re-fires with
+                # real counts. Without this, the right columns flash 0
+                # at the same instant the left columns fill in.
+                dict set cdict email_sent ""
+                dict set cdict email_replied ""
                 my _fire segment-loaded $seg_name $cdict $is_active
             }
+            set end [llength $AllContacts]
+            lappend seg_ranges [list $seg_name $seg_dir $is_active $start $end]
             my _yield_loop
         }
-        set SegmentPathsForAsync {}
 
-        set Warnings [dict get [spar::build_warnings $AllContacts $Cdata] messages]
-        my _yield_loop
-
-        # Per-tid transition build. Yielding between tids lets the tree
-        # render each branch as it lands rather than all at once when
-        # fully-loaded fires.
+        # Partition tree-row TIDs by whether eligibility needs the YAML.
+        # The numbering scheme assigns cheap TIDs to T1..T5 (T5 reserved)
+        # and parse TIDs to T6+; the partition is the source of truth so
+        # adding a TID requires placing it in the right range.
         set primary_channel [my _primary_channel]
-        set Transitions {}
+        set cheap_tids {}
+        set parse_tids {}
         foreach tid [spar::ui_transition_tids] {
+            if {[string range $tid 1 end] < 5} {
+                lappend cheap_tids $tid
+            } else {
+                lappend parse_tids $tid
+            }
+        }
+
+        # Cheap-TID emit. Yielding between tids lets the tree render
+        # each branch as it lands.
+        set Transitions {}
+        foreach tid $cheap_tids {
             set entry [my _transition_entry $tid $primary_channel]
             lappend Transitions $entry
             lassign $entry tlabel _ ttasks
             my _fire transition-loaded $tid $tlabel $ttasks
             my _yield_loop
         }
+
+        # Phase 2 — per-segment enrichment. For each segment, parse the
+        # approach YAML of its active contacts and overlay the SENT/REPLIED
+        # fields, then re-fire segment-loaded with the now-correct counts.
+        # Inactive segments are re-classified with full=1 (without joining
+        # AllContacts) just so their progress row gets accurate sent/repl.
+        set i 0
+        foreach range $seg_ranges {
+            lassign $range seg_name seg_dir is_active start end
+            if {$is_active} {
+                for {set idx $start} {$idx < $end} {incr idx} {
+                    set c [lindex $AllContacts $idx]
+                    if {[dict get $c approach_path] ne ""} {
+                        if {![catch {set full [spar::classify_contact $c $seg_dir 1]}]} {
+                            dict for {k v} $full { dict set c $k $v }
+                            lset AllContacts $idx $c
+                        }
+                    }
+                    my _fire contact-finalised [spar::dict_get_default $c stem ""]
+                    incr i
+                    if {($i % 25) == 0} { my _yield_loop }
+                }
+                set seg_contacts [lrange $AllContacts $start [expr {$end - 1}]]
+            } else {
+                if {[catch {set seg_contacts [spar::classify_segment $seg_dir 1]}]} {
+                    continue
+                }
+            }
+            set cdict [spar::progress_counts $seg_contacts]
+            my _fire segment-loaded $seg_name $cdict $is_active
+            my _yield_loop
+        }
+        if {($i % 25) != 0} { my _yield_loop }
+
+        # Parse-TID emit. Eligibility for these TIDs reads email_sent /
+        # linkedin_sent / email_replied populated by Phase 2.
+        foreach tid $parse_tids {
+            set entry [my _transition_entry $tid $primary_channel]
+            lappend Transitions $entry
+            lassign $entry tlabel _ ttasks
+            my _fire transition-loaded $tid $tlabel $ttasks
+            my _yield_loop
+        }
+
+        # Phase 3 — warnings.
+        set Warnings [dict get [spar::build_warnings $AllContacts $Cdata] messages]
+        my _yield_loop
 
         set FullLoadDone 1
         set LoaderCoro ""
