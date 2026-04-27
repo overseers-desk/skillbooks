@@ -3,7 +3,7 @@
 # Usage: tclsh9.0 spar-progress.tcl [campaign_dir_or_yaml] [--campaign=YAML] [--no-reply-check] [--json]
 # Positional arg may be a directory or a campaign YAML file (directory derived from YAML path).
 #
-# --no-reply-check omits the T4 (reply-check) row from the transition list.
+# --no-reply-check omits the T7 (reply-check) row from the transition list.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
@@ -181,10 +181,10 @@ if {$json_mode} {
     }
     # Transition labels come from the transition registry via
     # spar::transition_label; progress JSON includes the same T-ids as
-    # the UI tree. --no-reply-check omits T4 from the output.
+    # the UI tree. --no-reply-check omits T7 from the output.
     set transitions {}
     foreach tid [spar::ui_transition_tids] {
-        if {$skip_reply_check && $tid eq "T4"} continue
+        if {$skip_reply_check && $tid eq "T7"} continue
         set tlabel [spar::transition_label $tid]
         set tasks [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
         lappend transitions [dict create label "$tid: $tlabel" count [llength $tasks] tasks $tasks]

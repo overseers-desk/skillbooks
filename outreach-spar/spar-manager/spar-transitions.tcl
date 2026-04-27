@@ -2,7 +2,7 @@
 # spar-transitions.tcl — transition eligibility report and executor (CLI)
 #
 # Report mode (default):
-#   tclsh9.0 spar-transitions.tcl [campaign_dir_or_yaml] [--tid=T3 ...]
+#   tclsh9.0 spar-transitions.tcl [campaign_dir_or_yaml] [--tid=T6 ...]
 #       [--segment=<name> ...] [--stem=<roster-stem> ...] [--pending|--ready]
 #
 # Execute mode:
@@ -282,7 +282,7 @@ if {[llength $segment_paths] == 0} {
 }
 
 # --- Classify all contacts, then apply --stem filter ---
-# In --auto mode, T1/T2/T6/T7 are the only active transitions and none of
+# In --auto mode, T1/T2/T3/T4 are the only active transitions and none of
 # them read parsed-approach fields (#63). Skip the YAML parse on the
 # initial pass too — the auto loop reclassifies cheaply each iteration.
 set _classify_full [expr {$auto_mode ? 0 : 1}]
@@ -318,8 +318,8 @@ if {[llength $filter_tid] == 0} {
 }
 
 # --auto drives the offline state machine. Included T-ids are those
-# whose metadata declares auto_safe=1 (T1/T2/T6/T7). T3 (email send) is
-# excluded because auto_safe=0; T4 has a runner but is kept out for the
+# whose metadata declares auto_safe=1 (T1/T2/T3/T4). T6 (email send) is
+# excluded because auto_safe=0; T7 has a runner but is kept out for the
 # same reason so the loop stays offline.
 if {$auto_mode} {
     set filtered_active {}
@@ -360,7 +360,7 @@ if {$execute_mode} {
     # and again before each --auto iteration so disk changes from the
     # previous pass feed the next round of transition eligibility.
     #
-    # In --auto mode the only active T-ids are T1/T2/T6/T7 (auto_safe=1),
+    # In --auto mode the only active T-ids are T1/T2/T3/T4 (auto_safe=1),
     # none of which read the parsed-approach fields (email_sent /
     # linkedin_sent / email_replied / to_addresses / unsent_subjects). We
     # opt into classify_segment's cheap mode (full=0) so each iteration
@@ -448,7 +448,7 @@ if {$execute_mode} {
 
     # ────────────────────────────────────────────────────────────────────
     # --auto: state-machine loop. Re-classify between iterations so T1→T2
-    # and T6→T7 happen in a single invocation.
+    # and T3→T4 happen in a single invocation.
     # ────────────────────────────────────────────────────────────────────
     if {$auto_mode} {
         puts "Campaign: $campaign_name"

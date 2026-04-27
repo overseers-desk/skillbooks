@@ -108,15 +108,15 @@ The fixed transition types:
 |----|-------|-----------|----------|
 | T1 | Sweep → Profile | DISCOVERED | PROFILED |
 | T2 | Profile → Approach | PROFILED | APPROACHED |
-| T3 | Approach → Send | APPROACHED | SENT |
-| T4 | Send → Reply | SENT | REPLIED |
-| T6 | Stale → Re-profile | PROFILE_STALE | PROFILED |
-| T7 | Re-profile → Re-approach | PROFILED (rebuilt) | APPROACHED |
+| T3 | Stale → Re-profile | PROFILE_STALE | PROFILED |
+| T4 | Re-profile → Re-approach | PROFILED (rebuilt) | APPROACHED |
+| T6 | Approach → Send | APPROACHED | SENT |
+| T7 | Send → Reply | SENT | REPLIED |
 | T8 | LinkedIn → Email follow-up | SENT (LinkedIn) | APPROACHED (email) |
 
 Each top-level row displays: the transition label and the count of tasks (e.g. "Profile → Approach (23)"). Counts update dynamically when the user changes segment checkboxes in the progress table.
 
-T4 (Send → Reply) dispatches through `spar::r::run`: it queries the campaign's mailroom account and appends received replies to the corresponding approach YAMLs (same code path as the toolbar "Check Email" button). T8 (LinkedIn → Email follow-up) remains a monitoring transition — displayed but with no play button.
+T7 (Send → Reply) dispatches through `spar::r::run`: it queries the campaign's mailroom account and appends received replies to the corresponding approach YAMLs (same code path as the toolbar "Check Email" button). T8 (LinkedIn → Email follow-up) remains a monitoring transition — displayed but with no play button.
 
 ### 2.2 Tasks (child items)
 
@@ -130,9 +130,9 @@ Expanding a transition type reveals its individual tasks as child rows. Each chi
 
 Examples of pending reasons:
 
-- "No email address" (T3, channel is email but contact has no email)
+- "No email address" (T6, channel is email but contact has no email)
 - "Waiting for credit window" (any dispatched transition, API budget exhausted)
-- "Profile stale — cross-ref update from [other contact]" (T6)
+- "Profile stale — cross-ref update from [other contact]" (T3)
 - "LinkedIn request sent 2 days ago, waiting until day 5" (T8)
 
 Tasks in the **done** state are shown greyed out. A "Show completed" checkbox above the treeview toggles their visibility.

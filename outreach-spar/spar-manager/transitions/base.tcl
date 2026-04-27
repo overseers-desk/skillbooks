@@ -60,7 +60,7 @@ oo::class create ::spar::transitions::Transition {
     }
 
     # Default eligible — zero tasks. Subclasses that have eligibility
-    # criteria (T1, T2, T3, T4, T6, T8, T9, T10) override. Method name has
+    # criteria (T1, T2, T3, T4, T6, T7, T8, T9, T10) override. Method name has
     # no leading underscore: TclOO would unexport it and the dispatcher in
     # spar::transition_eligible reaches it via the registered object
     # command, which is an external call.
@@ -96,7 +96,7 @@ proc ::spar::transitions::get {tid} {
 proc ::spar::transitions::all {} {
     variable registry
     # Sorted by T-id numeric part so row positions stay T1..T10 regardless
-    # of class-file load order (profile.tcl registers T1 and T6 together).
+    # of class-file load order (profile.tcl registers T1 and T3 together).
     return [lsort -command ::spar::transitions::_tid_cmp [dict keys $registry]]
 }
 

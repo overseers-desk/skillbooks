@@ -14,7 +14,7 @@ oo::class create ::spar::transitions::ManualFollowupTransition {
     # APPROACHED/SENT, campaign declares the relevant slot, and channel
     # readiness reports `<slot>_ready`.  Pending reasons that name the
     # missing preceding-channel send are suppressed — the operator already
-    # sees those through T3/T4/T8 and does not need duplicate noise here.
+    # sees those through T6/T7/T8 and does not need duplicate noise here.
     method eligible {contact primary_channel cdata today_iso} {
         set state [dict get $contact state]
         if {$state eq "EXCLUDED"} { return {} }

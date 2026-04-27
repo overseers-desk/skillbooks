@@ -1,6 +1,6 @@
 # spar-manager/transitions/send_email.tcl
 #
-# SendEmailTransition (T3, Approach → Send). Sends the final-round email
+# SendEmailTransition (T6, Approach → Send). Sends the final-round email
 # message of each approach YAML via SES SMTP. Uses smtp_send.tcl, a
 # hand-rolled SMTP client that captures the "250 Ok <id>" tracking token
 # that tcllib smtp discards. actioned_date is stamped on success.
@@ -437,7 +437,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
         $driver kick
     }
 
-    # T3: APPROACHED/SENT, has_email, not yet email_sent.  Gated on
+    # T6: APPROACHED/SENT, has_email, not yet email_sent.  Gated on
     # primary_channel == "email" until per-message routing (#49) lands —
     # email-as-secondary belongs to T9/T10 with wait_days/wait_condition.
     # Approach-YAML structural validity is a hard gate (#43 principle 7).
@@ -461,7 +461,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
 
 ::spar::transitions::register \
     -class ::spar::transitions::SendEmailTransition \
-    -tid T3 \
+    -tid T6 \
     -label "Approach → Send" \
     -auto-safe 0 \
     -dispatch-status available \

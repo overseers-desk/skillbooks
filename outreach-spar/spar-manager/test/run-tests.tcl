@@ -469,7 +469,7 @@ assert_eq [dict get $result state] "APPROACHED" \
 
 # 1m2. classify_contact full=0 (cheap mode, #63): SENT/REPLIED collapse to
 # APPROACHED so --auto can skip the YAML parse. Auto-safe transitions
-# (T1/T2/T6/T7) never read email_sent/replied/etc., so the lossy mapping
+# (T1/T2/T3/T4) never read email_sent/replied/etc., so the lossy mapping
 # is safe for that scope.
 set seg [make_temp_segment]
 write_profile $seg "cheap-sent"
@@ -783,35 +783,35 @@ set t2_names [lmap c $t2 {dict get $c contact_name}]
 assert_eq [expr {"Prof Hi" in $t2_names}] 1 "T2: PROFILED star≥3 is eligible"
 assert_eq [expr {"Prof Lo" in $t2_names}] 0 "T2: PROFILED star<3 not eligible"
 
-# T3: Approach → Send: APPROACHED, has_email, not email_sent → ready
+# T6: Approach → Send: APPROACHED, has_email, not email_sent → ready
 # also: SENT + has_email + not email_sent (multi-channel case)
 # primary_channel="email" required — see issue #49 interim gate.
-set t3 [spar::transition_eligible $contacts "T3" "email"]
-set t3_names [lmap c $t3 {dict get $c contact_name}]
-set t3_ready_names {}
-set t3_pending {}
-foreach c $t3 {
+set t6 [spar::transition_eligible $contacts "T6" "email"]
+set t6_names [lmap c $t6 {dict get $c contact_name}]
+set t6_ready_names {}
+set t6_pending {}
+foreach c $t6 {
     if {[dict get $c task_state] eq "ready"} {
-        lappend t3_ready_names [dict get $c contact_name]
+        lappend t6_ready_names [dict get $c contact_name]
     } else {
-        lappend t3_pending [dict get $c contact_name]
+        lappend t6_pending [dict get $c contact_name]
     }
 }
-assert_eq [expr {"App Email" in $t3_ready_names}] 1 "T3: APPROACHED+email → ready"
-assert_eq [expr {"App NoEmail" in $t3_pending}] 1 "T3: APPROACHED no email → pending"
-assert_eq [expr {"Sent Sam" in $t3_ready_names || "Sent Sam" in $t3_pending}] 0 \
-    "T3: SENT+email_sent already → not in T3 list"
+assert_eq [expr {"App Email" in $t6_ready_names}] 1 "T6: APPROACHED+email → ready"
+assert_eq [expr {"App NoEmail" in $t6_pending}] 1 "T6: APPROACHED no email → pending"
+assert_eq [expr {"Sent Sam" in $t6_ready_names || "Sent Sam" in $t6_pending}] 0 \
+    "T6: SENT+email_sent already → not in T6 list"
 
-# T3 primary_channel gate (issue #49): non-email or unspecified → zero tasks.
-set t3_lk [spar::transition_eligible $contacts "T3" "linkedin"]
-assert_eq [llength $t3_lk] 0 "T3: primary_channel=linkedin → zero tasks"
-set t3_u [spar::transition_eligible $contacts "T3"]
-assert_eq [llength $t3_u] 0 "T3: primary_channel unknown → zero tasks"
+# T6 primary_channel gate (issue #49): non-email or unspecified → zero tasks.
+set t6_lk [spar::transition_eligible $contacts "T6" "linkedin"]
+assert_eq [llength $t6_lk] 0 "T6: primary_channel=linkedin → zero tasks"
+set t6_u [spar::transition_eligible $contacts "T6"]
+assert_eq [llength $t6_u] 0 "T6: primary_channel unknown → zero tasks"
 
-# T4: Send → Reply: email_sent, not email_replied → pending (monitoring)
-set t4 [spar::transition_eligible $contacts "T4"]
-set t4_names [lmap c $t4 {dict get $c contact_name}]
-assert_eq [expr {"Sent Sam" in $t4_names}] 1 "T4: SENT+email_sent → in monitoring list"
+# T7: Send → Reply: email_sent, not email_replied → pending (monitoring)
+set t7 [spar::transition_eligible $contacts "T7"]
+set t7_names [lmap c $t7 {dict get $c contact_name}]
+assert_eq [expr {"Sent Sam" in $t7_names}] 1 "T7: SENT+email_sent → in monitoring list"
 
 # transition_eligible result dicts must carry stem and _segment_dir so
 # downstream callers (spar-transitions.tcl --execute) can route without
@@ -1265,10 +1265,10 @@ set t8b_names [lmap c $t8b_results {dict get $c contact_name}]
 assert_eq [expr {"Both Sent" in $t8b_names}] 0 \
     "T8: email_sent=1 → not eligible for T8"
 
-# 10c. T4: EXCLUDED contact with email_sent=1 → not eligible for T4 monitoring
-set seg_t4_inv [make_temp_segment]
-write_profile $seg_t4_inv "t4-invalidated"
-write_approach_yaml $seg_t4_inv "t4-invalidated" {decisions:
+# 10c. T7: EXCLUDED contact with email_sent=1 → not eligible for T7 monitoring
+set seg_t7_inv [make_temp_segment]
+write_profile $seg_t7_inv "t7-invalidated"
+write_approach_yaml $seg_t7_inv "t7-invalidated" {decisions:
   channel: email
 rounds:
 - type: final
@@ -1281,14 +1281,14 @@ rounds:
     actioned_date: 2026-04-01
     replied_date: null
 }
-write_roster_tsv $seg_t4_inv $::std_headers [list \
+write_roster_tsv $seg_t7_inv $::std_headers [list \
     [make_base_row {contact_name "Sent Then Invalid" email "sti@acme-venues.au" \
-        stem "t4-invalidated" star_rating "4" date_excluded "2026-04-05"}] \
+        stem "t7-invalidated" star_rating "4" date_excluded "2026-04-05"}] \
 ]
-set ct4_inv [spar::classify_segment $seg_t4_inv]
-set t4_inv_results [spar::transition_eligible $ct4_inv "T4"]
-assert_eq [llength $t4_inv_results] 0 \
-    "T4: EXCLUDED contact with email_sent=1 → not eligible"
+set ct7_inv [spar::classify_segment $seg_t7_inv]
+set t7_inv_results [spar::transition_eligible $ct7_inv "T7"]
+assert_eq [llength $t7_inv_results] 0 \
+    "T7: EXCLUDED contact with email_sent=1 → not eligible"
 
 # 10d. T8: EXCLUDED contact with linkedin_sent=1 → not eligible for T8
 set seg_t8_inv [make_temp_segment]
@@ -1652,7 +1652,7 @@ assert_eq [has_issue $va_ph_none_issues profile_hash_mismatch] 0 \
     "validate_approach: no profile_hash → no profile_hash_mismatch (optional)"
 
 # 12d4. Approach with profile_hash but profile file absent → no error
-# (state machine routes via T6 → T7; validator does not block).
+# (state machine routes via T3 → T4; validator does not block).
 set seg_va_ph_abs [make_temp_segment]
 set va_ph_abs_path [write_approach_yaml $seg_va_ph_abs "va-ph-abs" {profile_hash: sha256:1111111111111111111111111111111111111111111111111111111111111111
 decisions:
@@ -1853,11 +1853,11 @@ set vp13_contacts [spar::classify_segment $seg_vp13]
 set vp13_state [dict get [lindex $vp13_contacts 0] state]
 assert_eq $vp13_state "PROFILE_STALE" "classify_contact: snapshot ≠ roster → PROFILE_STALE"
 
-# 12p-n. PROFILE_STALE appears as T6 transition target
-set vp13_t6 [spar::transition_eligible $vp13_contacts "T6"]
-set vp13_t6_names [lmap c $vp13_t6 {dict get $c contact_name}]
-assert_eq [expr {"Is Called This Now" in $vp13_t6_names}] 1 \
-    "T6: PROFILE_STALE contact is eligible for re-profile"
+# 12p-n. PROFILE_STALE appears as T3 transition target
+set vp13_t3 [spar::transition_eligible $vp13_contacts "T3"]
+set vp13_t3_names [lmap c $vp13_t3 {dict get $c contact_name}]
+assert_eq [expr {"Is Called This Now" in $vp13_t3_names}] 1 \
+    "T3: PROFILE_STALE contact is eligible for re-profile"
 
 # 12p-o. validate_campaign integration: staleness warning flows through
 set vp14_issues [spar::validate_campaign $vp13_contacts]
@@ -1939,47 +1939,47 @@ if {![file isdirectory $campaign_dir]} {
 }
 
 # ════════════════════════════════════════════════════════════════════════
-# 15. T6/T7 zero tasks (PROFILE_STALE undefined)
+# 15. T3/T4 zero tasks (PROFILE_STALE undefined)
 # ════════════════════════════════════════════════════════════════════════
-section "15. T6/T7 routing (#63)"
+section "15. T3/T4 routing (#63)"
 
 # Baseline: a healthy mix (DISCOVERED, PROFILED, APPROACHED, SENT) yields
-# zero T6 and zero T7 tasks — re-profile/re-approach only fire on staleness.
-set seg_t67 [make_temp_segment]
-write_profile $seg_t67 "t67-profiled"
-write_profile $seg_t67 "t67-approached"
-write_approach_yaml $seg_t67 "t67-approached" [approach_yaml_final_unsent]
-write_profile $seg_t67 "t67-sent"
-write_approach_yaml $seg_t67 "t67-sent" [approach_yaml_final_sent_email]
-write_roster_tsv $seg_t67 $::std_headers [list \
+# zero T3 and zero T4 tasks — re-profile/re-approach only fire on staleness.
+set seg_t34 [make_temp_segment]
+write_profile $seg_t34 "t34-profiled"
+write_profile $seg_t34 "t34-approached"
+write_approach_yaml $seg_t34 "t34-approached" [approach_yaml_final_unsent]
+write_profile $seg_t34 "t34-sent"
+write_approach_yaml $seg_t34 "t34-sent" [approach_yaml_final_sent_email]
+write_roster_tsv $seg_t34 $::std_headers [list \
     [make_base_row {contact_name "Disco" stem ""}] \
-    [make_base_row {contact_name "Prof" stem "t67-profiled"}] \
-    [make_base_row {contact_name "App" stem "t67-approached"}] \
-    [make_base_row {contact_name "Sent" stem "t67-sent"}] \
+    [make_base_row {contact_name "Prof" stem "t34-profiled"}] \
+    [make_base_row {contact_name "App" stem "t34-approached"}] \
+    [make_base_row {contact_name "Sent" stem "t34-sent"}] \
 ]
-set ct67 [spar::classify_segment $seg_t67]
+set ct34 [spar::classify_segment $seg_t34]
 
-set t6_results [spar::transition_eligible $ct67 "T6"]
-assert_eq [llength $t6_results] 0 "T6: zero tasks when no contact is PROFILE_STALE"
+set t3_results [spar::transition_eligible $ct34 "T3"]
+assert_eq [llength $t3_results] 0 "T3: zero tasks when no contact is PROFILE_STALE"
 
-set t7_results [spar::transition_eligible $ct67 "T7"]
-assert_eq [llength $t7_results] 0 "T7: zero tasks when no contact is APPROACH_STALE"
+set t4_results [spar::transition_eligible $ct34 "T4"]
+assert_eq [llength $t4_results] 0 "T4: zero tasks when no contact is APPROACH_STALE"
 
-# T6: missing-profile-with-approach lands in PROFILE_STALE → 1 T6 task.
-set seg_t6 [make_temp_segment]
-write_approach_yaml $seg_t6 "needs-reprofile" [approach_yaml_final_unsent]
-write_roster_tsv $seg_t6 $::std_headers [list \
+# T3: missing-profile-with-approach lands in PROFILE_STALE → 1 T3 task.
+set seg_t3 [make_temp_segment]
+write_approach_yaml $seg_t3 "needs-reprofile" [approach_yaml_final_unsent]
+write_roster_tsv $seg_t3 $::std_headers [list \
     [make_base_row {contact_name "Needs Reprofile" star_rating 4 stem "needs-reprofile"}] \
 ]
-set ct6 [spar::classify_segment $seg_t6]
-set t6_ready [spar::transition_eligible $ct6 "T6"]
-assert_eq [llength $t6_ready] 1 \
-    "T6: approach references missing profile → 1 ready task"
+set ct3 [spar::classify_segment $seg_t3]
+set t3_ready [spar::transition_eligible $ct3 "T3"]
+assert_eq [llength $t3_ready] 1 \
+    "T3: approach references missing profile → 1 ready task"
 
-# T7: APPROACH_STALE (hash mismatch) → 1 T7 task; T2 still sees zero.
-set seg_t7 [make_temp_segment]
-write_profile $seg_t7 "hash-stale"
-write_approach_yaml $seg_t7 "hash-stale" {profile_hash: sha256:0000000000000000000000000000000000000000000000000000000000000000
+# T4: APPROACH_STALE (hash mismatch) → 1 T4 task; T2 still sees zero.
+set seg_t4 [make_temp_segment]
+write_profile $seg_t4 "hash-stale"
+write_approach_yaml $seg_t4 "hash-stale" {profile_hash: sha256:0000000000000000000000000000000000000000000000000000000000000000
 decisions:
   channel: email
 rounds:
@@ -1993,18 +1993,18 @@ rounds:
     actioned_date: null
     replied_date: null
 }
-write_roster_tsv $seg_t7 $::std_headers [list \
+write_roster_tsv $seg_t4 $::std_headers [list \
     [make_base_row {contact_name "Hash Stale" star_rating 4 email "test@acme-venues.au" stem "hash-stale"}] \
 ]
-set ct7 [spar::classify_segment $seg_t7]
+set ct4 [spar::classify_segment $seg_t4]
 # Use the campaign-aware form so the dispatch gate (in_scope_channel) accepts it.
-set t7_cdata [dict create primary_channel email]
-set t7_ready [spar::transition_eligible $ct7 "T7" email $t7_cdata 2026-04-15]
-assert_eq [llength $t7_ready] 1 \
-    "T7: APPROACH_STALE → 1 ready task (#63)"
-set t2_zero [spar::transition_eligible $ct7 "T2" email $t7_cdata 2026-04-15]
+set t4_cdata [dict create primary_channel email]
+set t4_ready [spar::transition_eligible $ct4 "T4" email $t4_cdata 2026-04-15]
+assert_eq [llength $t4_ready] 1 \
+    "T4: APPROACH_STALE → 1 ready task (#63)"
+set t2_zero [spar::transition_eligible $ct4 "T2" email $t4_cdata 2026-04-15]
 assert_eq [llength $t2_zero] 0 \
-    "T2: APPROACH_STALE not eligible for T2 (T7's territory)"
+    "T2: APPROACH_STALE not eligible for T2 (T4's territory)"
 
 # ════════════════════════════════════════════════════════════════════════
 # 16. progress_counts edge cases
@@ -2832,10 +2832,10 @@ section "24b. transition runner routing"
 
 assert_eq [spar::has_transition_runner T1] 1 "routing: T1 is wired"
 assert_eq [spar::has_transition_runner T2] 1 "routing: T2 is wired"
-assert_eq [spar::has_transition_runner T3] 1 "routing: T3 is wired"
-assert_eq [spar::has_transition_runner T4] 1 "routing: T4 is wired"
 assert_eq [spar::has_transition_runner T6] 1 "routing: T6 is wired"
 assert_eq [spar::has_transition_runner T7] 1 "routing: T7 is wired"
+assert_eq [spar::has_transition_runner T3] 1 "routing: T3 is wired"
+assert_eq [spar::has_transition_runner T4] 1 "routing: T4 is wired"
 assert_eq [spar::has_transition_runner T8] 0 "routing: T8 is not wired"
 assert_eq [spar::has_transition_runner T9] 0 "routing: T9 is not wired"
 
@@ -2847,12 +2847,12 @@ proc _runner_class {tid} {
     return [info object class [lindex $runner 0]]
 }
 assert_eq [_runner_class T1] ::spar::transitions::ProfileTransition "routing: T1 → ProfileTransition"
-assert_eq [_runner_class T6] ::spar::transitions::ProfileTransition "routing: T6 → ProfileTransition"
+assert_eq [_runner_class T3] ::spar::transitions::ProfileTransition "routing: T3 → ProfileTransition"
 assert_eq [_runner_class T2] ::spar::transitions::ApproachTransition "routing: T2 → ApproachTransition"
-assert_eq [_runner_class T7] ::spar::transitions::ApproachTransition "routing: T7 → ApproachTransition"
-assert_eq [_runner_class T3] ::spar::transitions::SendEmailTransition "routing: T3 → SendEmailTransition"
-assert_eq [_runner_class T4] ::spar::transitions::CheckRepliesTransition "routing: T4 → CheckRepliesTransition"
-foreach _tid {T1 T2 T3 T4 T6 T7} {
+assert_eq [_runner_class T4] ::spar::transitions::ApproachTransition "routing: T4 → ApproachTransition"
+assert_eq [_runner_class T6] ::spar::transitions::SendEmailTransition "routing: T6 → SendEmailTransition"
+assert_eq [_runner_class T7] ::spar::transitions::CheckRepliesTransition "routing: T7 → CheckRepliesTransition"
+foreach _tid {T1 T2 T6 T7 T3 T4} {
     assert_eq [lindex [spar::transition_runner $_tid] 1] run \
         "routing: $_tid runner verb is `run`"
 }
@@ -2862,9 +2862,9 @@ catch {spar::transition_runner T8} _routing_err
 assert_match $_routing_err "no runner*" "routing: T8 lookup errors"
 
 # ════════════════════════════════════════════════════════════════════════
-# 24c. spar::filter_approaches_by_stems — T4 cohort narrowing (issue #73)
+# 24c. spar::filter_approaches_by_stems — T7 cohort narrowing (issue #73)
 # ════════════════════════════════════════════════════════════════════════
-section "24c. spar::filter_approaches_by_stems — T4 cohort narrowing"
+section "24c. spar::filter_approaches_by_stems — T7 cohort narrowing"
 
 source [file join $script_dir .. spar-email.tcl]
 
