@@ -23,6 +23,13 @@ apply {{} {
     ::spar::transitions::assert_matches_doc [file join $here state-machine.md]
 }}
 
+# Captured at source time for the prefetch_approach_cache worker initcmd:
+# tpool workers run in fresh interps and `source $::spar::_state_file`
+# bootstraps them with the same projection helpers and yaml dependency
+# the main interp has. Resolved against the symlinked-resolved path so
+# workers see the same file even if callers source via a relative path.
+namespace eval spar { variable _state_file [file normalize [info script]] }
+
 namespace eval spar {
     namespace export detect_duplicates progress_counts \
         roster_counts \
@@ -302,17 +309,34 @@ proc spar::analyse_final_round {data} {
 # cache hit, both are re-probed cheaply (one gets + one stat) before
 # the cached summary is returned; mismatch on either drops the entry.
 #
-# Parse cost on the read path is bounded by avoidance, not throughput:
-# the cache + cheap-tier classification keep cold-render parses to one-
-# per-APPROACHED-contact and zero across renders within a State's
-# lifetime. Further reduction belongs in the same register — additional
-# avoidance (e.g. caching the profile front-matter reads in
-# _profile_is_stale) before parallelism, since fan-out across already-
-# rare parses pays per-worker interp warmup for diminishing returns.
+# Parse cost on the read path is shaped first by avoidance: the cache +
+# cheap-tier classification keep cold-render parses to one-per-APPROACHED-
+# contact and zero across renders within a State's lifetime. The
+# remaining cold-load batch is dispatched by prefetch_approach_cache as
+# fire-and-forget tpool jobs; approach_summary blocks per-path on a
+# pending job only when a consumer actually asks for that path, so
+# main-thread work overlaps with worker parses. Further reduction
+# extends avoidance (e.g. front-matter caching for _profile_is_stale)
+# before adding more parallelism.
 oo::class create spar::State {
-    variable ApproachCache
+    variable ApproachCache Pool PendingJobs
     constructor {} {
         set ApproachCache [dict create]
+        set Pool ""
+        set PendingJobs [dict create]
+    }
+    destructor {
+        if {$Pool ne ""} {
+            # Drain any in-flight prefetch jobs before releasing the pool —
+            # tpool::release would orphan their results otherwise.
+            if {[dict size $PendingJobs]} {
+                foreach jid [dict values $PendingJobs] {
+                    catch {tpool::wait $Pool $jid}
+                    catch {tpool::get $Pool $jid}
+                }
+            }
+            catch {tpool::release $Pool}
+        }
     }
 }
 
@@ -326,6 +350,76 @@ oo::class create spar::State {
 oo::define spar::State method forget_approach {approach_path} {
     if {[dict exists $ApproachCache $approach_path]} {
         set ApproachCache [dict remove $ApproachCache $approach_path]
+    }
+    # Drop any in-flight prefetch for this path — its result was captured
+    # against the pre-rewrite bytes and would re-cache stale data on the
+    # next approach_summary call. Drain (but discard) the worker so the
+    # job slot is reclaimed cleanly.
+    if {[dict exists $PendingJobs $approach_path]} {
+        set jid [dict get $PendingJobs $approach_path]
+        set PendingJobs [dict remove $PendingJobs $approach_path]
+        catch {tpool::wait $Pool $jid}
+        catch {tpool::get $Pool $jid}
+    }
+}
+
+# _ensure_pool -- lazy-create the tpool worker pool. Pre-spawned with
+# -minworkers = -maxworkers so all workers run their initcmd in parallel
+# at pool creation; the alternative (-minworkers 0, lazy spawn) costs
+# more on first prefetch because the first refine_contact that joins a
+# pending job blocks while the worker spawns and sources spar-state.tcl
+# (~300 ms). Sized to nproc capped at 8 — past ~4 workers the
+# main-thread join cost of projection dicts becomes the serial floor.
+# -idletime 30 still decays workers if the pool sits unused, matching
+# the State's lifetime hygiene. Workers source spar-state.tcl wholesale;
+# the transitions/* files come along but are dead weight (workers never
+# call them).
+oo::define spar::State method _ensure_pool {} {
+    if {$Pool ne ""} return
+    package require Thread
+    set n [expr {min([exec nproc], 8)}]
+    set Pool [tpool::create \
+        -minworkers $n \
+        -maxworkers $n \
+        -idletime   30 \
+        -initcmd    [list source $::spar::_state_file]]
+}
+
+# prefetch_approach_cache -- fire-and-forget tpool dispatch for a list
+# of approach paths. Each path that is not already cache-valid and not
+# already in-flight is posted as a worker job; the job ID is stored in
+# PendingJobs keyed by path. The method returns immediately, so the
+# caller's main-thread work overlaps with worker parses. Cache writes
+# happen later, in approach_summary, when a consumer first asks for
+# that path: cache hit short-circuits, otherwise the pending job is
+# joined and its result becomes the cache entry.
+#
+# Skips paths already valid in the cache (line-1 hash + mtime match),
+# already in-flight (PendingJobs has the path), missing files, and
+# empty strings. Workers capture hash+mtime alongside the parse so the
+# tuple they return is race-free against the bytes they parsed.
+#
+# parse_count is incremented at cache-write time inside approach_summary,
+# not here — the parse logically completes when the cache absorbs the
+# result, and that point is where the test instrumentation is anchored.
+oo::define spar::State method prefetch_approach_cache {paths} {
+    set need {}
+    foreach p $paths {
+        if {$p eq "" || ![file exists $p]} continue
+        if {[dict exists $PendingJobs $p]} continue
+        set h [spar::_approach_first_line_hash $p]
+        set m [file mtime $p]
+        if {[dict exists $ApproachCache $p]} {
+            set e [dict get $ApproachCache $p]
+            if {[dict get $e hash] eq $h && [dict get $e mtime] eq $m} continue
+        }
+        lappend need $p
+    }
+    if {[llength $need] == 0} return
+    my _ensure_pool
+    foreach p $need {
+        dict set PendingJobs $p \
+            [tpool::post -nowait $Pool [list spar::_parse_worker_run $p]]
     }
 }
 
@@ -363,6 +457,27 @@ oo::define spar::State method approach_summary {contact} {
             return [dict get $entry summary]
         }
         # stale; fall through to re-parse
+    }
+
+    # Consume a pending prefetch for this path rather than re-parsing on
+    # the main thread. tpool::wait on a single jobid pumps the event loop,
+    # so Tk widgets keep painting while we block. The worker captured
+    # hash+mtime atomically against the bytes it parsed; the next call's
+    # cache probe re-validates against the current file, so a file
+    # rewritten between post and consume self-corrects on the next call.
+    if {[dict exists $PendingJobs $ap]} {
+        set jid [dict get $PendingJobs $ap]
+        set PendingJobs [dict remove $PendingJobs $ap]
+        tpool::wait $Pool $jid
+        if {![catch {tpool::get $Pool $jid} r]} {
+            dict set ApproachCache $ap [dict create \
+                hash    [dict get $r hash]    \
+                mtime   [dict get $r mtime]   \
+                summary [dict get $r summary]]
+            incr ::spar::parse_count
+            return [dict get $r summary]
+        }
+        # Worker errored — fall through to synchronous parse on this call.
     }
 
     set data [spar::read_approach_yaml $ap]
@@ -507,6 +622,21 @@ proc spar::_project_reply {reply} {
         }
     }
     return $out
+}
+
+# _parse_worker_run -- tpool worker entry. Takes an approach file path
+# and returns a result tuple {path summary hash mtime} that the main
+# thread uses to populate ApproachCache atomically. Hash and mtime are
+# captured here so they are race-free against the bytes the worker
+# parsed; main-thread storage uses the worker's tuple verbatim. Parse
+# failure (missing file, malformed YAML) returns summary = {} — same
+# semantics as the serial path.
+proc spar::_parse_worker_run {path} {
+    set hash  [spar::_approach_first_line_hash $path]
+    set mtime [expr {[file exists $path] ? [file mtime $path] : 0}]
+    set data  [spar::read_approach_yaml $path]
+    set summary [expr {$data eq "" ? {} : [spar::project_approach_data $data]}]
+    return [dict create path $path summary $summary hash $hash mtime $mtime]
 }
 
 # classify_contact -- classify one contact's cheap state.
