@@ -37,6 +37,9 @@ set outfile [dict get $meta OUTFILE]
 set roster_path [dict get $meta ROSTER_PATH]
 set stem [dict get $meta STEM]
 set p_strict [spar::dict_get_default $meta P_STRICT 0]
+set contact_name [spar::dict_get_default $meta CONTACT_NAME ""]
+set contact_org [spar::dict_get_default $meta CONTACT_ORG ""]
+set contact_email [spar::dict_get_default $meta CONTACT_EMAIL ""]
 
 set log_prefix [file join $log_dir $slug]
 file mkdir $log_dir
@@ -205,6 +208,10 @@ oo::class create spar::ProfileHarness {
 # ── Run ────────────────────────────────────────────────────────────────
 
 set harness [spar::ProfileHarness new $slug $log_prefix]
+
+$harness inject_mailroom \
+    [file join $prompt_dir prompt.txt] \
+    $contact_name $contact_org $contact_email
 
 puts "\[$slug\] \[phase: researching\]"
 puts "\[$slug\] Profile: researching..."

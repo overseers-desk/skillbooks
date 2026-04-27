@@ -15,3 +15,4 @@ Follow SPAR-P §5 profile structure exactly. The profile MUST begin with a YAML 
 Web search is the primary research method. Use Chromium only when the target has a LinkedIn or Facebook URL and WebFetch returns insufficient data. Wrap Chromium with flock: flock /tmp/chromium.lock /snap/bin/chromium --headless --dump-dom --virtual-time-budget=30000 --window-size=1920,10000 --user-data-dir="$HOME/snap/chromium/common/chromium" "URL" 2>/dev/null
 
 __SQLITE3_SKILL__
+__MAILROOM_SECTION__

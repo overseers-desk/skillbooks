@@ -42,7 +42,6 @@ proc spar::load_prompt_template {name} {
     return [string trimright $s "\n"]
 }
 
-source [file join $::spar::dispatch_script_dir spar-mailroom.tcl]
 source [file join $::spar::dispatch_script_dir spar-dispatcher.tcl]
 
 # ════════════════════════════════════════════════════════════════════════
@@ -273,13 +272,6 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
             __SQLITE3_SKILL__ $sqlite3_skill_text \
         ] [spar::load_prompt_template spar-p.txt]]
 
-        set _mr_hdr [spar::mailroom::accounts_block]
-        if {$_mr_hdr ne ""} {
-            {*}$on_progress $stem started "mailroom prefetch"
-            append prompt "\n\n$_mr_hdr"
-            append prompt [spar::mailroom::contact_block $name $org $email]
-        }
-
         if {$appendix_p_author ne ""} {
             append prompt "\n\n$appendix_p_author"
         }
@@ -293,6 +285,9 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
         puts $fd "OUTFILE=\"$outfile\""
         puts $fd "ROSTER_PATH=\"$roster_path\""
         puts $fd "P_STRICT=\"[expr {[spar::dict_get_default $cdata p_strict 0] ? 1 : 0}]\""
+        puts $fd "CONTACT_NAME=\"$name\""
+        puts $fd "CONTACT_ORG=\"$org\""
+        puts $fd "CONTACT_EMAIL=\"$email\""
         close $fd
     }
 
@@ -569,14 +564,6 @@ Response likelihood: $response_likelihood
 p_note: $p_note
 s_note: $s_note"
 
-            set mailroom_section ""
-            set _mr_hdr [spar::mailroom::accounts_block]
-            if {$_mr_hdr ne ""} {
-                set _mr_label "[spar::slugify $name]-[spar::slugify $org]"
-                {*}$on_progress $_mr_label started "mailroom prefetch"
-                set mailroom_section "\n\n$_mr_hdr[spar::mailroom::contact_block $name $org $email]"
-            }
-
             incr count
             set prompt_slug [format "%03d-%s-%s" $count $slug_name $slug_org]
             set prompt_dir [file join $prompts_dir $prompt_slug]
@@ -591,6 +578,7 @@ s_note: $s_note"
             puts $fd "ANTIFACTS=$antifacts"
             puts $fd "GOAL=$goal_path"
             puts $fd "CONTACT_SUMMARY=$name | $org | $segment"
+            puts $fd "CONTACT_NAME=$name"
             puts $fd "ROSTER_EMAIL=$email"
             puts $fd "ROSTER_ORGANISATION=$org"
             puts $fd "CHALLENGER_MODEL=sonnet"
@@ -620,7 +608,6 @@ ${item_num}. Campaign principles: $campaign_principles — read the \"Profile-in
             set author_prompt [string map [list \
                 __FILE_ITEMS__       $file_items \
                 __CONTACT_SUMMARY__  $contact_summary \
-                __MAILROOM_SECTION__ $mailroom_section \
                 __CHANNEL_DESC__     $channel_d \
                 __SENDER_LINE__      $sender_line \
                 __LANG_INSTRUCTION__ $lang_inst \

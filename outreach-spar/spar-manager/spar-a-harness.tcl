@@ -38,6 +38,7 @@ set contact_summary [dict get $meta CONTACT_SUMMARY]
 set challenger_model [spar::dict_get_default $meta CHALLENGER_MODEL sonnet]
 set roster_email [spar::dict_get_default $meta ROSTER_EMAIL ""]
 set roster_organisation [spar::dict_get_default $meta ROSTER_ORGANISATION ""]
+set contact_name_meta [spar::dict_get_default $meta CONTACT_NAME ""]
 
 set log_prefix [file join $log_dir $slug]
 file mkdir $log_dir
@@ -99,6 +100,10 @@ oo::class create spar::ApproachHarness {
 }
 
 set harness [spar::ApproachHarness new $slug $log_prefix]
+
+$harness inject_mailroom \
+    [file join $prompt_dir author-draft.txt] \
+    $contact_name_meta $roster_organisation $roster_email
 
 # ── Author: draft ──────────────────────────────────────────────────────
 
