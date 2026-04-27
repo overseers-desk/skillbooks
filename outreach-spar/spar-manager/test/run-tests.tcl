@@ -3388,6 +3388,62 @@ assert_eq [llength $rv5_unknown] 1 \
     "validate_approach: parent with unknown key → unknown_key_parent"
 
 # ════════════════════════════════════════════════════════════════════════
+# 27. spar::read_segment_yaml
+# ════════════════════════════════════════════════════════════════════════
+section "27. spar::read_segment_yaml"
+
+# Missing file → empty string
+set sy_missing [spar::read_segment_yaml /tmp/spar-segyaml-no-such-file-[pid]]
+assert_eq $sy_missing "" "read_segment_yaml: missing file → empty string"
+
+# Well-formed segment.yaml with scalars, multi-line block, and a list of dicts
+set sy_path [file join /tmp "spar-segyaml-[pid]-[clock microseconds].yaml"]
+set fd [open $sy_path w]
+puts $fd "title: Test segment"
+puts $fd "priority: Tier 1"
+puts $fd "objective: |"
+puts $fd "  Multi-line objective."
+puts $fd "  Second line."
+puts $fd "rating_rubric: |"
+puts $fd "  Brief prose rubric."
+puts $fd "usps:"
+puts $fd "  - id: U1"
+puts $fd "    type: emotional"
+puts $fd "    framing: Why this matters."
+puts $fd "  - id: U2"
+puts $fd "    type: functional"
+puts $fd "    framing: Functional value."
+close $fd
+
+set sy_data [spar::read_segment_yaml $sy_path]
+assert_match $sy_data "*title*" "read_segment_yaml: parses non-empty dict"
+assert_eq [dict get $sy_data title]    "Test segment" "read_segment_yaml: scalar field"
+assert_eq [dict get $sy_data priority] "Tier 1"       "read_segment_yaml: scalar field"
+assert_match [dict get $sy_data objective] \
+    "*Multi-line objective.*Second line.*" \
+    "read_segment_yaml: multi-line block scalar"
+assert_eq [llength [dict get $sy_data usps]] 2 \
+    "read_segment_yaml: list of dicts has two entries"
+set sy_first_usp [lindex [dict get $sy_data usps] 0]
+assert_eq [dict get $sy_first_usp id]   "U1"        "read_segment_yaml: list-of-dicts entry id"
+assert_eq [dict get $sy_first_usp type] "emotional" "read_segment_yaml: list-of-dicts entry type"
+
+file delete $sy_path
+
+# Malformed YAML — must not throw. read_segment_yaml wraps the parse in
+# catch and returns "" on failure; getting past the assignment without a
+# Tcl error is itself the assertion.
+set sy_bad [file join /tmp "spar-segyaml-bad-[pid]-[clock microseconds].yaml"]
+set fd [open $sy_bad w]
+puts $fd "key: value"
+puts $fd "  bogus_indent_under_scalar"
+puts $fd "another:: weird"
+close $fd
+set sy_bad_threw [catch {spar::read_segment_yaml $sy_bad} sy_bad_data]
+assert_eq $sy_bad_threw 0 "read_segment_yaml: malformed input does not throw"
+file delete $sy_bad
+
+# ════════════════════════════════════════════════════════════════════════
 # Cleanup and summary
 # ════════════════════════════════════════════════════════════════════════
 cleanup_temps

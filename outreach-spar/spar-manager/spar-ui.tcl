@@ -95,6 +95,7 @@ source [file join $script_dir ui dispatch-controller.tcl]
 source [file join $script_dir ui utils.tcl]
 source [file join $script_dir ui collapsible.tcl]
 source [file join $script_dir ui inspector.tcl]
+source [file join $script_dir ui segment-viewer.tcl]
 source [file join $script_dir ui settings.tcl]
 
 # ============================================================
@@ -239,7 +240,7 @@ messages."
 # go through mount_campaign's exec-relaunch path.
 proc ::spar::ui::build_loaded_body {path} {
     global script_dir colours
-    global campaign log progress tree_obj dispatch inspector
+    global campaign log progress tree_obj dispatch inspector segviewer
     global cf cpanel tpanel
     global auto_tid auto_stems auto_quit auto_dry_run log_to_stderr
 
@@ -407,6 +408,14 @@ proc ::spar::ui::build_loaded_body {path} {
     # selection-changed and double-clicked events so the wiring exists
     # from day one.
     set inspector [spar::ui::Inspector new $campaign $tree_obj .pw]
+
+    # SegmentViewer — opens on Double-1 in the progress table. Shares
+    # `.pw.right` with Inspector via cross `shown` subscriptions: each
+    # hides itself when the other shows, so the pane carries one or the
+    # other but not both.
+    set segviewer [spar::ui::SegmentViewer new $campaign $progress .pw]
+    $inspector subscribe shown [list $segviewer displace]
+    $segviewer subscribe shown [list $inspector displace]
 
     # ============================================================
     # Initial sash position

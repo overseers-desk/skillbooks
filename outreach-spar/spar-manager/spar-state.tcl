@@ -135,6 +135,29 @@ proc spar::read_approach_yaml {path} {
     return $data
 }
 
+# read_segment_yaml — safely read and parse a segment.yaml file.
+# Returns parsed dict, or empty string on failure / missing file.
+proc spar::read_segment_yaml {path} {
+    if {![file exists $path]} {
+        return ""
+    }
+    set fd {}
+    if {[catch {
+        set fd [open $path r]
+        fconfigure $fd -encoding utf-8
+        set raw [read $fd]
+        close $fd
+        set fd {}
+        set data [::yaml::yaml2dict $raw]
+    } err]} {
+        if {$fd ne ""} {
+            catch {close $fd}
+        }
+        return ""
+    }
+    return $data
+}
+
 # final_email_message — return the sole final-round email message dict, or ""
 # if the final round has no email message. Callers rely on the ≤1 invariant
 # enforced by validate_approach (too_many_final_emails). If multiple are
