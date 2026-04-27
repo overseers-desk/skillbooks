@@ -139,9 +139,14 @@ oo::class create spar::ui::TransitionTree {
         set SlugToRow         [dict create]
         set NextTransitionIdx 0
 
+        # Transitions list is built in ui_transition_tids order, so the
+        # i-th tentry corresponds to the i-th tid in that list.
+        set tids [spar::ui_transition_tids]
+        set i 0
         foreach tentry $transitions {
             lassign $tentry tlabel tcount ttasks
-            my _insert_transition $tlabel $ttasks
+            my _insert_transition [lindex $tids $i] $tlabel $ttasks
+            incr i
         }
     }
 
@@ -149,10 +154,10 @@ oo::class create spar::ui::TransitionTree {
     # rows) to the tree. Shared by populate and on_transition_loaded;
     # parent_id is derived from NextTransitionIdx so async-appended ids
     # match the `t$idx` shape the dispatch path's auto_dispatch expects.
-    method _insert_transition {tlabel ttasks} {
+    method _insert_transition {tid tlabel ttasks} {
         set parent_id "t$NextTransitionIdx"
         set tcount [llength $ttasks]
-        $Tree insert {} end -id $parent_id -text "$tlabel ($tcount)" -open false
+        $Tree insert {} end -id $parent_id -text "$tid: $tlabel ($tcount)" -open false
 
         foreach task $ttasks {
             lassign $task tname tstem torg tseg tstate treason
@@ -234,7 +239,7 @@ oo::class create spar::ui::TransitionTree {
     # arrives in the payload for debugging; the visual position comes
     # from NextTransitionIdx, which is in lockstep with tid order.
     method on_transition_loaded {tid tlabel ttasks} {
-        my _insert_transition $tlabel $ttasks
+        my _insert_transition $tid $tlabel $ttasks
     }
 
     # ─── Internal helpers ─────────────────────────────────────────────────
