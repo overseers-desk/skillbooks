@@ -16,7 +16,7 @@ The implementation target is `spar-state.tcl`, a pure read-only library sourced 
 
 Each state classification and each transition dispatch is independently deployable. Undefined parts produce zero results, not errors — they do not propagate failures to the rest of the system.
 
-**State machine:** classifies contacts from whatever information is present in the filesystem and TSV. If a state's classification condition is not yet defined (e.g., PROFILE_STALE), the state machine never assigns that state — contacts that would have been in it remain in the previous defined state instead. T6/T7 then see zero tasks. That is correct behavior: the rest of the state machine continues working.
+**State machine:** classifies contacts from whatever information is present in the filesystem and TSV. If a state's classification condition is not yet defined (e.g., PROFILE_STALE), the state machine never assigns that state — contacts that would have been in it remain in the previous defined state instead. T3/T4 then see zero tasks. That is correct behavior: the rest of the state machine continues working.
 
 **Transition dispatch:** independently incomplete. A contact can be eligible (state machine says "ready") while the dispatch for that transition is a stub returning an error or is not yet written. These are distinct reasons a transition cannot proceed:
 
@@ -89,7 +89,7 @@ A contact's state is inferred from the presence and content of files in the segm
 | `PROFILED` | Valid, file `profiles/{stem}.md` exists, not stale |
 | `PROFILE_STALE` | Valid, profile is missing-but-needed (an `approach/{stem}.yaml` references it) OR profile exists with snapshot diverging from the roster — see §Staleness |
 | `APPROACHED` | Profiled (fresh), file `approach/{stem}.yaml` exists, no final-round message with `actioned_date` set, profile_hash either matches or is absent |
-| `APPROACH_STALE` | Profiled (fresh), `approach/{stem}.yaml` exists with a `profile_hash` that diverges from the current profile bytes (#63). T7 re-runs A. Routed to APPROACHED-equivalent only — SENT/REPLIED supersede so engaged contacts are never re-approached on hash mismatch alone |
+| `APPROACH_STALE` | Profiled (fresh), `approach/{stem}.yaml` exists with a `profile_hash` that diverges from the current profile bytes (#63). T4 re-runs A. Routed to APPROACHED-equivalent only — SENT/REPLIED supersede so engaged contacts are never re-approached on hash mismatch alone |
 | `SENT` | `approach/{stem}.yaml` exists, final round has at least one message with `actioned_date` non-null |
 | `REPLIED` | `SENT`, and final round has a message with `replied_date` non-null, or a reply with `direction: received` |
 
@@ -112,7 +112,7 @@ These are orthogonal to primary state. They filter eligibility for specific tran
 
 ### Channel properties of the approach (for APPROACHED/SENT contacts)
 
-The approach YAML's final round can contain multiple messages across channels (e.g., one LinkedIn, one email, one phone), but **at most one `channel: email` message** — enforced by `validate_approach` (`too_many_final_emails`). Sequential email follow-ups belong in subsequent rounds; additional recipients belong in `cc`/`bcc`. These messages determine T3 and T8 eligibility.
+The approach YAML's final round can contain multiple messages across channels (e.g., one LinkedIn, one email, one phone), but **at most one `channel: email` message** — enforced by `validate_approach` (`too_many_final_emails`). Sequential email follow-ups belong in subsequent rounds; additional recipients belong in `cc`/`bcc`. These messages determine T6 and T8 eligibility.
 
 | Property | Condition |
 |----------|-----------|
@@ -125,7 +125,7 @@ The approach YAML's final round can contain multiple messages across channels (e
 `PROFILE_STALE` is raised in two situations:
 
 1. **Snapshot divergence.** The profile's front-matter `dependent_data` snapshot diverges from the current roster row. The profile document captures, at generation time, the roster fields whose subsequent change should invalidate P's assessment; comparing the snapshot against the live roster row is the staleness test.
-2. **Approach references a missing profile.** An `approach/{stem}.yaml` exists but the corresponding `profiles/{stem}.md` has been deleted. This is the missing-profile half of #63: re-profile is required (T6) before the approach can be re-considered. After T6 writes a fresh profile, the approach's stored `profile_hash` will mismatch the new bytes and the contact lands in `APPROACH_STALE` for T7.
+2. **Approach references a missing profile.** An `approach/{stem}.yaml` exists but the corresponding `profiles/{stem}.md` has been deleted. This is the missing-profile half of #63: re-profile is required (T3) before the approach can be re-considered. After T3 writes a fresh profile, the approach's stored `profile_hash` will mismatch the new bytes and the contact lands in `APPROACH_STALE` for T4.
 
 **Snapshotted fields and divergence rules** (full spec in `spar-P-profile.md` §5.3):
 
@@ -225,14 +225,16 @@ Derived from the same classified contacts:
 
 The transition manager filters `classify_segment` output by eligibility condition.
 
+T1–T4 are the cheap (no-parse) transitions; T5 is reserved for a future cheap addition; T6–T8 require an approach-YAML parse to evaluate eligibility. The split is exploited by the GUI loader (#82) to surface cheap rows before the parse pass completes.
+
 | # | Label | Eligible contacts | Dispatch | Dispatch status |
 |---|-------|-------------------|----------|-----------------|
 | T1 | Sweep → Profile | state = DISCOVERED | spar-transitions.tcl --tid=T1 --execute (runs §4.1 first if `contact_name` is blank, else §4.2+) | available |
 | T2 | Profile → Approach | state = PROFILED, star≥3 | spar-a-batch.tcl | available |
-| T3 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | spar-transitions.tcl --tid=T3 --execute (AWS SES, serial with --delay) | available |
-| T4 | Send → Reply | email_sent, not email_replied | spar-transitions.tcl --tid=T4 --execute (mailroom reply-check, appends replies to approach YAML) | available |
-| T6 | Stale → Re-profile | state = PROFILE_STALE | spar-transitions.tcl --tid=T6 --execute | available |
-| T7 | Re-profile → Re-approach | state = APPROACH_STALE (profile_hash mismatch, #63) | spar-a-batch.tcl | available |
+| T3 | Stale → Re-profile | state = PROFILE_STALE | spar-transitions.tcl --tid=T3 --execute | available |
+| T4 | Re-profile → Re-approach | state = APPROACH_STALE (profile_hash mismatch, #63) | spar-a-batch.tcl | available |
+| T6 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | spar-transitions.tcl --tid=T6 --execute (AWS SES, serial with --delay) | available |
+| T7 | Send → Reply | email_sent, not email_replied | spar-transitions.tcl --tid=T7 --execute (mailroom reply-check, appends replies to approach YAML) | available |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
 | T9 | Secondary follow-up | `secondary_ready` | render script + manual marker | manual |
 | T10 | Tertiary follow-up | `tertiary_ready` | render script + manual marker | manual |
@@ -244,7 +246,7 @@ Dispatch statuses:
 - **blocked** — dispatch exists in principle but depends on a feature (e.g., PROFILE_STALE detection) that is not yet defined; treated as not-implemented until unblocked
 - **n/a** — monitoring transition; no dispatch action exists by design
 
-**T7 note:** Resolved as of #63. The approach records `profile_hash: sha256:<hex>` at generation time; `classify_contact` re-hashes the profile file and assigns `APPROACH_STALE` on mismatch. T7 picks those up and re-runs A. SENT/REPLIED supersede `APPROACH_STALE` so already-engaged contacts are never re-approached on hash mismatch alone.
+**T4 note:** Resolved as of #63. The approach records `profile_hash: sha256:<hex>` at generation time; `classify_contact` re-hashes the profile file and assigns `APPROACH_STALE` on mismatch. T4 picks those up and re-runs A. SENT/REPLIED supersede `APPROACH_STALE` so already-engaged contacts are never re-approached on hash mismatch alone.
 
 ### Task states per contact in the transition manager
 
@@ -254,7 +256,7 @@ Each contact in a transition has one of:
 - `done` — transition already completed (shown when "Show completed" is enabled)
 
 `pending` reasons come from the eligibility gap:
-- T3: contact in state APPROACHED but no email address → "No email address"
+- T6: contact in state APPROACHED but no email address → "No email address"
 - T8: LinkedIn message sent N days ago, waiting for acceptance → "LinkedIn request sent N days ago, waiting until day 5"
 
 ---
@@ -262,20 +264,20 @@ Each contact in a transition has one of:
 ## State diagram
 
 ```
-  DISCOVERED ──T1──▶ PROFILED ──T2──▶ APPROACHED ──T3──▶ SENT ──T4──▶ REPLIED
+  DISCOVERED ──T1──▶ PROFILED ──T2──▶ APPROACHED ──T6──▶ SENT ──T7──▶ REPLIED
                          │                  │
                          ▼                  ▼
-                   PROFILE_STALE       APPROACH_STALE ──T7──▶ APPROACHED (re-approached, #63)
+                   PROFILE_STALE       APPROACH_STALE ──T4──▶ APPROACHED (re-approached, #63)
                        │
                        ▼
-                   T6 ──▶ PROFILED (re-written; downstream APPROACH_STALE follows
+                   T3 ──▶ PROFILED (re-written; downstream APPROACH_STALE follows
                                     via profile_hash mismatch on the next sweep)
 
   EXCLUDED — terminal; reached as an in-process outcome of S (sweep), P (profile),
              or A (approach) writing `date_excluded` on the roster row, per the rules
              in spar-S-search.md, spar-P-profile.md §§4.1/4.2/4.13/4.15, and
              spar-A-approach.md §4.0 step 2. There is no operator-initiated arrow.
-             T4, T8, detect_duplicates skip EXCLUDED. T2 cannot reach EXCLUDED
+             T7, T8, detect_duplicates skip EXCLUDED. T2 cannot reach EXCLUDED
              because its gate requires PROFILED.
 
   T8 — LinkedIn→Email cross-message transition within APPROACHED/SENT (same primary state).
@@ -298,15 +300,15 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 |-----|----------------------|---------------------------------------------------------|----------------------------------------------------------------|-------------------|
 | T1  | DISCOVERED           | —                                                       | —                                                              | spar-state.tcl:448 |
 | T2  | PROFILED             | star ≥ 3                                                | —                                                              | spar-state.tcl:456 |
-| T3  | APPROACHED ∨ SENT    | primary_channel = email ∧ has_email ∧ ¬email_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬A: "invalid_approach_yaml". primary_channel ≠ email: row is omitted entirely | spar-state.tcl:464 |
-| T4  | any ≠ EXCLUDED       | email_sent ∧ ¬email_replied ∧ A(approach_path)          | A invalid → "invalid_approach_yaml". Ready rows dispatch through spar::r::run (mailroom reply-check) | spar-state.tcl:487 |
-| T6  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
-| T7  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
+| T3  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
+| T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
+| T6  | APPROACHED ∨ SENT    | primary_channel = email ∧ has_email ∧ ¬email_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬A: "invalid_approach_yaml". primary_channel ≠ email: row is omitted entirely | spar-state.tcl:464 |
+| T7  | any ≠ EXCLUDED       | email_sent ∧ ¬email_replied ∧ A(approach_path)          | A invalid → "invalid_approach_yaml". Ready rows dispatch through spar::r::run (mailroom reply-check) | spar-state.tcl:487 |
 | T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always pending: awaiting acceptance                            | spar-state.tcl:526 |
 | T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | spar-state.tcl:T9 branch |
 | T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | spar-state.tcl:T10 branch |
 
-[†] T3's `primary_channel = email` gate is an interim measure (issue [#49](https://github.com/SmartLayer/aesop/issues/49)). The correct long-term rule routes each unsent final-round message to T3, T8, T9, or T10 based on its slot in the primary/secondary/tertiary structure — not on channel alone. Until per-message routing is implemented, T3 conservatively refuses campaigns whose primary channel is not email, even when they carry an unsent email for the secondary/tertiary slot.
+[†] T6's `primary_channel = email` gate is an interim measure (issue [#49](https://github.com/SmartLayer/aesop/issues/49)). The correct long-term rule routes each unsent final-round message to T6, T8, T9, or T10 based on its slot in the primary/secondary/tertiary structure — not on channel alone. Until per-message routing is implemented, T6 conservatively refuses campaigns whose primary channel is not email, even when they carry an unsent email for the secondary/tertiary slot.
 
 **Conditions no T-gate checks** (relevant for the cross-check below):
 
@@ -387,7 +389,7 @@ Categories (applied in the rightmost column):
 | roster_likelihood_without_star  | DISCOVERED → REPLIED                    | —                               | REAL             |
 | roster_zero_star_no_invalid     | DISCOVERED → REPLIED                    | n/a                             | OBSOLETE         |
 | merged_contact_name             | DISCOVERED → REPLIED                    | —                               | WORK-HYGIENE     |
-| masked_email                    | DISCOVERED → REPLIED                    | T3: has_email excludes masked   | REDUNDANT        |
+| masked_email                    | DISCOVERED → REPLIED                    | T6: has_email excludes masked   | REDUNDANT        |
 | orphan_profile                  | n/a (file-scan)                         | —                               | AUDIT            |
 | orphan_approach                 | n/a (file-scan)                         | —                               | AUDIT            |
 | duplicate_to                    | APPROACHED, SENT                        | —                               | TROUBLE          |
@@ -401,7 +403,7 @@ Categories (applied in the rightmost column):
 3. **T9, T10 wired in `transition_eligible` (issue #41).** Branches take the full campaign dict as an optional 4th arg and compute `secondary_ready` / `tertiary_ready` per contact using the per-message final-round list returned by `analyse_final_round`. Dispatch status remains `manual` — the UI still has to render a script and surface an "actioned" button; see `dispatch_status` in the transition table.
 4. **`roster_zero_star_no_invalid` is obsolete.** spar-P-profile.md §5.4 states star_rating=0 should not appear on the roster (exclusion is carried by `date_excluded` alone). Candidate for deletion.
 5. **T1 does not gate on name quality.** A DISCOVERED row with placeholder contact_name passes T1 and dispatches P on "Unknown". Either T1 should gate, or P's §4.1 should accept placeholders as input and resolve them (it does — so the current path works, but the warning is still a useful audit-signal).
-6. **T2 does not gate on `validate_profile` passing.** A malformed profile YAML is classified PROFILED and star≥3 can be whatever's in the front matter; T2 would mark it ready even though the profile file is broken. Parallel to T3's A(approach_path) check — missing symmetric P(profile_path) check at T2.
+6. **T2 does not gate on `validate_profile` passing.** A malformed profile YAML is classified PROFILED and star≥3 can be whatever's in the front matter; T2 would mark it ready even though the profile file is broken. Parallel to T6's A(approach_path) check — missing symmetric P(profile_path) check at T2.
 
 ---
 
@@ -489,7 +491,7 @@ Key locations in `../bin/update-campaign.py` and their redesign counterparts:
 
 - A single `contact_state` function returning a named state. The Python code computes derived boolean flags (`profiled`, `has_email`, `email_sent`, etc.) independently in an ad-hoc loop — there is no explicit state concept.
 - Transition eligibility as a derived view of state. The Python `--missing` flag is the closest analogue, but it lists gaps, not transition tasks.
-- The T4/T6/T7/T8 transitions have no Python equivalent at all.
+- The T3/T4/T7/T8 transitions have no Python equivalent at all.
 
 **Related Python library:** `../bin/spar_lib.py` — contains `load_roster`, `slugify`, `profile_exists`, `approach_final_round_status`, `match_roster_to_stems`. The Tcl equivalents already exist in `spar-lib.tcl`; `spar-state.tcl` builds on them.
 

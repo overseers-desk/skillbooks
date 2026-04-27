@@ -11,7 +11,7 @@ package require sha256
 
 # _approach_validation_error -- return first error-severity validation message for
 # a contact's approach file, or "" if clean. Used by transition_eligible to gate
-# approach-dependent transitions (T3, T4, T8) on structural validity (#43 principle 7).
+# approach-dependent transitions (T6, T7, T8) on structural validity (#43 principle 7).
 proc spar::_approach_validation_error {contact} {
     set ap [spar::dict_get_default $contact approach_path ""]
     if {$ap eq "" || ![file exists $ap]} { return "" }
@@ -206,7 +206,7 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
         # both subject and body; for `mode: reply` the subject is derived
         # from the parent thread (Re: <parent.subject>), so only body is
         # required at the message level. A reply must carry a parent block
-        # with a non-empty message_id — without it T3 cannot construct the
+        # with a non-empty message_id — without it T6 cannot construct the
         # In-Reply-To / References headers that join the thread.
         set final_email_count 0
         if {[dict exists $round messages]} {
@@ -296,7 +296,7 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
     # angle evidence. profile_hash is optional — manually-authored
     # approaches and any path that did not read a profile have no hash
     # to record. Absent profile (no file at the expected path) is not
-    # an error here; the state machine routes that through T6 → T7.
+    # an error here; the state machine routes that through T3 → T4.
     #
     # Position rule: when profile_hash is set, it MUST be the first line
     # of the file. The rule is what enables a future fast-classify path

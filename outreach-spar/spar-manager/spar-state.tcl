@@ -367,9 +367,9 @@ proc spar::classify_contact {roster_row segment_dir {full 1}} {
     # 2. DISCOVERED — profile file does not exist AND no approach exists.
     #    If an approach exists pointing at a missing profile, the contact
     #    needs re-profiling, not first-time profiling — fall through to
-    #    PROFILE_STALE below so T6 picks it up. After T6 re-profiles, the
+    #    PROFILE_STALE below so T3 picks it up. After T3 re-profiles, the
     #    approach's stored profile_hash will mismatch the freshly-written
-    #    profile and T7 will route the re-approach (#63).
+    #    profile and T4 will route the re-approach (#63).
     set profile_path [spar::profile_path_for_stem $segment_dir $stem]
     set approach_path [spar::approach_path_for_stem $segment_dir $stem]
     set profile_exists [file exists $profile_path]
@@ -400,10 +400,10 @@ proc spar::classify_contact {roster_row segment_dir {full 1}} {
     }
     dict set base approach_path $approach_path
 
-    # If the approach references a missing profile, route via T6 first.
-    # The approach is preserved on disk; T6 re-profiles, then the next
+    # If the approach references a missing profile, route via T3 first.
+    # The approach is preserved on disk; T3 re-profiles, then the next
     # sweep observes the hash mismatch (or, if no hash was stored, the
-    # operator runs T7 manually) and re-approaches. This branch needs no
+    # operator runs T4 manually) and re-approaches. This branch needs no
     # parse — file presence + the missing profile is sufficient signal.
     if {!$profile_exists} {
         dict set base state PROFILE_STALE
@@ -417,7 +417,7 @@ proc spar::classify_contact {roster_row segment_dir {full 1}} {
 
     # Cheap path (full=0): callers in --auto only need APPROACHED /
     # APPROACH_STALE / PROFILE_STALE distinctions because their gates
-    # (T1/T2/T6/T7) never read email_sent, linkedin_sent, email_replied,
+    # (T1/T2/T3/T4) never read email_sent, linkedin_sent, email_replied,
     # to_addresses, or unsent_subjects. Skipping the YAML parse here is
     # the whole point of issue #63's first-line discipline. SENT/REPLIED
     # contacts are reported as APPROACHED in this mode — auto-safe
@@ -457,7 +457,7 @@ proc spar::classify_contact {roster_row segment_dir {full 1}} {
     }
 
     # 4a. APPROACH_STALE — approach references a profile whose bytes have
-    # changed since the approach was drafted (#63). T7 picks these up and
+    # changed since the approach was drafted (#63). T4 picks these up and
     # re-runs A. Skipped silently when the approach lacks a line-1
     # profile_hash; legacy approaches drafted before the hash was
     # introduced remain APPROACHED until rebuilt.
@@ -679,7 +679,7 @@ proc spar::_evaluate_slot_readiness {preceding_msg own_msg wait_days wait_cond o
 }
 
 # _approach_dispatch_gate -- SSOT for the campaign-wide gates that both
-# transition_eligible (T2/T7) and spar::a::run apply when deciding
+# transition_eligible (T2/T4) and spar::a::run apply when deciding
 # whether a roster row may be approached. Returns "" if the row passes;
 # otherwise a human-readable reason. Takes either a raw roster row or a
 # classified contact — classify_segment merges row fields in, so both
@@ -744,10 +744,10 @@ proc spar::_task {contact task_state {reason ""}} {
 # classified_contacts  output of classify_segment
 # transition           transition name: T1, T2, ... T10
 # primary_channel      campaign primary channel (bare string, e.g. "email").
-#                      Empty string = unknown; T3 conservatively yields nothing.
+#                      Empty string = unknown; T6 conservatively yields nothing.
 #                      TODO(#49): this arg is an interim gate. Correct
 #                      per-message eligibility must route each unsent final-
-#                      round message to T3/T8/T9/T10 based on its slot in the
+#                      round message to T6/T8/T9/T10 based on its slot in the
 #                      primary/secondary/tertiary structure, not on channel
 #                      alone. See issue #49 for acceptance criteria.
 #
