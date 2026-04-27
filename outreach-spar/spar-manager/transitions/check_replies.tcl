@@ -1,6 +1,6 @@
 # spar-manager/transitions/check_replies.tcl
 #
-# CheckRepliesTransition (T4, Send → Reply). Queries the campaign's
+# CheckRepliesTransition (T7, Send → Reply). Queries the campaign's
 # configured inbox for replies to sent approaches and appends any new
 # ones to the approach YAML. Owns the integration to the external inbox
 # tool end-to-end: search command construction, JSON parsing, reply
@@ -531,7 +531,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         $driver kick
     }
 
-    # T4: email was sent, no reply yet, contact still in scope (not
+    # T7: email was sent, no reply yet, contact still in scope (not
     # EXCLUDED).  Gated on approach-YAML structural validity (#43
     # principle 7).
     method eligible {contact primary_channel cdata today_iso} {
@@ -549,7 +549,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
 
 ::spar::transitions::register \
     -class ::spar::transitions::CheckRepliesTransition \
-    -tid T4 \
+    -tid T7 \
     -label "Send → Reply" \
     -auto-safe 0 \
     -dispatch-status available \

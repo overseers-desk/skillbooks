@@ -1,8 +1,8 @@
 # spar-manager/transitions/profile.tcl
 #
-# ProfileTransition — T1 (Sweep → Profile) and T6 (Stale → Re-profile).
+# ProfileTransition — T1 (Sweep → Profile) and T3 (Stale → Re-profile).
 # Both dispatch through ::spar::p::run; the only difference is entry state
-# (DISCOVERED for T1, PROFILE_STALE for T6), which is handled by
+# (DISCOVERED for T1, PROFILE_STALE for T3), which is handled by
 # spar::transition_eligible.
 
 oo::class create ::spar::transitions::ProfileTransition {
@@ -27,7 +27,7 @@ oo::class create ::spar::transitions::ProfileTransition {
         ::spar::p::run $opts $on_progress $on_complete
     }
 
-    # T1 fires from DISCOVERED, T6 fires from PROFILE_STALE — same class,
+    # T1 fires from DISCOVERED, T3 fires from PROFILE_STALE — same class,
     # entry state distinguished via [my tid].
     method eligible {contact primary_channel cdata today_iso} {
         set state [dict get $contact state]
@@ -35,7 +35,7 @@ oo::class create ::spar::transitions::ProfileTransition {
         if {$tid eq "T1" && $state eq "DISCOVERED"} {
             return [list [spar::_task $contact ready ""]]
         }
-        if {$tid eq "T6" && $state eq "PROFILE_STALE"} {
+        if {$tid eq "T3" && $state eq "PROFILE_STALE"} {
             return [list [spar::_task $contact ready ""]]
         }
         return {}
@@ -53,7 +53,7 @@ oo::class create ::spar::transitions::ProfileTransition {
 
 ::spar::transitions::register \
     -class ::spar::transitions::ProfileTransition \
-    -tid T6 \
+    -tid T3 \
     -label "Stale → Re-profile" \
     -auto-safe 1 \
     -dispatch-status available \

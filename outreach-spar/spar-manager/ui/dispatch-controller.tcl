@@ -233,7 +233,7 @@ oo::class create spar::ui::DispatchController {
             }
         }
 
-        # Call build_opts so transition-specific keys (e.g. T3's `tasks`)
+        # Call build_opts so transition-specific keys (e.g. T6's `tasks`)
         # are populated — mirrors the CLI's dispatch_ready path. Filter
         # eligible contacts down to the selected stems so only the
         # user's selection is dispatched, not the entire campaign.
@@ -263,7 +263,7 @@ oo::class create spar::ui::DispatchController {
         }
         set opts [dict merge $opts $extra]
 
-        # Batch confirmation for transitions that send externally (e.g. T3
+        # Batch confirmation for transitions that send externally (e.g. T6
         # email). One dialog for the whole cohort instead of per-item popups.
         if {!$dry_run} {
             set cls [::spar::transitions::get $tid]

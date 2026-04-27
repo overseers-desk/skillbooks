@@ -1,6 +1,6 @@
 # spar-manager/transitions/approach.tcl
 #
-# ApproachTransition — T2 (Profile → Approach) and T7 (Re-profile →
+# ApproachTransition — T2 (Profile → Approach) and T4 (Re-profile →
 # Re-approach). Both dispatch through ::spar::a::run in a campaign-wide
 # pass; filters are propagated as opts to the runner.
 
@@ -26,16 +26,16 @@ oo::class create ::spar::transitions::ApproachTransition {
     # T2: PROFILED contacts that pass the campaign-wide approach-dispatch
     # gate (min_star, in_scope_channel, skip_excluded — SSOT with
     # spar::a::run per #56).
-    # T7: APPROACH_STALE contacts. classify_contact assigns this state when
+    # T4: APPROACH_STALE contacts. classify_contact assigns this state when
     # the approach's profile_hash diverges from the current profile bytes
-    # (#63); T7 re-runs A on those, dispatching through the same gate so
+    # (#63); T4 re-runs A on those, dispatching through the same gate so
     # filter rules stay symmetric with T2.
     method eligible {contact primary_channel cdata today_iso} {
         set tid [my tid]
         set state [dict get $contact state]
         if {$tid eq "T2"} {
             if {$state ne "PROFILED"} { return {} }
-        } elseif {$tid eq "T7"} {
+        } elseif {$tid eq "T4"} {
             if {$state ne "APPROACH_STALE"} { return {} }
         } else {
             return {}
@@ -55,7 +55,7 @@ oo::class create ::spar::transitions::ApproachTransition {
 
 ::spar::transitions::register \
     -class ::spar::transitions::ApproachTransition \
-    -tid T7 \
+    -tid T4 \
     -label "Re-profile → Re-approach" \
     -auto-safe 1 \
     -dispatch-status available \
