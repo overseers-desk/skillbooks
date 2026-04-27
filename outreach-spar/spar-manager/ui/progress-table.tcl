@@ -288,13 +288,25 @@ oo::class create spar::ui::ProgressTable {
         my _fire segments-changed [my get_checked_segments]
     }
 
-    # on_click — Button-1 handler. Column #0 of a real segment row is a
-    # checkbox toggle; everything else (including the totals row) is
-    # ignored. Public because it's invoked from a bind.
+    # on_click — Button-1 handler. Toggle the checkbox only when the
+    # click lands on the checkbox glyph at the start of column #0;
+    # clicks anywhere else (segment name, count columns, between rows)
+    # fall through to the treeview's class binding which selects the
+    # row. This narrow toggle zone gives a single click outside the
+    # checkbox a visible selection effect, so a subsequent double-click
+    # is visually confirmable. Public because it's invoked from a bind.
     method on_click {x y} {
         set col [$PTree identify column $x $y]
         set row [$PTree identify row    $x $y]
-        if {$col eq "#0" && $row ne "" && $row ne "__totals__"} {
+        if {$col ne "#0" || $row eq "" || $row eq "__totals__"} return
+        set bbox [$PTree bbox $row #0]
+        if {[llength $bbox] != 4} return
+        lassign $bbox bx by bw bh
+        # Hit zone = pixel width of the checkbox glyph plus its trailing
+        # spaces. font measure scales with the user's Tk DPI, so this
+        # works on hi-DPI displays without hard-coded pixel offsets.
+        set hit_w [font measure TkDefaultFont "☑  "]
+        if {$x < $bx + $hit_w} {
             my on_segment_toggle $row
         }
     }
