@@ -335,7 +335,7 @@ set cdata [dict create \
 set ::spar::parse_count 0
 set classified [$State classify_segment $seg]
 set refined [$State refine_segment $classified]
-$State transition_eligible $classified "T6" email $cdata 2026-04-27
+$State transition_eligible $refined "T6" email $cdata 2026-04-27
 set parses_render1 $::spar::parse_count
 assert_eq $parses_render1 3 "7: render 1 parses all 3 approaches once each"
 
@@ -343,7 +343,7 @@ assert_eq $parses_render1 3 "7: render 1 parses all 3 approaches once each"
 set ::spar::parse_count 0
 set classified [$State classify_segment $seg]
 set refined [$State refine_segment $classified]
-$State transition_eligible $classified "T6" email $cdata 2026-04-27
+$State transition_eligible $refined "T6" email $cdata 2026-04-27
 assert_eq $::spar::parse_count 0 \
     "7: render 2 with unchanged files → zero re-parses"
 
@@ -356,7 +356,7 @@ write_approach_yaml $seg "render-b" [cache_approach_yaml_with_hash \
 set ::spar::parse_count 0
 set classified [$State classify_segment $seg]
 set refined [$State refine_segment $classified]
-$State transition_eligible $classified "T6" email $cdata 2026-04-27
+$State transition_eligible $refined "T6" email $cdata 2026-04-27
 assert_eq $::spar::parse_count 1 \
     "7: render 3 with one file changed → exactly one re-parse"
 
