@@ -329,6 +329,10 @@ oo::class create spar::ui::ProgressTable {
     method on_segment_loaded {seg cdict is_active} {
         if {![$PTree exists $seg]} return
 
+        # Sentinel "" in cdict = "preserve the existing cell". The two-phase
+        # loader (#82) uses this to keep the "…" placeholder on parse-derived
+        # columns (sent/repl) during the cheap-pass fire, then writes real
+        # values during the parse-pass fire.
         set counts {}
         foreach id $PtreeColIds {
             set key [dict get $ColCountKeys $id]
@@ -338,22 +342,33 @@ oo::class create spar::ui::ProgressTable {
         if {$is_active} {
             set ci 0
             foreach id $PtreeColIds {
-                dict set SegCounts $seg $id [lindex $counts $ci]
+                set v [lindex $counts $ci]
+                if {$v ne ""} {
+                    dict set SegCounts $seg $id $v
+                }
                 incr ci
             }
         }
 
+        set existing [$PTree item $seg -values]
         set values {}
         set ci 0
         foreach {id heading anchor} $PtreeCols {
             set count [lindex $counts $ci]
-            set pid [dict get $DenomParent $id]
-            if {$pid eq ""} {
-                lappend values $count
+            if {$count eq ""} {
+                lappend values [lindex $existing $ci]
             } else {
-                set pidx [lsearch $PtreeColIds $pid]
-                set denom [lindex $counts $pidx]
-                lappend values [my _fmt_cell $count $denom]
+                set pid [dict get $DenomParent $id]
+                if {$pid eq ""} {
+                    lappend values $count
+                } else {
+                    set pidx [lsearch $PtreeColIds $pid]
+                    set denom [lindex $counts $pidx]
+                    if {$denom eq "" && [dict exists $SegCounts $seg $pid]} {
+                        set denom [dict get $SegCounts $seg $pid]
+                    }
+                    lappend values [my _fmt_cell $count $denom]
+                }
             }
             incr ci
         }
