@@ -3,6 +3,11 @@
 
 package require Tk
 
+# Load timer baseline. Reset on each `reloading` so refreshes are also
+# measured. fully-loaded subscriber prints elapsed to stderr — used to
+# compare loader strategies branch-to-branch.
+set ::load_kickoff_time [clock microseconds]
+
 # Cache the launch directory before anything that might cd. The
 # campaign-open dialog uses this when no campaign has been loaded yet,
 # so it opens in the directory the user invoked the app from rather
@@ -250,6 +255,21 @@ proc ::spar::ui::build_loaded_body {path} {
     # subscribe to its events and call its accessors directly.
     set campaign [spar::ui::CampaignModel new $path $script_dir]
     $campaign load
+
+    # Load timer wiring. reloading resets the kickoff stamp so each
+    # refresh measures its own latency; fully-loaded prints elapsed.
+    # When `--autoquit` was given without `--tid`, exit after the first
+    # fully-loaded — used to compare loader strategies across branches.
+    $campaign subscribe reloading [list apply {{} {
+        set ::load_kickoff_time [clock microseconds]
+    }}]
+    $campaign subscribe fully-loaded [list apply {{} {
+        global auto_tid auto_quit
+        set us [expr {[clock microseconds] - $::load_kickoff_time}]
+        puts stderr [format "\[load-timer\] fully-loaded in %.2fs" \
+            [expr {$us / 1000000.0}]]
+        if {$auto_quit && $auto_tid eq ""} { exit 0 }
+    }}]
 
     # LogWindow owns the dispatch log buffer, the optional toplevel,
     # and the unread counter. The toolbar badge subscribes to
