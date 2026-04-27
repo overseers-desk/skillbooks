@@ -117,6 +117,13 @@ oo::class create spar::ui::ProgressTable {
         # Click on column #0 toggles the checkbox for that segment.
         bind $PTree <Button-1> [list [self] on_click %x %y]
 
+        # Double-click any column of a real segment row opens the segment
+        # viewer via the segment-double-clicked event. Tk delivers the
+        # Button-1 binding on each click of a double-click, so the
+        # checkbox toggle happens on click 1 and the viewer opens on
+        # click 2 — both behaviours are wanted.
+        bind $PTree <Double-1> [list [self] on_double_click %x %y]
+
         # Mouse wheel scrolling.
         bind $PTree <Button-4>   { %W yview scroll -3 units }
         bind $PTree <Button-5>   { %W yview scroll  3 units }
@@ -290,6 +297,16 @@ oo::class create spar::ui::ProgressTable {
         if {$col eq "#0" && $row ne "" && $row ne "__totals__"} {
             my on_segment_toggle $row
         }
+    }
+
+    # on_double_click — Double-1 handler. Fires segment-double-clicked
+    # for any real segment row (skip-segment rows included — viewing a
+    # non-checked segment is legitimate). Totals row and clicks outside
+    # any row are ignored.
+    method on_double_click {x y} {
+        set row [$PTree identify row $x $y]
+        if {$row eq "" || $row eq "__totals__"} return
+        my _fire segment-double-clicked $row
     }
 
     # ─── Event handlers (Campaign subscriptions) ──────────────────────────
