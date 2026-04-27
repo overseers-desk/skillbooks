@@ -301,6 +301,14 @@ proc spar::analyse_final_round {data} {
 # without one) and `mtime` is the file's mtime when last parsed. On
 # cache hit, both are re-probed cheaply (one gets + one stat) before
 # the cached summary is returned; mismatch on either drops the entry.
+#
+# Parse cost on the read path is bounded by avoidance, not throughput:
+# the cache + cheap-tier classification keep cold-render parses to one-
+# per-APPROACHED-contact and zero across renders within a State's
+# lifetime. Further reduction belongs in the same register — additional
+# avoidance (e.g. caching the profile front-matter reads in
+# _profile_is_stale) before parallelism, since fan-out across already-
+# rare parses pays per-worker interp warmup for diminishing returns.
 oo::class create spar::State {
     variable ApproachCache
     constructor {} {
