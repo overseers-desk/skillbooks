@@ -345,7 +345,7 @@ Grouped by validator proc. All line numbers are in `spar-state.tcl`.
 
 #### `validate_approach` (per approach YAML, only when file exists)
 
-Codes: `invalid_yaml`, `unknown_key_<level>`, `wrong_level`, `missing_decisions`, `missing_rounds`, `no_final_round`, `draft_missing_number`, `review_missing_number`, `email_missing_content`, `placeholder_to`, `email_desync`, `profile_hash_mismatch`. All errors except the `*_missing_number`, `email_missing_content`, `email_desync` warnings. `profile_hash_mismatch` (issue #63) fires when the approach's stored hash differs from the current profile file's sha256 — the profile was rebuilt or edited after the approach was drafted and the approach must be regenerated.
+Codes: `invalid_yaml`, `unknown_key_<level>`, `wrong_level`, `missing_decisions`, `missing_rounds`, `no_final_round`, `draft_missing_number`, `review_missing_number`, `email_missing_content`, `placeholder_to`, `email_desync`, `profile_hash_mismatch`, `profile_hash_misplaced`. All errors except the `*_missing_number`, `email_missing_content`, `email_desync` warnings. `profile_hash_mismatch` (issue #63) fires when the approach's stored hash differs from the current profile file's sha256 — the profile was rebuilt or edited after the approach was drafted and the approach must be regenerated. `profile_hash_misplaced` fires when `profile_hash` is set but is not the first line of the file; the position discipline reserves a fast-classify path that can read just line 1 to detect staleness without parsing the YAML.
 
 #### `validate_profile` (per profile file, only when file exists)
 

@@ -297,6 +297,12 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
     # approaches and any path that did not read a profile have no hash
     # to record. Absent profile (no file at the expected path) is not
     # an error here; the state machine routes that through T6 → T7.
+    #
+    # Position rule: when profile_hash is set, it MUST be the first line
+    # of the file. The rule is what enables a future fast-classify path
+    # to detect APPROACH_STALE without parsing the YAML; the migration
+    # script and the A harness both place the hash on line 1, and this
+    # check catches drift if anything edits the file out of order.
     if {[dict exists $approach_data profile_hash]} {
         set _stored [string trim [dict get $approach_data profile_hash]]
         set _stored_hex $_stored
@@ -304,6 +310,10 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
             set _stored_hex [string tolower $_hex]
         } else {
             set _stored_hex [string tolower $_stored]
+        }
+        if {![spar::_approach_first_line_is_profile_hash $approach_path]} {
+            lappend issues [spar::_issue error profile_hash_misplaced $contact_name \
+                "profile_hash must be the first line of the approach file (issue #63) — re-emit with the hash on line 1"]
         }
         set _seg_dir [file dirname [file dirname $approach_path]]
         set _stem [file rootname [file tail $approach_path]]
@@ -318,6 +328,20 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
     }
 
     return $issues
+}
+
+# _approach_first_line_is_profile_hash -- returns 1 iff the file's first
+# line literally begins with `profile_hash:`. Used by validate_approach to
+# enforce the position discipline introduced with issue #63. Reads only
+# the first line (no YAML parser invocation), matching the cheap path
+# the discipline is intended to unlock.
+proc spar::_approach_first_line_is_profile_hash {approach_path} {
+    if {[catch {set fd [open $approach_path r]}]} { return 0 }
+    fconfigure $fd -encoding utf-8
+    set line ""
+    catch {set line [gets $fd]}
+    close $fd
+    return [regexp {^profile_hash:\s*sha256:[0-9a-fA-F]+\s*$} $line]
 }
 
 # ─────────────────────────────────────────────────────────────────────────────

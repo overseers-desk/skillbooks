@@ -282,10 +282,14 @@ if {[llength $segment_paths] == 0} {
 }
 
 # --- Classify all contacts, then apply --stem filter ---
+# In --auto mode, T1/T2/T6/T7 are the only active transitions and none of
+# them read parsed-approach fields (#63). Skip the YAML parse on the
+# initial pass too — the auto loop reclassifies cheaply each iteration.
+set _classify_full [expr {$auto_mode ? 0 : 1}]
 set all_contacts {}
 foreach item $segment_paths {
     lassign $item label seg_dir
-    if {[catch {set c [spar::classify_segment $seg_dir]} err]} {
+    if {[catch {set c [spar::classify_segment $seg_dir $_classify_full]} err]} {
         puts stderr "Error in $label: $err"
         continue
     }
@@ -355,11 +359,19 @@ if {$execute_mode} {
     # Classify segments → contacts (honours --stem filter). Used at startup
     # and again before each --auto iteration so disk changes from the
     # previous pass feed the next round of transition eligibility.
-    proc reclassify_contacts {segment_paths filter_stems} {
+    #
+    # In --auto mode the only active T-ids are T1/T2/T6/T7 (auto_safe=1),
+    # none of which read the parsed-approach fields (email_sent /
+    # linkedin_sent / email_replied / to_addresses / unsent_subjects). We
+    # opt into classify_segment's cheap mode (full=0) so each iteration
+    # skips read_approach_yaml + analyse_final_round per contact —
+    # that's the latency that previously made --auto silent for several
+    # seconds before the first dispatch (#63).
+    proc reclassify_contacts {segment_paths filter_stems {full 1}} {
         set out {}
         foreach item $segment_paths {
             lassign $item label seg_dir
-            if {[catch {set c [spar::classify_segment $seg_dir]} err]} {
+            if {[catch {set c [spar::classify_segment $seg_dir $full]} err]} {
                 puts stderr "Error in $label: $err"
                 continue
             }
@@ -446,7 +458,7 @@ if {$execute_mode} {
         set last_signature ""
         set iter 1
         while {$iter <= $MAX_ITER} {
-            set all_contacts [reclassify_contacts $segment_paths $filter_stems]
+            set all_contacts [reclassify_contacts $segment_paths $filter_stems 0]
             set ready_by_tid [compute_ready_by_tid \
                 $all_contacts $active_tids $primary_channel $cdata]
 
