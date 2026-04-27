@@ -282,7 +282,7 @@ proc spar::analyse_final_round {data} {
 #   to_addresses     list of final-round email To: addresses (empty if no approach)
 #   unsent_subjects  list of final-round unsent email subjects (empty if no approach)
 #
-proc spar::classify_contact {roster_row segment_dir} {
+proc spar::classify_contact {roster_row segment_dir {full 1}} {
     # Extract roster fields with safe defaults.
     # strip_tsv_field: trim whitespace, and if the remaining value is a
     # quoted-empty-or-whitespace string (e.g. `" "` or `""`), collapse to "".
@@ -377,7 +377,40 @@ proc spar::classify_contact {roster_row segment_dir} {
     }
     dict set base approach_path $approach_path
 
-    # Approach file exists — parse it for state determination
+    # If the approach references a missing profile, route via T6 first.
+    # The approach is preserved on disk; T6 re-profiles, then the next
+    # sweep observes the hash mismatch (or, if no hash was stored, the
+    # operator runs T7 manually) and re-approaches. This branch needs no
+    # parse — file presence + the missing profile is sufficient signal.
+    if {!$profile_exists} {
+        dict set base state PROFILE_STALE
+        return $base
+    }
+
+    # APPROACH_STALE check (#63): reads only the first line of the
+    # approach file via spar::_approach_first_line_hash, so we can
+    # answer it before deciding whether to do the expensive parse.
+    set hash_stale [spar::_approach_hash_mismatch $profile_path $approach_path]
+
+    # Cheap path (full=0): callers in --auto only need APPROACHED /
+    # APPROACH_STALE / PROFILE_STALE distinctions because their gates
+    # (T1/T2/T6/T7) never read email_sent, linkedin_sent, email_replied,
+    # to_addresses, or unsent_subjects. Skipping the YAML parse here is
+    # the whole point of issue #63's first-line discipline. SENT/REPLIED
+    # contacts are reported as APPROACHED in this mode — auto-safe
+    # transitions are not consumers of that distinction, so no caller
+    # is misled by it.
+    if {!$full} {
+        if {$hash_stale} {
+            dict set base state APPROACH_STALE
+        } else {
+            dict set base state APPROACHED
+        }
+        return $base
+    }
+
+    # Full path — parse the approach for SENT/REPLIED determination and
+    # final-round bookkeeping the GUI / non-auto CLI consume.
     set approach_data [spar::read_approach_yaml $approach_path]
     set fr [spar::analyse_final_round $approach_data]
     dict set base email_sent      [dict get $fr email_sent]
@@ -385,15 +418,6 @@ proc spar::classify_contact {roster_row segment_dir} {
     dict set base email_replied   [dict get $fr email_replied]
     dict set base to_addresses    [dict get $fr to_addresses]
     dict set base unsent_subjects [dict get $fr unsent_subjects]
-
-    # If the approach references a missing profile, route via T6 first.
-    # The approach is preserved on disk; T6 re-profiles, then the next
-    # sweep observes the hash mismatch (or, if no hash was stored, the
-    # operator runs T7 manually) and re-approaches.
-    if {!$profile_exists} {
-        dict set base state PROFILE_STALE
-        return $base
-    }
 
     # 6. REPLIED — SENT and (replied_date or reply with direction:received)
     if {[dict get $fr any_sent] && [dict get $fr email_replied]} {
@@ -411,10 +435,10 @@ proc spar::classify_contact {roster_row segment_dir} {
 
     # 4a. APPROACH_STALE — approach references a profile whose bytes have
     # changed since the approach was drafted (#63). T7 picks these up and
-    # re-runs A. Skipped silently when the approach lacks profile_hash;
-    # legacy approaches drafted before the hash was introduced remain
-    # APPROACHED until rebuilt.
-    if {[spar::_approach_hash_mismatch $profile_path $approach_data]} {
+    # re-runs A. Skipped silently when the approach lacks a line-1
+    # profile_hash; legacy approaches drafted before the hash was
+    # introduced remain APPROACHED until rebuilt.
+    if {$hash_stale} {
         dict set base state APPROACH_STALE
         return $base
     }
@@ -432,7 +456,7 @@ proc spar::classify_contact {roster_row segment_dir} {
 # each being the result of classify_contact merged with the original roster_row.
 # On schema error, throws an error.
 #
-proc spar::classify_segment {segment_dir} {
+proc spar::classify_segment {segment_dir {full 1}} {
     set roster_path [file join $segment_dir roster.tsv]
     if {![file exists $roster_path]} {
         error "Roster file not found: $roster_path"
@@ -450,7 +474,7 @@ proc spar::classify_segment {segment_dir} {
 
     set results {}
     foreach row $rows {
-        set classified [spar::classify_contact $row $segment_dir]
+        set classified [spar::classify_contact $row $segment_dir $full]
 
         # Merge: original roster_row + classified result (classified wins on overlap)
         set merged $row
@@ -1116,22 +1140,59 @@ proc spar::_roster_field_current {row field} {
     return $v
 }
 
-# _approach_hash_mismatch -- return 1 iff the approach carries profile_hash
-# and its sha256 differs from the profile file's bytes. Returns 0 when the
-# approach has no profile_hash (legacy / manually-authored case — the state
-# machine cannot prove staleness without a hash, and the contact stays
-# APPROACHED). Used by classify_contact to raise APPROACH_STALE for #63.
-# Caller has already confirmed both files exist.
-proc spar::_approach_hash_mismatch {profile_path approach_data} {
-    if {![dict exists $approach_data profile_hash]} { return 0 }
-    set stored [string trim [dict get $approach_data profile_hash]]
-    if {[regexp {^sha256:([0-9a-fA-F]+)$} $stored -> hex]} {
-        set stored [string tolower $hex]
-    } else {
-        set stored [string tolower $stored]
+# _approach_first_line_hash -- return the lowercase hex stored on line 1
+# of the approach file, or "" if line 1 is not a profile_hash declaration.
+# Reads only the first line; never invokes the YAML parser. Position
+# discipline (#63) is enforced by validate_approach (profile_hash_misplaced),
+# so a hash sitting elsewhere in the file is a validator concern, not a
+# silent classifier blind spot.
+proc spar::_approach_first_line_hash {approach_path} {
+    if {[catch {set fd [open $approach_path r]}]} { return "" }
+    fconfigure $fd -encoding utf-8
+    set line ""
+    catch {set line [gets $fd]}
+    close $fd
+    if {[regexp {^profile_hash:\s*sha256:([0-9a-fA-F]+)\s*$} $line -> hex]} {
+        return [string tolower $hex]
     }
+    return ""
+}
+
+# _approach_hash_mismatch -- return 1 iff the approach carries a line-1
+# profile_hash whose sha256 differs from the profile file's bytes. Returns
+# 0 when the approach has no profile_hash on line 1 (legacy / manually-
+# authored case — the state machine cannot prove staleness without a
+# canonically-placed hash, and the contact stays APPROACHED). Caller has
+# already confirmed both files exist.
+proc spar::_approach_hash_mismatch {profile_path approach_path} {
+    set stored [spar::_approach_first_line_hash $approach_path]
+    if {$stored eq ""} { return 0 }
     set actual [string tolower [::sha2::sha256 -hex -file $profile_path]]
     return [expr {$actual ne $stored}]
+}
+
+# prepend_profile_hash -- write `profile_hash: sha256:<hex>` as line 1 of
+# the approach file. Called by the A harness after validate_and_correct
+# passes (#63). Idempotent: if line 1 already carries a hash, the file is
+# left alone (so re-running the harness or the migration script does not
+# duplicate the line). The harness, not A, owns the line — A's prompt
+# tells A not to write one.
+proc spar::prepend_profile_hash {approach_path profile_path} {
+    if {![file exists $approach_path] || ![file exists $profile_path]} { return }
+    set fd [open $approach_path r]
+    fconfigure $fd -encoding utf-8
+    set raw [read $fd]
+    close $fd
+    set lines [split $raw \n]
+    if {[regexp {^profile_hash:\s*sha256:[0-9a-fA-F]+\s*$} [lindex $lines 0]]} {
+        return
+    }
+    set hex [::sha2::sha256 -hex -file $profile_path]
+    set lines [linsert $lines 0 "profile_hash: sha256:$hex"]
+    set fd [open $approach_path w]
+    fconfigure $fd -encoding utf-8
+    puts -nonewline $fd [join $lines \n]
+    close $fd
 }
 
 # _profile_is_stale -- return 1 iff any dependent_data field in the profile's

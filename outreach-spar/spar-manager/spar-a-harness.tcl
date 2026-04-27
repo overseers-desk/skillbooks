@@ -227,20 +227,18 @@ for {set r 1} {$r <= $pass} {incr r} {
 set initial_draft [spar::extract_between [spar::read_file "${log_prefix}-author-draft.log"] "DRAFT_START" "DRAFT_END"]
 set final_draft [spar::read_file [file join $prompt_dir draft-current.txt]]
 
-# profile_hash linkage (#63): compute the SHA-256 of the profile file
-# we just consulted. Inlined into the assembly prompt as a fixed string
-# A copies verbatim, so A never has to compute a hash. The path mirrors
+# profile_hash linkage (#63): paths to the profile file the harness just
+# consulted. The hash itself is computed and prepended to the approach
+# *after* validate_and_correct succeeds — never inlined into the prompt.
+# A's attention is not spent copying a fixed hex string, and the position
+# discipline (#63 — must be line 1) is enforced by the harness writing
+# the line, not by trusting A to put it there. The path mirrors
 # spar::approach_path_for_stem / profile_path_for_stem: outfile is
 # <segment_dir>/approach/<stem>.yaml, profile is at
 # <segment_dir>/profiles/<stem>.md.
 set _seg_dir [file dirname [file dirname $outfile]]
 set _stem [file rootname [file tail $outfile]]
 set _profile_path [file join $_seg_dir profiles "${_stem}.md"]
-set profile_hash_line ""
-if {[file exists $_profile_path]} {
-    set _hash [::sha2::sha256 -hex -file $_profile_path]
-    set profile_hash_line "profile_hash: sha256:$_hash"
-}
 
 set assembly_prompt "Write the final approach file. You have the method, overview, antifacts, goal, and profile from your drafting context. Refer to §6 (approach file structure) and §7 (quality checklist) in the method file.
 
@@ -268,9 +266,7 @@ Write the complete approach file to: $outfile
 
 Follow §6 structure exactly. Include contact header, angle rationale, A1 Draft 1, all A2 responses, revision drafts, final draft, fact provenance table, and roster a_note line. The contact header fields are: Contact, Channel, Language, Angle.
 
-The YAML MUST include a top-level profile_hash recording the SHA-256 of the profile file at generation time. Copy this line verbatim into the approach root (do not recompute it):
-
-$profile_hash_line
+Do not write a profile_hash line — the harness prepends it after this step (issue #63). The validator does not require it from you.
 
 Run §7 quality checklist before writing. Fix any failures in the final draft.
 
@@ -330,6 +326,13 @@ set contact_name [string trim [lindex [split $contact_summary |] 0]]
 if {[file exists $outfile]} {
     if {[$harness validate_and_correct $outfile $roster_email $contact_name $roster_organisation]} {
         exit 1
+    }
+    # profile_hash linkage (#63): prepend the hash AFTER validation
+    # passes. Doing it here (rather than via the prompt) keeps A's
+    # attention budget on the message and guarantees the position
+    # discipline — line 1 — without trusting A to follow it.
+    if {[file exists $_profile_path]} {
+        spar::prepend_profile_hash $outfile $_profile_path
     }
 }
 

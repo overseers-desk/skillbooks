@@ -467,6 +467,50 @@ set result [spar::classify_contact $row $seg]
 assert_eq [dict get $result state] "APPROACHED" \
     "legacy approach (no profile_hash) → APPROACHED"
 
+# 1m2. classify_contact full=0 (cheap mode, #63): SENT/REPLIED collapse to
+# APPROACHED so --auto can skip the YAML parse. Auto-safe transitions
+# (T1/T2/T6/T7) never read email_sent/replied/etc., so the lossy mapping
+# is safe for that scope.
+set seg [make_temp_segment]
+write_profile $seg "cheap-sent"
+write_approach_yaml $seg "cheap-sent" [approach_yaml_final_sent_email]
+set row [make_base_row {stem "cheap-sent"}]
+set cheap [spar::classify_contact $row $seg 0]
+set full  [spar::classify_contact $row $seg 1]
+assert_eq [dict get $cheap state] "APPROACHED" \
+    "classify_contact full=0: SENT contact reports as APPROACHED (no parse)"
+assert_eq [dict get $full  state] "SENT" \
+    "classify_contact full=1: SENT contact reports as SENT (parse path unchanged)"
+
+# 1m3. classify_contact full=0 still detects APPROACH_STALE via line-1 hash.
+set seg [make_temp_segment]
+write_profile $seg "cheap-stale"
+write_approach_yaml $seg "cheap-stale" {profile_hash: sha256:0000000000000000000000000000000000000000000000000000000000000000
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}
+set row [make_base_row {stem "cheap-stale"}]
+assert_eq [dict get [spar::classify_contact $row $seg 0] state] "APPROACH_STALE" \
+    "classify_contact full=0: line-1 hash mismatch → APPROACH_STALE"
+
+# 1m4. classify_contact full=0: legacy approach without profile_hash → APPROACHED.
+set seg [make_temp_segment]
+write_profile $seg "cheap-legacy"
+write_approach_yaml $seg "cheap-legacy" [approach_yaml_final_unsent]
+set row [make_base_row {stem "cheap-legacy"}]
+assert_eq [dict get [spar::classify_contact $row $seg 0] state] "APPROACHED" \
+    "classify_contact full=0: legacy approach (no hash) → APPROACHED"
+
 # 1n. SENT supersedes APPROACH_STALE: an engaged contact is not re-approached
 # on hash mismatch alone — would clobber the send history.
 set seg [make_temp_segment]
@@ -1627,6 +1671,55 @@ rounds:
 set va_ph_abs_issues [spar::validate_approach $va_ph_abs_path "test@acme-venues.au" "VA PH ABS" "Some Org"]
 assert_eq [has_issue $va_ph_abs_issues profile_hash_mismatch] 0 \
     "validate_approach: profile_hash with absent profile → no error (state machine handles)"
+
+# 12d5. profile_hash present but not on the first line → profile_hash_misplaced.
+# The position discipline (#63) reserves a fast-classify path that reads only
+# line 1; drift would silently break it, so the validator catches misplacement
+# even when the hash itself matches the profile bytes.
+set seg_va_ph_pos [make_temp_segment]
+write_profile $seg_va_ph_pos "va-ph-pos"
+set _ph_pos_hex [string tolower [::sha2::sha256 -hex -file [file join $seg_va_ph_pos profiles "va-ph-pos.md"]]]
+set va_ph_pos_path [write_approach_yaml $seg_va_ph_pos "va-ph-pos" "decisions:
+  channel: email
+profile_hash: sha256:$_ph_pos_hex
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+"]
+set va_ph_pos_issues [spar::validate_approach $va_ph_pos_path "test@acme-venues.au" "VA PH POS" "Some Org"]
+set va_ph_pos_errors [issues_with_code $va_ph_pos_issues profile_hash_misplaced]
+assert_eq [llength $va_ph_pos_errors] 1 \
+    "validate_approach: profile_hash not on line 1 → profile_hash_misplaced error"
+assert_eq [dict get [lindex $va_ph_pos_errors 0] severity] "error" \
+    "validate_approach: profile_hash_misplaced severity is error"
+
+# 12d6. profile_hash absent → no profile_hash_misplaced (the rule only fires
+# when the file declares a hash; legacy/manual files without one are clean).
+set seg_va_ph_none2 [make_temp_segment]
+write_profile $seg_va_ph_none2 "va-ph-none2"
+set va_ph_none2_path [write_approach_yaml $seg_va_ph_none2 "va-ph-none2" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}]
+set va_ph_none2_issues [spar::validate_approach $va_ph_none2_path "test@acme-venues.au" "VA PH NONE2" "Some Org"]
+assert_eq [has_issue $va_ph_none2_issues profile_hash_misplaced] 0 \
+    "validate_approach: no profile_hash → no profile_hash_misplaced (rule scoped to declared hashes)"
 
 # 12e. Nonexistent file → no errors (graceful)
 set va5_issues [spar::validate_approach "/tmp/nonexistent-approach.yaml" "test@acme-venues.au" "VA Missing"]
