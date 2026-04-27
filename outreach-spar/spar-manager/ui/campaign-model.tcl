@@ -413,6 +413,26 @@ oo::class create spar::ui::CampaignModel {
             my _yield_loop
         }
 
+        # Fire async tpool jobs for the active-segment approach YAMLs
+        # before any consumer asks for projection-derived fields. The
+        # call returns immediately; workers parse in parallel while the
+        # cheap-TID emit below and Phase 2 enrichment proceed on the
+        # main thread. transition_eligible / refine_contact route through
+        # approach_summary, which joins the per-path job on first need
+        # (cache hit when the worker has already finished, brief wait
+        # otherwise — tpool::wait pumps the event loop, so Tk continues
+        # to paint).
+        set prefetch_paths {}
+        foreach c $AllContacts {
+            set st [dict get $c state]
+            if {$st ne "APPROACHED" && $st ne "APPROACH_STALE"} continue
+            set ap [spar::dict_get_default $c approach_path ""]
+            if {$ap ne ""} { lappend prefetch_paths $ap }
+        }
+        if {[llength $prefetch_paths]} {
+            $State prefetch_approach_cache $prefetch_paths
+        }
+
         # Partition tree-row TIDs by whether eligibility needs the YAML.
         # The numbering scheme assigns cheap TIDs to T1..T5 (T5 reserved)
         # and parse TIDs to T6+; the partition is the source of truth so
@@ -445,6 +465,8 @@ oo::class create spar::ui::CampaignModel {
         # re-fire segment-loaded with the now-correct counts. Inactive
         # segments are classified+refined fresh (without joining
         # AllContacts) so their progress row gets accurate sent/repl.
+        # Async prefetch above means refine_contact joins each path's
+        # pending job (cache-hit if already parsed, brief wait otherwise).
         set i 0
         foreach range $seg_ranges {
             lassign $range seg_name seg_dir is_active start end
