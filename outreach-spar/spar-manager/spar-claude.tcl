@@ -13,6 +13,8 @@ package require json
 package require json::write
 package require TclOO
 
+source [file join [file dirname [file normalize [info script]]] spar-mailroom.tcl]
+
 namespace eval spar {}
 
 oo::class create spar::Harness {
@@ -50,6 +52,23 @@ oo::class create spar::Harness {
             error "spar::Harness::resume: no session_id — call must succeed first"
         }
         return [my _invoke $stage $log_file $prompt --resume $SessionId {*}$args]
+    }
+
+    # inject_mailroom — substitute __MAILROOM_SECTION__ in the prompt
+    # file with the prefetched mailroom block (accounts header + per-
+    # contact correspondence cascade). Runs in the harness so the slow
+    # `mailroom -A search` exec parallelises across contacts instead of
+    # serialising in the dispatcher's prepare loop. Empty section when
+    # mailroom isn't installed.
+    method inject_mailroom {prompt_path name org email} {
+        set hdr  [spar::mailroom::accounts_block]
+        set body [spar::mailroom::contact_block $name $org $email]
+        set section [expr {$hdr eq "" ? "" : "\n\n${hdr}${body}"}]
+        set prompt [spar::read_file $prompt_path]
+        set prompt [string map [list __MAILROOM_SECTION__ $section] $prompt]
+        spar::write_file $prompt_path $prompt
+        puts "\[$Slug\] \[phase: mailroom\]"
+        flush stdout
     }
 
     # cost_total — sum `cost` fields across the JSONL ledger.
