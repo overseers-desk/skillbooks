@@ -4,6 +4,8 @@ set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir .. spar-state.tcl]
 source [file join $script_dir test-helpers.tcl]
 
+set State [spar::State new]
+
 # ════════════════════════════════════════════════════════════════════════
 # 13. Golden snapshot (real campaign data)
 # ════════════════════════════════════════════════════════════════════════
@@ -15,7 +17,7 @@ if {![file isdirectory $campaign_dir]} {
 } else {
     # 13a. line-dance segment
     set ld_seg [file join $campaign_dir line-dance]
-    set ld_contacts [spar::classify_segment $ld_seg]
+    set ld_contacts [$State classify_segment $ld_seg]
     set ld_counts [spar::progress_counts $ld_contacts]
     assert_eq [dict get $ld_counts valid] 12 "golden line-dance: valid=12"
     assert_eq [dict get $ld_counts profiled] 12 "golden line-dance: profiled=12"
@@ -23,7 +25,7 @@ if {![file isdirectory $campaign_dir]} {
 
     # 13b. community-organisation segment
     set co_seg [file join $campaign_dir community-organisation]
-    set co_contacts [spar::classify_segment $co_seg]
+    set co_contacts [$State classify_segment $co_seg]
     set co_counts [spar::progress_counts $co_contacts]
     assert_eq [dict get $co_counts valid] 73 "golden community-organisation: valid=73"
     assert_eq [dict get $co_counts profiled] 73 "golden community-organisation: profiled=73"

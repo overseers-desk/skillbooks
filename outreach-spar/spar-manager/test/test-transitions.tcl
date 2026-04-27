@@ -4,6 +4,8 @@ set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir .. spar-state.tcl]
 source [file join $script_dir test-helpers.tcl]
 
+set State [spar::State new]
+
 # ════════════════════════════════════════════════════════════════════════
 # 24. spar::p::run — stems selector narrows the work queue
 # ════════════════════════════════════════════════════════════════════════
@@ -279,8 +281,8 @@ set t9_rows [list \
     [make_base_row {contact_name "C1" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-1"}] \
 ]
 write_roster_tsv $t9_seg $t9_headers $t9_rows
-set t9_contacts [spar::classify_segment $t9_seg]
-set t9_ready [spar::transition_eligible $t9_contacts "T9" email $t9_cdata $t9_today]
+set t9_contacts [$State classify_segment $t9_seg]
+set t9_ready [$State transition_eligible $t9_contacts "T9" email $t9_cdata $t9_today]
 assert_eq [llength $t9_ready] 1 \
     "T9 ready: primary sent 10d ago, no reply, phone pending → 1 task"
 assert_eq [dict get [lindex $t9_ready 0] task_state] "ready" \
@@ -292,8 +294,8 @@ write_profile $t9_seg2 "contact-2"
 write_approach_yaml $t9_seg2 "contact-2" [t9_yaml_primary_email_sent_secondary_phone_pending 2026-04-12]
 write_roster_tsv $t9_seg2 $t9_headers [list \
     [make_base_row {contact_name "C2" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-2"}]]
-set t9_contacts2 [spar::classify_segment $t9_seg2]
-set t9_pend [spar::transition_eligible $t9_contacts2 "T9" email $t9_cdata $t9_today]
+set t9_contacts2 [$State classify_segment $t9_seg2]
+set t9_pend [$State transition_eligible $t9_contacts2 "T9" email $t9_cdata $t9_today]
 assert_eq [llength $t9_pend] 1 "T9 pending: primary sent 3d ago → 1 pending task"
 assert_eq [dict get [lindex $t9_pend 0] task_state] "pending" \
     "T9 pending: task_state=pending"
@@ -308,8 +310,8 @@ write_profile $t9_seg3 "contact-3"
 write_approach_yaml $t9_seg3 "contact-3" [t9_yaml_primary_email_sent_secondary_phone_pending 2026-04-05 2026-04-06]
 write_roster_tsv $t9_seg3 $t9_headers [list \
     [make_base_row {contact_name "C3" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-3"}]]
-set t9_contacts3 [spar::classify_segment $t9_seg3]
-set t9_blocked [spar::transition_eligible $t9_contacts3 "T9" email $t9_cdata $t9_today]
+set t9_contacts3 [$State classify_segment $t9_seg3]
+set t9_blocked [$State transition_eligible $t9_contacts3 "T9" email $t9_cdata $t9_today]
 assert_eq [llength $t9_blocked] 0 \
     "T9 state-gated: contact in REPLIED (primary replied) → no T9 row"
 
@@ -319,19 +321,19 @@ write_profile $t9_seg4 "contact-4"
 write_approach_yaml $t9_seg4 "contact-4" [t9_yaml_primary_unsent]
 write_roster_tsv $t9_seg4 $t9_headers [list \
     [make_base_row {contact_name "C4" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-4"}]]
-set t9_contacts4 [spar::classify_segment $t9_seg4]
-set t9_noop [spar::transition_eligible $t9_contacts4 "T9" email $t9_cdata $t9_today]
+set t9_contacts4 [$State classify_segment $t9_seg4]
+set t9_noop [$State transition_eligible $t9_contacts4 "T9" email $t9_cdata $t9_today]
 assert_eq [llength $t9_noop] 0 \
     "T9 none: primary unsent → no T9 row (don't show 'preceding not yet sent' noise)"
 
 # ── T9 zero without cdata ──
-set t9_no_cdata [spar::transition_eligible $t9_contacts "T9" email]
+set t9_no_cdata [$State transition_eligible $t9_contacts "T9" email]
 assert_eq [llength $t9_no_cdata] 0 \
     "T9 zero when cdata omitted (back-compat with pre-#41 callers)"
 
 # ── T9 zero when campaign lacks secondary_channel ──
 set t9_primary_only_cdata [dict create primary_channel email]
-set t9_zero [spar::transition_eligible $t9_contacts "T9" email $t9_primary_only_cdata $t9_today]
+set t9_zero [$State transition_eligible $t9_contacts "T9" email $t9_primary_only_cdata $t9_today]
 assert_eq [llength $t9_zero] 0 \
     "T9 zero when campaign has no secondary_channel slot"
 
@@ -376,8 +378,8 @@ write_profile $t10_seg "contact-10"
 write_approach_yaml $t10_seg "contact-10" [t10_yaml_primary_sent_secondary_sent_tertiary_pending 2026-04-01 2026-04-05]
 write_roster_tsv $t10_seg $t9_headers [list \
     [make_base_row {contact_name "C10" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" linkedin_url "https://linkedin.com/in/c10" stem "contact-10"}]]
-set t10_contacts [spar::classify_segment $t10_seg]
-set t10_ready [spar::transition_eligible $t10_contacts "T10" email $t10_cdata $t9_today]
+set t10_contacts [$State classify_segment $t10_seg]
+set t10_ready [$State transition_eligible $t10_contacts "T10" email $t10_cdata $t9_today]
 assert_eq [llength $t10_ready] 1 \
     "T10 ready: secondary sent 10d ago, wait=5d, linkedin pending → 1 task"
 assert_eq [dict get [lindex $t10_ready 0] task_state] "ready" \
@@ -389,16 +391,196 @@ write_profile $t10_seg2 "contact-11"
 write_approach_yaml $t10_seg2 "contact-11" [t10_yaml_primary_sent_secondary_sent_tertiary_pending 2026-04-01 2026-04-13]
 write_roster_tsv $t10_seg2 $t9_headers [list \
     [make_base_row {contact_name "C11" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" linkedin_url "https://linkedin.com/in/c11" stem "contact-11"}]]
-set t10_contacts2 [spar::classify_segment $t10_seg2]
-set t10_pend [spar::transition_eligible $t10_contacts2 "T10" email $t10_cdata $t9_today]
+set t10_contacts2 [$State classify_segment $t10_seg2]
+set t10_pend [$State transition_eligible $t10_contacts2 "T10" email $t10_cdata $t9_today]
 assert_eq [llength $t10_pend] 1 "T10 pending: secondary sent 2d ago → 1 pending"
 assert_match [dict get [lindex $t10_pend 0] reason] "*waiting until day 5*" \
     "T10 pending names the wait threshold"
 
 # ── T10 zero if tertiary slot absent ──
-set t10_no_tert [spar::transition_eligible $t10_contacts "T10" email $t9_cdata $t9_today]
+set t10_no_tert [$State transition_eligible $t10_contacts "T10" email $t9_cdata $t9_today]
 assert_eq [llength $t10_no_tert] 0 \
     "T10 zero when campaign has no tertiary_channel slot"
+
+# ════════════════════════════════════════════════════════════════════════
+section "T6 / T7 behavioural eligibility (issue #84 audit gap)"
+# ════════════════════════════════════════════════════════════════════════
+#
+# Routing tests cover that T6 → SendEmailTransition and T7 →
+# CheckRepliesTransition resolve. These tests cover the per-T-id
+# `eligible` method bodies — the ready / pending-with-no-email /
+# already-sent / wrong-channel / invalid-yaml branches that the routing
+# tests do not exercise.
+
+# ── T6 ──────────────────────────────────────────────────────────────────
+
+# T6-a: APPROACHED, has_email, primary_channel=email, email_sent=0 → ready.
+set t6a_seg [make_temp_segment]
+write_profile $t6a_seg "t6a"
+write_approach_yaml $t6a_seg "t6a" [approach_yaml_final_unsent]
+write_roster_tsv $t6a_seg $::std_headers [list \
+    [make_base_row {contact_name "T6A" stem "t6a" email "test@acme-venues.au" star_rating 4}] \
+]
+set t6a_c [$State classify_segment $t6a_seg]
+set t6a_tasks [$State transition_eligible $t6a_c "T6" "email"]
+assert_eq [llength $t6a_tasks] 1 "T6: APPROACHED+email+unsent → 1 task"
+assert_eq [dict get [lindex $t6a_tasks 0] task_state] "ready" \
+    "T6: APPROACHED+email+unsent → task_state=ready"
+
+# T6-b: APPROACHED, has_email=0 → pending with "No email address".
+set t6b_seg [make_temp_segment]
+write_profile $t6b_seg "t6b"
+write_approach_yaml $t6b_seg "t6b" [approach_yaml_final_unsent]
+write_roster_tsv $t6b_seg $::std_headers [list \
+    [make_base_row {contact_name "T6B" stem "t6b" email "" \
+        linkedin_url "https://linkedin.com/in/t6b" star_rating 4}] \
+]
+set t6b_c [$State classify_segment $t6b_seg]
+set t6b_tasks [$State transition_eligible $t6b_c "T6" "email"]
+assert_eq [llength $t6b_tasks] 1 "T6: APPROACHED+no-email → 1 task"
+assert_eq [dict get [lindex $t6b_tasks 0] task_state] "pending" \
+    "T6: APPROACHED+no-email → task_state=pending"
+assert_eq [dict get [lindex $t6b_tasks 0] reason] "No email address" \
+    "T6: APPROACHED+no-email → reason='No email address'"
+
+# T6-c: APPROACHED but already-sent (email_sent=1) → no task (suppressed).
+set t6c_seg [make_temp_segment]
+write_profile $t6c_seg "t6c"
+write_approach_yaml $t6c_seg "t6c" [approach_yaml_final_sent_email]
+write_roster_tsv $t6c_seg $::std_headers [list \
+    [make_base_row {contact_name "T6C" stem "t6c" email "test@acme-venues.au" star_rating 4}] \
+]
+set t6c_c [$State classify_segment $t6c_seg]
+set t6c_tasks [$State transition_eligible $t6c_c "T6" "email"]
+assert_eq [llength $t6c_tasks] 0 \
+    "T6: APPROACHED+email+already-sent → 0 tasks (refine sees email_sent=1)"
+
+# T6-d: APPROACHED, primary_channel=linkedin → no task (T6 is email-only
+# until per-message routing per #49).
+set t6d_seg [make_temp_segment]
+write_profile $t6d_seg "t6d"
+write_approach_yaml $t6d_seg "t6d" [approach_yaml_final_unsent]
+write_roster_tsv $t6d_seg $::std_headers [list \
+    [make_base_row {contact_name "T6D" stem "t6d" email "test@acme-venues.au" star_rating 4}] \
+]
+set t6d_c [$State classify_segment $t6d_seg]
+set t6d_tasks [$State transition_eligible $t6d_c "T6" "linkedin"]
+assert_eq [llength $t6d_tasks] 0 \
+    "T6: primary_channel=linkedin → 0 tasks"
+
+# T6-e: APPROACHED + invalid approach YAML (unknown root key) → pending
+# with reason starting "invalid_approach_yaml:".
+set t6e_seg [make_temp_segment]
+write_profile $t6e_seg "t6e"
+write_approach_yaml $t6e_seg "t6e" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Hi
+    body: Hello
+    actioned_date: null
+    replied_date: null
+bogus_root_key: value
+}
+write_roster_tsv $t6e_seg $::std_headers [list \
+    [make_base_row {contact_name "T6E" stem "t6e" email "test@acme-venues.au" star_rating 4}] \
+]
+set t6e_c [$State classify_segment $t6e_seg]
+set t6e_tasks [$State transition_eligible $t6e_c "T6" "email"]
+assert_eq [llength $t6e_tasks] 1 "T6: invalid YAML → 1 task"
+assert_eq [dict get [lindex $t6e_tasks 0] task_state] "pending" \
+    "T6: invalid YAML → task_state=pending"
+assert_match [dict get [lindex $t6e_tasks 0] reason] "invalid_approach_yaml:*" \
+    "T6: invalid YAML → reason starts 'invalid_approach_yaml:'"
+
+# ── T7 ──────────────────────────────────────────────────────────────────
+
+# T7-a: SENT, email_replied=0 → ready.
+set t7a_seg [make_temp_segment]
+write_profile $t7a_seg "t7a"
+write_approach_yaml $t7a_seg "t7a" [approach_yaml_final_sent_email]
+write_roster_tsv $t7a_seg $::std_headers [list \
+    [make_base_row {contact_name "T7A" stem "t7a" email "test@acme-venues.au" star_rating 4}] \
+]
+set t7a_c [$State classify_segment $t7a_seg]
+set t7a_tasks [$State transition_eligible $t7a_c "T7"]
+assert_eq [llength $t7a_tasks] 1 "T7: SENT+no-reply → 1 task"
+assert_eq [dict get [lindex $t7a_tasks 0] task_state] "ready" \
+    "T7: SENT+no-reply → task_state=ready"
+
+# T7-b: REPLIED (email_replied=1) → no task.
+set t7b_seg [make_temp_segment]
+write_profile $t7b_seg "t7b"
+write_approach_yaml $t7b_seg "t7b" [approach_yaml_final_replied]
+write_roster_tsv $t7b_seg $::std_headers [list \
+    [make_base_row {contact_name "T7B" stem "t7b" email "test@acme-venues.au" star_rating 4}] \
+]
+set t7b_c [$State classify_segment $t7b_seg]
+set t7b_tasks [$State transition_eligible $t7b_c "T7"]
+assert_eq [llength $t7b_tasks] 0 \
+    "T7: REPLIED → 0 tasks (already replied, no monitoring needed)"
+
+# T7-c: APPROACHED but never sent → no task (T7 monitors only sent
+# emails).
+set t7c_seg [make_temp_segment]
+write_profile $t7c_seg "t7c"
+write_approach_yaml $t7c_seg "t7c" [approach_yaml_final_unsent]
+write_roster_tsv $t7c_seg $::std_headers [list \
+    [make_base_row {contact_name "T7C" stem "t7c" email "test@acme-venues.au" star_rating 4}] \
+]
+set t7c_c [$State classify_segment $t7c_seg]
+set t7c_tasks [$State transition_eligible $t7c_c "T7"]
+assert_eq [llength $t7c_tasks] 0 \
+    "T7: APPROACHED+unsent → 0 tasks (no email_sent yet)"
+
+# T7-d: EXCLUDED contact (was sent before exclusion) → no task. T7
+# explicitly skips EXCLUDED to avoid reply-watching a contact the
+# operator has retired.
+set t7d_seg [make_temp_segment]
+write_profile $t7d_seg "t7d"
+write_approach_yaml $t7d_seg "t7d" [approach_yaml_final_sent_email]
+write_roster_tsv $t7d_seg $::std_headers [list \
+    [make_base_row {contact_name "T7D" stem "t7d" email "test@acme-venues.au" \
+        star_rating 4 date_excluded "2026-04-05"}] \
+]
+set t7d_c [$State classify_segment $t7d_seg]
+set t7d_tasks [$State transition_eligible $t7d_c "T7"]
+assert_eq [llength $t7d_tasks] 0 \
+    "T7: EXCLUDED → 0 tasks (regardless of prior email_sent)"
+
+# T7-e: SENT contact + invalid approach YAML → pending with
+# reason starting "invalid_approach_yaml:". Validates the
+# eligibility-time approach gate symmetric with T6.
+set t7e_seg [make_temp_segment]
+write_profile $t7e_seg "t7e"
+write_approach_yaml $t7e_seg "t7e" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Sent
+    body: Hello
+    actioned_date: 2026-04-01
+    replied_date: null
+bogus_root_key: value
+}
+write_roster_tsv $t7e_seg $::std_headers [list \
+    [make_base_row {contact_name "T7E" stem "t7e" email "test@acme-venues.au" star_rating 4}] \
+]
+set t7e_c [$State classify_segment $t7e_seg]
+set t7e_tasks [$State transition_eligible $t7e_c "T7"]
+assert_eq [llength $t7e_tasks] 1 "T7: SENT+invalid YAML → 1 task"
+assert_eq [dict get [lindex $t7e_tasks 0] task_state] "pending" \
+    "T7: SENT+invalid YAML → task_state=pending"
+assert_match [dict get [lindex $t7e_tasks 0] reason] "invalid_approach_yaml:*" \
+    "T7: SENT+invalid YAML → reason starts 'invalid_approach_yaml:'"
 
 # ════════════════════════════════════════════════════════════════════════
 # audit_skills_in_transcript (issue #76)

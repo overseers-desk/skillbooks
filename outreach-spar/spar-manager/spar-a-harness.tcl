@@ -47,6 +47,25 @@ file mkdir $log_dir
 
 oo::class create spar::ApproachHarness {
     superclass spar::Harness
+    variable State
+
+    constructor {slug log_prefix} {
+        next $slug $log_prefix
+        # The harness rewrites the approach file across fix attempts —
+        # back-to-back rewrites can land within mtime granularity (1s)
+        # and may keep the line-1 profile_hash unchanged, so neither
+        # invalidator on approach_summary's cache fires reliably. Hold
+        # a State for shared validation paths and use forget_approach
+        # explicitly after each agent write that touched the outfile.
+        set State [spar::State new]
+    }
+    destructor {
+        if {[info exists State] && $State ne ""} {
+            $State destroy
+            set State ""
+        }
+    }
+    method state {} { return $State }
 
     # validate_and_correct -- DbC-Post loop for approach files. Attempts
     # 1-2 use the current model; attempt 3 escalates to opus. Returns 0 on
@@ -57,6 +76,8 @@ oo::class create spar::ApproachHarness {
         set lp   [my log_prefix]
 
         for {set attempt 1} {$attempt <= $max_fix} {incr attempt} {
+            # Path-form validate_approach parses fresh — appropriate here
+            # because every attempt follows an agent write to $outfile.
             set errors [spar::validate_approach $outfile $roster_email $contact_name $roster_organisation]
             set hard {}
             foreach e $errors {
@@ -86,6 +107,10 @@ oo::class create spar::ApproachHarness {
             if {[my resume "fix${attempt}" $fix_log $fix_prompt {*}$model_args]} {
                 return 1
             }
+            # Agent rewrote $outfile — drop any cached projection so the
+            # next validate_approach + the post-loop prepend_profile_hash
+            # call both see fresh bytes.
+            $State forget_approach $outfile
         }
 
         set errors [spar::validate_approach $outfile $roster_email $contact_name $roster_organisation]

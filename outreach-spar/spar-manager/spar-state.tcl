@@ -24,8 +24,7 @@ apply {{} {
 }}
 
 namespace eval spar {
-    namespace export classify_contact classify_segment \
-        transition_eligible detect_duplicates progress_counts \
+    namespace export detect_duplicates progress_counts \
         roster_counts \
         keychain_available \
         validate_campaign validate_campaign_semantics validate_sender_block \
@@ -114,7 +113,16 @@ proc spar::normalise_name {s} {
 
 # read_approach_yaml — safely read and parse an approach YAML file.
 # Returns parsed dict, or empty string on failure.
+#
+# Instrumentation: increments ::spar::parse_count on every successful or
+# failed parse. The counter is the canonical signal for verifying that
+# render-path consumers go through the State cache; the parse-count
+# assertion in /tmp/spar84-parse-count.tcl reads it. Test/bench callers
+# can reset via `set ::spar::parse_count 0`. Cost is one set + one incr
+# per parse (negligible against the parse itself).
+namespace eval spar { variable parse_count 0 }
 proc spar::read_approach_yaml {path} {
+    incr ::spar::parse_count
     if {![file exists $path]} {
         return ""
     }
@@ -280,18 +288,242 @@ proc spar::analyse_final_round {data} {
     return $result
 }
 
-# classify_contact -- classify one contact's state.
+# spar::State — owns per-unit-of-work classification. Phase B hangs an
+# approach-summary cache off the instance: render-path consumers
+# (refine_contact, the 5 transition `eligible` paths,
+# approach_validation_error, channel_readiness via
+# final_round_messages_for_contact) all route through approach_summary,
+# so a contact eligible for T6+T7+T9+T10 incurs one parse per State
+# lifetime instead of 4–8.
+#
+# ApproachCache is a dict approach_path → {hash mtime summary} where
+# `hash` is the line-1 profile_hash hex (or "" for legacy approaches
+# without one) and `mtime` is the file's mtime when last parsed. On
+# cache hit, both are re-probed cheaply (one gets + one stat) before
+# the cached summary is returned; mismatch on either drops the entry.
+oo::class create spar::State {
+    variable ApproachCache
+    constructor {} {
+        set ApproachCache [dict create]
+    }
+}
+
+# forget_approach -- drop the cached projection for a specific approach
+# path. Used by writers (spar-a-harness.tcl's validate_and_correct loop)
+# that rewrite the file mid-run: mtime granularity is 1s on some
+# filesystems and the line-1 profile_hash often stays the same across
+# retries, so neither hash+mtime invalidator can be relied on for
+# back-to-back rewrites. An explicit forget after each write closes
+# that window.
+oo::define spar::State method forget_approach {approach_path} {
+    if {[dict exists $ApproachCache $approach_path]} {
+        set ApproachCache [dict remove $ApproachCache $approach_path]
+    }
+}
+
+# approach_summary -- return a cached projection of the contact's
+# approach YAML, parsing only when the cache misses or the file's
+# line-1 hash / mtime have moved. Render-path consumers call this
+# instead of spar::read_approach_yaml so a contact eligible for
+# T6+T7+T9+T10 incurs one parse per State lifetime, not four.
+#
+# Bypass-site rule: write paths (transitions/send_email.tcl), DbC
+# snapshots in spar-dispatch.tcl, and the inspector continue to call
+# spar::read_approach_yaml directly — they need fresh bytes and a
+# cached projection would mask post-agent edits / in-flight writes.
+#
+# Returns the projection dict, or {} if the contact has no approach
+# file or it cannot be parsed. The projection is what
+# project_approach_data returns; field set is documented there.
+oo::define spar::State method approach_summary {contact} {
+    set ap [spar::dict_get_default $contact approach_path ""]
+    if {$ap eq "" || ![file exists $ap]} { return {} }
+
+    # Cheap validity probes — line-1 hash (one gets) and mtime (stat).
+    # Together they catch the two ways an approach changes under us:
+    # an A re-author rewrites the whole file (mtime advances; hash
+    # often advances too if the profile changed), and an in-place edit
+    # (validator fix loop, manual touch-up) advances mtime even when
+    # line-1 hash stays put.
+    set cur_hash [spar::_approach_first_line_hash $ap]
+    set cur_mtime [file mtime $ap]
+
+    if {[dict exists $ApproachCache $ap]} {
+        set entry [dict get $ApproachCache $ap]
+        if {[dict get $entry hash] eq $cur_hash \
+                && [dict get $entry mtime] eq $cur_mtime} {
+            return [dict get $entry summary]
+        }
+        # stale; fall through to re-parse
+    }
+
+    set data [spar::read_approach_yaml $ap]
+    if {$data eq ""} {
+        # Parse failure — cache "" so callers consistently see an empty
+        # projection and a re-parse only happens after the file changes.
+        dict set ApproachCache $ap [dict create \
+            hash $cur_hash mtime $cur_mtime summary {}]
+        return {}
+    }
+
+    set summary [spar::project_approach_data $data]
+    dict set ApproachCache $ap [dict create \
+        hash $cur_hash mtime $cur_mtime summary $summary]
+    return $summary
+}
+
+# project_approach_data -- build the render-path projection of a parsed
+# approach YAML. Preserves the key skeleton at every level so
+# spar::_check_unknown_keys (the closed-vocabulary walk in
+# validate_approach) still flags drift, but blanks heavy text values
+# (body, reply_summary, script[*]/text, replies[*]/text) so the cache
+# stays small. Validator structural checks (`dict exists $msg body`,
+# `dict exists $msg subject`) still see the keys; the values they
+# don't read are dropped.
+#
+# Brief constraint: send-time consumers need the full body and call
+# spar::read_approach_yaml directly — they are bypass sites and never
+# touch the projection.
+proc spar::project_approach_data {data} {
+    if {$data eq "" || [llength $data] % 2 != 0} { return $data }
+    set out [dict create]
+    dict for {k v} $data {
+        switch -- $k {
+            rounds {
+                set rounds_out {}
+                foreach r $v {
+                    lappend rounds_out [spar::_project_round $r]
+                }
+                dict set out rounds $rounds_out
+            }
+            decisions -
+            fact_provenance -
+            quality_checklist -
+            angle_rationale -
+            a_note -
+            profile_hash {
+                # Small / structural — copy through.
+                dict set out $k $v
+            }
+            default {
+                # Unknown root key — preserve so _check_unknown_keys
+                # still flags it.
+                dict set out $k $v
+            }
+        }
+    }
+    return $out
+}
+
+# _project_round -- helper for project_approach_data.
+proc spar::_project_round {round} {
+    if {[llength $round] % 2 != 0} { return $round }
+    set out [dict create]
+    dict for {k v} $round {
+        switch -- $k {
+            messages {
+                set msgs_out {}
+                foreach m $v { lappend msgs_out [spar::_project_message $m] }
+                dict set out messages $msgs_out
+            }
+            replies {
+                set replies_out {}
+                foreach rep $v { lappend replies_out [spar::_project_reply $rep] }
+                dict set out replies $replies_out
+            }
+            default {
+                dict set out $k $v
+            }
+        }
+    }
+    return $out
+}
+
+# _project_message -- preserve key skeleton, blank the heavy text
+# values (body, reply_summary, script[*]/text). channel/subject/to/
+# actioned_date/replied_date/mode/parent are read by render-path
+# consumers and pass through unchanged.
+proc spar::_project_message {msg} {
+    if {[llength $msg] % 2 != 0} { return $msg }
+    set out [dict create]
+    dict for {k v} $msg {
+        switch -- $k {
+            body -
+            reply_summary {
+                # Key preserved (validator checks `dict exists $msg body`),
+                # value blanked — wire content lives on disk and is read
+                # by the bypass site at send time.
+                dict set out $k ""
+            }
+            script {
+                set items_out {}
+                foreach item $v { lappend items_out [spar::_project_script_item $item] }
+                dict set out script $items_out
+            }
+            default {
+                dict set out $k $v
+            }
+        }
+    }
+    return $out
+}
+
+# _project_script_item -- preserve key skeleton (so the closed-
+# vocabulary walk at script_item level still operates), blank text
+# value. Validator's `_check_unknown_keys` walks key presence; dropping
+# the `text` key would break the walk silently.
+proc spar::_project_script_item {item} {
+    if {[llength $item] % 2 != 0} { return $item }
+    set out [dict create]
+    dict for {k v} $item {
+        if {$k eq "text"} {
+            dict set out $k ""
+        } else {
+            dict set out $k $v
+        }
+    }
+    return $out
+}
+
+# _project_reply -- preserve direction (analyse_final_round reads it to
+# compute email_replied) and any other keys present (so unknown-key
+# walks still work), blank the text body.
+proc spar::_project_reply {reply} {
+    if {[llength $reply] % 2 != 0} { return $reply }
+    set out [dict create]
+    dict for {k v} $reply {
+        if {$k eq "text"} {
+            dict set out $k ""
+        } else {
+            dict set out $k $v
+        }
+    }
+    return $out
+}
+
+# classify_contact -- classify one contact's cheap state.
+#
+# Returns the cheap projection only — state collapsed to APPROACHED for
+# any approach-having contact (no SENT/REPLIED/APPROACH_STALE-via-parse
+# refinement; APPROACH_STALE is still detected via the line-1 hash, which
+# does not require a full YAML parse). Refined fields (SENT/REPLIED, the
+# email_sent / linkedin_sent / email_replied / to_addresses / unsent_
+# subjects projections) are computed lazily by `refine_contact`, which
+# routes through `approach_summary`'s per-instance cache. Cheap-tier
+# callers (DISCOVERED/PROFILED/EXCLUDED routing, T1..T4 eligibility)
+# never refine and pay zero parse cost.
 #
 # roster_row   dict with TSV fields (contact_name, date_excluded,
 #              star_rating, email, linkedin_url, facebook_url, phone,
 #              stem, ...)
 #              stem is required; classify_segment validates its presence
-#              before calling this proc.
+#              before calling this method.
 # segment_dir  absolute path to the segment directory
 #
 # Returns a dict:
 #   state         one of: EXCLUDED DISCOVERED PROFILED PROFILE_STALE
-#                         APPROACHED APPROACH_STALE SENT REPLIED
+#                         APPROACHED APPROACH_STALE
+#                 (SENT / REPLIED only after refine_contact)
 #   profile_path  path to profile file, or empty string
 #   approach_path path to approach YAML, or empty string
 #   star          integer (0 if blank/unparseable)
@@ -299,13 +531,13 @@ proc spar::analyse_final_round {data} {
 #   has_linkedin  bool
 #   has_facebook  bool
 #   has_phone_only bool
-#   email_sent    bool
-#   linkedin_sent bool
-#   email_replied bool
-#   to_addresses     list of final-round email To: addresses (empty if no approach)
-#   unsent_subjects  list of final-round unsent email subjects (empty if no approach)
+#   email_sent    0 (placeholder; populated by refine_contact)
+#   linkedin_sent 0 (placeholder; populated by refine_contact)
+#   email_replied 0 (placeholder; populated by refine_contact)
+#   to_addresses     {} (placeholder; populated by refine_contact)
+#   unsent_subjects  {} (placeholder; populated by refine_contact)
 #
-proc spar::classify_contact {roster_row segment_dir {full 1}} {
+oo::define spar::State method classify_contact {roster_row segment_dir} {
     # Extract roster fields with safe defaults.
     # strip_tsv_field: trim whitespace, and if the remaining value is a
     # quoted-empty-or-whitespace string (e.g. `" "` or `""`), collapse to "".
@@ -412,74 +644,92 @@ proc spar::classify_contact {roster_row segment_dir {full 1}} {
 
     # APPROACH_STALE check (#63): reads only the first line of the
     # approach file via spar::_approach_first_line_hash, so we can
-    # answer it before deciding whether to do the expensive parse.
+    # answer it without a full YAML parse. Callers that need
+    # SENT/REPLIED (which DOES require parsing) call refine_contact;
+    # cheap-tier callers (T1..T4) never see those states.
     set hash_stale [spar::_approach_hash_mismatch $profile_path $approach_path]
-
-    # Cheap path (full=0): callers in --auto only need APPROACHED /
-    # APPROACH_STALE / PROFILE_STALE distinctions because their gates
-    # (T1/T2/T3/T4) never read email_sent, linkedin_sent, email_replied,
-    # to_addresses, or unsent_subjects. Skipping the YAML parse here is
-    # the whole point of issue #63's first-line discipline. SENT/REPLIED
-    # contacts are reported as APPROACHED in this mode — auto-safe
-    # transitions are not consumers of that distinction, so no caller
-    # is misled by it.
-    if {!$full} {
-        if {$hash_stale} {
-            dict set base state APPROACH_STALE
-        } else {
-            dict set base state APPROACHED
-        }
-        return $base
-    }
-
-    # Full path — parse the approach for SENT/REPLIED determination and
-    # final-round bookkeeping the GUI / non-auto CLI consume.
-    set approach_data [spar::read_approach_yaml $approach_path]
-    set fr [spar::analyse_final_round $approach_data]
-    dict set base email_sent      [dict get $fr email_sent]
-    dict set base linkedin_sent   [dict get $fr linkedin_sent]
-    dict set base email_replied   [dict get $fr email_replied]
-    dict set base to_addresses    [dict get $fr to_addresses]
-    dict set base unsent_subjects [dict get $fr unsent_subjects]
-
-    # 6. REPLIED — SENT and (replied_date or reply with direction:received)
-    if {[dict get $fr any_sent] && [dict get $fr email_replied]} {
-        dict set base state REPLIED
-        return $base
-    }
-
-    # 5. SENT — final round has at least one message with actioned_date.
-    # SENT/REPLIED supersede APPROACH_STALE: a contact already engaged is
-    # not re-approached on hash mismatch alone (would clobber send history).
-    if {[dict get $fr any_sent]} {
-        dict set base state SENT
-        return $base
-    }
-
-    # 4a. APPROACH_STALE — approach references a profile whose bytes have
-    # changed since the approach was drafted (#63). T4 picks these up and
-    # re-runs A. Skipped silently when the approach lacks a line-1
-    # profile_hash; legacy approaches drafted before the hash was
-    # introduced remain APPROACHED until rebuilt.
     if {$hash_stale} {
         dict set base state APPROACH_STALE
-        return $base
+    } else {
+        dict set base state APPROACHED
     }
-
-    # 4. APPROACHED — approach file exists, no final-round message with actioned_date
-    dict set base state APPROACHED
     return $base
 }
 
-# classify_segment -- load roster and classify all contacts.
+# refine_contact -- promote a cheap-classified contact dict to its
+# refined form by parsing the approach YAML (via approach_summary, so
+# the parse is shared across the render). Returns a new dict with
+# SENT/REPLIED resolved on `state` and email_sent / linkedin_sent /
+# email_replied / to_addresses / unsent_subjects populated.
+#
+# Idempotent: refining an already-refined contact rebuilds from the
+# (cached) projection. Refining a contact whose state is something
+# other than APPROACHED / APPROACH_STALE (DISCOVERED, PROFILED,
+# EXCLUDED, etc.) is a no-op — those states cannot host a final-round
+# message, so the parse is skipped and the contact is returned
+# unchanged.
+#
+# Callers that need refined fields call this on a per-contact basis
+# (UI inspector, send transitions) or via refine_segment (UI render,
+# spar-progress.tcl, T6/T7/T8/T9/T10 eligibility).
+oo::define spar::State method refine_contact {contact} {
+    set state [spar::dict_get_default $contact state ""]
+    if {$state ne "APPROACHED" && $state ne "APPROACH_STALE"} {
+        return $contact
+    }
+    set ap [spar::dict_get_default $contact approach_path ""]
+    if {$ap eq "" || ![file exists $ap]} { return $contact }
+
+    set approach_data [my approach_summary $contact]
+    set fr [spar::analyse_final_round $approach_data]
+    dict set contact email_sent      [dict get $fr email_sent]
+    dict set contact linkedin_sent   [dict get $fr linkedin_sent]
+    dict set contact email_replied   [dict get $fr email_replied]
+    dict set contact to_addresses    [dict get $fr to_addresses]
+    dict set contact unsent_subjects [dict get $fr unsent_subjects]
+
+    # REPLIED — SENT and (replied_date or reply with direction:received).
+    if {[dict get $fr any_sent] && [dict get $fr email_replied]} {
+        dict set contact state REPLIED
+        return $contact
+    }
+    # SENT — final round has at least one message with actioned_date.
+    # SENT/REPLIED supersede APPROACH_STALE: a contact already engaged is
+    # not re-approached on hash mismatch alone (would clobber send history).
+    if {[dict get $fr any_sent]} {
+        dict set contact state SENT
+        return $contact
+    }
+    # APPROACHED / APPROACH_STALE retained as-set by classify_contact.
+    return $contact
+}
+
+# refine_segment -- map refine_contact over a list of cheap-classified
+# contacts. Cheap-tier states pass through untouched; APPROACHED /
+# APPROACH_STALE contacts are promoted via the cache. Bulk form for
+# the UI render path and progress.tcl.
+oo::define spar::State method refine_segment {contacts} {
+    set out {}
+    foreach c $contacts {
+        lappend out [my refine_contact $c]
+    }
+    return $out
+}
+
+# classify_segment -- load roster and classify all contacts (cheap form).
 #
 # segment_dir  absolute path to the segment directory
 #
-# Returns a list of dicts, one per valid+named roster row,
-# each being the result of classify_contact merged with the original roster_row.
+# Returns a list of dicts, one per valid+named roster row, each being
+# the result of classify_contact merged with the original roster_row.
+# Refined fields are placeholders — call refine_segment (or
+# refine_contact per-row) on the result when SENT / REPLIED /
+# email_sent / linkedin_sent / email_replied / to_addresses /
+# unsent_subjects are needed.
+#
 # On schema error, throws an error.
 #
-proc spar::classify_segment {segment_dir {full 1}} {
+oo::define spar::State method classify_segment {segment_dir} {
     set roster_path [file join $segment_dir roster.tsv]
     if {![file exists $roster_path]} {
         error "Roster file not found: $roster_path"
@@ -497,7 +747,7 @@ proc spar::classify_segment {segment_dir {full 1}} {
 
     set results {}
     foreach row $rows {
-        set classified [spar::classify_contact $row $segment_dir $full]
+        set classified [my classify_contact $row $segment_dir]
 
         # Merge: original roster_row + classified result (classified wins on overlap)
         set merged $row
@@ -513,14 +763,13 @@ proc spar::classify_segment {segment_dir {full 1}} {
     return $results
 }
 
-# _final_round_messages_for_contact -- parse the contact's approach file
-# and return the per-message list from analyse_final_round, or {} if no
-# approach file exists. Convenience wrapper to avoid re-parsing the YAML
-# at each caller.
-proc spar::_final_round_messages_for_contact {contact} {
-    set ap [spar::dict_get_default $contact approach_path ""]
-    if {$ap eq "" || ![file exists $ap]} { return {} }
-    set adata [spar::read_approach_yaml $ap]
+# final_round_messages_for_contact -- return the per-message list from
+# analyse_final_round, or {} if no approach file exists. Phase B routes
+# this through approach_summary so T9/T10 channel-readiness checks
+# share the same parsed projection as classify_contact and the
+# eligibility validators.
+oo::define spar::State method final_round_messages_for_contact {contact} {
+    set adata [my approach_summary $contact]
     if {$adata eq ""} { return {} }
     set fr [spar::analyse_final_round $adata]
     return [dict get $fr messages]
@@ -572,7 +821,7 @@ proc spar::_days_since {date {today ""}} {
     return [expr {($now_sec - $then_sec) / 86400}]
 }
 
-# _channel_readiness -- evaluate secondary_ready / tertiary_ready for
+# channel_readiness -- evaluate secondary_ready / tertiary_ready for
 # one contact given the campaign's channel slots. Returns a dict:
 #   {secondary_ready bool tertiary_ready bool
 #    secondary_reason "" tertiary_reason ""}
@@ -588,7 +837,7 @@ proc spar::_days_since {date {today ""}} {
 # Reason strings describe why a slot is NOT ready (empty when it is).
 #
 # today_iso — ISO YYYY-MM-DD reference date. Optional; defaults to today.
-proc spar::_channel_readiness {contact cdata {today_iso ""}} {
+oo::define spar::State method channel_readiness {contact cdata {today_iso ""}} {
     set out [dict create \
         secondary_ready 0 tertiary_ready 0 \
         secondary_reason "" tertiary_reason ""]
@@ -598,7 +847,7 @@ proc spar::_channel_readiness {contact cdata {today_iso ""}} {
     set secondary_ch [spar::_campaign_channel_slot $cdata secondary_channel]
     if {$secondary_ch eq ""} { return $out }
 
-    set messages [spar::_final_round_messages_for_contact $contact]
+    set messages [my final_round_messages_for_contact $contact]
     if {[llength $messages] == 0} {
         dict set out secondary_reason "no approach/final round"
         return $out
@@ -754,17 +1003,25 @@ proc spar::_task {contact task_state {reason ""}} {
 # Per-T-id logic lives on the corresponding ::spar::transitions::* class as
 # its `eligible` method (no leading underscore — TclOO would unexport it
 # and external dispatch via the registered object command would fail). This
-# proc just walks contacts and folds the per-class results.
+# method just walks contacts and folds the per-class results.
 #
 # Returns a list of dicts with keys:
 #   contact_name, organisation, segment, task_state (ready/pending/done), reason
 #
-proc spar::transition_eligible {classified_contacts transition \
+oo::define spar::State method transition_eligible {classified_contacts transition \
         {primary_channel ""} {cdata {}} {today_iso ""}} {
     set t [::spar::transitions::get $transition]
     set out {}
     foreach contact $classified_contacts {
-        foreach task [$t eligible $contact $primary_channel $cdata $today_iso] {
+        # refine_contact short-circuits for cheap-tier states (DISCOVERED /
+        # PROFILED / EXCLUDED / etc.) so they pay zero parse cost; only
+        # APPROACHED / APPROACH_STALE contacts route through approach_summary,
+        # whose cache means the parse runs at most once per State lifetime.
+        # Refining here makes the cheap/full distinction implicit at the
+        # T-id `eligible` boundary — eligible always sees populated refined
+        # fields when the contact is in a state that has them.
+        set refined [my refine_contact $contact]
+        foreach task [$t eligible [self] $refined $primary_channel $cdata $today_iso] {
             lappend out $task
         }
     }

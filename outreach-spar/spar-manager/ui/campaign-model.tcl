@@ -48,6 +48,7 @@ oo::class create spar::ui::CampaignModel {
     variable LoaderCoro LoaderAfterId
     variable ScriptDir
     variable Subs
+    variable State
 
     constructor {campaign_file script_dir} {
         set CampaignFile $campaign_file
@@ -69,10 +70,16 @@ oo::class create spar::ui::CampaignModel {
         set LoaderCoro    ""
         set LoaderAfterId ""
         set Subs [dict create]
+        # State lives for the model's lifetime so Phase B can reuse cache
+        # entries across refresh() calls; refresh does not destroy/recreate.
+        set State [spar::State new]
     }
 
     destructor {
         my _cancel_loader
+        if {[info exists State] && [info commands $State] ne ""} {
+            $State destroy
+        }
     }
 
     # ─── Subscription ─────────────────────────────────────────────────────
@@ -97,6 +104,7 @@ oo::class create spar::ui::CampaignModel {
     method get_transitions     {} { return $Transitions }
     method get_warnings        {} { return $Warnings }
     method get_full_load_done  {} { return $FullLoadDone }
+    method get_state           {} { return $State }
 
     method get_smtp_host {} {
         if {![dict exists $Cdata sender]} { return "" }
@@ -322,7 +330,7 @@ oo::class create spar::ui::CampaignModel {
 
     method _transition_entry {tid primary_channel} {
         set label [spar::transition_label $tid]
-        set eligible [spar::transition_eligible $AllContacts $tid $primary_channel $Cdata]
+        set eligible [$State transition_eligible $AllContacts $tid $primary_channel $Cdata]
         set tasks {}
         foreach contact $eligible {
             set cname  [dict get $contact contact_name]
@@ -369,10 +377,12 @@ oo::class create spar::ui::CampaignModel {
     }
 
     method loader_body {} {
-        # Phase 1 — cheap classify per segment. classify_segment ... 0
-        # skips the approach-YAML parse (#63 fast path) so first paint
-        # depends only on roster + file-presence reads. SENT/REPLIED
-        # contacts are reported as APPROACHED here; Phase 2 corrects them.
+        # Phase 1 — cheap classify per segment. classify_segment skips
+        # the approach-YAML parse (#63 fast path) so first paint depends
+        # only on roster + file-presence reads. SENT/REPLIED contacts
+        # are reported as APPROACHED here; Phase 2 refines them via
+        # State::refine_contact, which routes through the per-instance
+        # approach_summary cache (#84).
         #
         # Track each segment's range in AllContacts so Phase 2 can enrich
         # in-place per segment and re-fire segment-loaded with corrected
@@ -384,7 +394,7 @@ oo::class create spar::ui::CampaignModel {
             lassign $item seg_name seg_dir is_active
             set start [llength $AllContacts]
 
-            if {![catch {set classified [spar::classify_segment $seg_dir 0]} err]} {
+            if {![catch {set classified [$State classify_segment $seg_dir]} err]} {
                 if {$is_active} {
                     foreach c $classified { lappend AllContacts $c }
                 }
@@ -429,11 +439,12 @@ oo::class create spar::ui::CampaignModel {
             my _yield_loop
         }
 
-        # Phase 2 — per-segment enrichment. For each segment, parse the
-        # approach YAML of its active contacts and overlay the SENT/REPLIED
-        # fields, then re-fire segment-loaded with the now-correct counts.
-        # Inactive segments are re-classified with full=1 (without joining
-        # AllContacts) just so their progress row gets accurate sent/repl.
+        # Phase 2 — per-segment enrichment. For each segment, refine the
+        # cheap-classified contacts (parse the approach YAML for those
+        # whose state warrants it) and overlay the refined fields, then
+        # re-fire segment-loaded with the now-correct counts. Inactive
+        # segments are classified+refined fresh (without joining
+        # AllContacts) so their progress row gets accurate sent/repl.
         set i 0
         foreach range $seg_ranges {
             lassign $range seg_name seg_dir is_active start end
@@ -441,9 +452,9 @@ oo::class create spar::ui::CampaignModel {
                 for {set idx $start} {$idx < $end} {incr idx} {
                     set c [lindex $AllContacts $idx]
                     if {[dict get $c approach_path] ne ""} {
-                        if {![catch {set full [spar::classify_contact $c $seg_dir 1]}]} {
-                            dict for {k v} $full { dict set c $k $v }
-                            lset AllContacts $idx $c
+                        if {![catch {set refined [$State refine_contact $c]}]} {
+                            lset AllContacts $idx $refined
+                            set c $refined
                         }
                     }
                     my _fire contact-finalised [spar::dict_get_default $c stem ""]
@@ -452,7 +463,8 @@ oo::class create spar::ui::CampaignModel {
                 }
                 set seg_contacts [lrange $AllContacts $start [expr {$end - 1}]]
             } else {
-                if {[catch {set seg_contacts [spar::classify_segment $seg_dir 1]}]} {
+                if {[catch {set seg_contacts \
+                        [$State refine_segment [$State classify_segment $seg_dir]]}]} {
                     continue
                 }
             }

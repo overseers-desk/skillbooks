@@ -15,16 +15,16 @@ oo::class create ::spar::transitions::ManualFollowupTransition {
     # readiness reports `<slot>_ready`.  Pending reasons that name the
     # missing preceding-channel send are suppressed — the operator already
     # sees those through T6/T7/T8 and does not need duplicate noise here.
-    method eligible {contact primary_channel cdata today_iso} {
-        set state [dict get $contact state]
-        if {$state eq "EXCLUDED"} { return {} }
-        if {$state ne "APPROACHED" && $state ne "SENT"} { return {} }
+    method eligible {state contact primary_channel cdata today_iso} {
+        set cstate [dict get $contact state]
+        if {$cstate eq "EXCLUDED"} { return {} }
+        if {$cstate ne "APPROACHED" && $cstate ne "SENT"} { return {} }
         if {[llength $cdata] == 0} { return {} }
-        set vmsg [spar::_approach_validation_error $contact]
+        set vmsg [$state approach_validation_error $contact]
         if {$vmsg ne ""} {
             return [list [spar::_task $contact pending "invalid_approach_yaml: $vmsg"]]
         }
-        set r [spar::_channel_readiness $contact $cdata $today_iso]
+        set r [$state channel_readiness $contact $cdata $today_iso]
         set slot [my param -slot]
         if {[dict get $r ${slot}_ready]} {
             return [list [spar::_task $contact ready ""]]

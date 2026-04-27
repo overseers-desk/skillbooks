@@ -97,13 +97,19 @@ if {[llength $segment_paths] == 0} {
 }
 
 # --- Classify all segments and collect counts ---
+# One State for the whole CLI run — its lifetime matches this script's.
+set State [spar::State new]
 set all_contacts {}
 set segment_counts {}   ;# list of {label counts_dict}
 
 foreach item $segment_paths {
     lassign $item label seg_dir
     if {[catch {
-        set classified [spar::classify_segment $seg_dir]
+        # Cheap classify, then refine — progress_counts reads email_sent /
+        # email_replied which are placeholder-zero on cheap output. The
+        # cache means refine_segment shares parses with any later
+        # transition_eligible calls in this script.
+        set classified [$State refine_segment [$State classify_segment $seg_dir]]
     } err]} {
         puts stderr "Error in $label: $err"
         continue
@@ -186,7 +192,7 @@ if {$json_mode} {
     foreach tid [spar::ui_transition_tids] {
         if {$skip_reply_check && $tid eq "T7"} continue
         set tlabel [spar::transition_label $tid]
-        set tasks [spar::transition_eligible $all_contacts $tid $primary_channel $cdata]
+        set tasks [$State transition_eligible $all_contacts $tid $primary_channel $cdata]
         lappend transitions [dict create label "$tid: $tlabel" count [llength $tasks] tasks $tasks]
     }
     puts [progress_to_json [dict create campaign $campaign_name min_star $min_star \
