@@ -65,7 +65,6 @@ tclsh9.0 spar-transitions.tcl /path/to/campaign.yaml --tid=T1 --execute --dry-ru
 # Approach generation (dry run)
 tclsh9.0 spar-a-batch.tcl /path/to/campaign.yaml --dry-run
 
-# Tests
-tclsh9.0 test/run-tests.tcl
-tclsh9.0 test/test-email.tcl
+# Tests (parallel; honours SPAR_TEST_JOBS)
+tclsh9.0 test/run.tcl
 ```

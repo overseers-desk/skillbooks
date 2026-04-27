@@ -8,6 +8,7 @@ package require yaml
 
 # ── Source the library under test ────────────────────────────────────────
 set script_dir [file dirname [file normalize [info script]]]
+source [file join $script_dir .. spar-state.tcl]
 source [file join $script_dir .. spar-email.tcl]
 
 # ── Minimal test framework ──────────────────────────────────────────────
@@ -210,7 +211,7 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: test@example.com
+    to: test@acme-venues.au
     subject: Test subject
     body: Hello there
     actioned_date: null
@@ -280,7 +281,7 @@ rounds:
   number: 1
   messages:
   - channel: email
-    to: contact@example.com
+    to: contact@acme-venues.au
     subject: Test subject
     body: Hello there
     actioned_date: 2026-04-01
@@ -422,15 +423,15 @@ section "8. stamp_actioned_date formatting preservation"
 set seg9 [make_temp_segment]
 set yaml_multiline {decisions:
   channel: email
-  notes: |
-    This approach has multi-line notes.
-    Keep them intact.
 rounds:
 - type: final
   number: 1
+  notes: |
+    This approach has multi-line notes.
+    Keep them intact.
   messages:
   - channel: email
-    to: format@example.com
+    to: format@acme-venues.au
     subject: Formatting test
     body: |
       Dear Sir,

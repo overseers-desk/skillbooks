@@ -691,7 +691,7 @@ proc spar::_evaluate_slot_readiness {preceding_msg own_msg wait_days wait_cond o
 #   - min_star:        filter.min_star (default 3) vs parsed star_rating
 #
 # When cdata is empty (tests, legacy callers), falls back to the pre-#56
-# T2 hardcode — star >= 3 + skip excluded — so run-tests.tcl T2 assertions
+# T2 hardcode — star >= 3 + skip excluded — so existing T2 test assertions
 # keep passing without threading cdata through.
 proc spar::_approach_dispatch_gate {row cdata} {
     set has_cdata [expr {[llength $cdata] > 0}]
