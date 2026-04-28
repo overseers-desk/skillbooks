@@ -184,6 +184,37 @@ oo::class create spar::Dispatcher {
         my _try_post_next
     }
 
+    # prune_missing — drop every row in RowState whose key is not in
+    # $valid_rows. Called after a workspace refresh so the Pool's
+    # state map sheds entries for contacts that no longer appear in
+    # the rebuilt TransitionTree (e.g. removed-from-roster). In-flight
+    # rows for stems that disappeared mid-refresh are intentionally
+    # NOT dropped — only rows in a terminal state, or queued rows
+    # that were not yet posted, can be safely garbage-collected.
+    # Active workers (running / paused / rate_limited) keep their
+    # state; they own a tpool slot and will arrive at a terminal
+    # message of their own accord.
+    method prune_missing {valid_rows} {
+        set valid [dict create]
+        foreach r $valid_rows { dict set valid $r 1 }
+        set dropped {}
+        dict for {row state} $RowState {
+            if {[dict exists $valid $row]} continue
+            if {$state in {running paused rate_limited}} continue
+            lappend dropped $row
+        }
+        foreach row $dropped {
+            dict unset RowState $row
+            catch {dict unset RowMeta  $row}
+            catch {dict unset RowJobId $row}
+            set idx [lsearch -exact $Queue $row]
+            if {$idx >= 0} { set Queue [lreplace $Queue $idx $idx] }
+            catch {tsv::unset ::spar::pool $row.cancel}
+            catch {tsv::unset ::spar::pool $row.pause}
+        }
+        return [llength $dropped]
+    }
+
     # requeue — move a terminal row back to queued so the user can
     # retry it. Clears any prior sentinel state.
     method requeue {row} {
