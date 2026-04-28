@@ -7,7 +7,7 @@ set test_files [lsearch -all -inline -not -exact $test_files [file join $script_
 
 set workers [expr {[info exists ::env(SPAR_TEST_JOBS)]
                    ? $::env(SPAR_TEST_JOBS)
-                   : [exec nproc]}]
+                   : [exec getconf _NPROCESSORS_ONLN]}]
 
 set pool [tpool::create \
     -minworkers 0 \
