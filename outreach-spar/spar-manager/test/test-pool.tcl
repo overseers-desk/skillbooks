@@ -347,25 +347,195 @@ $d resume_queue
 $d destroy
 
 # ════════════════════════════════════════════════════════════════════════
-# 14. ses_send / imap_poll — Phase-2 stubs route to msg_failed
+# 14. ses_send — happy path through a fake smtp_send helper
 # ════════════════════════════════════════════════════════════════════════
-# These two workers are deliberate stubs in Phase 2; the real bodies
-# (lifting the Driver classes from transitions/send_email.tcl and
-# transitions/check_replies.tcl) land in a follow-up. The stubs prove
-# the routing path is in place so Phase 3 can wire the GUI without
-# blocking on the send/poll work.
-section "14. ses_send / imap_poll stubs"
+# The worker shells out to smtp_send.tcl. We override the helper path
+# in opts so tests don't open a real TLS socket. The fake helper just
+# echoes a fixed message-id on stdout — enough to verify the wiring:
+# enqueue → ses_send → ses::send_one → exec helper → msg_done with the
+# id in the result dict, and that the approach YAML's actioned_date is
+# stamped on success.
+section "14. ses_send happy path"
+
+# Fake smtp_send: takes a params file and prints a deterministic id.
+set fake_smtp [file join $tmp_root fake-smtp_send.tcl]
+set fd [open $fake_smtp w]
+puts $fd "#!/usr/bin/env tclsh9.0"
+puts $fd "puts FAKE-MID-12345"
+puts $fd "exit 0"
+close $fd
+file attributes $fake_smtp -permissions 0o755
+
+# Approach YAML with one final-round email message, unsent.
+set seg_dir [file join $tmp_root "seg-ses"]
+file mkdir [file join $seg_dir approach]
+set approach_yaml {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: dest@acme-venues.au
+    subject: Hi
+    body: Hello there
+    actioned_date: null
+    replied_date: null
+}
+set approach_path [file join $seg_dir approach "alice.yaml"]
+set fd [open $approach_path w]; puts -nonewline $fd $approach_yaml; close $fd
+
+set ses_opts [dict create \
+    campaign_file "" \
+    approach_path $approach_path \
+    sender [dict create \
+        name      "Sender Name" \
+        email     "me@acme-venues.au" \
+        smtp_host "smtp.example.com" \
+        smtp_port 587 \
+        smtp_user "me@acme-venues.au" \
+        bcc       ""] \
+    dry_run 0 \
+    smtp_helper $fake_smtp \
+    today "2026-04-28"]
+
+# Pre-cache an SMTP password in the keychain stand-in via cdata
+# fallback. ses::send_one's keychain lookup will fail (test host has
+# no entry for smtp.example.com); the cdata fallback in
+# spar::smtp_credentials lifts sender.smtp_pass when present.
+dict set ses_opts sender smtp_pass "fake-pass"
 
 set d [spar::Dispatcher new 2 test_log]
+$d enqueue alice T6 ses_send $ses_opts
+wait_for_terminal $d alice 5000
+assert_eq [$d state alice] done "ses_send happy path reaches done"
 
-$d enqueue s1 T6 ses_send [dict create tasks {}]
-wait_for_terminal $d s1 2000
-assert_eq [$d state s1] failed "ses_send stub fails fast"
+# actioned_date should now be stamped in the YAML.
+set fd [open $approach_path r]; set after [read $fd]; close $fd
+assert_match $after "*actioned_date: 2026-04-28*" \
+    "ses_send stamps actioned_date on success"
 
-$d enqueue i1 T7 imap_poll [dict create tasks {}]
-wait_for_terminal $d i1 2000
-assert_eq [$d state i1] failed "imap_poll stub fails fast"
+$d destroy
 
+# 14b. ses_send dry-run does not invoke the helper and does not stamp.
+set seg_dir2 [file join $tmp_root "seg-ses-dry"]
+file mkdir [file join $seg_dir2 approach]
+set approach_path2 [file join $seg_dir2 approach "bob.yaml"]
+set fd [open $approach_path2 w]; puts -nonewline $fd $approach_yaml; close $fd
+
+set dry_opts [dict replace $ses_opts \
+    approach_path $approach_path2 dry_run 1]
+
+set d [spar::Dispatcher new 2 test_log]
+$d enqueue bob T6 ses_send $dry_opts
+wait_for_terminal $d bob 5000
+assert_eq [$d state bob] done "ses_send dry-run reaches done"
+set fd [open $approach_path2 r]; set after2 [read $fd]; close $fd
+assert_match $after2 "*actioned_date: null*" \
+    "ses_send dry-run leaves actioned_date null"
+$d destroy
+
+# 14c. ses_send failure when the approach file is missing.
+set d [spar::Dispatcher new 2 test_log]
+set bad_opts [dict replace $ses_opts approach_path /nonexistent/path.yaml]
+$d enqueue ghost T6 ses_send $bad_opts
+wait_for_terminal $d ghost 5000
+assert_eq [$d state ghost] failed "ses_send fails when approach missing"
+$d destroy
+
+# ════════════════════════════════════════════════════════════════════════
+# 14d. imap_poll — happy path through a fake mailroom helper
+# ════════════════════════════════════════════════════════════════════════
+# The worker shells out to mailroom. We override mailroom_bin in opts
+# to point at a fake script that returns canned JSON for both `search`
+# and `read`. The fake script branches on its first positional arg
+# after "-a <account>" to mimic the real mailroom CLI.
+section "14d. imap_poll happy path"
+
+set fake_mailroom [file join $tmp_root fake-mailroom.tcl]
+set fd [open $fake_mailroom w]
+puts $fd {#!/usr/bin/env tclsh9.0
+# Args: -a <account> (search|read) -f <folder> ...
+# Emit canned JSON for the two subcommands. Drop -a/-f flags.
+set positional {}
+for {set i 0} {$i < [llength $argv]} {incr i} {
+    set a [lindex $argv $i]
+    if {$a in {-a -f -u --limit}} { incr i; continue }
+    lappend positional $a
+}
+set op [lindex $positional 0]
+if {$op eq "search"} {
+    puts {{"search": {"acct": {"results": [{"uid": "U1", "from": "Dest <dest@acme-venues.au>", "to": ["Me <me@acme-venues.au>"], "cc": [], "date": "2026-04-25T10:00:00"}], "provenance": {}}}}}
+} elseif {$op eq "read"} {
+    puts {{"read": {"acct": {"body": "Hello back from Dest", "from": "dest@acme-venues.au", "to": ["me@acme-venues.au"], "date": "2026-04-25T10:00:00"}}}}
+}
+exit 0
+}
+close $fd
+file attributes $fake_mailroom -permissions 0o755
+
+set seg_dir3 [file join $tmp_root "seg-imap"]
+file mkdir [file join $seg_dir3 approach]
+set approach_yaml_sent {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: dest@acme-venues.au
+    subject: Hi
+    body: Hello there
+    actioned_date: 2026-04-20
+    replied_date: null
+}
+set approach_path3 [file join $seg_dir3 approach "carol.yaml"]
+set fd [open $approach_path3 w]; puts -nonewline $fd $approach_yaml_sent; close $fd
+
+set imap_opts [dict create \
+    approach_path $approach_path3 \
+    to_email      "dest@acme-venues.au" \
+    fingerprints  {} \
+    account       "acct" \
+    folder        "INBOX" \
+    sender        "me@acme-venues.au" \
+    dry_run       0 \
+    mailroom_bin  $fake_mailroom]
+
+set d [spar::Dispatcher new 2 test_log]
+$d enqueue carol T7 imap_poll $imap_opts
+wait_for_terminal $d carol 5000
+assert_eq [$d state carol] done "imap_poll happy path reaches done"
+
+# The reply should have been appended to the YAML.
+set fd [open $approach_path3 r]; set after3 [read $fd]; close $fd
+assert_match $after3 "*Hello back from Dest*" \
+    "imap_poll appends reply body to approach YAML"
+$d destroy
+
+# 14e. imap_poll with already-recorded fingerprint: no append.
+set seg_dir4 [file join $tmp_root "seg-imap-known"]
+file mkdir [file join $seg_dir4 approach]
+set approach_path4 [file join $seg_dir4 approach "dan.yaml"]
+set fd [open $approach_path4 w]; puts -nonewline $fd $approach_yaml_sent; close $fd
+
+set known_opts [dict replace $imap_opts \
+    approach_path $approach_path4 \
+    fingerprints  [list "dest@acme-venues.au|2026-04-25T10:00:00"]]
+
+set d [spar::Dispatcher new 2 test_log]
+$d enqueue dan T7 imap_poll $known_opts
+wait_for_terminal $d dan 5000
+assert_eq [$d state dan] done "imap_poll done when nothing new"
+set fd [open $approach_path4 r]; set after4 [read $fd]; close $fd
+# The reply body should NOT have been appended.
+if {[string first "Hello back from Dest" $after4] >= 0} {
+    puts "FAIL: imap_poll appended reply despite fingerprint match"
+    incr ::failures
+} else {
+    puts "  ok: imap_poll skips already-fingerprinted reply"
+    incr ::passes
+}
 $d destroy
 
 # ════════════════════════════════════════════════════════════════════════

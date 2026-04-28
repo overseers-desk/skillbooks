@@ -4,10 +4,13 @@
 # and test fixtures (fake_worker, fake_harness_class).
 #
 # Globals available when this file is sourced:
-#   ::main_tid          — main thread id, target of all msg_* sends
-#   ::dispatcher        — spar::Dispatcher object command in the main thread
-#   ::pool_state_file   — abs path to spar-state.tcl  (lazy-sourced by harness_run)
-#   ::pool_harness_file — abs path to spar-harness.tcl (lazy-sourced by harness_run)
+#   ::main_tid           — main thread id, target of all msg_* sends
+#   ::dispatcher         — spar::Dispatcher object command in the main thread
+#   ::pool_state_file    — abs path to spar-state.tcl  (lazy-sourced by harness_run)
+#   ::pool_harness_file  — abs path to spar-harness.tcl (lazy-sourced by harness_run)
+#   ::pool_email_file    — abs path to spar-email.tcl  (lazy-sourced by ses_send / imap_poll)
+#   ::pool_ses_send_file — abs path to ses_send_one.tcl (lazy-sourced by ses_send)
+#   ::pool_imap_check_file — abs path to imap_check_one.tcl (lazy-sourced by imap_poll)
 #
 # Worker bodies (harness_run / ses_send / imap_poll / fake_worker) are
 # the only callers of msg_*; nothing else in worker-thread code may
@@ -93,6 +96,20 @@ proc _ensure_harness_loaded {} {
     uplevel #0 [list source $::pool_harness_file]
 }
 
+# _ensure_email_loaded — lazy-source spar-state.tcl + spar-email.tcl +
+# the per-row send/check helpers into this worker interp. Called by
+# ses_send and imap_poll on first use. The package guards on each file
+# make repeat sources cheap; the worker reuses the loaded code on
+# subsequent rows.
+proc _ensure_email_loaded {} {
+    if {[info exists ::spar::_email_loaded]} { return }
+    uplevel #0 [list source $::pool_state_file]
+    uplevel #0 [list source $::pool_email_file]
+    uplevel #0 [list source $::pool_ses_send_file]
+    uplevel #0 [list source $::pool_imap_check_file]
+    set ::spar::_email_loaded 1
+}
+
 # harness_run — drive a Profile or Approach harness end-to-end for one
 # row. opts must carry:
 #   prompt_dir    — directory the harness reads (prompt.txt, meta.env,
@@ -140,28 +157,66 @@ proc harness_run {row opts} {
     }
 }
 
-# ses_send — STUB. Phase-2 placeholder so the Dispatcher's routing
-# path can be wired in Phase 3 without a real send body. The real
-# implementation (lifting the per-task subprocess invocation from
-# transitions/send_email.tcl's SendEmailDriver) lands in a follow-up;
-# the stub fails fast so a Phase-3 GUI smoke test sees a deterministic
-# msg_failed and can verify Pool → Controller plumbing.
+# ses_send — drive one row through SES SMTP. The opts dict is the
+# per-row payload built by the controller / CLI runner: it carries
+# campaign_file, dry_run, approach_path, sender (the campaign sender
+# dict), and an optional delay_ms used to pace consecutive sends from
+# the same worker thread. Cancel sentinel checked once before the
+# send; per-stage cancel inside the SMTP exchange is not implemented
+# (the SMTP exec is synchronous and short — typically a few seconds).
+#
+# delay_ms is honoured after a successful send so a worker that
+# processes many rows in succession does not breach SES's per-second
+# cap. Failed rows do not pace — the failure didn't reach SES.
 proc ses_send {row opts} {
     if {[worker_cancel_requested? $row]} {
         msg_cancelled $row
         return
     }
-    msg_failed $row "ses_send not yet implemented"
+    _ensure_email_loaded
+    set rc [catch {::spar::ses::send_one $opts} result]
+    if {$rc != 0} {
+        msg_failed $row "ses_send: $result"
+        return
+    }
+    set status [lindex $result 0]
+    set detail [lindex $result 1]
+    if {$status eq "ok"} {
+        set delay_ms [spar::dict_get_default $opts delay_ms 0]
+        if {$delay_ms > 0} {
+            set ::ses_delay_done 0
+            after $delay_ms set ::ses_delay_done 1
+            vwait ::ses_delay_done
+        }
+        msg_done $row [list message_id $detail]
+    } else {
+        msg_failed $row $detail
+    }
 }
 
-# imap_poll — STUB. Same rationale as ses_send: the real body lifts
-# from transitions/check_replies.tcl's Driver and lands in a follow-up.
+# imap_poll — drive one row through one inbox-search + zero-or-more
+# inbox-read cycle. opts is the per-row payload built by the
+# controller / CLI runner: campaign_file, dry_run, approach_path,
+# to_email, fingerprints, account, folder, sender. Cancel checked
+# once at entry; mailroom calls are synchronous and brief.
 proc imap_poll {row opts} {
     if {[worker_cancel_requested? $row]} {
         msg_cancelled $row
         return
     }
-    msg_failed $row "imap_poll not yet implemented"
+    _ensure_email_loaded
+    set rc [catch {::spar::imap::check_one $opts} result]
+    if {$rc != 0} {
+        msg_failed $row "imap_poll: $result"
+        return
+    }
+    set status [lindex $result 0]
+    set detail [lindex $result 1]
+    if {$status eq "ok"} {
+        msg_done $row [list new_replies $detail]
+    } else {
+        msg_failed $row $detail
+    }
 }
 
 # ─── Worker test fixtures ────────────────────────────────────────────────
