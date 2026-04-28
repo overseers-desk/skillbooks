@@ -2,7 +2,7 @@
 
 This document describes the design of the job pool that backs the SPAR Manager's transition table when the table is treated as the in-flight queue. The user stories and the surrounding rationale are in issue #88; this document covers only the chosen mechanism.
 
-The alternative considered was a subprocess framing, in which the present `spar::Dispatcher` would be generalised into a true coordinator above a `Worker` supertype, with `HarnessWorker`, `SesWorker`, and `ImapWorker` as siblings. It was set aside on clarity grounds: the `tpool`-based design is harder to misread, and the failure modes the subprocess form wins on — per-row kill of an in-flight claude call, exit from a credit-limit sleep — are deferred to a later harness migration that will move synchronous `exec claude` to `open "| …"` plus `fileevent`. The deferred-work section at the end lists the migration explicitly so the option is not lost.
+The alternative considered was a subprocess framing, in which the harness queue class (now `spar::HarnessQueue`, used by the CLI) would be generalised into a true coordinator above a `Worker` supertype, with `HarnessWorker`, `SesWorker`, and `ImapWorker` as siblings. It was set aside on clarity grounds: the `tpool`-based design is harder to misread, and the failure modes the subprocess form wins on — per-row kill of an in-flight claude call, exit from a credit-limit sleep — are deferred to a later harness migration that will move synchronous `exec claude` to `open "| …"` plus `fileevent`. The deferred-work section at the end lists the migration explicitly so the option is not lost.
 
 ## Layers
 

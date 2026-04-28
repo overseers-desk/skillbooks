@@ -6,7 +6,7 @@
 # auto_dispatch headless entry point.
 #
 # It consumes the TransitionTree's selection + row-update API and the
-# CampaignModel's refresh-lifecycle events, and wires a spar::Dispatcher
+# CampaignModel's refresh-lifecycle events, and wires a spar::HarnessQueue
 # (indirectly, via the transition runner) to its own on_progress /
 # on_complete methods. No other code reads or writes cohort state.
 #
