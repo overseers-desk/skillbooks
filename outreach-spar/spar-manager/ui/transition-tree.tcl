@@ -8,7 +8,7 @@
 # a refresh) and `transition-loaded` events (fills incrementally as
 # the loader coroutine produces tids).
 #
-# DispatchController (Commit 5) consults this class via get_tree_widget,
+# DispatchController consults this class via get_tree_widget,
 # get_row_names, get_slug_to_row, and update_row. _resolve_target
 # consults DispatchController's is_dispatching via a back-reference
 # wired post-construction by set_dispatch — we can't take it at
@@ -205,12 +205,10 @@ oo::class create spar::ui::TransitionTree {
     # rebuild — alias for populate.
     method rebuild {} { my populate }
 
-    # update_row — called from ui_on_progress (and, in Commit 5, from
-    # DispatchController) to rewrite one cohort row's state/reason
-    # columns. For Commit 4 the caller still passes a pre-rendered
-    # state_text/reason_text pair (because the cohort render logic lives
-    # in render_row in spar-ui.tcl). Commit 5 may choose to move the
-    # state-to-glyph translation here.
+    # update_row — called from DispatchController._render_row to rewrite
+    # one row's state/reason columns. The caller passes pre-rendered
+    # state_text/reason_text — the state-to-glyph translation lives in
+    # the controller, alongside the Pool subscription that drives it.
     method update_row {stem state_text reason_text} {
         if {![dict exists $SlugToRow $stem]} return
         set row_id [dict get $SlugToRow $stem]
