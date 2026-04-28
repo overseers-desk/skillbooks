@@ -32,8 +32,9 @@ package require TclOO
 namespace eval spar::ui {}
 
 oo::class create spar::ui::TransitionTree {
-    variable Campaign Tree RowNames SlugToRow ShowCompleted
+    variable Campaign Tree RowNames SlugToRow ShowCompleted OngoingOnly
     variable Dispatch NextTransitionIdx
+    variable DetachedRows
     variable Subs
 
     constructor {campaign parent_frame} {
@@ -41,11 +42,13 @@ oo::class create spar::ui::TransitionTree {
         set RowNames           [dict create]
         set SlugToRow          [dict create]
         set ShowCompleted      1
+        set OngoingOnly        0
         set Dispatch           ""
         set NextTransitionIdx  0
+        set DetachedRows       {}
         set Subs               [dict create]
 
-        # Toolbar with Show-completed checkbox.
+        # Toolbar with Show-completed and Ongoing-only checkboxes.
         ttk::frame ${parent_frame}.toolbar
         pack ${parent_frame}.toolbar -fill x -padx 4 -pady {4 0}
 
@@ -55,6 +58,11 @@ oo::class create spar::ui::TransitionTree {
         ttk::checkbutton ${parent_frame}.toolbar.showcomplete -text "Show completed" \
             -variable [my varname ShowCompleted]
         pack ${parent_frame}.toolbar.showcomplete -side left
+
+        ttk::checkbutton ${parent_frame}.toolbar.ongoing -text "Ongoing only" \
+            -variable [my varname OngoingOnly] \
+            -command [list [self] on_ongoing_toggled]
+        pack ${parent_frame}.toolbar.ongoing -side left -padx {12 0}
 
         # Tree + scrollbar.
         ttk::frame ${parent_frame}.treeframe
@@ -91,6 +99,7 @@ oo::class create spar::ui::TransitionTree {
 
         bind $Tree <<TreeviewSelect>> [list [self] on_select]
         bind $Tree <Double-1>         [list [self] on_double_click]
+        bind $Tree <Button-3>         [list [self] on_right_click %X %Y %x %y]
 
         # Subscribe to reloading — refresh has reset the model; clear
         # the tree so transition-loaded events refill it cleanly.
@@ -138,6 +147,7 @@ oo::class create spar::ui::TransitionTree {
         set RowNames          [dict create]
         set SlugToRow         [dict create]
         set NextTransitionIdx 0
+        set DetachedRows      {}
 
         # Transitions list is built in ui_transition_tids order, so the
         # i-th tentry corresponds to the i-th tid in that list.
@@ -159,6 +169,15 @@ oo::class create spar::ui::TransitionTree {
         set tcount [llength $ttasks]
         $Tree insert {} end -id $parent_id -text "$tid: $tlabel ($tcount)" -open false
 
+        # If "Ongoing only" is on, respect it during initial insertion
+        # by detaching rows whose stem isn't currently active in the Pool.
+        set live [dict create]
+        if {$OngoingOnly && $Dispatch ne ""} {
+            set disp [$Dispatch dispatcher]
+            foreach r [$disp active_rows]  { dict set live $r 1 }
+            foreach r [$disp queued_rows]  { dict set live $r 1 }
+        }
+
         foreach task $ttasks {
             lassign $task tname tstem torg tseg tstate treason
             set tags {}
@@ -172,6 +191,11 @@ oo::class create spar::ui::TransitionTree {
             dict set RowNames $row_id $tname
             if {$tstem ne ""} {
                 dict set SlugToRow $tstem $row_id
+                if {$OngoingOnly && ![dict exists $live $tstem]} {
+                    set idx [$Tree index $row_id]
+                    lappend DetachedRows [list $parent_id $row_id $idx]
+                    $Tree detach $row_id
+                }
             }
         }
 
@@ -225,6 +249,69 @@ oo::class create spar::ui::TransitionTree {
         if {$stem ne ""} {
             my _fire double-clicked $stem
         }
+    }
+
+    # on_right_click — bound to <Button-3>. Identifies the row under
+    # the click and forwards to DispatchController so it can pop a
+    # state-aware menu. Pure pass-through: the tree owns no menu state.
+    method on_right_click {x_screen y_screen x_widget y_widget} {
+        if {$Dispatch eq ""} return
+        set item [$Tree identify row $x_widget $y_widget]
+        if {$item eq ""} return
+        # Only leaf rows have a stem; parent rows are transition headers.
+        if {[$Tree parent $item] eq ""} return
+        set stem [$Tree set $item stem]
+        if {$stem eq ""} return
+        # Make this row the current selection so the user sees what
+        # they're acting on, but don't broaden a multi-row selection.
+        if {[lsearch -exact [$Tree selection] $item] < 0} {
+            $Tree selection set [list $item]
+            event generate $Tree <<TreeviewSelect>>
+        }
+        $Dispatch row_menu_for $stem $x_screen $y_screen
+    }
+
+    # on_ongoing_toggled — checkbutton handler. When on, hide rows
+    # whose stem is not in the Pool's active+queued set; when off,
+    # reattach the previously detached rows.
+    method on_ongoing_toggled {} {
+        if {$OngoingOnly} {
+            my _apply_ongoing_filter
+        } else {
+            my _restore_filter
+        }
+    }
+
+    method _apply_ongoing_filter {} {
+        if {$Dispatch eq ""} return
+        set disp [$Dispatch dispatcher]
+        set live [dict create]
+        foreach r [$disp active_rows]  { dict set live $r 1 }
+        foreach r [$disp queued_rows]  { dict set live $r 1 }
+        set DetachedRows {}
+        foreach parent [$Tree children {}] {
+            foreach row [$Tree children $parent] {
+                set s [$Tree set $row stem]
+                if {$s eq ""} continue
+                if {![dict exists $live $s]} {
+                    set idx [$Tree index $row]
+                    lappend DetachedRows [list $parent $row $idx]
+                    $Tree detach $row
+                }
+            }
+        }
+    }
+
+    method _restore_filter {} {
+        # Reattach in original order. tk::treeview keeps detached items
+        # alive; move them back to their stored index.
+        foreach entry $DetachedRows {
+            lassign $entry parent row idx
+            if {[$Tree exists $row]} {
+                $Tree move $row $parent $idx
+            }
+        }
+        set DetachedRows {}
     }
 
     # on_reloading — CampaignModel reset its state at the start of a
