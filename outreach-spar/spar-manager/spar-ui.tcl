@@ -92,6 +92,7 @@ set script_dir  [file dirname $script_path]
 # ============================================================
 
 source [file join $script_dir spar-state.tcl]
+source [file join $script_dir spar-dispatcher.tcl]
 source [file join $script_dir ui campaign-model.tcl]
 source [file join $script_dir ui log-window.tcl]
 source [file join $script_dir ui progress-table.tcl]
@@ -400,19 +401,22 @@ proc ::spar::ui::build_loaded_body {path} {
         ${tpanel}.dispatch.logbtn configure -text $text
     }}]
 
-    # DispatchController owns the cohort dicts, dispatch lifecycle,
-    # progress-bar animation, pause/cancel, and the headless
-    # auto_dispatch entry point. It wires the Play / Pause / Cancel
-    # buttons in its constructor and subscribes to Campaign
-    # (fully-loaded) and TransitionTree (dispatch-target-changed) for
-    # its own lifecycle.
+    # spar::Dispatcher (the GUI's mixed-type job pool) is constructed
+    # once per process; it outlives controller refreshes (Phase 4 will
+    # add a row-rebind hook). jobs=4 matches the prior CLI default in
+    # spar::p::run.
+    set ::pool [spar::Dispatcher new 4 [list $log log]]
+
+    # DispatchController translates Play/Pause/Cancel and the right-
+    # click menu into Pool methods, and renders Pool row-state events
+    # back onto the TransitionTree.
     #
     # Circular wire: TransitionTree's _resolve_target needs to read
     # is_dispatching, and DispatchController's subscribers and
     # update_row calls need the tree. Construct the tree first, then
     # the controller, then back-fill the tree with set_dispatch.
     set dispatch [spar::ui::DispatchController new \
-        $campaign $tree_obj $log \
+        $campaign $tree_obj $log $::pool \
         ${tpanel}.dispatch.play \
         ${tpanel}.dispatch.pause \
         ${tpanel}.dispatch.cancel \

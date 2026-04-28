@@ -147,6 +147,53 @@ proc spar::p::run {opts on_progress on_complete} {
     return
 }
 
+# spar::p::prepare_for_pool — Phase-3 GUI entry point. Runs the same
+# per-segment prep as spar::p::run, but returns a list of
+# {stem prompt_dir} tuples (plus the resolved logs_dir) instead of
+# constructing a HarnessQueue. The caller (DispatchController) enqueues
+# each row into spar::Dispatcher with worker=harness_run and
+# harness_class=spar::ProfileHarness.
+#
+# opts has the same shape as spar::p::run (campaign_file, segments,
+# stems). on_progress is used only for prep-time skipped/failed events
+# emitted during _prepare_segment; row-level progress is delivered by
+# the Pool's events once the worker runs.
+#
+# Returns: dict {logs_dir <abs path> rows {{stem pdir} ...}}
+proc spar::p::prepare_for_pool {opts on_progress} {
+    set campaign_file [spar::dict_get_default $opts campaign_file ""]
+    if {$campaign_file eq ""} {
+        error "spar::p::prepare_for_pool: opts.campaign_file is required"
+    }
+    set user_logs    [spar::dict_get_default $opts logs_dir ""]
+    set sel_segments [spar::dict_get_default $opts segments {}]
+
+    set cdata    [spar::load_campaign $campaign_file]
+    set base     [dict get $cdata _base]
+    set segments [spar::filter_segments [dict get $cdata segments] $sel_segments]
+
+    set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
+    set logs_dir  [spar::resolve_logs_dir $campaign_file p $datestamp $user_logs]
+
+    set rows {}
+    foreach segment $segments {
+        set segdir [file join $base $segment]
+        if {![file exists [file join $segdir roster.tsv]]} continue
+        if {[catch {
+            set seg [spar::p::_prepare_segment \
+                $segdir $cdata $opts $datestamp $on_progress]
+        } err]} {
+            {*}$on_progress "_segment_${segment}" failed "setup error: $err"
+            continue
+        }
+        # P's prompt_dir basename is exactly the stem (see _prepare_segment).
+        foreach pdir [dict get $seg prompt_dirs] {
+            lappend rows [list [file tail $pdir] $pdir]
+        }
+    }
+    return [dict create logs_dir $logs_dir rows $rows]
+}
+
 # _prepare_segment — per-segment setup. Reads the roster, writes prompt
 # dirs, captures a DbC-Pre snapshot. Returns
 #   {result <per-segment result dict>
@@ -371,17 +418,76 @@ proc spar::p::_dbc_post_progress {orig_progress slug_ctx slug status message} {
 # on_complete — callback prefix: {total_done total_failed result}
 
 proc spar::a::run {opts on_progress on_complete} {
+    set prep [spar::a::_build_prompts $opts $on_progress]
+    set result        [dict get $prep result]
+    set fresh_pdirs   [dict get $prep prompt_dirs]
+    set logs_dir      [dict get $prep logs_dir]
+    set count         [dict get $result count]
+
+    set dry_run       [spar::dict_get_default $opts dry_run 0]
+    set jobs          [spar::dict_get_default $opts jobs 8]
+    set tid           [spar::dict_get_default $opts tid ""]
+    set step_callback [spar::dict_get_default $opts step_callback ""]
+
+    if {$dry_run || $count == 0} {
+        {*}$on_complete $count 0 $result
+        return $result
+    }
+
+    variable ::spar::dispatch_script_dir
+    set harness [file join $::spar::dispatch_script_dir spar-a-harness.tcl]
+
+    # Dispatch only the prompt dirs we created this invocation — never glob
+    # the workdir, since a previous call within the same process may have
+    # left prompt dirs there and the harness would re-run them.
+    set prompt_dirs $fresh_pdirs
+    # Shuffle for load balancing (Fisher-Yates).
+    set n [llength $prompt_dirs]
+    for {set i [expr {$n - 1}]} {$i > 0} {incr i -1} {
+        set j [expr {int(rand() * ($i + 1))}]
+        set tmp [lindex $prompt_dirs $i]
+        lset prompt_dirs $i [lindex $prompt_dirs $j]
+        lset prompt_dirs $j $tmp
+    }
+
+    set disp [spar::HarnessQueue new $jobs $logs_dir $harness \
+        $on_progress $on_complete $result $tid $step_callback]
+    $disp run $prompt_dirs
+    return $result
+}
+
+# spar::a::prepare_for_pool — Phase-3 GUI entry point. Same prep as
+# spar::a::run, returns {logs_dir <path> rows {{stem pdir} ...}} so the
+# DispatchController can enqueue each row into spar::Dispatcher with
+# worker=harness_run and harness_class=spar::ApproachHarness.
+proc spar::a::prepare_for_pool {opts on_progress} {
+    set prep [spar::a::_build_prompts $opts $on_progress]
+    set result      [dict get $prep result]
+    set fresh_pdirs [dict get $prep prompt_dirs]
+    set logs_dir    [dict get $prep logs_dir]
+    set stem_map    [dict get $prep stem_map]
+    set rows {}
+    foreach pdir $fresh_pdirs {
+        set bn [file tail $pdir]
+        if {[dict exists $stem_map $bn]} {
+            lappend rows [list [dict get $stem_map $bn] $pdir]
+        }
+    }
+    return [dict create logs_dir $logs_dir rows $rows result $result]
+}
+
+# _build_prompts — A-phase per-segment prep. Lifted verbatim from the
+# previous body of spar::a::run so the runner and prepare_for_pool share
+# one path. Returns {result <result-dict> prompt_dirs <list> logs_dir <path>
+# stem_map <slug → stem>}.
+proc spar::a::_build_prompts {opts on_progress} {
     set campaign_file [spar::dict_get_default $opts campaign_file ""]
     if {$campaign_file eq ""} {
-        error "spar::a::run: opts.campaign_file is required"
+        error "spar::a::_build_prompts: opts.campaign_file is required"
     }
-    set dry_run [spar::dict_get_default $opts dry_run 0]
-    set jobs [spar::dict_get_default $opts jobs 8]
     set user_logs [spar::dict_get_default $opts logs_dir ""]
     set sel_segments [spar::dict_get_default $opts segments {}]
     set sel_stems [spar::dict_get_default $opts stems {}]
-    set tid [spar::dict_get_default $opts tid ""]
-    set step_callback [spar::dict_get_default $opts step_callback ""]
 
     set cdata [spar::load_campaign $campaign_file]
     set base [dict get $cdata _base]
@@ -454,6 +560,7 @@ proc spar::a::run {opts on_progress on_complete} {
     set count 0
     set skipped 0
     set fresh_prompt_dirs {}
+    set stem_map [dict create]
 
     foreach segment $segments {
         set roster_path [file join $base $segment roster.tsv]
@@ -576,6 +683,7 @@ s_note: $s_note"
             set prompt_dir [file join $prompts_dir $prompt_slug]
             file mkdir $prompt_dir
             lappend fresh_prompt_dirs $prompt_dir
+            dict set stem_map $prompt_slug $stem
 
             set fd [open [file join $prompt_dir meta.env] w]
             puts $fd "MAX_PASSES=$max_passes"
@@ -679,30 +787,11 @@ Emit exactly one of these lines as the very last line of your output:"
         prompts_dir $prompts_dir \
         logs_dir $logs_dir]
 
-    if {$dry_run || $count == 0} {
-        {*}$on_complete $count 0 $result
-        return $result
-    }
-
-    set harness [file join $script_dir spar-a-harness.tcl]
-
-    # Dispatch only the prompt dirs we created this invocation — never glob
-    # the workdir, since a previous call within the same process may have
-    # left prompt dirs there and the harness would re-run them.
-    set prompt_dirs $fresh_prompt_dirs
-    # Shuffle for load balancing (Fisher-Yates).
-    set n [llength $prompt_dirs]
-    for {set i [expr {$n - 1}]} {$i > 0} {incr i -1} {
-        set j [expr {int(rand() * ($i + 1))}]
-        set tmp [lindex $prompt_dirs $i]
-        lset prompt_dirs $i [lindex $prompt_dirs $j]
-        lset prompt_dirs $j $tmp
-    }
-
-    set disp [spar::HarnessQueue new $jobs $logs_dir $harness \
-        $on_progress $on_complete $result $tid $step_callback]
-    $disp run $prompt_dirs
-    return $result
+    return [dict create \
+        result       $result \
+        prompt_dirs  $fresh_prompt_dirs \
+        logs_dir     $logs_dir \
+        stem_map     $stem_map]
 }
 
 package provide spar-dispatch 1.0
