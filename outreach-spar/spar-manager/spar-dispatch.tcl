@@ -46,6 +46,143 @@ proc spar::load_prompt_template {name} {
 }
 
 source [file join $::spar::dispatch_script_dir spar-harness-queue.tcl]
+source [file join $::spar::dispatch_script_dir spar-dispatcher.tcl]
+
+# spar::run_through_pool — generic CLI adapter. Construct a fresh
+# spar::Dispatcher, enqueue every (row, worker_proc, row_opts) tuple,
+# wire row events back through the legacy on_progress / on_complete
+# callbacks, and tear down when the pool drains. Runners (P, A, T6,
+# T7) call this so all dispatch goes through one architecture.
+#
+# Args:
+#   jobs            global concurrency cap for this batch
+#   tid             T-id (used by step_callback signature only)
+#   worker_proc     name of the initcmd-defined worker (e.g.
+#                   "harness_run", "ses_send", "imap_poll")
+#   rows            list of {stem opts} pairs; opts is the per-row
+#                   dict the worker proc consumes
+#   result          opaque result dict passed back through on_complete
+#   on_progress     {slug status message} callback
+#   on_complete     {done failed result} callback (fires once)
+#   step_callback   optional {tid slug idx total} → continue|abort
+#                   callback fired before each row is posted
+#
+# The completion callback is called exactly once, after every row has
+# reached a terminal state (done / failed / cancelled). cancelled rows
+# count as skipped, not failed — they were aborted by the user.
+namespace eval ::spar { variable pool_runs [dict create] }
+
+proc spar::run_through_pool {jobs tid worker_proc rows result \
+                              on_progress on_complete \
+                              {step_callback ""}} {
+    variable pool_runs
+    if {[llength $rows] == 0} {
+        {*}$on_complete 0 0 $result
+        return
+    }
+    set total [llength $rows]
+    set run_id "run_[clock microseconds]_[expr {int(rand() * 100000)}]"
+    set st [dict create \
+        done     0 \
+        failed   0 \
+        skipped  0 \
+        seen     0 \
+        total    $total \
+        result   $result \
+        progress $on_progress \
+        complete $on_complete]
+
+    set disp [spar::Dispatcher new $jobs ::spar::_pool_log_drop]
+    dict set st dispatcher $disp
+    dict set pool_runs $run_id $st
+
+    # Step gate (CLI --jobs=0). Translate the legacy step_callback
+    # signature (tid slug idx total) onto the Dispatcher's
+    # pre_post hook (row tid idx total). slug == row in the CLI
+    # path; the runner uses the stem as the row id.
+    if {$step_callback ne ""} {
+        $disp set_pre_post_callback \
+            [list ::spar::_pool_pre_post $step_callback]
+    }
+
+    $disp subscribe row-done   [list ::spar::_pool_on_done   $run_id]
+    $disp subscribe row-failed [list ::spar::_pool_on_failed $run_id]
+    $disp subscribe row-state  [list ::spar::_pool_on_state  $run_id]
+
+    # Pause until every row is enqueued so step_callback receives the
+    # final total, not a growing one mid-batch.
+    $disp pause_queue
+    foreach pair $rows {
+        lassign $pair stem row_opts
+        $disp enqueue $stem $tid $worker_proc $row_opts
+        # Mirror the legacy `[START] slug` line at enqueue time. The
+        # GUI fires this on row-running; the CLI fires it here so the
+        # output ordering matches the legacy queue (one [START] per
+        # row, in enqueue order).
+        {*}$on_progress $stem started ""
+    }
+    $disp resume_queue
+}
+
+# _pool_pre_post — bridge the Dispatcher's (row tid idx total)
+# pre-post hook to the CLI's (tid slug idx total) step_callback.
+proc spar::_pool_pre_post {step_callback row tid idx total} {
+    return [{*}$step_callback $tid $row $idx $total]
+}
+
+proc spar::_pool_log_drop {msg} {}
+
+proc spar::_pool_on_state {run_id row to_state} {
+    variable pool_runs
+    if {![dict exists $pool_runs $run_id]} return
+    if {$to_state ni {done failed cancelled}} return
+    set st [dict get $pool_runs $run_id]
+    if {$to_state eq "cancelled"} {
+        dict incr st skipped
+        {*}[dict get $st progress] $row skipped "cancelled"
+    }
+    dict incr st seen
+    dict set pool_runs $run_id $st
+    if {[dict get $st seen] >= [dict get $st total]} {
+        # Defer finish so the row-state subscriber list isn't mutated
+        # while we're iterating it.
+        after idle [list ::spar::_pool_finish $run_id]
+    }
+}
+
+proc spar::_pool_on_done {run_id row result} {
+    variable pool_runs
+    if {![dict exists $pool_runs $run_id]} return
+    set st [dict get $pool_runs $run_id]
+    dict incr st done
+    dict set pool_runs $run_id $st
+    set msg ""
+    catch {set msg [dict get $result message_id]}
+    {*}[dict get $st progress] $row done $msg
+}
+
+proc spar::_pool_on_failed {run_id row reason} {
+    variable pool_runs
+    if {![dict exists $pool_runs $run_id]} return
+    set st [dict get $pool_runs $run_id]
+    dict incr st failed
+    dict set pool_runs $run_id $st
+    {*}[dict get $st progress] $row failed $reason
+}
+
+proc spar::_pool_finish {run_id} {
+    variable pool_runs
+    if {![dict exists $pool_runs $run_id]} return
+    set st [dict get $pool_runs $run_id]
+    dict unset pool_runs $run_id
+    set d  [dict get $st done]
+    set f  [dict get $st failed]
+    set r  [dict get $st result]
+    set cb [dict get $st complete]
+    set disp [dict get $st dispatcher]
+    catch {$disp destroy}
+    {*}$cb $d $f $r
+}
 
 # ════════════════════════════════════════════════════════════════════════
 # spar::p::run — SPAR-P phase runner (profile dispatch).
@@ -138,15 +275,23 @@ proc spar::p::run {opts on_progress on_complete} {
         return
     }
 
-    variable ::spar::dispatch_script_dir
-    set harness [file join $::spar::dispatch_script_dir spar-p-harness.tcl]
-
     set wrapped_progress [list spar::p::_dbc_post_progress \
         $on_progress $slug_ctx]
 
-    set disp [spar::HarnessQueue new $jobs $logs_dir $harness \
-        $wrapped_progress $on_complete $agg_result $tid $step_callback]
-    $disp run $all_prompt_dirs
+    # Build {stem opts} pairs. Stem == basename of the prompt_dir;
+    # mirrors HarnessQueue's slug derivation. The Pool's harness_run
+    # worker drives spar::ProfileHarness end-to-end for each row.
+    set rows {}
+    foreach pdir $all_prompt_dirs {
+        set stem [file tail $pdir]
+        lappend rows [list $stem [dict create \
+            prompt_dir    $pdir \
+            log_dir       $logs_dir \
+            harness_class spar::ProfileHarness]]
+    }
+
+    spar::run_through_pool $jobs $tid harness_run $rows $agg_result \
+        $wrapped_progress $on_complete $step_callback
     return
 }
 
@@ -437,9 +582,6 @@ proc spar::a::run {opts on_progress on_complete} {
         return $result
     }
 
-    variable ::spar::dispatch_script_dir
-    set harness [file join $::spar::dispatch_script_dir spar-a-harness.tcl]
-
     # Dispatch only the prompt dirs we created this invocation — never glob
     # the workdir, since a previous call within the same process may have
     # left prompt dirs there and the harness would re-run them.
@@ -453,9 +595,22 @@ proc spar::a::run {opts on_progress on_complete} {
         lset prompt_dirs $j $tmp
     }
 
-    set disp [spar::HarnessQueue new $jobs $logs_dir $harness \
-        $on_progress $on_complete $result $tid $step_callback]
-    $disp run $prompt_dirs
+    # A-phase prompt-dir basenames are NNN-name-org slugs, not stems.
+    # The legacy HarnessQueue used the slug as the row identifier; the
+    # Pool worker doesn't care what the row id is — it's the
+    # progress-reporting key. Use the basename so on_progress messages
+    # match the legacy CLI output.
+    set rows {}
+    foreach pdir $prompt_dirs {
+        set slug [file tail $pdir]
+        lappend rows [list $slug [dict create \
+            prompt_dir    $pdir \
+            log_dir       $logs_dir \
+            harness_class spar::ApproachHarness]]
+    }
+
+    spar::run_through_pool $jobs $tid harness_run $rows $result \
+        $on_progress $on_complete $step_callback
     return $result
 }
 
