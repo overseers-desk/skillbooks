@@ -20,10 +20,13 @@ namespace eval spar {
     # calling script at invocation, not this file, which breaks path
     # resolution when run from a test one dir deeper.
     variable dispatch_script_dir [file dirname [file normalize [info script]]]
-    # Registry of live Dispatcher instances. Populated by the constructor,
-    # drained by the destructor. UI layer walks this to pause/resume/cancel
-    # every in-flight dispatch — a single segment run spawns one Dispatcher,
-    # a multi-segment P-phase run spawns several in parallel.
+    # Registry of live HarnessQueue / Driver instances used by the CLI
+    # path. Populated by each constructor, drained by the destructor.
+    # spar::pause_all / resume_all / cancel_all in spar-harness-queue.tcl
+    # fan out across the registry — kept for the CLI's benefit even
+    # though the GUI no longer uses it (the GUI's job pool talks
+    # directly to spar::Dispatcher in spar-dispatcher.tcl). A single
+    # P/A segment spawns one HarnessQueue; T6/T7 spawn one Driver.
     variable live_dispatchers [list]
 }
 namespace eval spar::p {}
