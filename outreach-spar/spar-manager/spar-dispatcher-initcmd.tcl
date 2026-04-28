@@ -94,6 +94,7 @@ proc _ensure_harness_loaded {} {
     if {[info exists ::spar::_harness_loaded]} { return }
     uplevel #0 [list source $::pool_state_file]
     uplevel #0 [list source $::pool_harness_file]
+    set ::spar::_harness_loaded 1
 }
 
 # _ensure_email_loaded — lazy-source spar-state.tcl + spar-email.tcl +

@@ -427,14 +427,36 @@ oo::class create ::spar::transitions::SendEmailTransition {
         set tasks         [spar::dict_get_default $opts tasks {}]
         set delay         [spar::dict_get_default $opts delay 2]
         set step_callback [spar::dict_get_default $opts step_callback ""]
+        set jobs          [spar::dict_get_default $opts jobs 1]
 
         set cdata [spar::load_campaign $campaign_file]
         set camp_sender [spar::dict_get_default $cdata sender [dict create]]
 
-        set driver [::spar::transitions::SendEmailDriver new \
-            $tasks $delay $dry_run $camp_sender \
-            $on_progress $on_complete [my tid] $step_callback]
-        $driver kick
+        # Build per-row {stem opts} pairs. The Pool's ses_send worker
+        # consumes per-row data — campaign_file, dry_run,
+        # approach_path, sender, delay_ms — instead of the legacy
+        # tasks list. delay_ms throttles consecutive sends from the
+        # same worker thread (SES rate-cap).
+        set delay_ms [expr {$delay * 1000}]
+        set rows {}
+        foreach c $tasks {
+            set stem    [dict get $c stem]
+            set seg_dir [dict get $c _segment_dir]
+            set approach_path [file join $seg_dir approach "${stem}.yaml"]
+            lappend rows [list $stem [dict create \
+                campaign_file $campaign_file \
+                dry_run       $dry_run \
+                approach_path $approach_path \
+                sender        $camp_sender \
+                delay_ms      $delay_ms]]
+        }
+
+        # SES is serial by convention (one auth handshake per
+        # connection, pacing by delay_ms). Force jobs=1 here even if
+        # the caller passed --jobs=N — the per-row delay would
+        # interleave unpredictably with parallel workers.
+        spar::run_through_pool 1 [my tid] ses_send $rows [dict create] \
+            $on_progress $on_complete $step_callback
     }
 
     # T6: APPROACHED/SENT, has_email, not yet email_sent.  Gated on

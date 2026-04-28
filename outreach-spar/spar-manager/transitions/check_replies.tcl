@@ -468,14 +468,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         set segments      [spar::dict_get_default $opts segments {}]
         set stems         [spar::dict_get_default $opts stems    {}]
         set step_callback [spar::dict_get_default $opts step_callback ""]
-
-        # Emit started per-slug so UI rows leave their initial state
-        # before the collection pass (YAML parsing) starts.
-        if {$on_progress ne ""} {
-            foreach s $stems {
-                {*}$on_progress $s started ""
-            }
-        }
+        set jobs          [spar::dict_get_default $opts jobs 1]
 
         set cdata [spar::load_campaign $campaign_file]
 
@@ -526,23 +519,42 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
             return
         }
 
-        set by_to [dict create]
+        # Build {stem opts} pairs. The Pool's imap_poll worker drives
+        # one (search + zero-or-more reads) cycle per row. The legacy
+        # Driver coalesced multiple stems sharing one to_email into a
+        # single search; under the Pool this is split per stem,
+        # trading a small number of duplicate searches for a much
+        # simpler worker.
+        set rows {}
+        set seen_stems [dict create]
         foreach entry $approaches {
+            set approach_path [dict get $entry approach_path]
+            set stem [file rootname [file tail $approach_path]]
             set to_email [dict get $entry to_email]
-            if {![dict exists $by_to $to_email]} {
-                dict set by_to $to_email {}
-            }
-            dict lappend by_to $to_email $entry
+            set fingerprints [dict get $entry fingerprints]
+            dict set seen_stems $stem 1
+            lappend rows [list $stem [dict create \
+                campaign_file $campaign_file \
+                dry_run       $dry_run \
+                approach_path $approach_path \
+                to_email      $to_email \
+                fingerprints  $fingerprints \
+                account       $account \
+                folder        $folder \
+                sender        $sender]]
         }
 
-        set cohort_set [dict create]
-        foreach s $stems { dict set cohort_set $s 1 }
+        # Stems requested but with no sent approach get a synchronous
+        # "skipped — no reply yet" line, matching the legacy Driver's
+        # tail loop.
+        foreach s $stems {
+            if {![dict exists $seen_stems $s]} {
+                {*}$on_progress $s skipped "no reply yet"
+            }
+        }
 
-        set driver [::spar::transitions::CheckRepliesDriver new \
-            $account $folder $sender $campaign_dir $dry_run \
-            $stems $cohort_set $by_to $on_progress $on_complete \
-            [my tid] $step_callback]
-        $driver kick
+        spar::run_through_pool $jobs [my tid] imap_poll $rows \
+            [dict create] $on_progress $on_complete $step_callback
     }
 
     # T7: email was sent, no reply yet, contact still in scope (not
