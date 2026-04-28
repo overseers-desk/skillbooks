@@ -402,9 +402,10 @@ proc ::spar::ui::build_loaded_body {path} {
     }}]
 
     # spar::Dispatcher (the GUI's mixed-type job pool) is constructed
-    # once per process; it outlives controller refreshes (Phase 4 will
-    # add a row-rebind hook). jobs=4 matches the prior CLI default in
-    # spar::p::run.
+    # once per process; it outlives campaign refreshes. The Controller's
+    # on_fully_loaded handler calls prune_missing + reapply_pool_state
+    # so refreshed views inherit the surviving Pool state. jobs=4
+    # matches the prior CLI default in spar::p::run.
     set ::pool [spar::Dispatcher new 4 [list $log log]]
 
     # DispatchController translates Play/Pause/Cancel and the right-
