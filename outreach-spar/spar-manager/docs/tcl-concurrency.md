@@ -15,7 +15,7 @@ The built-in event loop (`after`, `vwait`, `fileevent`, `chan event`) is always 
 
 Of the five things above, only one gives real OS-thread parallelism. The others matter for different reasons.
 
-- **Thread (with `tpool::` API)** — real OS threads, each with its own Tcl interpreter; true parallelism across cores. This is what `test/run.tcl` uses to fan test files out across `[exec nproc]` workers.
+- **Thread (with `tpool::` API)** — real OS threads, each with its own Tcl interpreter; true parallelism across cores. This is what `test/run.tcl` uses to fan test files out across `[exec getconf _NPROCESSORS_ONLN]` workers.
 - **Built-in event loop** (`after` / `vwait` / `fileevent`) — single-threaded, cooperative. "Concurrent" in the non-blocking-I/O sense, not parallel. Reach for this when the work is I/O-bound and a single core suffices.
 - **coroutine** — cooperative single-thread; **not concurrent in the parallel sense**. Lets one task `yield` to another inside the same interpreter. Worth mentioning because the name invites the wrong assumption — coroutines on multi-core machines still occupy exactly one core.
 - **uevent** — pub/sub on the event loop. A decoupling tool, not a concurrency primitive; subscribers fire on the same thread that posted.
@@ -30,7 +30,7 @@ package require Thread
 
 set p [tpool::create \
     -minworkers 0 \
-    -maxworkers [exec nproc] \
+    -maxworkers [exec getconf _NPROCESSORS_ONLN] \
     -idletime   30]
 
 set jobs {}

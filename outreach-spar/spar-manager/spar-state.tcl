@@ -368,7 +368,7 @@ oo::define spar::State method forget_approach {approach_path} {
 # at pool creation; the alternative (-minworkers 0, lazy spawn) costs
 # more on first prefetch because the first refine_contact that joins a
 # pending job blocks while the worker spawns and sources spar-state.tcl
-# (~300 ms). Sized to nproc capped at 8 — past ~4 workers the
+# (~300 ms). Sized to _NPROCESSORS_ONLN capped at 8 — past ~4 workers the
 # main-thread join cost of projection dicts becomes the serial floor.
 # -idletime 30 still decays workers if the pool sits unused, matching
 # the State's lifetime hygiene. Workers source spar-state.tcl wholesale;
@@ -377,7 +377,7 @@ oo::define spar::State method forget_approach {approach_path} {
 oo::define spar::State method _ensure_pool {} {
     if {$Pool ne ""} return
     package require Thread
-    set n [expr {min([exec nproc], 8)}]
+    set n [expr {min([exec getconf _NPROCESSORS_ONLN], 8)}]
     set Pool [tpool::create \
         -minworkers $n \
         -maxworkers $n \
