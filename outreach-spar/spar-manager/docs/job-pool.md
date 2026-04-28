@@ -17,7 +17,7 @@ The alternative considered was a subprocess framing, in which the harness queue 
 ## Row state machine
 
 ```
-queued ──started──> running
+queued ──(tpool::post)──> running
 queued ──(cancel before post)──> cancelled
 running ──phase / progress / cost / retry / roster_update──> running
 running ──rate_limited──> rate_limited ──rate_limit_cleared──> running
@@ -27,6 +27,8 @@ running | paused | rate_limited ──done──> done
 running | paused | rate_limited ──failed──> failed
 done | failed | cancelled ──(user requeue)──> queued
 ```
+
+The transition from `queued` to `running` happens at the moment the Dispatcher posts the row to the tpool, not when the worker thread sends back a confirmation. There is no `msg_started` message; the worker's first action is whatever real work the row needs. This avoids a race where the row's state lagged behind its actual dispatch by the duration between `tpool::post` and the worker's first scheduled instruction.
 
 `rate_limited` and `paused` are waiting states. The worker thread is alive; it is sitting in a `vwait` on a sentinel or an `after` schedule. Both count against the global `Jobs` cap because the tpool slot is occupied.
 
@@ -40,7 +42,6 @@ Every message is sent by calling a proc named `msg_<name>` defined in the tpool'
 
 | message | when | row state effect | payload |
 |---|---|---|---|
-| `started` | first action in the worker after dispatch | queued → running | row |
 | `phase` | worker entered a labelled phase | none | row, phase_name |
 | `progress` | informational subtitle text for the UI | none | row, text |
 | `done` | terminal success | running / paused / rate_limited → done | row, result_dict |
