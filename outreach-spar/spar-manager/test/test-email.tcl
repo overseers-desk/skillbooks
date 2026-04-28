@@ -193,9 +193,9 @@ assert_eq [spar::fingerprint_match {} "alice@example.com" "2026-04-05"] 0 \
 # ════════════════════════════════════════════════════════════════════════
 # 4. send_email (removed)
 # ════════════════════════════════════════════════════════════════════════
-# The SES send flow lives on ::spar::transitions::SendEmailDriver now;
-# its dry-run path is covered by the end-to-end dispatch tests rather
-# than a unit test here.
+# The SES send flow lives on spar::ses::send_one (per-row helper) and
+# the ses_send Pool worker; its dry-run path is covered by
+# test/test-pool.tcl section 14 rather than a unit test here.
 
 # ════════════════════════════════════════════════════════════════════════
 # 5. stamp_actioned_date

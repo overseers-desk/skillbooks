@@ -7,12 +7,12 @@
 # spar-dispatcher-initcmd.tcl; tests: test-pool.tcl) does its own
 # signalling.
 #
-# This file lifts the per-task body of the legacy
-# ::spar::transitions::SendEmailDriver. The decision was to keep the
-# subprocess invocation of smtp_send.tcl rather than inline the SMTP
-# code: the helper is already a hot reuse target, the subprocess
-# isolates TLS state and is well-tested in production, and inlining
-# would duplicate ~100 lines of SMTP code into the worker thread.
+# This file holds the per-row body that the previous CLI's per-
+# dispatch send driver used to inline. Decision: keep the subprocess
+# invocation of smtp_send.tcl rather than inline the SMTP code — the
+# helper is a hot reuse target, the subprocess isolates TLS state and
+# is well-tested in production, and inlining would duplicate ~100
+# lines of SMTP code into the worker thread.
 #
 # Inputs (opts dict):
 #   campaign_file   abs path to campaign YAML — used only as fallback

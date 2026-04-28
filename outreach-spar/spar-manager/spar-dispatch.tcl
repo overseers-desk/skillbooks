@@ -20,14 +20,6 @@ namespace eval spar {
     # calling script at invocation, not this file, which breaks path
     # resolution when run from a test one dir deeper.
     variable dispatch_script_dir [file dirname [file normalize [info script]]]
-    # Registry of live HarnessQueue / Driver instances used by the CLI
-    # path. Populated by each constructor, drained by the destructor.
-    # spar::pause_all / resume_all / cancel_all in spar-harness-queue.tcl
-    # fan out across the registry — kept for the CLI's benefit even
-    # though the GUI no longer uses it (the GUI's job pool talks
-    # directly to spar::Dispatcher in spar-dispatcher.tcl). A single
-    # P/A segment spawns one HarnessQueue; T6/T7 spawn one Driver.
-    variable live_dispatchers [list]
 }
 namespace eval spar::p {}
 namespace eval spar::a {}
@@ -45,7 +37,6 @@ proc spar::load_prompt_template {name} {
     return [string trimright $s "\n"]
 }
 
-source [file join $::spar::dispatch_script_dir spar-harness-queue.tcl]
 source [file join $::spar::dispatch_script_dir spar-dispatcher.tcl]
 
 # spar::run_through_pool — generic CLI adapter. Construct a fresh
@@ -278,9 +269,9 @@ proc spar::p::run {opts on_progress on_complete} {
     set wrapped_progress [list spar::p::_dbc_post_progress \
         $on_progress $slug_ctx]
 
-    # Build {stem opts} pairs. Stem == basename of the prompt_dir;
-    # mirrors HarnessQueue's slug derivation. The Pool's harness_run
-    # worker drives spar::ProfileHarness end-to-end for each row.
+    # Build {stem opts} pairs. Stem == basename of the prompt_dir.
+    # The Pool's harness_run worker drives spar::ProfileHarness end-to-
+    # end for each row.
     set rows {}
     foreach pdir $all_prompt_dirs {
         set stem [file tail $pdir]
@@ -295,12 +286,13 @@ proc spar::p::run {opts on_progress on_complete} {
     return
 }
 
-# spar::p::prepare_for_pool — Phase-3 GUI entry point. Runs the same
+# spar::p::prepare_for_pool — GUI entry point. Runs the same
 # per-segment prep as spar::p::run, but returns a list of
-# {stem prompt_dir} tuples (plus the resolved logs_dir) instead of
-# constructing a HarnessQueue. The caller (DispatchController) enqueues
-# each row into spar::Dispatcher with worker=harness_run and
-# harness_class=spar::ProfileHarness.
+# {stem prompt_dir} tuples (plus the resolved logs_dir) so the GUI's
+# DispatchController can enqueue each row into spar::Dispatcher with
+# worker=harness_run and harness_class=spar::ProfileHarness directly,
+# bypassing the spar::run_through_pool wrapper that the CLI uses for
+# its callback-shape contract.
 #
 # opts has the same shape as spar::p::run (campaign_file, segments,
 # stems). on_progress is used only for prep-time skipped/failed events
@@ -596,10 +588,9 @@ proc spar::a::run {opts on_progress on_complete} {
     }
 
     # A-phase prompt-dir basenames are NNN-name-org slugs, not stems.
-    # The legacy HarnessQueue used the slug as the row identifier; the
-    # Pool worker doesn't care what the row id is — it's the
+    # The Pool worker doesn't care what the row id is — it's the
     # progress-reporting key. Use the basename so on_progress messages
-    # match the legacy CLI output.
+    # carry the same slug the operator sees on disk.
     set rows {}
     foreach pdir $prompt_dirs {
         set slug [file tail $pdir]
