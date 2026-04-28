@@ -197,7 +197,15 @@ oo::class create ::spar::transitions::CheckRepliesDriver {
             }
             set CurrentPipe ""
 
-            if {[catch {set messages [::json::json2dict $CurrentBuf]} perr]} {
+            # mailroom 1.1.0 wraps the payload as
+            #   {"<op_str>": {"<account>": {"results": [...], "provenance": ...}}}
+            # We invoke with a single -a $Account, so each level has one key.
+            if {[catch {
+                set raw [::json::json2dict $CurrentBuf]
+                set inner [dict get $raw [lindex [dict keys $raw] 0]]
+                set per_account [dict get $inner [lindex [dict keys $inner] 0]]
+                set messages [dict get $per_account results]
+            } perr]} {
                 incr Errors
                 if {$OnProgress ne ""} {
                     {*}$OnProgress $CurrentTo error "mailbox search JSON parse: $perr"
@@ -325,7 +333,13 @@ oo::class create ::spar::transitions::CheckRepliesDriver {
                 return
             }
 
-            if {[catch {set email_data [::json::json2dict $CurrentBuf]} _]} {
+            # mailroom 1.1.0 wraps the payload as
+            #   {"<op_str>": {"<account>": {<email fields>}}}
+            if {[catch {
+                set raw [::json::json2dict $CurrentBuf]
+                set inner [dict get $raw [lindex [dict keys $raw] 0]]
+                set email_data [dict get $inner [lindex [dict keys $inner] 0]]
+            } _]} {
                 my handle_read_failure $ctx \
                     "(could not parse reply -- review manually:\n  mailroom -a $Account read -f $Folder -u $uid)"
                 my start_next
