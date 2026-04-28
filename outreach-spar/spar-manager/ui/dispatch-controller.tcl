@@ -118,8 +118,9 @@ oo::class create spar::ui::DispatchController {
         $Dispatcher subscribe row-done \
             [list [self] on_row_done]
 
-        # Subscribe to Campaign lifecycle. Phase 4 will rebind row ids
-        # after a refresh; for now fully-loaded just kicks the auto path.
+        # Subscribe to Campaign lifecycle. on_fully_loaded both kicks
+        # the --tid auto-dispatch path and rebinds the Pool's per-row
+        # state onto the rebuilt tree (refresh persistence).
         $Campaign subscribe fully-loaded [list [self] on_fully_loaded]
 
         # Subscribe to TransitionTree selection shifts — drives the Play
