@@ -28,21 +28,22 @@ oo::class create spar::Dispatcher {
     variable Pool Jobs
     variable Queue RowState RowMeta RowJobId
     variable QueuePaused
-    variable LogCallback Subs
+    variable LogCallback PrePostCallback Subs
 
     # Terminal states. Anything else is non-terminal.
     variable Terminal
 
     constructor {jobs {log_cb ""}} {
-        set Jobs        $jobs
-        set Queue       {}
-        set RowState    [dict create]
-        set RowMeta     [dict create]
-        set RowJobId    [dict create]
-        set QueuePaused 0
-        set LogCallback $log_cb
-        set Subs        [dict create]
-        set Terminal    {done failed cancelled}
+        set Jobs            $jobs
+        set Queue           {}
+        set RowState        [dict create]
+        set RowMeta         [dict create]
+        set RowJobId        [dict create]
+        set QueuePaused     0
+        set LogCallback     $log_cb
+        set PrePostCallback ""
+        set Subs            [dict create]
+        set Terminal        {done failed cancelled}
 
         set me  [self]
         set tid [thread::id]
@@ -81,6 +82,17 @@ oo::class create spar::Dispatcher {
 
     # ─── Subscription ────────────────────────────────────────────────
     method subscribe {event cb} { dict lappend Subs $event $cb }
+
+    # set_pre_post_callback — install a synchronous gate fired just
+    # before tpool::post for each row. Invoked as
+    #   {*}$cb $row $tid $idx $total
+    # where idx is the 1-based position among rows posted so far in
+    # the current Dispatcher's lifetime, and total is the count of
+    # rows enqueued so far. Return "abort" to cancel the row before
+    # it is posted (state moves to cancelled, no worker runs); any
+    # other return (or empty) lets the post proceed. Used by the CLI
+    # --jobs=0 stepping path to gate one row at a time on stdin.
+    method set_pre_post_callback {cb} { set PrePostCallback $cb }
     method _fire {event args} {
         if {![dict exists $Subs $event]} return
         foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
@@ -339,6 +351,26 @@ oo::class create spar::Dispatcher {
             set meta [dict get $RowMeta $row]
             set worker [dict get $meta worker]
             set opts   [dict get $meta opts]
+            set tid    [dict get $meta tid]
+            # Pre-post gate. Total/idx are computed against current
+            # state-map size for a stable, monotonically increasing
+            # position usable by the stdin gate. The callback runs
+            # synchronously in the main thread; an "abort" return
+            # cancels this row before any tpool::post happens.
+            if {$PrePostCallback ne ""} {
+                set total [dict size $RowState]
+                set idx 0
+                dict for {r _} $RowState {
+                    incr idx
+                    if {$r eq $row} break
+                }
+                set verdict ""
+                catch {set verdict [{*}$PrePostCallback $row $tid $idx $total]}
+                if {$verdict eq "abort"} {
+                    my _set_state $row cancelled
+                    continue
+                }
+            }
             dict set RowMeta $row started_at [clock milliseconds]
             my _set_state $row running
             set jobid [tpool::post -nowait $Pool \
