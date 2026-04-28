@@ -281,4 +281,91 @@ assert_eq [lindex $active 0] r3 "active row is r3"
 wait_for_terminal $d r3 2000
 $d destroy
 
+# ════════════════════════════════════════════════════════════════════════
+# 13. harness_run — wires through to a harness_class instance
+# ════════════════════════════════════════════════════════════════════════
+# The real spar::ProfileHarness / spar::ApproachHarness needs claude on
+# PATH plus a fully-built prompt_dir (prompt.txt, meta.env, roster, etc.)
+# to exercise end-to-end. That is heavier than this test wants. Instead
+# we instantiate FakeHarness — a stand-in defined alongside fake_worker
+# in spar-dispatcher-initcmd.tcl that mimics the (prompt_dir log_dir)
+# constructor and the run-returns-0/1 contract — to verify only the
+# routing path: enqueue → tpool::post → harness_run → msg_done/failed.
+# Coverage of the real harness body lives in test-state.tcl /
+# test-validate-*; this section catches breakage in the worker wrapper.
+section "13. harness_run routing"
+
+set tmp_root [file join /tmp "spar-pool-harness-[pid]-[clock microseconds]"]
+file mkdir $tmp_root
+lappend ::cleanup_dirs $tmp_root
+
+proc make_harness_dirs {tag {rc 0}} {
+    set p [file join $::tmp_root "$tag-prompt"]
+    set l [file join $::tmp_root "$tag-log"]
+    file mkdir $p $l
+    if {$rc ne ""} {
+        set fd [open [file join $p run-rc] w]; puts -nonewline $fd $rc; close $fd
+    }
+    return [list $p $l]
+}
+
+set d [spar::Dispatcher new 2 test_log]
+
+# 13a. Successful harness run reaches done with rc=0 in the result dict.
+lassign [make_harness_dirs ok 0] p_ok l_ok
+$d enqueue h_ok T1 harness_run [dict create \
+    prompt_dir $p_ok log_dir $l_ok harness_class FakeHarness]
+wait_for_terminal $d h_ok 3000
+assert_eq [$d state h_ok] done "harness_run rc=0 reaches done"
+
+# 13b. Harness rc=1 lands as failed with the rc message.
+lassign [make_harness_dirs fail 1] p_f l_f
+$d enqueue h_fail T1 harness_run [dict create \
+    prompt_dir $p_f log_dir $l_f harness_class FakeHarness]
+wait_for_terminal $d h_fail 3000
+assert_eq [$d state h_fail] failed "harness_run rc=1 reaches failed"
+
+# 13c. Harness raising an error is caught and surfaced as failed.
+lassign [make_harness_dirs throw throw] p_t l_t
+$d enqueue h_throw T1 harness_run [dict create \
+    prompt_dir $p_t log_dir $l_t harness_class FakeHarness]
+wait_for_terminal $d h_throw 3000
+assert_eq [$d state h_throw] failed "harness_run catches errors as failed"
+
+# 13d. Cancel before the worker enters the harness body — the cancel
+# sentinel is set before resume_queue posts to the tpool, so the
+# pre-flight check fires.
+lassign [make_harness_dirs precancel 0] p_pc l_pc
+$d pause_queue
+$d enqueue h_pc T1 harness_run [dict create \
+    prompt_dir $p_pc log_dir $l_pc harness_class FakeHarness]
+$d cancel h_pc
+assert_eq [$d state h_pc] cancelled \
+    "cancel before post drops the row without invoking the harness"
+$d resume_queue
+
+$d destroy
+
+# ════════════════════════════════════════════════════════════════════════
+# 14. ses_send / imap_poll — Phase-2 stubs route to msg_failed
+# ════════════════════════════════════════════════════════════════════════
+# These two workers are deliberate stubs in Phase 2; the real bodies
+# (lifting the Driver classes from transitions/send_email.tcl and
+# transitions/check_replies.tcl) land in a follow-up. The stubs prove
+# the routing path is in place so Phase 3 can wire the GUI without
+# blocking on the send/poll work.
+section "14. ses_send / imap_poll stubs"
+
+set d [spar::Dispatcher new 2 test_log]
+
+$d enqueue s1 T6 ses_send [dict create tasks {}]
+wait_for_terminal $d s1 2000
+assert_eq [$d state s1] failed "ses_send stub fails fast"
+
+$d enqueue i1 T7 imap_poll [dict create tasks {}]
+wait_for_terminal $d i1 2000
+assert_eq [$d state i1] failed "imap_poll stub fails fast"
+
+$d destroy
+
 finish_tests
