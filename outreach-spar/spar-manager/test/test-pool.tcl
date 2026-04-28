@@ -368,4 +368,53 @@ assert_eq [$d state i1] failed "imap_poll stub fails fast"
 
 $d destroy
 
+# ════════════════════════════════════════════════════════════════════════
+# 15. prune_missing — drops state for stems no longer in the tree
+# ════════════════════════════════════════════════════════════════════════
+# Workspace refresh case: the Pool outlives the tree. After refresh,
+# stems that disappeared (removed contacts, segment churn) should be
+# garbage-collected from the Pool's state map. Active workers must
+# survive the prune even if the new tree happens not to list them
+# (race: refresh while a row is in flight).
+section "15. prune_missing"
+
+# Pool with cap 1: a single running blocker keeps the next enqueue
+# stuck in queued, deterministically.
+set d [spar::Dispatcher new 1 test_log]
+
+# Two terminal rows that finish before the blocker arrives.
+$d enqueue done1 T1 fake_worker {plan {{sleep 30}}}
+wait_for_terminal $d done1 2000
+$d enqueue fail1 T1 fake_worker {plan {{msg_failed boom}}}
+wait_for_terminal $d fail1 2000
+
+# Long-running blocker, then a queued row that cannot post.
+$d enqueue running1 T1 fake_worker {plan {{sleep 600}}}
+wait_for_state $d running1 running 1000
+$d enqueue queued1 T1 fake_worker {plan {{sleep 30}}}
+assert_eq [$d state queued1] queued "queued1 stays queued behind running1"
+
+# Refresh: tree now contains only running1 + a fresh stem the Pool
+# never heard of. done1, fail1, queued1 should be dropped; running1
+# survives even though its stem is absent from the prune list (the
+# active-state guard protects it).
+set kept [$d prune_missing [list fresh_stem]]
+assert_eq $kept 3 "prune drops 3 non-active rows"
+assert_eq [$d state done1]   "" "done1 dropped from state map"
+assert_eq [$d state fail1]   "" "fail1 dropped from state map"
+assert_eq [$d state queued1] "" "queued1 dropped from state map"
+assert_eq [$d state running1] running "running1 survives prune"
+
+# Verify the Queue list itself was scrubbed: enqueue a fresh row and
+# confirm it is the only queued entry (not stuck behind a ghost).
+$d pause_queue
+$d enqueue post_prune T1 fake_worker {plan {{sleep 30}}}
+assert_eq [$d queued_rows] [list post_prune] \
+    "Queue list scrubbed of pruned stems"
+$d resume_queue
+wait_for_terminal $d post_prune 2000
+wait_for_terminal $d running1   2000
+
+$d destroy
+
 finish_tests

@@ -558,8 +558,30 @@ oo::class create spar::ui::DispatchController {
     # ─── Campaign / tree event handlers ───────────────────────────────────
 
     method on_fully_loaded {} {
+        # Phase-4 refresh persistence. The TransitionTree has been
+        # rebuilt; row ids may differ for the same stems, contacts may
+        # have been added or removed. Prune the Pool's state map so it
+        # forgets stems no longer in the tree (terminal/queued only —
+        # in-flight rows keep their slot), then walk what's left and
+        # re-render so the new tree picks up the surviving Pool state.
+        set tree_stems [dict keys [$Transitions get_slug_to_row]]
+        $Dispatcher prune_missing $tree_stems
+        my reapply_pool_state
+
         if {$AutoTid ne ""} {
             after idle [list [self] auto_dispatch]
+        }
+    }
+
+    # reapply_pool_state — for every row the Pool still tracks, rerun
+    # the row-state render so the rebuilt tree's columns reflect the
+    # current Pool state. Cheap: each call is one update_row, and the
+    # set is bounded by what is currently or recently in flight.
+    method reapply_pool_state {} {
+        foreach row [$Dispatcher all_rows] {
+            set st [$Dispatcher state $row]
+            if {$st eq ""} continue
+            my _render_row $row $st
         }
     }
 
