@@ -148,6 +148,13 @@ oo::class create spar::Harness {
                 return 1
             }
             set cmd [list $claude_bin -p --output-format json --dangerously-skip-permissions]
+            # Default to sonnet unless caller already supplied --model
+            # (fix-loop attempt 3 escalates to opus; challenger passes its
+            # own model). Per-phase model selection from campaign YAML is
+            # tracked in #91.
+            if {[lsearch -exact $args --model] < 0} {
+                lappend cmd --model sonnet
+            }
             set cmd [concat $cmd $args [list $prompt]]
 
             if {[catch {
