@@ -50,12 +50,20 @@ oo::class create spar::Dispatcher {
             spar-dispatcher-initcmd.tcl]
         set state_path   [file join $::spar::pool_script_dir spar-state.tcl]
         set harness_path [file join $::spar::pool_script_dir spar-harness.tcl]
+        set email_path   [file join $::spar::pool_script_dir spar-email.tcl]
+        set ses_send_path [file join $::spar::pool_script_dir \
+            transitions ses_send_one.tcl]
+        set imap_check_path [file join $::spar::pool_script_dir \
+            transitions imap_check_one.tcl]
 
         set initcmd "
             set ::main_tid [list $tid]
             set ::dispatcher [list $me]
             set ::pool_state_file   [list $state_path]
             set ::pool_harness_file [list $harness_path]
+            set ::pool_email_file   [list $email_path]
+            set ::pool_ses_send_file   [list $ses_send_path]
+            set ::pool_imap_check_file [list $imap_check_path]
             source [list $initcmd_path]
         "
         set Pool [tpool::create \
