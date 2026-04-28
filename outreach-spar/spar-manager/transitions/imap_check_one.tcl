@@ -7,15 +7,13 @@
 # Returns counts; no callbacks, no thread::send, no registry, no event
 # loop.
 #
-# This file lifts the per-iteration body of the legacy
-# ::spar::transitions::CheckRepliesDriver. The legacy class did the
-# work asynchronously via fileevents on multiple `mailroom` pipes so
-# the GUI event loop kept turning. Under the pool model, one row
-# corresponds to one stem, so the asynchronous queue inside the driver
-# collapses to a synchronous per-stem call: one `mailroom search`,
-# zero or more `mailroom read`s, zero or more append_reply_to_yaml
-# calls. The worker thread is allowed to block — it has its own
-# thread::send mailbox and does not share the main event loop.
+# Under the pool model, one row corresponds to one stem, so the
+# previous async-fileevent queue (which served multiple stems through
+# one shared event loop on the main thread) collapses to a
+# synchronous per-stem call: one `mailroom search`, zero or more
+# `mailroom read`s, zero or more append_reply_to_yaml calls. The
+# worker thread is allowed to block — it has its own thread::send
+# mailbox and does not share the main event loop.
 #
 # Inputs (opts dict):
 #   approach_path   abs path to the approach YAML for this stem
