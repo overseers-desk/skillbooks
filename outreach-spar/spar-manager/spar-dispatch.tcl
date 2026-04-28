@@ -42,7 +42,7 @@ proc spar::load_prompt_template {name} {
     return [string trimright $s "\n"]
 }
 
-source [file join $::spar::dispatch_script_dir spar-dispatcher.tcl]
+source [file join $::spar::dispatch_script_dir spar-harness-queue.tcl]
 
 # ════════════════════════════════════════════════════════════════════════
 # spar::p::run — SPAR-P phase runner (profile dispatch).
@@ -141,7 +141,7 @@ proc spar::p::run {opts on_progress on_complete} {
     set wrapped_progress [list spar::p::_dbc_post_progress \
         $on_progress $slug_ctx]
 
-    set disp [spar::Dispatcher new $jobs $logs_dir $harness \
+    set disp [spar::HarnessQueue new $jobs $logs_dir $harness \
         $wrapped_progress $on_complete $agg_result $tid $step_callback]
     $disp run $all_prompt_dirs
     return
@@ -699,7 +699,7 @@ Emit exactly one of these lines as the very last line of your output:"
         lset prompt_dirs $j $tmp
     }
 
-    set disp [spar::Dispatcher new $jobs $logs_dir $harness \
+    set disp [spar::HarnessQueue new $jobs $logs_dir $harness \
         $on_progress $on_complete $result $tid $step_callback]
     $disp run $prompt_dirs
     return $result
