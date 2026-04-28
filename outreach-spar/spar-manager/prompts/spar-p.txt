@@ -5,6 +5,7 @@ Roster notes — s_note: __S_NOTE__, p_note: __P_NOTE__.
 
 Campaign context: read __GOAL_PATH__ for the segment's objective, USPs, and angle table.
 Organisation overview: read __OVERVIEW__ for ground truth about the organisation.
+__VENUE_LINE__
 __ANTIFACTS_LINE__
 
 Output file: __OUTFILE__

@@ -122,6 +122,26 @@ This step is critical for targets whose personal public statements are limited b
 
 If the employer's website reveals programmes or focus areas relevant to the campaign, record them in a dedicated section of the profile document ("Institutional context" or similar, under the domain-specific operational context section). Note which programmes the target is personally involved in versus which are run by their team or organisation more broadly.
 
+### 4.6.1 Distance from venue (when proximity bears on relevance)
+
+Run this step only when (a) the prompt declares a campaign venue (line beginning "Campaign venue:") and (b) proximity to that venue is a factor in the segment's angle table or otherwise bears on the relevance assessment for this campaign. If neither condition holds, skip — distance is not free context to collect for its own sake.
+
+When the conditions hold, do not estimate distance. Geocode the target's primary work address (resolved during §4.6) via Nominatim:
+
+```
+https://nominatim.openstreetmap.org/search?q={URL-encoded address}&format=json&limit=1
+```
+
+Then call OSRM using the venue coordinate from the prompt and the target coordinate from Nominatim:
+
+```
+https://router.project-osrm.org/route/v1/driving/{venue_lng},{venue_lat};{target_lng},{target_lat}?overview=false
+```
+
+Record the target address used, the OSRM driving distance in km, and the duration in minutes inline with the institutional context written in §4.6. If geocoding or routing fails, record the failure reason and proceed without a distance value — never substitute a guess.
+
+This responsibility is temporary; the harness will absorb the OSRM call once `venue` is consistently populated and a target-side location field is added to the roster. See SmartLayer/aesop#93.
+
 ### 4.7 Check email history (IMAP)
 
 Before profiling public sources, check whether the campaign's organisation has prior correspondence with this contact. The campaign plan specifies which email accounts to search (e.g. admin and director IMAP accounts).
