@@ -48,10 +48,14 @@ oo::class create spar::Dispatcher {
         set tid [thread::id]
         set initcmd_path [file join $::spar::pool_script_dir \
             spar-dispatcher-initcmd.tcl]
+        set state_path   [file join $::spar::pool_script_dir spar-state.tcl]
+        set harness_path [file join $::spar::pool_script_dir spar-harness.tcl]
 
         set initcmd "
             set ::main_tid [list $tid]
             set ::dispatcher [list $me]
+            set ::pool_state_file   [list $state_path]
+            set ::pool_harness_file [list $harness_path]
             source [list $initcmd_path]
         "
         set Pool [tpool::create \
