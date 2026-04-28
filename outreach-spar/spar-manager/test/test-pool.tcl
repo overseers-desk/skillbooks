@@ -587,4 +587,120 @@ wait_for_terminal $d running1   2000
 
 $d destroy
 
+# ════════════════════════════════════════════════════════════════════════
+# 16. spar::run_through_pool — CLI adapter end-to-end
+# ════════════════════════════════════════════════════════════════════════
+# Exercises the CLI's path through the Pool: enqueue a batch of fake
+# rows, mirror row events back through the legacy on_progress /
+# on_complete callback contract, and tear down once every row reaches
+# terminal state. Adapter lives in spar-dispatch.tcl.
+section "16. run_through_pool"
+
+# spar-dispatch.tcl needs a few of spar-state's helpers (load_campaign,
+# slugify, dict_get_default). Source it lazily — the rest of test-pool
+# does not need it.
+source [file join $script_dir .. spar-dispatch.tcl]
+
+# 16a. Happy path: three fake rows, all reach done, callbacks called
+# in expected order with expected counts.
+set ::progress_events {}
+set ::complete_events {}
+proc rt_progress {slug status message} {
+    lappend ::progress_events [list $slug $status $message]
+}
+proc rt_complete {done failed result} {
+    lappend ::complete_events [list $done $failed $result]
+    set ::rt_done 1
+}
+set ::rt_done 0
+set rows {}
+foreach r {a b c} {
+    lappend rows [list $r [dict create plan {{sleep 30}}]]
+}
+spar::run_through_pool 2 T1 fake_worker $rows [dict create] \
+    rt_progress rt_complete
+vwait ::rt_done
+assert_eq [llength $::complete_events] 1 "on_complete fires exactly once"
+lassign [lindex $::complete_events 0] d f res
+assert_eq $d 3 "all three rows reach done"
+assert_eq $f 0 "no failures"
+# Three started + three done events = 6.
+assert_eq [llength $::progress_events] 6 \
+    "three rows produce three started + three done events"
+
+# 16b. Failure path: one row fails, two succeed.
+set ::progress_events {}
+set ::complete_events {}
+set ::rt_done 0
+set rows {}
+lappend rows [list ok1 [dict create plan {{sleep 20}}]]
+lappend rows [list bad [dict create plan {{msg_failed boom}}]]
+lappend rows [list ok2 [dict create plan {{sleep 20}}]]
+spar::run_through_pool 2 T1 fake_worker $rows [dict create] \
+    rt_progress rt_complete
+vwait ::rt_done
+lassign [lindex $::complete_events 0] d f _
+assert_eq $d 2 "two rows succeed in failure path"
+assert_eq $f 1 "one row fails"
+# Verify the failed event carries the reason.
+set found_fail 0
+foreach ev $::progress_events {
+    lassign $ev slug status message
+    if {$slug eq "bad" && $status eq "failed" && $message eq "boom"} {
+        set found_fail 1
+    }
+}
+assert_eq $found_fail 1 "failed event carries the worker's reason"
+
+# 16c. Empty rows list: on_complete fires with zeros immediately.
+set ::complete_events {}
+set ::rt_done 0
+spar::run_through_pool 2 T1 fake_worker {} [dict create marker yes] \
+    rt_progress rt_complete
+# No vwait — empty path is synchronous.
+assert_eq [llength $::complete_events] 1 "empty rows: on_complete called once"
+lassign [lindex $::complete_events 0] d f res
+assert_eq $d 0 "empty rows: done=0"
+assert_eq $f 0 "empty rows: failed=0"
+assert_eq [dict get $res marker] yes "empty rows: result dict passed through"
+
+# 16d. step_callback abort: the gate refuses, rows go to cancelled and
+# surface as skipped in the on_progress stream.
+set ::progress_events {}
+set ::complete_events {}
+set ::rt_done 0
+proc rt_step_abort {tid slug idx total} { return abort }
+set rows {}
+foreach r {x y z} {
+    lappend rows [list $r [dict create plan {{sleep 30}}]]
+}
+spar::run_through_pool 1 T1 fake_worker $rows [dict create] \
+    rt_progress rt_complete rt_step_abort
+vwait ::rt_done
+lassign [lindex $::complete_events 0] d f _
+assert_eq $d 0 "all rows aborted: done=0"
+assert_eq $f 0 "all rows aborted: failed=0"
+# Each row should produce one started and one skipped event.
+set skipped_count 0
+foreach ev $::progress_events {
+    if {[lindex $ev 1] eq "skipped"} { incr skipped_count }
+}
+assert_eq $skipped_count 3 "three rows aborted by step_callback"
+
+# 16e. step_callback continue: same as no callback.
+set ::progress_events {}
+set ::complete_events {}
+set ::rt_done 0
+proc rt_step_continue {tid slug idx total} { return continue }
+set rows {}
+foreach r {p q} {
+    lappend rows [list $r [dict create plan {{sleep 20}}]]
+}
+spar::run_through_pool 1 T1 fake_worker $rows [dict create] \
+    rt_progress rt_complete rt_step_continue
+vwait ::rt_done
+lassign [lindex $::complete_events 0] d f _
+assert_eq $d 2 "step_callback=continue lets all rows through"
+assert_eq $f 0 "step_callback=continue: no failures"
+
 finish_tests
