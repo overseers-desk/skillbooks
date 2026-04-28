@@ -439,6 +439,16 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
             set antifacts_line "Antifact checklist: read $antifacts — flag any claims not supported by these sources."
         }
 
+        set venue_line ""
+        if {[dict exists $cdata venue]} {
+            set _venue [dict get $cdata venue]
+            set _vaddr [dict get $_venue address]
+            set _vcoord [dict get $_venue coordinate]
+            set _vlat [dict get $_vcoord latitude]
+            set _vlng [dict get $_vcoord longitude]
+            set venue_line "Campaign venue: $_vaddr (coordinate $_vlat,$_vlng). Use OSRM for any distance assessment per SPAR-P §4.6.1; do not estimate."
+        }
+
         set prompt [string map [list \
             __SPAR_P_PATH__   $spar_p \
             __NAME__          $name \
@@ -453,6 +463,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
             __GOAL_PATH__     $goal_path \
             __OVERVIEW__      $overview \
             __ANTIFACTS_LINE__ $antifacts_line \
+            __VENUE_LINE__    $venue_line \
             __OUTFILE__       $outfile \
             __ROSTER_PATH__   $roster_path \
             __STEM__          $stem \

@@ -155,6 +155,32 @@ proc spar::load_campaign {yaml_path} {
         }
     }
 
+    # Validate venue (optional). When present, the dispatcher exposes the
+    # address and coordinate to the P prompt so AI-side OSRM can compute
+    # target-to-venue driving distance for proximity-relevant angles
+    # without guessing. SmartLayer/aesop#93 tracks moving the OSRM call
+    # itself into the harness.
+    if {[dict exists $data venue]} {
+        set venue [dict get $data venue]
+        set vaddr [string trim [spar::dict_get_default $venue address ""]]
+        if {$vaddr eq ""} {
+            error "Campaign $yaml_path: venue.address must be a non-empty string when venue is present"
+        }
+        if {![dict exists $venue coordinate]} {
+            error "Campaign $yaml_path: venue.coordinate is required when venue is present"
+        }
+        set coord [dict get $venue coordinate]
+        foreach k {latitude longitude} {
+            if {![dict exists $coord $k]} {
+                error "Campaign $yaml_path: venue.coordinate.$k is required"
+            }
+            set cv [dict get $coord $k]
+            if {![string is double -strict $cv]} {
+                error "Campaign $yaml_path: venue.coordinate.$k must be numeric (got '$cv')"
+            }
+        }
+    }
+
     # Store base directory for later use
     dict set data _base $base
 
