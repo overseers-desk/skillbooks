@@ -1,13 +1,21 @@
 #!/usr/bin/env tclsh9.0
-# spar-transitions.tcl — transition eligibility report and executor (CLI)
+# spar-transitions.tcl — transition eligibility report and dispatch (CLI)
 #
-# Report mode (default):
-#   tclsh9.0 spar-transitions.tcl [campaign_dir_or_yaml] [Tn[:seg[/stem]] ...]
-#       [--pending|--ready] [-v|--verbose]
+# Modes (decided by what's on the argv):
+#   no Tn token, no --auto, no --dry-run   overview report.
+#   one or more Tn tokens                  dispatch those transitions live.
+#   --auto                                 drive auto_safe=1 transitions
+#                                          to convergence (live).
+#   add --dry-run to any of the above      pass dry_run=1 to runners;
+#                                          writes disabled. --dry-run
+#                                          alone (no Tn, no --auto)
+#                                          dry-runs every wired
+#                                          transition.
 #
-# Execute mode:
-#   tclsh9.0 spar-transitions.tcl <campaign_dir_or_yaml> Tn[:seg[/stem]] ...
-#       --execute [--jobs=N] [--delay=N] [--yes] [--dry-run]
+# Usage:
+#   tclsh9.0 spar-transitions.tcl <campaign.yaml> [Tn[:seg[/stem]] ...] \
+#       [--dry-run] [--auto] [--pending|--ready] [-v|--verbose] \
+#       [--jobs=N] [--delay=N] [--yes]
 #
 # Positional Tn tokens after the campaign path name the transitions to
 # act on:
@@ -17,12 +25,15 @@
 # Tokens are repeatable and mixable across TIDs. The grammar is parsed
 # in spar-transitions-cli.tcl (test/test-cli-parser.tcl drives it).
 #
-# --auto drives auto_safe=1 transitions as a state machine and refuses
-# any positional Tn token. Transitions with external-action side-effects
-# (e.g. SES send) declare auto_safe=0 and are filtered out.
+# --auto refuses any positional Tn token. Transitions with external-
+# action side-effects (e.g. SES send) declare auto_safe=0 and are
+# filtered out of the --auto loop.
 #
 # --jobs=0 activates stepping: worker parallelism drops to 1 and a
 # stdin [y/N] gate fires before each item.
+#
+# --yes skips the up-front [y/N] confirmation that fires before any
+# transition with requires_send_confirmation=1 (T6 SES). Cron uses --yes.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
@@ -34,32 +45,32 @@ source [file join $script_dir spar-transitions-cli.tcl]
 # operator-facing summary; the TRANSITIONS list is generated from the
 # registry so adding a transition surfaces it here automatically.
 proc print_help {} {
-    puts {spar-transitions.tcl — report and execute SPAR state transitions.
+    puts {spar-transitions.tcl — report and dispatch SPAR state transitions.
 
 USAGE
-    tclsh9.0 spar-transitions.tcl [campaign_dir_or_yaml] [Tn[:seg[/stem]] ...] [options]
+    tclsh9.0 spar-transitions.tcl <campaign.yaml> [Tn[:seg[/stem]] ...] [options]
 
 POSITIONAL TRANSITION TOKENS
-    Tn                  all rows of TID Tn, campaign-wide
+    Tn                  all rows of TID Tn, campaign-wide (live dispatch)
     Tn:<segment>        rows of Tn restricted to one segment
     Tn:<segment>/<stem> rows of Tn for one specific contact
-    (repeatable; mixable across TIDs)
+    (repeatable; mixable across TIDs. With no Tn token and no --auto,
+     spar-transitions reports the eligibility ladder and exits.)
 
 OPTIONS
-    --pending         show/act on pending tasks only
-    --ready           show/act on ready tasks only
-    --execute         run the transition; default is report-only
-    --auto            with --execute: drive the offline state machine
-                      (all auto_safe=1 transitions) until convergence.
-                      Refuses if any positional Tn token is supplied.
-    --dry-run         run the transition with writes disabled (implies
-                      execute-mode; pass alone, not with --execute).
-    --jobs=N          parallel jobs for --execute (default 4); pass
-                      --jobs=0 to step one item at a time with a
-                      stdin [y/N] gate before each item.
+    --pending         show pending tasks only (report mode)
+    --ready           show ready tasks only (report mode)
+    --dry-run         pass dry_run=1 to runners; writes disabled.
+                      Combine with Tn or --auto, or pass alone to
+                      dry-run every wired transition.
+    --auto            drive auto_safe=1 transitions as a state machine
+                      until convergence. Refuses positional Tn tokens.
+    --jobs=N          parallel jobs (default 4); --jobs=0 steps one
+                      item at a time with a stdin [y/N] gate.
     --delay=N         seconds between sends for send-type transitions
                       (default 2); ignored when --jobs=0.
-    --yes             skip any up-front confirmation prompt
+    --yes             skip the up-front [y/N] prompt for transitions
+                      that require it (T6 SES). Use in cron.
     -v, --verbose     in report mode, list each contact (default: counts only)
     -h, --help        show this help
 
@@ -69,8 +80,8 @@ TRANSITIONS}
         set status [$t dispatch_status]
         set mark $status
         switch -- $status {
-            available       { set mark "execute: wired" }
-            not-implemented { set mark "execute: not wired" }
+            available       { set mark "dispatch: wired" }
+            not-implemented { set mark "dispatch: not wired" }
             manual          { set mark "manual" }
             blocked         { set mark "blocked" }
             n/a             { set mark "n/a" }
@@ -79,30 +90,31 @@ TRANSITIONS}
     }
     puts {
 COMMON WORKFLOWS
-    # Report: what's ready across all transitions?
-    tclsh9.0 spar-transitions.tcl path/to/campaign --ready
+    # Overview: counts across every transition
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --ready
 
-    # Execute one transition's ready work
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1 --execute
+    # Dispatch one transition's ready work, live
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1
 
-    # Step through one transition's ready work, confirming each item
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1 --execute --jobs=0
-
-    # Dry-run first, then live
+    # Dry-run before dispatching live
     tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1 --dry-run
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1 --execute
 
-    # Limit to one segment or one contact
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1:vic --execute
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T6:vic/jane-doe --execute
+    # Step through a transition, confirming each item
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1 --jobs=0
+
+    # Limit dispatch to one segment or one contact
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1:vic
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T6:vic/jane-doe
 
     # Mix transitions and scopes in one shared pool
     tclsh9.0 spar-transitions.tcl path/to/campaign.yaml \
-        T1 T2:vic T6:vic/jane-doe --execute --jobs=8
+        T1 T2:vic T6:vic/jane-doe --jobs=8
 
-    # Drive the offline state machine (auto_safe transitions) until
-    # convergence, re-classifying between iterations.
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --execute --auto}
+    # Drive the offline state machine until convergence (live)
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --auto
+
+    # Cron: dispatch T6 sends without prompting
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T6 --yes}
 }
 
 # Parse argv. The parser returns {ok 0 error <msg>} on grammar errors;
@@ -120,7 +132,6 @@ if {[dict get $spec help]} { print_help; exit 0 }
 set campaign_path [dict get $spec campaign_path]
 set tid_scopes    [dict get $spec tid_scopes]
 set filter_state  [dict get $spec filter_state]
-set execute_mode  [dict get $spec execute_mode]
 set auto_mode     [dict get $spec auto_mode]
 set dry_run       [dict get $spec dry_run]
 set jobs          [dict get $spec jobs]
@@ -129,23 +140,25 @@ set assume_yes    [dict get $spec assume_yes]
 set verbose       [dict get $spec verbose]
 set stepping      0
 
-# Normalise path → campaign_dir + (optional) campaign_file. A directory
-# triggers the YAML auto-discover (campaign.yaml or campaign*.yaml);
-# a *.yaml argument is taken as the YAML directly. Unspecified path
-# defaults to ".".
-set campaign_dir ""
-set campaign_file ""
-if {$campaign_path ne ""} {
-    set norm [file normalize $campaign_path]
-    if {[file isfile $norm] && [string match *.yaml $norm]} {
-        set campaign_file $norm
-        set campaign_dir [file dirname $norm]
-    } else {
-        set campaign_dir $campaign_path
-    }
+# Campaign YAML is required. The parser captures the positional verbatim
+# (filesystem-pure for testability); rejection of empty/non-yaml/missing
+# happens here.
+if {$campaign_path eq ""} {
+    puts stderr "Error: campaign YAML file required."
+    puts stderr ""
+    print_help
+    exit 1
 }
-if {$campaign_dir eq ""} { set campaign_dir "." }
-set campaign_dir [file normalize $campaign_dir]
+if {![string match *.yaml $campaign_path]} {
+    puts stderr "Error: campaign argument must be a YAML file: $campaign_path"
+    exit 1
+}
+set yaml_path [file normalize $campaign_path]
+if {![file isfile $yaml_path]} {
+    puts stderr "Error: campaign YAML not found: $campaign_path"
+    exit 1
+}
+set campaign_dir [file dirname $yaml_path]
 
 # tid_scope_filter — return {segments stems} pair for one TID by
 # unioning every scope that names this TID. An unscoped scope ({tid {}
@@ -176,13 +189,13 @@ proc tid_scope_filter {tid_scopes tid} {
     return [list [lsort -unique $segs] [lsort -unique $stems]]
 }
 
-if {$execute_mode && $filter_state eq "pending"} {
-    puts stderr "Error: --execute requires --ready (default); --pending has no executable work."
-    exit 1
-}
+# Tn tokens, --auto, or --dry-run all enter the dispatch path. Bare
+# invocation (no Tn, no --auto, no --dry-run) falls through to the
+# overview report at the bottom of this script.
+set dispatching [expr {[llength $tid_scopes] > 0 || $auto_mode || $dry_run}]
 
-if {$auto_mode && !$execute_mode} {
-    puts stderr "Error: --auto only applies with --execute (or --dry-run)."
+if {$dispatching && $filter_state eq "pending"} {
+    puts stderr "Error: --pending has no executable work; dispatch targets ready rows."
     exit 1
 }
 
@@ -209,46 +222,17 @@ proc step_prompt {tid slug idx total} {
     return abort
 }
 
-# --- Discover campaign YAML ---
-if {$campaign_file ne ""} {
-    set yaml_path $campaign_file
-} else {
-    set yaml_path [file join $campaign_dir campaign.yaml]
-    if {![file exists $yaml_path]} {
-        set candidates [lsort [glob -nocomplain [file join $campaign_dir campaign*.yaml]]]
-        set yaml_path [expr {[llength $candidates] > 0 ? [lindex $candidates end] : ""}]
-    }
-}
-
 # --- Load campaign YAML ---
+set cdata [spar::load_campaign $yaml_path]
+set campaign_name [spar::dict_get_default $cdata campaign [file tail $yaml_path]]
+set primary_channel [spar::campaign_primary_channel $cdata]
 set segments_list {}
 set skip_set {}
-set campaign_name [file tail $campaign_dir]
-set primary_channel ""
-set cdata [dict create]
-
-if {$yaml_path ne "" && [file exists $yaml_path]} {
-    set cdata [spar::load_campaign $yaml_path]
-    set campaign_name [spar::dict_get_default $cdata campaign [file tail $yaml_path]]
-    set primary_channel [spar::campaign_primary_channel $cdata]
-    if {[dict exists $cdata segments]} {
-        set segments_list [dict get $cdata segments]
-    }
-    if {[dict exists $cdata skip_segments]} {
-        set skip_set [dict get $cdata skip_segments]
-    }
-} else {
-    puts stderr "Warning: no campaign YAML found; falling back to directory roster scan."
-    foreach child [lsort [glob -nocomplain [file join $campaign_dir *]]] {
-        if {[file isdirectory $child] && [file exists [file join $child roster.tsv]]} {
-            lappend segments_list [file tail $child]
-        }
-    }
+if {[dict exists $cdata segments]} {
+    set segments_list [dict get $cdata segments]
 }
-
-if {$execute_mode && $yaml_path eq ""} {
-    puts stderr "Error: --execute requires a campaign YAML (P harness needs usp_document/antifacts)."
-    exit 1
+if {[dict exists $cdata skip_segments]} {
+    set skip_set [dict get $cdata skip_segments]
 }
 
 # --- Build segment paths ---
@@ -320,9 +304,11 @@ if {$auto_mode} {
 }
 
 # ────────────────────────────────────────────────────────────────────────
-# Execute mode — dispatch ready tasks through the routing table.
+# Dispatch — drive the routing table. --dry-run disables writes;
+# without it, runners write live (file outputs for harness transitions,
+# real SES sends for T6, etc.).
 # ────────────────────────────────────────────────────────────────────────
-if {$execute_mode} {
+if {$dispatching} {
     set ::_total_done 0
     set ::_total_failed 0
 
@@ -584,7 +570,7 @@ if {$execute_mode} {
     }
 
     # ────────────────────────────────────────────────────────────────────
-    # Non-auto execute (single pass, explicit or default tid_scopes).
+    # Non-auto dispatch (single pass, explicit or default tid_scopes).
     # ────────────────────────────────────────────────────────────────────
     set ready_by_tid [compute_ready_by_tid \
         $State $all_contacts $active_tids $tid_scopes \
