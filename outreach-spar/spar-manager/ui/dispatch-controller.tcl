@@ -279,28 +279,7 @@ oo::class create spar::ui::DispatchController {
         set mode_tag [expr {$dry_run ? " (DRY RUN — writes disabled)" : ""}]
         $Log log "Dispatch requested: $label ($tid)$mode_tag"
 
-        # Route by transition kind. T1/T3 → harness_run with
-        # ProfileHarness; T2/T4 → harness_run with ApproachHarness;
-        # T6 → ses_send (stub); T7 → imap_poll (stub).
-        set enqueued 0
-        switch -- $tid {
-            T1 - T3 {
-                set incr [my _enqueue_harness_p $opts $sel_stems $tid $dry_run]
-            }
-            T2 - T4 {
-                set incr [my _enqueue_harness_a $opts $sel_stems $tid $dry_run]
-            }
-            T6 {
-                set incr [my _enqueue_simple ses_send $opts $sel_stems $tid $dry_run]
-            }
-            T7 {
-                set incr [my _enqueue_simple imap_poll $opts $sel_stems $tid $dry_run]
-            }
-            default {
-                $Log log "Dispatch for $tid not implemented in pool path."
-                return
-            }
-        }
+        set incr [my _enqueue_prepared $opts $sel_stems $tid $dry_run]
         if {$incr == 0} {
             $Log log "Dispatch: no rows enqueued (none eligible after gating)."
             return
@@ -319,83 +298,41 @@ oo::class create spar::ui::DispatchController {
         my _fire dispatch-started $tid
     }
 
-    # _enqueue_harness_p — prep + enqueue T1/T3 rows. Returns count.
-    method _enqueue_harness_p {opts sel_stems tid dry_run} {
-        if {[catch {
-            set prep [spar::p::prepare_for_pool $opts \
-                [list [self] on_prep_progress]]
-        } err]} {
+    # _enqueue_prepared — ask the transition class for its pool shape
+    # via prepare_for_pool, then enqueue each {stem opts} pair onto the
+    # shared Dispatcher with the worker_proc the class declares. The
+    # transition layer is the SSOT for per-row opts; this method only
+    # filters by selection and drives the in-pool gating + requeue.
+    method _enqueue_prepared {opts sel_stems tid dry_run} {
+        set cls [::spar::transitions::get $tid]
+        if {[catch {set prep [$cls prepare_for_pool $opts \
+                [list [self] on_prep_progress]]} err]} {
             $Log log "Dispatch prep failed: $err"
             return 0
         }
-        return [my _enqueue_harness_rows $prep $sel_stems $tid \
-            spar::ProfileHarness $dry_run]
-    }
+        set worker_proc [dict get $prep worker_proc]
+        set rows        [dict get $prep rows]
 
-    # _enqueue_harness_a — prep + enqueue T2/T4 rows. Returns count.
-    method _enqueue_harness_a {opts sel_stems tid dry_run} {
-        if {[catch {
-            set prep [spar::a::prepare_for_pool $opts \
-                [list [self] on_prep_progress]]
-        } err]} {
-            $Log log "Dispatch prep failed: $err"
-            return 0
-        }
-        return [my _enqueue_harness_rows $prep $sel_stems $tid \
-            spar::ApproachHarness $dry_run]
-    }
-
-    # _enqueue_harness_rows — for each {stem prompt_dir} pair the prep
-    # produced, enqueue with the harness worker proc. Returns count.
-    method _enqueue_harness_rows {prep sel_stems tid harness_class dry_run} {
-        set logs_dir [dict get $prep logs_dir]
-        set rows     [dict get $prep rows]
-        set n 0
         set selset [dict create]
         foreach s $sel_stems { dict set selset $s 1 }
-        foreach pair $rows {
-            lassign $pair stem pdir
-            if {[llength $sel_stems] > 0 && ![dict exists $selset $stem]} continue
-            if {[$Dispatcher state $stem] ni {"" done failed cancelled}} {
-                $Log log "Skip $stem: already in pool ([$Dispatcher state $stem])"
-                continue
-            }
-            # Requeue the slot if the row is in a terminal state.
-            if {[$Dispatcher state $stem] in {done failed cancelled}} {
-                $Dispatcher requeue $stem
-            }
-            set wopts [dict create \
-                prompt_dir    $pdir \
-                log_dir       $logs_dir \
-                harness_class $harness_class]
-            dict set RowTid    $stem $tid
-            dict set RowDryRun $stem $dry_run
-            dict set RowMeta   $stem [dict create \
-                prompt_dir $pdir log_dir $logs_dir]
-            lappend BurstStems $stem
-            $Dispatcher enqueue $stem $tid harness_run $wopts
-            incr n
-        }
-        return $n
-    }
 
-    # _enqueue_simple — T6 / T7 stubs. The worker bodies need only the
-    # full opts dict (for tasks, etc.), so we pass it through.
-    method _enqueue_simple {worker_proc opts sel_stems tid dry_run} {
         set n 0
-        foreach stem $sel_stems {
-            if {[$Dispatcher state $stem] ni {"" done failed cancelled}} {
-                $Log log "Skip $stem: already in pool ([$Dispatcher state $stem])"
+        foreach pair $rows {
+            lassign $pair stem row_opts
+            if {[llength $sel_stems] > 0 && ![dict exists $selset $stem]} continue
+            set st [$Dispatcher state $stem]
+            if {$st ni {"" done failed cancelled}} {
+                $Log log "Skip $stem: already in pool ($st)"
                 continue
             }
-            if {[$Dispatcher state $stem] in {done failed cancelled}} {
+            if {$st in {done failed cancelled}} {
                 $Dispatcher requeue $stem
             }
             dict set RowTid    $stem $tid
             dict set RowDryRun $stem $dry_run
-            dict set RowMeta   $stem [dict create]
+            dict set RowMeta   $stem $row_opts
             lappend BurstStems $stem
-            $Dispatcher enqueue $stem $tid $worker_proc $opts
+            $Dispatcher enqueue $stem $tid $worker_proc $row_opts
             incr n
         }
         return $n
