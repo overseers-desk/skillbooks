@@ -744,4 +744,51 @@ if {$elapsed < 4500} {
 }
 $d destroy
 
+# ════════════════════════════════════════════════════════════════════════
+# 18. Per-worker cap — distinct worker_proc names get distinct caps
+# ════════════════════════════════════════════════════════════════════════
+#
+# A unified Dispatcher must let one transition kind run serially (SES,
+# rate-limit pacing) while others run in parallel inside the same pool.
+# set_worker_cap installs a per-worker-proc cap that further constrains
+# the global Jobs cap; rows for that worker_proc cannot exceed it even
+# when the global cap has slack.
+#
+# This test enqueues 4 fake_worker_a rows and 4 fake_worker_b rows into
+# a pool of 8. set_worker_cap fake_worker_a 1 forces the four a-rows to
+# serialise; fake_worker_b is uncapped (4 in parallel under jobs=8).
+#
+# Wall time signature: a-rows take 4×2s=~8s sequentially; b-rows take
+# ~2s in parallel. Overall ~8s wall, dominated by the serialised side.
+# Without set_worker_cap, both groups parallelise and the total drops
+# to ~2s.
+section "18. Per-worker cap"
+
+set d [spar::Dispatcher new 8 test_log]
+$d set_worker_cap fake_worker_a 1
+set t0 [clock milliseconds]
+foreach r {a1 a2 a3 a4} {
+    $d enqueue $r T1 fake_worker_a {plan {{exec_sleep 2}}}
+}
+foreach r {b1 b2 b3 b4} {
+    $d enqueue $r T2 fake_worker_b {plan {{exec_sleep 2}}}
+}
+foreach r {a1 a2 a3 a4 b1 b2 b3 b4} { wait_for_terminal $d $r 20000 }
+set elapsed [expr {[clock milliseconds] - $t0}]
+foreach r {a1 a2 a3 a4 b1 b2 b3 b4} {
+    assert_eq [$d state $r] done "$r reaches done"
+}
+# fake_worker_a's 4×2s serialised ≈ 8s; fake_worker_b's 4×2s parallel ≈ 2s.
+# Overall wall time should be near max(8s, 2s) = 8s. Without per-worker
+# caps the test would finish in ~2s (everything parallel under cap=8).
+# Allow generous slack for tpool worker startup and OS scheduling.
+if {$elapsed > 6500 && $elapsed < 12000} {
+    puts "  ok: per-worker cap enforces serial fake_worker_a (elapsed=${elapsed}ms)"
+    incr ::passes
+} else {
+    puts "FAIL: per-worker cap not enforced (elapsed=${elapsed}ms; expected 6500–12000ms)"
+    incr ::failures
+}
+$d destroy
+
 finish_tests

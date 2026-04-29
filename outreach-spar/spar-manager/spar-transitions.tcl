@@ -323,7 +323,6 @@ if {$auto_mode} {
 # Execute mode — dispatch ready tasks through the routing table.
 # ────────────────────────────────────────────────────────────────────────
 if {$execute_mode} {
-    set ::_pending_dispatchers 0
     set ::_total_done 0
     set ::_total_failed 0
 
@@ -334,15 +333,6 @@ if {$execute_mode} {
             failed  { puts "  \[FAIL \] $slug ($message)" }
             skipped { puts "  \[SKIP \] $slug ($message)" }
             warning { puts stderr "  \[WARN \] $slug: $message" }
-        }
-    }
-
-    proc exec_on_complete {done failed result} {
-        incr ::_total_done $done
-        incr ::_total_failed $failed
-        incr ::_pending_dispatchers -1
-        if {$::_pending_dispatchers <= 0} {
-            set ::_alldone 1
         }
     }
 
@@ -406,48 +396,124 @@ if {$execute_mode} {
         return $ready_by_tid
     }
 
-    # Dispatch every ready T-id through its runner. Per-TID scope
-    # filters flow into build_opts as filter_segments / filter_stems
-    # so each runner sees only the scope its TID asked for.
+    # Dispatch every ready T-id through one shared spar::Dispatcher.
+    # Per-TID scope filters flow into build_opts as filter_segments /
+    # filter_stems so each runner sees only the scope its TID asked
+    # for; per-TID prepare_for_pool returns {worker_proc rows} which
+    # we fold into a single batch enqueued onto the same pool.
+    #
+    # The shared pool means --jobs=N is the campaign-wide cap (not
+    # per-TID). set_worker_cap ses_send 1 keeps T6 rows serial inside
+    # the pool while harness_run rows (T1/T2/T3/T4) parallelise. See
+    # docs/concurrency.md "Per-worker cap".
     proc dispatch_ready {ready_by_tid active_tids tid_scopes \
                          yaml_path cdata dry_run jobs delay \
                          assume_yes step_callback} {
-        set ::_pending_dispatchers 0
-        set ::_alldone 0
+        # Collect {tid worker_proc rows} triples from every active TID.
+        # Prep failures decrement nothing — they were never enqueued —
+        # but we surface them as warnings so the operator sees them.
+        set batches {}
         foreach tid $active_tids {
             if {![spar::has_transition_runner $tid]} continue
             if {![dict exists $ready_by_tid $tid]} continue
-            set runner [spar::transition_runner $tid]
             set tasks [dict get $ready_by_tid $tid]
             lassign [tid_scope_filter $tid_scopes $tid] f_segs f_stems
-            set opts [dict create \
+            set base_opts [dict create \
                 campaign_file $yaml_path \
                 dry_run $dry_run \
                 jobs $jobs \
                 delay $delay \
                 tid $tid]
             if {$step_callback ne ""} {
-                dict set opts step_callback $step_callback
+                dict set base_opts step_callback $step_callback
             }
-            # Per-runner opts come from the transition class's build_opts
-            # method. It returns a dict to merge onto opts; the
-            # log_message key is the one-line summary printed before
-            # dispatch.
             set cls [::spar::transitions::get $tid]
             set extra [$cls build_opts $tasks $f_segs $f_stems]
             if {[dict exists $extra log_message]} {
                 puts [dict get $extra log_message]
                 set extra [dict remove $extra log_message]
             }
-            set opts [dict merge $opts $extra]
-            incr ::_pending_dispatchers
-            if {[catch {{*}$runner $opts exec_on_progress exec_on_complete} err]} {
-                puts stderr "  $tid dispatch error: $err"
-                incr ::_pending_dispatchers -1
+            set opts [dict merge $base_opts $extra]
+            if {[catch {set prep [$cls prepare_for_pool $opts \
+                    exec_on_progress]} err]} {
+                puts stderr "  $tid prep error: $err"
                 incr ::_total_failed [llength $tasks]
+                continue
+            }
+            set worker_proc [dict get $prep worker_proc]
+            set rows        [dict get $prep rows]
+            if {[llength $rows] == 0} continue
+            lappend batches [list $tid $worker_proc $rows]
+        }
+
+        if {[llength $batches] == 0} return
+
+        # Build the shared Dispatcher and pre-install per-worker caps.
+        # ses_send is unconditionally capped at 1 (harmless when no T6
+        # rows are in the batch); other workers inherit the global cap.
+        set ::_alldone 0
+        set ::_total_seen 0
+        set ::_total_expected 0
+        foreach batch $batches {
+            incr ::_total_expected [llength [lindex $batch 2]]
+        }
+
+        set disp [spar::Dispatcher new $jobs ::spar::_pool_log_drop]
+        $disp set_worker_cap ses_send 1
+
+        if {$step_callback ne ""} {
+            $disp set_pre_post_callback \
+                [list ::spar::_pool_pre_post $step_callback]
+        }
+
+        $disp subscribe row-done   [list ::_dispatch_on_done]
+        $disp subscribe row-failed [list ::_dispatch_on_failed]
+        $disp subscribe row-state  [list ::_dispatch_on_state]
+
+        # Pause the queue while every batch is enqueued so step_callback
+        # (when present) sees the final total, not a growing one.
+        $disp pause_queue
+        foreach batch $batches {
+            lassign $batch tid worker_proc rows
+            foreach pair $rows {
+                lassign $pair stem row_opts
+                $disp enqueue $stem $tid $worker_proc $row_opts
+                # Mirror the legacy `[START] slug` line at enqueue time
+                # so output ordering matches the historical queue.
+                exec_on_progress $stem started ""
             }
         }
-        if {$::_pending_dispatchers > 0} { vwait ::_alldone }
+        $disp resume_queue
+
+        if {$::_total_expected > 0} { vwait ::_alldone }
+
+        catch {$disp destroy}
+    }
+
+    # Row-event subscribers used by dispatch_ready. Defined at script
+    # scope so the Dispatcher's subscribe call (which runs inside the
+    # proc) finds them. They mutate the same exec_on_progress /
+    # ::_total_done / ::_total_failed state the script's outer summary
+    # block reads.
+    proc ::_dispatch_on_done {row result} {
+        incr ::_total_done
+        set msg ""
+        catch {set msg [dict get $result message_id]}
+        exec_on_progress $row done $msg
+    }
+    proc ::_dispatch_on_failed {row reason} {
+        incr ::_total_failed
+        exec_on_progress $row failed $reason
+    }
+    proc ::_dispatch_on_state {row to_state} {
+        if {$to_state ni {done failed cancelled}} return
+        if {$to_state eq "cancelled"} {
+            exec_on_progress $row skipped "cancelled"
+        }
+        incr ::_total_seen
+        if {$::_total_seen >= $::_total_expected} {
+            after idle [list set ::_alldone 1]
+        }
     }
 
     # ────────────────────────────────────────────────────────────────────

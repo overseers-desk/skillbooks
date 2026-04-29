@@ -25,7 +25,7 @@ namespace eval spar {
 }
 
 oo::class create spar::Dispatcher {
-    variable Pool Jobs
+    variable Pool Jobs WorkerCap
     variable Queue RowState RowMeta RowJobId
     variable QueuePaused
     variable LogCallback PrePostCallback Subs
@@ -35,6 +35,7 @@ oo::class create spar::Dispatcher {
 
     constructor {jobs {log_cb ""}} {
         set Jobs            $jobs
+        set WorkerCap       [dict create]
         set Queue           {}
         set RowState        [dict create]
         set RowMeta         [dict create]
@@ -149,6 +150,30 @@ oo::class create spar::Dispatcher {
     method is_queue_paused {} { return $QueuePaused }
     method jobs_cap {} { return $Jobs }
     method posted_count {} { return [llength [my active_rows]] }
+
+    # set_worker_cap — install a per-worker-proc concurrency cap that
+    # further constrains the global Jobs cap. A row is posted to the
+    # tpool only if (global active < Jobs) AND (active rows whose meta
+    # carries this worker_proc < cap). Default cap is Jobs (i.e. no
+    # extra constraint).
+    #
+    # Used by the unified dispatch_ready in spar-transitions.tcl to let
+    # SES rows (worker_proc=ses_send) run serially while harness rows
+    # parallelise inside the same shared pool. The decision lives in
+    # docs/concurrency.md "Per-worker cap".
+    method set_worker_cap {worker_proc cap} {
+        dict set WorkerCap $worker_proc $cap
+    }
+
+    # _active_count_for_worker — count active rows whose meta worker
+    # equals $worker_proc. O(active_rows). Called from _try_post_next.
+    method _active_count_for_worker {worker_proc} {
+        set n 0
+        foreach row [my active_rows] {
+            if {[dict get $RowMeta $row worker] eq $worker_proc} { incr n }
+        }
+        return $n
+    }
 
     # ─── Public mutators ─────────────────────────────────────────────
 
@@ -343,21 +368,47 @@ oo::class create spar::Dispatcher {
 
     # ─── Internals ───────────────────────────────────────────────────
 
-    # _try_post_next — pop queued rows and post them to the tpool while
-    # we are below the global cap. The state transitions to running at
-    # post time, not at msg_started arrival; this avoids the race where
-    # the dict still showed `queued` between post and the asynchronous
-    # message arrival, and also lets the cap math read directly from
-    # the state map.
+    # _try_post_next — walk the queue in order and post any row that
+    # fits both the global Jobs cap and its per-worker cap. The state
+    # transitions to running at post time, not at msg_started arrival;
+    # this avoids the race where the dict showed `queued` between post
+    # and the asynchronous message arrival, and lets the cap math read
+    # directly from the state map.
+    #
+    # A row blocked only by its per-worker cap stays in queue; we keep
+    # scanning so other workers' rows can still post. This preserves
+    # per-worker FIFO under contention while letting unrelated workers
+    # run in parallel inside the same shared pool.
     method _try_post_next {} {
         if {$QueuePaused} return
-        while {[llength $Queue] > 0 && [llength [my active_rows]] < $Jobs} {
-            set row [lindex $Queue 0]
-            set Queue [lrange $Queue 1 end]
+        set new_queue {}
+        set i 0
+        while {$i < [llength $Queue]} {
+            set row [lindex $Queue $i]
+            incr i
             if {![dict exists $RowState $row]} continue
             if {[dict get $RowState $row] ne "queued"} continue
+            # Global cap blocks the entire pass; nothing more can post
+            # until a slot frees and _try_post_next runs again.
+            if {[llength [my active_rows]] >= $Jobs} {
+                lappend new_queue $row
+                # Tail is unprocessed; preserve it.
+                while {$i < [llength $Queue]} {
+                    lappend new_queue [lindex $Queue $i]
+                    incr i
+                }
+                break
+            }
             set meta [dict get $RowMeta $row]
             set worker [dict get $meta worker]
+            # Per-worker cap. Default = Jobs (no extra constraint).
+            set wcap [expr {[dict exists $WorkerCap $worker]
+                            ? [dict get $WorkerCap $worker]
+                            : $Jobs}]
+            if {[my _active_count_for_worker $worker] >= $wcap} {
+                lappend new_queue $row
+                continue
+            }
             set opts   [dict get $meta opts]
             set tid    [dict get $meta tid]
             # Pre-post gate. Total/idx are computed against current
@@ -385,6 +436,7 @@ oo::class create spar::Dispatcher {
                 [list $worker $row $opts]]
             dict set RowJobId $row $jobid
         }
+        set Queue $new_queue
     }
 
     # _expect — assert that the row's current state is one of the
