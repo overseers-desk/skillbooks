@@ -231,7 +231,18 @@ proc imap_poll {row opts} {
 # msg_done.
 #
 # Plan tuples:
-#   {sleep ms}                           — block this thread for ms
+#   {sleep ms}                           — yield to event loop for ms
+#                                          (vwait+after; worker remains
+#                                          responsive to thread::send)
+#   {exec_sleep secs}                    — block the worker thread in a
+#                                          real exec for secs (mimics the
+#                                          harness's exec claude). Used by
+#                                          test/test-pool.tcl §17 to assert
+#                                          the pool actually parallelises;
+#                                          a worker holding this step is
+#                                          OS-blocked, not event-loop
+#                                          responsive — which is what the
+#                                          production harness looks like.
 #   {msg_<name> arg ...}                 — emit the named message
 #   {check_cancel}                       — exit as cancelled if sentinel set
 #   {check_pause poll_ms}                — pause while sentinel set
@@ -247,6 +258,10 @@ proc fake_worker {row opts} {
                 set ::sleep_done 0
                 after $ms set ::sleep_done 1
                 vwait ::sleep_done
+            }
+            exec_sleep {
+                set secs [lindex $rest 0]
+                exec sleep $secs
             }
             check_cancel {
                 if {[worker_cancel_requested? $row]} {

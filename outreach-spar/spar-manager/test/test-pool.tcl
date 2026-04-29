@@ -703,4 +703,45 @@ lassign [lindex $::complete_events 0] d f _
 assert_eq $d 2 "step_callback=continue lets all rows through"
 assert_eq $f 0 "step_callback=continue: no failures"
 
+# ════════════════════════════════════════════════════════════════════════
+# 17. True parallelism with blocking workers
+# ════════════════════════════════════════════════════════════════════════
+#
+# Reproducer for the bug documented in #86 follow-up and analysed in
+# docs/job-pool.md "Pool sizing". A `tpool::create -minworkers 0` only
+# spawns one worker for the pool's lifetime, regardless of post volume,
+# so production runs at --jobs=8 ran strictly sequentially. Earlier
+# tests asserted `posted_count` (which counts state flips at
+# tpool::post time) and were therefore satisfied even when no second
+# worker thread ever existed.
+#
+# This test enqueues four rows, each with a real blocking `exec sleep`
+# in the worker body, and asserts wall time is roughly one sleep
+# duration (parallel) rather than four (serial). exec_sleep is the
+# right shape because the production harness's `exec claude` is OS-
+# blocked the same way; the original `sleep` plan-step uses event-loop-
+# friendly vwait+after and would not have reproduced the bug.
+section "17. True parallelism with blocking workers"
+
+set d [spar::Dispatcher new 4 test_log]
+set t0 [clock milliseconds]
+foreach r {p1 p2 p3 p4} {
+    $d enqueue $r T1 fake_worker {plan {{exec_sleep 2}}}
+}
+foreach r {p1 p2 p3 p4} { wait_for_terminal $d $r 12000 }
+set elapsed [expr {[clock milliseconds] - $t0}]
+foreach r {p1 p2 p3 p4} {
+    assert_eq [$d state $r] done "$r reaches done"
+}
+# Four 2-second sleeps in parallel ≈ 2s; in series ≈ 8s. Allow
+# generous slack for tpool worker startup and OS scheduling.
+if {$elapsed < 4500} {
+    puts "  ok: 4×exec_sleep 2s ran in parallel (elapsed=${elapsed}ms)"
+    incr ::passes
+} else {
+    puts "FAIL: 4×exec_sleep 2s ran serially (elapsed=${elapsed}ms; expected <4500ms)"
+    incr ::failures
+}
+$d destroy
+
 finish_tests

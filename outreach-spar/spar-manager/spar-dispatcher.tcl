@@ -67,8 +67,16 @@ oo::class create spar::Dispatcher {
             set ::pool_imap_check_file [list $imap_check_path]
             source [list $initcmd_path]
         "
+        # minworkers = maxworkers — pre-spawn all worker threads at
+        # tpool::create time. With -minworkers 0 the Thread package's
+        # lazy-spawn path produces only one worker for the pool's
+        # lifetime, regardless of post volume; subsequent posts queue
+        # behind the first worker and the pool never grows. Verified
+        # by test/test-pool.tcl §17 ("True parallelism with blocking
+        # workers"); see docs/job-pool.md "Pool sizing" for the
+        # diagnosis trail.
         set Pool [tpool::create \
-            -minworkers 0 \
+            -minworkers $jobs \
             -maxworkers $jobs \
             -idletime   60 \
             -initcmd    $initcmd]

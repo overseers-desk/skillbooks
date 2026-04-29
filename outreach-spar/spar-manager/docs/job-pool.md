@@ -14,6 +14,16 @@ The alternative considered was a subprocess framing, in which the original CLI h
 
 **Controller** (Tk, GUI). Owns the Play, Pause, and Cancel buttons, the right-click menu on tree rows, and the progress bar. Translates user actions into Dispatcher method calls. Reads the Dispatcher's per-row state map for rendering. Does not spawn jobs and does not call `thread::send` directly. The `TransitionTree` and `CampaignModel` layers above are unchanged from their present roles.
 
+## Pool sizing
+
+The `tpool::create` call uses `-minworkers $jobs -maxworkers $jobs`, pre-spawning every worker thread at create time. This is not the obvious choice; the obvious choice is `-minworkers 0 -maxworkers $jobs` and let workers spawn lazily as posts arrive. That obvious choice is broken.
+
+Empirical finding (#86 follow-up; reproducer in `test/test-pool.tcl` §17 "True parallelism with blocking workers"): with `-minworkers 0`, the Thread package spawns exactly one worker for the pool's lifetime, regardless of post volume. Subsequent posts queue behind the first worker and the pool never grows. This holds whether the worker body uses blocking `exec` or event-loop-friendly `open "|"` + `vwait` — so the deferred `exec → open "|"` migration listed below would not, on its own, give parallelism. Pre-spawning is the only fix that works.
+
+The cost is paying the initcmd overhead for `$jobs` worker threads up-front, even on small batches. Each Dispatcher lives for the duration of a wish session or a CLI run, so the per-thread cost amortises immediately and is not worth optimising.
+
+A production failure on 2026-04-28 (29-row T1 batch at `--jobs=8`) ran strictly sequentially over ~8 hours before this was identified. The Phase-1b unit tests asserted `posted_count` (which counts state flips at `tpool::post` time) and were therefore satisfied even when no second worker thread ever existed. The §17 test asserts wall time of four blocking `exec sleep 2` jobs is under 4500 ms, which can only pass with real parallelism.
+
 ## Row state machine
 
 ```
