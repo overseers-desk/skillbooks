@@ -2,84 +2,58 @@
 # spar-transitions.tcl — transition eligibility report and executor (CLI)
 #
 # Report mode (default):
-#   tclsh9.0 spar-transitions.tcl [campaign_dir_or_yaml] [--tid=T6 ...]
-#       [--segment=<name> ...] [--stem=<roster-stem> ...] [--pending|--ready]
+#   tclsh9.0 spar-transitions.tcl [campaign_dir_or_yaml] [Tn[:seg[/stem]] ...]
+#       [--pending|--ready] [-v|--verbose]
 #
 # Execute mode:
-#   tclsh9.0 spar-transitions.tcl <campaign_dir_or_yaml> --tid=Tn --execute
-#       [--segment=<name> ...] [--stem=<stem> ...] [--jobs=N] [--delay=N]
-#       [--yes] [--dry-run]
+#   tclsh9.0 spar-transitions.tcl <campaign_dir_or_yaml> Tn[:seg[/stem]] ...
+#       --execute [--jobs=N] [--delay=N] [--yes] [--dry-run]
 #
-# Each T-id is represented by a Transition class in
-# spar-manager/transitions/; registration happens at source time and
-# this file reads the registry via spar::transition_tids / _runner /
-# _label / etc. Per-runner opts come from each class's `build_opts`
-# method, not from proc-name lookups.
+# Positional Tn tokens after the campaign path name the transitions to
+# act on:
+#   Tn                   all rows of TID Tn, campaign-wide
+#   Tn:<segment>         Tn restricted to one segment
+#   Tn:<segment>/<stem>  Tn for one specific contact
+# Tokens are repeatable and mixable across TIDs. The grammar is parsed
+# in spar-transitions-cli.tcl (test/test-cli-parser.tcl drives it).
 #
-# Transitions that declare requires_send_confirmation surface an
-# up-front [y/N] here (CLI layer) so the GUI path — which confirms
-# via its own buttons — doesn't prompt on stdin.
-#
-# --auto drives auto_safe=1 transitions as a state machine: classify,
-# dispatch ready work, re-classify, repeat until no new work is ready.
-# Transitions with external-action side-effects (e.g. SES send)
-# declare auto_safe=0 and are filtered out; passing one via --tid=
-# alongside --auto is a hard error.
+# --auto drives auto_safe=1 transitions as a state machine and refuses
+# any positional Tn token. Transitions with external-action side-effects
+# (e.g. SES send) declare auto_safe=0 and are filtered out.
 #
 # --jobs=0 activates stepping: worker parallelism drops to 1 and a
-# stdin [y/N] gate fires before each item. The gate is generic — the
-# dispatcher / driver invokes a callback between items and the
-# transition class does not know what the callback does.
+# stdin [y/N] gate fires before each item.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
 source [file join $script_dir spar-dispatch.tcl]
 source [file join $script_dir spar-email.tcl]
+source [file join $script_dir spar-transitions-cli.tcl]
 
-# --- Argument parsing ---
-# Hand-rolled rather than tcllib cmdline because --tid, --segment, --stem
-# are repeatable; cmdline::getoptions and tcl::OptProc both overwrite on
-# repeat. Third-party parse_args/argparse support accumulation but aren't
-# installed. Tradeoff: we only accept --flag=value, not --flag value.
-set campaign_dir ""
-set campaign_file ""
-set filter_tid {}
-set filter_state {}   ;# "ready", "pending", or empty (all)
-set filter_segments {}
-set filter_stems {}
-set execute_mode 0
-set auto_mode 0
-set dry_run 0
-set jobs 4
-set delay 2
-set assume_yes 0
-set verbose 0
-set stepping 0
-
+# print_help — usage text. The compact grammar block at the top is the
+# operator-facing summary; the TRANSITIONS list is generated from the
+# registry so adding a transition surfaces it here automatically.
 proc print_help {} {
     puts {spar-transitions.tcl — report and execute SPAR state transitions.
 
 USAGE
-    tclsh9.0 spar-transitions.tcl [campaign_dir_or_yaml] [options]
+    tclsh9.0 spar-transitions.tcl [campaign_dir_or_yaml] [Tn[:seg[/stem]] ...] [options]
+
+POSITIONAL TRANSITION TOKENS
+    Tn                  all rows of TID Tn, campaign-wide
+    Tn:<segment>        rows of Tn restricted to one segment
+    Tn:<segment>/<stem> rows of Tn for one specific contact
+    (repeatable; mixable across TIDs)
 
 OPTIONS
-    --tid=Tn          filter by transition id (repeatable); default: all
-    --segment=NAME    restrict to segment (repeatable)
-    --stem=STEM       restrict to contact stem (repeatable)
     --pending         show/act on pending tasks only
     --ready           show/act on ready tasks only
     --execute         run the transition; default is report-only
     --auto            with --execute: drive the offline state machine
                       (all auto_safe=1 transitions) until convergence.
-                      Re-classifies between iterations so upstream
-                      output feeds downstream transitions in one run.
-                      Refuses if any --tid= names an auto_safe=0
-                      transition.
+                      Refuses if any positional Tn token is supplied.
     --dry-run         run the transition with writes disabled (implies
                       execute-mode; pass alone, not with --execute).
-                      Harness-backed transitions write prompts, skip
-                      children; send-type transitions skip the external
-                      action and any stamp that follows it.
     --jobs=N          parallel jobs for --execute (default 4); pass
                       --jobs=0 to step one item at a time with a
                       stdin [y/N] gate before each item.
@@ -109,64 +83,98 @@ COMMON WORKFLOWS
     tclsh9.0 spar-transitions.tcl path/to/campaign --ready
 
     # Execute one transition's ready work
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=Tn --execute
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1 --execute
 
     # Step through one transition's ready work, confirming each item
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=Tn \
-        --execute --jobs=0
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1 --execute --jobs=0
 
     # Dry-run first, then live
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=Tn --dry-run
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=Tn --execute
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1 --dry-run
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1 --execute
 
-    # Limit to one segment or one stem
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --tid=Tn --execute \
-        --segment=vic --stem=jane-doe
+    # Limit to one segment or one contact
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1:vic --execute
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T6:vic/jane-doe --execute
+
+    # Mix transitions and scopes in one shared pool
+    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml \
+        T1 T2:vic T6:vic/jane-doe --execute --jobs=8
 
     # Drive the offline state machine (auto_safe transitions) until
     # convergence, re-classifying between iterations.
     tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --execute --auto}
 }
 
-foreach arg $argv {
-    switch -glob -- $arg {
-        -h        -
-        --help      { print_help; exit 0 }
-        --tid=*     { lappend filter_tid [string range $arg 6 end] }
-        --segment=* { lappend filter_segments [string range $arg 10 end] }
-        --stem=*    { lappend filter_stems [string range $arg 7 end] }
-        --jobs=*    { set jobs [string range $arg 7 end] }
-        --delay=*   { set delay [string range $arg 8 end] }
-        --yes       { set assume_yes 1 }
-        --pending   { set filter_state pending }
-        --ready     { set filter_state ready }
-        --execute   { set execute_mode 1 }
-        --auto      { set auto_mode 1 }
-        --dry-run   { set dry_run 1 }
-        -v          -
-        --verbose   { set verbose 1 }
-        --*         { puts stderr "Unknown flag: $arg (try --help)"; exit 1 }
-        default     {
-            set norm [file normalize $arg]
-            if {[file isfile $norm] && [string match *.yaml $norm]} {
-                set campaign_file $norm
-                set campaign_dir [file dirname $norm]
+# Parse argv. The parser returns {ok 0 error <msg>} on grammar errors;
+# surface those as one-line stderr messages and exit 1. --help triggers
+# print_help and exit 0.
+set parse_result [spar::parse_cli $argv]
+if {[dict get $parse_result ok] != 1} {
+    puts stderr "Error: [dict get $parse_result error]"
+    exit 1
+}
+set spec [dict get $parse_result spec]
+
+if {[dict get $spec help]} { print_help; exit 0 }
+
+set campaign_path [dict get $spec campaign_path]
+set tid_scopes    [dict get $spec tid_scopes]
+set filter_state  [dict get $spec filter_state]
+set execute_mode  [dict get $spec execute_mode]
+set auto_mode     [dict get $spec auto_mode]
+set dry_run       [dict get $spec dry_run]
+set jobs          [dict get $spec jobs]
+set delay         [dict get $spec delay]
+set assume_yes    [dict get $spec assume_yes]
+set verbose       [dict get $spec verbose]
+set stepping      0
+
+# Normalise path → campaign_dir + (optional) campaign_file. A directory
+# triggers the YAML auto-discover (campaign.yaml or campaign*.yaml);
+# a *.yaml argument is taken as the YAML directly. Unspecified path
+# defaults to ".".
+set campaign_dir ""
+set campaign_file ""
+if {$campaign_path ne ""} {
+    set norm [file normalize $campaign_path]
+    if {[file isfile $norm] && [string match *.yaml $norm]} {
+        set campaign_file $norm
+        set campaign_dir [file dirname $norm]
+    } else {
+        set campaign_dir $campaign_path
+    }
+}
+if {$campaign_dir eq ""} { set campaign_dir "." }
+set campaign_dir [file normalize $campaign_dir]
+
+# tid_scope_filter — return {segments stems} pair for one TID by
+# unioning every scope that names this TID. An unscoped scope ({tid {}
+# {}}) widens both lists to "no filter" (empty list = all segments /
+# all stems).
+proc tid_scope_filter {tid_scopes tid} {
+    set segs {}
+    set stems {}
+    set seg_unbounded 0
+    set stem_unbounded 0
+    foreach scope $tid_scopes {
+        lassign $scope st sg sm
+        if {$st ne $tid} continue
+        if {$sg eq ""} {
+            set seg_unbounded 1
+            set stem_unbounded 1
+        } else {
+            if {!$seg_unbounded} { lappend segs $sg }
+            if {$sm eq ""} {
+                set stem_unbounded 1
             } else {
-                set campaign_dir $arg
+                if {!$stem_unbounded} { lappend stems $sm }
             }
         }
     }
+    if {$seg_unbounded}  { set segs  {} }
+    if {$stem_unbounded} { set stems {} }
+    return [list [lsort -unique $segs] [lsort -unique $stems]]
 }
-
-if {$dry_run && $execute_mode} {
-    puts stderr "Error: --dry-run and --execute are mutually exclusive."
-    puts stderr "  --dry-run   runs the transition with writes disabled"
-    puts stderr "  --execute   runs the transition live (with writes)"
-    puts stderr "Pick one."
-    exit 1
-}
-# --dry-run is its own execute mode — no need to pass --execute alongside.
-if {$dry_run} { set execute_mode 1 }
 
 if {$execute_mode && $filter_state eq "pending"} {
     puts stderr "Error: --execute requires --ready (default); --pending has no executable work."
@@ -187,22 +195,6 @@ if {$jobs == 0} {
     set delay 0
 }
 
-# Safety: --auto refuses any transition whose class declares
-# auto_safe=0 (e.g. live SES send). The check is against class
-# metadata, not T-id literals, so new auto-unsafe transitions are
-# refused without touching this file.
-if {$auto_mode && [llength $filter_tid] > 0} {
-    set unsafe {}
-    foreach tid $filter_tid {
-        if {[catch {set t [::spar::transitions::get $tid]}]} continue
-        if {![$t auto_safe]} { lappend unsafe "$tid ([$t label])" }
-    }
-    if {[llength $unsafe] > 0} {
-        puts stderr "Error: --auto excludes [join $unsafe {, }]. Drop those --tid= values or drop --auto."
-        exit 1
-    }
-}
-
 # step_prompt -- stdin [y/N] gate, installed as the step_callback
 # when --jobs=0. Generic: the caller passes the current transition's
 # tid and the item label; this proc carries no T-id-specific logic.
@@ -217,15 +209,9 @@ proc step_prompt {tid slug idx total} {
     return abort
 }
 
-if {$campaign_file ne "" && $campaign_dir eq ""} {
-    set campaign_dir [file dirname [file normalize $campaign_file]]
-}
-if {$campaign_dir eq ""} { set campaign_dir "." }
-set campaign_dir [file normalize $campaign_dir]
-
 # --- Discover campaign YAML ---
 if {$campaign_file ne ""} {
-    set yaml_path [file normalize $campaign_file]
+    set yaml_path $campaign_file
 } else {
     set yaml_path [file join $campaign_dir campaign.yaml]
     if {![file exists $yaml_path]} {
@@ -265,11 +251,13 @@ if {$execute_mode && $yaml_path eq ""} {
     exit 1
 }
 
-# --- Build segment paths (honour --segment filter) ---
+# --- Build segment paths ---
+# Per-TID scopes do their own segment filtering inside
+# compute_ready_by_tid; segment_paths here is the campaign-wide set
+# (minus skip_segments) so any scope can pick from any segment.
 set segment_paths {}
 foreach seg $segments_list {
     if {$seg in $skip_set} continue
-    if {[llength $filter_segments] > 0 && $seg ni $filter_segments} continue
     set seg_dir [file join $campaign_dir $seg]
     if {[file isdirectory $seg_dir] && [file exists [file join $seg_dir roster.tsv]]} {
         lappend segment_paths [list $seg $seg_dir]
@@ -281,10 +269,10 @@ if {[llength $segment_paths] == 0} {
     exit 1
 }
 
-# --- Classify all contacts, then apply --stem filter ---
-# In --auto mode, T1/T2/T3/T4 are the only active transitions and none of
-# them read parsed-approach fields (#63). Skip the refine pass too —
-# cheap classify_segment is enough.  Non-auto needs refined fields for
+# --- Classify all contacts ---
+# In --auto mode, T1/T2/T3/T4 are the only active transitions and none
+# of them read parsed-approach fields (#63). Skip the refine pass —
+# cheap classify_segment is enough. Non-auto needs refined fields for
 # T6+ progress reporting; refine via the State's cache so any later
 # transition_eligible call hits the same projection.
 # One State for the whole CLI run — its lifetime matches this script's.
@@ -304,25 +292,19 @@ foreach item $segment_paths {
     lappend all_contacts {*}$c
 }
 
-if {[llength $filter_stems] > 0} {
-    set filtered {}
-    foreach c $all_contacts {
-        set s [spar::dict_get_default $c stem ""]
-        if {$s in $filter_stems} {
-            lappend filtered $c
-        }
-    }
-    set all_contacts $filtered
-}
-
-# --- Transition definitions ---
+# --- Active transitions ---
 # All T-ids, labels, and auto-safety come from the transition registry
 # populated at load time by spar-manager/transitions/*.tcl. No parallel
 # list is maintained here.
-if {[llength $filter_tid] == 0} {
+if {[llength $tid_scopes] == 0} {
     set active_tids [spar::transition_tids]
 } else {
-    set active_tids $filter_tid
+    # Unique TIDs in insertion order from tid_scopes.
+    set active_tids {}
+    foreach scope $tid_scopes {
+        lassign $scope tid _ _
+        if {$tid ni $active_tids} { lappend active_tids $tid }
+    }
 }
 
 # --auto drives the offline state machine. Included T-ids are those
@@ -364,19 +346,14 @@ if {$execute_mode} {
         }
     }
 
-    # Classify segments → contacts (honours --stem filter). Used at startup
-    # and again before each --auto iteration so disk changes from the
-    # previous pass feed the next round of transition eligibility.
+    # Classify segments → contacts. Used at startup and again before each
+    # --auto iteration so disk changes from the previous pass feed the
+    # next round of transition eligibility.
     #
     # In --auto mode the only active T-ids are T1/T2/T3/T4 (auto_safe=1),
-    # none of which read the refined approach fields (email_sent /
-    # linkedin_sent / email_replied / to_addresses / unsent_subjects).
-    # Cheap classify_segment is the natural fit — transition_eligible
-    # refines each contact lazily on demand, and APPROACH_STALE is
-    # detected from the line-1 hash without parsing the YAML body. The
-    # parse-skipping is what made --auto's first dispatch responsive
-    # (#63).
-    proc reclassify_contacts {state segment_paths filter_stems {refine 0}} {
+    # none of which read the refined approach fields; classify_segment
+    # alone is the natural fit and transition_eligible refines lazily.
+    proc reclassify_contacts {state segment_paths {refine 0}} {
         set out {}
         foreach item $segment_paths {
             lassign $item label seg_dir
@@ -391,38 +368,50 @@ if {$execute_mode} {
             }
             lappend out {*}$c
         }
-        if {[llength $filter_stems] > 0} {
-            set filtered {}
-            foreach c $out {
-                if {[dict get $c stem] in $filter_stems} { lappend filtered $c }
-            }
-            set out $filtered
-        }
         return $out
     }
 
-    # Compute ready tasks per TID. cdata is full campaign dict — T9/T10
-    # need it to read secondary/tertiary channel slots.
-    proc compute_ready_by_tid {state all_contacts active_tids primary_channel {cdata {}}} {
+    # Compute ready tasks per TID, applying each TID's scope filter
+    # (segment + stem). Multiple scopes for the same TID concatenate;
+    # rows are deduped by stem so `T1 T1:foo` does not run T1's foo
+    # rows twice. cdata is the full campaign dict — T9/T10 need it to
+    # read secondary/tertiary channel slots.
+    proc compute_ready_by_tid {state all_contacts active_tids tid_scopes \
+                               primary_channel {cdata {}}} {
         set ready_by_tid [dict create]
         foreach tid $active_tids {
-            set eligible [$state transition_eligible $all_contacts $tid $primary_channel $cdata]
+            lassign [tid_scope_filter $tid_scopes $tid] segs stems
+            set eligible [$state transition_eligible \
+                $all_contacts $tid $primary_channel $cdata]
+            set seen_stems [dict create]
             set ready_list {}
             foreach c $eligible {
-                if {[dict get $c task_state] eq "ready"} { lappend ready_list $c }
+                if {[dict get $c task_state] ne "ready"} continue
+                if {[llength $segs] > 0} {
+                    set seg_name [file tail [dict get $c _segment_dir]]
+                    if {$seg_name ni $segs} continue
+                }
+                if {[llength $stems] > 0} {
+                    if {[dict get $c stem] ni $stems} continue
+                }
+                set key [dict get $c stem]
+                if {[dict exists $seen_stems $key]} continue
+                dict set seen_stems $key 1
+                lappend ready_list $c
             }
-            if {[llength $ready_list] > 0} { dict set ready_by_tid $tid $ready_list }
+            if {[llength $ready_list] > 0} {
+                dict set ready_by_tid $tid $ready_list
+            }
         }
         return $ready_by_tid
     }
 
-    # Dispatch every ready T-id through its runner. Runners run concurrently;
-    # exec_on_complete decrements ::_pending_dispatchers and the outer vwait
-    # blocks until all have drained.
-    proc dispatch_ready {ready_by_tid active_tids yaml_path cdata \
-                         dry_run jobs delay \
-                         filter_segments filter_stems assume_yes \
-                         step_callback} {
+    # Dispatch every ready T-id through its runner. Per-TID scope
+    # filters flow into build_opts as filter_segments / filter_stems
+    # so each runner sees only the scope its TID asked for.
+    proc dispatch_ready {ready_by_tid active_tids tid_scopes \
+                         yaml_path cdata dry_run jobs delay \
+                         assume_yes step_callback} {
         set ::_pending_dispatchers 0
         set ::_alldone 0
         foreach tid $active_tids {
@@ -430,6 +419,7 @@ if {$execute_mode} {
             if {![dict exists $ready_by_tid $tid]} continue
             set runner [spar::transition_runner $tid]
             set tasks [dict get $ready_by_tid $tid]
+            lassign [tid_scope_filter $tid_scopes $tid] f_segs f_stems
             set opts [dict create \
                 campaign_file $yaml_path \
                 dry_run $dry_run \
@@ -444,7 +434,7 @@ if {$execute_mode} {
             # log_message key is the one-line summary printed before
             # dispatch.
             set cls [::spar::transitions::get $tid]
-            set extra [$cls build_opts $tasks $filter_segments $filter_stems]
+            set extra [$cls build_opts $tasks $f_segs $f_stems]
             if {[dict exists $extra log_message]} {
                 puts [dict get $extra log_message]
                 set extra [dict remove $extra log_message]
@@ -472,9 +462,10 @@ if {$execute_mode} {
         set last_signature ""
         set iter 1
         while {$iter <= $MAX_ITER} {
-            set all_contacts [reclassify_contacts $State $segment_paths $filter_stems 0]
+            set all_contacts [reclassify_contacts $State $segment_paths 0]
             set ready_by_tid [compute_ready_by_tid \
-                $State $all_contacts $active_tids $primary_channel $cdata]
+                $State $all_contacts $active_tids $tid_scopes \
+                $primary_channel $cdata]
 
             if {[dict size $ready_by_tid] == 0} {
                 if {$iter == 1} {
@@ -506,9 +497,9 @@ if {$execute_mode} {
             puts ""
             puts "── Iteration $iter ──"
 
-            dispatch_ready $ready_by_tid $active_tids \
+            dispatch_ready $ready_by_tid $active_tids $tid_scopes \
                 $yaml_path $cdata $dry_run $jobs $delay \
-                $filter_segments $filter_stems $assume_yes \
+                $assume_yes \
                 [expr {$stepping ? "step_prompt" : ""}]
 
             incr iter
@@ -527,10 +518,11 @@ if {$execute_mode} {
     }
 
     # ────────────────────────────────────────────────────────────────────
-    # Non-auto execute (single pass, explicit or default --tid).
+    # Non-auto execute (single pass, explicit or default tid_scopes).
     # ────────────────────────────────────────────────────────────────────
     set ready_by_tid [compute_ready_by_tid \
-        $State $all_contacts $active_tids $primary_channel $cdata]
+        $State $all_contacts $active_tids $tid_scopes \
+        $primary_channel $cdata]
 
     if {[dict size $ready_by_tid] == 0} {
         puts "Campaign: $campaign_name"
@@ -572,9 +564,9 @@ if {$execute_mode} {
         }
     }
 
-    dispatch_ready $ready_by_tid $active_tids \
+    dispatch_ready $ready_by_tid $active_tids $tid_scopes \
         $yaml_path $cdata $dry_run $jobs $delay \
-        $filter_segments $filter_stems $assume_yes \
+        $assume_yes \
         [expr {$stepping ? "step_prompt" : ""}]
 
     puts ""
@@ -586,7 +578,8 @@ if {$execute_mode} {
 }
 
 # ────────────────────────────────────────────────────────────────────────
-# Report mode (original behaviour, now honouring --segment / --stem)
+# Report mode — honours per-TID scopes so `T1:vic` shows only T1's vic
+# rows when the user asked for that scope.
 # ────────────────────────────────────────────────────────────────────────
 puts "Campaign: $campaign_name\n"
 
@@ -595,11 +588,19 @@ foreach tid [spar::transition_tids] {
     if {$tid ni $active_tids} continue
     set label [spar::transition_label $tid]
 
+    lassign [tid_scope_filter $tid_scopes $tid] segs stems
     set eligible [$State transition_eligible $all_contacts $tid $primary_channel $cdata]
 
     set ready_list  {}
     set pending_list {}
     foreach c $eligible {
+        if {[llength $segs] > 0} {
+            set seg_name [file tail [dict get $c _segment_dir]]
+            if {$seg_name ni $segs} continue
+        }
+        if {[llength $stems] > 0} {
+            if {[dict get $c stem] ni $stems} continue
+        }
         if {[dict get $c task_state] eq "pending"} {
             lappend pending_list $c
         } else {
