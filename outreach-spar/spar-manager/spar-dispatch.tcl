@@ -203,6 +203,19 @@ proc spar::_pool_on_failed {run_id row reason} {
     {*}[dict get $st progress] $row failed $reason
 }
 
+# spar::_cleanup_locks_then_call — wrapped on_complete used by p::run.
+# Deletes any roster lock files from the segments that participated in
+# the batch, then forwards to the caller's on_complete. Best-effort:
+# absence is fine, deletion errors are ignored, because flock does not
+# require the file to exist between runs (#95).
+proc spar::_cleanup_locks_then_call {lock_paths user_cb done failed result} {
+    foreach p $lock_paths {
+        if {$p eq ""} continue
+        catch {file delete -force -- $p}
+    }
+    {*}$user_cb $done $failed $result
+}
+
 proc spar::_pool_finish {run_id} {
     variable pool_runs
     if {![dict exists $pool_runs $run_id]} return
@@ -272,6 +285,7 @@ proc spar::p::run {opts on_progress on_complete} {
     set all_prompt_dirs {}
     set slug_ctx [dict create]
     set per_seg_results {}
+    set lock_paths {}
     set total_count 0
     set total_skipped 0
 
@@ -286,6 +300,7 @@ proc spar::p::run {opts on_progress on_complete} {
             continue
         }
         lappend per_seg_results [dict get $seg result]
+        lappend lock_paths      [dict get $seg roster_lock]
         incr total_count   [dict get $seg result count]
         incr total_skipped [dict get $seg result skipped]
         foreach pdir [dict get $seg prompt_dirs] {
@@ -323,8 +338,15 @@ proc spar::p::run {opts on_progress on_complete} {
             harness_class spar::ProfileHarness]]
     }
 
+    # Wrap on_complete so the batch's roster locks are cleaned at
+    # end-of-run (#95). The user's on_complete fires after deletion;
+    # delete is best-effort (catch) since flock has no semantic
+    # requirement for the file to be present.
+    set wrapped_complete [list spar::_cleanup_locks_then_call \
+        $lock_paths $on_complete]
+
     spar::run_through_pool $jobs $tid harness_run $rows $agg_result \
-        $wrapped_progress $on_complete $step_callback
+        $wrapped_progress $wrapped_complete $step_callback
     return
 }
 
@@ -394,6 +416,15 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
     if {![file exists $goal_path]} {
         set goal_path [file join $segment_dir goal.md]
     }
+
+    # Canonical per-segment roster lock path (#95). Dot-prefix so it
+    # hides in `ls`; no `.tsv` infix because the lock is conceptually
+    # roster-shaped, not TSV-shaped. Pre-delete any stale lock from a
+    # prior run so the new run starts clean — flock semantics don't
+    # require deletion, but accumulated cosmetic debris is what bit
+    # the .gitignore three times in this repo's history.
+    set roster_lock [file join $segment_dir .roster.lock]
+    catch {file delete -force -- $roster_lock}
 
     variable ::spar::dispatch_script_dir
     set script_dir $::spar::dispatch_script_dir
@@ -511,6 +542,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
             __STEM__          $stem \
             __SQLITE3_SKILL__ $sqlite3_skill_text \
             __BROWSER_CMD__   [spar::detect_browser_cmd] \
+            __ROSTER_LOCK__   $roster_lock \
         ] [spar::load_prompt_template spar-p.txt]]
 
         if {$appendix_p_author ne ""} {
@@ -563,7 +595,8 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
     return [dict create \
         result $result \
         prompt_dirs $prompt_dirs \
-        pre_snapshot $pre_snapshot]
+        pre_snapshot $pre_snapshot \
+        roster_lock $roster_lock]
 }
 
 # on-progress wrapper that runs DbC-Post validation when a slug completes.
