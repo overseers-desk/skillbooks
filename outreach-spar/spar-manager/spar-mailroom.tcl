@@ -70,7 +70,8 @@ proc spar::mailroom::contact_block {name org email} {
 
 proc spar::mailroom::_run {query} {
     set mr [auto_execok mailroom]
-    set tmp "/tmp/spar-mr-[pid]-[clock microseconds]"
+    set chan [file tempfile tmp /tmp/spar-mr-]
+    close $chan
     set status [catch {exec {*}$mr -A search --format text --limit 10 $query > $tmp.out 2> $tmp.err} _ opts]
     if {$status == 0} {
         set rc 0
@@ -80,7 +81,7 @@ proc spar::mailroom::_run {query} {
     }
     set fd [open $tmp.out r]; set sout [read $fd]; close $fd
     set fd [open $tmp.err r]; set serr [read $fd]; close $fd
-    catch {file delete -- $tmp.out $tmp.err}
+    catch {file delete -- $tmp $tmp.out $tmp.err}
     if {$rc == 0 || $rc == 1} { return [list $rc [string trim $sout]] }
     return [list $rc "(search failed: [lindex [split [string trim $serr] \n] 0])"]
 }
