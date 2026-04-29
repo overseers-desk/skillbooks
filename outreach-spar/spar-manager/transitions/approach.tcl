@@ -23,6 +23,24 @@ oo::class create ::spar::transitions::ApproachTransition {
         ::spar::a::run $opts $on_progress $on_complete
     }
 
+    # prepare_for_pool — pool-shape entry. Wraps spar::a::prepare_for_pool
+    # (which returns {logs_dir <abs path> rows {{stem pdir} ...} result <r>})
+    # and repackages each pair into the per-row opts dict the harness_run
+    # worker consumes.
+    method prepare_for_pool {opts on_progress} {
+        set prep [::spar::a::prepare_for_pool $opts $on_progress]
+        set logs_dir [dict get $prep logs_dir]
+        set rows {}
+        foreach pair [dict get $prep rows] {
+            lassign $pair stem pdir
+            lappend rows [list $stem [dict create \
+                prompt_dir    $pdir \
+                log_dir       $logs_dir \
+                harness_class spar::ApproachHarness]]
+        }
+        return [dict create worker_proc harness_run rows $rows]
+    }
+
     # T2: PROFILED contacts that pass the campaign-wide approach-dispatch
     # gate (min_star, in_scope_channel, skip_excluded — SSOT with
     # spar::a::run per #56).

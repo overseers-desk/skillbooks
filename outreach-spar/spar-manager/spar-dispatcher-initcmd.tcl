@@ -294,6 +294,14 @@ proc fake_worker {row opts} {
     if {!$terminal_emitted} { msg_done $row {} }
 }
 
+# fake_worker_a / fake_worker_b — aliases for fake_worker that test-pool.tcl
+# §18 ("Per-worker cap") uses to drive distinct worker_proc names through
+# one shared pool. Production code never references them; they exist only
+# so set_worker_cap can apply different caps to two otherwise-identical
+# workers.
+proc fake_worker_a {row opts} { fake_worker $row $opts }
+proc fake_worker_b {row opts} { fake_worker $row $opts }
+
 # FakeHarness — minimal harness shape used by test/test-pool.tcl to
 # exercise harness_run without sourcing spar-harness.tcl or invoking
 # claude. Mirrors the constructor signature of spar::ProfileHarness /

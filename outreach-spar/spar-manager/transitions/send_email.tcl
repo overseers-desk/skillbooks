@@ -9,11 +9,14 @@
 # that builds the per-row Pool batch.
 #
 # actioned_date is stamped on success by the helper, not here.
-# Sends are serialised at jobs=1 inside the Pool with an inter-row
-# delay_ms throttle (opts.delay, default 2s) to stay under SES rate
-# limits.
+# Sends are serialised at the unified Dispatcher's per-worker cap
+# (set_worker_cap ses_send 1, installed by spar-transitions.tcl's
+# dispatch_ready) with an inter-row delay_ms throttle (opts.delay,
+# default 2s) to stay under SES rate limits. SES rows therefore run
+# at most one at a time inside the same shared pool that runs
+# harness_run rows in parallel.
 #
-# Opts consumed by run:
+# Opts consumed by run / prepare_for_pool:
 #   campaign_file  path to campaign YAML
 #   dry_run        1 = skip SES send + skip stamp
 #   tasks          list of classified ready contacts (from build_opts)
@@ -84,21 +87,41 @@ oo::class create ::spar::transitions::SendEmailTransition {
     }
 
     method run {opts on_progress on_complete} {
+        set step_callback [spar::dict_get_default $opts step_callback ""]
+        # Standalone callers (legacy CLI / tests) still get a serial
+        # pool of jobs=1 — SES is serial by convention. The unified
+        # CLI dispatch in spar-transitions.tcl bypasses this method
+        # and goes through prepare_for_pool + Dispatcher's per-worker
+        # cap instead.
+        set rows [my _build_rows $opts]
+        spar::run_through_pool 1 [my tid] ses_send $rows [dict create] \
+            $on_progress $on_complete $step_callback
+    }
+
+    # prepare_for_pool — pool-shape entry. Returns
+    # {worker_proc ses_send rows {{stem opts} ...}}; the caller
+    # (spar-transitions.tcl's dispatch_ready) installs
+    # set_worker_cap ses_send 1 on the shared Dispatcher so these
+    # rows run serially even when other transition kinds parallelise.
+    method prepare_for_pool {opts on_progress} {
+        set rows [my _build_rows $opts]
+        return [dict create worker_proc ses_send rows $rows]
+    }
+
+    # _build_rows — extract the per-row opts dict construction so
+    # both run (legacy callback shape) and prepare_for_pool (unified
+    # Dispatcher) share one path. Reads tasks, campaign_file,
+    # dry_run, delay, sender from opts; the per-row dict carries
+    # everything ses_send needs to send one message.
+    method _build_rows {opts} {
         set campaign_file [dict get $opts campaign_file]
         set dry_run       [spar::dict_get_default $opts dry_run 0]
         set tasks         [spar::dict_get_default $opts tasks {}]
         set delay         [spar::dict_get_default $opts delay 2]
-        set step_callback [spar::dict_get_default $opts step_callback ""]
-        set jobs          [spar::dict_get_default $opts jobs 1]
 
         set cdata [spar::load_campaign $campaign_file]
         set camp_sender [spar::dict_get_default $cdata sender [dict create]]
 
-        # Build per-row {stem opts} pairs. The Pool's ses_send worker
-        # consumes per-row data — campaign_file, dry_run,
-        # approach_path, sender, delay_ms — instead of the legacy
-        # tasks list. delay_ms throttles consecutive sends from the
-        # same worker thread (SES rate-cap).
         set delay_ms [expr {$delay * 1000}]
         set rows {}
         foreach c $tasks {
@@ -112,13 +135,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
                 sender        $camp_sender \
                 delay_ms      $delay_ms]]
         }
-
-        # SES is serial by convention (one auth handshake per
-        # connection, pacing by delay_ms). Force jobs=1 here even if
-        # the caller passed --jobs=N — the per-row delay would
-        # interleave unpredictably with parallel workers.
-        spar::run_through_pool 1 [my tid] ses_send $rows [dict create] \
-            $on_progress $on_complete $step_callback
+        return $rows
     }
 
     # T6: APPROACHED/SENT, has_email, not yet email_sent.  Gated on

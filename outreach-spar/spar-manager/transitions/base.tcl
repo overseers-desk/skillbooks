@@ -59,6 +59,22 @@ oo::class create ::spar::transitions::Transition {
             message "[my tid] ([my label]): dispatch_status=[my dispatch_status]"]
     }
 
+    # prepare_for_pool — return {worker_proc <name> rows {{stem opts} ...}}
+    # for the unified dispatch_ready in spar-transitions.tcl. Each row's
+    # `opts` is the per-row dict the worker_proc consumes (e.g.
+    # {prompt_dir log_dir harness_class} for harness_run).
+    #
+    # Subclasses with dispatch_status=available override. The base
+    # default errors so a missing override is loud.
+    #
+    # opts has the same shape as run's opts. on_progress is invoked
+    # synchronously during prep for skipped/failed setup events; row-
+    # level progress is delivered by the Pool's row events once the
+    # worker runs.
+    method prepare_for_pool {opts on_progress} {
+        error "[my tid]: prepare_for_pool not implemented"
+    }
+
     # Default eligible — zero tasks. Subclasses that have eligibility
     # criteria (T1, T2, T3, T4, T6, T7, T8, T9, T10) override. Method name has
     # no leading underscore: TclOO would unexport it and the dispatcher in

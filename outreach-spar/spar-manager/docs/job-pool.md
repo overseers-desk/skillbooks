@@ -24,6 +24,8 @@ The cost is paying the initcmd overhead for `$jobs` worker threads up-front, eve
 
 A production failure on 2026-04-28 (29-row T1 batch at `--jobs=8`) ran strictly sequentially over ~8 hours before this was identified. The Phase-1b unit tests asserted `posted_count` (which counts state flips at `tpool::post` time) and were therefore satisfied even when no second worker thread ever existed. The §17 test asserts wall time of four blocking `exec sleep 2` jobs is under 4500 ms, which can only pass with real parallelism.
 
+The Dispatcher exposes `set_worker_cap <worker_proc> <cap>` so a serial-required worker can coexist with parallel ones in the same shared pool. The cap is a sub-cap of the global `Jobs` — a row whose `worker_proc` is at its per-worker cap stays queued while other workers' rows continue to post. The CLI's `dispatch_ready` installs `set_worker_cap ses_send 1` on its shared Dispatcher so SES sends serialise (one auth handshake per connection, plus the per-row `delay_ms` rate-limit pacing) while harness and IMAP rows fill the rest of the pool's slots; reproducer in `test/test-pool.tcl` §18.
+
 ## Row state machine
 
 ```

@@ -30,12 +30,46 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
     }
 
     method run {opts on_progress on_complete} {
+        set step_callback [spar::dict_get_default $opts step_callback ""]
+        set jobs          [spar::dict_get_default $opts jobs 1]
+
+        set prep [my _build_rows $opts $on_progress $on_complete]
+        if {$prep eq ""} return  ;# _build_rows already invoked on_complete
+        set rows [dict get $prep rows]
+
+        spar::run_through_pool $jobs [my tid] imap_poll $rows \
+            [dict create] $on_progress $on_complete $step_callback
+    }
+
+    # prepare_for_pool — pool-shape entry. Returns
+    # {worker_proc imap_poll rows {{stem opts} ...}}. The unified
+    # Dispatcher in spar-transitions.tcl enqueues the rows directly;
+    # imap_poll has no rate-limit pacing requirement so it inherits
+    # the global Jobs cap.
+    method prepare_for_pool {opts on_progress} {
+        set prep [my _build_rows $opts $on_progress ""]
+        if {$prep eq ""} {
+            return [dict create worker_proc imap_poll rows {}]
+        }
+        return [dict create \
+            worker_proc imap_poll \
+            rows [dict get $prep rows]]
+    }
+
+    # _build_rows — extract the per-row opts dict construction so
+    # both run (legacy callback shape) and prepare_for_pool (unified
+    # Dispatcher) share one path. Returns {rows {{stem opts} ...}}
+    # on success or "" if a precondition failed.
+    #
+    # When called via run, on_complete may be invoked directly for
+    # missing-config or empty-rows shortcut paths; when called via
+    # prepare_for_pool, on_complete is "" and we just return empty
+    # rows for the pool to skip.
+    method _build_rows {opts on_progress on_complete} {
         set campaign_file [dict get $opts campaign_file]
         set dry_run       [spar::dict_get_default $opts dry_run 0]
         set segments      [spar::dict_get_default $opts segments {}]
         set stems         [spar::dict_get_default $opts stems    {}]
-        set step_callback [spar::dict_get_default $opts step_callback ""]
-        set jobs          [spar::dict_get_default $opts jobs 1]
 
         set cdata [spar::load_campaign $campaign_file]
 
@@ -45,15 +79,15 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
                 {*}$on_progress "" failed \
                     "campaign YAML missing reply_check.mailroom_account or reply_check.folder"
             }
-            {*}$on_complete 0 1 {}
-            return
+            if {$on_complete ne ""} { {*}$on_complete 0 1 {} }
+            return ""
         }
         if {![dict exists $cdata sender email]} {
             if {$on_progress ne ""} {
                 {*}$on_progress "" failed "campaign YAML missing sender.email"
             }
-            {*}$on_complete 0 1 {}
-            return
+            if {$on_complete ne ""} { {*}$on_complete 0 1 {} }
+            return ""
         }
 
         set account [dict get $cdata reply_check mailroom_account]
@@ -82,16 +116,14 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
                     {*}$on_progress $s skipped "no reply yet"
                 }
             }
-            {*}$on_complete 0 0 [dict create new_replies 0 errors 0]
-            return
+            if {$on_complete ne ""} {
+                {*}$on_complete 0 0 [dict create new_replies 0 errors 0]
+            }
+            return ""
         }
 
         # Build {stem opts} pairs. The Pool's imap_poll worker drives
-        # one (search + zero-or-more reads) cycle per row. The legacy
-        # Driver coalesced multiple stems sharing one to_email into a
-        # single search; under the Pool this is split per stem,
-        # trading a small number of duplicate searches for a much
-        # simpler worker.
+        # one (search + zero-or-more reads) cycle per row.
         set rows {}
         set seen_stems [dict create]
         foreach entry $approaches {
@@ -114,14 +146,15 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         # Stems requested but with no sent approach get a synchronous
         # "skipped — no reply yet" line, matching the legacy Driver's
         # tail loop.
-        foreach s $stems {
-            if {![dict exists $seen_stems $s]} {
-                {*}$on_progress $s skipped "no reply yet"
+        if {$on_progress ne ""} {
+            foreach s $stems {
+                if {![dict exists $seen_stems $s]} {
+                    {*}$on_progress $s skipped "no reply yet"
+                }
             }
         }
 
-        spar::run_through_pool $jobs [my tid] imap_poll $rows \
-            [dict create] $on_progress $on_complete $step_callback
+        return [dict create rows $rows]
     }
 
     # T7: email was sent, no reply yet, contact still in scope (not

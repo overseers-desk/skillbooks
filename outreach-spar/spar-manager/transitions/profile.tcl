@@ -27,6 +27,24 @@ oo::class create ::spar::transitions::ProfileTransition {
         ::spar::p::run $opts $on_progress $on_complete
     }
 
+    # prepare_for_pool — pool-shape entry. Wraps spar::p::prepare_for_pool
+    # (which returns {logs_dir <abs path> rows {{stem pdir} ...}}) and
+    # repackages each {stem pdir} pair into the per-row opts dict the
+    # harness_run worker consumes.
+    method prepare_for_pool {opts on_progress} {
+        set prep [::spar::p::prepare_for_pool $opts $on_progress]
+        set logs_dir [dict get $prep logs_dir]
+        set rows {}
+        foreach pair [dict get $prep rows] {
+            lassign $pair stem pdir
+            lappend rows [list $stem [dict create \
+                prompt_dir    $pdir \
+                log_dir       $logs_dir \
+                harness_class spar::ProfileHarness]]
+        }
+        return [dict create worker_proc harness_run rows $rows]
+    }
+
     # T1 fires from DISCOVERED, T3 fires from PROFILE_STALE — same class,
     # entry state distinguished via [my tid].
     method eligible {state contact primary_channel cdata today_iso} {
