@@ -37,6 +37,48 @@ proc spar::load_prompt_template {name} {
     return [string trimright $s "\n"]
 }
 
+# spar::detect_browser_cmd — Probe the host once for a usable headless
+# browser and return the leading shell command that the agent's bash
+# splices in front of `"URL" 2>/dev/null`. Memoised after first call so
+# every per-segment prompt build across a dispatcher run reuses the same
+# answer instead of asking the worker to re-detect (issue #96).
+#
+# Resolution: chromium first (snap → $HOME/snap/.../chromium profile;
+# non-snap → $HOME/.config/chromium); else google-chrome with no
+# --user-data-dir; else error. $HOME stays unexpanded in the returned
+# string — the agent's bash expands it at run time, which keeps the
+# prompt file portable across users.
+proc spar::detect_browser_cmd {} {
+    variable _browser_cmd_cache
+    if {[info exists _browser_cmd_cache]} { return $_browser_cmd_cache }
+
+    set ua "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+    set lock_wrap "flock /tmp/chromium.lock timeout 10"
+    set flags "--headless=new --dump-dom --user-agent=\"$ua\""
+
+    set chromium [auto_execok chromium]
+    if {$chromium ne ""} {
+        if {[catch {exec readlink -f $chromium} resolved]} {
+            set resolved $chromium
+        }
+        if {$resolved eq "/usr/bin/snap"} {
+            set userdir "\$HOME/snap/chromium/common/chromium"
+        } else {
+            set userdir "\$HOME/.config/chromium"
+        }
+        set _browser_cmd_cache "$lock_wrap chromium $flags --user-data-dir=\"$userdir\""
+        return $_browser_cmd_cache
+    }
+
+    set google_chrome [auto_execok google-chrome]
+    if {$google_chrome ne ""} {
+        set _browser_cmd_cache "$lock_wrap google-chrome $flags"
+        return $_browser_cmd_cache
+    }
+
+    error "spar::detect_browser_cmd: neither chromium nor google-chrome on PATH"
+}
+
 source [file join $::spar::dispatch_script_dir spar-dispatcher.tcl]
 
 # spar::run_through_pool — generic CLI adapter. Construct a fresh
@@ -468,6 +510,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
             __ROSTER_PATH__   $roster_path \
             __STEM__          $stem \
             __SQLITE3_SKILL__ $sqlite3_skill_text \
+            __BROWSER_CMD__   [spar::detect_browser_cmd] \
         ] [spar::load_prompt_template spar-p.txt]]
 
         if {$appendix_p_author ne ""} {
