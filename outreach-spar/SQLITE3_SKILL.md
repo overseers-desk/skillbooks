@@ -26,4 +26,4 @@ EOF
 mv /tmp/out.tsv file.tsv
 ```
 
-For concurrent access (worker scripts), wrap with `flock -x`.
+For concurrent access (worker scripts), wrap the sqlite3 call with `flock -x <lockfile>`. The dispatcher provides the canonical lockfile path inline elsewhere in the prompt — use that path verbatim, do not invent a new filename.
