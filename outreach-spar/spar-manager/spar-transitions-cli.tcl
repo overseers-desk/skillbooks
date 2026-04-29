@@ -7,11 +7,12 @@
 #
 # Grammar:
 #
-#   <campaign_dir_or_yaml>             positional, optional (defaults to ".")
+#   <campaign.yaml>                    positional, required (filesystem
+#                                      checks deferred to the script layer)
 #   Tn                                 all rows of TID Tn, campaign-wide
 #   Tn:<segment>                       Tn restricted to one segment
 #   Tn:<segment>/<stem>                Tn for one specific contact
-#   --execute | --dry-run              execute mode
+#   --dry-run                          dispatch path with writes disabled
 #   --jobs=N | --delay=N | --yes
 #   --auto                             refuses any positional Tn token
 #   --pending | --ready                report mode filter
@@ -32,9 +33,8 @@ namespace eval spar {}
 #   campaign_path  raw positional (file or dir, or "" if unspecified)
 #   tid_scopes     list of {tid segment stem} triples; empty == "all"
 #   filter_state   "" | "ready" | "pending"
-#   execute_mode   0/1   (--execute, or --dry-run implies execute)
 #   auto_mode      0/1   (--auto)
-#   dry_run        0/1
+#   dry_run        0/1   (--dry-run; gates the dispatch path)
 #   jobs           int   (default 4; 0 means stepping)
 #   delay          int   (default 2)
 #   assume_yes     0/1
@@ -45,7 +45,6 @@ proc spar::parse_cli {argv} {
         campaign_path ""   \
         tid_scopes    {}   \
         filter_state  ""   \
-        execute_mode  0    \
         auto_mode     0    \
         dry_run       0    \
         jobs          4    \
@@ -69,9 +68,8 @@ proc spar::parse_cli {argv} {
             --yes       { dict set spec assume_yes 1 }
             --pending   { dict set spec filter_state pending }
             --ready     { dict set spec filter_state ready }
-            --execute   { dict set spec execute_mode 1 }
             --auto      { dict set spec auto_mode 1; set saw_auto 1 }
-            --dry-run   { dict set spec dry_run 1; dict set spec execute_mode 1 }
+            --dry-run   { dict set spec dry_run 1 }
             -v          -
             --verbose   { dict set spec verbose 1 }
             --tid=*     {
@@ -119,10 +117,10 @@ proc spar::parse_cli {argv} {
                     set saw_positional_tid 1
                     dict lappend spec tid_scopes [list $tid $seg $stem]
                 } else {
-                    # Campaign path positional (file or directory).
-                    # File-existence checks are deferred to the script
-                    # layer so parse_cli stays filesystem-pure
-                    # (testable without temp YAMLs).
+                    # Campaign path positional. Captured verbatim;
+                    # the script layer enforces "yaml file that exists".
+                    # parse_cli stays filesystem-pure so tests run
+                    # without temp YAMLs.
                     if {[dict get $spec campaign_path] ne ""} {
                         return [dict create ok 0 error \
                             "only one campaign path may be supplied"]

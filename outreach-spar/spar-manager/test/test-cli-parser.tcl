@@ -131,27 +131,28 @@ assert_parse_error {/tmp/x.yaml --stem=alice} \
 # ════════════════════════════════════════════════════════════════════════
 section "3. Other flags survive"
 
-# --jobs / --execute / --dry-run / --delay / --yes / --verbose / --pending
-# / --ready / --auto are unchanged.
+# --jobs / --dry-run / --delay / --yes / --verbose / --pending / --ready
+# / --auto are unchanged.
 
-set result [spar::parse_cli {/tmp/x.yaml T1 --execute --jobs=8 --delay=5 --yes --verbose}]
+set result [spar::parse_cli {/tmp/x.yaml T1 --dry-run --jobs=8 --delay=5 --yes --verbose}]
 assert_eq [dict get $result ok] 1 "compound flags parse ok"
 set spec [dict get $result spec]
-assert_eq [dict get $spec execute_mode] 1 "--execute sets execute_mode"
+assert_eq [dict get $spec dry_run] 1 "--dry-run sets dry_run"
 assert_eq [dict get $spec jobs] 8 "--jobs=8 captured"
 assert_eq [dict get $spec delay] 5 "--delay=5 captured"
 assert_eq [dict get $spec assume_yes] 1 "--yes sets assume_yes"
 assert_eq [dict get $spec verbose] 1 "--verbose sets verbose"
 
 # --auto without positional Tn is fine
-set result [spar::parse_cli {/tmp/x.yaml --auto --execute}]
+set result [spar::parse_cli {/tmp/x.yaml --auto --dry-run}]
 assert_eq [dict get $result ok] 1 "--auto without Tn parses ok"
 assert_eq [dict get [dict get $result spec] auto_mode] 1 "--auto sets auto_mode"
 
-# Campaign path can be a directory or a YAML — parse_cli is filesystem-pure
+# Campaign path captured verbatim — parse_cli is filesystem-pure (the
+# script layer rejects non-yaml paths and missing files at runtime).
 set result [spar::parse_cli {some-campaign-dir T1}]
-assert_eq [dict get $result ok] 1 "directory path parses ok"
+assert_eq [dict get $result ok] 1 "any positional path parses ok"
 assert_eq [dict get [dict get $result spec] campaign_path] "some-campaign-dir" \
-    "directory path captured as campaign_path"
+    "campaign_path captured verbatim"
 
 finish_tests
