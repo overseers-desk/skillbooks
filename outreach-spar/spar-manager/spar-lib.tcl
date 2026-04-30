@@ -283,10 +283,10 @@ proc spar::write_roster {tsv_path rows {headers {}}} {
 # Atomic for the target file (write to sibling tmp + rename), but assumes
 # the caller has serialised concurrent writers. The dispatcher's single-
 # threaded event loop is the sole serialiser today: harness children emit
-# ROSTER_UPDATE marker lines instead of writing the TSV directly, and the
-# dispatcher invokes this function from on_harness_output. If a future
-# caller writes the TSV from multiple processes, reintroduce flock here.
-# Returns the count of rows updated. Errors if no row matches.
+# msg_roster_update via thread::send (defined in spar-dispatcher-initcmd.tcl)
+# and the dispatcher invokes this function from on_roster_update. If a
+# future caller writes the TSV from multiple processes, reintroduce flock
+# here. Returns the count of rows updated. Errors if no row matches.
 proc spar::update_roster_field {tsv_path key_col key_val field_col new_val} {
     if {![file exists $tsv_path]} {
         error "roster not found: $tsv_path"

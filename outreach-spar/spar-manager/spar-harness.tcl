@@ -641,7 +641,7 @@ oo::class create spar::ApproachHarness {
         }
         ${::spar::harness_log}::info "DONE: $slug ($Pass pass(es), verdict=$Verdict, cost=\$$total_cost)"
 
-        # Update roster response_likelihood via ROSTER_UPDATE marker —
+        # Update roster response_likelihood via msg_roster_update —
         # the dispatcher applies it from its single-threaded event loop
         # (no flock from here).
         set assembly_log "${log_prefix}-author-assembly.log"
@@ -656,8 +656,17 @@ oo::class create spar::ApproachHarness {
         if {$band_likelihood eq ""} return
         set roster_path [file join [file dirname [file dirname $Outfile]] roster.tsv]
         if {![file exists $roster_path]} return
-        puts "ROSTER_UPDATE\t$roster_path\tcontact_name\t$ContactName\tresponse_likelihood\t$band_likelihood"
-        flush stdout
+        # msg_roster_update is the dispatcher's thread-send protocol,
+        # defined in spar-dispatcher-initcmd.tcl and only available
+        # when this harness runs inside a tpool worker. Standalone
+        # harness invocations (spar-p-harness.tcl direct) lack it;
+        # the roster update is then dropped, which is correct — there
+        # is no dispatcher to apply it.
+        if {[llength [info commands msg_roster_update]] > 0} {
+            msg_roster_update [my slug] $roster_path \
+                contact_name $ContactName \
+                response_likelihood $band_likelihood
+        }
     }
 }
 
@@ -695,7 +704,7 @@ oo::class create spar::ProfileHarness {
     # DbC-Post: if the agent wrote a masked email (e.g. "b***@foo.com") to
     # the roster, blank the field. A masked address is worse than empty —
     # it inflates "has email" counts and propagates into approach files.
-    # Emits a ROSTER_UPDATE marker per match; the dispatcher applies it.
+    # Emits msg_roster_update per match; the dispatcher applies it.
     method sanitise_roster_email {roster_path slug} {
         if {![file exists $roster_path]} { return }
         foreach row [spar::load_roster $roster_path] {
@@ -703,8 +712,10 @@ oo::class create spar::ProfileHarness {
             set email [string trim [spar::dict_get_default $row email ""]]
             if {[spar::is_masked_email $email]} {
                 ${::spar::harness_log}::warn "\[[my slug]\] Guardrail: blanked masked email '$email' in roster"
-                puts "ROSTER_UPDATE\t$roster_path\tstem\t$slug\temail\t"
-                flush stdout
+                if {[llength [info commands msg_roster_update]] > 0} {
+                    msg_roster_update [my slug] $roster_path \
+                        stem $slug email ""
+                }
             }
         }
     }
