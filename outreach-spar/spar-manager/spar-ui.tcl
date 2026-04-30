@@ -102,6 +102,7 @@ source [file join $script_dir ui utils.tcl]
 source [file join $script_dir ui collapsible.tcl]
 source [file join $script_dir ui inspector.tcl]
 source [file join $script_dir ui segment-viewer.tcl]
+source [file join $script_dir ui campaign-viewer.tcl]
 source [file join $script_dir ui settings.tcl]
 
 # ============================================================
@@ -246,7 +247,7 @@ messages."
 # go through mount_campaign's exec-relaunch path.
 proc ::spar::ui::build_loaded_body {path} {
     global script_dir colours
-    global campaign log progress tree_obj dispatch inspector segviewer
+    global campaign log progress tree_obj dispatch inspector segviewer cmpviewer
     global cf cpanel tpanel
     global auto_tid auto_stems auto_quit auto_dry_run log_to_stderr
 
@@ -330,6 +331,11 @@ proc ::spar::ui::build_loaded_body {path} {
     grid ${cf}.l1 ${cf}.v1 -sticky w -padx {6 4} -pady 1
     grid ${cf}.l2 ${cf}.v2 -sticky w -padx {6 4} -pady 1
     grid ${cf}.l4 ${cf}.v4 -sticky w -padx {6 4} -pady 1
+
+    ttk::button ${cf}.viewbtn -text "View full…" \
+        -command [list apply {{} { $::cmpviewer toggle }}]
+    grid ${cf}.viewbtn -row 0 -column 2 -rowspan 3 -sticky e -padx {8 6} -pady 2
+    grid columnconfigure ${cf} 1 -weight 1
 
     # Toolbar: Refresh, Legend, Select All/None, gear + status (via settings module)
     ttk::frame ${cpanel}.toolbar
@@ -444,13 +450,20 @@ proc ::spar::ui::build_loaded_body {path} {
     # from day one.
     set inspector [spar::ui::Inspector new $campaign $tree_obj .pw]
 
-    # SegmentViewer — opens on Double-1 in the progress table. Shares
-    # `.pw.right` with Inspector via cross `shown` subscriptions: each
-    # hides itself when the other shows, so the pane carries one or the
-    # other but not both.
+    # SegmentViewer opens on Double-1 in the progress table. CampaignViewer
+    # opens on the "View full…" button in the Campaign Configuration
+    # labelframe. All three peers (Inspector, SegmentViewer, CampaignViewer)
+    # share `.pw.right` via cross `shown` subscriptions: each hides itself
+    # when any other shows, so the pane carries exactly one at a time.
     set segviewer [spar::ui::SegmentViewer new $campaign $progress .pw]
+    set cmpviewer [spar::ui::CampaignViewer new $campaign .pw]
+
     $inspector subscribe shown [list $segviewer displace]
+    $inspector subscribe shown [list $cmpviewer displace]
     $segviewer subscribe shown [list $inspector displace]
+    $segviewer subscribe shown [list $cmpviewer displace]
+    $cmpviewer subscribe shown [list $inspector displace]
+    $cmpviewer subscribe shown [list $segviewer displace]
 
     # ============================================================
     # Initial sash position
