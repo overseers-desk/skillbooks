@@ -485,48 +485,6 @@ proc spar::dict_get_default {d key {default ""}} {
     return $default
 }
 
-# install_log_timestamp — wrap ::puts so writes to stdout/stderr get an
-# ISO-8601 timestamp prefix on every line. Issue #100: per-line timestamps
-# are required to reconstruct overnight-run timelines without falling back
-# to filesystem mtime. Idempotent; safe to call from each tpool worker
-# interp's startup as well as the parent process.
-#
-# -nonewline writes pass through unprefixed so interactive prompts read
-# cleanly. fd writes (puts $fd ...) pass through unconditionally.
-proc spar::install_log_timestamp {} {
-    if {[info exists ::spar::_log_ts_installed]} return
-    set ::spar::_log_ts_installed 1
-    rename ::puts ::spar::_orig_puts
-    proc ::puts {args} {
-        set i 0
-        set newline 1
-        if {[lindex $args 0] eq "-nonewline"} {
-            set newline 0
-            incr i
-        }
-        set rest [lrange $args $i end]
-        if {[llength $rest] == 1} {
-            set channel stdout
-            set s [lindex $rest 0]
-        } elseif {[llength $rest] == 2} {
-            set channel [lindex $rest 0]
-            set s [lindex $rest 1]
-        } else {
-            return [::spar::_orig_puts {*}$args]
-        }
-        if {$newline && $channel in {stdout stderr}} {
-            set ts [clock format [clock seconds] \
-                -format {%Y-%m-%dT%H:%M:%S%z}]
-            set s [regsub -all -line {^} $s "$ts "]
-        }
-        if {$newline} {
-            ::spar::_orig_puts $channel $s
-        } else {
-            ::spar::_orig_puts -nonewline $channel $s
-        }
-    }
-}
-
 # filter_segments — keep only segments named in sel_segments. Empty
 # sel_segments means no filtering (return original list).
 proc spar::filter_segments {segments sel_segments} {
