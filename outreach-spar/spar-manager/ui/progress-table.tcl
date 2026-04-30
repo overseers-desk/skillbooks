@@ -129,6 +129,9 @@ oo::class create spar::ui::ProgressTable {
         bind $PTree <Button-5>   { %W yview scroll  3 units }
         bind $PTree <MouseWheel> { %W yview scroll [expr {-%D/120}] units }
 
+        # TIMING: measure expand render latency (remove after measurement).
+        bind $PTree <<TreeviewOpen>> [list [self] on_tree_open]
+
         # Subscribe to the Campaign's lifecycle events.
         $Campaign subscribe segment-loaded [list [self] on_segment_loaded]
         $Campaign subscribe fully-loaded   [list [self] on_fully_loaded]
@@ -329,6 +332,17 @@ oo::class create spar::ui::ProgressTable {
         my _fire segment-double-clicked $row
     }
 
+    # TIMING: measure how long Tk takes to render newly visible child rows.
+    # Remove after measurement confirms < 500 ms.
+    method on_tree_open {} {
+        set item [$PTree focus]
+        set n [llength [$PTree children $item]]
+        set t0 [clock microseconds]
+        update idletasks
+        set t1 [clock microseconds]
+        puts stderr "<<TreeviewOpen>> $item ($n children): [expr {$t1 - $t0}] us"
+    }
+
     # ─── Event handlers (Campaign subscriptions) ──────────────────────────
 
     # on_segment_loaded — one segment of the async pass finished. Update
@@ -492,11 +506,15 @@ oo::class create spar::ui::ProgressTable {
     # (matched by file tail of _segment_dir). Called from on_segment_loaded
     # after each phase updates the segment row's values.
     method _refresh_seg_children {seg_name} {
+        set t0 [clock microseconds]
         foreach child [$PTree children $seg_name] { $PTree delete $child }
         foreach c [$Campaign get_all_contacts] {
             if {[file tail [dict get $c _segment_dir]] ne $seg_name} continue
             set name [dict get $c contact_name]
             $PTree insert $seg_name end -text "  $name" -values [my _contact_values $c]
         }
+        set t1 [clock microseconds]
+        set n [llength [$PTree children $seg_name]]
+        puts stderr "_refresh_seg_children $seg_name ($n rows): [expr {$t1 - $t0}] us"
     }
 }
