@@ -504,19 +504,18 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
     }
 
     # Read raw to distinguish "missing fences" from "YAML parse failure".
-    set fd {}
+    set fd ""
     set raw ""
-    if {[catch {
+    try {
         set fd [open $profile_path r]
         fconfigure $fd -encoding utf-8
         set raw [read $fd]
-        close $fd
-        set fd {}
-    } err]} {
-        if {$fd ne ""} { catch {close $fd} }
+    } on error {err} {
         lappend issues [spar::_issue error invalid_front_matter $contact_name \
             "Profile file could not be read: $err"]
         return $issues
+    } finally {
+        if {$fd ne ""} { catch {close $fd} }
     }
 
     set lines [split $raw \n]
