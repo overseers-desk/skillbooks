@@ -1,0 +1,60 @@
+---
+name: qantas.com
+description: Search Qantas Classic Reward flight availability - point cost, taxes, seats, aircraft, and times for a route and date range; and read the user's Qantas Frequent Flyer points balance. Trigger when the user asks about Qantas Classic Reward flights, Qantas points redemptions, award seat availability on Qantas-operated routes, or how many Qantas points they have.
+argument-hint: <origin> <destination> <date> [stops]   |   points
+---
+
+## Prerequisites
+
+Feature 1 (Classic Reward search) requires no login. Feature 2 (points balance) requires credentials.
+
+- **What:** Qantas Frequent Flyer member number and password
+- **Where:** `~/.claude/config/qantas.com.json`
+- **Format:** `{ "username": "YOUR_FF_NUMBER", "password": "YOUR_PASSWORD" }`
+
+If Feature 2 is requested and the file is absent, pause and let the user know: "To read your Qantas points balance, create `~/.claude/config/qantas.com.json` with your Frequent Flyer credentials. This file is not part of the shared aesop repository - create it locally."
+
+The skill has two independent features. Run whichever the user asked for; do not chain them.
+
+## Feature 1: Search Classic Reward flight availability (no login)
+
+Per-flight Classic Flight Reward availability: flight number, aircraft, departure and arrival times (with day offset), point cost and tax per cabin (Economy / Premium Economy / Business / First), and seats remaining at that price. Every result on the Flight Reward Finder is a Classic Reward by definition.
+
+Endpoint: `https://flightrewardfinder.qantas.com/?o=ORIGIN&d=DEST&dr=YYYY-MM-DD_YYYY-MM-DD&st=STOPS&p=PASSENGERS`
+
+Parameters:
+- `o` - origin IATA code (e.g. `SIN`)
+- `d` - destination IATA code (e.g. `BNE`)
+- `dr` - date range, two dates joined with `_`. Single date uses the same value twice (`2026-06-13_2026-06-13`).
+- `st` - stops filter: `direct`, `1`, `2`, `3+`. Use `direct` for nonstop only.
+- `p` - passenger count.
+
+Server-rendered Next.js - flight data lives in `__next_f.push(...)` chunks in the HTML. No authentication, no API key, no headed browser needed.
+
+Steps:
+
+1. Fetch the URL via the headless command from `~/.claude/CLAUDE.md`, save to `/tmp/qantas-frf.html`.
+2. Run the parser:
+
+```bash
+python3 $HOME/code/aesop/qantas.com/parse-rewards.py /tmp/qantas-frf.html
+```
+
+Date handling: the Flight Reward Finder only holds live and future availability - past dates return zero records, not an error. If the user asks about a date in the past, state today's date and confirm before fetching. The endpoint also returns nearby dates within the same calendar window even when `dr` specifies one day, so filter on the requested date in the consumer.
+
+## Feature 2: Read Frequent Flyer points balance (login required)
+
+Returns first name, tier, member ID, points, and status credits. Login + read happen in one CDP session because cookies do not persist across invocations while the snap chromium browser is open (it locks the profile).
+
+```bash
+python3 $HOME/code/aesop/qantas.com/login.py            # human-readable
+python3 $HOME/code/aesop/qantas.com/login.py --json     # JSON
+```
+
+Credentials are read from `~/.claude/config/qantas.com.json` (memberId, lastName, pin). See Prerequisites above.
+
+This feature is independent of Feature 1. Run it only when the user asks about points balance, status credits, or tier. Do not run it as a side effect of a flight search.
+
+## Booking engine vs. reward finder
+
+The Classic Reward search above goes through `flightrewardfinder.qantas.com`. The main `book.qantas.com` booking engine blocks direct curl/headless access (HTTP/2 stream errors). To complete a booking after finding a redemption, the user opens it in their browser; this skill is search-only.
