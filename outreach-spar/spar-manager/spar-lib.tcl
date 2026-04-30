@@ -145,16 +145,6 @@ proc spar::load_campaign {yaml_path} {
         }
     }
 
-    # Validate p_strict (opt-in transcript-based audit that the P-stage
-    # invoked the linkedin and facebook skills per SPAR-P §4.3 / §4.4).
-    # Default off for back-compat; enforcement lives in the harness.
-    if {[dict exists $data p_strict]} {
-        set v [dict get $data p_strict]
-        if {![string is boolean -strict $v]} {
-            error "Campaign $yaml_path: p_strict must be a boolean (got '$v')"
-        }
-    }
-
     # Validate venue (optional). When present, the dispatcher exposes the
     # address and coordinate to the P prompt so AI-side OSRM can compute
     # target-to-venue driving distance for proximity-relevant angles
@@ -185,6 +175,35 @@ proc spar::load_campaign {yaml_path} {
     dict set data _base $base
 
     return $data
+}
+
+# extract_required_skills — convert a segment's profile_reject_if list into
+# the skill list audit_skills_in_transcript expects. Validates the closed
+# vocabulary; errors on unknown conditions or wrong shape. Empty list when
+# the field is absent or empty (no audit).
+#
+# segment_data    parsed segment.yaml dict
+# segment_path    path used for error messages
+proc spar::extract_required_skills {segment_data segment_path} {
+    if {![dict exists $segment_data profile_reject_if]} {
+        return {}
+    }
+    set conditions [dict get $segment_data profile_reject_if]
+    set skills {}
+    foreach cond $conditions {
+        switch -- $cond {
+            linkedin_not_invoked {
+                if {"linkedin" ni $skills} { lappend skills linkedin }
+            }
+            facebook_not_invoked {
+                if {"facebook" ni $skills} { lappend skills facebook }
+            }
+            default {
+                error "Segment $segment_path: unknown profile_reject_if condition '$cond' (allowed: linkedin_not_invoked, facebook_not_invoked)"
+            }
+        }
+    }
+    return $skills
 }
 
 # load_roster — read TSV, return list of dicts keyed by header columns

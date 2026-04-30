@@ -192,6 +192,21 @@ approach_sequencing:
 # discovery_criteria: |
 #   (Prose. What makes a contact valid or invalid for this segment.)
 
+# --- Profile-phase reject conditions (segment-level audit list — names
+#     the conditions that, if observed in the agent's transcript, cause
+#     the harness to reject the P-phase profile and re-trigger the
+#     existing fix-and-resume loop. Closed vocabulary; each entry must
+#     be one of:
+#         linkedin_not_invoked   — agent did not invoke the linkedin skill (§4.3)
+#         facebook_not_invoked   — agent did not invoke the facebook skill (§4.4)
+#     Include conditions only for channels where the segment's
+#     population has a meaningful presence. Omit the field entirely
+#     when no audit applies for this segment.) ---
+
+# profile_reject_if:
+#   - linkedin_not_invoked
+#   - facebook_not_invoked
+
 # --- Rating rubric (segment-specific guidance for star_rating
 #     beyond the methodology's third-party-introduction test.
 #     Optional; when absent, P role-plays as the campaign's

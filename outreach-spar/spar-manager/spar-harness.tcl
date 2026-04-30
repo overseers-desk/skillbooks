@@ -694,7 +694,7 @@ oo::class create spar::ApproachHarness {
 oo::class create spar::ProfileHarness {
     superclass spar::Harness
 
-    variable State Outfile RosterPath PStrict \
+    variable State Outfile RosterPath RequiredSkills \
              Stem ContactName ContactOrg ContactEmail
 
     method state {} {
@@ -740,12 +740,13 @@ oo::class create spar::ProfileHarness {
     }
 
     # DbC-Post loop for profile files. Per-call args stashed as instance
-    # vars; retry skeleton lives in spar::Harness::run_fix_loop. p_strict
-    # opts into the §4.3/§4.4 mandatory-skill audit (issue #76).
-    method validate_and_correct {outfile roster_path p_strict} {
-        set Outfile    $outfile
-        set RosterPath $roster_path
-        set PStrict    $p_strict
+    # vars; retry skeleton lives in spar::Harness::run_fix_loop. The
+    # required_skills list (derived from segment.yaml's profile_reject_if)
+    # opts into the §4.3/§4.4 mandatory-skill audit per skill named.
+    method validate_and_correct {outfile roster_path required_skills} {
+        set Outfile        $outfile
+        set RosterPath     $roster_path
+        set RequiredSkills $required_skills
         return [my run_fix_loop validate_profile_errors build_profile_fix_prompt]
     }
 
@@ -775,13 +776,14 @@ oo::class create spar::ProfileHarness {
                 lappend errors $ri
             }
         }
-        # Issue #76: transcript-based audit. Skipped when p_strict is
-        # off, the row is excluded, or session_id was never captured.
-        if {$PStrict eq "1" \
+        # Issue #76: transcript-based audit. Skipped when the segment lists
+        # no required skills (profile_reject_if absent or empty), the row
+        # is excluded, or session_id was never captured.
+        if {[llength $RequiredSkills] > 0 \
                 && [string trim [spar::dict_get_default $row date_excluded ""]] eq "" \
                 && [my session_id] ne ""} {
             foreach ai [spar::audit_skills_in_transcript \
-                            [my session_id] {linkedin facebook} $my_cname] {
+                            [my session_id] $RequiredSkills $my_cname] {
                 lappend errors $ai
             }
         }
@@ -843,7 +845,7 @@ oo::class create spar::ProfileHarness {
             # profile exists iff the row has a reachable channel or
             # date_excluded is set).
             my sanitise_roster_email $RosterPath [my slug]
-            if {[my validate_and_correct $Outfile $RosterPath $PStrict]} { return 1 }
+            if {[my validate_and_correct $Outfile $RosterPath $RequiredSkills]} { return 1 }
             my do_summary
             return 0
         } on error {err opts} {
@@ -858,7 +860,7 @@ oo::class create spar::ProfileHarness {
         set Outfile      [dict get $meta OUTFILE]
         set RosterPath   [dict get $meta ROSTER_PATH]
         set Stem         [dict get $meta STEM]
-        set PStrict      [spar::dict_get_default $meta P_STRICT 0]
+        set RequiredSkills [spar::dict_get_default $meta REQUIRED_SKILLS ""]
         set ContactName  [spar::dict_get_default $meta CONTACT_NAME ""]
         set ContactOrg   [spar::dict_get_default $meta CONTACT_ORG ""]
         set ContactEmail [spar::dict_get_default $meta CONTACT_EMAIL ""]

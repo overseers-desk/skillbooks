@@ -122,3 +122,7 @@ scope_note: |
 geographic_catchment: |
   Australia and New Zealand (ANZ). LinkedIn location field is the primary
   geographic signal.
+
+profile_reject_if:
+  - linkedin_not_invoked
+  - facebook_not_invoked
