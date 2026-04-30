@@ -127,7 +127,8 @@ ttk::progressbar .dispatch.progress.bar -mode determinate -value 0
 ttk::label       .dispatch.progress.status -text ""
 pack .dispatch.progress.bar .dispatch.progress.status -fill x
 
-set pool [spar::Dispatcher new 4 [list $log log]]
+spar::ui::install_logger_appender $log
+set pool [spar::Dispatcher new 4]
 set dc [spar::ui::DispatchController new \
     $campaign $tree_obj $log $pool \
     .dispatch.play .dispatch.pause .dispatch.cancel \
