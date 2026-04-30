@@ -12,6 +12,7 @@
 # on either get distinct entries.
 
 package require Tk
+package require logger
 
 namespace eval ::spar::ui::settings {
     variable Campaign    ""
@@ -23,6 +24,11 @@ namespace eval ::spar::ui::settings {
     # Typed-but-unstored password survives close+reopen of the dialog
     # via this namespace variable.
     variable SmtpPassVar ""
+
+    # Logger service for settings-dialog actions (SMTP test outcome,
+    # credential lookup failures). Routed to the LogWindow Tk appender
+    # in GUI mode by spar::ui::install_logger_appender.
+    variable settings_log [logger::init spar::ui::settings]
 }
 
 # ── Keychain install hint (platform-specific, Linux has an actionable one) ──
@@ -577,7 +583,7 @@ proc ::spar::ui::settings::do_smtp_test {host port user pass} {
 
     fconfigure $sock -blocking 1 -translation crlf -buffering full
 
-    if {[catch {
+    try {
         smtp_test_recv $sock 220
 
         puts $sock "EHLO spar-manager"; flush $sock
@@ -601,14 +607,20 @@ proc ::spar::ui::settings::do_smtp_test {host port user pass} {
 
         puts $sock "QUIT"; flush $sock
         catch {smtp_test_recv $sock 221}
-        close $sock
-    } err]} {
-        catch {close $sock}
+    } on error {err} {
         if {[string match "SMTP 535*" $err]} {
+            ${::spar::ui::settings::settings_log}::warn \
+                "SMTP test failed: authentication rejected ($host:$port as $user)"
             return [list fail "Authentication failed (wrong credentials?)"]
         }
+        ${::spar::ui::settings::settings_log}::warn \
+            "SMTP test failed: $err ($host:$port as $user)"
         return [list fail $err]
+    } finally {
+        catch {close $sock}
     }
 
+    ${::spar::ui::settings::settings_log}::info \
+        "SMTP test ok: $host:$port as $user"
     return [list ok "Connection verified"]
 }

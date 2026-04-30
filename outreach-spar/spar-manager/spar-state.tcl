@@ -1484,16 +1484,15 @@ proc spar::roster_counts {segment_dir} {
 # missing fences, YAML parse error).
 proc spar::read_profile_front_matter {path} {
     if {![file exists $path]} { return "" }
-    set fd {}
-    if {[catch {
+    set fd ""
+    try {
         set fd [open $path r]
         fconfigure $fd -encoding utf-8
         set raw [read $fd]
-        close $fd
-        set fd {}
-    } err]} {
-        if {$fd ne ""} { catch {close $fd} }
+    } on error {} {
         return ""
+    } finally {
+        if {$fd ne ""} { catch {close $fd} }
     }
     set lines [split $raw \n]
     if {[llength $lines] < 2} { return "" }

@@ -171,8 +171,11 @@ oo::class create spar::Harness {
             }
 
             set fd [open $json_file r]
-            set raw_json [read $fd]
-            close $fd
+            try {
+                set raw_json [read $fd]
+            } finally {
+                close $fd
+            }
 
             if {[catch {set parsed [::json::json2dict $raw_json]}]} {
                 ${::spar::harness_log}::error "FAIL ($stage: invalid JSON): $Slug"
@@ -200,8 +203,11 @@ oo::class create spar::Harness {
             }
 
             set fd [open $log_file w]
-            puts -nonewline $fd [dict get $parsed result]
-            close $fd
+            try {
+                puts -nonewline $fd [dict get $parsed result]
+            } finally {
+                close $fd
+            }
 
             set _prev_indent [::json::write indented]
             ::json::write indented false
@@ -210,8 +216,11 @@ oo::class create spar::Harness {
                 cost [spar::dict_get_default $parsed total_cost_usd 0]]
             ::json::write indented $_prev_indent
             set fd [open $CostLog a]
-            puts $fd $cost_entry
-            close $fd
+            try {
+                puts $fd $cost_entry
+            } finally {
+                close $fd
+            }
 
             return 0
         }
@@ -401,15 +410,25 @@ oo::class create spar::ApproachHarness {
     }
 
     # Run the full A-phase pipeline. Returns 0 on success, 1 on failure.
+    # The try/on-error wrapper turns an uncaught exception into a logged
+    # FAIL line — without it, an exception in load_my_meta or any phase
+    # method would propagate up to harness_run as "harness exited rc=…"
+    # with no per-row context in the operator's log.
     method run {} {
-        my load_my_meta
-        my do_inject_mailroom
-        if {[my do_author_draft]}             { return 1 }
-        if {[my run_spar_loop]}               { return 1 }
-        if {[my do_assembly]}                 { return 1 }
-        if {[my do_post_assembly_validation]} { return 1 }
-        my do_summary
-        return 0
+        try {
+            my load_my_meta
+            my do_inject_mailroom
+            if {[my do_author_draft]}             { return 1 }
+            if {[my run_spar_loop]}               { return 1 }
+            if {[my do_assembly]}                 { return 1 }
+            if {[my do_post_assembly_validation]} { return 1 }
+            my do_summary
+            return 0
+        } on error {err opts} {
+            ${::spar::harness_log}::error \
+                "FAIL ([my slug]): uncaught error in ApproachHarness::run — $err"
+            return 1
+        }
     }
 
     # Unpack meta.env into instance vars used by phase methods.
@@ -810,19 +829,28 @@ oo::class create spar::ProfileHarness {
     }
 
     # Run the full P-phase pipeline. Returns 0 on success, 1 on failure.
+    # The try/on-error wrapper logs uncaught exceptions as a FAIL line
+    # so the operator sees a per-row outcome instead of a generic
+    # "harness exited rc=…" from harness_run.
     method run {} {
-        my load_my_meta
-        my do_inject_mailroom
-        if {[my do_profile_call]} { return 1 }
-        # DbC-Post: sanitise masked emails written to the roster, then
-        # run validate_profile on both the front matter and roster-row
-        # invariants (#39 R1: profile_unreachable_without_exclusion —
-        # profile exists iff the row has a reachable channel or
-        # date_excluded is set).
-        my sanitise_roster_email $RosterPath [my slug]
-        if {[my validate_and_correct $Outfile $RosterPath $PStrict]} { return 1 }
-        my do_summary
-        return 0
+        try {
+            my load_my_meta
+            my do_inject_mailroom
+            if {[my do_profile_call]} { return 1 }
+            # DbC-Post: sanitise masked emails written to the roster, then
+            # run validate_profile on both the front matter and roster-row
+            # invariants (#39 R1: profile_unreachable_without_exclusion —
+            # profile exists iff the row has a reachable channel or
+            # date_excluded is set).
+            my sanitise_roster_email $RosterPath [my slug]
+            if {[my validate_and_correct $Outfile $RosterPath $PStrict]} { return 1 }
+            my do_summary
+            return 0
+        } on error {err opts} {
+            ${::spar::harness_log}::error \
+                "FAIL ([my slug]): uncaught error in ProfileHarness::run — $err"
+            return 1
+        }
     }
 
     method load_my_meta {} {
