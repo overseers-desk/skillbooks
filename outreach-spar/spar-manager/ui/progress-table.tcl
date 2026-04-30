@@ -165,6 +165,7 @@ oo::class create spar::ui::ProgressTable {
         $PTree delete [$PTree children {}]
         set SegCounts  [dict create]
         set SegChecked [dict create]
+        set ChildRows  [dict create]
 
         foreach seg_entry $segments {
             lassign $seg_entry seg_name is_campaign raw_data
@@ -239,12 +240,17 @@ oo::class create spar::ui::ProgressTable {
         set font TkDefaultFont
         set pad 12   ;# horizontal cell padding (pixels)
 
-        # Column #0: measure heading + all row texts
+        # Column #0: measure heading + segment rows + contact child rows
         set max0 [font measure $font "Segment"]
         foreach item [$PTree children {}] {
             set txt [$PTree item $item -text]
             set w [font measure $font $txt]
             if {$w > $max0} { set max0 $w }
+            foreach child [$PTree children $item] {
+                set txt [$PTree item $child -text]
+                set w [font measure $font $txt]
+                if {$w > $max0} { set max0 $w }
+            }
         }
         $PTree column #0 -minwidth [expr {$max0 + $pad}]
 
@@ -299,6 +305,7 @@ oo::class create spar::ui::ProgressTable {
         set col [$PTree identify column $x $y]
         set row [$PTree identify row    $x $y]
         if {$col ne "#0" || $row eq "" || $row eq "__totals__"} return
+        if {[$PTree parent $row] ne ""} return
         set bbox [$PTree bbox $row #0]
         if {[llength $bbox] != 4} return
         lassign $bbox bx by bw bh
@@ -318,6 +325,7 @@ oo::class create spar::ui::ProgressTable {
     method on_double_click {x y} {
         set row [$PTree identify row $x $y]
         if {$row eq "" || $row eq "__totals__"} return
+        if {[$PTree parent $row] ne ""} return
         my _fire segment-double-clicked $row
     }
 
@@ -373,6 +381,7 @@ oo::class create spar::ui::ProgressTable {
             incr ci
         }
         $PTree item $seg -values $values
+        my _refresh_seg_children $seg
     }
 
     # on_fully_loaded — async load finished. The per-row values were
