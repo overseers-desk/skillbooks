@@ -277,6 +277,12 @@ proc ::spar::ui::build_loaded_body {path} {
     # unread-changed.
     set log [spar::ui::LogWindow new $log_to_stderr]
 
+    # Route every spar* logger service through the LogWindow. Done
+    # after all spar-* files have been sourced so logger::services
+    # returns the full set; new services initialised later won't be
+    # captured (no such callers exist today).
+    spar::ui::install_logger_appender $log
+
     set campaign_name [$campaign get_campaign_name]
     set sender_text   [$campaign get_sender_text]
     set filter_desc   [$campaign get_filter_desc]
@@ -406,7 +412,11 @@ proc ::spar::ui::build_loaded_body {path} {
     # on_fully_loaded handler calls prune_missing + reapply_pool_state
     # so refreshed views inherit the surviving Pool state. jobs=4
     # matches the prior CLI default in spar::p::run.
-    set ::pool [spar::Dispatcher new 4 [list $log log]]
+    #
+    # Dispatcher's _log warnings flow into LogWindow via the
+    # spar::dispatch logger appender installed above; no LogCallback
+    # constructor argument needed.
+    set ::pool [spar::Dispatcher new 4]
 
     # DispatchController translates Play/Pause/Cancel and the right-
     # click menu into Pool methods, and renders Pool row-state events
@@ -473,8 +483,7 @@ proc ::spar::ui::build_loaded_body {path} {
     # Every refactored zone self-subscribes to the Campaign events it
     # cares about. The only thing left here is the config-summary
     # labels (cf.v1/v2/v4) + window title, which belong to this
-    # bootstrap and have no owning class. log-message is piped straight
-    # into the LogWindow.
+    # bootstrap and have no owning class.
 
     $campaign subscribe reloading [list apply {{} {
         global cf
@@ -483,8 +492,6 @@ proc ::spar::ui::build_loaded_body {path} {
         ${cf}.v4 configure -text [$::campaign get_filter_desc]
         wm title . "SPAR Campaign Manager — [$::campaign get_campaign_name]"
     }}]
-
-    $campaign subscribe log-message [list $log log]
 
     # Start async loading of filesystem-dependent columns. Use a timer
     # (not after idle) so the window renders first.

@@ -18,6 +18,7 @@
 
 package require Tk
 package require TclOO
+package require logger
 
 namespace eval spar::ui {}
 
@@ -49,17 +50,23 @@ oo::class create spar::ui::LogWindow {
     # if LogToStderr, append to the text widget if the window exists,
     # and bump the unread count. Public so it can be used directly as
     # an `after`/`-command` callback or a subscriber.
-    method log {msg} {
+    #
+    # `level` (default info) is the severity tag applied to the inserted
+    # line in the Text widget — error/warn/info/debug map to colours
+    # configured in `show`. Buffered lines (when the toplevel hasn't
+    # been opened yet) carry the level so `show` can re-tag them on
+    # initial population.
+    method log {msg {level info}} {
         set ts [clock format [clock seconds] -format "%H:%M:%S"]
         set line "$ts $msg"
         if {$LogToStderr} {
             puts stderr $line
             flush stderr
         }
-        lappend LogBuffer $line
+        lappend LogBuffer [list $line $level]
         if {[winfo exists .logwin]} {
             .logwin.txt configure -state normal
-            .logwin.txt insert end "$line\n"
+            .logwin.txt insert end "$line\n" $level
             .logwin.txt see end
             .logwin.txt configure -state disabled
         }
@@ -94,9 +101,16 @@ oo::class create spar::ui::LogWindow {
         pack .logwin.sb -side right -fill y -padx {0 4} -pady {0 4}
         pack .logwin.txt -fill both -expand 1 -padx {4 0} -pady {0 4}
 
+        # Severity tags. `info` deliberately has no styling — most lines
+        # are info and the default colour is the right baseline.
+        .logwin.txt tag configure error -foreground red
+        .logwin.txt tag configure warn  -foreground "#cc8800"
+        .logwin.txt tag configure debug -foreground "#888888"
+
         .logwin.txt configure -state normal
-        foreach line $LogBuffer {
-            .logwin.txt insert end "$line\n"
+        foreach entry $LogBuffer {
+            lassign $entry line level
+            .logwin.txt insert end "$line\n" $level
         }
         .logwin.txt see end
         .logwin.txt configure -state disabled
@@ -117,4 +131,33 @@ oo::class create spar::ui::LogWindow {
         set LogUnread 0
         my _fire unread-changed $LogUnread
     }
+}
+
+# install_logger_appender — route every spar* logger service through
+# `$logwin log $msg $level`, replacing the old LogCallback path the
+# Dispatcher and Campaign used to wire LogWindow. Idempotent if called
+# multiple times for the same logwin (interp alias is replaced).
+#
+# Call this AFTER all spar* services have been initialised — i.e. after
+# spar-state, spar-harness, spar-dispatcher have been sourced. tcllib
+# logger's logproc machinery dispatches per-(service, level), so we
+# install one alias per (service, level) tuple. New services created
+# later are not picked up automatically; callers needing a late-loaded
+# service should re-invoke this.
+proc spar::ui::install_logger_appender {logwin} {
+    foreach svc [logger::services] {
+        if {!([string match "spar" $svc] || [string match "spar::*" $svc])} continue
+        set svc_handle [logger::servicecmd $svc]
+        set safe_svc [string map {:: _} $svc]
+        foreach lvl {debug info notice warn error critical alert emergency} {
+            set alias_name "::spar::ui::_logwin_${safe_svc}_${lvl}"
+            interp alias {} $alias_name {} \
+                ::spar::ui::_logwin_emit $logwin $lvl
+            ${svc_handle}::logproc $lvl $alias_name
+        }
+    }
+}
+
+proc spar::ui::_logwin_emit {logwin level msg} {
+    $logwin log $msg $level
 }
