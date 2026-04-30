@@ -257,6 +257,38 @@ namespace eval ::spar::ui::inspector_widgets {
         return $row
     }
 
+    # kv_row_wrap parent key value indent. Width-aware variant of kv_row.
+    # Short scalars (≤60 chars and no embedded newline) delegate to kv_row
+    # and render inline. Longer or multiline values stack: a "key:" header
+    # row, then a -wrap word read-only text widget below holding the value.
+    # Decision is on string length and \n presence, not \n alone, because a
+    # YAML folded scalar (`>` style) arrives as one long line with no
+    # newline, and inline rendering would scroll horizontally inside
+    # kv_row's flat entry rather than wrap. The 60-char threshold keeps
+    # slugs, emails, short titles inline while paragraphs and long campaign
+    # titles stack.
+    proc kv_row_wrap {parent key value {indent 0}} {
+        if {[string length $value] <= 60 && [string first "\n" $value] < 0} {
+            return [kv_row $parent $key $value $indent]
+        }
+        set lpad [expr {$indent * 16}]
+        set hdr ${parent}.[_uniq kvw]
+        ttk::label $hdr -text "${key}:" -anchor w
+        pack $hdr -fill x -padx [list $lpad 4] -pady {4 0}
+        set tw ${parent}.[_uniq kvwt]
+        text $tw -wrap word -relief flat -borderwidth 0 -takefocus 0 \
+            -height 1 -background [. cget -background]
+        $tw insert end $value
+        $tw configure -state disabled
+        pack $tw -fill x -padx [list [expr {$lpad + 16}] 4] -pady {0 2}
+        update idletasks
+        set n [$tw count -displaylines 1.0 end]
+        if {$n < 1}  { set n 1 }
+        if {$n > 20} { set n 20 }
+        $tw configure -height $n
+        return $tw
+    }
+
     # copy_text path value — construct a flat readonly ttk::entry that
     # looks like a label but supports text selection. Reusable for header
     # strings and any other place a label could have gone. Uses the
