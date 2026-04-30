@@ -54,7 +54,7 @@ All batch scripts resolve `.` as the campaign root directory. When a campaign ou
 
 ## Discovery by batch scripts
 
-`spar-progress.tcl` and `spar-a-batch.tcl` both read the `segments` list from `campaign.yaml`. Only listed segments are processed. `spar-progress.tcl` warns about any `roster.tsv` files found on disk that are not listed in the YAML. Directories in `skip_segments` are excluded.
+`spar-progress.tcl` and `spar-transition.tcl` both read the `segments` list from `campaign.yaml`. Only listed segments are processed. `spar-progress.tcl` warns about any `roster.tsv` files found on disk that are not listed in the YAML. Directories in `skip_segments` are excluded.
 
 `spar-transition.tcl <campaign.yaml> T1` drives profile generation from the classified state machine, one campaign at a time. `T1:<segment>` narrows to a single segment, `T1:<segment>/<roster-stem>` narrows to a single contact. Add `--dry-run` to simulate without writes.
 
