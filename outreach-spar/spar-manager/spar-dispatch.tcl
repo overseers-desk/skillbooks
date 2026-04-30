@@ -458,6 +458,17 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
     set prompts_dir [file join $workdir prompts]
     file mkdir $prompts_dir
 
+    # Read profile_reject_if from segment.yaml. Empty list when the field
+    # is absent — no audit. The harness §4.3/§4.4 audit fires only when
+    # this list is non-empty.
+    set segment_yaml [file join $segment_dir segment.yaml]
+    set segment_data [spar::read_segment_yaml $segment_yaml]
+    if {$segment_data eq ""} {
+        set required_skills {}
+    } else {
+        set required_skills [spar::extract_required_skills $segment_data $segment_yaml]
+    }
+
     set rows [spar::load_roster $roster_path]
 
     set count 0
@@ -555,7 +566,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
         puts $fd "STEM=\"$stem\""
         puts $fd "OUTFILE=\"$outfile\""
         puts $fd "ROSTER_PATH=\"$roster_path\""
-        puts $fd "P_STRICT=\"[expr {[spar::dict_get_default $cdata p_strict 0] ? 1 : 0}]\""
+        puts $fd "REQUIRED_SKILLS=\"[join $required_skills { }]\""
         puts $fd "CONTACT_NAME=\"$name\""
         puts $fd "CONTACT_ORG=\"$org\""
         puts $fd "CONTACT_EMAIL=\"$email\""
