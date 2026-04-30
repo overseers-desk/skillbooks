@@ -372,7 +372,7 @@ oo::class create spar::ui::DispatchController {
     }
 
     # cancel — drain queued rows. In-flight rows continue to finish (per-
-    # row Kill is deferred — see docs/job-pool.md "Deferred work").
+    # row Kill is deferred — see docs/concurrency.md "Deferred work").
     method cancel {} {
         set queued [$Dispatcher queued_rows]
         foreach r $queued { $Dispatcher cancel $r }
