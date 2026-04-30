@@ -101,3 +101,10 @@ Check before running any test. Left column = cargo cult sign, right column = wha
 
 - **Open API endpoints:** Apollo GraphQL with operation safelisting — only pre-registered (name + query text + signature hash) tuples execute. Homepage-client signatures are accessible; search-page signatures (needed for pricing) are not.
 - **Blocked paths:** `/search/` and hotel-detail pages return 403 for both curl and direct HTTP requests. Cause undiagnosed.
+
+### Qantas (qantas.com)
+
+- **Public Next.js SSR (no auth):** `flightrewardfinder.qantas.com` returns server-rendered HTML with flight data in `__next_f.push(...)` chunks. Plain `--dump-dom` works.
+- **Authenticated SPA:** `www.qantas.com/au/en/frequent-flyer/my-account.html` is JS-rendered. The auth check fires after hydration, so `--dump-dom` captures the pre-hydration login redirect instead of the account view. Need CDP with a wait loop until the points value appears.
+- **Login form:** at `/au/en/frequent-flyer/my-account/sign-in.html`. The `<form>` has no `action` attribute - submission is JS-handled. Inputs are `#memberId`, `#lastName`, `#pin`. CDP `Input.insertText` + button click works; curl POST does not.
+- **Cookie persistence:** when the user has snap chromium running in the GUI, the headless instance does not flush cookies to disk on exit. Treat each authenticated read as one CDP session: log in, fetch, exit. Do not design around cross-process cookie reuse.
