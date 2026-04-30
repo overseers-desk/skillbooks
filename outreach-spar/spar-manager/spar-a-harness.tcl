@@ -8,6 +8,8 @@ source [file join $script_dir spar-state.tcl]
 source [file join $script_dir spar-harness.tcl]
 package require sha256
 
+spar::install_log_timestamp
+
 if {[llength $argv] < 2} {
     puts stderr "Usage: tclsh9.0 spar-a-harness.tcl <prompt-dir> <log-dir>"
     exit 1

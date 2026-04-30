@@ -41,6 +41,8 @@ source [file join $script_dir spar-dispatch.tcl]
 source [file join $script_dir spar-email.tcl]
 source [file join $script_dir spar-transitions-cli.tcl]
 
+spar::install_log_timestamp
+
 # print_help — usage text. The compact grammar block at the top is the
 # operator-facing summary; the TRANSITIONS list is generated from the
 # registry so adding a transition surfaces it here automatically.
