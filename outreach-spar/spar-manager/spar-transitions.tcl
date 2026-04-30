@@ -41,6 +41,14 @@ source [file join $script_dir spar-dispatch.tcl]
 source [file join $script_dir spar-email.tcl]
 source [file join $script_dir spar-transitions-cli.tcl]
 
+package require logger
+namespace eval spar {
+    # Logger service for the dispatch CLI's runtime output.
+    # Report-mode puts (the eligibility ladder, help text, error
+    # exits) stay as raw puts — they are CLI presentation, not log.
+    variable transitions_log [logger::init spar::transitions]
+}
+
 spar::install_log_timestamp
 
 # print_help — usage text. The compact grammar block at the top is the
@@ -316,11 +324,11 @@ if {$dispatching} {
 
     proc exec_on_progress {slug status message} {
         switch -- $status {
-            started { if {$message eq ""} { puts "  \[START\] $slug" } }
-            done    { puts "  \[DONE \] $slug [expr {$message ne "" ? "($message)" : ""}]" }
-            failed  { puts "  \[FAIL \] $slug ($message)" }
-            skipped { puts "  \[SKIP \] $slug ($message)" }
-            warning { puts stderr "  \[WARN \] $slug: $message" }
+            started { if {$message eq ""} { ${::spar::transitions_log}::info "  \[START\] $slug" } }
+            done    { ${::spar::transitions_log}::info "  \[DONE \] $slug [expr {$message ne "" ? "($message)" : ""}]" }
+            failed  { ${::spar::transitions_log}::error "  \[FAIL \] $slug ($message)" }
+            skipped { ${::spar::transitions_log}::info "  \[SKIP \] $slug ($message)" }
+            warning { ${::spar::transitions_log}::warn "  \[WARN \] $slug: $message" }
         }
     }
 
@@ -341,7 +349,7 @@ if {$dispatching} {
                     set c [$state refine_segment $c]
                 }
             } err]} {
-                puts stderr "Error in $label: $err"
+                ${::spar::transitions_log}::warn "Error in $label: $err"
                 continue
             }
             lappend out {*}$c
@@ -418,13 +426,13 @@ if {$dispatching} {
             set cls [::spar::transitions::get $tid]
             set extra [$cls build_opts $tasks $f_segs $f_stems]
             if {[dict exists $extra log_message]} {
-                puts [dict get $extra log_message]
+                ${::spar::transitions_log}::info [dict get $extra log_message]
                 set extra [dict remove $extra log_message]
             }
             set opts [dict merge $base_opts $extra]
             if {[catch {set prep [$cls prepare_for_pool $opts \
                     exec_on_progress]} err]} {
-                puts stderr "  $tid prep error: $err"
+                ${::spar::transitions_log}::error "  $tid prep error: $err"
                 incr ::_total_failed [llength $tasks]
                 continue
             }
@@ -509,8 +517,8 @@ if {$dispatching} {
     # and T3→T4 happen in a single invocation.
     # ────────────────────────────────────────────────────────────────────
     if {$auto_mode} {
-        puts "Campaign: $campaign_name"
-        if {$dry_run} { puts "(dry run — writes disabled)" }
+        ${::spar::transitions_log}::info "Campaign: $campaign_name"
+        if {$dry_run} { ${::spar::transitions_log}::info "(dry run — writes disabled)" }
 
         set MAX_ITER 8
         set last_signature ""
@@ -523,10 +531,9 @@ if {$dispatching} {
 
             if {[dict size $ready_by_tid] == 0} {
                 if {$iter == 1} {
-                    puts "No ready tasks for the requested transitions."
+                    ${::spar::transitions_log}::info "No ready tasks for the requested transitions."
                 } else {
-                    puts ""
-                    puts "Iteration $iter: nothing left — converged."
+                    ${::spar::transitions_log}::info "Iteration $iter: nothing left — converged."
                 }
                 break
             }
@@ -542,14 +549,12 @@ if {$dispatching} {
                 append signature "${tid}=[lsort $keys];"
             }
             if {$signature eq $last_signature} {
-                puts ""
-                puts "Iteration $iter: ready set unchanged — stopping (wedged)."
+                ${::spar::transitions_log}::warn "Iteration $iter: ready set unchanged — stopping (wedged)."
                 break
             }
             set last_signature $signature
 
-            puts ""
-            puts "── Iteration $iter ──"
+            ${::spar::transitions_log}::info "── Iteration $iter ──"
 
             dispatch_ready $ready_by_tid $active_tids $tid_scopes \
                 $yaml_path $cdata $dry_run $jobs $delay \
@@ -559,14 +564,12 @@ if {$dispatching} {
             incr iter
         }
         if {$iter > $MAX_ITER} {
-            puts ""
-            puts "Hit MAX_ITERATIONS ($MAX_ITER) — stopping. Investigate."
+            ${::spar::transitions_log}::error "Hit MAX_ITERATIONS ($MAX_ITER) — stopping. Investigate."
         }
 
-        puts ""
-        puts "=== Summary ==="
-        puts "Done:   $::_total_done"
-        puts "Failed: $::_total_failed"
+        ${::spar::transitions_log}::info "=== Summary ==="
+        ${::spar::transitions_log}::info "Done:   $::_total_done"
+        ${::spar::transitions_log}::info "Failed: $::_total_failed"
         if {$::_total_failed > 0} { exit 1 }
         exit 0
     }
@@ -579,8 +582,8 @@ if {$dispatching} {
         $primary_channel $cdata]
 
     if {[dict size $ready_by_tid] == 0} {
-        puts "Campaign: $campaign_name"
-        puts "No ready tasks for the requested transitions."
+        ${::spar::transitions_log}::info "Campaign: $campaign_name"
+        ${::spar::transitions_log}::info "No ready tasks for the requested transitions."
         exit 0
     }
 
@@ -589,12 +592,12 @@ if {$dispatching} {
     foreach tid [dict keys $ready_by_tid] {
         if {![spar::has_transition_runner $tid]} {
             set n [llength [dict get $ready_by_tid $tid]]
-            puts stderr "Note: $tid has $n ready task(s) but no runner is wired — skipping."
+            ${::spar::transitions_log}::warn "Note: $tid has $n ready task(s) but no runner is wired — skipping."
         }
     }
 
-    puts "Campaign: $campaign_name"
-    if {$dry_run} { puts "(dry run — writes disabled)" }
+    ${::spar::transitions_log}::info "Campaign: $campaign_name"
+    if {$dry_run} { ${::spar::transitions_log}::info "(dry run — writes disabled)" }
 
     # Up-front confirmation lives at the CLI layer (not inside the
     # transition class) so the GUI path — which has already confirmed
@@ -612,7 +615,7 @@ if {$dispatching} {
             flush stdout
             set reply [string trim [gets stdin]]
             if {[string tolower $reply] ni {y yes}} {
-                puts "Aborted."
+                ${::spar::transitions_log}::warn "Aborted."
                 exit 1
             }
         }
@@ -623,10 +626,9 @@ if {$dispatching} {
         $assume_yes \
         [expr {$stepping ? "step_prompt" : ""}]
 
-    puts ""
-    puts "=== Summary ==="
-    puts "Done:   $::_total_done"
-    puts "Failed: $::_total_failed"
+    ${::spar::transitions_log}::info "=== Summary ==="
+    ${::spar::transitions_log}::info "Done:   $::_total_done"
+    ${::spar::transitions_log}::info "Failed: $::_total_failed"
     if {$::_total_failed > 0} { exit 1 }
     exit 0
 }
