@@ -5,7 +5,7 @@
 package require TclOO
 
 # Idempotent load — top-level scripts (spar-transition.tcl, spar-ui.tcl,
-# spar-a-batch.tcl, test/test-*.tcl) may source this via multiple paths.
+# test/test-*.tcl) may source this via multiple paths.
 # oo::class create is not idempotent, so guard it.
 if {[info exists ::spar::_dispatch_loaded]} {
     package provide spar-dispatch 1.0
@@ -866,7 +866,7 @@ proc spar::a::_build_prompts {opts on_progress} {
 
             # Profile lookup — {stem}.md (post SmartLayer/aesop#45).
             # Legacy profile-{stem}.md files are ignored by the dispatcher;
-            # migrate them via spar-manager/migrate-profile-naming.tcl.
+            # rename them by hand to {stem}.md if encountered.
             set profile_path ""
             if {$stem ne ""} {
                 set candidate [spar::profile_path_for_stem $seg_dir $stem]
