@@ -43,7 +43,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
 
     # prepare_for_pool — pool-shape entry. Returns
     # {worker_proc imap_poll rows {{stem opts} ...}}. The unified
-    # Dispatcher in spar-transitions.tcl enqueues the rows directly;
+    # Dispatcher in spar-transition.tcl enqueues the rows directly;
     # imap_poll has no rate-limit pacing requirement so it inherits
     # the global Jobs cap.
     method prepare_for_pool {opts on_progress} {

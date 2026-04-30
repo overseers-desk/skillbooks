@@ -4,7 +4,7 @@
 
 package require TclOO
 
-# Idempotent load — top-level scripts (spar-transitions.tcl, spar-ui.tcl,
+# Idempotent load — top-level scripts (spar-transition.tcl, spar-ui.tcl,
 # spar-a-batch.tcl, test/test-*.tcl) may source this via multiple paths.
 # oo::class create is not idempotent, so guard it.
 if {[info exists ::spar::_dispatch_loaded]} {

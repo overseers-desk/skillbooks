@@ -490,7 +490,7 @@ set t7_names [lmap c $t7 {dict get $c contact_name}]
 assert_eq [expr {"Sent Sam" in $t7_names}] 1 "T7: SENT+email_sent → in monitoring list"
 
 # transition_eligible result dicts must carry stem and _segment_dir so
-# downstream callers (spar-transitions.tcl dispatch) can route without
+# downstream callers (spar-transition.tcl dispatch) can route without
 # re-classifying.
 set t1_first [lindex $t1 0]
 assert_eq [dict exists $t1_first stem] 1 "transition_eligible: result has stem key"

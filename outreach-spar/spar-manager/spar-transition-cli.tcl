@@ -1,4 +1,4 @@
-# spar-transitions-cli.tcl — argv parser for spar-transitions.tcl.
+# spar-transition-cli.tcl — argv parser for spar-transition.tcl.
 #
 # Lifted out of the script body so test/test-cli-parser.tcl can drive
 # the grammar in isolation. The script sources this file, calls

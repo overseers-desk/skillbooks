@@ -1137,7 +1137,7 @@ proc spar::_task {contact task_state {reason ""}} {
 #                      methods read only state, star_rating, date_excluded,
 #                      email, linkedin_url — all populated by the cheap
 #                      classify path. Callers that mix TIDs (the loader,
-#                      spar-progress, spar-transitions non-auto) refine
+#                      spar-progress, spar-transition non-auto) refine
 #                      once before calling here and reuse the refined list
 #                      across every TID.
 # transition           transition name: T1, T2, ... T10

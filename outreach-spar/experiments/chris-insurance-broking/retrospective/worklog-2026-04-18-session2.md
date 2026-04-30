@@ -65,6 +65,6 @@ Both completed profiles have closed YAML front matter (`star_rating:` line prese
 
 ## Facts for next session's benefit
 
-- Dispatcher PID naming pattern: `spar-transitions.tcl` parent, `spar-p-harness` bash wrappers as children, `claude -p` Sonnet sessions as grandchildren, chromium-via-flock as great-grandchildren. Kill order matters: dispatcher → harness wrappers → `claude -p` grandchildren. `pkill` by pattern is unreliable past depth 2.
+- Dispatcher PID naming pattern: `spar-transition.tcl` parent, `spar-p-harness` bash wrappers as children, `claude -p` Sonnet sessions as grandchildren, chromium-via-flock as great-grandchildren. Kill order matters: dispatcher → harness wrappers → `claude -p` grandchildren. `pkill` by pattern is unreliable past depth 2.
 - Log file in use this session: `logs/p4-v2-t23-dispatch.log` (10 lines at kill, 4 `[START]` 0 `[DONE]`). The mtime of profile `.md` files is a more reliable progress signal than the dispatch log.
 - Search-plan's `Current position` says `iteration: DONE-v2-complete, phase: complete` — that was written by the v2-t23 subagent before the parse corruption was discovered. The tier-2/3 data needs to be rebuilt before the roster can be treated as final.
