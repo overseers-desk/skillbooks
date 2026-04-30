@@ -1,5 +1,5 @@
 #!/usr/bin/env tclsh9.0
-# spar-transitions.tcl — transition eligibility report and dispatch (CLI)
+# spar-transition.tcl — transition eligibility report and dispatch (CLI)
 #
 # Modes (decided by what's on the argv):
 #   no Tn token, no --auto, no --dry-run   overview report.
@@ -13,7 +13,7 @@
 #                                          transition.
 #
 # Usage:
-#   tclsh9.0 spar-transitions.tcl <campaign.yaml> [Tn[:seg[/stem]] ...] \
+#   tclsh9.0 spar-transition.tcl <campaign.yaml> [Tn[:seg[/stem]] ...] \
 #       [--dry-run] [--auto] [--pending|--ready] [-v|--verbose] \
 #       [--jobs=N] [--delay=N] [--yes]
 #
@@ -23,7 +23,7 @@
 #   Tn:<segment>         Tn restricted to one segment
 #   Tn:<segment>/<stem>  Tn for one specific contact
 # Tokens are repeatable and mixable across TIDs. The grammar is parsed
-# in spar-transitions-cli.tcl (test/test-cli-parser.tcl drives it).
+# in spar-transition-cli.tcl (test/test-cli-parser.tcl drives it).
 #
 # --auto refuses any positional Tn token. Transitions with external-
 # action side-effects (e.g. SES send) declare auto_safe=0 and are
@@ -39,7 +39,7 @@ set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
 source [file join $script_dir spar-dispatch.tcl]
 source [file join $script_dir spar-email.tcl]
-source [file join $script_dir spar-transitions-cli.tcl]
+source [file join $script_dir spar-transition-cli.tcl]
 
 package require logger
 namespace eval spar {
@@ -53,17 +53,17 @@ namespace eval spar {
 # operator-facing summary; the TRANSITIONS list is generated from the
 # registry so adding a transition surfaces it here automatically.
 proc print_help {} {
-    puts {spar-transitions.tcl — report and dispatch SPAR state transitions.
+    puts {spar-transition.tcl — report and dispatch SPAR state transitions.
 
 USAGE
-    tclsh9.0 spar-transitions.tcl <campaign.yaml> [Tn[:seg[/stem]] ...] [options]
+    tclsh9.0 spar-transition.tcl <campaign.yaml> [Tn[:seg[/stem]] ...] [options]
 
 POSITIONAL TRANSITION TOKENS
     Tn                  all rows of TID Tn, campaign-wide (live dispatch)
     Tn:<segment>        rows of Tn restricted to one segment
     Tn:<segment>/<stem> rows of Tn for one specific contact
     (repeatable; mixable across TIDs. With no Tn token and no --auto,
-     spar-transitions reports the eligibility ladder and exits.)
+     spar-transition reports the eligibility ladder and exits.)
 
 OPTIONS
     --pending         show pending tasks only (report mode)
@@ -99,30 +99,30 @@ TRANSITIONS}
     puts {
 COMMON WORKFLOWS
     # Overview: counts across every transition
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --ready
+    tclsh9.0 spar-transition.tcl path/to/campaign.yaml --ready
 
     # Dispatch one transition's ready work, live
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1
+    tclsh9.0 spar-transition.tcl path/to/campaign.yaml T1
 
     # Dry-run before dispatching live
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1 --dry-run
+    tclsh9.0 spar-transition.tcl path/to/campaign.yaml T1 --dry-run
 
     # Step through a transition, confirming each item
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1 --jobs=0
+    tclsh9.0 spar-transition.tcl path/to/campaign.yaml T1 --jobs=0
 
     # Limit dispatch to one segment or one contact
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T1:vic
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T6:vic/jane-doe
+    tclsh9.0 spar-transition.tcl path/to/campaign.yaml T1:vic
+    tclsh9.0 spar-transition.tcl path/to/campaign.yaml T6:vic/jane-doe
 
     # Mix transitions and scopes in one shared pool
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml \
+    tclsh9.0 spar-transition.tcl path/to/campaign.yaml \
         T1 T2:vic T6:vic/jane-doe --jobs=8
 
     # Drive the offline state machine until convergence (live)
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml --auto
+    tclsh9.0 spar-transition.tcl path/to/campaign.yaml --auto
 
     # Cron: dispatch T6 sends without prompting
-    tclsh9.0 spar-transitions.tcl path/to/campaign.yaml T6 --yes}
+    tclsh9.0 spar-transition.tcl path/to/campaign.yaml T6 --yes}
 }
 
 # Parse argv. The parser returns {ok 0 error <msg>} on grammar errors;

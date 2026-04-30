@@ -231,12 +231,12 @@ T1–T4 are the cheap (no-parse) transitions; T5 is reserved for a future cheap 
 
 | # | Label | Eligible contacts | Dispatch | Dispatch status |
 |---|-------|-------------------|----------|-----------------|
-| T1 | Sweep → Profile | state = DISCOVERED | `spar-transitions.tcl <campaign.yaml> T1` (runs §4.1 first if `contact_name` is blank, else §4.2+) | available |
+| T1 | Sweep → Profile | state = DISCOVERED | `spar-transition.tcl <campaign.yaml> T1` (runs §4.1 first if `contact_name` is blank, else §4.2+) | available |
 | T2 | Profile → Approach | state = PROFILED, star≥3 | spar-a-batch.tcl | available |
-| T3 | Stale → Re-profile | state = PROFILE_STALE | `spar-transitions.tcl <campaign.yaml> T3` | available |
+| T3 | Stale → Re-profile | state = PROFILE_STALE | `spar-transition.tcl <campaign.yaml> T3` | available |
 | T4 | Re-profile → Re-approach | state = APPROACH_STALE (profile_hash mismatch, #63) | spar-a-batch.tcl | available |
-| T6 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | `spar-transitions.tcl <campaign.yaml> T6` (AWS SES, serial with --delay) | available |
-| T7 | Send → Reply | email_sent, not email_replied | `spar-transitions.tcl <campaign.yaml> T7` (mailroom reply-check, appends replies to approach YAML) | available |
+| T6 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | `spar-transition.tcl <campaign.yaml> T6` (AWS SES, serial with --delay) | available |
+| T7 | Send → Reply | email_sent, not email_replied | `spar-transition.tcl <campaign.yaml> T7` (mailroom reply-check, appends replies to approach YAML) | available |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
 | T9 | Secondary follow-up | `secondary_ready` | render script + manual marker | manual |
 | T10 | Tertiary follow-up | `tertiary_ready` | render script + manual marker | manual |

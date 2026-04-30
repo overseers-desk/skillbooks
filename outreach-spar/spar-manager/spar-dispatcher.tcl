@@ -161,7 +161,7 @@ oo::class create spar::Dispatcher {
     # carries this worker_proc < cap). Default cap is Jobs (i.e. no
     # extra constraint).
     #
-    # Used by the unified dispatch_ready in spar-transitions.tcl to let
+    # Used by the unified dispatch_ready in spar-transition.tcl to let
     # SES rows (worker_proc=ses_send) run serially while harness rows
     # parallelise inside the same shared pool. The decision lives in
     # docs/concurrency.md "Per-worker cap".

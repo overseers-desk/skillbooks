@@ -43,7 +43,7 @@ The cost is initcmd overhead for `$jobs` worker threads paid up-front, on small 
 
 **Per-worker cap.** SES (T6) must serialise but lives in the same shared pool as the parallel workers. The Dispatcher exposes `set_worker_cap <worker_proc> <cap>` as a sub-cap of the global `Jobs`: a row whose `worker_proc` sits at its per-worker cap stays queued while rows of other workers continue to post. `dispatch_ready` installs `set_worker_cap ses_send 1` so SES sends serialise alongside parallel harness rows; `_try_post_next` walks the queue rather than popping the head, so a blocked SES row at the front does not block harness rows behind it. Reproducer: `test/test-pool.tcl` §18.
 
-**Heterogeneous CLI grammar.** The old `--tid=T1 --tid=T6 --segment=foo --stem=bar` was homogeneous — one segment list and one stem list applied to every TID. That fits a one-runner-at-a-time mental model, but the shared pool wants per-TID scopes. Positional `Tn[:seg[/stem]]` tokens carry their scope on the token, repeat, and mix freely (e.g. `T1 T2:vic T6:vic/jane-doe`). The grammar parses in `spar-transitions-cli.tcl` so `test/test-cli-parser.tcl` can drive it without spinning up a campaign YAML.
+**Heterogeneous CLI grammar.** The old `--tid=T1 --tid=T6 --segment=foo --stem=bar` was homogeneous — one segment list and one stem list applied to every TID. That fits a one-runner-at-a-time mental model, but the shared pool wants per-TID scopes. Positional `Tn[:seg[/stem]]` tokens carry their scope on the token, repeat, and mix freely (e.g. `T1 T2:vic T6:vic/jane-doe`). The grammar parses in `spar-transition-cli.tcl` so `test/test-cli-parser.tcl` can drive it without spinning up a campaign YAML.
 
 **Typed message protocol via `thread::send -async`.** Worker threads cannot touch Tk or main-thread state directly; everything passes through a small set of `msg_*` procs in the tpool's `-initcmd` that forward to `on_*` methods on the Dispatcher in the main thread. Downward signals from Dispatcher to workers go through shared variables (`tsv::`), not messages — the main thread cannot `thread::send` into a worker that sits inside a synchronous `exec`.
 
@@ -57,7 +57,7 @@ The cost is initcmd overhead for `$jobs` worker threads paid up-front, on small 
 
 **`spar::ui::DispatchController`** in `ui/dispatch-controller.tcl` — Tk controller. Owns the Play/Pause/Cancel buttons, the right-click menu on tree rows, and the progress bar. Translates user actions into Dispatcher method calls and renders Dispatcher row-state events back onto the `TransitionTree`. Does not spawn jobs and does not call `thread::send` directly.
 
-The CLI's equivalent is `dispatch_ready` in `spar-transitions.tcl`. Same shape: it consults each transition's `prepare_for_pool`, builds one shared Dispatcher, installs `set_worker_cap ses_send 1`, enqueues every row, and `vwait`s once on a counter the row-state subscriber maintains.
+The CLI's equivalent is `dispatch_ready` in `spar-transition.tcl`. Same shape: it consults each transition's `prepare_for_pool`, builds one shared Dispatcher, installs `set_worker_cap ses_send 1`, enqueues every row, and `vwait`s once on a counter the row-state subscriber maintains.
 
 ## Row state machine
 

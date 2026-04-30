@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh9.0
-# Tests for spar-transitions.tcl's positional `Tn[:seg[/stem]]` token grammar.
+# Tests for spar-transition.tcl's positional `Tn[:seg[/stem]]` token grammar.
 #
-# Strategy: source spar-transitions-cli.tcl which exposes parse_cli as a
+# Strategy: source spar-transition-cli.tcl which exposes parse_cli as a
 # library. The proc returns a dict {ok 1 spec {...}} on success, or
 # {ok 0 error <msg>} on failure. The script's main body calls parse_cli
 # at startup and exits on error; the test bypasses that by sourcing the
@@ -13,7 +13,7 @@ source [file join $script_dir test-helpers.tcl]
 # Source enough to populate the transition registry — parse_cli validates
 # unknown TIDs against ::spar::transitions::all.
 source [file join $script_dir .. spar-state.tcl]
-source [file join $script_dir .. spar-transitions-cli.tcl]
+source [file join $script_dir .. spar-transition-cli.tcl]
 
 # helper — assert parse_cli succeeds and the resulting tid_scopes matches.
 proc assert_parse {argv expected_scopes label} {

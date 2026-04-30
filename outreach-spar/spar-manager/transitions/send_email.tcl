@@ -10,7 +10,7 @@
 #
 # actioned_date is stamped on success by the helper, not here.
 # Sends are serialised at the unified Dispatcher's per-worker cap
-# (set_worker_cap ses_send 1, installed by spar-transitions.tcl's
+# (set_worker_cap ses_send 1, installed by spar-transition.tcl's
 # dispatch_ready) with an inter-row delay_ms throttle (opts.delay,
 # default 2s) to stay under SES rate limits. SES rows therefore run
 # at most one at a time inside the same shared pool that runs
@@ -90,7 +90,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
         set step_callback [spar::dict_get_default $opts step_callback ""]
         # Standalone callers (legacy CLI / tests) still get a serial
         # pool of jobs=1 — SES is serial by convention. The unified
-        # CLI dispatch in spar-transitions.tcl bypasses this method
+        # CLI dispatch in spar-transition.tcl bypasses this method
         # and goes through prepare_for_pool + Dispatcher's per-worker
         # cap instead.
         set rows [my _build_rows $opts]
@@ -100,7 +100,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
 
     # prepare_for_pool — pool-shape entry. Returns
     # {worker_proc ses_send rows {{stem opts} ...}}; the caller
-    # (spar-transitions.tcl's dispatch_ready) installs
+    # (spar-transition.tcl's dispatch_ready) installs
     # set_worker_cap ses_send 1 on the shared Dispatcher so these
     # rows run serially even when other transition kinds parallelise.
     method prepare_for_pool {opts on_progress} {
