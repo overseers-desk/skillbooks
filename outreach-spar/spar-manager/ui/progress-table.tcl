@@ -27,7 +27,7 @@ namespace eval spar::ui {}
 oo::class create spar::ui::ProgressTable {
     variable Campaign PTree PtreeCols PtreeColIds DenomParent
     variable SegCounts SegChecked FsDependentCols ColCountKeys
-    variable Subs
+    variable Subs ChildRows
 
     constructor {campaign parent_frame} {
         set Campaign    $campaign
@@ -439,5 +439,55 @@ oo::class create spar::ui::ProgressTable {
         }
 
         $PTree item __totals__ -values $values
+    }
+
+    # _contact_values: returns an 11-element list (one per column) with "✓"
+    # where this contact is counted in that column's aggregate, "" otherwise.
+    # Mirrors the conditions in spar::progress_counts so the sum of ✓s equals
+    # the segment row's count for each column.
+    method _contact_values {c} {
+        set state [dict get $c state]
+        set star  [dict get $c star]
+        set em    [dict get $c has_email]
+        set li    [dict get $c has_linkedin]
+        set fb    [dict get $c has_facebook]
+        set ph    [dict get $c has_phone_only]
+        set sent  [dict get $c email_sent]
+        set repl  [dict get $c email_replied]
+
+        set profiled_plus  {PROFILED PROFILE_STALE APPROACHED APPROACH_STALE SENT REPLIED}
+        set approached_plus {APPROACHED APPROACH_STALE SENT REPLIED}
+
+        set is_valid [expr {$state ne "EXCLUDED"}]
+        set is_prof  [expr {$state in $profiled_plus}]
+        set is_s3    [expr {$star >= 3}]
+        set is_appr  [expr {$state in $approached_plus}]
+
+        set v "✓"
+        return [list \
+            [expr {$is_valid                              ? $v : ""}] \
+            [expr {$is_prof                               ? $v : ""}] \
+            [expr {$is_s3                                 ? $v : ""}] \
+            [expr {($is_s3 && $is_appr)                   ? $v : ""}] \
+            [expr {($is_s3 && $em)                        ? $v : ""}] \
+            [expr {($is_s3 && $em && $is_appr)            ? $v : ""}] \
+            [expr {($is_s3 && $li)                        ? $v : ""}] \
+            [expr {($is_s3 && $fb)                        ? $v : ""}] \
+            [expr {($is_s3 && $ph)                        ? $v : ""}] \
+            [expr {($is_s3 && $em && $is_appr && $sent)   ? $v : ""}] \
+            [expr {($is_s3 && $em && $is_appr && $repl)   ? $v : ""}]]
+    }
+
+    # _refresh_seg_children: delete existing child rows for seg_name, then
+    # insert one child per contact in AllContacts that belongs to this segment
+    # (matched by file tail of _segment_dir). Called from on_segment_loaded
+    # after each phase updates the segment row's values.
+    method _refresh_seg_children {seg_name} {
+        foreach child [$PTree children $seg_name] { $PTree delete $child }
+        foreach c [$Campaign get_all_contacts] {
+            if {[file tail [dict get $c _segment_dir]] ne $seg_name} continue
+            set name [dict get $c contact_name]
+            $PTree insert $seg_name end -text "  $name" -values [my _contact_values $c]
+        }
     }
 }
