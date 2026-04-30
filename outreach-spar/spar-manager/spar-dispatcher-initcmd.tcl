@@ -123,7 +123,7 @@ proc _ensure_email_loaded {} {
 #                   constructor + run shape.
 #
 # Cancel-checked once before the harness starts. Per-stage cancel
-# inside the harness is deferred — see docs/job-pool.md "Deferred
+# inside the harness is deferred — see docs/concurrency.md "Deferred
 # work" — so a cancel that arrives while exec claude is in flight
 # only takes effect after the current call returns.
 #

@@ -708,7 +708,7 @@ assert_eq $f 0 "step_callback=continue: no failures"
 # ════════════════════════════════════════════════════════════════════════
 #
 # Reproducer for the bug documented in #86 follow-up and analysed in
-# docs/job-pool.md "Pool sizing". A `tpool::create -minworkers 0` only
+# docs/concurrency.md "Pool sizing". A `tpool::create -minworkers 0` only
 # spawns one worker for the pool's lifetime, regardless of post volume,
 # so production runs at --jobs=8 ran strictly sequentially. Earlier
 # tests asserted `posted_count` (which counts state flips at

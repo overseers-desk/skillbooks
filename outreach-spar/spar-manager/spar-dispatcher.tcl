@@ -6,7 +6,7 @@
 # through thread::send -async calls into its on_* methods.
 #
 # The protocol — twelve message types, the row state machine, and the
-# downward sentinel channel — is documented in docs/job-pool.md.
+# downward sentinel channel — is documented in docs/concurrency.md.
 #
 # Idempotent: oo::class create is not idempotent, so guard against
 # multiple sources.
@@ -74,7 +74,7 @@ oo::class create spar::Dispatcher {
         # lifetime, regardless of post volume; subsequent posts queue
         # behind the first worker and the pool never grows. Verified
         # by test/test-pool.tcl §17 ("True parallelism with blocking
-        # workers"); see docs/job-pool.md "Pool sizing" for the
+        # workers"); see docs/concurrency.md "Pool sizing" for the
         # diagnosis trail.
         set Pool [tpool::create \
             -minworkers $jobs \
