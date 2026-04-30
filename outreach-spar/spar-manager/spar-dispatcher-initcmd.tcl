@@ -94,7 +94,6 @@ proc _ensure_harness_loaded {} {
     if {[info exists ::spar::_harness_loaded]} { return }
     uplevel #0 [list source $::pool_state_file]
     uplevel #0 [list source $::pool_harness_file]
-    spar::install_log_timestamp
     set ::spar::_harness_loaded 1
 }
 
@@ -109,7 +108,6 @@ proc _ensure_email_loaded {} {
     uplevel #0 [list source $::pool_email_file]
     uplevel #0 [list source $::pool_ses_send_file]
     uplevel #0 [list source $::pool_imap_check_file]
-    spar::install_log_timestamp
     set ::spar::_email_loaded 1
 }
 
