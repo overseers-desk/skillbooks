@@ -13,6 +13,7 @@
 package require json
 package require json::write
 package require TclOO
+package require logger
 
 # Idempotent: oo::class create is not idempotent, so guard against
 # multiple sources.
@@ -26,6 +27,10 @@ namespace eval spar {
     # Capture the harness install directory at source time. Used by
     # load_prompt to resolve prompts/<name>.txt relative to this file.
     variable harness_dir [file dirname [file normalize [info script]]]
+    # Logger service for harness runtime output. Per-row context
+    # (slug, phase) goes in the message body; logger adds the
+    # timestamp, service tag, and level.
+    variable harness_log [logger::init spar::harness]
 }
 
 source [file join $::spar::harness_dir spar-mailroom.tcl]
@@ -113,8 +118,7 @@ oo::class create spar::Harness {
         set prompt [spar::read_file $prompt_path]
         set prompt [string map [list __MAILROOM_SECTION__ $section] $prompt]
         spar::write_file $prompt_path $prompt
-        puts "\[$Slug\] \[phase: mailroom\]"
-        flush stdout
+        ${::spar::harness_log}::info "\[$Slug\] \[phase: mailroom\]"
     }
 
     # cost_total — sum `cost` fields across the JSONL ledger.
@@ -144,7 +148,7 @@ oo::class create spar::Harness {
 
             set claude_bin [spar::find_tool claude]
             if {$claude_bin eq ""} {
-                puts "FAIL ($stage: claude not found — check Settings): $Slug"
+                ${::spar::harness_log}::error "FAIL ($stage: claude not found — check Settings): $Slug"
                 return 1
             }
             set cmd [list $claude_bin -p --output-format json --dangerously-skip-permissions]
@@ -161,7 +165,7 @@ oo::class create spar::Harness {
                 exec {*}$cmd > $json_file 2> "${log_file}.stderr"
             }]} {
                 if {![file exists $json_file] || [file size $json_file] == 0} {
-                    puts "FAIL ($stage rc=error): $Slug"
+                    ${::spar::harness_log}::error "FAIL ($stage rc=error): $Slug"
                     return 1
                 }
             }
@@ -171,7 +175,7 @@ oo::class create spar::Harness {
             close $fd
 
             if {[catch {set parsed [::json::json2dict $raw_json]}]} {
-                puts "FAIL ($stage: invalid JSON): $Slug"
+                ${::spar::harness_log}::error "FAIL ($stage: invalid JSON): $Slug"
                 return 1
             }
 
@@ -179,11 +183,11 @@ oo::class create spar::Harness {
                 set result_text [spar::dict_get_default $parsed result ""]
                 if {[string match -nocase *hit*your*limit*resets* $result_text]} {
                     if {$attempt >= $max_retries} {
-                        puts "FAIL ($stage: credit limit after $max_retries retries): $Slug"
+                        ${::spar::harness_log}::error "FAIL ($stage: credit limit after $max_retries retries): $Slug"
                         return 1
                     }
                     set wait_secs [my _credit_wait_secs $result_text]
-                    puts "\[$Slug\] Credit limit hit (attempt $attempt/$max_retries). Sleeping [expr {$wait_secs/60}]m until reset..."
+                    ${::spar::harness_log}::warn "\[$Slug\] Credit limit hit (attempt $attempt/$max_retries). Sleeping [expr {$wait_secs/60}]m until reset..."
                     after [expr {$wait_secs * 1000}] set ::_wake 1
                     vwait ::_wake
                     continue
@@ -191,7 +195,7 @@ oo::class create spar::Harness {
             }
 
             if {![dict exists $parsed result]} {
-                puts "FAIL ($stage: no result in output): $Slug"
+                ${::spar::harness_log}::error "FAIL ($stage: no result in output): $Slug"
                 return 1
             }
 
@@ -270,12 +274,12 @@ oo::class create spar::Harness {
             set hard [my hard_errors_from $errors]
             if {[llength $hard] == 0} {
                 if {$attempt > 1} {
-                    puts "\[$Slug\] Validation passed after $attempt attempt(s)."
+                    ${::spar::harness_log}::info "\[$Slug\] Validation passed after $attempt attempt(s)."
                 }
                 return 0
             }
             set error_text [my format_errors $hard]
-            puts "\[$Slug\] Validation failed (attempt $attempt/$max_fix):\n$error_text"
+            ${::spar::harness_log}::warn "\[$Slug\] Validation failed (attempt $attempt/$max_fix):\n$error_text"
             set fix_log "${LogPrefix}-fix${attempt}.log"
             set fix_prompt [my $prompt_builder_method $attempt $hard $error_text]
             set model_args {}
@@ -321,7 +325,7 @@ oo::class create spar::Harness {
     # Default failure message when the loop exits with errors remaining.
     # ProfileHarness overrides to include the first error message.
     method report_fix_failure {hard max_fix} {
-        puts "FAIL (validation failed after $max_fix retries): $Slug"
+        ${::spar::harness_log}::error "FAIL (validation failed after $max_fix retries): $Slug"
     }
 }
 
@@ -438,8 +442,8 @@ oo::class create spar::ApproachHarness {
         set log_prefix [my log_prefix]
         set prompt_dir [my prompt_dir]
 
-        puts "\[$slug\] \[phase: drafting\]"
-        puts "\[$slug\] Author: drafting..."
+        ${::spar::harness_log}::info "\[$slug\] \[phase: drafting\]"
+        ${::spar::harness_log}::info "\[$slug\] Author: drafting..."
         set author_draft_log "${log_prefix}-author-draft.log"
         set author_prompt [spar::read_file [file join $prompt_dir author-draft.txt]]
 
@@ -450,7 +454,7 @@ oo::class create spar::ApproachHarness {
         set draft_text [spar::read_file $author_draft_log]
         set draft [spar::extract_between $draft_text "DRAFT_START" "DRAFT_END"]
         if {$draft eq ""} {
-            puts "FAIL (no draft markers): $slug"
+            ${::spar::harness_log}::error "FAIL (no draft markers): $slug"
             return 1
         }
         set rationale [spar::extract_between $draft_text "RATIONALE_START" "RATIONALE_END"]
@@ -472,8 +476,8 @@ oo::class create spar::ApproachHarness {
 
         while {$Pass < $MaxPasses && $Verdict eq "REVISE"} {
             incr Pass
-            puts "\[$slug\] \[phase: challenger $Pass/$MaxPasses\]"
-            puts "\[$slug\] Challenger pass $Pass/$MaxPasses..."
+            ${::spar::harness_log}::info "\[$slug\] \[phase: challenger $Pass/$MaxPasses\]"
+            ${::spar::harness_log}::info "\[$slug\] Challenger pass $Pass/$MaxPasses..."
 
             set challenger_template [spar::read_file [file join $prompt_dir challenger-template.txt]]
             set current_draft [spar::read_file [file join $prompt_dir draft-current.txt]]
@@ -496,12 +500,12 @@ oo::class create spar::ApproachHarness {
             if {$Verdict eq ""} { set Verdict "REVISE" }
 
             if {$Verdict eq "DONE"} {
-                puts "\[$slug\] Challenger pass $Pass: DONE"
+                ${::spar::harness_log}::info "\[$slug\] Challenger pass $Pass: DONE"
                 break
             }
 
-            puts "\[$slug\] \[phase: revising $Pass\]"
-            puts "\[$slug\] Challenger pass $Pass: REVISE — author revising..."
+            ${::spar::harness_log}::info "\[$slug\] \[phase: revising $Pass\]"
+            ${::spar::harness_log}::info "\[$slug\] Challenger pass $Pass: REVISE — author revising..."
 
             set author_rev_log "${log_prefix}-author-rev${Pass}.log"
             set challenger_feedback [spar::read_file [file join $prompt_dir "challenger-pass${Pass}.txt"]]
@@ -534,8 +538,8 @@ oo::class create spar::ApproachHarness {
         set log_prefix [my log_prefix]
         set prompt_dir [my prompt_dir]
 
-        puts "\[$slug\] \[phase: assembling\]"
-        puts "\[$slug\] Author: assembling..."
+        ${::spar::harness_log}::info "\[$slug\] \[phase: assembling\]"
+        ${::spar::harness_log}::info "\[$slug\] Author: assembling..."
 
         set all_challenger ""
         for {set r 1} {$r <= $Pass} {incr r} {
@@ -591,11 +595,11 @@ oo::class create spar::ApproachHarness {
         }
         foreach lg $required_logs {
             if {![file exists $lg]} {
-                puts "FAIL (DbC-Pre: assembly precondition log missing: $lg): $slug"
+                ${::spar::harness_log}::error "FAIL (DbC-Pre: assembly precondition log missing: $lg): $slug"
                 return 1
             }
             if {[file size $lg] == 0} {
-                puts "FAIL (DbC-Pre: assembly precondition log empty: $lg): $slug"
+                ${::spar::harness_log}::error "FAIL (DbC-Pre: assembly precondition log empty: $lg): $slug"
                 return 1
             }
         }
@@ -632,10 +636,10 @@ oo::class create spar::ApproachHarness {
         set total_cost [my cost_total]
 
         if {![file exists $Outfile]} {
-            puts "WARN: $slug completed but $Outfile not found (cost=\$$total_cost)"
+            ${::spar::harness_log}::warn "WARN: $slug completed but $Outfile not found (cost=\$$total_cost)"
             return
         }
-        puts "DONE: $slug ($Pass pass(es), verdict=$Verdict, cost=\$$total_cost)"
+        ${::spar::harness_log}::info "DONE: $slug ($Pass pass(es), verdict=$Verdict, cost=\$$total_cost)"
 
         # Update roster response_likelihood via ROSTER_UPDATE marker —
         # the dispatcher applies it from its single-threaded event loop
@@ -698,7 +702,7 @@ oo::class create spar::ProfileHarness {
             if {[spar::dict_get_default $row stem ""] ne $slug} continue
             set email [string trim [spar::dict_get_default $row email ""]]
             if {[spar::is_masked_email $email]} {
-                puts "\[[my slug]\] Guardrail: blanked masked email '$email' in roster"
+                ${::spar::harness_log}::warn "\[[my slug]\] Guardrail: blanked masked email '$email' in roster"
                 puts "ROSTER_UPDATE\t$roster_path\tstem\t$slug\temail\t"
                 flush stdout
             }
@@ -791,7 +795,7 @@ oo::class create spar::ProfileHarness {
     # Override: include the first error message in the failure line.
     method report_fix_failure {hard max_fix} {
         set msg [dict get [lindex $hard 0] message]
-        puts "FAIL (validation failed after $max_fix retries): [my slug] — $msg"
+        ${::spar::harness_log}::error "FAIL (validation failed after $max_fix retries): [my slug] — $msg"
     }
 
     # Run the full P-phase pipeline. Returns 0 on success, 1 on failure.
@@ -836,8 +840,8 @@ oo::class create spar::ProfileHarness {
         set log_prefix [my log_prefix]
         set prompt_dir [my prompt_dir]
 
-        puts "\[$slug\] \[phase: researching\]"
-        puts "\[$slug\] Profile: researching..."
+        ${::spar::harness_log}::info "\[$slug\] \[phase: researching\]"
+        ${::spar::harness_log}::info "\[$slug\] Profile: researching..."
         set draft_log "${log_prefix}-profile.log"
         set prompt [spar::read_file [file join $prompt_dir prompt.txt]]
         return [my call "profile" $draft_log $prompt]
@@ -845,7 +849,7 @@ oo::class create spar::ProfileHarness {
 
     method do_summary {} {
         set total_cost [my cost_total]
-        puts "DONE: [my slug] (cost=\$$total_cost)"
+        ${::spar::harness_log}::info "DONE: [my slug] (cost=\$$total_cost)"
     }
 }
 
