@@ -454,7 +454,7 @@ if {$dispatching} {
             incr ::_total_expected [llength [lindex $batch 2]]
         }
 
-        set disp [spar::Dispatcher new $jobs ::spar::_pool_log_drop]
+        set disp [spar::Dispatcher new $jobs]
         $disp set_worker_cap ses_send 1
 
         if {$step_callback ne ""} {

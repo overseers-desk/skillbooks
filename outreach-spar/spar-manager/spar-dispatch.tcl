@@ -125,7 +125,7 @@ proc spar::run_through_pool {jobs tid worker_proc rows result \
         progress $on_progress \
         complete $on_complete]
 
-    set disp [spar::Dispatcher new $jobs ::spar::_pool_log_drop]
+    set disp [spar::Dispatcher new $jobs]
     dict set st dispatcher $disp
     dict set pool_runs $run_id $st
 
@@ -162,8 +162,6 @@ proc spar::run_through_pool {jobs tid worker_proc rows result \
 proc spar::_pool_pre_post {step_callback row tid idx total} {
     return [{*}$step_callback $tid $row $idx $total]
 }
-
-proc spar::_pool_log_drop {msg} {}
 
 proc spar::_pool_on_state {run_id row to_state} {
     variable pool_runs

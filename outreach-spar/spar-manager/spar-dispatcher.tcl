@@ -13,6 +13,7 @@
 
 package require TclOO
 package require Thread
+package require logger
 
 if {[info exists ::spar::_pool_loaded]} {
     package provide spar-dispatcher 1.0
@@ -22,6 +23,9 @@ if {[info exists ::spar::_pool_loaded]} {
 namespace eval spar {
     variable _pool_loaded 1
     variable pool_script_dir [file dirname [file normalize [info script]]]
+    # Logger service for state-machine warnings the Dispatcher emits
+    # via _log (out-of-order/dropped messages, roster_update failures).
+    variable dispatch_log [logger::init spar::dispatch]
 }
 
 oo::class create spar::Dispatcher {
@@ -476,6 +480,10 @@ oo::class create spar::Dispatcher {
     }
 
     method _log {msg} {
+        ${::spar::dispatch_log}::warn $msg
+        # LogCallback is retained for the GUI's LogWindow wiring (until
+        # commit 5 swaps it for a logger appender) and for tests that
+        # capture per-instance dispatcher messages for assertion.
         if {$LogCallback ne ""} {
             {*}$LogCallback "spar::Dispatcher: $msg"
         }
