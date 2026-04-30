@@ -27,3 +27,33 @@ The lessons:
 2. **The anti-cargo-cult table is the multiplier.** The procedure alone still led to heavy solutions. The procedure plus domain-specific anti-patterns led to the right solution fast. Each new site debugged should feed back into the table.
 
 3. **Test before documenting.** The original skill claimed four capabilities. Testing proved one didn't work. An untested claim in a file that future AI will read is worse than no claim — it becomes the next session's false starting point.
+
+## How the qantas skill came to be
+
+In April 2026, the user asked for two things from qantas.com: search Classic Reward flight availability, and read the user's points balance. One AI session, three traps, one near-miss.
+
+The flight search was easy. `flightrewardfinder.qantas.com` is a Next.js SSR site. Plain `--dump-dom` returned a 200KB HTML page with the flight records embedded as JSON in `__next_f.push(...)` chunks. No headers needed beyond a non-`HeadlessChrome` user-agent. A regex extractor pulled the records out and a parser printed them. Public, no auth, done.
+
+The points balance was harder, in a way that revealed three traps.
+
+**Trap 1: same domain, different access regime.** The flight search lives on a public subdomain of qantas.com that ships rendered HTML to the wire. The account page at `www.qantas.com/au/en/frequent-flyer/my-account.html` looks like the same site but is a different beast: a SPA. The auth check runs in JavaScript after hydration. `--dump-dom` captures the page before that check resolves, so what comes back is the login redirect, not the account view. The AI's first attempt fetched the my-account URL with `--dump-dom`, saw a sign-in title, and concluded "user is not logged in." The user pointed out they were logged in. The actual cause was that the response had been captured too early. Fix: CDP with a wait loop polling `document.body.innerText` until the points value appears in the DOM, typically 5-10 seconds after navigation.
+
+**Trap 2: the no-action form.** The login page at `/au/en/frequent-flyer/my-account/sign-in.html` has three inputs (`#memberId`, `#lastName`, `#pin`) and a submit button labelled "LOG IN". Inspecting the form element revealed `<form>` with no `action` attribute. Submission is entirely JS-handled, probably an XHR to a token endpoint followed by a client-side redirect. A naive curl POST to the form has no URL to POST to. The fix is CDP: navigate, wait for `#pin` to mount, fill all three fields with `Input.insertText`, click the submit button by finding `button[type="submit"]`, then wait for `window.location.href` to contain `/my-account` and not `sign-in`. The login completed in roughly 12 seconds end to end.
+
+**Trap 3: cookie persistence between processes.** After login succeeded inside the CDP session and the points balance was scraped, the headless chromium process exited. The next invocation of the same headless command landed back on the sign-in page. The cookie database on disk had not changed. The cause: the user had snap chromium running in the GUI, which holds a profile lock on the same `--user-data-dir`. The headless instance keeps cookies in memory and only flushes them to disk on graceful shutdown when it owns the lock. With the GUI holding the lock, the headless cookies are session-only.
+
+This is where the AI almost lost the plot. Confronted with cookies-do-not-persist, the AI started designing a `fetch-balance.py` that would extract cookies via `Network.getCookies` after login, write them to a state file, and reload them in subsequent sessions via `Network.setCookies`. A small architecture took shape across two responses.
+
+The user stopped the work and pointed out: the original ask was "show my balance once when I ask." The login script already did that, log in, navigate, scrape, print, exit. The 30-second penalty per call was acceptable for a balance check that happens once a day. There was no second call to optimise for. The cross-process cookie scheme was solving a problem the user had not asked about.
+
+The skill landed as: `parse-rewards.py` for flights (no auth), `login.py` for balance (single CDP session per call). Two independent features. SKILL.md instructs the future AI not to chain them.
+
+The lessons:
+
+1. **One domain can host two different access regimes.** Public Next.js SSR and authenticated SPA can sit on the same site, even at adjacent URLs. The access method has to be picked per page, not per site. Test by inspecting the response: is the data already in the HTML, or is the HTML mostly a script tag plus a `<div id="root">` waiting for hydration?
+
+2. **Forms without `action=` are JS-submitted.** Reading the `<form>` opening tag is the cheapest test. No `action` means no plain HTTP submission target exists. Reach for CDP, not curl. A `<form>` with `action="/some/url"` is the opposite signal: try a curl POST first, it might work.
+
+3. **Cookie persistence between headless and GUI chromium fails when both target the same profile.** This is not sophisticated detection; it is filesystem locking. If a skill needs cookies to outlive a single headless invocation, either close the GUI browser first, use a separate `--user-data-dir`, or accept the design constraint and run login + read in one session every time.
+
+4. **When a chosen approach is blocked, check whether the user's original ask was already met before designing around the block.** Cookie persistence was blocked. The ask, "tell me my balance," had been met by the script that did login + read in one session. The "this is blocked" signal triggered a redesign instead of a re-read of the user's original ask. The redesign was unnecessary work that the user had to interrupt to prevent. The discipline rule is the same as in the IHG story above: a constraint is an observation, not a brief to architect around.
