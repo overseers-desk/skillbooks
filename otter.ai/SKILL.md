@@ -14,9 +14,9 @@ Spawn a **subagent** to run the CDP script, as each invocation launches a headle
 - A Chrome-compatible browser with an active Otter.ai session (user must be logged in via the browser UI)
 - Python 3 with `websocket-client` installed
 - For Dropbox export: Dropbox must be connected in Otter.ai settings
-- Export path configured in `~/.claude/config/skill-config.yaml` under `otter.ai.dropbox_export_path`
+- Export path configured in `~/.claude/skills/config.yaml` under `otter.ai.dropbox_export_path`
 
-If the script returns `{"error": "Not logged in..."}`, the user needs to log in to otter.ai in their browser first. If `skill-config.yaml` is absent, pause and let the user know: "Create `~/.claude/config/skill-config.yaml` with an `otter.ai.dropbox_export_path` entry. This file is not part of the shared aesop repository - create it locally."
+If the script returns `{"error": "Not logged in..."}`, the user needs to log in to otter.ai in their browser first. If `skill-config.yaml` is absent, pause and let the user know: "Create `~/.claude/skills/config.yaml` with an `otter.ai.dropbox_export_path` entry. This file is not part of the shared aesop repository - create it locally."
 
 ## Capabilities
 

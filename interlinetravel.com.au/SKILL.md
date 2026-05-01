@@ -11,7 +11,7 @@ allowed-tools: Bash, Read
 This skill requires staff travel credentials to access industry rates.
 
 - **What:** Interline Travel account email and password
-- **Where:** `$HOME/.claude/config/skill-config.yaml`, under the `interlinetravel.com.au` key
+- **Where:** `$HOME/.claude/skills/config.yaml`, under the `interlinetravel.com.au` key
 - **Format:**
   ```yaml
   interlinetravel.com.au:
@@ -19,7 +19,7 @@ This skill requires staff travel credentials to access industry rates.
     password: yourpassword
   ```
 
-If the section is absent, pause and let the user know: "To search Interline Travel staff rates, add an `interlinetravel.com.au` section with your email and password to `$HOME/.claude/config/skill-config.yaml`."
+If the section is absent, pause and let the user know: "To search Interline Travel staff rates, add an `interlinetravel.com.au` section with your email and password to `$HOME/.claude/skills/config.yaml`."
 
 ## Capabilities
 
