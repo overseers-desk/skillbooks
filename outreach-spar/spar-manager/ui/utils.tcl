@@ -295,6 +295,18 @@ namespace eval ::spar::ui::inspector_widgets {
         if {$n < 1}  { set n 1 }
         if {$n > 20} { set n 20 }
         $tw configure -height $n
+        # Re-measure on width change (sash drag, window resize, expanding
+        # collapsible). Guard against the loop that setting -height would
+        # otherwise create.
+        bind $tw <Configure> [list apply {{tw} {
+            if {![winfo exists $tw]} return
+            set m [$tw count -displaylines 1.0 end]
+            if {$m < 1}  { set m 1 }
+            if {$m > 20} { set m 20 }
+            if {$m != [$tw cget -height]} {
+                $tw configure -height $m
+            }
+        }} $tw]
         return $tw
     }
 
@@ -357,10 +369,24 @@ namespace eval ::spar::ui::inspector_widgets {
     # $widget and all its descendants to scroll $canvas. Called after
     # each render pass so newly-added widgets participate.
     proc bind_mousewheel_recursive {canvas widget} {
-        bind $widget <Button-4> [list $canvas yview scroll -3 units]
-        bind $widget <Button-5> [list $canvas yview scroll  3 units]
-        bind $widget <MouseWheel> \
-            [list apply {{c D} { $c yview scroll [expr {-$D/30}] units }} $canvas %D]
+        # The wheel scripts return -code break so Tk's Text class binding
+        # does not also scroll the widget's internal view. Without break,
+        # a wheel event over a body text widget scrolls both the outer
+        # canvas and the widget's own yview, leaving the widget showing
+        # a different slice of its content from where the surrounding
+        # layout suggests.
+        bind $widget <Button-4> [list apply {{c} {
+            $c yview scroll -3 units
+            return -code break
+        }} $canvas]
+        bind $widget <Button-5> [list apply {{c} {
+            $c yview scroll  3 units
+            return -code break
+        }} $canvas]
+        bind $widget <MouseWheel> [list apply {{c D} {
+            $c yview scroll [expr {-$D/30}] units
+            return -code break
+        }} $canvas %D]
         foreach child [winfo children $widget] {
             bind_mousewheel_recursive $canvas $child
         }
