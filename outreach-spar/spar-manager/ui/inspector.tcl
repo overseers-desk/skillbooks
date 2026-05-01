@@ -19,8 +19,8 @@ namespace eval spar::ui {}
 oo::class create spar::ui::Inspector {
     variable Campaign Tree
     variable Pane CurrentStem Visible SashPos
-    variable Right HeaderStem Notebook Canvas
-    variable Tabs CollapseMemory
+    variable Right HeaderStem Notebook
+    variable Tabs TabFrames TabCanvases CollapseMemory
     variable Subs
 
     constructor {campaign tree parent_panedwindow} {
@@ -31,6 +31,8 @@ oo::class create spar::ui::Inspector {
         set Visible         0
         set SashPos         0
         set Tabs            [dict create]
+        set TabFrames       [dict create]
+        set TabCanvases     [dict create]
         set CollapseMemory  [dict create]
         set Subs            [dict create]
 
@@ -54,20 +56,24 @@ oo::class create spar::ui::Inspector {
         ::spar::ui::inspector_widgets::copy_text $HeaderStem ""
         pack $HeaderStem -side left -fill x -expand 1 -padx 6 -pady 4
 
-        # One scroll region holding the notebook — tall A or R content
-        # scrolls within it; S and P render short and leave trailing
-        # space which the scrollbar makes navigable.
-        set inner [::spar::ui::inspector_widgets::scrollable $Right]
-        set Canvas [winfo parent $inner]
-        set Notebook ${inner}.nb
+        # Notebook sits directly under the header so its tab strip stays
+        # fixed. Each tab owns its own scrollable canvas, so scrolling
+        # within an active tab moves only that tab's content (the tab
+        # strip never scrolls off). Per-tab scrollbars also mean tall P
+        # or R bodies show a working scrollbar against their own tab.
+        set Notebook ${Right}.nb
         ttk::notebook $Notebook
         pack $Notebook -fill both -expand 1
 
         foreach letter {S P A R} {
-            set tab ${Notebook}.[string tolower $letter]
-            ttk::frame $tab
-            $Notebook add $tab -text $letter
-            dict set Tabs $letter $tab
+            set frame ${Notebook}.[string tolower $letter]
+            ttk::frame $frame
+            $Notebook add $frame -text $letter
+            set body   [::spar::ui::inspector_widgets::scrollable $frame]
+            set canvas [winfo parent $body]
+            dict set TabFrames   $letter $frame
+            dict set Tabs        $letter $body
+            dict set TabCanvases $letter $canvas
         }
 
         $Tree subscribe selection-changed [list [self] on_selection_changed]
@@ -152,10 +158,10 @@ oo::class create spar::ui::Inspector {
             ttk::label [dict get $Tabs S].ph -text $msg -anchor w
             pack [dict get $Tabs S].ph -fill x -padx 6 -pady 8
             foreach letter {S P A R} {
-                $Notebook tab [dict get $Tabs $letter] -text $letter \
+                $Notebook tab [dict get $TabFrames $letter] -text $letter \
                     -state [expr {$letter eq "S" ? "normal" : "disabled"}]
             }
-            $Notebook select [dict get $Tabs S]
+            $Notebook select [dict get $TabFrames S]
             return
         }
 
@@ -169,12 +175,12 @@ oo::class create spar::ui::Inspector {
         set replies      [my collect_replies $contact]
         set has_reply    [expr {[llength $replies] > 0}]
 
-        $Notebook tab [dict get $Tabs S] -state normal    -text [my tab_title_s $contact]
-        $Notebook tab [dict get $Tabs P] -state [expr {$has_profile  ? "normal" : "disabled"}] \
+        $Notebook tab [dict get $TabFrames S] -state normal -text [my tab_title_s $contact]
+        $Notebook tab [dict get $TabFrames P] -state [expr {$has_profile  ? "normal" : "disabled"}] \
             -text [expr {$has_profile  ? [my tab_title_p $contact] : "P"}]
-        $Notebook tab [dict get $Tabs A] -state [expr {$has_approach ? "normal" : "disabled"}] \
+        $Notebook tab [dict get $TabFrames A] -state [expr {$has_approach ? "normal" : "disabled"}] \
             -text [expr {$has_approach ? [my tab_title_a $contact] : "A"}]
-        $Notebook tab [dict get $Tabs R] -state [expr {$has_reply    ? "normal" : "disabled"}] \
+        $Notebook tab [dict get $TabFrames R] -state [expr {$has_reply    ? "normal" : "disabled"}] \
             -text [expr {$has_reply    ? "R [llength $replies]" : "R"}]
 
         my fill_s $contact
@@ -186,11 +192,14 @@ oo::class create spar::ui::Inspector {
         if {$has_profile}  { set latest P }
         if {$has_approach} { set latest A }
         if {$has_reply}    { set latest R }
-        $Notebook select [dict get $Tabs $latest]
+        $Notebook select [dict get $TabFrames $latest]
 
         update idletasks
-        ::spar::ui::inspector_widgets::bind_mousewheel_recursive $Canvas $Notebook
-        $Canvas configure -scrollregion [$Canvas bbox all]
+        dict for {letter body} $Tabs {
+            set canvas [dict get $TabCanvases $letter]
+            ::spar::ui::inspector_widgets::bind_mousewheel_recursive $canvas $body
+            $canvas configure -scrollregion [$canvas bbox all]
+        }
     }
 
     # Tab titles carry each authoring tab's self-assessment of the contact:
@@ -428,15 +437,19 @@ oo::class create spar::ui::Inspector {
     }
 
     method render_text_block {parent name text} {
-        set nlines [llength [split $text \n]]
-        if {$nlines > 20} { set nlines 20 }
-        if {$nlines < 3}  { set nlines 3 }
         set tw ${parent}.${name}
-        text $tw -wrap word -relief flat -borderwidth 0 -height $nlines \
-            -background [. cget -background]
+        text $tw -wrap word -relief flat -borderwidth 0 -takefocus 0 \
+            -height 1 -background [. cget -background]
         $tw insert end $text
         $tw configure -state disabled
         pack $tw -fill x -padx 6 -pady {2 2}
+        # Size to actual wrapped display lines after pack so long bodies
+        # extend the tab's scrollable region instead of clipping at a
+        # source-line count or arbitrary clamp.
+        update idletasks
+        set n [$tw count -displaylines 1.0 end]
+        if {$n < 1} { set n 1 }
+        $tw configure -height $n
     }
 
     # Date values may arrive as ISO strings or as YAML-parsed Unix
