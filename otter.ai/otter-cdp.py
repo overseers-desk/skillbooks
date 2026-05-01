@@ -32,9 +32,12 @@ UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36")
 
 def detect_browser():
-    """Return the first available Chrome-compatible headless browser binary."""
-    for cmd in ["chromium-browser", "chromium", "/snap/bin/chromium",
-                "google-chrome", "google-chrome-stable"]:
+    """Return the Chromium browser binary, or None if not found."""
+    if sys.platform == "darwin":
+        candidates = ["/Applications/Chromium.app/Contents/MacOS/Chromium"]
+    else:
+        candidates = ["chromium-browser", "chromium", "/snap/bin/chromium"]
+    for cmd in candidates:
         try:
             subprocess.run([cmd, "--version"], capture_output=True, timeout=3)
             return cmd
@@ -43,12 +46,17 @@ def detect_browser():
     return None
 
 def detect_profile():
-    """Return the browser user-data-dir, trying known profile locations."""
-    for path in [
-        os.path.expanduser("~/snap/chromium/common/chromium"),
-        os.path.expanduser("~/.config/chromium"),
-        os.path.expanduser("~/.config/google-chrome"),
-    ]:
+    """Return the browser user-data-dir, trying known Chromium profile locations."""
+    if sys.platform == "darwin":
+        candidates = [
+            os.path.expanduser("~/Library/Application Support/Chromium"),
+        ]
+    else:
+        candidates = [
+            os.path.expanduser("~/snap/chromium/common/chromium"),
+            os.path.expanduser("~/.config/chromium"),
+        ]
+    for path in candidates:
         if os.path.isdir(path):
             return path
     return None
