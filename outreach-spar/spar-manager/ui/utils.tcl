@@ -230,13 +230,22 @@ namespace eval ::spar::ui::inspector_widgets {
         ttk::frame $body
         $cv create window 0 0 -window $body -anchor nw -tags inner
 
+        # Coalesce -scrollregion updates through `after idle` instead of
+        # recomputing synchronously inside the <Configure> callbacks.
+        # During a scrollbar drag, motion events keep the event queue
+        # busy and idle handlers do not fire, so the scrollregion stays
+        # frozen until the user releases. Without this, a late geometry
+        # settle inside the inner frame (text-widget displayline reflow
+        # on first expose, theme post-map repaint, etc.) fires <Configure>
+        # on $body mid-drag, recomputes scrollregion, and the canvas's
+        # -yscrollcommand pushes new thumb fractions to the scrollbar
+        # that no longer match the user's mouse position, producing the
+        # "thumb jumps out from under the finger" symptom.
         bind $cv <Configure> [list apply {{cv w} {
             $cv itemconfigure inner -width $w
-            $cv configure -scrollregion [$cv bbox all]
+            ::spar::ui::inspector_widgets::_queue_sr $cv
         }} $cv %w]
-        bind $body <Configure> [list apply {{cv} {
-            $cv configure -scrollregion [$cv bbox all]
-        }} $cv]
+        bind $body <Configure> [list ::spar::ui::inspector_widgets::_queue_sr $cv]
         return $body
     }
 
@@ -315,6 +324,27 @@ namespace eval ::spar::ui::inspector_widgets {
     ttk::style configure Flat.TEntry -borderwidth 0 -relief flat -padding 0
     ttk::style map Flat.TEntry \
         -fieldbackground [list readonly [. cget -background]]
+
+    # Pending `after idle` ids for deferred -scrollregion updates,
+    # keyed by canvas widget path. See the comment in `scrollable`.
+    variable _sr_pending
+    array set _sr_pending {}
+
+    proc _queue_sr {cv} {
+        variable _sr_pending
+        if {[info exists _sr_pending($cv)]} {
+            after cancel $_sr_pending($cv)
+        }
+        set _sr_pending($cv) [after idle \
+            [list ::spar::ui::inspector_widgets::_apply_sr $cv]]
+    }
+
+    proc _apply_sr {cv} {
+        variable _sr_pending
+        unset -nocomplain _sr_pending($cv)
+        if {![winfo exists $cv]} return
+        $cv configure -scrollregion [$cv bbox all]
+    }
 
     variable _uniq_ctr 0
     proc _uniq {prefix} {
