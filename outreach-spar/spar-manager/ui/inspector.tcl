@@ -445,11 +445,24 @@ oo::class create spar::ui::Inspector {
         pack $tw -fill x -padx 6 -pady {2 2}
         # Size to actual wrapped display lines after pack so long bodies
         # extend the tab's scrollable region instead of clipping at a
-        # source-line count or arbitrary clamp.
+        # source-line count or arbitrary clamp. Then keep the height in
+        # sync with width changes (sash drag, window resize, expanding a
+        # collapsible whose body was packed at width 1) by re-measuring
+        # in the widget's <Configure> handler. The guard prevents the
+        # tight loop that would otherwise occur when setting -height
+        # itself fires <Configure>.
         update idletasks
         set n [$tw count -displaylines 1.0 end]
         if {$n < 1} { set n 1 }
         $tw configure -height $n
+        bind $tw <Configure> [list apply {{tw} {
+            if {![winfo exists $tw]} return
+            set m [$tw count -displaylines 1.0 end]
+            if {$m < 1} { set m 1 }
+            if {$m != [$tw cget -height]} {
+                $tw configure -height $m
+            }
+        }} $tw]
     }
 
     # Date values may arrive as ISO strings or as YAML-parsed Unix
