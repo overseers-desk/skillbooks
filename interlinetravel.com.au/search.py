@@ -33,6 +33,7 @@ Search options:
 
 import sys, json, os, argparse, urllib.request, urllib.parse, http.cookiejar, tempfile, time
 from pathlib import Path
+import yaml
 
 BASE = "https://interlinetravel.com.au"
 CRUISE_URL = "https://interlinetravel.com.au/cruise"
@@ -40,19 +41,15 @@ UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chr
 _COOKIE_FILE = Path(tempfile.gettempdir()) / "interline-travel-cookies.json"
 _COOKIE_MAX_AGE = 3600 * 2  # reuse session for 2 hours
 
-def _load_env():
-    env_file = Path.home() / ".claude" / "config" / "interlinetravel.env"
-    if not env_file.exists():
-        print(f"Error: {env_file} not found. See Prerequisites in the aesop interlinetravel.com.au SKILL.md.", file=sys.stderr)
-        sys.exit(1)
-    env = {}
-    for line in env_file.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        k, _, v = line.partition("=")
-        env[k.strip()] = v.strip()
-    return env
+def _load_creds():
+    cfg_file = Path.home() / "code" / "weiwu" / ".claude" / "config" / "skill-config.yaml"
+    if not cfg_file.exists():
+        sys.exit(f"Error: {cfg_file} not found. See Prerequisites in the aesop interlinetravel.com.au SKILL.md.")
+    cfg = yaml.safe_load(cfg_file.read_text())
+    section = (cfg or {}).get("interlinetravel.com.au", {})
+    if not section.get("email") or not section.get("password"):
+        sys.exit(f"Error: skill-config.yaml missing interlinetravel.com.au.email / password.")
+    return {"INTERLINE_EMAIL": section["email"], "INTERLINE_PASSWORD": section["password"]}
 
 def _make_opener():
     cj = http.cookiejar.CookieJar()
@@ -105,7 +102,7 @@ def authenticate(opener, cj):
         except Exception:
             pass
     # Fresh login
-    env = _load_env()
+    env = _load_creds()
     csrf = _request(opener, f"{BASE}/api/auth/csrf")["csrfToken"]
     result = _request(opener, f"{BASE}/api/auth/login", method="POST",
                       data={"identifier": env["INTERLINE_EMAIL"], "password": env["INTERLINE_PASSWORD"]},

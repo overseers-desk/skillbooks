@@ -11,10 +11,15 @@ allowed-tools: Bash, Read
 This skill requires staff travel credentials to access industry rates.
 
 - **What:** Interline Travel account email and password
-- **Where:** `~/.claude/config/interlinetravel.env`
-- **Format:** see `.env.template` in this directory for the required fields
+- **Where:** `~/code/weiwu/.claude/config/skill-config.yaml`, under the `interlinetravel.com.au` key
+- **Format:**
+  ```yaml
+  interlinetravel.com.au:
+    email: you@example.com
+    password: yourpassword
+  ```
 
-If the file is absent, pause and let the user know: "To search Interline Travel staff rates, create `~/.claude/config/interlinetravel.env` with your account credentials. This file is not part of the shared aesop repository - create it locally."
+If the section is absent, pause and let the user know: "To search Interline Travel staff rates, add an `interlinetravel.com.au` section with your email and password to `~/code/weiwu/.claude/config/skill-config.yaml`."
 
 ## Capabilities
 
@@ -82,7 +87,7 @@ The search API does not distinguish domestic from international cruises. Many Au
 
 ## Authentication
 
-The script authenticates automatically using credentials from `~/.claude/config/interlinetravel.env`. Auth flow: CSRF token → login with email/password → session cookies with JWT. Sessions are cached for 2 hours in `/tmp/interline-travel-cookies.json` to avoid rate limiting on the auth endpoint.
+The script authenticates automatically using credentials from `skill-config.yaml` (`interlinetravel.com.au.email` / `password`). Auth flow: CSRF token → login with email/password → session cookies with JWT. Sessions are cached for 2 hours in `/tmp/interline-travel-cookies.json` to avoid rate limiting on the auth endpoint.
 
 ## API details
 
@@ -133,7 +138,7 @@ The auth endpoint returns 429 if hit too frequently. The script caches session c
 
 | Error | Cause | Fix |
 |---|---|---|
-| Login failed | Wrong credentials or account locked | Check `.env` credentials |
+| Login failed | Wrong credentials or account locked | Check `skill-config.yaml` credentials |
 | HTTP 429 | Too many auth requests | Wait a few minutes; session caching should prevent this |
 | HTTP 403 on all endpoints | Cloudflare blocking | Add a standard Chrome User-Agent (the script already does this) |
 | 0 results | Filters too narrow or no cruises match | Broaden filters or check available options with `options` |

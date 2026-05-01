@@ -24,6 +24,8 @@ import subprocess
 import sys
 import time
 import urllib.request
+from pathlib import Path
+import yaml
 
 try:
     import websockets
@@ -106,14 +108,14 @@ def _parse_account_body(body: str) -> dict:
 
 
 async def run(check_only: bool, debug: bool):
-    creds_path = os.path.join(os.path.expanduser("~"), ".claude", "config", "qantas.com.json")
-    if not os.path.exists(creds_path):
-        sys.exit(f"ERROR: {creds_path} not found. See Prerequisites in the aesop qantas.com SKILL.md.")
-    with open(creds_path) as f:
-        creds = json.load(f)
+    cfg_file = Path.home() / "code" / "weiwu" / ".claude" / "config" / "skill-config.yaml"
+    if not cfg_file.exists():
+        sys.exit(f"ERROR: {cfg_file} not found. See Prerequisites in the aesop qantas.com SKILL.md.")
+    cfg = yaml.safe_load(cfg_file.read_text())
+    creds = (cfg or {}).get("qantas.com", {})
     for k in ("memberId", "lastName", "pin"):
         if not creds.get(k):
-            sys.exit(f"ERROR: credentials.json missing {k}")
+            sys.exit(f"ERROR: skill-config.yaml missing qantas.com.{k}")
 
     pids = _snap_chromium_running()
     if pids and debug:

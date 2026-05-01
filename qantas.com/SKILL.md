@@ -8,11 +8,17 @@ argument-hint: <origin> <destination> <date> [stops]   |   points
 
 Feature 1 (Classic Reward search) requires no login. Feature 2 (points balance) requires credentials.
 
-- **What:** Qantas Frequent Flyer member number and password
-- **Where:** `~/.claude/config/qantas.com.json`
-- **Format:** `{ "username": "YOUR_FF_NUMBER", "password": "YOUR_PASSWORD" }`
+- **What:** Qantas Frequent Flyer member number, last name, and PIN
+- **Where:** `~/code/weiwu/.claude/config/skill-config.yaml`, under the `qantas.com` key
+- **Format:**
+  ```yaml
+  qantas.com:
+    memberId: "YOUR_FF_NUMBER"
+    lastName: YOURLASTNAME
+    pin: "YOUR_PIN"
+  ```
 
-If Feature 2 is requested and the file is absent, pause and let the user know: "To read your Qantas points balance, create `~/.claude/config/qantas.com.json` with your Frequent Flyer credentials. This file is not part of the shared aesop repository - create it locally."
+If Feature 2 is requested and the section is absent, pause and let the user know: "To read your Qantas points balance, add a `qantas.com` section with memberId, lastName, and pin to `~/code/weiwu/.claude/config/skill-config.yaml`."
 
 The skill has two independent features. Run whichever the user asked for; do not chain them.
 
@@ -51,7 +57,7 @@ python3 $HOME/code/aesop/qantas.com/login.py            # human-readable
 python3 $HOME/code/aesop/qantas.com/login.py --json     # JSON
 ```
 
-Credentials are read from `~/.claude/config/qantas.com.json` (memberId, lastName, pin). See Prerequisites above.
+Credentials are read from `~/code/weiwu/.claude/config/skill-config.yaml` (qantas.com.memberId, lastName, pin). See Prerequisites above.
 
 This feature is independent of Feature 1. Run it only when the user asks about points balance, status credits, or tier. Do not run it as a side effect of a flight search.
 
