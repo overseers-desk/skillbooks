@@ -1,7 +1,7 @@
 ---
 name: otter.ai
 description: List, rename, and export Otter.ai recordings. Use when the user asks about Otter.ai recordings, transcripts, or wants to manage their Otter.ai content.
-argument-hint: <list | rename | export-dropbox | dropbox-status>
+argument-hint: <list | rename | export-dropbox | fetch-via-dropbox | dropbox-status>
 allowed-tools: Bash, Read
 ---
 
@@ -50,7 +50,21 @@ Exports the recording to the user's connected Dropbox. Default format is `txt`.
 
 Returns `{"status": "OK", "failed_speeches": []}` on success.
 
-### 4. Check Dropbox connection
+### 4. Fetch a recording via Dropbox round-trip
+
+```bash
+python3 $HOME/code/aesop/otter.ai/otter-cdp.py fetch-via-dropbox <otid> [--timeout 60] [--extended-timeout 120]
+```
+
+One-shot helper that triggers a txt export to Dropbox, polls `Dropbox:Apps/Otter` via `rclone` until a new file appears, reads its contents, deletes it from Dropbox, and returns the text. Format is hardcoded to `txt`. Path `Dropbox:Apps/Otter` is hardcoded.
+
+Polling: `rclone lsf` every 5 seconds. `--timeout` (default 60s) is the initial deadline; on expiry a stderr notice is logged and polling continues until `--extended-timeout` (default 120s).
+
+Returns `{"otid", "dropbox_filename", "content"}` on success. Errors include `Timeout waiting for Dropbox export`, `Multiple new files in Dropbox:Apps/Otter` (if a concurrent unrelated upload races), and any error propagated from `export-dropbox`.
+
+Requires `rclone` configured with a `Dropbox:` remote.
+
+### 5. Check Dropbox connection
 
 ```bash
 python3 $HOME/code/aesop/otter.ai/otter-cdp.py dropbox-status

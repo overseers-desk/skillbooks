@@ -10,6 +10,7 @@ Usage:
     python3 otter-cdp.py list [--page-size N] [--last-load-ts TS]
     python3 otter-cdp.py rename <otid> <new_title>
     python3 otter-cdp.py export-dropbox <otid> [--format txt|pdf|docx|srt]
+    python3 otter-cdp.py fetch-via-dropbox <otid> [--timeout N] [--extended-timeout N]
     python3 otter-cdp.py dropbox-status
 """
 
@@ -281,6 +282,99 @@ def cmd_export_dropbox(ws, args):
 
     return eval_js(ws, js)
 
+DROPBOX_OTTER_REMOTE = "Dropbox:Apps/Otter"
+
+
+def _rclone_lsf_otter():
+    """Return the set of filenames in Dropbox:Apps/Otter, or None on rclone failure."""
+    try:
+        out = subprocess.run(
+            ["rclone", "lsf", DROPBOX_OTTER_REMOTE],
+            capture_output=True, text=True, timeout=30,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired) as e:
+        sys.stderr.write(f"rclone lsf failed: {e}\n")
+        return None
+    if out.returncode != 0:
+        sys.stderr.write(f"rclone lsf failed: {out.stderr.strip()}\n")
+        return None
+    return {line.strip() for line in out.stdout.splitlines() if line.strip()}
+
+
+def cmd_fetch_via_dropbox(ws, args):
+    """Export <otid> as txt to Dropbox, wait for the file to appear, read it,
+    delete it from Dropbox, and return its content.
+
+    Output: {"otid", "dropbox_filename", "content"} on success, {"error", ...} on failure.
+    """
+    initial = _rclone_lsf_otter()
+    if initial is None:
+        return {"error": f"rclone lsf {DROPBOX_OTTER_REMOTE} failed (is rclone configured?)"}
+
+    args.format = "txt"
+    export_result = cmd_export_dropbox(ws, args)
+    if isinstance(export_result, dict) and export_result.get("error"):
+        return export_result
+    if isinstance(export_result, dict) and export_result.get("failed_speeches"):
+        return {"error": "Otter.ai export reported failure",
+                "failed_speeches": export_result["failed_speeches"]}
+
+    poll_interval = 5
+    start = time.time()
+    initial_deadline = start + args.timeout
+    extended_deadline = start + args.extended_timeout
+    extended_logged = False
+    new_files = set()
+
+    while True:
+        time.sleep(poll_interval)
+        current = _rclone_lsf_otter()
+        if current is None:
+            return {"error": f"rclone lsf {DROPBOX_OTTER_REMOTE} failed during poll"}
+        new_files = current - initial
+        if new_files:
+            break
+        now = time.time()
+        if now >= extended_deadline:
+            return {"error": "Timeout waiting for Dropbox export",
+                    "otid": args.otid,
+                    "elapsed": int(now - start)}
+        if now >= initial_deadline and not extended_logged:
+            sys.stderr.write(
+                f"Initial timeout ({args.timeout}s) exceeded, "
+                f"extending to {args.extended_timeout}s\n"
+            )
+            extended_logged = True
+
+    if len(new_files) > 1:
+        return {"error": "Multiple new files in Dropbox:Apps/Otter; cannot disambiguate",
+                "files": sorted(new_files)}
+
+    filename = next(iter(new_files))
+    remote_path = f"{DROPBOX_OTTER_REMOTE}/{filename}"
+
+    cat_out = subprocess.run(
+        ["rclone", "cat", remote_path],
+        capture_output=True, text=True, timeout=120,
+    )
+    if cat_out.returncode != 0:
+        return {"error": "rclone cat failed",
+                "remote_path": remote_path,
+                "stderr": cat_out.stderr.strip()}
+    content = cat_out.stdout
+
+    del_out = subprocess.run(
+        ["rclone", "delete", remote_path],
+        capture_output=True, text=True, timeout=30,
+    )
+    if del_out.returncode != 0:
+        sys.stderr.write(
+            f"Warning: rclone delete {remote_path} failed: {del_out.stderr.strip()}\n"
+        )
+
+    return {"otid": args.otid, "dropbox_filename": filename, "content": content}
+
+
 def cmd_dropbox_status(ws, args):
     js = """
     (async () => {
@@ -320,6 +414,13 @@ def main():
     p_export.add_argument("otid")
     p_export.add_argument("--format", choices=["txt", "pdf", "docx", "srt"], default="txt")
 
+    p_fetch = sub.add_parser("fetch-via-dropbox")
+    p_fetch.add_argument("otid")
+    p_fetch.add_argument("--timeout", type=int, default=60,
+        help="Initial poll deadline in seconds (default 60)")
+    p_fetch.add_argument("--extended-timeout", type=int, default=120,
+        help="Total poll deadline in seconds, used after --timeout expires (default 120)")
+
     sub.add_parser("dropbox-status")
 
     args = parser.parse_args()
@@ -349,6 +450,7 @@ def main():
             "list": cmd_list,
             "rename": cmd_rename,
             "export-dropbox": cmd_export_dropbox,
+            "fetch-via-dropbox": cmd_fetch_via_dropbox,
             "dropbox-status": cmd_dropbox_status,
         }
         result = commands[args.command](ws, args)
