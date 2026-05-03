@@ -450,6 +450,13 @@ proc ::spar::ui::build_loaded_body {path} {
     # from day one.
     set inspector [spar::ui::Inspector new $campaign $tree_obj .pw]
 
+    # ProgressTable's contact rows mirror TransitionTree: single-click
+    # updates Inspector content (if visible), double-click opens it.
+    # Inspector's existing handlers accept stem-as-parameter, so the
+    # wiring is two subscribe lines and no Inspector refactor.
+    $progress subscribe selection-changed [list $inspector on_selection_changed]
+    $progress subscribe double-clicked    [list $inspector on_double_clicked]
+
     # SegmentViewer opens on Double-1 in the progress table. CampaignViewer
     # opens on the "View full…" button in the Campaign Configuration
     # labelframe. All three peers (Inspector, SegmentViewer, CampaignViewer)
