@@ -87,7 +87,7 @@ oo::class create spar::ui::ProgressTable {
         ttk::treeview $PTree \
             -columns $PtreeColIds \
             -show {tree headings} \
-            -selectmode none \
+            -selectmode browse \
             -yscrollcommand [list $vsb set] \
             -xscrollcommand [list $hsb set]
 
@@ -114,14 +114,22 @@ oo::class create spar::ui::ProgressTable {
         $PTree tag configure totals -font "TkDefaultFont 9 bold" \
             -background $::colours(totals_bg)
 
-        # Click on column #0 toggles the checkbox for that segment.
+        # Button-1 on the segment-row checkbox glyph toggles include
+        # state; on_click returns -code break in that case so the class
+        # binding does not also select the row. Clicks elsewhere fall
+        # through to the class binding (selectmode browse), giving the
+        # user the same single-row highlight as TransitionTree.
         bind $PTree <Button-1> [list [self] on_click %x %y]
 
-        # Double-click any column of a real segment row opens the segment
-        # viewer via the segment-double-clicked event. Tk delivers the
-        # Button-1 binding on each click of a double-click, so the
-        # checkbox toggle happens on click 1 and the viewer opens on
-        # click 2 — both behaviours are wanted.
+        # Selection drives selection-changed (Inspector subscribes for
+        # contact rows). Empty stem for non-contact selections; Inspector
+        # ignores those, keeping the prior contact pinned.
+        bind $PTree <<TreeviewSelect>> [list [self] on_select]
+
+        # Double-click on a segment row opens the SegmentViewer; on a
+        # contact row opens the Inspector. Tk delivers Button-1 on each
+        # click of a double-click, so a double-click in the checkbox zone
+        # toggles twice (net no change) before the viewer opens.
         bind $PTree <Double-1> [list [self] on_double_click %x %y]
 
         # Mouse wheel scrolling.
@@ -297,18 +305,22 @@ oo::class create spar::ui::ProgressTable {
         my _fire segments-changed [my get_checked_segments]
     }
 
-    # on_click — Button-1 handler. Toggle the checkbox only when the
-    # click lands on the checkbox glyph at the start of column #0;
-    # clicks anywhere else (segment name, count columns, between rows)
-    # fall through to the treeview's class binding which selects the
-    # row. This narrow toggle zone gives a single click outside the
-    # checkbox a visible selection effect, so a subsequent double-click
-    # is visually confirmable. Public because it's invoked from a bind.
+    # on_click — Button-1 handler. Toggle include only when the click
+    # lands on the checkbox glyph at the start of column #0 of a segment
+    # row; clicks elsewhere fall through to the treeview's class binding
+    # which selects the row. The toggle path returns -code break to
+    # block the class binding so the segment row does not also become
+    # the selection on a checkbox click. Public because it's invoked
+    # from a bind.
     method on_click {x y} {
         set col [$PTree identify column $x $y]
         set row [$PTree identify row    $x $y]
-        if {$col ne "#0" || $row eq "" || $row eq "__totals__"} return
+        if {$row eq "" || $row eq "__totals__"} return
+        # Contact rows have no checkbox: let the class binding select.
         if {[$PTree parent $row] ne ""} return
+        # Segment row, but click outside column #0: let the class
+        # binding select.
+        if {$col ne "#0"} return
         set bbox [$PTree bbox $row #0]
         if {[llength $bbox] != 4} return
         lassign $bbox bx by bw bh
@@ -318,16 +330,43 @@ oo::class create spar::ui::ProgressTable {
         set hit_w [font measure TkDefaultFont "☑  "]
         if {$x < $bx + $hit_w} {
             my on_segment_toggle $row
+            return -code break
         }
     }
 
-    # on_double_click — Double-1 handler. Fires segment-double-clicked
-    # for any real segment row (skip-segment rows included — viewing a
-    # non-checked segment is legitimate). Totals row and clicks outside
+    # on_select: <<TreeviewSelect>> handler. Fires selection-changed
+    # with the stem of the selected contact row, or empty string for
+    # segment, totals, or no selection. Inspector's on_selection_changed
+    # ignores empty stems, so segment-row selection leaves the Inspector
+    # showing the prior contact rather than blanking.
+    method on_select {} {
+        set sel [$PTree selection]
+        if {[llength $sel] != 1} {
+            my _fire selection-changed ""
+            return
+        }
+        set row [lindex $sel 0]
+        if {[string match "c:*" $row]} {
+            my _fire selection-changed [string range $row 2 end]
+        } else {
+            my _fire selection-changed ""
+        }
+    }
+
+    # on_double_click: Double-1 handler. For a contact row (id "c:$stem")
+    # fires double-clicked with the stem so Inspector subscribes the same
+    # way it does to TransitionTree. For a segment row (top-level id =
+    # seg_name) fires segment-double-clicked, opening SegmentViewer.
+    # Skip-segment rows still fire segment-double-clicked: viewing a
+    # non-checked segment is legitimate. Totals row and clicks outside
     # any row are ignored.
     method on_double_click {x y} {
         set row [$PTree identify row $x $y]
         if {$row eq "" || $row eq "__totals__"} return
+        if {[string match "c:*" $row]} {
+            my _fire double-clicked [string range $row 2 end]
+            return
+        }
         if {[$PTree parent $row] ne ""} return
         my _fire segment-double-clicked $row
     }
@@ -504,14 +543,20 @@ oo::class create spar::ui::ProgressTable {
     # _refresh_seg_children: delete existing child rows for seg_name, then
     # insert one child per contact in AllContacts that belongs to this segment
     # (matched by file tail of _segment_dir). Called from on_segment_loaded
-    # after each phase updates the segment row's values.
+    # after each phase updates the segment row's values. The contact row id
+    # is "c:$stem" so on_select and on_double_click can recover the stem
+    # without a parallel map; the prefix avoids collision with segment-row
+    # ids (which are bare seg_name strings).
     method _refresh_seg_children {seg_name} {
         set t0 [clock microseconds]
         foreach child [$PTree children $seg_name] { $PTree delete $child }
         foreach c [$Campaign get_all_contacts] {
             if {[file tail [dict get $c _segment_dir]] ne $seg_name} continue
             set name [dict get $c contact_name]
-            $PTree insert $seg_name end -text "  $name" -values [my _contact_values $c]
+            set stem [spar::dict_get_default $c stem ""]
+            if {$stem eq ""} continue
+            $PTree insert $seg_name end -id "c:$stem" -text "  $name" \
+                -values [my _contact_values $c]
         }
         set t1 [clock microseconds]
         set n [llength [$PTree children $seg_name]]
