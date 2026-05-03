@@ -294,7 +294,10 @@ oo::class create spar::ui::Inspector {
             dict for {k v} $fm { my render_profile_value $body $k $v }
         }
         set text [string trim [spar::read_profile_body $path]]
-        if {$text ne ""} { my render_text_block $body bodytxt $text }
+        if {$text ne ""} {
+            ::spar::ui::inspector_widgets::wrapped_text_block \
+                $body $text {-fill x -padx 6 -pady {2 2}} 0
+        }
     }
 
     # Dispatch by key name for the known structured frontmatter fields.
@@ -424,7 +427,8 @@ oo::class create spar::ui::Inspector {
 
         set body [spar::dict_get_default $msg body ""]
         if {$body ne "" && ![spar::is_null $body]} {
-            my render_text_block $frame body [string trim $body]
+            ::spar::ui::inspector_widgets::wrapped_text_block \
+                $frame [string trim $body] {-fill x -padx 6 -pady {2 2}} 0
         }
 
         foreach {label key} {Sent actioned_date Received received_date} {
@@ -434,35 +438,6 @@ oo::class create spar::ui::Inspector {
                     [my fmt_date_with_since $v]
             }
         }
-    }
-
-    method render_text_block {parent name text} {
-        set tw ${parent}.${name}
-        text $tw -wrap word -relief flat -borderwidth 0 -takefocus 0 \
-            -height 1 -background [. cget -background]
-        $tw insert end $text
-        $tw configure -state disabled
-        pack $tw -fill x -padx 6 -pady {2 2}
-        # Size to actual wrapped display lines after pack so long bodies
-        # extend the tab's scrollable region instead of clipping at a
-        # source-line count or arbitrary clamp. Then keep the height in
-        # sync with width changes (sash drag, window resize, expanding a
-        # collapsible whose body was packed at width 1) by re-measuring
-        # in the widget's <Configure> handler. The guard prevents the
-        # tight loop that would otherwise occur when setting -height
-        # itself fires <Configure>.
-        update idletasks
-        set n [$tw count -displaylines 1.0 end]
-        if {$n < 1} { set n 1 }
-        $tw configure -height $n
-        bind $tw <Configure> [list apply {{tw} {
-            if {![winfo exists $tw]} return
-            set m [$tw count -displaylines 1.0 end]
-            if {$m < 1} { set m 1 }
-            if {$m != [$tw cget -height]} {
-                $tw configure -height $m
-            }
-        }} $tw]
     }
 
     # Date values may arrive as ISO strings or as YAML-parsed Unix

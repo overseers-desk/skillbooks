@@ -174,7 +174,8 @@ oo::class create spar::ui::CampaignViewer {
         }
         foreach {k v} $value {
             my render_label_header $body $k 1
-            my render_text_block $body [string trim $v]
+            ::spar::ui::inspector_widgets::wrapped_text_block \
+                $body [string trim $v] {-fill x -padx {22 4} -pady {2 4}}
         }
     }
 
@@ -201,17 +202,4 @@ oo::class create spar::ui::CampaignViewer {
         pack $lbl -fill x -padx [list $lpad 4] -pady {6 0}
     }
 
-    method render_text_block {parent text} {
-        set tw ${parent}.[::spar::ui::inspector_widgets::_uniq tb]
-        text $tw -wrap word -relief flat -borderwidth 0 -takefocus 0 \
-            -height 1 -background [. cget -background]
-        $tw insert end $text
-        $tw configure -state disabled
-        pack $tw -fill x -padx {22 4} -pady {2 4}
-        update idletasks
-        set n [$tw count -displaylines 1.0 end]
-        if {$n < 1}  { set n 1 }
-        if {$n > 20} { set n 20 }
-        $tw configure -height $n
-    }
 }
