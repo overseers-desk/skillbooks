@@ -172,7 +172,8 @@ oo::class create spar::ui::SegmentViewer {
         # block under a label header; single-line values become a kv_row.
         if {[string first "\n" $value] >= 0} {
             my render_label_header $parent $key
-            my render_text_block $parent [string trim $value]
+            ::spar::ui::inspector_widgets::wrapped_text_block \
+                $parent [string trim $value]
         } else {
             ::spar::ui::inspector_widgets::kv_row $parent $key $value
         }
@@ -197,7 +198,8 @@ oo::class create spar::ui::SegmentViewer {
                 foreach {ik iv} $item {
                     if {[string first "\n" $iv] >= 0} {
                         my render_label_header $ibody $ik
-                        my render_text_block $ibody [string trim $iv]
+                        ::spar::ui::inspector_widgets::wrapped_text_block \
+                            $ibody [string trim $iv]
                     } else {
                         set disp [expr {[spar::is_null $iv] ? "" : $iv}]
                         ::spar::ui::inspector_widgets::kv_row $ibody $ik $disp 1
@@ -250,15 +252,4 @@ oo::class create spar::ui::SegmentViewer {
         return "#$idx"
     }
 
-    method render_text_block {parent text} {
-        set nlines [llength [split $text \n]]
-        if {$nlines > 20} { set nlines 20 }
-        if {$nlines < 3}  { set nlines 3 }
-        set tw ${parent}.[::spar::ui::inspector_widgets::_uniq tb]
-        text $tw -wrap word -relief flat -borderwidth 0 -height $nlines \
-            -background [. cget -background]
-        $tw insert end $text
-        $tw configure -state disabled
-        pack $tw -fill x -padx 6 -pady {2 2}
-    }
 }

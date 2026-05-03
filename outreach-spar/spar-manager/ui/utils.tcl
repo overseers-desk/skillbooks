@@ -266,16 +266,46 @@ namespace eval ::spar::ui::inspector_widgets {
         return $row
     }
 
+    # wrapped_text_block parent text pack_args max_lines: pack a flat
+    # read-only Text widget under $parent, sized to its wrapped display-line
+    # count. Resizes on width change (sash drag, window resize, expanding
+    # collapsible) by re-measuring inside a <Configure> handler, with a
+    # guard against the loop that setting -height itself would create.
+    # max_lines clamps the height; use 0 to disable the cap, as the
+    # Inspector does for full-message bodies. Returns the widget path.
+    proc wrapped_text_block {parent text {pack_args {-fill x -padx 6 -pady {2 2}}} {max_lines 20}} {
+        set tw ${parent}.[_uniq wtb]
+        text $tw -wrap word -relief flat -borderwidth 0 -takefocus 0 \
+            -height 1 -background [. cget -background]
+        $tw insert end $text
+        $tw configure -state disabled
+        pack $tw {*}$pack_args
+        update idletasks
+        set n [$tw count -displaylines 1.0 end]
+        if {$n < 1} { set n 1 }
+        if {$max_lines > 0 && $n > $max_lines} { set n $max_lines }
+        $tw configure -height $n
+        bind $tw <Configure> [list apply {{tw max_lines} {
+            if {![winfo exists $tw]} return
+            set m [$tw count -displaylines 1.0 end]
+            if {$m < 1} { set m 1 }
+            if {$max_lines > 0 && $m > $max_lines} { set m $max_lines }
+            if {$m != [$tw cget -height]} {
+                $tw configure -height $m
+            }
+        }} $tw $max_lines]
+        return $tw
+    }
+
     # kv_row_wrap parent key value indent. Width-aware variant of kv_row.
     # Short scalars (≤60 chars and no embedded newline) delegate to kv_row
     # and render inline. Longer or multiline values stack: a "key:" header
-    # row, then a -wrap word read-only text widget below holding the value.
-    # Decision is on string length and \n presence, not \n alone, because a
-    # YAML folded scalar (`>` style) arrives as one long line with no
-    # newline, and inline rendering would scroll horizontally inside
-    # kv_row's flat entry rather than wrap. The 60-char threshold keeps
-    # slugs, emails, short titles inline while paragraphs and long campaign
-    # titles stack.
+    # row, then a wrapped_text_block holding the value. Decision is on
+    # string length and \n presence, not \n alone, because a YAML folded
+    # scalar (`>` style) arrives as one long line with no newline, and
+    # inline rendering would scroll horizontally inside kv_row's flat entry
+    # rather than wrap. The 60-char threshold keeps slugs, emails, short
+    # titles inline while paragraphs and long campaign titles stack.
     proc kv_row_wrap {parent key value {indent 0}} {
         if {[string length $value] <= 60 && [string first "\n" $value] < 0} {
             return [kv_row $parent $key $value $indent]
@@ -284,30 +314,8 @@ namespace eval ::spar::ui::inspector_widgets {
         set hdr ${parent}.[_uniq kvw]
         ttk::label $hdr -text "${key}:" -anchor w
         pack $hdr -fill x -padx [list $lpad 4] -pady {4 0}
-        set tw ${parent}.[_uniq kvwt]
-        text $tw -wrap word -relief flat -borderwidth 0 -takefocus 0 \
-            -height 1 -background [. cget -background]
-        $tw insert end $value
-        $tw configure -state disabled
-        pack $tw -fill x -padx [list [expr {$lpad + 16}] 4] -pady {0 2}
-        update idletasks
-        set n [$tw count -displaylines 1.0 end]
-        if {$n < 1}  { set n 1 }
-        if {$n > 20} { set n 20 }
-        $tw configure -height $n
-        # Re-measure on width change (sash drag, window resize, expanding
-        # collapsible). Guard against the loop that setting -height would
-        # otherwise create.
-        bind $tw <Configure> [list apply {{tw} {
-            if {![winfo exists $tw]} return
-            set m [$tw count -displaylines 1.0 end]
-            if {$m < 1}  { set m 1 }
-            if {$m > 20} { set m 20 }
-            if {$m != [$tw cget -height]} {
-                $tw configure -height $m
-            }
-        }} $tw]
-        return $tw
+        return [wrapped_text_block $parent $value \
+            [list -fill x -padx [list [expr {$lpad + 16}] 4] -pady {0 2}]]
     }
 
     # copy_text path value — construct a flat readonly ttk::entry that
