@@ -40,6 +40,8 @@ Returns `{"status": "OK", "modified_time": ...}` on success.
 
 The `otid` is the recording identifier from the list command or from an otter.ai URL (`https://otter.ai/u/<otid>`).
 
+**Naming convention:** titles follow `YYYY-MM-DD-kebab-case-description.txt`. When the user provides a natural-language phrase, convert it to this format before issuing the rename command.
+
 ### 3. Export to Dropbox
 
 ```bash
