@@ -19,7 +19,7 @@ The procedure enables:
 
 ## Procedure
 
-You will need [ref-ihg-website-crawling.txt](./ref-ihg-website-crawling.txt) for how to use browser to crawl data.
+Use the ihg.com skill for IHG queries (hotel discovery by destination, availability and pricing, price calendar, hotel details).
 
 ### Step 1: Single-Date Hotel Discovery
 
