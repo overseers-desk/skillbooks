@@ -8,7 +8,9 @@ The word **Chrome** appears in this repository under three permitted forms only:
 2. As part of the phrase **Chrome-compatible**, used to describe a class of browsers, a User-Agent shape, or a binary surface.
 3. As part of a technology name defined by Chrome — for example **Chrome DevTools Protocol** (CDP) — where the word is the proper name of the technology, not a reference to the product.
 
-It must not appear as a product reference outside form 1. New code or documentation that names Chrome as the product to use, install, or launch is to be rewritten in terms of Chromium.
+It must not appear as a product reference outside form 1. New code or documentation that names Chrome as the product to use, install, or launch is to be rewritten in terms of Chromium. This is because Chrome has an outsized representation in LLM training data, any mention of Chrome once in documents or code, AI starts to launch Chrome when this document detailed why we chose to use Chromium for the skills.
+
+The word **Chromium** in this repository should be changed to Chrome-compatible when it refers to generic idea of Chrome-like browsers such as Chromium.
 
 ## Problem
 
