@@ -2,7 +2,7 @@
 # Headless DOM dump against the user's logged-in Chromium profile.
 # Background and decisions: ../BROWSER.md and ../BROWSER_WHY.md.
 #
-# Usage:   browser [-t SECONDS] [--pdf PATH] URL [extra-flag ...]
+# Usage:   not-google-chrome [-t SECONDS] [--pdf PATH] URL [extra-flag ...]
 # Output:  rendered DOM on stdout (default), or PDF written to PATH (--pdf).
 # Exit 64: bad usage. Exit 78: unsupported OS or missing dependency.
 
@@ -22,7 +22,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ $print_args -eq 0 && $# -lt 1 ]]; then
-  echo "Usage: browser [-t SECONDS] [--pdf PATH] [--print-args] URL [extra-flag ...]" >&2
+  echo "Usage: not-google-chrome [-t SECONDS] [--pdf PATH] [--print-args] URL [extra-flag ...]" >&2
   exit 64
 fi
 
@@ -50,13 +50,13 @@ case "$(uname)" in
     if   [[ -x /opt/homebrew/opt/util-linux/bin/flock ]]; then flock_cmd=/opt/homebrew/opt/util-linux/bin/flock
     elif [[ -x /usr/local/opt/util-linux/bin/flock   ]]; then flock_cmd=/usr/local/opt/util-linux/bin/flock
     else
-      echo "browser: flock not found; run 'brew install util-linux'" >&2
+      echo "not-google-chrome: flock not found; run 'brew install util-linux'" >&2
       exit 78
     fi
     profile_args=(--user-data-dir="$HOME/Library/Application Support/Chromium")
     ;;
   *)
-    echo "browser: unsupported OS $(uname)" >&2
+    echo "not-google-chrome: unsupported OS $(uname)" >&2
     exit 78
     ;;
 esac

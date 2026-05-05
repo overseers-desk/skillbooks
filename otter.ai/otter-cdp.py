@@ -87,11 +87,11 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
 BROWSER_WRAPPER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bin", "browser")
 
 def launch_browser():
-    """Launch headless browser for CDP using platform config from bin/browser --print-args."""
+    """Launch headless browser for CDP using platform config from bin/not-google-chrome --print-args."""
     try:
         info = json.loads(subprocess.check_output([BROWSER_WRAPPER, "--print-args"], text=True))
     except Exception as e:
-        sys.stderr.write(f"bin/browser --print-args failed: {e}\n")
+        sys.stderr.write(f"bin/not-google-chrome --print-args failed: {e}\n")
         return None, None
     binary = info["binary"]
     profile_args = info["profile_args"]

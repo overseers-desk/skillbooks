@@ -44,7 +44,7 @@ Skills split into two groups by whether the decisions above apply.
 
 **API / non-browser skills** are not affected by D1-D5 because they do not touch a browser. Examples: serpapi, renfe.com, claude-api, send-email, mailroom. Credentials live in environment variables or `~/.claude/skills/config.yaml`.
 
-Profile paths per platform: `~/snap/chromium/common/chromium` on Linux snap, `~/.config/chromium` on Linux non-snap, `~/Library/Application Support/Chromium` on macOS (Chromium installed via the Homebrew cask, default profile). The snap-vs-non-snap probe and the canonical launch flags live in `bin/browser`, the wrapper that all skills call.
+Profile paths per platform: `~/snap/chromium/common/chromium` on Linux snap, `~/.config/chromium` on Linux non-snap, `~/Library/Application Support/Chromium` on macOS (Chromium installed via the Homebrew cask, default profile). The snap-vs-non-snap probe and the canonical launch flags live in `bin/not-google-chrome`, the wrapper that all skills call.
 
 When a skill written for the future runs into a login denial on a target site, the first action is not to harden the fingerprint. The first action is to verify the user is actually logged in inside the same Chromium profile, run the page in a non-headless Chromium to confirm the account itself works, and only then ask whether D3 needs revisiting for that specific site.
 

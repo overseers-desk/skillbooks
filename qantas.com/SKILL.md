@@ -39,7 +39,7 @@ Server-rendered Next.js - flight data lives in `__next_f.push(...)` chunks in th
 
 Steps:
 
-1. Fetch the URL with `$HOME/.claude/skills/bin/browser URL > /tmp/qantas-frf.html`.
+1. Fetch the URL with `$HOME/.claude/skills/bin/not-google-chrome URL > /tmp/qantas-frf.html`.
 2. Run the parser:
 
 ```bash

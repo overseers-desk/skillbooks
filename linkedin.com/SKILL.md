@@ -10,7 +10,7 @@ This workflow produces large DOM outputs (1-20MB per page). Spawn a **Sonnet sub
 
 ## Prerequisites
 
-A logged-in LinkedIn session in the browser profile that `$HOME/.claude/skills/bin/browser` targets. This skill constructs LinkedIn URLs, calls the wrapper to fetch them, and parses the result.
+A logged-in LinkedIn session in the browser profile that `$HOME/.claude/skills/bin/not-google-chrome` targets. This skill constructs LinkedIn URLs, calls the wrapper to fetch them, and parses the result.
 
 If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Registrarse", the wrapper did not deliver a logged-in session: the profile path is wrong, or another chromium instance holds the same profile. Investigate the plumbing; do not ask the user to log in again. The user is almost always already logged in.
 
@@ -19,7 +19,7 @@ If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Reg
 Use **people search**, not "all" search. Fetch this URL with the wrapper, save to `/tmp/linkedin-search-results.html`:
 
 ```bash
-$HOME/.claude/skills/bin/browser "https://www.linkedin.com/search/results/people/?keywords=SEARCH_TERMS&origin=GLOBAL_SEARCH_HEADER" > /tmp/linkedin-search-results.html
+$HOME/.claude/skills/bin/not-google-chrome "https://www.linkedin.com/search/results/people/?keywords=SEARCH_TERMS&origin=GLOBAL_SEARCH_HEADER" > /tmp/linkedin-search-results.html
 ```
 
 URL-encode search terms (spaces become `%20`).
@@ -50,7 +50,7 @@ Outputs each profile URL with nearby visible text (name, headline).
 Fetch this URL with the wrapper, save to `/tmp/linkedin-profile.html`:
 
 ```bash
-$HOME/.claude/skills/bin/browser "https://www.linkedin.com/in/USERNAME/" > /tmp/linkedin-profile.html
+$HOME/.claude/skills/bin/not-google-chrome "https://www.linkedin.com/in/USERNAME/" > /tmp/linkedin-profile.html
 ```
 
 ## 4. Parse profile
@@ -80,7 +80,7 @@ https://www.linkedin.com/preload/custom-invite/?vanityName=USERNAME
 Fetch this URL with the wrapper, save to `/tmp/linkedin-connect.html`, then check the modal that renders:
 
 ```bash
-$HOME/.claude/skills/bin/browser "https://www.linkedin.com/preload/custom-invite/?vanityName=USERNAME" > /tmp/linkedin-connect.html
+$HOME/.claude/skills/bin/not-google-chrome "https://www.linkedin.com/preload/custom-invite/?vanityName=USERNAME" > /tmp/linkedin-connect.html
 ```
 
 Parse the result:
