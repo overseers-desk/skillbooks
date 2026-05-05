@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Headless DOM dump against the user's logged-in Chromium/Chrome profile.
+# Headless DOM dump against the user's logged-in Chromium profile.
 # Background and decisions: ../BROWSER.md and ../BROWSER_WHY.md.
 #
 # Usage:   browser [-t SECONDS] [--pdf PATH] URL [extra-flag ...]
@@ -43,7 +43,7 @@ case "$(uname)" in
     profile_args=(--user-data-dir="$profile")
     ;;
   Darwin)
-    binary='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    binary='/Applications/Chromium.app/Contents/MacOS/Chromium'
     timeout_cmd=gtimeout
     if   [[ -x /opt/homebrew/opt/util-linux/bin/flock ]]; then flock_cmd=/opt/homebrew/opt/util-linux/bin/flock
     elif [[ -x /usr/local/opt/util-linux/bin/flock   ]]; then flock_cmd=/usr/local/opt/util-linux/bin/flock
@@ -51,10 +51,7 @@ case "$(uname)" in
       echo "browser: flock not found; run 'brew install util-linux'" >&2
       exit 78
     fi
-    profile_args=(
-      --user-data-dir="$HOME/Library/Application Support/Google/Chrome"
-      --profile-directory="Profile 5"
-    )
+    profile_args=(--user-data-dir="$HOME/Library/Application Support/Chromium")
     ;;
   *)
     echo "browser: unsupported OS $(uname)" >&2

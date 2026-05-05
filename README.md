@@ -104,7 +104,7 @@ This directory is also mounted at `~/.claude/skills` via a symlink, so the platf
 
 Skills come in two kinds: those that drive a browser (most of them) and those that talk to APIs directly with their own credentials. The browser-driving skills launch Chromium against the user's logged-in profile (snap-installed on Linux, brew-installed on macOS) and lock the profile dir while they run, so the user closes their everyday Chromium before invoking such a skill and waits for it to finish. If a browser skill cannot find a logged-in session, it prompts the user to open Chromium, sign in to the relevant site, and confirm before continuing.
 
-The reasoning behind the browser arrangement (why Chromium and not Chrome, why the user's real profile and not a fresh one, why we declined to diagnose Cursor's MCP-browser denials) is in `BROWSER.md`. That file is reference material for when a browser skill misbehaves, not preflight reading; skipping it costs nothing under normal operation.
+The reasoning behind the browser arrangement (why Chromium, why the user's real profile and not a fresh one, why we declined to diagnose Cursor's MCP-browser denials) is in `BROWSER_WHY.md`. That file is reference material for when a browser skill misbehaves, not preflight reading; skipping it costs nothing under normal operation.
 
 ## Usage
 

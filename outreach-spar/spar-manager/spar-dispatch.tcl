@@ -43,11 +43,10 @@ proc spar::load_prompt_template {name} {
 # every per-segment prompt build across a dispatcher run reuses the same
 # answer instead of asking the worker to re-detect (issue #96).
 #
-# Resolution: chromium first (snap → $HOME/snap/.../chromium profile;
-# non-snap → $HOME/.config/chromium); else google-chrome with no
-# --user-data-dir; else error. $HOME stays unexpanded in the returned
-# string — the agent's bash expands it at run time, which keeps the
-# prompt file portable across users.
+# Resolution: chromium (snap → $HOME/snap/.../chromium profile;
+# non-snap → $HOME/.config/chromium); else error. $HOME stays unexpanded
+# in the returned string — the agent's bash expands it at run time,
+# which keeps the prompt file portable across users.
 proc spar::detect_browser_cmd {} {
     variable _browser_cmd_cache
     if {[info exists _browser_cmd_cache]} { return $_browser_cmd_cache }
@@ -70,13 +69,7 @@ proc spar::detect_browser_cmd {} {
         return $_browser_cmd_cache
     }
 
-    set google_chrome [auto_execok google-chrome]
-    if {$google_chrome ne ""} {
-        set _browser_cmd_cache "$lock_wrap google-chrome $flags"
-        return $_browser_cmd_cache
-    }
-
-    error "spar::detect_browser_cmd: neither chromium nor google-chrome on PATH"
+    error "spar::detect_browser_cmd: chromium not on PATH"
 }
 
 source [file join $::spar::dispatch_script_dir spar-dispatcher.tcl]

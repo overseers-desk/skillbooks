@@ -39,7 +39,7 @@ Some high-profile accounts require email verification — an `<input type="email
 The "Add a note" textarea is injected dynamically when the "Add a note" button is clicked. It does not exist in the initial DOM. Similarly, the "Send" action requires a button click. Therefore, sending a connection (with or without a note) requires one of:
 
 1. **Puppeteer / Playwright** — launch browser, navigate to custom-invite URL, interact with modal.
-2. **Chrome DevTools Protocol (CDP)** — connect to a running Chrome instance via `--remote-debugging-port`, send click/type commands.
+2. **Chrome DevTools Protocol (CDP)** — connect to a running Chromium instance via `--remote-debugging-port`, send click/type commands.
 3. **Voyager REST API** — POST directly to LinkedIn's internal API with CSRF token and session cookie. The invitation API uses type `com.linkedin.voyager.dash.relationships.invitation.Invitation` with fields: `inviteeMember` (member URN), `message` (the note text), `sharedSecret`, `invitationState`, `invitationId`.
 
 ### Recommendation for next step
