@@ -10,22 +10,24 @@ set -euo pipefail
 
 timeout=15
 mode_args=(--dump-dom)
+print_args=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -t)    timeout="$2"; shift 2 ;;
-    --pdf) mode_args=(--no-pdf-header-footer "--print-to-pdf=$2"); shift 2 ;;
-    *)     break ;;
+    -t)           timeout="$2"; shift 2 ;;
+    --pdf)        mode_args=(--no-pdf-header-footer "--print-to-pdf=$2"); shift 2 ;;
+    --print-args) print_args=1; shift ;;
+    *)            break ;;
   esac
 done
 
-if [[ $# -lt 1 ]]; then
-  echo "Usage: browser [-t SECONDS] [--pdf PATH] URL [extra-flag ...]" >&2
+if [[ $print_args -eq 0 && $# -lt 1 ]]; then
+  echo "Usage: browser [-t SECONDS] [--pdf PATH] [--print-args] URL [extra-flag ...]" >&2
   exit 64
 fi
 
-url="$1"
-shift
+url="${1:-}"
+[[ $print_args -eq 0 ]] && shift
 
 ua='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36'
 common=(--headless=new "${mode_args[@]}" --window-size=3840,2160 --user-agent="$ua")
@@ -58,6 +60,22 @@ case "$(uname)" in
     exit 78
     ;;
 esac
+
+if [[ $print_args -eq 1 ]]; then
+  # Output binary + profile args as JSON for CDP scripts to consume.
+  # Profile args are emitted as a JSON array; each element is one flag string.
+  profile_json="["
+  first=1
+  for arg in "${profile_args[@]}"; do
+    [[ $first -eq 0 ]] && profile_json+=","
+    profile_json+="\"$(echo "$arg" | sed 's/"/\\"/g')\""
+    first=0
+  done
+  profile_json+="]"
+  printf '{"binary":"%s","profile_args":%s}\n' \
+    "$(echo "$binary" | sed 's/"/\\"/g')" "$profile_json"
+  exit 0
+fi
 
 exec "$flock_cmd" /tmp/chromium.lock "$timeout_cmd" "$timeout" \
   "$binary" "${profile_args[@]}" "${common[@]}" "$@" "$url"
