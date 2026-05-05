@@ -24,7 +24,7 @@ grep -oE 'https://wixmp[^"'\'']+\.mp4[^"'\'']*' /tmp/da_file.html | sort -u
 
 If this returns an MP4 URL that differs from the base URL's MP4, it is multi-file. If the same URL appears (or the page is empty), it is single-file — download only the base URL.
 
-Refer to `~/.claude/CLAUDE.md` for BROWSER binary, PROFILE_DIR, and `flock` conventions.
+Refer to `BROWSER.md` for BROWSER binary, PROFILE_DIR, and `flock` conventions.
 
 ## Single-file download
 

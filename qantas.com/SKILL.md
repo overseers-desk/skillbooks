@@ -39,7 +39,7 @@ Server-rendered Next.js - flight data lives in `__next_f.push(...)` chunks in th
 
 Steps:
 
-1. Fetch the URL via the headless command from `~/.claude/CLAUDE.md`, save to `/tmp/qantas-frf.html`.
+1. Fetch the URL via the headless command from `BROWSER.md`, save to `/tmp/qantas-frf.html`.
 2. Run the parser:
 
 ```bash
