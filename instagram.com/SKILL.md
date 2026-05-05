@@ -10,7 +10,7 @@ Spawn a **Sonnet subagent** to run the workflow. Profile DOM dumps are 1–2 MB;
 
 ## Prerequisites
 
-A Chrome-compatible headless browser with a logged-in Instagram session. The browser binary, profile path, user-agent override, and `flock` lock are machine-specific — refer to `~/.claude/CLAUDE.md` for local configuration. These instructions use `BROWSER` and `PROFILE_DIR` as placeholders.
+A Chrome-compatible headless browser with a logged-in Instagram session. The browser binary, profile path, user-agent override, and `flock` lock are machine-specific. Refer to `BROWSER.md` for local configuration. These instructions use `BROWSER` and `PROFILE_DIR` as placeholders.
 
 Note: `--lang` flags do not override Instagram's locale — it is a server-side account setting. The parsers are locale-agnostic, so this does not matter.
 

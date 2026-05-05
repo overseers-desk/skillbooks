@@ -10,7 +10,7 @@ This workflow produces large DOM outputs (1-15MB per page). Spawn a **Sonnet sub
 
 ## Prerequisites
 
-A Chrome-compatible headless browser with a logged-in Facebook session. The browser binary, profile path, user-agent override, and concurrency lock (`flock`) are machine-specific — refer to `~/.claude/CLAUDE.md` for the local configuration. These instructions use `BROWSER` and `PROFILE_DIR` as placeholders.
+A Chrome-compatible headless browser with a logged-in Facebook session. The browser binary, profile path, user-agent override, and concurrency lock (`flock`) are machine-specific. Refer to `BROWSER.md` for the local configuration. These instructions use `BROWSER` and `PROFILE_DIR` as placeholders.
 
 If the dumped DOM title contains "Log in", "Log into Facebook", or "Iniciar sesión", the session has expired and the user needs to log in interactively.
 

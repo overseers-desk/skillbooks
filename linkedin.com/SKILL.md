@@ -10,9 +10,9 @@ This workflow produces large DOM outputs (1-20MB per page). Spawn a **Sonnet sub
 
 ## Prerequisites
 
-A logged-in LinkedIn session in the browser profile that the headless command in `~/.claude/CLAUDE.md` targets. This skill does not invoke the browser itself — it constructs LinkedIn URLs, calls the headless command from CLAUDE.md to fetch them, and parses the result. Do not paste chromium flags into this file or into projects: CLAUDE.md is the single source of truth for the invocation.
+A logged-in LinkedIn session in the browser profile that the headless command in `BROWSER.md` targets. This skill constructs LinkedIn URLs, calls the headless command from `BROWSER.md` to fetch them, and parses the result. It does not invoke the browser directly. Do not paste chromium flags into this file or into projects: `BROWSER.md` is the single source of truth for the invocation.
 
-If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Registrarse", the headless command did not deliver a logged-in session — the profile path is wrong, or another chromium instance holds the same profile, or the invocation deviates from CLAUDE.md. Investigate the plumbing; do not ask the user to log in again. The user is almost always already logged in.
+If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Registrarse", the headless command did not deliver a logged-in session — the profile path is wrong, or another chromium instance holds the same profile, or the invocation deviates from `BROWSER.md`. Investigate the plumbing; do not ask the user to log in again. The user is almost always already logged in.
 
 ## 1. Search for people
 
