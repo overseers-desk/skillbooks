@@ -133,7 +133,7 @@ def main(path):
 
     # Login redirect check
     if "/accounts/login" in html[:30000] and "og:url" not in html[:50000]:
-        print("ERROR: redirected to /accounts/login/. Log in via Chrome or a Chrome-compatible browser first.")
+        print("ERROR: redirected to /accounts/login/. Log in via a Chrome-compatible browser first.")
         sys.exit(1)
 
     og_title = get_meta(html, "property", "og:title")

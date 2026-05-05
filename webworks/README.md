@@ -79,7 +79,7 @@ Check before running any test. Left column = cargo cult sign, right column = wha
 | Increasing timeout for a response that arrives instantly | A 403 in <1s is a server-side rejection. Timeouts only matter for incomplete page loads (skeleton/spinner). |
 | `DISPLAY=:0` without checking display server | `echo $XDG_SESSION_TYPE`. Wayland machines need `WAYLAND_DISPLAY` or confirmed XWayland. |
 | Switching to non-headless ("headed") mode | Find the specific detection signal first. Capture request headers with `--log-net-log` and diff against a headed browser. Usually one or two headers differ. |
-| Trying a different browser binary | Chromium and Chrome use the same headless implementation. Swap variables one at a time: UA, then headers, then profile. |
+| Trying a different browser binary | All Chrome-compatible browsers share the same headless implementation. Swap variables one at a time: UA, then headers, then profile. |
 | Adding anti-detection JS when the server returned 403 before serving any JS | No `<script>` tags in the response = no JS-level detection. The block is in passive request inspection. |
 | Installing Playwright/Selenium for what `--dump-dom` can do | Only reach for automation if you need interaction (clicks, form fills, XHR waits). |
 | Assuming "sophisticated bot detection" | Most detection is simple: UA string, TLS fingerprint, missing headers. Capture `curl -v` or `--log-net-log` and read it. |
@@ -87,13 +87,13 @@ Check before running any test. Left column = cargo cult sign, right column = wha
 
 ## Key diagnostic tool
 
-`--log-net-log=/tmp/netlog.json --net-log-capture-mode=Everything` on headless Chrome captures actual request/response headers. Parse for `HTTP_TRANSACTION_SEND_REQUEST_HEADERS` and `HTTP_TRANSACTION_READ_RESPONSE_HEADERS` events.
+`--log-net-log=/tmp/netlog.json --net-log-capture-mode=Everything` on a headless Chrome-compatible browser captures actual request/response headers. Parse for `HTTP_TRANSACTION_SEND_REQUEST_HEADERS` and `HTTP_TRANSACTION_READ_RESPONSE_HEADERS` events.
 
 ## Known access patterns
 
 ### IHG (ihg.com)
 
-- **Block mechanism:** Akamai reads the User-Agent. Headless Chrome sends `HeadlessChrome/...`. Override with `--user-agent`.
+- **Block mechanism:** Akamai reads the User-Agent. Headless Chrome-compatible browsers send `HeadlessChrome/...`. Override with `--user-agent`.
 - **Open API endpoints:** `apis.ihg.com/availability/v3/hotels/offers` and `apis.ihg.com/locations/v1/destinations` work via curl. GraphQL is WAF-protected.
 - **API key:** Static client-side key `se9ym5iAzaW8pxfBjkmgbuGjJcr3Pj6Y`.
 

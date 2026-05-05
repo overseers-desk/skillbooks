@@ -27,7 +27,7 @@ def parse_profile(html_path):
 
     # Check for login page
     if any(t in title.lower() for t in ["log in", "log into", "iniciar sesión"]):
-        print("ERROR: Facebook session expired. Log in via Chrome or a Chrome-compatible browser first.")
+        print("ERROR: Facebook session expired. Log in via a Chrome-compatible browser first.")
         sys.exit(1)
 
     # Extract name from title — Facebook uses various formats:

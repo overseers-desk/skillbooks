@@ -16,7 +16,7 @@ Note: `--lang` flags do not override Instagram's locale; it is a server-side acc
 
 If a request redirects to `/accounts/login/` or returns empty JSON, the session has expired or been rate-limited. Stop and let the user log in interactively; continuing usually makes it worse.
 
-## Skill-specific Chrome flag
+## Skill-specific Chromium flag
 
 The wrapper handles standard flags (headless, window size, user agent, profile, flock, timeout). This skill appends `--virtual-time-budget=N` (4000 for search, 6000 for profile) to give Instagram's JSON endpoint time to hydrate. Save stdout and stderr separately: a common pitfall is `2>/dev/null > out.html` producing a zero-byte file; `> out.html 2> out.err` is reliable.
 

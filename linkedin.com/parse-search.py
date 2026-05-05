@@ -22,7 +22,7 @@ def parse_search_results(html_path):
     title_match = re.findall(r"<title[^>]*>(.*?)</title>", html, re.DOTALL)
     title = title_match[0].strip() if title_match else ""
     if any(t in title.lower() for t in ["sign in", "log in", "iniciar"]):
-        print("ERROR: LinkedIn session expired. Log in to Chrome first.")
+        print("ERROR: LinkedIn session expired. Log in via a Chrome-compatible browser first.")
         sys.exit(1)
 
     print(f"Page title: {title}")

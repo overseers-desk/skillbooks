@@ -451,7 +451,7 @@ def main():
         navigate_and_wait(ws, "https://otter.ai/my-notes")
 
         if not check_logged_in(ws):
-            print(json.dumps({"error": "Not logged in to Otter.ai. Log in via Chrome or a Chrome-compatible browser first."}))
+            print(json.dumps({"error": "Not logged in to Otter.ai. Log in via a Chrome-compatible browser first."}))
             sys.exit(1)
 
         commands = {

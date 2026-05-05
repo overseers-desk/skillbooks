@@ -1,6 +1,6 @@
 # How this method came to be
 
-In April 2026, an Opus session was asked to programmatically fetch a page from ihg.com. The page loaded fine in a normal browser. curl got 403. Headless Chrome got "Access Denied."
+In April 2026, an Opus session was asked to programmatically fetch a page from ihg.com. The page loaded fine in a normal browser. curl got 403. A headless Chrome-compatible browser got "Access Denied."
 
 What followed was a two-hour debugging session in which the AI attributed the block to, in turn: Akamai TLS fingerprinting, GPU detection via WebGL, `navigator.webdriver`, HTTP/2 fingerprinting, browser/profile mismatch, and window size. Each hypothesis was plausible. Each was wrong. The user intervened repeatedly — "fireman," "SFS," "stop pattern matching, start thinking" — to break the cycle. Without those interventions, the AI would have declared the problem unsolvable and stopped.
 
