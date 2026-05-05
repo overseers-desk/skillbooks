@@ -1,10 +1,43 @@
 #!/usr/bin/env bash
 # Headless DOM dump against the user's logged-in Chromium profile.
-# Background and decisions: ../BROWSER.md and ../BROWSER_WHY.md.
+# Strategy and decisions (why Chromium, why the live profile, etc.): ../BROWSER.md.
 #
 # Usage:   not-google-chrome [-t SECONDS] [--pdf PATH] URL [extra-flag ...]
 # Output:  rendered DOM on stdout (default), or PDF written to PATH (--pdf).
+#          Redirect stdout to a file: dumps are commonly several MB and flood
+#          caller context if returned directly. Default timeout 15s. Pass
+#          extra Chrome-compatible flags after the URL (e.g. --virtual-time-budget=N,
+#          --log-net-log=PATH); they go through to the underlying invocation.
 # Exit 64: bad usage. Exit 78: unsupported OS or missing dependency.
+#
+# macOS prerequisite: brew install util-linux coreutils (flock, gtimeout).
+# Linux has both natively.
+#
+# What this wrapper produces, by platform:
+#   Linux (snap Chromium):
+#     flock /tmp/chromium.lock timeout 15 chromium \
+#       --user-data-dir="$HOME/snap/chromium/common/chromium" \
+#       --headless=new --dump-dom --window-size=3840,2160 --user-agent="..." URL
+#     (non-snap: --user-data-dir="$HOME/.config/chromium". Snap is detected
+#     via `readlink -f $(which chromium)` resolving to /usr/bin/snap.)
+#   macOS (Chromium installed via Homebrew cask):
+#     /opt/homebrew/opt/util-linux/bin/flock /tmp/chromium.lock gtimeout 15 \
+#       "/Applications/Chromium.app/Contents/MacOS/Chromium" \
+#       --user-data-dir="$HOME/Library/Application Support/Chromium" \
+#       --headless=new --dump-dom --window-size=3840,2160 --user-agent="..." URL
+#
+# Conventions:
+#   - --headless=new, not legacy --headless.
+#   - Do not set --virtual-time-budget for general use; a few skills
+#     (instagram, facebook) pass it explicitly because their JS-rendered
+#     endpoints need a budget.
+#   - Keep the UA override; it defeats sites that block on the literal
+#     string HeadlessChrome.
+#
+# When to call this wrapper vs WebFetch:
+#   Prefer WebFetch when the site allows it (converts HTML to plain text
+#   before loading into context, far smaller than a raw DOM dump). Fall
+#   back to this wrapper only when bot detection blocks WebFetch.
 
 set -euo pipefail
 
