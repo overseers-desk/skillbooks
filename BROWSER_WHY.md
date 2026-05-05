@@ -1,5 +1,15 @@
 # Browser strategy for skills
 
+## Editorial rule
+
+The word **Chrome** appears in this repository under three permitted forms only:
+
+1. As part of the unsuitability argument that follows in this file — explaining why Chrome the product is not used.
+2. As part of the phrase **Chrome-compatible**, used to describe a class of browsers, a User-Agent shape, or a binary surface.
+3. As part of a technology name defined by Chrome — for example **Chrome DevTools Protocol** (CDP) — where the word is the proper name of the technology, not a reference to the product.
+
+It must not appear as a product reference outside form 1. New code or documentation that names Chrome as the product to use, install, or launch is to be rewritten in terms of Chromium.
+
 ## Problem
 
 Skills that reach the web face a tangle of related problems.
@@ -14,7 +24,7 @@ Skills that reach the web face a tangle of related problems.
 
 The following decisions resolve the problems above.
 
-**D1. Use Chromium, not Chrome.** Resolves problems 2 and 3. The currently installed Chromium build (from the snap/distro channel) does not enforce the upstream user-data-dir restriction, and Chromium exits cleanly after `--dump-dom` on macOS. Recorded in commit `5d1dc6f`.
+**D1. Use Chromium, not Chrome.** Resolves problems 2 and 3. The currently installed Chromium build (from the snap channel on Linux, the Homebrew cask on macOS) does not enforce the upstream user-data-dir restriction that Chrome 136+ ships, and Chromium exits cleanly after `--dump-dom` on macOS. Recorded in commit `5d1dc6f`.
 
 **D2. Use the user's real, logged-in profile, not a fresh user-data-dir.** Resolves problem 1 in the most direct way available: a session indistinguishable from the user's own activity is hard to flag, because it is the user's own activity. Fresh-profile sessions fail both fingerprinting probes and account-level "new device" heuristics; the operational cost of using the live profile (see D5) is accepted in exchange.
 
@@ -32,7 +42,7 @@ Skills split into two groups by whether the decisions above apply.
 
 **API / non-browser skills** are not affected by D1-D5 because they do not touch a browser. Examples: serpapi, renfe.com, claude-api, send-email, mailroom. Credentials live in environment variables or `~/.claude/skills/config.yaml`.
 
-Profile paths per platform: `~/snap/chromium/common/chromium` on Linux snap, `~/.config/chromium` on Linux non-snap, `~/Library/Application Support/Google/Chrome` on macOS (Google Chrome, with `--profile-directory="Profile 5"`). The snap-vs-non-snap probe and the canonical launch flags live in `bin/browser`, the wrapper that all skills call.
+Profile paths per platform: `~/snap/chromium/common/chromium` on Linux snap, `~/.config/chromium` on Linux non-snap, `~/Library/Application Support/Chromium` on macOS (Chromium installed via the Homebrew cask, default profile). The snap-vs-non-snap probe and the canonical launch flags live in `bin/browser`, the wrapper that all skills call.
 
 When a skill written for the future runs into a login denial on a target site, the first action is not to harden the fingerprint. The first action is to verify the user is actually logged in inside the same Chromium profile, run the page in a non-headless Chromium to confirm the account itself works, and only then ask whether D3 needs revisiting for that specific site.
 
