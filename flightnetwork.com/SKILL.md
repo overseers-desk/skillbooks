@@ -65,7 +65,7 @@ PDF generation uses the browser wrapper's `--pdf` mode. Timeout is 60s instead o
 
 ```bash
 OUT="$HOME/snap/chromium/common/fn-travel-doc.pdf"   # snap-confined; move afterwards
-$HOME/.claude/skills/bin/browser -t 60 --pdf "$OUT" "$URL" 2>/dev/null
+$HOME/.claude/skills/bin/not-google-chrome -t 60 --pdf "$OUT" "$URL" 2>/dev/null
 ```
 
 Move to the caller's target path afterwards. The result is one page per flight segment.

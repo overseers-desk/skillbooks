@@ -4,10 +4,10 @@
 
 ## Headless browser access
 
-Skills that need to fetch a URL use the wrapper at `$HOME/.claude/skills/bin/browser`:
+Skills that need to fetch a URL use the wrapper at `$HOME/.claude/skills/bin/not-google-chrome`:
 
 ```bash
-$HOME/.claude/skills/bin/browser [-t SECONDS] URL > /tmp/output.html
+$HOME/.claude/skills/bin/not-google-chrome [-t SECONDS] URL > /tmp/output.html
 ```
 
 The wrapper handles platform detection, flock, timeout, UA override, and profile selection. See `BROWSER.md` for full details. Never write the raw `flock ... chromium ...` invocation inline in a skill — use the wrapper.

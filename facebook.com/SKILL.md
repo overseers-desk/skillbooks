@@ -10,7 +10,7 @@ This workflow produces large DOM outputs (1-15MB per page). Spawn a **Sonnet sub
 
 ## Prerequisites
 
-A logged-in Facebook session in the browser profile that `$HOME/.claude/skills/bin/browser` targets.
+A logged-in Facebook session in the browser profile that `$HOME/.claude/skills/bin/not-google-chrome` targets.
 
 If the dumped DOM title contains "Log in", "Log into Facebook", or "Iniciar sesión", the session has expired and the user needs to log in interactively.
 
@@ -23,7 +23,7 @@ The wrapper handles standard flags (headless, window size, user agent, profile, 
 ## 1. Search for people
 
 ```bash
-$HOME/.claude/skills/bin/browser \
+$HOME/.claude/skills/bin/not-google-chrome \
   "https://www.facebook.com/search/people/?q=SEARCH_TERMS" \
   --virtual-time-budget=3000 \
   > /tmp/facebook-search-results.html 2>/dev/null
@@ -53,7 +53,7 @@ Outputs profile URLs (both vanity `/username` and numeric `/profile.php?id=`) wi
 For username-based profiles:
 
 ```bash
-$HOME/.claude/skills/bin/browser \
+$HOME/.claude/skills/bin/not-google-chrome \
   "https://www.facebook.com/USERNAME" \
   --virtual-time-budget=3000 \
   > /tmp/facebook-profile.html 2>/dev/null
@@ -62,7 +62,7 @@ $HOME/.claude/skills/bin/browser \
 For numeric-ID profiles:
 
 ```bash
-$HOME/.claude/skills/bin/browser \
+$HOME/.claude/skills/bin/not-google-chrome \
   "https://www.facebook.com/profile.php?id=NUMERIC_ID" \
   --virtual-time-budget=3000 \
   > /tmp/facebook-profile.html 2>/dev/null
@@ -71,7 +71,7 @@ $HOME/.claude/skills/bin/browser \
 ### Optional: Fetch the About page for richer bio data
 
 ```bash
-$HOME/.claude/skills/bin/browser \
+$HOME/.claude/skills/bin/not-google-chrome \
   "https://www.facebook.com/USERNAME/about" \
   --virtual-time-budget=3000 \
   > /tmp/facebook-about.html 2>/dev/null

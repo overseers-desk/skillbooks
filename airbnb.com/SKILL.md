@@ -11,7 +11,7 @@ Spawn a **subagent** to run the CDP script, as each invocation launches a headle
 
 ## Prerequisites
 
-- A Chrome-compatible browser with an active Airbnb hosting session. The user must be logged in to `airbnb.com/hosting` via their browser. See `BROWSER.md` for which browser `bin/browser` targets on each platform — this skill uses CDP, not `--dump-dom`, because Airbnb is a React SPA and the URL does not change on in-page navigation.
+- A Chrome-compatible browser with an active Airbnb hosting session. The user must be logged in to `airbnb.com/hosting` via their browser. See `BROWSER.md` for which browser `bin/not-google-chrome` targets on each platform — this skill uses CDP, not `--dump-dom`, because Airbnb is a React SPA and the URL does not change on in-page navigation.
 - **Close the browser before running.** The headless instance and GUI browser share the same profile; if the GUI holds the profile lock, cookies will not be readable by the headless instance.
 
 If the script returns `{"error": "Not logged in..."}`, the user needs to log in to Airbnb in their browser first, then close it.
