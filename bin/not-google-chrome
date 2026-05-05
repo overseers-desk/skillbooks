@@ -8,7 +8,8 @@
 #          caller context if returned directly. Default timeout 15s. Pass
 #          extra Chrome-compatible flags after the URL (e.g. --virtual-time-budget=N,
 #          --log-net-log=PATH); they go through to the underlying invocation.
-# Exit 64: bad usage. Exit 78: unsupported OS or missing dependency.
+# Exit 64: bad usage. Exit 77: URL on the abuse list (override with
+#          --yes-i-am-not-stupid). Exit 78: unsupported OS or missing dependency.
 #
 # macOS prerequisite: brew install util-linux coreutils (flock, gtimeout).
 # Linux has both natively.
@@ -41,26 +42,69 @@
 
 set -euo pipefail
 
+# Abuse list. URLs containing any of these substrings are refused unless
+# --yes-i-am-not-stupid is passed. The wrapper exists for sites that block
+# automated access (Akamai, Cloudflare, login walls). For these patterns,
+# WebFetch or curl is cheaper, faster, and does not lock the user's profile.
+# Edit this list when a new common-abuse case shows up; a tighter pattern
+# beats a looser one (prefer "www.google." over "google" so we do not catch
+# a randomly-named google-something on a legitimate target site).
+ABUSE_PATTERNS=(
+  "google.com"
+  "www.google."
+  "wikipedia.org"
+  "github.com"
+  "raw.githubusercontent.com"
+  "news.ycombinator.com"
+  "stackoverflow.com"
+  "arxiv.org"
+  "archive.org"
+)
+
 timeout=15
 mode_args=(--dump-dom)
 print_args=0
+override=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -t)           timeout="$2"; shift 2 ;;
-    --pdf)        mode_args=(--no-pdf-header-footer "--print-to-pdf=$2"); shift 2 ;;
-    --print-args) print_args=1; shift ;;
-    *)            break ;;
+    -t)                     timeout="$2"; shift 2 ;;
+    --pdf)                  mode_args=(--no-pdf-header-footer "--print-to-pdf=$2"); shift 2 ;;
+    --print-args)           print_args=1; shift ;;
+    --yes-i-am-not-stupid)  override=1; shift ;;
+    *)                      break ;;
   esac
 done
 
 if [[ $print_args -eq 0 && $# -lt 1 ]]; then
-  echo "Usage: not-google-chrome [-t SECONDS] [--pdf PATH] [--print-args] URL [extra-flag ...]" >&2
+  echo "Usage: not-google-chrome [-t SECONDS] [--pdf PATH] [--print-args] [--yes-i-am-not-stupid] URL [extra-flag ...]" >&2
   exit 64
 fi
 
 url="${1:-}"
 [[ $print_args -eq 0 ]] && shift
+
+if [[ $print_args -eq 0 && $override -eq 0 ]]; then
+  for pat in "${ABUSE_PATTERNS[@]}"; do
+    if [[ "$url" == *"$pat"* ]]; then
+      cat >&2 <<EOF
+not-google-chrome: refusing to fetch $url
+
+This wrapper exists for sites that block automated access (Akamai,
+Cloudflare, login walls). The URL matches abuse pattern '$pat', a site
+that ordinarily responds to WebFetch or curl. Using a logged-in browser
+session here is wasteful: it locks the user's profile, takes seconds
+instead of milliseconds, and leaks attribution from their identity into a
+fetch that did not need it.
+
+Try WebFetch first; for raw bytes, try curl. If you genuinely need a
+logged-in browser session against this URL (rare), re-run with
+--yes-i-am-not-stupid.
+EOF
+      exit 77
+    fi
+  done
+fi
 
 ua='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36'
 common=(--headless=new "${mode_args[@]}" --window-size=3840,2160 --user-agent="$ua")
