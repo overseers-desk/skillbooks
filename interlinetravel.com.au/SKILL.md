@@ -35,26 +35,26 @@ Prices are interline staff rates — significantly below public pricing. The cur
 Run `search.py` from the skill directory.
 
 ```bash
-python3 $HOME/code/aesop/interlinetravel.com.au/search.py search --region Mediterranean --from 2026-06-01
+python3 $HOME/.claude/skills/interlinetravel.com.au/search.py search --region Mediterranean --from 2026-06-01
 ```
 
 ### Subcommands
 
 ```bash
 # Search with filters
-python3 $HOME/code/aesop/interlinetravel.com.au/search.py search --region Caribbean --duration 8-14 --per-page 10
+python3 $HOME/.claude/skills/interlinetravel.com.au/search.py search --region Caribbean --duration 8-14 --per-page 10
 
 # Search within a travel window (must depart after X and return by Y)
-python3 $HOME/code/aesop/interlinetravel.com.au/search.py search --from 2026-04-15 --to 2026-05-12 --return-by 2026-05-12
+python3 $HOME/.claude/skills/interlinetravel.com.au/search.py search --from 2026-04-15 --to 2026-05-12 --return-by 2026-05-12
 
 # Full cruise details (by ID from search results)
-python3 $HOME/code/aesop/interlinetravel.com.au/search.py details 26649
+python3 $HOME/.claude/skills/interlinetravel.com.au/search.py details 26649
 
 # List available filter values
-python3 $HOME/code/aesop/interlinetravel.com.au/search.py options
+python3 $HOME/.claude/skills/interlinetravel.com.au/search.py options
 
 # Autocomplete
-python3 $HOME/code/aesop/interlinetravel.com.au/search.py suggest "viking"
+python3 $HOME/.claude/skills/interlinetravel.com.au/search.py suggest "viking"
 ```
 
 ### Search options

@@ -7,7 +7,7 @@ allowed-tools: Bash, Read
 
 ## Execution model
 
-Spawn a **subagent** to run the CDP script, as each invocation launches a headless browser session (~15s overhead). Tell the subagent to use the script at `$HOME/code/aesop/otter.ai/otter-cdp.py`.
+Spawn a **subagent** to run the CDP script, as each invocation launches a headless browser session (~15s overhead). Tell the subagent to use the script at `$HOME/.claude/skills/otter.ai/otter-cdp.py`.
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ If the script returns `{"error": "Not logged in..."}`, the user needs to log in 
 ### 1. List recordings
 
 ```bash
-python3 $HOME/code/aesop/otter.ai/otter-cdp.py list [--page-size N] [--last-load-ts TS]
+python3 $HOME/.claude/skills/otter.ai/otter-cdp.py list [--page-size N] [--last-load-ts TS]
 ```
 
 Returns JSON with `speeches` array. Each entry has: `otid`, `title`, `created_at` (epoch), `duration` (seconds), `summary`, `link` (full URL).
@@ -33,7 +33,7 @@ Default page size is 50. To paginate, pass `--last-load-ts` from the previous re
 ### 2. Rename a recording
 
 ```bash
-python3 $HOME/code/aesop/otter.ai/otter-cdp.py rename <otid> "<new title>"
+python3 $HOME/.claude/skills/otter.ai/otter-cdp.py rename <otid> "<new title>"
 ```
 
 Returns `{"status": "OK", "modified_time": ...}` on success.
@@ -45,7 +45,7 @@ The `otid` is the recording identifier from the list command or from an otter.ai
 ### 3. Export to Dropbox
 
 ```bash
-python3 $HOME/code/aesop/otter.ai/otter-cdp.py export-dropbox <otid> [--format txt|pdf|docx|srt]
+python3 $HOME/.claude/skills/otter.ai/otter-cdp.py export-dropbox <otid> [--format txt|pdf|docx|srt]
 ```
 
 Exports the recording to the user's connected Dropbox. Default format is `txt`.
@@ -55,7 +55,7 @@ Returns `{"status": "OK", "failed_speeches": []}` on success.
 ### 4. Fetch a recording via Dropbox round-trip
 
 ```bash
-python3 $HOME/code/aesop/otter.ai/otter-cdp.py fetch-via-dropbox <otid> [--timeout 60] [--extended-timeout 120]
+python3 $HOME/.claude/skills/otter.ai/otter-cdp.py fetch-via-dropbox <otid> [--timeout 60] [--extended-timeout 120]
 ```
 
 One-shot helper that triggers a txt export to Dropbox, polls `Dropbox:Apps/Otter` via `rclone` until a new file appears, reads its contents, deletes it from Dropbox, and returns the text. Format is hardcoded to `txt`. Path `Dropbox:Apps/Otter` is hardcoded.
@@ -69,7 +69,7 @@ Requires `rclone` configured with a `Dropbox:` remote.
 ### 5. Check Dropbox connection
 
 ```bash
-python3 $HOME/code/aesop/otter.ai/otter-cdp.py dropbox-status
+python3 $HOME/.claude/skills/otter.ai/otter-cdp.py dropbox-status
 ```
 
 Returns connection status, `dropbox_account_id`, auto-export/import settings, and default export format.

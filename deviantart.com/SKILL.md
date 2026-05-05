@@ -15,23 +15,16 @@ Multi-file deviations use `?file=N` URL parameters (e.g. `?file=2` through `?fil
 Strip any `?file=` from the user's URL to get the canonical base URL. Fetch `?file=2`:
 
 ```bash
-flock /tmp/chromium.lock timeout 30 BROWSER --headless=new --dump-dom \
-  --user-agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" \
-  --user-data-dir=PROFILE_DIR --window-size=3840,2160 \
-  "BASE_URL?file=2" > /tmp/da_file.html
+$HOME/.claude/skills/bin/browser -t 30 "BASE_URL?file=2" > /tmp/da_file.html
 grep -oE 'https://wixmp[^"'\'']+\.mp4[^"'\'']*' /tmp/da_file.html | sort -u
 ```
 
-If this returns an MP4 URL that differs from the base URL's MP4, it is multi-file. If the same URL appears (or the page is empty), it is single-file — download only the base URL.
-
-Refer to `BROWSER.md` for BROWSER binary, PROFILE_DIR, and `flock` conventions.
+If this returns an MP4 URL that differs from the base URL's MP4, it is multi-file. If the same URL appears (or the page is empty), it is single-file: download only the base URL.
 
 ## Single-file download
 
 ```bash
-flock /tmp/chromium.lock timeout 30 BROWSER --headless=new --dump-dom \
-  --user-agent="..." --user-data-dir=PROFILE_DIR --window-size=3840,2160 \
-  "BASE_URL" > /tmp/da_file.html
+$HOME/.claude/skills/bin/browser -t 30 "BASE_URL" > /tmp/da_file.html
 MP4=$(grep -oE 'https://wixmp[^"'\'']+\.mp4[^"'\'']*' /tmp/da_file.html | sort -u | head -1)
 wget -q --show-progress -O "DEST/SLUG.mp4" "$MP4"
 ```
@@ -43,15 +36,13 @@ Maintain a set of already-downloaded wixmp URLs. For each page, extract wixmp UR
 ```python
 import re, subprocess, os
 
+WRAPPER = os.path.expanduser("~/.claude/skills/bin/browser")
+
 def dump_dom(url):
-    subprocess.run([
-        "flock", "/tmp/chromium.lock", "timeout", "30",
-        "chromium", "--headless=new", "--dump-dom",
-        "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-        "--user-data-dir=os.path.expanduser('~/snap/chromium/common/chromium')",
-        "--window-size=3840,2160", url
-    ], capture_output=True, check=True)
-    # return stdout
+    return subprocess.run(
+        [WRAPPER, "-t", "30", url],
+        capture_output=True, check=True, text=True
+    ).stdout
 
 def extract_wixmp_mp4s(html):
     return set(re.findall(r'https://wixmp[^"\x27]+\.mp4[^"\x27]*', html))
@@ -83,7 +74,7 @@ while True:
     n += 1
 ```
 
-In practice, write this as a shell loop or a short Python script, whichever is cleaner for the given task. The logic above is pseudocode — adapt the BROWSER path from CLAUDE.md.
+In practice, write this as a shell loop or a short Python script, whichever is cleaner for the given task.
 
 ## Filename convention
 

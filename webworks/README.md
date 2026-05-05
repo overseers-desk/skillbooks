@@ -25,7 +25,7 @@ Do not write a causal explanation into a skill or access pattern unless you have
 
 ## Prerequisites
 
-- A headless browser (see `~/.claude/CLAUDE.md` for the local command, profile, and concurrency)
+- A headless browser (use `$HOME/.claude/skills/bin/browser`; see `BROWSER.md` for context)
 - curl
 
 ## When repairing a broken skill

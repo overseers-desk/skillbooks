@@ -33,25 +33,25 @@ Free plan allows 250 searches/month. Check usage at: `curl -s "https://serpapi.c
 ### Google Flights (one-way)
 
 ```bash
-python3 $HOME/code/aesop/serpapi/search.py flights LHR BNE 2026-05-10 --currency EUR
+python3 $HOME/.claude/skills/serpapi/search.py flights LHR BNE 2026-05-10 --currency EUR
 ```
 
 ### Google Flights (return)
 
 ```bash
-python3 $HOME/code/aesop/serpapi/search.py flights LHR BNE 2026-05-10 --return-date 2026-05-20 --currency EUR
+python3 $HOME/.claude/skills/serpapi/search.py flights LHR BNE 2026-05-10 --return-date 2026-05-20 --currency EUR
 ```
 
 ### Google Search
 
 ```bash
-python3 $HOME/code/aesop/serpapi/search.py search "best noise cancelling headphones 2026"
+python3 $HOME/.claude/skills/serpapi/search.py search "best noise cancelling headphones 2026"
 ```
 
 ### Google Maps
 
 ```bash
-python3 $HOME/code/aesop/serpapi/search.py maps "restaurants near Jerez de la Frontera"
+python3 $HOME/.claude/skills/serpapi/search.py maps "restaurants near Jerez de la Frontera"
 ```
 
 ## Flight search arguments
@@ -153,13 +153,13 @@ This returns room types, rate options, amenities, and nearby places for a single
 ### Flight price comparison across dates
 ```bash
 for date in 2026-05-08 2026-05-09 2026-05-10; do
-    python3 $HOME/code/aesop/serpapi/search.py flights LHR BNE "$date" --currency EUR
+    python3 $HOME/.claude/skills/serpapi/search.py flights LHR BNE "$date" --currency EUR
 done
 ```
 
 ### Raw JSON for programmatic processing
 ```bash
-python3 $HOME/code/aesop/serpapi/search.py flights LHR BNE 2026-05-10 --currency EUR --json | python3 -c "
+python3 $HOME/.claude/skills/serpapi/search.py flights LHR BNE 2026-05-10 --currency EUR --json | python3 -c "
 import sys, json
 d = json.load(sys.stdin)
 all_flights = d.get('best_flights', []) + d.get('other_flights', [])
