@@ -39,11 +39,11 @@ Server-rendered Next.js - flight data lives in `__next_f.push(...)` chunks in th
 
 Steps:
 
-1. Fetch the URL via the headless command from `BROWSER.md`, save to `/tmp/qantas-frf.html`.
+1. Fetch the URL with `$HOME/.claude/skills/bin/browser URL > /tmp/qantas-frf.html`.
 2. Run the parser:
 
 ```bash
-python3 $HOME/code/aesop/qantas.com/parse-rewards.py /tmp/qantas-frf.html
+python3 $HOME/.claude/skills/qantas.com/parse-rewards.py /tmp/qantas-frf.html
 ```
 
 Date handling: the Flight Reward Finder only holds live and future availability - past dates return zero records, not an error. If the user asks about a date in the past, state today's date and confirm before fetching. The endpoint also returns nearby dates within the same calendar window even when `dr` specifies one day, so filter on the requested date in the consumer.
@@ -53,8 +53,8 @@ Date handling: the Flight Reward Finder only holds live and future availability 
 Returns first name, tier, member ID, points, and status credits. Login + read happen in one CDP session because cookies do not persist across invocations while the snap chromium browser is open (it locks the profile).
 
 ```bash
-python3 $HOME/code/aesop/qantas.com/login.py            # human-readable
-python3 $HOME/code/aesop/qantas.com/login.py --json     # JSON
+python3 $HOME/.claude/skills/qantas.com/login.py            # human-readable
+python3 $HOME/.claude/skills/qantas.com/login.py --json     # JSON
 ```
 
 Credentials are read from `$HOME/.claude/skills/config.yaml` (qantas.com.memberId, lastName, pin). See Prerequisites above.

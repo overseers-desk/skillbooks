@@ -6,20 +6,20 @@ argument-hint: <name, URL, or search terms>
 
 ## Execution model
 
-This workflow produces large DOM outputs (1-20MB per page). Spawn a **Sonnet subagent** to execute it so the main conversation context is not consumed. Tell the subagent to use the scripts in `$HOME/code/aesop/linkedin.com/` — do not paste scripts inline.
+This workflow produces large DOM outputs (1-20MB per page). Spawn a **Sonnet subagent** to execute it so the main conversation context is not consumed. Tell the subagent to use the scripts in `$HOME/.claude/skills/linkedin.com/` — do not paste scripts inline.
 
 ## Prerequisites
 
-A logged-in LinkedIn session in the browser profile that the headless command in `BROWSER.md` targets. This skill constructs LinkedIn URLs, calls the headless command from `BROWSER.md` to fetch them, and parses the result. It does not invoke the browser directly. Do not paste chromium flags into this file or into projects: `BROWSER.md` is the single source of truth for the invocation.
+A logged-in LinkedIn session in the browser profile that `$HOME/.claude/skills/bin/browser` targets. This skill constructs LinkedIn URLs, calls the wrapper to fetch them, and parses the result.
 
-If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Registrarse", the headless command did not deliver a logged-in session — the profile path is wrong, or another chromium instance holds the same profile, or the invocation deviates from `BROWSER.md`. Investigate the plumbing; do not ask the user to log in again. The user is almost always already logged in.
+If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Registrarse", the wrapper did not deliver a logged-in session: the profile path is wrong, or another chromium instance holds the same profile. Investigate the plumbing; do not ask the user to log in again. The user is almost always already logged in.
 
 ## 1. Search for people
 
-Use **people search**, not "all" search. Fetch this URL via the CLAUDE.md headless command, save to `/tmp/linkedin-search-results.html`:
+Use **people search**, not "all" search. Fetch this URL with the wrapper, save to `/tmp/linkedin-search-results.html`:
 
-```
-https://www.linkedin.com/search/results/people/?keywords=SEARCH_TERMS&origin=GLOBAL_SEARCH_HEADER
+```bash
+$HOME/.claude/skills/bin/browser "https://www.linkedin.com/search/results/people/?keywords=SEARCH_TERMS&origin=GLOBAL_SEARCH_HEADER" > /tmp/linkedin-search-results.html
 ```
 
 URL-encode search terms (spaces become `%20`).
@@ -40,23 +40,23 @@ A search returning zero results does not mean the person has no LinkedIn. Try al
 ## 2. Parse search results
 
 ```bash
-python3 $HOME/code/aesop/linkedin.com/parse-search.py /tmp/linkedin-search-results.html
+python3 $HOME/.claude/skills/linkedin.com/parse-search.py /tmp/linkedin-search-results.html
 ```
 
 Outputs each profile URL with nearby visible text (name, headline).
 
 ## 3. Fetch a profile
 
-Fetch this URL via the CLAUDE.md headless command, save to `/tmp/linkedin-profile.html`:
+Fetch this URL with the wrapper, save to `/tmp/linkedin-profile.html`:
 
-```
-https://www.linkedin.com/in/USERNAME/
+```bash
+$HOME/.claude/skills/bin/browser "https://www.linkedin.com/in/USERNAME/" > /tmp/linkedin-profile.html
 ```
 
 ## 4. Parse profile
 
 ```bash
-python3 $HOME/code/aesop/linkedin.com/parse-profile.py /tmp/linkedin-profile.html
+python3 $HOME/.claude/skills/linkedin.com/parse-profile.py /tmp/linkedin-profile.html
 ```
 
 Extracts name, headline, location, meta descriptions, and visible text blocks (experience, about, education).
@@ -64,7 +64,7 @@ Extracts name, headline, location, meta descriptions, and visible text blocks (e
 ## 5. Keyword search (optional)
 
 ```bash
-python3 $HOME/code/aesop/linkedin.com/keyword-search.py /tmp/linkedin-profile.html keyword1 keyword2 ...
+python3 $HOME/.claude/skills/linkedin.com/keyword-search.py /tmp/linkedin-profile.html keyword1 keyword2 ...
 ```
 
 Checks whether a profile mentions specific terms and shows surrounding context.
@@ -77,10 +77,10 @@ The connection invite page is at a constructable URL:
 https://www.linkedin.com/preload/custom-invite/?vanityName=USERNAME
 ```
 
-Fetch this URL via the CLAUDE.md headless command, save to `/tmp/linkedin-connect.html`, then check the modal that renders:
+Fetch this URL with the wrapper, save to `/tmp/linkedin-connect.html`, then check the modal that renders:
 
-```
-https://www.linkedin.com/preload/custom-invite/?vanityName=USERNAME
+```bash
+$HOME/.claude/skills/bin/browser "https://www.linkedin.com/preload/custom-invite/?vanityName=USERNAME" > /tmp/linkedin-connect.html
 ```
 
 Parse the result:
@@ -95,7 +95,7 @@ If the modal shows "Add a note" and "Send without a note", the person is connect
 ## 7. Send connection invite with note
 
 ```bash
-python3 $HOME/code/aesop/linkedin.com/send-invite.py VANITY_NAME "Your note (≤300 chars)"
+python3 $HOME/.claude/skills/linkedin.com/send-invite.py VANITY_NAME "Your note (≤300 chars)"
 ```
 
 `VANITY_NAME` is the slug from the profile URL: `/in/john-smith-123/` → `john-smith-123`.
@@ -119,7 +119,7 @@ The script uses CDP (Chrome DevTools Protocol) against the snap Chromium profile
 
 **Dry-run mode** (types but does not click Send):
 ```bash
-python3 $HOME/code/aesop/linkedin.com/send-invite.py VANITY_NAME "note" --dry-run
+python3 $HOME/.claude/skills/linkedin.com/send-invite.py VANITY_NAME "note" --dry-run
 ```
 
 **Prerequisites check:** if `websockets` is missing, install it: `pip3 install websockets`.

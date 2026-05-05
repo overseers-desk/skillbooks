@@ -6,36 +6,28 @@ argument-hint: <name, handle, or search terms>
 
 ## Execution model
 
-Spawn a **Sonnet subagent** to run the workflow. Profile DOM dumps are 1–2 MB; search responses are a few KB. Tell the subagent to use the scripts in `$HOME/code/aesop/instagram.com/` — do not paste scripts inline.
+Spawn a **Sonnet subagent** to run the workflow. Profile DOM dumps are 1–2 MB; search responses are a few KB. Tell the subagent to use the scripts in `$HOME/.claude/skills/instagram.com/` — do not paste scripts inline.
 
 ## Prerequisites
 
-A Chrome-compatible headless browser with a logged-in Instagram session. The browser binary, profile path, user-agent override, and `flock` lock are machine-specific. Refer to `BROWSER.md` for local configuration. These instructions use `BROWSER` and `PROFILE_DIR` as placeholders.
+A logged-in Instagram session in the browser profile that `$HOME/.claude/skills/bin/browser` targets.
 
-Note: `--lang` flags do not override Instagram's locale — it is a server-side account setting. The parsers are locale-agnostic, so this does not matter.
+Note: `--lang` flags do not override Instagram's locale; it is a server-side account setting. The parsers are locale-agnostic, so this does not matter.
 
 If a request redirects to `/accounts/login/` or returns empty JSON, the session has expired or been rate-limited. Stop and let the user log in interactively; continuing usually makes it worse.
 
-## Browser flags used below
+## Skill-specific Chrome flag
 
-| Flag | Purpose |
-|------|---------|
-| `--virtual-time-budget=4000` (search) / `6000` (profile) | Enough for the endpoint to respond. Do not raise past ~15000 — the real timeout will kill the process before the dump completes. |
-| `--window-size=3840,2160` | Tall viewport for lazy content on the profile DOM. |
-| `--user-data-dir=PROFILE_DIR` | Active session cookies. |
+The wrapper handles standard flags (headless, window size, user agent, profile, flock, timeout). This skill appends `--virtual-time-budget=N` (4000 for search, 6000 for profile) to give Instagram's JSON endpoint time to hydrate. Save stdout and stderr separately: a common pitfall is `2>/dev/null > out.html` producing a zero-byte file; `> out.html 2> out.err` is reliable.
 
-Also: save stdout and stderr to separate files. A common pitfall on this setup is `2>/dev/null > out.html` producing a zero-byte file; `> out.html 2> out.err` is reliable.
-
-## 1. Search — use the topsearch JSON endpoint
+## 1. Search via the topsearch JSON endpoint
 
 Instagram's rendered search page (`/explore/search/keyword/?q=...`) is GraphQL-hydrated and stays empty in a headless dump within a reasonable time budget. The internal endpoint `/web/search/topsearch/?query=...`, authenticated, returns clean JSON directly. Use that:
 
 ```bash
-flock /tmp/browser.lock timeout 30 BROWSER --headless --dump-dom \
-  --virtual-time-budget=4000 \
-  --window-size=3840,2160 \
-  --user-data-dir=PROFILE_DIR \
+$HOME/.claude/skills/bin/browser -t 30 \
   "https://www.instagram.com/web/search/topsearch/?query=SEARCH_TERMS" \
+  --virtual-time-budget=4000 \
   > /tmp/instagram-search.html 2> /tmp/instagram-search.err
 ```
 
@@ -46,7 +38,7 @@ The response contains `users[]`, `hashtags[]`, and `places[]`. Each user include
 ## 2. Parse search results
 
 ```bash
-python3 $HOME/code/aesop/instagram.com/parse-search.py /tmp/instagram-search.html
+python3 $HOME/.claude/skills/instagram.com/parse-search.py /tmp/instagram-search.html
 ```
 
 Prints a ranked list of candidate handles with display name, verified/private flags, profile URL, and mutual-followers context.
@@ -54,11 +46,9 @@ Prints a ranked list of candidate handles with display name, verified/private fl
 ## 3. Fetch a profile
 
 ```bash
-flock /tmp/browser.lock timeout 45 BROWSER --headless --dump-dom \
-  --virtual-time-budget=6000 \
-  --window-size=3840,2160 \
-  --user-data-dir=PROFILE_DIR \
+$HOME/.claude/skills/bin/browser -t 45 \
   "https://www.instagram.com/HANDLE/" \
+  --virtual-time-budget=6000 \
   > /tmp/instagram-profile.html 2> /tmp/instagram-profile.err
 ```
 
@@ -67,7 +57,7 @@ Instagram has no separate "about" page on the web.
 ## 4. Parse profile
 
 ```bash
-python3 $HOME/code/aesop/instagram.com/parse-profile.py /tmp/instagram-profile.html
+python3 $HOME/.claude/skills/instagram.com/parse-profile.py /tmp/instagram-profile.html
 ```
 
 Reliably extracts (from `<meta>` tags, which are server-rendered):

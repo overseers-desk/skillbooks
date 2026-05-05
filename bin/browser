@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Headless DOM dump against the user's logged-in Chromium/Chrome profile.
+# Background and decisions: ../BROWSER.md and ../BROWSER_WHY.md.
+#
+# Usage:   browser [-t SECONDS] [--pdf PATH] URL [extra-flag ...]
+# Output:  rendered DOM on stdout (default), or PDF written to PATH (--pdf).
+# Exit 64: bad usage. Exit 78: unsupported OS or missing dependency.
+
+set -euo pipefail
+
+timeout=15
+mode_args=(--dump-dom)
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -t)    timeout="$2"; shift 2 ;;
+    --pdf) mode_args=(--no-pdf-header-footer "--print-to-pdf=$2"); shift 2 ;;
+    *)     break ;;
+  esac
+done
+
+if [[ $# -lt 1 ]]; then
+  echo "Usage: browser [-t SECONDS] [--pdf PATH] URL [extra-flag ...]" >&2
+  exit 64
+fi
+
+url="$1"
+shift
+
+ua='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36'
+common=(--headless=new "${mode_args[@]}" --window-size=3840,2160 --user-agent="$ua")
+
+case "$(uname)" in
+  Linux)
+    binary=chromium
+    flock_cmd=flock
+    timeout_cmd=timeout
+    if [[ "$(readlink -f "$(command -v chromium 2>/dev/null || echo /missing)")" == /usr/bin/snap ]]; then
+      profile="$HOME/snap/chromium/common/chromium"
+    else
+      profile="$HOME/.config/chromium"
+    fi
+    profile_args=(--user-data-dir="$profile")
+    ;;
+  Darwin)
+    binary='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    timeout_cmd=gtimeout
+    if   [[ -x /opt/homebrew/opt/util-linux/bin/flock ]]; then flock_cmd=/opt/homebrew/opt/util-linux/bin/flock
+    elif [[ -x /usr/local/opt/util-linux/bin/flock   ]]; then flock_cmd=/usr/local/opt/util-linux/bin/flock
+    else
+      echo "browser: flock not found; run 'brew install util-linux'" >&2
+      exit 78
+    fi
+    profile_args=(
+      --user-data-dir="$HOME/Library/Application Support/Google/Chrome"
+      --profile-directory="Profile 5"
+    )
+    ;;
+  *)
+    echo "browser: unsupported OS $(uname)" >&2
+    exit 78
+    ;;
+esac
+
+exec "$flock_cmd" /tmp/chromium.lock "$timeout_cmd" "$timeout" \
+  "$binary" "${profile_args[@]}" "${common[@]}" "$@" "$url"

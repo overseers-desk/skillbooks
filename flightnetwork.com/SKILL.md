@@ -61,14 +61,11 @@ This endpoint is publicly accessible (the token is the auth). `curl` returns the
 
 ### 5. Render to PDF
 
-PDF generation needs a browser engine. Browser invocation follows `BROWSER.md` conventions; timeout is 60s here instead of 15s to allow PDF rendering. Snap chromium is path-restricted to `$HOME/snap/chromium/`:
+PDF generation uses the browser wrapper's `--pdf` mode. Timeout is 60s instead of the default 15s to allow PDF rendering. On Linux with a snap-confined chromium, the output path must be under `$HOME/snap/chromium/common/`:
 
 ```bash
-OUT="$HOME/snap/chromium/common/fn-travel-doc.pdf"
-flock /tmp/chromium.lock timeout 60 chromium --headless=new \
-  --user-data-dir="$HOME/snap/chromium/common/chromium" \
-  --user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" \
-  --no-pdf-header-footer --print-to-pdf="$OUT" "$URL" 2>/dev/null
+OUT="$HOME/snap/chromium/common/fn-travel-doc.pdf"   # snap-confined; move afterwards
+$HOME/.claude/skills/bin/browser -t 60 --pdf "$OUT" "$URL" 2>/dev/null
 ```
 
 Move to the caller's target path afterwards. The result is one page per flight segment.
