@@ -1,6 +1,6 @@
 # Browser invocation
 
-Skills use `$HOME/.claude/skills/bin/browser [-t SECONDS] URL [extra-flags...]` for headless DOM dumps. Output is on stdout; redirect to a file (dumps are commonly several MB and flood context if returned to the caller). Default timeout 15s. Pass extra Chromium flags after the URL when a specific skill needs them (e.g. `--virtual-time-budget=N`, `--log-net-log=PATH`).
+Skills use `$HOME/.claude/skills/bin/browser [-t SECONDS] URL [extra-flags...]` for headless DOM dumps. Output is on stdout; redirect to a file (dumps are commonly several MB and flood context if returned to the caller). Default timeout 15s. Pass extra Chrome-compatible flags after the URL when a specific skill needs them (e.g. `--virtual-time-budget=N`, `--log-net-log=PATH`).
 
 macOS prerequisite: `brew install util-linux coreutils` for `flock` and `gtimeout`. Linux has both natively.
 

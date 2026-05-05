@@ -16,7 +16,7 @@ If the dumped DOM title contains "Log in", "Log into Facebook", or "Iniciar sesi
 
 Facebook may serve different DOM structures depending on whether the viewer is logged in, the target profile's privacy settings, and the session locale.
 
-## Skill-specific Chromium flag
+## Skill-specific Chrome-compatible flag
 
 The wrapper handles standard flags (headless, window size, user agent, profile, flock, timeout). This skill appends `--virtual-time-budget=3000` to allow Facebook's JS to render. Increase to 45000 on slow connections.
 
