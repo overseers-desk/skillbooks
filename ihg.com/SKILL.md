@@ -141,7 +141,7 @@ If this returns 403, coordinates can be obtained from any geocoding service or l
 
 ## Fallback
 
-If the curl-based API becomes WAF-protected, fall back to the browser approach described in `BROWSER.md`.
+If the curl-based API becomes WAF-protected, fall back to `$HOME/.claude/skills/bin/not-google-chrome`.
 
 ## Typical workflow
 

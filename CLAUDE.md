@@ -10,7 +10,7 @@ Skills that need to fetch a URL use the wrapper at `$HOME/.claude/skills/bin/not
 $HOME/.claude/skills/bin/not-google-chrome [-t SECONDS] URL > /tmp/output.html
 ```
 
-The wrapper handles platform detection, flock, timeout, UA override, and profile selection. See `BROWSER.md` for full details. Never write the raw `flock ... chromium ...` invocation inline in a skill — use the wrapper.
+The wrapper handles platform detection, flock, timeout, UA override, and profile selection. Its comment header is the canonical reference for the underlying invocation; `BROWSER.md` covers the strategy and rationale. Never write the raw `flock ... chromium ...` invocation inline in a skill: use the wrapper.
 
 ## CDP scripts (authenticated SPAs)
 
