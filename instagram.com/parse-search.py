@@ -34,7 +34,7 @@ def load_payload(path):
         # If it looks like an HTML login redirect, say so
         if "login" in raw[:5000].lower() or "/accounts/login" in raw[:5000]:
             print("Looks like the session redirected to /accounts/login/. "
-                  "Log in via Chrome or a Chrome-compatible browser first.")
+                  "Log in via a Chrome-compatible browser first.")
         else:
             print("First 500 chars of body:")
             print(body[:500])

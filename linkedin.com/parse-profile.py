@@ -26,7 +26,7 @@ def parse_profile(html_path):
 
     # Check for login page
     if any(t in title.lower() for t in ["sign in", "log in", "iniciar"]):
-        print("ERROR: LinkedIn session expired. Log in to Chrome first.")
+        print("ERROR: LinkedIn session expired. Log in via a Chrome-compatible browser first.")
         sys.exit(1)
 
     name = title.replace(" | LinkedIn", "").strip() if " | LinkedIn" in title else title

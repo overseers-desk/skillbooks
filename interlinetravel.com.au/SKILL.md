@@ -140,6 +140,6 @@ The auth endpoint returns 429 if hit too frequently. The script caches session c
 |---|---|---|
 | Login failed | Wrong credentials or account locked | Check `skill-config.yaml` credentials |
 | HTTP 429 | Too many auth requests | Wait a few minutes; session caching should prevent this |
-| HTTP 403 on all endpoints | Cloudflare blocking | Add a standard Chrome User-Agent (the script already does this) |
+| HTTP 403 on all endpoints | Cloudflare blocking | Add a standard Chrome-compatible User-Agent (the script already does this) |
 | 0 results | Filters too narrow or no cruises match | Broaden filters or check available options with `options` |
 | POA pricing | Cruise has no interline rate set | Price on Application — contact Interline Travel directly |

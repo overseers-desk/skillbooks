@@ -23,7 +23,7 @@ def parse_search_results(html_path):
     title_match = re.findall(r"<title[^>]*>(.*?)</title>", html, re.DOTALL)
     title = title_match[0].strip() if title_match else ""
     if any(t in title.lower() for t in ["log in", "log into", "iniciar sesión", "facebook – log in"]):
-        print("ERROR: Facebook session expired. Log in via Chrome or a Chrome-compatible browser first.")
+        print("ERROR: Facebook session expired. Log in via a Chrome-compatible browser first.")
         sys.exit(1)
 
     print(f"Page title: {title}")

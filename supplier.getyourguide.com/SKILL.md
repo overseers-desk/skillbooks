@@ -30,7 +30,7 @@ Cloudflare protects the GraphQL endpoint. Direct curl without browser cookies re
 
 ### Step 1: Extract token and cookies via headless browser net log
 
-The wrapper passes through extra Chrome flags after the URL, so `--log-net-log` and `--net-log-capture-mode` are appended:
+The wrapper passes through extra Chromium flags after the URL, so `--log-net-log` and `--net-log-capture-mode` are appended:
 
 ```bash
 NETLOG="$HOME/gyg-netlog.json"

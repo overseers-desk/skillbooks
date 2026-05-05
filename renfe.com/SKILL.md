@@ -16,7 +16,7 @@ Everything below uses RENFE's two open data hosts, which are outside Akamai and 
 
 ## Required headers
 
-A plain Chrome User-Agent is enough for every endpoint below; nothing rotates per deploy. `--compressed` matters for `data.renfe.com` and `venta.renfe.com` (both gzip); the `gtfsrt.renfe.com` feeds are uncompressed JSON.
+A plain Chrome-compatible User-Agent is enough for every endpoint below; nothing rotates per deploy. `--compressed` matters for `data.renfe.com` and `venta.renfe.com` (both gzip); the `gtfsrt.renfe.com` feeds are uncompressed JSON.
 
 ```
 -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36'
