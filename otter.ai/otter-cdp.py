@@ -15,64 +15,96 @@ Usage:
 """
 
 import argparse
+import base64
 import json
 import os
+import socket
+import struct
 import subprocess
 import sys
 import time
 import urllib.request
 
-try:
-    import websocket
-except ImportError:
-    print(json.dumps({"error": "websocket-client not installed. Run: pip install websocket-client"}))
-    sys.exit(1)
 
-UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+class _WebSocket:
+    """Minimal stdlib WebSocket client — CDP connections are localhost-only, no TLS needed."""
+    def __init__(self, url, timeout=20):
+        url = url[len("ws://"):]
+        host_port, path = (url.split("/", 1) + [""])[:2]
+        host, port = host_port.rsplit(":", 1)
+        self._sock = socket.create_connection((host, int(port)), timeout=timeout)
+        key = base64.b64encode(os.urandom(16)).decode()
+        self._sock.sendall((
+            f"GET /{path} HTTP/1.1\r\nHost: {host}\r\n"
+            "Upgrade: websocket\r\nConnection: Upgrade\r\n"
+            f"Sec-WebSocket-Key: {key}\r\nSec-WebSocket-Version: 13\r\n\r\n"
+        ).encode())
+        resp = b""
+        while b"\r\n\r\n" not in resp:
+            resp += self._sock.recv(4096)
+        if b"101" not in resp:
+            raise OSError(f"WebSocket handshake failed: {resp[:120]}")
+
+    def send(self, data):
+        if isinstance(data, str):
+            data = data.encode()
+        n, mask = len(data), os.urandom(4)
+        hdr = bytes([0x81])
+        if n <= 125:      hdr += bytes([0x80 | n])
+        elif n <= 0xFFFF: hdr += bytes([0xFE]) + struct.pack(">H", n)
+        else:             hdr += bytes([0xFF]) + struct.pack(">Q", n)
+        self._sock.sendall(hdr + mask + bytes(b ^ mask[i % 4] for i, b in enumerate(data)))
+
+    def recv(self):
+        b0, b1 = self._recvn(2)
+        n = b1 & 0x7F
+        if n == 126: n = struct.unpack(">H", self._recvn(2))[0]
+        elif n == 127: n = struct.unpack(">Q", self._recvn(8))[0]
+        mask = self._recvn(4) if b1 & 0x80 else None
+        payload = self._recvn(n)
+        if mask:
+            payload = bytes(b ^ mask[i % 4] for i, b in enumerate(payload))
+        if b0 & 0x0F == 0x8:
+            raise OSError("WebSocket closed by server")
+        return payload.decode()
+
+    def settimeout(self, t): self._sock.settimeout(t)
+    def close(self):
+        try: self._sock.sendall(bytes([0x88, 0x80]) + os.urandom(4))
+        except Exception: pass
+        self._sock.close()
+    def _recvn(self, n):
+        buf = b""
+        while len(buf) < n:
+            chunk = self._sock.recv(n - len(buf))
+            if not chunk: raise OSError("WebSocket connection lost")
+            buf += chunk
+        return bytes(buf)
+
+UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36")
 
-def detect_browser():
-    """Return the Chromium browser binary, or None if not found."""
-    if sys.platform == "darwin":
-        candidates = ["/Applications/Chromium.app/Contents/MacOS/Chromium"]
-    else:
-        candidates = ["chromium-browser", "chromium", "/snap/bin/chromium"]
-    for cmd in candidates:
-        try:
-            subprocess.run([cmd, "--version"], capture_output=True, timeout=3)
-            return cmd
-        except Exception:
-            continue
-    return None
+BROWSER_WRAPPER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bin", "browser")
 
-def detect_profile():
-    """Return the browser user-data-dir, trying known Chromium profile locations."""
-    if sys.platform == "darwin":
-        candidates = [
-            os.path.expanduser("~/Library/Application Support/Chromium"),
-        ]
-    else:
-        candidates = [
-            os.path.expanduser("~/snap/chromium/common/chromium"),
-            os.path.expanduser("~/.config/chromium"),
-        ]
-    for path in candidates:
-        if os.path.isdir(path):
-            return path
-    return None
-
-def launch_browser(profile):
-    browser = detect_browser()
-    if not browser:
+def launch_browser():
+    """Launch headless browser for CDP using platform config from bin/browser --print-args."""
+    try:
+        info = json.loads(subprocess.check_output([BROWSER_WRAPPER, "--print-args"], text=True))
+    except Exception as e:
+        sys.stderr.write(f"bin/browser --print-args failed: {e}\n")
         return None, None
+    binary = info["binary"]
+    profile_args = info["profile_args"]
     proc = subprocess.Popen(
-        [browser, "--headless=new", "--disable-gpu",
-         f"--user-agent={UA}",
-         f"--user-data-dir={profile}",
-         "--remote-debugging-port=0",
-         "--remote-allow-origins=*",
-         "--window-size=1920,1080",
-         "about:blank"],
+        [binary] + profile_args + [
+            "--headless=new", "--disable-gpu",
+            f"--user-agent={UA}",
+            "--remote-debugging-port=0",
+            "--remote-allow-origins=*",
+            "--window-size=1920,1080",
+            "--no-first-run", "--no-default-browser-check",
+            "about:blank",
+        ],
         stderr=subprocess.PIPE,
         stdout=subprocess.DEVNULL,
     )
@@ -93,7 +125,7 @@ def connect_cdp(port):
         urllib.request.urlopen(f"http://127.0.0.1:{port}/json").read()
     )
     ws_url = targets[0]["webSocketDebuggerUrl"]
-    ws = websocket.create_connection(ws_url, timeout=20)
+    ws = _WebSocket(ws_url, timeout=20)
     return ws
 
 def send_cdp(ws, method, params=None, counter=[0]):
@@ -436,12 +468,7 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    profile = detect_profile()
-    if not profile:
-        print(json.dumps({"error": "Browser profile directory not found"}))
-        sys.exit(1)
-
-    proc, port = launch_browser(profile)
+    proc, port = launch_browser()
     if not proc:
         print(json.dumps({"error": "Failed to launch headless browser"}))
         sys.exit(1)
