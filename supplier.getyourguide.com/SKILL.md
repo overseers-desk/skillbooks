@@ -13,7 +13,7 @@ This skill requires a GetYourGuide supplier account and fresh authentication tok
 - **Supplier ID:** read from `~/.claude/skills/config.yaml` under `supplier.getyourguide.com.supplier_id`
 - **Tokens:** Firebase Bearer token + Cloudflare cookies extracted from a live browser session (see "Authentication" section below)
 
-If you do not have a GetYourGuide supplier account, this skill does not apply. If the supplier ID is absent from skill-config.yaml, pause and let the user know: "Add your supplier ID to `~/.claude/skills/config.yaml` under `supplier.getyourguide.com.supplier_id`. This file is not part of the shared aesop repository - create it locally."
+If you do not have a GetYourGuide supplier account, this skill does not apply. If the supplier ID is absent from `~/.claude/skills/config.yaml`, pause and let the user know: "Add your supplier ID to `~/.claude/skills/config.yaml` under `supplier.getyourguide.com.supplier_id`. This file is not part of the shared aesop repository - create it locally."
 
 ## Capabilities
 

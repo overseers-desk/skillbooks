@@ -87,7 +87,7 @@ The search API does not distinguish domestic from international cruises. Many Au
 
 ## Authentication
 
-The script authenticates automatically using credentials from `skill-config.yaml` (`interlinetravel.com.au.email` / `password`). Auth flow: CSRF token → login with email/password → session cookies with JWT. Sessions are cached for 2 hours in `/tmp/interline-travel-cookies.json` to avoid rate limiting on the auth endpoint.
+The script authenticates automatically using credentials from `~/.claude/skills/config.yaml` (`interlinetravel.com.au.email` / `password`). Auth flow: CSRF token → login with email/password → session cookies with JWT. Sessions are cached for 2 hours in `/tmp/interline-travel-cookies.json` to avoid rate limiting on the auth endpoint.
 
 ## API details
 
@@ -138,7 +138,7 @@ The auth endpoint returns 429 if hit too frequently. The script caches session c
 
 | Error | Cause | Fix |
 |---|---|---|
-| Login failed | Wrong credentials or account locked | Check `skill-config.yaml` credentials |
+| Login failed | Wrong credentials or account locked | Check `~/.claude/skills/config.yaml` credentials |
 | HTTP 429 | Too many auth requests | Wait a few minutes; session caching should prevent this |
 | HTTP 403 on all endpoints | Cloudflare blocking | Add a standard Chrome-compatible User-Agent (the script already does this) |
 | 0 results | Filters too narrow or no cruises match | Broaden filters or check available options with `options` |
