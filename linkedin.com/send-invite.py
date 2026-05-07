@@ -2,24 +2,87 @@
 """Send a LinkedIn connection invite with a personalised note via CDP.
 
 Usage:
-    python3 send-invite.py VANITY_NAME "Note text (≤300 chars)"
+    python3 send-invite.py VANITY_NAME "Note text (<=300 chars)"
     python3 send-invite.py VANITY_NAME "Note text" --dry-run   # stop before clicking Send
 """
 
 import argparse
-import asyncio
+import base64
 import json
 import os
 import re
+import socket
+import struct
 import subprocess
 import sys
 import time
 import urllib.request
 
-try:
-    import websockets
-except ImportError:
-    sys.exit("ERROR: install websockets: pip3 install websockets")
+
+# Hand-rolled WebSocket over stdlib socket. CDP runs ws:// on localhost,
+# so no TLS, no extensions, no permessage-deflate.
+
+def _ws_connect(url, timeout=20):
+    url = url[len("ws://"):]
+    host_port, path = (url.split("/", 1) + [""])[:2]
+    host, port = host_port.rsplit(":", 1)
+    sock = socket.create_connection((host, int(port)), timeout=timeout)
+    key = base64.b64encode(os.urandom(16)).decode()
+    sock.sendall((
+        f"GET /{path} HTTP/1.1\r\nHost: {host}\r\n"
+        "Upgrade: websocket\r\nConnection: Upgrade\r\n"
+        f"Sec-WebSocket-Key: {key}\r\nSec-WebSocket-Version: 13\r\n\r\n"
+    ).encode())
+    resp = b""
+    while b"\r\n\r\n" not in resp:
+        resp += sock.recv(4096)
+    if b"101" not in resp:
+        raise OSError(f"WebSocket handshake failed: {resp[:120]}")
+    return sock
+
+
+def _ws_send(sock, data):
+    if isinstance(data, str):
+        data = data.encode()
+    n, mask = len(data), os.urandom(4)
+    hdr = bytes([0x81])
+    if n <= 125:      hdr += bytes([0x80 | n])
+    elif n <= 0xFFFF: hdr += bytes([0xFE]) + struct.pack(">H", n)
+    else:             hdr += bytes([0xFF]) + struct.pack(">Q", n)
+    sock.sendall(hdr + mask + bytes(b ^ mask[i % 4] for i, b in enumerate(data)))
+
+
+def _ws_recvn(sock, n):
+    buf = b""
+    while len(buf) < n:
+        chunk = sock.recv(n - len(buf))
+        if not chunk:
+            raise OSError("WebSocket connection lost")
+        buf += chunk
+    return bytes(buf)
+
+
+def _ws_recv(sock):
+    b0, b1 = _ws_recvn(sock, 2)
+    n = b1 & 0x7F
+    if n == 126: n = struct.unpack(">H", _ws_recvn(sock, 2))[0]
+    elif n == 127: n = struct.unpack(">Q", _ws_recvn(sock, 8))[0]
+    mask = _ws_recvn(sock, 4) if b1 & 0x80 else None
+    payload = _ws_recvn(sock, n)
+    if mask:
+        payload = bytes(b ^ mask[i % 4] for i, b in enumerate(payload))
+    if b0 & 0x0F == 0x8:
+        raise OSError("WebSocket closed by server")
+    return payload.decode()
+
+
+def _ws_close(sock):
+    try:
+        sock.sendall(bytes([0x88, 0x80]) + os.urandom(4))
+    except Exception:
+        pass
+    sock.close()
+
 
 PROFILE = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
 CDP_PORT = 9223
@@ -32,7 +95,21 @@ def _snap_chromium_running():
     return r.stdout.strip()
 
 
-async def send_connection_invite(vanity_name: str, note: str, dry_run: bool = False):
+def _wait_for_cdp(retries=30):
+    for _ in range(retries):
+        time.sleep(0.5)
+        try:
+            with urllib.request.urlopen(
+                    f"http://localhost:{CDP_PORT}/json/list", timeout=2) as r:
+                tabs = json.loads(r.read())
+                if tabs:
+                    return tabs[0]["webSocketDebuggerUrl"]
+        except Exception:
+            pass
+    sys.exit("ERROR: CDP endpoint not ready - chromium failed to start")
+
+
+def send_connection_invite(vanity_name: str, note: str, dry_run: bool = False):
     if len(note) > MAX_NOTE_CHARS:
         sys.exit(f"ERROR: note is {len(note)} chars; LinkedIn limit is {MAX_NOTE_CHARS}")
 
@@ -57,8 +134,8 @@ async def send_connection_invite(vanity_name: str, note: str, dry_run: bool = Fa
     )
 
     try:
-        ws_url = await _wait_for_cdp()
-        return await _run_flow(ws_url, url, note, dry_run)
+        ws_url = _wait_for_cdp()
+        return _run_flow(ws_url, url, note, dry_run)
     finally:
         proc.terminate()
         try:
@@ -67,54 +144,32 @@ async def send_connection_invite(vanity_name: str, note: str, dry_run: bool = Fa
             proc.kill()
 
 
-async def _wait_for_cdp(retries=30):
-    for _ in range(retries):
-        await asyncio.sleep(0.5)
-        try:
-            with urllib.request.urlopen(
-                    f"http://localhost:{CDP_PORT}/json/list", timeout=2) as r:
-                tabs = json.loads(r.read())
-                if tabs:
-                    return tabs[0]["webSocketDebuggerUrl"]
-        except Exception:
-            pass
-    sys.exit("ERROR: CDP endpoint not ready — chromium failed to start")
-
-
-async def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dict:
-    async with websockets.connect(ws_url, max_size=50_000_000) as ws:
-        cmd_q: asyncio.Queue = asyncio.Queue()
+def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dict:
+    sock = _ws_connect(ws_url, timeout=20)
+    try:
         net_events: list = []
         _id = 0
 
-        async def _reader():
-            try:
-                async for raw in ws:
-                    msg = json.loads(raw)
-                    if "id" in msg:
-                        await cmd_q.put(msg)
-                    elif msg.get("method") == "Network.responseReceived":
-                        net_events.append(msg["params"])
-            except Exception:
-                pass
-
-        reader_task = asyncio.create_task(_reader())
-
-        async def cmd(method, params=None):
+        def cmd(method, params=None):
             nonlocal _id
             _id += 1
             cid = _id
-            await ws.send(json.dumps({"id": cid, "method": method,
-                                      "params": params or {}}))
+            _ws_send(sock, json.dumps({"id": cid, "method": method,
+                                       "params": params or {}}))
             while True:
-                r = await asyncio.wait_for(cmd_q.get(), timeout=15)
-                if r["id"] == cid:
-                    if "error" in r:
-                        raise RuntimeError(f"{method}: {r['error']}")
-                    return r.get("result", {})
+                msg = json.loads(_ws_recv(sock))
+                if "id" in msg:
+                    if msg["id"] != cid:
+                        continue  # response to a different command (shouldn't happen sequentially)
+                    if "error" in msg:
+                        raise RuntimeError(f"{method}: {msg['error']}")
+                    return msg.get("result", {})
+                if msg.get("method") == "Network.responseReceived":
+                    net_events.append(msg["params"])
+                # other events: discard
 
-        async def js(expr):
-            r = await cmd("Runtime.evaluate", {
+        def js(expr):
+            r = cmd("Runtime.evaluate", {
                 "expression": expr,
                 "awaitPromise": False,
                 "returnByValue": True,
@@ -123,61 +178,59 @@ async def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dic
                 raise RuntimeError(r["exceptionDetails"].get("text", "JS error"))
             return r.get("result", {}).get("value")
 
-        async def wait_for(selector, timeout=10):
+        def wait_for(selector, timeout=10):
             t0 = time.time()
             while time.time() - t0 < timeout:
-                if await js(f"!!document.querySelector({json.dumps(selector)})"):
+                if js(f"!!document.querySelector({json.dumps(selector)})"):
                     return True
-                await asyncio.sleep(0.5)
+                time.sleep(0.5)
             return False
 
-        await cmd("Network.enable")
-        await cmd("Page.enable")
+        cmd("Network.enable")
+        cmd("Page.enable")
 
         print(f"Navigating to: {page_url}")
-        await cmd("Page.navigate", {"url": page_url})
-        await asyncio.sleep(4)
+        cmd("Page.navigate", {"url": page_url})
+        time.sleep(4)
 
-        title = await js("document.title") or ""
+        title = js("document.title") or ""
         print(f"Page title: {title}")
         if any(x in title.lower() for x in ["sign in", "log in", "iniciar"]):
-            sys.exit("ERROR: got sign-in page — session is not active")
+            sys.exit("ERROR: got sign-in page - session is not active")
 
-        if not await wait_for('[aria-label="Add a note"]', 10):
-            body = await js("document.body.innerText") or ""
-            # Check for already-connected or email-required states
+        if not wait_for('[aria-label="Add a note"]', 10):
+            body = js("document.body.innerText") or ""
             if "already connected" in body.lower() or "ya estás conectado" in body.lower():
                 sys.exit("ERROR: already connected to this person")
-            if 'type="email"' in (await js("document.body.innerHTML") or ""):
+            if 'type="email"' in (js("document.body.innerHTML") or ""):
                 sys.exit("ERROR: email verification required to connect (high-profile account)")
             sys.exit(f"ERROR: invite modal not found. Body start: {body[:400]}")
 
         print("Modal found. Clicking 'Add a note'...")
-        await js('document.querySelector(\'[aria-label="Add a note"]\').click()')
+        js('document.querySelector(\'[aria-label="Add a note"]\').click()')
 
-        if not await wait_for("#custom-message", 8):
+        if not wait_for("#custom-message", 8):
             sys.exit("ERROR: textarea #custom-message did not appear after clicking 'Add a note'")
 
         print(f"Typing note ({len(note)} chars)...")
-        await js("document.querySelector('#custom-message').focus()")
-        await asyncio.sleep(0.3)
-        # Input.insertText simulates real keyboard paste — triggers Ember input events
-        await cmd("Input.insertText", {"text": note})
-        await asyncio.sleep(0.5)
+        js("document.querySelector('#custom-message').focus()")
+        time.sleep(0.3)
+        # Input.insertText simulates real keyboard paste - triggers Ember input events
+        cmd("Input.insertText", {"text": note})
+        time.sleep(0.5)
 
-        typed = await js("document.querySelector('#custom-message').value") or ""
+        typed = js("document.querySelector('#custom-message').value") or ""
         print(f"Verified in textarea ({len(typed)} chars): '{typed[:60]}{'...' if len(typed) > 60 else ''}'")
         if typed.strip() != note.strip():
-            print(f"WARNING: textarea mismatch — got {len(typed)} chars, expected {len(note)}",
+            print(f"WARNING: textarea mismatch - got {len(typed)} chars, expected {len(note)}",
                   file=sys.stderr)
 
         if dry_run:
             print("DRY RUN: stopping before send.")
-            reader_task.cancel()
             return {"status": "dry_run", "typed": typed}
 
-        # Find the send button — after typing, LinkedIn changes the primary button label
-        send_label = await js('''(function() {
+        # After typing, LinkedIn changes the primary button label
+        send_label = js('''(function() {
             var b = Array.from(document.querySelectorAll("button")).find(function(b) {
                 var l = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
                 return l.includes("send") && !l.includes("without");
@@ -186,7 +239,7 @@ async def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dic
         })()''')
 
         if not send_label:
-            all_btns = await js(
+            all_btns = js(
                 'Array.from(document.querySelectorAll("button"))'
                 '.map(function(b){return (b.getAttribute("aria-label")||"")+'
                 '"|"+b.textContent.trim()}).join("; ")'
@@ -194,7 +247,7 @@ async def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dic
             sys.exit(f"ERROR: send button not found after typing. Buttons present: {all_btns}")
 
         print(f"Clicking send button: '{send_label}'")
-        await js('''(function() {
+        js('''(function() {
             var b = Array.from(document.querySelectorAll("button")).find(function(b) {
                 var l = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
                 return l.includes("send") && !l.includes("without");
@@ -203,17 +256,16 @@ async def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dic
         })()''')
 
         print("Waiting for server response...")
-        await asyncio.sleep(5)
+        time.sleep(5)
 
-        # Confirmation signals from DOM
-        toast = await js(
+        toast = js(
             'document.querySelector(".artdeco-toast-item__message, '
             '[data-test-artdeco-toast-item]")?.textContent?.trim() || null'
         )
-        modal_gone = not await js('!!document.querySelector("#send-invite-modal")')
-        page_text = await js("document.body.innerText") or ""
+        modal_gone = not js('!!document.querySelector("#send-invite-modal")')
 
-        # Confirmation signals from network (invitation API calls)
+        # net_events fills as cmd() recvs frames; the js() calls above drained any
+        # buffered events along with their responses.
         inv_events = [
             e for e in net_events
             if any(k in e["response"]["url"]
@@ -229,14 +281,12 @@ async def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dic
         )
         if voyager_event:
             try:
-                body_result = await cmd("Network.getResponseBody",
-                                        {"requestId": voyager_event["requestId"]})
+                body_result = cmd("Network.getResponseBody",
+                                  {"requestId": voyager_event["requestId"]})
                 raw_body = body_result.get("body", "")
                 server_body = json.loads(raw_body) if raw_body else None
-                # Walk the response JSON looking for the message/note field
                 if server_body:
                     body_str = json.dumps(server_body)
-                    # Extract message echo if present
                     msg_match = re.search(
                         r'"(?:message|customMessage|note)"\s*:\s*"([^"]+)"', body_str)
                     if msg_match:
@@ -249,7 +299,7 @@ async def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dic
             print(f"Toast notification: {toast}")
         print(f"Modal closed after send: {modal_gone}")
         for e in inv_events:
-            print(f"API response: HTTP {e['response']['status']} ← {e['response']['url']}")
+            print(f"API response: HTTP {e['response']['status']} <- {e['response']['url']}")
         if server_message_echo:
             print(f"Message confirmed by server: \"{server_message_echo}\"")
         elif server_body is not None:
@@ -267,7 +317,6 @@ async def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dic
             or any(e["response"]["status"] in (200, 201, 204) for e in inv_events)
         )
 
-        reader_task.cancel()
         return {
             "status": "sent" if success else "uncertain",
             "toast": toast,
@@ -278,6 +327,8 @@ async def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dic
                 for e in inv_events
             ],
         }
+    finally:
+        _ws_close(sock)
 
 
 def main():
@@ -285,13 +336,12 @@ def main():
         description="Send a LinkedIn connection invite with a note")
     p.add_argument("vanity_name",
                    help="LinkedIn vanity slug, e.g. john-smith-123")
-    p.add_argument("note", help=f"Personalised note (≤{MAX_NOTE_CHARS} chars)")
+    p.add_argument("note", help=f"Personalised note (<={MAX_NOTE_CHARS} chars)")
     p.add_argument("--dry-run", action="store_true",
                    help="Type note but do not click Send")
     args = p.parse_args()
 
-    result = asyncio.run(
-        send_connection_invite(args.vanity_name, args.note, args.dry_run))
+    result = send_connection_invite(args.vanity_name, args.note, args.dry_run)
 
     print("\n=== RESULT ===")
     print(json.dumps(result, indent=2, ensure_ascii=False))
@@ -303,9 +353,9 @@ def main():
         else:
             print("\nSUCCESS: invitation sent (server confirmed via API + modal close; note text not echoed in response).")
     elif result["status"] == "dry_run":
-        print("\nDRY RUN complete — no invite sent.")
+        print("\nDRY RUN complete - no invite sent.")
     else:
-        print("\nUNCERTAIN — could not confirm server acceptance. Check LinkedIn manually.",
+        print("\nUNCERTAIN - could not confirm server acceptance. Check LinkedIn manually.",
               file=sys.stderr)
         sys.exit(1)
 
