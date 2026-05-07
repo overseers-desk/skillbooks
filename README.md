@@ -110,7 +110,7 @@ The skills assume Homebrew-installed binaries (`chromium`, brewed `python3`, etc
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
-(On Intel Macs the path is `/usr/local/bin/brew`.) Without this, `python3` resolves to the Command Line Tools build (`/usr/bin/python3`) which has no third-party packages installed, and skills that import `yaml` or similar will fail with `ModuleNotFoundError`.
+(On Intel Macs the path is `/usr/local/bin/brew`.) Without this, `python3` resolves to the Command Line Tools build (`/usr/bin/python3`), which has no third-party packages installed. Any skill that depends on a non-stdlib library fails with `ModuleNotFoundError`. The shared credentials config is INI (read with stdlib `configparser`), so most skills work without third-party packages; the remaining cases (`almanac/events/render.py` needs `pyyaml`, `qantas.com/login.py` needs `websockets`, `contact-graph/` needs `psycopg2` and `python-dotenv`) print install hints when run.
 
 Skills come in two kinds: those that drive a browser (most of them) and those that talk to APIs directly with their own credentials. The browser-driving skills launch Chromium against the user's logged-in profile (snap-installed on Linux, brew-installed on macOS) and lock the profile dir while they run, so the user closes their everyday Chromium before invoking such a skill and waits for it to finish. If a browser skill cannot find a logged-in session, it prompts the user to open Chromium, sign in to the relevant site, and confirm before continuing.
 

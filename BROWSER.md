@@ -42,7 +42,7 @@ Skills split into two groups by whether the decisions above apply.
 
 **Browser skills** ride D1-D5. Examples: otter.ai, ihg.com, qantas.com, linkedin.com, facebook.com, instagram.com, supplier.getyourguide.com, atdw-online.com.au, australia.skal.org, interlinetravel.com.au, deviantart.com, marriott.com. Each launches Chromium against the user's profile, dumps DOM or attaches CDP, runs the task, exits, releases the lock.
 
-**API / non-browser skills** are not affected by D1-D5 because they do not touch a browser. Examples: serpapi, renfe.com, claude-api, send-email, mailroom. Credentials live in environment variables or `~/.claude/skills/config.yaml`.
+**API / non-browser skills** are not affected by D1-D5 because they do not touch a browser. Examples: serpapi, renfe.com, claude-api, send-email, mailroom. Credentials live in environment variables or `~/.claude/skills/config.ini`.
 
 Profile paths per platform: `~/snap/chromium/common/chromium` on Linux snap, `~/.config/chromium` on Linux non-snap, `~/Library/Application Support/Chromium` on macOS (Chromium installed via the Homebrew cask, default profile). The snap-vs-non-snap probe and the canonical launch flags live in `bin/not-google-chrome`, the wrapper that all skills call.
 

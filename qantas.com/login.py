@@ -17,6 +17,7 @@ Usage:
 
 import argparse
 import asyncio
+import configparser
 import json
 import os
 import re
@@ -25,7 +26,6 @@ import sys
 import time
 import urllib.request
 from pathlib import Path
-import yaml
 
 try:
     import websockets
@@ -108,14 +108,17 @@ def _parse_account_body(body: str) -> dict:
 
 
 async def run(check_only: bool, debug: bool):
-    cfg_file = Path.home() / ".claude" / "skills" / "config.yaml"
+    cfg_file = Path.home() / ".claude" / "skills" / "config.ini"
     if not cfg_file.exists():
         sys.exit(f"ERROR: {cfg_file} not found. See Prerequisites in the aesop qantas.com SKILL.md.")
-    cfg = yaml.safe_load(cfg_file.read_text())
-    creds = (cfg or {}).get("qantas.com", {})
-    for k in ("memberId", "lastName", "pin"):
-        if not creds.get(k):
-            sys.exit(f"ERROR: ~/.claude/skills/config.yaml missing qantas.com.{k}")
+    cp = configparser.ConfigParser(interpolation=None)
+    cp.read(cfg_file)
+    member_id = cp.get("qantas.com", "member_id", fallback="").strip()
+    last_name = cp.get("qantas.com", "last_name", fallback="").strip()
+    pin = cp.get("qantas.com", "pin", fallback="").strip()
+    for k, v in (("member_id", member_id), ("last_name", last_name), ("pin", pin)):
+        if not v:
+            sys.exit(f"ERROR: ~/.claude/skills/config.ini missing [qantas.com] {k}")
 
     pids = _snap_chromium_running()
     if pids and debug:
@@ -202,9 +205,9 @@ async def run(check_only: bool, debug: bool):
                 reader_task.cancel()
                 return 0, {}
 
-            for fid, val in (("memberId", creds["memberId"]),
-                             ("lastName", creds["lastName"]),
-                             ("pin", creds["pin"])):
+            for fid, val in (("memberId", member_id),
+                             ("lastName", last_name),
+                             ("pin", pin)):
                 await js(f'document.querySelector("#{fid}").focus();'
                          f'document.querySelector("#{fid}").value = "";'
                          f'document.querySelector("#{fid}").dispatchEvent(new Event("input",{{bubbles:true}}));')

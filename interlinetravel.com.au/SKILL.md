@@ -11,15 +11,15 @@ allowed-tools: Bash, Read
 This skill requires staff travel credentials to access industry rates.
 
 - **What:** Interline Travel account email and password
-- **Where:** `$HOME/.claude/skills/config.yaml`, under the `interlinetravel.com.au` key
+- **Where:** `$HOME/.claude/skills/config.ini`, under the `[interlinetravel.com.au]` section
 - **Format:**
-  ```yaml
-  interlinetravel.com.au:
-    email: you@example.com
-    password: yourpassword
+  ```ini
+  [interlinetravel.com.au]
+  email = you@example.com
+  password = yourpassword
   ```
 
-If the section is absent, pause and let the user know: "To search Interline Travel staff rates, add an `interlinetravel.com.au` section with your email and password to `$HOME/.claude/skills/config.yaml`."
+If the section is absent, pause and let the user know: "To search Interline Travel staff rates, add an `[interlinetravel.com.au]` section with your email and password to `$HOME/.claude/skills/config.ini`."
 
 ## Capabilities
 
@@ -87,7 +87,7 @@ The search API does not distinguish domestic from international cruises. Many Au
 
 ## Authentication
 
-The script authenticates automatically using credentials from `~/.claude/skills/config.yaml` (`interlinetravel.com.au.email` / `password`). Auth flow: CSRF token → login with email/password → session cookies with JWT. Sessions are cached for 2 hours in `/tmp/interline-travel-cookies.json` to avoid rate limiting on the auth endpoint.
+The script authenticates automatically using credentials from `~/.claude/skills/config.ini` (`[interlinetravel.com.au]` email / password). Auth flow: CSRF token → login with email/password → session cookies with JWT. Sessions are cached for 2 hours in `/tmp/interline-travel-cookies.json` to avoid rate limiting on the auth endpoint.
 
 ## API details
 
@@ -138,7 +138,7 @@ The auth endpoint returns 429 if hit too frequently. The script caches session c
 
 | Error | Cause | Fix |
 |---|---|---|
-| Login failed | Wrong credentials or account locked | Check `~/.claude/skills/config.yaml` credentials |
+| Login failed | Wrong credentials or account locked | Check `~/.claude/skills/config.ini` credentials |
 | HTTP 429 | Too many auth requests | Wait a few minutes; session caching should prevent this |
 | HTTP 403 on all endpoints | Cloudflare blocking | Add a standard Chrome-compatible User-Agent (the script already does this) |
 | 0 results | Filters too narrow or no cruises match | Broaden filters or check available options with `options` |
