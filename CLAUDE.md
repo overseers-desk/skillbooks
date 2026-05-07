@@ -26,7 +26,7 @@ Current CDP scripts: `otter.ai/otter-cdp.py`, `airbnb.com/airbnb-cdp.py`.
 
 ## Credentials
 
-Site credentials live in `$HOME/.claude/skills/config.yaml` (the file is outside this repo — do not commit it). Each skill's SKILL.md documents the required keys under a `Prerequisites` section.
+Site credentials live in `$HOME/.claude/skills/config.ini`. The file is outside this repo, do not commit it. Each skill's SKILL.md documents the required keys under a `Prerequisites` section.
 
 ## Testing skills
 

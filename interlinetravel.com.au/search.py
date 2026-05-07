@@ -32,8 +32,8 @@ Search options:
 """
 
 import sys, json, os, argparse, urllib.request, urllib.parse, http.cookiejar, tempfile, time
+import configparser
 from pathlib import Path
-import yaml
 
 BASE = "https://interlinetravel.com.au"
 CRUISE_URL = "https://interlinetravel.com.au/cruise"
@@ -42,14 +42,16 @@ _COOKIE_FILE = Path(tempfile.gettempdir()) / "interline-travel-cookies.json"
 _COOKIE_MAX_AGE = 3600 * 2  # reuse session for 2 hours
 
 def _load_creds():
-    cfg_file = Path.home() / ".claude" / "skills" / "config.yaml"
+    cfg_file = Path.home() / ".claude" / "skills" / "config.ini"
     if not cfg_file.exists():
         sys.exit(f"Error: {cfg_file} not found. See Prerequisites in the aesop interlinetravel.com.au SKILL.md.")
-    cfg = yaml.safe_load(cfg_file.read_text())
-    section = (cfg or {}).get("interlinetravel.com.au", {})
-    if not section.get("email") or not section.get("password"):
-        sys.exit(f"Error: ~/.claude/skills/config.yaml missing interlinetravel.com.au.email / password.")
-    return {"INTERLINE_EMAIL": section["email"], "INTERLINE_PASSWORD": section["password"]}
+    cp = configparser.ConfigParser(interpolation=None)
+    cp.read(cfg_file)
+    email = cp.get("interlinetravel.com.au", "email", fallback="").strip()
+    password = cp.get("interlinetravel.com.au", "password", fallback="").strip()
+    if not (email and password):
+        sys.exit("Error: ~/.claude/skills/config.ini missing [interlinetravel.com.au] email / password.")
+    return {"INTERLINE_EMAIL": email, "INTERLINE_PASSWORD": password}
 
 def _make_opener():
     cj = http.cookiejar.CookieJar()

@@ -1,0 +1,14 @@
+[serpapi]
+api_key = <API-KEY>
+
+[supplier.getyourguide.com]
+supplier_id = <ID>
+
+[interlinetravel.com.au]
+email = <EMAIL>
+password = <PASSWORD>
+
+[qantas.com]
+member_id = <ID>
+last_name = <SURNAME>
+pin = <PIN>

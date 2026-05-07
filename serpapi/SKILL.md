@@ -11,22 +11,22 @@ allowed-tools: Bash, Read, Write
 This skill requires a SerpApi key (free plan: 250 searches/month, sign up at serpapi.com).
 
 - **What:** SerpApi API key
-- **Where:** environment variable `SERPAPI_KEY`, or `$HOME/.claude/skills/config.yaml` under `serpapi.api_key`
+- **Where:** environment variable `SERPAPI_KEY`, or `$HOME/.claude/skills/config.ini` under `[serpapi] api_key`
 - **Format:**
-  ```yaml
-  serpapi:
-    api_key: your_key_here
+  ```ini
+  [serpapi]
+  api_key = your_key_here
   ```
 
-If neither is present, pause and let the user know: "To use SerpApi, set the SERPAPI_KEY environment variable or add `serpapi.api_key` to `$HOME/.claude/skills/config.yaml`. Sign up at serpapi.com for a free key."
+If neither is present, pause and let the user know: "To use SerpApi, set the SERPAPI_KEY environment variable or add `api_key` under `[serpapi]` in `$HOME/.claude/skills/config.ini`. Sign up at serpapi.com for a free key."
 
 ## Setup
 
 API key is read from one of:
 - Environment variable `SERPAPI_KEY`
-- `$HOME/.claude/skills/config.yaml` under `serpapi.api_key`
+- `$HOME/.claude/skills/config.ini` under `[serpapi] api_key`
 
-Free plan allows 250 searches/month. Check usage at: `curl -s "https://serpapi.com/account.json?api_key=$(python3 -c "import yaml,pathlib; print(yaml.safe_load(pathlib.Path.home().joinpath('.claude/skills/config.yaml').read_text())['serpapi']['api_key'])")" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f'Used: {d[\"this_month_usage\"]}/250, Left: {d[\"total_searches_left\"]}')"`
+Free plan allows 250 searches/month. Check usage at: `curl -s "https://serpapi.com/account.json?api_key=$(python3 -c "import configparser,pathlib; cp=configparser.ConfigParser(); cp.read(pathlib.Path.home()/'.claude/skills/config.ini'); print(cp['serpapi']['api_key'])")" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f'Used: {d[\"this_month_usage\"]}/250, Left: {d[\"total_searches_left\"]}')"`
 
 ## Quick start
 
@@ -100,12 +100,12 @@ These notes save future agents from trial-and-error:
 
 ## Google Hotels (curl-based)
 
-For hotel searches (e.g. IHG availability), use the SerpApi Google Hotels engine directly via curl. The API key is read from `~/.claude/skills/config.yaml` (`serpapi.api_key`).
+For hotel searches (e.g. IHG availability), use the SerpApi Google Hotels engine directly via curl. The API key is read from `~/.claude/skills/config.ini` (`[serpapi] api_key`).
 
 ### Search for hotels
 
 ```bash
-SERPAPI_KEY=$(python3 -c "import yaml,pathlib; print(yaml.safe_load(pathlib.Path.home().joinpath('.claude/skills/config.yaml').read_text())['serpapi']['api_key'])")
+SERPAPI_KEY=$(python3 -c "import configparser,pathlib; cp=configparser.ConfigParser(); cp.read(pathlib.Path.home()/'.claude/skills/config.ini'); print(cp['serpapi']['api_key'])")
 curl -s "https://serpapi.com/search.json?engine=google_hotels&q=${DESTINATION}+hotels&check_in_date=${CHECKIN}&check_out_date=${CHECKOUT}&adults=${ADULTS}&brands=17&sort_by=3&api_key=$SERPAPI_KEY"
 ```
 
@@ -142,7 +142,7 @@ The `properties` array contains hotels. Each property has:
 Use `property_token` from the search results to get detailed pricing for a specific hotel:
 
 ```bash
-SERPAPI_KEY=$(python3 -c "import yaml,pathlib; print(yaml.safe_load(pathlib.Path.home().joinpath('.claude/skills/config.yaml').read_text())['serpapi']['api_key'])")
+SERPAPI_KEY=$(python3 -c "import configparser,pathlib; cp=configparser.ConfigParser(); cp.read(pathlib.Path.home()/'.claude/skills/config.ini'); print(cp['serpapi']['api_key'])")
 curl -s "https://serpapi.com/search.json?engine=google_hotels&property_token=${TOKEN}&check_in_date=${CHECKIN}&check_out_date=${CHECKOUT}&adults=${ADULTS}&api_key=$SERPAPI_KEY"
 ```
 
