@@ -116,6 +116,16 @@ Skills come in two kinds: those that drive a browser (most of them) and those th
 
 The reasoning behind the browser arrangement (why Chromium, why the user's real profile and not a fresh one, why we declined to diagnose Cursor's MCP-browser denials) is in `BROWSER.md`. That file is reference material for when a browser skill misbehaves, not preflight reading; skipping it costs nothing under normal operation.
 
+### macOS setup
+
+The browser wrapper (`bin/not-google-chrome`) uses `flock` to serialise access to the Chromium profile and `gtimeout` to bound the run time. macOS does not ship either; install via Homebrew:
+
+```sh
+brew install util-linux coreutils
+```
+
+Linux distros include both already.
+
 ## Usage
 
 SOPs are executed by passing them to Claude as a prompt file:
