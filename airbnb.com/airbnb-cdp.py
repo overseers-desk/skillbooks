@@ -21,60 +21,70 @@ import time
 import urllib.request
 
 
-class _WebSocket:
-    """Minimal stdlib WebSocket client — CDP connections are localhost-only, no TLS needed."""
-    def __init__(self, url, timeout=20):
-        url = url[len("ws://"):]
-        host_port, path = (url.split("/", 1) + [""])[:2]
-        host, port = host_port.rsplit(":", 1)
-        self._sock = socket.create_connection((host, int(port)), timeout=timeout)
-        key = base64.b64encode(os.urandom(16)).decode()
-        self._sock.sendall((
-            f"GET /{path} HTTP/1.1\r\nHost: {host}\r\n"
-            "Upgrade: websocket\r\nConnection: Upgrade\r\n"
-            f"Sec-WebSocket-Key: {key}\r\nSec-WebSocket-Version: 13\r\n\r\n"
-        ).encode())
-        resp = b""
-        while b"\r\n\r\n" not in resp:
-            resp += self._sock.recv(4096)
-        if b"101" not in resp:
-            raise OSError(f"WebSocket handshake failed: {resp[:120]}")
+# Hand-rolled WebSocket over stdlib socket. CDP runs ws:// on localhost,
+# so no TLS, no extensions, no permessage-deflate. socket.settimeout() works
+# on the returned socket directly.
 
-    def send(self, data):
-        if isinstance(data, str):
-            data = data.encode()
-        n, mask = len(data), os.urandom(4)
-        hdr = bytes([0x81])
-        if n <= 125:      hdr += bytes([0x80 | n])
-        elif n <= 0xFFFF: hdr += bytes([0xFE]) + struct.pack(">H", n)
-        else:             hdr += bytes([0xFF]) + struct.pack(">Q", n)
-        self._sock.sendall(hdr + mask + bytes(b ^ mask[i % 4] for i, b in enumerate(data)))
+def _ws_connect(url, timeout=20):
+    url = url[len("ws://"):]
+    host_port, path = (url.split("/", 1) + [""])[:2]
+    host, port = host_port.rsplit(":", 1)
+    sock = socket.create_connection((host, int(port)), timeout=timeout)
+    key = base64.b64encode(os.urandom(16)).decode()
+    sock.sendall((
+        f"GET /{path} HTTP/1.1\r\nHost: {host}\r\n"
+        "Upgrade: websocket\r\nConnection: Upgrade\r\n"
+        f"Sec-WebSocket-Key: {key}\r\nSec-WebSocket-Version: 13\r\n\r\n"
+    ).encode())
+    resp = b""
+    while b"\r\n\r\n" not in resp:
+        resp += sock.recv(4096)
+    if b"101" not in resp:
+        raise OSError(f"WebSocket handshake failed: {resp[:120]}")
+    return sock
 
-    def recv(self):
-        b0, b1 = self._recvn(2)
-        n = b1 & 0x7F
-        if n == 126: n = struct.unpack(">H", self._recvn(2))[0]
-        elif n == 127: n = struct.unpack(">Q", self._recvn(8))[0]
-        mask = self._recvn(4) if b1 & 0x80 else None
-        payload = self._recvn(n)
-        if mask:
-            payload = bytes(b ^ mask[i % 4] for i, b in enumerate(payload))
-        if b0 & 0x0F == 0x8:
-            raise OSError("WebSocket closed by server")
-        return payload.decode()
 
-    def settimeout(self, t): self._sock.settimeout(t)
-    def close(self):
-        try: self._sock.sendall(bytes([0x88, 0x80]) + os.urandom(4))
-        except Exception: pass
-        self._sock.close()
-    def _recvn(self, n):
-        buf = b""
-        while len(buf) < n:
-            chunk = self._sock.recv(n - len(buf))
-            if not chunk: raise OSError("WebSocket connection lost")
-            buf += chunk
-        return bytes(buf)
+def _ws_send(sock, data):
+    if isinstance(data, str):
+        data = data.encode()
+    n, mask = len(data), os.urandom(4)
+    hdr = bytes([0x81])
+    if n <= 125:      hdr += bytes([0x80 | n])
+    elif n <= 0xFFFF: hdr += bytes([0xFE]) + struct.pack(">H", n)
+    else:             hdr += bytes([0xFF]) + struct.pack(">Q", n)
+    sock.sendall(hdr + mask + bytes(b ^ mask[i % 4] for i, b in enumerate(data)))
+
+
+def _ws_recvn(sock, n):
+    buf = b""
+    while len(buf) < n:
+        chunk = sock.recv(n - len(buf))
+        if not chunk:
+            raise OSError("WebSocket connection lost")
+        buf += chunk
+    return bytes(buf)
+
+
+def _ws_recv(sock):
+    b0, b1 = _ws_recvn(sock, 2)
+    n = b1 & 0x7F
+    if n == 126: n = struct.unpack(">H", _ws_recvn(sock, 2))[0]
+    elif n == 127: n = struct.unpack(">Q", _ws_recvn(sock, 8))[0]
+    mask = _ws_recvn(sock, 4) if b1 & 0x80 else None
+    payload = _ws_recvn(sock, n)
+    if mask:
+        payload = bytes(b ^ mask[i % 4] for i, b in enumerate(payload))
+    if b0 & 0x0F == 0x8:
+        raise OSError("WebSocket closed by server")
+    return payload.decode()
+
+
+def _ws_close(sock):
+    try:
+        sock.sendall(bytes([0x88, 0x80]) + os.urandom(4))
+    except Exception:
+        pass
+    sock.close()
 
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36")
@@ -123,8 +133,7 @@ def launch_browser():
 def connect_cdp(port):
     targets = json.loads(urllib.request.urlopen(f"http://127.0.0.1:{port}/json").read())
     ws_url = targets[0]["webSocketDebuggerUrl"]
-    ws = _WebSocket(ws_url, timeout=20)
-    return ws
+    return _ws_connect(ws_url, timeout=20)
 
 
 def send_cdp(ws, method, params=None, counter=[0]):
@@ -134,12 +143,12 @@ def send_cdp(ws, method, params=None, counter=[0]):
     msg = {"id": mid, "method": method}
     if params:
         msg["params"] = params
-    ws.send(json.dumps(msg))
+    _ws_send(ws, json.dumps(msg))
     deadline = time.time() + 25
     while time.time() < deadline:
         ws.settimeout(1.0)
         try:
-            raw = ws.recv()
+            raw = _ws_recv(ws)
         except (TimeoutError, OSError):
             continue
         resp = json.loads(raw)
@@ -157,7 +166,7 @@ def drain_events(ws, duration):
     while time.time() < deadline:
         ws.settimeout(0.3)
         try:
-            raw = ws.recv()
+            raw = _ws_recv(ws)
             msg = json.loads(raw)
             if "method" in msg:
                 _event_buffer.append(msg)
@@ -312,7 +321,7 @@ def main():
         }
         result = commands[args.command](ws, args)
         print(json.dumps(result, indent=2, ensure_ascii=False))
-        ws.close()
+        _ws_close(ws)
     finally:
         proc.terminate()
         proc.wait(timeout=5)
