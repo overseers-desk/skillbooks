@@ -112,16 +112,6 @@ Skills fall into three tiers by what they need at runtime.
 
 **External dependency.** A few skills need something else: a command-line tool installed by the user, or a sibling repository at a fixed relative path next to this one. These skills check for the dependency at startup and print an install hint if it is missing. We prefer the second tier where feasible; the cost is a code restriction (no `yaml`, hand-rolled CDP) but the benefit is a skill that runs without setup beyond what the OS already provides.
 
-### macOS setup
-
-The skills assume Homebrew-installed binaries (`chromium`, brewed `python3`, etc.) are on `PATH` in every shell context, including the non-interactive ones used by Claude Code, cron, and ssh. Homebrew does not arrange this on its own. Add the following line to `~/.zprofile` once:
-
-```sh
-eval "$(/opt/homebrew/bin/brew shellenv)"
-```
-
-(On Intel Macs the path is `/usr/local/bin/brew`.) Without this, `python3` resolves to the Command Line Tools build (`/usr/bin/python3`), which has no third-party packages installed, so any tier-3 skill that depends on a non-stdlib library fails with `ModuleNotFoundError`.
-
 Skills come in two kinds: those that drive a browser (most of them) and those that talk to APIs directly with their own credentials. The browser-driving skills launch Chromium against the user's logged-in profile (snap-installed on Linux, brew-installed on macOS) and lock the profile dir while they run, so the user closes their everyday Chromium before invoking such a skill and waits for it to finish. If a browser skill cannot find a logged-in session, it prompts the user to open Chromium, sign in to the relevant site, and confirm before continuing.
 
 The reasoning behind the browser arrangement (why Chromium, why the user's real profile and not a fresh one, why we declined to diagnose Cursor's MCP-browser denials) is in `BROWSER.md`. That file is reference material for when a browser skill misbehaves, not preflight reading; skipping it costs nothing under normal operation.
