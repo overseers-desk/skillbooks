@@ -16,11 +16,7 @@ The wrapper handles platform detection, flock, timeout, UA override, and profile
 
 Sites that require login and use JavaScript-rendered content need Chrome DevTools Protocol instead of `--dump-dom`. CDP scripts launch a headless browser via `subprocess`, connect to its debug port over a local WebSocket, and execute JS `fetch()` calls or intercept network responses from within the browser.
 
-**No external dependencies.** CDP scripts in this repo use a `_WebSocket` class implemented in stdlib (`socket`, `struct`, `base64`, `os`). Do not install `websocket-client`, `websockets`, or Playwright. Do not suggest `pip install` for anything — on macOS with Homebrew, pip installs into a different Python environment than the one `python3` resolves to, so packages installed that way are silently invisible at runtime.
-
-The `_WebSocket` class is replicated verbatim in each CDP script rather than extracted to a shared lib. This keeps scripts self-contained when called by absolute path. If there are ever 5+ CDP scripts it is worth revisiting, but for now copy-paste is correct.
-
-Current CDP scripts: `otter.ai/otter-cdp.py`, `airbnb.com/airbnb-cdp.py`.
+CDP runs `ws://` on localhost (no TLS, no extensions, no compression), so the four CDP scripts in this repo (`airbnb.com/airbnb-cdp.py`, `otter.ai/otter-cdp.py`, `qantas.com/login.py`, `linkedin.com/send-invite.py`) hand-roll a small set of `_ws_*` helpers over stdlib `socket`, `struct`, `base64`, `os`. The helpers are copy-pasted across the four files so each runs self-contained when called by absolute path. If a fifth or sixth script lands and the copy-paste starts to drift, pulling them into a shared module is worth revisiting.
 
 **Profile lock.** CDP scripts use the same browser profile as the GUI browser. The user must close their browser before running a CDP script, otherwise the headless instance cannot read cookies and will land on a login page.
 
