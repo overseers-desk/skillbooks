@@ -100,7 +100,17 @@ The three methodologies share a structural principle: read before writing. SPAR 
 
 ## Skills
 
-This directory is also mounted at `~/.claude/skills` via a symlink, so the platform-named subdirectories (otter.ai, ihg.com, qantas.com, linkedin.com, facebook.com, instagram.com, serpapi, mailroom, and others) are Claude Code skills, invoked by name when Claude Code recognises a matching trigger.
+This directory is also mounted at `~/.claude/skills` via a symlink, so the platform-named subdirectories are Claude Code skills, invoked by name when Claude Code recognises a matching trigger.
+
+### Dependencies
+
+Skills fall into three tiers by what they need at runtime.
+
+**No code.** A small number of skills are SKILL.md only. The agent does the work using built-in tools (the browser wrapper, file reads, web fetches). These run the moment the repo is cloned.
+
+**System interpreter, standard library.** Most coded skills are Python or Tcl scripts that run under the system interpreter using only what ships with it. `outreach-spar/spar-manager/` is the heaviest example: a Tk GUI and dispatch tools that need Tcl/Tk 9 and tcllib, both available from the standard Homebrew and Ubuntu Tcl packages. No build, no virtualenv, no `pip install`, no repackaging.
+
+**External dependency.** A few skills need something else: a command-line tool installed by the user, or a sibling repository at a fixed relative path next to this one. These skills check for the dependency at startup and print an install hint if it is missing. We prefer the second tier where feasible; the cost is a code restriction (no `yaml`, hand-rolled CDP) but the benefit is a skill that runs without setup beyond what the OS already provides.
 
 ### macOS setup
 
@@ -110,7 +120,7 @@ The skills assume Homebrew-installed binaries (`chromium`, brewed `python3`, etc
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
-(On Intel Macs the path is `/usr/local/bin/brew`.) Without this, `python3` resolves to the Command Line Tools build (`/usr/bin/python3`), which has no third-party packages installed. Any skill that depends on a non-stdlib library fails with `ModuleNotFoundError`. The shared credentials config is INI (read with stdlib `configparser`), so most skills work without third-party packages; the remaining cases (`almanac/events/render.py` needs `pyyaml`, `qantas.com/login.py` needs `websockets`, `contact-graph/` needs `psycopg2` and `python-dotenv`) print install hints when run.
+(On Intel Macs the path is `/usr/local/bin/brew`.) Without this, `python3` resolves to the Command Line Tools build (`/usr/bin/python3`), which has no third-party packages installed, so any tier-3 skill that depends on a non-stdlib library fails with `ModuleNotFoundError`.
 
 Skills come in two kinds: those that drive a browser (most of them) and those that talk to APIs directly with their own credentials. The browser-driving skills launch Chromium against the user's logged-in profile (snap-installed on Linux, brew-installed on macOS) and lock the profile dir while they run, so the user closes their everyday Chromium before invoking such a skill and waits for it to finish. If a browser skill cannot find a logged-in session, it prompts the user to open Chromium, sign in to the relevant site, and confirm before continuing.
 
