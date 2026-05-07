@@ -89,7 +89,7 @@ def _ws_close(sock):
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36")
 
-BROWSER_WRAPPER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bin", "browser")
+BROWSER_WRAPPER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bin", "not-google-chrome")
 
 # Buffered CDP events (unsolicited messages that arrive during send_cdp calls)
 _event_buffer = []
