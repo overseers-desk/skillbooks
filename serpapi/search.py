@@ -14,7 +14,7 @@ Usage:
     # Google Maps
     python3 search.py maps "restaurants near Jerez de la Frontera"
 
-API key is read from SERPAPI_KEY env var or skill-config.yaml serpapi.api_key.
+API key is read from SERPAPI_KEY env var or ~/.claude/skills/config.yaml serpapi.api_key.
 """
 
 import argparse
@@ -31,13 +31,13 @@ def get_api_key():
     key = os.environ.get("SERPAPI_KEY", "").strip()
     if key:
         return key
-    cfg_file = Path.home() / "code" / "weiwu" / ".claude" / "config" / "skill-config.yaml"
+    cfg_file = Path.home() / ".claude" / "skills" / "config.yaml"
     if cfg_file.exists():
         cfg = yaml.safe_load(cfg_file.read_text())
         key = ((cfg or {}).get("serpapi") or {}).get("api_key", "").strip()
         if key:
             return key
-    sys.exit("No API key found. Set SERPAPI_KEY or add serpapi.api_key to skill-config.yaml")
+    sys.exit("No API key found. Set SERPAPI_KEY or add serpapi.api_key to ~/.claude/skills/config.yaml")
 
 
 def serpapi_request(params):

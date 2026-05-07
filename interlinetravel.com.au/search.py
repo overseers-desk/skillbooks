@@ -42,13 +42,13 @@ _COOKIE_FILE = Path(tempfile.gettempdir()) / "interline-travel-cookies.json"
 _COOKIE_MAX_AGE = 3600 * 2  # reuse session for 2 hours
 
 def _load_creds():
-    cfg_file = Path.home() / "code" / "weiwu" / ".claude" / "config" / "skill-config.yaml"
+    cfg_file = Path.home() / ".claude" / "skills" / "config.yaml"
     if not cfg_file.exists():
         sys.exit(f"Error: {cfg_file} not found. See Prerequisites in the aesop interlinetravel.com.au SKILL.md.")
     cfg = yaml.safe_load(cfg_file.read_text())
     section = (cfg or {}).get("interlinetravel.com.au", {})
     if not section.get("email") or not section.get("password"):
-        sys.exit(f"Error: skill-config.yaml missing interlinetravel.com.au.email / password.")
+        sys.exit(f"Error: ~/.claude/skills/config.yaml missing interlinetravel.com.au.email / password.")
     return {"INTERLINE_EMAIL": section["email"], "INTERLINE_PASSWORD": section["password"]}
 
 def _make_opener():

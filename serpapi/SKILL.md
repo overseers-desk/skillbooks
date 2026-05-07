@@ -100,7 +100,7 @@ These notes save future agents from trial-and-error:
 
 ## Google Hotels (curl-based)
 
-For hotel searches (e.g. IHG availability), use the SerpApi Google Hotels engine directly via curl. The API key is read from `skill-config.yaml` (`serpapi.api_key`).
+For hotel searches (e.g. IHG availability), use the SerpApi Google Hotels engine directly via curl. The API key is read from `~/.claude/skills/config.yaml` (`serpapi.api_key`).
 
 ### Search for hotels
 
