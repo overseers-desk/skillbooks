@@ -59,21 +59,21 @@ All-in prices in EUR. Flights verified via Kiwi 9 May 2026; airlines confirmed v
 
 | | **Shanghai** | **Singapore** | **Bali** | **Istanbul** | **Istanbul** | **Tbilisi** | **Seoul** |
 |---|---|---|---|---|---|---|---|
-| **London departs** | LGW 11:35 · 12 Jun | LGW 18:00 · 11 Jun | LHR 21:20 · 11 Jun | LGW 13:30 · 11 Jun | LGW 13:30 · 11 Jun | LGW 19:00 · 11 Jun | LGW 11:35 · 11 Jun |
-| **Outbound airline** | China Eastern | China Eastern (via PVG) | Air India (via DEL) | Pegasus | Pegasus | Kiwi virtual interline | China Eastern (via PVG) |
-| **Via** | PVG arr 13 Jun 05:55 · dep 13 Jun 21:05 | SIN arr 12 Jun 17:10 · dep 14 Jun 21:00 | DPS arr 13 Jun 07:25 · dep 14 Jun 23:20 | IST arr 11 Jun 19:30 · dep 13 Jun 02:10 | IST arr 11 Jun 19:30 · dep 14 Jun 16:55 / MEL arr 16 Jun 06:15 · dep 18:20 | TBS arr 12 Jun 05:00 · dep 14 Jun 11:00 | ICN arr 12 Jun 11:55 · dep 14 Jun 16:10 |
+| **London departs** | LGW 11:35 · 12 Jun | LGW 18:00 · 11 Jun | LHR 21:20 · 11 Jun | LGW 17:35 · 11 Jun | LGW 17:35 · 11 Jun | LGW 19:00 · 11 Jun | LGW 11:35 · 11 Jun |
+| **Outbound airline** | China Eastern | China Eastern (via PVG) | Air India (via DEL) | Turkish Airlines | Turkish Airlines | Kiwi virtual interline | China Eastern (via PVG) |
+| **Via** | PVG arr 13 Jun 05:55 · dep 13 Jun 21:05 | SIN arr 12 Jun 17:10 · dep 14 Jun 21:00 | DPS arr 13 Jun 07:25 · dep 14 Jun 23:20 | IST arr 11 Jun 23:30 · dep 13 Jun 02:10 | IST arr 11 Jun 23:30 · dep 14 Jun 16:55 / MEL arr 16 Jun 06:15 · dep 18:20 | TBS arr 12 Jun 05:00 · dep 14 Jun 11:00 | ICN arr 12 Jun 11:55 · dep 14 Jun 16:10 |
 | **Onward airline** | China Eastern | Jetstar | Virgin Australia | flydubai + Emirates | Kiwi virtual interline | Kiwi virtual interline | Jin Air + Jetstar |
 | **AU arrives** | BNE 14 Jun 09:00 | BNE 15 Jun 23:15 | OOL 15 Jun 06:55 | BNE 14 Jun 06:25 | OOL 16 Jun 20:25 | BNE 16 Jun 08:20 | BNE 15 Jun 07:30 |
-| **Flights** | €518 | €368 + €284 = €652 | €554 + €287 = €841 | €96 + €626 = €722 | €96 + €459 = €555 | €173 + €752 = €925 | €416 + €358 = €774 |
+| **Flights** | €518 | €368 + €284 = €652 | €554 + €287 = €841 | €185 + €626 = €811 | €185 + €459 = €644 | €173 + €752 = €925 | €416 + €358 = €774 |
 | **Hotel (IHG)** | €75–102 Gatwick | SGD 128/night × 2 (~€178) | USD 35 (~€33) | €74/night × 2 = €148 | €72/night × 3 = €217 | USD 131/night × 2 (~€242) | KRW 298k/night × 2 (~€400) |
-| **Flight total** | €518 | €652 | €841 | €722 | €555 | €925 | €774 |
-| **All-in** | **€593–620** | ~€830 | ~€909 | ~€870 | ~€772 | ~€1,167 | ~€1,174 |
+| **Flight total** | €518 | €652 | €841 | €811 | €644 | €925 | €774 |
+| **All-in** | **€593–620** | ~€830 | ~€909 | ~€959 | ~€861 | ~€1,167 | ~€1,174 |
 | **Tickets** | 1 ticket, 1 airline | 2 separate | 2 separate + LGW→LHR | 2 separate | 2 separate | 2 separate | 2 separate |
-| **Notes** | PVG hotel airline-supplied free for >8h; confirm at booking | Missed-connection risk | Cross-London transfer ~£30 | IST dep 02:10 local = 00:10 London | MEL 06:15–18:20 daytime, no hotel night | No longer outlier; was €2,373 | MU202 + MU5041 via PVG (2h55m transit); Weiwu departs LGW 6h before family's 18:00 |
+| **Notes** | PVG hotel airline-supplied free for >8h; confirm at booking | Missed-connection risk | Cross-London transfer ~£30 | TK 1998; IST dep 02:10 = 00:10 London time | MEL 06:15–18:20 daytime, no hotel night | No longer outlier; was €2,373 | MU202 + MU5041 via PVG (2h55m transit); Weiwu departs LGW 6h before family's 18:00 |
 
 ## Reading the comparison
 
-Plan A at €593–620 all-in is €152–581 cheaper than every resting-city alternative once hotel nights are counted, with the simplest logistics (one airline, one ticket, baggage through-checked PVG → BNE). The resting-city plans only beat Plan A on the dimension of "more interesting trip"; none win on price, simplicity, or arrival time. Seoul (G) and Tbilisi (F) are the most expensive at ~€1,174 and ~€1,167 respectively, both €547–581 above Plan A. Seoul uses MU202 from LGW (same flight as Plan A, one day earlier), making the outbound leg familiar, but the onward from ICN is a separate ticket via Jin Air + Jetstar. For Plans E and F the onward leg is a Kiwi virtual interline: luggage must be re-checked at each stop and missed-connection protection does not apply.
+Plan A at €593–620 all-in is €210–581 cheaper than every resting-city alternative once hotel nights are counted, with the simplest logistics (one airline, one ticket, baggage through-checked PVG → BNE). The resting-city plans only beat Plan A on the dimension of "more interesting trip"; none win on price, simplicity, or arrival time. Seoul (G) and Tbilisi (F) are the most expensive at ~€1,174 and ~€1,167 respectively, both €547–581 above Plan A. Seoul uses MU202 from LGW (same flight as Plan A, one day earlier), making the outbound leg familiar, but the onward from ICN is a separate ticket via Jin Air + Jetstar. For Plans E and F the onward leg is a Kiwi virtual interline: luggage must be re-checked at each stop and missed-connection protection does not apply.
 
 The 15-hour PVG layover is the meaningful disadvantage of Plan A. It is daytime in Shanghai (05:55 → 21:05), so a city tour or a transit hotel are both viable; China Eastern routinely supplies transit hotels for >8h connections, confirm at booking.
 
@@ -87,3 +87,4 @@ The 15-hour PVG layover is the meaningful disadvantage of Plan A. It is daytime 
 - Family booking: `Dropbox:0. Travel Admin/2026-06-10 London, Gold Coast - Liansu, A-Z/Fares/`
 - Stopover-route options: `london-au-onward-options.tsv` (original Kiwi pull); all prices reverified via Kiwi on 9 May 2026
 - IHG availability: live API call against `apis.ihg.com`, 9 May 2026
+- Istanbul outbound (Turkish Airlines TK 1998, LGW 17:35 → IST 23:30, 11 Jun): Google Flights $202; treated as USD, converted at ~€185. Confirm currency if re-pricing.
