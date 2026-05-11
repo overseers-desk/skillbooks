@@ -1,6 +1,6 @@
 ---
 name: deviantart.com
-description: Download videos from DeviantArt deviation pages (single or multi-file). Trigger when the user provides a deviantart.com/*/art/* URL and wants to download the video.
+description: "Download videos from DeviantArt deviation pages (single/multi-file) given a deviantart.com/*/art/* URL."
 argument-hint: <deviantart.com deviation URL> [destination directory]
 ---
 

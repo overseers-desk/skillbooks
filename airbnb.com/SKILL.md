@@ -1,6 +1,6 @@
 ---
 name: airbnb.com
-description: List Airbnb hosting quick replies. Use when the user asks about their Airbnb quick replies, saved message templates, or hosting message settings.
+description: "Airbnb hosting: list quick replies, saved message templates, hosting message settings."
 argument-hint: <list [--product STAYS|EXPERIENCES]>
 allowed-tools: Bash, Read
 ---

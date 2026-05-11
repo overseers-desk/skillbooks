@@ -1,6 +1,6 @@
 ---
 name: facebook
-description: Search Facebook people, read profiles, extract posts with hashtags and tagged people, and check keywords. Trigger when user asks to look up someone on Facebook, check a Facebook profile, or find someone's posts/activity.
+description: "Facebook: search people, read profiles, extract posts with hashtags and tagged people, check keywords; find someone's posts/activity."
 argument-hint: <name, URL, or search terms>
 ---
 

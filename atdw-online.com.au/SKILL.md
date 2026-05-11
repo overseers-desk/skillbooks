@@ -1,6 +1,6 @@
 ---
 name: atdw-online.com.au
-description: Query and edit ATDW tourism listings via the pyatdw CLI. Use when the user asks about listings, searches, or edits on the Australian Tourism Data Warehouse.
+description: "Query/edit ATDW (Australian Tourism Data Warehouse) listings via pyatdw CLI: searches, listings, edits."
 allowed-tools: Bash
 ---
 

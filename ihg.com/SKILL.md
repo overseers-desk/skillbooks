@@ -1,6 +1,6 @@
 ---
 name: ihg.com
-description: Search IHG hotels for availability and pricing. Use when the user asks about IHG hotel prices, availability, or hotel search on ihg.com.
+description: "IHG hotels on ihg.com: availability, pricing, search."
 allowed-tools: Bash, Read
 ---
 

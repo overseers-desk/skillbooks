@@ -1,6 +1,6 @@
 ---
 name: marriott.com
-description: Use when the user asks about Marriott hotels — finding Marriott properties near a destination, looking up a hotel by property code, or pulling basic property information (name, brand, address, coordinates, images, reviews). Does not return pricing or live availability.
+description: "Marriott hotels: find properties near a destination, lookup by property code, property info (name, brand, address, coordinates, images, reviews). No pricing or live availability."
 allowed-tools: Bash, Read
 ---
 
