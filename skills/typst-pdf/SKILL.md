@@ -1,7 +1,7 @@
 ---
 name: typst-pdf
 description: Render a markdown file to PDF via Typst, optionally applying a per-repo template discovered at .aesop/default.typ or .aesop/letterhead.typ. Trigger when the user asks to convert markdown to PDF, print a document, produce a letterhead-style PDF, or render with typst.
-argument-hint: <input.md> [--letterhead | --no-letterhead] [--out <path>] [--view]
+argument-hint: <input.md> --out <file.pdf> [--letterhead | --no-letterhead] [--view]
 allowed-tools: Bash, Read
 ---
 
@@ -13,16 +13,18 @@ If invoked outside a git repository, or if the repo has no `.aesop/` templates, 
 
 ## How to invoke
 
-Pass the markdown file as the first argument. The driver is at `$HOME/.claude/skills/typst-pdf/typst-pdf.sh`. Run it directly — do not spawn a subagent for this skill.
+Before invoking the driver, ask the user where to save the PDF using `AskUserQuestion`. Offer the platform-default file path as the first option: Linux `$(xdg-user-dir DOCUMENTS)/<stem>.pdf`, macOS `$HOME/Documents/<stem>.pdf`. The path must include the filename, not just a directory.
+
+Then invoke the driver at `$HOME/.claude/skills/typst-pdf/typst-pdf.sh`. Run it directly — do not spawn a subagent for this skill.
 
 ```bash
-$HOME/.claude/skills/typst-pdf/typst-pdf.sh <input.md> [flags]
+$HOME/.claude/skills/typst-pdf/typst-pdf.sh <input.md> --out <file.pdf> [flags]
 ```
 
 Flags:
 
-- `--letterhead` / `--no-letterhead` — pick the letterhead or plain template non-interactively. If neither flag is passed and both templates exist, the driver asks via stdin.
-- `--out <path>` — explicit output path. If omitted, the driver suggests a save directory (XDG documents dir on Linux, `$HOME/Documents` on macOS) and asks the user to confirm or override.
+- `--out <file.pdf>` — required. Full output file path (must end in a filename, not a directory).
+- `--letterhead` / `--no-letterhead` — pick the letterhead or plain template. Required when the repo has both `.aesop/default.typ` and `.aesop/letterhead.typ`.
 - `--view` — open the PDF after compilation.
 
 ## Prerequisites
@@ -58,10 +60,10 @@ It compiles with `typst compile --root <repo>` so the template can reference rel
 
 ## Save location
 
-When `--out` is not specified, the driver picks a suggested directory in this order:
+The driver requires `--out <file.pdf>`. Ask the user via `AskUserQuestion` before invoking. The default file path to offer:
 
-1. Linux: `xdg-user-dir DOCUMENTS` if installed, else `XDG_DOCUMENTS_DIR` from `~/.config/user-dirs.dirs`.
-2. macOS: `$HOME/Documents` (filesystem path is always English; Finder's localised display name is cosmetic).
-3. Anywhere: `$HOME`.
+1. Linux: `$(xdg-user-dir DOCUMENTS)/<stem>.pdf`, or `$XDG_DOCUMENTS_DIR/<stem>.pdf` from `~/.config/user-dirs.dirs`.
+2. macOS: `$HOME/Documents/<stem>.pdf` (the filesystem path is always English; Finder's localised display name is cosmetic).
+3. Fallback: `$HOME/<stem>.pdf`.
 
-The user is shown the suggested path and can paste any other path in response. The driver does not write without confirmation.
+If the user names a path that already exists as a directory, the driver errors instead of writing into it.
