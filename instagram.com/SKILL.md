@@ -69,6 +69,39 @@ Reliably extracts (from `<meta>` tags, which are server-rendered):
 
 When available (typically only for the logged-in user's own profile or profiles the viewer already follows closely), the parser also pulls JSON-hydrated fields: `biography`, `external_url`, `category_name`, `is_verified`, `is_private`, and exact counts. For most third-party profiles these JSON fields are absent — the og:description counts are the source of truth.
 
+## 5. DM inbox metadata (noninvasive)
+
+This script reads inbox metadata only. It must not be modified to read individual thread content. If you need message content from a specific thread, that is a separate, invasive operation. Write a different script with a different name.
+
+```bash
+python3 $HOME/.claude/skills/instagram.com/inbox-noninvasive.py list
+```
+
+Emits JSON with one entry per thread: `username`, `full_name`, `thread_id`, `last_activity_iso`, `last_snippet` (up to 120 chars of the last message text or a type label), `unseen` (boolean), `is_group`.
+
+To verify the script does not mutate read state:
+
+```bash
+python3 $HOME/.claude/skills/instagram.com/inbox-noninvasive.py verify-noninvasive
+```
+
+Runs `list` twice with a 45-second sleep, diffs the `unseen` field per thread, exits 0 if stable and exits 2 if any thread flipped from unseen to seen.
+
+Requires a logged-in session. Does not navigate to `/direct/inbox/` to avoid triggering a "user is viewing inbox" presence beacon. Any outgoing request matching seen-mutation URL patterns (`*/seen/*`, `*/mark_seen*`, `*item_seen*`, `*direct_thread*` POST) is blocked at the Fetch domain level and logged to stderr.
+
+## 6. Recent posts for a handle
+
+```bash
+python3 $HOME/.claude/skills/instagram.com/fetch-recent-posts.py posts HANDLE
+python3 $HOME/.claude/skills/instagram.com/fetch-recent-posts.py posts HANDLE --limit 6
+```
+
+Default limit is 12. Navigates to the profile page and intercepts the feed XHR that fires during hydration. Falls back to calling `/api/v1/feed/user/<user_id>/` directly if the XHR is not captured.
+
+Each post entry includes: `post_id`, `shortcode`, `url`, `post_type` (image/video/carousel/reel), `taken_at_iso`, `like_count`, `comment_count`, `caption`, `hashtags` (extracted from caption), `mentions` (extracted from caption), `is_paid_partnership`, `location`.
+
+Note: the feed API returns at most 12 posts per call without pagination. If more than 12 posts are needed, implement cursor-based pagination using the `next_max_id` field from the response.
+
 ## What this skill does NOT do (by design)
 
 - It does not scrape individual post captions, comments, or likes. The profile page does not render post bodies in a headless dump — those come from separate GraphQL calls. If that is needed, add a step that fetches individual post permalinks (`/p/SHORTCODE/`), which do server-render caption and alt text, and parse them separately.
