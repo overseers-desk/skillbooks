@@ -184,7 +184,11 @@ def check_logged_in(ws):
 def cmd_list(ws, args):
     params = f"page_size={args.page_size}"
     if args.last_load_ts:
-        params += f"&last_load_ts={args.last_load_ts}"
+        # Otter's API requires `modified_after` on subsequent pages; the cursor
+        # is `last_load_ts` from the previous response. Setting modified_after=1
+        # (epoch start) means "no modification-time filter" so the cursor alone
+        # controls pagination.
+        params += f"&modified_after=1&last_load_ts={args.last_load_ts}"
     js = f"""
     (async () => {{
         const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
