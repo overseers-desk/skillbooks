@@ -109,13 +109,8 @@ if [[ -n "$REPO_ROOT" ]]; then
       ;;
     "")
       if [[ $HAS_LETTER -eq 1 && $HAS_DEFAULT -eq 1 ]]; then
-        echo "Repo has both .aesop/default.typ and .aesop/letterhead.typ" >&2
-        read -r -p "Apply letterhead? [Y/n] " ans
-        if [[ "$ans" =~ ^[Nn] ]]; then
-          TEMPLATE_BASENAME="default.typ"
-        else
-          TEMPLATE_BASENAME="letterhead.typ"
-        fi
+        echo "Error: repo has both .aesop/default.typ and .aesop/letterhead.typ; pass --letterhead or --no-letterhead" >&2
+        exit 2
       elif [[ $HAS_LETTER -eq 1 ]]; then
         TEMPLATE_BASENAME="letterhead.typ"
       elif [[ $HAS_DEFAULT -eq 1 ]]; then
@@ -147,13 +142,17 @@ if [[ -z "$OUT" ]]; then
   esac
   [[ -d "$SUGGEST" ]] || SUGGEST="$HOME"
 
-  echo "Suggested save directory: $SUGGEST" >&2
-  read -r -p "Save directory [press Enter to accept, or type another path]: " user_dir
-  user_dir="${user_dir:-$SUGGEST}"
-  user_dir="${user_dir/#\~/$HOME}"
-  mkdir -p "$user_dir"
-  OUT="$user_dir/$INPUT_STEM.pdf"
+  echo "Error: --out <file.pdf> is required. Suggested: $SUGGEST/$INPUT_STEM.pdf" >&2
+  exit 2
 fi
+
+OUT="${OUT/#\~/$HOME}"
+if [[ -d "$OUT" ]]; then
+  echo "Error: --out points to an existing directory: $OUT" >&2
+  exit 2
+fi
+OUT_DIR="$(dirname "$OUT")"
+[[ -d "$OUT_DIR" ]] || mkdir -p "$OUT_DIR"
 
 TMP="$(mktemp -d)"
 WRAPPER_IN_REPO=""
