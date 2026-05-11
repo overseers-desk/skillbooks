@@ -1,6 +1,6 @@
 ---
 name: interlinetravel.com.au
-description: Search Interline Travel for cruise deals at industry staff rates. Use when the user asks about cruise prices, availability, interline rates, or cruise search on interlinetravel.com.au.
+description: "Interline Travel cruise deals at industry staff rates on interlinetravel.com.au: prices, availability, interline rates, search."
 allowed-tools: Bash, Read
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: otter.ai
-description: List, rename, and export Otter.ai recordings. Use when the user asks about Otter.ai recordings, transcripts, or wants to manage their Otter.ai content.
+description: "Otter.ai recordings: list, rename, export; transcripts and content management."
 argument-hint: <list | rename | export-dropbox | fetch-via-dropbox | dropbox-status>
 allowed-tools: Bash, Read
 ---

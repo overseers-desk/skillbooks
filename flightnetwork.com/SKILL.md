@@ -1,6 +1,6 @@
 ---
 name: flightnetwork.com
-description: Generate a clean travel-document PDF for a Flightnetwork order from the user's email. Use when the user has a Flightnetwork booking confirmation and wants the printable travel document (with airline, flight numbers, times, passenger names, e-tickets, and baggage allowance). The PDF the airline counter or customs would expect.
+description: "Travel-document PDF from a Flightnetwork booking-confirmation email (airline, flight numbers, times, passenger names, e-tickets, baggage allowance) — the PDF an airline counter or customs expects."
 allowed-tools: Bash, Read
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: qantas.com
-description: Search Qantas Classic Reward flight availability - point cost, taxes, seats, aircraft, and times for a route and date range; and read the user's Qantas Frequent Flyer points balance. Trigger when the user asks about Qantas Classic Reward flights, Qantas points redemptions, award seat availability on Qantas-operated routes, or how many Qantas points they have.
+description: "Qantas Classic Reward flight availability (point cost, taxes, seats, aircraft, times for a route+date range) and Qantas Frequent Flyer points balance. Triggers: Qantas points redemptions, award seat availability on Qantas-operated routes, points balance."
 argument-hint: <origin> <destination> <date> [stops]   |   points
 ---
 

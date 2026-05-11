@@ -1,6 +1,6 @@
 ---
 name: instagram
-description: Search Instagram accounts and read profiles (display name, follower/following/post counts, recent caption snippet). Trigger when the user asks to look up someone on Instagram, check an Instagram profile, or find an account by name or handle.
+description: "Instagram: search accounts, read profiles (display name, follower/following/post counts, recent caption snippet); find by name or handle."
 argument-hint: <name, handle, or search terms>
 ---
 

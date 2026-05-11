@@ -1,6 +1,6 @@
 ---
 name: supplier.getyourguide.com
-description: Query GetYourGuide supplier dashboard for tour/activity listings, bookings, and reviews. Use when the user asks about their GYG listings, products, bookings, or supplier account.
+description: "GetYourGuide (GYG) supplier dashboard: tour/activity listings, products, bookings, reviews, supplier account."
 allowed-tools: Bash, Read, Write
 ---
 

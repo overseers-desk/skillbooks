@@ -1,6 +1,6 @@
 ---
 name: linkedin
-description: Search LinkedIn people, read profiles, check keywords, and verify connect eligibility. Trigger when user asks to look up someone on LinkedIn, check a LinkedIn profile, find someone's role/company, or connect with someone on LinkedIn.
+description: "LinkedIn: search people, read profiles, check keywords, verify connect eligibility, find role/company."
 argument-hint: <name, URL, or search terms>
 ---
 

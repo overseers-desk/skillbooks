@@ -1,6 +1,6 @@
 ---
 name: renfe.com
-description: Use when the user asks about RENFE (Spanish national rail) — station codes and coordinates, direct scheduled trains between two stations on a date, train type (AVE / Avlo / ALVIA / AVANT / Intercity / MD / Regional / Cercanías), live delays, live vehicle positions, and service alerts.
+description: "RENFE (Spanish national rail): station codes/coordinates, direct trains between two stations on a date, train type (AVE/Avlo/ALVIA/AVANT/Intercity/MD/Regional/Cercanías), live delays, live vehicle positions, service alerts."
 allowed-tools: Bash, Read
 ---
 

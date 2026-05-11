@@ -1,6 +1,6 @@
 ---
 name: australia.skal.org
-description: Query Skal Australia member portal via the pyskal CLI. Use when the user asks about Skal (Skål) members, clubs, or events.
+description: "Skal Australia (Skål) member portal via pyskal CLI: members, clubs, events."
 allowed-tools: Bash
 ---
 
