@@ -113,7 +113,7 @@ tclsh9.0 test/run.tcl   # parallel; honours SPAR_TEST_JOBS
 
 ## Logs
 
-`spar::resolve_logs_dir` (`spar-lib.tcl:518`) creates `/var/local/logs/spar/<folder>` if `/var/local/logs/spar` exists, otherwise `$HOME/logs/spar/<folder>`. `<folder>` is `<dir_slug>-<stem>-<phase>-<datestamp>`, where `dir_slug` is the campaign yaml's normalised parent path with `/` replaced by `-`, `stem` is the yaml filename without extension, `phase` is `p` or `a`, and `datestamp` is Tcl `%Y%m%d-%H%M%S`. The dispatch API's `logs_dir` opt (`spar-dispatch.tcl:234`) overrides path derivation; the supplied directory must already exist or `resolve_logs_dir` raises an error.
+`spar::resolve_logs_dir` (`spar-lib.tcl:518`) creates `/var/local/log/spar/<folder>` if `/var/local/log/spar` exists, otherwise `$HOME/logs/spar/<folder>`. `<folder>` is `<dir_slug>-<stem>-<phase>-<datestamp>`, where `dir_slug` is the campaign yaml's normalised parent path with `/` replaced by `-`, `stem` is the yaml filename without extension, `phase` is `p` or `a`, and `datestamp` is Tcl `%Y%m%d-%H%M%S`. The dispatch API's `logs_dir` opt (`spar-dispatch.tcl:234`) overrides path derivation; the supplied directory must already exist or `resolve_logs_dir` raises an error.
 
 Created by dispatch runs only. `spar-transition.tcl` (CLI) and `spar-ui.tcl` (GUI) resolve identical paths for the same campaign and phase. `spar-progress.tcl`, state classification, and validation write nothing here.
 
