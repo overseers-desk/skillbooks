@@ -93,14 +93,37 @@ Requires a logged-in session. Does not navigate to `/direct/inbox/` to avoid tri
 
 ```bash
 python3 $HOME/.claude/skills/instagram.com/fetch-recent-posts.py posts HANDLE
-python3 $HOME/.claude/skills/instagram.com/fetch-recent-posts.py posts HANDLE --limit 6
+python3 $HOME/.claude/skills/instagram.com/fetch-recent-posts.py posts HANDLE --limit 50
 ```
 
-Default limit is 12. Navigates to the profile page and intercepts the feed XHR that fires during hydration. Falls back to calling `/api/v1/feed/user/<user_id>/` directly if the XHR is not captured.
+Default limit is 12. Pagination via the feed API's `next_max_id` cursor happens automatically when `--limit` exceeds 12. The script navigates to the profile page once to resolve the user_id (from inline JSON or the `web_profile_info` API), then calls `/api/v1/feed/user/<user_id>/` directly in a loop until the limit is reached or `more_available` is false.
 
-Each post entry includes: `post_id`, `shortcode`, `url`, `post_type` (image/video/carousel/reel), `taken_at_iso`, `like_count`, `comment_count`, `caption`, `hashtags` (extracted from caption), `mentions` (extracted from caption), `is_paid_partnership`, `location`.
+Each post entry includes:
 
-Note: the feed API returns at most 12 posts per call without pagination. If more than 12 posts are needed, implement cursor-based pagination using the `next_max_id` field from the response.
+- `post_id`, `shortcode`, `url`, `post_type` (image/video/carousel/reel), `taken_at_iso`
+- `like_count`, `comment_count`
+- `caption`, `hashtags` (regex-extracted from caption), `mentions` (regex-extracted from caption)
+- `tagged_users` (the "tag people" feature on the post; aggregated across carousel slides)
+- `coauthors` (the dual-author collab-post feature)
+- `sponsors` (branded-content sponsor tags)
+- `is_paid_partnership`, `location`
+
+The five handle-bearing fields above (`mentions`, `tagged_users`, `coauthors`, `sponsors`, plus paid-partnership context) are what the collab-expansion script in §7 walks to find candidates.
+
+## 7. Collab partner expansion (multi-handle spider)
+
+```bash
+python3 $HOME/.claude/skills/instagram.com/collab-expand.py expand handle1,handle2,handle3
+python3 $HOME/.claude/skills/instagram.com/collab-expand.py expand --from /tmp/seeds.txt --posts-per-handle 36
+```
+
+Walks a list of input handles, fetches recent posts for each (paginated via §6's helpers), and accumulates the union of `tagged_users`, `coauthors`, `sponsors`, and caption `mentions` across all posts. Outputs candidate handles NOT already in the input set, ranked by explicit-collab signal first (tagged + coauthor + sponsor counts) and then by caption-mention count and breadth of source handles.
+
+Each candidate row carries the four per-signal counts, a `total`, and a sorted `sources` list of input handles whose posts surfaced the candidate. Multi-source candidates (handles surfaced by several different input accounts) rank higher than single-source ones at equal signal strength.
+
+This is single-level expansion. For "spider" behaviour (recursively expanding), feed the top N candidates as input to a second run.
+
+Default `--posts-per-handle` is 24 (about two pages). Pacing: roughly one feed page every 2 seconds, plus a 2-second gap between input handles. A run over 5 input handles at 24 posts each takes about a minute.
 
 ## What this skill does NOT do (by design)
 

@@ -250,6 +250,55 @@ def _post_type(item):
     return "unknown"
 
 
+def _extract_usertags(item):
+    """Pull tagged usernames from the "tag people" feature on a post.
+
+    Single-image posts carry usertags directly. Carousel posts carry per-slide
+    usertags inside carousel_media[]; aggregate across slides and dedupe.
+    """
+    handles = []
+    seen = set()
+
+    def _pull(node):
+        ut = (node.get("usertags") or {}).get("in") or []
+        for entry in ut:
+            if not isinstance(entry, dict):
+                continue
+            u = (entry.get("user") or {}).get("username") or ""
+            if u and u not in seen:
+                seen.add(u)
+                handles.append(u)
+
+    _pull(item)
+    for slide in item.get("carousel_media") or []:
+        if isinstance(slide, dict):
+            _pull(slide)
+    return handles
+
+
+def _extract_coauthors(item):
+    """Pull coauthor usernames from Instagram's collab-post feature."""
+    handles = []
+    for c in item.get("coauthor_producers") or []:
+        if isinstance(c, dict):
+            u = c.get("username") or ""
+            if u:
+                handles.append(u)
+    return handles
+
+
+def _extract_sponsors(item):
+    """Pull sponsor usernames from branded-content sponsor tags."""
+    handles = []
+    for s in item.get("sponsor_tags") or []:
+        if isinstance(s, dict):
+            sponsor = s.get("sponsor") or {}
+            u = sponsor.get("username") or ""
+            if u:
+                handles.append(u)
+    return handles
+
+
 def _parse_media_items(items):
     """Convert raw media items into structured post dicts."""
     posts = []
@@ -275,104 +324,42 @@ def _parse_media_items(items):
             "caption": caption_text,
             "hashtags": _extract_hashtags(caption_text),
             "mentions": _extract_mentions(caption_text),
+            "tagged_users": _extract_usertags(item),
+            "coauthors": _extract_coauthors(item),
+            "sponsors": _extract_sponsors(item),
             "is_paid_partnership": bool(item.get("is_paid_partnership", False)),
             "location": location_name,
         })
     return posts
 
 
-def cmd_posts(ws, handle, limit):
-    """Fetch recent posts for a handle.
+def resolve_user_id(ws, handle):
+    """Navigate to a profile page and resolve the handle to its numeric user_id.
 
-    Strategy:
-    1. Navigate to the profile page.
-    2. Enable Network domain before navigation so XHR responses are captured.
-    3. After the page settles, drain CDP events to find the user feed XHR
-       (typically /api/v1/feed/user/<user_id>/ or a GraphQL variant).
-    4. If the feed XHR was captured, parse it directly.
-    5. Fallback: call /api/v1/feed/user/<user_id>/ directly via fetch() using
-       the user_id found in the hydrated page JSON.
+    Returns the user_id string on success. Returns a dict with `error` on
+    login redirect, private account, or rate-limit. Reusable across both
+    fetch-recent-posts and collab-expand.
     """
-    send_cdp(ws, "Network.enable")
-
     profile_url = f"https://www.instagram.com/{handle}/"
     sys.stderr.write(f"Navigating to {profile_url}...\n")
     send_cdp(ws, "Page.navigate", {"url": profile_url})
+    time.sleep(4)
 
-    # Collect Network events for up to 8 seconds while the page hydrates.
-    collected_events = []
-    deadline = time.time() + 8
-    sock_timeout = ws.gettimeout()
-    ws.settimeout(0.5)
-    try:
-        while time.time() < deadline:
-            try:
-                msg = json.loads(_ws_recv(ws))
-                collected_events.append(msg)
-            except (OSError, socket.timeout):
-                pass
-    finally:
-        ws.settimeout(sock_timeout)
-
-    sys.stderr.write(f"Collected {len(collected_events)} CDP events during page load.\n")
-
-    # Check for login redirect
     url_result = eval_js(ws, "window.location.href")
     current_url = url_result.get("raw", "") if isinstance(url_result, dict) else str(url_result)
     if "accounts/login" in current_url:
         return {"error": "Redirected to login. Session may be expired or rate-limited."}
 
-    title_result = eval_js(ws, "document.title")
-    title = title_result.get("raw", "") if isinstance(title_result, dict) else ""
-    sys.stderr.write(f"Page title: {title}\n")
-
-    # Try to find user_id from collected network responses or inline page JSON.
-    user_id = None
-
-    # Scan collected events for a network response that contains the user feed.
-    feed_data = None
-    for ev in collected_events:
-        if ev.get("method") != "Network.responseReceived":
-            continue
-        resp_url = ev.get("params", {}).get("response", {}).get("url", "")
-        if "/api/v1/feed/user/" in resp_url or "feed/user" in resp_url:
-            request_id = ev.get("params", {}).get("requestId")
-            if request_id:
-                body_resp = send_cdp(ws, "Network.getResponseBody", {"requestId": request_id})
-                if body_resp:
-                    body = body_resp.get("result", {}).get("body", "")
-                    try:
-                        feed_data = json.loads(body)
-                        sys.stderr.write(f"Captured feed XHR from: {resp_url}\n")
-                        break
-                    except json.JSONDecodeError:
-                        pass
-
-    if feed_data and feed_data.get("items"):
-        posts = _parse_media_items(feed_data["items"][:limit])
-        return {
-            "handle": handle,
-            "post_count": len(posts),
-            "source": "network_intercept",
-            "posts": posts,
-        }
-
-    # Fallback: extract user_id from the page's inline JSON and call the feed API directly.
-    sys.stderr.write("No feed XHR captured; trying inline JSON extraction + direct fetch.\n")
-
     js_extract_id = """
     (async () => {
-        // Instagram bakes user data into window.__additionalDataLoaded or inline script JSON.
-        // Look for a JSON blob containing "user_id" near the profile owner's username.
         const scripts = Array.from(document.querySelectorAll('script:not([src])'));
         for (const s of scripts) {
             const t = s.textContent || '';
-            const m = t.match(/"user_id"\s*:\s*"(\d+)"/);
+            const m = t.match(/"user_id"\\s*:\\s*"(\\d+)"/);
             if (m) return JSON.stringify({user_id: m[1]});
-            const m2 = t.match(/"id"\s*:\s*"(\d+)".*?"is_private"/s);
+            const m2 = t.match(/"id"\\s*:\\s*"(\\d+)".*?"is_private"/s);
             if (m2) return JSON.stringify({user_id: m2[1]});
         }
-        // Try window._sharedData path
         try {
             const sd = window._sharedData;
             if (sd) {
@@ -380,7 +367,6 @@ def cmd_posts(ws, handle, limit):
                 if (uid) return JSON.stringify({user_id: uid});
             }
         } catch(e) {}
-        // Try querying the profile API endpoint directly for the user ID
         const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
         const infoResp = await fetch('/api/v1/users/web_profile_info/?username=' + encodeURIComponent(location.pathname.replace(/\\//g, '')), {
             credentials: 'include',
@@ -399,22 +385,25 @@ def cmd_posts(ws, handle, limit):
     })()
     """
     id_result = eval_js(ws, js_extract_id)
-    sys.stderr.write(f"user_id extraction: {id_result}\n")
-
     if isinstance(id_result, dict) and id_result.get("user_id"):
-        user_id = id_result["user_id"]
-    else:
-        # Last resort: try the web_profile_info endpoint via Python fetch.
-        return {"error": f"Could not determine user_id for @{handle}. The account may be private or the session rate-limited.", "detail": id_result}
+        return id_result["user_id"]
+    return {"error": f"Could not determine user_id for @{handle}", "detail": id_result}
 
-    # Direct feed API call with the recovered user_id.
-    js_feed = f"""
+
+def fetch_user_feed_page(ws, user_id, max_id=None, count=12):
+    """Fetch one page of /api/v1/feed/user/<user_id>/.
+
+    Returns the raw JSON dict (with `items`, `more_available`, `next_max_id`)
+    or a dict with `error` on HTTP failure.
+    """
+    params_parts = [f"count={count}"]
+    if max_id:
+        params_parts.append(f"max_id={max_id}")
+    params_str = "&".join(params_parts)
+    js = f"""
     (async () => {{
         const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
-        const params = new URLSearchParams({{
-            count: '{min(limit, 12)}',
-        }});
-        const resp = await fetch('/api/v1/feed/user/{user_id}/?' + params.toString(), {{
+        const resp = await fetch('/api/v1/feed/user/{user_id}/?{params_str}', {{
             credentials: 'include',
             headers: {{
                 'X-IG-App-ID': '936619743392459',
@@ -422,36 +411,74 @@ def cmd_posts(ws, handle, limit):
                 'X-Requested-With': 'XMLHttpRequest',
             }}
         }});
-        const status = resp.status;
-        if (!resp.ok) {{
-            return JSON.stringify({{error: 'HTTP ' + status}});
-        }}
-        const data = await resp.json();
-        return JSON.stringify({{status: status, data: data}});
+        if (!resp.ok) return JSON.stringify({{error: 'HTTP ' + resp.status}});
+        return JSON.stringify(await resp.json());
     }})()
     """
-    feed_result = eval_js(ws, js_feed)
-    if isinstance(feed_result, dict) and feed_result.get("error"):
-        return feed_result
+    result = eval_js(ws, js)
+    return result
 
-    raw_data = feed_result.get("data", {})
-    items = raw_data.get("items", [])
+
+def fetch_user_feed_paginated(ws, user_id, limit, pause_between=2):
+    """Paginate /api/v1/feed/user/<user_id>/ until `limit` items collected
+    or the feed reports more_available=false.
+
+    Returns a list of raw media items (up to `limit`).
+    """
+    items = []
+    max_id = None
+    page_num = 0
+    while len(items) < limit:
+        page_num += 1
+        page = fetch_user_feed_page(ws, user_id, max_id=max_id, count=12)
+        if isinstance(page, dict) and page.get("error"):
+            sys.stderr.write(f"Page {page_num} fetch error: {page['error']}\n")
+            break
+        page_items = page.get("items", []) if isinstance(page, dict) else []
+        if not page_items:
+            sys.stderr.write(f"Page {page_num} returned no items; stopping.\n")
+            break
+        items.extend(page_items)
+        sys.stderr.write(f"Page {page_num}: {len(page_items)} items (cumulative {len(items)})\n")
+        if not page.get("more_available"):
+            break
+        max_id = page.get("next_max_id")
+        if not max_id:
+            break
+        if len(items) >= limit:
+            break
+        time.sleep(pause_between)
+    return items[:limit]
+
+
+def cmd_posts(ws, handle, limit):
+    """Fetch recent posts for a handle. Paginates if limit > 12.
+
+    Strategy: resolve user_id by navigating to the profile page, then
+    fetch the user feed API directly. The XHR-intercept optimization was
+    removed since it only saves the first page and complicates pagination.
+    """
+    user_id_or_err = resolve_user_id(ws, handle)
+    if isinstance(user_id_or_err, dict) and user_id_or_err.get("error"):
+        return user_id_or_err
+    user_id = user_id_or_err
+
+    time.sleep(2)
+    items = fetch_user_feed_paginated(ws, user_id, limit)
     if not items:
         return {
             "handle": handle,
             "user_id": user_id,
             "post_count": 0,
-            "source": "direct_api",
-            "note": "Feed returned no items. Account may be private.",
+            "note": "Feed returned no items. Account may be private or feed empty.",
             "posts": [],
         }
 
-    posts = _parse_media_items(items[:limit])
+    posts = _parse_media_items(items)
     return {
         "handle": handle,
         "user_id": user_id,
         "post_count": len(posts),
-        "source": "direct_api",
         "posts": posts,
     }
 
