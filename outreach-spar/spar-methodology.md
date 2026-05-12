@@ -35,6 +35,20 @@ S&P₁ → S&P₂ → S&P₃ → [human review of profiles and roster]
 
 For a compact notation to track a campaign's position in this flow, see [`spar-stage-notation.md`](spar-stage-notation.md).
 
+## Campaigns and segments
+
+A SPAR project produces two kinds of long-running record. The first is the population of people the project may want to engage: who they are, what they have said publicly, what we know about them, and what we have written to them and received in return. The second is a particular outreach project, defined by a sender, a message frame, a season, a set of filters, and the channels in scope.
+
+A segment is the home of the first record. It carries the roster (a list of people and their contact details), the profile documents (one per person), and the communications history with each person. The communications history lives in a directory named `approach/`. The name is kept from the time when the first artefact placed there was the initial approach draft. The directory now functions as the contact's communications log: the drafting record for the first outbound message, the message sent, replies received, and any follow-up outbound that accumulates as the segment is engaged over time.
+
+A campaign is the home of the second record. The campaign YAML names the sender, the channels, the USP registry, the filters that apply during dispatch, and the segments the campaign operates over. The campaign is time-bound. A new outreach window with a different sender, frame, or set of asks is a new campaign.
+
+The relation between the two is many-to-many. A campaign typically operates over several segments. A segment is, over time, drawn on by several campaigns. The filesystem reflects this by placing segments and campaign YAMLs as siblings at one repository level. A campaign YAML names its segments by bare directory name. The same segment name may appear in the `segments:` list of more than one campaign YAML at that level.
+
+A segment is not an asset of any one campaign. Placing a segment directory inside a campaign directory, or under a wrapping parent like `rosters/`, breaks the addressing (the segment name no longer resolves from the campaign YAML's directory) and conflates a long-lived population store with a time-bound project.
+
+A separate rule governs concurrent engagement: a segment supports at most one active campaign at a time. A second campaign on the same segment begins only after the first is closed. The closing procedure is defined elsewhere.
+
 ## Prong 1: S&P in detail
 
 ### S — Sweep
@@ -121,7 +135,7 @@ A has two sub-phases:
 - **Yield 3–5**: 1 pass. C2 can give a directional reaction — whether the angle feels relevant, whether the tone is off — but lacks the depth for iterative refinement. A1 incorporates C2's single response and finalises.
 - **Yield < 3**: A2 is skipped. C2 cannot roleplay convincingly with so little to work from; the simulation would be two instances of Opus guessing at each other. A1's first draft stands.
 
-**Output:** An approach file at `approach/{stem}.yaml`. The file contains: the profile summary, the angle chosen, the A1/A2 iteration history (all drafts and C2 responses, so the human can see how the message evolved), the final message, and the contact method.
+**Output:** A communications file at `approach/{stem}.yaml`. The directory is the segment's communications log for each contact; the name `approach/` is kept from when the first artefact placed there was the initial approach draft. At creation the file records the drafting of the first outbound message: the profile summary, the angle chosen, the A1/A2 iteration history (all drafts and C2 responses, so the human can see how the message took shape), the message body, and the contact method. Subsequent messages and replies on the same contact extend the same log.
 
 A also appends a one-line entry to a communication index file (`comms-index.md`): target name, organisation, segment, angle used, key relationship hooks. This index is what subsequent A runs read to find cross-references, rather than reading all prior approach files in full.
 
@@ -138,14 +152,14 @@ The output of R is a revised connection strategy: updated angle priorities, adju
 
 ## Artefacts
 
-| Artefact | Created by | Consumed by | Location |
+| Artefact | Created by | Consumed by | Lives in |
 |---|---|---|---|
-| Roster (TSV or markdown, schema defined by campaign plan) | S | P, A | Campaign directory |
-| Profile documents | P | A, human review | Campaign directory |
-| Approach files (`{stem}.yaml`) | A | R, subsequent A runs (via index) | Campaign directory |
-| Communication index (`comms-index.md`) | A (append) | A (read) | Campaign directory |
-| Strategy revision notes (`strategy-revision-[band].md`) | R (human) | A (next band) | Campaign directory |
-| Segment summary (search vocabulary, invisible segments) | S&P₃ | Future S&P runs on same segment | Campaign directory |
+| Roster (`roster.tsv`) | S | P, A | Segment directory |
+| Profile documents | P | A, human review | Segment directory (`profiles/`) |
+| Communications log files (`{stem}.yaml`) | A; replies and follow-ups extend the file over time | A subsequent runs, R, future campaigns on the same segment | Segment directory (`approach/`, name historical) |
+| Communication index (`comms-index.md`) | A (append) | A (read) | Segment directory |
+| Strategy revision notes (`strategy-revision-[band].md`) | R (human) | A (next band) | Campaign directory (one per band) |
+| Segment summary (search vocabulary, invisible segments) | S&P₃ | Future S&P runs on same segment | Segment directory |
 
 ## Model assignment
 
