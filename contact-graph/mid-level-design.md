@@ -114,6 +114,19 @@ Database: `contact_graph` on the local PostgreSQL instance.
 
 ---
 
+## Planned changes from the high-level design
+
+The high-level design now states multi-instancing of connectors and workflows, confluence over identity mappings, and a profile concept that detaches external identifiers from the `human` row. These imply schema changes the current table set does not yet provide. They are tracked here as the next batch of mid-level work, not yet drafted into `schema.sql`:
+
+- A `connector_instance` table, keyed by an id, carrying connector type, label, configuration handle, and credentials handle. Each existing source plugin (email, meeting notes) and each future connector (LinkedIn, WeChat) becomes one or more rows in this table. The term "source plugin" in this document maps to "connector" in the high-level vocabulary, with the inbound aspect being one half of what a connector can do.
+- A profile table that replaces `human.linkedin_url`, keyed at minimum by `(human_id, connector_instance_id)`, with the external identifier (URL or handle) as last observed and a context label distinguishing which life of the human the profile belongs to.
+- A `workflow_instance` table, keyed by an id, carrying workflow type and configuration. Each running workflow (an RSVP for one event, one reconnection campaign) is one row.
+- Re-keying of any per-`(human, platform)` state to per-`(human, connector_instance)` state. The first concrete case is the prospective `enrichment_state` table; further cases will arise as workflows are added.
+
+These items together preserve the confluence property: the view of a human is a join over the current rows in these tables, and rearranging the order of inserts to identity mappings or to `connector_instance` does not change the resulting join.
+
+---
+
 ## Open questions
 
 - What triggers the daily decay prompt: cron, morning aesop run, or MCP tool?
