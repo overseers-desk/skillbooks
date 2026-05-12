@@ -208,7 +208,7 @@ For each substantive public statement found (LinkedIn posts, blog posts, confere
 
 When the target has published an article or given a talk, extract specific recommendations, proposals, or calls to action — not just the general argument. "Wrote about XZ" is less useful to the A phase than "recommended SBOMs as industry standard and called for a partnership model among OSS communities, enterprises, and federal agencies." These specifics are the hooks the A phase uses to connect the target's stated views to the campaign's offering. A summary that captures the framing but omits the concrete proposals strips out the most actionable material.
 
-Do not invent or infer statements. If the target has not said anything about a topic, record that absence explicitly under the profile's "Absent themes" heading (§5.2): "No public statements on [topic]." This prevents the A phase from fabricating a connection that does not exist.
+Do not invent or infer statements. A-phase sometimes fabricata a connection that does not exist, and blame P-process for "hinting" the connection exists, there probably isn't any good solution barring from asking agents to careful not to imply things or invent/infer.
 
 ### 4.11 Record who the target knows
 
@@ -289,6 +289,20 @@ Record all corrections and backfills in the profile document under a "Verificati
 
 A profile file has two parts: a YAML **front matter** block (machine-read) and a markdown **body** (read by the A-phase agent and by humans).
 
+### 5.0 Style: dense, epistemic-faithful
+
+The body's job is to be a useful index for the A phase. Every sentence either records a specific (named entity, date, number, address, role title, quote, source URL, postcode, phone) or an epistemic marker (what was checked, what was found, what was unobtainable). Cut everything else.
+
+Specifics: write them literally. `0.76` beats `very low`. `founded 2013` beats `long-established`. `1,228 followers` beats `modest following`. Quotes go verbatim or close-paraphrase; do not collapse to a topic label.
+
+Epistemic markers distinguish absence-of-evidence from evidence-of-absence. `IMAP timed out, no priors obtainable` is not the same as `no prior correspondence confirmed`. The first is a retryable search-state; the second is a closed finding. Use `unobtainable` or `not attempted` when the search did not run or could not run; use `empty` or `no priors found` when the search ran and returned nothing. The §4.7 warmth finding is what the reader trusts; the marker is how it is justified.
+
+Do not write trailing-restate sentences (a final clause that summarises the prior list). Do not write editor-gloss clauses (`makes her a strong candidate for...`, `can accompany...`, `indicating breadth of...`). Do not expand a single fact into three sentences for paragraph rhythm. Each is filler that doubles word count without adding indexable signal.
+
+Words that trigger the wrong operation: do not aim for `concise`, `brief`, `summary`, `abstract`, `distilled`. These cluster with summarisation and substitute specifics with generics. Aim for dense: shorter sentences that carry the same specifics.
+
+This style applies at generation time. A separate densification pass over already-verbose prose is not the design; the model writes dense from the first draft.
+
 ### 5.1 Front matter
 
 Delimited by `---` fences at the very top of the file, standard Jekyll/Hugo/Pandoc convention. All listed fields are required; the validator rejects files with missing or unknown keys.
@@ -323,7 +337,7 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 
 ## Prior correspondence (IMAP)
 
-[Summary of IMAP findings per account, or "No prior correspondence found in any account". Evidence for `warmth_finding`.]
+[Hard limit: at most 3 lines, no quote marks, no paragraphs. Line 1: `Warmth: <existing|prior|known-of|cold>. IMAP <obtainable|empty|not-attempted>; <count> priors.` Line 2 (optional, when search ran): accounts and queries. Line 3 (optional, when priors exist): a single semicolon-separated chronology of dated actions, e.g. `2026-04-02 outreach sent; 2026-04-08 reply received; 2026-04-28 site visit; 2026-05-04 partnership-intent email; 2026-05-07 phone call`. Anything that is a `"` belongs in `## What they have said publicly`, never here. Anything that is interpretation or commentary is filler per §5.0 and goes nowhere.]
 
 ## Current role
 
@@ -347,9 +361,7 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 
 **On [topic] ([source]):** "[Quote or close paraphrase]"
 
-[Repeat for each substantive statement]
-
-**Absent themes:** [Explicit list of campaign-relevant topics the target has NOT spoken about]
+[Repeat for each substantive statement. This section is the canonical home for direct quotes attributable to the target, whether the source is a public post (LinkedIn, blog, conference) or a private email exchange with the campaign sender. Each quote appears exactly once in the profile; the IMAP section above must not repeat it. If the target has said nothing on a campaign-relevant topic and the absence is itself useful for angle selection, mention it inline once: e.g. `No public statements found on [topic].` Do not write a dedicated absent-themes block; absences that do not change angle assessment are not worth a line.]
 
 ## Who they know (connections relevant to campaign)
 
@@ -363,9 +375,7 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 
 ## Relevance assessment
 
-**What they have NOT said:** [Summary of absent themes and what this means for angle selection]
-
-**What IS relevant:** [Numbered list of relevance dimensions, with specific evidence for each]
+[Numbered list of relevance dimensions with specific evidence for each. If a campaign-relevant absence affects angle ordering, lead with that point; otherwise omit. Do not write a separate "What they have NOT said" header; the §5.0 style already prohibits paragraph-form negation.]
 
 ## Angles (ordered by fit)
 
