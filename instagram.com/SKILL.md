@@ -149,6 +149,24 @@ Workflow: comment-circle discovery promotes a commenter handle to a sweep candid
 
 The `comment_count_total` field in the response is the live count from this endpoint, which can differ from the cached count in the feed API. Treat the comments endpoint as authoritative.
 
+## 9. DM thread history reader (seen threads only)
+
+```bash
+python3 $HOME/.claude/skills/instagram.com/read-seen-thread.py thread <thread_id> [--limit N]
+python3 $HOME/.claude/skills/instagram.com/read-seen-thread.py by-handle <handle>   [--limit N]
+python3 $HOME/.claude/skills/instagram.com/read-seen-thread.py all-seen             [--limit N]
+```
+
+Fetches message history from a DM thread for P-phase use. Companion to §5: §5 enumerates inbox metadata without ever touching thread content; §9 reads thread content but only for threads the operator has already marked seen. The hyphen-delimited word "seen" in the filename is load-bearing, parallel to "noninvasive" in §5.
+
+The seen-only guarantee is enforced by calling the same `/api/v1/direct_v2/inbox/` endpoint §5 uses to check the thread's unread status BEFORE issuing any thread-content fetch. If `marked_as_unread` is true OR the viewer's `last_seen_at[viewer_id].timestamp` is older than `last_activity_at`, the script refuses with a structured error and never makes the thread-content call. The defensive `Fetch.enable` block list for seen-mutation URL patterns is also armed.
+
+Per-message output includes `is_from_viewer` (whether the message is from the operator's side or the other party), `timestamp_iso`, normalised `text` (with bracketed type labels for `[shared post]`, `[reel-share]`, `[action]`, `[media]`, `[link]`, `[disappearing media]`, etc.), `item_type`, and `item_id`.
+
+Verified 2026-05-12 against the live inbox: refusal path correctly skipped a thread carrying `marked_as_unread: true`; success path returned 9 messages across both directions from a seen thread. After both runs, the previously-unread thread was confirmed still unread by re-running §5, proving the gate did not leak a thread-content fetch onto the refused thread.
+
+`all-seen` is the batch primitive for P: enumerate every thread in the current inbox, return parsed messages for the seen ones, and emit a separate `refused` list noting which threads were skipped and why. Useful when profiling many contacts in one pass.
+
 ## What this skill does NOT do (by design)
 
 - It does not scrape individual post captions in bulk by opening each permalink. Recent post captions arrive via the feed API in §6; for older posts beyond pagination depth, a permalink fetch would be needed.
