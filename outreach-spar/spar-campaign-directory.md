@@ -4,41 +4,59 @@
 
 **Prerequisite reading:** `spar-methodology.md`, `spar-campaign-yaml.md`
 
-## Standard layout
+## Layouts
+
+A repository may host one campaign or several. Both cases use the same shape: a campaign YAML names segments by bare directory name, and each segment directory carries the segment's roster, segment definition, profile documents, and communications log. The relation between campaigns and segments is many-to-many (see `spar-methodology.md`, "Campaigns and segments").
+
+### Multi-campaign layout (segments shared across campaigns)
+
+When a repository hosts several campaigns that share segments, the campaign YAML files and the segment directories sit as siblings at one repository level:
 
 ```
-campaign-root/
-  campaign.yaml                   # campaign definition (schema: spar-campaign-yaml.md)
-  [campaign-principles.md]        # optional campaign-level rules (referenced by YAML)
-  {segment}/                      # one directory per segment
+campaigns-root/
+  campaign-{name-1}.yaml          # campaign definition (schema: spar-campaign-yaml.md)
+  campaign-{name-2}.yaml          # campaign definition
+  ...
+  {segment}/                      # one directory per segment, shared across campaigns
     roster.tsv                    # SPAR roster (schema: spar-roster-format.md)
-    segment.yaml                  # segment objective, USPs, first ask, conversion funnel (schema: segment-schema-proposal.yaml)
-    [profiles-summary.md]         # optional segment-level profile summary (lives here, NOT inside profiles/)
-    [comms-index.md]              # optional communication index (lives here, NOT inside approach/)
-    profiles/                     # SPAR-P profile documents ONLY — no summary or meta files
+    segment.yaml                  # segment objective and framing (schema: segment-schema-proposal.yaml)
+    [profiles-summary.md]         # optional segment-level profile summary
+    [comms-index.md]              # optional communication index
+    profiles/                     # SPAR-P profile documents, one per contact
       profile-{slug-name}-{slug-org}.md
-    approach/                     # SPAR-A approach files ONLY — no index or meta files
+    approach/                     # communications log per contact (name historical; see methodology)
       {stem}.yaml
 ```
 
-## Single-segment (flat) layout
+Each campaign YAML lists in its `segments:` field the segment directories it operates over. The same segment name may appear in the `segments:` list of more than one campaign YAML at this level. Path resolution is relative to the YAML file's directory, so segments are addressable by bare name.
 
-For small campaigns with one segment, set `segments: ["."]` in the campaign YAML. The roster, goal, profiles, and approach directories live directly in the campaign root alongside `campaign.yaml`:
+### Single-campaign layout
+
+When a repository hosts one campaign, the campaign YAML sits as a sibling of its segment directories:
+
+```
+campaign-root/
+  campaign.yaml
+  [campaign-principles.md]        # optional campaign-level rules (referenced by YAML)
+  {segment}/
+    roster.tsv
+    segment.yaml
+    profiles/
+    approach/
+```
+
+For a small campaign with only one segment, set `segments: ["."]` in the campaign YAML. The roster, segment definition, profiles, and communications log live directly in the campaign root alongside `campaign.yaml`:
 
 ```
 campaign-root/
   campaign.yaml
   roster.tsv
   segment.yaml
-  [profiles-summary.md]
-  [comms-index.md]
   profiles/
-    profile-{slug-name}-{slug-org}.md
   approach/
-    approach-{slug-name}-{slug-org}.md
 ```
 
-All batch scripts resolve `.` as the campaign root directory. When a campaign outgrows a single segment, create segment subdirectories, move the files, and update the `segments` list in the YAML. The segment file schema is defined in `segment-schema-proposal.yaml`.
+All batch scripts resolve `.` as the campaign root directory. When the campaign needs to address a second segment, list it in `segments:` and create the segment directory as a sibling. The segment file schema is defined in `segment-schema-proposal.yaml`.
 
 ## Conventions
 
@@ -69,6 +87,7 @@ The `usp_document` (organisation overview) and `antifacts` (fact-check document)
 - **Methodology documents** — live in `aesop/outreach-spar/`, not duplicated per campaign
 - **`README.md`** — the `campaign:` display-name field and the top-of-file banner comment in `campaign.yaml` already introduce the campaign for humans. A README duplicates that and drifts out of sync.
 - **Principles or policy prose that duplicates YAML content** — when you feel the pull to write a `goal-campaign-principles.md` or similar, first put the content into the campaign YAML's `prompt_appendices` block (`p_author`, `a_author`, `a_challenger`, `a_assembly`) or into the segment YAML's `discovery_criteria`. Those are the designed homes. The `campaign_principles:` path field is for content that genuinely cannot fit into the YAML — a long prose document, a principle set shared across multiple unrelated campaigns — not as a default container.
+- **Grouping parents around segments**: directories like `rosters/`, `segments/`, or any axis-named parent that wraps several segment directories under one node. Segments are addressable from the campaign YAML's directory by bare name; a wrapping parent breaks that addressing (the segment name no longer resolves) and implies a category layer the methodology does not model. If a classification of segments by role, axis, or industry is informative, record it as a tag inside the segment, not as a directory parent.
 
 ## Single source of truth — fact-to-home table
 
@@ -88,7 +107,7 @@ Every fact about the campaign has one authoritative home. Before creating any ne
 | Per-contact approach draft | `{segment}/approach/{stem}.yaml` |
 | Campaign intro for human readers | `campaign:` display-name field + top-of-file banner comment in `campaign.yaml` |
 
-**Pattern-matching warning.** An existing campaign in the repository may contain files that predate this guidance (for example `spar-campaigns/goal-campaign-principles.md`). Those are legacy; their existence is not a template for new campaigns. When the spec and a neighbouring example disagree, follow the spec.
+**Pattern-matching warning.** An existing repository may contain files or directories that predate or contradict this guidance: a legacy `spar-campaigns/goal-campaign-principles.md`, a wrapping `rosters/` parent over several segment directories, or other shapes the spec does not model. Their existence is not a template for new work. When the spec and a neighbouring example disagree, follow the spec. The failure mode this warning addresses is the next AI session inferring layout from what is on disk rather than from this document, then extending the unrecognised pattern further.
 
 ## Relationship to other documents
 
