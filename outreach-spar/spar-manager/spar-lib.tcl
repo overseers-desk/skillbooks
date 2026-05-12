@@ -531,8 +531,8 @@ proc spar::resolve_logs_dir {campaign_file phase datestamp user_logs} {
     set dir_slug [string map {/ -} \
         [file dirname [file normalize $campaign_file]]]
     set folder "${dir_slug}-${stem}-${phase}-${datestamp}"
-    if {[file isdirectory /var/local/logs/spar]} {
-        set logs_dir "/var/local/logs/spar/$folder"
+    if {[file isdirectory /var/local/log/spar]} {
+        set logs_dir "/var/local/log/spar/$folder"
     } else {
         set logs_dir "$::env(HOME)/logs/spar/$folder"
     }
