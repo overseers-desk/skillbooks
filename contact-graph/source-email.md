@@ -121,6 +121,6 @@ By Message-ID in the `email_message` table. The N-consecutive-seen stopping rule
 
 ## Addendum: email-derived outputs
 
-**AI tagger data source.** The AI tagger (described in plan.md as a generic component) gathers its input from this plugin: email subject lines and short snippets retrieved via mu. For each person node, it queries mu for messages involving that person's addresses and sends the results to a cost-effective model requesting industry, company, location, languages, and commonly co-occurring names.
+**AI tagger data source.** The AI tagger (described in mid-level-design.md as a generic component) gathers its input from this plugin: email subject lines and short snippets retrieved via mu. For each person node, it queries mu for messages involving that person's addresses and sends the results to a cost-effective model requesting industry, company, location, languages, and commonly co-occurring names.
 
 **~/.addressbook sync.** People with a known reachable email address who are marked as worth maintaining go into `~/.addressbook` (Alpine/pine 3-column TSV: `nickname\tFull Name\temail`). A convenience output derived from this plugin's data, not the primary purpose of the system.
