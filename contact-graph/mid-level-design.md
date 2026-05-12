@@ -1,35 +1,6 @@
-# Contact Graph
+# Contact graph: design details
 
-## What this is
-
-A personal relationship operating system built from communication history and external profile data. It stores a graph of people, projects, and topics with edges between them, and uses an AI layer to do the associative reasoning that human memory does unreliably at scale.
-
-The substrate is a PostgreSQL graph whose nodes are people, projects, and topics, and whose edges record that two things are connected, when, and in what context. The value compounds as the graph grows: the richer the node profiles, the more associations the AI can surface.
-
----
-
-## Problems this structure can solve
-
-**1. Associative discovery**
-You are working on tourism development and a name surfaces in your head. The system externalises that association: given a topic you are currently focused on, it surfaces people in your network whose profiles overlap with it — people you may not have thought of. The Argentine artist you met at Rivermill who mentioned rural creative economies is linked to the topic node; when you open a tourism project, her name surfaces alongside others.
-
-**2. Introduction brokering**
-Two people in your network share a context that neither knows about — they both worked in the same industry, they are both now in the same city, they have both discussed the same problem with you. You are the natural broker. The graph surfaces the opportunity; you decide whether to act.
-
-**3. Context before interaction**
-Before speaking to someone, the graph assembles what is known: shared projects, topics discussed, how long since last contact, who initiated, what has changed in their life since. This converts a cold outreach into an informed one.
-
-**4. Network gap analysis**
-The graph answers not only "who do I know in X" but "what domains am I building things in where I have no strong connections." A gap in your network is as actionable as a strong connection.
-
-**5. Project-to-people diffusion**
-When a project reaches a milestone or changes direction, the graph answers "who should know about this" — not only direct collaborators but people in your network for whom the development is relevant even if they are not involved.
-
-**6. Event-triggered reconnection**
-A LinkedIn post reveals that someone moved country, changed industry, or started a new venture. That change creates a natural opener that did not exist yesterday. The graph monitors external signals and generates the reason to reach out rather than leaving it to you to notice.
-
-**7. Relationship decay prompting** (the original problem)
-For relationships that have gone quiet, a spaced-recall scheduler surfaces the right person at the right time before the relationship fully lapses. This is one application of the graph, not the only one.
+Mid-level technical design for the contact graph. The high-level framing (what this is for, what consumers query it, where the boundaries are) lives in [high-level-design.md](high-level-design.md). This document covers the data model, components, database schema, and open operational questions.
 
 ---
 
@@ -50,9 +21,9 @@ Profile is built incrementally: source plugins give identifiers and display name
 
 Two kinds:
 
-**Internal ↔ external edges** (primary): directed. An internal human initiated contact with an external, or vice versa. The ratio reveals who initiates. Edge weight is interaction count plus timestamps (first seen, last seen). Not all sources produce directed edges — sources without a sender/recipient distinction contribute only coappearance edges.
+**Internal ↔ external edges** (primary): directed. An internal human initiated contact with an external, or vice versa. The ratio reveals who initiates. Edge weight is interaction count plus timestamps (first seen, last seen). Not all sources produce directed edges; sources without a sender/recipient distinction contribute only coappearance edges.
 
-**Person ↔ person edges** (secondary): when two non-internal people appear together on an item, they have a co-appearance edge. This enables "do A and B already know each other" before making an introduction, and surfaces mutual connections for the Argentine artist case.
+**Person ↔ person edges** (secondary): when two non-internal people appear together on an item, they have a co-appearance edge. This enables "do A and B already know each other" before making an introduction.
 
 ### Topic nodes
 
@@ -60,11 +31,7 @@ Topics are first-class nodes, not tags on people. A person has edges to topics t
 
 ### Project nodes
 
-Projects (Rivermill, SmartTokenLabs, a new initiative) are nodes with edges to the people and topics they connect to. When a project moves, querying its connected people gives the diffusion list.
-
-### Events (timestamped facts)
-
-Life changes are stored as timestamped facts on person nodes, not as overwritten state. "Moved from Argentina to US, April 2026" persists alongside "living in Buenos Aires, 2024." The history is part of the reasoning substrate.
+Projects are nodes with edges to the people and topics they connect to. When a project moves, querying its connected people gives the diffusion list.
 
 ---
 
@@ -74,15 +41,15 @@ Life changes are stored as timestamped facts on person nodes, not as overwritten
 
 Each source plugin runs two kinds of work against its upstream store.
 
-**Ingest** — pull structured metadata from the upstream source into the plugin's owned tables. No model calls, no body reading, no reasoning. Cheap enough to re-run on every new item; idempotent on the item's stable id. The email plugin's ingest reads mu headers; the meeting plugin's ingest reads the meeting file's frontmatter.
+**Ingest**: pull structured metadata from the upstream source into the plugin's owned tables. No model calls, no body reading, no reasoning. Cheap enough to re-run on every new item; idempotent on the item's stable id. The email plugin's ingest reads mu headers; the meeting plugin's ingest reads the meeting file's frontmatter.
 
-**Extract** — read the body/content of an item and call a model to produce structured entities. Expensive, budget-controlled, runs on its own schedule. Writes to `item_entity`.
+**Extract**: read the body/content of an item and call a model to produce structured entities. Expensive, budget-controlled, runs on its own schedule. Writes to `item_entity`.
 
 Ingest is fast and precedes extract; an item must be ingested before it can be extracted. The two are separate scripts on separate schedules because their cost and cadence differ by two orders of magnitude.
 
 ### 1. Source plugins (ingest + incremental update)
 
-Two plugins ship from the start: email and knowledge-capture (meeting notes). Additional sources — LinkedIn messages, calendar, SMS — can be added later following the same structure. Each plugin is fully specified in its own document: [source-email.md](source-email.md) and [source-meeting.md](source-meeting.md).
+Two plugins ship from the start: email and knowledge-capture (meeting notes). Additional sources (LinkedIn messages, calendar, SMS) can be added later following the same structure. Each plugin is fully specified in its own document: [source-email.md](source-email.md) and [source-meeting.md](source-meeting.md).
 
 A source is anything with a stable per-item id that the graph can consume. Each plugin writes participants to its own prefixed table (`email_thread_participant` for email, `meeting_participant` for meetings) after identity resolution. The `edge` and `coappearance` views union across plugin participant tables; whether edges are directed or undirected depends on the participant roles the source provides.
 
@@ -113,7 +80,7 @@ Given a topic, project, or person as input, queries the graph and passes the res
 - Natural openers (based on events or shared context)
 - Network gaps
 
-This is not a scheduled job but an on-demand tool — something you invoke when starting a new project, preparing for a meeting, or when a name surfaces in your head and you want to know what the graph knows about them.
+This is not a scheduled job but an on-demand tool, invoked when starting a new project, preparing for a meeting, or when a name surfaces in your head and you want to know what the graph knows about them.
 
 ### 5. Decay scheduler (original feature)
 
@@ -127,7 +94,7 @@ Database: `contact_graph` on the local PostgreSQL instance.
 
 | Table | Relationship / purpose | Fields |
 |---|---|---|
-| **human** | one row per real human; `internal` flags Rivermill team members and household | id, display_name, linkedin_url, internal, notes |
+| **human** | one row per real human; `internal` flags operator-side humans (self, household, team) | id, display_name, linkedin_url, internal, notes |
 | **organisation** | canonical organisation node; created when a new org name appears in role or item_entity resolution | id, name, notes |
 | **role** | a human holds a role at an organisation; the role owns its email address | id, human_id, organisation_id (FK→organisation), title, email_address_id |
 | **meeting_participant** | meeting plugin participant log; one row per attendee per meeting item; source for coappearance and edge views for meeting items | source_kind, external_item_id, identifier_ref, role |
@@ -142,15 +109,14 @@ Database: `contact_graph` on the local PostgreSQL instance.
 | **linkedin_snapshot** | versioned profile captures; source of truth from which contact_events are derived | id, human_id, scraped_at, url, headline, location, summary |
 | **human_event** | timestamped life-change facts derived from snapshot diffs | human_id, event_type, description, source_snapshot_id, event_date |
 | **linkedin_connection** | second-degree edges from profile browsing; human_id nullable for unresolved nodes | human_id_a, linkedin_url_a, human_id_b, linkedin_url_b, discovered_via_human_id, scraped_at |
-| **processing_queue** | unified job queue for AI tagging and LinkedIn enrichment; rebuilt in priority order (by edge count desc) after each ingest run so insertion order encodes priority — no stored score needed | human_id, job_type (tag/linkedin), queued_at, processed_at, model_used |
+| **processing_queue** | unified job queue for AI tagging and LinkedIn enrichment; rebuilt in priority order (by edge count desc) after each ingest run so insertion order encodes priority; no stored score needed | human_id, job_type (tag/linkedin), queued_at, processed_at, model_used |
 | **reconnect_schedule** | computed next-prompt date per human; decay score not stored, computed on demand | human_id, next_prompt_date, last_prompted_at, computed_at |
 
 ---
 
 ## Open questions
 
-- What is the spacing formula for the decay scheduler? Needs tuning against real data.
-- What triggers the daily decay prompt — cron, morning aesop run, or MCP tool?
+- What triggers the daily decay prompt: cron, morning aesop run, or MCP tool?
 - How are topic nodes created and merged? Free-form tags from AI will drift; needs a normalisation pass.
 - How is identity resolution triggered? Name similarity plus domain patterns as a starting heuristic, confirmed manually or via LinkedIn.
 - At what scale should streaming replication be configured? The schema is replication-ready (all tables have primary keys); the decision is operational, not structural.
