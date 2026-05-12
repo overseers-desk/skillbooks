@@ -17,7 +17,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 
 ## 3. Output
 
-A markdown file named `{stem}.md` in the campaign's `profiles/` directory, where `{stem}` is the roster row's `stem` column value. The file opens with a YAML front-matter block carrying machine-read fields, followed by a markdown body. Structure defined in §5.
+A markdown file named `{stem}.md` in the segment's `profiles/` directory, where `{stem}` is the roster row's `stem` column value. The file opens with a YAML front-matter block carrying machine-read fields, followed by a markdown body. Structure defined in §5.
 
 Additionally, P produces:
 - **Roster updates:** If the target's role, organisation, or contact details have changed or were missing and are now known, update the roster entry directly (see §4.15).
@@ -219,7 +219,7 @@ From LinkedIn posts (names mentioned or tagged), profile connections visible in 
 
 This is where the "network / connection value" angle is assessed. A target may have said nothing about the campaign's technical themes but may know people and communities the campaign needs to reach. The connections table is evidence for this angle. Connection value requires specific, named paths — "500+ connections" or any raw count is not evidence. What qualifies is a visible relationship to a named community, organisation, or person the campaign needs to reach.
 
-**Cross-reference people already in the system.** For each surfaced name, grep the campaign's profiles directory and roster before continuing:
+**Cross-reference people already in the system.** For each surfaced name, grep the segment's profiles directory and roster before continuing:
 
 ```bash
 grep -ril "PERSON NAME" /path/to/profiles/ /path/to/roster.tsv
