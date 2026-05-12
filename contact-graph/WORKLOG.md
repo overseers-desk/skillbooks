@@ -478,3 +478,82 @@ This deliverable is reusable across TEND, SPAR, reporting. It is not TEND work.
 |---|---|
 | `contact-graph/WORKLOG.md` | This entry |
 | `correspondence-tend/WORKLOG.md` | Created — TEND-side findings from the same probe |
+
+---
+
+## Session 8 — Concurrent head+tail extraction (2026-04-26)
+
+### `--tail` flag
+
+`build_work_queue()` gained a `tail: bool` parameter (committed 04-25 as `47c7fc8`). When set, the queue orders `last_message_at ASC` instead of the default `priority_score DESC, last_message_at DESC`. This enables the head/tail concurrent worker pattern described in source-email.md §3 line 23, which session 6's implementation left unbuilt. A second process launched with `--tail` walks oldest threads first while the default head process continues consuming priority/recent threads. The per-thread advisory lock already in `process_thread()` (`pg_try_advisory_lock(hashtext(thread_id))`) prevents collision when the two queues converge.
+
+### Pre-launch cleanup
+
+Deleted 272 `error` rows from `email_extraction_log` left over from the 04-20 cascade. Without this step those messages would have remained tomb-stoned (see "Tomb-stoning hazard" below). This is the same cleanup that ran before the brief 04-25 test.
+
+### Run
+
+Two processes launched 2026-04-26 00:42, 3 workers each (6 total). No budget cap. Self-paced monitoring via `ScheduleWakeup` at 60-minute cadence.
+
+The first 9.5 hours were clean. Sustained throughput across hours 1–9 was ~865 messages logged per hour (sum of `done` + `empty` + `skipped` deltas). Five isolated single-message Claude timeouts and one batch-parse fallback in that window, all handled as `empty`. Normal background noise.
+
+### Cascade
+
+First `Rate limit persists after backoff` error logged at 10:05:09 (tail process), 9h 23m after launch. The hourly check scheduled for 10:52 did not appear in the conversation (reason not investigated). The cascade continued unattended for ~11 hours until the user asked for status at 21:10. By then:
+
+- 9,183 batches tomb-stoned with `status='error'`
+- Backoff had escalated to the script's 900s ceiling and stayed there. Last three "All workers pausing for 900s" warnings at 20:25, 20:40, 20:55, no recovery
+- Forward progress in the 10 minutes between the user-prompted check at 21:00 and the kill at 21:10 was ~13 messages
+
+Both processes killed at user direction.
+
+### Final delta vs 00:42 baseline
+
+| metric | baseline | final | Δ |
+|---|---:|---:|---:|
+| done | 11,063 | 19,229 | +8,166 |
+| empty | 3,648 | 7,100 | +3,452 |
+| skipped | 291 | 1,454 | +1,163 |
+| error | 0 | 9,183 | +9,183 |
+| entities | 42,453 | 70,943 | +28,490 |
+| unextracted | 257,402 | 235,438 | −21,964 |
+
+Total messages logged in the run: 21,964 (12,781 useful + 9,183 tombed).
+
+### Worker-count observation
+
+The 04-20 cascade was a 4-worker single-process run. This session was 6 workers across two processes and reached the same cascade ceiling. So lowering workers (the 04-25 instinct that informed today's 3+3) did not avert the wall. The constraint is the account-wide rate budget, not the local concurrency. Worker count affects how fast the wall is reached, not whether it is hit on a multi-hour run.
+
+### Tomb-stoning hazard
+
+The queue filter is `WHERE NOT EXISTS (SELECT 1 FROM email_extraction_log el WHERE el.message_id = em.message_id)`. Any row in `email_extraction_log`, regardless of status, removes a message from the queue forever (until a human deletes the row).
+
+When a batch hits the backoff ceiling, the script writes a row with `status='error'`. This conflates two different failure modes into one status:
+
+- **Semantic failure**: the message body is unparseable, the AI returned malformed output that did not recover, or there is some other property of the message itself that caused the failure. Re-running this on a quiet day will fail the same way.
+- **Transient infrastructure failure**: rate limit, network error, Claude CLI subprocess crash. The message itself is fine; the run's context was bad.
+
+Both end up in the `error` bucket, and both are filtered out of every future queue. The 9,183 rows from this run are all transient: the rate-limit cascade had nothing to do with the messages' content. They are now invisible to the script and will stay so until a `DELETE FROM email_extraction_log WHERE status='error'` is run. The same hand cleanup happened before the 04-25 test (272 rows) and before this session.
+
+Two cascades' worth of evidence now points at the same hazard: a transient infrastructure event silently disqualifies thousands of messages from future processing. There is no marker on the row that says "transient, retry me" vs "permanent, leave me alone."
+
+Possible fixes for a future session:
+
+1. **Do not write rows for transient errors**: leave the message unlogged. Loses the audit trail.
+2. **Separate status**: `error_transient` vs `error_permanent`. Queue builder filters only `error_permanent`. One schema column, one filter change.
+3. **Time-bounded retry**: `error` rows older than N hours re-enter the queue. Introduces silent retries.
+
+Option 2 keeps the audit trail and surfaces clearly in queries.
+
+### What this session did not do
+
+- Did not delete the 9,183 `error` rows. The cleanup is the gating action before any next run and is left to the user.
+- Did not implement the `error_transient` schema change. Reporting the hazard, not fixing it.
+- Did not investigate whether the underlying rate-limit budget can be raised or whether the `claude -p` ~55k-token system-context overhead (noted in session 6) can be lowered.
+
+### Files modified
+
+| File | Change |
+|---|---|
+| `contact-graph/extract_email_entities.py` | `--tail` flag (committed 04-25 as 47c7fc8) |
+| `contact-graph/WORKLOG.md` | This entry |
