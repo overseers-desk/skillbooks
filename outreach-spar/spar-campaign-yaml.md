@@ -18,7 +18,7 @@ One file per campaign, in the campaign root directory. Named `campaign.yaml` or 
 | `sender.email` | string | Sender's email address (used as From: address) |
 | `usp_document` | path | Path to the organisation overview / USP document. Relative to the YAML file's directory. This is the ground truth about the organisation that A1 reads before drafting. |
 | `language` | string | Language code: `en-gb`, `en-au`, `en`, or a BCP-47 code |
-| `segments` | list of strings | Segment directory names to include in batch processing. Use `.` for a single-segment campaign where roster and segment.yaml live in the campaign root (see `spar-campaign-directory.md`). |
+| `segments` | list of strings | Segment directory names this campaign operates over. Names resolve to sibling directories of this YAML file (path resolution is relative to the YAML's directory). The same segment name may appear in the `segments:` list of more than one campaign YAML at the same level: segments are not owned by any one campaign (see `spar-methodology.md`, "Campaigns and segments"). Use `.` for a single-segment campaign where roster and segment.yaml live in the campaign root (see `spar-campaign-directory.md`). |
 | `approach_filename` | string | Template for approach filenames. Variables: `{slug_name}`, `{slug_org}`, `{star}`. Example: `approach-{slug_name}-{slug_org}.md` |
 | `usps` | map | USP registry: maps each USP identifier to its human-readable label. This is the single source of truth for USP names. Segment files reference USPs by `id`; the label is resolved from this registry. The full USP prose lives in the `usp_document`. |
 
