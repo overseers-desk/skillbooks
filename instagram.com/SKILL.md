@@ -125,8 +125,32 @@ This is single-level expansion. For "spider" behaviour (recursively expanding), 
 
 Default `--posts-per-handle` is 24 (about two pages). Pacing: roughly one feed page every 2 seconds, plus a 2-second gap between input handles. A run over 5 input handles at 24 posts each takes about a minute.
 
+## 8. Post comments (for comment-circle discovery)
+
+```bash
+python3 $HOME/.claude/skills/instagram.com/fetch-post-comments.py comments SHORTCODE
+python3 $HOME/.claude/skills/instagram.com/fetch-post-comments.py comments POST_ID
+```
+
+Accepts a shortcode (e.g. `DXsPrn5AvNH`), a full post_id from the feed API (`<media_id>_<user_id>`), or a bare numeric `media_id`. Shortcode-to-media-id conversion is a local base64 decode, so no extra fetch is needed to resolve. Calls `/api/v1/media/<media_id>/comments/` via fetch() inside the authenticated session.
+
+Returns first-page comments only (typically 20-50, occasionally 1-2 if the post is lightly engaged or moderated). The first page is most-recent and has the highest signal for creator-on-creator engagement; older comments add noise. Pagination via `min_id` cursor can be added later if comment-circle yield proves insufficient.
+
+Each comment row carries the four free significance signals:
+
+- `is_verified` — Instagram's platinum-tier flag. Catches public-figure-tier accounts. Misses the meaty mid-tier creator case where neither party is verified.
+- `has_default_avatar` — `true` when the user has not uploaded a profile picture (heuristic; checks for known default-avatar URL fragments and the API's `has_anonymous_profile_picture` flag). Throwaway accounts almost always have a default avatar.
+- `text_length_words` — word count of the comment. A creator engaging another creator usually writes more than one word; a fan drops "❤️🔥".
+- `comment_like_count` — likes on the comment itself. Weak but free signal.
+
+Plus `username`, `full_name`, `text`, `created_at`, `comment_id`.
+
+Workflow: comment-circle discovery promotes a commenter handle to a sweep candidate only if at least one of (`is_verified`, `text_length_words >= 3`, `has_default_avatar == false`) holds. This drops 80 to 95 percent of typical commenter sets before any profile fetch happens. Surviving handles enter the standard sweep pipeline (parse-profile then fetch-recent-posts), so the per-commenter profile fetch is just sweep doing its normal work, not a dedicated enumeration job. Instagram does not distinguish the request pattern.
+
+The `comment_count_total` field in the response is the live count from this endpoint, which can differ from the cached count in the feed API. Treat the comments endpoint as authoritative.
+
 ## What this skill does NOT do (by design)
 
-- It does not scrape individual post captions, comments, or likes. The profile page does not render post bodies in a headless dump — those come from separate GraphQL calls. If that is needed, add a step that fetches individual post permalinks (`/p/SHORTCODE/`), which do server-render caption and alt text, and parse them separately.
+- It does not scrape individual post captions in bulk by opening each permalink. Recent post captions arrive via the feed API in §6; for older posts beyond pagination depth, a permalink fetch would be needed.
 - It does not handle hashtag or place pages, only people search and profiles. The topsearch endpoint already returns hashtags and places for discovery; dedicated pages would be a separate addition.
-- It does not attempt to defeat rate limits or checkpoints. Pace requests — a few per minute, not a burst.
+- It does not attempt to defeat rate limits or checkpoints. Pace requests, a few per minute, not a burst.
