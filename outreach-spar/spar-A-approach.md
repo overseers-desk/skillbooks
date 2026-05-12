@@ -18,7 +18,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 
 ## 3. Outputs
 
-- **Approach file:** `{id}-{slug}.yaml` in the campaign's approach directory, following the structure shown in §6. The ID uses a segment prefix and sequential number (e.g. `TOR-001-peter-myers-pineapple-tours.yaml`). Contains the angle selection rationale, all A1/A2 drafts and responses, chosen USP identifiers per round, and the final send-ready messages.
+- **Approach file:** `{id}-{slug}.yaml` in the segment's `approach/` directory (the contact's communications log; the directory name is historical, see `spar-methodology.md`). The structure is shown in §6. The ID uses a segment prefix and sequential number (e.g. `TOR-001-peter-myers-pineapple-tours.yaml`). Contains the angle selection rationale, all A1/A2 drafts and responses, chosen USP identifiers per round, and the final send-ready messages.
 - **Communication index entry:** One line appended to `comms-index.md`: contact name, organisation, segment, angle used, key relationship hooks, channel selection.
 - **Roster update:** Populate the `a_note` column with: angle used, channel selected, warmth level, language, and any notable drafting consideration.
 
@@ -299,7 +299,7 @@ rounds:
 
 Omit `subject`/`to` from the message when `mode: reply` is set — T3 derives them. `reply_all: true` preserves the original Cc set (minus the chosen sender's own address); `reply_all: false` (default) replies to the parent's From only.
 
-The file ID uses a segment prefix and sequential number: `TOR-001-peter-myers.yaml`. Place it in the campaign's approach directory.
+The file ID uses a segment prefix and sequential number: `TOR-001-peter-myers.yaml`. Place it in the segment's `approach/` directory.
 
 ## 7. Quality checklist
 
