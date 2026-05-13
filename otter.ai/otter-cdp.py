@@ -218,6 +218,16 @@ def cmd_list(ws, args):
 def cmd_rename(ws, args):
     otid = args.otid
     title = args.new_title
+    warning = None
+    if not title.endswith(".txt"):
+        warning = (
+            f"Title {title!r} does not end in '.txt'. Project convention is "
+            "YYYY-MM-DD-kebab-case-description.txt; transcripts are picked up "
+            "downstream by their .txt suffix, so a non-.txt title means the "
+            "next rename pass will see this recording as still-unnamed and "
+            "rename it again (not idempotent)."
+        )
+        sys.stderr.write(f"Warning: {warning}\n")
     js = f"""
     (async () => {{
         const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
@@ -233,7 +243,13 @@ def cmd_rename(ws, args):
         return await resp.text();
     }})()
     """
-    return eval_js(ws, js)
+    result = eval_js(ws, js)
+    if warning:
+        if isinstance(result, dict):
+            result["warning"] = warning
+        else:
+            result = {"result": result, "warning": warning}
+    return result
 
 def _get_dropbox_id_js():
     """JS snippet that fetches the Dropbox account ID from synced_accounts."""
