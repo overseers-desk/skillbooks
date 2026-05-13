@@ -1,7 +1,7 @@
 ---
 name: otter.ai
-description: "Otter.ai recordings: list, rename, delete, export; transcripts and content management."
-argument-hint: <list | rename | delete | export-dropbox | fetch-via-dropbox | dropbox-status>
+description: "Otter.ai recordings: list, rename, trash, export; transcripts and content management."
+argument-hint: <list | rename | trash | export-dropbox | fetch-via-dropbox | dropbox-status>
 allowed-tools: Bash, Read
 ---
 
@@ -42,15 +42,17 @@ The `otid` is the recording identifier from the list command or from an otter.ai
 
 **Naming convention:** titles follow `YYYY-MM-DD-kebab-case-description.txt`. When the user provides a natural-language phrase, convert it to this format before issuing the rename command.
 
-### 3. Delete a recording
+### 3. Move a recording to Trash
 
 ```bash
-python3 $HOME/.claude/skills/otter.ai/otter-cdp.py delete <otid>
+python3 $HOME/.claude/skills/otter.ai/otter-cdp.py trash <otid>
 ```
 
-Returns `{"status": "OK", "speech_ids": [...], "otids": [<otid>]}` on success. The recording disappears from the active list (subsequent `list` calls will not show it).
+Moves the recording to Otter Trash, the same action as the web UI's "Move to Trash" button. The recording is recoverable from the Trash folder in the web UI for approximately 30 days, then permanently removed by Otter.
 
-This is the destructive end-of-pipeline action: use only after the transcript has been captured, corrected, and committed elsewhere. There is no built-in undo; recoverability via the Otter.ai web UI Trash folder is not verified by this skill.
+Use this as the end-of-pipeline action once the transcript has been captured, corrected, and committed elsewhere.
+
+**There is deliberately no hard-delete subcommand.** Otter's permanent-delete endpoints (`delete_speech`, `permanently_delete_speech`, `bulk_delete_speech`) bypass Trash and are unrecoverable. Their names are easy to misread as soft-delete; on 2026-05-13 a real recording was lost this way. If you genuinely need permanent deletion, do it from the Otter web UI where the consequence is explicit. Do not add a `delete` subcommand back without a strong reason and a confirmation prompt.
 
 ### 4. Export to Dropbox
 
@@ -100,7 +102,7 @@ No Selenium needed. The browser is terminated after each invocation.
 |---|---|---|---|
 | List speeches | GET | `/forward/api/v1/speeches` | session cookie + x-csrftoken |
 | Rename | POST | `/forward/api/v1/set_speech_title` | session cookie + x-csrftoken |
-| Delete | POST | `/forward/api/v1/delete_speech` | session cookie + x-csrftoken |
+| Trash (recoverable) | POST | `/forward/api/v1/move_to_trash_bin` (form body `otid=`) | session cookie + x-csrftoken |
 | Export TXT to Dropbox | POST | `/forward/api/v1/dropbox_speech_txt` | session cookie + x-csrftoken |
 | Export PDF to Dropbox | POST | `/forward/api/v1/dropbox_speech_pdf` | session cookie + x-csrftoken |
 | Export DOCX to Dropbox | POST | `/forward/api/v1/dropbox_speech_word` | session cookie + x-csrftoken |

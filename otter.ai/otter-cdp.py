@@ -9,10 +9,15 @@ fetch() calls against the Otter.ai internal API. Returns JSON results to stdout.
 Usage:
     python3 otter-cdp.py list [--page-size N] [--last-load-ts TS]
     python3 otter-cdp.py rename <otid> <new_title>
-    python3 otter-cdp.py delete <otid>
+    python3 otter-cdp.py trash <otid>
     python3 otter-cdp.py export-dropbox <otid> [--format txt|pdf|docx|srt]
     python3 otter-cdp.py fetch-via-dropbox <otid> [--timeout N] [--extended-timeout N]
     python3 otter-cdp.py dropbox-status
+
+Note: `trash` moves the recording to Otter Trash (recoverable via the web UI for
+~30 days). There is deliberately no `delete` subcommand: Otter's delete_speech /
+permanently_delete_speech endpoints are unrecoverable and easy to misname. If
+you really need permanent deletion, do it from the Otter web UI.
 """
 
 import argparse
@@ -252,20 +257,52 @@ def cmd_rename(ws, args):
             result = {"result": result, "warning": warning}
     return result
 
-def cmd_delete(ws, args):
-    """Delete a recording from Otter.ai. Returns {"status": "OK", "speech_ids": [...], "otids": [...]}.
+# =============================================================================
+# DANGER: do not call /forward/api/v1/delete_speech (or permanently_delete_speech,
+# bulk_delete_speech). They are HARD DELETES that bypass Otter Trash and are
+# unrecoverable, even though their names sound like "move to recycle bin" from
+# UI vocabulary. The UI's "Move to Trash" button calls move_to_trash_bin, which
+# IS recoverable from Trash for ~30 days. This skill only exposes the
+# move_to_trash_bin variant. A 2026-05-13 incident lost a real recording to
+# delete_speech because the name was assumed to mean soft-delete; the lesson is
+# that destructive endpoints in Otter's API are differentiated only by the
+# token "permanently" or by belonging to a *_trash_bin family. When in doubt,
+# pick the *_trash_bin one.
+#
+# Endpoint family observed in main.<hash>.js bundle (Speech*-prefixed registry):
+#   SpeechMoveToTrashBin        -> move_to_trash_bin           [SAFE: recoverable]
+#   SpeechBulkMoveToTrashBin    -> bulk_to_trash_bin           [SAFE: recoverable]
+#   SpeechMoveOutTrashBin       -> move_back_from_trash_bin    [SAFE: restore]
+#   SpeechBulkMoveOutTrashBin   -> bulk_back_from_trash_bin    [SAFE: restore]
+#   SpeechListTrashBin          -> get_deleted_speeches        [SAFE: read]
+#   SpeechClearTrashBin         -> clear_trash_bin             [DANGER: empties trash]
+#   SpeechPermanentlyDelete     -> permanently_delete_speech   [DANGER: hard]
+#   SpeechBulkPermanentlyDelete -> bulk_delete_speech          [DANGER: hard]
+#   SpeechDelete                -> delete_speech               [DANGER: hard, named misleadingly]
+# =============================================================================
 
-    Endpoint discovered by probe 2026-05-13: POST /forward/api/v1/delete_speech?otid=<otid>
+def cmd_trash(ws, args):
+    """Move a recording to Otter Trash (recoverable from the web UI for ~30 days).
+
+    Calls POST /forward/api/v1/move_to_trash_bin with `otid=<otid>` as a form body.
+    Returns the JSON response from Otter on success, {"error": ...} otherwise.
+
+    Do NOT switch this to /forward/api/v1/delete_speech: that endpoint is a hard
+    delete that bypasses Trash. See the header comment above this function.
     """
     otid = args.otid
     js = f"""
     (async () => {{
         const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
-        const params = new URLSearchParams({{otid: {json.dumps(otid)}}});
-        const resp = await fetch('/forward/api/v1/delete_speech?' + params.toString(), {{
+        const body = 'otid=' + encodeURIComponent({json.dumps(otid)});
+        const resp = await fetch('/forward/api/v1/move_to_trash_bin', {{
             method: 'POST',
             credentials: 'include',
-            headers: {{'x-csrftoken': csrf}}
+            headers: {{
+                'x-csrftoken': csrf,
+                'content-type': 'application/x-www-form-urlencoded',
+            }},
+            body,
         }});
         const text = await resp.text();
         return JSON.stringify({{status_code: resp.status, body: text}});
@@ -277,7 +314,7 @@ def cmd_delete(ws, args):
     status_code = raw.get("status_code") if isinstance(raw, dict) else None
     body = raw.get("body", "") if isinstance(raw, dict) else ""
     if status_code != 200:
-        return {"error": f"delete_speech returned HTTP {status_code}", "body": body[:300]}
+        return {"error": f"move_to_trash_bin returned HTTP {status_code}", "body": body[:300]}
     try:
         return json.loads(body)
     except json.JSONDecodeError:
@@ -512,8 +549,8 @@ def main():
     p_rename.add_argument("otid")
     p_rename.add_argument("new_title")
 
-    p_delete = sub.add_parser("delete")
-    p_delete.add_argument("otid")
+    p_trash = sub.add_parser("trash", help="Move recording to Otter Trash (recoverable for ~30 days). No hard-delete subcommand is exposed; see file header.")
+    p_trash.add_argument("otid")
 
     p_export = sub.add_parser("export-dropbox")
     p_export.add_argument("otid")
@@ -549,7 +586,7 @@ def main():
         commands = {
             "list": cmd_list,
             "rename": cmd_rename,
-            "delete": cmd_delete,
+            "trash": cmd_trash,
             "export-dropbox": cmd_export_dropbox,
             "fetch-via-dropbox": cmd_fetch_via_dropbox,
             "dropbox-status": cmd_dropbox_status,
