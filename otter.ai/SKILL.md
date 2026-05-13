@@ -1,7 +1,7 @@
 ---
 name: otter.ai
-description: "Otter.ai recordings: list, rename, export; transcripts and content management."
-argument-hint: <list | rename | export-dropbox | fetch-via-dropbox | dropbox-status>
+description: "Otter.ai recordings: list, rename, delete, export; transcripts and content management."
+argument-hint: <list | rename | delete | export-dropbox | fetch-via-dropbox | dropbox-status>
 allowed-tools: Bash, Read
 ---
 
@@ -42,7 +42,17 @@ The `otid` is the recording identifier from the list command or from an otter.ai
 
 **Naming convention:** titles follow `YYYY-MM-DD-kebab-case-description.txt`. When the user provides a natural-language phrase, convert it to this format before issuing the rename command.
 
-### 3. Export to Dropbox
+### 3. Delete a recording
+
+```bash
+python3 $HOME/.claude/skills/otter.ai/otter-cdp.py delete <otid>
+```
+
+Returns `{"status": "OK", "speech_ids": [...], "otids": [<otid>]}` on success. The recording disappears from the active list (subsequent `list` calls will not show it).
+
+This is the destructive end-of-pipeline action: use only after the transcript has been captured, corrected, and committed elsewhere. There is no built-in undo; recoverability via the Otter.ai web UI Trash folder is not verified by this skill.
+
+### 4. Export to Dropbox
 
 ```bash
 python3 $HOME/.claude/skills/otter.ai/otter-cdp.py export-dropbox <otid> [--format txt|pdf|docx|srt]
@@ -52,7 +62,7 @@ Exports the recording to the user's connected Dropbox. Default format is `txt`.
 
 Returns `{"status": "OK", "failed_speeches": []}` on success.
 
-### 4. Fetch a recording via Dropbox round-trip
+### 5. Fetch a recording via Dropbox round-trip
 
 ```bash
 python3 $HOME/.claude/skills/otter.ai/otter-cdp.py fetch-via-dropbox <otid> [--timeout 60] [--extended-timeout 120]
@@ -66,7 +76,7 @@ Returns `{"otid", "dropbox_filename", "content"}` on success. Errors include `Ti
 
 Requires `rclone` configured with a `Dropbox:` remote.
 
-### 5. Check Dropbox connection
+### 6. Check Dropbox connection
 
 ```bash
 python3 $HOME/.claude/skills/otter.ai/otter-cdp.py dropbox-status
@@ -90,6 +100,7 @@ No Selenium needed. The browser is terminated after each invocation.
 |---|---|---|---|
 | List speeches | GET | `/forward/api/v1/speeches` | session cookie + x-csrftoken |
 | Rename | POST | `/forward/api/v1/set_speech_title` | session cookie + x-csrftoken |
+| Delete | POST | `/forward/api/v1/delete_speech` | session cookie + x-csrftoken |
 | Export TXT to Dropbox | POST | `/forward/api/v1/dropbox_speech_txt` | session cookie + x-csrftoken |
 | Export PDF to Dropbox | POST | `/forward/api/v1/dropbox_speech_pdf` | session cookie + x-csrftoken |
 | Export DOCX to Dropbox | POST | `/forward/api/v1/dropbox_speech_word` | session cookie + x-csrftoken |
