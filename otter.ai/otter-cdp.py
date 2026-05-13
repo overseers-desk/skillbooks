@@ -15,9 +15,8 @@ Usage:
     python3 otter-cdp.py dropbox-status
 
 Note: `trash` moves the recording to Otter Trash (recoverable via the web UI for
-~30 days). There is deliberately no `delete` subcommand: Otter's delete_speech /
-permanently_delete_speech endpoints are unrecoverable and easy to misname. If
-you really need permanent deletion, do it from the Otter web UI.
+~30 days). There is deliberately no `delete` subcommand. See the DANGER block
+near cmd_trash for the endpoint names that must not be called and why.
 """
 
 import argparse
@@ -287,8 +286,7 @@ def cmd_trash(ws, args):
     Calls POST /forward/api/v1/move_to_trash_bin with `otid=<otid>` as a form body.
     Returns the JSON response from Otter on success, {"error": ...} otherwise.
 
-    Do NOT switch this to /forward/api/v1/delete_speech: that endpoint is a hard
-    delete that bypasses Trash. See the header comment above this function.
+    Before changing the endpoint, read the DANGER block above this function.
     """
     otid = args.otid
     js = f"""
