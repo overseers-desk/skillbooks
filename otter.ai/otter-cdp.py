@@ -9,6 +9,7 @@ fetch() calls against the Otter.ai internal API. Returns JSON results to stdout.
 Usage:
     python3 otter-cdp.py list [--page-size N] [--last-load-ts TS]
     python3 otter-cdp.py rename <otid> <new_title>
+    python3 otter-cdp.py delete <otid>
     python3 otter-cdp.py export-dropbox <otid> [--format txt|pdf|docx|srt]
     python3 otter-cdp.py fetch-via-dropbox <otid> [--timeout N] [--extended-timeout N]
     python3 otter-cdp.py dropbox-status
@@ -251,6 +252,38 @@ def cmd_rename(ws, args):
             result = {"result": result, "warning": warning}
     return result
 
+def cmd_delete(ws, args):
+    """Delete a recording from Otter.ai. Returns {"status": "OK", "speech_ids": [...], "otids": [...]}.
+
+    Endpoint discovered by probe 2026-05-13: POST /forward/api/v1/delete_speech?otid=<otid>
+    """
+    otid = args.otid
+    js = f"""
+    (async () => {{
+        const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+        const params = new URLSearchParams({{otid: {json.dumps(otid)}}});
+        const resp = await fetch('/forward/api/v1/delete_speech?' + params.toString(), {{
+            method: 'POST',
+            credentials: 'include',
+            headers: {{'x-csrftoken': csrf}}
+        }});
+        const text = await resp.text();
+        return JSON.stringify({{status_code: resp.status, body: text}});
+    }})()
+    """
+    raw = eval_js(ws, js)
+    if isinstance(raw, dict) and raw.get("error"):
+        return raw
+    status_code = raw.get("status_code") if isinstance(raw, dict) else None
+    body = raw.get("body", "") if isinstance(raw, dict) else ""
+    if status_code != 200:
+        return {"error": f"delete_speech returned HTTP {status_code}", "body": body[:300]}
+    try:
+        return json.loads(body)
+    except json.JSONDecodeError:
+        return {"raw": body}
+
+
 def _get_dropbox_id_js():
     """JS snippet that fetches the Dropbox account ID from synced_accounts."""
     return """
@@ -479,6 +512,9 @@ def main():
     p_rename.add_argument("otid")
     p_rename.add_argument("new_title")
 
+    p_delete = sub.add_parser("delete")
+    p_delete.add_argument("otid")
+
     p_export = sub.add_parser("export-dropbox")
     p_export.add_argument("otid")
     p_export.add_argument("--format", choices=["txt", "pdf", "docx", "srt"], default="txt")
@@ -513,6 +549,7 @@ def main():
         commands = {
             "list": cmd_list,
             "rename": cmd_rename,
+            "delete": cmd_delete,
             "export-dropbox": cmd_export_dropbox,
             "fetch-via-dropbox": cmd_fetch_via_dropbox,
             "dropbox-status": cmd_dropbox_status,
