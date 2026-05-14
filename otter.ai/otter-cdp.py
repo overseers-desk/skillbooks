@@ -220,7 +220,39 @@ def cmd_list(ws, args):
     """
     return eval_js(ws, js)
 
+def _fetch_speech_title(ws, otid, page_size=25):
+    """Return (title, found) for <otid> by reading the speeches list.
+
+    A successful rename bumps the recording's modification time, so the list
+    (ordered newest-modified-first) carries it near the top; a small page is
+    enough. Returns (None, False) if the otid is absent or the read fails.
+    """
+    js = f"""
+    (async () => {{
+        const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+        const resp = await fetch('/forward/api/v1/speeches?page_size={page_size}', {{
+            credentials: 'include',
+            headers: {{'x-csrftoken': csrf}}
+        }});
+        const data = await resp.json();
+        const s = (data.speeches || []).find(x => x.otid === {json.dumps(otid)});
+        return JSON.stringify({{title: s ? s.title : null, found: !!s}});
+    }})()
+    """
+    res = eval_js(ws, js)
+    if isinstance(res, dict) and not res.get("error"):
+        return res.get("title"), res.get("found", False)
+    return None, False
+
+
 def cmd_rename(ws, args):
+    """Rename a recording, then verify the change actually persisted.
+
+    set_speech_title returns a {"status": "OK"} body even when the rename does
+    not stick (observed 2026-05-14: two calls reported OK, the title stayed
+    "Note"). Checking the HTTP status would not catch that, so this reads the
+    title back from the speeches list and only reports OK once it matches.
+    """
     otid = args.otid
     title = args.new_title
     warning = None
@@ -248,12 +280,41 @@ def cmd_rename(ws, args):
         return await resp.text();
     }})()
     """
-    result = eval_js(ws, js)
+    attempts = 2
+    post_response = None
+    observed_title = None
+    found = False
+    for attempt in range(1, attempts + 1):
+        post_response = eval_js(ws, js)
+        observed_title, found = _fetch_speech_title(ws, otid)
+        if found and observed_title == title:
+            result = {"status": "OK", "verified": True, "title": title}
+            if isinstance(post_response, dict) and "modified_time" in post_response:
+                result["modified_time"] = post_response["modified_time"]
+            if attempt > 1:
+                result["attempts"] = attempt
+            if warning:
+                result["warning"] = warning
+            return result
+        if attempt < attempts:
+            sys.stderr.write(
+                f"Rename verification failed (attempt {attempt}/{attempts}): "
+                f"API returned {post_response!r} but list shows "
+                f"title={observed_title!r} found={found}; retrying.\n"
+            )
+            time.sleep(2)
+
+    result = {
+        "error": "Rename not persisted: the API reported success but the "
+                 "recording's title did not change after verification.",
+        "otid": otid,
+        "requested_title": title,
+        "observed_title": observed_title,
+        "found_in_list": found,
+        "post_response": post_response,
+    }
     if warning:
-        if isinstance(result, dict):
-            result["warning"] = warning
-        else:
-            result = {"result": result, "warning": warning}
+        result["warning"] = warning
     return result
 
 # =============================================================================
