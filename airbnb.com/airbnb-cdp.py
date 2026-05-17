@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""CDP helper for Airbnb hosting quick replies.
+"""CDP helper for the Airbnb hosting dashboard.
 
 Launches a headless browser with the user's logged-in profile, navigates to
-the quick replies settings page, intercepts the API response that page makes,
-and returns the quick replies as JSON.
+a hosting page, intercepts the React app's internal API responses, and
+prints them as JSON.
 
 Usage:
     python3 airbnb-cdp.py list [--product STAYS|EXPERIENCES]
+    python3 airbnb-cdp.py reservations [--filter past|upcoming|all]
 """
 
 import argparse
@@ -296,13 +297,90 @@ def cmd_list(ws, args):
     return eval_js(ws, js)
 
 
+def cmd_reservations(ws, args):
+    """Paginate the hosting reservations endpoint and return full records.
+
+    Navigates to /hosting/reservations once to establish the authenticated
+    session, then issues /api/v2/reservations calls from within the page
+    context, looping until metadata.page_count is exhausted. The page's own
+    initial call is what reveals the required headers (X-Airbnb-API-Key,
+    X-CSRF-Without-Token); we hard-code the well-known web key here.
+    """
+    send_cdp(ws, "Network.enable")
+    send_cdp(ws, "Page.navigate", {"url": "https://www.airbnb.com/hosting/reservations"})
+    drain_events(ws, duration=12)
+
+    if not check_logged_in(ws):
+        return {"error": "Not logged in to Airbnb. Log in via your browser first, then close it before running this script."}
+
+    # collection_strategy controls past vs upcoming. for_reservations_list_history
+    # returns every past reservation (including cancellations) sorted desc.
+    # for_reservations_list with date_min=today returns confirmed upcoming ones.
+    today = time.strftime("%Y-%m-%d")
+    strategies = {
+        "past":     {"strategy": "for_reservations_list_history", "extra": "", "order": "desc"},
+        "upcoming": {"strategy": "for_reservations_list",         "extra": f"&date_min={today}&status=accepted%2Crequest", "order": "asc"},
+    }
+    if args.filter == "all":
+        filters = ["past", "upcoming"]
+    else:
+        filters = [args.filter]
+
+    out = {}
+    for f in filters:
+        cfg = strategies[f]
+        js = (
+            "(async () => {"
+            "  const headers = {"
+            "    'Accept':'application/json',"
+            "    'Content-Type':'application/json',"
+            "    'X-Airbnb-API-Key':'d306zoyjsyarp7ifhu67rjxn52tv0t20',"
+            "    'X-CSRF-Without-Token':'1',"
+            "    'X-Airbnb-Supports-Airlock-V2':'true',"
+            "  };"
+            f"  const strategy = '{cfg['strategy']}';"
+            f"  const extra = '{cfg['extra']}';"
+            f"  const order = '{cfg['order']}';"
+            "  const all = [];"
+            "  let total = null;"
+            "  for (let offset = 0; offset < 5000; offset += 40) {"
+            "    const url = `/api/v2/reservations?locale=en&currency=USD&_format=for_remy"
+            "&_limit=40&_offset=${offset}&collection_strategy=${strategy}"
+            "&sort_field=start_date&sort_order=${order}${extra}`;"
+            "    const r = await fetch(url, {credentials:'include', headers});"
+            "    if (r.status !== 200) {"
+            "      return JSON.stringify({error:'fetch failed', status:r.status, offset, body:(await r.text()).slice(0,400)});"
+            "    }"
+            "    const d = await r.json();"
+            "    const recs = d.reservations || [];"
+            "    all.push(...recs);"
+            "    const m = d.metadata || {};"
+            "    total = m.total_count;"
+            "    if (recs.length < 40) break;"
+            "    if (m.page_index !== undefined && m.page_count !== undefined && m.page_index + 1 >= m.page_count) break;"
+            "  }"
+            "  return JSON.stringify({total_count: total, returned: all.length, reservations: all});"
+            "})()"
+        )
+        result = eval_js(ws, js)
+        out[f] = result
+
+    if args.filter == "all":
+        return out
+    return out[args.filter]
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Airbnb hosting quick replies CDP helper")
+    parser = argparse.ArgumentParser(description="Airbnb hosting dashboard CDP helper")
     sub = parser.add_subparsers(dest="command")
 
     p_list = sub.add_parser("list", help="List all quick replies")
     p_list.add_argument("--product", choices=["STAYS", "EXPERIENCES"], default="STAYS",
                         help="Product type (default: STAYS)")
+
+    p_res = sub.add_parser("reservations", help="Capture host reservations from the dashboard")
+    p_res.add_argument("--filter", choices=["past", "upcoming", "all"], default="past",
+                       help="Which reservations tab to load (default: past)")
 
     args = parser.parse_args()
     if not args.command:
@@ -318,6 +396,7 @@ def main():
         ws = connect_cdp(port)
         commands = {
             "list": cmd_list,
+            "reservations": cmd_reservations,
         }
         result = commands[args.command](ws, args)
         print(json.dumps(result, indent=2, ensure_ascii=False))

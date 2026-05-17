@@ -1,7 +1,7 @@
 ---
 name: airbnb.com
-description: "Airbnb hosting: list quick replies, saved message templates, hosting message settings."
-argument-hint: <list [--product STAYS|EXPERIENCES]>
+description: "Airbnb hosting: list quick replies, saved message templates, hosting message settings; capture past/upcoming/all reservations from the host dashboard."
+argument-hint: <list [--product STAYS|EXPERIENCES] | reservations [--filter past|upcoming|all]>
 allowed-tools: Bash, Read
 ---
 
@@ -28,18 +28,24 @@ Navigates to the quick replies settings page, intercepts the API response the pa
 
 On success returns a list of objects, each with the quick reply data as Airbnb returns it (typically `id`, `title`, `body`/`message`, and category fields). On API discovery failure, returns the intercepted responses with `url`, `status`, and `data` so the endpoint can be identified and hardcoded.
 
+### 2. Reservations
+
+```bash
+python3 $HOME/.claude/skills/airbnb.com/airbnb-cdp.py reservations [--filter past|upcoming|all]
+```
+
+Returns `{"total_count": N, "returned": N, "reservations": [...]}` (for `--filter all`, an object keyed by `past` and `upcoming`). Each reservation includes `confirmation_code`, `listing_id`, `listing_name`, `start_date`, `end_date`, `nights`, `guest_user`, `earnings`, `user_facing_status_key` (`complete`, `current`, `canceled`, `denied`, `timedout`, etc.), and `is_check_in_today` / `is_check_out_today` flags.
+
+`past` uses `collection_strategy=for_reservations_list_history` and includes every past reservation regardless of status (cancellations and denials included). `upcoming` uses `collection_strategy=for_reservations_list` with `date_min=today` and `status=accepted,request`. Results are paginated 40 per call from inside the authenticated page context and the script loops until `metadata.page_count` is exhausted.
+
 ## How it works
 
-The script uses Chrome DevTools Protocol (CDP) to:
-1. Launch a headless browser with the user's logged-in profile
-2. Enable `Network.enable` before navigating, so all API responses are captured
-3. Navigate to `airbnb.com/hosting/messages/settings/quick-replies?product=STAYS`
-4. Drain network events for 10 seconds, buffering responses whose URL contains `quick` and `airbnb.com/api`
-5. Fetch response bodies via `Network.getResponseBody` while still in the same CDP session
-6. If no matching network traffic is captured, falls back to JS `fetch()` against known v2 endpoints using the page's `X-Airbnb-API-Key` and CSRF tokens
+The script uses Chrome DevTools Protocol (CDP) to launch a headless browser with the user's logged-in profile, navigate to a hosting page to establish the authenticated session, and then either intercept the React app's own API responses (quick replies) or issue further `/api/v2/...` calls from inside the page context via `Runtime.evaluate` (reservations). The CDP approach is necessary because the hosting dashboard is a React SPA whose URL does not change on in-page navigation, so `--dump-dom` would only capture the pre-hydration shell.
 
-The CDP approach is necessary because the page is a React SPA — the URL does not change when browsing between quick replies, so `--dump-dom` would only capture the pre-hydration shell.
+Session redirects to the host's locale domain (e.g. `airbnb.es`), so any URL substring filter should match `airbnb` rather than the literal `airbnb.com`.
 
-## API endpoints (discovered via network interception)
+## API endpoints
 
-Not yet confirmed — the script captures whatever endpoint Airbnb's hosting dashboard calls. Once confirmed, this section should be updated with the verified endpoint, method, and auth headers.
+`GET /api/v2/reservations` (verified). Headers required: `X-Airbnb-API-Key: d306zoyjsyarp7ifhu67rjxn52tv0t20` (the public web key), `X-CSRF-Without-Token: 1`, `Content-Type: application/json`. Query parameters: `locale`, `currency`, `_format=for_remy`, `_limit`, `_offset`, `collection_strategy`, `sort_field=start_date`, `sort_order`, and the strategy-specific filters described above. Response shape: `{reservations: [...], metadata: {page_count, page_index, total_count}}`.
+
+`GET /api/v2/messaging_quick_replies?locale=...&role=host` (used by capability 1).
