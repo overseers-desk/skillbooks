@@ -1,6 +1,6 @@
 ---
 name: australia.skal.org
-description: "Skal Australia (Skål) member portal via pyskal CLI: members, clubs, events."
+description: "Skål Australia member portal: members, clubs, events."
 allowed-tools: Bash
 ---
 
