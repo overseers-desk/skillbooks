@@ -1,6 +1,6 @@
 # Economist editorial stylebook
 
-Twelve closed binary rules. The reader subagent grades against this list and may not invent a thirteenth criterion. Every rule cites a page in *The Economist Style Guide*, 12th edition (Wroe, 2018), available in this skill at `source/style_guide_12.pdf`.
+Thirteen closed binary rules. The reader subagent grades against this list and may not invent a fourteenth criterion. R1–R12 each cite a page in *The Economist Style Guide*, 12th edition (Wroe, 2018), available in this skill at `source/style_guide_12.pdf`; R13 is the dependency-grammar principle, sourced outside the Style Guide.
 
 For each rule the reader records, per draft: **pass** or **fail**. A fail carries a location (line number or quoted phrase) and a class tag: **A** = the fix is fully determined by content already in the draft (reader applies it), or **B** = the fix needs content the draft does not contain (reported to the author).
 
