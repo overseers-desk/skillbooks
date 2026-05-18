@@ -46,7 +46,7 @@ def _load_creds():
     if not cfg_file.exists():
         sys.exit(f"Error: {cfg_file} not found. See Prerequisites in the aesop interlinetravel.com.au SKILL.md.")
     cp = configparser.ConfigParser(interpolation=None)
-    cp.read(cfg_file)
+    cp.read([cfg_file, cfg_file.parent / "config.local.ini"])
     email = cp.get("interlinetravel.com.au", "email", fallback="").strip()
     password = cp.get("interlinetravel.com.au", "password", fallback="").strip()
     if not (email and password):

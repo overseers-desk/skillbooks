@@ -32,12 +32,11 @@ def get_api_key():
     if key:
         return key
     cfg_file = Path.home() / ".claude" / "skills" / "config.ini"
-    if cfg_file.exists():
-        cp = configparser.ConfigParser(interpolation=None)
-        cp.read(cfg_file)
-        key = cp.get("serpapi", "api_key", fallback="").strip()
-        if key:
-            return key
+    cp = configparser.ConfigParser(interpolation=None)
+    cp.read([cfg_file, cfg_file.parent / "config.local.ini"])
+    key = cp.get("serpapi", "api_key", fallback="").strip()
+    if key:
+        return key
     sys.exit("No API key found. Set SERPAPI_KEY or add api_key under [serpapi] in ~/.claude/skills/config.ini")
 
 
