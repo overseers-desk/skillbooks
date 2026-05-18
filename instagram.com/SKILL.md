@@ -20,6 +20,14 @@ If a request redirects to `/accounts/login/` or returns empty JSON, the session 
 
 The wrapper handles standard flags (headless, window size, user agent, profile, flock, timeout). This skill appends `--virtual-time-budget=N` (4000 for search, 6000 for profile) to give Instagram's JSON endpoint time to hydrate. Save stdout and stderr separately: a common pitfall is `2>/dev/null > out.html` producing a zero-byte file; `> out.html 2> out.err` is reliable.
 
+## DM read-state policy
+
+Before invoking any DM-content script (§9, and any future script whose filename carries `mark-seen`, `mutate-seen`, or `send`), name the specific thread(s) about to be touched and surface the read-state implication to the user, then wait for an explicit yes. For §9 the implication to surface is: this will only return content for threads already opened in the user's Instagram client; the script refuses unread threads and will not mark anything seen on the user's behalf.
+
+§5 (`inbox-noninvasive.py`) is exempt — it reads inbox metadata only, never thread content, and blocks seen-mutation requests at the Fetch layer.
+
+The internal refusal gate inside §9 is a backstop. A run without prior disclosure violates the policy even if the script would have refused anyway.
+
 ## 1. Search via the topsearch JSON endpoint
 
 Instagram's rendered search page (`/explore/search/keyword/?q=...`) is GraphQL-hydrated and stays empty in a headless dump within a reasonable time budget. The internal endpoint `/web/search/topsearch/?query=...`, authenticated, returns clean JSON directly. Use that:
