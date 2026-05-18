@@ -132,6 +132,24 @@ Articles in *The Economist* "should be like essays, in that they have a beginnin
 
 ---
 
+## E. Sentence architecture
+
+### R13: Dependents stay close
+The words that depend on each other should sit as close together as the sentence allows. Long subject-verb gaps, coordinations re-opening a clause after a prepositional phrase, parenthetical loads that defer the verb past a list of more than three items, stacked compound modifiers and meta-prose about the document's own structure all force the reader to hold material in working memory while the sentence finishes. Dependency grammar is the lens: between any pair of words you are connecting, the smaller the gap, the easier the read.
+
+**Source**: not from the Style Guide. Introduced as a dependency-grammar principle to address sentence-architecture failures the other twelve rules do not catch (mechanical fixes can pass a sentence on every other rule and still leave it structurally hard to parse).
+
+**Fail signatures** (any one is enough):
+- Subject and main verb separated by more than five or six words, especially when the gap is a parenthetical list.
+- A coordination re-opening a clause: "covered by X in P and by Y", "is at an earlier stage and is covered by …".
+- A parenthetical carrying a list of more than three items between subject and verb.
+- Two or more compound modifiers stacked: "the whole-house side of the short-term-let business".
+- Meta-prose about the document's structure: "This document covers …", "Those are not restated here", "is covered by the validation campaign in …".
+
+**Class**: **B** by default — the rewrite usually needs the author's intent to preserve meaning, and the wrong rewrite can read cleaner while saying something subtly different. Class **A** only when the move is unambiguous (splitting at a colon, demoting a parenthetical to its own sentence, removing meta-prose that says what is *not* in this document).
+
+---
+
 ## What the rubric does not include
 
 The Style Guide contains a great deal of guidance on grammar, punctuation, hyphenation, capitalisation and house-specific spelling. None of that is in this rubric, because none of it is the kind of failure the skill exists to catch (the failure being prose that ignores the cold global reader). If a future class of failure recurs across multiple unrelated drafts, the rubric grows. It does not grow during a run.
