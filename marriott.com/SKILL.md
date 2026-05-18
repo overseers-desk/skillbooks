@@ -1,6 +1,6 @@
 ---
 name: marriott.com
-description: "Marriott hotels: find properties near a destination, lookup by property code, property info (name, brand, address, coordinates, images, reviews). No pricing or live availability."
+description: "find hotel properties near a destination, lookup by property code; info (name, brand, address, coords, images, reviews). No pricing or live availability."
 allowed-tools: Bash, Read
 ---
 

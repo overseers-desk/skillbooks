@@ -1,6 +1,6 @@
 ---
 name: linkedin
-description: "LinkedIn: search people, read profiles, check keywords, verify connect eligibility, find role/company."
+description: "search people, read profiles, check keywords, verify connect eligibility, find role/company."
 argument-hint: <name, URL, or search terms>
 ---
 

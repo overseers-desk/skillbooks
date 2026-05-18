@@ -1,6 +1,6 @@
 ---
 name: ihg.com
-description: "IHG hotels on ihg.com: availability, pricing, search."
+description: "hotel availability, pricing, search."
 allowed-tools: Bash, Read
 ---
 

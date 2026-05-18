@@ -1,6 +1,6 @@
 ---
 name: deviantart.com
-description: "Download videos from DeviantArt deviation pages (single/multi-file) given a deviantart.com/*/art/* URL."
+description: "download videos from deviation pages (single/multi-file) given a /*/art/* URL."
 argument-hint: <deviantart.com deviation URL> [destination directory]
 ---
 

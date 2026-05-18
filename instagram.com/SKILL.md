@@ -1,6 +1,6 @@
 ---
 name: instagram
-description: "Instagram: search accounts, read profiles (display name, follower/following/post counts, recent caption snippet); find by name or handle."
+description: "search accounts, read profiles (display name, follower/following/post counts, recent caption snippet); find by name or handle."
 argument-hint: <name, handle, or search terms>
 ---
 

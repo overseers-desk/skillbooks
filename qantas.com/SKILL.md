@@ -1,6 +1,6 @@
 ---
 name: qantas.com
-description: "Qantas Classic Reward flight availability (point cost, taxes, seats, aircraft, times for a route+date range) and Qantas Frequent Flyer points balance. Triggers: Qantas points redemptions, award seat availability on Qantas-operated routes, points balance."
+description: "Classic Reward flight availability (point cost, taxes, seats, aircraft, times for route+date range) and Frequent Flyer points balance. Triggers: points redemptions, award seat availability on Qantas-operated routes."
 argument-hint: <origin> <destination> <date> [stops]   |   points
 ---
 
