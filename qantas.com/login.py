@@ -175,7 +175,7 @@ def run(check_only: bool, debug: bool):
     if not cfg_file.exists():
         sys.exit(f"ERROR: {cfg_file} not found. See Prerequisites in the aesop qantas.com SKILL.md.")
     cp = configparser.ConfigParser(interpolation=None)
-    cp.read(cfg_file)
+    cp.read([cfg_file, cfg_file.parent / "config.local.ini"])
     member_id = cp.get("qantas.com", "member_id", fallback="").strip()
     last_name = cp.get("qantas.com", "last_name", fallback="").strip()
     pin = cp.get("qantas.com", "pin", fallback="").strip()

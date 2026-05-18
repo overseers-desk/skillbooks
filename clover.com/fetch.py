@@ -35,7 +35,7 @@ def parse_args():
 
 def load_token():
     cfg = configparser.ConfigParser()
-    cfg.read(CONFIG)
+    cfg.read([CONFIG, CONFIG.replace("config.ini", "config.local.ini")])
     if "clover.com" not in cfg or "api_token" not in cfg["clover.com"]:
         sys.exit(f"FAIL: {CONFIG} missing [clover.com] api_token")
     return cfg["clover.com"]["api_token"].strip()
