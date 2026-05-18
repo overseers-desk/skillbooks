@@ -1,6 +1,6 @@
 ---
 name: otter.ai
-description: "Otter.ai recordings: list, rename, trash, export; transcripts and content management."
+description: "recordings: list, rename, trash, export; transcripts and content management."
 argument-hint: <list | rename | trash | export-dropbox | fetch-via-dropbox | dropbox-status>
 allowed-tools: Bash, Read
 ---

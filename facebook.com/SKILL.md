@@ -1,6 +1,6 @@
 ---
 name: facebook
-description: "Facebook: search people, read profiles, extract posts with hashtags and tagged people, check keywords; find someone's posts/activity."
+description: "search people, read profiles, extract posts with hashtags and tagged people, check keywords; find someone's posts/activity."
 argument-hint: <name, URL, or search terms>
 ---
 

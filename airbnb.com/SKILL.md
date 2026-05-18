@@ -1,6 +1,6 @@
 ---
 name: airbnb.com
-description: "Airbnb hosting: list quick replies, saved message templates, hosting message settings; capture past/upcoming/all reservations from the host dashboard."
+description: "host dashboard: quick replies, saved message templates, hosting message settings; past/upcoming/all reservations."
 argument-hint: <list [--product STAYS|EXPERIENCES] | reservations [--filter past|upcoming|all]>
 allowed-tools: Bash, Read
 ---
