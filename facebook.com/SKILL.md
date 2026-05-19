@@ -1,6 +1,6 @@
 ---
 name: facebook
-description: "search people, read profiles, extract posts with hashtags and tagged people, check keywords; find someone's posts/activity."
+description: "search people, read profiles, extract posts with hashtags and tagged people, check keywords, dump reel comments to markdown; find someone's posts/activity."
 argument-hint: <name, URL, or search terms>
 ---
 
@@ -118,6 +118,52 @@ python3 $HOME/.claude/skills/facebook.com/keyword-search.py /tmp/facebook-profil
 ```
 
 Checks whether a profile mentions specific terms and shows surrounding context.
+
+## 7. Dump reel comments to Markdown
+
+The reel viewer (`https://www.facebook.com/reel/{id}`) is an authenticated SPA
+that defers comment loading until the Comment button is clicked, and uses
+"Most relevant" sort by default. A plain `--dump-dom` captures the player
+chrome but no comments. Use the CDP fetcher, then the parser.
+
+Prerequisite: the user's snap chromium must be fully closed (the GUI holds
+the profile lock; the CDP fetcher needs exclusive access). If the SingletonLock
+file exists, ask the user to quit Chromium.
+
+```bash
+# 1. Fetch — drives CDP: open Comment panel, switch sort to All comments,
+#    scroll and expand "N replies" / "See more" until the harvested set
+#    stops growing. Each comment article is captured into a JS-side dict
+#    (resilient to virtualization) and the comment list is dumped in thread
+#    order at the end. The fetcher also intercepts every GraphQL response
+#    and writes a sidecar JSON of {legacy_fbid: canonical_body_text} — used
+#    by the parser to restore full text for comments truncated by 'See more'
+#    in the DOM render. For a 600-comment reel this takes 3-5 minutes.
+python3 $HOME/.claude/skills/facebook.com/reel-comments-cdp.py \
+  "https://www.facebook.com/reel/REEL_ID" \
+  --out /tmp/reel-comments.html \
+  --bodies-json /tmp/reel-bodies.json \
+  --max-rounds 200 \
+  --debug
+
+# 2. Parse to Markdown. Pass --bodies-json so truncated bodies get backfilled
+#    with canonical text from the GraphQL sidecar.
+python3 $HOME/.claude/skills/facebook.com/parse-reel-comments.py \
+  /tmp/reel-comments.html \
+  --bodies-json /tmp/reel-bodies.json \
+  --md /tmp/reel-comments.md \
+  --source-url "https://www.facebook.com/reel/REEL_ID"
+```
+
+Output format is raw: `Author · age` followed by body lines for each top-level
+comment, with replies indented under their parent (prefixed with `↳`). No
+headers, no profile URLs, no comment IDs — designed for reading.
+
+The number of comments returned matches what Facebook serves over its GraphQL
+endpoint. The viewer's header count (e.g. "630 comments") is often higher
+than what's actually returned because Facebook counts include
+spam-filtered/deleted/cross-universe-aggregated items that the API does not
+serve to a logged-in viewer.
 
 ## DOM parsing notes
 
