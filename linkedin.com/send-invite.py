@@ -8,6 +8,7 @@ Usage:
 
 import argparse
 import base64
+import configparser
 import json
 import os
 import re
@@ -85,8 +86,29 @@ def _ws_close(sock):
 
 
 PROFILE = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
+CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".claude/skills/config.ini")
 CDP_PORT = 9223
 MAX_NOTE_CHARS = 300
+
+
+def _load_browser_config():
+    """Read user_agent and accept_lang from [browser] in config.ini. Exit if absent."""
+    if not os.path.exists(CONFIG_PATH):
+        sys.exit(f"ERROR: {CONFIG_PATH} not found. Copy config.ini.example to config.ini "
+                 "and fill the [browser] section.")
+    cp = configparser.ConfigParser()
+    cp.read(CONFIG_PATH)
+    if "browser" not in cp:
+        sys.exit(f"ERROR: {CONFIG_PATH} missing [browser] section. See config.ini.example.")
+    ua = cp["browser"].get("user_agent", "").strip()
+    lang = cp["browser"].get("accept_lang", "").strip()
+    if not ua or not lang:
+        sys.exit(f"ERROR: [browser] section in {CONFIG_PATH} needs both "
+                 "user_agent and accept_lang.")
+    if "HeadlessChrome" in ua:
+        sys.exit(f"ERROR: user_agent in {CONFIG_PATH} contains 'HeadlessChrome' — "
+                 "that string defeats the override. Capture the UA from a real browser session.")
+    return ua, lang
 
 
 def _snap_chromium_running():
@@ -115,6 +137,8 @@ def send_connection_invite(vanity_name: str, note: str, dry_run: bool = False):
 
     url = f"https://www.linkedin.com/preload/custom-invite/?vanityName={vanity_name}"
 
+    ua, lang = _load_browser_config()
+
     pids = _snap_chromium_running()
     if pids:
         print(f"WARNING: snap Chromium running (PIDs: {pids}). Profile may be locked.",
@@ -122,11 +146,12 @@ def send_connection_invite(vanity_name: str, note: str, dry_run: bool = False):
 
     proc = subprocess.Popen(
         [
+            "flock", "/tmp/chromium.lock",
             "chromium", "--headless=new",
             f"--remote-debugging-port={CDP_PORT}",
             f"--user-data-dir={PROFILE}",
-            "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-            "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+            f"--user-agent={ua}",
+            f"--accept-lang={lang}",
             "--window-size=1920,1080",
             "--no-first-run", "--no-default-browser-check",
         ],
