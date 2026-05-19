@@ -1,6 +1,6 @@
 ---
 name: instagram
-description: "search accounts, read profiles (display name, follower/following/post counts, recent caption snippet); find by name or handle."
+description: "search accounts, read profiles (display name, follower/following/post counts, recent caption snippet), enumerate a profile's followers or following list; find by name or handle."
 argument-hint: <name, handle, or search terms>
 ---
 
@@ -174,6 +174,38 @@ Per-message output includes `is_from_viewer` (whether the message is from the op
 Verified 2026-05-12 against the live inbox: refusal path correctly skipped a thread carrying `marked_as_unread: true`; success path returned 9 messages across both directions from a seen thread. After both runs, the previously-unread thread was confirmed still unread by re-running §5, proving the gate did not leak a thread-content fetch onto the refused thread.
 
 `all-seen` is the batch primitive for P: enumerate every thread in the current inbox, return parsed messages for the seen ones, and emit a separate `refused` list noting which threads were skipped and why. Useful when profiling many contacts in one pass.
+
+## 10. Followers / following list extractor
+
+```bash
+python3 $HOME/.claude/skills/instagram.com/fetch-followers.py followers HANDLE [--limit N] [--csv PATH]
+python3 $HOME/.claude/skills/instagram.com/fetch-followers.py following HANDLE [--limit N] [--csv PATH]
+```
+
+Enumerates `/api/v1/friendships/<user_id>/followers/` or `/.../following/` via fetch() inside an authenticated CDP session. Resolves handle → user_id by reusing `resolve_user_id` from §6, then paginates the cursor-based endpoint (25 users per page, `next_max_id`) until `--limit` is reached or the endpoint reports no more pages.
+
+Default `--limit` is 500. Without `--csv`, the script prints JSON with a `users` array; with `--csv PATH` it writes one row per user to that path and omits the array from stdout (the stdout JSON still carries `handle`, `user_id`, `kind`, `count_returned`, `limit_requested`, `stop_reason`, and `csv_path`).
+
+Per-entry fields:
+
+- `user_id`, `username`, `full_name`
+- `is_verified`, `is_private`
+- `has_default_avatar` (same heuristic as §8 — known default-avatar URL fragments plus the API's `has_anonymous_profile_picture` flag)
+- `profile_pic_url`
+
+The five non-URL fields mirror the §8 comment-row shape, so the same sweep pre-filter (verified OR not-default-avatar OR ...) applies if the friendships output is fed into the standard sweep pipeline.
+
+**Visibility and accuracy:**
+
+- Private profiles return 0 users unless the logged-in viewer follows them. No workaround.
+- The header counts shown by §4 (parsed from og:description) are server-cached and frequently drift a few percent from the enumerable list. Treat the friendships endpoint as authoritative for the list itself; treat the header count as authoritative only for "roughly how many."
+- Order is reverse-chronological by relationship creation, not alphabetical or by engagement.
+
+**Pacing and limits:** The friendships endpoint is one of the most aggressively throttled in IG's web API. The script paces ~2.5 seconds per page, which a small profile (a few hundred entries) absorbs cleanly. For larger profiles, expect soft-throttling (truncated pages, 429s, or "challenge_required") somewhere in the low thousands of entries per session. If `stop_reason` comes back as `error:HTTP 4xx` partway through, back off and re-run later — do not hammer.
+
+`stop_reason` values: `limit` (hit the `--limit` cap), `exhausted` (endpoint returned no more pages), or `error:<detail>` (HTTP failure, often throttling).
+
+Verified 2026-05-19 against `@_a.j.handyman_`: header counts 162 followers / 188 following; enumerated 162 followers (full match) and 182 following (6-entry gap, consistent with cached-header drift). Both lists written to CSV cleanly across 7-8 pages each.
 
 ## What this skill does NOT do (by design)
 
