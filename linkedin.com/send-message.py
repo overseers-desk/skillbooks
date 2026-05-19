@@ -8,6 +8,7 @@ Usage:
 
 import argparse
 import base64
+import configparser
 import json
 import os
 import socket
@@ -84,7 +85,28 @@ def _ws_close(sock):
 
 
 PROFILE = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
+CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".claude/skills/config.ini")
 CDP_PORT = 9223
+
+
+def _load_browser_config():
+    """Read user_agent and accept_lang from [browser] in config.ini. Exit if absent."""
+    if not os.path.exists(CONFIG_PATH):
+        sys.exit(f"ERROR: {CONFIG_PATH} not found. Copy config.ini.example to config.ini "
+                 "and fill the [browser] section.")
+    cp = configparser.ConfigParser()
+    cp.read(CONFIG_PATH)
+    if "browser" not in cp:
+        sys.exit(f"ERROR: {CONFIG_PATH} missing [browser] section. See config.ini.example.")
+    ua = cp["browser"].get("user_agent", "").strip()
+    lang = cp["browser"].get("accept_lang", "").strip()
+    if not ua or not lang:
+        sys.exit(f"ERROR: [browser] section in {CONFIG_PATH} needs both "
+                 "user_agent and accept_lang.")
+    if "HeadlessChrome" in ua:
+        sys.exit(f"ERROR: user_agent in {CONFIG_PATH} contains 'HeadlessChrome' — "
+                 "that string defeats the override. Capture the UA from a real browser session.")
+    return ua, lang
 
 
 def _snap_chromium_running():
@@ -110,6 +132,8 @@ def _wait_for_cdp(retries=30):
 def send_message(vanity_name: str, text: str, dry_run: bool = False):
     url = f"https://www.linkedin.com/in/{vanity_name}/"
 
+    ua, lang = _load_browser_config()
+
     pids = _snap_chromium_running()
     if pids:
         print(f"WARNING: snap Chromium running (PIDs: {pids}). Profile may be locked.",
@@ -117,11 +141,12 @@ def send_message(vanity_name: str, text: str, dry_run: bool = False):
 
     proc = subprocess.Popen(
         [
+            "flock", "/tmp/chromium.lock",
             "chromium", "--headless=new",
             f"--remote-debugging-port={CDP_PORT}",
             f"--user-data-dir={PROFILE}",
-            "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-            "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+            f"--user-agent={ua}",
+            f"--accept-lang={lang}",
             "--window-size=1920,1080",
             "--no-first-run", "--no-default-browser-check",
         ],
@@ -141,6 +166,7 @@ def send_message(vanity_name: str, text: str, dry_run: bool = False):
 
 def _run_flow(ws_url: str, page_url: str, text: str, dry_run: bool) -> dict:
     sock = _ws_connect(ws_url, timeout=20)
+    sock.settimeout(None)  # profile pages emit a burst of CDP events; blocking reads are fine on localhost
     try:
         net_events: list = []
         _id = 0
@@ -192,46 +218,42 @@ def _run_flow(ws_url: str, page_url: str, text: str, dry_run: bool) -> dict:
         if any(x in title.lower() for x in ["sign in", "log in", "iniciar"]):
             sys.exit("ERROR: got sign-in page - session is not active")
 
-        # Find the Message button on the profile page.
-        # LinkedIn renders it as a button whose aria-label or visible text contains
-        # "message" — match case-insensitively, exclude nav bar items.
-        msg_btn = js('''(function() {
-            var btns = Array.from(document.querySelectorAll("button, a[href*='messaging']"));
-            return btns.some(function(b) {
-                var label = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
-                return label.trim() === "message" || label.includes("send a message");
-            });
-        })()''')
+        # LinkedIn sometimes shows a language-selection interstitial on first CDP load.
+        # Click "English" to set the locale cookie and let LinkedIn redirect to the profile.
+        body_check = js("document.body.innerText") or ""
+        if "選擇語言" in body_check or "Choose language" in body_check:
+            print("Language interstitial detected. Clicking English...")
+            clicked = js('''(function() {
+                var all = Array.from(document.querySelectorAll("a, button"));
+                var en = all.find(function(el) {
+                    var t = el.textContent.trim();
+                    return t === "English (English)" || t === "English";
+                });
+                if (en) { en.click(); return true; }
+                return false;
+            })()''')
+            if not clicked:
+                sys.exit("ERROR: language interstitial appeared but English option not found")
+            print("Clicked English. Waiting for profile to load...")
+            time.sleep(6)
+            title = js("document.title") or ""
+            print(f"Page title after language selection: {title}")
+            if any(x in title.lower() for x in ["sign in", "log in", "iniciar"]):
+                sys.exit("ERROR: redirected to sign-in after language selection")
 
-        if not msg_btn:
-            # Try waiting — the profile may still be rendering
-            found = False
-            for _ in range(12):
-                time.sleep(0.5)
-                msg_btn = js('''(function() {
-                    var btns = Array.from(document.querySelectorAll("button, a[href*='messaging']"));
-                    return btns.some(function(b) {
-                        var label = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
-                        return label.trim() === "message" || label.includes("send a message");
-                    });
-                })()''')
-                if msg_btn:
-                    found = True
-                    break
-            if not found:
-                body = js("document.body.innerText") or ""
-                sys.exit(f"ERROR: Message button not found. Are you connected to this person? "
-                         f"Body start: {body[:300]}")
+        # Find and click the Message button on the profile page
+        msg_found = wait_for('[aria-label*="Message"], [aria-label*="Mensaje"]', 15)
+        if not msg_found:
+            body = js("document.body.innerText") or ""
+            sys.exit(f"ERROR: Message button not found. Not connected? Body: {body[:300]}")
 
         print("Message button found. Clicking...")
         js('''(function() {
-            var btns = Array.from(document.querySelectorAll("button, a[href*='messaging']"));
-            var btn = btns.find(function(b) {
-                var label = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
-                return label.trim() === "message" || label.includes("send a message");
-            });
+            var sel = '[aria-label*="Message"], [aria-label*="Mensaje"]';
+            var btn = document.querySelector(sel);
             if (btn) btn.click();
         })()''')
+        time.sleep(2)
 
         # Wait for the compose area — LinkedIn messaging uses a contenteditable div
         compose_selectors = [
@@ -246,7 +268,8 @@ def _run_flow(ws_url: str, page_url: str, text: str, dry_run: bool) -> dict:
                 break
 
         if not compose_sel:
-            sys.exit("ERROR: message compose area did not appear after clicking Message button")
+            body = js("document.body.innerText") or ""
+            sys.exit(f"ERROR: compose area did not appear after clicking Message. Body: {body[:300]}")
 
         print(f"Compose area found ({compose_sel}). Focusing...")
         js(f"document.querySelector({json.dumps(compose_sel)}).focus()")
