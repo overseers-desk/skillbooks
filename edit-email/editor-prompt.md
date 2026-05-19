@@ -7,7 +7,7 @@ For each rule violation:
 - If you can fix it without changing meaning (cutting a sentence, recasting an enumerated list as prose, replacing a session-anchored timestamp), apply the fix in the POLISHED block.
 - If the fix needs the brief, or would change meaning, write a query in the QUERIES block. Quote the sentence, name the rule, ask the question. Do not invent the answer.
 
-After your polish pass, read the first paragraph alone and check it against R1: can you say who is writing, how the recipient has the sender's address, and what the email is about? If not, write a query.
+After your polish pass, read the first two paragraphs and check against R1: (a) who is writing, (b) how the recipient has the sender's address, (c) what the recipient is being asked to do, in one sentence. "What the email is about" is the topic; the ask is what the recipient is being asked to do. If the ask only appears after several paragraphs of supporting detail, write a query telling the caller the thesis is buried and should move up.
 
 Rulebook: $RULEBOOK_PATH
 

@@ -2,9 +2,9 @@
 
 Rules for drafting and polishing email on the user's behalf. CLAUDE.md applies concurrently (newspaper, SDT, NSWP, LHD, Densify) and is not restated.
 
-## R1. Identity-first lead
+## R1. Identity and ask up front
 
-The first sentence places the sender on the recipient's list: who, how the recipient has their address, what the email is about. Treat as a newspaper lead.
+The first paragraph names the sender and how the recipient has the sender's address. The second sentence or the start of the second paragraph states the ask in one sentence: what the recipient is being asked to do, and the headline fact that motivates it. Topic is not ask. "I am writing about my mortgage" is topic; "I have paid the stated arrears and need help getting the bank to confirm receipt" is ask. Supporting details, dates, references, and adjacent problems come after. A draft whose ask appears only after several paragraphs of background has buried its thesis under chronology; the subeditor queries the caller to move the ask up.
 
 ## R2. One ask, as prose
 
