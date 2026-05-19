@@ -1,6 +1,6 @@
 ---
 name: linkedin
-description: "search people, read profiles, check keywords, verify connect eligibility, find role/company."
+description: "search people, read profiles, check keywords, verify connect eligibility, find role/company. Send connection invites or direct messages to connections."
 argument-hint: <name, URL, or search terms>
 ---
 
@@ -125,6 +125,30 @@ python3 $HOME/.claude/skills/linkedin.com/send-invite.py VANITY_NAME "note" --dr
 **Prerequisites check:** if `websockets` is missing, install it: `pip3 install websockets`.
 
 **Note character limit:** LinkedIn enforces 300 chars client-side (no `maxlength` HTML attribute). The script enforces this before launching the browser.
+
+## 8. Send a direct message to a connection
+
+```bash
+python3 $HOME/.claude/skills/linkedin.com/send-message.py VANITY_NAME "Message text"
+```
+
+The person must be a first-degree connection. The script:
+1. Navigates to the profile page `/in/VANITY_NAME/`
+2. Clicks the "Message" button
+3. Types the message via `Input.insertText` into the compose area
+4. Clicks the Send button
+5. Confirms via compose-area clearing and/or API response
+
+**Dry-run mode:**
+```bash
+python3 $HOME/.claude/skills/linkedin.com/send-message.py VANITY_NAME "text" --dry-run
+```
+
+**Confirmation output:**
+- `toast` — LinkedIn toast text if present
+- `compose_cleared` — whether the compose area emptied after send (primary success signal)
+- `api_responses` — HTTP status codes from LinkedIn's messaging API
+- `status` — `"sent"` | `"uncertain"` | `"dry_run"`
 
 ## DOM parsing notes
 

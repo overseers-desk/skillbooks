@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
-"""Send a LinkedIn connection invite with a personalised note via CDP.
+"""Send a LinkedIn direct message to a connection via CDP.
 
 Usage:
-    python3 send-invite.py VANITY_NAME "Note text (<=300 chars)"
-    python3 send-invite.py VANITY_NAME "Note text" --dry-run   # stop before clicking Send
+    python3 send-message.py VANITY_NAME "Message text"
+    python3 send-message.py VANITY_NAME "Message text" --dry-run   # stop before clicking Send
 """
 
 import argparse
 import base64
 import json
 import os
-import re
 import socket
 import struct
 import subprocess
@@ -86,7 +85,6 @@ def _ws_close(sock):
 
 PROFILE = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
 CDP_PORT = 9223
-MAX_NOTE_CHARS = 300
 
 
 def _snap_chromium_running():
@@ -109,11 +107,8 @@ def _wait_for_cdp(retries=30):
     sys.exit("ERROR: CDP endpoint not ready - chromium failed to start")
 
 
-def send_connection_invite(vanity_name: str, note: str, dry_run: bool = False):
-    if len(note) > MAX_NOTE_CHARS:
-        sys.exit(f"ERROR: note is {len(note)} chars; LinkedIn limit is {MAX_NOTE_CHARS}")
-
-    url = f"https://www.linkedin.com/preload/custom-invite/?vanityName={vanity_name}"
+def send_message(vanity_name: str, text: str, dry_run: bool = False):
+    url = f"https://www.linkedin.com/in/{vanity_name}/"
 
     pids = _snap_chromium_running()
     if pids:
@@ -135,7 +130,7 @@ def send_connection_invite(vanity_name: str, note: str, dry_run: bool = False):
 
     try:
         ws_url = _wait_for_cdp()
-        return _run_flow(ws_url, url, note, dry_run)
+        return _run_flow(ws_url, url, text, dry_run)
     finally:
         proc.terminate()
         try:
@@ -144,7 +139,7 @@ def send_connection_invite(vanity_name: str, note: str, dry_run: bool = False):
             proc.kill()
 
 
-def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dict:
+def _run_flow(ws_url: str, page_url: str, text: str, dry_run: bool) -> dict:
     sock = _ws_connect(ws_url, timeout=20)
     try:
         net_events: list = []
@@ -160,13 +155,12 @@ def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dict:
                 msg = json.loads(_ws_recv(sock))
                 if "id" in msg:
                     if msg["id"] != cid:
-                        continue  # response to a different command (shouldn't happen sequentially)
+                        continue
                     if "error" in msg:
                         raise RuntimeError(f"{method}: {msg['error']}")
                     return msg.get("result", {})
                 if msg.get("method") == "Network.responseReceived":
                     net_events.append(msg["params"])
-                # other events: discard
 
         def js(expr):
             r = cmd("Runtime.evaluate", {
@@ -198,42 +192,83 @@ def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dict:
         if any(x in title.lower() for x in ["sign in", "log in", "iniciar"]):
             sys.exit("ERROR: got sign-in page - session is not active")
 
-        if not wait_for('[aria-label="Add a note"]', 10):
-            body = js("document.body.innerText") or ""
-            if "already connected" in body.lower() or "ya estás conectado" in body.lower():
-                sys.exit("ERROR: already connected to this person")
-            if 'type="email"' in (js("document.body.innerHTML") or ""):
-                sys.exit("ERROR: email verification required to connect (high-profile account)")
-            sys.exit(f"ERROR: invite modal not found. Body start: {body[:400]}")
+        # Find the Message button on the profile page.
+        # LinkedIn renders it as a button whose aria-label or visible text contains
+        # "message" — match case-insensitively, exclude nav bar items.
+        msg_btn = js('''(function() {
+            var btns = Array.from(document.querySelectorAll("button, a[href*='messaging']"));
+            return btns.some(function(b) {
+                var label = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
+                return label.trim() === "message" || label.includes("send a message");
+            });
+        })()''')
 
-        print("Modal found. Clicking 'Add a note'...")
-        js('document.querySelector(\'[aria-label="Add a note"]\').click()')
+        if not msg_btn:
+            # Try waiting — the profile may still be rendering
+            found = False
+            for _ in range(12):
+                time.sleep(0.5)
+                msg_btn = js('''(function() {
+                    var btns = Array.from(document.querySelectorAll("button, a[href*='messaging']"));
+                    return btns.some(function(b) {
+                        var label = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
+                        return label.trim() === "message" || label.includes("send a message");
+                    });
+                })()''')
+                if msg_btn:
+                    found = True
+                    break
+            if not found:
+                body = js("document.body.innerText") or ""
+                sys.exit(f"ERROR: Message button not found. Are you connected to this person? "
+                         f"Body start: {body[:300]}")
 
-        if not wait_for("#custom-message", 8):
-            sys.exit("ERROR: textarea #custom-message did not appear after clicking 'Add a note'")
+        print("Message button found. Clicking...")
+        js('''(function() {
+            var btns = Array.from(document.querySelectorAll("button, a[href*='messaging']"));
+            var btn = btns.find(function(b) {
+                var label = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
+                return label.trim() === "message" || label.includes("send a message");
+            });
+            if (btn) btn.click();
+        })()''')
 
-        print(f"Typing note ({len(note)} chars)...")
-        js("document.querySelector('#custom-message').focus()")
+        # Wait for the compose area — LinkedIn messaging uses a contenteditable div
+        compose_selectors = [
+            'div[role="textbox"][contenteditable="true"]',
+            '[contenteditable="true"][data-placeholder]',
+            '[contenteditable="true"]',
+        ]
+        compose_sel = None
+        for sel in compose_selectors:
+            if wait_for(sel, 8):
+                compose_sel = sel
+                break
+
+        if not compose_sel:
+            sys.exit("ERROR: message compose area did not appear after clicking Message button")
+
+        print(f"Compose area found ({compose_sel}). Focusing...")
+        js(f"document.querySelector({json.dumps(compose_sel)}).focus()")
         time.sleep(0.3)
-        # Input.insertText simulates real keyboard paste - triggers Ember input events
-        cmd("Input.insertText", {"text": note})
+
+        print(f"Typing message ({len(text)} chars)...")
+        cmd("Input.insertText", {"text": text})
         time.sleep(0.5)
 
-        typed = js("document.querySelector('#custom-message').value") or ""
-        print(f"Verified in textarea ({len(typed)} chars): '{typed[:60]}{'...' if len(typed) > 60 else ''}'")
-        if typed.strip() != note.strip():
-            print(f"WARNING: textarea mismatch - got {len(typed)} chars, expected {len(note)}",
-                  file=sys.stderr)
+        typed = js(f"document.querySelector({json.dumps(compose_sel)}).textContent") or ""
+        print(f"Verified in compose area ({len(typed)} chars): '{typed[:60]}{'...' if len(typed) > 60 else ''}'")
 
         if dry_run:
             print("DRY RUN: stopping before send.")
             return {"status": "dry_run", "typed": typed}
 
-        # After typing, LinkedIn changes the primary button label
+        # Find the Send button in the messaging compose panel
         send_label = js('''(function() {
-            var b = Array.from(document.querySelectorAll("button")).find(function(b) {
-                var l = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
-                return l.includes("send") && !l.includes("without");
+            var btns = Array.from(document.querySelectorAll("button"));
+            var b = btns.find(function(b) {
+                var label = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase().trim();
+                return label === "send" || label === "enviar";
             });
             return b ? (b.getAttribute("aria-label") || b.textContent.trim()) : null;
         })()''')
@@ -244,151 +279,94 @@ def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dict:
                 '.map(function(b){return (b.getAttribute("aria-label")||"")+'
                 '"|"+b.textContent.trim()}).join("; ")'
             )
-            sys.exit(f"ERROR: send button not found after typing. Buttons present: {all_btns}")
+            sys.exit(f"ERROR: Send button not found. Buttons present: {all_btns}")
 
         print(f"Clicking send button: '{send_label}'")
         js('''(function() {
-            var b = Array.from(document.querySelectorAll("button")).find(function(b) {
-                var l = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
-                return l.includes("send") && !l.includes("without");
+            var btns = Array.from(document.querySelectorAll("button"));
+            var b = btns.find(function(b) {
+                var label = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase().trim();
+                return label === "send" || label === "enviar";
             });
             if (b) b.click();
         })()''')
 
         print("Waiting for server response...")
-        time.sleep(5)
+        time.sleep(4)
 
         toast = js(
             'document.querySelector(".artdeco-toast-item__message, '
             '[data-test-artdeco-toast-item]")?.textContent?.trim() || null'
         )
-        modal_gone = not js('!!document.querySelector("#send-invite-modal")')
 
-        # net_events fills as cmd() recvs frames; the js() calls above drained any
-        # buffered events along with their responses.
-        # Exclude browser-internal URLs (chrome://, extension://) and LinkedIn's
-        # realtime push socket (/realtime/connect) — those are not the invite API.
-        inv_events = [
+        # Check compose area is cleared (message was sent)
+        compose_cleared = not (js(
+            f"document.querySelector({json.dumps(compose_sel)})?.textContent?.trim()"
+        ) or "").strip()
+
+        msg_events = [
             e for e in net_events
-            if any(k in e["response"]["url"]
-                   for k in ["invitation", "relationship"])
+            if "messaging" in e["response"]["url"]
             and not e["response"]["url"].startswith("chrome://")
             and not e["response"]["url"].startswith("extension://")
         ]
-        # The definitive invite creation call
-        voyager_event = next(
-            (e for e in net_events
-             if "verifyQuotaAndCreate" in e["response"]["url"]),
-            None,
-        )
-        if voyager_event and voyager_event not in inv_events:
-            inv_events.append(voyager_event)
-
-        # Fetch response body from the Voyager invitation API call
-        server_body = None
-        server_message_echo = None
-        if voyager_event:
-            try:
-                body_result = cmd("Network.getResponseBody",
-                                  {"requestId": voyager_event["requestId"]})
-                raw_body = body_result.get("body", "")
-                server_body = json.loads(raw_body) if raw_body else None
-                if server_body:
-                    body_str = json.dumps(server_body)
-                    msg_match = re.search(
-                        r'"(?:message|customMessage|note)"\s*:\s*"([^"]+)"', body_str)
-                    if msg_match:
-                        server_message_echo = msg_match.group(1)
-            except Exception as e:
-                print(f"WARNING: could not fetch API response body: {e}", file=sys.stderr)
 
         print("\n=== Server Confirmation ===")
         if toast:
             print(f"Toast notification: {toast}")
-        print(f"Modal closed after send: {modal_gone}")
-        for e in inv_events:
+        print(f"Compose area cleared after send: {compose_cleared}")
+        for e in msg_events:
             print(f"API response: HTTP {e['response']['status']} <- {e['response']['url']}")
-        if server_message_echo:
-            print(f"Message confirmed by server: \"{server_message_echo}\"")
-        elif server_body is not None:
-            print(f"Server response body (no message field found): {json.dumps(server_body)[:400]}")
-        elif voyager_event:
-            print("WARNING: Voyager API called but response body was empty or unreadable",
-                  file=sys.stderr)
-        else:
-            print("WARNING: Voyager invitation API call not captured in network monitor",
-                  file=sys.stderr)
 
-        api_ok = any(e["response"]["status"] in (200, 201, 204) for e in inv_events)
-        api_failed = bool(inv_events) and not api_ok
+        api_ok = any(e["response"]["status"] in (200, 201, 204) for e in msg_events)
+        api_failed = bool(msg_events) and not api_ok
 
         if api_failed and not toast:
-            statuses = [e["response"]["status"] for e in inv_events]
-            if all(s == 400 for s in statuses):
-                print("ERROR: invitation API returned 400 — already connected, "
-                      "quota exhausted, or profile not connectable.",
-                      file=sys.stderr)
-                return {
-                    "status": "failed",
-                    "reason": "already_connected_or_not_connectable",
-                    "toast": toast,
-                    "modal_closed": modal_gone,
-                    "api_responses": [
-                        {"url": e["response"]["url"], "status": e["response"]["status"]}
-                        for e in inv_events
-                    ],
-                }
-            print(f"ERROR: invitation API returned errors: {statuses}", file=sys.stderr)
+            statuses = [e["response"]["status"] for e in msg_events]
+            print(f"ERROR: messaging API returned errors: {statuses}", file=sys.stderr)
 
         success = bool(
             api_ok
+            or (compose_cleared and not api_failed)
             or (toast and not api_failed)
-            or (modal_gone and not api_failed)
         )
 
-        return {
+        result = {
             "status": "sent" if success else "uncertain",
             "toast": toast,
-            "modal_closed": modal_gone,
-            "server_message_echo": server_message_echo,
+            "compose_cleared": compose_cleared,
             "api_responses": [
                 {"url": e["response"]["url"], "status": e["response"]["status"]}
-                for e in inv_events
+                for e in msg_events
             ],
         }
+        return result
+
     finally:
         _ws_close(sock)
 
 
 def main():
     p = argparse.ArgumentParser(
-        description="Send a LinkedIn connection invite with a note")
+        description="Send a LinkedIn direct message to a connection")
     p.add_argument("vanity_name",
                    help="LinkedIn vanity slug, e.g. john-smith-123")
-    p.add_argument("note", help=f"Personalised note (<={MAX_NOTE_CHARS} chars)")
+    p.add_argument("text", help="Message text")
     p.add_argument("--dry-run", action="store_true",
-                   help="Type note but do not click Send")
+                   help="Type message but do not click Send")
     args = p.parse_args()
 
-    result = send_connection_invite(args.vanity_name, args.note, args.dry_run)
+    result = send_message(args.vanity_name, args.text, args.dry_run)
 
     print("\n=== RESULT ===")
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
     if result["status"] == "sent":
-        echo = result.get("server_message_echo")
-        if echo:
-            print(f"\nSUCCESS: invitation sent. Server confirmed note: \"{echo}\"")
-        else:
-            print("\nSUCCESS: invitation sent (server confirmed via API + modal close; note text not echoed in response).")
+        print("\nSUCCESS: message sent.")
     elif result["status"] == "dry_run":
-        print("\nDRY RUN complete - no invite sent.")
-    elif result["status"] == "failed":
-        print(f"\nFAILED: {result.get('reason', 'unknown')}. No invitation sent.",
-              file=sys.stderr)
-        sys.exit(1)
+        print("\nDRY RUN complete - no message sent.")
     else:
-        print("\nUNCERTAIN - could not confirm server acceptance. Check LinkedIn manually.",
+        print("\nUNCERTAIN - could not confirm delivery. Check LinkedIn manually.",
               file=sys.stderr)
         sys.exit(1)
 
