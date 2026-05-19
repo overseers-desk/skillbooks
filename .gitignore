@@ -1,3 +1,5 @@
 .claude/settings.local.json
 config.ini
 config.yaml
+__pycache__/
+*.pyc
