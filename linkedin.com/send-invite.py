@@ -266,19 +266,27 @@ def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dict:
 
         # net_events fills as cmd() recvs frames; the js() calls above drained any
         # buffered events along with their responses.
+        # Exclude browser-internal URLs (chrome://, extension://) and LinkedIn's
+        # realtime push socket (/realtime/connect) — those are not the invite API.
         inv_events = [
             e for e in net_events
             if any(k in e["response"]["url"]
-                   for k in ["invitation", "relationship", "connect"])
+                   for k in ["invitation", "relationship"])
+            and not e["response"]["url"].startswith("chrome://")
+            and not e["response"]["url"].startswith("extension://")
         ]
+        # The definitive invite creation call
+        voyager_event = next(
+            (e for e in net_events
+             if "verifyQuotaAndCreate" in e["response"]["url"]),
+            None,
+        )
+        if voyager_event and voyager_event not in inv_events:
+            inv_events.append(voyager_event)
 
         # Fetch response body from the Voyager invitation API call
         server_body = None
         server_message_echo = None
-        voyager_event = next(
-            (e for e in inv_events if "verifyQuotaAndCreate" in e["response"]["url"]),
-            None,
-        )
         if voyager_event:
             try:
                 body_result = cmd("Network.getResponseBody",
@@ -311,10 +319,31 @@ def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dict:
             print("WARNING: Voyager invitation API call not captured in network monitor",
                   file=sys.stderr)
 
+        api_ok = any(e["response"]["status"] in (200, 201, 204) for e in inv_events)
+        api_failed = bool(inv_events) and not api_ok
+
+        if api_failed and not toast:
+            statuses = [e["response"]["status"] for e in inv_events]
+            if all(s == 400 for s in statuses):
+                print("ERROR: invitation API returned 400 — already connected, "
+                      "quota exhausted, or profile not connectable.",
+                      file=sys.stderr)
+                return {
+                    "status": "failed",
+                    "reason": "already_connected_or_not_connectable",
+                    "toast": toast,
+                    "modal_closed": modal_gone,
+                    "api_responses": [
+                        {"url": e["response"]["url"], "status": e["response"]["status"]}
+                        for e in inv_events
+                    ],
+                }
+            print(f"ERROR: invitation API returned errors: {statuses}", file=sys.stderr)
+
         success = bool(
-            toast
-            or modal_gone
-            or any(e["response"]["status"] in (200, 201, 204) for e in inv_events)
+            api_ok
+            or (toast and not api_failed)
+            or (modal_gone and not api_failed)
         )
 
         return {
@@ -354,6 +383,10 @@ def main():
             print("\nSUCCESS: invitation sent (server confirmed via API + modal close; note text not echoed in response).")
     elif result["status"] == "dry_run":
         print("\nDRY RUN complete - no invite sent.")
+    elif result["status"] == "failed":
+        print(f"\nFAILED: {result.get('reason', 'unknown')}. No invitation sent.",
+              file=sys.stderr)
+        sys.exit(1)
     else:
         print("\nUNCERTAIN - could not confirm server acceptance. Check LinkedIn manually.",
               file=sys.stderr)
