@@ -126,6 +126,14 @@ brew install util-linux coreutils
 
 Linux distros include both already.
 
+### Browser setup
+
+Two one-time settings in Chromium and one config entry let the skills reuse your signed-in session:
+
+- In Chromium's "On startup" settings, choose "Continue where you left off." This carries session cookies across a close and reopen, so sites you are signed in to do not ask you to authenticate again every time a skill runs. Leave the privacy option that clears cookies when all windows close switched off, since it overrides this.
+- If Chromium shows a chooser at startup, untick "Show on startup" so it opens straight to the session you used last. A skill launches headless without choosing, and inherits that same last-used session.
+- Create `config.ini` (see `config.ini.example`) and set `[browser] user_agent` to your everyday browser's User-Agent string. A headless launch otherwise advertises itself as automated and gets blocked; the wrapper refuses to run without it.
+
 ## Usage
 
 SOPs are executed by passing them to Claude as a prompt file:
