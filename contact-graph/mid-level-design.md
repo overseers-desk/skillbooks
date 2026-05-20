@@ -94,7 +94,7 @@ Database: `contact_graph` on the local PostgreSQL instance.
 
 | Table | Relationship / purpose | Fields |
 |---|---|---|
-| **human** | one row per real human; `internal` flags operator-side humans (self, household, team) | id, display_name, linkedin_url, internal, notes |
+| **human** | one row per real human; `internal` flags operator-side humans (self, household, team); `linkedin_url` is UNIQUE so two humans cannot point at the same vanity (an identity-merge trigger for the LinkedIn enrichment worker) | id, display_name, linkedin_url, internal, notes |
 | **organisation** | canonical organisation node; created when a new org name appears in role or item_entity resolution | id, name, notes |
 | **role** | a human holds a role at an organisation; the role owns its email address | id, human_id, organisation_id (FK→organisation), title, email_address_id |
 | **meeting_participant** | meeting plugin participant log; one row per attendee per meeting item; source for coappearance and edge views for meeting items | source_kind, external_item_id, identifier_ref, role |
@@ -111,6 +111,7 @@ Database: `contact_graph` on the local PostgreSQL instance.
 | **linkedin_connection** | second-degree edges from profile browsing; human_id nullable for unresolved nodes | human_id_a, linkedin_url_a, human_id_b, linkedin_url_b, discovered_via_human_id, scraped_at |
 | **processing_queue** | unified job queue for AI tagging and LinkedIn enrichment; rebuilt in priority order (by edge count desc) after each ingest run so insertion order encodes priority; no stored score needed | human_id, job_type (tag/linkedin), queued_at, processed_at, model_used |
 | **reconnect_schedule** | computed next-prompt date per human; decay score not stored, computed on demand | human_id, next_prompt_date, last_prompted_at, computed_at |
+| **connection_queue** | one row per (human, campaign) for outbound LinkedIn outreach; state drains the row through verify → draft → queued → sent; do_not_contact reachable from any non-terminal state with exclusion_reason carrying the why; stand-in for the planned generic workflow_human_state | id, human_id, workflow_label, state, priority, vanity_name, note_text, with_note, verify_evidence, failure_reason, exclusion_reason, level (treatment band 0-3 from the harvested memory score), queued_at, verified_at, drafted_at, sent_at, terminal_at |
 
 ---
 
