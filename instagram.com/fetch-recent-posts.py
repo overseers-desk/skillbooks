@@ -109,9 +109,9 @@ def launch_browser():
         sys.stderr.write(f"headless-browser/not-google-chrome --print-args failed: {e}\n")
         return None, None
     binary = info["binary"]
-    profile_args = info["profile_args"]
+    user_data_dir_args = info["user_data_dir_args"]
     proc = subprocess.Popen(
-        [binary] + profile_args + [
+        [binary] + user_data_dir_args + [
             "--headless=new", "--disable-gpu",
             f"--user-agent={UA}",
             "--remote-debugging-port=0",

@@ -2,7 +2,7 @@
 """
 CDP helper for Otter.ai API calls.
 
-Launches a headless Chrome-compatible browser with the user's logged-in profile,
+Launches a headless Chrome-compatible browser with the user's logged-in user-data-dir,
 navigates to otter.ai to establish session context, then executes JavaScript
 fetch() calls against the Otter.ai internal API. Returns JSON results to stdout.
 
@@ -109,9 +109,9 @@ def launch_browser():
         sys.stderr.write(f"headless-browser/not-google-chrome --print-args failed: {e}\n")
         return None, None
     binary = info["binary"]
-    profile_args = info["profile_args"]
+    user_data_dir_args = info["user_data_dir_args"]
     proc = subprocess.Popen(
-        [binary] + profile_args + [
+        [binary] + user_data_dir_args + [
             "--headless=new", "--disable-gpu",
             f"--user-agent={UA}",
             "--remote-debugging-port=0",

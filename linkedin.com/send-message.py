@@ -84,7 +84,7 @@ def _ws_close(sock):
     sock.close()
 
 
-PROFILE = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
+USER_DATA_DIR = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
 CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".claude/skills/config.ini")
 CDP_PORT = 9223
 
@@ -136,7 +136,7 @@ def send_message(vanity_name: str, text: str, dry_run: bool = False):
 
     pids = _snap_chromium_running()
     if pids:
-        print(f"WARNING: snap Chromium running (PIDs: {pids}). Profile may be locked.",
+        print(f"WARNING: snap Chromium running (PIDs: {pids}). User-data-dir may be locked.",
               file=sys.stderr)
 
     proc = subprocess.Popen(
@@ -144,7 +144,7 @@ def send_message(vanity_name: str, text: str, dry_run: bool = False):
             "flock", "/tmp/chromium.lock",
             "chromium", "--headless=new",
             f"--remote-debugging-port={CDP_PORT}",
-            f"--user-data-dir={PROFILE}",
+            f"--user-data-dir={USER_DATA_DIR}",
             f"--user-agent={ua}",
             f"--accept-lang={lang}",
             "--window-size=1920,1080",

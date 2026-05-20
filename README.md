@@ -112,13 +112,13 @@ Skills fall into three tiers by what they need at runtime.
 
 **External dependency.** A few skills need something else: a command-line tool installed by the user, or a sibling repository at a fixed relative path next to this one. These skills check for the dependency at startup and print an install hint if it is missing. We prefer the second tier where feasible; the cost is a code restriction (no `yaml`, hand-rolled CDP) but the benefit is a skill that runs without setup beyond what the OS already provides.
 
-Skills come in two kinds: those that drive a browser (most of them) and those that talk to APIs directly with their own credentials. The browser-driving skills launch Chromium against the user's logged-in profile (snap-installed on Linux, brew-installed on macOS) and lock the profile dir while they run, so the user closes their everyday Chromium before invoking such a skill and waits for it to finish. If a browser skill cannot find a logged-in session, it prompts the user to open Chromium, sign in to the relevant site, and confirm before continuing.
+Skills come in two kinds: those that drive a browser (most of them) and those that talk to APIs directly with their own credentials. The browser-driving skills launch Chromium against the user's logged-in user-data-dir (snap-installed on Linux, brew-installed on macOS) and lock the user-data-dir while they run, so the user closes their everyday Chromium before invoking such a skill and waits for it to finish. If a browser skill cannot find a logged-in session, it prompts the user to open Chromium, sign in to the relevant site, and confirm before continuing.
 
-The reasoning behind the browser arrangement (why Chromium, why the user's real profile and not a fresh one, why we declined to diagnose Cursor's MCP-browser denials) is in `BROWSER.md`. That file is reference material for when a browser skill misbehaves, not preflight reading; skipping it costs nothing under normal operation.
+The reasoning behind the browser arrangement (why Chromium, why the user's real user-data-dir and not a fresh one, why we declined to diagnose Cursor's MCP-browser denials) is in `BROWSER.md`. That file is reference material for when a browser skill misbehaves, not preflight reading; skipping it costs nothing under normal operation.
 
 ### macOS setup
 
-The browser wrapper (`not-google-chrome`) uses `flock` to serialise access to the Chromium profile and `gtimeout` to bound the run time. macOS does not ship either; install via Homebrew:
+The browser wrapper (`not-google-chrome`) uses `flock` to serialise access to the Chromium user-data-dir and `gtimeout` to bound the run time. macOS does not ship either; install via Homebrew:
 
 ```sh
 brew install util-linux coreutils

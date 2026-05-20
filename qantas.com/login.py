@@ -6,7 +6,7 @@ www.qantas.com, navigates to my-account, and extracts {first_name, tier,
 member_id, points, status_credits}.
 
 Cookies do not persist between invocations when the snap chromium browser
-is open (it locks the profile), so this script is the canonical way to read
+is open (it locks the user-data-dir), so this script is the canonical way to read
 the authenticated state - login + balance happen in one CDP session.
 
 Usage:
@@ -96,7 +96,7 @@ def _ws_close(sock):
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PROFILE = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
+USER_DATA_DIR = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
 CDP_PORT = 9224
 LOGIN_URL = "https://www.qantas.com/au/en/frequent-flyer/my-account/sign-in.html"
 ACCOUNT_URL = "https://www.qantas.com/au/en/frequent-flyer/my-account.html"
@@ -191,7 +191,7 @@ def run(check_only: bool, debug: bool):
         [
             "chromium", "--headless=new",
             f"--remote-debugging-port={CDP_PORT}",
-            f"--user-data-dir={PROFILE}",
+            f"--user-data-dir={USER_DATA_DIR}",
             "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
             "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
             "--window-size=1920,1080",

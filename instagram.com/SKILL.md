@@ -10,7 +10,7 @@ Spawn a **Sonnet subagent** to run the workflow. Profile DOM dumps are 1–2 MB;
 
 ## Prerequisites
 
-A logged-in Instagram session in the browser profile that `not-google-chrome` targets.
+A logged-in Instagram session in the user-data-dir that `not-google-chrome` targets.
 
 Note: `--lang` flags do not override Instagram's locale; it is a server-side account setting. The parsers are locale-agnostic, so this does not matter.
 
@@ -18,7 +18,7 @@ If a request redirects to `/accounts/login/` or returns empty JSON, the session 
 
 ## Skill-specific Chrome-compatible flag
 
-The wrapper handles standard flags (headless, window size, user agent, profile, flock, timeout). This skill appends `--virtual-time-budget=N` (4000 for search, 6000 for profile) to give Instagram's JSON endpoint time to hydrate. Save stdout and stderr separately: a common pitfall is `2>/dev/null > out.html` producing a zero-byte file; `> out.html 2> out.err` is reliable.
+The wrapper handles standard flags (headless, window size, user agent, user-data-dir, flock, timeout). This skill appends `--virtual-time-budget=N` (4000 for search, 6000 for profile) to give Instagram's JSON endpoint time to hydrate. Save stdout and stderr separately: a common pitfall is `2>/dev/null > out.html` producing a zero-byte file; `> out.html 2> out.err` is reliable.
 
 ## DM read-state policy
 
