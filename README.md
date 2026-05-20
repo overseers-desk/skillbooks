@@ -118,7 +118,7 @@ The reasoning behind the browser arrangement (why Chromium, why the user's real 
 
 ### macOS setup
 
-The browser wrapper (`bin/not-google-chrome`) uses `flock` to serialise access to the Chromium profile and `gtimeout` to bound the run time. macOS does not ship either; install via Homebrew:
+The browser wrapper (`not-google-chrome`) uses `flock` to serialise access to the Chromium profile and `gtimeout` to bound the run time. macOS does not ship either; install via Homebrew:
 
 ```sh
 brew install util-linux coreutils

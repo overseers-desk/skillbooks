@@ -10,7 +10,7 @@ Spawn a **Sonnet subagent** to run the workflow. Profile DOM dumps are 1–2 MB;
 
 ## Prerequisites
 
-A logged-in Instagram session in the browser profile that `$HOME/.claude/skills/bin/not-google-chrome` targets.
+A logged-in Instagram session in the browser profile that `not-google-chrome` targets.
 
 Note: `--lang` flags do not override Instagram's locale; it is a server-side account setting. The parsers are locale-agnostic, so this does not matter.
 
@@ -33,7 +33,7 @@ The internal refusal gate inside §9 is a backstop. A run without prior disclosu
 Instagram's rendered search page (`/explore/search/keyword/?q=...`) is GraphQL-hydrated and stays empty in a headless dump within a reasonable time budget. The internal endpoint `/web/search/topsearch/?query=...`, authenticated, returns clean JSON directly. Use that:
 
 ```bash
-$HOME/.claude/skills/bin/not-google-chrome -t 30 \
+not-google-chrome -t 30 \
   "https://www.instagram.com/web/search/topsearch/?query=SEARCH_TERMS" \
   --virtual-time-budget=4000 \
   > /tmp/instagram-search.html 2> /tmp/instagram-search.err
@@ -54,7 +54,7 @@ Prints a ranked list of candidate handles with display name, verified/private fl
 ## 3. Fetch a profile
 
 ```bash
-$HOME/.claude/skills/bin/not-google-chrome -t 45 \
+not-google-chrome -t 45 \
   "https://www.instagram.com/HANDLE/" \
   --virtual-time-budget=6000 \
   > /tmp/instagram-profile.html 2> /tmp/instagram-profile.err

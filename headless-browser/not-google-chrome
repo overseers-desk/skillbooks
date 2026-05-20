@@ -9,7 +9,8 @@
 #          extra Chrome-compatible flags after the URL (e.g. --virtual-time-budget=N,
 #          --log-net-log=PATH); they go through to the underlying invocation.
 # Exit 64: bad usage. Exit 77: URL on the abuse list (override with
-#          --yes-i-am-not-stupid). Exit 78: unsupported OS or missing dependency.
+#          --yes-i-am-not-stupid). Exit 78: unsupported OS, missing dependency,
+#          or [browser] user_agent missing from config.ini.
 #
 # macOS prerequisite: brew install util-linux coreutils (flock, gtimeout).
 # Linux has both natively.
@@ -32,8 +33,11 @@
 #   - Do not set --virtual-time-budget for general use; a few skills
 #     (instagram, facebook) pass it explicitly because their JS-rendered
 #     endpoints need a budget.
-#   - Keep the UA override; it defeats sites that block on the literal
-#     string HeadlessChrome.
+#   - UA override is required, read from [browser] user_agent in
+#     $HOME/.claude/skills/config.ini (the same file and section the CDP
+#     skills read; the wrapper exits 78 if it is missing). It defeats sites
+#     that block on the literal string HeadlessChrome, and keeps the fetch
+#     fingerprint matching the user's logged-in browser session.
 #
 # When to call this wrapper vs WebFetch:
 #   Prefer WebFetch when the site allows it (converts HTML to plain text
@@ -106,9 +110,6 @@ EOF
   done
 fi
 
-ua='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36'
-common=(--headless=new "${mode_args[@]}" --window-size=3840,2160 --user-agent="$ua")
-
 case "$(uname)" in
   Linux)
     binary=chromium
@@ -153,6 +154,38 @@ if [[ $print_args -eq 1 ]]; then
     "$(echo "$binary" | sed 's/"/\\"/g')" "$profile_json"
   exit 0
 fi
+
+# UA comes from [browser] user_agent in config.ini so the headless fetch
+# presents the same fingerprint as the browser the user logs in with, read from
+# the same file and section the CDP skills (e.g. linkedin.com) read. No default:
+# a wrong UA silently diverging from the logged-in session is worse than a hard
+# failure.
+config="$HOME/.claude/skills/config.ini"
+if [[ ! -f "$config" ]]; then
+  echo "not-google-chrome: $config not found. Copy config.ini.example to config.ini and fill the [browser] section." >&2
+  exit 78
+fi
+ua="$(awk '
+  /^[[:space:]]*\[/ { gsub(/[][[:space:]]/, ""); sect=$0; next }
+  sect=="browser" && /^[[:space:]]*user_agent[[:space:]]*=/ {
+    sub(/^[^=]*=[[:space:]]*/, ""); sub(/[[:space:]]+$/, ""); print; exit
+  }
+' "$config")"
+if [[ -z "$ua" ]]; then
+  cat >&2 <<EOF
+not-google-chrome: [browser] user_agent missing from $config.
+
+Set it to the exact User-Agent of the browser you log into sites with, so the
+headless fetch matches your authenticated session. Capture it from a real
+request in the DevTools Network panel. See config.ini.example.
+EOF
+  exit 78
+fi
+if [[ "$ua" == *HeadlessChrome* ]]; then
+  echo "not-google-chrome: user_agent in $config contains 'HeadlessChrome', the marker sites block on. Use the UA of a real browser." >&2
+  exit 78
+fi
+common=(--headless=new "${mode_args[@]}" --window-size=3840,2160 --user-agent="$ua")
 
 exec "$flock_cmd" /tmp/chromium.lock "$timeout_cmd" "$timeout" \
   "$binary" "${profile_args[@]}" "${common[@]}" "$@" "$url"

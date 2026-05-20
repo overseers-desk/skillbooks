@@ -15,7 +15,7 @@ Multi-file deviations use `?file=N` URL parameters (e.g. `?file=2` through `?fil
 Strip any `?file=` from the user's URL to get the canonical base URL. Fetch `?file=2`:
 
 ```bash
-$HOME/.claude/skills/bin/not-google-chrome -t 30 "BASE_URL?file=2" > /tmp/da_file.html
+not-google-chrome -t 30 "BASE_URL?file=2" > /tmp/da_file.html
 grep -oE 'https://wixmp[^"'\'']+\.mp4[^"'\'']*' /tmp/da_file.html | sort -u
 ```
 
@@ -24,7 +24,7 @@ If this returns an MP4 URL that differs from the base URL's MP4, it is multi-fil
 ## Single-file download
 
 ```bash
-$HOME/.claude/skills/bin/not-google-chrome -t 30 "BASE_URL" > /tmp/da_file.html
+not-google-chrome -t 30 "BASE_URL" > /tmp/da_file.html
 MP4=$(grep -oE 'https://wixmp[^"'\'']+\.mp4[^"'\'']*' /tmp/da_file.html | sort -u | head -1)
 wget -q --show-progress -O "DEST/SLUG.mp4" "$MP4"
 ```
@@ -36,7 +36,7 @@ Maintain a set of already-downloaded wixmp URLs. For each page, extract wixmp UR
 ```python
 import re, subprocess, os
 
-WRAPPER = os.path.expanduser("~/.claude/skills/bin/not-google-chrome")
+WRAPPER = os.path.expanduser("~/.claude/skills/headless-browser/not-google-chrome")
 
 def dump_dom(url):
     return subprocess.run(

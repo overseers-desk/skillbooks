@@ -113,7 +113,7 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36")
 
 BROWSER_WRAPPER = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "..", "bin", "not-google-chrome"
+    os.path.dirname(os.path.abspath(__file__)), "..", "headless-browser", "not-google-chrome"
 )
 
 
@@ -132,7 +132,7 @@ def launch_browser():
     try:
         info = json.loads(subprocess.check_output([BROWSER_WRAPPER, "--print-args"], text=True))
     except Exception as e:
-        sys.stderr.write(f"bin/not-google-chrome --print-args failed: {e}\n")
+        sys.stderr.write(f"headless-browser/not-google-chrome --print-args failed: {e}\n")
         return None, None
     binary = info["binary"]
     profile_args = info["profile_args"]
