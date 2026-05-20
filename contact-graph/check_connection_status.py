@@ -30,7 +30,7 @@ import re
 import subprocess
 import sys
 
-NOT_GOOGLE_CHROME = os.path.expanduser('~/.claude/skills/bin/not-google-chrome')
+NOT_GOOGLE_CHROME = os.path.expanduser('~/.claude/skills/headless-browser/not-google-chrome')
 
 
 def main():

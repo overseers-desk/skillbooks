@@ -35,7 +35,7 @@ The wrapper passes through extra Chrome-compatible flags after the URL, so `--lo
 ```bash
 NETLOG="$HOME/gyg-netlog.json"
 
-$HOME/.claude/skills/bin/not-google-chrome -t 15 \
+not-google-chrome -t 15 \
   "https://supplier.getyourguide.com/products/list" \
   --log-net-log="$NETLOG" --net-log-capture-mode=Everything \
   > /dev/null 2>&1

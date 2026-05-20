@@ -11,7 +11,7 @@ Spawn a **subagent** to run the CDP script, as each invocation launches a headle
 
 ## Prerequisites
 
-- A Chrome-compatible browser with an active Otter.ai session (user must be logged in via the browser UI). Browser invocation via `$HOME/.claude/skills/bin/not-google-chrome`.
+- A Chrome-compatible browser with an active Otter.ai session (user must be logged in via the browser UI). Browser invocation via `not-google-chrome`.
 - Python 3 with `websocket-client` installed
 - For Dropbox export: Dropbox must be connected in Otter.ai settings
 - Export path configured in `~/.claude/skills/config.ini` under `[otter.ai] dropbox_export_path`

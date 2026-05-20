@@ -2,12 +2,12 @@
 
 **Scope:** applies to any LinkedIn fetch subagent working in this campaign directory.
 
-**Rationale:** the snap chromium user-data-dir `$HOME/snap/chromium/common/chromium` carries two LinkedIn-logged-in profiles. The `Default` profile is **Chris Graham**; the `Weiwu` profile is **Weiwu Zhang**. The wrapper at `$HOME/.claude/skills/bin/not-google-chrome` does not specify `--profile-directory`, so chromium falls back to `Default` (Chris). For a second discovery pass from Weiwu's 1st-degree network, select the `Weiwu` profile explicitly by passing `--profile-directory=Weiwu` as an extra flag after the URL.
+**Rationale:** the snap chromium user-data-dir `$HOME/snap/chromium/common/chromium` carries two LinkedIn-logged-in profiles. The `Default` profile is **Chris Graham**; the `Weiwu` profile is **Weiwu Zhang**. The `not-google-chrome` wrapper does not specify `--profile-directory`, so chromium falls back to `Default` (Chris). For a second discovery pass from Weiwu's 1st-degree network, select the `Weiwu` profile explicitly by passing `--profile-directory=Weiwu` as an extra flag after the URL.
 
 ## Exact invocation for this campaign when fetching LinkedIn as Weiwu
 
 ```bash
-$HOME/.claude/skills/bin/not-google-chrome -t 30 "URL" --profile-directory=Weiwu > out.html
+not-google-chrome -t 30 "URL" --profile-directory=Weiwu > out.html
 ```
 
 ## Rules
@@ -38,7 +38,7 @@ Every headless fetch in this campaign MUST save the fetched HTML to a persistent
 ```bash
 mkdir -p html-archive/$(date +%Y-%m-%d)
 out=html-archive/$(date +%Y-%m-%d)/${slug}-$(date +%H%M%S).html
-$HOME/.claude/skills/bin/not-google-chrome -t 30 "$URL" --profile-directory=Weiwu > "$out"
+not-google-chrome -t 30 "$URL" --profile-directory=Weiwu > "$out"
 # Then parse $out, not a pipe.
 ```
 
