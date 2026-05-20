@@ -10,9 +10,9 @@ This workflow produces large DOM outputs (1-20MB per page). Spawn a **Sonnet sub
 
 ## Prerequisites
 
-A logged-in LinkedIn session in the browser profile that `not-google-chrome` targets. This skill constructs LinkedIn URLs, calls the wrapper to fetch them, and parses the result.
+A logged-in LinkedIn session in the user-data-dir that `not-google-chrome` targets. This skill constructs LinkedIn URLs, calls the wrapper to fetch them, and parses the result.
 
-If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Registrarse", the wrapper did not deliver a logged-in session: the profile path is wrong, or another chromium instance holds the same profile. Investigate the plumbing; do not ask the user to log in again. The user is almost always already logged in.
+If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Registrarse", the wrapper did not deliver a logged-in session: the user-data-dir is wrong, or another chromium instance holds the same user-data-dir. Investigate the plumbing; do not ask the user to log in again. The user is almost always already logged in.
 
 ## 1. Search for people
 
@@ -100,14 +100,14 @@ python3 $HOME/.claude/skills/linkedin.com/send-invite.py VANITY_NAME "Your note 
 
 `VANITY_NAME` is the slug from the profile URL: `/in/john-smith-123/` → `john-smith-123`.
 
-The script uses CDP (Chrome DevTools Protocol) against the snap Chromium profile. It:
+The script uses CDP (Chrome DevTools Protocol) against the snap Chromium user-data-dir. It:
 1. Navigates to `/preload/custom-invite/?vanityName=VANITY_NAME`
 2. Clicks "Add a note", waits for the textarea (`#custom-message`)
 3. Types the note via `Input.insertText` (triggers Ember reactivity)
 4. Clicks the send button (label varies; matched by "send" excluding "without")
 5. Waits for server round-trip and captures confirmation
 
-**Prerequisite:** snap Chromium must not be open (it shares the profile directory). If it is running, the script warns but may still succeed; if the profile is locked, close the browser and retry.
+**Prerequisite:** snap Chromium must not be open (it shares the user-data-dir). If it is running, the script warns but may still succeed; if the user-data-dir is locked, close the browser and retry.
 
 **Confirmation output** — the script prints and returns a JSON result:
 - `toast` — text of LinkedIn's toast notification if present (e.g. "Invitation sent")

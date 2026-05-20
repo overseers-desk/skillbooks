@@ -86,5 +86,5 @@ where SLUG is the last path segment of the deviation URL (e.g. `Interrogation-2-
 ## What this skill does NOT do
 
 - It does not handle image or literature deviations — only video.
-- It does not handle deviations behind a login wall. If the dump returns a login page, the user must be logged in via the browser profile.
+- It does not handle deviations behind a login wall. If the dump returns a login page, the user must be logged in via the user-data-dir that `not-google-chrome` targets.
 - It does not search DeviantArt or browse galleries.

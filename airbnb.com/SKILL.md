@@ -12,7 +12,7 @@ Spawn a **subagent** to run the CDP script, as each invocation launches a headle
 ## Prerequisites
 
 - A Chrome-compatible browser with an active Airbnb hosting session. The user must be logged in to `airbnb.com/hosting` via their browser. See `BROWSER.md` for which browser `not-google-chrome` targets on each platform — this skill uses CDP, not `--dump-dom`, because Airbnb is a React SPA and the URL does not change on in-page navigation.
-- **Close the browser before running.** The headless instance and GUI browser share the same profile; if the GUI holds the profile lock, cookies will not be readable by the headless instance.
+- **Close the browser before running.** The headless instance and GUI browser share the same user-data-dir; if the GUI holds the user-data-dir lock, cookies will not be readable by the headless instance.
 
 If the script returns `{"error": "Not logged in..."}`, the user needs to log in to Airbnb in their browser first, then close it.
 
@@ -40,7 +40,7 @@ Returns `{"total_count": N, "returned": N, "reservations": [...]}` (for `--filte
 
 ## How it works
 
-The script uses Chrome DevTools Protocol (CDP) to launch a headless browser with the user's logged-in profile, navigate to a hosting page to establish the authenticated session, and then either intercept the React app's own API responses (quick replies) or issue further `/api/v2/...` calls from inside the page context via `Runtime.evaluate` (reservations). The CDP approach is necessary because the hosting dashboard is a React SPA whose URL does not change on in-page navigation, so `--dump-dom` would only capture the pre-hydration shell.
+The script uses Chrome DevTools Protocol (CDP) to launch a headless browser with the user's logged-in user-data-dir, navigate to a hosting page to establish the authenticated session, and then either intercept the React app's own API responses (quick replies) or issue further `/api/v2/...` calls from inside the page context via `Runtime.evaluate` (reservations). The CDP approach is necessary because the hosting dashboard is a React SPA whose URL does not change on in-page navigation, so `--dump-dom` would only capture the pre-hydration shell.
 
 Session redirects to the host's locale domain (e.g. `airbnb.es`), so any URL substring filter should match `airbnb` rather than the literal `airbnb.com`.
 

@@ -10,7 +10,7 @@ This workflow produces large DOM outputs (1-15MB per page). Spawn a **Sonnet sub
 
 ## Prerequisites
 
-A logged-in Facebook session in the browser profile that `not-google-chrome` targets.
+A logged-in Facebook session in the user-data-dir that `not-google-chrome` targets.
 
 If the dumped DOM title contains "Log in", "Log into Facebook", or "Iniciar sesión", the session has expired and the user needs to log in interactively.
 
@@ -18,7 +18,7 @@ Facebook may serve different DOM structures depending on whether the viewer is l
 
 ## Skill-specific Chrome-compatible flag
 
-The wrapper handles standard flags (headless, window size, user agent, profile, flock, timeout). This skill appends `--virtual-time-budget=3000` to allow Facebook's JS to render. Increase to 45000 on slow connections.
+The wrapper handles standard flags (headless, window size, user agent, user-data-dir, flock, timeout). This skill appends `--virtual-time-budget=3000` to allow Facebook's JS to render. Increase to 45000 on slow connections.
 
 ## 1. Search for people
 
@@ -162,7 +162,7 @@ that defers comment loading until the Comment button is clicked, and uses
 chrome but no comments. Use the CDP fetcher, then the parser.
 
 Prerequisite: the user's snap chromium must be fully closed (the GUI holds
-the profile lock; the CDP fetcher needs exclusive access). If the SingletonLock
+the user-data-dir lock; the CDP fetcher needs exclusive access). If the SingletonLock
 file exists, ask the user to quit Chromium.
 
 ```bash

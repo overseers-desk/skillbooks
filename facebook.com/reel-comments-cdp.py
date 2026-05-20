@@ -13,8 +13,8 @@ piping into parse-reel-comments.py.
 Usage:
     python3 reel-comments-cdp.py URL [--out PATH] [--max-rounds N] [--debug]
 
-Prerequisites: a logged-in snap chromium profile, no GUI chromium running
-(profile lock). See ../BROWSER.md.
+Prerequisites: a logged-in snap chromium user-data-dir, no GUI chromium running
+(user-data-dir lock). See ../BROWSER.md.
 """
 
 import argparse
@@ -94,7 +94,7 @@ def _ws_close(sock):
     sock.close()
 
 
-PROFILE = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
+USER_DATA_DIR = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
 CDP_PORT = 9226
 
 
@@ -432,7 +432,7 @@ def fetch(url, max_rounds=80, debug=False, bodies_out=None):
         [
             "chromium", "--headless=new",
             f"--remote-debugging-port={CDP_PORT}",
-            f"--user-data-dir={PROFILE}",
+            f"--user-data-dir={USER_DATA_DIR}",
             "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
             "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
             "--window-size=1920,1080",
@@ -677,7 +677,7 @@ def fetch(url, max_rounds=80, debug=False, bodies_out=None):
         # pointing to its own (now-dead) PID, which blocks the next launch.
         # Remove them if they reference a non-existent process.
         for name in ("SingletonLock", "SingletonCookie", "SingletonSocket"):
-            path = os.path.join(PROFILE, name)
+            path = os.path.join(USER_DATA_DIR, name)
             try:
                 target = os.readlink(path)
                 pid_str = target.rsplit("-", 1)[-1]

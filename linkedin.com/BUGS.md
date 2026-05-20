@@ -42,7 +42,7 @@ Saved HTML examples may still exist at `/tmp/linkedin-1a-*.html` for a short win
 
 **Symptom:** after sustained people-search activity within a calendar month, LinkedIn shows a Spanish-language warning banner "Has llegado al límite mensual de búsquedas de perfiles" ("You have reached the monthly profile search limit") and degrades search-result count to ~6 profiles per query (down from ~18-25 typical for the same query).
 
-**Repro:** ran ~12-13 people searches across one session on one logged-in LinkedIn account (corporate-team-experience S₅: 6 queries, event-producer S₃: 3 queries, wedding-planner S₄: ~3 queries before the banner), then the banner appeared mid-batch. Note: precise pre-CUL fetch count cannot be re-derived from the session log because tally was kept in prose; "13" is a working estimate, not an audited count. Same machine, switching to a second LinkedIn account on a separate browser profile was unaffected — confirming the cap is per-account, not per-IP.
+**Repro:** ran ~12-13 people searches across one session on one logged-in LinkedIn account (corporate-team-experience S₅: 6 queries, event-producer S₃: 3 queries, wedding-planner S₄: ~3 queries before the banner), then the banner appeared mid-batch. Note: precise pre-CUL fetch count cannot be re-derived from the session log because tally was kept in prose; "13" is a working estimate, not an audited count. Same machine, switching to a second LinkedIn account on a separate user-data-dir was unaffected — confirming the cap is per-account, not per-IP.
 
 **Behaviour observed:**
 
@@ -60,7 +60,7 @@ Saved HTML examples may still exist at `/tmp/linkedin-1a-*.html` for a short win
 
 - A simple `<title>`-Sign-In check is insufficient. Add a check for `límite mensual` / `límite` / monthly-limit substring in DOM body to detect the walled state.
 - Walled state is not a hard stop — degraded results may still contain useful candidates, but yield is much lower. Cost-per-fetch effectively halves once walled.
-- Best mitigation: maintain a second logged-in LinkedIn account on a separate browser profile, switch to it when the wall hits.
+- Best mitigation: maintain a second logged-in LinkedIn account on a separate user-data-dir, switch to it when the wall hits.
 - Triggers per-account, not per-IP — the second account on the same machine is unaffected.
 - Trigger threshold is approximately 12-15 people searches in a session (roughly — needs more measurement). The cap is part of LinkedIn's Commercial Use Limit policy and the official threshold is documented as fuzzy.
 

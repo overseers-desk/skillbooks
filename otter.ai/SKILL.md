@@ -89,7 +89,7 @@ Returns connection status, `dropbox_account_id`, auto-export/import settings, an
 ## How it works
 
 The script uses Chrome DevTools Protocol (CDP) to:
-1. Launch a headless browser with the user's logged-in profile
+1. Launch a headless browser with the user's logged-in user-data-dir
 2. Navigate to otter.ai to establish session context
 3. Execute JavaScript `fetch()` calls against Otter.ai's internal API (`/forward/api/v1/...`)
 4. Return JSON results

@@ -41,7 +41,7 @@ def detect_browser():
     return None
 
 
-def detect_profile():
+def detect_user_data_dir():
     if sys.platform == "darwin":
         candidates = [os.path.expanduser("~/Library/Application Support/Chromium")]
     else:
@@ -55,14 +55,14 @@ def detect_profile():
     return None
 
 
-def launch_browser(profile):
+def launch_browser(user_data_dir):
     browser = detect_browser()
     if not browser:
         return None, None
     proc = subprocess.Popen(
         [browser, "--headless=new", "--disable-gpu",
          f"--user-agent={UA}",
-         f"--user-data-dir={profile}",
+         f"--user-data-dir={user_data_dir}",
          "--remote-debugging-port=0",
          "--remote-allow-origins=*",
          "--window-size=1920,1080",
@@ -249,14 +249,14 @@ def main():
     print("- If succeeds: we get the exact endpoint URL and request shape", file=sys.stderr)
     print("- If fails: page may use SSR or non-standard transport", file=sys.stderr)
 
-    profile = detect_profile()
-    if not profile:
-        print(json.dumps({"error": "Browser profile not found"}))
+    user_data_dir = detect_user_data_dir()
+    if not user_data_dir:
+        print(json.dumps({"error": "Browser user-data-dir not found"}))
         sys.exit(1)
 
-    print(f"  Using profile: {profile}", file=sys.stderr)
+    print(f"  Using user-data-dir: {user_data_dir}", file=sys.stderr)
 
-    proc, port = launch_browser(profile)
+    proc, port = launch_browser(user_data_dir)
     if not proc:
         print(json.dumps({"error": "Failed to launch headless browser"}))
         sys.exit(1)

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Headless DOM dump against the user's logged-in Chromium profile.
-# Strategy and decisions (why Chromium, why the live profile, etc.): ../BROWSER.md.
+# Headless DOM dump against the user's logged-in Chromium session.
+# Strategy and decisions (why Chromium, why the live user-data-dir, etc.): ../BROWSER.md.
 #
 # Usage:   not-google-chrome [-t SECONDS] [--pdf PATH] URL [extra-flag ...]
 # Output:  rendered DOM on stdout (default), or PDF written to PATH (--pdf).
@@ -49,7 +49,7 @@ set -euo pipefail
 # Abuse list. URLs containing any of these substrings are refused unless
 # --yes-i-am-not-stupid is passed. The wrapper exists for sites that block
 # automated access (Akamai, Cloudflare, login walls). For these patterns,
-# WebFetch or curl is cheaper, faster, and does not lock the user's profile.
+# WebFetch or curl is cheaper, faster, and does not lock the user's user-data-dir.
 # Edit this list when a new common-abuse case shows up; a tighter pattern
 # beats a looser one (prefer "www.google." over "google" so we do not catch
 # a randomly-named google-something on a legitimate target site).
@@ -97,7 +97,7 @@ not-google-chrome: refusing to fetch $url
 This wrapper exists for sites that block automated access (Akamai,
 Cloudflare, login walls). The URL matches abuse pattern '$pat', a site
 that ordinarily responds to WebFetch or curl. Using a logged-in browser
-session here is wasteful: it locks the user's profile, takes seconds
+session here is wasteful: it locks the user's user-data-dir, takes seconds
 instead of milliseconds, and leaks attribution from their identity into a
 fetch that did not need it.
 
@@ -116,11 +116,11 @@ case "$(uname)" in
     flock_cmd=flock
     timeout_cmd=timeout
     if [[ "$(readlink -f "$(command -v chromium 2>/dev/null || echo /missing)")" == /usr/bin/snap ]]; then
-      profile="$HOME/snap/chromium/common/chromium"
+      user_data_dir="$HOME/snap/chromium/common/chromium"
     else
-      profile="$HOME/.config/chromium"
+      user_data_dir="$HOME/.config/chromium"
     fi
-    profile_args=(--user-data-dir="$profile")
+    user_data_dir_args=(--user-data-dir="$user_data_dir")
     ;;
   Darwin)
     binary='/Applications/Chromium.app/Contents/MacOS/Chromium'
@@ -131,7 +131,7 @@ case "$(uname)" in
       echo "not-google-chrome: flock not found; run 'brew install util-linux'" >&2
       exit 78
     fi
-    profile_args=(--user-data-dir="$HOME/Library/Application Support/Chromium")
+    user_data_dir_args=(--user-data-dir="$HOME/Library/Application Support/Chromium")
     ;;
   *)
     echo "not-google-chrome: unsupported OS $(uname)" >&2
@@ -140,18 +140,18 @@ case "$(uname)" in
 esac
 
 if [[ $print_args -eq 1 ]]; then
-  # Output binary + profile args as JSON for CDP scripts to consume.
-  # Profile args are emitted as a JSON array; each element is one flag string.
-  profile_json="["
+  # Output binary + user-data-dir args as JSON for CDP scripts to consume.
+  # The args are emitted as a JSON array; each element is one flag string.
+  user_data_dir_json="["
   first=1
-  for arg in "${profile_args[@]}"; do
-    [[ $first -eq 0 ]] && profile_json+=","
-    profile_json+="\"$(echo "$arg" | sed 's/"/\\"/g')\""
+  for arg in "${user_data_dir_args[@]}"; do
+    [[ $first -eq 0 ]] && user_data_dir_json+=","
+    user_data_dir_json+="\"$(echo "$arg" | sed 's/"/\\"/g')\""
     first=0
   done
-  profile_json+="]"
-  printf '{"binary":"%s","profile_args":%s}\n' \
-    "$(echo "$binary" | sed 's/"/\\"/g')" "$profile_json"
+  user_data_dir_json+="]"
+  printf '{"binary":"%s","user_data_dir_args":%s}\n' \
+    "$(echo "$binary" | sed 's/"/\\"/g')" "$user_data_dir_json"
   exit 0
 fi
 
@@ -188,4 +188,4 @@ fi
 common=(--headless=new "${mode_args[@]}" --window-size=3840,2160 --user-agent="$ua")
 
 exec "$flock_cmd" /tmp/chromium.lock "$timeout_cmd" "$timeout" \
-  "$binary" "${profile_args[@]}" "${common[@]}" "$@" "$url"
+  "$binary" "${user_data_dir_args[@]}" "${common[@]}" "$@" "$url"

@@ -64,7 +64,7 @@ If nothing recent turns up, the roster entry is sufficient.
 
 **1.3 LinkedIn lookup (if contact info needed)**
 
-Follow the method in `~/code/weiwu/linkedin-lookup-method/README.md`. This requires headless Chromium with the user's profile. Check that Chromium is not running before attempting.
+Follow the method in `~/code/weiwu/linkedin-lookup-method/README.md`. This requires headless Chromium with the user's user-data-dir. Check that Chromium is not running before attempting.
 
 LinkedIn is for finding contact details and current role. Do not spend time on LinkedIn if you already have what you need from the roster and web search.
 

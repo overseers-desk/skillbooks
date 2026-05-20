@@ -50,7 +50,7 @@ Date handling: the Flight Reward Finder only holds live and future availability 
 
 ## Feature 2: Read Frequent Flyer points balance (login required)
 
-Returns first name, tier, member ID, points, and status credits. Login + read happen in one CDP session because cookies do not persist across invocations while the snap chromium browser is open (it locks the profile).
+Returns first name, tier, member ID, points, and status credits. Login + read happen in one CDP session because cookies do not persist across invocations while the snap chromium browser is open (it locks the user-data-dir).
 
 ```bash
 python3 $HOME/.claude/skills/qantas.com/login.py            # human-readable

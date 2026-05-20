@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """CDP helper for the Airbnb hosting dashboard.
 
-Launches a headless browser with the user's logged-in profile, navigates to
+Launches a headless browser with the user's logged-in user-data-dir, navigates to
 a hosting page, intercepts the React app's internal API responses, and
 prints them as JSON.
 
@@ -104,9 +104,9 @@ def launch_browser():
         sys.stderr.write(f"headless-browser/not-google-chrome --print-args failed: {e}\n")
         return None, None
     binary = info["binary"]
-    profile_args = info["profile_args"]
+    user_data_dir_args = info["user_data_dir_args"]
     proc = subprocess.Popen(
-        [binary] + profile_args + [
+        [binary] + user_data_dir_args + [
             "--headless=new", "--disable-gpu",
             f"--user-agent={UA}",
             "--remote-debugging-port=0",
