@@ -10,7 +10,7 @@ This workflow produces large DOM outputs (1-15MB per page). Spawn a **Sonnet sub
 
 ## Prerequisites
 
-A logged-in Facebook session in the browser profile that `$HOME/.claude/skills/bin/not-google-chrome` targets.
+A logged-in Facebook session in the browser profile that `not-google-chrome` targets.
 
 If the dumped DOM title contains "Log in", "Log into Facebook", or "Iniciar sesión", the session has expired and the user needs to log in interactively.
 
@@ -23,7 +23,7 @@ The wrapper handles standard flags (headless, window size, user agent, profile, 
 ## 1. Search for people
 
 ```bash
-$HOME/.claude/skills/bin/not-google-chrome \
+not-google-chrome \
   "https://www.facebook.com/search/people/?q=SEARCH_TERMS" \
   --virtual-time-budget=3000 \
   > /tmp/facebook-search-results.html 2>/dev/null
@@ -53,7 +53,7 @@ Outputs profile URLs (both vanity `/username` and numeric `/profile.php?id=`) wi
 For username-based profiles:
 
 ```bash
-$HOME/.claude/skills/bin/not-google-chrome \
+not-google-chrome \
   "https://www.facebook.com/USERNAME" \
   --virtual-time-budget=3000 \
   > /tmp/facebook-profile.html 2>/dev/null
@@ -62,7 +62,7 @@ $HOME/.claude/skills/bin/not-google-chrome \
 For numeric-ID profiles:
 
 ```bash
-$HOME/.claude/skills/bin/not-google-chrome \
+not-google-chrome \
   "https://www.facebook.com/profile.php?id=NUMERIC_ID" \
   --virtual-time-budget=3000 \
   > /tmp/facebook-profile.html 2>/dev/null
@@ -71,7 +71,7 @@ $HOME/.claude/skills/bin/not-google-chrome \
 ### Optional: Fetch the About page for richer bio data
 
 ```bash
-$HOME/.claude/skills/bin/not-google-chrome \
+not-google-chrome \
   "https://www.facebook.com/USERNAME/about" \
   --virtual-time-budget=3000 \
   > /tmp/facebook-about.html 2>/dev/null
@@ -111,7 +111,42 @@ python3 $HOME/.claude/skills/facebook.com/parse-posts.py /tmp/facebook-profile.h
 
 How it works: each Facebook post carries a unique `__cft__[0]` token in all its links. The script uses `data-ad-preview="message"` markers to locate post boundaries, then associates hashtag and profile links via these tokens. Comments are excluded by limiting tag search to the header + content region.
 
-## 6. Keyword search (optional)
+## 6. Fetch a single reel / page post with comments
+
+Fetching `https://www.facebook.com/reel/{ID}` directly returns an empty shell with no rendered content. To get the rendered post with caption, counts, and visible comments, use the page-post permalink form:
+
+```bash
+not-google-chrome \
+  "https://www.facebook.com/PAGE_ID/posts/POST_ID" \
+  --virtual-time-budget=5000 \
+  > /tmp/facebook-post.html 2>/dev/null
+```
+
+`POST_ID` for a recent reel can be found in the main profile dump (step 3). Look for `"post_id":"NNNNNNNNN"` adjacent to the reel's `/reel/{ID}` URL — there is one such pair per recent reel embedded in the profile JSON.
+
+Parse with:
+
+```bash
+python3 $HOME/.claude/skills/facebook.com/parse-reel.py /tmp/facebook-post.html
+```
+
+Outputs page name, caption (from `<title>`), counts from both embedded JSON (`reaction_count`, `share_count`, sometimes `total_comment_count`) and the rendered engagement bar (reactions / comments / shares visible to the viewer), and the commenters whose names render in the DOM along with the comment body text adjacent to each name.
+
+Limit: Facebook lazy-loads comments. A single headless render yields the first ~5-10 comments out of the full thread. The total count in the engagement bar is the true number; do not invent further commenters beyond what the parser extracts.
+
+## 7. Parse reels-tab view counts (optional)
+
+For a profile's reels tab (`...?sk=reels_tab` or `/USERNAME/reels`), fetch the page as in step 3, then:
+
+```bash
+python3 $HOME/.claude/skills/facebook.com/parse-reels-tab.py /tmp/facebook-reels-tab.html
+```
+
+Extracts per visible reel card: reel URL and view count (e.g. `191K`). Headless dumps render only the first few cards before lazy-load — typical yield is 3 reels.
+
+How it works: each reel card has an eye-icon SVG with a fixed path string (`M7.5 10a2.5...`); the view count is the first `<span>` after it. The reel ID is the closest `/reel/NNNNN` link occurring before that SVG.
+
+## 8. Keyword search (optional)
 
 ```bash
 python3 $HOME/.claude/skills/facebook.com/keyword-search.py /tmp/facebook-profile.html keyword1 keyword2 ...
