@@ -12,7 +12,24 @@ This workflow produces large DOM outputs (1-20MB per page). Spawn a **Sonnet sub
 
 A logged-in LinkedIn session in the user-data-dir that `not-google-chrome` targets. This skill constructs LinkedIn URLs, calls the wrapper to fetch them, and parses the result.
 
-If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Registrarse", the wrapper did not deliver a logged-in session: the user-data-dir is wrong, or another chromium instance holds the same user-data-dir. Investigate the plumbing; do not ask the user to log in again. The user is almost always already logged in.
+If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Registrarse", the session is not active. LinkedIn expires the session periodically while keeping a remember-me cookie. First try `login.py` (see "Establish a session" below) to re-mint a session via the fastrack flow without a password. If that reports `logged_out` (no remember-me), or if the title persists after a successful login, then investigate the plumbing: the user-data-dir may be wrong, or another chromium instance may hold the same user-data-dir.
+
+## Establish a session
+
+LinkedIn expires the active session periodically while keeping a remember-me cookie. Re-mint a session without a password via the fastrack flow:
+
+```bash
+python3 $HOME/.claude/skills/linkedin.com/login.py          # log in via fastrack if logged out
+python3 $HOME/.claude/skills/linkedin.com/login.py --check  # report state only, never click
+```
+
+The JSON `status` is one of:
+- `already_logged_in` / `logged_in` — session active
+- `logged_out_remember_me` — remember-me cookie present; the default run clicks the fastrack "continue" control to log in
+- `logged_out` — no remember-me; the user must log in once in the GUI browser
+- `login_failed` — fastrack clicked but no session minted
+
+Run this when a fetch returns a sign-in title, before assuming the plumbing is broken. The same `[browser]` user-data-dir and UA caveats as the send scripts apply (close the GUI browser so the headless instance can write the session cookie).
 
 ## 1. Search for people
 

@@ -85,7 +85,7 @@ def _ws_close(sock):
     sock.close()
 
 
-PROFILE = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
+USER_DATA_DIR = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
 CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".claude/skills/config.ini")
 CDP_PORT = 9223
 MAX_NOTE_CHARS = 300
@@ -131,8 +131,8 @@ def _wait_for_cdp(retries=30):
     sys.exit("ERROR: CDP endpoint not ready - chromium failed to start")
 
 
-def send_connection_invite(vanity_name: str, note: str, dry_run: bool = False):
-    if len(note) > MAX_NOTE_CHARS:
+def send_connection_invite(vanity_name: str, note: str = "", dry_run: bool = False):
+    if note and len(note) > MAX_NOTE_CHARS:
         sys.exit(f"ERROR: note is {len(note)} chars; LinkedIn limit is {MAX_NOTE_CHARS}")
 
     url = f"https://www.linkedin.com/preload/custom-invite/?vanityName={vanity_name}"
@@ -141,7 +141,7 @@ def send_connection_invite(vanity_name: str, note: str, dry_run: bool = False):
 
     pids = _snap_chromium_running()
     if pids:
-        print(f"WARNING: snap Chromium running (PIDs: {pids}). Profile may be locked.",
+        print(f"WARNING: snap Chromium running (PIDs: {pids}). User-data-dir may be locked.",
               file=sys.stderr)
 
     proc = subprocess.Popen(
@@ -149,7 +149,7 @@ def send_connection_invite(vanity_name: str, note: str, dry_run: bool = False):
             "flock", "/tmp/chromium.lock",
             "chromium", "--headless=new",
             f"--remote-debugging-port={CDP_PORT}",
-            f"--user-data-dir={PROFILE}",
+            f"--user-data-dir={USER_DATA_DIR}",
             f"--user-agent={ua}",
             f"--accept-lang={lang}",
             "--window-size=1920,1080",
@@ -231,54 +231,77 @@ def _run_flow(ws_url: str, page_url: str, note: str, dry_run: bool) -> dict:
                 sys.exit("ERROR: email verification required to connect (high-profile account)")
             sys.exit(f"ERROR: invite modal not found. Body start: {body[:400]}")
 
-        print("Modal found. Clicking 'Add a note'...")
-        js('document.querySelector(\'[aria-label="Add a note"]\').click()')
+        if note:
+            print("Modal found. Clicking 'Add a note'...")
+            js('document.querySelector(\'[aria-label="Add a note"]\').click()')
 
-        if not wait_for("#custom-message", 8):
-            sys.exit("ERROR: textarea #custom-message did not appear after clicking 'Add a note'")
+            if not wait_for("#custom-message", 8):
+                sys.exit("ERROR: textarea #custom-message did not appear after clicking 'Add a note'")
 
-        print(f"Typing note ({len(note)} chars)...")
-        js("document.querySelector('#custom-message').focus()")
-        time.sleep(0.3)
-        # Input.insertText simulates real keyboard paste - triggers Ember input events
-        cmd("Input.insertText", {"text": note})
-        time.sleep(0.5)
+            print(f"Typing note ({len(note)} chars)...")
+            js("document.querySelector('#custom-message').focus()")
+            time.sleep(0.3)
+            # Input.insertText simulates real keyboard paste - triggers Ember input events
+            cmd("Input.insertText", {"text": note})
+            time.sleep(0.5)
 
-        typed = js("document.querySelector('#custom-message').value") or ""
-        print(f"Verified in textarea ({len(typed)} chars): '{typed[:60]}{'...' if len(typed) > 60 else ''}'")
-        if typed.strip() != note.strip():
-            print(f"WARNING: textarea mismatch - got {len(typed)} chars, expected {len(note)}",
-                  file=sys.stderr)
+            typed = js("document.querySelector('#custom-message').value") or ""
+            print(f"Verified in textarea ({len(typed)} chars): '{typed[:60]}{'...' if len(typed) > 60 else ''}'")
+            if typed.strip() != note.strip():
+                print(f"WARNING: textarea mismatch - got {len(typed)} chars, expected {len(note)}",
+                      file=sys.stderr)
 
-        if dry_run:
-            print("DRY RUN: stopping before send.")
-            return {"status": "dry_run", "typed": typed}
+            if dry_run:
+                print("DRY RUN: stopping before send.")
+                return {"status": "dry_run", "typed": typed}
 
-        # After typing, LinkedIn changes the primary button label
-        send_label = js('''(function() {
-            var b = Array.from(document.querySelectorAll("button")).find(function(b) {
-                var l = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
-                return l.includes("send") && !l.includes("without");
-            });
-            return b ? (b.getAttribute("aria-label") || b.textContent.trim()) : null;
-        })()''')
+            # After typing, LinkedIn changes the primary button label
+            send_label = js('''(function() {
+                var b = Array.from(document.querySelectorAll("button")).find(function(b) {
+                    var l = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
+                    return l.includes("send") && !l.includes("without");
+                });
+                return b ? (b.getAttribute("aria-label") || b.textContent.trim()) : null;
+            })()''')
 
-        if not send_label:
-            all_btns = js(
-                'Array.from(document.querySelectorAll("button"))'
-                '.map(function(b){return (b.getAttribute("aria-label")||"")+'
-                '"|"+b.textContent.trim()}).join("; ")'
-            )
-            sys.exit(f"ERROR: send button not found after typing. Buttons present: {all_btns}")
+            if not send_label:
+                all_btns = js(
+                    'Array.from(document.querySelectorAll("button"))'
+                    '.map(function(b){return (b.getAttribute("aria-label")||"")+'
+                    '"|"+b.textContent.trim()}).join("; ")'
+                )
+                sys.exit(f"ERROR: send button not found after typing. Buttons present: {all_btns}")
 
-        print(f"Clicking send button: '{send_label}'")
-        js('''(function() {
-            var b = Array.from(document.querySelectorAll("button")).find(function(b) {
-                var l = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
-                return l.includes("send") && !l.includes("without");
-            });
-            if (b) b.click();
-        })()''')
+            print(f"Clicking send button: '{send_label}'")
+            js('''(function() {
+                var b = Array.from(document.querySelectorAll("button")).find(function(b) {
+                    var l = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
+                    return l.includes("send") && !l.includes("without");
+                });
+                if (b) b.click();
+            })()''')
+        else:
+            # No-note path: click "Send without a note" directly.
+            if dry_run:
+                print("DRY RUN: modal found, would click 'Send without a note'.")
+                return {"status": "dry_run", "typed": ""}
+
+            print("No note. Clicking 'Send without a note'...")
+            clicked = js('''(function() {
+                var b = Array.from(document.querySelectorAll("button")).find(function(b) {
+                    var l = (b.getAttribute("aria-label") || b.textContent || "").toLowerCase();
+                    return l.includes("send without");
+                });
+                if (b) { b.click(); return true; }
+                return false;
+            })()''')
+            if not clicked:
+                all_btns = js(
+                    'Array.from(document.querySelectorAll("button"))'
+                    '.map(function(b){return (b.getAttribute("aria-label")||"")+'
+                    '"|"+b.textContent.trim()}).join("; ")'
+                )
+                sys.exit(f"ERROR: 'Send without a note' button not found. Buttons present: {all_btns}")
 
         print("Waiting for server response...")
         time.sleep(5)
@@ -390,7 +413,8 @@ def main():
         description="Send a LinkedIn connection invite with a note")
     p.add_argument("vanity_name",
                    help="LinkedIn vanity slug, e.g. john-smith-123")
-    p.add_argument("note", help=f"Personalised note (<={MAX_NOTE_CHARS} chars)")
+    p.add_argument("note", nargs="?", default="",
+                   help=f"Personalised note (<={MAX_NOTE_CHARS} chars); omit for a bare connect with no note")
     p.add_argument("--dry-run", action="store_true",
                    help="Type note but do not click Send")
     args = p.parse_args()
