@@ -1,6 +1,6 @@
 ---
-name: economist-editing
-description: Edit a draft markdown file to The Economist editorial standard via a fresh-context Sonnet subeditor spawned with the Agent tool. The subeditor edits in place; queries the editor cannot answer alone come back in its response message for the caller to address. Default is one editor pass. Pass `--two-pass` to add a verification round after the caller's revisions. The skill never commits. Use when the caller asks to apply Economist-style editing to a markdown document, or invokes /economist-editing.
+name: edit-economistly
+description: Edit a draft markdown file to The Economist editorial standard via a fresh-context Sonnet subeditor spawned with the Agent tool. `--two-pass` gets better result.
 argument-hint: <path-to-draft.md> [--two-pass]
 ---
 
