@@ -25,9 +25,21 @@ def parse_profile(html_path):
     title_match = re.findall(r"<title[^>]*>(.*?)</title>", html, re.DOTALL)
     title = title_match[0].strip() if title_match else "NOT FOUND"
 
-    # Check for login page
-    if any(t in title.lower() for t in ["log in", "log into", "iniciar sesión"]):
-        print("ERROR: Facebook session expired. Log in via a Chrome-compatible browser first.")
+    # Check for the no-session state. Two markers:
+    #  1. The page config embeds "USER_ID":"0" / "ACCOUNT_ID":"0" when no one
+    #     is logged in (these carry the real numeric id otherwise). This is the
+    #     reliable marker: it fires even on a public profile whose <title> reads
+    #     like a real page ("Mark Zuckerberg | Facebook") behind a login wall.
+    #  2. The login form (id="login_form", input name="email"/"pass") or a
+    #     login-flavoured title.
+    no_session = bool(
+        re.search(r'"(?:USER_ID|ACCOUNT_ID)":"0"', html)
+        or re.search(r'id="login_form"', html)
+        or any(t in title.lower() for t in ["log in", "log into", "iniciar sesión"])
+    )
+    if no_session:
+        print("ERROR: Facebook: not logged in - no session in this profile. "
+              "Log in via the GUI Chromium, then close it and retry.")
         sys.exit(1)
 
     # Extract name from title — Facebook uses various formats:

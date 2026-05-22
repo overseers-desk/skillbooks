@@ -12,9 +12,13 @@ This workflow produces large DOM outputs (1-15MB per page). Spawn a **Sonnet sub
 
 A logged-in Facebook session in the user-data-dir that `not-google-chrome` targets.
 
-If the dumped DOM title contains "Log in", "Log into Facebook", or "Iniciar sesión", the session has expired and the user needs to log in interactively.
+### No-session detection
 
-Facebook may serve different DOM structures depending on whether the viewer is logged in, the target profile's privacy settings, and the session locale.
+When no one is logged in, Facebook embeds `"USER_ID":"0"` and `"ACCOUNT_ID":"0"` in the page config and serves a login wall (`id="login_form"`, `input name="email"`, `input name="pass"`, action `login/device-based/regular/login/`). The `"USER_ID":"0"` marker is the reliable one: it fires even on a public profile whose `<title>` still reads like a real page (e.g. `Mark Zuckerberg | Facebook`) behind the wall, where a title-only check would be fooled. When logged in, `USER_ID`/`ACCOUNT_ID` carry the real numeric account id.
+
+`parse-profile.py` checks these markers and exits with `ERROR: Facebook: not logged in - no session in this profile. Log in via the GUI Chromium, then close it and retry.` The reel CDP fetcher (`reel-comments-cdp.py`) runs the same check after navigation and exits with the same message rather than returning an empty harvest. If a read returns this, surface it to the user verbatim — do not retry blindly or report empty results.
+
+Facebook may otherwise serve different DOM structures depending on the target profile's privacy settings and the session locale.
 
 ## Skill-specific Chrome-compatible flag
 
@@ -162,8 +166,17 @@ that defers comment loading until the Comment button is clicked, and uses
 chrome but no comments. Use the CDP fetcher, then the parser.
 
 Prerequisite: the user's snap chromium must be fully closed (the GUI holds
-the user-data-dir lock; the CDP fetcher needs exclusive access). If the SingletonLock
-file exists, ask the user to quit Chromium.
+the user-data-dir lock; the `not-google-chrome --cdp` wrapper needs exclusive
+access to launch its headless instance against the logged-in session).
+
+The fetcher is a pure CDP client: the `not-google-chrome --cdp` wrapper owns
+the browser (launch, flock, deadman timeout, snap-robust teardown, Singleton
+lock cleanup) and exports `CDP_WS_URL`; the script connects to it. Run without
+the wrapper and it exits with `ERROR: CDP_WS_URL not set`.
+
+If there is no session, the fetcher exits after navigation with `ERROR:
+Facebook: not logged in - no session in this profile...` (see No-session
+detection above) instead of returning an empty harvest.
 
 ```bash
 # 1. Fetch — drives CDP: open Comment panel, switch sort to All comments,
@@ -173,8 +186,10 @@ file exists, ask the user to quit Chromium.
 #    order at the end. The fetcher also intercepts every GraphQL response
 #    and writes a sidecar JSON of {legacy_fbid: canonical_body_text} — used
 #    by the parser to restore full text for comments truncated by 'See more'
-#    in the DOM render. For a 600-comment reel this takes 3-5 minutes.
-python3 $HOME/.claude/skills/facebook.com/reel-comments-cdp.py \
+#    in the DOM render. For a 600-comment reel this takes 3-5 minutes, so
+#    raise the wrapper's deadman with -t (e.g. -t 600).
+not-google-chrome --cdp -t 600 -- \
+  python3 $HOME/.claude/skills/facebook.com/reel-comments-cdp.py \
   "https://www.facebook.com/reel/REEL_ID" \
   --out /tmp/reel-comments.html \
   --bodies-json /tmp/reel-bodies.json \

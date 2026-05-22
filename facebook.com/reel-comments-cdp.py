@@ -10,11 +10,11 @@ the viewer over CDP: clicks Comment, scrolls the comment list, and clicks
 Output: the final document.documentElement.outerHTML on stdout, suitable for
 piping into parse-reel-comments.py.
 
-Usage:
-    python3 reel-comments-cdp.py URL [--out PATH] [--max-rounds N] [--debug]
+The wrapper (not-google-chrome --cdp) owns the browser lifecycle and exports
+CDP_WS_URL; this script is a pure CDP client and exits if run without it.
 
-Prerequisites: a logged-in snap chromium user-data-dir, no GUI chromium running
-(user-data-dir lock). See ../BROWSER.md.
+Usage:
+    not-google-chrome --cdp -- python3 reel-comments-cdp.py URL [--out PATH] [--max-rounds N] [--debug]
 """
 
 import argparse
@@ -24,10 +24,8 @@ import os
 import re
 import socket
 import struct
-import subprocess
 import sys
 import time
-import urllib.request
 
 
 # WebSocket over stdlib socket. Local CDP, no TLS, no extensions.
@@ -92,24 +90,6 @@ def _ws_close(sock):
     except Exception:
         pass
     sock.close()
-
-
-USER_DATA_DIR = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
-CDP_PORT = 9226
-
-
-def _wait_for_cdp(retries=30):
-    for _ in range(retries):
-        time.sleep(0.5)
-        try:
-            with urllib.request.urlopen(
-                    f"http://localhost:{CDP_PORT}/json/list", timeout=2) as r:
-                tabs = json.loads(r.read())
-                if tabs:
-                    return tabs[0]["webSocketDebuggerUrl"]
-        except Exception:
-            pass
-    sys.exit("ERROR: CDP endpoint not ready - chromium failed to start")
 
 
 # JS expressions kept as constants for readability. Each evaluates inside
@@ -428,269 +408,244 @@ def _extract_comment_bodies(response_text):
 
 
 def fetch(url, max_rounds=80, debug=False, bodies_out=None):
-    proc = subprocess.Popen(
-        [
-            "chromium", "--headless=new",
-            f"--remote-debugging-port={CDP_PORT}",
-            f"--user-data-dir={USER_DATA_DIR}",
-            "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-            "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-            "--window-size=1920,1080",
-            "--no-first-run", "--no-default-browser-check",
-        ],
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-    )
+    ws_url = os.environ.get("CDP_WS_URL")
+    if not ws_url:
+        sys.exit("ERROR: CDP_WS_URL not set; run via: not-google-chrome --cdp "
+                 "-- python3 reel-comments-cdp.py <reel-url> [--out FILE]")
 
+    sock = _ws_connect(ws_url, timeout=20)
     try:
-        ws_url = _wait_for_cdp()
-        sock = _ws_connect(ws_url, timeout=20)
-        try:
-            _id = 0
-            events = []  # buffer of CDP events received while waiting for cmd responses
+        _id = 0
+        events = []  # buffer of CDP events received while waiting for cmd responses
 
-            def cmd(method, params=None):
-                nonlocal _id
-                _id += 1
-                cid = _id
-                _ws_send(sock, json.dumps({"id": cid, "method": method,
-                                           "params": params or {}}))
-                while True:
-                    msg = json.loads(_ws_recv(sock))
-                    if msg.get("id") != cid:
-                        if "method" in msg:
-                            events.append(msg)
-                        continue
-                    if "error" in msg:
-                        raise RuntimeError(f"{method}: {msg['error']}")
-                    return msg.get("result", {})
+        def cmd(method, params=None):
+            nonlocal _id
+            _id += 1
+            cid = _id
+            _ws_send(sock, json.dumps({"id": cid, "method": method,
+                                       "params": params or {}}))
+            while True:
+                msg = json.loads(_ws_recv(sock))
+                if msg.get("id") != cid:
+                    if "method" in msg:
+                        events.append(msg)
+                    continue
+                if "error" in msg:
+                    raise RuntimeError(f"{method}: {msg['error']}")
+                return msg.get("result", {})
 
-            def js(expr, default=None):
-                try:
-                    r = cmd("Runtime.evaluate", {
-                        "expression": expr,
-                        "awaitPromise": False,
-                        "returnByValue": True,
-                    })
-                    if "exceptionDetails" in r:
-                        return default
-                    return r.get("result", {}).get("value")
-                except Exception:
-                    return default
-
-            def log(msg):
-                if debug:
-                    print(f"[reel] {msg}", file=sys.stderr)
-
-            cmd("Network.enable")
-            cmd("Network.setCacheDisabled", {"cacheDisabled": False})
-            cmd("Page.enable")
-
-            log(f"navigate {url}")
-            cmd("Page.navigate", {"url": url})
-            time.sleep(4)
-
-            # Wait for page chrome to render
-            t0 = time.time()
-            while time.time() - t0 < 20:
-                if js('!!document.querySelector(\'[aria-label="Comment"]\')'):
-                    break
-                time.sleep(0.5)
-
-            # Check for login wall
-            title = js("document.title", "") or ""
-            log(f"title={title!r}")
-            if any(t in title.lower() for t in ["log in", "log into", "iniciar sesi"]):
-                sys.exit("ERROR: Facebook session expired. Log in via Chromium "
-                        "first, then close it before running this skill.")
-
-            total = js(JS_TOTAL_COMMENT_COUNT)
-            log(f"total_comment_count={total}")
-
-            # Click the Comment button to open the comment panel
-            clicked = js(JS_CLICK_COMMENT_BUTTON)
-            log(f"clicked Comment button: {clicked}")
-            time.sleep(3)
-
-            # Wait for the panel to actually render some content before
-            # trying to switch sort. The "Most relevant" label only exists
-            # after the comment header has loaded.
-            t1 = time.time()
-            while time.time() - t1 < 15:
-                if (js(JS_COMMENT_COUNT) or 0) > 0:
-                    break
-                time.sleep(0.5)
-
-            # Switch sort from "Most relevant" (which hides duplicates and
-            # low-signal comments) to "All comments" / "Newest" so we see
-            # every top-level comment.
-            if js(JS_SWITCH_SORT_ALL):
-                time.sleep(1.5)
-                chosen = js(JS_PICK_SORT_OPTION)
-                log(f"sort switched to: {chosen}")
-                time.sleep(3)
-            else:
-                log("sort trigger not found; staying on default")
-
-            # Loop: scroll + click "view more" until the harvest stops growing.
-            # The harvest dict persists across DOM virtualization, so the
-            # stopping condition is based on cumulative harvested IDs, not
-            # what's currently mounted.
-            js(JS_HARVEST_COMMENTS)  # initialise window.__harvested
-            last_total = 0
-            stable_rounds = 0
-            for round_num in range(max_rounds):
-                js(JS_SCROLL_COMMENTS)
-                time.sleep(0.6)
-                clicked_more = js(JS_CLICK_VIEW_MORE) or 0
-                if clicked_more:
-                    time.sleep(1.2)
-                # Harvest after scroll + expand so we catch whatever's now
-                # visible (including freshly-loaded items).
-                stats = js(JS_HARVEST_COMMENTS) or {"total": 0, "added": 0}
-                mounted = (js(JS_COMMENT_COUNT) or 0) + (js(JS_REPLY_COUNT) or 0)
-                log(f"round {round_num}: harvested={stats['total']} "
-                    f"(+{stats['added']})  mounted={mounted}  "
-                    f"view-more-clicked={clicked_more}")
-
-                if total and stats["total"] >= total:
-                    log("reached total_comment_count; stopping")
-                    break
-                if stats["added"] == 0 and clicked_more == 0:
-                    stable_rounds += 1
-                    if stable_rounds >= 8:
-                        log(f"no growth for {stable_rounds} rounds; stopping")
-                        break
-                else:
-                    stable_rounds = 0
-                last_total = stats["total"]
-
-            # Final pass: scroll back to top, then scroll down again while
-            # aggressively clicking "See more" to capture full body text for
-            # any comments harvested with truncated bodies on first pass.
-            log("final pass: scrolling top->bottom expanding See more")
-            for direction in (0, 1):  # 0 = scroll up, 1 = scroll down
-                if direction == 0:
-                    js(r"""(function(){
-                      var art = document.querySelector('div[role="article"]');
-                      if (!art) return; var el = art.parentElement;
-                      while (el) { var s = getComputedStyle(el);
-                        if ((s.overflowY=='auto'||s.overflowY=='scroll') &&
-                            el.scrollHeight > el.clientHeight+5) {
-                          el.scrollTop = 0; return;
-                        }
-                        el = el.parentElement;
-                      } window.scrollTo(0,0);
-                    })()""")
-                    time.sleep(2.0)
-                # Walk through the panel in small steps so "See more" buttons
-                # come into view (and into the DOM if virtualized) and get
-                # clicked one section at a time. We hit each section with
-                # JS_CLICK_SEE_MORE (synthetic events) and JS_CLICK_VIEW_MORE
-                # (for any newly-expanded reply threads).
-                for step in range(50):
-                    sm = js(JS_CLICK_SEE_MORE) or 0
-                    if sm:
-                        time.sleep(1.4)
-                    vm = js(JS_CLICK_VIEW_MORE) or 0
-                    if vm:
-                        time.sleep(1.0)
-                    js(JS_HARVEST_COMMENTS)
-                    moved = js(r"""(function(){
-                      var art = document.querySelector('div[role="article"]');
-                      if (!art) return false; var el = art.parentElement;
-                      while (el) { var s = getComputedStyle(el);
-                        if ((s.overflowY=='auto'||s.overflowY=='scroll') &&
-                            el.scrollHeight > el.clientHeight+5) {
-                          var before = el.scrollTop;
-                          el.scrollTop = before + el.clientHeight * 0.6;
-                          return el.scrollTop !== before;
-                        }
-                        el = el.parentElement;
-                      } return false;
-                    })()""")
-                    if not moved and sm == 0 and vm == 0:
-                        break
-
-            title = js("document.title", "") or "Facebook reel"
-            html = js(JS_DUMP_HARVEST.replace("__TITLE__", title.replace("'", "")), "") or ""
-
-            # Also splice in the head metadata from the live page (og:url,
-            # feedback counts) so the parser can read them. We keep the
-            # harvest body since that's the authoritative comment list.
-            head_html = js(
-                "(function(){"
-                "var head = document.querySelector('head');"
-                "return head ? head.outerHTML : '';"
-                "})()", ""
-            ) or ""
-            if head_html and "<head>" in html:
-                html = html.replace(
-                    "<head><title>" + title.replace("'", "") + "</title></head>",
-                    head_html, 1
-                )
-
-            # Drain CDP events and harvest canonical comment bodies from
-            # every GraphQL response we saw. The DOM may truncate long
-            # comments with "See more"; the wire data has the full text.
-            if bodies_out is not None:
-                cmd("Runtime.evaluate",
-                    {"expression": "1", "returnByValue": True})  # flush
-                gql_rids = []
-                for e in events:
-                    if e.get("method") != "Network.responseReceived":
-                        continue
-                    resp = (e.get("params") or {}).get("response") or {}
-                    url_ = resp.get("url", "")
-                    rid = (e.get("params") or {}).get("requestId")
-                    if rid and "graphql" in url_:
-                        gql_rids.append(rid)
-                log(f"draining {len(gql_rids)} graphql responses for bodies")
-                bodies = {}
-                for rid in gql_rids:
-                    try:
-                        body = cmd("Network.getResponseBody",
-                                   {"requestId": rid})
-                        txt = body.get("body", "")
-                        if body.get("base64Encoded"):
-                            txt = base64.b64decode(txt).decode(
-                                "utf-8", "replace"
-                            )
-                        if '"legacy_fbid"' not in txt:
-                            continue
-                        bodies.update(_extract_comment_bodies(txt))
-                    except Exception:
-                        continue
-                log(f"canonical bodies extracted: {len(bodies)}")
-                with open(bodies_out, "w") as f:
-                    json.dump(bodies, f, ensure_ascii=False)
-            return html
-        finally:
-            _ws_close(sock)
-    finally:
-        proc.terminate()
-        try:
-            proc.wait(timeout=8)
-        except subprocess.TimeoutExpired:
-            proc.kill()
-            proc.wait(timeout=3)
-        # Chromium sometimes leaves SingletonLock/Cookie/Socket symlinks
-        # pointing to its own (now-dead) PID, which blocks the next launch.
-        # Remove them if they reference a non-existent process.
-        for name in ("SingletonLock", "SingletonCookie", "SingletonSocket"):
-            path = os.path.join(USER_DATA_DIR, name)
+        def js(expr, default=None):
             try:
-                target = os.readlink(path)
-                pid_str = target.rsplit("-", 1)[-1]
-                if pid_str.isdigit() and not os.path.exists(f"/proc/{pid_str}"):
-                    os.unlink(path)
-            except (FileNotFoundError, OSError):
-                # Not a symlink, or already gone, or unreadable — best effort.
+                r = cmd("Runtime.evaluate", {
+                    "expression": expr,
+                    "awaitPromise": False,
+                    "returnByValue": True,
+                })
+                if "exceptionDetails" in r:
+                    return default
+                return r.get("result", {}).get("value")
+            except Exception:
+                return default
+
+        def log(msg):
+            if debug:
+                print(f"[reel] {msg}", file=sys.stderr)
+
+        cmd("Network.enable")
+        cmd("Network.setCacheDisabled", {"cacheDisabled": False})
+        cmd("Page.enable")
+
+        log(f"navigate {url}")
+        cmd("Page.navigate", {"url": url})
+        time.sleep(4)
+
+        # Wait for page chrome to render
+        t0 = time.time()
+        while time.time() - t0 < 20:
+            if js('!!document.querySelector(\'[aria-label="Comment"]\')'):
+                break
+            time.sleep(0.5)
+
+        # No-session detection. Logged out, Facebook embeds USER_ID/ACCOUNT_ID
+        # of "0" in the page config and shows a login wall; the title may still
+        # read like a real page (e.g. on a public profile). Check both the
+        # title and the config marker so a no-session fetch fails loudly here
+        # instead of returning an empty comment harvest.
+        title = js("document.title", "") or ""
+        no_session = js(
+            r'/"(?:USER_ID|ACCOUNT_ID)":"0"/.test(document.documentElement.outerHTML)'
+        )
+        log(f"title={title!r} no_session={no_session}")
+        if no_session or any(
+            t in title.lower() for t in ["log in", "log into", "iniciar sesi"]
+        ):
+            sys.exit("ERROR: Facebook: not logged in - no session in this "
+                     "profile. Log in via the GUI Chromium, then close it and "
+                     "retry.")
+
+        total = js(JS_TOTAL_COMMENT_COUNT)
+        log(f"total_comment_count={total}")
+
+        # Click the Comment button to open the comment panel
+        clicked = js(JS_CLICK_COMMENT_BUTTON)
+        log(f"clicked Comment button: {clicked}")
+        time.sleep(3)
+
+        # Wait for the panel to actually render some content before
+        # trying to switch sort. The "Most relevant" label only exists
+        # after the comment header has loaded.
+        t1 = time.time()
+        while time.time() - t1 < 15:
+            if (js(JS_COMMENT_COUNT) or 0) > 0:
+                break
+            time.sleep(0.5)
+
+        # Switch sort from "Most relevant" (which hides duplicates and
+        # low-signal comments) to "All comments" / "Newest" so we see
+        # every top-level comment.
+        if js(JS_SWITCH_SORT_ALL):
+            time.sleep(1.5)
+            chosen = js(JS_PICK_SORT_OPTION)
+            log(f"sort switched to: {chosen}")
+            time.sleep(3)
+        else:
+            log("sort trigger not found; staying on default")
+
+        # Loop: scroll + click "view more" until the harvest stops growing.
+        # The harvest dict persists across DOM virtualization, so the
+        # stopping condition is based on cumulative harvested IDs, not
+        # what's currently mounted.
+        js(JS_HARVEST_COMMENTS)  # initialise window.__harvested
+        last_total = 0
+        stable_rounds = 0
+        for round_num in range(max_rounds):
+            js(JS_SCROLL_COMMENTS)
+            time.sleep(0.6)
+            clicked_more = js(JS_CLICK_VIEW_MORE) or 0
+            if clicked_more:
+                time.sleep(1.2)
+            # Harvest after scroll + expand so we catch whatever's now
+            # visible (including freshly-loaded items).
+            stats = js(JS_HARVEST_COMMENTS) or {"total": 0, "added": 0}
+            mounted = (js(JS_COMMENT_COUNT) or 0) + (js(JS_REPLY_COUNT) or 0)
+            log(f"round {round_num}: harvested={stats['total']} "
+                f"(+{stats['added']})  mounted={mounted}  "
+                f"view-more-clicked={clicked_more}")
+
+            if total and stats["total"] >= total:
+                log("reached total_comment_count; stopping")
+                break
+            if stats["added"] == 0 and clicked_more == 0:
+                stable_rounds += 1
+                if stable_rounds >= 8:
+                    log(f"no growth for {stable_rounds} rounds; stopping")
+                    break
+            else:
+                stable_rounds = 0
+            last_total = stats["total"]
+
+        # Final pass: scroll back to top, then scroll down again while
+        # aggressively clicking "See more" to capture full body text for
+        # any comments harvested with truncated bodies on first pass.
+        log("final pass: scrolling top->bottom expanding See more")
+        for direction in (0, 1):  # 0 = scroll up, 1 = scroll down
+            if direction == 0:
+                js(r"""(function(){
+                  var art = document.querySelector('div[role="article"]');
+                  if (!art) return; var el = art.parentElement;
+                  while (el) { var s = getComputedStyle(el);
+                    if ((s.overflowY=='auto'||s.overflowY=='scroll') &&
+                        el.scrollHeight > el.clientHeight+5) {
+                      el.scrollTop = 0; return;
+                    }
+                    el = el.parentElement;
+                  } window.scrollTo(0,0);
+                })()""")
+                time.sleep(2.0)
+            # Walk through the panel in small steps so "See more" buttons
+            # come into view (and into the DOM if virtualized) and get
+            # clicked one section at a time. We hit each section with
+            # JS_CLICK_SEE_MORE (synthetic events) and JS_CLICK_VIEW_MORE
+            # (for any newly-expanded reply threads).
+            for step in range(50):
+                sm = js(JS_CLICK_SEE_MORE) or 0
+                if sm:
+                    time.sleep(1.4)
+                vm = js(JS_CLICK_VIEW_MORE) or 0
+                if vm:
+                    time.sleep(1.0)
+                js(JS_HARVEST_COMMENTS)
+                moved = js(r"""(function(){
+                  var art = document.querySelector('div[role="article"]');
+                  if (!art) return false; var el = art.parentElement;
+                  while (el) { var s = getComputedStyle(el);
+                    if ((s.overflowY=='auto'||s.overflowY=='scroll') &&
+                        el.scrollHeight > el.clientHeight+5) {
+                      var before = el.scrollTop;
+                      el.scrollTop = before + el.clientHeight * 0.6;
+                      return el.scrollTop !== before;
+                    }
+                    el = el.parentElement;
+                  } return false;
+                })()""")
+                if not moved and sm == 0 and vm == 0:
+                    break
+
+        title = js("document.title", "") or "Facebook reel"
+        html = js(JS_DUMP_HARVEST.replace("__TITLE__", title.replace("'", "")), "") or ""
+
+        # Also splice in the head metadata from the live page (og:url,
+        # feedback counts) so the parser can read them. We keep the
+        # harvest body since that's the authoritative comment list.
+        head_html = js(
+            "(function(){"
+            "var head = document.querySelector('head');"
+            "return head ? head.outerHTML : '';"
+            "})()", ""
+        ) or ""
+        if head_html and "<head>" in html:
+            html = html.replace(
+                "<head><title>" + title.replace("'", "") + "</title></head>",
+                head_html, 1
+            )
+
+        # Drain CDP events and harvest canonical comment bodies from
+        # every GraphQL response we saw. The DOM may truncate long
+        # comments with "See more"; the wire data has the full text.
+        if bodies_out is not None:
+            cmd("Runtime.evaluate",
+                {"expression": "1", "returnByValue": True})  # flush
+            gql_rids = []
+            for e in events:
+                if e.get("method") != "Network.responseReceived":
+                    continue
+                resp = (e.get("params") or {}).get("response") or {}
+                url_ = resp.get("url", "")
+                rid = (e.get("params") or {}).get("requestId")
+                if rid and "graphql" in url_:
+                    gql_rids.append(rid)
+            log(f"draining {len(gql_rids)} graphql responses for bodies")
+            bodies = {}
+            for rid in gql_rids:
                 try:
-                    os.unlink(path)
-                except FileNotFoundError:
-                    pass
-                except OSError:
-                    pass
+                    body = cmd("Network.getResponseBody",
+                               {"requestId": rid})
+                    txt = body.get("body", "")
+                    if body.get("base64Encoded"):
+                        txt = base64.b64decode(txt).decode(
+                            "utf-8", "replace"
+                        )
+                    if '"legacy_fbid"' not in txt:
+                        continue
+                    bodies.update(_extract_comment_bodies(txt))
+                except Exception:
+                    continue
+            log(f"canonical bodies extracted: {len(bodies)}")
+            with open(bodies_out, "w") as f:
+                json.dump(bodies, f, ensure_ascii=False)
+        return html
+    finally:
+        _ws_close(sock)
 
 
 def main():
