@@ -26,6 +26,8 @@ The skill has two independent features. Run whichever the user asked for; do not
 
 Per-flight Classic Flight Reward availability: flight number, aircraft, departure and arrival times (with day offset), point cost and tax per cabin (Economy / Premium Economy / Business / First), and seats remaining at that price. Every result on the Flight Reward Finder is a Classic Reward by definition.
 
+The Flight Reward Finder serves international itineraries only. A domestic Australian route (e.g. `SYD`-`MEL`) returns `routeError: {blocked: true, code: "DOMESTIC_AU_ONLY"}` instead of results; Qantas directs domestic Classic Reward search to `book.qantas.com`, which this skill cannot reach (see Booking engine vs. reward finder below). For a domestic request, tell the user it is not available through this path.
+
 Endpoint: `https://flightrewardfinder.qantas.com/?o=ORIGIN&d=DEST&dr=YYYY-MM-DD_YYYY-MM-DD&st=STOPS&p=PASSENGERS`
 
 Parameters:
@@ -46,7 +48,7 @@ Steps:
 python3 $HOME/.claude/skills/qantas.com/parse-rewards.py /tmp/qantas-frf.html
 ```
 
-Date handling: the Flight Reward Finder only holds live and future availability - past dates return zero records, not an error. If the user asks about a date in the past, state today's date and confirm before fetching. The endpoint also returns nearby dates within the same calendar window even when `dr` specifies one day, so filter on the requested date in the consumer.
+Date handling: the Flight Reward Finder only holds live and future availability - past dates return zero records, not an error. If the user asks about a date in the past, state today's date and confirm before fetching. Even when `dr` specifies a single day, the endpoint returns the full forward availability list (observed spanning ~12 months), not a filtered window, so filter to the requested date in the consumer.
 
 ## Feature 2: Read Frequent Flyer points balance (login required)
 
