@@ -1,32 +1,39 @@
 #!/usr/bin/env bash
-# Headless DOM dump against the user's logged-in Chromium session.
-# Strategy and decisions (why Chromium, why the live user-data-dir, etc.): ../BROWSER.md.
+# Headless DOM dump (default) or persistent CDP session (--cdp) against the
+# user's logged-in Chromium. Strategy and decisions (why Chromium, why the live
+# user-data-dir, etc.): ../BROWSER.md.
 #
-# Usage:   not-google-chrome [-t SECONDS] [--pdf PATH] URL [extra-flag ...]
-# Output:  rendered DOM on stdout (default), or PDF written to PATH (--pdf).
-#          Redirect stdout to a file: dumps are commonly several MB and flood
-#          caller context if returned directly. Default timeout 15s. Pass
-#          extra Chrome-compatible flags after the URL (e.g. --virtual-time-budget=N,
-#          --log-net-log=PATH); they go through to the underlying invocation.
-# Exit 64: bad usage. Exit 77: URL on the abuse list (override with
-#          --yes-i-am-not-stupid). Exit 78: unsupported OS, missing dependency,
-#          or [browser] user_agent missing from config.ini.
+# Usage:
+#   not-google-chrome [-t SECONDS] [--pdf PATH] URL [extra-flag ...]
+#       Render URL's DOM to stdout (default), or write a PDF (--pdf).
+#   not-google-chrome --cdp [-t SECONDS] -- <client command ...>
+#       Launch a persistent CDP browser, export CDP_WS_URL (a page-target
+#       websocket) and CDP_PORT into the client's environment, run the client,
+#       and on every exit path tear the browser down. The wrapper owns the
+#       browser lifecycle: one browser at a time (flock), a deadman timeout, and
+#       a teardown that reaches the browser even after it detaches into its own
+#       systemd --user scope (the failure behind issue 120). Client scripts hold
+#       no browser PID; they connect to CDP_WS_URL and drive the page.
+#
+# Output:  rendered DOM on stdout (default), or PDF written to PATH (--pdf). In
+#          --cdp mode the client owns stdout. Redirect dump-dom stdout to a file:
+#          dumps are commonly several MB and flood caller context if returned
+#          directly. Default timeout 15s (dump-dom), 90s (--cdp); -t overrides.
+#          Pass extra Chrome-compatible flags after the URL (dump-dom only).
+# Exit 64: bad usage. Exit 75: timed out waiting for /tmp/chromium.lock.
+#          Exit 76: the profile Chromium would open has startup set to "Continue
+#          where you left off", which restores tabs and hangs a one-shot render.
+#          Exit 77: URL on the abuse list (override with --yes-i-am-not-stupid).
+#          Exit 78: unsupported OS, missing dependency, CDP endpoint never came
+#          up, or [browser] config missing from config.ini.
+#
+# Logging: failure modes (render timeout, empty result, lock-wait timeout, CDP
+#          endpoint failure) are written to syslog via `logger -t not-google-chrome`
+#          so a later session has evidence of flaky behavior rather than a guess.
+#          Inspect with `journalctl -t not-google-chrome` (systemd) or the syslog.
 #
 # macOS prerequisite: brew install util-linux coreutils (flock, gtimeout).
 # Linux has both natively.
-#
-# What this wrapper produces, by platform:
-#   Linux (snap Chromium):
-#     flock /tmp/chromium.lock timeout 15 chromium \
-#       --user-data-dir="$HOME/snap/chromium/common/chromium" \
-#       --headless=new --dump-dom --window-size=3840,2160 --user-agent="..." URL
-#     (non-snap: --user-data-dir="$HOME/.config/chromium". Snap is detected
-#     via `readlink -f $(which chromium)` resolving to /usr/bin/snap.)
-#   macOS (Chromium installed via Homebrew cask):
-#     /opt/homebrew/opt/util-linux/bin/flock /tmp/chromium.lock gtimeout 15 \
-#       "/Applications/Chromium.app/Contents/MacOS/Chromium" \
-#       --user-data-dir="$HOME/Library/Application Support/Chromium" \
-#       --headless=new --dump-dom --window-size=3840,2160 --user-agent="..." URL
 #
 # Conventions:
 #   - --headless=new, not legacy --headless.
@@ -34,9 +41,8 @@
 #     (instagram, facebook) pass it explicitly because their JS-rendered
 #     endpoints need a budget.
 #   - UA override is required, read from [browser] user_agent in
-#     $HOME/.claude/skills/config.ini (the same file and section the CDP
-#     skills read; the wrapper exits 78 if it is missing). It defeats sites
-#     that block on the literal string HeadlessChrome, and keeps the fetch
+#     $HOME/.claude/skills/config.ini (--cdp also reads accept_lang). It defeats
+#     sites that block on the literal string HeadlessChrome, and keeps the fetch
 #     fingerprint matching the user's logged-in browser session.
 #
 # When to call this wrapper vs WebFetch:
@@ -65,33 +71,214 @@ ABUSE_PATTERNS=(
   "archive.org"
 )
 
-timeout=15
+timeout=""
 mode_args=(--dump-dom)
 print_args=0
 override=0
+cdp=0
+pdf=0
+lock_wait=30
+CDP_FIXED_PORT=9223   # fixed (not 0) so teardown can match the browser by its
+                      # unique cmdline; flock guarantees one CDP browser at a time.
+_cdp_port=""          # set once the browser is launched; read by cdp_teardown.
+
+# Read one value from config.ini. Empty output if section/key absent.
+config_get() {  # $1=section $2=key
+  awk -v sect="$1" -v key="$2" '
+    /^[[:space:]]*\[/ { gsub(/[][[:space:]]/, ""); cur=$0; next }
+    cur==sect && $0 ~ ("^[[:space:]]*" key "[[:space:]]*=") {
+      sub(/^[^=]*=[[:space:]]*/, ""); sub(/[[:space:]]+$/, ""); print; exit
+    }
+  ' "$config"
+}
+
+# Record a failure mode to syslog so a later session has evidence instead of a
+# guess (e.g. whether a site's headless fetch is genuinely flaky, which otherwise
+# leaves no trace). Fail-open: if logger is absent the wrapper still works.
+log_event() {  # $1=syslog level (warning/err/info)  $2=message
+  command -v logger >/dev/null 2>&1 && logger -t not-google-chrome -p "user.$1" -- "$2" 2>/dev/null || true
+}
+
+# Diagnose a lock we could not acquire within lock_wait: name the holder so a
+# stuck session is fast and legible instead of an indefinite hang.
+lock_diag() {
+  local holder
+  holder="$(fuser /tmp/chromium.lock 2>/dev/null | tr -s ' ' || true)"
+  echo "not-google-chrome: timed out after ${lock_wait}s waiting for /tmp/chromium.lock (holder PID(s):${holder:- unknown}). A stuck browser session may be holding it:" >&2
+  pgrep -af remote-debugging-port >&2 2>/dev/null || true
+}
+
+# In one-shot render mode (--dump-dom / --pdf), refuse to launch if the profile
+# Chromium will open has its startup set to "Continue where you left off"
+# (restore_on_startup:1). That reopens the previous session's tabs on every
+# launch; the one-shot render then waits for all of them to finish loading and
+# hangs indefinitely, emitting nothing. CDP is immune (it reads its own target on
+# a timer, never waiting for the browser to settle). This fails OPEN on any parse
+# uncertainty, so a Local State / Preferences format change cannot wedge the
+# wrapper; it only bails on a positively-read restore_on_startup of 1.
+dumpdom_startup_guard() {
+  local ls="$user_data_dir/Local State" prof="" pref ros=""
+  # Which profile will a no-profile-directory launch open? last_active_profiles[0],
+  # else last_used, else Default. Each read ends with "|| true": under the
+  # wrapper's `set -o pipefail`, a grep that finds no match (e.g. an empty
+  # last_active_profiles []) would otherwise abort the whole wrapper.
+  if [[ -f "$ls" ]]; then
+    prof="$(grep -oE '"last_active_profiles":\[[^]]*\]' "$ls" 2>/dev/null | sed 's/.*\[//' | grep -oE '"[^"]*"' | head -1 | tr -d '"' || true)"
+    [[ -n "$prof" ]] || prof="$(grep -oE '"last_used":"[^"]*"' "$ls" 2>/dev/null | head -1 | sed 's/.*"last_used":"//; s/"$//' || true)"
+  fi
+  [[ -n "$prof" ]] || prof="Default"
+  pref="$user_data_dir/$prof/Preferences"
+  [[ -f "$pref" ]] || return 0
+  ros="$(grep -oE '"restore_on_startup":[0-9]+' "$pref" 2>/dev/null | head -1 | grep -oE '[0-9]+$' || true)"
+  [[ "$ros" == "1" ]] || return 0
+  cat >&2 <<EOF
+not-google-chrome: refusing to render. Chromium profile "$prof" has its startup
+set to "Continue where you left off" (restore_on_startup=1). That reopens the
+previous session's tabs on every launch; --dump-dom/--pdf then wait for those
+tabs to finish loading and hang indefinitely with no output, so this is refused
+rather than left to hang (see ../BROWSER.md).
+
+Fix: in that profile's Chromium, Settings > On startup > "Open the New Tab page",
+then retry. CDP mode (--cdp) is immune and unaffected by this setting.
+EOF
+  exit 76
+}
+
+# Snap-robust teardown of the CDP browser. Match it by its unique port string
+# and signal it DIRECTLY (a per-pid signal, not killpg): the signal reaches the
+# browser even after it re-execs into its own systemd --user scope, which is what
+# defeated the per-script proc.terminate(). SIGTERM lets Chromium flush and exit;
+# the scope-stop and SIGKILL are escalations if it does not.
+cdp_teardown() {
+  trap - EXIT INT TERM
+  local port="${_cdp_port:-}"
+  if [[ -n "$port" ]] && pgrep -f -- "remote-debugging-port=$port" >/dev/null 2>&1; then
+    pkill -TERM -f -- "remote-debugging-port=$port" 2>/dev/null || true
+    local i
+    for i in 1 2 3 4 5 6; do
+      pgrep -f -- "remote-debugging-port=$port" >/dev/null 2>&1 || break
+      sleep 0.5
+    done
+    if pgrep -f -- "remote-debugging-port=$port" >/dev/null 2>&1; then
+      if [[ "$(uname)" == Linux ]] && command -v systemctl >/dev/null 2>&1; then
+        local p scope
+        for p in $(pgrep -f -- "remote-debugging-port=$port" 2>/dev/null || true); do
+          scope="$(grep -oE 'app-org\.chromium\.Chromium-[0-9]+\.scope' "/proc/$p/cgroup" 2>/dev/null | head -1 || true)"
+          [[ -n "$scope" ]] && systemctl --user stop "$scope" 2>/dev/null || true
+        done
+      fi
+      pkill -KILL -f -- "remote-debugging-port=$port" 2>/dev/null || true
+    fi
+  fi
+  # A SIGKILL escalation can leave Chromium's Singleton{Lock,Cookie,Socket}
+  # symlinks pointing at a now-dead PID, which blocks the next launch. Remove any
+  # that reference a non-existent process. Linux-only: the liveness check is /proc.
+  if [[ "$(uname)" == Linux && -n "${user_data_dir:-}" ]]; then
+    local s tgt spid
+    for s in SingletonLock SingletonCookie SingletonSocket; do
+      tgt="$(readlink "$user_data_dir/$s" 2>/dev/null || true)"
+      [[ -z "$tgt" ]] && continue
+      spid="${tgt##*-}"
+      if [[ "$spid" =~ ^[0-9]+$ && ! -e "/proc/$spid" ]]; then
+        rm -f "$user_data_dir/$s" 2>/dev/null || true
+      fi
+    done
+  fi
+  exec 9>&- 2>/dev/null || true   # release the flock
+}
+
+# CDP mode: acquire the lock, launch the browser, hand the client a page-target
+# websocket, run it under a deadman, reap the browser on every exit path.
+run_cdp() {
+  local port="$CDP_FIXED_PORT" ws_url="" i rc=0
+
+  if [[ "$(uname)" == Linux ]] && pgrep -f -- "$user_data_dir" >/dev/null 2>&1; then
+    echo "not-google-chrome: a Chromium is already running on $user_data_dir; close it so the headless CDP instance can read the logged-in session." >&2
+  fi
+
+  exec 9>/tmp/chromium.lock
+  if ! "$flock_cmd" -w "$lock_wait" 9; then
+    lock_diag
+    log_event warning "cdp lock-wait timeout after ${lock_wait}s: ${client_cmd[*]}"
+    exit 75
+  fi
+
+  # Fixed port + an explicit about:blank so a page target exists immediately.
+  # 9>&- so the detached browser does not inherit (and pin) the lock fd.
+  "$binary" "${user_data_dir_args[@]}" \
+    --headless=new \
+    --remote-debugging-port="$port" --remote-allow-origins=* \
+    --user-agent="$ua" --accept-lang="$lang" \
+    --window-size=1920,1080 --no-first-run --no-default-browser-check \
+    about:blank >/dev/null 2>&1 9>&- &
+  _cdp_port="$port"
+  trap 'cdp_teardown; exit 130' INT TERM
+  trap cdp_teardown EXIT
+
+  for i in $(seq 1 60); do
+    ws_url="$(python3 -c '
+import json, sys, urllib.request
+try:
+    targets = json.load(urllib.request.urlopen("http://127.0.0.1:%s/json" % sys.argv[1], timeout=2))
+    print(next((t["webSocketDebuggerUrl"] for t in targets if t.get("type") == "page"), ""))
+except Exception:
+    pass
+' "$port" 2>/dev/null || true)"
+    [[ -n "$ws_url" ]] && break
+    sleep 0.25
+  done
+  if [[ -z "$ws_url" ]]; then
+    echo "not-google-chrome: CDP endpoint on port $port never came up" >&2
+    log_event err "cdp endpoint on port $port never came up: ${client_cmd[*]}"
+    exit 78
+  fi
+
+  export CDP_WS_URL="$ws_url" CDP_PORT="$port"
+  "$timeout_cmd" "$timeout" "${client_cmd[@]}" 9>&- || rc=$?
+  if [[ $rc -eq 124 || $rc -eq 137 ]]; then
+    log_event warning "cdp client timed out after ${timeout}s (exit $rc): ${client_cmd[*]}"
+  fi
+  exit "$rc"
+}
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -t)                     timeout="$2"; shift 2 ;;
-    --pdf)                  mode_args=(--no-pdf-header-footer "--print-to-pdf=$2"); shift 2 ;;
+    --cdp)                  cdp=1; shift ;;
+    --pdf)                  mode_args=(--no-pdf-header-footer "--print-to-pdf=$2"); pdf=1; shift 2 ;;
     --print-args)           print_args=1; shift ;;
     --yes-i-am-not-stupid)  override=1; shift ;;
+    --)                     shift; break ;;
     *)                      break ;;
   esac
 done
 
-if [[ $print_args -eq 0 && $# -lt 1 ]]; then
-  echo "Usage: not-google-chrome [-t SECONDS] [--pdf PATH] [--print-args] [--yes-i-am-not-stupid] URL [extra-flag ...]" >&2
-  exit 64
+# Dump-dom self-exits fast; a CDP client runs a multi-step flow, so it gets a
+# longer deadman by default.
+if [[ -z "$timeout" ]]; then
+  if [[ $cdp -eq 1 ]]; then timeout=90; else timeout=15; fi
 fi
 
-url="${1:-}"
-[[ $print_args -eq 0 ]] && shift
-
-if [[ $print_args -eq 0 && $override -eq 0 ]]; then
-  for pat in "${ABUSE_PATTERNS[@]}"; do
-    if [[ "$url" == *"$pat"* ]]; then
-      cat >&2 <<EOF
+url=""
+client_cmd=()
+if [[ $print_args -eq 0 ]]; then
+  if [[ $cdp -eq 1 ]]; then
+    client_cmd=("$@")
+    if [[ ${#client_cmd[@]} -eq 0 ]]; then
+      echo "Usage: not-google-chrome --cdp [-t SECONDS] -- <client command ...>" >&2
+      exit 64
+    fi
+  else
+    if [[ $# -lt 1 ]]; then
+      echo "Usage: not-google-chrome [-t SECONDS] [--pdf PATH] [--print-args] [--yes-i-am-not-stupid] URL [extra-flag ...]" >&2
+      echo "       not-google-chrome --cdp [-t SECONDS] -- <client command ...>" >&2
+      exit 64
+    fi
+    url="$1"; shift
+    if [[ $override -eq 0 ]]; then
+      for pat in "${ABUSE_PATTERNS[@]}"; do
+        if [[ "$url" == *"$pat"* ]]; then
+          cat >&2 <<EOF
 not-google-chrome: refusing to fetch $url
 
 This wrapper exists for sites that block automated access (Akamai,
@@ -105,9 +292,11 @@ Try WebFetch first; for raw bytes, try curl. If you genuinely need a
 logged-in browser session against this URL (rare), re-run with
 --yes-i-am-not-stupid.
 EOF
-      exit 77
+          exit 77
+        fi
+      done
     fi
-  done
+  fi
 fi
 
 case "$(uname)" in
@@ -131,7 +320,8 @@ case "$(uname)" in
       echo "not-google-chrome: flock not found; run 'brew install util-linux'" >&2
       exit 78
     fi
-    user_data_dir_args=(--user-data-dir="$HOME/Library/Application Support/Chromium")
+    user_data_dir="$HOME/Library/Application Support/Chromium"
+    user_data_dir_args=(--user-data-dir="$user_data_dir")
     ;;
   *)
     echo "not-google-chrome: unsupported OS $(uname)" >&2
@@ -155,22 +345,16 @@ if [[ $print_args -eq 1 ]]; then
   exit 0
 fi
 
-# UA comes from [browser] user_agent in config.ini so the headless fetch
-# presents the same fingerprint as the browser the user logs in with, read from
-# the same file and section the CDP skills (e.g. linkedin.com) read. No default:
-# a wrong UA silently diverging from the logged-in session is worse than a hard
-# failure.
+# UA (and, for --cdp, accept_lang) come from [browser] in config.ini so the
+# headless fetch presents the same fingerprint as the browser the user logs in
+# with. No default: a wrong UA silently diverging from the logged-in session is
+# worse than a hard failure.
 config="$HOME/.claude/skills/config.ini"
 if [[ ! -f "$config" ]]; then
   echo "not-google-chrome: $config not found. Copy config.ini.example to config.ini and fill the [browser] section." >&2
   exit 78
 fi
-ua="$(awk '
-  /^[[:space:]]*\[/ { gsub(/[][[:space:]]/, ""); sect=$0; next }
-  sect=="browser" && /^[[:space:]]*user_agent[[:space:]]*=/ {
-    sub(/^[^=]*=[[:space:]]*/, ""); sub(/[[:space:]]+$/, ""); print; exit
-  }
-' "$config")"
+ua="$(config_get browser user_agent)"
 if [[ -z "$ua" ]]; then
   cat >&2 <<EOF
 not-google-chrome: [browser] user_agent missing from $config.
@@ -185,7 +369,48 @@ if [[ "$ua" == *HeadlessChrome* ]]; then
   echo "not-google-chrome: user_agent in $config contains 'HeadlessChrome', the marker sites block on. Use the UA of a real browser." >&2
   exit 78
 fi
+
+if [[ $cdp -eq 1 ]]; then
+  lang="$(config_get browser accept_lang)"
+  if [[ -z "$lang" ]]; then
+    echo "not-google-chrome: [browser] accept_lang missing from $config (required for --cdp)." >&2
+    exit 78
+  fi
+  run_cdp   # launches, runs the client, and exits via the teardown trap
+fi
+
+dumpdom_startup_guard   # refuse if the profile's startup would restore tabs and hang the render
+
 common=(--headless=new "${mode_args[@]}" --window-size=3840,2160 --user-agent="$ua")
 
-exec "$flock_cmd" /tmp/chromium.lock "$timeout_cmd" "$timeout" \
-  "$binary" "${user_data_dir_args[@]}" "${common[@]}" "$@" "$url"
+# Bounded lock: a stuck holder degrades to a fast, diagnosable error instead of
+# an indefinite hang, while legitimate parallel fetches still serialise. The fd
+# is held by this process (and inherited by the child) for the render's life.
+exec 9>/tmp/chromium.lock
+if ! "$flock_cmd" -w "$lock_wait" 9; then
+  lock_diag
+  log_event warning "lock-wait timeout after ${lock_wait}s: $url"
+  exit 75
+fi
+
+# Run (not exec) so the outcome can be observed and logged: a render that times
+# out or returns an empty body used to leave no trace, so a later session had to
+# guess whether a site is flaky. Output is buffered to a temp file (tmpfs; a DOM
+# dump is finite and emitted at once) then forwarded, which also avoids
+# truncating the caller's stream.
+tmpout="$(mktemp)"
+rc=0
+set +e
+"$timeout_cmd" "$timeout" \
+  "$binary" "${user_data_dir_args[@]}" "${common[@]}" "$@" "$url" > "$tmpout"
+rc=$?
+set -e
+bytes="$(wc -c < "$tmpout" | tr -dc '0-9')"; [[ -n "$bytes" ]] || bytes=0
+cat "$tmpout"
+rm -f "$tmpout"
+if [[ $rc -eq 124 || $rc -eq 137 ]]; then
+  log_event warning "render timeout after ${timeout}s (exit $rc, $bytes bytes): $url"
+elif [[ $pdf -eq 0 && "$bytes" == "0" ]]; then
+  log_event warning "render returned empty (exit $rc): $url"
+fi
+exit "$rc"
