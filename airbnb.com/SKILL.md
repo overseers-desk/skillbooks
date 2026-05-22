@@ -26,7 +26,7 @@ not-google-chrome --cdp -- python3 $HOME/.claude/skills/airbnb.com/airbnb-cdp.py
 
 Navigates to the quick replies settings page, intercepts the API response the page makes, and returns the quick replies as JSON. Default product is `STAYS`.
 
-On success returns a list of objects, each with the quick reply data as Airbnb returns it (typically `id`, `title`, `body`/`message`, and category fields). On API discovery failure, returns the intercepted responses with `url`, `status`, and `data` so the endpoint can be identified and hardcoded.
+Returns a list with the intercepted response(s); each entry has `url`, `status`, and the parsed `data`. The quick replies live at `data.data.usersTemplates.messagingInbox.quickReplies.edges[].node`, each node carrying `id`, `title`, `text`, `productType`, and scheduling fields. If the response is not seen on the page, returns an `error` object naming the operation to look for in the Network panel.
 
 ### 2. Reservations
 
@@ -48,4 +48,4 @@ Session redirects to the host's locale domain (e.g. `airbnb.es`), so any URL sub
 
 `GET /api/v2/reservations` (verified). Headers required: `X-Airbnb-API-Key: d306zoyjsyarp7ifhu67rjxn52tv0t20` (the public web key), `X-CSRF-Without-Token: 1`, `Content-Type: application/json`. Query parameters: `locale`, `currency`, `_format=for_remy`, `_limit`, `_offset`, `collection_strategy`, `sort_field=start_date`, `sort_order`, and the strategy-specific filters described above. Response shape: `{reservations: [...], metadata: {page_count, page_index, total_count}}`.
 
-`GET /api/v2/messaging_quick_replies?locale=...&role=host` (used by capability 1).
+`GET /api/v3/FetchQuickRepliesViaduct/<sha256>?operationName=FetchQuickRepliesViaduct&variables={"limit":25,"offset":0,"productType":STAYS|EXPERIENCES}` (GraphQL persisted query, used by capability 1). The host app issues it on mount; the script intercepts the response rather than replaying the URL, because the persisted-query hash rotates on Airbnb redeploys.
