@@ -73,7 +73,6 @@ ABUSE_PATTERNS=(
 
 timeout=""
 mode_args=(--dump-dom)
-print_args=0
 override=0
 cdp=0
 pdf=0
@@ -246,7 +245,6 @@ while [[ $# -gt 0 ]]; do
     -t)                     timeout="$2"; shift 2 ;;
     --cdp)                  cdp=1; shift ;;
     --pdf)                  mode_args=(--no-pdf-header-footer "--print-to-pdf=$2"); pdf=1; shift 2 ;;
-    --print-args)           print_args=1; shift ;;
     --yes-i-am-not-stupid)  override=1; shift ;;
     --)                     shift; break ;;
     *)                      break ;;
@@ -261,24 +259,23 @@ fi
 
 url=""
 client_cmd=()
-if [[ $print_args -eq 0 ]]; then
-  if [[ $cdp -eq 1 ]]; then
-    client_cmd=("$@")
-    if [[ ${#client_cmd[@]} -eq 0 ]]; then
-      echo "Usage: not-google-chrome --cdp [-t SECONDS] -- <client command ...>" >&2
-      exit 64
-    fi
-  else
-    if [[ $# -lt 1 ]]; then
-      echo "Usage: not-google-chrome [-t SECONDS] [--pdf PATH] [--print-args] [--yes-i-am-not-stupid] URL [extra-flag ...]" >&2
-      echo "       not-google-chrome --cdp [-t SECONDS] -- <client command ...>" >&2
-      exit 64
-    fi
-    url="$1"; shift
-    if [[ $override -eq 0 ]]; then
-      for pat in "${ABUSE_PATTERNS[@]}"; do
-        if [[ "$url" == *"$pat"* ]]; then
-          cat >&2 <<EOF
+if [[ $cdp -eq 1 ]]; then
+  client_cmd=("$@")
+  if [[ ${#client_cmd[@]} -eq 0 ]]; then
+    echo "Usage: not-google-chrome --cdp [-t SECONDS] -- <client command ...>" >&2
+    exit 64
+  fi
+else
+  if [[ $# -lt 1 ]]; then
+    echo "Usage: not-google-chrome [-t SECONDS] [--pdf PATH] [--yes-i-am-not-stupid] URL [extra-flag ...]" >&2
+    echo "       not-google-chrome --cdp [-t SECONDS] -- <client command ...>" >&2
+    exit 64
+  fi
+  url="$1"; shift
+  if [[ $override -eq 0 ]]; then
+    for pat in "${ABUSE_PATTERNS[@]}"; do
+      if [[ "$url" == *"$pat"* ]]; then
+        cat >&2 <<EOF
 not-google-chrome: refusing to fetch $url
 
 This wrapper exists for sites that block automated access (Akamai,
@@ -292,10 +289,9 @@ Try WebFetch first; for raw bytes, try curl. If you genuinely need a
 logged-in browser session against this URL (rare), re-run with
 --yes-i-am-not-stupid.
 EOF
-          exit 77
-        fi
-      done
-    fi
+        exit 77
+      fi
+    done
   fi
 fi
 
@@ -328,22 +324,6 @@ case "$(uname)" in
     exit 78
     ;;
 esac
-
-if [[ $print_args -eq 1 ]]; then
-  # Output binary + user-data-dir args as JSON for CDP scripts to consume.
-  # The args are emitted as a JSON array; each element is one flag string.
-  user_data_dir_json="["
-  first=1
-  for arg in "${user_data_dir_args[@]}"; do
-    [[ $first -eq 0 ]] && user_data_dir_json+=","
-    user_data_dir_json+="\"$(echo "$arg" | sed 's/"/\\"/g')\""
-    first=0
-  done
-  user_data_dir_json+="]"
-  printf '{"binary":"%s","user_data_dir_args":%s}\n' \
-    "$(echo "$binary" | sed 's/"/\\"/g')" "$user_data_dir_json"
-  exit 0
-fi
 
 # UA (and, for --cdp, accept_lang) come from [browser] in config.ini so the
 # headless fetch presents the same fingerprint as the browser the user logs in

@@ -21,7 +21,7 @@ If the script returns `{"error": "Not logged in..."}`, the user needs to log in 
 ### 1. List quick replies
 
 ```bash
-python3 $HOME/.claude/skills/airbnb.com/airbnb-cdp.py list [--product STAYS|EXPERIENCES]
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/airbnb.com/airbnb-cdp.py list [--product STAYS|EXPERIENCES]
 ```
 
 Navigates to the quick replies settings page, intercepts the API response the page makes, and returns the quick replies as JSON. Default product is `STAYS`.
@@ -31,7 +31,7 @@ On success returns a list of objects, each with the quick reply data as Airbnb r
 ### 2. Reservations
 
 ```bash
-python3 $HOME/.claude/skills/airbnb.com/airbnb-cdp.py reservations [--filter past|upcoming|all]
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/airbnb.com/airbnb-cdp.py reservations [--filter past|upcoming|all]
 ```
 
 Returns `{"total_count": N, "returned": N, "reservations": [...]}` (for `--filter all`, an object keyed by `past` and `upcoming`). Each reservation includes `confirmation_code`, `listing_id`, `listing_name`, `start_date`, `end_date`, `nights`, `guest_user`, `earnings`, `user_facing_status_key` (`complete`, `current`, `canceled`, `denied`, `timedout`, etc.), and `is_check_in_today` / `is_check_out_today` flags.
@@ -40,7 +40,7 @@ Returns `{"total_count": N, "returned": N, "reservations": [...]}` (for `--filte
 
 ## How it works
 
-The script uses Chrome DevTools Protocol (CDP) to launch a headless browser with the user's logged-in user-data-dir, navigate to a hosting page to establish the authenticated session, and then either intercept the React app's own API responses (quick replies) or issue further `/api/v2/...` calls from inside the page context via `Runtime.evaluate` (reservations). The CDP approach is necessary because the hosting dashboard is a React SPA whose URL does not change on in-page navigation, so `--dump-dom` would only capture the pre-hydration shell.
+The `not-google-chrome --cdp` wrapper launches a headless browser with the user's logged-in user-data-dir and exports `CDP_WS_URL`; the script connects over Chrome DevTools Protocol (CDP), navigates to a hosting page to establish the authenticated session, and then either intercepts the React app's own API responses (quick replies) or issues further `/api/v2/...` calls from inside the page context via `Runtime.evaluate` (reservations). The CDP approach is necessary because the hosting dashboard is a React SPA whose URL does not change on in-page navigation, so `--dump-dom` would only capture the pre-hydration shell.
 
 Session redirects to the host's locale domain (e.g. `airbnb.es`), so any URL substring filter should match `airbnb` rather than the literal `airbnb.com`.
 

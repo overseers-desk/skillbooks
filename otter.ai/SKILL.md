@@ -23,7 +23,7 @@ If the script returns `{"error": "Not logged in..."}`, the user needs to log in 
 ### 1. List recordings
 
 ```bash
-python3 $HOME/.claude/skills/otter.ai/otter-cdp.py list [--page-size N] [--last-load-ts TS]
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/otter.ai/otter-cdp.py list [--page-size N] [--last-load-ts TS]
 ```
 
 Returns JSON with `speeches` array. Each entry has: `otid`, `title`, `created_at` (epoch), `duration` (seconds), `summary`, `link` (full URL).
@@ -33,7 +33,7 @@ Default page size is 50. To paginate, pass `--last-load-ts` from the previous re
 ### 2. Rename a recording
 
 ```bash
-python3 $HOME/.claude/skills/otter.ai/otter-cdp.py rename <otid> "<new title>"
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/otter.ai/otter-cdp.py rename <otid> "<new title>"
 ```
 
 Returns `{"status": "OK", "modified_time": ...}` on success.
@@ -45,7 +45,7 @@ The `otid` is the recording identifier from the list command or from an otter.ai
 ### 3. Move a recording to Trash
 
 ```bash
-python3 $HOME/.claude/skills/otter.ai/otter-cdp.py trash <otid>
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/otter.ai/otter-cdp.py trash <otid>
 ```
 
 Moves the recording to Otter Trash, the same action as the web UI's "Move to Trash" button. The recording is recoverable from the Trash folder in the web UI for approximately 30 days, then permanently removed by Otter.
@@ -57,7 +57,7 @@ Use this as the end-of-pipeline action once the transcript has been captured, co
 ### 4. Export to Dropbox
 
 ```bash
-python3 $HOME/.claude/skills/otter.ai/otter-cdp.py export-dropbox <otid> [--format txt|pdf|docx|srt]
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/otter.ai/otter-cdp.py export-dropbox <otid> [--format txt|pdf|docx|srt]
 ```
 
 Exports the recording to the user's connected Dropbox. Default format is `txt`.
@@ -67,7 +67,7 @@ Returns `{"status": "OK", "failed_speeches": []}` on success.
 ### 5. Fetch a recording via Dropbox round-trip
 
 ```bash
-python3 $HOME/.claude/skills/otter.ai/otter-cdp.py fetch-via-dropbox <otid> [--timeout 60] [--extended-timeout 120]
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/otter.ai/otter-cdp.py fetch-via-dropbox <otid> [--timeout 60] [--extended-timeout 120]
 ```
 
 One-shot helper that triggers a txt export to Dropbox, polls `Dropbox:Apps/Otter` via `rclone` until a new file appears, reads its contents, deletes it from Dropbox, and returns the text. Format is hardcoded to `txt`. Path `Dropbox:Apps/Otter` is hardcoded.
@@ -81,20 +81,20 @@ Requires `rclone` configured with a `Dropbox:` remote.
 ### 6. Check Dropbox connection
 
 ```bash
-python3 $HOME/.claude/skills/otter.ai/otter-cdp.py dropbox-status
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/otter.ai/otter-cdp.py dropbox-status
 ```
 
 Returns connection status, `dropbox_account_id`, auto-export/import settings, and default export format.
 
 ## How it works
 
-The script uses Chrome DevTools Protocol (CDP) to:
-1. Launch a headless browser with the user's logged-in user-data-dir
-2. Navigate to otter.ai to establish session context
-3. Execute JavaScript `fetch()` calls against Otter.ai's internal API (`/forward/api/v1/...`)
-4. Return JSON results
+The `not-google-chrome --cdp` wrapper launches a headless browser with the user's logged-in user-data-dir and exports `CDP_WS_URL` to the client. The script is a pure CDP client that:
+1. Connects to the page target given by `CDP_WS_URL`
+2. Navigates to otter.ai to establish session context
+3. Executes JavaScript `fetch()` calls against Otter.ai's internal API (`/forward/api/v1/...`)
+4. Returns JSON results
 
-No Selenium needed. The browser is terminated after each invocation.
+No Selenium needed. The wrapper owns the browser lifecycle; the client holds no browser PID.
 
 ## API endpoints used
 

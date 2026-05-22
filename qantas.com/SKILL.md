@@ -53,8 +53,8 @@ Date handling: the Flight Reward Finder only holds live and future availability 
 Returns first name, tier, member ID, points, and status credits. Login + read happen in one CDP session because cookies do not persist across invocations while the snap chromium browser is open (it locks the user-data-dir).
 
 ```bash
-python3 $HOME/.claude/skills/qantas.com/login.py            # human-readable
-python3 $HOME/.claude/skills/qantas.com/login.py --json     # JSON
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/qantas.com/login.py            # human-readable
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/qantas.com/login.py --json     # JSON
 ```
 
 Credentials are read from `$HOME/.claude/skills/config.ini` (`[qantas.com]` member_id, last_name, pin). See Prerequisites above.

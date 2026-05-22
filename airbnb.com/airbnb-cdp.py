@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """CDP helper for the Airbnb hosting dashboard.
 
-Launches a headless browser with the user's logged-in user-data-dir, navigates to
-a hosting page, intercepts the React app's internal API responses, and
-prints them as JSON.
+The wrapper (not-google-chrome --cdp) owns the browser lifecycle and exports
+CDP_WS_URL; this script is a pure CDP client and exits if run without it. It
+navigates to a hosting page, intercepts the React app's internal API responses,
+and prints them as JSON.
 
 Usage:
-    python3 airbnb-cdp.py list [--product STAYS|EXPERIENCES]
-    python3 airbnb-cdp.py reservations [--filter past|upcoming|all]
+    not-google-chrome --cdp -- python3 airbnb-cdp.py list [--product STAYS|EXPERIENCES]
+    not-google-chrome --cdp -- python3 airbnb-cdp.py reservations [--filter past|upcoming|all]
 """
 
 import argparse
@@ -16,10 +17,8 @@ import json
 import os
 import socket
 import struct
-import subprocess
 import sys
 import time
-import urllib.request
 
 
 # Hand-rolled WebSocket over stdlib socket. CDP runs ws:// on localhost,
@@ -87,54 +86,8 @@ def _ws_close(sock):
         pass
     sock.close()
 
-UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-      "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36")
-
-BROWSER_WRAPPER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "headless-browser", "not-google-chrome")
-
 # Buffered CDP events (unsolicited messages that arrive during send_cdp calls)
 _event_buffer = []
-
-
-def launch_browser():
-    """Launch headless browser for CDP using platform config from headless-browser/not-google-chrome --print-args."""
-    try:
-        info = json.loads(subprocess.check_output([BROWSER_WRAPPER, "--print-args"], text=True))
-    except Exception as e:
-        sys.stderr.write(f"headless-browser/not-google-chrome --print-args failed: {e}\n")
-        return None, None
-    binary = info["binary"]
-    user_data_dir_args = info["user_data_dir_args"]
-    proc = subprocess.Popen(
-        [binary] + user_data_dir_args + [
-            "--headless=new", "--disable-gpu",
-            f"--user-agent={UA}",
-            "--remote-debugging-port=0",
-            "--remote-allow-origins=*",
-            "--window-size=1920,1080",
-            "--no-first-run", "--no-default-browser-check",
-            "about:blank",
-        ],
-        stderr=subprocess.PIPE,
-        stdout=subprocess.DEVNULL,
-    )
-    port = None
-    deadline = time.time() + 15
-    while time.time() < deadline:
-        line = proc.stderr.readline().decode("utf-8", errors="replace")
-        if "DevTools listening on" in line:
-            port = line.strip().split(":")[-1].split("/")[0]
-            break
-    if not port:
-        proc.kill()
-        return None, None
-    return proc, port
-
-
-def connect_cdp(port):
-    targets = json.loads(urllib.request.urlopen(f"http://127.0.0.1:{port}/json").read())
-    ws_url = targets[0]["webSocketDebuggerUrl"]
-    return _ws_connect(ws_url, timeout=20)
 
 
 def send_cdp(ws, method, params=None, counter=[0]):
@@ -387,23 +340,22 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    proc, port = launch_browser()
-    if not proc:
-        print(json.dumps({"error": "Failed to launch headless browser"}))
+    ws_url = os.environ.get("CDP_WS_URL")
+    if not ws_url:
+        sys.stderr.write("ERROR: CDP_WS_URL not set; run via: "
+                         "not-google-chrome --cdp -- python3 airbnb-cdp.py ...\n")
         sys.exit(1)
 
+    ws = _ws_connect(ws_url, timeout=20)
     try:
-        ws = connect_cdp(port)
         commands = {
             "list": cmd_list,
             "reservations": cmd_reservations,
         }
         result = commands[args.command](ws, args)
         print(json.dumps(result, indent=2, ensure_ascii=False))
-        _ws_close(ws)
     finally:
-        proc.terminate()
-        proc.wait(timeout=5)
+        _ws_close(ws)
 
 
 if __name__ == "__main__":
