@@ -19,9 +19,11 @@ If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Reg
 LinkedIn expires the active session periodically while keeping a remember-me cookie. Re-mint a session without a password via the fastrack flow:
 
 ```bash
-python3 $HOME/.claude/skills/linkedin.com/login.py          # log in via fastrack if logged out
-python3 $HOME/.claude/skills/linkedin.com/login.py --check  # report state only, never click
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/linkedin.com/login.py          # log in via fastrack if logged out
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/linkedin.com/login.py --check  # report state only, never click
 ```
+
+`login.py`, `send-invite.py`, and `send-message.py` are CDP clients run through `not-google-chrome --cdp`, which owns the browser lifecycle: one browser at a time (flock), a deadman timeout, and a teardown that reaches the browser even after snap detaches it into its own systemd scope. Run directly, the scripts exit with `CDP_WS_URL not set`.
 
 The JSON `status` is one of:
 - `already_logged_in` / `logged_in` — session active
@@ -112,19 +114,19 @@ If the modal shows "Add a note" and "Send without a note", the person is connect
 ## 7. Send connection invite with note
 
 ```bash
-python3 $HOME/.claude/skills/linkedin.com/send-invite.py VANITY_NAME "Your note (≤300 chars)"
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/linkedin.com/send-invite.py VANITY_NAME "Your note (≤300 chars)"
 ```
 
 `VANITY_NAME` is the slug from the profile URL: `/in/john-smith-123/` → `john-smith-123`.
 
-The script uses CDP (Chrome DevTools Protocol) against the snap Chromium user-data-dir. It:
+The wrapper launches the browser and hands the script a page-target websocket; the script then, over CDP:
 1. Navigates to `/preload/custom-invite/?vanityName=VANITY_NAME`
 2. Clicks "Add a note", waits for the textarea (`#custom-message`)
 3. Types the note via `Input.insertText` (triggers Ember reactivity)
 4. Clicks the send button (label varies; matched by "send" excluding "without")
 5. Waits for server round-trip and captures confirmation
 
-**Prerequisite:** snap Chromium must not be open (it shares the user-data-dir). If it is running, the script warns but may still succeed; if the user-data-dir is locked, close the browser and retry.
+**Prerequisite:** the GUI Chromium must not be open (it shares the user-data-dir). The wrapper warns to stderr if it detects one running; close the browser and retry.
 
 **Confirmation output** — the script prints and returns a JSON result:
 - `toast` — text of LinkedIn's toast notification if present (e.g. "Invitation sent")
@@ -136,17 +138,15 @@ The script uses CDP (Chrome DevTools Protocol) against the snap Chromium user-da
 
 **Dry-run mode** (types but does not click Send):
 ```bash
-python3 $HOME/.claude/skills/linkedin.com/send-invite.py VANITY_NAME "note" --dry-run
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/linkedin.com/send-invite.py VANITY_NAME "note" --dry-run
 ```
 
-**Prerequisites check:** if `websockets` is missing, install it: `pip3 install websockets`.
-
-**Note character limit:** LinkedIn enforces 300 chars client-side (no `maxlength` HTML attribute). The script enforces this before launching the browser.
+**Note character limit:** LinkedIn enforces 300 chars client-side (no `maxlength` HTML attribute). The script enforces this before connecting.
 
 ## 8. Send a direct message to a connection
 
 ```bash
-python3 $HOME/.claude/skills/linkedin.com/send-message.py VANITY_NAME "Message text"
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/linkedin.com/send-message.py VANITY_NAME "Message text"
 ```
 
 The person must be a first-degree connection. The script:
@@ -158,7 +158,7 @@ The person must be a first-degree connection. The script:
 
 **Dry-run mode:**
 ```bash
-python3 $HOME/.claude/skills/linkedin.com/send-message.py VANITY_NAME "text" --dry-run
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/linkedin.com/send-message.py VANITY_NAME "text" --dry-run
 ```
 
 **Confirmation output:**
