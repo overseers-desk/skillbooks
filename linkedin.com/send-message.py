@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """Send a LinkedIn direct message to a connection via CDP.
 
+The wrapper (not-google-chrome --cdp) owns the browser lifecycle and exports
+CDP_WS_URL; this script is a pure CDP client and exits if run without it.
+
 Usage:
-    python3 send-message.py VANITY_NAME "Message text"
-    python3 send-message.py VANITY_NAME "Message text" --dry-run   # stop before clicking Send
+    not-google-chrome --cdp -- python3 send-message.py VANITY_NAME "Message text"
+    not-google-chrome --cdp -- python3 send-message.py VANITY_NAME "Message text" --dry-run   # stop before clicking Send
 """
 
 import argparse
 import base64
-import configparser
 import json
 import os
 import socket
 import struct
-import subprocess
 import sys
 import time
-import urllib.request
 
 
 # Hand-rolled WebSocket over stdlib socket. CDP runs ws:// on localhost,
@@ -84,84 +84,14 @@ def _ws_close(sock):
     sock.close()
 
 
-USER_DATA_DIR = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
-CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".claude/skills/config.ini")
-CDP_PORT = 9223
-
-
-def _load_browser_config():
-    """Read user_agent and accept_lang from [browser] in config.ini. Exit if absent."""
-    if not os.path.exists(CONFIG_PATH):
-        sys.exit(f"ERROR: {CONFIG_PATH} not found. Copy config.ini.example to config.ini "
-                 "and fill the [browser] section.")
-    cp = configparser.ConfigParser()
-    cp.read(CONFIG_PATH)
-    if "browser" not in cp:
-        sys.exit(f"ERROR: {CONFIG_PATH} missing [browser] section. See config.ini.example.")
-    ua = cp["browser"].get("user_agent", "").strip()
-    lang = cp["browser"].get("accept_lang", "").strip()
-    if not ua or not lang:
-        sys.exit(f"ERROR: [browser] section in {CONFIG_PATH} needs both "
-                 "user_agent and accept_lang.")
-    if "HeadlessChrome" in ua:
-        sys.exit(f"ERROR: user_agent in {CONFIG_PATH} contains 'HeadlessChrome' — "
-                 "that string defeats the override. Capture the UA from a real browser session.")
-    return ua, lang
-
-
-def _snap_chromium_running():
-    r = subprocess.run(["pgrep", "-f", "snap/chromium/common/chromium"],
-                       capture_output=True, text=True)
-    return r.stdout.strip()
-
-
-def _wait_for_cdp(retries=30):
-    for _ in range(retries):
-        time.sleep(0.5)
-        try:
-            with urllib.request.urlopen(
-                    f"http://localhost:{CDP_PORT}/json/list", timeout=2) as r:
-                tabs = json.loads(r.read())
-                if tabs:
-                    return tabs[0]["webSocketDebuggerUrl"]
-        except Exception:
-            pass
-    sys.exit("ERROR: CDP endpoint not ready - chromium failed to start")
-
-
 def send_message(vanity_name: str, text: str, dry_run: bool = False):
     url = f"https://www.linkedin.com/in/{vanity_name}/"
 
-    ua, lang = _load_browser_config()
-
-    pids = _snap_chromium_running()
-    if pids:
-        print(f"WARNING: snap Chromium running (PIDs: {pids}). User-data-dir may be locked.",
-              file=sys.stderr)
-
-    proc = subprocess.Popen(
-        [
-            "flock", "/tmp/chromium.lock",
-            "chromium", "--headless=new",
-            f"--remote-debugging-port={CDP_PORT}",
-            f"--user-data-dir={USER_DATA_DIR}",
-            f"--user-agent={ua}",
-            f"--accept-lang={lang}",
-            "--window-size=1920,1080",
-            "--no-first-run", "--no-default-browser-check",
-        ],
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-    )
-
-    try:
-        ws_url = _wait_for_cdp()
-        return _run_flow(ws_url, url, text, dry_run)
-    finally:
-        proc.terminate()
-        try:
-            proc.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            proc.kill()
+    ws_url = os.environ.get("CDP_WS_URL")
+    if not ws_url:
+        sys.exit("ERROR: CDP_WS_URL not set; run via: "
+                 "not-google-chrome --cdp -- python3 send-message.py VANITY_NAME \"Message\" [--dry-run]")
+    return _run_flow(ws_url, url, text, dry_run)
 
 
 def _run_flow(ws_url: str, page_url: str, text: str, dry_run: bool) -> dict:
