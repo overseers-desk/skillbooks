@@ -103,7 +103,7 @@ def _parse_account_body(body: str) -> dict:
 
     Layout (line-broken, with placeholder values):
         Profile
-        , Alice
+        Good evening, Alice
         Bronze:
         1234567890
         ...
@@ -114,8 +114,8 @@ def _parse_account_body(body: str) -> dict:
     """
     out = {}
 
-    # First name: line starting with ", " under Profile header
-    m = re.search(r"^,\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\s*$", body, re.M)
+    # First name: the greeting line under the Profile header, "Good <time>, <Name>"
+    m = re.search(r"^Good \w+,\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\s*$", body, re.M)
     if m:
         out["first_name"] = m.group(1)
 
