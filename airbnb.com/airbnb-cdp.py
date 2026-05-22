@@ -173,13 +173,16 @@ def cmd_list(ws, args):
     if not check_logged_in(ws):
         return {"error": "Not logged in to Airbnb. Log in via your browser first, then close it before running this script."}
 
-    # Find quick-reply-related API responses in the event buffer
+    # The hosting app loads quick replies on mount via the GraphQL persisted
+    # query FetchQuickRepliesViaduct, with productType matching the ?product=
+    # param. Capture that response from the buffer. The session may be on a
+    # localised host (airbnb.es, airbnb.fr, ...), so match the operation name
+    # rather than a fixed domain.
     pending = {}
     for evt in _event_buffer:
         if evt.get("method") == "Network.responseReceived":
             resp_url = evt["params"]["response"]["url"]
-            # Match any API call that looks like quick replies
-            if "quick" in resp_url.lower() and "airbnb.com/api" in resp_url:
+            if "quickreplies" in resp_url.lower() and "/api/" in resp_url:
                 req_id = evt["params"]["requestId"]
                 pending[req_id] = {
                     "url": resp_url,
@@ -201,53 +204,10 @@ def cmd_list(ws, args):
     if captured:
         return captured
 
-    # Fallback: make API calls directly from JS using the page's auth tokens
-    js = """
-    (async () => {
-        const apiKeyMeta = document.querySelector('meta[name="api-key"]');
-        const apiKey = apiKeyMeta ? apiKeyMeta.getAttribute('content') : '';
-
-        const csrfMeta = document.querySelector('meta[name="_csrf_token"]') ||
-                         document.querySelector('meta[name="csrf-token"]');
-        const csrf = csrfMeta ? csrfMeta.getAttribute('content') : '';
-
-        const headers = {'Accept': 'application/json'};
-        if (apiKey) headers['X-Airbnb-API-Key'] = apiKey;
-        if (csrf) headers['X-CSRF-Token'] = csrf;
-
-        const endpoints = [
-            '/api/v2/messaging_quick_replies?locale=en&currency=AUD&role=host',
-            '/api/v2/messaging_quick_replies?locale=en&role=host',
-        ];
-
-        for (const ep of endpoints) {
-            try {
-                const resp = await fetch(ep, {credentials: 'include', headers});
-                const body = await resp.text();
-                let parsed;
-                try { parsed = JSON.parse(body); } catch(e) { parsed = null; }
-                return JSON.stringify({
-                    endpoint: ep,
-                    status: resp.status,
-                    data: parsed,
-                    raw: parsed ? undefined : body,
-                    api_key_found: !!apiKey,
-                    csrf_found: !!csrf,
-                });
-            } catch(e) {
-                continue;
-            }
-        }
-
-        return JSON.stringify({
-            error: 'All endpoints failed',
-            api_key_found: !!apiKey,
-            csrf_found: !!csrf,
-            current_url: window.location.href,
-        });
-    })()
-    """
-    return eval_js(ws, js)
+    return {"error": "FetchQuickRepliesViaduct response not seen on the "
+                     "quick-replies page; the host app may have renamed the "
+                     "operation. Re-run, or capture the current request from "
+                     "the Network panel and update the match above."}
 
 
 def cmd_reservations(ws, args):
