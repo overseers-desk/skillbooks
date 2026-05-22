@@ -23,10 +23,13 @@ threads, the appropriate downstream action is to flag the contact as
 "warm: messages pending, not yet read" and either skip or surface to the
 operator for human review before any further fetch.
 
+The wrapper (not-google-chrome --cdp) owns the browser lifecycle and exports
+CDP_WS_URL; this script is a pure CDP client and exits if run without it.
+
 Usage:
-    python3 read-seen-thread.py thread <thread_id> [--limit N]
-    python3 read-seen-thread.py by-handle <handle>  [--limit N]
-    python3 read-seen-thread.py all-seen            [--limit N]
+    not-google-chrome --cdp -- python3 read-seen-thread.py thread <thread_id> [--limit N]
+    not-google-chrome --cdp -- python3 read-seen-thread.py by-handle <handle> [--limit N]
+    not-google-chrome --cdp -- python3 read-seen-thread.py all-seen [--limit N]
 """
 
 import argparse
@@ -35,10 +38,8 @@ import json
 import os
 import socket
 import struct
-import subprocess
 import sys
 import time
-import urllib.request
 from datetime import datetime, timezone
 
 
@@ -109,14 +110,6 @@ def _ws_close(sock):
     sock.close()
 
 
-UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-      "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36")
-
-BROWSER_WRAPPER = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "..", "headless-browser", "not-google-chrome"
-)
-
-
 # Patterns identifying potential seen-mutation requests. The script never
 # navigates to a thread page, so the React bundle should never fire one of
 # these in our context; the block list is defence-in-depth.
@@ -126,48 +119,6 @@ SEEN_BLOCK_PATTERNS = [
     "*item_seen*",
     "*/items/*/seen*",
 ]
-
-
-def launch_browser():
-    try:
-        info = json.loads(subprocess.check_output([BROWSER_WRAPPER, "--print-args"], text=True))
-    except Exception as e:
-        sys.stderr.write(f"headless-browser/not-google-chrome --print-args failed: {e}\n")
-        return None, None
-    binary = info["binary"]
-    user_data_dir_args = info["user_data_dir_args"]
-    proc = subprocess.Popen(
-        [binary] + user_data_dir_args + [
-            "--headless=new", "--disable-gpu",
-            f"--user-agent={UA}",
-            "--remote-debugging-port=0",
-            "--remote-allow-origins=*",
-            "--window-size=1920,1080",
-            "--no-first-run", "--no-default-browser-check",
-            "about:blank",
-        ],
-        stderr=subprocess.PIPE,
-        stdout=subprocess.DEVNULL,
-    )
-    port = None
-    deadline = time.time() + 15
-    while time.time() < deadline:
-        line = proc.stderr.readline().decode("utf-8", errors="replace")
-        if "DevTools listening on" in line:
-            port = line.strip().split(":")[-1].split("/")[0]
-            break
-    if not port:
-        proc.kill()
-        return None, None
-    return proc, port
-
-
-def connect_cdp(port):
-    targets = json.loads(
-        urllib.request.urlopen(f"http://127.0.0.1:{port}/json").read()
-    )
-    ws_url = targets[0]["webSocketDebuggerUrl"]
-    return _ws_connect(ws_url, timeout=20)
 
 
 def send_cdp(ws, method, params=None, counter=[0]):
@@ -551,39 +502,37 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    proc, port = launch_browser()
-    if not proc:
-        print(json.dumps({"error": "Failed to launch headless browser"}))
+    ws_url = os.environ.get("CDP_WS_URL")
+    if not ws_url:
+        sys.stderr.write(
+            "ERROR: CDP_WS_URL not set; run via: "
+            "not-google-chrome --cdp -- python3 read-seen-thread.py ...\n")
         sys.exit(1)
 
-    try:
-        ws = connect_cdp(port)
-        send_cdp(ws, "Page.enable")
+    ws = _ws_connect(ws_url, timeout=20)
+    send_cdp(ws, "Page.enable")
 
-        # Arm defensive Fetch interception BEFORE the first navigation.
-        enable_fetch_blocking(ws)
+    # Arm defensive Fetch interception BEFORE the first navigation.
+    enable_fetch_blocking(ws)
 
-        navigate_and_wait(ws, "https://www.instagram.com/", wait_seconds=4)
-        handle_fetch_events(ws)
+    navigate_and_wait(ws, "https://www.instagram.com/", wait_seconds=4)
+    handle_fetch_events(ws)
 
-        if not check_logged_in(ws):
-            print(json.dumps({"error": "Not logged in to Instagram. Log in via Chromium first."}))
-            sys.exit(1)
+    if not check_logged_in(ws):
+        print(json.dumps({"error": "Not logged in to Instagram. Log in via Chromium first."}))
+        sys.exit(1)
 
-        if args.command == "thread":
-            result = cmd_thread(ws, args.thread_id, args.limit)
-        elif args.command == "by-handle":
-            result = cmd_by_handle(ws, args.handle, args.limit)
-        elif args.command == "all-seen":
-            result = cmd_all_seen(ws, args.limit)
-        else:
-            result = {"error": f"Unknown command: {args.command}"}
+    if args.command == "thread":
+        result = cmd_thread(ws, args.thread_id, args.limit)
+    elif args.command == "by-handle":
+        result = cmd_by_handle(ws, args.handle, args.limit)
+    elif args.command == "all-seen":
+        result = cmd_all_seen(ws, args.limit)
+    else:
+        result = {"error": f"Unknown command: {args.command}"}
 
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-        _ws_close(ws)
-    finally:
-        proc.terminate()
-        proc.wait(timeout=5)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+    _ws_close(ws)
 
 
 if __name__ == "__main__":

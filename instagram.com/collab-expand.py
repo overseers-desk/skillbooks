@@ -23,8 +23,8 @@ take the top N candidates from one run and optionally feed them as the
 next run's input. This script does single-level expansion.
 
 Usage:
-    python3 collab-expand.py expand handle1,handle2 [--posts-per-handle N]
-    python3 collab-expand.py expand --from /path/to/handles.txt
+    not-google-chrome --cdp -- python3 collab-expand.py expand handle1,handle2 [--posts-per-handle N]
+    not-google-chrome --cdp -- python3 collab-expand.py expand --from /path/to/handles.txt
 """
 
 import argparse
@@ -168,30 +168,27 @@ def main():
         sys.exit(1)
     handles = deduped
 
-    proc, port = _frp.launch_browser()
-    if not proc:
-        print(json.dumps({"error": "Failed to launch headless browser"}))
+    ws_url = os.environ.get("CDP_WS_URL")
+    if not ws_url:
+        sys.stderr.write("ERROR: CDP_WS_URL not set; run via: "
+                         "not-google-chrome --cdp -- python3 collab-expand.py ...\n")
         sys.exit(1)
 
-    try:
-        ws = _frp.connect_cdp(port)
-        _frp.send_cdp(ws, "Page.enable")
-        _frp.send_cdp(ws, "Network.enable")
-        _frp.navigate_and_wait(ws, "https://www.instagram.com/", wait_seconds=3)
+    ws = _frp._ws_connect(ws_url, timeout=20)
+    _frp.send_cdp(ws, "Page.enable")
+    _frp.send_cdp(ws, "Network.enable")
+    _frp.navigate_and_wait(ws, "https://www.instagram.com/", wait_seconds=3)
 
-        if not _frp.check_logged_in(ws):
-            print(json.dumps({
-                "error": "Not logged in to Instagram. Log in via Chromium first."
-            }))
-            sys.exit(1)
+    if not _frp.check_logged_in(ws):
+        print(json.dumps({
+            "error": "Not logged in to Instagram. Log in via Chromium first."
+        }))
+        sys.exit(1)
 
-        result = cmd_expand(ws, handles, args.posts_per_handle)
-        result["candidate_count"] = len(result["candidates"])
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-        _frp._ws_close(ws)
-    finally:
-        proc.terminate()
-        proc.wait(timeout=5)
+    result = cmd_expand(ws, handles, args.posts_per_handle)
+    result["candidate_count"] = len(result["candidates"])
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+    _frp._ws_close(ws)
 
 
 if __name__ == "__main__":

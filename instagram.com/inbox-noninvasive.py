@@ -15,8 +15,8 @@ or any is_seen=true/seen-mutation call must be a separate script,
 not an addition here. The "noninvasive" word in this filename is load-bearing.
 
 Usage:
-    python3 inbox-noninvasive.py list
-    python3 inbox-noninvasive.py verify-noninvasive
+    not-google-chrome --cdp -- python3 inbox-noninvasive.py list
+    not-google-chrome --cdp -- python3 inbox-noninvasive.py verify-noninvasive
 """
 
 import argparse
@@ -25,10 +25,8 @@ import json
 import os
 import socket
 import struct
-import subprocess
 import sys
 import time
-import urllib.request
 from datetime import datetime, timezone
 
 
@@ -100,13 +98,6 @@ def _ws_close(sock):
     sock.close()
 
 
-UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-      "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36")
-
-BROWSER_WRAPPER = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "..", "headless-browser", "not-google-chrome"
-)
-
 # Patterns that identify seen-mutation requests.  These must NEVER leave the browser.
 SEEN_BLOCK_PATTERNS = [
     "*/seen/*",
@@ -114,49 +105,6 @@ SEEN_BLOCK_PATTERNS = [
     "*item_seen*",
     "*direct_thread*",
 ]
-
-
-def launch_browser():
-    """Launch headless browser for CDP using platform config from headless-browser/not-google-chrome --print-args."""
-    try:
-        info = json.loads(subprocess.check_output([BROWSER_WRAPPER, "--print-args"], text=True))
-    except Exception as e:
-        sys.stderr.write(f"headless-browser/not-google-chrome --print-args failed: {e}\n")
-        return None, None
-    binary = info["binary"]
-    user_data_dir_args = info["user_data_dir_args"]
-    proc = subprocess.Popen(
-        [binary] + user_data_dir_args + [
-            "--headless=new", "--disable-gpu",
-            f"--user-agent={UA}",
-            "--remote-debugging-port=0",
-            "--remote-allow-origins=*",
-            "--window-size=1920,1080",
-            "--no-first-run", "--no-default-browser-check",
-            "about:blank",
-        ],
-        stderr=subprocess.PIPE,
-        stdout=subprocess.DEVNULL,
-    )
-    port = None
-    deadline = time.time() + 15
-    while time.time() < deadline:
-        line = proc.stderr.readline().decode("utf-8", errors="replace")
-        if "DevTools listening on" in line:
-            port = line.strip().split(":")[-1].split("/")[0]
-            break
-    if not port:
-        proc.kill()
-        return None, None
-    return proc, port
-
-
-def connect_cdp(port):
-    targets = json.loads(
-        urllib.request.urlopen(f"http://127.0.0.1:{port}/json").read()
-    )
-    ws_url = targets[0]["webSocketDebuggerUrl"]
-    return _ws_connect(ws_url, timeout=20)
 
 
 def send_cdp(ws, method, params=None, counter=[0]):
@@ -472,44 +420,43 @@ def main():
     if not args.command:
         args.command = "list"
 
-    proc, port = launch_browser()
-    if not proc:
-        print(json.dumps({"error": "Failed to launch headless browser"}))
+    ws_url = os.environ.get("CDP_WS_URL")
+    if not ws_url:
+        sys.stderr.write(
+            "ERROR: CDP_WS_URL not set; run via: "
+            "not-google-chrome --cdp -- python3 inbox-noninvasive.py ...\n"
+        )
         sys.exit(1)
 
-    try:
-        ws = connect_cdp(port)
-        send_cdp(ws, "Page.enable")
+    ws = _ws_connect(ws_url, timeout=20)
+    send_cdp(ws, "Page.enable")
 
-        # Enable Fetch blocking BEFORE any navigation so mutations are caught
-        # even if they fire during page load.
-        enable_fetch_blocking(ws)
+    # Enable Fetch blocking BEFORE any navigation so mutations are caught
+    # even if they fire during page load.
+    enable_fetch_blocking(ws)
 
-        # Navigate to the Instagram home page (not /direct/inbox/) to establish
-        # session context without triggering a "user is viewing inbox" beacon.
-        navigate_and_wait(ws, "https://www.instagram.com/", wait_seconds=5)
-        handle_fetch_events(ws)
+    # Navigate to the Instagram home page (not /direct/inbox/) to establish
+    # session context without triggering a "user is viewing inbox" beacon.
+    navigate_and_wait(ws, "https://www.instagram.com/", wait_seconds=5)
+    handle_fetch_events(ws)
 
-        if not check_logged_in(ws):
-            print(json.dumps({
-                "error": "Not logged in to Instagram. Log in via a Chrome-compatible browser first."
-            }))
-            sys.exit(1)
+    if not check_logged_in(ws):
+        print(json.dumps({
+            "error": "Not logged in to Instagram. Log in via a Chrome-compatible browser first."
+        }))
+        sys.exit(1)
 
-        if args.command == "list":
-            result = cmd_list(ws)
-        elif args.command == "verify-noninvasive":
-            result = cmd_verify_noninvasive(ws)
-        elif args.command == "raw":
-            result = cmd_raw(ws)
-        else:
-            result = {"error": f"Unknown command: {args.command}"}
+    if args.command == "list":
+        result = cmd_list(ws)
+    elif args.command == "verify-noninvasive":
+        result = cmd_verify_noninvasive(ws)
+    elif args.command == "raw":
+        result = cmd_raw(ws)
+    else:
+        result = {"error": f"Unknown command: {args.command}"}
 
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-        _ws_close(ws)
-    finally:
-        proc.terminate()
-        proc.wait(timeout=5)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+    _ws_close(ws)
 
 
 if __name__ == "__main__":

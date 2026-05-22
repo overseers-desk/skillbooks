@@ -2,17 +2,18 @@
 """
 CDP helper for Otter.ai API calls.
 
-Launches a headless Chrome-compatible browser with the user's logged-in user-data-dir,
+The wrapper (not-google-chrome --cdp) owns the browser lifecycle and exports
+CDP_WS_URL; this script is a pure CDP client and exits if run without it. It
 navigates to otter.ai to establish session context, then executes JavaScript
 fetch() calls against the Otter.ai internal API. Returns JSON results to stdout.
 
 Usage:
-    python3 otter-cdp.py list [--page-size N] [--last-load-ts TS]
-    python3 otter-cdp.py rename <otid> <new_title>
-    python3 otter-cdp.py trash <otid>
-    python3 otter-cdp.py export-dropbox <otid> [--format txt|pdf|docx|srt]
-    python3 otter-cdp.py fetch-via-dropbox <otid> [--timeout N] [--extended-timeout N]
-    python3 otter-cdp.py dropbox-status
+    not-google-chrome --cdp -- python3 otter-cdp.py list [--page-size N] [--last-load-ts TS]
+    not-google-chrome --cdp -- python3 otter-cdp.py rename <otid> <new_title>
+    not-google-chrome --cdp -- python3 otter-cdp.py trash <otid>
+    not-google-chrome --cdp -- python3 otter-cdp.py export-dropbox <otid> [--format txt|pdf|docx|srt]
+    not-google-chrome --cdp -- python3 otter-cdp.py fetch-via-dropbox <otid> [--timeout N] [--extended-timeout N]
+    not-google-chrome --cdp -- python3 otter-cdp.py dropbox-status
 
 Note: `trash` moves the recording to Otter Trash (recoverable via the web UI for
 ~30 days). There is deliberately no `delete` subcommand. See the DANGER block
@@ -28,7 +29,6 @@ import struct
 import subprocess
 import sys
 import time
-import urllib.request
 
 
 # Hand-rolled WebSocket over stdlib socket. CDP runs ws:// on localhost,
@@ -95,52 +95,6 @@ def _ws_close(sock):
     except Exception:
         pass
     sock.close()
-
-UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-      "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36")
-
-BROWSER_WRAPPER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "headless-browser", "not-google-chrome")
-
-def launch_browser():
-    """Launch headless browser for CDP using platform config from headless-browser/not-google-chrome --print-args."""
-    try:
-        info = json.loads(subprocess.check_output([BROWSER_WRAPPER, "--print-args"], text=True))
-    except Exception as e:
-        sys.stderr.write(f"headless-browser/not-google-chrome --print-args failed: {e}\n")
-        return None, None
-    binary = info["binary"]
-    user_data_dir_args = info["user_data_dir_args"]
-    proc = subprocess.Popen(
-        [binary] + user_data_dir_args + [
-            "--headless=new", "--disable-gpu",
-            f"--user-agent={UA}",
-            "--remote-debugging-port=0",
-            "--remote-allow-origins=*",
-            "--window-size=1920,1080",
-            "--no-first-run", "--no-default-browser-check",
-            "about:blank",
-        ],
-        stderr=subprocess.PIPE,
-        stdout=subprocess.DEVNULL,
-    )
-    port = None
-    deadline = time.time() + 15
-    while time.time() < deadline:
-        line = proc.stderr.readline().decode("utf-8", errors="replace")
-        if "DevTools listening on" in line:
-            port = line.strip().split(":")[-1].split("/")[0]
-            break
-    if not port:
-        proc.kill()
-        return None, None
-    return proc, port
-
-def connect_cdp(port):
-    targets = json.loads(
-        urllib.request.urlopen(f"http://127.0.0.1:{port}/json").read()
-    )
-    ws_url = targets[0]["webSocketDebuggerUrl"]
-    return _ws_connect(ws_url, timeout=20)
 
 def send_cdp(ws, method, params=None, counter=[0]):
     counter[0] += 1
@@ -629,33 +583,32 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    proc, port = launch_browser()
-    if not proc:
-        print(json.dumps({"error": "Failed to launch headless browser"}))
+    ws_url = os.environ.get("CDP_WS_URL")
+    if not ws_url:
+        sys.stderr.write(
+            "ERROR: CDP_WS_URL not set; run via: "
+            "not-google-chrome --cdp -- python3 otter-cdp.py ...\n"
+        )
         sys.exit(1)
 
-    try:
-        ws = connect_cdp(port)
-        navigate_and_wait(ws, "https://otter.ai/my-notes")
+    ws = _ws_connect(ws_url, timeout=20)
+    navigate_and_wait(ws, "https://otter.ai/my-notes")
 
-        if not check_logged_in(ws):
-            print(json.dumps({"error": "Not logged in to Otter.ai. Log in via a Chrome-compatible browser first."}))
-            sys.exit(1)
+    if not check_logged_in(ws):
+        print(json.dumps({"error": "Not logged in to Otter.ai. Log in via a Chrome-compatible browser first."}))
+        sys.exit(1)
 
-        commands = {
-            "list": cmd_list,
-            "rename": cmd_rename,
-            "trash": cmd_trash,
-            "export-dropbox": cmd_export_dropbox,
-            "fetch-via-dropbox": cmd_fetch_via_dropbox,
-            "dropbox-status": cmd_dropbox_status,
-        }
-        result = commands[args.command](ws, args)
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-        _ws_close(ws)
-    finally:
-        proc.terminate()
-        proc.wait(timeout=5)
+    commands = {
+        "list": cmd_list,
+        "rename": cmd_rename,
+        "trash": cmd_trash,
+        "export-dropbox": cmd_export_dropbox,
+        "fetch-via-dropbox": cmd_fetch_via_dropbox,
+        "dropbox-status": cmd_dropbox_status,
+    }
+    result = commands[args.command](ws, args)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+    _ws_close(ws)
 
 if __name__ == "__main__":
     main()

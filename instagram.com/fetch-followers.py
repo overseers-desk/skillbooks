@@ -26,8 +26,8 @@ viewer follows it. A public profile may still return fewer entries than
 the header count if Instagram throttles the session mid-run.
 
 Usage:
-    python3 fetch-followers.py followers <handle> [--limit N] [--csv PATH]
-    python3 fetch-followers.py following <handle> [--limit N] [--csv PATH]
+    not-google-chrome --cdp -- python3 fetch-followers.py followers <handle> [--limit N] [--csv PATH]
+    not-google-chrome --cdp -- python3 fetch-followers.py following <handle> [--limit N] [--csv PATH]
 """
 
 import argparse
@@ -205,29 +205,26 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    proc, port = _frp.launch_browser()
-    if not proc:
-        print(json.dumps({"error": "Failed to launch headless browser"}))
+    ws_url = os.environ.get("CDP_WS_URL")
+    if not ws_url:
+        sys.stderr.write("ERROR: CDP_WS_URL not set; run via: "
+                         "not-google-chrome --cdp -- python3 fetch-followers.py ...\n")
         sys.exit(1)
 
-    try:
-        ws = _frp.connect_cdp(port)
-        _frp.send_cdp(ws, "Page.enable")
-        _frp.navigate_and_wait(ws, "https://www.instagram.com/", wait_seconds=3)
+    ws = _frp._ws_connect(ws_url, timeout=20)
+    _frp.send_cdp(ws, "Page.enable")
+    _frp.navigate_and_wait(ws, "https://www.instagram.com/", wait_seconds=3)
 
-        if not _frp.check_logged_in(ws):
-            print(json.dumps({
-                "error": "Not logged in to Instagram. Log in via a Chrome-compatible browser first."
-            }))
-            sys.exit(1)
+    if not _frp.check_logged_in(ws):
+        print(json.dumps({
+            "error": "Not logged in to Instagram. Log in via a Chrome-compatible browser first."
+        }))
+        sys.exit(1)
 
-        time.sleep(3)
-        result = cmd_friendships(ws, args.handle, args.command, args.limit, args.csv_path)
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-        _frp._ws_close(ws)
-    finally:
-        proc.terminate()
-        proc.wait(timeout=5)
+    time.sleep(3)
+    result = cmd_friendships(ws, args.handle, args.command, args.limit, args.csv_path)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+    _frp._ws_close(ws)
 
 
 if __name__ == "__main__":

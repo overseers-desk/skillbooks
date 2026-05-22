@@ -5,14 +5,14 @@ Reads credentials from ~/.claude/skills/config.ini, drives the sign-in form on
 www.qantas.com, navigates to my-account, and extracts {first_name, tier,
 member_id, points, status_credits}.
 
-Cookies do not persist between invocations when the snap chromium browser
-is open (it locks the user-data-dir), so this script is the canonical way to read
-the authenticated state - login + balance happen in one CDP session.
+The wrapper (not-google-chrome --cdp) owns the browser lifecycle and exports
+CDP_WS_URL; this script is a pure CDP client and exits if run without it.
+Login + balance happen in one CDP session.
 
 Usage:
-    python3 login.py            # human-readable
-    python3 login.py --json     # JSON
-    python3 login.py --check    # open login page, do not submit
+    not-google-chrome --cdp -- python3 login.py            # human-readable
+    not-google-chrome --cdp -- python3 login.py --json     # JSON
+    not-google-chrome --cdp -- python3 login.py --check    # open login page, do not submit
 """
 
 import argparse
@@ -23,10 +23,8 @@ import os
 import re
 import socket
 import struct
-import subprocess
 import sys
 import time
-import urllib.request
 from pathlib import Path
 
 
@@ -95,31 +93,8 @@ def _ws_close(sock):
     sock.close()
 
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-USER_DATA_DIR = os.path.join(os.path.expanduser("~"), "snap/chromium/common/chromium")
-CDP_PORT = 9224
 LOGIN_URL = "https://www.qantas.com/au/en/frequent-flyer/my-account/sign-in.html"
 ACCOUNT_URL = "https://www.qantas.com/au/en/frequent-flyer/my-account.html"
-
-
-def _snap_chromium_running():
-    r = subprocess.run(["pgrep", "-f", "snap/chromium/common/chromium"],
-                       capture_output=True, text=True)
-    return r.stdout.strip()
-
-
-def _wait_for_cdp(retries=30):
-    for _ in range(retries):
-        time.sleep(0.5)
-        try:
-            with urllib.request.urlopen(
-                    f"http://localhost:{CDP_PORT}/json/list", timeout=2) as r:
-                tabs = json.loads(r.read())
-                if tabs:
-                    return tabs[0]["webSocketDebuggerUrl"]
-        except Exception:
-            pass
-    sys.exit("ERROR: CDP endpoint not ready - chromium failed to start")
 
 
 def _parse_account_body(body: str) -> dict:
@@ -183,149 +158,131 @@ def run(check_only: bool, debug: bool):
         if not v:
             sys.exit(f"ERROR: ~/.claude/skills/config.ini missing [qantas.com] {k}")
 
-    pids = _snap_chromium_running()
-    if pids and debug:
-        print(f"[snap chromium running, PIDs: {pids}]", file=sys.stderr)
+    ws_url = os.environ.get("CDP_WS_URL")
+    if not ws_url:
+        print("ERROR: CDP_WS_URL not set; run via: "
+              "not-google-chrome --cdp -- python3 login.py [--json|--check]",
+              file=sys.stderr)
+        sys.exit(1)
 
-    proc = subprocess.Popen(
-        [
-            "chromium", "--headless=new",
-            f"--remote-debugging-port={CDP_PORT}",
-            f"--user-data-dir={USER_DATA_DIR}",
-            "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-            "(KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-            "--window-size=1920,1080",
-            "--no-first-run", "--no-default-browser-check",
-        ],
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-    )
-
+    sock = _ws_connect(ws_url, timeout=20)
     try:
-        ws_url = _wait_for_cdp()
-        sock = _ws_connect(ws_url, timeout=20)
-        try:
-            _id = 0
+        _id = 0
 
-            def cmd(method, params=None):
-                nonlocal _id
-                _id += 1
-                cid = _id
-                _ws_send(sock, json.dumps({"id": cid, "method": method,
-                                           "params": params or {}}))
-                while True:
-                    msg = json.loads(_ws_recv(sock))
-                    if msg.get("id") != cid:
-                        continue  # event or stale response - ignore
-                    if "error" in msg:
-                        raise RuntimeError(f"{method}: {msg['error']}")
-                    return msg.get("result", {})
+        def cmd(method, params=None):
+            nonlocal _id
+            _id += 1
+            cid = _id
+            _ws_send(sock, json.dumps({"id": cid, "method": method,
+                                       "params": params or {}}))
+            while True:
+                msg = json.loads(_ws_recv(sock))
+                if msg.get("id") != cid:
+                    continue  # event or stale response - ignore
+                if "error" in msg:
+                    raise RuntimeError(f"{method}: {msg['error']}")
+                return msg.get("result", {})
 
-            def js(expr, default=None):
-                try:
-                    r = cmd("Runtime.evaluate", {
-                        "expression": expr,
-                        "awaitPromise": False,
-                        "returnByValue": True,
-                    })
-                    if "exceptionDetails" in r:
-                        return default
-                    return r.get("result", {}).get("value")
-                except Exception:
+        def js(expr, default=None):
+            try:
+                r = cmd("Runtime.evaluate", {
+                    "expression": expr,
+                    "awaitPromise": False,
+                    "returnByValue": True,
+                })
+                if "exceptionDetails" in r:
                     return default
+                return r.get("result", {}).get("value")
+            except Exception:
+                return default
 
-            def wait_for(selector, timeout=10):
-                t0 = time.time()
-                while time.time() - t0 < timeout:
-                    if js(f"!!document.querySelector({json.dumps(selector)})"):
-                        return True
-                    time.sleep(0.4)
-                return False
+        def wait_for(selector, timeout=10):
+            t0 = time.time()
+            while time.time() - t0 < timeout:
+                if js(f"!!document.querySelector({json.dumps(selector)})"):
+                    return True
+                time.sleep(0.4)
+            return False
 
-            cmd("Network.enable")
-            cmd("Page.enable")
+        cmd("Network.enable")
+        cmd("Page.enable")
 
+        if debug:
+            print(f"[navigate] {LOGIN_URL}", file=sys.stderr)
+        cmd("Page.navigate", {"url": LOGIN_URL})
+        time.sleep(5)
+
+        if not wait_for("#pin", 12):
+            body = (js("document.body.innerText", "") or "")[:400]
+            sys.exit(f"ERROR: PIN field did not appear. Body: {body}")
+
+        if check_only:
+            print("Check only - login form ready, not submitting.")
+            return 0, {}
+
+        for fid, val in (("memberId", member_id),
+                         ("lastName", last_name),
+                         ("pin", pin)):
+            js(f'document.querySelector("#{fid}").focus();'
+               f'document.querySelector("#{fid}").value = "";'
+               f'document.querySelector("#{fid}").dispatchEvent(new Event("input",{{bubbles:true}}));')
+            time.sleep(0.2)
+            cmd("Input.insertText", {"text": val})
+            time.sleep(0.2)
             if debug:
-                print(f"[navigate] {LOGIN_URL}", file=sys.stderr)
-            cmd("Page.navigate", {"url": LOGIN_URL})
-            time.sleep(5)
+                got = js(f'document.querySelector("#{fid}").value', "") or ""
+                shown = "*" * len(got) if fid == "pin" else got
+                print(f"[fill] {fid}={shown} ({len(got)} chars)", file=sys.stderr)
 
-            if not wait_for("#pin", 12):
-                body = (js("document.body.innerText", "") or "")[:400]
-                sys.exit(f"ERROR: PIN field did not appear. Body: {body}")
+        clicked = js('''(function(){
+            var btns = Array.from(document.querySelectorAll("button"));
+            var b = btns.find(function(x){
+                var t = (x.textContent || "").trim().toLowerCase();
+                return x.type === "submit" || t === "log in" || t === "login";
+            });
+            if (b) { b.click(); return true; }
+            return false;
+        })()''')
+        if not clicked:
+            sys.exit("ERROR: LOG IN button not found")
 
-            if check_only:
-                print("Check only - login form ready, not submitting.")
-                return 0, {}
+        # Wait until URL is no longer sign-in (login redirect completes)
+        t0 = time.time()
+        while time.time() - t0 < 25:
+            time.sleep(1)
+            u = js("window.location.href", "") or ""
+            if "/my-account" in u and "sign-in" not in u:
+                break
 
-            for fid, val in (("memberId", member_id),
-                             ("lastName", last_name),
-                             ("pin", pin)):
-                js(f'document.querySelector("#{fid}").focus();'
-                   f'document.querySelector("#{fid}").value = "";'
-                   f'document.querySelector("#{fid}").dispatchEvent(new Event("input",{{bubbles:true}}));')
-                time.sleep(0.2)
-                cmd("Input.insertText", {"text": val})
-                time.sleep(0.2)
-                if debug:
-                    got = js(f'document.querySelector("#{fid}").value', "") or ""
-                    shown = "*" * len(got) if fid == "pin" else got
-                    print(f"[fill] {fid}={shown} ({len(got)} chars)", file=sys.stderr)
+        ma_url = js("window.location.href", "") or ""
+        ma_title = js("document.title", "") or ""
+        if "sign-in" in ma_url or "Login" in ma_title:
+            err = js(
+                '(function(){var e=document.querySelector('
+                '"[role=\\"alert\\"], .error, [data-testid*=\\"error\\"]");'
+                'return e ? e.textContent.trim() : null;})()')
+            msg = f"login did not complete (URL={ma_url}, title={ma_title})"
+            if err:
+                msg += f"; page error: {err}"
+            return 1, {"error": msg}
 
-            clicked = js('''(function(){
-                var btns = Array.from(document.querySelectorAll("button"));
-                var b = btns.find(function(x){
-                    var t = (x.textContent || "").trim().toLowerCase();
-                    return x.type === "submit" || t === "log in" || t === "login";
-                });
-                if (b) { b.click(); return true; }
-                return false;
-            })()''')
-            if not clicked:
-                sys.exit("ERROR: LOG IN button not found")
+        if "/my-account" not in ma_url:
+            cmd("Page.navigate", {"url": ACCOUNT_URL})
+            time.sleep(6)
 
-            # Wait until URL is no longer sign-in (login redirect completes)
-            t0 = time.time()
-            while time.time() - t0 < 25:
-                time.sleep(1)
-                u = js("window.location.href", "") or ""
-                if "/my-account" in u and "sign-in" not in u:
-                    break
+        # Wait for points to render (SPA may hydrate after navigation)
+        t0 = time.time()
+        body = ""
+        while time.time() - t0 < 15:
+            time.sleep(1)
+            body = js("document.body.innerText", "") or ""
+            if "Qantas Points" in body and re.search(r"\d{1,3}(?:,\d{3})", body):
+                break
 
-            ma_url = js("window.location.href", "") or ""
-            ma_title = js("document.title", "") or ""
-            if "sign-in" in ma_url or "Login" in ma_title:
-                err = js(
-                    '(function(){var e=document.querySelector('
-                    '"[role=\\"alert\\"], .error, [data-testid*=\\"error\\"]");'
-                    'return e ? e.textContent.trim() : null;})()')
-                msg = f"login did not complete (URL={ma_url}, title={ma_title})"
-                if err:
-                    msg += f"; page error: {err}"
-                return 1, {"error": msg}
-
-            if "/my-account" not in ma_url:
-                cmd("Page.navigate", {"url": ACCOUNT_URL})
-                time.sleep(6)
-
-            # Wait for points to render (SPA may hydrate after navigation)
-            t0 = time.time()
-            body = ""
-            while time.time() - t0 < 15:
-                time.sleep(1)
-                body = js("document.body.innerText", "") or ""
-                if "Qantas Points" in body and re.search(r"\d{1,3}(?:,\d{3})", body):
-                    break
-
-            data = _parse_account_body(body)
-            return 0, data
-        finally:
-            _ws_close(sock)
+        data = _parse_account_body(body)
+        return 0, data
     finally:
-        proc.terminate()
-        try:
-            proc.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            proc.kill()
+        _ws_close(sock)
 
 
 def main():
