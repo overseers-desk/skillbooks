@@ -57,3 +57,25 @@ The lessons:
 3. **Cookie persistence between headless and GUI chromium fails when both target the same user-data-dir.** This is not sophisticated detection; it is filesystem locking. If a skill needs cookies to outlive a single headless invocation, either close the GUI browser first, use a separate `--user-data-dir`, or accept the design constraint and run login + read in one session every time.
 
 4. **When a chosen approach is blocked, check whether the user's original ask was already met before designing around the block.** Cookie persistence was blocked. The ask, "tell me my balance," had been met by the script that did login + read in one session. The "this is blocked" signal triggered a redesign instead of a re-read of the user's original ask. The redesign was unnecessary work that the user had to interrupt to prevent. The discipline rule is the same as in the IHG story above: a constraint is an observation, not a brief to architect around.
+
+## How the resume-last hang was found, and what issue 120 got wrong
+
+In May 2026 a session set out to implement issue 120: CDP skill scripts were leaking a headless browser that held the user-data-dir lock and deadlocked later dump-dom fetches. The fix landed and tested. The wrapper became the single browser launcher, with a snap-robust teardown and a bounded lock wait. Then, asked to confirm a person search end to end, every Facebook fetch began to hang. The investigation that followed repeated the IHG mistake at greater length.
+
+The AI produced, in turn, ten causes for the hang: Facebook needs CDP because dump-dom cannot read it; the historical `--virtual-time-budget` flag; a regression in the just-written wrapper; a stale SingletonLock; leaked orphan processes; a missing `--no-first-run`; background GCM connections; an unclean `exit_type`; a snap refresh mid-session; disk slowness. Each was tested. Each was wrong. The user said "SFS," and the AI stopped guessing and reported only what it had verified: dump-dom hung on the real snap profile, while a byte-for-byte copy of the same data worked elsewhere, and CDP worked on the real profile too.
+
+Two user observations broke it open. First: "curious that the corruption is isolated to dom dump and not affect cdp." That reframed the question from "the profile is corrupt" to "what does dump-dom wait for that CDP does not." Second, after the AI floated an exit-state theory, the user proposed the decisive experiment: start a browser, close it cleanly over CDP, then dump again. The clean close flipped `exit_type` to Normal and dump-dom still hung, killing that theory. Then the user named the real lead: "resume all tabs." The profile's startup was set to "Continue where you left off." A process-tree dump confirmed it: a single `--dump-dom example.com` had spawned thirteen renderer processes, because session restore reopened thirteen heavy authenticated tabs that never finish loading, and dump-dom waits for the browser to settle. Changing the startup setting to "Open the New Tab page," one variable, turned a 120-second true hang into 530 bytes in under a second.
+
+The twist is that issue 120 was itself a misattribution. The leak it described is real, but it is a different mechanism: a leaked browser holds the lock, and the next fetch blocks on the lock. The recurring "profile corruption" had a free lock the whole time; its cause was session restore, not concurrency. The issue-120 refactor improved robustness against the leak, but the thing actually rotting the profile was a Chromium setting, and the cure was a few lines: a guard that refuses a one-shot render when the profile's `restore_on_startup` is 1.
+
+The lessons:
+
+1. **A hang is an observation, not a diagnosis, exactly like a 403.** The IHG rule applies unchanged to a fetch that hangs or returns empty. The cause was found only once the AI stopped attributing and started bisecting: fresh profile versus real, CDP versus dump-dom, and the renderer count.
+
+2. **The cheapest decisive test was the process tree.** Thirteen renderers for a one-tab fetch named session restore in a single observation, after ten failed theories. When a render hangs, count renderers and check `restore_on_startup` before theorising.
+
+3. **dump-dom waits for the browser to settle; CDP grabs its own target on a timer.** That one difference explains why one hung and the other did not, and it is why CDP is the robust fetch method when a profile or a site will not go idle.
+
+4. **A fix can be real and still aimed at the wrong target.** Issue 120's teardown and bounded lock are genuine improvements, but they could not have cured the recurring corruption, because that was never the leak. When a remedy does not stop the symptom, re-question the diagnosis, not the remedy.
+
+5. **Failure modes must leave evidence.** The AI could not tell whether Facebook dump-dom was historically flaky because nothing logged the timeouts. The wrapper now logs render timeouts and empty results to syslog, so the next session reads a record instead of guessing.

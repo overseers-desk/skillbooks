@@ -23,6 +23,17 @@ A response code is an observation, not a diagnosis. A 403 means the server rejec
 
 Do not write a causal explanation into a skill or access pattern unless you have verified it with a test that would have produced a different result if the cause were different. An unverified explanation written into a file becomes a false premise for every future session that reads it.
 
+## When a fetch hangs or returns empty (not the same as blocked)
+
+A 403 is the site rejecting you. A hang or an empty result is almost always local: the browser, the profile, or the launch, not the site. Same discipline (an observation is not a diagnosis), different bisection:
+
+1. **Fresh temp `--user-data-dir` versus the real profile.** If a copy of the same data works elsewhere and the real profile does not, the fault is the profile or its location, not the site or the binary.
+2. **CDP versus `--dump-dom`.** `--dump-dom` waits for the browser to report the page loaded; CDP navigates and reads `outerHTML` on a fixed timer. If CDP works and dump-dom hangs, the page never reports "done", so use CDP for that site.
+3. **Count the renderer processes.** N renderers for a one-tab fetch means session restore reopened N tabs; then check the profile's `restore_on_startup`. (`not-google-chrome` refuses a one-shot render when that is set to "Continue where you left off"; see `../BROWSER.md`.)
+4. **`/proc/PID/wchan`** separates a true hang from mere slowness.
+
+Red herrings observed once, worth skipping: the snap browser's process name is `chrome`, not `chromium`; the "zygote" errors are a symptom (`--single-process` removed them and the hang remained); `--timeout` cannot force a capture when no page renders; `--no-sandbox` and `--headless=old` changed nothing.
+
 ## Prerequisites
 
 - A headless browser (use `not-google-chrome`; see `BROWSER.md` for context)
