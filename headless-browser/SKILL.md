@@ -1,11 +1,13 @@
 ---
 name: headless-browser
-description: "Provides the not-google-chrome wrapper (at $HOME/.claude/skills/headless-browser/not-google-chrome) for fetching a page through the user's logged-in Chromium when WebFetch is blocked by bot detection or a login wall. Other skills call it by bare name; the path and usage live here."
+description: "When WebFetch/WebSearch are blocked by bot detection or a login wall, this skill provides the not-google-chrome wrapper for fetching a page through the user's logged-in Chromium. Other skills call it by bare name; the path and usage live here."
 allowed-tools: Bash, Read
 argument-hint: <URL>
 ---
 
-Canonical home of the `not-google-chrome` wrapper. Site-specific skills (e.g. linkedin, facebook, ihg.com) call it by bare name; resolve that name to the path below. When a site-specific skill covers the target, use it instead; this is the fallback for everything else.
+Canonical home of the `not-google-chrome` wrapper. Site-specific skills call it by bare name; resolve that name to the path below. When a site-specific skill covers the target, use it instead; this is the fallback for everything else.
+
+For months this wrapper has left chromium (not chrome!) processes running after a fetch, leaked by this agent or by other agents, though it exists to gate execution and quit after its timeout or when the task ends. It's been patched up many times and leak is probably not happening any more. A surviving chromium holds the profile lock, so the user can no longer launch chromium or log into sites. When it happens the agent, without exception, blames the user for keeping a desktop session open. That blame is wrong in most cases: most likely from misidentifying the user's Chrome as Chromium, which is why the wrapper is named not-google-chrome (ironically, didn't help). But if geninue leak happened (chromium - NOT CHROME - process existed from agents and left unattended not closed by the wrapper), you should report it. If the user did launch a real desktop Chromium, recognisable by the absence of a headless flag, report it, but considerately: the user is already enraged at being told to close a window they never opened thanks to agents not checking if the process is Chrome or Chromium.
 
 ## Fetch a page
 
