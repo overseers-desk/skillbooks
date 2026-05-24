@@ -11,9 +11,11 @@
 #       websocket) and CDP_PORT into the client's environment, run the client,
 #       and on every exit path tear the browser down. The wrapper owns the
 #       browser lifecycle: one browser at a time (flock), a deadman timeout, and
-#       a teardown that reaches the browser even after it detaches into its own
-#       systemd --user scope (the failure behind issue 120). Client scripts hold
-#       no browser PID; they connect to CDP_WS_URL and drive the page.
+#       a teardown that finds the browser by its --remote-debugging-port and
+#       signals that PID, since a persistent browser reparents to the user
+#       service manager once the wrapper returns and a PID captured at launch
+#       would be stale. Client scripts hold no browser PID; they connect to
+#       CDP_WS_URL and drive the page.
 #
 # Output:  rendered DOM on stdout (default), or PDF written to PATH (--pdf). In
 #          --cdp mode the client owns stdout. Redirect dump-dom stdout to a file:
@@ -143,11 +145,13 @@ EOF
   exit 76
 }
 
-# Snap-robust teardown of the CDP browser. Match it by its unique port string
-# and signal it DIRECTLY (a per-pid signal, not killpg): the signal reaches the
-# browser even after it re-execs into its own systemd --user scope, which is what
-# defeated the per-script proc.terminate(). SIGTERM lets Chromium flush and exit;
-# the scope-stop and SIGKILL are escalations if it does not.
+# Teardown of the CDP browser. A persistent browser reparents to the user
+# service manager once the wrapper returns, so a PID captured at launch goes
+# stale. Find the live browser by the one stable attribute only its main process
+# carries, the --remote-debugging-port string, and signal that PID: SIGTERM to
+# let Chromium flush, then SIGKILL if it does not exit. The child renderer, GPU
+# and zygote processes exit on their own once the main process is gone. (A cgroup
+# never intercepts signals, so a per-pid signal reaches the browser in any scope.)
 cdp_teardown() {
   trap - EXIT INT TERM
   local port="${_cdp_port:-}"
@@ -159,13 +163,6 @@ cdp_teardown() {
       sleep 0.5
     done
     if pgrep -f -- "remote-debugging-port=$port" >/dev/null 2>&1; then
-      if [[ "$(uname)" == Linux ]] && command -v systemctl >/dev/null 2>&1; then
-        local p scope
-        for p in $(pgrep -f -- "remote-debugging-port=$port" 2>/dev/null || true); do
-          scope="$(grep -oE 'app-org\.chromium\.Chromium-[0-9]+\.scope' "/proc/$p/cgroup" 2>/dev/null | head -1 || true)"
-          [[ -n "$scope" ]] && systemctl --user stop "$scope" 2>/dev/null || true
-        done
-      fi
       pkill -KILL -f -- "remote-debugging-port=$port" 2>/dev/null || true
     fi
   fi
@@ -203,7 +200,7 @@ run_cdp() {
   fi
 
   # Fixed port + an explicit about:blank so a page target exists immediately.
-  # 9>&- so the detached browser does not inherit (and pin) the lock fd.
+  # 9>&- so the browser does not inherit (and pin) the lock fd.
   "$binary" "${user_data_dir_args[@]}" \
     --headless=new \
     --remote-debugging-port="$port" --remote-allow-origins=* \
