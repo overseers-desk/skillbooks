@@ -619,4 +619,26 @@ assert_eq [dict get [lindex $au_miss 0] severity] "warning" \
     "audit: missing transcript → severity=warning"
 
 
+# ════════════════════════════════════════════════════════════════════════
+# 27. spar::delete_roster_locks — end-of-run lock sweep (#95)
+# ════════════════════════════════════════════════════════════════════════
+section "27. spar::delete_roster_locks"
+
+set _seg1 [make_temp_segment]
+set _seg2 [make_temp_segment]
+close [open [file join $_seg1 .roster.lock] w]
+close [open [file join $_seg2 .roster.lock] w]
+assert_eq [file exists [file join $_seg1 .roster.lock]] 1 \
+    "precondition: lock 1 exists"
+
+spar::delete_roster_locks [list $_seg1 $_seg2]
+assert_eq [file exists [file join $_seg1 .roster.lock]] 0 "lock 1 swept"
+assert_eq [file exists [file join $_seg2 .roster.lock]] 0 "lock 2 swept"
+
+# Best-effort: absent lock, empty-string segdir, and missing dir must
+# not error — flock has no requirement the file persist between runs.
+set _rc [catch {spar::delete_roster_locks [list $_seg1 "" /nonexistent/seg]} _err]
+assert_eq $_rc 0 "absent lock / empty segdir / missing dir: no error"
+
+
 finish_tests

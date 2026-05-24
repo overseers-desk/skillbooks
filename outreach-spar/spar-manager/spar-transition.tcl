@@ -482,6 +482,21 @@ if {$dispatching} {
         if {$::_total_expected > 0} { vwait ::_alldone }
 
         catch {$disp destroy}
+
+        # End-of-run sweep of the per-segment roster locks (#95) for the
+        # segments this batch processed, now that every worker has
+        # finished. Scoped to touched segments so a concurrent
+        # dispatcher's locks elsewhere are untouched.
+        set seg_dirs [dict create]
+        foreach tid $active_tids {
+            if {![dict exists $ready_by_tid $tid]} continue
+            foreach task [dict get $ready_by_tid $tid] {
+                if {[dict exists $task _segment_dir]} {
+                    dict set seg_dirs [dict get $task _segment_dir] 1
+                }
+            }
+        }
+        spar::delete_roster_locks [dict keys $seg_dirs]
     }
 
     # Row-event subscribers used by dispatch_ready. Defined at script
