@@ -400,6 +400,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
     set segment_dir [file normalize $segment_dir]
 
     set sel_stems [spar::dict_get_default $opts stems {}]
+    set worker_timeout_secs [spar::dict_get_default $cdata worker_timeout_secs 1800]
 
     set roster_path [file join $segment_dir roster.tsv]
     set profile_dir [spar::profile_dir_for_segment $segment_dir]
@@ -563,6 +564,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
         puts $fd "CONTACT_NAME=\"$name\""
         puts $fd "CONTACT_ORG=\"$org\""
         puts $fd "CONTACT_EMAIL=\"$email\""
+        puts $fd "WORKER_TIMEOUT_SECS=\"$worker_timeout_secs\""
         close $fd
     }
 
@@ -750,6 +752,7 @@ proc spar::a::_build_prompts {opts on_progress} {
     set antifacts [spar::dict_get_default $cdata antifacts]
     set campaign_principles [spar::dict_get_default $cdata campaign_principles]
     set a_max_passes_ceiling [spar::dict_get_default $cdata a_max_passes 3]
+    set worker_timeout_secs [spar::dict_get_default $cdata worker_timeout_secs 1800]
     set segments [spar::filter_segments [dict get $cdata segments] $sel_segments]
 
     # Campaign filters (issue #41 in-scope-channel gate replaces
@@ -935,6 +938,7 @@ s_note: $s_note"
             puts $fd "ROSTER_EMAIL=$email"
             puts $fd "ROSTER_ORGANISATION=$org"
             puts $fd "CHALLENGER_MODEL=sonnet"
+            puts $fd "WORKER_TIMEOUT_SECS=$worker_timeout_secs"
             close $fd
 
             if {$appendix_a_assembly ne ""} {

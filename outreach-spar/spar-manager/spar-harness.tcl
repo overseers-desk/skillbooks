@@ -36,7 +36,7 @@ namespace eval spar {
 source [file join $::spar::harness_dir spar-mailroom.tcl]
 
 oo::class create spar::Harness {
-    variable Slug LogPrefix CostLog SessionId PromptDir LogDir
+    variable Slug LogPrefix CostLog SessionId PromptDir LogDir WorkerTimeoutSecs
 
     constructor {prompt_dir log_dir} {
         set PromptDir $prompt_dir
@@ -45,6 +45,15 @@ oo::class create spar::Harness {
         set LogPrefix [file join $log_dir $Slug]
         set CostLog   "${LogPrefix}-cost.jsonl"
         set SessionId ""
+        # Per-attempt wall-clock budget (#114) travels with the prompt
+        # dir via meta.env, so every dispatch path that builds a prompt
+        # dir carries it — no per-path row-opts plumbing. Absent file or
+        # key leaves it 0 (disabled); set_worker_timeout can override.
+        set WorkerTimeoutSecs 0
+        if {[file exists [file join $prompt_dir meta.env]]} {
+            set WorkerTimeoutSecs [spar::dict_get_default \
+                [my load_meta] WORKER_TIMEOUT_SECS 0]
+        }
         file mkdir $log_dir
         set fd [open $CostLog w]; close $fd
     }
@@ -56,6 +65,13 @@ oo::class create spar::Harness {
     method session_id  {} { return $SessionId }
     method prompt_dir  {} { return $PromptDir }
     method log_dir     {} { return $LogDir }
+
+    # Per-attempt wall-clock budget for a single `exec claude -p`. Zero
+    # (default) disables the wrap. Credit-limit waits between retries
+    # sit outside the wrapped exec and do not count against the budget.
+    method set_worker_timeout {secs} {
+        set WorkerTimeoutSecs $secs
+    }
 
     # Load prompts/<name>.txt and apply __KEY__ → value substitutions
     # from the subs dict. Keys in subs are passed without the __..__
@@ -161,9 +177,32 @@ oo::class create spar::Harness {
             }
             set cmd [concat $cmd $args [list $prompt]]
 
+            # Per-attempt wall-clock cap (#114). Wrap with timeout(1)
+            # when configured. GNU coreutils exits 124 on SIGTERM at
+            # deadline; uutils (Rust reimplementation, installed on
+            # recent Debian/Ubuntu) exits 125 when --kill-after is set
+            # and the command times out. Either signals 137 if SIGKILL
+            # was needed after the kill-after grace.
+            if {$WorkerTimeoutSecs > 0} {
+                set timeout_bin [spar::resolve_coreutil timeout]
+                if {$timeout_bin ne ""} {
+                    set cmd [linsert $cmd 0 $timeout_bin \
+                        --kill-after=60s "${WorkerTimeoutSecs}s"]
+                }
+            }
+
             if {[catch {
                 exec {*}$cmd > $json_file 2> "${log_file}.stderr"
-            }]} {
+            } _err opts]} {
+                set ec [dict get $opts -errorcode]
+                if {$WorkerTimeoutSecs > 0 && [lindex $ec 0] eq "CHILDSTATUS"} {
+                    set exit_code [lindex $ec 2]
+                    if {$exit_code == 124 || $exit_code == 125 || $exit_code == 137} {
+                        ${::spar::harness_log}::error \
+                            "FAIL ($stage: timeout after ${WorkerTimeoutSecs}s): $Slug"
+                        return 1
+                    }
+                }
                 if {![file exists $json_file] || [file size $json_file] == 0} {
                     ${::spar::harness_log}::error "FAIL ($stage rc=error): $Slug"
                     return 1
