@@ -5,9 +5,11 @@
 # one Transition subclass instance held in ::spar::transitions::registry.
 #
 # Subclass contract:
-#   run          execute the transition; must call on_complete exactly once
-#   build_opts   adapt (ready_tasks, filter_segments, filter_stems) to the
-#                per-runner opts dict merged onto {campaign_file, dry_run, jobs}
+#   prepare_for_pool  build the per-row Pool batch; return
+#                     {worker_proc <name> rows {{stem opts} ...}}
+#   build_opts        adapt (ready_tasks, filter_segments, filter_stems) to
+#                     the per-runner opts dict merged onto
+#                     {campaign_file, dry_run, jobs}
 #
 # The remaining methods (tid, label, auto_safe, dispatch_status,
 # supports_reauthor, ui_tree_row) read from params set at construction.
@@ -50,13 +52,6 @@ oo::class create ::spar::transitions::Transition {
     # setup override.
     method build_opts {tasks filter_segments filter_stems} {
         return [dict create]
-    }
-
-    # run must be overridden by subclasses that declare dispatch_status
-    # `available`. Manual / not-implemented transitions inherit this stub.
-    method run {opts on_progress on_complete} {
-        {*}$on_complete 0 0 [dict create \
-            message "[my tid] ([my label]): dispatch_status=[my dispatch_status]"]
     }
 
     # prepare_for_pool — return {worker_proc <name> rows {{stem opts} ...}}
@@ -173,20 +168,6 @@ proc ::spar::transitions::assert_matches_doc {doc_path} {
 proc spar::has_transition_runner {tid} {
     if {$tid ni [::spar::transitions::all]} { return 0 }
     return [expr {[[::spar::transitions::get $tid] dispatch_status] eq "available"}]
-}
-
-# transition_runner -- command prefix that invokes the T-id's run method.
-# Callers expand with {*}$runner $opts $on_progress $on_complete. Errors
-# if the T-id is unregistered or non-dispatchable — gate via
-# has_transition_runner.
-proc spar::transition_runner {tid} {
-    if {$tid ni [::spar::transitions::all]} {
-        error "unknown transition: $tid"
-    }
-    if {![spar::has_transition_runner $tid]} {
-        error "no runner for $tid"
-    }
-    return [list [::spar::transitions::get $tid] run]
 }
 
 # transition_label -- human-readable edge name.

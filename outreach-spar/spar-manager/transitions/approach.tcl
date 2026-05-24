@@ -1,8 +1,8 @@
 # spar-manager/transitions/approach.tcl
 #
 # ApproachTransition — T2 (Profile → Approach) and T4 (Re-profile →
-# Re-approach). Both dispatch through ::spar::a::run in a campaign-wide
-# pass; filters are propagated as opts to the runner.
+# Re-approach). Both dispatch through ::spar::a::prepare_for_pool in a
+# campaign-wide pass; filters are propagated as opts to the runner.
 
 oo::class create ::spar::transitions::ApproachTransition {
     superclass ::spar::transitions::Transition
@@ -17,10 +17,6 @@ oo::class create ::spar::transitions::ApproachTransition {
             dict set result stems $filter_stems
         }
         return $result
-    }
-
-    method run {opts on_progress on_complete} {
-        ::spar::a::run $opts $on_progress $on_complete
     }
 
     # prepare_for_pool — pool-shape entry. Wraps spar::a::prepare_for_pool
@@ -43,7 +39,7 @@ oo::class create ::spar::transitions::ApproachTransition {
 
     # T2: PROFILED contacts that pass the campaign-wide approach-dispatch
     # gate (min_star, in_scope_channel, skip_excluded — SSOT with
-    # spar::a::run per #56).
+    # spar::a::_build_prompts per #56).
     # T4: APPROACH_STALE contacts. classify_contact assigns this state when
     # the approach's profile_hash diverges from the current profile bytes
     # (#63); T4 re-runs A on those, dispatching through the same gate so

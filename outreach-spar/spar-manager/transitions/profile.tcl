@@ -1,9 +1,9 @@
 # spar-manager/transitions/profile.tcl
 #
 # ProfileTransition — T1 (Sweep → Profile) and T3 (Stale → Re-profile).
-# Both dispatch through ::spar::p::run; the only difference is entry state
-# (DISCOVERED for T1, PROFILE_STALE for T3), which is handled by
-# spar::State's transition_eligible.
+# Both dispatch through ::spar::p::prepare_for_pool; the only difference
+# is entry state (DISCOVERED for T1, PROFILE_STALE for T3), which is
+# handled by spar::State's transition_eligible.
 
 oo::class create ::spar::transitions::ProfileTransition {
     superclass ::spar::transitions::Transition
@@ -21,10 +21,6 @@ oo::class create ::spar::transitions::ProfileTransition {
             stems $stems \
             segments $segments_list \
             log_message "[my tid]: [llength $tasks] task(s) across [llength $segments_list] segment(s)"]
-    }
-
-    method run {opts on_progress on_complete} {
-        ::spar::p::run $opts $on_progress $on_complete
     }
 
     # prepare_for_pool — pool-shape entry. Wraps spar::p::prepare_for_pool

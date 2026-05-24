@@ -38,7 +38,7 @@ namespace eval spar {
         validate_approach validate_profile audit_skills_in_transcript \
         read_profile_front_matter build_warnings \
         final_email_message \
-        has_transition_runner transition_runner \
+        has_transition_runner \
         transition_label transition_auto_safe transition_dispatch_status \
         transition_supports_reauthor \
         transition_tids ui_transition_tids
@@ -1080,8 +1080,8 @@ proc spar::_evaluate_slot_readiness {preceding_msg own_msg wait_days wait_cond o
 }
 
 # _approach_dispatch_gate -- SSOT for the campaign-wide gates that both
-# transition_eligible (T2/T4) and spar::a::run apply when deciding
-# whether a roster row may be approached. Returns "" if the row passes;
+# transition_eligible (T2/T4) and spar::a::_build_prompts apply when
+# deciding whether a roster row may be approached. Returns "" if the row passes;
 # otherwise a human-readable reason. Takes either a raw roster row or a
 # classified contact — classify_segment merges row fields in, so both
 # dicts expose star_rating, date_excluded, email, linkedin_url, etc.

@@ -417,7 +417,7 @@ proc ::spar::ui::build_loaded_body {path} {
     # once per process; it outlives campaign refreshes. The Controller's
     # on_fully_loaded handler calls prune_missing + reapply_pool_state
     # so refreshed views inherit the surviving Pool state. jobs=4
-    # matches the prior CLI default in spar::p::run.
+    # matches the CLI's default --jobs.
     #
     # Dispatcher's _log warnings flow into LogWindow via the
     # spar::dispatch logger appender installed above; no LogCallback
