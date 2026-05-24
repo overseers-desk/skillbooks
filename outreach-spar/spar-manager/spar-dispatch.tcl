@@ -82,6 +82,26 @@ proc spar::_pool_pre_post {step_callback row tid idx total} {
     return [{*}$step_callback $tid $row $idx $total]
 }
 
+# spar::delete_roster_locks — best-effort removal of per-segment
+# .roster.lock files (#95) after a dispatch batch completes. The lock is
+# pre-deleted at the start of each segment's prep (_prepare_segment, the
+# canonical home of the path); this is the matching end-of-run sweep so
+# the zero-byte flock target does not linger as debris between runs.
+#
+# Scoped to the segments a batch actually touched, never a campaign-wide
+# glob, so a concurrent dispatcher's lock on a different segment is left
+# intact. Safe only once every worker holding the flock has finished:
+# flock guards the inode, so deleting the path mid-run and letting a
+# later worker recreate it would hand out a second, non-excluding lock.
+# Best-effort: absence is fine (flock has no requirement the file persist
+# between runs), so deletion errors are swallowed.
+proc spar::delete_roster_locks {segment_dirs} {
+    foreach segdir $segment_dirs {
+        if {$segdir eq ""} continue
+        catch {file delete -force -- [file join $segdir .roster.lock]}
+    }
+}
+
 # spar::p::prepare_for_pool — P-phase dispatch entry. Runs per-segment
 # prep (roster read, YAML validation, prompt assembly, DbC-Pre
 # snapshot) and returns a list of {stem prompt_dir} tuples plus the
