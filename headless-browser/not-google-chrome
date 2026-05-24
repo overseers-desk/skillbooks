@@ -149,9 +149,12 @@ EOF
 # service manager once the wrapper returns, so a PID captured at launch goes
 # stale. Find the live browser by the one stable attribute only its main process
 # carries, the --remote-debugging-port string, and signal that PID: SIGTERM to
-# let Chromium flush, then SIGKILL if it does not exit. The child renderer, GPU
-# and zygote processes exit on their own once the main process is gone. (A cgroup
-# never intercepts signals, so a per-pid signal reaches the browser in any scope.)
+# let Chromium flush, then SIGKILL if it does not exit. This assumes the child
+# renderer, GPU and zygote processes then exit on their own once the main process
+# is gone; that has held in use so far but is unverified, the SIGKILL path
+# especially, since a hard-killed main runs no shutdown to bring them down (see
+# chromium-process-model.md F7). (A cgroup never intercepts signals, so a per-pid
+# signal reaches the browser in any scope.)
 cdp_teardown() {
   trap - EXIT INT TERM
   local port="${_cdp_port:-}"
