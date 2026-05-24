@@ -74,283 +74,30 @@ proc spar::detect_browser_cmd {} {
 
 source [file join $::spar::dispatch_script_dir spar-dispatcher.tcl]
 
-# spar::run_through_pool — generic CLI adapter. Construct a fresh
-# spar::Dispatcher, enqueue every (row, worker_proc, row_opts) tuple,
-# wire row events back through the legacy on_progress / on_complete
-# callbacks, and tear down when the pool drains. Runners (P, A, T6,
-# T7) call this so all dispatch goes through one architecture.
-#
-# Args:
-#   jobs            global concurrency cap for this batch
-#   tid             T-id (used by step_callback signature only)
-#   worker_proc     name of the initcmd-defined worker (e.g.
-#                   "harness_run", "ses_send", "imap_poll")
-#   rows            list of {stem opts} pairs; opts is the per-row
-#                   dict the worker proc consumes
-#   result          opaque result dict passed back through on_complete
-#   on_progress     {slug status message} callback
-#   on_complete     {done failed result} callback (fires once)
-#   step_callback   optional {tid slug idx total} → continue|abort
-#                   callback fired before each row is posted
-#
-# The completion callback is called exactly once, after every row has
-# reached a terminal state (done / failed / cancelled). cancelled rows
-# count as skipped, not failed — they were aborted by the user.
-namespace eval ::spar { variable pool_runs [dict create] }
-
-proc spar::run_through_pool {jobs tid worker_proc rows result \
-                              on_progress on_complete \
-                              {step_callback ""}} {
-    variable pool_runs
-    if {[llength $rows] == 0} {
-        {*}$on_complete 0 0 $result
-        return
-    }
-    set total [llength $rows]
-    set run_id "run_[clock microseconds]_[expr {int(rand() * 100000)}]"
-    set st [dict create \
-        done     0 \
-        failed   0 \
-        skipped  0 \
-        seen     0 \
-        total    $total \
-        result   $result \
-        progress $on_progress \
-        complete $on_complete]
-
-    set disp [spar::Dispatcher new $jobs]
-    dict set st dispatcher $disp
-    dict set pool_runs $run_id $st
-
-    # Step gate (CLI --jobs=0). Translate the legacy step_callback
-    # signature (tid slug idx total) onto the Dispatcher's
-    # pre_post hook (row tid idx total). slug == row in the CLI
-    # path; the runner uses the stem as the row id.
-    if {$step_callback ne ""} {
-        $disp set_pre_post_callback \
-            [list ::spar::_pool_pre_post $step_callback]
-    }
-
-    $disp subscribe row-done   [list ::spar::_pool_on_done   $run_id]
-    $disp subscribe row-failed [list ::spar::_pool_on_failed $run_id]
-    $disp subscribe row-state  [list ::spar::_pool_on_state  $run_id]
-
-    # Pause until every row is enqueued so step_callback receives the
-    # final total, not a growing one mid-batch.
-    $disp pause_queue
-    foreach pair $rows {
-        lassign $pair stem row_opts
-        $disp enqueue $stem $tid $worker_proc $row_opts
-        # Mirror the legacy `[START] slug` line at enqueue time. The
-        # GUI fires this on row-running; the CLI fires it here so the
-        # output ordering matches the legacy queue (one [START] per
-        # row, in enqueue order).
-        {*}$on_progress $stem started ""
-    }
-    $disp resume_queue
-}
-
 # _pool_pre_post — bridge the Dispatcher's (row tid idx total)
-# pre-post hook to the CLI's (tid slug idx total) step_callback.
+# pre-post hook to the CLI's (tid slug idx total) step_callback. Used
+# by spar-transition.tcl's dispatch_ready when --jobs=0 steps the
+# shared pool one row at a time.
 proc spar::_pool_pre_post {step_callback row tid idx total} {
     return [{*}$step_callback $tid $row $idx $total]
 }
 
-proc spar::_pool_on_state {run_id row to_state} {
-    variable pool_runs
-    if {![dict exists $pool_runs $run_id]} return
-    if {$to_state ni {done failed cancelled}} return
-    set st [dict get $pool_runs $run_id]
-    if {$to_state eq "cancelled"} {
-        dict incr st skipped
-        {*}[dict get $st progress] $row skipped "cancelled"
-    }
-    dict incr st seen
-    dict set pool_runs $run_id $st
-    if {[dict get $st seen] >= [dict get $st total]} {
-        # Defer finish so the row-state subscriber list isn't mutated
-        # while we're iterating it.
-        after idle [list ::spar::_pool_finish $run_id]
-    }
-}
-
-proc spar::_pool_on_done {run_id row result} {
-    variable pool_runs
-    if {![dict exists $pool_runs $run_id]} return
-    set st [dict get $pool_runs $run_id]
-    dict incr st done
-    dict set pool_runs $run_id $st
-    set msg ""
-    catch {set msg [dict get $result message_id]}
-    {*}[dict get $st progress] $row done $msg
-}
-
-proc spar::_pool_on_failed {run_id row reason} {
-    variable pool_runs
-    if {![dict exists $pool_runs $run_id]} return
-    set st [dict get $pool_runs $run_id]
-    dict incr st failed
-    dict set pool_runs $run_id $st
-    {*}[dict get $st progress] $row failed $reason
-}
-
-# spar::_cleanup_locks_then_call — wrapped on_complete used by p::run.
-# Deletes any roster lock files from the segments that participated in
-# the batch, then forwards to the caller's on_complete. Best-effort:
-# absence is fine, deletion errors are ignored, because flock does not
-# require the file to exist between runs (#95).
-proc spar::_cleanup_locks_then_call {lock_paths user_cb done failed result} {
-    foreach p $lock_paths {
-        if {$p eq ""} continue
-        catch {file delete -force -- $p}
-    }
-    {*}$user_cb $done $failed $result
-}
-
-proc spar::_pool_finish {run_id} {
-    variable pool_runs
-    if {![dict exists $pool_runs $run_id]} return
-    set st [dict get $pool_runs $run_id]
-    dict unset pool_runs $run_id
-    set d  [dict get $st done]
-    set f  [dict get $st failed]
-    set r  [dict get $st result]
-    set cb [dict get $st complete]
-    set disp [dict get $st dispatcher]
-    catch {$disp destroy}
-    {*}$cb $d $f $r
-}
-
-# ════════════════════════════════════════════════════════════════════════
-# spar::p::run — SPAR-P phase runner (profile dispatch).
-# ════════════════════════════════════════════════════════════════════════
+# spar::p::prepare_for_pool — P-phase dispatch entry. Runs per-segment
+# prep (roster read, YAML validation, prompt assembly, DbC-Pre
+# snapshot) and returns a list of {stem prompt_dir} tuples plus the
+# resolved logs_dir, so the caller (CLI's dispatch_ready or the GUI's
+# DispatchController) enqueues each row into spar::Dispatcher with
+# worker=harness_run and harness_class=spar::ProfileHarness. CLI and
+# GUI share this single entry point.
 #
 # opts dict keys:
 #   campaign_file  (required) path to campaign YAML
-#   dry_run        (bool, default 0) write prompts but don't spawn harnesses
-#   jobs           (int, default 4)  max concurrent harnesses across the
-#                                    whole campaign (global cap — see
-#                                    _prepare_segment for setup split)
 #   logs_dir       (string, optional) override log directory base
 #   segments       (list, optional) only process named segments
 #   stems          (list, optional) only process rows with matching stems;
 #                                    also bypasses the "profile exists" skip
 #
-# on_progress — callback prefix: {slug status message}
-#               status ∈ {started, done, failed, skipped, warning}
-# on_complete — callback prefix: {total_done total_failed result}
-#
-# Setup (roster read, YAML validation, prompt assembly, DbC-Pre snapshot)
-# runs per-segment in _prepare_segment and returns a prompt_dirs list.
-# p::run aggregates those lists and hands one flat list to a single
-# Dispatcher, so `jobs=N` bounds total live harnesses across the campaign.
-# Same shape as spar::a::run.
-
-proc spar::p::run {opts on_progress on_complete} {
-    set campaign_file [spar::dict_get_default $opts campaign_file ""]
-    if {$campaign_file eq ""} {
-        error "spar::p::run: opts.campaign_file is required"
-    }
-    set dry_run [spar::dict_get_default $opts dry_run 0]
-    set jobs [spar::dict_get_default $opts jobs 4]
-    set user_logs [spar::dict_get_default $opts logs_dir ""]
-    set tid [spar::dict_get_default $opts tid ""]
-    set step_callback [spar::dict_get_default $opts step_callback ""]
-
-    set cdata [spar::load_campaign $campaign_file]
-    set base [dict get $cdata _base]
-    set segments [dict get $cdata segments]
-
-    set sel_segments [spar::dict_get_default $opts segments {}]
-    set segments [spar::filter_segments $segments $sel_segments]
-
-    # Per-slug log files inside logs_dir are named by stem, so they
-    # don't collide unless two segments share a stem (documented
-    # limitation).
-    set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
-    set logs_dir [spar::resolve_logs_dir $campaign_file p $datestamp $user_logs]
-
-    # Gather prompt_dirs across segments and build a slug → per-segment
-    # context map for DbC-Post attribution. _prepare_segment emits
-    # "skipped profile exists" events synchronously through on_progress.
-    set all_prompt_dirs {}
-    set slug_ctx [dict create]
-    set per_seg_results {}
-    set lock_paths {}
-    set total_count 0
-    set total_skipped 0
-
-    foreach segment $segments {
-        set segdir [file join $base $segment]
-        if {![file exists [file join $segdir roster.tsv]]} continue
-        if {[catch {
-            set seg [spar::p::_prepare_segment \
-                $segdir $cdata $opts $datestamp $on_progress]
-        } err]} {
-            {*}$on_progress "_segment_${segment}" failed "setup error: $err"
-            continue
-        }
-        lappend per_seg_results [dict get $seg result]
-        lappend lock_paths      [dict get $seg roster_lock]
-        incr total_count   [dict get $seg result count]
-        incr total_skipped [dict get $seg result skipped]
-        foreach pdir [dict get $seg prompt_dirs] {
-            lappend all_prompt_dirs $pdir
-            dict set slug_ctx [file tail $pdir] \
-                [list $segdir [dict get $seg pre_snapshot]]
-        }
-    }
-
-    set agg_result [dict create \
-        campaign [spar::dict_get_default $cdata campaign ""] \
-        count $total_count \
-        skipped $total_skipped \
-        logs_dir $logs_dir \
-        segments [llength $per_seg_results] \
-        results $per_seg_results]
-
-    if {$dry_run || [llength $all_prompt_dirs] == 0} {
-        {*}$on_complete 0 0 $agg_result
-        return
-    }
-
-    set wrapped_progress [list spar::p::_dbc_post_progress \
-        $on_progress $slug_ctx]
-
-    # Build {stem opts} pairs. Stem == basename of the prompt_dir.
-    # The Pool's harness_run worker drives spar::ProfileHarness end-to-
-    # end for each row.
-    set rows {}
-    foreach pdir $all_prompt_dirs {
-        set stem [file tail $pdir]
-        lappend rows [list $stem [dict create \
-            prompt_dir    $pdir \
-            log_dir       $logs_dir \
-            harness_class spar::ProfileHarness]]
-    }
-
-    # Wrap on_complete so the batch's roster locks are cleaned at
-    # end-of-run (#95). The user's on_complete fires after deletion;
-    # delete is best-effort (catch) since flock has no semantic
-    # requirement for the file to be present.
-    set wrapped_complete [list spar::_cleanup_locks_then_call \
-        $lock_paths $on_complete]
-
-    spar::run_through_pool $jobs $tid harness_run $rows $agg_result \
-        $wrapped_progress $wrapped_complete $step_callback
-    return
-}
-
-# spar::p::prepare_for_pool — GUI entry point. Runs the same
-# per-segment prep as spar::p::run, but returns a list of
-# {stem prompt_dir} tuples (plus the resolved logs_dir) so the GUI's
-# DispatchController can enqueue each row into spar::Dispatcher with
-# worker=harness_run and harness_class=spar::ProfileHarness directly,
-# bypassing the spar::run_through_pool wrapper that the CLI uses for
-# its callback-shape contract.
-#
-# opts has the same shape as spar::p::run (campaign_file, segments,
-# stems). on_progress is used only for prep-time skipped/failed events
+# on_progress is used only for prep-time skipped/failed events
 # emitted during _prepare_segment; row-level progress is delivered by
 # the Pool's events once the worker runs.
 #
@@ -633,73 +380,20 @@ proc spar::p::_dbc_post_progress {orig_progress slug_ctx slug status message} {
 }
 
 # ════════════════════════════════════════════════════════════════════════
-# spar::a::run — SPAR-A phase runner (approach dispatch).
+# spar::a::prepare_for_pool — SPAR-A dispatch entry (approach dispatch).
 # ════════════════════════════════════════════════════════════════════════
+#
+# Returns {logs_dir <path> rows {{stem pdir} ...} result <r>} so the
+# caller (CLI's dispatch_ready or the GUI's DispatchController) enqueues
+# each row into spar::Dispatcher with worker=harness_run and
+# harness_class=spar::ApproachHarness. CLI and GUI share this single
+# entry point.
 #
 # opts dict keys:
 #   campaign_file  (required) path to campaign YAML
-#   dry_run        (bool, default 0)
-#   jobs           (int, default 8)
 #   logs_dir       (string, optional) override log directory
 #   segments       (list, optional) only process named segments
 #   stems          (list, optional) only process rows with matching stems
-#
-# on_progress — callback prefix: {slug status message}
-#               status ∈ {started, done, failed, skipped}
-# on_complete — callback prefix: {total_done total_failed result}
-
-proc spar::a::run {opts on_progress on_complete} {
-    set prep [spar::a::_build_prompts $opts $on_progress]
-    set result        [dict get $prep result]
-    set fresh_pdirs   [dict get $prep prompt_dirs]
-    set logs_dir      [dict get $prep logs_dir]
-    set count         [dict get $result count]
-
-    set dry_run       [spar::dict_get_default $opts dry_run 0]
-    set jobs          [spar::dict_get_default $opts jobs 8]
-    set tid           [spar::dict_get_default $opts tid ""]
-    set step_callback [spar::dict_get_default $opts step_callback ""]
-
-    if {$dry_run || $count == 0} {
-        {*}$on_complete $count 0 $result
-        return $result
-    }
-
-    # Dispatch only the prompt dirs we created this invocation — never glob
-    # the workdir, since a previous call within the same process may have
-    # left prompt dirs there and the harness would re-run them.
-    set prompt_dirs $fresh_pdirs
-    # Shuffle for load balancing (Fisher-Yates).
-    set n [llength $prompt_dirs]
-    for {set i [expr {$n - 1}]} {$i > 0} {incr i -1} {
-        set j [expr {int(rand() * ($i + 1))}]
-        set tmp [lindex $prompt_dirs $i]
-        lset prompt_dirs $i [lindex $prompt_dirs $j]
-        lset prompt_dirs $j $tmp
-    }
-
-    # A-phase prompt-dir basenames are NNN-name-org slugs, not stems.
-    # The Pool worker doesn't care what the row id is — it's the
-    # progress-reporting key. Use the basename so on_progress messages
-    # carry the same slug the operator sees on disk.
-    set rows {}
-    foreach pdir $prompt_dirs {
-        set slug [file tail $pdir]
-        lappend rows [list $slug [dict create \
-            prompt_dir    $pdir \
-            log_dir       $logs_dir \
-            harness_class spar::ApproachHarness]]
-    }
-
-    spar::run_through_pool $jobs $tid harness_run $rows $result \
-        $on_progress $on_complete $step_callback
-    return $result
-}
-
-# spar::a::prepare_for_pool — Phase-3 GUI entry point. Same prep as
-# spar::a::run, returns {logs_dir <path> rows {{stem pdir} ...}} so the
-# DispatchController can enqueue each row into spar::Dispatcher with
-# worker=harness_run and harness_class=spar::ApproachHarness.
 proc spar::a::prepare_for_pool {opts on_progress} {
     set prep [spar::a::_build_prompts $opts $on_progress]
     set result      [dict get $prep result]
@@ -716,10 +410,9 @@ proc spar::a::prepare_for_pool {opts on_progress} {
     return [dict create logs_dir $logs_dir rows $rows result $result]
 }
 
-# _build_prompts — A-phase per-segment prep. Lifted verbatim from the
-# previous body of spar::a::run so the runner and prepare_for_pool share
-# one path. Returns {result <result-dict> prompt_dirs <list> logs_dir <path>
-# stem_map <slug → stem>}.
+# _build_prompts — A-phase per-segment prep. Returns {result
+# <result-dict> prompt_dirs <list> logs_dir <path> stem_map <slug →
+# stem>}; prepare_for_pool repackages prompt_dirs into pool rows.
 proc spar::a::_build_prompts {opts on_progress} {
     set campaign_file [spar::dict_get_default $opts campaign_file ""]
     if {$campaign_file eq ""} {

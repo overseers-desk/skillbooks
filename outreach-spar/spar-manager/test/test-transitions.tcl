@@ -7,85 +7,78 @@ source [file join $script_dir test-helpers.tcl]
 set State [spar::State new]
 
 # ════════════════════════════════════════════════════════════════════════
-# 24. spar::p::run — stems selector narrows the work queue
+# 24. spar::p::prepare_for_pool — stems selector narrows the work queue
 # ════════════════════════════════════════════════════════════════════════
-section "24. spar::p::run — stems selector"
+section "24. spar::p::prepare_for_pool — stems selector"
 
 source [file join $script_dir .. spar-dispatch.tcl]
 
-# Build a minimal campaign: one segment with three roster rows, an
-# overview.md promoted to usp_document, a segment.yaml goal, and a
-# top-level campaign.yaml.
-set dp_base [make_temp_campaign]
-set dp_seg_name "seg-a"
-set dp_seg [file join $dp_base $dp_seg_name]
-file mkdir $dp_seg
-file mkdir [file join $dp_seg profiles]
-
+# _dp_make_campaign — build a minimal one-segment campaign with three
+# roster rows (alpha/beta/gamma), an overview.md promoted to
+# usp_document, a segment.yaml goal, and a top-level campaign.yaml. Each
+# scenario gets a fresh segment so the per-segment /tmp workdir
+# prepare_for_pool writes into never collides between same-second calls
+# in this one test process. Returns {yaml seg_dir}.
 set dp_headers {stem contact_name organisation role phone email linkedin_url facebook_url sweep_iteration date_excluded}
-write_roster_tsv $dp_seg $dp_headers [list \
-    [dict create stem alpha contact_name "A One"   organisation "Org A" sweep_iteration 1] \
-    [dict create stem beta  contact_name "B Two"   organisation "Org B" sweep_iteration 1] \
-    [dict create stem gamma contact_name "C Three" organisation "Org C" sweep_iteration 1] \
-]
+proc _dp_make_campaign {seg_name} {
+    set base [make_temp_campaign]
+    set seg [file join $base $seg_name]
+    file mkdir $seg
+    file mkdir [file join $seg profiles]
+    write_roster_tsv $seg $::dp_headers [list \
+        [dict create stem alpha contact_name "A One"   organisation "Org A" sweep_iteration 1] \
+        [dict create stem beta  contact_name "B Two"   organisation "Org B" sweep_iteration 1] \
+        [dict create stem gamma contact_name "C Three" organisation "Org C" sweep_iteration 1] \
+    ]
+    set fd [open [file join $seg segment.yaml] w]
+    puts $fd "objective: test"
+    puts $fd "message_goal: test"
+    close $fd
+    set fd [open [file join $base overview.md] w]
+    puts $fd "# Test overview"
+    close $fd
+    set yaml [file join $base campaign.yaml]
+    set fd [open $yaml w]
+    puts $fd "campaign: Test"
+    puts $fd "usp_document: overview.md"
+    puts $fd "segments:"
+    puts $fd "  - $seg_name"
+    close $fd
+    return [list $yaml $seg]
+}
 
-set fd [open [file join $dp_seg segment.yaml] w]
-puts $fd "objective: test"
-puts $fd "message_goal: test"
-close $fd
-
-set dp_overview [file join $dp_base overview.md]
-set fd [open $dp_overview w]
-puts $fd "# Test overview"
-close $fd
-
-set dp_yaml [file join $dp_base campaign.yaml]
-set fd [open $dp_yaml w]
-puts $fd "campaign: Test"
-puts $fd "usp_document: overview.md"
-puts $fd "segments:"
-puts $fd "  - $dp_seg_name"
-close $fd
-
-# Drive spar::p::run and capture the segment's count via on_complete.
-proc _dp_run_count {opts} {
-    set ::dp_last -1
-    spar::p::run $opts \
-        {apply {args {}}} \
-        {apply {{d f res} {
-            set results [dict get $res results]
-            if {[llength $results] > 0} {
-                set ::dp_last [dict get [lindex $results 0] count]
-            } else {
-                set ::dp_last 0
-            }
-        }}}
-    return $::dp_last
+# Drive spar::p::prepare_for_pool (the live CLI + GUI dispatch entry,
+# which calls _prepare_segment where the stems selector lives) and count
+# the rows it queues.
+proc _dp_run_count {yaml extra_opts} {
+    set prep [spar::p::prepare_for_pool \
+        [dict merge [dict create campaign_file $yaml] $extra_opts] \
+        {apply {args {}}}]
+    return [llength [dict get $prep rows]]
 }
 
 # Baseline: no stems → all three rows queued
-set dp_count_all [_dp_run_count [dict create \
-    campaign_file $dp_yaml dry_run 1]]
-assert_eq $dp_count_all 3 "spar::p::run: no stems → 3 queued"
+lassign [_dp_make_campaign seg-all] dp_yaml dp_seg
+assert_eq [_dp_run_count $dp_yaml {}] 3 \
+    "prepare_for_pool: no stems → 3 queued"
 
 # Narrowed: stems={beta} → only beta queued
-file delete -force [file join $dp_seg profiles]
-file mkdir [file join $dp_seg profiles]
-set dp_count_one [_dp_run_count [dict create \
-    campaign_file $dp_yaml dry_run 1 stems {beta}]]
-assert_eq $dp_count_one 1 "spar::p::run: stems={beta} → 1 queued"
+lassign [_dp_make_campaign seg-one] dp_yaml dp_seg
+assert_eq [_dp_run_count $dp_yaml {stems {beta}}] 1 \
+    "prepare_for_pool: stems={beta} → 1 queued"
 
-# stems selector bypasses profile-exists skip (caller pre-deleted old profile).
-# Re-run with an existing profiles/beta.md on disk → still 1, not 0.
+# stems selector bypasses profile-exists skip (caller pre-deleted old
+# profile). An existing profiles/beta.md on disk → still 1, not 0.
+lassign [_dp_make_campaign seg-rebuild] dp_yaml dp_seg
 write_profile $dp_seg beta
-set dp_count_rebuild [_dp_run_count [dict create \
-    campaign_file $dp_yaml dry_run 1 stems {beta}]]
-assert_eq $dp_count_rebuild 1 "spar::p::run: stems+existing profile → rebuild queued"
+assert_eq [_dp_run_count $dp_yaml {stems {beta}}] 1 \
+    "prepare_for_pool: stems+existing profile → rebuild queued"
 
 # Without stems, existing profile is skipped.
-set dp_count_skip [_dp_run_count [dict create \
-    campaign_file $dp_yaml dry_run 1]]
-assert_eq $dp_count_skip 2 "spar::p::run: no stems + 1 profile exists → 2 queued"
+lassign [_dp_make_campaign seg-skip] dp_yaml dp_seg
+write_profile $dp_seg beta
+assert_eq [_dp_run_count $dp_yaml {}] 2 \
+    "prepare_for_pool: no stems + 1 profile exists → 2 queued"
 
 # ════════════════════════════════════════════════════════════════════════
 # 24b. T-id → runner routing table
@@ -101,12 +94,10 @@ assert_eq [spar::has_transition_runner T4] 1 "routing: T4 is wired"
 assert_eq [spar::has_transition_runner T8] 0 "routing: T8 is not wired"
 assert_eq [spar::has_transition_runner T9] 0 "routing: T9 is not wired"
 
-# transition_runner returns a command prefix [list $obj run]. The object
-# is a TclOO instance of the class registered against the T-id, so shape
-# checks are "second element is `run`" and "class name matches".
+# Each wired T-id resolves to its registered transition class, the object
+# the dispatcher drives via prepare_for_pool.
 proc _runner_class {tid} {
-    set runner [spar::transition_runner $tid]
-    return [info object class [lindex $runner 0]]
+    return [info object class [::spar::transitions::get $tid]]
 }
 assert_eq [_runner_class T1] ::spar::transitions::ProfileTransition "routing: T1 → ProfileTransition"
 assert_eq [_runner_class T3] ::spar::transitions::ProfileTransition "routing: T3 → ProfileTransition"
@@ -114,14 +105,6 @@ assert_eq [_runner_class T2] ::spar::transitions::ApproachTransition "routing: T
 assert_eq [_runner_class T4] ::spar::transitions::ApproachTransition "routing: T4 → ApproachTransition"
 assert_eq [_runner_class T6] ::spar::transitions::SendEmailTransition "routing: T6 → SendEmailTransition"
 assert_eq [_runner_class T7] ::spar::transitions::CheckRepliesTransition "routing: T7 → CheckRepliesTransition"
-foreach _tid {T1 T2 T6 T7 T3 T4} {
-    assert_eq [lindex [spar::transition_runner $_tid] 1] run \
-        "routing: $_tid runner verb is `run`"
-}
-
-set _routing_err ""
-catch {spar::transition_runner T8} _routing_err
-assert_match $_routing_err "no runner*" "routing: T8 lookup errors"
 
 # ════════════════════════════════════════════════════════════════════════
 # 24c. spar::filter_approaches_by_stems — T7 cohort narrowing (issue #73)

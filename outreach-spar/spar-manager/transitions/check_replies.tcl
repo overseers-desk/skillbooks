@@ -6,7 +6,7 @@
 # in transitions/imap_check_one.tcl as a pure helper that the Pool's
 # imap_poll worker proc invokes; this file keeps only the transition-
 # class metadata, the build_opts hook the dispatcher reads, and the
-# run method that builds the per-row Pool batch.
+# prepare_for_pool method that builds the per-row Pool batch.
 
 package require TclOO
 
@@ -29,25 +29,13 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
             log_message "[my tid]: [llength $tasks] task(s) across [llength $segments_list] segment(s) (reply-check pass)"]
     }
 
-    method run {opts on_progress on_complete} {
-        set step_callback [spar::dict_get_default $opts step_callback ""]
-        set jobs          [spar::dict_get_default $opts jobs 1]
-
-        set prep [my _build_rows $opts $on_progress $on_complete]
-        if {$prep eq ""} return  ;# _build_rows already invoked on_complete
-        set rows [dict get $prep rows]
-
-        spar::run_through_pool $jobs [my tid] imap_poll $rows \
-            [dict create] $on_progress $on_complete $step_callback
-    }
-
     # prepare_for_pool — pool-shape entry. Returns
     # {worker_proc imap_poll rows {{stem opts} ...}}. The unified
     # Dispatcher in spar-transition.tcl enqueues the rows directly;
     # imap_poll has no rate-limit pacing requirement so it inherits
     # the global Jobs cap.
     method prepare_for_pool {opts on_progress} {
-        set prep [my _build_rows $opts $on_progress ""]
+        set prep [my _build_rows $opts $on_progress]
         if {$prep eq ""} {
             return [dict create worker_proc imap_poll rows {}]
         }
@@ -56,16 +44,12 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
             rows [dict get $prep rows]]
     }
 
-    # _build_rows — extract the per-row opts dict construction so
-    # both run (legacy callback shape) and prepare_for_pool (unified
-    # Dispatcher) share one path. Returns {rows {{stem opts} ...}}
-    # on success or "" if a precondition failed.
-    #
-    # When called via run, on_complete may be invoked directly for
-    # missing-config or empty-rows shortcut paths; when called via
-    # prepare_for_pool, on_complete is "" and we just return empty
-    # rows for the pool to skip.
-    method _build_rows {opts on_progress on_complete} {
+    # _build_rows — per-row opts dict construction for prepare_for_pool.
+    # Returns {rows {{stem opts} ...}} on success, or "" if a
+    # precondition failed (missing reply_check config, no sent approaches)
+    # so the pool skips with no rows. Synchronous failed/skipped events
+    # are emitted through on_progress.
+    method _build_rows {opts on_progress} {
         set campaign_file [dict get $opts campaign_file]
         set dry_run       [spar::dict_get_default $opts dry_run 0]
         set segments      [spar::dict_get_default $opts segments {}]
@@ -79,14 +63,12 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
                 {*}$on_progress "" failed \
                     "campaign YAML missing reply_check.mailroom_account or reply_check.folder"
             }
-            if {$on_complete ne ""} { {*}$on_complete 0 1 {} }
             return ""
         }
         if {![dict exists $cdata sender email]} {
             if {$on_progress ne ""} {
                 {*}$on_progress "" failed "campaign YAML missing sender.email"
             }
-            if {$on_complete ne ""} { {*}$on_complete 0 1 {} }
             return ""
         }
 
@@ -96,7 +78,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         set campaign_dir [file dirname $campaign_file]
 
         # Default segments to "all campaign segment dirs" when the caller
-        # passed none. Mirrors spar::p::run's full-campaign default.
+        # passed none. Mirrors the P-phase full-campaign default.
         if {[llength $segments] == 0} {
             set skip_set [spar::dict_get_default $cdata skip_segments {}]
             foreach seg [spar::dict_get_default $cdata segments {}] {
@@ -115,9 +97,6 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
                 foreach s $stems {
                     {*}$on_progress $s skipped "no reply yet"
                 }
-            }
-            if {$on_complete ne ""} {
-                {*}$on_complete 0 0 [dict create new_replies 0 errors 0]
             }
             return ""
         }

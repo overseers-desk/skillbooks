@@ -5,8 +5,8 @@
 # body lives in transitions/ses_send_one.tcl as a pure helper that
 # the Pool's ses_send worker proc invokes; this file keeps only the
 # transition-class metadata, the build_opts hook the dispatcher
-# reads, the smtp_credentials keychain lookup, and the run method
-# that builds the per-row Pool batch.
+# reads, the smtp_credentials keychain lookup, and the
+# prepare_for_pool method that builds the per-row Pool batch.
 #
 # actioned_date is stamped on success by the helper, not here.
 # Sends are serialised at the unified Dispatcher's per-worker cap
@@ -16,7 +16,7 @@
 # at most one at a time inside the same shared pool that runs
 # harness_run rows in parallel.
 #
-# Opts consumed by run / prepare_for_pool:
+# Opts consumed by prepare_for_pool:
 #   campaign_file  path to campaign YAML
 #   dry_run        1 = skip SES send + skip stamp
 #   tasks          list of classified ready contacts (from build_opts)
@@ -86,18 +86,6 @@ oo::class create ::spar::transitions::SendEmailTransition {
             log_message "[my tid]: [llength $tasks] email(s) ready"]
     }
 
-    method run {opts on_progress on_complete} {
-        set step_callback [spar::dict_get_default $opts step_callback ""]
-        # Standalone callers (legacy CLI / tests) still get a serial
-        # pool of jobs=1 — SES is serial by convention. The unified
-        # CLI dispatch in spar-transition.tcl bypasses this method
-        # and goes through prepare_for_pool + Dispatcher's per-worker
-        # cap instead.
-        set rows [my _build_rows $opts]
-        spar::run_through_pool 1 [my tid] ses_send $rows [dict create] \
-            $on_progress $on_complete $step_callback
-    }
-
     # prepare_for_pool — pool-shape entry. Returns
     # {worker_proc ses_send rows {{stem opts} ...}}; the caller
     # (spar-transition.tcl's dispatch_ready) installs
@@ -108,11 +96,9 @@ oo::class create ::spar::transitions::SendEmailTransition {
         return [dict create worker_proc ses_send rows $rows]
     }
 
-    # _build_rows — extract the per-row opts dict construction so
-    # both run (legacy callback shape) and prepare_for_pool (unified
-    # Dispatcher) share one path. Reads tasks, campaign_file,
-    # dry_run, delay, sender from opts; the per-row dict carries
-    # everything ses_send needs to send one message.
+    # _build_rows — per-row opts dict construction for prepare_for_pool.
+    # Reads tasks, campaign_file, dry_run, delay, sender from opts; the
+    # per-row dict carries everything ses_send needs to send one message.
     method _build_rows {opts} {
         set campaign_file [dict get $opts campaign_file]
         set dry_run       [spar::dict_get_default $opts dry_run 0]
