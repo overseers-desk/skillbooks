@@ -1,6 +1,6 @@
 ---
 name: headless-browser
-description: "When WebFetch/WebSearch are blocked by bot detection or a login wall, this skill provides the not-google-chrome wrapper for fetching a page through the user's logged-in Chromium. Other skills call it by bare name; the path and usage live here."
+description: "When WebFetch/WebSearch are blocked by bot detection or a login wall, or WebFetch returns 'unable to fetch' for a domain, this skill provides the not-google-chrome wrapper for fetching a page through the user's logged-in Chromium. Other skills call it by bare name; the path and usage live here."
 allowed-tools: Bash, Read
 argument-hint: <URL>
 ---
