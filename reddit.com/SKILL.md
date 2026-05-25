@@ -1,7 +1,7 @@
 ---
 name: reddit
-description: "can read a single post with its comment tree, or return whole post + comments"
-argument-hint: <search terms, or a reddit post URL>
+description: "search Reddit, read a post with its comment tree, return whole discussions for a search, or list the logged-in account's saved items"
+argument-hint: <search terms, a reddit post URL, or a request for saved items>
 ---
 
 ## Why this skill exists
@@ -48,7 +48,7 @@ Prints, per post: title, `r/subreddit`, `u/author`, score, comment count, date, 
 
 ## 2. Read a post and its comments
 
-Append `.json` to any post permalink (works with the `old.reddit.com/r/SUB/comments/ID/...` form):
+Append `.json` to any post permalink. A `www.reddit.com/r/SUB/comments/ID/slug/` URL works the same way; swap the host to `old.reddit.com` for locale consistency or leave it, since the `.json` body is original-language regardless:
 
 ```bash
 not-google-chrome -t 25 \
@@ -84,14 +84,25 @@ not-google-chrome --cdp -- python3 $HOME/.claude/skills/reddit.com/reddit-discus
 
 `--limit` is the number of discussions returned; `--comments` caps comments printed per discussion. Each discussion prints the post header, full selftext, and the top comment tree, the same format as §2. The script reads `CDP_WS_URL` from the wrapper's `--cdp` environment; it exits 78 if run without it. It paces one second between discussions.
 
+## 4. List the logged-in account's saved items
+
+The saved listing is private: Reddit returns it only to the account that owns it, so this needs the user's session cookie. It runs over CDP (the authenticated `old.reddit.com` origin), the same path §3 uses, and **the user must close their GUI Chromium first** (the user-data-dir lock, see CLAUDE.md), otherwise the headless instance reads no cookies and Reddit answers `404`.
+
+```bash
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/reddit.com/reddit-saved.py \
+  --user NAME [--limit 25]
+```
+
+`--user` is the account whose saved list to read and must be the logged-in account; another user's saved list is unreachable. `--limit` is the number of items returned, newest first. The script walks Reddit's `after` cursor across pages internally (100 per fetch, paced one second apart), so the caller asks for a count and never handles a cursor. A saved list interleaves posts (`t3`) and comments (`t1`); both print, comments tagged `[comment]` and carrying the title of the post they sit under. A `404` here means not logged in, the wrong account, or the GUI browser is still holding the profile lock.
+
 ## Notes
 
 - The parser strips the wrapper's `<pre>`, unescapes the HTML-render layer and Reddit's own entity escaping, and `json.loads` the result. It also accepts a raw `.json` body if fetched some other way. The §3 batcher fetches JSON directly via in-page `fetch()`, so there is no `<pre>` layer there; the shared `clean()` still handles Reddit's entity escaping.
-- Any Reddit Listing parses with `search` mode, so a subreddit front page (`/r/SUB/.json`) or a user's posts (`/user/NAME.json`) work through the same command.
+- A post-only Listing parses with `search` mode, so a subreddit front page (`/r/SUB/.json`) or a user's posts (`/user/NAME.json`) work through the same command. A saved listing mixes posts and comments, so it has its own `saved` mode (`reddit.py saved <dump>`), which §4 calls.
 - Author may read `[deleted]`; score may be hidden (shown as the number Reddit returns, often a low placeholder) on recent posts. These are Reddit states, not parse errors.
 
 ## What this skill does NOT do
 
 - It does not post, vote, comment, or message. Read-only.
-- It does not paginate past the first comment page or expand "load more" stubs. Add a `more`-children walk if deep threads prove necessary.
+- It does not paginate a comment tree past the first page or expand "load more" stubs (§2, §3). Add a `more`-children walk if deep threads prove necessary. Saved-item listings (§4) do paginate, by following the Listing `after` cursor.
 - It does not defeat rate limits. Pace requests; a few per minute, not a burst.
