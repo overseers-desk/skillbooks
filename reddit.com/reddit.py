@@ -19,13 +19,26 @@ def load(path):
     m = re.search(r"<pre[^>]*>(.*?)</pre>", text, re.S)
     raw = html.unescape(m.group(1)) if m else text
     raw = raw.strip()
+    # A bare HTML document (no <pre>-wrapped JSON) is a Chromium network-error page
+    # or a login/block interstitial: the fetch failed at the browser, not at Reddit.
+    # Say so plainly. Otherwise a CSS brace in that page leads json.loads into a
+    # cryptic traceback that invites wrong guesses like "rate limited".
+    if not m and raw[:1] == "<":
+        snippet = re.sub(r"\s+", " ", raw[:160]).strip()
+        sys.exit(f"reddit.py: {path} is an HTML page, not JSON. The browser fetch "
+                 f"failed (profile lock, login wall, or Chromium error page); this "
+                 f"is not a Reddit rate limit. Starts: {snippet}")
     start = raw.find("{")
     bracket = raw.find("[")
     if bracket != -1 and (bracket < start or start == -1):
         start = bracket
     if start > 0:
         raw = raw[start:]
-    return json.loads(raw)
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError as e:
+        sys.exit(f"reddit.py: {path} did not parse as JSON ({e}); "
+                 f"likely a browser error page, not Reddit data.")
 
 
 def iso(epoch):
