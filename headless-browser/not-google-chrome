@@ -191,8 +191,21 @@ cdp_teardown() {
 run_cdp() {
   local port="$CDP_FIXED_PORT" ws_url="" i rc=0
 
-  if [[ "$(uname)" == Linux ]] && pgrep -f -- "$user_data_dir" >/dev/null 2>&1; then
-    echo "not-google-chrome: a Chromium is already running on $user_data_dir; close it so the headless CDP instance can read the logged-in session." >&2
+  # A live Chromium already on this profile means our headless instance cannot
+  # attach to the logged-in session: it lands on an error page and every in-page
+  # fetch() then fails with a misleading "Failed to fetch", which callers read as
+  # a site block or rate limit. Refuse up front with the real cause instead.
+  # SingletonLock is Chromium's own contention marker; its target is "<host>-<pid>",
+  # trusted only if that pid is alive (stale locks are swept at teardown).
+  if [[ "$(uname)" == Linux ]]; then
+    local _stgt _spid
+    _stgt="$(readlink "$user_data_dir/SingletonLock" 2>/dev/null || true)"
+    _spid="${_stgt##*-}"
+    if [[ "$_spid" =~ ^[0-9]+$ && -e "/proc/$_spid" ]]; then
+      echo "not-google-chrome: a Chromium (pid $_spid) is already running on $user_data_dir; close it so the headless CDP instance can read the logged-in session. This is a profile lock, not a network or site-side error (not a block or rate limit)." >&2
+      log_event warning "cdp refused: chromium pid $_spid holds $user_data_dir: ${client_cmd[*]}"
+      exit 75
+    fi
   fi
 
   exec 9>/tmp/chromium.lock
