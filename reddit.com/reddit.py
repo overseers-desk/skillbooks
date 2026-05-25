@@ -9,6 +9,7 @@ auto-translation that corrupts the rendered old.reddit HTML.
 Usage:
     reddit.py search <dump.html> [--limit N]   # parse a search.json Listing
     reddit.py thread <dump.html> [--limit N]   # parse a comments/<id>.json reply
+    reddit.py saved  <dump.html> [--limit N]   # parse a user/<n>/saved.json Listing
 """
 import sys, re, json, html, argparse, datetime
 
@@ -44,24 +45,66 @@ def clean(s, n=None):
     return s[:n] + "..." if n and len(s) > n else s
 
 
+def render_post(d):
+    print(f"## {clean(d.get('title',''))}")
+    meta = [
+        f"r/{d.get('subreddit','')}",
+        f"u/{d.get('author','')}",
+        f"score {d.get('score','?')}",
+        f"{d.get('num_comments','?')} comments",
+        iso(d.get("created_utc")),
+    ]
+    print("   " + " | ".join(str(x) for x in meta))
+    print(f"   https://old.reddit.com{d.get('permalink','')}")
+    body = clean(d.get("selftext", ""), 200)
+    if body:
+        print(f"   {body}")
+
+
+def render_comment(d):
+    # A saved comment carries link_title (the post it sits under) but no title of
+    # its own; its permalink points at the comment within that post.
+    print(f"## [comment] {clean(d.get('link_title',''))}")
+    meta = [
+        f"r/{d.get('subreddit','')}",
+        f"u/{d.get('author','')}",
+        f"score {d.get('score','?')}",
+        iso(d.get("created_utc")),
+    ]
+    print("   " + " | ".join(str(x) for x in meta))
+    print(f"   https://old.reddit.com{d.get('permalink','')}")
+    body = clean(d.get("body", ""), 300)
+    if body:
+        print(f"   {body}")
+
+
 def cmd_search(data, limit):
-    children = data["data"]["children"]
-    for c in children[:limit]:
-        d = c["data"]
-        print(f"## {clean(d.get('title',''))}")
-        meta = [
-            f"r/{d.get('subreddit','')}",
-            f"u/{d.get('author','')}",
-            f"score {d.get('score','?')}",
-            f"{d.get('num_comments','?')} comments",
-            iso(d.get("created_utc")),
-        ]
-        print("   " + " | ".join(str(x) for x in meta))
-        print(f"   https://old.reddit.com{d.get('permalink','')}")
-        body = clean(d.get("selftext", ""), 200)
-        if body:
-            print(f"   {body}")
+    for c in data["data"]["children"][:limit]:
+        render_post(c["data"])
         print()
+
+
+def print_saved(children, limit):
+    """Print a saved Listing's children (mixed posts t3 and comments t1),
+    newest first. Returns the number printed."""
+    n = 0
+    for c in children:
+        if n >= limit:
+            break
+        kind, d = c.get("kind"), c.get("data", {})
+        if kind == "t3":
+            render_post(d)
+        elif kind == "t1":
+            render_comment(d)
+        else:
+            continue
+        n += 1
+        print()
+    return n
+
+
+def cmd_saved(data, limit):
+    print_saved(data["data"]["children"], limit)
 
 
 def walk(children, limit, counter, depth=0):
@@ -95,13 +138,15 @@ def cmd_thread(data, limit):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("mode", choices=["search", "thread"])
+    ap.add_argument("mode", choices=["search", "thread", "saved"])
     ap.add_argument("dump")
     ap.add_argument("--limit", type=int, default=25)
     a = ap.parse_args()
     data = load(a.dump)
     if a.mode == "search":
         cmd_search(data, a.limit)
+    elif a.mode == "saved":
+        cmd_saved(data, a.limit)
     else:
         cmd_thread(data, a.limit)
 
