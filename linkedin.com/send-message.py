@@ -171,19 +171,37 @@ def _run_flow(ws_url: str, page_url: str, text: str, dry_run: bool) -> dict:
             if any(x in title.lower() for x in ["sign in", "log in", "iniciar"]):
                 sys.exit("ERROR: redirected to sign-in after language selection")
 
-        # Find and click the Message button on the profile page
-        msg_found = wait_for('[aria-label*="Message"], [aria-label*="Mensaje"]', 15)
-        if not msg_found:
-            body = js("document.body.innerText") or ""
-            sys.exit(f"ERROR: Message button not found. Not connected? Body: {body[:300]}")
+        # The profile's "Send message" control is an <a> in <main> whose visible
+        # text is "Enviar mensaje" / "Send message" / "Message" and whose href is
+        # /messaging/compose/?profileUrn=<URN>&recipient=<ID>&... — the URN is
+        # not derivable from the vanity slug alone, so we scrape the link once,
+        # then navigate directly to the compose URL (cleaner than a click that
+        # would in any case trigger a navigation). [aria-label*="Message"] is
+        # NOT used: it matches the global-nav "Mensajes, N notificaciones"
+        # badge in <header>, which would land us on a random recent thread.
+        msg_href = None
+        for _ in range(20):
+            msg_href = js('''(function() {
+                var els = Array.from(document.querySelectorAll('main a'));
+                var msg = els.find(function(el) {
+                    var t = (el.textContent || '').trim().toLowerCase();
+                    return t === 'enviar mensaje' || t === 'send message' || t === 'message';
+                });
+                return msg ? msg.getAttribute('href') : null;
+            })()''')
+            if msg_href:
+                break
+            time.sleep(0.5)
 
-        print("Message button found. Clicking...")
-        js('''(function() {
-            var sel = '[aria-label*="Message"], [aria-label*="Mensaje"]';
-            var btn = document.querySelector(sel);
-            if (btn) btn.click();
-        })()''')
-        time.sleep(2)
+        if not msg_href:
+            body = js("document.body.innerText") or ""
+            sys.exit(f"ERROR: 'Send message' link not found on profile "
+                     f"(not a 1st-degree connection?). Body: {body[:300]}")
+
+        compose_url = msg_href if msg_href.startswith("http") else f"https://www.linkedin.com{msg_href}"
+        print(f"Navigating to compose URL...")
+        cmd("Page.navigate", {"url": compose_url})
+        time.sleep(5)
 
         # Wait for the compose area — LinkedIn messaging uses a contenteditable div
         compose_selectors = [
