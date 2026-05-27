@@ -119,7 +119,15 @@ def fetch_json(ws, url):
     if not isinstance(val, str):
         return {"error": "no value"}
     if val.startswith("FETCHERR:"):
-        return {"error": val}
+        loc_resp = send_cdp(ws, "Runtime.evaluate", {
+            "expression": "document.location.href", "returnByValue": True,
+        })
+        loc = (loc_resp or {}).get("result", {}).get("result", {}).get("value") or ""
+        if (not loc) or loc.startswith("about:") or loc.startswith("chrome-error://"):
+            return {"error": "in-page fetch before origin established "
+                             "(browser-side, not a Reddit response; location=%s): %s"
+                             % (loc or "<unknown>", val)}
+        return {"error": "%s (page location=%s)" % (val, loc)}
     try:
         return json.loads(val)
     except json.JSONDecodeError:
@@ -142,6 +150,12 @@ def main():
         send_cdp(ws, "Page.enable")
         send_cdp(ws, "Page.navigate", {"url": "https://old.reddit.com/"})
         time.sleep(3)  # settle on origin so fetch() carries cookies and locale
+        settle = send_cdp(ws, "Runtime.evaluate", {
+            "expression": "document.location.href + ' | ' + document.title",
+            "returnByValue": True,
+        })
+        print("settle: " + str((settle or {}).get("result", {}).get("result", {}).get("value", "<no result>")),
+              file=sys.stderr)
 
         collected, after = [], None
         while len(collected) < a.limit:
