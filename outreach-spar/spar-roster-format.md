@@ -20,12 +20,12 @@ Columns are ordered left-to-right by pipeline stage: identity, contact channels,
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
-| 1 | stem | filename stem (mandatory) | S | P, A, state machine | Unique contact ID, set at discovery. Slug form: `firstname-lastname-organisation`. Derives file paths: profile at `profiles/{stem}.md`, approach at `approach/{stem}.yaml`. Must be unique within the segment. Never changes after creation. |
+| 1 | stem | filename stem (mandatory) | S | P, A, state machine | Unique contact ID, set at discovery. Slug form: `firstname-lastname-organisation`. Derives file paths: profile at `profiles/{stem}.md`, approach at `approach/{stem}.yaml`. Must be unique within the segment. Renaming is high-impact (see design note): the stem keys the filesystem artefacts the state machine reads, so a rename has to move `profiles/{stem}.md` and `approach/{stem}.yaml` to the new path in the same change. |
 | 2 | contact_name | text (mandatory) | S | P, A, R | Identity anchor — no row without this |
 | 3 | organisation | text | S; P corrects | P, A | Org at discovery time; P updates if stale |
 | 4 | role | text | S; P corrects | P, A | Title at discovery time; P updates if stale |
 
-**Design note:** `stem` is set at sweep time — not at profile creation — so that it is the stable primary key throughout the entire pipeline. Because `stem` exists from the moment a contact enters the roster, SPAR-P and SPAR-A do not write back to the roster to record their artefact names; they simply create their files at the paths derived from the pre-existing `stem` (`profiles/{stem}.md` and `approach/{stem}.yaml` respectively). Contact state is therefore determined by file existence on disk, not by TSV field values.
+**Design note:** `stem` is set at sweep time (not at profile creation) so that it is a stable primary key throughout the pipeline. Because `stem` exists from the moment a contact enters the roster, SPAR-P and SPAR-A do not write back to the roster to record their artefact names; they create their files at the paths derived from the pre-existing `stem` (`profiles/{stem}.md` and `approach/{stem}.yaml` respectively). Contact state is determined by file existence on disk, not by TSV field values. A rename is therefore a coordinated change across the TSV row, both file paths, and any cross-referencing notes; do it when the alternative is worse (a stem collision is the clearest case), and move all three in the same commit so the state machine sees no break.
 
 ### Contact channels
 
