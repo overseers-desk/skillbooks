@@ -175,6 +175,14 @@ The output of R is a revised connection strategy: updated angle priorities, adju
 
 The S&P = Sonnet / AR = Opus allocation has been independently validated outside outreach. In the SIFT listing-evaluation methodology (`../listing-sift/sift-methodology.md`), the Fit phase — scoring listings against a structured rubric on two axes (star value and likelihood-of-success percentage) — was first run on job listings by four parallel Sonnet agents across 19 listings on 2026-03-25. The scores required no Opus-level correction: influence/knowledge gestalt judgments, hard-gate identification, and percentage amplification were all consistent with the rubric's intent. This confirms the general principle: when a rubric does the intellectual heavy lifting (defines the dimensions, provides anchor examples, specifies the formula), Sonnet applies it reliably. Opus is needed when the task requires generating the rubric, resolving ambiguity not covered by the rubric, or making judgment calls that trade off unstated considerations (i.e. the AR-tier work).
 
+## Versioning
+
+The SPAR spec is versioned. Each `campaign.yaml` and each `segment.yaml` carries a `version` field naming the spec generation it conforms to. The current generation is `1.0`. The two files version independently: a segment may be re-stamped to a later generation without re-stamping the campaign, and vice versa.
+
+This section is the single source of truth for what a version number means and when it changes. A version bump is warranted when a spec change invalidates data authored under the previous number: a renamed or removed field, a changed file layout, or a changed meaning for an existing field. Additive changes that older data still satisfies do not require a bump. Generation `1.0` is the spec as of the campaign/segment coordinate-axis layout (segments and campaigns as siblings, no grouping parents) and the roster schema in `spar-roster-format.md`.
+
+The version field is read by the tooling for two purposes. The validate command (`spar-manager/spar-validate-cli.tcl`) reports a file with no `version` as unstamped (a warning, since legacy data that still validates keeps working) and a file declaring a version the tool does not support as an error. The dispatcher refuses, before launching P or A, to process a campaign or segment whose declared version it does not support; unstamped data is allowed through so a campaign begun under an earlier generation continues to run until it is stamped.
+
 ## Relationship to existing documents
 
 This methodology does not replace any existing document. It provides the conceptual framework from which specific AESOPs are derived:

@@ -676,6 +676,76 @@ proc spar::validate_sender_block {cdata} {
     return $issues
 }
 
+# ---------------------------------------------------------------------------
+# Spec versioning
+#
+# campaign.yaml and segment.yaml each declare a top-level `version:` naming the
+# SPAR spec generation they conform to. The tool supports CURRENT_SPEC_VERSION;
+# data declaring a different version is refused (version_unsupported, error).
+# Data with no version field is legacy/unstamped — a warning, not an error, so
+# instances that still validate clean keep running until they are stamped.
+# ---------------------------------------------------------------------------
+namespace eval spar { variable CURRENT_SPEC_VERSION "1.0" }
+
+# campaign_version / segment_version -- read the declared `version` from an
+# already-parsed campaign or segment dict; "" when absent. The field name is
+# spelled in exactly one place per file type here.
+proc spar::campaign_version {cdata} {
+    return [spar::dict_get_default $cdata version ""]
+}
+proc spar::segment_version {segment_data} {
+    return [spar::dict_get_default $segment_data version ""]
+}
+
+# validate_spec_version -- gate one declared version against CURRENT_SPEC_VERSION.
+# Returns zero or one issue dict (same shape as the other validators).
+#   declared  the version string, possibly "" (unstamped)
+#   label     human tag for the message, e.g. "campaign.yaml" or "segment 'x'"
+#   extra     passed through to _issue (e.g. {segment growers-market})
+proc spar::validate_spec_version {declared label {extra {}}} {
+    variable CURRENT_SPEC_VERSION
+    if {[llength $extra] == 0} { set extra {segment ""} }
+    if {$declared eq ""} {
+        return [list [spar::_issue warning version_unstamped "" \
+            "$label has no version: field — treating as pre-$CURRENT_SPEC_VERSION (unstamped). Stamp it with version: \"$CURRENT_SPEC_VERSION\"." \
+            $extra]]
+    }
+    if {$declared ne $CURRENT_SPEC_VERSION} {
+        return [list [spar::_issue error version_unsupported "" \
+            "$label declares spec version '$declared' but this tool supports $CURRENT_SPEC_VERSION." \
+            $extra]]
+    }
+    return {}
+}
+
+# validate_versions -- run the version gate on the campaign dict and each
+# segment's segment.yaml. segment_paths is a list of {label seg_dir} pairs,
+# the shape produced by spar::resolve_campaign. A missing segment.yaml is
+# treated as unstamped (same as an empty version).
+proc spar::validate_versions {cdata segment_paths} {
+    set issues [spar::validate_spec_version [spar::campaign_version $cdata] "campaign.yaml"]
+    foreach item $segment_paths {
+        lassign $item label seg_dir
+        set sdata [spar::read_segment_yaml [file join $seg_dir segment.yaml]]
+        set declared [expr {$sdata eq "" ? "" : [spar::segment_version $sdata]}]
+        lappend issues {*}[spar::validate_spec_version $declared "segment '$label'" [list segment $label]]
+    }
+    return $issues
+}
+
+# assert_supported_version -- refuse-to-start guard for the dispatcher. Throws
+# when a declared version is unsupported (version_unsupported); unstamped data
+# (no version field) is allowed through with no error, so legacy campaigns keep
+# running until they are stamped. Reuses validate_spec_version so the rule lives
+# in one place. This is a pre-flight input check, not a DbC pre/post pair.
+proc spar::assert_supported_version {label declared} {
+    foreach issue [spar::validate_spec_version $declared $label] {
+        if {[dict get $issue code] eq "version_unsupported"} {
+            error [dict get $issue message]
+        }
+    }
+}
+
 # validate_campaign_semantics -- cross-file checks only; no per-file approach validation.
 # Used by progress/warnings paths where per-file schema validation is out of scope
 # (per issue SmartLayer/aesop#43 principle 6).

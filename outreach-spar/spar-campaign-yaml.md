@@ -12,6 +12,7 @@ One file per campaign, in the campaign root directory. Named `campaign.yaml` or 
 
 | Field | Type | Purpose |
 |---|---|---|
+| `version` | string | SPAR spec generation this file conforms to. Current value: `"1.0"`. Required for files authored under spec 1.0 or later. A file with no `version` is treated as legacy/unstamped (a warning, not a failure). The tool refuses to process a campaign whose `version` it does not support. See `spar-methodology.md`, "Versioning". |
 | `campaign` | string | Display name (appears in script output and logs) |
 | `sender.name` | string | Sender's display name for outgoing messages |
 | `sender.role` | string | Sender's role title |
@@ -91,6 +92,7 @@ Path fields (`usp_document`, `antifacts`, `campaign_principles`) are resolved re
 ## Example
 
 ```yaml
+version: "1.0"
 campaign: 2026-04 Example Outreach (3+ star, profile required)
 
 sender:

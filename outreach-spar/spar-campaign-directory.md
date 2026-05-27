@@ -95,6 +95,8 @@ Every fact about the campaign has one authoritative home. Before creating any ne
 
 | Fact | Authoritative home |
 |---|---|
+| Spec version a campaign conforms to | `campaign.yaml` `version:` |
+| Spec version a segment conforms to | `{segment}/segment.yaml` `version:` |
 | Campaign display name, sender, channels, filters | `campaign.yaml` |
 | USP labels | `campaign.yaml` `usps:` map |
 | USP prose | the file named in `usp_document:` |

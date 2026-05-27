@@ -38,6 +38,7 @@
 # IDENTITY — what this segment is
 # ---------------------------------------------------------------------------
 
+version: "1.0"                                     # SPAR spec generation this file conforms to; see spar-methodology.md "Versioning"
 title: ...                                        # human-readable segment name
 priority: Tier 2                                  # Tier 1 / Tier 2 / Tier 3
 date: 2026-03-30                                  # date this segment file was last substantively revised
