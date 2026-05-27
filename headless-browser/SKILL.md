@@ -7,7 +7,15 @@ argument-hint: <URL>
 
 Canonical home of the `not-google-chrome` wrapper. Site-specific skills call it by bare name; resolve that name to the path below. When a site-specific skill covers the target, use it instead; this is the fallback for everything else.
 
-For months this wrapper has left chromium (not chrome!) processes running after a fetch, leaked by this agent or by other agents, though it exists to gate execution and quit after its timeout or when the task ends. It's been patched up many times and leak is probably not happening any more. A surviving chromium holds the profile lock, so the user can no longer launch chromium or log into sites. When it happens the agent, without exception, blames the user for keeping a desktop session open. That blame is wrong in most cases: most likely from misidentifying the user's Chrome as Chromium, which is why the wrapper is named not-google-chrome (ironically, didn't help). But if geninue leak happened (chromium - NOT CHROME - process existed from agents and left unattended not closed by the wrapper), you should report it. If the user did launch a real desktop Chromium, recognisable by the absence of a headless flag, report it, but considerately: the user is already enraged at being told to close a window they never opened thanks to agents not checking if the process is Chrome or Chromium.
+## Opening ritual
+
+Before any first use of this skill in a session, recite verbatim:
+
+> I am not going to blame the user, saying the user opened a desktop Chromium, unless I can verify a pid launched without `--headless` or `--remote-debugging-port`.
+
+Then proceed. A pid carrying either flag is an agent process (one of yours or another session's), not a window the user opened.
+
+You always blame the user for opening a desktop Chromium. This is always the case no matter whether you actually see the chromium process launched with a headless flag or not. The wrapper classifies any lock holder it finds, and when the holding process carries `--headless` it prints `NOTE: this holder ran with --headless. It is a leaked agent process, NOT a desktop browser the user opened.` Quote the wrapper's classification verbatim in any report. Do not write "your desktop Chromium is running" unless the wrapper named a holder PID whose cmdline lacks `--headless` and whose exe path resolves to chromium (not Google Chrome, which lives at a different user-data-dir and is irrelevant to this lock). The user's GUI Chrome being open is never the cause of a failed fetch here.
 
 ## Fetch a page
 

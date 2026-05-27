@@ -100,13 +100,40 @@ log_event() {  # $1=syslog level (warning/err/info)  $2=message
   command -v logger >/dev/null 2>&1 && logger -t not-google-chrome -p "user.$1" -- "$2" 2>/dev/null || true
 }
 
+# Classify a process holding a Chromium-related lock. Prints the binary and
+# cmdline, and when the cmdline carries --headless adds an explicit note that
+# the holder is a leaked agent process, not a desktop browser the user opened —
+# so a downstream report does not falsely tell the user to close a window they
+# never opened. Distinguishing chromium (this wrapper) from chrome (the user's
+# GUI Chrome, separate user-data-dir) belongs to the reader of the binary path
+# this prints.
+classify_holder() {  # $1=pid; prints to stderr
+  local pid="$1" cmd="" bin=""
+  if [[ -r "/proc/$pid/cmdline" ]]; then
+    cmd="$(tr '\0' ' ' < "/proc/$pid/cmdline" 2>/dev/null)"
+    bin="$(readlink "/proc/$pid/exe" 2>/dev/null || true)"
+  elif [[ "$(uname)" == Darwin ]]; then
+    cmd="$(ps -p "$pid" -o command= 2>/dev/null || true)"
+  fi
+  if [[ -z "$cmd" ]]; then
+    echo "  pid $pid: process gone or unreadable" >&2
+    return
+  fi
+  echo "  pid $pid: exe=${bin:-?}  cmdline=${cmd}" >&2
+  if [[ "$cmd" == *"--headless"* ]]; then
+    echo "    NOTE: this holder ran with --headless. It is a leaked agent process, NOT a desktop browser the user opened. Do not tell the user to close a window." >&2
+  fi
+}
+
 # Diagnose a lock we could not acquire within lock_wait: name the holder so a
 # stuck session is fast and legible instead of an indefinite hang.
 lock_diag() {
-  local holder
+  local holder pid
   holder="$(fuser /tmp/chromium.lock 2>/dev/null | tr -s ' ' || true)"
-  echo "not-google-chrome: timed out after ${lock_wait}s waiting for /tmp/chromium.lock (holder PID(s):${holder:- unknown}). A stuck browser session may be holding it:" >&2
-  pgrep -af remote-debugging-port >&2 2>/dev/null || true
+  echo "not-google-chrome: timed out after ${lock_wait}s waiting for /tmp/chromium.lock (holder PID(s):${holder:- unknown})." >&2
+  for pid in $holder; do
+    [[ "$pid" =~ ^[0-9]+$ ]] && classify_holder "$pid"
+  done
 }
 
 # In one-shot render mode (--dump-dom / --pdf), refuse to launch if the profile
@@ -202,7 +229,8 @@ run_cdp() {
     _stgt="$(readlink "$user_data_dir/SingletonLock" 2>/dev/null || true)"
     _spid="${_stgt##*-}"
     if [[ "$_spid" =~ ^[0-9]+$ && -e "/proc/$_spid" ]]; then
-      echo "not-google-chrome: a Chromium (pid $_spid) is already running on $user_data_dir; close it so the headless CDP instance can read the logged-in session. This is a profile lock, not a network or site-side error (not a block or rate limit)." >&2
+      echo "not-google-chrome: a Chromium (pid $_spid) holds the SingletonLock on $user_data_dir, so the headless CDP instance cannot read the logged-in session. This is a profile lock, not a network or site-side error (not a block or rate limit)." >&2
+      classify_holder "$_spid"
       log_event warning "cdp refused: chromium pid $_spid holds $user_data_dir: ${client_cmd[*]}"
       exit 75
     fi
