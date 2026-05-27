@@ -16,7 +16,8 @@ The rules the drafting agent and the subeditor both work to are in `email-rulebo
 ## Procedure
 
 1. Assemble the draft as a text block with the YAML-style header preamble (`to:`, `cc:`, `from:`, `subject:`) and the body below.
-2. Spawn a fresh-context general-purpose agent. Use the prompt template at `$HOME/.claude/skills/edit-email/editor-prompt.md`; substitute `$RULEBOOK_PATH` with the rulebook path, `$EMAIL` with the draft text, and `$REGISTER` with the register tag (`general` by default; `director-to-staff` when the caller invokes with `--director`). Pass the result as the agent prompt.
+1a. If the draft relies on prior correspondence (a reply, or a fresh message that picks up an unresolved ask from earlier mail), assemble a THREAD block of the relevant prior messages. One issue often spans several threads: include every thread the draft draws on, not only the one the headers say it replies to. Each message in the block carries its own from/date/subject and body. The subeditor cannot fetch mail; whatever the cold reader needs to judge whether the draft omits a fact the recipient is waiting on must be in this block. If the draft stands on its own, the THREAD value is `(none)`.
+2. Spawn a fresh-context general-purpose agent. Use the prompt template at `$HOME/.claude/skills/edit-email/editor-prompt.md`; substitute `$RULEBOOK_PATH` with the rulebook path, `$EMAIL` with the draft text, `$THREAD` with the THREAD block (or `(none)`), and `$REGISTER` with the register tag (`general` by default; `director-to-staff` when the caller invokes with `--director`). Pass the result as the agent prompt.
 3. The agent returns POLISHED (body with mechanical fixes applied) and QUERIES (questions for the caller).
 4. Resolve each query from your conversation. Ask the user if the brief does not answer. Do not invent.
 5. Show the user the polished body inline; revise as requested by re-running the skill.
