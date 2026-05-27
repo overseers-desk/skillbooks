@@ -29,7 +29,7 @@ Additionally, P produces:
 
 If the roster entry has no `contact_name`, the organisation has been discovered by sweep but no individual has been identified. This step must complete before §4.2.
 
-**If the roster entry carries `linkedin_url`, fetch that profile first** using the LinkedIn skill. A direct profile view is not subject to LinkedIn's search-rate protections, so when the URL is already known the fetch is cheap, the name resolves immediately, and the profile yields organisation, community, and collaborator names that seed later keyword and cross-platform work. A skill-driven fetch that runs here also satisfies §4.3 — do not re-fetch. A fetch via WebFetch, raw chromium, or any other channel does **not** satisfy §4.3; the skill must still run.
+**If the roster entry carries `linkedin_url`, fetch that profile first** using the LinkedIn skill. A direct profile view is not subject to LinkedIn's search-rate protections, so when the URL is already known the fetch is cheap, the name resolves immediately, and the profile yields organisation, community, and collaborator names that seed later keyword and cross-platform work. The skill writes its saved HTML to the canonical path that §4.3 reads, so running it here doubles as the §4.3 fetch: the same artefact serves both steps. WebFetch, raw chromium, or any other channel produces no such artefact, so §4.3 will still need the skill to run.
 
 **Otherwise, search these sources in order:**
 
@@ -248,7 +248,7 @@ For each applicable angle, note:
 
 **Star rating (0–5):** How useful is this contact to the campaign's management in this segment, today? Assigning this rating is P's responsibility. Any value already in the roster's `star_rating` column was written before profiling and must be ignored — it carries no authority. Derive the rating solely from what profiling reveals.
 
-If the segment file carries a `rating_rubric`, apply it as written. If it does not, role-play as the campaign's management — using the campaign's USP document, the segment's objective, the segment's conversion funnel, and any subsegments as the standard for "useful" — and answer the usefulness question directly. Do not import anchors from other segments; segments differ in what useful means, and a rubric specific to one segment is wrong for the next. If the question cannot be answered with confidence from the segment file alone, that is an instruction to deepen profiling, not to default to a middle value.
+If the segment file carries a `rating_rubric`, apply it as written. If it does not, role-play as the campaign's management — using the campaign's USP document, the segment's objective, the segment's conversion funnel, and any subsegments as the standard for "useful" — and answer the usefulness question directly. The rating rubric is segment-local: segments differ in what useful means, so anchors borrowed from another segment's rubric are wrong for this one. If the question cannot be answered with confidence from the segment file alone, that is an instruction to deepen profiling, not to default to a middle value.
 
 If profiling reveals that the contact cannot deliver the segment's intended outcome through the mechanism the segment describes — including cases where §4.2 was not run before profiling began — set `star_rating` to 0 and exclude per §4.2. Do not produce a profile document for contacts assessed at 0; the roster entry is sufficient. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
 

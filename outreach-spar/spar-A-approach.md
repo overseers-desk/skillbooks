@@ -10,7 +10,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 ## 2. Inputs
 
 - **Profile document:** The full profile produced by SPAR-P for this contact.
-- **Roster entry:** The contact's row in the roster TSV, including `s_note`, `p_note`, and `star_rating`. Do not duplicate `star_rating` in the approach file — read it from the roster but do not write it (P owns that field). `response_likelihood` is set by A on the roster at §4.8 (it is a roster column, not an approach field).
+- **Roster entry:** The contact's row in the roster TSV, including `s_note`, `p_note`, and `star_rating`. `star_rating` is P-owned: the roster row is its authoritative home, read from there. `response_likelihood` is A-owned and lives on the roster at §4.8, not in the approach file.
 - **Campaign plan:** Defines segments, approach sequencing per segment, and campaign-specific rules (language, collateral prerequisites, channel preferences).
 - **Segment file:** (`segment.yaml`) Specifies the approach type (FAM invitation, phone call, personal email, etc.) and any collateral prerequisites. Read this before drafting.
 - **Communication index:** `comms-index.md`, the running index of all prior A outputs. Read this before drafting to find cross-references, shared connections, and angles already used with related contacts.
@@ -98,7 +98,7 @@ Write the connection message, email, or phone script using the profile, warmth l
 
 **The core principle: presuppose the recipient's world, don't narrate it.**
 
-Do not tell recipients what they do for a living, recite their history back to them, or signal "I did my homework" as a separate display. They can tell you understand their world from the specificity of your proposition. This rule does not apply to introducing yourself — a cold recipient has never heard of you and you must say who you are and what you offer.
+A cold reader registers your understanding of their world through the specificity of the proposition you bring. Recited history and "I did my homework" gestures occupy that space without supplying any specificity, so the reader gets the performance of research instead of its product. Introducing yourself and what you offer is a separate matter: that is presenting your world to them, not narrating theirs.
 
 **Element ordering — ask before justification:**
 
