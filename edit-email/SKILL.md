@@ -1,6 +1,6 @@
 ---
 name: edit-email
-description: Polish an email draft via a fresh-context subeditor spawned with the Agent tool. The caller passes the draft inline (no file). Counters the predictable failure modes of AI-drafted email: project-shaped to-do lists, session-anchored timestamps, defending arguments the reader has not raised, inferred facts smuggled in as paraphrase, missing identity-first lead.
+description: Polish an email draft via a fresh-context subeditor spawned with the Agent tool. The caller passes the draft inline (no file). Counters the predictable failure modes of AI-drafted email: project-shaped to-do lists, session-anchored timestamps, defending arguments the reader has not raised, inferred facts smuggled in as paraphrase, missing identity-first lead. The `--director` flag adds director-to-staff register checks (decisions stay decisions, no soft closes, don't decide in the recipient's domain, no deliberation-narrative defence).
 ---
 
 # edit-email
@@ -16,7 +16,7 @@ The rules the drafting agent and the subeditor both work to are in `email-rulebo
 ## Procedure
 
 1. Assemble the draft as a text block with the YAML-style header preamble (`to:`, `cc:`, `from:`, `subject:`) and the body below.
-2. Spawn a fresh-context general-purpose agent. Use the prompt template at `$HOME/.claude/skills/edit-email/editor-prompt.md`; substitute `$RULEBOOK_PATH` with the rulebook path and `$EMAIL` with the draft text. Pass the result as the agent prompt.
+2. Spawn a fresh-context general-purpose agent. Use the prompt template at `$HOME/.claude/skills/edit-email/editor-prompt.md`; substitute `$RULEBOOK_PATH` with the rulebook path, `$EMAIL` with the draft text, and `$REGISTER` with the register tag (`general` by default; `director-to-staff` when the caller invokes with `--director`). Pass the result as the agent prompt.
 3. The agent returns POLISHED (body with mechanical fixes applied) and QUERIES (questions for the caller).
 4. Resolve each query from your conversation. Ask the user if the brief does not answer. Do not invent.
 5. Show the user the polished body inline; revise as requested by re-running the skill.
