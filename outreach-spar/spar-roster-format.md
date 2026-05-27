@@ -79,7 +79,7 @@ A phase note should answer: "what does the next phase need to know about this co
 
 ## Artefact retention
 
-Profile and approach files must not be deleted when a contact is excluded or replaced. The roster's `date_excluded` field records *when* the determination was made, but the *reason* — why the contact is not a campaign target, or why a different person now holds the role — lives only in the profile document. Deleting it loses that reasoning. A future sweep agent that rediscovers the same name will find no record of the prior evaluation and repeat the work.
+The profile document is the only record of *why* a contact was excluded or replaced: why they are not a campaign target, or why a different person now holds the role. The roster's `date_excluded` carries *when* the determination was made; the *why* lives only in the profile. Preserving the profile preserves that reasoning for a future sweep that rediscovers the same name, which would otherwise repeat the evaluation. Any preservation that keeps the reasoning reachable from the contact's name serves this purpose.
 
 The same applies when a contact is replaced (e.g. a new person takes over the role): the old contact's profile should be kept. It documents who held the role before, what was found during profiling, and why outreach did not proceed. The replacement contact's profile is a separate file.
 
@@ -93,7 +93,7 @@ Campaigns may append columns after column 17. The campaign plan defines them. Co
 - **type** — contact category within a segment (e.g. "strategic", "corporate", "community")
 - **source_url** — the specific page that justified inclusion
 
-Campaign-specific columns must not duplicate core columns under different names. If a campaign needs a field that serves the same purpose as a core column, use the core column.
+Each roster fact has one canonical column. If a campaign needs a field that serves the same purpose as a core column, use the core column rather than add a parallel one under a different name.
 
 ## Quality checklist
 
