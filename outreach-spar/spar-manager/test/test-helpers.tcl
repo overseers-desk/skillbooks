@@ -347,3 +347,11 @@ proc write_campaign_yaml {campaign_dir content} {
     close $fd
     return $path
 }
+
+proc write_segment_yaml {segment_dir content} {
+    set path [file join $segment_dir segment.yaml]
+    set fd [open $path w]
+    puts -nonewline $fd $content
+    close $fd
+    return $path
+}

@@ -131,6 +131,9 @@ proc spar::p::prepare_for_pool {opts on_progress} {
     set sel_segments [spar::dict_get_default $opts segments {}]
 
     set cdata    [spar::load_campaign $campaign_file]
+    # Version pre-flight (refuse-to-start): do not run P on a campaign whose
+    # declared spec version this tool does not support. Unstamped is allowed.
+    spar::assert_supported_version "campaign.yaml" [spar::campaign_version $cdata]
     set base     [dict get $cdata _base]
     set segments [spar::filter_segments [dict get $cdata segments] $sel_segments]
 
@@ -227,6 +230,10 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
     if {$segment_data eq ""} {
         set required_skills {}
     } else {
+        # Version pre-flight (refuse-to-start): refuse a segment whose declared
+        # spec version this tool does not support. Unstamped is allowed.
+        spar::assert_supported_version "segment '[file tail $segment_dir]'" \
+            [spar::segment_version $segment_data]
         set required_skills [spar::extract_required_skills $segment_data $segment_yaml]
     }
 
@@ -443,6 +450,9 @@ proc spar::a::_build_prompts {opts on_progress} {
     set sel_stems [spar::dict_get_default $opts stems {}]
 
     set cdata [spar::load_campaign $campaign_file]
+    # Version pre-flight (refuse-to-start): do not run A on a campaign whose
+    # declared spec version this tool does not support. Unstamped is allowed.
+    spar::assert_supported_version "campaign.yaml" [spar::campaign_version $cdata]
     set base [dict get $cdata _base]
 
     set sender_name [dict get $cdata sender name]
@@ -527,6 +537,14 @@ proc spar::a::_build_prompts {opts on_progress} {
 
         if {![file exists $roster_path]} continue
         if {![file exists $goal_path]} continue
+
+        # Version pre-flight (refuse-to-start): refuse a segment whose declared
+        # spec version this tool does not support. Unstamped is allowed.
+        set _seg_data [spar::read_segment_yaml [file join $seg_dir segment.yaml]]
+        if {$_seg_data ne ""} {
+            spar::assert_supported_version "segment '$segment'" \
+                [spar::segment_version $_seg_data]
+        }
 
         file mkdir [spar::approach_dir_for_segment $seg_dir]
 

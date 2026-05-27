@@ -177,6 +177,68 @@ proc spar::load_campaign {yaml_path} {
     return $data
 }
 
+# resolve_campaign -- shared campaign resolution for the CLI tools
+# (spar-progress, spar-validate-cli). Given the campaign spec already teased
+# out of argv — a campaign.yaml path in campaign_file, or a directory in
+# campaign_dir; either may be empty — discover the campaign YAML, load it, and
+# build the list of {label seg_dir} segment paths that carry a roster.tsv.
+#
+# Returns a dict with keys: yaml_path campaign_dir cdata segment_paths
+#                           campaign_name min_star primary_channel
+# Throws on: campaign YAML not found, or no segments with a roster.
+proc spar::resolve_campaign {campaign_file campaign_dir} {
+    if {$campaign_file ne "" && $campaign_dir eq ""} {
+        set campaign_dir [file dirname [file normalize $campaign_file]]
+    }
+    if {$campaign_dir eq ""} { set campaign_dir "." }
+    set campaign_dir [file normalize $campaign_dir]
+
+    if {$campaign_file ne ""} {
+        set yaml_path [file normalize $campaign_file]
+    } else {
+        set yaml_path [file join $campaign_dir campaign.yaml]
+        if {![file exists $yaml_path]} {
+            set candidates [lsort [glob -nocomplain [file join $campaign_dir campaign*.yaml]]]
+            set yaml_path [expr {[llength $candidates] > 0 ? [lindex $candidates end] : ""}]
+        }
+    }
+    if {$yaml_path eq "" || ![file exists $yaml_path]} {
+        if {$campaign_file ne ""} {
+            error "Campaign YAML not found: $campaign_file"
+        } else {
+            error "No campaign YAML found in $campaign_dir"
+        }
+    }
+
+    set cdata [spar::load_campaign $yaml_path]
+    set campaign_name [spar::dict_get_default $cdata campaign [file tail $yaml_path]]
+    set primary_channel [spar::campaign_primary_channel $cdata]
+    set min_star 0
+    if {[dict exists $cdata filter]} {
+        set min_star [spar::dict_get_default [dict get $cdata filter] min_star 0]
+    }
+    set segments_list {}
+    if {[dict exists $cdata segments]} { set segments_list [dict get $cdata segments] }
+    set skip_set {}
+    if {[dict exists $cdata skip_segments]} { set skip_set [dict get $cdata skip_segments] }
+
+    set segment_paths {}
+    foreach seg $segments_list {
+        if {$seg in $skip_set} continue
+        set seg_dir [file join $campaign_dir $seg]
+        if {[file isdirectory $seg_dir] && [file exists [file join $seg_dir roster.tsv]]} {
+            lappend segment_paths [list $seg $seg_dir]
+        }
+    }
+    if {[llength $segment_paths] == 0} {
+        error "No segments found."
+    }
+
+    return [dict create yaml_path $yaml_path campaign_dir $campaign_dir \
+        cdata $cdata segment_paths $segment_paths campaign_name $campaign_name \
+        min_star $min_star primary_channel $primary_channel]
+}
+
 # extract_required_skills — convert a segment's profile_reject_if list into
 # the skill list audit_skills_in_transcript expects. Validates the closed
 # vocabulary; errors on unknown conditions or wrong shape. Empty list when

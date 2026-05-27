@@ -33,68 +33,18 @@ foreach arg $argv {
     }
 }
 
-if {$campaign_file ne "" && $campaign_dir eq ""} {
-    set campaign_dir [file dirname [file normalize $campaign_file]]
-}
-if {$campaign_dir eq ""} {
-    set campaign_dir "."
-}
-set campaign_dir [file normalize $campaign_dir]
-
-# --- Discover campaign YAML ---
-if {$campaign_file ne ""} {
-    set yaml_path [file normalize $campaign_file]
-} else {
-    set yaml_path [file join $campaign_dir campaign.yaml]
-    if {![file exists $yaml_path]} {
-        set candidates [lsort [glob -nocomplain [file join $campaign_dir campaign*.yaml]]]
-        set yaml_path [expr {[llength $candidates] > 0 ? [lindex $candidates end] : ""}]
-    }
-}
-
-# --- Load campaign YAML ---
-set segments_list {}
-set skip_set {}
-set campaign_name [file tail $campaign_dir]
-set min_star 0
-set primary_channel ""
-
-if {$yaml_path eq "" || ![file exists $yaml_path]} {
-    if {$campaign_file ne ""} {
-        puts stderr "Campaign YAML not found: $campaign_file"
-    } else {
-        puts stderr "No campaign YAML found in $campaign_dir"
-    }
+# --- Resolve campaign (discover YAML, load, build segment paths) ---
+if {[catch {set rc [spar::resolve_campaign $campaign_file $campaign_dir]} err]} {
+    puts stderr $err
     exit 1
 }
-
-set cdata [spar::load_campaign $yaml_path]
-set campaign_name [spar::dict_get_default $cdata campaign [file tail $yaml_path]]
-set primary_channel [spar::campaign_primary_channel $cdata]
-if {[dict exists $cdata filter]} {
-    set min_star [spar::dict_get_default [dict get $cdata filter] min_star 0]
-}
-if {[dict exists $cdata segments]} {
-    set segments_list [dict get $cdata segments]
-}
-if {[dict exists $cdata skip_segments]} {
-    set skip_set [dict get $cdata skip_segments]
-}
-
-# --- Build segment paths ---
-set segment_paths {}
-foreach seg $segments_list {
-    if {$seg in $skip_set} continue
-    set seg_dir [file join $campaign_dir $seg]
-    if {[file isdirectory $seg_dir] && [file exists [file join $seg_dir roster.tsv]]} {
-        lappend segment_paths [list $seg $seg_dir]
-    }
-}
-
-if {[llength $segment_paths] == 0} {
-    puts stderr "No segments found."
-    exit 1
-}
+set campaign_dir    [dict get $rc campaign_dir]
+set yaml_path       [dict get $rc yaml_path]
+set cdata           [dict get $rc cdata]
+set campaign_name   [dict get $rc campaign_name]
+set primary_channel [dict get $rc primary_channel]
+set min_star        [dict get $rc min_star]
+set segment_paths   [dict get $rc segment_paths]
 
 # --- Classify all segments and collect counts ---
 # One State for the whole CLI run — its lifetime matches this script's.
