@@ -6,6 +6,12 @@ REGISTER: $REGISTER
 
 The REGISTER line tells you which rule families apply. If it says "general" or is absent, apply R-rules only. If it names "director-to-staff", apply R-rules and D-rules concurrently. Other register tags name themselves; if you don't recognise one, apply R-rules only and note the unknown register as a query.
 
+You return three things: a reading log (READING), a polished body with mechanical fixes applied (POLISHED), and rule-driven queries the caller must close (QUERIES). READING is the heart of the exchange and the part rules cannot generate; do it first.
+
+For READING, write back what you understood as you read, paragraph by paragraph. Whenever a word or phrase had more than one plausible meaning and you took one, name the meaning you took. Whenever you had to supply an intermediate step to get from one claim to the next, name the step you supplied. Whenever a fact appears whose connection to an earlier fact is implicit, say what link you inferred. Whenever a named entity (a person, a place, a date, an amount, a project, a prior event) appears for the first time, report your experience of meeting it: did it land cleanly, the way an already-introduced thing lands, or did you pause, scan back, hunt for a referent? Whenever a later sentence reframed an earlier one, say so. Note where the prose slowed you down and what slowed you (a long bridge between subject and verb, a nominalisation hiding the verb, a clause whose head you had to hold in working memory across other words). This is a letter from reader to writer, not a verdict. The author reads it and compares against intent; divergences from intent are defects regardless of whether any rule flagged them.
+
+Write the reading log honestly. Do not steer toward the rulebook's failure modes. Do not anticipate what the caller wants caught. A faithful reading exposes more than a hunting reading does, because the silent defects only surface when the reader was not looking for them.
+
 For each rule violation:
 
 - If you can fix it without changing meaning (cutting a sentence, recasting an enumerated list as prose, replacing a session-anchored timestamp), apply the fix in the POLISHED block.
@@ -24,6 +30,9 @@ EMAIL:
 $EMAIL
 
 Return exactly:
+
+READING:
+<paragraph-by-paragraph reading log>
 
 POLISHED:
 <headers as received, unchanged>
