@@ -14,9 +14,9 @@ State the request as a sentence inside the prose. Numbered or bulleted lists of 
 
 State the situation and what is needed. Don't prescribe how a professional should do their work. Recipe text reads as patronising and signals "this will take effort".
 
-## R4. Defend nothing the reader has not raised
+## R4. Secondary and tertiary concerns
 
-A sentence that counters an interpretation, refutes an objection, or pre-empts a reading the email itself has not established invents the reader's doubt. Cut it.
+The primary ask is the trunk. Facts that directly support the ask are primary; facts that support those are secondary; facts that support those are tertiary. A secondary or tertiary fact sometimes can't earn the recipient's attention and tends to carry sender-only context that does not travel. The subeditor walks each fact back to the primary ask and queries (does not silently cut) any that sit at secondary or tertiary depth, unless the primary ask cannot be understood without them. The caller decides whether to ground the fact in one sentence or to remove it.
 
 ## R5. No session-anchored timestamps
 
@@ -37,6 +37,24 @@ A sentence narrating what the email is doing, or hedging on the recipient's beha
 ## R9. Sender identity match
 
 Send from the address the recipient most likely has indexed against the user's file. The right `From` makes the recipient's reflex search hit; a mismatched one forces a content search that may not surface the file. When the body claims an identity tied to prior correspondence and the `From` does not match that history, the subeditor queries the caller.
+
+## R10. Reader's pace
+
+Email is read fast, not literarily. Long sentences and convoluted clause structure can be optimised for sounding serious; the unintended effect is to slow the reader down and make the message hard to scan. A reader should be able to grasp each fact on first pass. The substance stays serious by being clear, not by being slow.
+
+The underlying principle is **dependency distance**. Each grammatically-linked pair of words — subject and verb, modifier and head, verb and particle, noun and its qualifier — should sit as close together as possible. The reader holds a head word in working memory until its dependent arrives; the further apart they sit, the more effort the bridge costs. Compose in dependency grammar (head–dependent links), not phrase structure grammar (slotting clauses into NP/VP positions). Subjects beside verbs. Modifiers beside heads. Particles beside the verbs they belong to. Qualifiers beside the nouns they qualify.
+
+Specific patterns this principle exposes:
+
+- **Two-idea sentences joined by ", and" or extended by em-dash.** Each clause has its own subject and verb; separating them lets every dependency sit close. Split.
+- **Nominalisation: verbs hidden inside abstract noun phrases.** "The site has surfaced flood-resilience considerations that need designing into the brief" hides the verbs (*design*, *be on a river*) inside the nouns *considerations* and *site*. Find the verb the sentence is actually about and lead with it: "The site is on the river, so we have to design for flood and weather before locking specifications." Same fact, half the reading time.
+- **Setup-before-subject.** Clauses that delay the subject behind a positioning phrase widen the subject–verb dependency. Lead with the subject.
+- **Subject and verb separated by an intervening clause.** "The supplier, despite having received multiple notifications, has not finalised their acceptance terms" suspends the reader between *supplier* and *has not finalised*. Move the intervening clause out of the middle.
+- **Modifier far from head.** "Acceptance terms for the new equipment" — when an adjective phrase qualifies the wrong noun on first read (here the reader can parse "terms for the new equipment" as terms about the new equipment, not terms governing the return of the old equipment), the qualifier is too far from its true head. Recast so the qualifier sits next to what it modifies.
+- **Adverbial weight without fact.** "Substantively", "essentially", "ultimately", "in effect", "broadly" — cut unless the adverb carries a fact the sentence loses without it.
+- **Stacked compound noun phrases.** "Closing the supply agreement out on contract terms" stacks three noun phrases without verbs to anchor them. Pick the load-bearing one or recast as a verb.
+
+R7 still applies: shorter does not mean dropping facts the ask depends on.
 
 ## Director register (D-rules)
 
