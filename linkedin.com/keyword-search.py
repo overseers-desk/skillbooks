@@ -12,9 +12,30 @@ import re
 import sys
 
 
+def strip_viewer_content(html):
+    """Remove logged-in viewer's own profile data from the page."""
+    html = re.sub(r'<nav\b[^>]*>.*?</nav>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    html = re.sub(r'<aside\b[^>]*>.*?</aside>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    for marker in [
+        "People also viewed",
+        "People you may know",
+        "You might also know",
+        "Explore collaborative articles",
+        "Add profile section",
+        "More profiles for you",
+    ]:
+        idx = html.find(marker)
+        if idx > 5000:
+            html = html[:idx]
+            break
+    return html
+
+
 def keyword_search(html_path, keywords):
     with open(html_path, "r") as f:
         html = f.read()
+
+    html = strip_viewer_content(html)
 
     title_match = re.findall(r"<title[^>]*>(.*?)</title>", html, re.DOTALL)
     title = title_match[0].strip() if title_match else "NOT FOUND"
