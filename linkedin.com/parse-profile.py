@@ -16,9 +16,35 @@ import re
 import sys
 
 
+def strip_viewer_content(html):
+    """Remove logged-in viewer's own profile data from the page.
+
+    LinkedIn embeds the viewer's profile in <nav> and <aside> elements.
+    Without this, text extracted from those sections (viewer's headline,
+    bio, employer) pollutes the target profile's output.
+    """
+    html = re.sub(r'<nav\b[^>]*>.*?</nav>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    html = re.sub(r'<aside\b[^>]*>.*?</aside>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    for marker in [
+        "People also viewed",
+        "People you may know",
+        "You might also know",
+        "Explore collaborative articles",
+        "Add profile section",
+        "More profiles for you",
+    ]:
+        idx = html.find(marker)
+        if idx > 5000:
+            html = html[:idx]
+            break
+    return html
+
+
 def parse_profile(html_path):
     with open(html_path, "r") as f:
         html = f.read()
+
+    html = strip_viewer_content(html)
 
     # --- Title (Name) ---
     title_match = re.findall(r"<title[^>]*>(.*?)</title>", html, re.DOTALL)
@@ -66,10 +92,17 @@ def parse_profile(html_path):
                 print(f"  - {t}")
 
     # --- Location ---
+    # Match short text that looks like a location: "City, Country", "Region Area",
+    # "City y alrededores", or well-known country/region names.
     location_texts = [
         t for t in texts
-        if re.search(r"Singapore|Australia|London|New York|Hong Kong|Jakarta|Tokyo|Kuala Lumpur", t)
-        and len(t) < 100
+        if len(t) < 100 and re.search(
+            r'(?i)\b(?:area|alrededores|España|Spain|France|Germany|Italy|'
+            r'Australia|United\s+States|United\s+Kingdom|Ireland|Singapore|'
+            r'California|Texas|Florida|Illinois|Washington|'
+            r'Hong\s+Kong|Indonesia|Japan|Malaysia)\b'
+            r'|[A-Z][a-z]+(?:,\s*[A-Z][a-z]+)+', t
+        )
     ]
     if location_texts:
         print(f"\nLocation (inferred): {location_texts[0]}")

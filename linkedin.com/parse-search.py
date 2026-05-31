@@ -14,9 +14,18 @@ import re
 import sys
 
 
+def strip_viewer_content(html):
+    """Remove logged-in viewer's own profile data from the page."""
+    html = re.sub(r'<nav\b[^>]*>.*?</nav>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    html = re.sub(r'<aside\b[^>]*>.*?</aside>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    return html
+
+
 def parse_search_results(html_path):
     with open(html_path, "r") as f:
         html = f.read()
+
+    html = strip_viewer_content(html)
 
     # Check if this is a login page
     title_match = re.findall(r"<title[^>]*>(.*?)</title>", html, re.DOTALL)
