@@ -19,6 +19,7 @@ Usage:
 import argparse
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -37,16 +38,23 @@ VERIFY_STATES = {'verified', 'unverifiable', 'ambiguous',
 TERMINAL_FOR_VERIFY = {'unverifiable', 'ambiguous',
                        'already_connected', 'invite_pending'}
 
+UPSERT_PROFILE = """
+INSERT INTO linkedin.profile (human_id, connector_instance_id, slug)
+VALUES (%s, 1, %s)
+ON CONFLICT (slug) DO UPDATE SET human_id = EXCLUDED.human_id
+RETURNING id;
+"""
+
 UPSERT = """
-INSERT INTO connection_queue
-  (human_id, workflow_label, state, vanity_name, verify_evidence,
+INSERT INTO linkedin.connection_queue
+  (human_id, workflow_label, state, profile_id, verify_evidence,
    level, verified_at, queued_at, terminal_at)
 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
 ON CONFLICT (human_id, workflow_label) DO UPDATE SET
   state = EXCLUDED.state,
-  vanity_name = EXCLUDED.vanity_name,
+  profile_id = COALESCE(EXCLUDED.profile_id, linkedin.connection_queue.profile_id),
   verify_evidence = EXCLUDED.verify_evidence,
-  level = COALESCE(EXCLUDED.level, connection_queue.level),
+  level = COALESCE(EXCLUDED.level, linkedin.connection_queue.level),
   verified_at = EXCLUDED.verified_at,
   terminal_at = EXCLUDED.terminal_at;
 """
@@ -77,16 +85,25 @@ def main():
     now = int(time.time())
     terminal = now if args.state in TERMINAL_FOR_VERIFY else None
 
+    slug = None
+    if args.vanity:
+        slug = re.sub(r'^https?://[^/]+/in/([^/?#]+).*', r'\1',
+                      args.vanity).strip('/')
+
     with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
+            profile_id = None
+            if slug:
+                cur.execute(UPSERT_PROFILE, (args.human_id, slug))
+                profile_id = cur.fetchone()[0]
             cur.execute(UPSERT, (
                 args.human_id, args.workflow, args.state,
-                args.vanity, evidence_json, args.level,
+                profile_id, evidence_json, args.level,
                 now, now, terminal,
             ))
 
     print(f'ok: human_id={args.human_id} state={args.state}'
-          + (f' vanity={args.vanity}' if args.vanity else ''))
+          + (f' slug={slug}' if slug else ''))
 
 
 if __name__ == '__main__':

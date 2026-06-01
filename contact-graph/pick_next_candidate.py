@@ -99,12 +99,12 @@ SELECT
   ) AS org_hints
 FROM human h
 JOIN scored sc ON sc.human_id = h.id
-WHERE h.linkedin_url IS NULL
+LEFT JOIN linkedin.profile lp ON lp.human_id = h.id
+LEFT JOIN linkedin.connection_queue cq
+    ON cq.human_id = h.id AND cq.workflow_label = %(workflow)s
+WHERE lp.id IS NULL
   AND sc.m >= %(floor)s
-  AND NOT EXISTS (
-    SELECT 1 FROM connection_queue cq
-    WHERE cq.human_id = h.id AND cq.workflow_label = %(workflow)s
-  )
+  AND cq.human_id IS NULL
 ORDER BY sc.m DESC
 LIMIT %(limit)s;
 """
