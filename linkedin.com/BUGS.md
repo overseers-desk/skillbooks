@@ -1,5 +1,19 @@
 # LinkedIn skill — open bugs
 
+## 2026-06-01 login.py `--check` reports `unknown` for a logged-in session
+
+**Symptom:** `login.py --check` against an active, logged-in session returns `{"status": "unknown"}` instead of `already_logged_in`. The page was the normal logged-in feed (title `Feed | LinkedIn`, ~7.8 MB DOM, no checkpoint redirect), yet `_login_state` matched none of its branches and fell through to `unknown`.
+
+**Repro:** with a logged-in session, `not-google-chrome --cdp -- python3 login.py --check`. Observed 2026-06-01.
+
+**Cause:** `_login_state` (login.py:101-115) detects the logged-in state with class-substring selectors: `[class*="global-nav__me"]`, `a[href*="/in/"][class*="global-nav"]`, `main [class*="feed"]`, `div[class*="feed-shared"]`. LinkedIn randomises class names per session (the skill's own DOM notes say never to select by class), so on the current feed render these match nothing; `has_nav` and `has_feed` are both false and the function returns `unknown`. The logged-out branches (fastrack CTA, login form) use more stable selectors, which is why logged-out detection still works.
+
+**Impact:** a caller that gates on `already_logged_in` before fetching reads a healthy session as indeterminate, and either aborts or proceeds blind. Harmless in isolation, but it defeats the pre-fetch session check.
+
+**Proposed fix direction:** detect logged-in by a stable signal rather than class substrings (the page title `Feed | LinkedIn` or locale equivalent, the `/feed` landing URL, or a structural/aria landmark), paired with the existing negative login-form test. Verify against both a live logged-in and a live logged-out session before shipping, since the failure mode is exactly a false state read.
+
+**Status:** open.
+
 ## 2026-04-17 parse-search.py: role field contains adjacent profile's name
 
 **Symptom:** parsed search results pair one profile's name with the *next* profile's headline. When a calling agent uses the output to populate a roster, some rows end up with another person's NAME written into the role field.
