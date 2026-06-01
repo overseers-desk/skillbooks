@@ -1,6 +1,6 @@
 ---
 name: edit-email
-description: Polish an email draft via a fresh-context subeditor spawned with the Agent tool. The caller passes the draft inline (no file). Counters the predictable failure modes of AI-drafted email: project-shaped to-do lists, session-anchored timestamps, defending arguments the reader has not raised, inferred facts smuggled in as paraphrase, missing identity-first lead. The subeditor returns a reading log (what landed and how, where the reader paused or had to infer) alongside POLISHED and QUERIES, so confident wrong-readings surface even when no rule fires. The `--director` flag adds director-to-staff register checks (decisions stay decisions, no soft closes, don't decide in the recipient's domain, no deliberation-narrative defence). The `--Liansu` flag loads a style guide derived from Liansu Yu's sent mail and applies it in addition to the R-rules.
+description: Polish an email draft via a fresh-context subeditor spawned with the Agent tool. The caller passes the draft inline (no file). Counters the predictable failure modes of AI-drafted email: project-shaped to-do lists, session-anchored timestamps, defending arguments the reader has not raised, inferred facts smuggled in as paraphrase, missing identity-first lead. The subeditor returns a reading log (what landed and how, where the reader paused or had to infer) alongside POLISHED and QUERIES, so confident wrong-readings surface even when no rule fires. The `--director` flag adds director-to-staff register checks (decisions stay decisions, no soft closes, don't decide in the recipient's domain, no deliberation-narrative defence). The `--Liansu` flag loads a voice guide derived from Liansu Yu's sent mail and switches the subeditor from cold reader to impersonator: the agent adopts Liansu's identity, edits in place as her, and returns first-person friction notes rather than rule citations.
 argument-hint: [--director] [--Liansu]
 ---
 
@@ -18,9 +18,10 @@ The rules the drafting agent and the subeditor both work to are in `email-rulebo
 
 1. Assemble the draft as a text block with the YAML-style header preamble (`to:`, `cc:`, `from:`, `subject:`) and the body below.
 1a. If the draft relies on prior correspondence (a reply, or a fresh message that picks up an unresolved ask from earlier mail), assemble a THREAD block of the relevant prior messages. One issue often spans several threads: include every thread the draft draws on, not only the one the headers say it replies to. Each message in the block carries its own from/date/subject and body. The subeditor cannot fetch mail; whatever the cold reader needs to judge whether the draft omits a fact the recipient is waiting on must be in this block. If the draft stands on its own, the THREAD value is `(none)`.
-2. Spawn a fresh-context general-purpose agent. Use the prompt template at `$HOME/.claude/skills/edit-email/editor-prompt.md`; substitute `$RULEBOOK_PATH` with the rulebook path, `$EMAIL` with the draft text, `$THREAD` with the THREAD block (or `(none)`), `$REGISTER` with the register tag (`general` by default; `director-to-staff` when the caller invokes with `--director`), and `$STYLE_GUIDE` with the content of the named style guide file (`(none)` when no style flag is given; the content of `liansu-style.md` when `--Liansu` is given). Pass the result as the agent prompt.
-3. The agent returns READING (a paragraph-by-paragraph log of what landed, where the reader paused, what meaning they took when a word was ambiguous, what step they supplied to bridge a chain of reasoning), POLISHED (body with mechanical fixes applied), and QUERIES (questions for the caller).
-4. Read READING first. Compare each interpretation against what the draft meant. Where the reader took a meaning the author did not intend, or had to supply a link the draft elided, that is a defect even though no rule fired; fix the draft. Then resolve each query from your conversation, asking the user if the brief does not answer. Do not invent.
+2. Spawn a fresh-context agent. Use the prompt template at `$HOME/.claude/skills/edit-email/editor-prompt.md`; substitute `$RULEBOOK_PATH` with the rulebook path, `$EMAIL` with the draft text, `$THREAD` with the THREAD block (or `(none)`), `$REGISTER` with the register tag (`general` by default; `director-to-staff` when the caller invokes with `--director`), and `$VOICE_GUIDE` with the content of the named voice guide file (`(none)` when no voice flag is given; the content of `liansu-voice.md` when `--Liansu` is given). When `--Liansu` is given, use Opus as the agent model. Pass the result as the agent prompt.
+3. When `$VOICE_GUIDE` is `(none)`: the agent is a cold subeditor. It returns READING (paragraph-by-paragraph log of how the draft landed), POLISHED (mechanical fixes applied), and QUERIES (rule citations for things needing the brief).
+   When `$VOICE_GUIDE` has content: the agent is an impersonator. It returns READING (first-person friction notes as the named author), POLISHED (the email as the author would send it), and QUERIES (what the author would need to know to finalise it herself).
+4. Read READING first. Compare each friction point or interpretation against what the draft meant. Fix the draft based on what the agent surfaces. Resolve queries from your conversation context, asking the user if the brief does not answer. Do not invent.
 5. Show the user the polished body inline; revise as requested by re-running the skill.
 6. Send via mailroom once approved. The skill does not send.
 
@@ -30,7 +31,7 @@ The rules the drafting agent and the subeditor both work to are in `email-rulebo
 
 - `email-rulebook.md` — the rules
 - `editor-prompt.md` — the subeditor prompt template
-- `liansu-style.md` — style guide for `--Liansu`; derived from Liansu Yu's sent mail
+- `liansu-voice.md` — voice guide for `--Liansu`; derived from Liansu Yu's sent mail corpus
 
 ## Why a fresh-context subeditor
 
