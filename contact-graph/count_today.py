@@ -42,7 +42,7 @@ SELECT
   COUNT(*) FILTER (
     WHERE state = 'verified' AND verified_at >= (SELECT day_start FROM t)
   ) AS candidates_verified_not_yet_drafted
-FROM connection_queue
+FROM linkedin.connection_queue
 WHERE workflow_label = %s;
 """
 

@@ -29,7 +29,7 @@ DEFAULT_WORKFLOW = 'linkedin_2026'
 LINKEDIN_NOTE_MAX = 300
 
 UPDATE = """
-UPDATE connection_queue
+UPDATE linkedin.connection_queue
 SET state = 'drafted',
     note_text = %s,
     with_note = %s,
