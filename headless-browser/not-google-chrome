@@ -218,12 +218,24 @@ cdp_teardown() {
 run_cdp() {
   local port="$CDP_FIXED_PORT" ws_url="" i rc=0
 
-  # A live Chromium already on this profile means our headless instance cannot
-  # attach to the logged-in session: it lands on an error page and every in-page
-  # fetch() then fails with a misleading "Failed to fetch", which callers read as
-  # a site block or rate limit. Refuse up front with the real cause instead.
-  # SingletonLock is Chromium's own contention marker; its target is "<host>-<pid>",
-  # trusted only if that pid is alive (stale locks are swept at teardown).
+  exec 9>/tmp/chromium.lock
+  if ! "$flock_cmd" -w "$lock_wait" 9; then
+    lock_diag
+    log_event warning "cdp lock-wait timeout after ${lock_wait}s: ${client_cmd[*]}"
+    exit 75
+  fi
+
+  # With the flock held, no sibling not-google-chrome instance is running, so any
+  # live Chromium still on this profile is foreign: a browser the user opened, or
+  # another launcher that bypasses this lock. Our headless instance cannot attach
+  # to an occupied profile; it lands on an error page and every in-page fetch()
+  # then fails with a misleading "Failed to fetch", which callers read as a site
+  # block or rate limit. Refuse with the real cause instead. The check sits after
+  # the flock on purpose: ahead of it, a transient sibling dump (which the flock
+  # serialises) shows a live SingletonLock and would be misread as a foreign
+  # holder and refused. SingletonLock is Chromium's own contention marker; its
+  # target is "<host>-<pid>", trusted only if that pid is alive (stale locks are
+  # swept at teardown).
   if [[ "$(uname)" == Linux ]]; then
     local _stgt _spid
     _stgt="$(readlink "$user_data_dir/SingletonLock" 2>/dev/null || true)"
@@ -234,13 +246,6 @@ run_cdp() {
       log_event warning "cdp refused: chromium pid $_spid holds $user_data_dir: ${client_cmd[*]}"
       exit 75
     fi
-  fi
-
-  exec 9>/tmp/chromium.lock
-  if ! "$flock_cmd" -w "$lock_wait" 9; then
-    lock_diag
-    log_event warning "cdp lock-wait timeout after ${lock_wait}s: ${client_cmd[*]}"
-    exit 75
   fi
 
   # Fixed port + an explicit about:blank so a page target exists immediately.
