@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """Parse an Instagram profile page HTML.
 
-Usage: python3 parse-profile.py <html-file>
+Usage: python3 parse-profile.py [--json] <html-file>
+
+With --json, emit one JSON object (handle, name, followers_raw/following_raw/
+posts_raw, avatar, caption_snippet, and the hydrated fields when present) for
+machine consumers; otherwise print the human-readable report.
 
 Third-party profile dumps in a headless browser reliably contain:
   - <meta property="og:title">        — "Display Name (@handle) • ..."
@@ -127,14 +131,61 @@ def extract_json_fields_for_handle(html, handle):
     return out
 
 
-def main(path):
+def build_profile(html):
+    """Assemble the structured profile dict from a profile-page dump.
+
+    og:* counts (followers/following/posts as raw strings) are reliable for any
+    public profile; the hydrated JSON fields (exact counts, verified, category,
+    bio) are merged on top when present, usually only for the viewer's own or
+    followed accounts.
+    """
+    og_title = get_meta(html, "property", "og:title")
+    og_desc = get_meta(html, "property", "og:description")
+    og_url = get_meta(html, "property", "og:url")
+    og_image = get_meta(html, "property", "og:image")
+    meta_desc = get_meta(html, "name", "description")
+
+    handle, name = parse_handle_and_name(og_title, og_url)
+    counts = parse_count_triple(og_desc)
+    caption_snippet = parse_recent_caption(meta_desc)
+    extra = extract_json_fields_for_handle(html, handle) if handle else {}
+
+    prof = {
+        "handle": handle,
+        "url": f"https://www.instagram.com/{handle}/" if handle else None,
+        "name": name,
+        "followers_raw": counts[0] if counts else None,
+        "following_raw": counts[1] if counts else None,
+        "posts_raw": counts[2] if counts else None,
+        "avatar": og_image,
+        "caption_snippet": caption_snippet,
+        "og_description": og_desc,
+        "meta_description": meta_desc,
+        "html_size": len(html),
+    }
+    # Hydrated fields (absent for most third-party profiles).
+    for k in ("full_name", "biography", "external_url", "category_name",
+              "business_category_name", "follower_count", "following_count",
+              "media_count", "is_verified", "is_private"):
+        prof[k] = extra.get(k)
+    return prof
+
+
+def main(path, as_json=False):
     with open(path, "r") as f:
         html = f.read()
 
     # Login redirect check
     if "/accounts/login" in html[:30000] and "og:url" not in html[:50000]:
-        print("ERROR: redirected to /accounts/login/. Log in via a Chrome-compatible browser first.")
+        if as_json:
+            print(json.dumps({"error": "login_redirect"}))
+        else:
+            print("ERROR: redirected to /accounts/login/. Log in via a Chrome-compatible browser first.")
         sys.exit(1)
+
+    if as_json:
+        print(json.dumps(build_profile(html), ensure_ascii=False))
+        return
 
     og_title = get_meta(html, "property", "og:title")
     og_desc = get_meta(html, "property", "og:description")
@@ -188,7 +239,9 @@ def main(path):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print(f"Usage: {sys.argv[0]} <profile.html>")
+    args = [a for a in sys.argv[1:] if a != "--json"]
+    as_json = "--json" in sys.argv[1:]
+    if len(args) != 1:
+        print(f"Usage: {sys.argv[0]} [--json] <profile.html>")
         sys.exit(1)
-    main(sys.argv[1])
+    main(args[0], as_json=as_json)
