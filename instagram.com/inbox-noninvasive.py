@@ -331,7 +331,7 @@ def fetch_inbox_page(ws, cursor=None, limit=INBOX_PAGE_SIZE):
     return eval_js(ws, js)
 
 
-def cmd_list(ws, max_threads=2000, pace=5.0):
+def cmd_list(ws, max_threads=2000, pace=5.0, start_cursor=None):
     """Enumerate the whole DM inbox (metadata only) by paging the inbox cursor.
 
     Pages from most-recent backwards until the inbox is exhausted or max_threads
@@ -342,7 +342,7 @@ def cmd_list(ws, max_threads=2000, pace=5.0):
     """
     all_threads, seen_ids = [], set()
     viewer_id = ""
-    cursor, pages = None, 0
+    cursor, pages = start_cursor, 0
     has_older, oldest_cursor = None, None
     while True:
         result = fetch_inbox_page(ws, cursor=cursor)
@@ -382,6 +382,7 @@ def cmd_list(ws, max_threads=2000, pace=5.0):
         "thread_count": len(all_threads),
         "pages_fetched": pages,
         "has_older_final": has_older,
+        "oldest_cursor_final": oldest_cursor,
         "complete": (has_older is False),
     }
 
@@ -466,6 +467,8 @@ def main():
     p_list = sub.add_parser("list", help="Emit inbox thread list as JSON")
     p_list.add_argument("--max", type=int, default=2000, dest="max_threads",
         help="Max conversations to enumerate (paginates the inbox cursor up to this cap)")
+    p_list.add_argument("--cursor", dest="start_cursor", default=None,
+        help="Resume paging from this oldest_cursor (opaque string returned by a prior run)")
     sub.add_parser("verify-noninvasive", help="Run list twice, verify no read-state mutation")
     sub.add_parser("raw", help="Dump raw inbox API response for parser diagnosis")
     args = parser.parse_args()
@@ -499,7 +502,7 @@ def main():
         sys.exit(1)
 
     if args.command == "list":
-        result = cmd_list(ws, getattr(args, "max_threads", 2000))
+        result = cmd_list(ws, getattr(args, "max_threads", 2000), start_cursor=getattr(args, "start_cursor", None))
     elif args.command == "verify-noninvasive":
         result = cmd_verify_noninvasive(ws)
     elif args.command == "raw":
