@@ -48,8 +48,7 @@ CREATE TABLE linkedin.profile (
     human_id              INTEGER REFERENCES human (id),
     connector_instance_id INTEGER NOT NULL REFERENCES core.connector_instance (id),
     slug                  TEXT    NOT NULL UNIQUE,
-    urn                   TEXT,
-    context               TEXT
+    urn                   TEXT
 );
 
 -- Plugin: linkedin
