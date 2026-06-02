@@ -102,6 +102,58 @@ if {[file exists $json_file]} { set json_size [file size $json_file] }
 assert_eq $json_size 0 "json file empty (claude was killed before output)"
 
 # ════════════════════════════════════════════════════════════════════════
+section "2b. Timeout after a complete envelope is a success (product over status)"
+# ════════════════════════════════════════════════════════════════════════
+
+# A stub that writes a complete JSON envelope, then sleeps past the
+# deadline — modelling a session that finished its work just before the
+# wall-clock kill landed (e.g. SIGTSTP past the deadline, SIGTERM on
+# resume). timeout(1) exits 124, but the envelope is whole on disk, so
+# _invoke must judge by the product and return success, not fail on the
+# exit status.
+set done_stub [file join $tmp_root claude-done]
+set fd [open $done_stub w]
+puts $fd "#!/bin/sh"
+puts $fd {printf '%s' '{"result":"profile written","is_error":false,"total_cost_usd":0.01,"session_id":"done-sess"}'}
+puts $fd "sleep 30"
+close $fd
+file attributes $done_stub -permissions 0755
+
+proc spar::find_tool {name} {
+    if {$name eq "claude"} { return [list $::done_stub] }
+    return [auto_execok $name]
+}
+
+set log_file_done [file join $log_dir test-done.log]
+set inst_done [spar::Harness new $prompt_dir [file join $tmp_root logs-done]]
+$inst_done set_worker_timeout 2
+
+set t0 [clock milliseconds]
+set rc_done [$inst_done call "test-stage" $log_file_done "dummy prompt"]
+set elapsed_done [expr {[clock milliseconds] - $t0}]
+set sid_done [$inst_done session_id]
+$inst_done destroy
+
+assert_eq $rc_done 0 "_invoke returns rc=0 when the envelope was written before the timeout kill"
+
+# The kill still fires at ~2s (the stub would otherwise sleep 30s), so a
+# prompt return proves the envelope was recovered rather than the call
+# blocking on the stub's natural exit.
+if {$elapsed_done >= 8000} {
+    puts "FAIL: timeout did not fire within budget"
+    puts "  elapsed: ${elapsed_done}ms (expected < 8000ms)"
+    incr ::failures
+} else {
+    puts "  ok: success recovered, kill fired at ${elapsed_done}ms (< 8000ms)"
+    incr ::passes
+}
+
+# The harness extracted result into the log file and the session id from
+# the envelope — the markers of a processed success.
+assert_eq [file exists $log_file_done] 1 "result file written from recovered envelope"
+assert_eq $sid_done "done-sess" "session id captured from recovered envelope"
+
+# ════════════════════════════════════════════════════════════════════════
 section "3. Escape hatch: WorkerTimeoutSecs=0 does not wrap"
 # ════════════════════════════════════════════════════════════════════════
 
