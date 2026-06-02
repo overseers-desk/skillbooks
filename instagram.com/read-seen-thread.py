@@ -476,7 +476,24 @@ def _seen_or_refuse(target, viewer_id):
     return None
 
 
-def cmd_thread(ws, thread_id, max_messages):
+def cmd_thread(ws, thread_id, max_messages, ungated=False):
+    if ungated:
+        # The caller has established this thread is safe to read without the
+        # seen-gate (e.g. old enough that marking it seen is acceptable). Read by
+        # id directly; this also reaches threads too deep to appear in the inbox
+        # snapshot. NOTE: an ungated read can mark the thread seen.
+        paged = fetch_thread_all(ws, thread_id, max_messages)
+        if isinstance(paged, dict) and paged.get("error"):
+            return {"thread_id": thread_id, "ungated": True, "error": paged["error"]}
+        return {
+            "thread_id": thread_id,
+            "ungated": True,
+            "message_count_returned": len(paged.get("items", [])),
+            "pages_fetched": paged.get("pages_fetched"),
+            "has_older_final": paged.get("has_older_final"),
+            "complete": paged.get("has_older_final") is False,
+            "messages": _parse_thread_items(paged.get("items", []), ""),
+        }
     inbox_data = fetch_inbox(ws)
     handle_fetch_events(ws)
     if isinstance(inbox_data, dict) and inbox_data.get("error"):
@@ -541,6 +558,9 @@ def main():
     p_thread.add_argument("--limit", type=int, default=2000,
         help="Max messages to capture per thread; the reader paginates on the "
              "cursor up to this cap (a safety ceiling, not a target)")
+    p_thread.add_argument("--ungated", action="store_true",
+        help="Skip the seen-gate and read by id directly (may mark the thread "
+             "seen). Only for threads the caller has established are safe, e.g. old ones.")
 
     p_handle = sub.add_parser("by-handle", help="Read the thread for a handle (refuses if unread)")
     p_handle.add_argument("handle")
@@ -575,7 +595,7 @@ def main():
         sys.exit(1)
 
     if args.command == "thread":
-        result = cmd_thread(ws, args.thread_id, args.limit)
+        result = cmd_thread(ws, args.thread_id, args.limit, ungated=getattr(args, "ungated", False))
     elif args.command == "by-handle":
         result = cmd_by_handle(ws, args.handle, args.limit)
     elif args.command == "all-seen":
