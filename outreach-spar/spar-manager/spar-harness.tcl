@@ -191,6 +191,16 @@ oo::class create spar::Harness {
                 }
             }
 
+            # The wrapped timeout(1) reports a wall-clock kill via the exit
+            # codes noted above, but that status is a label, not a verdict:
+            # a kill can land after the envelope was already written — the
+            # process group SIGTSTP'd past the deadline and SIGTERM'd on
+            # resume once the work had finished, or a late SIGALRM on a
+            # thrashing host. Success is judged by the product on disk, so
+            # one check covers every "clock said too long but the work was
+            # done" cause without a per-cause branch. The status only
+            # selects the failure wording when no usable envelope survives.
+            set timed_out 0
             if {[catch {
                 exec {*}$cmd > $json_file 2> "${log_file}.stderr"
             } _err opts]} {
@@ -198,15 +208,21 @@ oo::class create spar::Harness {
                 if {$WorkerTimeoutSecs > 0 && [lindex $ec 0] eq "CHILDSTATUS"} {
                     set exit_code [lindex $ec 2]
                     if {$exit_code == 124 || $exit_code == 125 || $exit_code == 137} {
-                        ${::spar::harness_log}::error \
-                            "FAIL ($stage: timeout after ${WorkerTimeoutSecs}s): $Slug"
-                        return 1
+                        set timed_out 1
                     }
                 }
-                if {![file exists $json_file] || [file size $json_file] == 0} {
+            }
+
+            # No bytes means the work did not land. Name the timeout when
+            # that was the cause, a generic error otherwise.
+            if {![file exists $json_file] || [file size $json_file] == 0} {
+                if {$timed_out} {
+                    ${::spar::harness_log}::error \
+                        "FAIL ($stage: timeout after ${WorkerTimeoutSecs}s): $Slug"
+                } else {
                     ${::spar::harness_log}::error "FAIL ($stage rc=error): $Slug"
-                    return 1
                 }
+                return 1
             }
 
             set fd [open $json_file r]
@@ -216,8 +232,15 @@ oo::class create spar::Harness {
                 close $fd
             }
 
+            # A truncated envelope (SIGTERM mid-write) fails to parse;
+            # attribute it to the timeout when that was the cause.
             if {[catch {set parsed [::json::json2dict $raw_json]}]} {
-                ${::spar::harness_log}::error "FAIL ($stage: invalid JSON): $Slug"
+                if {$timed_out} {
+                    ${::spar::harness_log}::error \
+                        "FAIL ($stage: timeout after ${WorkerTimeoutSecs}s): $Slug"
+                } else {
+                    ${::spar::harness_log}::error "FAIL ($stage: invalid JSON): $Slug"
+                }
                 return 1
             }
 
