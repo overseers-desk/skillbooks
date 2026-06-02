@@ -136,6 +136,18 @@ proc harness_run {row opts} {
         msg_cancelled $row
         return
     }
+
+    # Dry-run short-circuit. prepare_for_pool has already assembled the
+    # prompt dir exactly as a live run would. The only side-effecting step
+    # left is the claude exec inside the harness, which authors and writes
+    # the output file, so skip it and report done. This mirrors
+    # ses_send_one's `if {$dry_run} {return [list ok dry-run]}`. Read with
+    # plain dict ops so the check needs no spar:: helpers loaded yet.
+    if {[dict exists $opts dry_run] && [dict get $opts dry_run]} {
+        msg_done $row [list dry_run 1]
+        return
+    }
+
     _ensure_harness_loaded
 
     set prompt_dir    [dict get $opts prompt_dir]

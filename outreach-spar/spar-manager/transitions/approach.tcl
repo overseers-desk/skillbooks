@@ -22,16 +22,20 @@ oo::class create ::spar::transitions::ApproachTransition {
     # prepare_for_pool — pool-shape entry. Wraps spar::a::prepare_for_pool
     # (which returns {logs_dir <abs path> rows {{stem pdir} ...} result <r>})
     # and repackages each pair into the per-row opts dict the harness_run
-    # worker consumes.
+    # worker consumes. dry_run is threaded into each row so the worker can
+    # skip the claude exec under --dry-run (the prompt dir is still
+    # assembled, mirroring the send path's dry-run behaviour).
     method prepare_for_pool {opts on_progress} {
         set prep [::spar::a::prepare_for_pool $opts $on_progress]
         set logs_dir [dict get $prep logs_dir]
+        set dry_run [spar::dict_get_default $opts dry_run 0]
         set rows {}
         foreach pair [dict get $prep rows] {
             lassign $pair stem pdir
             lappend rows [list $stem [dict create \
                 prompt_dir    $pdir \
                 log_dir       $logs_dir \
+                dry_run       $dry_run \
                 harness_class spar::ApproachHarness]]
         }
         return [dict create worker_proc harness_run rows $rows]
