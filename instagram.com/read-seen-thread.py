@@ -293,12 +293,14 @@ def find_thread(inbox_data, thread_id=None, handle=None):
 # Thread message fetch (only invoked after the seen gate has passed).
 # ---------------------------------------------------------------------------
 
-def fetch_thread_messages(ws, thread_id, message_limit):
-    """Call /api/v1/direct_v2/threads/<thread_id>/ for message content.
+def fetch_thread_messages(ws, thread_id, message_limit, cursor=None):
+    """Fetch one page of /api/v1/direct_v2/threads/<thread_id>/ message content.
 
     Must only be called after is_thread_unseen() returned False for this
-    thread on the same inbox snapshot.
+    thread on the same inbox snapshot. `cursor` pages further back into history
+    (pass the previous page's thread.oldest_cursor); omit it for the first page.
     """
+    set_cursor = f"params.set('cursor', {json.dumps(cursor)});" if cursor else ""
     js = f"""
     (async () => {{
         const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
@@ -307,6 +309,7 @@ def fetch_thread_messages(ws, thread_id, message_limit):
             direction: 'older',
             limit: '{message_limit}',
         }});
+        {set_cursor}
         const resp = await fetch('/api/v1/direct_v2/threads/{thread_id}/?' + params.toString(), {{
             credentials: 'include',
             headers: {{
@@ -322,27 +325,74 @@ def fetch_thread_messages(ws, thread_id, message_limit):
     return eval_js(ws, js)
 
 
+# Page size per thread-content call. Instagram caps a single thread fetch well
+# below a long history, so capturing every message means paging on the cursor.
+THREAD_PAGE_SIZE = 100
+
+
+def fetch_thread_all(ws, thread_id, max_messages, page_size=THREAD_PAGE_SIZE, pace=5.0):
+    """Page a thread from newest backwards until it is exhausted or max_messages
+    is reached, so every message is captured rather than only the first window.
+
+    De-dupes by item_id across page boundaries (the cursor item can repeat).
+    `has_older_final` carries the raw value from the last page (None if the
+    field was absent), so a wrong cursor field surfaces as incomplete instead of
+    masquerading as a fully-captured thread.
+    """
+    all_items, seen_ids = [], set()
+    cursor, pages = None, 0
+    has_older, oldest_cursor = None, None
+    while True:
+        msg_data = fetch_thread_messages(ws, thread_id, page_size, cursor=cursor)
+        handle_fetch_events(ws)
+        if isinstance(msg_data, dict) and msg_data.get("error"):
+            return {"items": all_items, "pages_fetched": pages,
+                    "has_older_final": has_older, "error": msg_data.get("error")}
+        thread = (msg_data.get("thread") or {}) if isinstance(msg_data, dict) else {}
+        pages += 1
+        for it in thread.get("items", []) or []:
+            iid = str(it.get("item_id") or "")
+            if iid and iid in seen_ids:
+                continue
+            if iid:
+                seen_ids.add(iid)
+            all_items.append(it)
+        has_older = thread.get("has_older")
+        oldest_cursor = thread.get("oldest_cursor")
+        if len(all_items) >= max_messages or not has_older or not oldest_cursor:
+            break
+        cursor = oldest_cursor
+        time.sleep(pace)
+    return {"items": all_items, "pages_fetched": pages, "has_older_final": has_older}
+
+
 def _parse_thread_items(items, viewer_id):
-    """Convert raw thread.items into structured message rows."""
+    """Convert raw thread.items into structured message rows, one per item.
+
+    Lossless by intent: every item becomes a row carrying the message id
+    (item_id), the sender id (from_user_id), full message text with no
+    truncation, and for an unrecognised item_type the raw item under `raw` so no
+    content is discarded. The conversation id is the thread itself.
+    """
     rows = []
     for it in items:
         user_id = str(it.get("user_id", "") or "")
         item_type = it.get("item_type", "")
         ts = it.get("timestamp", 0)
 
-        text = ""
+        raw = None
         if item_type == "text":
             text = it.get("text", "") or ""
         elif item_type == "like":
             text = "[like]"
         elif item_type == "media_share":
             ms = it.get("media_share") or {}
-            cap = (ms.get("caption") or {})
+            cap = ms.get("caption") or {}
             cap_text = (cap.get("text") if isinstance(cap, dict) else "") or ""
-            text = f"[shared post] {cap_text[:120]}".strip()
+            text = f"[shared post] {cap_text}".strip()
         elif item_type == "reel_share":
             rs = it.get("reel_share") or {}
-            text = f"[reel-share] {(rs.get('text') or '')[:200]}".strip()
+            text = f"[reel-share] {rs.get('text') or ''}".strip()
         elif item_type == "raven_media":
             text = "[disappearing media]"
         elif item_type == "story_share":
@@ -351,41 +401,56 @@ def _parse_thread_items(items, viewer_id):
             text = "[media]"
         elif item_type == "link":
             ln = it.get("link") or {}
-            text = f"[link] {(ln.get('link_context') or {}).get('link_url', '')}".strip()
+            ctx = ln.get("link_context") or {}
+            text = f"[link] {ctx.get('link_url', '')} {ln.get('text') or ''}".strip()
         elif item_type == "action_log":
             al = it.get("action_log") or {}
-            text = f"[action] {al.get('description', '')[:120]}"
+            text = f"[action] {al.get('description', '')}".strip()
         else:
             text = f"[{item_type}]"
+            raw = it
 
-        rows.append({
+        row = {
             "is_from_viewer": (user_id == viewer_id) if viewer_id else None,
             "from_user_id": user_id,
             "item_type": item_type,
             "timestamp_iso": _micros_to_iso(ts),
             "text": text,
             "item_id": str(it.get("item_id") or ""),
-        })
+        }
+        if raw is not None:
+            row["raw"] = raw
+        rows.append(row)
     return rows
 
 
-def _build_thread_result(target, inbox_data, msg_data, viewer_id):
-    """Combine inbox-side metadata and thread-side message list into one dict."""
-    thread = (msg_data.get("thread") or {}) if isinstance(msg_data, dict) else {}
-    items = thread.get("items", []) or []
+def _build_thread_result(target, paged, viewer_id):
+    """Combine inbox-side metadata with the paged message list into one dict.
+
+    `complete` is True only when the last page reported has_older == False; a
+    cap hit (has_older still True) or an absent field (None) leaves it False so a
+    partial capture is never reported as whole.
+    """
+    items = paged.get("items", []) or []
     users = target.get("users") or []
-    other_party = ""
-    if users:
-        other_party = users[0].get("username", "")
-    return {
+    other_party = users[0].get("username", "") if users else ""
+    has_older_final = paged.get("has_older_final")
+    result = {
         "thread_id": target.get("thread_id"),
+        "thread_v2_id": target.get("thread_v2_id"),
         "other_party": other_party,
         "is_group": bool(target.get("is_group")),
         "last_activity_iso": _micros_to_iso(target.get("last_activity_at", 0)),
         "viewer_id": viewer_id,
         "message_count_returned": len(items),
+        "pages_fetched": paged.get("pages_fetched"),
+        "has_older_final": has_older_final,
+        "complete": (has_older_final is False) and not paged.get("error"),
         "messages": _parse_thread_items(items, viewer_id),
     }
+    if paged.get("error"):
+        result["error"] = paged["error"]
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -411,7 +476,7 @@ def _seen_or_refuse(target, viewer_id):
     return None
 
 
-def cmd_thread(ws, thread_id, message_limit):
+def cmd_thread(ws, thread_id, max_messages):
     inbox_data = fetch_inbox(ws)
     handle_fetch_events(ws)
     if isinstance(inbox_data, dict) and inbox_data.get("error"):
@@ -420,15 +485,12 @@ def cmd_thread(ws, thread_id, message_limit):
     refused = _seen_or_refuse(target, viewer_id)
     if refused:
         return refused
-    time.sleep(2)
-    msg_data = fetch_thread_messages(ws, thread_id, message_limit)
-    handle_fetch_events(ws)
-    if isinstance(msg_data, dict) and msg_data.get("error"):
-        return msg_data
-    return _build_thread_result(target, inbox_data, msg_data, viewer_id)
+    time.sleep(5)
+    paged = fetch_thread_all(ws, thread_id, max_messages)
+    return _build_thread_result(target, paged, viewer_id)
 
 
-def cmd_by_handle(ws, handle, message_limit):
+def cmd_by_handle(ws, handle, max_messages):
     inbox_data = fetch_inbox(ws)
     handle_fetch_events(ws)
     if isinstance(inbox_data, dict) and inbox_data.get("error"):
@@ -437,15 +499,12 @@ def cmd_by_handle(ws, handle, message_limit):
     refused = _seen_or_refuse(target, viewer_id)
     if refused:
         return refused
-    time.sleep(2)
-    msg_data = fetch_thread_messages(ws, target.get("thread_id"), message_limit)
-    handle_fetch_events(ws)
-    if isinstance(msg_data, dict) and msg_data.get("error"):
-        return msg_data
-    return _build_thread_result(target, inbox_data, msg_data, viewer_id)
+    time.sleep(5)
+    paged = fetch_thread_all(ws, target.get("thread_id"), max_messages)
+    return _build_thread_result(target, paged, viewer_id)
 
 
-def cmd_all_seen(ws, message_limit):
+def cmd_all_seen(ws, max_messages):
     inbox_data = fetch_inbox(ws)
     handle_fetch_events(ws)
     if isinstance(inbox_data, dict) and inbox_data.get("error"):
@@ -467,17 +526,9 @@ def cmd_all_seen(ws, message_limit):
                 "marked_as_unread": bool(t.get("marked_as_unread")),
             })
             continue
-        time.sleep(2)
-        msg_data = fetch_thread_messages(ws, tid, message_limit)
-        handle_fetch_events(ws)
-        if isinstance(msg_data, dict) and msg_data.get("error"):
-            results["threads"].append({
-                "thread_id": tid,
-                "other_party": username,
-                "error": msg_data.get("error"),
-            })
-            continue
-        results["threads"].append(_build_thread_result(t, inbox_data, msg_data, viewer_id))
+        time.sleep(5)
+        paged = fetch_thread_all(ws, tid, max_messages)
+        results["threads"].append(_build_thread_result(t, paged, viewer_id))
     return results
 
 
@@ -487,15 +538,16 @@ def main():
 
     p_thread = sub.add_parser("thread", help="Read a thread by thread_id (refuses if unread)")
     p_thread.add_argument("thread_id")
-    p_thread.add_argument("--limit", type=int, default=50,
-        help="Max messages to return per thread")
+    p_thread.add_argument("--limit", type=int, default=2000,
+        help="Max messages to capture per thread; the reader paginates on the "
+             "cursor up to this cap (a safety ceiling, not a target)")
 
     p_handle = sub.add_parser("by-handle", help="Read the thread for a handle (refuses if unread)")
     p_handle.add_argument("handle")
-    p_handle.add_argument("--limit", type=int, default=50)
+    p_handle.add_argument("--limit", type=int, default=2000)
 
     p_all = sub.add_parser("all-seen", help="Read every SEEN thread; refuses each unread one separately")
-    p_all.add_argument("--limit", type=int, default=50)
+    p_all.add_argument("--limit", type=int, default=2000)
 
     args = parser.parse_args()
     if not args.command:

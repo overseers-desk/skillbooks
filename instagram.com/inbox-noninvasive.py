@@ -247,6 +247,8 @@ def _parse_inbox_response(data):
         else:
             username = t.get("thread_title", "")
             full_name = ""
+        user_id = str(users[0].get("pk") or users[0].get("id") or "") if users else ""
+        user_ids = [str(u.get("pk") or u.get("id") or "") for u in users]
 
         last_activity_ts = t.get("last_activity_at", 0)
         last_activity_iso = _microseconds_to_iso(last_activity_ts)
@@ -282,7 +284,10 @@ def _parse_inbox_response(data):
         results.append({
             "username": username,
             "full_name": full_name,
+            "user_id": user_id,
+            "user_ids": user_ids,
             "thread_id": t.get("thread_id", ""),
+            "thread_v2_id": t.get("thread_v2_id"),
             "last_activity_iso": last_activity_iso,
             "last_snippet": snippet,
             "unseen": unseen,
@@ -291,49 +296,94 @@ def _parse_inbox_response(data):
     return results
 
 
-def cmd_list(ws):
-    """Fetch the DM inbox thread list without navigating to /direct/inbox/."""
-    # Get CSRF token and App-ID from the home page session context.
-    js = """
-    (async () => {
+INBOX_PAGE_SIZE = 20
+
+
+def fetch_inbox_page(ws, cursor=None, limit=INBOX_PAGE_SIZE):
+    """Fetch one page of /api/v1/direct_v2/inbox/ metadata. This endpoint does
+    not change read state. `cursor` pages to older threads (pass the previous
+    page's oldest_cursor); omit it for the first page.
+    """
+    set_cursor = f"params.set('cursor', {json.dumps(cursor)});" if cursor else ""
+    js = f"""
+    (async () => {{
         const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
-        const appId = '936619743392459';
-        const params = new URLSearchParams({
+        const params = new URLSearchParams({{
             visual_message_return_type: 'unseen',
             thread_message_limit: '1',
             persistentBadging: 'true',
-            limit: '20',
-        });
-        const resp = await fetch('/api/v1/direct_v2/inbox/?' + params.toString(), {
+            limit: '{limit}',
+        }});
+        {set_cursor}
+        const resp = await fetch('/api/v1/direct_v2/inbox/?' + params.toString(), {{
             credentials: 'include',
-            headers: {
-                'X-IG-App-ID': appId,
+            headers: {{
+                'X-IG-App-ID': '936619743392459',
                 'X-CSRFToken': csrf,
                 'X-Requested-With': 'XMLHttpRequest',
-            }
-        });
+            }}
+        }});
         const status = resp.status;
-        if (!resp.ok) {
-            return JSON.stringify({error: 'HTTP ' + status, status: status});
-        }
-        const data = await resp.json();
-        return JSON.stringify({status: status, data: data});
-    })()
+        if (!resp.ok) return JSON.stringify({{error: 'HTTP ' + status, status: status}});
+        return JSON.stringify({{status: status, data: await resp.json()}});
+    }})()
     """
-    result = eval_js(ws, js)
-    handle_fetch_events(ws)
+    return eval_js(ws, js)
 
-    if isinstance(result, dict) and result.get("error"):
-        return result
 
-    status = result.get("status")
-    data = result.get("data", {})
+def cmd_list(ws, max_threads=2000, pace=5.0):
+    """Enumerate the whole DM inbox (metadata only) by paging the inbox cursor.
 
-    if status == 401 or status == 403:
-        return {"error": f"Instagram returned HTTP {status}. Session may be expired or rate-limited."}
-
-    threads = _parse_inbox_response(data)
-    return {"threads": threads, "thread_count": len(threads)}
+    Pages from most-recent backwards until the inbox is exhausted or max_threads
+    is reached, de-duping by thread_id. `has_older_final` carries the raw value
+    from the last page (None if the field was absent), so a wrong cursor field
+    surfaces as incomplete rather than masquerading as the whole inbox. Stays
+    noninvasive: the inbox endpoint returns metadata and does not mark seen.
+    """
+    all_threads, seen_ids = [], set()
+    viewer_id = ""
+    cursor, pages = None, 0
+    has_older, oldest_cursor = None, None
+    while True:
+        result = fetch_inbox_page(ws, cursor=cursor)
+        handle_fetch_events(ws)
+        if isinstance(result, dict) and result.get("error"):
+            if all_threads:
+                break
+            return result
+        status = result.get("status")
+        if status in (401, 403):
+            return {"error": f"Instagram returned HTTP {status}. Session may be expired or rate-limited."}
+        data = result.get("data", {})
+        inbox = data.get("inbox", data)
+        if not viewer_id:
+            viewer = data.get("viewer") or {}
+            viewer_id = str(viewer.get("pk") or viewer.get("id") or "")
+        pages += 1
+        before = len(all_threads)
+        for t in _parse_inbox_response(data):
+            tid = t.get("thread_id")
+            if tid and tid in seen_ids:
+                continue
+            if tid:
+                seen_ids.add(tid)
+            all_threads.append(t)
+        has_older = inbox.get("has_older")
+        oldest_cursor = inbox.get("oldest_cursor")
+        if len(all_threads) == before:
+            break  # page added nothing new: cursor is not advancing, do not loop
+        if len(all_threads) >= max_threads or not has_older or not oldest_cursor:
+            break
+        cursor = oldest_cursor
+        time.sleep(pace)
+    return {
+        "viewer_id": viewer_id,
+        "threads": all_threads,
+        "thread_count": len(all_threads),
+        "pages_fetched": pages,
+        "has_older_final": has_older,
+        "complete": (has_older is False),
+    }
 
 
 def cmd_verify_noninvasive(ws):
@@ -413,7 +463,9 @@ def cmd_raw(ws):
 def main():
     parser = argparse.ArgumentParser(description="Instagram inbox metadata reader (noninvasive)")
     sub = parser.add_subparsers(dest="command")
-    sub.add_parser("list", help="Emit inbox thread list as JSON")
+    p_list = sub.add_parser("list", help="Emit inbox thread list as JSON")
+    p_list.add_argument("--max", type=int, default=2000, dest="max_threads",
+        help="Max conversations to enumerate (paginates the inbox cursor up to this cap)")
     sub.add_parser("verify-noninvasive", help="Run list twice, verify no read-state mutation")
     sub.add_parser("raw", help="Dump raw inbox API response for parser diagnosis")
     args = parser.parse_args()
@@ -447,7 +499,7 @@ def main():
         sys.exit(1)
 
     if args.command == "list":
-        result = cmd_list(ws)
+        result = cmd_list(ws, getattr(args, "max_threads", 2000))
     elif args.command == "verify-noninvasive":
         result = cmd_verify_noninvasive(ws)
     elif args.command == "raw":
