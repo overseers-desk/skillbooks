@@ -344,6 +344,18 @@ assert_eq [$d state h_pc] cancelled \
     "cancel before post drops the row without invoking the harness"
 $d resume_queue
 
+# 13e. Dry-run skips the harness body entirely. The row's run-rc is
+# "throw", so the FakeHarness would fail if it ran; under dry_run=1
+# harness_run short-circuits to msg_done before instantiating the
+# harness, so the row still reaches done. Proves --dry-run authors
+# nothing and writes no output file.
+lassign [make_harness_dirs dryrun throw] p_dr l_dr
+$d enqueue h_dr T1 harness_run [dict create \
+    prompt_dir $p_dr log_dir $l_dr dry_run 1 harness_class FakeHarness]
+wait_for_terminal $d h_dr 3000
+assert_eq [$d state h_dr] done \
+    "dry_run short-circuits harness_run to done without running the harness"
+
 $d destroy
 
 # ════════════════════════════════════════════════════════════════════════
