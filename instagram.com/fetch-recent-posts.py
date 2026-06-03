@@ -268,6 +268,19 @@ def _parse_media_items(items):
             "taken_at_iso": _seconds_to_iso(taken_at),
             "like_count": like_count,
             "comment_count": comment_count,
+            # video/reel play, view and reshare counts (None on stills), the
+            # Facebook-crosspost counterparts (None unless shared to FB), the
+            # video length, and whether the creator hid metrics: engagement and
+            # format signal beyond likes/comments.
+            "play_count": item.get("play_count"),
+            "ig_play_count": item.get("ig_play_count"),
+            "fb_play_count": item.get("fb_play_count"),
+            "view_count": item.get("view_count"),
+            "media_repost_count": item.get("media_repost_count"),
+            "fb_like_count": item.get("fb_like_count"),
+            "fb_comment_count": item.get("fb_comment_count"),
+            "video_duration": item.get("video_duration"),
+            "like_and_view_counts_disabled": bool(item.get("like_and_view_counts_disabled")),
             "caption": caption_text,
             "hashtags": _extract_hashtags(caption_text),
             "mentions": _extract_mentions(caption_text),
@@ -398,12 +411,16 @@ def fetch_user_feed_paginated(ws, user_id, limit, pause_between=2):
     return items[:limit]
 
 
-def cmd_posts(ws, handle, limit):
+def cmd_posts(ws, handle, limit, raw_out=None):
     """Fetch recent posts for a handle. Paginates if limit > 12.
 
     Strategy: resolve user_id by navigating to the profile page, then
     fetch the user feed API directly. The XHR-intercept optimization was
     removed since it only saves the first page and complicates pagination.
+
+    raw_out: optional path. When set, the unparsed raw feed-API items are
+    written there as JSON before parsing, so a caller can keep the full
+    response and re-derive any field later without re-fetching. Off by default.
     """
     user_id_or_err = resolve_user_id(ws, handle)
     if isinstance(user_id_or_err, dict) and user_id_or_err.get("error"):
@@ -412,6 +429,14 @@ def cmd_posts(ws, handle, limit):
 
     time.sleep(2)
     items = fetch_user_feed_paginated(ws, user_id, limit)
+    if raw_out:
+        try:
+            with open(raw_out, "w") as f:
+                json.dump({"handle": handle, "user_id": user_id, "items": items},
+                          f, ensure_ascii=False)
+            sys.stderr.write(f"Raw feed items written to {raw_out}\n")
+        except OSError as e:
+            sys.stderr.write(f"Failed to write --raw-out {raw_out}: {e}\n")
     if not items:
         return {
             "handle": handle,
@@ -437,6 +462,8 @@ def main():
     p_posts = sub.add_parser("posts", help="Fetch recent posts for a handle")
     p_posts.add_argument("handle")
     p_posts.add_argument("--limit", type=int, default=12)
+    p_posts.add_argument("--raw-out", default=None,
+                         help="also write the unparsed raw feed-API items to this path (off by default)")
 
     args = parser.parse_args()
     if not args.command:
@@ -465,7 +492,7 @@ def main():
     time.sleep(3)
 
     if args.command == "posts":
-        result = cmd_posts(ws, args.handle, args.limit)
+        result = cmd_posts(ws, args.handle, args.limit, raw_out=args.raw_out)
     else:
         result = {"error": f"Unknown command: {args.command}"}
 
