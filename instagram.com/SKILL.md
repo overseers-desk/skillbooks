@@ -102,14 +102,18 @@ Requires a logged-in session. Does not navigate to `/direct/inbox/` to avoid tri
 ```bash
 not-google-chrome --cdp -- python3 $HOME/.claude/skills/instagram.com/fetch-recent-posts.py posts HANDLE
 not-google-chrome --cdp -- python3 $HOME/.claude/skills/instagram.com/fetch-recent-posts.py posts HANDLE --limit 50
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/instagram.com/fetch-recent-posts.py posts HANDLE --raw-out /path/raw.json
 ```
 
 Default limit is 12. Pagination via the feed API's `next_max_id` cursor happens automatically when `--limit` exceeds 12. The script navigates to the profile page once to resolve the user_id (from inline JSON or the `web_profile_info` API), then calls `/api/v1/feed/user/<user_id>/` directly in a loop until the limit is reached or `more_available` is false.
 
+`--raw-out PATH` (off by default) also writes the unparsed raw feed-API items (the full per-post objects, ~130 fields each) to PATH before parsing. Use it when a caller wants to keep the whole response and re-derive fields later without re-fetching; stdout stays the parsed form.
+
 Each post entry includes:
 
 - `post_id`, `shortcode`, `url`, `post_type` (image/video/carousel/reel), `taken_at_iso`
-- `like_count`, `comment_count`
+- `like_count`, `comment_count`, `play_count`, `ig_play_count`, `fb_play_count`, `view_count`, `media_repost_count`, `fb_like_count`, `fb_comment_count` (play/view/reshare null on stills; the `fb_*` are null unless the post was cross-posted to Facebook)
+- `video_duration` (seconds, null on stills), `like_and_view_counts_disabled` (the creator hid metrics)
 - `caption`, `hashtags` (regex-extracted from caption), `mentions` (regex-extracted from caption)
 - `tagged_users` (the "tag people" feature on the post; aggregated across carousel slides)
 - `coauthors` (the dual-author collab-post feature)
