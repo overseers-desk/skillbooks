@@ -1,6 +1,6 @@
 ---
 name: instagram
-description: "search accounts, read profiles (display name, follower/following/post counts, recent caption snippet), enumerate a profile's followers or following list; find by name or handle."
+description: "search accounts, read profiles (display name, follower/following/post counts, recent caption snippet), enumerate a profile's followers or following list; find by name or handle. Also audits tag-reshare compliance for a brand account (which customer tags since a given date were not reshared)."
 argument-hint: <name, handle, or search terms>
 ---
 
@@ -206,6 +206,34 @@ The five non-URL fields mirror the §8 comment-row shape, so the same sweep pre-
 `stop_reason` values: `limit` (hit the `--limit` cap), `exhausted` (endpoint returned no more pages), or `error:<detail>` (HTTP failure, often throttling).
 
 Verified 2026-05-19 against `@_a.j.handyman_`: header counts 162 followers / 188 following; enumerated 162 followers (full match) and 182 following (6-entry gap, consistent with cached-header drift). Both lists written to CSV cleanly across 7-8 pages each.
+
+## 11. Tag-reshare compliance audit
+
+Built for SOP D40 (Social Media Reply) §6: the service team must reshare customer-tagged stories and posts to the brand's own story. This script audits which tags since `--since` were not reshared.
+
+```bash
+not-google-chrome --cdp -- python3 $HOME/.claude/skills/instagram.com/audit-tag-reshares.py \
+    audit historicrivermill --since 2026-05-01
+```
+
+Add `--debug` on the first run to dump raw API responses to `/tmp/instagram-audit-*.json`. The reshare-match heuristic (which inspects `reshared_reel.id`, `imported_taken_at`, and `reel_mentions[].user_id`) is best-effort and may need adjustment once real fields are inspected.
+
+What the script pulls:
+
+- **Tagged feed posts** — `/api/v1/usertags/<user_id>/feed/`, paginated until items predate `--since`. Permanent data, full coverage.
+- **Activity-inbox story-mention notifications** — `/api/v1/news/inbox/`, filtered to story-mention rows. Instagram retains these for roughly 14-30 days only; older story tags are unrecoverable.
+- **Currently-live story tray** — `/api/v1/feed/user/<user_id>/story/`, for stories posted in the last 24h.
+- **Own story archive** — `/api/v1/archive/reel/day_shells/` + `seen_media`, walked back to `--since`. Only readable if the logged-in viewer IS the target account. If the viewer is a different account, the script reports `archive_not_accessible` in `coverage` and lists the implication in `notes`.
+
+Reshare matching: for each tag (post or story), the script looks for a target-side story that either (a) carries a `reshared_media_id` equal to the tag's media id, or (b) has a `reel_mentions` entry pointing at the tag's actor within 24 hours of the tag timestamp.
+
+Output is a JSON object with `summary` (counts), `missed_post_reshares`, `missed_story_tags`, `matched_*` lists, a `coverage` block (per source), and a `notes` array listing every applicable caveat. Always read `notes` and `coverage` before quoting a count — the same audit run can give very different numbers depending on whether the archive was reachable.
+
+Operational notes:
+
+- For a complete historical audit, the user must log in as the brand account in Chromium before running. A personal-account session can only see live (<24h) stories on the brand side.
+- To build an ongoing audit trail, schedule the script daily and append the output to a log. Combined with the activity-inbox retention window, this captures every story tag before Instagram drops the notification.
+- The script does not write or modify any Instagram state. All endpoints are read-only fetches.
 
 ## What this skill does NOT do (by design)
 
