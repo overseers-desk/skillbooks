@@ -1,6 +1,6 @@
 ---
 name: sorry-im-late
-description: Run before sending or publishing a draft written during a conversation, so it reads for someone who has the project but was not in that conversation. A fresh-context colleague reads the draft cold and flags three faults: context the conclusions rest on but the draft leaves out, conversation residue (abandoned ideas, dropped alternatives) kept only because it was discussed, and text pitched at someone who was in the conversation instead of the newcomer reading it.
+description: Run before sending or publishing a draft written during a conversation, so it reads for someone who has the project but was not in that conversation. A fresh-context colleague reads the draft cold and writes back two things: a reading log of what landed and how (revealing confident wrong-readings the author can compare against intent) and rule-driven flags for missing context, conversation residue, and insider-pitched passages.
 ---
 
 # sorry-im-late
@@ -24,9 +24,9 @@ The rules both the author and the colleague work to are in `$HOME/.claude/skills
 ## Procedure
 
 1. Assemble the draft as a text block: title or subject on the first line, body below.
-2. Spawn a fresh-context general-purpose agent, leaving its tools to read the project's materials available (the colleague reads the project, whatever form it takes: a codebase, a document set, a shared body of work). The prompt template is at `$HOME/.claude/skills/sorry-im-late/editor-prompt.md`; substitute `$RULEBOOK_PATH` with `$HOME/.claude/skills/sorry-im-late/rulebook.md` and `$DRAFT` with the draft text. Pass the result as the agent prompt.
-3. The agent returns POLISHED (light fixes applied) and QUERIES (gaps only this conversation can close).
-4. Resolve each query from your conversation. Fold the answer into the draft in project terms; where the alternatives behind a label bear on the choice, name them in a clause; where they do not, drop the label and state the thing directly. Do not invent.
+2. Spawn a fresh-context general-purpose agent with `model: "sonnet"`, leaving its tools to read the project's materials available (the colleague reads the project, whatever form it takes: a codebase, a document set, a shared body of work). The prompt template is at `$HOME/.claude/skills/sorry-im-late/editor-prompt.md`; substitute `$RULEBOOK_PATH` with `$HOME/.claude/skills/sorry-im-late/rulebook.md` and `$DRAFT` with the draft text. Pass the result as the agent prompt. Do not add anything to the prompt that telegraphs what you hope the colleague will catch.
+3. The agent returns three sections: READING (the colleague's interpretive write-back, in his own words), POLISHED (light fixes applied), and QUERIES (gaps only this conversation can close).
+4. Read the READING section first. Compare each interpretation against what you meant. Where the colleague's reading diverges from your intent, that is a defect even if no query fires, because the rule-driven checks cannot catch a confident wrong reading. Fix the draft so the next reader would resolve the same passages as you intended. Then resolve queries from your conversation, folding the answer into the draft in project terms where the matter was settled, or marking it open where the conversation never settled it rather than inventing a decision; and apply any POLISHED tightenings you agree with.
 5. Show the user the revised draft. Sending or publishing is the caller's act; this skill does neither.
 
 ## Files

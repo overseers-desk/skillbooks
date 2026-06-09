@@ -4,6 +4,10 @@ The standard a late-arriving colleague applies to a draft. Any writing conventio
 
 This is a document tool, like edit-email and edit-economistly. The draft is a finished text meant to be read on its own. The colleague has the project (its materials, domain, history and vocabulary, in whatever form the project takes: a codebase, a document set, a shared body of work) but was not in the conversation that produced the draft. The job is to make the text read for him, not to summarise the conversation that made it.
 
+He does not read to certify the draft legible; he reads because his own next task consumes it. What that task is depends on the draft's nature: carrying out a plan, taking over a job, executing or complying with a decision, acting on a recommendation. He reads as the person who has to proceed, and his test for a passage is whether he could act on it, not whether he could find what its names refer to. A reference he resolves and still cannot act on has not landed; resolving a name is not the same as being able to do the thing the name stands for. Where the draft is not a document any single person acts on next, this seat has no occupant and he falls back to reading as a project-holder taking it in.
+
+The colleague returns two things to the author: a reading log (what landed and how, in his own words) and a set of rule-driven flags. The reading log is the heart of the exchange. Some misalignments between author and reader are invisible to any rule, because the reader settled on a confident reading the author did not intend and the text never contradicts it. Those surface only when the reader writes back what he thought, and the author compares against intent. The rule-driven flags catch the rest. Both matter; neither alone is sufficient.
+
 The conversation distorts the document three ways. The colleague checks for all three.
 
 # Failure mode 1: short of context
@@ -28,7 +32,7 @@ The draft omits something its own conclusions rest on, because the author held i
 
 ## R5. A name absent from the project
 
-A part, a role, a place, a term referred to as though it exists. If it is in the project, fine. If it exists only because the conversation coined it, define it where it first appears.
+A part, a role, a place, a term referred to as though it exists. If it is in the project and what the reader finds there lets him act, fine. If it exists only because the conversation coined it, define it where it first appears. A name that resolves in the project yet still leaves the reader unable to do his task (the referent is there, but the act the name stands for is never stated) is a gap, not a resolution: the draft owes the missing part where the name first appears, and resolving the name elsewhere does not discharge it.
 
 ## R6. A solution with its problem left behind
 
@@ -41,6 +45,22 @@ A change settles, in the conversation, the fate of what it touches: removed, rep
 Work from the project, not from the draft's own list. Take stock of what currently occupies the area the change affects, including the parts the draft never names; the part most likely dropped is the one the draft is silent about, because the conversation already retired it. For each, the draft should say whether it stays, goes, changes, or merges. A part left unaccounted is a gap; a part the draft elsewhere still leans on as though it survives is the same gap twice. Do not stop at the first.
 
 Example: a draft recommends moving the weekly review to Monday morning. The team already holds its planning meeting in that slot. If the draft never says whether the two merge or one of them moves, the colleague asks what becomes of the planning meeting.
+
+## R10. A common word silently narrowed
+
+A term with an everyday reading is used in a narrower project-specific sense without being defined. The reader resolves it with the common reading; downstream sentences happen to be consistent with that reading, so no contradiction surfaces. The misalignment is invisible to rule-driven checks because nothing in the text is unresolved; only the reading log surfaces it, when the reader names which sense he took.
+
+The check is not "can the reader resolve this?" but "does the everyday reading match the author's?" The cure is to define at first use or pick a different term. The reading log carries the burden of catching this rule when it fires; record the reading you took whenever a word has more than one plausible referent.
+
+Example: a deployment note says "the queue must be drained before deploy". The reader takes "queue" as the team's ticket backlog; the author meant the message broker's outbound buffer. The runbook downstream uses "queue" again, the reader stays consistent with his reading, and the wrong work gets done.
+
+## R11. A chain step the reader has to supply
+
+The draft asserts step N+1 of a chain of reasoning whose link to step N requires an unstated intermediate. The reader fills the middle from project knowledge, often silently, sometimes with a different middle from the author's. The conclusion then reads as following from the premise when in fact it follows only via the missing step.
+
+The check is not "is each individual claim true?" but "does the leap from claim to claim require unstated reasoning?" The cure is to restore the middle. Where the reading log notes "I filled in X to get from A to B", that is the rule firing.
+
+Example: a runbook says "the cache cluster is offline during the migration window, therefore writes must be queued client-side." The reader has to supply why writes must be queued (the path the writes would otherwise take leads through a degraded backend during the window). A reader who supplies a different middle (writes are normally cache-only) may design the wrong client-side queuing.
 
 # Failure mode 2: conversation residue
 
@@ -64,7 +84,12 @@ Example: a report opens "The switch to monthly billing fixes the backlog." A new
 
 # How the colleague responds
 
-Two kinds of issue, mirroring the rest of the edit family:
+Three outputs, in this order:
 
-- **Apply in place (POLISHED).** Anything fixable without the conversation: tightening a sentence, cutting scaffolding, sharpening a vague title, removing dead residue.
-- **Write a query (QUERIES).** Anything that needs the conversation to close. Quote the sentence, name what only the conversation can resolve, ask the question. Do not invent the answer, and do not telegraph it: ask "what is Option C, and do the other options bear on this?", not "explain that Option C is the card-list design".
+- **Reading log (READING).** Write back, in your own words, what you understood as you read. Section by section or paragraph by paragraph. Where you found a sentence ambiguous and resolved it one way, say which way. Where you supplied an inferential step from your knowledge of the project, say what you supplied. Where you were surprised by a later sentence that reframed an earlier one, say so. This is a letter from reader to writer, not a verdict. The author reads it and compares against intent; divergences are defects regardless of whether any rule flagged them.
+
+  Write it honestly. Do not steer toward the rulebook; do not anticipate what the caller wants caught. A faithful reading exposes more than a hunting reading does, because the silent defects only surface when the reader was not looking for them.
+
+- **Apply in place (POLISHED).** Anything fixable without the conversation: tightening a sentence, cutting scaffolding, sharpening a vague title, removing dead residue. Output the polished draft in full.
+
+- **Write a query (QUERIES).** Anything that needs the conversation to close. Quote the sentence, name what only the conversation can resolve, ask the question. Do not invent the answer, and do not telegraph it: ask "what is Option C, and do the other options bear on this?", not "explain that Option C is the card-list design". A reader whose work depends on the draft turns up more gaps than a legibility check would, and not every gap is a defect. A thing the conversation settled and the draft left out is short of context, failure mode 1; a thing the conversation never settled is not a withholding and not the draft's fault. Having missed the conversation, the colleague cannot tell the two apart, so he surfaces the gap that blocks his task and phrases the query so "this was left open" closes it, rather than pressing for a decision the draft was never obliged to carry. The author, who held the conversation, classifies: fold the settled answer into the draft, or mark the open matter open. The skill checks whether the draft honestly carries the authoring situation, not whether the plan behind it is complete.
