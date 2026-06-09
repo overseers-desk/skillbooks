@@ -100,7 +100,35 @@ The three methodologies share a structural principle: read before writing. SPAR 
 
 ## Skills
 
-The skills are packaged as the `aesop` Claude Code plugin under `plugins/aesop/` (manifest at `plugins/aesop/.claude-plugin/plugin.json`), distributed via the marketplace at `.claude-plugin/marketplace.json`. Each `plugins/aesop/skills/<skill>/` is a skill, namespaced `aesop:<skill>` and invoked when Claude Code recognises a matching trigger. For development, load it from disk with `claude --plugin-dir ./plugins/aesop`; to use it permanently, add this repo as a marketplace and install the plugin.
+The skills are packaged as the `aesop` Claude Code plugin under `plugins/aesop/` (manifest at `plugins/aesop/.claude-plugin/plugin.json`), distributed via the marketplace at `.claude-plugin/marketplace.json`. Each `plugins/aesop/skills/<skill>/` is a skill, namespaced `aesop:<skill>` and invoked when Claude Code recognises a matching trigger.
+
+### Install
+
+Installing the plugin makes all 23 skills available at once. Claude Code invokes them automatically when a request matches a skill's description, so you rarely type the name.
+
+From GitHub (once the plugin is on the default branch):
+
+```sh
+claude plugin marketplace add SmartLayer/aesop
+claude plugin install aesop@aesop-skills
+```
+
+From a local clone, run from the repo root:
+
+```sh
+claude plugin marketplace add ./
+claude plugin install aesop@aesop-skills
+```
+
+`claude plugin list` then shows `aesop@aesop-skills` enabled, and `claude plugin details aesop@aesop-skills` lists the skills it provides.
+
+While editing a skill, load the plugin from disk instead of installing — this reads the working tree live, so changes take effect without reinstalling:
+
+```sh
+claude --plugin-dir ./plugins/aesop
+```
+
+Browser and API skills additionally need `config.ini` (see Browser setup below). The browser wrapper ships on the plugin's `PATH` as `not-google-chrome`; the skills call it by name.
 
 ### Dependencies
 
