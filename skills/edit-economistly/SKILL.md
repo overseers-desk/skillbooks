@@ -4,7 +4,7 @@ description: Edit a draft markdown file to The Economist editorial standard via 
 argument-hint: <path-to-draft.md> [--two-pass]
 ---
 
-# economist-editing
+# edit-economistly
 
 ## Problem this skill exists to solve
 
@@ -19,8 +19,8 @@ Before revising in response to the subeditor's queries, hold one principle in mi
 ## Invocation
 
 ```
-/economist-editing path/to/draft.md            # one pass (default)
-/economist-editing path/to/draft.md --two-pass # two passes with verification
+/edit-economistly path/to/draft.md            # one pass (default)
+/edit-economistly path/to/draft.md --two-pass # two passes with verification
 ```
 
 If the second positional argument is `--two-pass`, the skill runs the editor a second time after the caller's revisions, to verify that round-1 queries are addressed and flag anything the revisions surfaced. Without `--two-pass`, the skill runs only round 1; the caller still revises and the polish stops there.
@@ -34,7 +34,7 @@ The skill **never commits**. Whatever mode you run in, the draft is left edited 
 ### Round 1 (always runs)
 
 1. **Confirm the draft is committed** (clean working tree for that file). Commit any uncommitted changes first, or discard them.
-2. **Spawn a fresh-context subeditor with the Agent tool.** Use a fresh general-purpose agent. The prompt template is at `$HOME/.claude/skills/economist-editing/editor-prompt.md`; substitute the two placeholder paths and pass it as the agent prompt. The agent will read the stylebook (including R13 on dependency grammar) and the draft, apply class-A fixes in place via its Edit tool, and return a list of author queries as its single response message.
+2. **Spawn a fresh-context subeditor with the Agent tool.** Use a fresh general-purpose agent. The prompt template is at `${CLAUDE_PLUGIN_ROOT}/skills/edit-economistly/editor-prompt.md`; substitute the two placeholder paths and pass it as the agent prompt. The agent will read the stylebook (including R13 on dependency grammar) and the draft, apply class-A fixes in place via its Edit tool, and return a list of author queries as its single response message.
 3. **Read the agent's response** (the list of queries). The actual edits are on disk; inspect with `git diff HEAD -- <draft>` or `git diff --word-diff HEAD -- <draft>`.
 4. **Revise but do not commit.** Address each query using sources you have in conversation, or leave it and note the unresolved item in a `## Unresolved` block at the foot of the draft. Do not invent. Keep dependency grammar in mind: when you rewrite a sentence the editor flagged for R13, bring the dependent words closer; do not just swap synonyms.
 
@@ -53,7 +53,7 @@ If you want to recover token budget after committing, the user can manually roll
 
 ## Skill files
 
-`$HOME/.claude/skills/economist-editing/` holds:
+`${CLAUDE_PLUGIN_ROOT}/skills/edit-economistly/` holds:
 
 - `economist-stylebook.md`: the editorial standard (twelve Style-Guide rules plus R13 on dependency grammar)
 - `editor-prompt.md`: the subeditor prompt template

@@ -18,7 +18,7 @@ The rules the drafting agent and the subeditor both work to are in `email-rulebo
 
 1. Assemble the draft as a text block with the YAML-style header preamble (`to:`, `cc:`, `from:`, `subject:`) and the body below.
 1a. If the draft relies on prior correspondence (a reply, or a fresh message that picks up an unresolved ask from earlier mail), assemble a THREAD block of the relevant prior messages. One issue often spans several threads: include every thread the draft draws on, not only the one the headers say it replies to. Each message in the block carries its own from/date/subject and body. The subeditor cannot fetch mail; whatever the cold reader needs to judge whether the draft omits a fact the recipient is waiting on must be in this block. If the draft stands on its own, the THREAD value is `(none)`.
-2. Spawn a fresh-context agent. Use the prompt template at `$HOME/.claude/skills/edit-email/editor-prompt.md`; substitute `$RULEBOOK_PATH` with the rulebook path, `$EMAIL` with the draft text, `$THREAD` with the THREAD block (or `(none)`), `$REGISTER` with the register tag (`general` by default; `director-to-staff` when the caller invokes with `--director`), and `$VOICE_GUIDE` with the content of the named voice guide file (`(none)` when no voice flag is given; the content of `liansu-voice.md` when `--Liansu` is given). When `--Liansu` is given, use Opus as the agent model. Pass the result as the agent prompt.
+2. Spawn a fresh-context agent. Use the prompt template at `${CLAUDE_PLUGIN_ROOT}/skills/edit-email/editor-prompt.md`; substitute `$RULEBOOK_PATH` with the rulebook path, `$EMAIL` with the draft text, `$THREAD` with the THREAD block (or `(none)`), `$REGISTER` with the register tag (`general` by default; `director-to-staff` when the caller invokes with `--director`), and `$VOICE_GUIDE` with the content of the named voice guide file (`(none)` when no voice flag is given; the content of `liansu-voice.md` when `--Liansu` is given). When `--Liansu` is given, use Opus as the agent model. Pass the result as the agent prompt.
 3. When `$VOICE_GUIDE` is `(none)`: the agent is a cold subeditor. It returns READING (paragraph-by-paragraph log of how the draft landed), POLISHED (mechanical fixes applied), and QUERIES (rule citations for things needing the brief).
    When `$VOICE_GUIDE` has content: the agent is an impersonator. It returns READING (first-person friction notes as the named author), POLISHED (the email as the author would send it), and QUERIES (what the author would need to know to finalise it herself).
 4. Read READING first. Compare each friction point or interpretation against what the draft meant. Fix the draft based on what the agent surfaces. Resolve queries from your conversation context, asking the user if the brief does not answer. Do not invent.
@@ -27,7 +27,7 @@ The rules the drafting agent and the subeditor both work to are in `email-rulebo
 
 ## Files
 
-`$HOME/.claude/skills/edit-email/`:
+`${CLAUDE_PLUGIN_ROOT}/skills/edit-email/`:
 
 - `email-rulebook.md` — the rules
 - `editor-prompt.md` — the subeditor prompt template

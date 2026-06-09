@@ -19,19 +19,19 @@ A draft written in the middle of a conversation carries that conversation into t
 
 The reader-simulation maxim in CLAUDE.md is not enough on its own, because the author cannot see the scaffolding it carried in. A separate reader who never had the conversation can. This is the boundary from edit-economistly, whose reader is a generalist outside the project who needs entities glossed and acronyms expanded; here the reader is inside the project and needs none of that. The one thing withheld from him is this conversation.
 
-The rules both the author and the colleague work to are in `$HOME/.claude/skills/sorry-im-late/rulebook.md`.
+The rules both the author and the colleague work to are in `${CLAUDE_PLUGIN_ROOT}/skills/sorry-im-late/rulebook.md`.
 
 ## Procedure
 
 1. Assemble the draft as a text block: title or subject on the first line, body below.
-2. Spawn a fresh-context general-purpose agent with `model: "sonnet"`, leaving its tools to read the project's materials available (the colleague reads the project, whatever form it takes: a codebase, a document set, a shared body of work). The prompt template is at `$HOME/.claude/skills/sorry-im-late/editor-prompt.md`; substitute `$RULEBOOK_PATH` with `$HOME/.claude/skills/sorry-im-late/rulebook.md` and `$DRAFT` with the draft text. Pass the result as the agent prompt. Do not add anything to the prompt that telegraphs what you hope the colleague will catch.
+2. Spawn a fresh-context general-purpose agent with `model: "sonnet"`, leaving its tools to read the project's materials available (the colleague reads the project, whatever form it takes: a codebase, a document set, a shared body of work). The prompt template is at `${CLAUDE_PLUGIN_ROOT}/skills/sorry-im-late/editor-prompt.md`; substitute `$RULEBOOK_PATH` with `${CLAUDE_PLUGIN_ROOT}/skills/sorry-im-late/rulebook.md` and `$DRAFT` with the draft text. Pass the result as the agent prompt. Do not add anything to the prompt that telegraphs what you hope the colleague will catch.
 3. The agent returns three sections: READING (the colleague's interpretive write-back, in his own words), POLISHED (light fixes applied), and QUERIES (gaps only this conversation can close).
 4. Read the READING section first. Compare each interpretation against what you meant. Where the colleague's reading diverges from your intent, that is a defect even if no query fires, because the rule-driven checks cannot catch a confident wrong reading. Fix the draft so the next reader would resolve the same passages as you intended. Then resolve queries from your conversation, folding the answer into the draft in project terms where the matter was settled, or marking it open where the conversation never settled it rather than inventing a decision; and apply any POLISHED tightenings you agree with.
 5. Show the user the revised draft. Sending or publishing is the caller's act; this skill does neither.
 
 ## Files
 
-`$HOME/.claude/skills/sorry-im-late/`:
+`${CLAUDE_PLUGIN_ROOT}/skills/sorry-im-late/`:
 
 - `rulebook.md` — the colleague's knowledge boundary and the gaps to query
 - `editor-prompt.md` — the subagent prompt template

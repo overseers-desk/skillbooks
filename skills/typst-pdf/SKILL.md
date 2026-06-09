@@ -15,10 +15,10 @@ If invoked outside a git repository, or if the repo has no `.aesop/` templates, 
 
 Before invoking the driver, ask the user where to save the PDF using `AskUserQuestion`. Offer the platform-default file path as the first option: Linux `$(xdg-user-dir DOCUMENTS)/<stem>.pdf`, macOS `$HOME/Documents/<stem>.pdf`. The path must include the filename, not just a directory.
 
-Then invoke the driver at `$HOME/.claude/skills/typst-pdf/typst-pdf.sh`. Run it directly — do not spawn a subagent for this skill.
+Then invoke the driver at `${CLAUDE_PLUGIN_ROOT}/skills/typst-pdf/typst-pdf.sh`. Run it directly — do not spawn a subagent for this skill.
 
 ```bash
-$HOME/.claude/skills/typst-pdf/typst-pdf.sh <input.md> --out <file.pdf> [flags]
+${CLAUDE_PLUGIN_ROOT}/skills/typst-pdf/typst-pdf.sh <input.md> --out <file.pdf> [flags]
 ```
 
 Flags:
