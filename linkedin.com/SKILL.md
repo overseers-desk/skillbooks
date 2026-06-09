@@ -75,10 +75,10 @@ not-google-chrome "https://www.linkedin.com/in/USERNAME/" > /tmp/linkedin-profil
 ## 4. Parse profile
 
 ```bash
-python3 $HOME/.claude/skills/linkedin.com/parse-profile.py /tmp/linkedin-profile.html
+python3 $HOME/.claude/skills/linkedin.com/parse-profile.py /tmp/linkedin-profile.html "https://www.linkedin.com/in/USERNAME/"
 ```
 
-Extracts name, headline, location, meta descriptions, and visible text blocks (experience, about, education).
+Emits a structured YAML record to stdout: name, vanity slug, the profile URN (`urn:li:fsd_profile:ACoAA...`, the owner's, found as the dominant id in the page's data payload across LinkedIn's several serialisations of it), headline, location, current company, and a capped list of evidence text blocks. Pass the profile URL as the optional second argument so the record carries the slug and canonical URL; redirect stdout to `<slug>.yaml` to save it. The legacy numeric form (`urn:li:member:NNN`) is not emitted: on a profile page its most-frequent value is the signed-in viewer's own id, not the owner. Deep career history, About, and skills are lazy-mounted and not reliably present in the dump (see BUGS.md), so they are not extracted as structured fields.
 
 ## 5. Keyword search (optional)
 
