@@ -100,7 +100,7 @@ The three methodologies share a structural principle: read before writing. SPAR 
 
 ## Skills
 
-This directory is also mounted at `~/.claude/skills` via a symlink, so the platform-named subdirectories are Claude Code skills, invoked by name when Claude Code recognises a matching trigger.
+The skills are packaged as the `aesop` Claude Code plugin under `plugins/aesop/` (manifest at `plugins/aesop/.claude-plugin/plugin.json`), distributed via the marketplace at `.claude-plugin/marketplace.json`. Each `plugins/aesop/skills/<skill>/` is a skill, namespaced `aesop:<skill>` and invoked when Claude Code recognises a matching trigger. For development, load it from disk with `claude --plugin-dir ./plugins/aesop`; to use it permanently, add this repo as a marketplace and install the plugin.
 
 ### Dependencies
 
@@ -132,7 +132,7 @@ Two one-time settings in Chromium and one config entry let the skills reuse your
 
 - In Chromium's "On startup" settings, choose "Continue where you left off." This carries session cookies across a close and reopen, so sites you are signed in to do not ask you to authenticate again every time a skill runs. Leave the privacy option that clears cookies when all windows close switched off, since it overrides this.
 - If Chromium shows a chooser at startup, untick "Show on startup" so it opens straight to the session you used last. A skill launches headless without choosing, and inherits that same last-used session.
-- Create `config.ini` (see `config.ini.example`) and set `[browser] user_agent` to your everyday browser's User-Agent string. A headless launch otherwise advertises itself as automated and gets blocked; the wrapper refuses to run without it.
+- Create `config.ini` (see `plugins/aesop/config.ini.example`) and set `[browser] user_agent` to your everyday browser's User-Agent string. A headless launch otherwise advertises itself as automated and gets blocked; the wrapper refuses to run without it.
 
 ## Usage
 
