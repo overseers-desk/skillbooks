@@ -91,6 +91,19 @@ weasyprint /tmp/booking.html /tmp/booking.pdf
 rclone copyto /tmp/booking.pdf "Dropbox:0. Travel Admin/[journey]/Fares/[name].pdf"
 ```
 
+## Traveller Profiles
+
+Traveller facts live outside the travel folder, in the personal repo:
+
+- `$HOME/code/weiwu/family.yaml`: identities, passports, travel constraints
+  (e.g. motion sickness), children's languages, traits and interests
+- `$HOME/code/weiwu/weiwu.yaml`: Weiwu as a person (background, roles,
+  living pattern); its header routes travel detail back to family.yaml
+
+This section is the single home for these paths. Other travel SOPs refer to
+"traveller profiles (per `sop-travel-folder-access.md`)" rather than
+repeating them.
+
 ## Journey Folder Structure
 
 Each journey folder contains standardised subfolders:
