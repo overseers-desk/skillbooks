@@ -43,6 +43,7 @@ Enumerate before evaluating. Candidates drawn from memory are the famous and the
 - Enumerate what exists around the travellers' position by radius and category (museums, parks, attractions, events), out to the distance the day's slack allows. A maps or local-search skill, if available, beats text queries here: it searches by distance, not by words.
 - Place-name queries clip at administrative boundaries; the next district, ten minutes away, is invisible to a query carrying this district's name. Enumerate by distance, or repeat the query with neighbouring district names.
 - Adequacy test: a candidate set holding only doorstep options and city landmarks is the signature of memory-driven generation; regenerate before proceeding.
+- A round in which every candidate is vetoed means the set was too small, not that nothing exists; widen the radius and categories and regenerate.
 - Generate before framing the day. A day framed first ("just a transition, keep it low") sets the stopping rule before the search starts; what exists nearby is allowed to change the frame.
 
 ### 3. Standard checks
