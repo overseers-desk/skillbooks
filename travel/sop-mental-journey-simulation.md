@@ -26,6 +26,7 @@ The simulation is worth exactly as much as its facts are real. The story does no
 
 - **Anchors.** Flight time, airport, terminal and who is on which booking come from the ticket PDFs in the journey folder (`pdftotext`), not from conversational memory. When a stated time and a document disagree, the document wins and the discrepancy is flagged.
 - **People.** Read the traveller profiles before the first scene. Ages, constraints (motion sickness, stamina) and interests are character properties that act in the plot. A constraint that does not bind today is worth one line saying why not.
+- **Options.** The cast of candidate scenes is enumerated, not remembered. Before the first scene is chosen, list what exists within the day's reach by map radius and category (a maps or local-search skill if available; place-name text queries clip at administrative boundaries and miss the next district ten minutes away). Memory proposes the famous and the walkable, and the story then merely verifies its own assumption; enumerate first, imagine second.
 - **Weather.** An outdoor scene is written against the forecast for that hour at that place, plus daylight times outside high summer. A forecast that forks the day (rain or dry) produces both story branches and the time by which the choice is made.
 - **Time on the road.** A traffic-variable leg gets a typical run and a bad run; when the leg feeds a hard anchor, the story walks the bad run too and states the latest safe departure. Rail and metro legs get their actual frequency and journey time.
 - **Doors and prices.** Opening hours checked for the actual calendar date (weekday pattern, holidays), prices for the actual party including child fare rules.
@@ -91,6 +92,8 @@ Flag inline as the story is written:
 When the day offers a real choice (mode of transport, which activity, when to leave), run the story forward through each candidate to the point where they converge or one fails. Keep the comparison in the traveller's units: minutes of the family's day, money, and risk to the anchor. The Luton forecourt question, "what does the next hour look like if I choose this," is the whole method; what makes it work on paper is that the projection is grounded (forecast checked, bad run walked) where a head-projection relies on guesses.
 
 State the surviving plan's decision points explicitly: the time each is decided, the observation that decides it, and the fallback.
+
+Frame the day after the enumeration, not before. A day framed in advance as merely a transition to be survived sets the stopping rule before the search starts; what the enumeration turns up is allowed to change the frame.
 
 ## Verdict (validation mode)
 
