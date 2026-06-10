@@ -25,6 +25,8 @@ The caller names the output location.
 
 Extract the day's fixed points from documents, not from conversational memory: flights from the ticket PDFs (`pdftotext`: airport, departure time, terminal, who is on which booking reference), hotel checkout time, any timed tickets. When a remembered time and a document disagree, the document wins and the discrepancy is flagged.
 
+Documents state entitlements and schedules, not the state of the world. A baggage allowance is a ceiling, not a manifest; the actual load is evidenced by what the travellers carried on the inbound leg. A fact about the ground takes ground evidence.
+
 Convert each anchor into a backward chain with the buffers stated as numbers:
 
 ```
@@ -69,10 +71,11 @@ List every uncertainty that splits the day in two: rain or dry, jam or clear, op
 | M23 incident | clear | 45 min to terminal | £80 car | none |
 | | jam | 90-150 min | £80+ | misses bag drop |
 
-Two rules of reading the table:
+Three rules of reading the table:
 
 - A fork whose bad branch threatens an anchor gets a **trigger**: the time by which the state is observable, and the switch action. If no trigger exists (the bad branch is discovered only when it is too late), that branch's option is out.
 - Branches are compared at the tree level. An option that wins its good branch and loses the day on its bad branch loses to an option that is slightly worse on the good branch and indifferent on the bad one.
+- Branches are costed against the traveller constraints as well as the clock. A bad branch whose duration crosses a profile threshold (motion sickness, stamina) fails even when it still makes the anchor; a constraint cleared on the typical run is re-checked on the bad one.
 
 ### 5. Compose the day
 
