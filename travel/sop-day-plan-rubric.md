@@ -13,11 +13,7 @@ This SOP suits the mid-journey case: the travellers are somewhere concrete (a ho
 
 ## Output
 
-- Day timeline with times, per-leg transport, and family-total costs
-- Decision table: every fork, both branches costed, with in-day triggers
-- The backward chain from each anchor with its latest-safe times
-
-The caller names the output location.
+A reader-facing day plan (step 7): the lived day first, the few act-now items surfaced, the decisions to carry as plain triggers, and the planner's working (anchors and their sourcing, the option table, the checks ledger, the backward chain) demoted to a closing notes appendix. The caller names the output location.
 
 ## Procedure
 
@@ -82,9 +78,20 @@ Three rules of reading the table:
 
 Assemble the timeline from activities that survive their forks, ordered so that the anchor chain is protected: the closer to the anchor, the more fixed-schedule the leg. Activities are picked with the profile findings in hand (check 2): a candidate that matches the travellers' interests beats a generic one at equal logistics.
 
-### 6. Deliver
+### 6. Assemble the working
 
-The three outputs above, plus one line per standard check confirming it ran and what it found (including checked-empty). The decision table is part of the plan, not working notes: the traveller carries the triggers into the day ("if not on the 12:48, drop X; if raining at 9:30, museum branch").
+Bring together the full plan and the evidence behind it: the timeline, the decision table (every fork, both branches costed, with triggers), the backward chain with its latest-safe times, and one line per standard check confirming it ran and what it found (including checked-empty). This is the planner's artifact, in the planner's order, anchor first.
+
+### 7. Render for the reader
+
+The work above is reasoned anchor-first, because the anchor constrains everything else. The traveller reading the plan already holds the constraints and wants the day. Render the deliverable in the reader's order:
+
+- **Act now**: the few items with a deadline before the day begins (a booking that closes tonight, a check-in window, an alarm), one line each. The only part the reader acts on before the day starts.
+- **The day**: the hour-by-hour, what happens, in plain language. The main body.
+- **Carry with you**: the decisions as plain triggers ("if not on a Gatwick train by 15:00, take the taxi; if raining at 09:30, museum branch").
+- **Planning notes** (appendix): the anchors and their sourcing, the option table, the checks ledger, the backward-chain arithmetic. Kept so the reasoning can be audited, not needed to use the plan.
+
+State only what changes the traveller's actions; a fact that changes nothing they do today belongs in the notes or is cut. Lead with the day, not the derivation.
 
 ---
 
