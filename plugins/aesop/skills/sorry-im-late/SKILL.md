@@ -1,6 +1,6 @@
 ---
 name: sorry-im-late
-description: Run before sending or publishing a draft written during a conversation, so it reads for someone who has the project but was not in that conversation. A fresh-context colleague reads the draft cold and writes back two things: a reading log of what landed and how (revealing confident wrong-readings the author can compare against intent) and rule-driven flags for missing context, conversation residue, and insider-pitched passages.
+description: Run before sending or publishing a draft written during a conversation, so it reads for someone who has the project but was not in that conversation. Pass the path to the draft file (it must already be written to disk); a fresh-context colleague opens it and reads it cold, in full, the same way it reads the project's code, then writes back two things: a reading log of what landed and how (revealing confident wrong-readings the author can compare against intent) and rule-driven flags for missing context, conversation residue, and insider-pitched passages.
 ---
 
 # sorry-im-late
@@ -23,8 +23,8 @@ The rules both the author and the colleague work to are in `${CLAUDE_PLUGIN_ROOT
 
 ## Procedure
 
-1. Assemble the draft as a text block: title or subject on the first line, body below.
-2. Spawn a fresh-context general-purpose agent with `model: "sonnet"`, leaving its tools to read the project's materials available (the colleague reads the project, whatever form it takes: a codebase, a document set, a shared body of work). The prompt template is at `${CLAUDE_PLUGIN_ROOT}/skills/sorry-im-late/editor-prompt.md`; substitute `$RULEBOOK_PATH` with `${CLAUDE_PLUGIN_ROOT}/skills/sorry-im-late/rulebook.md` and `$DRAFT` with the draft text. Pass the result as the agent prompt. Do not add anything to the prompt that telegraphs what you hope the colleague will catch.
+1. The draft must already be a file on disk (the finished text at a known path). The colleague reads it by that path, in full, the same way it reads the project's code — which is why the draft has to be written first. Take its path. Never paste the draft into the prompt, and never a condensed or excerpted version: the review is only as thorough as what the colleague actually sees, so a shortened draft silently blinds it to the sections you cut.
+2. Spawn a fresh-context general-purpose agent with `model: "sonnet"`, leaving its tools to read the project's materials available (the colleague reads the project, whatever form it takes: a codebase, a document set, a shared body of work). The prompt template is at `${CLAUDE_PLUGIN_ROOT}/skills/sorry-im-late/editor-prompt.md`; substitute `$RULEBOOK_PATH` with `${CLAUDE_PLUGIN_ROOT}/skills/sorry-im-late/rulebook.md` and `$DRAFT_PATH` with the absolute path to the draft file. Pass the result as the agent prompt. Do not add anything to the prompt that telegraphs what you hope the colleague will catch.
 3. The agent returns three sections: READING (the colleague's interpretive write-back, in his own words), POLISHED (light fixes applied), and QUERIES (gaps only this conversation can close).
 4. Read the READING section first. Compare each interpretation against what you meant. Where the colleague's reading diverges from your intent, that is a defect even if no query fires, because the rule-driven checks cannot catch a confident wrong reading. Fix the draft so the next reader would resolve the same passages as you intended. Then resolve queries from your conversation, folding the answer into the draft in project terms where the matter was settled, or marking it open where the conversation never settled it rather than inventing a decision; and apply any POLISHED tightenings you agree with.
 5. Show the user the revised draft. Sending or publishing is the caller's act; this skill does neither.
@@ -42,4 +42,4 @@ The authoring role belongs to the caller, which holds the conversation. A subage
 
 ## Anti-cheating discipline
 
-Rulebook examples come from outside any test fixture, so the subagent applies the rule rather than recognising a remembered phrase. The prompt carries only the rulebook and the draft; no hint about the particular draft is leaked in.
+Rulebook examples come from outside any test fixture, so the subagent applies the rule rather than recognising a remembered phrase. The prompt carries only the rulebook path and the draft's path; no hint about the particular draft is leaked in, and the colleague reads the draft in full from its file (never a pasted or condensed copy), so the review covers every section rather than the ones the caller happened to include.
