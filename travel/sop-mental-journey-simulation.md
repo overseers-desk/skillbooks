@@ -17,7 +17,7 @@ Two modes share this engine:
 
 ## Output
 
-- **Planning mode**: the day plan as a timeline (times, transport, family costs), the candidate table behind the chosen day (each candidate: distance, the date's opening state with the source that verified it, the verdict that kept or cut it), the decision points with their switch conditions, and residual risks. The caller names the output location.
+- **Planning mode**: a reader-facing day plan (see "Render for the Reader"): the lived day first, the act-now items surfaced, the decisions to carry as plain triggers, and the planner's working (the candidate table, the grounding, the decision points, residual risks) demoted to a closing notes appendix. The caller names the output location.
 - **Validation mode**: journey narrative, categorised issues, recommendations, verdict. Under master orchestration the file is `build/test/{N}.{Segment}.md`; otherwise the caller names it.
 
 ## Grounding
@@ -94,6 +94,17 @@ When the day offers a real choice (mode of transport, which activity, when to le
 State the surviving plan's decision points explicitly: the time each is decided, the observation that decides it, and the fallback.
 
 Frame the day after the enumeration, not before. A day framed in advance as merely a transition to be survived sets the stopping rule before the search starts; what the enumeration turns up is allowed to change the frame.
+
+## Render for the Reader (planning mode)
+
+The story is written forward, scene by scene, the planner's path through the day. The traveller reading it already holds the constraints and wants the day itself. The final step re-renders the deliverable in the reader's order:
+
+- **Act now**: the few items with a deadline before the day begins (a booking that closes tonight, a check-in window, an alarm), one line each.
+- **The day**: the lived hour-by-hour, what happens, in plain language. The main body, with the issue markers folded into the prose where they bite.
+- **Carry with you**: the decision points as plain triggers ("if not on a Gatwick train by 15:00, take the taxi").
+- **Planning notes** (appendix): the candidate table with sourced verdicts, the grounding, the backward-chain arithmetic. Kept so the reasoning can be audited, not needed to use the plan.
+
+State only what changes the traveller's actions; lead with the day, not the derivation.
 
 ## Verdict (validation mode)
 
