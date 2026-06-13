@@ -100,67 +100,7 @@ The three methodologies share a structural principle: read before writing. SPAR 
 
 ## Skills
 
-The skills are packaged as the `aesop` Claude Code plugin under `plugins/aesop/` (manifest at `plugins/aesop/.claude-plugin/plugin.json`), distributed via the marketplace at `.claude-plugin/marketplace.json`. Each `plugins/aesop/skills/<skill>/` is a skill, namespaced `aesop:<skill>` and invoked when Claude Code recognises a matching trigger.
-
-### Install
-
-Installing the plugin makes all 23 skills available at once. Claude Code invokes them automatically when a request matches a skill's description, so you rarely type the name.
-
-From GitHub (once the plugin is on the default branch):
-
-```sh
-claude plugin marketplace add SmartLayer/aesop
-claude plugin install aesop@aesop-skills
-```
-
-From a local clone, run from the repo root:
-
-```sh
-claude plugin marketplace add ./
-claude plugin install aesop@aesop-skills
-```
-
-`claude plugin list` then shows `aesop@aesop-skills` enabled, and `claude plugin details aesop@aesop-skills` lists the skills it provides.
-
-While editing a skill, load the plugin from disk instead of installing — this reads the working tree live, so changes take effect without reinstalling:
-
-```sh
-claude --plugin-dir ./plugins/aesop
-```
-
-Browser and API skills additionally need `config.ini` (see Browser setup below). The browser wrapper ships on the plugin's `PATH` as `not-google-chrome`; the skills call it by name.
-
-### Dependencies
-
-Skills fall into three tiers by what they need at runtime.
-
-**No code.** A small number of skills are SKILL.md only. The agent does the work using built-in tools (the browser wrapper, file reads, web fetches). These run the moment the repo is cloned.
-
-**System interpreter, standard library.** Most coded skills are Python or Tcl scripts that run under the system interpreter using only what ships with it. `outreach-spar/spar-manager/` is the heaviest example: a Tk GUI and dispatch tools that need Tcl/Tk 9 and tcllib, both available from the standard Homebrew and Ubuntu Tcl packages. No build, no virtualenv, no `pip install`, no repackaging.
-
-**External dependency.** A few skills need something else: a command-line tool installed by the user, or a sibling repository at a fixed relative path next to this one. These skills check for the dependency at startup and print an install hint if it is missing. We prefer the second tier where feasible; the cost is a code restriction (no `yaml`, hand-rolled CDP) but the benefit is a skill that runs without setup beyond what the OS already provides.
-
-Skills come in two kinds: those that drive a browser (most of them) and those that talk to APIs directly with their own credentials. The browser-driving skills launch Chromium against the user's logged-in user-data-dir (snap-installed on Linux, brew-installed on macOS) and lock the user-data-dir while they run, so the user closes their everyday Chromium before invoking such a skill and waits for it to finish. If a browser skill cannot find a logged-in session, it prompts the user to open Chromium, sign in to the relevant site, and confirm before continuing.
-
-The reasoning behind the browser arrangement (why Chromium, why the user's real user-data-dir and not a fresh one, why we declined to diagnose Cursor's MCP-browser denials) is in `BROWSER.md`. That file is reference material for when a browser skill misbehaves, not preflight reading; skipping it costs nothing under normal operation.
-
-### macOS setup
-
-The browser wrapper (`not-google-chrome`) uses `flock` to serialise access to the Chromium user-data-dir and `gtimeout` to bound the run time. macOS does not ship either; install via Homebrew:
-
-```sh
-brew install util-linux coreutils
-```
-
-Linux distros include both already.
-
-### Browser setup
-
-Two one-time settings in Chromium and one config entry let the skills reuse your signed-in session:
-
-- In Chromium's "On startup" settings, choose "Continue where you left off." This carries session cookies across a close and reopen, so sites you are signed in to do not ask you to authenticate again every time a skill runs. Leave the privacy option that clears cookies when all windows close switched off, since it overrides this.
-- If Chromium shows a chooser at startup, untick "Show on startup" so it opens straight to the session you used last. A skill launches headless without choosing, and inherits that same last-used session.
-- Create `config.ini` (see `plugins/aesop/config.ini.example`) and set `[browser] user_agent` to your everyday browser's User-Agent string. A headless launch otherwise advertises itself as automated and gets blocked; the wrapper refuses to run without it.
+The skills the methodologies call (LinkedIn, Facebook, Qantas, edit-email, and the rest) are packaged separately as the **overseer-toolbox** Claude Code plugin, in its own repository at `git@github.com:SmartLayer/overseer-toolbox.git`. The SOPs here reference skills by name ("use the LinkedIn skill if available"); install that plugin to make them available. Its README covers install, the `not-google-chrome` browser wrapper, credentials at `$HOME/.claude/skills/config.ini`, and browser setup.
 
 ## Usage
 
