@@ -10,7 +10,7 @@ WebFetch hard-refuses reddit.com ("Claude Code is unable to fetch from www.reddi
 
 ## Execution model
 
-Spawn a **Sonnet subagent** to run the workflow. A search dump is tens of KB; a busy thread can be a few hundred KB. Tell the subagent to use `not-google-chrome` (the wrapper from the headless-browser skill, called by bare name), the parser at `${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit.py`, and the discussion batcher at `${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit-discussions.py`. Keep raw dumps out of the main session.
+Spawn a **Sonnet subagent** to run the workflow. A search dump is tens of KB; a busy thread can be a few hundred KB. Tell the subagent to use `not-google-chrome` (the wrapper from the headless-browser skill, called by bare name), the parser at `${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit.tcl`, and the discussion batcher at `${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit-discussions.tcl`. Keep raw dumps out of the main session.
 
 A Reddit search hit is always a **post** (submission, kind `t3`); there is no comment-level search. A post's `comments/<id>.json` endpoint returns the post body and the comment tree together, so "go to the post" and "go to the comments" are a single fetch. §1-2 are the two-step path (one fetch, then parse a file); §3 collapses search-then-read-each into one browser session and is what you usually want for gathering discussions.
 
@@ -41,7 +41,7 @@ URL-encode the query (spaces as `+` or `%20`). `sort` accepts `relevance`, `new`
 Parse:
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit.py search /tmp/reddit-search.html --limit 25
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit.tcl search /tmp/reddit-search.html --limit 25
 ```
 
 Prints, per post: title, `r/subreddit`, `u/author`, score, comment count, date, the full `old.reddit.com` permalink, and a 200-char selftext snippet. Take the permalink of a promising post into step 2.
@@ -59,7 +59,7 @@ not-google-chrome -t 25 \
 Parse:
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit.py thread /tmp/reddit-thread.html --limit 50
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit.tcl thread /tmp/reddit-thread.html --limit 50
 ```
 
 Prints the post header (title, subreddit, author, score, comment count, date, permalink), the full selftext, then the comment tree indented by depth, each comment carrying `u/author`, score, date, and body. `--limit` caps the number of comments emitted. Reddit collapses deep threads behind "load more" stubs; the first `.json` page covers the top of the tree, which is the highest-signal part for quote gathering.
@@ -69,7 +69,7 @@ Prints the post header (title, subreddit, author, score, comment count, date, pe
 Searches, then fetches each result's discussion (post body plus comment tree) over a single CDP session, so it does not pay a browser cold-start per result. This is the usual entry point for quote-gathering.
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit-discussions.py \
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit-discussions.tcl \
   --query "SEARCH TERMS" [--subreddit SUB] \
   [--sort relevance|new|top|comments] [--time all|year|month|week|day] \
   [--limit 5] [--comments 15]
@@ -78,7 +78,7 @@ not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddi
 Subreddit listing instead of a search (omit `--query`, give `--subreddit`; `--sort` then takes `hot|new|top|rising`):
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit-discussions.py \
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit-discussions.tcl \
   --subreddit SUB --sort hot --limit 5 --comments 15
 ```
 
@@ -89,7 +89,7 @@ not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddi
 The saved listing is private: Reddit returns it only to the account that owns it, so this needs the user's session cookie. It runs over CDP (the authenticated `old.reddit.com` origin), the same path §3 uses, and **the user must close their GUI Chromium first** (the user-data-dir lock, see CLAUDE.md), otherwise the headless instance reads no cookies and Reddit answers `404`.
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit-saved.py \
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddit-saved.tcl \
   --user NAME [--limit 25]
 ```
 
@@ -97,8 +97,8 @@ not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/reddit.com/reddi
 
 ## Notes
 
-- The parser strips the wrapper's `<pre>`, unescapes the HTML-render layer and Reddit's own entity escaping, and `json.loads` the result. It also accepts a raw `.json` body if fetched some other way. The §3 batcher fetches JSON directly via in-page `fetch()`, so there is no `<pre>` layer there; the shared `clean()` still handles Reddit's entity escaping.
-- A post-only Listing parses with `search` mode, so a subreddit front page (`/r/SUB/.json`) or a user's posts (`/user/NAME.json`) work through the same command. A saved listing mixes posts and comments, so it has its own `saved` mode (`reddit.py saved <dump>`), which §4 calls.
+- The parser strips the wrapper's `<pre>`, unescapes the HTML-render layer and Reddit's own entity escaping, and parses the result as JSON. It also accepts a raw `.json` body if fetched some other way. The §3 batcher fetches JSON directly via in-page `fetch()`, so there is no `<pre>` layer there; the shared `clean` still handles Reddit's entity escaping.
+- A post-only Listing parses with `search` mode, so a subreddit front page (`/r/SUB/.json`) or a user's posts (`/user/NAME.json`) work through the same command. A saved listing mixes posts and comments, so it has its own `saved` mode (`reddit.tcl saved <dump>`), which §4 calls.
 - Author may read `[deleted]`; score may be hidden (shown as the number Reddit returns, often a low placeholder) on recent posts. These are Reddit states, not parse errors.
 
 ## What this skill does NOT do
