@@ -6,16 +6,26 @@
 # Usage:
 #   not-google-chrome [-t SECONDS] [--pdf PATH] URL [extra-flag ...]
 #       Render URL's DOM to stdout (default), or write a PDF (--pdf).
-#   not-google-chrome --cdp [-t SECONDS] -- <client command ...>
-#       Launch a persistent CDP browser, export CDP_WS_URL (a page-target
+#   not-google-chrome --cdp [-t SECONDS] [--host HOST] -- <client command ...>
+#       Provide a CDP browser to the client: export CDP_WS_URL (a page-target
 #       websocket) and CDP_PORT into the client's environment, run the client,
-#       and on every exit path tear the browser down. The wrapper owns the
-#       browser lifecycle: one browser at a time (flock), a deadman timeout, and
-#       a teardown that finds the browser by its --remote-debugging-port and
-#       signals that PID, since a persistent browser reparents to the user
-#       service manager once the wrapper returns and a PID captured at launch
-#       would be stale. Client scripts hold no browser PID; they connect to
-#       CDP_WS_URL and drive the page.
+#       and on every exit path tear the browser down. The browser comes from one
+#       of two sources, decided at run time:
+#         - Overseer (local browser broker on 127.0.0.1:11402, env BI_OVERSEER_PORT
+#           to override): if it answers /health, lease a browser from it, hand the
+#           client the relay websocket as CDP_WS_URL (CDP_PORT empty, no local debug
+#           port), and release the lease on exit. The overseer owns the browser and
+#           its serialization, so no flock and no Chromium launch here. --host HOST
+#           labels the lease for the overseer's per-site gate (default localhost;
+#           site skills pass their own, e.g. --host instagram.com).
+#         - Standalone (overseer absent): launch a persistent Chromium owned by the
+#           wrapper -- one browser at a time (flock), a deadman timeout, and a
+#           teardown that finds the browser by its --remote-debugging-port and
+#           signals that PID, since a persistent browser reparents to the user
+#           service manager once the wrapper returns and a PID captured at launch
+#           would be stale.
+#       Client scripts hold no browser PID; they connect to CDP_WS_URL and drive
+#       the page.
 #
 # Output:  rendered DOM on stdout (default), or PDF written to PATH (--pdf). In
 #          --cdp mode the client owns stdout. Redirect dump-dom stdout to a file:
@@ -82,6 +92,16 @@ lock_wait=30
 CDP_FIXED_PORT=9223   # fixed (not 0) so teardown can match the browser by its
                       # unique cmdline; flock guarantees one CDP browser at a time.
 _cdp_port=""          # set once the browser is launched; read by cdp_teardown.
+cdp_host=localhost    # --cdp --host: gate label handed to the overseer lease;
+                      # a generic default for ad-hoc fetches. Site skills pass
+                      # their own (e.g. --host instagram.com).
+
+# Local browser broker. When the overseer is listening here, --cdp delegates the
+# browser to it instead of launching its own Chromium (see run_cdp). Honor the
+# env override so a test overseer on another port is reachable; the listener is
+# Bearer-free locally, so no auth header is sent.
+OVERSEER_BASE="http://127.0.0.1:${BI_OVERSEER_PORT:-11402}"
+_lease_id=""          # set once a lease is granted; read by lease_teardown.
 
 # Read one value from config.ini. Empty output if section/key absent.
 config_get() {  # $1=section $2=key
@@ -172,6 +192,22 @@ EOF
   exit 76
 }
 
+# Teardown of a delegated lease (overseer broker mode). The overseer owns the
+# browser, so the only thing to release is the lease: POST /browser/release with
+# the lease id on every exit path. Fail-open (the overseer reaps abandoned leases
+# on its own deadman), so a release that does not reach the overseer never wedges
+# the wrapper. No Bearer: the listener is Bearer-free locally.
+lease_teardown() {
+  trap - EXIT INT TERM
+  local id="${_lease_id:-}"
+  if [[ -n "$id" ]]; then
+    curl -s --max-time 5 -o /dev/null \
+      -X POST -H 'Content-Type: application/json' \
+      -d "{\"leaseId\":\"$id\"}" \
+      "$OVERSEER_BASE/browser/release" 2>/dev/null || true
+  fi
+}
+
 # Teardown of the CDP browser. A persistent browser reparents to the user
 # service manager once the wrapper returns, so a PID captured at launch goes
 # stale. Find the live browser by the one stable attribute only its main process
@@ -217,6 +253,53 @@ cdp_teardown() {
 # websocket, run it under a deadman, reap the browser on every exit path.
 run_cdp() {
   local port="$CDP_FIXED_PORT" ws_url="" i rc=0
+
+  # Local browser broker. If the overseer answers /health here, delegate the
+  # browser to it (lease -> hand the client the relay websocket as CDP_WS_URL ->
+  # release) instead of launching our own Chromium. The overseer owns the browser
+  # and its own serialization, so this path takes no /tmp/chromium.lock flock, does
+  # no foreign-profile check, launches nothing, and polls no /json endpoint. When
+  # the overseer is absent (connection refused / timeout / non-200) the probe falls
+  # through to the standalone path below, byte-for-byte as before.
+  if [[ "$(curl -s --max-time 1 -o /dev/null -w '%{http_code}' "$OVERSEER_BASE/health" 2>/dev/null || true)" == 200 ]]; then
+    local lease_json relay
+    lease_json="$(curl -s --max-time 10 \
+      -X POST -H 'Content-Type: application/json' \
+      -d "{\"host\":\"$cdp_host\"}" \
+      "$OVERSEER_BASE/browser/lease" 2>/dev/null || true)"
+    # Same JSON-extraction style as the /json target read below: a stdlib python3
+    # one-liner reading the field, empty on any parse failure.
+    _lease_id="$(printf '%s' "$lease_json" | python3 -c '
+import json, sys
+try:
+    print(json.load(sys.stdin).get("leaseId", "") or "")
+except Exception:
+    pass
+' 2>/dev/null || true)"
+    relay="$(printf '%s' "$lease_json" | python3 -c '
+import json, sys
+try:
+    print(json.load(sys.stdin).get("cdpRelay", "") or "")
+except Exception:
+    pass
+' 2>/dev/null || true)"
+    if [[ -z "$_lease_id" || -z "$relay" ]]; then
+      echo "not-google-chrome: overseer on $OVERSEER_BASE is up but did not grant a browser lease (response: ${lease_json:-<empty>})" >&2
+      log_event err "cdp lease failed against overseer $OVERSEER_BASE: ${client_cmd[*]}"
+      lease_teardown   # release the lease if one was partially granted
+      exit 78
+    fi
+    trap 'lease_teardown; exit 130' INT TERM
+    trap lease_teardown EXIT
+
+    # No local debug port in delegate mode: the relay carries CDP, CDP_PORT empty.
+    export CDP_WS_URL="$relay" CDP_PORT=""
+    "$timeout_cmd" "$timeout" "${client_cmd[@]}" || rc=$?
+    if [[ $rc -eq 124 || $rc -eq 137 ]]; then
+      log_event warning "cdp client timed out after ${timeout}s (exit $rc): ${client_cmd[*]}"
+    fi
+    exit "$rc"
+  fi
 
   exec 9>/tmp/chromium.lock
   if ! "$flock_cmd" -w "$lock_wait" 9; then
@@ -290,6 +373,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     -t)                     timeout="$2"; shift 2 ;;
     --cdp)                  cdp=1; shift ;;
+    --host)                 cdp_host="$2"; shift 2 ;;
     --pdf)                  mode_args=(--no-pdf-header-footer "--print-to-pdf=$2"); pdf=1; shift 2 ;;
     --yes-i-am-not-stupid)  override=1; shift ;;
     --)                     shift; break ;;
@@ -308,13 +392,13 @@ client_cmd=()
 if [[ $cdp -eq 1 ]]; then
   client_cmd=("$@")
   if [[ ${#client_cmd[@]} -eq 0 ]]; then
-    echo "Usage: not-google-chrome --cdp [-t SECONDS] -- <client command ...>" >&2
+    echo "Usage: not-google-chrome --cdp [-t SECONDS] [--host HOST] -- <client command ...>" >&2
     exit 64
   fi
 else
   if [[ $# -lt 1 ]]; then
     echo "Usage: not-google-chrome [-t SECONDS] [--pdf PATH] [--yes-i-am-not-stupid] URL [extra-flag ...]" >&2
-    echo "       not-google-chrome --cdp [-t SECONDS] -- <client command ...>" >&2
+    echo "       not-google-chrome --cdp [-t SECONDS] [--host HOST] -- <client command ...>" >&2
     exit 64
   fi
   url="$1"; shift
