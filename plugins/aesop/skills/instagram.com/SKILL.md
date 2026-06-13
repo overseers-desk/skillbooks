@@ -24,7 +24,7 @@ The wrapper handles standard flags (headless, window size, user agent, user-data
 
 Before invoking any DM-content script (§9, and any future script whose filename carries `mark-seen`, `mutate-seen`, or `send`), name the specific thread(s) about to be touched and surface the read-state implication to the user, then wait for an explicit yes. For §9 the implication to surface is: this will only return content for threads already opened in the user's Instagram client; the script refuses unread threads and will not mark anything seen on the user's behalf.
 
-§5 (`inbox-noninvasive.py`) is exempt — it reads inbox metadata only, never thread content, and blocks seen-mutation requests at the Fetch layer.
+§5 (`inbox-noninvasive.tcl`) is exempt — it reads inbox metadata only, never thread content, and blocks seen-mutation requests at the Fetch layer.
 
 The internal refusal gate inside §9 is a backstop. A run without prior disclosure violates the policy even if the script would have refused anyway.
 
@@ -46,7 +46,7 @@ The response contains `users[]`, `hashtags[]`, and `places[]`. Each user include
 ## 2. Parse search results
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/parse-search.py /tmp/instagram-search.html
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/parse-search.tcl /tmp/instagram-search.html
 ```
 
 Prints a ranked list of candidate handles with display name, verified/private flags, profile URL, and mutual-followers context.
@@ -65,7 +65,7 @@ Instagram has no separate "about" page on the web.
 ## 4. Parse profile
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/parse-profile.py /tmp/instagram-profile.html
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/parse-profile.tcl /tmp/instagram-profile.html
 ```
 
 Reliably extracts (from `<meta>` tags, which are server-rendered):
@@ -82,7 +82,7 @@ When available (typically only for the logged-in user's own profile or profiles 
 This script reads inbox metadata only. It must not be modified to read individual thread content. If you need message content from a specific thread, that is a separate, invasive operation. Write a different script with a different name.
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/inbox-noninvasive.py list
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/inbox-noninvasive.tcl list
 ```
 
 Emits JSON with one entry per thread: `username`, `full_name`, `thread_id`, `last_activity_iso`, `last_snippet` (up to 120 chars of the last message text or a type label), `unseen` (boolean), `is_group`.
@@ -90,7 +90,7 @@ Emits JSON with one entry per thread: `username`, `full_name`, `thread_id`, `las
 To verify the script does not mutate read state:
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/inbox-noninvasive.py verify-noninvasive
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/inbox-noninvasive.tcl verify-noninvasive
 ```
 
 Runs `list` twice with a 45-second sleep, diffs the `unseen` field per thread, exits 0 if stable and exits 2 if any thread flipped from unseen to seen.
@@ -100,9 +100,9 @@ Requires a logged-in session. Does not navigate to `/direct/inbox/` to avoid tri
 ## 6. Recent posts for a handle
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-recent-posts.py posts HANDLE
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-recent-posts.py posts HANDLE --limit 50
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-recent-posts.py posts HANDLE --raw-out /path/raw.json
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-recent-posts.tcl posts HANDLE
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-recent-posts.tcl posts HANDLE --limit 50
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-recent-posts.tcl posts HANDLE --raw-out /path/raw.json
 ```
 
 Default limit is 12. Pagination via the feed API's `next_max_id` cursor happens automatically when `--limit` exceeds 12. The script navigates to the profile page once to resolve the user_id (from inline JSON or the `web_profile_info` API), then calls `/api/v1/feed/user/<user_id>/` directly in a loop until the limit is reached or `more_available` is false.
@@ -125,8 +125,8 @@ The five handle-bearing fields above (`mentions`, `tagged_users`, `coauthors`, `
 ## 7. Collab partner expansion (multi-handle spider)
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/collab-expand.py expand handle1,handle2,handle3
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/collab-expand.py expand --from /tmp/seeds.txt --posts-per-handle 36
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/collab-expand.tcl expand handle1,handle2,handle3
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/collab-expand.tcl expand --from /tmp/seeds.txt --posts-per-handle 36
 ```
 
 Walks a list of input handles, fetches recent posts for each (paginated via §6's helpers), and accumulates the union of `tagged_users`, `coauthors`, `sponsors`, and caption `mentions` across all posts. Outputs candidate handles NOT already in the input set, ranked by explicit-collab signal first (tagged + coauthor + sponsor counts) and then by caption-mention count and breadth of source handles.
@@ -140,8 +140,8 @@ Default `--posts-per-handle` is 24 (about two pages). Pacing: roughly one feed p
 ## 8. Post comments (for comment-circle discovery)
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-post-comments.py comments SHORTCODE
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-post-comments.py comments POST_ID
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-post-comments.tcl comments SHORTCODE
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-post-comments.tcl comments POST_ID
 ```
 
 Accepts a shortcode (e.g. `DXsPrn5AvNH`), a full post_id from the feed API (`<media_id>_<user_id>`), or a bare numeric `media_id`. Shortcode-to-media-id conversion is a local base64 decode, so no extra fetch is needed to resolve. Calls `/api/v1/media/<media_id>/comments/` via fetch() inside the authenticated session.
@@ -164,9 +164,9 @@ The `comment_count_total` field in the response is the live count from this endp
 ## 9. DM thread history reader (seen threads only)
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/read-seen-thread.py thread <thread_id> [--limit N]
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/read-seen-thread.py by-handle <handle>   [--limit N]
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/read-seen-thread.py all-seen             [--limit N]
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/read-seen-thread.tcl thread <thread_id> [--limit N]
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/read-seen-thread.tcl by-handle <handle>   [--limit N]
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/read-seen-thread.tcl all-seen             [--limit N]
 ```
 
 Fetches message history from a DM thread for P-phase use. Companion to §5: §5 enumerates inbox metadata without ever touching thread content; §9 reads thread content but only for threads the operator has already marked seen. The hyphen-delimited word "seen" in the filename is load-bearing, parallel to "noninvasive" in §5.
@@ -182,8 +182,8 @@ Verified 2026-05-12 against the live inbox: refusal path correctly skipped a thr
 ## 10. Followers / following list extractor
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-followers.py followers HANDLE [--limit N] [--csv PATH]
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-followers.py following HANDLE [--limit N] [--csv PATH]
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-followers.tcl followers HANDLE [--limit N] [--csv PATH]
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/instagram.com/fetch-followers.tcl following HANDLE [--limit N] [--csv PATH]
 ```
 
 Enumerates `/api/v1/friendships/<user_id>/followers/` or `/.../following/` via fetch() inside an authenticated CDP session. Resolves handle → user_id by reusing `resolve_user_id` from §6, then paginates the cursor-based endpoint (25 users per page, `next_max_id`) until `--limit` is reached or the endpoint reports no more pages.
