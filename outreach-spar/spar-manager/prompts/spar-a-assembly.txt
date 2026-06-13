@@ -1,0 +1,36 @@
+Write the final approach file. You have the method, overview, antifacts, goal, and profile from your drafting context. Refer to §6 (approach file structure) and §7 (quality checklist) in the method file.
+
+## Contact details
+
+__CONTACT_SUMMARY__
+
+## A1 Draft 1
+
+__INITIAL_DRAFT__
+
+## Challenger spar log (__CHALLENGER_MODEL__, context-isolated)
+__ALL_CHALLENGER__
+
+## Revisions
+__ALL_REVISIONS__
+
+## Final draft
+
+__FINAL_DRAFT__
+
+## Instructions
+
+Write the complete approach file to: __OUTFILE__
+
+Follow §6 structure exactly. Include contact header, angle rationale, A1 Draft 1, all A2 responses, revision drafts, final draft, fact provenance table, and the root keys `response_likelihood`, `a_note`, and `r_note`. The contact header fields are: Contact, Channel, Language, Angle.
+
+`a_note` is your one-line summary for R: angle used, channel, warmth, language. `r_note` is the human reviewer's field — write it as an empty string (`r_note: ""`); R fills it after responses arrive. `response_likelihood` is the whole-number percentage you estimate below, written as an integer root key (e.g. `response_likelihood: 75`). These three are root keys in the approach file, not roster columns.
+
+Do not write a profile_hash line — the harness prepends it after this step (issue #63). The validator does not require it from you.
+
+Run §7 quality checklist before writing. Fix any failures in the final draft.
+
+Estimate the response likelihood for this contact as a whole-number percentage (0–100), based on warmth level, angle quality, challenger verdict, and channel availability. Write it as the `response_likelihood` root key in the approach file (per above), and also print it for the run log:
+RESPONSE_LIKELIHOOD: {n}%
+
+Then print: DONE: __CONTACT_SUMMARY__ | __OUTFILE__

@@ -801,7 +801,7 @@ section "21. validate_roster — roster quality-checklist assertions"
 set ::vr_headers {
     stem contact_name organisation role phone email linkedin_url facebook_url
     sweep_iteration discovered_via date_excluded
-    s_note p_note star_rating response_likelihood a_note r_note
+    s_note p_note star_rating
 }
 
 proc make_vr_row {{overrides {}}} {
@@ -820,9 +820,6 @@ proc make_vr_row {{overrides {}}} {
         s_note            "" \
         p_note            "" \
         star_rating       "3" \
-        response_likelihood "" \
-        a_note            "" \
-        r_note            "" \
     ]
     dict for {k v} $overrides {
         dict set row $k $v
@@ -884,15 +881,6 @@ write_roster_tsv $seg_vr1b $::vr_headers [list \
 set issues_vr1b [vr_issues $seg_vr1b]
 assert_eq [has_issue $issues_vr1b roster_placeholder_name] 0 \
     "A1b: blank contact_name + non-empty organisation exempt (P §4.1 case)"
-
-# ── Assertion 7: response_likelihood without star_rating ──
-set seg_vr7 [make_temp_segment]
-write_roster_tsv $seg_vr7 $::vr_headers [list \
-    [make_vr_row {stem s1 star_rating "" response_likelihood "80"}] \
-]
-set issues_vr7 [vr_issues $seg_vr7]
-assert_eq [has_issue $issues_vr7 roster_likelihood_without_star] 1 \
-    "A7: response_likelihood without star_rating flagged"
 
 # ── Assertion 8: star_rating=0 without date_excluded ──
 set seg_vr8 [make_temp_segment]

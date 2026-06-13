@@ -50,7 +50,7 @@ proc spar::_issue {severity code contact_name message {extra {}}} {
 # favour of profile_hash linkage).
 proc spar::_approach_canonical_keys {} {
     return [dict create \
-        root {decisions rounds angle_rationale a_note fact_provenance quality_checklist profile_hash} \
+        root {decisions rounds angle_rationale response_likelihood a_note r_note fact_provenance quality_checklist profile_hash} \
         decisions {channel language angle sender channel_detail subsegment} \
         round {type number messages verdict fact_check in_character chosen_usps revision_note notes replies antifact_check} \
         message {channel subject body to actioned_date replied_date reply_summary script text char_count bcc cc director_note to_note phone_note mode parent reply_all} \
@@ -913,7 +913,6 @@ proc spar::validate_roster {segment_contacts} {
         set sweep [string trim [spar::dict_get_default $contact sweep_iteration ""]]
         set date_invalid [string trim [spar::dict_get_default $contact date_excluded ""]]
         set star [string trim [spar::dict_get_default $contact star_rating ""]]
-        set response_likelihood [string trim [spar::dict_get_default $contact response_likelihood ""]]
         set stem [string trim [spar::dict_get_default $contact stem ""]]
         set field_count_warning [spar::dict_get_default $contact _field_count_warning ""]
 
@@ -979,15 +978,6 @@ proc spar::validate_roster {segment_contacts} {
             lappend issues [spar::_issue warning roster_no_sweep_iteration $contact_name \
                 "Contact has no sweep_iteration value" \
                 [list segment $segment]]
-        }
-
-        # Assertion 7: response_likelihood implies star_rating
-        if {$response_likelihood ne "" && $response_likelihood ne "0"} {
-            if {$star eq ""} {
-                lappend issues [spar::_issue warning roster_likelihood_without_star $contact_name \
-                    "Contact has response_likelihood but no star_rating" \
-                    [list segment $segment]]
-            }
         }
 
         # Assertion 8: star_rating=0 implies date_excluded

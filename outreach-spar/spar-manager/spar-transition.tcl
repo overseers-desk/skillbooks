@@ -234,11 +234,8 @@ proc step_prompt {tid slug idx total} {
 set cdata [spar::load_campaign $yaml_path]
 set campaign_name [spar::dict_get_default $cdata campaign [file tail $yaml_path]]
 set primary_channel [spar::campaign_primary_channel $cdata]
-set segments_list {}
+set segments_list [spar::campaign_segment_names $cdata]
 set skip_set {}
-if {[dict exists $cdata segments]} {
-    set segments_list [dict get $cdata segments]
-}
 if {[dict exists $cdata skip_segments]} {
     set skip_set [dict get $cdata skip_segments]
 }

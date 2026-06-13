@@ -713,7 +713,6 @@ oo::class create spar::ApproachHarness {
 
     method do_summary {} {
         set slug       [my slug]
-        set log_prefix [my log_prefix]
         set total_cost [my cost_total]
 
         if {![file exists $Outfile]} {
@@ -722,32 +721,10 @@ oo::class create spar::ApproachHarness {
         }
         ${::spar::harness_log}::info "DONE: $slug ($Pass pass(es), verdict=$Verdict, cost=\$$total_cost)"
 
-        # Update roster response_likelihood via msg_roster_update —
-        # the dispatcher applies it from its single-threaded event loop
-        # (no flock from here).
-        set assembly_log "${log_prefix}-author-assembly.log"
-        if {![file exists $assembly_log]} return
-        set assembly_text [spar::read_file $assembly_log]
-        set band_likelihood ""
-        foreach line [split $assembly_text \n] {
-            if {[string match "RESPONSE_LIKELIHOOD:*" $line]} {
-                regexp {\d+} $line band_likelihood
-            }
-        }
-        if {$band_likelihood eq ""} return
-        set roster_path [file join [file dirname [file dirname $Outfile]] roster.tsv]
-        if {![file exists $roster_path]} return
-        # msg_roster_update is the dispatcher's thread-send protocol,
-        # defined in spar-dispatcher-initcmd.tcl and only available
-        # when this harness runs inside a tpool worker. Standalone
-        # harness invocations (spar-p-harness.tcl direct) lack it;
-        # the roster update is then dropped, which is correct — there
-        # is no dispatcher to apply it.
-        if {[llength [info commands msg_roster_update]] > 0} {
-            msg_roster_update [my slug] $roster_path \
-                contact_name $ContactName \
-                response_likelihood $band_likelihood
-        }
+        # response_likelihood is written into the approach YAML by the
+        # assembly agent (a root key, per spar-A-approach.md §6); it is
+        # campaign-bound and does not go to the segment's shared roster.
+        # No roster write-back here.
     }
 }
 
