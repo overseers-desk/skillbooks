@@ -16,7 +16,7 @@ A logged-in Facebook session in the user-data-dir that `not-google-chrome` targe
 
 When no one is logged in, Facebook embeds `"USER_ID":"0"` and `"ACCOUNT_ID":"0"` in the page config and serves a login wall (`id="login_form"`, `input name="email"`, `input name="pass"`, action `login/device-based/regular/login/`). The `"USER_ID":"0"` marker is the reliable one: it fires even on a public profile whose `<title>` still reads like a real page (e.g. `Mark Zuckerberg | Facebook`) behind the wall, where a title-only check would be fooled. When logged in, `USER_ID`/`ACCOUNT_ID` carry the real numeric account id.
 
-`parse-profile.py` checks these markers and exits with `ERROR: Facebook: not logged in - no session in this profile. Log in via the GUI Chromium, then close it and retry.` The reel CDP fetcher (`reel-comments-cdp.py`) runs the same check after navigation and exits with the same message rather than returning an empty harvest. If a read returns this, surface it to the user verbatim — do not retry blindly or report empty results.
+`parse-profile.tcl` checks these markers and exits with `ERROR: Facebook: not logged in - no session in this profile. Log in via the GUI Chromium, then close it and retry.` The reel CDP fetcher (`reel-comments-cdp.tcl`) runs the same check after navigation and exits with the same message rather than returning an empty harvest. If a read returns this, surface it to the user verbatim — do not retry blindly or report empty results.
 
 Facebook may otherwise serve different DOM structures depending on the target profile's privacy settings and the session locale.
 
@@ -47,7 +47,7 @@ Try in order if no results:
 ## 2. Parse search results
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-search.py /tmp/facebook-search-results.html
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-search.tcl /tmp/facebook-search-results.html
 ```
 
 Outputs profile URLs (both vanity `/username` and numeric `/profile.php?id=`) with nearby visible text.
@@ -86,7 +86,7 @@ For numeric-ID profiles, the about URL is `https://www.facebook.com/profile.php?
 ## 4. Parse profile
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-profile.py /tmp/facebook-profile.html
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-profile.tcl /tmp/facebook-profile.html
 ```
 
 Extracts name, meta descriptions, JSON-LD Person data (if present), bio/intro lines, role/work mentions, location mentions, and visible text blocks.
@@ -94,7 +94,7 @@ Extracts name, meta descriptions, JSON-LD Person data (if present), bio/intro li
 Optionally parse the about page too:
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-profile.py /tmp/facebook-about.html
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-profile.tcl /tmp/facebook-about.html
 ```
 
 ## 5. Parse recent posts (optional)
@@ -102,7 +102,7 @@ python3 ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-profile.py /tmp/facebook
 Uses the same profile HTML from step 3 (no additional fetch):
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-posts.py /tmp/facebook-profile.html
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-posts.tcl /tmp/facebook-profile.html
 ```
 
 Extracts per post: text content, hashtags, tagged/mentioned people and pages (with profile URLs), and shared-from source. Produces a summary of all hashtags and tagged entities across posts.
@@ -110,7 +110,7 @@ Extracts per post: text content, hashtags, tagged/mentioned people and pages (wi
 The script auto-detects the profile owner's ID to exclude self-references. To override:
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-posts.py /tmp/facebook-profile.html --owner-id 100006232604720
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-posts.tcl /tmp/facebook-profile.html --owner-id 100006232604720
 ```
 
 How it works: each Facebook post carries a unique `__cft__[0]` token in all its links. The script uses `data-ad-preview="message"` markers to locate post boundaries, then associates hashtag and profile links via these tokens. Comments are excluded by limiting tag search to the header + content region.
@@ -131,7 +131,7 @@ not-google-chrome \
 Parse with:
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-reel.py /tmp/facebook-post.html
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-reel.tcl /tmp/facebook-post.html
 ```
 
 Outputs page name, caption (from `<title>`), counts from both embedded JSON (`reaction_count`, `share_count`, sometimes `total_comment_count`) and the rendered engagement bar (reactions / comments / shares visible to the viewer), and the commenters whose names render in the DOM along with the comment body text adjacent to each name.
@@ -143,7 +143,7 @@ Limit: Facebook lazy-loads comments. A single headless render yields the first ~
 For a profile's reels tab (`...?sk=reels_tab` or `/USERNAME/reels`), fetch the page as in step 3, then:
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-reels-tab.py /tmp/facebook-reels-tab.html
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-reels-tab.tcl /tmp/facebook-reels-tab.html
 ```
 
 Extracts per visible reel card: reel URL and view count (e.g. `191K`). Headless dumps render only the first few cards before lazy-load — typical yield is 3 reels.
@@ -153,7 +153,7 @@ How it works: each reel card has an eye-icon SVG with a fixed path string (`M7.5
 ## 8. Keyword search (optional)
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/keyword-search.py /tmp/facebook-profile.html keyword1 keyword2 ...
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/keyword-search.tcl /tmp/facebook-profile.html keyword1 keyword2 ...
 ```
 
 Checks whether a profile mentions specific terms and shows surrounding context.
@@ -189,7 +189,7 @@ detection above) instead of returning an empty harvest.
 #    in the DOM render. For a 600-comment reel this takes 3-5 minutes, so
 #    raise the wrapper's deadman with -t (e.g. -t 600).
 not-google-chrome --cdp -t 600 -- \
-  python3 ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/reel-comments-cdp.py \
+  tclsh ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/reel-comments-cdp.tcl \
   "https://www.facebook.com/reel/REEL_ID" \
   --out /tmp/reel-comments.html \
   --bodies-json /tmp/reel-bodies.json \
@@ -198,7 +198,7 @@ not-google-chrome --cdp -t 600 -- \
 
 # 2. Parse to Markdown. Pass --bodies-json so truncated bodies get backfilled
 #    with canonical text from the GraphQL sidecar.
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-reel-comments.py \
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/facebook.com/parse-reel-comments.tcl \
   /tmp/reel-comments.html \
   --bodies-json /tmp/reel-bodies.json \
   --md /tmp/reel-comments.md \
