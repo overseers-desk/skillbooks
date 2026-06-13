@@ -79,3 +79,7 @@ Where reasoning belongs, the email gives the outcome frame ("X fits because Y") 
 ### D5. Closing matches register
 
 Internal director-to-staff mail closes with the writer's name. Ornamental sign-offs ("Best regards", "Warm regards") and anticipatory thanks ("thanks in advance") belong to peer or vendor register; here they read as the writer adopting the manners of the wrong relationship.
+
+### D6. Approval phrases are rulings
+
+Over the director's signature, an approval-flavoured sentence is read as a ruling by the recipient and by every staff member cc'd: "happy for you to carry on", "no problem at all", "that works for us" each auto-translate to "boss said yes" and get quoted later as policy. Where the brief intends a ruling, state it as one (D2). Where it intends only acknowledgement or normalisation, recast to a form that cannot be quoted as approval: a fact, or experience ("we have worked this way with other organisers for years"). Within director register the rule covers external mail with staff in cc as much as internal mail, since the cc'd staff read the approval as a ruling either way.
