@@ -19,6 +19,14 @@
 #   $cdp navigate <url>                 ;# Page.enable + Page.navigate
 #   $cdp evaluate <jsExpr>             ;# Runtime.evaluate value (returnByValue, awaitPromise)
 #   $cdp close
+#
+# Network-interception API (for skills that read the page's own API traffic
+# rather than replaying it — the persisted-query hash rotates, so intercept):
+#   $cdp cdpBuffered <method> ?paramsDict?  ;# like cdp, but parks any CDP events
+#                                            # seen while awaiting the response
+#   $cdp drainEvents <seconds>          ;# park every event seen for <seconds>
+#   $cdp events                          ;# the parked events (list of dicts)
+#   $cdp clearEvents                     ;# empty the event buffer
 
 package require json
 package require json::write
@@ -38,10 +46,11 @@ proc cdp::connect {{url ""}} {
 }
 
 oo::class create cdp::Client {
-    variable Sock NextId
+    variable Sock NextId EventBuffer
 
     constructor {url} {
         set NextId 0
+        set EventBuffer {}
         my Open $url
     }
 
@@ -172,6 +181,98 @@ oo::class create cdp::Client {
             # else a CDP event or another command's response; keep reading.
         }
     }
+
+    # Read one frame, but give up after $ms milliseconds. Returns the decoded
+    # payload, or "" on timeout/close/EOF. Used by the event-draining methods so
+    # a quiet socket does not block. Toggles non-blocking around a fileevent so
+    # the rest of the client keeps its simple blocking reads.
+    method ReadFrameTimed {ms} {
+        fconfigure $Sock -blocking 0
+        set hdr [my ReadNTimed 2 $ms]
+        if {[string length $hdr] < 2} {
+            fconfigure $Sock -blocking 1
+            return ""
+        }
+        binary scan $hdr cucu b0 b1
+        set opcode [expr {$b0 & 0x0f}]
+        set len [expr {$b1 & 0x7f}]
+        if {$len == 126} {
+            binary scan [my ReadNTimed 2 $ms] Su len
+        } elseif {$len == 127} {
+            binary scan [my ReadNTimed 8 $ms] Wu len
+        }
+        set payload ""
+        if {$len > 0} { set payload [my ReadNTimed $len $ms] }
+        fconfigure $Sock -blocking 1
+        if {$opcode == 0x8} { return "" }
+        return [encoding convertfrom utf-8 $payload]
+    }
+
+    # Read exactly $n bytes from a non-blocking socket, waiting up to $ms total.
+    # Returns the bytes, or "" if the deadline passes before $n arrive.
+    method ReadNTimed {n ms} {
+        set deadline [expr {[clock milliseconds] + $ms}]
+        set buf ""
+        while {[string length $buf] < $n} {
+            set need [expr {$n - [string length $buf]}]
+            set chunk [read $Sock $need]
+            append buf $chunk
+            if {[string length $buf] >= $n} { break }
+            if {[eof $Sock]} { return "" }
+            set remain [expr {$deadline - [clock milliseconds]}]
+            if {$remain <= 0} { return "" }
+            set ready 0
+            set tok [after $remain [list set [namespace current]::ready 1]]
+            fileevent $Sock readable [list set [namespace current]::ready 2]
+            vwait [namespace current]::ready
+            after cancel $tok
+            fileevent $Sock readable {}
+            if {$ready == 1} { return "" }
+        }
+        return $buf
+    }
+
+    # Like cdp, but events seen while awaiting the response are parked in the
+    # event buffer instead of being dropped. Pair with drainEvents/events.
+    method cdpBuffered {method {params ""}} {
+        incr NextId
+        set id $NextId
+        if {$params eq ""} {
+            set msg [subst {{"id":$id,"method":[json::write string $method]}}]
+        } else {
+            set msg [subst {{"id":$id,"method":[json::write string $method],"params":[my ToJson $params]}}]
+        }
+        puts -nonewline $Sock [my FrameMasked $msg]
+        flush $Sock
+        while 1 {
+            set r [my ReadFrame]
+            if {$r eq ""} { error "CDP connection closed awaiting id $id" }
+            set d [json::json2dict $r]
+            if {[dict exists $d id] && [dict get $d id] == $id} {
+                return $d
+            }
+            if {[dict exists $d method]} { lappend EventBuffer $d }
+        }
+    }
+
+    # Park every CDP event the server sends over the next $seconds.
+    method drainEvents {seconds} {
+        set deadline [expr {[clock milliseconds] + int($seconds * 1000)}]
+        while {[clock milliseconds] < $deadline} {
+            set remain [expr {$deadline - [clock milliseconds]}]
+            if {$remain <= 0} break
+            set r [my ReadFrameTimed [expr {$remain < 300 ? $remain : 300}]]
+            if {$r eq ""} continue
+            set d [json::json2dict $r]
+            if {[dict exists $d method]} { lappend EventBuffer $d }
+        }
+    }
+
+    # The parked CDP events, in arrival order (each a dict).
+    method events {} { return $EventBuffer }
+
+    # Discard parked events.
+    method clearEvents {} { set EventBuffer {} }
 
     # Page.enable then Page.navigate. Returns the navigate response dict.
     method navigate {url} {
