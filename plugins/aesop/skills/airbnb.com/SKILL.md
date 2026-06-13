@@ -7,7 +7,7 @@ allowed-tools: Bash, Read
 
 ## Execution model
 
-Spawn a **subagent** to run the CDP script, as each invocation launches a headless browser session (~15s overhead). Tell the subagent to use the script at `${CLAUDE_PLUGIN_ROOT}/skills/airbnb.com/airbnb-cdp.py`.
+Spawn a **subagent** to run the CDP script, as each invocation launches a headless browser session (~15s overhead). Tell the subagent to use the script at `${CLAUDE_PLUGIN_ROOT}/skills/airbnb.com/airbnb-cdp.tcl`.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ If the script returns `{"error": "Not logged in..."}`, the user needs to log in 
 ### 1. List quick replies
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/airbnb.com/airbnb-cdp.py list [--product STAYS|EXPERIENCES]
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/airbnb.com/airbnb-cdp.tcl list [--product STAYS|EXPERIENCES]
 ```
 
 Navigates to the quick replies settings page, intercepts the API response the page makes, and returns the quick replies as JSON. Default product is `STAYS`.
@@ -31,7 +31,7 @@ Returns a list with the intercepted response(s); each entry has `url`, `status`,
 ### 2. Reservations
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/airbnb.com/airbnb-cdp.py reservations [--filter past|upcoming|all]
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/airbnb.com/airbnb-cdp.tcl reservations [--filter past|upcoming|all]
 ```
 
 Returns `{"total_count": N, "returned": N, "reservations": [...]}` (for `--filter all`, an object keyed by `past` and `upcoming`). Each reservation includes `confirmation_code`, `listing_id`, `listing_name`, `start_date`, `end_date`, `nights`, `guest_user`, `earnings`, `user_facing_status_key` (`complete`, `current`, `canceled`, `denied`, `timedout`, etc.), and `is_check_in_today` / `is_check_out_today` flags.
