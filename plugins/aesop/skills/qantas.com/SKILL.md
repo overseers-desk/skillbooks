@@ -45,7 +45,7 @@ Steps:
 2. Run the parser:
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/qantas.com/parse-rewards.py /tmp/qantas-frf.html
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/qantas.com/parse-rewards.tcl /tmp/qantas-frf.html
 ```
 
 Date handling: the Flight Reward Finder only holds live and future availability - past dates return zero records, not an error. If the user asks about a date in the past, state today's date and confirm before fetching. Even when `dr` specifies a single day, the endpoint returns the full forward availability list (observed spanning ~12 months), not a filtered window, so filter to the requested date in the consumer.
@@ -55,8 +55,8 @@ Date handling: the Flight Reward Finder only holds live and future availability 
 Returns first name, tier, member ID, points, and status credits. Login + read happen in one CDP session because cookies do not persist across invocations while the snap chromium browser is open (it locks the user-data-dir).
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/qantas.com/login.py            # human-readable
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/qantas.com/login.py --json     # JSON
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/qantas.com/login.tcl            # human-readable
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/qantas.com/login.tcl --json     # JSON
 ```
 
 Credentials are read from `$HOME/.claude/skills/config.ini` (`[qantas.com]` member_id, last_name, pin). See Prerequisites above.
