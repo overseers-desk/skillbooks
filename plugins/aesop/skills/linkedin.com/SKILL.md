@@ -12,18 +12,18 @@ This workflow produces large DOM outputs (1-20MB per page). Spawn a **Sonnet sub
 
 A logged-in LinkedIn session in the user-data-dir that `not-google-chrome` targets. This skill constructs LinkedIn URLs, calls the wrapper to fetch them, and parses the result.
 
-If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Registrarse", the session is not active. LinkedIn expires the session periodically while keeping a remember-me cookie. First try `login.py` (see "Establish a session" below) to re-mint a session via the fastrack flow without a password. If that reports `logged_out` (no remember-me), or if the title persists after a successful login, then investigate the plumbing: the user-data-dir may be wrong, or another chromium instance may hold the same user-data-dir.
+If the dumped DOM title contains "Sign In", "Log In", "Iniciar sesión", or "Registrarse", the session is not active. LinkedIn expires the session periodically while keeping a remember-me cookie. First try `login.tcl` (see "Establish a session" below) to re-mint a session via the fastrack flow without a password. If that reports `logged_out` (no remember-me), or if the title persists after a successful login, then investigate the plumbing: the user-data-dir may be wrong, or another chromium instance may hold the same user-data-dir.
 
 ## Establish a session
 
 LinkedIn expires the active session periodically while keeping a remember-me cookie. Re-mint a session without a password via the fastrack flow:
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/login.py          # log in via fastrack if logged out
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/login.py --check  # report state only, never click
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/login.tcl          # log in via fastrack if logged out
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/login.tcl --check  # report state only, never click
 ```
 
-`login.py`, `send-invite.py`, and `send-message.py` are CDP clients run through `not-google-chrome --cdp`, which owns the browser lifecycle: one browser at a time (flock), a deadman timeout, and a teardown that reaches the browser even after snap detaches it into its own systemd scope. Run directly, the scripts exit with `CDP_WS_URL not set`.
+`login.tcl`, `send-invite.tcl`, and `send-message.tcl` are CDP clients run through `not-google-chrome --cdp`, which owns the browser lifecycle: one browser at a time (flock), a deadman timeout, and a teardown that reaches the browser even after snap detaches it into its own systemd scope. Run directly, the scripts exit with `CDP_WS_URL not set`.
 
 The JSON `status` is one of:
 - `already_logged_in` / `logged_in` — session active
@@ -59,7 +59,7 @@ A search returning zero results does not mean the person has no LinkedIn. Try al
 ## 2. Parse search results
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/parse-search.py /tmp/linkedin-search-results.html
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/parse-search.tcl /tmp/linkedin-search-results.html
 ```
 
 Outputs each profile URL with nearby visible text (name, headline).
@@ -75,7 +75,7 @@ not-google-chrome "https://www.linkedin.com/in/USERNAME/" > /tmp/linkedin-profil
 ## 4. Parse profile
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/parse-profile.py /tmp/linkedin-profile.html "https://www.linkedin.com/in/USERNAME/"
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/parse-profile.tcl /tmp/linkedin-profile.html "https://www.linkedin.com/in/USERNAME/"
 ```
 
 Emits a structured YAML record to stdout: name, vanity slug, the profile URN (`urn:li:fsd_profile:ACoAA...`, the owner's, found as the dominant id in the page's data payload across LinkedIn's several serialisations of it), headline, location, current company, and a capped list of evidence text blocks. Pass the profile URL as the optional second argument so the record carries the slug and canonical URL; redirect stdout to `<slug>.yaml` to save it. The legacy numeric form (`urn:li:member:NNN`) is not emitted: on a profile page its most-frequent value is the signed-in viewer's own id, not the owner. Deep career history, About, and skills are lazy-mounted and not reliably present in the dump (see BUGS.md), so they are not extracted as structured fields.
@@ -83,7 +83,7 @@ Emits a structured YAML record to stdout: name, vanity slug, the profile URN (`u
 ## 5. Keyword search (optional)
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/keyword-search.py /tmp/linkedin-profile.html keyword1 keyword2 ...
+tclsh ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/keyword-search.tcl /tmp/linkedin-profile.html keyword1 keyword2 ...
 ```
 
 Checks whether a profile mentions specific terms and shows surrounding context.
@@ -114,7 +114,7 @@ If the modal shows "Add a note" and "Send without a note", the person is connect
 ## 7. Send connection invite with note
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/send-invite.py VANITY_NAME "Your note (≤300 chars)"
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/send-invite.tcl VANITY_NAME "Your note (≤300 chars)"
 ```
 
 `VANITY_NAME` is the slug from the profile URL: `/in/john-smith-123/` → `john-smith-123`.
@@ -138,7 +138,7 @@ The wrapper launches the browser and hands the script a page-target websocket; t
 
 **Dry-run mode** (types but does not click Send):
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/send-invite.py VANITY_NAME "note" --dry-run
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/send-invite.tcl VANITY_NAME "note" --dry-run
 ```
 
 **Note character limit:** LinkedIn enforces 300 chars client-side (no `maxlength` HTML attribute). The script enforces this before connecting.
@@ -146,7 +146,7 @@ not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/sen
 ## 8. Send a direct message to a connection
 
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/send-message.py VANITY_NAME "Message text"
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/send-message.tcl VANITY_NAME "Message text"
 ```
 
 The person must be a first-degree connection. The script:
@@ -158,7 +158,7 @@ The person must be a first-degree connection. The script:
 
 **Dry-run mode:**
 ```bash
-not-google-chrome --cdp -- python3 ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/send-message.py VANITY_NAME "text" --dry-run
+not-google-chrome --cdp -- tclsh ${CLAUDE_PLUGIN_ROOT}/skills/linkedin.com/send-message.tcl VANITY_NAME "text" --dry-run
 ```
 
 **Confirmation output:**

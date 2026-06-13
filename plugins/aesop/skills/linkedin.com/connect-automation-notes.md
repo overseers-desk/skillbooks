@@ -78,4 +78,4 @@ These LIX (LinkedIn Experiment) keys appeared in the custom-invite page JSON sta
 
 ## Retiring the old method
 
-The skill at `~/.claude/skills/linkedin/` replaces `aesop/linkedin-lookup-method/`. The scripts (`parse-search.py`, `parse-profile.py`, `keyword-search.py`) are copied into the skill directory. Once confirmed working, remove the LinkedIn lookup line from `~/.claude/CLAUDE.md` and optionally delete the old directory.
+The skill at `~/.claude/skills/linkedin/` replaces `aesop/linkedin-lookup-method/`. The scripts (`parse-search.tcl`, `parse-profile.tcl`, `keyword-search.tcl`) are copied into the skill directory. Once confirmed working, remove the LinkedIn lookup line from `~/.claude/CLAUDE.md` and optionally delete the old directory.
