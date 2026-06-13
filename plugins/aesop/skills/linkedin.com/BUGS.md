@@ -1,12 +1,12 @@
 # LinkedIn skill — open bugs
 
-## 2026-06-01 login.py `--check` reports `unknown` for a logged-in session
+## 2026-06-01 login.tcl `--check` reports `unknown` for a logged-in session
 
-**Symptom:** `login.py --check` against an active, logged-in session returns `{"status": "unknown"}` instead of `already_logged_in`. The page was the normal logged-in feed (title `Feed | LinkedIn`, ~7.8 MB DOM, no checkpoint redirect), yet `_login_state` matched none of its branches and fell through to `unknown`.
+**Symptom:** `login.tcl --check` against an active, logged-in session returns `{"status": "unknown"}` instead of `already_logged_in`. The page was the normal logged-in feed (title `Feed | LinkedIn`, ~7.8 MB DOM, no checkpoint redirect), yet `login_state` matched none of its branches and fell through to `unknown`.
 
-**Repro:** with a logged-in session, `not-google-chrome --cdp -- python3 login.py --check`. Observed 2026-06-01.
+**Repro:** with a logged-in session, `not-google-chrome --cdp -- tclsh login.tcl --check`. Observed 2026-06-01.
 
-**Cause:** `_login_state` (login.py:101-115) detects the logged-in state with class-substring selectors: `[class*="global-nav__me"]`, `a[href*="/in/"][class*="global-nav"]`, `main [class*="feed"]`, `div[class*="feed-shared"]`. LinkedIn randomises class names per session (the skill's own DOM notes say never to select by class), so on the current feed render these match nothing; `has_nav` and `has_feed` are both false and the function returns `unknown`. The logged-out branches (fastrack CTA, login form) use more stable selectors, which is why logged-out detection still works.
+**Cause:** `login_state` (login.tcl:101-115) detects the logged-in state with class-substring selectors: `[class*="global-nav__me"]`, `a[href*="/in/"][class*="global-nav"]`, `main [class*="feed"]`, `div[class*="feed-shared"]`. LinkedIn randomises class names per session (the skill's own DOM notes say never to select by class), so on the current feed render these match nothing; `has_nav` and `has_feed` are both false and the function returns `unknown`. The logged-out branches (fastrack CTA, login form) use more stable selectors, which is why logged-out detection still works.
 
 **Impact:** a caller that gates on `already_logged_in` before fetching reads a healthy session as indeterminate, and either aborts or proceeds blind. Harmless in isolation, but it defeats the pre-fetch session check.
 
@@ -14,7 +14,7 @@
 
 **Status:** open.
 
-## 2026-04-17 parse-search.py: role field contains adjacent profile's name
+## 2026-04-17 parse-search.tcl: role field contains adjacent profile's name
 
 **Symptom:** parsed search results pair one profile's name with the *next* profile's headline. When a calling agent uses the output to populate a roster, some rows end up with another person's NAME written into the role field.
 
@@ -40,7 +40,7 @@ Saved HTML examples may still exist at `/tmp/linkedin-1a-*.html` for a short win
 - `Andrew Antonopoulos | Executive Director at SWELL Sculpture Festival`  ← the SWELL headline actually belongs to Dee Steinfort (genuine SWELL Executive Director, adjacent card). Andrew Antonopoulos (`/in/andrew-antonopoulos/`) is an R&D-tax platform founder at Synnch in Melbourne, no SWELL connection. A direct profile fetch confirmed the mis-pairing. The bled pairing was propagated as a cross-lead from corporate-team-experience to event-producer and produced a roster row with no valid outreach channels — flagged later by `spar-progress.tcl`. Downstream cleanup: negative-cache Andrew Antonopoulos row in `event-producer/roster.tsv`.
 - `Lincoln Williams | Creative Director at Ravel + Chairperson at Swell Sculpture`  ← surfaced in the same sweep and rostered without direct-profile verification. Could be a genuine SWELL board member or another bled pairing; not confirmed either way.
 
-**Likely cause:** `parse-search.py` walks visible text linearly (`>content<` regex) and pairs each name with whatever headline text appears next. LinkedIn's lazy-loaded result cards don't always place the name and headline in stable order once the DOM has been rendered, so cross-card pairing happens.
+**Likely cause:** `parse-search.tcl` walks visible text linearly (`>content<` regex) and pairs each name with whatever headline text appears next. LinkedIn's lazy-loaded result cards don't always place the name and headline in stable order once the DOM has been rendered, so cross-card pairing happens.
 
 **Proposed fix direction:** parse per result card boundary rather than linearly across the document. Card boundaries can be detected by the recurring profile-URL anchor (`/in/<slug>/`); everything between two such anchors belongs to one person.
 
