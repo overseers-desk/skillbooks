@@ -12,7 +12,8 @@ allowed-tools: Bash, Read
 2. **Hotel availability with pricing** — given hotel mnemonic codes, dates, and guest count, returns rate plans with prices. Pure curl. Tested and working.
 3. **Price calendar** — given a hotel mnemonic and a date range, returns the lowest nightly rate for each night. Tested and working.
 4. **Destination resolution** — resolves a place name to coordinates. May return 403 on some IPs. Tested, works on some machines.
-5. **Hotel details (names, addresses, brand info)** — given one or more hotel mnemonics, returns hotel name, full GDS name, brand, address, and more. Pure curl. Tested and working.
+5. **Hotel details (names, addresses, brand info)** — given one or more hotel mnemonics, returns hotel name, full GDS name, brand, address, and more. Pure curl. The `profiles/details` host (`apis.ihg.com/hotels/v1/...`) is Akamai-WAF'd and returns `Access Denied` from some IPs for every method and fieldset (observed blocked 2026-06 while the availability host kept working). When blocked, fall back to `not-google-chrome` on the public `ihg.com/.../<mnemonic>/hoteldetail` page for the name/area.
+6. **Room-type / suite availability and refundable-rate check** — given one mnemonic and a date, lists each room type with its live availability tonight and flags which rate plans are refundable. Single property only. Pure curl. Tested and working.
 
 ## Brand codes
 
@@ -106,6 +107,17 @@ Response structure (key fields):
 - `hotels[].ratePlanDefinitions[].code` — rate plan code
 - `hotels[].ratePlanDefinitions[].rateRange.low.baseAmount` / `.high.baseAmount` — price range per rate plan
 - `hotels[].ratePlanDefinitions[].providerDescription` — rate plan description
+
+### Room-type / suite availability and refundable rate (single property)
+
+Add `rateDetails` to the fieldset on the availability-by-mnemonic call: `fieldset=summary,rateDetails`. Single property only — including it on a `geoLocation` or multi-mnemonic request returns `INVALID_FIELDSET` ("ratedetails ... may not be requested on a multi property or radius search request"). So discover hotels with a geo/summary search first, then loop one mnemonic per `rateDetails` call.
+
+It adds:
+- `hotels[].productDefinitions[]` — every room type, with `inventoryTypeCode`, `inventoryTypeName` (e.g. "1 King Junior Suite"), `isPremium`, `isAvailable`. Detect a suite by `inventoryTypeName`/`description` matching `suite` (case-insensitive).
+- `hotels[].rateDetails.offers[]` — each is a rate-plan × room-type combination. `offers[].productUses[].inventoryTypeCode` joins back to the room type; `offers[].productUses[].numberOfAvailableProducts` is the count bookable for the dates (this, not the catalogue, answers "is a suite available tonight"); `offers[].productUses[].rates.totalRate.amountAfterTax` is the price.
+- Refundable vs prepaid: join `offers[].ratePlanCode` to `hotels[].ratePlanDefinitions[].code` and read `advanceBooking.isAdvancePurchase` — `false` is a flexible/refundable rate, `true` is non-refundable advance purchase. This flag is visible anonymously and is not membership-gated. The exact cancellation cutoff (e.g. by 23:59 day of arrival) is not in this response; it lives in the WAF-blocked `profiles/details?fieldset=policies`.
+
+The availability host also returns brand codes beyond the table above for newer/lifestyle brands (e.g. `STAY` Staybridge Suites, `KIKI` Kimpton, `SIXS` Six Senses, `SPND` Noted Collection); resolve an unknown code to a name via the hotel page.
 
 ### Hotel details (batch)
 
