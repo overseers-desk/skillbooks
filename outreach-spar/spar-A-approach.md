@@ -10,9 +10,9 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 ## 2. Inputs
 
 - **Profile document:** The full profile produced by SPAR-P for this contact.
-- **Roster entry:** The contact's row in the roster TSV, including `s_note`, `p_note`, and `star_rating`. `star_rating` is P-owned: the roster row is its authoritative home, read from there. `response_likelihood` is A-owned and lives on the roster at §4.8, not in the approach file.
-- **Campaign plan:** Defines segments, approach sequencing per segment, and campaign-specific rules (language, collateral prerequisites, channel preferences).
-- **Segment file:** (`segment.yaml`) Specifies the approach type (FAM invitation, phone call, personal email, etc.) and any collateral prerequisites. Read this before drafting.
+- **Roster entry:** The contact's row in the roster TSV, including `s_note`, `p_note`, and `star_rating`. `star_rating` is P-owned: the roster row is its authoritative home, read from there. The roster carries campaign-independent population data only; A's outputs (`response_likelihood`, `a_note`) are written to the approach file, not the roster (see §4.8 and §6).
+- **Campaign plan block:** The segment's entry under `segments:` in `campaign.yaml` — the objective, USP framings, `message_goal`, `first_ask`, `conversion_funnel`, and `approach_sequencing` for this segment, including the approach type (FAM invitation, phone call, personal email, etc.) and collateral prerequisites. Read this before drafting. The dispatcher passes the campaign YAML path and the segment key.
+- **Segment file:** (`segment.yaml`) The population definition — `discovery_criteria`, `scope_note`, `rating_rubric`. Consult for boundary and rating context. The per-campaign plan now lives in the campaign plan block above, not here.
 - **Communication index:** `comms-index.md`, the running index of all prior A outputs. Read this before drafting to find cross-references, shared connections, and angles already used with related contacts.
 - **Strategy revision notes:** If this is not the first AR band, read the most recent `strategy-revision-[band].md` for revised angle priorities and messaging guidance from R.
 
@@ -20,7 +20,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 
 - **Approach file:** `{id}-{slug}.yaml` in the segment's `approach/` directory (the contact's communications log; the directory name is historical, see `spar-methodology.md`). The structure is shown in §6. The ID uses a segment prefix and sequential number (e.g. `TOR-001-peter-myers-pineapple-tours.yaml`). Contains the angle selection rationale, all A1/A2 drafts and responses, chosen USP identifiers per round, and the final send-ready messages.
 - **Communication index entry:** One line appended to `comms-index.md`: contact name, organisation, segment, angle used, key relationship hooks, channel selection.
-- **Roster update:** Populate the `a_note` column with: angle used, channel selected, warmth level, language, and any notable drafting consideration.
+- **Approach-file notes:** Write the `a_note` root key in the approach file with: angle used, channel selected, warmth level, language, and any notable drafting consideration. Set the `response_likelihood` root key to the estimated reply probability under the chosen angle. These are A's outputs and live in the approach file, not the roster.
 
 ## 4. Procedure
 
@@ -29,7 +29,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 Before drafting, verify that this contact is a valid campaign target:
 
 1. Check the roster: `star_rating` must be ≥ 1 and `date_excluded` must be empty. If either condition fails, skip this contact.
-2. Read the profile's angle assessment. If the profile states or implies the contact should not be approached (e.g. "not a Phase 1 contact", "deferred", "competing operator"), do not draft. Instead: set `star_rating` to 0, set `date_excluded` to today's date, write the reason in `a_note`, and move to the next contact.
+2. Read the profile's angle assessment. If the profile states or implies the contact should not be approached (e.g. "not a Phase 1 contact", "deferred", "competing operator"), do not draft. Instead: set `star_rating` to 0 and `date_excluded` to today's date in the roster, record the reason in the approach file's `a_note` (a minimal approach file with no draft rounds is fine — the exclusion is the outcome), and move to the next contact.
 3. If `star_rating` is 1 or 2, request explicit human confirmation before proceeding. Low-star contacts rarely justify the drafting cost.
 
 This gate exists because A is the first point where profile content and campaign goals are jointly evaluated. P assesses relevance to the campaign in general; A assesses whether a specific approach is viable. A contact may pass P's filter but fail A's — for example, a strategically interesting person for whom no viable first-touch exists.
@@ -66,7 +66,7 @@ If frequent prior correspondence already establishes that the contact knows the 
 
 ### 4.2 Select channel
 
-Read the segment file for the prescribed approach type. Then check what channels are available in the roster (email, linkedin_url, facebook_url, phone, etc.). An email is usable when the `email` column contains a deliverable `user@domain` value (the §4.8 format gate); masked or placeholder values do not count.
+Read the campaign plan block (the segment's entry under `segments:` in `campaign.yaml`) for the prescribed approach type. Then check what channels are available in the roster (email, linkedin_url, facebook_url, phone, etc.). An email is usable when the `email` column contains a deliverable `user@domain` value (the §4.8 format gate); masked or placeholder values do not count.
 
 Channel selection rules, in priority order:
 
@@ -157,9 +157,9 @@ Write the approach file as `{id}-{slug}.yaml` following the structure shown in �
 
 The default sender and BCC address come from the campaign YAML (`sender.name`, `sender.email`, `sender.bcc`) and do not need to be written into the approach file. Write a `decisions.sender` block only when this specific outreach should go from someone other than the campaign's default sender — e.g. a colleague with a prior relationship to the contact. When present, `decisions.sender.email` (and optional `sender.name`) overrides the campaign sender for this contact; per-message `bcc` / `cc` likewise override `sender.bcc`. All of this is resolved by the T3 dispatcher at send time.
 
-### 4.8 Update the roster and communication index
+### 4.8 Update the communication index
 
-**Roster:** Copy `a_note` from the approach file into the `a_note` column of the roster TSV. Also write `response_likelihood` (the percentage estimate from the approach file's contact header) to the roster's `response_likelihood` column. Use `sqlite3` for both updates.
+`a_note` and `response_likelihood` are written directly into the approach file (§6); there is no roster write-back. A writes nothing to the roster: the roster is the segment's campaign-independent population record, and A's outputs are campaign-bound, so they belong with the messages in the approach file.
 
 **Communication index:** Append one line to `comms-index.md`: contact ID, name, organisation, segment, angle used, key relationship hooks, channel selection.
 
@@ -180,7 +180,8 @@ Approach files are YAML documents with a **closed vocabulary** — any key outsi
 
 **Canonical keys by level:**
 
-- Root: `decisions`, `rounds`, `angle_rationale`, `a_note`, `fact_provenance`, `quality_checklist`, `profile_hash`
+- Root: `decisions`, `rounds`, `angle_rationale`, `response_likelihood`, `a_note`, `r_note`, `fact_provenance`, `quality_checklist`, `profile_hash`
+- `response_likelihood`: integer percentage (0–100), A's estimate of reply probability under the chosen angle, used for band ordering. `a_note`: A's one-line summary for R (angle, channel, warmth, language). `r_note`: the human reviewer's per-contact observation after responses arrive (what worked, new leads, channel adjustment); empty until R fills it. All three are campaign-bound and live here, not in the segment roster.
 - `profile_hash`: `sha256:<64-hex>` — SHA-256 of the profile file's bytes at generation time, prefixed `sha256:`. Computed by the A harness; A copies the value verbatim. Optional in the schema: manually-authored approaches and any path that did not read a profile have no hash to record. **When present, this key must be on the first line of the file** — no leading blank line, no preceding keys (issue #63). The position discipline lets a future fast-classify path detect staleness by reading only the first line; `validate_approach` emits `profile_hash_misplaced` if the rule is broken. When the hash is present and the profile exists, mismatch is an error (`profile_hash_mismatch`) — the source profile was rebuilt or edited, and the approach must be regenerated. When the hash is absent, `validate_approach` accepts the file and the state machine routes any divergence (deleted / edited profile) through T6/T7 instead.
 - `decisions`: `channel`, `language`, `angle`, `sender`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7. Warmth comes from the profile front matter (`warmth_finding`); it is not duplicated on the approach.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
@@ -205,7 +206,9 @@ decisions:
     email: director@example.com
   subsegment: boutique-operator
 angle_rationale: Why this angle fits this contact.
-a_note: Anything the roster row should record post-approach.
+response_likelihood: 75
+a_note: Angle, channel, warmth, language, and any notable drafting consideration (A's one-line summary for R).
+r_note: ""   # R (human) fills this after responses arrive; empty until then.
 rounds:
   - type: draft
     number: 1

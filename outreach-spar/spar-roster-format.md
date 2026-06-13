@@ -14,7 +14,7 @@ Every row must have a `contact_name`. A row without a named person is not a cont
 
 ## Core columns
 
-Columns are ordered left-to-right by pipeline stage: identity, contact channels, discovery provenance, validation, then phase handover (S, P, A, R). A human scanning a row reads the contact's identity first, then progressively later-stage information.
+Columns are ordered left-to-right by pipeline stage: identity, contact channels, discovery provenance, validation, then phase handover (S, P). A human scanning a row reads the contact's identity first, then progressively later-stage information. The roster ends at the P phase: it is the segment's campaign-independent population record, so the campaign-bound A and R outputs do not live here (see "Phase handover" below).
 
 ### Identity
 
@@ -49,33 +49,30 @@ Every row must have at least one of email, linkedin_url, or facebook_url populat
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
-| 11 | date_excluded | ISO date (YYYY-MM-DD) | S, P, or A | S (skips row), A (skips row), human review | Marks contacts that should not be advanced further, without deleting them. The date rather than a flag allows periodic re-checking. Set when the person has left the relevant role entirely (retired, changed industry), when profiling determines the contact is not a campaign target (wrong mechanism, no individual identifiable after exhaustive search, or low relevance), or when approach drafting concludes no viable angle exists. The roster carries the date; the reason lives in the writing agent's note column — `s_note` for S-authored exclusions (stale contacts discovered during sweep), `p_note` for P-authored exclusions, `a_note` for A-authored exclusions. See §Artefact retention below. |
+| 11 | date_excluded | ISO date (YYYY-MM-DD) | S, P, or A | S (skips row), A (skips row), human review | Marks contacts that should not be advanced further, without deleting them. The date rather than a flag allows periodic re-checking. Set when the person has left the relevant role entirely (retired, changed industry), when profiling determines the contact is not a campaign target (wrong mechanism, no individual identifiable after exhaustive search, or low relevance), or when approach drafting concludes no viable angle exists. The roster carries the date; the reason lives in the writing agent's note — `s_note` for S-authored exclusions (stale contacts discovered during sweep), `p_note` for P-authored exclusions, and the approach YAML's `a_note` root key for A-authored exclusions. See §Artefact retention below. |
 
 ### Phase handover
 
-Each SPAR phase has one note column. Only that phase writes to it. Subsequent phases read it as context before doing their work. Notes are roster-level summaries, not replacements for full artefacts (profile documents, approach files, strategy revision notes).
+The S and P phases each have one note column in the roster. Only that phase writes to it; subsequent phases read it as context before doing their work. Notes are roster-level summaries, not replacements for full artefacts (profile documents, approach files, strategy revision notes). The A and R phases do not write to the roster: their per-contact output (`response_likelihood`, `a_note`, `r_note`) is campaign-bound, and a segment's roster is shared across campaigns, so that output lives in the per-contact approach YAML instead (see `spar-methodology.md`, "Campaigns and segments", and `spar-A-approach.md`).
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
 | 12 | s_note | short text | S only; frozen after discovery | P, A | Why S included this person — the source statement, event, or signal that justified the entry. P reads this before profiling to check whether the person matches the rationale. |
 | 13 | p_note | short text | P only | A, human review | What P found: the evidence of interest, the recommended angle, any cautions for A. Broader than evidence of interest alone — includes corrections, routing advice, and warnings. |
-| 14 | star_rating | 0–5 | P; A may set to 0 | A (band ordering), human review | Usefulness to the campaign in this segment, today. Question and procedure defined in `spar-methodology.md` (P section) and `spar-P-profile.md` §4.13 — segment file's `rating_rubric` governs where present, otherwise role-play as the campaign's management. A value of 0 means "excluded — not a campaign target." When star_rating is set to 0, date_excluded must also be set. The date_excluded field records when the determination was made; p_note or a_note records the reason. A star_rating of 0 is distinct from 1: a 1-star contact is low-priority but targetable; a 0-star contact is excluded from the pipeline entirely. |
-| 15 | response_likelihood | percentage | A | A (band ordering) | Estimated probability the contact responds to outreach. Set by A because it depends on the approach angle chosen. |
-| 16 | a_note | short text | A only | R (human review), subsequent A bands | Angle used, key hook referenced, outcome. Lets R scan a band's results from the roster without opening every approach file. |
-| 17 | r_note | short text | R (human) only | Subsequent A bands, S&P₄+ | Per-contact observation from response review: what worked, what did not, new leads mentioned, channel adjustment. |
+| 14 | star_rating | 0–5 | P; A may set to 0 | A (band ordering), human review | Usefulness of this contact to us in this segment, today — a property of the contact, not of any one campaign. Question and procedure defined in `spar-methodology.md` (P section) and `spar-P-profile.md` §4.13 — segment file's `rating_rubric` governs where present, otherwise role-play as the campaign's management. A value of 0 means "excluded — not a campaign target." When star_rating is set to 0, date_excluded must also be set. The date_excluded field records when the determination was made; p_note (or, for an A-authored exclusion, the approach YAML's a_note) records the reason. A star_rating of 0 is distinct from 1: a 1-star contact is low-priority but targetable; a 0-star contact is excluded from the pipeline entirely. |
 
-Columns 13–17 are empty during S and populated progressively as the contact moves through P, A, and R. Empty columns are expected; not every contact reaches every phase.
+Columns 13–14 are empty during S and populated by P. Empty columns are expected; not every contact reaches every phase. The campaign-bound A and R outputs are documented with the approach YAML schema in `spar-A-approach.md`, not here.
 
 ## Phase notes vs full artefacts
 
-| Phase | Full artefact | Note column |
+| Phase | Full artefact | One-line note |
 |---|---|---|
-| S | Roster row (this is S's primary output) | s_note: why this person was included |
-| P | Profile document (`profiles/{stem}.md` with YAML front matter) | p_note: one-line relevance summary and routing for A |
-| A | Approach file (`{stem}.yaml`) and comms index entry | a_note: angle and outcome summary for R |
-| R | Strategy revision notes (`strategy-revision-[band].md`) | r_note: per-contact observation from the human reviewer |
+| S | Roster row (this is S's primary output) | roster `s_note`: why this person was included |
+| P | Profile document (`profiles/{stem}.md` with YAML front matter) | roster `p_note`: one-line relevance summary and routing for A |
+| A | Approach file (`{stem}.yaml`) | approach YAML `a_note` root key: angle and outcome summary for R |
+| R | Strategy revision notes (`strategy-revision-[band].md`) | approach YAML `r_note` root key: per-contact observation from the human reviewer |
 
-A phase note should answer: "what does the next phase need to know about this contact from my phase, in one line?" If the observation requires more than a short sentence, it belongs in the full artefact, not in the note column.
+A phase note should answer: "what does the next phase need to know about this contact from my phase, in one line?" If the observation requires more than a short sentence, it belongs in the full artefact, not in the note. The S and P notes live in the roster; the A and R notes live in the approach YAML, beside the messages they summarise.
 
 ## Artefact retention
 
@@ -87,7 +84,7 @@ Old-slug duplicates — where the same content exists under two filenames due to
 
 ## Campaign-specific columns
 
-Campaigns may append columns after column 17. The campaign plan defines them. Common additions include:
+Campaigns may append columns after column 14. The campaign plan defines them. Common additions include:
 
 - **postcode** or **location** — for geographic filtering
 - **type** — contact category within a segment (e.g. "strategic", "corporate", "community")
@@ -104,20 +101,19 @@ These assertions apply to the core columns. Campaign-specific checks are defined
 3. No two rows share the same (`contact_name`, `organisation`) pair (case-insensitive).
 4. Every row has at least one of email, `linkedin_url`, or `facebook_url`.
 5. Every row has a `sweep_iteration` value.
-6. Every row with a `response_likelihood` also has a `star_rating` (`star_rating` is a P output; `response_likelihood` is an A output. P runs before A, so `response_likelihood` implies `star_rating`).
-7. Every row with `star_rating = 0` has a non-empty `date_excluded`.
-8. Every row has a non-empty `stem`.
-9. No two rows share the same `stem` (it is the primary key of the segment roster).
-10. The roster file must contain a `stem` column header. A roster lacking it is rejected by the state machine (`spar-state.tcl`) at load time with a schema error. This is a hard failure, not a warning.
+6. Every row with `star_rating = 0` has a non-empty `date_excluded`.
+7. Every row has a non-empty `stem`.
+8. No two rows share the same `stem` (it is the primary key of the segment roster).
+9. The roster file must contain a `stem` column header. A roster lacking it is rejected by the state machine (`spar-state.tcl`) at load time with a schema error. This is a hard failure, not a warning.
 
 ## Relationship to other documents
 
 This document defines the roster schema. The operational procedures for populating it are:
 
 - **SPAR-S** (`spar-S-search.md`) — populates columns 1–12 (including `stem` at discovery)
-- **SPAR-P** (`spar-P-profile.md`) — populates columns 13–14, corrects columns 3–8 and 11; creates `profiles/{stem}.md` using the pre-existing `stem` but does not write back to the roster
-- **SPAR-A** (`spar-A-approach.md`) — populates column 16; creates `approach/{stem}.yaml` using the pre-existing `stem` but does not write back to the roster
-- **R** (human, no procedure document) — populates column 17
+- **SPAR-P** (`spar-P-profile.md`) — populates columns 13–14, corrects columns 3–8 and 11; creates `profiles/{stem}.md` using the pre-existing `stem`
+- **SPAR-A** (`spar-A-approach.md`) — creates `approach/{stem}.yaml` using the pre-existing `stem`, writing `response_likelihood`, `a_note`, and the messages into it; does not write to the roster
+- **R** (human, no procedure document) — writes the `r_note` root key into `approach/{stem}.yaml`; does not write to the roster
 - **spar-state.tcl** — reads `stem` from the roster and checks for the presence of `profiles/{stem}.md` and `approach/{stem}.yaml` on disk to classify contact state; never writes to the roster
 
 SPAR-S §4 currently contains a roster format definition that predates this document. When SPAR-S is next revised, §4 should reference this document rather than defining the format inline.

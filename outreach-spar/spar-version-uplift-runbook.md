@@ -52,8 +52,8 @@ Re-run the validator: the `version_unstamped` warnings disappear and the run exi
 Markers, in order of appearance in the spec history, tell you how far an instance is from current:
 
 - **Pre-model:** no `segment.yaml`, no `roster.tsv`; profiles are prose-headed markdown (no YAML front matter); a non-standard seed list (e.g. `seed-list.tsv`); segments nested inside a dated campaign directory. The validator cannot even start (no `campaign.yaml`/roster). This is a reconstruction.
-- **Early-formal:** has `segment.yaml` and front-matter profiles, but the roster column order predates the current schema (organisation before contact_name, no `a_note`/`r_note`), and the layout uses a grouping parent (e.g. a `rosters/` wrapper) or dated campaign-segment directories. The tooling tolerates the roster (it keys by header name), so the work is layout, not roster rewrite.
-- **Current (`1.0`):** segments and campaigns as siblings with no grouping parent; roster columns per `spar-roster-format.md`; front-matter profiles. Uplift is stamping plus any data-integrity fixes the validator surfaces.
+- **Early-formal:** has `segment.yaml` and front-matter profiles, but `segment.yaml` still carries the plan fields (objective, USP framings, message_goal, first_ask, conversion_funnel, approach_sequencing) that now belong in the campaign's per-segment plan block; the roster column order predates the current schema (organisation before contact_name) and may still carry the retired A/R columns (`response_likelihood`, `a_note`, `r_note`) inline; the layout may use a grouping parent (e.g. a `rosters/` wrapper) or dated campaign-segment directories. The tooling tolerates the roster (it keys by header name) and ignores the extra columns, so the roster work is dropping those three columns, and the plan work is lifting the six fields into `campaign.yaml`'s `segments:` map.
+- **Current (`1.0`):** segments and campaigns as siblings with no grouping parent; `campaign.yaml` carries per-segment plan blocks (`segments:` as a map); `segment.yaml` is population-only (`discovery_criteria`, `rating_rubric`, `scope_note`); the roster ends at `star_rating`, with A/R outputs in the approach YAML, per `spar-roster-format.md`; front-matter profiles. Uplift is stamping plus any data-integrity fixes the validator surfaces.
 
 ## Deferred hard cases
 
@@ -62,7 +62,7 @@ Markers, in order of appearance in the spec history, tell you how far an instanc
 Segments stored under a wrapping parent, or inside a dated campaign directory, are not addressable by bare name from a campaign YAML, so no campaign processes them. To uplift:
 
 1. Move each segment directory up to sit as a sibling of the campaign YAML.
-2. Add its bare name to the `segments:` list of the campaign that should own it (create the campaign YAML if none exists).
+2. Add its bare name (with its plan block) to the `segments:` map of the campaign that should own it (create the campaign YAML if none exists).
 3. Run the three-step procedure on the now-addressable segments.
 
 This is deferred from a first pass because it changes paths that downstream artefacts may reference; do it deliberately, one segment at a time, re-validating after each.

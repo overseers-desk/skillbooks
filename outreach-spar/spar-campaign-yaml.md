@@ -19,9 +19,9 @@ One file per campaign, in the campaign root directory. Named `campaign.yaml` or 
 | `sender.email` | string | Sender's email address (used as From: address) |
 | `usp_document` | path | Path to the organisation overview / USP document. Relative to the YAML file's directory. This is the ground truth about the organisation that A1 reads before drafting. |
 | `language` | string | Language code: `en-gb`, `en-au`, `en`, or a BCP-47 code |
-| `segments` | list of strings | Segment directory names this campaign operates over. Names resolve to sibling directories of this YAML file (path resolution is relative to the YAML's directory). The same segment name may appear in the `segments:` list of more than one campaign YAML at the same level: segments are not owned by any one campaign (see `spar-methodology.md`, "Campaigns and segments"). Use `.` for a single-segment campaign where roster and segment.yaml live in the campaign root (see `spar-campaign-directory.md`). |
+| `segments` | map | Maps each segment directory name this campaign operates over to that segment's **plan block** (the campaign×segment intersection: objective, USP framings, message_goal, first_ask, conversion_funnel, approach_sequencing). See "Per-segment plan block" below. Names resolve to sibling directories of this YAML file (path resolution is relative to the YAML's directory). The same segment name may appear under the `segments:` of more than one campaign YAML at the same level, each carrying its own plan: segments are not owned by any one campaign, and the plan is the campaign's view of the segment, not the segment's own (see `spar-methodology.md`, "Campaigns and segments"). Use `.` for a single-segment campaign where roster and segment.yaml live in the campaign root (see `spar-campaign-directory.md`). |
 | `approach_filename` | string | Template for approach filenames. Variables: `{slug_name}`, `{slug_org}`, `{star}`. Example: `approach-{slug_name}-{slug_org}.md` |
-| `usps` | map | USP registry: maps each USP identifier to its human-readable label. This is the single source of truth for USP names. Segment files reference USPs by `id`; the label is resolved from this registry. The full USP prose lives in the `usp_document`. |
+| `usps` | map | USP registry: maps each USP identifier to its human-readable label. This is the single source of truth for USP names. A segment's plan block references USPs by `id`; the label is resolved from this registry. Registry and per-segment framing now live in the same file, so a referenced `id` always resolves. The full USP prose lives in the `usp_document`. |
 
 ### Required (channels)
 
@@ -85,6 +85,26 @@ venue:
 | `reply_check.folder` | string | (none) | IMAP folder to search for replies (e.g. `Partnerships`). |
 | `prompt_appendices` | map | (none) | Per-agent appendix text appended verbatim to the composed prompt at dispatch time. Closed vocabulary — allowed sub-keys: `p_author`, `a_author`, `a_challenger`, `a_assembly`. Any other sub-key is rejected by the campaign loader. Each value is an inline string; empty string or missing key = no appendix. Use this slot for campaign-specific tone guidance, exclusion rules, or strategy-revision notes that must not pollute the methodology documents. |
 
+## Per-segment plan block
+
+`segments` is a map from segment name to that segment's plan. The plan is the campaign×segment intersection: what *this* campaign aims to do with the contacts in that segment, and how. It is campaign-bound, which is why it lives here and not in `segment.yaml` (the segment file holds only the campaign-independent population definition — discovery criteria, scope, rating rubric; see `segment-schema.yaml` and `spar-campaign-directory.md`).
+
+Each plan block may carry:
+
+| Plan field | Type | Purpose |
+|---|---|---|
+| `objective` | prose | What this campaign aims to accomplish with this segment, in 1–3 sentences. |
+| `usps` | list | Which campaign USPs apply to this segment and why. Each entry has `id` (from the campaign `usps:` registry), `type` (`emotional` or `functional`, segment-specific), and `framing` (prose: why this USP matters to contacts in this segment). A segment-local USP not in the registry uses `label` instead of `id`. |
+| `message_goal` | prose | The outcome the first message aims for (e.g. "agree to a site visit"). |
+| `first_ask` | prose | The model message or pattern for first contact. May contain placeholders the A phase fills from the profile. |
+| `conversion_funnel` | list | The sequence from first contact to outcome; each step has `step`, `name`, `description`. |
+| `approach_sequencing` | list | Operational order of actions for this segment; each step has `step`, `action`. |
+| `subsegments` | list | Optional variations within the segment. A subsegment shares the segment's objective and USPs but may override `message_goal`, `first_ask`, `conversion_funnel`, and `discovery_criteria`. Only differing fields appear. |
+
+A plan block may be sparse: a segment still being discovered (S&P only, A not yet in scope) carries `objective` and little else. Do not fabricate plan fields to fill the shape.
+
+The P phase reads `objective` (and the funnel) for star-rating context; the A phase reads the whole block to draft. Both reach it through the segment's entry in this map, which the dispatcher surfaces to the prompt by path and segment key.
+
 ## Path resolution
 
 Path fields (`usp_document`, `antifacts`, `campaign_principles`) are resolved relative to the YAML file's parent directory. Absolute paths are used as-is. The SPAR-A procedure document is resolved by the dispatcher as a sibling of its own script (`../spar-A-approach.md`) and is not a campaign-level path.
@@ -120,8 +140,39 @@ usps:
   U3: Example USP three
 
 segments:
-  - segment-a
-  - segment-b
+  segment-a:
+    objective: |
+      Get segment-a contacts to agree to a site visit.
+    usps:
+      - id: U1
+        type: emotional
+        framing: |
+          Why U1 matters to contacts in segment-a.
+      - id: U2
+        type: functional
+        framing: |
+          Why U2 matters to contacts in segment-a.
+    message_goal: |
+      Agree to a complimentary site visit.
+    first_ask: |
+      The model first-contact message or pattern for segment-a.
+    conversion_funnel:
+      - step: 1
+        name: Initial approach
+        description: |
+          What happens at this step.
+      - step: 2
+        name: Site visit
+        description: |
+          What happens at this step.
+    approach_sequencing:
+      - step: 1
+        action: |
+          What to do first.
+  segment-b:
+    objective: |
+      What this campaign aims to accomplish with segment-b.
+    # remaining plan fields as above; a sparse block is valid
 
 filter:
   skip_excluded: true

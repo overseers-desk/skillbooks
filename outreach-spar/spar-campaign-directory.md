@@ -19,7 +19,7 @@ campaigns-root/
   ...
   {segment}/                      # one directory per segment, shared across campaigns
     roster.tsv                    # SPAR roster (schema: spar-roster-format.md)
-    segment.yaml                  # segment objective and framing (schema: segment-schema-proposal.yaml)
+    segment.yaml                  # population definition (schema: segment-schema.yaml)
     [profiles-summary.md]         # optional segment-level profile summary
     [comms-index.md]              # optional communication index
     profiles/                     # SPAR-P profile documents, one per contact
@@ -28,7 +28,7 @@ campaigns-root/
       {stem}.yaml
 ```
 
-Each campaign YAML lists in its `segments:` field the segment directories it operates over. The same segment name may appear in the `segments:` list of more than one campaign YAML at this level. Path resolution is relative to the YAML file's directory, so segments are addressable by bare name.
+Each campaign YAML names in its `segments:` map the segment directories it operates over, mapping each to that segment's plan block. The same segment name may appear in the `segments:` map of more than one campaign YAML at this level, each with its own plan. Path resolution is relative to the YAML file's directory, so segments are addressable by bare name.
 
 ### Single-campaign layout
 
@@ -56,15 +56,15 @@ campaign-root/
   approach/
 ```
 
-All batch scripts resolve `.` as the campaign root directory. When the campaign needs to address a second segment, list it in `segments:` and create the segment directory as a sibling. The segment file schema is defined in `segment-schema-proposal.yaml`.
+All batch scripts resolve `.` as the campaign root directory. When the campaign needs to address a second segment, add it to the `segments:` map (with its plan block) and create the segment directory as a sibling. The segment file schema is defined in `segment-schema.yaml`.
 
 ## Conventions
 
-**Segment directories** are named with lowercase hyphenated nouns describing the contact type (e.g. `wedding-planner`, `tour-operator-domestic`, `community-organisation`). The directory name appears in the `segments` list in `campaign.yaml` and in progress reports. The special value `.` means the segment files live in the campaign root itself.
+**Segment directories** are named with lowercase hyphenated nouns describing the contact type (e.g. `wedding-planner`, `tour-operator-domestic`, `community-organisation`). The directory name appears as a key in the `segments` map in `campaign.yaml` and in progress reports. The special value `.` means the segment files live in the campaign root itself.
 
 **One roster per segment.** The file is always `roster.tsv` — the directory carries the segment context. Do not embed the segment name in the roster filename. The roster schema is defined in `spar-roster-format.md`.
 
-**One segment file per segment.** The file is always `segment.yaml`. It contains: the outreach objective, the USPs relevant to this segment (by identifier, with segment-specific framing), the approach message goal, the first ask, the conversion funnel, approach sequencing, and optional subsegments. The schema is defined in `segment-schema-proposal.yaml`.
+**One segment file per segment.** The file is always `segment.yaml`. It defines the campaign-independent population: `discovery_criteria` (who belongs), `rating_rubric` (how useful a member is to us), `scope_note` (boundaries with neighbouring segments), and `profile_reject_if`. It carries no campaign plan content. The objective, USP framings, message goal, first ask, conversion funnel, approach sequencing, and subsegments live in the campaign's per-segment plan block (`campaign.yaml` `segments.<name>`), because they are one campaign's view of the segment and a segment is reused across campaigns. The schema is defined in `segment-schema.yaml`.
 
 **Profile filenames** follow the pattern `profile-{slug-name}-{slug-org}.md`, where slugs are lowercase-hyphenated. Batch scripts match roster entries to profiles by slug prefix, so the profile filename must contain the contact's slugified name.
 
@@ -72,7 +72,7 @@ All batch scripts resolve `.` as the campaign root directory. When the campaign 
 
 ## Discovery by batch scripts
 
-`spar-progress.tcl` and `spar-transition.tcl` both read the `segments` list from `campaign.yaml`. Only listed segments are processed. `spar-progress.tcl` warns about any `roster.tsv` files found on disk that are not listed in the YAML. Directories in `skip_segments` are excluded.
+`spar-progress.tcl` and `spar-transition.tcl` both read the `segments` map from `campaign.yaml`. Only named segments are processed. `spar-progress.tcl` warns about any `roster.tsv` files found on disk that are not listed in the YAML. Directories in `skip_segments` are excluded.
 
 `spar-transition.tcl <campaign.yaml> T1` drives profile generation from the classified state machine, one campaign at a time. `T1:<segment>` narrows to a single segment, `T1:<segment>/<roster-stem>` narrows to a single contact. Add `--dry-run` to simulate without writes.
 
@@ -101,12 +101,13 @@ Every fact about the campaign has one authoritative home. Before creating any ne
 | USP labels | `campaign.yaml` `usps:` map |
 | USP prose | the file named in `usp_document:` |
 | Anti-claims / do-not-say list | the file named in `antifacts:` |
-| Segment objective, USP framings, message goal, first ask, funnel | `{segment}/segment.yaml` |
-| Segment-level qualification gates | `{segment}/segment.yaml` `discovery_criteria:` |
+| Segment objective, USP framings, message goal, first ask, funnel, approach sequencing | `campaign.yaml` `segments.<name>` plan block |
+| Segment-level qualification gates (who belongs in the population) | `{segment}/segment.yaml` `discovery_criteria:` |
+| Segment rating rubric (how useful a member is to us) | `{segment}/segment.yaml` `rating_rubric:` |
 | A-phase and P-phase prompt guidance (reminders, rules, apology behaviour) | `campaign.yaml` `prompt_appendices:` |
-| Per-contact data | `{segment}/roster.tsv` |
+| Per-contact population data (identity, channels, s_note, p_note, star_rating) | `{segment}/roster.tsv` |
 | Per-contact profile | `{segment}/profiles/profile-{slug}.md` |
-| Per-contact approach draft | `{segment}/approach/{stem}.yaml` |
+| Per-contact engagement (messages, response_likelihood, a_note, r_note) | `{segment}/approach/{stem}.yaml` |
 | Campaign intro for human readers | `campaign:` display-name field + top-of-file banner comment in `campaign.yaml` |
 
 **Pattern-matching warning.** An existing repository may contain files or directories that predate or contradict this guidance: a legacy `spar-campaigns/goal-campaign-principles.md`, a wrapping `rosters/` parent over several segment directories, or other shapes the spec does not model. Their existence is not a template for new work. When the spec and a neighbouring example disagree, follow the spec. The failure mode this warning addresses is the next AI session inferring layout from what is on disk rather than from this document, then extending the unrecognised pattern further.
