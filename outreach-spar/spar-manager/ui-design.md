@@ -74,8 +74,8 @@ Vertical separators (ttk::Separator or label borders) are placed at group bounda
 
 Each row represents one segment. Segments fall into two categories:
 
-- **Campaign segments** — listed in the campaign YAML's `segments:` key. These rows have a checkbox. All checkboxes are checked by default. Unchecking a segment excludes it from the totals row and from the transition treeview below. The checkbox state does not persist across sessions; it is a transient filter.
-- **Non-campaign segments** — segment directories that exist in the campaign folder but are not listed in `segments:` (e.g. `bridal-expo`). These rows are displayed in a muted style (greyed out text, no checkbox). They appear in the table for awareness but do not contribute to the totals row or the transition treeview, and cannot be selected.
+- **Campaign segments** — named as keys in the campaign YAML's `segments:` map. These rows have a checkbox. All checkboxes are checked by default. Unchecking a segment excludes it from the totals row and from the transition treeview below. The checkbox state does not persist across sessions; it is a transient filter.
+- **Non-campaign segments** — segment directories that exist in the campaign folder but are not named in `segments:` (e.g. `bridal-expo`). These rows are displayed in a muted style (greyed out text, no checkbox). They appear in the table for awareness but do not contribute to the totals row or the transition treeview, and cannot be selected.
 
 The final row is a **Totals** row that sums only the checked campaign segments. It updates dynamically when checkboxes change.
 

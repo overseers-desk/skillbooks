@@ -1,0 +1,109 @@
+# =============================================================================
+# SPAR segment file — YAML schema
+#
+# Defines the structure for segment.yaml, the segment-level file used by the
+# SPAR methodology. A segment is a long-lived, campaign-independent population:
+# a set of people who share a contact type, the criteria for who belongs, and
+# the rubric for how useful a member is to us. segment.yaml describes that
+# population, nothing campaign-specific.
+#
+# Campaign-agnostic: the same schema applies to any SPAR deployment, regardless
+# of industry.
+#
+# Position in the three-tier hierarchy:
+#
+#   campaign.yaml          segment.yaml          approach/{stem}.yaml
+#   (campaign tier)        (this file —          (engagement tier —
+#     - sender, channels     population tier)      campaign × contact)
+#     - usps registry        - discovery_criteria   - messages
+#     - segments: map        - rating_rubric        - response_likelihood
+#       (campaign × segment  - scope_note           - a_note, r_note
+#        plan blocks)        - profile_reject_if
+#
+# What lives where (single source of truth):
+#
+#   - sender, channels, filters        -> campaign.yaml
+#   - usps registry (id -> label)      -> campaign.yaml usps:
+#   - usp prose                        -> campaign usp_document
+#   - per-segment plan (objective, usp framings, message_goal, first_ask,
+#     conversion_funnel, approach_sequencing, subsegments)
+#                                      -> campaign.yaml segments.<name> block
+#   - who belongs in this population   -> THIS FILE discovery_criteria
+#   - how useful a member is to us     -> THIS FILE rating_rubric
+#   - segment boundaries vs neighbours -> THIS FILE scope_note
+#   - roster (per-contact identity)    -> roster.tsv
+#   - per-contact profile              -> profiles/{stem}.md
+#   - engagement (per campaign)        -> approach/{stem}.yaml
+#   - methodology rules                -> methodology documents
+#
+# The fields that used to live here — objective, usps, message_goal, first_ask,
+# conversion_funnel, approach_sequencing — moved to the campaign's per-segment
+# plan block, because they are the campaign's view of the segment and a segment
+# is reused across campaigns. See spar-campaign-yaml.md, "Per-segment plan block".
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# IDENTITY — what this population is
+# ---------------------------------------------------------------------------
+
+title: ...                                        # human-readable segment name
+version: "1.0"                                     # SPAR spec generation (see spar-methodology.md, "Versioning")
+date: 2026-03-30                                   # date this file was last substantively revised
+
+# ---------------------------------------------------------------------------
+# DISCOVERY CRITERIA — who belongs in this population
+#
+# What makes a contact a valid member of this segment. This is the population
+# boundary, campaign-independent: it answers "is this person one of these
+# people", not "does this campaign want them" (that is the campaign's filter).
+# Include when the boundary is non-obvious and invalid contacts are a known
+# risk. The S phase applies it when sweeping; the P phase re-checks it.
+# ---------------------------------------------------------------------------
+
+discovery_criteria: |
+  (Prose. What makes a contact valid or invalid for this segment.)
+
+# ---------------------------------------------------------------------------
+# RATING RUBRIC — how useful a member is to us
+#
+# Segment-specific guidance for star_rating beyond the methodology's
+# third-party-introduction test. star_rating measures usefulness of the
+# contact to us in this segment, a property of the contact, not of any one
+# campaign. Optional; when absent, P role-plays as the campaign's management
+# per spar-methodology.md (P section). Keep terse: prose, not anchor tables;
+# no signals written in segment-portable language, since "portable" is how the
+# previous global rubric failed.
+# ---------------------------------------------------------------------------
+
+# rating_rubric: |
+#   (Prose. Brief, segment-specific.)
+
+# ---------------------------------------------------------------------------
+# OPTIONAL SECTIONS — include only when applicable
+# ---------------------------------------------------------------------------
+
+# --- Profile-phase reject conditions (segment-level audit list — names the
+#     conditions that, if observed in the agent's transcript, cause the harness
+#     to reject the P-phase profile and re-trigger the fix-and-resume loop.
+#     Closed vocabulary; each entry must be one of:
+#         linkedin_not_invoked   — agent did not invoke the linkedin skill (§4.3)
+#         facebook_not_invoked   — agent did not invoke the facebook skill (§4.4)
+#     Include conditions only for channels where the segment's population has a
+#     meaningful presence. Omit the field entirely when no audit applies.) ---
+
+# profile_reject_if:
+#   - linkedin_not_invoked
+#   - facebook_not_invoked
+
+# --- Scope note (boundary conditions with other segments, or exclusions from
+#     this segment's scope) ---
+
+# scope_note: |
+#   (Prose. What is excluded and why, or how this segment relates to adjacent
+#   segments.)
+
+# --- Geographic catchment (where this population is, when it has a meaningful
+#     geographic boundary) ---
+
+# geographic_catchment: |
+#   (Prose. Geographic scope for this segment.)

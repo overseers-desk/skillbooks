@@ -53,7 +53,7 @@ These columns are standard across all campaigns. Every roster produced by this A
 
 ### 4.2 Campaign-specific columns
 
-The campaign plan may add columns beyond the core set. The core columns, including the phase handover notes (s_note, p_note, a_note, r_note) and ratings (star_rating, response_likelihood), are defined in `spar-roster-format.md`. Common campaign-specific additions include:
+The campaign plan may add columns beyond the core set. The core columns are defined in `spar-roster-format.md`: the S and P phase handover notes (s_note, p_note) and the rating (star_rating). The A and R outputs (response_likelihood, a_note, r_note) are not roster columns — they live in the per-contact approach YAML. Common campaign-specific additions include:
 
 - **segment** — when the campaign has multiple segments in a single roster or needs to tag cross-leads
 - **postcode** or **address** — for geographic filtering

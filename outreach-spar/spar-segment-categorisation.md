@@ -14,7 +14,7 @@ The segment structure is a design decision made at campaign planning time. It ca
 
 The question is not "are these contacts similar?" but "does contacting them require materially different work?"
 
-Two contacts are in the same segment when the segment file, the first ask, the conversion funnel, and the approach procedure apply to both without modification. They are in different segments when at least one of these differs enough that a single segment file would need conditional sections to accommodate both.
+Two contacts are in the same segment when the segment's discovery criteria, and a campaign's plan for it (the first ask, the conversion funnel, the approach procedure), apply to both without modification. They are in different segments when at least one of these differs enough that a single segment definition or plan block would need conditional sections to accommodate both.
 
 The threshold is practical, not taxonomic. A campaign does not need a segment for every noun that describes a contact type. It needs a segment for every distinct combination of pitch and procedure.
 
@@ -68,7 +68,7 @@ When the same person appears in two segments that remain separate, the risk is t
 
 The solution is not to merge the segments but to coordinate the approaches. Three mechanisms, in order of preference:
 
-**Single combined approach.** Write one approach file that addresses both angles. Place it in whichever segment the contact is more strategically valuable to. In the other segment's roster, set `a_note` to reference the combined file's location. The progress script will show the contact as "no approach file" in the second segment; this is acceptable and expected.
+**Single combined approach.** Write one approach file that addresses both angles. Place it in whichever segment the contact is more strategically valuable to, and name both segments in that file's `a_note` root key. The progress script will show the contact as "no approach file" in the second segment; this is acceptable and expected.
 
 **Sequenced approaches.** If both angles are genuinely worth separate messages (because they address different divisions or roles within the contact's organisation), send them in sequence with enough time between them that the second message can reference the first. The second message should acknowledge the prior contact: "I wrote to you last month about X; I'm now reaching out about Y."
 
