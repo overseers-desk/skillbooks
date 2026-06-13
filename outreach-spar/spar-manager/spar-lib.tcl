@@ -217,8 +217,7 @@ proc spar::resolve_campaign {campaign_file campaign_dir} {
     if {[dict exists $cdata filter]} {
         set min_star [spar::dict_get_default [dict get $cdata filter] min_star 0]
     }
-    set segments_list {}
-    if {[dict exists $cdata segments]} { set segments_list [dict get $cdata segments] }
+    set segments_list [spar::campaign_segment_names $cdata]
     set skip_set {}
     if {[dict exists $cdata skip_segments]} { set skip_set [dict get $cdata skip_segments] }
 
@@ -564,6 +563,35 @@ proc spar::dict_get_default {d key {default ""}} {
         return [dict get $d $key]
     }
     return $default
+}
+
+# campaign_segment_names — return the list of segment names from a campaign
+# dict, accepting both the current map form (segments: a map from name to a
+# per-segment plan block) and the legacy list form (segments: a bare list of
+# names). The YAML parser represents both as flat Tcl lists; _segments_is_map
+# discriminates structurally, so no campaign-version dependency is needed and
+# the two shapes can coexist across the migration. Returns {} when absent.
+proc spar::campaign_segment_names {cdata} {
+    if {![dict exists $cdata segments]} { return {} }
+    set segs [dict get $cdata segments]
+    if {[llength $segs] == 0} { return {} }
+    if {[spar::_segments_is_map $segs]} {
+        return [dict keys $segs]
+    }
+    return $segs
+}
+
+# _segments_is_map — true when a parsed `segments` value is the map form
+# (name -> plan block) rather than the legacy bare-name list. In list form
+# every value position is a bare segment slug (one word, odd token length);
+# in map form every value is a plan block (empty, or an even-length dict).
+# A bare name in a value position therefore rules out the map reading.
+proc spar::_segments_is_map {segs} {
+    if {[llength $segs] % 2 != 0} { return 0 }
+    foreach {k v} $segs {
+        if {$v ne "" && [llength $v] % 2 != 0} { return 0 }
+    }
+    return 1
 }
 
 # filter_segments — keep only segments named in sel_segments. Empty

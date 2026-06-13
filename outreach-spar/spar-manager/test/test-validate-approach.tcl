@@ -18,6 +18,33 @@ set va1_path [write_approach_yaml $seg_va1 "va-valid" [approach_yaml_final_unsen
 set va1_issues [spar::validate_approach $va1_path "test@acme-venues.au" "Test Contact"]
 assert_eq [llength $va1_issues] 0 "validate_approach: valid email → no issues"
 
+# 12a-bis. Engagement root keys response_likelihood / a_note / r_note are
+# canonical at root (the campaign-bound A/R outputs now live in the approach
+# YAML, not the roster) → no unknown_key_root / wrong_level errors.
+set seg_va1b [make_temp_segment]
+set va1b_path [write_approach_yaml $seg_va1b "va-engagement" {decisions:
+  channel: email
+angle_rationale: Why this angle fits.
+response_likelihood: 75
+a_note: shared-venue angle; email; warm; en
+r_note: ""
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test subject
+    body: Hello there
+    actioned_date: null
+    replied_date: null
+}]
+set va1b_issues [spar::validate_approach $va1b_path "test@acme-venues.au" "Test Contact"]
+set va1b_unknown [lsearch -all -inline -glob [lmap i $va1b_issues {dict get $i code}] "unknown_key*"]
+set va1b_wrong   [lsearch -all -inline [lmap i $va1b_issues {dict get $i code}] "wrong_level"]
+assert_eq [llength $va1b_unknown] 0 "validate_approach: response_likelihood/a_note/r_note → no unknown_key_root"
+assert_eq [llength $va1b_wrong] 0 "validate_approach: engagement root keys → no wrong_level"
+
 # 12b. Placeholder to: field → placeholder_to error
 set seg_va2 [make_temp_segment]
 set va2_path [write_approach_yaml $seg_va2 "va-placeholder" {decisions:

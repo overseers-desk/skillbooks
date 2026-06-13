@@ -204,8 +204,8 @@ oo::class create spar::ui::Inspector {
 
     # Tab titles carry each authoring tab's self-assessment of the contact:
     # S names the contact (roster identity), P shows the P-authored star
-    # rating, A shows the A-authored response_likelihood (read from the
-    # roster column where A writes it at SPAR-A §4.8), R the reply count.
+    # rating, A shows the A-authored response_likelihood (a root key in the
+    # approach YAML, read from the file), R the reply count.
     # Disabled tabs stay as bare letters (see render).
 
     method tab_title_s {contact} {
@@ -226,8 +226,10 @@ oo::class create spar::ui::Inspector {
     }
 
     method tab_title_a {contact} {
-        if {[spar::dict_get_default $contact approach_path ""] eq ""} { return "A" }
-        set pct [spar::dict_get_default $contact response_likelihood ""]
+        set path [spar::dict_get_default $contact approach_path ""]
+        if {$path eq ""} { return "A" }
+        set data [spar::read_approach_yaml $path]
+        set pct [spar::dict_get_default $data response_likelihood ""]
         if {$pct eq "" || [spar::is_null $pct]} { return "A" }
         return "A ${pct}%"
     }

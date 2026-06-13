@@ -468,4 +468,34 @@ assert_eq $sy_bad_threw 0 "read_segment_yaml: malformed input does not throw"
 file delete $sy_bad
 
 
+# ── campaign_segment_names: map vs legacy-list detection ──
+
+# Legacy list form (bare names) → returned unchanged.
+assert_eq [spar::campaign_segment_names [dict create segments {wedding-planner tour-operator}]] \
+    {wedding-planner tour-operator} "campaign_segment_names: legacy list form"
+assert_eq [spar::campaign_segment_names [dict create segments {only-one}]] \
+    {only-one} "campaign_segment_names: single-name list"
+
+# Map form (name -> plan block) → returns the keys, order preserved.
+set seg_map [dict create \
+    wedding-planner [dict create objective "win weddings"] \
+    tour-operator   [dict create objective "win tours" first_ask "hello"]]
+assert_eq [spar::campaign_segment_names [dict create segments $seg_map]] \
+    {wedding-planner tour-operator} "campaign_segment_names: map form returns keys"
+
+# Map with a sparse (empty) plan block → still detected as map.
+set seg_map_sparse [dict create seg-a [dict create objective "x"] seg-b ""]
+assert_eq [spar::campaign_segment_names [dict create segments $seg_map_sparse]] \
+    {seg-a seg-b} "campaign_segment_names: sparse map block detected as map"
+
+# Single-segment dot map (segments: {.: {...}}).
+assert_eq [spar::campaign_segment_names \
+        [dict create segments [dict create . [dict create objective "x"]]]] \
+    {.} "campaign_segment_names: single dot-segment map"
+
+# Absent segments → empty.
+assert_eq [spar::campaign_segment_names [dict create campaign "x"]] {} \
+    "campaign_segment_names: absent segments → empty"
+
+
 finish_tests

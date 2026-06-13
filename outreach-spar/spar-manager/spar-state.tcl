@@ -537,7 +537,9 @@ proc spar::project_approach_data {data} {
             fact_provenance -
             quality_checklist -
             angle_rationale -
+            response_likelihood -
             a_note -
+            r_note -
             profile_hash {
                 # Small / structural — copy through.
                 dict set out $k $v
@@ -839,6 +841,14 @@ oo::define spar::State method refine_contact {contact} {
     dict set contact email_replied   [dict get $fr email_replied]
     dict set contact to_addresses    [dict get $fr to_addresses]
     dict set contact unsent_subjects [dict get $fr unsent_subjects]
+
+    # Promote the campaign-bound engagement fields from the approach YAML
+    # onto the contact dict. They live in the approach file (not the roster),
+    # so any consumer expecting them on the contact (e.g. the inspector's
+    # A-tab title) reads them from here.
+    dict set contact response_likelihood [spar::dict_get_default $approach_data response_likelihood ""]
+    dict set contact a_note              [spar::dict_get_default $approach_data a_note ""]
+    dict set contact r_note              [spar::dict_get_default $approach_data r_note ""]
 
     # REPLIED — SENT and (replied_date or reply with direction:received).
     if {[dict get $fr any_sent] && [dict get $fr email_replied]} {

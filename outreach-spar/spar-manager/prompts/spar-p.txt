@@ -3,7 +3,7 @@ Follow the SPAR-P procedure at __SPAR_P_PATH__.
 Target: __NAME__ at __ORG__, role: __ROLE__. Phone: __PHONE__. Email: __EMAIL__. LinkedIn: __LINKEDIN__. Facebook: __FACEBOOK__.
 Roster notes — s_note: __S_NOTE__, p_note: __P_NOTE__.
 
-Campaign context: read __GOAL_PATH__ for the segment's objective, USPs, and angle table.
+Campaign context: read the `segments.__SEGMENT_KEY__` block in __CAMPAIGN_PATH__ (campaign.yaml) for this segment's objective, USP framings, and conversion funnel. Read __GOAL_PATH__ (segment.yaml) for the segment's `rating_rubric` and `discovery_criteria`.
 Organisation overview: read __OVERVIEW__ for ground truth about the organisation.
 __VENUE_LINE__
 __ANTIFACTS_LINE__

@@ -236,10 +236,7 @@ oo::class create spar::ui::CampaignModel {
         }
 
         # Discover segments
-        set segments_list {}
-        if {[dict exists $Cdata segments]} {
-            set segments_list [dict get $Cdata segments]
-        }
+        set segments_list [spar::campaign_segment_names $Cdata]
         set SkipSet {}
         if {[dict exists $Cdata skip_segments]} {
             foreach s [dict get $Cdata skip_segments] { lappend SkipSet $s }

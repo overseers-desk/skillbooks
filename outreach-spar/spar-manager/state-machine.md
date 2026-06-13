@@ -335,7 +335,6 @@ Grouped by validator proc. All line numbers are in `spar-state.tcl`.
 | roster_personal_email_reused    | warning | same email, same name, different orgs (case_3)        | EXCLUDED            | —    |
 | roster_no_channel               | warning | ¬has_email ∧ ¬has_linkedin ∧ ¬has_facebook ∧ phone="" | EXCLUDED            | 1626 |
 | roster_no_sweep_iteration       | warning | sweep_iteration empty                                 | EXCLUDED            | 1636 |
-| roster_likelihood_without_star  | warning | response_likelihood set, star_rating empty            | EXCLUDED            | 1646 |
 | roster_zero_star_no_invalid     | warning | star=0 ∧ date_excluded empty                          | EXCLUDED            | 1658 |
 
 #### `validate_campaign` (cross-file campaign checks)
@@ -388,7 +387,6 @@ Categories (applied in the rightmost column):
 | roster_personal_email_reused    | DISCOVERED → REPLIED                    | —                               | AUDIT (case_3)   |
 | roster_no_channel               | DISCOVERED → REPLIED                    | no T-gate; P §4.15 now excludes | MISALIGNED       |
 | roster_no_sweep_iteration       | DISCOVERED → REPLIED                    | —                               | AUDIT            |
-| roster_likelihood_without_star  | DISCOVERED → REPLIED                    | —                               | REAL             |
 | roster_zero_star_no_invalid     | DISCOVERED → REPLIED                    | n/a                             | OBSOLETE         |
 | merged_contact_name             | DISCOVERED → REPLIED                    | —                               | WORK-HYGIENE     |
 | masked_email                    | DISCOVERED → REPLIED                    | T6: has_email excludes masked   | REDUNDANT        |

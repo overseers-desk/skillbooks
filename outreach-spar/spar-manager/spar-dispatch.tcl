@@ -135,7 +135,7 @@ proc spar::p::prepare_for_pool {opts on_progress} {
     # declared spec version this tool does not support. Unstamped is allowed.
     spar::assert_supported_version "campaign.yaml" [spar::campaign_version $cdata]
     set base     [dict get $cdata _base]
-    set segments [spar::filter_segments [dict get $cdata segments] $sel_segments]
+    set segments [spar::filter_segments [spar::campaign_segment_names $cdata] $sel_segments]
 
     set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
     set logs_dir  [spar::resolve_logs_dir $campaign_file p $datestamp $user_logs]
@@ -146,7 +146,7 @@ proc spar::p::prepare_for_pool {opts on_progress} {
         if {![file exists [file join $segdir roster.tsv]]} continue
         if {[catch {
             set seg [spar::p::_prepare_segment \
-                $segdir $cdata $opts $datestamp $on_progress]
+                $segdir $cdata $opts $datestamp $on_progress $campaign_file $segment]
         } err]} {
             {*}$on_progress "_segment_${segment}" failed "setup error: $err"
             continue
@@ -166,7 +166,7 @@ proc spar::p::prepare_for_pool {opts on_progress} {
 #    pre_snapshot <dict of pre-existing roster issues>}
 # "skipped profile exists" events are emitted synchronously via
 # on_progress during the row loop.
-proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
+proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress campaign_file segment_name} {
     set segment_dir [file normalize $segment_dir]
 
     set sel_stems [spar::dict_get_default $opts stems {}]
@@ -311,6 +311,8 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress} {
             __S_NOTE__        $s_note \
             __P_NOTE__        $p_note \
             __GOAL_PATH__     $goal_path \
+            __CAMPAIGN_PATH__ $campaign_file \
+            __SEGMENT_KEY__   $segment_name \
             __OVERVIEW__      $overview \
             __ANTIFACTS_LINE__ $antifacts_line \
             __VENUE_LINE__    $venue_line \
@@ -476,7 +478,7 @@ proc spar::a::_build_prompts {opts on_progress} {
     set campaign_principles [spar::dict_get_default $cdata campaign_principles]
     set a_max_passes_ceiling [spar::dict_get_default $cdata a_max_passes 3]
     set worker_timeout_secs [spar::dict_get_default $cdata worker_timeout_secs 1800]
-    set segments [spar::filter_segments [dict get $cdata segments] $sel_segments]
+    set segments [spar::filter_segments [spar::campaign_segment_names $cdata] $sel_segments]
 
     # Campaign filters (issue #41 in-scope-channel gate replaces
     # filter.require_email). A roster row is dispatchable for A when it
@@ -560,7 +562,6 @@ proc spar::a::_build_prompts {opts on_progress} {
             set facebook [string trim [spar::dict_get_default $row facebook_url]]
             set p_note [string trim [spar::dict_get_default $row p_note]]
             set star [string trim [spar::dict_get_default $row star_rating]]
-            set response_likelihood [string trim [spar::dict_get_default $row response_likelihood]]
             set s_note [string trim [spar::dict_get_default $row s_note]]
             set date_invalid [string trim [spar::dict_get_default $row date_excluded]]
             set stem [string trim [spar::dict_get_default $row stem ""]]
@@ -646,7 +647,6 @@ Email: $email
 LinkedIn: $linkedin
 Facebook: $facebook
 Star rating: $star
-Response likelihood: $response_likelihood
 p_note: $p_note
 s_note: $s_note"
 
@@ -679,9 +679,9 @@ s_note: $s_note"
             }
 
             set file_items "1. Method: $method — read §4.1 through §4.5 (warmth, channel, language, angle, draft). Skip §4.6 (spar) — that is handled separately.
-2. Organisation overview: $overview — read in full. This is the ground truth about the organisation. The segment file lists which USPs apply to this segment and whether each is functional or emotional. Use those USPs, do not invent your own from the overview.
+2. Organisation overview: $overview — read in full. This is the ground truth about the organisation. The campaign plan block (the segments.$segment block in $campaign_file) lists which USPs apply to this segment and whether each is functional or emotional. Use those USPs, do not invent your own from the overview.
 $profile_a1_instruction
-4. Segment file: $goal_path — read the \"message_goal\" field for the specific objective this message must achieve (e.g. secure a FAM visit, collect a roster expression of interest). The \"objective\" field is the long-term commercial goal, not what this message asks for. Read \"first_ask\" for approach style guidance. If the segment has subsegments, determine which subsegment applies to this contact and use its overrides where present."
+4. Campaign plan block: read the \"segments.$segment\" block in $campaign_file (campaign.yaml) — \"message_goal\" for the specific objective this message must achieve (e.g. secure a FAM visit, collect a roster expression of interest); \"objective\" for the long-term commercial goal, not what this message asks for; \"first_ask\" for approach style guidance; and the USP framings. If the block has subsegments, determine which applies to this contact and use its overrides where present. The segment file $goal_path holds only the population definition (discovery_criteria, rating_rubric)."
             set item_num 5
             if {$antifacts ne ""} {
                 append file_items "
@@ -711,7 +711,7 @@ ${item_num}. Campaign principles: $campaign_principles — read the \"Profile-in
 
             set factcheck_files "Files to read:
 1. $overview
-2. $goal_path"
+2. $campaign_file (the segments.$segment plan block)"
             if {$antifacts ne ""} {
                 append factcheck_files "
 3. $antifacts"
