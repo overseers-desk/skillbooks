@@ -3,7 +3,8 @@
 A catalog of harness/dispatch failure modes observed in real runs, each with a
 trace path (session IDs) so a later session diagnoses from the record instead of
 re-deriving it. Open modes carry an issue number; fixed modes carry the commit
-that closed them. Add to it; do not let the same mode be rediscovered from scratch.
+that closed them; operational caveats record conditions outside the tooling's
+control. Add to it; do not let the same mode be rediscovered from scratch.
 
 ## How to trace a run
 
@@ -94,19 +95,6 @@ independent witness; treat the mechanism as a strong hypothesis, not a logged fa
 **Note.** The harness now judges by the on-disk product (FM-HARNESS-2 fixed), so the loop
 no longer loses the deliverable; the wasted wall-clock and cost remain.
 
-### FM-REPO-1 — concurrent git HEAD movement during a run (observed) · issue #137
-
-**Symptom.** During the run, the campaign repo's HEAD moved forward and then back (a commit
-appeared, then HEAD returned to its prior position) without the worker committing — visible
-to a worker's `git` calls and a source of confusion (it fed FM-AGENT-1).
-
-**Cause.** Not confirmed. Some process commits (and possibly resets) the campaign repo while
-workers run; roster writes are guarded by `.roster.lock`, but git operations are not. Whether
-it is an intended dispatcher auto-commit or workers racing each other is unverified.
-
-**Next step.** Identify what commits/resets the repo during a run before relying on git state
-mid-run; a reset could discard a worker's working-tree edits.
-
 ---
 
 ## Fixed
@@ -163,3 +151,21 @@ without shell redirection left no on-disk record of its outcomes. `spar::install
 tees those services to `<logs_root>/orchestration-<stem>-<datestamp>.log`, installed by the
 transition CLI for real (non-dry) dispatch. Per-row worker lines are not captured there (see
 "How to trace").
+
+---
+
+## Operational caveats (not code defects)
+
+### FM-REPO-1 — concurrent git operations on the campaign repo during a run
+
+spar-manager performs no git operations: there is no commit/reset/add anywhere in the tooling,
+and the SPAR-P methodology and prompts do not instruct the agent to commit (verified by grep).
+So any commit or reset on the campaign repo during a run comes from outside spar-manager — a
+parallel session, a manual command, or an automation on the same checkout.
+
+Nothing in spar-manager code can prevent this, but it carries a real risk: a concurrent
+`git reset --hard` discards uncommitted working-tree edits, which is exactly what a run is
+producing (roster.tsv, profile files). Do not commit or reset the campaign repo while a run is
+active. Observed in the 2026-06-14 run as HEAD moving forward then back; it also fed the agent
+loop in FM-AGENT-1 (the worker saw a confusing git state and chased it). Filed then closed as
+not-a-code-bug: SmartLayer/aesop#137.
