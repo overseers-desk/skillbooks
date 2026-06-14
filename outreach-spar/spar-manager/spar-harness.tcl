@@ -37,7 +37,7 @@ source [file join $::spar::harness_dir spar-mailroom.tcl]
 
 oo::class create spar::Harness {
     variable Slug LogPrefix CostLog SessionId PromptDir LogDir \
-             WorkerTimeoutSecs WorkerCostCapUsd CostKilled
+             WorkerCostCapUsd CostKilled
 
     constructor {prompt_dir log_dir} {
         set PromptDir $prompt_dir
@@ -47,25 +47,15 @@ oo::class create spar::Harness {
         set CostLog   "${LogPrefix}-cost.jsonl"
         set SessionId ""
         set CostKilled 0
-        # Per-attempt wall-clock budget (#114) travels with the prompt
-        # dir via meta.env, so every dispatch path that builds a prompt
-        # dir carries it — no per-path row-opts plumbing. Absent file or
-        # key leaves it 0 (disabled); set_worker_timeout can override.
-        #
-        # Per-worker cost cap (#114) is the primary spend circuit-breaker:
-        # the time cap above only bounds a parked worker (which spends $0),
-        # while the cost cap bounds a runaway think/retry loop that spends
-        # fast. The two are complementary, so both travel together. The
+        # Per-worker cost cap (#114) is the sole budget circuit-breaker:
+        # it bounds a runaway think/retry loop that spends fast. The
+        # wall-clock cap was removed — dollars, not time, is the bound. The
         # default sits above the $7.83 heaviest-worker ceiling on record;
-        # campaign.yaml tunes it per campaign through the same meta.env
-        # carrier as the time cap (key WORKER_COST_CAP_USD). Zero disables
-        # the watchdog.
-        set WorkerTimeoutSecs 0
+        # campaign.yaml tunes it per campaign through meta.env (key
+        # WORKER_COST_CAP_USD). Zero disables the watchdog.
         set WorkerCostCapUsd 10.0
         if {[file exists [file join $prompt_dir meta.env]]} {
             set meta [my load_meta]
-            set WorkerTimeoutSecs [spar::dict_get_default \
-                $meta WORKER_TIMEOUT_SECS 0]
             set WorkerCostCapUsd [spar::dict_get_default \
                 $meta WORKER_COST_CAP_USD $WorkerCostCapUsd]
         }
@@ -81,13 +71,6 @@ oo::class create spar::Harness {
     method prompt_dir  {} { return $PromptDir }
     method log_dir     {} { return $LogDir }
     method cost_cap    {} { return $WorkerCostCapUsd }
-
-    # Per-attempt wall-clock budget for a single `exec claude -p`. Zero
-    # (default) disables the wrap. Credit-limit waits between retries
-    # sit outside the wrapped exec and do not count against the budget.
-    method set_worker_timeout {secs} {
-        set WorkerTimeoutSecs $secs
-    }
 
     # Per-worker cost cap in USD for a single dispatch (parent session
     # plus its research subagents). Zero disables the watchdog.
@@ -203,20 +186,6 @@ oo::class create spar::Harness {
             }
             set cmd [concat $cmd $args [list $prompt]]
 
-            # Per-attempt wall-clock cap (#114). Wrap with timeout(1)
-            # when configured. GNU coreutils exits 124 on SIGTERM at
-            # deadline; uutils (Rust reimplementation, installed on
-            # recent Debian/Ubuntu) exits 125 when --kill-after is set
-            # and the command times out. Either signals 137 if SIGKILL
-            # was needed after the kill-after grace.
-            if {$WorkerTimeoutSecs > 0} {
-                set timeout_bin [spar::resolve_coreutil timeout]
-                if {$timeout_bin ne ""} {
-                    set cmd [linsert $cmd 0 $timeout_bin \
-                        --kill-after=60s "${WorkerTimeoutSecs}s"]
-                }
-            }
-
             # Verdict rule this harness commits to: the deliverable on disk
             # is the source of truth, not the claude envelope. stream-json
             # writes one JSONL event per line as work happens, so
@@ -233,28 +202,17 @@ oo::class create spar::Harness {
 
             # A deliberate budget kill is a circuit-breaker, not an
             # interruption: resuming it re-spends the very budget the cap
-            # exists to bound (#139). Two triggers count as deliberate —
-            # the wall-clock cap firing (elapsed reached the deadline, or
-            # timeout(1) reported 124/125/137) and the cost watchdog SIGTERM
-            # (CostKilled). Either fails the row fast: return 3, which
+            # exists to bound (#139). The cost watchdog SIGTERM (CostKilled)
+            # is that kill — it fails the row fast with return 3, which
             # ProfileHarness::run routes to a hard fail with no validate /
             # resume. An external kill or a truncated-but-incomplete stream
             # is a different animal — the turn may have done real work the
             # disk product still holds — so that path keeps return 2, the
             # validate-the-product / resume route (FM-HARNESS-2).
-            set wall_kill [expr {$WorkerTimeoutSecs > 0 \
-                && ($elapsed >= $WorkerTimeoutSecs \
-                    || $exit_code == 124 || $exit_code == 125 \
-                    || $exit_code == 137)}]
             if {[llength $parsed] == 0} {
                 if {$CostKilled} {
                     ${::spar::harness_log}::error \
                         "FAIL ($stage: cost cap \$$WorkerCostCapUsd reached — killed, no resume): $Slug"
-                    return 3
-                }
-                if {$wall_kill} {
-                    ${::spar::harness_log}::error \
-                        "FAIL ($stage: timeout after ${WorkerTimeoutSecs}s — killed, no resume): $Slug"
                     return 3
                 }
                 ${::spar::harness_log}::error \
