@@ -621,13 +621,51 @@ proc spar::resolve_logs_dir {campaign_file phase datestamp user_logs} {
     set dir_slug [string map {/ -} \
         [file dirname [file normalize $campaign_file]]]
     set folder "${dir_slug}-${stem}-${phase}-${datestamp}"
-    if {[file isdirectory /var/local/log/spar]} {
-        set logs_dir "/var/local/log/spar/$folder"
-    } else {
-        set logs_dir "$::env(HOME)/logs/spar/$folder"
-    }
+    set logs_dir [file join [spar::logs_root] $folder]
     file mkdir $logs_dir
     return $logs_dir
+}
+
+# logs_root — base directory for SPAR run logs: the system path when it
+# exists (persistent, multi-user), else a per-user fallback. Single source
+# for resolve_logs_dir's per-phase dirs and the orchestration log.
+proc spar::logs_root {} {
+    if {[file isdirectory /var/local/log/spar]} {
+        return /var/local/log/spar
+    }
+    return [file join $::env(HOME) logs spar]
+}
+
+# Orchestration log (FM-LOG-1). The spar::transitions / spar::dispatch
+# logger services emit only to stderr by default, so a dispatch run launched
+# without shell redirection leaves no on-disk record of its outcomes
+# (START/DONE/FAIL/Summary). install_orchestration_log tees those services
+# to a file so a run is traceable from its log root regardless of how it was
+# launched. Per-row worker (spar::harness) lines run in separate tpool
+# interps and are not captured here; they persist in the per-row artifacts
+# under resolve_logs_dir.
+namespace eval ::spar { variable _orch_logfile "" }
+
+proc spar::_orch_emit {service level txt} {
+    if {$::spar::_orch_logfile eq ""} return
+    set line "\[[clock format [clock seconds]]\] \[$service\] \[$level\] '$txt'"
+    catch {puts stderr $line}
+    catch {
+        set fd [open $::spar::_orch_logfile a]
+        puts $fd $line
+        close $fd
+    }
+}
+
+proc spar::install_orchestration_log {logfile services} {
+    set ::spar::_orch_logfile $logfile
+    file mkdir [file dirname $logfile]
+    foreach svc $services {
+        set log [logger::init $svc]
+        foreach lvl {debug info notice warn error critical alert emergency} {
+            ${log}::logproc $lvl txt [format {::spar::_orch_emit %s %s $txt} $svc $lvl]
+        }
+    }
 }
 
 # Path conventions for stem-keyed artefacts. SSOT: every consumer that
