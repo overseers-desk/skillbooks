@@ -93,10 +93,8 @@ Repeat until the stop condition fires:
    ```bash
    python3 ~/code/aesop/contact-graph/count_today.py | grep linkedin_searches_used
    ```
-   If the count is `>= 30`, stop the entire loop. Otherwise:
-   ```bash
-   python3 ~/.claude/skills/linkedin.com/keyword-search.py "DisplayName Disambiguator"
-   ```
+   If the count is `>= 30`, stop the entire loop. Otherwise use the LinkedIn
+   skill's keyword search for `DisplayName Disambiguator`.
    Parse the output. Apply the same confidence rubric. Then:
    - **Confident LinkedIn hit** → `record_verify.py --state verified --vanity
      <url> --level <level> --evidence '{"source":"linkedin","query":"...","m":<m>}'`.
@@ -186,8 +184,8 @@ Drafted rows:
 [human_id] ...
 ```
 
-Then exit. Do NOT call `~/.claude/skills/linkedin.com/send-invite.py`. The
-operator reviews `connection_queue` and decides what to send manually.
+Then exit. Do NOT send invites; sending is the operator's separate step. The
+operator reviews `linkedin.connection_queue` and decides what to send manually.
 
 ## Boundaries
 
@@ -196,10 +194,7 @@ operator reviews `connection_queue` and decides what to send manually.
   first.
 - Never include personal identifiers from `weiwu.yaml` / global CLAUDE.md
   rules in `note_text` or `verify_evidence`.
-- Never call `send-invite.py`.
-- Never write to `human.linkedin_url` directly during this run. Vanity
-  goes into `connection_queue.vanity_name`; promotion to `human.linkedin_url`
-  is a separate later step after operator review.
+- Never send invites; sending is the operator's separate step.
 - If a Google search returns a result that looks like a different person
   with the same name, prefer `state='ambiguous'` over a guess.
 - Skip generic-domain disambiguators (gmail/hotmail/outlook/yahoo/etc.) when
@@ -210,7 +205,7 @@ operator reviews `connection_queue` and decides what to send manually.
 Run these three commands once at session start to confirm the environment:
 
 ```bash
-psql "$DATABASE_URL" -tA -c "SELECT COUNT(*) FROM connection_queue;" 2>&1
+psql "$DATABASE_URL" -tA -c "SELECT COUNT(*) FROM linkedin.connection_queue;" 2>&1
 python3 ~/code/aesop/contact-graph/pick_next_candidate.py
 python3 ~/code/aesop/contact-graph/count_today.py
 ```
