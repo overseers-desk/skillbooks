@@ -3,7 +3,7 @@
 record_verify.py — write a verify-stage outcome to connection_queue.
 
 UPSERTs the connection_queue row for (human_id, workflow_label). Sets state,
-vanity_name, verify_evidence, verified_at, level; sets terminal_at if state is a
+profile_id, verify_evidence, verified_at, level; sets terminal_at if state is a
 terminal state for this stage (unverifiable, ambiguous).
 
 --level is the treatment band carried over from pick_next_candidate.py (3 bare
@@ -39,8 +39,8 @@ TERMINAL_FOR_VERIFY = {'unverifiable', 'ambiguous',
                        'already_connected', 'invite_pending'}
 
 UPSERT_PROFILE = """
-INSERT INTO linkedin.profile (human_id, connector_instance_id, slug)
-VALUES (%s, 1, %s)
+INSERT INTO linkedin.profile (human_id, slug)
+VALUES (%s, %s)
 ON CONFLICT (slug) DO UPDATE SET human_id = EXCLUDED.human_id
 RETURNING id;
 """
