@@ -4,8 +4,8 @@
 #   1. resolve_coreutil — finds `timeout` on Linux, `gtimeout` on macOS
 #      (with coreutils installed). Returns "" when neither present.
 #   2. _invoke wrap — when WorkerTimeoutSecs > 0, the wrapped exec exits
-#      within the deadline with rc=1 and the harness log records
-#      "timeout after Ns".
+#      within the deadline; _invoke returns rc=2 (incomplete, no result
+#      object) and the harness log records "timeout after Ns".
 #
 # The second test stubs `claude` by overriding spar::find_tool — the
 # real claude binary on $PATH is not invoked. The stub sleeps past the
@@ -76,7 +76,7 @@ set elapsed_ms [expr {[clock milliseconds] - $t0}]
 
 $inst destroy
 
-assert_eq $rc 1 "_invoke returns rc=1 when stub claude is killed by timeout"
+assert_eq $rc 2 "_invoke returns rc=2 (incomplete) when stub claude is killed by timeout"
 
 # Stub sleeps 30s; deadline is 2s + 60s kill-after grace. SIGTERM should
 # fire at ~2s and `sleep` exits promptly. Allow 8s to absorb CI jitter.
@@ -105,16 +105,16 @@ assert_eq $json_size 0 "json file empty (claude was killed before output)"
 section "2b. Timeout after a complete envelope is a success (product over status)"
 # ════════════════════════════════════════════════════════════════════════
 
-# A stub that writes a complete JSON envelope, then sleeps past the
-# deadline — modelling a session that finished its work just before the
+# A stub that writes a complete stream-json result line, then sleeps past
+# the deadline — modelling a session that finished its work just before the
 # wall-clock kill landed (e.g. SIGTSTP past the deadline, SIGTERM on
-# resume). timeout(1) exits 124, but the envelope is whole on disk, so
+# resume). timeout(1) exits 124, but the result object is whole on disk, so
 # _invoke must judge by the product and return success, not fail on the
 # exit status.
 set done_stub [file join $tmp_root claude-done]
 set fd [open $done_stub w]
 puts $fd "#!/bin/sh"
-puts $fd {printf '%s' '{"result":"profile written","is_error":false,"total_cost_usd":0.01,"session_id":"done-sess"}'}
+puts $fd {printf '%s\n' '{"type":"result","subtype":"success","result":"profile written","is_error":false,"total_cost_usd":0.01,"session_id":"done-sess"}'}
 puts $fd "sleep 30"
 close $fd
 file attributes $done_stub -permissions 0755
@@ -183,9 +183,9 @@ set rc2 [$inst2 call "test-stage" $log_file2 "dummy"]
 set elapsed2 [expr {[clock milliseconds] - $t0}]
 $inst2 destroy
 
-# rc=1 because the stub produces no JSON; the point is that the call
-# returned promptly (no timeout binary was invoked).
-assert_eq $rc2 1 "escape hatch: rc=1 from missing JSON, not from timeout"
+# rc=2 (incomplete) because the stub produces no result line; the point is
+# that the call returned promptly (no timeout binary was invoked).
+assert_eq $rc2 2 "escape hatch: rc=2 (incomplete) from missing result, not from timeout"
 if {$elapsed2 >= 5000} {
     puts "FAIL: escape hatch call took too long"
     puts "  elapsed: ${elapsed2}ms"
@@ -226,7 +226,7 @@ set rc3 [$inst3 call "test-stage" $log_file3 "dummy prompt"]
 set elapsed3 [expr {[clock milliseconds] - $t0}]
 $inst3 destroy
 
-assert_eq $rc3 1 "meta.env: rc=1 when stub killed by timeout read from meta.env"
+assert_eq $rc3 2 "meta.env: rc=2 (incomplete) when stub killed by timeout read from meta.env"
 if {$elapsed3 >= 8000} {
     puts "FAIL: meta.env-driven timeout did not fire within budget"
     puts "  elapsed: ${elapsed3}ms (expected < 8000ms)"

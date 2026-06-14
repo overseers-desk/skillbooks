@@ -106,7 +106,9 @@ oo::class create spar::Harness {
     # on the same harness reuse it via `resume`.
     method call {stage log_file prompt args} {
         set rc [my _invoke $stage $log_file $prompt {*}$args]
-        if {$rc == 0 && $SessionId eq ""} {
+        # Capture session_id whenever the stream produced one — including an
+        # incomplete run (rc 2) — so an interrupted call can still be resumed.
+        if {$SessionId eq ""} {
             set SessionId [my _extract_session_id "${log_file}.json"]
         }
         return $rc
@@ -167,7 +169,7 @@ oo::class create spar::Harness {
                 ${::spar::harness_log}::error "FAIL ($stage: claude not found — check Settings): $Slug"
                 return 1
             }
-            set cmd [list $claude_bin -p --output-format json --dangerously-skip-permissions]
+            set cmd [list $claude_bin -p --output-format stream-json --verbose --dangerously-skip-permissions]
             # Default to sonnet unless caller already supplied --model
             # (fix-loop attempt 3 escalates to opus; challenger passes its
             # own model). Per-phase model selection from campaign YAML is
@@ -191,57 +193,44 @@ oo::class create spar::Harness {
                 }
             }
 
-            # The wrapped timeout(1) reports a wall-clock kill via the exit
-            # codes noted above, but that status is a label, not a verdict:
-            # a kill can land after the envelope was already written — the
-            # process group SIGTSTP'd past the deadline and SIGTERM'd on
-            # resume once the work had finished, or a late SIGALRM on a
-            # thrashing host. Success is judged by the product on disk, so
-            # one check covers every "clock said too long but the work was
-            # done" cause without a per-cause branch. The status only
-            # selects the failure wording when no usable envelope survives.
-            set timed_out 0
+            # Verdict rule this harness commits to: the deliverable on disk
+            # is the source of truth, not the claude envelope. stream-json
+            # writes one JSONL event per line as work happens, so
+            # _stream_result recovers the final result object when the turn
+            # closes, and _extract_session_id recovers session_id from the
+            # first (init) event even when it does not. Record real elapsed
+            # and the true exit code so a kill is reported honestly: a
+            # 124/125/137 from any cause is no longer blanket-labelled a
+            # timeout (FM-HARNESS-1).
+            set t0 [clock seconds]
+            set exit_code 0
             if {[catch {
                 exec {*}$cmd > $json_file 2> "${log_file}.stderr"
             } _err opts]} {
                 set ec [dict get $opts -errorcode]
-                if {$WorkerTimeoutSecs > 0 && [lindex $ec 0] eq "CHILDSTATUS"} {
+                if {[lindex $ec 0] eq "CHILDSTATUS"} {
                     set exit_code [lindex $ec 2]
-                    if {$exit_code == 124 || $exit_code == 125 || $exit_code == 137} {
-                        set timed_out 1
-                    }
                 }
             }
+            set elapsed [expr {[clock seconds] - $t0}]
 
-            # No bytes means the work did not land. Name the timeout when
-            # that was the cause, a generic error otherwise.
-            if {![file exists $json_file] || [file size $json_file] == 0} {
-                if {$timed_out} {
+            set parsed [my _stream_result $json_file]
+
+            # No final result object: the turn did not close (kill, timeout,
+            # crash, or truncated stream). Return 2 (incomplete) — distinct
+            # from 1 (hard failure) — so ProfileHarness::run validates
+            # whatever landed on disk rather than discarding it
+            # (FM-HARNESS-2); the session_id captured by `call` still allows
+            # a resume. Name the timeout only when the clock actually ran out.
+            if {[llength $parsed] == 0} {
+                if {$WorkerTimeoutSecs > 0 && $elapsed >= $WorkerTimeoutSecs} {
                     ${::spar::harness_log}::error \
                         "FAIL ($stage: timeout after ${WorkerTimeoutSecs}s): $Slug"
                 } else {
-                    ${::spar::harness_log}::error "FAIL ($stage rc=error): $Slug"
-                }
-                return 1
-            }
-
-            set fd [open $json_file r]
-            try {
-                set raw_json [read $fd]
-            } finally {
-                close $fd
-            }
-
-            # A truncated envelope (SIGTERM mid-write) fails to parse;
-            # attribute it to the timeout when that was the cause.
-            if {[catch {set parsed [::json::json2dict $raw_json]}]} {
-                if {$timed_out} {
                     ${::spar::harness_log}::error \
-                        "FAIL ($stage: timeout after ${WorkerTimeoutSecs}s): $Slug"
-                } else {
-                    ${::spar::harness_log}::error "FAIL ($stage: invalid JSON): $Slug"
+                        "FAIL ($stage: ended without result after ${elapsed}s, exit $exit_code): $Slug"
                 }
-                return 1
+                return 2
             }
 
             if {[dict exists $parsed is_error] && [dict get $parsed is_error] eq "true"} {
@@ -288,13 +277,49 @@ oo::class create spar::Harness {
         }
     }
 
-    method _extract_session_id {json_file} {
+    # _stream_result — the final result object from a stream-json
+    # transcript, or {} when no complete result line was written (the turn
+    # was killed or truncated). Tolerates a half-written trailing line.
+    method _stream_result {json_file} {
+        if {![file exists $json_file]} { return {} }
+        set result {}
         set fd [open $json_file r]
-        set raw [read $fd]
-        close $fd
-        set parsed [::json::json2dict $raw]
-        if {![dict exists $parsed session_id]} { return "" }
-        return [dict get $parsed session_id]
+        try {
+            while {[gets $fd line] >= 0} {
+                set line [string trim $line]
+                if {$line eq ""} continue
+                if {[catch {set obj [::json::json2dict $line]}]} continue
+                if {[dict exists $obj type] && [dict get $obj type] eq "result"} {
+                    set result $obj
+                }
+            }
+        } finally {
+            close $fd
+        }
+        return $result
+    }
+
+    # _extract_session_id — session_id from the first stream-json event that
+    # carries it (the init event), so it survives a kill that prevented the
+    # final result object from being written.
+    method _extract_session_id {json_file} {
+        if {![file exists $json_file]} { return "" }
+        set sid ""
+        set fd [open $json_file r]
+        try {
+            while {[gets $fd line] >= 0} {
+                set line [string trim $line]
+                if {$line eq ""} continue
+                if {[catch {set obj [::json::json2dict $line]}]} continue
+                if {[dict exists $obj session_id]} {
+                    set sid [dict get $obj session_id]
+                    break
+                }
+            }
+        } finally {
+            close $fd
+        }
+        return $sid
     }
 
     # Parse "resets 3am (Australia/Brisbane)" → seconds to sleep.
@@ -885,7 +910,14 @@ oo::class create spar::ProfileHarness {
         try {
             my load_my_meta
             my do_inject_mailroom
-            if {[my do_profile_call]} { return 1 }
+            # do_profile_call returns 0 (turn closed), 1 (hard failure), or
+            # 2 (turn cut short — kill/timeout). Hard-fail only on 1; on 2,
+            # fall through to validate the on-disk product (FM-HARNESS-2):
+            # a profile the kill prevented from emitting an envelope still
+            # validates and lands DONE, while a missing/partial one surfaces
+            # as missing_profile and the fix loop resumes the captured
+            # session.
+            if {[my do_profile_call] == 1} { return 1 }
             # DbC-Post: sanitise masked emails written to the roster, then
             # run validate_profile on both the front matter and roster-row
             # invariants (#39 R1: profile_unreachable_without_exclusion —
