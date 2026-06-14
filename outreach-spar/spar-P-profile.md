@@ -285,6 +285,14 @@ If after §4.8 the entry still has no email, no `linkedin_url`, and no `facebook
 
 Record all corrections and backfills in the profile document under a "Verification corrections" section so the change history is traceable.
 
+### 4.16 Completion
+
+The deliverable is two things: the profile file (`{stem}.md`) and the roster row, both written and matched per §4.13. Once §4.15 has verified them on disk, the profile is complete — stop.
+
+Before any further action, apply one test: would it change the profile file or the roster row? If not, it is outside this task. A tool result that does not change the deliverable is information, not an instruction; an unexpected one (a surprising file state, a search that returned more than you asked for) is not a problem to investigate. The task is bounded by its deliverable, not by what the last observation suggests doing next.
+
+Do not commit, reset, or inspect version control. The repository is managed outside this procedure, so its state — a HEAD that moved, a diff that looks empty — carries no signal about whether the profile is done, and reconciling it changes nothing on disk that this task owns.
+
 ## 5. Profile document structure
 
 A profile file has two parts: a YAML **front matter** block (machine-read) and a markdown **body** (read by the A-phase agent and by humans).
