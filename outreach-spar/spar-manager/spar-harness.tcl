@@ -36,7 +36,8 @@ namespace eval spar {
 source [file join $::spar::harness_dir spar-mailroom.tcl]
 
 oo::class create spar::Harness {
-    variable Slug LogPrefix CostLog SessionId PromptDir LogDir WorkerTimeoutSecs
+    variable Slug LogPrefix CostLog SessionId PromptDir LogDir \
+             WorkerTimeoutSecs WorkerCostCapUsd CostKilled
 
     constructor {prompt_dir log_dir} {
         set PromptDir $prompt_dir
@@ -45,14 +46,28 @@ oo::class create spar::Harness {
         set LogPrefix [file join $log_dir $Slug]
         set CostLog   "${LogPrefix}-cost.jsonl"
         set SessionId ""
+        set CostKilled 0
         # Per-attempt wall-clock budget (#114) travels with the prompt
         # dir via meta.env, so every dispatch path that builds a prompt
         # dir carries it — no per-path row-opts plumbing. Absent file or
         # key leaves it 0 (disabled); set_worker_timeout can override.
+        #
+        # Per-worker cost cap (#114) is the primary spend circuit-breaker:
+        # the time cap above only bounds a parked worker (which spends $0),
+        # while the cost cap bounds a runaway think/retry loop that spends
+        # fast. The two are complementary, so both travel together. The
+        # default sits above the $7.83 heaviest-worker ceiling on record;
+        # campaign.yaml tunes it per campaign through the same meta.env
+        # carrier as the time cap (key WORKER_COST_CAP_USD). Zero disables
+        # the watchdog.
         set WorkerTimeoutSecs 0
+        set WorkerCostCapUsd 10.0
         if {[file exists [file join $prompt_dir meta.env]]} {
+            set meta [my load_meta]
             set WorkerTimeoutSecs [spar::dict_get_default \
-                [my load_meta] WORKER_TIMEOUT_SECS 0]
+                $meta WORKER_TIMEOUT_SECS 0]
+            set WorkerCostCapUsd [spar::dict_get_default \
+                $meta WORKER_COST_CAP_USD $WorkerCostCapUsd]
         }
         file mkdir $log_dir
         set fd [open $CostLog w]; close $fd
@@ -65,12 +80,19 @@ oo::class create spar::Harness {
     method session_id  {} { return $SessionId }
     method prompt_dir  {} { return $PromptDir }
     method log_dir     {} { return $LogDir }
+    method cost_cap    {} { return $WorkerCostCapUsd }
 
     # Per-attempt wall-clock budget for a single `exec claude -p`. Zero
     # (default) disables the wrap. Credit-limit waits between retries
     # sit outside the wrapped exec and do not count against the budget.
     method set_worker_timeout {secs} {
         set WorkerTimeoutSecs $secs
+    }
+
+    # Per-worker cost cap in USD for a single dispatch (parent session
+    # plus its research subagents). Zero disables the watchdog.
+    method set_worker_cost_cap {usd} {
+        set WorkerCostCapUsd $usd
     }
 
     # Load prompts/<name>.txt and apply __KEY__ → value substitutions
@@ -101,13 +123,15 @@ oo::class create spar::Harness {
         return $meta
     }
 
-    # call — first or standalone claude call. Returns 0 on success, 1 on
-    # failure. Captures session_id from the JSON response; subsequent calls
-    # on the same harness reuse it via `resume`.
+    # call — first or standalone claude call. Returns the _invoke code:
+    # 0 success, 1 hard failure, 2 external kill / incomplete, 3 deliberate
+    # budget kill (wall-clock or cost cap). Captures session_id from the
+    # stream; subsequent calls on the same harness reuse it via `resume`.
     method call {stage log_file prompt args} {
         set rc [my _invoke $stage $log_file $prompt {*}$args]
         # Capture session_id whenever the stream produced one — including an
-        # incomplete run (rc 2) — so an interrupted call can still be resumed.
+        # incomplete or budget-killed run — so an interrupted call can still
+        # be resumed and the cost meter can find the transcript.
         if {$SessionId eq ""} {
             set SessionId [my _extract_session_id "${log_file}.json"]
         }
@@ -199,39 +223,48 @@ oo::class create spar::Harness {
             # _stream_result recovers the final result object when the turn
             # closes, and _extract_session_id recovers session_id from the
             # first (init) event even when it does not. Record real elapsed
-            # and the true exit code so a kill is reported honestly: a
-            # 124/125/137 from any cause is no longer blanket-labelled a
-            # timeout (FM-HARNESS-1).
+            # and the true exit code so a kill is reported honestly.
             set t0 [clock seconds]
-            set exit_code 0
-            if {[catch {
-                exec {*}$cmd > $json_file 2> "${log_file}.stderr"
-            } _err opts]} {
-                set ec [dict get $opts -errorcode]
-                if {[lindex $ec 0] eq "CHILDSTATUS"} {
-                    set exit_code [lindex $ec 2]
-                }
-            }
+            set CostKilled 0
+            set exit_code [my _run_watched $cmd $json_file "${log_file}.stderr"]
             set elapsed [expr {[clock seconds] - $t0}]
 
             set parsed [my _stream_result $json_file]
 
-            # No final result object: the turn did not close (kill, timeout,
-            # crash, or truncated stream). Return 2 (incomplete) — distinct
-            # from 1 (hard failure) — so ProfileHarness::run validates
-            # whatever landed on disk rather than discarding it
-            # (FM-HARNESS-2); the session_id captured by `call` still allows
-            # a resume. Name the timeout only when the clock actually ran out.
+            # A deliberate budget kill is a circuit-breaker, not an
+            # interruption: resuming it re-spends the very budget the cap
+            # exists to bound (#139). Two triggers count as deliberate —
+            # the wall-clock cap firing (elapsed reached the deadline, or
+            # timeout(1) reported 124/125/137) and the cost watchdog SIGTERM
+            # (CostKilled). Either fails the row fast: return 3, which
+            # ProfileHarness::run routes to a hard fail with no validate /
+            # resume. An external kill or a truncated-but-incomplete stream
+            # is a different animal — the turn may have done real work the
+            # disk product still holds — so that path keeps return 2, the
+            # validate-the-product / resume route (FM-HARNESS-2).
+            set wall_kill [expr {$WorkerTimeoutSecs > 0 \
+                && ($elapsed >= $WorkerTimeoutSecs \
+                    || $exit_code == 124 || $exit_code == 125 \
+                    || $exit_code == 137)}]
             if {[llength $parsed] == 0} {
-                if {$WorkerTimeoutSecs > 0 && $elapsed >= $WorkerTimeoutSecs} {
+                if {$CostKilled} {
                     ${::spar::harness_log}::error \
-                        "FAIL ($stage: timeout after ${WorkerTimeoutSecs}s): $Slug"
-                } else {
-                    ${::spar::harness_log}::error \
-                        "FAIL ($stage: ended without result after ${elapsed}s, exit $exit_code): $Slug"
+                        "FAIL ($stage: cost cap \$$WorkerCostCapUsd reached — killed, no resume): $Slug"
+                    return 3
                 }
+                if {$wall_kill} {
+                    ${::spar::harness_log}::error \
+                        "FAIL ($stage: timeout after ${WorkerTimeoutSecs}s — killed, no resume): $Slug"
+                    return 3
+                }
+                ${::spar::harness_log}::error \
+                    "FAIL ($stage: ended without result after ${elapsed}s, exit $exit_code): $Slug"
                 return 2
             }
+            # A complete envelope landed despite a budget kill (the work
+            # finished just before SIGTERM): the product verdict stands, so
+            # fall through to the success path below — a genuinely complete
+            # profile validates to DONE without resuming.
 
             if {[dict exists $parsed is_error] && [dict get $parsed is_error] eq "true"} {
                 set result_text [spar::dict_get_default $parsed result ""]
@@ -276,6 +309,130 @@ oo::class create spar::Harness {
             return 0
         }
     }
+
+    # _run_watched — run the claude command, capturing stdout to json_file
+    # and stderr to stderr_file, returning the child exit code (0 on clean
+    # exit). While it runs, a cost watchdog polls this worker's accumulated
+    # spend (parent session plus its research subagents) and SIGTERMs the
+    # whole process group once it crosses WorkerCostCapUsd, setting
+    # CostKilled so _invoke fails the row fast (#114).
+    #
+    # The command runs through a pipe rather than a blocking exec so the
+    # poll timer and the stream reader share one event loop. setsid puts
+    # the child in its own process group, so kill -TERM -<pid> reaches
+    # claude and the subagents it spawned without touching this harness
+    # process. The wall-clock timeout(1) wrap (added by _invoke) still
+    # composes inside the pipe; its kill arrives as EOF on the pipe just
+    # the same. With no cost cap configured the watchdog never fires, but
+    # the same pipe path runs so there is one exec path to reason about.
+    #
+    # rw_drain / rw_poll are dispatched from fileevent / after at global
+    # scope through [self], so they carry no leading underscore — TclOO
+    # leaves underscored methods unexported and an external dispatch of one
+    # fails with "unknown method".
+    method _run_watched {cmd json_file stderr_file} {
+        set setsid_bin [spar::resolve_coreutil setsid]
+        # No setsid (e.g. macOS without util-linux): fall back to a plain
+        # blocking exec. The cost watchdog needs a killable process group,
+        # so it is inert here; the wall-clock cap still works through
+        # timeout(1), and the disk-product verdict is unaffected.
+        if {$setsid_bin eq ""} {
+            set ec 0
+            if {[catch {
+                exec {*}$cmd > $json_file 2> $stderr_file
+            } _err opts]} {
+                set e [dict get $opts -errorcode]
+                if {[lindex $e 0] eq "CHILDSTATUS"} { set ec [lindex $e 2] }
+            }
+            return $ec
+        }
+
+        # Build the pipe: setsid wraps the command; stderr is redirected to
+        # its file inside the child so only stdout flows up the pipe, which
+        # rw_drain tees into json_file as lines arrive.
+        set chan [open [list | {*}$setsid_bin {*}$cmd 2> $stderr_file] r]
+        fconfigure $chan -blocking 0 -buffering line
+        set lead [lindex [pid $chan] 0]
+        set out [open $json_file w]
+
+        set ::_rw_done($lead) 0
+        set ::_rw_ec($lead) 0
+        fileevent $chan readable [list [self] rw_drain $chan $out $lead]
+        if {$WorkerCostCapUsd > 0} {
+            after [my _cost_poll_ms] \
+                [list [self] rw_poll $json_file $lead]
+        }
+        vwait ::_rw_done($lead)
+        set ec $::_rw_ec($lead)
+        unset -nocomplain ::_rw_done($lead) ::_rw_ec($lead)
+        catch {close $out}
+        return $ec
+    }
+
+    # rw_drain — tee available stdout lines from the pipe into json_file
+    # and, on EOF, reap the child's exit code into ::_rw_ec and signal
+    # completion. A timeout(1) or watchdog kill closes the child's stdout,
+    # so EOF fires for every termination cause.
+    method rw_drain {chan out lead} {
+        while {1} {
+            if {[catch {gets $chan line} n]} { set n -1 }
+            if {$n < 0} {
+                if {[eof $chan]} {
+                    if {[catch {close $chan} _e opts]} {
+                        set e [dict get $opts -errorcode]
+                        if {[lindex $e 0] eq "CHILDSTATUS"} {
+                            set ::_rw_ec($lead) [lindex $e 2]
+                        }
+                    }
+                    set ::_rw_done($lead) 1
+                }
+                return
+            }
+            puts $out $line
+            flush $out
+        }
+    }
+
+    # rw_poll — watchdog tick: price this worker and, once it crosses the
+    # cap, SIGTERM the process group (negative pid). session_id comes from
+    # the growing json_file (the init event lands within the first second),
+    # so the poll meters the right session even though `call` captures
+    # SessionId only after _invoke returns. Re-arms itself until the run
+    # completes.
+    method rw_poll {json_file lead} {
+        # The run can finish between two ticks, after which _run_watched has
+        # unset ::_rw_done($lead). A bare $::_rw_done($lead) would then read
+        # a missing element and error into bgerror, and on pid reuse could
+        # even act against an unrelated later run — so gate on existence too.
+        if {![info exists ::_rw_done($lead)] || $::_rw_done($lead)} { return }
+        set sid $SessionId
+        if {$sid eq ""} { set sid [my _extract_session_id $json_file] }
+        if {$sid ne ""} {
+            set cost [spar::worker_cost_usd $sid]
+            if {$cost >= $WorkerCostCapUsd} {
+                set CostKilled 1
+                ${::spar::harness_log}::warn \
+                    "\[$Slug\] Cost cap: \$[format %.2f $cost] >= \$$WorkerCostCapUsd — SIGTERM worker group"
+                # Kill the worker's process group (negative pid). setsid put
+                # the child in its own group with the group id equal to the
+                # lead pid when it execs in place (the case for this pipe
+                # shape: the Tcl pipe child is not already a group leader, so
+                # setsid does not fork). The positive-pid SIGTERM is a
+                # belt-and-suspenders for any host where setsid forks, so the
+                # lead itself is signalled even if the group target misses.
+                catch {exec kill -TERM -$lead}
+                catch {exec kill -TERM $lead}
+                return
+            }
+        }
+        after [my _cost_poll_ms] [list [self] rw_poll $json_file $lead]
+    }
+
+    # The watchdog poll interval in ms. A method so tests can shorten it
+    # without touching the production cadence (30s: long enough that the
+    # cost read stays a negligible fraction of wall time, short enough to
+    # catch a runaway within one $-cap's worth of overspend).
+    method _cost_poll_ms {} { return 30000 }
 
     # _stream_result — the final result object from a stream-json
     # transcript, or {} when no complete result line was written (the turn
@@ -910,14 +1067,19 @@ oo::class create spar::ProfileHarness {
         try {
             my load_my_meta
             my do_inject_mailroom
-            # do_profile_call returns 0 (turn closed), 1 (hard failure), or
-            # 2 (turn cut short — kill/timeout). Hard-fail only on 1; on 2,
-            # fall through to validate the on-disk product (FM-HARNESS-2):
-            # a profile the kill prevented from emitting an envelope still
-            # validates and lands DONE, while a missing/partial one surfaces
-            # as missing_profile and the fix loop resumes the captured
-            # session.
-            if {[my do_profile_call] == 1} { return 1 }
+            # do_profile_call returns one of four codes:
+            #   0 — turn closed cleanly
+            #   1 — hard failure (no usable product)
+            #   2 — turn cut short by an EXTERNAL kill / truncation; the
+            #       disk product may still hold real work, so fall through
+            #       to validate it (FM-HARNESS-2): a complete profile lands
+            #       DONE, a partial one surfaces missing_profile and the fix
+            #       loop resumes the captured session.
+            #   3 — DELIBERATE budget kill (wall-clock or cost cap). The cap
+            #       is a circuit-breaker; resuming re-spends the budget it
+            #       exists to bound (#139). Fail the row fast, no resume.
+            set pc [my do_profile_call]
+            if {$pc == 1 || $pc == 3} { return 1 }
             # DbC-Post: sanitise masked emails written to the roster, then
             # run validate_profile on both the front matter and roster-row
             # invariants (#39 R1: profile_unreachable_without_exclusion —
