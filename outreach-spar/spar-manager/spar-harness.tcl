@@ -790,15 +790,23 @@ oo::class create spar::ProfileHarness {
     }
 
     method validate_profile_errors {attempt} {
-        # Synthetic error when file missing — feeds the missing-profile
-        # branch in build_profile_fix_prompt; the next iteration re-
-        # validates the rewritten file.
+        set slug [my slug]
+        set row  [my _roster_row $RosterPath $slug]
+        # A missing file is normally the missing-profile fault (feeds the
+        # missing-profile branch in build_profile_fix_prompt; the next
+        # iteration re-validates the rewritten file). The exception is an
+        # excluded row: §5.4 requires an excluded contact to have NO
+        # profile document, so an absent file next to a date_excluded row
+        # is the correct terminal state, not a fault. Mirrors the
+        # profile_unreachable_without_exclusion check, which likewise
+        # tolerates an absent channel once date_excluded is set.
         if {![file exists $Outfile]} {
+            if {[spar::_roster_field_current $row date_excluded] ne ""} {
+                return {}
+            }
             return [list [dict create severity error code missing_profile \
                           message "The profile file was not written to $Outfile"]]
         }
-        set slug [my slug]
-        set row [my _roster_row $RosterPath $slug]
         set errors [spar::validate_profile $Outfile $row $slug]
         # Segment-scoped roster checks reach this harness via
         # contact_name match — within-segment duplicates and
