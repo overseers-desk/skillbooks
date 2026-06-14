@@ -687,4 +687,119 @@ if {$elapsed > 6500 && $elapsed < 12000} {
 }
 $d destroy
 
+# ════════════════════════════════════════════════════════════════════════
+# 19. Fill to N at the start and refill the instant a slot frees
+# ════════════════════════════════════════════════════════════════════════
+#
+# Regression guard for #138: a --jobs=N run must keep all N slots busy
+# while the queue has work — fill to N at the start, and the moment one
+# row finishes, post the next, not wait for a wave to drain. §17 proved
+# four rows run in parallel; this proves the fill holds when the queue is
+# several times the cap and rows free their slots one at a time.
+#
+# Setup: jobs=4, sixteen rows, each a real blocking exec_sleep 1s. With
+# the pool kept full the sixteen rows clear in four waves ≈ 4s. If the
+# dispatcher posted a short first wave or refilled only per-wave (the
+# bug), wall time stretches toward serial. The bound rejects anything
+# slower than ~one extra wave of slack.
+section "19. Fill to N and refill on free"
+
+set JOBS 4
+set NROWS 16
+set d [spar::Dispatcher new $JOBS test_log]
+
+# Post-time fill: with the queue paused, enqueue all rows, then resume.
+# The single _try_post_next on resume must post exactly JOBS rows (fill
+# the pool in one pass), not a partial wave.
+$d pause_queue
+for {set i 1} {$i <= $NROWS} {incr i} {
+    $d enqueue f$i T1 fake_worker {plan {{exec_sleep 1}}}
+}
+$d resume_queue
+assert_eq [$d posted_count] $JOBS \
+    "resume posts exactly JOBS=$JOBS rows in the first fill pass"
+assert_eq [llength [$d queued_rows]] [expr {$NROWS - $JOBS}] \
+    "the rest stay queued behind the first fill"
+
+# Refill-to-cap holds: sample posted_count repeatedly while the queue
+# drains; it must stay pinned at JOBS until fewer than JOBS rows remain.
+set t0 [clock milliseconds]
+set saw_below_cap_with_queue 0
+while {1} {
+    set posted [$d posted_count]
+    set queued [llength [$d queued_rows]]
+    set terminal 0
+    foreach r [$d all_rows] {
+        if {[$d state $r] in {done failed cancelled}} { incr terminal }
+    }
+    if {$terminal >= $NROWS} break
+    # While work remains to fill every slot, the pool must read full.
+    if {$queued > 0 && $posted < $JOBS} { set saw_below_cap_with_queue 1 }
+    if {[clock milliseconds] - $t0 > 30000} break
+    set ::tick 0; after 40 set ::tick 1; vwait ::tick
+}
+set elapsed [expr {[clock milliseconds] - $t0}]
+foreach r [$d all_rows] {
+    assert_eq [$d state $r] done "[set r] reaches done"
+}
+assert_eq $saw_below_cap_with_queue 0 \
+    "pool never drops below JOBS while rows wait in the queue"
+# 16 rows / 4 slots × 1s = 4 waves ≈ 4s. Generous slack for tpool
+# startup and OS scheduling; a partial-fill / per-wave-refill bug runs
+# far slower.
+if {$elapsed < 8000} {
+    puts "  ok: 16 rows over 4 slots stayed full (elapsed=${elapsed}ms)"
+    incr ::passes
+} else {
+    puts "FAIL: pool under-filled — 16/4 took ${elapsed}ms (expected <8000ms)"
+    incr ::failures
+}
+$d destroy
+
+# ════════════════════════════════════════════════════════════════════════
+# 20. A worker that dies without a terminal message frees its slot (#138)
+# ════════════════════════════════════════════════════════════════════════
+#
+# Root cause of #138: a worker proc owns its tpool slot until it sends a
+# terminal message (done / failed / cancelled). The Dispatcher reclaims
+# the slot only on that message — the tpool job's own completion is never
+# reaped. A worker body that returns by raising, before it emits any
+# terminal message, leaves the row in `running` forever: active_rows
+# keeps counting it against the global cap, so the slot reads occupied
+# while no worker runs. A few of these collapse a --jobs=N pool to a
+# trickle — slots full, host idle.
+#
+# harness_run / ses_send / imap_poll now run their bodies under
+# _worker_guard, which catches any uncaught throw and sends msg_failed so
+# the slot is reclaimed. This drives the leak directly: harness_run rows
+# whose opts omit the keys the body reads (prompt_dir, harness_class)
+# throw inside the body before any terminal message. They must land in
+# `failed`, and good rows queued behind them must then run.
+section "20. Worker error frees the slot (#138 regression)"
+
+set d [spar::Dispatcher new 4 test_log]
+
+# Four harness_run rows with opts that make _harness_run_body throw
+# (missing prompt_dir / harness_class). Pre-guard these stranded all
+# four slots in `running` forever.
+foreach r {dead1 dead2 dead3 dead4} {
+    $d enqueue $r T1 harness_run {bogus 1}
+}
+foreach r {dead1 dead2 dead3 dead4} { wait_for_terminal $d $r 5000 }
+foreach r {dead1 dead2 dead3 dead4} {
+    assert_eq [$d state $r] failed "$r fails instead of stranding its slot"
+}
+assert_eq [$d posted_count] 0 "all four leaked-candidate slots reclaimed"
+
+# Good rows queued behind the dead ones must now run to completion —
+# proof the slots are genuinely free, not just relabelled.
+foreach r {live1 live2 live3 live4} {
+    $d enqueue $r T1 fake_worker {plan {{sleep 30} {msg_done}}}
+}
+foreach r {live1 live2 live3 live4} { wait_for_terminal $d $r 5000 }
+foreach r {live1 live2 live3 live4} {
+    assert_eq [$d state $r] done "$r runs in a reclaimed slot"
+}
+$d destroy
+
 finish_tests
