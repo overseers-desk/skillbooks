@@ -46,57 +46,6 @@ distinct ways; their UUIDs key the entries below.
 
 ---
 
-## Open
-
-### FM-HARNESS-4 — early external SIGKILL of first-wave workers (cause unidentified) · issue #136
-
-**Symptom.** Several of the first concurrently-launched workers are SIGKILLed ~70-83s in,
-mid-turn, with no error envelope; replacement workers launch immediately and survive.
-
-**Cause.** Unknown. Held open deliberately rather than guessed.
-
-**Ruled out (with evidence):**
-- The 1800s timeout — deaths at 67-83s, far short of the cap.
-- Kernel OOM — `journalctl -k` over the window shows no OOM/killed-process lines.
-- Userspace OOM — `systemd-oomd` is active but logged zero kills that day.
-- CPU/memory contention — load average 3.99 on 8 cores (~50%); 13Gi RAM free.
-
-**Evidence.** Four sessions (30656bff, 2d6fe635, b688ebf0, 73268a63) all end in a 7-second
-window (06:18:25-32 UTC), last event a tool_result with no following turn, no result
-object, no `stop_reason`. Launch was staggered: 4 workers started ~16:17:08-18, the
-remaining started ~16:18:33+ — and it was exactly the first-started 4 that died.
-
-**Hypotheses not yet tested:** a one-time ramp-up resource transient at first 10-wide
-cold-start; a concurrent-session limit; a dispatcher/tpool teardown step. Distinguishing
-them needs the real exit code, which the harness now logs (FM-HARNESS-1 is fixed), so the
-next occurrence records the actual signal.
-
-### FM-AGENT-1 — no stop test; last tool result treated as the next prompt · issue #135
-
-**Symptom.** After the deliverable is written, the agent keeps acting — here, four minutes
-of `git diff`/`git log` archaeology — until an external kill stops it. The run-tail looks
-like a hang but is a self-sustaining loop.
-
-**Cause (agent self-reconstruction, ed9357e7).** The agent finished the profile + roster,
-ran `git add`, saw `roster.tsv` show no diff (because a concurrent process owns commits —
-see FM-REPO-1), and that surprise "spawned a fake question" which it then chased. Its own
-words: *"I treat the last tool result as the prompt, not the task spec as the boundary.
-After the Write succeeds, there's no internal 'halt' fired"* and *"there was no problem — I
-manufactured one"* (NSWP). The deliverable contract (file + roster on disk) was met but
-never bound to "done", so a proxy ("is it committed?") substituted for the terminator.
-
-**Proposed terminator (from the same transcript):** after on-disk verification, apply one
-test — *does the next observation change any action I would take?* Once no, stop. This
-belongs in SPAR-P (the methodology and the profile prompt), not the harness.
-
-**Caveat.** This is the same model reconstructing its behaviour after the fact, not an
-independent witness; treat the mechanism as a strong hypothesis, not a logged fact.
-
-**Note.** The harness now judges by the on-disk product (FM-HARNESS-2 fixed), so the loop
-no longer loses the deliverable; the wasted wall-clock and cost remain.
-
----
-
 ## Fixed
 
 ### FM-HARNESS-0 — `missing_profile` gate rejected legitimate exclusions · `bab6ca7`
@@ -152,6 +101,20 @@ tees those services to `<logs_root>/orchestration-<stem>-<datestamp>.log`, insta
 transition CLI for real (non-dry) dispatch. Per-row worker lines are not captured there (see
 "How to trace").
 
+### FM-AGENT-1 — profiling agent had no stop test · `3a0c802`
+
+The §4 procedure ran §4.1–§4.15 with no terminal condition, so after the deliverable (profile
+file + matched roster row) was on disk the agent treated the next tool result as a new prompt
+and kept working — git archaeology in the observed case (ed9357e7) — until the wall-clock cap
+killed it. Its own reconstruction: *"I treat the last tool result as the prompt, not the task
+spec as the boundary… there was no problem — I manufactured one."* New SPAR-P §4.16 binds done
+to the deliverable, adds the test "would the next action change the profile or roster? if not,
+it is outside this task", and bars touching version control (the trigger that fed the loop and
+linked it to FM-REPO-1). The existing imperatives were left untouched as correctness invariants.
+Self-diagnosis caveat: the mechanism is the model reconstructing itself, not an independent
+witness; the fix stands on the missing-boundary fact regardless. Behavioural confirmation (the
+agent actually stopping) awaits a live run.
+
 ---
 
 ## Operational caveats (not code defects)
@@ -169,3 +132,18 @@ producing (roster.tsv, profile files). Do not commit or reset the campaign repo 
 active. Observed in the 2026-06-14 run as HEAD moving forward then back; it also fed the agent
 loop in FM-AGENT-1 (the worker saw a confusing git state and chased it). Filed then closed as
 not-a-code-bug: SmartLayer/aesop#137.
+
+### FM-HARNESS-4 — first-wave workers SIGKILLed ~75s in (external, unidentified)
+
+In a jobs=10 run, four of the first-launched workers were SIGKILLed 67-83s in, mid-turn, with no
+error envelope; replacements launched immediately and survived. spar-manager has no code path
+that kills a running worker (verified by reading the dispatch/pool machinery): `idletime=60`
+evicts only idle workers, `cancel` is a cooperative sentinel, the `timeout` wrap fires only at
+1800s, and the chromium `flock`/`timeout` runs inside the agent's bash. So the kill came from
+outside the tooling — same class as FM-REPO-1.
+
+Ruled out: the 1800s cap (deaths too early), kernel OOM (`journalctl -k` clean), userspace OOM
+(`systemd-oomd` zero kills), CPU/memory contention (load 3.99/8 cores, 13Gi free). Cause
+unidentified; the honest exit code is now logged (FM-HARNESS-1 fixed), so a recurrence records
+the real signal. Sessions: 30656bff, 2d6fe635, b688ebf0, 73268a63 (2026-06-14 run). Filed then
+closed as not-a-code-bug: SmartLayer/aesop#136.
