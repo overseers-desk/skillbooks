@@ -111,6 +111,40 @@ proc _ensure_email_loaded {} {
     set ::spar::_email_loaded 1
 }
 
+# A worker proc owns its row's tpool slot from the moment the Dispatcher
+# posts it (state → running) until it sends a terminal message — done,
+# failed, or cancelled. The Dispatcher reclaims the slot and posts the
+# next queued row only on that terminal message; there is no other signal
+# (the tpool job's own completion is never reaped — results carry no row
+# identity, and a blocking tpool::wait has no place in the event loop).
+#
+# So a worker proc that returns WITHOUT a terminal message strands its
+# slot: the row sits in `running` forever, active_rows keeps counting it
+# against the global cap, and the queue behind it never drains. A handful
+# of these over a long campaign collapse a --jobs=10 pool to a trickle —
+# the slots read full while the host runs three workers (#138). The
+# guarantee every worker proc therefore upholds is: exactly one terminal
+# message on every code path, including an uncaught error anywhere in the
+# body (a missing opts key, a source failure in _ensure_*_loaded, a throw
+# from the harness constructor before its own catch is reached).
+#
+# _worker_guard runs a worker body proc and, if it raises, sends
+# msg_failed with the error so the slot is reclaimed. Bodies emit their
+# own terminal message on every normal path and never reach the fallback;
+# the fallback exists only for an uncaught throw. A body that both emits
+# a terminal message and then throws is harmless — the Dispatcher's
+# terminal-message state machine drops the duplicate.
+#
+#   _worker_guard $row { ${body_proc} $row $opts }
+#
+# The body runs as a separate proc call (not uplevel), so a plain
+# `return` inside the body returns from the body, not from the guard.
+proc _worker_guard {row body} {
+    if {[catch {uplevel 1 $body} err]} {
+        catch {msg_failed $row "worker error: $err"}
+    }
+}
+
 # harness_run — drive a Profile or Approach harness end-to-end for one
 # row. opts must carry:
 #   prompt_dir    — directory the harness reads (prompt.txt, meta.env,
@@ -122,16 +156,27 @@ proc _ensure_email_loaded {} {
 #                   Tests may pass a stub class providing the same
 #                   constructor + run shape.
 #
-# Cancel-checked once before the harness starts. Per-stage cancel
-# inside the harness is deferred — see docs/concurrency.md "Deferred
-# work" — so a cancel that arrives while exec claude is in flight
-# only takes effect after the current call returns.
-#
-# Phase-2 scope: harness_run only emits msg_done / msg_failed /
-# msg_cancelled. The msg_phase / msg_cost / msg_rate_limited call
-# sites inside spar-harness.tcl can land in a later commit; the
-# Dispatcher's on_* handlers for those messages already exist.
+# harness_run is a thin guard wrapper; _harness_run_body does the work.
+# The split keeps the slot-reclamation guarantee (see the slot-ownership
+# note above): if _harness_run_body throws anywhere — a missing opts key,
+# a source failure in _ensure_harness_loaded, a throw from the harness
+# constructor before the inner catch around `$inst run` — the guard sends
+# msg_failed and the Dispatcher frees the slot for the next queued row.
 proc harness_run {row opts} {
+    _worker_guard $row {_harness_run_body $row $opts}
+}
+
+# _harness_run_body — the harness driver. Cancel-checked once before the
+# harness starts. Per-stage cancel inside the harness is deferred — see
+# docs/concurrency.md "Deferred work" — so a cancel that arrives while
+# exec claude is in flight only takes effect after the current call
+# returns.
+#
+# Phase-2 scope: emits msg_done / msg_failed / msg_cancelled only. The
+# msg_phase / msg_cost / msg_rate_limited call sites inside
+# spar-harness.tcl can land in a later commit; the Dispatcher's on_*
+# handlers for those messages already exist.
+proc _harness_run_body {row opts} {
     if {[worker_cancel_requested? $row]} {
         msg_cancelled $row
         return
@@ -181,7 +226,14 @@ proc harness_run {row opts} {
 # delay_ms is honoured after a successful send so a worker that
 # processes many rows in succession does not breach SES's per-second
 # cap. Failed rows do not pace — the failure didn't reach SES.
+#
+# Guard wrapper, same slot-reclamation rationale as harness_run: a throw
+# from _ensure_email_loaded (or anywhere before the inner catch) would
+# otherwise strand the slot.
 proc ses_send {row opts} {
+    _worker_guard $row {_ses_send_body $row $opts}
+}
+proc _ses_send_body {row opts} {
     if {[worker_cancel_requested? $row]} {
         msg_cancelled $row
         return
@@ -212,7 +264,12 @@ proc ses_send {row opts} {
 # controller / CLI runner: campaign_file, dry_run, approach_path,
 # to_email, fingerprints, account, folder, sender. Cancel checked
 # once at entry; mailroom calls are synchronous and brief.
+#
+# Guard wrapper, same slot-reclamation rationale as harness_run.
 proc imap_poll {row opts} {
+    _worker_guard $row {_imap_poll_body $row $opts}
+}
+proc _imap_poll_body {row opts} {
     if {[worker_cancel_requested? $row]} {
         msg_cancelled $row
         return
