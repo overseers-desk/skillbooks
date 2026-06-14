@@ -687,4 +687,123 @@ proc spar::approach_path_for_stem {segment_dir stem} {
     return [file join [spar::approach_dir_for_segment $segment_dir] "${stem}.yaml"]
 }
 
+# ── Per-worker cost metering (#114) ───────────────────────────────────
+#
+# A worker's true spend is its own `claude -p` session plus the research
+# subagents it fans out (each its own session file); on the recorded
+# $7.83 worker the subagents were ~75% of the bill, so a parent-only
+# meter undercounts the governing concern. These procs price one worker
+# by its session_id, summing the canonical transcripts claude writes
+# under ~/.claude/projects/<campaign>/, so the figure is the same one
+# questlog reports — read here directly off the few files that belong to
+# this worker, which keeps a watchdog poll sub-second and scoped to the
+# one session rather than the whole corpus.
+#
+# Workers run on sonnet (the dispatcher launches `--model sonnet`; the
+# fix-loop opus escalation and the challenger are resume/side calls on a
+# different harness), so the meter prices at sonnet published rates,
+# matching the accounting in #114. Per-million-token rates:
+namespace eval ::spar {
+    variable sonnet_rate_input      3.00
+    variable sonnet_rate_output    15.00
+    variable sonnet_rate_cache_write 3.75
+    variable sonnet_rate_cache_read  0.30
+}
+
+# worker_session_files — the canonical transcript files for a worker:
+# the parent session plus every research-subagent session it spawned.
+# Globs by session_id rather than reconstructing the project dir from
+# pwd, mirroring spar::audit_skills_in_transcript: the dispatcher does
+# not chdir per-job, so claude inherits a launch cwd that is not
+# deterministic from here. Returns {} when the parent transcript has not
+# appeared yet (the init event lands within the first second, so an
+# empty list early in a run is normal). transcripts_root is injectable
+# for tests.
+proc spar::worker_session_files {session_id {transcripts_root ""}} {
+    if {$session_id eq ""} { return {} }
+    if {$transcripts_root eq ""} {
+        set transcripts_root [file join $::env(HOME) .claude projects]
+    }
+    set parents [glob -nocomplain -directory $transcripts_root \
+        -types f -- */${session_id}.jsonl]
+    if {[llength $parents] == 0} { return {} }
+    set parent [lindex $parents 0]
+    set files [list $parent]
+    set subdir [file join [file dirname $parent] $session_id subagents]
+    foreach sub [glob -nocomplain -directory $subdir -types f -- *.jsonl] {
+        lappend files $sub
+    }
+    return $files
+}
+
+# _accumulate_usage — fold one transcript file's assistant usage into the
+# running token totals dict (keys: input output cache_write cache_read).
+# A single request can surface across several stream records (the same
+# requestId reported as tokens accrue); take the max per requestId so the
+# figure is not double-counted, then add the per-request maxima. Mirrors
+# the dedup in questlog's cost::parse_file. Unreadable or half-written
+# files are skipped — the watchdog reads a live, growing transcript.
+proc spar::_accumulate_usage {path totalsVar} {
+    upvar 1 $totalsVar totals
+    if {[catch {open $path r} fd]} { return }
+    fconfigure $fd -encoding utf-8 -profile replace
+    set req_usage [dict create]
+    set dummy 0
+    while {[gets $fd line] >= 0} {
+        if {![string match {*"type":"assistant"*} $line]} continue
+        if {[catch {::json::json2dict $line} rec]} continue
+        if {![dict exists $rec message]} continue
+        set msg [dict get $rec message]
+        if {![dict exists $msg usage]} continue
+        set u [dict get $msg usage]
+        set req_id [spar::dict_get_default $rec requestId \
+            [spar::dict_get_default $msg requestId ""]]
+        if {$req_id eq ""} { set req_id "dummy-[incr dummy]" }
+        set in [spar::dict_get_default $u input_tokens 0]
+        set out [spar::dict_get_default $u output_tokens 0]
+        set cw [spar::dict_get_default $u cache_creation_input_tokens 0]
+        set cr [spar::dict_get_default $u cache_read_input_tokens 0]
+        if {[dict exists $req_usage $req_id]} {
+            lassign [dict get $req_usage $req_id] oi oo ow or
+            dict set req_usage $req_id [list \
+                [expr {max($in,$oi)}] [expr {max($out,$oo)}] \
+                [expr {max($cw,$ow)}] [expr {max($cr,$or)}]]
+        } else {
+            dict set req_usage $req_id [list $in $out $cw $cr]
+        }
+    }
+    close $fd
+    dict for {_ c} $req_usage {
+        lassign $c i o w r
+        dict set totals input       [expr {[dict get $totals input] + $i}]
+        dict set totals output      [expr {[dict get $totals output] + $o}]
+        dict set totals cache_write [expr {[dict get $totals cache_write] + $w}]
+        dict set totals cache_read  [expr {[dict get $totals cache_read] + $r}]
+    }
+}
+
+# worker_cost_usd — accumulated dollar spend of a worker (parent session
+# plus its research subagents) at sonnet published rates. Returns 0.0
+# before the worker's transcript appears, so a watchdog can call it from
+# the first poll without a special case. transcripts_root is injectable
+# for tests.
+proc spar::worker_cost_usd {session_id {transcripts_root ""}} {
+    set files [spar::worker_session_files $session_id $transcripts_root]
+    if {[llength $files] == 0} { return 0.0 }
+    set totals [dict create input 0 output 0 cache_write 0 cache_read 0]
+    foreach f $files {
+        spar::_accumulate_usage $f totals
+    }
+    variable sonnet_rate_input
+    variable sonnet_rate_output
+    variable sonnet_rate_cache_write
+    variable sonnet_rate_cache_read
+    return [expr {(
+        [dict get $totals input]       * $sonnet_rate_input +
+        [dict get $totals output]      * $sonnet_rate_output +
+        [dict get $totals cache_write] * $sonnet_rate_cache_write +
+        [dict get $totals cache_read]  * $sonnet_rate_cache_read
+    ) / 1000000.0}]
+}
+
 package provide spar-lib 1.0
