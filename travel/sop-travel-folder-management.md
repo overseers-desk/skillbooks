@@ -201,11 +201,11 @@ For boarding passes, use format: `Boarding Pass - YYYY-MM-DD [Airline] Origin-De
   - `Boarding Pass - 2025-12-01 [Pegasus] Seville-Istanbul 1F6QUT.pdf`
   - `Boarding Pass - 2025-12-04 [IndiGo] Tbilisi-Mumbai XEIUME.jpeg`
 
-### Reimbursement Folders (in journey folder root)
+### Reimbursement and Reconciliation Folders (in journey folder root)
 
-**What Is Reimbursable**
+**What Is a Business Expense**
 
-Only travel-related business expenses qualify for reimbursement. Entertainment expenses are NOT reimbursable.
+Only travel-related business expenses qualify for reimbursement or reconciliation. Entertainment expenses qualify for neither.
 
 **Reimbursable (travel-related):**
 
@@ -228,6 +228,15 @@ Only travel-related business expenses qualify for reimbursement. Entertainment e
 
 The distinction is business purpose: a ticket to a tech expo (Web Summit) is reimbursable because it serves a professional purpose; a ticket to a castle or museum is entertainment and stays in the Passes folder without reimbursement.
 
+**Two Actions: Reimburse or Reconcile**
+
+A business invoice is filed by the action it still needs, and the folder is named after that action:
+
+- **`Reimbursement`** — the traveller paid out of pocket; the action is to reimburse the traveller.
+- **`Reconciliation`** — a company card paid directly; nothing is owed to the traveller, and the action is to send the invoice to that company to reconcile against its card statement.
+
+Which action applies depends on who paid at the point of sale. The AI usually cannot read this from the invoice, so it auto-routes only into `Reimbursement` (the out-of-pocket default); routing an invoice into a reconciliation folder is a human decision (see Multiple Folders below).
+
 **Folder Structure**
 
 By default, reimbursable invoices go into a single `Reimbursement` folder. If no reimbursement folder exists and reimbursable invoices are identified, create the folder.
@@ -240,26 +249,39 @@ By default, reimbursable invoices go into a single `Reimbursement` folder. If no
 
 `Reimbursed YYYY-MM-DD €Amount`
 
-**Multiple Reimbursement Folders (Company-Specific)**
+**Format for reconciliation folder** (company-card payments; human-created):
 
-Some journeys may have expenses billable to different entities (e.g., personal company vs employer, or two different client projects). In these cases, human-created company-specific folders may exist:
+`Reconciliation (Company Name)`
+
+The company name is normally present, because a company card identifies a specific paying entity and a single journey may carry more than one (e.g. two companies' cards).
+
+**Format for completed reconciliation folder** (after the company has reconciled):
+
+`Reconciled YYYY-MM-DD (Company Name)`
+
+No amount is recorded, since no money returns to the traveller; append `€Amount` only if the human wants the figure on the folder.
+
+**Multiple Folders (Company-Specific, or a Reconciliation Folder Present)**
+
+Some journeys carry expenses billable to different entities (e.g., personal company vs employer, or two different client projects), or a mix of out-of-pocket and company-card payments. In these cases, human-created folders may exist:
 
 - `Reimbursement (Company A)`
 - `Reimbursement (Company B)`
+- `Reconciliation (Company A)` — invoices a Company A card already paid
 
-**When multiple folders exist, the AI does NOT decide which folder an invoice belongs to.** This is a human decision based on business rules the AI cannot know (which client to bill, which entity is paying, internal accounting policies). The AI's role when multiple folders exist:
+**When more than one such folder exists, or any reconciliation folder exists, the AI does NOT decide which folder an invoice belongs to.** This is a human decision based on business rules the AI cannot know (which client to bill, which entity is paying, which card was used at the point of sale). The AI's role in this case:
 
-1. **Do not automatically save invoices** to either folder
+1. **Do not automatically save invoices** to any folder
 2. **Flag the invoice for human decision**: Note the invoice details and that it requires manual placement
 3. **Still check completeness**: Verify the invoice exists in one of the folders (see Completeness Check below)
 
 **Completeness Check**
 
-Regardless of folder structure, the AI must verify that every reimbursable invoice is saved somewhere. An invoice should be in exactly one reimbursement folder—not missing from all folders.
+Regardless of folder structure, the AI must verify that every business invoice is saved somewhere. An invoice should be in exactly one reimbursement or reconciliation folder—not missing from all folders.
 
-- **Single folder**: Save reimbursable invoices to `Reimbursement`
-- **Multiple folders**: Check if invoice exists in any reimbursement folder; if not, flag as "Missing - requires human placement"
-- **No folder (and reimbursable items exist)**: Create `Reimbursement` folder and save invoices there
+- **Single reimbursement folder, no reconciliation folder**: Save reimbursable invoices to `Reimbursement`
+- **Multiple folders, or any reconciliation folder present**: Check if invoice exists in any reimbursement or reconciliation folder; if not, flag as "Missing - requires human placement"
+- **No folder (and reimbursable items exist)**: Create `Reimbursement` folder and save invoices there (the AI never auto-creates a reconciliation folder, since it cannot determine that a company card paid)
 
 **Examples:**
 
@@ -267,8 +289,10 @@ Regardless of folder structure, the AI must verify that every reimbursable invoi
 - `Reimbursed 2025-11-18 €120.99` - completed reimbursement
 - `Reimbursement (Palacio Bizcocheros SL)` - company-specific folder (human-created)
 - `Reimbursement (Employer Inc)` - another company-specific folder (human-created)
+- `Reconciliation (Company A)` - invoices a Company A card paid; action is to send them to Company A (human-created)
+- `Reconciled 2025-11-18 (Company A)` - completed reconciliation
 
-### Files in Reimbursement Folders
+### Files in Reimbursement and Reconciliation Folders
 
 Format: `Type - Vendor Date €Amount.pdf` (invoices, default) or `Type - Vendor Date €Amount (Receipt).pdf` (receipts only)
 
@@ -648,10 +672,10 @@ Actions to execute (proceed without confirmation):
    
    - **Hotel Booking with Invoice**:
      - If email contains an invoice (as attachment or embedded):
-       - **Check for existing reimbursement folder(s)**: Look for `Reimbursement` folder or any company-specific folders (e.g., `Reimbursement (Company Name)`) in the journey folder. Also check completed folders with format `Reimbursed YYYY-MM-DD €Amount` or `Reimbursed YYYY-MM-DD €Amount (Company Name)`. Skip downloading if the invoice already exists in any reimbursement folder.
-       - **Single or no reimbursement folder**: Save to `Reimbursement` folder (create if needed)
-       - **Multiple reimbursement folders**: Do NOT automatically save. Flag the invoice for human decision: "Hotel invoice [details] requires manual placement - multiple reimbursement folders exist"
-       - **Action**: Flag for saving invoice to appropriate reimbursement folder (create folder if needed), or flag for human placement if multiple folders exist
+       - **Check for existing folder(s)**: Look for `Reimbursement` folder or any company-specific folders (e.g., `Reimbursement (Company Name)`), plus any `Reconciliation (Company Name)` folder, in the journey folder. Also check completed folders (`Reimbursed YYYY-MM-DD €Amount [(Company Name)]`, `Reconciled YYYY-MM-DD (Company Name)`). Skip downloading if the invoice already exists in any reimbursement or reconciliation folder.
+       - **Single reimbursement folder, no reconciliation folder**: Save to `Reimbursement` folder (create if needed)
+       - **Multiple folders, or any reconciliation folder present**: Do NOT automatically save. Flag the invoice for human decision: "Hotel invoice [details] requires manual placement - multiple folders exist (the AI cannot tell whether a company card paid)"
+       - **Action**: Flag for saving invoice to `Reimbursement` (create folder if needed), or flag for human placement if multiple/reconciliation folders exist
    
    - **Hotel Promotional/Marketing**:
      - Subject typically: "Special offers", "Upcoming stay", "Rate your stay", "Earn bonus points"
@@ -664,8 +688,8 @@ Actions to execute (proceed without confirmation):
      - Contains trip details: date, origin, destination, fare amount
      - **Action**:
        - Verify trip date falls within journey date range
-       - **Single or no reimbursement folder**: Save to `Reimbursement` folder (create if needed)
-       - **Multiple reimbursement folders**: Do NOT automatically save. Flag for human decision: "Taxi invoice [date, amount] requires manual placement - multiple reimbursement folders exist"
+       - **Single reimbursement folder, no reconciliation folder**: Save to `Reimbursement` folder (create if needed)
+       - **Multiple folders, or any reconciliation folder present**: Do NOT automatically save. Flag for human decision: "Taxi invoice [date, amount] requires manual placement - multiple folders exist"
        - Apply Helper Procedure A for file naming
    
 6. **Cross-Reference Emails and Files (Bidirectional)**
@@ -717,19 +741,19 @@ Actions to execute (proceed without confirmation):
 
    **Reimbursable vs Non-Reimbursable Check:**
    
-   Before flagging a missing invoice, verify the expense is reimbursable (see Reimbursement Folders section for criteria). Entertainment expenses (museums, amusement parks, castles, tourist attractions) are NOT reimbursable and do not require invoices in the reimbursement folder.
+   Before flagging a missing invoice, verify the expense is a business expense (see Reimbursement and Reconciliation Folders section for criteria). Entertainment expenses (museums, amusement parks, castles, tourist attractions) are NOT reimbursable and do not require invoices in the reimbursement folder.
 
    **Completeness Check:**
    
-   Every reimbursable invoice must exist in exactly one reimbursement folder. This check ensures nothing falls through the cracks.
+   Every business invoice must exist in exactly one reimbursement or reconciliation folder. This check ensures nothing falls through the cracks. A company-card payment still needs its tax invoice for the company's books, so a reconciliation folder is checked for completeness exactly like a reimbursement folder.
 
-   - **List all reimbursement folders**: Find `Reimbursement`, any `Reimbursement (Company Name)` folders, and any `Reimbursed YYYY-MM-DD €Amount` completed folders
-   - **For each reimbursable booking** (hotels, flights, car rentals, taxis, business conferences):
-     - Search ALL reimbursement folders for a corresponding invoice
+   - **List all reimbursement and reconciliation folders**: Find `Reimbursement`, any `Reimbursement (Company Name)` folders, any `Reconciliation (Company Name)` folders, and any completed `Reimbursed YYYY-MM-DD €Amount` / `Reconciled YYYY-MM-DD (Company Name)` folders
+   - **For each business booking** (hotels, flights, car rentals, taxis, business conferences):
+     - Search ALL reimbursement and reconciliation folders for a corresponding invoice
      - If invoice found in one folder: ✓ Complete
      - If invoice found in multiple folders: Flag as "Duplicate invoice - exists in [Folder A] and [Folder B]"
-     - If invoice not found in any folder: Flag as "Missing invoice for [booking reference] - not in any reimbursement folder"
-   - **For non-reimbursable items** (museums, amusement parks, castles): Do not flag as missing—these do not require reimbursement invoices
+     - If invoice not found in any folder: Flag as "Missing invoice for [booking reference] - not in any reimbursement or reconciliation folder"
+   - **For non-reimbursable items** (museums, amusement parks, castles): Do not flag as missing—these do not require invoices
 
    Common reimbursable cases: hotel invoices (sent after checkout), airline invoices (for business travel), car rental invoices, taxi receipts, conference registration invoices
 
