@@ -113,7 +113,8 @@ Each journey folder contains standardised subfolders:
 ├── Fares/              # Transport booking PDFs (flights, trains, buses, car rentals)
 ├── Accommodations/     # Hotel/lodging booking PDFs
 ├── Passes/             # Event tickets, museum passes, boarding passes
-└── Reimbursement (Company Name)/  # Optional: pending reimbursement invoices
+├── Reimbursement (Company Name)/   # Optional: invoices the traveller paid; action: reimburse traveller
+└── Reconciliation (Company Name)/  # Optional: invoices a company card paid; action: send to company to reconcile
 ```
 
 Some journey folders may also contain:
