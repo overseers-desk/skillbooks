@@ -1,10 +1,20 @@
 # Webworks: Programmatic Website Access
 
-**Scope:** Direct programmatic access to a site's own API or DOM. Not for general web search or third-party aggregators.
+**Scope:** Direct programmatic access to a site's own API or DOM, or controlled access through headless browsers.
 
-Method for finding and maintaining programmatic access to websites. Covers both first-time access and repairing skills that have broken.
+This document was created mainly due to the excessive premature commitment behaviour (firemaning) demonstrated by AI when doing this type of work.
 
-Spawn a subagent for this work — it involves many tool calls and large outputs. Include the diagnostic procedure in the subagent prompt.
+AI would commit to 3 causes if something doesn't work, and circle between them:
+
+1. Something is wrong with what the user has. User profile must be bad or corrupted (correct about two times a year). User wasn't logged in (sometimes yes, but AI will always suspect this). User had a Chromium browser running (sometimes true, but AI will report it without verifying that a desktop Chromium session exists).
+2. The website detected a browser fingerprint. e.g. the website learned the browser is bot controlled by Browser String, by headless behaviour, by TLS handshake.
+3. The website has banned, blocked, or throttled us. AI attributes every sign of error to this first. We have accessed it too frequently (sometimes true, but AI would name this even if the access rate is far slower than a real human, e.g. one click per 10 seconds or even one click per minute).
+
+Being committed to the big 3 makes AI not enumerate plausible reasons and sometimes omit the obvious clue (e.g. that the code used to work, and by comparing the changes the cause may be discovered).
+
+Method for finding and maintaining programmatic access to websites. It covers both first-time access and repairing skills that have broken, and is thus documented here to unstick AI.
+
+Remember to spawn a subagent when suitable — it involves many tool calls and large outputs. Include the diagnostic procedure in the subagent prompt.
 
 ## How to write a skill as a modular skill, not as a prompt to the AI that overshadows other skills
 
