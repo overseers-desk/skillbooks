@@ -294,7 +294,7 @@ Regardless of folder structure, the AI must verify that every business invoice i
 
 ### Files in Reimbursement and Reconciliation Folders
 
-Format: `Type - Vendor Date €Amount.pdf` (invoices, default) or `Type - Vendor Date €Amount (Receipt).pdf` (receipts only)
+Format: `Type - Vendor Date Amount (TaxType=TaxAmount).pdf`. The tax suffix is mandatory and always states the amount, **including zero** (e.g. `(GST=A$0.00)` for a GST-free item).
 
 **Required components:**
 
@@ -306,16 +306,18 @@ Format: `Type - Vendor Date €Amount.pdf` (invoices, default) or `Type - Vendor
   - `Other` - parking, tolls, visas, incidentals
 - **Vendor**: Name of vendor, restaurant, or service provider
 - **Date**: Invoice/receipt date in YYYY-MM-DD format
-- **Amount**: Total amount with euro symbol, e.g., `€120.99`, `€327.90`
-- **Document type**: 
-  - **Invoice** Document shows tax amount. Tax can be one of a few types: GST, VAT. Add `([tax type]=[currency symbol][tax amount])` suffix to indicate tax amount. Note that even if the invoice says IVA (VAT tax spelt in Spanish or Portogese) the tax type in the filename should still indicate VAT.
-  - **Receipt** Document does NOT show tax breakdown, only total amount. Add `(Receipt)` suffix.
+- **Amount**: Total amount with the document's currency symbol, e.g. `€120.99`, `A$2070.28`, `S$935.60`
+- **Tax**: Always end the name with the tax amount in parentheses, **even when it is zero** — the zero records that no tax applies and was verified, not that tax is unknown.
+  - Tax shown on the document: `([tax type]=[currency symbol][tax amount])`, e.g. `(VAT=€8.06)`, `(GST=A$0.12)`. Tax type is GST or VAT; even when the document says IVA (VAT spelt in Spanish or Portuguese), write VAT.
+  - Tax-free or exempt (e.g. international air transport): state the zero explicitly, `(VAT=€0.00)` or `(GST=A$0.00)`.
+  - `(Receipt)` is reserved for the rare document that shows a bare total with no tax information and whose rate cannot be determined.
 - **Extension**: `.pdf` or `.jpg` depending on source
 
 **Examples:**
 
-- `Accommodation - Holiday Inn Express Lisboa Alfragide 2025-11-15 €327.90.pdf`
-- `Conference - Web Summit 2025-11-05 €2495.00.pdf`
+- `Accommodation - Holiday Inn Express Lisboa Alfragide 2025-11-15 €327.90 (VAT=€59.95).pdf`
+- `Conference - Web Summit 2025-11-05 €2495.00 (VAT=€0.00).pdf`
+- `Travel - Qantas 2026-06-10 S$935.60 (GST=S$0.00).pdf` (international air transport, GST-free; zero stated, not omitted)
 
 ## Procedure 1: File Organization and Naming
 
