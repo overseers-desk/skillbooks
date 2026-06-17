@@ -319,6 +319,20 @@ Format: `Type - Vendor Date Amount (TaxType=TaxAmount).pdf`. The tax suffix is m
 - `Conference - Web Summit 2025-11-05 €2495.00 (VAT=€0.00).pdf`
 - `Travel - Qantas 2026-06-10 S$935.60 (GST=S$0.00).pdf` (international air transport, GST-free; zero stated, not omitted)
 
+### Hotel loyalty points and points-plus-cash bookings
+
+When a hotel stay is paid wholly or partly with a loyalty programme's points (a reward night, or a "points + cash" rate), the hotel usually issues no room invoice — at check-in the room reads as already paid, so the property feels no billing responsibility. A points-plus-cash booking is settled internally as: the cash buys points, and the points are redeemed for the room. So a "cash + N points" confirmation is **one** transaction; do not read it as the traveller having separately bought points.
+
+The document that justifies the cash actually spent is therefore not a hotel folio but the **points-purchase receipt issued by the loyalty programme** (for IHG, sent by IHG / its Points.com processor, typically within 24h of purchase), showing the cash amount.
+
+For reconciliation:
+
+- Collect that points-purchase receipt and file it in the reconciliation folder; it is the paper that supports the card charge in the accounting system.
+- The redemption is not a cash room sale, so it carries no room VAT/GST — name the file with the tax stated as zero per the convention above.
+- If no receipt arrived, request one from the programme; the hotel cannot supply it.
+
+Observed with IHG. Major chains sell points through the same kind of processor and issue purchase receipts similarly, so this likely holds generally — confirm the receipt source per programme.
+
 ## Procedure 1: File Organization and Naming
 
 ### Purpose
