@@ -323,15 +323,15 @@ Format: `Type - Vendor Date Amount (TaxType=TaxAmount).pdf`. The tax suffix is m
 
 When a hotel stay is paid wholly or partly with a loyalty programme's points (a reward night, or a "points + cash" rate), the hotel usually issues no room invoice — at check-in the room reads as already paid, so the property feels no billing responsibility. A points-plus-cash booking is settled internally as: the cash buys points, and the points are redeemed for the room. So a "cash + N points" confirmation is **one** transaction; do not read it as the traveller having separately bought points.
 
-The document that justifies the cash actually spent is therefore not a hotel folio but the **points-purchase receipt issued by the loyalty programme** (for IHG, sent by IHG / its Points.com processor, typically within 24h of purchase), showing the cash amount.
+The document that justifies the cash actually spent is not a hotel folio but the **cash line on the booking-confirmation email itself**: a points-plus-cash confirmation shows the card charge (in the billing currency, often USD) next to the points used and purchased. Export that email as the paper. For IHG the cash figure lives only in that confirmation email, not in the member account; the IHG skill documents where to read it.
 
 For reconciliation:
 
-- Collect that points-purchase receipt and file it in the reconciliation folder; it is the paper that supports the card charge in the accounting system.
-- The redemption is not a cash room sale, so it carries no room VAT/GST — name the file with the tax stated as zero per the convention above.
-- If no receipt arrived, request one from the programme; the hotel cannot supply it.
+- File the booking-confirmation email (exported to PDF) in the reconciliation folder; its card-charge line supports the card charge in the accounting system.
+- The stay is a redemption, not a cash room sale, so it carries no room VAT/GST — name the file with the tax stated as zero per the convention above.
+- A points block bought as a *separate* transaction (not a points-plus-cash rate) instead has its own purchase receipt from the programme's points processor (e.g. Points.com); collect that.
 
-Observed with IHG. Major chains sell points through the same kind of processor and issue purchase receipts similarly, so this likely holds generally — confirm the receipt source per programme.
+Observed with IHG; other chains' points-plus-cash confirmations carry the cash line similarly — confirm per programme.
 
 ## Procedure 1: File Organization and Naming
 
