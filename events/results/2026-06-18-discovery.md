@@ -38,6 +38,14 @@
 
 **Notes:** No upcoming ACBC Queensland networking events (dinners, drinks, connection events, speed connect) on or after 2026-06-18. This is a confirmed "no events found", not a read failure: the QLD events page (https://acbc.com.au/qldevents/) and the Queensland branch page (https://acbc.com.au/branch/queensland/) were read via the serialised-browsing harness because plain WebFetch and the Eventbrite organiser page ("Nothing planned right now") under-reported. The branch "Upcoming Events" section is empty (boilerplate only); all listed events sit under "Past Events". The networking-type events on record are all past — New Member Introduction & Networking Drinks (14 Oct 2025), CNY Gala Dinner 2026 (26 Feb 2026), Gold Coast Business Speed Connect (19 Mar 2025), Exporter Connection Opportunity HK/GBA (12 Jun 2025). ACBC QLD runs networking events roughly twice a year, so the next is likely simply unpublished rather than not planned.
 
+## Local Business Chambers (Gold Coast hinterland)
+
+| Event | Date | Location | Deadline | Description | Source |
+|-------|------|----------|----------|-------------|--------|
+| Jingle & Mingle: Christmas in July Networking Event | 16 Jul 2026, 18:00–20:30 | The Manor, 160 Long Rd, Tamborine Mountain QLD | Tickets limited; book early | Festive Christmas-in-July networking dinner for local business owners and community leaders | [events.humanitix.com](https://events.humanitix.com/jingle-and-mingle-christmas-in-july-networking-event) |
+
+**Notes:** Business Chamber Tamborine Mountain renders its calendar through an embedded Humanitix collection widget (https://collections.humanitix.com/bctm-events) that returns an empty body to a plain fetch; it was read via the serialised-browsing skill, so the listing is "read successfully", not "could not read". The Humanitix structured startDate confirms 16 Jul **2026** (weekday Thursday matches 2026). Two further Chamber-organised items are upcoming but are public community festivals, not member/networking gatherings, so they fall outside scope: Scarecrow Trail 2026 (30 Oct–1 Nov, https://events.humanitix.com/scarecrow-festival-trail) and Scarecrow Festival 2026 (31 Oct, https://events.humanitix.com/scarecrow-festival-2026). No committee-only/board internal-admin items were listed.
+
 ## Tourism Industry (Australia)
 
 | Event | Date | Location | Deadline | Description | Source |
