@@ -321,15 +321,15 @@ Format: `Type - Vendor Date Amount (TaxType=TaxAmount).pdf`. The tax suffix is m
 
 ### Hotel loyalty points and points-plus-cash bookings
 
-When a hotel stay is paid wholly or partly with a loyalty programme's points (a reward night, or a "points + cash" rate), the hotel usually issues no room invoice — at check-in the room reads as already paid, so the property feels no billing responsibility. A points-plus-cash booking is settled internally as: the cash buys points, and the points are redeemed for the room. So a "cash + N points" confirmation is **one** transaction; do not read it as the traveller having separately bought points.
+When a hotel stay is paid wholly or partly with a loyalty programme's points (a reward night, or a "points + cash" rate), expect **no hotel invoice or folio and no VAT/GST invoice** — at check-in the room reads as already paid, so the property bills nothing further. A points-plus-cash booking is settled as one transaction: the cash buys points, the points are redeemed for the room. A "cash + N points" confirmation is therefore **one** event, not a separate points purchase plus a booking.
 
-The document that justifies the cash actually spent is not a hotel folio but the **cash line on the booking-confirmation email itself**: a points-plus-cash confirmation shows the card charge (in the billing currency, often USD) next to the points used and purchased. Export that email as the paper. For IHG the cash figure lives only in that confirmation email, not in the member account; the IHG skill documents where to read it.
+What email to expect, and what to file:
 
-For reconciliation:
-
-- File the booking-confirmation email (exported to PDF) in the reconciliation folder; its card-charge line supports the card charge in the accounting system.
+- The cash spent shows up as a line on the **booking-confirmation email** (from the hotel brand's transactional address), labelled something like "credit card charge" or "cash amount", in the billing currency (often USD), beside the points used and the points purchased. Export that email to PDF and file it in the reconciliation folder — it is the paper for the card charge.
 - The stay is a redemption, not a cash room sale, so it carries no room VAT/GST — name the file with the tax stated as zero per the convention above.
 - A points block bought as a *separate* transaction (not a points-plus-cash rate) instead has its own purchase receipt from the programme's points processor (e.g. Points.com); collect that.
+
+Do not flag such a stay as a missing invoice on the ground that no folio arrived — that absence is expected. The spend is documented on the booking-confirmation email's cash line; open and read that line before recording anything as missing. For IHG the cash figure is only in that email, never in the member account (confirmed against a live booking); the IHG skill notes where to read it.
 
 Observed with IHG; other chains' points-plus-cash confirmations carry the cash line similarly — confirm per programme.
 
