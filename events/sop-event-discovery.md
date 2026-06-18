@@ -22,6 +22,10 @@ Many clubs and small organisers publish their calendar only on their own site, a
 - Networking events only (dinners, drinks, connection events, speed connect).
 - Skip lectures, seminars, webinars, and briefings.
 
+### Local business chambers (Gold Coast hinterland)
+- Tamborine Mountain Chamber of Commerce: member meetings and networking events.
+- Networking and member-event style gatherings only; skip purely internal admin (committee-only, board) items.
+
 ### Tourism industry
 - Australian Tourism Exchange (ATE) — note both event dates and application/submission deadlines.
 - Other significant Australian tourism trade events.
@@ -46,6 +50,11 @@ Many clubs and small organisers publish their calendar only on their own site, a
 |-------|------|----------|----------|-------------|--------|
 
 ## ACBC Queensland (networking only)
+
+| Event | Date | Location | Deadline | Description | Source |
+|-------|------|----------|----------|-------------|--------|
+
+## Local Business Chambers (Gold Coast hinterland)
 
 | Event | Date | Location | Deadline | Description | Source |
 |-------|------|----------|----------|-------------|--------|
