@@ -11,7 +11,8 @@ The skills the methodologies call are packaged as the **overseer-toolbox** Claud
 plugin, in its own repository (`git@github.com:SmartLayer/overseer-toolbox.git`), not
 here. SOPs reference skills by name (for example, "use the LinkedIn skill if
 available"); install that plugin to make them available. Its README and CLAUDE.md cover
-the `not-google-chrome` wrapper, the CDP convention, credentials, and testing. This repo
+the serialised-browsing skill (the browser harness the methodologies use when it is
+available), credentials, and testing. This repo
 is methodology only: do not re-add skill directories or a plugin manifest here.
 
 ## Credentials

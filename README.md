@@ -100,7 +100,7 @@ The three methodologies share a structural principle: read before writing. SPAR 
 
 ## Skills
 
-The skills the methodologies call (LinkedIn, Facebook, Qantas, edit-email, and the rest) are packaged separately as the **overseer-toolbox** Claude Code plugin, in its own repository at `git@github.com:SmartLayer/overseer-toolbox.git`. The SOPs here reference skills by name ("use the LinkedIn skill if available"); install that plugin to make them available. Its README covers install, the `not-google-chrome` browser wrapper, credentials at `$HOME/.claude/skills/config.ini`, and browser setup.
+The skills the methodologies call (LinkedIn, Facebook, Qantas, edit-email, and the rest) are packaged separately as the **overseer-toolbox** Claude Code plugin, in its own repository at `git@github.com:SmartLayer/overseer-toolbox.git`. The SOPs here reference skills by name ("use the LinkedIn skill if available"); install that plugin to make them available. Its README covers install, the serialised-browsing skill (the browser harness, used when available), credentials at `$HOME/.claude/skills/config.ini`, and browser setup.
 
 ## Usage
 

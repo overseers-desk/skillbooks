@@ -30,7 +30,9 @@ import re
 import subprocess
 import sys
 
-NOT_GOOGLE_CHROME = os.path.expanduser('~/.claude/skills/headless-browser/not-google-chrome')
+# browser-serialiser ships with the serialised-browsing skill (overseer-toolbox
+# plugin) and is on PATH when that plugin is installed.
+BROWSER_SERIALISER = 'browser-serialiser'
 
 
 def main():
@@ -49,7 +51,7 @@ def main():
 
     try:
         res = subprocess.run(
-            [NOT_GOOGLE_CHROME, '-t', str(args.timeout), url],
+            [BROWSER_SERIALISER, '--dump', '-t', str(args.timeout), url],
             capture_output=True, text=True, timeout=args.timeout + 10,
         )
     except subprocess.TimeoutExpired:
@@ -61,7 +63,7 @@ def main():
 
     dom = res.stdout
 
-    # If the page shows a "Sign In" wall the wrapper plumbing is broken;
+    # If the page shows a "Sign In" wall the browser plumbing is broken;
     # bail loudly rather than silently classify.
     if re.search(r'<title>[^<]*Sign In', dom, re.I) or 'Iniciar sesión' in dom:
         sys.exit('error: profile page returned a Sign-In wall; chromium '
