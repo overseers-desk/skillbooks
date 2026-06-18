@@ -4,6 +4,8 @@ Search the web for upcoming events matching the interests below. For each event 
 
 Write the results to `events/results/YYYY-MM-DD-discovery.md` (using today's date). Group events by interest area. Within each group, sort by date (earliest first). Only include events that haven't already passed.
 
+Many clubs and small organisers publish their calendar only on their own site, and those sites often return an error code or an empty body to a plain fetch while serving the page normally to a browser. A blocked or empty fetch is not evidence the organiser has no events — re-fetch the page with the serialised-browsing skill if available before concluding nothing is on. Distinguish "no events found" from "could not read the source" in the notes, and never report the former when you mean the latter.
+
 ## Areas of interest
 
 ### AI events
