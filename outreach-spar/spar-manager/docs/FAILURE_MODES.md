@@ -63,8 +63,9 @@ in the 2026-06-14 14:07 run.
 `_invoke` branded any wrapped exit code in {124,125,137} as the configured timeout regardless
 of elapsed time (uutils `timeout` emits 125 for its own failures and 137 for a SIGKILL), so a
 non-timeout death was reported as a timeout and the real exit code — the actual diagnostic —
-was lost. `_invoke` now records real elapsed and the true exit code, and reserves the timeout
-wording for an elapsed wall-clock that reached the cap.
+was lost. `_invoke` now records real elapsed and the true exit code. (The wrapped-timeout path
+this entry fixed was later removed entirely — `78b6e2d` — leaving the per-worker cost cap as the
+sole budget bound.)
 
 ### FM-HARNESS-2 — completed deliverable discarded when killed before the result · `111f548`
 
@@ -77,13 +78,14 @@ landed during the write (ed9357e7: profile written 16:44, killed 16:48:33, logge
 object closed the turn; `ProfileHarness::run` validates the on-disk product on 2, so a
 completed-but-killed profile lands DONE. Shared `_invoke` covers both CLI and GUI.
 
-### FM-HARNESS-3 — blanket wall-clock cap kills long sessions · mitigated by `111f548`
+### FM-HARNESS-3 — blanket wall-clock cap kills long sessions · mitigated by `111f548`, cap removed by `78b6e2d`
 
 The 1800s cap had no awareness of whether the deliverable was done; SPAR-P §6's sequential
-social fetches (~15 min) put a thorough profile near the cap. With the product-based verdict
-(FM-HARNESS-2), a cap-kill of a completed profile now lands DONE and a partial one resumes the
-captured session, so the cap no longer destroys work. Residual — the cap value, and the loop
-that inflated the tail — is tracked under FM-AGENT-1 (#135). Not separately filed.
+social fetches (~15 min) put a thorough profile near the cap. The product-based verdict
+(FM-HARNESS-2) first defanged it — a cap-kill of a completed profile lands DONE and a partial
+one resumes the captured session — and `78b6e2d` then removed the wall-clock cap altogether,
+leaving the per-worker cost cap as the sole budget bound. The loop that inflated the tail is
+tracked under FM-AGENT-1 (#135).
 
 ### FM-HARNESS-5 — no metadata recovery path on a killed session · `111f548`
 
@@ -138,8 +140,9 @@ not-a-code-bug: SmartLayer/aesop#137.
 In a jobs=10 run, four of the first-launched workers were SIGKILLed 67-83s in, mid-turn, with no
 error envelope; replacements launched immediately and survived. spar-manager has no code path
 that kills a running worker (verified by reading the dispatch/pool machinery): `idletime=60`
-evicts only idle workers, `cancel` is a cooperative sentinel, the `timeout` wrap fires only at
-1800s, and the chromium `flock`/`timeout` runs inside the agent's bash. So the kill came from
+evicts only idle workers, `cancel` is a cooperative sentinel, the `timeout` wrap (the one in
+place during this run, since removed — `78b6e2d`) fired only at 1800s, and the chromium
+`flock`/`timeout` runs inside the agent's bash. So the kill came from
 outside the tooling — same class as FM-REPO-1.
 
 Ruled out: the 1800s cap (deaths too early), kernel OOM (`journalctl -k` clean), userspace OOM
