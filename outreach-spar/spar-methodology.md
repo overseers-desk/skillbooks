@@ -166,6 +166,14 @@ The output of R is a revised connection strategy: updated angle priorities, adju
 | Strategy revision notes (`strategy-revision-[band].md`) | R (human) | A (next band) | Campaign directory (one per band) |
 | Segment summary (search vocabulary, invisible segments) | S&P₃ | Future S&P runs on same segment | Segment directory |
 
+## Web fetching and browser serialisation
+
+S and P both research from the open web, and some of what they read sits behind rate limiting or a login (LinkedIn, Facebook, busier directory sites). The hazard is access cadence: hit such a site too fast or too often and it throttles the address or, when a logged-in session is in play, flags the profile, which then needs repair before further work. Both phases reach these sites the same way, so the rule lives here once rather than in each phase.
+
+Prefer the user's serialised-browsing skill when it is available. It paces access across every SPAR worker at once, which is what the cadence problem needs: S and P are not sequential at the dataset level — a contact is swept before it is profiled, but while some records are profiled others are still being swept — so several workers may want the same site at once, and only a serialiser spanning them all keeps the cadence safe. A per-phase or per-worker throttle cannot, because it cannot see the other phase's traffic.
+
+When no serialised-browsing skill is available in the environment, hand-roll a headless chromium fetch; do not halt for lack of the skill. For P the dispatcher resolves the host's invocation and passes it to the worker; elsewhere invoke `chromium` from `PATH` with `--headless --dump-dom` and the host's user-data-dir. Reference such a skill by the capability it provides, never by a wrapper or script name.
+
 ## Model assignment
 
 | Phase | Model tier | Rationale |

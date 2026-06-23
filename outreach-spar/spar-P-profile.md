@@ -69,7 +69,7 @@ If §4.1 already fetched the profile via the roster's `linkedin_url`, the data i
 
 Otherwise: if the roster provides a LinkedIn URL, fetch and parse it. If no URL is provided, search for the person by name and location first, identify the correct profile, then fetch it.
 
-Use the LinkedIn skill — it is the canonical lookup method for this campaign system. WebFetch, raw chromium, or any other channel is not a substitute. If the skill is genuinely unavailable in your environment, halt this profile and report it as a setup issue rather than improvising with raw browser commands.
+Prefer the LinkedIn skill for the fetch. It routes through the user's serialised browser, which paces access so a burst of profile views does not throttle the address or flag the logged-in session (see `spar-methodology.md`, "Web fetching and browser serialisation"). If no serialised-browsing skill is available in your environment, hand-roll a headless chromium fetch instead; do not halt.
 
 **From the parsed profile, extract:**
 - Current role and organisation
@@ -84,7 +84,7 @@ Social media fetches run sequentially — see §6.
 
 ### 4.4 Fetch and parse the Facebook profile
 
-Run this step after §4.3. Use the Facebook skill, under the same constraint as §4.3 (no WebFetch or raw-browser substitute; halt and report if the skill is genuinely unavailable). "No verified match found" (see Verification, below) is a legitimate outcome of having invoked the skill on a candidate profile, not a substitute for invoking it.
+Run this step after §4.3. Use the Facebook skill under the same rule as §4.3 — prefer the serialised skill, hand-roll a chromium fetch if none is available. "No verified match found" (see Verification, below) is a legitimate outcome of having actually fetched and checked a candidate profile, not a substitute for fetching one.
 
 The purpose of this step is twofold: (1) verify the person found is the same individual as on LinkedIn, and (2) collect details not available on LinkedIn, in particular current workplace, community affiliations, and recent activity. Fetch both the main profile page and the About page.
 
@@ -100,7 +100,7 @@ The purpose of this step is twofold: (1) verify the person found is the same ind
 
 Run keyword searches on the saved HTML using the terms from the campaign's angle table. This determines which angles have direct evidence and which do not.
 
-Use the keyword-search tool from the LinkedIn skill or MCP in your environment, passing the saved profile HTML and the keyword list.
+If you fetched via the LinkedIn skill or MCP, use its keyword-search tool, passing the saved profile HTML and the keyword list; if you hand-rolled a chromium fetch, grep the saved DOM for the keyword list.
 
 **Choose keywords from two sources:**
 
