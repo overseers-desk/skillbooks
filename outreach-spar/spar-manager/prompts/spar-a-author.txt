@@ -19,7 +19,7 @@ __CHANNEL_DESC__
 
 - The sender is __SENDER_LINE__.
 - The email must stand alone for a recipient who has never heard of the sender's organisation. Introduce who you are, what the organisation is, and why you are writing.
-- Read the segment file to determine the correct approach type. Do not default to a generic email.
+- Read the campaign plan block (the `segments.<segment>` block in the campaign YAML) to determine the correct approach type. Do not default to a generic email.
 - __LANG_INSTRUCTION__
 - No emoji.
 

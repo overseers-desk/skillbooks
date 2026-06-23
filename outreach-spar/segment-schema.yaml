@@ -2,10 +2,13 @@
 # SPAR segment file — YAML schema
 #
 # Defines the structure for segment.yaml, the segment-level file used by the
-# SPAR methodology. A segment is a long-lived, campaign-independent population:
-# a set of people who share a contact type, the criteria for who belongs, and
-# the rubric for how useful a member is to us. segment.yaml describes that
-# population, nothing campaign-specific.
+# SPAR methodology. A segment is a long-lived population: a set of people who
+# share a contact type, the criteria for who belongs, and the rubric for how
+# generally valuable a member is to us. A fact belongs here when a different
+# campaign over these people — a different ask, or a later run — would use it
+# unchanged (the invariance test in spar-methodology.md, "Campaigns and
+# segments"). segment.yaml describes that population, nothing that changes with
+# the campaign's ask.
 #
 # Campaign-agnostic: the same schema applies to any SPAR deployment, regardless
 # of industry.
@@ -38,8 +41,9 @@
 #
 # The fields that used to live here — objective, usps, message_goal, first_ask,
 # conversion_funnel, approach_sequencing — moved to the campaign's per-segment
-# plan block, because they are the campaign's view of the segment and a segment
-# is reused across campaigns. See spar-campaign-yaml.md, "Per-segment plan block".
+# plan block, because they fail that test: change the campaign's ask and the
+# objective, message_goal, first_ask, and the rest change with it. See
+# spar-campaign-yaml.md, "Per-segment plan block".
 # =============================================================================
 
 # ---------------------------------------------------------------------------
@@ -67,12 +71,15 @@ discovery_criteria: |
 # RATING RUBRIC — how useful a member is to us
 #
 # Segment-specific guidance for star_rating beyond the methodology's
-# third-party-introduction test. star_rating measures usefulness of the
+# third-party-introduction test. star_rating measures the general value of the
 # contact to us in this segment, a property of the contact, not of any one
-# campaign. Optional; when absent, P role-plays as the campaign's management
-# per spar-methodology.md (P section). Keep terse: prose, not anchor tables;
-# no signals written in segment-portable language, since "portable" is how the
-# previous global rubric failed.
+# campaign. This rubric governs star_rating only; it must not carry
+# campaign-dependent (response-likelihood) content — how likely a contact is to
+# respond to a given ask lives in the campaign tier, not here. Optional; when
+# absent, P judges general value to us directly per spar-methodology.md (P
+# section). Keep terse: prose, not anchor tables; no signals written in
+# segment-portable language, since "portable" is how the previous global rubric
+# failed.
 # ---------------------------------------------------------------------------
 
 # rating_rubric: |
