@@ -108,7 +108,7 @@ oo::class create spar::Harness {
 
     # call — first or standalone claude call. Returns the _invoke code:
     # 0 success, 1 hard failure, 2 external kill / incomplete, 3 deliberate
-    # budget kill (wall-clock or cost cap). Captures session_id from the
+    # budget kill (cost cap). Captures session_id from the
     # stream; subsequent calls on the same harness reuse it via `resume`.
     method call {stage log_file prompt args} {
         set rc [my _invoke $stage $log_file $prompt {*}$args]
@@ -279,9 +279,7 @@ oo::class create spar::Harness {
     # poll timer and the stream reader share one event loop. setsid puts
     # the child in its own process group, so kill -TERM -<pid> reaches
     # claude and the subagents it spawned without touching this harness
-    # process. The wall-clock timeout(1) wrap (added by _invoke) still
-    # composes inside the pipe; its kill arrives as EOF on the pipe just
-    # the same. With no cost cap configured the watchdog never fires, but
+    # process. With no cost cap configured the watchdog never fires, but
     # the same pipe path runs so there is one exec path to reason about.
     #
     # rw_drain / rw_poll are dispatched from fileevent / after at global
@@ -292,8 +290,7 @@ oo::class create spar::Harness {
         set setsid_bin [spar::resolve_coreutil setsid]
         # No setsid (e.g. macOS without util-linux): fall back to a plain
         # blocking exec. The cost watchdog needs a killable process group,
-        # so it is inert here; the wall-clock cap still works through
-        # timeout(1), and the disk-product verdict is unaffected.
+        # so it is inert here; the disk-product verdict is unaffected.
         if {$setsid_bin eq ""} {
             set ec 0
             if {[catch {
@@ -329,8 +326,8 @@ oo::class create spar::Harness {
 
     # rw_drain — tee available stdout lines from the pipe into json_file
     # and, on EOF, reap the child's exit code into ::_rw_ec and signal
-    # completion. A timeout(1) or watchdog kill closes the child's stdout,
-    # so EOF fires for every termination cause.
+    # completion. An external kill or the cost watchdog closes the child's
+    # stdout, so EOF fires for every termination cause.
     method rw_drain {chan out lead} {
         while {1} {
             if {[catch {gets $chan line} n]} { set n -1 }
@@ -1033,7 +1030,7 @@ oo::class create spar::ProfileHarness {
             #       to validate it (FM-HARNESS-2): a complete profile lands
             #       DONE, a partial one surfaces missing_profile and the fix
             #       loop resumes the captured session.
-            #   3 — DELIBERATE budget kill (wall-clock or cost cap). The cap
+            #   3 — DELIBERATE budget kill (cost cap). The cap
             #       is a circuit-breaker; resuming re-spends the budget it
             #       exists to bound (#139). Fail the row fast, no resume.
             set pc [my do_profile_call]
