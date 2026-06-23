@@ -95,6 +95,12 @@ A contact's state is inferred from the presence and content of files in the segm
 
 Evaluation order: `EXCLUDED` is checked first. A contact that is `EXCLUDED` is never checked for any other state. States 2–7 are evaluated in order; the first match wins.
 
+### Reassignment is a file move
+
+Because the filesystem is the sole state — no index, no database, no `segment` field inside any roster row, profile, or approach file — a contact is reassigned between segments by moving its files: the `roster.tsv` row, `profiles/{stem}.md`, and `approach/{stem}.yaml` relocated into the destination segment's directory. There is nothing else to rewrite. The contact's pipeline state is re-derived from which of those files the destination now holds, so a DISCOVERED contact moves one file (the roster row) and a SENT contact moves all three; only the files that exist need to move.
+
+The one constraint: a stem is unique within a segment, not globally, so a move checks that the destination does not already hold that stem (`classify_segment`'s `roster_duplicate_stem` is the post-move guard).
+
 ### Secondary properties
 
 These are orthogonal to primary state. They filter eligibility for specific transitions and drive the channel-level columns in the progress table.
