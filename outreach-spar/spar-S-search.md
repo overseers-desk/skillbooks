@@ -199,13 +199,12 @@ This AESOP does not prescribe how to access social media; each operator uses the
 
 **Context management for web page fetching:** When a subagent fetches web pages (organisation websites, employer About pages, registry directories), the raw HTML or even processed HTML consumes far more context tokens than the facts it yields. A single About page can return thousands of tokens; a subagent processing 20 websites in one session will exhaust its context on page content before it finishes.
 
-To prevent this, always convert fetched HTML to plain text or markdown before bringing content into the conversation:
+To prevent this, always convert fetched HTML to plain text or markdown before bringing content into the conversation. For sites behind rate limiting or a login, prefer the serialised-browsing skill (see `spar-methodology.md`, "Web fetching and browser serialisation"); the hand-rolled chromium below is the fallback for public pages when no such skill is available:
 
 ```bash
-# Preferred: chromium fetch → pandoc → plain text (discards all markup)
-/snap/bin/chromium --headless --dump-dom \
+# chromium fetch → pandoc → plain text (discards all markup)
+chromium --headless --dump-dom \
   --virtual-time-budget=5000 --window-size=1920,3000 \
-  --user-data-dir="$HOME/snap/chromium/common/chromium" \
   "URL" 2>/dev/null \
   | pandoc -f html -t plain --wrap=none > /tmp/page-text.txt
 
