@@ -181,7 +181,7 @@ Approach files are YAML documents with a **closed vocabulary** — any key outsi
 **Canonical keys by level:**
 
 - Root: `decisions`, `rounds`, `angle_rationale`, `response_likelihood`, `a_note`, `r_note`, `fact_provenance`, `quality_checklist`, `profile_hash`
-- `response_likelihood`: integer percentage (0–100), A's estimate of reply probability under the chosen angle, used for band ordering. `a_note`: A's one-line summary for R (angle, channel, warmth, language). `r_note`: the human reviewer's per-contact observation after responses arrive (what worked, new leads, channel adjustment); empty until R fills it. All three are campaign-bound and live here, not in the segment roster.
+- `response_likelihood`: integer percentage (0–100), A's estimate of reply probability under the chosen angle, used for band ordering. It is the campaign-dependent counterpart to the segment's `star_rating` (general value to us): change the ask and this changes, which is why it lives here, not on the roster. `a_note`: A's one-line summary for R (angle, channel, warmth, language). `r_note`: the human reviewer's per-contact observation after responses arrive (what worked, new leads, channel adjustment); empty until R fills it. All three are campaign-bound and live here, not in the segment roster.
 - `profile_hash`: `sha256:<64-hex>` — SHA-256 of the profile file's bytes at generation time, prefixed `sha256:`. Computed by the A harness; A copies the value verbatim. Optional in the schema: manually-authored approaches and any path that did not read a profile have no hash to record. **When present, this key must be on the first line of the file** — no leading blank line, no preceding keys (issue #63). The position discipline lets a future fast-classify path detect staleness by reading only the first line; `validate_approach` emits `profile_hash_misplaced` if the rule is broken. When the hash is present and the profile exists, mismatch is an error (`profile_hash_mismatch`) — the source profile was rebuilt or edited, and the approach must be regenerated. When the hash is absent, `validate_approach` accepts the file and the state machine routes any divergence (deleted / edited profile) through T6/T7 instead.
 - `decisions`: `channel`, `language`, `angle`, `sender`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7. Warmth comes from the profile front matter (`warmth_finding`); it is not duplicated on the approach.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
@@ -317,9 +317,9 @@ Before presenting an approach file for human review:
 7. **Band-level pattern check.** Read the openers of all messages in the band sequentially. If they sound like variations of the same template, revise.
 8. **Final round email cardinality.** The `final` round contains at most one message with `channel: email`. Sequential email follow-ups belong in subsequent rounds; additional recipients belong in `cc`/`bcc`. Multi-channel finals (e.g. one email + one phone) are fine — the cap is on emails only. Enforced by `validate_approach` (`too_many_final_emails`).
 
-## 8. Segment-specific approach types
+## 8. Approach types
 
-The segment file defines the approach type for each segment. Common patterns across campaigns:
+The campaign plan block (the segment's entry under `segments:` in `campaign.yaml`) defines the approach type for each segment. Common patterns across campaigns:
 
 - **FAM invitation:** An invitation to experience the offering firsthand. The ask is a visit date, not a commitment.
 - **Personal email with collateral:** A short message with attached or linked materials. The collateral must exist before the message is sent.
@@ -327,7 +327,7 @@ The segment file defines the approach type for each segment. Common patterns acr
 - **Exhibitor or participation enquiry:** An enquiry to an organiser about joining their event or programme.
 - **Interest gauge:** An open question — "Is this something your group does?" — used when no booking history exists to validate the fit.
 
-Do not default to a generic email when the segment file prescribes a specific format.
+Do not default to a generic email when the plan block prescribes a specific format.
 
 ## 9. Subagent delegation
 

@@ -40,15 +40,15 @@ The following are signs that merging would harm targeting precision or operation
 
 **Different contact profiles.** If the two segments' contacts operate in different industries — even if the campaign's label for them sounds similar — they require different search vocabulary, different profiling sources, and different approach angles. The S phase for one segment would not find the other segment's contacts, and the P phase would evaluate them against different criteria.
 
-**Different collateral or procedure.** If one segment requires a trade product sheet for offshore distribution while the other requires a simple experience description with photos, the approach procedure diverges. A merged segment file would need conditional logic: "if the contact is type X, do this; if type Y, do that." Conditional segment files are a sign that the merge is wrong.
+**Different collateral or procedure.** If one segment requires a trade product sheet for offshore distribution while the other requires a simple experience description with photos, the approach procedure diverges. A merged segment would force conditional logic into the campaign's plan block: "if the contact is type X, do this; if type Y, do that." Conditional plan blocks are a sign that the merge is wrong.
 
 **Asymmetric pipeline stage.** If one segment is at S&P3.AR1 (approaches being sent) while the other is at S&P1 (still discovering contacts), merging mid-campaign creates confusion about what stage the combined segment is in. The progress report would show a blended number that misrepresents both halves.
 
 ## 5. Sub-segments within a segment
 
-A segment need not have a single purpose. It is acceptable — and sometimes preferable — for a segment to contain sub-segments with different immediate asks, provided the contacts share enough operational context that a single segment file can accommodate them without becoming conditional.
+A segment need not have a single purpose. It is acceptable — and sometimes preferable — for a segment to contain sub-segments with different immediate asks, provided the contacts share enough operational context to sit in one segment, and a single plan block can carry the variant without becoming conditional.
 
-The mechanism is a named section in the segment file. The main body defines the default approach for the majority of contacts. A clearly labelled section defines the variant approach for the sub-segment. The roster does not need a sub-segment column; the approach writer reads the segment file and applies the appropriate section based on what the profile says about the contact.
+The mechanism is the `subsegments` list in the campaign's per-segment plan block (`campaign.yaml` `segments.<name>`; see `spar-campaign-yaml.md`). The plan block's main body defines the default approach for the majority of contacts; each subsegment entry overrides only the fields that differ (`message_goal`, `first_ask`, `conversion_funnel`, `discovery_criteria`) for its variant. The roster does not need a sub-segment column; the approach writer reads the plan block and applies the subsegment whose criteria match what the profile says about the contact.
 
 This is appropriate when:
 
