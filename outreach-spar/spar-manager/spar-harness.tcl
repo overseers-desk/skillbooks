@@ -200,19 +200,21 @@ oo::class create spar::Harness {
 
             set parsed [my _stream_result $json_file]
 
-            # A deliberate budget kill is a circuit-breaker, not an
-            # interruption: resuming it re-spends the very budget the cap
-            # exists to bound (#139). The cost watchdog SIGTERM (CostKilled)
-            # is that kill — it fails the row fast with return 3, which
-            # ProfileHarness::run routes to a hard fail with no validate /
-            # resume. An external kill or a truncated-but-incomplete stream
-            # is a different animal — the turn may have done real work the
-            # disk product still holds — so that path keeps return 2, the
-            # validate-the-product / resume route (FM-HARNESS-2).
+            # A deliberate budget kill is a circuit-breaker on RESEARCH:
+            # resuming the research re-spends the very budget the cap exists
+            # to bound (#139). The cost watchdog SIGTERM (CostKilled) is that
+            # kill — it fails the row with return 3 to mark the cap tripped.
+            # ProfileHarness::run reads return 3 as a signal to resume once
+            # for a research-free FINALISE under a small extra cap (recovering
+            # the spend without re-opening research); the approach path treats
+            # it as a terminal fail. An external kill or a truncated-but-
+            # incomplete stream is a different animal — the turn may have done
+            # real work the disk product still holds — so that path keeps
+            # return 2, the validate-the-product / resume route (FM-HARNESS-2).
             if {[llength $parsed] == 0} {
                 if {$CostKilled} {
                     ${::spar::harness_log}::error \
-                        "FAIL ($stage: cost cap \$$WorkerCostCapUsd reached — killed, no resume): $Slug"
+                        "FAIL ($stage: cost cap \$$WorkerCostCapUsd reached — budget kill): $Slug"
                     return 3
                 }
                 ${::spar::harness_log}::error \
@@ -870,7 +872,7 @@ oo::class create spar::ApproachHarness {
 oo::class create spar::ProfileHarness {
     superclass spar::Harness
 
-    variable State Outfile RosterPath RequiredSkills \
+    variable State Outfile RosterPath RosterLock RequiredSkills \
              Stem ContactName ContactOrg ContactEmail
 
     method state {} {
@@ -1030,11 +1032,19 @@ oo::class create spar::ProfileHarness {
             #       to validate it (FM-HARNESS-2): a complete profile lands
             #       DONE, a partial one surfaces missing_profile and the fix
             #       loop resumes the captured session.
-            #   3 — DELIBERATE budget kill (cost cap). The cap
-            #       is a circuit-breaker; resuming re-spends the budget it
-            #       exists to bound (#139). Fail the row fast, no resume.
+            #   3 — DELIBERATE budget kill (cost cap). The watchdog SIGTERM
+            #       lands after the costly research and the profile body are
+            #       written but typically before the cheap finalisation the
+            #       prompt orders last (the roster star_rating write and the
+            #       YAML front matter). Resuming the *research* would re-spend
+            #       the budget the cap bounds (#139); resuming only to
+            #       FINALISE does no research, so it is cheap and recovers the
+            #       near-total spend instead of discarding it. do_finalise_-
+            #       after_cost_kill does that single bounded resume, then the
+            #       product is validated below like any other run.
             set pc [my do_profile_call]
-            if {$pc == 1 || $pc == 3} { return 1 }
+            if {$pc == 1} { return 1 }
+            if {$pc == 3} { my do_finalise_after_cost_kill }
             # DbC-Post: sanitise masked emails written to the roster, then
             # run validate_profile on both the front matter and roster-row
             # invariants (#39 R1: profile_unreachable_without_exclusion —
@@ -1056,6 +1066,13 @@ oo::class create spar::ProfileHarness {
         set Outfile      [dict get $meta OUTFILE]
         set RosterPath   [dict get $meta ROSTER_PATH]
         set Stem         [dict get $meta STEM]
+        # The dispatcher is the canonical home of the per-segment lock path
+        # (.roster.lock beside the roster); it writes ROSTER_LOCK into
+        # meta.env. Fall back to the same derivation only for a prompt dir
+        # written before that key existed, so a standalone resume still
+        # serialises on the right lock.
+        set RosterLock   [spar::dict_get_default $meta ROSTER_LOCK \
+                              [file join [file dirname $RosterPath] .roster.lock]]
         set RequiredSkills [spar::dict_get_default $meta REQUIRED_SKILLS ""]
         set ContactName  [spar::dict_get_default $meta CONTACT_NAME ""]
         set ContactOrg   [spar::dict_get_default $meta CONTACT_ORG ""]
@@ -1082,6 +1099,46 @@ oo::class create spar::ProfileHarness {
         set draft_log "${log_prefix}-profile.log"
         set prompt [spar::read_file [file join $prompt_dir prompt.txt]]
         return [my call "profile" $draft_log $prompt]
+    }
+
+    # do_finalise_after_cost_kill — recover a cost-cap-killed profile worker.
+    # The watchdog SIGTERM lands after the costly research and the profile
+    # body are written but before the cheap finalisation (the roster
+    # star_rating sqlite write and the YAML front matter, which the prompt
+    # orders last), so discarding the worker loses near-all the spend and
+    # leaves a body-only profile with no front matter that the validator
+    # rejects. Resume the captured session once with a self-contained
+    # finalise prompt that does no research, so it cannot re-spend the
+    # research budget. The post-profile validate_and_correct in run() is the
+    # verdict: a now-complete profile lands DONE, a still-partial one resumes
+    # to be fixed.
+    method do_finalise_after_cost_kill {} {
+        set slug [my slug]
+        if {[my session_id] eq ""} {
+            # The init event never landed, so there is no session to resume.
+            # Fall through to validation, which surfaces the partial profile.
+            ${::spar::harness_log}::warn \
+                "\[$slug\] Cost cap fired before a session_id was captured — cannot resume to finalise"
+            return
+        }
+        ${::spar::harness_log}::info "\[$slug\] \[phase: finalising (post cost-cap)\]"
+        # Bound the finalise resume. worker_cost_usd meters the resumed
+        # session cumulatively (--resume appends to the same transcript), so
+        # the cap must sit ABOVE the spend already booked: cap + $2 gives the
+        # finalise ~$2 of headroom. A flat $2 cap would re-trip on the first
+        # poll because the worker already crossed cap. Zero cap is impossible
+        # here (rc==3 only fires when the watchdog is armed, i.e. cap > 0).
+        my set_worker_cost_cap [expr {[my cost_cap] + 2.0}]
+        set finalise_log "[my log_prefix]-finalise.log"
+        set finalise_prompt [my load_prompt spar-p-finalise [dict create \
+            STEM        $Stem \
+            OUTFILE     $Outfile \
+            ROSTER_PATH $RosterPath \
+            ROSTER_LOCK $RosterLock]]
+        if {[my resume "finalise" $finalise_log $finalise_prompt]} {
+            ${::spar::harness_log}::warn \
+                "\[$slug\] Finalise resume did not close cleanly; validating the on-disk product anyway"
+        }
     }
 
     method do_summary {} {

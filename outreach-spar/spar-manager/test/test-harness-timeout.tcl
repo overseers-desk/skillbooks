@@ -274,4 +274,82 @@ assert_eq [llength $files] 3 "worker_session_files finds parent + 2 subagents"
 assert_eq [spar::worker_cost_usd "no-such-sess" $proj_root] 0.0 \
     "worker_cost_usd returns 0.0 before the transcript appears"
 
+# ════════════════════════════════════════════════════════════════════════
+section "8. Profile cost-cap kill resumes once to finalise, not fail"
+# ════════════════════════════════════════════════════════════════════════
+
+# A cost-cap kill (rc==3) of a profile worker must not be discarded: the
+# kill lands after the costly research and body are written but before the
+# cheap finalisation, so ProfileHarness::run resumes the captured session
+# once with the self-contained finalise prompt (no research) under cap + $2
+# of headroom, then validates the on-disk product. do_profile_call is
+# stubbed to report the kill and resume records its stage and the cap in
+# force, proving run() finalises rather than returning 1.
+set fin_prompt_dir [file join $tmp_root prompt-fin]
+file mkdir $fin_prompt_dir
+set fd [open [file join $fin_prompt_dir meta.env] w]
+puts $fd "WORKER_COST_CAP_USD=4.0"
+close $fd
+
+set ph [spar::ProfileHarness new $fin_prompt_dir [file join $tmp_root logs-fin]]
+set ::fin_resume_calls {}
+oo::objdefine $ph {
+    method load_my_meta {} {
+        my variable Outfile RosterPath Stem RosterLock RequiredSkills
+        set Outfile        /tmp/none/profile.md
+        set RosterPath     /tmp/none/roster.tsv
+        set Stem           teststem
+        set RosterLock     /tmp/none/.roster.lock
+        set RequiredSkills {}
+    }
+    method do_inject_mailroom {} {}
+    method do_profile_call {} { return 3 }
+    method session_id {} { return "fin-sess" }
+    method resume {stage log_file prompt args} {
+        lappend ::fin_resume_calls [list $stage [my cost_cap]]
+        return 0
+    }
+    method sanitise_roster_email {rp slug} {}
+    method validate_and_correct {o r s} { return 0 }
+    method do_summary {} {}
+}
+set rc_fin [$ph run]
+$ph destroy
+
+assert_eq $rc_fin 0 "profile run returns 0 (finalised) after a cost-cap kill"
+assert_eq [llength $::fin_resume_calls] 1 "exactly one finalise resume issued"
+assert_eq [lindex [lindex $::fin_resume_calls 0] 0] "finalise" \
+    "the resume ran the finalise stage"
+assert_eq [lindex [lindex $::fin_resume_calls 0] 1] 6.0 \
+    "finalise cap is the worker cap + \$2 headroom (4.0 -> 6.0)"
+
+# A cost-cap kill with no captured session_id cannot resume; run() must not
+# crash, and must fall through to validation (which here passes).
+set ph2 [spar::ProfileHarness new $fin_prompt_dir [file join $tmp_root logs-fin2]]
+set ::fin2_resume_calls {}
+oo::objdefine $ph2 {
+    method load_my_meta {} {
+        my variable Outfile RosterPath Stem RosterLock RequiredSkills
+        set Outfile        /tmp/none/profile.md
+        set RosterPath     /tmp/none/roster.tsv
+        set Stem           teststem
+        set RosterLock     /tmp/none/.roster.lock
+        set RequiredSkills {}
+    }
+    method do_inject_mailroom {} {}
+    method do_profile_call {} { return 3 }
+    method session_id {} { return "" }
+    method resume {stage log_file prompt args} {
+        lappend ::fin2_resume_calls $stage
+        return 0
+    }
+    method sanitise_roster_email {rp slug} {}
+    method validate_and_correct {o r s} { return 0 }
+    method do_summary {} {}
+}
+set rc_fin2 [$ph2 run]
+$ph2 destroy
+assert_eq $rc_fin2 0 "cost-cap kill with no session_id falls through without crashing"
+assert_eq [llength $::fin2_resume_calls] 0 "no resume attempted without a session_id"
+
 finish_tests
