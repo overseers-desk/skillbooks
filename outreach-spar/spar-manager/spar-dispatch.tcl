@@ -339,6 +339,15 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         puts $fd "CONTACT_NAME=\"$name\""
         puts $fd "CONTACT_ORG=\"$org\""
         puts $fd "CONTACT_EMAIL=\"$email\""
+        # Per-campaign cost-cap override (spar-harness.tcl reads
+        # WORKER_COST_CAP_USD from meta.env). The profile path previously
+        # never wrote it, so campaign.yaml could not tune the cap the
+        # harness comment promised; this supplies it when the campaign
+        # sets worker_cost_cap_usd. Empty -> harness default applies.
+        set _cost_cap [spar::dict_get_default $cdata worker_cost_cap_usd ""]
+        if {$_cost_cap ne ""} {
+            puts $fd "WORKER_COST_CAP_USD=$_cost_cap"
+        }
         close $fd
     }
 
