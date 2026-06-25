@@ -335,6 +335,10 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         puts $fd "STEM=\"$stem\""
         puts $fd "OUTFILE=\"$outfile\""
         puts $fd "ROSTER_PATH=\"$roster_path\""
+        # Canonical per-segment lock path, so a cost-cap finalise resume
+        # (ProfileHarness::do_finalise_after_cost_kill) serialises its roster
+        # write on the same lock the worker prompt uses.
+        puts $fd "ROSTER_LOCK=\"$roster_lock\""
         puts $fd "REQUIRED_SKILLS=\"[join $required_skills { }]\""
         puts $fd "CONTACT_NAME=\"$name\""
         puts $fd "CONTACT_ORG=\"$org\""
