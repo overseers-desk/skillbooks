@@ -37,19 +37,41 @@ proc spar::load_prompt_template {name} {
     return [string trimright $s "\n"]
 }
 
-# spar::detect_browser_cmd — Probe the host once for a usable headless
-# browser and return the leading shell command that the agent's bash
-# splices in front of `"URL" 2>/dev/null`. Memoised after first call so
-# every per-segment prompt build across a dispatcher run reuses the same
-# answer instead of asking the worker to re-detect (issue #96).
+# spar::detect_browser_cmd — Probe the host once for a usable browser and
+# return the leading shell command that the agent's bash splices in front of
+# a `"URL"` argument. Memoised after first call so every per-segment prompt
+# build across a dispatcher run reuses the same answer instead of asking the
+# worker to re-detect (issue #96).
 #
-# Resolution: chromium (snap → $HOME/snap/.../chromium profile;
-# non-snap → $HOME/.config/chromium); else error. $HOME stays unexpanded
-# in the returned string — the agent's bash expands it at run time,
-# which keeps the prompt file portable across users.
+# Resolution prefers the serialised-browsing arbiter (#141). browser-
+# serialiser is the project's single-browser arbiter: it holds its own lock
+# and, when an overseer is present on localhost:11402, delegates to the one
+# process that owns the logged-in Chromium profile. The linkedin/facebook
+# site skills already drive the browser through it. Routing the worker's
+# ad-hoc page fetch through `browser-serialiser --dump` (the curl/WebFetch
+# fallback the skill documents, which renders the DOM to stdout) makes
+# workers and site skills serialise on one arbiter, instead of two
+# uncoordinated locks (the old `/tmp/chromium.lock` vs the serialiser's own
+# lock) colliding on the shared user-data-dir. Sibling of #125 (worker path
+# bypasses the managed browser); option 1 of #141 subsumes both.
+#
+# Fallback is a raw headless chromium under /tmp/chromium.lock, used only
+# when no serialiser is installed — in which case no site skill runs through
+# one either, so there is no cross-regime collision to coordinate, and the
+# /tmp/chromium.lock still serialises workers among themselves (#116). The
+# command name stays bare (resolved on the worker's PATH at run time) and
+# $HOME stays unexpanded, which keeps the written prompt portable across
+# users.
 proc spar::detect_browser_cmd {} {
     variable _browser_cmd_cache
     if {[info exists _browser_cmd_cache]} { return $_browser_cmd_cache }
+
+    # browser-serialiser ships with the serialised-browsing skill, usually on
+    # PATH (its bin/ dir). Resolve it robustly rather than hard-coding a path.
+    if {[auto_execok browser-serialiser] ne ""} {
+        set _browser_cmd_cache "browser-serialiser --dump -t 20"
+        return $_browser_cmd_cache
+    }
 
     set ua "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
     set lock_wrap "flock /tmp/chromium.lock timeout 10"
@@ -69,7 +91,7 @@ proc spar::detect_browser_cmd {} {
         return $_browser_cmd_cache
     }
 
-    error "spar::detect_browser_cmd: chromium not on PATH"
+    error "spar::detect_browser_cmd: neither browser-serialiser nor chromium on PATH"
 }
 
 source [file join $::spar::dispatch_script_dir spar-dispatcher.tcl]
