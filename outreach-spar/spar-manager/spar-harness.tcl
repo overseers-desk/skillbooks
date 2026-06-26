@@ -893,7 +893,7 @@ oo::class create spar::ProfileHarness {
         return [list \
             --permission-mode dontAsk \
             --allowedTools "WebSearch,WebFetch,Read,Write,Edit,Glob,Grep,ToolSearch,TodoWrite,Skill,Bash,Agent(Explore)" \
-            --disallowedTools "Skill(deep-research),Workflow"]
+            --disallowedTools "Agent(general-purpose),Agent(claude),Agent(general),Workflow,Skill(deep-research)"]
     }
 
     method state {} {
