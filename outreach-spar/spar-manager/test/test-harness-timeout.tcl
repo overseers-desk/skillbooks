@@ -404,4 +404,34 @@ assert_eq $rc_cl 0 "credit-limit hit then success returns rc=0"
 assert_eq $cl_result "PROFILE OK" "the second (post-reset) attempt's product is on disk"
 assert_eq $cl_attempts 2 "exactly two claude invocations: limit then success"
 
+# ════════════════════════════════════════════════════════════════════════
+section "10. Failure cause is captured for an empty-result FAIL (#133)"
+# ════════════════════════════════════════════════════════════════════════
+
+# When claude exits with no usable result, the FAIL log must carry the child
+# exit code, the stderr tail, and the last stream event that did land — so the
+# five empty-artefact failures of #133 stop being undiagnosable. Exercise the
+# cause assembler directly (exported for the test); section 2c already proves
+# the rc==2 path invokes it without crashing.
+set fc_dir [file join $tmp_root prompt-fc]
+file mkdir $fc_dir
+set inst_fc [spar::Harness new $fc_dir [file join $tmp_root logs-fc]]
+oo::objdefine $inst_fc export _failure_cause
+
+set fc_log [file join $tmp_root logs-fc fc.log]
+set f [open "${fc_log}.stderr" w]
+puts $f "warning: something benign"
+puts $f "fatal: the real cause"
+close $f
+set f [open "${fc_log}.json" w]
+puts $f {{"type":"system","subtype":"init","session_id":"fc-sess"}}
+close $f
+
+set cause [$inst_fc _failure_cause $fc_log "${fc_log}.json" 137]
+$inst_fc destroy
+
+assert_match $cause "*exit 137*" "cause carries the child exit code"
+assert_match $cause "*fatal: the real cause*" "cause carries the stderr tail"
+assert_match $cause "*last event: system/init*" "cause carries the last stream event"
+
 finish_tests

@@ -225,7 +225,7 @@ oo::class create spar::Harness {
                     return 3
                 }
                 ${::spar::harness_log}::error \
-                    "FAIL ($stage: ended without result after ${elapsed}s, exit $exit_code): $Slug"
+                    "FAIL ($stage: ended without result after ${elapsed}s; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
                 return 2
             }
             # A complete envelope landed despite a budget kill (the work
@@ -249,7 +249,7 @@ oo::class create spar::Harness {
             }
 
             if {![dict exists $parsed result]} {
-                ${::spar::harness_log}::error "FAIL ($stage: no result in output): $Slug"
+                ${::spar::harness_log}::error "FAIL ($stage: no result in output; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
                 return 1
             }
 
@@ -441,6 +441,56 @@ oo::class create spar::Harness {
             close $fd
         }
         return $sid
+    }
+
+    # _failure_cause — assemble a one-line cause string for a FAIL log when the
+    # turn produced no usable result (#133). A claude exit with empty stdout
+    # used to leave the operator with "rc=error" and nothing else; surface the
+    # child exit code (already in hand), the tail of the stderr file, and the
+    # last stream event that did land, so an empty-artefact failure becomes
+    # diagnosable instead of undetermined.
+    method _failure_cause {log_file json_file exit_code} {
+        set parts [list "exit $exit_code"]
+        set stderr_file "${log_file}.stderr"
+        if {[file exists $stderr_file] && [file size $stderr_file] > 0} {
+            set fd [open $stderr_file r]
+            try {
+                set lines [split [read $fd] \n]
+            } finally {
+                close $fd
+            }
+            set kept {}
+            foreach line $lines {
+                set line [string trim $line]
+                if {$line ne ""} { lappend kept $line }
+            }
+            if {[llength $kept] > 0} {
+                set n [llength $kept]
+                set start [expr {$n > 5 ? $n - 5 : 0}]
+                lappend parts "stderr: [join [lrange $kept $start end] { | }]"
+            }
+        }
+        if {[file exists $json_file]} {
+            set fd [open $json_file r]
+            set last ""
+            try {
+                while {[gets $fd line] >= 0} {
+                    set line [string trim $line]
+                    if {$line eq ""} continue
+                    if {[catch {set obj [::json::json2dict $line]}]} continue
+                    set last $obj
+                }
+            } finally {
+                close $fd
+            }
+            if {$last ne ""} {
+                set ev [spar::dict_get_default $last type "?"]
+                set sub [spar::dict_get_default $last subtype ""]
+                if {$sub ne ""} { append ev "/$sub" }
+                lappend parts "last event: $ev"
+            }
+        }
+        return [join $parts {, }]
     }
 
     # Parse "resets 3am (Australia/Brisbane)" → seconds to sleep.
