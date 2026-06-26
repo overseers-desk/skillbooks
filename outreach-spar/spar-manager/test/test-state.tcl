@@ -459,23 +459,23 @@ set t2_names [lmap c $t2 {dict get $c contact_name}]
 assert_eq [expr {"Prof Hi" in $t2_names}] 1 "T2: PROFILED star≥3 is eligible"
 assert_eq [expr {"Prof Lo" in $t2_names}] 0 "T2: PROFILED star<3 not eligible"
 
-# T6: Approach → Send: APPROACHED, has_email, not email_sent → ready
+# T6: Approach → Send: APPROACHED, has_email, not email_sent → dispatchable
 # also: SENT + has_email + not email_sent (multi-channel case)
 # primary_channel="email" required — see issue #49 interim gate.
 set t6 [$State transition_eligible $contacts "T6" "email"]
 set t6_names [lmap c $t6 {dict get $c contact_name}]
-set t6_ready_names {}
-set t6_pending {}
+set t6_dispatchable_names {}
+set t6_blocked {}
 foreach c $t6 {
-    if {[dict get $c task_state] eq "ready"} {
-        lappend t6_ready_names [dict get $c contact_name]
+    if {[dict get $c task_state] eq "dispatchable"} {
+        lappend t6_dispatchable_names [dict get $c contact_name]
     } else {
-        lappend t6_pending [dict get $c contact_name]
+        lappend t6_blocked [dict get $c contact_name]
     }
 }
-assert_eq [expr {"App Email" in $t6_ready_names}] 1 "T6: APPROACHED+email → ready"
-assert_eq [expr {"App NoEmail" in $t6_pending}] 1 "T6: APPROACHED no email → pending"
-assert_eq [expr {"Sent Sam" in $t6_ready_names || "Sent Sam" in $t6_pending}] 0 \
+assert_eq [expr {"App Email" in $t6_dispatchable_names}] 1 "T6: APPROACHED+email → dispatchable"
+assert_eq [expr {"App NoEmail" in $t6_blocked}] 1 "T6: APPROACHED no email → blocked"
+assert_eq [expr {"Sent Sam" in $t6_dispatchable_names || "Sent Sam" in $t6_blocked}] 0 \
     "T6: SENT+email_sent already → not in T6 list"
 
 # T6 primary_channel gate (issue #49): non-email or unspecified → zero tasks.
@@ -484,7 +484,7 @@ assert_eq [llength $t6_lk] 0 "T6: primary_channel=linkedin → zero tasks"
 set t6_u [$State transition_eligible $contacts "T6"]
 assert_eq [llength $t6_u] 0 "T6: primary_channel unknown → zero tasks"
 
-# T7: Send → Reply: email_sent, not email_replied → pending (monitoring)
+# T7: Send → Reply: email_sent, not email_replied → dispatchable (monitoring)
 set t7 [$State transition_eligible $contacts "T7"]
 set t7_names [lmap c $t7 {dict get $c contact_name}]
 assert_eq [expr {"Sent Sam" in $t7_names}] 1 "T7: SENT+email_sent → in monitoring list"
@@ -568,10 +568,10 @@ set t8_results [$State transition_eligible $ct8 "T8"]
 set t8_names [lmap c $t8_results {dict get $c contact_name}]
 assert_eq [expr {"LI Sent" in $t8_names}] 1 \
     "T8: linkedin_sent=1, email_sent=0 → eligible"
-# Verify task_state is pending
+# Verify task_state is awaiting
 set t8_entry [lindex $t8_results 0]
-assert_eq [dict get $t8_entry task_state] "pending" \
-    "T8: task_state is pending"
+assert_eq [dict get $t8_entry task_state] "awaiting" \
+    "T8: task_state is awaiting"
 
 # 10b. T8: email_sent=1 → does NOT appear in T8 list
 set seg_t8b [make_temp_segment]

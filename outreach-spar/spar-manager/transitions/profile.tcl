@@ -51,10 +51,10 @@ oo::class create ::spar::transitions::ProfileTransition {
         set state [dict get $contact state]
         set tid [my tid]
         if {$tid eq "T1" && $state eq "DISCOVERED"} {
-            return [list [spar::_task $contact ready ""]]
+            return [list [spar::_task $contact dispatchable ""]]
         }
         if {$tid eq "T3" && $state eq "PROFILE_STALE"} {
-            return [list [spar::_task $contact ready ""]]
+            return [list [spar::_task $contact dispatchable ""]]
         }
         return {}
     }

@@ -15,7 +15,7 @@
 #   --dry-run                          dispatch path with writes disabled
 #   --jobs=N | --delay=N | --yes
 #   --auto                             refuses any positional Tn token
-#   --pending | --ready                report mode filter
+#   --dispatchable | --awaiting | --blocked   report mode filter
 #   -v | --verbose
 #   -h | --help
 #
@@ -32,7 +32,7 @@ namespace eval spar {}
 # spec keys:
 #   campaign_path  raw positional (file or dir, or "" if unspecified)
 #   tid_scopes     list of {tid segment stem} triples; empty == "all"
-#   filter_state   "" | "ready" | "pending"
+#   filter_state   "" | "dispatchable" | "awaiting" | "blocked"
 #   auto_mode      0/1   (--auto)
 #   dry_run        0/1   (--dry-run; gates the dispatch path)
 #   jobs           int   (default 4; 0 means stepping)
@@ -66,8 +66,9 @@ proc spar::parse_cli {argv} {
             --jobs=*    { dict set spec jobs   [string range $arg 7 end] }
             --delay=*   { dict set spec delay  [string range $arg 8 end] }
             --yes       { dict set spec assume_yes 1 }
-            --pending   { dict set spec filter_state pending }
-            --ready     { dict set spec filter_state ready }
+            --dispatchable { dict set spec filter_state dispatchable }
+            --awaiting     { dict set spec filter_state awaiting }
+            --blocked      { dict set spec filter_state blocked }
             --auto      { dict set spec auto_mode 1; set saw_auto 1 }
             --dry-run   { dict set spec dry_run 1 }
             -v          -

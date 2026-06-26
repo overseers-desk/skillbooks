@@ -85,7 +85,7 @@ oo::class create spar::ui::TransitionTree {
         $Tree heading org     -text "Organisation"
         $Tree heading segment -text "Segment"
         $Tree heading state   -text "State"
-        $Tree heading reason  -text "Pending Reason"
+        $Tree heading reason  -text "Reason"
 
         $Tree column #0      -width 250 -minwidth 150
         $Tree column org     -width 200 -minwidth 100
@@ -94,7 +94,8 @@ oo::class create spar::ui::TransitionTree {
         $Tree column reason  -width 300 -minwidth 100
 
         $Tree tag configure done      -foreground #999999
-        $Tree tag configure pending   -foreground #cc6600
+        $Tree tag configure awaiting  -foreground #cc6600
+        $Tree tag configure blocked   -foreground #cc0000
         $Tree tag configure in_cohort -background #e8f0fa
 
         bind $Tree <<TreeviewSelect>> [list [self] on_select]
@@ -183,8 +184,10 @@ oo::class create spar::ui::TransitionTree {
             set tags {}
             if {$tstate eq "done"} {
                 set tags {done}
-            } elseif {$tstate eq "pending"} {
-                set tags {pending}
+            } elseif {$tstate eq "awaiting"} {
+                set tags {awaiting}
+            } elseif {$tstate eq "blocked"} {
+                set tags {blocked}
             }
             set row_id [$Tree insert $parent_id end -text "  $tname" \
                 -values [list $tstem $torg $tseg $tstate $treason] -tags $tags]

@@ -131,8 +131,8 @@ assert_parse_error {/tmp/x.yaml --stem=alice} \
 # ════════════════════════════════════════════════════════════════════════
 section "3. Other flags survive"
 
-# --jobs / --dry-run / --delay / --yes / --verbose / --pending / --ready
-# / --auto are unchanged.
+# --jobs / --dry-run / --delay / --yes / --verbose / --dispatchable
+# / --awaiting / --blocked / --auto all parse.
 
 set result [spar::parse_cli {/tmp/x.yaml T1 --dry-run --jobs=8 --delay=5 --yes --verbose}]
 assert_eq [dict get $result ok] 1 "compound flags parse ok"

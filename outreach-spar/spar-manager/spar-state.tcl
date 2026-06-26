@@ -1137,7 +1137,7 @@ proc spar::_approach_dispatch_gate {row cdata} {
 
 # _task -- factory for transition task dicts. Every per-T-id `eligible`
 # method emits 0 or 1 of these per contact (manual_followup may emit
-# pending or ready, others typically one shape per branch).
+# dispatchable or awaiting, others typically one shape per branch).
 proc spar::_task {contact task_state {reason ""}} {
     set name [spar::dict_get_default $contact contact_name ""]
     set org  [spar::dict_get_default $contact organisation ""]
@@ -1179,7 +1179,7 @@ proc spar::_task {contact task_state {reason ""}} {
 # method just walks contacts and folds the per-class results.
 #
 # Returns a list of dicts with keys:
-#   contact_name, organisation, segment, task_state (ready/pending/done), reason
+#   contact_name, organisation, segment, task_state (dispatchable/awaiting/blocked/done), reason
 #
 oo::define spar::State method transition_eligible {classified_contacts transition \
         {primary_channel ""} {cdata {}} {today_iso ""}} {

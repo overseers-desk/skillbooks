@@ -14,7 +14,7 @@
 #
 # Usage:
 #   tclsh9.0 spar-transition.tcl <campaign.yaml> [Tn[:seg[/stem]] ...] \
-#       [--dry-run] [--auto] [--pending|--ready] [-v|--verbose] \
+#       [--dry-run] [--auto] [--dispatchable|--awaiting|--blocked] [-v|--verbose] \
 #       [--jobs=N] [--delay=N] [--yes]
 #
 # Positional Tn tokens after the campaign path name the transitions to
@@ -66,8 +66,9 @@ POSITIONAL TRANSITION TOKENS
      spar-transition reports the eligibility ladder and exits.)
 
 OPTIONS
-    --pending         show pending tasks only (report mode)
-    --ready           show ready tasks only (report mode)
+    --dispatchable    show dispatchable tasks only (report mode)
+    --awaiting        show awaiting tasks only (report mode)
+    --blocked         show blocked tasks only (report mode)
     --dry-run         pass dry_run=1 to runners; writes disabled.
                       Combine with Tn or --auto, or pass alone to
                       dry-run every wired transition.
@@ -99,7 +100,7 @@ TRANSITIONS}
     puts {
 COMMON WORKFLOWS
     # Overview: counts across every transition
-    tclsh9.0 spar-transition.tcl path/to/campaign.yaml --ready
+    tclsh9.0 spar-transition.tcl path/to/campaign.yaml --dispatchable
 
     # Dispatch one transition's ready work, live
     tclsh9.0 spar-transition.tcl path/to/campaign.yaml T1
@@ -202,8 +203,8 @@ proc tid_scope_filter {tid_scopes tid} {
 # overview report at the bottom of this script.
 set dispatching [expr {[llength $tid_scopes] > 0 || $auto_mode || $dry_run}]
 
-if {$dispatching && $filter_state eq "pending"} {
-    puts stderr "Error: --pending has no executable work; dispatch targets ready rows."
+if {$dispatching && $filter_state ne "" && $filter_state ne "dispatchable"} {
+    puts stderr "Error: --$filter_state has no executable work; dispatch targets dispatchable rows."
     exit 1
 }
 
@@ -378,7 +379,7 @@ if {$dispatching} {
             set seen_stems [dict create]
             set ready_list {}
             foreach c $eligible {
-                if {[dict get $c task_state] ne "ready"} continue
+                if {[dict get $c task_state] ne "dispatchable"} continue
                 if {[llength $segs] > 0} {
                     set seg_name [file tail [dict get $c _segment_dir]]
                     if {$seg_name ni $segs} continue
@@ -668,8 +669,9 @@ foreach tid [spar::transition_tids] {
     lassign [tid_scope_filter $tid_scopes $tid] segs stems
     set eligible [$State transition_eligible $all_contacts $tid $primary_channel $cdata]
 
-    set ready_list  {}
-    set pending_list {}
+    set dispatchable_list {}
+    set awaiting_list {}
+    set blocked_list {}
     foreach c $eligible {
         if {[llength $segs] > 0} {
             set seg_name [file tail [dict get $c _segment_dir]]
@@ -678,29 +680,34 @@ foreach tid [spar::transition_tids] {
         if {[llength $stems] > 0} {
             if {[dict get $c stem] ni $stems} continue
         }
-        if {[dict get $c task_state] eq "pending"} {
-            lappend pending_list $c
-        } else {
-            lappend ready_list $c
+        switch -- [dict get $c task_state] {
+            dispatchable { lappend dispatchable_list $c }
+            awaiting     { lappend awaiting_list $c }
+            blocked      { lappend blocked_list $c }
         }
     }
 
     # Apply state filter — only omits rows when a state filter is set and
     # the relevant bucket is empty. With no state filter, zero-count rows
     # still print so the reader can see the full transition ladder.
-    if {$filter_state eq "ready"   && [llength $ready_list]  == 0} continue
-    if {$filter_state eq "pending" && [llength $pending_list] == 0} continue
+    if {$filter_state eq "dispatchable" && [llength $dispatchable_list] == 0} continue
+    if {$filter_state eq "awaiting"     && [llength $awaiting_list]     == 0} continue
+    if {$filter_state eq "blocked"      && [llength $blocked_list]      == 0} continue
 
-    set nr [llength $ready_list]
-    set np [llength $pending_list]
-    set total [expr {$nr + $np}]
+    set nd [llength $dispatchable_list]
+    set na [llength $awaiting_list]
+    set nb [llength $blocked_list]
+    set total [expr {$nd + $na + $nb}]
 
     if {$filter_state eq ""} {
-        puts [format "%-3s %-26s — %3d total (%3d ready, %3d pending)" "${tid}:" $label $total $nr $np]
-    } elseif {$filter_state eq "ready"} {
-        puts [format "%-3s %-26s — %3d ready" "${tid}:" $label $nr]
+        puts [format "%-3s %-26s — %3d total (%3d dispatchable, %3d awaiting, %3d blocked)" \
+            "${tid}:" $label $total $nd $na $nb]
+    } elseif {$filter_state eq "dispatchable"} {
+        puts [format "%-3s %-26s — %3d dispatchable" "${tid}:" $label $nd]
+    } elseif {$filter_state eq "awaiting"} {
+        puts [format "%-3s %-26s — %3d awaiting" "${tid}:" $label $na]
     } else {
-        puts [format "%-3s %-26s — %3d pending" "${tid}:" $label $np]
+        puts [format "%-3s %-26s — %3d blocked" "${tid}:" $label $nb]
     }
 
     proc print_contacts {clist} {
@@ -718,18 +725,24 @@ foreach tid [spar::transition_tids] {
     }
 
     if {$verbose} {
-        if {$filter_state eq "pending"} {
-            print_contacts $pending_list
-        } elseif {$filter_state eq "ready"} {
-            print_contacts $ready_list
+        if {$filter_state eq "dispatchable"} {
+            print_contacts $dispatchable_list
+        } elseif {$filter_state eq "awaiting"} {
+            print_contacts $awaiting_list
+        } elseif {$filter_state eq "blocked"} {
+            print_contacts $blocked_list
         } else {
-            if {[llength $ready_list] > 0} {
-                puts "  ready:"
-                foreach c $ready_list { print_contacts [list $c] }
+            if {[llength $dispatchable_list] > 0} {
+                puts "  dispatchable:"
+                foreach c $dispatchable_list { print_contacts [list $c] }
             }
-            if {[llength $pending_list] > 0} {
-                puts "  pending:"
-                foreach c $pending_list { print_contacts [list $c] }
+            if {[llength $awaiting_list] > 0} {
+                puts "  awaiting:"
+                foreach c $awaiting_list { print_contacts [list $c] }
+            }
+            if {[llength $blocked_list] > 0} {
+                puts "  blocked:"
+                foreach c $blocked_list { print_contacts [list $c] }
             }
         }
         puts ""
