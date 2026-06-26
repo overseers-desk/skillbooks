@@ -38,7 +38,7 @@ source [file join $::spar::harness_dir spar-mailroom.tcl]
 oo::class create spar::Harness {
     variable Slug LogPrefix CostLog SessionId PromptDir LogDir \
              WorkerCostCapUsd CostKilled \
-             StallKilled LastProgressMs StallTimeoutMs
+             StallKilled LastProgressMs StallTimeoutMs UsageResetSecs
 
     constructor {prompt_dir log_dir} {
         set PromptDir $prompt_dir
@@ -50,6 +50,7 @@ oo::class create spar::Harness {
         set CostKilled 0
         set StallKilled 0
         set LastProgressMs 0
+        set UsageResetSecs 0
         # Per-worker cost cap (#114) is the sole budget circuit-breaker:
         # it bounds a runaway think/retry loop that spends fast. The
         # wall-clock cap was removed — dollars, not time, is the bound. The
@@ -132,12 +133,14 @@ oo::class create spar::Harness {
         return $meta
     }
 
-    # call — first or standalone claude call. Returns the _invoke code:
-    # 0 success, 1 hard failure, 2 external kill / incomplete, 3 deliberate
-    # budget kill (cost cap). Captures session_id from the
-    # stream; subsequent calls on the same harness reuse it via `resume`.
+    # call — first or standalone claude call. Returns a terminal code:
+    # 0 success, 1 hard failure, 2 external kill / stall / incomplete, 3
+    # deliberate budget kill (cost cap). The usage-window block (code 4) is
+    # consumed inside _with_recovery and never reaches here. Captures session_id
+    # from the stream; subsequent calls on the same harness reuse it via
+    # `resume`.
     method call {stage log_file prompt args} {
-        set rc [my _invoke $stage $log_file $prompt {*}$args]
+        set rc [my _with_recovery $stage $log_file $prompt {*}$args]
         # Capture session_id whenever the stream produced one — including an
         # incomplete or budget-killed run — so an interrupted call can still
         # be resumed and the cost meter can find the transcript.
@@ -153,7 +156,7 @@ oo::class create spar::Harness {
         if {$SessionId eq ""} {
             error "spar::Harness::resume: no session_id — call must succeed first"
         }
-        return [my _invoke $stage $log_file $prompt --resume $SessionId {*}$args]
+        return [my _with_recovery $stage $log_file $prompt --resume $SessionId {*}$args]
     }
 
     # inject_mailroom — substitute __MAILROOM_SECTION__ in the prompt
@@ -187,124 +190,144 @@ oo::class create spar::Harness {
         return $total
     }
 
-    # _invoke — the single claude-CLI call loop. Handles credit-limit
-    # waits, JSON parse, result extraction, cost-log append.
+    # _with_recovery — the recovery layer call/resume route through. _invoke
+    # classifies and returns; this method owns the one interruption class
+    # _invoke cannot resolve on its own — a usage-window block (code 4), where
+    # the subscription limit is reached and resets at a stated time. It waits
+    # until the reset and re-invokes, bounded by max_retries; on exhaustion it
+    # surfaces the terminal 1 the old in-loop path returned. Because rc==4 is
+    # consumed here, no caller ever sees it. Re-invoking with the same args
+    # reproduces the prior behaviour: a `call` (no --resume in args) restarts
+    # fresh, a `resume` (--resume in args) continues the same session.
+    method _with_recovery {stage log_file prompt args} {
+        set max_retries 5
+        for {set attempt 1} {1} {incr attempt} {
+            set rc [my _invoke $stage $log_file $prompt {*}$args]
+            if {$rc != 4} { return $rc }
+            if {$attempt >= $max_retries} {
+                ${::spar::harness_log}::error "FAIL ($stage: credit limit after $max_retries retries): $Slug"
+                return 1
+            }
+            ${::spar::harness_log}::warn "\[$Slug\] Credit limit hit (attempt $attempt/$max_retries). Sleeping [expr {$UsageResetSecs / 60}]m until reset..."
+            after [expr {$UsageResetSecs * 1000}] set ::_wake 1
+            vwait ::_wake
+        }
+    }
+
+    # _invoke — run the claude CLI once and classify the outcome; it does not
+    # wait or retry. Codes: 0 success, 1 hard failure, 2 external kill / stall /
+    # incomplete, 3 cost-cap budget kill, 4 usage-window blocked (the reset
+    # seconds ride UsageResetSecs; _with_recovery consumes it). Writes the
+    # product on success and appends the cost-log entry.
     method _invoke {stage log_file prompt args} {
         set json_file "${log_file}.json"
-        set max_retries 5
-        set attempt 0
 
-        while {1} {
-            incr attempt
+        set claude_bin [spar::find_tool claude]
+        if {$claude_bin eq ""} {
+            ${::spar::harness_log}::error "FAIL ($stage: claude not found — check Settings): $Slug"
+            return 1
+        }
+        set cmd [concat [list $claude_bin -p --output-format stream-json --verbose] [my permission_args]]
+        # Default to sonnet unless caller already supplied --model
+        # (fix-loop attempt 3 escalates to opus; challenger passes its
+        # own model). Per-phase model selection from campaign YAML is
+        # tracked in #91.
+        if {[lsearch -exact $args --model] < 0} {
+            lappend cmd --model sonnet
+        }
+        set cmd [concat $cmd $args [list $prompt]]
 
-            set claude_bin [spar::find_tool claude]
-            if {$claude_bin eq ""} {
-                ${::spar::harness_log}::error "FAIL ($stage: claude not found — check Settings): $Slug"
-                return 1
-            }
-            set cmd [concat [list $claude_bin -p --output-format stream-json --verbose] [my permission_args]]
-            # Default to sonnet unless caller already supplied --model
-            # (fix-loop attempt 3 escalates to opus; challenger passes its
-            # own model). Per-phase model selection from campaign YAML is
-            # tracked in #91.
-            if {[lsearch -exact $args --model] < 0} {
-                lappend cmd --model sonnet
-            }
-            set cmd [concat $cmd $args [list $prompt]]
+        # Verdict rule this harness commits to: the deliverable on disk
+        # is the source of truth, not the claude envelope. stream-json
+        # writes one JSONL event per line as work happens, so
+        # _stream_result recovers the final result object when the turn
+        # closes, and _extract_session_id recovers session_id from the
+        # first (init) event even when it does not. Record real elapsed
+        # and the true exit code so a kill is reported honestly.
+        set t0 [clock seconds]
+        set CostKilled 0
+        set StallKilled 0
+        set exit_code [my _run_watched $cmd $json_file "${log_file}.stderr"]
+        set elapsed [expr {[clock seconds] - $t0}]
 
-            # Verdict rule this harness commits to: the deliverable on disk
-            # is the source of truth, not the claude envelope. stream-json
-            # writes one JSONL event per line as work happens, so
-            # _stream_result recovers the final result object when the turn
-            # closes, and _extract_session_id recovers session_id from the
-            # first (init) event even when it does not. Record real elapsed
-            # and the true exit code so a kill is reported honestly.
-            set t0 [clock seconds]
-            set CostKilled 0
-            set StallKilled 0
-            set exit_code [my _run_watched $cmd $json_file "${log_file}.stderr"]
-            set elapsed [expr {[clock seconds] - $t0}]
+        set parsed [my _stream_result $json_file]
 
-            set parsed [my _stream_result $json_file]
-
-            # A deliberate budget kill is a circuit-breaker on RESEARCH:
-            # resuming the research re-spends the very budget the cap exists
-            # to bound (#139). The cost watchdog SIGTERM (CostKilled) is that
-            # kill — it fails the row with return 3 to mark the cap tripped.
-            # ProfileHarness::run reads return 3 as a signal to resume once
-            # for a research-free FINALISE under a small extra cap (recovering
-            # the spend without re-opening research); the approach path treats
-            # it as a terminal fail. An external kill or a truncated-but-
-            # incomplete stream is a different animal — the turn may have done
-            # real work the disk product still holds — so that path keeps
-            # return 2, the validate-the-product / resume route (FM-HARNESS-2).
-            if {[llength $parsed] == 0} {
-                if {$CostKilled} {
-                    ${::spar::harness_log}::error \
-                        "FAIL ($stage: cost cap \$$WorkerCostCapUsd reached — budget kill): $Slug"
-                    return 3
-                }
-                # A stall kill (#115) is the same animal as an external kill for
-                # recovery — the disk product may hold real work — so it shares
-                # return 2 (validate-the-product). Check it AFTER CostKilled so a
-                # cost kill is never downgraded to a resumable stall; the cause
-                # string distinguishes the two in the log (#133).
-                if {$StallKilled} {
-                    ${::spar::harness_log}::error \
-                        "FAIL ($stage: stalled — no output for >= [my stall_timeout]s; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
-                    return 2
-                }
+        # A deliberate budget kill is a circuit-breaker on RESEARCH:
+        # resuming the research re-spends the very budget the cap exists
+        # to bound (#139). The cost watchdog SIGTERM (CostKilled) is that
+        # kill — it fails the row with return 3 to mark the cap tripped.
+        # ProfileHarness::run reads return 3 as a signal to resume once
+        # for a research-free FINALISE under a small extra cap (recovering
+        # the spend without re-opening research); the approach path treats
+        # it as a terminal fail. An external kill or a truncated-but-
+        # incomplete stream is a different animal — the turn may have done
+        # real work the disk product still holds — so that path keeps
+        # return 2, the validate-the-product / resume route (FM-HARNESS-2).
+        if {[llength $parsed] == 0} {
+            if {$CostKilled} {
                 ${::spar::harness_log}::error \
-                    "FAIL ($stage: ended without result after ${elapsed}s; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
+                    "FAIL ($stage: cost cap \$$WorkerCostCapUsd reached — budget kill): $Slug"
+                return 3
+            }
+            # A stall kill (#115) is the same animal as an external kill for
+            # recovery — the disk product may hold real work — so it shares
+            # return 2 (validate-the-product). Check it AFTER CostKilled so a
+            # cost kill is never downgraded to a resumable stall; the cause
+            # string distinguishes the two in the log (#133).
+            if {$StallKilled} {
+                ${::spar::harness_log}::error \
+                    "FAIL ($stage: stalled — no output for >= [my stall_timeout]s; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
                 return 2
             }
-            # A complete envelope landed despite a budget kill (the work
-            # finished just before SIGTERM): the product verdict stands, so
-            # fall through to the success path below — a genuinely complete
-            # profile validates to DONE without resuming.
-
-            if {[dict exists $parsed is_error] && [dict get $parsed is_error] eq "true"} {
-                set result_text [spar::dict_get_default $parsed result ""]
-                if {[string match -nocase *hit*your*limit*resets* $result_text]} {
-                    if {$attempt >= $max_retries} {
-                        ${::spar::harness_log}::error "FAIL ($stage: credit limit after $max_retries retries): $Slug"
-                        return 1
-                    }
-                    set wait_secs [my _credit_wait_secs $result_text]
-                    ${::spar::harness_log}::warn "\[$Slug\] Credit limit hit (attempt $attempt/$max_retries). Sleeping [expr {$wait_secs/60}]m until reset..."
-                    after [expr {$wait_secs * 1000}] set ::_wake 1
-                    vwait ::_wake
-                    continue
-                }
-            }
-
-            if {![dict exists $parsed result]} {
-                ${::spar::harness_log}::error "FAIL ($stage: no result in output; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
-                return 1
-            }
-
-            set fd [open $log_file w]
-            try {
-                puts -nonewline $fd [dict get $parsed result]
-            } finally {
-                close $fd
-            }
-
-            set _prev_indent [::json::write indented]
-            ::json::write indented false
-            set cost_entry [::json::write object \
-                stage [::json::write string $stage] \
-                cost [spar::dict_get_default $parsed total_cost_usd 0]]
-            ::json::write indented $_prev_indent
-            set fd [open $CostLog a]
-            try {
-                puts $fd $cost_entry
-            } finally {
-                close $fd
-            }
-
-            return 0
+            ${::spar::harness_log}::error \
+                "FAIL ($stage: ended without result after ${elapsed}s; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
+            return 2
         }
+        # A complete envelope landed despite a budget kill (the work
+        # finished just before SIGTERM): the product verdict stands, so
+        # fall through to the success path below — a genuinely complete
+        # profile validates to DONE without resuming.
+
+        if {[dict exists $parsed is_error] && [dict get $parsed is_error] eq "true"} {
+            set result_text [spar::dict_get_default $parsed result ""]
+            if {[string match -nocase *hit*your*limit*resets* $result_text]} {
+                # Usage-window block. Classify and return 4; _with_recovery
+                # owns the wait and the retry. The reset seconds ride
+                # UsageResetSecs. (The string match and reset-time scrape are
+                # the only prose-dependent code in the harness — kept here in
+                # one place so there is a single home to harden if a future
+                # CLI exposes a structured usage-limit signal.)
+                set UsageResetSecs [my _credit_wait_secs $result_text]
+                return 4
+            }
+        }
+
+        if {![dict exists $parsed result]} {
+            ${::spar::harness_log}::error "FAIL ($stage: no result in output; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
+            return 1
+        }
+
+        set fd [open $log_file w]
+        try {
+            puts -nonewline $fd [dict get $parsed result]
+        } finally {
+            close $fd
+        }
+
+        set _prev_indent [::json::write indented]
+        ::json::write indented false
+        set cost_entry [::json::write object \
+            stage [::json::write string $stage] \
+            cost [spar::dict_get_default $parsed total_cost_usd 0]]
+        ::json::write indented $_prev_indent
+        set fd [open $CostLog a]
+        try {
+            puts $fd $cost_entry
+        } finally {
+            close $fd
+        }
+
+        return 0
     }
 
     # _run_watched — run the claude command, capturing stdout to json_file
