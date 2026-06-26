@@ -19,7 +19,7 @@
 # Opts consumed by prepare_for_pool:
 #   campaign_file  path to campaign YAML
 #   dry_run        1 = skip SES send + skip stamp
-#   tasks          list of classified ready contacts (from build_opts)
+#   tasks          list of classified dispatchable contacts (from build_opts)
 #   delay          seconds between sends (default 2)
 #   step_callback  optional --jobs=0 stepping gate
 
@@ -135,14 +135,14 @@ oo::class create ::spar::transitions::SendEmailTransition {
         set has_email   [dict get $contact has_email]
         set email_sent  [dict get $contact email_sent]
         if {!$has_email} {
-            return [list [spar::_task $contact pending "No email address"]]
+            return [list [spar::_task $contact blocked "No email address"]]
         }
         if {$email_sent} { return {} }
         set vmsg [$state approach_validation_error $contact]
         if {$vmsg ne ""} {
-            return [list [spar::_task $contact pending "invalid_approach_yaml: $vmsg"]]
+            return [list [spar::_task $contact blocked "invalid_approach_yaml: $vmsg"]]
         }
-        return [list [spar::_task $contact ready ""]]
+        return [list [spar::_task $contact dispatchable ""]]
     }
 }
 

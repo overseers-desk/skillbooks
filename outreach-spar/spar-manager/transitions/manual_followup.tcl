@@ -12,7 +12,7 @@ oo::class create ::spar::transitions::ManualFollowupTransition {
 
     # T9 (slot=secondary) and T10 (slot=tertiary): contact is in
     # APPROACHED/SENT, campaign declares the relevant slot, and channel
-    # readiness reports `<slot>_ready`.  Pending reasons that name the
+    # readiness reports `<slot>_ready`.  Awaiting reasons that name the
     # missing preceding-channel send are suppressed — the operator already
     # sees those through T6/T7/T8 and does not need duplicate noise here.
     method eligible {state contact primary_channel cdata today_iso} {
@@ -22,12 +22,12 @@ oo::class create ::spar::transitions::ManualFollowupTransition {
         if {[llength $cdata] == 0} { return {} }
         set vmsg [$state approach_validation_error $contact]
         if {$vmsg ne ""} {
-            return [list [spar::_task $contact pending "invalid_approach_yaml: $vmsg"]]
+            return [list [spar::_task $contact blocked "invalid_approach_yaml: $vmsg"]]
         }
         set r [$state channel_readiness $contact $cdata $today_iso]
         set slot [my param -slot]
         if {[dict get $r ${slot}_ready]} {
-            return [list [spar::_task $contact ready ""]]
+            return [list [spar::_task $contact dispatchable ""]]
         }
         set reason [dict get $r ${slot}_reason]
         if {$reason eq ""} { return {} }
@@ -36,7 +36,7 @@ oo::class create ::spar::transitions::ManualFollowupTransition {
             || [string match "preceding channel not yet sent*" $reason]} {
             return {}
         }
-        return [list [spar::_task $contact pending $reason]]
+        return [list [spar::_task $contact awaiting $reason]]
     }
 }
 

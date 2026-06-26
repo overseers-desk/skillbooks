@@ -18,11 +18,11 @@ Each state classification and each transition dispatch is independently deployab
 
 **State machine:** classifies contacts from whatever information is present in the filesystem and TSV. If a state's classification condition is not yet defined (e.g., PROFILE_STALE), the state machine never assigns that state — contacts that would have been in it remain in the previous defined state instead. T3/T4 then see zero tasks. That is correct behavior: the rest of the state machine continues working.
 
-**Transition dispatch:** independently incomplete. A contact can be eligible (state machine says "ready") while the dispatch for that transition is a stub returning an error or is not yet written. These are distinct reasons a transition cannot proceed:
+**Transition dispatch:** independently incomplete. A contact can be eligible (state machine says "dispatchable") while the dispatch for that transition is a stub returning an error or is not yet written. These are distinct reasons a transition cannot proceed:
 
-- **Not eligible** — contact not in the required state. State machine decides this; contact does not appear as "ready".
+- **Not eligible** — contact not in the required state. State machine decides this; contact does not appear as "dispatchable".
 - **State undefined** — the state exists in the registry but its classification condition is not yet implemented. No contacts reach that state; the transition sees zero tasks.
-- **Dispatch unavailable** — contact is eligible, but the dispatch is missing or incomplete. The transition manager shows the contact as ready; the play button is disabled with a reason.
+- **Dispatch unavailable** — contact is eligible, but the dispatch is missing or incomplete. The transition manager shows the contact as dispatchable; the play button is disabled with a reason.
 
 The transition table carries a `dispatch_status` per transition type. The state machine never reads this field.
 
@@ -259,12 +259,16 @@ Dispatch statuses:
 ### Task states per contact in the transition manager
 
 Each contact in a transition has one of:
-- `ready` — all preconditions met, can be dispatched now
-- `pending` — precondition not yet met (with a human-readable reason)
+- `dispatchable` — all preconditions met, can be dispatched now
+- `awaiting` — a self-resolving external dependency is outstanding (a clock or a third party); becomes `dispatchable` on its own, with a human-readable reason
+- `blocked` — a data defect stops the row; an operator must fix it before it can move, with a human-readable reason
 - `done` — transition already completed (shown when "Show completed" is enabled)
 
-`pending` reasons come from the eligibility gap:
+`blocked` reasons name a defect the operator must repair:
 - T6: contact in state APPROACHED but no email address → "No email address"
+- any parse-TID: approach YAML fails structural validation → "invalid_approach_yaml: …"
+
+`awaiting` reasons name the dependency that will clear itself:
 - T8: LinkedIn message sent N days ago, waiting for acceptance → "LinkedIn request sent N days ago, waiting until day 5"
 
 ---
@@ -302,17 +306,17 @@ This section inventories both, and cross-checks them so misalignments surface.
 
 ### Transition gates (formal)
 
-Each T has a state predicate plus zero or more secondary predicates that must all hold for `task_state: ready`. Where the code takes a different branch (typically `task_state: pending` with a reason), that branch is noted. `A(path)` = `_approach_validation_error(path) == ""` (approach YAML validates).
+Each T has a state predicate plus zero or more secondary predicates that must all hold for `task_state: dispatchable`. Where the code takes a different branch (`task_state: awaiting` for a self-resolving dependency, `task_state: blocked` for a defect, each carrying a reason), that branch is noted. `A(path)` = `_approach_validation_error(path) == ""` (approach YAML validates).
 
-| T   | State                | Secondary predicates (all, for ready)                   | Pending branch                                                 | Source            |
+| T   | State                | Secondary predicates (all, for dispatchable)            | Awaiting / blocked branch                                      | Source            |
 |-----|----------------------|---------------------------------------------------------|----------------------------------------------------------------|-------------------|
 | T1  | DISCOVERED           | —                                                       | —                                                              | spar-state.tcl:448 |
 | T2  | PROFILED             | star ≥ 3                                                | —                                                              | spar-state.tcl:456 |
 | T3  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
 | T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
 | T6  | APPROACHED ∨ SENT    | primary_channel = email ∧ has_email ∧ ¬email_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬A: "invalid_approach_yaml". primary_channel ≠ email: row is omitted entirely | spar-state.tcl:464 |
-| T7  | any ≠ EXCLUDED       | email_sent ∧ ¬email_replied ∧ A(approach_path)          | A invalid → "invalid_approach_yaml". Ready rows dispatch through spar::r::run (mailroom reply-check) | spar-state.tcl:487 |
-| T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always pending: awaiting acceptance                            | spar-state.tcl:526 |
+| T7  | any ≠ EXCLUDED       | email_sent ∧ ¬email_replied ∧ A(approach_path)          | A invalid → "invalid_approach_yaml". Dispatchable rows dispatch through spar::r::run (mailroom reply-check) | spar-state.tcl:487 |
+| T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | spar-state.tcl:526 |
 | T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | spar-state.tcl:T9 branch |
 | T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | spar-state.tcl:T10 branch |
 
@@ -463,7 +467,7 @@ Use a fixture segment with 5 contacts in known states. Assert that `classify_seg
 
 **5. Transition eligibility**
 
-For each transition T1–T8, construct a contact in the eligible state and assert it appears in the transition's task list. Construct a contact one step short of eligibility and assert it does not appear (or appears as `pending`).
+For each transition T1–T8, construct a contact in the eligible state and assert it appears in the transition's task list. Construct a contact one step short of eligibility and assert it does not appear (or appears as `awaiting` or `blocked`).
 
 **6. Duplicate detection**
 

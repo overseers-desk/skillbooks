@@ -146,9 +146,9 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         if {[dict get $contact email_replied]} { return {} }
         set vmsg [$state approach_validation_error $contact]
         if {$vmsg ne ""} {
-            return [list [spar::_task $contact pending "invalid_approach_yaml: $vmsg"]]
+            return [list [spar::_task $contact blocked "invalid_approach_yaml: $vmsg"]]
         }
-        return [list [spar::_task $contact ready ""]]
+        return [list [spar::_task $contact dispatchable ""]]
     }
 }
 

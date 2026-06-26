@@ -255,7 +255,7 @@ set t9_cdata [dict create \
 # Today for deterministic wait-day math.
 set t9_today 2026-04-15
 
-# ── T9 ready: primary email sent 10d ago, no reply, secondary phone pending ──
+# ── T9 dispatchable: primary email sent 10d ago, no reply, secondary phone pending ──
 set t9_seg [make_temp_segment]
 write_profile $t9_seg "contact-1"
 write_approach_yaml $t9_seg "contact-1" [t9_yaml_primary_email_sent_secondary_phone_pending 2026-04-05]
@@ -266,13 +266,13 @@ set t9_rows [list \
 write_roster_tsv $t9_seg $t9_headers $t9_rows
 set t9_contacts [$State classify_segment $t9_seg]
 set t9_contacts [$State refine_segment $t9_contacts]
-set t9_ready [$State transition_eligible $t9_contacts "T9" email $t9_cdata $t9_today]
-assert_eq [llength $t9_ready] 1 \
-    "T9 ready: primary sent 10d ago, no reply, phone pending → 1 task"
-assert_eq [dict get [lindex $t9_ready 0] task_state] "ready" \
-    "T9 ready: task_state=ready"
+set t9_dispatchable [$State transition_eligible $t9_contacts "T9" email $t9_cdata $t9_today]
+assert_eq [llength $t9_dispatchable] 1 \
+    "T9 dispatchable: primary sent 10d ago, no reply, phone pending → 1 task"
+assert_eq [dict get [lindex $t9_dispatchable 0] task_state] "dispatchable" \
+    "T9 dispatchable: task_state=dispatchable"
 
-# ── T9 pending: primary sent 3d ago (< 7d wait) ──
+# ── T9 awaiting: primary sent 3d ago (< 7d wait) ──
 set t9_seg2 [make_temp_segment]
 write_profile $t9_seg2 "contact-2"
 write_approach_yaml $t9_seg2 "contact-2" [t9_yaml_primary_email_sent_secondary_phone_pending 2026-04-12]
@@ -280,12 +280,12 @@ write_roster_tsv $t9_seg2 $t9_headers [list \
     [make_base_row {contact_name "C2" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-2"}]]
 set t9_contacts2 [$State classify_segment $t9_seg2]
 set t9_contacts2 [$State refine_segment $t9_contacts2]
-set t9_pend [$State transition_eligible $t9_contacts2 "T9" email $t9_cdata $t9_today]
-assert_eq [llength $t9_pend] 1 "T9 pending: primary sent 3d ago → 1 pending task"
-assert_eq [dict get [lindex $t9_pend 0] task_state] "pending" \
-    "T9 pending: task_state=pending"
-assert_match [dict get [lindex $t9_pend 0] reason] "*waiting until day 7*" \
-    "T9 pending reason names the wait threshold"
+set t9_await [$State transition_eligible $t9_contacts2 "T9" email $t9_cdata $t9_today]
+assert_eq [llength $t9_await] 1 "T9 awaiting: primary sent 3d ago → 1 awaiting task"
+assert_eq [dict get [lindex $t9_await 0] task_state] "awaiting" \
+    "T9 awaiting: task_state=awaiting"
+assert_match [dict get [lindex $t9_await 0] reason] "*waiting until day 7*" \
+    "T9 awaiting reason names the wait threshold"
 
 # ── T9 not visible: primary got a reply → state=REPLIED → T9 skips ──
 # (REPLIED state already expresses that outreach succeeded; the wait_condition
@@ -367,13 +367,13 @@ write_roster_tsv $t10_seg $t9_headers [list \
     [make_base_row {contact_name "C10" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" linkedin_url "https://linkedin.com/in/c10" stem "contact-10"}]]
 set t10_contacts [$State classify_segment $t10_seg]
 set t10_contacts [$State refine_segment $t10_contacts]
-set t10_ready [$State transition_eligible $t10_contacts "T10" email $t10_cdata $t9_today]
-assert_eq [llength $t10_ready] 1 \
-    "T10 ready: secondary sent 10d ago, wait=5d, linkedin pending → 1 task"
-assert_eq [dict get [lindex $t10_ready 0] task_state] "ready" \
-    "T10 ready: task_state=ready"
+set t10_dispatchable [$State transition_eligible $t10_contacts "T10" email $t10_cdata $t9_today]
+assert_eq [llength $t10_dispatchable] 1 \
+    "T10 dispatchable: secondary sent 10d ago, wait=5d, linkedin pending → 1 task"
+assert_eq [dict get [lindex $t10_dispatchable 0] task_state] "dispatchable" \
+    "T10 dispatchable: task_state=dispatchable"
 
-# ── T10 pending: secondary sent 2d ago (< 5d wait) ──
+# ── T10 awaiting: secondary sent 2d ago (< 5d wait) ──
 set t10_seg2 [make_temp_segment]
 write_profile $t10_seg2 "contact-11"
 write_approach_yaml $t10_seg2 "contact-11" [t10_yaml_primary_sent_secondary_sent_tertiary_pending 2026-04-01 2026-04-13]
@@ -381,10 +381,10 @@ write_roster_tsv $t10_seg2 $t9_headers [list \
     [make_base_row {contact_name "C11" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" linkedin_url "https://linkedin.com/in/c11" stem "contact-11"}]]
 set t10_contacts2 [$State classify_segment $t10_seg2]
 set t10_contacts2 [$State refine_segment $t10_contacts2]
-set t10_pend [$State transition_eligible $t10_contacts2 "T10" email $t10_cdata $t9_today]
-assert_eq [llength $t10_pend] 1 "T10 pending: secondary sent 2d ago → 1 pending"
-assert_match [dict get [lindex $t10_pend 0] reason] "*waiting until day 5*" \
-    "T10 pending names the wait threshold"
+set t10_await [$State transition_eligible $t10_contacts2 "T10" email $t10_cdata $t9_today]
+assert_eq [llength $t10_await] 1 "T10 awaiting: secondary sent 2d ago → 1 awaiting"
+assert_match [dict get [lindex $t10_await 0] reason] "*waiting until day 5*" \
+    "T10 awaiting names the wait threshold"
 
 # ── T10 zero if tertiary slot absent ──
 set t10_no_tert [$State transition_eligible $t10_contacts "T10" email $t9_cdata $t9_today]
@@ -403,7 +403,7 @@ section "T6 / T7 behavioural eligibility (issue #84 audit gap)"
 
 # ── T6 ──────────────────────────────────────────────────────────────────
 
-# T6-a: APPROACHED, has_email, primary_channel=email, email_sent=0 → ready.
+# T6-a: APPROACHED, has_email, primary_channel=email, email_sent=0 → dispatchable.
 set t6a_seg [make_temp_segment]
 write_profile $t6a_seg "t6a"
 write_approach_yaml $t6a_seg "t6a" [approach_yaml_final_unsent]
@@ -414,10 +414,10 @@ set t6a_c [$State classify_segment $t6a_seg]
 set t6a_c [$State refine_segment $t6a_c]
 set t6a_tasks [$State transition_eligible $t6a_c "T6" "email"]
 assert_eq [llength $t6a_tasks] 1 "T6: APPROACHED+email+unsent → 1 task"
-assert_eq [dict get [lindex $t6a_tasks 0] task_state] "ready" \
-    "T6: APPROACHED+email+unsent → task_state=ready"
+assert_eq [dict get [lindex $t6a_tasks 0] task_state] "dispatchable" \
+    "T6: APPROACHED+email+unsent → task_state=dispatchable"
 
-# T6-b: APPROACHED, has_email=0 → pending with "No email address".
+# T6-b: APPROACHED, has_email=0 → blocked with "No email address".
 set t6b_seg [make_temp_segment]
 write_profile $t6b_seg "t6b"
 write_approach_yaml $t6b_seg "t6b" [approach_yaml_final_unsent]
@@ -429,8 +429,8 @@ set t6b_c [$State classify_segment $t6b_seg]
 set t6b_c [$State refine_segment $t6b_c]
 set t6b_tasks [$State transition_eligible $t6b_c "T6" "email"]
 assert_eq [llength $t6b_tasks] 1 "T6: APPROACHED+no-email → 1 task"
-assert_eq [dict get [lindex $t6b_tasks 0] task_state] "pending" \
-    "T6: APPROACHED+no-email → task_state=pending"
+assert_eq [dict get [lindex $t6b_tasks 0] task_state] "blocked" \
+    "T6: APPROACHED+no-email → task_state=blocked"
 assert_eq [dict get [lindex $t6b_tasks 0] reason] "No email address" \
     "T6: APPROACHED+no-email → reason='No email address'"
 
@@ -461,7 +461,7 @@ set t6d_tasks [$State transition_eligible $t6d_c "T6" "linkedin"]
 assert_eq [llength $t6d_tasks] 0 \
     "T6: primary_channel=linkedin → 0 tasks"
 
-# T6-e: APPROACHED + invalid approach YAML (unknown root key) → pending
+# T6-e: APPROACHED + invalid approach YAML (unknown root key) → blocked
 # with reason starting "invalid_approach_yaml:".
 set t6e_seg [make_temp_segment]
 write_profile $t6e_seg "t6e"
@@ -486,14 +486,14 @@ set t6e_c [$State classify_segment $t6e_seg]
 set t6e_c [$State refine_segment $t6e_c]
 set t6e_tasks [$State transition_eligible $t6e_c "T6" "email"]
 assert_eq [llength $t6e_tasks] 1 "T6: invalid YAML → 1 task"
-assert_eq [dict get [lindex $t6e_tasks 0] task_state] "pending" \
-    "T6: invalid YAML → task_state=pending"
+assert_eq [dict get [lindex $t6e_tasks 0] task_state] "blocked" \
+    "T6: invalid YAML → task_state=blocked"
 assert_match [dict get [lindex $t6e_tasks 0] reason] "invalid_approach_yaml:*" \
     "T6: invalid YAML → reason starts 'invalid_approach_yaml:'"
 
 # ── T7 ──────────────────────────────────────────────────────────────────
 
-# T7-a: SENT, email_replied=0 → ready.
+# T7-a: SENT, email_replied=0 → dispatchable.
 set t7a_seg [make_temp_segment]
 write_profile $t7a_seg "t7a"
 write_approach_yaml $t7a_seg "t7a" [approach_yaml_final_sent_email]
@@ -504,8 +504,8 @@ set t7a_c [$State classify_segment $t7a_seg]
 set t7a_c [$State refine_segment $t7a_c]
 set t7a_tasks [$State transition_eligible $t7a_c "T7"]
 assert_eq [llength $t7a_tasks] 1 "T7: SENT+no-reply → 1 task"
-assert_eq [dict get [lindex $t7a_tasks 0] task_state] "ready" \
-    "T7: SENT+no-reply → task_state=ready"
+assert_eq [dict get [lindex $t7a_tasks 0] task_state] "dispatchable" \
+    "T7: SENT+no-reply → task_state=dispatchable"
 
 # T7-b: REPLIED (email_replied=1) → no task.
 set t7b_seg [make_temp_segment]
@@ -550,7 +550,7 @@ set t7d_tasks [$State transition_eligible $t7d_c "T7"]
 assert_eq [llength $t7d_tasks] 0 \
     "T7: EXCLUDED → 0 tasks (regardless of prior email_sent)"
 
-# T7-e: SENT contact + invalid approach YAML → pending with
+# T7-e: SENT contact + invalid approach YAML → blocked with
 # reason starting "invalid_approach_yaml:". Validates the
 # eligibility-time approach gate symmetric with T6.
 set t7e_seg [make_temp_segment]
@@ -576,8 +576,8 @@ set t7e_c [$State classify_segment $t7e_seg]
 set t7e_c [$State refine_segment $t7e_c]
 set t7e_tasks [$State transition_eligible $t7e_c "T7"]
 assert_eq [llength $t7e_tasks] 1 "T7: SENT+invalid YAML → 1 task"
-assert_eq [dict get [lindex $t7e_tasks 0] task_state] "pending" \
-    "T7: SENT+invalid YAML → task_state=pending"
+assert_eq [dict get [lindex $t7e_tasks 0] task_state] "blocked" \
+    "T7: SENT+invalid YAML → task_state=blocked"
 assert_match [dict get [lindex $t7e_tasks 0] reason] "invalid_approach_yaml:*" \
     "T7: SENT+invalid YAML → reason starts 'invalid_approach_yaml:'"
 

@@ -9,7 +9,7 @@ oo::class create ::spar::transitions::ApproachTransition {
 
     method build_opts {tasks filter_segments filter_stems} {
         set result [dict create \
-            log_message "[my tid]: [llength $tasks] task(s) ready (campaign-wide pass)"]
+            log_message "[my tid]: [llength $tasks] task(s) dispatchable (campaign-wide pass)"]
         if {[llength $filter_segments] > 0} {
             dict set result segments $filter_segments
         }
@@ -59,7 +59,7 @@ oo::class create ::spar::transitions::ApproachTransition {
             return {}
         }
         if {[spar::_approach_dispatch_gate $contact $cdata] ne ""} { return {} }
-        return [list [spar::_task $contact ready ""]]
+        return [list [spar::_task $contact dispatchable ""]]
     }
 }
 

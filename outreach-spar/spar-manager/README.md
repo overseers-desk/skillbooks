@@ -76,7 +76,7 @@ wish9.0 spar-ui.tcl /path/to/campaign.yaml  # mount campaign directly
 
 ```
 tclsh9.0 spar-transition.tcl /path/to/campaign.yaml             # eligibility report
-tclsh9.0 spar-transition.tcl /path/to/campaign.yaml --ready     # ready rows only
+tclsh9.0 spar-transition.tcl /path/to/campaign.yaml --dispatchable   # dispatchable rows only
 tclsh9.0 spar-transition.tcl /path/to/campaign.yaml T1          # dispatch one TID live
 tclsh9.0 spar-transition.tcl /path/to/campaign.yaml T1 --dry-run
 tclsh9.0 spar-transition.tcl /path/to/campaign.yaml T6:vic/jane-doe   # one contact
@@ -84,7 +84,7 @@ tclsh9.0 spar-transition.tcl /path/to/campaign.yaml --auto      # converge auto-
 tclsh9.0 spar-transition.tcl /path/to/campaign.yaml T6 --yes    # cron, skip [y/N]
 ```
 
-Common flags: `--pending`/`--ready` (report filters), `--jobs=N` (parallelism, default 4; `--jobs=0` steps one row at a time with a `[y/N]` gate), `--delay=N` (seconds between sends for SES-type transitions, default 2), `--yes` (skip the upfront confirmation for transitions that require it, e.g. `T6` SES sends), `-v`/`--verbose` (list each contact in report mode rather than counts).
+Common flags: `--dispatchable`/`--awaiting`/`--blocked` (report filters), `--jobs=N` (parallelism, default 4; `--jobs=0` steps one row at a time with a `[y/N]` gate), `--delay=N` (seconds between sends for SES-type transitions, default 2), `--yes` (skip the upfront confirmation for transitions that require it, e.g. `T6` SES sends), `-v`/`--verbose` (list each contact in report mode rather than counts).
 
 ### Progress table
 

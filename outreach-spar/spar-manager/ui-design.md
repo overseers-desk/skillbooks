@@ -125,15 +125,19 @@ Expanding a transition type reveals its individual tasks as child rows. Each chi
 - Contact name
 - Organisation
 - Segment
-- Task state: **ready**, **pending**, or **done**
-- Pending reason (if pending) — a short text explaining what blocks the transition
+- Task state: **dispatchable**, **awaiting**, **blocked**, or **done**
+- Reason (when **awaiting** or **blocked**): a short text naming the dependency or the defect
 
-Examples of pending reasons:
+**awaiting** rows clear themselves once an external dependency resolves (a clock elapses, a third party acts):
 
-- "No email address" (T6, channel is email but contact has no email)
 - "Waiting for credit window" (any dispatched transition, API budget exhausted)
 - "Profile stale — cross-ref update from [other contact]" (T3)
 - "LinkedIn request sent 2 days ago, waiting until day 5" (T8)
+
+**blocked** rows need an operator to fix the underlying data before they can move:
+
+- "No email address" (T6, channel is email but contact has no email)
+- "invalid_approach_yaml: …" (the approach YAML fails structural validation)
 
 Tasks in the **done** state are shown greyed out. A "Show completed" checkbox above the treeview toggles their visibility.
 
