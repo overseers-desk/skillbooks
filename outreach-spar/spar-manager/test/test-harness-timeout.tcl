@@ -352,4 +352,56 @@ $ph2 destroy
 assert_eq $rc_fin2 0 "cost-cap kill with no session_id falls through without crashing"
 assert_eq [llength $::fin2_resume_calls] 0 "no resume attempted without a session_id"
 
+# ════════════════════════════════════════════════════════════════════════
+section "9. Credit-limit hit waits then resumes the same session (rc=0)"
+# ════════════════════════════════════════════════════════════════════════
+
+# Characterisation of the usage-window (credit-limit) retry before it is
+# refactored out of _invoke. The stub emits a complete is_error envelope whose
+# result text matches the harness's *hit*your*limit*resets* guard on its FIRST
+# invocation, then a success envelope on the SECOND. The harness must wait
+# (_credit_wait_secs, overridden to 0 here so the test does not sleep until the
+# named reset time) and retry, ultimately returning rc=0 with the success
+# product on disk — proving the credit limit is not a terminal failure.
+set cl_counter [file join $tmp_root cl-counter]
+set cl_stub [file join $tmp_root claude-creditlimit]
+set fd [open $cl_stub w]
+puts $fd "#!/bin/sh"
+puts $fd "CNT=\"$cl_counter\""
+puts $fd {n=$(cat "$CNT" 2>/dev/null || echo 0); n=$((n+1)); echo "$n" > "$CNT"}
+puts $fd {printf '%s\n' '{"type":"system","subtype":"init","session_id":"limit-sess"}'}
+puts $fd {if [ "$n" -eq 1 ]; then}
+puts $fd {  printf '%s\n' '{"type":"result","subtype":"error_during_execution","is_error":true,"result":"You have hit your usage limit, resets 3am (Australia/Brisbane)","total_cost_usd":0,"session_id":"limit-sess"}'}
+puts $fd {else}
+puts $fd {  printf '%s\n' '{"type":"result","subtype":"success","is_error":false,"result":"PROFILE OK","total_cost_usd":0.05,"session_id":"limit-sess"}'}
+puts $fd {fi}
+puts $fd "exit 0"
+close $fd
+file attributes $cl_stub -permissions 0755
+
+proc spar::find_tool {name} {
+    if {$name eq "claude"} { return [list $::cl_stub] }
+    return [auto_execok $name]
+}
+
+set cl_prompt [file join $tmp_root prompt-cl]
+file mkdir $cl_prompt
+set inst_cl [spar::Harness new $cl_prompt [file join $tmp_root logs-cl]]
+# Disable the cost watchdog (this leg is about the credit-limit retry, not the
+# cap) and collapse the credit-limit sleep to ~0 so the test runs instantly.
+$inst_cl set_worker_cost_cap 0
+oo::objdefine $inst_cl method _credit_wait_secs {msg} { return 0 }
+
+set log_cl [file join $tmp_root logs-cl cl.log]
+set t0 [clock milliseconds]
+set rc_cl [$inst_cl call "credit-stage" $log_cl "dummy prompt"]
+set elapsed_cl [expr {[clock milliseconds] - $t0}]
+set cl_result [string trim [exec cat $log_cl]]
+set cl_attempts [string trim [exec cat $cl_counter]]
+$inst_cl destroy
+
+assert_eq $rc_cl 0 "credit-limit hit then success returns rc=0"
+assert_eq $cl_result "PROFILE OK" "the second (post-reset) attempt's product is on disk"
+assert_eq $cl_attempts 2 "exactly two claude invocations: limit then success"
+
 finish_tests
