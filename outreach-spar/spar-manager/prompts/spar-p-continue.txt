@@ -1,0 +1,9 @@
+The previous turn of this profiling task was paused by a subscription usage-limit window, which has now reset. The budget is fine — this is not a cost cap, and you are not being asked to stop. Do not restart the research from scratch and do not repeat searches or page fetches you have already completed in this session.
+
+Resume any research that was still in progress when the window hit, then carry on through the remaining steps the original task set out.
+
+Working context, re-stated because a resumed session reloads skill descriptions fresh and must not assume the earlier prompt's context survived:
+- STEM: __STEM__ — the roster stem; the profile file must be named exactly {stem}.md
+- OUTFILE: __OUTFILE__ — the profile document
+
+When the profile body, the YAML front matter, and the roster star_rating are all complete per the original task (SPAR-P), the task is done — stop.

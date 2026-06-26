@@ -495,4 +495,71 @@ if {$elapsed_st >= 8000} {
     incr ::passes
 }
 
+# ════════════════════════════════════════════════════════════════════════
+section "12. Usage-window recovery posture: resume default, restart override (#142)"
+# ════════════════════════════════════════════════════════════════════════
+
+# After the reset, an initial `call` resumes the interrupted session by default
+# (the user-chosen posture): the retry carries --resume <captured sid> instead
+# of restarting fresh. A per-stage override flips it back to restart. The stub
+# records its argv per invocation so the retry's command line is observable;
+# rc never surfaces as 4 (the wrapper consumes it).
+set rec_counter [file join $tmp_root rec-counter]
+set rec_argv [file join $tmp_root rec-argv]
+set rec_stub [file join $tmp_root claude-rec]
+set fd [open $rec_stub w]
+puts $fd "#!/bin/sh"
+puts $fd "CNT=\"$rec_counter\""
+puts $fd "ARGV=\"$rec_argv\""
+puts $fd {printf '%s\n' "$*" >> "$ARGV"}
+puts $fd {n=$(cat "$CNT" 2>/dev/null || echo 0); n=$((n+1)); echo "$n" > "$CNT"}
+puts $fd {printf '%s\n' '{"type":"system","subtype":"init","session_id":"limit-sess"}'}
+puts $fd {if [ "$n" -eq 1 ]; then}
+puts $fd {  printf '%s\n' '{"type":"result","subtype":"error_during_execution","is_error":true,"result":"You have hit your usage limit, resets 3am (Australia/Brisbane)","total_cost_usd":0,"session_id":"limit-sess"}'}
+puts $fd {else}
+puts $fd {  printf '%s\n' '{"type":"result","subtype":"success","is_error":false,"result":"PROFILE OK","total_cost_usd":0.05,"session_id":"limit-sess"}'}
+puts $fd {fi}
+puts $fd "exit 0"
+close $fd
+file attributes $rec_stub -permissions 0755
+
+proc spar::find_tool {name} {
+    if {$name eq "claude"} { return [list $::rec_stub] }
+    return [auto_execok $name]
+}
+
+# Default posture: resume-continue.
+file delete -force $rec_counter $rec_argv
+set rv_prompt [file join $tmp_root prompt-rv]
+file mkdir $rv_prompt
+set inst_rv [spar::Harness new $rv_prompt [file join $tmp_root logs-rv]]
+$inst_rv set_worker_cost_cap 0
+oo::objdefine $inst_rv method _credit_wait_secs {msg} { return 0 }
+set rc_rv [$inst_rv call "rec-stage" [file join $tmp_root logs-rv rv.log] "dummy prompt"]
+$inst_rv destroy
+set argv_rv [split [string trim [exec cat $rec_argv]] \n]
+assert_eq $rc_rv 0 "resume-posture call recovers to rc=0 (code 4 never leaks)"
+assert_eq [llength $argv_rv] 2 "exactly two invocations: block then resumed retry"
+if {[string match *--resume* [lindex $argv_rv 0]]} {
+    puts "FAIL: first invocation should not carry --resume"; incr ::failures
+} else { puts "  ok: first invocation runs fresh (no --resume)"; incr ::passes }
+assert_match [lindex $argv_rv 1] "*--resume limit-sess*" \
+    "second invocation resumes the captured session"
+
+# Per-stage override: restart fresh, no --resume on the retry.
+file delete -force $rec_counter $rec_argv
+set rs_prompt [file join $tmp_root prompt-rs]
+file mkdir $rs_prompt
+set inst_rs [spar::Harness new $rs_prompt [file join $tmp_root logs-rs]]
+$inst_rs set_worker_cost_cap 0
+oo::objdefine $inst_rs method _credit_wait_secs {msg} { return 0 }
+oo::objdefine $inst_rs method recovery_posture {stage} { return restart }
+set rc_rs [$inst_rs call "rec-stage" [file join $tmp_root logs-rs rs.log] "dummy prompt"]
+$inst_rs destroy
+set argv_rs [split [string trim [exec cat $rec_argv]] \n]
+assert_eq $rc_rs 0 "restart-posture call recovers to rc=0"
+if {[string match *--resume* [lindex $argv_rs 1]]} {
+    puts "FAIL: restart posture should not add --resume on the retry"; incr ::failures
+} else { puts "  ok: restart posture re-issues fresh (no --resume)"; incr ::passes }
+
 finish_tests

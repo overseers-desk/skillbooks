@@ -140,7 +140,7 @@ oo::class create spar::Harness {
     # from the stream; subsequent calls on the same harness reuse it via
     # `resume`.
     method call {stage log_file prompt args} {
-        set rc [my _with_recovery $stage $log_file $prompt {*}$args]
+        set rc [my _with_recovery call $stage $log_file $prompt {*}$args]
         # Capture session_id whenever the stream produced one — including an
         # incomplete or budget-killed run — so an interrupted call can still
         # be resumed and the cost meter can find the transcript.
@@ -156,7 +156,7 @@ oo::class create spar::Harness {
         if {$SessionId eq ""} {
             error "spar::Harness::resume: no session_id — call must succeed first"
         }
-        return [my _with_recovery $stage $log_file $prompt --resume $SessionId {*}$args]
+        return [my _with_recovery resume $stage $log_file $prompt --resume $SessionId {*}$args]
     }
 
     # inject_mailroom — substitute __MAILROOM_SECTION__ in the prompt
@@ -196,11 +196,23 @@ oo::class create spar::Harness {
     # the subscription limit is reached and resets at a stated time. It waits
     # until the reset and re-invokes, bounded by max_retries; on exhaustion it
     # surfaces the terminal 1 the old in-loop path returned. Because rc==4 is
-    # consumed here, no caller ever sees it. Re-invoking with the same args
-    # reproduces the prior behaviour: a `call` (no --resume in args) restarts
-    # fresh, a `resume` (--resume in args) continues the same session.
-    method _with_recovery {stage log_file prompt args} {
+    # consumed here, no caller ever sees it.
+    #
+    # After the reset, how to re-issue depends on the entrypoint and the
+    # per-stage posture:
+    #   - resume-initiated (entry=resume): $args already carries --resume and
+    #     the resume's own prompt; replay verbatim to continue the session.
+    #   - call-initiated (entry=call), posture resume (the default everywhere):
+    #     the interrupted research is worth preserving, so switch to --resume
+    #     <captured sid> plus a continuation prompt for the remaining attempts.
+    #     session_id is captured from json_file here, before the next _invoke
+    #     truncates it.
+    #   - call-initiated, posture restart (per-stage override): re-issue fresh
+    #     with the original prompt+args, clearing SessionId so the new session
+    #     is metered by its own init event, not the dead one.
+    method _with_recovery {entry stage log_file prompt args} {
         set max_retries 5
+        set json_file "${log_file}.json"
         for {set attempt 1} {1} {incr attempt} {
             set rc [my _invoke $stage $log_file $prompt {*}$args]
             if {$rc != 4} { return $rc }
@@ -211,7 +223,38 @@ oo::class create spar::Harness {
             ${::spar::harness_log}::warn "\[$Slug\] Credit limit hit (attempt $attempt/$max_retries). Sleeping [expr {$UsageResetSecs / 60}]m until reset..."
             after [expr {$UsageResetSecs * 1000}] set ::_wake 1
             vwait ::_wake
+
+            # Already in resume mode — either a resume-initiated call, or a
+            # call already converted on an earlier block — so replay verbatim.
+            # The lsearch guard is what stops a second --resume being added.
+            if {$entry eq "resume" || [lsearch -exact $args --resume] >= 0} {
+                continue
+            }
+            if {[my recovery_posture $stage] eq "resume" \
+                    && [set sid [my _extract_session_id $json_file]] ne ""} {
+                set SessionId $sid
+                set prompt [my continuation_prompt $stage]
+                set args [linsert $args 0 --resume $sid]
+            } else {
+                set SessionId ""
+            }
         }
+    }
+
+    # recovery_posture — for a usage-window block on an initial `call`, whether
+    # to resume-continue the interrupted session (the default everywhere) or
+    # restart it fresh. A stage whose interrupted work is not worth preserving
+    # may override to "restart". Resume-initiated calls ignore this — they
+    # always continue their own session.
+    method recovery_posture {stage} { return resume }
+
+    # continuation_prompt — the prompt sent when resuming a `call` after the
+    # usage window resets. It must tell the agent to continue from the work
+    # already in the session, the opposite of the cost-cap finalise prompt's
+    # "stop all research". Generic by default; ProfileHarness points it at the
+    # research-specific spar-p-continue prompt.
+    method continuation_prompt {stage} {
+        return "The previous turn of this task was paused by a subscription usage-limit window, which has now reset. The budget is fine. Do not restart from scratch or repeat work already done. Continue the task from where you left off, using everything already gathered in this session, and finish it."
     }
 
     # _invoke — run the claude CLI once and classify the outcome; it does not
@@ -1022,6 +1065,16 @@ oo::class create spar::ProfileHarness {
             --permission-mode dontAsk \
             --allowedTools "WebSearch,WebFetch,Read,Write,Edit,Glob,Grep,ToolSearch,TodoWrite,Skill,Bash,Agent(Explore),SendMessage" \
             --disallowedTools "Agent(general-purpose),Agent(claude),Agent(general),Workflow,Skill(deep-research),Skill(ot:build-dossier)"]
+    }
+
+    # Override the generic continuation prompt with the research-specific one:
+    # a profile interrupted mid-research should resume its research, not stop
+    # (the inverse of do_finalise_after_cost_kill, which stops it). load_my_meta
+    # runs before do_profile_call, so Stem/Outfile are set by the time a
+    # usage-window block can fire.
+    method continuation_prompt {stage} {
+        return [my load_prompt spar-p-continue [dict create \
+            STEM $Stem OUTFILE $Outfile]]
     }
 
     method state {} {
