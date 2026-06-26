@@ -78,6 +78,13 @@ oo::class create spar::Harness {
         set WorkerCostCapUsd $usd
     }
 
+    # permission_args — the claude permission flags this harness runs under.
+    # Approach/author/challenger work unrestricted under skip-permissions.
+    # ProfileHarness overrides this to fence research fan-out (#132).
+    method permission_args {} {
+        return [list --dangerously-skip-permissions]
+    }
+
     # Load prompts/<name>.txt and apply __KEY__ → value substitutions
     # from the subs dict. Keys in subs are passed without the __..__
     # wrapping; this method adds them.
@@ -176,7 +183,7 @@ oo::class create spar::Harness {
                 ${::spar::harness_log}::error "FAIL ($stage: claude not found — check Settings): $Slug"
                 return 1
             }
-            set cmd [list $claude_bin -p --output-format stream-json --verbose --dangerously-skip-permissions]
+            set cmd [concat [list $claude_bin -p --output-format stream-json --verbose] [my permission_args]]
             # Default to sonnet unless caller already supplied --model
             # (fix-loop attempt 3 escalates to opus; challenger passes its
             # own model). Per-phase model selection from campaign YAML is
@@ -874,6 +881,20 @@ oo::class create spar::ProfileHarness {
 
     variable State Outfile RosterPath RosterLock RequiredSkills \
              Stem ContactName ContactOrg ContactEmail
+
+    # Profile workers run under an explicit allow-list instead of
+    # skip-permissions, so a research delegation can only reach the
+    # read-only Explore subagent (which cannot cascade); a full-tool/null
+    # Agent spawn fails to match Agent(Explore) and the deep-research swarm
+    # is denied. This closes the 270-subagent runaway (#132). dontAsk makes
+    # the allow-list non-interactive: a tool outside it is denied, not
+    # prompted, so an unattended run never stalls.
+    method permission_args {} {
+        return [list \
+            --permission-mode dontAsk \
+            --allowedTools "WebSearch,WebFetch,Read,Write,Edit,Glob,Grep,ToolSearch,TodoWrite,Skill,Bash,Agent(Explore)" \
+            --disallowedTools "Skill(deep-research),Workflow"]
+    }
 
     method state {} {
         if {![info exists State] || $State eq ""} {
