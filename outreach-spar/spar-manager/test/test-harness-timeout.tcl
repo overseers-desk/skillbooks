@@ -434,4 +434,65 @@ assert_match $cause "*exit 137*" "cause carries the child exit code"
 assert_match $cause "*fatal: the real cause*" "cause carries the stderr tail"
 assert_match $cause "*last event: system/init*" "cause carries the last stream event"
 
+# ════════════════════════════════════════════════════════════════════════
+section "11. Stall watchdog: meta.env carrier + idle SIGTERM (#115)"
+# ════════════════════════════════════════════════════════════════════════
+
+# The stall timeout travels through meta.env (STALL_TIMEOUT_SECS), mirroring
+# WORKER_COST_CAP_USD; absent key leaves the conservative default.
+set stall_meta_dir [file join $tmp_root prompt-stallmeta]
+file mkdir $stall_meta_dir
+set fd [open [file join $stall_meta_dir meta.env] w]
+puts $fd "STALL_TIMEOUT_SECS=\"45\""
+close $fd
+set inst_sm [spar::Harness new $stall_meta_dir [file join $tmp_root logs-sm]]
+assert_eq [$inst_sm stall_timeout] 45 "meta.env: STALL_TIMEOUT_SECS read into the harness"
+$inst_sm destroy
+
+set stall_nokey_dir [file join $tmp_root prompt-stallnokey]
+file mkdir $stall_nokey_dir
+set inst_snk [spar::Harness new $stall_nokey_dir [file join $tmp_root logs-snk]]
+assert_eq [$inst_snk stall_timeout] 600 "default stall timeout (600s) when meta key absent"
+$inst_snk destroy
+
+# A worker that emits an init event then falls silent is SIGTERM'd by the stall
+# watchdog. The cost cap is disabled (this leg is the stall path, not the cap),
+# so the poll must arm on the stall bound alone. rc==2: the disk product may
+# hold work, same recovery as an external kill.
+set stall_stub [file join $tmp_root claude-stall]
+set fd [open $stall_stub w]
+puts $fd "#!/bin/sh"
+puts $fd {printf '%s\n' '{"type":"system","subtype":"init","session_id":"stall-sess"}'}
+puts $fd "sleep 30"
+close $fd
+file attributes $stall_stub -permissions 0755
+
+proc spar::find_tool {name} {
+    if {$name eq "claude"} { return [list $::stall_stub] }
+    return [auto_execok $name]
+}
+
+set stall_prompt [file join $tmp_root prompt-stall]
+file mkdir $stall_prompt
+set inst_st [spar::Harness new $stall_prompt [file join $tmp_root logs-st]]
+oo::objdefine $inst_st method _cost_poll_ms {} { return 150 }
+$inst_st set_worker_cost_cap 0
+$inst_st set_stall_timeout 0.4
+
+set log_st [file join $tmp_root logs-st st.log]
+set t0 [clock milliseconds]
+set rc_st [$inst_st call "stall-stage" $log_st "dummy prompt"]
+set elapsed_st [expr {[clock milliseconds] - $t0}]
+$inst_st destroy
+
+assert_eq $rc_st 2 "stall kill returns rc=2 (validate-the-product) with cost cap disabled"
+if {$elapsed_st >= 8000} {
+    puts "FAIL: stall watchdog did not fire within budget"
+    puts "  elapsed: ${elapsed_st}ms (expected < 8000ms)"
+    incr ::failures
+} else {
+    puts "  ok: stall watchdog fired at ${elapsed_st}ms (< 8000ms)"
+    incr ::passes
+}
+
 finish_tests

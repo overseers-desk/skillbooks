@@ -37,7 +37,8 @@ source [file join $::spar::harness_dir spar-mailroom.tcl]
 
 oo::class create spar::Harness {
     variable Slug LogPrefix CostLog SessionId PromptDir LogDir \
-             WorkerCostCapUsd CostKilled
+             WorkerCostCapUsd CostKilled \
+             StallKilled LastProgressMs StallTimeoutMs
 
     constructor {prompt_dir log_dir} {
         set PromptDir $prompt_dir
@@ -47,6 +48,8 @@ oo::class create spar::Harness {
         set CostLog   "${LogPrefix}-cost.jsonl"
         set SessionId ""
         set CostKilled 0
+        set StallKilled 0
+        set LastProgressMs 0
         # Per-worker cost cap (#114) is the sole budget circuit-breaker:
         # it bounds a runaway think/retry loop that spends fast. The
         # wall-clock cap was removed — dollars, not time, is the bound. The
@@ -54,10 +57,19 @@ oo::class create spar::Harness {
         # campaign.yaml tunes it per campaign through meta.env (key
         # WORKER_COST_CAP_USD). Zero disables the watchdog.
         set WorkerCostCapUsd 10.0
+        # Per-worker stall watchdog (#115): SIGTERM a worker that has emitted no
+        # stdout for STALL_TIMEOUT_SECS, catching a hung Skill that the cost cap
+        # would only reach much later (or never, with the cap disabled). The
+        # default ships enabled but conservative — long enough that a slow
+        # subagent turn or web fetch does not trip it. Zero disables. Stored in
+        # ms for direct comparison with clock milliseconds.
+        set StallTimeoutMs 600000
         if {[file exists [file join $prompt_dir meta.env]]} {
             set meta [my load_meta]
             set WorkerCostCapUsd [spar::dict_get_default \
                 $meta WORKER_COST_CAP_USD $WorkerCostCapUsd]
+            set StallTimeoutMs [expr {[spar::dict_get_default \
+                $meta STALL_TIMEOUT_SECS 600] * 1000}]
         }
         file mkdir $log_dir
         set fd [open $CostLog w]; close $fd
@@ -71,11 +83,18 @@ oo::class create spar::Harness {
     method prompt_dir  {} { return $PromptDir }
     method log_dir     {} { return $LogDir }
     method cost_cap    {} { return $WorkerCostCapUsd }
+    method stall_timeout {} { return [expr {$StallTimeoutMs / 1000}] }
 
     # Per-worker cost cap in USD for a single dispatch (parent session
     # plus its research subagents). Zero disables the watchdog.
     method set_worker_cost_cap {usd} {
         set WorkerCostCapUsd $usd
+    }
+
+    # Per-worker stall timeout in seconds (#115). Zero disables. Fractional
+    # values are accepted so tests can drive a sub-second timeout.
+    method set_stall_timeout {secs} {
+        set StallTimeoutMs [expr {$secs * 1000}]
     }
 
     # permission_args — the claude permission flags this harness runs under.
@@ -202,6 +221,7 @@ oo::class create spar::Harness {
             # and the true exit code so a kill is reported honestly.
             set t0 [clock seconds]
             set CostKilled 0
+            set StallKilled 0
             set exit_code [my _run_watched $cmd $json_file "${log_file}.stderr"]
             set elapsed [expr {[clock seconds] - $t0}]
 
@@ -223,6 +243,16 @@ oo::class create spar::Harness {
                     ${::spar::harness_log}::error \
                         "FAIL ($stage: cost cap \$$WorkerCostCapUsd reached — budget kill): $Slug"
                     return 3
+                }
+                # A stall kill (#115) is the same animal as an external kill for
+                # recovery — the disk product may hold real work — so it shares
+                # return 2 (validate-the-product). Check it AFTER CostKilled so a
+                # cost kill is never downgraded to a resumable stall; the cause
+                # string distinguishes the two in the log (#133).
+                if {$StallKilled} {
+                    ${::spar::harness_log}::error \
+                        "FAIL ($stage: stalled — no output for >= [my stall_timeout]s; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
+                    return 2
                 }
                 ${::spar::harness_log}::error \
                     "FAIL ($stage: ended without result after ${elapsed}s; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
@@ -321,8 +351,12 @@ oo::class create spar::Harness {
 
         set ::_rw_done($lead) 0
         set ::_rw_ec($lead) 0
+        # Seed the stall clock before arming the poll so the first tick measures
+        # idleness from now, not from epoch 0 (which would read as an instant
+        # stall). rw_drain advances it on every stdout line.
+        set LastProgressMs [clock milliseconds]
         fileevent $chan readable [list [self] rw_drain $chan $out $lead]
-        if {$WorkerCostCapUsd > 0} {
+        if {$WorkerCostCapUsd > 0 || $StallTimeoutMs > 0} {
             after [my _cost_poll_ms] \
                 [list [self] rw_poll $json_file $lead]
         }
@@ -354,6 +388,7 @@ oo::class create spar::Harness {
             }
             puts $out $line
             flush $out
+            set LastProgressMs [clock milliseconds]
         }
     }
 
@@ -369,27 +404,47 @@ oo::class create spar::Harness {
         # a missing element and error into bgerror, and on pid reuse could
         # even act against an unrelated later run — so gate on existence too.
         if {![info exists ::_rw_done($lead)] || $::_rw_done($lead)} { return }
-        set sid $SessionId
-        if {$sid eq ""} { set sid [my _extract_session_id $json_file] }
-        if {$sid ne ""} {
-            set cost [spar::worker_cost_usd $sid]
-            if {$cost >= $WorkerCostCapUsd} {
-                set CostKilled 1
+        # Two breach detectors share this tick, each gated on its own being
+        # armed: with the cost cap disabled (cap == 0) the cost block must not
+        # run, or `$cost >= 0` would fire an instant false budget kill. Cost is
+        # checked first so a worker over both bounds is recorded as the terminal
+        # budget kill (rc==3), not the resumable stall (rc==2).
+        if {$WorkerCostCapUsd > 0} {
+            set sid $SessionId
+            if {$sid eq ""} { set sid [my _extract_session_id $json_file] }
+            if {$sid ne ""} {
+                set cost [spar::worker_cost_usd $sid]
+                if {$cost >= $WorkerCostCapUsd} {
+                    set CostKilled 1
+                    ${::spar::harness_log}::warn \
+                        "\[$Slug\] Cost cap: \$[format %.2f $cost] >= \$$WorkerCostCapUsd — SIGTERM worker group"
+                    my _sigterm_group $lead
+                    return
+                }
+            }
+        }
+        if {$StallTimeoutMs > 0} {
+            set idle [expr {[clock milliseconds] - $LastProgressMs}]
+            if {$idle >= $StallTimeoutMs} {
+                set StallKilled 1
                 ${::spar::harness_log}::warn \
-                    "\[$Slug\] Cost cap: \$[format %.2f $cost] >= \$$WorkerCostCapUsd — SIGTERM worker group"
-                # Kill the worker's process group (negative pid). setsid put
-                # the child in its own group with the group id equal to the
-                # lead pid when it execs in place (the case for this pipe
-                # shape: the Tcl pipe child is not already a group leader, so
-                # setsid does not fork). The positive-pid SIGTERM is a
-                # belt-and-suspenders for any host where setsid forks, so the
-                # lead itself is signalled even if the group target misses.
-                catch {exec kill -TERM -$lead}
-                catch {exec kill -TERM $lead}
+                    "\[$Slug\] Stall: no output for [expr {$idle / 1000}]s >= [my stall_timeout]s — SIGTERM worker group"
+                my _sigterm_group $lead
                 return
             }
         }
         after [my _cost_poll_ms] [list [self] rw_poll $json_file $lead]
+    }
+
+    # _sigterm_group — SIGTERM the worker's process group (negative pid). setsid
+    # put the child in its own group with the group id equal to the lead pid
+    # when it execs in place (the case for this pipe shape: the Tcl pipe child
+    # is not already a group leader, so setsid does not fork). The positive-pid
+    # SIGTERM is a belt-and-suspenders for any host where setsid forks, so the
+    # lead itself is signalled even if the group target misses.
+    method _sigterm_group {lead} {
+        catch {exec kill -TERM -$lead}
+        catch {exec kill -TERM $lead}
     }
 
     # The watchdog poll interval in ms. A method so tests can shorten it
