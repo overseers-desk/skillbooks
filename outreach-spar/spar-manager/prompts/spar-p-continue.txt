@@ -1,6 +1,6 @@
 The previous turn of this profiling task was paused by a subscription usage-limit window, which has now reset. The budget is fine — this is not a cost cap, and you are not being asked to stop. Do not restart the research from scratch and do not repeat searches or page fetches you have already completed in this session.
 
-Resume any research that was still in progress when the window hit, then carry on through the remaining steps the original task set out.
+Resume any research that was still in progress when the window hit, then carry on through the remaining steps the original task set out. If a usage window has interrupted this profile more than once, or the searches already in this session are circling the same ground without new evidence, treat that as a signal to stop gathering: consolidate what you already have and write the profile, rather than opening new lines of research. A session that keeps hitting the limit is more likely looping than under-researched.
 
 Working context, re-stated because a resumed session reloads skill descriptions fresh and must not assume the earlier prompt's context survived:
 - STEM: __STEM__ — the roster stem; the profile file must be named exactly {stem}.md
