@@ -212,9 +212,37 @@ oo::class create spar::Harness {
     #     is metered by its own init event, not the dead one.
     method _with_recovery {entry stage log_file prompt args} {
         set max_retries 5
+        # A stall kill (#146) is a recoverable interruption, not a verdict on the
+        # work: a worker that emitted only thinking tokens then fell silent past
+        # the stall timeout produced nothing on disk to validate, and the silence
+        # is often a usage-limit window the CLI never surfaced as a resets-string
+        # for the rc==4 path to catch. Retry it on a fresh session rather than
+        # dropping the contact with no product. Bounded separately from the
+        # usage-window retries — the two failure classes are independent — and
+        # each retry already spaces itself by one stall_timeout of wall clock.
+        set max_stall_retries 2
+        set stall_attempt 0
         set json_file "${log_file}.json"
         for {set attempt 1} {1} {incr attempt} {
             set rc [my _invoke $stage $log_file $prompt {*}$args]
+            if {$rc == 2 && $StallKilled} {
+                if {$stall_attempt >= $max_stall_retries} {
+                    ${::spar::harness_log}::error \
+                        "FAIL ($stage: stalled after $max_stall_retries fresh-session retries): $Slug"
+                    return 2
+                }
+                incr stall_attempt
+                ${::spar::harness_log}::warn \
+                    "\[$Slug\] Stalled (retry $stall_attempt/$max_stall_retries) — restarting on a fresh session"
+                # A resume-initiated stall replays verbatim on its own session
+                # (restarting fresh would discard the work that session holds); a
+                # call-initiated one clears the captured session so the retry is
+                # metered by a fresh init event, not the hung one.
+                if {$entry ne "resume" && [lsearch -exact $args --resume] < 0} {
+                    set SessionId ""
+                }
+                continue
+            }
             if {$rc != 4} { return $rc }
             if {$attempt >= $max_retries} {
                 ${::spar::harness_log}::error "FAIL ($stage: credit limit after $max_retries retries): $Slug"
