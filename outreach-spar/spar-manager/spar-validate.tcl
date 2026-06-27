@@ -390,7 +390,7 @@ proc spar::_approach_first_line_is_profile_hash {approach_path} {
 # Keyed by level; must stay in sync with spar-P-profile.md §5.1.
 proc spar::_profile_canonical_keys {} {
     return [dict create \
-        root {profile_date star_rating yield match_rationale dependent_data} \
+        root {profile_date star_rating yield dependent_data} \
         dependent_data {contact_name organisation role date_excluded}]
 }
 
@@ -542,7 +542,7 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
     }
 
     # Required keys at root.
-    foreach req {profile_date star_rating yield match_rationale dependent_data} {
+    foreach req {profile_date star_rating yield dependent_data} {
         if {![dict exists $fm $req]} {
             lappend issues [spar::_issue error missing_${req} $contact_name \
                 "Profile front matter missing required key '${req}'"]
@@ -565,7 +565,6 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
     foreach {pat desc} {
         "## Prior correspondence" "prior-correspondence or warmth section"
         "## Angles"               "pitch or angles section"
-        "## Relevance assessment" "relevance-assessment pitch section"
         "Warmth:"                 "warmth line"
     } {
         if {[string first $pat $raw] >= 0} {

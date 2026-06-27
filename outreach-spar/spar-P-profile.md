@@ -209,7 +209,7 @@ If the person already has a profile, update it to record the new information. Ex
 
 P judges how useful this contact is to us in general, the campaign-independent value `star_rating` measures (see "Campaigns and segments"). Designing the pitch, the angle and the specific ask, is the approach phase's job. The reason is reuse: a segment's profiles serve many campaigns over time, each asking the contact for something different, and the same campaign may run again once our own facts have moved. A profile that argues one campaign's pitch, or recites our facts as they stand today, binds the profile to that ask and that moment and goes stale or wrong-ask the next time it is read. So the profile stays about the contact; the ask, our facts, and the pitch live in the approach phase, which is re-instantiated per campaign.
 
-Weigh the contact's audience, the topics they cover, the guests or subjects they feature, and any stated interest, against what this segment needs (its `rating_rubric` and `discovery_criteria`). Record the fit, where it is strong, weak, or absent, and any caution (wrong audience, stale, low engagement), in the front-matter `match_rationale` field (§5.1), stated as the contact's attributes against our needs. The body holds facts about the contact; the judgement of fit lives only in that field.
+Weigh the contact's audience, the topics they cover, the guests or subjects they feature, and any stated interest, against what this segment needs (its `rating_rubric` and `discovery_criteria`). Record the fit, where it is strong, weak, or absent, and any caution (wrong audience, stale, low engagement), in the body `## Relevance assessment` section (§5.2), as the contact's attributes against the segment rubric. This is the campaign-independent judgement behind `star_rating` (§4.13).
 
 ### 4.13 Assign ratings
 
@@ -287,10 +287,6 @@ Delimited by `---` fences at the very top of the file, standard Jekyll/Hugo/Pand
 profile_date: 2026-04-12            # ISO date this profile was generated
 star_rating: 4                      # 1–5; 0 never appears here (excluded contacts have no profile — see §4.2, §4.13, §5.4)
 yield: 7                            # integer — substantive data points counted per §4.14
-match_rationale: >                  # §4.12 — why this contact is useful to us, as the contact's attributes against this segment's needs; campaign-independent, 1–3 sentences
-  Large engaged audience of founders and operators; covers AI in business and
-  features founder guests. Strong general value for reaching that audience;
-  audience skews enterprise, so investor overlap is moderate.
 dependent_data:                     # snapshot of roster fields whose change invalidates this profile (see §5.3)
   contact_name: Kara Struckman
   organisation: Wilson Center
@@ -299,7 +295,7 @@ dependent_data:                     # snapshot of roster fields whose change inv
 ---
 ```
 
-**Field ownership.** `profile_date`, `star_rating`, `yield`, `match_rationale` are P-authored at profile generation time. They are not copies of roster values — they are the authorial record of P's assessment. If the roster is later hand-edited, git history of this profile preserves what P originally decided.
+**Field ownership.** `profile_date`, `star_rating`, `yield` are P-authored at profile generation time. They are not copies of roster values — they are the authorial record of P's assessment. If the roster is later hand-edited, git history of this profile preserves what P originally decided.
 
 **What is *not* in the front matter.** Approach-time decisions (`channel`, chosen `angle`, `sender`, `language`, `response_likelihood`) belong in the approach YAML, authored by A. Contact channels (`email`, `linkedin_url`, `facebook_url`, `phone`) belong in the roster TSV. Do not duplicate them here.
 
@@ -344,6 +340,10 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 
 [e.g. "FOSSASIA operational role" — only include if the target has operational experience relevant to the campaign that does not fit in the career history table]
 
+## Relevance assessment
+
+[Numbered list of the relevance dimensions, with specific evidence for each: which value signals from the segment `rating_rubric` this contact meets and how strongly, including where a signal is weak or absent. This is the campaign-independent judgement behind `star_rating`. Do not write a separate "What they have NOT said" header; the §5.0 style already prohibits paragraph-form negation.]
+
 ## Verification corrections
 
 [Any corrections made to the roster entry during profiling, or "None — roster entry confirmed accurate"]
@@ -355,7 +355,7 @@ The `dependent_data` block is a snapshot, taken at profile-generation time, of r
 
 **Snapshotted fields and divergence rules:**
 
-- `contact_name`, `organisation`, `role` — any change is staleness. A renamed contact, a moved org, or a new role all invalidate the profile's `match_rationale` and star rating.
+- `contact_name`, `organisation`, `role` — any change is staleness. A renamed contact, a moved org, or a new role all invalidate the profile's relevance assessment and star rating.
 - `date_excluded` — asymmetric. If the snapshot holds a date and the current value is empty, the contact was re-validated after a period of exclusion; treat as stale so P can re-assess. The reverse direction (empty → date) is not staleness; the contact is now `EXCLUDED` and the state supersedes.
 
 If the contact's name, organisation, or role was corrected *during this profile run* (see §4.15), snapshot the corrected values — not the pre-correction values. The snapshot's purpose is to detect *future* drift, not to preserve history.
