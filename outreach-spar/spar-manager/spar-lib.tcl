@@ -486,8 +486,10 @@ proc spar::get_max_passes {profile_path} {
         return 1
     }
     # read_profile_front_matter lives in spar-state.tcl; guard for callers that
-    # source only spar-lib.tcl.
-    if {[info procs spar::read_profile_front_matter] eq ""} {
+    # source only spar-lib.tcl. Use the fully-qualified name: this proc runs in
+    # the ::spar namespace, where a relative pattern resolves against
+    # ::spar:: and never matches the real ::spar::read_profile_front_matter.
+    if {[info procs ::spar::read_profile_front_matter] eq ""} {
         return 1
     }
     set fm [spar::read_profile_front_matter $profile_path]
