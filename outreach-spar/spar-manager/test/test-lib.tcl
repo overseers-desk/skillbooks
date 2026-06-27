@@ -497,5 +497,31 @@ assert_eq [spar::campaign_segment_names \
 assert_eq [spar::campaign_segment_names [dict create campaign "x"]] {} \
     "campaign_segment_names: absent segments → empty"
 
+# ════════════════════════════════════════════════════════════════════════
+# get_max_passes — profile-derived A-phase pass budget (SmartLayer/aesop#144)
+# ════════════════════════════════════════════════════════════════════════
+section "get_max_passes"
+
+# yield ≥ 6 licenses 3 passes. Regression guard for #144: get_max_passes runs
+# in the ::spar namespace, where a relative `info procs` guard silently missed
+# the front-matter reader and the proc fell through to 1 for every profile.
+set seg_mp [make_temp_segment]
+write_profile $seg_mp mp-high -yield 10
+assert_eq [spar::get_max_passes [file join $seg_mp profiles mp-high.md]] 3 \
+    "get_max_passes: yield 10 → 3 passes"
+
+write_profile $seg_mp mp-six -yield 6
+assert_eq [spar::get_max_passes [file join $seg_mp profiles mp-six.md]] 3 \
+    "get_max_passes: yield 6 (boundary) → 3 passes"
+
+# yield < 6 stays at a single pass.
+write_profile $seg_mp mp-low -yield 5
+assert_eq [spar::get_max_passes [file join $seg_mp profiles mp-low.md]] 1 \
+    "get_max_passes: yield 5 → 1 pass"
+
+# Missing profile → 1 pass.
+assert_eq [spar::get_max_passes [file join $seg_mp profiles nope.md]] 1 \
+    "get_max_passes: missing profile → 1 pass"
+
 
 finish_tests
