@@ -457,8 +457,9 @@ $inst_snk destroy
 
 # A worker that emits an init event then falls silent is SIGTERM'd by the stall
 # watchdog. The cost cap is disabled (this leg is the stall path, not the cap),
-# so the poll must arm on the stall bound alone. rc==2: the disk product may
-# hold work, same recovery as an external kill.
+# so the poll must arm on the stall bound alone. This stub always stalls, so the
+# bounded fresh-session retries (#146) are exhausted and the call returns rc==2:
+# the disk product may hold work, same recovery as an external kill.
 set stall_stub [file join $tmp_root claude-stall]
 set fd [open $stall_stub w]
 puts $fd "#!/bin/sh"
@@ -494,6 +495,62 @@ if {$elapsed_st >= 8000} {
     puts "  ok: stall watchdog fired at ${elapsed_st}ms (< 8000ms)"
     incr ::passes
 }
+
+# ════════════════════════════════════════════════════════════════════════
+section "11b. Stall retries on a fresh session, then recovers (#146)"
+# ════════════════════════════════════════════════════════════════════════
+
+# A stall is a recoverable interruption: the worker emitted nothing on disk to
+# validate, and the silence is often a usage-limit window the CLI never surfaced
+# as a resets-string. So a call-initiated stall must not drop the contact — the
+# recovery layer retries on a FRESH session (no --resume, the hung session
+# cleared) up to the bound. The stub stalls on its first invocation and succeeds
+# on the second; the harness must return rc=0 with the recovered product on disk,
+# after exactly two invocations, the retry carrying no --resume.
+set sr_counter [file join $tmp_root sr-counter]
+set sr_argv    [file join $tmp_root sr-argv]
+set sr_stub [file join $tmp_root claude-stallretry]
+set fd [open $sr_stub w]
+puts $fd "#!/bin/sh"
+puts $fd "CNT=\"$sr_counter\""
+puts $fd "ARGV=\"$sr_argv\""
+puts $fd {printf '%s\n' "$*" >> "$ARGV"}
+puts $fd {n=$(cat "$CNT" 2>/dev/null || echo 0); n=$((n+1)); echo "$n" > "$CNT"}
+puts $fd {printf '%s\n' "{\"type\":\"system\",\"subtype\":\"init\",\"session_id\":\"stallretry-sess-$n\"}"}
+puts $fd {if [ "$n" -eq 1 ]; then}
+puts $fd {  sleep 30}
+puts $fd {else}
+puts $fd {  printf '%s\n' '{"type":"result","subtype":"success","is_error":false,"result":"RECOVERED","total_cost_usd":0.03,"session_id":"stallretry-sess-2"}'}
+puts $fd {fi}
+puts $fd "exit 0"
+close $fd
+file attributes $sr_stub -permissions 0755
+
+proc spar::find_tool {name} {
+    if {$name eq "claude"} { return [list $::sr_stub] }
+    return [auto_execok $name]
+}
+
+set sr_prompt [file join $tmp_root prompt-sr]
+file mkdir $sr_prompt
+set inst_sr [spar::Harness new $sr_prompt [file join $tmp_root logs-sr]]
+oo::objdefine $inst_sr method _cost_poll_ms {} { return 150 }
+$inst_sr set_worker_cost_cap 0
+$inst_sr set_stall_timeout 0.4
+
+set log_sr [file join $tmp_root logs-sr sr.log]
+set rc_sr [$inst_sr call "stallretry-stage" $log_sr "dummy prompt"]
+set sr_result [string trim [exec cat $log_sr]]
+set sr_attempts [string trim [exec cat $sr_counter]]
+set argv_sr [split [string trim [exec cat $sr_argv]] \n]
+$inst_sr destroy
+
+assert_eq $rc_sr 0 "stall then success returns rc=0 (contact recovered, not dropped)"
+assert_eq $sr_result "RECOVERED" "the fresh-session retry's product is on disk"
+assert_eq $sr_attempts 2 "exactly two invocations: stall then fresh retry"
+if {[string match *--resume* [lindex $argv_sr 1]]} {
+    puts "FAIL: stall retry should run fresh, not resume the hung session"; incr ::failures
+} else { puts "  ok: stall retry runs fresh (no --resume)"; incr ::passes }
 
 # ════════════════════════════════════════════════════════════════════════
 section "12. Usage-window recovery posture: resume default, restart override (#142)"
