@@ -55,12 +55,17 @@ proc section {title} {
 
 # make_temp_segment -- create a temp directory mimicking a segment.
 # Returns the path.  Caller is responsible for cleanup (or use register_cleanup).
-proc make_temp_segment {} {
+proc make_temp_dir {} {
     set base [file join /tmp "spar-test-[pid]-[clock microseconds]"]
     file mkdir $base
+    lappend ::cleanup_dirs $base
+    return $base
+}
+
+proc make_temp_segment {} {
+    set base [make_temp_dir]
     file mkdir [file join $base profiles]
     file mkdir [file join $base approach]
-    lappend ::cleanup_dirs $base
     return $base
 }
 

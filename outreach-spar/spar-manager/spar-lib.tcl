@@ -553,6 +553,41 @@ proc spar::extract_between {text start_marker end_marker} {
     return [join $result \n]
 }
 
+# transcript_assistant_text — concatenate every assistant text block from a
+# stream-json transcript (.json), in order, newline-separated. The marker
+# blocks the A harness greps for (DRAFT_START/DRAFT_END, RATIONALE_*) live in
+# the author's own turns; the envelope's `result` is only the final turn's
+# text, which a post-draft turn (e.g. a Stop hook reacting to a `#N` token the
+# draft quoted) displaces. Reading the whole transcript recovers the draft
+# regardless of what was said after it. Returns "" when the file is absent or
+# holds no assistant text.
+proc spar::transcript_assistant_text {json_file} {
+    if {![file exists $json_file]} { return "" }
+    set chunks {}
+    set fd [open $json_file r]
+    try {
+        while {[gets $fd line] >= 0} {
+            set line [string trim $line]
+            if {$line eq ""} continue
+            if {[catch {set obj [::json::json2dict $line]}]} continue
+            if {![dict exists $obj type] || [dict get $obj type] ne "assistant"} continue
+            if {![dict exists $obj message]} continue
+            set msg [dict get $obj message]
+            if {![dict exists $msg content]} continue
+            set content [dict get $msg content]
+            foreach block $content {
+                if {[dict exists $block type] && [dict get $block type] eq "text" \
+                        && [dict exists $block text]} {
+                    lappend chunks [dict get $block text]
+                }
+            }
+        }
+    } finally {
+        close $fd
+    }
+    return [join $chunks \n]
+}
+
 # is_null — check for YAML null representations
 proc spar::is_null {val} {
     set v [string trim $val]
