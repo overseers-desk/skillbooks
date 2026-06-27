@@ -849,7 +849,7 @@ oo::class create spar::ApproachHarness {
             return 1
         }
 
-        set draft_text [spar::read_file $author_draft_log]
+        set draft_text [spar::transcript_assistant_text "${author_draft_log}.json"]
         set draft [spar::extract_between $draft_text "DRAFT_START" "DRAFT_END"]
         if {$draft eq ""} {
             ${::spar::harness_log}::error "FAIL (no draft markers): $slug"
@@ -918,7 +918,7 @@ oo::class create spar::ApproachHarness {
                 return 1
             }
 
-            set rev_text [spar::read_file $author_rev_log]
+            set rev_text [spar::transcript_assistant_text "${author_rev_log}.json"]
             set revised_draft [spar::extract_between $rev_text "DRAFT_START" "DRAFT_END"]
             if {$revised_draft ne ""} {
                 spar::write_file [file join $prompt_dir draft-current.txt] $revised_draft
@@ -950,14 +950,14 @@ oo::class create spar::ApproachHarness {
         for {set r 1} {$r <= $Pass} {incr r} {
             set rev_log "${log_prefix}-author-rev${r}.log"
             if {[file exists $rev_log]} {
-                set rev_draft [spar::extract_between [spar::read_file $rev_log] "DRAFT_START" "DRAFT_END"]
+                set rev_draft [spar::extract_between [spar::transcript_assistant_text "${rev_log}.json"] "DRAFT_START" "DRAFT_END"]
                 if {$rev_draft ne ""} {
                     append all_revisions "\n### A1 Draft [expr {$r + 1}]\n\n$rev_draft\n"
                 }
             }
         }
 
-        set initial_draft [spar::extract_between [spar::read_file "${log_prefix}-author-draft.log"] "DRAFT_START" "DRAFT_END"]
+        set initial_draft [spar::extract_between [spar::transcript_assistant_text "${log_prefix}-author-draft.log.json"] "DRAFT_START" "DRAFT_END"]
         set final_draft [spar::read_file [file join $prompt_dir draft-current.txt]]
 
         set assembly_prompt [my load_prompt spar-a-assembly [dict create \
