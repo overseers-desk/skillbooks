@@ -225,8 +225,12 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
     set appendices [spar::dict_get_default $cdata prompt_appendices [dict create]]
     set appendix_p_author [spar::dict_get_default $appendices p_author ""]
 
+    # Limited-knowledge profiling (INVARIANTS.md I1): P reads only the roster
+    # and the segment definition. The campaign usp_document/overview is NOT a
+    # profiler input — it is campaign-bound (our pitch and our current facts),
+    # and feeding it is what let our facts seep into reusable profiles.
     foreach {path label} [list \
-        $roster_path Roster $goal_path Goal $spar_p SPAR-P $overview Overview] {
+        $roster_path Roster $goal_path Goal $spar_p SPAR-P] {
         if {![file exists $path]} {
             error "$label not found: $path"
         }
@@ -345,9 +349,10 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             __ROSTER_LOCK__   $roster_lock \
         ] [spar::load_prompt_template spar-p.txt]]
 
-        if {$appendix_p_author ne ""} {
-            append prompt "\n\n$appendix_p_author"
-        }
+        # p_author (campaign prompt_appendices) is NOT appended to the profiler:
+        # it is campaign-bound guidance, and the profiler operates on the segment
+        # definition alone (INVARIANTS.md I1). Relevance guidance that P needs
+        # lives in segment.yaml rating_rubric, a campaign-independent home.
 
         set fd [open [file join $pdir prompt.txt] w]
         puts $fd $prompt

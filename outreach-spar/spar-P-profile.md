@@ -1,7 +1,7 @@
 # SPAR-P: Profile Building
 
 **Applies to:** AI agents (Sonnet tier) performing the P phase of the SPAR outreach methodology
-**Prerequisite reading:** The campaign's angle table (defines what relevance looks like for this campaign) and the SPAR methodology (`spar-methodology.md`, P section)
+**Prerequisite reading:** the segment file's `rating_rubric` and `discovery_criteria` (the standing, campaign-independent standard for who belongs and how valuable they are), `INVARIANTS.md` (I1 governs what may enter a profile), and the SPAR methodology (`spar-methodology.md`, P section)
 
 ## 1. When to use this procedure
 
@@ -11,8 +11,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 
 - **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, segment, discovered_via). If the roster entry has no `contact_name`, resolving one is the first task of this phase — see §4.1. Entries with a blank `contact_name` are P-phase leads, not invalid data.
 - **Segment file:** The file (typically `segment.yaml`) that defines the segment's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
-- **Campaign angle table:** The list of angles defined by the campaign plan, with descriptions of when each applies. Read this before profiling — it defines what "relevant" means for this campaign.
-- **Campaign context documents:** The campaign plan names specific documents (mission statement, project pages, segment definitions) that explain the campaign's offering. Read the angle table first; read context documents only for angles that seem relevant to the target.
+- **Rating rubric (in the segment file):** the segment's `rating_rubric` defines what "valuable to us" means for this population, campaign-independent. It is the standing standard you judge the contact against. You are not given the campaign's ask, pitch, or USP, nor any campaign overview document; the profile is reused across campaigns and over time, so that knowledge belongs to the approach phase (INVARIANTS.md I1).
 - **LinkedIn lookup method:** Use the LinkedIn skill or MCP available in your environment. Read its documentation before the first fetch in a session — it specifies sequencing constraints and any parsing scripts.
 
 ## 3. Output
@@ -96,15 +95,15 @@ The purpose of this step is twofold: (1) verify the person found is the same ind
 - Community groups or pages they admin or follow (relevant to campaign angles)
 - Any public posts relevant to the campaign
 
-### 4.5 Keyword search for campaign-relevant terms
+### 4.5 Keyword search for relevance terms
 
-Run keyword searches on the saved HTML using the terms from the campaign's angle table. This determines which angles have direct evidence and which do not.
+Run keyword searches on the saved HTML using terms drawn from the segment's `rating_rubric` and `discovery_criteria`. This determines which relevance signals have direct evidence.
 
 If you fetched via the LinkedIn skill or MCP, use its keyword-search tool, passing the saved profile HTML and the keyword list; if you hand-rolled a chromium fetch, grep the saved DOM for the keyword list.
 
 **Choose keywords from two sources:**
 
-1. **Campaign angle table keywords.** For each angle in the table, derive 2–4 search terms. For example, if the angle is "certification gap" and the description mentions "provenance, SLSA, Sigstore, supply chain attestation," search for those terms. If the angle is "network / connection value," search for names of organisations and communities the campaign wants to reach.
+1. **Rubric keywords.** From the segment's `rating_rubric` and `discovery_criteria`, derive 2–4 search terms for each value signal the rubric names (the topics, audiences, and contact attributes that make a member valuable). Search the saved HTML for those terms.
 
 2. **Profile-derived keywords.** After parsing the profile, note organisations, projects, and people mentioned. Run a second keyword search for these to extract context (what the target said about them, how they are connected). This is the step that surfaces connections — not the initial parse.
 
@@ -142,32 +141,9 @@ Record the target address used, the OSRM driving distance in km, and the duratio
 
 This responsibility is temporary; the harness will absorb the OSRM call once `venue` is consistently populated and a target-side location field is added to the roster. See SmartLayer/aesop#93.
 
-### 4.7 Check email history (IMAP)
+### 4.7 (removed) Warmth and prior correspondence are not profile content
 
-Before profiling public sources, check whether the campaign's organisation has prior correspondence with this contact. The campaign plan specifies which email accounts to search (e.g. admin and director IMAP accounts).
-
-**Search each account for:**
-
-- The contact's email address (if known) — search by `from` field
-- The contact's full name — search by `subject` field (as a proxy; full-text body search may not be available on all mail servers)
-- The organisation name — search by `subject` field
-
-**Record in the profile document:**
-
-- Whether prior correspondence exists (yes/no per account)
-- If yes: dates, topics discussed, any commitments made, and direct quotes from the contact that reveal what they care about
-- The warmth level this implies (see table below)
-
-| Level | Criteria |
-|---|---|
-| Existing relationship | Substantive prior correspondence across multiple threads, or CRM records prior bookings |
-| Prior contact | Brief or one-off correspondence (enquiry, event RSVP, introduction) |
-| Known-of | No direct correspondence, but discovered via a mutual connection, shared network, or industry event |
-| Cold | No prior contact, no shared context |
-
-**Update the roster:** Add IMAP findings to `p_note` so the A phase knows the warmth level without re-querying email. Example: `warm (director IMAP: discussed coach access Nov 2025)` or `cold (no IMAP history)`.
-
-This step is critical because warmth level determines how the A phase opens the message. A contact with prior correspondence gets a thread-referencing opener; a cold contact gets a situational opener. If this step is skipped, the A phase cannot distinguish between the two.
+P does not check IMAP and does not record warmth. Prior correspondence and warmth are engagement state: they change between campaigns and the first message we send falsifies them, so a profile carrying them is stale on reuse (INVARIANTS.md, I1). The approach phase determines warmth fresh at contact time, from the per-contact approach log and a current IMAP check.
 
 ### 4.8 Source contact email
 
@@ -229,20 +205,11 @@ If the person already has a profile, update it to record the new information. Ex
 
 **New names for the roster.** Any person found in this step who is not already in the roster and who is relevant to the campaign (by role, organisation, or community membership) should be added to the roster as a new contact. Record `discovered_via` as the target being profiled together with the specific mechanism (e.g. "tagged in LinkedIn post about FOSSASIA Summit 2024 by [contact]"). After completing all social media fetches for the current target, profile each newly added contact immediately by spawning a P subagent — do not defer to a future sweep, which may never run. If the seed data for a new contact is insufficient to produce a meaningful profile (name only, no organisation or role), write the roster entry and accept it will not be profiled in this session.
 
-### 4.12 Identify applicable angles
+### 4.12 Judge usefulness to us
 
-Read the campaign's angle table. For each angle, assess whether the profile provides evidence for it:
-- **Direct evidence:** The target has said or done something that maps to this angle. Quote the evidence.
-- **Indirect evidence:** The target's role, connections, or education suggest relevance, but they have not stated it publicly. Note the inference and flag it as indirect.
-- **No evidence:** Nothing in the profile connects to this angle.
+P judges how useful this contact is to us in general, the campaign-independent value `star_rating` measures (see "Campaigns and segments"). Designing the pitch, the angle and the specific ask, is the approach phase's job. The reason is reuse: a segment's profiles serve many campaigns over time, each asking the contact for something different, and the same campaign may run again once our own facts have moved. A profile that argues one campaign's pitch, or recites our facts as they stand today, binds the profile to that ask and that moment and goes stale or wrong-ask the next time it is read. So the profile stays about the contact; the ask, our facts, and the pitch live in the approach phase, which is re-instantiated per campaign.
 
-Education programmes can be indirect evidence. A degree in International Relations, Public Policy, Law, or a similar programme is a signal that the target thinks about the policy dimension of their technical work, and supports angles like "jurisdiction" or "cross-border licensing" even though it is not a public statement. Record education even when the target has published nothing.
-
-Order the applicable angles by strength of evidence. The primary angle is the one with the strongest evidence. If no technical angle has direct evidence but the target has strong connection value, "network / connection value" becomes the primary angle.
-
-For each applicable angle, note:
-- The specific ask it implies (working group participation, advisory board, membership, introductions, conference partnership)
-- Whether the ask is a cold open (requires the conversation to surface interest) or a warm open (can reference something the target has already said)
+Weigh the contact's audience, the topics they cover, the guests or subjects they feature, and any stated interest, against what this segment needs (its `rating_rubric` and `discovery_criteria`). Record the fit, where it is strong, weak, or absent, and any caution (wrong audience, stale, low engagement), in the front-matter `match_rationale` field (§5.1), stated as the contact's attributes against our needs. The body holds facts about the contact; the judgement of fit lives only in that field.
 
 ### 4.13 Assign ratings
 
@@ -303,7 +270,7 @@ The body's job is to be a useful index for the A phase. Every sentence either re
 
 Specifics: write them literally. `0.76` beats `very low`. `founded 2013` beats `long-established`. `1,228 followers` beats `modest following`. Quotes go verbatim or close-paraphrase; do not collapse to a topic label.
 
-Epistemic markers distinguish absence-of-evidence from evidence-of-absence. `IMAP timed out, no priors obtainable` is not the same as `no prior correspondence confirmed`. The first is a retryable search-state; the second is a closed finding. Use `unobtainable` or `not attempted` when the search did not run or could not run; use `empty` or `no priors found` when the search ran and returned nothing. The §4.7 warmth finding is what the reader trusts; the marker is how it is justified.
+Epistemic markers distinguish absence-of-evidence from evidence-of-absence. `LinkedIn fetch failed, activity not assessed` is not the same as `no relevant public activity found`. The first is a retryable search-state; the second is a closed finding. Use `unobtainable` or `not attempted` when a search did not run or could not run; use `empty` or `none found` when the search ran and returned nothing.
 
 Do not write trailing-restate sentences (a final clause that summarises the prior list). Do not write editor-gloss clauses (`makes her a strong candidate for...`, `can accompany...`, `indicating breadth of...`). Do not expand a single fact into three sentences for paragraph rhythm. Each is filler that doubles word count without adding indexable signal.
 
@@ -320,10 +287,10 @@ Delimited by `---` fences at the very top of the file, standard Jekyll/Hugo/Pand
 profile_date: 2026-04-12            # ISO date this profile was generated
 star_rating: 4                      # 1–5; 0 never appears here (excluded contacts have no profile — see §4.2, §4.13, §5.4)
 yield: 7                            # integer — substantive data points counted per §4.14
-warmth_finding: cold                # existing | prior | known-of | cold — IMAP-derived per §4.7
-applicable_angles:                  # ordered by strength of evidence per §4.12; slugs only, evidence stays in the body
-  - certification-gap
-  - network-connection-value
+match_rationale: >                  # §4.12 — why this contact is useful to us, as the contact's attributes against this segment's needs; campaign-independent, 1–3 sentences
+  Large engaged audience of founders and operators; covers AI in business and
+  features founder guests. Strong general value for reaching that audience;
+  audience skews enterprise, so investor overlap is moderate.
 dependent_data:                     # snapshot of roster fields whose change invalidates this profile (see §5.3)
   contact_name: Kara Struckman
   organisation: Wilson Center
@@ -332,7 +299,7 @@ dependent_data:                     # snapshot of roster fields whose change inv
 ---
 ```
 
-**Field ownership.** `profile_date`, `star_rating`, `yield`, `warmth_finding`, `applicable_angles` are P-authored at profile generation time. They are not copies of roster values — they are the authorial record of P's assessment. If the roster is later hand-edited, git history of this profile preserves what P originally decided.
+**Field ownership.** `profile_date`, `star_rating`, `yield`, `match_rationale` are P-authored at profile generation time. They are not copies of roster values — they are the authorial record of P's assessment. If the roster is later hand-edited, git history of this profile preserves what P originally decided.
 
 **What is *not* in the front matter.** Approach-time decisions (`channel`, chosen `angle`, `sender`, `language`, `response_likelihood`) belong in the approach YAML, authored by A. Contact channels (`email`, `linkedin_url`, `facebook_url`, `phone`) belong in the roster TSV. Do not duplicate them here.
 
@@ -342,10 +309,6 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 
 ```markdown
 # Profile: [Full Name]
-
-## Prior correspondence (IMAP)
-
-[Hard limit: at most 3 lines, no quote marks, no paragraphs. Line 1: `Warmth: <existing|prior|known-of|cold>. IMAP <obtainable|empty|not-attempted>; <count> priors.` Line 2 (optional, when search ran): accounts and queries. Line 3 (optional, when priors exist): a single semicolon-separated chronology of dated actions, e.g. `2026-04-02 outreach sent; 2026-04-08 reply received; 2026-04-28 site visit; 2026-05-04 partnership-intent email; 2026-05-07 phone call`. Anything that is a `"` belongs in `## What they have said publicly`, never here. Anything that is interpretation or commentary is filler per §5.0 and goes nowhere.]
 
 ## Current role
 
@@ -369,7 +332,7 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 
 **On [topic] ([source]):** "[Quote or close paraphrase]"
 
-[Repeat for each substantive statement. This section is the canonical home for direct quotes attributable to the target, whether the source is a public post (LinkedIn, blog, conference) or a private email exchange with the campaign sender. Each quote appears exactly once in the profile; the IMAP section above must not repeat it. If the target has said nothing on a campaign-relevant topic and the absence is itself useful for angle selection, mention it inline once: e.g. `No public statements found on [topic].` Do not write a dedicated absent-themes block; absences that do not change angle assessment are not worth a line.]
+[Repeat for each substantive statement. This section is the canonical home for direct quotes attributable to the target, whether the source is a public post (LinkedIn, blog, conference) or a private email exchange with the campaign sender. Each quote appears exactly once in the profile. If the target has said nothing on a relevant topic and the absence bears on the rating, mention it inline once: e.g. `No public statements found on [topic].` Do not write a dedicated absent-themes block; absences that do not change the rating are not worth a line.]
 
 ## Who they know (connections relevant to campaign)
 
@@ -380,18 +343,6 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 ## [Domain-specific operational context, if applicable]
 
 [e.g. "FOSSASIA operational role" — only include if the target has operational experience relevant to the campaign that does not fit in the career history table]
-
-## Relevance assessment
-
-[Numbered list of relevance dimensions with specific evidence for each. If a campaign-relevant absence affects angle ordering, lead with that point; otherwise omit. Do not write a separate "What they have NOT said" header; the §5.0 style already prohibits paragraph-form negation.]
-
-## Angles (ordered by fit)
-
-1. **[Primary angle]** ([primary/secondary/tertiary]) — [Assessment with specific evidence. State the ask this angle implies.]
-
-2. **[Secondary angle]** — [Assessment]
-
-[Continue as needed]
 
 ## Verification corrections
 
@@ -404,7 +355,7 @@ The `dependent_data` block is a snapshot, taken at profile-generation time, of r
 
 **Snapshotted fields and divergence rules:**
 
-- `contact_name`, `organisation`, `role` — any change is staleness. A renamed contact, a moved org, or a new role all invalidate the profile's angle assessment.
+- `contact_name`, `organisation`, `role` — any change is staleness. A renamed contact, a moved org, or a new role all invalidate the profile's `match_rationale` and star rating.
 - `date_excluded` — asymmetric. If the snapshot holds a date and the current value is empty, the contact was re-validated after a period of exclusion; treat as stale so P can re-assess. The reverse direction (empty → date) is not staleness; the contact is now `EXCLUDED` and the state supersedes.
 
 If the contact's name, organisation, or role was corrected *during this profile run* (see §4.15), snapshot the corrected values — not the pre-correction values. The snapshot's purpose is to detect *future* drift, not to preserve history.
@@ -418,7 +369,7 @@ Per §4.1, §4.2, §4.13 and §4.15, contacts with `date_excluded` set do not re
 If this procedure is delegated to a subagent, the calling agent must provide:
 - The path to this AESOP
 - The roster file path and the specific entry to profile
-- The campaign angle table path
+- The segment file path (`rating_rubric`, `discovery_criteria`)
 - The campaign context document paths (only those likely to be relevant)
 - The profile output directory path
 

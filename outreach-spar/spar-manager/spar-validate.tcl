@@ -390,7 +390,7 @@ proc spar::_approach_first_line_is_profile_hash {approach_path} {
 # Keyed by level; must stay in sync with spar-P-profile.md §5.1.
 proc spar::_profile_canonical_keys {} {
     return [dict create \
-        root {profile_date star_rating yield warmth_finding applicable_angles dependent_data} \
+        root {profile_date star_rating yield match_rationale dependent_data} \
         dependent_data {contact_name organisation role date_excluded}]
 }
 
@@ -542,7 +542,7 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
     }
 
     # Required keys at root.
-    foreach req {profile_date star_rating yield warmth_finding applicable_angles dependent_data} {
+    foreach req {profile_date star_rating yield match_rationale dependent_data} {
         if {![dict exists $fm $req]} {
             lappend issues [spar::_issue error missing_${req} $contact_name \
                 "Profile front matter missing required key '${req}'"]
@@ -557,11 +557,27 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
                 "yield '$y' — must be a non-negative integer (data-point count per SPAR-P §4.14)"]
         }
     }
-    if {[dict exists $fm warmth_finding]} {
-        set w [dict get $fm warmth_finding]
-        if {$w ni {existing prior known-of cold}} {
-            lappend issues [spar::_issue error invalid_warmth_finding $contact_name \
-                "warmth_finding '$w' — must be existing, prior, known-of, or cold"]
+    # I1 backstop (INVARIANTS.md): a reusable profile must carry no engagement,
+    # warmth, or pitch content; that is campaign-bound and goes stale on reuse,
+    # so its presence is a build failure, not a style note. These patterns are
+    # the headings and lines the removed leaky sections used. This is the
+    # mechanical check that would have caught the leak the prose missed.
+    foreach {pat desc} {
+        "## Prior correspondence" "prior-correspondence or warmth section"
+        "## Angles"               "pitch or angles section"
+        "## Relevance assessment" "relevance-assessment pitch section"
+        "Warmth:"                 "warmth line"
+    } {
+        if {[string first $pat $raw] >= 0} {
+            lappend issues [spar::_issue error engagement_leak $contact_name \
+                "Profile carries a $desc ('$pat'). Engagement and pitch content is campaign-bound and must not live in a reusable profile (INVARIANTS.md I1)."]
+        }
+    }
+    set _low [string tolower $raw]
+    foreach _ph {"no prior contact" "no prior correspondence" "no prior connection"} {
+        if {[string first $_ph $_low] >= 0} {
+            lappend issues [spar::_issue error engagement_leak $contact_name \
+                "Profile states '$_ph'. Prior-contact state is campaign-bound and stale on reuse (INVARIANTS.md I1)."]
         }
     }
     if {[dict exists $fm star_rating]} {
