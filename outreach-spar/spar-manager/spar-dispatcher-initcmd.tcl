@@ -200,9 +200,11 @@ proc _harness_run_body {row opts} {
     set harness_class [dict get $opts harness_class]
 
     set rc 1
+    set cause ""
     if {[catch {
         set inst [$harness_class new $prompt_dir $log_dir]
         set rc [$inst run]
+        if {$rc != 0} { catch {set cause [$inst fail_cause]} }
         catch {$inst destroy}
     } err]} {
         msg_failed $row "harness_run: $err"
@@ -211,7 +213,7 @@ proc _harness_run_body {row opts} {
     if {$rc == 0} {
         msg_done $row [list rc 0]
     } else {
-        msg_failed $row "harness exited rc=$rc"
+        msg_failed $row "harness exited rc=$rc[expr {$cause ne "" ? " | $cause" : ""}]"
     }
 }
 
