@@ -299,12 +299,15 @@ set tmp_root [file join /tmp "spar-pool-harness-[pid]-[clock microseconds]"]
 file mkdir $tmp_root
 lappend ::cleanup_dirs $tmp_root
 
-proc make_harness_dirs {tag {rc 0}} {
+proc make_harness_dirs {tag {rc 0} {cause ""}} {
     set p [file join $::tmp_root "$tag-prompt"]
     set l [file join $::tmp_root "$tag-log"]
     file mkdir $p $l
     if {$rc ne ""} {
         set fd [open [file join $p run-rc] w]; puts -nonewline $fd $rc; close $fd
+    }
+    if {$cause ne ""} {
+        set fd [open [file join $p run-cause] w]; puts -nonewline $fd $cause; close $fd
     }
     return [list $p $l]
 }
@@ -331,6 +334,24 @@ $d enqueue h_throw T1 harness_run [dict create \
     prompt_dir $p_t log_dir $l_t harness_class FakeHarness]
 wait_for_terminal $d h_throw 3000
 assert_eq [$d state h_throw] failed "harness_run catches errors as failed"
+
+# 13e. The harness FAIL cause reaches the failure reason for the roll-call
+# (#148): harness_run reads fail_cause when rc!=0 and folds it into the reason,
+# so a real enqueue→harness_run→row-failed round trip carries the cause an
+# operator needs, not just "rc=1". Render it through spar::render_rollcall to
+# prove the run-end worklist is built from the live event, end to end.
+set ::_rc_reason ""
+$d subscribe row-failed [list apply {{row reason} { set ::_rc_reason $reason }}]
+lassign [make_harness_dirs cause 1 "FAIL (T2: stalled — no output): cause-prompt"] p_c l_c
+$d enqueue h_cause T2 harness_run [dict create \
+    prompt_dir $p_c log_dir $l_c harness_class FakeHarness]
+wait_for_terminal $d h_cause 3000
+assert_match $::_rc_reason "*rc=1*FAIL (T2: stalled*" \
+    "harness_run folds fail_cause into the failure reason"
+set rc_line [spar::render_rollcall \
+    [list [dict create slug h_cause tid T2 outcome failed reason $::_rc_reason]]]
+assert_match $rc_line "*h_cause*\[T2\]*rc=1*stalled*" \
+    "render_rollcall builds the worklist line from the live failure reason"
 
 # 13d. Cancel before the worker enters the harness body — the cancel
 # sentinel is set before resume_queue posts to the tpool, so the
