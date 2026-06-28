@@ -328,6 +328,12 @@ if {$auto_mode} {
 if {$dispatching} {
     set ::_total_done 0
     set ::_total_failed 0
+    # Roll-call accumulators: ::_row_tid maps each enqueued slug to the TID
+    # (phase) that last ran it, ::_rollcall collects every non-DONE outcome.
+    # Reset once here, not in the per-iteration block below, so the --auto
+    # loop's failures survive across iterations to the final summary.
+    set ::_row_tid [dict create]
+    set ::_rollcall {}
 
     proc exec_on_progress {slug status message} {
         switch -- $status {
@@ -481,6 +487,7 @@ if {$dispatching} {
             foreach pair $rows {
                 lassign $pair stem row_opts
                 $disp enqueue $stem $tid $worker_proc $row_opts
+                dict set ::_row_tid $stem $tid
                 # Mirror the legacy `[START] slug` line at enqueue time
                 # so output ordering matches the historical queue.
                 exec_on_progress $stem started ""
@@ -521,11 +528,15 @@ if {$dispatching} {
     }
     proc ::_dispatch_on_failed {row reason} {
         incr ::_total_failed
+        set tid ""; catch {set tid [dict get $::_row_tid $row]}
+        lappend ::_rollcall [dict create slug $row tid $tid outcome failed reason $reason]
         exec_on_progress $row failed $reason
     }
     proc ::_dispatch_on_state {row to_state} {
         if {$to_state ni {done failed cancelled}} return
         if {$to_state eq "cancelled"} {
+            set tid ""; catch {set tid [dict get $::_row_tid $row]}
+            lappend ::_rollcall [dict create slug $row tid $tid outcome cancelled reason cancelled]
             exec_on_progress $row skipped "cancelled"
         }
         incr ::_total_seen
@@ -592,6 +603,9 @@ if {$dispatching} {
         ${::spar::transitions_log}::info "=== Summary ==="
         ${::spar::transitions_log}::info "Done:   $::_total_done"
         ${::spar::transitions_log}::info "Failed: $::_total_failed"
+        if {[llength $::_rollcall] > 0} {
+            ${::spar::transitions_log}::info [spar::render_rollcall $::_rollcall]
+        }
         if {$::_total_failed > 0} { exit 1 }
         exit 0
     }
@@ -651,6 +665,9 @@ if {$dispatching} {
     ${::spar::transitions_log}::info "=== Summary ==="
     ${::spar::transitions_log}::info "Done:   $::_total_done"
     ${::spar::transitions_log}::info "Failed: $::_total_failed"
+    if {[llength $::_rollcall] > 0} {
+        ${::spar::transitions_log}::info [spar::render_rollcall $::_rollcall]
+    }
     if {$::_total_failed > 0} { exit 1 }
     exit 0
 }

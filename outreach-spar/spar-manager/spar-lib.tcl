@@ -12,7 +12,48 @@ namespace eval spar {
         profile_exists get_max_passes lang_instruction channel_desc \
         campaign_primary_channel campaign_secondary_channel \
         campaign_tertiary_channel campaign_in_scope_channels \
-        roster_row_has_in_scope_channel
+        roster_row_has_in_scope_channel render_rollcall
+}
+
+# _parse_fail_reason — split a dispatcher failure reason into {rc cause}.
+# The reason is the flat string built by harness_run, e.g.
+# "harness exited rc=2 | FAIL (... stalled ...): slug" or a bare
+# "ses_send: <error>". Extract rc from an "rc=<n>" token (empty when absent)
+# and take the cause as the text after the first " | " (the whole reason when
+# there is no separator, so non-harness failures still read sensibly).
+proc spar::_parse_fail_reason {reason} {
+    set rc ""
+    regexp {rc=(\d+)} $reason -> rc
+    set sep [string first " | " $reason]
+    if {$sep >= 0} {
+        set cause [string range $reason [expr {$sep + 3}] end]
+    } else {
+        set cause $reason
+    }
+    return [list $rc $cause]
+}
+
+# render_rollcall — format a run-end per-contact roll-call from a list of
+# outcome dicts (keys: slug, tid, outcome, reason). Returns a multi-line block
+# naming every non-DONE contact with its phase, exit class, and cause, so an
+# operator reads a worklist rather than a bare Failed count. Empty string when
+# there are no records (the caller then prints nothing extra).
+proc spar::render_rollcall {records} {
+    if {[llength $records] == 0} { return "" }
+    set lines [list "Non-DONE contacts:"]
+    foreach rec $records {
+        set slug    [dict get $rec slug]
+        set tid     [expr {[dict exists $rec tid] ? [dict get $rec tid] : ""}]
+        set outcome [expr {[dict exists $rec outcome] ? [dict get $rec outcome] : "failed"}]
+        set reason  [expr {[dict exists $rec reason] ? [dict get $rec reason] : ""}]
+        lassign [spar::_parse_fail_reason $reason] rc cause
+        set fields [list $slug]
+        if {$tid ne ""}   { lappend fields "\[$tid\]" }
+        lappend fields [expr {$rc ne "" ? "rc=$rc" : $outcome}]
+        if {$cause ne ""} { lappend fields $cause }
+        lappend lines "  [join $fields {  }]"
+    }
+    return [join $lines "\n"]
 }
 
 # _campaign_channel_slot — internal shared implementation for
