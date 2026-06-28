@@ -44,6 +44,15 @@ When S has outrun P within an iteration (search done, profiling not yet complete
 
 The split form is a transient state. Once P catches up, the marker reverts to the standard `S&P{n}` form. Use the split form in task assignment ("you are running P2; S2 is complete, here are the new contacts") rather than in project status tracking.
 
+## A-phase sparring rounds
+
+Within a single AR band, the A pass is itself an author/challenger exchange. Two role letters name the agents:
+
+- **A** — the author, the drafting agent (the `A1` sub-phase in `spar-methodology.md`).
+- **C** — the challenger, the context-isolated agent that reads the same profile and reacts as the recipient would (the second agent the methodology calls `C2`).
+
+`A/C{n}` marks the nth challenge round: `A/C1` is the challenger's first reaction to the draft, `A/C2` the second, and so on. The slash is always written, so the round marker never collapses into the bare agent name `C2`. The number of rounds is capped by profile yield (the A2 yield ladder in `spar-methodology.md`); below the threshold the draft stands unsparred and there is no A/C round. Like the split form, `A/C{n}` is task-assignment notation ("you are running A/C2: here is the draft and the challenger's first reaction"), not a campaign-position coordinate; `AR{m}` is what tracks position.
+
 ## What the marker does not encode
 
 The response-likelihood threshold and star-rating floor for each AR band are operational parameters, not position coordinates. They belong in the band plan or strategy revision log. A separate band index serves this purpose:
