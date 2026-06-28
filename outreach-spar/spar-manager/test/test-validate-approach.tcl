@@ -347,7 +347,7 @@ set pt_va6 [issues_with_code $issues_va6 placeholder_to]
 assert_eq [llength $pt_va6] 1 "validate_campaign: still detects placeholder_to via validate_approach delegation"
 
 # ════════════════════════════════════════════════════════════════════════
-# 12p. validate_profile (per-file front-matter check, SmartLayer/aesop#45)
+# 12p. validate_profile (per-file front-matter check, #45)
 # ════════════════════════════════════════════════════════════════════════
 section "validate_profile"
 

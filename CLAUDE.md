@@ -8,7 +8,7 @@ agents to execute.
 ## Skills live elsewhere
 
 The skills the methodologies call are packaged as the **overseer-toolbox** Claude Code
-plugin, in its own repository (`git@github.com:SmartLayer/overseer-toolbox.git`), not
+plugin, in its own repository (`git@github.com:overseers-desk/overseer-toolbox.git`), not
 here. SOPs reference skills by name (for example, "use the LinkedIn skill if
 available"); install that plugin to make them available. Its README and CLAUDE.md cover
 the serialised-browsing skill (the browser harness the methodologies use when it is

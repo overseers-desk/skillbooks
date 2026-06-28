@@ -133,7 +133,7 @@ Nothing in spar-manager code can prevent this, but it carries a real risk: a con
 producing (roster.tsv, profile files). Do not commit or reset the campaign repo while a run is
 active. Observed in the 2026-06-14 run as HEAD moving forward then back; it also fed the agent
 loop in FM-AGENT-1 (the worker saw a confusing git state and chased it). Filed then closed as
-not-a-code-bug: SmartLayer/aesop#137.
+not-a-code-bug: #137.
 
 ### FM-HARNESS-4 — first-wave workers SIGKILLed ~75s in (external, unidentified)
 
@@ -149,4 +149,4 @@ Ruled out: the 1800s cap (deaths too early), kernel OOM (`journalctl -k` clean),
 (`systemd-oomd` zero kills), CPU/memory contention (load 3.99/8 cores, 13Gi free). Cause
 unidentified; the honest exit code is now logged (FM-HARNESS-1 fixed), so a recurrence records
 the real signal. Sessions: 30656bff, 2d6fe635, b688ebf0, 73268a63 (2026-06-14 run). Filed then
-closed as not-a-code-bug: SmartLayer/aesop#136.
+closed as not-a-code-bug: #136.

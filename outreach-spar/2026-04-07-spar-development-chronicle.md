@@ -8,9 +8,9 @@ This is a summary of how the SPAR methodology developed over the past month, wri
 
 SPAR lives across three git repositories:
 
-- **git@github.com:SmartLayer/aesop.git** — the methodology framework. Contains the procedure documents (spar-S-search.md, spar-P-profile.md, spar-A-approach.md, spar-methodology.md), the roster format spec, the campaign YAML spec, and the batch scripts in outreach-spar/bin/. AESOP stands for AI-Executed Standard Operating Procedures. SPAR is one of three methodologies in the AESOP collection (the others are SIFT for inbound listing evaluation, and TEND for correspondence processing). The methodology is domain-agnostic; domain-specific content lives in the campaign repositories.
+- **git@github.com:overseers-desk/aesop.git** — the methodology framework. Contains the procedure documents (spar-S-search.md, spar-P-profile.md, spar-A-approach.md, spar-methodology.md), the roster format spec, the campaign YAML spec, and the batch scripts in outreach-spar/bin/. AESOP stands for AI-Executed Standard Operating Procedures. SPAR is one of three methodologies in the AESOP collection (the others are SIFT for inbound listing evaluation, and TEND for correspondence processing). The methodology is domain-agnostic; domain-specific content lives in the campaign repositories.
 
-- **git@github.com:SmartLayer/rivermill.git** — the Rivermill campaign implementation, in segments-outreach.spar/. 19 segments (wedding planners, tour operators, community organisations, market stallholders, etc.), 415 contacts profiled, 258 approach messages drafted. This is the primary deployment and where most of the methodology's design was tested and refined.
+- **git@github.com:overseers-desk/rivermill.git** — the Rivermill campaign implementation, in segments-outreach.spar/. 19 segments (wedding planners, tour operators, community organisations, market stallholders, etc.), 415 contacts profiled, 258 approach messages drafted. This is the primary deployment and where most of the methodology's design was tested and refined.
 
 - **git@gitlab.com:bossdog/opensource.foundation.git** — the Open Source Foundation campaign, in outreach/. A second deployment, described briefly below.
 

@@ -189,7 +189,7 @@ proc spar::load_campaign {yaml_path} {
     # Validate venue (optional). When present, the dispatcher exposes the
     # address and coordinate to the P prompt so AI-side OSRM can compute
     # target-to-venue driving distance for proximity-relevant angles
-    # without guessing. SmartLayer/aesop#93 tracks moving the OSRM call
+    # without guessing. #93 tracks moving the OSRM call
     # itself into the harness.
     if {[dict exists $data venue]} {
         set venue [dict get $data venue]
@@ -748,7 +748,7 @@ proc spar::install_orchestration_log {logfile services} {
 
 # Path conventions for stem-keyed artefacts. SSOT: every consumer that
 # resolves a profile or approach by stem uses these. Layout per
-# spar-roster-format.md / SmartLayer/aesop#45.
+# spar-roster-format.md / #45.
 proc spar::profile_dir_for_segment {segment_dir} {
     return [file join $segment_dir profiles]
 }

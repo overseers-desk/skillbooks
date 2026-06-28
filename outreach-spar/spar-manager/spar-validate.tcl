@@ -46,7 +46,7 @@ proc spar::_issue {severity code contact_name message {extra {}}} {
 }
 
 # _approach_canonical_keys -- single source of truth for approach YAML vocabulary.
-# Per issues SmartLayer/aesop#43 (closed vocabulary) and #63 (replicas retired in
+# Per issues #43 (closed vocabulary) and #63 (replicas retired in
 # favour of profile_hash linkage).
 proc spar::_approach_canonical_keys {} {
     return [dict create \
@@ -380,7 +380,7 @@ proc spar::_approach_first_line_is_profile_hash {approach_path} {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Profile validation (SmartLayer/aesop#45)
+# Profile validation (#45)
 # Mirrors the approach validator: closed-vocabulary front matter + staleness
 # check against the current roster row. Per state-machine.md §Design by
 # Contract, this is the post-check for the P-phase AI call.
@@ -763,7 +763,7 @@ proc spar::assert_supported_version {label declared} {
 
 # validate_campaign_semantics -- cross-file checks only; no per-file approach validation.
 # Used by progress/warnings paths where per-file schema validation is out of scope
-# (per issue SmartLayer/aesop#43 principle 6).
+# (per issue #43 principle 6).
 proc spar::validate_campaign_semantics {all_classified_contacts} {
     return [spar::validate_campaign $all_classified_contacts 0 0]
 }
