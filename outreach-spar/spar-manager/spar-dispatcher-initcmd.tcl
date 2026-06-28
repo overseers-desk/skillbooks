@@ -403,4 +403,12 @@ oo::class create FakeHarness {
             default { return 0 }
         }
     }
+    # Mirror spar::Harness::fail_cause so harness_run can fold a cause into the
+    # failure reason for the run-end roll-call. Reads an optional run-cause file.
+    method fail_cause {} {
+        set f [file join $PromptDir run-cause]
+        if {![file exists $f]} { return "" }
+        set fd [open $f r]; set c [string trim [read $fd]]; close $fd
+        return $c
+    }
 }
