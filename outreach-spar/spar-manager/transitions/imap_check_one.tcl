@@ -19,7 +19,7 @@
 #   approach_path   abs path to the approach YAML for this stem
 #   to_email        recipient address of the original send (lower)
 #   fingerprints    list of "from|date" strings already recorded
-#   account         mailroom -a value
+#   account         mailroom --imap value
 #   folder          mailroom -f value
 #   sender          our own bare email address (used to filter inbound
 #                   to messages addressed to us, not bounces)
@@ -52,14 +52,23 @@ proc ::spar::imap::check_one {opts} {
         return [list error "mailroom not found — check Settings"]
     }
 
-    if {[catch {
-        set search_out [exec $mailroom_bin -a $account search -f $folder \
-            --limit 50 "from:$to_email" 2>@1]
-    } serr]} {
-        return [list error "mailbox search failed: [string trim $serr]"]
+    # mailroom 1.1.15 exits 1 on a successful search that returns zero
+    # results (documented), so a non-zero exit is not by itself a failure.
+    # Capture the merged output whether exec returns or throws; the JSON
+    # payload is present either way, and only an unparseable payload below
+    # is treated as a real error.
+    catch {exec $mailroom_bin --imap $account search -f $folder \
+        --limit 50 "from:$to_email" 2>@1} search_out
+
+    # On the exit-1 path the output may carry a trailing Tcl "child process
+    # exited abnormally" note; isolate the JSON object by its outer braces.
+    set jb [string first "\{" $search_out]
+    set je [string last  "\}" $search_out]
+    if {$jb >= 0 && $je > $jb} {
+        set search_out [string range $search_out $jb $je]
     }
 
-    # mailroom 1.1.0 wraps the payload as
+    # mailroom wraps the payload as
     #   {"<op_str>": {"<account>": {"results": [...], "provenance": ...}}}
     if {[catch {
         set raw [::json::json2dict $search_out]
@@ -116,7 +125,7 @@ proc ::spar::imap::check_one {opts} {
         # retrieved.
         set reply_text "(no text content)"
         if {[catch {
-            set read_out [exec $mailroom_bin -a $account read \
+            set read_out [exec $mailroom_bin --imap $account read \
                 -f $folder -u $uid 2>@1]
             set raw [::json::json2dict $read_out]
             set inner [dict get $raw [lindex [dict keys $raw] 0]]
@@ -126,7 +135,7 @@ proc ::spar::imap::check_one {opts} {
                 set reply_text [spar::html_to_text $body]
             }
         } _]} {
-            set reply_text "(inbox read failed -- review manually:\n  $mailroom_bin -a $account read -f $folder -u $uid)"
+            set reply_text "(inbox read failed -- review manually:\n  $mailroom_bin --imap $account read -f $folder -u $uid)"
         }
 
         if {!$dry_run} {
