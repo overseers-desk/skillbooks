@@ -524,4 +524,31 @@ assert_eq [spar::get_max_passes [file join $seg_mp profiles nope.md]] 1 \
     "get_max_passes: missing profile → 1 pass"
 
 
+# ────────────────────────────────────────────────────────────────────────
+section "render_rollcall (run-end per-contact summary, #148)"
+
+# _parse_fail_reason splits the dispatcher's flat reason into {rc cause}.
+assert_eq [spar::_parse_fail_reason "harness exited rc=2 | FAIL (T2: stalled): bob"] \
+    {2 {FAIL (T2: stalled): bob}} \
+    "_parse_fail_reason: extracts rc and the cause after ' | '"
+assert_eq [spar::_parse_fail_reason "ses_send: connection refused"] \
+    {{} {ses_send: connection refused}} \
+    "_parse_fail_reason: no rc/separator → empty rc, whole string as cause"
+
+# render_rollcall names every non-DONE contact with phase, exit class, cause.
+set rc_recs [list \
+    [dict create slug alice-acme tid T2 outcome failed \
+        reason "harness exited rc=1 | FAIL (no draft markers): alice-acme"] \
+    [dict create slug carol-inc tid T1 outcome cancelled reason cancelled]]
+set rc_out [spar::render_rollcall $rc_recs]
+assert_match $rc_out "*alice-acme*"  "render_rollcall: lists the failed slug"
+assert_match $rc_out "*\[T2\]*"      "render_rollcall: shows the phase TID"
+assert_match $rc_out "*rc=1*"        "render_rollcall: shows the exit class"
+assert_match $rc_out "*no draft markers*" "render_rollcall: shows the cause"
+assert_match $rc_out "*carol-inc*cancelled*" "render_rollcall: lists cancelled rows too"
+
+# An empty roll-call renders nothing (caller prints no extra block).
+assert_eq [spar::render_rollcall {}] "" "render_rollcall: empty list → blank"
+
+
 finish_tests
