@@ -54,7 +54,7 @@ Channel vocabulary: `email`, `phone`, `linkedin`, `facebook`. A channel not name
 
 ### Optional (venue)
 
-The campaign may declare a physical venue. When present, the dispatcher exposes it to the P prompt so the AI can compute target-to-venue driving distance via OSRM where proximity bears on angle assessment (see `spar-P-profile.md` §4.6.1). Until SmartLayer/aesop#93 lands, the OSRM call is AI-side; once it lands, the harness will use the same fields to compute distance deterministically and substitute it into the prompt as a literal.
+The campaign may declare a physical venue. When present, the dispatcher exposes it to the P prompt so the AI can compute target-to-venue driving distance via OSRM where proximity bears on angle assessment (see `spar-P-profile.md` §4.6.1). Until #93 lands, the OSRM call is AI-side; once it lands, the harness will use the same fields to compute distance deterministically and substitute it into the prompt as a literal.
 
 | Field | Type | Default | Purpose |
 |---|---|---|---|

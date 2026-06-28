@@ -320,7 +320,7 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 | T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | spar-state.tcl:T9 branch |
 | T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | spar-state.tcl:T10 branch |
 
-[†] T6's `primary_channel = email` gate is an interim measure (issue [#49](https://github.com/SmartLayer/aesop/issues/49)). The correct long-term rule routes each unsent final-round message to T6, T8, T9, or T10 based on its slot in the primary/secondary/tertiary structure — not on channel alone. Until per-message routing is implemented, T6 conservatively refuses campaigns whose primary channel is not email, even when they carry an unsent email for the secondary/tertiary slot.
+[†] T6's `primary_channel = email` gate is an interim measure (issue #49). The correct long-term rule routes each unsent final-round message to T6, T8, T9, or T10 based on its slot in the primary/secondary/tertiary structure — not on channel alone. Until per-message routing is implemented, T6 conservatively refuses campaigns whose primary channel is not email, even when they carry an unsent email for the secondary/tertiary slot.
 
 **Conditions no T-gate checks** (relevant for the cross-check below):
 

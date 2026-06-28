@@ -291,7 +291,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
 
         set outfile [spar::profile_path_for_stem $segment_dir $stem]
-        # Legacy path: profiles authored before SmartLayer/aesop#45. Still
+        # Legacy path: profiles authored before #45. Still
         # counts as "profile exists" until migration completes.
         set legacy_outfile [spar::legacy_profile_path_for_stem $segment_dir $stem]
 
@@ -640,7 +640,7 @@ proc spar::a::_build_prompts {opts on_progress} {
                 continue
             }
 
-            # Profile lookup — {stem}.md (post SmartLayer/aesop#45).
+            # Profile lookup — {stem}.md (post #45).
             # Legacy profile-{stem}.md files are ignored by the dispatcher;
             # rename them by hand to {stem}.md if encountered.
             set profile_path ""

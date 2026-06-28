@@ -498,7 +498,7 @@ assert_eq [spar::campaign_segment_names [dict create campaign "x"]] {} \
     "campaign_segment_names: absent segments → empty"
 
 # ════════════════════════════════════════════════════════════════════════
-# get_max_passes — profile-derived A-phase pass budget (SmartLayer/aesop#144)
+# get_max_passes — profile-derived A-phase pass budget (#144)
 # ════════════════════════════════════════════════════════════════════════
 section "get_max_passes"
 
