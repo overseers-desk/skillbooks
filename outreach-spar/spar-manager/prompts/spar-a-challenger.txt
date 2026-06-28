@@ -14,7 +14,7 @@ __DRAFT_PLACEHOLDER__
 
 ---
 
-Give your in-character reaction now. When done, proceed.
+Give your in-character reaction now. As the recipient, what's the percent chance you actually reply to that message? End your reaction with a line `REPLY_PCT: <whole number 0-100>`. When done, proceed.
 
 __FACTCHECK_SECTION__
 
