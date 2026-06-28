@@ -38,7 +38,8 @@ source [file join $::spar::harness_dir spar-mailroom.tcl]
 oo::class create spar::Harness {
     variable Slug LogPrefix CostLog SessionId PromptDir LogDir \
              WorkerCostCapUsd CostKilled \
-             StallKilled LastProgressMs StallTimeoutMs UsageResetSecs
+             StallKilled LastProgressMs StallTimeoutMs UsageResetSecs \
+             FailCause
 
     constructor {prompt_dir log_dir} {
         set PromptDir $prompt_dir
@@ -51,6 +52,7 @@ oo::class create spar::Harness {
         set StallKilled 0
         set LastProgressMs 0
         set UsageResetSecs 0
+        set FailCause ""
         # Per-worker cost cap (#114) is the sole budget circuit-breaker:
         # it bounds a runaway think/retry loop that spends fast. The
         # wall-clock cap was removed — dollars, not time, is the bound. The
@@ -85,6 +87,13 @@ oo::class create spar::Harness {
     method log_dir     {} { return $LogDir }
     method cost_cap    {} { return $WorkerCostCapUsd }
     method stall_timeout {} { return [expr {$StallTimeoutMs / 1000}] }
+    method fail_cause  {} { return $FailCause }
+
+    # _fail — record a terminal FAIL cause and log it. The recorded cause is
+    # read back by the dispatcher worker (only when run returns non-zero) and
+    # surfaced in the run-end roll-call. Last write before a non-zero run wins;
+    # an intermediate cause on a path that later recovers is never read.
+    method _fail {msg} { set FailCause $msg; ${::spar::harness_log}::error $msg }
 
     # Per-worker cost cap in USD for a single dispatch (parent session
     # plus its research subagents). Zero disables the watchdog.
@@ -227,7 +236,7 @@ oo::class create spar::Harness {
             set rc [my _invoke $stage $log_file $prompt {*}$args]
             if {$rc == 2 && $StallKilled} {
                 if {$stall_attempt >= $max_stall_retries} {
-                    ${::spar::harness_log}::error \
+                    my _fail \
                         "FAIL ($stage: stalled after $max_stall_retries fresh-session retries): $Slug"
                     return 2
                 }
@@ -245,7 +254,7 @@ oo::class create spar::Harness {
             }
             if {$rc != 4} { return $rc }
             if {$attempt >= $max_retries} {
-                ${::spar::harness_log}::error "FAIL ($stage: credit limit after $max_retries retries): $Slug"
+                my _fail "FAIL ($stage: credit limit after $max_retries retries): $Slug"
                 return 1
             }
             ${::spar::harness_log}::warn "\[$Slug\] Credit limit hit (attempt $attempt/$max_retries). Sleeping [expr {$UsageResetSecs / 60}]m until reset..."
@@ -295,7 +304,7 @@ oo::class create spar::Harness {
 
         set claude_bin [spar::find_tool claude]
         if {$claude_bin eq ""} {
-            ${::spar::harness_log}::error "FAIL ($stage: claude not found — check Settings): $Slug"
+            my _fail "FAIL ($stage: claude not found — check Settings): $Slug"
             return 1
         }
         set cmd [concat [list $claude_bin -p --output-format stream-json --verbose] [my permission_args]]
@@ -336,7 +345,7 @@ oo::class create spar::Harness {
         # return 2, the validate-the-product / resume route (FM-HARNESS-2).
         if {[llength $parsed] == 0} {
             if {$CostKilled} {
-                ${::spar::harness_log}::error \
+                my _fail \
                     "FAIL ($stage: cost cap \$$WorkerCostCapUsd reached — budget kill): $Slug"
                 return 3
             }
@@ -346,11 +355,11 @@ oo::class create spar::Harness {
             # cost kill is never downgraded to a resumable stall; the cause
             # string distinguishes the two in the log (#133).
             if {$StallKilled} {
-                ${::spar::harness_log}::error \
+                my _fail \
                     "FAIL ($stage: stalled — no output for >= [my stall_timeout]s; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
                 return 2
             }
-            ${::spar::harness_log}::error \
+            my _fail \
                 "FAIL ($stage: ended without result after ${elapsed}s; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
             return 2
         }
@@ -374,7 +383,7 @@ oo::class create spar::Harness {
         }
 
         if {![dict exists $parsed result]} {
-            ${::spar::harness_log}::error "FAIL ($stage: no result in output; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
+            my _fail "FAIL ($stage: no result in output; [my _failure_cause $log_file $json_file $exit_code]): $Slug"
             return 1
         }
 
@@ -741,7 +750,7 @@ oo::class create spar::Harness {
     # Default failure message when the loop exits with errors remaining.
     # ProfileHarness overrides to include the first error message.
     method report_fix_failure {hard max_fix} {
-        ${::spar::harness_log}::error "FAIL (validation failed after $max_fix retries): $Slug"
+        my _fail "FAIL (validation failed after $max_fix retries): $Slug"
     }
 }
 
@@ -832,7 +841,7 @@ oo::class create spar::ApproachHarness {
             my do_summary
             return 0
         } on error {err opts} {
-            ${::spar::harness_log}::error \
+            my _fail \
                 "FAIL ([my slug]): uncaught error in ApproachHarness::run — $err"
             return 1
         }
@@ -880,7 +889,7 @@ oo::class create spar::ApproachHarness {
         set draft_text [spar::transcript_assistant_text "${author_draft_log}.json"]
         set draft [spar::extract_between $draft_text "DRAFT_START" "DRAFT_END"]
         if {$draft eq ""} {
-            ${::spar::harness_log}::error "FAIL (no draft markers): $slug"
+            my _fail "FAIL (no draft markers): $slug"
             return 1
         }
         set rationale [spar::extract_between $draft_text "RATIONALE_START" "RATIONALE_END"]
@@ -1021,11 +1030,11 @@ oo::class create spar::ApproachHarness {
         }
         foreach lg $required_logs {
             if {![file exists $lg]} {
-                ${::spar::harness_log}::error "FAIL (DbC-Pre: assembly precondition log missing: $lg): $slug"
+                my _fail "FAIL (DbC-Pre: assembly precondition log missing: $lg): $slug"
                 return 1
             }
             if {[file size $lg] == 0} {
-                ${::spar::harness_log}::error "FAIL (DbC-Pre: assembly precondition log empty: $lg): $slug"
+                my _fail "FAIL (DbC-Pre: assembly precondition log empty: $lg): $slug"
                 return 1
             }
         }
@@ -1243,7 +1252,7 @@ oo::class create spar::ProfileHarness {
     # Override: include the first error message in the failure line.
     method report_fix_failure {hard max_fix} {
         set msg [dict get [lindex $hard 0] message]
-        ${::spar::harness_log}::error "FAIL (validation failed after $max_fix retries): [my slug] — $msg"
+        my _fail "FAIL (validation failed after $max_fix retries): [my slug] — $msg"
     }
 
     # Run the full P-phase pipeline. Returns 0 on success, 1 on failure.
@@ -1285,7 +1294,7 @@ oo::class create spar::ProfileHarness {
             my do_summary
             return 0
         } on error {err opts} {
-            ${::spar::harness_log}::error \
+            my _fail \
                 "FAIL ([my slug]): uncaught error in ProfileHarness::run — $err"
             return 1
         }
