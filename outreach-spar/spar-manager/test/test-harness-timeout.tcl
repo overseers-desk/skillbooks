@@ -619,4 +619,64 @@ if {[string match *--resume* [lindex $argv_rs 1]]} {
     puts "FAIL: restart posture should not add --resume on the retry"; incr ::failures
 } else { puts "  ok: restart posture re-issues fresh (no --resume)"; incr ::passes }
 
+# ════════════════════════════════════════════════════════════════════════
+section "13. No draft markers is a captured FAIL cause (#145)"
+# ════════════════════════════════════════════════════════════════════════
+
+# do_author_draft greps the author transcript for DRAFT_START/DRAFT_END. When
+# the author returns a complete envelope but its text carries no markers, the
+# draft is empty and the contact must fail with a cause the run-end roll-call
+# can name — not a silent drop. The stub emits a clean success envelope whose
+# assistant text holds no markers, so `call` returns 0 and the no-markers
+# branch (not the call-failed branch) is what fails the contact.
+set nd_stub [file join $tmp_root claude-nodraft]
+set fd [open $nd_stub w]
+puts $fd "#!/bin/sh"
+puts $fd {printf '%s\n' '{"type":"system","subtype":"init","session_id":"nodraft-sess"}'}
+puts $fd {printf '%s\n' '{"type":"assistant","message":{"content":[{"type":"text","text":"I looked into the contact but have nothing to pitch right now."}]}}'}
+puts $fd {printf '%s\n' '{"type":"result","subtype":"success","is_error":false,"result":"I looked into the contact but have nothing to pitch right now.","total_cost_usd":0.05,"session_id":"nodraft-sess"}'}
+puts $fd "exit 0"
+close $fd
+file attributes $nd_stub -permissions 0755
+
+proc spar::find_tool {name} {
+    if {$name eq "claude"} { return [list $::nd_stub] }
+    return [auto_execok $name]
+}
+
+set nd_prompt [file join $tmp_root prompt-nodraft]
+file mkdir $nd_prompt
+set afd [open [file join $nd_prompt author-draft.txt] w]; puts $afd "draft a message"; close $afd
+set inst_nd [spar::ApproachHarness new $nd_prompt [file join $tmp_root logs-nodraft]]
+$inst_nd set_worker_cost_cap 0
+set rc_nd [$inst_nd do_author_draft]
+set cause_nd [$inst_nd fail_cause]
+$inst_nd destroy
+
+assert_eq $rc_nd 1 "do_author_draft returns 1 when the transcript has no DRAFT markers"
+assert_match $cause_nd "*no draft markers*" \
+    "fail_cause records the no-draft-markers cause for the roll-call"
+
+# ════════════════════════════════════════════════════════════════════════
+section "14. claude-not-found is a hard failure with a captured cause (rc=1)"
+# ════════════════════════════════════════════════════════════════════════
+
+# The rc=1 hard-failure path: when the claude binary cannot be resolved,
+# _invoke fails fast (no resume) and records a cause the roll-call can show.
+proc spar::find_tool {name} {
+    if {$name eq "claude"} { return "" }
+    return [auto_execok $name]
+}
+
+set nf_prompt [file join $tmp_root prompt-nf]
+file mkdir $nf_prompt
+set inst_nf [spar::Harness new $nf_prompt [file join $tmp_root logs-nf]]
+set rc_nf [$inst_nf call "nf-stage" [file join $tmp_root logs-nf nf.log] "dummy prompt"]
+set cause_nf [$inst_nf fail_cause]
+$inst_nf destroy
+
+assert_eq $rc_nf 1 "claude-not-found returns rc=1 (hard failure, no resume)"
+assert_match $cause_nf "*claude not found*" \
+    "fail_cause records the not-found cause for the roll-call"
+
 finish_tests
