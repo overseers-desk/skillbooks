@@ -76,6 +76,7 @@ Prefer the LinkedIn skill for the fetch. It routes through the user's serialised
 - Education (degrees, certifications, current study)
 - Volunteer and mentorship roles
 - Location
+- **Employment-currency signal**, if present: an "Open to work" / "#OpenToWork" banner, a "Providing services" / freelance section, or a headline whose named employer or role the current-experience entry or recent activity contradicts ("ex-", a different current employer). Capture verbatim; record it in the body `## Current role`. Its presence means the stated role may be ending — see §4.13.
 
 **DOM parsing note.** LinkedIn's DOM parser sometimes returns category labels (e.g. "Startup") rather than company names, and when a person lists multiple roles at the same organisation, the parser may present them as separate entries. Cross-reference roles by date overlap and description content to identify entries that belong to the same organisation. If a "Co-Founder" entry describes a crowdfunding platform and a "Business Development Manager" entry is at "Startup" during the same period, these are almost certainly the same company.
 
@@ -120,6 +121,8 @@ Visit the website of the target's current employer (and previous employer if the
 This step is critical for targets whose personal public statements are limited but whose institutional position creates value. A junior programme officer who has written one relevant article may appear low-value if assessed on personal statements alone, but may be high-value if their employer runs a technology policy education programme for lawmakers. The A phase needs the institutional context to frame the outreach correctly — as an institutional proposition rather than a personal one.
 
 If the employer's website reveals programmes or focus areas relevant to the campaign, record them in a dedicated section of the profile document ("Institutional context" or similar, under the domain-specific operational context section). Note which programmes the target is personally involved in versus which are run by their team or organisation more broadly.
+
+When the segment's value turns on the outlet's reach and the outlet is not one independently recognisable as large, do not inherit a "large / major / global" label from the profile seed or the outlet's own copy. Verify current reach against an external figure (a traffic source such as Similarweb) and record the number with its date and source. A size label without a number and a date is not evidence (§5.0).
 
 ### 4.6.1 Distance from venue (when proximity bears on relevance)
 
@@ -216,6 +219,8 @@ Weigh the contact's audience, the topics they cover, the guests or subjects they
 **Star rating (0–5):** How valuable is this contact to us in this segment, in the general sense, today? Not how good their business is, nor how much they like us — whether we would value a relationship with them at all, independent of any one campaign's ask. Assigning this rating is P's responsibility. Any value already in the roster's `star_rating` column was written before profiling and must be ignored — it carries no authority. Derive the rating solely from what profiling reveals.
 
 If the segment file carries a `rating_rubric`, apply it as written. If it does not, judge general value to us directly: would our organisation, independent of any single campaign's ask, value a relationship with this contact? Do not borrow the current campaign's objective or conversion funnel as the standard for "useful" — that turns on the campaign's ask and belongs to `response_likelihood` (campaign-dependent, set by A), not the star rating. The rating rubric is segment-local: segments differ in what useful means, so anchors borrowed from another segment's rubric are wrong for this one. If the question cannot be answered with confidence, that is an instruction to deepen profiling, not to default to a middle value.
+
+A rating resting on a role cannot stand on a role whose currency the discovery contradicts (an open-to-work signal, a headline/experience mismatch, an "ex-"); a rating resting on reach cannot stand on an unverified size label. Where discovery unsettles the basis of the rating, re-derive the rating from what was verified, not from the prior basis. (Where the role has been vacated outright, §4.15 governs: exclude and find the replacement.)
 
 If profiling reveals that the contact cannot deliver the segment's intended outcome through the mechanism the segment describes — including cases where §4.2 was not run before profiling began — set `star_rating` to 0 and exclude per §4.2. Do not produce a profile document for contacts assessed at 0; the roster entry is sufficient. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
 
