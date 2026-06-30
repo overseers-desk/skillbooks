@@ -19,7 +19,7 @@ One file per campaign, in the campaign root directory. Named `campaign.yaml` or 
 | `sender.email` | string | Sender's email address (used as From: address) |
 | `usp_document` | path | Path to the organisation overview / USP document. Relative to the YAML file's directory. This is the ground truth about the organisation that A1 reads before drafting. |
 | `language` | string | Language code: `en-gb`, `en-au`, `en`, or a BCP-47 code |
-| `segments` | map | Maps each segment directory name this campaign operates over to that segment's **plan block** (the campaign×segment intersection: objective, USP framings, message_goal, first_ask, conversion_funnel, approach_sequencing). See "Per-segment plan block" below. Names resolve to sibling directories of this YAML file (path resolution is relative to the YAML's directory). The same segment name may appear under the `segments:` of more than one campaign YAML at the same level, each carrying its own plan: segments are not owned by any one campaign, and the plan changes with the campaign's ask, so it is the campaign's, not the segment's (see the invariance test in `spar-methodology.md`, "Campaigns and segments"). Use `.` for a single-segment campaign where roster and segment.yaml live in the campaign root (see `spar-campaign-directory.md`). |
+| `segments` | map | Maps each segment directory name this campaign operates over to that segment's **plan block** (the campaign×segment intersection: objective, USP framings, message_goal, first_ask, ask_stance, conversion_funnel, approach_sequencing). See "Per-segment plan block" below. Names resolve to sibling directories of this YAML file (path resolution is relative to the YAML's directory). The same segment name may appear under the `segments:` of more than one campaign YAML at the same level, each carrying its own plan: segments are not owned by any one campaign, and the plan changes with the campaign's ask, so it is the campaign's, not the segment's (see the invariance test in `spar-methodology.md`, "Campaigns and segments"). Use `.` for a single-segment campaign where roster and segment.yaml live in the campaign root (see `spar-campaign-directory.md`). |
 | `approach_filename` | string | Template for approach filenames. Variables: `{slug_name}`, `{slug_org}`, `{star}`. Example: `approach-{slug_name}-{slug_org}.md` |
 | `usps` | map | USP registry: maps each USP identifier to its human-readable label. This is the single source of truth for USP names. A segment's plan block references USPs by `id`; the label is resolved from this registry. Registry and per-segment framing now live in the same file, so a referenced `id` always resolves. The full USP prose lives in the `usp_document`. |
 
@@ -97,9 +97,13 @@ Each plan block may carry:
 | `usps` | list | Which campaign USPs apply to this segment and why. Each entry has `id` (from the campaign `usps:` registry), `type` (`emotional` or `functional`, segment-specific), and `framing` (prose: why this USP matters to contacts in this segment). A segment-local USP not in the registry uses `label` instead of `id`. |
 | `message_goal` | prose | The outcome the first message aims for (e.g. "agree to a site visit"). |
 | `first_ask` | prose | The model message or pattern for first contact. May contain placeholders the A phase fills from the profile. |
+| `ask_stance` | `direct` or `problem-led` | The stance chosen via the classifier in `spar-methodology.md` ("Classifying the ask"). `direct`: state the want plainly (we are the buyer, or a plain mutual offer). `problem-led`: frame around the recipient's problem, because naming the want would weaken us (we compete to be selected). |
+| `recipient_problem` | prose | Required when `ask_stance` is `problem-led`. The recipient's own problem this campaign solves, which the first message addresses. |
+| `deciding_interest` | prose | The lens through which this segment's recipient decides: the campaign's instantiation of the methodology's generic "deciding interest". For a media segment, their *audience*; for a supplier ask, *winning a worthwhile account*. Naming it here keeps "audience" out of the method (anti-brittle). |
+| `state_want` | boolean | Whether the first message states the want outright. `direct` implies `true`. Under `problem-led` the author chooses; leaving the want unsaid (`false`) is an option, never a requirement. |
 | `conversion_funnel` | list | The sequence from first contact to outcome; each step has `step`, `name`, `description`. |
 | `approach_sequencing` | list | Operational order of actions for this segment; each step has `step`, `action`. |
-| `subsegments` | list | Optional variations within the segment. A subsegment shares the segment's objective and USPs but may override `message_goal`, `first_ask`, `conversion_funnel`, and `discovery_criteria`. Only differing fields appear. |
+| `subsegments` | list | Optional variations within the segment. A subsegment shares the segment's objective and USPs but may override `message_goal`, `first_ask`, `ask_stance`, `recipient_problem`, `deciding_interest`, `state_want`, `conversion_funnel`, and `discovery_criteria`. Only differing fields appear. |
 
 A plan block may be sparse: a segment still being discovered (S&P only, A not yet in scope) carries `objective` and little else. Do not fabricate plan fields to fill the shape.
 
@@ -156,6 +160,13 @@ segments:
       Agree to a complimentary site visit.
     first_ask: |
       The model first-contact message or pattern for segment-a.
+    ask_stance: problem-led        # or: direct
+    recipient_problem: |
+      The recipient's own problem this campaign solves and the message addresses.
+      (Required when ask_stance is problem-led.)
+    deciding_interest: |
+      The lens this recipient decides by, e.g. their audience (problem-led only).
+    state_want: false              # direct implies true; problem-led is the author's call
     conversion_funnel:
       - step: 1
         name: Initial approach

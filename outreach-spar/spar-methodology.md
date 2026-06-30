@@ -45,13 +45,24 @@ A campaign is the home of the second record. The campaign YAML names the sender,
 
 The line between the two is one test, and every placement rule derives from it: would a different campaign over this same population — one with a different ask, or simply run at a different time — use this fact unchanged? If yes, the fact belongs to the segment; if a change of ask or campaign window would change it, the fact belongs to the campaign. `star_rating` and `response_likelihood` show the test on a single contact: a business does not become less valuable to us because one campaign skipped it, so its `star_rating` (general value to us) is the same for any campaign and lives in the segment, while how likely it is to respond turns on what this campaign asks, so `response_likelihood` lives with the engagement.
 
-This gives three tiers, each with one home. **Population** (the segment, campaign-independent): identity, channels, discovery, the profile, and `star_rating` — how useful the contact is to us in this segment, a property of the contact. It lives in the segment's `roster.tsv` (which ends at `star_rating`), `profiles/`, and `segment.yaml` (`discovery_criteria`, `rating_rubric`, `scope_note`). **Plan** (campaign × segment): the per-segment plan block in `campaign.yaml`. **Engagement** (campaign × contact): `response_likelihood`, `a_note`, `r_note`, and the messages — campaign-bound, written into the per-contact approach YAML, not the shared roster. The approach files live in the segment directory (so a future campaign sees the history at one path) but their content is the engagement of one campaign.
+This gives three tiers, each with one home. **Population** (the segment, campaign-independent): identity, channels, discovery, the profile, and `star_rating` — how useful the contact is to us in this segment, a property of the contact. It lives in the segment's `roster.tsv` (which ends at `star_rating`), `profiles/`, and `segment.yaml` (`discovery_criteria`, `rating_rubric`, `scope_note`). Contact details (`email`, `linkedin_url`, `facebook_url`) are population-tier, so whoever discovers one, P during profiling or A at send time, writes it back to the roster (see `spar-A-approach.md` §4.8); this is the one population fact A may write. **Plan** (campaign × segment): the per-segment plan block in `campaign.yaml`. **Engagement** (campaign × contact): `response_likelihood`, `a_note`, `r_note`, and the messages — campaign-bound, written into the per-contact approach YAML, not the shared roster. The approach files live in the segment directory (so a future campaign sees the history at one path) but their content is the engagement of one campaign.
 
 The relation between the two records is many-to-many. A campaign typically operates over several segments. A segment is, over time, drawn on by several campaigns. The filesystem reflects this by placing segments and campaign YAMLs as siblings at one repository level. A campaign YAML names its segments by bare directory name. The same segment name may appear in the `segments:` map of more than one campaign YAML at that level, each carrying its own plan.
 
 A segment is not an asset of any one campaign. Placing a segment directory inside a campaign directory, or under a wrapping parent like `rosters/`, breaks the addressing (the segment name no longer resolves from the campaign YAML's directory) and conflates a long-lived population store with a time-bound project.
 
 A separate rule governs concurrent engagement: a segment supports at most one active campaign at a time. A second campaign on the same segment begins only after the first is closed. The closing procedure is defined elsewhere.
+
+### Classifying the ask
+
+Before writing a campaign's per-segment plan, the author classifies the ask, because the classification decides how the first message is framed. The test: does the recipient have a problem this campaign solves, such that naming our want would weaken us, so that we are one of many competing to be selected by them?
+
+- **Problem-led.** The recipient is the gatekeeper and we are competing for their selection (a podcast host choosing guests, an editor choosing stories). Naming the want ("put me on your show") is the weak move. The author may instead frame the message around the recipient's problem, and may choose to leave the want unsaid, letting the recipient reach the verdict. This is "Show, don't tell" (SDT): the substance does the work rather than a stated request (see `spar-A-approach.md` §4.5, "presuppose the recipient's world, don't narrate it", and the §7 presupposition test).
+- **Direct.** We are the buyer, or it is a plain mutual offer (asking a supplier for a rate card, asking a law firm whether it handles a case, offering an aged-care home an outing). Here the want is normal commerce; state it plainly.
+
+The classifier offers the problem-led option; it does not require it, and leaving the want unsaid is never mandatory. The stance, and whether the want is stated, are the campaign author's decisions, recorded in the plan (`ask_stance` and the fields below it; see `spar-campaign-yaml.md`).
+
+What the recipient cares about, the lens through which they decide, is **the recipient's deciding interest**, and it is campaign-specific. For a media campaign it is the recipient's *audience*; for a supplier ask it is *winning a worthwhile account*; for some asks there is no audience at all. The method names only the generic slot; the campaign names what fills it. Writing a specific lens such as "audience" into the method would be brittle: it breaks the moment the recipient is a supplier or a buyer with no audience.
 
 ## Prong 1: S&P in detail
 
@@ -158,7 +169,7 @@ The output of R is a revised connection strategy: updated angle priorities, adju
 
 | Artefact | Created by | Consumed by | Lives in |
 |---|---|---|---|
-| Roster (`roster.tsv`, population: identity → `star_rating`) | S; P writes `p_note`/`star_rating` | P, A (read) | Segment directory |
+| Roster (`roster.tsv`, population: identity → `star_rating`) | S; P writes `p_note`/`star_rating`; A backfills discovered contact details (§4.8) | P, A (read; A writes contact details only) | Segment directory |
 | Per-segment plan block (objective, USP framings, message goal, first ask, funnel, sequencing) | campaign planner | P, A | `campaign.yaml` `segments.<name>` |
 | Profile documents | P | A, human review | Segment directory (`profiles/`) |
 | Communications log files (`{stem}.yaml`, engagement: messages, `response_likelihood`, `a_note`, `r_note`) | A; replies and follow-ups extend the file over time | A subsequent runs, R, future campaigns on the same segment | Segment directory (`approach/`, name historical) |
