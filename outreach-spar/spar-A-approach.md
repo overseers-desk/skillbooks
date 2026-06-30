@@ -79,6 +79,8 @@ Channel selection rules, in priority order:
 
 The approach file includes all pieces for the selected combination. Sequencing and timing between pieces (days to wait, conditions to trigger each step) follow methodology rules and are not restated per contact.
 
+**Verify the email at source for LinkedIn contacts.** When the contact is a LinkedIn connection, or before relying on an `email` value that was pattern-derived rather than confirmed, run the LinkedIn contact-info lookup (the `linkedin.com/contact-info` skill verb) to read the member's self-listed email. Prefer the shared address over a pattern guess: a guessed address often reaches the wrong inbox or a generic one, while the shared address is what the member chose to publish. A newly found address is written back to the roster (§4.8). If the lookup returns no shared email, fall back to the best address on file and mark it unverified in the approach `a_note`.
+
 ### 4.3 Select language
 
 The default language is English. The campaign plan may specify language rules based on the contact's background and the sender's capability. When a non-default language is used, the A2 spar also runs in that language — the simulated recipient responds as they actually would. Record the language decision and its rationale in the approach file's `decisions` block.
@@ -159,7 +161,9 @@ The default sender and BCC address come from the campaign YAML (`sender.name`, `
 
 ### 4.8 Update the communication index
 
-`a_note` and `response_likelihood` are written directly into the approach file (§6); there is no roster write-back. A writes nothing to the roster: the roster is the segment's campaign-independent population record, and A's outputs are campaign-bound, so they belong with the messages in the approach file.
+`a_note` and `response_likelihood`, like the messages, are engagement-tier and campaign-bound: write them into the approach file (§6), never the roster.
+
+**Contact-detail backfill (the one roster write A makes).** A contact detail is population-tier, not engagement: a verified email, or a corrected or newly found `linkedin_url` / `facebook_url`, is the same fact for any campaign, so its home is the roster. When A discovers one at send time (typically a member's shared email from the §4.2 contact-info lookup), A writes it back to `roster.tsv`, the same backfill P performs (`spar-P-profile.md`, "Backfill empty contact fields"). A backfilled email must pass the same gates P uses: the format gate (an `@` with a plausible `user@domain` shape; no masked, placeholder, or non-email value), the name-mismatch check, and the shared-inbox rule (all in `spar-P-profile.md`). This contact detail is the only thing A writes to the roster; everything campaign-bound stays in the approach file.
 
 **Communication index:** Append one line to `comms-index.md`: contact ID, name, organisation, segment, angle used, key relationship hooks, channel selection.
 

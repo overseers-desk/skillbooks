@@ -32,9 +32,9 @@ Columns are ordered left-to-right by pipeline stage: identity, contact channels,
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
 | 5 | phone | text | S; P updates | A | |
-| 6 | email | text | S; P updates | A | |
-| 7 | linkedin_url | URL | S | P (fetches it) | Contact channel and profiling source |
-| 8 | facebook_url | URL | S | P (fetches it) | Contact channel and profiling source |
+| 6 | email | text | S; P updates; A backfills on discovery | A | A may write a verified email found at send time (see `spar-A-approach.md` §4.8) |
+| 7 | linkedin_url | URL | S; A corrects on discovery | P (fetches it) | Contact channel and profiling source |
+| 8 | facebook_url | URL | S; A backfills on discovery | P (fetches it) | Contact channel and profiling source |
 
 Every row must have at least one of email, linkedin_url, or facebook_url populated. Phone alone is insufficient for campaigns that begin with a written introduction.
 
@@ -53,7 +53,7 @@ Every row must have at least one of email, linkedin_url, or facebook_url populat
 
 ### Phase handover
 
-The S and P phases each have one note column in the roster. Only that phase writes to it; subsequent phases read it as context before doing their work. Notes are roster-level summaries, not replacements for full artefacts (profile documents, approach files, strategy revision notes). The A and R phases do not write to the roster: their per-contact output (`response_likelihood`, `a_note`, `r_note`) is campaign-bound, and a segment's roster is shared across campaigns, so that output lives in the per-contact approach YAML instead (see `spar-methodology.md`, "Campaigns and segments", and `spar-A-approach.md`).
+The S and P phases each have one note column in the roster. Only that phase writes to it; subsequent phases read it as context before doing their work. Notes are roster-level summaries, not replacements for full artefacts (profile documents, approach files, strategy revision notes). The A and R phases do not write their campaign-bound output to the roster: `response_likelihood`, `a_note`, and `r_note` are campaign-bound, and a segment's roster is shared across campaigns, so that output lives in the per-contact approach YAML instead (see `spar-methodology.md`, "Campaigns and segments", and `spar-A-approach.md`). The one exception is population-tier contact details: when A discovers a verified email, or a corrected `linkedin_url` / `facebook_url`, at send time, it backfills the roster, the same as P (see `spar-A-approach.md` §4.8). Such a detail is campaign-independent, so the roster is its home, not the approach file.
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
@@ -112,7 +112,7 @@ This document defines the roster schema. The operational procedures for populati
 
 - **SPAR-S** (`spar-S-search.md`) — populates columns 1–12 (including `stem` at discovery)
 - **SPAR-P** (`spar-P-profile.md`) — populates columns 13–14, corrects columns 3–8 and 11; creates `profiles/{stem}.md` using the pre-existing `stem`
-- **SPAR-A** (`spar-A-approach.md`) — creates `approach/{stem}.yaml` using the pre-existing `stem`, writing `response_likelihood`, `a_note`, and the messages into it; does not write to the roster
+- **SPAR-A** (`spar-A-approach.md`) — creates `approach/{stem}.yaml` using the pre-existing `stem`, writing `response_likelihood`, `a_note`, and the messages into it; writes to the roster only to backfill a population-tier contact detail discovered at send time (a verified email, a corrected `linkedin_url`/`facebook_url`; see §4.8)
 - **R** (human, no procedure document) — writes the `r_note` root key into `approach/{stem}.yaml`; does not write to the roster
 - **spar-state.tcl** — reads `stem` from the roster and checks for the presence of `profiles/{stem}.md` and `approach/{stem}.yaml` on disk to classify contact state; never writes to the roster
 
