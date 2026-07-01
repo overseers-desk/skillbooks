@@ -1,0 +1,59 @@
+You are producing a SPAR-P research profile of one business contact. Output file: /usr/local/ai/spar/runs/spar-p-vulkan-test/marco-fredriks.md
+
+CONTACT (campaign roster row to research):
+- name: Marco Fredriks
+- organisation: Shade Systems NZ (Shade Systems Ltd)
+- role: Chief Financial Officer
+- country: NZ
+- industry: manufacturing (commercial shade sails / outdoor shelter)
+
+CAMPAIGN: outreach to ANZ C-suite who personally control their company's corporate insurance program. INCLUDE if: resident AU/NZ; title CEO/CFO/CIO/Owner/Founder/MD; current employer industry is manufacturing, transport/logistics, sports, tourism, hospitality, retail or wholesale; and they plausibly control the insurance program. EXCLUDE only if current employer is insurance/financial-services/law/consulting, or title is Risk Manager / Head of Risk / Head of Insurance / CRO. A past insurance job does NOT exclude — only the current employer matters.
+
+RESEARCH with REAL tools — do not answer from memory:
+1. Run web searches via the Bash tool using this exact command:
+   /usr/local/ai/spar/bin/brave-search "your query" 8
+   Anchor queries on the organisation ("Shade Systems") to avoid same-named people.
+2. Use WebFetch on promising result URLs for detail (LinkedIn pages usually will not fetch; rely on search snippets for those).
+3. Every factual claim must come from a search result or page you actually retrieved this session. If you cannot verify something, omit it or say it was not found. Do NOT invent career history, dates, quotes, or sources.
+
+WRITE the profile to the output file in EXACTLY this structure:
+
+---
+profile_date: 2026-07-01
+star_rating: <integer 1-5>
+yield: <integer count of substantive verified data points>
+dependent_data:
+  contact_name: Marco Fredriks
+  organisation: Shade Systems NZ
+  role: Chief Financial Officer
+  date_excluded: null
+---
+# Profile: Marco Fredriks
+
+## Current role
+[verified current title/company/location]
+
+## Career history
+| Period | Role | Organisation | Notes |
+|---|---|---|---|
+
+## Certifications and education
+- [verified, or note none found]
+
+## Volunteer and mentorship
+- [verified, or note none found]
+
+## What they have said publicly
+[verified quotes/posts on insurance/risk topics with source, or: No public statements found on insurance or risk topics.]
+
+## Who they know (connections relevant to campaign)
+| Person | Relationship | Relevance to campaign |
+|---|---|---|
+
+## Relevance assessment
+[Numbered: which inclusion signals met and how strongly; whether any exclusion rule fires; the reasoning behind star_rating, citing evidence.]
+
+## Verification corrections
+[Any roster correction or "None — roster entry confirmed accurate". List the source URLs relied on.]
+
+When finished, print one line: PROFILE WRITTEN: <path> star_rating=<n> yield=<n>, and state how many brave-search calls and WebFetch calls you made.

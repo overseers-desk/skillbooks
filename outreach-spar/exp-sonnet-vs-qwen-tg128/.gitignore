@@ -1,0 +1,5 @@
+# runtime process logs — noise; the durable record is run-trace*.md + stream*.jsonl
+*/ccr.log
+*/dmesg.log
+*/llama-server.log
+*/err.log

@@ -1,0 +1,61 @@
+You are producing a SPAR-P research profile of one business contact. Output file: /usr/local/ai/spar/runs/spar-p-vulkan-test/marco-fredriks.md
+
+CONTACT (campaign roster row to research):
+- name: Marco Fredriks
+- organisation: Shade Systems NZ (Shade Systems Ltd)
+- role: Chief Financial Officer
+- country: NZ
+- industry: manufacturing (commercial shade sails / outdoor shelter)
+
+CAMPAIGN: outreach to ANZ C-suite who personally control their company's corporate insurance program. INCLUDE if: resident AU/NZ; title CEO/CFO/CIO/Owner/Founder/MD; current employer industry is manufacturing, transport/logistics, sports, tourism, hospitality, retail or wholesale; and they plausibly control the insurance program. EXCLUDE only if current employer is insurance/financial-services/law/consulting, or title is Risk Manager / Head of Risk / Head of Insurance / CRO. A past insurance job does NOT exclude.
+
+STRICT RESEARCH BUDGET — obey exactly:
+- Make AT MOST 4 web searches total, using: /usr/local/ai/spar/bin/brave-search "query" 8  (via the Bash tool).
+- Make AT MOST 3 WebFetch calls total.
+- NEVER repeat a search or a fetch you have already done. If a page gave no new fact, do not fetch it again.
+- Do NOT hunt for email/phone/contact details — those are masked online and are a dead end. Contact channels are out of scope for this profile.
+- The moment you have confirmed the person's current role + employer + industry (usually after 1-2 searches), STOP researching and WRITE the profile. You already have enough from ZoomInfo/Crunchbase-type results to confirm the role.
+
+WRITING THE FILE IS MANDATORY. A short, honest profile is a success; endless research is a failure. Base every claim only on results you actually retrieved; do not invent career history, dates, or quotes; if something is unknown, write that it was not found.
+
+Write the profile to the output file in EXACTLY this structure:
+
+---
+profile_date: 2026-07-01
+star_rating: <integer 1-5>
+yield: <integer count of substantive verified data points>
+dependent_data:
+  contact_name: Marco Fredriks
+  organisation: Shade Systems NZ
+  role: Chief Financial Officer
+  date_excluded: null
+---
+# Profile: Marco Fredriks
+
+## Current role
+[verified current title/company/location]
+
+## Career history
+| Period | Role | Organisation | Notes |
+|---|---|---|---|
+
+## Certifications and education
+- [verified, or "None found"]
+
+## Volunteer and mentorship
+- [verified, or "None found"]
+
+## What they have said publicly
+[verified quotes/posts on insurance/risk with source, or: No public statements found on insurance or risk topics.]
+
+## Who they know (connections relevant to campaign)
+| Person | Relationship | Relevance to campaign |
+|---|---|---|
+
+## Relevance assessment
+[Numbered: which inclusion signals met; whether any exclusion rule fires; reasoning behind star_rating, citing evidence.]
+
+## Verification corrections
+[Any roster correction or "None — roster entry confirmed accurate". List source URLs relied on.]
+
+After writing the file, print one line: PROFILE WRITTEN: <path> star_rating=<n> yield=<n>, and state how many brave-search and WebFetch calls you used.
