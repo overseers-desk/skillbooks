@@ -1,0 +1,14 @@
+__AUDIT_PREAMBLE__The profile written for __SLUG__ failed validation. Correct the deliverable in place; do not restart research, and do not rewrite sections the errors below do not touch.
+
+Validation errors:
+__ERROR_TEXT__
+
+Working context, re-stated because a resumed session reloads skill descriptions fresh and must not assume the earlier prompt's context survived:
+- OUTFILE: __OUTFILE__ — the profile document to correct
+
+How to fix each error class:
+- Front-matter errors: edit the YAML block at the top of OUTFILE. The canonical keys are `profile_date`, `star_rating` (integer 1–5), `yield` (non-negative integer), and `dependent_data` with exactly `contact_name`, `organisation`, `role`, `date_excluded`. Remove any other key; fold its content into the body if it is worth keeping.
+- Engagement-leak errors: delete the offending line or section. Prior correspondence, warmth statements, and angles/pitch content are campaign-bound and belong to the approach phase, never a profile (INVARIANTS.md I1).
+- Roster errors (duplicates, shared inbox, unreachable-without-exclusion, star_rating mismatch): correct the roster row via `sqlite3` under the roster lock discipline from the original task, keeping the front-matter and roster `star_rating` copies matching.
+
+Do not commit, reset, or inspect version control. When every listed error is corrected on disk, the task is done — stop.

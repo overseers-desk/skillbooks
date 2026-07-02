@@ -1246,7 +1246,7 @@ oo::class create spar::ProfileHarness {
                 lappend parts "invoke the facebook skill (Skill tool with skill=facebook) to fetch and parse the Facebook profile per SPAR-P §4.4"
             }
         }
-        return "FIRST: [join $parts { AND }]. Then re-derive any front-matter fields whose values depend on that data (warmth_finding, applicable_angles).\n\n"
+        return "FIRST: [join $parts { AND }]. Then re-derive any front-matter fields whose values depend on that data (star_rating, yield).\n\n"
     }
 
     # Override: include the first error message in the failure line.

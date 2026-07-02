@@ -1,0 +1,10 @@
+The previous turn of this profiling task ended without writing the profile file. The research in this session may already be complete; what is missing is the deliverable on disk.
+
+Working context, re-stated because a resumed session reloads skill descriptions fresh and must not assume the earlier prompt's context survived:
+- OUTFILE: __OUTFILE__ — the profile document that must exist when this turn ends
+
+Write the profile to OUTFILE now, following the SPAR-P §5 structure: the body sections first, then the roster `star_rating` write per §4.13 (via `sqlite3`, under the roster lock discipline from the original task), then the YAML front matter at the top of the file — `profile_date`, `star_rating`, `yield`, and a `dependent_data` snapshot of `contact_name`, `organisation`, `role`, and `date_excluded`; those are the only front-matter keys. The front-matter `star_rating` and the roster copy are two physical copies of one logical value and MUST match.
+
+Use the evidence already gathered in this session; resume research only where what is on hand is not enough to write an honest profile. Record what was checked and found empty as checked-empty, not as absence of research.
+
+Do not commit, reset, or inspect version control. When OUTFILE exists and the roster row carries the matching star_rating, the task is done — stop.
