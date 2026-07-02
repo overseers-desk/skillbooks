@@ -9,21 +9,20 @@ CONTACT (roster row):
 - channel type: @@TYPE@@
 - linkedin: @@LINKEDIN@@
 - source_url (why they were included): @@SOURCE_URL@@
+- roster notes: @@NOTES@@
 
-HOW TO WORK — research briefly, then write. You will NOT see the full catalogue, and you do not need to. A few broad searches, then write the file. Do not exhaust the context hunting for more examples; three to five concrete examples are plenty.
+HOW TO WORK — research until the picture supports a rating, then write. Depth guidance: the profile structure below tells you what coverage is expected; when further searching stops yielding new facts, write. Your context window is finite and you are responsible for budgeting it; writing the file is the only success, and an unwritten profile is a failure.
 
 SEGMENT — media creator. A valid member runs their own channel (podcast, YouTube channel, newsletter, or blog) covering AI in business, AI agents and automation, entrepreneurship and founders, business automation, fintech, or crypto and web3, and features founder guests or founder stories. Global; English primary, Mandarin acceptable.
 
-PRIMARY EVIDENCE IS THE CATALOGUE, NOT LINKEDIN. The evidence of what this creator covers is their own output: episode or video titles and the guests they feature. Build the relevance judgement from what the searches reveal about that output, and quote the real titles and guest names you find. Use LinkedIn only for identity, never as evidence of what they cover.
+PRIMARY EVIDENCE IS THE CATALOGUE, NOT LINKEDIN. The evidence of what this creator covers is their own output: episode or video titles and the guests they feature. Build the relevance judgement from what the research reveals about that output, and quote the real titles and guest names you find. Use LinkedIn only for identity and career history, never as evidence of what they cover.
 
-TOOLS — all via the Bash tool. Your research budget is SMALL; work from search snippets.
-1. Web search (your main, usually only, source): /usr/local/ai/spar/bin/brave-search "query" 5
-   Use two or three BROAD queries: the show name with "guests" or "episodes"; the host name with the campaign themes (AI, founders, automation); the host name with "AI" to find their own stated stance. Snippets carry titles and guest names. Do NOT search for guests one at a time — that burns the budget and fills the context before you can write. Avoid apostrophes inside the quoted query (write Lennys, not Lenny's); they break the search wrapper.
-2. WebFetch (optional, usually returns almost nothing): these channel pages are JavaScript-rendered and come back near-empty. Try at most one, only if a search points at a plainly readable page, and never retry it.
-3. LinkedIn (identity only, optional): browser-serialiser linkedin.com/parse-profile <slug>
-   The session may be logged out; if it returns a login wall or nothing, skip it and note that in Verification corrections.
-
-HARD STOP AND WRITE: after at most 4 tool calls in total, stop researching and WRITE the file, even if your picture is partial. Writing the file is the only success; an unwritten profile is a failure. A short, honest profile built from a few searches, quoting the real episode titles and guest names you found, is a complete success.
+TOOLS — all via the Bash tool (all on PATH):
+1. Web search: brave-search "query" <n-results>
+   Snippets carry titles and guest names. Avoid apostrophes inside the quoted query (write Lennys, not Lenny's); they break the search wrapper.
+2. WebFetch: fetch a page when a search points at one worth reading. Channel pages that are JavaScript-rendered come back near-empty from WebFetch; do not keep retrying one that does.
+3. LinkedIn (identity and career history): browser-serialiser linkedin.com/parse-profile <slug>
+   If it returns a login wall or nothing, note that in Verification corrections and continue from web sources.
 
 VERIFICATION RULES:
 - Quote only titles and guests you actually saw in a result. Do not invent episodes, guests, subscriber or download counts, or a host thesis. If a reach number is not verified, say so.
@@ -36,10 +35,10 @@ RATING — value to us, reach-gated. star_rating (1-5) = reach into OUR audience
   (3) stated interest: the host's own expressed appetite for these themes.
 Calibrate conservatively. On-theme but low-reach, or high-reach but audience-mismatched (general consumer or general tech with no founder, investor, or operator overlap), is NOT a 4 or 5. A mid-size channel with exactly the right audience can outrank a larger general one. Reserve 5 for strong reach into our audiences AND squarely on-domain with the right guest type. Rate on VERIFIED reach and fit, not on how much data you gathered; more data found does not by itself raise the rating. Justify the number against reach times the three signals.
 
-Write the profile in EXACTLY this structure:
+Write the profile in EXACTLY this structure, and write nothing after the final section:
 
 ---
-profile_date: 2026-07-02
+profile_date: @@DATE@@
 star_rating: <integer 1-5>
 yield: <integer count of substantive verified data points>
 dependent_data:
@@ -70,15 +69,13 @@ dependent_data:
 ## Who they know (connections relevant to campaign)
 | Person | Relationship | Relevance to campaign |
 |---|---|---|
-[a few named guests or peers relevant to us, from the catalogue]
+[named guests or peers relevant to us, from the catalogue]
 
 ## Catalogue evidence
-[PRIMARY section. Three to five real episode or video titles and named guests that show what the channel covers, grouped by signal: on-topic episodes (signal 1), founder/operator/exited-founder guests (signal 2), any host-voiced thesis (signal 3). Quote titles. Name the source and roughly how much you saw.]
+[PRIMARY section. Real episode or video titles and named guests that show what the channel covers, grouped by signal: on-topic episodes (signal 1), founder/operator/exited-founder guests (signal 2), any host-voiced thesis (signal 3). Quote titles. Name the source and roughly how much you saw.]
 
 ## Relevance assessment
 [Numbered: which of signals 1, 2, 3 are met and how strongly; the audience and its overlap with ours; the reach judgement; then the reasoning behind star_rating, citing the catalogue evidence.]
 
 ## Verification corrections
 [Any roster correction; any claim you REJECTED as unverified (an aggregator reach estimate, a guest's view misattributed to the host). List the tools and URLs relied on.]
-
-After writing the file, print one line: PROFILE WRITTEN: <path> star_rating=<n> yield=<n>, and state how many brave-search, WebFetch, and parse-profile calls you used.

@@ -25,8 +25,13 @@ MODEL=/usr/local/ai/spar/models/Qwen3.5-35B-A3B-Q4_K_M.gguf
 LLAMA_BIN=/usr/local/ai/spar/src/llama.cpp/build-vulkan/bin/llama-server
 LLAMA_LOG="$LOGS/llama-server.log"
 
-PERPROFILE_TIMEOUT=1200   # 20 min hard cap per attempt (circuit-breaker for decode loops)
+PERPROFILE_TIMEOUT=1800   # 30 min hard cap per attempt (circuit-breaker for decode loops;
+                          # sized for the full-method prompt, which researches deeper than run 1)
 MAX_ATTEMPTS=2            # auto-fix: retry non-hardware failures once
+
+# The research tools the prompt names bare (brave-search, browser-serialiser) resolve via PATH,
+# so the same prompt file drives any box; each box's driver supplies its own locations here.
+export PATH="$HOME/code/skillbooks/bin:/usr/local/ai/spar/bin:$PATH"
 
 ALLOWED="Bash,WebFetch,Read,Write,Edit,Glob,Agent"
 DISALLOWED="WebSearch,Grep,ToolSearch,Skill,TodoWrite,SendMessage,NotebookEdit,Workflow,CronCreate,CronDelete,CronList,TaskCreate,TaskGet,TaskList,TaskOutput,TaskStop,TaskUpdate,DesignSync,EnterWorktree,ExitWorktree,ScheduleWakeup,ReportFindings,WaitForMcpServers"
@@ -66,6 +71,7 @@ compose_prompt() {  # stem name org role type li src notes -> stdout
   local stem="$1" name="$2" org="$3" role="$4" type="$5" li="$6" src="$7" notes="$8"
   local out="$PROFILES/$stem.md" p="$TMPL"
   p="${p//@@OUTPUT_PATH@@/$out}"
+  p="${p//@@DATE@@/$(date +%F)}"
   p="${p//@@NAME@@/$name}"
   p="${p//@@ORG@@/$org}"
   p="${p//@@ROLE@@/$role}"
@@ -130,6 +136,8 @@ for stem in "${STEMS[@]}"; do
 
     wrote=0; [ "$after" -gt "$before" ] && wrote=1
     if [ "$wrote" = 1 ]; then
+      # harness hygiene (aesop#151): run boilerplate stays out of the committed profile body
+      sed -i -e '/^PROFILE WRITTEN/d' -e '/^Tool calls used\|^brave-search calls\|^I used [0-9]* /d' "$out"
       star=$(awk -F': *' '/^star_rating:/{gsub(/[^0-9]/,"",$2);print $2; exit}' "$out")
       yield=$(awk -F': *' '/^yield:/{gsub(/[^0-9]/,"",$2);print $2; exit}' "$out")
     fi
