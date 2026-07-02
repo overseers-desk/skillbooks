@@ -1,0 +1,10 @@
+{
+  "model": "qwen2.5:14b",
+  "wall_s": 93.1,
+  "prompt_eval_count": 3754,
+  "eval_count": 558,
+  "prompt_eval_s": 6.3,
+  "eval_s": 86.32,
+  "tg_tok_s": 6.5,
+  "pp_tok_s": 596.3
+}

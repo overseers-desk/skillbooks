@@ -1,0 +1,67 @@
+You are producing a SPAR-P research profile of one business contact. Output the profile as markdown text (it will be saved to a file).
+
+CONTACT (campaign roster row):
+- name: Marco Fredriks
+- linkedin slug: marco-fredriks-5737bb15
+- organisation: Shade Systems Ltd (Shade Systems NZ)
+- role: Chief Financial Officer
+- country: NZ
+
+CAMPAIGN: outreach to ANZ C-suite who personally control their company's corporate insurance program. INCLUDE if: resident AU/NZ; title CEO/CFO/CIO/Owner/Founder/MD; current employer industry is manufacturing, transport/logistics, sports, tourism, hospitality, retail or wholesale; plausibly controls the insurance program. EXCLUDE only if current employer is insurance/financial-services/law/consulting, or title is Risk Manager / Head of Risk / Head of Insurance / CRO. A past insurance job does NOT exclude.
+
+SOURCE FACTS (already gathered for you; reach tools are offline in this run, so use only what is below):
+- The LinkedIn parse-profile output is the AUTHORITATIVE source for who this person is and their real career history.
+- The brave-search snippets are public web/aggregator context, NOT authoritative for identity.
+
+VERIFICATION RULE — this is the point of the run, obey it:
+- Build the "Current role" and "Career history" sections ONLY from what the LinkedIn parse-profile actually shows.
+- Aggregator sources (ZoomInfo, RocketReach, Crunchbase, and brave-search snippets) frequently attach a DIFFERENT same-named person's history to this name (name-collision). If an aggregator or search snippet claims a role, employer, or career (for example an insurance-industry background) that the LinkedIn parse-profile does NOT show, treat it as UNVERIFIED and do NOT put it in the profile as fact. If it is decision-relevant, note it in Verification corrections as an unverified aggregator claim contradicted by the direct LinkedIn fetch.
+- Do not invent, infer, or import career history the LinkedIn parse-profile does not contain.
+
+Write the profile in EXACTLY this structure (current SPAR-P §5.2):
+
+---
+profile_date: 2026-07-02
+star_rating: <integer 1-5>
+yield: <integer count of substantive verified data points>
+dependent_data:
+  contact_name: Marco Fredriks
+  organisation: Shade Systems Ltd
+  role: Chief Financial Officer
+  date_excluded: null
+---
+# Profile: Marco Fredriks
+
+## Current role
+[from LinkedIn: title, company, location, tenure]
+
+## Career history
+| Period | Role | Organisation | Notes |
+|---|---|---|---|
+[ONLY roles shown on the LinkedIn profile]
+
+## Certifications and education
+- [from LinkedIn, or "None found"]
+
+## Volunteer and mentorship
+- [from LinkedIn, or "None found"]
+
+## What they have said publicly
+[verified statements on insurance/risk with source, or: No public statements found on insurance or risk topics.]
+
+## Who they know (connections relevant to campaign)
+| Person | Relationship | Relevance to campaign |
+|---|---|---|
+
+## Institutional context
+[what the employer is and why the CFO plausibly controls the insurance program]
+
+## Relevance assessment
+[Numbered: inclusion signals met; any exclusion rule; the reasoning behind star_rating, citing evidence. Base the rating on VALUE TO THE CAMPAIGN and on what is VERIFIED, not on unverified aggregator claims and not merely on how much data is present.]
+
+## Verification corrections
+[Any roster correction; and explicitly: any aggregator/search claim you found and REJECTED because the direct LinkedIn fetch did not support it. List source URLs / tools relied on.]
+
+After the profile, print one line: PROFILE WRITTEN star_rating=<n> yield=<n>
+
+Output ONLY the profile markdown starting at the leading --- front matter, then the final PROFILE WRITTEN line. Do not add commentary before or after.
