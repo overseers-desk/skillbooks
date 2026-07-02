@@ -5,5 +5,18 @@
       "Read(**/config.ini)",
       "Read(**/config.yaml)"
     ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq 'if env.SSOT_ALLOW_WRITE == \"1\" then empty elif ((.tool_input.file_path // \"\") | test(\"/(spar-campaigns|spar-job-agents)/[^/]+\\\\.md$\")) then {hookSpecificOutput:{hookEventName:\"PreToolUse\",permissionDecision:\"deny\",permissionDecisionReason:\"SPAR campaign directories keep prose in campaign.yaml (prompt_appendices) and segment.yaml (discovery_criteria). Do not create parallel .md files — edit the YAML instead. Override: SSOT_ALLOW_WRITE=1 claude …\"}} else empty end'"
+          }
+        ]
+      }
+    ]
   }
 }
