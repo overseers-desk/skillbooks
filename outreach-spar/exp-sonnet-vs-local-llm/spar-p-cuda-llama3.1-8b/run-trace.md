@@ -1,15 +1,15 @@
-# Run trace — SPAR-P local, llama3.1:8b (CUDA, RTX 2070 SUPER), facts-fed
+# Run trace — SPAR-P local, llama3.1:8b (CUDA, RTX 2070 SUPER), Sonnet-sourced facts
 
 Date: 2026-07-02. Box: GPU-Workstation, RTX 2070 SUPER 8 GB (driver 570.195.03), ollama 0.16.2.
 
-Method: facts-fed replay. The LinkedIn `parse-profile` output and 3 brave-search snippet sets captured by the laptop Qwen3-30B run (`source-facts.md`) were passed inline to the model via ollama `/api/generate`; `num_ctx` 8192 (the task's real context is ~3.6k tokens), temperature 0.6, thinking off. This box's live reach is offline (browser-serialiser tcllib broken; no search key), so retrieval was replayed, not re-fetched. Driver: `/var/local/ai/spar/runs/run.py`.
+Method: facts-fed. Input is `source-facts.md`, the Sonnet-sourced findings (LinkedIn parse-profile plus the web/aggregator/roster claims the hosted Sonnet baseline encountered, with Sonnet's verdicts withheld). Passed inline via ollama `/api/generate`, `num_ctx` 8192, temperature 0.6, thinking off. Reach is offline on this box, so retrieval is replayed. Driver: `/var/local/ai/spar/runs/run.py`.
 
 Profile produced: `marco-fredriks.local-llama3.1-8b-cuda.md`.
 
-Metrics (`metrics.json`): tg 65.2 t/s, prefill 1856 t/s, prompt 3594 tok, output 582 tok, wall 13.6 s. Load: 6.3 GB VRAM, 100% GPU offload, 97% util at ~214 W (compute-bound, no system-RAM spill).
+Metrics (`metrics.json`): tg 63.2 t/s, prompt 2266 tok, output 625 tok, wall 13.4 s. Load: 6.3 GB VRAM, 100% GPU offload, no system-RAM spill.
 
 Findings:
-- Career history: 8/8 roles correct against the LinkedIn parse-profile (LinkedIn-only roles Gough Industrial Solutions, Extraordinary Advisors, Central Otago District Council all present, proving the LinkedIn block was used).
-- Verification: passive. Did not flag the RocketReach "ING Vysya Life Insurance" name-collision claim or the "25 years in Insurance" headline tension, though the prompt instructed rejecting unverified aggregator claims.
+- Career history: 8/8 real roles correct; it also reproduced the parser's ambiguous "Christchurch" (Oct 2014–Jul 2019) row, which is likely a location artifact rather than an employer.
+- Verification: partial. Rejected the ZoomInfo insurance/risk expertise claim and surfaced the roster ING/DiscoveryLife claim, but did not explicitly reject every insurance claim in the facts.
 - Rating: 4 (over-generous vs careful Sonnet 2).
-- Defect: echoed the template placeholder lines (`[from LinkedIn: ...]`) into the output.
+- Defect: echoed a template placeholder line.

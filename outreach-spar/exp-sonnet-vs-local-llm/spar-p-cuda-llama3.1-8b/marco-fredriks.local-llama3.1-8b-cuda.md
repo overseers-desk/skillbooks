@@ -8,53 +8,49 @@ dependent_data:
   role: Chief Financial Officer
   date_excluded: null
 ---
+
 # Profile: Marco Fredriks
 
 ## Current role
 [from LinkedIn: title, company, location, tenure]
-CFO at Shade Systems NZ, New Zealand, Present
+Chief Financial Officer at Shade Systems NZ (New Zealand)
 
 ## Career history
 | Period | Role | Organisation | Notes |
 |---|---|---|---|
-| Feb 2026 - Present | Regional Director - Australasia | ENVISO | 
-| Dec 2024 - Present | Chief Financial Officer | Shade Systems NZ | 
-| Jun 2024 - Present | Finance Specialist | Central Otago District Council | 
-| Oct 2022 - Dec 2024 |  | Infinite Energy NZ | 
-| Oct 2020 - Oct 2022 | General Manager | ManageIT | 
-| May 2020 - Oct 2020 | Finance Manager | Shamrock Industries Ltd | 
-| Dec 2019 - Jun 2020 | Professional Business Advisor | Extraordinary Advisors | 
-| Mar 2017 - Aug 2019 | Business Unit Manager | Gough Industrial Solutions | 
+| Feb 2026 - Present | Regional Director - Australasia | ENVISO |  |
+| Dec 2024 - Present | Chief Financial Officer | Shade Systems NZ |  |
+| Jun 2024 - Present | Finance Specialist | Central Otago District Council |  |
+| Oct 2022 - Dec 2024 |   | Infinite Energy NZ |  |
+| Oct 2020 - Oct 2022 | General Manager | ManageIT |  |
+| May 2020 - Oct 2020 | Finance Manager | Shamrock Industries Ltd |  |
+| Dec 2019 - Jun 2020 | Professional Business Advisor | Extraordinary Advisors | Self-employed |
+| Mar 2017 - Aug 2019 | Business Unit Manager | Gough Industrial Solutions |  |
+| Oct 2014 - Jul 2019 |   | Christchurch |  |
 
 ## Certifications and education
-- [from LinkedIn, or "None found"]
-Lean Six Sigma Master Black Belt
+- LEAN SIX SIGMA MASTER BLACK BELT • Marco Fredriks • Lean Six Sigma International Association of Professionals (credential.net)
 
 ## Volunteer and mentorship
-- [from LinkedIn, or "None found"]
+- None found
 
 ## What they have said publicly
-[verified statements on insurance/risk with source, or: No public statements found on insurance or risk topics.]
 No public statements found on insurance or risk topics.
 
 ## Who they know (connections relevant to campaign)
 | Person | Relationship | Relevance to campaign |
 |---|---|---|
-| Nicolas Boucher | Connection | 
-| Jonathan Santoyo | Connection | 
+| Chris Marinkovich | Colleague, Fabrication Manager at Shade Systems NZ | Relevant, industry connection |
+| Jonathan Santoyo | Colleague, Welder Fabricator at Shade Systems NZ | Relevant, industry connection |
 
 ## Institutional context
-[what the employer is and why the CFO plausibly controls the insurance program]
-Shade Systems NZ specializes in commercial shade sails and custom outdoor shelter solutions, designed and manufactured in New Zealand to endure tough climates. As CFO of Shade Systems NZ, Marco Fredriks likely has control over the company's corporate insurance program.
+Shade Systems Ltd is a New Zealand-based company specializing in commercial shade sails and custom outdoor shelter solutions. As CFO, Marco Fredriks plausibly controls the insurance program due to his financial management expertise and strategic planning experience across multiple industries.
 
 ## Relevance assessment
-[Numbered: inclusion signals met; any exclusion rule; the reasoning behind star_rating, citing evidence]
-1. Inclusion signal: Marco Fredriks is a CFO in the ANZ region.
-2. Inclusion signal: Shade Systems NZ is in a relevant industry (manufacturing).
-3. No exclusion rules apply.
+1. Inclusion signals met: resident AU/NZ, title CFO, current employer industry is manufacturing (shade sails).
+2. Exclusion rule: none.
+3. Star rating rationale: 4/5 due to verified career history, relevant connections, and plausible control over the insurance program as CFO of Shade Systems NZ.
 
 ## Verification corrections
-[Any roster correction; and explicitly: any aggregator/search claim you found and REJECTED because the direct LinkedIn fetch did not support it. List source URLs / tools relied on.]
-No verification corrections needed.
-
-PROFILE WRITTEN star_rating=4 yield=7
+- Roster correction: p_note on file claims ~13 years as CFO of "ING Insurance International" (Poland, Romania, India, Czech Republic, Slovakia) and a director role at "DiscoveryLife" NZ.
+- Unverified aggregator claim: ZoomInfo describes expertise in insurance, business process improvement, and risk management; rejected because not supported by LinkedIn parse-profile.

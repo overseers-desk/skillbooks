@@ -1,7 +1,7 @@
 ---
 profile_date: 2026-07-02
 star_rating: 5
-yield: 10
+yield: 12
 dependent_data:
   contact_name: Marco Fredriks
   organisation: Shade Systems Ltd
@@ -11,17 +11,19 @@ dependent_data:
 # Profile: Marco Fredriks
 
 ## Current role
-[from LinkedIn: title, company, location, tenure]
-Chief Financial Officer at Shade Systems NZ, New Zealand, with tenure from Dec 2024 to Present.
+[from LinkedIn: Chief Financial Officer, Shade Systems NZ, New Zealand, tenure: Dec 2024 - Present]
 
 ## Career history
 | Period | Role | Organisation | Notes |
 |---|---|---|---|
-| Feb 2026 – Present | Regional Director - Australasia | ENVISO | Self-employed |
-| Dec 2024 – Present | Chief Financial Officer | Shade Systems NZ | Full-time |
-| Jun 2024 – Present | Finance Specialist | Central Otago District Council | Full-time |
-| Oct 2022 – Dec 2024 | Finance Manager | Shamrock Industries Ltd | Full-time |
-| Mar 2017 – Aug 2019 | Business Unit Manager | Gough Industrial Solutions | Full-time |
+| Dec 2024 - Present | Chief Financial Officer | Shade Systems NZ | |
+| Jun 2024 - Present | Finance Specialist | Central Otago District Council | |
+| Feb 2026 - Present | Regional Director - Australasia | ENVISO | Self-employed |
+| Oct 2022 - Dec 2024 | Finance Manager | Shamrock Industries Ltd | |
+| Oct 2020 - Oct 2022 | General Manager | ManageIT | |
+| May 2020 - Oct 2020 | Finance Manager | Shamrock Industries Ltd | |
+| Dec 2019 - Jun 2020 | Professional Business Advisor | Extraordinary Advisors | Self-employed |
+| Mar 2017 - Aug 2019 | Business Unit Manager | Gough Industrial Solutions | |
 
 ## Certifications and education
 - Lean Six Sigma Master Black Belt • Marco Fredriks • Lean Six Sigma International Association of Professionals
@@ -30,24 +32,27 @@ Chief Financial Officer at Shade Systems NZ, New Zealand, with tenure from Dec 2
 - None found
 
 ## What they have said publicly
-[verified statements on insurance/risk with source, or: No public statements found on insurance or risk topics.]
+No public statements found on insurance or risk topics.
 
 ## Who they know (connections relevant to campaign)
 | Person | Relationship | Relevance to campaign |
 |---|---|---|
-| Chris Marinkovich | Colleague | Fabrication Manager at Shade Systems NZ |
-| Jonathan Santoyo | Colleague | Welder Fabricator at Shade Systems NZ |
+| Chris Marinkovich | Fabrication Manager | Shade Systems NZ |
+| Jonathan Santoyo | Welder Fabricator | Shade Systems NZ |
 
 ## Institutional context
-Shade Systems NZ is a New Zealand-based company that specializes in commercial shade sails and custom outdoor shelter solutions. As the CFO, Marco Fredriks is responsible for financial management and strategic planning, which includes overseeing the company’s corporate insurance program.
+Shade Systems NZ is a manufacturer of commercial shade sails and custom outdoor shelter solutions. As CFO, Marco Fredriks is responsible for financial management and strategic planning, which includes oversight of the company's insurance program.
 
 ## Relevance assessment
-1. Inclusion signals met: Resident of NZ, title is CFO, current employer is manufacturing (Shade Systems NZ).
-2. Exclusion rule: No exclusion applicable as Marco Fredriks is not in the insurance/financial-services/law/consulting industry.
-3. Star rating: 5 – Marco Fredriks is a high-value contact for the campaign as he is a CFO at a manufacturing company in NZ, and the LinkedIn data confirms his role and tenure, making him a strong candidate for outreach.
+1. Inclusion signals met: Resident of NZ, title is CFO, current employer industry is manufacturing (shade sails and outdoor shelters).
+2. No exclusion rule applies: Role is not in insurance/financial-services/law/consulting, and title is not Risk Manager / Head of Risk / Head of Insurance / CRO.
+3. Star rating: 5 (High value to the campaign, verified role and company, and plausible control over the insurance program as CFO of a manufacturing company).
 
 ## Verification corrections
-- Aggregator claim: "Marco Fredriks brings experience from previous roles at Shade Systems NZ, Infinite Energy NZ, Shamrock Industries Ltd and ING Vysya Life Insurance" – rejected as the LinkedIn profile does not show any insurance industry experience.
-- Aggregator claim: "Marco Fredriks is the Chief Financial Officer at Shade Systems NZ, bringing extensive financial leadership experience to the organization. They demonstrate expertise in financial management, strategic planning, and risk management, cultivated through diverse roles across multiple industries" – partially supported, but the insurance-related claims are not verified by LinkedIn.
+- Aggregator claim: "claims ~13 years as CFO of 'ING Insurance International'" — REJECTED. LinkedIn does not show any insurance-related roles.
+- Aggregator claim: "director role at 'DiscoveryLife' NZ" — REJECTED. LinkedIn does not show any director roles at DiscoveryLife.
+- Aggregator claim: "25 years of experience in Insurance" — REJECTED. LinkedIn does not show any insurance-related experience.
+- Aggregator claim: "lists prior roles at Shade Systems NZ, Infinite Energy NZ, Shamrock Industries Ltd, and ING Vysya Life Insurance" — REJECTED. LinkedIn shows Marco Fredriks was at Shade Systems NZ, Infinite Energy NZ, Shamrock Industries Ltd, but not ING Vysya Life Insurance.
+- Aggregator claim: "skill set includes Insurance, Business Process Improvement, Life Insurance" — REJECTED. LinkedIn shows Marco Fredriks has skills in Business Process Improvement, but not Insurance or Life Insurance.
 
-PROFILE WRITTEN star_rating=5 yield=10
+PROFILE WRITTEN star_rating=5 yield=12
