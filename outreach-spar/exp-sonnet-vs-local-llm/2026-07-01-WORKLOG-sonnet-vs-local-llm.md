@@ -108,3 +108,21 @@ Next steps to narrow the residual (untested here):
 3. **Production write-back.** `prompt3.txt` writes only the standalone `.md`; the spec (`spar-P-profile.md` §4.13) also requires `star_rating` written to the roster TSV via `sqlite3` in order (body → roster → front matter). A production prompt must add it, or the state machine's band filters and progress counts break.
 
 The single durable lesson: give a local model the same reach through Bash CLIs and it matches the hosted run on facts; what it still lacks is the reflex to distrust a convenient fact and to price what the facts mean.
+
+## 9. Qwen3.5-35B-A3B (successor engine): tool + verification gaps close; calibration remains
+
+Same setup as §7 (Vulkan, LinkedIn + brave via Bash, same contact, logged-in LinkedIn session), on the successor model — Qwen3.5-35B-A3B, Q4_K_M, 22 GB, in `spar-p-vulkan-qwen3.5-35b-a3b/`. 8 turns, ~8 min, peak ~25 GiB, fit under Wayland at `-c 16384`.
+
+Three engines, one contact (Marco Fredriks):
+
+| engine | star | career | verification |
+|---|---|---|---|
+| Qwen3-30B-A3B | 4 | full (via LinkedIn) | **passive** — took LinkedIn as truth, flagged nothing |
+| **Qwen3.5-35B-A3B** | **4** | **full (via LinkedIn)** | **active + correct** — rejected the ZoomInfo "ING Vysya Life Insurance" claim as a name-collision (different Marco Fredriks); precise on the Infinite Energy nuance ("employment shown, title not — unverifiable") |
+| Sonnet (current-spec) | 2 | full | active — debunked the collision |
+
+The successor **closes the verification gap** the 30B had: on the same clean data it independently caught and rejected the aggregator name-collision — the disconfirming reflex the 30B lacked — and reached full career parity with Sonnet. Two of the three axes (tool reach, verification judgement) now match hosted Sonnet.
+
+**Remaining gap: rating calibration.** With full facts and correct verification it still rates **4** where Sonnet rates **2**. It scores presence-of-verified-data, not value-to-us: it does not discount the portfolio/fractional pattern (three concurrent "present" roles) or the absent value signals (no insurance-program authority, no public engagement). Its calibration is data-driven-optimistic — *more* verified data pushed the rating *up* (a run whose LinkedIn fetch hit a login wall saw a thinner career and rated 3; the clean run saw the full history and rated 4). This is the one axis where the A3B local models still trail Sonnet, and the most prompt-tunable — the §8 next-step (a rubric-anchored "rate value, not completeness" instruction) is the lever to test.
+
+Condition note: a LinkedIn login wall on `parse-profile` thins the career table; a warm logged-in session (`browser-serialiser linkedin.com/login --check` → `already_logged_in`) gives the full history. Check it before a run.
