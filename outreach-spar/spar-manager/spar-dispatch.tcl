@@ -281,10 +281,12 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         set stem [string trim [spar::dict_get_default $row stem ""]]
 
         # Header fragments and invalidated rows never dispatched.
-        # Blank contact_name is allowed through: P §4.1 resolves the name
-        # when organisation is identified but no individual is yet known.
+        # One of contact_name / organisation may be blank: P §4.1 resolves
+        # a missing name from a known organisation, and consumer segments
+        # carry named individuals with no organisation. A row with neither
+        # is an undispatchable fragment.
         if {$name eq "contact_name" || $name eq "organisation"} continue
-        if {$org eq ""} continue
+        if {$org eq "" && $name eq ""} continue
         if {$date_invalid ne ""} continue
         if {$stem eq ""} continue
 
