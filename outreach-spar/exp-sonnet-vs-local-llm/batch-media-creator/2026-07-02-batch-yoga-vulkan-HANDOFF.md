@@ -6,7 +6,7 @@ Handoff written 2026-07-02, context exhausted mid-setup. Task not started. Do th
 Redo every SPAR-P profile in the `holotapes-career` campaign using the **local Qwen3.5-35B-A3B** engine (Vulkan), on a **new branch**, **overriding** the existing (hosted-Sonnet) profiles. Goal: how many complete unattended, and quality vs the Sonnet originals. Run **NQA** — the user will wake to check the count.
 
 ## Do NOT re-derive these — read them first (don't duplicate in your writeup)
-- `exp-sonnet-vs-local-llm/2026-07-01-WORKLOG-sonnet-vs-local-llm.md` — the whole method: §2 reproduce recipe (llama-server + ccr + `ccr code` loop), §3 tools-via-Bash (brave-search + `browser-serialiser linkedin.com/parse-profile`, no `Skill`, grammar limit), §4 dead-ends, §5–6 tg128/bottleneck, §7–9 the 30b/3.5/Sonnet comparison and the residual (rating calibration).
+- `exp-sonnet-vs-local-llm/2026-07-01-probe-yoga-vulkan.md` — the whole method: §2 reproduce recipe (llama-server + ccr + `ccr code` loop), §3 tools-via-Bash (brave-search + `browser-serialiser linkedin.com/parse-profile`, no `Skill`, grammar limit), §4 dead-ends, §5–6 tg128/bottleneck, §7–9 the 30b/3.5/Sonnet comparison and the residual (rating calibration).
 - `exp-sonnet-vs-local-llm/CLAUDE.md` — memory invariants. Key: **one persistent `llama-server` (load the model once), stream all profiles through it; no reload/reboot per profile.** GTT lazy-frees and is reclaimed by the next load — do not reboot between runs. Keep big files off `/tmp` (tmpfs).
 - `spar-p-vulkan-qwen3.5-35b-a3b/prompt3.txt` — the working per-contact prompt (LinkedIn-as-ground-truth + verification rule + SPAR-P §5.2 structure). It is chris-insurance-broking-specific; **adapt the CAMPAIGN/INCLUDE-EXCLUDE block to holotapes-career's segment rules** and make it generic per-contact.
 
@@ -41,7 +41,7 @@ Drive the **local** model directly via `ccr code` per contact — do NOT use `sp
 Notes: tools reach the model only through Bash (brave-search + browser-serialiser); keep the tool set lean (grammar limit, WORKLOG §4 dead-end 2). Force the verification pass and a value-calibrated rating in the prompt (WORKLOG §8 next-steps — the 3.5 residual is over-rating, star 4 vs Sonnet 2).
 
 ## Record-keeping (user's split)
-- **Experiment record → here**: create `exp-sonnet-vs-local-llm/spar-p-qwen3.5-holotapes-career/` for the run log, `progress.log`, `stream*.jsonl`, and a dated WORKLOG (date-leading name). `.log` noise → its `logs/` (git-ignored).
+- **Experiment record → here**: create `exp-sonnet-vs-local-llm/batch-media-creator/` for the run log, `progress.log`, `stream*.jsonl`, and a dated WORKLOG (date-leading name). `.log` noise → its `logs/` (git-ignored).
 - **Result data → the campaign repo**: the regenerated profiles overwrite `holotapes-career/.../profiles/*.md` on the branch. Commit there separately; the aesop experiment folder holds only the record, not the profiles.
 
 ## Progress check for the user

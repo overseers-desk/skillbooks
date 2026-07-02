@@ -1,6 +1,6 @@
 # WORKLOG 2026-07-02 — SPAR-P on local models, GPU-Workstation (CUDA, RTX 2070 SUPER)
 
-Forward-only record for a future agent asked "can SPAR-P run on the GPU-Workstation box, with the local model producing a comparable profile at reasonable time and machine load?" This box is a different environment from the laptop the sibling `WORKLOG.md` describes (that one is a Lunar Lake laptop, Arc 140V, Vulkan). This file is about the desktop.
+Forward-only record for a future agent asked "can SPAR-P run on the GPU-Workstation box, with the local model producing a comparable profile at reasonable time and machine load?" This box is a different environment from the laptop the sibling `2026-07-01-probe-yoga-vulkan.md` describes (that one is a Lunar Lake laptop, Arc 140V, Vulkan). This file is about the desktop.
 
 ## 1. The box (measured)
 

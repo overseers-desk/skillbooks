@@ -9,7 +9,7 @@
 #        run-batch.sh <stem> [stem ...]     # explicit stems (pilot)
 set -u
 
-REC="$HOME/code/aesop/outreach-spar/exp-sonnet-vs-local-llm/spar-p-qwen3.5-holotapes-career"
+REC="$HOME/code/aesop/outreach-spar/exp-sonnet-vs-local-llm/batch-media-creator"
 RUN=/usr/local/ai/spar/runs/holotapes-career-qwen35
 CAMPAIGN="$HOME/code/holotapes-career/spar-campaigns"
 SEG=media-creator
