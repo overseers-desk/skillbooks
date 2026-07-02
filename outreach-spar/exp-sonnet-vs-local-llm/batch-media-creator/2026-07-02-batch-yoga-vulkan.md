@@ -10,7 +10,7 @@ Forward-only record: regenerate the media-creator SPAR-P profiles on yoga (Lunar
 
 Qwen3.5-35B-A3B Q4 on yoga (Arc 140V, Vulkan). Live agentic retrieval (ccr + brave-search + WebFetch), the same architecture as the Vulkan groundwork. Profiles written to the holotapes-career branch `career-qwen35-vulkan`, forked from `career` (the Sonnet baseline, commit ecfdf33). Compare with `git diff career..career-qwen35-vulkan -- spar-campaigns/media-creator/profiles`.
 
-This is the live-retrieval point of the comparison: the laptop has live web + LinkedIn reach, so its 35B does real retrieval, whereas the CUDA three replay from a facts sheet. The two methods differ by necessity (the CUDA box has no live reach), so the 35B is not directly head-to-head with the facts-fed three; it answers a different question, whether a local model can do the whole loop live.
+This is the live-retrieval point of the comparison: the laptop has live web + LinkedIn reach, so its 35B does real retrieval, whereas the CUDA three replay from a facts sheet. The two methods differ by the CUDA batch's choice to feed facts rather than retrieve live (the box itself has live web and LinkedIn reach, which its probe used), so the 35B is not directly head-to-head with the facts-fed three; it answers a different question, whether a local model can do the whole loop live.
 
 ## Method
 
