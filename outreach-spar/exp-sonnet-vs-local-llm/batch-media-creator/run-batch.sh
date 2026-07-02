@@ -31,7 +31,7 @@ MAX_ATTEMPTS=2            # auto-fix: retry non-hardware failures once
 
 # The research tools the prompt names bare (brave-search, browser-serialiser) resolve via PATH,
 # so the same prompt file drives any box; each box's driver supplies its own locations here.
-export PATH="$HOME/code/skillbooks/bin:/usr/local/ai/spar/bin:$PATH"
+export PATH="$HOME/code/skillbooks/bin:/usr/local/ai/spar/bin:$HOME/.npm-global/bin:$PATH"
 
 ALLOWED="Bash,WebFetch,Read,Write,Edit,Glob,Agent"
 DISALLOWED="WebSearch,Grep,ToolSearch,Skill,TodoWrite,SendMessage,NotebookEdit,Workflow,CronCreate,CronDelete,CronList,TaskCreate,TaskGet,TaskList,TaskOutput,TaskStop,TaskUpdate,DesignSync,EnterWorktree,ExitWorktree,ScheduleWakeup,ReportFindings,WaitForMcpServers"
