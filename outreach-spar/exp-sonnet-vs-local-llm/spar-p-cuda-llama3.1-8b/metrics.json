@@ -1,10 +1,10 @@
 {
   "model": "llama3.1:8b",
-  "wall_s": 13.4,
-  "prompt_eval_count": 2266,
-  "eval_count": 625,
-  "prompt_eval_s": 1.38,
-  "eval_s": 9.9,
-  "tg_tok_s": 63.2,
-  "pp_tok_s": 1646.5
+  "wall_s": 13.8,
+  "prompt_eval_count": 2232,
+  "eval_count": 672,
+  "prompt_eval_s": 1.18,
+  "eval_s": 9.98,
+  "tg_tok_s": 67.3,
+  "pp_tok_s": 1896.3
 }

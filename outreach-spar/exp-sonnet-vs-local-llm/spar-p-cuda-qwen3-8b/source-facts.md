@@ -1,6 +1,6 @@
-# Source facts — Sonnet-sourced (reconstructed from Sonnet's finished profile)
+# Source facts — live first-party retrieval (GPU-Workstation, 2026-07-02)
 
-The raw findings the hosted Sonnet baseline gathered for this contact: the LinkedIn parse-profile (the same canonical fetch Sonnet used) plus the web, aggregator, directory and roster claims it encountered. Presented as neutral inputs, with Sonnet's own conclusions and verdicts deliberately withheld, so a consuming model must do the verification itself.
+Retrieved live for this run: the LinkedIn parse-profile via the linkedin.com skill (authoritative for identity and career), and web results via live web search plus a direct fetch of the company site (aggregator and institutional context). The roster row and its p_note are the campaign input on file. Everything below is presented as neutral claims; the verification is left to the model.
 
 ## LinkedIn parse-profile (marco-fredriks-5737bb15) — authoritative for identity and career
 
@@ -81,6 +81,7 @@ experience:
   end: Jul 2019
   current: false
 skills:
+- Marco Fredriks
 - CFO at Shade Systems
 - Financial Process Improvement
 - New Client Acquisitions
@@ -109,32 +110,21 @@ coverage:
   about: not_found
 ```
 
-## Roster row (campaign input on file for this contact)
+## Roster row (campaign input on file)
 - name: Marco Fredriks; organisation: Shade Systems Ltd (Shade Systems NZ); role: CFO; location on file: Dargaville, NZ.
 - p_note on file: claims ~13 years as CFO of "ING Insurance International" (Poland, Romania, India, Czech Republic, Slovakia) and a director role at "DiscoveryLife" NZ.
 - linkedin_url on file: the canonical profile above. email on file: empty. facebook_url on file: empty.
 
-## Web, aggregator and directory results encountered
-- ZoomInfo (person): Chief Financial Officer at Shade Systems NZ; describes expertise in financial management, strategic planning, and risk management, across multiple industries.
-- ZoomInfo (company): Shade Systems NZ specializes in commercial shade sails and custom outdoor shelter solutions, designed and manufactured in New Zealand; phone +64 9 222 0395; site shadesystems.co.nz.
-- RocketReach: lists prior roles at Shade Systems NZ, Infinite Energy NZ, Shamrock Industries Ltd, and ING Vysya Life Insurance; skill set includes Insurance, Business Process Improvement, Life Insurance.
+## Live web search results (2026-07-02)
+- ZoomInfo (person): Chief Financial Officer at Shade Systems NZ; describes expertise in financial management, strategic planning and risk management across multiple industries; masked email ****@shadesystems.co.nz.
+- ZoomInfo (company): Shade Systems NZ specializes in commercial shade sails and custom outdoor shelter solutions, designed and manufactured in New Zealand; phone +64 9 222 0395.
+- RocketReach: brings experience from previous roles at Shade Systems NZ, Infinite Energy NZ, Shamrock Industries Ltd and ING Vysya Life Insurance; also lists him as currently General Manager at ManageIT, based in Cromwell, OTA, NZ.
+- Aggregated bios: describe a CFO position at ING Vysya Life Insurance (an India-only ING subsidiary later renamed Exide Life Insurance) with "risk management" expertise "within the insurance sector", and a CFO role at Infinite Energy.
 - Crunchbase: Marco Fredriks is the Chief Financial Officer of Shade Systems.
-- Search-engine-synthesized bios: variously describe "CFO at ING Vysya Life Insurance" (an India-only ING subsidiary later renamed Exide Life) and "25 years of experience in Insurance".
-- LinkedIn people-directory (/pub/dir/Marco/Fredriks): lists 3 separate "Marco Fredriks" profiles.
-- Colleagues surfaced via ZoomInfo: Chris Marinkovich (Fabrication Manager, Shade Systems NZ), Jonathan Santoyo (Welder Fabricator, Shade Systems NZ).
+- Colleagues surfaced (Shade Systems NZ): Chris Marinkovich (Fabrication Manager), Jonathan Santoyo (Welder Fabricator).
 
-## Company site (shadesystems.co.nz)
-- Products: COLA Canopy, Shade Sails, Sola Gola hardtop canopies, Bowling Canopy, Cricket Canopy, Hip Roof, Star Shade, tensile membrane structures; for schools, stadiums, sports clubs, businesses and communities. States it serves "New Zealand and around the globe".
-- Contact address on site: 40 Onehunga Mall, Auckland 1061. (Roster lists Dargaville, NZ.)
-- No leadership bios, founding year or employee count published; Marco Fredriks is not named on the site.
-
-## ENVISO (enviso.org)
-- Lean Six Sigma / BPM / Agile training and certification consultancy; active in 30+ countries; founded 2006.
-
-## Infinite Energy NZ
-- Solar-energy company (consistent with the LinkedIn "Solar Energy" skill tag).
-
-## Other reach
-- No personal email found; the site publishes only shared role addresses.
-- No verified Facebook profile located (name / location / employer searches returned no corroborated match).
-- LinkedIn post/activity feed not fetched (parse-profile surfaces topcard, experience, skills and about only).
+## Company site, direct fetch (shadesystems.co.nz, 2026-07-02)
+- New Zealand tensile-membrane manufacturer; products: COLA Canopy, Shade Sails, Sola Gola hardtop canopies, Bowling Canopy, Cricket Canopy, Tensile Membrane Structures, Hip Roof, Star Shade; all manufactured in-house in New Zealand.
+- Address: PO Box 411, Dargaville 0310, New Zealand. Phone +64 9 222 0395 / 0800 166 722.
+- Markets: schools, stadiums/arenas, playgrounds, sports facilities, community spaces, commercial, dining, residential; "New Zealand and around the globe". No individual leadership names published.
+- ENVISO (current self-employed engagement per LinkedIn): Lean Six Sigma / BPM / Agile training consultancy. Infinite Energy NZ: solar-energy company (consistent with the LinkedIn "Solar Energy" skill tag).

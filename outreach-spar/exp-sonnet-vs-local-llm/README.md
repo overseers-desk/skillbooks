@@ -5,17 +5,14 @@ An experiment: can SPAR-P profiles be produced by a local LLM instead of hosted 
 ## Layout
 
 - `spar-p-sonnet/` holds the hosted-Sonnet profile. This is the **quality baseline**: the yardstick every local run is judged against.
-- `spar-p-<backend>-<model>/` holds one local run each (for example a Vulkan run on a laptop, or the CUDA runs on GPU-Workstation). Inside each: the produced profile (`marco-fredriks.local-*.md`), a `run-trace.md`, `metrics.json`, and the `source-facts.md` that run consumed.
+- `spar-p-<backend>-<model>/` holds one local run each (for example a Vulkan run on a laptop, or the CUDA runs on GPU-Workstation). Inside each: the produced profile (`marco-fredriks.local-*.md`), a `run-trace.md`, `metrics.json`, the `source-facts.md` that run consumed, and the `prompt-instructions.txt` it ran.
 - Dated worklogs, `YYYY-MM-DD <title>.md`, carry the detailed per-machine record. Each is authored for its own day and machine, not a running edit of the others.
 
-## The two baselines, and the provenance caveat
+## Method
 
-Two distinct roles are easy to conflate:
+Each local run retrieves live and then hands the same facts to the model, so the only variable is the consuming model. Retrieval is the LinkedIn parse-profile via the linkedin.com skill (authoritative for identity and career), live web search for aggregator and name-collision context, and a direct fetch of the company site. The roster row and its p_note are the campaign input, carried as a claim the model must verify. The facts are the run's own first-party retrieval; Sonnet is only the quality baseline, not the source of the facts.
 
-1. The **quality baseline** is Sonnet's finished profile (`spar-p-sonnet/`).
-2. The **facts-provider baseline** is the retrieval that a facts-fed local run consumes. For a clean test this should be the authoritative retrieval, so the only variable is the consuming model's reasoning.
-
-Important: the facts fed to the local runs are **Sonnet-sourced but not a live Sonnet capture**. Sonnet's raw retrieval was never saved, so `source-facts.md` is reconstructed from Sonnet's finished profile, with Sonnet's own verdicts withheld so each model still has to verify for itself. The first cut of the CUDA runs used a different provider (a laptop Qwen3-30B run's captured tool outputs) and was re-based onto Sonnet; that cut is in git history. A genuinely clean provider, a live Sonnet run with raw tool outputs captured, is a later step. It is gated on installing live LinkedIn and web reach on the local box, which is why the local runs to date are facts-fed rather than reaching out themselves.
+The point of the verification is that aggregator sources attach a different same-named person's insurance career to this contact. A good profile rejects that against the direct LinkedIn fetch.
 
 ## Where to start
 

@@ -9,13 +9,13 @@ CONTACT (campaign roster row):
 
 CAMPAIGN: outreach to ANZ C-suite who personally control their company's corporate insurance program. INCLUDE if: resident AU/NZ; title CEO/CFO/CIO/Owner/Founder/MD; current employer industry is manufacturing, transport/logistics, sports, tourism, hospitality, retail or wholesale; plausibly controls the insurance program. EXCLUDE only if current employer is insurance/financial-services/law/consulting, or title is Risk Manager / Head of Risk / Head of Insurance / CRO. A past insurance job does NOT exclude.
 
-SOURCE FACTS (already gathered for you; reach tools are offline in this run, so use only what is below):
-- The LinkedIn parse-profile output is the AUTHORITATIVE source for who this person is and their real career history.
-- The brave-search snippets are public web/aggregator context, NOT authoritative for identity.
+SOURCE FACTS (retrieved live for this run):
+- The LinkedIn parse-profile output (via the linkedin.com skill) is the AUTHORITATIVE source for who this person is and their real career history.
+- The web search results and company-site fetch are public web/aggregator context, NOT authoritative for identity.
 
 VERIFICATION RULE — this is the point of the run, obey it:
 - Build the "Current role" and "Career history" sections ONLY from what the LinkedIn parse-profile actually shows.
-- Aggregator sources (ZoomInfo, RocketReach, Crunchbase, and brave-search snippets) frequently attach a DIFFERENT same-named person's history to this name (name-collision). If an aggregator or search snippet claims a role, employer, or career (for example an insurance-industry background) that the LinkedIn parse-profile does NOT show, treat it as UNVERIFIED and do NOT put it in the profile as fact. If it is decision-relevant, note it in Verification corrections as an unverified aggregator claim contradicted by the direct LinkedIn fetch.
+- Aggregator sources (ZoomInfo, RocketReach, Crunchbase, and web search results) frequently attach a DIFFERENT same-named person's history to this name (name-collision). If an aggregator or search snippet claims a role, employer, or career (for example an insurance-industry background) that the LinkedIn parse-profile does NOT show, treat it as UNVERIFIED and do NOT put it in the profile as fact. If it is decision-relevant, note it in Verification corrections as an unverified aggregator claim contradicted by the direct LinkedIn fetch.
 - Do not invent, infer, or import career history the LinkedIn parse-profile does not contain.
 
 Write the profile in EXACTLY this structure (current SPAR-P §5.2):
