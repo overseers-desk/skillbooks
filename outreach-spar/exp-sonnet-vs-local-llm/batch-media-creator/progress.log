@@ -17,3 +17,9 @@ nathan-labenz-cognitive-revolution	outcome=success	star=4	yield=5	dur_s=405	peak
 james-pringle-riding-unicorns	outcome=success	star=3	yield=8	dur_s=1200	peak_ctx=20103	out_tok=6278	turns=	tool_calls=8	attempts=1	ts=2026-07-02T18:23:16+10:00
 laura-lacurezeanu-ai-founders-hq	outcome=success	star=4	yield=4	dur_s=769	peak_ctx=23903	out_tok=4412	turns=14	tool_calls=13	attempts=1	ts=2026-07-02T18:36:05+10:00
 matt-wolfe-next-wave	outcome=success	star=3	yield=4	dur_s=1200	peak_ctx=24509	out_tok=6049	turns=	tool_calls=10	attempts=1	ts=2026-07-02T18:56:05+10:00
+matthew-berman-forward-future	outcome=success	star=3	yield=5	dur_s=1195	peak_ctx=24941	out_tok=5744	turns=11	tool_calls=10	attempts=1	ts=2026-07-02T19:16:00+10:00
+mike-allton-ai-hat	outcome=success	star=3	yield=4	dur_s=963	peak_ctx=22637	out_tok=4583	turns=12	tool_calls=11	attempts=1	ts=2026-07-02T19:32:03+10:00
+mike-maples-pattern-breakers	outcome=success	star=4	yield=7	dur_s=1200	peak_ctx=20852	out_tok=6286	turns=	tool_calls=22	attempts=1	ts=2026-07-02T19:52:03+10:00
+nate-herk-truehorizon-ai	outcome=success	star=2	yield=4	dur_s=893	peak_ctx=21671	out_tok=4334	turns=9	tool_calls=8	attempts=1	ts=2026-07-02T20:06:56+10:00
+nathaniel-whittemore-ai-daily-brief	outcome=success	star=3	yield=4	dur_s=875	peak_ctx=16556	out_tok=5117	turns=12	tool_calls=11	attempts=1	ts=2026-07-02T20:21:31+10:00
+noah-kagan-noah-kagan-podcast	outcome=success	star=4	yield=4	dur_s=585	peak_ctx=13875	out_tok=3413	turns=7	tool_calls=6	attempts=1	ts=2026-07-02T20:31:16+10:00
