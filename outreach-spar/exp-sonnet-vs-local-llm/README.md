@@ -35,6 +35,8 @@ Can SPAR-P profiles be produced by a local LLM instead of hosted Sonnet, and how
 
 ## Findings so far
 
+**The whole-set comparison is due for a redo.** The engines ran under unequal prompts and retrieval (Sonnet on the production harness, the 35B on a snippet-budget prompt, the CUDA three facts-fed), so the cross-engine quality results below describe those unequal conditions, not model quality alone. The redo spec, including the decision to run one method for all engines and let engines fail, is [issue #151](https://github.com/overseers-desk/aesop/issues/151). The blind study that surfaced this is in [2026-07-02-blind-quality-12x5/](2026-07-02-blind-quality-12x5/).
+
 Retrieval is not the differentiator: given the same facts, every local engine is fact-complete and non-fabricating. The residual gap is rating calibration. On the whole set, qwen2.5:14b tracks Sonnet closest, qwen3:8b over-rates, and llama3.1:8b is the most conservative. The Vulkan Qwen3.5-35B tracks Sonnet on its completed subset but is much slower (memory-bandwidth-bound decode) and needed a context-window fix to stop over-research overflows. Detail is in the worklogs above.
 
 ## Where to start
