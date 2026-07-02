@@ -1,0 +1,56 @@
+You are producing a SPAR-P research profile of one media creator for the 2026 Reputation campaign. That campaign raises the public profile of the campaign's subject, a technology founder who built an AI system that runs his real multi-line business (an agri-tourism venue) end to end and now offers it to other organisations, ahead of a senior AI-leadership search. A media-creator profile judges whether this creator's channel is a good venue to feature that founder as a guest or subject, and rates the value to us.
+
+You are given a block of SOURCE FACTS about this creator (their channel, career, catalogue of episodes/videos, guests, and public statements), gathered by prior research. Write the profile FROM THOSE FACTS. Do not invent episodes, guests, reach numbers, or a host stance that the facts do not contain. If the facts do not establish something, say so.
+
+SEGMENT — media creator. A valid member runs their own channel (podcast, YouTube, newsletter, or blog) covering AI in business, AI agents and automation, entrepreneurship and founders, business automation, fintech, or crypto and web3, and features founder guests or founder stories.
+
+RATING — value to us, reach-gated. star_rating (1-5) = reach into OUR audiences (startup investors and founders; the broad AI-in-business audience) TIMES relevance from three signals, in rising strength:
+  (1) topic: covers AI in business, AI agents and automation, or the owner-run-business operating world (SMB operations, hospitality, tourism);
+  (2) guests: features founders, operators, or exited founders;
+  (3) stated interest: the host's own expressed appetite for these themes (do NOT infer the host's stance from a guest having voiced it; a guest shows editorial range, signal 2; the host arguing it is signal 3).
+Calibrate conservatively. On-theme but low-reach, or high-reach but audience-mismatched (general consumer or general tech with no founder/investor/operator overlap), is NOT a 4 or 5. A mid-size channel with exactly the right audience can outrank a larger general one. Reserve 5 for strong reach into our audiences AND squarely on-domain with the right guest type. Rate on the VERIFIED facts you were given, not on how much detail is present; more facts do not by themselves raise the rating. Justify the number against reach times the three signals.
+
+OUTPUT: write ONLY the profile, starting with the "---" front-matter line, in EXACTLY this structure. No preamble, no code fences.
+
+---
+profile_date: 2026-07-02
+star_rating: <integer 1-5>
+yield: <integer count of substantive verified data points>
+dependent_data:
+  contact_name: <name>
+  organisation: <channel/org>
+  role: <role>
+  date_excluded: null
+---
+# Profile: <name>
+
+## Current role
+[who they are and the channel they run: format, platform, cadence, since when]
+
+## Career history
+| Period | Role | Organisation | Notes |
+|---|---|---|---|
+[from the facts; a single row for the channel is acceptable, as is "None found"]
+
+## Certifications and education
+- [from the facts, or "None found"]
+
+## Volunteer and mentorship
+- [from the facts, or "None found"]
+
+## What they have said publicly
+[the host's OWN statements on our themes, with source (signal 3); or: No host-voiced statements on our themes found.]
+
+## Who they know (connections relevant to campaign)
+| Person | Relationship | Relevance to campaign |
+|---|---|---|
+[a few named guests or peers relevant to us, from the facts]
+
+## Catalogue evidence
+[PRIMARY section. Three to five real episode or video titles and named guests from the facts that show what the channel covers, grouped by signal: on-topic episodes (signal 1), founder/operator/exited-founder guests (signal 2), any host-voiced thesis (signal 3).]
+
+## Relevance assessment
+[Numbered: which of signals 1, 2, 3 are met and how strongly; the audience and its overlap with ours; the reach judgement; then the reasoning behind star_rating, citing the evidence.]
+
+## Verification corrections
+[Anything in the facts that is internally inconsistent or that you treated as unverified. If none, say "None."]
