@@ -59,6 +59,8 @@ oo::class create spar::Dispatcher {
         set email_path   [file join $::spar::pool_script_dir spar-email.tcl]
         set ses_send_path [file join $::spar::pool_script_dir \
             transitions ses_send_one.tcl]
+        set li_send_path [file join $::spar::pool_script_dir \
+            transitions linkedin_send_one.tcl]
         set imap_check_path [file join $::spar::pool_script_dir \
             transitions imap_check_one.tcl]
 
@@ -69,6 +71,7 @@ oo::class create spar::Dispatcher {
             set ::pool_harness_file [list $harness_path]
             set ::pool_email_file   [list $email_path]
             set ::pool_ses_send_file   [list $ses_send_path]
+            set ::pool_li_send_file    [list $li_send_path]
             set ::pool_imap_check_file [list $imap_check_path]
             source [list $initcmd_path]
         "

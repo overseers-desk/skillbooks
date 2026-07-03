@@ -332,7 +332,10 @@ oo::class create spar::ui::DispatchController {
             dict set RowDryRun $stem $dry_run
             dict set RowMeta   $stem $row_opts
             lappend BurstStems $stem
-            $Dispatcher enqueue $stem $tid $worker_proc $row_opts
+            # A row may name its own worker (T6 linkedin rows carry
+            # linkedin_send); the batch worker_proc is the default.
+            set wp [spar::dict_get_default $row_opts worker_proc $worker_proc]
+            $Dispatcher enqueue $stem $tid $wp $row_opts
             incr n
         }
         return $n

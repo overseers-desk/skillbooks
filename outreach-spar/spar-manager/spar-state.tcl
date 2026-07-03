@@ -187,25 +187,29 @@ proc spar::read_segment_yaml {path} {
     return $data
 }
 
-# final_email_message — return the sole final-round email message dict, or ""
-# if the final round has no email message. Callers rely on the ≤1 invariant
-# enforced by validate_approach (too_many_final_emails). If multiple are
-# present (validator bypass or malformed file), returns the first to fail
-# safe rather than silently mis-targeting a send.
-proc spar::final_email_message {data} {
+# final_channel_message — return the first final-round message dict on the
+# given channel, or "" if the final round has none. For email, callers rely
+# on the ≤1 invariant enforced by validate_approach (too_many_final_emails);
+# if multiple are present (validator bypass or malformed file), returning the
+# first fails safe rather than silently mis-targeting a send.
+proc spar::final_channel_message {data channel} {
     if {$data eq "" || ![dict exists $data rounds]} { return "" }
     foreach round [dict get $data rounds] {
         if {![dict exists $round type]} continue
         if {[dict get $round type] ne "final"} continue
         if {![dict exists $round messages]} { return "" }
         foreach msg [dict get $round messages] {
-            if {[spar::dict_get_default $msg channel ""] eq "email"} {
+            if {[spar::dict_get_default $msg channel ""] eq $channel} {
                 return $msg
             }
         }
         return ""
     }
     return ""
+}
+
+proc spar::final_email_message {data} {
+    return [spar::final_channel_message $data email]
 }
 
 # analyse_final_round — extract state and channel properties from approach YAML data.
