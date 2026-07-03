@@ -191,6 +191,7 @@ Approach files are YAML documents with a **closed vocabulary** — any key outsi
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
 - `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `replied_date`, `reply_summary`, `script`, `text`, `char_count`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`, `mode`, `parent`, `reply_all`
 - `parent` (only inside a `mode: reply` message): `account`, `folder`, `uid`, `message_id`, `references`, `subject`, `from`, `to`, `cc`. Captured verbatim from `mailroom read` on the parent message; T3 derives In-Reply-To, References, the `Re:` Subject, and the To/Cc set from these fields at send time.
+- `mode` on a `channel: linkedin` message: `invite` (connection request with the message as the note, ≤300 characters) or `dm` (direct message to an existing 1st-degree connection). When absent, the send dispatcher infers `invite` for text within 300 characters and `dm` otherwise; write it explicitly so the choice is the author's, not an inference.
 - `fact_provenance` / `fact_check` items: `claim`, `source` (plus `result`, `note`, `correction` for `fact_check` only)
 - `script` items (inside a message): `point`, `text`
 
