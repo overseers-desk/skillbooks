@@ -328,6 +328,11 @@ if {$auto_mode} {
 if {$dispatching} {
     set ::_total_done 0
     set ::_total_failed 0
+    # Display-only flag: when 1, exec_on_progress renders `done` rows
+    # with the dry-run glyph "○" instead of "DONE". Set from dry_run at
+    # the top of dispatch_ready; defaults to 0 so report-mode and live
+    # paths are unaffected. The status vocabulary itself is unchanged.
+    set ::spar::dry_run_display 0
     # Roll-call accumulators: ::_row_tid maps each enqueued slug to the TID
     # (phase) that last ran it, ::_rollcall collects every non-DONE outcome.
     # Reset once here, not in the per-iteration block below, so the --auto
@@ -338,7 +343,7 @@ if {$dispatching} {
     proc exec_on_progress {slug status message} {
         switch -- $status {
             started { if {$message eq ""} { ${::spar::transitions_log}::info "  \[START\] $slug" } }
-            done    { ${::spar::transitions_log}::info "  \[DONE \] $slug[expr {$message ne "" ? " ($message)" : ""}]" }
+            done    { ${::spar::transitions_log}::info "  \[[expr {$::spar::dry_run_display ? " ○   " : "DONE "}]\] $slug[expr {$message ne "" ? " ($message)" : ""}]" }
             failed  { ${::spar::transitions_log}::error "  \[FAIL \] $slug ($message)" }
             skipped { ${::spar::transitions_log}::info "  \[SKIP \] $slug ($message)" }
             warning { ${::spar::transitions_log}::warn "  \[WARN \] $slug: $message" }
@@ -418,6 +423,7 @@ if {$dispatching} {
     proc dispatch_ready {ready_by_tid active_tids tid_scopes \
                          yaml_path cdata dry_run jobs delay \
                          assume_yes step_callback} {
+        set ::spar::dry_run_display $dry_run
         # Collect {tid worker_proc rows} triples from every active TID.
         # Prep failures decrement nothing — they were never enqueued —
         # but we surface them as warnings so the operator sees them.
@@ -528,6 +534,7 @@ if {$dispatching} {
         incr ::_total_done
         set msg ""
         catch {set msg [dict get $result message_id]}
+        if {$msg eq ""} { catch {set msg [dict get $result result]} }
         exec_on_progress $row done $msg
     }
     proc ::_dispatch_on_failed {row reason} {
@@ -605,7 +612,11 @@ if {$dispatching} {
         }
 
         ${::spar::transitions_log}::info "=== Summary ==="
-        ${::spar::transitions_log}::info "Done:   $::_total_done"
+        if {$dry_run} {
+            ${::spar::transitions_log}::info "○ $::_total_done of [expr {$::_total_done + $::_total_failed}] validated (dry run — nothing sent)"
+        } else {
+            ${::spar::transitions_log}::info "Done:   $::_total_done"
+        }
         ${::spar::transitions_log}::info "Failed: $::_total_failed"
         if {[llength $::_rollcall] > 0} {
             ${::spar::transitions_log}::info [spar::render_rollcall $::_rollcall]
@@ -667,7 +678,11 @@ if {$dispatching} {
         [expr {$stepping ? "step_prompt" : ""}]
 
     ${::spar::transitions_log}::info "=== Summary ==="
-    ${::spar::transitions_log}::info "Done:   $::_total_done"
+    if {$dry_run} {
+        ${::spar::transitions_log}::info "○ $::_total_done of [expr {$::_total_done + $::_total_failed}] validated (dry run — nothing sent)"
+    } else {
+        ${::spar::transitions_log}::info "Done:   $::_total_done"
+    }
     ${::spar::transitions_log}::info "Failed: $::_total_failed"
     if {[llength $::_rollcall] > 0} {
         ${::spar::transitions_log}::info [spar::render_rollcall $::_rollcall]

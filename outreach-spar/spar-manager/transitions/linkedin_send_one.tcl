@@ -24,7 +24,9 @@
 # Returns one of:
 #   {ok sent}        — the primitive confirmed the send; actioned_date
 #                      stamped on the linkedin message
-#   {ok dry-run}     — dry run, nothing sent, nothing stamped
+#   {ok "<mode>, <N> chars"} — dry run: validated only, nothing sent,
+#                      nothing stamped; detail names the mode and the
+#                      message length (e.g. "invite, 264 chars")
 #   {error <reason>} — probe/read/build/run failure, or a primitive
 #                      status of error/failed/uncertain. uncertain is
 #                      never stamped: the human checks LinkedIn.
@@ -118,7 +120,7 @@ proc ::spar::li::send_one {opts} {
     }
 
     if {$dry_run} {
-        return [list ok "dry-run"]
+        return [list ok "$mode, [string length $text] chars"]
     }
 
     # Fail-fast probe: the overseer must be present and healthy.
