@@ -159,8 +159,14 @@ proc ::spar::li::send_one {opts} {
     set status [spar::dict_get_default $r status ""]
     switch -- $status {
         sent {
-            if {[catch {spar::stamp_actioned_date $approach_path $today linkedin} serr]} {
+            if {[catch {set stamped [spar::stamp_actioned_date $approach_path $today linkedin]} serr]} {
                 return [list error "sent ok but stamp failed: $serr"]
+            }
+            # A confirmed send that stamps nothing leaves the file reading
+            # as unsent — the contact would be re-dispatched (issue #160).
+            # The send DID go out; surface it as a FAIL naming the file.
+            if {!$stamped} {
+                return [list error "sent ok but stamp made no change: $approach_path"]
             }
             return [list ok sent]
         }

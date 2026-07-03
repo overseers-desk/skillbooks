@@ -304,6 +304,83 @@ set ap3 [write_approach_yaml $seg3 "linkedin-only" $yaml_linkedin]
 set changed4 [spar::stamp_actioned_date $ap3 "2026-04-10"]
 assert_eq $changed4 0 "stamp_actioned_date skips non-email channels"
 
+# 5e. Final linkedin message WITHOUT an actioned_date key (legal per the
+# schema — lifecycle fields may be omitted, issue #160): the line is
+# inserted at field indentation, the file still parses, the validator
+# stays green, and a second stamp is a 0-no-change because the date is set.
+set seg_ins [make_temp_segment]
+set yaml_li_nokey {decisions:
+  channel: linkedin
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: linkedin
+    mode: invite
+    text: Hi, I would like to connect
+  - channel: email
+    to: test@acme-venues.au
+    subject: Follow-up subject
+    body: Hello there
+    actioned_date: null
+    replied_date: null
+}
+set ap_ins [write_approach_yaml $seg_ins "stamp-li-nokey" $yaml_li_nokey]
+set changed_ins [spar::stamp_actioned_date $ap_ins "2026-07-04" linkedin]
+assert_eq $changed_ins 1 "stamp(linkedin) returns 1 when actioned_date key inserted"
+set fd [open $ap_ins r]; set stamped_ins [read $fd]; close $fd
+assert_contains $stamped_ins "    actioned_date: 2026-07-04" \
+    "inserted actioned_date line at field indentation"
+assert_contains $stamped_ins "actioned_date: null" \
+    "email message's actioned_date left null"
+set data_ins [::yaml::yaml2dict $stamped_ins]
+set li_msg_ins [spar::final_channel_message $data_ins linkedin]
+# (the yaml package parses unquoted dates to epoch seconds, so assert
+# parsed-non-null here; the exact text is asserted above)
+assert_eq [spar::is_null [dict get $li_msg_ins actioned_date]] 0 \
+    "file parses and linkedin message carries the inserted date"
+assert_eq [llength [spar::_dbc_errors $ap_ins]] 0 \
+    "DbC post-validation green after insertion"
+set changed_ins2 [spar::stamp_actioned_date $ap_ins "2026-07-05" linkedin]
+assert_eq $changed_ins2 0 "re-stamp returns 0 — date already set by insertion"
+
+# 5f. Email-channel equivalent: final email message without the key, and
+# with a multi-line body so the insertion lands after the literal block.
+set seg_ins2 [make_temp_segment]
+set yaml_em_nokey {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test subject
+    body: |
+      Hello there,
+
+      Second paragraph.
+a_note: trailing top-level key
+}
+set ap_ins2 [write_approach_yaml $seg_ins2 "stamp-em-nokey" $yaml_em_nokey]
+set changed_em [spar::stamp_actioned_date $ap_ins2 "2026-07-04"]
+assert_eq $changed_em 1 "stamp(email) returns 1 when actioned_date key inserted"
+set fd [open $ap_ins2 r]; set stamped_em [read $fd]; close $fd
+assert_contains $stamped_em "    actioned_date: 2026-07-04" \
+    "inserted actioned_date line at field indentation (email)"
+set data_em [::yaml::yaml2dict $stamped_em]
+set em_msg_ins [spar::final_channel_message $data_em email]
+assert_eq [spar::is_null [dict get $em_msg_ins actioned_date]] 0 \
+    "file parses and email message carries the inserted date"
+assert_contains [dict get $em_msg_ins body] "Second paragraph." \
+    "multi-line body intact after insertion"
+assert_eq [spar::dict_get_default $data_em a_note ""] "trailing top-level key" \
+    "top-level key after rounds intact"
+assert_eq [llength [spar::_dbc_errors $ap_ins2]] 0 \
+    "DbC post-validation green after insertion (email)"
+set changed_em2 [spar::stamp_actioned_date $ap_ins2 "2026-07-05"]
+assert_eq $changed_em2 0 "re-stamp(email) returns 0 — date already set by insertion"
+
 # ════════════════════════════════════════════════════════════════════════
 # 6. append_reply_to_yaml
 # ════════════════════════════════════════════════════════════════════════
