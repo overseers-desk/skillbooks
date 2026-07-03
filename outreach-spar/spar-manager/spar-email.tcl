@@ -405,20 +405,51 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
         return 0
     }
 
-    # Targeted text replacement: in the final round section, replace
-    # actioned_date: null with actioned_date: $today for the channel's messages.
+    # Targeted text edit: in the final round section, replace
+    # actioned_date: null with actioned_date: $today for the channel's
+    # messages — or, when the message carries no actioned_date line at all
+    # (the schema lets lifecycle fields be omitted, issue #160), insert one
+    # after the message's last existing field line.
     #
     # Strategy: walk lines, track when we're in a final round and a message
     # block of the target channel, and replace actioned_date: null only in
-    # that context. Note: YAML list items start with "- ", so regexes must
-    # allow for an optional dash-space prefix (e.g. "- type: final").
+    # that context. While inside a target-channel message block, remember
+    # the field indentation (from the channel: line) and the position of
+    # the block's last non-blank line; when the block ends (dedent — the
+    # next "- channel:" item, the next round, and any top-level key all
+    # dedent below the field indent — or EOF) without an actioned_date
+    # line having been seen, splice one in at that position. Note: YAML
+    # list items start with "- ", so regexes must allow for an optional
+    # dash-space prefix (e.g. "- type: final").
     set lines [split $content \n]
     set result {}
     set in_final 0
     set in_channel_msg 0
     set changed 0
+    set msg_field_indent 0   ;# indent of field lines in the current target msg
+    set msg_has_ad 0         ;# actioned_date line seen in the current target msg
+    set msg_last_ridx -1     ;# index in $result of the block's last non-blank line
 
     foreach line $lines {
+        set trimmed [string trim $line]
+
+        # Close an open target-channel message block on dedent: any
+        # non-blank line indented shallower than the block's field lines
+        # ends the message (deeper lines are literal-block content or
+        # nested field lists; equal-indent lines are further fields).
+        if {$in_channel_msg && $trimmed ne ""} {
+            regexp {^(\s*)} $line -> lead
+            if {[string length $lead] < $msg_field_indent} {
+                if {!$msg_has_ad} {
+                    set pad [string repeat " " $msg_field_indent]
+                    set result [linsert $result [expr {$msg_last_ridx + 1}] \
+                        "${pad}actioned_date: $today"]
+                    set changed 1
+                }
+                set in_channel_msg 0
+            }
+        }
+
         # Detect "type: final" at round level (may be "- type: final")
         if {[regexp {[-\s]*type:\s*final} $line]} {
             set in_final 1
@@ -431,8 +462,13 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
             }
         }
         # Detect the target channel within a final round (may be "  - channel: email")
-        if {$in_final && [regexp {[-\s]*channel:\s*(\S+)\s*$} $line -> ch]} {
+        if {$in_final && [regexp {^(\s*)(-\s+)?channel:\s*(\S+)\s*$} $line -> lead dash ch]} {
             set in_channel_msg [expr {$ch eq $channel}]
+            if {$in_channel_msg} {
+                # Fields sit where the key after the "- " sits.
+                set msg_field_indent [expr {[string length $lead] + [string length $dash]}]
+                set msg_has_ad 0
+            }
         }
         # Replace actioned_date: null in target-channel message context
         if {$in_final && $in_channel_msg && [regexp {^(\s*)actioned_date:\s*(null|~|)\s*$} $line -> indent]} {
@@ -441,6 +477,24 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
         } else {
             lappend result $line
         }
+        # Record an actioned_date line (null-replaced or already set) and
+        # the block's last non-blank line, for the insertion path above.
+        if {$in_channel_msg} {
+            if {[regexp {^\s*actioned_date:} $line]} {
+                set msg_has_ad 1
+            }
+            if {$trimmed ne ""} {
+                set msg_last_ridx [expr {[llength $result] - 1}]
+            }
+        }
+    }
+
+    # EOF closes any still-open target-channel message block.
+    if {$in_channel_msg && !$msg_has_ad} {
+        set pad [string repeat " " $msg_field_indent]
+        set result [linsert $result [expr {$msg_last_ridx + 1}] \
+            "${pad}actioned_date: $today"]
+        set changed 1
     }
 
     if {$changed} {

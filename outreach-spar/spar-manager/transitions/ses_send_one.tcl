@@ -174,8 +174,14 @@ proc ::spar::ses::send_one {opts} {
     set message_id [string trim $send_out]
     if {$message_id eq ""} { set message_id "?" }
 
-    if {[catch {spar::stamp_actioned_date $approach_path $today} serr]} {
+    if {[catch {set stamped [spar::stamp_actioned_date $approach_path $today]} serr]} {
         return [list error "sent ok ($message_id) but stamp failed: $serr"]
+    }
+    # A confirmed send that stamps nothing leaves the file reading as
+    # unsent — the contact would be re-dispatched (issue #160). The send
+    # DID go out; surface it as a FAIL naming the file.
+    if {!$stamped} {
+        return [list error "sent ok ($message_id) but stamp made no change: $approach_path"]
     }
 
     return [list ok $message_id]
