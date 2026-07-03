@@ -34,9 +34,9 @@ Before drafting, verify that this contact is a valid campaign target:
 
 This gate exists because A is the first point where profile content and campaign goals are jointly evaluated. P assesses relevance to the campaign in general; A assesses whether a specific approach is viable. A contact may pass P's filter but fail A's — for example, a strategically interesting person for whom no viable first-touch exists.
 
-### 4.1 Read warmth level from the profile
+### 4.1 Determine the warmth level
 
-The P phase has already assessed prior correspondence and assigned a warmth level (see SPAR-P §4.7). Read it from the profile document and from `p_note` in the roster.
+Warmth is engagement state, not profile content (INVARIANTS.md I1; SPAR-P §4.7): it changes between campaigns and the first message sent falsifies it, so A determines it fresh at contact time. Assess it from the contact's approach file (prior rounds and replies, if any) and a current IMAP check for prior correspondence with the sender's accounts. The dispatcher prefetch (§4.1.1) supplies the IMAP evidence.
 
 | Level | Opener style |
 |---|---|
@@ -47,7 +47,7 @@ The P phase has already assessed prior correspondence and assigned a warmth leve
 
 When a first-channel contact (e.g. a connection request) is accepted before the follow-up message is sent, the follow-up can acknowledge the connection naturally — the contact is no longer fully cold. This warm transition is a reason to use a multi-channel sequence rather than a single message.
 
-If the profile does not contain a warmth assessment, flag it for the human. Do not guess.
+If the evidence is contradictory (the approach file and the IMAP record disagree about prior contact), flag it for the human. Do not guess.
 
 ### 4.1.1 Reply-vs-new-thread decision
 
@@ -91,7 +91,7 @@ Read the full profile document. Then:
 
 1. **Note what the contact has said publicly.** These are the hooks: specific statements, positions, or activities that connect their situation to the campaign's offering.
 2. **Note what the contact has NOT said.** The absent-themes section of the profile exists to prevent fabricating relevance. Respect it throughout drafting.
-3. **Read the angles from the profile.** P has already ordered them by evidence strength. Select the primary angle and record the rationale in the approach file.
+3. **Derive the angles.** The profile carries no angle list (angles are campaign-bound; INVARIANTS.md I1). Construct candidate angles from the profile's `## Relevance assessment` and evidence sections together with the campaign plan's angle table, order them by evidence strength, select the primary angle, and record the rationale in the approach file.
 4. **Cross-reference the communication index.** If a related contact (same organisation, network, or segment) has already been approached, use a compatible angle — not identical, but consistent, so the campaign's voice does not contradict itself across contacts who may compare notes.
 
 ### 4.5 Draft the message (A1)
@@ -180,14 +180,14 @@ Read the latest strategy revision note before starting each new band. It may cha
 
 ## 6. Approach file structure
 
-Approach files are YAML documents with a **closed vocabulary** — any key outside the set below is rejected by the runtime validator (`spar::validate_approach` in `spar-manager/spar-state.tcl`). The validator emits plain-language errors such as `unknown key 'X' at <level>` or `'X' at <level> belongs at <other_level>`.
+Approach files are YAML documents with a **closed vocabulary** — any key outside the set below is rejected by the runtime validator (`spar::validate_approach` in `spar-manager/spar-validate.tcl`). The validator emits plain-language errors such as `unknown key 'X' at <level>` or `'X' at <level> belongs at <other_level>`.
 
 **Canonical keys by level:**
 
 - Root: `decisions`, `rounds`, `angle_rationale`, `response_likelihood`, `a_note`, `r_note`, `fact_provenance`, `quality_checklist`, `profile_hash`
 - `response_likelihood`: integer percentage (0–100), A's estimate of reply probability under the chosen angle, used for band ordering. It is the campaign-dependent counterpart to the segment's `star_rating` (general value to us): change the ask and this changes, which is why it lives here, not on the roster. `a_note`: A's one-line summary for R (angle, channel, warmth, language). `r_note`: the human reviewer's per-contact observation after responses arrive (what worked, new leads, channel adjustment); empty until R fills it. All three are campaign-bound and live here, not in the segment roster.
 - `profile_hash`: `sha256:<64-hex>` — SHA-256 of the profile file's bytes at generation time, prefixed `sha256:`. Computed by the A harness; A copies the value verbatim. Optional in the schema: manually-authored approaches and any path that did not read a profile have no hash to record. **When present, this key must be on the first line of the file** — no leading blank line, no preceding keys (issue #63). The position discipline lets a future fast-classify path detect staleness by reading only the first line; `validate_approach` emits `profile_hash_misplaced` if the rule is broken. When the hash is present and the profile exists, mismatch is an error (`profile_hash_mismatch`) — the source profile was rebuilt or edited, and the approach must be regenerated. When the hash is absent, `validate_approach` accepts the file and the state machine routes any divergence (deleted / edited profile) through T6/T7 instead.
-- `decisions`: `channel`, `language`, `angle`, `sender`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7. Warmth comes from the profile front matter (`warmth_finding`); it is not duplicated on the approach.
+- `decisions`: `channel`, `language`, `angle`, `sender`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7. Warmth is determined fresh by A (§4.1) and informs the drafting; it is not a stored field.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
 - `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `replied_date`, `reply_summary`, `script`, `text`, `char_count`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`, `mode`, `parent`, `reply_all`
 - `parent` (only inside a `mode: reply` message): `account`, `folder`, `uid`, `message_id`, `references`, `subject`, `from`, `to`, `cc`. Captured verbatim from `mailroom read` on the parent message; T3 derives In-Reply-To, References, the `Re:` Subject, and the To/Cc set from these fields at send time.
