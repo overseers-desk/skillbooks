@@ -97,8 +97,7 @@ proc write_roster_tsv {segment_dir headers rows} {
 # exercise staleness populate the snapshot explicitly via args, e.g.:
 #   write_profile $seg alice -contact_name "Alice Smith" -organisation "Acme"
 # Keys accepted in args:
-#   -profile_date -star_rating -yield -warmth_finding
-#   -applicable_angle   (single slug; default "default-angle")
+#   -profile_date -star_rating -yield
 #   -contact_name -organisation -role -date_excluded  (snapshot fields)
 proc write_profile {segment_dir stem args} {
     set path [file join $segment_dir profiles "${stem}.md"]
@@ -106,8 +105,6 @@ proc write_profile {segment_dir stem args} {
         -profile_date    2026-04-12
         -star_rating     4
         -yield           2
-        -warmth_finding  cold
-        -applicable_angle default-angle
     }
     array set snap {}
     foreach {k v} $args {
@@ -123,9 +120,6 @@ proc write_profile {segment_dir stem args} {
     puts $fd "profile_date: $opts(-profile_date)"
     puts $fd "star_rating: $opts(-star_rating)"
     puts $fd "yield: $opts(-yield)"
-    puts $fd "warmth_finding: $opts(-warmth_finding)"
-    puts $fd "applicable_angles:"
-    puts $fd "  - $opts(-applicable_angle)"
     if {[array size snap] == 0} {
         puts $fd "dependent_data: {}"
     } else {

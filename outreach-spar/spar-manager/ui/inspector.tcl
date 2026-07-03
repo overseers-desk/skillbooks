@@ -317,12 +317,6 @@ oo::class create spar::ui::Inspector {
                     }
                 }
             }
-            applicable_angles {
-                ::spar::ui::inspector_widgets::kv_row $body $key ""
-                foreach item $val {
-                    ::spar::ui::inspector_widgets::kv_row $body "" $item 1
-                }
-            }
             default {
                 set disp [expr {[spar::is_null $val] ? "" : $val}]
                 ::spar::ui::inspector_widgets::kv_row $body $key $disp
