@@ -307,15 +307,21 @@ oo::class create spar::Harness {
             my _fail "FAIL ($stage: claude not found — check Settings): $Slug"
             return 1
         }
-        set cmd [concat [list $claude_bin -p --output-format stream-json --verbose] [my permission_args]]
-        # Default to sonnet unless caller already supplied --model
-        # (fix-loop attempt 3 escalates to opus; challenger passes its
-        # own model). Per-phase model selection from campaign YAML is
-        # tracked in #91.
-        if {[lsearch -exact $args --model] < 0} {
-            lappend cmd --model sonnet
+        # --model rides immediately after -p so the model is the first thing
+        # visible in `ps ax` output rather than scrolled off past the flags.
+        # Default to sonnet unless the caller supplied --model (fix-loop
+        # attempt 3 escalates to opus; challenger passes its own model); pull
+        # the caller's pair out of args so it is not repeated. Per-phase model
+        # selection from campaign YAML is tracked in #91.
+        set model sonnet
+        set idx [lsearch -exact $args --model]
+        if {$idx >= 0} {
+            set model [lindex $args [expr {$idx + 1}]]
+            set args [lreplace $args $idx [expr {$idx + 1}]]
         }
-        set cmd [concat $cmd $args [list $prompt]]
+        set cmd [concat \
+            [list $claude_bin -p --model $model --output-format stream-json --verbose] \
+            [my permission_args] $args [list $prompt]]
 
         # Verdict rule this harness commits to: the deliverable on disk
         # is the source of truth, not the claude envelope. stream-json
