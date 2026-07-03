@@ -1,9 +1,11 @@
 #!/usr/bin/env tclsh9.0
 # spar-progress.tcl — Campaign progress table and duplicate detection (CLI)
-# Usage: tclsh9.0 spar-progress.tcl [campaign_dir_or_yaml] [--campaign=YAML] [--no-reply-check] [--json]
+# Usage: tclsh9.0 spar-progress.tcl [campaign_dir_or_yaml] [--campaign=YAML] [--no-reply-check] [--json] [-v|--verbose]
 # Positional arg may be a directory or a campaign YAML file (directory derived from YAML path).
 #
 # --no-reply-check omits the T7 (reply-check) row from the transition list.
+# -v, --verbose    under Warnings, list the member names behind each grouped
+#                  per-contact warning (default: segment counts only).
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir spar-state.tcl]
@@ -15,11 +17,14 @@ set campaign_dir ""
 set campaign_file ""
 set json_mode 0
 set skip_reply_check 0
+set verbose 0
 foreach arg $argv {
     switch -glob -- $arg {
         --campaign=*     { set campaign_file [string range $arg 11 end] }
         --json           { set json_mode 1 }
         --no-reply-check { set skip_reply_check 1 }
+        -v               -
+        --verbose        { set verbose 1 }
         --legend         {}
         --*              { puts stderr "Unknown flag: $arg"; exit 1 }
         default          {
@@ -274,9 +279,55 @@ puts "\nRun with --legend to see column definitions."
 # --- Warnings and validation ---
 set warn_result [spar::build_warnings $all_contacts $cdata]
 set warn_messages [dict get $warn_result messages]
-if {[llength $warn_messages] > 0} {
+set val_issues   [dict get $warn_result validation_issues]
+
+# Per-contact validation warnings are the trailing block of `messages`
+# (build_warnings appends them last, after the sender-block and duplicate
+# warnings). Split them off: the head warnings carry locations that don't
+# collapse, so they print verbatim; the per-contact ones group by problem.
+set nval [llength $val_issues]
+set head_messages [lrange $warn_messages 0 end-$nval]
+
+if {[llength $head_messages] > 0 || $nval > 0} {
     puts "\n## Warnings\n"
-    foreach msg $warn_messages {
+    foreach msg $head_messages {
         puts "- $msg"
+    }
+
+    # Group the per-contact issues by problem text (carrying its severity),
+    # then by segment, so every segment sharing a problem lands on one line:
+    #   [WARNING] <problem>: segA (3), segB (9)
+    # --verbose expands each segment to its member names.
+    set order {}          ;# problem texts, first-seen order
+    set severity_of {}    ;# problem -> severity
+    set by_segment {}     ;# problem -> (segment -> list of member names)
+    foreach issue $val_issues {
+        set m [dict get $issue message]
+        if {![dict exists $severity_of $m]} {
+            lappend order $m
+            dict set severity_of $m [dict get $issue severity]
+            dict set by_segment $m {}
+        }
+        dict update by_segment $m segs {
+            dict lappend segs [dict get $issue segment] [dict get $issue contact]
+        }
+    }
+    foreach m $order {
+        set sev [string toupper [dict get $severity_of $m]]
+        set segs [dict get $by_segment $m]
+        set seg_parts {}
+        foreach {seg names} $segs {
+            lappend seg_parts "$seg ([llength $names])"
+        }
+        puts "- \[$sev\] $m: [join $seg_parts {, }]"
+        if {$verbose} {
+            foreach {seg names} $segs {
+                puts "    - $seg ([llength $names]): [join $names {, }]"
+            }
+        }
+    }
+
+    if {$nval > 0 && !$verbose} {
+        puts "\n(pass --verbose / -v to list the members behind each warning)"
     }
 }
