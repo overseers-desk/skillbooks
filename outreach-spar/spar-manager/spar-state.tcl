@@ -585,13 +585,23 @@ proc spar::_project_round {round} {
 # _project_message -- preserve key skeleton, blank the heavy text
 # values (body, reply_summary, script[*]/text). channel/subject/to/
 # actioned_date/replied_date/mode/parent are read by render-path
-# consumers and pass through unchanged.
+# consumers and pass through unchanged. Exception: linkedin bodies are
+# kept — they are ≤ a few hundred chars and the validator's length and
+# char_count checks (#159) measure them on this projection; blanking
+# would let an over-long note through the T6-T10 gate and falsely flag
+# every honest char_count.
 proc spar::_project_message {msg} {
     if {[llength $msg] % 2 != 0} { return $msg }
     set out [dict create]
     dict for {k v} $msg {
         switch -- $k {
-            body -
+            body {
+                if {[spar::dict_get_default $msg channel ""] eq "linkedin"} {
+                    dict set out $k $v
+                } else {
+                    dict set out $k ""
+                }
+            }
             reply_summary {
                 # Key preserved (validator checks `dict exists $msg body`),
                 # value blanked — wire content lives on disk and is read

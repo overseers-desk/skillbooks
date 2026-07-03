@@ -318,7 +318,7 @@ Before presenting an approach file for human review:
 3. **Presupposition test.** Does any sentence tell the recipient something they already know about themselves? If so, restructure.
 4. **Manufactured-connection test.** Is every claim of shared interest traceable to a specific profile data point? Check against the absent-themes section.
 5. **Concreteness.** Can the recipient answer the ask in one sentence?
-6. **Channel character limits.** Where the channel imposes a character limit (e.g. 300 characters for a LinkedIn connection note), verify compliance.
+6. **Channel character limits.** Where the channel imposes a character limit, verify compliance. A LinkedIn message with `mode: invite` (or no `mode`) is a connection note capped at 300 characters, measured on the trimmed text the dispatcher sends; either shorten it or declare `mode: dm` when a direct message to a 1st-degree connection is intended. A recorded `char_count` states the measured length; omit it rather than guess. Enforced by `validate_approach` (`linkedin_note_too_long`, `char_count_mismatch`).
 7. **Band-level pattern check.** Read the openers of all messages in the band sequentially. If they sound like variations of the same template, revise.
 8. **Final round email cardinality.** The `final` round contains at most one message with `channel: email`. Sequential email follow-ups belong in subsequent rounds; additional recipients belong in `cc`/`bcc`. Multi-channel finals (e.g. one email + one phone) are fine — the cap is on emails only. Enforced by `validate_approach` (`too_many_final_emails`).
 
