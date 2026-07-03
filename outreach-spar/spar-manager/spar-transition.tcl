@@ -469,6 +469,7 @@ if {$dispatching} {
 
         set disp [spar::Dispatcher new $jobs]
         $disp set_worker_cap ses_send 1
+        $disp set_worker_cap linkedin_send 1
 
         if {$step_callback ne ""} {
             $disp set_pre_post_callback \
@@ -486,7 +487,10 @@ if {$dispatching} {
             lassign $batch tid worker_proc rows
             foreach pair $rows {
                 lassign $pair stem row_opts
-                $disp enqueue $stem $tid $worker_proc $row_opts
+                # A row may name its own worker (T6 linkedin rows carry
+                # linkedin_send); the batch worker_proc is the default.
+                set wp [spar::dict_get_default $row_opts worker_proc $worker_proc]
+                $disp enqueue $stem $tid $wp $row_opts
                 dict set ::_row_tid $stem $tid
                 # Mirror the legacy `[START] slug` line at enqueue time
                 # so output ordering matches the historical queue.

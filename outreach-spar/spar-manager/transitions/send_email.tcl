@@ -87,10 +87,13 @@ oo::class create ::spar::transitions::SendEmailTransition {
     }
 
     # prepare_for_pool — pool-shape entry. Returns
-    # {worker_proc ses_send rows {{stem opts} ...}}; the caller
-    # (spar-transition.tcl's dispatch_ready) installs
-    # set_worker_cap ses_send 1 on the shared Dispatcher so these
-    # rows run serially even when other transition kinds parallelise.
+    # {worker_proc ses_send rows {{stem opts} ...}}; a row's opts may
+    # carry its own worker_proc (linkedin rows carry linkedin_send),
+    # which the enqueuers honour over the batch default. The callers
+    # (spar-transition.tcl's dispatch_ready, the GUI's pool setup)
+    # install set_worker_cap 1 for both send workers on the shared
+    # Dispatcher so send rows run serially even when other transition
+    # kinds parallelise.
     method prepare_for_pool {opts on_progress} {
         set rows [my _build_rows $opts]
         return [dict create worker_proc ses_send rows $rows]
@@ -98,7 +101,10 @@ oo::class create ::spar::transitions::SendEmailTransition {
 
     # _build_rows — per-row opts dict construction for prepare_for_pool.
     # Reads tasks, campaign_file, dry_run, delay, sender from opts; the
-    # per-row dict carries everything ses_send needs to send one message.
+    # per-row dict carries everything the send worker needs for one
+    # message. The campaign's primary channel decides the worker: email
+    # rows go to ses_send, linkedin rows to linkedin_send (which also
+    # gets the contact's linkedin_url from the segment roster).
     method _build_rows {opts} {
         set campaign_file [dict get $opts campaign_file]
         set dry_run       [spar::dict_get_default $opts dry_run 0]
@@ -107,37 +113,70 @@ oo::class create ::spar::transitions::SendEmailTransition {
 
         set cdata [spar::load_campaign $campaign_file]
         set camp_sender [spar::dict_get_default $cdata sender [dict create]]
+        set primary [spar::dict_get_default $cdata primary_channel email]
 
         set delay_ms [expr {$delay * 1000}]
         set rows {}
+        set rosters [dict create]
         foreach c $tasks {
             set stem    [dict get $c stem]
             set seg_dir [dict get $c _segment_dir]
             set approach_path [file join $seg_dir approach "${stem}.yaml"]
-            lappend rows [list $stem [dict create \
+            set row [dict create \
                 campaign_file $campaign_file \
                 dry_run       $dry_run \
                 approach_path $approach_path \
                 sender        $camp_sender \
-                delay_ms      $delay_ms]]
+                delay_ms      $delay_ms]
+            if {$primary eq "linkedin"} {
+                if {![dict exists $rosters $seg_dir]} {
+                    dict set rosters $seg_dir \
+                        [spar::load_roster [file join $seg_dir roster.tsv]]
+                }
+                set linkedin_url ""
+                foreach r [dict get $rosters $seg_dir] {
+                    if {[spar::dict_get_default $r stem ""] eq $stem} {
+                        set linkedin_url [string trim \
+                            [spar::dict_get_default $r linkedin_url ""]]
+                        break
+                    }
+                }
+                dict set row worker_proc linkedin_send
+                dict set row linkedin_url $linkedin_url
+            }
+            lappend rows [list $stem $row]
         }
         return $rows
     }
 
-    # T6: APPROACHED/SENT, has_email, not yet email_sent.  Gated on
-    # primary_channel == "email" until per-message routing (#49) lands —
-    # email-as-secondary belongs to T9/T10 with wait_days/wait_condition.
-    # Approach-YAML structural validity is a hard gate (#43 principle 7).
+    # T6: APPROACHED/SENT, routed by the campaign's primary channel:
+    # email → SES rows (has_email, not yet email_sent); linkedin →
+    # overseer /run rows (has_linkedin, not yet linkedin_sent).
+    # Secondary/tertiary slots still belong to T9/T10 with wait_days/
+    # wait_condition (#49). Approach-YAML structural validity is a hard
+    # gate (#43 principle 7).
     method eligible {state contact primary_channel cdata today_iso} {
-        if {$primary_channel ne "email"} { return {} }
         set cstate [dict get $contact state]
         if {$cstate ne "APPROACHED" && $cstate ne "SENT"} { return {} }
-        set has_email   [dict get $contact has_email]
-        set email_sent  [dict get $contact email_sent]
-        if {!$has_email} {
-            return [list [spar::_task $contact blocked "No email address"]]
+        switch -- $primary_channel {
+            email {
+                set has_email   [dict get $contact has_email]
+                set email_sent  [dict get $contact email_sent]
+                if {!$has_email} {
+                    return [list [spar::_task $contact blocked "No email address"]]
+                }
+                if {$email_sent} { return {} }
+            }
+            linkedin {
+                set has_linkedin  [dict get $contact has_linkedin]
+                set linkedin_sent [dict get $contact linkedin_sent]
+                if {!$has_linkedin} {
+                    return [list [spar::_task $contact blocked "No linkedin_url"]]
+                }
+                if {$linkedin_sent} { return {} }
+            }
+            default { return {} }
         }
-        if {$email_sent} { return {} }
         set vmsg [$state approach_validation_error $contact]
         if {$vmsg ne ""} {
             return [list [spar::_task $contact blocked "invalid_approach_yaml: $vmsg"]]

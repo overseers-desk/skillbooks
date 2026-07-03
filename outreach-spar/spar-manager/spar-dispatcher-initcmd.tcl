@@ -107,6 +107,7 @@ proc _ensure_email_loaded {} {
     uplevel #0 [list source $::pool_state_file]
     uplevel #0 [list source $::pool_email_file]
     uplevel #0 [list source $::pool_ses_send_file]
+    uplevel #0 [list source $::pool_li_send_file]
     uplevel #0 [list source $::pool_imap_check_file]
     set ::spar::_email_loaded 1
 }
@@ -256,6 +257,36 @@ proc _ses_send_body {row opts} {
             vwait ::ses_delay_done
         }
         msg_done $row [list message_id $detail]
+    } else {
+        msg_failed $row $detail
+    }
+}
+
+# linkedin_send — drive one row through the overseer's POST /run
+# (spar::li::send_one in transitions/linkedin_send_one.tcl). No
+# delay_ms pacing here: the overseer's linkedin.com rate gate owns the
+# cadence, and a client-side delay on top would double-pace. Serialised
+# by set_worker_cap linkedin_send 1, installed beside ses_send's cap.
+#
+# Guard wrapper, same slot-reclamation rationale as harness_run.
+proc linkedin_send {row opts} {
+    _worker_guard $row {_linkedin_send_body $row $opts}
+}
+proc _linkedin_send_body {row opts} {
+    if {[worker_cancel_requested? $row]} {
+        msg_cancelled $row
+        return
+    }
+    _ensure_email_loaded
+    set rc [catch {::spar::li::send_one $opts} result]
+    if {$rc != 0} {
+        msg_failed $row "linkedin_send: $result"
+        return
+    }
+    set status [lindex $result 0]
+    set detail [lindex $result 1]
+    if {$status eq "ok"} {
+        msg_done $row [list result $detail]
     } else {
         msg_failed $row $detail
     }

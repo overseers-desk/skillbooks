@@ -478,9 +478,18 @@ assert_eq [expr {"App NoEmail" in $t6_blocked}] 1 "T6: APPROACHED no email → b
 assert_eq [expr {"Sent Sam" in $t6_dispatchable_names || "Sent Sam" in $t6_blocked}] 0 \
     "T6: SENT+email_sent already → not in T6 list"
 
-# T6 primary_channel gate (issue #49): non-email or unspecified → zero tasks.
+# T6 routes by primary channel (#49, partial): under linkedin,
+# eligibility is has_linkedin / linkedin_sent. None of these fixture
+# contacts carries a linkedin_url, so every APPROACHED/SENT row blocks
+# with "No linkedin_url"; an unknown channel still yields zero tasks.
 set t6_lk [$State transition_eligible $contacts "T6" "linkedin"]
-assert_eq [llength $t6_lk] 0 "T6: primary_channel=linkedin → zero tasks"
+assert_eq [llength $t6_lk] 3 "T6: linkedin primary, no linkedin_urls → 3 blocked"
+foreach t $t6_lk {
+    assert_eq [dict get $t task_state] "blocked" \
+        "T6: linkedin primary, no url → blocked ([dict get $t contact_name])"
+    assert_eq [dict get $t reason] "No linkedin_url" \
+        "T6: linkedin primary, no url → reason ([dict get $t contact_name])"
+}
 set t6_u [$State transition_eligible $contacts "T6"]
 assert_eq [llength $t6_u] 0 "T6: primary_channel unknown → zero tasks"
 

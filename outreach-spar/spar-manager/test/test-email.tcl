@@ -233,6 +233,43 @@ assert_contains $stamped "replied_date: null" "replied_date unchanged"
 set changed2 [spar::stamp_actioned_date $ap "2026-04-11"]
 assert_eq $changed2 0 "stamp_actioned_date returns 0 when already stamped"
 
+# 5b2. channel=linkedin stamps the linkedin message and leaves the
+# email message's actioned_date untouched.
+set seg_li [make_temp_segment]
+set yaml_li {decisions:
+  channel: linkedin
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: linkedin
+    mode: invite
+    text: Hi, I would like to connect
+    actioned_date: null
+    replied_date: null
+  - channel: email
+    to: test@acme-venues.au
+    subject: Follow-up subject
+    body: Hello there
+    actioned_date: null
+    replied_date: null
+}
+set ap_li [write_approach_yaml $seg_li "stamp-li" $yaml_li]
+set changed_li [spar::stamp_actioned_date $ap_li "2026-07-03" linkedin]
+assert_eq $changed_li 1 "stamp(linkedin) returns 1 when linkedin msg stamped"
+set fd [open $ap_li r]; set stamped_li [read $fd]; close $fd
+assert_contains $stamped_li "actioned_date: 2026-07-03" \
+    "stamp(linkedin) stamps the linkedin message"
+assert_contains $stamped_li "actioned_date: null" \
+    "stamp(linkedin) leaves the email message unstamped"
+set data_li [spar::read_approach_yaml $ap_li]
+set li_msg [spar::final_channel_message $data_li linkedin]
+set em_msg [spar::final_channel_message $data_li email]
+assert_eq [dict get $li_msg mode] "invite" \
+    "final_channel_message(linkedin) selects the linkedin message"
+assert_eq [dict get $em_msg subject] "Follow-up subject" \
+    "final_channel_message(email) selects the email message"
+
 # 5c. No final round → no change
 set seg2 [make_temp_segment]
 set yaml_draft {decisions:

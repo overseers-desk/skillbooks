@@ -358,14 +358,16 @@ proc spar::_indent_body {text indent_spaces} {
 
 # ── Exported procs ─────────────────────────────────────────────────────
 
-# spar::stamp_actioned_date -- set actioned_date on unsent final-round email messages.
+# spar::stamp_actioned_date -- set actioned_date on unsent final-round messages
+# of one channel (default email; T6's LinkedIn leg passes linkedin).
 #
 # approach_path   path to approach YAML file
 # today           date string (e.g. "2026-04-10")
+# channel         message channel to stamp (email | linkedin | phone)
 #
 # Returns 1 if file was modified, 0 otherwise.
 #
-proc spar::stamp_actioned_date {approach_path today} {
+proc spar::stamp_actioned_date {approach_path today {channel email}} {
     # DbC-Pre: refuse to write if the file already has structural errors.
     set pre_errs [spar::_dbc_errors $approach_path]
     if {[llength $pre_errs] > 0} {
@@ -389,7 +391,7 @@ proc spar::stamp_actioned_date {approach_path today} {
         if {[dict_get_default $r type ""] ne "final"} continue
         if {![dict exists $r messages]} continue
         foreach msg [dict get $r messages] {
-            if {[dict_get_default $msg channel ""] ne "email"} continue
+            if {[dict_get_default $msg channel ""] ne $channel} continue
             set ad [dict_get_default $msg actioned_date ""]
             if {[is_null $ad]} {
                 set needs_stamp 1
@@ -404,16 +406,16 @@ proc spar::stamp_actioned_date {approach_path today} {
     }
 
     # Targeted text replacement: in the final round section, replace
-    # actioned_date: null with actioned_date: $today for email messages.
+    # actioned_date: null with actioned_date: $today for the channel's messages.
     #
-    # Strategy: walk lines, track when we're in a final round and an email
-    # message block, and replace actioned_date: null only in that context.
-    # Note: YAML list items start with "- ", so regexes must allow for
-    # an optional dash-space prefix (e.g. "- type: final").
+    # Strategy: walk lines, track when we're in a final round and a message
+    # block of the target channel, and replace actioned_date: null only in
+    # that context. Note: YAML list items start with "- ", so regexes must
+    # allow for an optional dash-space prefix (e.g. "- type: final").
     set lines [split $content \n]
     set result {}
     set in_final 0
-    set in_email_msg 0
+    set in_channel_msg 0
     set changed 0
 
     foreach line $lines {
@@ -425,21 +427,15 @@ proc spar::stamp_actioned_date {approach_path today} {
         if {[regexp {[-\s]*type:\s*(\S+)} $line -> rtype]} {
             if {$rtype ne "final"} {
                 set in_final 0
-                set in_email_msg 0
+                set in_channel_msg 0
             }
         }
-        # Detect channel: email within a final round (may be "  - channel: email")
-        if {$in_final && [regexp {[-\s]*channel:\s*email\s*$} $line]} {
-            set in_email_msg 1
+        # Detect the target channel within a final round (may be "  - channel: email")
+        if {$in_final && [regexp {[-\s]*channel:\s*(\S+)\s*$} $line -> ch]} {
+            set in_channel_msg [expr {$ch eq $channel}]
         }
-        # Detect a new message block start (channel: something else)
-        if {$in_final && [regexp {[-\s]*channel:\s*(\S+)} $line -> ch]} {
-            if {$ch ne "email"} {
-                set in_email_msg 0
-            }
-        }
-        # Replace actioned_date: null in email message context
-        if {$in_final && $in_email_msg && [regexp {^(\s*)actioned_date:\s*(null|~|)\s*$} $line -> indent]} {
+        # Replace actioned_date: null in target-channel message context
+        if {$in_final && $in_channel_msg && [regexp {^(\s*)actioned_date:\s*(null|~|)\s*$} $line -> indent]} {
             lappend result "${indent}actioned_date: $today"
             set changed 1
         } else {

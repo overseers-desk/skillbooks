@@ -274,6 +274,21 @@ rounds:
 }
 }
 
+proc approach_yaml_final_unsent_linkedin {} {
+    return {decisions:
+  channel: linkedin
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: linkedin
+    mode: invite
+    text: Hi, I would like to connect
+    actioned_date: null
+    replied_date: null
+}
+}
+
 proc approach_yaml_final_sent_linkedin {} {
     return {decisions:
   channel: linkedin
