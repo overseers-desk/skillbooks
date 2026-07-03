@@ -338,7 +338,7 @@ if {$dispatching} {
     proc exec_on_progress {slug status message} {
         switch -- $status {
             started { if {$message eq ""} { ${::spar::transitions_log}::info "  \[START\] $slug" } }
-            done    { ${::spar::transitions_log}::info "  \[DONE \] $slug [expr {$message ne "" ? "($message)" : ""}]" }
+            done    { ${::spar::transitions_log}::info "  \[DONE \] $slug[expr {$message ne "" ? " ($message)" : ""}]" }
             failed  { ${::spar::transitions_log}::error "  \[FAIL \] $slug ($message)" }
             skipped { ${::spar::transitions_log}::info "  \[SKIP \] $slug ($message)" }
             warning { ${::spar::transitions_log}::warn "  \[WARN \] $slug: $message" }
