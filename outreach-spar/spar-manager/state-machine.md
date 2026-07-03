@@ -241,7 +241,7 @@ T1–T4 are the cheap (no-parse) transitions; T5 is reserved for a future cheap 
 | T2 | Profile → Approach | state = PROFILED, star≥3 | `spar-transition.tcl <campaign.yaml> T2` | available |
 | T3 | Stale → Re-profile | state = PROFILE_STALE | `spar-transition.tcl <campaign.yaml> T3` | available |
 | T4 | Re-profile → Re-approach | state = APPROACH_STALE (profile_hash mismatch, #63) | `spar-transition.tcl <campaign.yaml> T4` | available |
-| T6 | Approach → Send | state = APPROACHED or SENT, primary_channel = email, has_email, not email_sent | `spar-transition.tcl <campaign.yaml> T6` (AWS SES, serial with --delay) | available |
+| T6 | Approach → Send | state = APPROACHED or SENT; email primary: has_email, not email_sent; linkedin primary: has_linkedin, not linkedin_sent | `spar-transition.tcl <campaign.yaml> T6` (email: AWS SES, serial with --delay; linkedin: overseer POST /run, serial, overseer-paced) | available |
 | T7 | Send → Reply | email_sent, not email_replied | `spar-transition.tcl <campaign.yaml> T7` (mailroom reply-check, appends replies to approach YAML) | available |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
 | T9 | Secondary follow-up | `secondary_ready` | render script + manual marker | manual |
@@ -266,6 +266,7 @@ Each contact in a transition has one of:
 
 `blocked` reasons name a defect the operator must repair:
 - T6: contact in state APPROACHED but no email address → "No email address"
+- T6 (linkedin primary): no linkedin_url on the roster → "No linkedin_url"
 - any parse-TID: approach YAML fails structural validation → "invalid_approach_yaml: …"
 
 `awaiting` reasons name the dependency that will clear itself:
@@ -314,13 +315,13 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 | T2  | PROFILED             | star ≥ 3                                                | —                                                              | spar-state.tcl:456 |
 | T3  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
 | T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
-| T6  | APPROACHED ∨ SENT    | primary_channel = email ∧ has_email ∧ ¬email_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬A: "invalid_approach_yaml". primary_channel ≠ email: row is omitted entirely | spar-state.tcl:464 |
+| T6  | APPROACHED ∨ SENT    | email primary: has_email ∧ ¬email_sent ∧ A(approach_path); linkedin primary: has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". other primary channels: row is omitted entirely | spar-state.tcl:464 |
 | T7  | any ≠ EXCLUDED       | email_sent ∧ ¬email_replied ∧ A(approach_path)          | A invalid → "invalid_approach_yaml". Dispatchable rows dispatch through spar::r::run (mailroom reply-check) | spar-state.tcl:487 |
 | T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | spar-state.tcl:526 |
 | T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | spar-state.tcl:T9 branch |
 | T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | spar-state.tcl:T10 branch |
 
-[†] T6's `primary_channel = email` gate is an interim measure (issue #49). The correct long-term rule routes each unsent final-round message to T6, T8, T9, or T10 based on its slot in the primary/secondary/tertiary structure — not on channel alone. Until per-message routing is implemented, T6 conservatively refuses campaigns whose primary channel is not email, even when they carry an unsent email for the secondary/tertiary slot.
+[†] T6 routes the primary channel only (issue #49, partially resolved: email and linkedin primaries both dispatch, each to its own worker — ses_send and linkedin_send). The remaining #49 work is the secondary/tertiary slots: an unsent email in a linkedin-primary campaign still belongs to T9/T10 with wait_days/wait_condition, and T6 does not send it.
 
 **Conditions no T-gate checks** (relevant for the cross-check below):
 
