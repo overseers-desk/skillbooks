@@ -263,6 +263,49 @@ proc spar::validate_approach_data {approach_data approach_path roster_email \
                     }
                     if {$rtype eq "final"} { incr final_email_count }
                 }
+                # LinkedIn guard rails (issue #159). The send dispatcher
+                # (transitions/linkedin_send_one.tcl) sends `text` falling
+                # back to `body`, trimmed, and treats a modeless message
+                # within 300 code points as a connection invite. Mirror
+                # that rule exactly so validator and send path cannot
+                # disagree; the legitimate long-DM case survives by being
+                # declared (`mode: dm`) rather than inferred.
+                #
+                # Scope: unsent final-round messages only. A sent message
+                # (actioned_date non-null) is a record of what went out,
+                # and draft rounds are records of the drafting process —
+                # retro-editing either to satisfy a validator falsifies
+                # history, and approach_validation_error gates T7-T10 as
+                # well as T6, so flagging history would strand the
+                # contact's reply monitoring forever. The round a reviewer
+                # approves and the dispatcher sends is the final; the A
+                # harness's post-assembly fix loop validates the assembled
+                # file with its final round present, so authoring-time
+                # enforcement is unchanged.
+                if {$rtype eq "final"
+                        && [dict exists $msg channel] && [dict get $msg channel] eq "linkedin"
+                        && [spar::is_null [spar::dict_get_default $msg actioned_date ""]]} {
+                    set li_text [string trim [spar::dict_get_default $msg text ""]]
+                    if {$li_text eq ""} {
+                        set li_text [string trim [spar::dict_get_default $msg body ""]]
+                    }
+                    set li_len [string length $li_text]
+                    set li_mode [spar::dict_get_default $msg mode ""]
+                    if {($li_mode eq "invite" || $li_mode eq "") && $li_len > 300} {
+                        lappend issues [spar::_issue error linkedin_note_too_long $contact_name \
+                            "LinkedIn invite note is $li_len chars, limit 300; shorten it, or declare mode: dm if a direct message to a 1st-degree connection is intended"]
+                    }
+                    # char_count honesty: a wrong count is worse than no
+                    # count, since a reviewer trusts it. Absent stays valid.
+                    if {[dict exists $msg char_count]} {
+                        set li_cc [string trim [dict get $msg char_count]]
+                        if {$li_cc ne "" && ![spar::is_null $li_cc] \
+                                && (![string is integer -strict $li_cc] || $li_cc != $li_len)} {
+                            lappend issues [spar::_issue error char_count_mismatch $contact_name \
+                                "LinkedIn message char_count recorded $li_cc, measured $li_len"]
+                        }
+                    }
+                }
             }
         }
 

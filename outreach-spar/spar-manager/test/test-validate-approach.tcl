@@ -713,4 +713,129 @@ assert_eq [llength $rv5_unknown] 1 \
     "validate_approach: parent with unknown key → unknown_key_parent"
 
 
+# ════════════════════════════════════════════════════════════════════════
+# 27. validate_approach — LinkedIn note limit and char_count (issue #159)
+# ════════════════════════════════════════════════════════════════════════
+section "27. validate_approach — LinkedIn note limit and char_count"
+
+# Fixture builder: a final round with one linkedin message. mode_line and
+# cc_line are inserted verbatim ("" omits the key); actioned defaults to
+# null (unsent).
+proc li_approach_yaml {body {mode_line ""} {cc_line ""} {actioned "null"}} {
+    set yaml "decisions:\n  channel: linkedin\nrounds:\n- type: final\n  number: 1\n  messages:\n  - channel: linkedin\n"
+    if {$mode_line ne ""} { append yaml "    $mode_line\n" }
+    append yaml "    body: $body\n"
+    if {$cc_line ne ""} { append yaml "    $cc_line\n" }
+    append yaml "    actioned_date: $actioned\n    replied_date: null\n"
+    return $yaml
+}
+
+# 27a. Exactly 300 chars, mode: invite → no linkedin_note_too_long.
+set seg_li1 [make_temp_segment]
+set li1_path [write_approach_yaml $seg_li1 "li-300" \
+    [li_approach_yaml [string repeat a 300] "mode: invite"]]
+set li1_issues [spar::validate_approach $li1_path "" "LI 300"]
+assert_eq [has_issue $li1_issues linkedin_note_too_long] 0 \
+    "validate_approach: 300-char invite note → no linkedin_note_too_long"
+
+# 27b. 301 chars, no mode (dispatcher infers invite) → linkedin_note_too_long.
+set seg_li2 [make_temp_segment]
+set li2_path [write_approach_yaml $seg_li2 "li-301" \
+    [li_approach_yaml [string repeat a 301]]]
+set li2_issues [spar::validate_approach $li2_path "" "LI 301"]
+set li2_errors [issues_with_code $li2_issues linkedin_note_too_long]
+assert_eq [llength $li2_errors] 1 \
+    "validate_approach: 301-char modeless note → linkedin_note_too_long"
+assert_eq [dict get [lindex $li2_errors 0] severity] "error" \
+    "validate_approach: linkedin_note_too_long severity is error"
+
+# 27c. mode: dm → no length cap, any length passes.
+set seg_li3 [make_temp_segment]
+set li3_path [write_approach_yaml $seg_li3 "li-dm" \
+    [li_approach_yaml [string repeat a 450] "mode: dm"]]
+set li3_issues [spar::validate_approach $li3_path "" "LI DM"]
+assert_eq [has_issue $li3_issues linkedin_note_too_long] 0 \
+    "validate_approach: 450-char mode: dm message → no linkedin_note_too_long"
+
+# 27d. char_count differs from measured length → char_count_mismatch.
+set seg_li4 [make_temp_segment]
+set li4_path [write_approach_yaml $seg_li4 "li-ccbad" \
+    [li_approach_yaml [string repeat a 290] "mode: invite" "char_count: 292"]]
+set li4_issues [spar::validate_approach $li4_path "" "LI CCBad"]
+set li4_errors [issues_with_code $li4_issues char_count_mismatch]
+assert_eq [llength $li4_errors] 1 \
+    "validate_approach: char_count 292 on 290-char note → char_count_mismatch"
+assert_eq [dict get [lindex $li4_errors 0] severity] "error" \
+    "validate_approach: char_count_mismatch severity is error"
+
+# 27e. Absent char_count → valid (27a/27b already omit it; assert explicitly).
+set seg_li5 [make_temp_segment]
+set li5_path [write_approach_yaml $seg_li5 "li-nocc" \
+    [li_approach_yaml [string repeat a 290] "mode: invite"]]
+set li5_issues [spar::validate_approach $li5_path "" "LI NoCC"]
+assert_eq [has_issue $li5_issues char_count_mismatch] 0 \
+    "validate_approach: absent char_count → no char_count_mismatch"
+
+# 27f. Render path: the projection keeps linkedin bodies (spar-state.tcl
+# _project_message), so approach_validation_error's T6-T10 gate sees the
+# same length the dispatcher will send. Body-authored over-long note must
+# still fail through project_approach_data.
+set li6_data [spar::read_approach_yaml $li2_path]
+set li6_proj [spar::project_approach_data $li6_data]
+set li6_issues [spar::validate_approach_data $li6_proj $li2_path "" "LI Proj"]
+assert_eq [has_issue $li6_issues linkedin_note_too_long] 1 \
+    "validate_approach_data via projection: body-authored 301-char note → linkedin_note_too_long"
+set li7_data [spar::read_approach_yaml $li1_path]
+set li7_proj [spar::project_approach_data $li7_data]
+set li7_issues [spar::validate_approach_data $li7_proj $li1_path "" "LI Proj OK"]
+assert_eq [has_issue $li7_issues char_count_mismatch] 0 \
+    "validate_approach_data via projection: linkedin body survives projection (no false char_count_mismatch)"
+
+# 27g. Pre-send only: a sent message (actioned_date non-null) is a record
+# of what went out; approach_validation_error gates T7-T10, so flagging
+# history would strand reply monitoring over text nobody may edit. The
+# same 400-char modeless message fails unsent, passes sent.
+set seg_li8 [make_temp_segment]
+set li8_path [write_approach_yaml $seg_li8 "li-sent" \
+    [li_approach_yaml [string repeat a 400] "" "char_count: 123" "2026-06-01"]]
+set li8_issues [spar::validate_approach $li8_path "" "LI Sent"]
+assert_eq [has_issue $li8_issues linkedin_note_too_long] 0 \
+    "validate_approach: sent 400-char modeless note → no linkedin_note_too_long"
+assert_eq [has_issue $li8_issues char_count_mismatch] 0 \
+    "validate_approach: sent message with wrong char_count → no char_count_mismatch"
+
+set seg_li9 [make_temp_segment]
+set li9_path [write_approach_yaml $seg_li9 "li-unsent" \
+    [li_approach_yaml [string repeat a 400]]]
+set li9_issues [spar::validate_approach $li9_path "" "LI Unsent"]
+assert_eq [has_issue $li9_issues linkedin_note_too_long] 1 \
+    "validate_approach: same 400-char modeless note unsent → linkedin_note_too_long"
+
+# 27h. Final rounds only: draft rounds are records of the drafting
+# process, the same class as sent messages — retro-editing them to
+# satisfy a validator falsifies history. The round a reviewer approves
+# and the dispatcher sends is the final; the A harness's post-assembly
+# fix loop validates the assembled file with its final round present,
+# so authoring-time enforcement is unchanged. An over-long, mis-counted
+# message in a DRAFT round passes both checks; the identical message in
+# an unsent FINAL round fails both.
+set li_bad_msg "  - channel: linkedin\n    body: [string repeat a 400]\n    char_count: 123\n    actioned_date: null\n    replied_date: null\n"
+set seg_li10 [make_temp_segment]
+set li10_path [write_approach_yaml $seg_li10 "li-draft-history" \
+    "decisions:\n  channel: linkedin\nrounds:\n- type: draft\n  number: 1\n  messages:\n$li_bad_msg- type: final\n  number: 2\n  messages:\n  - channel: linkedin\n    body: [string repeat a 250]\n    actioned_date: null\n    replied_date: null\n"]
+set li10_issues [spar::validate_approach $li10_path "" "LI DraftHist"]
+assert_eq [has_issue $li10_issues linkedin_note_too_long] 0 \
+    "validate_approach: over-long note in draft round → no linkedin_note_too_long"
+assert_eq [has_issue $li10_issues char_count_mismatch] 0 \
+    "validate_approach: mis-counted note in draft round → no char_count_mismatch"
+
+set seg_li11 [make_temp_segment]
+set li11_path [write_approach_yaml $seg_li11 "li-final-bad" \
+    "decisions:\n  channel: linkedin\nrounds:\n- type: final\n  number: 1\n  messages:\n$li_bad_msg"]
+set li11_issues [spar::validate_approach $li11_path "" "LI FinalBad"]
+assert_eq [has_issue $li11_issues linkedin_note_too_long] 1 \
+    "validate_approach: identical message in unsent final → linkedin_note_too_long"
+assert_eq [has_issue $li11_issues char_count_mismatch] 1 \
+    "validate_approach: identical message in unsent final → char_count_mismatch"
+
 finish_tests
