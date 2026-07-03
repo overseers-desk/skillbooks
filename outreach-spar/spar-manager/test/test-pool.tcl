@@ -488,12 +488,12 @@ section "14d. imap_poll happy path"
 set fake_mailroom [file join $tmp_root fake-mailroom.tcl]
 set fd [open $fake_mailroom w]
 puts $fd {#!/usr/bin/env tclsh9.0
-# Args: -a <account> (search|read) -f <folder> ...
-# Emit canned JSON for the two subcommands. Drop -a/-f flags.
+# Args: --imap <account> (search|read) -f <folder> ...
+# Emit canned JSON for the two subcommands. Drop --imap/-f flags.
 set positional {}
 for {set i 0} {$i < [llength $argv]} {incr i} {
     set a [lindex $argv $i]
-    if {$a in {-a -f -u --limit}} { incr i; continue }
+    if {$a in {--imap -f -u --limit}} { incr i; continue }
     lappend positional $a
 }
 set op [lindex $positional 0]

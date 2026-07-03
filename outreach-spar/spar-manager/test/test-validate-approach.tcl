@@ -373,7 +373,7 @@ assert_eq [has_issue $vp3_issues invalid_front_matter] 1 "validate_profile: unpa
 
 # 12p-d. Unknown top-level key → unknown_key_root error
 set seg_vp4 [make_temp_segment]
-set vp4_path [write_profile_raw $seg_vp4 "vp-unknown" "---\nprofile_date: 2026-04-12\nstar_rating: 3\nyield: 2\nwarmth_finding: cold\napplicable_angles:\n  - foo\ndependent_data: {}\nrogue_key: oops\n---\nbody"]
+set vp4_path [write_profile_raw $seg_vp4 "vp-unknown" "---\nprofile_date: 2026-04-12\nstar_rating: 3\nyield: 2\ndependent_data: {}\nrogue_key: oops\n---\nbody"]
 set vp4_issues [spar::validate_profile $vp4_path [make_base_row] "VP Unknown"]
 assert_eq [has_issue $vp4_issues unknown_key_root] 1 "validate_profile: unknown root key → unknown_key_root"
 
@@ -383,12 +383,6 @@ set vp5_path [write_profile $seg_vp5 "vp-yield" -yield "sparkly"]
 set vp5_issues [spar::validate_profile $vp5_path [make_base_row] "VP Yield"]
 assert_eq [has_issue $vp5_issues invalid_yield] 1 "validate_profile: yield 'sparkly' → invalid_yield"
 
-# 12p-f. invalid_warmth_finding
-set seg_vp6 [make_temp_segment]
-set vp6_path [write_profile $seg_vp6 "vp-warm" -warmth_finding "lukewarm"]
-set vp6_issues [spar::validate_profile $vp6_path [make_base_row] "VP Warmth"]
-assert_eq [has_issue $vp6_issues invalid_warmth_finding] 1 "validate_profile: warmth_finding 'lukewarm' → invalid_warmth_finding"
-
 # 12p-g. invalid_star_rating (0 must not appear)
 set seg_vp7 [make_temp_segment]
 set vp7_path [write_profile $seg_vp7 "vp-star0" -star_rating 0]
@@ -397,7 +391,7 @@ assert_eq [has_issue $vp7_issues invalid_star_rating] 1 "validate_profile: star_
 
 # 12p-h. Missing required key (yield omitted)
 set seg_vp8 [make_temp_segment]
-set vp8_path [write_profile_raw $seg_vp8 "vp-miss" "---\nprofile_date: 2026-04-12\nstar_rating: 3\nwarmth_finding: cold\napplicable_angles:\n  - foo\ndependent_data: {}\n---\nbody"]
+set vp8_path [write_profile_raw $seg_vp8 "vp-miss" "---\nprofile_date: 2026-04-12\nstar_rating: 3\ndependent_data: {}\n---\nbody"]
 set vp8_issues [spar::validate_profile $vp8_path [make_base_row] "VP Missing"]
 assert_eq [has_issue $vp8_issues missing_yield] 1 "validate_profile: missing yield → missing_yield"
 
