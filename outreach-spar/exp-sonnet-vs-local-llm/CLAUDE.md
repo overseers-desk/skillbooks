@@ -30,11 +30,15 @@ This host is ~30 GiB shared between CPU and the Arc iGPU (UMA — the GPU has no
 VRAM). A Q4 A3B model is ~20–22 GiB of that. Before any run, check `free` and confirm
 model + KV fits with headroom:
 - KV ≈ `-c` context × ~96 KiB/token (this model class); halve it with
-  `--cache-type-k q8_0 --cache-type-v q8_0`, or lower `-c` (16384 is plenty for one profile).
+  `--cache-type-k q8_0 --cache-type-v q8_0`. Size `-c` from the context the workload
+  actually needs, read off the memory analysis, not a fixed number: media-creator SPAR-P
+  at Sonnet's research depth measured 73k–111k tokens per profile (median ~87k), so what
+  fits and what it costs on each host is in
+  `batch-media-creator/2026-07-03-memory-analysis-context-vs-hosts.md`.
 - Weights are held as `xe` GTT — **invisible to process RSS**. Read `free`/`used`, not RSS.
-- Under Wayland the GUI baseline (~5 GiB, GNOME only) eats headroom; console frees ~13 GiB.
-  Wayland is not a blocker if the GUI is light; the orphaned idle GTT is not a blocker
-  either — the next model load reclaims it (invariant 1). Just budget one model's worth.
+- GNOME cannot be quit (skillbooks#14), but its ~5 GiB idle footprint sweeps out to the
+  62 GiB swap, so physical RAM for weights + KV is ~28 GiB with the desktop still running.
+  The orphaned idle GTT is not a blocker either — the next model load reclaims it (invariant 1).
 
 **/tmp is tmpfs (RAM-backed): keep large files off it** — a big file there consumes the
 very memory the model needs. Write big artifacts to disk:
