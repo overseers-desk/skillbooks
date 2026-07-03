@@ -1081,6 +1081,11 @@ proc spar::validate_roster {segment_contacts} {
 #   identical_subject  — count of identical subject warnings
 #   validation_errors  — count of validation errors
 #   validation_warnings — count of validation warnings
+#   validation_issues  — structured per-contact semantic issues, each a dict
+#                        {severity segment contact message}, in the same order
+#                        their flat strings were appended to messages. Lets a
+#                        caller (spar-progress) group by problem instead of
+#                        printing one line per contact.
 #
 proc spar::build_warnings {all_classified_contacts {cdata {}}} {
     set messages {}
@@ -1090,6 +1095,7 @@ proc spar::build_warnings {all_classified_contacts {cdata {}}} {
     set dup_subject_count 0
     set val_errors 0
     set val_warnings 0
+    set validation_issues {}
 
     # Campaign-level sender-block issues run even if the contact list is
     # empty (e.g. an unreadable campaign). Merge them into the messages
@@ -1109,7 +1115,7 @@ proc spar::build_warnings {all_classified_contacts {cdata {}}} {
         return [dict create messages $messages \
             duplicate_to 0 duplicate_name 0 duplicate_email 0 \
             identical_subject 0 validation_errors $val_errors \
-            validation_warnings $val_warnings]
+            validation_warnings $val_warnings validation_issues {}]
     }
 
     # Duplicates
@@ -1174,6 +1180,8 @@ proc spar::build_warnings {all_classified_contacts {cdata {}}} {
         if {$seg ne ""} { append prefix " $seg" }
         if {$cname ne ""} { append prefix " ($cname)" }
         lappend messages "$prefix: $msg"
+        lappend validation_issues \
+            [dict create severity $sev segment $seg contact $cname message $msg]
         if {$sev eq "error"} {
             incr val_errors
         } else {
@@ -1184,7 +1192,8 @@ proc spar::build_warnings {all_classified_contacts {cdata {}}} {
     return [dict create messages $messages \
         duplicate_to $dup_to_count duplicate_name $dup_name_count \
         duplicate_email $dup_email_count identical_subject $dup_subject_count \
-        validation_errors $val_errors validation_warnings $val_warnings]
+        validation_errors $val_errors validation_warnings $val_warnings \
+        validation_issues $validation_issues]
 }
 
 
