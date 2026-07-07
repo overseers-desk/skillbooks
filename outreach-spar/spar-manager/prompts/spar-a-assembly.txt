@@ -22,9 +22,9 @@ __FINAL_DRAFT__
 
 Write the complete approach file to: __OUTFILE__
 
-Follow §6 structure exactly. Include contact header, angle rationale, A1 Draft 1, all A2 responses, revision drafts, final draft, fact provenance table, and the root keys `response_likelihood`, `a_note`, and `r_note`. The contact header fields are: Contact, Channel, Language, Angle.
+Follow §6 structure exactly. Include contact header, angle rationale, A1 Draft 1, all A2 responses, revision drafts, final draft, fact provenance table, and the root keys `response_likelihood` and `a_note`. The contact header fields are: Contact, Channel, Language, Angle.
 
-`a_note` is your one-line summary for R: angle used, channel, warmth, language. `r_note` is the human reviewer's field — write it as an empty string (`r_note: ""`); R fills it after responses arrive. `response_likelihood` is the whole-number percentage you estimate below, written as an integer root key (e.g. `response_likelihood: 75`). These three are root keys in the approach file, not roster columns.
+`a_note` is your one-line summary for R: angle used, channel, warmth, language. `response_likelihood` is the whole-number percentage you estimate below, written as an integer root key (e.g. `response_likelihood: 75`). Both are root keys in the approach file, not roster columns.
 
 Do not write a profile_hash line — the harness prepends it after this step (issue #63). The validator does not require it from you.
 
