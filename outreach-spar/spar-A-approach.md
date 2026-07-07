@@ -180,12 +180,12 @@ Read the latest strategy revision note before starting each new band. It may cha
 
 ## 6. Approach file structure
 
-Approach files are YAML documents with a **closed vocabulary** — any key outside the set below is rejected by the runtime validator (`spar::validate_approach` in `spar-manager/spar-validate.tcl`). The validator emits plain-language errors such as `unknown key 'X' at <level>` or `'X' at <level> belongs at <other_level>`.
+Approach files are YAML documents with a **closed vocabulary**: the runtime validator (`spar::validate_approach` in `spar-manager/spar-validate.tcl`, which holds the authoritative key set) rejects any key you write outside the set below, emitting plain-language errors such as `unknown key 'X' at <level>` or `'X' at <level> belongs at <other_level>`.
 
 **Canonical keys by level:**
 
-- Root: `decisions`, `rounds`, `angle_rationale`, `response_likelihood`, `a_note`, `r_note`, `fact_provenance`, `quality_checklist`, `profile_hash`
-- `response_likelihood`: integer percentage (0–100), A's estimate of reply probability under the chosen angle, used for band ordering. It is the campaign-dependent counterpart to the segment's `star_rating` (general value to us): change the ask and this changes, which is why it lives here, not on the roster. `a_note`: A's one-line summary for R (angle, channel, warmth, language). `r_note`: the human reviewer's per-contact observation after responses arrive (what worked, new leads, channel adjustment); empty until R fills it. All three are campaign-bound and live here, not in the segment roster.
+- Root: `decisions`, `rounds`, `angle_rationale`, `response_likelihood`, `a_note`, `fact_provenance`, `quality_checklist`, `profile_hash`
+- `response_likelihood`: integer percentage (0–100), A's estimate of reply probability under the chosen angle, used for band ordering. It is the campaign-dependent counterpart to the segment's `star_rating` (general value to us): change the ask and this changes, which is why it lives here, not on the roster. `a_note`: A's one-line summary for R (angle, channel, warmth, language). Both are campaign-bound and live here, not in the segment roster.
 - `profile_hash`: `sha256:<64-hex>` — SHA-256 of the profile file's bytes at generation time, prefixed `sha256:`. Computed by the A harness; A copies the value verbatim. Optional in the schema: manually-authored approaches and any path that did not read a profile have no hash to record. **When present, this key must be on the first line of the file** — no leading blank line, no preceding keys (issue #63). The position discipline lets a future fast-classify path detect staleness by reading only the first line; `validate_approach` emits `profile_hash_misplaced` if the rule is broken. When the hash is present and the profile exists, mismatch is an error (`profile_hash_mismatch`) — the source profile was rebuilt or edited, and the approach must be regenerated. When the hash is absent, `validate_approach` accepts the file and the state machine routes any divergence (deleted / edited profile) through T6/T7 instead.
 - `decisions`: `channel`, `language`, `angle`, `sender`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7. Warmth is determined fresh by A (§4.1) and informs the drafting; it is not a stored field.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
@@ -213,7 +213,6 @@ decisions:
 angle_rationale: Why this angle fits this contact.
 response_likelihood: 75
 a_note: Angle, channel, warmth, language, and any notable drafting consideration (A's one-line summary for R).
-r_note: ""   # R (human) fills this after responses arrive; empty until then.
 rounds:
   - type: draft
     number: 1
