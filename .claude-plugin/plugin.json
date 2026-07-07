@@ -1,6 +1,6 @@
 {
   "name": "skillbooks",
-  "description": "Editorial and writing skills: cold-read a draft before you send, edit to Economist style, strip AI-writing tells, quote-check a claim, keep a durable worklog, render markdown to PDF.",
+  "description": "Put an editor between your AI and the send button: cold-read a draft before you send, edit to Economist style, strip AI-writing tells, quote-check a claim, keep a durable worklog, render markdown to PDF.",
   "author": {
     "name": "The Overseer"
   }
