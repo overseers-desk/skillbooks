@@ -18,6 +18,7 @@ set campaign_file ""
 set json_mode 0
 set skip_reply_check 0
 set verbose 0
+set show_legend 0
 foreach arg $argv {
     switch -glob -- $arg {
         --campaign=*     { set campaign_file [string range $arg 11 end] }
@@ -25,7 +26,7 @@ foreach arg $argv {
         --no-reply-check { set skip_reply_check 1 }
         -v               -
         --verbose        { set verbose 1 }
-        --legend         {}
+        --legend         { set show_legend 1 }
         --*              { puts stderr "Unknown flag: $arg"; exit 1 }
         default          {
             if {[string match *.yaml $arg]} {
@@ -274,7 +275,24 @@ foreach row $data_rows {
     puts "|[join $parts |]|"
 }
 
-puts "\nRun with --legend to see column definitions."
+if {$show_legend} {
+    puts "\nColumn legend  (each cell is a count; the % is the share of the denominator named)"
+    puts "  Valid     Contacts not excluded. Denominator for Profile and 3+★."
+    puts "  Profile   Profiled or beyond, as % of Valid."
+    puts "  3+★       Rated 3 stars or higher — the qualified pool. Denominator for A/3+★,"
+    puts "            Email, LinkedIn, Facebook and Only ☎."
+    puts "  A/3+★     Approached, as % of 3+★."
+    puts "  Email     Has an email address, as % of 3+★."
+    puts "  A/Eml     Approached, as % of those that have an email."
+    puts "  LinkedIn  Has a LinkedIn profile, as % of 3+★."
+    puts "  Facebook  Has a Facebook profile, as % of 3+★."
+    puts "  Only ☎    Reachable by phone only (no email or social), as % of 3+★."
+    puts "  ✉ Sent    Emails sent, as % of approached-with-email (A/Eml) — send progress."
+    puts "  ✉ Repl    Replies received; the % is the REPLY RATE = replies ÷ emails sent."
+    puts "            This is the campaign's key conversion metric."
+} else {
+    puts "\nRun with --legend to see column definitions."
+}
 
 # --- Warnings and validation ---
 set warn_result [spar::build_warnings $all_contacts $cdata]
