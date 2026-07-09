@@ -1236,7 +1236,6 @@ proc spar::detect_duplicates {all_classified_contacts} {
         set segment [file tail $segment_dir]
         set approach_path [dict get $contact approach_path]
         set state [dict get $contact state]
-        set email_sent_flag [dict get $contact email_sent]
 
         # EXCLUDED contacts cannot be acted on — no transition dispatches them and
         # validate_campaign skips them. Their roster fields and approach files
