@@ -1347,7 +1347,7 @@ proc spar::detect_duplicates {all_classified_contacts} {
 #
 # Returns a dict with counts:
 #   valid, profiled, star3, approached_star3, has_email, approached_email,
-#   has_linkedin, has_facebook, has_phone_only, email_sent, email_replied
+#   has_linkedin, has_facebook, has_phone_only, sent, replied
 #
 proc spar::progress_counts {classified_contacts} {
     set valid 0
@@ -1359,8 +1359,8 @@ proc spar::progress_counts {classified_contacts} {
     set has_linkedin 0
     set has_facebook 0
     set has_phone_only 0
-    set n_email_sent 0
-    set n_email_replied 0
+    set n_sent 0
+    set n_replied 0
 
     # States that are "profiled or above"
     set profiled_plus {PROFILED PROFILE_STALE APPROACHED APPROACH_STALE SENT REPLIED}
@@ -1374,8 +1374,6 @@ proc spar::progress_counts {classified_contacts} {
         set c_has_linkedin [dict get $contact has_linkedin]
         set c_has_facebook [dict get $contact has_facebook]
         set c_has_phone_only [dict get $contact has_phone_only]
-        set c_email_sent [dict get $contact email_sent]
-        set c_any_replied [dict get $contact any_replied]
 
         # Valid: not EXCLUDED
         if {$state ne "EXCLUDED"} {
@@ -1423,14 +1421,14 @@ proc spar::progress_counts {classified_contacts} {
                 incr has_phone_only
             }
 
-            # Email sent / replied: only count among star3 with email
-            if {$c_has_email && $state in $approached_plus} {
-                if {$c_email_sent} {
-                    incr n_email_sent
-                }
-                if {$c_any_replied} {
-                    incr n_email_replied
-                }
+            # Sent / replied are projections of the SENT / REPLIED states
+            # themselves: a message actioned on any channel, a reply
+            # received on any channel.
+            if {$state in {SENT REPLIED}} {
+                incr n_sent
+            }
+            if {$state eq "REPLIED"} {
+                incr n_replied
             }
         }
     }
@@ -1445,8 +1443,8 @@ proc spar::progress_counts {classified_contacts} {
         has_linkedin $has_linkedin \
         has_facebook $has_facebook \
         has_phone_only $has_phone_only \
-        email_sent $n_email_sent \
-        email_replied $n_email_replied]
+        sent $n_sent \
+        replied $n_replied]
 }
 
 # roster_counts -- compute progress counts from roster TSV alone (no filesystem).
@@ -1457,7 +1455,7 @@ proc spar::progress_counts {classified_contacts} {
 #   valid, star3, has_email, has_linkedin, has_facebook, has_phone_only
 # These correspond to columns that do not require profile/approach file access.
 # Counts not computable from the TSV alone (profiled, approached_star3,
-# approached_email, email_sent, email_replied) are omitted.
+# approached_email, sent, replied) are omitted.
 #
 proc spar::roster_counts {segment_dir} {
     set roster_path [file join $segment_dir roster.tsv]

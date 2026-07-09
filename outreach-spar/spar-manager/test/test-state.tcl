@@ -412,10 +412,26 @@ assert_eq [dict get $counts approached_star3] 3 "progress: approached_star3=3"
 assert_eq [dict get $counts has_email] 4 "progress: has_email=4"
 # approached+ star≥3 has_email: Bob, Carol, Dave = 3
 assert_eq [dict get $counts approached_email] 3 "progress: approached_email=3"
-# email_sent: Carol(SENT, email actioned) + Dave(REPLIED, email actioned) = 2
-assert_eq [dict get $counts email_sent] 2 "progress: email_sent=2"
-# email_replied: Dave = 1
-assert_eq [dict get $counts email_replied] 1 "progress: email_replied=1"
+# sent: Carol(SENT) + Dave(REPLIED) = 2
+assert_eq [dict get $counts sent] 2 "progress: sent=2"
+# replied: Dave(REPLIED) = 1
+assert_eq [dict get $counts replied] 1 "progress: replied=1"
+
+# 5b. Channel-agnostic sent/replied: a LinkedIn-only contact (no email)
+# counts in sent and replied — connectors do not gate state.
+set seg [make_temp_segment]
+write_profile $seg "p-frank"
+write_approach_yaml $seg "p-frank" [approach_yaml_final_replied_linkedin]
+set rows [list \
+    [make_base_row {contact_name "Frank" star_rating "4" email "" linkedin_url "https://www.linkedin.com/in/frank" stem "p-frank"}] \
+]
+write_roster_tsv $seg $::std_headers $rows
+set contacts [$State refine_segment [$State classify_segment $seg]]
+assert_eq [dict get [lindex $contacts 0] state] "REPLIED" "progress: linkedin-only reply resolves REPLIED"
+set counts [spar::progress_counts $contacts]
+assert_eq [dict get $counts has_email] 0 "progress: linkedin-only has_email=0"
+assert_eq [dict get $counts sent] 1 "progress: linkedin-only sent=1"
+assert_eq [dict get $counts replied] 1 "progress: linkedin-only replied=1"
 
 # ════════════════════════════════════════════════════════════════════════
 # 6. Transition eligibility tests
@@ -735,8 +751,8 @@ assert_eq [dict get $counts_empty valid] 0 "empty segment: valid=0"
 assert_eq [dict get $counts_empty profiled] 0 "empty segment: profiled=0"
 assert_eq [dict get $counts_empty star3] 0 "empty segment: star3=0"
 assert_eq [dict get $counts_empty approached_star3] 0 "empty segment: approached_star3=0"
-assert_eq [dict get $counts_empty email_sent] 0 "empty segment: email_sent=0"
-assert_eq [dict get $counts_empty email_replied] 0 "empty segment: email_replied=0"
+assert_eq [dict get $counts_empty sent] 0 "empty segment: sent=0"
+assert_eq [dict get $counts_empty replied] 0 "empty segment: replied=0"
 
 # 16b. All EXCLUDED contacts → valid=0, all other counts=0
 set seg_inv [make_temp_segment]

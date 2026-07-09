@@ -303,6 +303,20 @@ rounds:
 }
 }
 
+proc approach_yaml_final_replied_linkedin {} {
+    return {decisions:
+  channel: linkedin
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: linkedin
+    body: Hi, I would like to connect
+    actioned_date: 2026-04-01
+    replied_date: 2026-04-05
+}
+}
+
 proc approach_yaml_final_multi_channel {} {
     return {decisions:
   channel: linkedin_then_email

@@ -61,8 +61,8 @@ set segment_counts {}   ;# list of {label counts_dict}
 foreach item $segment_paths {
     lassign $item label seg_dir
     if {[catch {
-        # Cheap classify, then refine — progress_counts reads email_sent /
-        # email_replied which are placeholder-zero on cheap output. The
+        # Cheap classify, then refine — progress_counts projects the
+        # SENT / REPLIED states, which only refinement resolves. The
         # cache means refine_segment shares parses with any later
         # transition_eligible calls in this script.
         set classified [$State refine_segment [$State classify_segment $seg_dir]]
@@ -91,8 +91,8 @@ if {$json_mode} {
                     approached [::json::write object \
                         count $approached_email \
                         sent  [::json::write object \
-                            count   $email_sent \
-                            replied $email_replied]]] \
+                            count   $sent \
+                            replied $replied]]] \
                 linkedin  $has_linkedin \
                 facebook  $has_facebook \
                 phone_only $has_phone_only]
@@ -136,7 +136,7 @@ if {$json_mode} {
     }
     set totals [dict create valid 0 profiled 0 star3 0 approached_star3 0 \
         has_email 0 approached_email 0 has_linkedin 0 has_facebook 0 \
-        has_phone_only 0 email_sent 0 email_replied 0]
+        has_phone_only 0 sent 0 replied 0]
     foreach seg_info $seg_results {
         set sc [dict get $seg_info counts]
         dict for {k v} $sc { dict set totals $k [expr {[dict get $totals $k] + $v}] }
@@ -198,13 +198,13 @@ foreach item $segment_counts {
     set l [dict get $counts has_linkedin]
     set f [dict get $counts has_facebook]
     set po [dict get $counts has_phone_only]
-    set es [dict get $counts email_sent]
-    set r [dict get $counts email_replied]
+    set es [dict get $counts sent]
+    set r [dict get $counts replied]
 
     set row [list $label $v \
         [fmt_cell $p $v] [fmt_cell $s $v] [fmt_cell $a $s] \
         [fmt_cell $e $s] [fmt_cell $ae $e] [fmt_cell $l $s] \
-        [fmt_cell $f $s] [fmt_cell $po $s] [fmt_cell $es $ae] \
+        [fmt_cell $f $s] [fmt_cell $po $s] [fmt_cell $es $a] \
         [fmt_cell $r $es]]
     lappend data_rows $row
 
@@ -217,7 +217,7 @@ foreach item $segment_counts {
 set total_row [list TOTAL $gt_v \
     [fmt_cell $gt_p $gt_v] [fmt_cell $gt_s $gt_v] [fmt_cell $gt_a $gt_s] \
     [fmt_cell $gt_e $gt_s] [fmt_cell $gt_ae $gt_e] [fmt_cell $gt_l $gt_s] \
-    [fmt_cell $gt_f $gt_s] [fmt_cell $gt_po $gt_s] [fmt_cell $gt_es $gt_ae] \
+    [fmt_cell $gt_f $gt_s] [fmt_cell $gt_po $gt_s] [fmt_cell $gt_es $gt_a] \
     [fmt_cell $gt_r $gt_es]]
 lappend data_rows $total_row
 
@@ -287,8 +287,8 @@ if {$show_legend} {
     puts "  LinkedIn  Has a LinkedIn profile, as % of 3+★."
     puts "  Facebook  Has a Facebook profile, as % of 3+★."
     puts "  Only ☎    Reachable by phone only (no email or social), as % of 3+★."
-    puts "  ✉ Sent    Emails sent, as % of approached-with-email (A/Eml) — send progress."
-    puts "  ✉ Repl    Replies received; the % is the REPLY RATE = replies ÷ emails sent."
+    puts "  ✉ Sent    Sent on any channel (state SENT or beyond), as % of A/3+★."
+    puts "  ✉ Repl    Replied on any channel; the % is the REPLY RATE = replies ÷ sent."
     puts "            This is the campaign's key conversion metric."
 } else {
     puts "\nRun with --legend to see column definitions."
