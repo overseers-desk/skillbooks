@@ -17,7 +17,9 @@
 #
 # Inputs (opts dict):
 #   approach_path   abs path to the approach YAML for this stem
-#   to_email        recipient address of the original send (lower)
+#   to_email        address watched for replies (lower)
+#   since           ISO date floor; messages dated before it are not
+#                   replies to this approach (optional, "" = no floor)
 #   fingerprints    list of "from|date" strings already recorded
 #   account         mailroom --imap value
 #   folder          mailroom -f value
@@ -38,6 +40,7 @@ namespace eval ::spar::imap {}
 proc ::spar::imap::check_one {opts} {
     set approach_path [dict get $opts approach_path]
     set to_email      [dict get $opts to_email]
+    set since         [spar::dict_get_default $opts since ""]
     set fingerprints  [spar::dict_get_default $opts fingerprints {}]
     set account       [dict get $opts account]
     set folder        [dict get $opts folder]
@@ -111,6 +114,10 @@ proc ::spar::imap::check_one {opts} {
             [spar::dict_get_default $msg from ""]]
         set date_str [spar::dict_get_default $msg date ""]
         if {![regexp {^\d{4}-\d{2}-\d{2}} $date_str]} continue
+
+        # Mail predating the send is unrelated inbox history, not a
+        # reply; ISO dates order lexically.
+        if {$since ne "" && [string range $date_str 0 9] < $since} continue
 
         if {[spar::fingerprint_match $fingerprints $from_email_addr $date_str]} {
             continue

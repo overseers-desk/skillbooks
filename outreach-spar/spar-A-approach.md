@@ -275,7 +275,7 @@ fact_provenance:
 quality_checklist: Notes on §7 checks passed or flagged.
 ```
 
-Lifecycle fields (`actioned_date`, `replied_date`, `reply_summary`) are written by the dispatcher and reply-ingest stages — start them as `null` (or omit). Entries under `replies` are ingested by `spar-email.tcl`; its item shape (`direction`, `date`, `from`, `body`) is mechanical, not part of the AI-authored vocabulary.
+Lifecycle fields (`actioned_date`, `replied_date`, `reply_summary`) are written by the dispatcher and reply-ingest stages — start them as `null` (or omit). Entries under `replies` are ingested by `spar-email.tcl`; its item shape (`direction`, `channel`, `date`, `from`, `body`) is mechanical, not part of the AI-authored vocabulary. `channel` names the channel the reply arrived on; the inbox ingest writes `email`, a manually recorded reply names its own.
 
 **Reply-mode email skeleton** (issue #79). When the §4.1.1 rule selects reply-on-thread, the final email message replaces `subject` and `to` with a `parent` block carrying the captured threading state:
 

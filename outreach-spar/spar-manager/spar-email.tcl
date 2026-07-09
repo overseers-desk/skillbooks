@@ -246,6 +246,7 @@ proc spar::append_reply_to_yaml {approach_path timestamp from_display reply_text
 
     # Build the reply YAML block
     set reply_block "  - direction: received\n"
+    append reply_block "    channel: email\n"
     append reply_block "    date: \"$timestamp\"\n"
     append reply_block "    from: \"$from_display\"\n"
     append reply_block "    body: |\n$escaped_body"
@@ -317,10 +318,39 @@ proc spar::append_reply_to_yaml {approach_path timestamp from_display reply_text
         set new_content [join [concat $before $insertion $after] "\n"]
     }
 
-    # Also set replied_date on email messages if not already set
+    # Stamp replied_date on the final round's email message: an inbox
+    # reply answers the email leg, so only that message's null marker
+    # is filled. Messages on other channels and in other rounds keep
+    # their own markers for their own ingest paths. Assumes `channel:`
+    # precedes `replied_date:` within a message item, the order the A
+    # harness writes.
     set reply_date [string range $timestamp 0 9]
-    # Replace "replied_date: null" with the date (only in final round context)
-    regsub -all {replied_date:\s*null} $new_content "replied_date: $reply_date" new_content
+    set out_lines {}
+    set in_final 0
+    set final_indent -1
+    set msg_channel ""
+    foreach line [split $new_content \n] {
+        if {!$in_final} {
+            if {[regexp {^(\s*)- type:\s*final} $line -> lead]} {
+                set final_indent [string length $lead]
+                set in_final 1
+            }
+        } else {
+            if {[regexp {^(\s*)\S} $line -> ind]
+                && [string length $ind] <= $final_indent} {
+                set in_final 0
+                set msg_channel ""
+            } elseif {[regexp {^\s*(?:-\s+)?channel:\s*(\S+)} $line -> ch]} {
+                set msg_channel $ch
+            }
+            if {$in_final && $msg_channel eq "email"
+                && [regexp {^(\s*)replied_date:\s*null\s*$} $line -> rl]} {
+                set line "${rl}replied_date: $reply_date"
+            }
+        }
+        lappend out_lines $line
+    }
+    set new_content [join $out_lines \n]
 
     set fd [open $approach_path w]
     # Tolerate characters that cannot round-trip through strict UTF-8 (e.g.
@@ -514,21 +544,56 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
     return $changed
 }
 
+# _roster_email_map -- stem → watchable roster email for one segment.
+#
+# Applies the same hygiene as classify_contact: strip TSV quote
+# artifacts, require an @, reject masked (starred) addresses. A
+# missing or unreadable roster yields an empty map.
+proc spar::_roster_email_map {seg_dir} {
+    set map [dict create]
+    set roster_path [file join $seg_dir roster.tsv]
+    if {![file exists $roster_path]} { return $map }
+    if {[catch {set rows [spar::load_roster $roster_path]}]} { return $map }
+    foreach row $rows {
+        set stem  [string trim [dict_get_default $row stem ""]]
+        set email [string trim [dict_get_default $row email ""]]
+        foreach var {stem email} {
+            upvar 0 $var v
+            if {[regexp {^"(.*)"$} $v -> inner]} { set v [string trim $inner] }
+        }
+        if {$stem eq "" || [string first "@" $email] < 0} continue
+        if {[spar::is_masked_email $email]} continue
+        dict set map $stem [string tolower $email]
+    }
+    return $map
+}
+
 # spar::collect_sent_approaches -- find all sent approach files across segments.
 #
 # segments      list of segment directory paths
 #
 # Returns list of dicts, each with:
 #   approach_path   path to approach YAML file
-#   to_email        recipient email address (lowercase)
+#   to_email        address to watch for replies (lowercase): the final
+#                   round's email to:, or the roster email when the send
+#                   went out on another channel
+#   first_sent      earliest final-round actioned_date (reply date floor)
 #   fingerprints    list of "from|date" strings for existing replies
 #
+# A roster-sourced address is used by at most one approach per call
+# (first stem wins): shared inboxes would otherwise record one inbound
+# mail as a reply to every contact behind that address. The roster
+# validators (roster_shared_inbox_collision) flag the underlying
+# collision to the operator.
 proc spar::collect_sent_approaches {segments} {
     set results {}
+    set watched_addresses [dict create]
 
     foreach seg_dir $segments {
         set approach_dir [file join $seg_dir approach]
         if {![file isdirectory $approach_dir]} continue
+
+        set roster_map ""
 
         foreach yf [lsort [glob -nocomplain -directory $approach_dir *.yaml]] {
             if {[catch {
@@ -542,6 +607,7 @@ proc spar::collect_sent_approaches {segments} {
 
             set is_sent 0
             set to_email ""
+            set first_sent ""
             set fingerprints {}
 
             foreach r [dict get $data rounds] {
@@ -552,6 +618,17 @@ proc spar::collect_sent_approaches {segments} {
                         set ad [dict_get_default $msg actioned_date ""]
                         if {![is_null $ad]} {
                             set is_sent 1
+                            # yaml2dict parses unquoted dates to epoch
+                            # seconds; quoted ones stay ISO strings.
+                            set ad_day [string trim $ad]
+                            if {[string is wideinteger -strict $ad_day]} {
+                                set ad_day [clock format $ad_day -format %Y-%m-%d]
+                            } else {
+                                set ad_day [string range $ad_day 0 9]
+                            }
+                            if {$first_sent eq "" || $ad_day < $first_sent} {
+                                set first_sent $ad_day
+                            }
                         }
                         if {[dict_get_default $msg channel ""] eq "email"} {
                             set msg_to [dict_get_default $msg to ""]
@@ -577,11 +654,27 @@ proc spar::collect_sent_approaches {segments} {
                 }
             }
 
-            if {!$is_sent || $to_email eq ""} continue
+            if {!$is_sent} continue
+
+            if {$to_email eq ""} {
+                # Send went out on a non-email channel; watch the roster
+                # email, if the roster carries a usable one.
+                if {$roster_map eq ""} {
+                    set roster_map [spar::_roster_email_map $seg_dir]
+                }
+                set stem [file rootname [file tail $yf]]
+                set fallback [dict_get_default $roster_map $stem ""]
+                if {$fallback eq "" || [dict exists $watched_addresses $fallback]} {
+                    continue
+                }
+                set to_email $fallback
+            }
+            dict set watched_addresses $to_email 1
 
             lappend results [dict create \
                 approach_path $yf \
                 to_email $to_email \
+                first_sent $first_sent \
                 fingerprints $fingerprints]
         }
     }

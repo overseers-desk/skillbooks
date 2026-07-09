@@ -410,6 +410,8 @@ close $fd
 
 assert_contains $replied "replies:" "replies section added"
 assert_contains $replied "direction: received" "reply has direction: received"
+assert_contains $replied {- direction: received
+    channel: email} "reply block names its channel"
 assert_contains $replied "2026-04-05T10:30:00" "reply has timestamp"
 assert_contains $replied "John Smith <john@example.com>" "reply has from display"
 assert_contains $replied "Thank you for reaching out." "reply has body text"
@@ -450,6 +452,47 @@ close $fd_after
 
 assert_eq $before $after "no final round → file unchanged"
 
+# 6d. replied_date lands on the final round's email message only:
+# the linkedin message beside it and the earlier round's message
+# keep their null markers.
+set seg5b [make_temp_segment]
+set yaml_multi {decisions:
+  channel: linkedin_then_email
+rounds:
+- type: draft
+  number: 1
+  messages:
+  - channel: email
+    subject: Old draft
+    body: Old body
+    actioned_date: null
+    replied_date: null
+- type: final
+  number: 2
+  messages:
+  - channel: linkedin
+    to: https://www.linkedin.com/in/pat
+    body: Hi Pat
+    actioned_date: 2026-04-01
+    replied_date: null
+  - channel: email
+    to: pat@acme-venues.au
+    subject: Hello
+    body: Hi there
+    actioned_date: 2026-04-02
+    replied_date: null
+}
+set ap5b [write_approach_yaml $seg5b "multi-reply" $yaml_multi]
+spar::append_reply_to_yaml $ap5b "2026-04-08T09:00:00" "Pat <pat@acme-venues.au>" "Sounds good."
+
+set fd [open $ap5b r]
+set replied5b [read $fd]
+close $fd
+
+assert_contains $replied5b "replied_date: 2026-04-08" "final email message stamped"
+assert_eq [regexp -all {replied_date: null} $replied5b] 2 \
+    "linkedin message and draft round keep null markers"
+
 # ════════════════════════════════════════════════════════════════════════
 # 7. collect_sent_approaches
 # ════════════════════════════════════════════════════════════════════════
@@ -474,6 +517,7 @@ set collected [spar::collect_sent_approaches [list $seg6]]
 assert_eq [llength $collected] 1 "one sent approach collected"
 set entry [lindex $collected 0]
 assert_eq [dict get $entry to_email] "contact@example.com" "to_email extracted"
+assert_eq [dict get $entry first_sent] "2026-04-01" "first_sent captures the send date"
 assert_eq [llength [dict get $entry fingerprints]] 0 "no fingerprints (no replies)"
 
 # 7b. Unsent approach is not collected
@@ -528,6 +572,55 @@ assert_eq [llength $collected_multi] 2 "approaches from multiple segments collec
 set seg_empty [make_temp_dir]
 set collected_empty [spar::collect_sent_approaches [list $seg_empty]]
 assert_eq [llength $collected_empty] 0 "segment without approach dir → empty"
+
+# 7f. Send on a non-email channel: the roster email is watched.
+set seg9 [make_temp_segment]
+set yaml_li_sent {decisions:
+  channel: linkedin
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: linkedin
+    to: https://www.linkedin.com/in/lee
+    body: Hi Lee
+    actioned_date: 2026-04-03
+}
+write_approach_yaml $seg9 "li-only" $yaml_li_sent
+set fd [open [file join $seg9 roster.tsv] w]
+puts $fd "stem\temail"
+puts $fd "li-only\tLee@Example.com"
+close $fd
+set collected9 [spar::collect_sent_approaches [list $seg9]]
+assert_eq [llength $collected9] 1 "non-email send collected via roster email"
+set entry9 [lindex $collected9 0]
+assert_eq [dict get $entry9 to_email] "lee@example.com" "roster email lowercased"
+assert_eq [dict get $entry9 first_sent] "2026-04-03" "first_sent from the linkedin send"
+
+# 7g. Non-email send with no usable roster email (masked) is not
+# watchable and yields no entry.
+set seg10 [make_temp_segment]
+write_approach_yaml $seg10 "li-masked" $yaml_li_sent
+set fd [open [file join $seg10 roster.tsv] w]
+puts $fd "stem\temail"
+puts $fd "li-masked\tm***@example.com"
+close $fd
+set collected10 [spar::collect_sent_approaches [list $seg10]]
+assert_eq [llength $collected10] 0 "masked roster email → not watchable"
+
+# 7h. Two non-email sends behind one roster address: the address is
+# watched once (first stem wins); one inbound mail must not become a
+# reply on two contacts.
+set seg11 [make_temp_segment]
+write_approach_yaml $seg11 "li-a" $yaml_li_sent
+write_approach_yaml $seg11 "li-b" $yaml_li_sent
+set fd [open [file join $seg11 roster.tsv] w]
+puts $fd "stem\temail"
+puts $fd "li-a\toffice@example.com"
+puts $fd "li-b\toffice@example.com"
+close $fd
+set collected11 [spar::collect_sent_approaches [list $seg11]]
+assert_eq [llength $collected11] 1 "shared roster address watched once"
 
 # ════════════════════════════════════════════════════════════════════════
 # 8. stamp_actioned_date preserves formatting
