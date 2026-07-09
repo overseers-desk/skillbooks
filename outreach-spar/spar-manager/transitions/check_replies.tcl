@@ -143,7 +143,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         set cstate [dict get $contact state]
         if {$cstate eq "EXCLUDED"} { return {} }
         if {![dict get $contact email_sent]} { return {} }
-        if {[dict get $contact email_replied]} { return {} }
+        if {[dict get $contact any_replied]} { return {} }
         set vmsg [$state approach_validation_error $contact]
         if {$vmsg ne ""} {
             return [list [spar::_task $contact blocked "invalid_approach_yaml: $vmsg"]]

@@ -296,21 +296,21 @@ set row [make_base_row {stem "ch-unsent"}]
 set result [$State refine_contact [$State classify_contact $row $seg]]
 assert_eq [dict get $result email_sent] 0 "final email not actioned → email_sent=0"
 
-# 3d. Approach with final round, replied_date set → email_replied=1
+# 3d. Approach with final round, replied_date set → any_replied=1
 set seg [make_temp_segment]
 write_profile $seg "ch-replied"
 write_approach_yaml $seg "ch-replied" [approach_yaml_final_replied]
 set row [make_base_row {stem "ch-replied"}]
 set result [$State refine_contact [$State classify_contact $row $seg]]
-assert_eq [dict get $result email_replied] 1 "final replied_date → email_replied=1"
+assert_eq [dict get $result any_replied] 1 "final replied_date → any_replied=1"
 
-# 3e. direction=received → email_replied=1
+# 3e. direction=received → any_replied=1
 set seg [make_temp_segment]
 write_profile $seg "ch-recv"
 write_approach_yaml $seg "ch-recv" [approach_yaml_final_reply_received]
 set row [make_base_row {stem "ch-recv"}]
 set result [$State refine_contact [$State classify_contact $row $seg]]
-assert_eq [dict get $result email_replied] 1 "direction=received → email_replied=1"
+assert_eq [dict get $result any_replied] 1 "direction=received → any_replied=1"
 
 # 3f. Multi-channel: linkedin sent, email not sent
 set seg [make_temp_segment]
@@ -493,7 +493,7 @@ foreach t $t6_lk {
 set t6_u [$State transition_eligible $contacts "T6"]
 assert_eq [llength $t6_u] 0 "T6: primary_channel unknown → zero tasks"
 
-# T7: Send → Reply: email_sent, not email_replied → dispatchable (monitoring)
+# T7: Send → Reply: email_sent, not any_replied → dispatchable (monitoring)
 set t7 [$State transition_eligible $contacts "T7"]
 set t7_names [lmap c $t7 {dict get $c contact_name}]
 assert_eq [expr {"Sent Sam" in $t7_names}] 1 "T7: SENT+email_sent → in monitoring list"

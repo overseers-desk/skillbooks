@@ -494,7 +494,7 @@ oo::class create spar::ui::CampaignModel {
         if {($i % 25) != 0} { my _yield_loop }
 
         # Parse-TID emit. Eligibility for these TIDs reads email_sent /
-        # linkedin_sent / email_replied populated by Phase 2.
+        # linkedin_sent / any_replied populated by Phase 2.
         foreach tid $parse_tids {
             set entry [my _transition_entry $tid $primary_channel]
             lappend Transitions $entry

@@ -214,7 +214,7 @@ proc spar::final_email_message {data} {
 
 # analyse_final_round — extract state and channel properties from approach YAML data.
 # Returns dict with keys: has_final, any_sent, email_sent, linkedin_sent,
-#   email_replied, to_addresses, unsent_subjects, messages.
+#   any_replied, to_addresses, unsent_subjects, messages.
 # `messages` is a list of per-message dicts {channel actioned_date replied_date
 #   is_actioned is_replied} used by T9/T10 channel-readiness evaluation.
 proc spar::analyse_final_round {data} {
@@ -223,7 +223,7 @@ proc spar::analyse_final_round {data} {
         any_sent 0 \
         email_sent 0 \
         linkedin_sent 0 \
-        email_replied 0 \
+        any_replied 0 \
         to_addresses {} \
         unsent_subjects {} \
         messages {}]
@@ -262,7 +262,7 @@ proc spar::analyse_final_round {data} {
                 }
 
                 if {$is_replied} {
-                    dict set result email_replied 1
+                    dict set result any_replied 1
                 }
 
                 # Collect To: addresses from email messages
@@ -304,7 +304,7 @@ proc spar::analyse_final_round {data} {
         if {[dict exists $round replies]} {
             foreach reply [dict get $round replies] {
                 if {[spar::dict_get_default $reply direction ""] eq "received"} {
-                    dict set result email_replied 1
+                    dict set result any_replied 1
                 }
             }
         }
@@ -639,7 +639,7 @@ proc spar::_project_script_item {item} {
 }
 
 # _project_reply -- preserve direction (analyse_final_round reads it to
-# compute email_replied) and any other keys present (so unknown-key
+# compute any_replied) and any other keys present (so unknown-key
 # walks still work), blank the text body.
 proc spar::_project_reply {reply} {
     if {[llength $reply] % 2 != 0} { return $reply }
@@ -675,8 +675,8 @@ proc spar::_parse_worker_run {path} {
 # any approach-having contact (no SENT/REPLIED/APPROACH_STALE-via-parse
 # refinement; APPROACH_STALE is still detected via the line-1 hash, which
 # does not require a full YAML parse). Refined fields (SENT/REPLIED, the
-# email_sent / linkedin_sent / email_replied / to_addresses / unsent_
-# subjects projections) are computed lazily by `refine_contact`, which
+# any_sent / email_sent / linkedin_sent / any_replied / to_addresses /
+# unsent_subjects projections) are computed lazily by `refine_contact`, which
 # routes through `approach_summary`'s per-instance cache. Cheap-tier
 # callers (DISCOVERED/PROFILED/EXCLUDED routing, T1..T4 eligibility)
 # never refine and pay zero parse cost.
@@ -699,9 +699,10 @@ proc spar::_parse_worker_run {path} {
 #   has_linkedin  bool
 #   has_facebook  bool
 #   has_phone_only bool
+#   any_sent      0 (placeholder; populated by refine_contact)
 #   email_sent    0 (placeholder; populated by refine_contact)
 #   linkedin_sent 0 (placeholder; populated by refine_contact)
-#   email_replied 0 (placeholder; populated by refine_contact)
+#   any_replied   0 (placeholder; populated by refine_contact)
 #   to_addresses     {} (placeholder; populated by refine_contact)
 #   unsent_subjects  {} (placeholder; populated by refine_contact)
 #
@@ -738,7 +739,7 @@ oo::define spar::State method classify_contact {roster_row segment_dir} {
 
     # Result dict: defaults for paths and approach-derived fields. Each
     # branch overrides `state` (and, after parsing the approach YAML,
-    # email_sent/linkedin_sent/email_replied/to_addresses/unsent_subjects)
+    # any_sent/email_sent/linkedin_sent/any_replied/to_addresses/unsent_subjects)
     # before returning. to_addresses/unsent_subjects are carried through so
     # detect_duplicates parses the YAML once per contact, not twice.
     set base [dict create \
@@ -750,9 +751,10 @@ oo::define spar::State method classify_contact {roster_row segment_dir} {
         has_linkedin $has_linkedin \
         has_facebook $has_facebook \
         has_phone_only $has_phone_only \
+        any_sent 0 \
         email_sent 0 \
         linkedin_sent 0 \
-        email_replied 0 \
+        any_replied 0 \
         to_addresses {} \
         unsent_subjects {}]
 
@@ -827,8 +829,8 @@ oo::define spar::State method classify_contact {roster_row segment_dir} {
 # refine_contact -- promote a cheap-classified contact dict to its
 # refined form by parsing the approach YAML (via approach_summary, so
 # the parse is shared across the render). Returns a new dict with
-# SENT/REPLIED resolved on `state` and email_sent / linkedin_sent /
-# email_replied / to_addresses / unsent_subjects populated.
+# SENT/REPLIED resolved on `state` and any_sent / email_sent /
+# linkedin_sent / any_replied / to_addresses / unsent_subjects populated.
 #
 # Idempotent: refining an already-refined contact rebuilds from the
 # (cached) projection. Refining a contact whose state is something
@@ -850,9 +852,10 @@ oo::define spar::State method refine_contact {contact} {
 
     set approach_data [my approach_summary $contact]
     set fr [spar::analyse_final_round $approach_data]
+    dict set contact any_sent        [dict get $fr any_sent]
     dict set contact email_sent      [dict get $fr email_sent]
     dict set contact linkedin_sent   [dict get $fr linkedin_sent]
-    dict set contact email_replied   [dict get $fr email_replied]
+    dict set contact any_replied     [dict get $fr any_replied]
     dict set contact to_addresses    [dict get $fr to_addresses]
     dict set contact unsent_subjects [dict get $fr unsent_subjects]
 
@@ -865,7 +868,7 @@ oo::define spar::State method refine_contact {contact} {
     dict set contact r_note              [spar::dict_get_default $approach_data r_note ""]
 
     # REPLIED — SENT and (replied_date or reply with direction:received).
-    if {[dict get $fr any_sent] && [dict get $fr email_replied]} {
+    if {[dict get $fr any_sent] && [dict get $fr any_replied]} {
         dict set contact state REPLIED
         return $contact
     }
@@ -900,7 +903,7 @@ oo::define spar::State method refine_segment {contacts} {
 # the result of classify_contact merged with the original roster_row.
 # Refined fields are placeholders — call refine_segment (or
 # refine_contact per-row) on the result when SENT / REPLIED /
-# email_sent / linkedin_sent / email_replied / to_addresses /
+# any_sent / email_sent / linkedin_sent / any_replied / to_addresses /
 # unsent_subjects are needed.
 #
 # On schema error, throws an error.
@@ -1168,7 +1171,7 @@ proc spar::_task {contact task_state {reason ""}} {
 #
 # classified_contacts  output of classify_segment, optionally followed by
 #                      refine_segment. Parse-TIDs (T6+) require refined
-#                      input — they read email_sent / email_replied /
+#                      input — they read any_sent / email_sent / any_replied /
 #                      to_addresses / unsent_subjects and the SENT/REPLIED
 #                      state upgrade that refine_contact installs. Cheap-
 #                      TIDs (T1..T4) accept either form: their `eligible`
@@ -1372,7 +1375,7 @@ proc spar::progress_counts {classified_contacts} {
         set c_has_facebook [dict get $contact has_facebook]
         set c_has_phone_only [dict get $contact has_phone_only]
         set c_email_sent [dict get $contact email_sent]
-        set c_email_replied [dict get $contact email_replied]
+        set c_any_replied [dict get $contact any_replied]
 
         # Valid: not EXCLUDED
         if {$state ne "EXCLUDED"} {
@@ -1425,7 +1428,7 @@ proc spar::progress_counts {classified_contacts} {
                 if {$c_email_sent} {
                     incr n_email_sent
                 }
-                if {$c_email_replied} {
+                if {$c_any_replied} {
                     incr n_email_replied
                 }
             }
