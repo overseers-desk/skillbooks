@@ -1,6 +1,6 @@
 #!/usr/bin/env tclsh9.0
 # spar-progress.tcl — Campaign progress table and duplicate detection (CLI)
-# Usage: tclsh9.0 spar-progress.tcl [campaign_dir_or_yaml] [--campaign=YAML] [--no-reply-check] [--json] [-v|--verbose]
+# Usage: tclsh9.0 spar-progress.tcl [campaign_dir_or_yaml] [--campaign=YAML] [--no-reply-check] [--json] [--legend] [-v|--verbose]
 # Positional arg may be a directory or a campaign YAML file (directory derived from YAML path).
 #
 # --no-reply-check omits the T7 (reply-check) row from the transition list.
@@ -171,7 +171,7 @@ proc fmt_cell {count denom} {
     }
 }
 
-set headers {Segment Valid Profile "3+★ " "A/3+★ " Email A/Eml LinkedIn Facebook "Only ☎ " "✉ Sent" "✉ Repl"}
+set headers {Segment Valid Profile "3+★ " "A/3+★ " Email A/Eml LinkedIn Facebook "Only ☎ " Sent Repl}
 
 # Compute column widths
 set ncols [llength $headers]
@@ -287,8 +287,8 @@ if {$show_legend} {
     puts "  LinkedIn  Has a LinkedIn profile, as % of 3+★."
     puts "  Facebook  Has a Facebook profile, as % of 3+★."
     puts "  Only ☎    Reachable by phone only (no email or social), as % of 3+★."
-    puts "  ✉ Sent    Sent on any channel (state SENT or beyond), as % of A/3+★."
-    puts "  ✉ Repl    Replied on any channel; the % is the REPLY RATE = replies ÷ sent."
+    puts "  Sent      Sent on any channel (state SENT or beyond), as % of A/3+★."
+    puts "  Repl      Replied on any channel; the % is the REPLY RATE = replies ÷ sent."
     puts "            This is the campaign's key conversion metric."
 } else {
     puts "\nRun with --legend to see column definitions."

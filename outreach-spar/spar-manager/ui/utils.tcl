@@ -183,8 +183,8 @@ namespace eval ::spar::ui::legend {
             "Facebook"    "/ 3+★" $x_facebook $y2 \
             "Only ☎" "/ 3+★" $x_phone $y2 \
             "A/Eml"       "/ Email" $x_aeml     $y3 \
-            "✉ Sent" "/ A/Eml" $x_sent     $y4 \
-            "✉ Repl" "/ Sent"  $x_repl     $y5 \
+            "Sent"   "/ A/3+★" $x_sent     $y4 \
+            "Repl"   "/ Sent"  $x_repl     $y5 \
         ]
 
         foreach {lbl denom x y} $nodes {
