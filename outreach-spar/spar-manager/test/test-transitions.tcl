@@ -531,7 +531,7 @@ assert_match [dict get [lindex $t6e_tasks 0] reason] "invalid_approach_yaml:*" \
 
 # ── T7 ──────────────────────────────────────────────────────────────────
 
-# T7-a: SENT, email_replied=0 → dispatchable.
+# T7-a: SENT, any_replied=0 → dispatchable.
 set t7a_seg [make_temp_segment]
 write_profile $t7a_seg "t7a"
 write_approach_yaml $t7a_seg "t7a" [approach_yaml_final_sent_email]
@@ -545,7 +545,7 @@ assert_eq [llength $t7a_tasks] 1 "T7: SENT+no-reply → 1 task"
 assert_eq [dict get [lindex $t7a_tasks 0] task_state] "dispatchable" \
     "T7: SENT+no-reply → task_state=dispatchable"
 
-# T7-b: REPLIED (email_replied=1) → no task.
+# T7-b: REPLIED (any_replied=1) → no task.
 set t7b_seg [make_temp_segment]
 write_profile $t7b_seg "t7b"
 write_approach_yaml $t7b_seg "t7b" [approach_yaml_final_replied]

@@ -515,7 +515,7 @@ oo::class create spar::ui::ProgressTable {
         set fb    [dict get $c has_facebook]
         set ph    [dict get $c has_phone_only]
         set sent  [dict get $c email_sent]
-        set repl  [dict get $c email_replied]
+        set repl  [dict get $c any_replied]
 
         set profiled_plus  {PROFILED PROFILE_STALE APPROACHED APPROACH_STALE SENT REPLIED}
         set approached_plus {APPROACHED APPROACH_STALE SENT REPLIED}
