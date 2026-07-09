@@ -124,7 +124,8 @@ The approach YAML's final round can contain multiple messages across channels (e
 |----------|-----------|
 | `email_sent` | Final round: message with `channel: email` and `actioned_date` non-null |
 | `linkedin_sent` | Final round: message with `channel: linkedin` and `actioned_date` non-null |
-| `email_replied` | Final round: message with `replied_date` non-null, or reply with `direction: received` |
+| `any_sent` | Final round: any message with `actioned_date` non-null, any channel |
+| `any_replied` | Final round: any message with `replied_date` non-null, or any reply with `direction: received`, whatever the channel |
 
 ### Staleness
 
@@ -179,9 +180,10 @@ Classification lives on `spar::State`, a TclOO class whose lifetime matches a un
 #   has_linkedin  bool
 #   has_facebook  bool
 #   has_phone_only bool
-#   email_sent    bool  (meaningful only when state is APPROACHED/SENT/REPLIED)
+#   any_sent      bool  (meaningful only when state is APPROACHED/SENT/REPLIED)
+#   email_sent    bool
 #   linkedin_sent bool
-#   email_replied bool
+#   any_replied   bool
 #
 oo::define spar::State method classify_contact {roster_row segment_dir} { ... }
 ```
@@ -214,8 +216,8 @@ The progress table columns are counts derived from running `classify_segment` ac
 | LinkedIn | star≥3 and has_linkedin | 3+★ | — |
 | Facebook | star≥3 and has_facebook | 3+★ | — |
 | Only ☎ | star≥3 and has_phone_only | 3+★ | — |
-| ✉ Sent | email_sent true | A/Eml | — |
-| ✉ Repl | email_replied true | ✉ Sent | — |
+| Sent | state SENT or REPLIED | A/3+★ | — |
+| Repl | state REPLIED | Sent | — |
 
 All twelve columns are projections of `classify_segment` output. There is no separate scanning step.
 
@@ -242,7 +244,7 @@ T1–T4 are the cheap (no-parse) transitions; T5 is reserved for a future cheap 
 | T3 | Stale → Re-profile | state = PROFILE_STALE | `spar-transition.tcl <campaign.yaml> T3` | available |
 | T4 | Re-profile → Re-approach | state = APPROACH_STALE (profile_hash mismatch, #63) | `spar-transition.tcl <campaign.yaml> T4` | available |
 | T6 | Approach → Send | state = APPROACHED or SENT; email primary: has_email, not email_sent; linkedin primary: has_linkedin, not linkedin_sent | `spar-transition.tcl <campaign.yaml> T6` (email: AWS SES, serial with --delay; linkedin: overseer POST /run, serial, overseer-paced) | available |
-| T7 | Send → Reply | email_sent, not email_replied | `spar-transition.tcl <campaign.yaml> T7` (mailroom reply-check, appends replies to approach YAML) | available |
+| T7 | Send → Reply | email_sent, not any_replied | `spar-transition.tcl <campaign.yaml> T7` (mailroom reply-check, appends replies to approach YAML) | available |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
 | T9 | Secondary follow-up | `secondary_ready` | render script + manual marker | manual |
 | T10 | Tertiary follow-up | `tertiary_ready` | render script + manual marker | manual |
@@ -316,7 +318,7 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 | T3  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
 | T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
 | T6  | APPROACHED ∨ SENT    | email primary: has_email ∧ ¬email_sent ∧ A(approach_path); linkedin primary: has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". other primary channels: row is omitted entirely | spar-state.tcl:464 |
-| T7  | any ≠ EXCLUDED       | email_sent ∧ ¬email_replied ∧ A(approach_path)          | A invalid → "invalid_approach_yaml". Dispatchable rows dispatch through spar::r::run (mailroom reply-check) | spar-state.tcl:487 |
+| T7  | any ≠ EXCLUDED       | email_sent ∧ ¬any_replied ∧ A(approach_path)          | A invalid → "invalid_approach_yaml". Dispatchable rows dispatch through spar::r::run (mailroom reply-check) | spar-state.tcl:487 |
 | T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | spar-state.tcl:526 |
 | T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | spar-state.tcl:T9 branch |
 | T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | spar-state.tcl:T10 branch |

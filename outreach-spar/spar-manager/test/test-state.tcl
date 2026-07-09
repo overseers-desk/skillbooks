@@ -144,7 +144,7 @@ assert_eq [dict get $result state] "APPROACHED" \
 
 # 1m2. classify_contact (cheap by design, post-#84): SENT/REPLIED collapse
 # to APPROACHED until refine_contact is called. Auto-safe transitions
-# (T1/T2/T3/T4) never read email_sent/replied/etc., so the lossy mapping
+# (T1/T2/T3/T4) never read any_sent/email_sent/linkedin_sent/any_replied, so the lossy mapping
 # is safe for that scope and the parse stays skipped.
 set seg [make_temp_segment]
 write_profile $seg "cheap-sent"

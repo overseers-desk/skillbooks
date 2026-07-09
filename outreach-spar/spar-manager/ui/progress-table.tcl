@@ -48,8 +48,8 @@ oo::class create spar::ui::ProgressTable {
             linkedin "LinkedIn"    e
             facebook "Facebook"    e
             phone    "Only ☎" e
-            sent     "✉ Sent" e
-            repl     "✉ Repl" e
+            sent     "Sent"        e
+            repl     "Repl"        e
         }
 
         set PtreeColIds {}
