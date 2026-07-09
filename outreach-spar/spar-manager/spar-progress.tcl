@@ -84,18 +84,15 @@ if {$json_mode} {
             valid     $valid \
             profiled  $profiled \
             qualified [::json::write object \
-                count     $star3 \
+                count      $star3 \
                 approached $approached_star3 \
-                email     [::json::write object \
-                    count     $has_email \
-                    approached [::json::write object \
-                        count $approached_email \
-                        sent  [::json::write object \
-                            count   $sent \
-                            replied $replied]]] \
-                linkedin  $has_linkedin \
-                facebook  $has_facebook \
-                phone_only $has_phone_only]
+                sent       $sent \
+                replied    $replied \
+                channels   [::json::write object \
+                    email      $has_email \
+                    linkedin   $has_linkedin \
+                    facebook   $has_facebook \
+                    phone_only $has_phone_only]]
     }
     proc progress_to_json {progress_dict} {
         set seg_list {}
@@ -135,7 +132,7 @@ if {$json_mode} {
         lappend seg_results [dict create name $label active 1 counts $counts]
     }
     set totals [dict create valid 0 profiled 0 star3 0 approached_star3 0 \
-        has_email 0 approached_email 0 has_linkedin 0 has_facebook 0 \
+        has_email 0 has_linkedin 0 has_facebook 0 \
         has_phone_only 0 sent 0 replied 0]
     foreach seg_info $seg_results {
         set sc [dict get $seg_info counts]
@@ -171,7 +168,7 @@ proc fmt_cell {count denom} {
     }
 }
 
-set headers {Segment Valid Profile "3+★ " "A/3+★ " Email A/Eml LinkedIn Facebook "Only ☎ " Sent Repl}
+set headers {Segment Valid Profile "3+★ " "A/3+★ " Email LinkedIn Facebook "Only ☎ " Sent Repl}
 
 # Compute column widths
 set ncols [llength $headers]
@@ -184,7 +181,7 @@ for {set i 0} {$i < $ncols} {incr i} {
 set data_rows {}
 
 # Grand totals
-set gt_v 0; set gt_p 0; set gt_s 0; set gt_a 0; set gt_e 0; set gt_ae 0
+set gt_v 0; set gt_p 0; set gt_s 0; set gt_a 0; set gt_e 0
 set gt_l 0; set gt_f 0; set gt_po 0; set gt_es 0; set gt_r 0
 
 foreach item $segment_counts {
@@ -194,7 +191,6 @@ foreach item $segment_counts {
     set s [dict get $counts star3]
     set a [dict get $counts approached_star3]
     set e [dict get $counts has_email]
-    set ae [dict get $counts approached_email]
     set l [dict get $counts has_linkedin]
     set f [dict get $counts has_facebook]
     set po [dict get $counts has_phone_only]
@@ -203,22 +199,20 @@ foreach item $segment_counts {
 
     set row [list $label $v \
         [fmt_cell $p $v] [fmt_cell $s $v] [fmt_cell $a $s] \
-        [fmt_cell $e $s] [fmt_cell $ae $e] [fmt_cell $l $s] \
-        [fmt_cell $f $s] [fmt_cell $po $s] [fmt_cell $es $a] \
-        [fmt_cell $r $es]]
+        [fmt_cell $e $s] [fmt_cell $l $s] [fmt_cell $f $s] \
+        [fmt_cell $po $s] [fmt_cell $es $a] [fmt_cell $r $es]]
     lappend data_rows $row
 
     incr gt_v $v; incr gt_p $p; incr gt_s $s; incr gt_a $a
-    incr gt_e $e; incr gt_ae $ae; incr gt_l $l; incr gt_f $f
+    incr gt_e $e; incr gt_l $l; incr gt_f $f
     incr gt_po $po; incr gt_es $es; incr gt_r $r
 }
 
 # TOTAL row
 set total_row [list TOTAL $gt_v \
     [fmt_cell $gt_p $gt_v] [fmt_cell $gt_s $gt_v] [fmt_cell $gt_a $gt_s] \
-    [fmt_cell $gt_e $gt_s] [fmt_cell $gt_ae $gt_e] [fmt_cell $gt_l $gt_s] \
-    [fmt_cell $gt_f $gt_s] [fmt_cell $gt_po $gt_s] [fmt_cell $gt_es $gt_a] \
-    [fmt_cell $gt_r $gt_es]]
+    [fmt_cell $gt_e $gt_s] [fmt_cell $gt_l $gt_s] [fmt_cell $gt_f $gt_s] \
+    [fmt_cell $gt_po $gt_s] [fmt_cell $gt_es $gt_a] [fmt_cell $gt_r $gt_es]]
 lappend data_rows $total_row
 
 # Update column widths
@@ -283,7 +277,6 @@ if {$show_legend} {
     puts "            Email, LinkedIn, Facebook and Only ☎."
     puts "  A/3+★     Approached, as % of 3+★."
     puts "  Email     Has an email address, as % of 3+★."
-    puts "  A/Eml     Approached, as % of those that have an email."
     puts "  LinkedIn  Has a LinkedIn profile, as % of 3+★."
     puts "  Facebook  Has a Facebook profile, as % of 3+★."
     puts "  Only ☎    Reachable by phone only (no email or social), as % of 3+★."

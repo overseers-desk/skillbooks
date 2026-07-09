@@ -1346,7 +1346,7 @@ proc spar::detect_duplicates {all_classified_contacts} {
 # classified_contacts  output of classify_segment for one segment
 #
 # Returns a dict with counts:
-#   valid, profiled, star3, approached_star3, has_email, approached_email,
+#   valid, profiled, star3, approached_star3, has_email,
 #   has_linkedin, has_facebook, has_phone_only, sent, replied
 #
 proc spar::progress_counts {classified_contacts} {
@@ -1355,7 +1355,6 @@ proc spar::progress_counts {classified_contacts} {
     set star3 0
     set approached_star3 0
     set has_email 0
-    set approached_email 0
     set has_linkedin 0
     set has_facebook 0
     set has_phone_only 0
@@ -1399,11 +1398,6 @@ proc spar::progress_counts {classified_contacts} {
             # Has email (among star3)
             if {$c_has_email} {
                 incr has_email
-
-                # Approached with email (among star3 with email)
-                if {$state in $approached_plus} {
-                    incr approached_email
-                }
             }
 
             # Has LinkedIn (among star3)
@@ -1439,7 +1433,6 @@ proc spar::progress_counts {classified_contacts} {
         star3 $star3 \
         approached_star3 $approached_star3 \
         has_email $has_email \
-        approached_email $approached_email \
         has_linkedin $has_linkedin \
         has_facebook $has_facebook \
         has_phone_only $has_phone_only \
@@ -1455,7 +1448,7 @@ proc spar::progress_counts {classified_contacts} {
 #   valid, star3, has_email, has_linkedin, has_facebook, has_phone_only
 # These correspond to columns that do not require profile/approach file access.
 # Counts not computable from the TSV alone (profiled, approached_star3,
-# approached_email, sent, replied) are omitted.
+# sent, replied) are omitted.
 #
 proc spar::roster_counts {segment_dir} {
     set roster_path [file join $segment_dir roster.tsv]

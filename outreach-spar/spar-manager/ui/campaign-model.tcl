@@ -178,7 +178,7 @@ oo::class create spar::ui::CampaignModel {
     }
 
     method _zero_row {} {
-        return [list 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {}]
+        return [list 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {}]
     }
 
     # ─── Internal: config load ────────────────────────────────────────────
@@ -304,7 +304,6 @@ oo::class create spar::ui::CampaignModel {
                 $s3 [my _format_pct $s3 $v] \
                 0 {} \
                 $e  [my _format_pct $e  $s3] \
-                0 {} \
                 $l  [my _format_pct $l  $s3] \
                 $f  [my _format_pct $f  $s3] \
                 $po [my _format_pct $po $s3] \

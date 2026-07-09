@@ -44,7 +44,6 @@ oo::class create spar::ui::ProgressTable {
             star3    "3+★"    e
             astar    "A/3+★"  e
             email    "Email"       e
-            aeml     "A/✉"       e
             linkedin "LinkedIn"    e
             facebook "Facebook"    e
             phone    "Only ☎" e
@@ -62,7 +61,6 @@ oo::class create spar::ui::ProgressTable {
             star3    valid
             astar    star3
             email    star3
-            aeml     email
             linkedin star3
             facebook star3
             phone    star3
@@ -71,12 +69,12 @@ oo::class create spar::ui::ProgressTable {
         }
 
         # Filesystem-dependent column IDs — shown as "…" until full load.
-        set FsDependentCols {profiled astar aeml sent repl}
+        set FsDependentCols {profiled astar sent repl}
 
         # Column ID -> progress_counts dict key.
         set ColCountKeys [dict create \
             valid valid  profiled profiled  star3 star3 \
-            astar approached_star3  email has_email  aeml approached_email \
+            astar approached_star3  email has_email \
             linkedin has_linkedin  facebook has_facebook  phone has_phone_only \
             sent sent  repl replied]
 
@@ -183,10 +181,12 @@ oo::class create spar::ui::ProgressTable {
             set tags {}
             if {!$is_campaign} { lappend tags muted }
 
-            # raw_data is flat list: count {} count pct count pct ...
-            # ci 0 = valid (no pct), ci 1..10 = count pct pairs
+            # raw_data is a flat count/pct pair per column ($count $pct …),
+            # one pair for every PtreeColIds entry; take the count (even
+            # indices) from each pair. valid's pct slot is empty.
             set counts {}
-            for {set ci 0} {$ci < 11} {incr ci} {
+            set ncols [llength $PtreeColIds]
+            for {set ci 0} {$ci < $ncols} {incr ci} {
                 lappend counts [lindex $raw_data [expr {$ci * 2}]]
             }
 
@@ -503,10 +503,10 @@ oo::class create spar::ui::ProgressTable {
         $PTree item __totals__ -values $values
     }
 
-    # _contact_values: returns an 11-element list (one per column) with "✓"
-    # where this contact is counted in that column's aggregate, "" otherwise.
-    # Mirrors the conditions in spar::progress_counts so the sum of ✓s equals
-    # the segment row's count for each column.
+    # _contact_values: returns one element per column (in PtreeColIds order)
+    # with "✓" where this contact is counted in that column's aggregate, ""
+    # otherwise. Mirrors the conditions in spar::progress_counts so the sum
+    # of ✓s equals the segment row's count for each column.
     method _contact_values {c} {
         set state [dict get $c state]
         set star  [dict get $c star]
@@ -532,7 +532,6 @@ oo::class create spar::ui::ProgressTable {
             [expr {$is_s3                                 ? $v : ""}] \
             [expr {($is_s3 && $is_appr)                   ? $v : ""}] \
             [expr {($is_s3 && $em)                        ? $v : ""}] \
-            [expr {($is_s3 && $em && $is_appr)            ? $v : ""}] \
             [expr {($is_s3 && $li)                        ? $v : ""}] \
             [expr {($is_s3 && $fb)                        ? $v : ""}] \
             [expr {($is_s3 && $ph)                        ? $v : ""}] \
