@@ -36,7 +36,7 @@ A table built with the grid geometry manager, using ttk::Label widgets for cells
 
 Columns:
 
-| Segment | Valid | Profile | 3+★ | A/3+★ | Email | A/Eml | LinkedIn | Facebook | Only ☎ | Sent | Repl |
+| Segment | Valid | Profile | 3+★ | A/3+★ | Email | LinkedIn | Facebook | Only ☎ | Sent | Repl |
 
 The star threshold (3+★) is drawn from the campaign configuration (`filter.min_star`). All column headers and groupings adjust when this value changes.
 
@@ -49,10 +49,9 @@ Valid
 ├── Profile         (/ Valid)
 └── N+★             (/ Valid)
     ├── A/N+★       (/ N+★)
+    │   └── Sent    (/ A/3+★)
+    │       └── Repl  (/ Sent)
     ├── Email       (/ N+★)
-    │   └── A/Eml   (/ Email)
-    │       └── Sent  (/ A/3+★)
-    │           └── Repl  (/ Sent)
     ├── LinkedIn    (/ N+★)
     ├── Facebook    (/ N+★)
     └── Only ☎     (/ N+★)
@@ -61,11 +60,10 @@ Valid
 This hierarchy is communicated visually using multi-level header rows above the treeview. Each row is a strip of ttk::Label widgets spanning the columns that share a denominator. From top to bottom:
 
 ```
-|                  | ← / Valid → |                              ← / N+★ →                                |
-|                  |             |            |← / Email →|                             |                  |
-|                  |             |            |           |← / A/Eml →|                 |                  |
-|                  |             |            |           |           |← / Sent →  |    |                  |
-| Segment   | Valid|  Profile    | N+★ | A/N+★|   Email   |    A/Eml  |  Sent  | Repl  | LinkedIn|Facebook| Only ☎|
+|                  | ← / Valid → |                          ← / N+★ →                          |
+|                  |             |            |←  / A/N+★  →|                                   |
+|                  |             |            |             |← / Sent → |                       |
+| Segment   | Valid|  Profile    | N+★ |   A/N+★   |    Sent   |    Repl   | Email | LinkedIn|Facebook| Only ☎|
 ```
 
 The spanning labels are sized to match the combined width of their child columns. When columns are resized, the spanning labels resize to match. Each level may use a subtle background tint to reinforce the grouping.
@@ -210,12 +208,10 @@ A **Legend** button in the campaign toolbar opens a `toplevel` window titled "Co
                    Profile    N+★
                             ╱  |  ╲        ╲
                         A/N+★ Email LinkedIn Facebook Only☎
-                              |
-                             A/Eml
-                              |
-                             Sent
-                              |
-                             Repl
+                          |
+                         Sent
+                          |
+                         Repl
 ```
 
 Each node label is accompanied by its denominator in smaller grey text (e.g. "/ Valid", "/ 3+★"). The canvas redraws on `<Configure>` so it adapts to the window being resized. Closing the legend window withdraws it rather than destroying it; reopening raises and deiconifies the existing window.

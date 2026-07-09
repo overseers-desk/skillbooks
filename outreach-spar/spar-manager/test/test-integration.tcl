@@ -60,13 +60,16 @@ assert_eq [dict exists $parsed totals] 1 "json: has totals"
 set jtotals [dict get $parsed totals]
 assert_eq [dict exists $jtotals qualified] 1 "json: totals has qualified"
 set jq [dict get $jtotals qualified]
-assert_eq [dict exists $jq email] 1 "json: qualified has email"
-set je [dict get $jq email]
-assert_eq [dict exists $je approached] 1 "json: email has approached"
-set ja [dict get $je approached]
-assert_eq [dict exists $ja sent] 1 "json: approached has sent"
-set js [dict get $ja sent]
-assert_eq [dict exists $js replied] 1 "json: sent has replied"
+assert_eq [dict exists $jq count] 1 "json: qualified has count"
+assert_eq [dict exists $jq approached] 1 "json: qualified has approached"
+assert_eq [dict exists $jq sent] 1 "json: qualified has sent"
+assert_eq [dict exists $jq replied] 1 "json: qualified has replied"
+assert_eq [dict exists $jq channels] 1 "json: qualified has channels"
+set jch [dict get $jq channels]
+assert_eq [dict exists $jch email] 1 "json: channels has email"
+assert_eq [dict exists $jch linkedin] 1 "json: channels has linkedin"
+assert_eq [dict exists $jch facebook] 1 "json: channels has facebook"
+assert_eq [dict exists $jch phone_only] 1 "json: channels has phone_only"
 assert_eq [dict exists $parsed segments] 1 "json: has segments"
 assert_eq [llength [dict get $parsed segments]] 1 "json: one segment"
 assert_eq [dict exists $parsed transitions] 1 "json: has transitions"

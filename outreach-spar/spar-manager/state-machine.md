@@ -212,14 +212,13 @@ The progress table columns are counts derived from running `classify_segment` ac
 | 3+★ | Valid and star≥3 | Valid | — |
 | A/3+★ | APPROACHED or above, star≥3 | 3+★ | — |
 | Email | star≥3 and has_email | 3+★ | — |
-| A/Eml | APPROACHED+, star≥3, has_email | Email | — |
 | LinkedIn | star≥3 and has_linkedin | 3+★ | — |
 | Facebook | star≥3 and has_facebook | 3+★ | — |
 | Only ☎ | star≥3 and has_phone_only | 3+★ | — |
 | Sent | state SENT or REPLIED | A/3+★ | — |
 | Repl | state REPLIED | Sent | — |
 
-All twelve columns are projections of `classify_segment` output. There is no separate scanning step.
+Every column is a projection of `classify_segment` output. There is no separate scanning step.
 
 ### Duplicate warnings
 

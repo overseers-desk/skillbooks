@@ -132,7 +132,7 @@ namespace eval ::spar::ui::legend {
         }
         toplevel .legendwin
         wm title .legendwin "Column Denominator Tree"
-        canvas .legendwin.c -width 750 -height 220 -highlightthickness 0
+        canvas .legendwin.c -width 750 -height 190 -highlightthickness 0
         pack .legendwin.c -fill both -expand 1
         bind .legendwin.c <Configure> {::spar::ui::legend::draw .legendwin.c}
         wm protocol .legendwin WM_DELETE_WINDOW {wm withdraw .legendwin}
@@ -157,7 +157,6 @@ namespace eval ::spar::ui::legend {
         set y2 [expr {$y0 + 2*$dy}]
         set y3 [expr {$y0 + 3*$dy}]
         set y4 [expr {$y0 + 4*$dy}]
-        set y5 [expr {$y0 + 5*$dy}]
 
         set margin 50
         set span [expr {$w - 2*$margin}]
@@ -169,9 +168,8 @@ namespace eval ::spar::ui::legend {
         set x_linkedin [expr {$margin + $span * 0.55}]
         set x_facebook [expr {$margin + $span * 0.75}]
         set x_phone    [expr {$margin + $span * 0.95}]
-        set x_aeml     [expr {$margin + $span * 0.40}]
-        set x_sent     [expr {$margin + $span * 0.50}]
-        set x_repl     [expr {$margin + $span * 0.60}]
+        set x_sent     [expr {$margin + $span * 0.10}]
+        set x_repl     [expr {$margin + $span * 0.10}]
 
         set nodes [list \
             "Valid"       ""         $x_valid    $y0 \
@@ -182,9 +180,8 @@ namespace eval ::spar::ui::legend {
             "LinkedIn"    "/ 3+★" $x_linkedin $y2 \
             "Facebook"    "/ 3+★" $x_facebook $y2 \
             "Only ☎" "/ 3+★" $x_phone $y2 \
-            "A/Eml"       "/ Email" $x_aeml     $y3 \
-            "Sent"   "/ A/3+★" $x_sent     $y4 \
-            "Repl"   "/ Sent"  $x_repl     $y5 \
+            "Sent"   "/ A/3+★" $x_sent     $y3 \
+            "Repl"   "/ Sent"  $x_repl     $y4 \
         ]
 
         foreach {lbl denom x y} $nodes {
@@ -202,9 +199,8 @@ namespace eval ::spar::ui::legend {
         foreach xc [list $x_astar $x_email $x_linkedin $x_facebook $x_phone] {
             $c create line $x_star [expr {$y1+$g}] $xc [expr {$y2-$gt}] -fill $line_colour
         }
-        $c create line $x_email [expr {$y2+$g}] $x_aeml [expr {$y3-$gt}] -fill $line_colour
-        $c create line $x_aeml  [expr {$y3+$g}] $x_sent [expr {$y4-$gt}] -fill $line_colour
-        $c create line $x_sent  [expr {$y4+$g}] $x_repl [expr {$y5-$gt}] -fill $line_colour
+        $c create line $x_astar [expr {$y2+$g}] $x_sent [expr {$y3-$gt}] -fill $line_colour
+        $c create line $x_sent  [expr {$y3+$g}] $x_repl [expr {$y4-$gt}] -fill $line_colour
     }
 }
 
