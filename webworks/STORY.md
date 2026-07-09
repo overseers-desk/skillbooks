@@ -78,4 +78,4 @@ The lessons:
 
 4. **A fix can be real and still aimed at the wrong target.** Issue 120's teardown and bounded lock are genuine improvements, but they could not have cured the recurring corruption, because that was never the leak. When a remedy does not stop the symptom, re-question the diagnosis, not the remedy.
 
-5. **Failure modes must leave evidence.** The AI could not tell whether Facebook dump-dom was historically flaky because nothing logged the timeouts. The wrapper now logs render timeouts and empty results to syslog, so the next session reads a record instead of guessing.
+5. **Failure modes must leave evidence.** Whether Facebook dump-dom was historically flaky could not be answered, because nothing recorded the timeouts. The serialiser keeps a record at `<LogDir>/skill.log`: tab-separated `run`, `gap`, `nav`, `capture`, `api`, `backoff`, `terminal` and `end` events, each carrying the paced interval and the landing URL. It holds no render-timeout and no empty-result event, so a fetch that dies quietly still leaves the next session guessing. The place for the evidence exists; the entry that would settle this question is the part still owed.
