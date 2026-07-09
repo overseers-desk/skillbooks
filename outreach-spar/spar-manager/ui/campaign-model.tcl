@@ -396,13 +396,14 @@ oo::class create spar::ui::CampaignModel {
                     foreach c $classified { lappend AllContacts $c }
                 }
                 set cdict [spar::progress_counts $classified]
-                # email_sent / email_replied are uniformly 0 in cheap mode
-                # (no YAML parsed). Sentinel "" tells the progress table to
-                # preserve the "…" placeholder until Phase 2 re-fires with
-                # real counts. Without this, the right columns flash 0
+                # sent / replied are uniformly 0 in cheap mode (no YAML
+                # parsed, so no contact resolves to SENT/REPLIED).
+                # Sentinel "" tells the progress table to preserve the
+                # "…" placeholder until Phase 2 re-fires with real
+                # counts. Without this, the right columns flash 0
                 # at the same instant the left columns fill in.
-                dict set cdict email_sent ""
-                dict set cdict email_replied ""
+                dict set cdict sent ""
+                dict set cdict replied ""
                 my _fire segment-loaded $seg_name $cdict $is_active
             }
             set end [llength $AllContacts]

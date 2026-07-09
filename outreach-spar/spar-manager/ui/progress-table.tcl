@@ -66,7 +66,7 @@ oo::class create spar::ui::ProgressTable {
             linkedin star3
             facebook star3
             phone    star3
-            sent     aeml
+            sent     astar
             repl     sent
         }
 
@@ -78,7 +78,7 @@ oo::class create spar::ui::ProgressTable {
             valid valid  profiled profiled  star3 star3 \
             astar approached_star3  email has_email  aeml approached_email \
             linkedin has_linkedin  facebook has_facebook  phone has_phone_only \
-            sent email_sent  repl email_replied]
+            sent sent  repl replied]
 
         # Build the widget inside the parent labelframe.
         set PTree ${parent_frame}.tree
@@ -514,8 +514,6 @@ oo::class create spar::ui::ProgressTable {
         set li    [dict get $c has_linkedin]
         set fb    [dict get $c has_facebook]
         set ph    [dict get $c has_phone_only]
-        set sent  [dict get $c email_sent]
-        set repl  [dict get $c any_replied]
 
         set profiled_plus  {PROFILED PROFILE_STALE APPROACHED APPROACH_STALE SENT REPLIED}
         set approached_plus {APPROACHED APPROACH_STALE SENT REPLIED}
@@ -524,6 +522,8 @@ oo::class create spar::ui::ProgressTable {
         set is_prof  [expr {$state in $profiled_plus}]
         set is_s3    [expr {$star >= 3}]
         set is_appr  [expr {$state in $approached_plus}]
+        set is_sent  [expr {$state in {SENT REPLIED}}]
+        set is_repl  [expr {$state eq "REPLIED"}]
 
         set v "✓"
         return [list \
@@ -536,8 +536,8 @@ oo::class create spar::ui::ProgressTable {
             [expr {($is_s3 && $li)                        ? $v : ""}] \
             [expr {($is_s3 && $fb)                        ? $v : ""}] \
             [expr {($is_s3 && $ph)                        ? $v : ""}] \
-            [expr {($is_s3 && $em && $is_appr && $sent)   ? $v : ""}] \
-            [expr {($is_s3 && $em && $is_appr && $repl)   ? $v : ""}]]
+            [expr {($is_s3 && $is_sent)                   ? $v : ""}] \
+            [expr {($is_s3 && $is_repl)                   ? $v : ""}]]
     }
 
     # _refresh_seg_children: delete existing child rows for seg_name, then
