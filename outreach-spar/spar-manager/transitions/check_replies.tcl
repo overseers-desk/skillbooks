@@ -95,7 +95,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         if {[llength $approaches] == 0} {
             if {$on_progress ne ""} {
                 foreach s $stems {
-                    {*}$on_progress $s skipped "no reply yet"
+                    {*}$on_progress $s skipped "no email address to watch"
                 }
             }
             return ""
@@ -116,19 +116,19 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
                 dry_run       $dry_run \
                 approach_path $approach_path \
                 to_email      $to_email \
+                since         [spar::dict_get_default $entry first_sent ""] \
                 fingerprints  $fingerprints \
                 account       $account \
                 folder        $folder \
                 sender        $sender]]
         }
 
-        # Stems requested but with no sent approach get a synchronous
-        # "skipped — no reply yet" line, matching the legacy Driver's
-        # tail loop.
+        # Stems requested but with no watchable sent approach get a
+        # synchronous skipped line naming the reason.
         if {$on_progress ne ""} {
             foreach s $stems {
                 if {![dict exists $seen_stems $s]} {
-                    {*}$on_progress $s skipped "no reply yet"
+                    {*}$on_progress $s skipped "no email address to watch"
                 }
             }
         }
@@ -136,14 +136,20 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         return [dict create rows $rows]
     }
 
-    # T7: email was sent, no reply yet, contact still in scope (not
-    # EXCLUDED).  Gated on approach-YAML structural validity (#43
-    # principle 7).
+    # T7: a message was sent on some channel, no reply recorded yet,
+    # and an email address is known to watch (the final round's email
+    # to: or the roster email). Contacts without a watchable address
+    # are omitted: the inbox cannot be monitored for them; a reply on
+    # another channel is recorded on the approach YAML directly and
+    # resolves REPLIED without this transition. Gated on approach-YAML
+    # structural validity (#43 principle 7).
     method eligible {state contact primary_channel cdata today_iso} {
         set cstate [dict get $contact state]
         if {$cstate eq "EXCLUDED"} { return {} }
-        if {![dict get $contact email_sent]} { return {} }
+        if {![dict get $contact any_sent]} { return {} }
         if {[dict get $contact any_replied]} { return {} }
+        if {[llength [dict get $contact to_addresses]] == 0
+            && ![dict get $contact has_email]} { return {} }
         set vmsg [$state approach_validation_error $contact]
         if {$vmsg ne ""} {
             return [list [spar::_task $contact blocked "invalid_approach_yaml: $vmsg"]]

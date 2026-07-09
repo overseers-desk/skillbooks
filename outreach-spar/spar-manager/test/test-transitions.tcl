@@ -558,8 +558,7 @@ set t7b_tasks [$State transition_eligible $t7b_c "T7"]
 assert_eq [llength $t7b_tasks] 0 \
     "T7: REPLIED → 0 tasks (already replied, no monitoring needed)"
 
-# T7-c: APPROACHED but never sent → no task (T7 monitors only sent
-# emails).
+# T7-c: APPROACHED but never sent → no task (nothing to monitor).
 set t7c_seg [make_temp_segment]
 write_profile $t7c_seg "t7c"
 write_approach_yaml $t7c_seg "t7c" [approach_yaml_final_unsent]
@@ -570,7 +569,7 @@ set t7c_c [$State classify_segment $t7c_seg]
 set t7c_c [$State refine_segment $t7c_c]
 set t7c_tasks [$State transition_eligible $t7c_c "T7"]
 assert_eq [llength $t7c_tasks] 0 \
-    "T7: APPROACHED+unsent → 0 tasks (no email_sent yet)"
+    "T7: APPROACHED+unsent → 0 tasks (no send yet)"
 
 # T7-d: EXCLUDED contact (was sent before exclusion) → no task. T7
 # explicitly skips EXCLUDED to avoid reply-watching a contact the
@@ -587,6 +586,37 @@ set t7d_c [$State refine_segment $t7d_c]
 set t7d_tasks [$State transition_eligible $t7d_c "T7"]
 assert_eq [llength $t7d_tasks] 0 \
     "T7: EXCLUDED → 0 tasks (regardless of prior email_sent)"
+
+# T7-f: sent on LinkedIn only, roster email known → dispatchable
+# (the inbox is watched for the roster address).
+set t7f_seg [make_temp_segment]
+write_profile $t7f_seg "t7f"
+write_approach_yaml $t7f_seg "t7f" [approach_yaml_final_sent_linkedin]
+write_roster_tsv $t7f_seg $::std_headers [list \
+    [make_base_row {contact_name "T7F" stem "t7f" email "t7f@acme-venues.au" \
+        linkedin_url "https://www.linkedin.com/in/t7f" star_rating 4}] \
+]
+set t7f_c [$State classify_segment $t7f_seg]
+set t7f_c [$State refine_segment $t7f_c]
+set t7f_tasks [$State transition_eligible $t7f_c "T7"]
+assert_eq [llength $t7f_tasks] 1 "T7: linkedin-sent + roster email → 1 task"
+assert_eq [dict get [lindex $t7f_tasks 0] task_state] "dispatchable" \
+    "T7: linkedin-sent + roster email → dispatchable"
+
+# T7-g: sent on LinkedIn only, no email address anywhere → omitted
+# (no address to watch; a reply is recorded on the YAML directly).
+set t7g_seg [make_temp_segment]
+write_profile $t7g_seg "t7g"
+write_approach_yaml $t7g_seg "t7g" [approach_yaml_final_sent_linkedin]
+write_roster_tsv $t7g_seg $::std_headers [list \
+    [make_base_row {contact_name "T7G" stem "t7g" email "" \
+        linkedin_url "https://www.linkedin.com/in/t7g" star_rating 4}] \
+]
+set t7g_c [$State classify_segment $t7g_seg]
+set t7g_c [$State refine_segment $t7g_c]
+set t7g_tasks [$State transition_eligible $t7g_c "T7"]
+assert_eq [llength $t7g_tasks] 0 \
+    "T7: linkedin-sent + no email address → 0 tasks (unwatchable)"
 
 # T7-e: SENT contact + invalid approach YAML → blocked with
 # reason starting "invalid_approach_yaml:". Validates the

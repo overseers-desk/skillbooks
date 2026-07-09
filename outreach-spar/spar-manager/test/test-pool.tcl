@@ -546,6 +546,26 @@ assert_match $after3 "*Hello back from Dest*" \
     "imap_poll appends reply body to approach YAML"
 $d destroy
 
+# 14f. imap_poll with a since floor after the message date: inbox
+# history predating the send is not a reply; no append.
+set seg_dir3f [file join $tmp_root "seg-imap-floor"]
+file mkdir [file join $seg_dir3f approach]
+set approach_path3f [file join $seg_dir3f approach "cass.yaml"]
+set fd [open $approach_path3f w]; puts -nonewline $fd $approach_yaml_sent; close $fd
+
+set floor_opts [dict replace $imap_opts \
+    approach_path $approach_path3f \
+    since         "2026-04-26"]
+
+set d [spar::Dispatcher new 2 test_log]
+$d enqueue cass T7 imap_poll $floor_opts
+wait_for_terminal $d cass 5000
+assert_eq [$d state cass] done "imap_poll with future floor reaches done"
+set fd [open $approach_path3f r]; set after3f [read $fd]; close $fd
+assert_eq [string match "*Hello back from Dest*" $after3f] 0 \
+    "message before the since floor is not appended"
+$d destroy
+
 # 14e. imap_poll with already-recorded fingerprint: no append.
 set seg_dir4 [file join $tmp_root "seg-imap-known"]
 file mkdir [file join $seg_dir4 approach]
