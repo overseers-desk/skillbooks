@@ -2,9 +2,9 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![Claude Code plugin](https://img.shields.io/badge/Claude_Code-plugin-d97757)](https://claude.com/claude-code)
 
-Crafts your agent picks up and keeps, one book per skill.
+Every book read is a stat permanently raised.
 
-skillbooks is a Claude Code plugin of general-purpose skills. The editorial ones read a draft the way its real reader will: cold, without the conversation that produced it, and with no patience for machine habits. The code-audit ones read a codebase the same way, trusting nothing a change said about itself, hunting what it left stale and what solves no problem. The rest carry work across sessions and decide what genuinely needs you. Claude runs a skill automatically when a request fits its description, or you invoke one directly as `/skillbooks:<skill>`.
+skillbooks is a Claude Code plugin of crafts your agent keeps. Each one reads the work cold, the way its next reader will: the editor who never saw the chat, the reviewer who takes no refactor at its word, the colleague who brings you only the questions that are really yours. That cold read is the one thing you cannot do to your own work, because you were in the room. Claude runs a skill automatically when a request fits its description, or you invoke one directly as `/skillbooks:<skill>`.
 
 ## The moments it exists for
 
