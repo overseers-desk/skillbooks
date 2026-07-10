@@ -2,15 +2,17 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![Claude Code plugin](https://img.shields.io/badge/Claude_Code-plugin-d97757)](https://claude.com/claude-code)
 
-Put an editor between your AI and the send button.
+Crafts your agent picks up and keeps, one book per skill.
 
-skillbooks is a Claude Code plugin of editorial skills. Each one reads a draft the way its real reader will: cold, without the conversation that produced it, and with no patience for machine habits. Claude runs a skill automatically when a request fits its description, or you invoke one directly as `/skillbooks:<skill>`.
+skillbooks is a Claude Code plugin of general-purpose skills. The editorial ones read a draft the way its real reader will: cold, without the conversation that produced it, and with no patience for machine habits. The code-audit ones read a codebase the same way, trusting nothing a change said about itself, hunting what it left stale and what solves no problem. The rest carry work across sessions and decide what genuinely needs you. Claude runs a skill automatically when a request fits its description, or you invoke one directly as `/skillbooks:<skill>`.
 
 ## The moments it exists for
 
 - An AI-drafted email is competent and reads machine-made: bullet points where a person would write sentences, the session's date presented as "today", a closing offer to answer questions nobody asked.
 - A document written across a long conversation goes to a colleague who was not in it, and paragraph two leans on "the approach we discussed".
 - A report states a figure with confidence, and you can no longer say which source it came from, or whether the source agrees.
+- A rename landed weeks ago, and a test fixture, a CI file, and a doc still describe the world as it was.
+- Your agent hits a decision mid-run and stops the whole plan to ask you, when it could have settled safely and kept walking.
 - The work continues tomorrow on another machine, and everything this session learned lives in a transcript that will expire.
 
 ## Before and after
@@ -33,6 +35,8 @@ becomes
 - **quote-me**: Locate the exact source passage behind a claim, run a challenge-and-minimum-edit cycle, and verify the fix with a context-free subagent. Triggered by "quote me".
 - **worklog**: Write a durable WORKLOG in the repository so a session's knowledge survives when its JSONL is gone or you continue the work on another machine or in a fresh session.
 - **nswp-scout**: Scout a codebase for redundant solutions, most sharply one problem solved twice in two vocabularies where neither arm earns its place, and other solutions that answer no live problem.
+- **drift-scout**: Find the stale debris a refactor, rename, or move left in a codebase's edges: extract each change's retired vocabulary, sweep the periphery, confirm by running, and report only what provably breaks or misleads.
+- **halfway-house**: Tell a decision your agent can safely settle from one that blocks the path: settle it, land the change, file the road not taken, and bring only the true forks to you.
 - **typst-pdf**: Render a markdown file to PDF with Typst, optionally applying a per-repo template.
 
 ## Install
@@ -50,7 +54,7 @@ claude --plugin-dir /path/to/skillbooks
 
 ## Prerequisites
 
-The editorial skills are self-contained: they run their own fresh-context subagents and need no credentials and no browser. Only **typst-pdf** has an external dependency: [Typst](https://typst.app) on `PATH`.
+The skills are self-contained: they run their own fresh-context subagents and need no credentials and no browser. Only **typst-pdf** has an external dependency: [Typst](https://typst.app) on `PATH`.
 
 ## License
 
