@@ -1,0 +1,10 @@
+leak	category	human_form
+Here is the corrected set	secretary	Here is the revised set
+Re-reviewing my own set after sending it is what triggered the hold	officialese	My own pointer patch in the earlier set dropped them, which is why I held that set.
+01-ibus-fd-lifecycle.patch: registers the IBus file handler... (filename as item label, six items)	officialese	wish crashes at exit. Any script that lives past the first focus callback dies with... (problem named, file carries its own name)
+restores them (GLFW buttons 4/5 map to Button4Mask/Button5Mask, and Tk_UpdatePointer's diff loop delivers them as <Button-8>/<Button-9>, the same mapping the win port uses), removes	officialese	the same content as a (*) footnote after the signature
+What each patch does: (then items narrating what the author built)	secretary	The six problems, in apply order: (then symptoms)
+Marc, your event-loop change at ff9b48d9eb already removed the per-pass re-arm	secretary	I noticed Marc's event-loop change at ff9b48d9eb already removed the per-pass re-arm
+If the tip has moved by the time you get to these, say so and I will rebase and resend.	secretary	(dropped; a human just resends when it happens)
+I do not know what "idle ring", "queue presentation", or "layout expose evaluation" mean either; ... which predates my first patch of 24 June	secretary+officialese	I had to admit I don't know what "idle ring", "queue presentation" or "layout expose evaluation" mean either; ... before my first patch of 24 June
+Kevin, no rush given the travel.	secretary	Kevin: I see you are still committing while travelling? Take care!
