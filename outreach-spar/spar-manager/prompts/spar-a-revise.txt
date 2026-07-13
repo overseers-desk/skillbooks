@@ -1,0 +1,11 @@
+This is revision pass __PASS__. A challenger (context-isolated, playing the recipient) reacted to your draft and fact-checked it.
+
+## Challenger feedback (pass __PASS__)
+
+__CHALLENGER_FEEDBACK__
+
+## Instructions
+
+Revise the draft to address valid concerns. Do not over-correct. If the reaction was positive on a point, keep it. If a factual error was flagged, fix it. If the tone was off, adjust.
+
+Output the revised draft between DRAFT_START and DRAFT_END markers. Output any updated rationale between RATIONALE_START and RATIONALE_END.
