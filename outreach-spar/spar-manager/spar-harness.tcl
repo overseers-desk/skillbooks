@@ -319,9 +319,13 @@ oo::class create spar::Harness {
             set model [lindex $args [expr {$idx + 1}]]
             set args [lreplace $args $idx [expr {$idx + 1}]]
         }
+        # permission_args goes before the boolean flags, never last: claude's
+        # --allowedTools/--disallowedTools are variadic (<tools...>), so a tool
+        # list immediately ahead of the prompt eats it and -p is left with no
+        # input. Keep a non-variadic flag between them.
         set cmd [concat \
-            [list $claude_bin -p --model $model --output-format stream-json --verbose] \
-            [my permission_args] $args [list $prompt]]
+            [list $claude_bin -p --model $model] [my permission_args] \
+            [list --output-format stream-json --verbose] $args [list $prompt]]
 
         # Verdict rule this harness commits to: the deliverable on disk
         # is the source of truth, not the claude envelope. stream-json
