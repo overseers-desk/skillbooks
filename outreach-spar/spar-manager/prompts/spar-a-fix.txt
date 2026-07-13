@@ -1,0 +1,5 @@
+The approach file you just wrote failed validation:
+
+__ERROR_TEXT__
+
+Rewrite the file at __OUTFILE__ to fix these errors. The to: field in each email message must be a real email address (not a placeholder). It must match the roster email: __ROSTER_EMAIL__
