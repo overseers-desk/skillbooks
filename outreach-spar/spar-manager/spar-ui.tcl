@@ -423,6 +423,7 @@ proc ::spar::ui::build_loaded_body {path} {
     # spar::dispatch logger appender installed above; no LogCallback
     # constructor argument needed.
     set ::pool [spar::Dispatcher new 4]
+    spar::subscribe_pool_domain $::pool
     # Same per-worker send caps the CLI's dispatch_ready installs: send
     # rows run serially whichever front-end enqueues them.
     $::pool set_worker_cap ses_send 1

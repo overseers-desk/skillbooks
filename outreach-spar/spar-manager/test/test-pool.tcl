@@ -843,4 +843,21 @@ foreach r {live1 live2 live3 live4} {
 }
 $d destroy
 
+# ── 21. roster_update relays to the domain subscriber ────────────────────
+section "21. roster_update relays to the domain subscriber"
+
+# Without a subscriber the relay logs and drops; with one, the payload
+# arrives whole. The subscriber here is the test's own; the spar wiring
+# (spar::subscribe_pool_domain) is one [subscribe] away from it.
+set d [spar::Dispatcher new 1 test_log]
+$d on_roster_update r1 /tmp/nowhere.tsv slug s1 email e@x
+assert_match [join $::log_messages \n] "*roster_update with no subscriber*" \
+    "an unsubscribed roster_update is logged, not lost silently"
+set ::domain_got {}
+$d subscribe domain-roster_update {lappend ::domain_got}
+$d on_roster_update r1 /tmp/nowhere.tsv slug s1 email e@x
+assert_eq [lindex $::domain_got 0] r1 "payload row arrives at the subscriber"
+assert_eq [llength $::domain_got] 6 "payload arrives whole"
+$d destroy
+
 finish_tests

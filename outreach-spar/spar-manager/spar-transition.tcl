@@ -474,6 +474,7 @@ if {$dispatching} {
         }
 
         set disp [spar::Dispatcher new $jobs]
+        spar::subscribe_pool_domain $disp
         $disp set_worker_cap ses_send 1
         $disp set_worker_cap linkedin_send 1
 
