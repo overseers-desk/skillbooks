@@ -41,7 +41,7 @@ Files may originate from various sources: email confirmations, WhatsApp messages
 
 A booking can arrive before any journey folder exists ("archive the ticket we just bought"). The flow is the reverse of a RUN: locate the confirmation email first, then create the folder it belongs in.
 
-1. **Locate the confirmation email.** The receiving mailbox follows the email account rules (see Email Account Verification, Procedure 1). A recency-defined target ("today", "this week") is found by enumerating the date window and reading the listing, not by guessing content keywords (see Procedure 2 Step 4 for the method and its zero-hit caveat):
+1. **Locate the confirmation email.** The receiving mailbox follows the email account rules (see Email Account Verification, Procedure 1). A recency-defined target ("today", "this week") is found by enumerating the date window and reading the listing, not by guessing content keywords (see Procedure 2 Step 4 for the method and its query-language caveats):
 
    ```bash
    courier --imap <imap> --format json search "after:<purchase date>"
@@ -569,7 +569,12 @@ Actions to execute (proceed without confirmation):
 
      Probes surface both platform confirmations and direct correspondence with hosts or providers; the correspondence often holds what the voucher lacks (names, phone numbers, arrangements).
 
-   **Zero-hit caveat, either mode**: Gmail-syntax translation to non-Gmail IMAP blocks is imperfect. An OR-chain, and a hyphenated token with no date bracket, have each returned zero against mail that simpler query shapes showed present. Keep probes to one or two plain tokens plus a date bracket; a zero result from a mailbox expected to hold the answer indicts the query, not the mailbox. Simplify and re-run (or enumerate a sub-window) before concluding the mail is absent or asking the user.
+   **Query-language caveats (each verified against this setup):**
+
+   - Parentheses are not part of the query language. Gmail blocks receive the raw query (X-GM-RAW) and Gmail happens to accept them; other blocks pass them through as literal characters and the server rejects the whole search ("Unexpected ("), which surfaces as zero results. Write `a or b` without brackets.
+   - `or` joins single terms only. A date does not distribute across branches (`after:X a or b` dates the first branch alone), and a branch carrying two terms (`a after:X or b after:X`) mis-binds on non-Gmail blocks. For dated alternatives, run separate probes (chained `search` ops share one connection).
+   - On non-Gmail blocks, a content term with no date bracket forces a whole-folder body scan; a large folder exceeds the server read timeout and its results are silently dropped. Keep a date bracket alongside content terms there.
+   - Per-folder search errors do not reach the JSON output; they go to syslog (`journalctl -t courier`; stderr on hosts without syslog). On a zero or a surprising count, read the log before concluding the mail is absent.
 
    **Bolt invoice handling**: Bolt invoices are download links, not attachments. Use `courier --imap <imap> links -f FOLDER -u UID` to extract the invoice URL, then download.
 
