@@ -15,7 +15,8 @@ package require json::write
 package require TclOO
 package require logger
 # vendor/ carries the modules this app depends on: a checkout runs as-is,
-# and an upstream bump lands as a reviewable diff.
+# and an upstream bump lands as a reviewable diff. deadman's home, man
+# page, and full test suite live in the teatotal repository.
 ::tcl::tm::path add \
     [file join [file dirname [file normalize [info script]]] vendor]
 package require deadman
