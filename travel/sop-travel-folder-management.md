@@ -548,15 +548,28 @@ Actions to execute (proceed without confirmation):
 
    Email search uses the `courier` CLI (Gmail-style queries; `courier list` shows the configured mailbox blocks). Pick the mailbox by the email account rules (see Email Account Verification, Procedure 1); when the receiving account is uncertain, `courier -A` searches every block at once.
 
-   **Primary method — enumerate the date window, then read the listing:**
+   **Match the instrument to the window:**
 
-   ```bash
-   courier --imap <imap> --format json search "after:<start> before:<end>"
-   ```
+   - **Narrow window** (a recency-defined target such as "bought today"; a journey sync with known dates): enumerate the window with no content keywords and read the listing:
 
-   A bare date window with no content keywords lists every message in the window; booking mail stands out by sender and subject (airline, hotel, rail and OTA domains are distinctive). This one listing catches flights, hotels, car rentals, trains, passes, parking, taxi receipts, and local attractions, including bookings whose subjects are generic ("Standard Ticket", "Order Receipt"). For a journey-folder sync, the window is the earliest travel date minus 120 days to the latest travel date plus 7 days. When that window is too long to read, narrow it with a single plain keyword on top (a city name, a provider name) rather than a keyword list.
+     ```bash
+     courier --imap <imap> --format json search "after:<start> before:<end>"
+     ```
 
-   **Keyword queries are a narrowing device, not the primary instrument.** Gmail-syntax translation to non-Gmail IMAP blocks is imperfect: OR-chains and hyphenated tokens (`e-ticket`) have returned zero against mail that a bare date-window listing showed present. A zero result from a mailbox expected to hold the answer indicts the query, not the mailbox — re-run as a bare date window before concluding the mail is absent or asking the user.
+     Booking mail stands out by sender and subject (airline, hotel, rail and OTA domains are distinctive), including bookings whose subjects are generic ("Standard Ticket", "Order Receipt"). For a journey-folder sync, the window is the earliest travel date minus 120 days to the latest travel date plus 7 days.
+
+   - **Wide or fuzzy window** (a remembered trip years back, "sometime between 2010 and 2014"; a year of inbox runs to thousands of messages): enumeration is impractical, so keyword probes are the primary. Run several probes, one plain token each (destination city, booking platform, provider), each date-bracketed to the remembered range, and dedupe across probes:
+
+     ```bash
+     courier -A --format json \
+       search "<destination> after:<start> before:<end>" \
+       search "<platform> after:<start> before:<end>" \
+       -n 100
+     ```
+
+     Probes surface both platform confirmations and direct correspondence with hosts or providers; the correspondence often holds what the voucher lacks (names, phone numbers, arrangements).
+
+   **Zero-hit caveat, either mode**: Gmail-syntax translation to non-Gmail IMAP blocks is imperfect. An OR-chain, and a hyphenated token with no date bracket, have each returned zero against mail that simpler query shapes showed present. Keep probes to one or two plain tokens plus a date bracket; a zero result from a mailbox expected to hold the answer indicts the query, not the mailbox. Simplify and re-run (or enumerate a sub-window) before concluding the mail is absent or asking the user.
 
    **Bolt invoice handling**: Bolt invoices are download links, not attachments. Use `courier --imap <imap> links -f FOLDER -u UID` to extract the invoice URL, then download.
 
@@ -878,7 +891,7 @@ Actions to execute (proceed without confirmation):
 - All accommodation booking references collected from Accommodations folder
 - Journey date range established
 - Current date determined and journey status assessed
-- Search strategy applied: date-window enumeration as the primary instrument, keyword narrowing only on top
+- Search instrument matched the window: enumeration for narrow windows, date-bracketed keyword probes for wide ones; zero-hits re-tested with a simpler shape before being read as absence
 - All emails categorised appropriately (transport, accommodation, and taxi/ride-hailing)
 - **All emails with attachments had attachments checked** using `courier --imap <imap> attachments -f FOLDER -u UID`
 - **All file saves produce PDF output** (from PDF attachment or HTML-to-PDF conversion—no text summaries created)
