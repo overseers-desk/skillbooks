@@ -430,7 +430,7 @@ proc ::spar::ui::build_loaded_body {path} {
     $::pool set_worker_cap linkedin_send 1
 
     # DispatchController translates Play/Pause/Cancel and the right-
-    # click menu into Pool methods, and renders Pool row-state events
+    # click menu into Pool methods, and renders Pool job-state events
     # back onto the TransitionTree.
     #
     # Circular wire: TransitionTree's _resolve_target needs to read

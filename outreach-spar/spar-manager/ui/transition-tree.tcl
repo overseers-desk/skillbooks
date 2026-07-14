@@ -175,8 +175,8 @@ oo::class create spar::ui::TransitionTree {
         set live [dict create]
         if {$OngoingOnly && $Dispatch ne ""} {
             set disp [$Dispatch dispatcher]
-            foreach r [$disp active_rows]  { dict set live $r 1 }
-            foreach r [$disp queued_rows]  { dict set live $r 1 }
+            foreach r [$disp active_jobs]  { dict set live $r 1 }
+            foreach r [$disp queued_jobs]  { dict set live $r 1 }
         }
 
         foreach task $ttasks {
@@ -287,8 +287,8 @@ oo::class create spar::ui::TransitionTree {
         if {$Dispatch eq ""} return
         set disp [$Dispatch dispatcher]
         set live [dict create]
-        foreach r [$disp active_rows]  { dict set live $r 1 }
-        foreach r [$disp queued_rows]  { dict set live $r 1 }
+        foreach r [$disp active_jobs]  { dict set live $r 1 }
+        foreach r [$disp queued_jobs]  { dict set live $r 1 }
         set DetachedRows {}
         foreach parent [$Tree children {}] {
             foreach row [$Tree children $parent] {
