@@ -14,6 +14,11 @@ package require json
 package require json::write
 package require TclOO
 package require logger
+# deadman (the subprocess watchdog) rides the teatotal checkout beside this
+# repository until it is vendored in.
+::tcl::tm::path add [file normalize \
+    [file join [file dirname [info script]] .. .. .. teatotal]]
+package require deadman
 
 # Idempotent: oo::class create is not idempotent, so guard against
 # multiple sources.
@@ -38,7 +43,7 @@ source [file join $::spar::harness_dir spar-mailroom.tcl]
 oo::class create spar::Harness {
     variable Slug LogPrefix CostLog SessionId PromptDir LogDir \
              WorkerCostCapUsd CostKilled \
-             StallKilled LastProgressMs StallTimeoutMs UsageResetSecs \
+             StallKilled StallTimeoutMs UsageResetSecs \
              FailCause
 
     constructor {prompt_dir log_dir} {
@@ -50,7 +55,6 @@ oo::class create spar::Harness {
         set SessionId ""
         set CostKilled 0
         set StallKilled 0
-        set LastProgressMs 0
         set UsageResetSecs 0
         set FailCause ""
         # Per-worker cost cap (#114) is the sole budget circuit-breaker:
@@ -71,8 +75,8 @@ oo::class create spar::Harness {
             set meta [my load_meta]
             set WorkerCostCapUsd [spar::dict_get_default \
                 $meta WORKER_COST_CAP_USD $WorkerCostCapUsd]
-            set StallTimeoutMs [expr {[spar::dict_get_default \
-                $meta STALL_TIMEOUT_SECS 600] * 1000}]
+            set StallTimeoutMs [expr {int([spar::dict_get_default \
+                $meta STALL_TIMEOUT_SECS 600] * 1000)}]
         }
         file mkdir $log_dir
         set fd [open $CostLog w]; close $fd
@@ -102,9 +106,10 @@ oo::class create spar::Harness {
     }
 
     # Per-worker stall timeout in seconds (#115). Zero disables. Fractional
-    # values are accepted so tests can drive a sub-second timeout.
+    # values are accepted so tests can drive a sub-second timeout; the
+    # stored ms count is a whole number, as the watchdog requires.
     method set_stall_timeout {secs} {
-        set StallTimeoutMs [expr {$secs * 1000}]
+        set StallTimeoutMs [expr {int($secs * 1000)}]
     }
 
     # permission_args — the claude permission flags this harness runs under.
@@ -337,7 +342,22 @@ oo::class create spar::Harness {
         set t0 [clock seconds]
         set CostKilled 0
         set StallKilled 0
-        set exit_code [my _run_watched $cmd $json_file "${log_file}.stderr"]
+        # deadman owns the pipe, the stall clock, and the group kill; the
+        # budget check rides its poll tick (budget_poll below), and a cost
+        # kill beats a stall on a shared tick because the poll callback
+        # runs before the stall check.
+        set dm [list -out $json_file -err "${log_file}.stderr" \
+            -stall $StallTimeoutMs]
+        if {$WorkerCostCapUsd > 0} {
+            lappend dm -poll \
+                [list [my _cost_poll_ms] [list [self] budget_poll $json_file]]
+        }
+        set r [deadman::run $cmd {*}$dm]
+        set exit_code [dict get $r exit]
+        switch -- [dict get $r cause] {
+            cost  { set CostKilled 1 }
+            stall { set StallKilled 1 }
+        }
         set elapsed [expr {[clock seconds] - $t0}]
 
         set parsed [my _stream_result $json_file]
@@ -420,144 +440,26 @@ oo::class create spar::Harness {
         return 0
     }
 
-    # _run_watched — run the claude command, capturing stdout to json_file
-    # and stderr to stderr_file, returning the child exit code (0 on clean
-    # exit). While it runs, a cost watchdog polls this worker's accumulated
-    # spend (parent session plus its research subagents) and SIGTERMs the
-    # whole process group once it crosses WorkerCostCapUsd, setting
-    # CostKilled so _invoke fails the row fast (#114).
-    #
-    # The command runs through a pipe rather than a blocking exec so the
-    # poll timer and the stream reader share one event loop. setsid puts
-    # the child in its own process group, so kill -TERM -<pid> reaches
-    # claude and the subagents it spawned without touching this harness
-    # process. With no cost cap configured the watchdog never fires, but
-    # the same pipe path runs so there is one exec path to reason about.
-    #
-    # rw_drain / rw_poll are dispatched from fileevent / after at global
-    # scope through [self], so they carry no leading underscore — TclOO
-    # leaves underscored methods unexported and an external dispatch of one
-    # fails with "unknown method".
-    method _run_watched {cmd json_file stderr_file} {
-        set setsid_bin [spar::resolve_coreutil setsid]
-        # No setsid (e.g. macOS without util-linux): fall back to a plain
-        # blocking exec. The cost watchdog needs a killable process group,
-        # so it is inert here; the disk-product verdict is unaffected.
-        if {$setsid_bin eq ""} {
-            set ec 0
-            if {[catch {
-                exec {*}$cmd > $json_file 2> $stderr_file
-            } _err opts]} {
-                set e [dict get $opts -errorcode]
-                if {[lindex $e 0] eq "CHILDSTATUS"} { set ec [lindex $e 2] }
-            }
-            return $ec
+    # budget_poll — the cost breach detector, dispatched from deadman's
+    # poll tick. Prices this worker (parent session plus its research
+    # subagents) and, once the spend crosses WorkerCostCapUsd, kills the
+    # run with cause `cost` so _invoke fails the row fast (#114).
+    # session_id comes from the growing json_file (the init event lands
+    # within the first second), so the poll meters the right session even
+    # though `call` captures SessionId only after _invoke returns. Carries
+    # no leading underscore: TclOO leaves underscored methods unexported,
+    # and this one is dispatched from outside the object.
+    method budget_poll {json_file h} {
+        if {$WorkerCostCapUsd <= 0} { return }
+        set sid $SessionId
+        if {$sid eq ""} { set sid [my _extract_session_id $json_file] }
+        if {$sid eq ""} { return }
+        set cost [spar::worker_cost_usd $sid]
+        if {$cost >= $WorkerCostCapUsd} {
+            ${::spar::harness_log}::warn \
+                "\[$Slug\] Cost cap: \$[format %.2f $cost] >= \$$WorkerCostCapUsd — SIGTERM worker group"
+            deadman::kill $h cost
         }
-
-        # Build the pipe: setsid wraps the command; stderr is redirected to
-        # its file inside the child so only stdout flows up the pipe, which
-        # rw_drain tees into json_file as lines arrive.
-        set chan [open [list | {*}$setsid_bin {*}$cmd 2> $stderr_file] r]
-        fconfigure $chan -blocking 0 -buffering line
-        set lead [lindex [pid $chan] 0]
-        set out [open $json_file w]
-
-        set ::_rw_done($lead) 0
-        set ::_rw_ec($lead) 0
-        # Seed the stall clock before arming the poll so the first tick measures
-        # idleness from now, not from epoch 0 (which would read as an instant
-        # stall). rw_drain advances it on every stdout line.
-        set LastProgressMs [clock milliseconds]
-        fileevent $chan readable [list [self] rw_drain $chan $out $lead]
-        if {$WorkerCostCapUsd > 0 || $StallTimeoutMs > 0} {
-            after [my _cost_poll_ms] \
-                [list [self] rw_poll $json_file $lead]
-        }
-        vwait ::_rw_done($lead)
-        set ec $::_rw_ec($lead)
-        unset -nocomplain ::_rw_done($lead) ::_rw_ec($lead)
-        catch {close $out}
-        return $ec
-    }
-
-    # rw_drain — tee available stdout lines from the pipe into json_file
-    # and, on EOF, reap the child's exit code into ::_rw_ec and signal
-    # completion. An external kill or the cost watchdog closes the child's
-    # stdout, so EOF fires for every termination cause.
-    method rw_drain {chan out lead} {
-        while {1} {
-            if {[catch {gets $chan line} n]} { set n -1 }
-            if {$n < 0} {
-                if {[eof $chan]} {
-                    if {[catch {close $chan} _e opts]} {
-                        set e [dict get $opts -errorcode]
-                        if {[lindex $e 0] eq "CHILDSTATUS"} {
-                            set ::_rw_ec($lead) [lindex $e 2]
-                        }
-                    }
-                    set ::_rw_done($lead) 1
-                }
-                return
-            }
-            puts $out $line
-            flush $out
-            set LastProgressMs [clock milliseconds]
-        }
-    }
-
-    # rw_poll — watchdog tick: price this worker and, once it crosses the
-    # cap, SIGTERM the process group (negative pid). session_id comes from
-    # the growing json_file (the init event lands within the first second),
-    # so the poll meters the right session even though `call` captures
-    # SessionId only after _invoke returns. Re-arms itself until the run
-    # completes.
-    method rw_poll {json_file lead} {
-        # The run can finish between two ticks, after which _run_watched has
-        # unset ::_rw_done($lead). A bare $::_rw_done($lead) would then read
-        # a missing element and error into bgerror, and on pid reuse could
-        # even act against an unrelated later run — so gate on existence too.
-        if {![info exists ::_rw_done($lead)] || $::_rw_done($lead)} { return }
-        # Two breach detectors share this tick, each gated on its own being
-        # armed: with the cost cap disabled (cap == 0) the cost block must not
-        # run, or `$cost >= 0` would fire an instant false budget kill. Cost is
-        # checked first so a worker over both bounds is recorded as the terminal
-        # budget kill (rc==3), not the resumable stall (rc==2).
-        if {$WorkerCostCapUsd > 0} {
-            set sid $SessionId
-            if {$sid eq ""} { set sid [my _extract_session_id $json_file] }
-            if {$sid ne ""} {
-                set cost [spar::worker_cost_usd $sid]
-                if {$cost >= $WorkerCostCapUsd} {
-                    set CostKilled 1
-                    ${::spar::harness_log}::warn \
-                        "\[$Slug\] Cost cap: \$[format %.2f $cost] >= \$$WorkerCostCapUsd — SIGTERM worker group"
-                    my _sigterm_group $lead
-                    return
-                }
-            }
-        }
-        if {$StallTimeoutMs > 0} {
-            set idle [expr {[clock milliseconds] - $LastProgressMs}]
-            if {$idle >= $StallTimeoutMs} {
-                set StallKilled 1
-                ${::spar::harness_log}::warn \
-                    "\[$Slug\] Stall: no output for [expr {$idle / 1000}]s >= [my stall_timeout]s — SIGTERM worker group"
-                my _sigterm_group $lead
-                return
-            }
-        }
-        after [my _cost_poll_ms] [list [self] rw_poll $json_file $lead]
-    }
-
-    # _sigterm_group — SIGTERM the worker's process group (negative pid). setsid
-    # put the child in its own group with the group id equal to the lead pid
-    # when it execs in place (the case for this pipe shape: the Tcl pipe child
-    # is not already a group leader, so setsid does not fork). The positive-pid
-    # SIGTERM is a belt-and-suspenders for any host where setsid forks, so the
-    # lead itself is signalled even if the group target misses.
-    method _sigterm_group {lead} {
-        catch {exec kill -TERM -$lead}
-        catch {exec kill -TERM $lead}
     }
 
     # The watchdog poll interval in ms. A method so tests can shorten it
