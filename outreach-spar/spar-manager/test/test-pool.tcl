@@ -79,7 +79,7 @@ section "2. Basic dispatch"
 
 set d [spar::Dispatcher new 4 test_log]
 $d pause_queue
-$d enqueue r1 T1 fake_worker {plan {{sleep 50}}}
+$d enqueue r1 fake_worker {plan {{sleep 50}}}
 assert_eq [$d state r1] queued "r1 starts queued (queue paused)"
 
 # Resume; the post happens immediately and the state flips to running
@@ -97,13 +97,13 @@ section "3. Concurrency cap"
 
 set d [spar::Dispatcher new 2 test_log]
 foreach r {r1 r2 r3 r4} {
-    $d enqueue $r T1 fake_worker {plan {{sleep 200}}}
+    $d enqueue $r fake_worker {plan {{sleep 200}}}
 }
 
 # State flips to running at tpool::post time, so the snapshot is
 # deterministic the moment all enqueues have returned.
 assert_eq [$d posted_count] 2 "Jobs=2 caps posted at 2"
-assert_eq [llength [$d queued_rows]] 2 "remaining 2 stay queued"
+assert_eq [llength [$d queued_jobs]] 2 "remaining 2 stay queued"
 
 foreach r {r1 r2 r3 r4} { wait_for_terminal $d $r 5000 }
 foreach r {r1 r2 r3 r4} {
@@ -119,7 +119,7 @@ section "4. Queue pause/resume"
 set d [spar::Dispatcher new 2 test_log]
 $d pause_queue
 foreach r {r1 r2 r3} {
-    $d enqueue $r T1 fake_worker {plan {{sleep 30}}}
+    $d enqueue $r fake_worker {plan {{sleep 30}}}
 }
 set ::tick 0; after 50 set ::tick 1; vwait ::tick
 foreach r {r1 r2 r3} {
@@ -140,8 +140,8 @@ section "5. Cancel queued"
 
 set d [spar::Dispatcher new 1 test_log]
 # Block worker slot with a long-running row
-$d enqueue r1 T1 fake_worker {plan {{sleep 300}}}
-$d enqueue r2 T1 fake_worker {plan {{sleep 30}}}
+$d enqueue r1 fake_worker {plan {{sleep 300}}}
+$d enqueue r2 fake_worker {plan {{sleep 30}}}
 wait_for_state $d r1 running 1000
 assert_eq [$d state r2] queued "r2 queued behind r1"
 
@@ -157,7 +157,7 @@ $d destroy
 section "6. Cancel running"
 
 set d [spar::Dispatcher new 1 test_log]
-$d enqueue r1 T1 fake_worker \
+$d enqueue r1 fake_worker \
     {plan {{sleep 50} {check_cancel} {sleep 50} {check_cancel}}}
 wait_for_state $d r1 running 1000
 $d cancel r1
@@ -171,13 +171,13 @@ $d destroy
 section "7. Pause and resume row"
 
 set d [spar::Dispatcher new 1 test_log]
-$d enqueue r1 T1 fake_worker \
+$d enqueue r1 fake_worker \
     {plan {{sleep 50} {check_pause 30} {sleep 30}}}
 wait_for_state $d r1 running 1000
-$d pause_row r1
+$d pause_job r1
 wait_for_state $d r1 paused 2000
 assert_eq [$d state r1] paused "r1 reaches paused via sentinel"
-$d resume_row r1
+$d resume_job r1
 wait_for_terminal $d r1 2000
 assert_eq [$d state r1] done "r1 resumes and reaches done"
 $d destroy
@@ -190,17 +190,17 @@ section "8. State-machine validation"
 set d [spar::Dispatcher new 1 test_log]
 set ::log_messages {}
 $d on_phase nonexistent_row foo
-assert_match [join $::log_messages " "] "*phase for unknown row nonexistent_row*" \
+assert_match [join $::log_messages " "] "*phase for unknown job nonexistent_row*" \
     "on_phase for unknown row is logged"
 
 # Register a queued row (queue paused so it does not auto-post), then
 # send on_done — should be logged + dropped because the row never
 # transitioned to running.
 $d pause_queue
-$d enqueue r1 T1 fake_worker {plan {{sleep 200}}}
+$d enqueue r1 fake_worker {plan {{sleep 200}}}
 set ::log_messages {}
 $d on_done r1 {}
-assert_match [join $::log_messages " "] "*done for row r1 in state queued*" \
+assert_match [join $::log_messages " "] "*done for job r1 in state queued*" \
     "on_done for queued row is logged and dropped"
 assert_eq [$d state r1] queued "r1 still queued after illegal on_done"
 
@@ -214,15 +214,15 @@ $d destroy
 section "9. count_by_kind"
 
 set d [spar::Dispatcher new 4 test_log]
-$d enqueue a1 T1 fake_worker {plan {{sleep 30}}}
-$d enqueue a2 T1 fake_worker {plan {{sleep 30}}}
-$d enqueue b1 T2 fake_worker {plan {{sleep 30}}}
-$d enqueue b2 T2 fake_worker {plan {{sleep 30}}}
-$d enqueue b3 T2 fake_worker {plan {{sleep 30}}}
+$d enqueue a1 fake_worker_a {plan {{sleep 30}}}
+$d enqueue a2 fake_worker_a {plan {{sleep 30}}}
+$d enqueue b1 fake_worker_b {plan {{sleep 30}}}
+$d enqueue b2 fake_worker_b {plan {{sleep 30}}}
+$d enqueue b3 fake_worker_b {plan {{sleep 30}}}
 foreach r {a1 a2 b1 b2 b3} { wait_for_terminal $d $r 3000 }
-assert_eq [$d count_by_kind T1 done] 2 "T1 done count = 2"
-assert_eq [$d count_by_kind T2 done] 3 "T2 done count = 3"
-assert_eq [$d count_by_kind T1 failed] 0 "T1 failed count = 0"
+assert_eq [$d count_by_kind fake_worker_a done] 2 "fake_worker_a done count = 2"
+assert_eq [$d count_by_kind fake_worker_b done] 3 "fake_worker_b done count = 3"
+assert_eq [$d count_by_kind fake_worker_a failed] 0 "fake_worker_a failed count = 0"
 $d destroy
 
 # ════════════════════════════════════════════════════════════════════════
@@ -231,7 +231,7 @@ $d destroy
 section "10. Rate-limited cycle"
 
 set d [spar::Dispatcher new 1 test_log]
-$d enqueue r1 T1 fake_worker [list plan [list \
+$d enqueue r1 fake_worker [list plan [list \
     [list sleep 30] \
     [list msg_rate_limited [clock seconds]] \
     [list sleep 30] \
@@ -251,7 +251,7 @@ $d destroy
 section "11. Requeue"
 
 set d [spar::Dispatcher new 1 test_log]
-$d enqueue r1 T1 fake_worker {plan {{msg_failed boom}}}
+$d enqueue r1 fake_worker {plan {{msg_failed boom}}}
 wait_for_terminal $d r1 2000
 assert_eq [$d state r1] failed "r1 fails first time"
 
@@ -264,18 +264,18 @@ assert_eq [$d state r1] failed "r1 fails again on rerun (same plan)"
 $d destroy
 
 # ════════════════════════════════════════════════════════════════════════
-# 12. active_rows — excludes terminal
+# 12. active_jobs — excludes terminal
 # ════════════════════════════════════════════════════════════════════════
-section "12. active_rows"
+section "12. active_jobs"
 
 set d [spar::Dispatcher new 4 test_log]
-$d enqueue r1 T1 fake_worker {plan {{sleep 30}}}
-$d enqueue r2 T1 fake_worker {plan {{msg_failed nope}}}
-$d enqueue r3 T1 fake_worker {plan {{sleep 200}}}
+$d enqueue r1 fake_worker {plan {{sleep 30}}}
+$d enqueue r2 fake_worker {plan {{msg_failed nope}}}
+$d enqueue r3 fake_worker {plan {{sleep 200}}}
 wait_for_terminal $d r2 2000
 wait_for_terminal $d r1 2000
 # r3 still running (200ms vs 30ms others)
-set active [$d active_rows]
+set active [$d active_jobs]
 assert_eq [llength $active] 1 "only r3 still active"
 assert_eq [lindex $active 0] r3 "active row is r3"
 wait_for_terminal $d r3 2000
@@ -316,34 +316,34 @@ set d [spar::Dispatcher new 2 test_log]
 
 # 13a. Successful harness run reaches done with rc=0 in the result dict.
 lassign [make_harness_dirs ok 0] p_ok l_ok
-$d enqueue h_ok T1 harness_run [dict create \
+$d enqueue h_ok harness_run [dict create \
     prompt_dir $p_ok log_dir $l_ok harness_class FakeHarness]
 wait_for_terminal $d h_ok 3000
 assert_eq [$d state h_ok] done "harness_run rc=0 reaches done"
 
 # 13b. Harness rc=1 lands as failed with the rc message.
 lassign [make_harness_dirs fail 1] p_f l_f
-$d enqueue h_fail T1 harness_run [dict create \
+$d enqueue h_fail harness_run [dict create \
     prompt_dir $p_f log_dir $l_f harness_class FakeHarness]
 wait_for_terminal $d h_fail 3000
 assert_eq [$d state h_fail] failed "harness_run rc=1 reaches failed"
 
 # 13c. Harness raising an error is caught and surfaced as failed.
 lassign [make_harness_dirs throw throw] p_t l_t
-$d enqueue h_throw T1 harness_run [dict create \
+$d enqueue h_throw harness_run [dict create \
     prompt_dir $p_t log_dir $l_t harness_class FakeHarness]
 wait_for_terminal $d h_throw 3000
 assert_eq [$d state h_throw] failed "harness_run catches errors as failed"
 
 # 13e. The harness FAIL cause reaches the failure reason for the roll-call
 # (#148): harness_run reads fail_cause when rc!=0 and folds it into the reason,
-# so a real enqueue→harness_run→row-failed round trip carries the cause an
+# so a real enqueue→harness_run→job-failed round trip carries the cause an
 # operator needs, not just "rc=1". Render it through spar::render_rollcall to
 # prove the run-end worklist is built from the live event, end to end.
 set ::_rc_reason ""
-$d subscribe row-failed [list apply {{row reason} { set ::_rc_reason $reason }}]
+$d subscribe job-failed [list apply {{row reason} { set ::_rc_reason $reason }}]
 lassign [make_harness_dirs cause 1 "FAIL (T2: stalled — no output): cause-prompt"] p_c l_c
-$d enqueue h_cause T2 harness_run [dict create \
+$d enqueue h_cause harness_run [dict create \
     prompt_dir $p_c log_dir $l_c harness_class FakeHarness]
 wait_for_terminal $d h_cause 3000
 assert_match $::_rc_reason "*rc=1*FAIL (T2: stalled*" \
@@ -358,7 +358,7 @@ assert_match $rc_line "*h_cause*\[T2\]*rc=1*stalled*" \
 # pre-flight check fires.
 lassign [make_harness_dirs precancel 0] p_pc l_pc
 $d pause_queue
-$d enqueue h_pc T1 harness_run [dict create \
+$d enqueue h_pc harness_run [dict create \
     prompt_dir $p_pc log_dir $l_pc harness_class FakeHarness]
 $d cancel h_pc
 assert_eq [$d state h_pc] cancelled \
@@ -371,7 +371,7 @@ $d resume_queue
 # harness, so the row still reaches done. Proves --dry-run authors
 # nothing and writes no output file.
 lassign [make_harness_dirs dryrun throw] p_dr l_dr
-$d enqueue h_dr T1 harness_run [dict create \
+$d enqueue h_dr harness_run [dict create \
     prompt_dir $p_dr log_dir $l_dr dry_run 1 harness_class FakeHarness]
 wait_for_terminal $d h_dr 3000
 assert_eq [$d state h_dr] done \
@@ -439,7 +439,7 @@ set ses_opts [dict create \
 dict set ses_opts sender smtp_pass "fake-pass"
 
 set d [spar::Dispatcher new 2 test_log]
-$d enqueue alice T6 ses_send $ses_opts
+$d enqueue alice ses_send $ses_opts
 wait_for_terminal $d alice 5000
 assert_eq [$d state alice] done "ses_send happy path reaches done"
 
@@ -460,7 +460,7 @@ set dry_opts [dict replace $ses_opts \
     approach_path $approach_path2 dry_run 1]
 
 set d [spar::Dispatcher new 2 test_log]
-$d enqueue bob T6 ses_send $dry_opts
+$d enqueue bob ses_send $dry_opts
 wait_for_terminal $d bob 5000
 assert_eq [$d state bob] done "ses_send dry-run reaches done"
 set fd [open $approach_path2 r]; set after2 [read $fd]; close $fd
@@ -471,7 +471,7 @@ $d destroy
 # 14c. ses_send failure when the approach file is missing.
 set d [spar::Dispatcher new 2 test_log]
 set bad_opts [dict replace $ses_opts approach_path /nonexistent/path.yaml]
-$d enqueue ghost T6 ses_send $bad_opts
+$d enqueue ghost ses_send $bad_opts
 wait_for_terminal $d ghost 5000
 assert_eq [$d state ghost] failed "ses_send fails when approach missing"
 $d destroy
@@ -536,7 +536,7 @@ set imap_opts [dict create \
     mailroom_bin  $fake_mailroom]
 
 set d [spar::Dispatcher new 2 test_log]
-$d enqueue carol T7 imap_poll $imap_opts
+$d enqueue carol imap_poll $imap_opts
 wait_for_terminal $d carol 5000
 assert_eq [$d state carol] done "imap_poll happy path reaches done"
 
@@ -558,7 +558,7 @@ set floor_opts [dict replace $imap_opts \
     since         "2026-04-26"]
 
 set d [spar::Dispatcher new 2 test_log]
-$d enqueue cass T7 imap_poll $floor_opts
+$d enqueue cass imap_poll $floor_opts
 wait_for_terminal $d cass 5000
 assert_eq [$d state cass] done "imap_poll with future floor reaches done"
 set fd [open $approach_path3f r]; set after3f [read $fd]; close $fd
@@ -577,7 +577,7 @@ set known_opts [dict replace $imap_opts \
     fingerprints  [list "dest@acme-venues.au|2026-04-25T10:00:00"]]
 
 set d [spar::Dispatcher new 2 test_log]
-$d enqueue dan T7 imap_poll $known_opts
+$d enqueue dan imap_poll $known_opts
 wait_for_terminal $d dan 5000
 assert_eq [$d state dan] done "imap_poll done when nothing new"
 set fd [open $approach_path4 r]; set after4 [read $fd]; close $fd
@@ -606,15 +606,15 @@ section "15. prune_missing"
 set d [spar::Dispatcher new 1 test_log]
 
 # Two terminal rows that finish before the blocker arrives.
-$d enqueue done1 T1 fake_worker {plan {{sleep 30}}}
+$d enqueue done1 fake_worker {plan {{sleep 30}}}
 wait_for_terminal $d done1 2000
-$d enqueue fail1 T1 fake_worker {plan {{msg_failed boom}}}
+$d enqueue fail1 fake_worker {plan {{msg_failed boom}}}
 wait_for_terminal $d fail1 2000
 
 # Long-running blocker, then a queued row that cannot post.
-$d enqueue running1 T1 fake_worker {plan {{sleep 600}}}
+$d enqueue running1 fake_worker {plan {{sleep 600}}}
 wait_for_state $d running1 running 1000
-$d enqueue queued1 T1 fake_worker {plan {{sleep 30}}}
+$d enqueue queued1 fake_worker {plan {{sleep 30}}}
 assert_eq [$d state queued1] queued "queued1 stays queued behind running1"
 
 # Refresh: tree now contains only running1 + a fresh stem the Pool
@@ -631,8 +631,8 @@ assert_eq [$d state running1] running "running1 survives prune"
 # Verify the Queue list itself was scrubbed: enqueue a fresh row and
 # confirm it is the only queued entry (not stuck behind a ghost).
 $d pause_queue
-$d enqueue post_prune T1 fake_worker {plan {{sleep 30}}}
-assert_eq [$d queued_rows] [list post_prune] \
+$d enqueue post_prune fake_worker {plan {{sleep 30}}}
+assert_eq [$d queued_jobs] [list post_prune] \
     "Queue list scrubbed of pruned stems"
 $d resume_queue
 wait_for_terminal $d post_prune 2000
@@ -663,7 +663,7 @@ section "17. True parallelism with blocking workers"
 set d [spar::Dispatcher new 4 test_log]
 set t0 [clock milliseconds]
 foreach r {p1 p2 p3 p4} {
-    $d enqueue $r T1 fake_worker {plan {{exec_sleep 2}}}
+    $d enqueue $r fake_worker {plan {{exec_sleep 2}}}
 }
 foreach r {p1 p2 p3 p4} { wait_for_terminal $d $r 12000 }
 set elapsed [expr {[clock milliseconds] - $t0}]
@@ -687,28 +687,28 @@ $d destroy
 #
 # A unified Dispatcher must let one transition kind run serially (SES,
 # rate-limit pacing) while others run in parallel inside the same pool.
-# set_worker_cap installs a per-worker-proc cap that further constrains
+# set_kind_cap installs a per-worker-proc cap that further constrains
 # the global Jobs cap; rows for that worker_proc cannot exceed it even
 # when the global cap has slack.
 #
 # This test enqueues 4 fake_worker_a rows and 4 fake_worker_b rows into
-# a pool of 8. set_worker_cap fake_worker_a 1 forces the four a-rows to
+# a pool of 8. set_kind_cap fake_worker_a 1 forces the four a-rows to
 # serialise; fake_worker_b is uncapped (4 in parallel under jobs=8).
 #
 # Wall time signature: a-rows take 4×2s=~8s sequentially; b-rows take
 # ~2s in parallel. Overall ~8s wall, dominated by the serialised side.
-# Without set_worker_cap, both groups parallelise and the total drops
+# Without set_kind_cap, both groups parallelise and the total drops
 # to ~2s.
 section "18. Per-worker cap"
 
 set d [spar::Dispatcher new 8 test_log]
-$d set_worker_cap fake_worker_a 1
+$d set_kind_cap fake_worker_a 1
 set t0 [clock milliseconds]
 foreach r {a1 a2 a3 a4} {
-    $d enqueue $r T1 fake_worker_a {plan {{exec_sleep 2}}}
+    $d enqueue $r fake_worker_a {plan {{exec_sleep 2}}}
 }
 foreach r {b1 b2 b3 b4} {
-    $d enqueue $r T2 fake_worker_b {plan {{exec_sleep 2}}}
+    $d enqueue $r fake_worker_b {plan {{exec_sleep 2}}}
 }
 foreach r {a1 a2 a3 a4 b1 b2 b3 b4} { wait_for_terminal $d $r 20000 }
 set elapsed [expr {[clock milliseconds] - $t0}]
@@ -754,12 +754,12 @@ set d [spar::Dispatcher new $JOBS test_log]
 # the pool in one pass), not a partial wave.
 $d pause_queue
 for {set i 1} {$i <= $NROWS} {incr i} {
-    $d enqueue f$i T1 fake_worker {plan {{exec_sleep 1}}}
+    $d enqueue f$i fake_worker {plan {{exec_sleep 1}}}
 }
 $d resume_queue
 assert_eq [$d posted_count] $JOBS \
     "resume posts exactly JOBS=$JOBS rows in the first fill pass"
-assert_eq [llength [$d queued_rows]] [expr {$NROWS - $JOBS}] \
+assert_eq [llength [$d queued_jobs]] [expr {$NROWS - $JOBS}] \
     "the rest stay queued behind the first fill"
 
 # Refill-to-cap holds: sample posted_count repeatedly while the queue
@@ -768,9 +768,9 @@ set t0 [clock milliseconds]
 set saw_below_cap_with_queue 0
 while {1} {
     set posted [$d posted_count]
-    set queued [llength [$d queued_rows]]
+    set queued [llength [$d queued_jobs]]
     set terminal 0
-    foreach r [$d all_rows] {
+    foreach r [$d all_jobs] {
         if {[$d state $r] in {done failed cancelled}} { incr terminal }
     }
     if {$terminal >= $NROWS} break
@@ -780,7 +780,7 @@ while {1} {
     set ::tick 0; after 40 set ::tick 1; vwait ::tick
 }
 set elapsed [expr {[clock milliseconds] - $t0}]
-foreach r [$d all_rows] {
+foreach r [$d all_jobs] {
     assert_eq [$d state $r] done "[set r] reaches done"
 }
 assert_eq $saw_below_cap_with_queue 0 \
@@ -805,7 +805,7 @@ $d destroy
 # terminal message (done / failed / cancelled). The Dispatcher reclaims
 # the slot only on that message — the tpool job's own completion is never
 # reaped. A worker body that returns by raising, before it emits any
-# terminal message, leaves the row in `running` forever: active_rows
+# terminal message, leaves the row in `running` forever: active_jobs
 # keeps counting it against the global cap, so the slot reads occupied
 # while no worker runs. A few of these collapse a --jobs=N pool to a
 # trickle — slots full, host idle.
@@ -824,7 +824,7 @@ set d [spar::Dispatcher new 4 test_log]
 # (missing prompt_dir / harness_class). Pre-guard these stranded all
 # four slots in `running` forever.
 foreach r {dead1 dead2 dead3 dead4} {
-    $d enqueue $r T1 harness_run {bogus 1}
+    $d enqueue $r harness_run {bogus 1}
 }
 foreach r {dead1 dead2 dead3 dead4} { wait_for_terminal $d $r 5000 }
 foreach r {dead1 dead2 dead3 dead4} {
@@ -835,7 +835,7 @@ assert_eq [$d posted_count] 0 "all four leaked-candidate slots reclaimed"
 # Good rows queued behind the dead ones must now run to completion —
 # proof the slots are genuinely free, not just relabelled.
 foreach r {live1 live2 live3 live4} {
-    $d enqueue $r T1 fake_worker {plan {{sleep 30} {msg_done}}}
+    $d enqueue $r fake_worker {plan {{sleep 30} {msg_done}}}
 }
 foreach r {live1 live2 live3 live4} { wait_for_terminal $d $r 5000 }
 foreach r {live1 live2 live3 live4} {

@@ -417,7 +417,7 @@ if {$dispatching} {
     # we fold into a single batch enqueued onto the same pool.
     #
     # The shared pool means --jobs=N is the campaign-wide cap (not
-    # per-TID). set_worker_cap ses_send 1 keeps T6 rows serial inside
+    # per-TID). set_kind_cap ses_send 1 keeps T6 rows serial inside
     # the pool while harness_run rows (T1/T2/T3/T4) parallelise. See
     # docs/concurrency.md "Per-worker cap".
     proc dispatch_ready {ready_by_tid active_tids tid_scopes \
@@ -475,17 +475,17 @@ if {$dispatching} {
 
         set disp [spar::Dispatcher new $jobs]
         spar::subscribe_pool_domain $disp
-        $disp set_worker_cap ses_send 1
-        $disp set_worker_cap linkedin_send 1
+        $disp set_kind_cap ses_send 1
+        $disp set_kind_cap linkedin_send 1
 
         if {$step_callback ne ""} {
             $disp set_pre_post_callback \
                 [list ::spar::_pool_pre_post $step_callback]
         }
 
-        $disp subscribe row-done   [list ::_dispatch_on_done]
-        $disp subscribe row-failed [list ::_dispatch_on_failed]
-        $disp subscribe row-state  [list ::_dispatch_on_state]
+        $disp subscribe job-done   [list ::_dispatch_on_done]
+        $disp subscribe job-failed [list ::_dispatch_on_failed]
+        $disp subscribe job-state  [list ::_dispatch_on_state]
 
         # Pause the queue while every batch is enqueued so step_callback
         # (when present) sees the final total, not a growing one.
@@ -497,7 +497,7 @@ if {$dispatching} {
                 # A row may name its own worker (T6 linkedin rows carry
                 # linkedin_send); the batch worker_proc is the default.
                 set wp [spar::dict_get_default $row_opts worker_proc $worker_proc]
-                $disp enqueue $stem $tid $wp $row_opts
+                $disp enqueue $stem $wp $row_opts
                 dict set ::_row_tid $stem $tid
                 # Mirror the legacy `[START] slug` line at enqueue time
                 # so output ordering matches the historical queue.

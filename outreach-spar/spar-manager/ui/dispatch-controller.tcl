@@ -8,8 +8,8 @@
 # Phase 3 rewire: per-cohort lifecycle state and per-row classify
 # snapshots are gone. The Pool is the single source of truth for
 # row state across all in-flight rows of every transition kind. The
-# Controller subscribes to its `row-state` event to drive
-# update_row, and reads `posted_count` / `queued_rows` for the
+# Controller subscribes to its `job-state` event to drive
+# update_row, and reads `posted_count` / `queued_jobs` for the
 # progress bar.
 #
 # Circular wire: DispatchController needs TransitionTree at construction
@@ -106,16 +106,16 @@ oo::class create spar::ui::DispatchController {
             -command [list [self] dispatch 1]
         bind $PlayBtn <Button-3> [list [self] on_play_menu %X %Y]
 
-        # Subscribe to Pool events. row-state drives the per-row glyph;
-        # row-phase keeps the running subtitle current; row-failed gives
-        # a reason; row-done likewise.
-        $Dispatcher subscribe row-state \
+        # Subscribe to Pool events. job-state drives the per-row glyph;
+        # job-phase keeps the running subtitle current; job-failed gives
+        # a reason; job-done likewise.
+        $Dispatcher subscribe job-state \
             [list [self] on_row_state]
-        $Dispatcher subscribe row-phase \
+        $Dispatcher subscribe job-phase \
             [list [self] on_row_phase]
-        $Dispatcher subscribe row-failed \
+        $Dispatcher subscribe job-failed \
             [list [self] on_row_failed]
-        $Dispatcher subscribe row-done \
+        $Dispatcher subscribe job-done \
             [list [self] on_row_done]
 
         # Subscribe to Campaign lifecycle. on_fully_loaded both kicks
@@ -335,7 +335,7 @@ oo::class create spar::ui::DispatchController {
             # A row may name its own worker (T6 linkedin rows carry
             # linkedin_send); the batch worker_proc is the default.
             set wp [spar::dict_get_default $row_opts worker_proc $worker_proc]
-            $Dispatcher enqueue $stem $tid $wp $row_opts
+            $Dispatcher enqueue $stem $wp $row_opts
             incr n
         }
         return $n
@@ -377,7 +377,7 @@ oo::class create spar::ui::DispatchController {
     # cancel — drain queued rows. In-flight rows continue to finish (per-
     # row Kill is deferred — see docs/concurrency.md "Deferred work").
     method cancel {} {
-        set queued [$Dispatcher queued_rows]
+        set queued [$Dispatcher queued_jobs]
         foreach r $queued { $Dispatcher cancel $r }
         $Log log "Cancelled [llength $queued] queued row(s); in-flight items finish normally."
     }
@@ -489,7 +489,7 @@ oo::class create spar::ui::DispatchController {
 
     method on_row_failed {row reason} {
         dict set RowReason $row $reason
-        # row-state will follow with state=failed; render then.
+        # job-state will follow with state=failed; render then.
     }
 
     method on_row_done {row result} {
@@ -515,11 +515,11 @@ oo::class create spar::ui::DispatchController {
     }
 
     # reapply_pool_state — for every row the Pool still tracks, rerun
-    # the row-state render so the rebuilt tree's columns reflect the
+    # the job-state render so the rebuilt tree's columns reflect the
     # current Pool state. Cheap: each call is one update_row, and the
     # set is bounded by what is currently or recently in flight.
     method reapply_pool_state {} {
-        foreach row [$Dispatcher all_rows] {
+        foreach row [$Dispatcher all_jobs] {
             set st [$Dispatcher state $row]
             if {$st eq ""} continue
             my _render_row $row $st
@@ -540,8 +540,8 @@ oo::class create spar::ui::DispatchController {
         # Pause is meaningful whenever there are queued rows (or we
         # want to pre-empt new sends). Cancel is meaningful when there
         # are queued rows. Both are toggled on best-effort here.
-        if {[llength [$Dispatcher queued_rows]] > 0 \
-                || [llength [$Dispatcher active_rows]] > 0} {
+        if {[llength [$Dispatcher queued_jobs]] > 0 \
+                || [llength [$Dispatcher active_jobs]] > 0} {
             $PauseBtn  configure -state normal
             $CancelBtn configure -state normal
         } else {
@@ -577,13 +577,13 @@ oo::class create spar::ui::DispatchController {
             running -
             rate_limited {
                 $RowMenu add command -label "Pause" \
-                    -command [list [self] menu_pause_row]
+                    -command [list [self] menu_pause_job]
                 $RowMenu add command -label "Cancel" \
                     -command [list [self] menu_cancel]
             }
             paused {
                 $RowMenu add command -label "Resume" \
-                    -command [list [self] menu_resume_row]
+                    -command [list [self] menu_resume_job]
                 $RowMenu add command -label "Cancel" \
                     -command [list [self] menu_cancel]
             }
@@ -619,8 +619,8 @@ oo::class create spar::ui::DispatchController {
     }
 
     method menu_cancel    {} { $Dispatcher cancel     $RowMenuRow }
-    method menu_pause_row {} { $Dispatcher pause_row  $RowMenuRow }
-    method menu_resume_row {} { $Dispatcher resume_row $RowMenuRow }
+    method menu_pause_job {} { $Dispatcher pause_job  $RowMenuRow }
+    method menu_resume_job {} { $Dispatcher resume_job $RowMenuRow }
     method menu_requeue   {} { $Dispatcher requeue    $RowMenuRow }
 
     method menu_open_log {} {
@@ -717,7 +717,7 @@ oo::class create spar::ui::DispatchController {
     # Total = posted_count + queued; finished = burst counters.
     method _update_progress_display {} {
         set posted [$Dispatcher posted_count]
-        set queued [llength [$Dispatcher queued_rows]]
+        set queued [llength [$Dispatcher queued_jobs]]
         set bar    ${ProgressFrame}.bar
         set status ${ProgressFrame}.status
         set total [llength $BurstStems]

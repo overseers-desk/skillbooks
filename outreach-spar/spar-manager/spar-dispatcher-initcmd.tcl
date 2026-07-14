@@ -121,7 +121,7 @@ proc _ensure_email_loaded {} {
 # identity, and a blocking tpool::wait has no place in the event loop).
 #
 # So a worker proc that returns WITHOUT a terminal message strands its
-# slot: the row sits in `running` forever, active_rows keeps counting it
+# slot: the row sits in `running` forever, active_jobs keeps counting it
 # against the global cap, and the queue behind it never drains. A handful
 # of these over a long campaign collapse a --jobs=10 pool to a trickle —
 # the slots read full while the host runs three workers (#138). The

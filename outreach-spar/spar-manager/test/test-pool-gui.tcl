@@ -139,13 +139,13 @@ $tree_obj set_dispatch $dc
 
 # ════════════════════════════════════════════════════════════════════
 # 1. Enqueue 2 fake_worker rows directly on the Pool; verify both reach
-#    done. Drives the controller's row-state subscription as a side
+#    done. Drives the controller's job-state subscription as a side
 #    effect — observable via the Tree's `state` column once update_row
 #    paints (we don't assert that text here; we assert pool state).
 # ════════════════════════════════════════════════════════════════════
 section "1. Enqueue + reach done"
-$pool enqueue r1 T1 fake_worker {plan {{sleep 200}}}
-$pool enqueue r2 T1 fake_worker {plan {{sleep 200}}}
+$pool enqueue r1 fake_worker {plan {{sleep 200}}}
+$pool enqueue r2 fake_worker {plan {{sleep 200}}}
 foreach r {r1 r2} { wait_for_state $pool $r running 1000 }
 foreach r {r1 r2} { assert_eq [$pool state $r] running "$r is running" }
 foreach r {r1 r2} { wait_for_terminal $pool $r 3000 }
@@ -156,10 +156,10 @@ foreach r {r1 r2} { assert_eq [$pool state $r] done "$r reached done" }
 #    queued; resume, verify it dispatches.
 # ════════════════════════════════════════════════════════════════════
 section "2. Pause queue holds new rows"
-$pool enqueue r3 T1 fake_worker {plan {{sleep 400}}}
+$pool enqueue r3 fake_worker {plan {{sleep 400}}}
 wait_for_state $pool r3 running 1000
 $pool pause_queue
-$pool enqueue r4 T1 fake_worker {plan {{sleep 100}}}
+$pool enqueue r4 fake_worker {plan {{sleep 100}}}
 # r4 should sit queued for at least one event loop tick (queue paused).
 set ::tick 0; after 50 set ::tick 1; vwait ::tick
 assert_eq [$pool state r4] queued "r4 sits queued while queue paused"
@@ -178,10 +178,10 @@ section "3. Cancel a queued row"
 # Block worker slots so the next enqueue stays queued. Pool jobs=4, so
 # we need to fill all 4 slots first.
 foreach r {b1 b2 b3 b4} {
-    $pool enqueue $r T1 fake_worker {plan {{sleep 600}}}
+    $pool enqueue $r fake_worker {plan {{sleep 600}}}
 }
 foreach r {b1 b2 b3 b4} { wait_for_state $pool $r running 1000 }
-$pool enqueue qcancel T1 fake_worker {plan {{sleep 50}}}
+$pool enqueue qcancel fake_worker {plan {{sleep 50}}}
 assert_eq [$pool state qcancel] queued "qcancel queued behind blockers"
 
 $pool cancel qcancel

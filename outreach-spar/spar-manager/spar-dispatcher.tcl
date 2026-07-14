@@ -48,15 +48,15 @@ oo::class create spar::Dispatcher {
 
     method on_cost {row stage usd} {
         if {![my _expect_active $row cost]} return
-        my _fire row-cost $row $stage $usd
+        my _fire job-cost $row $stage $usd
     }
     method on_retry {row stage attempt max} {
         if {![my _expect_active $row retry]} return
-        my _fire row-retry $row $stage $attempt $max
+        my _fire job-retry $row $stage $attempt $max
     }
     method on_credit_warning {row usd_window window_secs} {
         if {![my _expect_active $row credit_warning]} return
-        my _fire row-credit-warning $row $usd_window $window_secs
+        my _fire job-credit-warning $row $usd_window $window_secs
     }
     method on_roster_update {args} {
         if {![my subscribed domain-roster_update]} {
