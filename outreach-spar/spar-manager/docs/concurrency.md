@@ -49,15 +49,15 @@ The cost is initcmd overhead for `$jobs` worker threads paid up-front, on small 
 
 ## The classes that result
 
-**`spar::Dispatcher`** in `spar-dispatcher.tcl` — coordinator. Owns the heterogeneous queue, the per-row state map, the global `Jobs` cap, and the per-worker caps. Posts jobs to the tpool by looking up the row's `worker_proc`. Receives messages from worker threads through `thread::send -async` calls into its `on_*` methods. Holds no Tk references and creates no widgets.
+**`spar::Dispatcher`** in `spar-dispatcher.tcl` — coordinator. Owns the heterogeneous queue, the per-row state map, the global `Jobs` cap, and the per-worker caps. Posts jobs to the tpool by looking up the row's `worker_proc`. Receives messages from worker threads through `thread::send -async` calls into its `on_*` methods. Holds no Tk references and creates no widgets. The class itself is generic: its constructor takes the worker bootstrap as an argument (defaulting to `spar::pool_initcmd`, the file manifest kept in the residue section below the class), and the one domain message, `roster_update`, relays whole to the `domain-roster_update` subscriber that `spar::subscribe_pool_domain` installs beside each front-end's construction site.
 
 **Worker proc family** in `spar-dispatcher-initcmd.tcl` — registered in the tpool's `-initcmd` and so present in every worker thread's interpreter. `harness_run` for the AI-driven transitions, `ses_send` for SES delivery, `imap_poll` for reply checking. Each runs to completion or until it observes a cancel sentinel. Worker bodies are the only callers of `msg_*`; nothing else in worker-thread code may call `thread::send` directly.
 
-**Harness library** in `spar-harness.tcl`, loaded inside `harness_run` only. The validate-and-correct fix loop, credit-limit retry, session-resume bookkeeping, cost ledger. Used by the AI-work worker and only by it. The harness is the body of `harness_run`, not a layer above it.
+**Harness library** in `spar-harness.tcl`, loaded inside `harness_run` only. The validate-and-correct fix loop, credit-limit retry, session-resume bookkeeping, cost ledger. Used by the AI-work worker and only by it. The harness is the body of `harness_run`, not a layer above it. The claude pipe itself runs under the vendored deadman watchdog (`vendor/deadman-1.0.tm`): stall detection, the budget poll's kill, and the process-group teardown are the module's, and the harness keeps only the policy (which cause maps to which return code).
 
 **`spar::ui::DispatchController`** in `ui/dispatch-controller.tcl` — Tk controller. Owns the Play/Pause/Cancel buttons, the right-click menu on tree rows, and the progress bar. Translates user actions into Dispatcher method calls and renders Dispatcher row-state events back onto the `TransitionTree`. Does not spawn jobs and does not call `thread::send` directly.
 
-The CLI's equivalent is `dispatch_ready` in `spar-transition.tcl`. Same shape: it consults each transition's `prepare_for_pool`, builds one shared Dispatcher, installs `set_worker_cap ses_send 1`, enqueues every row, and `vwait`s once on a counter the row-state subscriber maintains.
+The CLI's equivalent is `dispatch_ready` in `spar-transition.tcl`. Same shape: it consults each transition's `prepare_for_pool`, builds one shared Dispatcher, wires `spar::subscribe_pool_domain`, installs `set_worker_cap ses_send 1`, enqueues every row, and `vwait`s once on a counter the row-state subscriber maintains.
 
 ## Row state machine
 
