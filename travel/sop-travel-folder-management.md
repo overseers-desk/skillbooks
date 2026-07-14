@@ -37,6 +37,24 @@ Files may originate from various sources: email confirmations, WhatsApp messages
 
 **Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access method (rclone) and is the single source of truth for folder location. When processing a journey, if only the folder name is provided, the system assumes it is located within the Travel Admin parent directory.
 
+### New Booking Intake (No Journey Folder Yet)
+
+A booking can arrive before any journey folder exists ("archive the ticket we just bought"). The flow is the reverse of a RUN: locate the confirmation email first, then create the folder it belongs in.
+
+1. **Locate the confirmation email.** The receiving mailbox follows the email account rules (see Email Account Verification, Procedure 1). A recency-defined target ("today", "this week") is found by enumerating the date window and reading the listing, not by guessing content keywords (see Procedure 2 Step 4 for the method and its zero-hit caveat):
+
+   ```bash
+   courier --imap <imap> --format json search "after:<purchase date>"
+   ```
+
+2. **Extract the booking facts**: travellers, route, travel dates, provider, booking reference.
+
+3. **Check for an existing journey folder** covering those dates and destinations (list folders per `sop-travel-folder-access.md`). If one exists, file into it rather than creating a sibling.
+
+4. **Create the journey folder** using the naming convention in `sop-travel-folder-access.md`, plus the standard subfolders. Mirror the traveller naming that existing folders use for the same travellers (initials or names, as sibling folders show).
+
+5. **File the confirmation** per the Fare/Accommodation/Pass naming conventions (PDF attachment when present; otherwise export the email body and convert, per `sop-travel-folder-access.md`).
+
 ### RUN: Folder Management Execution
 
 A **RUN** is a complete folder management pass through a journey folder, executing all procedures in sequence to ensure files are properly organized, named correctly, and synchronized with email confirmations. This SOP covers the folder management aspects only—for journey completeness evaluation and itinerary generation, see the Travel Itinerary Management SOP (`travel-itinerary-management.md`).
@@ -484,7 +502,7 @@ Verify that all booking confirmation emails have been saved to the journey folde
 ### Prerequisites
 
 - Access travel folders following `sop-travel-folder-access.md`
-- The `mailroom` CLI must be available for searching emails and downloading attachments
+- The `courier` CLI available for searching emails and downloading attachments (`courier list` shows the configured mailboxes)
 - Note the current date at execution start
 
 ### Input
@@ -528,28 +546,19 @@ Actions to execute (proceed without confirmation):
 
 4. **Search Emails for All Bookings**
 
-   Execute a single comprehensive IMAP search combining city names with booking keywords. This catches all booking types in one query.
+   Email search uses the `courier` CLI (Gmail-style queries; `courier list` shows the configured mailbox blocks). Pick the mailbox by the email account rules (see Email Account Verification, Procedure 1); when the receiving account is uncertain, `courier -A` searches every block at once.
 
-   **Build the search query:**
+   **Primary method — enumerate the date window, then read the listing:**
 
-   1. Extract city names from folder (e.g., `2025-06-15 Porto, Lisbon - Weiwu, Liansu` → Porto, Lisbon)
-   2. Use IMAP Polish notation to OR all terms together
-
-   **Search pattern:**
-   ```
-   search_emails(
-     query='OR FROM "City1" OR FROM "City2" ... OR SUBJECT "City1" OR SUBJECT "City2" ... OR SUBJECT "booking" OR SUBJECT "confirmation" OR SUBJECT "reservation" OR SUBJECT "itinerary" OR SUBJECT "e-ticket" OR SUBJECT "receipt" OR SUBJECT "ticket" OR SUBJECT "car rental" OR SUBJECT "car hire" SUBJECT "order"',
-     criteria="raw",
-     folder="INBOX",
-     limit=100
-   )
+   ```bash
+   courier --imap <imap> --format json search "after:<start> before:<end>"
    ```
 
-   This single search catches flights, hotels, car rentals, trains, passes, parking, taxi receipts, and local attractions. Use `FROM` and `SUBJECT` only—`TEXT` doesn't work with `criteria="raw"`.
+   A bare date window with no content keywords lists every message in the window; booking mail stands out by sender and subject (airline, hotel, rail and OTA domains are distinctive). This one listing catches flights, hotels, car rentals, trains, passes, parking, taxi receipts, and local attractions, including bookings whose subjects are generic ("Standard Ticket", "Order Receipt"). For a journey-folder sync, the window is the earliest travel date minus 120 days to the latest travel date plus 7 days. When that window is too long to read, narrow it with a single plain keyword on top (a city name, a provider name) rather than a keyword list.
 
-   **Date filtering**: After search, filter results to journey date range (earliest travel date minus 120 days to latest travel date plus 7 days).
+   **Keyword queries are a narrowing device, not the primary instrument.** Gmail-syntax translation to non-Gmail IMAP blocks is imperfect: OR-chains and hyphenated tokens (`e-ticket`) have returned zero against mail that a bare date-window listing showed present. A zero result from a mailbox expected to hold the answer indicts the query, not the mailbox — re-run as a bare date window before concluding the mail is absent or asking the user.
 
-   **Bolt invoice handling**: Bolt invoices are download links, not attachments. Use `mailroom links -f FOLDER -u UID` to extract the invoice URL, then download.
+   **Bolt invoice handling**: Bolt invoices are download links, not attachments. Use `courier --imap <imap> links -f FOLDER -u UID` to extract the invoice URL, then download.
 
 5. **Tabulate All Booking Emails Found**
 
@@ -587,7 +596,7 @@ Actions to execute (proceed without confirmation):
    - **Booking Confirmation** (Travel Itinerary, Reservation Confirmation, Invoice with PNR):
      - Subject typically: "Travel Itinerary", "Booking Confirmation", "Invoice [number]"
      - Contains full booking details
-     - **Attachments**: Check for PDF attachments using `mailroom attachments -f FOLDER -u UID`. If a PDF attachment exists (e-ticket, itinerary, confirmation), save the attachment as the primary source.
+     - **Attachments**: Check for PDF attachments using `courier --imap <imap> attachments -f FOLDER -u UID`. If a PDF attachment exists (e-ticket, itinerary, confirmation), save the attachment as the primary source.
      - **Action**: Verify if already saved in Fares folder. If not, flag for saving (specifying the attachment to save).
    
    - **Cancellation Confirmation**:
@@ -618,7 +627,7 @@ Actions to execute (proceed without confirmation):
    - **Rental Agreement / Booking Confirmation**:
      - Subject typically: "Rental Agreement", "Booking confirmed", "Your reservation", "Confirmation #", "car hire confirmation"
      - Contains booking reference, pickup/return dates and locations, vehicle details
-     - **Attachments**: Check for PDF attachments using `mailroom attachments -f FOLDER -u UID`. If a PDF attachment exists (voucher, rental agreement, confirmation), this is the primary source document to save.
+     - **Attachments**: Check for PDF attachments using `courier --imap <imap> attachments -f FOLDER -u UID`. If a PDF attachment exists (voucher, rental agreement, confirmation), this is the primary source document to save.
      - **Confirmation priority**: If both an OTA confirmation (e.g., Expedia) and a direct provider confirmation (e.g., from Avis itself) exist for the same booking, prefer the direct provider confirmation.
      - **Extract key information**:
        - Booking reference/confirmation number (use the car rental company's reference, not OTA's)
@@ -673,7 +682,7 @@ Actions to execute (proceed without confirmation):
    - **Hotel Booking Confirmation**:
      - Subject typically: "Booking confirmation", "Reservation confirmed", "Your booking at [Hotel Name]"
      - Contains booking reference, hotel name, check-in/check-out dates
-     - **Attachments**: Check for PDF attachments using `mailroom attachments -f FOLDER -u UID`. If a PDF attachment exists (confirmation, voucher), save the attachment as the primary source.
+     - **Attachments**: Check for PDF attachments using `courier --imap <imap> attachments -f FOLDER -u UID`. If a PDF attachment exists (confirmation, voucher), save the attachment as the primary source.
      - Verify check-in date falls within journey date range (earliest travel date to latest travel date + 7 days). If check-in is outside this range, this booking belongs to a different journey—skip it.
      - **Action**: Verify if already saved in Accommodations folder. If not, flag for saving (specifying the attachment to save).
      - **Check for invoice**: Examine if the email contains an invoice attachment or invoice information
@@ -783,7 +792,7 @@ Actions to execute (proceed without confirmation):
    
    **Source hierarchy** (in order of preference):
    1. **PDF attachment**: If the email has a PDF attachment (voucher, confirmation, e-ticket), save the attachment directly
-   2. **HTML email body converted to PDF**: If no PDF attachment exists but the email body contains the booking confirmation, export with `mailroom export -f FOLDER -u UID -o /tmp/booking.html`, then convert with `weasyprint /tmp/booking.html /tmp/booking.pdf`
+   2. **HTML email body converted to PDF**: If no PDF attachment exists but the email body contains the booking confirmation, export with `courier --imap <imap> export -f FOLDER -u UID -o /tmp/booking.html`, then convert with `weasyprint /tmp/booking.html /tmp/booking.pdf`
    3. **NEVER**: Do not create text files summarising email content. If none of the above sources produce a usable PDF, do step 2 (export email then convert to pdf)
    
    **Note on existing image files**: Image files (`.jpg`, `.jpeg`, `.png`) may already exist in the folder—for example, a human may have saved a boarding pass photo. Do not replace these with inferior versions; simply rename them to follow naming conventions.
@@ -836,7 +845,7 @@ Actions to execute (proceed without confirmation):
 
    ```bash
    # Download attachment to /tmp
-   mailroom -a me-weiwu-id-au save -f INBOX -u UID -i attachment.pdf -o /tmp/attachment.pdf
+   courier --imap me-weiwu-id-au save -f INBOX -u UID --attachment attachment.pdf -o /tmp/attachment.pdf
 
    # Upload to Dropbox
    rclone copyto /tmp/attachment.pdf "Dropbox:0. Travel Admin/[journey]/[subfolder]/[filename].pdf"
@@ -855,21 +864,23 @@ Actions to execute (proceed without confirmation):
    **Deleting Emails:**
 
    ```bash
-   mailroom -a me-weiwu-id-au delete -f INBOX -u UID
+   courier --imap me-weiwu-id-au trash -f INBOX -u UID
    ```
+
+   (`trash` is the recoverable removal; `courier delete` expunges irrecoverably and is normally not wanted.)
 
    **Report what was done** after all actions complete.
 
 ### Checkpoint: Email Verification Complete
 
-- INBOX sanity check passed (if multiple searches returned empty, sanity check confirmed INBOX has emails)
+- Zero-result searches re-run as a bare date-window listing before being read as absence
 - All PNR codes/booking references collected from Fares folder
 - All accommodation booking references collected from Accommodations folder
 - Journey date range established
 - Current date determined and journey status assessed
-- Search strategy applied: `from`/`subject` criteria used first, `text` search used as fallback only when needed
+- Search strategy applied: date-window enumeration as the primary instrument, keyword narrowing only on top
 - All emails categorised appropriately (transport, accommodation, and taxi/ride-hailing)
-- **All emails with attachments had attachments checked** using `mailroom attachments -f FOLDER -u UID`
+- **All emails with attachments had attachments checked** using `courier --imap <imap> attachments -f FOLDER -u UID`
 - **All file saves produce PDF output** (from PDF attachment or HTML-to-PDF conversion—no text summaries created)
 - Taxi/ride-hailing invoices identified within journey date range
 - Cancellation emails identified and corresponding files flagged for renaming
