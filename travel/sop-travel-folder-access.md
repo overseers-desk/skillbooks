@@ -82,7 +82,7 @@ When a booking confirmation exists only as an email body (no PDF attachment), ex
 
 ```bash
 # Export the email as HTML
-mailroom -a me-example-com export -f INBOX -u UID -o /tmp/booking.html
+courier --imap me-example-com export -f INBOX -u UID -o /tmp/booking.html
 
 # Convert to PDF
 weasyprint /tmp/booking.html /tmp/booking.pdf
