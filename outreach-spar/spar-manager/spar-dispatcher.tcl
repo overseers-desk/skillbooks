@@ -37,7 +37,7 @@ oo::class create spar::Dispatcher {
     # Terminal states. Anything else is non-terminal.
     variable Terminal
 
-    constructor {jobs {log_cb ""}} {
+    constructor {jobs {log_cb ""} {initcmd ""}} {
         set Jobs            $jobs
         set WorkerCap       [dict create]
         set Queue           {}
@@ -52,28 +52,15 @@ oo::class create spar::Dispatcher {
 
         set me  [self]
         set tid [thread::id]
-        set initcmd_path [file join $::spar::pool_script_dir \
-            spar-dispatcher-initcmd.tcl]
-        set state_path   [file join $::spar::pool_script_dir spar-state.tcl]
-        set harness_path [file join $::spar::pool_script_dir spar-harness.tcl]
-        set email_path   [file join $::spar::pool_script_dir spar-email.tcl]
-        set ses_send_path [file join $::spar::pool_script_dir \
-            transitions ses_send_one.tcl]
-        set li_send_path [file join $::spar::pool_script_dir \
-            transitions linkedin_send_one.tcl]
-        set imap_check_path [file join $::spar::pool_script_dir \
-            transitions imap_check_one.tcl]
-
+        # The worker bootstrap: a generic preamble (whom to message) ahead
+        # of the deployment's own script, which declares the worker procs
+        # and their file manifest. The default is this application's
+        # (spar::pool_initcmd, defined below the class).
+        if {$initcmd eq ""} { set initcmd [spar::pool_initcmd] }
         set initcmd "
             set ::main_tid [list $tid]
             set ::dispatcher [list $me]
-            set ::pool_state_file   [list $state_path]
-            set ::pool_harness_file [list $harness_path]
-            set ::pool_email_file   [list $email_path]
-            set ::pool_ses_send_file   [list $ses_send_path]
-            set ::pool_li_send_file    [list $li_send_path]
-            set ::pool_imap_check_file [list $imap_check_path]
-            source [list $initcmd_path]
+            $initcmd
         "
         # minworkers = maxworkers — pre-spawn all worker threads at
         # tpool::create time. With -minworkers 0 the Thread package's
@@ -325,13 +312,16 @@ oo::class create spar::Dispatcher {
         my _try_post_next
     }
 
-    method on_roster_update {row roster_path key_col key_val field new_val} {
-        if {[catch {
-            spar::update_roster_field $roster_path $key_col $key_val \
-                $field $new_val
-        } err]} {
-            my _log "roster_update failed for row=$row $key_col=$key_val: $err"
+    # A domain message the pool relays whole: the semantics belong to the
+    # deployment's subscriber (spar::subscribe_pool_domain, below the
+    # class), not to the pool. A relay with no subscriber is logged and
+    # dropped rather than silently lost.
+    method on_roster_update {args} {
+        if {![dict exists $Subs domain-roster_update]} {
+            my _log "roster_update with no subscriber; dropping: $args"
+            return
         }
+        my _fire domain-roster_update {*}$args
     }
 
     method on_cost {row stage usd} {
@@ -490,6 +480,45 @@ oo::class create spar::Dispatcher {
         if {$LogCallback ne ""} {
             {*}$LogCallback "spar::Dispatcher: $msg"
         }
+    }
+}
+
+# ─── spar residue: this deployment's own wiring ──────────────────────────
+# The pool class above is generic; what follows is what this application
+# feeds it: the worker bootstrap manifest, and the domain subscriber each
+# construction site installs beside the pool.
+
+# The worker bootstrap script: the six file globals the worker procs read,
+# then the worker definitions themselves.
+proc spar::pool_initcmd {} {
+    variable pool_script_dir
+    set d $pool_script_dir
+    return "
+        set ::pool_state_file   [list [file join $d spar-state.tcl]]
+        set ::pool_harness_file [list [file join $d spar-harness.tcl]]
+        set ::pool_email_file   [list [file join $d spar-email.tcl]]
+        set ::pool_ses_send_file   [list [file join $d transitions ses_send_one.tcl]]
+        set ::pool_li_send_file    [list [file join $d transitions linkedin_send_one.tcl]]
+        set ::pool_imap_check_file [list [file join $d transitions imap_check_one.tcl]]
+        source [list [file join $d spar-dispatcher-initcmd.tcl]]
+    "
+}
+
+# Wire the domain messages to their spar semantics. Both front-ends call
+# this right after constructing their Dispatcher.
+proc spar::subscribe_pool_domain {disp} {
+    $disp subscribe domain-roster_update ::spar::_pool_roster_update
+}
+
+# roster_update: a worker requests a serialised mutation of a roster TSV;
+# the main thread is the serialisation point.
+proc spar::_pool_roster_update {row roster_path key_col key_val field new_val} {
+    if {[catch {
+        spar::update_roster_field $roster_path $key_col $key_val \
+            $field $new_val
+    } err]} {
+        ${::spar::dispatch_log}::warn \
+            "roster_update failed for row=$row $key_col=$key_val: $err"
     }
 }
 

@@ -92,7 +92,7 @@ Every message is sent by calling a proc named `msg_<name>` defined in the tpool'
 | `done` | terminal success | running / paused / rate_limited → done | row, result_dict |
 | `failed` | terminal failure | running / paused / rate_limited → failed | row, reason |
 | `cancelled` | worker observed cancel sentinel and stopped at a safe point | running / paused → cancelled | row |
-| `roster_update` | request a serialised mutation of a roster TSV (the present `ROSTER_UPDATE` protocol) | none | row, roster_path, key_col, key_val, field, new_val |
+| `roster_update` | request a serialised mutation of a roster TSV (the present `ROSTER_UPDATE` protocol); the pool relays it whole to the `domain-roster_update` subscriber that `spar::subscribe_pool_domain` installs, and logs a drop when none is installed | none | row, roster_path, key_col, key_val, field, new_val |
 
 ### Harness-only — sent by `harness_run` workers
 
