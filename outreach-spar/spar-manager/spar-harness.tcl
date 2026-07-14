@@ -14,10 +14,10 @@ package require json
 package require json::write
 package require TclOO
 package require logger
-# deadman (the subprocess watchdog) rides the teatotal checkout beside this
-# repository until it is vendored in.
-::tcl::tm::path add [file normalize \
-    [file join [file dirname [info script]] .. .. .. teatotal]]
+# vendor/ carries the modules this app depends on: a checkout runs as-is,
+# and an upstream bump lands as a reviewable diff.
+::tcl::tm::path add \
+    [file join [file dirname [file normalize [info script]]] vendor]
 package require deadman
 
 # Idempotent: oo::class create is not idempotent, so guard against
