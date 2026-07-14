@@ -209,9 +209,9 @@ wait_for_terminal $d r1 1000
 $d destroy
 
 # ════════════════════════════════════════════════════════════════════════
-# 9. count_by_transition — across heterogeneous rows
+# 9. count_by_kind — across heterogeneous rows
 # ════════════════════════════════════════════════════════════════════════
-section "9. count_by_transition"
+section "9. count_by_kind"
 
 set d [spar::Dispatcher new 4 test_log]
 $d enqueue a1 T1 fake_worker {plan {{sleep 30}}}
@@ -220,9 +220,9 @@ $d enqueue b1 T2 fake_worker {plan {{sleep 30}}}
 $d enqueue b2 T2 fake_worker {plan {{sleep 30}}}
 $d enqueue b3 T2 fake_worker {plan {{sleep 30}}}
 foreach r {a1 a2 b1 b2 b3} { wait_for_terminal $d $r 3000 }
-assert_eq [$d count_by_transition T1 done] 2 "T1 done count = 2"
-assert_eq [$d count_by_transition T2 done] 3 "T2 done count = 3"
-assert_eq [$d count_by_transition T1 failed] 0 "T1 failed count = 0"
+assert_eq [$d count_by_kind T1 done] 2 "T1 done count = 2"
+assert_eq [$d count_by_kind T2 done] 3 "T2 done count = 3"
+assert_eq [$d count_by_kind T1 failed] 0 "T1 failed count = 0"
 $d destroy
 
 # ════════════════════════════════════════════════════════════════════════

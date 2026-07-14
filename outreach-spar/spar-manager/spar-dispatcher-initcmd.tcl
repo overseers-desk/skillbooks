@@ -5,7 +5,7 @@
 #
 # Globals available when this file is sourced:
 #   ::main_tid           — main thread id, target of all msg_* sends
-#   ::dispatcher         — spar::Dispatcher object command in the main thread
+#   ::pool         — spar::Dispatcher object command in the main thread
 #   ::pool_state_file    — abs path to spar-state.tcl  (lazy-sourced by harness_run)
 #   ::pool_harness_file  — abs path to spar-harness.tcl (lazy-sourced by harness_run)
 #   ::pool_email_file    — abs path to spar-email.tcl  (lazy-sourced by ses_send / imap_poll)
@@ -29,59 +29,60 @@ package require Tcl 9
 # work the row needs; it does not need to announce that it has started.
 
 proc msg_phase {row phase} {
-    thread::send -async $::main_tid [list $::dispatcher on_phase $row $phase]
+    thread::send -async $::main_tid [list $::pool on_phase $row $phase]
 }
 proc msg_progress {row text} {
-    thread::send -async $::main_tid [list $::dispatcher on_progress $row $text]
+    thread::send -async $::main_tid [list $::pool on_progress $row $text]
 }
 proc msg_done {row {result {}}} {
-    thread::send -async $::main_tid [list $::dispatcher on_done $row $result]
+    thread::send -async $::main_tid [list $::pool on_done $row $result]
 }
 proc msg_failed {row reason} {
-    thread::send -async $::main_tid [list $::dispatcher on_failed $row $reason]
+    thread::send -async $::main_tid [list $::pool on_failed $row $reason]
 }
 proc msg_cancelled {row} {
-    thread::send -async $::main_tid [list $::dispatcher on_cancelled $row]
+    thread::send -async $::main_tid [list $::pool on_cancelled $row]
 }
 proc msg_roster_update {row roster_path key_col key_val field new_val} {
-    thread::send -async $::main_tid [list $::dispatcher on_roster_update \
+    thread::send -async $::main_tid [list $::pool on_roster_update \
         $row $roster_path $key_col $key_val $field $new_val]
 }
 proc msg_cost {row stage usd} {
-    thread::send -async $::main_tid [list $::dispatcher on_cost \
+    thread::send -async $::main_tid [list $::pool on_cost \
         $row $stage $usd]
 }
 proc msg_retry {row stage attempt max} {
-    thread::send -async $::main_tid [list $::dispatcher on_retry \
+    thread::send -async $::main_tid [list $::pool on_retry \
         $row $stage $attempt $max]
 }
 proc msg_rate_limited {row reset_at} {
-    thread::send -async $::main_tid [list $::dispatcher on_rate_limited \
+    thread::send -async $::main_tid [list $::pool on_rate_limited \
         $row $reset_at]
 }
 proc msg_rate_limit_cleared {row} {
-    thread::send -async $::main_tid [list $::dispatcher on_rate_limit_cleared $row]
+    thread::send -async $::main_tid [list $::pool on_rate_limit_cleared $row]
 }
 proc msg_paused {row} {
-    thread::send -async $::main_tid [list $::dispatcher on_paused $row]
+    thread::send -async $::main_tid [list $::pool on_paused $row]
 }
 proc msg_resumed {row} {
-    thread::send -async $::main_tid [list $::dispatcher on_resumed $row]
+    thread::send -async $::main_tid [list $::pool on_resumed $row]
 }
 proc msg_credit_warning {row usd_window window_secs} {
-    thread::send -async $::main_tid [list $::dispatcher on_credit_warning \
+    thread::send -async $::main_tid [list $::pool on_credit_warning \
         $row $usd_window $window_secs]
 }
 
 # ─── Sentinel helpers (Dispatcher → worker via tsv) ──────────────────────
 
-# Workers must use these instead of reading the tsv directly. The tsv
-# array name is stable across threads.
+# Workers must use these instead of reading the tsv directly. The pool
+# names its sentinel array in ::jobpool_tsv, injected into every worker
+# interpreter at pool creation.
 proc worker_cancel_requested? {row} {
-    return [tsv::exists ::spar::pool $row.cancel]
+    return [tsv::exists $::jobpool_tsv $row.cancel]
 }
 proc worker_pause_requested? {row} {
-    return [tsv::exists ::spar::pool $row.pause]
+    return [tsv::exists $::jobpool_tsv $row.pause]
 }
 
 # ─── Worker proc bodies (production) ─────────────────────────────────────
