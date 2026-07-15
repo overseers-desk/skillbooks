@@ -104,7 +104,7 @@ Repeat until the stop condition fires:
    - **Ambiguous** → `record_verify.py --state ambiguous --evidence
      '{"source":"linkedin","candidates":[...]}'`. Next candidate.
 
-6.5. **Check connection status** — only for `verified` candidates. This step is CHEAP (no CUL, ~3 seconds, direct profile-page fetch). It MUST come before any mailroom or drafting work, because half the candidates may already be first-degree connections and there is no point burning tokens drafting notes for invites that will never go out.
+6.5. **Check connection status** — only for `verified` candidates. This step is CHEAP (no CUL, ~3 seconds, direct profile-page fetch). It MUST come before any courier or drafting work, because half the candidates may already be first-degree connections and there is no point burning tokens drafting notes for invites that will never go out.
 
    ```bash
    python3 ~/code/aesop/contact-graph/check_connection_status.py --vanity <vanity-or-url>
@@ -128,7 +128,7 @@ Repeat until the stop condition fires:
    Branch on the candidate's `level`.
 
    **Level 3 (bare connect).** They plainly remember us, so a note adds
-   nothing. No mailroom or USP work. Save with:
+   nothing. No courier or USP work. Save with:
    ```bash
    python3 ~/code/aesop/contact-graph/record_draft.py --human-id <id> --no-note
    ```
@@ -137,12 +137,12 @@ Repeat until the stop condition fires:
    **Levels 2 and 1 (write a note).** First gather context:
    - **Fetch correspondence**:
      ```bash
-     mailroom -A search "from:<email> OR to:<email>" -n 10
+     courier -A search "from:<email> OR to:<email>" -n 10
      ```
      Use the first email in `email_addresses`. If zero results, retry with
      the second address.
    - **Pick a touch-point** from the most recent thread (subject + date is
-     usually enough; fetch one body via `mailroom read <UID>` if a subject
+     usually enough; fetch one body via `courier read -u <UID>` if a subject
      is too generic to anchor to).
    - **Decide which venue fits** this contact. Default: Rivermill. Switch
      to Bizcocheros if the email-thread topic, organisation, or geography

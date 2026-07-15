@@ -7,13 +7,13 @@ transcript: ~/.claude/projects/-home-weiwu-code-aesop-travel/be4b5fa2-3d12-4e22-
 
 # Qantas booking declared absent from all mailboxes, on a head-truncated search of the wrong sender domain
 
-The task was to find every invoice for a June 2026 multi-leg family trip (Spain → London → Asia → Brisbane → Gold Coast) and file them for reconciliation against the CPL company card. Five IMAP mailboxes are configured in `mailroom`.
+The task was to find every invoice for a June 2026 multi-leg family trip (Spain → London → Asia → Brisbane → Gold Coast) and file them for reconciliation against the CPL company card. Five IMAP mailboxes are configured in `courier`.
 
 ## Pre-fireman sequence
 
-1. `mailroom -A search 'qantas' search 'gold coast' search 'OOL'`, output piped through `head -80`. The raw JSON is verbose, so `head -80` showed only two or three messages, all marketing (a DBS travel promo, an "Experience Gold Coast" newsletter, a "perks before you travel" bank mail). Conclusion: noise.
+1. `courier -A search 'qantas' search 'gold coast' search 'OOL'`, output piped through `head -80`. The raw JSON is verbose, so `head -80` showed only two or three messages, all marketing (a DBS travel promo, an "Experience Gold Coast" newsletter, a "perks before you travel" bank mail). Conclusion: noise.
 
-2. `mailroom -A search 'from:qantas.com' search 'from:qantas' search 'subject:itinerary'`, formatted one line per message, piped through `head -60`. `from:qantas.com` returned five messages, all `upgradeoffers@qantas.com` (2024–2025 bid-for-upgrade marketing). `from:qantas` returned a long block, of which the visible 60 lines were entirely work-mailbox results dated 2017–2023. Conclusion, written verbatim: "No Qantas booking or e-ticket for 2026 exists in any of the five mailboxes — every Qantas confirmation is 2017–2023."
+2. `courier -A search 'from:qantas.com' search 'from:qantas' search 'subject:itinerary'`, formatted one line per message, piped through `head -60`. `from:qantas.com` returned five messages, all `upgradeoffers@qantas.com` (2024–2025 bid-for-upgrade marketing). `from:qantas` returned a long block, of which the visible 60 lines were entirely work-mailbox results dated 2017–2023. Conclusion, written verbatim: "No Qantas booking or e-ticket for 2026 exists in any of the five mailboxes — every Qantas confirmation is 2017–2023."
 
 3. Acted on that absence for the next three turns: built a forensic puzzle around the on-file boarding pass's e-ticket prefix (`781` = China Eastern stock vs Qantas `081`), concluded the SIN→BNE invoice "needs the Qantas portal / serialised browsing," then "is in-app only, no PDF." Every downstream claim rested on the unverified absence, and each new claim was stated with more confidence than the last.
 
@@ -33,7 +33,7 @@ The Qantas e-ticket (booking F784YM, subject "Confirmation and E-Ticket Flight I
 
 Two facts already on screen falsified the claim at the moment it was made. Earlier searches in the same session had shown that this same personal mailbox held every other booking for the trip (the Ryanair invoice, the BudgetAir and Flightnetwork receipts) — yet Qantas was assumed absent from it. And `from:qantas.com` returning *only* `upgradeoffers@qantas.com` should have raised "is `qantas.com` even the transactional domain?" rather than "there is no booking."
 
-Once the assuming stopped, it took **one** search to find: `mailroom -A search 'QF52' …` surfaced both reminders and, in the same run, the F784YM e-ticket with its PDF attachment — the document that had been declared not to exist anywhere.
+Once the assuming stopped, it took **one** search to find: `courier -A search 'QF52' …` surfaced both reminders and, in the same run, the F784YM e-ticket with its PDF attachment — the document that had been declared not to exist anywhere.
 
 ## Marker for a hook
 

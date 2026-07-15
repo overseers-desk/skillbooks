@@ -92,7 +92,7 @@ These mirror the warnings produced by `spar::build_warnings` (spar-state.tcl). E
 
 ### 1.4 Check email button
 
-A button labelled "Check Email" in the toolbar area of the campaign panel. Clicking it queries the campaign's configured mailroom account for new replies and updates approach files with reply markers. The button is disabled while a check is in progress. Results appear in the log panel (§3) and the progress table refreshes afterward.
+A button labelled "Check Email" in the toolbar area of the campaign panel. Clicking it queries the campaign's configured courier account for new replies and updates approach files with reply markers. The button is disabled while a check is in progress. Results appear in the log panel (§3) and the progress table refreshes afterward.
 
 ## 2. Transition manager
 
@@ -114,7 +114,7 @@ The fixed transition types:
 
 Each top-level row displays: the transition label and the count of tasks (e.g. "Profile → Approach (23)"). Counts update dynamically when the user changes segment checkboxes in the progress table.
 
-T7 (Send → Reply) dispatches through `spar::r::run`: it queries the campaign's mailroom account and appends received replies to the corresponding approach YAMLs (same code path as the toolbar "Check Email" button). T8 (LinkedIn → Email follow-up) remains a monitoring transition — displayed but with no play button.
+T7 (Send → Reply) dispatches through `spar::r::run`: it queries the campaign's courier account and appends received replies to the corresponding approach YAMLs (same code path as the toolbar "Check Email" button). T8 (LinkedIn → Email follow-up) remains a monitoring transition — displayed but with no play button.
 
 ### 2.2 Tasks (child items)
 

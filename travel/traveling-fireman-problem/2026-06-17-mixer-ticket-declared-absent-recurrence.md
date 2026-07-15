@@ -13,7 +13,7 @@ This is the second occurrence in a single session of the failure recorded in `20
 
 Asked to save today's Tamborine Mountain Chamber event ("After Hours Networking Mixer") to the Passes folder. After saving the invitation email, I checked whether a real ticket existed:
 
-1. `mailroom -A search 'trybooking' search 'humanitix' search 'your ticket' search 'distillery'`, piped through `python3 mr_count.py | grep -iE "…|order|ticket|…" | head -25`. The visible rows were all the Chamber's own invitation/newsletter emails. Conclusion, written verbatim: "No separate ticket confirmation exists for today's mixer — the only artifacts are the Chamber's invitation emails (the trybooking/humanitix counts are unrelated noise)."
+1. `courier -A search 'trybooking' search 'humanitix' search 'your ticket' search 'distillery'`, piped through `python3 courier_count.py | grep -iE "…|order|ticket|…" | head -25`. The visible rows were all the Chamber's own invitation/newsletter emails. Conclusion, written verbatim: "No separate ticket confirmation exists for today's mixer — the only artifacts are the Chamber's invitation emails (the trybooking/humanitix counts are unrelated noise)."
 
 2. Saved the marketing invitation as the Passes "pass," and dismissed the platform counts (99 trybooking, 212 humanitix) as "unrelated noise."
 

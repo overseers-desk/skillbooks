@@ -9,7 +9,7 @@ __FILE_ITEMS__
 ## Contact details from roster
 
 __CONTACT_SUMMARY__
-__MAILROOM_SECTION__
+__COURIER_SECTION__
 
 ## Channel selection
 

@@ -477,16 +477,16 @@ assert_eq [$d state ghost] failed "ses_send fails when approach missing"
 $d destroy
 
 # ════════════════════════════════════════════════════════════════════════
-# 14d. imap_poll — happy path through a fake mailroom helper
+# 14d. imap_poll — happy path through a fake courier helper
 # ════════════════════════════════════════════════════════════════════════
-# The worker shells out to mailroom. We override mailroom_bin in opts
+# The worker shells out to courier. We override courier_bin in opts
 # to point at a fake script that returns canned JSON for both `search`
 # and `read`. The fake script branches on its first positional arg
-# after "-a <account>" to mimic the real mailroom CLI.
+# after "--imap <account>" to mimic the real courier CLI.
 section "14d. imap_poll happy path"
 
-set fake_mailroom [file join $tmp_root fake-mailroom.tcl]
-set fd [open $fake_mailroom w]
+set fake_courier [file join $tmp_root fake-courier.tcl]
+set fd [open $fake_courier w]
 puts $fd {#!/usr/bin/env tclsh9.0
 # Args: --imap <account> (search|read) -f <folder> ...
 # Emit canned JSON for the two subcommands. Drop --imap/-f flags.
@@ -505,7 +505,7 @@ if {$op eq "search"} {
 exit 0
 }
 close $fd
-file attributes $fake_mailroom -permissions 0o755
+file attributes $fake_courier -permissions 0o755
 
 set seg_dir3 [file join $tmp_root "seg-imap"]
 file mkdir [file join $seg_dir3 approach]
@@ -533,7 +533,7 @@ set imap_opts [dict create \
     folder        "INBOX" \
     sender        "me@acme-venues.au" \
     dry_run       0 \
-    mailroom_bin  $fake_mailroom]
+    courier_bin  $fake_courier]
 
 set d [spar::Dispatcher new 2 test_log]
 $d enqueue carol imap_poll $imap_opts

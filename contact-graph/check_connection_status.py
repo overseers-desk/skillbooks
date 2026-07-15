@@ -5,7 +5,7 @@ whether the operator is already first-degree connected to a person, has a
 pending invite outstanding, or is not connected.
 
 Direct URL fetch (no people-search), so it does not count against the
-Commercial Use Limit. Cheap; should be called BEFORE mailroom/draft work
+Commercial Use Limit. Cheap; should be called BEFORE courier/draft work
 in the outreach loop so we do not burn tokens drafting notes for people
 who cannot or should not be invited.
 

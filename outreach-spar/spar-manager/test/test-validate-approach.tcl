@@ -507,7 +507,7 @@ assert_eq [has_issue $vp19_issues profile_unreachable_without_exclusion] 0 \
 # ════════════════════════════════════════════════════════════════════════
 section "25. spar::build_reply_headers — reply header derivation"
 
-# Parent dict captured at A-time from `mailroom read`.
+# Parent dict captured at A-time from `courier read`.
 set brh_parent_root [dict create \
     account admin-rivermill-au \
     folder {[Gmail]/All Mail} \

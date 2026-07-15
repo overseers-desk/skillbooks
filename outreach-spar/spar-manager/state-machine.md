@@ -243,7 +243,7 @@ T1–T4 are the cheap (no-parse) transitions; T5 is reserved for a future cheap 
 | T3 | Stale → Re-profile | state = PROFILE_STALE | `spar-transition.tcl <campaign.yaml> T3` | available |
 | T4 | Re-profile → Re-approach | state = APPROACH_STALE (profile_hash mismatch, #63) | `spar-transition.tcl <campaign.yaml> T4` | available |
 | T6 | Approach → Send | state = APPROACHED or SENT; email primary: has_email, not email_sent; linkedin primary: has_linkedin, not linkedin_sent | `spar-transition.tcl <campaign.yaml> T6` (email: AWS SES, serial with --delay; linkedin: overseer POST /run, serial, overseer-paced) | available |
-| T7 | Send → Reply | any_sent, not any_replied, email address known | `spar-transition.tcl <campaign.yaml> T7` (mailroom reply-check against the known address, appends replies to approach YAML) | available |
+| T7 | Send → Reply | any_sent, not any_replied, email address known | `spar-transition.tcl <campaign.yaml> T7` (courier reply-check against the known address, appends replies to approach YAML) | available |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
 | T9 | Secondary follow-up | `secondary_ready` | render script + manual marker | manual |
 | T10 | Tertiary follow-up | `tertiary_ready` | render script + manual marker | manual |
@@ -317,7 +317,7 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 | T3  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
 | T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
 | T6  | APPROACHED ∨ SENT    | email primary: has_email ∧ ¬email_sent ∧ A(approach_path); linkedin primary: has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". other primary channels: row is omitted entirely | spar-state.tcl:464 |
-| T7  | any ≠ EXCLUDED       | any_sent ∧ ¬any_replied ∧ email-known ∧ A(approach_path) | A invalid → "invalid_approach_yaml". No watchable address → row omitted. Dispatchable rows dispatch through spar::r::run (mailroom reply-check) | spar-state.tcl:487 |
+| T7  | any ≠ EXCLUDED       | any_sent ∧ ¬any_replied ∧ email-known ∧ A(approach_path) | A invalid → "invalid_approach_yaml". No watchable address → row omitted. Dispatchable rows dispatch through spar::r::run (courier reply-check) | spar-state.tcl:487 |
 | T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | spar-state.tcl:526 |
 | T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | spar-state.tcl:T9 branch |
 | T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | spar-state.tcl:T10 branch |
