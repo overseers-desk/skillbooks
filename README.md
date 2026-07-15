@@ -27,17 +27,19 @@ becomes
 
 ## Skills
 
-- **edit-email**: Polish or compose an email so it reads as a person wrote it, not a project: fixes the tells of machine-written mail (to-do lists, session dates, smuggled inferences, a buried lead) and applies a standing like-human-do pass. `--register` picks how the mail is pitched to its recipient; `--voice` picks whose hand it is written in.
-- **edit-economistly**: Edit a markdown draft to The Economist editorial standard through a fresh-context subeditor. `--two-pass` for a closer edit.
-- **sorry-im-late**: Cold-read something written during a conversation, a draft or a staged code diff, as a colleague who has the project but was not in that conversation, so missing context and insider residue show up before you send, publish, or commit.
-- **this-guy-aint**: Cold-read work written under an assumed identity (`human`, `aussie`, `developer`, `manager`, any phrase) as a fresh reader who is one: believed or not, with the giveaways that leak a non-member. Detection only, no editing; `this-guy-aint human` is the light gate for code comments and short pieces where tell-tale is too heavy.
-- **tell-tale**: Label each line of a draft for AI tells (vocabulary clusters, negative parallelisms, rule-of-three padding, em-dash overuse, promotional tone), rewrite only the flagged lines, then smooth the seams. Optional project profile and dialect target.
-- **quote-me**: Locate the exact source passage behind a claim, run a challenge-and-minimum-edit cycle, and verify the fix with a context-free subagent. Triggered by "quote me".
-- **worklog**: Write a durable WORKLOG in the repository so a session's knowledge survives when its JSONL is gone or you continue the work on another machine or in a fresh session.
-- **nswp-scout**: Scout a codebase for redundant solutions, most sharply one problem solved twice in two vocabularies where neither arm earns its place, and other solutions that answer no live problem.
-- **drift-scout**: Find the stale debris a refactor, rename, or move left in a codebase's edges: extract each change's retired vocabulary, sweep the periphery, confirm by running, and report only what provably breaks or misleads.
-- **halfway-house**: Tell a decision your agent can safely settle from one that blocks the path: settle it, land the change, file the road not taken, and bring only the true forks to you.
-- **typst-pdf**: Render a markdown file to PDF with Typst, optionally applying a per-repo template.
+| Skill | What it does | Category |
+|---|---|---|
+| **edit-email** | Polish or compose an email so it reads as a person wrote it, not a project: fixes the tells of machine-written mail (to-do lists, session dates, smuggled inferences, a buried lead) and applies a standing like-human-do pass. `--register` picks how the mail is pitched to its recipient; `--voice` picks whose hand it is written in. | Writing |
+| **edit-economistly** | Edit a markdown draft to The Economist editorial standard through a fresh-context subeditor. `--two-pass` for a closer edit. | Writing |
+| **tell-tale** | Label each line of a draft for AI tells (vocabulary clusters, negative parallelisms, rule-of-three padding, em-dash overuse, promotional tone), rewrite only the flagged lines, then smooth the seams. Optional project profile and dialect target. | Writing |
+| **sorry-im-late** | Cold-read something written during a conversation, a draft or a staged code diff, as a colleague who has the project but was not in that conversation, so missing context and insider residue show up before you send, publish, or commit. | Review |
+| **this-guy-aint** | Cold-read work written under an assumed identity (`human`, `aussie`, `developer`, `manager`, any phrase) as a fresh reader who is one: believed or not, with the giveaways that leak a non-member. Detection only, no editing; `this-guy-aint human` is the light gate for code comments and short pieces where tell-tale is too heavy. | Review |
+| **quote-me** | Locate the exact source passage behind a claim, run a challenge-and-minimum-edit cycle, and verify the fix with a context-free subagent. Triggered by "quote me". | Verification |
+| **nswp-scout** | Scout a codebase for redundant solutions, most sharply one problem solved twice in two vocabularies where neither arm earns its place, and other solutions that answer no live problem. | Codebase audit |
+| **drift-scout** | Find the stale debris a refactor, rename, or move left in a codebase's edges: extract each change's retired vocabulary, sweep the periphery, confirm by running, and report only what provably breaks or misleads. | Codebase audit |
+| **halfway-house** | Tell a decision your agent can safely settle from one that blocks the path: settle it, land the change, file the road not taken, and bring only the true forks to you. | Agent workflow |
+| **worklog** | Write a durable WORKLOG in the repository so a session's knowledge survives when its JSONL is gone or you continue the work on another machine or in a fresh session. | Handoff |
+| **typst-pdf** | Render a markdown file to PDF with Typst, optionally applying a per-repo template. | Rendering |
 
 ## Install
 
