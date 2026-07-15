@@ -569,12 +569,13 @@ Actions to execute (proceed without confirmation):
 
      Probes surface both platform confirmations and direct correspondence with hosts or providers; the correspondence often holds what the voucher lacks (names, phone numbers, arrangements).
 
-   **Query-language caveats (each verified against this setup):**
+   **Query-language caveats (verified against courier 1.1.18):**
 
-   - Parentheses are not part of the query language. Gmail blocks receive the raw query (X-GM-RAW) and Gmail happens to accept them; other blocks pass them through as literal characters and the server rejects the whole search ("Unexpected ("), which surfaces as zero results. Write `a or b` without brackets.
-   - `or` joins single terms only. A date does not distribute across branches (`after:X a or b` dates the first branch alone), and a branch carrying two terms (`a after:X or b after:X`) mis-binds on non-Gmail blocks. For dated alternatives, run separate probes (chained `search` ops share one connection).
-   - On non-Gmail blocks, a content term with no date bracket forces a whole-folder body scan; a large folder exceeds the server read timeout and its results are silently dropped. Keep a date bracket alongside content terms there.
-   - Per-folder search errors do not reach the JSON output; they go to syslog (`journalctl -t courier`; stderr on hosts without syslog). On a zero or a surprising count, read the log before concluding the mail is absent.
+   - Grouping works on every backend: `after:X (a OR b)` brackets the disjunction, `{a b}` ORs its contents, `prefix:(a OR b)` distributes the prefix. `or` binds only the two terms beside it, so `a after:X or b after:X` puts the second date inside the OR; group with parentheses instead.
+   - Failures are loud: a folder that errors or times out mid-search appears in `folders_failed` in the JSON, and the exit code distinguishes hits (0), a clean zero (1), and zero-with-failures (2). A content term with no date bracket can still time out body-scanning a large folder on the FTS-less block; the date bracket avoids the scan.
+   - Query-level rejections (syntax errors, `in:` contradictions) print to stderr with exit 2 and no JSON; when stdout is empty, read stderr.
+   - On cache-backed blocks a zero-hit search re-verifies against live IMAP by design (`fell_back_reason: "mu_no_matches"`), so clean zeros run tens of seconds per block, minutes across `-A`.
+   - `--no-cache` is accepted only when `search` is invoked without leading `--imap`/`--format` flags (courier #55).
 
    **Bolt invoice handling**: Bolt invoices are download links, not attachments. Use `courier --imap <imap> links -f FOLDER -u UID` to extract the invoice URL, then download.
 
