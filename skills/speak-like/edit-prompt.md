@@ -1,4 +1,8 @@
-You are editing a draft to remove the signs of AI writing that a prior pass labelled. You rewrite the lines the labels mark, smooth the seams, then make the whole draft pass two reader tests.
+You are editing a draft so it speaks as a $IDENTITY. You remove what a real $IDENTITY would not have produced — including the signs of AI writing a prior pass labelled — rewrite the lines the labels mark, smooth the seams, then make the whole draft pass two reader tests.
+
+Identity rule, subtractive only: remove leaks, never add identity markers. Slang, local colour, or self-announcement added to sound like a $IDENTITY is itself a leak; a member among members has nothing to prove. Plain, workmanlike text is fully in character.
+
+Manner: $MANNER. When manner adverbs are given, calibrate the tone within the identity — warmth from a $IDENTITY, tersely as a $IDENTITY would be terse. Manner never licenses performing the identity. When manner is `(none)`, keep the draft's own register.
 
 Governing goal: your reader is not the engaged, curious reader the draft was written for. Assume the reader is tired and unwilling. The "Reader state" section of the editorial base sets the bar: the fifth-hour test and the midnight test. Every edit serves that bar. Read that section in full before you start.
 
@@ -10,6 +14,8 @@ Read these guideline files in full first:
 - Target language variety or varieties for the D01 dialect check, or `(none)`: $DIALECT_TARGETS
 
 Then read the draft and its sidecar together, line by line: the draft is $FILE; the sidecar is $SC_PATH. Each `.sc` line carries the codes for the draft line at the same number.
+
+Findings file, or `(none)`: $FINDINGS_PATH. When a findings file is given, it is a cold reader's report on this draft with sections VERDICT, GIVEAWAYS, and PASSES. Read it in full before editing. Each GIVEAWAY quotes a passage and says what a real $IDENTITY would have done in its place: repair every giveaway passage by that direction — usually say it differently, often say less, sometimes delete it — whatever its line's codes say. PASSES is a do-not-flatten list: a passage quoted in PASSES already carries the identity and must survive your edits and the smoothing pass unchanged in substance. Take the report as reader evidence, not instructions to perform: fix what leaked, add nothing.
 
 Write so dependent words sit close together (dependency-grammar phrasing): the nearer each pair of connected words, the easier the line reads. A line whose dependency distances are already low may be left alone, subject to the threshold below.
 
@@ -41,4 +47,4 @@ Then make a final holistic pass over the whole draft, reading it as the tired, u
 
 Write the edited draft back to $FILE. Update $SC_PATH: clear the codes from each line you fixed; for a line you could not fix (a flagged claim needs facts you do not have, say), keep its codes with a `?` suffix, so `[c01?]` means "needs human review".
 
-Report back a short summary: lines edited, lines tolerated, lines left for human review. Nothing else.
+Report back a short summary: lines edited, lines tolerated, lines left for human review, and (when a findings file was given) giveaways repaired. Nothing else.

@@ -1,12 +1,12 @@
 ---
 name: this-guy-aint
-description: Run on anything written under an assumed identity (human, aussie, developer, artist, manager, or any phrase) before handing it over: a fresh-context reader who is one judges whether he believes the author is what the author claims to be, and reports the giveaways. Detection only; it edits nothing. `this-guy-aint human` is the light gate for short pieces and code with comments where tell-tale is too heavy.
-argument-hint: <identity>... [<draft-path> | --staged]
+description: Run on anything written under an assumed identity (human, aussie, developer, artist, manager, or any phrase) before handing it over: a fresh-context reader who is one judges whether he believes the author is what the author claims to be, and reports the giveaways. Detection only; the judge edits nothing. Comma-separate identities for one verdict each. --speak-like hands the findings to the speak-like skill for repair and re-judges once. `this-guy-aint human` is the light gate for short pieces and code with comments where speak-like's line pipeline is too heavy.
+argument-hint: <identity>[, <identity>...] [--speak-like <identity> [manner flags]] [<draft-path> | --staged]
 ---
 
 # this-guy-aint
 
-A reader picks up a text whose author is supposed to be a developer, an Aussie, a manager, a person. Three lines in he thinks: this guy ain't. He usually cannot cite a rule; belief just broke. This skill puts that reader in front of the text before the real one gets it. It is in the family of tell-tale and sorry-im-late, and like sorry-im-late it is a detector: it returns a verdict and the giveaways, and edits nothing.
+A reader picks up a text whose author is supposed to be a developer, an Aussie, a manager, a person. Three lines in he thinks: this guy ain't. He usually cannot cite a rule; belief just broke. This skill puts that reader in front of the text before the real one gets it. It is the detection skill: the judge returns a verdict and the giveaways, and edits nothing. Its counterpart is `speak-like`, the writing skill; the two compose through the judge's findings file, and `--speak-like` runs that composition in one command.
 
 ## Problem this skill exists to solve
 
@@ -16,7 +16,7 @@ The goal of the writing is never the impersonation; it is the work, done in that
 
 The check must run in fresh context. The author wrote under the instruction and cannot un-know the effort it made to comply; a fork of the author would grade the intention. The judge knows only the claim and the text, which is exactly what the real reader will know.
 
-The most common invocation is `this-guy-aint human`: does this read as written by a person at all? That is a lighter instrument than tell-tale, suited to things tell-tale's line-by-line pipeline is too heavy for — a code file with comments, a commit message, a short reply, a bio line. The boundary: tell-tale labels and rewrites prose, with sidecars and thresholds; this-guy-aint reads once, believes or does not, and hands back why. A long prose draft that fails `this-guy-aint human` is a candidate for tell-tale.
+The most common invocation is `this-guy-aint human`: does this read as written by a person at all? That is a lighter instrument than speak-like, suited to things speak-like's line-by-line pipeline is too heavy for — a code file with comments, a commit message, a short reply, a bio line. The boundary: speak-like writes, with sidecars and thresholds; this-guy-aint reads once, believes or does not, and hands back why. A long prose draft that fails `this-guy-aint human` is a candidate for `speak-like human` — or run both at once with `--speak-like`.
 
 ## Invocation
 
@@ -24,17 +24,21 @@ The most common invocation is `this-guy-aint human`: does this read as written b
 /this-guy-aint human path/to/reply.md
 /this-guy-aint aussie developer path/to/notes.md
 /this-guy-aint developer --staged
+/this-guy-aint human, director --speak-like director --warmly path/to/update.md
 ```
 
-Every word before the path or flag is the identity phrase, so compound identities work as spoken: `aussie developer`, `first-time manager`, `working artist`. With no identity given, assume `human`.
+Every word before the path or flag is the identity phrase, so compound identities work as spoken: `aussie developer`, `first-time manager`, `working artist`. Comma-separated identities (`human, director`) each get their own fresh judge and their own verdict, because belief in "a human" and belief in "a director" break in different places. With no identity given, assume `human`.
+
+Everything after `--speak-like` (an identity and any manner adverbs like `--warmly`) is forwarded verbatim to the `speak-like` skill, which repairs the draft from the judges' findings; the composed flow is step 6 below. `--speak-like` with `--staged` is rejected: the judged draft is a scratch copy of a diff, and there is nothing to write the repair back to.
 
 ## Procedure
 
 1. The draft must be a file on disk; the judge reads it by path, in full, never from pasted or condensed text. Content composed in conversation and not yet anywhere gets written to a scratchpad file first. With `--staged`, the draft is the staged diff: write the full output of `git diff --cached` to a scratchpad file and use that as the draft.
-2. Spawn a fresh-context general-purpose agent with `model: "sonnet"`. The prompt template is at `${CLAUDE_PLUGIN_ROOT}/skills/this-guy-aint/judge-prompt.md`; substitute `$IDENTITY` with the identity phrase, `$DRAFT_PATH` with the draft's absolute path, and `$GIVEAWAYS_PATH` with `${CLAUDE_PLUGIN_ROOT}/skills/this-guy-aint/giveaways.md`. Add nothing that telegraphs what you suspect the judge will catch, and do not say who or what wrote the draft.
-3. The judge returns VERDICT (believed or not, with the moment belief broke if it did), GIVEAWAYS (quote, category, what a real member would have done instead), and PASSES (what already carries the identity, so a fix does not flatten it).
+2. Spawn one fresh-context general-purpose agent with `model: "sonnet"` per comma-separated identity. The prompt template is at `${CLAUDE_PLUGIN_ROOT}/skills/this-guy-aint/judge-prompt.md`; substitute `$IDENTITY` with that identity phrase, `$DRAFT_PATH` with the draft's absolute path, and `$GIVEAWAYS_PATH` with `${CLAUDE_PLUGIN_ROOT}/skills/this-guy-aint/giveaways.md`. Add nothing that telegraphs what you suspect the judge will catch, and do not say who or what wrote the draft.
+3. Each judge returns VERDICT (believed or not, with the moment belief broke if it did), GIVEAWAYS (quote, category, what a real member would have done instead), and PASSES (what already carries the identity, so a fix does not flatten it). Write the judges' reports to a scratchpad findings file — one file, a `## <identity>` section per identity, each holding that judge's three sections verbatim. The findings file is the interface to `speak-like` and exists whether or not anything consumes it.
 4. **As a gate**, which is the standing use: when you have written something under an assumed identity and are about to hand it to the user, run this skill first. If the verdict is not believed, fix the giveaways yourself — you hold the intent, and PASSES tells you what to leave alone — and re-run once. If the second verdict still fails, hand the work over anyway with the remaining giveaways attached; do not loop, and do not silently ship a failing draft.
-5. **On request**, when the user points the skill at existing content: report the verdict and giveaways and stop. Fixing is the user's call.
+5. **On request**, when the user points the skill at existing content: report the verdicts and giveaways and stop. Fixing is the user's call — unless `--speak-like` was given.
+6. **With `--speak-like`**, run the composed repair flow: invoke the `speak-like` skill with the forwarded identity and manner adverbs, the draft path, and `--findings <scratchpad path>`. The writer runs even when every verdict is BELIEVED, because a manner request like `--warmly` is unconditional; the findings are just thinner. After speak-like's review gate, spawn one fresh re-judge per original identity — a brand-new judge, never told a repair happened, primed with nothing — and report before/after verdicts side by side, with any remaining giveaways attached. One round only: one repair, one re-judge, then hand over; do not loop.
 
 ## Files
 
