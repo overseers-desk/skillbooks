@@ -195,6 +195,21 @@ Replacing repeated references to the same thing with different synonyms each tim
 
 ---
 
+### l06 — Chained clauses avoiding the period
+
+Stretching one sentence across what should be two or three, splicing clauses with colons, dashes, semicolons, and parentheticals so the reader never gets a full stop. The long breath imitates sophistication — a writer whose thought is too continuous to break — but carries no more content than the same clauses as separate sentences, and reads worse. A 2025–26-era tell: where earlier models over-fragmented, current ones under-punctuate.
+
+The unit of suspicion is the sentence that would lose nothing if a period replaced its colon or dash. A genuine colon (setting up a list, a definition) or a single dash aside survives; three splices deep does not.
+
+**Patterns to watch:** a colon *and* a dash in one sentence; a parenthetical clause with its own verb mid-sentence; semicolon chains of three or more clauses; sentences past ~35 words whose clauses could each stand alone.
+
+**Example:**
+> The defensible structure is one repair tool whose detection is line-scoped by nature of repair, and one verdict tool whose detection is whole-text by nature of voice — with the admission that on prose they are substitutes: the judge for verdicts, the labeller only when you intend to fix.
+
+**Fix:** Break at the splice points. Each clause that can stand alone gets its own sentence. Keep at most one colon or dash per sentence, and only where it earns its place.
+
+---
+
 ### g01 — Signal words (AI-speech canaries)
 
 A small set of words whose mere presence signals the sentence was probably produced in "improve" mode. A model that can speak plainly, when asked to polish, drifts toward these words, so the harder it is pushed to improve, the closer it gets to cliché and the worse the result. The word is a canary, not a banned item.
@@ -534,6 +549,7 @@ This taxonomy was first tuned for encyclopedic text. Several codes do not transf
 | l03 | Negative parallelisms ("not just X, but Y") |
 | l04 | Rule-of-three padding |
 | l05 | Elegant variation (forced synonym cycling) |
+| l06 | Chained clauses avoiding the period |
 | s01 | Title case in headings |
 | s02 | Overuse of boldface |
 | s03 | Inline-header vertical lists |
