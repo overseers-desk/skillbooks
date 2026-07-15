@@ -142,7 +142,7 @@ Repeat until the stop condition fires:
      Use the first email in `email_addresses`. If zero results, retry with
      the second address.
    - **Pick a touch-point** from the most recent thread (subject + date is
-     usually enough; fetch one body via `courier read -u <UID>` if a subject
+     usually enough; fetch one body via `courier --imap <ACCOUNT> read -f <FOLDER> -u <UID>` if a subject
      is too generic to anchor to).
    - **Decide which venue fits** this contact. Default: Rivermill. Switch
      to Bizcocheros if the email-thread topic, organisation, or geography
