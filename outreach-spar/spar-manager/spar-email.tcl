@@ -26,11 +26,11 @@ proc spar::extract_email_address {header} {
 
 # build_reply_headers -- derive the headers needed to thread a reply onto an
 # existing IMAP message. Pure function: takes the parent block captured at
-# A-time (see SPAR-A §6 `parent` keyset, populated from `mailroom read`) plus
+# A-time (see SPAR-A §6 `parent` keyset, populated from `courier read`) plus
 # the sender's address and reply_all flag, returns a dict with `to`, `cc`,
 # `subject`, `in_reply_to`, `references` ready to drop into the SMTP path.
 #
-# The parent dict is captured from `mailroom read` at A-time and frozen into
+# The parent dict is captured from `courier read` at A-time and frozen into
 # the approach YAML; we deliberately do not re-fetch at send time, so the
 # reply still threads correctly even if the parent UID has shifted in the
 # meantime (Gmail label cleanups, server migrations).

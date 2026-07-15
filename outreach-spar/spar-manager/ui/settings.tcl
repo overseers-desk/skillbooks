@@ -3,7 +3,7 @@
 # ::spar::ui::settings — toolbar status indicator and SPAR Settings dialog.
 #
 # There is no per-installation persisted config.  Tool paths (claude,
-# mailroom) are pure PATH-presence checks with no override surface.
+# courier) are pure PATH-presence checks with no override surface.
 # The one secret the dialog configures is the SMTP password, which is
 # stored in the OS keychain keyed by (smtp_host, smtp_user) — both read
 # from the active campaign's YAML under sender:.  The password is
@@ -75,7 +75,7 @@ proc ::spar::ui::settings::check_smtp_creds {host user} {
 }
 
 # check_issues campaign -- ordered list of issue strings, highest priority first.
-# Ordering preserved: claude → SMTP → mailroom.
+# Ordering preserved: claude → SMTP → courier.
 # SMTP is "configured" when either:
 #   (a) keychain_available + (host,user) in YAML + entry in keychain, OR
 #   (b) keychain_unavailable + host+user+smtp_pass all in YAML.
@@ -98,7 +98,7 @@ proc ::spar::ui::settings::check_issues {campaign} {
         }
     }
     if {!$smtp_ok} { lappend issues "SMTP not configured" }
-    if {[spar::find_tool mailroom] eq ""} { lappend issues "mailroom not found" }
+    if {[spar::find_tool courier] eq ""} { lappend issues "courier not found" }
     return $issues
 }
 

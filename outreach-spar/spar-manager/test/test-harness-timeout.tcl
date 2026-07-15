@@ -302,7 +302,7 @@ oo::objdefine $ph {
         set RosterLock     /tmp/none/.roster.lock
         set RequiredSkills {}
     }
-    method do_inject_mailroom {} {}
+    method do_inject_courier {} {}
     method do_profile_call {} { return 3 }
     method session_id {} { return "fin-sess" }
     method resume {stage log_file prompt args} {
@@ -336,7 +336,7 @@ oo::objdefine $ph2 {
         set RosterLock     /tmp/none/.roster.lock
         set RequiredSkills {}
     }
-    method do_inject_mailroom {} {}
+    method do_inject_courier {} {}
     method do_profile_call {} { return 3 }
     method session_id {} { return "" }
     method resume {stage log_file prompt args} {

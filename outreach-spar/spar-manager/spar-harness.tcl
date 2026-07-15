@@ -39,7 +39,7 @@ namespace eval spar {
     variable harness_log [logger::init spar::harness]
 }
 
-source [file join $::spar::harness_dir spar-mailroom.tcl]
+source [file join $::spar::harness_dir spar-courier.tcl]
 
 oo::class create spar::Harness {
     variable Slug LogPrefix CostLog SessionId PromptDir LogDir \
@@ -174,20 +174,20 @@ oo::class create spar::Harness {
         return [my _with_recovery resume $stage $log_file $prompt --resume $SessionId {*}$args]
     }
 
-    # inject_mailroom — substitute __MAILROOM_SECTION__ in the prompt
-    # file with the prefetched mailroom block (accounts header + per-
+    # inject_courier — substitute __COURIER_SECTION__ in the prompt
+    # file with the prefetched courier block (accounts header + per-
     # contact correspondence cascade). Runs in the harness so the slow
-    # `mailroom -A search` exec parallelises across contacts instead of
+    # `courier -A search` exec parallelises across contacts instead of
     # serialising in the dispatcher's prepare loop. Empty section when
-    # mailroom isn't installed.
-    method inject_mailroom {prompt_path name org email} {
-        set hdr  [spar::mailroom::accounts_block]
-        set body [spar::mailroom::contact_block $name $org $email]
+    # courier isn't installed.
+    method inject_courier {prompt_path name org email} {
+        set hdr  [spar::courier::accounts_block]
+        set body [spar::courier::contact_block $name $org $email]
         set section [expr {$hdr eq "" ? "" : "\n\n${hdr}${body}"}]
         set prompt [spar::read_file $prompt_path]
-        set prompt [string map [list __MAILROOM_SECTION__ $section] $prompt]
+        set prompt [string map [list __COURIER_SECTION__ $section] $prompt]
         spar::write_file $prompt_path $prompt
-        ${::spar::harness_log}::info "\[$Slug\] \[phase: mailroom\]"
+        ${::spar::harness_log}::info "\[$Slug\] \[phase: courier\]"
     }
 
     # cost_total — sum `cost` fields across the JSONL ledger.
@@ -746,7 +746,7 @@ oo::class create spar::ApproachHarness {
     method run {} {
         try {
             my load_my_meta
-            my do_inject_mailroom
+            my do_inject_courier
             if {[my do_author_draft]}             { return 1 }
             if {[my run_spar_loop]}               { return 1 }
             if {[my do_assembly]}                 { return 1 }
@@ -779,8 +779,8 @@ oo::class create spar::ApproachHarness {
         set ProfilePath [file join $seg_dir profiles "${stem}.md"]
     }
 
-    method do_inject_mailroom {} {
-        my inject_mailroom \
+    method do_inject_courier {} {
+        my inject_courier \
             [file join [my prompt_dir] author-draft.txt] \
             $ContactNameMeta $RosterOrg $RosterEmail
     }
@@ -1175,7 +1175,7 @@ oo::class create spar::ProfileHarness {
     method run {} {
         try {
             my load_my_meta
-            my do_inject_mailroom
+            my do_inject_courier
             # do_profile_call returns one of four codes:
             #   0 — turn closed cleanly
             #   1 — hard failure (no usable product)
@@ -1231,8 +1231,8 @@ oo::class create spar::ProfileHarness {
         set ContactEmail [spar::dict_get_default $meta CONTACT_EMAIL ""]
     }
 
-    method do_inject_mailroom {} {
-        my inject_mailroom \
+    method do_inject_courier {} {
+        my inject_courier \
             [file join [my prompt_dir] prompt.txt] \
             $ContactName $ContactOrg $ContactEmail
     }

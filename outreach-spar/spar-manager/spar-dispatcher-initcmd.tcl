@@ -297,7 +297,7 @@ proc _linkedin_send_body {row opts} {
 # inbox-read cycle. opts is the per-row payload built by the
 # controller / CLI runner: campaign_file, dry_run, approach_path,
 # to_email, fingerprints, account, folder, sender. Cancel checked
-# once at entry; mailroom calls are synchronous and brief.
+# once at entry; courier calls are synchronous and brief.
 #
 # Guard wrapper, same slot-reclamation rationale as harness_run.
 proc imap_poll {row opts} {

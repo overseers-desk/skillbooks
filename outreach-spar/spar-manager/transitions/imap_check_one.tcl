@@ -10,8 +10,8 @@
 # Under the pool model, one row corresponds to one stem, so the
 # previous async-fileevent queue (which served multiple stems through
 # one shared event loop on the main thread) collapses to a
-# synchronous per-stem call: one `mailroom search`, zero or more
-# `mailroom read`s, zero or more append_reply_to_yaml calls. The
+# synchronous per-stem call: one `courier search`, zero or more
+# `courier read`s, zero or more append_reply_to_yaml calls. The
 # worker thread is allowed to block — it has its own thread::send
 # mailbox and does not share the main event loop.
 #
@@ -21,12 +21,12 @@
 #   since           ISO date floor; messages dated before it are not
 #                   replies to this approach (optional, "" = no floor)
 #   fingerprints    list of "from|date" strings already recorded
-#   account         mailroom --imap value
-#   folder          mailroom -f value
+#   account         courier --imap value
+#   folder          courier -f value
 #   sender          our own bare email address (used to filter inbound
 #                   to messages addressed to us, not bounces)
 #   dry_run         1 = parse and report but don't write to YAML
-#   mailroom_bin    optional path override (tests pass a fake)
+#   courier_bin    optional path override (tests pass a fake)
 #
 # Returns one of:
 #   {ok <new_replies>}              — count of replies appended
@@ -46,21 +46,21 @@ proc ::spar::imap::check_one {opts} {
     set folder        [dict get $opts folder]
     set sender        [dict get $opts sender]
     set dry_run       [spar::dict_get_default $opts dry_run 0]
-    set mailroom_bin  [spar::dict_get_default $opts mailroom_bin ""]
+    set courier_bin  [spar::dict_get_default $opts courier_bin ""]
 
-    if {$mailroom_bin eq ""} {
-        set mailroom_bin [spar::find_tool mailroom]
+    if {$courier_bin eq ""} {
+        set courier_bin [spar::find_tool courier]
     }
-    if {$mailroom_bin eq ""} {
-        return [list error "mailroom not found — check Settings"]
+    if {$courier_bin eq ""} {
+        return [list error "courier not found — check Settings"]
     }
 
-    # mailroom 1.1.15 exits 1 on a successful search that returns zero
+    # courier 1.1.15 exits 1 on a successful search that returns zero
     # results (documented), so a non-zero exit is not by itself a failure.
     # Capture the merged output whether exec returns or throws; the JSON
     # payload is present either way, and only an unparseable payload below
     # is treated as a real error.
-    catch {exec $mailroom_bin --imap $account search -f $folder \
+    catch {exec $courier_bin --imap $account search -f $folder \
         --limit 50 "from:$to_email" 2>@1} search_out
 
     # On the exit-1 path the output may carry a trailing Tcl "child process
@@ -71,7 +71,7 @@ proc ::spar::imap::check_one {opts} {
         set search_out [string range $search_out $jb $je]
     }
 
-    # mailroom wraps the payload as
+    # courier wraps the payload as
     #   {"<op_str>": {"<account>": {"results": [...], "provenance": ...}}}
     if {[catch {
         set raw [::json::json2dict $search_out]
@@ -126,13 +126,13 @@ proc ::spar::imap::check_one {opts} {
         set uid [spar::dict_get_default $msg uid ""]
         set from_display [spar::dict_get_default $msg from $from_email_addr]
 
-        # Fetch the body. mailroom-read failure becomes a placeholder
+        # Fetch the body. courier-read failure becomes a placeholder
         # text, exactly as the legacy Driver did, so the user still
         # sees that a reply arrived even if the body could not be
         # retrieved.
         set reply_text "(no text content)"
         if {[catch {
-            set read_out [exec $mailroom_bin --imap $account read \
+            set read_out [exec $courier_bin --imap $account read \
                 -f $folder -u $uid 2>@1]
             set raw [::json::json2dict $read_out]
             set inner [dict get $raw [lindex [dict keys $raw] 0]]
@@ -142,7 +142,7 @@ proc ::spar::imap::check_one {opts} {
                 set reply_text [spar::html_to_text $body]
             }
         } _]} {
-            set reply_text "(inbox read failed -- review manually:\n  $mailroom_bin --imap $account read -f $folder -u $uid)"
+            set reply_text "(inbox read failed -- review manually:\n  $courier_bin --imap $account read -f $folder -u $uid)"
         }
 
         if {!$dry_run} {
@@ -155,7 +155,7 @@ proc ::spar::imap::check_one {opts} {
         }
 
         # Update local fingerprint set so a duplicate within this batch
-        # is not re-appended (mailroom dedup is per-uid; this guards
+        # is not re-appended (courier dedup is per-uid; this guards
         # the rare case of two messages from the same address with the
         # same date).
         lappend fingerprints "${from_email_addr}|${date_str}"

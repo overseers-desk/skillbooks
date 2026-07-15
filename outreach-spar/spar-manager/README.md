@@ -24,7 +24,7 @@ For deeper internals: `state-machine.md` covers the TIDs, validation gates, warn
 | Tool | Used by | Purpose |
 |------|---------|---------|
 | `claude` | `spar-harness.tcl` (harness) | Claude Code CLI for profile/approach generation |
-| `mailroom` | `spar-email.tcl` | Query email account for reply checking |
+| `courier` | `spar-email.tcl` | Query email account for reply checking |
 | `flock` | `spar-a-harness.tcl` | File locking for concurrent roster TSV writes |
 | `md5sum` | `spar-a-harness.tcl` | Lock file path derivation |
 | `mktemp` | `spar-a-harness.tcl`, `transitions/send_email.tcl` | Temporary file creation |
@@ -55,7 +55,7 @@ On macOS, Keychain presents a one-time "Allow / Always Allow / Deny" dialog the 
 
 ### Optional
 
-- `mailroom` is only needed for reply checking. The GUI and CLI progress tools work without it.
+- `courier` is only needed for reply checking. The GUI and CLI progress tools work without it.
 - `claude` is only needed for dispatch (running profile/approach generation). Progress reporting and state classification do not require it.
 
 ## Usage
