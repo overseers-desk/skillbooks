@@ -426,8 +426,8 @@ proc ::spar::ui::build_loaded_body {path} {
     spar::subscribe_pool_domain $::pool
     # Same per-worker send caps the CLI's dispatch_ready installs: send
     # rows run serially whichever front-end enqueues them.
-    $::pool set_worker_cap ses_send 1
-    $::pool set_worker_cap linkedin_send 1
+    $::pool set_kind_cap ses_send 1
+    $::pool set_kind_cap linkedin_send 1
 
     # DispatchController translates Play/Pause/Cancel and the right-
     # click menu into Pool methods, and renders Pool job-state events

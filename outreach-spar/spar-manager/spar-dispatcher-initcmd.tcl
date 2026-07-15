@@ -267,7 +267,7 @@ proc _ses_send_body {row opts} {
 # (spar::li::send_one in transitions/linkedin_send_one.tcl). No
 # delay_ms pacing here: the overseer's linkedin.com rate gate owns the
 # cadence, and a client-side delay on top would double-pace. Serialised
-# by set_worker_cap linkedin_send 1, installed beside ses_send's cap.
+# by set_kind_cap linkedin_send 1, installed beside ses_send's cap.
 #
 # Guard wrapper, same slot-reclamation rationale as harness_run.
 proc linkedin_send {row opts} {
@@ -400,7 +400,7 @@ proc fake_worker {row opts} {
 # fake_worker_a / fake_worker_b — aliases for fake_worker that test-pool.tcl
 # §18 ("Per-worker cap") uses to drive distinct worker_proc names through
 # one shared pool. Production code never references them; they exist only
-# so set_worker_cap can apply different caps to two otherwise-identical
+# so set_kind_cap can apply different caps to two otherwise-identical
 # workers.
 proc fake_worker_a {row opts} { fake_worker $row $opts }
 proc fake_worker_b {row opts} { fake_worker $row $opts }
