@@ -57,11 +57,11 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
 
         set cdata [spar::load_campaign $campaign_file]
 
-        if {![dict exists $cdata reply_check mailroom_account] \
+        if {![dict exists $cdata reply_check courier_account] \
             || ![dict exists $cdata reply_check folder]} {
             if {$on_progress ne ""} {
                 {*}$on_progress "" failed \
-                    "campaign YAML missing reply_check.mailroom_account or reply_check.folder"
+                    "campaign YAML missing reply_check.courier_account or reply_check.folder"
             }
             return ""
         }
@@ -72,7 +72,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
             return ""
         }
 
-        set account [dict get $cdata reply_check mailroom_account]
+        set account [dict get $cdata reply_check courier_account]
         set folder  [dict get $cdata reply_check folder]
         set sender  [dict get $cdata sender email]
         set campaign_dir [file dirname $campaign_file]
