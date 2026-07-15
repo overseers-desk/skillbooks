@@ -533,7 +533,7 @@ set imap_opts [dict create \
     folder        "INBOX" \
     sender        "me@acme-venues.au" \
     dry_run       0 \
-    courier_bin  $fake_courier]
+    courier_bin   $fake_courier]
 
 set d [spar::Dispatcher new 2 test_log]
 $d enqueue carol imap_poll $imap_opts

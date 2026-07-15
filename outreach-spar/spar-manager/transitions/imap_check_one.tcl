@@ -46,7 +46,7 @@ proc ::spar::imap::check_one {opts} {
     set folder        [dict get $opts folder]
     set sender        [dict get $opts sender]
     set dry_run       [spar::dict_get_default $opts dry_run 0]
-    set courier_bin  [spar::dict_get_default $opts courier_bin ""]
+    set courier_bin   [spar::dict_get_default $opts courier_bin ""]
 
     if {$courier_bin eq ""} {
         set courier_bin [spar::find_tool courier]
