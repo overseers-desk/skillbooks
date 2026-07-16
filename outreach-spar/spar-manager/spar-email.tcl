@@ -44,12 +44,12 @@ proc spar::extract_email_address {header} {
 # we do not accidentally email ourselves.
 proc spar::build_reply_headers {parent sender_email reply_all} {
     set sender_lc [string tolower [string trim $sender_email]]
-    set parent_msg_id [spar::dict_get_default $parent message_id ""]
-    set parent_subject [spar::dict_get_default $parent subject ""]
-    set parent_from [spar::dict_get_default $parent from ""]
-    set parent_to [spar::dict_get_default $parent to ""]
-    set parent_cc [spar::dict_get_default $parent cc ""]
-    set parent_references [spar::dict_get_default $parent references ""]
+    set parent_msg_id [dict getdef $parent message_id ""]
+    set parent_subject [dict getdef $parent subject ""]
+    set parent_from [dict getdef $parent from ""]
+    set parent_to [dict getdef $parent to ""]
+    set parent_cc [dict getdef $parent cc ""]
+    set parent_references [dict getdef $parent references ""]
 
     # To: the sender of the parent. Reply-all preserves the rest of the
     # original recipient set in Cc, minus our own address.
@@ -233,7 +233,7 @@ proc spar::append_reply_to_yaml {approach_path timestamp from_display reply_text
     # Find final round index to locate it in the text
     set has_final 0
     foreach r [dict get $data rounds] {
-        if {[spar::dict_get_default $r type ""] eq "final"} {
+        if {[dict getdef $r type ""] eq "final"} {
             set has_final 1
             break
         }
@@ -418,11 +418,11 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
 
     set needs_stamp 0
     foreach r [dict get $data rounds] {
-        if {[dict_get_default $r type ""] ne "final"} continue
+        if {[dict getdef $r type ""] ne "final"} continue
         if {![dict exists $r messages]} continue
         foreach msg [dict get $r messages] {
-            if {[dict_get_default $msg channel ""] ne $channel} continue
-            set ad [dict_get_default $msg actioned_date ""]
+            if {[dict getdef $msg channel ""] ne $channel} continue
+            set ad [dict getdef $msg actioned_date ""]
             if {[is_null $ad]} {
                 set needs_stamp 1
                 break
@@ -555,8 +555,8 @@ proc spar::_roster_email_map {seg_dir} {
     if {![file exists $roster_path]} { return $map }
     if {[catch {set rows [spar::load_roster $roster_path]}]} { return $map }
     foreach row $rows {
-        set stem  [string trim [dict_get_default $row stem ""]]
-        set email [string trim [dict_get_default $row email ""]]
+        set stem  [string trim [dict getdef $row stem ""]]
+        set email [string trim [dict getdef $row email ""]]
         foreach var {stem email} {
             upvar 0 $var v
             if {[regexp {^"(.*)"$} $v -> inner]} { set v [string trim $inner] }
@@ -611,11 +611,11 @@ proc spar::collect_sent_approaches {segments} {
             set fingerprints {}
 
             foreach r [dict get $data rounds] {
-                if {[dict_get_default $r type ""] ne "final"} continue
+                if {[dict getdef $r type ""] ne "final"} continue
 
                 if {[dict exists $r messages]} {
                     foreach msg [dict get $r messages] {
-                        set ad [dict_get_default $msg actioned_date ""]
+                        set ad [dict getdef $msg actioned_date ""]
                         if {![is_null $ad]} {
                             set is_sent 1
                             # yaml2dict parses unquoted dates to epoch
@@ -630,8 +630,8 @@ proc spar::collect_sent_approaches {segments} {
                                 set first_sent $ad_day
                             }
                         }
-                        if {[dict_get_default $msg channel ""] eq "email"} {
-                            set msg_to [dict_get_default $msg to ""]
+                        if {[dict getdef $msg channel ""] eq "email"} {
+                            set msg_to [dict getdef $msg to ""]
                             if {$msg_to ne "" && $to_email eq ""} {
                                 set to_email [string tolower [string trim $msg_to]]
                             }
@@ -641,8 +641,8 @@ proc spar::collect_sent_approaches {segments} {
 
                 if {[dict exists $r replies]} {
                     foreach reply [dict get $r replies] {
-                        set rd [dict_get_default $reply date ""]
-                        set rf [dict_get_default $reply from ""]
+                        set rd [dict getdef $reply date ""]
+                        set rf [dict getdef $reply from ""]
                         if {$rd ne ""} {
                             set from_addr ""
                             if {$rf ne ""} {
@@ -663,7 +663,7 @@ proc spar::collect_sent_approaches {segments} {
                     set roster_map [spar::_roster_email_map $seg_dir]
                 }
                 set stem [file rootname [file tail $yf]]
-                set fallback [dict_get_default $roster_map $stem ""]
+                set fallback [dict getdef $roster_map $stem ""]
                 if {$fallback eq "" || [dict exists $watched_addresses $fallback]} {
                     continue
                 }

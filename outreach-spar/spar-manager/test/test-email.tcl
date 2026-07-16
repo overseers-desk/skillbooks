@@ -374,7 +374,7 @@ assert_eq [spar::is_null [dict get $em_msg_ins actioned_date]] 0 \
     "file parses and email message carries the inserted date"
 assert_contains [dict get $em_msg_ins body] "Second paragraph." \
     "multi-line body intact after insertion"
-assert_eq [spar::dict_get_default $data_em a_note ""] "trailing top-level key" \
+assert_eq [dict getdef $data_em a_note ""] "trailing top-level key" \
     "top-level key after rounds intact"
 assert_eq [llength [spar::_dbc_errors $ap_ins2]] 0 \
     "DbC post-validation green after insertion (email)"

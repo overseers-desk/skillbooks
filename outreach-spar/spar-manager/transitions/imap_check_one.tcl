@@ -39,13 +39,13 @@ namespace eval ::spar::imap {}
 proc ::spar::imap::check_one {opts} {
     set approach_path [dict get $opts approach_path]
     set to_email      [dict get $opts to_email]
-    set since         [spar::dict_get_default $opts since ""]
-    set fingerprints  [spar::dict_get_default $opts fingerprints {}]
+    set since         [dict getdef $opts since ""]
+    set fingerprints  [dict getdef $opts fingerprints {}]
     set account       [dict get $opts account]
     set folder        [dict get $opts folder]
     set sender        [dict get $opts sender]
-    set dry_run       [spar::dict_get_default $opts dry_run 0]
-    set courier_bin   [spar::dict_get_default $opts courier_bin ""]
+    set dry_run       [dict getdef $opts dry_run 0]
+    set courier_bin   [dict getdef $opts courier_bin ""]
 
     if {$courier_bin eq ""} {
         set courier_bin [spar::find_tool courier]
@@ -102,16 +102,16 @@ proc ::spar::imap::check_one {opts} {
     }
 
     set incoming [lsort -command {apply {{a b} {
-        set da [spar::dict_get_default $a date ""]
-        set db [spar::dict_get_default $b date ""]
+        set da [dict getdef $a date ""]
+        set db [dict getdef $b date ""]
         return [string compare $da $db]
     }}} $incoming]
 
     set appended 0
     foreach msg $incoming {
         set from_email_addr [spar::extract_email_address \
-            [spar::dict_get_default $msg from ""]]
-        set date_str [spar::dict_get_default $msg date ""]
+            [dict getdef $msg from ""]]
+        set date_str [dict getdef $msg date ""]
         if {![regexp {^\d{4}-\d{2}-\d{2}} $date_str]} continue
 
         # Mail predating the send is unrelated inbox history, not a
@@ -122,8 +122,8 @@ proc ::spar::imap::check_one {opts} {
             continue
         }
 
-        set uid [spar::dict_get_default $msg uid ""]
-        set from_display [spar::dict_get_default $msg from $from_email_addr]
+        set uid [dict getdef $msg uid ""]
+        set from_display [dict getdef $msg from $from_email_addr]
 
         # Fetch the body. courier-read failure becomes a placeholder
         # text, exactly as the legacy Driver did, so the user still
@@ -136,7 +136,7 @@ proc ::spar::imap::check_one {opts} {
             set raw [::json::json2dict $read_out]
             set inner [dict get $raw [lindex [dict keys $raw] 0]]
             set email_data [dict get $inner [lindex [dict keys $inner] 0]]
-            set body [spar::dict_get_default $email_data body ""]
+            set body [dict getdef $email_data body ""]
             if {$body ne ""} {
                 set reply_text [spar::html_to_text $body]
             }

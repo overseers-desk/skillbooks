@@ -219,9 +219,9 @@ oo::class create spar::ui::SegmentViewer {
         set d $item
         switch -- $key {
             usps {
-                set id    [spar::dict_get_default $d id ""]
-                set label [spar::dict_get_default $d label ""]
-                set type  [spar::dict_get_default $d type ""]
+                set id    [dict getdef $d id ""]
+                set label [dict getdef $d label ""]
+                set type  [dict getdef $d type ""]
                 set who   [expr {$id ne "" ? $id : $label}]
                 if {$who eq ""} { set who "#$idx" }
                 if {$type ne ""} { return "$who ($type)" }
@@ -229,8 +229,8 @@ oo::class create spar::ui::SegmentViewer {
             }
             conversion_funnel -
             approach_sequencing {
-                set step [spar::dict_get_default $d step ""]
-                set name [spar::dict_get_default $d name ""]
+                set step [dict getdef $d step ""]
+                set name [dict getdef $d name ""]
                 set parts {}
                 if {$step ne ""} { lappend parts $step }
                 if {$name ne ""} { lappend parts $name }
@@ -238,12 +238,12 @@ oo::class create spar::ui::SegmentViewer {
                 return [join $parts ". "]
             }
             subsegments {
-                set name [spar::dict_get_default $d name ""]
+                set name [dict getdef $d name ""]
                 if {$name ne ""} { return $name }
                 return "#$idx"
             }
             proof_points {
-                set id [spar::dict_get_default $d id ""]
+                set id [dict getdef $d id ""]
                 if {$id ne ""} { return $id }
                 return "#$idx"
             }

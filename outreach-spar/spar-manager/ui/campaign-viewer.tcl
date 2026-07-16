@@ -89,7 +89,7 @@ oo::class create spar::ui::CampaignViewer {
         foreach w [winfo children $Body] { destroy $w }
 
         set cdata [$Campaign get_cdata]
-        set title [spar::dict_get_default $cdata campaign \
+        set title [dict getdef $cdata campaign \
             [file tail [$Campaign get_campaign_file]]]
         ::spar::ui::inspector_widgets::copy_text_set $HeaderStem $title
 

@@ -164,13 +164,13 @@ oo::class create spar::ui::Inspector {
             return
         }
 
-        set seg [spar::dict_get_default $contact _segment_dir ""]
+        set seg [dict getdef $contact _segment_dir ""]
         if {$seg ne ""} { set seg [file tail $seg] }
         set heading [expr {$seg ne "" ? "$seg/$CurrentStem" : $CurrentStem}]
         ::spar::ui::inspector_widgets::copy_text_set $HeaderStem $heading
 
-        set has_profile  [expr {[spar::dict_get_default $contact profile_path ""]  ne ""}]
-        set has_approach [expr {[spar::dict_get_default $contact approach_path ""] ne ""}]
+        set has_profile  [expr {[dict getdef $contact profile_path ""]  ne ""}]
+        set has_approach [expr {[dict getdef $contact approach_path ""] ne ""}]
         set replies      [my collect_replies $contact]
         set has_reply    [expr {[llength $replies] > 0}]
 
@@ -208,8 +208,8 @@ oo::class create spar::ui::Inspector {
     # Disabled tabs stay as bare letters (see render).
 
     method tab_title_s {contact} {
-        set name [spar::dict_get_default $contact contact_name ""]
-        set org  [spar::dict_get_default $contact organisation ""]
+        set name [dict getdef $contact contact_name ""]
+        set org  [dict getdef $contact organisation ""]
         set parts {}
         if {$name ne ""} { lappend parts $name }
         if {$org  ne ""} { lappend parts $org }
@@ -218,17 +218,17 @@ oo::class create spar::ui::Inspector {
     }
 
     method tab_title_p {contact} {
-        set star [spar::dict_get_default $contact star 0]
+        set star [dict getdef $contact star 0]
         if {![string is integer -strict $star] || $star <= 0} { return "P" }
         if {$star > 5} { set star 5 }
         return "P [string repeat "★" $star][string repeat "☆" [expr {5 - $star}]]"
     }
 
     method tab_title_a {contact} {
-        set path [spar::dict_get_default $contact approach_path ""]
+        set path [dict getdef $contact approach_path ""]
         if {$path eq ""} { return "A" }
         set data [spar::read_approach_yaml $path]
-        set pct [spar::dict_get_default $data response_likelihood ""]
+        set pct [dict getdef $data response_likelihood ""]
         if {$pct eq "" || [spar::is_null $pct]} { return "A" }
         return "A ${pct}%"
     }
@@ -237,14 +237,14 @@ oo::class create spar::ui::Inspector {
     # round index so the R tab can label each reply with its origin.
     method collect_replies {contact} {
         set out {}
-        set path [spar::dict_get_default $contact approach_path ""]
+        set path [dict getdef $contact approach_path ""]
         if {$path eq ""} { return $out }
         set data [spar::read_approach_yaml $path]
         if {$data eq "" || ![dict exists $data rounds]} { return $out }
         set idx 0
         foreach round [dict get $data rounds] {
-            foreach reply [spar::dict_get_default $round replies {}] {
-                if {[spar::dict_get_default $reply direction ""] ne "received"} continue
+            foreach reply [dict getdef $round replies {}] {
+                if {[dict getdef $reply direction ""] ne "received"} continue
                 lappend out [dict merge $reply [dict create _round $idx]]
             }
             incr idx
@@ -256,12 +256,12 @@ oo::class create spar::ui::Inspector {
 
     method fill_s {contact} {
         set body [dict get $Tabs S]
-        set seg [spar::dict_get_default $contact _segment_dir ""]
+        set seg [dict getdef $contact _segment_dir ""]
         if {$seg ne ""} { set seg [file tail $seg] }
 
         set channels {}
         foreach {flag label} {has_email email has_linkedin linkedin has_facebook facebook has_phone_only phone-only} {
-            if {[spar::dict_get_default $contact $flag 0]} { lappend channels $label }
+            if {[dict getdef $contact $flag 0]} { lappend channels $label }
         }
 
         foreach {label key} {
@@ -272,12 +272,12 @@ oo::class create spar::ui::Inspector {
             State        state
         } {
             ::spar::ui::inspector_widgets::kv_row $body $label \
-                [spar::dict_get_default $contact $key ""]
+                [dict getdef $contact $key ""]
         }
         ::spar::ui::inspector_widgets::kv_row $body "Segment"  $seg
         ::spar::ui::inspector_widgets::kv_row $body "Channels" [join $channels ", "]
 
-        set dx [spar::dict_get_default $contact date_excluded ""]
+        set dx [dict getdef $contact date_excluded ""]
         if {$dx ne "" && ![spar::is_null $dx]} {
             ::spar::ui::inspector_widgets::kv_row $body "Excluded" $dx
         }
@@ -334,8 +334,8 @@ oo::class create spar::ui::Inspector {
 
         set idx 0
         foreach round [dict get $data rounds] {
-            set rtype   [spar::dict_get_default $round type ""]
-            set rnumber [spar::dict_get_default $round number ""]
+            set rtype   [dict getdef $round type ""]
+            set rnumber [dict getdef $round number ""]
 
             set header "Round $idx — $rtype"
             if {$rnumber ne "" && ![spar::is_null $rnumber]} {
@@ -355,7 +355,7 @@ oo::class create spar::ui::Inspector {
 
             set rbody [$cl body]
             set mi 0
-            foreach msg [spar::dict_get_default $round messages {}] {
+            foreach msg [dict getdef $round messages {}] {
                 my render_message $rbody $mi $msg
                 incr mi
             }
@@ -377,17 +377,17 @@ oo::class create spar::ui::Inspector {
         foreach reply $sorted {
             my render_message $body $idx [dict create \
                 channel       "reply (round [dict get $reply _round])" \
-                from          [spar::dict_get_default $reply from ""] \
-                subject       [spar::dict_get_default $reply subject ""] \
-                body          [spar::dict_get_default $reply body ""] \
-                received_date [spar::dict_get_default $reply date ""]]
+                from          [dict getdef $reply from ""] \
+                subject       [dict getdef $reply subject ""] \
+                body          [dict getdef $reply body ""] \
+                received_date [dict getdef $reply date ""]]
             incr idx
         }
     }
 
     method reply_cmp {a b} {
-        set sa [my date_to_sec [spar::dict_get_default $a date ""]]
-        set sb [my date_to_sec [spar::dict_get_default $b date ""]]
+        set sa [my date_to_sec [dict getdef $a date ""]]
+        set sb [my date_to_sec [dict getdef $b date ""]]
         if {$sa eq ""} { set sa 0 }
         if {$sb eq ""} { set sb 0 }
         return [expr {$sb - $sa}]
@@ -399,35 +399,35 @@ oo::class create spar::ui::Inspector {
         pack $frame -fill x -padx 4 -pady 2
 
         ::spar::ui::inspector_widgets::kv_row $frame "Channel" \
-            [spar::dict_get_default $msg channel ""]
+            [dict getdef $msg channel ""]
 
-        set from [spar::dict_get_default $msg from ""]
+        set from [dict getdef $msg from ""]
         if {$from ne "" && ![spar::is_null $from]} {
             ::spar::ui::inspector_widgets::kv_row $frame "From" $from
         }
 
-        if {[spar::dict_get_default $msg channel ""] eq "email"} {
+        if {[dict getdef $msg channel ""] eq "email"} {
             foreach {label key} {To to Cc cc Bcc bcc} {
-                set v [spar::dict_get_default $msg $key ""]
+                set v [dict getdef $msg $key ""]
                 if {$v ne "" && ![spar::is_null $v] && [llength $v] > 0} {
                     ::spar::ui::inspector_widgets::kv_row $frame $label [join $v ", "]
                 }
             }
         }
 
-        set subj [spar::dict_get_default $msg subject ""]
+        set subj [dict getdef $msg subject ""]
         if {$subj ne "" && ![spar::is_null $subj]} {
             ::spar::ui::inspector_widgets::kv_row $frame "Subject" $subj
         }
 
-        set body [spar::dict_get_default $msg body ""]
+        set body [dict getdef $msg body ""]
         if {$body ne "" && ![spar::is_null $body]} {
             ::spar::ui::inspector_widgets::wrapped_text_block \
                 $frame [string trim $body] {-fill x -padx 6 -pady {2 2}} 0
         }
 
         foreach {label key} {Sent actioned_date Received received_date} {
-            set v [spar::dict_get_default $msg $key ""]
+            set v [dict getdef $msg $key ""]
             if {$v ne "" && ![spar::is_null $v]} {
                 ::spar::ui::inspector_widgets::kv_row $frame $label \
                     [my fmt_date_with_since $v]

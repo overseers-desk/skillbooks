@@ -185,7 +185,7 @@ proc spar::final_channel_message {data channel} {
         if {[dict get $round type] ne "final"} continue
         if {![dict exists $round messages]} { return "" }
         foreach msg [dict get $round messages] {
-            if {[spar::dict_get_default $msg channel ""] eq $channel} {
+            if {[dict getdef $msg channel ""] eq $channel} {
                 return $msg
             }
         }
@@ -228,11 +228,11 @@ proc spar::analyse_final_round {data} {
         # Process messages
         if {[dict exists $round messages]} {
             foreach msg [dict get $round messages] {
-                set channel [spar::dict_get_default $msg channel ""]
-                set actioned [spar::dict_get_default $msg actioned_date ""]
-                set replied [spar::dict_get_default $msg replied_date ""]
-                set to_addr [spar::dict_get_default $msg to ""]
-                set subject [spar::dict_get_default $msg subject ""]
+                set channel [dict getdef $msg channel ""]
+                set actioned [dict getdef $msg actioned_date ""]
+                set replied [dict getdef $msg replied_date ""]
+                set to_addr [dict getdef $msg to ""]
+                set subject [dict getdef $msg subject ""]
 
                 set is_actioned [expr {![spar::is_null $actioned]}]
                 set is_replied [expr {![spar::is_null $replied]}]
@@ -289,7 +289,7 @@ proc spar::analyse_final_round {data} {
         # Process replies
         if {[dict exists $round replies]} {
             foreach reply [dict get $round replies] {
-                if {[spar::dict_get_default $reply direction ""] eq "received"} {
+                if {[dict getdef $reply direction ""] eq "received"} {
                     dict set result any_replied 1
                 }
             }
@@ -442,7 +442,7 @@ oo::define spar::State method prefetch_approach_cache {paths} {
 # file or it cannot be parsed. The projection is what
 # project_approach_data returns; field set is documented there.
 oo::define spar::State method approach_summary {contact} {
-    set ap [spar::dict_get_default $contact approach_path ""]
+    set ap [dict getdef $contact approach_path ""]
     if {$ap eq "" || ![file exists $ap]} { return {} }
 
     # Cheap validity probes — line-1 hash (one gets) and mtime (stat).
@@ -582,7 +582,7 @@ proc spar::_project_message {msg} {
     dict for {k v} $msg {
         switch -- $k {
             body {
-                if {[spar::dict_get_default $msg channel ""] eq "linkedin"} {
+                if {[dict getdef $msg channel ""] eq "linkedin"} {
                     dict set out $k $v
                 } else {
                     dict set out $k ""
@@ -697,16 +697,16 @@ oo::define spar::State method classify_contact {roster_row segment_dir} {
     # strip_tsv_field: trim whitespace, and if the remaining value is a
     # quoted-empty-or-whitespace string (e.g. `" "` or `""`), collapse to "".
     # This happens when TSV was edited with a tool that CSV-quotes blank fields.
-    set date_invalid [string trim [spar::dict_get_default $roster_row date_excluded ""]]
-    set stem [string trim [spar::dict_get_default $roster_row stem ""]]
+    set date_invalid [string trim [dict getdef $roster_row date_excluded ""]]
+    set stem [string trim [dict getdef $roster_row stem ""]]
     # P-authored (see spar-P-profile.md §5.1). Roster column is a query-
     # optimised cache for band filters and state predicates; the authorial
     # home is the profile front matter. Not an input to profiling.
-    set star_raw [spar::dict_get_default $roster_row star_rating ""]
-    set email [string trim [spar::dict_get_default $roster_row email ""]]
-    set linkedin [string trim [spar::dict_get_default $roster_row linkedin_url ""]]
-    set facebook [string trim [spar::dict_get_default $roster_row facebook_url ""]]
-    set phone [string trim [spar::dict_get_default $roster_row phone ""]]
+    set star_raw [dict getdef $roster_row star_rating ""]
+    set email [string trim [dict getdef $roster_row email ""]]
+    set linkedin [string trim [dict getdef $roster_row linkedin_url ""]]
+    set facebook [string trim [dict getdef $roster_row facebook_url ""]]
+    set phone [string trim [dict getdef $roster_row phone ""]]
 
     # Strip TSV quote artifacts: `" "`, `""`, `" "` → ""
     foreach var {date_invalid stem email linkedin facebook phone} {
@@ -829,11 +829,11 @@ oo::define spar::State method classify_contact {roster_row segment_dir} {
 # (UI inspector, send transitions) or via refine_segment (UI render,
 # spar-progress.tcl, T6/T7/T8/T9/T10 eligibility).
 oo::define spar::State method refine_contact {contact} {
-    set state [spar::dict_get_default $contact state ""]
+    set state [dict getdef $contact state ""]
     if {$state ne "APPROACHED" && $state ne "APPROACH_STALE"} {
         return $contact
     }
-    set ap [spar::dict_get_default $contact approach_path ""]
+    set ap [dict getdef $contact approach_path ""]
     if {$ap eq "" || ![file exists $ap]} { return $contact }
 
     set approach_data [my approach_summary $contact]
@@ -849,9 +849,9 @@ oo::define spar::State method refine_contact {contact} {
     # onto the contact dict. They live in the approach file (not the roster),
     # so any consumer expecting them on the contact (e.g. the inspector's
     # A-tab title) reads them from here.
-    dict set contact response_likelihood [spar::dict_get_default $approach_data response_likelihood ""]
-    dict set contact a_note              [spar::dict_get_default $approach_data a_note ""]
-    dict set contact r_note              [spar::dict_get_default $approach_data r_note ""]
+    dict set contact response_likelihood [dict getdef $approach_data response_likelihood ""]
+    dict set contact a_note              [dict getdef $approach_data a_note ""]
+    dict set contact r_note              [dict getdef $approach_data r_note ""]
 
     # REPLIED — SENT and (replied_date or reply with direction:received).
     if {[dict get $fr any_sent] && [dict get $fr any_replied]} {
@@ -945,14 +945,14 @@ oo::define spar::State method final_round_messages_for_contact {contact} {
 proc spar::_channel_slot_wait_days {slot} {
     if {$slot eq ""} { return "" }
     if {[llength $slot] <= 1} { return "" }
-    return [spar::dict_get_default $slot wait_days ""]
+    return [dict getdef $slot wait_days ""]
 }
 
 # _channel_slot_wait_condition -- extract wait_condition. Returns "" if missing.
 proc spar::_channel_slot_wait_condition {slot} {
     if {$slot eq ""} { return "" }
     if {[llength $slot] <= 1} { return "" }
-    return [spar::dict_get_default $slot wait_condition ""]
+    return [dict getdef $slot wait_condition ""]
 }
 
 # _channel_slot_as_map -- return the raw slot value (bare string or map)
@@ -1109,15 +1109,15 @@ proc spar::_evaluate_slot_readiness {preceding_msg own_msg wait_days wait_cond o
 # keep passing without threading cdata through.
 proc spar::_approach_dispatch_gate {row cdata} {
     set has_cdata [expr {[llength $cdata] > 0}]
-    set date_ex [string trim [spar::dict_get_default $row date_excluded ""]]
+    set date_ex [string trim [dict getdef $row date_excluded ""]]
     set skip_excluded 1
     set min_star 3
     set in_scope {}
     if {$has_cdata} {
-        set filter [spar::dict_get_default $cdata filter [dict create]]
+        set filter [dict getdef $cdata filter [dict create]]
         set skip_excluded [string is true -strict \
-            [spar::dict_get_default $filter skip_excluded true]]
-        set min_star [spar::dict_get_default $filter min_star 3]
+            [dict getdef $filter skip_excluded true]]
+        set min_star [dict getdef $filter min_star 3]
         set in_scope [spar::campaign_in_scope_channels $cdata]
     }
     if {$skip_excluded && $date_ex ne ""} {
@@ -1130,7 +1130,7 @@ proc spar::_approach_dispatch_gate {row cdata} {
         # star_rating is P-authored (spar-P-profile.md §5.1); the roster
         # column is a cache so this band filter can scan without parsing
         # profiles. Pre-P rows carry 0 and fail the filter by design.
-        set star [spar::parse_star [spar::dict_get_default $row star_rating ""]]
+        set star [spar::parse_star [dict getdef $row star_rating ""]]
         if {$star < $min_star} {
             return "star $star below min_star $min_star"
         }
@@ -1142,10 +1142,10 @@ proc spar::_approach_dispatch_gate {row cdata} {
 # method emits 0 or 1 of these per contact (manual_followup may emit
 # dispatchable or awaiting, others typically one shape per branch).
 proc spar::_task {contact task_state {reason ""}} {
-    set name [spar::dict_get_default $contact contact_name ""]
-    set org  [spar::dict_get_default $contact organisation ""]
-    set stem [spar::dict_get_default $contact stem ""]
-    set segment_dir [spar::dict_get_default $contact _segment_dir ""]
+    set name [dict getdef $contact contact_name ""]
+    set org  [dict getdef $contact organisation ""]
+    set stem [dict getdef $contact stem ""]
+    set segment_dir [dict getdef $contact _segment_dir ""]
     return [dict create \
         contact_name $name organisation $org \
         segment [file tail $segment_dir] \
@@ -1215,10 +1215,10 @@ proc spar::detect_duplicates {all_classified_contacts} {
     array set subject_map {}  ;# subject → list of {segment filename}
 
     foreach contact $all_classified_contacts {
-        set name [spar::dict_get_default $contact contact_name ""]
-        set org [spar::dict_get_default $contact organisation ""]
-        set email [string trim [string tolower [spar::dict_get_default $contact email ""]]]
-        set segment_dir [spar::dict_get_default $contact _segment_dir ""]
+        set name [dict getdef $contact contact_name ""]
+        set org [dict getdef $contact organisation ""]
+        set email [string trim [string tolower [dict getdef $contact email ""]]]
+        set segment_dir [dict getdef $contact _segment_dir ""]
         set segment [file tail $segment_dir]
         set approach_path [dict get $contact approach_path]
         set state [dict get $contact state]
@@ -1251,7 +1251,7 @@ proc spar::detect_duplicates {all_classified_contacts} {
         set filename [file tail $approach_path]
 
         # To: address duplicates
-        foreach addr [spar::dict_get_default $contact to_addresses {}] {
+        foreach addr [dict getdef $contact to_addresses {}] {
             set addr_lower [string tolower [string trim $addr]]
             if {$addr_lower ne "" && [string first "@" $addr_lower] >= 0} {
                 lappend to_map($addr_lower) [list $segment $filename]
@@ -1259,7 +1259,7 @@ proc spar::detect_duplicates {all_classified_contacts} {
         }
 
         # Identical subject lines in unsent approach files
-        foreach subj [spar::dict_get_default $contact unsent_subjects {}] {
+        foreach subj [dict getdef $contact unsent_subjects {}] {
             if {$subj ne ""} {
                 lappend subject_map($subj) [list $segment $filename]
             }
@@ -1454,25 +1454,25 @@ proc spar::roster_counts {segment_dir} {
         }
 
         # Skip EXCLUDED (date_excluded set)
-        set date_invalid [string trim [spar::dict_get_default $row date_excluded ""]]
+        set date_invalid [string trim [dict getdef $row date_excluded ""]]
         if {[regexp {^"(.*)"$} $date_invalid -> inner]} {
             set date_invalid [string trim $inner]
         }
         if {![spar::is_null $date_invalid]} continue
 
-        set contact_name [string trim [spar::dict_get_default $row contact_name ""]]
+        set contact_name [string trim [dict getdef $row contact_name ""]]
 
         incr valid
 
-        set star [spar::parse_star [spar::dict_get_default $row star_rating ""]]
+        set star [spar::parse_star [dict getdef $row star_rating ""]]
 
-        set email [string trim [spar::dict_get_default $row email ""]]
+        set email [string trim [dict getdef $row email ""]]
         if {[regexp {^"(.*)"$} $email -> inner]} { set email [string trim $inner] }
-        set linkedin [string trim [spar::dict_get_default $row linkedin_url ""]]
+        set linkedin [string trim [dict getdef $row linkedin_url ""]]
         if {[regexp {^"(.*)"$} $linkedin -> inner]} { set linkedin [string trim $inner] }
-        set facebook [string trim [spar::dict_get_default $row facebook_url ""]]
+        set facebook [string trim [dict getdef $row facebook_url ""]]
         if {[regexp {^"(.*)"$} $facebook -> inner]} { set facebook [string trim $inner] }
-        set phone [string trim [spar::dict_get_default $row phone ""]]
+        set phone [string trim [dict getdef $row phone ""]]
         if {[regexp {^"(.*)"$} $phone -> inner]} { set phone [string trim $inner] }
 
         set c_has_email [expr {[string first "@" $email] >= 0 && ![spar::is_masked_email $email]}]
@@ -1570,7 +1570,7 @@ proc spar::read_profile_body {path} {
 # _roster_field_current -- fetch and de-quote a roster field from a row dict.
 # TSV loaders sometimes wrap blanks in `""`; strip the artifact.
 proc spar::_roster_field_current {row field} {
-    set v [string trim [spar::dict_get_default $row $field ""]]
+    set v [string trim [dict getdef $row $field ""]]
     if {[regexp {^"(.*)"$} $v -> inner]} {
         set v [string trim $inner]
     }

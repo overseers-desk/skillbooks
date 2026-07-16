@@ -86,7 +86,7 @@ set send_readiness_codes {placeholder_to}
 
 # --- Partition by severity, sort within group ---
 proc _issue_sort_key {issue} {
-    return "[spar::dict_get_default $issue segment {}]\t[spar::dict_get_default $issue contact_name {}]"
+    return "[dict getdef $issue segment {}]\t[dict getdef $issue contact_name {}]"
 }
 set errors {}
 set warnings {}
@@ -105,8 +105,8 @@ set warnings [lsort -command {apply {{a b} {string compare [_issue_sort_key $a] 
 
 # --- Output ---
 proc _issue_line {issue} {
-    set seg [spar::dict_get_default $issue segment ""]
-    set cn  [spar::dict_get_default $issue contact_name ""]
+    set seg [dict getdef $issue segment ""]
+    set cn  [dict getdef $issue contact_name ""]
     set ctx {}
     if {$seg ne ""} { lappend ctx $seg }
     if {$cn ne ""}  { lappend ctx $cn }
@@ -120,8 +120,8 @@ if {$json_mode} {
         ::json::write object \
             severity     [::json::write string [dict get $issue severity]] \
             code         [::json::write string [dict get $issue code]] \
-            segment      [::json::write string [spar::dict_get_default $issue segment ""]] \
-            contact_name [::json::write string [spar::dict_get_default $issue contact_name ""]] \
+            segment      [::json::write string [dict getdef $issue segment ""]] \
+            contact_name [::json::write string [dict getdef $issue contact_name ""]] \
             message      [::json::write string [dict get $issue message]]
     }
     set err_json {}

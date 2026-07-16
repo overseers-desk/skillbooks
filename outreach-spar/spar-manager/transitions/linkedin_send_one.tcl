@@ -66,7 +66,7 @@ proc ::spar::li::_health {overseer} {
             error "health probe failed"
         }
         set h [json::json2dict [http::data $tok]]
-        if {![spar::dict_get_default $h ok 0]} { error "overseer reports not ok" }
+        if {![dict getdef $h ok 0]} { error "overseer reports not ok" }
         return $h
     } finally {
         http::cleanup $tok
@@ -76,10 +76,10 @@ proc ::spar::li::_health {overseer} {
 proc ::spar::li::send_one {opts} {
     variable default_overseer
     set approach_path [dict get $opts approach_path]
-    set linkedin_url  [string trim [spar::dict_get_default $opts linkedin_url ""]]
-    set dry_run       [spar::dict_get_default $opts dry_run 0]
-    set overseer      [spar::dict_get_default $opts overseer_url $default_overseer]
-    set today         [spar::dict_get_default $opts today \
+    set linkedin_url  [string trim [dict getdef $opts linkedin_url ""]]
+    set dry_run       [dict getdef $opts dry_run 0]
+    set overseer      [dict getdef $opts overseer_url $default_overseer]
+    set today         [dict getdef $opts today \
         [clock format [clock seconds] -format "%Y-%m-%d"]]
 
     if {![file exists $approach_path]} {
@@ -93,8 +93,8 @@ proc ::spar::li::send_one {opts} {
     if {$msg eq ""} {
         return [list error "no linkedin message in final round"]
     }
-    set text [string trim [spar::dict_get_default $msg text ""]]
-    if {$text eq ""} { set text [string trim [spar::dict_get_default $msg body ""]] }
+    set text [string trim [dict getdef $msg text ""]]
+    if {$text eq ""} { set text [string trim [dict getdef $msg body ""]] }
     if {$text eq ""} {
         return [list error "linkedin message has no text"]
     }
@@ -106,7 +106,7 @@ proc ::spar::li::send_one {opts} {
 
     # invite vs dm: the draft's mode key decides; absent, a text within
     # the 300-char note limit reads as a connection invite.
-    set mode [spar::dict_get_default $msg mode ""]
+    set mode [dict getdef $msg mode ""]
     if {$mode eq ""} {
         set mode [expr {[string length $text] <= 300 ? "invite" : "dm"}]
     }
@@ -149,14 +149,14 @@ proc ::spar::li::send_one {opts} {
         catch {set detail [dict get $f detail]}
         return [list error "overseer fault ($shape): $detail"]
     }
-    set inner [spar::dict_get_default $resp result ""]
+    set inner [dict getdef $resp result ""]
     if {$inner in {"" null}} {
         return [list error "overseer returned no result"]
     }
     if {[catch {set r [json::json2dict $inner]} err]} {
         return [list error "unparseable primitive result: [string range $inner 0 200]"]
     }
-    set status [spar::dict_get_default $r status ""]
+    set status [dict getdef $r status ""]
     switch -- $status {
         sent {
             if {[catch {set stamped [spar::stamp_actioned_date $approach_path $today linkedin]} serr]} {
@@ -171,7 +171,7 @@ proc ::spar::li::send_one {opts} {
             return [list ok sent]
         }
         default {
-            set reason [spar::dict_get_default $r reason ""]
+            set reason [dict getdef $r reason ""]
             if {$reason eq ""} { set reason $status }
             return [list error "primitive status '$status': $reason"]
         }

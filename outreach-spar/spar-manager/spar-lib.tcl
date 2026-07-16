@@ -108,19 +108,19 @@ proc spar::roster_row_has_in_scope_channel {row channels} {
     foreach ch $channels {
         switch -- $ch {
             email {
-                set v [string trim [spar::dict_get_default $row email ""]]
+                set v [string trim [dict getdef $row email ""]]
                 if {[string match *@* $v]} { return 1 }
             }
             linkedin {
-                set v [string trim [spar::dict_get_default $row linkedin_url ""]]
+                set v [string trim [dict getdef $row linkedin_url ""]]
                 if {$v ne ""} { return 1 }
             }
             facebook {
-                set v [string trim [spar::dict_get_default $row facebook_url ""]]
+                set v [string trim [dict getdef $row facebook_url ""]]
                 if {$v ne ""} { return 1 }
             }
             phone {
-                set v [string trim [spar::dict_get_default $row phone ""]]
+                set v [string trim [dict getdef $row phone ""]]
                 if {$v ne ""} { return 1 }
             }
         }
@@ -193,7 +193,7 @@ proc spar::load_campaign {yaml_path} {
     # itself into the harness.
     if {[dict exists $data venue]} {
         set venue [dict get $data venue]
-        set vaddr [string trim [spar::dict_get_default $venue address ""]]
+        set vaddr [string trim [dict getdef $venue address ""]]
         if {$vaddr eq ""} {
             error "Campaign $yaml_path: venue.address must be a non-empty string when venue is present"
         }
@@ -252,11 +252,11 @@ proc spar::resolve_campaign {campaign_file campaign_dir} {
     }
 
     set cdata [spar::load_campaign $yaml_path]
-    set campaign_name [spar::dict_get_default $cdata campaign [file tail $yaml_path]]
+    set campaign_name [dict getdef $cdata campaign [file tail $yaml_path]]
     set primary_channel [spar::campaign_primary_channel $cdata]
     set min_star 0
     if {[dict exists $cdata filter]} {
-        set min_star [spar::dict_get_default [dict get $cdata filter] min_star 0]
+        set min_star [dict getdef [dict get $cdata filter] min_star 0]
     }
     set segments_list [spar::campaign_segment_names $cdata]
     set skip_set {}
@@ -393,7 +393,7 @@ proc spar::write_roster {tsv_path rows {headers {}}} {
     foreach row $rows {
         set fields {}
         foreach h $headers {
-            lappend fields [spar::dict_get_default $row $h ""]
+            lappend fields [dict getdef $row $h ""]
         }
         puts $fd [join $fields \t]
     }
@@ -635,14 +635,6 @@ proc spar::is_null {val} {
     return [expr {$v eq "" || $v eq "~" || $v eq "None" || $v eq "null"}]
 }
 
-# dict_get_default — get a dict value with a default if missing
-proc spar::dict_get_default {d key {default ""}} {
-    if {[dict exists $d $key]} {
-        return [dict get $d $key]
-    }
-    return $default
-}
-
 # campaign_segment_names — return the list of segment names from a campaign
 # dict, accepting both the current map form (segments: a map from name to a
 # per-segment plan block) and the legacy list form (segments: a bare list of
@@ -834,13 +826,13 @@ proc spar::_accumulate_usage {path totalsVar} {
         set msg [dict get $rec message]
         if {![dict exists $msg usage]} continue
         set u [dict get $msg usage]
-        set req_id [spar::dict_get_default $rec requestId \
-            [spar::dict_get_default $msg requestId ""]]
+        set req_id [dict getdef $rec requestId \
+            [dict getdef $msg requestId ""]]
         if {$req_id eq ""} { set req_id "dummy-[incr dummy]" }
-        set in [spar::dict_get_default $u input_tokens 0]
-        set out [spar::dict_get_default $u output_tokens 0]
-        set cw [spar::dict_get_default $u cache_creation_input_tokens 0]
-        set cr [spar::dict_get_default $u cache_read_input_tokens 0]
+        set in [dict getdef $u input_tokens 0]
+        set out [dict getdef $u output_tokens 0]
+        set cw [dict getdef $u cache_creation_input_tokens 0]
+        set cr [dict getdef $u cache_read_input_tokens 0]
         if {[dict exists $req_usage $req_id]} {
             lassign [dict get $req_usage $req_id] oi oo ow or
             dict set req_usage $req_id [list \

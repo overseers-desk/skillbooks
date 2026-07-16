@@ -106,17 +106,17 @@ oo::class create spar::ui::CampaignModel {
 
     method get_smtp_host {} {
         if {![dict exists $Cdata sender]} { return "" }
-        return [spar::dict_get_default [dict get $Cdata sender] smtp_host ""]
+        return [dict getdef [dict get $Cdata sender] smtp_host ""]
     }
 
     method get_smtp_user {} {
         if {![dict exists $Cdata sender]} { return "" }
-        return [spar::dict_get_default [dict get $Cdata sender] smtp_user ""]
+        return [dict getdef [dict get $Cdata sender] smtp_user ""]
     }
 
     method get_smtp_port {} {
         if {![dict exists $Cdata sender]} { return 587 }
-        return [spar::dict_get_default [dict get $Cdata sender] smtp_port 587]
+        return [dict getdef [dict get $Cdata sender] smtp_port 587]
     }
 
     # get_has_smtp_pass -- 1 if the YAML insecurely embeds a password.
@@ -129,7 +129,7 @@ oo::class create spar::ui::CampaignModel {
     method get_contact {stem} {
         if {$stem eq "" || [llength $AllContacts] == 0} { return "" }
         foreach c $AllContacts {
-            if {[spar::dict_get_default $c stem ""] eq $stem} { return $c }
+            if {[dict getdef $c stem ""] eq $stem} { return $c }
         }
         return ""
     }
@@ -204,15 +204,15 @@ oo::class create spar::ui::CampaignModel {
             return 0
         }
 
-        set CampaignName [spar::dict_get_default $Cdata campaign [file tail $CampaignFile]]
+        set CampaignName [dict getdef $Cdata campaign [file tail $CampaignFile]]
 
         # Sender
         set sender_parts {}
         if {[dict exists $Cdata sender]} {
             set sender_d [dict get $Cdata sender]
-            set s_name  [spar::dict_get_default $sender_d name  ""]
-            set s_role  [spar::dict_get_default $sender_d role  ""]
-            set s_email [spar::dict_get_default $sender_d email ""]
+            set s_name  [dict getdef $sender_d name  ""]
+            set s_role  [dict getdef $sender_d role  ""]
+            set s_email [dict getdef $sender_d email ""]
             if {$s_name  ne ""} { lappend sender_parts $s_name }
             if {$s_role  ne ""} { lappend sender_parts $s_role }
             if {$s_email ne ""} { lappend sender_parts "($s_email)" }
@@ -328,7 +328,7 @@ oo::class create spar::ui::CampaignModel {
         set tasks {}
         foreach contact $eligible {
             set cname  [dict get $contact contact_name]
-            set cstem  [spar::dict_get_default $contact stem ""]
+            set cstem  [dict getdef $contact stem ""]
             set org    [dict get $contact organisation]
             set seg    [dict get $contact segment]
             set tstate [dict get $contact task_state]
@@ -412,7 +412,7 @@ oo::class create spar::ui::CampaignModel {
         foreach c $AllContacts {
             set st [dict get $c state]
             if {$st ne "APPROACHED" && $st ne "APPROACH_STALE"} continue
-            set ap [spar::dict_get_default $c approach_path ""]
+            set ap [dict getdef $c approach_path ""]
             if {$ap ne ""} { lappend prefetch_paths $ap }
         }
         if {[llength $prefetch_paths]} {
@@ -465,7 +465,7 @@ oo::class create spar::ui::CampaignModel {
                             set c $refined
                         }
                     }
-                    my _fire contact-finalised [spar::dict_get_default $c stem ""]
+                    my _fire contact-finalised [dict getdef $c stem ""]
                     incr i
                     if {($i % 25) == 0} { my _yield_loop }
                 }
