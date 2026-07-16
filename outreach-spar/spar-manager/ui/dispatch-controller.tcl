@@ -279,15 +279,26 @@ oo::class create spar::ui::DispatchController {
         set mode_tag [expr {$dry_run ? " (DRY RUN — writes disabled)" : ""}]
         $Log log "Dispatch requested: $label ($tid)$mode_tag"
 
-        set incr [my _enqueue_prepared $opts $sel_stems $tid $dry_run]
-        if {$incr == 0} {
+        set enqueued [my _enqueue_prepared $opts $sel_stems $tid $dry_run]
+        if {[llength $enqueued] == 0} {
             $Log log "Dispatch: no rows enqueued (none eligible after gating)."
             return
         }
-        set BurstStems {}
+        # Set BurstStems from _enqueue_prepared's result only now, after
+        # every row in it has been enqueued. jobloop's enqueue fires each
+        # row's "queued" (and, if a slot is free, "running") job-state
+        # report synchronously, inline; only a job's terminal report
+        # (done/failed/cancelled) is deferred, via a 0ms timer, so none can
+        # land before this line runs. Resetting BurstStems earlier (before
+        # or during the enqueue loop) wiped rows this same burst had just
+        # added, so on_row_state's `$row in $BurstStems` test failed for
+        # every terminal report and the burst-complete block below never
+        # ran — the GUI's spinner never stopped and --autoquit never saw
+        # its burst finish.
+        set BurstStems $enqueued
         set BurstFinished 0
         set BurstFailed 0
-        incr BurstActive $incr
+        incr BurstActive [llength $enqueued]
 
         my _update_progress_display
         if {$AggregateAfter eq ""} { my aggregate_animate }
@@ -303,12 +314,16 @@ oo::class create spar::ui::DispatchController {
     # shared Dispatcher with the worker_proc the class declares. The
     # transition layer is the SSOT for per-row opts; this method only
     # filters by selection and drives the in-pool gating + requeue.
+    # Returns the list of stems actually enqueued (possibly empty). The
+    # caller derives its count from [llength] and owns writing that list
+    # onto BurstStems — see the comment in `dispatch` for why this method
+    # must not touch BurstStems itself.
     method _enqueue_prepared {opts sel_stems tid dry_run} {
         set cls [::spar::transitions::get $tid]
         if {[catch {set prep [$cls prepare_for_pool $opts \
                 [list [self] on_prep_progress]]} err]} {
             $Log log "Dispatch prep failed: $err"
-            return 0
+            return {}
         }
         set worker_proc [dict get $prep worker_proc]
         set rows        [dict get $prep rows]
@@ -316,7 +331,7 @@ oo::class create spar::ui::DispatchController {
         set selset [dict create]
         foreach s $sel_stems { dict set selset $s 1 }
 
-        set n 0
+        set enqueued {}
         foreach pair $rows {
             lassign $pair stem row_opts
             if {[llength $sel_stems] > 0 && ![dict exists $selset $stem]} continue
@@ -331,14 +346,13 @@ oo::class create spar::ui::DispatchController {
             dict set RowTid    $stem $tid
             dict set RowDryRun $stem $dry_run
             dict set RowMeta   $stem $row_opts
-            lappend BurstStems $stem
+            lappend enqueued $stem
             # A row may name its own worker (T6 linkedin rows carry
             # linkedin_send); the batch worker_proc is the default.
             set wp [spar::dict_get_default $row_opts worker_proc $worker_proc]
             $Dispatcher enqueue $stem $wp $row_opts
-            incr n
         }
-        return $n
+        return $enqueued
     }
 
     # on_prep_progress — prep-time callback invoked by prepare_for_pool
@@ -473,7 +487,14 @@ oo::class create spar::ui::DispatchController {
                 $Log log \
                     "Dispatch burst completed: $BurstFinished done, $BurstFailed failed$tag."
                 my _fire dispatch-ended "" $BurstFinished $BurstFailed
-                if {$AutoQuit && $AutoTid eq ""} {
+                # A burst only exists because work was dispatched, whether
+                # that dispatch was scoped by --tid (auto_dispatch) or by
+                # an interactive Play click; --autoquit means quit once
+                # that work finishes, however it was scoped. AutoTid is
+                # unconditionally cleared by auto_dispatch before it ever
+                # calls `dispatch`, so gating this exit on `$AutoTid eq ""`
+                # excluded exactly the --tid path it exists to serve.
+                if {$AutoQuit} {
                     update
                     exit [expr {$BurstFailed > 0 ? 1 : 0}]
                 }
