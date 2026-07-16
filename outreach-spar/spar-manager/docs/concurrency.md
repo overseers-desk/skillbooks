@@ -104,7 +104,7 @@ The masked-email guardrail in `ProfileHarness` no longer routes through `roster_
 
 Cancel and pause are cooperative and observed at a `checkpoint`, which is the only downward signal. `spar::Dispatcher cancel <row>` on a queued row drops it before it launches; on a running row it sets a flag the coroutine reads at its next `checkpoint`, where it reports `cancelled` and unwinds. `pause_job` parks the coroutine at the next checkpoint (a yield) and `resume_job` resumes it into a re-check of the cancel flag, so cancelling a paused row takes at the park.
 
-Because a checkpoint is a plain call in the coroutine's own stack, there is no shared-variable sentinel and no thread to signal into. A worker that never calls `checkpoint` is never interrupted, which is the price of never tearing a coroutine out of its own stack. The worker bodies check once at entry and, in the harness, between fix-loop passes.
+Because a checkpoint is a plain call in the coroutine's own stack, there is no shared-variable sentinel and no thread to signal into. A worker that never calls `checkpoint` is never interrupted, which is the price of never tearing a coroutine out of its own stack. Each of the four worker bodies checks once, at entry, before its harness or send begins; per-stage cancel inside the harness is deferred (below).
 
 A cancel that arrives while the coroutine is parked on a wait (a credit-limit sleep, an in-flight claude call) is not seen until the wait returns and the next checkpoint runs. This is the same timing the sentinel model had, for the same reason: the observation point is the worker's, not the pool's.
 
