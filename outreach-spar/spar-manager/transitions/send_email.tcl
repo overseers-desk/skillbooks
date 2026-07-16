@@ -46,11 +46,11 @@ proc ::spar::smtp_credentials {host user {cdata ""}} {
         catch {
             switch $tcl_platform(os) {
                 "Darwin" {
-                    set pass [string trim [exec security find-generic-password \
-                        -s $host -a $user -w]]
+                    set pass [string trim [spar::pool_exec security \
+                        find-generic-password -s $host -a $user -w]]
                 }
                 "Linux" {
-                    set pass [string trim [exec secret-tool lookup \
+                    set pass [string trim [spar::pool_exec secret-tool lookup \
                         protocol smtp server $host user $user]]
                 }
                 "Windows NT" {
