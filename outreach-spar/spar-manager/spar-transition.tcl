@@ -479,8 +479,8 @@ if {$dispatching} {
         $disp set_kind_cap linkedin_send 1
 
         if {$step_callback ne ""} {
-            $disp set_pre_post_callback \
-                [list ::spar::_pool_pre_post $step_callback]
+            $disp set_pre_launch_callback \
+                [list ::spar::_pool_pre_launch $step_callback]
         }
 
         $disp subscribe job-done   [list ::_dispatch_on_done]

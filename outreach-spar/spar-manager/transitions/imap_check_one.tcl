@@ -7,13 +7,12 @@
 # Returns counts; no callbacks, no thread::send, no registry, no event
 # loop.
 #
-# Under the pool model, one row corresponds to one stem, so the
-# previous async-fileevent queue (which served multiple stems through
-# one shared event loop on the main thread) collapses to a
-# synchronous per-stem call: one `courier search`, zero or more
-# `courier read`s, zero or more append_reply_to_yaml calls. The
-# worker thread is allowed to block — it has its own thread::send
-# mailbox and does not share the main event loop.
+# Under the pool model, one row corresponds to one stem: one `courier
+# search`, zero or more `courier read`s, zero or more append_reply_to_yaml
+# calls. The courier children run through spar::pool_exec, which drives the
+# subprocess off the event loop when this helper runs inside a jobloop
+# coroutine (the pool path) and falls back to a plain exec otherwise, so a
+# slow inbox yields the loop to the other jobs instead of freezing it.
 #
 # Inputs (opts dict):
 #   approach_path   abs path to the approach YAML for this stem
@@ -60,8 +59,8 @@ proc ::spar::imap::check_one {opts} {
     # Capture the merged output whether exec returns or throws; the JSON
     # payload is present either way, and only an unparseable payload below
     # is treated as a real error.
-    catch {exec $courier_bin --imap $account search -f $folder \
-        --limit 50 "from:$to_email" 2>@1} search_out
+    catch {spar::pool_exec $courier_bin --imap $account search -f $folder \
+        --limit 50 "from:$to_email"} search_out
 
     # On the exit-1 path the output may carry a trailing Tcl "child process
     # exited abnormally" note; isolate the JSON object by its outer braces.
@@ -132,8 +131,8 @@ proc ::spar::imap::check_one {opts} {
         # retrieved.
         set reply_text "(no text content)"
         if {[catch {
-            set read_out [exec $courier_bin --imap $account read \
-                -f $folder -u $uid 2>@1]
+            set read_out [spar::pool_exec $courier_bin --imap $account read \
+                -f $folder -u $uid]
             set raw [::json::json2dict $read_out]
             set inner [dict get $raw [lindex [dict keys $raw] 0]]
             set email_data [dict get $inner [lindex [dict keys $inner] 0]]

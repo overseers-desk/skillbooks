@@ -264,8 +264,22 @@ oo::class create spar::Harness {
                 return 1
             }
             ${::spar::harness_log}::warn "\[$Slug\] Credit limit hit (attempt $attempt/$max_retries). Sleeping [expr {$UsageResetSecs / 60}]m until reset..."
-            after [expr {$UsageResetSecs * 1000}] set ::_wake 1
-            vwait ::_wake
+            # A usage-window reset can be an hour out; in a jobloop coroutine
+            # that wait must not freeze the loop, so resume the coroutine
+            # when the timer fires (guarded, so a torn-down coroutine leaves
+            # nothing to fire into) rather than parking the whole process on
+            # a vwait. Outside a coroutine the vwait fallback keeps a
+            # standalone run working.
+            if {[info coroutine] ne ""} {
+                after [expr {$UsageResetSecs * 1000}] \
+                    [list apply {co {
+                        if {[llength [info commands $co]]} { $co }
+                    }} [info coroutine]]
+                yield
+            } else {
+                after [expr {$UsageResetSecs * 1000}] set ::_wake 1
+                vwait ::_wake
+            }
 
             # Already in resume mode — either a resume-initiated call, or a
             # call already converted on an earlier block — so replay verbatim.
@@ -353,7 +367,18 @@ oo::class create spar::Harness {
             lappend dm -poll \
                 [list [my _cost_poll_ms] [list [self] budget_poll $json_file]]
         }
-        set r [deadman::run $cmd {*}$dm]
+        # In a jobloop coroutine (the pool path) deadman completes into the
+        # coroutine: hand it [info coroutine] as -done and yield, so the
+        # minutes-long claude run drives the loop instead of freezing it,
+        # and the result dict arrives as the yield's value. Called outside a
+        # coroutine (a standalone or a test harness run) deadman's own vwait
+        # blocks until the child is reaped.
+        if {[info coroutine] ne ""} {
+            deadman::run $cmd {*}$dm -done [info coroutine]
+            set r [yield]
+        } else {
+            set r [deadman::run $cmd {*}$dm]
+        }
         set exit_code [dict get $r exit]
         switch -- [dict get $r cause] {
             cost  { set CostKilled 1 }
@@ -1053,7 +1078,10 @@ oo::class create spar::ProfileHarness {
     # DbC-Post: if the agent wrote a masked email (e.g. "b***@foo.com") to
     # the roster, blank the field. A masked address is worse than empty —
     # it inflates "has email" counts and propagates into approach files.
-    # Emits msg_roster_update per match; the dispatcher applies it.
+    # The harness runs as a coroutine on the pool's own thread, so the
+    # roster write is already serialised against every other job; blank the
+    # field by calling spar::update_roster_field directly rather than
+    # marshalling a report across threads.
     method sanitise_roster_email {roster_path slug} {
         if {![file exists $roster_path]} { return }
         foreach row [spar::load_roster $roster_path] {
@@ -1061,9 +1089,12 @@ oo::class create spar::ProfileHarness {
             set email [string trim [spar::dict_get_default $row email ""]]
             if {[spar::is_masked_email $email]} {
                 ${::spar::harness_log}::warn "\[[my slug]\] Guardrail: blanked masked email '$email' in roster"
-                if {[llength [info commands msg_roster_update]] > 0} {
-                    msg_roster_update [my slug] $roster_path \
+                if {[catch {
+                    spar::update_roster_field $roster_path \
                         stem $slug email ""
+                } err]} {
+                    ${::spar::harness_log}::warn \
+                        "\[[my slug]\] roster blank failed for stem=$slug: $err"
                 }
             }
         }

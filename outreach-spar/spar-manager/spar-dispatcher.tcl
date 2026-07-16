@@ -1,14 +1,20 @@
-# spar::Dispatcher — the campaign job pool.
+# spar::Dispatcher - the campaign job pool.
 #
 # The generic coordinator (queue, per-row state machine, concurrency caps,
-# cooperative cancel/pause, the worker-message surface, the event stream)
-# is the vendored `jobpool` module. spar::Dispatcher subclasses it to
-# supply what is spar's own: the worker bootstrap manifest, the logger
-# service, and the domain messages a spar worker sends that a generic pool
-# does not know — cost, retry, credit warnings, and roster updates.
+# cooperative cancel/pause, the worker-report surface, the event stream)
+# is the vendored `jobloop` module. spar::Dispatcher subclasses it to
+# supply what is spar's own: the logger service and the domain reports a
+# spar worker sends that a generic pool does not know - cost, retry,
+# credit warnings, and roster updates.
 #
-# The generic protocol is documented in the jobpool man page; the spar
-# additions and the per-worker cap policy live in docs/concurrency.md.
+# Each job runs as a coroutine on the front-end's own event loop; there is
+# no worker thread and no message marshalling. The worker bodies
+# (harness_run / ses_send / linkedin_send / imap_poll) live in the main
+# interpreter, sourced at the bottom of this file alongside the
+# harness/email/transition code they call.
+#
+# The generic protocol is documented in the jobloop man page; the spar
+# additions and the per-kind cap policy live in docs/concurrency.md.
 #
 # Idempotent: oo::class create is not idempotent, so guard against
 # multiple sources.
@@ -23,24 +29,24 @@ if {[info exists ::spar::_pool_loaded]} {
 namespace eval spar {
     variable _pool_loaded 1
     variable pool_script_dir [file dirname [file normalize [info script]]]
-    # vendor/ carries the jobpool module; a checkout runs as-is.
+    # vendor/ carries the jobloop module; a checkout runs as-is.
     ::tcl::tm::path add [file join $pool_script_dir vendor]
     # Logger service for the pool's dropped/out-of-order warnings.
     variable dispatch_log [logger::init spar::dispatch]
 }
-package require jobpool
+package require jobloop
 
 oo::class create spar::Dispatcher {
-    superclass jobpool
+    superclass jobloop
 
     # Keep spar's construction signature (jobs, optional log callback);
-    # feed jobpool the worker bootstrap and spar's logger service.
+    # feed jobloop spar's logger service. jobloop has no worker bootstrap:
+    # the worker bodies are commands in this interpreter, sourced below.
     constructor {jobs {log_cb ""}} {
-        next $jobs -log $log_cb -init [spar::pool_initcmd] \
-            -logger spar::dispatch
+        next $jobs -log $log_cb -logger spar::dispatch
     }
 
-    # ─── spar's domain messages ──────────────────────────────────────
+    # ─── spar's domain reports ───────────────────────────────────────
     # A generic pool carries lifecycle; these four are spar's own worker
     # signals. cost/retry/credit_warning are informational (they fire an
     # event and change no state); roster_update is relayed whole to the
@@ -67,28 +73,14 @@ oo::class create spar::Dispatcher {
     }
 }
 
-# ─── spar's wiring, fed to the pool ──────────────────────────────────────
-
-# The worker bootstrap: the file globals the worker procs read, then the
-# worker definitions.
-proc spar::pool_initcmd {} {
-    variable pool_script_dir
-    set d $pool_script_dir
-    return "
-        set ::pool_state_file   [list [file join $d spar-state.tcl]]
-        set ::pool_harness_file [list [file join $d spar-harness.tcl]]
-        set ::pool_email_file   [list [file join $d spar-email.tcl]]
-        set ::pool_ses_send_file   [list [file join $d transitions ses_send_one.tcl]]
-        set ::pool_li_send_file    [list [file join $d transitions linkedin_send_one.tcl]]
-        set ::pool_imap_check_file [list [file join $d transitions imap_check_one.tcl]]
-        source [list [file join $d spar-dispatcher-initcmd.tcl]]
-    "
-}
+# ─── spar's wiring ───────────────────────────────────────────────────────
 
 # Both front-ends call this right after constructing their Dispatcher, to
-# wire the one domain message that carries semantics: roster_update, a
-# worker's request for a serialised mutation of a roster TSV, run on the
-# main thread.
+# wire the one domain report that carries semantics: roster_update, a
+# request for a serialised mutation of a roster TSV. Coroutines run on the
+# one event loop, so the mutation is already serialised; the worker may
+# also call spar::update_roster_field itself. This subscriber keeps the
+# domain event usable for a caller that reports through the pool instead.
 proc spar::subscribe_pool_domain {disp} {
     $disp subscribe domain-roster_update ::spar::_pool_roster_update
 }
@@ -101,5 +93,23 @@ proc spar::_pool_roster_update {row roster_path key_col key_val field new_val} {
             "roster_update failed for row=$row $key_col=$key_val: $err"
     }
 }
+
+# ─── Worker code, loaded once into the main interpreter ──────────────────
+#
+# jobloop's workers are commands in this interpreter, not procs seeded into
+# a thread pool. Source the harness, email, and per-row transition helpers
+# the worker bodies call, then the worker bodies themselves. The guard at
+# the top of this file runs the block once; spar-harness carries its own
+# re-source guard, and the email/transition files only redefine procs.
+apply {{} {
+    variable ::spar::pool_script_dir
+    set d $::spar::pool_script_dir
+    source [file join $d spar-email.tcl]
+    source [file join $d spar-harness.tcl]
+    source [file join $d transitions ses_send_one.tcl]
+    source [file join $d transitions linkedin_send_one.tcl]
+    source [file join $d transitions imap_check_one.tcl]
+    source [file join $d spar-dispatcher-initcmd.tcl]
+}}
 
 package provide spar-dispatcher 1.0
