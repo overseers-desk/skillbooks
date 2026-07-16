@@ -18,7 +18,7 @@ proc spar::courier::accounts_block {} {
     if {$accounts_block_cache ne ""} { return $accounts_block_cache }
     set courier [auto_execok courier]
     if {$courier eq ""} { return "" }
-    if {[catch {set out [exec {*}$courier list]}]} { return "" }
+    if {[catch {set out [spar::pool_exec {*}$courier list]}]} { return "" }
     set hdr "## Courier — prefetched by dispatcher\n\n"
     append hdr "The commands and outputs below were already run for you. **Do not re-run `courier list` and do not search for this contact's email / name / organisation** — the results are below. If you need a different search, use the account names shown and invoke `courier -A search '<query>' --format text` directly.\n\n"
     append hdr "\$ courier list\n[string trim $out]\n"
@@ -70,20 +70,16 @@ proc spar::courier::contact_block {name org email} {
 
 proc spar::courier::_run {query} {
     set courier [auto_execok courier]
-    set chan [file tempfile tmp /tmp/spar-courier-]
-    close $chan
-    set status [catch {exec {*}$courier -A search --format text --limit 10 $query > $tmp.out 2> $tmp.err} _ opts]
-    if {$status == 0} {
-        set rc 0
-    } else {
-        set ec [dict get $opts -errorcode]
-        set rc [expr {[lindex $ec 0] eq "CHILDSTATUS" ? [lindex $ec 2] : -1}]
-    }
-    set fd [open $tmp.out r]; set sout [read $fd]; close $fd
-    set fd [open $tmp.err r]; set serr [read $fd]; close $fd
-    catch {file delete -- $tmp $tmp.out $tmp.err}
-    if {$rc == 0 || $rc == 1} { return [list $rc [string trim $sout]] }
-    return [list $rc "(search failed: [lindex [split [string trim $serr] \n] 0])"]
+    # courier exits 1 on a successful-but-empty search (documented), so a
+    # non-zero exit is not by itself a failure. pool_exec merges stderr into
+    # stdout the way `2>@1` did and, on a non-zero exit, throws with that
+    # merged output as its message; capture it either way, the way
+    # imap_check_one does. rc 0 means the search returned hits, which the
+    # caller reads to decide whether the email pass already satisfied the
+    # cascade.
+    set rc [catch {spar::pool_exec {*}$courier -A search --format text \
+        --limit 10 $query} out]
+    return [list $rc [string trim $out]]
 }
 
 package provide spar-courier 1.0

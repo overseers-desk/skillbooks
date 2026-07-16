@@ -884,4 +884,71 @@ proc spar::worker_cost_usd {session_id {transcripts_root ""}} {
     ) / 1000000.0}]
 }
 
+# ─── Coroutine-aware I/O helpers ─────────────────────────────────────────
+#
+# A pool worker (a jobloop coroutine) waits the loop's way: it never blocks
+# on a synchronous read or a bare vwait, which would stall every other job
+# in the process. These helpers arm a timer, a subprocess pipe, or an http
+# callback that resumes the coroutine, then yield. Called outside a
+# coroutine (a test, a standalone harness run) each falls back to the
+# blocking form, so the same body works either way. They live here, the
+# shared base, because both the pool's worker bodies and the harness path
+# (spar-courier, the SMTP credential lookup) reach them. deadman and http
+# are required lazily, in the branch that needs them, so a lightweight
+# consumer of this library does not pull them in.
+
+# spar::pool_sleep - wait `ms` milliseconds. In a coroutine: arm a timer
+# that resumes it, then yield, so the loop runs every other job meanwhile.
+# The timer's resume is guarded, so a coroutine torn down (pool destroyed)
+# before the timer fires leaves nothing to fire into.
+proc spar::pool_sleep {ms} {
+    set co [info coroutine]
+    if {$co eq ""} {
+        set var ::spar::__pool_sleep([incr ::spar::__pool_sleep_seq])
+        after $ms [list set $var 1]
+        vwait $var
+        unset -nocomplain $var
+        return
+    }
+    after $ms [list apply {co {
+        if {[llength [info commands $co]]} { $co }
+    }} $co]
+    yield
+}
+
+# spar::pool_exec - run a child and return its merged stdout+stderr, the
+# shape of `exec ... 2>@1`: the output on success, and on a non-zero exit
+# or a signal an error whose message is that same output. In a coroutine
+# the child is driven through deadman (pipe + fileevent) and awaited with a
+# yield, so it never blocks the loop; outside one it is a plain exec.
+# deadman arrives with the dispatcher's or the harness's vendor path, both
+# loaded wherever a coroutine can run, so the lazy require resolves.
+proc spar::pool_exec {args} {
+    if {[info coroutine] eq ""} {
+        return [exec {*}$args 2>@1]
+    }
+    package require deadman
+    deadman::run $args -err stdout -done [info coroutine]
+    set r [yield]
+    set out [string trimright [dict get $r stdout] \n]
+    if {[dict get $r exit] != 0 || [dict get $r signal] ne ""} {
+        return -code error $out
+    }
+    return $out
+}
+
+# spar::pool_http - http::geturl that does not block the loop. In a
+# coroutine the request is issued with -command resuming the coroutine, so
+# the socket exchange runs on the event loop; the caller gets the token
+# back and owns http::cleanup as with a synchronous geturl.
+proc spar::pool_http {args} {
+    package require http
+    if {[info coroutine] eq ""} {
+        return [http::geturl {*}$args]
+    }
+    set tok [http::geturl {*}$args -command [info coroutine]]
+    yield
+    return $tok
+}
+
 package provide spar-lib 1.0
