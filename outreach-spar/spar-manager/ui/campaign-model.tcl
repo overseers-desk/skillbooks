@@ -97,8 +97,6 @@ oo::class create spar::ui::CampaignModel {
     method get_sender_text     {} { return $SenderText }
     method get_filter_desc     {} { return $FilterDesc }
     method get_cdata           {} { return $Cdata }
-    method get_segment_order   {} { return $SegmentOrder }
-    method get_skip_set        {} { return $SkipSet }
     method get_segments        {} { return $Segments }
     method get_all_contacts    {} { return $AllContacts }
     method get_transitions     {} { return $Transitions }
@@ -338,15 +336,6 @@ oo::class create spar::ui::CampaignModel {
             lappend tasks [list $cname $cstem $org $seg $tstate $reason]
         }
         return [list $label [llength $eligible] $tasks]
-    }
-
-    method _build_transitions {} {
-        set primary_channel [my _primary_channel]
-        set result {}
-        foreach tid [spar::ui_transition_tids] {
-            lappend result [my _transition_entry $tid $primary_channel]
-        }
-        return $result
     }
 
     # ─── Internal: async loader (coroutine) ───────────────────────────────

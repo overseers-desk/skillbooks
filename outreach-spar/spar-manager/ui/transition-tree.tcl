@@ -129,7 +129,6 @@ oo::class create spar::ui::TransitionTree {
     method get_tree_widget  {} { return $Tree }
     method get_row_names    {} { return $RowNames }
     method get_slug_to_row  {} { return $SlugToRow }
-    method get_show_completed {} { return $ShowCompleted }
 
     # ─── Public entry points ──────────────────────────────────────────────
 
