@@ -1,7 +1,6 @@
 # Sourced into the main interpreter by spar-dispatcher.tcl. Defines the
-# coroutine-aware I/O helpers, the worker proc bodies (harness_run /
-# ses_send / linkedin_send / imap_poll), and the test fixtures
-# (fake_worker, FakeHarness).
+# worker proc bodies (harness_run / ses_send / linkedin_send / imap_poll)
+# and the test fixtures (fake_worker, FakeHarness).
 #
 # Under jobloop each job runs as a coroutine on the front-end's event
 # loop, in this interpreter. A worker reports through the jobloop verbs
@@ -13,73 +12,16 @@
 #
 # A worker waits the loop's way: it never blocks on a synchronous read or
 # a bare vwait, which would stall every other job in the process. The
-# helpers below arm a timer, a subprocess pipe, or an http callback that
-# resumes the coroutine, then yield. Called outside a coroutine (from a
-# test, or a standalone harness run) each falls back to the blocking form.
+# coroutine-aware waits (spar::pool_sleep / pool_exec / pool_http) live in
+# spar-lib.tcl, the shared base, so the harness path reaches them too; each
+# falls back to the blocking form when called outside a coroutine.
 
 package require Tcl 9
-package require http
-# deadman (subprocess watchdog) and its vendor path arrive with
-# spar-harness.tcl, sourced ahead of this file; require it here too so the
-# dependency is explicit and a re-order does not break the exec helper.
-package require deadman
 
 # The worker bodies are global procs; this line lets an unqualified
 # `checkpoint` / `done` / `failed` inside them resolve to the jobloop
 # verbs. Each verb finds its owning pool from [info coroutine].
 namespace path ::jobloop::worker
-
-# ─── Coroutine-aware I/O helpers ─────────────────────────────────────────
-
-# spar::pool_sleep - wait `ms` milliseconds. In a coroutine: arm a timer
-# that resumes it, then yield, so the loop runs every other job meanwhile.
-# The timer's resume is guarded, so a coroutine torn down (pool destroyed)
-# before the timer fires leaves nothing to fire into.
-proc spar::pool_sleep {ms} {
-    set co [info coroutine]
-    if {$co eq ""} {
-        set var ::spar::__pool_sleep([incr ::spar::__pool_sleep_seq])
-        after $ms [list set $var 1]
-        vwait $var
-        unset -nocomplain $var
-        return
-    }
-    after $ms [list apply {co {
-        if {[llength [info commands $co]]} { $co }
-    }} $co]
-    yield
-}
-
-# spar::pool_exec - run a child and return its merged stdout+stderr, the
-# shape of `exec ... 2>@1`: the output on success, and on a non-zero exit
-# or a signal an error whose message is that same output. In a coroutine
-# the child is driven through deadman (pipe + fileevent) and awaited with a
-# yield, so it never blocks the loop; outside one it is a plain exec.
-proc spar::pool_exec {args} {
-    if {[info coroutine] eq ""} {
-        return [exec {*}$args 2>@1]
-    }
-    deadman::run $args -err stdout -done [info coroutine]
-    set r [yield]
-    set out [string trimright [dict get $r stdout] \n]
-    if {[dict get $r exit] != 0 || [dict get $r signal] ne ""} {
-        return -code error $out
-    }
-    return $out
-}
-
-# spar::pool_http - http::geturl that does not block the loop. In a
-# coroutine the request is issued with -command resuming the coroutine, so
-# the socket exchange runs on the event loop; the caller gets the token
-# back and owns http::cleanup as with a synchronous geturl.
-proc spar::pool_http {args} {
-    if {[info coroutine] eq ""} {
-        return [http::geturl {*}$args]
-    }
-    set tok [http::geturl {*}$args -command [info coroutine]]
-    yield
-    return $tok
-}
 
 # ─── Worker proc bodies (production) ─────────────────────────────────────
 #
