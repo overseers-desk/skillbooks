@@ -9,14 +9,50 @@ set workers [expr {[info exists ::env(SPAR_TEST_JOBS)]
                    ? $::env(SPAR_TEST_JOBS)
                    : [exec getconf _NPROCESSORS_ONLN]}]
 
+# A test that requires Tk needs a real display; wish9.0 falls off the
+# script end into the event loop instead of exiting, so only a Tk test
+# runs under it (word-bounded match, so `package require tkdown` does not
+# read as Tk - mirrors tests/run.sh in teatotal, the jobloop/jobpool
+# vendor home). Start one private Xvfb for the whole run - never an
+# existing display, where its windows would land over someone's work -
+# and tear it down when the suite finishes, so plain `tclsh9.0
+# test/run.tcl` comes back green on a headless box with no caller-side
+# xvfb-run needed.
+proc needs_tk {path} {
+    set fd [open $path r]; set src [read $fd]; close $fd
+    return [regexp -line {^[[:space:]]*package require (Tk|Ttk|tk|ttk)\y} $src]
+}
+
+set display ""
+set xvfb_pid ""
+if {[llength [lmap f $test_files {expr {[needs_tk $f] ? 1 : [continue]}}]]} {
+    set disp 99
+    while {[file exists "/tmp/.X${disp}-lock"] || [file exists "/tmp/.X11-unix/X${disp}"]} {
+        incr disp
+    }
+    set display ":$disp"
+    set xvfb_pid [exec Xvfb $display -screen 0 1500x1150x24 \
+        > /tmp/spar-tests-xvfb.log 2>@1 &]
+    exec sleep 2
+}
+
 set pool [tpool::create \
     -minworkers 0 \
     -maxworkers $workers \
     -idletime   30 \
     -initcmd {
-        proc run_test_file {path} {
+        proc file_needs_tk {path} {
+            set fd [open $path r]; set src [read $fd]; close $fd
+            return [regexp -line {^[[:space:]]*package require (Tk|Ttk|tk|ttk)\y} $src]
+        }
+        proc run_test_file {path display} {
             set t0 [clock milliseconds]
-            set rc [catch {exec tclsh9.0 $path 2>@1} output]
+            if {[file_needs_tk $path]} {
+                set ::env(DISPLAY) $display
+                set rc [catch {exec wish9.0 $path 2>@1} output]
+            } else {
+                set rc [catch {exec tclsh9.0 $path 2>@1} output]
+            }
             return [dict create \
                 path       $path \
                 rc         $rc \
@@ -28,7 +64,7 @@ set pool [tpool::create \
 set t0 [clock milliseconds]
 set pending {}
 foreach f $test_files {
-    lappend pending [tpool::post -nowait $pool [list run_test_file $f]]
+    lappend pending [tpool::post -nowait $pool [list run_test_file $f $display]]
 }
 
 set results {}
@@ -77,5 +113,7 @@ puts "════════════════════════�
 puts [format "Files: %d ok, %d failed   Tests: %d passed, %d failed   Wall: %d ms (workers=%d)" \
     [expr {[llength $results] - $failed}] $failed $total_passes $total_failures $wall $workers]
 puts "════════════════════════════════════════════════════════════════"
+
+if {$xvfb_pid ne ""} { catch {exec kill $xvfb_pid} }
 
 exit [expr {$failed > 0}]
