@@ -49,7 +49,7 @@ namespace path ::jobloop::worker
 # async completion (see spar-harness.tcl _invoke), so a long run yields the
 # loop rather than freezing it. Cancel-checked once before the harness
 # starts; per-stage cancel inside the harness is deferred (see
-# docs/concurrency.md "Deferred work").
+# docs/concurrency.md "Deferred and adjacent work").
 proc harness_run {row opts} {
     checkpoint $row
 
