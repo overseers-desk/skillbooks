@@ -223,14 +223,9 @@ proc imap_poll {row opts} {
 #
 # Plan tuples:
 #   {sleep ms}                - yield to the loop for ms (timer + yield)
-#   {exec_sleep secs}         - run a real `sleep secs` child, awaited off
-#                               the loop; several overlap as concurrent
-#                               coroutines, which is what the production
-#                               harness's async claude looks like.
 #   {msg_<verb> arg ...}      - call the named jobloop verb (the msg_
 #                               prefix is the historical spelling)
 #   {check_cancel}            - checkpoint: unwind as cancelled if flagged
-#   {check_pause ?poll_ms?}   - checkpoint: park while the pause flag is set
 proc fake_worker {row opts} {
     set plan [dict get $opts plan]
     set terminal_emitted 0
@@ -241,13 +236,7 @@ proc fake_worker {row opts} {
             sleep {
                 spar::pool_sleep [lindex $rest 0]
             }
-            exec_sleep {
-                spar::pool_exec sleep [lindex $rest 0]
-            }
-            check_cancel -
-            check_pause {
-                # Cancel and pause are both observed at a checkpoint now;
-                # the old poll_ms argument no longer applies.
+            check_cancel {
                 checkpoint $row
             }
             default {
@@ -260,13 +249,6 @@ proc fake_worker {row opts} {
     }
     if {!$terminal_emitted} { done $row {} }
 }
-
-# fake_worker_a / fake_worker_b - aliases for fake_worker that
-# test-pool.tcl uses to drive distinct kind names through one shared pool,
-# so set_kind_cap can apply different caps to two otherwise-identical
-# workers. Production code never references them.
-proc fake_worker_a {row opts} { fake_worker $row $opts }
-proc fake_worker_b {row opts} { fake_worker $row $opts }
 
 # FakeHarness - minimal harness shape used by test/test-pool.tcl to
 # exercise harness_run without sourcing the real harness or invoking
