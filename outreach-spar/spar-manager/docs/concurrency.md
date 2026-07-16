@@ -135,3 +135,7 @@ Two mechanisms.
 **Cancel during credit-limit sleep.** The retry loop in `_with_recovery` now yields the loop for the reset window rather than blocking, so a cancel is deliverable during the sleep. What is missing is a checkpoint after the sleep returns and a fast path that exits the loop instead of looping back to another claude call. Small change; deferred only because cancel during a multi-hour credit sleep has not yet bitten anyone.
 
 **Keychain access dialog.** On macOS the first call to `security find-generic-password` per Keychain item can pop a modal dialog and block the worker until the user dismisses it. Steady-state cost is zero; rotating the SMTP password unattended would re-trigger it. Worth being aware of, not worth code now.
+
+**The `progress` verb.** The harness reports `phase` and never `progress`; whether `progress` earns a distinct use or leaves the workers' vocabulary stays open.
+
+**`credit_warning`.** No harness path emits it yet; when the credit-limit retry loop learns to warn before it sleeps, this is the report it would ride on. Open.
