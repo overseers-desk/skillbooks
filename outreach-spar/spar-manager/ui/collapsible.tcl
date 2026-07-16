@@ -30,7 +30,6 @@ oo::class create spar::ui::Collapsible {
 
     method widget      {} { return $Frame }
     method body        {} { return $Body }
-    method is_expanded {} { return $Expanded }
 
     method expand   {} { if {!$Expanded} { my toggle } }
     method collapse {} { if { $Expanded} { my toggle } }

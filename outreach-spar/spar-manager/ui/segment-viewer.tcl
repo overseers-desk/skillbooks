@@ -56,7 +56,6 @@ oo::class create spar::ui::SegmentViewer {
         foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
     }
 
-    method get_current_segment {} { return $CurrentSegment }
     method is_visible          {} { return $Visible }
 
     # ─── Event handlers ───────────────────────────────────────────────────

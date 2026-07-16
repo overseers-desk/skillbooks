@@ -89,7 +89,6 @@ oo::class create spar::ui::Inspector {
         foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
     }
 
-    method get_current_stem {} { return $CurrentStem }
     method is_visible       {} { return $Visible }
 
     # ─── Event handlers ───────────────────────────────────────────────────

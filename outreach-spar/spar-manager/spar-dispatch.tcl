@@ -423,35 +423,6 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         roster_lock $roster_lock]
 }
 
-# on-progress wrapper that runs DbC-Post validation when a slug completes.
-# slug_ctx: dict slug → {segment_dir pre_snapshot}. Emits new roster
-# issues (not in the slug's pre_snapshot) as severity "warning" with
-# code prefix "regression:".
-proc spar::p::_dbc_post_progress {orig_progress slug_ctx slug status message} {
-    {*}$orig_progress $slug $status $message
-    if {$status ne "done"} return
-    if {![dict exists $slug_ctx $slug]} return
-    lassign [dict get $slug_ctx $slug] segment_dir pre_snapshot
-    if {[catch {
-        # DbC-Post bypass: fresh State, same rationale as the pre snapshot.
-        set _post_state [spar::State new]
-        set _post_contacts [$_post_state classify_segment $segment_dir]
-        $_post_state destroy
-        set _post_issues [spar::validate_roster $_post_contacts]
-    } _post_err]} {
-        {*}$orig_progress $slug warning "DbC-Post validate_roster failed: $_post_err"
-        return
-    }
-    foreach _issue $_post_issues {
-        set _cn [dict get $_issue contact_name]
-        set _cd [dict get $_issue code]
-        set _key "${_cn}|${_cd}"
-        if {[dict exists $pre_snapshot $_key]} continue
-        set _msg [dict get $_issue message]
-        {*}$orig_progress $slug warning "regression: $_cd ($_cn): $_msg"
-    }
-}
-
 # ════════════════════════════════════════════════════════════════════════
 # spar::a::prepare_for_pool — SPAR-A dispatch entry (approach dispatch).
 # ════════════════════════════════════════════════════════════════════════

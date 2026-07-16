@@ -41,9 +41,6 @@ oo::class create spar::ui::LogWindow {
         foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
     }
 
-    # ─── Accessors ────────────────────────────────────────────────────────
-    method get_unread {} { return $LogUnread }
-
     # ─── Public entry points ──────────────────────────────────────────────
 
     # log — append a timestamped line to the buffer, mirror to stderr

@@ -86,7 +86,6 @@ oo::class create spar::Harness {
     # Public accessors — subclasses and harness scripts use these.
     method slug        {} { return $Slug }
     method log_prefix  {} { return $LogPrefix }
-    method cost_log    {} { return $CostLog }
     method session_id  {} { return $SessionId }
     method prompt_dir  {} { return $PromptDir }
     method log_dir     {} { return $LogDir }

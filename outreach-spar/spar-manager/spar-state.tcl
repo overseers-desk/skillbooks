@@ -51,20 +51,6 @@ proc spar::find_tool {name} {
     return [auto_execok $name]
 }
 
-# resolve_coreutil -- resolve a GNU coreutils command name (timeout,
-# flock, date, ...) to an absolute path, accounting for Homebrew's
-# g-prefix convention on macOS (gtimeout, gflock, gdate). Returns ""
-# if neither variant is on PATH.
-proc spar::resolve_coreutil {name} {
-    set direct [auto_execok $name]
-    if {$direct ne ""} { return $direct }
-    global tcl_platform
-    if {$tcl_platform(os) eq "Darwin"} {
-        return [auto_execok "g$name"]
-    }
-    return ""
-}
-
 # keychain_available -- 1 iff this host can store SMTP passwords in an
 # OS-native secret store. macOS always has `security`; Linux depends on
 # libsecret-tools being installed; Windows is runtime-probed exactly
