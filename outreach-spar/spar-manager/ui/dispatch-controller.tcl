@@ -239,7 +239,7 @@ oo::class create spar::ui::DispatchController {
         foreach s $sel_stems { dict set stem_set $s 1 }
         set filtered {}
         foreach c $eligible {
-            if {[dict exists $stem_set [spar::dict_get_default $c stem ""]]} {
+            if {[dict exists $stem_set [dict getdef $c stem ""]]} {
                 lappend filtered $c
             }
         }
@@ -349,7 +349,7 @@ oo::class create spar::ui::DispatchController {
             lappend enqueued $stem
             # A row may name its own worker (T6 linkedin rows carry
             # linkedin_send); the batch worker_proc is the default.
-            set wp [spar::dict_get_default $row_opts worker_proc $worker_proc]
+            set wp [dict getdef $row_opts worker_proc $worker_proc]
             $Dispatcher enqueue $stem $wp $row_opts
         }
         return $enqueued

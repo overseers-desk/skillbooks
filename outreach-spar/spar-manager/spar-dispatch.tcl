@@ -149,12 +149,12 @@ proc spar::delete_roster_locks {segment_dirs} {
 #
 # Returns: dict {logs_dir <abs path> rows {{stem pdir} ...}}
 proc spar::p::prepare_for_pool {opts on_progress} {
-    set campaign_file [spar::dict_get_default $opts campaign_file ""]
+    set campaign_file [dict getdef $opts campaign_file ""]
     if {$campaign_file eq ""} {
         error "spar::p::prepare_for_pool: opts.campaign_file is required"
     }
-    set user_logs    [spar::dict_get_default $opts logs_dir ""]
-    set sel_segments [spar::dict_get_default $opts segments {}]
+    set user_logs    [dict getdef $opts logs_dir ""]
+    set sel_segments [dict getdef $opts segments {}]
 
     set cdata    [spar::load_campaign $campaign_file]
     # Version pre-flight (refuse-to-start): do not run P on a campaign whose
@@ -195,7 +195,7 @@ proc spar::p::prepare_for_pool {opts on_progress} {
 proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress campaign_file segment_name} {
     set segment_dir [file normalize $segment_dir]
 
-    set sel_stems [spar::dict_get_default $opts stems {}]
+    set sel_stems [dict getdef $opts stems {}]
 
     set roster_path [file join $segment_dir roster.tsv]
     set profile_dir [spar::profile_dir_for_segment $segment_dir]
@@ -224,10 +224,10 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         close $_fd
     }
 
-    set overview [spar::dict_get_default $cdata usp_document]
-    set antifacts [spar::dict_get_default $cdata antifacts]
-    set appendices [spar::dict_get_default $cdata prompt_appendices [dict create]]
-    set appendix_p_author [spar::dict_get_default $appendices p_author ""]
+    set overview [dict getdef $cdata usp_document ""]
+    set antifacts [dict getdef $cdata antifacts ""]
+    set appendices [dict getdef $cdata prompt_appendices [dict create]]
+    set appendix_p_author [dict getdef $appendices p_author ""]
 
     # Limited-knowledge profiling (INVARIANTS.md I1): P reads only the roster
     # and the segment definition. The campaign usp_document/overview is NOT a
@@ -272,17 +272,17 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
     set skipped 0
 
     foreach row $rows {
-        set name [string trim [spar::dict_get_default $row contact_name]]
-        set org [string trim [spar::dict_get_default $row organisation]]
-        set role [string trim [spar::dict_get_default $row role]]
-        set phone [string trim [spar::dict_get_default $row phone]]
-        set email [string trim [spar::dict_get_default $row email]]
-        set linkedin [string trim [spar::dict_get_default $row linkedin_url]]
-        set facebook [string trim [spar::dict_get_default $row facebook_url]]
-        set date_invalid [string trim [spar::dict_get_default $row date_excluded]]
-        set s_note [string trim [spar::dict_get_default $row s_note]]
-        set p_note [string trim [spar::dict_get_default $row p_note]]
-        set stem [string trim [spar::dict_get_default $row stem ""]]
+        set name [string trim [dict getdef $row contact_name ""]]
+        set org [string trim [dict getdef $row organisation ""]]
+        set role [string trim [dict getdef $row role ""]]
+        set phone [string trim [dict getdef $row phone ""]]
+        set email [string trim [dict getdef $row email ""]]
+        set linkedin [string trim [dict getdef $row linkedin_url ""]]
+        set facebook [string trim [dict getdef $row facebook_url ""]]
+        set date_invalid [string trim [dict getdef $row date_excluded ""]]
+        set s_note [string trim [dict getdef $row s_note ""]]
+        set p_note [string trim [dict getdef $row p_note ""]]
+        set stem [string trim [dict getdef $row stem ""]]
 
         # Header fragments and invalidated rows never dispatched.
         # One of contact_name / organisation may be blank: P §4.1 resolves
@@ -381,7 +381,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         # never wrote it, so campaign.yaml could not tune the cap the
         # harness comment promised; this supplies it when the campaign
         # sets worker_cost_cap_usd. Empty -> harness default applies.
-        set _cost_cap [spar::dict_get_default $cdata worker_cost_cap_usd ""]
+        set _cost_cap [dict getdef $cdata worker_cost_cap_usd ""]
         if {$_cost_cap ne ""} {
             puts $fd "WORKER_COST_CAP_USD=$_cost_cap"
         }
@@ -458,13 +458,13 @@ proc spar::a::prepare_for_pool {opts on_progress} {
 # <result-dict> prompt_dirs <list> logs_dir <path> stem_map <slug →
 # stem>}; prepare_for_pool repackages prompt_dirs into pool rows.
 proc spar::a::_build_prompts {opts on_progress} {
-    set campaign_file [spar::dict_get_default $opts campaign_file ""]
+    set campaign_file [dict getdef $opts campaign_file ""]
     if {$campaign_file eq ""} {
         error "spar::a::_build_prompts: opts.campaign_file is required"
     }
-    set user_logs [spar::dict_get_default $opts logs_dir ""]
-    set sel_segments [spar::dict_get_default $opts segments {}]
-    set sel_stems [spar::dict_get_default $opts stems {}]
+    set user_logs [dict getdef $opts logs_dir ""]
+    set sel_segments [dict getdef $opts segments {}]
+    set sel_stems [dict getdef $opts stems {}]
 
     set cdata [spar::load_campaign $campaign_file]
     # Version pre-flight (refuse-to-start): do not run A on a campaign whose
@@ -475,7 +475,7 @@ proc spar::a::_build_prompts {opts on_progress} {
     set sender_name [dict get $cdata sender name]
     set sender_role [dict get $cdata sender role]
     set sender_email [dict get $cdata sender email]
-    set sender_org [spar::dict_get_default [dict get $cdata sender] organisation]
+    set sender_org [dict getdef [dict get $cdata sender] organisation ""]
     set language [dict get $cdata language]
     # approach_filename in campaign YAML is retained for backwards compat
     # but no longer consulted: the authoritative slug is the roster stem,
@@ -484,23 +484,23 @@ proc spar::a::_build_prompts {opts on_progress} {
     variable ::spar::dispatch_script_dir
     set script_dir $::spar::dispatch_script_dir
     set method [file normalize [file join $script_dir .. spar-A-approach.md]]
-    set appendices [spar::dict_get_default $cdata prompt_appendices [dict create]]
-    set appendix_a_author [spar::dict_get_default $appendices a_author ""]
-    set appendix_a_challenger [spar::dict_get_default $appendices a_challenger ""]
-    set appendix_a_assembly [spar::dict_get_default $appendices a_assembly ""]
+    set appendices [dict getdef $cdata prompt_appendices [dict create]]
+    set appendix_a_author [dict getdef $appendices a_author ""]
+    set appendix_a_challenger [dict getdef $appendices a_challenger ""]
+    set appendix_a_assembly [dict getdef $appendices a_assembly ""]
     set overview [dict get $cdata usp_document]
-    set antifacts [spar::dict_get_default $cdata antifacts]
-    set campaign_principles [spar::dict_get_default $cdata campaign_principles]
-    set a_max_passes_ceiling [spar::dict_get_default $cdata a_max_passes 3]
+    set antifacts [dict getdef $cdata antifacts ""]
+    set campaign_principles [dict getdef $cdata campaign_principles ""]
+    set a_max_passes_ceiling [dict getdef $cdata a_max_passes 3]
     set segments [spar::filter_segments [spar::campaign_segment_names $cdata] $sel_segments]
 
     # Campaign filters (issue #41 in-scope-channel gate replaces
     # filter.require_email). A roster row is dispatchable for A when it
     # has at least one populated field for a channel the campaign declares.
-    set filter [spar::dict_get_default $cdata filter [dict create]]
-    set filter_skip_excluded [string is true -strict [spar::dict_get_default $filter skip_excluded true]]
-    set filter_min_star [spar::dict_get_default $filter min_star 0]
-    set filter_require_profile [string is true -strict [spar::dict_get_default $filter require_profile false]]
+    set filter [dict getdef $cdata filter [dict create]]
+    set filter_skip_excluded [string is true -strict [dict getdef $filter skip_excluded true]]
+    set filter_min_star [dict getdef $filter min_star 0]
+    set filter_require_profile [string is true -strict [dict getdef $filter require_profile false]]
     set in_scope_channels [spar::campaign_in_scope_channels $cdata]
 
     set lang_inst [spar::lang_instruction $language]
@@ -528,7 +528,7 @@ proc spar::a::_build_prompts {opts on_progress} {
 
     set logs_dir [spar::resolve_logs_dir $campaign_file a $datestamp $user_logs]
 
-    set campaign_name [spar::dict_get_default $cdata campaign]
+    set campaign_name [dict getdef $cdata campaign ""]
     set filter_desc "in_scope_channels=\{[join $in_scope_channels { }]\} skip_excluded=$filter_skip_excluded min_star=$filter_min_star require_profile=$filter_require_profile"
 
     set sender_line "$sender_name, $sender_role"
@@ -567,18 +567,18 @@ proc spar::a::_build_prompts {opts on_progress} {
         set rows [spar::load_roster $roster_path]
 
         foreach row $rows {
-            set org [string trim [spar::dict_get_default $row organisation]]
-            set name [string trim [spar::dict_get_default $row contact_name]]
-            set role [string trim [spar::dict_get_default $row role]]
-            set phone [string trim [spar::dict_get_default $row phone]]
-            set email [string trim [spar::dict_get_default $row email]]
-            set linkedin [string trim [spar::dict_get_default $row linkedin_url]]
-            set facebook [string trim [spar::dict_get_default $row facebook_url]]
-            set p_note [string trim [spar::dict_get_default $row p_note]]
-            set star [string trim [spar::dict_get_default $row star_rating]]
-            set s_note [string trim [spar::dict_get_default $row s_note]]
-            set date_invalid [string trim [spar::dict_get_default $row date_excluded]]
-            set stem [string trim [spar::dict_get_default $row stem ""]]
+            set org [string trim [dict getdef $row organisation ""]]
+            set name [string trim [dict getdef $row contact_name ""]]
+            set role [string trim [dict getdef $row role ""]]
+            set phone [string trim [dict getdef $row phone ""]]
+            set email [string trim [dict getdef $row email ""]]
+            set linkedin [string trim [dict getdef $row linkedin_url ""]]
+            set facebook [string trim [dict getdef $row facebook_url ""]]
+            set p_note [string trim [dict getdef $row p_note ""]]
+            set star [string trim [dict getdef $row star_rating ""]]
+            set s_note [string trim [dict getdef $row s_note ""]]
+            set date_invalid [string trim [dict getdef $row date_excluded ""]]
+            set stem [string trim [dict getdef $row stem ""]]
 
             if {$org eq "organisation" || $name eq ""} continue
             if {$org eq ""} continue

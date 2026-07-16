@@ -51,9 +51,9 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
     # are emitted through on_progress.
     method _build_rows {opts on_progress} {
         set campaign_file [dict get $opts campaign_file]
-        set dry_run       [spar::dict_get_default $opts dry_run 0]
-        set segments      [spar::dict_get_default $opts segments {}]
-        set stems         [spar::dict_get_default $opts stems    {}]
+        set dry_run       [dict getdef $opts dry_run 0]
+        set segments      [dict getdef $opts segments {}]
+        set stems         [dict getdef $opts stems    {}]
 
         set cdata [spar::load_campaign $campaign_file]
 
@@ -80,8 +80,8 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         # Default segments to "all campaign segment dirs" when the caller
         # passed none. Mirrors the P-phase full-campaign default.
         if {[llength $segments] == 0} {
-            set skip_set [spar::dict_get_default $cdata skip_segments {}]
-            foreach seg [spar::dict_get_default $cdata segments {}] {
+            set skip_set [dict getdef $cdata skip_segments {}]
+            foreach seg [dict getdef $cdata segments {}] {
                 if {$seg in $skip_set} continue
                 set seg_path [file join $campaign_dir $seg]
                 if {[file isdirectory $seg_path]} {
@@ -116,7 +116,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
                 dry_run       $dry_run \
                 approach_path $approach_path \
                 to_email      $to_email \
-                since         [spar::dict_get_default $entry first_sent ""] \
+                since         [dict getdef $entry first_sent ""] \
                 fingerprints  $fingerprints \
                 account       $account \
                 folder        $folder \

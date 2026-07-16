@@ -104,7 +104,7 @@ proc ses_send {row opts} {
     set status [lindex $result 0]
     set detail [lindex $result 1]
     if {$status eq "ok"} {
-        set delay_ms [spar::dict_get_default $opts delay_ms 0]
+        set delay_ms [dict getdef $opts delay_ms 0]
         if {$delay_ms > 0} { spar::pool_sleep $delay_ms }
         done $row [list message_id $detail]
     } else {

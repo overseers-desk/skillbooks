@@ -7,8 +7,8 @@
 # spar::ProfileHarness subclasses supply the phase-specific
 # validate_and_correct loop and orchestration.
 #
-# Requires spar-state.tcl sourced first (for spar::State,
-# spar::dict_get_default, and the validators).
+# Requires spar-state.tcl sourced first (for spar::State
+# and the validators).
 
 package require json
 package require json::write
@@ -74,9 +74,9 @@ oo::class create spar::Harness {
         set StallTimeoutMs 600000
         if {[file exists [file join $prompt_dir meta.env]]} {
             set meta [my load_meta]
-            set WorkerCostCapUsd [spar::dict_get_default \
+            set WorkerCostCapUsd [dict getdef \
                 $meta WORKER_COST_CAP_USD $WorkerCostCapUsd]
-            set StallTimeoutMs [expr {int([spar::dict_get_default \
+            set StallTimeoutMs [expr {int([dict getdef \
                 $meta STALL_TIMEOUT_SECS 600] * 1000)}]
         }
         file mkdir $log_dir
@@ -198,7 +198,7 @@ oo::class create spar::Harness {
             set line [string trim $line]
             if {$line eq ""} continue
             if {[catch {set d [::json::json2dict $line]}]} continue
-            set total [expr {$total + [spar::dict_get_default $d cost 0]}]
+            set total [expr {$total + [dict getdef $d cost 0]}]
         }
         close $fd
         return $total
@@ -424,7 +424,7 @@ oo::class create spar::Harness {
         # profile validates to DONE without resuming.
 
         if {[dict exists $parsed is_error] && [dict get $parsed is_error] eq "true"} {
-            set result_text [spar::dict_get_default $parsed result ""]
+            set result_text [dict getdef $parsed result ""]
             if {[string match -nocase *hit*your*limit*resets* $result_text]} {
                 # Usage-window block. Classify and return 4; _with_recovery
                 # owns the wait and the retry. The reset seconds ride
@@ -453,7 +453,7 @@ oo::class create spar::Harness {
         ::json::write indented false
         set cost_entry [::json::write object \
             stage [::json::write string $stage] \
-            cost [spar::dict_get_default $parsed total_cost_usd 0]]
+            cost [dict getdef $parsed total_cost_usd 0]]
         ::json::write indented $_prev_indent
         set fd [open $CostLog a]
         try {
@@ -579,8 +579,8 @@ oo::class create spar::Harness {
                 close $fd
             }
             if {$last ne ""} {
-                set ev [spar::dict_get_default $last type "?"]
-                set sub [spar::dict_get_default $last subtype ""]
+                set ev [dict getdef $last type "?"]
+                set sub [dict getdef $last subtype ""]
                 if {$sub ne ""} { append ev "/$sub" }
                 lappend parts "last event: $ev"
             }
@@ -793,10 +793,10 @@ oo::class create spar::ApproachHarness {
         set MaxPasses        [dict get $meta MAX_PASSES]
         set Outfile          [dict get $meta OUTFILE]
         set ContactSummary   [dict get $meta CONTACT_SUMMARY]
-        set ChallengerModel  [spar::dict_get_default $meta CHALLENGER_MODEL sonnet]
-        set RosterEmail      [spar::dict_get_default $meta ROSTER_EMAIL ""]
-        set RosterOrg        [spar::dict_get_default $meta ROSTER_ORGANISATION ""]
-        set ContactNameMeta  [spar::dict_get_default $meta CONTACT_NAME ""]
+        set ChallengerModel  [dict getdef $meta CHALLENGER_MODEL sonnet]
+        set RosterEmail      [dict getdef $meta ROSTER_EMAIL ""]
+        set RosterOrg        [dict getdef $meta ROSTER_ORGANISATION ""]
+        set ContactNameMeta  [dict getdef $meta CONTACT_NAME ""]
         set ContactName      [string trim [lindex [split $ContactSummary |] 0]]
         set seg_dir [file dirname [file dirname $Outfile]]
         set stem    [file rootname [file tail $Outfile]]
@@ -1069,7 +1069,7 @@ oo::class create spar::ProfileHarness {
     method _roster_row {roster_path slug} {
         if {![file exists $roster_path]} { return [dict create] }
         foreach r [spar::load_roster $roster_path] {
-            if {[spar::dict_get_default $r stem ""] eq $slug} { return $r }
+            if {[dict getdef $r stem ""] eq $slug} { return $r }
         }
         return [dict create]
     }
@@ -1084,8 +1084,8 @@ oo::class create spar::ProfileHarness {
     method sanitise_roster_email {roster_path slug} {
         if {![file exists $roster_path]} { return }
         foreach row [spar::load_roster $roster_path] {
-            if {[spar::dict_get_default $row stem ""] ne $slug} continue
-            set email [string trim [spar::dict_get_default $row email ""]]
+            if {[dict getdef $row stem ""] ne $slug} continue
+            set email [string trim [dict getdef $row email ""]]
             if {[spar::is_masked_email $email]} {
                 ${::spar::harness_log}::warn "\[[my slug]\] Guardrail: blanked masked email '$email' in roster"
                 if {[catch {
@@ -1132,7 +1132,7 @@ oo::class create spar::ProfileHarness {
         # Segment-scoped roster checks reach this harness via
         # contact_name match — within-segment duplicates and
         # shared-inbox collisions surface here for resume.
-        set my_cname [string trim [spar::dict_get_default $row contact_name ""]]
+        set my_cname [string trim [dict getdef $row contact_name ""]]
         set segment_dir [file dirname $RosterPath]
         if {$my_cname ne ""} {
             if {[catch {[my state] classify_segment $segment_dir} seg_contacts]} {
@@ -1148,7 +1148,7 @@ oo::class create spar::ProfileHarness {
         # no required skills (profile_reject_if absent or empty), the row
         # is excluded, or session_id was never captured.
         if {[llength $RequiredSkills] > 0 \
-                && [string trim [spar::dict_get_default $row date_excluded ""]] eq "" \
+                && [string trim [dict getdef $row date_excluded ""]] eq "" \
                 && [my session_id] ne ""} {
             foreach ai [spar::audit_skills_in_transcript \
                             [my session_id] $RequiredSkills $my_cname] {
@@ -1253,12 +1253,12 @@ oo::class create spar::ProfileHarness {
         # meta.env. Fall back to the same derivation only for a prompt dir
         # written before that key existed, so a standalone resume still
         # serialises on the right lock.
-        set RosterLock   [spar::dict_get_default $meta ROSTER_LOCK \
+        set RosterLock   [dict getdef $meta ROSTER_LOCK \
                               [file join [file dirname $RosterPath] .roster.lock]]
-        set RequiredSkills [spar::dict_get_default $meta REQUIRED_SKILLS ""]
-        set ContactName  [spar::dict_get_default $meta CONTACT_NAME ""]
-        set ContactOrg   [spar::dict_get_default $meta CONTACT_ORG ""]
-        set ContactEmail [spar::dict_get_default $meta CONTACT_EMAIL ""]
+        set RequiredSkills [dict getdef $meta REQUIRED_SKILLS ""]
+        set ContactName  [dict getdef $meta CONTACT_NAME ""]
+        set ContactOrg   [dict getdef $meta CONTACT_ORG ""]
+        set ContactEmail [dict getdef $meta CONTACT_EMAIL ""]
     }
 
     method do_inject_courier {} {

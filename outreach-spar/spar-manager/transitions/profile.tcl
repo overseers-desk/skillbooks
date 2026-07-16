@@ -32,7 +32,7 @@ oo::class create ::spar::transitions::ProfileTransition {
     method prepare_for_pool {opts on_progress} {
         set prep [::spar::p::prepare_for_pool $opts $on_progress]
         set logs_dir [dict get $prep logs_dir]
-        set dry_run [spar::dict_get_default $opts dry_run 0]
+        set dry_run [dict getdef $opts dry_run 0]
         set rows {}
         foreach pair [dict get $prep rows] {
             lassign $pair stem pdir

@@ -107,13 +107,13 @@ oo::class create ::spar::transitions::SendEmailTransition {
     # gets the contact's linkedin_url from the segment roster).
     method _build_rows {opts} {
         set campaign_file [dict get $opts campaign_file]
-        set dry_run       [spar::dict_get_default $opts dry_run 0]
-        set tasks         [spar::dict_get_default $opts tasks {}]
-        set delay         [spar::dict_get_default $opts delay 2]
+        set dry_run       [dict getdef $opts dry_run 0]
+        set tasks         [dict getdef $opts tasks {}]
+        set delay         [dict getdef $opts delay 2]
 
         set cdata [spar::load_campaign $campaign_file]
-        set camp_sender [spar::dict_get_default $cdata sender [dict create]]
-        set primary [spar::dict_get_default $cdata primary_channel email]
+        set camp_sender [dict getdef $cdata sender [dict create]]
+        set primary [dict getdef $cdata primary_channel email]
 
         set delay_ms [expr {$delay * 1000}]
         set rows {}
@@ -135,9 +135,9 @@ oo::class create ::spar::transitions::SendEmailTransition {
                 }
                 set linkedin_url ""
                 foreach r [dict get $rosters $seg_dir] {
-                    if {[spar::dict_get_default $r stem ""] eq $stem} {
+                    if {[dict getdef $r stem ""] eq $stem} {
                         set linkedin_url [string trim \
-                            [spar::dict_get_default $r linkedin_url ""]]
+                            [dict getdef $r linkedin_url ""]]
                         break
                     }
                 }

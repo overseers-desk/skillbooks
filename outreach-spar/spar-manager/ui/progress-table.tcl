@@ -552,7 +552,7 @@ oo::class create spar::ui::ProgressTable {
         foreach c [$Campaign get_all_contacts] {
             if {[file tail [dict get $c _segment_dir]] ne $seg_name} continue
             set name [dict get $c contact_name]
-            set stem [spar::dict_get_default $c stem ""]
+            set stem [dict getdef $c stem ""]
             if {$stem eq ""} continue
             $PTree insert $seg_name end -id "c:$stem" -text "  $name" \
                 -values [my _contact_values $c]

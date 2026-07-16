@@ -42,10 +42,10 @@ proc ::spar::ses::send_one {opts} {
     variable script_dir
     set approach_path [dict get $opts approach_path]
     set sender        [dict get $opts sender]
-    set dry_run       [spar::dict_get_default $opts dry_run 0]
-    set smtp_helper   [spar::dict_get_default $opts smtp_helper \
+    set dry_run       [dict getdef $opts dry_run 0]
+    set smtp_helper   [dict getdef $opts smtp_helper \
         [file join $script_dir smtp_send.tcl]]
-    set today         [spar::dict_get_default $opts today \
+    set today         [dict getdef $opts today \
         [clock format [clock seconds] -format "%Y-%m-%d"]]
 
     if {![file exists $approach_path]} {
@@ -62,18 +62,18 @@ proc ::spar::ses::send_one {opts} {
         return [list error "no email message in final round"]
     }
 
-    set to      [string trim [spar::dict_get_default $msg to ""]]
-    set cc      [string trim [spar::dict_get_default $msg cc ""]]
-    set bcc     [string trim [spar::dict_get_default $msg bcc ""]]
-    set subject [spar::dict_get_default $msg subject ""]
-    set body    [spar::dict_get_default $msg body ""]
+    set to      [string trim [dict getdef $msg to ""]]
+    set cc      [string trim [dict getdef $msg cc ""]]
+    set bcc     [string trim [dict getdef $msg bcc ""]]
+    set subject [dict getdef $msg subject ""]
+    set body    [dict getdef $msg body ""]
 
-    set camp_from_name  [spar::dict_get_default $sender name ""]
-    set camp_from_email [spar::dict_get_default $sender email ""]
-    set camp_bcc        [spar::dict_get_default $sender bcc ""]
-    set camp_smtp_host  [spar::dict_get_default $sender smtp_host ""]
-    set camp_smtp_port  [spar::dict_get_default $sender smtp_port 587]
-    set camp_smtp_user  [spar::dict_get_default $sender smtp_user ""]
+    set camp_from_name  [dict getdef $sender name ""]
+    set camp_from_email [dict getdef $sender email ""]
+    set camp_bcc        [dict getdef $sender bcc ""]
+    set camp_smtp_host  [dict getdef $sender smtp_host ""]
+    set camp_smtp_port  [dict getdef $sender smtp_port 587]
+    set camp_smtp_user  [dict getdef $sender smtp_user ""]
 
     # Sender resolution mirrors the legacy Driver: approach
     # decisions.sender beats campaign sender, used both for the
@@ -81,10 +81,10 @@ proc ::spar::ses::send_one {opts} {
     set from_name  $camp_from_name
     set from_email $camp_from_email
     if {[dict exists $approach_data decisions]} {
-        set ad_sender [spar::dict_get_default \
+        set ad_sender [dict getdef \
             [dict get $approach_data decisions] sender [dict create]]
-        set ad_name  [spar::dict_get_default $ad_sender name ""]
-        set ad_email [spar::dict_get_default $ad_sender email ""]
+        set ad_name  [dict getdef $ad_sender name ""]
+        set ad_email [dict getdef $ad_sender email ""]
         if {$ad_email ne ""} {
             set from_email $ad_email
             if {$ad_name ne ""} { set from_name $ad_name }
@@ -98,14 +98,14 @@ proc ::spar::ses::send_one {opts} {
     # Reply-mode threading (issue #79).
     set in_reply_to ""
     set references ""
-    set is_reply [expr {[spar::dict_get_default $msg mode ""] eq "reply"}]
+    set is_reply [expr {[dict getdef $msg mode ""] eq "reply"}]
     if {$is_reply} {
-        set parent [spar::dict_get_default $msg parent [dict create]]
-        set parent_mid [string trim [spar::dict_get_default $parent message_id ""]]
+        set parent [dict getdef $msg parent [dict create]]
+        set parent_mid [string trim [dict getdef $parent message_id ""]]
         if {$parent_mid eq ""} {
             return [list error "reply mode but parent.message_id is empty; cannot construct In-Reply-To"]
         }
-        set reply_all [spar::dict_get_default $msg reply_all 0]
+        set reply_all [dict getdef $msg reply_all 0]
         set rh [spar::build_reply_headers $parent $from_email $reply_all]
         set to          [dict get $rh to]
         set cc          [dict get $rh cc]

@@ -1,7 +1,7 @@
 # spar-validate.tcl — Validators for SPAR campaign artefacts: approach
 # YAML, profile front matter, roster TSV, campaign-level cross-checks,
 # sender block, and aggregated warnings. Sourced by spar-state.tcl which
-# provides the dict_get_default / readers used here.
+# provides the readers used here.
 #
 # This file owns _approach_validation_error and _profile_validation_error
 # — thin wrappers used by the per-class transition `eligible` methods to
@@ -15,11 +15,11 @@ package require sha256
 # validity (#43 principle 7). Routes through approach_summary so the parse is
 # shared with classify_contact and channel_readiness on the same render.
 oo::define spar::State method approach_validation_error {contact} {
-    set ap [spar::dict_get_default $contact approach_path ""]
+    set ap [dict getdef $contact approach_path ""]
     if {$ap eq "" || ![file exists $ap]} { return "" }
-    set roster_email [string trim [spar::dict_get_default $contact email ""]]
-    set cname [spar::dict_get_default $contact contact_name ""]
-    set corg  [spar::dict_get_default $contact organisation ""]
+    set roster_email [string trim [dict getdef $contact email ""]]
+    set cname [dict getdef $contact contact_name ""]
+    set corg  [dict getdef $contact organisation ""]
     set adata [my approach_summary $contact]
     if {$adata eq ""} {
         # Parse failure is itself an error, mirroring validate_approach_path's
@@ -249,8 +249,8 @@ proc spar::validate_approach_data {approach_data approach_path roster_email \
                             lappend issues [spar::_issue warning email_missing_content $contact_name \
                                 "Reply email message missing 'body'"]
                         }
-                        set _parent [spar::dict_get_default $msg parent ""]
-                        set _pmid [spar::dict_get_default $_parent message_id ""]
+                        set _parent [dict getdef $msg parent ""]
+                        set _pmid [dict getdef $_parent message_id ""]
                         if {[string trim $_pmid] eq ""} {
                             lappend issues [spar::_issue error reply_missing_parent_message_id $contact_name \
                                 "Reply email message has no parent.message_id; cannot thread the reply"]
@@ -284,13 +284,13 @@ proc spar::validate_approach_data {approach_data approach_path roster_email \
                 # enforcement is unchanged.
                 if {$rtype eq "final"
                         && [dict exists $msg channel] && [dict get $msg channel] eq "linkedin"
-                        && [spar::is_null [spar::dict_get_default $msg actioned_date ""]]} {
-                    set li_text [string trim [spar::dict_get_default $msg text ""]]
+                        && [spar::is_null [dict getdef $msg actioned_date ""]]} {
+                    set li_text [string trim [dict getdef $msg text ""]]
                     if {$li_text eq ""} {
-                        set li_text [string trim [spar::dict_get_default $msg body ""]]
+                        set li_text [string trim [dict getdef $msg body ""]]
                     }
                     set li_len [string length $li_text]
-                    set li_mode [spar::dict_get_default $msg mode ""]
+                    set li_mode [dict getdef $msg mode ""]
                     if {($li_mode eq "invite" || $li_mode eq "") && $li_len > 300} {
                         lappend issues [spar::_issue error linkedin_note_too_long $contact_name \
                             "LinkedIn invite note is $li_len chars, limit 300; shorten it, or declare mode: dm if a direct message to a 1st-degree connection is intended"]
@@ -506,13 +506,13 @@ proc spar::audit_skills_in_transcript {session_id required_skills contact_name {
         # contain a Skill tool_use.
         if {![string match {*"name":"Skill"*} $line]} continue
         if {[catch {set d [::json::json2dict $line]}]} continue
-        set msg [spar::dict_get_default $d message [dict create]]
-        set content [spar::dict_get_default $msg content {}]
+        set msg [dict getdef $d message [dict create]]
+        set content [dict getdef $msg content {}]
         foreach blk $content {
-            if {[spar::dict_get_default $blk type ""] ne "tool_use"} continue
-            if {[spar::dict_get_default $blk name ""] ne "Skill"} continue
-            set input [spar::dict_get_default $blk input [dict create]]
-            set sk [spar::dict_get_default $input skill ""]
+            if {[dict getdef $blk type ""] ne "tool_use"} continue
+            if {[dict getdef $blk name ""] ne "Skill"} continue
+            set input [dict getdef $blk input [dict create]]
+            set sk [dict getdef $input skill ""]
             if {[dict exists $counts $sk]} {
                 dict incr counts $sk
             }
@@ -523,7 +523,7 @@ proc spar::audit_skills_in_transcript {session_id required_skills contact_name {
     set sec [dict create linkedin §4.3 facebook §4.4]
     foreach s $required_skills {
         if {[dict get $counts $s] == 0} {
-            set sref [spar::dict_get_default $sec $s "(spec)"]
+            set sref [dict getdef $sec $s "(spec)"]
             lappend issues [spar::_issue error "${s}_lookup_missing" $contact_name \
                 "SPAR-P $sref requires the $s skill; transcript shows zero Skill invocations with input.skill=$s."]
         }
@@ -685,9 +685,9 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
 # _approach_validation_error. Used by DbC-Post handlers and by downstream
 # gatekeeping (not currently wired to any T-transition, but available).
 proc spar::_profile_validation_error {contact} {
-    set pp [spar::dict_get_default $contact profile_path ""]
+    set pp [dict getdef $contact profile_path ""]
     if {$pp eq ""} { return "" }
-    set cname [spar::dict_get_default $contact contact_name ""]
+    set cname [dict getdef $contact contact_name ""]
     foreach issue [spar::validate_profile $pp $contact $cname] {
         if {[dict get $issue severity] eq "error"} {
             return [dict get $issue message]
@@ -712,9 +712,9 @@ proc spar::validate_sender_block {cdata} {
     }
     set sender [dict get $cdata sender]
 
-    set smtp_host [string trim [spar::dict_get_default $sender smtp_host ""]]
-    set smtp_user [string trim [spar::dict_get_default $sender smtp_user ""]]
-    set smtp_port [spar::dict_get_default $sender smtp_port ""]
+    set smtp_host [string trim [dict getdef $sender smtp_host ""]]
+    set smtp_user [string trim [dict getdef $sender smtp_user ""]]
+    set smtp_port [dict getdef $sender smtp_port ""]
 
     if {$smtp_host eq ""} {
         lappend issues [spar::_issue error smtp_host_missing "" \
@@ -749,10 +749,10 @@ namespace eval spar { variable CURRENT_SPEC_VERSION "1.0" }
 # already-parsed campaign or segment dict; "" when absent. The field name is
 # spelled in exactly one place per file type here.
 proc spar::campaign_version {cdata} {
-    return [spar::dict_get_default $cdata version ""]
+    return [dict getdef $cdata version ""]
 }
 proc spar::segment_version {segment_data} {
-    return [spar::dict_get_default $segment_data version ""]
+    return [dict getdef $segment_data version ""]
 }
 
 # validate_spec_version -- gate one declared version against CURRENT_SPEC_VERSION.
@@ -831,13 +831,13 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1} {incl
     array set seg_dirs_seen {}       ;# segment_dir → 1
 
     foreach contact $all_classified_contacts {
-        set state [spar::dict_get_default $contact state ""]
-        set segment_dir [spar::dict_get_default $contact _segment_dir ""]
+        set state [dict getdef $contact state ""]
+        set segment_dir [dict getdef $contact _segment_dir ""]
         set segment [file tail $segment_dir]
-        set contact_name [spar::dict_get_default $contact contact_name ""]
-        set roster_email [string trim [spar::dict_get_default $contact email ""]]
-        set roster_org [string trim [spar::dict_get_default $contact organisation ""]]
-        set stem [string trim [spar::dict_get_default $contact stem ""]]
+        set contact_name [dict getdef $contact contact_name ""]
+        set roster_email [string trim [dict getdef $contact email ""]]
+        set roster_org [string trim [dict getdef $contact organisation ""]]
+        set stem [string trim [dict getdef $contact stem ""]]
 
         # Track segment directories and stems for orphan checks
         set seg_dirs_seen($segment_dir) 1
@@ -864,7 +864,7 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1} {incl
 
         # Checks 1 and 2: delegate to validate_approach (skipped when include_approach=0)
         if {$include_approach} {
-            set approach_path [spar::dict_get_default $contact approach_path ""]
+            set approach_path [dict getdef $contact approach_path ""]
             foreach issue [spar::validate_approach $approach_path $roster_email $contact_name $roster_org] {
                 dict set issue segment $segment
                 lappend issues $issue
@@ -875,7 +875,7 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1} {incl
         # still emits through validate_profile's stale_* warnings; DISCOVERED has
         # no profile file so validate_profile no-ops.
         if {$include_profile} {
-            set profile_path [spar::dict_get_default $contact profile_path ""]
+            set profile_path [dict getdef $contact profile_path ""]
             foreach issue [spar::validate_profile $profile_path $contact $contact_name] {
                 dict set issue segment $segment
                 lappend issues $issue
@@ -886,7 +886,7 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1} {incl
     # Roster quality-checklist assertions (per-segment)
     array set seg_contacts {}
     foreach contact $all_classified_contacts {
-        set sd [spar::dict_get_default $contact _segment_dir ""]
+        set sd [dict getdef $contact _segment_dir ""]
         lappend seg_contacts($sd) $contact
     }
     foreach sd [array names seg_contacts] {
@@ -953,7 +953,7 @@ proc spar::validate_roster {segment_contacts} {
     if {[llength $segment_contacts] == 0} {
         return $issues
     }
-    set segment_dir [spar::dict_get_default [lindex $segment_contacts 0] _segment_dir ""]
+    set segment_dir [dict getdef [lindex $segment_contacts 0] _segment_dir ""]
     set segment [file tail $segment_dir]
 
     # Accumulators for cross-row checks
@@ -961,18 +961,18 @@ proc spar::validate_roster {segment_contacts} {
     set seen_stems {}     ;# list of stem values
 
     foreach contact $segment_contacts {
-        set state [spar::dict_get_default $contact state ""]
-        set contact_name [string trim [spar::dict_get_default $contact contact_name ""]]
-        set org [string trim [spar::dict_get_default $contact organisation ""]]
-        set email [string trim [spar::dict_get_default $contact email ""]]
-        set linkedin [string trim [spar::dict_get_default $contact linkedin_url ""]]
-        set facebook [string trim [spar::dict_get_default $contact facebook_url ""]]
-        set phone [string trim [spar::dict_get_default $contact phone ""]]
-        set sweep [string trim [spar::dict_get_default $contact sweep_iteration ""]]
-        set date_invalid [string trim [spar::dict_get_default $contact date_excluded ""]]
-        set star [string trim [spar::dict_get_default $contact star_rating ""]]
-        set stem [string trim [spar::dict_get_default $contact stem ""]]
-        set field_count_warning [spar::dict_get_default $contact _field_count_warning ""]
+        set state [dict getdef $contact state ""]
+        set contact_name [string trim [dict getdef $contact contact_name ""]]
+        set org [string trim [dict getdef $contact organisation ""]]
+        set email [string trim [dict getdef $contact email ""]]
+        set linkedin [string trim [dict getdef $contact linkedin_url ""]]
+        set facebook [string trim [dict getdef $contact facebook_url ""]]
+        set phone [string trim [dict getdef $contact phone ""]]
+        set sweep [string trim [dict getdef $contact sweep_iteration ""]]
+        set date_invalid [string trim [dict getdef $contact date_excluded ""]]
+        set star [string trim [dict getdef $contact star_rating ""]]
+        set stem [string trim [dict getdef $contact stem ""]]
+        set field_count_warning [dict getdef $contact _field_count_warning ""]
 
         # Assertion 2: extra fields (truncated rows are hard errors in load_roster)
         if {$field_count_warning ne ""} {
@@ -1060,12 +1060,12 @@ proc spar::validate_roster {segment_contacts} {
     # roster_duplicate_name_org.
     array set _email_group {}
     foreach contact $segment_contacts {
-        set state [spar::dict_get_default $contact state ""]
+        set state [dict getdef $contact state ""]
         if {$state eq "EXCLUDED"} continue
-        set _name [string trim [spar::dict_get_default $contact contact_name ""]]
+        set _name [string trim [dict getdef $contact contact_name ""]]
         if {$_name eq ""} continue
-        set _org [string trim [spar::dict_get_default $contact organisation ""]]
-        set _email [string trim [string tolower [spar::dict_get_default $contact email ""]]]
+        set _org [string trim [dict getdef $contact organisation ""]]
+        set _email [string trim [string tolower [dict getdef $contact email ""]]]
         if {$_email eq "" || [string first "@" $_email] < 0} continue
         lappend _email_group($_email) [list $_name $_org]
     }
@@ -1216,8 +1216,8 @@ proc spar::build_warnings {all_classified_contacts {cdata {}}} {
     # validation is a transition dependency, not a progress concern (#43 principle 6).
     foreach issue [spar::validate_campaign_semantics $all_classified_contacts] {
         set sev [dict get $issue severity]
-        set seg [spar::dict_get_default $issue segment ""]
-        set cname [spar::dict_get_default $issue contact_name ""]
+        set seg [dict getdef $issue segment ""]
+        set cname [dict getdef $issue contact_name ""]
         set msg [dict get $issue message]
         set prefix "\[[string toupper $sev]\]"
         if {$seg ne ""} { append prefix " $seg" }
