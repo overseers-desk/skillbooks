@@ -1,11 +1,12 @@
 #!/usr/bin/env tclsh9.0
-# Tests for spar::Dispatcher (the GUI's job pool) and the message-protocol
-# enforcement defined in spar-dispatcher-initcmd.tcl.
+# Tests for spar::Dispatcher (the shared job pool) and the state-machine
+# enforcement it inherits from jobloop.
 #
-# Strategy: drive the Dispatcher with fake_worker tpool jobs that emit
-# scripted message sequences. No real claude / SES / IMAP calls. The
-# fake_worker proc is defined in spar-dispatcher-initcmd.tcl alongside
-# the production worker procs, so it loads via the same initcmd path.
+# Strategy: drive the Dispatcher with fake_worker coroutine jobs that run
+# scripted report sequences. No real claude / SES / IMAP calls. The
+# fake_worker proc is defined in spar-dispatcher-initcmd.tcl alongside the
+# production worker procs, sourced into this interpreter by
+# spar-dispatcher.tcl.
 
 package require Thread
 set script_dir [file dirname [file normalize [info script]]]
@@ -43,34 +44,33 @@ proc wait_for_terminal {dispatcher row {timeout_ms 5000}} {
 }
 
 # ════════════════════════════════════════════════════════════════════════
-# 1. Introspection mirror — every msg_* in initcmd has a matching on_*
+# 1. No marshalling layer - the worker file crosses no thread
 # ════════════════════════════════════════════════════════════════════════
-section "1. Introspection mirror"
+# jobloop runs each job as a coroutine on the main thread, so the worker
+# file carries no thread::send, no tsv sentinel, and no msg_* bridge procs:
+# a worker reports through the jobloop verbs (checkpoint/done/failed/...).
+# Guard against the marshalling layer creeping back, and confirm the
+# spar-domain reports still land on matching on_* methods.
+section "1. No marshalling layer"
 
-# Read the initcmd file and pull out msg_* proc names.
 set initcmd_path [file join $script_dir .. spar-dispatcher-initcmd.tcl]
 set fd [open $initcmd_path r]; set initcmd_src [read $fd]; close $fd
+assert_eq [regexp {thread::send} $initcmd_src] 0 \
+    "worker file has no thread::send"
+assert_eq [regexp {tsv::} $initcmd_src] 0 \
+    "worker file has no tsv sentinel"
 set msg_names {}
 foreach line [split $initcmd_src \n] {
     if {[regexp {^proc\s+(msg_[a-z_]+)\s} $line -> name]} {
         lappend msg_names $name
     }
 }
-set msg_names [lsort -unique $msg_names]
+assert_eq $msg_names {} "no msg_* marshalling procs remain"
 
-set on_names {}
-foreach m [info class methods spar::Dispatcher -all] {
-    if {[regexp {^on_[a-z_]+$} $m]} { lappend on_names $m }
+set methods [info class methods spar::Dispatcher -all]
+foreach on {on_cost on_retry on_credit_warning on_roster_update} {
+    assert_eq [expr {$on in $methods}] 1 "Dispatcher carries $on"
 }
-set on_names [lsort -unique $on_names]
-
-# Build the expected on_* set by stripping msg_ → on_.
-set expected_on {}
-foreach m $msg_names { lappend expected_on [regsub {^msg_} $m on_] }
-set expected_on [lsort -unique $expected_on]
-
-assert_eq $on_names $expected_on \
-    "every msg_* has a matching on_* method (and vice versa)"
 
 # ════════════════════════════════════════════════════════════════════════
 # 2. Basic dispatch — enqueue a row, fake_worker runs it, reaches done
@@ -100,9 +100,9 @@ foreach r {r1 r2 r3 r4} {
     $d enqueue $r fake_worker {plan {{sleep 200}}}
 }
 
-# State flips to running at tpool::post time, so the snapshot is
-# deterministic the moment all enqueues have returned.
-assert_eq [$d posted_count] 2 "Jobs=2 caps posted at 2"
+# State flips to running at launch time (before the coroutine starts), so
+# the snapshot is deterministic the moment all enqueues have returned.
+assert_eq [llength [$d active_jobs]] 2 "Jobs=2 caps active at 2"
 assert_eq [llength [$d queued_jobs]] 2 "remaining 2 stay queued"
 
 foreach r {r1 r2 r3 r4} { wait_for_terminal $d $r 5000 }
@@ -290,7 +290,7 @@ $d destroy
 # we instantiate FakeHarness — a stand-in defined alongside fake_worker
 # in spar-dispatcher-initcmd.tcl that mimics the (prompt_dir log_dir)
 # constructor and the run-returns-0/1 contract — to verify only the
-# routing path: enqueue → tpool::post → harness_run → msg_done/failed.
+# routing path: enqueue → coroutine → harness_run → done/failed.
 # Coverage of the real harness body lives in test-state.tcl /
 # test-validate-*; this section catches breakage in the worker wrapper.
 section "13. harness_run routing"
@@ -353,9 +353,9 @@ set rc_line [spar::render_rollcall \
 assert_match $rc_line "*h_cause*\[T2\]*rc=1*stalled*" \
     "render_rollcall builds the worklist line from the live failure reason"
 
-# 13d. Cancel before the worker enters the harness body — the cancel
-# sentinel is set before resume_queue posts to the tpool, so the
-# pre-flight check fires.
+# 13d. Cancel before the worker enters the harness body: the row is
+# cancelled while still queued (before resume_queue launches it), so it
+# never reaches a coroutine.
 lassign [make_harness_dirs precancel 0] p_pc l_pc
 $d pause_queue
 $d enqueue h_pc harness_run [dict create \
@@ -641,24 +641,18 @@ wait_for_terminal $d running1   2000
 $d destroy
 
 # ════════════════════════════════════════════════════════════════════════
-# 17. True parallelism with blocking workers
+# 17. Concurrent I/O waits overlap
 # ════════════════════════════════════════════════════════════════════════
 #
-# Reproducer for the bug documented in #86 follow-up and analysed in
-# docs/concurrency.md "Pool sizing". A `tpool::create -minworkers 0` only
-# spawns one worker for the pool's lifetime, regardless of post volume,
-# so production runs at --jobs=8 ran strictly sequentially. Earlier
-# tests asserted `posted_count` (which counts state flips at
-# tpool::post time) and were therefore satisfied even when no second
-# worker thread ever existed.
-#
-# This test enqueues four rows, each with a real blocking `exec sleep`
-# in the worker body, and asserts wall time is roughly one sleep
-# duration (parallel) rather than four (serial). exec_sleep is the
-# right shape because the production harness's `exec claude` is OS-
-# blocked the same way; the original `sleep` plan-step uses event-loop-
-# friendly vwait+after and would not have reproduced the bug.
-section "17. True parallelism with blocking workers"
+# jobloop's concurrency is overlapping I/O waits, not parallel CPU: N
+# coroutines each parked on a subprocess or a timer all make progress
+# together on the one event loop. This test enqueues four rows, each
+# running a real `sleep` child through spar::pool_exec (the same async
+# subprocess path the production harness's claude runs through) and
+# asserts wall time is roughly one sleep duration (overlapped) rather than
+# four (serial). A body that blocked the loop on its child would serialise
+# the four and fail the bound.
+section "17. Concurrent I/O waits overlap"
 
 set d [spar::Dispatcher new 4 test_log]
 set t0 [clock milliseconds]
@@ -670,8 +664,8 @@ set elapsed [expr {[clock milliseconds] - $t0}]
 foreach r {p1 p2 p3 p4} {
     assert_eq [$d state $r] done "$r reaches done"
 }
-# Four 2-second sleeps in parallel ≈ 2s; in series ≈ 8s. Allow
-# generous slack for tpool worker startup and OS scheduling.
+# Four 2-second sleeps overlapped ≈ 2s; in series ≈ 8s. Allow
+# generous slack for coroutine and subprocess startup and OS scheduling.
 if {$elapsed < 4500} {
     puts "  ok: 4×exec_sleep 2s ran in parallel (elapsed=${elapsed}ms)"
     incr ::passes
@@ -716,9 +710,9 @@ foreach r {a1 a2 a3 a4 b1 b2 b3 b4} {
     assert_eq [$d state $r] done "$r reaches done"
 }
 # fake_worker_a's 4×2s serialised ≈ 8s; fake_worker_b's 4×2s parallel ≈ 2s.
-# Overall wall time should be near max(8s, 2s) = 8s. Without per-worker
-# caps the test would finish in ~2s (everything parallel under cap=8).
-# Allow generous slack for tpool worker startup and OS scheduling.
+# Overall wall time should be near max(8s, 2s) = 8s. Without per-kind
+# caps the test would finish in ~2s (everything overlapped under cap=8).
+# Allow generous slack for coroutine and subprocess startup and OS scheduling.
 if {$elapsed > 6500 && $elapsed < 12000} {
     puts "  ok: per-worker cap enforces serial fake_worker_a (elapsed=${elapsed}ms)"
     incr ::passes
@@ -757,17 +751,17 @@ for {set i 1} {$i <= $NROWS} {incr i} {
     $d enqueue f$i fake_worker {plan {{exec_sleep 1}}}
 }
 $d resume_queue
-assert_eq [$d posted_count] $JOBS \
-    "resume posts exactly JOBS=$JOBS rows in the first fill pass"
+assert_eq [llength [$d active_jobs]] $JOBS \
+    "resume launches exactly JOBS=$JOBS rows in the first fill pass"
 assert_eq [llength [$d queued_jobs]] [expr {$NROWS - $JOBS}] \
     "the rest stay queued behind the first fill"
 
-# Refill-to-cap holds: sample posted_count repeatedly while the queue
+# Refill-to-cap holds: sample the active count repeatedly while the queue
 # drains; it must stay pinned at JOBS until fewer than JOBS rows remain.
 set t0 [clock milliseconds]
 set saw_below_cap_with_queue 0
 while {1} {
-    set posted [$d posted_count]
+    set posted [llength [$d active_jobs]]
     set queued [llength [$d queued_jobs]]
     set terminal 0
     foreach r [$d all_jobs] {
@@ -785,9 +779,9 @@ foreach r [$d all_jobs] {
 }
 assert_eq $saw_below_cap_with_queue 0 \
     "pool never drops below JOBS while rows wait in the queue"
-# 16 rows / 4 slots × 1s = 4 waves ≈ 4s. Generous slack for tpool
-# startup and OS scheduling; a partial-fill / per-wave-refill bug runs
-# far slower.
+# 16 rows / 4 slots × 1s = 4 waves ≈ 4s. Generous slack for coroutine
+# and subprocess startup and OS scheduling; a partial-fill /
+# per-wave-refill bug runs far slower.
 if {$elapsed < 8000} {
     puts "  ok: 16 rows over 4 slots stayed full (elapsed=${elapsed}ms)"
     incr ::passes
@@ -801,21 +795,17 @@ $d destroy
 # 20. A worker that dies without a terminal message frees its slot (#138)
 # ════════════════════════════════════════════════════════════════════════
 #
-# Root cause of #138: a worker proc owns its tpool slot until it sends a
-# terminal message (done / failed / cancelled). The Dispatcher reclaims
-# the slot only on that message — the tpool job's own completion is never
-# reaped. A worker body that returns by raising, before it emits any
-# terminal message, leaves the row in `running` forever: active_jobs
-# keeps counting it against the global cap, so the slot reads occupied
-# while no worker runs. A few of these collapse a --jobs=N pool to a
-# trickle — slots full, host idle.
+# Root cause of #138: a worker owns its slot until it reports a terminal
+# verb (done / failed / cancelled). A body that returns by raising, before
+# any terminal verb, would strand the row in `running` forever; active_jobs
+# keeps counting it against the cap, so the slot reads occupied while no job
+# runs, and a few of these collapse a --jobs=N pool to a trickle.
 #
-# harness_run / ses_send / imap_poll now run their bodies under
-# _worker_guard, which catches any uncaught throw and sends msg_failed so
-# the slot is reclaimed. This drives the leak directly: harness_run rows
-# whose opts omit the keys the body reads (prompt_dir, harness_class)
-# throw inside the body before any terminal message. They must land in
-# `failed`, and good rows queued behind them must then run.
+# jobloop's RunJob closes that gap: an uncaught throw from a body is
+# reported failed and the slot freed. This drives it directly: harness_run
+# rows whose opts omit the keys the body reads (prompt_dir, harness_class)
+# throw before any terminal verb. They must land in `failed`, and good
+# rows queued behind them must then run.
 section "20. Worker error frees the slot (#138 regression)"
 
 set d [spar::Dispatcher new 4 test_log]
@@ -830,7 +820,7 @@ foreach r {dead1 dead2 dead3 dead4} { wait_for_terminal $d $r 5000 }
 foreach r {dead1 dead2 dead3 dead4} {
     assert_eq [$d state $r] failed "$r fails instead of stranding its slot"
 }
-assert_eq [$d posted_count] 0 "all four leaked-candidate slots reclaimed"
+assert_eq [llength [$d active_jobs]] 0 "all four leaked-candidate slots reclaimed"
 
 # Good rows queued behind the dead ones must now run to completion —
 # proof the slots are genuinely free, not just relabelled.
