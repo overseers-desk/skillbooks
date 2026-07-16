@@ -1,10 +1,10 @@
 #!/usr/bin/env tclsh9.0
 # Tests for what spar::Dispatcher adds on top of jobloop: no marshalling
 # layer, the harness_run / ses_send / imap_poll workers, and the
-# roster_update relay to the domain subscriber. Pool mechanics — dispatch,
+# roster_update relay to the domain subscriber. Pool mechanics (dispatch,
 # caps, pause/resume, cancel, the state-machine guards, rate-limiting,
 # requeue, active_jobs, prune_missing, per-kind caps, concurrency, and
-# worker-error recovery — are jobloop's, proven once in teatotal's
+# worker-error recovery) are jobloop's, proven once in teatotal's
 # tests/test-jobloop.tcl and tests/test-jobpool.tcl; this file does not
 # re-prove them through the Dispatcher.
 #
@@ -78,7 +78,7 @@ foreach on {on_cost on_retry on_credit_warning on_roster_update} {
 }
 
 # ════════════════════════════════════════════════════════════════════════
-# 2. harness_run — wires through to a harness_class instance
+# 2. harness_run wires through to a harness_class instance
 # ════════════════════════════════════════════════════════════════════════
 # The real spar::ProfileHarness / spar::ApproachHarness needs claude on
 # PATH plus a fully-built prompt_dir (prompt.txt, meta.env, roster, etc.)
@@ -176,7 +176,7 @@ assert_eq [$d state h_dr] done \
 $d destroy
 
 # ════════════════════════════════════════════════════════════════════════
-# 3. ses_send — happy path through a fake smtp_send helper
+# 3. ses_send happy path through a fake smtp_send helper
 # ════════════════════════════════════════════════════════════════════════
 # The worker shells out to smtp_send.tcl. We override the helper path
 # in opts so tests don't open a real TLS socket. The fake helper just
@@ -273,7 +273,7 @@ assert_eq [$d state ghost] failed "ses_send fails when approach missing"
 $d destroy
 
 # ════════════════════════════════════════════════════════════════════════
-# 4. imap_poll — happy path through a fake courier helper
+# 4. imap_poll happy path through a fake courier helper
 # ════════════════════════════════════════════════════════════════════════
 # The worker shells out to courier. We override courier_bin in opts
 # to point at a fake script that returns canned JSON for both `search`
