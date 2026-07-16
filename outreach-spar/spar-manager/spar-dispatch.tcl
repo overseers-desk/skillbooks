@@ -96,12 +96,16 @@ proc spar::detect_browser_cmd {} {
 
 source [file join $::spar::dispatch_script_dir spar-dispatcher.tcl]
 
-# _pool_pre_launch - bridge the Dispatcher's (row tid idx total)
-# pre-launch hook to the CLI's (tid slug idx total) step_callback. Used
-# by spar-transition.tcl's dispatch_ready when --jobs=0 steps the
-# shared pool one row at a time.
-proc spar::_pool_pre_launch {step_callback row tid idx total} {
-    return [{*}$step_callback $tid $row $idx $total]
+# _pool_pre_launch - bridge the Dispatcher's (row kind) pre-launch hook
+# to the CLI's (tid slug idx total) step_callback. Used by
+# spar-transition.tcl's dispatch_ready when --jobs=0 steps the shared
+# pool one row at a time. The ordinal is counted here (each row passes
+# the gate once) and the total is curried in at install, where the
+# batch count is already known.
+proc spar::_pool_pre_launch {step_callback total row kind} {
+    variable _step_ordinal
+    incr _step_ordinal
+    return [{*}$step_callback $kind $row $_step_ordinal $total]
 }
 
 # spar::delete_roster_locks — best-effort removal of per-segment
