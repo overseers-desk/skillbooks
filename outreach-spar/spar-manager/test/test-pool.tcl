@@ -8,7 +8,6 @@
 # production worker procs, sourced into this interpreter by
 # spar-dispatcher.tcl.
 
-package require Thread
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir test-helpers.tcl]
 

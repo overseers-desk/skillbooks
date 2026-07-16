@@ -1078,10 +1078,10 @@ oo::class create spar::ProfileHarness {
     # DbC-Post: if the agent wrote a masked email (e.g. "b***@foo.com") to
     # the roster, blank the field. A masked address is worse than empty —
     # it inflates "has email" counts and propagates into approach files.
-    # The harness runs as a coroutine on the pool's own thread, so the
-    # roster write is already serialised against every other job; blank the
-    # field by calling spar::update_roster_field directly rather than
-    # marshalling a report across threads.
+    # The harness runs as a coroutine on the one thread the pool and the
+    # front-end share, so the roster write is already serialised against
+    # every other job; blank the field by calling spar::update_roster_field
+    # directly rather than marshalling a report across threads.
     method sanitise_roster_email {roster_path slug} {
         if {![file exists $roster_path]} { return }
         foreach row [spar::load_roster $roster_path] {
