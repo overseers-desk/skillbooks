@@ -164,7 +164,7 @@ proc ::spar::ses::send_one {opts} {
         return [list error "tempfile write error: $err"]
     }
 
-    set rc [catch {exec tclsh9.0 $smtp_helper $tmp_file 2>@1} send_out]
+    set rc [catch {spar::pool_exec tclsh9.0 $smtp_helper $tmp_file} send_out]
     catch {file delete $tmp_file}
 
     if {$rc != 0} {

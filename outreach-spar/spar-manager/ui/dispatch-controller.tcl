@@ -9,7 +9,7 @@
 # snapshots are gone. The Pool is the single source of truth for
 # row state across all in-flight rows of every transition kind. The
 # Controller subscribes to its `job-state` event to drive
-# update_row, and reads `posted_count` / `queued_jobs` for the
+# update_row, and reads `active_jobs` / `queued_jobs` for the
 # progress bar.
 #
 # Circular wire: DispatchController needs TransitionTree at construction
@@ -714,9 +714,9 @@ oo::class create spar::ui::DispatchController {
     }
 
     # _update_progress_display — recompute progress from Pool state.
-    # Total = posted_count + queued; finished = burst counters.
+    # Total = active + queued; finished = burst counters.
     method _update_progress_display {} {
-        set posted [$Dispatcher posted_count]
+        set posted [llength [$Dispatcher active_jobs]]
         set queued [llength [$Dispatcher queued_jobs]]
         set bar    ${ProgressFrame}.bar
         set status ${ProgressFrame}.status

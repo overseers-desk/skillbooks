@@ -43,7 +43,7 @@ namespace eval ::spar::li {
 # Timeout is generous: a /run holds through the browser pool queue and
 # the linkedin.com rate gate before the primitive even launches.
 proc ::spar::li::_post_json {url body timeout_ms} {
-    set tok [http::geturl $url -method POST -type application/json \
+    set tok [spar::pool_http $url -method POST -type application/json \
         -query $body -timeout $timeout_ms]
     try {
         if {[http::status $tok] ne "ok"} {
@@ -60,7 +60,7 @@ proc ::spar::li::_post_json {url body timeout_ms} {
 
 # GET /health, erroring unless it answers ok:true.
 proc ::spar::li::_health {overseer} {
-    set tok [http::geturl "$overseer/health" -timeout 5000]
+    set tok [spar::pool_http "$overseer/health" -timeout 5000]
     try {
         if {[http::status $tok] ne "ok" || [http::ncode $tok] != 200} {
             error "health probe failed"
