@@ -96,7 +96,7 @@ proc spar::detect_browser_cmd {} {
 
 source [file join $::spar::dispatch_script_dir spar-dispatcher.tcl]
 
-# _pool_pre_launch — bridge the Dispatcher's (row tid idx total)
+# _pool_pre_launch - bridge the Dispatcher's (row tid idx total)
 # pre-launch hook to the CLI's (tid slug idx total) step_callback. Used
 # by spar-transition.tcl's dispatch_ready when --jobs=0 steps the
 # shared pool one row at a time.
