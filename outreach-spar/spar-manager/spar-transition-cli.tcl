@@ -14,7 +14,7 @@
 #   Tn:<segment>/<stem>                Tn for one specific contact
 #   --dry-run                          dispatch path with writes disabled
 #   --jobs=N | --delay=N | --limit=N | --yes
-#   --control-port=N                   drain socket (0 disables)
+#   --control-port=N                   control socket (0 disables)
 #   --auto                             refuses any positional Tn token
 #   --dispatchable | --awaiting | --blocked   report mode filter
 #   -v | --verbose
