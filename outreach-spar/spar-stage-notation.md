@@ -17,7 +17,7 @@ Before engagement begins, the marker is just `S&P{n}`. Once the first AR band st
 
 ## Rules
 
-1. The S&P counter only increases. S&P1 → S&P2 → S&P3 is the standard autonomous progression.
+1. The S&P counter only increases. S&P1 → S&P2 → S&P3 is the standard autonomous progression. S&P0 precedes it: market sizing and the source census, written to the segment's `sweep.yaml` (`spar-S-search.md` §7) with no roster rows produced. A segment whose `sweep.yaml` exists with no rounds recorded stands at S&P0; file existence carries the state, the same way profile and approach files carry P and A states.
 2. S&P > 3 implies that AR work surfaced new names and a human triggered an additional S&P iteration. This is the normal case, not an exception.
 3. The AR counter only increases. Each band gets one A pass (approach) and one R pass (revise) before the counter increments.
 4. A can begin after any S&P iteration, not only after S&P3. A campaign with a small universe may begin engagement after S&P1.

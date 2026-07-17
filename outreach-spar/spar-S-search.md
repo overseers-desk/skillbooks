@@ -25,7 +25,7 @@ The discovery steps are the same for both types. The differences — whether P i
 ## 3. Outputs
 
 - **Roster TSV file:** One file per segment, in the location specified by the campaign plan. Contains every discovered contact with metadata tracking how and when they were found.
-- **Segment summary file:** `summary-[segment-name].md` in the same directory as the roster. Written when discovery is complete for a segment. Preserves the search vocabulary so that future work starts from the full keyword set rather than rediscovering it.
+- **Sweep file:** `sweep.yaml` in the same directory as the roster (§7). Carries the market denominator, the source census with per-source status, escapes, and one record per round. It replaces the earlier `summary-[segment-name].md`; a segment still carrying a summary file migrates its content into `sweep.yaml` at the next sweep and deletes the summary.
 - **New names for P:** Contacts discovered during S enter P within the same S&P iteration. Names that belong to a different segment are tagged with the destination segment and picked up by that segment's next S phase.
 
 ## 4. Roster file format
@@ -74,9 +74,19 @@ Segments fall into three types that affect how S is seeded and how quickly the r
 
 The campaign plan specifies which type each segment is. If the plan does not classify segments explicitly, determine the type from the seed sources: if the plan names a government registry, it is a registry segment; if it names an industry directory, it is a directory segment; if it names only keyword searches, it is an informal segment.
 
+Classification is an evidence-bearing claim, recorded in the sweep file's source census (§7). Classifying a segment as informal requires having looked for a registry and a directory and recording that the search came up empty; the licensing question is a cheap test (a licensed or government-subsidised activity almost always has a register). The costliest sweep failure on record came from treating a registry segment as informal: keyword search found 35 aged care organisations where the government register held over 500.
+
 ## 6. Discovery iterations
 
 Discovery progresses through iterations that expand the roster in two ways: **social-graph expansion** (following referral chains from known contacts to their peers) and **semantic expansion** (broadening search queries based on how discovered contacts describe themselves and their industry).
+
+### S&P₀: Size the market (gate)
+
+Before any contact search, establish the denominator: how many members does this segment's addressable market hold, top-down (population and density reasoning) and bottom-up (which enumerable sources hold the population, with an expected yield each). Write the estimate with its derivation, and the source census it rests on, into the segment's `sweep.yaml` (§7). No searching starts while the denominator is absent.
+
+Report every later progress claim as a fraction against this denominator ("412 of ~520"). A bare count carries no quality signal; the two order-of-magnitude under-deliveries on record were both invisible until someone asked "how many exist in the world?" — the question this gate moves to the front.
+
+S&P₀ produces no roster rows and can run inside the same session as S&P₁.
 
 ### S&P₁: Seed
 
@@ -116,10 +126,12 @@ Run any expanded keyword queries identified by the reverse-search diagnostic fro
 
 ### Stopping criteria
 
-Stop discovery for a segment when any of these is met:
+Discovery for a segment closes when either:
 
-- The last iteration added fewer than 5 new contacts.
-- Three iterations have been completed (for informal segments, accept whatever count is reached).
+- Coverage (roster count over the S&P₀ denominator) reaches the target the campaign plan sets — high for registry segments, lower for informal ones; or
+- every source in the census is marked exhausted with evidence, and the last modality-changing iteration added fewer than 5 new contacts.
+
+Repeats prove instrument saturation, not market exhaustion: an iteration that re-runs earlier queries and re-finds swept contacts says nothing about the market, so each further iteration changes modality (a different register, platform, social graph, or geography) rather than re-running old queries. Three iterations remain the autonomous bound; going past S&P₃ is human-initiated (below). For informal segments with every census source exhausted, accept the count reached and record the shortfall against the denominator rather than absorbing it.
 
 S may terminate early within an S&P iteration once the stopping criteria are met, while P continues on accumulated contacts.
 
@@ -127,16 +139,45 @@ S may terminate early within an S&P iteration once the stopping criteria are met
 
 S&P₁ through S&P₃ run autonomously. Any iteration beyond S&P₃ is human-initiated, triggered by names accumulated during AR (the R phase reliably surfaces a small number of new names per band — respondents mention colleagues, connections reveal relevant people, revised strategy identifies uncovered segments). These names enter the roster at iteration number max(current) + 1, go through the same S steps as any other contact, and their profiles feed back into subsequent AR bands. The quantity is typically small enough that S&P₄ or S&P₅ is a lightweight pass, not a full discovery cycle.
 
-## 7. Segment summary
+## 7. The sweep file (sweep.yaml)
 
-When discovery is complete for a segment, write a summary file alongside the roster: `summary-[segment-name].md` in the same directory. The summary records:
+One `sweep.yaml` per segment, beside the roster. It is the segment's discovery record and the S phase's working memory: the denominator, the instruments, what each round did, and what the next round should do. Future work on the segment starts from this file rather than rediscovering the vocabulary. It supersedes the earlier `summary-[segment-name].md`.
 
-- The seed queries used in S&P₁
-- The expanded queries discovered during later iterations (from semantic expansion and reverse-search diagnostic)
-- Any segments that proved invisible to web search, and why (vocabulary gap, weak web presence, B2B-only, etc.)
-- The CRM gap analysis results, if a CRM was used as a seed source
+The head is forward-only (it states current reality); the rounds log is append-only (it states what happened). Structure:
 
-This file preserves the search vocabulary so that future work on the same segment — whether re-checking stale contacts, running a new campaign, or onboarding a new team member — starts from the full keyword set rather than rediscovering it.
+```yaml
+version: "1.0"
+segment: <name>
+catchment: <geographic or sector scope>
+market_estimate:            # S&P₀ output; the denominator
+  value: <number or range, with any known unharvested layers>
+  derivation: <top-down and bottom-up reasoning, source by source>
+  estimated: <date>
+sources:                    # the census; every discovered_via maps to an entry here
+  - name: <register/directory/platform/method>
+    type: registry | directory | informal
+    url: <where>
+    status: exhausted | partial | unreachable | unharvested | stale, each with its reason
+    yield: <n found / n in source after filter>
+exclusions: <what this segment's scope keeps out, sharpened as misfits teach>
+escapes: []                 # permanent test cases; see below
+next_round:                 # staging block compiled from feedback between rounds
+rows_to_verify: []          # roster rows a later source disputed
+rounds:
+  - n: <iteration>
+    date: <date>
+    method: <one line>
+    inputs: {keywords: [], new_sources: [], escapes_to_verify: []}
+    reconciliation: <per source, rows kept vs source total after filter>
+    surprises: [<observations with sweep consequences>]
+    coverage_after: <count>/<denominator>
+```
+
+**Escapes.** When a market member surfaces that the sweep should have found (a user hands one over, a later source disputes the roster, profiling turns up an unswept peer), the member enters the roster immediately and the miss enters `escapes` with a verdict naming the cause: `missing-keyword`, `missing-source`, `source-not-exhausted`, `filter-too-tight`, or `process-defect`. The verdict decides which part of the head gets fixed, and the escape stays in the file as a test case the next round demonstrably catches.
+
+**New-source claims.** Feedback from profiling or later rounds routinely proposes "new" sources. Check the claim against the source census before accepting it; a proposed source the census already lists as exhausted is a re-discovery, not an input for the next round. Both a worker and a compiling agent have skipped this check in the same pilot; the census caught it at validation.
+
+The per-round `surprises` field absorbs what the old summary file recorded (vocabulary gaps, invisible sub-segments, CRM gap analysis results).
 
 ## 8. Stale contact handling
 
@@ -167,6 +208,8 @@ Run this checklist against all roster files after each iteration. Each check is 
 6. **Iteration recorded:** every row has a `sweep_iteration` value.
 7. **Segment matches file:** if the roster uses a `segment` column, the value on every row matches the roster filename.
 8. **Iteration progress:** for each roster, confirm that `sweep_iteration` is populated on every row and that the stopping criteria in §6 have been evaluated.
+9. **Provenance maps to census:** every row's `discovered_via` corresponds to an entry in the sweep file's source census (§7). A row citing a source the census does not hold means either an undeclared source (add it, with status) or a provenance error (investigate).
+10. **Coverage computed:** the round record's `coverage_after` equals the roster's live row count over the S&P₀ denominator, computed from the files rather than asserted.
 
 Campaign-specific checks (e.g. "every outreach row has a non-empty p_note") are defined by the campaign plan, not by this AESOP.
 
