@@ -9,6 +9,18 @@
 
 package require sha256
 
+# DEV — yamlmuster lives in the teatotal shelf; this line is flipped to the
+# vendored copy (vendor/) at the vendoring wave. It only registers a module
+# search path (no I/O, no load); the actual `package require yamlmuster`, the
+# instance, and the rules load are deferred to spar::_yamlmuster_approach on
+# first validation, so sourcing this file — including in the tpool parse
+# workers that never validate — costs nothing.
+::tcl::tm::path add [file join $::env(HOME) code teatotal]  ;# DEV — flipped to vendor/ at the vendoring wave
+
+# Directory of this file, captured at source time so the lazy bootstrap can
+# locate rules/approach.rules independent of the caller's cwd.
+namespace eval spar { variable _validate_dir [file dirname [file normalize [info script]]] }
+
 # approach_validation_error -- return first error-severity validation message for
 # a contact's approach file, or "" if clean. Used by transition `eligible` methods
 # to gate approach-dependent transitions (T6, T7, T8, T9, T10) on structural
@@ -19,18 +31,13 @@ oo::define spar::State method approach_validation_error {contact} {
     if {$ap eq "" || ![file exists $ap]} { return "" }
     set roster_email [string trim [dict getdef $contact email ""]]
     set cname [dict getdef $contact contact_name ""]
-    set corg  [dict getdef $contact organisation ""]
     set adata [my approach_summary $contact]
     if {$adata eq ""} {
         # Parse failure is itself an error, mirroring validate_approach_path's
         # invalid_yaml issue on a fresh parse miss.
         return "Approach file could not be parsed as YAML"
     }
-    foreach issue [spar::validate_approach_data $adata $ap $roster_email $cname $corg] {
-        if {[dict get $issue severity] ne "error"} continue
-        return [dict get $issue message]
-    }
-    return ""
+    return [spar::_approach_gate_error $adata $ap $roster_email $cname]
 }
 
 # _issue -- factory for validator issue dicts. Every issue carries severity,
@@ -45,54 +52,239 @@ proc spar::_issue {severity code contact_name message {extra {}}} {
     return $d
 }
 
-# _approach_canonical_keys -- single source of truth for approach YAML vocabulary.
-# Per issues #43 (closed vocabulary) and #63 (replicas retired in
-# favour of profile_hash linkage).
-proc spar::_approach_canonical_keys {} {
-    return [dict create \
-        root {decisions rounds angle_rationale response_likelihood a_note r_note fact_provenance quality_checklist profile_hash} \
-        decisions {channel language angle sender channel_detail subsegment} \
-        round {type number messages verdict fact_check in_character chosen_usps revision_note notes replies antifact_check} \
-        message {channel subject body to actioned_date replied_date reply_summary script text char_count bcc cc director_note to_note phone_note mode parent reply_all} \
-        parent {account folder uid message_id references subject from to cc} \
-        fact_provenance_item {claim source} \
-        fact_check_item {claim source result note correction} \
-        script_item {point text}]
+# ── yamlmuster rules-engine bootstrap (approach) ───────────────────────────
+# The closed-vocabulary walk and the structural checks that used to live in
+# _check_unknown_keys / validate_approach_data now run on the yamlmuster rule
+# engine over rules/approach.rules. The canonical vocabulary is the `level`
+# declarations in that file; this proc is its single source of truth.
+#
+# One engine instance per document kind: every rules file declares `level
+# root`, so a single instance loading all four kinds would fail on the
+# duplicate root. This wave wires the approach kind only.
+#
+# Lazy: package require, predicate registration, and the rules load all happen
+# on the first approach validation, never at source time, so the tpool parse
+# workers that source this file but never validate pay nothing.
+namespace eval spar { variable _yamlmuster_approach_inst "" }
+proc spar::_yamlmuster_approach {} {
+    variable _yamlmuster_approach_inst
+    if {$_yamlmuster_approach_inst ne ""} {
+        return $_yamlmuster_approach_inst
+    }
+    variable _validate_dir
+    package require yamlmuster
+    set inst [yamlmuster new]
+    # Host predicates — the checks that read files or aggregate across levels,
+    # which the declarative DSL cannot express. Registered before load so a
+    # rules-file typo is a line-numbered load error, not a validate surprise.
+    $inst predicate rounds_structural           ::spar::_pred_rounds_structural
+    $inst predicate placeholder_to              ::spar::_pred_placeholder_to
+    $inst predicate linkedin_guard              ::spar::_pred_linkedin_guard
+    $inst predicate first_line_is_profile_hash  ::spar::_pred_first_line_is_profile_hash
+    $inst predicate profile_hash_actual         ::spar::_pred_profile_hash_actual
+    set fd [open [file join $_validate_dir rules approach.rules] r]
+    fconfigure $fd -encoding utf-8
+    set script [read $fd]
+    close $fd
+    $inst load $script -name approach
+    set _yamlmuster_approach_inst $inst
+    return $inst
 }
 
-# _check_unknown_keys -- emit unknown_key_<level> or wrong_level issues for a parsed dict.
-# If an unknown key is canonical at another level, emit wrong_level with a pointer.
-proc spar::_check_unknown_keys {data level contact_name} {
-    set issues {}
-    set canon [spar::_approach_canonical_keys]
-    if {![dict exists $canon $level]} { return $issues }
-    set known [dict get $canon $level]
-    if {[llength $data] % 2 != 0} { return $issues }
-    foreach {k _v} $data {
-        if {$k in $known} continue
-        set found_at ""
-        dict for {lvl keys} $canon {
-            if {$lvl eq $level} continue
-            if {$k in $keys} { set found_at $lvl; break }
-        }
-        if {$found_at ne ""} {
-            lappend issues [spar::_issue error wrong_level $contact_name \
-                "'$k' at $level belongs at $found_at; move it there"]
-        } else {
-            lappend issues [spar::_issue error unknown_key_$level $contact_name \
-                "unknown key '$k' at $level — not in canonical vocabulary"]
+# _xlate_engine_issue -- project one yamlmuster issue dict back to spar's
+# legacy _issue shape {severity code contact_name message}. Two engine codes
+# need re-spelling to the tokens the test suite and the A/P fix-loop prompts
+# depend on: the built-in `unknown_key` becomes `unknown_key_<level>` with the
+# canonical-vocabulary wording recomposed from key+level, and `wrong_level`
+# keeps its code but recomposes its message from key + owning level. Every
+# other rule already carries its verbatim legacy message (rule -message
+# templates and predicate-built strings), so those pass through untouched.
+proc spar::_xlate_engine_issue {ei contact_name} {
+    set sev  [dict get $ei severity]
+    set code [dict get $ei code]
+    set msg  [dict get $ei message]
+    if {$code eq "unknown_key"} {
+        set lvl  [dict get $ei level]
+        set code "unknown_key_$lvl"
+        set msg  "unknown key '[dict get $ei key]' at $lvl — not in canonical vocabulary"
+    } elseif {$code eq "wrong_level"} {
+        set lvl [dict get $ei level]
+        set msg "'[dict get $ei key]' at $lvl belongs at [dict get $ei owner]; move it there"
+    }
+    return [spar::_issue $sev $code $contact_name $msg]
+}
+
+# _approach_gate_error -- the transition eligibility gate. Returns the first
+# error-severity validation message for an approach dict, or "" if clean.
+# Cost-limited: -severities error drops the warning-DECLARED rules before
+# traversal and -limit 1 stops the walk at the first error, so the hot T6-T10
+# path never evaluates the full ruleset. -badnode ignore reproduces legacy's
+# silent skip of malformed (odd-length) nodes.
+#
+# The emitted-issue severity filter is still needed on top of -severities
+# error: a rule declared error-severity may emit a warning per issue (the
+# placeholder_to predicate emits both the placeholder_to error and the
+# email_desync warning), and those warnings do not count toward -limit, so the
+# returned list can carry a warning ahead of the first error. Skip them, as
+# legacy's approach_validation_error did.
+proc spar::_approach_gate_error {approach_data approach_path roster_email contact_name} {
+    set inst [spar::_yamlmuster_approach]
+    set context [list roster_email $roster_email]
+    if {$approach_path ne ""} { lappend context approach_path $approach_path }
+    foreach ei [$inst validate $approach_data \
+            -groups approach -severities error -limit 1 -badnode ignore \
+            -context $context -extra [list contact_name $contact_name]] {
+        if {[dict get $ei severity] ne "error"} continue
+        return [dict get [spar::_xlate_engine_issue $ei $contact_name] message]
+    }
+    return ""
+}
+
+# ── Host predicates ────────────────────────────────────────────────────────
+# Contract (yamlmuster): {*}$cmdprefix $node $meta, meta = {path level context
+# extra}; return a list of partial issue dicts ({} = pass). The engine fills
+# severity/code from the rule declaration and owns path/level; a predicate may
+# override severity/code/message per issue.
+
+# rounds_structural -- missing_rounds (two distinct messages) + no_final_round,
+# reproducing legacy validate_approach_data lines 193-216 including its
+# early-return semantics: on absent or empty rounds only the missing_rounds
+# issue is emitted (no_final_round is suppressed). A declarative require
+# -nonempty + any pair cannot express the two messages nor the empty-list
+# suppression, so this stays a root predicate.
+proc spar::_pred_rounds_structural {node meta} {
+    if {![dict exists $node rounds]} {
+        return [list [dict create code missing_rounds \
+            message "Approach file missing required 'rounds' key"]]
+    }
+    set rounds [dict get $node rounds]
+    if {[catch {llength $rounds} n] || $n == 0} {
+        return [list [dict create code missing_rounds \
+            message "Approach file has empty 'rounds' array"]]
+    }
+    foreach round $rounds {
+        if {[dict exists $round type] && [dict get $round type] eq "final"} {
+            return {}
         }
     }
-    return $issues
+    return [list [dict create code no_final_round \
+        message "Approach file has no round with type: final"]]
+}
+
+# placeholder_to -- the email guard rails (legacy 320-363): over the final
+# round's To: addresses (gathered by analyse_final_round), a mutually-exclusive
+# chain of non-email shape / placeholder domain-or-local / roster desync. A
+# root predicate because the addresses are a cross-level aggregation, the three
+# checks share a `continue` chain, and desync interpolates the roster_email
+# context value. No -needs: the shape and placeholder checks run regardless of
+# roster_email; the desync sub-check is skipped when it is empty or lacks '@'.
+proc spar::_pred_placeholder_to {node meta} {
+    set roster_email [dict getdef [dict get $meta context] roster_email ""]
+    set email_re {^[^@\s]+@[^@\s]+\.[^@\s]+$}
+    set placeholder_domains {example.com example.org example.net example.edu
+        domain.com fake.com placeholder.com email.com yourcompany.com}
+    set placeholder_locals {todo placeholder xxx tbd fixme placeholder-email
+        your-email-here}
+    set fr [spar::analyse_final_round $node]
+    set out {}
+    foreach addr [dict get $fr to_addresses] {
+        set addr_trimmed [string trim $addr]
+        if {$addr_trimmed eq ""} continue
+        if {![regexp $email_re $addr_trimmed]} {
+            lappend out [dict create code placeholder_to \
+                message "Approach file has non-email to: address '$addr_trimmed'"]
+            continue
+        }
+        set addr_lc [string tolower $addr_trimmed]
+        set at_idx [string first "@" $addr_lc]
+        set local  [string range $addr_lc 0 [expr {$at_idx - 1}]]
+        set domain [string range $addr_lc [expr {$at_idx + 1}] end]
+        if {$domain in $placeholder_domains || $local in $placeholder_locals} {
+            lappend out [dict create code placeholder_to \
+                message "Approach to: '$addr_trimmed' looks like a placeholder (reserved domain or stub local-part)"]
+            continue
+        }
+        if {$roster_email ne "" && [string first "@" $roster_email] >= 0} {
+            if {[string tolower $addr_trimmed] ne [string tolower $roster_email]} {
+                lappend out [dict create severity warning code email_desync \
+                    message "Approach to: '$addr_trimmed' differs from roster email '$roster_email'"]
+            }
+        }
+    }
+    return $out
+}
+
+# linkedin_guard -- the #159 LinkedIn rails (legacy 285-308) over a final
+# round's messages: the 300-char invite bound and char_count honesty. A round
+# predicate (gated -when {type final}) because it needs the round type and
+# iterates the round's linkedin messages, with a text/body fallback and mode
+# gate the length kind cannot express; it emits both codes, overriding per
+# offending message.
+proc spar::_pred_linkedin_guard {node meta} {
+    set out {}
+    if {![dict exists $node messages]} { return $out }
+    foreach msg [dict get $node messages] {
+        if {![dict exists $msg channel] || [dict get $msg channel] ne "linkedin"} continue
+        if {![spar::is_null [dict getdef $msg actioned_date ""]]} continue
+        set li_text [string trim [dict getdef $msg text ""]]
+        if {$li_text eq ""} { set li_text [string trim [dict getdef $msg body ""]] }
+        set li_len  [string length $li_text]
+        set li_mode [dict getdef $msg mode ""]
+        if {($li_mode eq "invite" || $li_mode eq "") && $li_len > 300} {
+            lappend out [dict create code linkedin_note_too_long \
+                message "LinkedIn invite note is $li_len chars, limit 300; shorten it, or declare mode: dm if a direct message to a 1st-degree connection is intended"]
+        }
+        if {[dict exists $msg char_count]} {
+            set li_cc [string trim [dict get $msg char_count]]
+            if {$li_cc ne "" && ![spar::is_null $li_cc] \
+                    && (![string is integer -strict $li_cc] || $li_cc != $li_len)} {
+                lappend out [dict create code char_count_mismatch \
+                    message "LinkedIn message char_count recorded $li_cc, measured $li_len"]
+            }
+        }
+    }
+    return $out
+}
+
+# first_line_is_profile_hash -- profile_hash_misplaced (legacy 392-395). Opens
+# the approach file and tests line 1. -needs approach_path drops the rule for
+# pure-dict callers; the predicate additionally guards profile_hash presence.
+proc spar::_pred_first_line_is_profile_hash {node meta} {
+    set ap [dict getdef [dict get $meta context] approach_path ""]
+    if {$ap eq "" || ![dict exists $node profile_hash]} { return {} }
+    if {[spar::_approach_first_line_is_profile_hash $ap]} { return {} }
+    return [list [dict create code profile_hash_misplaced \
+        message "profile_hash must be the first line of the approach file (issue #63) — re-emit with the hash on line 1"]]
+}
+
+# profile_hash_actual -- profile_hash_mismatch (legacy 384-405): sha256 the
+# sibling profile file and compare to the stored hash. -needs approach_path;
+# guards profile_hash presence and sibling-profile existence internally.
+proc spar::_pred_profile_hash_actual {node meta} {
+    set ap [dict getdef [dict get $meta context] approach_path ""]
+    if {$ap eq "" || ![dict exists $node profile_hash]} { return {} }
+    set stored [string trim [dict get $node profile_hash]]
+    if {[regexp {^sha256:([0-9a-fA-F]+)$} $stored -> hex]} {
+        set stored_hex [string tolower $hex]
+    } else {
+        set stored_hex [string tolower $stored]
+    }
+    set profile_path [file join [file dirname [file dirname $ap]] profiles \
+        "[file rootname [file tail $ap]].md"]
+    if {![file exists $profile_path]} { return {} }
+    set actual [string tolower [::sha2::sha256 -hex -file $profile_path]]
+    if {$actual eq $stored_hex} { return {} }
+    return [list [dict create code profile_hash_mismatch \
+        message "Approach profile_hash 'sha256:$stored_hex' does not match profile file (current sha256:$actual) — re-approach required"]]
 }
 
 # validate_approach -- check a single approach file against guard rails.
 #
 # approach_path         path to the approach YAML file
 # roster_email          email field from the roster row (may be empty)
-# contact_name          roster contact_name (used for messages and, when
-#                       generated_for is present, the name_desync comparison)
-# roster_organisation   roster organisation (optional, used for org_desync)
+# contact_name          roster contact_name (used for issue messages)
+# roster_organisation   retained for signature compatibility; unused (the
+#                       org/name_desync checks were retired with #63)
 #
 # Returns a list of issue dicts, each with keys:
 #   severity, code, contact_name, message
@@ -121,290 +313,32 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
         $roster_email $contact_name $roster_organisation]
 }
 
-# validate_approach_data -- guts of validate_approach over an already-
-# parsed dict. Render-path callers (the State's approach_validation_error)
-# pass the projection from approach_summary so the parse is shared with
-# the rest of the render. The approach_path argument is needed for the
-# profile_hash position and profile-file mismatch checks (file-system
-# reads, not dict reads); pass "" if the caller has no path on hand
-# (validation will then skip those file-bound checks).
+# validate_approach_data -- full validation of an already-parsed approach dict
+# on the yamlmuster approach ruleset (rules/approach.rules + the host
+# predicates registered in spar::_yamlmuster_approach). Render-path callers
+# (the State's approach_validation_error, via _approach_gate_error) pass the
+# projection from approach_summary so the parse is shared with the rest of the
+# render; CLI / harness callers pass a fresh parse. Returns every issue —
+# errors and warnings — in spar's legacy _issue shape; callers wanting only the
+# first error use the cost-limited gate, spar::_approach_gate_error.
+#
+# approach_path drives the two file-bound profile_hash predicates: they carry
+# -needs approach_path, so passing "" (pure-dict callers with synthetic
+# fixtures) omits it from the engine context and opts out of those checks —
+# exactly the legacy behaviour. roster_organisation is unused, retained for
+# signature compatibility (the org/name_desync checks were retired with #63).
 #
 proc spar::validate_approach_data {approach_data approach_path roster_email \
         contact_name {roster_organisation ""}} {
+    set inst [spar::_yamlmuster_approach]
+    set context [list roster_email $roster_email]
+    if {$approach_path ne ""} { lappend context approach_path $approach_path }
     set issues {}
-
-    # ── Closed-vocabulary walk (approach-schema.yaml) ──
-    # Emits unknown_key_<level> / wrong_level issues. Per #43 principle 1.
-
-    lappend issues {*}[spar::_check_unknown_keys $approach_data root $contact_name]
-
-    if {[dict exists $approach_data decisions]} {
-        set _dec [dict get $approach_data decisions]
-        lappend issues {*}[spar::_check_unknown_keys $_dec decisions $contact_name]
+    foreach ei [$inst validate $approach_data \
+            -groups approach -badnode ignore \
+            -context $context -extra [list contact_name $contact_name]] {
+        lappend issues [spar::_xlate_engine_issue $ei $contact_name]
     }
-
-    if {[dict exists $approach_data rounds]} {
-        foreach _round [dict get $approach_data rounds] {
-            if {[llength $_round] % 2 != 0} continue
-            lappend issues {*}[spar::_check_unknown_keys $_round round $contact_name]
-            if {[dict exists $_round messages]} {
-                foreach _msg [dict get $_round messages] {
-                    if {[llength $_msg] % 2 != 0} continue
-                    lappend issues {*}[spar::_check_unknown_keys $_msg message $contact_name]
-                    if {[dict exists $_msg script]} {
-                        foreach _item [dict get $_msg script] {
-                            if {[llength $_item] % 2 != 0} continue
-                            lappend issues {*}[spar::_check_unknown_keys $_item script_item $contact_name]
-                        }
-                    }
-                    if {[dict exists $_msg parent]} {
-                        set _parent [dict get $_msg parent]
-                        if {[llength $_parent] % 2 == 0} {
-                            lappend issues {*}[spar::_check_unknown_keys $_parent parent $contact_name]
-                        }
-                    }
-                }
-            }
-            if {[dict exists $_round fact_check]} {
-                foreach _item [dict get $_round fact_check] {
-                    if {[llength $_item] % 2 != 0} continue
-                    lappend issues {*}[spar::_check_unknown_keys $_item fact_check_item $contact_name]
-                }
-            }
-        }
-    }
-
-    if {[dict exists $approach_data fact_provenance]} {
-        foreach _item [dict get $approach_data fact_provenance] {
-            if {[llength $_item] % 2 != 0} continue
-            lappend issues {*}[spar::_check_unknown_keys $_item fact_provenance_item $contact_name]
-        }
-    }
-
-    # ── Structural checks (approach-schema.yaml) ──
-
-    # decisions key must exist
-    if {![dict exists $approach_data decisions]} {
-        lappend issues [spar::_issue error missing_decisions $contact_name \
-            "Approach file missing required 'decisions' key"]
-    }
-
-    # rounds key must exist and be non-empty
-    if {![dict exists $approach_data rounds]} {
-        lappend issues [spar::_issue error missing_rounds $contact_name \
-            "Approach file missing required 'rounds' key"]
-        return $issues
-    }
-    set rounds [dict get $approach_data rounds]
-    if {[llength $rounds] == 0} {
-        lappend issues [spar::_issue error missing_rounds $contact_name \
-            "Approach file has empty 'rounds' array"]
-        return $issues
-    }
-
-    # At least one round must have type: final
-    set has_final 0
-    foreach round $rounds {
-        if {[dict exists $round type] && [dict get $round type] eq "final"} {
-            set has_final 1
-            break
-        }
-    }
-    if {!$has_final} {
-        lappend issues [spar::_issue error no_final_round $contact_name \
-            "Approach file has no round with type: final"]
-    }
-
-    # Per-round checks
-    foreach round $rounds {
-        set rtype ""
-        if {[dict exists $round type]} {
-            set rtype [dict get $round type]
-        }
-
-        # Draft and review rounds require number
-        if {$rtype eq "draft" && ![dict exists $round number]} {
-            lappend issues [spar::_issue warning draft_missing_number $contact_name \
-                "Draft round missing required 'number' field"]
-        }
-        if {$rtype eq "review" && ![dict exists $round number]} {
-            lappend issues [spar::_issue warning review_missing_number $contact_name \
-                "Review round missing required 'number' field"]
-        }
-
-        # Email messages must have content. For ordinary sends that means
-        # both subject and body; for `mode: reply` the subject is derived
-        # from the parent thread (Re: <parent.subject>), so only body is
-        # required at the message level. A reply must carry a parent block
-        # with a non-empty message_id — without it T6 cannot construct the
-        # In-Reply-To / References headers that join the thread.
-        set final_email_count 0
-        if {[dict exists $round messages]} {
-            foreach msg [dict get $round messages] {
-                if {[dict exists $msg channel] && [dict get $msg channel] eq "email"} {
-                    set is_reply [expr {[dict exists $msg mode] && \
-                        [dict get $msg mode] eq "reply"}]
-                    if {$is_reply} {
-                        if {![dict exists $msg body]} {
-                            lappend issues [spar::_issue warning email_missing_content $contact_name \
-                                "Reply email message missing 'body'"]
-                        }
-                        set _parent [dict getdef $msg parent ""]
-                        set _pmid [dict getdef $_parent message_id ""]
-                        if {[string trim $_pmid] eq ""} {
-                            lappend issues [spar::_issue error reply_missing_parent_message_id $contact_name \
-                                "Reply email message has no parent.message_id; cannot thread the reply"]
-                        }
-                    } else {
-                        if {![dict exists $msg subject] && ![dict exists $msg body]} {
-                            lappend issues [spar::_issue warning email_missing_content $contact_name \
-                                "Email message missing both 'subject' and 'body'"]
-                        }
-                    }
-                    if {$rtype eq "final"} { incr final_email_count }
-                }
-                # LinkedIn guard rails (issue #159). The send dispatcher
-                # (transitions/linkedin_send_one.tcl) sends `text` falling
-                # back to `body`, trimmed, and treats a modeless message
-                # within 300 code points as a connection invite. Mirror
-                # that rule exactly so validator and send path cannot
-                # disagree; the legitimate long-DM case survives by being
-                # declared (`mode: dm`) rather than inferred.
-                #
-                # Scope: unsent final-round messages only. A sent message
-                # (actioned_date non-null) is a record of what went out,
-                # and draft rounds are records of the drafting process —
-                # retro-editing either to satisfy a validator falsifies
-                # history, and approach_validation_error gates T7-T10 as
-                # well as T6, so flagging history would strand the
-                # contact's reply monitoring forever. The round a reviewer
-                # approves and the dispatcher sends is the final; the A
-                # harness's post-assembly fix loop validates the assembled
-                # file with its final round present, so authoring-time
-                # enforcement is unchanged.
-                if {$rtype eq "final"
-                        && [dict exists $msg channel] && [dict get $msg channel] eq "linkedin"
-                        && [spar::is_null [dict getdef $msg actioned_date ""]]} {
-                    set li_text [string trim [dict getdef $msg text ""]]
-                    if {$li_text eq ""} {
-                        set li_text [string trim [dict getdef $msg body ""]]
-                    }
-                    set li_len [string length $li_text]
-                    set li_mode [dict getdef $msg mode ""]
-                    if {($li_mode eq "invite" || $li_mode eq "") && $li_len > 300} {
-                        lappend issues [spar::_issue error linkedin_note_too_long $contact_name \
-                            "LinkedIn invite note is $li_len chars, limit 300; shorten it, or declare mode: dm if a direct message to a 1st-degree connection is intended"]
-                    }
-                    # char_count honesty: a wrong count is worse than no
-                    # count, since a reviewer trusts it. Absent stays valid.
-                    if {[dict exists $msg char_count]} {
-                        set li_cc [string trim [dict get $msg char_count]]
-                        if {$li_cc ne "" && ![spar::is_null $li_cc] \
-                                && (![string is integer -strict $li_cc] || $li_cc != $li_len)} {
-                            lappend issues [spar::_issue error char_count_mismatch $contact_name \
-                                "LinkedIn message char_count recorded $li_cc, measured $li_len"]
-                        }
-                    }
-                }
-            }
-        }
-
-        # Final round may have at most one email message. Follow-ups belong
-        # in subsequent rounds; multi-recipient belongs in cc/bcc.
-        if {$rtype eq "final" && $final_email_count > 1} {
-            lappend issues [spar::_issue error too_many_final_emails $contact_name \
-                "Final round has $final_email_count email messages; maximum is 1"]
-        }
-    }
-
-    # ── Email guard rails (existing checks) ──
-
-    set email_re {^[^@\s]+@[^@\s]+\.[^@\s]+$}
-    # RFC 2606 reserves example.{com,org,net,edu}, test.*, invalid.*, localhost.*
-    # for documentation and testing. Plus common stub domains humans type as
-    # placeholders. Kept deliberately short — false positives here reject
-    # legitimate sends.
-    set placeholder_domains {example.com example.org example.net example.edu
-        domain.com fake.com placeholder.com email.com yourcompany.com}
-    # Local-part placeholders that are too generic to be real addresses.
-    # Avoid common-English words ("test", "name", "unknown") — they match
-    # legitimate mailbox conventions.
-    set placeholder_locals {todo placeholder xxx tbd fixme placeholder-email
-        your-email-here}
-    set fr [spar::analyse_final_round $approach_data]
-    set to_addresses [dict get $fr to_addresses]
-
-    foreach addr $to_addresses {
-        set addr_trimmed [string trim $addr]
-        if {$addr_trimmed eq ""} continue
-
-        if {![regexp $email_re $addr_trimmed]} {
-            lappend issues [spar::_issue error placeholder_to $contact_name \
-                "Approach file has non-email to: address '$addr_trimmed'"]
-            continue
-        }
-
-        set addr_lc [string tolower $addr_trimmed]
-        set at_idx [string first "@" $addr_lc]
-        set local  [string range $addr_lc 0 [expr {$at_idx - 1}]]
-        set domain [string range $addr_lc [expr {$at_idx + 1}] end]
-        if {$domain in $placeholder_domains || $local in $placeholder_locals} {
-            lappend issues [spar::_issue error placeholder_to $contact_name \
-                "Approach to: '$addr_trimmed' looks like a placeholder (reserved domain or stub local-part)"]
-            continue
-        }
-
-        if {$roster_email ne "" && [string first "@" $roster_email] >= 0} {
-            if {[string tolower $addr_trimmed] ne [string tolower $roster_email]} {
-                lappend issues [spar::_issue warning email_desync $contact_name \
-                    "Approach to: '$addr_trimmed' differs from roster email '$roster_email'"]
-            }
-        }
-    }
-
-    # ── profile_hash linkage (issue #63) ──
-    # When the approach carries profile_hash and the source profile is
-    # present, mismatch is an error: the profile was rebuilt or edited
-    # after the approach was drafted, so the approach references stale
-    # angle evidence. profile_hash is optional — manually-authored
-    # approaches and any path that did not read a profile have no hash
-    # to record. Absent profile (no file at the expected path) is not
-    # an error here; the state machine routes that through T3 → T4.
-    #
-    # Position rule: when profile_hash is set, it MUST be the first line
-    # of the file. The rule is what enables a future fast-classify path
-    # to detect APPROACH_STALE without parsing the YAML; the migration
-    # script and the A harness both place the hash on line 1, and this
-    # check catches drift if anything edits the file out of order.
-    #
-    # File-bound checks (line-1 position, profile-file sha256 compare)
-    # only run when an approach_path was supplied — pure dict callers
-    # (test fixtures with synthetic data) opt out of these checks by
-    # passing "".
-    if {$approach_path ne "" && [dict exists $approach_data profile_hash]} {
-        set _stored [string trim [dict get $approach_data profile_hash]]
-        set _stored_hex $_stored
-        if {[regexp {^sha256:([0-9a-fA-F]+)$} $_stored -> _hex]} {
-            set _stored_hex [string tolower $_hex]
-        } else {
-            set _stored_hex [string tolower $_stored]
-        }
-        if {![spar::_approach_first_line_is_profile_hash $approach_path]} {
-            lappend issues [spar::_issue error profile_hash_misplaced $contact_name \
-                "profile_hash must be the first line of the approach file (issue #63) — re-emit with the hash on line 1"]
-        }
-        set _seg_dir [file dirname [file dirname $approach_path]]
-        set _stem [file rootname [file tail $approach_path]]
-        set _profile_path [file join $_seg_dir profiles "${_stem}.md"]
-        if {[file exists $_profile_path]} {
-            set _actual [string tolower [::sha2::sha256 -hex -file $_profile_path]]
-            if {$_actual ne $_stored_hex} {
-                lappend issues [spar::_issue error profile_hash_mismatch $contact_name \
-                    "Approach profile_hash 'sha256:$_stored_hex' does not match profile file (current sha256:$_actual) — re-approach required"]
-            }
-        }
-    }
-
     return $issues
 }
 

@@ -1,0 +1,198 @@
+# approach.rules — yamlmuster ruleset for SPAR approach YAML.
+# DRAFT (Wave 2a). Translated from spar-validate.tcl
+# validate_approach_data (lines 132-409) + _check_unknown_keys (63-87) +
+# _approach_canonical_keys (51-61). Nothing here is loaded or tested yet;
+# a later wiring round registers the predicates and drives it.
+#
+# ── PROJECTION CONSTRAINT (State render-path invariant) ─────────────────
+# Render-path callers validate spar::State's approach_summary projection
+# (project_approach_data, spar-state.tcl:502-545), not a fresh parse.
+# That projection PRESERVES the whole key skeleton at every level but
+# BLANKS these VALUES to keep the cache small:
+#     • email message  body        (linkedin bodies are kept)
+#     • message         reply_summary
+#     • script_item     text
+#     • reply           text
+# So no rule below may read those blanked values. Every value a rule reads
+# (message `to`, `char_count`, `mode`, `actioned_date`, round `type`,
+# message `channel`, linkedin `text`/`body`, `parent.message_id`, root
+# `profile_hash`) is a preserved field; the existence-only checks
+# (email_missing_content, vocab) read kept keys. Verified field-by-field
+# against the projection; see rules/DRAFT-NOTES.md.
+#
+# Selection: every rule carries -groups {approach}; the shared singleton is
+# driven with `validate <adata> -groups {approach} ...`.
+# Emission order mirrors legacy as far as the engine's node-rules-before-
+# descent, single-walk model allows. The residual reordering (legacy runs a
+# full vocab PASS then a structural PASS; yamlmuster fuses them into one
+# walk) is documented in DRAFT-NOTES.md section (d), the headline doubt.
+
+# ── Levels (closed vocabulary) ─────────────────────────────────────────
+# Declared in the SAME order as _approach_canonical_keys so the built-in
+# wrong_level hint resolves a misplaced key to the FIRST-declared owning
+# level, matching legacy's dict-order `break` (spar-validate.tcl:74-77).
+level root                 -keys {decisions rounds angle_rationale response_likelihood a_note r_note fact_provenance quality_checklist profile_hash}
+level decisions            -keys {channel language angle sender channel_detail subsegment}
+level round                -keys {type number messages verdict fact_check in_character chosen_usps revision_note notes replies antifact_check}
+level message              -keys {channel subject body to actioned_date replied_date reply_summary script text char_count bcc cc director_note to_note phone_note mode parent reply_all}
+level parent               -keys {account folder uid message_id references subject from to cc}
+level fact_provenance_item -keys {claim source}
+level fact_check_item      -keys {claim source result note correction}
+level script_item          -keys {point text}
+
+# ── Nesting edges (drive traversal + wrong_level hints) ─────────────────
+# Child order at each level = legacy descent order, so vocab issues emit in
+# the legacy sequence. NOTE: round.replies is deliberately NOT an edge.
+# Legacy never vocab-walks replies (it is a valid round key, no descent).
+child root    decisions       dict decisions
+child root    rounds          list round
+child root    fact_provenance list fact_provenance_item
+child round   messages        list message
+child round   fact_check      list fact_check_item
+child message script          list script_item
+child message parent          dict parent
+
+# ── ROOT level rules ────────────────────────────────────────────────────
+
+# vocab walk at root. Built-in codes unknown_key / wrong_level. The host
+# wrapper rewrites unknown_key into unknown_key_<level> using the issue's
+# `level` field (design-migration section 7). The built-in messages MUST be
+# the legacy strings (see DRAFT-NOTES a/c):
+#   unknown_key : "unknown key '<k>' at <level> — not in canonical vocabulary"
+#   wrong_level : "'<k>' at <level> belongs at <found_at>; move it there"
+rule vocab root -groups {approach}
+
+# missing_decisions: legacy 187-190. Existence only.
+rule require root decisions -code missing_decisions \
+    -message {Approach file missing required 'decisions' key} -groups {approach}
+
+# missing_rounds (two messages) + no_final_round: legacy 193-216. A host
+# predicate, not the declarative require/-nonempty + any pair: legacy emits
+# two distinct messages ("missing required 'rounds' key" when absent, "has
+# empty 'rounds' array" when empty) and RETURNS after either, suppressing
+# no_final_round. A require rule carries one message and cannot early-return,
+# and an `any` rule fires no_final_round on an empty (but present) rounds
+# list. The predicate reproduces all three cases exactly, including the
+# suppression of no_final_round on absent/empty rounds. See DRAFT-NOTES b#1,
+# d#3. Declared after missing_decisions so the gate's first error on a doc
+# missing both keys is missing_decisions, matching legacy.
+rule predicate root rounds_structural -code no_final_round \
+    -message {Approach file has no round with type: final} -groups {approach}
+
+# placeholder_to (two variants) plus email_desync: legacy 320-363. HOST
+# PREDICATE. Escapes the DSL because: (1) it reads `to_addresses` as
+# gathered by analyse_final_round (FINAL rounds, channel email, non-null
+# `to` only), a cross-level aggregation a message-level regexp rule cannot
+# scope; (2) the three per-address checks are mutually exclusive via
+# `continue`, so independent rules would double-emit; (3) email_desync's
+# message interpolates the roster_email CONTEXT value, not a node field.
+# design-muster's split (regexp for the shape test, predicate for the
+# stub-lists, predicate for desync) is therefore not viable: one root
+# predicate reproduces legacy exactly. No -needs: placeholder checks run
+# regardless of roster_email; the predicate reads roster_email from
+# -context and skips the desync sub-check when it is empty or lacks '@'
+# (legacy 357). The predicate emits, overriding code/severity/message:
+#   placeholder_to (error): "Approach file has non-email to: address '<a>'"
+#   placeholder_to (error): "Approach to: '<a>' looks like a placeholder (reserved domain or stub local-part)"
+#   email_desync   (warn) : "Approach to: '<a>' differs from roster email '<roster_email>'"
+rule predicate root placeholder_to -code placeholder_to \
+    -message {Approach file has non-email to: address} -groups {approach}
+
+# profile_hash_misplaced: legacy 392-395. HOST PREDICATE
+# (first_line_is_profile_hash) wrapping _approach_first_line_is_profile_hash
+# (416-423): opens the file, tests line 1. -needs approach_path drops the
+# rule for pure-dict callers (approach_path absent from -context). The
+# predicate additionally guards `dict exists $node profile_hash` (legacy
+# 384) and a non-empty path. Static message.
+rule predicate root first_line_is_profile_hash -needs approach_path \
+    -code profile_hash_misplaced \
+    -message {profile_hash must be the first line of the approach file (issue #63) — re-emit with the hash on line 1} \
+    -groups {approach}
+
+# profile_hash_mismatch: legacy 396-405. HOST PREDICATE (profile_hash_actual)
+# wrapping the sha256 sibling-profile compare. The message interpolates two
+# hashes (stored, actual), not template-expressible, so it is a predicate.
+# -needs approach_path; guards profile_hash presence and sibling-profile
+# existence internally. Predicate builds:
+#   "Approach profile_hash 'sha256:<stored>' does not match profile file (current sha256:<actual>) — re-approach required"
+rule predicate root profile_hash_actual -needs approach_path \
+    -code profile_hash_mismatch \
+    -message {Approach profile_hash does not match profile file (re-approach required)} \
+    -groups {approach}
+
+# ── DECISIONS level ─────────────────────────────────────────────────────
+rule vocab decisions -groups {approach}
+
+# ── ROUND level rules ───────────────────────────────────────────────────
+rule vocab round -groups {approach}
+
+# draft_missing_number / review_missing_number: legacy 226-233. Warnings.
+# -when gates on the round's own `type` (sibling field).
+rule require round number -when {type draft} -severity warning \
+    -code draft_missing_number \
+    -message {Draft round missing required 'number' field} -groups {approach}
+rule require round number -when {type review} -severity warning \
+    -code review_missing_number \
+    -message {Review round missing required 'number' field} -groups {approach}
+
+# linkedin_note_too_long + char_count_mismatch: legacy 285-308. HOST
+# PREDICATE at ROUND level (design-muster): it needs the round `type`
+# (final) AND iterates the round's messages, filtering channel linkedin and
+# actioned-null; the text/body fallback and mode gate are "fallback-
+# tangled", so a plain `length` rule cannot express it. -when {type final}
+# gates the round; the predicate does the per-message linkedin work and
+# emits, overriding code/message per offending message:
+#   linkedin_note_too_long: "LinkedIn invite note is <n> chars, limit 300; shorten it, or declare mode: dm if a direct message to a 1st-degree connection is intended"
+#   char_count_mismatch   : "LinkedIn message char_count recorded <cc>, measured <n>"
+# ORDERING DOUBT: as a round-level rule it fires BEFORE descent into the
+# message level, so its errors precede email_missing_content and
+# reply_missing_parent_message_id; legacy interleaves them per message.
+# DRAFT-NOTES d.
+rule predicate round linkedin_guard -when {type final} \
+    -code linkedin_note_too_long \
+    -message {LinkedIn invite note exceeds the 300-char invite limit} -groups {approach}
+
+# too_many_final_emails: legacy 314-317. At most one channel==email message
+# in a final round. %n = the measured count.
+# ORDERING DOUBT: round-level rule fires before message descent; legacy
+# computes it AFTER the per-message loop. DRAFT-NOTES d.
+rule atmost round messages 1 -where {channel email} -when {type final} \
+    -code too_many_final_emails \
+    -message {Final round has %n email messages; maximum is 1} -groups {approach}
+
+# ── MESSAGE level rules ─────────────────────────────────────────────────
+rule vocab message -groups {approach}
+
+# email_missing_content (reply variant): legacy 248-251. Existence only
+# (body value is blanked in the projection, but the KEY is preserved).
+rule require message body -when {channel email mode reply} -severity warning \
+    -code email_missing_content \
+    -message {Reply email message missing 'body'} -groups {approach}
+
+# reply_missing_parent_message_id: legacy 252-257. Nested keypath walked
+# with -nonblank: absent parent, absent message_id, or blank message_id all
+# fire (legacy's getdef chain plus `string trim eq ""`). parent.message_id
+# is preserved in the projection.
+rule require message {parent message_id} -nonblank -when {channel email mode reply} \
+    -code reply_missing_parent_message_id \
+    -message {Reply email message has no parent.message_id; cannot thread the reply} \
+    -groups {approach}
+
+# email_missing_content (non-reply variant): legacy 259-262. -anyof means
+# the {subject body} list is ALTERNATIVES (fires only when NEITHER key
+# exists); existence only. -unless {mode reply} excludes the reply branch.
+rule require message {subject body} -anyof -when {channel email} -unless {mode reply} \
+    -severity warning -code email_missing_content \
+    -message {Email message missing both 'subject' and 'body'} -groups {approach}
+
+# ── PARENT level ────────────────────────────────────────────────────────
+rule vocab parent -groups {approach}
+
+# ── FACT_CHECK_ITEM level ───────────────────────────────────────────────
+rule vocab fact_check_item -groups {approach}
+
+# ── FACT_PROVENANCE_ITEM level ──────────────────────────────────────────
+rule vocab fact_provenance_item -groups {approach}
+
+# ── SCRIPT_ITEM level ───────────────────────────────────────────────────
+rule vocab script_item -groups {approach}
