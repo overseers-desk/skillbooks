@@ -52,6 +52,19 @@ proc spar::_issue {severity code contact_name message {extra {}}} {
     return $d
 }
 
+# _yamlmuster_load -- read rules/<file> as UTF-8 and load it into $inst under
+# $label. yamlmuster does no I/O: the host reads the rules file and passes the
+# text. Shared by the four per-kind accessors; the predicate registrations that
+# must precede the load stay in each accessor, since they differ by kind.
+proc spar::_yamlmuster_load {inst file label} {
+    variable _validate_dir
+    set fd [open [file join $_validate_dir rules $file] r]
+    fconfigure $fd -encoding utf-8
+    set script [read $fd]
+    close $fd
+    $inst load $script -name $label
+}
+
 # ── yamlmuster rules-engine bootstrap (approach) ───────────────────────────
 # The closed-vocabulary walk and the structural checks that used to live in
 # _check_unknown_keys / validate_approach_data now run on the yamlmuster rule
@@ -71,7 +84,6 @@ proc spar::_yamlmuster_approach {} {
     if {$_yamlmuster_approach_inst ne ""} {
         return $_yamlmuster_approach_inst
     }
-    variable _validate_dir
     package require yamlmuster
     set inst [yamlmuster new]
     # Host predicates — the checks that read files or aggregate across levels,
@@ -82,11 +94,7 @@ proc spar::_yamlmuster_approach {} {
     $inst predicate linkedin_guard              ::spar::_pred_linkedin_guard
     $inst predicate first_line_is_profile_hash  ::spar::_pred_first_line_is_profile_hash
     $inst predicate profile_hash_actual         ::spar::_pred_profile_hash_actual
-    set fd [open [file join $_validate_dir rules approach.rules] r]
-    fconfigure $fd -encoding utf-8
-    set script [read $fd]
-    close $fd
-    $inst load $script -name approach
+    spar::_yamlmuster_load $inst approach.rules approach
     set _yamlmuster_approach_inst $inst
     return $inst
 }
@@ -363,37 +371,55 @@ proc spar::_approach_first_line_is_profile_hash {approach_path} {
 # Contract, this is the post-check for the P-phase AI call.
 # ─────────────────────────────────────────────────────────────────────────────
 
-# _profile_canonical_keys -- single source of truth for profile front-matter vocabulary.
-# Keyed by level; must stay in sync with spar-P-profile.md §5.1.
-proc spar::_profile_canonical_keys {} {
-    return [dict create \
-        root {profile_date star_rating yield dependent_data} \
-        dependent_data {contact_name organisation role date_excluded}]
+# ── yamlmuster rules-engine bootstrap (profile) ────────────────────────────
+# The front-matter vocabulary walk, required-key checks, yield/star ranges, and
+# the engagement-leak backstop that used to live inline in validate_profile now
+# run on the yamlmuster rule engine over rules/profile.rules. A separate
+# instance from the approach one: both declare `level root`, so a single
+# instance loading both would fail on the duplicate. Lazy, like the approach
+# accessor, so the tpool parse workers pay nothing.
+namespace eval spar { variable _yamlmuster_profile_inst "" }
+proc spar::_yamlmuster_profile {} {
+    variable _yamlmuster_profile_inst
+    if {$_yamlmuster_profile_inst ne ""} {
+        return $_yamlmuster_profile_inst
+    }
+    package require yamlmuster
+    set inst [yamlmuster new]
+    $inst predicate engagement_leak ::spar::_pred_engagement_leak
+    spar::_yamlmuster_load $inst profile.rules profile
+    set _yamlmuster_profile_inst $inst
+    return $inst
 }
 
-# _check_profile_unknown_keys -- mirror of _check_unknown_keys, profile vocabulary.
-proc spar::_check_profile_unknown_keys {data level contact_name} {
-    set issues {}
-    set canon [spar::_profile_canonical_keys]
-    if {![dict exists $canon $level]} { return $issues }
-    set known [dict get $canon $level]
-    if {[llength $data] % 2 != 0} { return $issues }
-    foreach {k _v} $data {
-        if {$k in $known} continue
-        set found_at ""
-        dict for {lvl keys} $canon {
-            if {$lvl eq $level} continue
-            if {$k in $keys} { set found_at $lvl; break }
-        }
-        if {$found_at ne ""} {
-            lappend issues [spar::_issue error wrong_level $contact_name \
-                "'$k' at $level belongs at $found_at; move it there"]
-        } else {
-            lappend issues [spar::_issue error unknown_key_$level $contact_name \
-                "unknown key '$k' at $level — not in canonical vocabulary"]
+# engagement_leak -- the I1 backstop (INVARIANTS.md): a reusable profile must
+# carry no engagement, warmth, or pitch content — that is campaign-bound and
+# goes stale on reuse, so its presence is a build failure, not a style note. A
+# host predicate because it scans the whole profile text (context `raw`), not a
+# front-matter field, and each message interpolates the matched pattern/phrase.
+# Emits the three case-sensitive heading/line patterns first, then the three
+# case-insensitive prior-contact phrases, in that order, all code engagement_leak.
+proc spar::_pred_engagement_leak {node meta} {
+    set raw [dict getdef [dict get $meta context] raw ""]
+    set out {}
+    foreach {pat desc} {
+        "## Prior correspondence" "prior-correspondence or warmth section"
+        "## Angles"               "pitch or angles section"
+        "Warmth:"                 "warmth line"
+    } {
+        if {[string first $pat $raw] >= 0} {
+            lappend out [dict create message \
+                "Profile carries a $desc ('$pat'). Engagement and pitch content is campaign-bound and must not live in a reusable profile (INVARIANTS.md I1)."]
         }
     }
-    return $issues
+    set low [string tolower $raw]
+    foreach ph {"no prior contact" "no prior correspondence" "no prior connection"} {
+        if {[string first $ph $low] >= 0} {
+            lappend out [dict create message \
+                "Profile states '$ph'. Prior-contact state is campaign-bound and stale on reuse (INVARIANTS.md I1)."]
+        }
+    }
+    return $out
 }
 
 # read_profile_front_matter -- extract and parse the YAML front-matter block
@@ -509,59 +535,17 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
         return $issues
     }
 
-    # Closed-vocabulary walk.
-    lappend issues {*}[spar::_check_profile_unknown_keys $fm root $contact_name]
-    if {[dict exists $fm dependent_data]} {
-        set _dep [dict get $fm dependent_data]
-        if {[llength $_dep] % 2 == 0} {
-            lappend issues {*}[spar::_check_profile_unknown_keys $_dep dependent_data $contact_name]
-        }
-    }
-
-    # Required keys at root.
-    foreach req {profile_date star_rating yield dependent_data} {
-        if {![dict exists $fm $req]} {
-            lappend issues [spar::_issue error missing_${req} $contact_name \
-                "Profile front matter missing required key '${req}'"]
-        }
-    }
-
-    # Enum checks.
-    if {[dict exists $fm yield]} {
-        set y [dict get $fm yield]
-        if {![string is integer -strict $y] || $y < 0} {
-            lappend issues [spar::_issue error invalid_yield $contact_name \
-                "yield '$y' — must be a non-negative integer (data-point count per SPAR-P §4.14)"]
-        }
-    }
-    # I1 backstop (INVARIANTS.md): a reusable profile must carry no engagement,
-    # warmth, or pitch content; that is campaign-bound and goes stale on reuse,
-    # so its presence is a build failure, not a style note. These patterns are
-    # the headings and lines the removed leaky sections used. This is the
-    # mechanical check that would have caught the leak the prose missed.
-    foreach {pat desc} {
-        "## Prior correspondence" "prior-correspondence or warmth section"
-        "## Angles"               "pitch or angles section"
-        "Warmth:"                 "warmth line"
-    } {
-        if {[string first $pat $raw] >= 0} {
-            lappend issues [spar::_issue error engagement_leak $contact_name \
-                "Profile carries a $desc ('$pat'). Engagement and pitch content is campaign-bound and must not live in a reusable profile (INVARIANTS.md I1)."]
-        }
-    }
-    set _low [string tolower $raw]
-    foreach _ph {"no prior contact" "no prior correspondence" "no prior connection"} {
-        if {[string first $_ph $_low] >= 0} {
-            lappend issues [spar::_issue error engagement_leak $contact_name \
-                "Profile states '$_ph'. Prior-contact state is campaign-bound and stale on reuse (INVARIANTS.md I1)."]
-        }
-    }
-    if {[dict exists $fm star_rating]} {
-        set s [dict get $fm star_rating]
-        if {![string is integer -strict $s] || $s < 1 || $s > 5} {
-            lappend issues [spar::_issue error invalid_star_rating $contact_name \
-                "star_rating '$s' — must be integer 1..5 (0 never appears; excluded contacts have no profile)"]
-        }
+    # Closed-vocabulary walk, required keys, yield/star ranges, and the
+    # engagement-leak backstop now run on the yamlmuster profile ruleset
+    # (rules/profile.rules + the engagement_leak predicate). The whole profile
+    # text is passed as context `raw` for the leak scan; contact_name rides in
+    # -extra for the issue shape. Reachability and staleness stay imperative
+    # below (roster-row comparisons), appended after these issues to preserve
+    # the legacy near-last emission order.
+    foreach ei [[spar::_yamlmuster_profile] validate $fm \
+            -groups profile -badnode ignore \
+            -context [list raw $raw] -extra [list contact_name $contact_name]] {
+        lappend issues [spar::_xlate_engine_issue $ei $contact_name]
     }
 
     # Reachability (#39 R1): a profile exists only if P honoured §4.15 —
