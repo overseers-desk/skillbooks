@@ -13,7 +13,7 @@
 #   Tn:<segment>                       Tn restricted to one segment
 #   Tn:<segment>/<stem>                Tn for one specific contact
 #   --dry-run                          dispatch path with writes disabled
-#   --jobs=N | --delay=N | --yes
+#   --jobs=N | --delay=N | --limit=N | --yes
 #   --auto                             refuses any positional Tn token
 #   --dispatchable | --awaiting | --blocked   report mode filter
 #   -v | --verbose
@@ -37,6 +37,7 @@ namespace eval spar {}
 #   dry_run        0/1   (--dry-run; gates the dispatch path)
 #   jobs           int   (default 4; 0 means stepping)
 #   delay          int   (default 2)
+#   limit          int   (default 0; 0 means no row cap)
 #   assume_yes     0/1
 #   verbose        0/1
 #   help           0/1   (--help requested)
@@ -49,6 +50,7 @@ proc spar::parse_cli {argv} {
         dry_run       0    \
         jobs          4    \
         delay         2    \
+        limit         0    \
         assume_yes    0    \
         verbose       0    \
         help          0]
@@ -65,6 +67,7 @@ proc spar::parse_cli {argv} {
             --help      { dict set spec help 1 }
             --jobs=*    { dict set spec jobs   [string range $arg 7 end] }
             --delay=*   { dict set spec delay  [string range $arg 8 end] }
+            --limit=*   { dict set spec limit  [string range $arg 8 end] }
             --yes       { dict set spec assume_yes 1 }
             --dispatchable { dict set spec filter_state dispatchable }
             --awaiting     { dict set spec filter_state awaiting }

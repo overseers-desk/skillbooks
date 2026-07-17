@@ -78,6 +78,10 @@ OPTIONS
                       item at a time with a stdin [y/N] gate.
     --delay=N         seconds between sends for send-type transitions
                       (default 2); ignored when --jobs=0.
+    --limit=N         dispatch at most N rows (default: no cap), for
+                      trying a bounded batch of a large band before
+                      committing to the rest. Under --auto the cap
+                      applies to each iteration's pass.
     --yes             skip the up-front [y/N] prompt for transitions
                       that require it (T6 SES). Use in cron.
     -v, --verbose     in report mode, list each contact (default: counts only)
@@ -145,6 +149,7 @@ set auto_mode     [dict get $spec auto_mode]
 set dry_run       [dict get $spec dry_run]
 set jobs          [dict get $spec jobs]
 set delay         [dict get $spec delay]
+set limit         [dict get $spec limit]
 set assume_yes    [dict get $spec assume_yes]
 set verbose       [dict get $spec verbose]
 set stepping      0
@@ -422,16 +427,29 @@ if {$dispatching} {
     # docs/concurrency.md "Per-worker cap".
     proc dispatch_ready {ready_by_tid active_tids tid_scopes \
                          yaml_path cdata dry_run jobs delay \
-                         assume_yes step_callback} {
+                         limit assume_yes step_callback} {
         set ::spar::dry_run_display $dry_run
         # Collect {tid worker_proc rows} triples from every active TID.
         # Prep failures decrement nothing — they were never enqueued —
         # but we surface them as warnings so the operator sees them.
+        #
+        # --limit=N is one cap across the whole pass, spent in
+        # active_tids order. The trimmed set replaces the TID's entry
+        # in this proc's ready_by_tid so the roster-lock sweep at the
+        # end of the proc covers only segments this pass touched.
         set batches {}
+        set remaining $limit
         foreach tid $active_tids {
             if {![spar::has_transition_runner $tid]} continue
             if {![dict exists $ready_by_tid $tid]} continue
             set tasks [dict get $ready_by_tid $tid]
+            if {$limit > 0} {
+                set keep [expr {min([llength $tasks], $remaining)}]
+                set tasks [lrange $tasks 0 [expr {$keep - 1}]]
+                incr remaining -$keep
+                dict set ready_by_tid $tid $tasks
+                if {$keep == 0} continue
+            }
             lassign [tid_scope_filter $tid_scopes $tid] f_segs f_stems
             set base_opts [dict create \
                 campaign_file $yaml_path \
@@ -604,7 +622,7 @@ if {$dispatching} {
 
             dispatch_ready $ready_by_tid $active_tids $tid_scopes \
                 $yaml_path $cdata $dry_run $jobs $delay \
-                $assume_yes \
+                $limit $assume_yes \
                 [expr {$stepping ? "step_prompt" : ""}]
 
             incr iter
@@ -676,7 +694,7 @@ if {$dispatching} {
 
     dispatch_ready $ready_by_tid $active_tids $tid_scopes \
         $yaml_path $cdata $dry_run $jobs $delay \
-        $assume_yes \
+        $limit $assume_yes \
         [expr {$stepping ? "step_prompt" : ""}]
 
     ${::spar::transitions_log}::info "=== Summary ==="
