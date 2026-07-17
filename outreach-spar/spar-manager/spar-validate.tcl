@@ -372,9 +372,9 @@ proc spar::_approach_first_line_is_profile_hash {approach_path} {
 # ─────────────────────────────────────────────────────────────────────────────
 
 # ── yamlmuster rules-engine bootstrap (profile) ────────────────────────────
-# The front-matter vocabulary walk, required-key checks, yield/star ranges, and
-# the engagement-leak backstop that used to live inline in validate_profile now
-# run on the yamlmuster rule engine over rules/profile.rules. A separate
+# The front-matter vocabulary walk, required-key checks, yield/star validity,
+# and the engagement-leak backstop that used to live inline in validate_profile
+# now run on the yamlmuster rule engine over rules/profile.rules. A separate
 # instance from the approach one: both declare `level root`, so a single
 # instance loading both would fail on the duplicate. Lazy, like the approach
 # accessor, so the tpool parse workers pay nothing.
@@ -386,7 +386,9 @@ proc spar::_yamlmuster_profile {} {
     }
     package require yamlmuster
     set inst [yamlmuster new]
-    $inst predicate engagement_leak ::spar::_pred_engagement_leak
+    $inst predicate engagement_leak     ::spar::_pred_engagement_leak
+    $inst predicate invalid_yield       ::spar::_pred_invalid_yield
+    $inst predicate invalid_star_rating ::spar::_pred_invalid_star_rating
     spar::_yamlmuster_load $inst profile.rules profile
     set _yamlmuster_profile_inst $inst
     return $inst
@@ -420,6 +422,33 @@ proc spar::_pred_engagement_leak {node meta} {
         }
     }
     return $out
+}
+
+# invalid_yield / invalid_star_rating -- the yield and star_rating validity
+# checks (legacy validate_profile 596-602 / 625-631). Host predicates rather
+# than the declarative `range` kind because legacy's guard fires on a
+# present-but-BLANK value ("" is a non-integer), and the engine's value-reading
+# kinds treat a blank keypath as absent, so `range` would let a blank slip
+# through. Each replicates legacy's exact guard: skip only when the key is
+# absent (existence is require's job); otherwise flag blank, non-integer, and
+# out-of-range in one check, with the verbatim legacy message.
+proc spar::_pred_invalid_yield {node meta} {
+    if {![dict exists $node yield]} { return {} }
+    set y [dict get $node yield]
+    if {![string is integer -strict $y] || $y < 0} {
+        return [list [dict create message \
+            "yield '$y' — must be a non-negative integer (data-point count per SPAR-P §4.14)"]]
+    }
+    return {}
+}
+proc spar::_pred_invalid_star_rating {node meta} {
+    if {![dict exists $node star_rating]} { return {} }
+    set s [dict get $node star_rating]
+    if {![string is integer -strict $s] || $s < 1 || $s > 5} {
+        return [list [dict create message \
+            "star_rating '$s' — must be integer 1..5 (0 never appears; excluded contacts have no profile)"]]
+    }
+    return {}
 }
 
 # read_profile_front_matter -- extract and parse the YAML front-matter block

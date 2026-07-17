@@ -389,6 +389,25 @@ set vp7_path [write_profile $seg_vp7 "vp-star0" -star_rating 0]
 set vp7_issues [spar::validate_profile $vp7_path [make_base_row] "VP Star0"]
 assert_eq [has_issue $vp7_issues invalid_star_rating] 1 "validate_profile: star_rating 0 → invalid_star_rating"
 
+# 12p-g2. Present-but-blank yield / star_rating — the key exists (so not
+# missing_*) but its value is blank; legacy flags a blank as a non-integer, so
+# invalid_yield / invalid_star_rating must fire. Regression for the yamlmuster
+# blank-value fidelity restore (the engine's range kind treats blank as absent;
+# these checks are host predicates that reproduce legacy's guard).
+set seg_vpby [make_temp_segment]
+set vpby_path [write_profile_raw $seg_vpby "vp-blank-yield" \
+    "---\nprofile_date: 2026-04-12\nstar_rating: 3\nyield:\ndependent_data: {}\n---\nbody\n"]
+set vpby_issues [spar::validate_profile $vpby_path [make_base_row] "VP BlankYield"]
+assert_eq [has_issue $vpby_issues invalid_yield] 1 "validate_profile: present-but-blank yield → invalid_yield"
+assert_eq [has_issue $vpby_issues missing_yield] 0 "validate_profile: blank yield is present, not missing_yield"
+
+set seg_vpbs [make_temp_segment]
+set vpbs_path [write_profile_raw $seg_vpbs "vp-blank-star" \
+    "---\nprofile_date: 2026-04-12\nstar_rating:\nyield: 2\ndependent_data: {}\n---\nbody\n"]
+set vpbs_issues [spar::validate_profile $vpbs_path [make_base_row] "VP BlankStar"]
+assert_eq [has_issue $vpbs_issues invalid_star_rating] 1 "validate_profile: present-but-blank star_rating → invalid_star_rating"
+assert_eq [has_issue $vpbs_issues missing_star_rating] 0 "validate_profile: blank star_rating is present, not missing_star_rating"
+
 # 12p-h. Missing required key (yield omitted)
 set seg_vp8 [make_temp_segment]
 set vp8_path [write_profile_raw $seg_vp8 "vp-miss" "---\nprofile_date: 2026-04-12\nstar_rating: 3\ndependent_data: {}\n---\nbody"]
