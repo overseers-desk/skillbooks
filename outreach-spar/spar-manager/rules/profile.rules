@@ -15,11 +15,10 @@
 # where <fm> is the parsed front-matter dict and <raw> is the whole profile
 # text. engagement_leak matches patterns against the `raw` context value.
 #
-# ORDERING DOUBT (same root cause as approach.rules): legacy runs the vocab
-# walk (root then dependent_data) BEFORE the required-key / range /
-# engagement_leak rules; yamlmuster fires all root-level rules before
-# descending to dependent_data, so `vocab dependent_data` emits AFTER the
-# root structural rules rather than right after `vocab root`. DRAFT-NOTES d.
+# ORDERING (same model as approach.rules): yamlmuster fires all root-level
+# rules before descending to dependent_data, so `vocab dependent_data` emits
+# after the root required-key / range / engagement-leak rules rather than
+# right after `vocab root`.
 
 # ── Levels ───────────────────────────────────────────────────────────────
 level root           -keys {profile_date star_rating yield dependent_data}
@@ -67,8 +66,7 @@ rule predicate root invalid_yield -code invalid_yield -groups {profile}
 #   three case-insensitive phrases over `string tolower raw` (618-624):
 #     "no prior contact" / "no prior correspondence" / "no prior connection"
 #       -> "Profile states '<phrase>'. Prior-contact state is campaign-bound and stale on reuse (INVARIANTS.md I1)."
-# NOTE: context key name is `raw` per design-migration's call site;
-# design-muster called it raw_text (DRAFT-NOTES d).
+# The context key is `raw`, matching validate_profile's -context {raw <text>}.
 rule predicate root engagement_leak -needs raw -code engagement_leak \
     -message {Profile carries campaign-bound engagement or pitch content (INVARIANTS.md I1)} \
     -groups {profile}

@@ -15,7 +15,6 @@ outreach-spar/
   spar-campaign-directory.md   Campaign directory structure
   spar-segment-categorisation.md  Segment merge/split guidance
   sop-outreach-personalization.md Personalisation SOP
-  approach-schema.yaml         JSON Schema for approach YAML files
   SQLITE3_SKILL.md             SQLite3 skill injected into AI prompts
   spar-manager/                Tcl dispatcher, state machine, CLI, GUI
   tests/                       Schema validation tests

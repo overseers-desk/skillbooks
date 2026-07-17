@@ -1046,7 +1046,7 @@ assert_eq [has_issue $issues_cx roster_shared_inbox_collision] 0 \
     "EXCLUDED rows do not participate in case_2"
 
 # ════════════════════════════════════════════════════════════════════════
-section "22. validate_approach — structural validation (approach-schema.yaml)"
+section "22. validate_approach — structural validation (rules/approach.rules)"
 # ════════════════════════════════════════════════════════════════════════
 
 # Helper: write YAML content to a temp file and call validate_approach

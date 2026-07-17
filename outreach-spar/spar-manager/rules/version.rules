@@ -2,14 +2,10 @@
 # Wired in Wave 2c. Translated from spar-validate.tcl validate_spec_version;
 # loaded by spar::_yamlmuster_version and driven by that proc.
 #
-# BOTH rules are PREDICATES, not oneof/require. Reason (task rule: a legacy
-# message that interpolates something the template vocabulary cannot express
-# belongs to a predicate): each message interpolates the per-call $label
+# BOTH rules are PREDICATES. Each message interpolates the per-call $label
 # ("campaign.yaml" or "segment '<x>'") and $CURRENT_SPEC_VERSION, neither of
-# which is a node field or a template token. design-muster assigned these to
-# oneof (version_unsupported) + require (version_unstamped); that is not
-# viable for message fidelity, and it leaves the `oneof` kind with no
-# surviving user. See DRAFT-NOTES d.
+# which is a node field or a template token, so a declarative oneof/require
+# rule cannot carry the message and a predicate is required.
 #
 # Call shape (design-migration Wave 2c): the facts arrive via -context, so
 # the data argument is a throwaway root dict (may be {}):

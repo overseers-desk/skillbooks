@@ -40,10 +40,9 @@ rule require sender_block smtp_user -nonblank -code smtp_user_missing \
     -groups {sender}
 
 # smtp_port_non_numeric: legacy 729-733. Warning. %v = the port value.
-# DOUBT: legacy guards with `smtp_port ne "" && !integer`, so a present-but-
-# empty port does NOT fire; range -integer would fire on "" unless the
-# engine skips empty/blank values. Range must skip an absent keypath (as in
-# profile invalid_yield) AND a blank value to match legacy here. DRAFT-NOTES d.
+# range skips an absent or blank keypath, so a present-but-empty port does not
+# fire and only a non-integer value flags, matching legacy's
+# `smtp_port ne "" && !integer` guard.
 rule range sender_block smtp_port -integer -severity warning \
     -code smtp_port_non_numeric \
     -message {sender.smtp_port '%v' is not numeric — expected an integer port (e.g. 587).} \
