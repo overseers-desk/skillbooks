@@ -14,6 +14,7 @@
 #   Tn:<segment>/<stem>                Tn for one specific contact
 #   --dry-run                          dispatch path with writes disabled
 #   --jobs=N | --delay=N | --limit=N | --yes
+#   --control-port=N                   drain socket (0 disables)
 #   --auto                             refuses any positional Tn token
 #   --dispatchable | --awaiting | --blocked   report mode filter
 #   -v | --verbose
@@ -38,6 +39,7 @@ namespace eval spar {}
 #   jobs           int   (default 4; 0 means stepping)
 #   delay          int   (default 2)
 #   limit          int   (default 0; 0 means no row cap)
+#   control_port   int   (default 25519; 0 means no control socket)
 #   assume_yes     0/1
 #   verbose        0/1
 #   help           0/1   (--help requested)
@@ -51,6 +53,7 @@ proc spar::parse_cli {argv} {
         jobs          4    \
         delay         2    \
         limit         0    \
+        control_port  25519 \
         assume_yes    0    \
         verbose       0    \
         help          0]
@@ -68,6 +71,9 @@ proc spar::parse_cli {argv} {
             --jobs=*    { dict set spec jobs   [string range $arg 7 end] }
             --delay=*   { dict set spec delay  [string range $arg 8 end] }
             --limit=*   { dict set spec limit  [string range $arg 8 end] }
+            --control-port=* {
+                dict set spec control_port [string range $arg 15 end]
+            }
             --yes       { dict set spec assume_yes 1 }
             --dispatchable { dict set spec filter_state dispatchable }
             --awaiting     { dict set spec filter_state awaiting }

@@ -1,0 +1,72 @@
+# spar-control.tcl — TCP control socket for a running dispatch.
+#
+# Lifted out of spar-transition.tcl so test/test-control.tcl can drive
+# it against a stub dispatcher. The CLI sources this file, listens when
+# dispatch begins, and keeps ::spar::control_dispatcher pointing at the
+# live pool while one exists.
+#
+# Protocol: one text command per TCP connection to 127.0.0.1:<port>,
+# one-line reply, connection closed. Verbs:
+#   drain — cancel every queued row and launch nothing further; the
+#           in-flight workers finish undisturbed, the run summarises
+#           and exits, and an --auto loop starts no further pass.
+# Operator command:  echo drain | nc 127.0.0.1 <port>
+#
+# The socket is TCP on loopback because core Tcl's [socket] speaks TCP
+# only; a Unix-domain socket would need a compiled extension on every
+# machine that runs spar.
+
+namespace eval spar {
+    variable control_draining 0
+    variable control_dispatcher ""
+}
+
+# control_listen — open the listener on 127.0.0.1:$port and return the
+# server channel. port 0 asks the OS for an ephemeral port (tests);
+# read the assignment back from [chan configure $srv -sockname]. A
+# busy port raises; the caller decides whether that is fatal.
+proc spar::control_listen {port} {
+    return [socket -server ::spar::_control_accept -myaddr 127.0.0.1 $port]
+}
+
+proc spar::_control_accept {chan addr peer_port} {
+    fconfigure $chan -blocking 0 -buffering line
+    fileevent $chan readable [list ::spar::_control_read $chan]
+}
+
+proc spar::_control_read {chan} {
+    set n [gets $chan line]
+    if {$n < 0} {
+        if {[eof $chan]} { catch {close $chan} }
+        return
+    }
+    switch -- [string trim $line] {
+        drain {
+            set cancelled [spar::control_drain]
+            catch {puts $chan "ok: draining ($cancelled queued row(s) cancelled)"}
+        }
+        default {
+            catch {puts $chan "error: unknown command (try: drain)"}
+        }
+    }
+    catch {close $chan}
+}
+
+# control_drain — flip the drain flag and cancel every queued job in
+# the live pool, returning how many were cancelled. The cancellations
+# flow through the pool's normal job-state events, so the dispatch
+# loop's completion accounting needs no adjustment. Idempotent, and
+# callable with no pool live (drain between --auto passes).
+proc spar::control_drain {} {
+    variable control_draining
+    variable control_dispatcher
+    set control_draining 1
+    set cancelled 0
+    if {$control_dispatcher ne ""} {
+        foreach job [$control_dispatcher queued_jobs] {
+            $control_dispatcher cancel $job
+            incr cancelled
+        }
+    }
+    return $cancelled
+}
