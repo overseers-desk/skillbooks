@@ -134,12 +134,13 @@ section "3. Other flags survive"
 # --jobs / --dry-run / --delay / --yes / --verbose / --dispatchable
 # / --awaiting / --blocked / --auto all parse.
 
-set result [spar::parse_cli {/tmp/x.yaml T1 --dry-run --jobs=8 --delay=5 --yes --verbose}]
+set result [spar::parse_cli {/tmp/x.yaml T1 --dry-run --jobs=8 --delay=5 --limit=10 --yes --verbose}]
 assert_eq [dict get $result ok] 1 "compound flags parse ok"
 set spec [dict get $result spec]
 assert_eq [dict get $spec dry_run] 1 "--dry-run sets dry_run"
 assert_eq [dict get $spec jobs] 8 "--jobs=8 captured"
 assert_eq [dict get $spec delay] 5 "--delay=5 captured"
+assert_eq [dict get $spec limit] 10 "--limit=10 captured"
 assert_eq [dict get $spec assume_yes] 1 "--yes sets assume_yes"
 assert_eq [dict get $spec verbose] 1 "--verbose sets verbose"
 
