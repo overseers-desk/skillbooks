@@ -1,9 +1,9 @@
-# approach.rules — yamlmuster ruleset for SPAR approach YAML. Translated from
-# spar-validate.tcl validate_approach_data + _check_unknown_keys +
-# _approach_canonical_keys; loaded by spar::_yamlmuster_approach and driven by
-# spar::validate_approach. It declares its own `level root` and loads into a
-# dedicated yamlmuster instance; two rulesets that each declare `root` cannot
-# share one instance, which is why every document kind gets its own singleton.
+# approach.rules — yamlmuster ruleset for SPAR approach YAML: the approach
+# vocabulary and structural checks, loaded by spar::_yamlmuster_approach and
+# driven by spar::validate_approach. It declares its own `level root` and
+# loads into a dedicated yamlmuster instance; two rulesets that each declare
+# `root` cannot share one instance, which is why every document kind gets its
+# own singleton.
 #
 # ── PROJECTION CONSTRAINT (State render-path invariant) ─────────────────
 # Render-path callers validate spar::State's approach_summary projection
@@ -59,8 +59,7 @@ child message parent          dict parent
 
 # vocab walk at root. Built-in codes unknown_key / wrong_level. The host
 # wrapper rewrites unknown_key into unknown_key_<level> using the issue's
-# `level` field (design-migration section 7). The built-in messages MUST be
-# the legacy strings:
+# `level` field. The built-in messages MUST be the legacy strings:
 #   unknown_key : "unknown key '<k>' at <level> — not in canonical vocabulary"
 #   wrong_level : "'<k>' at <level> belongs at <found_at>; move it there"
 rule vocab root -groups {approach}
@@ -89,8 +88,8 @@ rule predicate root rounds_structural -code no_final_round \
 # scope; (2) the three per-address checks are mutually exclusive via
 # `continue`, so independent rules would double-emit; (3) email_desync's
 # message interpolates the roster_email CONTEXT value, not a node field.
-# design-muster's split (regexp for the shape test, predicate for the
-# stub-lists, predicate for desync) is therefore not viable: one root
+# Splitting this into three rules (regexp for the shape test, predicate for
+# the stub-lists, predicate for desync) is therefore not viable: one root
 # predicate reproduces legacy exactly. No -needs: placeholder checks run
 # regardless of roster_email; the predicate reads roster_email from
 # -context and skips the desync sub-check when it is empty or lacks '@'
@@ -139,7 +138,7 @@ rule require round number -when {type review} -severity warning \
     -message {Review round missing required 'number' field} -groups {approach}
 
 # linkedin_note_too_long + char_count_mismatch: legacy 285-308. HOST
-# PREDICATE at ROUND level (design-muster): it needs the round `type`
+# PREDICATE at ROUND level: it needs the round `type`
 # (final) AND iterates the round's messages, filtering channel linkedin and
 # actioned-null; the text/body fallback and mode gate are "fallback-
 # tangled", so a plain `length` rule cannot express it. -when {type final}

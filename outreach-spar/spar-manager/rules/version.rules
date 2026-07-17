@@ -7,7 +7,7 @@
 # which is a node field or a template token, so a declarative oneof/require
 # rule cannot carry the message and a predicate is required.
 #
-# Call shape (design-migration Wave 2c): the facts arrive via -context, so
+# Call shape: the facts arrive via -context, so
 # the data argument is a throwaway root dict (may be {}):
 #   validate {} -groups {version} -context {declared <declared> label <label>}
 # The wrapper (validate_spec_version) stays thin around this; CURRENT_SPEC_

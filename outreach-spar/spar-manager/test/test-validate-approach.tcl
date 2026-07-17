@@ -274,7 +274,7 @@ assert_eq [llength $va5_issues] 0 "validate_approach: nonexistent file → no is
 # operates on the projection from approach_summary (Phase B field-set
 # audit). project_approach_data preserves script_item key skeleton —
 # only `text` is blanked, other keys (canonical or unknown) flow
-# through — so _check_unknown_keys at script_item level still rejects
+# through — so the script_item vocab rule still rejects
 # drift. Without this preservation, a typo'd script_item key would slip
 # silently past the render-path validator.
 set seg_va_si [make_temp_segment]
