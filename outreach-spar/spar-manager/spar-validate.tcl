@@ -614,6 +614,27 @@ proc spar::_profile_validation_error {contact} {
     return ""
 }
 
+# ── yamlmuster rules-engine bootstrap (sender) ─────────────────────────────
+# validate_sender_block's schema checks run on the yamlmuster rule engine over
+# rules/sender.rules. Its own instance (the shared-root constraint again); no
+# predicates — the sender rules are all declarative require/range. sender.rules
+# carries no vocab rule (legacy never closed-vocabulary-walks the campaign or
+# sender block), and legacy's "no sender block => skip the smtp_* checks" early
+# return is reproduced structurally: with no `sender` key the walk never
+# descends to the sender_block level, so its rules never run.
+namespace eval spar { variable _yamlmuster_sender_inst "" }
+proc spar::_yamlmuster_sender {} {
+    variable _yamlmuster_sender_inst
+    if {$_yamlmuster_sender_inst ne ""} {
+        return $_yamlmuster_sender_inst
+    }
+    package require yamlmuster
+    set inst [yamlmuster new]
+    spar::_yamlmuster_load $inst sender.rules sender
+    set _yamlmuster_sender_inst $inst
+    return $inst
+}
+
 # validate_sender_block -- campaign-level sender schema checks. Pure
 # schema validation, platform-agnostic — smtp_pass in YAML is not
 # flagged here (environmental concern, handled in build_warnings /
@@ -622,32 +643,10 @@ proc spar::_profile_validation_error {contact} {
 # empty segment/contact_name (these are campaign-level, not per-contact).
 proc spar::validate_sender_block {cdata} {
     set issues {}
-    if {![dict exists $cdata sender]} {
-        lappend issues [spar::_issue error sender_missing "" \
-            "sender: block missing from campaign.yaml — required for sending." \
-            {segment ""}]
-        return $issues
-    }
-    set sender [dict get $cdata sender]
-
-    set smtp_host [string trim [dict getdef $sender smtp_host ""]]
-    set smtp_user [string trim [dict getdef $sender smtp_user ""]]
-    set smtp_port [dict getdef $sender smtp_port ""]
-
-    if {$smtp_host eq ""} {
-        lappend issues [spar::_issue error smtp_host_missing "" \
-            "sender.smtp_host not set — required for sending." \
-            {segment ""}]
-    }
-    if {$smtp_user eq ""} {
-        lappend issues [spar::_issue error smtp_user_missing "" \
-            "sender.smtp_user not set — required for sending; the keychain is keyed by (host, user)." \
-            {segment ""}]
-    }
-    if {$smtp_port ne "" && ![string is integer -strict $smtp_port]} {
-        lappend issues [spar::_issue warning smtp_port_non_numeric "" \
-            "sender.smtp_port '$smtp_port' is not numeric — expected an integer port (e.g. 587)." \
-            {segment ""}]
+    foreach ei [[spar::_yamlmuster_sender] validate $cdata \
+            -groups sender -badnode ignore] {
+        lappend issues [spar::_issue [dict get $ei severity] [dict get $ei code] "" \
+            [dict get $ei message] {segment ""}]
     }
     return $issues
 }
@@ -673,25 +672,67 @@ proc spar::segment_version {segment_data} {
     return [dict getdef $segment_data version ""]
 }
 
+# ── yamlmuster rules-engine bootstrap (version) ────────────────────────────
+# The spec-version gate runs on the yamlmuster rule engine over
+# rules/version.rules. Its own instance (shared-root constraint). Both rules
+# are predicates: their messages interpolate the per-call $label and
+# CURRENT_SPEC_VERSION, neither a node field nor a -message template token, so
+# the declarative oneof/require kinds cannot carry them. The declared version
+# and label arrive via -context; the throwaway data dict is empty.
+namespace eval spar { variable _yamlmuster_version_inst "" }
+proc spar::_yamlmuster_version {} {
+    variable _yamlmuster_version_inst
+    if {$_yamlmuster_version_inst ne ""} {
+        return $_yamlmuster_version_inst
+    }
+    package require yamlmuster
+    set inst [yamlmuster new]
+    $inst predicate version_unstamped   ::spar::_pred_version_unstamped
+    $inst predicate version_unsupported ::spar::_pred_version_unsupported
+    spar::_yamlmuster_load $inst version.rules version
+    set _yamlmuster_version_inst $inst
+    return $inst
+}
+
+# version_unstamped -- warning when the declared version is empty. Mutually
+# exclusive with version_unsupported (which guards declared ne "" first).
+proc spar::_pred_version_unstamped {node meta} {
+    variable CURRENT_SPEC_VERSION
+    set ctx [dict get $meta context]
+    set declared [dict getdef $ctx declared ""]
+    set label [dict getdef $ctx label ""]
+    if {$declared ne ""} { return {} }
+    return [list [dict create message \
+        "$label has no version: field — treating as pre-$CURRENT_SPEC_VERSION (unstamped). Stamp it with version: \"$CURRENT_SPEC_VERSION\"."]]
+}
+
+# version_unsupported -- error when a non-empty declared version is not the one
+# this tool supports.
+proc spar::_pred_version_unsupported {node meta} {
+    variable CURRENT_SPEC_VERSION
+    set ctx [dict get $meta context]
+    set declared [dict getdef $ctx declared ""]
+    set label [dict getdef $ctx label ""]
+    if {$declared eq "" || $declared eq $CURRENT_SPEC_VERSION} { return {} }
+    return [list [dict create message \
+        "$label declares spec version '$declared' but this tool supports $CURRENT_SPEC_VERSION."]]
+}
+
 # validate_spec_version -- gate one declared version against CURRENT_SPEC_VERSION.
 # Returns zero or one issue dict (same shape as the other validators).
 #   declared  the version string, possibly "" (unstamped)
 #   label     human tag for the message, e.g. "campaign.yaml" or "segment 'x'"
 #   extra     passed through to _issue (e.g. {segment growers-market})
 proc spar::validate_spec_version {declared label {extra {}}} {
-    variable CURRENT_SPEC_VERSION
     if {[llength $extra] == 0} { set extra {segment ""} }
-    if {$declared eq ""} {
-        return [list [spar::_issue warning version_unstamped "" \
-            "$label has no version: field — treating as pre-$CURRENT_SPEC_VERSION (unstamped). Stamp it with version: \"$CURRENT_SPEC_VERSION\"." \
-            $extra]]
+    set issues {}
+    foreach ei [[spar::_yamlmuster_version] validate {} \
+            -groups version \
+            -context [list declared $declared label $label]] {
+        lappend issues [spar::_issue [dict get $ei severity] [dict get $ei code] "" \
+            [dict get $ei message] $extra]
     }
-    if {$declared ne $CURRENT_SPEC_VERSION} {
-        return [list [spar::_issue error version_unsupported "" \
-            "$label declares spec version '$declared' but this tool supports $CURRENT_SPEC_VERSION." \
-            $extra]]
-    }
-    return {}
+    return $issues
 }
 
 # validate_versions -- run the version gate on the campaign dict and each

@@ -1,0 +1,37 @@
+# version.rules — yamlmuster ruleset for the SPAR spec-version gate.
+# Wired in Wave 2c. Translated from spar-validate.tcl validate_spec_version;
+# loaded by spar::_yamlmuster_version and driven by that proc.
+#
+# BOTH rules are PREDICATES, not oneof/require. Reason (task rule: a legacy
+# message that interpolates something the template vocabulary cannot express
+# belongs to a predicate): each message interpolates the per-call $label
+# ("campaign.yaml" or "segment '<x>'") and $CURRENT_SPEC_VERSION, neither of
+# which is a node field or a template token. design-muster assigned these to
+# oneof (version_unsupported) + require (version_unstamped); that is not
+# viable for message fidelity, and it leaves the `oneof` kind with no
+# surviving user. See DRAFT-NOTES d.
+#
+# Call shape (design-migration Wave 2c): the facts arrive via -context, so
+# the data argument is a throwaway root dict (may be {}):
+#   validate {} -groups {version} -context {declared <declared> label <label>}
+# The wrapper (validate_spec_version) stays thin around this; CURRENT_SPEC_
+# VERSION is the host constant the predicates read (spar::CURRENT_SPEC_VERSION).
+
+level root -keys {}
+
+# version_unstamped: legacy 766-770. Warning, emitted when declared eq "".
+# Predicate reads context.declared / context.label and builds:
+#   "<label> has no version: field — treating as pre-<CURRENT> (unstamped). Stamp it with version: \"<CURRENT>\"."
+rule predicate root version_unstamped -severity warning -needs {declared label} \
+    -code version_unstamped \
+    -message {campaign/segment has no version: field (unstamped)} \
+    -groups {version}
+
+# version_unsupported: legacy 771-775. Error, emitted when declared is
+# non-empty and != CURRENT_SPEC_VERSION (predicate guards declared ne ""
+# first so the two are mutually exclusive, as in legacy). Builds:
+#   "<label> declares spec version '<declared>' but this tool supports <CURRENT>."
+rule predicate root version_unsupported -severity error -needs {declared label} \
+    -code version_unsupported \
+    -message {declared spec version is not supported by this tool} \
+    -groups {version}

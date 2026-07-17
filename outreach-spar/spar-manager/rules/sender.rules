@@ -1,0 +1,50 @@
+# sender.rules — yamlmuster ruleset for the campaign.yaml sender block.
+# Wired in Wave 2c. Translated from validate_sender_block; loaded by
+# spar::_yamlmuster_sender and driven by that proc.
+#
+# Data in = the whole campaign dict (cdata). Call shape: validate <cdata>
+# -groups {sender}. The wrapper stamps contact_name "" and segment "" onto
+# each issue via spar::_issue (matching the legacy issue shape), so the rules
+# carry no consumer vocabulary.
+#
+# Legacy's early return (no sender block => skip smtp_* checks, 707-712) is
+# reproduced STRUCTURALLY: with no `sender` key the traversal never
+# descends to sender_block, so its three rules never run. No special rule.
+#
+# There is NO vocab rule here: legacy does not do a closed-vocabulary walk
+# on the campaign or sender block. The -keys lists below exist only so the
+# child edge resolves and for documentation; they are not enforced.
+
+# ── Levels ───────────────────────────────────────────────────────────────
+level root         -keys {sender}
+level sender_block -keys {smtp_host smtp_user smtp_port smtp_pass smtp_from}
+
+child root sender dict sender_block
+
+# ── Rules ────────────────────────────────────────────────────────────────
+
+# sender_missing: legacy 707-712. `sender` block must be present.
+rule require root sender -code sender_missing \
+    -message {sender: block missing from campaign.yaml — required for sending.} \
+    -groups {sender}
+
+# smtp_host_missing: legacy 719-723. -nonblank fires on absent OR blank/
+# whitespace, reproducing legacy's `string trim ... eq ""`.
+rule require sender_block smtp_host -nonblank -code smtp_host_missing \
+    -message {sender.smtp_host not set — required for sending.} \
+    -groups {sender}
+
+# smtp_user_missing: legacy 724-728.
+rule require sender_block smtp_user -nonblank -code smtp_user_missing \
+    -message {sender.smtp_user not set — required for sending; the keychain is keyed by (host, user).} \
+    -groups {sender}
+
+# smtp_port_non_numeric: legacy 729-733. Warning. %v = the port value.
+# DOUBT: legacy guards with `smtp_port ne "" && !integer`, so a present-but-
+# empty port does NOT fire; range -integer would fire on "" unless the
+# engine skips empty/blank values. Range must skip an absent keypath (as in
+# profile invalid_yield) AND a blank value to match legacy here. DRAFT-NOTES d.
+rule range sender_block smtp_port -integer -severity warning \
+    -code smtp_port_non_numeric \
+    -message {sender.smtp_port '%v' is not numeric — expected an integer port (e.g. 587).} \
+    -groups {sender}
