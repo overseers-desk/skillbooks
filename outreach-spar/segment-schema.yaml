@@ -57,6 +57,20 @@ sweeper: ...                                       # optional: market family thi
                                                    # sweeper-<name>.yaml beside the campaign YAMLs (spar-S-search.md §7.1).
                                                    # Membership is authored here only; the sweeper file lists no segments.
 
+# --- Target type (profile depth) — optional; default cue-required ---
+# cue-required        : members need a cue (evidence they care) before contact;
+#                       full SPAR-P §5 profile.
+# qualification-only  : members qualify by role and geography or sector alone,
+#                       usually from a register; SPAR-P §5.5 thin profile
+#                       (contact-or-office-channel, mechanism evidence, rating).
+# Vocabulary from spar-S-search.md §1. Segment-owned because profile depth
+# follows the population, not any campaign's ask. The declaration is a claim
+# about the population's plausible uses: should a later campaign need
+# cue-required treatment of these contacts, re-profile the affected stems at
+# full depth (explicit-stem rebuild) rather than redefining the segment.
+
+# target_type: qualification-only
+
 # ---------------------------------------------------------------------------
 # DISCOVERY CRITERIA — who belongs in this population
 #

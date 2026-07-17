@@ -445,9 +445,18 @@ proc spar::_pred_invalid_yield {node meta} {
 proc spar::_pred_invalid_star_rating {node meta} {
     if {![dict exists $node star_rating]} { return {} }
     set s [dict get $node star_rating]
-    if {![string is integer -strict $s] || $s < 1 || $s > 5} {
+    # 0 is valid only on an exclusion profile: SPAR-P §5.4 has the excluded
+    # contact keep a short profile whose front matter mirrors the roster's
+    # star_rating=0, discriminated by dependent_data.date_excluded being set.
+    set excluded ""
+    if {[dict exists $node dependent_data date_excluded]} {
+        set excluded [dict get $node dependent_data date_excluded]
+    }
+    if {$excluded in {null ~ Null NULL}} { set excluded "" }
+    set lo [expr {$excluded ne "" ? 0 : 1}]
+    if {![string is integer -strict $s] || $s < $lo || $s > 5} {
         return [list [dict create message \
-            "star_rating '$s' — must be integer 1..5 (0 never appears; excluded contacts have no profile)"]]
+            "star_rating '$s' — must be integer 1..5 (0 only on an exclusion profile with dependent_data.date_excluded set, SPAR-P §5.4)"]]
     }
     return {}
 }

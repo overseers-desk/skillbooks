@@ -501,15 +501,16 @@ oo::class create spar::ProfileHarness {
         set row  [my _roster_row $RosterPath $slug]
         # A missing file is normally the missing-profile fault (feeds the
         # missing-profile branch in build_profile_fix_prompt; the next
-        # iteration re-validates the rewritten file). The exception is an
-        # excluded row: §5.4 requires an excluded contact to have NO
-        # profile document, so an absent file next to a date_excluded row
-        # is the correct terminal state, not a fault. Mirrors the
-        # profile_unreachable_without_exclusion check, which likewise
-        # tolerates an absent channel once date_excluded is set.
+        # iteration re-validates the rewritten file). An excluded row is
+        # softer: SPAR-P §5.4 asks for a short exclusion profile recording
+        # why, but historical exclusions predate that requirement, so an
+        # absent file next to a date_excluded row warns rather than loops
+        # the worker.
         if {![file exists $Outfile]} {
             if {[spar::_roster_field_current $row date_excluded] ne ""} {
-                return {}
+                return [list [dict create severity warning \
+                    code exclusion_profile_missing \
+                    message "Excluded row has no profile document; SPAR-P §5.4 asks for a short exclusion profile recording why"]]
             }
             return [list [dict create severity error code missing_profile \
                           message "The profile file was not written to $Outfile"]]
