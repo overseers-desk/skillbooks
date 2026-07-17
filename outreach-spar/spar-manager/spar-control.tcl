@@ -1,9 +1,10 @@
 # spar-control.tcl — TCP control socket for a running dispatch.
 #
-# Lifted out of spar-transition.tcl so test/test-control.tcl can drive
-# it against a stub dispatcher. The CLI sources this file, listens when
-# dispatch begins, and keeps ::spar::control_dispatcher pointing at the
-# live pool while one exists.
+# Its own file rather than spar-transition.tcl script body so
+# test/test-control.tcl can drive it against a stub dispatcher. The
+# CLI sources this file, listens when dispatch begins, and keeps
+# ::spar::control_dispatcher pointing at the live pool while one
+# exists.
 #
 # Protocol: one text command per TCP connection to 127.0.0.1:<port>,
 # one-line reply, connection closed. Verbs:
