@@ -90,4 +90,21 @@ assert_eq $::spar::control_draining 1 "flag set with no pool live"
 
 close $srv
 
+# ════════════════════════════════════════════════════════════════════════
+# 4. control_listen_from steps over a taken port
+# ════════════════════════════════════════════════════════════════════════
+section "4. control_listen_from steps over a taken port"
+
+# Hold a port, then probe from it: the second bind must step to a
+# higher free port, not fail. The successor need not be exactly +1 (a
+# neighbour may be taken by another process), so the contract is
+# "strictly higher and distinct", not a fixed offset.
+lassign [spar::control_listen_from 0] first_srv first_port
+lassign [spar::control_listen_from $first_port] second_srv second_port
+assert_eq [expr {$second_port > $first_port}] 1 \
+    "taken port steps up to a higher free one"
+
+close $first_srv
+close $second_srv
+
 finish_tests

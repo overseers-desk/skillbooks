@@ -13,6 +13,12 @@
 #           and exits, and an --auto loop starts no further pass.
 # Operator command:  echo drain | nc 127.0.0.1 <port>
 #
+# The port is a per-process stop channel, not a lock: each dispatch
+# gets its own so it can be stopped on its own. When the preferred
+# port is taken (another dispatch already listening there, a leftover),
+# the next free port up is used, and the chosen port is reported to the
+# operator so they know where to send drain.
+#
 # The socket is TCP on loopback because core Tcl's [socket] speaks TCP
 # only; a Unix-domain socket would need a compiled extension on every
 # machine that runs spar.
@@ -28,6 +34,21 @@ namespace eval spar {
 # busy port raises; the caller decides whether that is fatal.
 proc spar::control_listen {port} {
     return [socket -server ::spar::_control_accept -myaddr 127.0.0.1 $port]
+}
+
+# control_listen_from — bind the first free port at or above $start,
+# returning {chan port}. A busy port is stepped over, not fatal, so
+# concurrent dispatches each get their own stop channel. Gives up after
+# $tries ports and rethrows the last error (a persistent failure is a
+# real fault, e.g. no loopback, not a contended port).
+proc spar::control_listen_from {start {tries 64}} {
+    for {set p $start} {$p < $start + $tries} {incr p} {
+        if {![catch {spar::control_listen $p} srv]} {
+            set bound [lindex [chan configure $srv -sockname] 2]
+            return [list $srv $bound]
+        }
+    }
+    return -code error "no free control port in $start..[expr {$start + $tries - 1}]: $srv"
 }
 
 proc spar::_control_accept {chan addr peer_port} {
