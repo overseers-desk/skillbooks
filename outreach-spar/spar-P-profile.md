@@ -291,7 +291,7 @@ Delimited by `---` fences at the very top of the file, standard Jekyll/Hugo/Pand
 ```yaml
 ---
 profile_date: 2026-04-12            # ISO date this profile was generated
-star_rating: 4                      # 1–5; 0 never appears here (excluded contacts have no profile — see §4.2, §4.13, §5.4)
+star_rating: 4                      # 1–5; 0 only on an exclusion profile, where dependent_data.date_excluded is set (§4.2, §5.4)
 yield: 7                            # integer — substantive data points counted per §4.14
 dependent_data:                     # snapshot of roster fields whose change invalidates this profile (see §5.3)
   contact_name: Kara Struckman
@@ -366,9 +366,20 @@ The `dependent_data` block is a snapshot, taken at profile-generation time, of r
 
 If the contact's name, organisation, or role was corrected *during this profile run* (see §4.15), snapshot the corrected values — not the pre-correction values. The snapshot's purpose is to detect *future* drift, not to preserve history.
 
-### 5.4 Excluded contacts have no profile
+### 5.4 Excluded contacts carry a short exclusion profile
 
-Per §4.1, §4.2, §4.13 and §4.15, contacts with `date_excluded` set do not receive a profile document. The presence of a profile file is itself a claim that the contact is valid. No `excluded: true` field, no `star_rating: 0`. The roster's `date_excluded` column carries that state.
+Per §4.2 and §4.13, a contact excluded during profiling receives a short profile document recording why: the profile is the only durable home of the exclusion reasoning (`spar-roster-format.md`, Artefact retention), and a future sweep that rediscovers the name reads it instead of repeating the evaluation. The exclusion itself is asserted once, by the roster's `date_excluded` column; the document explains it. An exclusion profile carries `star_rating: 0` in its front matter, matching the roster, and needs only the front matter plus a brief body (the reason, the evidence, and `## Verification corrections` where roster fields were touched).
+
+### 5.5 Qualification-only profiles
+
+When the segment's `segment.yaml` declares `target_type: qualification-only` (see `segment-schema.yaml`), the population qualifies by role and geography or sector, usually from a register, and the pitch varies little between members. The profile's job shrinks to four outcomes:
+
+1. The current buyer-role holder's name (§4.1), or, where the name search is exhausted, the organisation's published office channel (§4.1's organisation-segment rule).
+2. A verified written channel, backfilled to the roster (§4.15).
+3. Confirmation the contact fits the segment's mechanism (`discovery_criteria`), with the evidence found.
+4. `star_rating` against the segment rubric (§4.13).
+
+Body sections: `# Profile:` heading, `## Current role` (or contact), `## Mechanism evidence`, `## Relevance assessment`, `## Verification corrections`. Career history, certifications, volunteer work, public statements, and connection mapping are omitted; front matter is unchanged (§5.1). Research effort follows the outcomes: when a register or the organisation's own page already answers a question, verifying it is the work, and depth beyond the four outcomes is spend without a reader. The declaration is a claim about the population's plausible uses; if a campaign later needs cue-required treatment of these contacts, re-profile the affected stems at full depth (explicit-stem rebuild).
 
 ## 6. Subagent delegation and sequencing
 
