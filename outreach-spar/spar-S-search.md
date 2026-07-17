@@ -148,7 +148,6 @@ The head is forward-only (it states current reality); the rounds log is append-o
 ```yaml
 version: "1.0"
 segment: <name>
-catchment: <geographic or sector scope>
 market_estimate:            # S&P₀ output; the denominator
   value: <number or range, with any known unharvested layers>
   derivation: <top-down and bottom-up reasoning, source by source>
@@ -178,6 +177,17 @@ rounds:
 **New-source claims.** Feedback from profiling or later rounds routinely proposes "new" sources. Check the claim against the source census before accepting it; a proposed source the census already lists as exhausted is a re-discovery, not an input for the next round. Both a worker and a compiling agent have skipped this check in the same pilot; the census caught it at validation.
 
 The per-round `surprises` field absorbs what the old summary file recorded (vocabulary gaps, invisible sub-segments, CRM gap analysis results).
+
+### 7.1 The sweeper file (shared sweep knowledge)
+
+Segments are usually swept together as a market family: sibling populations sharing a catchment, instruments, and buyer geography. Facts that hold across the family live once, in a **sweeper file** named `sweeper-<family>.yaml`, a flat file beside the campaign YAMLs (deliberately not in a subdirectory, so segments and sweepers stay at one level). A segment joins by declaring `sweeper: <family>` in its `segment.yaml`; membership is authored there and only there, so the sweeper file does not list its segments.
+
+What lives where:
+
+- **Sweeper file:** the catchment definition; sources serving more than one member segment (identity, URL, access mechanics and quirks); cross-segment strategy (contact-strategy splits, operator rollups spanning segments); harvest craft that is family-general.
+- **Segment's sweep.yaml:** the denominator, each source's status and yield for this population, rounds, escapes, next_round. A shared source appears in the segment census by name with its per-segment status; its mechanics stay in the sweeper.
+
+The cut is the SSOT test: a fact that would change for all member segments at once (the catchment moved, a register changed its access path) has its home in the sweeper; a fact that can change for one segment alone (a source exhausted for clubs but partial for providers) stays per-segment. A segment swept alone needs no sweeper; the fields stay in its sweep.yaml until a family exists.
 
 ## 8. Stale contact handling
 
