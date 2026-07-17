@@ -1,0 +1,81 @@
+# profile.rules — yamlmuster ruleset for SPAR profile front matter.
+# Wired in Wave 2b. Translated from validate_profile's vocab walk,
+# required-key, yield/star range, and engagement-leak checks; loaded by
+# spar::_yamlmuster_profile and driven by spar::validate_profile.
+#
+# STAYS IMPERATIVE in validate_profile (NOT migrated here): the file read,
+# the `---` fence check, the front-matter parse, all three
+# invalid_front_matter variants (545-576), and the roster-row comparisons,
+# reachability profile_unreachable_without_exclusion (640-651) and
+# staleness stale_* (653-678). Those imperative issues are appended AFTER
+# the yamlmuster issues, matching their legacy near-last position.
+#
+# Call shape (design-migration Wave 2b):
+#   validate <fm> -groups {profile} -context {raw <raw>} -extra {contact_name <cn>}
+# where <fm> is the parsed front-matter dict and <raw> is the whole profile
+# text. engagement_leak matches patterns against the `raw` context value.
+#
+# ORDERING DOUBT (same root cause as approach.rules): legacy runs the vocab
+# walk (root then dependent_data) BEFORE the required-key / range /
+# engagement_leak rules; yamlmuster fires all root-level rules before
+# descending to dependent_data, so `vocab dependent_data` emits AFTER the
+# root structural rules rather than right after `vocab root`. DRAFT-NOTES d.
+
+# ── Levels ───────────────────────────────────────────────────────────────
+level root           -keys {profile_date star_rating yield dependent_data}
+level dependent_data -keys {contact_name organisation role date_excluded}
+
+child root dependent_data dict dependent_data
+
+# ── ROOT level rules ─────────────────────────────────────────────────────
+
+# vocab walk at root. Built-in unknown_key / wrong_level (same wrapper
+# rename to unknown_key_<level> as approach). Legacy 579.
+rule vocab root -groups {profile}
+
+# Required keys at root: legacy 588-593 (foreach req in this exact order).
+# Message template %k = the required key name, reproducing
+# "Profile front matter missing required key '<req>'". Existence only.
+rule require root profile_date   -code missing_profile_date \
+    -message {Profile front matter missing required key '%k'} -groups {profile}
+rule require root star_rating    -code missing_star_rating \
+    -message {Profile front matter missing required key '%k'} -groups {profile}
+rule require root yield          -code missing_yield \
+    -message {Profile front matter missing required key '%k'} -groups {profile}
+rule require root dependent_data -code missing_dependent_data \
+    -message {Profile front matter missing required key '%k'} -groups {profile}
+
+# invalid_yield: legacy 596-602. Only checked when present (range must skip
+# an absent keypath; existence is require's job). %v = the yield value.
+rule range root yield -min 0 -integer -code invalid_yield \
+    -message {yield '%v' — must be a non-negative integer (data-point count per SPAR-P §4.14)} \
+    -groups {profile}
+
+# engagement_leak: legacy 604-624. HOST PREDICATE over the `raw` context
+# value (the whole profile text), not a front-matter field, so the DSL
+# cannot express it and each message interpolates the matched pattern or
+# phrase. -needs raw drops it if the caller omits the text. The predicate
+# emits, in this order (all code engagement_leak):
+#   three case-sensitive `string first` patterns (608-617):
+#     "## Prior correspondence" -> "Profile carries a prior-correspondence or warmth section ('## Prior correspondence'). Engagement and pitch content is campaign-bound and must not live in a reusable profile (INVARIANTS.md I1)."
+#     "## Angles"               -> "...pitch or angles section ('## Angles')..."
+#     "Warmth:"                 -> "...warmth line ('Warmth:')..."
+#   three case-insensitive phrases over `string tolower raw` (618-624):
+#     "no prior contact" / "no prior correspondence" / "no prior connection"
+#       -> "Profile states '<phrase>'. Prior-contact state is campaign-bound and stale on reuse (INVARIANTS.md I1)."
+# NOTE: context key name is `raw` per design-migration's call site;
+# design-muster called it raw_text (DRAFT-NOTES d).
+rule predicate root engagement_leak -needs raw -code engagement_leak \
+    -message {Profile carries campaign-bound engagement or pitch content (INVARIANTS.md I1)} \
+    -groups {profile}
+
+# invalid_star_rating: legacy 625-631. Only checked when present. %v = value.
+# Emission position: AFTER engagement_leak, matching legacy order.
+rule range root star_rating -min 1 -max 5 -integer -code invalid_star_rating \
+    -message {star_rating '%v' — must be integer 1..5 (0 never appears; excluded contacts have no profile)} \
+    -groups {profile}
+
+# ── DEPENDENT_DATA level ─────────────────────────────────────────────────
+# vocab walk: legacy 580-585 (guarded by even-length; -badnode ignore
+# reproduces the skip).
+rule vocab dependent_data -groups {profile}
