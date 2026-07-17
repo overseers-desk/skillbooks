@@ -9,13 +9,15 @@
 
 package require sha256
 
-# DEV — yamlmuster lives in the teatotal shelf; this line is flipped to the
-# vendored copy (vendor/) at the vendoring wave. It only registers a module
-# search path (no I/O, no load); the actual `package require yamlmuster`, the
-# instance, and the rules load are deferred to spar::_yamlmuster_approach on
-# first validation, so sourcing this file — including in the tpool parse
-# workers that never validate — costs nothing.
-::tcl::tm::path add [file join $::env(HOME) code teatotal]  ;# DEV — flipped to vendor/ at the vendoring wave
+# yamlmuster is vendored beside the other modules in vendor/, found via the
+# same search path spar-harness.tcl registers; spar-validate.tcl adds it too
+# because the CLI, tests, GUI, and tpool parse workers source this file but not
+# spar-harness.tcl. The line only registers a module search path (no I/O, no
+# load); the actual `package require yamlmuster`, the instance, and the rules
+# load are deferred to spar::_yamlmuster_approach on first validation, so
+# sourcing this file, including in the tpool parse workers that never validate,
+# costs nothing.
+::tcl::tm::path add [file join [file dirname [file normalize [info script]]] vendor]
 
 # Directory of this file, captured at source time so the lazy bootstrap can
 # locate rules/approach.rules independent of the caller's cwd.
