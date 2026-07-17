@@ -83,9 +83,11 @@ OPTIONS
                       trying a bounded batch of a large band before
                       committing to the rest. Under --auto the cap
                       applies to each iteration's pass.
-    --control-port=N  listen on 127.0.0.1:N for operator commands
-                      while dispatching (default 25519; 0 disables).
-                      `echo drain | nc 127.0.0.1 N` stops launching
+    --control-port=N  listen on 127.0.0.1 for operator commands while
+                      dispatching, preferring port N (default 25519; 0
+                      disables). A taken port steps up to the next free
+                      one; the bound port is logged at startup.
+                      `echo drain | nc 127.0.0.1 <port>` stops launching
                       and lets the in-flight workers finish.
     --yes             skip the up-front [y/N] prompt for transitions
                       that require it (T6 SES). Use in cron.
@@ -219,13 +221,17 @@ if {$dispatching && $filter_state ne "" && $filter_state ne "dispatchable"} {
     exit 1
 }
 
-# Operator drain channel for live runs (spar-control.tcl). A busy port
-# is expected when a second dispatcher runs concurrently on the same
-# machine; that run proceeds without a control socket, warned not
-# killed.
+# Operator drain channel for live runs (spar-control.tcl). The port is
+# this run's own stop channel, so a busy preferred port steps up to the
+# next free one rather than sharing or skipping; the bound port is
+# reported so the operator knows where to send drain. A total failure
+# (no free port at all) leaves the run without a channel, warned.
 if {$dispatching && $control_port != 0} {
-    if {[catch {spar::control_listen $control_port} err]} {
-        ${::spar::transitions_log}::warn "control socket: 127.0.0.1:$control_port unavailable ($err) — run continues without one"
+    if {[catch {spar::control_listen_from $control_port} res]} {
+        ${::spar::transitions_log}::warn "control socket: none bound ($res) — run continues without one"
+    } else {
+        lassign $res _control_srv _bound_port
+        ${::spar::transitions_log}::info "Control socket: 127.0.0.1:$_bound_port — stop with: echo drain | nc 127.0.0.1 $_bound_port"
     }
 }
 
