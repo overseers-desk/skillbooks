@@ -141,8 +141,13 @@ assert_eq [dict get $spec dry_run] 1 "--dry-run sets dry_run"
 assert_eq [dict get $spec jobs] 8 "--jobs=8 captured"
 assert_eq [dict get $spec delay] 5 "--delay=5 captured"
 assert_eq [dict get $spec limit] 10 "--limit=10 captured"
+assert_eq [dict get $spec control_port] 25519 "control_port defaults to 25519"
 assert_eq [dict get $spec assume_yes] 1 "--yes sets assume_yes"
 assert_eq [dict get $spec verbose] 1 "--verbose sets verbose"
+
+set result [spar::parse_cli {/tmp/x.yaml T1 --control-port=0}]
+assert_eq [dict get $result ok] 1 "--control-port parses ok"
+assert_eq [dict get [dict get $result spec] control_port] 0 "--control-port=0 captured"
 
 # --auto without positional Tn is fine
 set result [spar::parse_cli {/tmp/x.yaml --auto --dry-run}]

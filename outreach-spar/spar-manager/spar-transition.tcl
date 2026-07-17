@@ -40,6 +40,7 @@ source [file join $script_dir spar-state.tcl]
 source [file join $script_dir spar-dispatch.tcl]
 source [file join $script_dir spar-email.tcl]
 source [file join $script_dir spar-transition-cli.tcl]
+source [file join $script_dir spar-control.tcl]
 
 package require logger
 namespace eval spar {
@@ -82,6 +83,10 @@ OPTIONS
                       trying a bounded batch of a large band before
                       committing to the rest. Under --auto the cap
                       applies to each iteration's pass.
+    --control-port=N  listen on 127.0.0.1:N for operator commands
+                      while dispatching (default 25519; 0 disables).
+                      `echo drain | nc 127.0.0.1 N` stops launching
+                      and lets the in-flight workers finish.
     --yes             skip the up-front [y/N] prompt for transitions
                       that require it (T6 SES). Use in cron.
     -v, --verbose     in report mode, list each contact (default: counts only)
@@ -150,6 +155,7 @@ set dry_run       [dict get $spec dry_run]
 set jobs          [dict get $spec jobs]
 set delay         [dict get $spec delay]
 set limit         [dict get $spec limit]
+set control_port  [dict get $spec control_port]
 set assume_yes    [dict get $spec assume_yes]
 set verbose       [dict get $spec verbose]
 set stepping      0
@@ -211,6 +217,16 @@ set dispatching [expr {[llength $tid_scopes] > 0 || $auto_mode || $dry_run}]
 if {$dispatching && $filter_state ne "" && $filter_state ne "dispatchable"} {
     puts stderr "Error: --$filter_state has no executable work; dispatch targets dispatchable rows."
     exit 1
+}
+
+# Operator drain channel for live runs (spar-control.tcl). A busy port
+# is expected when a second dispatcher runs concurrently on the same
+# machine; that run proceeds without a control socket, warned not
+# killed.
+if {$dispatching && $control_port != 0} {
+    if {[catch {spar::control_listen $control_port} err]} {
+        ${::spar::transitions_log}::warn "control socket: 127.0.0.1:$control_port unavailable ($err) — run continues without one"
+    }
 }
 
 # --jobs=0 is the stepping signal: one item at a time, gated by a
@@ -428,6 +444,10 @@ if {$dispatching} {
     proc dispatch_ready {ready_by_tid active_tids tid_scopes \
                          yaml_path cdata dry_run jobs delay \
                          limit assume_yes step_callback} {
+        if {$::spar::control_draining} {
+            ${::spar::transitions_log}::warn "control: drain active — dispatching nothing"
+            return
+        }
         set ::spar::dry_run_display $dry_run
         # Collect {tid worker_proc rows} triples from every active TID.
         # Prep failures decrement nothing — they were never enqueued —
@@ -492,6 +512,7 @@ if {$dispatching} {
         }
 
         set disp [spar::Dispatcher new $jobs]
+        set ::spar::control_dispatcher $disp
         spar::subscribe_pool_domain $disp
         $disp set_kind_cap ses_send 1
         $disp set_kind_cap linkedin_send 1
@@ -527,6 +548,7 @@ if {$dispatching} {
 
         if {$::_total_expected > 0} { vwait ::_alldone }
 
+        set ::spar::control_dispatcher ""
         catch {$disp destroy}
 
         # End-of-run sweep of the per-segment roster locks (#95) for the
@@ -588,6 +610,10 @@ if {$dispatching} {
         set last_signature ""
         set iter 1
         while {$iter <= $MAX_ITER} {
+            if {$::spar::control_draining} {
+                ${::spar::transitions_log}::warn "control: drain — no further passes"
+                break
+            }
             set all_contacts [reclassify_contacts $State $segment_paths 0]
             set ready_by_tid [compute_ready_by_tid \
                 $State $all_contacts $active_tids $tid_scopes \
