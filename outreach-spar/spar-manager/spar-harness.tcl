@@ -21,7 +21,8 @@ package require logger
     [file join [file dirname [file normalize [info script]]] vendor]
 package require deadman
 # steward carries the generic claude-session harness base; spar::Harness
-# below subclasses it. Vendored beside deadman.
+# below subclasses it. Authored and published in the questlog repository,
+# which spar is the only consumer of so far, so a bump comes from there.
 package require steward
 
 # Idempotent: oo::class create is not idempotent, so guard against
