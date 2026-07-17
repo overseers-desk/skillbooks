@@ -225,15 +225,16 @@ assert_eq $rc_un 0 "under-cap run returns rc=0 after several polls"
 assert_eq $un_result "UNDER OK" "under-cap run wrote its result intact"
 
 # ════════════════════════════════════════════════════════════════════════
-section "7. worker_cost_usd prices parent + subagents at sonnet rates"
+section "7. worker_cost_usd prices parent + subagents per model"
 # ════════════════════════════════════════════════════════════════════════
 
 # A synthetic ~/.claude/projects layout: one parent session plus two
 # research subagents under <sid>/subagents/. worker_cost_usd globs by
-# session_id, sums assistant `usage` deduped per requestId, and prices at
-# sonnet published rates (input 3, output 15, cache_write 3.75, cache_read
-# 0.30 per Mtok). The subagents are the bulk of a heavy worker's bill, so
-# the meter must include them.
+# session_id, sums assistant `usage` deduped per requestId, and prices each
+# model against the rate table. This fixture's records are all
+# claude-sonnet-4-6 (input 3, output 15, cache_write 3.75, cache_read 0.30 per
+# Mtok), so the figures below are the sonnet-rate totals. The subagents are the
+# bulk of a heavy worker's bill, so the meter must include them.
 set proj_root [file join $tmp_root projects]
 set proj_dir  [file join $proj_root some-campaign]
 set sid "synth-sess-1234"
@@ -265,7 +266,7 @@ close $fd
 # Expected: 15.00 (parent) + 0.30 (sub1) + 3.75 + 3.00 (sub2) = 22.05.
 set cost [spar::worker_cost_usd $sid $proj_root]
 assert_eq [format %.2f $cost] 22.05 \
-    "worker_cost_usd sums parent + subagents, dedups per requestId, sonnet rates"
+    "worker_cost_usd sums parent + subagents, dedups per requestId, per-model rates"
 
 set files [spar::worker_session_files $sid $proj_root]
 assert_eq [llength $files] 3 "worker_session_files finds parent + 2 subagents"
