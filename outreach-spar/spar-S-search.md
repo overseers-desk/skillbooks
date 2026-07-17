@@ -172,7 +172,7 @@ Campaign-specific checks (e.g. "every outreach row has a non-empty p_note") are 
 
 ### 10.1 Approach file validation
 
-Run this checklist against all approach YAML files after A-phase processing completes for a segment. Each check is a pass/warn/fail assertion on the YAML data in `{segment}/approach/*.yaml`. The dispatcher runs guard-rail checks (check 1) post-assembly in `spar-a-worker.tcl`. Campaign-wide validation and cross-segment duplicate detection are reported by `spar-progress.tcl`. Structural checks 2–5 are defined by `approach-schema.yaml` and tracked for Tcl implementation in issue #34.
+Run this checklist against all approach YAML files after A-phase processing completes for a segment. Each check is a pass/warn/fail assertion on the YAML data in `{segment}/approach/*.yaml`. The dispatcher runs guard-rail checks (check 1) post-assembly in `spar-a-worker.tcl`. Campaign-wide validation and cross-segment duplicate detection are reported by `spar-progress.tcl`. Structural checks 2–5 are defined by the approach validation rules in `spar-manager/rules/approach.rules` and enforced during that campaign-wide validation.
 
 1. **Email to: address validity:** For every email-channel message in a final round, the `to:` field must contain a deliverable email address (i.e. must contain `@` with a valid user@domain.tld shape). Placeholders (`[email obtained during call]`, `[confirmed email]`), contact form URLs (`via website...`), phone numbers, tildes, and empty values are flagged. This catches the class of issue described in issue #11: non-email strings that pass naive non-empty checks but are not sendable.
 2. **Required top-level keys:** Every approach file must have `decisions` and `rounds` at the top level.

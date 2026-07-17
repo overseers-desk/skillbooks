@@ -1,8 +1,9 @@
-# approach.rules — yamlmuster ruleset for SPAR approach YAML.
-# DRAFT (Wave 2a). Translated from spar-validate.tcl
-# validate_approach_data (lines 132-409) + _check_unknown_keys (63-87) +
-# _approach_canonical_keys (51-61). Nothing here is loaded or tested yet;
-# a later wiring round registers the predicates and drives it.
+# approach.rules — yamlmuster ruleset for SPAR approach YAML. Translated from
+# spar-validate.tcl validate_approach_data + _check_unknown_keys +
+# _approach_canonical_keys; loaded by spar::_yamlmuster_approach and driven by
+# spar::validate_approach. It declares its own `level root` and loads into a
+# dedicated yamlmuster instance; two rulesets that each declare `root` cannot
+# share one instance, which is why every document kind gets its own singleton.
 #
 # ── PROJECTION CONSTRAINT (State render-path invariant) ─────────────────
 # Render-path callers validate spar::State's approach_summary projection
@@ -18,14 +19,16 @@
 # message `channel`, linkedin `text`/`body`, `parent.message_id`, root
 # `profile_hash`) is a preserved field; the existence-only checks
 # (email_missing_content, vocab) read kept keys. Verified field-by-field
-# against the projection; see rules/DRAFT-NOTES.md.
+# against the projection.
 #
-# Selection: every rule carries -groups {approach}; the shared singleton is
-# driven with `validate <adata> -groups {approach} ...`.
-# Emission order mirrors legacy as far as the engine's node-rules-before-
-# descent, single-walk model allows. The residual reordering (legacy runs a
-# full vocab PASS then a structural PASS; yamlmuster fuses them into one
-# walk) is documented in DRAFT-NOTES.md section (d), the headline doubt.
+# Selection: every rule carries -groups {approach}; the singleton is driven
+# with `validate <adata> -groups {approach} ...`.
+# Emission order: yamlmuster fires every rule at a node before descending into
+# its children, so root aggregates (missing_decisions, no_final_round,
+# placeholder_to, profile_hash_*) emit ahead of the deeper decisions / round /
+# message issues, and declaration order fixes the sequence within a level. The
+# gate (-severities error -limit 1) therefore surfaces a root-level error
+# ahead of any deeper one on a document that carries both.
 
 # ── Levels (closed vocabulary) ─────────────────────────────────────────
 # Declared in the SAME order as _approach_canonical_keys so the built-in
@@ -57,7 +60,7 @@ child message parent          dict parent
 # vocab walk at root. Built-in codes unknown_key / wrong_level. The host
 # wrapper rewrites unknown_key into unknown_key_<level> using the issue's
 # `level` field (design-migration section 7). The built-in messages MUST be
-# the legacy strings (see DRAFT-NOTES a/c):
+# the legacy strings:
 #   unknown_key : "unknown key '<k>' at <level> — not in canonical vocabulary"
 #   wrong_level : "'<k>' at <level> belongs at <found_at>; move it there"
 rule vocab root -groups {approach}
@@ -73,9 +76,9 @@ rule require root decisions -code missing_decisions \
 # no_final_round. A require rule carries one message and cannot early-return,
 # and an `any` rule fires no_final_round on an empty (but present) rounds
 # list. The predicate reproduces all three cases exactly, including the
-# suppression of no_final_round on absent/empty rounds. See DRAFT-NOTES b#1,
-# d#3. Declared after missing_decisions so the gate's first error on a doc
-# missing both keys is missing_decisions, matching legacy.
+# suppression of no_final_round on absent/empty rounds. Declared after
+# missing_decisions so the gate's first error on a doc missing both keys is
+# missing_decisions, matching legacy.
 rule predicate root rounds_structural -code no_final_round \
     -message {Approach file has no round with type: final} -groups {approach}
 
@@ -144,18 +147,16 @@ rule require round number -when {type review} -severity warning \
 # emits, overriding code/message per offending message:
 #   linkedin_note_too_long: "LinkedIn invite note is <n> chars, limit 300; shorten it, or declare mode: dm if a direct message to a 1st-degree connection is intended"
 #   char_count_mismatch   : "LinkedIn message char_count recorded <cc>, measured <n>"
-# ORDERING DOUBT: as a round-level rule it fires BEFORE descent into the
-# message level, so its errors precede email_missing_content and
-# reply_missing_parent_message_id; legacy interleaves them per message.
-# DRAFT-NOTES d.
+# ORDERING: as a round-level rule it fires before descent into the message
+# level, so its errors precede email_missing_content and
+# reply_missing_parent_message_id.
 rule predicate round linkedin_guard -when {type final} \
     -code linkedin_note_too_long \
     -message {LinkedIn invite note exceeds the 300-char invite limit} -groups {approach}
 
 # too_many_final_emails: legacy 314-317. At most one channel==email message
 # in a final round. %n = the measured count.
-# ORDERING DOUBT: round-level rule fires before message descent; legacy
-# computes it AFTER the per-message loop. DRAFT-NOTES d.
+# ORDERING: round-level rule fires before message descent.
 rule atmost round messages 1 -where {channel email} -when {type final} \
     -code too_many_final_emails \
     -message {Final round has %n email messages; maximum is 1} -groups {approach}
