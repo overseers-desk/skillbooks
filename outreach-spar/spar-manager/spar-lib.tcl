@@ -137,6 +137,15 @@ proc spar::slugify {s} {
     return $s
 }
 
+# yaml_parse — parse YAML text through tcllib yaml, guarding its 0.4.2 hang on
+# input whose last line is an empty-valued key with no trailing newline (e.g.
+# "a: 1\nkey:", which loops forever). A trailing newline is insignificant to
+# YAML, so supplying one when absent removes the hang without changing meaning.
+proc spar::yaml_parse {text} {
+    if {[string index $text end] ne "\n"} { append text \n }
+    return [::yaml::yaml2dict $text]
+}
+
 # load_campaign — parse campaign YAML, resolve relative paths against YAML dir
 # Port of spar-a-batch.sh lines 27-67
 proc spar::load_campaign {yaml_path} {
@@ -148,7 +157,7 @@ proc spar::load_campaign {yaml_path} {
     set fd [open $yaml_path r]
     set raw [read $fd]
     close $fd
-    set data [::yaml::yaml2dict $raw]
+    set data [spar::yaml_parse $raw]
 
     # Resolve path fields relative to YAML directory
     foreach key {usp_document antifacts campaign_principles} {

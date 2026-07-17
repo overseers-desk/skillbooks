@@ -140,7 +140,7 @@ proc spar::read_approach_yaml {path} {
         set raw [read $fd]
         close $fd
         set fd {}
-        set data [::yaml::yaml2dict $raw]
+        set data [spar::yaml_parse $raw]
     } err]} {
         if {$fd ne ""} {
             catch {close $fd}
@@ -163,7 +163,7 @@ proc spar::read_segment_yaml {path} {
         set raw [read $fd]
         close $fd
         set fd {}
-        set data [::yaml::yaml2dict $raw]
+        set data [spar::yaml_parse $raw]
     } err]} {
         if {$fd ne ""} {
             catch {close $fd}
@@ -1527,7 +1527,7 @@ proc spar::read_profile_front_matter {path} {
     if {!$closed} { return "" }
     set fm_text [join $fm_lines \n]
     set data ""
-    if {[catch { set data [::yaml::yaml2dict $fm_text] } err]} {
+    if {[catch { set data [spar::yaml_parse $fm_text] } err]} {
         return ""
     }
     return $data

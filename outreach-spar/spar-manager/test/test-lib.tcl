@@ -550,5 +550,17 @@ assert_match $rc_out "*carol-inc*cancelled*" "render_rollcall: lists cancelled r
 # An empty roll-call renders nothing (caller prints no extra block).
 assert_eq [spar::render_rollcall {}] "" "render_rollcall: empty list → blank"
 
+section "yaml_parse — tcllib yaml hang guard"
+
+# A document whose last line is an empty-valued key with no trailing newline
+# loops forever in tcllib yaml 0.4.2; yaml_parse supplies the newline so the
+# parse returns instead of hanging, with the same result as the newline form.
+assert_eq [spar::yaml_parse "a: 1\nkey:"] [spar::yaml_parse "a: 1\nkey:\n"] \
+    "yaml_parse: trailing bare key without newline parses, matches newline form"
+assert_eq [spar::yaml_parse "a: 1\nkey:"] {a 1 key {}} \
+    "yaml_parse: the guarded parse yields the expected dict"
+assert_eq [spar::yaml_parse "x: 1\ny: 2\n"] {x 1 y 2} \
+    "yaml_parse: an already-terminated document is unchanged"
+
 
 finish_tests
