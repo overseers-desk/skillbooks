@@ -45,11 +45,15 @@ rule require root yield          -code missing_yield \
 rule require root dependent_data -code missing_dependent_data \
     -message {Profile front matter missing required key '%k'} -groups {profile}
 
-# invalid_yield: legacy 596-602. Only checked when present (range must skip
-# an absent keypath; existence is require's job). %v = the yield value.
-rule range root yield -min 0 -integer -code invalid_yield \
-    -message {yield '%v' — must be a non-negative integer (data-point count per SPAR-P §4.14)} \
-    -groups {profile}
+# invalid_yield: legacy 596-602. HOST PREDICATE, not `range`: legacy's guard
+# is `[dict exists yield] && (![string is integer -strict $y] || $y < 0)`,
+# which fires on a present-but-BLANK yield (a blank is a non-integer). The
+# engine's value-reading kinds treat a blank keypath as absent, so `range`
+# would let a blank slip through unflagged (and require sees the key as
+# present, so no missing_yield either). The predicate replicates the legacy
+# guard exactly: skip only when the key is absent; otherwise flag blank and
+# non-integer and negative in one check, with the verbatim message.
+rule predicate root invalid_yield -code invalid_yield -groups {profile}
 
 # engagement_leak: legacy 604-624. HOST PREDICATE over the `raw` context
 # value (the whole profile text), not a front-matter field, so the DSL
@@ -69,11 +73,11 @@ rule predicate root engagement_leak -needs raw -code engagement_leak \
     -message {Profile carries campaign-bound engagement or pitch content (INVARIANTS.md I1)} \
     -groups {profile}
 
-# invalid_star_rating: legacy 625-631. Only checked when present. %v = value.
-# Emission position: AFTER engagement_leak, matching legacy order.
-rule range root star_rating -min 1 -max 5 -integer -code invalid_star_rating \
-    -message {star_rating '%v' — must be integer 1..5 (0 never appears; excluded contacts have no profile)} \
-    -groups {profile}
+# invalid_star_rating: legacy 625-631. HOST PREDICATE, same reason as
+# invalid_yield: legacy's guard fires on a present-but-BLANK star_rating,
+# which the engine's `range` would skip. Emission position AFTER
+# engagement_leak, matching legacy order.
+rule predicate root invalid_star_rating -code invalid_star_rating -groups {profile}
 
 # ── DEPENDENT_DATA level ─────────────────────────────────────────────────
 # vocab walk: legacy 580-585 (guarded by even-length; -badnode ignore
