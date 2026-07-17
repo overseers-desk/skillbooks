@@ -389,7 +389,7 @@ set vp7_path [write_profile $seg_vp7 "vp-star0" -star_rating 0]
 set vp7_issues [spar::validate_profile $vp7_path [make_base_row] "VP Star0"]
 assert_eq [has_issue $vp7_issues invalid_star_rating] 1 "validate_profile: star_rating 0 → invalid_star_rating"
 
-# 12p-g2. Present-but-blank yield / star_rating — the key exists (so not
+# 12p-g2. Present-but-blank yield / star_rating: the key exists (so not
 # missing_*) but its value is blank; legacy flags a blank as a non-integer, so
 # invalid_yield / invalid_star_rating must fire. Regression for the yamlmuster
 # blank-value fidelity restore (the engine's range kind treats blank as absent;

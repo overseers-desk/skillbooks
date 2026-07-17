@@ -88,7 +88,7 @@ proc spar::_yamlmuster_approach {} {
     }
     package require yamlmuster
     set inst [yamlmuster new]
-    # Host predicates — the checks that read files or aggregate across levels,
+    # Host predicates: the checks that read files or aggregate across levels,
     # which the declarative DSL cannot express. Registered before load so a
     # rules-file typo is a line-numbered load error, not a validate surprise.
     $inst predicate rounds_structural           ::spar::_pred_rounds_structural
@@ -258,7 +258,7 @@ proc spar::_pred_linkedin_guard {node meta} {
 
 # first_line_is_profile_hash -- profile_hash_misplaced (legacy 392-395). Opens
 # the approach file and tests line 1. -needs approach_path drops the rule for
-# pure-dict callers; the predicate additionally guards profile_hash presence.
+# pure-dict callers; the predicate also guards profile_hash presence.
 proc spar::_pred_first_line_is_profile_hash {node meta} {
     set ap [dict getdef [dict get $meta context] approach_path ""]
     if {$ap eq "" || ![dict exists $node profile_hash]} { return {} }
@@ -328,13 +328,13 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
 # predicates registered in spar::_yamlmuster_approach). Render-path callers
 # (the State's approach_validation_error, via _approach_gate_error) pass the
 # projection from approach_summary so the parse is shared with the rest of the
-# render; CLI / harness callers pass a fresh parse. Returns every issue —
-# errors and warnings — in spar's legacy _issue shape; callers wanting only the
+# render; CLI / harness callers pass a fresh parse. Returns every issue
+# (errors and warnings) in spar's legacy _issue shape; callers wanting only the
 # first error use the cost-limited gate, spar::_approach_gate_error.
 #
 # approach_path drives the two file-bound profile_hash predicates: they carry
 # -needs approach_path, so passing "" (pure-dict callers with synthetic
-# fixtures) omits it from the engine context and opts out of those checks —
+# fixtures) omits it from the engine context and opts out of those checks,
 # exactly the legacy behaviour. roster_organisation is unused, retained for
 # signature compatibility (the org/name_desync checks were retired with #63).
 #
@@ -397,7 +397,7 @@ proc spar::_yamlmuster_profile {} {
 }
 
 # engagement_leak -- the I1 backstop (INVARIANTS.md): a reusable profile must
-# carry no engagement, warmth, or pitch content — that is campaign-bound and
+# carry no engagement, warmth, or pitch content, which is campaign-bound and
 # goes stale on reuse, so its presence is a build failure, not a style note. A
 # host predicate because it scans the whole profile text (context `raw`), not a
 # front-matter field, and each message interpolates the matched pattern/phrase.
@@ -648,7 +648,7 @@ proc spar::_profile_validation_error {contact} {
 # ── yamlmuster rules-engine bootstrap (sender) ─────────────────────────────
 # validate_sender_block's schema checks run on the yamlmuster rule engine over
 # rules/sender.rules. Its own instance (the shared-root constraint again); no
-# predicates — the sender rules are all declarative require/range. sender.rules
+# predicates, since the sender rules are all declarative require/range. sender.rules
 # carries no vocab rule (legacy never closed-vocabulary-walks the campaign or
 # sender block), and legacy's "no sender block => skip the smtp_* checks" early
 # return is reproduced structurally: with no `sender` key the walk never
