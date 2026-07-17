@@ -68,10 +68,9 @@ proc spar::_yamlmuster_load {inst file label} {
 }
 
 # ── yamlmuster rules-engine bootstrap (approach) ───────────────────────────
-# The closed-vocabulary walk and the structural checks that used to live in
-# _check_unknown_keys / validate_approach_data now run on the yamlmuster rule
-# engine over rules/approach.rules. The canonical vocabulary is the `level`
-# declarations in that file; this proc is its single source of truth.
+# The closed-vocabulary walk and the structural checks run on the yamlmuster
+# rule engine over rules/approach.rules. The canonical vocabulary is the
+# `level` declarations in that file; this proc is its single source of truth.
 #
 # One engine instance per document kind: every rules file declares `level
 # root`, so a single instance loading all four kinds would fail on the

@@ -500,9 +500,9 @@ oo::define spar::State method approach_summary {contact} {
 }
 
 # project_approach_data -- build the render-path projection of a parsed
-# approach YAML. Preserves the key skeleton at every level so
-# spar::_check_unknown_keys (the closed-vocabulary walk in
-# validate_approach) still flags drift, but blanks heavy text values
+# approach YAML. Preserves the key skeleton at every level so the
+# yamlmuster vocab rules (rules/approach.rules, via validate_approach)
+# still flag drift, but blanks heavy text values
 # (body, reply_summary, script[*]/text, replies[*]/text) so the cache
 # stays small. Validator structural checks (`dict exists $msg body`,
 # `dict exists $msg subject`) still see the keys; the values they
@@ -535,8 +535,8 @@ proc spar::project_approach_data {data} {
                 dict set out $k $v
             }
             default {
-                # Unknown root key — preserve so _check_unknown_keys
-                # still flags it.
+                # Unknown root key: preserve so the vocab rule can
+                # flag it.
                 dict set out $k $v
             }
         }
@@ -609,7 +609,7 @@ proc spar::_project_message {msg} {
 
 # _project_script_item -- preserve key skeleton (so the closed-
 # vocabulary walk at script_item level still operates), blank text
-# value. Validator's `_check_unknown_keys` walks key presence; dropping
+# value. The script_item vocab rule walks key presence; dropping
 # the `text` key would break the walk silently.
 proc spar::_project_script_item {item} {
     if {[llength $item] % 2 != 0} { return $item }

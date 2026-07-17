@@ -10,7 +10,7 @@
 # staleness stale_* (653-678). Those imperative issues are appended AFTER
 # the yamlmuster issues, matching their legacy near-last position.
 #
-# Call shape (design-migration Wave 2b):
+# Call shape:
 #   validate <fm> -groups {profile} -context {raw <raw>} -extra {contact_name <cn>}
 # where <fm> is the parsed front-matter dict and <raw> is the whole profile
 # text. engagement_leak matches patterns against the `raw` context value.
@@ -21,6 +21,8 @@
 # right after `vocab root`.
 
 # ── Levels ───────────────────────────────────────────────────────────────
+# root's -keys must stay in sync with the front-matter fields listed in
+# spar-P-profile.md §5.1.
 level root           -keys {profile_date star_rating yield dependent_data}
 level dependent_data -keys {contact_name organisation role date_excluded}
 
