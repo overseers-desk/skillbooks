@@ -523,6 +523,23 @@ assert_eq [llength $t6d5_tasks] 1 "T6: email-only in linkedin campaign → 1 tas
 assert_eq [dict get [lindex $t6d5_tasks 0] task_state] "dispatchable" \
     "T6: email-only in linkedin campaign → dispatchable (not blocked)"
 
+# T6-d6: a structurally broken approach (no final round at all)
+# resolves no send channel either, but stays visible as blocked. Only
+# a genuine other-channel final drops out of T6.
+set t6d6_seg [make_temp_segment]
+write_profile $t6d6_seg "t6d6"
+write_approach_yaml $t6d6_seg "t6d6" [approach_yaml_no_final]
+write_roster_tsv $t6d6_seg $::std_headers [list \
+    [make_base_row {contact_name "T6D6" stem "t6d6" email "test@acme-venues.au" star_rating 4}] \
+]
+set t6d6_c [$State refine_segment [$State classify_segment $t6d6_seg]]
+set t6d6_tasks [$State transition_eligible $t6d6_c "T6" "email"]
+assert_eq [llength $t6d6_tasks] 1 "T6: broken approach → 1 task"
+assert_eq [dict get [lindex $t6d6_tasks 0] task_state] "blocked" \
+    "T6: broken approach → task_state=blocked"
+assert_match [dict get [lindex $t6d6_tasks 0] reason] "invalid_approach_yaml:*" \
+    "T6: broken approach → reason names invalid_approach_yaml"
+
 # T6-e: APPROACHED + invalid approach YAML (unknown root key) → blocked
 # with reason starting "invalid_approach_yaml:".
 set t6e_seg [make_temp_segment]

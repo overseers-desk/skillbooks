@@ -179,7 +179,18 @@ oo::class create ::spar::transitions::SendEmailTransition {
                 }
                 if {[dict get $contact linkedin_sent]} { return {} }
             }
-            default { return {} }
+            default {
+                # No auto-send channel resolves for a phone-only final
+                # round, but also for a structurally broken approach
+                # file (no final round at all). The broken file stays
+                # visible as blocked; only the genuinely other-channel
+                # contact drops out of T6.
+                set vmsg [$state approach_validation_error $contact]
+                if {$vmsg ne ""} {
+                    return [list [spar::_task $contact blocked "invalid_approach_yaml: $vmsg"]]
+                }
+                return {}
+            }
         }
         set vmsg [$state approach_validation_error $contact]
         if {$vmsg ne ""} {
