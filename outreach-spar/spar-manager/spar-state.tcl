@@ -198,15 +198,15 @@ proc spar::final_email_message {data} {
     return [spar::final_channel_message $data email]
 }
 
-# t6_send_channel returns the channel T6 dispatches for one contact:
+# final_auto_send_channel returns a contact's own primary send channel:
 # the channel of the first final-round message that is email or linkedin.
-# Message order in the final round encodes the contact's own primary
-# touch; secondary and tertiary channels belong to T9/T10. Routing is
-# per contact, not per campaign, so an email-only contact in a
+# Message order in the final round encodes the contact's primary touch;
+# secondary and tertiary channels belong to T9/T10. Routing is per
+# contact, not per campaign, so an email-only contact in a
 # linkedin-primary campaign still sends by email. Returns email,
 # linkedin, or "" when the final round leads with no auto-send channel
 # (e.g. phone-only).
-proc spar::t6_send_channel {data} {
+proc spar::final_auto_send_channel {data} {
     if {$data eq "" || ![dict exists $data rounds]} { return "" }
     foreach round [dict get $data rounds] {
         if {![dict exists $round type]} continue
@@ -864,10 +864,10 @@ oo::define spar::State method refine_contact {contact} {
     dict set contact any_sent        [dict get $fr any_sent]
     dict set contact email_sent      [dict get $fr email_sent]
     dict set contact linkedin_sent   [dict get $fr linkedin_sent]
-    # The contact's own T6 send channel, from its final round's message
+    # The contact's own send channel, from its final round's message
     # order, promoted here so eligibility routes per contact without
     # re-parsing (and without send_email.tcl touching the projection cache).
-    dict set contact t6_send_channel [spar::t6_send_channel $approach_data]
+    dict set contact auto_send_channel [spar::final_auto_send_channel $approach_data]
     dict set contact any_replied     [dict get $fr any_replied]
     dict set contact to_addresses    [dict get $fr to_addresses]
     dict set contact unsent_subjects [dict get $fr unsent_subjects]
@@ -1196,12 +1196,13 @@ proc spar::_task {contact task_state {reason ""}} {
 #                      across every TID.
 # transition           transition name: T1, T2, ... T10
 # primary_channel      campaign primary channel (bare string, e.g. "email").
-#                      Empty string = unknown; T6 conservatively yields nothing.
-#                      TODO(#49): this arg is an interim gate. Correct
-#                      per-message eligibility must route each unsent final-
-#                      round message to T6/T8/T9/T10 based on its slot in the
-#                      primary/secondary/tertiary structure, not on channel
-#                      alone. See issue #49 for acceptance criteria.
+#                      No transition's eligible reads it today: T6 routes by
+#                      the contact's own auto_send_channel (final-round message
+#                      order), not the campaign. Retained in the eligible
+#                      signature that every transition class shares, and still
+#                      passed by callers. TODO(#49): T9/T10 secondary/tertiary
+#                      routing by primary/secondary/tertiary slot is the
+#                      remaining work; see issue #49.
 #
 # Per-T-id logic lives on the corresponding ::spar::transitions::* class as
 # its `eligible` method (no leading underscore — TclOO would unexport it
