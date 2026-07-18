@@ -1200,9 +1200,9 @@ proc spar::_task {contact task_state {reason ""}} {
 #                      the contact's own auto_send_channel (final-round message
 #                      order), not the campaign. Retained in the eligible
 #                      signature that every transition class shares, and still
-#                      passed by callers. TODO(#49): T9/T10 secondary/tertiary
+#                      passed by callers. TODO(#174): T9/T10 secondary/tertiary
 #                      routing by primary/secondary/tertiary slot is the
-#                      remaining work; see issue #49.
+#                      remaining work; see issue #174.
 #
 # Per-T-id logic lives on the corresponding ::spar::transitions::* class as
 # its `eligible` method (no leading underscore — TclOO would unexport it
