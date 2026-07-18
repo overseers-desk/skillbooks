@@ -265,12 +265,11 @@ set primary_channel [spar::campaign_primary_channel $cdata]
 
 # Orchestration log (FM-LOG-1): tee dispatch-level outcomes to a file under
 # the log root so a real run is traceable without shell redirection. Skipped
-# for --dry-run (no real outcomes) and for the bare overview report.
+# for --dry-run (no real outcomes) and for the bare overview report. Path
+# policy lives in ensure_orchestration_file.
 if {$dispatching && !$dry_run} {
-    set _orch_stamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
-    set _orch_log [file join [spar::logs_root] \
-        "orchestration-[file rootname [file tail $yaml_path]]-$_orch_stamp.log"]
-    spar::install_orchestration_log $_orch_log {spar::transitions spar::dispatch}
+    set _orch_log [spar::ensure_orchestration_file $yaml_path $dry_run]
+    spar::install_orchestration_log {spar::transitions spar::dispatch}
     ${::spar::transitions_log}::info "Orchestration log: $_orch_log"
 }
 set segments_list [spar::campaign_segment_names $cdata]

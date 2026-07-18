@@ -562,5 +562,47 @@ assert_eq [spar::yaml_parse "a: 1\nkey:"] {a 1 key {}} \
 assert_eq [spar::yaml_parse "x: 1\ny: 2\n"] {x 1 y 2} \
     "yaml_parse: an already-terminated document is unchanged"
 
+# ════════════════════════════════════════════════════════════════════════
+# ensure_orchestration_file / install_orchestration_log (FM-LOG-1 split)
+# ════════════════════════════════════════════════════════════════════════
+# LAST section: it redefines spar::logs_root and installs logger sinks for
+# spar::transitions, so it stays after every other section to avoid
+# polluting them.
+section "ensure_orchestration_file / install_orchestration_log"
+
+package require logger
+set orch_scratch [make_temp_dir]
+proc spar::logs_root {} { return $::orch_scratch }
+set ::spar::_orch_logfile ""
+
+# Dry run: no path, no file.
+assert_eq [spar::ensure_orchestration_file /tmp/campaign-foo.yaml 1] "" \
+    "ensure_orchestration_file: dry run returns empty path"
+assert_eq [llength [glob -nocomplain -directory $orch_scratch *]] 0 \
+    "ensure_orchestration_file: dry run creates no file"
+
+# Live call: path matches the naming convention, file created.
+set orch_path1 [spar::ensure_orchestration_file /tmp/campaign-foo.yaml 0]
+assert_match $orch_path1 "$orch_scratch/orchestration-campaign-foo-*" \
+    "ensure_orchestration_file: live call names the file for the campaign"
+assert_eq [regexp {orchestration-campaign-foo-[0-9]{8}-[0-9]{6}\.log$} $orch_path1] 1 \
+    "ensure_orchestration_file: live call's stamp matches YYYYMMDD-HHMMSS"
+
+# Second live call: idempotent, same path.
+set orch_path2 [spar::ensure_orchestration_file /tmp/campaign-foo.yaml 0]
+assert_eq $orch_path2 $orch_path1 \
+    "ensure_orchestration_file: second live call returns the same path"
+
+# install_orchestration_log tees a logger service to the file.
+set ::spar::transitions_log [logger::init spar::transitions]
+spar::install_orchestration_log {spar::transitions}
+${::spar::transitions_log}::info "hello row"
+set orch_fd [open $orch_path1 r]
+set orch_contents [read $orch_fd]
+close $orch_fd
+assert_match $orch_contents "*\\\[spar::transitions\\\] \\\[info\\\] 'hello row'*" \
+    "install_orchestration_log: tees an info line to the orchestration file"
+
+set ::spar::_orch_logfile ""
 
 finish_tests
