@@ -302,6 +302,12 @@ oo::class create spar::ui::DispatchController {
             }
         }
 
+        set orch_new [expr {$::spar::_orch_logfile eq ""}]
+        set orch_file [spar::ensure_orchestration_file $CampaignFile $dry_run]
+        if {$orch_new && $orch_file ne ""} {
+            ${::spar::transitions_log}::info "Orchestration log: $orch_file"
+        }
+
         set mode_tag [expr {$dry_run ? " (DRY RUN — writes disabled)" : ""}]
         $Log log "Dispatch requested: $label ($tid)$mode_tag"
 
@@ -394,7 +400,7 @@ oo::class create spar::ui::DispatchController {
             dict set RowReason $slug $message
             my _render_row $slug failed
         }
-        $Log log "  \[$status\] $slug $message"
+        spar::log_row_outcome $slug $status $message $LastWasDryRun
     }
 
     # pause / resume toggle — pause-of-queue, not pause of in-flight.
