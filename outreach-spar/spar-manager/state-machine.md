@@ -259,7 +259,7 @@ Dispatch statuses:
 
 ### Task states per contact in the transition manager
 
-Each contact in a transition has one of:
+T6 tasks carry the send channel that routed them (the `channel` key on the task dict from `spar::_task`); the GUI groups a mixed-channel band under one node per channel so a cohort dispatches with one click. Each contact in a transition has one of:
 - `dispatchable` — all preconditions met, can be dispatched now
 - `awaiting` — a self-resolving external dependency is outstanding (a clock or a third party); becomes `dispatchable` on its own, with a human-readable reason
 - `blocked` — a data defect stops the row; an operator must fix it before it can move, with a human-readable reason

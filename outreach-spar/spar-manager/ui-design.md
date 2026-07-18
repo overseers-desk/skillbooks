@@ -32,7 +32,7 @@ This is a compact summary, not an editor. Campaign YAML editing is a planned fea
 
 A table built with the grid geometry manager, using ttk::Label widgets for cells and ttk::Checkbutton for the segment selection column. All columns are visible without horizontal scrolling; column widths are sized to fit the window. This reproduces the output of `spar-progress.tcl`.
 
-**Why grid, not ttk::treeview.** The progress table requires multi-level grouped column headers (§1.2 "Column header grouping"), per-cell background colouring for denominator bands, and checkbox widgets in the segment column. ttk::Treeview does not support any of these: it cannot span or group column headings, cannot colour individual cells, and cannot embed widgets in cells. The grid geometry manager with individual ttk::Label and ttk::Checkbutton widgets provides full control over cell appearance, spanning headers, and per-cell styling. The transition manager (§2) uses ttk::treeview because it has a genuine parent-child hierarchy (transition types containing tasks), which is what treeview is designed for.
+**Why grid, not ttk::treeview.** The progress table requires multi-level grouped column headers (§1.2 "Column header grouping"), per-cell background colouring for denominator bands, and checkbox widgets in the segment column. ttk::Treeview does not support any of these: it cannot span or group column headings, cannot colour individual cells, and cannot embed widgets in cells. The grid geometry manager with individual ttk::Label and ttk::Checkbutton widgets provides full control over cell appearance, spanning headers, and per-cell styling. The transition manager (§2) uses ttk::treeview because it has a genuine parent-child hierarchy (transition types containing tasks, with a channel-group level when a send band mixes channels), which is what treeview is designed for.
 
 Columns:
 
@@ -96,7 +96,7 @@ A button labelled "Check Email" in the toolbar area of the campaign panel. Click
 
 ## 2. Transition manager
 
-A single ttk::treeview with `selectmode extended`. Top-level items are the fixed set of transition types. Each top-level item shows a task count and can be expanded (via the disclosure triangle ▶) to reveal the individual contact tasks as child items.
+A single ttk::treeview with `selectmode extended`. Top-level items are the fixed set of transition types. Each top-level item shows a task count and can be expanded (via the disclosure triangle ▶) to reveal the individual contact tasks. When a transition's tasks span more than one send channel (a T6 band mixing email and LinkedIn), the contacts sit under one group node per channel: "✉ email (n)", "🔗 linkedin (m)", and "other" for channel-less blocked rows. Selecting a group node selects that whole channel cohort, so one click dispatches it. A single-channel band keeps the contacts directly under the transition row.
 
 ### 2.1 Transition types (top-level items)
 
@@ -118,7 +118,7 @@ T7 (Send → Reply) dispatches through `spar::r::run`: it queries the campaign's
 
 ### 2.2 Tasks (child items)
 
-Expanding a transition type reveals its individual tasks as child rows. Each child row has columns:
+Expanding a transition type reveals its individual tasks as child rows (under their channel group when the band mixes channels, per §2). Each task row has columns:
 
 - Contact name
 - Organisation
