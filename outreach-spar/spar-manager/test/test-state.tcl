@@ -511,10 +511,23 @@ foreach c [$State transition_eligible $contacts "T6" "linkedin"] {
 assert_eq $app_noemail_reason "No email address" \
     "T6: email contact under linkedin campaign blocks on email, not linkedin_url"
 
+# T6 tasks carry the send channel that routed them, dispatchable and
+# blocked alike, so the UI can group send cohorts per channel.
+foreach c [$State transition_eligible $contacts "T6" "email"] {
+    switch -- [dict get $c contact_name] {
+        "App Email"   { assert_eq [dict get $c channel] "email" \
+                            "T6: dispatchable task carries channel=email" }
+        "App NoEmail" { assert_eq [dict get $c channel] "email" \
+                            "T6: blocked task carries channel=email" }
+    }
+}
+
 # T7: Send → Reply: email_sent, not any_replied → dispatchable (monitoring)
 set t7 [$State transition_eligible $contacts "T7"]
 set t7_names [lmap c $t7 {dict get $c contact_name}]
 assert_eq [expr {"Sent Sam" in $t7_names}] 1 "T7: SENT+email_sent → in monitoring list"
+# T7 is not a send: its tasks carry no channel, keeping its tree flat.
+assert_eq [dict get [lindex $t7 0] channel] "" "T7: task channel is empty"
 
 # transition_eligible result dicts must carry stem and _segment_dir so
 # downstream callers (spar-transition.tcl dispatch) can route without

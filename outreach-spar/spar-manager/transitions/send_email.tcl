@@ -83,7 +83,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
     method build_opts {tasks filter_segments filter_stems} {
         return [dict create \
             tasks $tasks \
-            log_message "[my tid]: [llength $tasks] email(s) ready"]
+            log_message "[my tid]: [llength $tasks] send(s) ready"]
     }
 
     # prepare_for_pool — pool-shape entry. Returns
@@ -169,13 +169,13 @@ oo::class create ::spar::transitions::SendEmailTransition {
         switch -- $channel {
             email {
                 if {![dict get $contact has_email]} {
-                    return [list [spar::_task $contact blocked "No email address"]]
+                    return [list [spar::_task $contact blocked "No email address" $channel]]
                 }
                 if {[dict get $contact email_sent]} { return {} }
             }
             linkedin {
                 if {![dict get $contact has_linkedin]} {
-                    return [list [spar::_task $contact blocked "No linkedin_url"]]
+                    return [list [spar::_task $contact blocked "No linkedin_url" $channel]]
                 }
                 if {[dict get $contact linkedin_sent]} { return {} }
             }
@@ -194,9 +194,9 @@ oo::class create ::spar::transitions::SendEmailTransition {
         }
         set vmsg [$state approach_validation_error $contact]
         if {$vmsg ne ""} {
-            return [list [spar::_task $contact blocked "invalid_approach_yaml: $vmsg"]]
+            return [list [spar::_task $contact blocked "invalid_approach_yaml: $vmsg" $channel]]
         }
-        return [list [spar::_task $contact dispatchable ""]]
+        return [list [spar::_task $contact dispatchable "" $channel]]
     }
 }
 
