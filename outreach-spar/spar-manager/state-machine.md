@@ -242,7 +242,7 @@ T1–T4 are the cheap (no-parse) transitions; T5 is reserved for a future cheap 
 | T2 | Profile → Approach | state = PROFILED, star≥3 | `spar-transition.tcl <campaign.yaml> T2` | available |
 | T3 | Stale → Re-profile | state = PROFILE_STALE | `spar-transition.tcl <campaign.yaml> T3` | available |
 | T4 | Re-profile → Re-approach | state = APPROACH_STALE (profile_hash mismatch, #63) | `spar-transition.tcl <campaign.yaml> T4` | available |
-| T6 | Approach → Send | state = APPROACHED or SENT; email primary: has_email, not email_sent; linkedin primary: has_linkedin, not linkedin_sent | `spar-transition.tcl <campaign.yaml> T6` (email: AWS SES, serial with --delay; linkedin: overseer POST /run, serial, overseer-paced) | available |
+| T6 | Approach → Send | state = APPROACHED or SENT; routed by the contact's own send channel (`t6_send_channel`, its final round's first email-or-linkedin message): email → has_email, not email_sent; linkedin → has_linkedin, not linkedin_sent | `spar-transition.tcl <campaign.yaml> T6` (email: AWS SES, serial with --delay; linkedin: overseer POST /run, serial, overseer-paced) | available |
 | T7 | Send → Reply | any_sent, not any_replied, email address known | `spar-transition.tcl <campaign.yaml> T7` (courier reply-check against the known address, appends replies to approach YAML) | available |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
 | T9 | Secondary follow-up | `secondary_ready` | render script + manual marker | manual |
@@ -266,8 +266,8 @@ Each contact in a transition has one of:
 - `done` — transition already completed (shown when "Show completed" is enabled)
 
 `blocked` reasons name a defect the operator must repair:
-- T6: contact in state APPROACHED but no email address → "No email address"
-- T6 (linkedin primary): no linkedin_url on the roster → "No linkedin_url"
+- T6 (contact's send channel is email): no email address → "No email address"
+- T6 (contact's send channel is linkedin): no linkedin_url on the roster → "No linkedin_url"
 - any parse-TID: approach YAML fails structural validation → "invalid_approach_yaml: …"
 
 `awaiting` reasons name the dependency that will clear itself:
@@ -316,13 +316,13 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 | T2  | PROFILED             | star ≥ 3                                                | —                                                              | spar-state.tcl:456 |
 | T3  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
 | T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
-| T6  | APPROACHED ∨ SENT    | email primary: has_email ∧ ¬email_sent ∧ A(approach_path); linkedin primary: has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". other primary channels: row is omitted entirely | spar-state.tcl:464 |
+| T6  | APPROACHED ∨ SENT    | channel = `t6_send_channel`(contact): email → has_email ∧ ¬email_sent ∧ A(approach_path); linkedin → has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". channel ∉ {email, linkedin} (e.g. phone-first, or no final message): row is omitted entirely | spar-state.tcl |
 | T7  | any ≠ EXCLUDED       | any_sent ∧ ¬any_replied ∧ email-known ∧ A(approach_path) | A invalid → "invalid_approach_yaml". No watchable address → row omitted. Dispatchable rows dispatch through spar::r::run (courier reply-check) | spar-state.tcl:487 |
 | T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | spar-state.tcl:526 |
 | T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | spar-state.tcl:T9 branch |
 | T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | spar-state.tcl:T10 branch |
 
-[†] T6 routes the primary channel only (issue #49, partially resolved: email and linkedin primaries both dispatch, each to its own worker — ses_send and linkedin_send). The remaining #49 work is the secondary/tertiary slots: an unsent email in a linkedin-primary campaign still belongs to T9/T10 with wait_days/wait_condition, and T6 does not send it.
+[†] T6 sends each contact's own primary touch: `t6_send_channel` reads the contact's final round and returns the channel of its first email-or-linkedin message, so routing is per contact, not per campaign — an email-only contact in a linkedin-primary campaign dispatches by email (ses_send), a linkedin contact by linkedin_send. The contact's secondary and tertiary channels belong to T9/T10 with wait_days/wait_condition (issue #49); T6 sends only the first.
 
 T7's coverage is bounded by its actuator: it watches one known address per contact (the final round's email `to:`, or the roster email when the send went out on another channel), with a date floor at the earliest final-round `actioned_date`. A reply from any other mailbox, or on any other channel, is not detected automatically; it is recorded by editing the approach YAML (`replied_date` on the message, or a `replies` entry with `direction: received`), which resolves REPLIED on the next classification.
 
