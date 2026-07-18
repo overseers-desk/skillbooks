@@ -224,5 +224,85 @@ if {$varname eq ""} {
         "after toggle off, 3 leaves restored"
 }
 
+# ════════════════════════════════════════════════════════════════════
+# 5. Channel groups: a mixed-band transition gets one group node per
+#    channel; selection, SlugToRow, and the ongoing filter work across
+#    the extra level. A single-channel transition stays flat.
+# ════════════════════════════════════════════════════════════════════
+section "5. Channel groups under a mixed-band transition"
+
+# populate against the FakeCampaign's empty transition list clears the
+# hand-built tree from the earlier sections and resets the t$idx
+# counter, so on_transition_loaded builds from t0.
+$tree_obj populate
+
+set t6_tasks {
+    {"Alice A" a1 "Org A" seg-x dispatchable "" email}
+    {"Bob B"   b1 "Org B" seg-x dispatchable "" linkedin}
+    {"Cara C"  c1 "Org C" seg-x dispatchable "" email}
+    {"Dan D"   d1 "Org D" seg-x blocked "invalid_approach_yaml: x" ""}
+}
+$tree_obj on_transition_loaded T6 "Approach → Send" $t6_tasks
+
+set groups [$tree children t0]
+assert_eq [llength $groups] 3 "mixed band: 3 group nodes under the header"
+set glabels [lmap g $groups {string trim [$tree item $g -text]}]
+assert_eq [expr {"✉ email (2)" in $glabels}] 1 "email group labelled with count 2"
+assert_eq [expr {"🔗 linkedin (1)" in $glabels}] 1 "linkedin group labelled with count 1"
+assert_eq [expr {"other (1)" in $glabels}] 1 "channel-less blocked row grouped as other"
+
+set leaves [$tree_obj leaf_descendants t0]
+assert_eq [llength $leaves] 4 "leaf_descendants finds all 4 contacts through groups"
+assert_eq [$tree_obj header_of [lindex $leaves 0]] t0 "header_of resolves a grouped leaf to t0"
+set s2r [$tree_obj get_slug_to_row]
+foreach stem {a1 b1 c1 d1} {
+    assert_eq [dict exists $s2r $stem] 1 "SlugToRow covers grouped leaf $stem"
+}
+
+# Selecting the linkedin group resolves to a 1-leaf cohort of t0.
+set li_group ""
+foreach g $groups {
+    if {[string match "*linkedin*" [$tree item $g -text]]} { set li_group $g }
+}
+set ::target {}
+$tree_obj subscribe dispatch-target-changed \
+    [list apply {{parent nchild label verb} {
+        set ::target [list $parent $nchild]
+    }}]
+$tree selection set [list $li_group]
+$tree_obj on_select
+assert_eq $::target {t0 1} "group selection → cohort of its 1 leaf under t0"
+
+# Ongoing filter detaches and restores across the group level.
+set varname ""
+foreach v [info vars [info object namespace $tree_obj]::*] {
+    if {[string match *::OngoingOnly $v]} { set varname $v; break }
+}
+if {$varname eq ""} {
+    puts "  SKIP 5-filter: could not locate OngoingOnly var"
+} else {
+    set $varname 1
+    $tree_obj on_ongoing_toggled
+    assert_eq [llength [$tree_obj leaf_descendants t0]] 0 \
+        "Ongoing-only detaches grouped leaves (Pool empty)"
+    set $varname 0
+    $tree_obj on_ongoing_toggled
+    set email_group ""
+    foreach g [$tree children t0] {
+        if {[string match "*email*" [$tree item $g -text]]} { set email_group $g }
+    }
+    assert_eq [llength [$tree children $email_group]] 2 \
+        "toggle off restores leaves under their group"
+}
+
+# A single-channel band stays flat: leaves directly under the header.
+$tree_obj on_transition_loaded T7 "Send → Reply" {
+    {"Eve E" e1 "Org E" seg-x dispatchable "" ""}
+    {"Fay F" f1 "Org F" seg-x dispatchable "" ""}
+}
+set t7_children [$tree children t1]
+assert_eq [llength $t7_children] 2 "single-channel band: leaves directly under header"
+assert_eq [$tree set [lindex $t7_children 0] stem] e1 "flat leaf carries its stem"
+
 $pool destroy
 finish_tests

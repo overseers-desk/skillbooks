@@ -212,7 +212,8 @@ oo::class create spar::ui::TransitionTree {
         set tcount [llength $ttasks]
         $Tree insert {} end -id $parent_id -text "$tid: $tlabel ($tcount)" -open false
 
-        # Distinct channels, first-seen order ("" sorts under "other").
+        # Distinct real channels in first-seen order; channel-less
+        # tasks get a trailing "other" group below.
         set channels {}
         foreach task $ttasks {
             set tchan [lindex $task 6]
