@@ -728,20 +728,42 @@ proc spar::logs_root {} {
 # under resolve_logs_dir.
 namespace eval ::spar { variable _orch_logfile "" }
 
-proc spar::_orch_emit {service level txt} {
+proc spar::_orch_format {service level txt} {
+    return "\[[clock format [clock seconds]]\] \[$service\] \[$level\] '$txt'"
+}
+
+# _orch_write — file half of the orchestration tee. Safe to call from any
+# logger sink; a no-op until ensure_orchestration_file has set the path.
+proc spar::_orch_write {service level txt} {
     if {$::spar::_orch_logfile eq ""} return
-    set line "\[[clock format [clock seconds]]\] \[$service\] \[$level\] '$txt'"
-    catch {puts stderr $line}
     catch {
         set fd [open $::spar::_orch_logfile a]
-        puts $fd $line
+        puts $fd [spar::_orch_format $service $level $txt]
         close $fd
     }
 }
 
-proc spar::install_orchestration_log {logfile services} {
-    set ::spar::_orch_logfile $logfile
+proc spar::_orch_emit {service level txt} {
+    catch {puts stderr [spar::_orch_format $service $level $txt]}
+    spar::_orch_write $service $level $txt
+}
+
+# ensure_orchestration_file — single home for the orchestration log's path
+# policy: no file on dry runs, one file per process, named for the campaign
+# and the moment the first real dispatch began. Returns the path, or "" on
+# a dry run. Idempotent: a second call returns the path already minted.
+proc spar::ensure_orchestration_file {campaign_file dry_run} {
+    if {$dry_run} { return "" }
+    if {$::spar::_orch_logfile ne ""} { return $::spar::_orch_logfile }
+    set stamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
+    set logfile [file join [spar::logs_root] \
+        "orchestration-[file rootname [file tail $campaign_file]]-$stamp.log"]
     file mkdir [file dirname $logfile]
+    set ::spar::_orch_logfile $logfile
+    return $logfile
+}
+
+proc spar::install_orchestration_log {services} {
     foreach svc $services {
         set log [logger::init $svc]
         foreach lvl {debug info notice warn error critical alert emergency} {
