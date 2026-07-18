@@ -198,8 +198,8 @@ proc spar::final_email_message {data} {
     return [spar::final_channel_message $data email]
 }
 
-# t6_send_channel — the channel T6 dispatches for one contact: the
-# channel of the first final-round message that is email or linkedin.
+# t6_send_channel returns the channel T6 dispatches for one contact:
+# the channel of the first final-round message that is email or linkedin.
 # Message order in the final round encodes the contact's own primary
 # touch; secondary and tertiary channels belong to T9/T10. Routing is
 # per contact, not per campaign, so an email-only contact in a
@@ -865,7 +865,7 @@ oo::define spar::State method refine_contact {contact} {
     dict set contact email_sent      [dict get $fr email_sent]
     dict set contact linkedin_sent   [dict get $fr linkedin_sent]
     # The contact's own T6 send channel, from its final round's message
-    # order — promoted here so eligibility routes per contact without
+    # order, promoted here so eligibility routes per contact without
     # re-parsing (and without send_email.tcl touching the projection cache).
     dict set contact t6_send_channel [spar::t6_send_channel $approach_data]
     dict set contact any_replied     [dict get $fr any_replied]

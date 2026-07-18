@@ -494,7 +494,7 @@ assert_eq [expr {"Sent Sam" in $t6_dispatchable_names || "Sent Sam" in $t6_block
     "T6: SENT+email_sent already → not in T6 list"
 
 # The campaign primary channel does not change routing: with the campaign
-# set to linkedin, these email-final contacts still route by email — App
+# set to linkedin, these email-final contacts still route by email. App
 # Email dispatches (not blocked "No linkedin_url"), App NoEmail blocks on
 # the email address, not the missing linkedin_url. This is the regression
 # guard for email-only contacts in a linkedin-primary campaign.

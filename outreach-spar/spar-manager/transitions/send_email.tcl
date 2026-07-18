@@ -154,7 +154,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
 
     # T6: APPROACHED/SENT, routed by the contact's OWN primary touch
     # (spar::t6_send_channel over its final round), not the campaign
-    # channel — an email-only contact in a linkedin-primary campaign
+    # channel, so an email-only contact in a linkedin-primary campaign
     # sends by email. email → SES rows (has_email, not yet email_sent);
     # linkedin → overseer /run rows (has_linkedin, not yet
     # linkedin_sent). Secondary/tertiary channels belong to T9/T10 with
