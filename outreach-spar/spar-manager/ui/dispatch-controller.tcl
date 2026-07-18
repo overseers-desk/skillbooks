@@ -542,7 +542,12 @@ oo::class create spar::ui::DispatchController {
 
     method on_row_failed {row reason} {
         dict set RowReason $row $reason
-        # job-state will follow with state=failed; render then.
+        # job-state will follow with state=failed; render then. The log
+        # line lands here, not in the render: a worker failure's reason
+        # must reach the orchestration file, where the tree glyph and
+        # RowReason tooltip die with the session. Prep failures take the
+        # on_prep_progress path instead; a row hits exactly one of the two.
+        spar::log_row_outcome $row failed $reason
     }
 
     method on_row_done {row result} {
