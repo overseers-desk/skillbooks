@@ -130,6 +130,36 @@ oo::class create spar::ui::TransitionTree {
     method get_row_names    {} { return $RowNames }
     method get_slug_to_row  {} { return $SlugToRow }
 
+    # ─── Tree-shape helpers ───────────────────────────────────────────────
+    #
+    # The tree is a transition header per root child, with contact leaves
+    # either directly beneath or under per-channel group nodes (T6 with a
+    # mixed band). All selection and cohort logic goes through these two
+    # helpers so no caller assumes a fixed depth. A leaf is an item with a
+    # non-empty stem column; headers and group nodes have none.
+
+    # header_of — the transition header (root child) above an item; the
+    # item itself when it is a header.
+    method header_of {item} {
+        while {[$Tree parent $item] ne ""} {
+            set item [$Tree parent $item]
+        }
+        return $item
+    }
+
+    # leaf_descendants — every contact leaf at or below an item, in tree
+    # order.
+    method leaf_descendants {item} {
+        set leaves {}
+        if {[$Tree set $item stem] ne ""} {
+            return [list $item]
+        }
+        foreach child [$Tree children $item] {
+            lappend leaves {*}[my leaf_descendants $child]
+        }
+        return $leaves
+    }
+
     # ─── Public entry points ──────────────────────────────────────────────
 
     # populate — rebuild the treeview from the Campaign's current
@@ -141,6 +171,13 @@ oo::class create spar::ui::TransitionTree {
     method populate {} {
         set transitions [$Campaign get_transitions]
 
+        # Detached rows are not children of anything, so the delete loop
+        # below never reaches them; delete them explicitly or they
+        # accumulate as orphan items across refreshes under Ongoing only.
+        foreach entry $DetachedRows {
+            set row [lindex $entry 1]
+            if {[$Tree exists $row]} { $Tree delete $row }
+        }
         foreach item [$Tree children {}] {
             $Tree delete $item
         }
@@ -160,14 +197,51 @@ oo::class create spar::ui::TransitionTree {
         }
     }
 
-    # _insert_transition — append one transition branch (parent + child
-    # rows) to the tree. Shared by populate and on_transition_loaded;
-    # parent_id is derived from NextTransitionIdx so async-appended ids
-    # match the `t$idx` shape the dispatch path's auto_dispatch expects.
+    # _insert_transition — append one transition branch to the tree.
+    # Shared by populate and on_transition_loaded; parent_id is derived
+    # from NextTransitionIdx so async-appended ids match the `t$idx`
+    # shape the dispatch path's auto_dispatch expects.
+    #
+    # When the tasks carry two or more distinct send channels (T6 with a
+    # mixed band), contact leaves are grouped under one node per channel
+    # so a whole cohort dispatches with one click; a single-channel band
+    # keeps the flat header → leaves shape. Group nodes take Tk auto ids
+    # (never t$idx-shaped) and an empty stem.
     method _insert_transition {tid tlabel ttasks} {
         set parent_id "t$NextTransitionIdx"
         set tcount [llength $ttasks]
         $Tree insert {} end -id $parent_id -text "$tid: $tlabel ($tcount)" -open false
+
+        # Distinct channels, first-seen order ("" sorts under "other").
+        set channels {}
+        foreach task $ttasks {
+            set tchan [lindex $task 6]
+            if {$tchan ne "" && $tchan ni $channels} { lappend channels $tchan }
+        }
+        set grouped [expr {[llength $channels] >= 2}]
+        set group_ids [dict create]
+        if {$grouped} {
+            set has_other 0
+            foreach task $ttasks {
+                if {[lindex $task 6] eq ""} { set has_other 1; break }
+            }
+            if {$has_other} { lappend channels "" }
+            foreach chan $channels {
+                set n 0
+                foreach task $ttasks {
+                    if {[lindex $task 6] eq $chan} { incr n }
+                }
+                switch -- $chan {
+                    email    { set glabel "✉ email" }
+                    linkedin { set glabel "🔗 linkedin" }
+                    ""       { set glabel "other" }
+                    default  { set glabel $chan }
+                }
+                dict set group_ids $chan [$Tree insert $parent_id end \
+                    -text "  $glabel ($n)" -open true \
+                    -values [list "" "" "" "" ""]]
+            }
+        }
 
         # If "Ongoing only" is on, respect it during initial insertion
         # by detaching rows whose stem isn't currently active in the Pool.
@@ -179,7 +253,7 @@ oo::class create spar::ui::TransitionTree {
         }
 
         foreach task $ttasks {
-            lassign $task tname tstem torg tseg tstate treason
+            lassign $task tname tstem torg tseg tstate treason tchan
             set tags {}
             if {$tstate eq "done"} {
                 set tags {done}
@@ -188,14 +262,16 @@ oo::class create spar::ui::TransitionTree {
             } elseif {$tstate eq "blocked"} {
                 set tags {blocked}
             }
-            set row_id [$Tree insert $parent_id end -text "  $tname" \
+            set leaf_parent [expr {$grouped \
+                ? [dict get $group_ids $tchan] : $parent_id}]
+            set row_id [$Tree insert $leaf_parent end -text "  $tname" \
                 -values [list $tstem $torg $tseg $tstate $treason] -tags $tags]
             dict set RowNames $row_id $tname
             if {$tstem ne ""} {
                 dict set SlugToRow $tstem $row_id
                 if {$OngoingOnly && ![dict exists $live $tstem]} {
                     set idx [$Tree index $row_id]
-                    lappend DetachedRows [list $parent_id $row_id $idx]
+                    lappend DetachedRows [list $leaf_parent $row_id $idx]
                     $Tree detach $row_id
                 }
             }
@@ -221,12 +297,12 @@ oo::class create spar::ui::TransitionTree {
 
     # get_selected_stem — returns the stem of the single selected leaf
     # row, or empty string if the selection is not a single leaf.
+    # Headers and channel-group nodes have an empty stem, so the stem
+    # value itself is the leaf test at any depth.
     method get_selected_stem {} {
         set sel [$Tree selection]
         if {[llength $sel] != 1} { return "" }
-        set item [lindex $sel 0]
-        if {[$Tree parent $item] eq ""} { return "" }
-        return [$Tree set $item stem]
+        return [$Tree set [lindex $sel 0] stem]
     }
 
     # ─── Event handlers ───────────────────────────────────────────────────
@@ -258,8 +334,8 @@ oo::class create spar::ui::TransitionTree {
         if {$Dispatch eq ""} return
         set item [$Tree identify row $x_widget $y_widget]
         if {$item eq ""} return
-        # Only leaf rows have a stem; parent rows are transition headers.
-        if {[$Tree parent $item] eq ""} return
+        # Only contact leaves carry a stem; transition headers and
+        # channel-group nodes fall through.
         set stem [$Tree set $item stem]
         if {$stem eq ""} return
         # Make this row the current selection so the user sees what
@@ -289,13 +365,13 @@ oo::class create spar::ui::TransitionTree {
         foreach r [$disp active_jobs]  { dict set live $r 1 }
         foreach r [$disp queued_jobs]  { dict set live $r 1 }
         set DetachedRows {}
-        foreach parent [$Tree children {}] {
-            foreach row [$Tree children $parent] {
+        foreach header [$Tree children {}] {
+            foreach row [my leaf_descendants $header] {
                 set s [$Tree set $row stem]
-                if {$s eq ""} continue
                 if {![dict exists $live $s]} {
+                    set row_parent [$Tree parent $row]
                     set idx [$Tree index $row]
-                    lappend DetachedRows [list $parent $row $idx]
+                    lappend DetachedRows [list $row_parent $row $idx]
                     $Tree detach $row
                 }
             }
@@ -334,42 +410,45 @@ oo::class create spar::ui::TransitionTree {
     # _resolve_target — inspect the current selection and compute the
     # {parent nchild label verb} quadruple the dispatch button needs.
     # Returns {"" 0 "" ""} when the selection is not dispatchable (mixed
-    # parents, empty transition, or dispatching in progress).
+    # transitions, empty transition, or dispatching in progress).
+    #
+    # nchild counts contact leaves: a selected channel-group node
+    # contributes its leaf descendants, so the Play label and the
+    # Re-author check see the real cohort. Header-only selection keeps
+    # nchild 0 (implicit whole-transition cohort).
     method _resolve_target {} {
         if {$Dispatch ne "" && [$Dispatch is_dispatching]} {
             return [list "" 0 "" ""]
         }
         set sel [$Tree selection]
         set parents {}
-        set children {}
+        set leaves {}
         foreach item $sel {
-            set p [$Tree parent $item]
-            if {$p eq ""} {
-                lappend parents $item
-            } else {
-                lappend parents $p
-                lappend children $item
+            lappend parents [my header_of $item]
+            if {[$Tree parent $item] ne ""} {
+                lappend leaves {*}[my leaf_descendants $item]
             }
         }
         set parents [lsort -unique $parents]
+        set leaves  [lsort -unique $leaves]
 
-        # Mixed parents, or nothing selected ⇒ not dispatchable.
+        # Mixed transitions, or nothing selected ⇒ not dispatchable.
         if {[llength $parents] != 1} {
             return [list "" 0 "" ""]
         }
         set parent [lindex $parents 0]
 
-        # Empty transition (no children at all) ⇒ nothing to dispatch.
-        if {[$Tree children $parent] eq ""} {
+        # Empty transition (no contact leaves) ⇒ nothing to dispatch.
+        if {[llength [my leaf_descendants $parent]] == 0} {
             return [list "" 0 "" ""]
         }
 
         set label [$Tree item $parent -text]
         regsub {\s*\(\d+\)\s*$} $label "" label
 
-        set nchild [llength $children]
+        set nchild [llength $leaves]
 
-        # When children are selected and the runner supports re-author
+        # When leaves are selected and the runner supports re-author
         # (currently T1/T3 — profile runners), passing stems bypasses the
         # "profile exists" skip. Reflect that in the verb so the user
         # sees the action before firing.
@@ -379,7 +458,7 @@ oo::class create spar::ui::TransitionTree {
             set tids [spar::ui_transition_tids]
             set tid [lindex $tids $tnum]
             if {[spar::transition_supports_reauthor $tid]} {
-                foreach c $children {
+                foreach c $leaves {
                     if {[$Tree set $c state] eq "done"} {
                         set verb "Re-author"
                         break

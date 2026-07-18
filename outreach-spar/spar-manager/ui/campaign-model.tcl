@@ -333,7 +333,8 @@ oo::class create spar::ui::CampaignModel {
             set seg    [dict get $contact segment]
             set tstate [dict get $contact task_state]
             set reason [dict get $contact reason]
-            lappend tasks [list $cname $cstem $org $seg $tstate $reason]
+            set chan   [dict getdef $contact channel ""]
+            lappend tasks [list $cname $cstem $org $seg $tstate $reason $chan]
         }
         return [list $label [llength $eligible] $tasks]
     }
