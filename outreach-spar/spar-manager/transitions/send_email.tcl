@@ -159,7 +159,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
     # campaign sends by email. email → SES rows (has_email, not yet
     # email_sent); linkedin → overseer /run rows (has_linkedin, not yet
     # linkedin_sent). Secondary/tertiary channels belong to T9/T10 with
-    # wait_days/wait_condition (#49). Approach-YAML structural validity
+    # wait_days/wait_condition (#174). Approach-YAML structural validity
     # is a hard gate (#43 principle 7). primary_channel is unused here;
     # it is part of the eligible signature every transition class shares.
     method eligible {state contact primary_channel cdata today_iso} {
