@@ -6,6 +6,7 @@
 package require yaml
 package require json
 package require json::write
+package require logger
 
 namespace eval spar {
     namespace export slugify load_campaign load_roster find_profile \
@@ -728,6 +729,11 @@ proc spar::logs_root {} {
 # under resolve_logs_dir.
 namespace eval ::spar { variable _orch_logfile "" }
 
+# Logger service for per-row dispatch outcomes (FM-LOG-1), shared by the
+# CLI and the GUI so both front-ends render the same line format via
+# spar::log_row_outcome below.
+namespace eval ::spar { variable transitions_log [logger::init spar::transitions] }
+
 proc spar::_orch_format {service level txt} {
     return "\[[clock format [clock seconds]]\] \[$service\] \[$level\] '$txt'"
 }
@@ -769,6 +775,19 @@ proc spar::install_orchestration_log {services} {
         foreach lvl {debug info notice warn error critical alert emergency} {
             ${log}::logproc $lvl txt [format {::spar::_orch_emit %s %s $txt} $svc $lvl]
         }
+    }
+}
+
+# log_row_outcome — the one renderer for per-row dispatch outcomes, shared
+# by both front-ends so the line format has a single home (FM-LOG-1).
+# dry_run swaps the done glyph so a rehearsal is visibly not a send.
+proc spar::log_row_outcome {slug status message {dry_run 0}} {
+    switch -- $status {
+        started { if {$message eq ""} { ${::spar::transitions_log}::info "  \[START\] $slug" } }
+        done    { ${::spar::transitions_log}::info "  \[[expr {$dry_run ? " ○   " : "DONE "}]\] $slug[expr {$message ne "" ? " ($message)" : ""}]" }
+        failed  { ${::spar::transitions_log}::error "  \[FAIL \] $slug ($message)" }
+        skipped { ${::spar::transitions_log}::info "  \[SKIP \] $slug ($message)" }
+        warning { ${::spar::transitions_log}::warn "  \[WARN \] $slug: $message" }
     }
 }
 

@@ -43,12 +43,6 @@ source [file join $script_dir spar-transition-cli.tcl]
 source [file join $script_dir spar-control.tcl]
 
 package require logger
-namespace eval spar {
-    # Logger service for the dispatch CLI's runtime output.
-    # Report-mode puts (the eligibility ladder, help text, error
-    # exits) stay as raw puts — they are CLI presentation, not log.
-    variable transitions_log [logger::init spar::transitions]
-}
 
 # print_help — usage text. The compact grammar block at the top is the
 # operator-facing summary; the TRANSITIONS list is generated from the
@@ -367,13 +361,7 @@ if {$dispatching} {
     set ::_rollcall {}
 
     proc exec_on_progress {slug status message} {
-        switch -- $status {
-            started { if {$message eq ""} { ${::spar::transitions_log}::info "  \[START\] $slug" } }
-            done    { ${::spar::transitions_log}::info "  \[[expr {$::spar::dry_run_display ? " ○   " : "DONE "}]\] $slug[expr {$message ne "" ? " ($message)" : ""}]" }
-            failed  { ${::spar::transitions_log}::error "  \[FAIL \] $slug ($message)" }
-            skipped { ${::spar::transitions_log}::info "  \[SKIP \] $slug ($message)" }
-            warning { ${::spar::transitions_log}::warn "  \[WARN \] $slug: $message" }
-        }
+        spar::log_row_outcome $slug $status $message $::spar::dry_run_display
     }
 
     # Classify segments → contacts. Used at startup and again before each
