@@ -1168,7 +1168,11 @@ proc spar::_approach_dispatch_gate {row cdata} {
 # _task -- factory for transition task dicts. Every per-T-id `eligible`
 # method emits 0 or 1 of these per contact (manual_followup may emit
 # dispatchable or awaiting, others typically one shape per branch).
-proc spar::_task {contact task_state {reason ""}} {
+# `channel` is the send channel this task will use, passed explicitly by
+# transitions that route per contact (T6); it stays "" for transitions
+# where the task is not a send, so the UI can group send cohorts without
+# misreading a contact's auto_send_channel as a task property.
+proc spar::_task {contact task_state {reason ""} {channel ""}} {
     set name [dict getdef $contact contact_name ""]
     set org  [dict getdef $contact organisation ""]
     set stem [dict getdef $contact stem ""]
@@ -1177,7 +1181,7 @@ proc spar::_task {contact task_state {reason ""}} {
         contact_name $name organisation $org \
         segment [file tail $segment_dir] \
         stem $stem _segment_dir $segment_dir \
-        task_state $task_state reason $reason]
+        task_state $task_state reason $reason channel $channel]
 }
 
 # transition_eligible -- filter classified contacts by transition eligibility.
