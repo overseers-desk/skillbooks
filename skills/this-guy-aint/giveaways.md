@@ -1,6 +1,6 @@
 # giveaways
 
-The ways belief breaks when a text claims an identity its author does not inhabit. The judge reads first and classifies after: these categories name the common breaks so a felt wrongness can be reported precisely, not a checklist to hunt with. A giveaway that fits no category is still a giveaway; report it as `other` and describe it. The two closing categories, secretary and officialese, are the exception to felt-first: they name a register that reads as competent and courteous and so trips no felt read; the judge checks the draft against those two deliberately, as its prompt directs.
+The ways belief breaks when a text claims an identity its author does not inhabit. The judge reads first and classifies after: these categories name the common breaks so a felt wrongness can be reported precisely, not a checklist to hunt with. A giveaway that fits no category is still a giveaway; report it as `other` and describe it. The three closing categories, restate, secretary, and officialese, are the exception to felt-first: they name registers that read as thorough, competent, and courteous and so trip no felt read; the judge checks the draft against those three deliberately, as its prompt directs.
 
 The author's goal is never the impersonation; it is the work, done in that identity, without leaking that a non-member did it. Every category below is therefore a leak — something present in the text that a member would not have produced. The absence of persona is not a leak: plain, unadorned, workmanlike text with no opinions and no flavour is fully believable, because members write that way all the time. Never report what the text failed to perform; report only what it let slip.
 
@@ -61,6 +61,22 @@ Confidence inverted. A member is casually sure of the everyday and careful about
 Question: do the hedges sit where a member's doubts actually live?
 
 Example: a supposed GP's note that says paracetamol "may be considered as a possible option" for a headache but states a definitive cause for a patient's chronic fatigue. A real one shrugs at the first and hedges the second.
+
+## phantom-specific
+
+Specificity managed backwards. Precision arrives where nobody measured: percentage bands for behaviour no one counted, tidy thresholds, plausible-sounding rates. Hedged boilerplate stands where the text has already committed to an exact thing. A member is specific where they know and silent where they don't; the impostor decorates ignorance with numbers and pads the known with maybes.
+
+Question: would the claimed author actually possess this number, and would they be this vague about the thing they already named?
+
+Example: a gym owner's handbook stating "roughly 12-18% of members will require towel service" — nobody counted that; the owner writes "keep a stack of towels at the desk". The same handbook has lost cards replaced "via the standard membership platform or equivalent" three sections after naming the one system the front desk uses every day.
+
+## restate
+
+The text says something again. A closing section that summarises what the page just said; an opening that announces what the document is about to be about; a list's last item generalising the items above it; a final sentence assuring the reader the procedure brings safety, clarity, or efficiency; one warning re-worded in full at every place it applies; a staccato echo of the rule just given. A member writing a working document trusts the reader to look back: the document is referred to, not memorised, so it needs no mnemonic close and no introduction, and a member states a rule once and points at it from everywhere else. Restatement reads as thoroughness, which is why it trips no felt read.
+
+Question: does this passage say something, or say again what the page already said?
+
+Example: a bakery's opening checklist that ends "Following these steps each morning keeps the bakery clean, safe, and ready for customers" — the steps already did that; the baker's checklist ends at the last step. A lab manual that opens every acid-handling step with the full spill procedure re-worded, where the chemist writes the spill procedure once and puts "spill: see §2" at each step.
 
 ## secretary
 
