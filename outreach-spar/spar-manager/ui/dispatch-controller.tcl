@@ -174,18 +174,20 @@ oo::class create spar::ui::DispatchController {
         set sel [$tree selection]
         if {[llength $sel] == 0} return
 
+        # Resolve every selected item to its transition header; cohort =
+        # contact leaves under the selected items (a channel-group node
+        # contributes its leaves). Header-only selection means the whole
+        # transition, expanded below.
         set parents {}
         set child_items {}
         foreach item $sel {
-            set p [$tree parent $item]
-            if {$p eq ""} {
-                lappend parents $item
-            } else {
-                lappend parents $p
-                lappend child_items $item
+            lappend parents [$Transitions header_of $item]
+            if {[$tree parent $item] ne ""} {
+                lappend child_items {*}[$Transitions leaf_descendants $item]
             }
         }
         set parents [lsort -unique $parents]
+        set child_items [lsort -unique $child_items]
         if {[llength $parents] != 1} return
         set parent [lindex $parents 0]
 
@@ -210,9 +212,9 @@ oo::class create spar::ui::DispatchController {
             }
         }
 
-        # Parent-only selection: the implicit cohort is every child.
+        # Parent-only selection: the implicit cohort is every leaf.
         if {[llength $child_items] == 0} {
-            set child_items [$tree children $parent]
+            set child_items [$Transitions leaf_descendants $parent]
         }
 
         # Build the cohort from the selected leaf rows.
@@ -227,7 +229,10 @@ oo::class create spar::ui::DispatchController {
             return
         }
 
-        # Filter eligible contacts down to the selected stems.
+        # Filter eligible tasks down to the selected stems, dropping
+        # blocked rows: they are display-only ("No email address",
+        # invalid YAML) and the workers cannot act on them. The CLI
+        # applies the same filter in compute_ready_by_tid.
         set cdata [$Campaign get_cdata]
         set primary_channel ""
         if {[dict size $cdata] > 0} {
@@ -238,12 +243,19 @@ oo::class create spar::ui::DispatchController {
         set stem_set [dict create]
         foreach s $sel_stems { dict set stem_set $s 1 }
         set filtered {}
+        set sel_stems {}
         foreach c $eligible {
+            if {[dict get $c task_state] eq "blocked"} continue
             if {[dict exists $stem_set [dict getdef $c stem ""]]} {
                 lappend filtered $c
+                lappend sel_stems [dict get $c stem]
             }
         }
         set eligible $filtered
+        if {[llength $sel_stems] == 0} {
+            $Log log "Dispatch: nothing dispatchable in the selection."
+            return
+        }
 
         # Pull transition-specific opts (tasks, segments, etc.) the way
         # the legacy CLI path does.
@@ -261,13 +273,27 @@ oo::class create spar::ui::DispatchController {
         set opts [dict merge $base_opts $extra]
 
         # T6 needs an explicit Send confirmation — one dialog for the
-        # whole batch instead of per-row prompts.
+        # whole batch instead of per-row prompts. The message counts the
+        # batch per send channel, since a T6 band can mix email and
+        # LinkedIn rows.
         if {!$dry_run} {
             if {[$cls requires_send_confirmation]} {
-                set n [llength $sel_stems]
+                set by_chan [dict create]
+                foreach c $eligible {
+                    dict incr by_chan [dict getdef $c channel ""]
+                }
+                set parts {}
+                foreach {chan n} $by_chan {
+                    switch -- $chan {
+                        email    { lappend parts "$n email(s)" }
+                        linkedin { lappend parts "$n LinkedIn message(s)" }
+                        ""       { lappend parts "$n send(s)" }
+                        default  { lappend parts "$n $chan send(s)" }
+                    }
+                }
                 set answer [tk_messageBox -title "Confirm Send" \
                     -icon question -type yesno \
-                    -message "Send $n email(s) via $label ($tid)?" \
+                    -message "Send [join $parts { and }] via $label ($tid)?" \
                     -detail "Press Yes to proceed, No to cancel."]
                 if {$answer ne "yes"} {
                     $Log log "Dispatch cancelled by user."
@@ -417,8 +443,8 @@ oo::class create spar::ui::DispatchController {
             if {$AutoQuit} { exit 1 }
             return
         }
-        set children [$tree children $parent]
-        if {[llength $children] == 0} {
+        set leaves [$Transitions leaf_descendants $parent]
+        if {[llength $leaves] == 0} {
             puts stderr "spar-ui: transition $target has zero eligible contacts"
             if {$AutoQuit} { exit 0 }
             return
@@ -427,7 +453,7 @@ oo::class create spar::ui::DispatchController {
         if {[llength $AutoStems] > 0} {
             set matches {}
             set all_stems {}
-            foreach c $children {
+            foreach c $leaves {
                 set s [$tree set $c stem]
                 lappend all_stems $s
                 if {$s in $AutoStems} { lappend matches $c }
