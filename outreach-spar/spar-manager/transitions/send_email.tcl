@@ -163,7 +163,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
     method eligible {state contact primary_channel cdata today_iso} {
         set cstate [dict get $contact state]
         if {$cstate ne "APPROACHED" && $cstate ne "SENT"} { return {} }
-        set channel [spar::t6_send_channel [$state approach_summary $contact]]
+        set channel [dict getdef $contact t6_send_channel ""]
         switch -- $channel {
             email {
                 if {![dict get $contact has_email]} {

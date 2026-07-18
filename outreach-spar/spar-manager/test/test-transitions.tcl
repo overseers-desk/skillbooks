@@ -447,9 +447,9 @@ set t6c_tasks [$State transition_eligible $t6c_c "T6" "email"]
 assert_eq [llength $t6c_tasks] 0 \
     "T6: APPROACHED+email+already-sent → 0 tasks (refine sees email_sent=1)"
 
-# T6-d: APPROACHED, primary_channel=linkedin, has_linkedin, linkedin
-# final unsent → dispatchable (T6 routes by primary channel; the
-# linkedin rows carry the linkedin_send worker).
+# T6-d: linkedin contact (final leads with linkedin), has_linkedin,
+# unsent → dispatchable. Routing is per contact from its own final
+# round, so the campaign primary_channel passed here does not decide it.
 set t6d_seg [make_temp_segment]
 write_profile $t6d_seg "t6d"
 write_approach_yaml $t6d_seg "t6d" [approach_yaml_final_unsent_linkedin]
@@ -460,11 +460,11 @@ write_roster_tsv $t6d_seg $::std_headers [list \
 set t6d_c [$State classify_segment $t6d_seg]
 set t6d_c [$State refine_segment $t6d_c]
 set t6d_tasks [$State transition_eligible $t6d_c "T6" "linkedin"]
-assert_eq [llength $t6d_tasks] 1 "T6: linkedin-primary+unsent → 1 task"
+assert_eq [llength $t6d_tasks] 1 "T6: linkedin contact unsent → 1 task"
 assert_eq [dict get [lindex $t6d_tasks 0] task_state] "dispatchable" \
-    "T6: linkedin-primary+unsent → task_state=dispatchable"
+    "T6: linkedin contact unsent → task_state=dispatchable"
 
-# T6-d2: linkedin-primary but no linkedin_url → blocked "No linkedin_url".
+# T6-d2: linkedin contact but no linkedin_url → blocked "No linkedin_url".
 set t6d2_seg [make_temp_segment]
 write_profile $t6d2_seg "t6d2"
 write_approach_yaml $t6d2_seg "t6d2" [approach_yaml_final_unsent_linkedin]
@@ -474,13 +474,13 @@ write_roster_tsv $t6d2_seg $::std_headers [list \
 set t6d2_c [$State classify_segment $t6d2_seg]
 set t6d2_c [$State refine_segment $t6d2_c]
 set t6d2_tasks [$State transition_eligible $t6d2_c "T6" "linkedin"]
-assert_eq [llength $t6d2_tasks] 1 "T6: linkedin-primary+no-url → 1 task"
+assert_eq [llength $t6d2_tasks] 1 "T6: linkedin contact no-url → 1 task"
 assert_eq [dict get [lindex $t6d2_tasks 0] task_state] "blocked" \
-    "T6: linkedin-primary+no-url → task_state=blocked"
+    "T6: linkedin contact no-url → task_state=blocked"
 assert_eq [dict get [lindex $t6d2_tasks 0] reason] "No linkedin_url" \
-    "T6: linkedin-primary+no-url → reason='No linkedin_url'"
+    "T6: linkedin contact no-url → reason='No linkedin_url'"
 
-# T6-d3: linkedin-primary, linkedin final already actioned → suppressed.
+# T6-d3: linkedin contact, linkedin final already actioned → suppressed.
 set t6d3_seg [make_temp_segment]
 write_profile $t6d3_seg "t6d3"
 write_approach_yaml $t6d3_seg "t6d3" [approach_yaml_final_sent_linkedin]
@@ -492,12 +492,36 @@ set t6d3_c [$State classify_segment $t6d3_seg]
 set t6d3_c [$State refine_segment $t6d3_c]
 set t6d3_tasks [$State transition_eligible $t6d3_c "T6" "linkedin"]
 assert_eq [llength $t6d3_tasks] 0 \
-    "T6: linkedin-primary+already-sent → 0 tasks (refine sees linkedin_sent=1)"
+    "T6: linkedin contact already-sent → 0 tasks (refine sees linkedin_sent=1)"
 
-# T6-d4: unknown primary channel → 0 tasks.
-set t6d4_tasks [$State transition_eligible $t6d_c "T6" "phone"]
+# T6-d4: contact whose final round leads with a non-auto channel
+# (phone-only) → 0 tasks, whatever the campaign primary.
+set t6d4_seg [make_temp_segment]
+write_profile $t6d4_seg "t6d4"
+write_approach_yaml $t6d4_seg "t6d4" [approach_yaml_final_phone_only]
+write_roster_tsv $t6d4_seg $::std_headers [list \
+    [make_base_row {contact_name "T6D4" stem "t6d4" email "test@acme-venues.au" \
+        phone "+61 400 000 000" star_rating 4}] \
+]
+set t6d4_c [$State refine_segment [$State classify_segment $t6d4_seg]]
+set t6d4_tasks [$State transition_eligible $t6d4_c "T6" "email"]
 assert_eq [llength $t6d4_tasks] 0 \
-    "T6: primary_channel=phone → 0 tasks"
+    "T6: phone-only final → 0 tasks (not a T6 send channel)"
+
+# T6-d5 (regression, the bug): an email-only contact in a
+# linkedin-primary campaign routes by its OWN channel (email) and
+# dispatches, rather than being blocked 'No linkedin_url'.
+set t6d5_seg [make_temp_segment]
+write_profile $t6d5_seg "t6d5"
+write_approach_yaml $t6d5_seg "t6d5" [approach_yaml_final_unsent]
+write_roster_tsv $t6d5_seg $::std_headers [list \
+    [make_base_row {contact_name "T6D5" stem "t6d5" email "test@acme-venues.au" star_rating 4}] \
+]
+set t6d5_c [$State refine_segment [$State classify_segment $t6d5_seg]]
+set t6d5_tasks [$State transition_eligible $t6d5_c "T6" "linkedin"]
+assert_eq [llength $t6d5_tasks] 1 "T6: email-only in linkedin campaign → 1 task"
+assert_eq [dict get [lindex $t6d5_tasks 0] task_state] "dispatchable" \
+    "T6: email-only in linkedin campaign → dispatchable (not blocked)"
 
 # T6-e: APPROACHED + invalid approach YAML (unknown root key) → blocked
 # with reason starting "invalid_approach_yaml:".
@@ -528,6 +552,50 @@ assert_eq [dict get [lindex $t6e_tasks 0] task_state] "blocked" \
     "T6: invalid YAML → task_state=blocked"
 assert_match [dict get [lindex $t6e_tasks 0] reason] "invalid_approach_yaml:*" \
     "T6: invalid YAML → reason starts 'invalid_approach_yaml:'"
+
+# T6-f: prepare_for_pool assigns the worker per contact's own channel.
+# One segment, one linkedin-primary campaign, two contacts: the
+# email-only contact gets the default ses_send worker (no per-row
+# override), the linkedin contact gets linkedin_send with its url.
+set t6f_seg [make_temp_segment]
+write_approach_yaml $t6f_seg "mailer" [approach_yaml_final_unsent]
+write_approach_yaml $t6f_seg "connector" [approach_yaml_final_unsent_linkedin]
+set t6f_campaign [file join $t6f_seg campaign.yaml]
+set fd [open $t6f_campaign w]
+puts -nonewline $fd {version: "1.0"
+campaign: T6-f worker routing
+primary_channel: linkedin
+sender:
+  name: Sender Name
+  email: me@acme-venues.au
+segments: {}
+}
+close $fd
+write_roster_tsv $t6f_seg $::std_headers [list \
+    [make_base_row {contact_name "Mailer" stem "mailer" email "m@acme-venues.au" star_rating 4}] \
+    [make_base_row {contact_name "Connector" stem "connector" email "" \
+        linkedin_url "https://linkedin.com/in/connector" star_rating 4}] \
+]
+set t6f_tasks [list \
+    [spar::_task [dict create stem "mailer" _segment_dir $t6f_seg] dispatchable] \
+    [spar::_task [dict create stem "connector" _segment_dir $t6f_seg] dispatchable]]
+set t6f_prep [[::spar::transitions::get T6] prepare_for_pool \
+    [dict create campaign_file $t6f_campaign tasks $t6f_tasks] {}]
+assert_eq [dict get $t6f_prep worker_proc] "ses_send" \
+    "T6-f: batch default worker is ses_send"
+foreach pair [dict get $t6f_prep rows] {
+    lassign $pair stem row
+    if {$stem eq "mailer"} {
+        assert_eq [dict getdef $row worker_proc "ses_send"] "ses_send" \
+            "T6-f: email-only contact routes to ses_send"
+    } elseif {$stem eq "connector"} {
+        assert_eq [dict getdef $row worker_proc ""] "linkedin_send" \
+            "T6-f: linkedin contact routes to linkedin_send"
+        assert_eq [dict getdef $row linkedin_url ""] \
+            "https://linkedin.com/in/connector" \
+            "T6-f: linkedin row carries the contact's url"
+    }
+}
 
 # ── T7 ──────────────────────────────────────────────────────────────────
 
