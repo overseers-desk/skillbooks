@@ -864,6 +864,10 @@ oo::define spar::State method refine_contact {contact} {
     dict set contact any_sent        [dict get $fr any_sent]
     dict set contact email_sent      [dict get $fr email_sent]
     dict set contact linkedin_sent   [dict get $fr linkedin_sent]
+    # The contact's own T6 send channel, from its final round's message
+    # order — promoted here so eligibility routes per contact without
+    # re-parsing (and without send_email.tcl touching the projection cache).
+    dict set contact t6_send_channel [spar::t6_send_channel $approach_data]
     dict set contact any_replied     [dict get $fr any_replied]
     dict set contact to_addresses    [dict get $fr to_addresses]
     dict set contact unsent_subjects [dict get $fr unsent_subjects]

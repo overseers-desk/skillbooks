@@ -337,6 +337,21 @@ rounds:
 }
 }
 
+proc approach_yaml_final_phone_only {} {
+    return {decisions:
+  channel: phone
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: phone
+    to: "+61 400 000 000"
+    text: Call intro
+    actioned_date: null
+    replied_date: null
+}
+}
+
 # cleanup_temps -- remove all registered temporary directories.
 proc cleanup_temps {} {
     foreach dir $::cleanup_dirs {

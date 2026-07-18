@@ -473,39 +473,43 @@ set t2_names [lmap c $t2 {dict get $c contact_name}]
 assert_eq [expr {"Prof Hi" in $t2_names}] 1 "T2: PROFILED star≥3 is eligible"
 assert_eq [expr {"Prof Lo" in $t2_names}] 0 "T2: PROFILED star<3 not eligible"
 
-# T6: Approach → Send: APPROACHED, has_email, not email_sent → dispatchable
-# also: SENT + has_email + not email_sent (multi-channel case)
-# primary_channel="email" required — see issue #49 interim gate.
-set t6 [$State transition_eligible $contacts "T6" "email"]
-set t6_names [lmap c $t6 {dict get $c contact_name}]
-set t6_dispatchable_names {}
-set t6_blocked {}
-foreach c $t6 {
-    if {[dict get $c task_state] eq "dispatchable"} {
-        lappend t6_dispatchable_names [dict get $c contact_name]
-    } else {
-        lappend t6_blocked [dict get $c contact_name]
+# T6: Approach → Send routes by each contact's own final-round channel
+# (all three fixtures lead with email), not the campaign channel.
+proc t6_split {tasks} {
+    set disp {}; set blocked {}
+    foreach c $tasks {
+        if {[dict get $c task_state] eq "dispatchable"} {
+            lappend disp [dict get $c contact_name]
+        } else {
+            lappend blocked [dict get $c contact_name]
+        }
     }
+    return [list $disp $blocked]
 }
+lassign [t6_split [$State transition_eligible $contacts "T6" "email"]] \
+    t6_dispatchable_names t6_blocked
 assert_eq [expr {"App Email" in $t6_dispatchable_names}] 1 "T6: APPROACHED+email → dispatchable"
 assert_eq [expr {"App NoEmail" in $t6_blocked}] 1 "T6: APPROACHED no email → blocked"
 assert_eq [expr {"Sent Sam" in $t6_dispatchable_names || "Sent Sam" in $t6_blocked}] 0 \
     "T6: SENT+email_sent already → not in T6 list"
 
-# T6 routes by primary channel (#49, partial): under linkedin,
-# eligibility is has_linkedin / linkedin_sent. None of these fixture
-# contacts carries a linkedin_url, so every APPROACHED/SENT row blocks
-# with "No linkedin_url"; an unknown channel still yields zero tasks.
-set t6_lk [$State transition_eligible $contacts "T6" "linkedin"]
-assert_eq [llength $t6_lk] 3 "T6: linkedin primary, no linkedin_urls → 3 blocked"
-foreach t $t6_lk {
-    assert_eq [dict get $t task_state] "blocked" \
-        "T6: linkedin primary, no url → blocked ([dict get $t contact_name])"
-    assert_eq [dict get $t reason] "No linkedin_url" \
-        "T6: linkedin primary, no url → reason ([dict get $t contact_name])"
+# The campaign primary channel does not change routing: with the campaign
+# set to linkedin, these email-final contacts still route by email — App
+# Email dispatches (not blocked "No linkedin_url"), App NoEmail blocks on
+# the email address, not the missing linkedin_url. This is the regression
+# guard for email-only contacts in a linkedin-primary campaign.
+lassign [t6_split [$State transition_eligible $contacts "T6" "linkedin"]] \
+    t6lk_dispatchable t6lk_blocked
+assert_eq [expr {"App Email" in $t6lk_dispatchable}] 1 \
+    "T6: email contact under linkedin campaign → dispatchable"
+set app_noemail_reason ""
+foreach c [$State transition_eligible $contacts "T6" "linkedin"] {
+    if {[dict get $c contact_name] eq "App NoEmail"} {
+        set app_noemail_reason [dict get $c reason]
+    }
 }
-set t6_u [$State transition_eligible $contacts "T6"]
-assert_eq [llength $t6_u] 0 "T6: primary_channel unknown → zero tasks"
+assert_eq $app_noemail_reason "No email address" \
+    "T6: email contact under linkedin campaign blocks on email, not linkedin_url"
 
 # T7: Send → Reply: email_sent, not any_replied → dispatchable (monitoring)
 set t7 [$State transition_eligible $contacts "T7"]
