@@ -102,11 +102,12 @@ oo::class create ::spar::transitions::SendEmailTransition {
     # _build_rows — per-row opts dict construction for prepare_for_pool.
     # Reads tasks, campaign_file, dry_run, delay, sender from opts; the
     # per-row dict carries everything the send worker needs for one
-    # message. Each contact's OWN primary touch (spar::t6_send_channel,
-    # the same selector eligible routes on) decides the worker: email
-    # rows go to ses_send, linkedin rows to linkedin_send (which also
-    # gets the contact's linkedin_url from the segment roster). The send
-    # path is a full-file bypass site, so it reads the approach directly.
+    # message. Each contact's OWN primary touch
+    # (spar::final_auto_send_channel, the same selector eligible routes
+    # on) decides the worker: email rows go to ses_send, linkedin rows to
+    # linkedin_send (which also gets the contact's linkedin_url from the
+    # segment roster). The send path is a full-file bypass site, so it
+    # reads the approach directly.
     method _build_rows {opts} {
         set campaign_file [dict get $opts campaign_file]
         set dry_run       [dict getdef $opts dry_run 0]
@@ -123,7 +124,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
             set stem    [dict get $c stem]
             set seg_dir [dict get $c _segment_dir]
             set approach_path [file join $seg_dir approach "${stem}.yaml"]
-            set channel [spar::t6_send_channel \
+            set channel [spar::final_auto_send_channel \
                 [spar::read_approach_yaml $approach_path]]
             set row [dict create \
                 campaign_file $campaign_file \
@@ -153,17 +154,18 @@ oo::class create ::spar::transitions::SendEmailTransition {
     }
 
     # T6: APPROACHED/SENT, routed by the contact's OWN primary touch
-    # (spar::t6_send_channel over its final round), not the campaign
-    # channel, so an email-only contact in a linkedin-primary campaign
-    # sends by email. email → SES rows (has_email, not yet email_sent);
-    # linkedin → overseer /run rows (has_linkedin, not yet
+    # (spar::final_auto_send_channel over its final round), not the
+    # campaign channel, so an email-only contact in a linkedin-primary
+    # campaign sends by email. email → SES rows (has_email, not yet
+    # email_sent); linkedin → overseer /run rows (has_linkedin, not yet
     # linkedin_sent). Secondary/tertiary channels belong to T9/T10 with
     # wait_days/wait_condition (#49). Approach-YAML structural validity
-    # is a hard gate (#43 principle 7).
+    # is a hard gate (#43 principle 7). primary_channel is unused here;
+    # it is part of the eligible signature every transition class shares.
     method eligible {state contact primary_channel cdata today_iso} {
         set cstate [dict get $contact state]
         if {$cstate ne "APPROACHED" && $cstate ne "SENT"} { return {} }
-        set channel [dict getdef $contact t6_send_channel ""]
+        set channel [dict getdef $contact auto_send_channel ""]
         switch -- $channel {
             email {
                 if {![dict get $contact has_email]} {
