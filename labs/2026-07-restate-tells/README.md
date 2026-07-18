@@ -4,7 +4,7 @@ Regression fixtures for `this-guy-aint human` against the restate and phantom-sp
 
 ## Files
 
-- `note-a.md` — a plant nursery's morning watering procedure carrying eight planted leaks (six restate, two phantom-specific). Every fact in it is real to the fixture.
+- `note-a.md` — a plant nursery's morning watering procedure carrying seven planted leaks (five restate, two phantom-specific). Every fact in it is real to the fixture. The closing "That is the rule. Zero means closed." stays as a distractor: a judge read it as human emphasis, and the key does not claim it.
 - `note-b.md` — the same procedure as a member writes it: identical facts, no restatement, no invented number.
 - `answer-key.tsv` — columns `leak / category / member_form`, one row per planted leak.
 
