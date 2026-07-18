@@ -15,7 +15,7 @@
 #     • script_item     text
 #     • reply           text
 # So no rule below may read those blanked values. Every value a rule reads
-# (message `to`, `char_count`, `mode`, `actioned_date`, round `type`,
+# (message `to`, `mode`, `actioned_date`, round `type`,
 # message `channel`, linkedin `text`/`body`, `parent.message_id`, root
 # `profile_hash`) is a preserved field; the existence-only checks
 # (email_missing_content, vocab) read kept keys. Verified field-by-field
@@ -37,7 +37,7 @@
 level root                 -keys {decisions rounds angle_rationale response_likelihood a_note r_note fact_provenance quality_checklist profile_hash}
 level decisions            -keys {channel language angle sender channel_detail subsegment}
 level round                -keys {type number messages verdict fact_check in_character chosen_usps revision_note notes replies antifact_check}
-level message              -keys {channel subject body to actioned_date replied_date reply_summary script text char_count bcc cc director_note to_note phone_note mode parent reply_all}
+level message              -keys {channel subject body to actioned_date replied_date reply_summary script text bcc cc director_note to_note phone_note mode parent reply_all}
 level parent               -keys {account folder uid message_id references subject from to cc}
 level fact_provenance_item -keys {claim source}
 level fact_check_item      -keys {claim source result note correction}
@@ -137,7 +137,7 @@ rule require round number -when {type review} -severity warning \
     -code review_missing_number \
     -message {Review round missing required 'number' field} -groups {approach}
 
-# linkedin_note_too_long + char_count_mismatch: legacy 285-308. HOST
+# linkedin_note_too_long: legacy 285-308. HOST
 # PREDICATE at ROUND level: it needs the round `type`
 # (final) AND iterates the round's messages, filtering channel linkedin and
 # actioned-null; the text/body fallback and mode gate are "fallback-
@@ -145,7 +145,6 @@ rule require round number -when {type review} -severity warning \
 # gates the round; the predicate does the per-message linkedin work and
 # emits, overriding code/message per offending message:
 #   linkedin_note_too_long: "LinkedIn invite note is <n> chars, limit 300; shorten it, or declare mode: dm if a direct message to a 1st-degree connection is intended"
-#   char_count_mismatch   : "LinkedIn message char_count recorded <cc>, measured <n>"
 # ORDERING: as a round-level rule it fires before descent into the message
 # level, so its errors precede email_missing_content and
 # reply_missing_parent_message_id.

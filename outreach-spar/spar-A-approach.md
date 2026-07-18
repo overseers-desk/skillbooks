@@ -189,7 +189,7 @@ Approach files are YAML documents with a **closed vocabulary**: the runtime vali
 - `profile_hash`: `sha256:<64-hex>` — SHA-256 of the profile file's bytes at generation time, prefixed `sha256:`. Computed by the A harness; A copies the value verbatim. Optional in the schema: manually-authored approaches and any path that did not read a profile have no hash to record. **When present, this key must be on the first line of the file** — no leading blank line, no preceding keys (issue #63). The position discipline lets a future fast-classify path detect staleness by reading only the first line; `validate_approach` emits `profile_hash_misplaced` if the rule is broken. When the hash is present and the profile exists, mismatch is an error (`profile_hash_mismatch`) — the source profile was rebuilt or edited, and the approach must be regenerated. When the hash is absent, `validate_approach` accepts the file and the state machine routes any divergence (deleted / edited profile) through T6/T7 instead.
 - `decisions`: `channel`, `language`, `angle`, `sender`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7. Warmth is determined fresh by A (§4.1) and informs the drafting; it is not a stored field.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
-- `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `replied_date`, `reply_summary`, `script`, `text`, `char_count`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`, `mode`, `parent`, `reply_all`
+- `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `replied_date`, `reply_summary`, `script`, `text`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`, `mode`, `parent`, `reply_all`
 - `parent` (only inside a `mode: reply` message): `account`, `folder`, `uid`, `message_id`, `references`, `subject`, `from`, `to`, `cc`. Captured verbatim from `courier read` on the parent message; T3 derives In-Reply-To, References, the `Re:` Subject, and the To/Cc set from these fields at send time.
 - `mode` on a `channel: linkedin` message: `invite` (connection request with the message as the note, ≤300 characters) or `dm` (direct message to an existing 1st-degree connection). When absent, the send dispatcher infers `invite` for text within 300 characters and `dm` otherwise; write it explicitly so the choice is the author's, not an inference.
 - `fact_provenance` / `fact_check` items: `claim`, `source` (plus `result`, `note`, `correction` for `fact_check` only)
@@ -226,7 +226,6 @@ rounds:
         subject: Draft subject
         body: |
           Draft body.
-        char_count: 412
         director_note: Internal-only guidance about the draft.
         to_note: If the to-address is provisional, explain here.
       - channel: phone
@@ -317,7 +316,7 @@ Before presenting an approach file for human review:
 3. **Presupposition test.** Does any sentence tell the recipient something they already know about themselves? If so, restructure.
 4. **Manufactured-connection test.** Is every claim of shared interest traceable to a specific profile data point? Check against the absent-themes section.
 5. **Concreteness.** Can the recipient answer the ask in one sentence?
-6. **Channel character limits.** Where the channel imposes a character limit, verify compliance. A LinkedIn message with `mode: invite` (or no `mode`) is a connection note capped at 300 characters, measured on the trimmed text the dispatcher sends; either shorten it or declare `mode: dm` when a direct message to a 1st-degree connection is intended. A recorded `char_count` states the measured length; omit it rather than guess. Enforced by `validate_approach` (`linkedin_note_too_long`, `char_count_mismatch`).
+6. **Channel character limits.** Where the channel imposes a character limit, verify compliance. A LinkedIn message with `mode: invite` (or no `mode`) is a connection note capped at 300 characters, measured on the trimmed text the dispatcher sends; either shorten it or declare `mode: dm` when a direct message to a 1st-degree connection is intended. The message body is the only record of its length: the validator measures it, so nothing states a count alongside it. Enforced by `validate_approach` (`linkedin_note_too_long`).
 7. **Band-level pattern check.** Read the openers of all messages in the band sequentially. If they sound like variations of the same template, revise.
 8. **Final round email cardinality.** The `final` round contains at most one message with `channel: email`. Sequential email follow-ups belong in subsequent rounds; additional recipients belong in `cc`/`bcc`. Multi-channel finals (e.g. one email + one phone) are fine — the cap is on emails only. Enforced by `validate_approach` (`too_many_final_emails`).
 

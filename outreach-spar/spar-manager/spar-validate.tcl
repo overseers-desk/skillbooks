@@ -224,11 +224,10 @@ proc spar::_pred_placeholder_to {node meta} {
 }
 
 # linkedin_guard -- the #159 LinkedIn rails (legacy 285-308) over a final
-# round's messages: the 300-char invite bound and char_count honesty. A round
-# predicate (gated -when {type final}) because it needs the round type and
-# iterates the round's linkedin messages, with a text/body fallback and mode
-# gate the length kind cannot express; it emits both codes, overriding per
-# offending message.
+# round's messages: the 300-char invite bound, measured on the text the
+# dispatcher sends. A round predicate (gated -when {type final}) because it
+# needs the round type and iterates the round's linkedin messages, with a
+# text/body fallback and mode gate the length kind cannot express.
 proc spar::_pred_linkedin_guard {node meta} {
     set out {}
     if {![dict exists $node messages]} { return $out }
@@ -242,14 +241,6 @@ proc spar::_pred_linkedin_guard {node meta} {
         if {($li_mode eq "invite" || $li_mode eq "") && $li_len > 300} {
             lappend out [dict create code linkedin_note_too_long \
                 message "LinkedIn invite note is $li_len chars, limit 300; shorten it, or declare mode: dm if a direct message to a 1st-degree connection is intended"]
-        }
-        if {[dict exists $msg char_count]} {
-            set li_cc [string trim [dict get $msg char_count]]
-            if {$li_cc ne "" && ![spar::is_null $li_cc] \
-                    && (![string is integer -strict $li_cc] || $li_cc != $li_len)} {
-                lappend out [dict create code char_count_mismatch \
-                    message "LinkedIn message char_count recorded $li_cc, measured $li_len"]
-            }
         }
     }
     return $out
