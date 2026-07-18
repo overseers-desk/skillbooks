@@ -11,12 +11,14 @@ control. Add to it; do not let the same mode be rediscovered from scratch.
 Three artifact layers, in increasing detail:
 
 1. **Orchestration stream** (`[START]`/`[DONE]`/`[FAIL]`/`Validation failed`/`[phase]`
-   lines). The transition CLI persists the dispatch-level part (`spar::transitions`
-   and `spar::dispatch`) to `<logs_root>/orchestration-<stem>-<datestamp>.log` for any
-   real (non-dry) run, and also writes it to stderr. Per-row worker (`spar::harness`)
-   lines run in separate tpool interps and are not in that file; they live in the
-   per-row artifacts below. Other entry points (GUI, a manual run) capture the stream
-   only if launched with redirection (`… > run.log 2>&1`, or `| tee`).
+   lines, rendered by `spar::log_row_outcome`). Both front-ends persist it to
+   `<logs_root>/orchestration-<stem>-<datestamp>.log` for any real (non-dry) run.
+   The CLI tees `spar::transitions` and `spar::dispatch` (plus stderr) per run; the
+   GUI's log-window appender tees every spar* service to one file per session,
+   minted at the first non-dry dispatch. CLI per-row worker (`spar::harness`)
+   lines run in separate tpool interps and are not in the CLI's file; they live in
+   the per-row artifacts below. The GUI runs its pool in-process, so its file
+   carries the harness lines too.
 2. **Per-row harness artifacts**: `<logs_root>/<run-slug>/<stem>-profile.log.json`
    (the claude stream-json transcript), `<stem>-profile.log.stderr`, `<stem>-cost.jsonl`,
    `<stem>-fixN.log`. `<run-slug>` is the campaign path slug + `-p-<YYYYMMDD-HHMMSS>`
@@ -100,8 +102,13 @@ retains per-turn usage if needed).
 The `spar::transitions` / `spar::dispatch` services emitted only to stderr, so a run launched
 without shell redirection left no on-disk record of its outcomes. `spar::install_orchestration_log`
 tees those services to `<logs_root>/orchestration-<stem>-<datestamp>.log`, installed by the
-transition CLI for real (non-dry) dispatch. Per-row worker lines are not captured there (see
-"How to trace").
+transition CLI for real (non-dry) dispatch. The GUI's coverage arrived later: its dispatch
+outcomes were direct log-window writes outside any logger service, so a GUI run left no
+on-disk record at all (a 2026-07-18 T6 run's one failure is unrecoverable for this reason).
+Row outcomes now render through the shared `spar::log_row_outcome` on `spar::transitions`,
+and the log-window appender doubles as the GUI's tee via `spar::_orch_write`, one file per
+GUI session minted by `spar::ensure_orchestration_file` at the first non-dry dispatch.
+Per-row worker lines are not captured in the CLI's file (see "How to trace").
 
 ### FM-AGENT-1 — profiling agent had no stop test · `3a0c802`
 
