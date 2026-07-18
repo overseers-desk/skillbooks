@@ -102,9 +102,11 @@ oo::class create ::spar::transitions::SendEmailTransition {
     # _build_rows — per-row opts dict construction for prepare_for_pool.
     # Reads tasks, campaign_file, dry_run, delay, sender from opts; the
     # per-row dict carries everything the send worker needs for one
-    # message. The campaign's primary channel decides the worker: email
+    # message. Each contact's OWN primary touch (spar::t6_send_channel,
+    # the same selector eligible routes on) decides the worker: email
     # rows go to ses_send, linkedin rows to linkedin_send (which also
-    # gets the contact's linkedin_url from the segment roster).
+    # gets the contact's linkedin_url from the segment roster). The send
+    # path is a full-file bypass site, so it reads the approach directly.
     method _build_rows {opts} {
         set campaign_file [dict get $opts campaign_file]
         set dry_run       [dict getdef $opts dry_run 0]
@@ -113,7 +115,6 @@ oo::class create ::spar::transitions::SendEmailTransition {
 
         set cdata [spar::load_campaign $campaign_file]
         set camp_sender [dict getdef $cdata sender [dict create]]
-        set primary [dict getdef $cdata primary_channel email]
 
         set delay_ms [expr {$delay * 1000}]
         set rows {}
@@ -122,13 +123,15 @@ oo::class create ::spar::transitions::SendEmailTransition {
             set stem    [dict get $c stem]
             set seg_dir [dict get $c _segment_dir]
             set approach_path [file join $seg_dir approach "${stem}.yaml"]
+            set channel [spar::t6_send_channel \
+                [spar::read_approach_yaml $approach_path]]
             set row [dict create \
                 campaign_file $campaign_file \
                 dry_run       $dry_run \
                 approach_path $approach_path \
                 sender        $camp_sender \
                 delay_ms      $delay_ms]
-            if {$primary eq "linkedin"} {
+            if {$channel eq "linkedin"} {
                 if {![dict exists $rosters $seg_dir]} {
                     dict set rosters $seg_dir \
                         [spar::load_roster [file join $seg_dir roster.tsv]]
@@ -149,31 +152,30 @@ oo::class create ::spar::transitions::SendEmailTransition {
         return $rows
     }
 
-    # T6: APPROACHED/SENT, routed by the campaign's primary channel:
-    # email → SES rows (has_email, not yet email_sent); linkedin →
-    # overseer /run rows (has_linkedin, not yet linkedin_sent).
-    # Secondary/tertiary slots still belong to T9/T10 with wait_days/
-    # wait_condition (#49). Approach-YAML structural validity is a hard
-    # gate (#43 principle 7).
+    # T6: APPROACHED/SENT, routed by the contact's OWN primary touch
+    # (spar::t6_send_channel over its final round), not the campaign
+    # channel — an email-only contact in a linkedin-primary campaign
+    # sends by email. email → SES rows (has_email, not yet email_sent);
+    # linkedin → overseer /run rows (has_linkedin, not yet
+    # linkedin_sent). Secondary/tertiary channels belong to T9/T10 with
+    # wait_days/wait_condition (#49). Approach-YAML structural validity
+    # is a hard gate (#43 principle 7).
     method eligible {state contact primary_channel cdata today_iso} {
         set cstate [dict get $contact state]
         if {$cstate ne "APPROACHED" && $cstate ne "SENT"} { return {} }
-        switch -- $primary_channel {
+        set channel [spar::t6_send_channel [$state approach_summary $contact]]
+        switch -- $channel {
             email {
-                set has_email   [dict get $contact has_email]
-                set email_sent  [dict get $contact email_sent]
-                if {!$has_email} {
+                if {![dict get $contact has_email]} {
                     return [list [spar::_task $contact blocked "No email address"]]
                 }
-                if {$email_sent} { return {} }
+                if {[dict get $contact email_sent]} { return {} }
             }
             linkedin {
-                set has_linkedin  [dict get $contact has_linkedin]
-                set linkedin_sent [dict get $contact linkedin_sent]
-                if {!$has_linkedin} {
+                if {![dict get $contact has_linkedin]} {
                     return [list [spar::_task $contact blocked "No linkedin_url"]]
                 }
-                if {$linkedin_sent} { return {} }
+                if {[dict get $contact linkedin_sent]} { return {} }
             }
             default { return {} }
         }

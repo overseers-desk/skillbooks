@@ -198,6 +198,29 @@ proc spar::final_email_message {data} {
     return [spar::final_channel_message $data email]
 }
 
+# t6_send_channel — the channel T6 dispatches for one contact: the
+# channel of the first final-round message that is email or linkedin.
+# Message order in the final round encodes the contact's own primary
+# touch; secondary and tertiary channels belong to T9/T10. Routing is
+# per contact, not per campaign, so an email-only contact in a
+# linkedin-primary campaign still sends by email. Returns email,
+# linkedin, or "" when the final round leads with no auto-send channel
+# (e.g. phone-only).
+proc spar::t6_send_channel {data} {
+    if {$data eq "" || ![dict exists $data rounds]} { return "" }
+    foreach round [dict get $data rounds] {
+        if {![dict exists $round type]} continue
+        if {[dict get $round type] ne "final"} continue
+        if {![dict exists $round messages]} { return "" }
+        foreach msg [dict get $round messages] {
+            set ch [dict getdef $msg channel ""]
+            if {$ch eq "email" || $ch eq "linkedin"} { return $ch }
+        }
+        return ""
+    }
+    return ""
+}
+
 # analyse_final_round — extract state and channel properties from approach YAML data.
 # Returns dict with keys: has_final, any_sent, email_sent, linkedin_sent,
 #   any_replied, to_addresses, unsent_subjects, messages.
