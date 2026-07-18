@@ -36,6 +36,9 @@ oo::class create spar::ui::LogWindow {
     # ─── Subscription ─────────────────────────────────────────────────────
     method subscribe {event cb} { dict lappend Subs $event $cb }
 
+    # get_buffer — read-only accessor onto the log line buffer, for tests.
+    method get_buffer {} { return $LogBuffer }
+
     method _fire {event args} {
         if {![dict exists $Subs $event]} return
         foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
@@ -135,6 +138,10 @@ oo::class create spar::ui::LogWindow {
 # Dispatcher and Campaign used to wire LogWindow. Idempotent if called
 # multiple times for the same logwin (interp alias is replaced).
 #
+# The appender is also the GUI's half of the orchestration tee (FM-LOG-1):
+# every line shown in the log window also reaches the orchestration file,
+# once ensure_orchestration_file has minted one (a no-op before that).
+#
 # Call this AFTER all spar* services have been initialised — i.e. after
 # spar-state, spar-harness, spar-dispatcher have been sourced. tcllib
 # logger's logproc machinery dispatches per-(service, level), so we
@@ -149,12 +156,18 @@ proc spar::ui::install_logger_appender {logwin} {
         foreach lvl {debug info notice warn error critical alert emergency} {
             set alias_name "::spar::ui::_logwin_${safe_svc}_${lvl}"
             interp alias {} $alias_name {} \
-                ::spar::ui::_logwin_emit $logwin $lvl
+                ::spar::ui::_logwin_emit $logwin $svc $lvl
             ${svc_handle}::logproc $lvl $alias_name
         }
     }
 }
 
-proc spar::ui::_logwin_emit {logwin level msg} {
+# _logwin_emit — the appender's per-line sink. Also the GUI's half of the
+# orchestration tee (FM-LOG-1): every line shown in the log window is
+# forwarded to spar::_orch_write, which is a no-op until
+# ensure_orchestration_file has minted the run's orchestration file, and
+# writes the line to it once it has.
+proc spar::ui::_logwin_emit {logwin svc level msg} {
     $logwin log $msg $level
+    spar::_orch_write $svc $level $msg
 }
