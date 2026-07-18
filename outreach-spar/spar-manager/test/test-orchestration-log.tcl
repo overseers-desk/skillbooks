@@ -1,9 +1,9 @@
 #!/usr/bin/env tclsh9.0
 # FM-LOG-1: the GUI's log-window appender is also the orchestration
 # file's tee. install_logger_appender routes spar* logger services
-# through _logwin_emit, which now forwards every line to
-# spar::_orch_write — so a line shown in the log window also lands in
-# the orchestration file once ensure_orchestration_file has minted one.
+# through _logwin_emit, which forwards every line to spar::_orch_write.
+# A line shown in the log window therefore also lands in the
+# orchestration file once ensure_orchestration_file has minted one.
 #
 # Sources Tk (via ui/log-window.tcl) so run.tcl's needs_tk detection
 # picks this up as a GUI test and runs it under wish9.0/Xvfb; the
