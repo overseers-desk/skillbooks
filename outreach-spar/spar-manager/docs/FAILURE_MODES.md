@@ -108,8 +108,8 @@ on-disk record at all (a 2026-07-18 T6 run's one failure is unrecoverable for th
 Row outcomes now render through the shared `spar::log_row_outcome` on `spar::transitions`,
 and the log-window appender doubles as the GUI's tee via `spar::_orch_write`, one file per
 GUI session minted by `spar::ensure_orchestration_file` at the first non-dry dispatch.
-Worker failures log their reason from `on_row_failed`, so the cause of a failed send
-survives the session that watched it.
+GUI worker failures log their reason from the controller's `on_row_failed`, so the cause
+of a failed send survives the session that watched it.
 Per-row worker lines are not captured in the CLI's file (see "How to trace").
 
 ### FM-AGENT-1 — profiling agent had no stop test · `3a0c802`
