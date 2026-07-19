@@ -189,7 +189,19 @@ What lives where:
 
 The cut is the SSOT test: a fact that would change for all member segments at once (the catchment moved, a register changed its access path) has its home in the sweeper; a fact that can change for one segment alone (a source exhausted for clubs but partial for providers) stays per-segment. A segment swept alone needs no sweeper; the fields stay in its sweep.yaml until a family exists.
 
-## 8. Stale contact handling
+## 8. Writing the roster during a sweep
+
+The roster is the sweep's only data file. A sweep or person-resolution agent that is the segment's sole writer works on `roster.tsv` directly: it reads the roster first to know the stems already present, then appends or updates row by row as it finds things, never rewriting wholesale. Side staging files are not created for sole-writer sweeps.
+
+Every attempt leaves its outcome on the row it concerned:
+
+- A person found fills `contact_name`, `role`, and the channel columns.
+- A person found where the row already has a contact goes into `s_note` as a dated alternate ("[date source alternate contact: name, role, channel; fallback if the listed contact does not answer]").
+- A search that found nobody leaves a dated checked-empty marker in `s_note` naming what was tried ("[date source checked-empty: searches A, B]"). A later resolution round targets only the unsearched, and it tells them apart by this marker alone: a blank contact with the marker is a settled miss, a blank contact without it is open work.
+
+Concurrent writers on one roster lose data silently: with the read-modify-replace pattern both writers copy the same original and the second replacement erases the first's rows, and with raw appends the rows can interleave mid-line. So one segment has one writer at a time. When a round genuinely needs several agents feeding one segment at once, either serialise them, or give each agent a scratch file named by run id that is merged and deleted in the same act; a scratch file that outlives its merge is a defect. A running transition batch (P or A, dispatched by spar-transition.tcl) patches the roster from its single dispatcher process, which is safe against itself, but it counts as the segment's writer while it runs.
+
+## 8a. Stale contact handling
 
 S will routinely discover that a contact is stale: the person has left the organisation, changed roles, or retired from the field. A stale contact is not simply removed from the roster. The procedure is:
 
