@@ -7,7 +7,8 @@
 # send primitive and interprets the primitive's result. Fail-fast rule:
 # GET /health is probed first, and an absent or unhealthy overseer is
 # an error, never a silent skip. No pacing here — cadence is the
-# overseer's.
+# overseer's; the probe reads that cadence back so a parked row can say
+# what it waits on (health_note).
 #
 # Inputs (opts dict):
 #   approach_path  abs path to the approach YAML for this row
@@ -15,6 +16,11 @@
 #   dry_run        1 = validate and report without calling the overseer
 #   overseer_url   optional override; default http://127.0.0.1:11402
 #   today          optional ISO date for stamp; default = today
+#   note_cmd       optional cmdprefix, called with one line of text when
+#                  the probe finds something standing in this send's way
+#                  (a rate gate, an open breaker, an account not signed
+#                  in). The dispatcher passes the pool's phase verb, so
+#                  the row says what it is waiting on.
 #
 # Skill selection: the final linkedin message's `mode` key picks the
 # primitive (invite → linkedin.com/send-invite, dm →
@@ -58,7 +64,9 @@ proc ::spar::li::_post_json {url body timeout_ms} {
     }
 }
 
-# GET /health, erroring unless it answers ok:true.
+# GET /health, erroring unless it answers ok:true. A refusal names the
+# overseer's own fault detail when it reported one, so the row says what
+# is wrong rather than only that something is.
 proc ::spar::li::_health {overseer} {
     set tok [spar::pool_http "$overseer/health" -timeout 5000]
     try {
@@ -66,11 +74,55 @@ proc ::spar::li::_health {overseer} {
             error "health probe failed"
         }
         set h [json::json2dict [http::data $tok]]
-        if {![dict getdef $h ok 0]} { error "overseer reports not ok" }
+        if {![dict getdef $h ok 0]} {
+            error "overseer reports not ok[::spar::li::_fault_suffix $h]"
+        }
         return $h
     } finally {
         http::cleanup $tok
     }
+}
+
+# ": <detail>" from a health or /run document's fault object, or "" when
+# it carries none. fault is null (json2dict yields the string) when clear,
+# so the shape is checked before it is read as a dict.
+proc ::spar::li::_fault_suffix {doc} {
+    set f [dict getdef $doc fault ""]
+    if {$f in {"" null}} { return "" }
+    set detail ""
+    catch {set detail [dict get $f detail]}
+    return [expr {$detail ne "" ? ": $detail" : ""}]
+}
+
+# What /health says stands between this send and the browser, as one
+# phrase, or "" when the way is clear. The document is the one _health
+# already fetched, so this costs no extra round trip.
+#
+#   gates    host -> seconds until that host's rate gate frees
+#   tripped  line -> {since count detail}, an open circuit breaker; a
+#            send's line is its skill ref
+#   holds    host -> identity -> {...}, an account declined until someone
+#            signs it in again
+#
+# Every key is read by host or by line, so a platform added later reads
+# out of the same document with no change here.
+proc ::spar::li::health_note {h host {line ""}} {
+    set parts {}
+    set secs [dict getdef $h gates $host 0]
+    if {[string is integer -strict $secs] && $secs > 0} {
+        lappend parts "$host gate ${secs}s"
+    }
+    if {$line ne ""} {
+        set trip [dict getdef $h tripped $line ""]
+        if {$trip ne ""} {
+            lappend parts "line tripped after [dict getdef $trip count "repeated"] failures"
+        }
+    }
+    set held [dict keys [dict getdef $h holds $host ""]]
+    if {[llength $held]} {
+        lappend parts "account not signed in: [join $held {, }]"
+    }
+    return [join $parts "; "]
 }
 
 proc ::spar::li::send_one {opts} {
@@ -81,6 +133,7 @@ proc ::spar::li::send_one {opts} {
     set overseer      [dict getdef $opts overseer_url $default_overseer]
     set today         [dict getdef $opts today \
         [clock format [clock seconds] -format "%Y-%m-%d"]]
+    set note_cmd      [dict getdef $opts note_cmd ""]
 
     if {![file exists $approach_path]} {
         return [list error "approach file missing: $approach_path"]
@@ -124,9 +177,20 @@ proc ::spar::li::send_one {opts} {
     }
 
     # Fail-fast probe: the overseer must be present and healthy.
-    if {[catch {::spar::li::_health $overseer} err]} {
+    if {[catch {set health [::spar::li::_health $overseer]} err]} {
         return [list error "overseer not available at $overseer — start it before T6 linkedin sends ($err)"]
     }
+
+    # A /run parks server-side behind the rate gate, an open breaker or a
+    # held account, so the row would otherwise sit silent for as long as
+    # the wait lasts. The probe already knows why; report it through the
+    # caller's note cmdprefix, and keep it for the failure text.
+    set note [::spar::li::health_note $health \
+        [lindex [split $skill_ref /] 0] $skill_ref]
+    if {$note ne "" && $note_cmd ne ""} {
+        catch {{*}$note_cmd $note}
+    }
+    set at_probe [expr {$note ne "" ? " (at probe: $note)" : ""}]
 
     set args_json [json::write array \
         [json::write string $vanity] \
@@ -138,7 +202,7 @@ proc ::spar::li::send_one {opts} {
     if {[catch {
         set resp [::spar::li::_post_json "$overseer/run" $body 600000]
     } err]} {
-        return [list error "overseer /run failed: $err"]
+        return [list error "overseer /run failed: $err$at_probe"]
     }
 
     # Outer fault: the browser or the primitive failed to run at all.
@@ -147,7 +211,7 @@ proc ::spar::li::send_one {opts} {
         set shape ""; set detail ""
         catch {set shape [dict get $f shape]}
         catch {set detail [dict get $f detail]}
-        return [list error "overseer fault ($shape): $detail"]
+        return [list error "overseer fault ($shape): $detail$at_probe"]
     }
     set inner [dict getdef $resp result ""]
     if {$inner in {"" null}} {
@@ -173,7 +237,7 @@ proc ::spar::li::send_one {opts} {
         default {
             set reason [dict getdef $r reason ""]
             if {$reason eq ""} { set reason $status }
-            return [list error "primitive status '$status': $reason"]
+            return [list error "primitive status '$status': $reason$at_probe"]
         }
     }
 }
