@@ -20,10 +20,10 @@ package require logger
 ::tcl::tm::path add \
     [file join [file dirname [file normalize [info script]]] vendor]
 package require deadman
-# steward carries the generic claude-session harness base; spar::Harness
+# coachman carries the generic claude-session harness base; spar::Harness
 # below subclasses it. Authored and published in the questlog repository,
 # which spar is the only consumer of so far, so a bump comes from there.
-package require steward
+package require coachman
 
 # Idempotent: oo::class create is not idempotent, so guard against
 # multiple sources.
@@ -46,14 +46,14 @@ namespace eval spar {
 source [file join $::spar::harness_dir spar-courier.tcl]
 
 oo::class create spar::Harness {
-    superclass steward::Harness
+    superclass coachman::Harness
 
-    # spar::Harness is a thin subclass of the vendored steward harness. steward
+    # spar::Harness is a thin subclass of the vendored coachman harness. coachman
     # owns the generic claude-session machinery (invoke/resume, credit-limit
     # recovery, stall-kill, cost cap, the fix-loop skeleton); spar supplies the
-    # host-specific pieces steward leaves injectable, plus its one domain method.
+    # host-specific pieces coachman leaves injectable, plus its one domain method.
 
-    # steward's injected reach-ins, pointed at spar's own services. steward
+    # coachman's injected reach-ins, pointed at spar's own services. coachman
     # carries a default for each; spar overrides all four.
     method log_service {}         { return $::spar::harness_log }
     method prompt_root {}         { return $::spar::harness_dir }
@@ -65,7 +65,7 @@ oo::class create spar::Harness {
     # cascade). Runs in the harness so the slow `courier -A search` exec
     # parallelises across contacts instead of serialising in the dispatcher's
     # prepare loop. Empty section when courier isn't installed. This is spar's
-    # own concern and stays out of steward.
+    # own concern and stays out of coachman.
     method inject_courier {prompt_path name org email} {
         set hdr  [spar::courier::accounts_block]
         set body [spar::courier::contact_block $name $org $email]
