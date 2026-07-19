@@ -84,6 +84,27 @@ oo::class create spar::Dispatcher {
 proc spar::subscribe_pool_domain {disp} {
     $disp subscribe domain-roster_update ::spar::_pool_roster_update
 }
+# is_usage_limit_halt — true when a worker's failure reason carries
+# coachman's stable USAGE_LIMIT_UNRECOGNIZED token: a claude usage limit
+# whose wording coachman no longer parses (a reworded window, or a
+# monthly/spend/fast limit). Both front-ends test it to halt dispatch
+# loudly instead of grinding every remaining row into the same limit.
+# The token is coachman's contract (documented at its _invoke); this is
+# the single place spar names it.
+proc spar::is_usage_limit_halt {reason} {
+    return [string match {*USAGE_LIMIT_UNRECOGNIZED*} $reason]
+}
+
+# halt_dispatch_queue — cancel every still-queued row on the dispatcher so
+# no new job launches; in-flight rows finish on their own. Returns the
+# count cancelled. The shared half of each front-end's usage-limit halt;
+# the front-end adds its own loud report (stderr line, or a dialog).
+proc spar::halt_dispatch_queue {disp} {
+    set queued [$disp queued_jobs]
+    foreach r $queued { $disp cancel $r }
+    return [llength $queued]
+}
+
 proc spar::_pool_roster_update {row roster_path key_col key_val field new_val} {
     if {[catch {
         spar::update_roster_field $roster_path $key_col $key_val \

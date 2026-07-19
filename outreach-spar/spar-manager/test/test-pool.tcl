@@ -404,4 +404,25 @@ assert_eq [lindex $::domain_got 0] r1 "payload row arrives at the subscriber"
 assert_eq [llength $::domain_got] 6 "payload arrives whole"
 $d destroy
 
+section "6. usage-limit halt helpers"
+
+# is_usage_limit_halt keys on coachman's stable token wherever it sits in
+# the failure reason harness_run passes through.
+assert_eq [spar::is_usage_limit_halt \
+    {harness exited rc=1 | FAIL (author-draft: USAGE_LIMIT_UNRECOGNIZED, suspected usage limit): slug}] 1 \
+    "the halt token in a wrapped reason is recognised"
+assert_eq [spar::is_usage_limit_halt {harness exited rc=1 | FAIL (no draft markers): slug}] 0 \
+    "an ordinary failure reason does not halt"
+
+# halt_dispatch_queue cancels every still-queued row and returns the
+# count; in-flight rows are the front-end's concern, not this helper's.
+# Pause the queue so all three rows stay queued, then drain.
+set d [spar::Dispatcher new 2 test_log]
+$d pause_queue
+foreach r {a b c} { $d enqueue $r fake_worker [dict create plan {{msg_done {}}}] }
+assert_eq [llength [$d queued_jobs]] 3 "three rows queued while paused"
+assert_eq [spar::halt_dispatch_queue $d] 3 "halt cancels all three queued rows"
+assert_eq [llength [$d queued_jobs]] 0 "nothing queued after the halt"
+$d destroy
+
 finish_tests

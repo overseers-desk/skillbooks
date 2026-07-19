@@ -581,6 +581,21 @@ if {$dispatching} {
         set tid ""; catch {set tid [dict get $::_row_tid $row]}
         lappend ::_rollcall [dict create slug $row tid $tid outcome failed reason $reason]
         exec_on_progress $row failed $reason
+        # A claude usage limit coachman could not parse: halt the batch
+        # loudly, once. Draining the queue lets the run end (in-flight
+        # rows finish) rather than sending every remaining row into the
+        # same wall. Reported to both the log and stderr, since an
+        # unattended `T*` run is watched through neither reliably.
+        if {[spar::is_usage_limit_halt $reason] && ![info exists ::_usage_limit_halted]} {
+            set ::_usage_limit_halted 1
+            set n 0
+            if {$::spar::control_dispatcher ne ""} {
+                set n [spar::halt_dispatch_queue $::spar::control_dispatcher]
+            }
+            set line "USAGE LIMIT (unrecognized wording): halting after $row; cancelled $n queued row(s), in-flight rows finish. Check the claude usage window and re-run."
+            ${::spar::transitions_log}::error $line
+            puts stderr "spar: $line"
+        }
     }
     proc ::_dispatch_on_state {row to_state} {
         if {$to_state ni {done failed cancelled}} return

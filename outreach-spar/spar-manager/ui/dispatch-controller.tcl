@@ -47,6 +47,7 @@ oo::class create spar::ui::DispatchController {
     variable Subs
     variable RowTid RowReason RowPhase RowMeta RowDryRun
     variable BurstStems BurstFinished BurstFailed BurstActive
+    variable UsageLimitHalted
     variable RowMenu RowMenuRow
 
     constructor {campaign transitions log dispatcher \
@@ -548,6 +549,20 @@ oo::class create spar::ui::DispatchController {
         # reason-column text die with the session. Prep failures take the
         # on_prep_progress path instead; a row hits exactly one of the two.
         spar::log_row_outcome $row failed $reason
+        # A claude usage limit coachman could not parse: drain the queue so
+        # no new row launches, and raise one dialog. Every remaining row
+        # would hit the same wall, so halting once beats a wall of
+        # identical failures behind the operator's back.
+        if {[spar::is_usage_limit_halt $reason]
+                && ![info exists UsageLimitHalted]} {
+            set UsageLimitHalted 1
+            set n [spar::halt_dispatch_queue $Dispatcher]
+            $Log log "USAGE LIMIT (unrecognized wording): halted after $row; cancelled $n queued row(s), in-flight rows finish."
+            tk_messageBox -icon warning -type ok \
+                -title "Usage limit reached" \
+                -message "Claude reported a usage limit in wording spar did not recognise." \
+                -detail "Halted after $row. Cancelled $n queued row(s); in-flight rows finish. Check the claude usage window before re-running."
+        }
     }
 
     method on_row_done {row result} {
