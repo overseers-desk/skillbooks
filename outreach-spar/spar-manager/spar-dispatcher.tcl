@@ -28,6 +28,9 @@ if {[info exists ::spar::_pool_loaded]} {
 
 namespace eval spar {
     variable _pool_loaded 1
+    # Live coachman harnesses, keyed by row, published by harness_run for
+    # the span of its run() so a front-end's cancel can abort them.
+    variable live_harnesses [dict create]
     variable pool_script_dir [file dirname [file normalize [info script]]]
     # vendor/ carries the jobloop module; a checkout runs as-is.
     ::tcl::tm::path add [file join $pool_script_dir vendor]
@@ -103,6 +106,29 @@ proc spar::halt_dispatch_queue {disp} {
     set queued [$disp queued_jobs]
     foreach r $queued { $disp cancel $r }
     return [llength $queued]
+}
+
+# live_harness_count — how many coachman harnesses are running right now,
+# the abortable in-flight runs (a short send worker holds none). A
+# front-end reads it to size its "also stop the in-flight run(s)?" prompt.
+proc spar::live_harness_count {} {
+    variable live_harnesses
+    return [dict size $live_harnesses]
+}
+
+# abort_live_harnesses — abort every running coachman harness. Each abort
+# is sticky, so the harness ends its whole run (not just the current
+# stage) and reports failed through harness_run, which unpublishes it.
+# Returns the count told to stop. In-flight short sends are not harnesses
+# and are left to finish.
+proc spar::abort_live_harnesses {} {
+    variable live_harnesses
+    set n 0
+    dict for {row inst} $live_harnesses {
+        if {[catch {$inst abort}]} continue
+        incr n
+    }
+    return $n
 }
 
 proc spar::_pool_roster_update {row roster_path key_col key_val field new_val} {

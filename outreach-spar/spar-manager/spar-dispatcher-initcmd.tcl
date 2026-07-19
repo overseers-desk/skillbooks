@@ -48,8 +48,8 @@ namespace path ::jobloop::worker
 # The claude session inside the harness is driven through deadman with an
 # async completion (see spar-harness.tcl _invoke), so a long run yields the
 # loop rather than freezing it. Cancel-checked once before the harness
-# starts; per-stage cancel inside the harness is deferred (see
-# docs/concurrency.md "Deferred and adjacent work").
+# starts; a mid-run cancel reaches the harness through
+# spar::abort_live_harnesses, which the harness is published for below.
 proc harness_run {row opts} {
     checkpoint $row
 
@@ -72,10 +72,20 @@ proc harness_run {row opts} {
     set cause ""
     if {[catch {
         set inst [$harness_class new $prompt_dir $log_dir]
-        set rc [$inst run]
+        # Publish the live harness so a front-end's cancel can abort it
+        # mid-run (spar::abort_live_harnesses). Registered only for the
+        # span of run(); a short send worker (ses/linkedin/imap) has no
+        # harness and never appears here.
+        dict set ::spar::live_harnesses $row $inst
+        try {
+            set rc [$inst run]
+        } finally {
+            dict unset ::spar::live_harnesses $row
+        }
         if {$rc != 0} { catch {set cause [$inst fail_cause]} }
         catch {$inst destroy}
     } err]} {
+        catch {dict unset ::spar::live_harnesses $row}
         failed $row "harness_run: $err"
         return
     }

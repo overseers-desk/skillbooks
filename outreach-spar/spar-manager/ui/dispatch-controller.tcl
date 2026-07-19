@@ -421,12 +421,27 @@ oo::class create spar::ui::DispatchController {
         if {[$Dispatcher is_queue_paused]} { my pause }
     }
 
-    # cancel — drain queued rows. In-flight rows continue to finish (per-
-    # row Kill is deferred — see docs/concurrency.md "Deferred work").
+    # cancel — drain queued rows without asking, then offer to abort the
+    # in-flight runs. Draining is immediate: no new row launches. The
+    # in-flight coachman runs are a separate call, since aborting one
+    # discards the work it has already spent; the operator chooses.
     method cancel {} {
         set queued [$Dispatcher queued_jobs]
         foreach r $queued { $Dispatcher cancel $r }
-        $Log log "Cancelled [llength $queued] queued row(s); in-flight items finish normally."
+        $Log log "Cancelled [llength $queued] queued row(s)."
+
+        set live [spar::live_harness_count]
+        if {$live == 0} { return }
+        set ans [tk_messageBox -icon question -type yesno \
+            -title "Stop in-flight runs?" \
+            -message "$live run(s) are still in flight." \
+            -detail "Also stop them now? Each discards the claude work it has spent so far. Choose No to let them finish."]
+        if {$ans ne "yes"} {
+            $Log log "$live in-flight run(s) left to finish."
+            return
+        }
+        set n [spar::abort_live_harnesses]
+        $Log log "Aborted $n in-flight run(s)."
     }
 
     # auto_dispatch — headless / self-debug entry point. Called from the
