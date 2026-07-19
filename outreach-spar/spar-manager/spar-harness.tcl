@@ -148,6 +148,22 @@ oo::class create spar::ApproachHarness {
         $State forget_approach $Outfile
     }
 
+    # Mediated roster writes, A side: a validated approach may declare a
+    # root roster_patch (send-time email backfill, exclusion). The harness
+    # applies it; the worker writes no TSV. Rejections are logged, not
+    # fatal: the approach itself passed validation, and the roster is
+    # untouched on rejection.
+    method apply_declarations {} {
+        set segment_dir [file dirname [file dirname $Outfile]]
+        set roster_path [file join $segment_dir roster.tsv]
+        set stem [file rootname [file tail $Outfile]]
+        foreach issue [spar::apply_approach_patch $Outfile $roster_path $stem] {
+            ${::spar::harness_log}::warn \
+                "\[[my slug]\] roster_patch rejected: [dict getdef $issue message ?]"
+        }
+        $State forget_approach $Outfile
+    }
+
     # Run the full A-phase pipeline. Returns 0 on success, 1 on failure.
     # The try/on-error wrapper turns an uncaught exception into a logged
     # FAIL line — without it, an exception in load_my_meta or any phase
@@ -161,6 +177,7 @@ oo::class create spar::ApproachHarness {
             if {[my run_spar_loop]}               { return 1 }
             if {[my do_assembly]}                 { return 1 }
             if {[my do_post_assembly_validation]} { return 1 }
+            my apply_declarations
             my do_summary
             return 0
         } on error {err opts} {
@@ -410,7 +427,7 @@ oo::class create spar::ApproachHarness {
 oo::class create spar::ProfileHarness {
     superclass spar::Harness
 
-    variable State Outfile RosterPath RosterLock RequiredSkills \
+    variable State Outfile RosterPath RequiredSkills \
              Stem ContactName ContactOrg ContactEmail
 
     # Profile workers run under an explicit allow-list instead of
@@ -515,7 +532,18 @@ oo::class create spar::ProfileHarness {
             return [list [dict create severity error code missing_profile \
                           message "The profile file was not written to $Outfile"]]
         }
-        set errors [spar::validate_profile $Outfile $row $slug]
+        # Mediated roster writes: apply the deliverable's declarations
+        # (star sync, one-shot roster_patch, sweep_feedback) before
+        # validating, so validation sees the roster the declaration
+        # produced. Runs on every attempt: idempotent by stamp, and a
+        # fix-loop resume that edits the declaration gets it applied on
+        # the re-validate. Rejections join the error list and drive the
+        # same fix loop.
+        set errors [spar::apply_roster_patch $Outfile $RosterPath $Stem]
+        if {[llength $errors] == 0} {
+            set row [my _roster_row $RosterPath $slug]
+        }
+        lappend errors {*}[spar::validate_profile $Outfile $row $slug]
         # Segment-scoped roster checks reach this harness via
         # contact_name match — within-segment duplicates and
         # shared-inbox collisions surface here for resume.
@@ -635,13 +663,6 @@ oo::class create spar::ProfileHarness {
         set Outfile      [dict get $meta OUTFILE]
         set RosterPath   [dict get $meta ROSTER_PATH]
         set Stem         [dict get $meta STEM]
-        # The dispatcher is the canonical home of the per-segment lock path
-        # (.roster.lock beside the roster); it writes ROSTER_LOCK into
-        # meta.env. Fall back to the same derivation only for a prompt dir
-        # written before that key existed, so a standalone resume still
-        # serialises on the right lock.
-        set RosterLock   [dict getdef $meta ROSTER_LOCK \
-                              [file join [file dirname $RosterPath] .roster.lock]]
         set RequiredSkills [dict getdef $meta REQUIRED_SKILLS ""]
         set ContactName  [dict getdef $meta CONTACT_NAME ""]
         set ContactOrg   [dict getdef $meta CONTACT_ORG ""]
@@ -702,8 +723,7 @@ oo::class create spar::ProfileHarness {
         set finalise_prompt [my load_prompt spar-p-finalise [dict create \
             STEM        $Stem \
             OUTFILE     $Outfile \
-            ROSTER_PATH $RosterPath \
-            ROSTER_LOCK $RosterLock]]
+            ROSTER_PATH $RosterPath]]
         if {[my resume "finalise" $finalise_log $finalise_prompt]} {
             ${::spar::harness_log}::warn \
                 "\[$slug\] Finalise resume did not close cleanly; validating the on-disk product anyway"

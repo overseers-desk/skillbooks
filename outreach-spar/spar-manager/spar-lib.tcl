@@ -459,6 +459,231 @@ proc spar::update_roster_field {tsv_path key_col key_val field_col new_val} {
     return $updated
 }
 
+# apply_roster_patch — harness-mediated roster writes. A harnessed worker
+# declares roster changes in its deliverable's front matter instead of
+# writing the TSV itself; this proc validates the declaration and applies
+# it, so a worker defect can corrupt at most its own declaration, not the
+# roster (the 2026-07-17 incident was a worker UPDATE without a WHERE
+# clause reaching 249 rows). Three declaration surfaces:
+#   star_rating          — authoritative in the deliverable; the roster
+#                          column is a derived cache, synced whenever the
+#                          two differ. No stamp: sync is unconditional.
+#   roster_patch         — dict of one-shot column writes. One-shot
+#                          because a later comparison cannot distinguish
+#                          "not yet applied" from "a human corrected the
+#                          roster afterwards"; the roster_patch_applied
+#                          stamp written back into the deliverable makes
+#                          a replay inert and protects the human's edit.
+#   sweep_feedback       — list of {kind note} observations, appended to
+#                          the segment's sweep-feedback.tsv. Gated by the
+#                          same stamp so a reconcile replay cannot
+#                          double-append.
+# Serialisation matches update_roster_field: the dispatcher's single
+# event loop is the sole writer. Returns a list of issue dicts
+# (severity/code/message), empty when applied clean; issues feed the
+# caller's fix loop.
+proc spar::apply_roster_patch {profile_path roster_path stem} {
+    set fm [spar::read_profile_front_matter $profile_path]
+    if {$fm eq ""} { return {} }
+
+    set issues {}
+    set rows [spar::load_roster $roster_path]
+    set row ""
+    foreach r $rows {
+        if {[dict getdef $r stem ""] eq $stem} { set row $r; break }
+    }
+    if {$row eq ""} {
+        return [list [dict create severity error code patch_stem_unknown \
+            message "roster_patch: stem '$stem' has no roster row in $roster_path"]]
+    }
+
+    set pending {}
+
+    # star_rating: deliverable is home, roster is cache. An excluded row
+    # is left alone: exclusion (typically A-phase, star 0 + date_excluded)
+    # outranks the profile's pre-exclusion star, and syncing it back
+    # would resurrect an excluded contact.
+    if {[dict exists $fm star_rating] \
+            && [dict getdef $row date_excluded ""] eq ""} {
+        set s [dict get $fm star_rating]
+        if {[string is integer -strict $s] \
+                && [dict getdef $row star_rating ""] ne $s} {
+            dict set pending star_rating $s
+        }
+    }
+
+    set stamped [dict exists $fm roster_patch_applied]
+    # star_rating is admitted for the A-phase exclusion write (star 0 with
+    # date_excluded); P declares its star through the front matter itself.
+    set allowed {contact_name organisation role phone email \
+                 linkedin_url facebook_url date_excluded p_note star_rating}
+
+    if {[dict exists $fm roster_patch] && !$stamped} {
+        dict for {k v} [dict get $fm roster_patch] {
+            if {$k ni $allowed} {
+                lappend issues [dict create severity error \
+                    code patch_unknown_column \
+                    message "roster_patch key '$k' is not an applyable roster column (allowed: $allowed)"]
+                continue
+            }
+            if {$k eq "email" && [string match {*\**} $v]} {
+                lappend issues [dict create severity error \
+                    code patch_masked_email \
+                    message "roster_patch email '$v' is masked; find the unmasked address or omit the key"]
+                continue
+            }
+            dict set pending $k $v
+        }
+    }
+
+    if {[llength $issues]} { return $issues }
+
+    if {[dict size $pending]} {
+        set fd [open $roster_path r]
+        fconfigure $fd -translation binary
+        gets $fd header_line
+        close $fd
+        set header_line [string map {\r\n "" \r ""} $header_line]
+        set headers [split $header_line \t]
+        foreach r $rows {
+            if {[dict getdef $r stem ""] eq $stem} {
+                dict for {k v} $pending { dict set r $k $v }
+            }
+            lappend out_rows $r
+        }
+        set tmp [exec mktemp "${roster_path}.XXXXXX"]
+        try {
+            spar::write_roster $tmp $out_rows $headers
+            file rename -force $tmp $roster_path
+            set tmp ""
+        } finally {
+            if {$tmp ne "" && [file exists $tmp]} { catch {file delete $tmp} }
+        }
+    }
+
+    if {!$stamped && ([dict exists $fm roster_patch] \
+                      || [dict exists $fm sweep_feedback])} {
+        if {[dict exists $fm sweep_feedback]} {
+            set fb_path [file join [file dirname $roster_path] sweep-feedback.tsv]
+            set fd [open $fb_path a]
+            foreach entry [dict get $fm sweep_feedback] {
+                set kind [dict getdef $entry kind observation]
+                set note [string map {\t " " \n " "} [dict getdef $entry note ""]]
+                if {$note ne ""} { puts $fd "$stem\t$kind\t$note" }
+            }
+            close $fd
+        }
+        spar::_stamp_patch_applied $profile_path
+    }
+    return {}
+}
+
+# apply_approach_patch — the A-phase twin of apply_roster_patch. Approach
+# files are whole-file YAML rather than front-matter documents, so the
+# declaration is a root roster_patch key; the stamp is appended as a root
+# line. No star sync: the approach is not star_rating's home. Same
+# one-shot semantics and issue-list return.
+proc spar::apply_approach_patch {approach_path roster_path stem} {
+    if {[catch {spar::read_approach_yaml $approach_path} adata]} { return {} }
+    if {$adata eq "" || ![dict exists $adata roster_patch]} { return {} }
+    if {[dict exists $adata roster_patch_applied]} { return {} }
+    set fm [dict create \
+        roster_patch [dict get $adata roster_patch]]
+    set issues [spar::_apply_patch_only $fm $roster_path $stem]
+    if {[llength $issues] == 0} {
+        set fd [open $approach_path a]
+        puts $fd "roster_patch_applied: [clock format [clock seconds] -format %Y-%m-%d]"
+        close $fd
+    }
+    return $issues
+}
+
+# _apply_patch_only — shared core: validate a roster_patch dict and write
+# the pending columns onto the stem's roster row in one atomic rewrite.
+proc spar::_apply_patch_only {fm roster_path stem} {
+    set issues {}
+    set rows [spar::load_roster $roster_path]
+    set found 0
+    foreach r $rows {
+        if {[dict getdef $r stem ""] eq $stem} { set found 1; break }
+    }
+    if {!$found} {
+        return [list [dict create severity error code patch_stem_unknown \
+            message "roster_patch: stem '$stem' has no roster row in $roster_path"]]
+    }
+    set allowed {contact_name organisation role phone email \
+                 linkedin_url facebook_url date_excluded p_note star_rating}
+    set pending {}
+    dict for {k v} [dict get $fm roster_patch] {
+        if {$k ni $allowed} {
+            lappend issues [dict create severity error \
+                code patch_unknown_column \
+                message "roster_patch key '$k' is not an applyable roster column (allowed: $allowed)"]
+            continue
+        }
+        if {$k eq "email" && [string match {*\**} $v]} {
+            lappend issues [dict create severity error \
+                code patch_masked_email \
+                message "roster_patch email '$v' is masked; find the unmasked address or omit the key"]
+            continue
+        }
+        dict set pending $k $v
+    }
+    if {[llength $issues]} { return $issues }
+    if {[dict size $pending] == 0} { return {} }
+    set fd [open $roster_path r]
+    fconfigure $fd -translation binary
+    gets $fd header_line
+    close $fd
+    set header_line [string map {\r\n "" \r ""} $header_line]
+    set headers [split $header_line \t]
+    set out_rows {}
+    foreach r $rows {
+        if {[dict getdef $r stem ""] eq $stem} {
+            dict for {k v} $pending { dict set r $k $v }
+        }
+        lappend out_rows $r
+    }
+    set tmp [exec mktemp "${roster_path}.XXXXXX"]
+    try {
+        spar::write_roster $tmp $out_rows $headers
+        file rename -force $tmp $roster_path
+        set tmp ""
+    } finally {
+        if {$tmp ne "" && [file exists $tmp]} { catch {file delete $tmp} }
+    }
+    return {}
+}
+
+# _stamp_patch_applied — insert roster_patch_applied into the deliverable's
+# front matter, before the closing --- delimiter. tmp+rename like the
+# roster writes, so a crash leaves the old file whole.
+proc spar::_stamp_patch_applied {profile_path} {
+    set fd [open $profile_path r]
+    set content [read $fd]
+    close $fd
+    set lines [split $content \n]
+    set out {}
+    set delims 0
+    set today [clock format [clock seconds] -format %Y-%m-%d]
+    foreach line $lines {
+        if {[string trim $line] eq "---" && [incr delims] == 2} {
+            lappend out "roster_patch_applied: $today"
+        }
+        lappend out $line
+    }
+    set tmp [exec mktemp "${profile_path}.XXXXXX"]
+    try {
+        set fd [open $tmp w]
+        puts -nonewline $fd [join $out \n]
+        close $fd
+        file rename -force $tmp $profile_path
+        set tmp ""
+    } finally {
+        if {$tmp ne "" && [file exists $tmp]} { catch {file delete $tmp} }
+    }
+}
+
 # find_profile — find a profile file matching name/org slugs
 # Port of spar-a-batch.sh lines 108-117
 # Returns the path if found, empty string otherwise
