@@ -4,7 +4,7 @@ package require logger
 package require json
 package require json::write
 package require deadman
-package provide coachman 1.5
+package provide coachman 1.6
 
 # coachman - drives one harnessed `claude -p` CLI session.
 #
@@ -775,8 +775,13 @@ oo::class create coachman::Harness {
                 # top of the next iteration's _invoke return is too late
                 # (it would re-invoke first), so check it here.
                 set SleepCoro [info coroutine]
+                # The timer callback guards against the harness being
+                # destroyed mid-sleep (a pool torn down): a bare
+                # [self] dispatch would fire into a dead command.
                 set SleepTimer [after [expr {$UsageResetSecs * 1000}] \
-                    [list [self] sleep_wake]]
+                    [list apply {obj {
+                        if {[llength [info commands $obj]]} { $obj sleep_wake }
+                    }} [self]]]
                 yield
                 if {$AbortRequested} {
                     my _fail "FAIL ($stage: aborted by caller): $Slug"
