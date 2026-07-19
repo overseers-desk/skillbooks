@@ -425,4 +425,25 @@ assert_eq [spar::halt_dispatch_queue $d] 3 "halt cancels all three queued rows"
 assert_eq [llength [$d queued_jobs]] 0 "nothing queued after the halt"
 $d destroy
 
+section "7. in-flight harness abort registry"
+
+# harness_run publishes each live harness in spar::live_harnesses; the
+# helpers count and abort them. Fake harness instances (an object with an
+# abort method) stand in for the registered coachman harnesses.
+set ::spar::live_harnesses [dict create]
+assert_eq [spar::live_harness_count] 0 "no live harnesses to start"
+
+set ::aborted {}
+foreach row {p1 p2} {
+    set fake [oo::object new]
+    oo::objdefine $fake method abort {} {
+        lappend ::aborted [self]; return 1
+    }
+    dict set ::spar::live_harnesses $row $fake
+}
+assert_eq [spar::live_harness_count] 2 "two live harnesses counted"
+assert_eq [spar::abort_live_harnesses] 2 "both live harnesses told to abort"
+assert_eq [llength $::aborted] 2 "each harness's abort was called"
+set ::spar::live_harnesses [dict create]
+
 finish_tests
