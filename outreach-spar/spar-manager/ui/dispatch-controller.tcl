@@ -332,6 +332,11 @@ oo::class create spar::ui::DispatchController {
         set BurstFinished 0
         set BurstFailed 0
         incr BurstActive [llength $enqueued]
+        # Re-arm the usage-limit halt for this burst: the controller lives
+        # for the whole GUI session, and an operator who cleared the window
+        # and dispatched again needs the halt to fire on a fresh block, not
+        # stay disarmed from a batch ago.
+        unset -nocomplain UsageLimitHalted
 
         my _update_progress_display
         if {$AggregateAfter eq ""} { my aggregate_animate }
