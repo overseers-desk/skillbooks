@@ -12,6 +12,8 @@ Every row must have a `contact_name`. A row without a named person is not a cont
 
 **Programmatic access:** Use `sqlite3` for SQL operations on roster files. Do not use `trdsql`, `q`, `csvq`, or Python's `csv` module — they apply CSV quoting rules to TSV output, corrupting fields that contain double quotes.
 
+**Harnessed writes are mediated.** A worker running under the spar-manager harness does not write the roster: it declares changes in its own deliverable (the profile front matter's `roster_patch` block and `star_rating`, or the approach file's root `roster_patch`), and the harness validates and applies them (`spar::apply_roster_patch` / `spar::apply_approach_patch`), stamping `roster_patch_applied` back into the deliverable so a replay is inert and a later human roster edit stands. `star_rating`'s authoritative home is the profile front matter; the roster column is a cache the harness syncs. The sqlite3 discipline above is the interactive regime: S sweeps, maintenance sessions, and anything else with no harness to mediate. (A worker defect once wrote one facility's contacts across 249 rows in a single unguarded UPDATE; mediation bounds that class to one row.)
+
 ## Core columns
 
 Columns are ordered left-to-right by pipeline stage: identity, contact channels, discovery provenance, validation, then phase handover (S, P). A human scanning a row reads the contact's identity first, then progressively later-stage information. The roster ends at the P phase: it is the segment's campaign-independent population record, so the campaign-bound A and R outputs do not live here (see "Phase handover" below).

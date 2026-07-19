@@ -108,25 +108,6 @@ proc spar::_pool_pre_launch {step_callback total row kind} {
     return [{*}$step_callback $kind $row $_step_ordinal $total]
 }
 
-# spar::delete_roster_locks — best-effort removal of per-segment
-# .roster.lock files (#95) after a dispatch batch completes. The lock is
-# pre-deleted at the start of each segment's prep (_prepare_segment, the
-# canonical home of the path); this is the matching end-of-run sweep so
-# the zero-byte flock target does not linger as debris between runs.
-#
-# Scoped to the segments a batch actually touched, never a campaign-wide
-# glob, so a concurrent dispatcher's lock on a different segment is left
-# intact. Safe only once every worker holding the flock has finished:
-# flock guards the inode, so deleting the path mid-run and letting a
-# later worker recreate it would hand out a second, non-excluding lock.
-# Best-effort: absence is fine (flock has no requirement the file persist
-# between runs), so deletion errors are swallowed.
-proc spar::delete_roster_locks {segment_dirs} {
-    foreach segdir $segment_dirs {
-        if {$segdir eq ""} continue
-        catch {file delete -force -- [file join $segdir .roster.lock]}
-    }
-}
 
 # spar::p::prepare_for_pool — P-phase dispatch entry. Runs per-segment
 # prep (roster read, YAML validation, prompt assembly, DbC-Pre
@@ -204,25 +185,15 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         set goal_path [file join $segment_dir goal.md]
     }
 
-    # Canonical per-segment roster lock path (#95). Dot-prefix so it
-    # hides in `ls`; no `.tsv` infix because the lock is conceptually
-    # roster-shaped, not TSV-shaped. Pre-delete any stale lock from a
-    # prior run so the new run starts clean — flock semantics don't
-    # require deletion, but accumulated cosmetic debris is what bit
-    # the .gitignore three times in this repo's history.
-    set roster_lock [file join $segment_dir .roster.lock]
-    catch {file delete -force -- $roster_lock}
+    # Roster writes are harness-mediated: workers declare changes in their
+    # deliverable's front matter and spar::apply_roster_patch applies them,
+    # so worker prompts carry no lock and no TSV tooling. Stale locks from
+    # the pre-mediation era are swept once here.
+    catch {file delete -force -- [file join $segment_dir .roster.lock]}
 
     variable ::spar::dispatch_script_dir
     set script_dir $::spar::dispatch_script_dir
     set spar_p [file normalize [file join $script_dir .. spar-P-profile.md]]
-    set sqlite3_skill [file normalize [file join $script_dir .. SQLITE3_SKILL.md]]
-    set sqlite3_skill_text ""
-    if {[file exists $sqlite3_skill]} {
-        set _fd [open $sqlite3_skill r]
-        set sqlite3_skill_text [read $_fd]
-        close $_fd
-    }
 
     set overview [dict getdef $cdata usp_document ""]
     set antifacts [dict getdef $cdata antifacts ""]
@@ -266,6 +237,26 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         set required_skills [spar::extract_required_skills $segment_data $segment_yaml]
     }
 
+    set rows [spar::load_roster $roster_path]
+
+    # Startup reconcile: replay any declaration a dead dispatcher left
+    # unapplied. apply_roster_patch is idempotent (star sync compares,
+    # roster_patch is stamp-gated), so replaying every existing profile
+    # is safe; rejections surface as warnings, since fixing belongs to
+    # the row's own next harness run.
+    if {![info exists ::spar::dispatch_log]} {
+        set ::spar::dispatch_log [logger::init spar::dispatch]
+    }
+    foreach row $rows {
+        set _stem [string trim [dict getdef $row stem ""]]
+        if {$_stem eq ""} continue
+        set _ppath [spar::profile_path_for_stem $segment_dir $_stem]
+        if {![file exists $_ppath]} continue
+        foreach _issue [spar::apply_roster_patch $_ppath $roster_path $_stem] {
+            ${::spar::dispatch_log}::warn \
+                "reconcile \[$_stem\] [dict getdef $_issue message ?]"
+        }
+    }
     set rows [spar::load_roster $roster_path]
 
     set count 0
@@ -350,9 +341,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             __OUTFILE__       $outfile \
             __ROSTER_PATH__   $roster_path \
             __STEM__          $stem \
-            __SQLITE3_SKILL__ $sqlite3_skill_text \
             __BROWSER_CMD__   [spar::detect_browser_cmd] \
-            __ROSTER_LOCK__   $roster_lock \
         ] [spar::load_prompt_template spar-p.txt]]
 
         # p_author (campaign prompt_appendices) is NOT appended to the profiler:
@@ -368,10 +357,6 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         puts $fd "STEM=\"$stem\""
         puts $fd "OUTFILE=\"$outfile\""
         puts $fd "ROSTER_PATH=\"$roster_path\""
-        # Canonical per-segment lock path, so a cost-cap finalise resume
-        # (ProfileHarness::do_finalise_after_cost_kill) serialises its roster
-        # write on the same lock the worker prompt uses.
-        puts $fd "ROSTER_LOCK=\"$roster_lock\""
         puts $fd "REQUIRED_SKILLS=\"[join $required_skills { }]\""
         puts $fd "CONTACT_NAME=\"$name\""
         puts $fd "CONTACT_ORG=\"$org\""
@@ -419,8 +404,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
     return [dict create \
         result $result \
         prompt_dirs $prompt_dirs \
-        pre_snapshot $pre_snapshot \
-        roster_lock $roster_lock]
+        pre_snapshot $pre_snapshot]
 }
 
 # ════════════════════════════════════════════════════════════════════════

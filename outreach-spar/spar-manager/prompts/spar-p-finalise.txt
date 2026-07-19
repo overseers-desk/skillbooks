@@ -1,19 +1,18 @@
-The previous turn of this profiling task was stopped by a budget circuit-breaker. The kill normally lands after the expensive research and the profile body are written, but before the cheap finalisation the procedure orders last (the roster `star_rating` write and the YAML front matter). Finalise now using only what is already in this session.
+The previous turn of this profiling task was stopped by a budget circuit-breaker. The kill normally lands after the expensive research and the profile body are written, but before the cheap finalisation the procedure orders last (the YAML front matter with its declarations). Finalise now using only what is already in this session.
 
 Stop all research and tool use. Do not fetch, search, or browse. Do not start new research of any kind — the budget is nearly spent and a fresh search will be killed again.
 
 Working context, re-stated because a resumed session reloads skill descriptions fresh and must not assume the earlier prompt's context survived:
 - STEM: __STEM__ — the roster stem; the profile file must be named exactly {stem}.md
-- OUTFILE: __OUTFILE__ — the profile document
-- ROSTER_PATH: __ROSTER_PATH__ — the segment roster TSV
-- ROSTER_LOCK: __ROSTER_LOCK__ — the canonical roster lock file
+- OUTFILE: __OUTFILE__ — the profile document, your only write surface
+- ROSTER_PATH: __ROSTER_PATH__ — the segment roster TSV, read-only to you; the harness applies your declarations to it
 
 Using only what is already in this session, complete the finalisation steps (SPAR-P §4.13 and §5.1):
 
 1. Ensure the profile body is written to OUTFILE — the research, evidence, relevance assessment, and verification corrections you already gathered. If the body is already on disk, leave it as is.
 
-2. Compute `star_rating` (0–5) for STEM against the segment's `rating_rubric`, from the evidence already in this session, and write it to the roster row for STEM via `sqlite3`. Prefix the command with `flock -x __ROSTER_LOCK__` so concurrent workers serialise on the one canonical lock. Use that lock path verbatim.
+2. Compute `star_rating` for STEM against the segment's `rating_rubric`, from the evidence already in this session.
 
-3. Write the YAML front matter at the top of OUTFILE with the SAME `star_rating` already written to the roster, plus `profile_date`, `yield`, and a `dependent_data` snapshot of `contact_name`, `organisation`, `role`, and `date_excluded`. Those are the only front-matter keys the validator accepts. The two `star_rating` copies — front matter and roster — are two physical copies of one logical value and MUST match.
+3. Write the YAML front matter at the top of OUTFILE: `profile_date`, `star_rating` (its authoritative home; the harness syncs the roster cache), `yield`, a `dependent_data` snapshot of `contact_name`, `organisation`, `role`, and `date_excluded`, plus a `roster_patch:` block for any contact-detail backfills or corrections you found (§4.15) and a `sweep_feedback:` list for any sweep-relevant observations. The harness validates and applies these; you write no TSV.
 
-Do not commit, reset, or inspect version control. When the profile file and the roster row are both written and the two `star_rating` copies match, the task is done — stop.
+Do not commit, reset, or inspect version control. When OUTFILE holds the body, the front matter, and your declarations, the task is done — stop.

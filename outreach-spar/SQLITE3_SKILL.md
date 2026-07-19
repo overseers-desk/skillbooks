@@ -1,4 +1,6 @@
-# TSV editing with sqlite3
+# TSV editing with sqlite3 (interactive sessions)
+
+Scope: interactive, unharnessed work — S sweeps, roster maintenance, row inserts. A worker under the spar-manager harness declares roster changes in its deliverable instead (`spar-roster-format.md`, "Harnessed writes are mediated") and has no use for this file.
 
 TSV (IANA text/tab-separated-values) has no quoting mechanism. Most SQL-over-file tools (trdsql, q, csvq) treat TSV as "CSV with tabs" and re-quote fields containing `"` on output — data corruption. sqlite3 `.mode tabs` is a true literal-delimiter mode. UPDATE also avoids enumerating columns — a SELECT rewrite silently drops any column the author forgets.
 

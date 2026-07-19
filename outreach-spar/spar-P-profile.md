@@ -166,7 +166,7 @@ Never write a masked or redacted email address (e.g. `b***@example.com`) to the 
 
 **Shared-inbox rule.** Before writing an email, check whether the same address is already carried by another row in this segment at the same organisation. If it is, do not write the duplicate and do not overwrite the other row. Research for a non-shared alternate — a personal mailbox, a direct-dial address, a `firstname@` form — and write that. If no non-shared alternate can be found, leave this contact's `email` field empty; the approach will proceed via LinkedIn, phone, or (if no reachable channel remains) be excluded. A single shared inbox (`admin@`, `info@`, `hello@`, `grow@`, etc.) must belong to at most one roster row per organisation, because two outreach emails landing in the same inbox on behalf of two different people reads as bulk outreach, not considered correspondence. The runtime post-validator (`roster_shared_inbox_collision`) will reject the second write and re-prompt for this rule.
 
-If the email passes the format gate, the name check, and the shared-inbox check, write it to the roster via `sqlite3`. If not found, record in `p_note`: "email search attempted [date]: no public email found."
+If the email passes the format gate, the name check, and the shared-inbox check, declare it in the profile front matter's `roster_patch:` block; the harness applies it to the roster (an interactive, unharnessed session writes the roster itself per `SQLITE3_SKILL.md`). If not found, record in `p_note` via the same block: "email search attempted [date]: no public email found."
 
 ### 4.9 Web search for public activity beyond LinkedIn
 
@@ -225,7 +225,7 @@ A rating resting on a role cannot stand on a role whose currency the discovery c
 
 If profiling reveals that the contact cannot deliver the segment's intended outcome through the mechanism the segment describes — including cases where §4.2 was not run before profiling began — set `star_rating` to 0 and exclude per §4.2, which includes writing the short exclusion profile. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
 
-**Write `star_rating` in two places: the profile front matter (`star_rating:`) and the roster TSV column.** The profile is the authorial home — it is where P records the assessment and where git history preserves it across later roster edits. The TSV column is the query-optimised copy used by the state machine, band filters, and progress counts. Both must be written by the same P run; `sqlite3` updates the roster row in-place. The two copies are physical replicas of one logical value: they MUST match at end-of-run. **Order matters: write the profile body first, then write the roster TSV (this `sqlite3` step forces a fresh re-read of the rubric), then write the YAML front matter at the top of the profile file with the same value already in the roster.** Writing the front matter first creates a divergence risk: an autoregressive agent's understanding of the rubric matures while writing the body, and an early front-matter value can lag the late roster value (observed: an LLM agent wrote `star_rating: 4` to the front matter and `star_rating=1` to the roster in a single run because the rubric only fully clicked at the §4.13 sqlite step). `response_likelihood` is set by the A phase, not P; do not write it here.
+**The profile front matter is `star_rating`'s authoritative home; the roster TSV column is a derived cache.** The harness syncs the roster from the profile whenever the two differ (`spar::apply_roster_patch`), so a harnessed worker writes the value once, in the front matter, and touches no TSV. **Order still matters: write the profile body first, then compute the rating, then write the front matter** — computing after the body forces a fresh re-read of the rubric, so the recorded value reflects a matured reading rather than an early guess (observed failure when ordered the other way: a front-matter 4 against a rubric-derived 1 in one run). An interactive, unharnessed session updates both copies itself per `SQLITE3_SKILL.md` discipline. `response_likelihood` is set by the A phase, not P; do not write it here.
 
 ### 4.14 Record profile yield
 
@@ -248,7 +248,7 @@ Backfilled emails must pass the §4.8 format gate, name-mismatch check, and shar
 
 Only backfill emails that belong to the contact or their organisation. An email discovered for a different person mentioned in the profile (e.g. a successor, a co-admin) belongs in that person's roster row, not this one.
 
-For each empty contact field where a value was discovered, update the roster using `sqlite3`.
+For each empty contact field where a value was discovered, declare the value in the front matter's `roster_patch:` block for the harness to apply (interactive sessions update the roster directly per `SQLITE3_SKILL.md`).
 
 **Person vs. company.** Ask whether the campaign wants this person or the person currently in this role at this company. If the answer is the role — which is true for most contacts discovered via directories or company listings — and profiling shows someone else now holds it, the roster entry is wrong. Invalidate it per §4.2, add the current person as a new roster row, and do not pass the displaced entry to the A phase. Delete any existing profile for them; git history preserves it. This is the canonical application point for the §4.8 name-mismatch signal.
 
@@ -286,7 +286,7 @@ This style applies at generation time. A separate densification pass over alread
 
 ### 5.1 Front matter
 
-Delimited by `---` fences at the very top of the file, standard Jekyll/Hugo/Pandoc convention. All listed fields are required; the validator rejects files with missing or unknown keys.
+Delimited by `---` fences at the very top of the file, standard Jekyll/Hugo/Pandoc convention. All listed fields are required; the validator rejects files with missing or unknown keys. Three further keys are optional: `roster_patch` (a dict of roster columns the worker declares for the harness to apply — contact_name, organisation, role, phone, email, linkedin_url, facebook_url, date_excluded, p_note), `roster_patch_applied` (the harness's stamp; the worker leaves it alone), and `sweep_feedback` (a list of `{kind, note}` observations the harness appends to the segment's queue).
 
 ```yaml
 ---

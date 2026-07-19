@@ -23,10 +23,17 @@
 # ── Levels ───────────────────────────────────────────────────────────────
 # root's -keys must stay in sync with the front-matter fields listed in
 # spar-P-profile.md §5.1.
-level root           -keys {profile_date star_rating yield dependent_data}
+level root           -keys {profile_date star_rating yield dependent_data \
+                            roster_patch roster_patch_applied sweep_feedback}
 level dependent_data -keys {contact_name organisation role date_excluded}
+# roster_patch carries the worker's declared one-shot roster writes; the
+# harness applies them (spar::apply_roster_patch) and stamps
+# roster_patch_applied. Key set mirrors the applier's allowed columns.
+level roster_patch   -keys {contact_name organisation role phone email \
+                            linkedin_url facebook_url date_excluded p_note}
 
 child root dependent_data dict dependent_data
+child root roster_patch   dict roster_patch
 
 # ── ROOT level rules ─────────────────────────────────────────────────────
 

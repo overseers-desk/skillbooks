@@ -34,7 +34,10 @@
 # Declared in the SAME order as _approach_canonical_keys so the built-in
 # wrong_level hint resolves a misplaced key to the FIRST-declared owning
 # level, matching legacy's dict-order `break` (spar-validate.tcl:74-77).
-level root                 -keys {decisions rounds angle_rationale response_likelihood a_note r_note fact_provenance quality_checklist profile_hash}
+# roster_patch / roster_patch_applied: harness-mediated roster writes
+# (spar::apply_approach_patch) — the worker declares, the harness applies.
+level root                 -keys {decisions rounds angle_rationale response_likelihood a_note r_note fact_provenance quality_checklist profile_hash roster_patch roster_patch_applied}
+level roster_patch         -keys {contact_name organisation role phone email linkedin_url facebook_url date_excluded p_note star_rating}
 level decisions            -keys {channel language angle sender channel_detail subsegment}
 level round                -keys {type number messages verdict fact_check in_character chosen_usps revision_note notes replies antifact_check}
 level message              -keys {channel subject body to actioned_date replied_date reply_summary script text bcc cc director_note to_note phone_note mode parent reply_all}
