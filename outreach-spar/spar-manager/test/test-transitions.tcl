@@ -781,12 +781,13 @@ source [file join $script_dir .. transitions linkedin_send_one.tcl]
 
 # A healthy overseer with every host free: nothing to say.
 set hn_clear {ok true version 0.1 pools {browser {cap 1 inUse 0}} \
-    fault null tripped {} holds {} gates {linkedin.com 0}}
+    fault null lanes {} holds {} gates {linkedin.com {opensIn_s 0 interval_s 900}}}
 assert_eq [spar::li::health_note $hn_clear linkedin.com linkedin.com/send-invite] "" \
     "health_note: clear runner says nothing"
 
 # A host whose rate gate has not freed yet.
-set hn_gated {ok true fault null tripped {} holds {} gates {linkedin.com 40}}
+set hn_gated {ok true fault null lanes {} holds {} \
+    gates {linkedin.com {opensIn_s 40 interval_s 900}}}
 assert_eq [spar::li::health_note $hn_gated linkedin.com linkedin.com/send-invite] \
     "linkedin.com gate 40s" "health_note: a closed gate names host and seconds"
 
@@ -794,19 +795,19 @@ assert_eq [spar::li::health_note $hn_gated linkedin.com linkedin.com/send-invite
 assert_eq [spar::li::health_note $hn_gated facebook.com facebook.com/send] "" \
     "health_note: another host's gate is not this send's business"
 
-# An open breaker on this send's line, and a hold on this send's host.
+# An open breaker on this send's lane, and a hold on this send's host.
 set hn_all {ok true fault null \
-    tripped {linkedin.com/send-invite {since 12:00 count 2 detail boom}} \
-    holds {linkedin.com {jo@example.com {since 1 checked p1}}} \
-    gates {linkedin.com 40}}
+    lanes {linkedin.com/send-invite {since 2026-07-19T12:00:00 count 2 detail boom}} \
+    holds {linkedin.com {jo@example.com {since 2026-07-19T12:00:00 checked p1}}} \
+    gates {linkedin.com {opensIn_s 40 interval_s 900}}}
 assert_eq [spar::li::health_note $hn_all linkedin.com linkedin.com/send-invite] \
-    "linkedin.com gate 40s; line tripped after 2 failures; account not signed in: jo@example.com" \
+    "linkedin.com gate 40s; lane tripped after 2 failures; account not signed in: jo@example.com" \
     "health_note: gate, trip and hold read together in one phrase"
 
-# A trip on a different line leaves this one alone.
+# A trip on a different lane leaves this one alone.
 assert_eq [spar::li::health_note $hn_all linkedin.com linkedin.com/send-message] \
     "linkedin.com gate 40s; account not signed in: jo@example.com" \
-    "health_note: another line's trip is not this send's"
+    "health_note: another lane's trip is not this send's"
 
 # A document missing the keys entirely (an older runner) reads as clear
 # rather than erroring.

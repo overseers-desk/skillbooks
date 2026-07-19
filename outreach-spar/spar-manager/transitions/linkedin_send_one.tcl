@@ -1,8 +1,8 @@
 # spar-manager/transitions/linkedin_send_one.tcl
 #
 # spar::li::send_one — per-row LinkedIn send through the overseer's
-# POST /run (contract: docs/overseer-protocol.md in the overseer's own
-# repository). The overseer owns the logged-in browser, the profile
+# POST /run (contract: docs/ducks-protocol.md in the Matter repository,
+# the runner's design home). The overseer owns the logged-in browser, the profile
 # lock, and the linkedin.com rate gate; this helper asks it to run one
 # send primitive and interprets the primitive's result. Fail-fast rule:
 # GET /health is probed first, and an absent or unhealthy overseer is
@@ -98,24 +98,29 @@ proc ::spar::li::_fault_suffix {doc} {
 # phrase, or "" when the way is clear. The document is the one _health
 # already fetched, so this costs no extra round trip.
 #
-#   gates    host -> seconds until that host's rate gate frees
-#   tripped  line -> {since count detail}, an open circuit breaker; a
-#            send's line is its skill ref
+#   gates    host -> {opensIn_s, interval_s}: the seconds until that
+#            host's rate gate frees, beside the interval it counts from
+#   lanes    lane -> {since count detail}, an open circuit breaker; a
+#            send's lane is its skill ref
 #   holds    host -> identity -> {...}, an account declined until someone
 #            signs it in again
 #
-# Every key is read by host or by line, so a platform added later reads
+# Every key is read by host or by lane, so a platform added later reads
 # out of the same document with no change here.
-proc ::spar::li::health_note {h host {line ""}} {
+proc ::spar::li::health_note {h host {lane ""}} {
     set parts {}
-    set secs [dict getdef $h gates $host 0]
+    # The gate names its unit in the key: take the countdown, not the
+    # interval standing beside it. Guarded, so a document shaped another
+    # way cannot throw in a send's path.
+    set secs 0
+    catch {set secs [dict get $h gates $host opensIn_s]}
     if {[string is integer -strict $secs] && $secs > 0} {
         lappend parts "$host gate ${secs}s"
     }
-    if {$line ne ""} {
-        set trip [dict getdef $h tripped $line ""]
+    if {$lane ne ""} {
+        set trip [dict getdef $h lanes $lane ""]
         if {$trip ne ""} {
-            lappend parts "line tripped after [dict getdef $trip count "repeated"] failures"
+            lappend parts "lane tripped after [dict getdef $trip count "repeated"] failures"
         }
     }
     set held [dict keys [dict getdef $h holds $host ""]]
