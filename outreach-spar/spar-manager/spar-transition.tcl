@@ -83,6 +83,11 @@ OPTIONS
                       one; the bound port is logged at startup.
                       `echo drain | nc 127.0.0.1 <port>` stops launching
                       and lets the in-flight workers finish.
+                      `echo "setenv NAME=VALUE" | nc 127.0.0.1 <port>`
+                      changes a worker environment variable mid-run
+                      (e.g. CLAUDE_CONFIG_DIR to swap accounts); the
+                      same NAME=VALUE form on this command line sets
+                      the at-launch default.
     --yes             skip the up-front [y/N] prompt for transitions
                       that require it (T6 SES). Use in cron.
     -v, --verbose     in report mode, list each contact (default: counts only)
@@ -238,7 +243,7 @@ if {$dispatching && $control_port != 0} {
         ${::spar::transitions_log}::warn "control socket: none bound ($res) — run continues without one"
     } else {
         lassign $res _control_srv _bound_port
-        ${::spar::transitions_log}::info "Control socket: 127.0.0.1:$_bound_port — stop with: echo drain | nc 127.0.0.1 $_bound_port"
+        ${::spar::transitions_log}::info "Control socket: 127.0.0.1:$_bound_port — stop with: echo drain | nc 127.0.0.1 $_bound_port ; swap worker env with: echo \"setenv NAME=VALUE\" | nc 127.0.0.1 $_bound_port"
     }
 }
 
