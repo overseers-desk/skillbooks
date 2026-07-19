@@ -53,12 +53,12 @@ oo::class create spar::Harness {
     # recovery, stall-kill, cost cap, the fix-loop skeleton); spar supplies the
     # host-specific pieces coachman leaves injectable, plus its one domain method.
 
-    # coachman's injected reach-ins, pointed at spar's own services. coachman
-    # carries a default for each; spar overrides all four.
+    # coachman's injected reach-ins, pointed at spar's own services. The
+    # cost meter stays coachman's default: tallyman and anthropic-rates.tcl
+    # sit beside the vendored module, so the cap is metered as shipped.
     method log_service {}         { return $::spar::harness_log }
     method prompt_root {}         { return $::spar::harness_dir }
     method claude_bin {}          { return [spar::find_tool claude] }
-    method session_cost_usd {sid} { return [spar::worker_cost_usd $sid] }
 
     # inject_courier — substitute __COURIER_SECTION__ in the prompt file with the
     # prefetched courier block (accounts header plus per-contact correspondence
@@ -226,13 +226,13 @@ oo::class create spar::ApproachHarness {
             return 1
         }
 
-        set draft_text [spar::transcript_assistant_text "${author_draft_log}.json"]
-        set draft [spar::extract_between $draft_text "DRAFT_START" "DRAFT_END"]
+        set draft_text [coachman::transcript_assistant_text "${author_draft_log}.json"]
+        set draft [coachman::extract_between $draft_text "DRAFT_START" "DRAFT_END"]
         if {$draft eq ""} {
             my _fail "FAIL (no draft markers): $slug"
             return 1
         }
-        set rationale [spar::extract_between $draft_text "RATIONALE_START" "RATIONALE_END"]
+        set rationale [coachman::extract_between $draft_text "RATIONALE_START" "RATIONALE_END"]
         spar::write_file [file join $prompt_dir draft-current.txt] $draft
         spar::write_file [file join $prompt_dir rationale.txt] $rationale
         return 0
@@ -295,12 +295,12 @@ oo::class create spar::ApproachHarness {
                 return 1
             }
 
-            set rev_text [spar::transcript_assistant_text "${author_rev_log}.json"]
-            set revised_draft [spar::extract_between $rev_text "DRAFT_START" "DRAFT_END"]
+            set rev_text [coachman::transcript_assistant_text "${author_rev_log}.json"]
+            set revised_draft [coachman::extract_between $rev_text "DRAFT_START" "DRAFT_END"]
             if {$revised_draft ne ""} {
                 spar::write_file [file join $prompt_dir draft-current.txt] $revised_draft
             }
-            set revised_rationale [spar::extract_between $rev_text "RATIONALE_START" "RATIONALE_END"]
+            set revised_rationale [coachman::extract_between $rev_text "RATIONALE_START" "RATIONALE_END"]
             if {$revised_rationale ne ""} {
                 spar::write_file [file join $prompt_dir rationale.txt] $revised_rationale
             }
@@ -327,14 +327,14 @@ oo::class create spar::ApproachHarness {
         for {set r 1} {$r <= $Pass} {incr r} {
             set rev_log "${log_prefix}-author-rev${r}.log"
             if {[file exists $rev_log]} {
-                set rev_draft [spar::extract_between [spar::transcript_assistant_text "${rev_log}.json"] "DRAFT_START" "DRAFT_END"]
+                set rev_draft [coachman::extract_between [coachman::transcript_assistant_text "${rev_log}.json"] "DRAFT_START" "DRAFT_END"]
                 if {$rev_draft ne ""} {
                     append all_revisions "\n### A1 Draft [expr {$r + 1}]\n\n$rev_draft\n"
                 }
             }
         }
 
-        set initial_draft [spar::extract_between [spar::transcript_assistant_text "${log_prefix}-author-draft.log.json"] "DRAFT_START" "DRAFT_END"]
+        set initial_draft [coachman::extract_between [coachman::transcript_assistant_text "${log_prefix}-author-draft.log.json"] "DRAFT_START" "DRAFT_END"]
         set final_draft [spar::read_file [file join $prompt_dir draft-current.txt]]
 
         set assembly_prompt [my load_prompt spar-a-assembly [dict create \
@@ -697,37 +697,23 @@ oo::class create spar::ProfileHarness {
     # star_rating sqlite write and the YAML front matter, which the prompt
     # orders last), so discarding the worker loses near-all the spend and
     # leaves a body-only profile with no front matter that the validator
-    # rejects. Resume the captured session once with a self-contained
-    # finalise prompt that does no research, so it cannot re-spend the
-    # research budget. The post-profile validate_and_correct in run() is the
-    # verdict: a now-complete profile lands DONE, a still-partial one resumes
+    # rejects. coachman's finalise_resume does the single bounded resume
+    # under the cap plus its headroom, with a self-contained finalise
+    # prompt that does no research, so it cannot re-spend the research
+    # budget; absent a captured session it warns and resumes nothing. The
+    # post-profile validate_and_correct in run() is the verdict either
+    # way: a now-complete profile lands DONE, a still-partial one resumes
     # to be fixed.
     method do_finalise_after_cost_kill {} {
-        set slug [my slug]
-        if {[my session_id] eq ""} {
-            # The init event never landed, so there is no session to resume.
-            # Fall through to validation, which surfaces the partial profile.
-            ${::spar::harness_log}::warn \
-                "\[$slug\] Cost cap fired before a session_id was captured — cannot resume to finalise"
-            return
+        if {[my session_id] ne ""} {
+            ${::spar::harness_log}::info \
+                "\[[my slug]\] \[phase: finalising (post cost-cap)\]"
         }
-        ${::spar::harness_log}::info "\[$slug\] \[phase: finalising (post cost-cap)\]"
-        # Bound the finalise resume. worker_cost_usd meters the resumed
-        # session cumulatively (--resume appends to the same transcript), so
-        # the cap must sit ABOVE the spend already booked: cap + $2 gives the
-        # finalise ~$2 of headroom. A flat $2 cap would re-trip on the first
-        # poll because the worker already crossed cap. Zero cap is impossible
-        # here (rc==3 only fires when the watchdog is armed, i.e. cap > 0).
-        my set_worker_cost_cap [expr {[my cost_cap] + 2.0}]
-        set finalise_log "[my log_prefix]-finalise.log"
-        set finalise_prompt [my load_prompt spar-p-finalise [dict create \
-            STEM        $Stem \
-            OUTFILE     $Outfile \
-            ROSTER_PATH $RosterPath]]
-        if {[my resume "finalise" $finalise_log $finalise_prompt]} {
-            ${::spar::harness_log}::warn \
-                "\[$slug\] Finalise resume did not close cleanly; validating the on-disk product anyway"
-        }
+        my finalise_resume finalise "[my log_prefix]-finalise.log" \
+            [my load_prompt spar-p-finalise [dict create \
+                STEM        $Stem \
+                OUTFILE     $Outfile \
+                ROSTER_PATH $RosterPath]]
     }
 
     method do_summary {} {
