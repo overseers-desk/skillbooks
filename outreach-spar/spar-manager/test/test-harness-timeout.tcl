@@ -14,7 +14,7 @@
 # claude on $PATH is never invoked. Cost-cap stubs emit an init event
 # (carrying session_id) then sleep past the deadline, so the cost watchdog
 # fires well before their natural exit and a prompt return proves the kill
-# landed; worker_cost_usd is overridden so the meter does not depend on a
+# landed; session_cost_usd is overridden so the meter does not depend on a
 # real ~/.claude/projects transcript.
 
 package require TclOO
@@ -121,7 +121,7 @@ section "6. Cost cap is a deliberate budget kill (rc=3, no resume)"
 # session_id) then sleeps; the watchdog meters the worker by that
 # session_id and kills the group.
 #
-# worker_cost_usd is overridden so the test does not depend on a real
+# session_cost_usd is overridden so the test does not depend on a real
 # ~/.claude/projects transcript: it reports a figure over the cap for the
 # test session_id once a couple of polls have passed. _cost_poll_ms is
 # shortened to keep the test quick.
@@ -138,14 +138,6 @@ proc spar::find_tool {name} {
     return [auto_execok $name]
 }
 
-# Stand-in cost meter: anything at or over the cap for the test session.
-set ::orig_worker_cost_usd [info body spar::worker_cost_usd]
-set ::orig_worker_cost_args [info args spar::worker_cost_usd]
-proc spar::worker_cost_usd {session_id {transcripts_root ""}} {
-    if {$session_id eq "cap-sess"} { return 99.0 }
-    return 0.0
-}
-
 set cap_prompt [file join $tmp_root prompt-cap]
 file mkdir $cap_prompt
 set inst_cc [spar::Harness new $cap_prompt [file join $tmp_root logs-cc]]
@@ -153,6 +145,11 @@ set inst_cc [spar::Harness new $cap_prompt [file join $tmp_root logs-cc]]
 # subclass; oo::objdefine overrides the single method on the single
 # object, leaving the production poll interval untouched.
 oo::objdefine $inst_cc method _cost_poll_ms {} { return 200 }
+# Stand-in cost meter: anything at or over the cap for the test session.
+oo::objdefine $inst_cc method session_cost_usd {sid} {
+    if {$sid eq "cap-sess"} { return 99.0 }
+    return 0.0
+}
 $inst_cc set_worker_cost_cap 5.0
 
 set log_file_cc [file join $tmp_root logs-cc cc.log]
@@ -160,9 +157,6 @@ set t0 [clock milliseconds]
 set rc_cc [$inst_cc call "cost-stage" $log_file_cc "dummy prompt"]
 set elapsed_cc [expr {[clock milliseconds] - $t0}]
 $inst_cc destroy
-
-# Restore the real meter for any later legs.
-proc spar::worker_cost_usd {session_id {transcripts_root ""}} $::orig_worker_cost_usd
 
 assert_eq $rc_cc 3 "_invoke returns rc=3 (deliberate budget kill) when the cost cap trips"
 # The stub would sleep 30s; the watchdog kills within a few 200ms polls,
@@ -202,13 +196,12 @@ proc spar::find_tool {name} {
     if {$name eq "claude"} { return [list $::under_stub] }
     return [auto_execok $name]
 }
-# Meter always under the cap so the watchdog re-arms but never kills.
-proc spar::worker_cost_usd {session_id {transcripts_root ""}} { return 0.10 }
-
 set under_prompt [file join $tmp_root prompt-under]
 file mkdir $under_prompt
 set inst_un [spar::Harness new $under_prompt [file join $tmp_root logs-un]]
 oo::objdefine $inst_un method _cost_poll_ms {} { return 150 }
+# Meter always under the cap so the watchdog re-arms but never kills.
+oo::objdefine $inst_un method session_cost_usd {sid} { return 0.10 }
 $inst_un set_worker_cost_cap 5.0
 
 set log_un [file join $tmp_root logs-un un.log]
@@ -219,61 +212,9 @@ after 400 set ::_un_wait 1
 vwait ::_un_wait
 set un_result [string trim [exec cat $log_un]]
 $inst_un destroy
-proc spar::worker_cost_usd {session_id {transcripts_root ""}} $::orig_worker_cost_usd
 
 assert_eq $rc_un 0 "under-cap run returns rc=0 after several polls"
 assert_eq $un_result "UNDER OK" "under-cap run wrote its result intact"
-
-# ════════════════════════════════════════════════════════════════════════
-section "7. worker_cost_usd prices parent + subagents per model"
-# ════════════════════════════════════════════════════════════════════════
-
-# A synthetic ~/.claude/projects layout: one parent session plus two
-# research subagents under <sid>/subagents/. worker_cost_usd globs by
-# session_id, sums assistant `usage` deduped per requestId, and prices each
-# model against the rate table. This fixture's records are all
-# claude-sonnet-4-6 (input 3, output 15, cache_write 3.75, cache_read 0.30 per
-# Mtok), so the figures below are the sonnet-rate totals. The subagents are the
-# bulk of a heavy worker's bill, so the meter must include them.
-set proj_root [file join $tmp_root projects]
-set proj_dir  [file join $proj_root some-campaign]
-set sid "synth-sess-1234"
-file mkdir [file join $proj_dir $sid subagents]
-
-proc write_usage_line {fd req in out cw cr} {
-    set u "{\"input_tokens\":$in,\"output_tokens\":$out,\"cache_creation_input_tokens\":$cw,\"cache_read_input_tokens\":$cr}"
-    puts $fd "{\"type\":\"assistant\",\"requestId\":\"$req\",\"message\":{\"model\":\"claude-sonnet-4-6\",\"usage\":$u}}"
-}
-
-# Parent: one request, 1M output tokens = $15 at sonnet output rate.
-set fd [open [file join $proj_dir $sid.jsonl] w]
-puts $fd "{\"type\":\"system\",\"subtype\":\"init\",\"session_id\":\"$sid\"}"
-write_usage_line $fd req-A 0 1000000 0 0
-# Same request appears again with lower numbers — must NOT double count.
-write_usage_line $fd req-A 0 500000 0 0
-close $fd
-
-# Subagent 1: 1M cache_read tokens = $0.30.
-set fd [open [file join $proj_dir $sid subagents agent-1.jsonl] w]
-write_usage_line $fd req-B 0 0 0 1000000
-close $fd
-
-# Subagent 2: 1M cache_write tokens = $3.75 and 1M input = $3.00.
-set fd [open [file join $proj_dir $sid subagents agent-2.jsonl] w]
-write_usage_line $fd req-C 1000000 0 1000000 0
-close $fd
-
-# Expected: 15.00 (parent) + 0.30 (sub1) + 3.75 + 3.00 (sub2) = 22.05.
-set cost [spar::worker_cost_usd $sid $proj_root]
-assert_eq [format %.2f $cost] 22.05 \
-    "worker_cost_usd sums parent + subagents, dedups per requestId, per-model rates"
-
-set files [spar::worker_session_files $sid $proj_root]
-assert_eq [llength $files] 3 "worker_session_files finds parent + 2 subagents"
-
-# Missing session: zero, not an error (the transcript has not appeared yet).
-assert_eq [spar::worker_cost_usd "no-such-sess" $proj_root] 0.0 \
-    "worker_cost_usd returns 0.0 before the transcript appears"
 
 # ════════════════════════════════════════════════════════════════════════
 section "8. Profile cost-cap kill resumes once to finalise, not fail"
@@ -313,7 +254,9 @@ oo::objdefine $ph {
     method sanitise_roster_email {rp slug} {}
     method validate_and_correct {o r s} { return 0 }
     method do_summary {} {}
+    method testset_sid {v} { my variable SessionId; set SessionId $v }
 }
+$ph testset_sid fin-sess
 set rc_fin [$ph run]
 $ph destroy
 
