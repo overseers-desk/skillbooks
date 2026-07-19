@@ -11,7 +11,16 @@
 #   drain — cancel every queued row and launch nothing further; the
 #           in-flight workers finish undisturbed, the run summarises
 #           and exits, and an --auto loop starts no further pass.
-# Operator command:  echo drain | nc 127.0.0.1 <port>
+#   setenv NAME=VALUE — set an environment variable in the dispatcher
+#           process. Workers launched from then on inherit it; workers
+#           already running keep the environment they started with.
+#           The operator's case: half-way through a batch one Claude
+#           account runs out, so `setenv CLAUDE_CONFIG_DIR=<other>`
+#           points every subsequent `claude -p` at a different account
+#           without stopping the run. The same NAME=VALUE form is
+#           accepted on the CLI command line for the at-launch default.
+# Operator commands:  echo drain | nc 127.0.0.1 <port>
+#                     echo "setenv CLAUDE_CONFIG_DIR=$HOME/.claude-b" | nc 127.0.0.1 <port>
 #
 # The port is a per-process stop channel, not a lock: each dispatch
 # gets its own so it can be stopped on its own. When the preferred
@@ -62,14 +71,15 @@ proc spar::_control_read {chan} {
         if {[eof $chan]} { catch {close $chan} }
         return
     }
-    switch -- [string trim $line] {
-        drain {
-            set cancelled [spar::control_drain]
-            catch {puts $chan "ok: draining ($cancelled queued row(s) cancelled)"}
-        }
-        default {
-            catch {puts $chan "error: unknown command (try: drain)"}
-        }
+    set line [string trim $line]
+    if {$line eq "drain"} {
+        set cancelled [spar::control_drain]
+        catch {puts $chan "ok: draining ($cancelled queued row(s) cancelled)"}
+    } elseif {[regexp {^setenv\s+([A-Za-z_][A-Za-z0-9_]*)=(.*)$} $line -> _name _val]} {
+        set ::env($_name) $_val
+        catch {puts $chan "ok: $_name set for workers launched from now on"}
+    } else {
+        catch {puts $chan "error: unknown command (try: drain | setenv NAME=VALUE)"}
     }
     catch {close $chan}
 }

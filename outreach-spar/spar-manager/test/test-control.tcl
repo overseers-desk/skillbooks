@@ -73,7 +73,7 @@ set reply [send_command $port drain]
 assert_eq $reply "ok: draining (0 queued row(s) cancelled)" "second drain finds nothing to cancel"
 
 set reply [send_command $port status]
-assert_eq $reply "error: unknown command (try: drain)" "unknown verb refused"
+assert_eq $reply "error: unknown command (try: drain | setenv NAME=VALUE)" "unknown verb refused"
 
 $disp destroy
 set ::spar::control_dispatcher ""
@@ -106,5 +106,22 @@ assert_eq [expr {$second_port > $first_port}] 1 \
 
 close $first_srv
 close $second_srv
+
+# ── setenv: the second protocol verb ─────────────────────────────────
+section "setenv sets ::env for later worker launches"
+
+lassign [spar::control_listen_from 0] env_srv env_port
+catch {unset ::env(SPAR_TEST_SETENV)}
+set reply [send_command $env_port "setenv SPAR_TEST_SETENV=/tmp/claude-b"]
+assert_match $reply "ok: SPAR_TEST_SETENV*" "setenv replies ok naming the variable"
+assert_eq $::env(SPAR_TEST_SETENV) "/tmp/claude-b" "setenv lands in ::env"
+
+set reply [send_command $env_port "setenv 1BAD=x"]
+assert_match $reply "error: unknown command*" "malformed name rejected"
+
+set reply [send_command $env_port "bogus"]
+assert_match $reply "*setenv NAME=VALUE*" "unknown-command reply names both verbs"
+unset ::env(SPAR_TEST_SETENV)
+close $env_srv
 
 finish_tests

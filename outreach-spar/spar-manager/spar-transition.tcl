@@ -141,6 +141,19 @@ if {[dict get $parse_result ok] != 1} {
 }
 set spec [dict get $parse_result spec]
 
+# NAME=VALUE assignments from the command line: the at-launch form of
+# the control socket's setenv. Applied before any worker launches, so
+# every `claude -p` this run spawns inherits them; the socket changes
+# them mid-run. Tilde expands so CLAUDE_CONFIG_DIR=~/.claude means the
+# home-relative path, as an operator expects.
+foreach _ea [dict getdef $spec env_assignments {}] {
+    lassign $_ea _ename _eval
+    if {[string index $_eval 0] eq "~"} {
+        catch {set _eval [file normalize $_eval]}
+    }
+    set ::env($_ename) $_eval
+}
+
 if {[dict get $spec help]} { print_help; exit 0 }
 
 set campaign_path [dict get $spec campaign_path]

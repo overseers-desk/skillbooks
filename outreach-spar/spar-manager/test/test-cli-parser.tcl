@@ -161,4 +161,14 @@ assert_eq [dict get $result ok] 1 "any positional path parses ok"
 assert_eq [dict get [dict get $result spec] campaign_path] "some-campaign-dir" \
     "campaign_path captured verbatim"
 
+# NAME=VALUE tokens are environment assignments, recorded in order; a
+# path positional is untouched by the env grammar.
+set result [spar::parse_cli {/tmp/x.yaml T1 CLAUDE_CONFIG_DIR=/home/op/.claude-b FOO_2=bar}]
+assert_eq [dict get $result ok] 1 "env assignments parse ok"
+assert_eq [dict get [dict get $result spec] env_assignments] \
+    {{CLAUDE_CONFIG_DIR /home/op/.claude-b} {FOO_2 bar}} \
+    "env assignments captured in order"
+assert_eq [dict get [dict get $result spec] campaign_path] "/tmp/x.yaml" \
+    "campaign path still captured beside env assignments"
+
 finish_tests
