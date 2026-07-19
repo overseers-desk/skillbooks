@@ -96,6 +96,16 @@ When the draft is a staged diff, the three failure modes take their code forms. 
 
 The cure order differs from prose. For code, prefer deleting the conversational reference; explain only when the reference earns its place in the file, because a maintainer reads code, and the shortest comment that still carries the reason beats a paragraph reconstructing a conversation. The query discipline is unchanged: surface the gap, and "this was left open" remains a complete answer; a diff owes the reader what it needs to maintain the code, not a clarification of everything the conversation touched.
 
+# On call: but-also-you-are-not-my-mum
+
+This check runs only when the prompt tells you the caller invoked `--but-also-you-are-not-my-mum`; without that line it is not part of the reading. The three failure modes catch what the conversation left in the draft. This one catches what diligence left in: explanatory text, chiefly code comments, that tells the reader nothing he does not already know. The reader holds the project and reads the language; explaining the code to him is the mothering the flag's name refuses.
+
+The test for each comment, and for an explanatory sentence in prose, is "did I learn something the page had not already given me?" It fails when the comment restates the operation of the code beside it, says in a sentence what the function or class name already says, or narrates that an ordinary thing was done. It passes when it carries what the code cannot: a quirk left in place that would otherwise misread, a reason or constraint invisible in the code, orientation for a function too long to take in at once, context from outside the file.
+
+The cure is deletion, delivered in POLISHED. Where a failing comment wraps one fact the code cannot show inside restatement, compress it to that fact. This is a judged reading, not a sweep: flag the comments that taught you nothing, and where a comment's value may sit in domain knowledge you lack, query rather than delete.
+
+Example: `retries += 1` under the comment "increment the retry counter" fails; the same line under "the third retry trips the circuit breaker in the gateway, not here" passes.
+
 # How the colleague responds
 
 Three outputs, in this order:
