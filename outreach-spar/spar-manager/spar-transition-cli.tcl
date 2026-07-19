@@ -103,7 +103,15 @@ proc spar::parse_cli {argv} {
                 # path. Prefix `Tn` decides which path: any token
                 # starting with T followed by digits is a transition
                 # token.
-                if {[regexp {^T[0-9]+} $arg]} {
+                if {[regexp {^([A-Za-z_][A-Za-z0-9_]*)=(.*)$} $arg -> _ename _eval]} {
+                    # Environment assignment (make-style): the at-launch
+                    # form of the control socket's setenv. Recorded in
+                    # the spec; the script layer applies it to ::env
+                    # before dispatch, so every worker inherits it
+                    # (e.g. CLAUDE_CONFIG_DIR=~/.claude selecting the
+                    # account all `claude -p` workers run under).
+                    dict lappend spec env_assignments [list $_ename $_eval]
+                } elseif {[regexp {^T[0-9]+} $arg]} {
                     if {[regexp {^(T[0-9]+)$} $arg -> tid]} {
                         set seg ""
                         set stem ""
