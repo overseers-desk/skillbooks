@@ -119,6 +119,11 @@ proc ses_send {row opts} {
 # cap.
 proc linkedin_send {row opts} {
     checkpoint $row
+    # A send parks server-side behind the rate gate, an open breaker or a
+    # held account, and the row would otherwise show nothing for the whole
+    # wait. send_one's probe already reads why, so hand it the pool's phase
+    # verb to say so; the GUI shows a running row's phase as its reason.
+    dict set opts note_cmd [list ::jobloop::worker::phase $row]
     set rc [catch {::spar::li::send_one $opts} result]
     if {$rc != 0} {
         failed $row "linkedin_send: $result"

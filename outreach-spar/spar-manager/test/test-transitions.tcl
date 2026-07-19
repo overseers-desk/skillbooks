@@ -772,4 +772,51 @@ assert_eq [dict get [lindex $au_miss 0] severity] "warning" \
     "audit: missing transcript → severity=warning"
 
 
+# ════════════════════════════════════════════════════════════════════════
+# spar::li::health_note: the overseer's /health read back as a row reason
+# ════════════════════════════════════════════════════════════════════════
+section "spar::li::health_note: what stands in a send's way"
+
+source [file join $script_dir .. transitions linkedin_send_one.tcl]
+
+# A healthy overseer with every host free: nothing to say.
+set hn_clear {ok true version 0.1 pools {browser {cap 1 inUse 0}} \
+    fault null tripped {} holds {} gates {linkedin.com 0}}
+assert_eq [spar::li::health_note $hn_clear linkedin.com linkedin.com/send-invite] "" \
+    "health_note: clear runner says nothing"
+
+# A host whose rate gate has not freed yet.
+set hn_gated {ok true fault null tripped {} holds {} gates {linkedin.com 40}}
+assert_eq [spar::li::health_note $hn_gated linkedin.com linkedin.com/send-invite] \
+    "linkedin.com gate 40s" "health_note: a closed gate names host and seconds"
+
+# The gate belongs to the host asked about, not to any host in the document.
+assert_eq [spar::li::health_note $hn_gated facebook.com facebook.com/send] "" \
+    "health_note: another host's gate is not this send's business"
+
+# An open breaker on this send's line, and a hold on this send's host.
+set hn_all {ok true fault null \
+    tripped {linkedin.com/send-invite {since 12:00 count 2 detail boom}} \
+    holds {linkedin.com {jo@example.com {since 1 checked p1}}} \
+    gates {linkedin.com 40}}
+assert_eq [spar::li::health_note $hn_all linkedin.com linkedin.com/send-invite] \
+    "linkedin.com gate 40s; line tripped after 2 failures; account not signed in: jo@example.com" \
+    "health_note: gate, trip and hold read together in one phrase"
+
+# A trip on a different line leaves this one alone.
+assert_eq [spar::li::health_note $hn_all linkedin.com linkedin.com/send-message] \
+    "linkedin.com gate 40s; account not signed in: jo@example.com" \
+    "health_note: another line's trip is not this send's"
+
+# A document missing the keys entirely (an older runner) reads as clear
+# rather than erroring.
+assert_eq [spar::li::health_note {ok true} linkedin.com linkedin.com/send-invite] "" \
+    "health_note: absent keys read as clear"
+
+# _fault_suffix: fault is null when clear, an object when not.
+assert_eq [spar::li::_fault_suffix {ok false fault null}] "" \
+    "fault_suffix: a null fault adds nothing"
+assert_eq [spar::li::_fault_suffix {ok false fault {when now detail {browser gone}}}] \
+    ": browser gone" "fault_suffix: a real fault names its detail"
+
 finish_tests
