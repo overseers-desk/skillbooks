@@ -4,7 +4,7 @@ package require logger
 package require json
 package require json::write
 package require deadman
-package provide coachman 1.2
+package provide coachman 1.3
 
 # coachman - drives one harnessed `claude -p` CLI session.
 #
@@ -89,6 +89,11 @@ package provide coachman 1.2
 #
 # A usage-limit block never reaches the caller: it is classified inside,
 # waited out, and retried.
+#
+# `abort` cancels an in-flight coroutine-driven run from outside (a GUI
+# cancel, a job loop shutdown); the killed call returns 2 with its
+# fail_cause naming the abort. See the method for the synchronous-mode
+# limit.
 #
 # FILES per call, given `log_file`:
 #   $log_file           the product (the turn's result text)
@@ -238,11 +243,68 @@ proc coachman::_session_files {sid root} {
     return $files
 }
 
+# tool_use_counts - post-hoc audit of a session's tool calls: counts of
+# tool_use blocks across session $sid's transcripts (the parent plus
+# its subagents) under $root. Bare, a dict of tool name to count. With
+# $toolname alone, that tool's count under its own name. With $toolname
+# and $inputfield, a dict of that input field's values to counts across
+# the tool's calls, the shape a did-it-invoke-the-skill audit reads
+# (tool Skill, field skill). Raises with -errorcode
+# {COACHMAN NO_TRANSCRIPT} when no transcript for $sid exists under
+# $root, a distinguishable absence: an empty dict means the session
+# made no matching calls, which is a different fact. A cheap string
+# prefilter runs before each json parse; long sessions run to
+# megabytes and json2dict is slow per line.
+proc coachman::tool_use_counts {sid root {toolname ""} {inputfield ""}} {
+    set files [coachman::_session_files $sid $root]
+    if {[llength $files] == 0} {
+        return -code error -errorcode {COACHMAN NO_TRANSCRIPT} \
+            "no transcript for session $sid under $root"
+    }
+    if {$toolname ne ""} {
+        set prefilter "*\"name\":\"$toolname\"*"
+    } else {
+        set prefilter "*\"type\":\"tool_use\"*"
+    }
+    set counts [dict create]
+    foreach f $files {
+        if {[catch {open $f r} fd]} continue
+        fconfigure $fd -encoding utf-8 -profile replace
+        try {
+            while {[gets $fd line] >= 0} {
+                if {![string match $prefilter $line]} continue
+                if {[catch {set d [::json::json2dict $line]}]} continue
+                set msg [dict getdef $d message [dict create]]
+                foreach blk [dict getdef $msg content {}] {
+                    if {[dict getdef $blk type ""] ne "tool_use"} continue
+                    set name [dict getdef $blk name ""]
+                    if {$name eq ""} continue
+                    if {$toolname eq ""} {
+                        dict incr counts $name
+                        continue
+                    }
+                    if {$name ne $toolname} continue
+                    if {$inputfield eq ""} {
+                        dict incr counts $name
+                        continue
+                    }
+                    set input [dict getdef $blk input [dict create]]
+                    set v [dict getdef $input $inputfield ""]
+                    if {$v ne ""} { dict incr counts $v }
+                }
+            }
+        } finally {
+            close $fd
+        }
+    }
+    return $counts
+}
+
 oo::class create coachman::Harness {
     variable Slug LogPrefix CostLog SessionId PromptDir LogDir \
              WorkerCostCapUsd CostKilled \
-             StallKilled StallTimeoutMs UsageResetSecs \
-             FailCause
+             StallKilled CallerKilled StallTimeoutMs UsageResetSecs \
+             FailCause DeadmanHandle
 
     constructor {prompt_dir log_dir} {
         set PromptDir $prompt_dir
@@ -253,8 +315,10 @@ oo::class create coachman::Harness {
         set SessionId ""
         set CostKilled 0
         set StallKilled 0
+        set CallerKilled 0
         set UsageResetSecs 0
         set FailCause ""
+        set DeadmanHandle ""
         # The per-session cost cap is the sole budget circuit-breaker: it
         # bounds a runaway think/retry loop that spends fast (BOUNDS in
         # the header holds the no-wall-clock rationale). The prompt
@@ -522,6 +586,25 @@ oo::class create coachman::Harness {
         return [my _with_recovery resume $stage $log_file $prompt --resume $SessionId {*}$args]
     }
 
+    # abort - cancel the in-flight run: the outside kill path a GUI
+    # cancel button or a job loop draining at shutdown reaches for. With
+    # a live handle the child group is killed with cause `caller` and 1
+    # is returned; the interrupted call classifies as an external kill
+    # (return 2, the validate-the-product path) and is not retried.
+    # Idle, a no-op returning 0. Only a coroutine-driven run holds a
+    # handle: deadman's synchronous mode blocks its caller until the
+    # child is reaped, so a synchronous caller is itself parked inside
+    # the very run it would abort, and abort from another event source
+    # finds no handle there. An abort racing a watchdog on one tick can
+    # return 1 while the recorded cause is the watchdog's; deadman's
+    # first-cause-wins rule decides, and the return value reports only
+    # that a live run was told to die.
+    method abort {} {
+        if {$DeadmanHandle eq ""} { return 0 }
+        deadman::kill $DeadmanHandle caller
+        return 1
+    }
+
     # finalise_resume - the bounded recovery for a cost-cap kill (a call
     # that returned 3). The budget SIGTERM typically lands after the
     # expensive work and its product are on disk but before the cheap
@@ -721,6 +804,7 @@ oo::class create coachman::Harness {
         set t0 [clock seconds]
         set CostKilled 0
         set StallKilled 0
+        set CallerKilled 0
         # deadman owns the pipe, the stall clock, and the group kill; the
         # budget check rides its poll tick (budget_poll below), and a cost
         # kill beats a stall on a shared tick because the poll callback
@@ -738,15 +822,20 @@ oo::class create coachman::Harness {
         # coroutine (a standalone or a test run) deadman's own vwait blocks
         # until the child is reaped.
         if {[info coroutine] ne ""} {
-            deadman::run $cmd {*}$dm -done [info coroutine]
+            # The returned handle is the outside kill path: abort reaches
+            # it while the run is in flight. Cleared once the result
+            # lands, so abort on an idle harness stays a no-op.
+            set DeadmanHandle [deadman::run $cmd {*}$dm -done [info coroutine]]
             set r [yield]
+            set DeadmanHandle ""
         } else {
             set r [deadman::run $cmd {*}$dm]
         }
         set exit_code [dict get $r exit]
         switch -- [dict get $r cause] {
-            cost  { set CostKilled 1 }
-            stall { set StallKilled 1 }
+            cost   { set CostKilled 1 }
+            stall  { set StallKilled 1 }
+            caller { set CallerKilled 1 }
         }
         set elapsed [expr {[clock seconds] - $t0}]
 
@@ -768,6 +857,15 @@ oo::class create coachman::Harness {
                 my _fail \
                     "FAIL ($stage: cost cap \$$WorkerCostCapUsd reached — budget kill): $Slug"
                 return 3
+            }
+            # A caller abort is an external kill by request: return 2 (the
+            # product may hold real work), and because StallKilled stays 0
+            # the recovery loop does not retry it - an auto-retried abort
+            # would defeat the abort.
+            if {$CallerKilled} {
+                my _fail \
+                    "FAIL ($stage: aborted by caller): $Slug"
+                return 2
             }
             # A stall kill is the same animal as an external kill for
             # recovery (the disk product may hold real work), so it shares

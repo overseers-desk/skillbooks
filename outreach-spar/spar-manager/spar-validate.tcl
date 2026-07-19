@@ -454,65 +454,41 @@ proc spar::_pred_invalid_star_rating {node meta} {
 
 # read_profile_front_matter -- extract and parse the YAML front-matter block
 # of a profile file. Returns parsed dict, or "" on any failure (missing file,
-# audit_skills_in_transcript -- count Skill tool_use invocations in a
-# Claude session transcript. Returns a list of issue dicts (same shape
-# as validate_profile output) with code "<skill>_lookup_missing" for
-# each required skill that has zero invocations. If the transcript file
-# is missing, returns a single warning-severity issue with code
-# transcript_not_found rather than masquerading as a skill miss — a
-# future Claude storage-layout change should not loop the agent.
+# audit_skills_in_transcript -- the SPAR reading of a session's Skill
+# calls: coachman::tool_use_counts does the counting (the worker's
+# parent session plus its research subagents), and this wrapper turns
+# zero counts into issue dicts (same shape as validate_profile output),
+# code "<skill>_lookup_missing" per required skill with no invocation.
+# A missing transcript becomes a single warning-severity issue with
+# code transcript_not_found rather than masquerading as a skill miss —
+# a future Claude storage-layout change should not loop the agent.
 #
 # session_id      UUID returned by claude --output-format json
 # required_skills list of skill IDs (e.g. {linkedin facebook})
 # contact_name    for issue dicts (consumed by validate_and_correct)
-#
-# Glob by session_id rather than reconstructing the project_dir from
-# pwd: the dispatcher does not chdir per-job, claude inherits the
-# spar-manager launch cwd which is not deterministic from here. UUID
-# v4 collision risk is negligible.
 proc spar::audit_skills_in_transcript {session_id required_skills contact_name {transcripts_root ""}} {
-    set issues {}
     if {$transcripts_root eq ""} {
         set transcripts_root [file join $::env(HOME) .claude projects]
     }
-    set matches [glob -nocomplain \
-        -directory $transcripts_root \
-        -types f -- */${session_id}.jsonl]
-    if {[llength $matches] == 0} {
-        return [list [dict create severity warning code transcript_not_found \
-            contact_name $contact_name \
-            message "Session transcript $session_id.jsonl not found under ~/.claude/projects/*/ — audit skipped"]]
-    }
-    set transcript [lindex $matches 0]
-
-    set counts [dict create]
-    foreach s $required_skills { dict set counts $s 0 }
-
-    set fd [open $transcript r]
-    fconfigure $fd -encoding utf-8
-    while {[gets $fd line] >= 0} {
-        # Cheap prefilter — long P sessions are 100s KB to a few MB and
-        # json::json2dict is slow per line. Skip lines that cannot
-        # contain a Skill tool_use.
-        if {![string match {*"name":"Skill"*} $line]} continue
-        if {[catch {set d [::json::json2dict $line]}]} continue
-        set msg [dict getdef $d message [dict create]]
-        set content [dict getdef $msg content {}]
-        foreach blk $content {
-            if {[dict getdef $blk type ""] ne "tool_use"} continue
-            if {[dict getdef $blk name ""] ne "Skill"} continue
-            set input [dict getdef $blk input [dict create]]
-            set sk [dict getdef $input skill ""]
-            if {[dict exists $counts $sk]} {
-                dict incr counts $sk
-            }
+    # Deferred require, mirroring _yamlmuster_approach above: the
+    # validate CLI and the tpool parse workers source this file without
+    # the harness, so coachman loads only when an audit actually runs
+    # (this file's own vendor tm path makes it resolvable here).
+    package require coachman
+    if {[catch {
+        coachman::tool_use_counts $session_id $transcripts_root Skill skill
+    } counts opts]} {
+        if {[dict getdef $opts -errorcode {}] eq {COACHMAN NO_TRANSCRIPT}} {
+            return [list [dict create severity warning code transcript_not_found \
+                contact_name $contact_name \
+                message "Session transcript $session_id.jsonl not found under ~/.claude/projects/*/ — audit skipped"]]
         }
+        return -options $opts $counts
     }
-    close $fd
-
+    set issues {}
     set sec [dict create linkedin §4.3 facebook §4.4]
     foreach s $required_skills {
-        if {[dict get $counts $s] == 0} {
+        if {[dict getdef $counts $s 0] == 0} {
             set sref [dict getdef $sec $s "(spec)"]
             lappend issues [spar::_issue error "${s}_lookup_missing" $contact_name \
                 "SPAR-P $sref requires the $s skill; transcript shows zero Skill invocations with input.skill=$s."]
