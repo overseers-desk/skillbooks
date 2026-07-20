@@ -244,7 +244,7 @@ oo::objdefine $ph {
         set RosterLock     /tmp/none/.roster.lock
         set RequiredSkills {}
     }
-    method inject_linkedin {} {}
+    method inject_linkedin {} { return 0 }
     method do_profile_call {} { return 3 }
     method session_id {} { return "fin-sess" }
     method resume {stage log_file prompt args} {
@@ -280,7 +280,7 @@ oo::objdefine $ph2 {
         set RosterLock     /tmp/none/.roster.lock
         set RequiredSkills {}
     }
-    method inject_linkedin {} {}
+    method inject_linkedin {} { return 0 }
     method do_profile_call {} { return 3 }
     method session_id {} { return "" }
     method resume {stage log_file prompt args} {
@@ -821,5 +821,46 @@ assert_eq [file exists [file join $bs_dir was-run]] 0 \
 assert_eq [string match "*__LINKEDIN_SECTION__*" \
     [spar::read_file [file join $li_none prompt.txt]]] 0 \
     "no linkedin_url: placeholder still cleared"
+
+# Exit 78 (the serialiser's environment code: no browser path at all)
+# fails the row before the claude call (#184).
+set fd [open $bs_stub w]
+puts $fd "#!/bin/sh"
+puts $fd "exit 78"
+close $fd
+file attributes $bs_stub -permissions 0755
+array unset ::auto_execs browser-serialiser
+set li_78 [make_li_prompt_dir hard "https://www.linkedin.com/in/test-person/"]
+set ph10 [spar::ProfileHarness new $li_78 [file join $tmp_root logs-li-78]]
+set ::reached_call 0
+oo::objdefine $ph10 {
+    method do_profile_call {} { set ::reached_call 1; return 1 }
+    method sanitise_roster_email {rp slug} {}
+    method validate_and_correct {o r s} { return 0 }
+    method do_summary {} {}
+}
+set rc_78 [$ph10 run]
+set cause_78 [$ph10 fail_cause]
+$ph10 destroy
+assert_eq $rc_78 1 "exit 78 fails the row"
+assert_eq $::reached_call 0 "the claude call was never made under exit 78"
+assert_match $cause_78 "*exit 78*" "the failure reason names the exit code"
+
+# pool_exec's coroutine branch mirrors exec's CHILDSTATUS errorCode,
+# so inject_linkedin reads the same exit code inside a pool worker as
+# in these plain-exec tests.
+set ::pe_code ""
+coroutine pe_test apply {{} {
+    catch { spar::pool_exec sh -c "exit 78" } out copts
+    set ec [dict getdef $copts -errorcode {}]
+    set ::pe_code [expr {[lindex $ec 0] eq "CHILDSTATUS"
+                         ? [lindex $ec 2] : "none"}]
+}}
+set _pe_t0 [clock milliseconds]
+while {$::pe_code eq "" && [clock milliseconds] - $_pe_t0 < 3000} {
+    after 50 set ::_pe_tick 1
+    vwait ::_pe_tick
+}
+assert_eq $::pe_code 78 "pool_exec coroutine branch carries the child exit code"
 
 finish_tests

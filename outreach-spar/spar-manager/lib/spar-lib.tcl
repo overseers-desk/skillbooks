@@ -1028,6 +1028,12 @@ proc spar::pool_exec {args} {
     set r [yield]
     set out [string trimright [dict get $r stdout] \n]
     if {[dict get $r exit] != 0 || [dict get $r signal] ne ""} {
+        # Mirror exec's CHILDSTATUS errorCode so a caller reads the
+        # child's exit code the same way on both branches.
+        set code [dict get $r exit]
+        if {[string is integer -strict $code] && $code != 0} {
+            return -code error -errorcode [list CHILDSTATUS 0 $code] $out
+        }
         return -code error $out
     }
     return $out
