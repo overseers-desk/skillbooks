@@ -14,19 +14,21 @@ When a repository hosts several campaigns that share segments, the campaign YAML
 
 ```
 campaigns-root/
-  campaign-{name-1}.yaml          # campaign definition (schema: spar-campaign-yaml.md)
-  campaign-{name-2}.yaml          # campaign definition
-  ...
+  campaign-{name}.yaml            # campaign definition (schema: spar-campaign-yaml.md)
+  campaign-{name}-usp.md          # that campaign's selling points, named by its usp_document
+  sweeper-{family}.yaml           # sweep knowledge shared by a family of segments (spar-S-search.md 7.1)
   {segment}/                      # one directory per segment, shared across campaigns
     roster.tsv                    # SPAR roster (schema: spar-roster-format.md)
     segment.yaml                  # population definition (schema: segment-schema.yaml)
-    [profiles-summary.md]         # optional segment-level profile summary
-    [comms-index.md]              # optional communication index
+    sweep.yaml                    # coverage: denominator, sources, rounds, escapes (spar-S-search.md 7)
+    sweep-feedback.tsv            # observations queued by P for the next round's sweep
     profiles/                     # SPAR-P profile documents, one per contact
-      profile-{slug-name}-{slug-org}.md
+      {stem}.md
     approach/                     # communications log per contact (name historical; see methodology)
       {stem}.yaml
 ```
+
+This enumeration is complete, and `INVARIANTS.md` I2 holds it closed: a file whose name is not here does not belong in the folder. Analysis, working notes, worklogs, issue write-ups and segment summaries live outside it, because inside it they duplicate one of these files and go stale against it.
 
 Each campaign YAML names in its `segments:` map the segment directories it operates over, mapping each to that segment's plan block. The same segment name may appear in the `segments:` map of more than one campaign YAML at this level, each with its own plan. Path resolution is relative to the YAML file's directory, so segments are addressable by bare name.
 
@@ -37,10 +39,12 @@ When a repository hosts one campaign, the campaign YAML sits as a sibling of its
 ```
 campaign-root/
   campaign.yaml
-  [campaign-principles.md]        # optional campaign-level rules (referenced by YAML)
+  campaign-usp.md
   {segment}/
     roster.tsv
     segment.yaml
+    sweep.yaml
+    sweep-feedback.tsv
     profiles/
     approach/
 ```
@@ -50,8 +54,11 @@ For a small campaign with only one segment, set `segments: ["."]` in the campaig
 ```
 campaign-root/
   campaign.yaml
+  campaign-usp.md
   roster.tsv
   segment.yaml
+  sweep.yaml
+  sweep-feedback.tsv
   profiles/
   approach/
 ```
