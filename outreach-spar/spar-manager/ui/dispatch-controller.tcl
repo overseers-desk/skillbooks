@@ -47,6 +47,7 @@ oo::class create spar::ui::DispatchController {
     variable Subs
     variable RowTid RowReason RowPhase RowMeta RowDryRun
     variable BurstStems BurstFinished BurstFailed BurstActive
+    variable RetryPending
     variable UsageLimitHalted
     variable RowMenu RowMenuRow
 
@@ -79,6 +80,7 @@ oo::class create spar::ui::DispatchController {
         set BurstFinished  0
         set BurstFailed    0
         set BurstActive    0
+        set RetryPending   [dict create]
 
         set AggregateTick  0
         set AggregateAfter ""
@@ -118,6 +120,8 @@ oo::class create spar::ui::DispatchController {
             [list [self] on_row_failed]
         $Dispatcher subscribe job-done \
             [list [self] on_row_done]
+        $Dispatcher subscribe job-requeued \
+            [list [self] on_row_requeued]
 
         # Subscribe to Campaign lifecycle. on_fully_loaded both kicks
         # the --tid auto-dispatch path and rebinds the Pool's per-row
@@ -520,8 +524,26 @@ oo::class create spar::ui::DispatchController {
 
     # ─── Pool event handlers ──────────────────────────────────────────────
 
+    # job-requeued precedes the failed pair (job-state failed, then
+    # job-failed) of a row the Dispatcher is about to requeue: those two
+    # events are intermediate, not a final outcome, so the burst
+    # accounting must not consume them. The mark set here makes
+    # on_row_state keep BurstActive whole and on_row_failed keep the
+    # burst's failure count and log clean; on_row_failed, the second of
+    # the pair, consumes the mark, and the retry's own terminal events
+    # count normally.
+    method on_row_requeued {row} {
+        dict set RetryPending $row 1
+        spar::log_row_outcome $row retry \
+            "profile untouched by a cleanly-closed run; requeued to queue tail"
+    }
+
     method on_row_state {row state} {
         my _render_row $row $state
+        if {$state eq "failed" && [dict exists $RetryPending $row]} {
+            my _update_progress_display
+            return
+        }
         if {$state in {done failed cancelled} && $row in $BurstStems} {
             if {$state eq "done"} { incr BurstFinished }
             if {$state eq "failed"} { incr BurstFailed }
@@ -563,6 +585,10 @@ oo::class create spar::ui::DispatchController {
 
     method on_row_failed {row reason} {
         dict set RowReason $row $reason
+        if {[dict exists $RetryPending $row]} {
+            dict unset RetryPending $row
+            return
+        }
         # job-state will follow with state=failed; render then. The log
         # line lands here, not in the render: a worker failure's reason
         # must reach the orchestration file, where the tree glyph and
