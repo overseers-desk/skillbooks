@@ -113,7 +113,7 @@ Run multiple rounds of keyword search if needed. The first round checks campaign
 
 ### 4.6 Research the target's employer
 
-Visit the website of the target's current employer (and previous employer if the current role is recent — under 12 months). Convert fetched HTML to plain text before processing — see SPAR-S §11 "Context management for web page fetching" for the method. Note:
+Visit the website of the target's current employer (and previous employer if the current role is recent — under 12 months). Convert fetched HTML to plain text before processing — see `spar-methodology.md`, "Context management for fetched pages", for the method. Note:
 - The organisation's mission statement and focus areas
 - Programmes, labs, working groups, or convenings the organisation runs — especially those that involve external stakeholders, policymakers, or industry participants
 - Named leaders (the target's direct supervisor or programme director)

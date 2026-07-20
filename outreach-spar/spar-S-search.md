@@ -30,37 +30,13 @@ The discovery steps are the same for both types. The differences — whether P i
 
 ## 4. Roster file format
 
-Store one TSV file per segment. Use TSV, not CSV — roster fields frequently contain quoted speech, URLs, and free-text notes that cause quoting problems with commas. The file is named `roster.tsv` and lives inside the segment's own directory (e.g. `wedding-planner/roster.tsv`). Do not embed the segment name in the filename — the directory already carries that context.
+The roster schema — file naming, TSV conventions, the core columns, programmatic access — is defined in `spar-roster-format.md` and not restated here. S populates the identity, channel, and provenance columns; the phase-handover columns (`p_note`, `star_rating`) are P's. The campaign plan may add columns beyond the core set (segment tags, postcode, type, source_url are common) and defines what they mean.
 
-Every row should have a **contact_name** where one can be identified. If a source lists only an organisation and a quick check of the organisation's website, LinkedIn, and Facebook does not surface a named individual, retain the organisation as a row with a blank `contact_name`: write a provisional `stem` using the organisation slug, and leave `date_excluded` empty. Exclusion is a P-phase judgement: §4.1 runs the exhaustive name search, so sweep leaves `date_excluded` empty even when it could not surface a named individual. The blank-name row ensures future sweep iterations recognise the organisation as already discovered and do not re-add it.
+S-specific rules:
 
-Each S&P iteration updates the same file via the `sweep_iteration` column. Do not create separate files per iteration.
-
-### 4.1 Core columns
-
-These columns are standard across all campaigns. Every roster produced by this AESOP includes them:
-
-1. **contact_name** — person's name (blank if no individual identified yet — the P-phase §4.1 procedure will attempt resolution)
-2. **organisation** — business, group, or institution name
-3. **role** — title or function
-4. **phone**
-5. **email**
-6. **linkedin_url**
-7. **facebook_url**
-8. **sweep_iteration** — which sweep iteration added or last updated this row
-9. **discovered_via** — the source that led to this contact. For seeds: the source name (e.g. "government school directory", "Google Maps", "industry association member list"). For social-graph contacts: the `contact_name` of the person whose profile surfaced this entry, creating a referral chain traceable to the original seed.
-10. **date_excluded** — ISO date (YYYY-MM-DD) when the contact was confirmed unreachable or no longer in a relevant role. The date rather than a flag allows periodic re-checking — a person with no LinkedIn in March may have one by September. The profiling will skip entries that are already found invalid - although most entries are found invalid during profiling stage (P) hence profile is created anyway.
-
-### 4.2 Campaign-specific columns
-
-The campaign plan may add columns beyond the core set. The core columns are defined in `spar-roster-format.md`: the S and P phase handover notes (s_note, p_note) and the rating (star_rating). The A and R outputs (response_likelihood, a_note, r_note) are not roster columns — they live in the per-contact approach YAML. Common campaign-specific additions include:
-
-- **segment** — when the campaign has multiple segments in a single roster or needs to tag cross-leads
-- **postcode** or **address** — for geographic filtering
-- **type** — contact category within a segment
-- **source_url** — the specific page that justified inclusion
-
-The campaign plan defines which additional columns apply and what they mean. This AESOP does not prescribe them.
+- Every row should have a **contact_name** where one can be identified. If a source lists only an organisation and a quick check of the organisation's website, LinkedIn, and Facebook does not surface a named individual, retain the organisation as a row with a blank `contact_name`: write a provisional `stem` using the organisation slug, and leave `date_excluded` empty. Exclusion is a P-phase judgement: SPAR-P §4.1 runs the exhaustive name search, so sweep leaves `date_excluded` empty even when it could not surface a named individual. The blank-name row ensures future sweep iterations recognise the organisation as already discovered and do not re-add it.
+- Each S&P iteration updates the same file via the `sweep_iteration` column. Do not create separate files per iteration.
+- `discovered_via` is authored at sweep time: for seeds, the source name (e.g. "government school directory", "Google Maps", "industry association member list"); for social-graph contacts, the `contact_name` of the person whose profile surfaced the entry, creating a referral chain traceable to the original seed.
 
 ## 5. Segment types
 
@@ -226,8 +202,8 @@ These cross-leads must not be discarded because they fall outside the current se
 
 Run this checklist against all roster files after each iteration. Each check is a pass/fail assertion on the TSV data.
 
-1. **Column count:** every row has the expected number of tab-separated fields (core columns from §4.1 plus any campaign-specific columns from §4.2).
-2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)"), or has a blank `contact_name` with a provisional organisation-slug stem. Rows with blank `contact_name` and no `date_excluded` are P-phase leads awaiting §4.1 name resolution — they are not errors.
+1. **Column count:** every row has the expected number of tab-separated fields (core columns per `spar-roster-format.md` plus any campaign-specific columns the plan defines).
+2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)"), or has a blank `contact_name` with a provisional organisation-slug stem. Rows with blank `contact_name` and no `date_excluded` are P-phase leads awaiting SPAR-P §4.1 name resolution — they are not errors.
 3. **No duplicate contacts:** no two rows in the same roster file share the same (`contact_name`, `organisation`) pair (case-insensitive). Multiple contacts at the same organisation is permitted.
 4. **Email format:** every non-empty `email` field contains an `@` sign. Strings like `via website`, `(07) 5572 3588`, or `[email obtained during call]` are not email addresses and must not pass validation. This is the gate that prevents non-email strings from inflating counts downstream.
 5. **Reachable:** every row has at least one of email (valid, per check 4), `linkedin_url`, or `facebook_url` populated. Phone alone is insufficient for campaigns that begin with a written introduction.
@@ -238,18 +214,6 @@ Run this checklist against all roster files after each iteration. Each check is 
 10. **Coverage computed:** the round record's `coverage_after` equals the roster's live row count over the S&P₀ denominator, computed from the files rather than asserted.
 
 Campaign-specific checks (e.g. "every outreach row has a non-empty p_note") are defined by the campaign plan, not by this AESOP.
-
-### 10.1 Approach file validation
-
-Run this checklist against all approach YAML files after A-phase processing completes for a segment. Each check is a pass/warn/fail assertion on the YAML data in `{segment}/approach/*.yaml`. The dispatcher runs guard-rail checks (check 1) post-assembly in `spar-a-worker.tcl`. Campaign-wide validation and cross-segment duplicate detection are reported by `spar-progress.tcl`. Structural checks 2–5 are defined by the approach validation rules in `spar-manager/rules/approach.rules` and enforced during that campaign-wide validation.
-
-1. **Email to: address validity:** For every email-channel message in a final round, the `to:` field must contain a deliverable email address (i.e. must contain `@` with a valid user@domain.tld shape). Placeholders (`[email obtained during call]`, `[confirmed email]`), contact form URLs (`via website...`), phone numbers, tildes, and empty values are flagged. This catches the class of issue described in issue #11: non-email strings that pass naive non-empty checks but are not sendable.
-2. **Required top-level keys:** Every approach file must have `decisions` and `rounds` at the top level.
-3. **Final round exists:** Every approach file must contain exactly one round with `type: final`. A file without a final round is structurally incomplete per the approach schema.
-4. **Round structure:** Each round must have `type` (one of `draft`, `review`, `final`) and `number` (for draft and review). Draft and final rounds must have a non-empty `messages` list. Each message must have a `channel` field.
-5. **Channel-roster consistency:** When the approach `decisions.channel` includes email but the roster's `email` field for the same contact does not contain a valid email address, flag the mismatch. This catches cases where the A phase assumed an email channel but no deliverable address exists in the roster.
-
-Cross-segment check: email addresses targeted by final-round messages in multiple segments are flagged as warnings, since the same person receiving approach emails from two segments may see contradictory messaging.
 
 ## 11. Subagent delegation
 
@@ -266,21 +230,4 @@ Do not replicate SPAR-S content in prompts — copies drift and cannot be correc
 
 This AESOP does not prescribe how to access social media; each operator uses their own method and tooling. The sequencing constraint is the only requirement.
 
-**Context management for web page fetching:** When a subagent fetches web pages (organisation websites, employer About pages, registry directories), the raw HTML or even processed HTML consumes far more context tokens than the facts it yields. A single About page can return thousands of tokens; a subagent processing 20 websites in one session will exhaust its context on page content before it finishes.
-
-To prevent this, always convert fetched HTML to plain text or markdown before bringing content into the conversation. For sites behind rate limiting or a login, prefer the serialised-browsing skill (see `spar-methodology.md`, "Web fetching and browser serialisation"); the hand-rolled chromium below is the fallback for public pages when no such skill is available:
-
-```bash
-# chromium fetch → pandoc → plain text (discards all markup)
-chromium --headless --dump-dom \
-  --virtual-time-budget=5000 --window-size=1920,3000 \
-  "URL" 2>/dev/null \
-  | pandoc -f html -t plain --wrap=none > /tmp/page-text.txt
-
-# Then extract the needed fact from the plain text file
-grep -i 'founder\|director\|owner\|manager' /tmp/page-text.txt
-```
-
-For batch website lookups (e.g. resolving contact names for 20 organisations), process one page at a time: fetch, extract the fact, discard the page content, then fetch the next. Do not fetch multiple pages in parallel via WebFetch — the results all land in context simultaneously and cannot be discarded.
-
-If the subagent uses `WebFetch` (the built-in tool) instead of headless Chromium, write a tight extraction prompt that returns only the specific fact needed (e.g. "Return only the owner or director's full name and role, nothing else"). Even with a tight prompt, WebFetch results are large enough that more than 5–6 pages in one session will strain context.
+**Context management for web page fetching:** covered in `spar-methodology.md`, "Web fetching and browser serialisation" — convert pages to plain text before they enter context, one page at a time.

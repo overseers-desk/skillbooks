@@ -253,6 +253,25 @@ Prefer the user's serialised-browsing skill when it is available. It paces acces
 
 When no serialised-browsing skill is available in the environment, hand-roll a headless chromium fetch; do not halt for lack of the skill. For P the dispatcher resolves the host's invocation and passes it to the worker; elsewhere invoke `chromium` from `PATH` with `--headless --dump-dom` and the host's user-data-dir. Reference such a skill by the capability it provides, never by a wrapper or script name.
 
+### Context management for fetched pages
+
+Raw or even processed HTML consumes far more context tokens than the facts it yields. A single About page can return thousands of tokens; a session processing 20 websites will exhaust its context on page content before it finishes. Convert fetched HTML to plain text or markdown before bringing content into the conversation:
+
+```bash
+# chromium fetch → pandoc → plain text (discards all markup)
+chromium --headless --dump-dom \
+  --virtual-time-budget=5000 --window-size=1920,3000 \
+  "URL" 2>/dev/null \
+  | pandoc -f html -t plain --wrap=none > /tmp/page-text.txt
+
+# Then extract the needed fact from the plain text file
+grep -i 'founder\|director\|owner\|manager' /tmp/page-text.txt
+```
+
+For batch website lookups (e.g. resolving contact names for 20 organisations), process one page at a time: fetch, extract the fact, discard the page content, then fetch the next. Do not fetch multiple pages in parallel via WebFetch — the results all land in context simultaneously and cannot be discarded.
+
+If `WebFetch` (the built-in tool) is used instead of headless chromium, write a tight extraction prompt that returns only the specific fact needed (e.g. "Return only the owner or director's full name and role, nothing else"). Even with a tight prompt, WebFetch results are large enough that more than 5–6 pages in one session will strain context.
+
 ## Model assignment
 
 | Phase | Model tier | Rationale |

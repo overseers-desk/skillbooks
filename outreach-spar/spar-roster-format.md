@@ -143,5 +143,3 @@ This document defines the roster schema. The operational procedures for populati
 - **SPAR-A** (`spar-A-approach.md`) — creates `approach/{stem}.yaml` using the pre-existing `stem`, writing `response_likelihood`, `a_note`, and the messages into it; writes to the roster only to backfill a population-tier contact detail discovered at send time (a verified email, a corrected `linkedin_url`/`facebook_url`; see §4.8)
 - **R** (human, no procedure document) — writes the `r_note` root key into `approach/{stem}.yaml`; does not write to the roster
 - **spar-state.tcl** — reads `stem` from the roster and checks for the presence of `profiles/{stem}.md` and `approach/{stem}.yaml` on disk to classify contact state; never writes to the roster
-
-SPAR-S §4 currently contains a roster format definition that predates this document. When SPAR-S is next revised, §4 should reference this document rather than defining the format inline.
