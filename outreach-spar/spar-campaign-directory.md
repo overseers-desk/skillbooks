@@ -73,9 +73,9 @@ All batch scripts resolve `.` as the campaign root directory. When the campaign 
 
 **One segment file per segment.** The file is always `segment.yaml`. It defines the campaign-independent population: `discovery_criteria` (who belongs), `rating_rubric` (how useful a member is to us), `scope_note` (boundaries with neighbouring segments), and `profile_reject_if`. It carries no campaign plan content. The objective, USP framings, message goal, first ask, conversion funnel, approach sequencing, and subsegments live in the campaign's per-segment plan block (`campaign.yaml` `segments.<name>`), because they change with the campaign's ask (a segment is reused across campaigns of different asks) — see the invariance test in `spar-methodology.md`, "Campaigns and segments". The schema is defined in `segment-schema.yaml`.
 
-**Profile filenames** follow the pattern `profile-{slug-name}-{slug-org}.md`, where slugs are lowercase-hyphenated. Batch scripts match roster entries to profiles by slug prefix, so the profile filename must contain the contact's slugified name.
+**Profile filenames** are `profiles/{stem}.md`, `{stem}` being the roster row's stem (`spar-roster-format.md`). Contact state is derived by file existence at that exact path, so the stem is the whole convention.
 
-**Approach filenames** follow the `approach_filename` template in `campaign.yaml`, defaulting to `approach-{slug_name}-{slug_org}.md`. Batch scripts detect approach status by parsing headings within the file (see `spar-A-approach.md` lifecycle conventions).
+**Approach filenames** are `approach/{stem}.yaml`, the same stem. (`approach_filename` in `campaign.yaml` is a legacy template retained for backwards compatibility; new campaigns need no such key.)
 
 ## Discovery by batch scripts
 
@@ -113,7 +113,7 @@ Every fact about the campaign has one authoritative home. Before creating any ne
 | Segment rating rubric (how useful a member is to us) | `{segment}/segment.yaml` `rating_rubric:` |
 | A-phase and P-phase prompt guidance (reminders, rules, apology behaviour) | `campaign.yaml` `prompt_appendices:` |
 | Per-contact population data (identity, channels, s_note, p_note, star_rating) | `{segment}/roster.tsv` |
-| Per-contact profile | `{segment}/profiles/profile-{slug}.md` |
+| Per-contact profile | `{segment}/profiles/{stem}.md` |
 | Per-contact engagement (messages, response_likelihood, a_note, r_note) | `{segment}/approach/{stem}.yaml` |
 | Campaign intro for human readers | `campaign:` display-name field + top-of-file banner comment in `campaign.yaml` |
 

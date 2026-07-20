@@ -20,7 +20,6 @@ One file per campaign, in the campaign root directory. Named `campaign.yaml` or 
 | `usp_document` | path | Path to the organisation overview / USP document. Relative to the YAML file's directory. This is the ground truth about the organisation that A1 reads before drafting. |
 | `language` | string | Language code: `en-gb`, `en-au`, `en`, or a BCP-47 code |
 | `segments` | map | Maps each segment directory name this campaign operates over to that segment's **plan block** (the campaign×segment intersection: objective, USP framings, message_goal, first_ask, ask_stance, conversion_funnel, approach_sequencing). See "Per-segment plan block" below. Names resolve to sibling directories of this YAML file (path resolution is relative to the YAML's directory). The same segment name may appear under the `segments:` of more than one campaign YAML at the same level, each carrying its own plan: segments are not owned by any one campaign, and the plan changes with the campaign's ask, so it is the campaign's, not the segment's (see the invariance test in `spar-methodology.md`, "Campaigns and segments"). Use `.` for a single-segment campaign where roster and segment.yaml live in the campaign root (see `spar-campaign-directory.md`). |
-| `approach_filename` | string | Template for approach filenames. Variables: `{slug_name}`, `{slug_org}`, `{star}`. Example: `approach-{slug_name}-{slug_org}.md` |
 | `usps` | map | USP registry: maps each USP identifier to its human-readable label. This is the single source of truth for USP names. A segment's plan block references USPs by `id`; the label is resolved from this registry. Registry and per-segment framing now live in the same file, so a referenced `id` always resolves. The full USP prose lives in the `usp_document`. |
 
 ### Required (channels)
@@ -81,8 +80,9 @@ venue:
 | `skip_segments` | list of strings | (none) | Segment directory names to exclude from progress reporting. Useful for closed campaigns or non-standard directories that should not appear in the progress report. |
 | `ses_region` | string | `ap-southeast-2` | AWS SES region for email sending |
 | `a_max_passes` | integer | 3 | Hard ceiling on challenger passes per contact in the A phase. The effective value for each contact is `min(a_max_passes, profile-derived)`. Profile-derived comes from the profile's `yield` front-matter field: `yield >= 6` yields 3, otherwise 1 (see `spar-P-profile.md` §5.1). Must be an integer ≥ 0. A ceiling does not force passes; the challenger can still return `DONE` earlier. Quality/cost ladder: `0` disables the challenger entirely — the initial draft flows straight to assembly with no fact-check (cheapest, no adversarial review). `1` runs the challenger once; the author revises based on its feedback, but that revision is never re-validated (feedback applied, not verified). `2` re-challenges the first revision. `3` (default) allows up to two re-challenges. Note that at any `a_max_passes ≥ 1` the *last* revision is still unvalidated — there is no pass that both critiques and then re-challenges the final draft. |
-| `reply_check.courier_account` | string | (none) | Courier account name for reply detection. When present (with `reply_check.folder`), the reply checker queries this IMAP account for incoming replies and appends `### Email Replied` sections to matching approach files. |
+| `reply_check.courier_account` | string | (none) | Courier account name for reply detection. When present (with `reply_check.folder`), the reply checker queries this IMAP account for incoming replies and appends them to the matching approach YAML as `replies:` entries with `direction: received`. |
 | `reply_check.folder` | string | (none) | IMAP folder to search for replies (e.g. `Partnerships`). |
+| `approach_filename` | string | (none) | Legacy template for approach filenames, retained for backwards compatibility. The tooling derives approach paths from the roster `stem` (`approach/{stem}.yaml`); new campaigns omit this key. |
 | `prompt_appendices` | map | (none) | Per-agent appendix text appended verbatim to the composed prompt at dispatch time. Closed vocabulary — allowed sub-keys: `p_author`, `a_author`, `a_challenger`, `a_assembly`. Any other sub-key is rejected by the campaign loader. Each value is an inline string; empty string or missing key = no appendix. Use this slot for campaign-specific tone guidance, exclusion rules, or strategy-revision notes that must not pollute the methodology documents. |
 
 ## Per-segment plan block
@@ -189,8 +189,6 @@ filter:
   skip_excluded: true
   min_star: 3
   require_profile: true
-
-approach_filename: "approach-{slug_name}-{slug_org}.md"
 
 ses_region: ap-southeast-2
 
