@@ -35,7 +35,7 @@ The dispatch pool used to run on `jobpool`, the thread twin of jobloop with the 
 
 **Per-kind cap.** SES (T6) must serialise but lives in the same shared pool as the parallel work. The Dispatcher exposes `set_kind_cap <kind> <cap>` as a sub-cap of the global `jobs`: a row whose kind sits at its per-kind cap stays queued while rows of other kinds keep launching. `dispatch_ready` installs `set_kind_cap ses_send 1` and `set_kind_cap linkedin_send 1` so sends serialise alongside parallel harness rows; the queue is walked rather than popped from the head, so a blocked send row at the front does not hold up harness rows behind it. Reproducer: `test/test-pool.tcl` §18.
 
-**Heterogeneous CLI grammar.** Positional `Tn[:seg[/stem]]` tokens carry their scope on the token, repeat, and mix freely (e.g. `T1 T2:vic T6:vic/jane-doe`). The grammar parses in `spar-transition-cli.tcl` so `test/test-cli-parser.tcl` can drive it without spinning up a campaign YAML.
+**Heterogeneous CLI grammar.** Positional `Tn[:seg[/stem]]` tokens carry their scope on the token, repeat, and mix freely (e.g. `T1 T2:vic T6:vic/jane-doe`). The grammar parses in `lib/spar-transition-cli.tcl` so `test/test-cli-parser.tcl` can drive it without spinning up a campaign YAML.
 
 ## The classes that result
 
