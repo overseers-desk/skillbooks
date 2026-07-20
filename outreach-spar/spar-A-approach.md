@@ -180,7 +180,7 @@ Read the latest strategy revision note before starting each new band. It may cha
 
 ## 6. Approach file structure
 
-Approach files are YAML documents with a **closed vocabulary**: the runtime validator (`spar::validate_approach` in `spar-manager/spar-validate.tcl`, which holds the authoritative key set) rejects any key you write outside the set below, emitting plain-language errors such as `unknown key 'X' at <level>` or `'X' at <level> belongs at <other_level>`.
+Approach files are YAML documents with a **closed vocabulary**: the runtime validator (`spar::validate_approach` in `spar-manager/lib/spar-validate.tcl`, which holds the authoritative key set) rejects any key you write outside the set below, emitting plain-language errors such as `unknown key 'X' at <level>` or `'X' at <level> belongs at <other_level>`.
 
 **Canonical keys by level:**
 

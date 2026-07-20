@@ -25,7 +25,7 @@ Three methodologies for three directions of information flow. Each is a four-pha
 
 **Procedure documents:** `outreach-spar/spar-methodology.md` and the phase-specific AESOPs (`spar-S-search.md`, `spar-P-profile.md`, `spar-A-approach.md`).
 
-**Tooling:** `outreach-spar/spar-manager/` contains Tcl dispatch tools (`spar-transition.tcl`, `spar-dispatch.tcl`, `spar-p-batch.tcl`, `spar-a-worker.tcl`), a progress reporter (`spar-progress.tcl`), and a Tk GUI (`spar-ui.tcl`). These read a campaign YAML, classify contacts via the state machine (`spar-state.tcl`), and dispatch work to the Claude Code CLI.
+**Tooling:** `outreach-spar/spar-manager/` holds its runnable scripts at the top: a transition dispatcher (`spar-transition.tcl`), a progress reporter (`spar-progress.tcl`), a validator (`spar-validate-cli.tcl`), a Tk GUI (`spar-ui.tcl`), and the two phase harnesses. The libraries they source sit under `lib/`. These read a campaign YAML, classify contacts via the state machine (`lib/spar-state.tcl`), and dispatch work to the Claude Code CLI.
 
 #### SPAR use cases
 
