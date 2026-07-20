@@ -16,9 +16,6 @@ namespace eval spar {
         roster_row_has_in_scope_channel render_rollcall
 }
 
-# Directory this library lives in. vendor/ sits beside it, one level up.
-set ::spar::lib_dir [file dirname [file normalize [info script]]]
-
 # _parse_fail_reason — split a dispatcher failure reason into {rc cause}.
 # The reason is the flat string built by harness_run, e.g.
 # "harness exited rc=2 | FAIL (... stalled ...): slug" or a bare

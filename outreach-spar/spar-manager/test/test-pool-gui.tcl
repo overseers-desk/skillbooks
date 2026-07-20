@@ -9,6 +9,33 @@
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir test-helpers.tcl]
 
+# ── Lazy-source paths ───────────────────────────────────────────────
+# DispatchController sources the dispatch libraries on the first Play
+# rather than at load time, so a wrong path there surfaces as a logged
+# "not available" and a silent return, not a load error. Nothing else
+# here drives that method. Check the names it lists resolve against the
+# directory spar-ui.tcl hands it as ScriptDir. Runs before the display
+# gate below: it needs no Tk.
+section "0. DispatchController's lazy sources resolve"
+
+set dc_path [file join $script_dir .. ui dispatch-controller.tcl]
+set fd [open $dc_path r]; set dc_src [read $fd]; close $fd
+
+# Take the loop's file list and the path expression built from it, then
+# run that expression against the real directory. Whatever the source
+# line says is what gets checked.
+set found [regexp {foreach\s+(\w+)\s+\{([^\}]*)\}[^\n]*\n\s*(set path \[file join \$ScriptDir[^\n]*\])} \
+    $dc_src -> loop_var lazy_libs path_expr]
+assert_eq $found 1 "DispatchController still lazy-sources a list of libraries"
+if {$found} {
+    set ScriptDir [file join $script_dir ..]
+    foreach $loop_var $lazy_libs {
+        eval $path_expr
+        assert_eq [file exists $path] 1 \
+            "lazy source resolves: [set $loop_var]"
+    }
+}
+
 # ── Display detection ───────────────────────────────────────────────
 proc have_display? {} {
     if {[info exists ::env(DISPLAY)] && $::env(DISPLAY) ne ""} {
