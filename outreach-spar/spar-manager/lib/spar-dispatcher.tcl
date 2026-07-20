@@ -78,6 +78,10 @@ oo::class create spar::Dispatcher {
         my _fire domain-roster_update {*}$args
     }
 
+    # ─── requeue-on-token ────────────────────────────────────────────
+    # Unlike the passive report relays above, this pair changes
+    # dispatch behaviour.
+    #
     # Requeue-on-token (#181): a ProfileHarness run that closed cleanly
     # without writing its outfile reports failed with this token (via
     # harness_run rc=4). The job goes terminal as usual, then back to
@@ -89,11 +93,11 @@ oo::class create spar::Dispatcher {
     #
     # job-requeued fires BEFORE the failed events so a front-end's
     # counters can treat them as an intermediate pair, not a final
-    # outcome (the CLI skips them; the GUI is state-driven and needs
-    # nothing). The requeue itself is deferred off this coroutine's
-    # stack: done synchronously, the state re-flips to queued/running
-    # before RunJob's no-verb fallback reads it, and the fallback would
-    # stamp the requeued incarnation done.
+    # outcome; both front-ends skip them (the CLI's _retry_pending, the
+    # GUI controller's RetryPending). The requeue itself is deferred off
+    # this coroutine's stack: done synchronously, the state re-flips to
+    # queued/running before RunJob's no-verb fallback reads it, and the
+    # fallback would stamp the requeued incarnation done.
     method on_failed {job reason} {
         set will_requeue 0
         if {[string match {*PROFILE_UNTOUCHED_RETRY*} $reason]
@@ -106,7 +110,7 @@ oo::class create spar::Dispatcher {
         }
         next $job $reason
         if {$will_requeue && [my state $job] eq "failed"} {
-            after 0 [list [self] requeue_failed $job]
+            after 1 [list [self] requeue_failed $job]
         }
     }
 

@@ -768,8 +768,8 @@ assert_match $li_prompt "*headline: Test Person*" \
     "prefetched parse lands in prompt.txt"
 assert_eq [string match "*__LINKEDIN_SECTION__*" $li_prompt] 0 \
     "placeholder substituted away on success"
-# ph7 destroyed above; re-query via a fresh instance is meaningless — the
-# audit adjustment is instance state, so it was read before destroy.
+# RequiredSkills is instance state, so a second harness re-runs the
+# same inject to read the audit adjustment.
 set ph7b [spar::ProfileHarness new $li_ok [file join $tmp_root logs-li-ok2]]
 oo::objdefine $ph7b method test_required {} {
     my variable RequiredSkills; return $RequiredSkills
@@ -781,7 +781,7 @@ assert_eq [$ph7b test_required] {facebook} \
 $ph7b destroy
 
 # Failed fetch (rate wall, absent overseer): empty section, warn, audit
-# unchanged — the worker fetches live as before.
+# unchanged; the worker fetches live as before.
 set fd [open $bs_stub w]
 puts $fd "#!/bin/sh"
 puts $fd "exit 66"

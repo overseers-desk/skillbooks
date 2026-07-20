@@ -181,6 +181,33 @@ foreach r {r1 r2} { wait_for_terminal $pool $r 3000 }
 foreach r {r1 r2} { assert_eq [$pool state $r] done "$r reached done" }
 
 # ════════════════════════════════════════════════════════════════════
+# 1b. A requeued row's intermediate failed pair leaves the burst
+#     accounting whole (#181): job-requeued marks the row, the failed
+#     pair is skipped, and only the retry's final outcome counts.
+# ════════════════════════════════════════════════════════════════════
+section "1b. Requeue skips the intermediate failed pair"
+oo::objdefine $dc method test_burst {stems active} {
+    my variable BurstStems BurstActive BurstFinished BurstFailed
+    set BurstStems $stems
+    set BurstActive $active
+    set BurstFinished 0
+    set BurstFailed 0
+}
+oo::objdefine $dc method test_burst_counts {} {
+    my variable BurstActive BurstFinished BurstFailed
+    return [list $BurstActive $BurstFinished $BurstFailed]
+}
+$dc test_burst {rq1} 2
+$dc on_row_requeued rq1
+$dc on_row_state rq1 failed
+$dc on_row_failed rq1 "PROFILE_UNTOUCHED_RETRY: profile not written by a cleanly-closed run"
+assert_eq [$dc test_burst_counts] {2 0 0} \
+    "intermediate failed pair consumed no burst state"
+$dc on_row_state rq1 done
+assert_eq [$dc test_burst_counts] {1 1 0} \
+    "the retry's own done is the one counted outcome"
+
+# ════════════════════════════════════════════════════════════════════
 # 2. While 1 is in flight, enqueue 1 more, pause queue, verify it sits
 #    queued; resume, verify it dispatches.
 # ════════════════════════════════════════════════════════════════════

@@ -717,7 +717,9 @@ oo::class create spar::ProfileHarness {
     # saturated queue outlives its foreground window instead. The
     # worker reads the parse as text and skips its own fetch, and a
     # successful injection drops `linkedin` from the §4.3 transcript
-    # audit: the injected parse is the evidence that audit demands.
+    # audit's required-skill list: the harness satisfied the
+    # requirement itself, so there is nothing left for the transcript
+    # check to find.
     # Degradation: no linkedin_url, CLI absent, or a failed fetch
     # (rate wall, lock timeout, absent overseer) leaves the section
     # empty with a warn, and the worker fetches live, audit unchanged.
