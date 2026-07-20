@@ -96,7 +96,7 @@ The three methodologies share a structural principle: read before writing. SPAR 
 - `articles/` — Lessons learned from building and testing AESOPs
 - `tests/` — Test cases and results for validating SOPs through iterative rounds
 - `sop-authoring-rules.md` — Meta-guide for creating and updating SOPs
-- `prompts/` — Prompts a person launches a session with (SOP authoring, headless master-prompt example)
+- `authoring/` — Start here to create or revise an AESOP: the prompt that runs the author-test-fix loop, and a worked headless example
 
 ## Skills
 
