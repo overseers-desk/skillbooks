@@ -2,7 +2,7 @@
 
 This document defines the file-based state machine that backs the SPAR Manager GUI. Both the **progress table** and the **transition manager** are derived views of the same underlying state — they are not separate scanning systems.
 
-The implementation target is `spar-state.tcl`, a pure read-only library sourced by both `wish` (GUI) and `tclsh` (CLI).
+The implementation target is `lib/spar-state.tcl`, a pure read-only library sourced by both `wish` (GUI) and `tclsh` (CLI).
 
 ## Architecture: two separate concerns
 
@@ -10,7 +10,7 @@ The implementation target is `spar-state.tcl`, a pure read-only library sourced 
 
 **Transition registry** — a data table mapping each state to the set of valid transitions. Consulted to enumerate eligible contacts per transition type, and to decide which dispatch action to invoke.
 
-**Dispatch** — the proc or batch script that executes a transition. Called by the GUI when the user triggers a transition. Not part of `spar-state.tcl`.
+**Dispatch** — the proc or batch script that executes a transition. Called by the GUI when the user triggers a transition. Not part of `lib/spar-state.tcl`.
 
 ### Design principle: independent deployability
 
@@ -38,7 +38,7 @@ Before dispatch launches a Claude session that mutates project state (roster TSV
 
 After the AI session returns, the *same* validation runs again. Any new failure is the agent's fault. The orchestrator can then resume the agent (`claude --resume`) with a specific message: "you broke X, fix it" — the agent cannot deny responsibility because the pre-check passed.
 
-This is a pre/post-condition contract in the Design by Contract sense (Meyer, Eiffel). The contract holds an invariant: project state remains valid across each AI invocation. The orchestration layer enforces the contract; the validation library (`spar-state.tcl`) defines what "valid" means.
+This is a pre/post-condition contract in the Design by Contract sense (Meyer, Eiffel). The contract holds an invariant: project state remains valid across each AI invocation. The orchestration layer enforces the contract; the validation library (`lib/spar-state.tcl`) defines what "valid" means.
 
 ### Coding standard: `DbC-Pre` / `DbC-Post` markers
 
@@ -312,15 +312,15 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 
 | T   | State                | Secondary predicates (all, for dispatchable)            | Awaiting / blocked branch                                      | Source            |
 |-----|----------------------|---------------------------------------------------------|----------------------------------------------------------------|-------------------|
-| T1  | DISCOVERED           | —                                                       | —                                                              | spar-state.tcl:448 |
-| T2  | PROFILED             | star ≥ 3                                                | —                                                              | spar-state.tcl:456 |
+| T1  | DISCOVERED           | —                                                       | —                                                              | lib/spar-state.tcl:448 |
+| T2  | PROFILED             | star ≥ 3                                                | —                                                              | lib/spar-state.tcl:456 |
 | T3  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
 | T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
-| T6  | APPROACHED ∨ SENT    | channel = `final_auto_send_channel`(contact): email → has_email ∧ ¬email_sent ∧ A(approach_path); linkedin → has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". channel ∉ {email, linkedin} (e.g. phone-first, or no final message): row is omitted entirely | spar-state.tcl |
-| T7  | any ≠ EXCLUDED       | any_sent ∧ ¬any_replied ∧ email-known ∧ A(approach_path) | A invalid → "invalid_approach_yaml". No watchable address → row omitted. Dispatchable rows dispatch through spar::r::run (courier reply-check) | spar-state.tcl:487 |
-| T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | spar-state.tcl:526 |
-| T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | spar-state.tcl:T9 branch |
-| T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | spar-state.tcl:T10 branch |
+| T6  | APPROACHED ∨ SENT    | channel = `final_auto_send_channel`(contact): email → has_email ∧ ¬email_sent ∧ A(approach_path); linkedin → has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". channel ∉ {email, linkedin} (e.g. phone-first, or no final message): row is omitted entirely | lib/spar-state.tcl |
+| T7  | any ≠ EXCLUDED       | any_sent ∧ ¬any_replied ∧ email-known ∧ A(approach_path) | A invalid → "invalid_approach_yaml". No watchable address → row omitted. Dispatchable rows dispatch through spar::r::run (courier reply-check) | lib/spar-state.tcl:487 |
+| T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | lib/spar-state.tcl:526 |
+| T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | lib/spar-state.tcl:T9 branch |
+| T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | lib/spar-state.tcl:T10 branch |
 
 [†] T6 sends each contact's own primary touch: `final_auto_send_channel` reads the contact's final round and returns the channel of its first email-or-linkedin message, so routing is per contact, not per campaign — an email-only contact in a linkedin-primary campaign dispatches by email (ses_send), a linkedin contact by linkedin_send. The contact's secondary and tertiary channels belong to T9/T10 with wait_days/wait_condition (issue #174); T6 sends only the first.
 
@@ -334,7 +334,7 @@ T7's coverage is bounded by its actuator: it watches one known address per conta
 
 ### Warnings catalog
 
-Grouped by validator proc. All line numbers are in `spar-state.tcl`.
+Grouped by validator proc. All line numbers are in `lib/spar-state.tcl`.
 
 #### `validate_roster` (per-segment roster quality)
 
@@ -493,12 +493,12 @@ The progress-scanning and state-detection logic currently lives in `../bin/updat
 
 Key locations in `../bin/update-campaign.py` and their redesign counterparts:
 
-| Python location | What it does | Redesign in spar-state.tcl |
+| Python location | What it does | Redesign in lib/spar-state.tcl |
 |----------------|--------------|----------------------------|
 | `classify_approach_gaps()` (line 343) | Matches 3+★ contacts to approach files; detects missing/unsent | Folded into `classify_contact` — approach state is per-contact, not a gap analysis |
 | `scan_approach_dir()` (line 390) | Scans approach directory for sent/replied/to-address | Replaced by reading the approach YAML once per contact in `classify_contact`; per-segment aggregation in `classify_segment` |
 | Segment loop (line 583–696) | Iterates over segments, accumulates 8-tuple of counts | Replaced by `classify_segment` returning a list of contact dicts; progress table columns are projections, computed on demand |
-| `build_profile_index()` (via spar_lib) | Builds a dict of all profile files in a directory for fast lookup | **Not used in spar-state.tcl.** Profile presence is determined by checking `profiles/{stem}.md` directly using the `stem` from the roster row; no directory scan is needed. `spar::build_profile_index` remains in spar-lib.tcl as a utility. |
+| `build_profile_index()` (via spar_lib) | Builds a dict of all profile files in a directory for fast lookup | **Not used in lib/spar-state.tcl.** Profile presence is determined by checking `profiles/{stem}.md` directly using the `stem` from the roster row; no directory scan is needed. `spar::build_profile_index` remains in spar-lib.tcl as a utility. |
 | Duplicate detection (lines 554–668) | Accumulates email/name/subject maps across segments | Becomes a cross-segment pass over the full classified-contacts list |
 
 **What the Python code does not have (new in the redesign):**
@@ -507,14 +507,14 @@ Key locations in `../bin/update-campaign.py` and their redesign counterparts:
 - Transition eligibility as a derived view of state. The Python `--missing` flag is the closest analogue, but it lists gaps, not transition tasks.
 - The T3/T4/T7/T8 transitions have no Python equivalent at all.
 
-**Related Python library:** `../bin/spar_lib.py` — contains `load_roster`, `slugify`, `profile_exists`, `approach_final_round_status`, `match_roster_to_stems`. The Tcl equivalents already exist in `spar-lib.tcl`; `spar-state.tcl` builds on them.
+**Related Python library:** `../bin/spar_lib.py` — contains `load_roster`, `slugify`, `profile_exists`, `approach_final_round_status`, `match_roster_to_stems`. The Tcl equivalents already exist in `spar-lib.tcl`; `lib/spar-state.tcl` builds on them.
 
 ---
 
 ## Implementation plan
 
 1. **Write tests first** (per-module `test/test-*.tcl` with fixture-based unit tests)
-2. **Implement `spar::classify_contact`** in `spar-state.tcl`
+2. **Implement `spar::classify_contact`** in `lib/spar-state.tcl`
 3. **Implement `spar::classify_segment`** — loop + aggregate
 4. **Implement duplicate detection procs** (cross-segment email/name/subject checks)
 5. **Implement transition eligibility procs** — filter classify_segment output per T1–T8

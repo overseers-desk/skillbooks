@@ -88,7 +88,7 @@ Below the progress table, a warnings area displays issues detected during the fi
 - Duplicate contacts by email (same email in multiple segments)
 - Identical subject lines in unsent approaches
 
-These mirror the warnings produced by `spar::build_warnings` (spar-state.tcl). Each warning is a single line. The area is collapsed by default and shows a summary when collapsed (e.g. "▶ ⚠ 7 warnings (5 duplicate email, 1 duplicate name, 1 identical subject)"). Clicking the toggle button expands the full warning list.
+These mirror the warnings produced by `spar::build_warnings` (lib/spar-state.tcl). Each warning is a single line. The area is collapsed by default and shows a summary when collapsed (e.g. "▶ ⚠ 7 warnings (5 duplicate email, 1 duplicate name, 1 identical subject)"). Clicking the toggle button expands the full warning list.
 
 ### 1.4 Check email button
 
