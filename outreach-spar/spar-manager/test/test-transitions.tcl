@@ -820,4 +820,64 @@ assert_eq [spar::li::_fault_suffix {ok false fault null}] "" \
 assert_eq [spar::li::_fault_suffix {ok false fault {when now detail {browser gone}}}] \
     ": browser gone" "fault_suffix: a real fault names its detail"
 
+# ════════════════════════════════════════════════════════════════════════
+section "--action scopes T6 rows by auto-send channel"
+# ════════════════════════════════════════════════════════════════════════
+
+# Two dispatchable T6 tasks, one whose final round routes to email and
+# one to linkedin. actions={linkedin} builds only the linkedin row and
+# reports the email row skipped; no actions builds both.
+set act_camp [make_temp_campaign]
+set act_cpath [write_campaign_yaml $act_camp "campaign: ActionTest\n"]
+set act_seg [make_temp_segment]
+write_roster_tsv $act_seg {stem contact_name organisation linkedin_url} [list \
+    [dict create stem mail-contact contact_name "Mail C" organisation X] \
+    [dict create stem li-contact contact_name "Li C" organisation Y \
+        linkedin_url https://www.linkedin.com/in/li-c/]]
+write_approach_yaml $act_seg mail-contact {rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: mail@x.com
+    subject: s
+    body: b
+    actioned_date: null
+    replied_date: null
+}
+write_approach_yaml $act_seg li-contact {rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: linkedin
+    to: ""
+    subject: s
+    body: b
+    actioned_date: null
+    replied_date: null
+}
+set act_tasks [list \
+    [dict create stem mail-contact _segment_dir $act_seg] \
+    [dict create stem li-contact _segment_dir $act_seg]]
+set act_cls [::spar::transitions::get T6]
+set ::act_skips {}
+proc act_progress {stem status msg} {
+    lappend ::act_skips [list $stem $status $msg]
+}
+set act_prep [$act_cls prepare_for_pool [dict create \
+    campaign_file $act_cpath dry_run 1 tasks $act_tasks \
+    actions {linkedin}] act_progress]
+set act_rows [dict get $act_prep rows]
+assert_eq [llength $act_rows] 1 "--action=linkedin builds only the linkedin row"
+assert_eq [lindex [lindex $act_rows 0] 0] li-contact \
+    "the kept row is the linkedin contact"
+assert_eq [llength $::act_skips] 1 "the email row reported one skip"
+assert_match [lindex [lindex $::act_skips 0] 2] "*email*" \
+    "the skip message names the excluded channel"
+
+set act_prep_all [$act_cls prepare_for_pool [dict create \
+    campaign_file $act_cpath dry_run 1 tasks $act_tasks] act_progress]
+assert_eq [llength [dict get $act_prep_all rows]] 2 \
+    "no --action: both channels build rows"
+
 finish_tests

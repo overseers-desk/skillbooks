@@ -171,4 +171,32 @@ assert_eq [dict get [dict get $result spec] env_assignments] \
 assert_eq [dict get [dict get $result spec] campaign_path] "/tmp/x.yaml" \
     "campaign path still captured beside env assignments"
 
+# ── --action grammar ────────────────────────────────────────────────────
+section "--action grammar"
+
+set r [spar::parse_cli {c.yaml T6 --action=linkedin}]
+assert_eq [dict get $r ok] 1 "--action with one channel parses"
+assert_eq [dict get [dict get $r spec] actions] {linkedin} \
+    "single channel captured"
+
+set r [spar::parse_cli {c.yaml T6 --action=linkedin,email}]
+assert_eq [dict get [dict get $r spec] actions] {linkedin email} \
+    "comma list captured in order"
+
+set r [spar::parse_cli {c.yaml T6 --action=email,email}]
+assert_eq [dict get [dict get $r spec] actions] {email} \
+    "duplicate channels collapse"
+
+set r [spar::parse_cli {c.yaml T6}]
+assert_eq [dict get [dict get $r spec] actions] {} \
+    "no --action: empty list, every channel sends"
+
+set r [spar::parse_cli {c.yaml T6 --action=bogus}]
+assert_eq [dict get $r ok] 0 "unknown action rejected"
+assert_match [dict get $r error] "*bogus*" \
+    "the error names the unknown token"
+
+set r [spar::parse_cli {c.yaml T6 --action=}]
+assert_eq [dict get $r ok] 0 "empty --action rejected"
+
 finish_tests

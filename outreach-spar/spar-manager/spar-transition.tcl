@@ -73,6 +73,10 @@ OPTIONS
                       item at a time with a stdin [y/N] gate.
     --delay=N         seconds between sends for send-type transitions
                       (default 2); ignored when --jobs=0.
+    --action=A[,B]    scope T6 to the named auto-send channels (email,
+                      linkedin); a row whose final round routes to a
+                      channel outside the list is skipped with a
+                      [SKIP] line. Default: every channel sends.
     --limit=N         dispatch at most N rows (default: no cap), for
                       trying a bounded batch of a large band before
                       committing to the rest. Under --auto the cap
@@ -169,6 +173,7 @@ set dry_run       [dict get $spec dry_run]
 set jobs          [dict get $spec jobs]
 set delay         [dict get $spec delay]
 set limit         [dict get $spec limit]
+set actions       [dict get $spec actions]
 set control_port  [dict get $spec control_port]
 set assume_yes    [dict get $spec assume_yes]
 set verbose       [dict get $spec verbose]
@@ -454,7 +459,7 @@ if {$dispatching} {
     # docs/concurrency.md "Per-worker cap".
     proc dispatch_ready {ready_by_tid active_tids tid_scopes \
                          yaml_path cdata dry_run jobs delay \
-                         limit assume_yes step_callback} {
+                         limit assume_yes actions step_callback} {
         if {$::spar::control_draining} {
             ${::spar::transitions_log}::warn "control: drain active — dispatching nothing"
             return
@@ -487,6 +492,7 @@ if {$dispatching} {
                 dry_run $dry_run \
                 jobs $jobs \
                 delay $delay \
+                actions $actions \
                 tid $tid]
             if {$step_callback ne ""} {
                 dict set base_opts step_callback $step_callback
@@ -675,7 +681,7 @@ if {$dispatching} {
 
             dispatch_ready $ready_by_tid $active_tids $tid_scopes \
                 $yaml_path $cdata $dry_run $jobs $delay \
-                $limit $assume_yes \
+                $limit $assume_yes $actions \
                 [expr {$stepping ? "step_prompt" : ""}]
 
             incr iter
@@ -747,7 +753,7 @@ if {$dispatching} {
 
     dispatch_ready $ready_by_tid $active_tids $tid_scopes \
         $yaml_path $cdata $dry_run $jobs $delay \
-        $limit $assume_yes \
+        $limit $assume_yes $actions \
         [expr {$stepping ? "step_prompt" : ""}]
 
     ${::spar::transitions_log}::info "=== Summary ==="

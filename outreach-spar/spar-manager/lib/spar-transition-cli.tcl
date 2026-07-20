@@ -14,6 +14,7 @@
 #   Tn:<segment>/<stem>                Tn for one specific contact
 #   --dry-run                          dispatch path with writes disabled
 #   --jobs=N | --delay=N | --limit=N | --yes
+#   --action=A[,B]                     scope T6 sends to these channels
 #   --control-port=N                   control socket (0 disables)
 #   --auto                             refuses any positional Tn token
 #   --dispatchable | --awaiting | --blocked   report mode filter
@@ -39,6 +40,7 @@ namespace eval spar {}
 #   jobs           int   (default 4; 0 means stepping)
 #   delay          int   (default 2)
 #   limit          int   (default 0; 0 means no row cap)
+#   actions        list  (default {}; empty means every send channel)
 #   control_port   int   (default 25519; 0 means no control socket)
 #   assume_yes     0/1
 #   verbose        0/1
@@ -53,6 +55,7 @@ proc spar::parse_cli {argv} {
         jobs          4    \
         delay         2    \
         limit         0    \
+        actions       {}   \
         control_port  25519 \
         assume_yes    0    \
         verbose       0    \
@@ -71,6 +74,23 @@ proc spar::parse_cli {argv} {
             --jobs=*    { dict set spec jobs   [string range $arg 7 end] }
             --delay=*   { dict set spec delay  [string range $arg 8 end] }
             --limit=*   { dict set spec limit  [string range $arg 8 end] }
+            --action=*  {
+                set acts {}
+                foreach a [split [string range $arg 9 end] ,] {
+                    set a [string trim $a]
+                    if {$a eq ""} continue
+                    if {![spar::_send_channel_known $a]} {
+                        return [dict create ok 0 error \
+                            "unknown send action: $a (known: [join [spar::_send_channels] {, }])"]
+                    }
+                    if {$a ni $acts} { lappend acts $a }
+                }
+                if {[llength $acts] == 0} {
+                    return [dict create ok 0 error \
+                        "--action needs at least one channel, e.g. --action=linkedin"]
+                }
+                dict set spec actions $acts
+            }
             --control-port=* {
                 dict set spec control_port [string range $arg 15 end]
             }
@@ -166,4 +186,18 @@ proc spar::_tid_known {tid} {
         return 0
     }
     return [expr {$tid in $all}]
+}
+
+# _send_channels / _send_channel_known — the --action vocabulary, read
+# from the send transition's routing home (send_email.tcl) with the
+# same catch-empty shape as _tid_known, so parse_cli stays loadable
+# without the transition registry.
+proc spar::_send_channels {} {
+    if {[catch {::spar::transitions::send_channels} chans]} {
+        return {}
+    }
+    return $chans
+}
+proc spar::_send_channel_known {a} {
+    return [expr {$a in [spar::_send_channels]}]
 }
