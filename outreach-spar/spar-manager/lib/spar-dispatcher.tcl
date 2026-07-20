@@ -33,7 +33,7 @@ namespace eval spar {
     variable live_harnesses [dict create]
     variable pool_script_dir [file dirname [file normalize [info script]]]
     # vendor/ carries the jobloop module; a checkout runs as-is.
-    ::tcl::tm::path add [file join $pool_script_dir vendor]
+    ::tcl::tm::path add [file join $pool_script_dir .. vendor]
     # Logger service for the pool's dropped/out-of-order warnings.
     variable dispatch_log [logger::init spar::dispatch]
 }
@@ -153,9 +153,9 @@ apply {{} {
     set d $::spar::pool_script_dir
     source [file join $d spar-email.tcl]
     source [file join $d spar-harness.tcl]
-    source [file join $d transitions ses_send_one.tcl]
-    source [file join $d transitions linkedin_send_one.tcl]
-    source [file join $d transitions imap_check_one.tcl]
+    source [file join $d .. transitions ses_send_one.tcl]
+    source [file join $d .. transitions linkedin_send_one.tcl]
+    source [file join $d .. transitions imap_check_one.tcl]
     source [file join $d spar-dispatcher-initcmd.tcl]
 }}
 

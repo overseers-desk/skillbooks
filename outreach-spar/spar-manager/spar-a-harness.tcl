@@ -4,8 +4,8 @@
 #   <prompt-dir> contains: author-draft.txt, challenger-template.txt, meta.env
 
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir spar-state.tcl]
-source [file join $script_dir spar-harness.tcl]
+source [file join $script_dir lib spar-state.tcl]
+source [file join $script_dir lib spar-harness.tcl]
 package require sha256
 
 if {[llength $argv] < 2} {

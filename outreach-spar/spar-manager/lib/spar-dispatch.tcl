@@ -30,7 +30,7 @@ namespace eval spar::a {}
 # substituted result is byte-identical to the previous heredocs.
 proc spar::load_prompt_template {name} {
     variable dispatch_script_dir
-    set path [file join $dispatch_script_dir prompts $name]
+    set path [file join $dispatch_script_dir .. prompts $name]
     set fd [open $path r]
     set s [read $fd]
     close $fd
@@ -193,7 +193,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
 
     variable ::spar::dispatch_script_dir
     set script_dir $::spar::dispatch_script_dir
-    set spar_p [file normalize [file join $script_dir .. spar-P-profile.md]]
+    set spar_p [file normalize [file join $script_dir .. .. spar-P-profile.md]]
 
     set overview [dict getdef $cdata usp_document ""]
     set antifacts [dict getdef $cdata antifacts ""]
@@ -467,7 +467,7 @@ proc spar::a::_build_prompts {opts on_progress} {
     # classify_segment can find them by the same key it looks up profiles by.
     variable ::spar::dispatch_script_dir
     set script_dir $::spar::dispatch_script_dir
-    set method [file normalize [file join $script_dir .. spar-A-approach.md]]
+    set method [file normalize [file join $script_dir .. .. spar-A-approach.md]]
     set appendices [dict getdef $cdata prompt_appendices [dict create]]
     set appendix_a_author [dict getdef $appendices a_author ""]
     set appendix_a_challenger [dict getdef $appendices a_challenger ""]

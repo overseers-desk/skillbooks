@@ -12,8 +12,8 @@ source [file join $script_dir test-helpers.tcl]
 
 # Source enough to populate the transition registry — parse_cli validates
 # unknown TIDs against ::spar::transitions::all.
-source [file join $script_dir .. spar-state.tcl]
-source [file join $script_dir .. spar-transition-cli.tcl]
+source [file join $script_dir .. lib spar-state.tcl]
+source [file join $script_dir .. lib spar-transition-cli.tcl]
 
 # helper — assert parse_cli succeeds and the resulting tid_scopes matches.
 proc assert_parse {argv expected_scopes label} {

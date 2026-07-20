@@ -16,7 +16,7 @@ namespace eval spar {
         roster_row_has_in_scope_channel render_rollcall
 }
 
-# Directory this library lives in, used to locate vendored files under vendor/.
+# Directory this library lives in. vendor/ sits beside it, one level up.
 set ::spar::lib_dir [file dirname [file normalize [info script]]]
 
 # _parse_fail_reason — split a dispatcher failure reason into {rc cause}.

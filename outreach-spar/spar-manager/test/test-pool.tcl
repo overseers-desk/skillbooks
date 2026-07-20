@@ -19,8 +19,8 @@ source [file join $script_dir test-helpers.tcl]
 
 # spar-dispatcher.tcl needs spar-state.tcl in scope for spar::update_roster_field
 # (called by on_roster_update). Source it so the file loads cleanly.
-source [file join $script_dir .. spar-state.tcl]
-source [file join $script_dir .. spar-dispatcher.tcl]
+source [file join $script_dir .. lib spar-state.tcl]
+source [file join $script_dir .. lib spar-dispatcher.tcl]
 
 set ::log_messages {}
 proc test_log {msg} { lappend ::log_messages $msg }
@@ -58,7 +58,7 @@ proc wait_for_terminal {dispatcher row {timeout_ms 5000}} {
 # spar-domain reports still land on matching on_* methods.
 section "1. No marshalling layer"
 
-set initcmd_path [file join $script_dir .. spar-dispatcher-initcmd.tcl]
+set initcmd_path [file join $script_dir .. lib spar-dispatcher-initcmd.tcl]
 set fd [open $initcmd_path r]; set initcmd_src [read $fd]; close $fd
 assert_eq [regexp {thread::send} $initcmd_src] 0 \
     "worker file has no thread::send"

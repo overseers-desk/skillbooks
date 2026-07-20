@@ -12,7 +12,7 @@ source [file join [file dirname [file normalize [info script]]] spar-lib.tcl]
 # parallel list of T-ids is maintained anywhere else.
 apply {{} {
     set here [file dirname [file normalize [info script]]]
-    set td [file join $here transitions]
+    set td [file join $here .. transitions]
     uplevel #0 [list source [file join $td base.tcl]]
     foreach f {profile.tcl approach.tcl send_email.tcl check_replies.tcl \
                linkedin_followup.tcl manual_followup.tcl} {
@@ -20,7 +20,7 @@ apply {{} {
     }
     # Drift check: registered T-ids must match state-machine.md.
     # Silent no-op if the doc is absent (tests, migrations).
-    ::spar::transitions::assert_matches_doc [file join $here state-machine.md]
+    ::spar::transitions::assert_matches_doc [file join $here .. state-machine.md]
 }}
 
 # Captured at source time for the prefetch_approach_cache worker initcmd:
