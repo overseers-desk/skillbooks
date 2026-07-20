@@ -75,6 +75,16 @@ proc ::spar::smtp_credentials {host user {cdata ""}} {
     }
 }
 
+# send_channels — the auto-send channel vocabulary: every value
+# spar::final_auto_send_channel routes to a send worker (email →
+# ses_send, linkedin → the overseer /run leg). --action validates
+# against this list and _build_rows filters by it; a new send leg
+# (another platform's worker) adds its channel here in the same
+# commit that adds its routing below.
+proc ::spar::transitions::send_channels {} {
+    return {email linkedin}
+}
+
 # ── SendEmailTransition ─────────────────────────────────────────────
 
 oo::class create ::spar::transitions::SendEmailTransition {
@@ -95,7 +105,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
     # Dispatcher so send rows run serially even when other transition
     # kinds parallelise.
     method prepare_for_pool {opts on_progress} {
-        set rows [my _build_rows $opts]
+        set rows [my _build_rows $opts $on_progress]
         return [dict create worker_proc ses_send rows $rows]
     }
 
@@ -108,11 +118,13 @@ oo::class create ::spar::transitions::SendEmailTransition {
     # linkedin_send (which also gets the contact's linkedin_url from the
     # segment roster). The send path is a full-file bypass site, so it
     # reads the approach directly.
-    method _build_rows {opts} {
+    method _build_rows {opts on_progress} {
         set campaign_file [dict get $opts campaign_file]
         set dry_run       [dict getdef $opts dry_run 0]
         set tasks         [dict getdef $opts tasks {}]
         set delay         [dict getdef $opts delay 2]
+        # --action scope: an empty list means every channel sends.
+        set actions       [dict getdef $opts actions {}]
 
         set cdata [spar::load_campaign $campaign_file]
         set camp_sender [dict getdef $cdata sender [dict create]]
@@ -126,6 +138,11 @@ oo::class create ::spar::transitions::SendEmailTransition {
             set approach_path [file join $seg_dir approach "${stem}.yaml"]
             set channel [spar::final_auto_send_channel \
                 [spar::read_approach_yaml $approach_path]]
+            if {[llength $actions] > 0 && $channel ni $actions} {
+                {*}$on_progress $stem skipped \
+                    "channel '$channel' outside --action=[join $actions ,]"
+                continue
+            }
             set row [dict create \
                 campaign_file $campaign_file \
                 dry_run       $dry_run \
