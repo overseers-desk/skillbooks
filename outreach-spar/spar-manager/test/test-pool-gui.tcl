@@ -109,17 +109,19 @@ pack .tpanel
 # touches; the real model is heavy (loads YAML, classifies a campaign,
 # starts a coroutine) and untouched by what this test wants to verify.
 oo::class create FakeCampaign {
-    variable Subs Cdata Transitions State
+    variable Subs Cdata Transitions State Contacts
     constructor {} {
         set Subs [dict create]
         set Cdata [dict create]
         set Transitions {}
+        set Contacts {}
         set State [spar::State new]
     }
     method subscribe {event cb} { dict lappend Subs $event $cb }
     method get_cdata           {} { return $Cdata }
     method get_state           {} { return $State }
-    method get_all_contacts    {} { return {} }
+    method get_all_contacts    {} { return $Contacts }
+    method set_contacts    {cs} { set Contacts $cs }
     method get_transitions     {} { return $Transitions }
     method refresh             {} { return }
 }
@@ -330,6 +332,108 @@ $tree_obj on_transition_loaded T7 "Send → Reply" {
 set t7_children [$tree children t1]
 assert_eq [llength $t7_children] 2 "single-channel band: leaves directly under header"
 assert_eq [$tree set [lindex $t7_children 0] stem] e1 "flat leaf carries its stem"
+
+# ════════════════════════════════════════════════════════════════════
+# 6. The Play button itself. Sections 1-5 reach past it and hand work
+#    straight to the Pool, so nothing above covers the handler that runs
+#    on a click: selection → cohort → eligibility filter → the
+#    transition's prepare_for_pool → enqueue.
+#
+#    Stubbed at one seam only, the transition class. It subclasses the
+#    real base so it inherits the contract the handler calls against,
+#    and it names fake_worker as its worker, so a click enqueues sleeps
+#    instead of spawning claude or sending mail. Everything between the
+#    click and that seam is the shipping code.
+#
+#    Dry run: it skips the send-confirmation dialog, which would block
+#    on a modal with no one to answer it, and leaves the orchestration
+#    log unwritten. The confirmation path stays uncovered.
+# ════════════════════════════════════════════════════════════════════
+section "6. Play handler enqueues the selected cohort"
+
+oo::class create StubTransition {
+    superclass ::spar::transitions::Transition
+    method eligible {state contact primary_channel cdata today_iso} {
+        return [list [dict merge $contact [dict create task_state ready]]]
+    }
+    method prepare_for_pool {opts on_progress} {
+        set rows {}
+        foreach c [dict get $opts stub_cohort] {
+            lappend rows [list $c [dict create plan {{sleep 50}}]]
+        }
+        return [dict create worker_proc fake_worker rows $rows]
+    }
+    method build_opts {tasks filter_segments filter_stems} {
+        return [dict create stub_cohort $filter_stems]
+    }
+}
+
+# Own widgets, own pool, own controller. The fixtures above have been
+# reshaped by five sections of inserts, channel groups and toggles, and
+# the handler resolves a tree item to a T-id by the item's index, so a
+# band added to that tree lands under the wrong transition.
+ttk::frame .tpanel6
+pack .tpanel6
+set campaign6 [FakeCampaign new]
+set tree6_obj [spar::ui::TransitionTree new $campaign6 .tpanel6]
+set tree6 [$tree6_obj get_tree_widget]
+set log6 [spar::ui::LogWindow new 0]
+
+ttk::frame .dispatch6
+pack .dispatch6
+ttk::button .dispatch6.play   -text "▶ Send to pool" -state disabled
+ttk::button .dispatch6.pause  -text "⏸ Pause"        -state disabled
+ttk::button .dispatch6.cancel -text "✕ Cancel"       -state disabled
+pack .dispatch6.play .dispatch6.pause .dispatch6.cancel -side left
+ttk::frame .dispatch6.progress
+ttk::progressbar .dispatch6.progress.bar -mode determinate -value 0
+ttk::label       .dispatch6.progress.status -text ""
+pack .dispatch6.progress.bar .dispatch6.progress.status -fill x
+
+set pool6 [spar::Dispatcher new 4]
+set dc6 [spar::ui::DispatchController new \
+    $campaign6 $tree6_obj $log6 $pool6 \
+    .dispatch6.play .dispatch6.pause .dispatch6.cancel \
+    .dispatch6.progress \
+    [file join $script_dir ..] "" "" {} 0 0]
+$tree6_obj set_dispatch $dc6
+
+# The handler maps the first tree item to the first T-id in tree order,
+# so the stub has to stand in for whichever one that is.
+set stub_tid [lindex [spar::ui_transition_tids] 0]
+set real_transition [::spar::transitions::get $stub_tid]
+dict set ::spar::transitions::registry $stub_tid \
+    [StubTransition new $stub_tid [dict create -label "Stub"]]
+
+$campaign6 set_contacts {
+    {stem p1 contact_name "Pat P"}
+    {stem p2 contact_name "Quinn Q"}
+}
+$tree6_obj on_transition_loaded $stub_tid "Stub band" {
+    {"Pat P"   p1 "Org P" seg-p dispatchable "" ""}
+    {"Quinn Q" p2 "Org Q" seg-p dispatchable "" ""}
+}
+
+set band [lindex [$tree6 children {}] 0]
+set leaves [$tree6_obj leaf_descendants $band]
+assert_eq [llength $leaves] 2 "two leaves under the stub band"
+$tree6 selection set $leaves
+
+$dc6 dispatch 1
+
+assert_eq [wait_for_terminal $pool6 p1] 1 "clicked row p1 reached a terminal state"
+assert_eq [wait_for_terminal $pool6 p2] 1 "clicked row p2 reached a terminal state"
+assert_eq [$pool6 state p1] done "p1 done, so the click reached the worker"
+assert_eq [$pool6 state p2] done "p2 done, so the click reached the worker"
+
+# An empty selection is the other half of the handler's contract: it
+# returns without enqueueing rather than dispatching the whole band.
+$tree6 selection set {}
+$dc6 dispatch 1
+assert_eq [$pool6 state p3] "" "empty selection enqueues nothing"
+
+dict set ::spar::transitions::registry $stub_tid $real_transition
+$pool6 destroy
 
 $pool destroy
 finish_tests
