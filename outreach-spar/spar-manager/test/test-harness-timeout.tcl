@@ -244,6 +244,7 @@ oo::objdefine $ph {
         set RosterLock     /tmp/none/.roster.lock
         set RequiredSkills {}
     }
+    method inject_linkedin {} {}
     method do_profile_call {} { return 3 }
     method session_id {} { return "fin-sess" }
     method resume {stage log_file prompt args} {
@@ -279,6 +280,7 @@ oo::objdefine $ph2 {
         set RosterLock     /tmp/none/.roster.lock
         set RequiredSkills {}
     }
+    method inject_linkedin {} {}
     method do_profile_call {} { return 3 }
     method session_id {} { return "" }
     method resume {stage log_file prompt args} {
@@ -645,6 +647,9 @@ puts $fd "STEM=\"rq-stem\""
 puts $fd "OUTFILE=\"$rq_outfile\""
 puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
 close $fd
+set fd [open [file join $rq_prompt_dir prompt.txt] w]
+puts $fd "research the contact\n__LINKEDIN_SECTION__\nwrite the profile"
+close $fd
 
 set ph3 [spar::ProfileHarness new $rq_prompt_dir [file join $tmp_root logs-rq]]
 oo::objdefine $ph3 {
@@ -699,6 +704,9 @@ puts $fd "STEM=\"t1-stem\""
 puts $fd "OUTFILE=\"[file join $tmp_root profiles-rq t1-stem.md]\""
 puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
 close $fd
+set fd [open [file join $t1_prompt_dir prompt.txt] w]
+puts $fd "research the contact\n__LINKEDIN_SECTION__\nwrite the profile"
+close $fd
 set ph6 [spar::ProfileHarness new $t1_prompt_dir [file join $tmp_root logs-t1]]
 set ::t1_validated 0
 oo::objdefine $ph6 {
@@ -711,5 +719,107 @@ set rc_t1 [$ph6 run]
 $ph6 destroy
 assert_eq $rc_t1 0 "no pre-existing outfile: run falls through to validation"
 assert_eq $::t1_validated 1 "validation (missing_profile owner) ran for the T1 shape"
+
+# ════════════════════════════════════════════════════════════════════════
+section "12. LinkedIn prefetch injects the parse and adjusts the audit (#182)"
+# ════════════════════════════════════════════════════════════════════════
+
+# browser-serialiser is stubbed ahead of PATH. auto_execok caches its
+# resolution, so the cache entry is cleared whenever the stub changes.
+set bs_dir [file join $tmp_root bs-bin]
+file mkdir $bs_dir
+set bs_stub [file join $bs_dir browser-serialiser]
+set fd [open $bs_stub w]
+puts $fd "#!/bin/sh"
+puts $fd {printf '%s\n' "headline: Test Person"}
+close $fd
+file attributes $bs_stub -permissions 0755
+set ::env(PATH) "$bs_dir:$::env(PATH)"
+array unset ::auto_execs browser-serialiser
+
+proc make_li_prompt_dir {tag {linkedin ""}} {
+    set d [file join $::tmp_root "prompt-li-$tag"]
+    file mkdir $d
+    set fd [open [file join $d meta.env] w]
+    puts $fd "STEM=\"li-$tag\""
+    puts $fd "OUTFILE=\"/tmp/none/li-$tag.md\""
+    puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
+    puts $fd "REQUIRED_SKILLS=\"linkedin facebook\""
+    if {$linkedin ne ""} {
+        puts $fd "CONTACT_LINKEDIN=\"$linkedin\""
+    }
+    close $fd
+    set fd [open [file join $d prompt.txt] w]
+    puts $fd "research the contact\n__LINKEDIN_SECTION__\nwrite the profile"
+    close $fd
+    return $d
+}
+
+set li_ok [make_li_prompt_dir ok "https://www.linkedin.com/in/test-person/"]
+set ph7 [spar::ProfileHarness new $li_ok [file join $tmp_root logs-li-ok]]
+oo::objdefine $ph7 method test_required {} {
+    my variable RequiredSkills; return $RequiredSkills
+}
+$ph7 load_my_meta
+$ph7 inject_linkedin
+set li_prompt [spar::read_file [file join $li_ok prompt.txt]]
+$ph7 destroy
+assert_match $li_prompt "*headline: Test Person*" \
+    "prefetched parse lands in prompt.txt"
+assert_eq [string match "*__LINKEDIN_SECTION__*" $li_prompt] 0 \
+    "placeholder substituted away on success"
+# ph7 destroyed above; re-query via a fresh instance is meaningless — the
+# audit adjustment is instance state, so it was read before destroy.
+set ph7b [spar::ProfileHarness new $li_ok [file join $tmp_root logs-li-ok2]]
+oo::objdefine $ph7b method test_required {} {
+    my variable RequiredSkills; return $RequiredSkills
+}
+$ph7b load_my_meta
+$ph7b inject_linkedin
+assert_eq [$ph7b test_required] {facebook} \
+    "successful prefetch drops linkedin from the required-skill audit"
+$ph7b destroy
+
+# Failed fetch (rate wall, absent overseer): empty section, warn, audit
+# unchanged — the worker fetches live as before.
+set fd [open $bs_stub w]
+puts $fd "#!/bin/sh"
+puts $fd "exit 66"
+close $fd
+file attributes $bs_stub -permissions 0755
+array unset ::auto_execs browser-serialiser
+set li_fail [make_li_prompt_dir fail "https://www.linkedin.com/in/test-person/"]
+set ph8 [spar::ProfileHarness new $li_fail [file join $tmp_root logs-li-fail]]
+oo::objdefine $ph8 method test_required {} {
+    my variable RequiredSkills; return $RequiredSkills
+}
+$ph8 load_my_meta
+$ph8 inject_linkedin
+set li_prompt_f [spar::read_file [file join $li_fail prompt.txt]]
+assert_eq [string match "*__LINKEDIN_SECTION__*" $li_prompt_f] 0 \
+    "placeholder cleared on a failed fetch"
+assert_eq [string match "*headline*" $li_prompt_f] 0 \
+    "no parse injected on a failed fetch"
+assert_eq [$ph8 test_required] {linkedin facebook} \
+    "failed prefetch leaves the required-skill audit unchanged"
+$ph8 destroy
+
+# No linkedin_url on the row: no exec at all, placeholder cleared.
+set fd [open $bs_stub w]
+puts $fd "#!/bin/sh"
+puts $fd "touch [file join $bs_dir was-run]"
+close $fd
+file attributes $bs_stub -permissions 0755
+array unset ::auto_execs browser-serialiser
+set li_none [make_li_prompt_dir none]
+set ph9 [spar::ProfileHarness new $li_none [file join $tmp_root logs-li-none]]
+$ph9 load_my_meta
+$ph9 inject_linkedin
+$ph9 destroy
+assert_eq [file exists [file join $bs_dir was-run]] 0 \
+    "no linkedin_url: browser-serialiser not invoked"
+assert_eq [string match "*__LINKEDIN_SECTION__*" \
+    [spar::read_file [file join $li_none prompt.txt]]] 0 \
+    "no linkedin_url: placeholder still cleared"
 
 finish_tests
