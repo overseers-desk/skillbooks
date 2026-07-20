@@ -191,7 +191,7 @@ The cut is the SSOT test: a fact that would change for all member segments at on
 
 ## 8. Writing the roster during a sweep
 
-The roster is the sweep's only data file. A sweep or person-resolution agent that is the segment's sole writer works on `roster.tsv` directly: it reads the roster first to know the stems already present, then appends or updates row by row as it finds things, never rewriting wholesale. Side staging files are not created for sole-writer sweeps.
+The roster is the sweep's only data file, and a sweep creates no other. A sweep or person-resolution agent works on `roster.tsv` directly: it reads the roster first to know the stems already present, then appends or updates row by row as it finds things, never rewriting wholesale. Findings land on the row they concern at the moment they are settled, so a stopped agent leaves finished work in the roster rather than stranded beside it.
 
 Every attempt leaves its outcome on the row it concerned:
 
@@ -201,7 +201,9 @@ Every attempt leaves its outcome on the row it concerned:
 
 New rows are plain appends. Changes to existing rows go through sqlite3 (`.mode tabs`, import, UPDATE, `SELECT *` to a fresh file, move it over the original); TSV has no quoting, and tools that treat it as CSV with tabs re-quote fields and corrupt them, while sqlite3 is a true literal-delimiter mode.
 
-Concurrent writers on one roster lose data silently, and the failure mode differs by write style. Two writers on the sqlite3 pattern both copy the same original, and the second replacement erases the first's rows: the file stays well-formed, rows are just gone. Two raw appenders can interleave mid-line, which corrupts the file itself. Either way the sweep loses truth, so one segment has one writer at a time. When a round genuinely needs several agents feeding one segment at once, either serialise them, or give each agent a scratch file named by run id that is merged and deleted in the same act; a scratch file that outlives its merge is a defect. A running transition batch (P or A, dispatched by spar-transition.tcl) patches the roster from its single dispatcher process, which is safe against itself, but it counts as the segment's writer while it runs.
+Concurrent writers on one roster lose data silently, and the failure mode differs by write style. Two writers on the sqlite3 pattern both copy the same original, and the second replacement erases the first's rows: the file stays well-formed, rows are just gone. Two raw appenders can interleave mid-line, which corrupts the file itself. Either way the sweep loses truth, so a segment takes one writer at a time and a round that wants several agents on one segment runs them in turn. A running transition batch (P or A, dispatched by spar-transition.tcl) patches the roster from its single dispatcher process, which is safe against itself, and it holds the segment's writer slot until it finishes.
+
+Serialising costs less than it appears, and less than the alternative. An agent parked behind another spends only waiting time, while a second data file spends the reader's trust: the roster stops being the answer to "who do we know here", and every later question needs a merge before it can be answered. That merge is where rows are lost, because it lands on a file other sessions are writing. So a sweep's output goes to the roster or waits for the roster, and the repository grows no companion file, no side directory, and no scratch copy to hold it in the meantime.
 
 ## 8a. Stale contact handling
 
