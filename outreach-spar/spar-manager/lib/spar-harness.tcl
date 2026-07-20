@@ -621,7 +621,7 @@ oo::class create spar::ProfileHarness {
     method run {} {
         try {
             my load_my_meta
-            my inject_linkedin
+            if {[my inject_linkedin]} { return 1 }
             # do_profile_call returns one of four codes:
             #   0 — turn closed cleanly
             #   1 — hard failure (no usable product)
@@ -720,11 +720,19 @@ oo::class create spar::ProfileHarness {
     # audit's required-skill list: the harness satisfied the
     # requirement itself, so there is nothing left for the transcript
     # check to find.
-    # Degradation: no linkedin_url, CLI absent, or a failed fetch
-    # (rate wall, lock timeout, absent overseer) leaves the section
-    # empty with a warn, and the worker fetches live, audit unchanged.
-    # The outer `timeout 600` bounds a hung serialiser; the overseer
-    # queue wait it allows for is minutes, not seconds.
+    # Failure splits on the serialiser's exit code (#184). Exit 78 is
+    # its environment code: no browser path at all, overseer absent
+    # and standalone impossible. The worker's own §4.3 fetch runs the
+    # same binary on the same host, so its turn is guaranteed waste
+    # and the row fails here, before any token is spent. Every other
+    # failure (65 skill error, 66 rate wall, 75 lock wait, 124 timeout
+    # kill) is a transient the truth-check and queue-tail requeue
+    # already bound:
+    # the section stays empty, the warn names the exit code, and the
+    # worker fetches live with the audit unchanged. Returns 1 on the
+    # hard failure, 0 otherwise. The outer `timeout 600` bounds a hung
+    # serialiser; the overseer queue wait it allows for is minutes,
+    # not seconds.
     method inject_linkedin {} {
         set prompt_path [file join [my prompt_dir] prompt.txt]
         set section ""
@@ -738,9 +746,16 @@ oo::class create spar::ProfileHarness {
             if {$tmo ne ""} { set cmd [list {*}$tmo 600 {*}$cmd] }
             if {[catch {
                 spar::pool_exec {*}$cmd
-            } out]} {
+            } out copts]} {
+                set ec [dict getdef $copts -errorcode {}]
+                set ecode [expr {[lindex $ec 0] eq "CHILDSTATUS"
+                                 ? [lindex $ec 2] : ""}]
+                if {$ecode eq "78"} {
+                    my _fail "FAIL (no browser path, browser-serialiser exit 78: overseer absent and standalone unavailable): [my slug]"
+                    return 1
+                }
                 ${::spar::harness_log}::warn \
-                    "\[[my slug]\] linkedin prefetch failed (worker fetches live): $out"
+                    "\[[my slug]\] linkedin prefetch failed (exit ${ecode}; worker fetches live): $out"
             } else {
                 set RequiredSkills \
                     [lsearch -all -inline -not -exact $RequiredSkills linkedin]
@@ -750,6 +765,7 @@ oo::class create spar::ProfileHarness {
         set prompt [spar::read_file $prompt_path]
         set prompt [string map [list __LINKEDIN_SECTION__ $section] $prompt]
         spar::write_file $prompt_path $prompt
+        return 0
     }
 
     # DbC-Pre: roster integrity for this segment was validated at
