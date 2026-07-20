@@ -312,15 +312,15 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 
 | T   | State                | Secondary predicates (all, for dispatchable)            | Awaiting / blocked branch                                      | Source            |
 |-----|----------------------|---------------------------------------------------------|----------------------------------------------------------------|-------------------|
-| T1  | DISCOVERED           | —                                                       | —                                                              | lib/spar-state.tcl:448 |
-| T2  | PROFILED             | star ≥ 3                                                | —                                                              | lib/spar-state.tcl:456 |
+| T1  | DISCOVERED           | —                                                       | —                                                              | lib/spar-state.tcl |
+| T2  | PROFILED             | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — `spar::_approach_dispatch_gate`, SSOT with T4; #56) | — | transitions/approach.tcl |
 | T3  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
 | T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
 | T6  | APPROACHED ∨ SENT    | channel = `final_auto_send_channel`(contact): email → has_email ∧ ¬email_sent ∧ A(approach_path); linkedin → has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". channel ∉ {email, linkedin} (e.g. phone-first, or no final message): row is omitted entirely | lib/spar-state.tcl |
-| T7  | any ≠ EXCLUDED       | any_sent ∧ ¬any_replied ∧ email-known ∧ A(approach_path) | A invalid → "invalid_approach_yaml". No watchable address → row omitted. Dispatchable rows dispatch through spar::r::run (courier reply-check) | lib/spar-state.tcl:487 |
-| T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | lib/spar-state.tcl:526 |
-| T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | lib/spar-state.tcl:T9 branch |
-| T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | lib/spar-state.tcl:T10 branch |
+| T7  | any ≠ EXCLUDED       | any_sent ∧ ¬any_replied ∧ email-known ∧ A(approach_path) | A invalid → "invalid_approach_yaml". No watchable address → row omitted. Dispatchable rows dispatch through spar::r::run (courier reply-check) | lib/spar-state.tcl |
+| T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | lib/spar-state.tcl |
+| T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | lib/spar-state.tcl (T9 branch) |
+| T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | lib/spar-state.tcl (T10 branch) |
 
 [†] T6 sends each contact's own primary touch: `final_auto_send_channel` reads the contact's final round and returns the channel of its first email-or-linkedin message, so routing is per contact, not per campaign — an email-only contact in a linkedin-primary campaign dispatches by email (ses_send), a linkedin contact by linkedin_send. The contact's secondary and tertiary channels belong to T9/T10 with wait_days/wait_condition (issue #174); T6 sends only the first.
 
@@ -328,37 +328,36 @@ T7's coverage is bounded by its actuator: it watches one known address per conta
 
 **Conditions no T-gate checks** (relevant for the cross-check below):
 
-- `has_email ∨ has_linkedin ∨ has_facebook` — unchecked from DISCOVERED through SENT. A PROFILED star≥3 contact with zero channels passes T2 and reaches A. A's spec §4.2 line 63 tells A to "flag for human resolution", but the state machine itself does not prevent A-dispatch.
-- `contact_name` quality — T1 has no placeholder check. A DISCOVERED row with `contact_name="Unknown"` dispatches P.
-- `validate_profile` passing — T2 asserts PROFILED by file existence, not by profile-YAML validity.
+- `contact_name` quality — T1 has no placeholder check, by design: P §4.1 accepts placeholder rows as input and resolves the name, so a DISCOVERED row with `contact_name="Unknown"` dispatching P is the intended path and `roster_placeholder_name` is an audit signal, not a missed gate.
+- `validate_profile` passing — T2/T4 assert PROFILED by file existence, not by profile validity; the symmetric P(profile_path) counterpart to T6's A(approach_path) is #179.
 
 ### Warnings catalog
 
-Grouped by validator proc. All line numbers are in `lib/spar-state.tcl`.
+Grouped by validator proc; all live in `lib/spar-state.tcl`.
 
 #### `validate_roster` (per-segment roster quality)
 
-| Code                            | Sev     | Trigger                                               | Skipped states      | Line |
-|---------------------------------|---------|-------------------------------------------------------|---------------------|------|
-| roster_empty_stem               | error   | `stem == ""`                                          | —                   | 1569 |
-| roster_duplicate_stem           | error   | stem repeats within segment                           | —                   | 1580 |
-| roster_extra_fields             | warning | TSV row has extra columns                             | —                   | 1559 |
-| roster_placeholder_name         | warning | contact_name empty or in {unknown,n/a,tbd,placeholder}| EXCLUDED            | 1604 |
-| roster_duplicate_name_org       | error   | (name,org) pair repeats in segment (case_1, issue #5) | EXCLUDED            | 1614 |
-| roster_shared_inbox_collision   | error   | same email at same org, different names (case_2)      | EXCLUDED            | —    |
-| roster_personal_email_reused    | warning | same email, same name, different orgs (case_3)        | EXCLUDED            | —    |
-| roster_no_channel               | warning | ¬has_email ∧ ¬has_linkedin ∧ ¬has_facebook ∧ phone="" | EXCLUDED            | 1626 |
-| roster_no_sweep_iteration       | warning | sweep_iteration empty                                 | EXCLUDED            | 1636 |
-| roster_zero_star_no_invalid     | warning | star=0 ∧ date_excluded empty                          | EXCLUDED            | 1658 |
+| Code                            | Sev     | Trigger                                               | Skipped states      |
+|---------------------------------|---------|-------------------------------------------------------|---------------------|
+| roster_empty_stem               | error   | `stem == ""`                                          | —                   |
+| roster_duplicate_stem           | error   | stem repeats within segment                           | —                   |
+| roster_extra_fields             | warning | TSV row has extra columns                             | —                   |
+| roster_placeholder_name         | warning | contact_name empty or in {unknown,n/a,tbd,placeholder}| EXCLUDED            |
+| roster_duplicate_name_org       | error   | (name,org) pair repeats in segment (case_1, issue #5) | EXCLUDED            |
+| roster_shared_inbox_collision   | error   | same email at same org, different names (case_2)      | EXCLUDED            |
+| roster_personal_email_reused    | warning | same email, same name, different orgs (case_3)        | EXCLUDED            |
+| roster_no_channel               | warning | ¬has_email ∧ ¬has_linkedin ∧ ¬has_facebook ∧ phone="" | EXCLUDED            |
+| roster_no_sweep_iteration       | warning | sweep_iteration empty                                 | EXCLUDED            |
+| roster_zero_star_no_invalid     | warning | star=0 ∧ date_excluded empty                          | EXCLUDED            |
 
 #### `validate_campaign` (cross-file campaign checks)
 
-| Code                    | Sev     | Trigger                                    | Skipped states      | Line |
-|-------------------------|---------|--------------------------------------------|---------------------|------|
-| merged_contact_name     | warning | contact_name contains ` & `                | EXCLUDED            | 1419 |
-| masked_email            | error   | roster email contains `*`                  | EXCLUDED            | 1429 |
-| orphan_profile          | warning | profile file stem not in roster            | —                   | 1488 |
-| orphan_approach         | warning | approach file stem not in roster           | —                   | 1510 |
+| Code                    | Sev     | Trigger                                    | Skipped states      |
+|-------------------------|---------|--------------------------------------------|---------------------|
+| merged_contact_name     | warning | contact_name contains ` & `                | EXCLUDED            |
+| masked_email            | error   | roster email contains `*`                  | EXCLUDED            |
+| orphan_profile          | warning | profile file stem not in roster            | —                   |
+| orphan_approach         | warning | approach file stem not in roster           | —                   |
 
 #### `validate_approach` (per approach YAML, only when file exists)
 
@@ -395,13 +394,13 @@ Categories (applied in the rightmost column):
 | roster_empty_stem               | all                                     | schema pre-check (column-level) | HARD             |
 | roster_duplicate_stem           | all                                     | —                               | HARD             |
 | roster_extra_fields             | all                                     | —                               | SCHEMA-DRIFT     |
-| roster_placeholder_name         | DISCOVERED → REPLIED                    | T1 does not gate on name        | GAP              |
+| roster_placeholder_name         | DISCOVERED → REPLIED                    | none; T1 dispatches P §4.1 name resolution by design | AUDIT |
 | roster_duplicate_name_org       | DISCOVERED → REPLIED                    | P-harness validate_and_correct  | TROUBLE (case_1) |
 | roster_shared_inbox_collision   | DISCOVERED → REPLIED                    | P-harness validate_and_correct  | TROUBLE (case_2) |
 | roster_personal_email_reused    | DISCOVERED → REPLIED                    | —                               | AUDIT (case_3)   |
-| roster_no_channel               | DISCOVERED → REPLIED                    | no T-gate; P §4.15 now excludes | MISALIGNED       |
+| roster_no_channel               | DISCOVERED → REPLIED                    | T2/T4 in_scope_channel (#56); P §4.8/§4.15 exclude, so a firing means a legacy profile or a guard regression | AUDIT |
 | roster_no_sweep_iteration       | DISCOVERED → REPLIED                    | —                               | AUDIT            |
-| roster_zero_star_no_invalid     | DISCOVERED → REPLIED                    | n/a                             | OBSOLETE         |
+| roster_zero_star_no_invalid     | DISCOVERED → REPLIED                    | —                               | REAL (enforces `spar-roster-format.md` checklist 6: star 0 requires date_excluded) |
 | merged_contact_name             | DISCOVERED → REPLIED                    | —                               | WORK-HYGIENE     |
 | masked_email                    | DISCOVERED → REPLIED                    | T6: has_email excludes masked   | REDUNDANT        |
 | orphan_profile                  | n/a (file-scan)                         | —                               | AUDIT            |
@@ -410,113 +409,8 @@ Categories (applied in the rightmost column):
 | duplicate_email / duplicate_name| all non-EXCLUDED                        | —                               | TROUBLE or AUDIT |
 | identical_subject               | APPROACHED (unsent)                     | —                               | WORK-HYGIENE     |
 
-### Known gaps surfaced by this cross-check
-
-1. **`roster_no_channel` is a canary for P's §4.8 rule.** Condition now matches P's DbC-Post (`profile_unreachable_without_exclusion`): no email, LinkedIn, Facebook, or phone. Firing on a non-EXCLUDED row means P's §4.8 was bypassed (legacy profile pre-dating the guard, or guard regression) — profile should be redone or `date_excluded` set.
-2. **T2 has no channel gate.** `state==PROFILED ∧ star≥3` is insufficient; a P bug letting a no-channel contact through would reach A. Either add `has_email ∨ has_linkedin ∨ has_facebook` to T2, or rely wholly on P's §4.15. Cleanest: both.
-3. **T9, T10 wired in `transition_eligible` (issue #41).** Branches take the full campaign dict as an optional 4th arg and compute `secondary_ready` / `tertiary_ready` per contact using the per-message final-round list returned by `analyse_final_round`. Dispatch status remains `manual` — the UI still has to render a script and surface an "actioned" button; see `dispatch_status` in the transition table.
-4. **`roster_zero_star_no_invalid` is obsolete.** spar-P-profile.md §5.4 states star_rating=0 should not appear on the roster (exclusion is carried by `date_excluded` alone). Candidate for deletion.
-5. **T1 does not gate on name quality.** A DISCOVERED row with placeholder contact_name passes T1 and dispatches P on "Unknown". Either T1 should gate, or P's §4.1 should accept placeholders as input and resolve them (it does — so the current path works, but the warning is still a useful audit-signal).
-6. **T2 does not gate on `validate_profile` passing.** A malformed profile YAML is classified PROFILED and star≥3 can be whatever's in the front matter; T2 would mark it ready even though the profile file is broken. Parallel to T6's A(approach_path) check — missing symmetric P(profile_path) check at T2.
-
 ---
 
-## Testing strategy — first task
+## Testing
 
-Tests live in `spar-manager/test/`, one file per module (`test-state.tcl`, `test-validate-approach.tcl`, …). `test/run.tcl` dispatches them in parallel via tpool; `SPAR_TEST_JOBS=1` forces serial.
-
-### Approach
-
-Each test creates a minimal in-memory fixture (no real filesystem writes), calls `classify_contact` with a synthetic roster row and a temporary directory, and asserts the returned dict.
-
-For filesystem-touching tests (profile/approach file detection), use `file tempfile` or a `test/fixtures/` directory with committed minimal files.
-
-### Test cases required before implementing the UI wiring
-
-**1. Primary state classification (no filesystem)**
-
-| Input condition | Expected state |
-|-----------------|----------------|
-| `date_excluded` set | EXCLUDED |
-| Valid, profiles/ absent | DISCOVERED |
-| `contact_name` empty, `date_excluded` empty, profiles/ absent | DISCOVERED |
-| Valid, profiles/ exists but no match | DISCOVERED |
-| Valid, profile file matches by name+org slug | PROFILED |
-| Valid, profile matches by name-prefix only | PROFILED |
-| Valid, profile matches by org+initial | PROFILED |
-
-**2. Approach state (approach YAML present)**
-
-| Approach YAML content | Expected state |
-|-----------------------|----------------|
-| File exists, no final round | APPROACHED |
-| Final round, no `actioned_date` | APPROACHED |
-| Final round, `actioned_date` set | SENT |
-| Final round, `replied_date` set | REPLIED |
-| Final round, `replies` with `direction: received` | REPLIED |
-
-**3. Secondary properties**
-
-| Roster field | Expected property |
-|--------------|-------------------|
-| `email: foo@bar.com` | `has_email true` |
-| `email: ` (blank) | `has_email false` |
-| `linkedin_url: https://...` | `has_linkedin true` |
-| `phone: 0412 000 000`, no email, no linkedin, no facebook | `has_phone_only true` |
-| `phone: 0412 000 000`, email present | `has_phone_only false` |
-
-**4. Progress table derivation (classify_segment)**
-
-Use a fixture segment with 5 contacts in known states. Assert that `classify_segment` returns the correct counts for each column. This is a regression test: if classify_contact is correct, the aggregation should be trivial.
-
-**5. Transition eligibility**
-
-For each transition T1–T8, construct a contact in the eligible state and assert it appears in the transition's task list. Construct a contact one step short of eligibility and assert it does not appear (or appears as `awaiting` or `blocked`).
-
-**6. Duplicate detection**
-
-Two contacts in different segments with the same `email` field → assert duplicate email warning generated. Same `To:` in two approach files → assert duplicate recipient warning.
-
-### Golden snapshot test (validation against real campaign data)
-
-Once the unit tests pass, run `classify_segment` against the real campaign data (line-dance, growers-market) and compare the output counts against the known-good values hardcoded in `mock-ui.tcl`. Any divergence indicates a bug in the classifier.
-
-This test requires the campaign data directory to be present. It is marked as an integration test and skipped in CI if the directory is absent.
-
----
-
-## Reference: existing Python implementation (not a port — a redesign)
-
-**Note (2026-04):** The bin/ Python code referenced below has been removed (v0.1-pre-tcl-migration). This section is retained as design rationale for the Tcl reimplementation.
-
-The progress-scanning and state-detection logic currently lives in `../bin/update-campaign.py`. The Tcl implementation is a **redesign around the state machine model**, not a line-by-line port. The Python code is the reference for what conditions matter; the Tcl design replaces its structure.
-
-Key locations in `../bin/update-campaign.py` and their redesign counterparts:
-
-| Python location | What it does | Redesign in lib/spar-state.tcl |
-|----------------|--------------|----------------------------|
-| `classify_approach_gaps()` (line 343) | Matches 3+★ contacts to approach files; detects missing/unsent | Folded into `classify_contact` — approach state is per-contact, not a gap analysis |
-| `scan_approach_dir()` (line 390) | Scans approach directory for sent/replied/to-address | Replaced by reading the approach YAML once per contact in `classify_contact`; per-segment aggregation in `classify_segment` |
-| Segment loop (line 583–696) | Iterates over segments, accumulates 8-tuple of counts | Replaced by `classify_segment` returning a list of contact dicts; progress table columns are projections, computed on demand |
-| `build_profile_index()` (via spar_lib) | Builds a dict of all profile files in a directory for fast lookup | **Not used in lib/spar-state.tcl.** Profile presence is determined by checking `profiles/{stem}.md` directly using the `stem` from the roster row; no directory scan is needed. `spar::build_profile_index` remains in spar-lib.tcl as a utility. |
-| Duplicate detection (lines 554–668) | Accumulates email/name/subject maps across segments | Becomes a cross-segment pass over the full classified-contacts list |
-
-**What the Python code does not have (new in the redesign):**
-
-- A single `contact_state` function returning a named state. The Python code computes derived boolean flags (`profiled`, `has_email`, `email_sent`, etc.) independently in an ad-hoc loop — there is no explicit state concept.
-- Transition eligibility as a derived view of state. The Python `--missing` flag is the closest analogue, but it lists gaps, not transition tasks.
-- The T3/T4/T7/T8 transitions have no Python equivalent at all.
-
-**Related Python library:** `../bin/spar_lib.py` — contains `load_roster`, `slugify`, `profile_exists`, `approach_final_round_status`, `match_roster_to_stems`. The Tcl equivalents already exist in `spar-lib.tcl`; `lib/spar-state.tcl` builds on them.
-
----
-
-## Implementation plan
-
-1. **Write tests first** (per-module `test/test-*.tcl` with fixture-based unit tests)
-2. **Implement `spar::classify_contact`** in `lib/spar-state.tcl`
-3. **Implement `spar::classify_segment`** — loop + aggregate
-4. **Implement duplicate detection procs** (cross-segment email/name/subject checks)
-5. **Implement transition eligibility procs** — filter classify_segment output per T1–T8
-6. **Run golden snapshot test** against real campaign data
-7. **Wire into mock-ui.tcl** — replace hardcoded `$segments` and `$transitions` lists with live calls
+Tests live in `spar-manager/test/`, one file per module (`test-state.tcl`, `test-validate-approach.tcl`, …). `test/run.tcl` dispatches them in parallel via tpool; `SPAR_TEST_JOBS=1` forces serial. Unit tests build minimal fixtures, call `classify_contact` with a synthetic roster row and a temporary directory, and assert the returned dict; filesystem-touching cases use `file tempfile` or the committed minimal files under `test/fixtures/`. Coverage spans primary state classification, approach-state derivation from the YAML's final round, secondary properties, progress-table aggregation (`classify_segment`), transition eligibility including the `awaiting`/`blocked` branches, and cross-segment duplicate detection.
