@@ -18,7 +18,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 
 ## 3. Outputs
 
-- **Approach file:** `{id}-{slug}.yaml` in the segment's `approach/` directory (the contact's communications log; the directory name is historical, see `spar-methodology.md`). The structure is shown in §6. The ID uses a segment prefix and sequential number (e.g. `TOR-001-peter-myers-pineapple-tours.yaml`). Contains the angle selection rationale, all A1/A2 drafts and responses, chosen USP identifiers per round, and the final send-ready messages.
+- **Approach file:** `approach/{stem}.yaml` in the segment directory, `{stem}` being the contact's roster stem — the state machine derives contact state from file existence at that exact path (the directory is the contact's communications log; its name is historical, see `spar-methodology.md`). The structure is shown in §6. Contains the angle selection rationale, all A1/A2 drafts and responses, chosen USP identifiers per round, and the final send-ready messages.
 - **Communication index entry:** One line appended to `comms-index.md`: contact name, organisation, segment, angle used, key relationship hooks, channel selection.
 - **Approach-file notes:** Write the `a_note` root key in the approach file with: angle used, channel selected, warmth level, language, and any notable drafting consideration. Set the `response_likelihood` root key to the estimated reply probability under the chosen angle. These are A's outputs and live in the approach file, not the roster.
 
@@ -137,7 +137,7 @@ Anti-patterns to avoid in all drafted messages:
 
 A2 tests whether the draft would land well with the recipient and whether it contains factual errors. A2 must run as a separate agent process with its own context — not as self-review within the A1 agent.
 
-**A2 is mandatory for all contacts.** Low-yield profiles need sparring more than high-yield ones: less evidence means more room to hallucinate relevance. Passes are budgeted by profile yield:
+**A2 is mandatory for all contacts.** Low-yield profiles need sparring more than high-yield ones: less evidence means more room to hallucinate relevance. (The one override is the campaign's cost ladder: `a_max_passes: 0` in `campaign.yaml` disables the challenger entirely; see `spar-campaign-yaml.md`.) Passes are budgeted by profile yield:
 
 - yield ≥ 6: up to 3 passes
 - yield 3–5: 1 pass
@@ -155,7 +155,7 @@ A1 reads both steps. If C2 identifies a misalignment or a factual error, A1 revi
 
 ### 4.7 Assemble the approach file
 
-Write the approach file as `{id}-{slug}.yaml` following the structure shown in §6. Run the §7 quality checklist before presenting for human review.
+Write the approach file as `approach/{stem}.yaml` following the structure shown in §6. Run the §7 quality checklist before presenting for human review.
 
 The default sender and BCC address come from the campaign YAML (`sender.name`, `sender.email`, `sender.bcc`) and do not need to be written into the approach file. Write a `decisions.sender` block only when this specific outreach should go from someone other than the campaign's default sender — e.g. a colleague with a prior relationship to the contact. When present, `decisions.sender.email` (and optional `sender.name`) overrides the campaign sender for this contact; per-message `bcc` / `cc` likewise override `sender.bcc`. All of this is resolved by the T3 dispatcher at send time.
 
@@ -305,7 +305,7 @@ rounds:
 
 Omit `subject`/`to` from the message when `mode: reply` is set — T3 derives them. `reply_all: true` preserves the original Cc set (minus the chosen sender's own address); `reply_all: false` (default) replies to the parent's From only.
 
-The file ID uses a segment prefix and sequential number: `TOR-001-peter-myers.yaml`. Place it in the segment's `approach/` directory.
+The file is `approach/{stem}.yaml`, named by the contact's roster stem.
 
 ## 7. Quality checklist
 

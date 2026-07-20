@@ -15,14 +15,13 @@ outreach-spar/
   spar-campaign-directory.md   Campaign directory structure
   spar-segment-categorisation.md  Segment merge/split guidance
   spar-manager/                Tcl dispatcher, state machine, CLI, GUI
-  tests/                       Schema validation tests
 ```
 
 ## How dispatch works
 
 The dispatcher (`spar-manager/lib/spar-dispatch.tcl`) reads `campaign.yaml`, identifies contacts eligible for the next pipeline stage via the state machine (`spar-manager/lib/spar-state.tcl`), and launches AI agent sessions. Each session receives the relevant methodology document (e.g. `spar-P-profile.md`) as part of its prompt. The agent follows the procedure; it does not call scripts.
 
-Post-assembly guard rails (`spar-a-worker.tcl`) validate output and retry on failure with model escalation.
+Post-assembly guard rails (`spar-manager/spar-a-harness.tcl`) validate the approach YAML and resume the agent with the errors until it passes or retries run out.
 
 ## Quick start
 
