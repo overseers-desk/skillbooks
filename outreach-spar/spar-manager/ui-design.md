@@ -8,13 +8,12 @@ Use ttk widgets throughout. Use Tcl 9.
 
 ## Layout
 
-The window is divided into three vertical zones, top to bottom:
+The window is divided into two vertical zones, top to bottom:
 
 1. Campaign panel: config summary + progress table
 2. Transition manager: treeview + task detail
-3. Log panel
 
-A ttk::panedwindow separates the three zones so the user can drag the boundaries.
+A ttk::panedwindow separates the two zones so the user can drag the boundary. Log output lives in an on-demand window (§3), not in a main-window zone.
 
 ## 1. Campaign panel
 
@@ -32,7 +31,7 @@ This is a compact summary, not an editor. Campaign YAML editing is a planned fea
 
 A table built with the grid geometry manager, using ttk::Label widgets for cells and ttk::Checkbutton for the segment selection column. All columns are visible without horizontal scrolling; column widths are sized to fit the window. This reproduces the output of `spar-progress.tcl`.
 
-**Why grid, not ttk::treeview.** The progress table requires multi-level grouped column headers (§1.2 "Column header grouping"), per-cell background colouring for denominator bands, and checkbox widgets in the segment column. ttk::Treeview does not support any of these: it cannot span or group column headings, cannot colour individual cells, and cannot embed widgets in cells. The grid geometry manager with individual ttk::Label and ttk::Checkbutton widgets provides full control over cell appearance, spanning headers, and per-cell styling. The transition manager (§2) uses ttk::treeview because it has a genuine parent-child hierarchy (transition types containing tasks, with a channel-group level when a send band mixes channels), which is what treeview is designed for.
+**Why grid, not ttk::treeview.** The progress table requires per-cell background colouring for denominator bands and checkbox widgets in the segment column. ttk::Treeview supports neither: it cannot colour individual cells and cannot embed widgets in cells. The grid geometry manager with individual ttk::Label and ttk::Checkbutton widgets provides full control over cell appearance and per-cell styling. The transition manager (§2) uses ttk::treeview because it has a genuine parent-child hierarchy (transition types containing tasks, with a channel-group level when a send band mixes channels), which is what treeview is designed for.
 
 Columns:
 
@@ -57,18 +56,7 @@ Valid
     └── Only ☎     (/ N+★)
 ```
 
-This hierarchy is communicated visually using multi-level header rows above the treeview. Each row is a strip of ttk::Label widgets spanning the columns that share a denominator. From top to bottom:
-
-```
-|                  | ← / Valid → |                          ← / N+★ →                          |
-|                  |             |            |←  / A/N+★  →|                                   |
-|                  |             |            |             |← / Sent → |                       |
-| Segment   | Valid|  Profile    | N+★ |   A/N+★   |    Sent   |    Repl   | Email | LinkedIn|Facebook| Only ☎|
-```
-
-The spanning labels are sized to match the combined width of their child columns. When columns are resized, the spanning labels resize to match. Each level may use a subtle background tint to reinforce the grouping.
-
-Vertical separators (ttk::Separator or label borders) are placed at group boundaries — without them, a spanning header label has no visible edges and the reader cannot tell which columns it covers. The separators run the full height of the header area and continue through the data rows to maintain visual alignment.
+The tree is communicated by the Legend popup (§1.5), not by header rows: the table header is a single row of column labels directly above the data. The table itself uses three frames — a fixed header frame, a scrollable data frame (a canvas with a vertical scrollbar), and a fixed totals frame — with identical `grid columnconfigure -minsize` values keeping the columns aligned. The header and totals rows stay visible at all times; the data rows between them scroll vertically when there are more segments than fit the paned-window allocation. Mouse-wheel scrolling is handled via a `ScrollData` bindtag applied to the canvas and all child widgets.
 
 Each row represents one segment. Segments fall into two categories:
 
@@ -92,7 +80,25 @@ These mirror the warnings produced by `spar::build_warnings` (lib/spar-state.tcl
 
 ### 1.4 Check email button
 
-A button labelled "Check Email" in the toolbar area of the campaign panel. Clicking it queries the campaign's configured courier account for new replies and updates approach files with reply markers. The button is disabled while a check is in progress. Results appear in the log panel (§3) and the progress table refreshes afterward.
+A button labelled "Check Email" in the toolbar area of the campaign panel. Clicking it queries the campaign's configured courier account for new replies and updates approach files with reply markers. The button is disabled while a check is in progress. Results appear in the log window (§3) and the progress table refreshes afterward.
+
+### 1.5 Legend popup
+
+A **Legend** button in the campaign toolbar opens a `toplevel` window titled "Column Denominator Tree". The window contains a `canvas` widget that draws the denominator tree (§1.2) as connecting lines between node labels:
+
+```
+                         Valid
+                        ╱     ╲
+                   Profile    N+★
+                            ╱  |  ╲        ╲
+                        A/N+★ Email LinkedIn Facebook Only☎
+                          |
+                         Sent
+                          |
+                         Repl
+```
+
+Each node label is accompanied by its denominator in smaller grey text (e.g. "/ Valid", "/ 3+★"). The canvas redraws on `<Configure>` so it adapts to the window being resized. Closing the legend window withdraws it rather than destroying it; reopening raises and deiconifies the existing window. The canvas is not embedded above the table; the legend is on-demand.
 
 ## 2. Transition manager
 
@@ -165,68 +171,20 @@ The two zones are linked by the segment checkboxes:
 
 This filtering is immediate and does not require a refresh button.
 
-## 3. Log panel
+## 3. Log window
 
-A text widget at the bottom of the window displaying timestamped log entries. All subprocess output (from dispatch actions, email checks, filesystem scans) is appended here. The log panel is scrollable and has a "Clear" button.
-
-Error messages from failed tasks appear here with the contact name and transition type, providing detail beyond what the red progress block and pending reason convey.
+Log output matters during a dispatch run, so it lives in an on-demand window rather than a main-window zone. While a dispatch is active, a **Log…** button appears in the dispatch toolbar; it opens a separate `toplevel` with a scrollable text widget and a "Clear" button, and the window persists across dispatches within a session. All subprocess output (dispatch actions, email checks, filesystem scans) is appended there with timestamps. Error messages from failed tasks appear with the contact name and transition type, providing detail beyond what the red progress block and pending reason convey.
 
 ## State derivation
 
-Contact states are derived from the filesystem, not stored in a separate database. The derivation rules:
-
-| State | Condition |
-|-------|-----------|
-| DISCOVERED | Roster row exists, no profile file |
-| PROFILED | Profile file exists, no approach file |
-| APPROACHED | Approach file exists, no `actioned_date` in final round |
-| SENT | `actioned_date` present in final round |
-| REPLIED | Reply marker present in approach file |
-| EXCLUDED | `date_excluded` set in roster |
-| PROFILE_STALE | Profile file exists; its front-matter `dependent_data` snapshot diverges from the current roster row |
-
-The application scans the filesystem on startup and when the user triggers a refresh (via the Check Email button or after a dispatch completes). If the platform provides a filesystem monitoring facility, use it to trigger automatic refreshes; otherwise rely on manual refresh.
+Contact states derive from the filesystem per `state-machine.md` §States; the GUI stores nothing separately and adds no derivation rules of its own. The application scans the filesystem on startup and when the user triggers a refresh (via the Check Email button or after a dispatch completes). If the platform provides a filesystem monitoring facility, use it to trigger automatic refreshes; otherwise rely on manual refresh.
 
 ## Scope exclusions (planned for future versions)
 
 - Campaign YAML editing from within the UI
 - Segment configuration pop-up (gear icon per segment)
 
-## Column header approach: legend popup (chosen)
-
-The multi-level spanning header rows (§1.2) were prototyped but abandoned: placing headers and data rows in separate grid frames prevented column alignment without complex post-layout width synchronisation, and the five header rows consumed vertical space without solving the alignment problem reliably.
-
-The chosen approach uses a single-row column header directly above the data rows, with denominator relationships explained in a separate legend popup rather than embedded in the table header area.
-
-### Legend button and popup window
-
-A **Legend** button in the campaign toolbar opens a `toplevel` window titled "Column Denominator Tree". The window contains a `canvas` widget that draws the denominator tree as connecting lines between node labels:
-
-```
-                         Valid
-                        ╱     ╲
-                   Profile    N+★
-                            ╱  |  ╲        ╲
-                        A/N+★ Email LinkedIn Facebook Only☎
-                          |
-                         Sent
-                          |
-                         Repl
-```
-
-Each node label is accompanied by its denominator in smaller grey text (e.g. "/ Valid", "/ 3+★"). The canvas redraws on `<Configure>` so it adapts to the window being resized. Closing the legend window withdraws it rather than destroying it; reopening raises and deiconifies the existing window.
-
-The canvas is not embedded above the table. The table header is a single row; the legend is on-demand.
-
-### Progress table: three-frame layout with scrollable data
-
-The progress table uses three separate frames: a fixed header frame, a scrollable data frame (embedded in a canvas with a vertical scrollbar), and a fixed totals frame. All three frames use identical `grid columnconfigure -minsize` values to ensure column alignment. The header row and totals row remain visible at all times; the data rows between them scroll vertically when there are more segments than fit in the available space. Mouse wheel scrolling is handled via a `ScrollData` bindtag applied to the canvas and all child widgets.
-
-### Log panel removed from main window
-
-The log panel (zone 3) is not a persistent zone. Log output is only relevant during a dispatch run. When a dispatch is active, a progress bar and a **Log…** button appear in the dispatch toolbar. The Log… button opens a separate `toplevel` window with a scrollable text widget. This window persists across dispatches within a session.
-
-### Scrollbars
+## Scrollbars
 
 Three scrollbars in the application:
 
@@ -238,10 +196,10 @@ No scrollbar wraps a whole zone or the campaign panel.
 
 ## Development notes
 
-### Running the mock
+### Running the GUI
 
 ```bash
-wish9.0 spar-manager/mock-ui.tcl
+wish9.0 spar-manager/spar-ui.tcl
 ```
 
 ### Screenshot debug cycle (Wayland + XWayland)
@@ -249,7 +207,7 @@ wish9.0 spar-manager/mock-ui.tcl
 `wish9.0` uses Tk, which runs on X11. Under a Wayland compositor it runs via XWayland, not as a native Wayland client. This means `ydotool` (which operates on Wayland input events and cannot query X11 window IDs) does not apply. Use `xdotool` to find the window ID and ImageMagick `import` to capture it:
 
 ```bash
-wish9.0 spar-manager/mock-ui.tcl &
+wish9.0 spar-manager/spar-ui.tcl &
 PID=$!
 sleep 2
 WID=$(xdotool search --name "SPAR Campaign Manager" | head -1)
