@@ -36,11 +36,11 @@
 # transition with requires_send_confirmation=1 (T6 SES). Cron uses --yes.
 
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir spar-state.tcl]
-source [file join $script_dir spar-dispatch.tcl]
-source [file join $script_dir spar-email.tcl]
-source [file join $script_dir spar-transition-cli.tcl]
-source [file join $script_dir spar-control.tcl]
+source [file join $script_dir lib spar-state.tcl]
+source [file join $script_dir lib spar-dispatch.tcl]
+source [file join $script_dir lib spar-email.tcl]
+source [file join $script_dir lib spar-transition-cli.tcl]
+source [file join $script_dir lib spar-control.tcl]
 
 package require logger
 

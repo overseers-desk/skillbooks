@@ -17,7 +17,7 @@ package require sha256
 # load are deferred to spar::_yamlmuster_approach on first validation, so
 # sourcing this file, including in the tpool parse workers that never validate,
 # costs nothing.
-::tcl::tm::path add [file join [file dirname [file normalize [info script]]] vendor]
+::tcl::tm::path add [file join [file dirname [file normalize [info script]]] .. vendor]
 
 # Directory of this file, captured at source time so the lazy bootstrap can
 # locate rules/approach.rules independent of the caller's cwd.
@@ -60,7 +60,7 @@ proc spar::_issue {severity code contact_name message {extra {}}} {
 # must precede the load stay in each accessor, since they differ by kind.
 proc spar::_yamlmuster_load {inst file label} {
     variable _validate_dir
-    set fd [open [file join $_validate_dir rules $file] r]
+    set fd [open [file join $_validate_dir .. rules $file] r]
     fconfigure $fd -encoding utf-8
     set script [read $fd]
     close $fd

@@ -18,7 +18,7 @@ package require logger
 # and an upstream bump lands as a reviewable diff. deadman's home, man
 # page, and full test suite live in the teatotal repository.
 ::tcl::tm::path add \
-    [file join [file dirname [file normalize [info script]]] vendor]
+    [file join [file dirname [file normalize [info script]]] .. vendor]
 package require deadman
 # coachman carries the generic claude-session harness base; spar::Harness
 # below subclasses it. Authored and published in the questlog repository,
@@ -34,8 +34,9 @@ if {[info exists ::spar::_harness_loaded]} {
 
 namespace eval spar {
     variable _harness_loaded 1
-    # Capture the harness install directory at source time. Used by
-    # load_prompt to resolve prompts/<name>.txt relative to this file.
+    # Capture the directory holding this file at source time. prompt_root
+    # derives the checkout root from it, where load_prompt resolves
+    # prompts/<name>.txt.
     variable harness_dir [file dirname [file normalize [info script]]]
     # Logger service for harness runtime output. Per-row context
     # (slug, phase) goes in the message body; logger adds the
@@ -57,7 +58,7 @@ oo::class create spar::Harness {
     # cost meter stays coachman's default: tallyman and anthropic-rates.tcl
     # sit beside the vendored module, so the cap is metered as shipped.
     method log_service {}         { return $::spar::harness_log }
-    method prompt_root {}         { return $::spar::harness_dir }
+    method prompt_root {}         { return [file dirname $::spar::harness_dir] }
     method claude_bin {}          { return [spar::find_tool claude] }
 
     # inject_courier — substitute __COURIER_SECTION__ in the prompt file with the

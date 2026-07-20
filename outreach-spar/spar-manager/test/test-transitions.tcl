@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh9.0
 package require yaml
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. spar-state.tcl]
+source [file join $script_dir .. lib spar-state.tcl]
 source [file join $script_dir test-helpers.tcl]
 
 set State [spar::State new]
@@ -11,7 +11,7 @@ set State [spar::State new]
 # ════════════════════════════════════════════════════════════════════════
 section "24. spar::p::prepare_for_pool — stems selector"
 
-source [file join $script_dir .. spar-dispatch.tcl]
+source [file join $script_dir .. lib spar-dispatch.tcl]
 
 # _dp_make_campaign — build a minimal one-segment campaign with three
 # roster rows (alpha/beta/gamma), an overview.md promoted to
@@ -111,7 +111,7 @@ assert_eq [_runner_class T7] ::spar::transitions::CheckRepliesTransition "routin
 # ════════════════════════════════════════════════════════════════════════
 section "24c. spar::filter_approaches_by_stems — T7 cohort narrowing"
 
-source [file join $script_dir .. spar-email.tcl]
+source [file join $script_dir .. lib spar-email.tcl]
 
 set fas_inputs [list \
     [dict create approach_path /x/approach/alpha.yaml      to_email a@x fingerprints {}] \

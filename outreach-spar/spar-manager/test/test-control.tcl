@@ -6,9 +6,9 @@
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir test-helpers.tcl]
-source [file join $script_dir .. spar-state.tcl]
-source [file join $script_dir .. spar-dispatcher.tcl]
-source [file join $script_dir .. spar-control.tcl]
+source [file join $script_dir .. lib spar-state.tcl]
+source [file join $script_dir .. lib spar-dispatcher.tcl]
+source [file join $script_dir .. lib spar-control.tcl]
 
 proc wait_for {script {timeout_ms 5000}} {
     set deadline [expr {[clock milliseconds] + $timeout_ms}]

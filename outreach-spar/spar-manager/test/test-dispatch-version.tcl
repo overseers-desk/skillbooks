@@ -5,8 +5,8 @@
 package require yaml
 package require TclOO
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. spar-state.tcl]
-source [file join $script_dir .. spar-dispatch.tcl]
+source [file join $script_dir .. lib spar-state.tcl]
+source [file join $script_dir .. lib spar-dispatch.tcl]
 source [file join $script_dir test-helpers.tcl]
 
 set noop {apply {args {}}}

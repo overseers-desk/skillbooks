@@ -8,8 +8,8 @@ package require yaml
 
 # ── Source the library under test ────────────────────────────────────────
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. spar-state.tcl]
-source [file join $script_dir .. spar-email.tcl]
+source [file join $script_dir .. lib spar-state.tcl]
+source [file join $script_dir .. lib spar-email.tcl]
 
 # ── Minimal test framework ──────────────────────────────────────────────
 set ::passes   0

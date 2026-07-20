@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh9.0
 package require yaml
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. spar-state.tcl]
+source [file join $script_dir .. lib spar-state.tcl]
 source [file join $script_dir test-helpers.tcl]
 
 # ════════════════════════════════════════════════════════════════════════

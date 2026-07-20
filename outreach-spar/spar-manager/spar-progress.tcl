@@ -8,7 +8,7 @@
 #                  per-contact warning (default: segment counts only).
 
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir spar-state.tcl]
+source [file join $script_dir lib spar-state.tcl]
 
 # --- Argument parsing ---
 # Hand-rolled (not tcllib cmdline) for style consistency with
