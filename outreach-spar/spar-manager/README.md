@@ -86,6 +86,22 @@ tclsh9.0 spar-transition.tcl /path/to/campaign.yaml T6 --yes    # cron, skip [y/
 
 Common flags: `--dispatchable`/`--awaiting`/`--blocked` (report filters), `--jobs=N` (parallelism, default 4; `--jobs=0` steps one row at a time with a `[y/N]` gate), `--delay=N` (seconds between sends for SES-type transitions, default 2), `--yes` (skip the upfront confirmation for transitions that require it, e.g. `T6` SES sends), `-v`/`--verbose` (list each contact in report mode rather than counts).
 
+### T6 LinkedIn sends
+
+1. Start an overseer on the machine whose Chromium profile is logged in to the sending LinkedIn account, pointing it at a skills checkout that carries `linkedin.com/send-invite` and `linkedin.com/send-message`:
+
+   `BI_SKILLS_ROOT=<skills-checkout>/skills <overseer-repo>/desktop/overseer -cli -no-poll`
+
+2. Confirm it answers: `curl http://127.0.0.1:11402/health` (expect `"ok":true`). For an unattended run, do this pre-flight before approach drafting finishes, not at send time: an overseer absent when the send leg fires leaves the sends failing until someone looks.
+
+3. Dry run first: `tclsh9.0 spar-transition.tcl <campaign.yaml> T6 --dry-run` validates every row (message present, vanity extractable, note within the 300-char invite limit) without contacting the overseer.
+
+4. Send stepped: `tclsh9.0 spar-transition.tcl <campaign.yaml> T6 --jobs=0` confirms each contact on stdin before its send. A plain `T6` sends the whole band serially; the overseer's linkedin.com gate spaces the sends (minutes-scale, jittered), so a band of N takes on the order of N × 2–4 minutes.
+
+5. A successful send stamps `actioned_date` on the approach YAML's linkedin message; `uncertain` results are left unstamped and reported as failures for a human to check on LinkedIn before retrying.
+
+The message's `mode` key (`invite` or `dm`) picks the primitive; absent, text within 300 chars sends as a connection invite, longer text as a direct message (which requires a 1st-degree connection and fails cleanly otherwise).
+
 ### Progress table
 
 ```

@@ -7,19 +7,3 @@
 **Browser work reaches the overseer.** Every browser touch ends at the one process that owns the machine's logged-in Chromium profile, by one of two routes: a send leg calls `POST /run` on `127.0.0.1:11402` directly, and an ad-hoc page fetch goes through `browser-serialiser`, which delegates to the overseer when one is present. Today the direct leg is the T6 linkedin send (`transitions/linkedin_send_one.tcl`); another platform is another skill ref under its own per-host gate, not another path, so adding one changes no rule here. The contract for `POST /run` and `GET /health` is `docs/ducks-protocol.md` in the runner's design home, the Matter repository at `overseers-desk/matter`, often already cloned at `~/code/matter` — read the clone if it is there rather than fetching; the overseer repository's own `docs/overseer-protocol.md` carries that consumer's job layer, not this contract. spar never launches a browser itself, and never implements its own pacing for any host: cadence belongs to the overseer's per-host rate gate, and a client-side delay on top would double-pace. Probe `GET /health` first; an absent overseer fails the transition loudly, never a silent skip. spar is one overseer client among several (the overseer's own type-B jobs, agents running skills), so never assume exclusivity of the browser or impose a client-side global lock; the per-kind cap of 1 on each send kind (`linkedin_send`, `ses_send`) serialises spar's own rows and is the permitted exception.
 
 **A released `vendor/` file (`module-<version>.tm`) is edited in place only to test, and that edit is never committed.** The copies under `vendor/` have homes elsewhere (coachman and tallyman in the questlog repository; deadman, jobloop, leash, yamlmuster in teatotal). Committable work-in-progress lives in a draft beside the release: the next version with an alpha marker (`module-1.2a1.tm`), which Tcl's stable-first `package require` ignores until a test opts in with `package prefer latest` or an explicit version. Finalising strips the marker: the change lands at the module's home as the bumped release, the release file replaces the vendor copy, and the draft is deleted in the same act, so a released file's history holds only whole-file adds, deletes, and replacements mirroring each home.
-
-## Running T6 LinkedIn sends (operator runbook)
-
-1. Start an overseer on the machine whose Chromium profile is logged in to the sending LinkedIn account, pointing it at a skills checkout that carries `linkedin.com/send-invite` and `linkedin.com/send-message`:
-
-   `BI_SKILLS_ROOT=<skills-checkout>/skills <overseer-repo>/desktop/overseer -cli -no-poll`
-
-2. Confirm it answers: `curl http://127.0.0.1:11402/health` (expect `"ok":true`).
-
-3. Dry run first: `tclsh9.0 spar-transition.tcl <campaign.yaml> T6 --dry-run` validates every row (message present, vanity extractable, note within the 300-char invite limit) without contacting the overseer.
-
-4. Send stepped: `tclsh9.0 spar-transition.tcl <campaign.yaml> T6 --jobs=0` confirms each contact on stdin before its send. A plain `T6` sends the whole band serially; the overseer's linkedin.com gate spaces the sends (minutes-scale, jittered), so a band of N takes on the order of N × 2–4 minutes.
-
-5. A successful send stamps `actioned_date` on the approach YAML's linkedin message; `uncertain` results are left unstamped and reported as failures for a human to check on LinkedIn before retrying.
-
-The message's `mode` key (`invite` or `dm`) picks the primitive; absent, text within 300 chars sends as a connection invite, longer text as a direct message (which requires a 1st-degree connection and fails cleanly otherwise).
