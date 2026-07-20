@@ -429,7 +429,7 @@ oo::class create spar::ProfileHarness {
     superclass spar::Harness
 
     variable State Outfile RosterPath RequiredSkills Stem \
-             OutfilePreexisted OutfileSnapshot
+             ContactLinkedin OutfilePreexisted OutfileSnapshot
 
     # Profile workers run under an explicit allow-list instead of
     # skip-permissions, so a research delegation can only reach the
@@ -621,6 +621,7 @@ oo::class create spar::ProfileHarness {
     method run {} {
         try {
             my load_my_meta
+            my inject_linkedin
             # do_profile_call returns one of four codes:
             #   0 — turn closed cleanly
             #   1 — hard failure (no usable product)
@@ -670,6 +671,7 @@ oo::class create spar::ProfileHarness {
         set RosterPath   [dict get $meta ROSTER_PATH]
         set Stem         [dict get $meta STEM]
         set RequiredSkills [dict getdef $meta REQUIRED_SKILLS ""]
+        set ContactLinkedin [dict getdef $meta CONTACT_LINKEDIN ""]
         # Snapshot for the post-call truth-check (#181). Bytes, not
         # mtime: consecutive runs can land within mtime granularity (1s),
         # per the ApproachHarness constructor note.
@@ -706,6 +708,46 @@ oo::class create spar::ProfileHarness {
         ${::spar::harness_log}::info \
             "RETRY: [my slug] profile untouched after clean close, requeued to queue tail (cost=\$[my cost_total])"
         return 4
+    }
+
+    # inject_linkedin (skillbooks#182) — prefetch the roster row's
+    # LinkedIn parse and substitute __LINKEDIN_SECTION__ in prompt.txt.
+    # Runs here so the wait sits in Tcl, inside the overseer's fair
+    # queue, before any token is spent; a worker-side fetch under a
+    # saturated queue outlives its foreground window instead. The
+    # worker reads the parse as text and skips its own fetch, and a
+    # successful injection drops `linkedin` from the §4.3 transcript
+    # audit: the injected parse is the evidence that audit demands.
+    # Degradation: no linkedin_url, CLI absent, or a failed fetch
+    # (rate wall, lock timeout, absent overseer) leaves the section
+    # empty with a warn, and the worker fetches live, audit unchanged.
+    # The outer `timeout 600` bounds a hung serialiser; the overseer
+    # queue wait it allows for is minutes, not seconds.
+    method inject_linkedin {} {
+        set prompt_path [file join [my prompt_dir] prompt.txt]
+        set section ""
+        if {$ContactLinkedin ne "" && [auto_execok browser-serialiser] ne ""} {
+            ${::spar::harness_log}::info \
+                "\[[my slug]\] \[phase: linkedin prefetch\]"
+            set cmd [auto_execok browser-serialiser]
+            lappend cmd linkedin.com/parse-profile $ContactLinkedin
+            # GNU timeout is absent on stock macOS; the bound is optional.
+            set tmo [auto_execok timeout]
+            if {$tmo ne ""} { set cmd [list {*}$tmo 600 {*}$cmd] }
+            if {[catch {
+                spar::pool_exec {*}$cmd
+            } out]} {
+                ${::spar::harness_log}::warn \
+                    "\[[my slug]\] linkedin prefetch failed (worker fetches live): $out"
+            } else {
+                set RequiredSkills \
+                    [lsearch -all -inline -not -exact $RequiredSkills linkedin]
+                set section "\n\n## LinkedIn — prefetched by dispatcher\n\nThe linkedin skill's parse-profile output for $ContactLinkedin, fetched just before this session started. Treat it as your §4.3 LinkedIn lookup; a re-fetch would only repeat the browser queue wait.\n\n\$ browser-serialiser linkedin.com/parse-profile $ContactLinkedin\n[string trim $out]\n"
+            }
+        }
+        set prompt [spar::read_file $prompt_path]
+        set prompt [string map [list __LINKEDIN_SECTION__ $section] $prompt]
+        spar::write_file $prompt_path $prompt
     }
 
     # DbC-Pre: roster integrity for this segment was validated at
