@@ -166,7 +166,7 @@ Never write a masked or redacted email address (e.g. `b***@example.com`) to the 
 
 **Shared-inbox rule.** Before writing an email, check whether the same address is already carried by another row in this segment at the same organisation. If it is, do not write the duplicate and do not overwrite the other row. Research for a non-shared alternate — a personal mailbox, a direct-dial address, a `firstname@` form — and write that. If no non-shared alternate can be found, leave this contact's `email` field empty; the approach will proceed via LinkedIn, phone, or (if no reachable channel remains) be excluded. A single shared inbox (`admin@`, `info@`, `hello@`, `grow@`, etc.) must belong to at most one roster row per organisation, because two outreach emails landing in the same inbox on behalf of two different people reads as bulk outreach, not considered correspondence. The runtime post-validator (`roster_shared_inbox_collision`) will reject the second write and re-prompt for this rule.
 
-If the email passes the format gate, the name check, and the shared-inbox check, declare it in the profile front matter's `roster_patch:` block; the harness applies it to the roster (an interactive, unharnessed session writes the roster itself per `SQLITE3_SKILL.md`). If not found, record in `p_note` via the same block: "email search attempted [date]: no public email found."
+If the email passes the format gate, the name check, and the shared-inbox check, declare it in the profile front matter's `roster_patch:` block; the harness applies it to the roster (an interactive, unharnessed session writes the roster itself per `spar-roster-format.md`, "Programmatic access"). If not found, record in `p_note` via the same block: "email search attempted [date]: no public email found."
 
 ### 4.9 Web search for public activity beyond LinkedIn
 
@@ -188,7 +188,7 @@ For each substantive public statement found (LinkedIn posts, blog posts, confere
 
 When the target has published an article or given a talk, extract specific recommendations, proposals, or calls to action — not just the general argument. "Wrote about XZ" is less useful to the A phase than "recommended SBOMs as industry standard and called for a partnership model among OSS communities, enterprises, and federal agencies." These specifics are the hooks the A phase uses to connect the target's stated views to the campaign's offering. A summary that captures the framing but omits the concrete proposals strips out the most actionable material.
 
-Do not invent or infer statements. A-phase sometimes fabricata a connection that does not exist, and blame P-process for "hinting" the connection exists, there probably isn't any good solution barring from asking agents to careful not to imply things or invent/infer.
+Do not invent or infer statements. The A phase sometimes fabricates a connection that does not exist and blames the profile for hinting at it; there is no structural guard, so the only defence is care here — imply nothing the source does not state.
 
 ### 4.11 Record who the target knows
 
@@ -225,7 +225,7 @@ A rating resting on a role cannot stand on a role whose currency the discovery c
 
 If profiling reveals that the contact cannot deliver the segment's intended outcome through the mechanism the segment describes — including cases where §4.2 was not run before profiling began — set `star_rating` to 0 and exclude per §4.2, which includes writing the short exclusion profile. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
 
-**The profile front matter is `star_rating`'s authoritative home; the roster TSV column is a derived cache.** The harness syncs the roster from the profile whenever the two differ (`spar::apply_roster_patch`), so a harnessed worker writes the value once, in the front matter, and touches no TSV. **Order still matters: write the profile body first, then compute the rating, then write the front matter** — computing after the body forces a fresh re-read of the rubric, so the recorded value reflects a matured reading rather than an early guess (observed failure when ordered the other way: a front-matter 4 against a rubric-derived 1 in one run). An interactive, unharnessed session updates both copies itself per `SQLITE3_SKILL.md` discipline. `response_likelihood` is set by the A phase, not P; do not write it here.
+**The profile front matter is `star_rating`'s authoritative home; the roster TSV column is a derived cache.** The harness syncs the roster from the profile whenever the two differ (`spar::apply_roster_patch`), so a harnessed worker writes the value once, in the front matter, and touches no TSV. **Order still matters: write the profile body first, then compute the rating, then write the front matter** — computing after the body forces a fresh re-read of the rubric, so the recorded value reflects a matured reading rather than an early guess (observed failure when ordered the other way: a front-matter 4 against a rubric-derived 1 in one run). An interactive, unharnessed session updates both copies itself per the sqlite3 discipline in `spar-roster-format.md`, "Programmatic access". `response_likelihood` is set by the A phase, not P; do not write it here.
 
 ### 4.14 Record profile yield
 
@@ -248,7 +248,7 @@ Backfilled emails must pass the §4.8 format gate, name-mismatch check, and shar
 
 Only backfill emails that belong to the contact or their organisation. An email discovered for a different person mentioned in the profile (e.g. a successor, a co-admin) belongs in that person's roster row, not this one.
 
-For each empty contact field where a value was discovered, declare the value in the front matter's `roster_patch:` block for the harness to apply (interactive sessions update the roster directly per `SQLITE3_SKILL.md`).
+For each empty contact field where a value was discovered, declare the value in the front matter's `roster_patch:` block for the harness to apply (interactive sessions update the roster directly per `spar-roster-format.md`, "Programmatic access").
 
 **Person vs. company.** Ask whether the campaign wants this person or the person currently in this role at this company. If the answer is the role — which is true for most contacts discovered via directories or company listings — and profiling shows someone else now holds it, the roster entry is wrong. Invalidate it per §4.2, add the current person as a new roster row, and do not pass the displaced entry to the A phase. Delete any existing profile for them; git history preserves it. This is the canonical application point for the §4.8 name-mismatch signal.
 

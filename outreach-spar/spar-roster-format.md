@@ -10,7 +10,33 @@ Every row must have a `contact_name`. A row without a named person is not a cont
 
 **Delimiter and line-break conventions:** Tab (`\t`) separates fields; newline (`\n`) separates rows. Neither may appear inside a field value. When a field needs to represent a line break within its content (e.g. a multi-sentence note), use carriage return (`\r`) instead of newline. Standard tools (LibreOffice, Python `csv` with `delimiter='\t'`, pandas) read `\r` inside a field without treating it as a row boundary.
 
-**Programmatic access:** Use `sqlite3` for SQL operations on roster files. Do not use `trdsql`, `q`, `csvq`, or Python's `csv` module — they apply CSV quoting rules to TSV output, corrupting fields that contain double quotes.
+**Programmatic access (interactive sessions):** Use `sqlite3` for SQL operations on roster files. Do not use `trdsql`, `q`, `csvq`, or Python's `csv` module — they apply CSV quoting rules to TSV output, corrupting fields that contain double quotes; sqlite3 `.mode tabs` is a true literal-delimiter mode. For updates, UPDATE + `SELECT *` also avoids enumerating columns — a SELECT that lists columns silently drops any the author forgets.
+
+Read:
+
+```bash
+sqlite3 :memory: <<'EOF'
+.mode tabs
+.import roster.tsv tbl
+SELECT contact_name, email FROM tbl WHERE email = '';
+EOF
+```
+
+Write:
+
+```bash
+sqlite3 :memory: <<'EOF'
+.mode tabs
+.import roster.tsv tbl
+UPDATE tbl SET email='new@example.com' WHERE contact_name='Name';
+.headers on
+.output /tmp/out.tsv
+SELECT * FROM tbl;
+EOF
+mv /tmp/out.tsv roster.tsv
+```
+
+For concurrent access (worker scripts), wrap the sqlite3 call with `flock -x <lockfile>`; when a dispatcher provides the canonical lockfile path in the prompt, use that path verbatim rather than inventing a new filename.
 
 **Harnessed writes are mediated.** A worker running under the spar-manager harness does not write the roster: it declares changes in its own deliverable (the profile front matter's `roster_patch` block and `star_rating`, or the approach file's root `roster_patch`), and the harness validates and applies them (`spar::apply_roster_patch` / `spar::apply_approach_patch`), stamping `roster_patch_applied` back into the deliverable so a replay is inert and a later human roster edit stands. `star_rating`'s authoritative home is the profile front matter; the roster column is a cache the harness syncs. The sqlite3 discipline above is the interactive regime: S sweeps, maintenance sessions, and anything else with no harness to mediate. (A worker defect once wrote one facility's contacts across 249 rows in a single unguarded UPDATE; mediation bounds that class to one row.)
 
