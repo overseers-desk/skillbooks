@@ -149,6 +149,48 @@ set rc_line [spar::render_rollcall \
 assert_match $rc_line "*h_cause*\[T2\]*rc=1*stalled*" \
     "render_rollcall builds the worklist line from the live failure reason"
 
+# 2f. PROFILE_UNTOUCHED_RETRY (#181): rc=4 reports failed with the token
+# and the Dispatcher requeues the row at the queue tail once. Here the
+# first failure rewrites run-rc to 0 (standing in for the retry finding
+# the congestion drained), so the requeued run completes: the job's
+# state trail shows one failed round trip ending done.
+lassign [make_harness_dirs rq 4] p_rq l_rq
+set ::p_rq $p_rq
+set ::_rq_trail {}
+$d subscribe job-state [list apply {{row state} {
+    if {$row eq "h_rq"} { lappend ::_rq_trail $state }
+}}]
+$d subscribe job-failed [list apply {{row reason} {
+    if {$row eq "h_rq"} {
+        set fd [open [file join $::p_rq run-rc] w]
+        puts -nonewline $fd 0
+        close $fd
+    }
+}}]
+$d enqueue h_rq harness_run [dict create \
+    prompt_dir $p_rq log_dir $l_rq harness_class FakeHarness]
+wait_for_terminal $d h_rq 3000
+assert_eq [$d state h_rq] done \
+    "untouched-retry rc=4 requeues and the retry lands done"
+assert_eq $::_rq_trail {queued running failed queued running done} \
+    "requeue round trip: failed once, requeued, done"
+
+# 2g. The pool requeues a token failure once. A worker that keeps
+# returning 4 (its prompt-dir marker logic broken) stays failed on the
+# second occurrence instead of looping the queue.
+lassign [make_harness_dirs rq2 4] p_rq2 l_rq2
+set ::_rq2_trail {}
+$d subscribe job-state [list apply {{row state} {
+    if {$row eq "h_rq2"} { lappend ::_rq2_trail $state }
+}}]
+$d enqueue h_rq2 harness_run [dict create \
+    prompt_dir $p_rq2 log_dir $l_rq2 harness_class FakeHarness]
+wait_for_terminal $d h_rq2 3000
+assert_eq [$d state h_rq2] failed \
+    "second token failure stays failed (requeued once)"
+assert_eq $::_rq2_trail {queued running failed queued running failed} \
+    "requeue cap: one round trip then terminal failed"
+
 # 2d. Cancel before the worker enters the harness body: the row is
 # cancelled while still queued (before resume_queue launches it), so it
 # never reaches a coroutine.

@@ -953,6 +953,7 @@ proc spar::log_row_outcome {slug status message {dry_run 0}} {
         started { if {$message eq ""} { ${::spar::transitions_log}::info "  \[START\] $slug" } }
         done    { ${::spar::transitions_log}::info "  \[[expr {$dry_run ? " ○   " : "DONE "}]\] $slug[expr {$message ne "" ? " ($message)" : ""}]" }
         failed  { ${::spar::transitions_log}::error "  \[FAIL \] $slug ($message)" }
+        retry   { ${::spar::transitions_log}::warn "  \[RETRY\] $slug ($message)" }
         skipped { ${::spar::transitions_log}::info "  \[SKIP \] $slug ($message)" }
         warning { ${::spar::transitions_log}::warn "  \[WARN \] $slug: $message" }
     }

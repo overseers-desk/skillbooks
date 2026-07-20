@@ -428,8 +428,8 @@ oo::class create spar::ApproachHarness {
 oo::class create spar::ProfileHarness {
     superclass spar::Harness
 
-    variable State Outfile RosterPath RequiredSkills \
-             Stem ContactName ContactOrg ContactEmail
+    variable State Outfile RosterPath RequiredSkills Stem \
+             OutfilePreexisted OutfileSnapshot
 
     # Profile workers run under an explicit allow-list instead of
     # skip-permissions, so a research delegation can only reach the
@@ -621,7 +621,6 @@ oo::class create spar::ProfileHarness {
     method run {} {
         try {
             my load_my_meta
-            my do_inject_courier
             # do_profile_call returns one of four codes:
             #   0 — turn closed cleanly
             #   1 — hard failure (no usable product)
@@ -643,6 +642,12 @@ oo::class create spar::ProfileHarness {
             set pc [my do_profile_call]
             if {$pc == 1} { return 1 }
             if {$pc == 3} { my do_finalise_after_cost_kill }
+            # Truth-check (#181): a clean close that left a pre-existing
+            # outfile byte-identical goes to the requeue path, not to
+            # validation, which a stale file passes.
+            if {$pc == 0 && [my _outfile_untouched]} {
+                return [my _request_requeue]
+            }
             # DbC-Post: sanitise masked emails written to the roster, then
             # run validate_profile on both the front matter and roster-row
             # invariants (#39 R1: profile_unreachable_without_exclusion —
@@ -665,15 +670,42 @@ oo::class create spar::ProfileHarness {
         set RosterPath   [dict get $meta ROSTER_PATH]
         set Stem         [dict get $meta STEM]
         set RequiredSkills [dict getdef $meta REQUIRED_SKILLS ""]
-        set ContactName  [dict getdef $meta CONTACT_NAME ""]
-        set ContactOrg   [dict getdef $meta CONTACT_ORG ""]
-        set ContactEmail [dict getdef $meta CONTACT_EMAIL ""]
+        # Snapshot for the post-call truth-check (#181). Bytes, not
+        # mtime: consecutive runs can land within mtime granularity (1s),
+        # per the ApproachHarness constructor note.
+        set OutfilePreexisted [file exists $Outfile]
+        set OutfileSnapshot \
+            [expr {$OutfilePreexisted ? [spar::read_file $Outfile] : ""}]
     }
 
-    method do_inject_courier {} {
-        my inject_courier \
-            [file join [my prompt_dir] prompt.txt] \
-            $ContactName $ContactOrg $ContactEmail
+    # A re-profile row's outfile already exists, so "the run closed
+    # cleanly and a valid file sits at Outfile" does not prove the worker
+    # wrote anything: a worker that ends its turn parked on a background
+    # fetch leaves the stale file to pass validation (staleness issues
+    # are warning-severity) and lands a false DONE (#181).
+    method _outfile_untouched {} {
+        if {!$OutfilePreexisted} { return 0 }
+        if {![file exists $Outfile]} { return 0 }
+        return [string equal [spar::read_file $Outfile] $OutfileSnapshot]
+    }
+
+    # First occurrence: drop a marker in the prompt dir (which a requeued
+    # row reuses) and return 4. harness_run maps 4 to a failed report
+    # carrying PROFILE_UNTOUCHED_RETRY, and spar::Dispatcher::on_failed
+    # requeues the row at the queue tail, so the retry runs after the
+    # congestion that starved this attempt has drained. Marker present
+    # means this run WAS the retry: hard FAIL, no loop.
+    method _request_requeue {} {
+        set marker [file join [my prompt_dir] retry.marker]
+        if {[file exists $marker]} {
+            my _fail "FAIL (profile untouched after requeue): [my slug] — $Outfile not written (cost=\$[my cost_total])"
+            return 1
+        }
+        spar::write_file $marker \
+            "attempt 1 session_id [my session_id]\n"
+        ${::spar::harness_log}::info \
+            "RETRY: [my slug] profile untouched after clean close, requeued to queue tail (cost=\$[my cost_total])"
+        return 4
     }
 
     # DbC-Pre: roster integrity for this segment was validated at

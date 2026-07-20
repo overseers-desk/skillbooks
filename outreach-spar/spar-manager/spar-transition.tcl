@@ -534,9 +534,10 @@ if {$dispatching} {
                 [list ::spar::_pool_pre_launch $step_callback $::_total_expected]
         }
 
-        $disp subscribe job-done   [list ::_dispatch_on_done]
-        $disp subscribe job-failed [list ::_dispatch_on_failed]
-        $disp subscribe job-state  [list ::_dispatch_on_state]
+        $disp subscribe job-done     [list ::_dispatch_on_done]
+        $disp subscribe job-failed   [list ::_dispatch_on_failed]
+        $disp subscribe job-state    [list ::_dispatch_on_state]
+        $disp subscribe job-requeued [list ::_dispatch_on_requeued]
 
         # Pause the queue while every batch is enqueued so step_callback
         # (when present) sees the final total, not a growing one.
@@ -576,7 +577,20 @@ if {$dispatching} {
         if {$msg eq ""} { catch {set msg [dict get $result result]} }
         exec_on_progress $row done $msg
     }
+    # job-requeued arrives before the failed pair (job-state failed,
+    # job-failed) of a row the Dispatcher is about to requeue (#181).
+    # Mark the row so those two events count as intermediate, not
+    # final: the retry's own terminal events settle the row. The mark
+    # is consumed by the job-failed handler, the second of the pair.
+    proc ::_dispatch_on_requeued {row} {
+        set ::_retry_pending($row) 1
+        exec_on_progress $row retry "profile untouched by a cleanly-closed run; requeued to queue tail"
+    }
     proc ::_dispatch_on_failed {row reason} {
+        if {[info exists ::_retry_pending($row)]} {
+            unset ::_retry_pending($row)
+            return
+        }
         incr ::_total_failed
         set tid ""; catch {set tid [dict get $::_row_tid $row]}
         lappend ::_rollcall [dict create slug $row tid $tid outcome failed reason $reason]
@@ -599,6 +613,7 @@ if {$dispatching} {
     }
     proc ::_dispatch_on_state {row to_state} {
         if {$to_state ni {done failed cancelled}} return
+        if {[info exists ::_retry_pending($row)]} return
         if {$to_state eq "cancelled"} {
             set tid ""; catch {set tid [dict get $::_row_tid $row]}
             lappend ::_rollcall [dict create slug $row tid $tid outcome cancelled reason cancelled]

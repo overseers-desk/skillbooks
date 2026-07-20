@@ -244,7 +244,6 @@ oo::objdefine $ph {
         set RosterLock     /tmp/none/.roster.lock
         set RequiredSkills {}
     }
-    method do_inject_courier {} {}
     method do_profile_call {} { return 3 }
     method session_id {} { return "fin-sess" }
     method resume {stage log_file prompt args} {
@@ -280,7 +279,6 @@ oo::objdefine $ph2 {
         set RosterLock     /tmp/none/.roster.lock
         set RequiredSkills {}
     }
-    method do_inject_courier {} {}
     method do_profile_call {} { return 3 }
     method session_id {} { return "" }
     method resume {stage log_file prompt args} {
@@ -622,5 +620,96 @@ $inst_nf destroy
 assert_eq $rc_nf 1 "claude-not-found returns rc=1 (hard failure, no resume)"
 assert_match $cause_nf "*claude not found*" \
     "fail_cause records the not-found cause for the roll-call"
+
+# ════════════════════════════════════════════════════════════════════════
+section "11. Untouched pre-existing outfile requeues once, then fails (#181)"
+# ════════════════════════════════════════════════════════════════════════
+
+# A worker that ends its turn parked on a backgrounded fetch closes
+# cleanly (rc=0 from do_profile_call) without reaching its write step. A
+# re-profile row's pre-existing outfile then passes validation (staleness
+# issues are warning-severity), so run() must intercept the untouched
+# file before validation: first occurrence returns 4 (harness_run maps
+# it to the PROFILE_UNTOUCHED_RETRY requeue), the requeued attempt with a
+# still-untouched outfile is a hard FAIL. The stubs raise on the paths a
+# correct run must not reach, so a miss surfaces as rc=1, not rc=4.
+set rq_prompt_dir [file join $tmp_root prompt-rq]
+file mkdir $rq_prompt_dir
+set rq_outfile [file join $tmp_root profiles-rq rq-stem.md]
+file mkdir [file dirname $rq_outfile]
+set fd [open $rq_outfile w]
+puts -nonewline $fd "---\nprofile_date: 2026-01-01\n---\nstale body\n"
+close $fd
+set fd [open [file join $rq_prompt_dir meta.env] w]
+puts $fd "STEM=\"rq-stem\""
+puts $fd "OUTFILE=\"$rq_outfile\""
+puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
+close $fd
+
+set ph3 [spar::ProfileHarness new $rq_prompt_dir [file join $tmp_root logs-rq]]
+oo::objdefine $ph3 {
+    method do_profile_call {} { return 0 }
+    method session_id {} { return "rq-sess" }
+    method sanitise_roster_email {rp slug} {}
+    method validate_and_correct {o r s} { error "must not validate an untouched outfile" }
+    method do_summary {} { error "must not reach DONE" }
+}
+set rc_rq [$ph3 run]
+$ph3 destroy
+assert_eq $rc_rq 4 "clean close with untouched pre-existing outfile returns rc=4"
+assert_eq [file exists [file join $rq_prompt_dir retry.marker]] 1 \
+    "retry marker written to the prompt dir"
+
+set ph4 [spar::ProfileHarness new $rq_prompt_dir [file join $tmp_root logs-rq2]]
+oo::objdefine $ph4 {
+    method do_profile_call {} { return 0 }
+    method session_id {} { return "rq-sess-2" }
+    method sanitise_roster_email {rp slug} {}
+    method validate_and_correct {o r s} { error "must not validate an untouched outfile" }
+    method do_summary {} { error "must not reach DONE" }
+}
+set rc_rq2 [$ph4 run]
+$ph4 destroy
+assert_eq $rc_rq2 1 "second untouched close (marker present) is a hard FAIL"
+
+# A run that rewrites the outfile proceeds to validation and DONE.
+set ph5 [spar::ProfileHarness new $rq_prompt_dir [file join $tmp_root logs-rq3]]
+set ::rq_validated 0
+oo::objdefine $ph5 {
+    method do_profile_call {} {
+        my variable Outfile
+        spar::write_file $Outfile "---\nprofile_date: 2026-07-21\n---\nfresh body\n"
+        return 0
+    }
+    method sanitise_roster_email {rp slug} {}
+    method validate_and_correct {o r s} { incr ::rq_validated; return 0 }
+    method do_summary {} {}
+}
+set rc_rq3 [$ph5 run]
+$ph5 destroy
+assert_eq $rc_rq3 0 "a rewritten outfile passes through to validation and DONE"
+assert_eq $::rq_validated 1 "validation ran for the rewritten outfile"
+
+# No pre-existing outfile (the T1 shape): a clean close that wrote
+# nothing keeps the missing_profile fix-loop path, not the requeue.
+set t1_prompt_dir [file join $tmp_root prompt-t1]
+file mkdir $t1_prompt_dir
+set fd [open [file join $t1_prompt_dir meta.env] w]
+puts $fd "STEM=\"t1-stem\""
+puts $fd "OUTFILE=\"[file join $tmp_root profiles-rq t1-stem.md]\""
+puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
+close $fd
+set ph6 [spar::ProfileHarness new $t1_prompt_dir [file join $tmp_root logs-t1]]
+set ::t1_validated 0
+oo::objdefine $ph6 {
+    method do_profile_call {} { return 0 }
+    method sanitise_roster_email {rp slug} {}
+    method validate_and_correct {o r s} { incr ::t1_validated; return 0 }
+    method do_summary {} {}
+}
+set rc_t1 [$ph6 run]
+$ph6 destroy
+assert_eq $rc_t1 0 "no pre-existing outfile: run falls through to validation"
+assert_eq $::t1_validated 1 "validation (missing_profile owner) ran for the T1 shape"
 
 finish_tests

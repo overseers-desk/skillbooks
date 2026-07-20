@@ -1,13 +1,14 @@
-# spar-courier.tcl — Courier prefetch helpers used by the SPAR-P and
-# SPAR-A prompt builders. Builds the "## Courier — prefetched by
-# dispatcher" block injected into prompts: an account-list header
-# (cached) plus a per-contact correspondence cascade. Goal: kill
-# redundant per-agent account-list calls and the
+# spar-courier.tcl — Courier prefetch helpers used by the SPAR-A prompt
+# builder (SPAR-P deliberately excludes prior correspondence from
+# profiles, per spar-P-profile.md §4.7). Builds the "## Courier —
+# prefetched by dispatcher" block injected into the approach prompt: an
+# account-list header (cached) plus a per-contact correspondence
+# cascade. Goal: kill redundant per-agent account-list calls and the
 # email_search/email-search guess pattern observed in courier #13.
-# Cascade per SPAR-P §4.7 — pass 1 by email (from/to), pass 2 by
-# subject for name and organisation. Uses `courier -A` (multi-account)
-# with `--format text`; both shipped in courier 1.0.3 along with the
-# [Gmail]/All Mail folder default and exit-1-on-empty.
+# Cascade: pass 1 by email (from/to), pass 2 by subject for name and
+# organisation. Uses `courier -A` (multi-account) with `--format text`;
+# both shipped in courier 1.0.3 along with the [Gmail]/All Mail folder
+# default and exit-1-on-empty.
 
 namespace eval spar::courier {
     variable accounts_block_cache ""

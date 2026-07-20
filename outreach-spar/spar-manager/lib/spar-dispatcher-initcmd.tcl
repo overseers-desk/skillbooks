@@ -91,6 +91,12 @@ proc harness_run {row opts} {
     }
     if {$rc == 0} {
         done $row [list rc 0]
+    } elseif {$rc == 4} {
+        # ProfileHarness truth-check (#181): clean close, outfile untouched,
+        # first occurrence. The token routes spar::Dispatcher::on_failed to
+        # requeue the row at the queue tail; the harness's prompt-dir marker
+        # caps it at one retry.
+        failed $row "PROFILE_UNTOUCHED_RETRY: profile not written by a cleanly-closed run"
     } else {
         failed $row "harness exited rc=$rc[expr {$cause ne "" ? " | $cause" : ""}]"
     }
@@ -211,10 +217,10 @@ proc fake_worker {row opts} {
 # exercise harness_run without sourcing the real harness or invoking
 # claude. Mirrors the constructor signature of spar::ProfileHarness /
 # spar::ApproachHarness ([new $prompt_dir $log_dir]) and the run contract
-# (returns 0 = success, 1 = failure). Reads a single token from
-# $prompt_dir/run-rc to choose its return: "0" passes, "1" fails, "throw"
-# raises an error to exercise the catch path. Production code never
-# instantiates it.
+# (returns 0 = success, 1 = failure, 4 = untouched-outfile retry). Reads
+# a single token from $prompt_dir/run-rc to choose its return: "0"
+# passes, "1" fails, "4" requests the requeue, "throw" raises an error to
+# exercise the catch path. Production code never instantiates it.
 package require TclOO
 oo::class create FakeHarness {
     variable PromptDir LogDir
@@ -230,6 +236,7 @@ oo::class create FakeHarness {
         switch -- $rc {
             0       { return 0 }
             1       { return 1 }
+            4       { return 4 }
             throw   { error "fake harness deliberate error" }
             default { return 0 }
         }

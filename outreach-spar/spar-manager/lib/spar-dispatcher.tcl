@@ -45,8 +45,11 @@ oo::class create spar::Dispatcher {
     # Keep spar's construction signature (jobs, optional log callback);
     # feed jobloop spar's logger service. jobloop has no worker bootstrap:
     # the worker bodies are commands in this interpreter, sourced below.
+    variable RequeuedOnce
+
     constructor {jobs {log_cb ""}} {
         next $jobs -log $log_cb -logger spar::dispatch
+        set RequeuedOnce [dict create]
     }
 
     # ─── spar's domain reports ───────────────────────────────────────
@@ -73,6 +76,47 @@ oo::class create spar::Dispatcher {
             return
         }
         my _fire domain-roster_update {*}$args
+    }
+
+    # Requeue-on-token (#181): a ProfileHarness run that closed cleanly
+    # without writing its outfile reports failed with this token (via
+    # harness_run rc=4). The job goes terminal as usual, then back to
+    # the queue tail, so the retry runs after the congestion that
+    # starved the first attempt has drained. Two caps, two owners: the
+    # harness's prompt-dir marker turns a second untouched close into a
+    # plain FAIL (with slug and cost context), and RequeuedOnce keeps
+    # this pool from looping even if a worker keeps reporting the token.
+    #
+    # job-requeued fires BEFORE the failed events so a front-end's
+    # counters can treat them as an intermediate pair, not a final
+    # outcome (the CLI skips them; the GUI is state-driven and needs
+    # nothing). The requeue itself is deferred off this coroutine's
+    # stack: done synchronously, the state re-flips to queued/running
+    # before RunJob's no-verb fallback reads it, and the fallback would
+    # stamp the requeued incarnation done.
+    method on_failed {job reason} {
+        set will_requeue 0
+        if {[string match {*PROFILE_UNTOUCHED_RETRY*} $reason]
+                && ![dict exists $RequeuedOnce $job]
+                && ![catch {my state $job} _s]
+                && $_s in {running paused rate_limited}} {
+            set will_requeue 1
+            dict set RequeuedOnce $job 1
+            my _fire job-requeued $job
+        }
+        next $job $reason
+        if {$will_requeue && [my state $job] eq "failed"} {
+            after 0 [list [self] requeue_failed $job]
+        }
+    }
+
+    # The deferred half of the token requeue. Public because the timer
+    # dispatches it through the object command. The state guard covers
+    # the gap: a job cancelled, pruned, or re-reported between the
+    # failed event and this timer stays where it is.
+    method requeue_failed {job} {
+        if {[catch {my state $job} s]} return
+        if {$s eq "failed"} { my requeue $job }
     }
 }
 
