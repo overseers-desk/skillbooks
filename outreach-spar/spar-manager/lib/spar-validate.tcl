@@ -455,7 +455,7 @@ proc spar::_pred_invalid_star_rating {node meta} {
 # read_profile_front_matter -- extract and parse the YAML front-matter block
 # of a profile file. Returns parsed dict, or "" on any failure (missing file,
 # audit_skills_in_transcript -- the SPAR reading of a session's Skill
-# calls: coachman::tool_use_counts does the counting (the worker's
+# calls: linesman::tool_counts does the counting (the worker's
 # parent session plus its research subagents), and this wrapper turns
 # zero counts into issue dicts (same shape as validate_profile output),
 # code "<skill>_lookup_missing" per required skill with no invocation.
@@ -472,13 +472,13 @@ proc spar::audit_skills_in_transcript {session_id required_skills contact_name {
     }
     # Deferred require, mirroring _yamlmuster_approach above: the
     # validate CLI and the tpool parse workers source this file without
-    # the harness, so coachman loads only when an audit actually runs
+    # the harness, so linesman loads only when an audit actually runs
     # (this file's own vendor tm path makes it resolvable here).
-    package require coachman
+    package require linesman
     if {[catch {
-        coachman::tool_use_counts $session_id $transcripts_root Skill skill
+        linesman::tool_counts $session_id $transcripts_root Skill skill
     } counts opts]} {
-        if {[dict getdef $opts -errorcode {}] eq {COACHMAN NO_TRANSCRIPT}} {
+        if {[dict getdef $opts -errorcode {}] eq {LINESMAN NO_TRANSCRIPT}} {
             return [list [dict create severity warning code transcript_not_found \
                 contact_name $contact_name \
                 message "Session transcript $session_id.jsonl not found under ~/.claude/projects/*/ — audit skipped"]]
