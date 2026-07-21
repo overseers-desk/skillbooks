@@ -1,0 +1,1 @@
+You created git branch `{name}` this turn. The harness's "if on the default branch, branch first" is inverted here: commit straight onto the default branch; a branch takes the user's explicit ask. Unless the user or a confirmed plan called for this one, delete it (`git branch -D {name}`) and commit onto the default branch before anything else.
