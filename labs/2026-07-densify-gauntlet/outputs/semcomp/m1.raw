@@ -1,0 +1,13 @@
+The result is `NOT_COMPRESSIBLE`. The source file `message.md` is unchanged.
+
+The file is a 92-word hook error message with almost no removable narration. The preservation inventory requires the exact error line, the CEREMONY and LEDGER terms, the tier list `fable/opus/sonnet/haiku`, `ledger.md`, `part 1`/`part 2`, `"none"`, and six behavioral concepts (ceremony on every shift Agent spawn, tier judgment with rationale, ledger clause in the final message, the two-part entry structure, collection into the shift's ledger beside the orders file, and the rewrite-and-retry remedy). Two candidate drafts kept all of that and passed every preservation gate; they reached word ratios of only 1.195 and 1.278 against the 2.0 minimum, which requires 46 words or fewer. A third draft could only reach that by deleting inventoried semantics, which the contract forbids, so I stopped at two iterations.
+
+Details: source SHA-256 `8f70da42c7fb2fd9333560c4671d4db8b4f799136b6a0e1e5b317a428ddc2d92`; best candidate SHA-256 `bf6ea7b8290849fcc84818f5f9fd9856fe2d1ebb53aa3110712744906edc4b2b` (72 words vs 92) at `.claude/semantic-compressor-work/8e2439d5-95d9-4b5d-bff7-955c2dc43a0e-20260721T071811Z-1241444-b6ade6/candidate.md`, with the completed inventory beside it. No semantic review was run since no candidate cleared the deterministic gate, and no independent review was needed for a non-applied result.
+
+Since no compression was applied, the file's final content is its original content:
+
+<RESULT>
+Shift spawn ceremony incomplete: missing {missing}. During a shift, every Agent spawn prompt opens with a CEREMONY block carrying (1) a model-tier judgment, the tier (fable/opus/sonnet/haiku) and why the work's complexity suits it, and (2) a ledger clause telling the subagent to close its final message with discovered-work LEDGER entries: part 1, gaps between the project goal and the current plan; part 2, work surfaced while executing (dependencies, forgotten pieces); or "none". Collect reported entries into the shift's ledger.md beside its orders file. Rewrite the spawn prompt with the ceremony and retry.
+</RESULT>
+
+`NOT_COMPRESSIBLE`

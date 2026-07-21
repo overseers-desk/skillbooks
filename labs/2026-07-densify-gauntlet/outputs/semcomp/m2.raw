@@ -1,0 +1,12 @@
+Compression of `message.md` passed both gates in one draft; the source file is unchanged.
+
+- Source: `message.md`, SHA-256 `a810090a97b336409d04dea06383d6f728990c420a2fccb3ce5f57b03b908e1d`, 189 words.
+- Candidate: `.claude/semantic-compressor-work/8c6054b8-cbac-4d14-8bce-273adcee8c3e-20260721T071809Z-1241205-0bb443/candidate.md`, SHA-256 `3e62329b7994cdd52a30bbde32b5b3256cd3d8e3d0e123d675c3967511b57184`, 93 words. Word ratio 2.03 against the 2.0 gate; byte ratio 1.78 as a supporting metric. Iterations: 1 of 3.
+- Deterministic validation: status PASS, no errors; all inventoried literals ("Standard checkup", "bare-dot", "amend", "not pushed, because <reason>") are present verbatim in the candidate.
+- Independent semantic review (fresh read-only subagent): verdict PASS, a model judgment supported by per-concept citations for all 8 inventory concepts, with no missing concepts, altered meanings, or unsupported additions. Saved to `semantic-review.json` in the same workspace, alongside `inventory.json`.
+
+Result state: `PASS`.
+
+<RESULT>
+Standard checkup (idle session; self-decide): after executing a plan this session, audit: planned tasks done, marked done where tracked; mid-execution ideas/work items captured durably (ledger, issue, plan, note); work committed and pushed, closing commits naming closed issues (unpushed at HEAD: amend; buried under later commits: name it in the next commit's message). Push when the segment is complete enough; else tell the user: not pushed, because <reason>. Act on failures; items needing user approval: report; later bare-dot prompt grants approval. If clean or no plan: say nothing; answer the message as if absent.
+</RESULT>

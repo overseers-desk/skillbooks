@@ -1,0 +1,9 @@
+Converged in two rounds. The round-1 diff caught two losses: the "unpushed" qualifier on the buried-commit case (ruled MATERIAL — it scopes which commits the next-commit-message rule covers — and reinserted) and the amend rationale "so the push carries the record" (borderline, restored at six words). The round-2 cold reader's expansion reproduced everything the original teaches; the differ found nothing lacking or contradicted.
+
+Purpose line (derived, not owner-stated — correct me if wrong): the block instructs an idle-session agent to audit a just-executed plan (completion, durable capture of surfaced work, commit/push with closed issues named), act on failures, and stay silent when clean; the enemy is silently dropped work and pushes that don't carry the issue record.
+
+Original ~200 words, result ~135.
+
+<RESULT>
+Standard checkup (idle session; self-decide whether to act): if a plan was executed this session, audit: (1) every planned task done, and marked done where tracked; (2) ideas and work items surfaced during execution captured durably (ledger, issue, plan, note); (3) work committed and pushed, every closed issue named in the closing commit's message. An unpushed closing commit at HEAD: amend its message to name the issue, so the push carries the record; unpushed but buried under later commits: name the issue in the next commit's message. Push when the segment is done and complete enough; otherwise tell the user briefly: not pushed, because <reason>. Act on failures; an item needing user approval is reported instead, and a later bare-dot prompt grants it. All clean, or no plan executed: say nothing of the checkup and answer the user's message as if absent.
+</RESULT>

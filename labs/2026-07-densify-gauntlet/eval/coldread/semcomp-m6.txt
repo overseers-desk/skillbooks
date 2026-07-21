@@ -1,0 +1,63 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it are "Establishing facts and causes" (the message is a worked anti-fireman diagnosis, and my reading of it must not outrun its text), "Handling the request and executing the plan" (an invariant met mid-work, and the fact that mid-session hook edits do not propagate to a running session), and the hook-quoting material implicit in "Testing settings.json or hook script changes". I have re-read those where they sit in context. No tools used, as instructed.
+
+## What the message is
+
+It is the terminal report of a run of the `/semantic-compressor compress message.md` skill invocation, written in the first person by the agent that attempted the run. It declares the run ended in the skill's `ERROR` state, explains why, proves the diagnosis, prescribes a fix, and marks the boundary of what the agent was willing to do on its own authority. The word `ERROR` appears at the head and again alone at the foot; I read the repetition as a machine-parseable sentinel for whatever consumes the skill's output, though that is inference, not something the text states.
+
+## The situation it describes
+
+A session had a PreToolUse hook on the Bash tool. That hook's command wraps a jq program in single quotes for `/bin/sh`, and the deny-reason string inside the jq program contains apostrophes ("that conversation's tail"). The first apostrophe closes the shell's single-quoted string, so `/bin/sh` rejects the entire hook command with "Syntax error: Unterminated quoted string". Because a PreToolUse hook error blocks the tool call, and the hook fires on every Bash invocation, every Bash command in the session fails before execution, including a bare `true`. The hook was evidently written to deny one specific command, `gh issue create`, but the quoting defect widened it into a blanket denial of Bash.
+
+Into this environment the user invoked the semantic-compressor skill. That skill requires a control script, run via Bash, to create a workspace, build an inventory, and perform deterministic validation. The skill forbids recreating those operations with ad hoc tooling and treats any runtime failure as a hard stop. With Bash unusable, the control script could never run, so the skill's contract dictates the `ERROR` terminal state rather than a hand-rolled, unvalidated compression.
+
+## What it requires, of whom
+
+Of the agent that wrote it (obligations it evidences rather than states):
+
+1. When the mandatory control script cannot run, terminate in `ERROR`. Do not produce compressed content, and put nothing between the `<RESULT>` tags.
+2. Do not substitute ad hoc tooling for the control script's operations.
+3. Leave the input untouched and say so in verifiable terms ("byte-for-byte").
+4. Enumerate what artifacts were and were not created (no candidate, inventory, or review artifact).
+5. Attribute the failure only after discriminating tests: a bare `true` failing shows the fault is in the hook, not the commands; a fresh subagent hitting the identical error shows the breakage is session-wide; the error text itself names the mechanism. This is the anti-fireman shape: candidates held, discriminating observation made, cause read off evidence rather than asserted.
+6. Do not edit session configuration (the hook definition), because that lies outside the skill's scope; offer the repair and wait for explicit authorization ("say the word").
+
+Of the recipient (the user, or a supervising session reading the report):
+
+1. Treat the run as having produced nothing. `message.md` is not compressed; there is no partial output to salvage.
+2. Fix the hook before any retry: remove the apostrophes from the deny-reason text, or restructure the quoting (put the jq program in a file, or escape embedded single quotes as `'\''`).
+3. Verify by running any Bash command, then re-invoke `/semantic-compressor compress message.md`.
+4. If the fix should be done by the agent, say so explicitly.
+
+## What satisfies it
+
+The hook definition repaired so that `/bin/sh` parses the hook command, demonstrated by any Bash command succeeding, followed by a re-invocation of the skill that runs the control script normally. Nothing short of a successful Bash execution counts as the precondition; the message names that as the test.
+
+## What violates it
+
+Presenting any compression of `message.md` as this run's output. Recreating the inventory or validation by hand and calling the result validated. Editing the session's hook configuration without the user's word. Retrying the skill without fixing the hook, since the failure is deterministic and repetition changes nothing. Reading the `ERROR` as partial success, or reading the empty `<RESULT>` region as an empty result rather than the absence of one.
+
+## Why it exists, as far as I can tell
+
+The skill's value is that anything it emits between `<RESULT>` tags has passed deterministic validation. An unvalidated compression is worse than none, because the reader cannot detect what was lost; the hard-stop rule protects that guarantee, and this message is the hard stop honoring it. The diagnostic section exists so the recipient can trust the attribution: the run failed for an environmental reason, not a task reason, and re-invocation after the environmental fix will succeed. The scope boundary exists because session configuration belongs to the user; a skill that silently rewrote the user's hooks to unblock itself would be spending a decision that is not its to spend. This matches the project's own rule that a blocking invariant met mid-work is obeyed and the redesign proposed, not silently worked around.
+
+## What it teaches beyond its own run
+
+Since I maintain the plugin whose hooks run on users' machines, the message is also a bug report at one remove. Dynamic text interpolated into a single-quoted `/bin/sh` string breaks on the first apostrophe; a deny-reason string is exactly the kind of prose that will contain one. The robust fixes are structural (pass the reason via `jq --arg`, put the jq program in a file, or avoid `sh -c` string assembly), not editorial; deleting the apostrophes from this one reason string leaves the same landmine for the next. It also teaches the blast radius: a hook intended to deny one command fails closed across all Bash, and subagents inherit the same hooks, so spawning one is not an escape. And it teaches the attribution method: an error prefixed `PreToolUse:Bash hook error` on a bare `true` indicts the hook, not the command.
+
+One of the message's own claims deserves a caveat. It says that once any Bash command succeeds, re-invoking the skill will proceed normally, and it offers to repair the hook within the session. But hook configuration is loaded at session start; mid-session edits to settings.json or hook scripts do not propagate to the running session. So an in-session repair followed by an in-session re-invocation would likely still hit the broken hook. The correct sequence is: edit the hook definition, verify with a fresh non-interactive session (`claude -p 'true'`), then re-run the compression in a fresh session.
+
+## What I would do on receiving it
+
+Accept the terminal state and make no use of any supposed output. Locate the hook command in settings.json or in the plugin that installs it, and fix the quoting structurally rather than by stripping apostrophes. Verify the fix with `claude -p` rather than in the broken session, for the reason above. Re-run the compression in a fresh session. As maintainer, audit the plugin for the same interpolation pattern in other hooks. I would not fault the reporting agent; its conduct matches the skill's contract at every point.
+
+## Parts I cannot fully interpret
+
+The framing I was given says "one of its hooks emits this message into a session", but the text reads as an agent's authored final report, with first-person run-specific observations (the subagent test, the byte-for-byte check). A hook emitting canned text of this shape would make those observations fabrications rather than findings; an agent authoring it makes them evidence. I cannot resolve which from the text alone, and the two readings differ in how much of the diagnosis can be trusted. Within the message itself, nothing is unintelligible to me; the control script's internals are known to me only through its parenthetical ("workspace, inventory, deterministic validation"), which I take on the message's word.
+
+**HITS**
+
+1. The run produced no output: `message.md` is unchanged and nothing exists between the `<RESULT>` tags, so no downstream step may treat the file as compressed.
+2. The root cause is a quoting defect in the session's PreToolUse Bash hook: an apostrophe in the jq deny-reason string terminates the shell's single-quoted string, so `/bin/sh` rejects the hook and thereby blocks every Bash command, not just the one the hook meant to deny.
+3. It will keep happening on every Bash call, in the main loop and in subagents, until the hook definition is edited; retrying the skill without that edit changes nothing.
+4. The durable fix is structural quoting (jq program in a file, `'\''` escapes, or `--arg`), not removing this one string's apostrophes; and because hook edits do not propagate mid-session, verification belongs in a fresh `claude -p` session, contrary to the message's re-invoke-here suggestion.
+5. The reporting agent correctly declined to edit session configuration and left that decision to the user, matching the skill's hard-stop contract and the invariant-met-mid-work rule.

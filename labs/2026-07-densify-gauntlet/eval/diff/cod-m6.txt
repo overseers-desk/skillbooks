@@ -1,0 +1,5 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it are "Writing for a reader" (the cold-reader pass, the sorry-im-late skill, forward-only writing) and the blind-test rule in "Handling the request and executing the plan"; I have re-read them where they sit in my context.
+
+Comparing the two texts point by point — the mid-conversation-draft problem and its three example classes, the repo-having-but-conversation-blind reader, the /sorry-im-late step, the fresh agent's nature and its querying of conversation-closable references, the fold-in-then-recreate sequence, the SORRY_IM_LATE_DONE=1 prefix on the gh command, and the purpose of the block as forcing one deliberate standalone pass — every teaching of ORIGINAL is present in EXPANSION, none contradicted.
+
+NOTHING LOST

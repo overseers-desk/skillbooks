@@ -1,0 +1,9 @@
+Precision through sophistication, brevity through vocabulary, clarity through structure.
+
+Intent: an error message stating a spawn prompt lacks the required CEREMONY block, specifying the block's two required parts, and directing a retry. Must keep: the `{missing}` placeholder, tier list, both ledger parts, "none", ledger.md/orders-file collection step, retry instruction.
+
+<RESULT>
+Shift spawn ceremony incomplete: missing {missing}. During a shift, every Agent spawn prompt opens with a CEREMONY block containing (1) a model-tier judgment: the tier (fable/opus/sonnet/haiku) and why the work's complexity suits it; and (2) a ledger clause: the subagent closes its final message with discovered-work LEDGER entries (part 1: gaps between the project goal and the current plan; part 2: work surfaced while executing, e.g. dependencies, forgotten pieces) or "none". Collect reported entries into the shift's ledger.md beside its orders file. Rewrite the spawn prompt with the ceremony and retry.
+</RESULT>
+
+Key edits: replaced the two verbose clause introductions ("carrying (1) … the tier … and (2) a ledger clause telling the subagent to close…") with parallel colon-delimited definitions; folded the "or 'none'" alternative into the entry specification so the sentence reads once, not twice. Every obligation, the tier list, both ledger parts, and the collection/retry steps survive verbatim in meaning. Reduction is under 20%, so no delta report is owed.

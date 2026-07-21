@@ -1,0 +1,23 @@
+This is a Kahneman's system 2 question. The sections of the office methodology that bear on it are the cue-word preamble (which defines III) and "Version control and issue maintenance" (which carries the same `--only` staging rule: "commit with `--only` to stage whole files touched this conversation"). I have re-read both where they sit in my context.
+
+What the message teaches, as I understand it:
+
+**When it fires.** The hook detects that a blanket staging command was run in the session: `git add -A`, `git add --all`, `git add -u`, `git add .`, or `git commit -a`. The message is an advisory injected after that detection; it is addressed to the AI session that ran the command.
+
+**What it requires.** The standing rule ("office rule") is that commits are made with `git commit --only`, explicitly staging the whole files that this conversation touched, and no others. The unit is the file, not the hunk ("whole files"), and the criterion for including a file is that this session touched it.
+
+**Why it exists.** The checkout may be shared: several sessions (human or AI) can be working in the same working tree at once. A blanket add stages everything modified or untracked, which sweeps sibling sessions' work-in-progress and scratch files into this session's commit. The rule confines each session's commits to its own work.
+
+**What it demands on receipt (the remedy).** Not merely a change of future habit. The session must audit what was actually staged or committed: run `git status` and/or `git show --stat HEAD`, then go through the resulting file list and claim each file as this session's own — that is, positively verify that this conversation is the origin of each file's changes. Files that cannot be claimed must be removed: unstaged (if not yet committed), amended out of the commit (if committed), or reverted. The phrase "even if already pushed" means a push does not close the matter; a pushed commit containing swept-in files must still be corrected, which implies amending or reverting pushed history.
+
+**What satisfies it.** Either (a) the audit shows every staged/committed file belongs to this session, in which case nothing further is needed, or (b) the foreign files are removed by one of the three mechanisms, leaving the commit containing only this session's files.
+
+**What violates it.** Leaving a commit (staged, local, or pushed) containing files this session cannot claim; or continuing to use blanket staging in future commits outside the exceptions.
+
+**Exceptions.** Two situations where the blanket add was legitimate and the session should simply carry on: the user explicitly ordered a sweep (a "user-ordered sweep"), or the repository is a fresh import where every file genuinely belongs to this session, so there is nothing foreign to sweep.
+
+**The trailing "III".** This is the office cue "Ignore If Irrelevant, Silently": the hook's pattern match may have caught a case where the rule does not apply. The receiving session judges; if the advisory is irrelevant (an exception holds, or the match was spurious), it is dropped silently, with no note that it was checked. If the harness forces a spoken reply where only silence is appropriate, the reply is at most one character.
+
+**What I would do on receiving it.** First judge relevance: did I in fact run a blanket staging command, and does either exception apply? If an exception applies or the match was spurious, drop it silently and continue. Otherwise, run `git status` and `git show --stat HEAD`, walk the file list, keep the files this conversation touched, and remove the rest by unstaging, `git commit --amend`, or revert, including fixing pushed history if the commit went out; then commit with `--only` from that point on.
+
+**Parts I find unclear.** Two minor points, neither unintelligible. "Even if already pushed" prescribes correcting pushed history but not the mechanism (amend plus force-push versus a revert commit); on a shared default branch these differ materially in risk, and the message leaves the choice to judgment. And "claim each file as this session's own" does not say how to establish ownership when a file is ambiguous (for example, a file both this session and a sibling touched); I read the intent as "positively verify from this conversation's own record of what it edited", with anything unverifiable treated as foreign.

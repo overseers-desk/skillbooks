@@ -1,0 +1,49 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it are "Writing for a reader" (the cold-reader test, forward-only, and the note that the sorry-im-late skill gates or fixes documents written for a third party) and the sorry-im-late skill's own description in the skills list. I have re-read both where they sit in context.
+
+## What the message is
+
+It is the output of a hook, almost certainly a PreToolUse hook that matched a Bash command of the shape `gh issue create ...`. It fires at the moment a session is about to create a GitHub issue, before the command runs. Its audience is the AI session that issued the command, not the human user.
+
+## The problem it names
+
+An issue body drafted in the middle of a conversation is written by an author saturated with that conversation's private context. The draft therefore contains references that resolve only inside the conversation: a label like "Option C", the phrase "as discussed", a decision stated without its reason because the reason was spoken in the chat. The issue's actual reader is a colleague who has the repository but was not present for the exchange. To that reader those references are dead ends. The author cannot detect this by self-inspection, because the author's own context silently closes every gap; only a reader who lacks the conversation can find the gaps.
+
+## What it requires, of whom, in what situation
+
+Of the AI session, whenever it is about to create a GitHub issue whose body was drafted during the conversation:
+
+1. Do not run the `gh` create command yet.
+2. Run the /sorry-im-late skill on the draft. That skill spawns a fresh agent which is given the project (the repository) but not the conversation. This agent reads the draft as the eventual colleague would and produces queries for every reference that only the conversation can resolve.
+3. Take those queries back into the session, answer them from the conversation the session does have, and fold the answers into the issue body, so each formerly-private reference now carries its referent.
+4. Re-issue the create command with `SORRY_IM_LATE_DONE=1` prepended to it, i.e. `SORRY_IM_LATE_DONE=1 gh issue create ...`. The hook evidently inspects the command string for this marker and lets the marked command through.
+
+## What satisfies it
+
+The pass genuinely ran: a fresh, conversation-blind agent read the draft, its questions were answered into the body, and only then was the command retried with the marker. The marker is an attestation that this sequence happened, not a bypass switch.
+
+## What violates it
+
+- Prepending `SORRY_IM_LATE_DONE=1` without running the pass. The closing sentence, "the deliberate pass is the point", exists precisely to foreclose this: the marker is trivially forgeable, so the design relies on the session's honesty, and the message states that the value lies in the pass itself, not in satisfying the gate.
+- Substituting self-review for the cold read: the author rewriting the draft from inside the conversation and judging it clear. The mechanism depends on the reader lacking the conversation; the author structurally cannot supply that.
+- Leaking the conversation to the fresh agent, which would un-blind it and void the test. This matches the repo methodology's blind-test rule: give the subagent only what it would naturally receive.
+- Ignoring the hook and abandoning or force-creating the issue.
+
+## Why it exists
+
+It mechanizes the CLAUDE.md principle that a document the user asks for is written for a third party who has the project but not the conversation, and that a cold-reader pass, not the author's feel, is the test of whether a stranger could act on it. The environment-variable handshake exists because hooks are stateless pattern-matchers on commands: they cannot themselves verify that a skill ran, so the session certifies completion by marking the retried command.
+
+## What I would do on receiving it
+
+Hold the create. Invoke the sorry-im-late skill with the drafted issue body. Receive the fresh agent's list of unresolvable references. Answer each from the conversation and rewrite the body so every answer is in the text itself, stated forward-only (the current state and its reason, not the deliberative route). Then run the same `gh issue create` command with `SORRY_IM_LATE_DONE=1` prepended.
+
+## Parts that are less than fully clear
+
+- "recreate the issue": the hook fires before creation ("About to create"), so nothing exists yet to re-create. I read "recreate" as "issue the creation command again"; the wording slightly suggests the first command may have executed, but the more coherent reading is that the hook blocked it.
+- The mechanics of "queries every reference": the message does not say how the fresh agent's queries reach the session (a returned list, an interactive exchange). That detail lives in the skill, not the message; the message only establishes that queries are produced and their answers folded in.
+- The scope of the marker is unstated: whether `SORRY_IM_LATE_DONE=1` licenses one command or would be honored on any later create in the session. The safe reading is one command per pass, since the pass is per-draft.
+
+HITS:
+1. The message is a pre-execution gate on `gh issue create`, addressed to the AI session, requiring a cold-reader pass over the drafted issue body before creation.
+2. The pass consists of a fresh agent with the repository but not the conversation querying every reference only the conversation can resolve; the session answers those queries into the body.
+3. Compliance is signaled by prepending `SORRY_IM_LATE_DONE=1` to the retried `gh` command; the marker attests the pass ran and setting it without the pass defeats the mechanism, which the message's final clause anticipates.
+4. The rationale is that an author cannot see their own conversation-dependent gaps; only a conversation-blind reader can, which is the same cold-reader principle stated in this repo's CLAUDE.md.

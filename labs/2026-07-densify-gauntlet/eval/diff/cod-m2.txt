@@ -1,0 +1,8 @@
+This is a Kahneman's system 2 question. Sections bearing on it: Densify (this is the cold-reader-diff step that verifies a compression — losses are dropped specifics and collapsed markers), and the trailing-restate rule (the list ends at the last real loss). Re-read where they sit; no tools follow.
+
+- Item 2 covers "ideas and work items" that floated up during execution; EXPANSION captures only ideas.
+- The bare-dot prompt grants approval — ORIGINAL states this plainly; EXPANSION demotes it to an unresolved ambiguity.
+- Approval-needing items are reported to the user ("report it instead"); EXPANSION says to hold them silently and counts raising them unprompted as a violation.
+- The next-commit rule is scoped to a buried commit that is unpushed; EXPANSION drops the unpushed qualifier for the buried case.
+- If no plan was executed in the session, the same silence applies; EXPANSION lacks this branch.
+- The advisory arrives alongside a user message that is to be answered normally as if the checkup were absent; EXPANSION reads it as a forced-reply situation warranting "minimal or empty output".

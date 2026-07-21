@@ -1,0 +1,37 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it: "Handling the request and executing the plan" (subagent tiers, NQA, the shift skill's mechanisation of the unattended floor) and "Deciding what to build" (the ledger's relation to batching open questions). I have re-read those where they sit in context. No tools follow; the analysis is below.
+
+## What the message is
+
+It is the output of a blocking hook, almost certainly a PreToolUse hook on the Agent (subagent-spawn) tool, active during an armed shift (the unattended-run mode the `holotapes:shift` skill sets up). It fires when an orchestrating session tries to spawn a subagent with a prompt that lacks a required preamble, rejects the spawn, and tells the session how to fix the prompt and try again. `{missing}` is a template slot the hook script fills with whichever required parts were absent, so the session knows what to add rather than guessing.
+
+## What it requires, of whom
+
+The obligation falls on the orchestrating session (the one calling the Agent tool), not on the subagent. The subagent prompt must open with a block labelled CEREMONY containing two things:
+
+1. **Model tier and rationale.** The chosen tier (fable, opus, sonnet, or haiku) plus why the work suits that tier. This forces the tier decision to be made deliberately per spawn, in writing, rather than defaulting to the orchestrator's own model. It mechanises the methodology rule that subagent tiers follow the component's consequence-of-error and complexity, not the conversation's altitude.
+
+2. **A ledger clause.** An instruction to the subagent that it close its final message with LEDGER entries in two parts — part 1: gaps between the project goal and the current plan; part 2: work that surfaced while executing (dependencies, forgotten pieces) — or the literal word "none" if there is nothing to report.
+
+A third obligation falls on the orchestrator after the subagent returns: collect the subagent's LEDGER entries into `ledger.md`, a file beside the shift's orders file. The subagent cannot do this itself since it does not know the shift's file layout; the clause makes it emit the data, the orchestrator files it.
+
+## What satisfies, what violates
+
+Satisfies: a spawn prompt whose opening CEREMONY block names a tier with a work-specific justification and carries the ledger instruction. Violates: no CEREMONY block; a block missing either element; presumably a tier named without a rationale. I cannot tell from the message alone how strictly the hook parses — whether it checks for keywords ("CEREMONY", a tier name, "LEDGER") or for structure. The `{missing}` slot implies it validates the two elements separately.
+
+## Why it exists, as far as I can tell
+
+Both requirements guard against known failure modes of unattended multi-agent runs. The tier clause prevents the recurring offence the methodology names: using the orchestration model for work that is beneath it (or a small model for work above it), by making the choice explicit and justified at the moment it is made. The ledger clause solves the problem that subagent discoveries die with the subagent: a subagent that notices a missing dependency, a forgotten piece of work, or a mismatch between the plan and the project goal has nowhere durable to put that observation. During a shift the user is asleep (NQA), and the standing discipline is to batch open questions and surfaced work for waking; `ledger.md` beside the orders file is the physical batch, read at `/clock-off`. The two ledger parts are distinct in kind: part 1 is plan criticism (the current plan does not reach the goal), part 2 is scope discovery (executing revealed work nobody listed). Requiring "none" rather than allowing silence distinguishes a subagent that checked and found nothing from one that never looked, the checked-empty versus unrecorded distinction the densify rule also protects.
+
+## What I would do on receiving it
+
+Read `{missing}` to see which parts the hook found absent. Rewrite the spawn prompt so it opens with a CEREMONY block: state the tier I chose and why this specific work suits it, and append the ledger instruction to the subagent's brief. Retry the same Agent call with the rewritten prompt. After the subagent's final message arrives, append its LEDGER entries (or note the "none") into the shift's `ledger.md`, creating it beside the orders file if absent. I would not treat the hook message as a reason to abandon the spawn or to downgrade the work; it is a formatting-and-discipline gate, not a veto.
+
+## Parts I cannot fully resolve
+
+"Open the spawn prompt with a CEREMONY block" I read as "begin the prompt with," but the message does not say whether the block needs delimiters or a heading beyond the word CEREMONY. "Beside the orders file" presumes I know where the orders file is; that knowledge comes from the shift skill's own artifacts, not from this message, so a session that lost track of the shift directory would have to find it before filing. Whether the orchestrator should merge duplicate ledger entries across many subagents or append verbatim is unstated; verbatim append is the safe reading, since dedup is judgment the clock-off review can apply.
+
+HITS:
+1. The message is a blocking gate on subagent spawns during an armed shift: the spawn is rejected until the prompt opens with a CEREMONY block, and the fix is rewrite-and-retry, not abandonment.
+2. The CEREMONY block has exactly two required elements: a model tier (fable/opus/sonnet/haiku) with a work-specific rationale, and an instruction that the subagent end its final message with two-part LEDGER entries or "none".
+3. The orchestrator, not the subagent, files the returned LEDGER entries into `ledger.md` beside the shift's orders file.
+4. The mandatory "none" exists to distinguish checked-and-empty from never-checked; the two ledger parts distinguish plan-vs-goal gaps from work discovered in execution.

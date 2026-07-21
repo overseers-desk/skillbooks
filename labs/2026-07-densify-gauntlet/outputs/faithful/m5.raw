@@ -1,0 +1,7 @@
+The gate passed in one round: the cold reader's expansion recovered everything, and the differ, given only the expansion and the original, listed no losses. Triage: nothing to rule on — zero MATERIAL, zero IMMATERIAL. One note for the owner: the cold reader guessed "III" is a rule identifier; the original does not define it either (its meaning lives in the methodology, not this text), so it stays as the bare token.
+
+Purpose line (derived, correct me if wrong): the advisory fires when the agent runs a blanket-staging git command, to make it audit the staged or committed set, purge files not this session's, and stage with `--only`; the enemy is sweeping sibling sessions' files into a commit in a shared checkout.
+
+<RESULT>
+Blanket staging (git add -A/--all/-u/. or git commit -a) noted. Rule: commit --only the whole files this conversation touched; a blanket add in a shared checkout sweeps sibling sessions' WIP and scratch into your commit. Before building on this command, list what it staged (git status / git show --stat HEAD) and claim each file as this session's; unstage, amend away, or revert the rest, even a commit already pushed. User-ordered sweep, or fresh import where all is yours: carry on. III.
+</RESULT>

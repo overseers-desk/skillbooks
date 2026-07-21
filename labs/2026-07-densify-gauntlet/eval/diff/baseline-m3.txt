@@ -1,0 +1,3 @@
+One loss:
+
+- Each rework of the code lays down another comment of the accretion kind, so such lines accumulate over successive reworks — EXPANSION describes the accretion check's targets but not this mechanism of how they arise.

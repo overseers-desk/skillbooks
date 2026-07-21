@@ -1,0 +1,40 @@
+<RESULT>
+**Overview.** This instruction defines a standard checkup to run when a session sat idle, with the agent deciding on its own whether to act. It applies only if a plan was just executed in the session, and it audits three things: task completion and tracking, durable capture of ideas that arose during execution, and commit/push hygiene including naming closed issues in commit messages. The agent acts on any failure of the audit, defers only items genuinely needing user approval, and stays silent about the checkup entirely if everything is clean or no plan was executed.
+
+**Scope and trigger**
+
+1. **Conditional, self-directed audit after an idle session**
+The checkup runs on a *"standard checkup"* basis when *"the session sat idle; self-decide whether to act"*, and applies *"if you just executed a plan in this session"* — the agent must *"audit three things now"*.
+
+**The three audit items**
+
+2. **Task completion and tracking**
+Item one asks: *"Is every planned task actually done, and marked done where it is tracked?"* — both actual completion and its recorded status count.
+
+3. **Durable capture of emergent work items**
+Item two asks whether *"the ideas and work items that floated up during execution"* were *"captured somewhere durable (ledger, issue, plan, note) rather than dropped"*.
+
+4. **Commit, push, and issue-naming hygiene**
+Item three asks: *"Is the work committed and pushed, with every issue it closed named in the closing commit's message?"*
+
+**Commit-message repair rules**
+
+5. **Unpushed closing commit at HEAD gets amended**
+*"While a closing commit sits unpushed at HEAD, amend its message to name the issue, so the push carries the record"* — amendment is allowed precisely because the record has not yet left the machine.
+
+6. **Buried unpushed commit gets the issue named in the next commit**
+*"an unpushed one buried under later commits gets the issue named in the next commit's message instead"* — no history rewriting below HEAD.
+
+**Push policy**
+
+7. **Push on segment completion, otherwise report with a reason**
+*"Push when the work segment is done and complete enough to push; otherwise tell the user briefly: not pushed, because <reason>."*
+
+**Response to audit outcomes**
+
+8. **Act on failures; approval items are reported, with bare-dot as consent**
+*"Act on whatever fails the audit; where an item genuinely needs the user's approval, report it instead, and a later bare-dot prompt from the user grants that approval."*
+
+9. **Silence when clean or inapplicable**
+*"If all three check clean, or no plan was executed, say nothing about this checkup and answer the user's message as if it were absent."*
+</RESULT>

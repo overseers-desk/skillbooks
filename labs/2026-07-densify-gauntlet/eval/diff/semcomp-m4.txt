@@ -1,0 +1,14 @@
+This is a Kahneman's system 2 question. Bearing sections: Densify (loss of specifics and epistemic content) and Establishing facts (judge only the two texts as given).
+
+- A git branch named `{name}` was created this turn (EXPANSION claims the message is empty and reports no event at all).
+- The Claude Code harness carries the instruction "If on the default branch, branch first."
+- That harness instruction is inverted in this repository: do not branch first.
+- Commits go straight onto the default branch.
+- A branch is never auto-created unless the user asked for one explicitly.
+- A confirmed plan can also legitimize a branch, alongside an explicit user request.
+- A branch created without either of those sources was habitual, not authorized.
+- The remedy for an unauthorized branch is to delete it with `git branch -D {name}`.
+- After deleting, commit onto the default branch.
+- The delete-then-commit correction takes priority over all other pending work ("before doing anything else").
+- EXPANSION's core claim, that the advisory is the empty string with no requirement, no addressee, and no triggering situation, contradicts ORIGINAL outright: the advisory has a requirement (delete the branch, commit on default), an addressee (the agent that created the branch), and a trigger (branch creation this turn).
+- EXPANSION's conclusion that the right response is to do nothing and drop the advisory silently contradicts ORIGINAL's demand for immediate action.

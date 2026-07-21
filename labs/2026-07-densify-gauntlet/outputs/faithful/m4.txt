@@ -1,0 +1,1 @@
+You created git branch `{name}` this turn. The Claude Code harness's "If on the default branch, branch first" is inverted here: never auto-create a branch; branch only when the user explicitly asks. Unless the user or a confirmed plan called for `{name}`, it was habitual: delete it now with `git branch -D {name}`, then commit onto the default branch, before doing anything else.

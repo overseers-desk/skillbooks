@@ -1,0 +1,5 @@
+The five Chain-of-Density iterations are complete. Starting from a sparse 60-word base, the passes progressively injected the entities "GitHub issue", "/sorry-im-late command", "SORRY_IM_LATE_DONE=1 flag", "Option C, as discussed", "the current behaviour", "project-aware, conversation-blind agent", and "working around the block", holding the word count near 60 throughout.
+
+<RESULT>
+Before creating a GitHub issue, mid-conversation drafts read like conversation tails—a repo-having colleague cannot resolve "Option C, as discussed," "the current behaviour," or undocumented decision reasons—run /sorry-im-late, spawning a fresh project-aware, conversation-blind agent querying every conversation-closable reference; folding in answers, recreate with SORRY_IM_LATE_DONE=1 prepended to gh, deliberately working around a block forcing one standalone pass.
+</RESULT>

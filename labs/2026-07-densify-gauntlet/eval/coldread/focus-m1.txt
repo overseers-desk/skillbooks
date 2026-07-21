@@ -1,0 +1,25 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it are "Handling the request and executing the plan" (subagent tiers, NQA, the shift skill) and "Deciding what to build" (NSWP, for naming the problem the mechanism solves); I have re-read them in context.
+
+What the message teaches, as I understand it:
+
+**Who it binds, and when.** It binds the orchestrating session, the one calling the Agent tool, and only during a shift. A shift is the unattended-run mode this plugin arms with /shift and closes with /clock-off, the mechanized form of NQA where the user is asleep or away. Outside a shift the requirement does not apply. The message itself is a hook's diagnostic, emitted when a spawn attempt during a shift fails the check; receiving it means a spawn was rejected.
+
+**What it requires.** Every Agent spawn prompt issued during a shift must open with a block called CEREMONY. The block has two mandatory components.
+
+The first component is a model-tier judgment: the prompt must name the chosen tier, one of fable, opus, sonnet, or haiku, and state why the work's complexity suits that tier. This mechanizes the standing methodology rule that subagent tiers follow the component's consequence-of-error and complexity, not the conversation's altitude, and it targets the recurring offence of spawning everything at the orchestration model by default.
+
+The second component is a ledger clause: an instruction to the subagent that its final message must close with discovered-work LEDGER entries in two parts. Part 1 is gaps between the project goal and the current plan. Part 2 is work surfaced while executing, such as dependencies and forgotten pieces. If the subagent has nothing to report in either part, it writes the literal word "none". The clause is written into the spawn prompt so that every subagent, however briefed, knows it owes this report.
+
+**What happens to the reports.** The shift machinery collects the LEDGER entries from subagent final messages into a file named ledger.md, located beside the shift's orders file. The ledger is a shift-level accumulator of discovered work. Its evident purpose is that during an unattended run there is no user to tell about gaps and surfaced work; the ledger holds them for the morning review at clock-off, so nothing a subagent noticed is lost when its context ends.
+
+**What satisfies it.** A spawn prompt that begins with a CEREMONY block containing both components: a named tier with a complexity rationale, and the two-part ledger instruction (or the "none" convention) addressed to the subagent.
+
+**What violates it.** A shift-time spawn prompt with no CEREMONY block, or one whose block lacks a component. The error message names the absent component through the placeholder: "Shift spawn ceremony incomplete: missing {missing}".
+
+**The remedy.** Rewrite the spawn prompt with the ceremony included and retry the spawn. The failed spawn did not run; the fix is prompt-side, not configuration-side.
+
+**Why it exists, as far as I can tell.** Both components compensate for the absent user. The tier judgment forces a deliberate cost-and-capability decision at each spawn, made explicit so the morning review can audit it. The ledger clause turns each subagent into a scout for scope drift and forgotten work, and the ledger.md file gives those observations a durable home that survives the subagents' contexts and the night.
+
+**What I would do on receiving it.** Read the {missing} value to learn which component was absent, rewrite the spawn prompt so it opens with a CEREMONY block stating the tier, the complexity rationale, and the two-part ledger instruction, and reissue the same Agent call.
+
+**Parts not fully intelligible to me.** The message does not say where the shift's orders file lives, so "beside its orders file" locates ledger.md only relatively; I would rely on the shift skill's own documentation for the absolute location. It does not say what mechanism harvests the LEDGER entries from subagent final messages into ledger.md, whether a hook parses them or the orchestrator copies them; the message only asserts that reported entries accumulate there. It also does not state whether the block must carry the literal heading "CEREMONY" or merely its content; since a hook validates it mechanically, I would assume the literal heading and exact "none" token are required.

@@ -1,0 +1,3 @@
+This is a Kahneman's system 2 question. The sections that bear on it are Densify (what counts as a lost specific), the Version control section (the `--only` rule ORIGINAL restates), and the III definition; I have re-read them where they sit in my context.
+
+- ORIGINAL says a blanket add sweeps sibling sessions' work-in-progress **and scratch files**; EXPANSION names only work-in-progress/uncommitted edits, dropping scratch (untracked) files as a swept category.

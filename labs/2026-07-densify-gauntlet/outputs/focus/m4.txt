@@ -1,0 +1,14 @@
+**Overview:** This instruction block reverses a Claude Code harness default about git branching. It applies when the agent has created a git branch named `{name}` during the current turn. The harness guidance to branch before committing on the default branch is declared inverted: commits go straight onto the default branch, branches are never auto-created without an explicit user request, and any branch created out of habit rather than by user or plan authorization must be deleted immediately with `git branch -D {name}` before any other work.
+
+**The inverted harness rule**
+
+1. **The harness's branch-first instruction is reversed**
+The trigger condition is *"You created git branch `{name}` this turn."* The Claude Code harness says *"If on the default branch, branch first"*, but that instruction is declared **INVERTED** here: do **not** branch first; commit straight onto the **default branch**.
+
+2. **No automatic branch creation**
+Never auto-create a branch *"unless the user asked for one explicitly."*
+
+**Remediation for a habitual branch**
+
+3. **Delete an unauthorized branch immediately**
+If neither the **user** nor a **confirmed plan** called for the branch, its creation was **habitual**: delete it now with `git branch -D {name}`, then commit onto the default branch, *"before doing anything else."*

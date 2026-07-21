@@ -1,0 +1,9 @@
+No MATERIAL loss. The single diff item — the reader treating "confirmed plan" as also licensing branch *creation*, where the original grants it only as a deletion exemption — is IMMATERIAL: the dense text preserves the original's exact two-clause structure ("branch only when the user explicitly asks" for creation; "user or a confirmed plan" only in the deletion exemption), so the reader's merge is an inference the original text invites equally. The gate passes on round 1.
+
+**Purpose line (derived, correct me if wrong):** make the agent delete any branch it created without an explicit user request and commit directly onto the default branch; the enemy is the harness's default branch-first habit.
+
+**Triage of the last round:** 1 loss listed, ruled IMMATERIAL (interpretive smoothing present in original and dense text alike); 0 MATERIAL.
+
+<RESULT>
+You created git branch `{name}` this turn. The Claude Code harness's "If on the default branch, branch first" is inverted here: never auto-create a branch; branch only when the user explicitly asks. Unless the user or a confirmed plan called for `{name}`, it was habitual: delete it now with `git branch -D {name}`, then commit onto the default branch, before doing anything else.
+</RESULT>

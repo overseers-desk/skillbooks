@@ -1,0 +1,43 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it are "Writing for a reader" (the cold-reader discipline, forward-only writing, and the sorry-im-late skill's stated purpose), the LHD entry in that section (the push gate as the enforcement point for comment quality at push time), and "Vocabulary expansion" under "Deciding what to build" (coined words that name nothing real). I have re-read those sections in context.
+
+## What the message is
+
+It is the output of a push gate: a hook in this plugin that intercepts a `git push` and blocks it. The "[2]" indicates it is the second numbered check in a block that may contain others. The braces (`{comment_count}`, `{source_count}`, `{base}`) are template slots filled at emission time with the actual counts and the actual base ref.
+
+## The triggering situation
+
+A session runs `git push`. The hook measures the diff the push would carry and counts added comment lines and added source lines. The limits are 2 comment lines and 25 source lines. The message as phrased ("past the limit of 2 and 25") describes an instance where the counts exceed the limits; whether exceeding either one alone triggers, or both must be exceeded, is not decidable from the message text alone. I would assume either suffices, since the two limits guard the same risk, but that is an inference, not something the message states.
+
+## Whom it addresses
+
+The AI session that attempted the push, which is also (in the common case) the session that wrote the diff. The work it commissions, however, is explicitly not done by that session: it is done by a fresh agent spawned via the sorry-im-late skill, which knows the project but has no access to the conversation.
+
+## What it requires
+
+1. Run `/sorry-im-late --since {base} --but-also-you-are-not-my-mum`. This spawns a cold reader that reviews the session's work starting from where the session began, not merely from the last push. The stated reason for the wider window: a session that has already pushed once would otherwise present the reader only the tail of its own change, and the earlier pushed portion would escape the cold read entirely.
+2. The cold reader looks for four things: insider framing (text pitched at someone who was present), leftover deliberation (traces of the route rather than the result), coined vocabulary that names no real thing (session-invented words treated as established), and references only this conversation can resolve.
+3. The `--but-also-you-are-not-my-mum` flag adds a fifth check, called the accretion check: comments that restate the code beside them, or names whose comment says only what the name already says. The rationale given is that such lines tell a project-having reader nothing, and that each round of rework tends to lay down another one, so they accumulate.
+4. Repair preference: deleting a conversational reference is preferred over explaining it.
+5. Fold the findings into the work, then rerun the push with `COLD_READ_DONE=1` in the command (an environment-variable prefix on the push command, as I read it; the exact placement is the one mechanical detail the message leaves to convention).
+
+## What satisfies it and what violates it
+
+The bypass token is deliberately available and its use is expected: the message says outright that working around the block is the point. The gate is not trying to prevent the push; it is trying to purchase exactly one deliberate pass over the question "does this work stand without the conversation attached." So:
+
+- Satisfies: running the cold read, folding in what it finds (possibly nothing), and pushing with the token.
+- Violates: attaching `COLD_READ_DONE=1` without running the pass, or running the pass and ignoring its findings. The token is an attestation on the honor system; nothing mechanical verifies the pass happened. A session that lies with the token defeats the design entirely.
+- Also consistent with the design: shrinking the diff below the limits instead, though the message does not offer this and the limits are low enough (2 comment lines) that most real work will trip them, which suggests the gate expects to fire routinely and expects the cold read to be the routine answer.
+
+## Why it exists
+
+The premise is stated in the message and matches the repository's methodology: a diff written inside a conversation inherits that conversation's private context. Its comments, names, and framing can be legible only to someone who was there. The eventual reader of pushed code has the project but not the session transcript. The gate converts "large enough diff to carry that risk" into a forced checkpoint where a reader in exactly the eventual reader's position (project yes, conversation no) reads the work before it becomes public history. The accretion half exists because iterative rework inside a session is the specific process that deposits restating comments, and the author cannot see them as noise because to the author each one recorded a live moment.
+
+The flag name `--but-also-you-are-not-my-mum` is a joke encoding its function: comments that explain what is already visible treat the reader as a child; the flag arms the pass that strips that register (the repository's own history calls it a "tell-me-something-new pass").
+
+## What I would do on receiving it
+
+Run the sorry-im-late skill exactly as given, with the emitted `{base}`. Read its findings. Apply them, preferring deletion of conversation-dependent material over annotation of it. Then rerun the original push command prefixed with `COLD_READ_DONE=1`. I would not set the token without the pass, and I would not substitute my own in-session judgment for the cold reader's, since the entire mechanism exists because the author's judgment is the thing that cannot detect this class of defect.
+
+## Parts I cannot fully resolve
+
+Two, both minor. First, the and/or ambiguity of the two limits, noted above. Second, the exact syntax expected for the token ("in the command" implies an env prefix like `COLD_READ_DONE=1 git push ...`, but a flag or config channel would also fit the words); the hook's own parser is the authority and the message does not reproduce its rule. Everything else in the message is intelligible to me.

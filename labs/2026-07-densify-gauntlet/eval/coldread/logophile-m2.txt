@@ -1,0 +1,32 @@
+This is a Kahneman's system 2 question. The sections of the office methodology that bear on it are "Version control and issue maintenance" (commit-in-stages, push-with-commits, issue-update duties) and "Handling the request and executing the plan" (leave state whole, batching items for the user's approval); I have re-read them where they sit in context.
+
+What follows is my full understanding of the checkup message.
+
+**Who it addresses and when it fires.** It is addressed to the AI session (me), delivered by a hook when the session has gone idle. It is advisory rather than mandatory in trigger: "decide for yourself whether to act." Its precondition is that a plan was executed this session. If no plan was executed, the whole message is a no-op and must leave no trace in my reply.
+
+**What it requires: a three-point audit.**
+
+1. *Task completeness.* Every task in the executed plan is actually done, and wherever tasks are tracked (a todo list, an issue, a plan document), the done ones are marked done. Two ways to fail: work left undone, or work done but the tracker still showing it open.
+
+2. *Capture of emergent items.* Ideas, follow-ups, and work items that surfaced during execution must be recorded somewhere durable — a ledger, an issue, a plan, a note — rather than existing only in the conversation. The failure it guards against is context evaporation: a session ends, the transcript expires or is never reread, and a discovered work item is silently lost.
+
+3. *Commit, push, and issue linkage.* Work is committed and pushed, and any commit that closes an issue names that issue in its commit message, so the pushed history carries the record of what was closed. It then gives a positional rule for retrofitting a missing issue reference:
+   - If the closing commit is unpushed and sits at HEAD, amend its message to add the issue reference (safe, because amending an unpushed tip rewrites nothing shared).
+   - If the closing commit is unpushed but has later commits stacked on it, do not amend (rewriting a buried commit is disruptive); instead name the issue in the next commit's message so the record still reaches the remote.
+   - The unstated third case: if the closing commit is already pushed, neither remedy applies — amending pushed history is off the table, so presumably the next-commit remedy or nothing. The message does not spell this case out; I infer it from the two it does spell out.
+
+**The push decision.** Push when the work segment is done and complete enough to push. If not, do not push silently: tell the user, briefly and with a concrete reason ("not pushed, because <reason>"). This matches the methodology's rule that a hold on pushing names the feared consequence rather than deferring with "your call."
+
+**What to do with failures.** Act directly on whatever fails the audit — this is standing authority to mark tasks done, file the dropped items, amend or write commit messages, and push, without asking. The exception is items that genuinely need the user's approval: those are reported, not acted on. The message defines a convention for that approval: if the user later sends a bare-dot prompt ("."), that grants approval for the reported items. So a "." after my report means "go ahead with what you reported."
+
+**The silence rule.** If all three checks pass, or no plan was executed, I say nothing about the checkup at all — no "I ran the checkup, all clean." I answer the user's actual message as if the checkup text were not there. The point is that the audit machinery must not generate noise in the conversation when it has nothing to contribute.
+
+**What satisfies it, in summary.** On receipt: silently determine whether a plan was executed this session. If not, ignore it entirely. If yes, run the three checks. For each failure, fix it if it is within my standing authority (mark done, capture the item durably, amend the HEAD commit or annotate the next one, push a done segment), report it if it needs the user, and give the reason if a push is being held. If everything is clean, produce no mention of the checkup.
+
+**What violates it.** Mentioning the checkup when clean; skipping the audit after a plan-executing session; letting surfaced work items die in the transcript; pushing a closing commit whose message omits the issue it closed when a remedy was available; amending a commit that is not the unpushed tip; holding a push without telling the user why; acting on an approval-needing item without the report-then-dot handshake; or treating the bare dot as anything other than approval of the previously reported items.
+
+**Why it exists, as far as I can tell.** It encodes the office's "leave state whole" and record-keeping discipline as an end-of-segment gate: sessions end and their context is lost, so anything valuable must be pushed into durable stores (git remote, issue tracker, notes) before the session goes cold. The issue-in-commit-message rule makes the git history self-documenting about what each commit resolved, which serves later tooling and later AI sessions that read history instead of transcripts. The idle trigger catches the natural pause when work has wound down but the session is still alive to repair omissions cheaply. The silence rule keeps a frequently-firing hook from polluting conversations.
+
+**Unintelligible or underspecified parts.** Two points are less than fully determined rather than unintelligible. First, "executed a plan" does not define what counts as a plan — a formally approved plan-mode plan, a todo list, or any multi-step task; I would read it broadly as any deliberate multi-step work, since the audit's value does not depend on the plan's formality. Second, as noted, the already-pushed closing commit case is not covered explicitly. Everything else in the message is intelligible to me.
+
+**What I would do on receiving it.** Check whether the session executed multi-step planned work. If it did: verify tracker state against actual completion; sweep the conversation for surfaced-but-uncaptured work items and file them; check `git status` and the unpushed log for closing commits missing issue references, applying the amend-at-tip or name-in-next-commit remedy as position dictates; push if the segment is done, otherwise state the hold and its reason; report anything needing approval and await a dot. If the session was conversational or the checks all pass, answer the user's message with no reference to the checkup.

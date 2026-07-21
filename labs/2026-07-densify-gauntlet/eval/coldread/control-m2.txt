@@ -1,0 +1,39 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it are "Version control and issue maintenance" (commit and push discipline, naming issues in closing commits) and "Handling the request and executing the plan" (batching items that need approval, acting without asking where authorized); I have re-read both in context.
+
+What the message is: a hook-injected prompt, delivered to the AI running a session after that session has sat idle, alongside whatever the user's actual message is. It is addressed to the assistant, not the user. It grants discretion ("self-decide whether to act") but then specifies the audit precisely, so the discretion is mostly about whether the precondition holds, not about whether to bother.
+
+Precondition: it applies only when a plan was executed in this session. If no plan was executed, the entire message is inert; the assistant answers the user's message as if the checkup text were not there, saying nothing about it.
+
+What it requires, when the precondition holds — three audits:
+
+1. Completion and marking. Every task in the executed plan is actually done, and is recorded as done wherever that plan is tracked (a task list, a plan file, an issue). Doing the work but leaving the tracker showing it open fails the audit.
+
+2. Capture of emergent items. Ideas and work items that surfaced during execution, rather than being in the original plan, must have landed somewhere durable: a ledger, an issue, a plan document, a note. An idea that exists only in the conversation transcript counts as dropped.
+
+3. Version control state. The work is committed and pushed, and every issue a commit closed is named in that closing commit's message, so the pushed history itself carries the record of what was resolved. Two sub-rules govern repair when the issue name is missing:
+   - If the closing commit is unpushed and sits at HEAD, amend its message to add the issue name. Amending is safe there because nothing downstream depends on it, and the eventual push then carries the record.
+   - If the closing commit is unpushed but buried under later commits, do not amend it (that would mean rewriting intermediate history); instead name the issue in the message of the next commit made.
+   The implied third case, a closing commit already pushed without the issue name, is not stated; the buried-commit remedy (name it in the next commit) is the natural reading for that case too, though the text does not say so explicitly.
+
+Push policy: push when the work segment is done and complete enough to push. If it is not, do not push, and tell the user briefly in the form "not pushed, because <reason>". A silent hold violates it; so does pushing an incomplete segment just to satisfy the audit.
+
+Remediation and approval: whatever fails the audit gets acted on directly, without asking, except where an item genuinely needs the user's approval; those are reported instead of acted on. The message then defines an approval channel: if the user later sends a prompt consisting of a bare dot (".") that grants approval for the previously reported items. So a "." from the user is not noise; it is authorization to proceed with what was last reported as needing approval.
+
+Silence rule: if all three audits pass, or no plan was executed, the assistant says nothing whatsoever about the checkup, no "I ran the audit, all clean". The checkup is invisible to the user unless it found something. Mentioning a clean checkup violates the message.
+
+What satisfies it, in sum: either silence (clean or inapplicable), or visible repair (tasks marked, items filed, commits amended or annotated, pushed) plus a report limited to items needing approval or a stated reason for not pushing.
+
+What violates it: skipping the audit after a plan was executed; narrating a clean audit; leaving emergent ideas only in the transcript; amending a buried or pushed commit; pushing incomplete work; holding a push without telling the user why; asking permission for repairs that need none.
+
+Why it exists, as far as I can tell: idle-after-execution is the moment loose ends fossilize. A session that executed a plan and then went quiet typically leaves trackers stale, ideas unfiled, and commits local, and once the session's context expires those records are the only durable trace. The issue-naming rule in particular exists so that the git history, once pushed, is self-documenting about which issues each commit resolved; the amend-vs-next-commit distinction exists because rewriting an unpushed HEAD is cheap and safe while rewriting under later commits is not. The silence rule exists to keep housekeeping from generating chatter. The bare-dot convention exists so approval can be granted with minimal user effort, fitting a workflow where the user checks in briefly after leaving the assistant to work.
+
+What I would do on receiving it: determine whether this session executed a plan. If not, answer the user's message and say nothing else. If yes, check the plan's tracker against what was actually done and mark stragglers; sweep the conversation for work items that arose mid-execution and file each durably; run git status and git log against the remote, add missing issue names by amend (at HEAD) or by the next commit (buried), commit anything uncommitted that belongs to the segment, and push if the segment is complete, otherwise state the reason it is held; act on everything not needing approval and report only what does. This is consistent with the repo's own methodology, which reverses the harness defaults and authorizes committing and pushing without per-act confirmation.
+
+Unintelligible or underdetermined parts: none of it is unintelligible. Two points are underdetermined. First, "marked done where it is tracked" does not name a tracking system; the audit has to find where the plan was in fact tracked. Second, the already-pushed closing commit lacking an issue name has no explicit remedy, as noted above. The bare-dot clause is unusual but clear once parsed: a subsequent message of just "." is a standing grant of approval for the reported items.
+
+HITS:
+1. The message binds the assistant, not the user, and only in a session that executed a plan; otherwise it must be treated as absent and never mentioned.
+2. It mandates three audits: planned tasks done and marked done, emergent work items captured durably, and work committed and pushed with closed issues named in the closing commits.
+3. A missing issue name is repaired by amending only an unpushed HEAD commit; a buried unpushed commit gets the issue named in the next commit's message instead.
+4. Pushing is required when the segment is complete; withholding a push requires telling the user the reason.
+5. Repairs proceed without asking; only items genuinely needing approval are reported, and a later bare "." from the user grants that approval.

@@ -1,0 +1,24 @@
+This is a Kahneman's system 2 question. The bearing sections are "Writing for a reader" (the cold-reader test and the sorry-im-late discipline, which this hook mechanizes) and, less directly, "Handling the request and executing the plan" (a hook's message is a gate on my own tool call, addressed to me). I have re-read them where they sit in context.
+
+What the message teaches, as I understand it:
+
+**Who it addresses, and when.** It addresses the AI agent in a Claude Code session, at the moment that agent is about to run a `gh` command that creates a GitHub issue. It is emitted by a hook in this plugin that intercepts and blocks that command; the issue has not been created when the message arrives.
+
+**The problem it names.** An issue body drafted during a conversation inherits the conversation's private vocabulary. References such as "Option C", "as discussed", "the current behaviour", or a decision stated without its reason are resolvable only by someone who was present in the exchange. The intended reader of a GitHub issue is a colleague who has the repository but was not in the conversation; to that reader such references are dead ends, and the issue cannot be acted on.
+
+**What it requires.** Three steps, in order. First, run the /sorry-im-late skill on the draft issue body. That skill spawns a fresh agent that knows the project but has no access to this conversation, and that agent queries every reference it cannot close from the project alone; those queries enumerate exactly the places where the draft depends on the conversation. Second, fold the answers to those queries into the draft, so each formerly conversation-bound reference now carries its referent. Third, run the issue-creation command again with `SORRY_IM_LATE_DONE=1` prepended to the `gh` command (that is, as an environment-variable assignment prefixed to the command line), which the hook reads as the signal to let the command through.
+
+**What satisfies it.** A genuine cold-reader pass, revision of the draft with the answers incorporated, and then the prefixed command. The prefix is an attestation that the pass happened.
+
+**What violates it.** Prepending `SORRY_IM_LATE_DONE=1` without having run the pass, or having run it without folding the answers in. Nothing mechanical prevents this; the hook cannot verify that the skill ran or that the revision was real. Also violating: creating the issue by some other route that dodges the hook (for example the GitHub API directly) to avoid the gate. Running the pass on a different text than the one filed would violate it in substance.
+
+**Why it exists.** The sentence "Working around this block is the point" states the design: the block is meant to be worked around, and the deliberate act of working around it is the enforcement mechanism. Since the check cannot be automated, the hook converts an easily skipped judgment ("does this issue stand without the conversation?") into a step that cannot be taken absent-mindedly. The prefix forces one conscious moment in which the agent must either have done the pass or knowingly lie in the command line. It is a friction device aimed at the known failure mode where a mid-conversation author cannot see their own text as a cold reader would.
+
+**What I would do on receiving it.** Stop the blocked command. Invoke /sorry-im-late on the draft body. Take the fresh agent's list of unresolvable references, rewrite the body so each is answered in place (naming what "Option C" is, stating the current behaviour concretely, giving the reason a decision was made), then run the same `gh issue create` command with `SORRY_IM_LATE_DONE=1` prepended. I would not prepend the variable without the pass, and I would not route around the hook.
+
+**Points of uncertainty.** "Recreate the issue" reads oddly, since the blocked command never created one; I take it to mean "run the creation command again", not that a created issue is deleted and remade. The message does not say what happens if the cold reader finds nothing to query; I take the satisfying condition to be running the pass, not necessarily changing the draft, so an already-self-contained issue passes through after an empty-result pass. Nothing in the message is unintelligible to me beyond these two readings.
+
+HITS:
+1. The hook blocks `gh` issue creation and requires a /sorry-im-late cold-reader pass on the draft before the command is re-run with `SORRY_IM_LATE_DONE=1` prepended.
+2. The environment-variable prefix is an unenforceable attestation; prepending it without the pass is the violation the design anticipates and relies on the agent not committing.
+3. The purpose is reader-side: an issue must be actionable by someone with the repository but not the conversation, and the fresh agent's queries locate every place the draft fails that test.

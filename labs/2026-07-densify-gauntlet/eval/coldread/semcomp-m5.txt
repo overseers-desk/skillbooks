@@ -1,0 +1,45 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it: HITS (the message is built in that form), anti-fireman and the SFS rebuild (the message models verified-cause discipline), "Testing settings.json or hook script changes" under Handling the request (the `claude -p` point in the message restates it), and Floor & File (the ask is investigative, so the deliverable is this report and nothing is to be edited). I have re-read those sections in context. No tools are used, as instructed.
+
+## What the message is
+
+It is a terminal failure report from a run of a skill invoked as `/semantic-compressor compress message.md`. The skill's job was to compress a one-line, 96-word file called `message.md`. The report announces that the run ended in the state `ERROR`, that the target file is byte-for-byte untouched, and that no compressed output is being printed. It closes with four numbered HITS statements and a bare final line reading `ERROR`, which I take to be a machine-readable state token required by the skill's output protocol, though the message itself does not say so.
+
+## The situation it describes
+
+The session it ran in had a Bash PreToolUse hook: a jq guard that intercepts `gh issue create` and denies it until a sorry-im-late pass has been done. That hook's command is written as a single-quoted shell string, and the deny-reason prose inside it contains apostrophes ("conversation's tail", "this session's own"). Each apostrophe terminates the single-quoted string, so the command handed to `/bin/sh` is malformed, and the shell fails with "Syntax error: Unterminated quoted string" before any tool command runs. Because the hook fires on every Bash invocation, every Bash call in the session is rejected, including the trivial command `true`. The reporter verified this rather than assuming it: it tested `true`, and it tested inside a fresh subagent, establishing that subagents inherit the same broken configuration and that no execution path in the session can reach a shell.
+
+The semantic-compressor skill depends on a bundled control script, run via Bash, which performs workspace, inventory, validate, and apply operations and provides a deterministic gate. The skill's contract forbids recreating those operations with ad hoc shell or file tools. With Bash dead and reimplementation forbidden, no valid candidate output can exist. The reporter therefore printed nothing between `<RESULT>` tags, on the stated ground that fabricating ungated output would violate the contract.
+
+## What it requires, and of whom
+
+Of the session that produced it (already discharged): report `ERROR` honestly; omit the RESULT payload rather than fabricate one; do not reimplement the gated pipeline by hand; leave the target file unmodified; deliver the cause, the recurrence prognosis, and the fix path.
+
+Of the receiver, who here is the plugin maintainer, since the defective jq guard is a hook this plugin ships: fix the hook definition so the deny-reason prose no longer sits inside a single-quoted shell string. The message offers two fixes: move the prose out of the single-quoted string (escaping, or passing it via something like `jq --arg`), or move the whole command into a script file that the hook invokes. It also imposes two procedural constraints. First, editing the configuration mid-session will not revive the broken session, because hooks load at session start; the fix only helps fresh sessions. Second, the fix is verifiable immediately with `claude -p`, a fresh non-interactive session that loads the new configuration from disk, so there is no need to wait for a user restart. Both constraints match this office's standing guidance on testing hook changes.
+
+Of whoever wants the original compression done: re-run `/semantic-compressor compress message.md` in a new session after the fix. Nothing about the file itself blocked compression, so no change to the file is warranted.
+
+## What satisfies it and what violates it
+
+Satisfying behavior: repair the quoting in the hook definition at its source; confirm with `claude -p` both that a trivial Bash command now runs and that the guard still denies `gh issue create` with its intended message; re-run the compressor in a fresh session; treat `message.md` as innocent.
+
+Violating behavior: printing fabricated compressed text between RESULT tags; hand-rolling the workspace, inventory, validate, or apply steps with file tools to route around the dead shell; retrying Bash with varied wording in the same session, since the failure is pre-execution and unconditional; editing the config and expecting the current session to recover; reading `ERROR` as a verdict on the file's compressibility, which is what `FAIL` or `NOT_COMPRESSIBLE` would have meant; blaming the skill or the target file rather than the hook.
+
+## Why it exists
+
+Three reasons are visible in the text. First, contract integrity: the skill's value is that anything between RESULT tags passed a deterministic gate, and an honest empty ERROR preserves that guarantee where a plausible fabrication would destroy it. Second, diagnosis over symptom: the report converts "compression didn't happen" into a verified root cause, a recurrence statement, and a concrete fix, which are precisely the three hidden questions the HITS discipline says a problem-solving report owes its reader. Third, it distinguishes environmental failure from content failure through the state taxonomy, so the receiver spends effort on the hooks configuration and none on the file.
+
+It also carries an incidental design lesson: user-facing prose embedded inside a machine-quoted command string is fragile, and a guard whose deny message can break the guard is better served by keeping the prose in a script file or a quoted argument mechanism.
+
+## What I would do on receiving it
+
+Locate the hook definition containing the jq guard, in whichever settings or hooks file the plugin ships it. Rewrite it so the apostrophe-bearing prose is not inside single quotes: preferably move the command body into a script file the hook calls, which also removes the whole class of quoting failures, or else pass the deny-reason via `jq --arg` or escape the apostrophes. Then verify with `claude -p` in a fresh process: one run confirming an ordinary Bash command executes, one confirming the guard still intercepts `gh issue create` with the intended deny reason. Then re-run `/semantic-compressor compress message.md` in a fresh session. Under the current instruction I do none of this; the deliverable is this explication.
+
+## Parts I cannot fully resolve
+
+The phrase "the blanket-staging advisory" describes the content of `message.md`; its referent is not explained anywhere in the message and I cannot say what it means. The final bare `ERROR` line's exact protocol role is inferred, not stated. The message never names the file that holds the broken hook definition, only the fix directions. There is also a framing tension I can state but not resolve without looking: the message speaks in the first person ("I confirmed"), which reads as a session's own report, while the prompt says a hook of this plugin emits it into a session; a hook emitting a canned first-person run report is consistent with a test fixture (this repo's lab outputs include a `semcomp` arm), but the message itself does not say which it is. Finally, no skill named semantic-compressor is installed in this session's environment, so the skill's full contract, including its success states, is known to me only through what this message asserts about it.
+
+HITS:
+1. The message requires one repair, owed by the plugin maintainer: the Bash PreToolUse jq guard's deny-reason prose contains apostrophes inside a single-quoted shell string, which makes `/bin/sh` fail on every Bash call in any session loading that configuration.
+2. The failure is total and persistent until the configuration is fixed on disk; a mid-session edit cannot revive an already-running session, and `claude -p` is the stated verification mechanism.
+3. The absent RESULT payload is deliberate compliance, not an omission: the skill forbids output that did not pass its control script's deterministic gate, and the dead shell made the gate unreachable.
+4. `ERROR` is an environmental state, distinct from `FAIL` and `NOT_COMPRESSIBLE`; `message.md` is unmodified and blameless, and the same compression command should succeed in a fresh session after the fix.

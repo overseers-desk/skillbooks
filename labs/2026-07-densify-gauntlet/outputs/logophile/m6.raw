@@ -1,0 +1,9 @@
+Precision through sophistication, brevity through vocabulary, clarity through structure.
+
+Intent: instruct that a mid-conversation issue draft must pass /sorry-im-late before the gh command is rerun with the override flag.
+
+<RESULT>
+Before creating a GitHub issue: an issue drafted mid-conversation reads like that conversation's tail. A colleague with the repo but not this exchange cannot resolve "Option C", "as discussed", "the current behaviour", or a decision whose reason stayed in the talk. Run /sorry-im-late on the draft first: it spawns a fresh agent that knows the project but not this conversation and queries every reference only the conversation can close. Fold in the answers, then recreate the issue with SORRY_IM_LATE_DONE=1 prepended to the gh command. The block is deliberate: it forces one pass over whether the issue stands without the conversation.
+</RESULT>
+
+Delta: ~137 → ~103 words (about 25% shorter). Every mechanism survives: the cold-reader rationale, the fresh-agent behaviour, the fold-in step, the env-var override, and why the block exists.

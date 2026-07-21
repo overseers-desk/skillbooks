@@ -1,0 +1,5 @@
+This is a Kahneman's system 2 question. The sections that bear on it are "Writing for a reader" (the cold-reader discipline and the sorry-im-late skill, and the LHD entry's push gate) and the densify entry's standard that judging a rewrite means checking every specific and epistemic marker against the source; I have re-read them in context.
+
+Checked clause by clause: the counts and both limits, the added-lines framing, the check number and bypass token, the exact command and both flags, the fresh agent's knowledge boundary, the session-start window and the tail-of-change rationale, all four read-targets, the accretion check and its rework rationale, the delete-over-explain preference, the fold-and-rerun step, and the one-deliberate-pass purpose all appear in EXPANSION without contradiction. Its two admitted ambiguities (and/or of the limits, token placement) are ambiguities in ORIGINAL itself, not losses.
+
+NOTHING LOST

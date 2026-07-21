@@ -1,0 +1,20 @@
+This is a diagnostic message reporting an incomplete "shift spawn ceremony": during a shift, every Agent spawn prompt must open with a CEREMONY block, and the message names what is absent via the placeholder *"missing {missing}"*. The CEREMONY block carries two mandatory parts — a model-tier judgment and a ledger clause — and reported ledger entries feed a shift-level ledger.md file. The prescribed remedy is to rewrite the spawn prompt with the ceremony included and retry the spawn.
+
+**The requirement**
+
+1. **Every shift-time spawn prompt opens with a CEREMONY block**
+During a shift, an Agent spawn prompt is incomplete unless it begins with a CEREMONY block carrying two components; the error fires as *"Shift spawn ceremony incomplete: missing {missing}"*, where the placeholder names which component is absent.
+
+2. **Component (1): a model-tier judgment**
+The block must state the chosen tier — one of **fable/opus/sonnet/haiku** — and *"why the work's complexity suits it"*.
+
+3. **Component (2): a ledger clause with two entry types**
+The block must tell the subagent to close its final message with **discovered-work LEDGER entries** in two parts: *"part 1, gaps between the project goal and the current plan; part 2, work surfaced while executing (dependencies, forgotten pieces)"* — or, if there is nothing to report, the literal *"none"*.
+
+**Collection and remedy**
+
+4. **Reported entries accumulate in the shift's ledger.md**
+Collected entries go into the shift's **ledger.md**, located *"beside its orders file"*.
+
+5. **The corrective action is rewrite-and-retry**
+The instruction on failure: *"Rewrite the spawn prompt with the ceremony and retry."*

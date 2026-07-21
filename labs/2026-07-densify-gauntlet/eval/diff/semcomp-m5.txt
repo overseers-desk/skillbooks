@@ -1,0 +1,14 @@
+This is a Kahneman's system 2 question. The sections that bear on it: Densify (loss is measured specific by specific, and a generic standing in for a specific counts as loss) and the exclusivity fallacy (EXPANSION's silence on a point is the loss being asked about, not evidence against it). No tools are used, as instructed. EXPANSION explicitly declares the blanket-staging advisory's content unresolvable, so every teaching of ORIGINAL is absent:
+
+- Blanket staging was detected, in one of the forms git add -A, git add --all, git add -u, git add ., or git commit -a.
+- The office rule is to commit with --only.
+- The --only commit stages the whole files this conversation touched and nothing else.
+- In a shared checkout, a blanket add sweeps sibling sessions' work-in-progress into the commit.
+- A blanket add also sweeps scratch files into the commit.
+- Before building on the flagged command, list what it staged, using git status or git show --stat HEAD.
+- Each staged file must be claimed as this session's own.
+- Whatever is not this session's own is to be unstaged, amended away, or reverted.
+- The cleanup extends to a commit this same command has already pushed.
+- A sweep the user ordered is exempt; carry on.
+- A fresh import where everything is yours is exempt; carry on.
+- The advisory ends with III: if its pattern caught the wrong thing, it is to be dropped silently.

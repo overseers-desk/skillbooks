@@ -1,0 +1,5 @@
+This is a Kahneman's system 2 question. The methodology section that bears on it is "Densify" (it defines what counts as a lost specific or epistemic marker); it is in my context and I have re-read it.
+
+Checking each thing ORIGINAL teaches against EXPANSION: the branch `{name}` created this turn; the harness's "branch first" rule quoted and declared inverted; commit straight onto the default branch; never auto-create a branch without the user's explicit ask; user-or-confirmed-plan as the test for whether this branch was authorized; the presumption of habit when neither applies; the remedy `git branch -D {name}`; the follow-up commit onto the default branch; and the priority of the remedy over all other work. Every one is present in EXPANSION, none contradicted.
+
+NOTHING LOST

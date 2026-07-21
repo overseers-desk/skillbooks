@@ -1,0 +1,3 @@
+This is a Kahneman's system 2 question. The methodology section that bears on it is "Writing for a reader" (the cold-reader test and the sorry-im-late gate); I have re-read it in context.
+
+- "The current behaviour" as one of the references a colleague outside the conversation cannot resolve; EXPANSION's list of dead-end references (Option C, "as discussed", a reason-less decision) omits it.

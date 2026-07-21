@@ -1,0 +1,41 @@
+<RESULT>
+## Overview
+
+This is a push-gate block, labeled *"[2] Cold read"*, that fires when a push adds more comment or source lines than an allowed threshold. It explains why a large diff written inside a conversation is suspect (its comments and naming may be legible only with that conversation attached) and directs the user to run a cold-read pass with a fresh agent via the `/sorry-im-late` skill, fold in the findings, and rerun the push with the bypass token. The block's stated purpose is to force one deliberate check of whether the work stands on its own without the originating conversation.
+
+## The gate and its trigger
+
+1. **The block is bypassed with a token**
+The block is titled *"[2] Cold read (bypass token: COLD_READ_DONE=1)"*.
+
+2. **It fires when added lines exceed set limits**
+*"This push carries {comment_count} added comment line(s) and {source_count} added source line(s), past the limit of 2 and 25."* The two limits are **2** added comment lines and **25** added source lines.
+
+3. **Size implies conversational dependence**
+*"A diff that size was written inside a conversation, and its comments and naming may only make sense with that conversation attached."*
+
+## The cold-read remedy
+
+4. **Run the sorry-im-late skill with a since-flag**
+The instruction is to run *"/sorry-im-late --since {base} --but-also-you-are-not-my-mum"*, described as *"a fresh agent that knows the project but not this session cold-reads this session's work from where it began."*
+
+5. **The read reaches back past the last push**
+The cold-read starts from where the session's work began, *"which reaches back past the last push, since a session that already pushed once would otherwise hand the reader only the tail of its own change."*
+
+6. **What the cold-read looks for**
+*"It reads for insider framing, leftover deliberation, coined vocabulary that names no real thing, and references only this conversation can resolve."*
+
+7. **The flag adds an accretion check**
+*"The flag adds the accretion check: a comment restating the code beside it, or saying what the name already says, tells a reader who has the project nothing, and each rework lays down another such line."*
+
+8. **Deletion is preferred over explanation**
+*"Prefer deleting a conversational reference over explaining it."*
+
+## Completing the pass
+
+9. **Fold findings in and rerun with the token**
+*"Fold in what it finds and rerun the push with COLD_READ_DONE=1 in the command."*
+
+10. **The point is the deliberate pass itself**
+*"Working around this block is the point: one deliberate pass over whether the work stands without the conversation."*
+</RESULT>

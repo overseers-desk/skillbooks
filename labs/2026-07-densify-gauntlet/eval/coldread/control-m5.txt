@@ -1,0 +1,30 @@
+This is a Kahneman's system 2 question. The sections that bear on it are Version control and issue maintenance (the `--only` commit rule this hook enforces) and the methodology preamble's definition of III; I have re-read both in context.
+
+What the message teaches, as I understand it:
+
+**Who it addresses and when it fires.** It is emitted by a hook to the AI session (me, or any office agent) that has just run a blanket staging command: `git add -A`, `git add --all`, `git add -u`, `git add .`, or `git commit -a`. It fires on the command pattern, not on evidence of actual harm, which is why it ends with III.
+
+**The underlying rule.** The office convention is to commit with `git commit --only <files>`, naming the whole files this conversation touched and nothing else. I read "staging the whole files this conversation touched" as: stage complete files (not partial hunks), and only those files that this session's work modified or created. Blanket staging is the violation because the checkout may be shared: other sessions may have work-in-progress and scratch files in the same working tree, and `add -A` or `commit -a` sweeps their files into my commit.
+
+**The obligation on receipt.** Before doing anything that builds on the blanket command, I must audit its effect: list what was staged or committed (`git status` if only staged, `git show --stat HEAD` if a commit already exists) and claim each file — that is, confirm each one belongs to this session's work. Anything I cannot claim must be removed: unstaged if only staged, amended out if committed, reverted if the same command already pushed the commit. The message explicitly extends the cleanup duty to a pushed commit; a push does not close the window on fixing it.
+
+**The exceptions.** Two situations satisfy the rule with no action: the user explicitly ordered the sweep, or the repository is a fresh import in which every file genuinely belongs to this session. In either case I carry on.
+
+**What satisfies it.** Either qualifying under an exception, or completing the audit and ending with a staged set / HEAD commit that contains only this session's files.
+
+**What violates it.** Proceeding to push, tag, or build further work on the commit without the audit; leaving a sibling session's file in the commit after the audit; or, having ignored the message, treating the swept-in files as mine in later reasoning.
+
+**The "III." suffix.** This is the office cue "Ignore If Irrelevant, Silently": the hook's pattern match may have caught a case where the rule does not apply. I am to judge; if it does not apply I drop the advisory silently, adding no remark that I checked. If the harness forces a spoken reply where only a thought is warranted, I produce at most one character.
+
+**Why it exists.** The rule protects concurrent sessions sharing one checkout: a blanket add turns another agent's uncommitted work into part of my commit, which corrupts attribution, publishes unfinished work, and makes reverts entangle two sessions' changes. The hook is advisory rather than blocking because legitimate blanket adds exist (ordered sweeps, fresh imports), so the judgment is delegated to the session with III as the escape valve.
+
+**What I would do on receiving it.** First decide whether an exception applies from what I already know of the conversation. If not, run `git status` (and `git show --stat HEAD` if the command committed), check every listed file against the files this session actually touched, remove any I cannot claim by unstaging, `commit --amend`, or revert as the state requires, and only then continue with the original task. If an exception applies, I continue silently.
+
+**Unintelligible or awkward parts.** Nothing is unintelligible, but "staging the whole files this conversation touched" is grammatically odd; I interpret "whole files" as opposed to partial hunks, since `--only` operates on whole file contents. Also, "revert whatever is not, including a commit this same command already pushed" compresses two remedies (amend before push, revert after push) into one clause; the intent is clear but the mapping of remedy to state is left to judgment.
+
+HITS:
+
+1. The message fires on blanket git staging commands and requires the session to audit the staged or committed file list and keep only files this conversation touched, using `git commit --only` as the standing form.
+2. The remedy scales with how far the command got: unstage, amend, or revert, and a push does not exempt the commit from cleanup.
+3. Two exceptions require no action: a sweep the user ordered, or a fresh import where all files are the session's own.
+4. The closing "III." delegates relevance judgment to the session and requires silent dismissal of false positives.

@@ -1,0 +1,12 @@
+This is a Kahneman's system 2 question. The sections that bear on it are "Writing for a reader" (the cold-reader discipline the ORIGINAL advisory implements) and "Establishing facts and causes" (judging loss only from the two texts, not from a reconstruction I prefer); I have re-read them where they sit in context. No tools used.
+
+- ORIGINAL is advice issued before a GitHub issue is created; EXPANSION reads the message as a terminal error report of an already-failed compression run.
+- An issue drafted mid-conversation reads to the next contributor like the tail of that conversation.
+- The specific unresolvable references a repo-holding colleague cannot close: "Option C, as discussed", "the current behaviour", a decision whose reason stayed in the talk.
+- The instruction to run /sorry-im-late on the draft before creating the issue.
+- /sorry-im-late spawns a fresh agent that knows the project but not this conversation.
+- That fresh agent queries every reference only the conversation can close.
+- The answers from that pass are folded into the draft before the issue is recreated.
+- The sanctioned path past the block: recreate the issue with SORRY_IM_LATE_DONE=1 prepended to the gh command; EXPANSION offers no bypass at all.
+- The block is intentional and its circumvention ritual is the point, forcing one deliberate pass over whether the issue stands without the conversation; EXPANSION contradicts this by reading the blanket block as an accidental quoting defect to be repaired.
+- ORIGINAL teaches the hook works as designed and blocks only issue creation; EXPANSION teaches it fails with a shell syntax error and blocks every Bash command, and prescribes fixing the hook's quoting, a remedy ORIGINAL never asks for.

@@ -1,0 +1,48 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it are "Version control and issue maintenance" (the `--only` staging rule this hook enforces), the definition of III in the preamble (Ignore If Irrelevant, Silently), and "Handling the request and executing the plan" (a project rule met mid-work is obeyed, not worked around). I have re-read them.
+
+## What the message is
+
+It is a hook advisory, emitted automatically when the session runs a blanket staging or committing command: `git add -A`, `git add --all`, `git add -u`, `git add .`, or `git commit -a`. It is addressed to the AI agent in the session that ran the command, not to the human user.
+
+## The rule it states
+
+The office rule is that commits are made with `git commit --only <files>`, naming only the whole files that this specific conversation touched. Staging is therefore explicit and per-file; commands that stage "everything changed" or "everything untracked" are the thing being flagged.
+
+## The reason it gives
+
+The checkout may be shared: several Claude sessions (and possibly the human) can be working in the same working tree at once. A blanket add does not distinguish authorship; it sweeps sibling sessions' work-in-progress and scratch files into this session's commit. The commit then publishes, or destroys the isolation of, work that belongs to someone else's in-flight task.
+
+## What it requires on receipt
+
+The duty is triggered "before building on this command", meaning before treating the blanket-staged state or the resulting commit as a foundation for further work. The required steps:
+
+1. List what the command actually staged or committed: `git status` for staged-but-uncommitted state, `git show --stat HEAD` if a commit already exists.
+2. For each file in that list, positively claim it as this session's own work, that is, verify this conversation touched it.
+3. For every file that cannot be so claimed, remove it from the commit's reach: unstage it (if only staged), amend it out of the commit (if committed), or revert (if the commit is already published). The clause "including a commit this same command already pushed" extends the cleanup duty to the pushed case: having pushed does not exempt the commit from having the foreign files reverted out.
+
+## The exceptions
+
+Two situations satisfy the rule without any cleanup, and the message says to "carry on" in them:
+
+- The user explicitly ordered the sweep (a blanket add was the instruction, not the agent's shortcut).
+- A fresh import where every file in the tree is this session's own (nothing foreign exists to sweep).
+
+## The trailing "III."
+
+This is the office cue token Ignore If Irrelevant, Silently. It marks the advisory as pattern-matched and possibly a false positive: the hook fires on the command text, and cannot itself tell whether an exception applies. The agent is to judge; if the advisory does not apply, it is dropped with no spoken acknowledgment. If the harness forces a spoken reply where nothing is warranted, the reply is at most one character.
+
+## What satisfies and what violates
+
+Satisfies: either (a) an exception genuinely holds and the agent silently continues, or (b) the agent audits the staged/committed set, keeps only files this conversation touched, removes the rest by unstage/amend/revert, and thereafter commits with `--only`.
+
+Violates: continuing to build on the blanket-staged state without auditing it; pushing or further committing on top of a commit that carries unclaimed files; treating "already pushed" as a reason to leave foreign files in; claiming the exception without checking that it holds; or, conversely, adding a note like "I checked, the rule didn't apply" when it was irrelevant (the III clause forbids that narration).
+
+## What I would do on receiving it
+
+First check whether an exception applies from the conversation itself (did the user order the sweep; is this a fresh import that is wholly mine). If yes, proceed silently. If no or unclear, run `git status` and, if a commit exists, `git show --stat HEAD`; compare the file list against the files this conversation edited or created; unstage or amend away anything not mine; if the command sequence already pushed, revert the foreign content and push the correction; then redo the intended commit as `git commit --only <my files>`.
+
+## Parts that are less than fully clear
+
+- "including a commit this same command already pushed": `git add` and `git commit -a` do not themselves push, so read literally the clause is odd. The intelligible reading, which I adopt, is that the flagged command may have been part of a compound invocation (e.g. `git commit -a && git push`), or the hook's report may arrive after a push has followed; the clause says the cleanup duty survives the push. I flag the literal oddity but the intent is clear.
+- "claim each file as this session's own" does not specify the evidence standard for claiming. I read it as: the file appears in this conversation's own edits or creations; anything I cannot trace to this conversation's work is treated as foreign.
+- The rule says "whole files this conversation touched", which I read as forbidding partial staging (`git add -p` hunks) as well as blanket staging: the unit of staging is the complete file, and the selection criterion is this conversation's authorship.

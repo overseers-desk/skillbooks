@@ -1,0 +1,16 @@
+Compression of `message.md` completed in one iteration; the source is unchanged and the candidate lives in the run workspace.
+
+- Source: `message.md`, SHA-256 `b22777ae1011bd44da3db184a2277c13e66d59add432448bbecfb0f236ce3fd8`, 194 words.
+- Candidate: `.claude/semantic-compressor-work/72dd704f-dc2b-4fdc-b943-35b8821d5d4b-20260721T071811Z-1241659-ae40b6/candidate.md`, SHA-256 `1a700f4d336c85d053fb7f9ecb986252d79983e85c4632db07c1faa313f39d50`, 96 words.
+- Deterministic gate: PASS, word ratio 2.02 (bytes 1.67), all inventoried literals present: the `/sorry-im-late --since {base} --but-also-you-are-not-my-mum` command, `COLD_READ_DONE=1`, the `{comment_count}`/`{source_count}`/`{base}` placeholders, and the 2 and 25 limits. Iterations: 1 of 3.
+- Semantic review: an independent read-only subagent judged the candidate equivalent (verdict PASS) with excerpt evidence for all 8 inventory concepts; the clauses it noted as dropped are explanatory rationale whose behaviors remain. This is a model judgment supported by that evidence, not a proof.
+- Artifacts: `inventory.json` and `semantic-review.json` sit beside the candidate in the same workspace directory. No backup or manifest exists because nothing was applied; run `apply message.md` if you want the source replaced.
+
+The compressed content (the candidate; the source file itself is untouched in compress mode):
+
+<RESULT>
+[2] Cold read (bypass token: COLD_READ_DONE=1)
+Push adds {comment_count} comment and {source_count} source line(s), exceeding limits 2 and 25: a conversation-written diff. Run /sorry-im-late --since {base} --but-also-you-are-not-my-mum: a fresh agent knowing the project, not this session, cold-reads the session's work from its start, past the last push, for insider framing, leftover deliberation, coined vocabulary naming nothing real, conversation-only references, and (flag's accretion check) comments restating adjacent code or names. Prefer deleting a conversational reference over explaining. Fold in findings, rerun with COLD_READ_DONE=1; the block's point is one deliberate pass: does the work stand without the conversation?
+</RESULT>
+
+PASS

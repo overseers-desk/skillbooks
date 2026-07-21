@@ -1,0 +1,55 @@
+This is a Kahneman's system 2 question. The methodology sections bearing on it are Version control and issue maintenance (the commit/push/issue conventions the hook message assumes) and Writing for a reader (since the deliverable is an exposition to be checked for completeness). Both are already in context; I have re-read them.
+
+## What the message is
+
+It is emitted by an idle-session hook: the trigger is elapsed inactivity, not a user action. The parenthetical "self-decide whether to act" tells the receiving session that the hook fires unconditionally on idleness and delegates to the session the judgment of whether its condition is met. It addresses the AI running the session, not the user, and the user may never see it.
+
+## The gating condition
+
+The entire message is conditional on "a plan was executed this session." If no plan was executed, the whole checkup is void. The message does not define "plan" precisely; I read it as a plan in the Claude Code sense (an approved plan-mode plan or an equivalent tracked task list), as opposed to ordinary conversational Q&A. That reading is an interpretation, not something the text states.
+
+## The three audit items
+
+1. **Task completeness.** Every task in the plan was actually done, and where the tasks are tracked somewhere (a todo list, an issue, a plan document), each done task is marked done there. Two failure modes: work left undone, and work done but its tracking record left open.
+
+2. **Durable capture of by-products.** Ideas and work items that surfaced during execution but were not part of the plan must be recorded somewhere that survives the session: a ledger, a GitHub issue, a plan document, a note. The failure mode is an insight or a discovered follow-up that exists only in the conversation transcript, which expires.
+
+3. **Commit, push, and issue linkage.** Work is committed and pushed, and every issue closed by this session's work is named in the message of the commit that closes it. This has two sub-rules for a closing commit whose message lacks the issue reference:
+   - If that commit is unpushed and sits at HEAD, amend its message to name the issue (amending is safe there because nothing is stacked on it and the remote has not seen it).
+   - If it is buried under later commits, do not rewrite history; instead name the issue in the message of the *next* commit made.
+
+## The push rule
+
+Push when the work segment is done. If the session judges the segment not done, or there is another reason not to push, do not stay silent: emit exactly one line of the form "not pushed, because \<reason\>". The reason must be a concrete consequence-naming reason, consistent with the repository's standing git discipline ("a hold names the feared consequence, not 'your call'").
+
+## Remediation and the approval channel
+
+"Act on whatever fails" means the session fixes failed items itself, without asking: mark tasks done, file the issues, amend or write the commit messages, push. The one exception is an item that requires the user's approval (for example something the standing rules reserve to the user). Such an item is not acted on and not silently dropped; it is *reported* to the user. Then: "a later bare-dot prompt grants it" — if the user subsequently sends a message consisting of just "." (a bare dot), that is defined as approval for the previously reported item(s), and the session should then act on them. The bare dot is a pre-agreed low-effort approval token.
+
+## The silence clause
+
+If all three audits pass, or if no plan was executed this session, the session must not mention the checkup at all: no "I ran the standard checkup, all clean," no acknowledgment that the hook fired. It answers whatever else is pending as if the message never arrived. The clause exists to keep the hook zero-noise in the common case, matching the III convention in this office's methodology (silently drop an advisory that does not apply, adding no note that you checked).
+
+## What satisfies it / what violates it
+
+Satisfies: on an idle wake-up after plan execution, silently verifying all three items; fixing any that fail (updating trackers, filing issues, amending an unpushed HEAD commit's message, pushing a done segment); reporting only approval-gated items and any "not pushed, because …" line; saying nothing when clean.
+
+Violates: announcing the checkup when clean; running it when no plan was executed and narrating that fact; leaving surfaced work items only in the transcript; rewriting a pushed or buried commit to insert an issue reference (the message explicitly routes that case to the next commit instead); holding a push with no stated reason, or with a vague one; acting on an approval-gated item without the report-then-bare-dot handshake; treating the bare dot as anything other than the grant it is defined to be.
+
+## Why it exists, as far as I can tell
+
+It is an end-of-segment hygiene sweep for autonomous or semi-attended sessions. The three items correspond to three known leak points when an AI session finishes a plan and the human is away: plans marked done diverging from reality, transcript-only knowledge evaporating, and commits sitting local or issues closing without a traceable closing commit. The idle trigger catches the natural pause after execution; the silence clause keeps the mechanism invisible unless something actually needs the user; the bare-dot grant lets the user approve deferred items with one keystroke on return. It is a hook-mechanized instance of this office's "leave state whole" and issue-maintenance discipline.
+
+## What I would do on receiving it
+
+Determine whether a plan was executed this session. If not, ignore it entirely and continue. If yes: check the tracked task list against work actually done and fix markings; scan the session for surfaced ideas or follow-ups and file each durably; check git — commits present, issue references in closing commits (amend only an unpushed HEAD, otherwise queue the reference for the next commit), then push if the segment is done or emit the one-line hold reason. Anything approval-gated goes into a short report and waits for a bare dot. If everything checks out, I say nothing about any of this.
+
+## Unintelligible or ambiguous parts
+
+Nothing is unintelligible. Two points are ambiguous rather than opaque: the exact boundary of "a plan was executed" (formal plan mode versus any multi-step tracked work) is left to the session's judgment, and "segment" in "push when the segment is done" is undefined in the message itself, though the repository's git discipline gives it working meaning (a coherent unit of work whose completion warrants pushing).
+
+**HITS:**
+1. The message binds the AI session, only when a plan was executed that session, to a three-part audit: tasks done and marked done, surfaced work captured durably, work committed and pushed with closed issues named in their closing commits.
+2. Commit-message repair is position-dependent: amend only an unpushed HEAD commit; for a buried commit, put the issue name in the next commit's message instead.
+3. Failures are fixed autonomously except approval-gated items, which are reported and later granted by a user message consisting of a bare dot.
+4. When all is clean or no plan ran, the checkup must be invisible: the session answers as if the message never arrived.

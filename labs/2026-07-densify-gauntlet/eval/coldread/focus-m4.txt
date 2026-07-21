@@ -1,0 +1,24 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it are "Version control and issue maintenance" (the git-defaults-reversed rule, which this hook message enforces) and, for the reply itself, "Writing for a reader"; I have re-read them where they sit in context.
+
+**What the message is.** It is a hook-emitted advisory, templated on `{name}`, which at emission time is filled with the actual name of a branch the agent created. Its trigger condition is narrow: it fires only when the agent itself created a git branch during the current turn. It does not concern branches that already existed, branches the user created, or branches created in earlier turns.
+
+**What it requires, of whom.** It binds the AI agent in the session, not the human user. It makes three demands:
+
+1. It declares the Claude Code harness default ("If on the default branch, branch first" before committing) inverted for this environment. Commits are to be made directly onto the default branch.
+2. Branches are never to be created automatically. A branch is legitimate only when the user explicitly asked for one. The remediation section adds a second legitimating source, a "confirmed plan"; rule 2's wording mentions only the user, so the full authorization set as I read it is: explicit user request, or a plan the user confirmed.
+3. If the branch just created has neither authorization, its creation is classed as habitual (the agent reflexively following the harness default), and the remediation is: delete it immediately with `git branch -D {name}`, then commit onto the default branch, before doing any other work. The "before doing anything else" ordering makes the cleanup take priority over the task in progress.
+
+**What satisfies it.** On receiving it, the agent checks whether the user or a confirmed plan called for the branch. If yes, the branch stays and no action is needed. If no, the agent deletes the branch with `git branch -D <name>` and puts its commits on the default branch instead, and does this before continuing the task.
+
+**What violates it.** Continuing to work on an unauthorized branch; committing to it; deferring the deletion until after other work; creating further branches out of habit; and, going forward, following the harness's branch-first default in this environment at all.
+
+**Why it exists, as far as I can tell.** The harness default assumes the user wants the default branch protected. This user's workflow is the opposite: work lands as commits directly on main, and an unrequested branch is a silent fork of the repository's state that the user must later discover, reconcile, and clean up. The hook exists because the harness instruction is baked into the system prompt and agents follow it reflexively; a session-time advisory that fires exactly when the reflex has just occurred is the mechanism that catches it. This matches the office methodology's standing git section ("Branch only on the user's word... commit straight onto the default branch"), so the hook is an enforcement arm of an already-stated rule, not a new policy.
+
+**What I would do on receiving it.** First, retrieve from the conversation whether the user or an approved plan asked for the branch by name or by intent. If authorized, continue as planned. If not: check out the default branch first (a practical prerequisite the message does not state, since `git branch -D` refuses to delete the currently checked-out branch), carry any commits that exist only on the branch onto the default branch (fast-forward or cherry-pick) so the work is not orphaned, then delete the branch, then resume the task committing directly to the default branch.
+
+**Parts that are underspecified or need judgment, stated plainly.**
+
+- `git branch -D` is the force-delete form. If the branch carries commits not yet on the default branch, deleting it "before doing anything else", read literally, orphans those commits (recoverable only via reflog). Since the trigger is a branch created this same turn, the likely intended reading is that little or nothing has diverged, or that moving the commits to the default branch is implied by "then commit onto the default branch". The message does not spell out the ordering between rescuing commits and deleting the pointer; I would rescue first.
+- The message does not say what to do if the agent is currently on the branch (checkout of the default branch must precede deletion). This is inferable, not stated.
+- The slight mismatch between rule 2 (user only) and rule 3 (user or confirmed plan) as sources of authorization is a wording inconsistency, not an unintelligibility; the remediation section's wider set is the operative one, since it is the one that decides whether deletion fires.
+- Nothing else in the message is unintelligible to me.

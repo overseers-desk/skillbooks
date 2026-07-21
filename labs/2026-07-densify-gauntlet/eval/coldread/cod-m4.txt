@@ -1,0 +1,27 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it are "Version control and issue maintenance" (the branching discipline) and, at the margin, anti-infantization (how a "never" is to be read); I have re-read them where they sit in context.
+
+What follows is my full reading of the hook message.
+
+**What the message is.** It is a hook-injected correction to a default in the Claude Code harness system prompt. The harness prompt tells the model "If on the default branch, branch first" before committing. The message declares that guidance inverted for this environment: the local rule is the opposite of the shipped default.
+
+**Of whom it requires things.** Of the AI session that receives it — me, or any Claude Code instance running with this plugin's hooks. It is not addressed to the human user.
+
+**What it requires, in what situation.**
+
+1. Standing prohibition: do not create a git branch as an automatic or habitual act. The only conditions under which creating a branch is permitted are (a) the user explicitly asked for one, or (b) a plan the user confirmed includes one. "user/confirmed-plan request" I read as that disjunction: explicit user request, or a user-confirmed plan that specifies branching. Absent either, work is committed directly onto the default branch even when the session starts there.
+
+2. Remediation clause: if, in the current turn, the session has already created a branch habitually — that is, as a reflex following the harness guidance, without either authorization above — the required remedy is to delete that branch with `git branch -D` and then make the turn's commits on the default branch. "Before anything else" makes this remediation the first order of business, taking priority over whatever else the turn was doing.
+
+**What satisfies it.** Committing straight onto the default branch during ordinary work. Creating a branch only when the user asked or the confirmed plan calls for it. On noticing an unauthorized branch created this turn: removing it and landing the same work as commits on the default branch, immediately, without first pursuing other tasks.
+
+**What violates it.** Creating a branch because the harness guidance suggested it. Leaving such a branch in place once noticed. Continuing to commit onto it. Deferring the cleanup until after other work. Treating the harness system prompt's branching advice as controlling.
+
+**Why it exists, as far as I can tell.** The harness system prompt is fixed text that this environment cannot edit, and models reliably obey it; the hook is the only channel by which the local convention can override it at the moment it matters. The convention itself matches this repository's office methodology, which states that the user commits constantly and directly on the default branch, and that the thing to avoid is the silent fork — a branch the user did not ask for fragments history, hides work from the user's view of main, and manufactures divergence someone must later reconcile. The remediation clause exists because the failure is known to be habitual: the message anticipates that the session may have already branched before the hook's lesson registers, and prescribes the undo.
+
+**What I would do on receiving it.** First check whether I created a branch this turn without user or confirmed-plan authorization. If yes: preserve the work, switch back to the default branch, land the changes as commits there, and delete the errant branch with `git branch -D`. If no branch was created: no remedial action; adopt the norm for the rest of the session — commit on the default branch, and create branches only on explicit request.
+
+**Parts that are unintelligible or defective as written.**
+
+- `{name}` is an unsubstituted template placeholder. The hook evidently intends to interpolate the actual name of the branch it detected, and the substitution has not happened (or the text I was given is the raw template). I can still read the intent — "the branch created this turn" — but a session receiving this literally would not be told which branch is meant, and if several branches exist it would have to infer the culprit from the reflog or `git branch --sort=-creatordate`.
+- The prescribed order — delete first, "then default-branch commits" — is unsafe if executed literally. `git branch -D` is a force delete that discards an unmerged branch; if the turn's commits already sit on that branch and the working tree is clean, deleting before transferring the work orphans those commits (recoverable only via reflog). Two further mechanical wrinkles: you cannot delete the branch you are currently on, so a switch to the default branch must precede the delete in any case; and "then default-branch commits" does not say how the work gets there (cherry-pick, merge, re-commit of the working tree, or fast-forwarding the default branch to the branch tip before deletion). I read the message's intent as "the work ends up as commits on the default branch and the unauthorized branch ceases to exist," and I would sequence the steps to satisfy that intent without data loss, rather than follow the stated order literally.
+- "habitually" is doing quiet definitional work: it marks the branch as one created by reflex rather than by decision. It is intelligible, but it means the remediation is conditioned on my own assessment of why I branched, which is a judgment the message leaves to me.

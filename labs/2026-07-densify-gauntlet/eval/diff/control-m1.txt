@@ -1,0 +1,3 @@
+This is a Kahneman's system 2 question. The methodology section that bears on it is Densify in "Writing for a reader" (the loss test for specifics and epistemic markers); I have re-read it. Checking ORIGINAL clause by clause against EXPANSION — the shift-only scope, the {missing} placeholder, the CEREMONY block opening the prompt, all four tiers, the complexity rationale, the ledger clause, both ledger parts with their examples, the "none" case, collection into ledger.md beside the orders file, and the rewrite-and-retry remedy — each appears in EXPANSION uncontradicted.
+
+NOTHING LOST

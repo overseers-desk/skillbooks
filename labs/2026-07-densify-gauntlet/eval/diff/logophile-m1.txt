@@ -1,0 +1,5 @@
+This is a Kahneman's system 2 question. The sections that bear on it are "Writing for a reader" (the densify rule, whose loss standard — every concrete specific and epistemic marker surviving — is the standard I am applying here) and "Handling the request and executing the plan" (the shift skill and subagent-tier rule, the subject matter of both texts); I have re-read them where they sit in my context.
+
+Checked item by item: the hook's trigger and `{missing}` placeholder, the shift-only scope, the CEREMONY block opening every Agent spawn prompt, the tier judgment with all four tiers named and the complexity reasoning, the ledger clause with both LEDGER parts (goal-plan gaps; work surfaced while executing, dependencies and forgotten pieces) and the "none" escape, the duty to collect entries into ledger.md beside the orders file, and the rewrite-and-retry directive — each appears in EXPANSION intact, with no contradiction.
+
+NOTHING LOST

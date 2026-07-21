@@ -1,0 +1,13 @@
+Compression could not run: the result state is `ERROR`, and `message.md` is byte-for-byte unchanged.
+
+The cause is outside this task. This session's Bash PreToolUse hook (the jq guard that intercepts `gh issue create` to require a sorry-im-late pass) is written as a single-quoted shell string whose deny-reason text contains apostrophes ("conversation's tail", "this session's own"). Those apostrophes terminate the shell quoting, so `/bin/sh` fails with "Syntax error: Unterminated quoted string" on every Bash invocation, including `true`. I confirmed the same failure occurs inside a fresh subagent, so no execution path in this session can run the skill's bundled control script, and the skill forbids recreating the workspace/inventory/validate/apply operations with ad hoc shell or file tools. Without the control script there is no workspace, no inventory, no deterministic gate, and therefore no valid candidate.
+
+No compressed content exists to print between `<RESULT>` tags; fabricating one without the gates would violate the skill's contract, so I am omitting it rather than printing unvalidated text.
+
+HITS:
+1. `message.md` (the blanket-staging advisory, 1 line, 96 words) was read but never modified; result state is `ERROR`, not `FAIL` or `NOT_COMPRESSIBLE`.
+2. Every Bash call in this session is rejected before execution by a malformed PreToolUse hook; the defect is unescaped apostrophes inside the hook's single-quoted jq command in the hooks configuration.
+3. The failure will recur for all Bash use (in this and any new session) until that hook definition is fixed — for example by moving the deny-reason text out of the single-quoted string or into a script file; note a mid-session config edit will not revive this session, but a fixed config can be verified with `claude -p`.
+4. Re-running `/semantic-compressor compress message.md` after the hook fix should proceed normally; nothing about the target file itself blocked compression.
+
+`ERROR`

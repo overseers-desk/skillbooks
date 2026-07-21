@@ -1,0 +1,59 @@
+This is a Kahneman's system 2 question. The sections of the office methodology that bear on it are "Version control and issue maintenance" (commit-and-push cadence, issue-update duties, the closing-commit convention), "Leave state whole" (the local/remote pair as the unit of completion), and the III convention (silent no-op when a check finds nothing), and I have re-read them where they sit in my context.
+
+## What the message is
+
+It is a self-audit instruction injected by a hook when a session goes idle. The addressee is the AI session itself, not the user. The parenthetical "self-decide whether to act" marks it as advisory in trigger but prescriptive in content: the hook cannot know whether a plan was executed, so it delegates that predicate to the session; once the predicate holds and failures are found, the imperative "Act on failures" governs.
+
+## The condition
+
+The audit fires only if a plan was executed this session. If no plan was executed, or the audit finds everything clean, the session must say nothing about the checkup and respond to whatever the user's actual message was as though the hook text had never appeared. This is the same shape as the III rule: a silent no-op, with no "I checked and all is well" residue. Mentioning a clean checkup would violate the instruction.
+
+## The three audit items
+
+1. **Plan completion.** Every task in the executed plan is actually done, and where a tracking mechanism exists (todo list, issue, plan document), the done state is recorded there. Two failure modes: work skipped, and work done but still marked pending.
+
+2. **Durable capture.** Ideas and work items that surfaced during execution, side findings, follow-ups, forks, must be written somewhere that outlives the session: a ledger, a GitHub issue, a plan file, a note. Leaving them only in the conversation transcript violates this, since the transcript is not a working surface future sessions consult.
+
+3. **Committed, pushed, and cross-referenced.** Work is committed and pushed, and any issue closed during the session is named in the message of the commit that closed it, so the git log carries the issue-to-commit link.
+
+## The unpushed-closing-commit rules
+
+Two cases, distinguished by whether the closing commit is still at HEAD:
+
+- **Unpushed and at HEAD:** amend the commit message to add the issue name. Amending is safe precisely because the commit has not been pushed; the push then carries the corrected record, and no history anyone else has seen is rewritten.
+- **Unpushed but buried under later commits:** amending would rewrite intermediate history, so instead the issue is named in the *next* commit's message. The record still reaches the log; it just rides a later commit.
+
+The unstated third case, already pushed, is outside the remedy: published history is not rewritten.
+
+## The push decision
+
+Push when the work segment is done and "complete enough." This is a judgment call left to the session; the phrase is vague by design rather than unintelligible, matching the repo's standing rule that pushing accompanies committing. If the session judges the segment not ready, it does not silently hold the push: it tells the user, briefly, "not pushed, because \<reason\>," naming the concrete reason. A silent unpushed state is a violation; so is a hold justified only by "your call."
+
+## Failures, approval, and the bare dot
+
+Failures the session can fix itself, it fixes (mark the task done, file the issue, amend the message, push). A failure whose remedy needs user approval is not acted on but reported. The phrase "a later bare-dot prompt grants it" means: if the user subsequently sends a message consisting of just ".", that is a grant of the previously reported approval-needing action, and the session should then perform it. The dot is a minimal-effort approval token; it carries no content of its own, so its meaning is defined entirely by the pending reported item.
+
+## What satisfies and what violates it
+
+Satisfying it: on idle, determine whether a plan ran; if yes, walk the three checks against git state and any tracking artifacts; repair what is repairable autonomously; report only approval-gated items and any not-pushed reason; if clean or no plan, produce a normal answer with zero checkup narration.
+
+Violating it: announcing a clean checkup; leaving a closed issue unnamed in any commit message when the closing commit was still amendable; amending a pushed or buried commit; letting session-surfaced work items evaporate; holding a push without telling the user why; performing an approval-gated remedy without the grant; or treating the checkup as optional when failures are visible.
+
+## Why it exists
+
+An idle moment is the cheapest time to reconcile state. The rules it enforces all serve future readers of the record: the issue name in the closing commit makes the log traceable (the who-did-this style of archaeology depends on it), durable capture keeps ideas from dying with the transcript, and push-with-commit keeps local and remote as one whole state rather than a half-synced pair. The amend-versus-next-commit split encodes the standard git safety line between unpublished and effectively-published history.
+
+## Unintelligible or ambiguous parts
+
+Nothing is unintelligible to me. Two genuine ambiguities: "complete enough" has no criterion and is left to judgment, and there is mild tension between "self-decide whether to act" in the header and the later imperative "Act on failures," which I resolve as: the session decides whether the condition (a plan was executed) holds, but once failures are found, acting is not discretionary. "Ledger" names no specific file; I read it as any durable running record the project keeps.
+
+## What I would do on receiving it
+
+Check the transcript for an executed plan. None: answer the user normally, no mention. One exists: run `git status`/`git log` against the plan and any tracked issues, mark done what is done, file or note surfaced items, amend the HEAD closing commit's message if unpushed and missing an issue name, push if the segment is complete enough, otherwise tell the user the reason it is held, and list any approval-gated repairs, awaiting a "." to execute them.
+
+HITS:
+1. The message binds the AI session, only on idle, and only if a plan was executed this session; otherwise it mandates complete silence about the checkup.
+2. Its three checks are: planned tasks done and marked done, surfaced work captured durably, and work committed and pushed with every closed issue named in its closing commit's message.
+3. An unpushed closing commit at HEAD is amended to name the issue; one buried under later commits is compensated by naming the issue in the next commit instead, and pushed history is never rewritten.
+4. Fixable failures are fixed autonomously; approval-gated ones are reported, and a subsequent bare "." from the user constitutes the approval.
+5. A held push must be reported with its concrete reason; a silent hold violates the instruction.

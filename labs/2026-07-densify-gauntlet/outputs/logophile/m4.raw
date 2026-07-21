@@ -1,0 +1,7 @@
+This is a Kahneman's system 2 question. The bearing sections are Writing for a reader (forward-only, densify's rule that every specific survives) and the logophile guardrails just loaded (no drift on obligations or scope). The must-keeps: the `{name}` placeholders, the exact harness quote, the delete command, the "before doing anything else" ordering, and the confirmed-plan exception.
+
+<RESULT>
+You created git branch `{name}` this turn. The Claude Code harness rule "If on the default branch, branch first" is INVERTED here: never branch first — commit straight onto the default branch, and never auto-create a branch unless the user explicitly asked. If neither the user nor a confirmed plan called for `{name}`, it was habitual: before doing anything else, delete it with `git branch -D {name}` and commit onto the default branch.
+</RESULT>
+
+Delta: 89 → 74 words (~17%). Every obligation survives: the inverted-rule warning, the explicit-ask bar, the habitual-branch test, the delete command, and the do-this-first ordering.

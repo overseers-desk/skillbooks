@@ -1,0 +1,3 @@
+This is a Kahneman's system 2 question. The methodology sections bearing on it are "Writing for a reader" (the cold-reader pass and the sorry-im-late discipline) and the LHD rule's push-time comment scope; I have re-read them where they sit in context.
+
+- ORIGINAL teaches that without the reach-back a session that has already pushed once would hand the reader only the tail since its last push; EXPANSION's illustration ("a session that pushed twice is not judged only on the increment since its first push") contradicts this by measuring the un-reached-back read from the first push rather than the last.

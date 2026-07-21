@@ -1,0 +1,5 @@
+The text is a short instruction block rather than an article, so the file-measurement steps don't apply; I condensed it directly, keeping every directive: the inversion of the harness rule, the no-auto-branch condition, the delete command, and the ordering requirement.
+
+<RESULT>
+You created git branch `{name}` this turn. The harness rule "If on the default branch, branch first" is INVERTED here: commit straight onto the default branch, and never auto-create a branch unless the user explicitly asked. If neither the user nor a confirmed plan called for this branch, delete it now with `git branch -D {name}` and commit onto the default branch before doing anything else.
+</RESULT>

@@ -1,0 +1,4 @@
+This is a Kahneman's system 2 question. The methodology sections bearing on it are Writing for a reader (the densify rule's standard for what counts as a lost specific or epistemic marker) and Version control and issue maintenance (the commit/push conventions the texts describe); both are in context and re-read.
+
+- The stated purpose of amending the unpushed HEAD commit is "so the push carries the record"; EXPANSION replaces this with a safety rationale (nothing stacked, remote unseen).
+- The push condition is "done and complete enough to push"; EXPANSION reduces it to "done."

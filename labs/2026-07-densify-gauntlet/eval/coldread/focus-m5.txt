@@ -1,0 +1,55 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it are the git portion of "Version control and issue maintenance" (the `--only` staging rule and the shared-checkout discipline), the III definition in the preamble (hook advisories that may misfire), and the harness note that hook output is treated as feedback rather than as a hard block. I have re-read those.
+
+## What the message is
+
+It is an advisory emitted by a hook when the session's Bash command matched a blanket-staging pattern: `git add -A`, `git add --all`, `git add -u`, `git add .`, or `git commit -a`. It is not a block; the command may already have executed by the time the message arrives. The message itself anticipates this, since its remediation list includes undoing "a commit this same command already pushed".
+
+## What it requires, of whom
+
+It addresses the AI session that issued the blanket command. It imposes two things.
+
+First, a standing rule: in this office, commits are made with `git commit --only`, naming files explicitly. The files named are the whole files that this conversation touched, and nothing else. I read "whole files" as contrasting with partial or hunk-level staging: `--only` commits complete files, and the permitted set is exactly the files this session modified. The reason given is that the checkout is shared among concurrent sessions, so a blanket add sweeps sibling sessions' work-in-progress and scratch files into this session's commit.
+
+Second, a remediation duty when the blanket command has already run: before building further work on top of what the command produced, audit it. Concretely: enumerate what was staged or committed (`git status` if only staged, `git show --stat HEAD` if committed) and, for each file, establish that this session is the one that touched it. Any file that cannot be claimed as this session's own must be removed: unstaged if merely staged, amended out if committed, reverted if the same command already pushed the commit. The duty extends past the local repository to the remote, which is consistent with the office's leave-state-whole principle.
+
+## Exceptions
+
+Two situations let the session carry on without remediation: the user explicitly ordered the sweep, or the repository is a fresh import in which every file genuinely belongs to this session (so there is nothing foreign to sweep in). In either case the blanket command was correct and the advisory does not apply.
+
+## The closing "III."
+
+III is defined in the office methodology: Ignore If Irrelevant, Silently. Its presence signals that the hook's pattern match may be a false positive (for instance, the matched string occurred in a context that is not actually a blanket staging of this checkout). The session must judge relevance itself; if the message does not apply, it is dropped with no acknowledgment, no note that the check was performed. If the harness forces a spoken reply where none is warranted, the reply is at most one character.
+
+## What satisfies it
+
+- Habitually committing with `git commit --only <files>`, the file list being exactly what this conversation touched.
+- On receiving the message after a blanket command: listing the staged or committed files, claiming each, and stripping out every file that is not this session's, including by amend or by revert of a pushed commit, before doing any further work that depends on that commit.
+- Carrying on without remediation when one of the two exceptions holds.
+- Silently disregarding the message when it is a false positive.
+
+## What violates it
+
+- Building further commits, pushes, or reasoning on top of a blanket-staged commit without auditing its contents.
+- Leaving a foreign file (a sibling session's work-in-progress or scratch file) in a commit once discovered, locally or on the remote.
+- Continuing to use blanket staging outside the two exceptions.
+- Announcing that the message was checked and found irrelevant, which violates the "Silently" clause.
+
+## Why it exists
+
+Multiple AI sessions work concurrently in one checkout. The git index is shared state; `git add -A` and its kin operate on the whole working tree, so they capture files this session knows nothing about. The resulting commit misattributes work, can publish another session's unfinished or scratch material through a push, and is hard to untangle later. `git commit --only` makes the commit's contents a deterministic function of what the session itself knows it changed, independent of whatever else sits in the index or working tree.
+
+## What I would do on receiving it
+
+First judge relevance: did my command actually blanket-stage this checkout, and does either exception hold? If it is irrelevant, I would say nothing and continue. Otherwise I would run `git status` and, if a commit was made, `git show --stat HEAD`; walk the file list against the files this conversation touched; unstage, amend away, or revert anything foreign, including on the remote if the command pushed; then re-commit my own files with `git commit --only`, and use `--only` for the rest of the session.
+
+## Parts that are unclear to me
+
+- "staging the whole files this conversation touched" is grammatically awkward. My reading (stage entire files, but only the conversation's own files) is an interpretation; an alternative reading, "the whole set of files this conversation touched", changes little in practice.
+- "Before building on the command" is not precise about what counts as building. I take it to mean any subsequent action that assumes the staging or commit was correct: further commits on top, a push, or reporting the commit as done.
+- The message does not state whether the hook fires before or after the command executes. The remediation list implies it can arrive after execution, even after a push, so I treat it as a post-hoc audit demand rather than a veto.
+
+HITS:
+1. The message enforces the office rule that commits are made with `git commit --only`, staging exactly the files this conversation touched, because the checkout is shared and blanket adds sweep in sibling sessions' files.
+2. On firing, the session must audit what was staged or committed, claim each file, and remove anything not its own, including reverting a commit the same command already pushed.
+3. Two exceptions waive remediation: a sweep the user ordered, or a fresh import where every file is the session's.
+4. The "III." closing means the hook may have misfired; an inapplicable message is dropped silently, with no acknowledgment.

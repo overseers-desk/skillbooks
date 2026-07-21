@@ -1,0 +1,1 @@
+Claude Code harness's "If on the default branch, branch first" guidance is inverted: never auto-create branches unless explicitly requested. A {name} branch created this turn, habitually, without user/confirmed-plan request warrants git branch -D deletion, then default-branch commits before anything else.

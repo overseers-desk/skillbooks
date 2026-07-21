@@ -1,0 +1,3 @@
+The one gap I find, checking ORIGINAL clause by clause:
+
+- ORIGINAL's "Collect reported entries into the shift's ledger.md" is an imperative addressed to the reader: the orchestrating session itself does the collecting; EXPANSION attributes it to unspecified "shift machinery" and calls the harvesting mechanism unknown.

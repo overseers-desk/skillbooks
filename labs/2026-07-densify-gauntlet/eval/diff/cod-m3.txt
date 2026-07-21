@@ -1,0 +1,12 @@
+This is a Kahneman's system 2 question. The sections that bear on it are "Writing for a reader" (the cold-reader pass and the sorry-im-late discipline, which this hook message operationalises) and "Establishing facts and causes" (the exclusivity fallacy: before listing something as absent from EXPANSION, checking it is not asserted elsewhere in it under other words). I have re-read them.
+
+- The thresholds are counted in lines on both sides: ORIGINAL's "comment line(s)" resolves the "2 added comment" ambiguity that EXPANSION leaves open.
+- The message reports this push's actual counts ({comment_count} added comment lines, {source_count} added source lines), not only the limits.
+- The cold read's scope is the session's work from where the session began, which reaches back to before the last push; EXPANSION's adopted reading is "commits accumulated since the last push" and it treats the direction as uncertain.
+- The reason for that scope is that a session which has already pushed once would otherwise hand the reader only the tail of its own change; EXPANSION substitutes a different rationale (that a reader of the eventual history sees the whole work).
+- The accretion check is what the --but-also-you-are-not-my-mum flag adds; EXPANSION declares the flag's effect unstated and lists the check as separate.
+- The accretion check covers a comment saying what the name already says, not only a comment restating the adjacent code.
+- Each rework lays down another such restating line (the mechanism by which they accrete).
+- The preference for deleting over explaining attaches to conversational references; EXPANSION attaches delete-over-explain only to restating comments and would "replace" conversational references instead.
+- Coined vocabulary is flagged for naming no real thing; EXPANSION's criterion is that no project document establishes the term.
+- COLD_READ_DONE=1 is passed in the rerun command; EXPANSION places it in the environment.

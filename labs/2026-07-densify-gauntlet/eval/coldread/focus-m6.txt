@@ -1,0 +1,25 @@
+This is a Kahneman's system 2 question. The sections that bear on it are "Writing for a reader" (the cold-reader discipline the message implements) and, for the reading itself, "Establishing facts and causes" (report what the text asserts, flag what it only implies); I have re-read them.
+
+What follows is my expansion of the hook message, stated as what it teaches me.
+
+**The situation it addresses.** An AI session (or a user working through one) has drafted a GitHub issue during a conversation and is about to create it, evidently with a `gh` command. The message arrives at that moment, and its existence implies a hook that blocks the creation command until a sentinel condition is met. The message does not state the block outright; I infer it from "the deliberate friction of the block" and from the instruction to re-run the command with a variable prepended.
+
+**The problem it names.** An issue drafted mid-conversation is written against the conversation's shared context. A colleague who has the repository but was not in the conversation cannot resolve references such as "Option C", "as discussed", "the current behaviour", or a decision whose justification was spoken but never written. To that reader the issue is the tail of a conversation they cannot see.
+
+**What it requires, of whom.** It requires the session that drafted the issue to do three things, in order. First, run the /sorry-im-late skill on the draft. That skill spawns a fresh agent which knows the project but not the conversation, and that agent queries every reference in the draft that only the conversation can resolve. Second, fold the answers to those queries into the draft, so the references resolve within the issue body itself. Third, run the creation command again with `SORRY_IM_LATE_DONE=1` prepended to the `gh` command; that sentinel is what lets the command through.
+
+**What satisfies it.** A draft that has actually been read by a context-free agent, whose questions were answered by editing the body, followed by the `gh` command carrying the sentinel. The sentinel asserts "the cold-reader pass has been done"; it is honest only when that is true.
+
+**What violates it.** Prepending `SORRY_IM_LATE_DONE=1` without having run the skill: the variable is mechanical and nothing verifies the pass occurred, so this is the obvious cheat, and the rationale section exists to argue against it. Also violating in spirit: running the skill but ignoring its questions, or answering them in the chat rather than in the issue body, since the reader being protected sees only the body. Creating the issue by a route the hook does not intercept (the web interface, a raw API call) would dodge the block; the message does not mention this, but it plainly defeats the purpose.
+
+**Why it exists.** The mechanism is stated in its own last section: "working around this block is the point". The block is not a permission system; it is friction placed exactly at the moment of publication, sized so that the cheapest legitimate way past it is one deliberate pass over whether the issue stands without the conversation. The value is in forcing that pass, not in the sentinel itself.
+
+**What I would do on receiving it.** Treat the blocked command as declined rather than retry it. Invoke /sorry-im-late on the draft issue body. Take each question the fresh agent returns and rewrite the body so the question no longer arises: name the option instead of "Option C", state the decision's reason instead of "as discussed", describe the current behaviour instead of pointing at it. Then re-run the same `gh issue create` command with `SORRY_IM_LATE_DONE=1` prepended, and not before.
+
+**Parts that are unclear to me.**
+
+1. "The issue is recreated" is an odd verb: at the moment the message fires, the issue was never created, only attempted. I read "recreated" as "the creation command is issued again", but a literal reading (delete an existing issue and make it anew) is also available, and the message does not disambiguate.
+2. The final sentence, "working around this block is the point", is ambiguous in isolation. The intended reading, which the surrounding text supports, is that the sanctioned workaround (skill, fold, sentinel) embodies the deliberate pass. But the sentence could be misread as licensing any workaround, including the dishonest one it means to discourage.
+3. The message does not say what to do when a draft genuinely contains no conversation-only references. Presumably the skill runs, returns no questions, and the sentinel follows; but whether the session may judge the draft clean and skip straight to the sentinel is not stated.
+4. Whether anything checks that the skill actually ran before the sentinel is honoured is not stated; as written, the sentinel appears to be trusted on the session's word.
+5. "Queries every reference only the conversation can close" uses "close" where I would expect "resolve"; I take them as synonyms here, but note the choice.

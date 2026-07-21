@@ -1,0 +1,22 @@
+This is a Kahneman's system 2 question. The sections that bear on it are Densify (what counts as a lost specific and a lost epistemic marker), the exclusivity fallacy (what the expansion's emptiness claim is and is not evidence of), and III; I have re-read them where they sit in context.
+
+- The message has content at all; EXPANSION asserts it is the empty string, contradicting everything below.
+- The message blocks a push and can be bypassed with the token COLD_READ_DONE=1.
+- The push carries {comment_count} added comment line(s) and {source_count} added source line(s).
+- The limits exceeded are 2 added comment lines and 25 added source lines.
+- A diff of that size was written inside a conversation, so its comments and naming may only make sense with that conversation attached.
+- The remedy is to run /sorry-im-late --since {base} --but-also-you-are-not-my-mum.
+- That command spawns a fresh agent that knows the project but not this session.
+- The fresh agent cold-reads the session's work from where the session began.
+- The read reaches back past the last push, because a session that already pushed once would otherwise hand the reader only the tail of its own change.
+- The agent reads for insider framing.
+- The agent reads for leftover deliberation.
+- The agent reads for coined vocabulary that names no real thing.
+- The agent reads for references only this conversation can resolve.
+- The --but-also-you-are-not-my-mum flag adds the accretion check.
+- The accretion check targets comments that restate the code beside them or say what the name already says, which tell a reader who has the project nothing.
+- Each rework lays down another such restating line.
+- Prefer deleting a conversational reference over explaining it.
+- After folding in the findings, rerun the push with COLD_READ_DONE=1 in the command.
+- Working around the block is the point: one deliberate pass over whether the work stands without the conversation.
+- The correct response is to act (run the pass, fix, rerun the push); EXPANSION contradicts this by concluding the message requires nothing and calls for no action in session.

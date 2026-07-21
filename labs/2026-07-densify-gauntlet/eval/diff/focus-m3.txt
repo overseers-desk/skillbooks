@@ -1,0 +1,1 @@
+- The stated rationale that a restating comment "tells a reader who has the project nothing" — EXPANSION justifies the accretion check only by accumulation-through-rework, omitting that such a line carries zero information for a reader who already has the project.

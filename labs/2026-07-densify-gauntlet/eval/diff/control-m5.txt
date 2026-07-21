@@ -1,0 +1,5 @@
+This is a Kahneman's system 2 question. The sections that bear on it are Densify (what counts as a lost specific or epistemic marker) and Version control and issue maintenance (the `--only` rule the ORIGINAL advisory enforces); I have re-read both where they sit in context.
+
+Checking each thing ORIGINAL teaches against EXPANSION: the five trigger commands, the `--only` rule with whole files and nothing else, the shared-checkout rationale including sibling sessions' work-in-progress and scratch files, the audit before building on the command (`git status` / `git show --stat HEAD`), claiming each file, the three remedies with the pushed-commit extension, both exceptions, and the III suffix are all present and none is contradicted. EXPANSION's remedy-to-state mapping and its III elaboration go beyond ORIGINAL without reversing it.
+
+NOTHING LOST

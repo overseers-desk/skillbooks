@@ -1,0 +1,5 @@
+The condensation target is the blanket-staging advisory (about 110 words). Every concrete specific stays: the trigger commands, the `--only` rule, the shared-checkout hazard, the verification commands, the remedies including a pushed commit, both exceptions, and the III marker. What goes is connective tissue and restatement.
+
+<RESULT>
+Blanket staging noted (`git add -A`/`--all`/`-u`/`.` or `git commit -a`). Office rule: commit with `--only`, staging whole files this conversation touched, nothing else — in a shared checkout a blanket add sweeps sibling sessions' work-in-progress and scratch files into your commit. List what was staged (`git status` / `git show --stat HEAD`) and claim each file as this session's own; unstage, amend away, or revert the rest, even if already pushed. A user-ordered sweep or a fresh import where everything is yours: carry on. III.
+</RESULT>

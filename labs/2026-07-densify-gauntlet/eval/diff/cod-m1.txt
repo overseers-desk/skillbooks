@@ -1,0 +1,5 @@
+This is a Kahneman's system 2 question. Sections bearing on it: Densify (what counts as a lost specific versus survived), and the cold-reader material behind sorry-im-late/densify's round gate; re-read both where they sit in context.
+
+- ORIGINAL's remedy is to rewrite the *spawn prompt* with the ceremony and retry the spawn; EXPANSION places the rewrite-and-retry on the subagent's ledger entry after completion instead.
+- ORIGINAL's "missing {missing}" names the absent component of the ceremony block in the spawn prompt; EXPANSION reads the placeholder as a missing part of a ledger entry.
+- ORIGINAL's advisory fires at spawn time, on an incomplete ceremony, before any subagent runs; EXPANSION frames enforcement as post-completion checking of the subagent's final message.

@@ -1,0 +1,7 @@
+The gate passed on round 1: the differ, comparing the cold reader's expansion against the original, found no losses, so there was nothing to triage and no MATERIAL loss. The original was already tight; the rewrite mostly trims connective phrasing ("carrying", "During a shift, every … prompt" → "Every shift … prompt") while keeping every specific: the `{missing}` placeholder, the four tiers, both ceremony parts, both ledger-entry parts, the "none" fallback, ledger.md's location beside the orders file, and the rewrite-and-retry remedy.
+
+Purpose line (derived, since none was supplied — correct me if it's off): this message fires when a shift-time Agent spawn prompt lacks the required CEREMONY block; it exists to make the spawning agent rebuild the prompt with both ceremony parts and retry, and to route reported ledger entries into ledger.md.
+
+<RESULT>
+Shift spawn ceremony incomplete: missing {missing}. Every shift Agent spawn prompt opens with a CEREMONY block: (1) model-tier judgment — the tier (fable/opus/sonnet/haiku) and why the work's complexity suits it; (2) ledger clause — the subagent closes its final message with discovered-work LEDGER entries: part 1, gaps between the project goal and the current plan; part 2, work surfaced while executing (dependencies, forgotten pieces); or "none". Collect reported entries into the shift's ledger.md beside its orders file. Rewrite the spawn prompt with the ceremony and retry.
+</RESULT>

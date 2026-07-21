@@ -1,0 +1,5 @@
+This is a Kahneman's system 2 question. The sections bearing on it are Writing for a reader (the densify clause, whose loss criteria this comparison applies) and Establishing facts and causes (an absence claim needs a search designed for it — each ORIGINAL clause checked against EXPANSION, not skimmed); I have re-read them where they sit in context.
+
+Checked clause by clause — the idle-session gate, the three audit items, both commit-message repair rules, the push condition and the "not pushed, because <reason>" form, act-on-failure, the approval-and-bare-dot rule, and the silence rule — each is present in EXPANSION without contradiction.
+
+NOTHING LOST

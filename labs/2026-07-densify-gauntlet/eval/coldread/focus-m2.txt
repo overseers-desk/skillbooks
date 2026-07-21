@@ -1,0 +1,39 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it are Version control and issue maintenance (commit and push discipline, issue updates) and Leave state whole (the local/remote pair), since the message under examination encodes a variant of that discipline; I have re-read them. No tools are used, as instructed.
+
+What follows is my understanding of the hook message, stated as completely as I can.
+
+**What kind of thing it is.** It is an instruction injected by a hook into a Claude Code session. It defines a post-idle self-audit: a checkup the agent performs on its own initiative when the session has been idle, without being asked by the user to perform it, and mostly without telling the user it happened.
+
+**Who it binds.** The agent (Claude) in the session that receives it. It imposes nothing on the user, though it defines one meaning for a user behaviour: a bare-dot prompt after the agent has reported approval-needing items counts as the user granting approval for those items.
+
+**When it applies.** Two conditions must both hold. First, the session sat idle and has now resumed (that is the trigger the hook fires on). Second, a plan was executed in this session before the idle period. If no plan was executed, the whole instruction is inert, and the agent must not mention the checkup at all; it answers the user's message as if the checkup instruction were not present. The agent decides for itself whether to act; there is no user prompt requesting the audit.
+
+**What it requires: three audit items.**
+
+1. Task completion and tracking. Every task in the executed plan must be actually done, and also marked done wherever that task is tracked (a todo list, an issue, a plan file). Both halves count: real completion without the recorded status is a failure, and presumably a "done" marker on an undone task is a worse one.
+
+2. Durable capture of emergent items. Ideas and work items that surfaced during execution but were not part of the plan must have been written somewhere durable: a ledger, an issue, a plan, a note. The failure being guarded against is that such items existed only in the conversation and were dropped when the session went idle.
+
+3. Commit, push, and issue-naming hygiene. The work must be committed and pushed, and any issue the work closed must be named in the message of the commit that closed it.
+
+**Repair rules for item 3.** The message distinguishes two cases by whether history rewriting is safe.
+
+- If the closing commit is unpushed and sits at HEAD, the agent amends its message to add the issue name. The stated rationale is that amendment is permissible exactly because the commit has not left the machine; the push that follows then carries the corrected record.
+- If the closing commit is unpushed but buried under later commits, the agent does not rewrite history below HEAD. Instead the issue is named in the message of the next commit made.
+- The message does not state a repair for an already-pushed closing commit that omits the issue name; by the logic given (amendment allowed only before the record leaves the machine), I take the buried-commit rule to cover it as well: name the issue in a later commit's message rather than rewrite pushed history.
+
+**Push policy.** If the work segment is done and complete enough to push, push it. If not, do not push, and tell the user briefly in the form "not pushed, because <reason>". This is the one case where the checkup speaks even though the agent took no corrective action; the silence rule applies to a clean audit, not to a deliberately withheld push.
+
+**Response to outcomes.** The agent acts directly on whatever fails the audit: marks tasks done, files the dropped ideas, amends or commits, pushes. Only items that genuinely need the user's approval are deferred; those the agent reports instead of acting on. If the user later replies with a bare dot, that dot is consent to the reported items, and the agent may then act on them.
+
+**Silence rule.** If all three items check clean, or no plan was executed, the agent says nothing about the checkup and answers whatever the user actually wrote as if the checkup instruction were absent. The checkup surfaces to the user only through its actions (commits, pushes, filed notes), through the "not pushed, because" report, or through approval-needing items.
+
+**What satisfies it.** On the trigger conditions: verify the three items; silently do nothing further if clean; otherwise fix each failure (using the correct amendment-vs-next-commit rule for issue naming), push if the segment warrants it or state the reason it was held, report only approval-needing items, and treat a subsequent bare dot as approval to proceed on those.
+
+**What violates it.** Running or mentioning the audit when no plan was executed; announcing a clean checkup; asking the user for permission on items the agent could act on itself; amending a pushed commit, or rewriting a commit below HEAD, to insert an issue name; leaving a closing commit unpushed at HEAD with the issue unnamed when it could have been amended; silently withholding a push with no reason given; dropping mid-execution ideas without durable capture; treating a bare dot as something other than approval after approval items were reported (or, conversely, treating a bare dot as approval when nothing had been reported).
+
+**Why it exists, as far as I can tell.** Plan execution tends to end ragged: tasks done but unmarked, ideas mentioned in passing and lost, commits sitting unpushed, issues closed in substance but with no record linking commit to issue. An idle gap is a natural seam at which to close those loops, because the work has settled and the user is not mid-thought. The self-directed, silent design keeps the checkup from generating noise or permission-seeking chatter: the user only hears about it when something needs their judgment. The amend-at-HEAD-only rule preserves the traceability goal (commit messages naming closed issues) without rewriting shared or buried history. The bare-dot convention gives the user a minimal-effort way to approve a batch of deferred items. This is consistent with the office methodology this repository serves, which favours committing and pushing without asking and batching questions for when the user returns.
+
+**Parts that are less than fully determinate.** Three ambiguities, none of which makes the message unintelligible. First, "just executed a plan" does not define how recent "just" is, nor whether a partially executed plan counts; I would read it as any plan whose execution was the session's last substantive activity. Second, "complete enough to push" is left to judgment by design. Third, the scope of the bare-dot consent is stated as granting "that approval", which I read as covering all items reported in the immediately preceding checkup report, not any approval ever deferred. Nothing in the message is unintelligible to me.
+
+**What I would do on receiving it.** Note it as a standing conditional. When the session resumes after idle: if I had not executed a plan, ignore it entirely and answer the user. If I had, silently check the plan's tasks against their tracking, scan the conversation for uncaptured work items, and inspect git state (status, unpushed commits, whether closing commits name their issues). Fix what fails, using amend only for an unpushed closing commit at HEAD, otherwise naming the issue in the next commit. Push if the segment is complete; otherwise include one brief line "not pushed, because <reason>". Report only items needing the user's approval, and on a later bare dot, act on them. If everything is clean, say nothing about any of this.

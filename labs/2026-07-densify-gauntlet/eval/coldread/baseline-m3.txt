@@ -1,0 +1,58 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it are "Writing for a reader" (the forward-only rule, the cold-reader discipline around sorry-im-late, and the LHD push-gate paragraph) and "Deciding what to build" (vocabulary expansion, since the message polices coined vocabulary); I have re-read those where they sit in context.
+
+## What the message is
+
+It is the output of a push gate: a hook in this plugin that intercepts a `git push` and blocks it, emitting this text into the pushing session. The "[2]" marks it as the second gate in a numbered series (the LHD comment-word scan being a sibling). The placeholders `{comment_count}`, `{source_count}`, and `{base}` are filled in by the hook at emission time with the actual counts and the session's base commit.
+
+## When it fires
+
+It fires when the push being attempted carries commits that add more comment lines than 2 or more source lines than 25 (the phrasing "past the limits of 2 and 25" pairs each count with its limit; I read it as either threshold being exceeded triggers the gate, though the text does not state and/or explicitly, which I flag as a point I cannot resolve from the message alone). A change of that size is classified as "conversation-scale work": it was authored across a conversation long enough that its comments and its naming may only make sense to someone who has that conversation.
+
+## What it requires, of whom
+
+It addresses the AI session doing the push. It requires that session, before pushing, to run:
+
+```
+/sorry-im-late --since {base} --but-also-you-are-not-my-mum
+```
+
+This invokes the sorry-im-late skill, which spawns a fresh agent that has the project on disk but none of this session's conversation. That agent cold-reads the diff from `{base}`, where `{base}` is the commit at which the session began, not the last pushed commit. The parenthetical "past the last push, so an earlier push does not hide the head of the change" explains why: if the session pushed once already mid-way, measuring from that push would exclude the earlier half of the session's work from review; measuring from session start reviews the whole change even if part of it is already on the remote.
+
+The cold reader looks for four things:
+
+1. Insider framing: text pitched at someone who was present for the conversation.
+2. Leftover deliberation: traces of the back-and-forth that produced the code, rather than the result (the forward-only failure mode).
+3. Coined vocabulary naming no real thing: words invented during the session that correspond to nothing that greps in the project (the vocabulary-expansion failure mode).
+4. References only this conversation resolves: names, numbers, or allusions whose referent lives in the session transcript.
+
+The `--but-also-you-are-not-my-mum` flag arms one additional check, called the accretion check: comments that restate the code they sit beside, or restate the name of the thing they annotate. The flag name is a joke on the mother who tells you what you can already see; the check demands each comment tell the reader something new.
+
+## What satisfies it
+
+The satisfying sequence is: run the skill, receive the cold reader's findings, fold them into the work (amending the commits), then rerun the same push command with `COLD_READ_DONE=1` set in it. That environment token is the bypass the gate honors; on seeing it the gate lets the push through. The closing sentence, "the deliberate pass is the point," states the design intent: the token exists to certify that the pass happened, not to offer an escape hatch.
+
+For fixing findings, the message states a preference: delete a conversational reference rather than explain it. Adding an explanation keeps the session's vocabulary in the project and grows the text; deletion removes the dependency outright.
+
+## What violates it
+
+- Setting `COLD_READ_DONE=1` without running the pass. Nothing mechanical prevents this; the gate trusts the session, and the final sentence exists precisely to say that hollow compliance defeats the purpose.
+- Running the cold read but pushing without folding in the findings.
+- Leaking session context into the cold reader's brief, which would make the "fresh agent" no longer cold and the pass worthless (this matches the office methodology's blind-test rule, though the message itself only implies it via "with the project but not this session").
+- Weaker, against the stated preference rather than the requirement: explaining every flagged reference inline instead of deleting.
+
+## Why it exists
+
+Work written during a conversation inherits that conversation invisibly: the author cannot see which of their words depend on context the repository does not contain, because for the author the context is always attached. The eventual reader, human or a future AI session, has the project but not the session. The gate mechanizes the check the author cannot perform on themselves, by putting the diff in front of a reader in exactly the eventual reader's position, at the last moment before the work becomes public (the push). The size thresholds exempt small changes, where a whole-diff cold read would cost more than it protects.
+
+## What I would do on receiving it
+
+1. Note `{base}` and run `/sorry-im-late --since {base} --but-also-you-are-not-my-mum` via the Skill tool.
+2. Take the findings; for each conversational reference, delete it where the code stands without it, recast it in project-grepping vocabulary where something real needs naming, and cut comments that restate their code.
+3. Amend or add commits with the fixes.
+4. Rerun the original push with `COLD_READ_DONE=1` prefixed to the command.
+
+## Parts I cannot fully resolve
+
+- Whether the two thresholds are conjunctive or disjunctive ("past the limits of 2 and 25" reads most naturally as either-exceeds, but the sentence does not say).
+- Whether `COLD_READ_DONE=1` is an environment-variable prefix to the git command (`COLD_READ_DONE=1 git push ...`) or some other placement "in the command"; the token syntax suggests an env prefix and that is how I would use it.
+- "the head of the change" I read as the chronologically first part of the session's work, which an intermediate push would otherwise place outside the review range; the phrase is compressed but I believe that is its meaning.

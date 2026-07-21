@@ -1,0 +1,43 @@
+This is a Kahneman's system 2 question. The methodology sections that bear on it: "Writing for a reader" (forward-only, the cold-reader test, the sorry-im-late discipline), "Deciding what to build" (vocabulary expansion — coined words naming no real thing), and the LHD entry's note on comments at push time. I have re-read them where they sit in context. No tools are used, as instructed; what follows is my understanding of the hook message alone, plus what the surrounding repo context adds.
+
+## What the message is
+
+It is the output of a push gate, gate number [2] in some sequence, that fires when a push is attempted. The placeholders `{comment_count}`, `{source_count}`, and `{base}` are template slots the hook fills at emission time: how many comment lines and source lines the push adds, and the git ref the diff is measured against. The gate blocks the push when the added lines exceed its thresholds: more than 2 comment lines or more than 25 source lines.
+
+## The situation it addresses
+
+A diff of that size was written inside a conversation between a user and an AI. The people (and future AI sessions) who will read the resulting code will have the project but not the conversation. Comments, names, and framing that made sense while the conversation was open may be unintelligible or misleading without it. The gate exists to force one deliberate check of whether the work stands on its own before it becomes public history.
+
+## Of whom it requires what
+
+It addresses the session that attempted the push, at the moment of pushing. It requires that session to:
+
+1. Run `/sorry-im-late --since {base} --but-also-you-are-not-my-mum`. This spawns a fresh agent that knows the project but has no access to the current session's conversation. That agent cold-reads the session's work.
+2. The reading scope starts from where the session's work began, deliberately reaching back past the last push. The stated reason: a session that has already pushed once mid-way would otherwise present the reader only the tail of its change, and the cold read must cover the whole of what this conversation produced, not just the unpushed remainder.
+3. The cold reader looks for four things: insider framing (text pitched at someone who was in the conversation), leftover deliberation (traces of options weighed and discarded), coined vocabulary naming no real thing (words invented in the session that denote nothing in the project), and references only the conversation can resolve.
+4. The `--but-also-you-are-not-my-mum` flag adds a fifth check, called the accretion check: comments that restate the code beside them, or repeat what a name already says. Such a comment tells a reader who has the project nothing, and the message observes that each rework of a piece of code tends to lay down another such line, so they accrete over a session. (The repo's recent commit log describes this flag as arming a "tell-me-something-new pass," which matches.)
+5. When fixing a conversational reference, prefer deleting it over explaining it. Explanation inflates the text to rescue a line that carried nothing; deletion is the cheaper and usually correct repair.
+6. Fold the findings into the work, then rerun the push with `COLD_READ_DONE=1` set. That token is the bypass: its presence tells the gate the pass has been done and the push may proceed.
+
+## What satisfies it
+
+A genuine cold-read pass by a fresh agent over the full session's work, its findings actually applied to the diff, followed by the push rerun with the token. The message is explicit that the gate is bypassable by design: "Working around this block is the point: one deliberate pass over whether the work stands without the conversation." The mechanism is not tamper-proof enforcement; it is a forcing function for a single deliberate System 2 pass that would otherwise be skipped. The token is honor-system.
+
+## What violates it
+
+Setting `COLD_READ_DONE=1` without running the pass; running the pass but discarding its findings; running it over only the post-last-push tail when the session pushed earlier; having the same session that wrote the code "cold-read" its own work inline instead of spawning the fresh agent (the author cannot simulate not having the conversation); or explaining away insider references with more insider text rather than deleting them.
+
+## Why it exists
+
+Code and comments written mid-conversation inherit the conversation as implicit context. Once pushed, the conversation detaches and never travels with the code. A future reader, human or AI, meets the comments and names cold. Insider framing wastes their attention or, worse, misleads them; coined vocabulary reads as established project vocabulary and gets built upon (the vocabulary-expansion failure mode); restating comments read as unreviewed AI output. The size thresholds (2 comment lines, 25 source lines) mark the point below which a diff is small enough to trust without ceremony and above which one deliberate check is worth its cost. The author's own review cannot substitute because the author cannot unknow the conversation; only a context-free reader can measure whether the text stands alone.
+
+## What I would do on receiving it
+
+Run the exact command given, with the `{base}` the message supplied, as a fresh-context agent invocation. Wait for its findings. Apply them to the working tree: delete conversational references rather than annotate them, cut restating comments, replace coined terms with names that grep or with plain description. Commit the fixes. Rerun the same push command with `COLD_READ_DONE=1` prefixed. I would not set the token without the pass, and I would not narrate the pass into the code (no comment saying "cleaned for cold readers").
+
+## Parts that are less than fully intelligible
+
+- The flag name `--but-also-you-are-not-my-mum` is whimsical and its semantic link to the accretion check is not stated in the message. My best reading: a mum repeats things you already know; a comment restating the adjacent code is the code's mum; the flag tells the reader to flag such nagging repetition. But that is inference, not something the message says.
+- "[2]" implies at least one other gate in the same push sequence; the message does not say what gate [1] is. (Context elsewhere in this repo suggests a push-gate that scans comment wording, but the message itself is silent.)
+- Whether `COLD_READ_DONE=1` is an environment variable on the push command or some other token the hook detects is not specified in the message; the parenthetical "bypass token" plus the `NAME=1` shape strongly suggests an environment variable prefix, but the mechanism is not spelled out.
+- The exact definition of "where it began" for `--since {base}` — whether `{base}` is computed as the session's first commit's parent, the merge-base with upstream, or something else — is not given; the message only gives the intent (reach back past the last push to the session's start).

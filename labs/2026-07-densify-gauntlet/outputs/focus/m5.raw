@@ -1,0 +1,27 @@
+<RESULT>
+A hook advisory that fires when blanket staging is detected (`git add -A`/`--all`/`-u`/`.` or `git commit -a`). It states the office rule — commit with `--only`, staging only the whole files the conversation touched — and explains the danger in a shared checkout: a blanket add captures other sessions' work into the commit. It prescribes an audit of what was staged, reclaiming or reverting anything not owned by the session (even if already pushed), names two exemptions, and ends with the III marker, meaning ignore silently if the pattern caught the wrong thing.
+
+**The rule and its rationale**
+
+1. **The office staging rule**
+Commit with `--only`, *"staging the whole files this conversation touched, nothing else"*. The advisory fires on blanket staging: `git add -A`/`--all`/`-u`/`.` or `git commit -a`.
+
+2. **Why blanket staging is dangerous in a shared checkout**
+A blanket add *"sweeps sibling sessions' work-in-progress and scratch files into your commit"*.
+
+**Required remediation**
+
+3. **Audit before building on the command**
+Before building on the blanket command, *"list what it staged (git status / git show --stat HEAD) and claim each file as this session's own"*.
+
+4. **Undo anything not owned, even if pushed**
+For files not this session's own: *"unstage, amend away, or revert whatever is not, including a commit this same command already pushed"* — remediation extends to commits the same command has already pushed.
+
+**Exemptions and disposition**
+
+5. **Two cases where blanket staging stands**
+*"A sweep the user ordered, or a fresh import where everything is yours: carry on."*
+
+6. **III marker**
+The advisory ends with *"III."* — the office cue for Ignore If Irrelevant, Silently: judge whether the pattern caught the wrong thing and, if it does not apply, drop it with no note.
+</RESULT>

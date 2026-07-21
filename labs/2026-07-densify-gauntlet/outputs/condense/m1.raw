@@ -1,0 +1,3 @@
+<RESULT>
+Shift spawn ceremony incomplete: missing {missing}. During a shift, every Agent spawn prompt opens with a CEREMONY block: (1) the chosen model tier (fable/opus/sonnet/haiku) and why the work's complexity suits it; (2) a ledger clause telling the subagent to close its final message with LEDGER entries — gaps between project goal and current plan, plus work surfaced while executing (dependencies, forgotten pieces) — or "none". Collect reported entries into the shift's ledger.md beside its orders file. Rewrite the spawn prompt with the ceremony and retry.
+</RESULT>

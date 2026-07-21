@@ -1,0 +1,5 @@
+The text is short instructional prose, not a Map article, so the skill's file-analysis and changelog steps don't apply; I applied its cutting principles directly: removed the redundant restatement of the rationale (the closing sentence repeats the opening one), tightened the examples of unresolvable references to a single parenthetical list, and kept the mechanism (fresh agent, the env-var gate) intact.
+
+<RESULT>
+Before creating a GitHub issue, run /sorry-im-late on the draft. An issue drafted mid-conversation reads like the tail of that conversation: a contributor with the repo but not this exchange cannot resolve references like "Option C", "the current behaviour", or decisions whose reasons stayed in the talk. The skill spawns a fresh agent that knows the project but not this conversation and queries every such reference. Fold in the answers, then recreate the issue with SORRY_IM_LATE_DONE=1 prepended to the gh command — the block forces one deliberate pass over whether the issue stands alone.
+</RESULT>

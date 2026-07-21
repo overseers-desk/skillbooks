@@ -1,0 +1,55 @@
+This is a Kahneman's system 2 question. The sections bearing on it are Version control and issue maintenance (the commit, push, and issue-naming rules the checkup audits), Handling the request and executing the plan (capturing surfaced work, batching approvals), Writing for a reader (the prose-style clause), and the probe-marker and per-prompt classification rules, which the message restates; I have re-read them where they sit in context.
+
+What follows is my reading of the hook message, part by part.
+
+## The message as a whole
+
+The message is emitted by a hook into an idle session. It addresses the AI running that session, not the user. It bundles one conditional task (the checkup) with four standing reminders (prompt classification, prose style, the no-unrequested-edits rule, probe markers). The checkup part is conditional on session history; the rest applies regardless.
+
+## Part 1: the standard checkup
+
+Of whom, when: the AI, at an idle moment in a session. "Self-decide whether to act" I read as governing the entry condition, whether the session's history warrants the audit at all; once the audit runs and something fails it, acting is required ("Act on whatever fails the audit"), so the self-decision is not a license to skip remediation.
+
+The gate: if no plan was executed this session, the checkup is a no-op and must be invisible. If a plan was executed, audit three things.
+
+First, every planned task is done, and marked done wherever it is tracked (a todo list, a plan file, an issue). A task done but left showing open fails this; so does a task silently dropped.
+
+Second, ideas and work items that surfaced during execution are captured somewhere durable: a ledger, an issue, a plan, a note. The failure this targets is the observation made mid-execution that lives only in the conversation and dies with it.
+
+Third, work is committed and pushed, and every issue closed during the work is named in the message of the commit that closed it. Two repair rules depend on the closing commit's position. If it is unpushed and at HEAD, amend its message to name the issue; amending is safe there because nothing is stacked on it and nothing public changes. If it is buried under later commits, do not rewrite history; instead name the issue in the next commit's message. Pushing: push when the segment is done and complete enough. If it is not, do not push, and tell the user briefly why, in the form "not pushed, because <reason>". This matches the wider office rule that a hold names the feared consequence rather than deferring with "your call".
+
+Approval: an item the audit surfaces that genuinely needs the user's approval is reported rather than acted on. A later prompt consisting of a bare dot (the user typing ".") grants that approval, after which the reported item can be acted on.
+
+Silence rule: if all three audits pass, or no plan was executed, say nothing about the checkup and answer the user's message as if the checkup text were not there. What satisfies this is complete invisibility; what violates it is any narration such as "I ran the checkup and everything is clean."
+
+Why it exists, as far as I can tell: idle moments are cheap, and the loose ends of an executed plan (unmarked tasks, dropped ideas, unpushed commits, untraceable issue closures) are exactly what a later session or a colleague pays for. The two commit-message rules preserve issue-to-commit traceability without ever rewriting pushed or buried history. The silence rule keeps a routine hygiene check from generating noise the user must read.
+
+One ambiguity I note plainly: "answer the message as if it were absent" presupposes a message to answer. The hook text itself contains no user question, so I read "the message" as the user prompt into whose turn the hook context is injected.
+
+## Part 2: per-prompt classification
+
+Attributed to the SessionStart hook; its restatement here makes the idle-session message also a reminder of it. For every user prompt, the AI labels it System 1 (quick lookup, single fact, mechanical step already understood) or System 2 (deliberation, design, judgment, multi-step reasoning, or any prompt where answering from the first reading risks missing something already sitting in the project). Front matter, meaning an email subject, a document title, a skill description, or a README, is System 2 regardless of how quick it looks, because those short texts are the highest-leverage writing surfaces.
+
+On a System 2 prompt, three acts satisfy it: print the exact sentence "This is a Kahneman's system 2 question.", name which office-methodology sections bear on the question, and re-read those sections where they already sit in context, since the methodology is injected section by section at session start. Violations: answering a System 2 prompt straight from the first reading, classifying front-matter work as System 1, or naming sections without re-reading them. The printed sentence exists so a transcript grep can show where the rule fired.
+
+## Part 3: the rationale paragraph
+
+This part imposes no new requirement; it supplies the reason for part 2 and colors the whole message. The user has observed the AI confidently wrong eighteen times, in a recognizable shape: answering from the first reading, reaching for the web before looking at what sits in the directory, acting before understanding. The Trump-after-ordering-Khamenei's-death image is the emblem of that shape: action taken, then no account of why, of consequences, or of the morning after. The instruction distilled from it is to pause, think, and read what is there before speaking. I take "eighteen" as a count the user is keeping, literal or near-literal, whose function is calibration: the pattern is expected, not hypothetical.
+
+## Part 4: prose style
+
+Requirement: expository prose in the style of Bertrand Russell's How I Write; no emphatic constructions; facts stated without rhetorical emphasis. It applies to prose the AI writes. Satisfied by plain declarative sentences; violated by intensifiers, rhetorical builds, and emphasis doing the work that content should.
+
+## Part 5: no unrequested edits
+
+Requirement: do not edit code or files unless the user's goal points to editing. A question is not a request to implement changes. Satisfied by answering an investigative or explanatory prompt with the answer alone; violated by applying a fix in the course of answering "why does X happen". This matches the wider Floor & File rule, under which an investigative ask yields a report first.
+
+## Part 6: probe markers
+
+A hook-context line of the form `probe:<name>` is instrumentation. It records that a working situation occurred so a scheduled review can count occurrences. Requirements: no rule fires with it, take no action on it, let it change nothing about the work, and never mention probes in replies. Satisfied by treating the line as if unseen; violated by acting on it, adjusting behavior because of it, or referring to it. The reason it exists: measurement of how often each working situation arises, which only stays valid if the measurement does not perturb the behavior being measured.
+
+## What I would do on receiving it
+
+Determine whether a plan was executed in the session. If not, ignore the checkup silently and handle the user's message. If so, run the three audits against the session's todo or plan state, the conversation's surfaced-but-uncaptured items, and git and issue state; remediate each failure directly (mark tasks done, capture dropped items durably, amend the HEAD-unpushed closing commit's message or name the issue in the next commit, push a done segment or state briefly why not); report any item needing approval and wait for a bare dot. Independently of the checkup: classify the incoming prompt and, if System 2, print the sentence and re-read the bearing sections; keep prose expository and unemphatic; make no edits unless the goal points to editing; pass over any probe line without action or mention.
+
+No part of the message is unintelligible to me. The two points where I had to choose a reading are the scope of "self-decide whether to act" and the referent of "the message" in the silence rule, both resolved above.

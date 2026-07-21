@@ -1,0 +1,9 @@
+The gate passed on round 1. The differ found one loss: the original's framing that "working around this block is the point" (the override step itself is the forcing mechanism), which the compressed version had softened to "the block is deliberate". Triage: IMMATERIAL by the behavioral test — a reader of the dense text performs exactly the same actions (run the skill, fold in answers, recreate with the marker), and the cold reader's stricter inference (don't prepend the marker without doing the pass) is compatible with the original, not forbidden by it. Since restoring the original phrasing costs two words, I restored it anyway. No MATERIAL loss, so this round is the stop.
+
+**Purpose line (derived, shown for correction):** make an agent about to create a GitHub issue run /sorry-im-late on the draft and recreate the issue with SORRY_IM_LATE_DONE=1, against the enemy of issues that only make sense to someone who sat in the conversation.
+
+**Final round's triage:** 1 loss listed (workaround-is-the-point framing) — IMMATERIAL, restored anyway at negligible cost.
+
+<RESULT>
+Before creating a GitHub issue, run /sorry-im-late on the draft. A mid-conversation draft leans on context a contributor with the repo but not this exchange cannot resolve ("Option C", "as discussed", "the current behaviour", decisions whose reasons stayed in the talk). The skill spawns a fresh agent that knows the project but not this conversation and queries every reference only the conversation can close. Fold in the answers, then recreate the issue with SORRY_IM_LATE_DONE=1 prepended to the gh command. Working around the block is the point: one deliberate pass over whether the issue stands without the conversation.
+</RESULT>

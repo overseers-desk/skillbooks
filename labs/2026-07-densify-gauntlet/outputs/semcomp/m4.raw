@@ -1,0 +1,13 @@
+Compression of `message.md` is complete in `compress` mode. The source file is unchanged; the candidate lives in the run workspace.
+
+- Source: `message.md`, SHA-256 `161d022e511a5440abb2be21a41fec627005dc72527828b016c68dafdbab8283`, 80 words.
+- Candidate: `.claude/semantic-compressor-work/acd157b3-7729-4a9f-b15b-6e1aea929e06-20260721T071811Z-1241375-6e16f0/candidate.md`, SHA-256 `8a0bb896c0c3ce5414b1613bfaf9cd51e66d88e87fee4a2cd6a885fe179aac7c`, 39 words.
+- Word ratio 2.05 (bytes 1.73), one draft iteration, deterministic validation PASS with all inventoried literals intact (`git branch -D {name}`, the quoted rule "If on the default branch, branch first", the `{name}` placeholder).
+- Independent semantic review (fresh read-only subagent): verdict PASS, with per-concept source/candidate citations covering the inverted branch-first instruction, the no-auto-branch rule, and the delete-then-commit recovery step; no missing concepts, altered meanings, or unsupported additions. Semantic equivalence is a model judgment supported by that evidence, not a proof.
+- Artifacts: `inventory.json` and `semantic-review.json` in the same workspace directory.
+
+<RESULT>
+Branch `{name}` created this turn. Harness advice "If on the default branch, branch first" is INVERTED: never auto-create branches unless the user explicitly asked. Absent user/confirmed-plan request, delete now (`git branch -D {name}`), then commit onto the default branch.
+</RESULT>
+
+PASS

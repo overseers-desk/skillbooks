@@ -1,0 +1,5 @@
+This is a Kahneman's system 2 question. The sections bearing on it: Densify (what counts as a lost specific or collapsed epistemic marker) and the hook-advisory conventions; I have re-read them in context.
+
+Comparing each element of ORIGINAL — the incomplete-ceremony header with its `{missing}` placeholder, the shift scope, the opening CEREMONY block, the tier judgment with its four named tiers and complexity rationale, the ledger clause with both parts and the "none" fallback, the collection into ledger.md beside the orders file, and the rewrite-and-retry instruction — against EXPANSION, every one is present and none is contradicted.
+
+NOTHING LOST

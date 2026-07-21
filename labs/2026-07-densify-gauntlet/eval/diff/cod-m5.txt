@@ -1,0 +1,5 @@
+This is a Kahneman's system 2 question. The office methodology sections that bear on it are "Version control and issue maintenance" (the `--only` rule and blanket-staging hazard) and "Conventions and knowledge" (the III marker); I have re-read them in context.
+
+- ORIGINAL is a reaction to an observed event: a blanket staging command was actually run this session ("Blanket staging noted"); EXPANSION reads the text as a standing rule statement, not a finding about a command already executed.
+- The inspection duty attaches to that just-run command — "before building on this command, list what it staged" — whereas EXPANSION reattaches it to pre-existing staged or committed state in general and treats the antecedent as ambiguous.
+- The closing "III." — the advisory's pattern may have misfired; the recipient is to judge relevance and, where it does not apply, drop it silently without noting the check — is absent from EXPANSION.

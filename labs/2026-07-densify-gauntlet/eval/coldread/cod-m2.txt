@@ -1,0 +1,54 @@
+This is a Kahneman's system 2 question. The sections that bear on it: Densify (the message reads as a densified text, and my task resembles the cold-reader expansion that verifies one), Leave state whole (the message's push discipline restates it), and III (its silence clause is the same discipline). I have re-read those where they sit in context. No tools follow; the whole reply is the deliverable.
+
+## What the message is, structurally
+
+It is a policy for a post-execution checkup. The audience is the AI session that receives it. The situation is: a plan has been executed and the session is now idle (the hook that emits it presumably fires at that point, a stop or idle event). "Checkup (self-decide whether to act)" means the checkup is not a command to produce output; the agent runs the audit and itself decides whether anything needs doing.
+
+## The three audited things
+
+1. **Planned tasks done and marked.** Every task in the executed plan is actually complete, and recorded as complete wherever the plan tracks state. Two failure modes: work done but not marked, and work marked but not done.
+
+2. **Execution-surfaced ideas captured durably.** Ideas that arose during execution (side observations, follow-ups, design questions) must exist in a durable store rather than only in the conversation. The parenthetical enumerates the acceptable homes: a ledger, an issue, a plan, a note. An idea that lives only in session context violates this, because the session expires.
+
+3. **Work committed and pushed, naming closed issues.** Finished work is committed, the commits are pushed, and the commit messages name the issues the work closes, so the remote history carries the traceability from commit to closed issue.
+
+## The amend rule
+
+"Amend an unpushed closing commit at HEAD so pushes carry record" — if the commit that closed an issue sits at HEAD and has not been pushed, and its message fails to name the closed issue, amend that commit's message so that when the push happens, the record (which issue was closed) travels with it. The two conditions (unpushed, at HEAD) are what make amending safe: no rewriting of published history, no rebasing of later commits.
+
+"One buried under later commits gets issues named in next commit's message" — if the closing commit is no longer at HEAD (later commits sit on top), amending is no longer the move; instead, the *next* commit made carries the closed issues' names in its message. The record still reaches the remote log, just attached to a later commit rather than the closing one.
+
+## The action clauses
+
+- **"Act on failures"**: when the audit finds one of the three checks failing, fix it (mark the task, file the idea, make or amend the commit) rather than merely reporting it.
+- **"Push when segments complete, else brief reasons"**: a completed segment of work is pushed. If a push is held, the agent states a brief reason for holding it, not silence and not "your call". This matches the office's leave-state-whole rule: local and remote advance together.
+- **"Approval-needing items await bare-dot prompts"**: items the agent cannot act on without user approval are not pushed at the user unprompted; they are held in a queue until the user sends a bare-dot prompt (a message consisting of just "."). I read the bare dot as the user's signal "surface what is pending"; whether the dot itself also *grants* approval or merely surfaces the queue for decision, the message does not say. I note that as an ambiguity rather than resolve it.
+- **"Silence when clean, answering as if absent"**: if all three audits pass and nothing is held, the agent produces no report. "Answering as if absent" I read as: where the harness forces some reply, answer as though the checkup message had never arrived — that is, contribute nothing about the checkup, minimal or empty output. This is the same discipline as the office's III rule (ignore if irrelevant, silently, one character at most when a reply is forced).
+
+## What satisfies it
+
+On receiving the message in an idle post-plan session: run the three audits (inspect plan/task state; scan the session for uncaptured ideas; inspect `git status`/`git log` against the remote). Where a check fails, repair it: mark tasks, write the idea to a durable home, commit, amend an unpushed HEAD closing commit's message to name its issue or plan the issue names into the next commit, push completed segments. Where a push is deliberately held, emit one brief sentence of reason. Hold approval-needing items silently. If everything is clean, say nothing.
+
+## What violates it
+
+- Emitting a status report ("all checks passed") when clean.
+- Proactively asking the user to approve the held items instead of waiting for the bare-dot prompt.
+- Holding a push with no stated reason, or with "let me know if you want me to push".
+- Amending a commit that is already pushed, or one buried under later commits (both rewrite or destabilize history the rule deliberately protects).
+- Leaving an execution-surfaced idea only in conversation.
+- Treating the checkup as an instruction to always act; it is self-decided, and acting on a clean state is itself a violation of the silence clause.
+
+## Why it exists, as far as I can tell
+
+It makes unattended or lightly attended sessions leave complete, traceable state without nagging. The three audits are exactly the loose ends an executed plan tends to leave: unmarked tasks, ideas lost with the context window, and local commits whose issue-closing significance never reaches the shared remote. The amend/next-commit rule exists because issue traceability is only useful if the remote log carries it, and the two-case split respects git safety. The bare-dot and silence clauses keep the checkup's cost to the user at zero when nothing needs them: the user hears from the checkup only by asking (the dot) or when something genuinely blocks (the brief reason for a held push).
+
+## What I would do on receiving it
+
+In an idle session after plan execution: check the plan's task list against what was actually done and mark accordingly; sweep the session for ideas worth keeping and file each into ledger, issue, plan, or note; run `git status` and `git log @{u}..` to find unpushed work; verify closing commits name their issues, amending at HEAD if unpushed, otherwise noting the issue names for the next commit message; push any completed segment; if holding a push, say why in one line; queue anything approval-needing and say nothing about it until a bare "." arrives; and if all of this comes up clean, output nothing.
+
+## Parts I cannot fully resolve
+
+- Whether the bare-dot prompt grants approval or only surfaces the pending-approval queue.
+- Whether "brief reasons" are spoken to the user or written somewhere durable; I read them as spoken, since they replace an expected push.
+- "Idle sessions" is compressed enough that I cannot tell whether the checkup fires once at plan completion, or repeatedly whenever the session idles thereafter. Both readings are coherent; the audits are idempotent either way.
+- Everything else in the message parses; no clause is unintelligible to me beyond these three ambiguities.

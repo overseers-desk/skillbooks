@@ -1,0 +1,12 @@
+`ERROR` — compression could not run. The session's PreToolUse Bash hook is broken and blocks every Bash command, so the skill's mandatory control script (workspace, inventory, deterministic validation) could never execute. `message.md` is unchanged, byte-for-byte; no candidate, inventory, or review artifact was created, so there is no compressed content to print between `<RESULT>` tags.
+
+What happened, specifically:
+
+1. Every Bash invocation, including a bare `true`, fails before execution with `PreToolUse:Bash hook error: ... /bin/sh: 1: Syntax error: Unterminated quoted string`. The failure is in the hook, not in my commands.
+2. A fresh subagent hit the identical error, so the breakage is session-wide, not confined to the main loop.
+3. The cause is visible in the error text: the hook wraps a jq program in single quotes for `/bin/sh`, and the jq deny-reason string contains apostrophes ("that conversation's tail", "conversation's"). The first apostrophe terminates the shell's single-quoted string, so `/bin/sh` rejects the whole hook for every Bash call, not just `gh issue create`.
+4. The semantic-compressor skill forbids recreating the control-script operations with ad hoc tooling, and treats any runtime failure as a hard stop, so the correct terminal state is `ERROR` rather than an unvalidated hand-rolled compression.
+
+To fix: in the hook definition (settings.json or the plugin that installs it), remove the apostrophes from the deny-reason text or restructure the quoting (e.g. put the jq program in a file, or escape the embedded single quotes as `'\''`). Once any Bash command succeeds, re-invoke `/semantic-compressor compress message.md` and the run will proceed normally. I have not edited the hook, since that is session configuration outside this skill's scope; say the word and I'll repair it.
+
+**ERROR**

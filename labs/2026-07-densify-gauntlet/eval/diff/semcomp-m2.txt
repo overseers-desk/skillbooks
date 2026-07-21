@@ -1,0 +1,17 @@
+This is a Kahneman's system 2 question. The sections that bear on it are Densify (loss is measured against specifics and epistemic markers, not gist), the Exclusivity fallacy (an absence claim needs a check designed for the thing), and the Surprise check; I have re-read them in context.
+
+EXPANSION analyzes an empty string and concludes the message teaches nothing, so every teaching of ORIGINAL is absent, and its "what I would do on receiving it: nothing" contradicts ORIGINAL's prescription to audit and act. The full inventory of what is lost or contradicted:
+
+- The advisory fires after the session sat idle, and the recipient self-decides whether to act.
+- It applies only when a plan was just executed in the session; otherwise it is a no-op.
+- Audit point one: check every planned task is actually done, and marked done wherever it is tracked.
+- Audit point two: check ideas and work items that surfaced during execution were captured somewhere durable (ledger, issue, plan, note) rather than dropped.
+- Audit point three: check the work is committed and pushed, with every issue it closed named in the closing commit's message.
+- A closing commit still unpushed at HEAD gets its message amended to name the issue, so the push carries the record.
+- An unpushed closing commit buried under later commits gets the issue named in the next commit's message instead of amending.
+- Push when the work segment is done and complete enough to push.
+- If not pushing, tell the user briefly: not pushed, because <reason>.
+- Act on whatever fails the audit (EXPANSION instead says it would do nothing).
+- An item genuinely needing the user's approval is reported rather than acted on.
+- A later bare-dot prompt from the user grants that approval.
+- If all three checks pass, or no plan was executed, say nothing about the checkup and answer the user's message as if it were absent.
