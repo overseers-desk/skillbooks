@@ -237,10 +237,13 @@ proc spar::_pred_linkedin_guard {node meta} {
         set li_text [string trim [dict getdef $msg text ""]]
         if {$li_text eq ""} { set li_text [string trim [dict getdef $msg body ""]] }
         set li_len  [string length $li_text]
-        set li_mode [dict getdef $msg mode ""]
-        if {($li_mode eq "invite" || $li_mode eq "") && $li_len > 300} {
+        # The 300-char cap is measured on every LinkedIn message regardless of
+        # mode. A LinkedIn first touch is a connection invite; mode: dm is not a
+        # way to carry a longer note past this bound, since a DM first touch is
+        # near-universally ignored (see spar-A-approach.md, the mode entry).
+        if {$li_len > 300} {
             lappend out [dict create code linkedin_note_too_long \
-                message "LinkedIn invite note is $li_len chars, limit 300; shorten it, or declare mode: dm if a direct message to a 1st-degree connection is intended"]
+                message "LinkedIn note is $li_len chars, limit 300; shorten it. The first touch is a connection invite, not a DM, so a long body cannot be rerouted through mode: dm"]
         }
     }
     return $out
