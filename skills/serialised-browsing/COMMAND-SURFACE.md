@@ -52,6 +52,14 @@ library).
   wire-touching verbs, enforces view-before-fetch for declared private
   endpoints, bounds response and paging size, and classifies 429 / login-wall
   outcomes into terminal states the skill reads via `state` but cannot retry past.
+  A hosted run may also carry the lease's site (the optional 4th
+  `serialiser::run` argument, which the overseer passes): the harness then
+  confines every `nav`/`capture` landing, redirects included, and the `api`
+  verb's effective site to that site, terminal `off-site` on a breach. Both
+  sides fold hostnames to the registrable site by the same rule (lowercase,
+  port stripped, two labels, three over a cc-SLD such as `.com.au`), each
+  implementing it in its own repo. Standalone runs pass no site and are
+  unconfined, exactly as before.
 
 ## Why the sandbox holds with no overseer present
 
@@ -76,7 +84,7 @@ with `dwell` instead.
 | `veto` | `veto <urlGlob>` | live veto list | Declare a URL the harness must refuse if the page tries to fetch it (a mutation guard, e.g. mark-as-seen). |
 | `type` | `type <text>` | "" | Insert text into the focused element (`Input.insertText`). Paced. |
 | `click` | `click <cssSelector>` | 1 or 0 | Click the first matching element in-page. Paced. |
-| `state` | `state` | dict | The harness's view of the run: `terminal` (""/`rate-limited`/`logged-out`/`checkpoint`), `lastNav`, `pages`. A skill reads `terminal` to stop gracefully. |
+| `state` | `state` | dict | The harness's view of the run: `terminal` (""/`rate-limited`/`logged-out`/`checkpoint`/`off-site`), `lastNav`, `pages`. A skill reads `terminal` to stop gracefully. |
 | `emit` | `emit <result>` | "" | The skill's single output. The harness returns it as the run result. |
 | `dwell` | `dwell <seconds>` | "" | A deliberate human-ish pause the skill may request (reading time between views). The harness owns timing. |
 | `log` | `log <message>` | "" | A diagnostic line to stderr (the only channel besides `emit`). |
@@ -93,6 +101,11 @@ The harness, not the skill, classifies walls:
   60s, up to 4 tries) → terminal `rate-limited`.
 - **login / checkpoint** redirect (on `nav`/`capture`) or **401/403** on `api` →
   immediate terminal (`logged-out` / `checkpoint`).
+- **off-site** (hosted runs only, when the runner granted a lease site): a
+  `nav`/`capture` landing, redirects included, or the `api` verb's effective
+  site (`--site`, or the last landing) outside the granted site → immediate
+  terminal `off-site`. The verb raises at once rather than letting the skill
+  keep driving a site the lease never granted.
 
 On a terminal state the run ends; `browser-serialiser` exits 66 and the skill's
 `state` shows the reason. A skill never chooses to retry a wall; the only retry
