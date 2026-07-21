@@ -1,7 +1,7 @@
 package require Tcl 9
 package require TclOO
 package require leash
-package provide jobloop 1.0
+package provide jobloop 1.2.1
 
 # jobloop - an event-loop job pool that owns each job's lifecycle, not just
 # its coroutine.
@@ -25,6 +25,19 @@ package provide jobloop 1.0
 #   $loop set_kind_pace fetch 400          ;# and >=400 ms between fetch launches
 #   $loop enqueue job42 fetch {url http://example.com/feed}
 #   $loop cancel job42                     ;# reaches it even mid-wait
+#
+# THE LIFECYCLE CLASS (::jobloop::lifecycle)
+#
+# Everything below except the coroutines lives in ::jobloop::lifecycle,
+# the runtime-independent class this module publishes: the queue, the
+# state machine and its guards, the admission controls, the event
+# stream. jobloop is that lifecycle run over coroutines. jobpool, its own
+# module on this shelf, subclasses the same lifecycle over worker threads. A
+# runtime answers six methods: Launch starts an admitted job's body;
+# SignalCancel, SignalPause, and SignalResume carry a flag to wherever the
+# running body can observe it; ClearSignals retracts both flags when a job
+# reaches a terminal state or is pruned; Reap (a no-op by default)
+# reclaims any per-launch record after a terminal report.
 #
 # THE WORKERS
 #
@@ -51,6 +64,20 @@ package provide jobloop 1.0
 # progress job text      informational: freeform progress text
 # rate_limited job until  running -> rate_limited (holds the slot)
 # rate_limit_cleared job  rate_limited -> running
+# parked job note        running -> parked: the job frees its slot while it
+#                        waits out an external window, and the note rides
+#                        job-parked. The pool never resumes a parked job: the
+#                        worker keeps its own wakeup through the park and
+#                        should checkpoint through it, so a cancel lands.
+# unparked job           parked -> running. The job re-takes a slot with no
+#                        cap re-check, like rate_limit_cleared's return: a
+#                        kind may transiently exceed its cap until the
+#                        surplus drains, the price of never stranding a job
+#                        whose window has ended.
+# self                   the calling coroutine's job id, "" outside a job -
+#                        so a library the worker calls into can report to the
+#                        job without the id threaded through every argument
+#                        list on the way down.
 # done job ?result?      terminal: -> done, result rides the event
 # failed job reason      terminal: -> failed, reason rides the event
 #
@@ -75,15 +102,23 @@ package provide jobloop 1.0
 #   queued -> running -> done|failed|cancelled
 #   running <-> paused           (user hold, observed at a checkpoint)
 #   running <-> rate_limited     (worker waiting on an external limit)
+#   running <-> parked           (worker waiting out an external window,
+#                                 slot handed back meanwhile)
 #   queued  -> cancelled         (dropped before it ever launches)
 #
 # running, paused and rate_limited each hold one of the pool's slots;
-# queued does not.
+# queued and parked do not. parked is rate_limited's slot-free sibling: a
+# rate_limited job's wait is expected to be short or exclusive, so it keeps
+# its slot; a parked job's window may be long and other work could use the
+# slot meanwhile, so parking frees it and the next queued job launches. A
+# parked job may finish where it stands: the terminal reports accept parked,
+# so a cancel or an outcome discovered mid-park needs no detour through
+# running.
 #
 # THE REPORTING SURFACE (verb -> pool method)
 #
 #   on_phase on_progress on_rate_limited on_rate_limit_cleared
-#   on_paused on_resumed on_done on_failed on_cancelled
+#   on_parked on_unparked on_paused on_resumed on_done on_failed on_cancelled
 #
 # A report that changes state is checked against the job's current state
 # and dropped, with a diagnostic, when it does not fit, so a stale report
@@ -110,7 +145,8 @@ package provide jobloop 1.0
 #
 # job-state fires on every transition (job, new-state); the finer events
 # job-phase, job-progress, job-done, job-failed, job-paused, job-resumed,
-# job-rate-limited, job-rate-limit-cleared carry each report on. queue-
+# job-rate-limited, job-rate-limit-cleared, job-parked, job-unparked carry
+# each report on. queue-
 # paused/queue-resumed track the whole-queue hold; kind-held/kind-released
 # track a single kind; count-cap-reached fires when the spent budget first
 # holds a job back.
@@ -143,22 +179,36 @@ namespace eval ::jobloop::worker {
     proc progress {job text}       { [_pool] on_progress $job $text }
     proc rate_limited {job until}  { [_pool] on_rate_limited $job $until }
     proc rate_limit_cleared {job}  { [_pool] on_rate_limit_cleared $job }
+    proc parked {job note}         { [_pool] on_parked $job $note }
+    proc unparked {job}            { [_pool] on_unparked $job }
     proc done {job {result {}}}    { [_pool] on_done $job $result }
     proc failed {job reason}       { [_pool] on_failed $job $reason }
+    # self - the job id of the coroutine this call runs in, "" outside one:
+    # the same Owner lookup every verb makes, followed by the pool's reverse
+    # map from coroutine to job. A library the worker calls into finds its
+    # job here instead of having the id threaded through every argument list.
+    proc self {} {
+        set co [info coroutine]
+        if {$co eq "" || ![dict exists $::jobloop::Owner $co]} { return "" }
+        return [[dict get $::jobloop::Owner $co] job_of $co]
+    }
 }
 
-oo::class create jobloop {
+# ::jobloop::lifecycle - the runtime-independent job lifecycle (see THE
+# LIFECYCLE CLASS above). It owns every job's record and decides what
+# launches next; a runtime subclass owns how a body runs and how a signal
+# reaches it.
+oo::class create ::jobloop::lifecycle {
     mixin leash
 
     variable Jobs KindCap
     variable Queue JobState JobMeta
     variable QueuePaused
-    variable LogCallback LogService PreLaunchCallback Subs
+    variable LogCallback LogService LogName PreLaunchCallback Subs
     variable Terminal Reg
     variable KindPace LastLaunch PaceTimer
     variable HeldKinds HeldAnnounced
     variable CountCap Launched CountAnnounced
-    variable Coros CancelFlag PauseFlag Serial
 
     constructor {jobs args} {
         set Jobs             $jobs
@@ -179,34 +229,29 @@ oo::class create jobloop {
         set CountCap         0
         set Launched         0
         set CountAnnounced   0
-        set Coros            [dict create]
-        set CancelFlag       [dict create]
-        set PauseFlag        [dict create]
-        set Serial           0
 
+        # The runtime leaf names itself (LogName) before chaining here; a
+        # subclass that does not is named by its class.
+        if {![info exists LogName]} {
+            set LogName [namespace tail [info object class [self]]]
+        }
         set LogCallback ""
-        set LogService  jobloop
+        set LogService  $LogName
         foreach {opt val} $args {
             switch -- $opt {
                 -log     { set LogCallback $val }
                 -logger  { set LogService  $val }
-                default  { error "jobloop: unknown option $opt" }
+                default  { error "$LogName: unknown option $opt" }
             }
         }
     }
 
-    destructor {
-        # leash (the mixin) has already cancelled the pool's timers and, in
-        # deleting the instance namespace, reaps every coroutine armed there.
-        # Drop this pool's keys from the shared Owner dict so a torn-down
-        # pool leaves nothing behind. Collect the keys before unsetting, not
-        # during the walk.
-        set drop {}
-        dict for {co owner} $::jobloop::Owner {
-            if {$owner eq [self]} { lappend drop $co }
-        }
-        foreach co $drop { dict unset ::jobloop::Owner $co }
-    }
+    # ─── The runtime seam ────────────────────────────────────────────
+    # Launch, SignalCancel, SignalPause, SignalResume, and ClearSignals
+    # have no default: a lifecycle without a runtime can neither start a body
+    # nor reach one. Reap defaults to nothing; a runtime with per-launch
+    # records to reclaim overrides it.
+    method Reap {job} {}
 
     # ─── Subscription ────────────────────────────────────────────────
     method subscribe {event cb} { dict lappend Subs $event $cb }
@@ -218,9 +263,9 @@ oo::class create jobloop {
 
     # set_pre_launch_callback - a synchronous admission gate fired just
     # before each launch, as `{*}$cb $job $kind`. "abort" cancels the job
-    # before any coroutine runs; "defer" leaves it queued for a later
-    # walk, which any enqueue, completion, release, resume, or pace
-    # re-drain triggers; anything else admits it.
+    # before any body runs; "defer" leaves it queued for a later walk,
+    # which any enqueue, completion, release, resume, or pace re-drain
+    # triggers; anything else admits it.
     method set_pre_launch_callback {cb} { set PreLaunchCallback $cb }
 
     # ─── Accessors ───────────────────────────────────────────────────
@@ -242,7 +287,8 @@ oo::class create jobloop {
         return $n
     }
     # active_jobs - jobs holding a slot: launched, not yet terminal. Queued
-    # jobs are not active; they have not launched.
+    # jobs are not active; they have not launched. Parked jobs are not active
+    # either: they launched, but handed the slot back for the park.
     method active_jobs {} {
         set out {}
         dict for {job state} $JobState {
@@ -257,6 +303,15 @@ oo::class create jobloop {
         }
         return $out
     }
+    # parked_jobs - launched jobs waiting out an external window slot-free;
+    # the read a supervisor bounds its launch-blind dispatch on.
+    method parked_jobs {} {
+        set out {}
+        dict for {job state} $JobState {
+            if {$state eq "parked"} { lappend out $job }
+        }
+        return $out
+    }
     method all_jobs {} { return [dict keys $JobState] }
     method is_queue_paused {} { return $QueuePaused }
     method jobs_cap {} { return $Jobs }
@@ -265,7 +320,9 @@ oo::class create jobloop {
 
     # set_kind_cap - a per-kind concurrency sub-cap inside the global Jobs
     # cap. A job of this kind launches only while fewer than <cap> of its
-    # kind are active. The default cap is Jobs (no extra limit).
+    # kind are active. The default cap is Jobs (no extra limit). This is
+    # what lets one serial kind share a pool with parallel ones without a
+    # second pool.
     method set_kind_cap {kind cap} { dict set KindCap $kind $cap }
 
     # set_kind_pace - keep at least ms between successive launches of a
@@ -295,14 +352,6 @@ oo::class create jobloop {
         catch {dict unset HeldAnnounced $kind}
         my _fire kind-released $kind
         my _try_launch
-    }
-
-    method _active_count_for_kind {kind} {
-        set n 0
-        foreach job [my active_jobs] {
-            if {[dict get $JobMeta $job kind] eq $kind} { incr n }
-        }
-        return $n
     }
 
     # ─── Mutators ────────────────────────────────────────────────────
@@ -359,9 +408,9 @@ oo::class create jobloop {
         set Queue [linsert $Queue $at $job]
     }
 
-    # cancel - a queued job drops before it launches; a running job gets the
-    # cancel flag and unwinds at its next checkpoint. A paused job is resumed
-    # straight into the post-pause cancel check.
+    # cancel - a queued job drops before it launches; a live job gets the
+    # cancel signal and unwinds at its next checkpoint. A paused job takes
+    # the cancel at its park.
     method cancel {job} {
         if {![dict exists $JobState $job]} return
         set s [dict get $JobState $job]
@@ -372,20 +421,17 @@ oo::class create jobloop {
             return
         }
         if {$s in $Terminal} return
-        dict set CancelFlag $job 1
-        if {$s eq "paused"} { my _resume_coro $job }
+        my SignalCancel $job $s
     }
 
     method pause_job {job} {
         if {![dict exists $JobState $job]} return
         if {[dict get $JobState $job] in $Terminal} return
-        dict set PauseFlag $job 1
+        my SignalPause $job
     }
     method resume_job {job} {
         if {![dict exists $JobState $job]} return
-        set state [dict get $JobState $job]
-        catch {dict unset PauseFlag $job}
-        if {$state eq "paused"} { my _resume_coro $job }
+        my SignalResume $job [dict get $JobState $job]
     }
     method pause_queue {} { set QueuePaused 1; my _fire queue-paused }
     method resume_queue {} {
@@ -394,37 +440,43 @@ oo::class create jobloop {
         my _try_launch
     }
 
-    # prune_missing - drop every job whose key is not in $valid_jobs. Active
-    # jobs (running/paused/rate_limited) keep their state: they own a slot
-    # and will reach a terminal report on their own. Only terminal or
-    # not-yet-launched jobs are collectable.
+    # prune_missing - drop every job whose key is not in $valid_jobs. A
+    # caller that recomputes the set of jobs it still wants uses this to
+    # shed the rest in one call. Launched jobs (running/paused/rate_limited/
+    # parked) keep their state: their body is live and will reach a terminal
+    # report on its own - a parked job holds no slot, but its coroutine is
+    # still on the loop, so collecting it would orphan a running body. Only
+    # terminal or not-yet-launched jobs are collectable.
     method prune_missing {valid_jobs} {
         set valid [dict create]
         foreach r $valid_jobs { dict set valid $r 1 }
         set dropped {}
         dict for {job state} $JobState {
             if {[dict exists $valid $job]} continue
-            if {$state in {running paused rate_limited}} continue
+            if {$state in {running paused rate_limited parked}} continue
             lappend dropped $job
         }
         foreach job $dropped {
             dict unset JobState $job
             catch {dict unset JobMeta $job}
-            catch {dict unset CancelFlag $job}
-            catch {dict unset PauseFlag $job}
+            my ClearSignals $job
+            # Reap, not just forget: a dropped job may still hold an
+            # unretrieved per-launch record (a completion that pruned before
+            # its own report, or a cancel routed through a caller that
+            # prunes on the state event), so reclaim it here rather than
+            # leak the record.
+            my Reap $job
             set idx [lsearch -exact $Queue $job]
             if {$idx >= 0} { set Queue [lreplace $Queue $idx $idx] }
         }
         return [llength $dropped]
     }
 
-    # requeue - move a terminal job back to queued for a retry, clearing any
-    # prior flag.
+    # requeue - move a terminal job back to queued for a retry. The
+    # terminal transition already retracted any cancel or pause signal.
     method requeue {job} {
         if {![dict exists $JobState $job]} return
         if {[dict get $JobState $job] ni $Terminal} return
-        catch {dict unset CancelFlag $job}
-        catch {dict unset PauseFlag $job}
         dict set JobMeta $job started_at ""
         my _set_state $job queued
         my _queue_insert $job
@@ -442,23 +494,28 @@ oo::class create jobloop {
         my _fire job-progress $job $text
     }
     method on_done {job {result {}}} {
-        if {![my _expect $job done {running paused rate_limited}]} return
+        if {![my _expect $job done {running paused rate_limited parked}]} return
         my _set_state $job done
+        my Reap $job
         my _fire job-done $job $result
         my _try_launch
     }
     method on_failed {job reason} {
-        if {![my _expect $job failed {running paused rate_limited}]} return
+        if {![my _expect $job failed {running paused rate_limited parked}]} return
         my _set_state $job failed
+        my Reap $job
         my _fire job-failed $job $reason
         my _try_launch
     }
     method on_cancelled {job} {
         # rate_limited is cancellable too: a job waiting out an external
         # limit still checkpoints, and its cancel must free the slot rather
-        # than strand the job in rate_limited with the report refused.
-        if {![my _expect $job cancelled {running paused rate_limited}]} return
+        # than strand the job in rate_limited with the report refused. So is
+        # parked: its checkpointing park loop is where a cancel lands, and
+        # the terminal must take there without a detour through running.
+        if {![my _expect $job cancelled {running paused rate_limited parked}]} return
         my _set_state $job cancelled
+        my Reap $job
         my _try_launch
     }
     method on_rate_limited {job until} {
@@ -471,6 +528,25 @@ oo::class create jobloop {
         my _set_state $job running
         my _fire job-rate-limit-cleared $job
     }
+    # on_parked - the worker hands its slot back for the length of an
+    # external window (a host gate, a quota reset) and keeps waiting where
+    # it stands. The tally in _try_launch reads states, so the freed slot is
+    # simply no longer counted; the immediate re-walk offers it to the queue.
+    method on_parked {job note} {
+        if {![my _expect $job parked running]} return
+        my _set_state $job parked
+        my _fire job-parked $job $note
+        my _try_launch
+    }
+    # on_unparked - the window ended and the worker resumes. No cap re-check,
+    # the same immediacy rate_limit_cleared has: the job already earned its
+    # launch, and holding it now would strand a body the world has resumed.
+    # The kind may transiently exceed its cap until the surplus drains.
+    method on_unparked {job} {
+        if {![my _expect $job unparked parked]} return
+        my _set_state $job running
+        my _fire job-unparked $job
+    }
     method on_paused {job} {
         if {![my _expect $job paused running]} return
         my _set_state $job paused
@@ -480,6 +556,211 @@ oo::class create jobloop {
         if {![my _expect $job resumed paused]} return
         my _set_state $job running
         my _fire job-resumed $job
+    }
+
+    # ─── Internals ───────────────────────────────────────────────────
+
+    # _try_launch - walk the queue in order, launching any job that clears
+    # every admission control. State flips to running at launch time, so
+    # the cap math has no queued/running gap to race; how the body then
+    # starts is the runtime's Launch (deferred, so no worker code runs
+    # inside the walk). The active tallies are taken from the state map
+    # once per walk and moved forward at each launch - a rescan per queued
+    # job made a long held-back queue quadratic, and the enqueue-per-row
+    # intake of a large board cubic. The controls fold in per job: the
+    # lifetime count cap first (nothing more launches once it is hit), then
+    # the global cap (stop and keep the tail), a held kind (announce once,
+    # keep queued, scan on so other kinds launch), the per-kind cap, the
+    # pacing floor (track the soonest wait and arm one coalesced re-drain),
+    # and the admission gate.
+    method _try_launch {} {
+        if {$QueuePaused} return
+        my forget $PaceTimer
+        set PaceTimer ""
+        set soonest ""
+        set now [clock milliseconds]
+        set active_n 0
+        set active_kind [dict create]
+        dict for {j st} $JobState {
+            if {$st in {running paused rate_limited}} {
+                incr active_n
+                dict incr active_kind [dict get $JobMeta $j kind]
+            }
+        }
+        set new_queue {}
+        set i 0
+        set n [llength $Queue]
+        while {$i < $n} {
+            set job [lindex $Queue $i]
+            incr i
+            if {![dict exists $JobState $job]} continue
+            if {[dict get $JobState $job] ne "queued"} continue
+
+            if {$CountCap > 0 && $Launched >= $CountCap} {
+                if {!$CountAnnounced} {
+                    set CountAnnounced 1
+                    my _fire count-cap-reached
+                }
+                lappend new_queue $job
+                while {$i < $n} { lappend new_queue [lindex $Queue $i]; incr i }
+                break
+            }
+            if {$active_n >= $Jobs} {
+                lappend new_queue $job
+                while {$i < $n} { lappend new_queue [lindex $Queue $i]; incr i }
+                break
+            }
+            set meta [dict get $JobMeta $job]
+            set kind [dict get $meta kind]
+            if {[dict exists $HeldKinds $kind]} {
+                if {![dict exists $HeldAnnounced $kind]} {
+                    dict set HeldAnnounced $kind 1
+                    my _fire kind-held $kind
+                }
+                lappend new_queue $job
+                continue
+            }
+            set kcap [expr {[dict exists $KindCap $kind]
+                            ? [dict get $KindCap $kind] : $Jobs}]
+            set kact [expr {[dict exists $active_kind $kind]
+                            ? [dict get $active_kind $kind] : 0}]
+            if {$kact >= $kcap} {
+                lappend new_queue $job
+                continue
+            }
+            if {[dict exists $KindPace $kind] && [dict exists $LastLaunch $kind]} {
+                set wait [expr {[dict get $KindPace $kind]
+                                - ($now - [dict get $LastLaunch $kind])}]
+                if {$wait > 0} {
+                    if {$soonest eq "" || $wait < $soonest} { set soonest $wait }
+                    lappend new_queue $job
+                    continue
+                }
+            }
+            if {$PreLaunchCallback ne ""} {
+                set verdict ""
+                catch {set verdict [{*}$PreLaunchCallback $job $kind]}
+                if {$verdict eq "abort"} {
+                    my _set_state $job cancelled
+                    continue
+                } elseif {$verdict eq "defer"} {
+                    lappend new_queue $job
+                    continue
+                }
+            }
+            dict set LastLaunch $kind [clock milliseconds]
+            incr Launched
+            incr active_n
+            dict incr active_kind $kind
+            dict set JobMeta $job started_at [clock milliseconds]
+            my _set_state $job running
+            my Launch $job
+        }
+        set Queue $new_queue
+        if {$soonest ne ""} {
+            set PaceTimer [my later $soonest \
+                [list [namespace which my] _try_launch]]
+        }
+    }
+
+    # _expect - the job's state must be one of allowed_from for this
+    # transition; log and refuse otherwise.
+    method _expect {job transition allowed_from} {
+        if {![dict exists $JobState $job]} {
+            my _log "$transition for unknown job $job; dropping"
+            return 0
+        }
+        set cur [dict get $JobState $job]
+        if {$cur ni $allowed_from} {
+            my _log "$transition for job $job in state $cur (allowed: [join $allowed_from {, }]); dropping"
+            return 0
+        }
+        return 1
+    }
+    # _expect_active - an informational report is allowed in any non-terminal
+    # state.
+    method _expect_active {job mtype} {
+        if {![dict exists $JobState $job]} {
+            my _log "$mtype for unknown job $job; dropping"
+            return 0
+        }
+        if {[dict get $JobState $job] in $Terminal} {
+            my _log "$mtype for job $job in terminal state [dict get $JobState $job]; dropping"
+            return 0
+        }
+        return 1
+    }
+    method _set_state {job to} {
+        dict set JobState $job $to
+        if {$to in $Terminal} { my ClearSignals $job }
+        my _fire job-state $job $to
+    }
+    method _log {msg} {
+        catch {${LogService}::warn $msg}
+        if {$LogCallback ne ""} { {*}$LogCallback "$LogName: $msg" }
+    }
+}
+
+# jobloop - the lifecycle run over coroutines: each admitted job's body is
+# a coroutine this pool owns, its signals plain dicts read in-interpreter,
+# its pause park a yield.
+oo::class create jobloop {
+    superclass ::jobloop::lifecycle
+
+    variable JobState JobMeta Terminal Reg LogName
+    variable Coros CancelFlag PauseFlag Serial
+
+    constructor {jobs args} {
+        set LogName    jobloop
+        set Coros      [dict create]
+        set CancelFlag [dict create]
+        set PauseFlag  [dict create]
+        set Serial     0
+        next $jobs {*}$args
+    }
+
+    destructor {
+        # leash (the mixin) has already cancelled the pool's timers and, in
+        # deleting the instance namespace, reaps every coroutine armed there.
+        # Drop this pool's keys from the shared Owner dict so a torn-down
+        # pool leaves nothing behind. Collect the keys before unsetting, not
+        # during the walk.
+        set drop {}
+        dict for {co owner} $::jobloop::Owner {
+            if {$owner eq [self]} { lappend drop $co }
+        }
+        foreach co $drop { dict unset ::jobloop::Owner $co }
+    }
+
+    # ─── The runtime seam, over coroutines ───────────────────────────
+
+    # Launch - arm the body on a 0 ms timer, off the queue walk, so no
+    # worker code runs inline.
+    method Launch {job} {
+        my later 0 [list [namespace which my] _start $job]
+    }
+    method SignalCancel {job state} {
+        dict set CancelFlag $job 1
+        if {$state eq "paused"} { my _resume_coro $job }
+    }
+    method SignalPause {job} { dict set PauseFlag $job 1 }
+    method SignalResume {job state} {
+        catch {dict unset PauseFlag $job}
+        if {$state eq "paused"} { my _resume_coro $job }
+    }
+    method ClearSignals {job} {
+        catch {dict unset CancelFlag $job}
+        catch {dict unset PauseFlag $job}
+    }
+
+    # job_of - the job a coroutine runs, "" for one this pool does not own:
+    # the runtime's reverse map behind the worker self verb. Coros is small
+    # (at most the launched, not-yet-finished jobs), so a walk suffices.
+    method job_of {co} {
+        dict for {job c} $Coros {
+            if {$c eq $co} { return $job }
+        }
+        return ""
     }
 
     # ─── Coroutine mechanics ─────────────────────────────────────────
@@ -522,9 +803,8 @@ oo::class create jobloop {
         $co
     }
 
-    # _start - fired by the launch's 0 ms timer, off the queue walk so no
-    # worker code runs inline. A cancel arriving in the gap reports the
-    # cancellation instead of starting the body.
+    # _start - fired by the launch's 0 ms timer. A cancel arriving in the
+    # gap reports the cancellation instead of starting the body.
     method _start {job} {
         if {![dict exists $JobState $job]} return
         if {[dict get $JobState $job] ne "running"} return
@@ -567,135 +847,5 @@ oo::class create jobloop {
             catch {dict unset ::jobloop::Owner $co}
             catch {dict unset Coros $job}
         }
-    }
-
-    # ─── Internals ───────────────────────────────────────────────────
-
-    # _try_launch - walk the queue in order, launching any job that clears
-    # every admission control. State flips to running at launch time, before
-    # the coroutine starts, so the cap math reads straight from the state map
-    # and there is no queued/running gap to race; the body itself is armed by
-    # a 0 ms timer so the walk never runs worker code inline. The controls
-    # fold in per job: the lifetime count cap first (nothing more launches
-    # once it is hit), then the global cap (stop and keep the tail), a held
-    # kind (announce once, keep queued, scan on so other kinds launch), the
-    # per-kind cap, the pacing floor (track the soonest wait and arm one
-    # coalesced re-drain), and the admission gate.
-    method _try_launch {} {
-        if {$QueuePaused} return
-        my forget $PaceTimer
-        set PaceTimer ""
-        set soonest ""
-        set now [clock milliseconds]
-        set new_queue {}
-        set i 0
-        set n [llength $Queue]
-        while {$i < $n} {
-            set job [lindex $Queue $i]
-            incr i
-            if {![dict exists $JobState $job]} continue
-            if {[dict get $JobState $job] ne "queued"} continue
-
-            if {$CountCap > 0 && $Launched >= $CountCap} {
-                if {!$CountAnnounced} {
-                    set CountAnnounced 1
-                    my _fire count-cap-reached
-                }
-                lappend new_queue $job
-                while {$i < $n} { lappend new_queue [lindex $Queue $i]; incr i }
-                break
-            }
-            if {[llength [my active_jobs]] >= $Jobs} {
-                lappend new_queue $job
-                while {$i < $n} { lappend new_queue [lindex $Queue $i]; incr i }
-                break
-            }
-            set meta [dict get $JobMeta $job]
-            set kind [dict get $meta kind]
-            if {[dict exists $HeldKinds $kind]} {
-                if {![dict exists $HeldAnnounced $kind]} {
-                    dict set HeldAnnounced $kind 1
-                    my _fire kind-held $kind
-                }
-                lappend new_queue $job
-                continue
-            }
-            set kcap [expr {[dict exists $KindCap $kind]
-                            ? [dict get $KindCap $kind] : $Jobs}]
-            if {[my _active_count_for_kind $kind] >= $kcap} {
-                lappend new_queue $job
-                continue
-            }
-            if {[dict exists $KindPace $kind] && [dict exists $LastLaunch $kind]} {
-                set wait [expr {[dict get $KindPace $kind]
-                                - ($now - [dict get $LastLaunch $kind])}]
-                if {$wait > 0} {
-                    if {$soonest eq "" || $wait < $soonest} { set soonest $wait }
-                    lappend new_queue $job
-                    continue
-                }
-            }
-            if {$PreLaunchCallback ne ""} {
-                set verdict ""
-                catch {set verdict [{*}$PreLaunchCallback $job $kind]}
-                if {$verdict eq "abort"} {
-                    my _set_state $job cancelled
-                    continue
-                } elseif {$verdict eq "defer"} {
-                    lappend new_queue $job
-                    continue
-                }
-            }
-            dict set LastLaunch $kind [clock milliseconds]
-            incr Launched
-            dict set JobMeta $job started_at [clock milliseconds]
-            my _set_state $job running
-            my later 0 [list [namespace which my] _start $job]
-        }
-        set Queue $new_queue
-        if {$soonest ne ""} {
-            set PaceTimer [my later $soonest \
-                [list [namespace which my] _try_launch]]
-        }
-    }
-
-    # _expect - the job's state must be one of allowed_from for this
-    # transition; log and refuse otherwise.
-    method _expect {job transition allowed_from} {
-        if {![dict exists $JobState $job]} {
-            my _log "$transition for unknown job $job; dropping"
-            return 0
-        }
-        set cur [dict get $JobState $job]
-        if {$cur ni $allowed_from} {
-            my _log "$transition for job $job in state $cur (allowed: [join $allowed_from {, }]); dropping"
-            return 0
-        }
-        return 1
-    }
-    # _expect_active - an informational report is allowed in any non-terminal
-    # state.
-    method _expect_active {job mtype} {
-        if {![dict exists $JobState $job]} {
-            my _log "$mtype for unknown job $job; dropping"
-            return 0
-        }
-        if {[dict get $JobState $job] in $Terminal} {
-            my _log "$mtype for job $job in terminal state [dict get $JobState $job]; dropping"
-            return 0
-        }
-        return 1
-    }
-    method _set_state {job to} {
-        dict set JobState $job $to
-        if {$to in $Terminal} {
-            catch {dict unset CancelFlag $job}
-            catch {dict unset PauseFlag $job}
-        }
-        my _fire job-state $job $to
-    }
-    method _log {msg} {
-        catch {${LogService}::warn $msg}
-        if {$LogCallback ne ""} { {*}$LogCallback "jobloop: $msg" }
     }
 }
