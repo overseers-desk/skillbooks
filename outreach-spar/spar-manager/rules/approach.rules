@@ -147,7 +147,7 @@ rule require round number -when {type review} -severity warning \
 # tangled", so a plain `length` rule cannot express it. -when {type final}
 # gates the round; the predicate does the per-message linkedin work and
 # emits, overriding code/message per offending message:
-#   linkedin_note_too_long: "LinkedIn invite note is <n> chars, limit 300; shorten it, or declare mode: dm if a direct message to a 1st-degree connection is intended"
+#   linkedin_note_too_long: "LinkedIn note is <n> chars, limit 300; shorten it. The first touch is a connection invite, not a DM, so a long body cannot be rerouted through mode: dm"
 # ORDERING: as a round-level rule it fires before descent into the message
 # level, so its errors precede email_missing_content and
 # reply_missing_parent_message_id.
