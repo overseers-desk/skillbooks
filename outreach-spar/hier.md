@@ -39,7 +39,7 @@ The pairing rule: a definition file and a same-stem folder of its contents, side
 
 **Approaches keyed by campaign, not by segment.** The parent directory of an approach file *is* its campaign attribution. Per-campaign facts (who was approached, earliest send) become a walk of one folder.
 
-**Approach filenames stay flat inside the campaign folder — collisions are a feature.** Approaches are keyed `<stem>.yaml`. When one campaign spans two segments that both carry the same stem, the flat folder cannot hold both files. That collision is intended to surface: it reveals that the segments carry a duplicate contact, and triggers a segment repair process rather than being absorbed by segment-qualified paths.
+**Approach filenames stay flat inside the campaign folder — collisions are a feature.** Approaches are keyed `<stem>.yaml`. When one campaign spans two segments that both carry the same stem, the flat folder cannot hold both files. That collision is intended to surface: it reveals that the segments carry a duplicate contact, and triggers a segment repair process rather than being absorbed by segment-qualified paths. The same holds for one person reachable in two roles (different stems, same human): a campaign approaches a person once, so the approaches are merged into one file rather than writing to them as if they don't know each other. One campaign × one person = one approach file.
 
 **Sweeps are their own top-level folder, separate from both segments and campaigns.** A sweep can happen before any campaign exists, during a campaign, or not at all (a campaign can run over existing segments with no sweep). So a sweep belongs to neither axis and sits parallel to both. Its internal structure is not yet designed.
 
