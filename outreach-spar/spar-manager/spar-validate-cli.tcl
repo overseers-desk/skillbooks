@@ -43,6 +43,7 @@ if {[catch {set rc [spar::resolve_campaign $campaign_file $campaign_dir]} err]} 
     exit 2
 }
 set cdata         [dict get $rc cdata]
+set approach_dir  [spar::approach_dir_for_campaign [dict get $rc yaml_path]]
 set campaign_name [dict get $rc campaign_name]
 set segment_paths [dict get $rc segment_paths]
 
@@ -65,7 +66,7 @@ set State [spar::State new]
 set all_contacts {}
 foreach item $segment_paths {
     lassign $item label seg_dir
-    if {[catch {set classified [$State classify_segment $seg_dir]} cerr]} {
+    if {[catch {set classified [$State classify_segment $seg_dir $approach_dir]} cerr]} {
         puts stderr "Error classifying $label: $cerr"
         continue
     }

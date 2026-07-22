@@ -50,7 +50,7 @@ write_roster_tsv $seg $::std_headers [list \
 ]
 
 set State [spar::State new]
-set contacts [$State classify_segment $seg]
+set contacts [$State classify_segment $seg [approach_dir_of $seg]]
 set contact [lindex $contacts 0]
 
 set gate_err [$State approach_validation_error $contact]

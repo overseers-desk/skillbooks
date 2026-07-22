@@ -43,6 +43,7 @@ oo::class create ::spar::transitions::ManualFollowupTransition {
 ::spar::transitions::register \
     -class ::spar::transitions::ManualFollowupTransition \
     -tid T9 \
+    -outgoing 1 \
     -label "Secondary follow-up" \
     -auto-safe 0 \
     -dispatch-status manual \
@@ -52,6 +53,7 @@ oo::class create ::spar::transitions::ManualFollowupTransition {
 ::spar::transitions::register \
     -class ::spar::transitions::ManualFollowupTransition \
     -tid T10 \
+    -outgoing 1 \
     -label "Tertiary follow-up" \
     -auto-safe 0 \
     -dispatch-status manual \

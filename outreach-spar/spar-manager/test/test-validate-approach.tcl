@@ -132,7 +132,7 @@ assert_eq [has_issue $va4_issues no_final_round] 1 "validate_approach: no final 
 # 12d1. profile_hash matches profile bytes → no issue (issue #63)
 set seg_va_ph_ok [make_temp_segment]
 write_profile $seg_va_ph_ok "va-ph-ok"
-set _ph_ok_profile [file join $seg_va_ph_ok profiles "va-ph-ok.md"]
+set _ph_ok_profile [file join $seg_va_ph_ok "va-ph-ok.md"]
 set _ph_ok_hex [string tolower [::sha2::sha256 -hex -file $_ph_ok_profile]]
 set va_ph_ok_path [write_approach_yaml $seg_va_ph_ok "va-ph-ok" "profile_hash: sha256:$_ph_ok_hex
 decisions:
@@ -223,7 +223,7 @@ assert_eq [has_issue $va_ph_abs_issues profile_hash_mismatch] 0 \
 # even when the hash itself matches the profile bytes.
 set seg_va_ph_pos [make_temp_segment]
 write_profile $seg_va_ph_pos "va-ph-pos"
-set _ph_pos_hex [string tolower [::sha2::sha256 -hex -file [file join $seg_va_ph_pos profiles "va-ph-pos.md"]]]
+set _ph_pos_hex [string tolower [::sha2::sha256 -hex -file [file join $seg_va_ph_pos "va-ph-pos.md"]]]
 set va_ph_pos_path [write_approach_yaml $seg_va_ph_pos "va-ph-pos" "decisions:
   channel: email
 profile_hash: sha256:$_ph_pos_hex
@@ -279,7 +279,7 @@ assert_eq [llength $va5_issues] 0 "validate_approach: nonexistent file → no is
 # silently past the render-path validator.
 set seg_va_si [make_temp_segment]
 write_profile $seg_va_si "va-si-unknown"
-set _va_si_ppath [file join $seg_va_si profiles "va-si-unknown.md"]
+set _va_si_ppath [file join $seg_va_si "va-si-unknown.md"]
 set _va_si_hash [::sha2::sha256 -hex -file $_va_si_ppath]
 set va_si_path [write_approach_yaml $seg_va_si "va-si-unknown" \
 "profile_hash: sha256:$_va_si_hash
@@ -303,7 +303,7 @@ rounds:
 write_roster_tsv $seg_va_si $::std_headers [list \
     [make_base_row {contact_name "Script Drift" email "test@acme-venues.au" \
         stem "va-si-unknown"}]]
-set cv_va_si [$State classify_segment $seg_va_si]
+set cv_va_si [$State classify_segment $seg_va_si [approach_dir_of $seg_va_si]]
 set _va_si_contact ""
 foreach _c $cv_va_si {
     if {[dict get $_c stem] eq "va-si-unknown"} { set _va_si_contact $_c; break }
@@ -341,7 +341,7 @@ write_roster_tsv $seg_va6 $::std_headers [list \
     [make_base_row {contact_name "Campaign Check" email "real@acme-venues.au" \
         stem "va-campaign-check"}] \
 ]
-set cv_va6 [$State classify_segment $seg_va6]
+set cv_va6 [$State classify_segment $seg_va6 [approach_dir_of $seg_va6]]
 set issues_va6 [spar::validate_campaign $cv_va6]
 set pt_va6 [issues_with_code $issues_va6 placeholder_to]
 assert_eq [llength $pt_va6] 1 "validate_campaign: still detects placeholder_to via validate_approach delegation"
@@ -452,12 +452,12 @@ set seg_vp13 [make_temp_segment]
 write_profile $seg_vp13 "vp-classify-stale" \
     -contact_name "Was Called This" -organisation "Same Org" -role "Same Role"
 set vp13_roster [list stem contact_name organisation role date_excluded email]
-set vp13_tsv [file join $seg_vp13 roster.tsv]
+set vp13_tsv [spar::roster_path_for_segment $seg_vp13]
 set fd [open $vp13_tsv w]
 puts $fd [join $vp13_roster \t]
 puts $fd [join [list "vp-classify-stale" "Is Called This Now" "Same Org" "Same Role" "" "x@y.com"] \t]
 close $fd
-set vp13_contacts [$State classify_segment $seg_vp13]
+set vp13_contacts [$State classify_segment $seg_vp13 [approach_dir_of $seg_vp13]]
 set vp13_state [dict get [lindex $vp13_contacts 0] state]
 assert_eq $vp13_state "PROFILE_STALE" "classify_contact: snapshot ≠ roster → PROFILE_STALE"
 
@@ -768,13 +768,14 @@ assert_eq [llength $li2_errors] 1 \
 assert_eq [dict get [lindex $li2_errors 0] severity] "error" \
     "validate_approach: linkedin_note_too_long severity is error"
 
-# 27c. mode: dm → no length cap, any length passes.
+# 27c. The 300-char cap binds every mode: a first touch is a connection
+# invite, and mode: dm is not a route around the bound.
 set seg_li3 [make_temp_segment]
 set li3_path [write_approach_yaml $seg_li3 "li-dm" \
     [li_approach_yaml [string repeat a 450] "mode: dm"]]
 set li3_issues [spar::validate_approach $li3_path "" "LI DM"]
-assert_eq [has_issue $li3_issues linkedin_note_too_long] 0 \
-    "validate_approach: 450-char mode: dm message → no linkedin_note_too_long"
+assert_eq [has_issue $li3_issues linkedin_note_too_long] 1 \
+    "validate_approach: 450-char mode: dm message → linkedin_note_too_long (cap binds every mode)"
 
 # 27f. Render path: the projection keeps linkedin bodies (spar-state.tcl
 # _project_message), so approach_validation_error's T6-T10 gate sees the

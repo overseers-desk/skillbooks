@@ -646,6 +646,7 @@ set fd [open [file join $rq_prompt_dir meta.env] w]
 puts $fd "STEM=\"rq-stem\""
 puts $fd "OUTFILE=\"$rq_outfile\""
 puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
+puts $fd "CAMPAIGN_FILE=\"/tmp/none/campaigns/camp.yaml\""
 close $fd
 set fd [open [file join $rq_prompt_dir prompt.txt] w]
 puts $fd "research the contact\n__LINKEDIN_SECTION__\nwrite the profile"
@@ -703,6 +704,7 @@ set fd [open [file join $t1_prompt_dir meta.env] w]
 puts $fd "STEM=\"t1-stem\""
 puts $fd "OUTFILE=\"[file join $tmp_root profiles-rq t1-stem.md]\""
 puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
+puts $fd "CAMPAIGN_FILE=\"/tmp/none/campaigns/camp.yaml\""
 close $fd
 set fd [open [file join $t1_prompt_dir prompt.txt] w]
 puts $fd "research the contact\n__LINKEDIN_SECTION__\nwrite the profile"
@@ -744,6 +746,7 @@ proc make_li_prompt_dir {tag {linkedin ""}} {
     puts $fd "STEM=\"li-$tag\""
     puts $fd "OUTFILE=\"/tmp/none/li-$tag.md\""
     puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
+puts $fd "CAMPAIGN_FILE=\"/tmp/none/campaigns/camp.yaml\""
     puts $fd "REQUIRED_SKILLS=\"linkedin facebook\""
     if {$linkedin ne ""} {
         puts $fd "CONTACT_LINKEDIN=\"$linkedin\""

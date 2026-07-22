@@ -141,7 +141,7 @@ proc spar::p::prepare_for_pool {opts on_progress} {
     # Version pre-flight (refuse-to-start): do not run P on a campaign whose
     # declared spec version this tool does not support. Unstamped is allowed.
     spar::assert_supported_version "campaign.yaml" [spar::campaign_version $cdata]
-    set base     [dict get $cdata _base]
+    set root     [spar::instance_root_for_yaml $campaign_file]
     set segments [spar::filter_segments [spar::campaign_segment_names $cdata] $sel_segments]
 
     set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
@@ -149,8 +149,8 @@ proc spar::p::prepare_for_pool {opts on_progress} {
 
     set rows {}
     foreach segment $segments {
-        set segdir [file join $base $segment]
-        if {![file exists [file join $segdir roster.tsv]]} continue
+        set segdir [file join $root segments $segment]
+        if {![file exists [spar::roster_path_for_segment $segdir]]} continue
         if {[catch {
             set seg [spar::p::_prepare_segment \
                 $segdir $cdata $opts $datestamp $on_progress $campaign_file $segment]
@@ -178,12 +178,9 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
 
     set sel_stems [dict getdef $opts stems {}]
 
-    set roster_path [file join $segment_dir roster.tsv]
+    set roster_path [spar::roster_path_for_segment $segment_dir]
     set profile_dir [spar::profile_dir_for_segment $segment_dir]
-    set goal_path [file join $segment_dir segment.yaml]
-    if {![file exists $goal_path]} {
-        set goal_path [file join $segment_dir goal.md]
-    }
+    set goal_path [spar::segment_yaml_for_segment $segment_dir]
 
     # Roster writes are harness-mediated: workers declare changes in their
     # deliverable's front matter and spar::apply_roster_patch applies them,
@@ -225,7 +222,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
     # Read profile_reject_if from segment.yaml. Empty list when the field
     # is absent — no audit. The harness §4.3/§4.4 audit fires only when
     # this list is non-empty.
-    set segment_yaml [file join $segment_dir segment.yaml]
+    set segment_yaml [spar::segment_yaml_for_segment $segment_dir]
     set segment_data [spar::read_segment_yaml $segment_yaml]
     if {$segment_data eq ""} {
         set required_skills {}
@@ -288,15 +285,11 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
 
         set outfile [spar::profile_path_for_stem $segment_dir $stem]
-        # Legacy path: profiles authored before #45. Still
-        # counts as "profile exists" until migration completes.
-        set legacy_outfile [spar::legacy_profile_path_for_stem $segment_dir $stem]
 
         # Skip existing profile unless caller supplied an explicit stems
         # list — then they have accepted responsibility for pre-deleting
         # the old profile and want a rebuild.
-        if {[llength $sel_stems] == 0 \
-            && ([file exists $outfile] || [file exists $legacy_outfile])} {
+        if {[llength $sel_stems] == 0 && [file exists $outfile]} {
             incr skipped
             {*}$on_progress $stem skipped "profile exists"
             continue
@@ -357,6 +350,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         puts $fd "STEM=\"$stem\""
         puts $fd "OUTFILE=\"$outfile\""
         puts $fd "ROSTER_PATH=\"$roster_path\""
+        puts $fd "CAMPAIGN_FILE=\"$campaign_file\""
         puts $fd "REQUIRED_SKILLS=\"[join $required_skills { }]\""
         puts $fd "CONTACT_NAME=\"$name\""
         puts $fd "CONTACT_ORG=\"$org\""
@@ -388,7 +382,8 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             # DbC-Pre bypass: fresh State so any Phase B cache cannot
             # carry stale entries into the snapshot the post-pass diffs against.
             set _pre_state [spar::State new]
-            set _pre_contacts [$_pre_state classify_segment $segment_dir]
+            set _pre_contacts [$_pre_state classify_segment $segment_dir \
+                [spar::approach_dir_for_campaign $campaign_file]]
             $_pre_state destroy
             foreach _issue [spar::validate_roster $_pre_contacts] {
                 set _cn [dict get $_issue contact_name]
@@ -455,7 +450,8 @@ proc spar::a::_build_prompts {opts on_progress} {
     # Version pre-flight (refuse-to-start): do not run A on a campaign whose
     # declared spec version this tool does not support. Unstamped is allowed.
     spar::assert_supported_version "campaign.yaml" [spar::campaign_version $cdata]
-    set base [dict get $cdata _base]
+    set root [spar::instance_root_for_yaml $campaign_file]
+    set approach_dir [spar::approach_dir_for_campaign $campaign_file]
 
     set sender_name [dict get $cdata sender name]
     set sender_role [dict get $cdata sender role]
@@ -528,12 +524,9 @@ proc spar::a::_build_prompts {opts on_progress} {
     set stem_map [dict create]
 
     foreach segment $segments {
-        set roster_path [file join $base $segment roster.tsv]
-        set goal_path [file join $base $segment segment.yaml]
-        if {![file exists $goal_path]} {
-            set goal_path [file join $base $segment goal.md]
-        }
-        set seg_dir [file join $base $segment]
+        set seg_dir [file join $root segments $segment]
+        set roster_path [spar::roster_path_for_segment $seg_dir]
+        set goal_path [spar::segment_yaml_for_segment $seg_dir]
         set profile_dir [spar::profile_dir_for_segment $seg_dir]
 
         if {![file exists $roster_path]} continue
@@ -541,13 +534,13 @@ proc spar::a::_build_prompts {opts on_progress} {
 
         # Version pre-flight (refuse-to-start): refuse a segment whose declared
         # spec version this tool does not support. Unstamped is allowed.
-        set _seg_data [spar::read_segment_yaml [file join $seg_dir segment.yaml]]
+        set _seg_data [spar::read_segment_yaml $goal_path]
         if {$_seg_data ne ""} {
             spar::assert_supported_version "segment '$segment'" \
                 [spar::segment_version $_seg_data]
         }
 
-        file mkdir [spar::approach_dir_for_segment $seg_dir]
+        file mkdir $approach_dir
 
         set rows [spar::load_roster $roster_path]
 
@@ -594,7 +587,7 @@ proc spar::a::_build_prompts {opts on_progress} {
                 {*}$on_progress "${slug_name}-${slug_org}" skipped "no stem"
                 continue
             }
-            set outfile [spar::approach_path_for_stem $seg_dir $stem]
+            set outfile [spar::approach_path_in_dir $approach_dir $stem]
 
             if {[file exists $outfile]} {
                 incr skipped
@@ -659,6 +652,7 @@ s_note: $s_note"
             set fd [open [file join $prompt_dir meta.env] w]
             puts $fd "MAX_PASSES=$max_passes"
             puts $fd "OUTFILE=$outfile"
+            puts $fd "SEGMENT_DIR=$seg_dir"
             puts $fd "METHOD=$method"
             puts $fd "OVERVIEW=$overview"
             puts $fd "ANTIFACTS=$antifacts"

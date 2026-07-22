@@ -51,6 +51,7 @@ set campaign_name   [dict get $rc campaign_name]
 set primary_channel [dict get $rc primary_channel]
 set min_star        [dict get $rc min_star]
 set segment_paths   [dict get $rc segment_paths]
+set approach_dir    [spar::approach_dir_for_campaign $yaml_path]
 
 # --- Classify all segments and collect counts ---
 # One State for the whole CLI run — its lifetime matches this script's.
@@ -65,7 +66,8 @@ foreach item $segment_paths {
         # SENT / REPLIED states, which only refinement resolves. The
         # cache means refine_segment shares parses with any later
         # transition_eligible calls in this script.
-        set classified [$State refine_segment [$State classify_segment $seg_dir]]
+        set classified [$State refine_segment \
+            [$State classify_segment $seg_dir $approach_dir]]
     } err]} {
         puts stderr "Error in $label: $err"
         continue

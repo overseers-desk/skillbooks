@@ -15,7 +15,7 @@ set noop {apply {args {}}}
 # version gate fires before the segment loop, so no roster is needed).
 proc versioned_campaign {ver} {
     set cdir [make_temp_campaign]
-    file mkdir [file join $cdir seg-a]
+    file mkdir [file join $cdir segments seg-a]
     write_campaign_yaml $cdir "campaign: Dispatch Test\nversion: \"$ver\"\nsegments:\n  - seg-a\n"
     return $cdir
 }
@@ -25,8 +25,8 @@ proc versioned_campaign {ver} {
 # ════════════════════════════════════════════════════════════════════════
 section "50. dispatch version pre-flight"
 
-set cdir [versioned_campaign "2.0"]
-set opts [dict create campaign_file [file join $cdir campaign.yaml]]
+set cdir [versioned_campaign "3.0"]
+set opts [dict create campaign_file [file join $cdir campaigns camp.yaml]]
 
 assert_error {spar::p::prepare_for_pool $opts $noop} \
     "*spec version*" "P refuses unsupported campaign version"
@@ -36,7 +36,7 @@ assert_error {spar::a::prepare_for_pool $opts $noop} \
 # A current-version campaign passes the version gate (it may stop later for
 # other reasons — empty roster set — but not with a version error).
 set cdir_ok [versioned_campaign $spar::CURRENT_SPEC_VERSION]
-set opts_ok [dict create campaign_file [file join $cdir_ok campaign.yaml]]
+set opts_ok [dict create campaign_file [file join $cdir_ok campaigns camp.yaml]]
 catch {spar::p::prepare_for_pool $opts_ok $noop} perr
 assert_eq [string match "*spec version*" $perr] 0 "current version clears the P gate"
 

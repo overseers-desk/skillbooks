@@ -119,7 +119,7 @@ write_test_profile $profile {
 }
 spar::apply_roster_patch $profile $roster jane-doe-acme
 spar::apply_roster_patch $profile $roster jane-doe-acme
-set fb [file join $tmpdir sweep-feedback.tsv]
+set fb [file join $tmpdir roster.sweep-feedback.tsv]
 set fd [open $fb r]; set fbtext [read $fd]; close $fd
 assert_eq [llength [lsearch -all [split $fbtext \n] "jane-doe-acme*"]] 1 "feedback appended exactly once across two applies"
 

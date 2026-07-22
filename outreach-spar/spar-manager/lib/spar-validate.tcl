@@ -272,11 +272,20 @@ proc spar::_pred_profile_hash_actual {node meta} {
     } else {
         set stored_hex [string tolower $stored]
     }
-    set profile_path [file join [file dirname [file dirname $ap]] profiles \
-        "[file rootname [file tail $ap]].md"]
-    if {![file exists $profile_path]} { return {} }
-    set actual [string tolower [::sha2::sha256 -hex -file $profile_path]]
-    if {$actual eq $stored_hex} { return {} }
+    # The approach sits in campaigns/<camp>/; its profile sits in some
+    # segments/<seg>/ of the same instance root, found by stem. A stem
+    # normally names one profile; where a two-role person keeps rows in
+    # two segments, a hash matching any of them is current.
+    set root [file dirname [file dirname [file dirname $ap]]]
+    set stem [file rootname [file tail $ap]]
+    set candidates [glob -nocomplain \
+        [file join $root segments * "${stem}.md"]]
+    if {[llength $candidates] == 0} { return {} }
+    set actual ""
+    foreach profile_path [lsort $candidates] {
+        set actual [string tolower [::sha2::sha256 -hex -file $profile_path]]
+        if {$actual eq $stored_hex} { return {} }
+    }
     return [list [dict create code profile_hash_mismatch \
         message "Approach profile_hash 'sha256:$stored_hex' does not match profile file (current sha256:$actual) — re-approach required"]]
 }
@@ -669,7 +678,7 @@ proc spar::validate_sender_block {cdata} {
 # Data with no version field is legacy/unstamped — a warning, not an error, so
 # instances that still validate clean keep running until they are stamped.
 # ---------------------------------------------------------------------------
-namespace eval spar { variable CURRENT_SPEC_VERSION "1.0" }
+namespace eval spar { variable CURRENT_SPEC_VERSION "2.0" }
 
 # campaign_version / segment_version -- read the declared `version` from an
 # already-parsed campaign or segment dict; "" when absent. The field name is
@@ -724,7 +733,7 @@ proc spar::_pred_version_unsupported {node meta} {
     set label [dict getdef $ctx label ""]
     if {$declared eq "" || $declared eq $CURRENT_SPEC_VERSION} { return {} }
     return [list [dict create message \
-        "$label declares spec version '$declared' but this tool supports $CURRENT_SPEC_VERSION."]]
+        "$label declares spec version '$declared' but this tool supports $CURRENT_SPEC_VERSION. To bring a 1.0 instance up, run the migration in spar-version-uplift-runbook.md (1.0 → 2.0)."]]
 }
 
 # validate_spec_version -- gate one declared version against CURRENT_SPEC_VERSION.
@@ -752,7 +761,7 @@ proc spar::validate_versions {cdata segment_paths} {
     set issues [spar::validate_spec_version [spar::campaign_version $cdata] "campaign.yaml"]
     foreach item $segment_paths {
         lassign $item label seg_dir
-        set sdata [spar::read_segment_yaml [file join $seg_dir segment.yaml]]
+        set sdata [spar::read_segment_yaml [spar::segment_yaml_for_segment $seg_dir]]
         set declared [expr {$sdata eq "" ? "" : [spar::segment_version $sdata]}]
         lappend issues {*}[spar::validate_spec_version $declared "segment '$label'" [list segment $label]]
     }
@@ -876,9 +885,6 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1} {incl
 
         foreach f [glob -nocomplain [file join $profile_dir *.md]] {
             set filestem [file rootname [file tail $f]]
-            # Skip legacy profile-* files during migration window — they are reference
-            # artefacts, not authoritative profiles. The classifier reads {stem}.md only.
-            if {[string match "profile-*" $filestem]} continue
             if {$filestem ni $known_profile_names} {
                 lappend issues [spar::_issue warning orphan_profile "" \
                     "Profile file '${filestem}.md' not referenced by any roster row" \
@@ -887,21 +893,25 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1} {incl
         }
     }
 
-    # Check 5: orphan_approach
-    foreach segment_dir [array names seg_dirs_seen] {
-        set segment [file tail $segment_dir]
-        set approach_dir [spar::approach_dir_for_segment $segment_dir]
-        set known_stems {}
-        if {[info exists seg_stems($segment_dir)]} {
-            set known_stems $seg_stems($segment_dir)
-        }
-
+    # Check 5: orphan_approach. The approach folder is campaign-level
+    # (campaigns/<camp>/), so the check runs once against the union of
+    # stems across every classified segment; the folder is recovered
+    # from the contacts' own approach paths.
+    set approach_dirs [dict create]
+    set all_stems {}
+    foreach contact $all_classified_contacts {
+        set ap [dict getdef $contact approach_path ""]
+        if {$ap ne ""} { dict set approach_dirs [file dirname $ap] 1 }
+        set st [string trim [dict getdef $contact stem ""]]
+        if {$st ne ""} { lappend all_stems $st }
+    }
+    foreach approach_dir [dict keys $approach_dirs] {
         foreach f [glob -nocomplain [file join $approach_dir *.yaml]] {
             set filestem [file rootname [file tail $f]]
-            if {$filestem ni $known_stems} {
+            if {$filestem ni $all_stems} {
                 lappend issues [spar::_issue warning orphan_approach "" \
                     "Approach file '${filestem}.yaml' not referenced by any roster row" \
-                    [list segment $segment]]
+                    [list segment ""]]
             }
         }
     }

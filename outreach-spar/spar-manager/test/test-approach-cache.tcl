@@ -72,7 +72,7 @@ write_roster_tsv $seg $::std_headers [list \
 ]
 
 set State [spar::State new]
-set contacts [$State classify_segment $seg]
+set contacts [$State classify_segment $seg [approach_dir_of $seg]]
 set contact [lindex $contacts 0]
 assert_eq [dict get $contact state] "APPROACHED" "1: contact classifies APPROACHED"
 
@@ -104,7 +104,7 @@ write_roster_tsv $seg $::std_headers [list \
 ]
 
 set State [spar::State new]
-set contacts [$State classify_segment $seg]
+set contacts [$State classify_segment $seg [approach_dir_of $seg]]
 set ca [lindex $contacts 0]
 set cb [lindex $contacts 1]
 assert_eq [dict get $ca state] "APPROACHED" "2: contact A is APPROACHED"
@@ -130,7 +130,7 @@ write_roster_tsv $seg $::std_headers [list \
 ]
 
 set State [spar::State new]
-set contact [lindex [$State classify_segment $seg] 0]
+set contact [lindex [$State classify_segment $seg [approach_dir_of $seg]] 0]
 
 set ::spar::parse_count 0
 $State approach_summary $contact
@@ -162,7 +162,7 @@ write_roster_tsv $seg $::std_headers [list \
 ]
 
 set State [spar::State new]
-set contact [lindex [$State classify_segment $seg] 0]
+set contact [lindex [$State classify_segment $seg [approach_dir_of $seg]] 0]
 
 set ::spar::parse_count 0
 set summary_before [$State approach_summary $contact]
@@ -207,7 +207,7 @@ write_roster_tsv $seg $::std_headers [list \
 ]
 
 set State [spar::State new]
-set contact [lindex [$State classify_segment $seg] 0]
+set contact [lindex [$State classify_segment $seg [approach_dir_of $seg]] 0]
 set ap [dict get $contact approach_path]
 
 set ::spar::parse_count 0
@@ -239,7 +239,7 @@ write_roster_tsv $seg $::std_headers [list \
 ]
 
 set State [spar::State new]
-set contact [lindex [$State classify_segment $seg] 0]
+set contact [lindex [$State classify_segment $seg [approach_dir_of $seg]] 0]
 
 # Populate the cache with the original content.
 set cached [$State approach_summary $contact]
@@ -333,7 +333,7 @@ set cdata [dict create \
 
 # Render 1 — cold cache. Three APPROACHED contacts → three parses.
 set ::spar::parse_count 0
-set classified [$State classify_segment $seg]
+set classified [$State classify_segment $seg [approach_dir_of $seg]]
 set refined [$State refine_segment $classified]
 $State transition_eligible $refined "T6" email $cdata 2026-04-27
 set parses_render1 $::spar::parse_count
@@ -341,7 +341,7 @@ assert_eq $parses_render1 3 "7: render 1 parses all 3 approaches once each"
 
 # Render 2 — warm cache, no file changes. Zero re-parses.
 set ::spar::parse_count 0
-set classified [$State classify_segment $seg]
+set classified [$State classify_segment $seg [approach_dir_of $seg]]
 set refined [$State refine_segment $classified]
 $State transition_eligible $refined "T6" email $cdata 2026-04-27
 assert_eq $::spar::parse_count 0 \
@@ -354,7 +354,7 @@ write_approach_yaml $seg "render-b" [cache_approach_yaml_with_hash \
     "2222222222222222222222222222222222222222222222222222222222222222"]
 
 set ::spar::parse_count 0
-set classified [$State classify_segment $seg]
+set classified [$State classify_segment $seg [approach_dir_of $seg]]
 set refined [$State refine_segment $classified]
 $State transition_eligible $refined "T6" email $cdata 2026-04-27
 assert_eq $::spar::parse_count 1 \

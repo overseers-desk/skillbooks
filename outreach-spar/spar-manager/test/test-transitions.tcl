@@ -22,25 +22,25 @@ source [file join $script_dir .. lib spar-dispatch.tcl]
 set dp_headers {stem contact_name organisation role phone email linkedin_url facebook_url sweep_iteration date_excluded}
 proc _dp_make_campaign {seg_name} {
     set base [make_temp_campaign]
-    set seg [file join $base $seg_name]
+    set seg [file join $base segments $seg_name]
     file mkdir $seg
-    file mkdir [file join $seg profiles]
+    file mkdir [file join $base campaigns camp]
     write_roster_tsv $seg $::dp_headers [list \
         [dict create stem alpha contact_name "A One"   organisation "Org A" sweep_iteration 1] \
         [dict create stem beta  contact_name "B Two"   organisation "Org B" sweep_iteration 1] \
         [dict create stem gamma contact_name "C Three" organisation "Org C" sweep_iteration 1] \
     ]
-    set fd [open [file join $seg segment.yaml] w]
+    set fd [open [spar::segment_yaml_for_segment $seg] w]
     puts $fd "objective: test"
     puts $fd "message_goal: test"
     close $fd
     set fd [open [file join $base overview.md] w]
     puts $fd "# Test overview"
     close $fd
-    set yaml [file join $base campaign.yaml]
+    set yaml [file join $base campaigns camp.yaml]
     set fd [open $yaml w]
     puts $fd "campaign: Test"
-    puts $fd "usp_document: overview.md"
+    puts $fd "usp_document: ../overview.md"
     puts $fd "segments:"
     puts $fd "  - $seg_name"
     close $fd
@@ -249,6 +249,7 @@ rounds:
 
 # Campaign dict with primary=email, secondary=phone@7d no_reply
 set t9_cdata [dict create \
+    start_date 2026-04-01 \
     primary_channel email \
     secondary_channel [dict create channel phone wait_days 7 wait_condition no_reply]]
 
@@ -264,7 +265,7 @@ set t9_rows [list \
     [make_base_row {contact_name "C1" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-1"}] \
 ]
 write_roster_tsv $t9_seg $t9_headers $t9_rows
-set t9_contacts [$State classify_segment $t9_seg]
+set t9_contacts [$State classify_segment $t9_seg [approach_dir_of $t9_seg]]
 set t9_contacts [$State refine_segment $t9_contacts]
 set t9_dispatchable [$State transition_eligible $t9_contacts "T9" email $t9_cdata $t9_today]
 assert_eq [llength $t9_dispatchable] 1 \
@@ -278,7 +279,7 @@ write_profile $t9_seg2 "contact-2"
 write_approach_yaml $t9_seg2 "contact-2" [t9_yaml_primary_email_sent_secondary_phone_pending 2026-04-12]
 write_roster_tsv $t9_seg2 $t9_headers [list \
     [make_base_row {contact_name "C2" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-2"}]]
-set t9_contacts2 [$State classify_segment $t9_seg2]
+set t9_contacts2 [$State classify_segment $t9_seg2 [approach_dir_of $t9_seg2]]
 set t9_contacts2 [$State refine_segment $t9_contacts2]
 set t9_await [$State transition_eligible $t9_contacts2 "T9" email $t9_cdata $t9_today]
 assert_eq [llength $t9_await] 1 "T9 awaiting: primary sent 3d ago → 1 awaiting task"
@@ -295,7 +296,7 @@ write_profile $t9_seg3 "contact-3"
 write_approach_yaml $t9_seg3 "contact-3" [t9_yaml_primary_email_sent_secondary_phone_pending 2026-04-05 2026-04-06]
 write_roster_tsv $t9_seg3 $t9_headers [list \
     [make_base_row {contact_name "C3" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-3"}]]
-set t9_contacts3 [$State classify_segment $t9_seg3]
+set t9_contacts3 [$State classify_segment $t9_seg3 [approach_dir_of $t9_seg3]]
 set t9_contacts3 [$State refine_segment $t9_contacts3]
 set t9_blocked [$State transition_eligible $t9_contacts3 "T9" email $t9_cdata $t9_today]
 assert_eq [llength $t9_blocked] 0 \
@@ -307,7 +308,7 @@ write_profile $t9_seg4 "contact-4"
 write_approach_yaml $t9_seg4 "contact-4" [t9_yaml_primary_unsent]
 write_roster_tsv $t9_seg4 $t9_headers [list \
     [make_base_row {contact_name "C4" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" stem "contact-4"}]]
-set t9_contacts4 [$State classify_segment $t9_seg4]
+set t9_contacts4 [$State classify_segment $t9_seg4 [approach_dir_of $t9_seg4]]
 set t9_contacts4 [$State refine_segment $t9_contacts4]
 set t9_noop [$State transition_eligible $t9_contacts4 "T9" email $t9_cdata $t9_today]
 assert_eq [llength $t9_noop] 0 \
@@ -330,6 +331,7 @@ assert_eq [llength $t9_zero] 0 \
 # linkedin pending. Today=2026-04-15. Phone was sent 10d ago, wait_days=5,
 # no reply on phone → tertiary_ready=1.
 set t10_cdata [dict create \
+    start_date 2026-04-01 \
     primary_channel email \
     secondary_channel [dict create channel phone wait_days 3 wait_condition no_reply] \
     tertiary_channel  [dict create channel linkedin wait_days 5 wait_condition no_reply]]
@@ -365,7 +367,7 @@ write_profile $t10_seg "contact-10"
 write_approach_yaml $t10_seg "contact-10" [t10_yaml_primary_sent_secondary_sent_tertiary_pending 2026-04-01 2026-04-05]
 write_roster_tsv $t10_seg $t9_headers [list \
     [make_base_row {contact_name "C10" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" linkedin_url "https://linkedin.com/in/c10" stem "contact-10"}]]
-set t10_contacts [$State classify_segment $t10_seg]
+set t10_contacts [$State classify_segment $t10_seg [approach_dir_of $t10_seg]]
 set t10_contacts [$State refine_segment $t10_contacts]
 set t10_dispatchable [$State transition_eligible $t10_contacts "T10" email $t10_cdata $t9_today]
 assert_eq [llength $t10_dispatchable] 1 \
@@ -379,7 +381,7 @@ write_profile $t10_seg2 "contact-11"
 write_approach_yaml $t10_seg2 "contact-11" [t10_yaml_primary_sent_secondary_sent_tertiary_pending 2026-04-01 2026-04-13]
 write_roster_tsv $t10_seg2 $t9_headers [list \
     [make_base_row {contact_name "C11" star_rating 4 email "test@acme-venues.au" phone "0412 000 000" linkedin_url "https://linkedin.com/in/c11" stem "contact-11"}]]
-set t10_contacts2 [$State classify_segment $t10_seg2]
+set t10_contacts2 [$State classify_segment $t10_seg2 [approach_dir_of $t10_seg2]]
 set t10_contacts2 [$State refine_segment $t10_contacts2]
 set t10_await [$State transition_eligible $t10_contacts2 "T10" email $t10_cdata $t9_today]
 assert_eq [llength $t10_await] 1 "T10 awaiting: secondary sent 2d ago → 1 awaiting"
@@ -410,7 +412,7 @@ write_approach_yaml $t6a_seg "t6a" [approach_yaml_final_unsent]
 write_roster_tsv $t6a_seg $::std_headers [list \
     [make_base_row {contact_name "T6A" stem "t6a" email "test@acme-venues.au" star_rating 4}] \
 ]
-set t6a_c [$State classify_segment $t6a_seg]
+set t6a_c [$State classify_segment $t6a_seg [approach_dir_of $t6a_seg]]
 set t6a_c [$State refine_segment $t6a_c]
 set t6a_tasks [$State transition_eligible $t6a_c "T6" "email"]
 assert_eq [llength $t6a_tasks] 1 "T6: APPROACHED+email+unsent → 1 task"
@@ -425,7 +427,7 @@ write_roster_tsv $t6b_seg $::std_headers [list \
     [make_base_row {contact_name "T6B" stem "t6b" email "" \
         linkedin_url "https://linkedin.com/in/t6b" star_rating 4}] \
 ]
-set t6b_c [$State classify_segment $t6b_seg]
+set t6b_c [$State classify_segment $t6b_seg [approach_dir_of $t6b_seg]]
 set t6b_c [$State refine_segment $t6b_c]
 set t6b_tasks [$State transition_eligible $t6b_c "T6" "email"]
 assert_eq [llength $t6b_tasks] 1 "T6: APPROACHED+no-email → 1 task"
@@ -441,7 +443,7 @@ write_approach_yaml $t6c_seg "t6c" [approach_yaml_final_sent_email]
 write_roster_tsv $t6c_seg $::std_headers [list \
     [make_base_row {contact_name "T6C" stem "t6c" email "test@acme-venues.au" star_rating 4}] \
 ]
-set t6c_c [$State classify_segment $t6c_seg]
+set t6c_c [$State classify_segment $t6c_seg [approach_dir_of $t6c_seg]]
 set t6c_c [$State refine_segment $t6c_c]
 set t6c_tasks [$State transition_eligible $t6c_c "T6" "email"]
 assert_eq [llength $t6c_tasks] 0 \
@@ -457,7 +459,7 @@ write_roster_tsv $t6d_seg $::std_headers [list \
     [make_base_row {contact_name "T6D" stem "t6d" email "" \
         linkedin_url "https://linkedin.com/in/t6d" star_rating 4}] \
 ]
-set t6d_c [$State classify_segment $t6d_seg]
+set t6d_c [$State classify_segment $t6d_seg [approach_dir_of $t6d_seg]]
 set t6d_c [$State refine_segment $t6d_c]
 set t6d_tasks [$State transition_eligible $t6d_c "T6" "linkedin"]
 assert_eq [llength $t6d_tasks] 1 "T6: linkedin contact unsent → 1 task"
@@ -471,7 +473,7 @@ write_approach_yaml $t6d2_seg "t6d2" [approach_yaml_final_unsent_linkedin]
 write_roster_tsv $t6d2_seg $::std_headers [list \
     [make_base_row {contact_name "T6D2" stem "t6d2" email "test@acme-venues.au" star_rating 4}] \
 ]
-set t6d2_c [$State classify_segment $t6d2_seg]
+set t6d2_c [$State classify_segment $t6d2_seg [approach_dir_of $t6d2_seg]]
 set t6d2_c [$State refine_segment $t6d2_c]
 set t6d2_tasks [$State transition_eligible $t6d2_c "T6" "linkedin"]
 assert_eq [llength $t6d2_tasks] 1 "T6: linkedin contact no-url → 1 task"
@@ -488,7 +490,7 @@ write_roster_tsv $t6d3_seg $::std_headers [list \
     [make_base_row {contact_name "T6D3" stem "t6d3" email "" \
         linkedin_url "https://linkedin.com/in/t6d3" star_rating 4}] \
 ]
-set t6d3_c [$State classify_segment $t6d3_seg]
+set t6d3_c [$State classify_segment $t6d3_seg [approach_dir_of $t6d3_seg]]
 set t6d3_c [$State refine_segment $t6d3_c]
 set t6d3_tasks [$State transition_eligible $t6d3_c "T6" "linkedin"]
 assert_eq [llength $t6d3_tasks] 0 \
@@ -503,7 +505,7 @@ write_roster_tsv $t6d4_seg $::std_headers [list \
     [make_base_row {contact_name "T6D4" stem "t6d4" email "test@acme-venues.au" \
         phone "+61 400 000 000" star_rating 4}] \
 ]
-set t6d4_c [$State refine_segment [$State classify_segment $t6d4_seg]]
+set t6d4_c [$State refine_segment [$State classify_segment $t6d4_seg [approach_dir_of $t6d4_seg]]]
 set t6d4_tasks [$State transition_eligible $t6d4_c "T6" "email"]
 assert_eq [llength $t6d4_tasks] 0 \
     "T6: phone-only final → 0 tasks (not a T6 send channel)"
@@ -517,7 +519,7 @@ write_approach_yaml $t6d5_seg "t6d5" [approach_yaml_final_unsent]
 write_roster_tsv $t6d5_seg $::std_headers [list \
     [make_base_row {contact_name "T6D5" stem "t6d5" email "test@acme-venues.au" star_rating 4}] \
 ]
-set t6d5_c [$State refine_segment [$State classify_segment $t6d5_seg]]
+set t6d5_c [$State refine_segment [$State classify_segment $t6d5_seg [approach_dir_of $t6d5_seg]]]
 set t6d5_tasks [$State transition_eligible $t6d5_c "T6" "linkedin"]
 assert_eq [llength $t6d5_tasks] 1 "T6: email-only in linkedin campaign → 1 task"
 assert_eq [dict get [lindex $t6d5_tasks 0] task_state] "dispatchable" \
@@ -532,7 +534,7 @@ write_approach_yaml $t6d6_seg "t6d6" [approach_yaml_no_final]
 write_roster_tsv $t6d6_seg $::std_headers [list \
     [make_base_row {contact_name "T6D6" stem "t6d6" email "test@acme-venues.au" star_rating 4}] \
 ]
-set t6d6_c [$State refine_segment [$State classify_segment $t6d6_seg]]
+set t6d6_c [$State refine_segment [$State classify_segment $t6d6_seg [approach_dir_of $t6d6_seg]]]
 set t6d6_tasks [$State transition_eligible $t6d6_c "T6" "email"]
 assert_eq [llength $t6d6_tasks] 1 "T6: broken approach → 1 task"
 assert_eq [dict get [lindex $t6d6_tasks 0] task_state] "blocked" \
@@ -561,7 +563,7 @@ bogus_root_key: value
 write_roster_tsv $t6e_seg $::std_headers [list \
     [make_base_row {contact_name "T6E" stem "t6e" email "test@acme-venues.au" star_rating 4}] \
 ]
-set t6e_c [$State classify_segment $t6e_seg]
+set t6e_c [$State classify_segment $t6e_seg [approach_dir_of $t6e_seg]]
 set t6e_c [$State refine_segment $t6e_c]
 set t6e_tasks [$State transition_eligible $t6e_c "T6" "email"]
 assert_eq [llength $t6e_tasks] 1 "T6: invalid YAML → 1 task"
@@ -577,9 +579,9 @@ assert_match [dict get [lindex $t6e_tasks 0] reason] "invalid_approach_yaml:*" \
 set t6f_seg [make_temp_segment]
 write_approach_yaml $t6f_seg "mailer" [approach_yaml_final_unsent]
 write_approach_yaml $t6f_seg "connector" [approach_yaml_final_unsent_linkedin]
-set t6f_campaign [file join $t6f_seg campaign.yaml]
+set t6f_campaign [campaign_yaml_of $t6f_seg]
 set fd [open $t6f_campaign w]
-puts -nonewline $fd {version: "1.0"
+puts -nonewline $fd {version: "2.0"
 campaign: T6-f worker routing
 primary_channel: linkedin
 sender:
@@ -623,7 +625,7 @@ write_approach_yaml $t7a_seg "t7a" [approach_yaml_final_sent_email]
 write_roster_tsv $t7a_seg $::std_headers [list \
     [make_base_row {contact_name "T7A" stem "t7a" email "test@acme-venues.au" star_rating 4}] \
 ]
-set t7a_c [$State classify_segment $t7a_seg]
+set t7a_c [$State classify_segment $t7a_seg [approach_dir_of $t7a_seg]]
 set t7a_c [$State refine_segment $t7a_c]
 set t7a_tasks [$State transition_eligible $t7a_c "T7"]
 assert_eq [llength $t7a_tasks] 1 "T7: SENT+no-reply → 1 task"
@@ -637,7 +639,7 @@ write_approach_yaml $t7b_seg "t7b" [approach_yaml_final_replied]
 write_roster_tsv $t7b_seg $::std_headers [list \
     [make_base_row {contact_name "T7B" stem "t7b" email "test@acme-venues.au" star_rating 4}] \
 ]
-set t7b_c [$State classify_segment $t7b_seg]
+set t7b_c [$State classify_segment $t7b_seg [approach_dir_of $t7b_seg]]
 set t7b_c [$State refine_segment $t7b_c]
 set t7b_tasks [$State transition_eligible $t7b_c "T7"]
 assert_eq [llength $t7b_tasks] 0 \
@@ -650,7 +652,7 @@ write_approach_yaml $t7c_seg "t7c" [approach_yaml_final_unsent]
 write_roster_tsv $t7c_seg $::std_headers [list \
     [make_base_row {contact_name "T7C" stem "t7c" email "test@acme-venues.au" star_rating 4}] \
 ]
-set t7c_c [$State classify_segment $t7c_seg]
+set t7c_c [$State classify_segment $t7c_seg [approach_dir_of $t7c_seg]]
 set t7c_c [$State refine_segment $t7c_c]
 set t7c_tasks [$State transition_eligible $t7c_c "T7"]
 assert_eq [llength $t7c_tasks] 0 \
@@ -666,7 +668,7 @@ write_roster_tsv $t7d_seg $::std_headers [list \
     [make_base_row {contact_name "T7D" stem "t7d" email "test@acme-venues.au" \
         star_rating 4 date_excluded "2026-04-05"}] \
 ]
-set t7d_c [$State classify_segment $t7d_seg]
+set t7d_c [$State classify_segment $t7d_seg [approach_dir_of $t7d_seg]]
 set t7d_c [$State refine_segment $t7d_c]
 set t7d_tasks [$State transition_eligible $t7d_c "T7"]
 assert_eq [llength $t7d_tasks] 0 \
@@ -681,7 +683,7 @@ write_roster_tsv $t7f_seg $::std_headers [list \
     [make_base_row {contact_name "T7F" stem "t7f" email "t7f@acme-venues.au" \
         linkedin_url "https://www.linkedin.com/in/t7f" star_rating 4}] \
 ]
-set t7f_c [$State classify_segment $t7f_seg]
+set t7f_c [$State classify_segment $t7f_seg [approach_dir_of $t7f_seg]]
 set t7f_c [$State refine_segment $t7f_c]
 set t7f_tasks [$State transition_eligible $t7f_c "T7"]
 assert_eq [llength $t7f_tasks] 1 "T7: linkedin-sent + roster email → 1 task"
@@ -697,7 +699,7 @@ write_roster_tsv $t7g_seg $::std_headers [list \
     [make_base_row {contact_name "T7G" stem "t7g" email "" \
         linkedin_url "https://www.linkedin.com/in/t7g" star_rating 4}] \
 ]
-set t7g_c [$State classify_segment $t7g_seg]
+set t7g_c [$State classify_segment $t7g_seg [approach_dir_of $t7g_seg]]
 set t7g_c [$State refine_segment $t7g_c]
 set t7g_tasks [$State transition_eligible $t7g_c "T7"]
 assert_eq [llength $t7g_tasks] 0 \
@@ -725,7 +727,7 @@ bogus_root_key: value
 write_roster_tsv $t7e_seg $::std_headers [list \
     [make_base_row {contact_name "T7E" stem "t7e" email "test@acme-venues.au" star_rating 4}] \
 ]
-set t7e_c [$State classify_segment $t7e_seg]
+set t7e_c [$State classify_segment $t7e_seg [approach_dir_of $t7e_seg]]
 set t7e_c [$State refine_segment $t7e_c]
 set t7e_tasks [$State transition_eligible $t7e_c "T7"]
 assert_eq [llength $t7e_tasks] 1 "T7: SENT+invalid YAML → 1 task"
@@ -827,9 +829,11 @@ section "--action scopes T6 rows by auto-send channel"
 # Two dispatchable T6 tasks, one whose final round routes to email and
 # one to linkedin. actions={linkedin} builds only the linkedin row and
 # reports the email row skipped; no actions builds both.
-set act_camp [make_temp_campaign]
-set act_cpath [write_campaign_yaml $act_camp "campaign: ActionTest\n"]
 set act_seg [make_temp_segment]
+set act_cpath [campaign_yaml_of $act_seg]
+set fd [open $act_cpath w]
+puts $fd "campaign: ActionTest"
+close $fd
 write_roster_tsv $act_seg {stem contact_name organisation linkedin_url} [list \
     [dict create stem mail-contact contact_name "Mail C" organisation X] \
     [dict create stem li-contact contact_name "Li C" organisation Y \
@@ -879,5 +883,49 @@ set act_prep_all [$act_cls prepare_for_pool [dict create \
     campaign_file $act_cpath dry_run 1 tasks $act_tasks] act_progress]
 assert_eq [llength [dict get $act_prep_all rows]] 2 \
     "no --action: both channels build rows"
+
+# ════════════════════════════════════════════════════════════════════════
+# Launch gate: outgoing transitions blocked before start_date
+# ════════════════════════════════════════════════════════════════════════
+section "Launch gate (start_date) on outgoing transitions"
+
+set lg_seg [make_temp_segment]
+write_profile $lg_seg "lg-contact"
+write_approach_yaml $lg_seg "lg-contact" [approach_yaml_final_unsent]
+write_roster_tsv $lg_seg $::std_headers [list \
+    [make_base_row {contact_name "LG C" stem "lg-contact" email "lg@acme-venues.au" star_rating 4}]]
+set lg_contacts [$State refine_segment [$State classify_segment $lg_seg [approach_dir_of $lg_seg]]]
+
+# No start_date → T6 dispatchable rewrites to blocked, reason names the gap.
+set lg_none [dict create primary_channel email]
+set lg_tasks [$State transition_eligible $lg_contacts "T6" email $lg_none 2026-07-22]
+assert_eq [dict get [lindex $lg_tasks 0] task_state] "blocked" \
+    "no start_date → outgoing task blocked"
+assert_match [dict get [lindex $lg_tasks 0] reason] "*no start_date*" \
+    "no start_date → reason says not launched"
+
+# Future start_date → blocked with the date in the reason.
+set lg_future [dict create primary_channel email start_date 2026-08-01]
+set lg_tasks [$State transition_eligible $lg_contacts "T6" email $lg_future 2026-07-22]
+assert_eq [dict get [lindex $lg_tasks 0] task_state] "blocked" \
+    "future start_date → outgoing task blocked"
+assert_match [dict get [lindex $lg_tasks 0] reason] "*2026-08-01*" \
+    "future start_date → reason names the date"
+
+# Past (or same-day) start_date → dispatchable.
+set lg_past [dict create primary_channel email start_date 2026-07-20]
+set lg_tasks [$State transition_eligible $lg_contacts "T6" email $lg_past 2026-07-22]
+assert_eq [dict get [lindex $lg_tasks 0] task_state] "dispatchable" \
+    "past start_date → outgoing task dispatchable"
+
+# Drafting transitions are not outgoing: T2 stays eligible with no start_date.
+set lg_t2_seg [make_temp_segment]
+write_profile $lg_t2_seg "lg-draft"
+write_roster_tsv $lg_t2_seg $::std_headers [list \
+    [make_base_row {contact_name "LG D" stem "lg-draft" email "lgd@acme-venues.au" star_rating 4}]]
+set lg_t2_contacts [$State classify_segment $lg_t2_seg [approach_dir_of $lg_t2_seg]]
+set lg_t2_tasks [$State transition_eligible $lg_t2_contacts "T2" email $lg_none 2026-07-22]
+assert_eq [dict get [lindex $lg_t2_tasks 0] task_state] "dispatchable" \
+    "no start_date → drafting (T2) still dispatchable"
 
 finish_tests

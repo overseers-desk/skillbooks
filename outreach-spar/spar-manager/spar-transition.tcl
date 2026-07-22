@@ -197,7 +197,8 @@ if {![file isfile $yaml_path]} {
     puts stderr "Error: campaign YAML not found: $campaign_path"
     exit 1
 }
-set campaign_dir [file dirname $yaml_path]
+set campaign_dir [spar::instance_root_for_yaml $yaml_path]
+set approach_dir [spar::approach_dir_for_campaign $yaml_path]
 
 # tid_scope_filter — return {segments stems} pair for one TID by
 # unioning every scope that names this TID. An unscoped scope ({tid {}
@@ -275,10 +276,11 @@ proc step_prompt {tid slug idx total} {
     return abort
 }
 
-# --- Load campaign YAML ---
-set cdata [spar::load_campaign $yaml_path]
-set campaign_name [dict getdef $cdata campaign [file tail $yaml_path]]
-set primary_channel [spar::campaign_primary_channel $cdata]
+# --- Load campaign YAML and discover segments ---
+set resolved [spar::resolve_campaign $yaml_path ""]
+set cdata [dict get $resolved cdata]
+set campaign_name [dict get $resolved campaign_name]
+set primary_channel [dict get $resolved primary_channel]
 
 # Orchestration log (FM-LOG-1): tee dispatch-level outcomes to a file under
 # the log root so a real run is traceable without shell redirection. Skipped
@@ -289,29 +291,11 @@ if {$dispatching && !$dry_run} {
     spar::install_orchestration_log {spar::transitions spar::dispatch}
     ${::spar::transitions_log}::info "Orchestration log: $_orch_log"
 }
-set segments_list [spar::campaign_segment_names $cdata]
-set skip_set {}
-if {[dict exists $cdata skip_segments]} {
-    set skip_set [dict get $cdata skip_segments]
-}
-
-# --- Build segment paths ---
+# --- Segment paths ---
 # Per-TID scopes do their own segment filtering inside
-# compute_ready_by_tid; segment_paths here is the campaign-wide set
-# (minus skip_segments) so any scope can pick from any segment.
-set segment_paths {}
-foreach seg $segments_list {
-    if {$seg in $skip_set} continue
-    set seg_dir [file join $campaign_dir $seg]
-    if {[file isdirectory $seg_dir] && [file exists [file join $seg_dir roster.tsv]]} {
-        lappend segment_paths [list $seg $seg_dir]
-    }
-}
-
-if {[llength $segment_paths] == 0} {
-    puts stderr "No segments found."
-    exit 1
-}
+# compute_ready_by_tid; segment_paths here is the campaign-wide set so
+# any scope can pick from any segment. Discovery is resolve_campaign's.
+set segment_paths [dict get $resolved segment_paths]
 
 # --- Classify all contacts ---
 # In --auto mode, T1/T2/T3/T4 are the only active transitions and none
@@ -325,7 +309,7 @@ set all_contacts {}
 foreach item $segment_paths {
     lassign $item label seg_dir
     if {[catch {
-        set c [$State classify_segment $seg_dir]
+        set c [$State classify_segment $seg_dir $approach_dir]
         if {!$auto_mode} {
             set c [$State refine_segment $c]
         }
@@ -394,12 +378,12 @@ if {$dispatching} {
     # In --auto mode the only active T-ids are T1/T2/T3/T4 (auto_safe=1),
     # none of which read the refined approach fields; classify_segment
     # alone is the natural fit and transition_eligible refines lazily.
-    proc reclassify_contacts {state segment_paths {refine 0}} {
+    proc reclassify_contacts {state segment_paths approach_dir {refine 0}} {
         set out {}
         foreach item $segment_paths {
             lassign $item label seg_dir
             if {[catch {
-                set c [$state classify_segment $seg_dir]
+                set c [$state classify_segment $seg_dir $approach_dir]
                 if {$refine} {
                     set c [$state refine_segment $c]
                 }
@@ -647,7 +631,7 @@ if {$dispatching} {
                 ${::spar::transitions_log}::warn "control: drain — no further passes"
                 break
             }
-            set all_contacts [reclassify_contacts $State $segment_paths 0]
+            set all_contacts [reclassify_contacts $State $segment_paths $approach_dir 0]
             set ready_by_tid [compute_ready_by_tid \
                 $State $all_contacts $active_tids $tid_scopes \
                 $primary_channel $cdata]

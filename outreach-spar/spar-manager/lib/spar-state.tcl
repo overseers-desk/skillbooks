@@ -714,7 +714,7 @@ proc spar::_parse_worker_run {path} {
 #   to_addresses     {} (placeholder; populated by refine_contact)
 #   unsent_subjects  {} (placeholder; populated by refine_contact)
 #
-oo::define spar::State method classify_contact {roster_row segment_dir} {
+oo::define spar::State method classify_contact {roster_row segment_dir approach_dir} {
     # Extract roster fields with safe defaults.
     # strip_tsv_field: trim whitespace, and if the remaining value is a
     # quoted-empty-or-whitespace string (e.g. `" "` or `""`), collapse to "".
@@ -781,7 +781,7 @@ oo::define spar::State method classify_contact {roster_row segment_dir} {
     #    approach's stored profile_hash will mismatch the freshly-written
     #    profile and T4 will route the re-approach (#63).
     set profile_path [spar::profile_path_for_stem $segment_dir $stem]
-    set approach_path [spar::approach_path_for_stem $segment_dir $stem]
+    set approach_path [spar::approach_path_in_dir $approach_dir $stem]
     set profile_exists [file exists $profile_path]
     set approach_exists [file exists $approach_path]
     if {!$profile_exists && !$approach_exists} {
@@ -909,7 +909,10 @@ oo::define spar::State method refine_segment {contacts} {
 
 # classify_segment -- load roster and classify all contacts (cheap form).
 #
-# segment_dir  absolute path to the segment directory
+# segment_dir   absolute path to the segment folder (segments/<seg>)
+# approach_dir  the campaign's approach folder (campaigns/<camp>) — an
+#               approach is a campaign×contact fact, so classification
+#               is campaign-scoped
 #
 # Returns a list of dicts, one per valid+named roster row, each being
 # the result of classify_contact merged with the original roster_row.
@@ -920,8 +923,8 @@ oo::define spar::State method refine_segment {contacts} {
 #
 # On schema error, throws an error.
 #
-oo::define spar::State method classify_segment {segment_dir} {
-    set roster_path [file join $segment_dir roster.tsv]
+oo::define spar::State method classify_segment {segment_dir approach_dir} {
+    set roster_path [spar::roster_path_for_segment $segment_dir]
     if {![file exists $roster_path]} {
         error "Roster file not found: $roster_path"
     }
@@ -938,7 +941,7 @@ oo::define spar::State method classify_segment {segment_dir} {
 
     set results {}
     foreach row $rows {
-        set classified [my classify_contact $row $segment_dir]
+        set classified [my classify_contact $row $segment_dir $approach_dir]
 
         # Merge: original roster_row + classified result (classified wins on overlap)
         set merged $row
@@ -1218,9 +1221,38 @@ proc spar::_task {contact task_state {reason ""} {channel ""}} {
 oo::define spar::State method transition_eligible {classified_contacts transition \
         {primary_channel ""} {cdata {}} {today_iso ""}} {
     set t [::spar::transitions::get $transition]
+
+    # Launch gate for outgoing transitions: start_date is the campaign's
+    # planned first-approach date, the floor the BI reply derivation
+    # keys on. Absent = not launched; future = holds until the day.
+    # Dispatchable tasks are rewritten to blocked (not dropped) so both
+    # front-ends show the cohort with the reason. Drafting transitions
+    # (T1..T4) are not outgoing: preparing approaches before launch is
+    # normal.
+    set launch_block ""
+    if {[$t outgoing] && [llength $cdata] > 0} {
+        set start_date [dict getdef $cdata start_date ""]
+        if {$start_date eq ""} {
+            set launch_block "campaign has no start_date (not launched)"
+        } else {
+            set today $today_iso
+            if {$today eq ""} {
+                set today [clock format [clock seconds] -format %Y-%m-%d]
+            }
+            if {$today < $start_date} {
+                set launch_block "campaign starts on $start_date"
+            }
+        }
+    }
+
     set out {}
     foreach contact $classified_contacts {
         foreach task [$t eligible [self] $contact $primary_channel $cdata $today_iso] {
+            if {$launch_block ne "" \
+                    && [dict get $task task_state] eq "dispatchable"} {
+                dict set task task_state blocked
+                dict set task reason $launch_block
+            }
             lappend out $task
         }
     }
@@ -1467,7 +1499,7 @@ proc spar::progress_counts {classified_contacts} {
 # sent, replied) are omitted.
 #
 proc spar::roster_counts {segment_dir} {
-    set roster_path [file join $segment_dir roster.tsv]
+    set roster_path [spar::roster_path_for_segment $segment_dir]
     set rows [spar::load_roster $roster_path]
 
     set valid 0
