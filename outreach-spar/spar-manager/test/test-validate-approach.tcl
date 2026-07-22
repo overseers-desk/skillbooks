@@ -625,7 +625,6 @@ rounds:
   number: 1
   messages:
   - channel: email
-    mode: reply
     reply_all: false
     body: Following up on the Chef requirement we discussed.
     actioned_date: null
@@ -654,7 +653,6 @@ rounds:
   number: 1
   messages:
   - channel: email
-    mode: reply
     body: Continuing the thread.
     parent:
       message_id: "<root@example.com>"
@@ -675,7 +673,6 @@ rounds:
   number: 1
   messages:
   - channel: email
-    mode: reply
     parent:
       message_id: "<root@example.com>"
       subject: Original
@@ -695,7 +692,6 @@ rounds:
   number: 1
   messages:
   - channel: email
-    mode: reply
     body: text
     parent:
       account: a
@@ -718,7 +714,6 @@ rounds:
   number: 1
   messages:
   - channel: email
-    mode: reply
     body: text
     parent:
       message_id: "<root@example.com>"
@@ -749,13 +744,13 @@ proc li_approach_yaml {body {mode_line ""} {cc_line ""} {actioned "null"}} {
     return $yaml
 }
 
-# 27a. Exactly 300 chars, mode: invite → no linkedin_note_too_long.
+# 27a. Exactly 300 chars → no linkedin_note_too_long.
 set seg_li1 [make_temp_segment]
 set li1_path [write_approach_yaml $seg_li1 "li-300" \
-    [li_approach_yaml [string repeat a 300] "mode: invite"]]
+    [li_approach_yaml [string repeat a 300]]]
 set li1_issues [spar::validate_approach $li1_path "" "LI 300"]
 assert_eq [has_issue $li1_issues linkedin_note_too_long] 0 \
-    "validate_approach: 300-char invite note → no linkedin_note_too_long"
+    "validate_approach: 300-char invitation note → no linkedin_note_too_long"
 
 # 27b. 301 chars, no mode (dispatcher infers invite) → linkedin_note_too_long.
 set seg_li2 [make_temp_segment]
@@ -768,14 +763,14 @@ assert_eq [llength $li2_errors] 1 \
 assert_eq [dict get [lindex $li2_errors 0] severity] "error" \
     "validate_approach: linkedin_note_too_long severity is error"
 
-# 27c. The 300-char cap binds every mode: a first touch is a connection
-# invite, and mode: dm is not a route around the bound.
+# 27c. The 300-char cap binds either route: invitation_unavailable does
+# not carry a longer body past the bound.
 set seg_li3 [make_temp_segment]
 set li3_path [write_approach_yaml $seg_li3 "li-dm" \
-    [li_approach_yaml [string repeat a 450] "mode: dm"]]
+    [li_approach_yaml [string repeat a 450] "invitation_unavailable: true"]]
 set li3_issues [spar::validate_approach $li3_path "" "LI DM"]
 assert_eq [has_issue $li3_issues linkedin_note_too_long] 1 \
-    "validate_approach: 450-char mode: dm message → linkedin_note_too_long (cap binds every mode)"
+    "validate_approach: 450-char invitation_unavailable message → linkedin_note_too_long (cap binds either route)"
 
 # 27f. Render path: the projection keeps linkedin bodies (spar-state.tcl
 # _project_message), so approach_validation_error's T6-T10 gate sees the
@@ -896,29 +891,22 @@ set ap3_issues [spar::validate_approach $ap3_path "test@acme-venues.au" "AP OK"]
 assert_eq [llength $ap3_issues] 0 "unsent file with all three present → clean"
 
 # ════════════════════════════════════════════════════════════════════════
-# 29. linkedin_mode_unknown (mode vocabulary)
+# 29. invitation_unavailable is canonical message vocabulary
 # ════════════════════════════════════════════════════════════════════════
-section "29. linkedin mode vocabulary"
+section "29. invitation_unavailable vocabulary"
 
-set seg_lm1 [make_temp_segment]
-set lm1_path [write_approach_yaml $seg_lm1 "lm-bad" \
-    [li_approach_yaml "short note" "mode: broadcast"]]
-set lm1_issues [spar::validate_approach $lm1_path "" "LM Bad"]
-assert_eq [has_issue $lm1_issues linkedin_mode_unknown] 1 \
-    "mode: broadcast → linkedin_mode_unknown"
+set seg_iu1 [make_temp_segment]
+set iu1_path [write_approach_yaml $seg_iu1 "iu-set" \
+    [li_approach_yaml "short note" "invitation_unavailable: true"]]
+set iu1_issues [spar::validate_approach $iu1_path "" "IU Set"]
+assert_eq [has_issue $iu1_issues unknown_key_message] 0 \
+    "invitation_unavailable: true passes the message vocabulary walk"
 
-set seg_lm2 [make_temp_segment]
-set lm2_path [write_approach_yaml $seg_lm2 "lm-ok" \
+set seg_iu2 [make_temp_segment]
+set iu2_path [write_approach_yaml $seg_iu2 "iu-mode" \
     [li_approach_yaml "short note" "mode: invite"]]
-set lm2_issues [spar::validate_approach $lm2_path "" "LM OK"]
-assert_eq [has_issue $lm2_issues linkedin_mode_unknown] 0 \
-    "mode: invite → no linkedin_mode_unknown"
-
-set seg_lm3 [make_temp_segment]
-set lm3_path [write_approach_yaml $seg_lm3 "lm-absent" \
-    [li_approach_yaml "short note"]]
-set lm3_issues [spar::validate_approach $lm3_path "" "LM Absent"]
-assert_eq [has_issue $lm3_issues linkedin_mode_unknown] 0 \
-    "absent mode → no linkedin_mode_unknown (dispatcher infers invite)"
+set iu2_issues [spar::validate_approach $iu2_path "" "IU Mode"]
+assert_eq [has_issue $iu2_issues unknown_key_message] 1 \
+    "the retired mode key now fails the vocabulary walk"
 
 finish_tests

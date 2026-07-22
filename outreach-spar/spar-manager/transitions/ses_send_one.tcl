@@ -95,15 +95,16 @@ proc ::spar::ses::send_one {opts} {
             "no sender: neither approach decisions.sender.email nor campaign sender.email set"]
     }
 
-    # Reply-mode threading (issue #79).
+    # Reply threading (issue #79). A parent block is what makes the
+    # message a reply on an existing thread.
     set in_reply_to ""
     set references ""
-    set is_reply [expr {[dict getdef $msg mode ""] eq "reply"}]
+    set is_reply [dict exists $msg parent]
     if {$is_reply} {
-        set parent [dict getdef $msg parent [dict create]]
+        set parent [dict get $msg parent]
         set parent_mid [string trim [dict getdef $parent message_id ""]]
         if {$parent_mid eq ""} {
-            return [list error "reply mode but parent.message_id is empty; cannot construct In-Reply-To"]
+            return [list error "reply has an empty parent.message_id; cannot construct In-Reply-To"]
         }
         set reply_all [dict getdef $msg reply_all 0]
         set rh [spar::build_reply_headers $parent $from_email $reply_all]

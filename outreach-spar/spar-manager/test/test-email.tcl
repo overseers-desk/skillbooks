@@ -249,7 +249,6 @@ rounds:
   number: 1
   messages:
   - channel: linkedin
-    mode: invite
     text: Hi, I would like to connect
     actioned_date: null
     replied_date: null
@@ -271,7 +270,7 @@ assert_contains $stamped_li "actioned_date: null" \
 set data_li [spar::read_approach_yaml $ap_li]
 set li_msg [spar::final_channel_message $data_li linkedin]
 set em_msg [spar::final_channel_message $data_li email]
-assert_eq [dict get $li_msg mode] "invite" \
+assert_eq [dict get $li_msg channel] "linkedin" \
     "final_channel_message(linkedin) selects the linkedin message"
 assert_eq [dict get $em_msg subject] "Follow-up subject" \
     "final_channel_message(email) selects the email message"
@@ -322,7 +321,6 @@ rounds:
   number: 1
   messages:
   - channel: linkedin
-    mode: invite
     text: Hi, I would like to connect
   - channel: email
     to: test@acme-venues.au

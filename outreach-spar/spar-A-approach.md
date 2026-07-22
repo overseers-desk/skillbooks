@@ -189,13 +189,13 @@ Approach files are YAML documents with a **closed vocabulary**: the runtime vali
 - `profile_hash`: `sha256:<64-hex>` — SHA-256 of the profile file's bytes at generation time, prefixed `sha256:`. Computed by the A harness; A copies the value verbatim. Optional in the schema: manually-authored approaches and any path that did not read a profile have no hash to record. **When present, this key must be on the first line of the file** — no leading blank line, no preceding keys (issue #63). The position discipline lets a future fast-classify path detect staleness by reading only the first line; `validate_approach` emits `profile_hash_misplaced` if the rule is broken. When the hash is present and the profile exists, mismatch is an error (`profile_hash_mismatch`) — the source profile was rebuilt or edited, and the approach must be regenerated. When the hash is absent, `validate_approach` accepts the file and the state machine routes any divergence (deleted / edited profile) through T6/T7 instead.
 - `decisions`: `channel`, `language`, `angle`, `sender`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7. Warmth is determined fresh by A (§4.1) and informs the drafting; it is not a stored field.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
-- `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `replied_date`, `reply_summary`, `script`, `text`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`, `mode`, `parent`, `reply_all`
-- `parent` (only inside a `mode: reply` message): `account`, `folder`, `uid`, `message_id`, `references`, `subject`, `from`, `to`, `cc`. Captured verbatim from `courier read` on the parent message; T3 derives In-Reply-To, References, the `Re:` Subject, and the To/Cc set from these fields at send time.
-- `mode` on a `channel: linkedin` message: the LinkedIn first touch is a connection `invite` (connection request with the message as the note, ≤300 characters), and this holds whether or not the roster shows the person as an existing connection. The reason to prefer it is behavioural, not stylistic: an unsolicited direct message from a stranger is, on LinkedIn, near-universally ignored or deleted, so a `dm` first touch tends to forfeit the contact outright, while a connection request with a short note is the move the platform is built around. `dm` is a narrow fallback, worth it only for a contact important enough to pursue whose profile offers no way to attach a note to a connection request; even then it may be refused by LinkedIn's own policy, so treat it as uncertain rather than a reliable path. When `mode` is absent the dispatcher infers `invite`; a note over 300 characters is an authoring error to shorten, never a reason to switch to `dm`.
+- `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `replied_date`, `reply_summary`, `script`, `text`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`, `invitation_unavailable`, `parent`, `reply_all`
+- `parent` (inside an email message): `account`, `folder`, `uid`, `message_id`, `references`, `subject`, `from`, `to`, `cc`. Its presence is what makes the message a reply on an existing thread: captured verbatim from `courier read` on the parent message, and T3 derives In-Reply-To, References, the `Re:` Subject, and the To/Cc set from these fields at send time.
+- `invitation_unavailable: true` on a `channel: linkedin` message: records the observed fact that this profile offers no way to attach a note to a connection invitation (a follow-first creator profile, an invitation limit, an email-required gate). The dispatcher then sends the note text as a direct Message instead of an invitation; LinkedIn may still refuse, so treat that path as uncertain. Absent, the first touch is a connection invitation with the message as its note (≤300 characters), whether or not the roster shows the person as an existing connection. The reason invitations are the default is behavioural, not stylistic: an unsolicited direct message from a stranger is, on LinkedIn, near-universally ignored or deleted, while a connection request with a short note is the move the platform is built around. A note over 300 characters is an authoring error to shorten; the length cap binds every LinkedIn message either way.
 - `fact_provenance` / `fact_check` items: `claim`, `source` (plus `result`, `note`, `correction` for `fact_check` only)
 - `script` items (inside a message): `point`, `text`
 
-**Structural rules:** At least one round must have `type: final`. Draft and review rounds require `number`. Ordinary email messages must have `subject` or `body`. Reply-mode messages (`mode: reply`) need only `body` — the Subject is derived from `parent.subject` — and must carry a non-empty `parent.message_id` so T3 can construct the threading headers.
+**Structural rules:** At least one round must have `type: final`. Draft and review rounds require `number`. Email messages must have `subject` or `body`. A reply (an email message carrying a `parent` block) needs only `body` — the Subject is derived from `parent.subject` — and must carry a non-empty `parent.message_id` so T3 can construct the threading headers.
 
 **Example skeleton — terse, but covers every canonical key so you never need to invent one:**
 
@@ -275,7 +275,7 @@ quality_checklist: Notes on §7 checks passed or flagged.
 
 Lifecycle fields (`actioned_date`, `replied_date`, `reply_summary`) are written by the dispatcher and reply-ingest stages — start them as `null` (or omit). Entries under `replies` are ingested by `spar-email.tcl`; its item shape (`direction`, `channel`, `date`, `from`, `body`) is mechanical, not part of the AI-authored vocabulary. `channel` names the channel the reply arrived on; the inbox ingest writes `email`, a manually recorded reply names its own.
 
-**Reply-mode email skeleton** (issue #79). When the §4.1.1 rule selects reply-on-thread, the final email message replaces `subject` and `to` with a `parent` block carrying the captured threading state:
+**Reply email skeleton** (issue #79). When the §4.1.1 rule selects reply-on-thread, the final email message replaces `subject` and `to` with a `parent` block carrying the captured threading state:
 
 ```yaml
 rounds:
@@ -283,7 +283,6 @@ rounds:
     chosen_usps: [U2]
     messages:
       - channel: email
-        mode: reply
         reply_all: true
         body: |
           Following up on the Chef requirement we discussed in August.
@@ -303,7 +302,7 @@ rounds:
           cc: ""
 ```
 
-Omit `subject`/`to` from the message when `mode: reply` is set — T3 derives them. `reply_all: true` preserves the original Cc set (minus the chosen sender's own address); `reply_all: false` (default) replies to the parent's From only.
+Omit `subject`/`to` from a reply message — T3 derives them from the `parent` block. `reply_all: true` preserves the original Cc set (minus the chosen sender's own address); `reply_all: false` (default) replies to the parent's From only.
 
 The file is `campaigns/{campaign}/{stem}.yaml`, named by the contact's roster stem.
 
