@@ -1355,4 +1355,28 @@ assert_eq [has_issue $issues_ok wrong_level] 0 \
     "closed vocab: clean file has no wrong_level"
 
 
+# ════════════════════════════════════════════════════════════════════════
+# progress_counts: the approachable denominator and the no-channel gap
+# ════════════════════════════════════════════════════════════════════════
+section "progress_counts approachable"
+
+set pc_seg [make_temp_segment]
+write_roster_tsv $pc_seg $::std_headers [list \
+    [make_base_row {contact_name "Has Email" stem "pc-email" email "a@x.com" star_rating 4}] \
+    [make_base_row {contact_name "No Channel" stem "pc-none" email "" star_rating 4}] \
+    [make_base_row {contact_name "Excluded" stem "pc-ex" email "b@x.com" star_rating 4 date_excluded 2026-07-01}]]
+set pc_contacts [$State classify_segment $pc_seg [approach_dir_of $pc_seg]]
+set pc_cdata [dict create primary_channel email]
+set pc [spar::progress_counts $pc_contacts $pc_cdata]
+assert_eq [dict get $pc star3] 2 "excluded contact counts in neither pool"
+assert_eq [dict get $pc approachable] 1 \
+    "no-channel contact sits outside the approachable denominator"
+assert_eq [expr {[dict get $pc star3] - [dict get $pc approachable]}] 1 \
+    "the no-channel backlog is inferable as star3 minus approachable"
+
+# Without campaign context every channel is in scope: approachable == star3.
+set pc_nocd [spar::progress_counts $pc_contacts]
+assert_eq [dict get $pc_nocd approachable] 2 \
+    "empty cdata keeps the whole star band approachable"
+
 finish_tests

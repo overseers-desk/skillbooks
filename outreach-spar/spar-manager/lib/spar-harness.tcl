@@ -650,10 +650,8 @@ oo::class create spar::ProfileHarness {
                 return [my _request_requeue]
             }
             # DbC-Post: sanitise masked emails written to the roster, then
-            # run validate_profile on both the front matter and roster-row
-            # invariants (#39 R1: profile_unreachable_without_exclusion —
-            # profile exists iff the row has a reachable channel or
-            # date_excluded is set).
+            # run validate_profile on the front matter and roster-row
+            # invariants.
             my sanitise_roster_email $RosterPath [my slug]
             if {[my validate_and_correct $Outfile $RosterPath $RequiredSkills]} { return 1 }
             my do_summary

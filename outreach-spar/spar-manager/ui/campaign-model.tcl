@@ -10,7 +10,7 @@
 # Events fired:
 #   segment-loaded {segment counts_dict}
 #       one segment of the async pass has finished classifying; payload is
-#       the segment name, its spar::progress_counts dict, and its active flag
+#       the segment name and its spar::progress_counts dict
 #   transition-loaded {tid label tasks}
 #       one transition's eligibility has been computed; payload is the
 #       tid string, its display label, and the list of task tuples (one
@@ -176,7 +176,7 @@ oo::class create spar::ui::CampaignModel {
     }
 
     method _zero_row {} {
-        return [list 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {}]
+        return [list 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {} 0 {}]
     }
 
     # ─── Internal: config load ────────────────────────────────────────────
@@ -272,13 +272,14 @@ oo::class create spar::ui::CampaignModel {
 
             lappend SegmentPathsForAsync [list $label $seg_dir]
 
-            if {[catch {set rcounts [spar::roster_counts $seg_dir]} err]} {
+            if {[catch {set rcounts [spar::roster_counts $seg_dir $Cdata]} err]} {
                 lappend Segments [list $label [my _zero_row]]
                 continue
             }
 
             set v  [dict get $rcounts valid]
             set s3 [dict get $rcounts star3]
+            set re [dict get $rcounts approachable]
             set e  [dict get $rcounts has_email]
             set l  [dict get $rcounts has_linkedin]
             set f  [dict get $rcounts has_facebook]
@@ -288,6 +289,7 @@ oo::class create spar::ui::CampaignModel {
                 $v {} \
                 0 {} \
                 $s3 [my _format_pct $s3 $v] \
+                $re [my _format_pct $re $s3] \
                 0 {} \
                 $e  [my _format_pct $e  $s3] \
                 $l  [my _format_pct $l  $s3] \
@@ -370,7 +372,7 @@ oo::class create spar::ui::CampaignModel {
 
             if {![catch {set classified [$State classify_segment $seg_dir $ApproachDir]} err]} {
                 foreach c $classified { lappend AllContacts $c }
-                set cdict [spar::progress_counts $classified]
+                set cdict [spar::progress_counts $classified $Cdata]
                 # sent / replied are uniformly 0 in cheap mode (no YAML
                 # parsed, so no contact resolves to SENT/REPLIED).
                 # Sentinel "" tells the progress table to preserve the
@@ -454,7 +456,7 @@ oo::class create spar::ui::CampaignModel {
                 if {($i % 25) == 0} { my _yield_loop }
             }
             set seg_contacts [lrange $AllContacts $start [expr {$end - 1}]]
-            set cdict [spar::progress_counts $seg_contacts]
+            set cdict [spar::progress_counts $seg_contacts $Cdata]
             my _fire segment-loaded $seg_name $cdict
             my _yield_loop
         }

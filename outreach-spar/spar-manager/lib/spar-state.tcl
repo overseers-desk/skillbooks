@@ -1392,15 +1392,24 @@ proc spar::detect_duplicates {all_classified_contacts} {
 # progress_counts -- compute progress table counts for one segment.
 #
 # classified_contacts  output of classify_segment for one segment
+# cdata                campaign dict; its channel slots decide which
+#                      contacts count as approachable. Empty = every
+#                      channel in scope, so approachable equals star3.
 #
 # Returns a dict with counts:
-#   valid, profiled, star3, approached_star3, has_email,
+#   valid, profiled, star3, approachable, approached_star3, has_email,
 #   has_linkedin, has_facebook, has_phone_only, sent, replied
 #
-proc spar::progress_counts {classified_contacts} {
+# approachable is the approach denominator: 3+ star contacts holding at
+# least one channel the campaign declares. A contact with no channel is
+# recorded reality, not a finding: they sit outside the denominator (a
+# campaign that approached everyone approachable reads 100%) and are
+# inferable from the table as star3 minus approachable.
+proc spar::progress_counts {classified_contacts {cdata {}}} {
     set valid 0
     set profiled 0
     set star3 0
+    set approachable 0
     set approached_star3 0
     set has_email 0
     set has_linkedin 0
@@ -1408,6 +1417,8 @@ proc spar::progress_counts {classified_contacts} {
     set has_phone_only 0
     set n_sent 0
     set n_replied 0
+    set in_scope [expr {[llength $cdata] > 0 \
+        ? [spar::campaign_in_scope_channels $cdata] : {}}]
 
     # States that are "profiled or above"
     set profiled_plus {PROFILED PROFILE_STALE APPROACHED APPROACH_STALE SENT REPLIED}
@@ -1437,6 +1448,10 @@ proc spar::progress_counts {classified_contacts} {
         # Star 3+
         if {$star >= 3} {
             incr star3
+
+            if {[spar::roster_row_has_in_scope_channel $contact $in_scope]} {
+                incr approachable
+            }
 
             # Approached and star3
             if {$state in $approached_plus} {
@@ -1479,6 +1494,7 @@ proc spar::progress_counts {classified_contacts} {
         valid $valid \
         profiled $profiled \
         star3 $star3 \
+        approachable $approachable \
         approached_star3 $approached_star3 \
         has_email $has_email \
         has_linkedin $has_linkedin \
@@ -1492,22 +1508,27 @@ proc spar::progress_counts {classified_contacts} {
 #
 # segment_dir  absolute path to the segment directory
 #
-# Returns a dict with the six TSV-derivable counts:
-#   valid, star3, has_email, has_linkedin, has_facebook, has_phone_only
+# Returns a dict with the TSV-derivable counts:
+#   valid, star3, approachable, has_email, has_linkedin, has_facebook,
+#   has_phone_only
 # These correspond to columns that do not require profile/approach file access.
 # Counts not computable from the TSV alone (profiled, approached_star3,
 # sent, replied) are omitted.
 #
-proc spar::roster_counts {segment_dir} {
+# cdata as in progress_counts: channel scope for the approachable count.
+proc spar::roster_counts {segment_dir {cdata {}}} {
     set roster_path [spar::roster_path_for_segment $segment_dir]
     set rows [spar::load_roster $roster_path]
 
     set valid 0
     set star3 0
+    set approachable 0
     set has_email 0
     set has_linkedin 0
     set has_facebook 0
     set has_phone_only 0
+    set in_scope [expr {[llength $cdata] > 0 \
+        ? [spar::campaign_in_scope_channels $cdata] : {}}]
 
     foreach row $rows {
         if {[dict exists $row stem]} {
@@ -1545,6 +1566,9 @@ proc spar::roster_counts {segment_dir} {
 
         if {$star >= 3} {
             incr star3
+            if {[spar::roster_row_has_in_scope_channel $row $in_scope]} {
+                incr approachable
+            }
             if {$c_has_email} { incr has_email }
             if {$c_has_linkedin} { incr has_linkedin }
             if {$c_has_facebook} { incr has_facebook }
@@ -1555,6 +1579,7 @@ proc spar::roster_counts {segment_dir} {
     return [dict create \
         valid $valid \
         star3 $star3 \
+        approachable $approachable \
         has_email $has_email \
         has_linkedin $has_linkedin \
         has_facebook $has_facebook \

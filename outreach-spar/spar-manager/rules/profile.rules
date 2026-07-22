@@ -5,9 +5,8 @@
 #
 # STAYS IMPERATIVE in validate_profile (NOT migrated here): the file read,
 # the `---` fence check, the front-matter parse, all three
-# invalid_front_matter variants (545-576), and the roster-row comparisons,
-# reachability profile_unreachable_without_exclusion (640-651) and
-# staleness stale_* (653-678). Those imperative issues are appended AFTER
+# invalid_front_matter variants (545-576) and the roster-row staleness
+# comparisons stale_* (653-678). Those imperative issues are appended AFTER
 # the yamlmuster issues, matching their legacy near-last position.
 #
 # Call shape:
