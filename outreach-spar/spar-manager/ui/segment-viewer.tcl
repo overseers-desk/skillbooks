@@ -111,7 +111,7 @@ oo::class create spar::ui::SegmentViewer {
 
         if {![file exists $yaml_path]} {
             ttk::label ${Body}.warn \
-                -text "no segment.yaml in [file tail $seg_dir]/" \
+                -text "no [file tail $yaml_path]" \
                 -anchor w
             pack ${Body}.warn -fill x -padx 6 -pady 8
             update idletasks

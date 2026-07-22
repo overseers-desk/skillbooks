@@ -12,7 +12,7 @@ Campaigns may define two types of targets, or only one:
 
 **Cue-required targets** are people who might send the campaign business, make introductions, or amplify its message if they knew about it — referral partners, community organisers, industry connectors, conference speakers. They need a cue (evidence they care about something the campaign offers) before contact; without one, the message is cold spam. The cue is collected during the P phase, not during S. S discovers the names; P determines whether a cue exists.
 
-**Qualification-only targets** are organisations that are potential customers or members — they qualify by role and geography (or role and sector) alone and enter the outreach sequence without requiring a cue or detailed profile. P is minimal for these targets: the segment declares `target_type: qualification-only` in its `segment.yaml` (see `segment-schema.yaml`), and `spar-P-profile.md` §5.5 defines the profile shape that declaration selects. Profile depth follows the population, not the campaign's ask, which is why the declaration lives with the segment.
+**Qualification-only targets** are organisations that are potential customers or members — they qualify by role and geography (or role and sector) alone and enter the outreach sequence without requiring a cue or detailed profile. P is minimal for these targets: the segment declares `target_type: qualification-only` in its definition (`segments/{segment}.yaml`) (see `segment-schema.yaml`), and `spar-P-profile.md` §5.5 defines the profile shape that declaration selects. Profile depth follows the population, not the campaign's ask, which is why the declaration lives with the segment.
 
 The discovery steps are the same for both types. The differences — whether P is required, which roster columns apply, what the handoff looks like — are defined by the campaign plan, not by this AESOP.
 
@@ -156,7 +156,7 @@ The per-round `surprises` field absorbs what the old summary file recorded (voca
 
 ### 7.1 The sweeper file (shared sweep knowledge)
 
-Segments are usually swept together as a market family: sibling populations sharing a catchment, instruments, and buyer geography. Facts that hold across the family live once, in a **sweeper file** named `sweeper-<family>.yaml`, a flat file at the instance root (the sweeps axis has no designed folder yet; see `spar-campaign-directory.md`). A segment joins by declaring `sweeper: <family>` in its `segment.yaml`; membership is authored there and only there, so the sweeper file does not list its segments.
+Segments are usually swept together as a market family: sibling populations sharing a catchment, instruments, and buyer geography. Facts that hold across the family live once, in a **sweeper file** named `sweeper-<family>.yaml`, a flat file at the instance root (the sweeps axis has no designed folder yet; see `spar-campaign-directory.md`). A segment joins by declaring `sweeper: <family>` in its definition YAML; membership is authored there and only there, so the sweeper file does not list its segments.
 
 What lives where:
 
