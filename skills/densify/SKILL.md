@@ -1,6 +1,6 @@
 ---
 name: densify
-description: Shrink a text yet keep doing its job: unlike summariser, specific (dates, numbers, names, commands, caveats) survives, gated by a cold reader. Triggers: densify.
+description: Shrink a text yet keep it doing its job: unlike a summariser ("David Jones" becoming "a man"), every specific (dates, numbers, names, commands, caveats) survives, gated by a cold reader. Triggers: densify.
 argument-hint: "[file or text to densify]"
 ---
 
