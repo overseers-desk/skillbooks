@@ -6,6 +6,22 @@ Summarisers were excluded from the comparison. A summariser is judged by what a 
 
 That these arms ran at all was a roster error, recorded here rather than quietly dropped. The candidate sweep bucketed products by function words, densify/compress/summarize together, when the test is what the output is: a text that still does the original's job, or a text that stands in place of it. **skill-focus** (FOCUS method) was run on that mistaken basis and its outputs are kept under `outputs/` as the record; its numbers are absent from what follows. Two further entries named in the recovered survey, **jwynia/agent-skills summarization** and **mcpmarket Context Compression**, are of the same category and were in any case unobtainable: no such skill exists in the current tree, and the listing resolves to no repository.
 
+## The densifiers side by side
+
+Ratio is output words over original words, per message; the median and range exclude nothing except where noted. "Clean cells" counts messages whose differ returned an empty loss list.
+
+| | baseline | skillbooks:densify | logophile | condense | chain-of-density | semantic-compressor |
+|---|---|---|---|---|---|---|
+| material losses | 0 | 0 | 0 | 0 | 9 | n/a |
+| immaterial losses | 5 | 0 | 0 | 2 | 8 | n/a |
+| clean cells (of 6) | 2 | 6 | 6 | 4 | 2 | 0 |
+| median ratio | 0.72 | 0.83 | 0.95 | 0.86 | 0.50 | 1.00 |
+| ratio range | 0.68–0.88 | 0.75–0.93 | 0.83–0.99 | 0.78–0.92 | 0.42–0.61 | 1.00 |
+| cells completed | 6 | 6 | 6 | 6 | 6 | 1 |
+| run blind | no | yes | yes | yes | yes | yes |
+
+Condense's range omits its one runaway cell at 36.5, described below. Semantic-compressor's single figure is a refusal, not a compression. The control arm, originals passed through unchanged, sat at ratio 1.00 with zero losses on all six.
+
 ## What each densifier did
 
 **baseline**, this office's own sweep of 2026-07-20, run by hand under the mapping method the skill then carried. It lost nothing material on any of the six and cut the most, to a median 0.72 of the original. Its five immaterial losses were all of one kind: an explanation dropped whose act survives, such as the rationale for amending an unpushed commit, or the "scratch files" example inside a rule whose audit procedure still catches them. The result is not a blind measurement: the author held the whole corpus and its project context while writing.
