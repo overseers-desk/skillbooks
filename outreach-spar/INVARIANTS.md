@@ -24,11 +24,11 @@ This invariant has been stated in `spar-methodology.md` since the three-tier spe
 2. **Mechanical backstop** — `spar-validate` fails a profile whose body carries engagement markers (a prior-correspondence or warmth line, a "no prior contact" statement, an angles/pitch section). A leak is a build failure, not a style note.
 3. **This file** — the single statement the prompt references and the validator cites.
 
-## I2. A campaign folder's file list is closed
+## I2. The instance layout's file list is closed
 
-`spar-campaign-directory.md` enumerates the names, and that enumeration is complete: a file whose name is not in it does not belong in the folder, whatever produced it. Profiles and approaches run to one file per target, so the volume is open while the list is not.
+`spar-campaign-directory.md` enumerates the name patterns under `segments/` and `campaigns/`, and that enumeration is complete: a file whose name matches none of them does not belong there, whatever produced it. Profiles and approaches run to one file per target, so the volume is open while the list is not.
 
-What makes the list closable is that each name is the sole home of what it holds: the roster owns who we know and how to reach them, the sweep file owns coverage, a profile owns one target's assessment, an approach owns one target's messages. A further name duplicates one of them and goes stale against it, so analysis, working notes, worklogs, issue write-ups and segment summaries live outside the campaign folder.
+What makes the list closable is that each name is the sole home of what it holds: the roster owns who we know and how to reach them, the sweep file owns coverage, a profile owns one target's assessment, an approach owns one target's messages. A further name duplicates one of them and goes stale against it, so analysis, working notes, worklogs and issue write-ups live outside `segments/` and `campaigns/`; a segment summary has a named home (`segments/{segment}.summary.md`) and stays the only one.
 
 A second TSV created to be merged into the first one later is the recurring form of the breach, and the merge is the step that does not happen: context runs out, the user leaves, the machine reboots, the agent is stopped mid-run, and the file stays holding data nobody can account for. An agent talks itself past this whenever the roster looks inconvenient: another writer holds it (a running P or A batch, a second sweep, another session), several agents are fanning out over one segment, the findings are unvalidated and want staging, bulk merging at the end looks cheaper, a crash once ate work so an in-repo copy feels safer, a subagent should not touch shared state, the pass is only scratch, or no column fits what was found. The answer to each is the same: wait for the roster or write to it now, unproven rows marked unproven and anything homeless in `s_note` prose until the owner names a column, because scratch in a tracked directory is not scratch.
 

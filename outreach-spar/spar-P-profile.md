@@ -16,7 +16,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 
 ## 3. Output
 
-A markdown file named `{stem}.md` in the segment's `profiles/` directory, where `{stem}` is the roster row's `stem` column value. The file opens with a YAML front-matter block carrying machine-read fields, followed by a markdown body. Structure defined in §5.
+A markdown file named `{stem}.md` directly in the segment's folder (`segments/{segment}/`), where `{stem}` is the roster row's `stem` column value. The file opens with a YAML front-matter block carrying machine-read fields, followed by a markdown body. Structure defined in §5.
 
 Additionally, P produces:
 - **Roster updates:** If the target's role, organisation, or contact details have changed or were missing and are now known, update the roster entry directly (see §4.15).
@@ -202,7 +202,7 @@ This is where the "network / connection value" angle is assessed. A target may h
 **Cross-reference people already in the system.** For each surfaced name, grep the segment's profiles directory and roster before continuing:
 
 ```bash
-grep -ril "PERSON NAME" /path/to/profiles/ /path/to/roster.tsv
+grep -ril "PERSON NAME" <instance-root>/segments/
 ```
 
 If the person already has a profile, update it to record the new information. Examples: "this person was replaced at [org] by [target] as of [date]" (useful for inferring the departing person's industry experience); or "this person is the predecessor of [target] at [org], whose background may inform [target]'s approach." Prior industry experience — especially if the person came from the operator side of the same industry — changes the register of any approach written for them. A profile that records only the current role and misses a relevant predecessor role causes the A phase to write to a stranger who already speaks the trade's language. If the person is in the roster but has no profile yet, note the cross-reference in the current profile; the next P run for that contact will pick it up. Do not touch approach files — approach regeneration in response to a cross-reference update is a graph-type transition that the batch pipeline does not currently handle (see #4).

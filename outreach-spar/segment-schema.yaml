@@ -15,7 +15,7 @@
 #
 # Position in the three-tier hierarchy:
 #
-#   campaign.yaml          segment.yaml          approach/{stem}.yaml
+#   campaigns/{camp}.yaml  segments/{seg}.yaml   campaigns/{camp}/{stem}.yaml
 #   (campaign tier)        (this file —          (engagement tier —
 #     - sender, channels     population tier)      campaign × contact)
 #     - usps registry        - discovery_criteria   - messages
@@ -34,9 +34,9 @@
 #   - who belongs in this population   -> THIS FILE discovery_criteria
 #   - how useful a member is to us     -> THIS FILE rating_rubric
 #   - segment boundaries vs neighbours -> THIS FILE scope_note
-#   - roster (per-contact identity)    -> roster.tsv
-#   - per-contact profile              -> profiles/{stem}.md
-#   - engagement (per campaign)        -> approach/{stem}.yaml
+#   - roster (per-contact identity)    -> segments/{seg}.tsv
+#   - per-contact profile              -> segments/{seg}/{stem}.md
+#   - engagement (per campaign)        -> campaigns/{camp}/{stem}.yaml
 #   - methodology rules                -> methodology documents
 #
 # The fields that used to live here — objective, usps, message_goal, first_ask,

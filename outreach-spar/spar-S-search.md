@@ -156,7 +156,7 @@ The per-round `surprises` field absorbs what the old summary file recorded (voca
 
 ### 7.1 The sweeper file (shared sweep knowledge)
 
-Segments are usually swept together as a market family: sibling populations sharing a catchment, instruments, and buyer geography. Facts that hold across the family live once, in a **sweeper file** named `sweeper-<family>.yaml`, a flat file beside the campaign YAMLs (deliberately not in a subdirectory, so segments and sweepers stay at one level). A segment joins by declaring `sweeper: <family>` in its `segment.yaml`; membership is authored there and only there, so the sweeper file does not list its segments.
+Segments are usually swept together as a market family: sibling populations sharing a catchment, instruments, and buyer geography. Facts that hold across the family live once, in a **sweeper file** named `sweeper-<family>.yaml`, a flat file at the instance root (the sweeps axis has no designed folder yet; see `spar-campaign-directory.md`). A segment joins by declaring `sweeper: <family>` in its `segment.yaml`; membership is authored there and only there, so the sweeper file does not list its segments.
 
 What lives where:
 
@@ -167,7 +167,7 @@ The cut is the SSOT test: a fact that would change for all member segments at on
 
 ## 8. Writing the roster during a sweep
 
-The roster is the sweep's only data file, and a sweep creates no other. A sweep or person-resolution agent works on `roster.tsv` directly: it reads the roster first to know the stems already present, then appends or updates row by row as it finds things, never rewriting wholesale. Findings land on the row they concern at the moment they are settled, so a stopped agent leaves finished work in the roster rather than stranded beside it.
+The roster is the sweep's only data file, and a sweep creates no other. A sweep or person-resolution agent works on the segment's roster (`segments/{segment}.tsv`) directly: it reads the roster first to know the stems already present, then appends or updates row by row as it finds things, never rewriting wholesale. Findings land on the row they concern at the moment they are settled, so a stopped agent leaves finished work in the roster rather than stranded beside it.
 
 Every attempt leaves its outcome on the row it concerned:
 

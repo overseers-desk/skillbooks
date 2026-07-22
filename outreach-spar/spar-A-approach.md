@@ -18,7 +18,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 
 ## 3. Outputs
 
-- **Approach file:** `approach/{stem}.yaml` in the segment directory, `{stem}` being the contact's roster stem — the state machine derives contact state from file existence at that exact path (the directory is the contact's communications log; its name is historical, see `spar-methodology.md`). The structure is shown in §6. Contains the angle selection rationale, all A1/A2 drafts and responses, chosen USP identifiers per round, and the final send-ready messages.
+- **Approach file:** `campaigns/{campaign}/{stem}.yaml`, `{stem}` being the contact's roster stem — the state machine derives contact state from file existence at that exact path, and the parent directory is the campaign attribution (`spar-campaign-directory.md`). The structure is shown in §6. Contains the angle selection rationale, all A1/A2 drafts and responses, chosen USP identifiers per round, and the final send-ready messages.
 - **Communication index entry:** One line appended to `comms-index.md`: contact name, organisation, segment, angle used, key relationship hooks, channel selection.
 - **Approach-file notes:** Write the `a_note` root key in the approach file with: angle used, channel selected, warmth level, language, and any notable drafting consideration. Set the `response_likelihood` root key to the estimated reply probability under the chosen angle. These are A's outputs and live in the approach file, not the roster.
 
@@ -155,7 +155,7 @@ A1 reads both steps. If C2 identifies a misalignment or a factual error, A1 revi
 
 ### 4.7 Assemble the approach file
 
-Write the approach file as `approach/{stem}.yaml` following the structure shown in §6. Run the §7 quality checklist before presenting for human review.
+Write the approach file as `campaigns/{campaign}/{stem}.yaml` following the structure shown in §6. Run the §7 quality checklist before presenting for human review.
 
 The default sender and BCC address come from the campaign YAML (`sender.name`, `sender.email`, `sender.bcc`) and do not need to be written into the approach file. Write a `decisions.sender` block only when this specific outreach should go from someone other than the campaign's default sender — e.g. a colleague with a prior relationship to the contact. When present, `decisions.sender.email` (and optional `sender.name`) overrides the campaign sender for this contact; per-message `bcc` / `cc` likewise override `sender.bcc`. All of this is resolved by the T3 dispatcher at send time.
 
@@ -163,7 +163,7 @@ The default sender and BCC address come from the campaign YAML (`sender.name`, `
 
 `a_note` and `response_likelihood`, like the messages, are engagement-tier and campaign-bound: write them into the approach file (§6), never the roster.
 
-**Contact-detail backfill (the one roster change A declares).** A contact detail is population-tier, not engagement: a verified email, or a corrected or newly found `linkedin_url` / `facebook_url`, is the same fact for any campaign, so its home is the roster. When A discovers one at send time (typically a member's shared email from the §4.2 contact-info lookup), A declares it in the approach file's root `roster_patch:` block and the harness applies it to `roster.tsv`, the same mediation P uses. A backfilled email must pass the same gates P uses: the format gate (an `@` with a plausible `user@domain` shape; no masked, placeholder, or non-email value), the name-mismatch check, and the shared-inbox rule (all in `spar-P-profile.md`); the harness rejects a masked value before it reaches the roster. This contact detail is the only roster change A declares; everything campaign-bound stays in the approach file.
+**Contact-detail backfill (the one roster change A declares).** A contact detail is population-tier, not engagement: a verified email, or a corrected or newly found `linkedin_url` / `facebook_url`, is the same fact for any campaign, so its home is the roster. When A discovers one at send time (typically a member's shared email from the §4.2 contact-info lookup), A declares it in the approach file's root `roster_patch:` block and the harness applies it to the segment's roster, the same mediation P uses. A backfilled email must pass the same gates P uses: the format gate (an `@` with a plausible `user@domain` shape; no masked, placeholder, or non-email value), the name-mismatch check, and the shared-inbox rule (all in `spar-P-profile.md`); the harness rejects a masked value before it reaches the roster. This contact detail is the only roster change A declares; everything campaign-bound stays in the approach file.
 
 **Communication index:** Append one line to `comms-index.md`: contact ID, name, organisation, segment, angle used, key relationship hooks, channel selection.
 
@@ -305,7 +305,7 @@ rounds:
 
 Omit `subject`/`to` from the message when `mode: reply` is set — T3 derives them. `reply_all: true` preserves the original Cc set (minus the chosen sender's own address); `reply_all: false` (default) replies to the parent's From only.
 
-The file is `approach/{stem}.yaml`, named by the contact's roster stem.
+The file is `campaigns/{campaign}/{stem}.yaml`, named by the contact's roster stem.
 
 ## 7. Quality checklist
 

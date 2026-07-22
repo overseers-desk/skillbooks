@@ -85,19 +85,19 @@ A contact's state is inferred from the presence and content of files in the segm
 | State | Condition |
 |-------|-----------|
 | `EXCLUDED` | Roster: `date_excluded` non-empty |
-| `DISCOVERED` | Valid (not excluded), neither `profiles/{stem}.md` nor `approach/{stem}.yaml` exists. Blank `contact_name` is permitted — P §4.1 resolves it before the rest of profiling |
-| `PROFILED` | Valid, file `profiles/{stem}.md` exists, not stale |
-| `PROFILE_STALE` | Valid, profile is missing-but-needed (an `approach/{stem}.yaml` references it) OR profile exists with snapshot diverging from the roster — see §Staleness |
-| `APPROACHED` | Profiled (fresh), file `approach/{stem}.yaml` exists, no final-round message with `actioned_date` set, profile_hash either matches or is absent |
-| `APPROACH_STALE` | Profiled (fresh), `approach/{stem}.yaml` exists with a `profile_hash` that diverges from the current profile bytes (#63). T4 re-runs A. Routed to APPROACHED-equivalent only — SENT/REPLIED supersede so engaged contacts are never re-approached on hash mismatch alone |
-| `SENT` | `approach/{stem}.yaml` exists, final round has at least one message with `actioned_date` non-null |
+| `DISCOVERED` | Valid (not excluded), neither `segments/{segment}/{stem}.md` nor `campaigns/{campaign}/{stem}.yaml` exists. Blank `contact_name` is permitted — P §4.1 resolves it before the rest of profiling |
+| `PROFILED` | Valid, file `segments/{segment}/{stem}.md` exists, not stale |
+| `PROFILE_STALE` | Valid, profile is missing-but-needed (an `campaigns/{campaign}/{stem}.yaml` references it) OR profile exists with snapshot diverging from the roster — see §Staleness |
+| `APPROACHED` | Profiled (fresh), file `campaigns/{campaign}/{stem}.yaml` exists, no final-round message with `actioned_date` set, profile_hash either matches or is absent |
+| `APPROACH_STALE` | Profiled (fresh), `campaigns/{campaign}/{stem}.yaml` exists with a `profile_hash` that diverges from the current profile bytes (#63). T4 re-runs A. Routed to APPROACHED-equivalent only — SENT/REPLIED supersede so engaged contacts are never re-approached on hash mismatch alone |
+| `SENT` | `campaigns/{campaign}/{stem}.yaml` exists, final round has at least one message with `actioned_date` non-null |
 | `REPLIED` | `SENT`, and final round has a message with `replied_date` non-null, or a reply with `direction: received` |
 
 Evaluation order: `EXCLUDED` is checked first. A contact that is `EXCLUDED` is never checked for any other state. States 2–7 are evaluated in order; the first match wins.
 
 ### Reassignment is a file move
 
-Because the filesystem is the sole state — no index, no database, no `segment` field inside any roster row, profile, or approach file — a contact is reassigned between segments by moving its files: the `roster.tsv` row, `profiles/{stem}.md`, and `approach/{stem}.yaml` relocated into the destination segment's directory. There is nothing else to rewrite. The contact's pipeline state is re-derived from which of those files the destination now holds, so a DISCOVERED contact moves one file (the roster row) and a SENT contact moves all three; only the files that exist need to move.
+Because the filesystem is the sole state — no index, no database, no `segment` field inside any roster row, profile, or approach file — a contact is reassigned between segments by moving its population files: the roster row and `segments/{segment}/{stem}.md` relocated to the destination segment. The approach file is campaign-keyed, so it does not move. The contact's pipeline state is re-derived from which files now exist, so a DISCOVERED contact moves one file (the roster row) and a profiled contact moves two; only the files that exist need to move.
 
 The one constraint: a stem is unique within a segment, not globally, so a move checks that the destination does not already hold that stem (`classify_segment`'s `roster_duplicate_stem` is the post-move guard).
 
@@ -132,7 +132,7 @@ The approach YAML's final round can contain multiple messages across channels (e
 `PROFILE_STALE` is raised in two situations:
 
 1. **Snapshot divergence.** The profile's front-matter `dependent_data` snapshot diverges from the current roster row. The profile document captures, at generation time, the roster fields whose subsequent change should invalidate P's assessment; comparing the snapshot against the live roster row is the staleness test.
-2. **Approach references a missing profile.** An `approach/{stem}.yaml` exists but the corresponding `profiles/{stem}.md` has been deleted. This is the missing-profile half of #63: re-profile is required (T3) before the approach can be re-considered. After T3 writes a fresh profile, the approach's stored `profile_hash` will mismatch the new bytes and the contact lands in `APPROACH_STALE` for T4.
+2. **Approach references a missing profile.** A `campaigns/{campaign}/{stem}.yaml` exists but the corresponding `segments/{segment}/{stem}.md` has been deleted. This is the missing-profile half of #63: re-profile is required (T3) before the approach can be re-considered. After T3 writes a fresh profile, the approach's stored `profile_hash` will mismatch the new bytes and the contact lands in `APPROACH_STALE` for T4.
 
 **Snapshotted fields and divergence rules** (full spec in `spar-P-profile.md` §5.3):
 
@@ -153,7 +153,7 @@ A profile missing its front matter, or with unparseable front matter, is classif
 Error: roster missing required column 'stem' — run schema migration before using spar-state.tcl
 ```
 
-This is a hard failure, not a warning. Contact state is determined by file presence on disk (`profiles/{stem}.md`, `approach/{stem}.yaml`); without `stem` those paths cannot be constructed.
+This is a hard failure, not a warning. Contact state is determined by file presence on disk (`segments/{segment}/{stem}.md`, `campaigns/{campaign}/{stem}.yaml`); without `stem` those paths cannot be constructed.
 
 ---
 
