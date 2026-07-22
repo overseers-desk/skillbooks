@@ -910,7 +910,7 @@ oo::define spar::State method refine_segment {contacts} {
 # classify_segment -- load roster and classify all contacts (cheap form).
 #
 # segment_dir   absolute path to the segment folder (segments/<seg>)
-# approach_dir  the campaign's approach folder (campaigns/<camp>) — an
+# approach_dir  the campaign's approach folder (campaigns/<camp>); an
 #               approach is a campaign×contact fact, so classification
 #               is campaign-scoped
 #
