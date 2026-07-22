@@ -226,9 +226,14 @@ rounds:
 proc approach_yaml_final_unsent {} {
     return {decisions:
   channel: email
+a_note: test note
+fact_provenance:
+- claim: greeting
+  source: profile
 rounds:
 - type: final
   number: 1
+  chosen_usps: [U1]
   messages:
   - channel: email
     to: test@acme-venues.au
