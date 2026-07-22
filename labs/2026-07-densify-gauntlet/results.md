@@ -38,6 +38,18 @@ Condense's range omits its one runaway cell at 36.5, described below. Semantic-c
 
 **control**, the original text passed through unchanged, as an instrument check. It scored no losses on all six, so the gate does not manufacture failures.
 
+## Verdict
+
+**skillbooks:densify wins the blind field, and its margin is robustness, not depth.** Four arms finished with no material loss: the office's own hand-run baseline, skillbooks:densify, logophile and condense. The baseline is not a product and did not run blind, so among things a stranger could install and use, the contest is between our skill and the two fidelity products.
+
+Against condense, the depth medians (0.83 against 0.86) claim more than the data supports. Message by message, condense cut deeper on three of the six and our skill on the other three, a tie inside the noise of a single reader and differ per cell. What separates them is what happens when nothing goes wrong and when something does. Our skill lost nothing at all, material or immaterial, on every cell; condense lost two immaterial items, and on one message returned 6,898 words for a 189-word target, having condensed its own injected context instead of the text. A tool used unattended is judged on that cell.
+
+Against logophile the gap is real and one-directional: logophile cut less on all six messages, a median 0.95 against 0.83, and never once cut deeper. It is the safe floor of the market, and our skill clears it by twelve points of depth at the same zero-loss standard.
+
+Against chain-of-density, the incumbent by distribution, our skill trades depth for correctness: 0.83 against 0.50, but nine material losses against none, and those nine are meaning inversions rather than dropped facts.
+
+The one arm that beats our skill on depth without losing anything material is our own baseline, at 0.72 against 0.83. That is the standing gap and the honest one to chase: it was written by an author holding the whole project, which is exactly the context the shipped skill refuses itself.
+
 ## What this says about the trade
 
 The market offers fidelity or depth, and mostly not both. Logophile and condense keep everything and cut 5% to 15%; chain-of-density halves the text and breaks two-thirds of the corpus. The two arms that keep everything and still cut deep are the office's own, and the shape of their difference is the honest finding: the hand-run baseline cut more because its author knew the project, and the gated skill, running blind, converged on a text that a stranger could still act on.
