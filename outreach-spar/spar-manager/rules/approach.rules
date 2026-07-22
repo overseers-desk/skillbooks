@@ -125,6 +125,26 @@ rule predicate root profile_hash_actual -needs approach_path \
     -message {Approach profile_hash does not match profile file (re-approach required)} \
     -groups {approach}
 
+# missing_fact_provenance / blank_a_note: authoring-presence pair, gated
+# to files with no sends at all (_file_unsent; sent history is never
+# re-judged). Warning, not error: hundreds of pre-convention drafts sit
+# unsent in old campaigns and cannot be truthfully backfilled, so an
+# error here would flood the report; a fresh authoring miss still
+# surfaces. HOST PREDICATE because the gate spans the rounds list while
+# the checked keys sit at root.
+rule predicate root unsent_final_requires -severity warning \
+    -code missing_fact_provenance \
+    -message {Approach has an unsent final round but no fact_provenance} \
+    -groups {approach}
+
+# missing_chosen_usps: in a file with no sends, every draft/final round
+# names its USPs. HOST PREDICATE, same file-level gate; root because the
+# gate spans every round's messages.
+rule predicate root chosen_usps_presence -severity warning \
+    -code missing_chosen_usps \
+    -message {Unsent round has no chosen_usps} \
+    -groups {approach}
+
 # ── DECISIONS level ─────────────────────────────────────────────────────
 rule vocab decisions -groups {approach}
 
@@ -164,6 +184,13 @@ rule atmost round messages 1 -where {channel email} -when {type final} \
 
 # ── MESSAGE level rules ─────────────────────────────────────────────────
 rule vocab message -groups {approach}
+
+# linkedin_mode_unknown: mode, when present on a linkedin message, is
+# invite or dm. oneof skips an absent key (the dispatcher infers invite).
+rule oneof message mode {invite dm} -when {channel linkedin} \
+    -code linkedin_mode_unknown \
+    -message {LinkedIn message mode '%v' is not one of invite, dm} \
+    -groups {approach}
 
 # email_missing_content (reply variant): legacy 248-251. Existence only
 # (body value is blanked in the projection, but the KEY is preserved).

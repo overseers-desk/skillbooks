@@ -1220,14 +1220,20 @@ assert_eq [has_issue $issues_mf too_many_final_emails] 0 \
 set issues_valid [va_issues {
 decisions:
   channel: email
+a_note: valid-approach note
+fact_provenance:
+  - claim: greeting
+    source: profile
 rounds:
   - type: draft
     number: 1
+    chosen_usps: [U1]
     messages:
       - channel: email
         subject: Draft subject
         body: Draft body
   - type: final
+    chosen_usps: [U1]
     messages:
       - channel: email
         subject: Final subject

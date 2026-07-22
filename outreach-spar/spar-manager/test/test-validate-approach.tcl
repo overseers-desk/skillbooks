@@ -833,4 +833,92 @@ set li11_issues [spar::validate_approach $li11_path "" "LI FinalBad"]
 assert_eq [has_issue $li11_issues linkedin_note_too_long] 1 \
     "validate_approach: identical message in unsent final → linkedin_note_too_long"
 
+# ════════════════════════════════════════════════════════════════════════
+# 28. Authoring-presence warnings (chosen_usps, fact_provenance, a_note)
+# ════════════════════════════════════════════════════════════════════════
+section "28. authoring-presence warnings on unsent files"
+
+# Bare unsent final round: all three presence warnings fire.
+set seg_ap1 [make_temp_segment]
+set ap1_path [write_approach_yaml $seg_ap1 "ap-bare" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: S
+    body: B
+    actioned_date: null
+    replied_date: null
+}]
+set ap1_issues [spar::validate_approach $ap1_path "test@acme-venues.au" "AP Bare"]
+assert_eq [has_issue $ap1_issues missing_chosen_usps] 1 \
+    "unsent final without chosen_usps → missing_chosen_usps"
+assert_eq [has_issue $ap1_issues missing_fact_provenance] 1 \
+    "unsent final without fact_provenance → missing_fact_provenance"
+assert_eq [has_issue $ap1_issues blank_a_note] 1 \
+    "unsent final without a_note → blank_a_note"
+assert_eq [dict get [lindex [issues_with_code $ap1_issues missing_chosen_usps] 0] severity] warning \
+    "presence findings are warnings, not errors"
+
+# Same shape but the final message was sent: the file is history, nothing fires.
+set seg_ap2 [make_temp_segment]
+set ap2_path [write_approach_yaml $seg_ap2 "ap-sent" {decisions:
+  channel: email
+rounds:
+- type: draft
+  number: 1
+  notes: early draft, pre-convention
+- type: final
+  number: 2
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: S
+    body: B
+    actioned_date: 2026-04-01
+    replied_date: null
+}]
+set ap2_issues [spar::validate_approach $ap2_path "test@acme-venues.au" "AP Sent"]
+assert_eq [has_issue $ap2_issues missing_chosen_usps] 0 \
+    "sent file → no missing_chosen_usps on its old draft rounds"
+assert_eq [has_issue $ap2_issues missing_fact_provenance] 0 \
+    "sent file → no missing_fact_provenance"
+assert_eq [has_issue $ap2_issues blank_a_note] 0 \
+    "sent file → no blank_a_note"
+
+# The enriched standard fixture passes clean (presence satisfied).
+set seg_ap3 [make_temp_segment]
+set ap3_path [write_approach_yaml $seg_ap3 "ap-ok" [approach_yaml_final_unsent]]
+set ap3_issues [spar::validate_approach $ap3_path "test@acme-venues.au" "AP OK"]
+assert_eq [llength $ap3_issues] 0 "unsent file with all three present → clean"
+
+# ════════════════════════════════════════════════════════════════════════
+# 29. linkedin_mode_unknown (mode vocabulary)
+# ════════════════════════════════════════════════════════════════════════
+section "29. linkedin mode vocabulary"
+
+set seg_lm1 [make_temp_segment]
+set lm1_path [write_approach_yaml $seg_lm1 "lm-bad" \
+    [li_approach_yaml "short note" "mode: broadcast"]]
+set lm1_issues [spar::validate_approach $lm1_path "" "LM Bad"]
+assert_eq [has_issue $lm1_issues linkedin_mode_unknown] 1 \
+    "mode: broadcast → linkedin_mode_unknown"
+
+set seg_lm2 [make_temp_segment]
+set lm2_path [write_approach_yaml $seg_lm2 "lm-ok" \
+    [li_approach_yaml "short note" "mode: invite"]]
+set lm2_issues [spar::validate_approach $lm2_path "" "LM OK"]
+assert_eq [has_issue $lm2_issues linkedin_mode_unknown] 0 \
+    "mode: invite → no linkedin_mode_unknown"
+
+set seg_lm3 [make_temp_segment]
+set lm3_path [write_approach_yaml $seg_lm3 "lm-absent" \
+    [li_approach_yaml "short note"]]
+set lm3_issues [spar::validate_approach $lm3_path "" "LM Absent"]
+assert_eq [has_issue $lm3_issues linkedin_mode_unknown] 0 \
+    "absent mode → no linkedin_mode_unknown (dispatcher infers invite)"
+
 finish_tests

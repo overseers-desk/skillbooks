@@ -93,6 +93,8 @@ proc spar::_yamlmuster_approach {} {
     $inst predicate rounds_structural           ::spar::_pred_rounds_structural
     $inst predicate placeholder_to              ::spar::_pred_placeholder_to
     $inst predicate linkedin_guard              ::spar::_pred_linkedin_guard
+    $inst predicate chosen_usps_presence        ::spar::_pred_chosen_usps_presence
+    $inst predicate unsent_final_requires       ::spar::_pred_unsent_final_requires
     $inst predicate first_line_is_profile_hash  ::spar::_pred_first_line_is_profile_hash
     $inst predicate profile_hash_actual         ::spar::_pred_profile_hash_actual
     spar::_yamlmuster_load $inst approach.rules approach
@@ -245,6 +247,79 @@ proc spar::_pred_linkedin_guard {node meta} {
             lappend out [dict create code linkedin_note_too_long \
                 message "LinkedIn note is $li_len chars, limit 300; shorten it. The first touch is a connection invite, not a DM, so a long body cannot be rerouted through mode: dm"]
         }
+    }
+    return $out
+}
+
+# _round_unsent -- 1 iff no message in the round carries a non-null
+# actioned_date. The pre-send-only gate the authoring-presence rules
+# share with linkedin_guard: sent history is a record, only unsent work
+# is held to the current authoring bar.
+proc spar::_round_unsent {round} {
+    if {[dict exists $round messages]} {
+        foreach msg [dict get $round messages] {
+            if {![spar::is_null [dict getdef $msg actioned_date ""]]} {
+                return 0
+            }
+        }
+    }
+    return 1
+}
+
+# _file_unsent -- 1 iff no message in any round of the file carries a
+# non-null actioned_date. The authoring-presence rules gate on the whole
+# file, not the round: once anything has gone out, the file is history
+# (early rounds of a sent file often predate the current authoring
+# vocabulary), and only a file with no sends at all is still authoring-
+# stage work the current bar applies to.
+proc spar::_file_unsent {node} {
+    if {![dict exists $node rounds]} { return 1 }
+    foreach r [dict get $node rounds] {
+        if {![spar::_round_unsent $r]} { return 0 }
+    }
+    return 1
+}
+
+# chosen_usps_presence -- in a file with no sends, every draft and final
+# round names the USPs it leads with. Root predicate: the gate spans
+# every round's messages.
+proc spar::_pred_chosen_usps_presence {node meta} {
+    if {![dict exists $node rounds]} { return {} }
+    if {![spar::_file_unsent $node]} { return {} }
+    set out {}
+    foreach r [dict get $node rounds] {
+        set type [dict getdef $r type ""]
+        if {$type ni {draft final}} { continue }
+        set cu [dict getdef $r chosen_usps {}]
+        if {[catch {llength $cu} n]} { continue }
+        if {$n > 0} { continue }
+        lappend out [dict create code missing_chosen_usps             message "Unsent $type round has no chosen_usps — name the USPs the draft leads with (spar-A-approach.md §6)"]
+    }
+    return $out
+}
+
+# unsent_final_requires -- a file with a final round and no sends is
+# still authoring-stage, so fact_provenance and a_note must be there.
+# Root predicate: the gate spans rounds and the checked keys are roots.
+proc spar::_pred_unsent_final_requires {node meta} {
+    if {![dict exists $node rounds]} { return {} }
+    if {![spar::_file_unsent $node]} { return {} }
+    set gate 0
+    foreach r [dict get $node rounds] {
+        if {[dict getdef $r type ""] eq "final"} {
+            set gate 1
+            break
+        }
+    }
+    if {!$gate} { return {} }
+    set out {}
+    set fp [dict getdef $node fact_provenance {}]
+    if {[catch {llength $fp} n]} { set n 1 }
+    if {$n == 0} {
+        lappend out [dict create code missing_fact_provenance             message "Approach has an unsent final round but no fact_provenance — record the source of every factual claim (spar-A-approach.md §6)"]
+    }
+    if {[string trim [dict getdef $node a_note ""]] eq ""} {
+        lappend out [dict create code blank_a_note             message "Approach has an unsent final round but no a_note"]
     }
     return $out
 }
