@@ -43,7 +43,6 @@ An instance is ready to stamp when the validator reports **zero errors**. If it 
 |---|---|---|
 | `invalid_yaml` | Approach file does not parse. The common signature is truncation at the final `a_note:` field (an unterminated quoted scalar, file ends mid-line), left by an A-phase write that was cut off. | Check whether the contact's approach has a sent or replied message. If it has (real conversation to preserve), repair the YAML by hand. If it has no sent message, delete the file and regenerate the draft by re-running the A-phase on that contact (the contact reverts to `PROFILED`, so the Profile→Approach transition redrafts it). |
 | `roster_duplicate_name_org` | The same `(contact_name, organisation)` pair appears on two rows in one segment. | Merge or remove the duplicate row. Keep the row carrying the richer profile/approach; move any unique channel data onto it. |
-| `profile_unreachable_without_exclusion` | A profiled contact has no email, LinkedIn, Facebook, or phone, and is not excluded. | Add a channel if one exists, or set `date_excluded` with a reason in the note column. |
 | `invalid_star_rating` | The profile front matter carries a star value outside 0–5 or non-integer. | Correct the front-matter value to match `spar-roster-format.md`. |
 | `masked_email` | A roster email contains `*` (redacted). | Replace with the real address or clear the field. |
 

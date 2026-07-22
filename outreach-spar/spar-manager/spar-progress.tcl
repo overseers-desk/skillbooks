@@ -73,7 +73,7 @@ foreach item $segment_paths {
         continue
     }
     lappend all_contacts {*}$classified
-    lappend segment_counts [list $label [spar::progress_counts $classified]]
+    lappend segment_counts [list $label [spar::progress_counts $classified $cdata]]
 }
 
 # --- JSON mode ---
@@ -87,6 +87,7 @@ if {$json_mode} {
             profiled  $profiled \
             qualified [::json::write object \
                 count      $star3 \
+                approachable $approachable \
                 approached $approached_star3 \
                 sent       $sent \
                 replied    $replied \
@@ -133,8 +134,8 @@ if {$json_mode} {
         lassign $item label counts
         lappend seg_results [dict create name $label active 1 counts $counts]
     }
-    set totals [dict create valid 0 profiled 0 star3 0 approached_star3 0 \
-        has_email 0 has_linkedin 0 has_facebook 0 \
+    set totals [dict create valid 0 profiled 0 star3 0 approachable 0 \
+        approached_star3 0 has_email 0 has_linkedin 0 has_facebook 0 \
         has_phone_only 0 sent 0 replied 0]
     foreach seg_info $seg_results {
         set sc [dict get $seg_info counts]
@@ -170,7 +171,7 @@ proc fmt_cell {count denom} {
     }
 }
 
-set headers {Segment Valid Profile "3+★ " "A/3+★ " Email LinkedIn Facebook "Only ☎ " Sent Repl}
+set headers {Segment Valid Profile "3+★ " Reach "A/Reach " Email LinkedIn Facebook "Only ☎ " Sent Repl}
 
 # Compute column widths
 set ncols [llength $headers]
@@ -183,7 +184,7 @@ for {set i 0} {$i < $ncols} {incr i} {
 set data_rows {}
 
 # Grand totals
-set gt_v 0; set gt_p 0; set gt_s 0; set gt_a 0; set gt_e 0
+set gt_v 0; set gt_p 0; set gt_s 0; set gt_re 0; set gt_a 0; set gt_e 0
 set gt_l 0; set gt_f 0; set gt_po 0; set gt_es 0; set gt_r 0
 
 foreach item $segment_counts {
@@ -191,6 +192,7 @@ foreach item $segment_counts {
     set v [dict get $counts valid]
     set p [dict get $counts profiled]
     set s [dict get $counts star3]
+    set re [dict get $counts approachable]
     set a [dict get $counts approached_star3]
     set e [dict get $counts has_email]
     set l [dict get $counts has_linkedin]
@@ -200,19 +202,20 @@ foreach item $segment_counts {
     set r [dict get $counts replied]
 
     set row [list $label $v \
-        [fmt_cell $p $v] [fmt_cell $s $v] [fmt_cell $a $s] \
+        [fmt_cell $p $v] [fmt_cell $s $v] [fmt_cell $re $s] [fmt_cell $a $re] \
         [fmt_cell $e $s] [fmt_cell $l $s] [fmt_cell $f $s] \
         [fmt_cell $po $s] [fmt_cell $es $a] [fmt_cell $r $es]]
     lappend data_rows $row
 
-    incr gt_v $v; incr gt_p $p; incr gt_s $s; incr gt_a $a
+    incr gt_v $v; incr gt_p $p; incr gt_s $s; incr gt_re $re; incr gt_a $a
     incr gt_e $e; incr gt_l $l; incr gt_f $f
     incr gt_po $po; incr gt_es $es; incr gt_r $r
 }
 
 # TOTAL row
 set total_row [list TOTAL $gt_v \
-    [fmt_cell $gt_p $gt_v] [fmt_cell $gt_s $gt_v] [fmt_cell $gt_a $gt_s] \
+    [fmt_cell $gt_p $gt_v] [fmt_cell $gt_s $gt_v] [fmt_cell $gt_re $gt_s] \
+    [fmt_cell $gt_a $gt_re] \
     [fmt_cell $gt_e $gt_s] [fmt_cell $gt_l $gt_s] [fmt_cell $gt_f $gt_s] \
     [fmt_cell $gt_po $gt_s] [fmt_cell $gt_es $gt_a] [fmt_cell $gt_r $gt_es]]
 lappend data_rows $total_row
@@ -275,14 +278,18 @@ if {$show_legend} {
     puts "\nColumn legend  (each cell is a count; the % is the share of the denominator named)"
     puts "  Valid     Contacts not excluded. Denominator for Profile and 3+★."
     puts "  Profile   Profiled or beyond, as % of Valid."
-    puts "  3+★       Rated 3 stars or higher — the qualified pool. Denominator for A/3+★,"
+    puts "  3+★       Rated 3 stars or higher — the qualified pool. Denominator for Reach,"
     puts "            Email, LinkedIn, Facebook and Only ☎."
-    puts "  A/3+★     Approached, as % of 3+★."
+    puts "  Reach     Approachable: 3+★ holding at least one channel the campaign declares,"
+    puts "            as % of 3+★. The gap to 3+★ is the no-channel backlog — recorded"
+    puts "            reality, not an error; those contacts sit outside every denominator"
+    puts "            below until a channel is found."
+    puts "  A/Reach   Approached, as % of Reach — 100% means everyone approachable was."
     puts "  Email     Has an email address, as % of 3+★."
     puts "  LinkedIn  Has a LinkedIn profile, as % of 3+★."
     puts "  Facebook  Has a Facebook profile, as % of 3+★."
     puts "  Only ☎    Reachable by phone only (no email or social), as % of 3+★."
-    puts "  Sent      Sent on any channel (state SENT or beyond), as % of A/3+★."
+    puts "  Sent      Sent on any channel (state SENT or beyond), as % of A/Reach."
     puts "  Repl      Replied on any channel; the % is the REPLY RATE = replies ÷ sent."
     puts "            This is the campaign's key conversion metric."
 } else {

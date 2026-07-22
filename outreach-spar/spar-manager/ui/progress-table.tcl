@@ -42,7 +42,8 @@ oo::class create spar::ui::ProgressTable {
             valid    "Valid"       e
             profiled "Profile"     e
             star3    "3+★"    e
-            astar    "A/3+★"  e
+            reach    "Reach"       e
+            astar    "A/Reach" e
             email    "Email"       e
             linkedin "LinkedIn"    e
             facebook "Facebook"    e
@@ -59,7 +60,8 @@ oo::class create spar::ui::ProgressTable {
             valid    {}
             profiled valid
             star3    valid
-            astar    star3
+            reach    star3
+            astar    reach
             email    star3
             linkedin star3
             facebook star3
@@ -74,6 +76,7 @@ oo::class create spar::ui::ProgressTable {
         # Column ID -> progress_counts dict key.
         set ColCountKeys [dict create \
             valid valid  profiled profiled  star3 star3 \
+            reach approachable \
             astar approached_star3  email has_email \
             linkedin has_linkedin  facebook has_facebook  phone has_phone_only \
             sent sent  repl replied]
