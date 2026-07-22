@@ -1,12 +1,12 @@
 ---
 name: densify
-description: Shrink a verbose text so that every specific (dates, numbers, names, commands, caveats) survives, verified by a cold reader in a fresh context rather than by the author's feel. Triggers: densify, densify this document.
+description: Shrink a verbose text that has to keep doing its job: every specific (dates, numbers, names, commands, caveats) survives, gated by a cold reader in a fresh context rather than the author's feel. The result replaces the original where it stands; summarising, which describes a text for a reader instead ("David Jones" becoming "a man"), is the other job. Triggers: densify, densify this document.
 argument-hint: "[file or text to densify]"
 ---
 
 # Densify
 
-Densification shrinks a text while keeping every concrete specific and epistemic marker; the office methodology's Densify rule sets the standard, this skill is the method. The author's own judgment of the result is contaminated: a verifier that already knows what every fragment means reads nothing as lost or too tight. Verification therefore leaves the session: a cold reader and a differ, in fresh contexts, gate every round.
+Densification shrinks a text while keeping every concrete specific and epistemic marker; the office methodology's Densify rule sets the standard, this skill is the method. The output goes back where the input came from and carries the same load, so a result a reader consumes in place of the text, whatever its fidelity, is a summary and a failed run. The author's own judgment of the result is contaminated: a verifier that already knows what every fragment means reads nothing as lost or too tight. Verification therefore leaves the session: a cold reader and a differ, in fresh contexts, gate every round.
 
 Before round 1, obtain the purpose line: one owner-stated sentence naming what the text exists to make its reader do, and what the enemy is. It steers the triage, and what it omits the triage forgives, so anything mandatory belongs in it. The owner supplies it; failing that, derive it from context and show it with the delivery so the owner can correct it.
 
