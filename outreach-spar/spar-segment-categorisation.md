@@ -6,7 +6,7 @@
 
 ## 1. What a segment is
 
-A segment is one directory containing one roster, one segment file, one set of profiles, and one set of approach files. The progress script discovers segments by scanning for `roster.tsv` files. Each segment appears as one row in the progress report. A segment is the unit of pipeline management: it has its own S&P iterations, its own approach sequencing, and its own summary file.
+A segment is one `segments/` entry: the folder of profiles plus its dotted stem siblings, the roster (`segments/{segment}.tsv`) and the segment definition (`segments/{segment}.yaml`); see `spar-campaign-directory.md`. The progress script processes the segments a campaign names in its `segments:` map. Each segment appears as one row in the progress report. A segment is the unit of pipeline management: it has its own S&P iterations, its own approach sequencing, and its own summary file.
 
 The segment structure is a design decision made at campaign planning time. It can be revised during the campaign when evidence shows the initial structure is wrong — but revising it mid-campaign means moving files, merging rosters, and rewriting segment files, so the cost of getting it wrong is real.
 

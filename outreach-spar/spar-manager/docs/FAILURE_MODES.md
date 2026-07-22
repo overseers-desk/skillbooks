@@ -139,7 +139,7 @@ parallel session, a manual command, or an automation on the same checkout.
 
 Nothing in spar-manager code can prevent this, but it carries a real risk: a concurrent
 `git reset --hard` discards uncommitted working-tree edits, which is exactly what a run is
-producing (roster.tsv, profile files). Do not commit or reset the campaign repo while a run is
+producing (the segment roster, profile files). Do not commit or reset the campaign repo while a run is
 active. Observed in the 2026-06-14 run as HEAD moving forward then back; it also fed the agent
 loop in FM-AGENT-1 (the worker saw a confusing git state and chased it). Filed then closed as
 not-a-code-bug: #137.

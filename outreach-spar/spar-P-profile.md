@@ -10,7 +10,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 ## 2. Inputs
 
 - **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, segment, discovered_via). If the roster entry has no `contact_name`, resolving one is the first task of this phase — see §4.1. Entries with a blank `contact_name` are P-phase leads, not invalid data.
-- **Segment file:** The file (typically `segment.yaml`) that defines the segment's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
+- **Segment file:** The segment definition (`segments/{segment}.yaml`) that defines the segment's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
 - **Rating rubric (in the segment file):** the segment's `rating_rubric` defines what "valuable to us" means for this population, campaign-independent. It is the standing standard you judge the contact against. You are not given the campaign's ask, pitch, or USP, nor any campaign overview document; the profile is reused across campaigns and over time, so that knowledge belongs to the approach phase (INVARIANTS.md I1).
 - **LinkedIn lookup method:** Use the LinkedIn skill or MCP available in your environment. Read its documentation before the first fetch in a session — it specifies sequencing constraints and any parsing scripts.
 
@@ -372,7 +372,7 @@ Per §4.2 and §4.13, a contact excluded during profiling receives a short profi
 
 ### 5.5 Qualification-only profiles
 
-When the segment's `segment.yaml` declares `target_type: qualification-only` (see `segment-schema.yaml`), the population qualifies by role and geography or sector, usually from a register, and the pitch varies little between members. The profile's job shrinks to four outcomes:
+When the segment definition declares `target_type: qualification-only` (see `segment-schema.yaml`), the population qualifies by role and geography or sector, usually from a register, and the pitch varies little between members. The profile's job shrinks to four outcomes:
 
 1. The current buyer-role holder's name (§4.1), or, where the name search is exhausted, the organisation's published office channel (§4.1's organisation-segment rule).
 2. A verified written channel, backfilled to the roster (§4.15).

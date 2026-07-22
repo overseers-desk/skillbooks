@@ -86,7 +86,7 @@ venue:
 
 ## Per-segment plan block
 
-`segments` is a map from segment name to that segment's plan. The plan is the campaign×segment intersection: what *this* campaign aims to do with the contacts in that segment, and how. It is campaign-bound, which is why it lives here and not in `segment.yaml` (the segment file holds only the campaign-independent population definition — discovery criteria, scope, rating rubric; see `segment-schema.yaml` and `spar-campaign-directory.md`).
+`segments` is a map from segment name to that segment's plan. The plan is the campaign×segment intersection: what *this* campaign aims to do with the contacts in that segment, and how. It is campaign-bound, which is why it lives here and not in the segment definition (which holds only the campaign-independent population definition — discovery criteria, scope, rating rubric; see `segment-schema.yaml` and `spar-campaign-directory.md`).
 
 Each plan block may carry:
 
