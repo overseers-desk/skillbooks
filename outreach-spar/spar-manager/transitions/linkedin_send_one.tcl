@@ -22,16 +22,15 @@
 #                  in). The dispatcher passes the pool's phase verb, so
 #                  the row says what it is waiting on.
 #
-# Skill selection: the final linkedin message's `mode` key picks the
-# primitive (invite → linkedin.com/send-invite, dm →
-# linkedin.com/send-message). Absent mode falls back to invite when the
-# text fits LinkedIn's 300-char connection-note limit, else dm.
+# Skill selection: an invitation with the text as its note by default;
+# invitation_unavailable: true routes to a direct Message
+# (linkedin.com/send-invite vs linkedin.com/send-message).
 #
 # Returns one of:
 #   {ok sent}        — the primitive confirmed the send; actioned_date
 #                      stamped on the linkedin message
-#   {ok "<mode>, <N> chars"} — dry run: validated only, nothing sent,
-#                      nothing stamped; detail names the mode and the
+#   {ok "<invitation|message>, <N> chars"} — dry run: validated only, nothing sent,
+#                      nothing stamped; detail names the route and the
 #                      message length (e.g. "invite, 264 chars")
 #   {error <reason>} — probe/read/build/run failure, or a primitive
 #                      status of error/failed/uncertain. uncertain is
@@ -162,23 +161,23 @@ proc ::spar::li::send_one {opts} {
         return [list error "cannot extract vanity name from linkedin_url: '$linkedin_url'"]
     }
 
-    # invite vs dm: the draft's mode key decides; absent, a text within
-    # the 300-char note limit reads as a connection invite.
-    set mode [dict getdef $msg mode ""]
-    if {$mode eq ""} {
-        set mode [expr {[string length $text] <= 300 ? "invite" : "dm"}]
-    }
-    switch -- $mode {
-        invite  { set skill_ref "linkedin.com/send-invite" }
-        dm      { set skill_ref "linkedin.com/send-message" }
-        default { return [list error "unknown linkedin message mode '$mode' (expect invite|dm)"] }
-    }
-    if {$mode eq "invite" && [string length $text] > 300} {
-        return [list error "invite note is [string length $text] chars; LinkedIn limit is 300"]
+    # The first touch is a connection invitation with the text as its
+    # note. invitation_unavailable: true records that this profile offers
+    # no note box (follow-first profile, invitation limit), and the text
+    # goes out as a direct Message instead.
+    if {[string is true -strict [dict getdef $msg invitation_unavailable 0]]} {
+        set send_as "message"
+        set skill_ref "linkedin.com/send-message"
+    } else {
+        set send_as "invitation"
+        set skill_ref "linkedin.com/send-invite"
+        if {[string length $text] > 300} {
+            return [list error "invite note is [string length $text] chars; LinkedIn limit is 300"]
+        }
     }
 
     if {$dry_run} {
-        return [list ok "$mode, [string length $text] chars"]
+        return [list ok "$send_as, [string length $text] chars"]
     }
 
     # Fail-fast probe: the overseer must be present and healthy.

@@ -593,7 +593,7 @@ proc spar::_project_round {round} {
 
 # _project_message -- preserve key skeleton, blank the heavy text
 # values (body, reply_summary, script[*]/text). channel/subject/to/
-# actioned_date/replied_date/mode/parent are read by render-path
+# actioned_date/replied_date/invitation_unavailable/parent are read by render-path
 # consumers and pass through unchanged. Exception: linkedin bodies are
 # kept — they are ≤ a few hundred chars and the validator's length
 # check (#159) measures them on this projection; blanking would let an

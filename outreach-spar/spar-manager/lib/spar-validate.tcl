@@ -229,7 +229,7 @@ proc spar::_pred_placeholder_to {node meta} {
 # round's messages: the 300-char invite bound, measured on the text the
 # dispatcher sends. A round predicate (gated -when {type final}) because it
 # needs the round type and iterates the round's linkedin messages, with a
-# text/body fallback and mode gate the length kind cannot express.
+# text/body fallback the length kind cannot express.
 proc spar::_pred_linkedin_guard {node meta} {
     set out {}
     if {![dict exists $node messages]} { return $out }
@@ -239,13 +239,13 @@ proc spar::_pred_linkedin_guard {node meta} {
         set li_text [string trim [dict getdef $msg text ""]]
         if {$li_text eq ""} { set li_text [string trim [dict getdef $msg body ""]] }
         set li_len  [string length $li_text]
-        # The 300-char cap is measured on every LinkedIn message regardless of
-        # mode. A LinkedIn first touch is a connection invite; mode: dm is not a
-        # way to carry a longer note past this bound, since a DM first touch is
-        # near-universally ignored (see spar-A-approach.md, the mode entry).
+        # The 300-char cap is measured on every LinkedIn message, whether it
+        # goes out as an invitation note or (invitation_unavailable) a direct
+        # Message: a longer body is an authoring error to shorten (see
+        # spar-A-approach.md, the invitation_unavailable entry).
         if {$li_len > 300} {
             lappend out [dict create code linkedin_note_too_long \
-                message "LinkedIn note is $li_len chars, limit 300; shorten it. The first touch is a connection invite, not a DM, so a long body cannot be rerouted through mode: dm"]
+                message "LinkedIn note is $li_len chars, limit 300; shorten it. The cap binds every LinkedIn message, invitation or direct"]
         }
     }
     return $out

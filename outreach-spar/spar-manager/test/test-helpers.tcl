@@ -304,7 +304,6 @@ rounds:
   number: 1
   messages:
   - channel: linkedin
-    mode: invite
     text: Hi, I would like to connect
     actioned_date: null
     replied_date: null

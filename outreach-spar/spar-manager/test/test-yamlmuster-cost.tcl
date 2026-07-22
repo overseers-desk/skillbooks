@@ -16,7 +16,7 @@ source [file join $script_dir .. lib spar-state.tcl]
 source [file join $script_dir test-helpers.tcl]
 
 # Error-tagged approach-rule count, pinned from rules/approach.rules. The
-# ruleset compiles to 23 rules; 6 are warning-declared, leaving 17 error rules:
+# ruleset compiles to 21 rules; 5 are warning-declared, leaving 16 error rules:
 #
 #   error   vocab root, decisions, round, message, parent,            (8)
 #           fact_check_item, fact_provenance_item, script_item
@@ -26,18 +26,17 @@ source [file join $script_dir test-helpers.tcl]
 #   error   predicate first_line_is_profile_hash (-needs approach_path) (1)
 #   error   predicate profile_hash_actual        (-needs approach_path) (1)
 #   error   predicate linkedin_guard                                  (1)
-#   error   oneof linkedin_mode_unknown                               (1)
 #   error   atmost too_many_final_emails                              (1)
-#   error   require reply_missing_parent_message_id                   (1)
-#   ------------------------------------------------------------------ 17
-#   warning require draft_missing_number, review_missing_number,      (4)
-#           require email_missing_content (reply + non-reply variants)
+#   error   require reply_missing_parent_message_id (parent level)    (1)
+#   ------------------------------------------------------------------ 16
+#   warning require draft_missing_number, review_missing_number,      (3)
+#           require email_missing_content
 #   warning predicate unsent_final_requires, chosen_usps_presence     (2)
 #
 # The gate passes approach_path, so both -needs-gated hash predicates select;
-# rules_selected below asserts the 17 back from the engine, failing loudly if
+# rules_selected below asserts the 16 back from the engine, failing loudly if
 # the ruleset's error count ever drifts from this pin.
-set ERROR_RULES 17
+set ERROR_RULES 16
 
 # ════════════════════════════════════════════════════════════════════════
 # 1. Clean fixture: the gate returns no error and evaluates no warning rule.
