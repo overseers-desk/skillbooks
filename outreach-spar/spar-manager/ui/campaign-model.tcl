@@ -233,7 +233,7 @@ oo::class create spar::ui::CampaignModel {
             }
         }
 
-        # Discover segments — the same walk resolve_campaign does, kept
+        # Discover segments: the same walk resolve_campaign does, kept
         # local because the model already holds Cdata and reports per-
         # segment load errors instead of failing the campaign load.
         set SegmentOrder {}

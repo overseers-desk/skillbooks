@@ -312,7 +312,7 @@ proc spar::resolve_campaign {campaign_file campaign_dir} {
         min_star $min_star primary_channel $primary_channel]
 }
 
-# instance_root_for_yaml — the instance root of a campaign YAML at
+# instance_root_for_yaml: the instance root of a campaign YAML at
 # <root>/campaigns/<camp>.yaml. Errors when the YAML does not sit in a
 # campaigns/ folder, which is the spec-2.0 shape the tool supports.
 proc spar::instance_root_for_yaml {yaml_path} {
@@ -929,7 +929,7 @@ proc spar::log_row_outcome {slug status message {dry_run 0}} {
 # side by side (segments/<seg>.yaml + segments/<seg>/, campaigns/<camp>.yaml
 # + campaigns/<camp>/).
 #
-# segment_dir is segments/<seg> — the folder holding profile files directly
+# segment_dir is segments/<seg>, the folder holding profile files directly
 # (no profiles/ wrapper). The roster and segment definition are its dotted
 # stem siblings.
 proc spar::profile_dir_for_segment {segment_dir} {
