@@ -4,7 +4,7 @@
 
 ## Location
 
-One file per campaign, in the campaign root directory. Named `campaign.yaml` or `campaign-{date}.yaml` (e.g. `campaign-2026-04.yaml`). One campaign in business terms means one YAML file — do not create variants or copies to change filter settings. Edit the existing file instead.
+One file per campaign, at `campaigns/{campaign}.yaml` in the instance root (`spar-campaign-directory.md`), paired with the same-stem approach folder `campaigns/{campaign}/`. One campaign in business terms means one YAML file — do not create variants or copies to change filter settings. Edit the existing file instead.
 
 ## Fields
 
@@ -12,14 +12,14 @@ One file per campaign, in the campaign root directory. Named `campaign.yaml` or 
 
 | Field | Type | Purpose |
 |---|---|---|
-| `version` | string | SPAR spec generation this file conforms to. Current value: `"1.0"`. Required for files authored under spec 1.0 or later. A file with no `version` is treated as legacy/unstamped (a warning, not a failure). The tool refuses to process a campaign whose `version` it does not support. See `spar-methodology.md`, "Versioning". |
+| `version` | string | SPAR spec generation this file conforms to. Current value: `"2.0"`. Required for files authored under spec 1.0 or later. A file with no `version` is treated as legacy/unstamped (a warning, not a failure). The tool refuses to process a campaign whose `version` it does not support. See `spar-methodology.md`, "Versioning". |
 | `campaign` | string | Display name (appears in script output and logs) |
 | `sender.name` | string | Sender's display name for outgoing messages |
 | `sender.role` | string | Sender's role title |
 | `sender.email` | string | Sender's email address (used as From: address) |
 | `usp_document` | path | Path to the organisation overview / USP document. Relative to the YAML file's directory. This is the ground truth about the organisation that A1 reads before drafting. |
 | `language` | string | Language code: `en-gb`, `en-au`, `en`, or a BCP-47 code |
-| `segments` | map | Maps each segment directory name this campaign operates over to that segment's **plan block** (the campaign×segment intersection: objective, USP framings, message_goal, first_ask, ask_stance, conversion_funnel, approach_sequencing). See "Per-segment plan block" below. Names resolve to sibling directories of this YAML file (path resolution is relative to the YAML's directory). The same segment name may appear under the `segments:` of more than one campaign YAML at the same level, each carrying its own plan: segments are not owned by any one campaign, and the plan changes with the campaign's ask, so it is the campaign's, not the segment's (see the invariance test in `spar-methodology.md`, "Campaigns and segments"). Use `.` for a single-segment campaign where roster and segment.yaml live in the campaign root (see `spar-campaign-directory.md`). |
+| `segments` | map | Maps each segment name this campaign operates over to that segment's **plan block** (the campaign×segment intersection: objective, USP framings, message_goal, first_ask, ask_stance, conversion_funnel, approach_sequencing). See "Per-segment plan block" below. Names resolve to `segments/{name}` in the instance root (`spar-campaign-directory.md`). The same segment name may appear under the `segments:` of more than one campaign YAML in the instance, each carrying its own plan: segments are not owned by any one campaign, and the plan changes with the campaign's ask, so it is the campaign's, not the segment's (see the invariance test in `spar-methodology.md`, "Campaigns and segments"). |
 | `usps` | map | USP registry: maps each USP identifier to its human-readable label. This is the single source of truth for USP names. A segment's plan block references USPs by `id`; the label is resolved from this registry. Registry and per-segment framing now live in the same file, so a referenced `id` always resolves. The full USP prose lives in the `usp_document`. |
 
 ### Required (channels)
@@ -73,16 +73,15 @@ venue:
 
 | Field | Type | Default | Purpose |
 |---|---|---|---|
+| `start_date` | date string | (none) | The campaign's planned first-approach date, `YYYY-MM-DD` (quote it: an unquoted YAML date is parsed to epoch seconds, which the loader normalises back, but the quoted form is what you mean). Absent means the campaign has not launched: outgoing transitions (send and follow-up T-ids) hold every dispatchable task as blocked. Present, it is a planned floor: sends before the date are blocked, so real sends land on or after it, and downstream consumers (the BI reply derivation) can key on it as the earliest possible send. The related epistemic rule: a message with no `actioned_date` has not been sent, and a campaign with no `start_date` has not launched. |
 | `sender.organisation` | string | (none) | Organisation name for prompt text (e.g. "Historic Rivermill"). When absent, prompts use the sender's name and role without an org name. |
 | `sender.bcc` | string | (none) | BCC address for outgoing emails |
 | `antifacts` | path | (none) | Path to the antifact/fact-check document. When present, the A2 challenger fact-checks the draft against this file. When absent, fact-check uses only the overview and segment file. Relative to the YAML file's directory. |
 | `campaign_principles` | path | (none) | Path to campaign-level principles document. When present, A1 reads it before drafting. When absent, A1 relies on the method document and segment file alone. Relative to the YAML file's directory. |
-| `skip_segments` | list of strings | (none) | Segment directory names to exclude from progress reporting. Useful for closed campaigns or non-standard directories that should not appear in the progress report. |
 | `ses_region` | string | `ap-southeast-2` | AWS SES region for email sending |
 | `a_max_passes` | integer | 3 | Hard ceiling on challenger passes per contact in the A phase. The effective value for each contact is `min(a_max_passes, profile-derived)`. Profile-derived comes from the profile's `yield` front-matter field: `yield >= 6` yields 3, otherwise 1 (see `spar-P-profile.md` §5.1). Must be an integer ≥ 0. A ceiling does not force passes; the challenger can still return `DONE` earlier. Quality/cost ladder: `0` disables the challenger entirely — the initial draft flows straight to assembly with no fact-check (cheapest, no adversarial review). `1` runs the challenger once; the author revises based on its feedback, but that revision is never re-validated (feedback applied, not verified). `2` re-challenges the first revision. `3` (default) allows up to two re-challenges. Note that at any `a_max_passes ≥ 1` the *last* revision is still unvalidated — there is no pass that both critiques and then re-challenges the final draft. |
 | `reply_check.courier_account` | string | (none) | Courier account name for reply detection. When present (with `reply_check.folder`), the reply checker queries this IMAP account for incoming replies and appends them to the matching approach YAML as `replies:` entries with `direction: received`. |
 | `reply_check.folder` | string | (none) | IMAP folder to search for replies (e.g. `Partnerships`). |
-| `approach_filename` | string | (none) | Legacy template for approach filenames, retained for backwards compatibility. The tooling derives approach paths from the roster `stem` (`approach/{stem}.yaml`); new campaigns omit this key. |
 | `prompt_appendices` | map | (none) | Per-agent appendix text appended verbatim to the composed prompt at dispatch time. Closed vocabulary — allowed sub-keys: `p_author`, `a_author`, `a_challenger`, `a_assembly`. Any other sub-key is rejected by the campaign loader. Each value is an inline string; empty string or missing key = no appendix. Use this slot for campaign-specific tone guidance, exclusion rules, or strategy-revision notes that must not pollute the methodology documents. |
 
 ## Per-segment plan block
@@ -116,8 +115,9 @@ Path fields (`usp_document`, `antifacts`, `campaign_principles`) are resolved re
 ## Example
 
 ```yaml
-version: "1.0"
+version: "2.0"
 campaign: 2026-04 Example Outreach (3+ star, profile required)
+start_date: "2026-04-09"
 
 sender:
   name: Example Sender

@@ -458,10 +458,6 @@ proc spar::a::_build_prompts {opts on_progress} {
     set sender_email [dict get $cdata sender email]
     set sender_org [dict getdef [dict get $cdata sender] organisation ""]
     set language [dict get $cdata language]
-    # approach_filename in campaign YAML is retained for backwards compat
-    # but no longer consulted: the authoritative slug is the roster stem,
-    # and approach files are always written to {stem}.yaml so
-    # classify_segment can find them by the same key it looks up profiles by.
     variable ::spar::dispatch_script_dir
     set script_dir $::spar::dispatch_script_dir
     set method [file normalize [file join $script_dir .. .. spar-A-approach.md]]

@@ -1,10 +1,29 @@
 # SPAR version-uplift runbook
 
-**Applies to:** bringing an existing SPAR campaign instance up to the current spec version (`1.0`), so it declares conformance and the tooling will process it. Read `spar-methodology.md` "Versioning" first for what a version number means.
+**Applies to:** bringing an existing SPAR campaign instance up to the current spec version (`2.0`), so it declares conformance and the tooling will process it. Read `spar-methodology.md` "Versioning" first for what a version number means.
 
-The procedure was distilled from uplifting the first instances that already matched the current schema. It is written to serve the harder instances that do not, without re-deriving the steps each time.
+## 1.0 → 2.0: the layout migration
 
-## The three-step procedure
+Spec 2.0 restructures the instance into `segments/` and `campaigns/` folders with campaign-keyed approach files (`spar-campaign-directory.md`). The tool supports 2.0 only, so a 1.0 instance is migrated, not merely stamped. The migration is scripted:
+
+```
+tclsh9.0 spar-manager/migrate-to-2.0.tcl <instance-root>              # dry-run plan + findings
+tclsh9.0 spar-manager/migrate-to-2.0.tcl <instance-root> --execute
+```
+
+The script plans every move (rosters and segment definitions to dotted stem siblings, profiles into the segment folder, approaches into their campaign's folder, single-campaign docs to `{campaign}.{word}.md`), rewrites the campaign YAMLs' relative path fields for the one-level-deeper location, drops the retired `skip_segments` key, and stamps `version: "2.0"`. It performs moves with `git mv` so history follows.
+
+Three situations stop it, by design:
+
+- **Ambiguous attribution** — a segment with approach files is referenced by more than one campaign. Decide which campaign engaged the segment and pass `--attribute <segment>=<campaign>`. (A campaign that never sent and drafted nothing is not a candidate.)
+- **Filename collision** — two roster rows map to one `campaigns/{campaign}/{stem}.yaml`. One campaign × one person = one approach file: judge whether the duplicate is a mis-segmentation (fix the rosters) or a genuine two-role person (keep both rows), and in both cases merge the approach drafts into one file by hand, keeping any sent/replied history, before re-running.
+- **`segments: "."`** — the 1.0 root-as-segment form. Name the segment (move the root-level roster and profiles into that name) first; 2.0 has no unnamed segment.
+
+`--start-date <campaign>=<YYYY-MM-DD>` stamps the campaign's planned first-approach date during the same pass (`spar-campaign-yaml.md`). Author it from evidence: the earliest `actioned_date` under the campaign's own approaches is the floor a launched campaign gets; a campaign that has not sent gets no `start_date` until it launches.
+
+After `--execute`, run the validator (step 1 below) and fix to zero errors.
+
+## The three-step procedure (any generation)
 
 ### 1. Validate
 
@@ -32,20 +51,7 @@ After each fix, re-run the validator until errors reach zero.
 
 ### 3. Stamp
 
-Add `version: "1.0"` as a top-level key to the `campaign.yaml` (every campaign file in the instance) and to each conforming `segment.yaml`. Insertion is mechanical and idempotent:
-
-```bash
-# segment.yaml files (key as the first line)
-for f in <campaign-root>/*/segment.yaml; do
-  grep -q '^version:' "$f" || sed -i '1i version: "1.0"' "$f"
-done
-# campaign file(s) (key just before the campaign: line)
-for f in <campaign-root>/campaign*.yaml; do
-  grep -q '^version:' "$f" || sed -i '0,/^campaign:/s//version: "1.0"\ncampaign:/' "$f"
-done
-```
-
-Re-run the validator: the `version_unstamped` warnings disappear and the run exits 0 (warnings aside). The instance is uplifted.
+`migrate-to-2.0.tcl --execute` stamps `version: "2.0"` into every campaign YAML and segment YAML it touches. For a file created after the migration, add the key by hand as the first line (segment YAML) or just above `campaign:` (campaign YAML). Re-run the validator: the `version_unstamped` warnings disappear and the run exits 0 (warnings aside). The instance is uplifted.
 
 ## Identifying an instance's generation
 
@@ -53,7 +59,8 @@ Markers, in order of appearance in the spec history, tell you how far an instanc
 
 - **Pre-model:** no `segment.yaml`, no `roster.tsv`; profiles are prose-headed markdown (no YAML front matter); a non-standard seed list (e.g. `seed-list.tsv`); segments nested inside a dated campaign directory. The validator cannot even start (no `campaign.yaml`/roster). This is a reconstruction.
 - **Early-formal:** has `segment.yaml` and front-matter profiles, but `segment.yaml` still carries the plan fields (objective, USP framings, message_goal, first_ask, conversion_funnel, approach_sequencing) that now belong in the campaign's per-segment plan block; the roster column order predates the current schema (organisation before contact_name) and may still carry the retired A/R columns (`response_likelihood`, `a_note`, `r_note`) inline; the layout may use a grouping parent (e.g. a `rosters/` wrapper) or dated campaign-segment directories. The tooling tolerates the roster (it keys by header name) and ignores the extra columns, so the roster work is dropping those three columns, and the plan work is lifting the six fields into `campaign.yaml`'s `segments:` map.
-- **Current (`1.0`):** segments and campaigns as siblings with no grouping parent; `campaign.yaml` carries per-segment plan blocks (`segments:` as a map); `segment.yaml` is population-only (`discovery_criteria`, `rating_rubric`, `scope_note`); the roster ends at `star_rating`, with A/R outputs in the approach YAML, per `spar-roster-format.md`; front-matter profiles. Uplift is stamping plus any data-integrity fixes the validator surfaces.
+- **Formal 1.0:** segments and campaign YAMLs as siblings with no grouping parent; per-segment plan blocks in the campaign YAML; population-only `segment.yaml`; the roster ends at `star_rating`; front-matter profiles; approaches under each segment's `approach/`. Uplift is the scripted 1.0 → 2.0 migration above.
+- **Current (`2.0`):** `segments/` and `campaigns/` folders with dotted stem siblings; approaches keyed by campaign (`spar-campaign-directory.md`). Uplift is stamping plus any data-integrity fixes the validator surfaces.
 
 ## Deferred hard cases
 
@@ -61,9 +68,9 @@ Markers, in order of appearance in the spec history, tell you how far an instanc
 
 Segments stored under a wrapping parent, or inside a dated campaign directory, are not addressable by bare name from a campaign YAML, so no campaign processes them. To uplift:
 
-1. Move each segment directory up to sit as a sibling of the campaign YAML.
+1. Move each segment directory up to the 1.0 sibling position (out of the wrapper or dated directory).
 2. Add its bare name (with its plan block) to the `segments:` map of the campaign that should own it (create the campaign YAML if none exists).
-3. Run the three-step procedure on the now-addressable segments.
+3. Run the 1.0 → 2.0 migration, then the three-step procedure.
 
 This is deferred from a first pass because it changes paths that downstream artefacts may reference; do it deliberately, one segment at a time, re-validating after each.
 
@@ -72,8 +79,8 @@ This is deferred from a first pass because it changes paths that downstream arte
 An instance with no `segment.yaml`, no `roster.tsv`, and prose-headed markdown profiles cannot be field-mapped to the current schema, because the identity model (the roster `stem` as primary key) and the segment model did not exist when it was authored. Bringing it forward is reconstruction:
 
 1. Build a `roster.tsv` per `spar-roster-format.md`, deriving `stem` for each contact and carrying forward name, organisation, channels, and discovery provenance from the old seed list.
-2. Convert each prose profile to a `profiles/{stem}.md` with the current YAML front matter.
-3. Create a `segment.yaml` per segment and a `campaign.yaml`, lifting segments out of the dated campaign directory into sibling position.
+2. Convert each prose profile to a `segments/{segment}/{stem}.md` with the current YAML front matter.
+3. Create a `segments/{segment}.yaml` per segment and a `campaigns/{campaign}.yaml`.
 4. Run the three-step procedure.
 
 Reconstruction is out of scope for a routine uplift; treat it as its own project.

@@ -6,7 +6,7 @@
 
 One TSV file per segment. TSV, not CSV — roster fields contain quoted speech, URLs, and free-text that cause quoting problems with commas.
 
-Every row must have a `contact_name`. A row without a named person is not a contact. Each S&P iteration updates the same file via the `sweep_iteration` column; do not create separate files per iteration. The file is named `roster.tsv` and lives inside the segment's own directory (e.g. `wedding-planner/roster.tsv`). Do not embed the segment name in the filename — the directory already carries that context.
+Every row must have a `contact_name`. A row without a named person is not a contact. Each S&P iteration updates the same file via the `sweep_iteration` column; do not create separate files per iteration. The file is `segments/{segment}.tsv`, the dotted stem sibling of the segment folder (e.g. `segments/wedding-planner.tsv`; see `spar-campaign-directory.md`).
 
 **Delimiter and line-break conventions:** Tab (`\t`) separates fields; newline (`\n`) separates rows. Neither may appear inside a field value. When a field needs to represent a line break within its content (e.g. a multi-sentence note), use carriage return (`\r`) instead of newline. Standard tools (LibreOffice, Python `csv` with `delimiter='\t'`, pandas) read `\r` inside a field without treating it as a row boundary.
 
@@ -48,12 +48,12 @@ Columns are ordered left-to-right by pipeline stage: identity, contact channels,
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
-| 1 | stem | filename stem (mandatory) | S | P, A, state machine | Unique contact ID, set at discovery. Slug form: `firstname-lastname-organisation`. Derives file paths: profile at `profiles/{stem}.md`, approach at `approach/{stem}.yaml`. Must be unique within the segment. Renaming is high-impact (see design note): the stem keys the filesystem artefacts the state machine reads, so a rename has to move `profiles/{stem}.md` and `approach/{stem}.yaml` to the new path in the same change. |
+| 1 | stem | filename stem (mandatory) | S | P, A, state machine | Unique contact ID, set at discovery. Slug form: `firstname-lastname-organisation`. Derives file paths: profile at `segments/{segment}/{stem}.md`, approach at `campaigns/{campaign}/{stem}.yaml`. Must be unique within the segment. Renaming is high-impact (see design note): the stem keys the filesystem artefacts the state machine reads, so a rename has to move the profile and every campaign's approach file to the new path in the same change. |
 | 2 | contact_name | text (mandatory) | S | P, A, R | Identity anchor — no row without this |
 | 3 | organisation | text | S; P corrects | P, A | Org at discovery time; P updates if stale |
 | 4 | role | text | S; P corrects | P, A | Title at discovery time; P updates if stale |
 
-**Design note:** `stem` is set at sweep time (not at profile creation) so that it is a stable primary key throughout the pipeline. Because `stem` exists from the moment a contact enters the roster, SPAR-P and SPAR-A do not write back to the roster to record their artefact names; they create their files at the paths derived from the pre-existing `stem` (`profiles/{stem}.md` and `approach/{stem}.yaml` respectively). Contact state is determined by file existence on disk, not by TSV field values. A rename is therefore a coordinated change across the TSV row, both file paths, and any cross-referencing notes; do it when the alternative is worse (a stem collision is the clearest case), and move all three in the same commit so the state machine sees no break.
+**Design note:** `stem` is set at sweep time (not at profile creation) so that it is a stable primary key throughout the pipeline. Because `stem` exists from the moment a contact enters the roster, SPAR-P and SPAR-A do not write back to the roster to record their artefact names; they create their files at the paths derived from the pre-existing `stem` (`segments/{segment}/{stem}.md` and `campaigns/{campaign}/{stem}.yaml` respectively). Contact state is determined by file existence on disk, not by TSV field values. A rename is therefore a coordinated change across the TSV row, both file paths, and any cross-referencing notes; do it when the alternative is worse (a stem collision is the clearest case), and move all three in the same commit so the state machine sees no break.
 
 ### Contact channels
 
@@ -96,7 +96,7 @@ Columns 13–14 are empty during S and populated by P. Empty columns are expecte
 | Phase | Full artefact | One-line note |
 |---|---|---|
 | S | Roster row (this is S's primary output) | roster `s_note`: why this person was included |
-| P | Profile document (`profiles/{stem}.md` with YAML front matter) | roster `p_note`: one-line relevance summary and routing for A |
+| P | Profile document (`segments/{segment}/{stem}.md` with YAML front matter) | roster `p_note`: one-line relevance summary and routing for A |
 | A | Approach file (`{stem}.yaml`) | approach YAML `a_note` root key: angle and outcome summary for R |
 | R | Strategy revision notes (`strategy-revision-[band].md`) | approach YAML `r_note` root key: per-contact observation from the human reviewer |
 
@@ -139,7 +139,7 @@ These assertions apply to the core columns. Campaign-specific checks are defined
 This document defines the roster schema. The operational procedures for populating it are:
 
 - **SPAR-S** (`spar-S-search.md`) — populates columns 1–12 (including `stem` at discovery)
-- **SPAR-P** (`spar-P-profile.md`) — populates columns 13–14, corrects columns 3–8 and 11; creates `profiles/{stem}.md` using the pre-existing `stem`
-- **SPAR-A** (`spar-A-approach.md`) — creates `approach/{stem}.yaml` using the pre-existing `stem`, writing `response_likelihood`, `a_note`, and the messages into it; writes to the roster only to backfill a population-tier contact detail discovered at send time (a verified email, a corrected `linkedin_url`/`facebook_url`; see §4.8)
-- **R** (human, no procedure document) — writes the `r_note` root key into `approach/{stem}.yaml`; does not write to the roster
-- **spar-state.tcl** — reads `stem` from the roster and checks for the presence of `profiles/{stem}.md` and `approach/{stem}.yaml` on disk to classify contact state; never writes to the roster
+- **SPAR-P** (`spar-P-profile.md`) — populates columns 13–14, corrects columns 3–8 and 11; creates `segments/{segment}/{stem}.md` using the pre-existing `stem`
+- **SPAR-A** (`spar-A-approach.md`) — creates `campaigns/{campaign}/{stem}.yaml` using the pre-existing `stem`, writing `response_likelihood`, `a_note`, and the messages into it; writes to the roster only to backfill a population-tier contact detail discovered at send time (a verified email, a corrected `linkedin_url`/`facebook_url`; see §4.8)
+- **R** (human, no procedure document) — writes the `r_note` root key into the campaign's approach file; does not write to the roster
+- **spar-state.tcl** — reads `stem` from the roster and checks for the presence of the profile and the campaign's approach file on disk to classify contact state; never writes to the roster
