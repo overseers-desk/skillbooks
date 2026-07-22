@@ -29,6 +29,14 @@ A skill covers only what the target site's own API or DOM can do. Rules:
 
 The Known access patterns section below is for hints when building access to a new site — not instructions for accessing any specific site. Entries are examples; they must not grow into full access guides.
 
+## Driving a page: prefer the constant action, and match by name not visible text
+
+Two ways a click-and-submit skill breaks on a machine other than the one it was written on, both avoidable while the skill is being written:
+
+- **A button's shape is presentation; the action behind it is the constant.** A site moves a control, buries it in a menu, or drops it for a keyboard affordance. It does this per redesign and per A/B rollout, so two sessions logged into the same site at the same moment can differ. Where the action has a stable trigger, reach for that first. A message composer sends on Enter, a form submits on Enter, and a trusted keypress in the focused field survives a layout the button-shape match does not. Match a button only when no such trigger exists.
+
+- **A visible text label is localized; a name is not.** A control reading "Send" reads "Enviar" for a Spanish session and "Senden" for a German one, so a match on the rendered words works on your machine and fails on the next. Prefer a stable handle over the text: a class, an aria role, a data attribute, or a form-level `type=submit`. When the visible label is the only option left, cover the locales you actually run rather than assuming English.
+
 ## How to get access to a website without the early false conclusion such as thinking a 403 response means TLS-level blocking
 
 A response code is an observation, not a diagnosis. A 403 means the server rejected the request. It does not reveal why — the cause could be a User-Agent string, a missing header, a TLS fingerprint, an unsolved JS challenge, an IP block, or something else entirely. Each cause requires a different fix, and they must be distinguished by evidence, not by inference.
