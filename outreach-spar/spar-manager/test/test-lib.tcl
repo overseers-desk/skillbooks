@@ -22,8 +22,8 @@ write_roster_tsv $seg2 $::std_headers [list \
     [make_base_row {contact_name "Alice Two" email "shared@acme-venues.au" stem ""}] \
 ]
 
-set c1 [$State refine_segment [$State classify_segment $seg1]]
-set c2 [$State refine_segment [$State classify_segment $seg2]]
+set c1 [$State refine_segment [$State classify_segment $seg1 [approach_dir_of $seg1]]]
+set c2 [$State refine_segment [$State classify_segment $seg2 [approach_dir_of $seg2]]]
 set all_contacts [concat $c1 $c2]
 set dups [spar::detect_duplicates $all_contacts]
 assert_eq [expr {[llength [dict get $dups duplicate_email]] > 0}] 1 \
@@ -35,7 +35,7 @@ write_roster_tsv $seg3 $::std_headers [list \
     [make_base_row {contact_name "Bob One" email "bob@acme-venues.au" stem ""}] \
     [make_base_row {contact_name "Bob Two" email "bob@acme-venues.au" stem ""}] \
 ]
-set c3 [$State refine_segment [$State classify_segment $seg3]]
+set c3 [$State refine_segment [$State classify_segment $seg3 [approach_dir_of $seg3]]]
 set dups3 [spar::detect_duplicates $c3]
 assert_eq [llength [dict get $dups3 duplicate_email]] 0 \
     "duplicate_email: same email within one segment → not flagged"
@@ -49,8 +49,8 @@ write_roster_tsv $seg4 $::std_headers [list \
 write_roster_tsv $seg5 $::std_headers [list \
     [make_base_row {contact_name "Diana" email "diana@acme-venues.au" stem ""}] \
 ]
-set c4 [$State refine_segment [$State classify_segment $seg4]]
-set c5 [$State refine_segment [$State classify_segment $seg5]]
+set c4 [$State refine_segment [$State classify_segment $seg4 [approach_dir_of $seg4]]]
+set c5 [$State refine_segment [$State classify_segment $seg5 [approach_dir_of $seg5]]]
 set dups45 [spar::detect_duplicates [concat $c4 $c5]]
 assert_eq [llength [dict get $dups45 duplicate_email]] 0 \
     "duplicate_email: unique emails → not flagged"
@@ -64,8 +64,8 @@ write_roster_tsv $seg6 $::std_headers [list \
 write_roster_tsv $seg7 $::std_headers [list \
     [make_base_row {contact_name "John Smith" email "john2@acme-venues.au" stem ""}] \
 ]
-set c6 [$State refine_segment [$State classify_segment $seg6]]
-set c7 [$State refine_segment [$State classify_segment $seg7]]
+set c6 [$State refine_segment [$State classify_segment $seg6 [approach_dir_of $seg6]]]
+set c7 [$State refine_segment [$State classify_segment $seg7 [approach_dir_of $seg7]]]
 set dups67 [spar::detect_duplicates [concat $c6 $c7]]
 assert_eq [expr {[llength [dict get $dups67 duplicate_name]] > 0}] 1 \
     "duplicate_name: same name in different segments → flagged"
@@ -76,7 +76,7 @@ write_roster_tsv $seg8 $::std_headers [list \
     [make_base_row {contact_name "Jane Doe" email "jane1@acme-venues.au" stem ""}] \
     [make_base_row {contact_name "Jane Doe" email "jane2@acme-venues.au" stem ""}] \
 ]
-set c8 [$State refine_segment [$State classify_segment $seg8]]
+set c8 [$State refine_segment [$State classify_segment $seg8 [approach_dir_of $seg8]]]
 set dups8 [spar::detect_duplicates $c8]
 assert_eq [llength [dict get $dups8 duplicate_name]] 0 \
     "duplicate_name: same name within one segment → not flagged"
@@ -121,8 +121,8 @@ write_roster_tsv $seg10 $::std_headers [list \
     [make_base_row {contact_name "To Dup B" email "b@acme-venues.au" stem "dup-to-b"}] \
 ]
 
-set c9 [$State refine_segment [$State classify_segment $seg9]]
-set c10 [$State refine_segment [$State classify_segment $seg10]]
+set c9 [$State refine_segment [$State classify_segment $seg9 [approach_dir_of $seg9]]]
+set c10 [$State refine_segment [$State classify_segment $seg10 [approach_dir_of $seg10]]]
 set dups910 [spar::detect_duplicates [concat $c9 $c10]]
 assert_eq [expr {[llength [dict get $dups910 duplicate_to]] > 0}] 1 \
     "duplicate_to: same To: address in two approach files → flagged"
@@ -167,8 +167,8 @@ write_roster_tsv $seg12 $::std_headers [list \
     [make_base_row {contact_name "Uniq B" email "b@acme-venues.au" stem "uniq-to-b"}] \
 ]
 
-set c11 [$State refine_segment [$State classify_segment $seg11]]
-set c12 [$State refine_segment [$State classify_segment $seg12]]
+set c11 [$State refine_segment [$State classify_segment $seg11 [approach_dir_of $seg11]]]
+set c12 [$State refine_segment [$State classify_segment $seg12 [approach_dir_of $seg12]]]
 set dups1112 [spar::detect_duplicates [concat $c11 $c12]]
 assert_eq [llength [dict get $dups1112 duplicate_to]] 0 \
     "duplicate_to: unique addresses → not flagged"
@@ -213,8 +213,8 @@ write_roster_tsv $seg14 $::std_headers [list \
     [make_base_row {contact_name "Subj B" email "sb@acme-venues.au" stem "subj-dup-b"}] \
 ]
 
-set c13 [$State refine_segment [$State classify_segment $seg13]]
-set c14 [$State refine_segment [$State classify_segment $seg14]]
+set c13 [$State refine_segment [$State classify_segment $seg13 [approach_dir_of $seg13]]]
+set c14 [$State refine_segment [$State classify_segment $seg14 [approach_dir_of $seg14]]]
 set dups1314 [spar::detect_duplicates [concat $c13 $c14]]
 assert_eq [expr {[llength [dict get $dups1314 identical_subject]] > 0}] 1 \
     "identical_subject: same subject in two unsent approaches → flagged"
@@ -259,8 +259,8 @@ write_roster_tsv $seg16 $::std_headers [list \
     [make_base_row {contact_name "Sent Subj B" email "ssb@acme-venues.au" stem "subj-sent-b"}] \
 ]
 
-set c15 [$State refine_segment [$State classify_segment $seg15]]
-set c16 [$State refine_segment [$State classify_segment $seg16]]
+set c15 [$State refine_segment [$State classify_segment $seg15 [approach_dir_of $seg15]]]
+set c16 [$State refine_segment [$State classify_segment $seg16 [approach_dir_of $seg16]]]
 set dups1516 [spar::detect_duplicates [concat $c15 $c16]]
 assert_eq [llength [dict get $dups1516 identical_subject]] 0 \
     "identical_subject: sent messages with same subject → not flagged"
@@ -275,8 +275,8 @@ write_roster_tsv $seg_inv1 $::std_headers [list \
 write_roster_tsv $seg_inv2 $::std_headers [list \
     [make_base_row {contact_name "Ghost Person" email "ghost2@acme-venues.au" stem ""}] \
 ]
-set cinv1 [$State refine_segment [$State classify_segment $seg_inv1]]
-set cinv2 [$State refine_segment [$State classify_segment $seg_inv2]]
+set cinv1 [$State refine_segment [$State classify_segment $seg_inv1 [approach_dir_of $seg_inv1]]]
+set cinv2 [$State refine_segment [$State classify_segment $seg_inv2 [approach_dir_of $seg_inv2]]]
 set dups_inv [spar::detect_duplicates [concat $cinv1 $cinv2]]
 assert_eq [llength [dict get $dups_inv duplicate_name]] 0 \
     "duplicate_name: EXCLUDED contact does not contribute → not flagged"
@@ -291,8 +291,8 @@ write_roster_tsv $seg_inv3 $::std_headers [list \
 write_roster_tsv $seg_inv4 $::std_headers [list \
     [make_base_row {contact_name "Active Two" email "shared-inv@acme-venues.au" stem ""}] \
 ]
-set cinv3 [$State refine_segment [$State classify_segment $seg_inv3]]
-set cinv4 [$State refine_segment [$State classify_segment $seg_inv4]]
+set cinv3 [$State refine_segment [$State classify_segment $seg_inv3 [approach_dir_of $seg_inv3]]]
+set cinv4 [$State refine_segment [$State classify_segment $seg_inv4 [approach_dir_of $seg_inv4]]]
 set dups_inv2 [spar::detect_duplicates [concat $cinv3 $cinv4]]
 assert_eq [llength [dict get $dups_inv2 duplicate_email]] 0 \
     "duplicate_email: EXCLUDED contact does not contribute → not flagged"
@@ -336,8 +336,8 @@ write_roster_tsv $seg_inv6 $::std_headers [list \
     [make_base_row {contact_name "Still Active" email "active@acme-venues.au" \
         stem "active-approach-b"}] \
 ]
-set cinv5 [$State refine_segment [$State classify_segment $seg_inv5]]
-set cinv6 [$State refine_segment [$State classify_segment $seg_inv6]]
+set cinv5 [$State refine_segment [$State classify_segment $seg_inv5 [approach_dir_of $seg_inv5]]]
+set cinv6 [$State refine_segment [$State classify_segment $seg_inv6 [approach_dir_of $seg_inv6]]]
 set dups_inv3 [spar::detect_duplicates [concat $cinv5 $cinv6]]
 assert_eq [llength [dict get $dups_inv3 duplicate_to]] 0 \
     "duplicate_to: EXCLUDED contact's approach file does not contribute → not flagged"
@@ -507,20 +507,20 @@ section "get_max_passes"
 # the front-matter reader and the proc fell through to 1 for every profile.
 set seg_mp [make_temp_segment]
 write_profile $seg_mp mp-high -yield 10
-assert_eq [spar::get_max_passes [file join $seg_mp profiles mp-high.md]] 3 \
+assert_eq [spar::get_max_passes [file join $seg_mp mp-high.md]] 3 \
     "get_max_passes: yield 10 → 3 passes"
 
 write_profile $seg_mp mp-six -yield 6
-assert_eq [spar::get_max_passes [file join $seg_mp profiles mp-six.md]] 3 \
+assert_eq [spar::get_max_passes [file join $seg_mp mp-six.md]] 3 \
     "get_max_passes: yield 6 (boundary) → 3 passes"
 
 # yield < 6 stays at a single pass.
 write_profile $seg_mp mp-low -yield 5
-assert_eq [spar::get_max_passes [file join $seg_mp profiles mp-low.md]] 1 \
+assert_eq [spar::get_max_passes [file join $seg_mp mp-low.md]] 1 \
     "get_max_passes: yield 5 → 1 pass"
 
 # Missing profile → 1 pass.
-assert_eq [spar::get_max_passes [file join $seg_mp profiles nope.md]] 1 \
+assert_eq [spar::get_max_passes [file join $seg_mp nope.md]] 1 \
     "get_max_passes: missing profile → 1 pass"
 
 
@@ -604,5 +604,30 @@ assert_match $orch_contents "*\\\[spar::transitions\\\] \\\[info\\\] 'hello row'
     "install_orchestration_log: tees an info line to the orchestration file"
 
 set ::spar::_orch_logfile ""
+
+# ════════════════════════════════════════════════════════════════════════
+# 12. load_campaign start_date validation
+# ════════════════════════════════════════════════════════════════════════
+section "12. load_campaign start_date"
+
+set sd_root [make_temp_campaign]
+write_campaign_yaml $sd_root "campaign: SD Test\nstart_date: 2026-07-19\n"
+set sd_cdata [spar::load_campaign [file join $sd_root campaigns camp.yaml]]
+assert_eq [dict get $sd_cdata start_date] "2026-07-19" "valid start_date parses through"
+
+set sd_root2 [make_temp_campaign]
+write_campaign_yaml $sd_root2 "campaign: SD Test\nstart_date: 19/07/2026\n"
+assert_error {spar::load_campaign [file join $sd_root2 campaigns camp.yaml]} \
+    "*start_date must be a valid YYYY-MM-DD*" "non-ISO start_date rejected"
+
+set sd_root3 [make_temp_campaign]
+write_campaign_yaml $sd_root3 "campaign: SD Test\nstart_date: \"2026-13-40\"\n"
+assert_error {spar::load_campaign [file join $sd_root3 campaigns camp.yaml]} \
+    "*start_date must be a valid YYYY-MM-DD*" "impossible calendar date rejected"
+
+set sd_root4 [make_temp_campaign]
+write_campaign_yaml $sd_root4 "campaign: SD Test\n"
+set sd_cdata4 [spar::load_campaign [file join $sd_root4 campaigns camp.yaml]]
+assert_eq [dict exists $sd_cdata4 start_date] 0 "absent start_date loads clean (not launched)"
 
 finish_tests

@@ -9,8 +9,8 @@ package require json::write
 package require logger
 
 namespace eval spar {
-    namespace export slugify load_campaign load_roster find_profile \
-        profile_exists get_max_passes lang_instruction channel_desc \
+    namespace export slugify load_campaign load_roster \
+        get_max_passes lang_instruction channel_desc \
         campaign_primary_channel campaign_secondary_channel \
         campaign_tertiary_channel campaign_in_scope_channels \
         roster_row_has_in_scope_channel render_rollcall
@@ -185,6 +185,31 @@ proc spar::load_campaign {yaml_path} {
         }
     }
 
+    # Validate start_date (optional planned first-approach date). Absent
+    # means the campaign has not launched: outgoing transitions block.
+    # Present, it is the floor the BI reply derivation keys on, so a
+    # malformed value is an error, not a warning.
+    if {[dict exists $data start_date]} {
+        set sd [dict get $data start_date]
+        # yaml2dict parses an unquoted date to epoch seconds; a quoted one
+        # stays an ISO string. Normalise to ISO so every consumer compares
+        # dates lexically.
+        if {[string is wideinteger -strict $sd]} {
+            set sd [clock format $sd -format %Y-%m-%d]
+            dict set data start_date $sd
+        }
+        if {![regexp {^\d{4}-\d{2}-\d{2}$} $sd] \
+                || [catch {clock scan $sd -format %Y-%m-%d -gmt 1}]} {
+            error "Campaign $yaml_path: start_date must be a valid YYYY-MM-DD date (got '$sd')"
+        }
+    }
+
+    # skip_segments is retired in spec 2.0: only segments/<seg> entries
+    # named by the segments: map are read, so there is nothing to fence.
+    if {[dict exists $data skip_segments]} {
+        puts stderr "Campaign $yaml_path: skip_segments is retired (spec 2.0) and ignored"
+    }
+
     # Validate a_max_passes (hard ceiling on A-phase challenger passes).
     # Integer ≥ 0. 0 disables the challenger entirely (initial draft flows
     # straight to assembly with no fact-check). Absent = default 3, applied
@@ -232,32 +257,32 @@ proc spar::load_campaign {yaml_path} {
 # (spar-progress, spar-validate-cli). Given the campaign spec already teased
 # out of argv — a campaign.yaml path in campaign_file, or a directory in
 # campaign_dir; either may be empty — discover the campaign YAML, load it, and
-# build the list of {label seg_dir} segment paths that carry a roster.tsv.
+# build the list of {label seg_dir} segment paths that carry a roster.
 #
 # Returns a dict with keys: yaml_path campaign_dir cdata segment_paths
 #                           campaign_name min_star primary_channel
 # Throws on: campaign YAML not found, or no segments with a roster.
 proc spar::resolve_campaign {campaign_file campaign_dir} {
-    if {$campaign_file ne "" && $campaign_dir eq ""} {
-        set campaign_dir [file dirname [file normalize $campaign_file]]
-    }
-    if {$campaign_dir eq ""} { set campaign_dir "." }
-    set campaign_dir [file normalize $campaign_dir]
-
     if {$campaign_file ne ""} {
         set yaml_path [file normalize $campaign_file]
+        set campaign_dir [spar::instance_root_for_yaml $yaml_path]
     } else {
-        set yaml_path [file join $campaign_dir campaign.yaml]
-        if {![file exists $yaml_path]} {
-            set candidates [lsort [glob -nocomplain [file join $campaign_dir campaign*.yaml]]]
-            set yaml_path [expr {[llength $candidates] > 0 ? [lindex $candidates end] : ""}]
-        }
+        if {$campaign_dir eq ""} { set campaign_dir "." }
+        set campaign_dir [file normalize $campaign_dir]
+        set candidates [lsort [glob -nocomplain \
+            [file join $campaign_dir campaigns *.yaml]]]
+        # Only definition files: a dotted doc (2026-07-x.usp.yaml would be
+        # unusual, but the rule is cheap) has more than one dot-part.
+        set candidates [lmap c $candidates {
+            expr {[llength [split [file tail $c] .]] == 2 ? $c : [continue]}
+        }]
+        set yaml_path [expr {[llength $candidates] > 0 ? [lindex $candidates end] : ""}]
     }
     if {$yaml_path eq "" || ![file exists $yaml_path]} {
         if {$campaign_file ne ""} {
             error "Campaign YAML not found: $campaign_file"
         } else {
-            error "No campaign YAML found in $campaign_dir"
+            error "No campaign YAML found under $campaign_dir/campaigns/"
         }
     }
 
@@ -269,14 +294,12 @@ proc spar::resolve_campaign {campaign_file campaign_dir} {
         set min_star [dict getdef [dict get $cdata filter] min_star 0]
     }
     set segments_list [spar::campaign_segment_names $cdata]
-    set skip_set {}
-    if {[dict exists $cdata skip_segments]} { set skip_set [dict get $cdata skip_segments] }
 
     set segment_paths {}
     foreach seg $segments_list {
-        if {$seg in $skip_set} continue
-        set seg_dir [file join $campaign_dir $seg]
-        if {[file isdirectory $seg_dir] && [file exists [file join $seg_dir roster.tsv]]} {
+        set seg_dir [file join $campaign_dir segments $seg]
+        if {[file isdirectory $seg_dir] \
+                && [file exists [spar::roster_path_for_segment $seg_dir]]} {
             lappend segment_paths [list $seg $seg_dir]
         }
     }
@@ -287,6 +310,18 @@ proc spar::resolve_campaign {campaign_file campaign_dir} {
     return [dict create yaml_path $yaml_path campaign_dir $campaign_dir \
         cdata $cdata segment_paths $segment_paths campaign_name $campaign_name \
         min_star $min_star primary_channel $primary_channel]
+}
+
+# instance_root_for_yaml — the instance root of a campaign YAML at
+# <root>/campaigns/<camp>.yaml. Errors when the YAML does not sit in a
+# campaigns/ folder, which is the spec-2.0 shape the tool supports.
+proc spar::instance_root_for_yaml {yaml_path} {
+    set yaml_path [file normalize $yaml_path]
+    set parent [file dirname $yaml_path]
+    if {[file tail $parent] ne "campaigns"} {
+        error "Campaign YAML $yaml_path is not under a campaigns/ folder (spec 2.0 layout; see spar-version-uplift-runbook.md)"
+    }
+    return [file dirname $parent]
 }
 
 # extract_required_skills — convert a segment's profile_reject_if list into
@@ -561,7 +596,7 @@ proc spar::apply_roster_patch {profile_path roster_path stem} {
     if {!$stamped && ([dict exists $fm roster_patch] \
                       || [dict exists $fm sweep_feedback])} {
         if {[dict exists $fm sweep_feedback]} {
-            set fb_path [file join [file dirname $roster_path] sweep-feedback.tsv]
+            set fb_path [spar::sweep_feedback_path_for_segment [file rootname $roster_path]]
             set fd [open $fb_path a]
             foreach entry [dict get $fm sweep_feedback] {
                 set kind [dict getdef $entry kind observation]
@@ -679,78 +714,6 @@ proc spar::_stamp_patch_applied {profile_path} {
     } finally {
         if {$tmp ne "" && [file exists $tmp]} { catch {file delete $tmp} }
     }
-}
-
-# find_profile — find a profile file matching name/org slugs
-# Port of spar-a-batch.sh lines 108-117
-# Returns the path if found, empty string otherwise
-proc spar::find_profile {profile_dir slug_name slug_org} {
-    if {![file isdirectory $profile_dir]} {
-        return ""
-    }
-    # Try name+org match first
-    set matches [glob -nocomplain -directory $profile_dir \
-        "*${slug_name}*${slug_org}*"]
-    if {[llength $matches] > 0} {
-        return [lindex [lsort $matches] 0]
-    }
-    # Fall back to name-only match
-    set matches [glob -nocomplain -directory $profile_dir \
-        "*${slug_name}*"]
-    if {[llength $matches] > 0} {
-        return [lindex [lsort $matches] 0]
-    }
-    return ""
-}
-
-# profile_exists — check if a profile exists for this contact
-# Port of spar-p-batch.sh lines 88-123 (name match + org+initial match)
-# Returns 1 if found, 0 otherwise
-proc spar::profile_exists {profile_dir slug_name slug_org} {
-    if {![file isdirectory $profile_dir]} {
-        return 0
-    }
-
-    # Check 1: exact slug output path
-    set exact [file join $profile_dir "profile-${slug_name}-${slug_org}.md"]
-    if {[file exists $exact]} {
-        return 1
-    }
-
-    # Check 2: name-prefix match on profile filename
-    set name_matches [glob -nocomplain \
-        [file join $profile_dir "profile-${slug_name}-*.md"]]
-    if {[llength $name_matches] > 0} {
-        # Multi-word name: prefix match alone is reliable
-        if {[string first - $slug_name] >= 0} {
-            return 1
-        }
-        # Single-word name: verify first word of org appears in profile's org section
-        set first_org_word [lindex [split $slug_org -] 0]
-        foreach match $name_matches {
-            set base [file rootname [file tail $match]]
-            # Strip "profile-{slug_name}-" prefix to get the org part
-            set profile_org [string range $base \
-                [expr {[string length "profile-${slug_name}-"]}] end]
-            if {[string first $first_org_word $profile_org] >= 0} {
-                return 1
-            }
-        }
-    }
-
-    # Check 3: org-slug match with same initial letter
-    set initial [string index $slug_name 0]
-    set org_matches [glob -nocomplain \
-        [file join $profile_dir "profile-*${slug_org}*.md"]]
-    foreach match $org_matches {
-        set base [file rootname [file tail $match]]
-        set profile_name [string range $base [string length "profile-"] end]
-        if {[string index $profile_name 0] eq $initial} {
-            return 1
-        }
-    }
-
-    return 0
 }
 
 # get_max_passes — determine max A2 spar passes from profile yield.
@@ -959,23 +922,42 @@ proc spar::log_row_outcome {slug status message {dry_run 0}} {
     }
 }
 
-# Path conventions for stem-keyed artefacts. SSOT: every consumer that
-# resolves a profile or approach by stem uses these. Layout per
-# spar-roster-format.md / #45.
+# Path conventions for the spec-2.0 instance layout. SSOT: every consumer
+# that resolves a segment artefact or a stem-keyed file uses these. Layout
+# per spar-campaign-directory.md: the instance root holds segments/ and
+# campaigns/; a definition file and a same-stem folder of its contents sit
+# side by side (segments/<seg>.yaml + segments/<seg>/, campaigns/<camp>.yaml
+# + campaigns/<camp>/).
+#
+# segment_dir is segments/<seg> — the folder holding profile files directly
+# (no profiles/ wrapper). The roster and segment definition are its dotted
+# stem siblings.
 proc spar::profile_dir_for_segment {segment_dir} {
-    return [file join $segment_dir profiles]
+    return $segment_dir
 }
-proc spar::approach_dir_for_segment {segment_dir} {
-    return [file join $segment_dir approach]
+proc spar::roster_path_for_segment {segment_dir} {
+    return "${segment_dir}.tsv"
+}
+proc spar::segment_yaml_for_segment {segment_dir} {
+    return "${segment_dir}.yaml"
+}
+proc spar::sweep_feedback_path_for_segment {segment_dir} {
+    return "${segment_dir}.sweep-feedback.tsv"
 }
 proc spar::profile_path_for_stem {segment_dir stem} {
     return [file join [spar::profile_dir_for_segment $segment_dir] "${stem}.md"]
 }
-proc spar::legacy_profile_path_for_stem {segment_dir stem} {
-    return [file join [spar::profile_dir_for_segment $segment_dir] "profile-${stem}.md"]
+# An approach is a campaign×contact fact: it lives in the campaign's
+# folder, campaigns/<camp>/<stem>.yaml, beside the campaign YAML it is
+# keyed to. The folder is the campaign attribution.
+proc spar::approach_dir_for_campaign {campaign_yaml} {
+    return [file rootname [file normalize $campaign_yaml]]
 }
-proc spar::approach_path_for_stem {segment_dir stem} {
-    return [file join [spar::approach_dir_for_segment $segment_dir] "${stem}.yaml"]
+proc spar::approach_path_for_stem {campaign_yaml stem} {
+    return [spar::approach_path_in_dir [spar::approach_dir_for_campaign $campaign_yaml] $stem]
+}
+proc spar::approach_path_in_dir {approach_dir stem} {
+    return [file join $approach_dir "${stem}.yaml"]
 }
 
 # ── Per-worker cost metering (#114) ───────────────────────────────────

@@ -135,7 +135,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
         foreach c $tasks {
             set stem    [dict get $c stem]
             set seg_dir [dict get $c _segment_dir]
-            set approach_path [file join $seg_dir approach "${stem}.yaml"]
+            set approach_path [spar::approach_path_for_stem $campaign_file $stem]
             set channel [spar::final_auto_send_channel \
                 [spar::read_approach_yaml $approach_path]]
             if {[llength $actions] > 0 && $channel ni $actions} {
@@ -152,7 +152,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
             if {$channel eq "linkedin"} {
                 if {![dict exists $rosters $seg_dir]} {
                     dict set rosters $seg_dir \
-                        [spar::load_roster [file join $seg_dir roster.tsv]]
+                        [spar::load_roster [spar::roster_path_for_segment $seg_dir]]
                 }
                 set linkedin_url ""
                 foreach r [dict get $rosters $seg_dir] {
@@ -220,6 +220,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
 ::spar::transitions::register \
     -class ::spar::transitions::SendEmailTransition \
     -tid T6 \
+    -outgoing 1 \
     -label "Approach → Send" \
     -auto-safe 0 \
     -dispatch-status available \

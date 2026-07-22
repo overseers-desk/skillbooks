@@ -118,7 +118,6 @@ oo::class create spar::ui::CampaignViewer {
             filter             { my render_dict_collapsible $parent $key $value 0 }
             prompt_appendices  { my render_prompt_appendices $parent $value }
             segments           -
-            skip_segments      { my render_list $parent $key $value }
             default            {
                 ::spar::ui::inspector_widgets::kv_row_wrap $parent $key $value
             }

@@ -93,7 +93,7 @@ $State prefetch_approach_cache $paths
 # parse_count does not jump at post time — workers haven't been joined yet.
 # Drain by classifying + refining; refine_contact routes through
 # approach_summary which joins each pending job and writes the cache.
-set contacts [$State classify_segment $seg]
+set contacts [$State classify_segment $seg [approach_dir_of $seg]]
 set refined [$State refine_segment $contacts]
 assert_eq $::spar::parse_count 30 \
     "1: 30 paths drained via refine → 30 parse_count increments"
@@ -116,7 +116,7 @@ lassign [build_segment 10] seg paths
 set State [spar::State new]
 $State prefetch_approach_cache $paths
 # Drain so cache is fully warm.
-set contacts [$State classify_segment $seg]
+set contacts [$State classify_segment $seg [approach_dir_of $seg]]
 $State refine_segment $contacts
 
 # Second prefetch on a warm cache must not post new jobs. Reset parse_count
@@ -139,7 +139,7 @@ lassign [build_segment 10] seg paths
 
 set State [spar::State new]
 $State prefetch_approach_cache $paths
-set contacts [$State classify_segment $seg]
+set contacts [$State classify_segment $seg [approach_dir_of $seg]]
 $State refine_segment $contacts   ;# drain initial 10 parses
 
 # Wait > 1s so mtime advances on filesystems with 1s granularity, then
@@ -156,7 +156,7 @@ set ::spar::parse_count 0
 $State prefetch_approach_cache $paths
 # Re-classify to pick up the new line-1 hash on the affected contact, then
 # drain. Only the rewritten file should parse.
-set contacts [$State classify_segment $seg]
+set contacts [$State classify_segment $seg [approach_dir_of $seg]]
 $State refine_segment $contacts
 assert_eq $::spar::parse_count 1 \
     "3: only the changed file re-parses; 9 still cache-hit"
@@ -174,7 +174,7 @@ set State [spar::State new]
 set mixed [list "" "/nonexistent/approach.yaml" {*}$paths ""]
 set ::spar::parse_count 0
 $State prefetch_approach_cache $mixed
-set contacts [$State classify_segment $seg]
+set contacts [$State classify_segment $seg [approach_dir_of $seg]]
 $State refine_segment $contacts
 assert_eq $::spar::parse_count 3 \
     "4: 3 real paths parse; 1 empty + 1 missing skipped silently"
@@ -190,14 +190,14 @@ lassign [build_segment 5] seg paths
 
 set S1 [spar::State new]
 $S1 prefetch_approach_cache $paths
-set c1 [$S1 classify_segment $seg]
+set c1 [$S1 classify_segment $seg [approach_dir_of $seg]]
 $S1 refine_segment $c1   ;# drains S1's pending jobs
 
 # Second State has its own (empty) cache; its prefetch parses fresh.
 set S2 [spar::State new]
 set ::spar::parse_count 0
 $S2 prefetch_approach_cache $paths
-set c2 [$S2 classify_segment $seg]
+set c2 [$S2 classify_segment $seg [approach_dir_of $seg]]
 $S2 refine_segment $c2
 assert_eq $::spar::parse_count 5 \
     "5: second State's cache is independent — prefetch+drain parses all 5"
@@ -236,7 +236,7 @@ write_roster_tsv $seg $::std_headers [list \
     [make_base_row {contact_name "Sent One" stem "sent-one"}]]
 
 set State [spar::State new]
-set contact [lindex [$State classify_segment $seg] 0]
+set contact [lindex [$State classify_segment $seg [approach_dir_of $seg]] 0]
 $State prefetch_approach_cache [list [dict get $contact approach_path]]
 set refined [$State refine_contact $contact]
 assert_eq [dict get $refined state] "SENT" \
@@ -266,7 +266,7 @@ set victim [lindex $paths 2]
 $State forget_approach $victim
 
 set ::spar::parse_count 0
-set contacts [$State classify_segment $seg]
+set contacts [$State classify_segment $seg [approach_dir_of $seg]]
 $State refine_segment $contacts
 assert_eq $::spar::parse_count 5 \
     "7: forget + drain still produces 5 cache-writes (4 pending + 1 sync re-parse)"

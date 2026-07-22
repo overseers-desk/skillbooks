@@ -106,8 +106,8 @@ oo::class create spar::ui::SegmentViewer {
 
         ::spar::ui::inspector_widgets::copy_text_set $HeaderStem $CurrentSegment
 
-        set seg_dir [file join [$Campaign get_campaign_dir] $CurrentSegment]
-        set yaml_path [file join $seg_dir segment.yaml]
+        set seg_dir [file join [$Campaign get_campaign_dir] segments $CurrentSegment]
+        set yaml_path [spar::segment_yaml_for_segment $seg_dir]
 
         if {![file exists $yaml_path]} {
             ttk::label ${Body}.warn \

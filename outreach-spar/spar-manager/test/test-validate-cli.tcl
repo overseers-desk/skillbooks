@@ -25,16 +25,15 @@ proc run_cli {args} {
 # opts: -campaign_version, -segment_version (default 1.0 each),
 #       -email (roster email, default valid), -approach (raw approach yaml or "")
 proc make_cli_campaign {args} {
-    set cv [expr {[dict exists $args -campaign_version] ? [dict get $args -campaign_version] : "1.0"}]
-    set sv [expr {[dict exists $args -segment_version] ? [dict get $args -segment_version] : "1.0"}]
+    set cv [expr {[dict exists $args -campaign_version] ? [dict get $args -campaign_version] : "2.0"}]
+    set sv [expr {[dict exists $args -segment_version] ? [dict get $args -segment_version] : "2.0"}]
     set email [expr {[dict exists $args -email] ? [dict get $args -email] : "alice@test.com"}]
     set approach [expr {[dict exists $args -approach] ? [dict get $args -approach] : ""}]
 
     set cdir [make_temp_campaign]
-    set seg [file join $cdir seg-a]
+    set seg [file join $cdir segments seg-a]
     file mkdir $seg
-    file mkdir [file join $seg profiles]
-    file mkdir [file join $seg approach]
+    file mkdir [file join $cdir campaigns camp]
     write_roster_tsv $seg $::std_headers [list \
         [make_base_row [list stem "alice" contact_name "Alice" star_rating "5" email $email]]]
     write_profile $seg "alice"
@@ -64,17 +63,17 @@ foreach e [dict get $parsed errors] { lappend codes [dict get $e code] }
 assert_eq [expr {"masked_email" in $codes}] 1 "masked_email present in errors"
 
 # unsupported spec version → exit 1, version_unsupported
-lassign [run_cli [make_cli_campaign -campaign_version "2.0"] --json] rc out
+lassign [run_cli [make_cli_campaign -campaign_version "3.0"] --json] rc out
 set parsed [::json::json2dict $out]
-assert_eq $rc 1 "campaign version 2.0 → exit 1"
+assert_eq $rc 1 "campaign version 3.0 → exit 1"
 set codes {}
 foreach e [dict get $parsed errors] { lappend codes [dict get $e code] }
 assert_eq [expr {"version_unsupported" in $codes}] 1 "version_unsupported present in errors"
 
 # unstamped (missing version) → warning only, exit 0
 set cdir [make_temp_campaign]
-set seg [file join $cdir seg-a]
-file mkdir $seg; file mkdir [file join $seg profiles]; file mkdir [file join $seg approach]
+set seg [file join $cdir segments seg-a]
+file mkdir $seg; file mkdir [file join $cdir campaigns camp]
 write_roster_tsv $seg $::std_headers [list \
     [make_base_row {stem "alice" contact_name "Alice" star_rating "5" email "alice@test.com"}]]
 write_profile $seg "alice"

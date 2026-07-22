@@ -75,22 +75,21 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         set account [dict get $cdata reply_check courier_account]
         set folder  [dict get $cdata reply_check folder]
         set sender  [dict get $cdata sender email]
-        set campaign_dir [file dirname $campaign_file]
+        set campaign_dir [spar::instance_root_for_yaml $campaign_file]
+        set approach_dir [spar::approach_dir_for_campaign $campaign_file]
 
         # Default segments to "all campaign segment dirs" when the caller
         # passed none. Mirrors the P-phase full-campaign default.
         if {[llength $segments] == 0} {
-            set skip_set [dict getdef $cdata skip_segments {}]
-            foreach seg [dict getdef $cdata segments {}] {
-                if {$seg in $skip_set} continue
-                set seg_path [file join $campaign_dir $seg]
+            foreach seg [spar::campaign_segment_names $cdata] {
+                set seg_path [file join $campaign_dir segments $seg]
                 if {[file isdirectory $seg_path]} {
                     lappend segments $seg_path
                 }
             }
         }
 
-        set approaches [spar::collect_sent_approaches $segments]
+        set approaches [spar::collect_sent_approaches $approach_dir $segments]
         set approaches [spar::filter_approaches_by_stems $approaches $stems]
         if {[llength $approaches] == 0} {
             if {$on_progress ne ""} {

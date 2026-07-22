@@ -8,7 +8,7 @@
 # the encapsulated fields.
 #
 # Events fired:
-#   segment-loaded {segment counts_dict is_active}
+#   segment-loaded {segment counts_dict}
 #       one segment of the async pass has finished classifying; payload is
 #       the segment name, its spar::progress_counts dict, and its active flag
 #   transition-loaded {tid label tasks}
@@ -42,7 +42,7 @@ namespace eval spar::ui {}
 
 oo::class create spar::ui::CampaignModel {
     variable CampaignFile CampaignDir CampaignName SenderText FilterDesc
-    variable Cdata SegmentOrder SkipSet SegmentPaths
+    variable Cdata SegmentOrder SegmentPaths ApproachDir
     variable Segments AllContacts Transitions Warnings
     variable FullLoadDone SegmentPathsForAsync
     variable LoaderCoro LoaderAfterId
@@ -52,14 +52,14 @@ oo::class create spar::ui::CampaignModel {
 
     constructor {campaign_file script_dir} {
         set CampaignFile $campaign_file
-        set CampaignDir  [file dirname $campaign_file]
+        set CampaignDir  [spar::instance_root_for_yaml $campaign_file]
+        set ApproachDir  [spar::approach_dir_for_campaign $campaign_file]
         set ScriptDir    $script_dir
         set CampaignName ""
         set SenderText   ""
         set FilterDesc   ""
         set Cdata        [dict create]
         set SegmentOrder {}
-        set SkipSet      {}
         set SegmentPaths {}
         set Segments     {}
         set AllContacts  {}
@@ -233,25 +233,14 @@ oo::class create spar::ui::CampaignModel {
             }
         }
 
-        # Discover segments
-        set segments_list [spar::campaign_segment_names $Cdata]
-        set SkipSet {}
-        if {[dict exists $Cdata skip_segments]} {
-            foreach s [dict get $Cdata skip_segments] { lappend SkipSet $s }
-        }
-        if {[llength $segments_list] == 0} {
-            foreach child [lsort [glob -nocomplain [file join $CampaignDir *]]] {
-                if {[file isdirectory $child] && [file exists [file join $child roster.tsv]]} {
-                    lappend segments_list [file tail $child]
-                }
-            }
-        }
-
+        # Discover segments — the same walk resolve_campaign does, kept
+        # local because the model already holds Cdata and reports per-
+        # segment load errors instead of failing the campaign load.
         set SegmentOrder {}
         set SegmentPaths {}
-        foreach seg $segments_list {
-            set seg_dir [file join $CampaignDir $seg]
-            if {[file isdirectory $seg_dir] && [file exists [file join $seg_dir roster.tsv]]} {
+        foreach seg [spar::campaign_segment_names $Cdata] {
+            set seg_dir [file join $CampaignDir segments $seg]
+            if {[file isdirectory $seg_dir]                     && [file exists [spar::roster_path_for_segment $seg_dir]]} {
                 lappend SegmentOrder $seg
                 lappend SegmentPaths [list $seg $seg_dir]
             }
@@ -280,12 +269,11 @@ oo::class create spar::ui::CampaignModel {
 
         foreach item $SegmentPaths {
             lassign $item label seg_dir
-            set is_active [expr {$label ni $SkipSet}]
 
-            lappend SegmentPathsForAsync [list $label $seg_dir $is_active]
+            lappend SegmentPathsForAsync [list $label $seg_dir]
 
             if {[catch {set rcounts [spar::roster_counts $seg_dir]} err]} {
-                lappend Segments [list $label $is_active [my _zero_row]]
+                lappend Segments [list $label [my _zero_row]]
                 continue
             }
 
@@ -308,7 +296,7 @@ oo::class create spar::ui::CampaignModel {
                 0 {} \
                 0 {}]
 
-            lappend Segments [list $label $is_active $raw_data]
+            lappend Segments [list $label $raw_data]
         }
 
         set Warnings    {}
@@ -377,13 +365,11 @@ oo::class create spar::ui::CampaignModel {
         set SegmentPathsForAsync {}
         set seg_ranges {}
         foreach item $seg_paths {
-            lassign $item seg_name seg_dir is_active
+            lassign $item seg_name seg_dir
             set start [llength $AllContacts]
 
-            if {![catch {set classified [$State classify_segment $seg_dir]} err]} {
-                if {$is_active} {
-                    foreach c $classified { lappend AllContacts $c }
-                }
+            if {![catch {set classified [$State classify_segment $seg_dir $ApproachDir]} err]} {
+                foreach c $classified { lappend AllContacts $c }
                 set cdict [spar::progress_counts $classified]
                 # sent / replied are uniformly 0 in cheap mode (no YAML
                 # parsed, so no contact resolves to SENT/REPLIED).
@@ -393,10 +379,10 @@ oo::class create spar::ui::CampaignModel {
                 # at the same instant the left columns fill in.
                 dict set cdict sent ""
                 dict set cdict replied ""
-                my _fire segment-loaded $seg_name $cdict $is_active
+                my _fire segment-loaded $seg_name $cdict
             }
             set end [llength $AllContacts]
-            lappend seg_ranges [list $seg_name $seg_dir $is_active $start $end]
+            lappend seg_ranges [list $seg_name $seg_dir $start $end]
             my _yield_loop
         }
 
@@ -449,36 +435,27 @@ oo::class create spar::ui::CampaignModel {
         # Phase 2 — per-segment enrichment. For each segment, refine the
         # cheap-classified contacts (parse the approach YAML for those
         # whose state warrants it) and overlay the refined fields, then
-        # re-fire segment-loaded with the now-correct counts. Inactive
-        # segments are classified+refined fresh (without joining
-        # AllContacts) so their progress row gets accurate sent/repl.
+        # re-fire segment-loaded with the now-correct counts.
         # Async prefetch above means refine_contact joins each path's
         # pending job (cache-hit if already parsed, brief wait otherwise).
         set i 0
         foreach range $seg_ranges {
-            lassign $range seg_name seg_dir is_active start end
-            if {$is_active} {
-                for {set idx $start} {$idx < $end} {incr idx} {
-                    set c [lindex $AllContacts $idx]
-                    if {[dict get $c approach_path] ne ""} {
-                        if {![catch {set refined [$State refine_contact $c]}]} {
-                            lset AllContacts $idx $refined
-                            set c $refined
-                        }
+            lassign $range seg_name seg_dir start end
+            for {set idx $start} {$idx < $end} {incr idx} {
+                set c [lindex $AllContacts $idx]
+                if {[dict get $c approach_path] ne ""} {
+                    if {![catch {set refined [$State refine_contact $c]}]} {
+                        lset AllContacts $idx $refined
+                        set c $refined
                     }
-                    my _fire contact-finalised [dict getdef $c stem ""]
-                    incr i
-                    if {($i % 25) == 0} { my _yield_loop }
                 }
-                set seg_contacts [lrange $AllContacts $start [expr {$end - 1}]]
-            } else {
-                if {[catch {set seg_contacts \
-                        [$State refine_segment [$State classify_segment $seg_dir]]}]} {
-                    continue
-                }
+                my _fire contact-finalised [dict getdef $c stem ""]
+                incr i
+                if {($i % 25) == 0} { my _yield_loop }
             }
+            set seg_contacts [lrange $AllContacts $start [expr {$end - 1}]]
             set cdict [spar::progress_counts $seg_contacts]
-            my _fire segment-loaded $seg_name $cdict $is_active
+            my _fire segment-loaded $seg_name $cdict
             my _yield_loop
         }
         if {($i % 25) != 0} { my _yield_loop }

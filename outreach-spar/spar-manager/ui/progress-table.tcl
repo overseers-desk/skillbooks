@@ -107,8 +107,7 @@ oo::class create spar::ui::ProgressTable {
             $PTree column  $id -stretch 0 -anchor $anchor -minwidth 10
         }
 
-        # Tags: muted for skip segments, totals row styling.
-        $PTree tag configure muted -foreground $::colours(muted_fg)
+        # Tags: totals row styling.
         $PTree tag configure totals -font "TkDefaultFont 9 bold" \
             -background $::colours(totals_bg)
 
@@ -177,9 +176,7 @@ oo::class create spar::ui::ProgressTable {
         set ChildRows  [dict create]
 
         foreach seg_entry $segments {
-            lassign $seg_entry seg_name is_campaign raw_data
-            set tags {}
-            if {!$is_campaign} { lappend tags muted }
+            lassign $seg_entry seg_name raw_data
 
             # raw_data is a flat count/pct pair per column ($count $pct …),
             # one pair for every PtreeColIds entry; take the count (even
@@ -217,17 +214,14 @@ oo::class create spar::ui::ProgressTable {
                 }
             }
 
-            set cb [expr {$is_campaign ? "☑" : "  "}]
-            $PTree insert {} end -id $seg_name -text "$cb  $seg_name" \
-                -values $values -tags $tags
+            $PTree insert {} end -id $seg_name -text "☑  $seg_name" \
+                -values $values
 
-            if {$is_campaign} {
-                dict set SegChecked $seg_name 1
-                set ci 0
-                foreach id $PtreeColIds {
-                    dict set SegCounts $seg_name $id [lindex $counts $ci]
-                    incr ci
-                }
+            dict set SegChecked $seg_name 1
+            set ci 0
+            foreach id $PtreeColIds {
+                dict set SegCounts $seg_name $id [lindex $counts $ci]
+                incr ci
             }
         }
 
@@ -387,7 +381,7 @@ oo::class create spar::ui::ProgressTable {
     # on_segment_loaded — one segment of the async pass finished. Update
     # its row in place and refresh totals. Public because it's invoked
     # via [list [self] on_segment_loaded] from the subscription dispatch.
-    method on_segment_loaded {seg cdict is_active} {
+    method on_segment_loaded {seg cdict} {
         if {![$PTree exists $seg]} return
 
         # Sentinel "" in cdict = "preserve the existing cell". The two-phase
@@ -400,15 +394,13 @@ oo::class create spar::ui::ProgressTable {
             lappend counts [dict get $cdict $key]
         }
 
-        if {$is_active} {
-            set ci 0
-            foreach id $PtreeColIds {
-                set v [lindex $counts $ci]
-                if {$v ne ""} {
-                    dict set SegCounts $seg $id $v
-                }
-                incr ci
+        set ci 0
+        foreach id $PtreeColIds {
+            set v [lindex $counts $ci]
+            if {$v ne ""} {
+                dict set SegCounts $seg $id $v
             }
+            incr ci
         }
 
         set existing [$PTree item $seg -values]

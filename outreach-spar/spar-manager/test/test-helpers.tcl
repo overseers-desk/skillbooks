@@ -62,17 +62,34 @@ proc make_temp_dir {} {
     return $base
 }
 
+# make_temp_segment -- create a spec-2.0 instance root with one segment
+# folder (segments/seg) and one campaign approach folder (campaigns/camp).
+# Returns the segment folder; the paired approach folder is reached via
+# approach_dir_of.
+set ::_seg_counter 0
 proc make_temp_segment {} {
     set base [make_temp_dir]
-    file mkdir [file join $base profiles]
-    file mkdir [file join $base approach]
-    return $base
+    set name "seg[incr ::_seg_counter]"
+    file mkdir [file join $base segments $name]
+    file mkdir [file join $base campaigns camp]
+    return [file join $base segments $name]
+}
+
+# approach_dir_of -- the campaign approach folder paired with a
+# make_temp_segment segment folder.
+proc approach_dir_of {segment_dir} {
+    return [file join [file dirname [file dirname $segment_dir]] campaigns camp]
+}
+
+# campaign_yaml_of -- the campaign YAML path paired with that folder.
+proc campaign_yaml_of {segment_dir} {
+    return [file join [file dirname [file dirname $segment_dir]] campaigns camp.yaml]
 }
 
 # write_roster_tsv -- write a roster.tsv from a list of dicts.
 # headers is a list of column names.  rows is a list of dicts (missing keys → "").
 proc write_roster_tsv {segment_dir headers rows} {
-    set path [file join $segment_dir roster.tsv]
+    set path [spar::roster_path_for_segment $segment_dir]
     set fd [open $path w]
     puts $fd [join $headers \t]
     foreach row $rows {
@@ -100,7 +117,7 @@ proc write_roster_tsv {segment_dir headers rows} {
 #   -profile_date -star_rating -yield
 #   -contact_name -organisation -role -date_excluded  (snapshot fields)
 proc write_profile {segment_dir stem args} {
-    set path [file join $segment_dir profiles "${stem}.md"]
+    set path [file join $segment_dir "${stem}.md"]
     array set opts {
         -profile_date    2026-04-12
         -star_rating     4
@@ -139,10 +156,10 @@ proc write_profile {segment_dir stem args} {
     return $path
 }
 
-# write_profile_raw -- write exact raw content to profiles/{stem}.md. For tests
+# write_profile_raw -- write exact raw content to the segment folder's {stem}.md. For tests
 # that need a deliberately malformed profile (missing fences, bad YAML, etc.).
 proc write_profile_raw {segment_dir stem content} {
-    set path [file join $segment_dir profiles "${stem}.md"]
+    set path [file join $segment_dir "${stem}.md"]
     set fd [open $path w]
     puts -nonewline $fd $content
     close $fd
@@ -152,7 +169,7 @@ proc write_profile_raw {segment_dir stem content} {
 # write_approach_yaml -- create an approach YAML file from plain text.
 # content is the raw YAML string.
 proc write_approach_yaml {segment_dir stem content} {
-    set path [file join $segment_dir approach "${stem}.yaml"]
+    set path [file join [approach_dir_of $segment_dir] "${stem}.yaml"]
     set fd [open $path w]
     puts -nonewline $fd $content
     close $fd
@@ -383,8 +400,13 @@ proc make_temp_campaign {} {
     return $base
 }
 
+# write_campaign_yaml -- write campaigns/camp.yaml under an instance
+# root created by make_temp_campaign_dir (or the root paired with
+# make_temp_segment).
 proc write_campaign_yaml {campaign_dir content} {
-    set path [file join $campaign_dir campaign.yaml]
+    file mkdir [file join $campaign_dir campaigns]
+    file mkdir [file join $campaign_dir campaigns camp]
+    set path [file join $campaign_dir campaigns camp.yaml]
     set fd [open $path w]
     puts -nonewline $fd $content
     close $fd
@@ -392,7 +414,7 @@ proc write_campaign_yaml {campaign_dir content} {
 }
 
 proc write_segment_yaml {segment_dir content} {
-    set path [file join $segment_dir segment.yaml]
+    set path [spar::segment_yaml_for_segment $segment_dir]
     set fd [open $path w]
     puts -nonewline $fd $content
     close $fd

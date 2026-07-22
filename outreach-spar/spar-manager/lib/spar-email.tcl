@@ -551,7 +551,7 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
 # missing or unreadable roster yields an empty map.
 proc spar::_roster_email_map {seg_dir} {
     set map [dict create]
-    set roster_path [file join $seg_dir roster.tsv]
+    set roster_path [spar::roster_path_for_segment $seg_dir]
     if {![file exists $roster_path]} { return $map }
     if {[catch {set rows [spar::load_roster $roster_path]}]} { return $map }
     foreach row $rows {
@@ -568,9 +568,13 @@ proc spar::_roster_email_map {seg_dir} {
     return $map
 }
 
-# spar::collect_sent_approaches -- find all sent approach files across segments.
+# spar::collect_sent_approaches -- find all sent approach files of a
+# campaign.
 #
-# segments      list of segment directory paths
+# approach_dir  the campaign's approach folder (campaigns/<camp>)
+# segments      list of segment directory paths, read only for the
+#               roster-email fallback when a send went out on a
+#               non-email channel
 #
 # Returns list of dicts, each with:
 #   approach_path   path to approach YAML file
@@ -585,14 +589,14 @@ proc spar::_roster_email_map {seg_dir} {
 # mail as a reply to every contact behind that address. The roster
 # validators (roster_shared_inbox_collision) flag the underlying
 # collision to the operator.
-proc spar::collect_sent_approaches {segments} {
+proc spar::collect_sent_approaches {approach_dir segments} {
     set results {}
     set watched_addresses [dict create]
 
-    foreach seg_dir $segments {
-        set approach_dir [file join $seg_dir approach]
-        if {![file isdirectory $approach_dir]} continue
-
+    if {[file isdirectory $approach_dir]} {
+        # Roster fallback map, built lazily across every segment the
+        # campaign names: the approach folder no longer says which
+        # segment a stem came from, and stems are campaign-unique.
         set roster_map ""
 
         foreach yf [lsort [glob -nocomplain -directory $approach_dir *.yaml]] {
@@ -660,7 +664,11 @@ proc spar::collect_sent_approaches {segments} {
                 # Send went out on a non-email channel; watch the roster
                 # email, if the roster carries a usable one.
                 if {$roster_map eq ""} {
-                    set roster_map [spar::_roster_email_map $seg_dir]
+                    set roster_map [dict create]
+                    foreach seg_dir $segments {
+                        set roster_map [dict merge \
+                            [spar::_roster_email_map $seg_dir] $roster_map]
+                    }
                 }
                 set stem [file rootname [file tail $yf]]
                 set fallback [dict getdef $roster_map $stem ""]

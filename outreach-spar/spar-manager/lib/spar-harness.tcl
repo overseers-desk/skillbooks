@@ -98,7 +98,7 @@ oo::class create spar::ApproachHarness {
     superclass spar::Harness
     variable State Outfile RosterEmail ContactName RosterOrg \
              MaxPasses ContactSummary ChallengerModel ContactNameMeta \
-             Pass Verdict ProfilePath
+             Pass Verdict ProfilePath SegmentDir
 
     constructor {prompt_dir log_dir} {
         next $prompt_dir $log_dir
@@ -155,8 +155,7 @@ oo::class create spar::ApproachHarness {
     # fatal: the approach itself passed validation, and the roster is
     # untouched on rejection.
     method apply_declarations {} {
-        set segment_dir [file dirname [file dirname $Outfile]]
-        set roster_path [file join $segment_dir roster.tsv]
+        set roster_path [spar::roster_path_for_segment $SegmentDir]
         set stem [file rootname [file tail $Outfile]]
         foreach issue [spar::apply_approach_patch $Outfile $roster_path $stem] {
             ${::spar::harness_log}::warn \
@@ -189,9 +188,9 @@ oo::class create spar::ApproachHarness {
     }
 
     # Unpack meta.env into instance vars used by phase methods.
-    # ProfilePath mirrors approach_path_for_stem / profile_path_for_stem:
-    # outfile is <segment_dir>/approach/<stem>.yaml; profile is at
-    # <segment_dir>/profiles/<stem>.md.
+    # SEGMENT_DIR carries the contact's segment folder: the outfile sits
+    # in the campaign's approach folder, which does not name the segment,
+    # so the profile path cannot be derived from it.
     method load_my_meta {} {
         set meta [my load_meta]
         set MaxPasses        [dict get $meta MAX_PASSES]
@@ -202,9 +201,9 @@ oo::class create spar::ApproachHarness {
         set RosterOrg        [dict getdef $meta ROSTER_ORGANISATION ""]
         set ContactNameMeta  [dict getdef $meta CONTACT_NAME ""]
         set ContactName      [string trim [lindex [split $ContactSummary |] 0]]
-        set seg_dir [file dirname [file dirname $Outfile]]
+        set SegmentDir       [dict get $meta SEGMENT_DIR]
         set stem    [file rootname [file tail $Outfile]]
-        set ProfilePath [file join $seg_dir profiles "${stem}.md"]
+        set ProfilePath [spar::profile_path_for_stem $SegmentDir $stem]
     }
 
     method do_inject_courier {} {
@@ -429,7 +428,7 @@ oo::class create spar::ProfileHarness {
     superclass spar::Harness
 
     variable State Outfile RosterPath RequiredSkills Stem \
-             ContactLinkedin OutfilePreexisted OutfileSnapshot
+             ContactLinkedin OutfilePreexisted OutfileSnapshot CampaignFile
 
     # Profile workers run under an explicit allow-list instead of
     # skip-permissions, so a research delegation can only reach the
@@ -549,9 +548,10 @@ oo::class create spar::ProfileHarness {
         # contact_name match — within-segment duplicates and
         # shared-inbox collisions surface here for resume.
         set my_cname [string trim [dict getdef $row contact_name ""]]
-        set segment_dir [file dirname $RosterPath]
+        set segment_dir [file rootname $RosterPath]
         if {$my_cname ne ""} {
-            if {[catch {[my state] classify_segment $segment_dir} seg_contacts]} {
+            if {[catch {[my state] classify_segment $segment_dir \
+                    [spar::approach_dir_for_campaign $CampaignFile]} seg_contacts]} {
                 set seg_contacts {}
             }
             foreach ri [spar::validate_roster $seg_contacts] {
@@ -669,6 +669,7 @@ oo::class create spar::ProfileHarness {
         set meta [my load_meta]
         set Outfile      [dict get $meta OUTFILE]
         set RosterPath   [dict get $meta ROSTER_PATH]
+        set CampaignFile [dict get $meta CAMPAIGN_FILE]
         set Stem         [dict get $meta STEM]
         set RequiredSkills [dict getdef $meta REQUIRED_SKILLS ""]
         set ContactLinkedin [dict getdef $meta CONTACT_LINKEDIN ""]

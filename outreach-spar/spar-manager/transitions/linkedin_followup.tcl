@@ -31,6 +31,7 @@ oo::class create ::spar::transitions::LinkedInFollowupTransition {
 ::spar::transitions::register \
     -class ::spar::transitions::LinkedInFollowupTransition \
     -tid T8 \
+    -outgoing 1 \
     -label "LinkedIn → Email follow-up" \
     -auto-safe 0 \
     -dispatch-status not-implemented \

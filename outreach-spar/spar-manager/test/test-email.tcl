@@ -67,15 +67,21 @@ proc make_temp_dir {} {
     return $base
 }
 
+set ::_seg_counter 0
 proc make_temp_segment {} {
     set base [make_temp_dir]
-    file mkdir [file join $base profiles]
-    file mkdir [file join $base approach]
-    return $base
+    set name "seg[incr ::_seg_counter]"
+    file mkdir [file join $base segments $name]
+    file mkdir [file join $base campaigns camp]
+    return [file join $base segments $name]
+}
+
+proc approach_dir_of {segment_dir} {
+    return [file join [file dirname [file dirname $segment_dir]] campaigns camp]
 }
 
 proc write_approach_yaml {segment_dir stem content} {
-    set path [file join $segment_dir approach "${stem}.yaml"]
+    set path [file join [approach_dir_of $segment_dir] "${stem}.yaml"]
     set fd [open $path w]
     puts -nonewline $fd $content
     close $fd
@@ -513,7 +519,7 @@ rounds:
     actioned_date: 2026-04-01
     replied_date: null
 }
-set collected [spar::collect_sent_approaches [list $seg6]]
+set collected [spar::collect_sent_approaches [approach_dir_of $seg6] [list $seg6]]
 assert_eq [llength $collected] 1 "one sent approach collected"
 set entry [lindex $collected 0]
 assert_eq [dict get $entry to_email] "contact@example.com" "to_email extracted"
@@ -535,7 +541,7 @@ rounds:
     actioned_date: null
     replied_date: null
 }
-set collected2 [spar::collect_sent_approaches [list $seg7]]
+set collected2 [spar::collect_sent_approaches [approach_dir_of $seg7] [list $seg7]]
 assert_eq [llength $collected2] 0 "unsent approach not collected"
 
 # 7c. Approach with existing replies has fingerprints
@@ -558,19 +564,24 @@ rounds:
     from: "replied@example.com"
     body: "Thanks"
 }
-set collected3 [spar::collect_sent_approaches [list $seg8]]
+set collected3 [spar::collect_sent_approaches [approach_dir_of $seg8] [list $seg8]]
 assert_eq [llength $collected3] 1 "replied approach collected"
 set fps [dict get [lindex $collected3 0] fingerprints]
 assert_eq [llength $fps] 1 "one fingerprint from existing reply"
 assert_eq [lindex $fps 0] "replied@example.com|2026-04-05T10:30:00" "fingerprint format correct"
 
 # 7d. Multiple segments
-set collected_multi [spar::collect_sent_approaches [list $seg6 $seg8]]
+# One campaign folder holds every approach of the campaign, whichever
+# segment the contact came from: copying seg8's file beside seg6's
+# models a two-segment campaign.
+file copy -force [file join [approach_dir_of $seg8] replied-approach.yaml] \
+    [approach_dir_of $seg6]
+set collected_multi [spar::collect_sent_approaches [approach_dir_of $seg6] [list $seg6 $seg8]]
 assert_eq [llength $collected_multi] 2 "approaches from multiple segments collected"
 
 # 7e. No approach directory → no results
 set seg_empty [make_temp_dir]
-set collected_empty [spar::collect_sent_approaches [list $seg_empty]]
+set collected_empty [spar::collect_sent_approaches [approach_dir_of $seg_empty] [list $seg_empty]]
 assert_eq [llength $collected_empty] 0 "segment without approach dir → empty"
 
 # 7f. Send on a non-email channel: the roster email is watched.
@@ -587,11 +598,11 @@ rounds:
     actioned_date: 2026-04-03
 }
 write_approach_yaml $seg9 "li-only" $yaml_li_sent
-set fd [open [file join $seg9 roster.tsv] w]
+set fd [open [spar::roster_path_for_segment $seg9] w]
 puts $fd "stem\temail"
 puts $fd "li-only\tLee@Example.com"
 close $fd
-set collected9 [spar::collect_sent_approaches [list $seg9]]
+set collected9 [spar::collect_sent_approaches [approach_dir_of $seg9] [list $seg9]]
 assert_eq [llength $collected9] 1 "non-email send collected via roster email"
 set entry9 [lindex $collected9 0]
 assert_eq [dict get $entry9 to_email] "lee@example.com" "roster email lowercased"
@@ -601,11 +612,11 @@ assert_eq [dict get $entry9 first_sent] "2026-04-03" "first_sent from the linked
 # watchable and yields no entry.
 set seg10 [make_temp_segment]
 write_approach_yaml $seg10 "li-masked" $yaml_li_sent
-set fd [open [file join $seg10 roster.tsv] w]
+set fd [open [spar::roster_path_for_segment $seg10] w]
 puts $fd "stem\temail"
 puts $fd "li-masked\tm***@example.com"
 close $fd
-set collected10 [spar::collect_sent_approaches [list $seg10]]
+set collected10 [spar::collect_sent_approaches [approach_dir_of $seg10] [list $seg10]]
 assert_eq [llength $collected10] 0 "masked roster email → not watchable"
 
 # 7h. Two non-email sends behind one roster address: the address is
@@ -614,12 +625,12 @@ assert_eq [llength $collected10] 0 "masked roster email → not watchable"
 set seg11 [make_temp_segment]
 write_approach_yaml $seg11 "li-a" $yaml_li_sent
 write_approach_yaml $seg11 "li-b" $yaml_li_sent
-set fd [open [file join $seg11 roster.tsv] w]
+set fd [open [spar::roster_path_for_segment $seg11] w]
 puts $fd "stem\temail"
 puts $fd "li-a\toffice@example.com"
 puts $fd "li-b\toffice@example.com"
 close $fd
-set collected11 [spar::collect_sent_approaches [list $seg11]]
+set collected11 [spar::collect_sent_approaches [approach_dir_of $seg11] [list $seg11]]
 assert_eq [llength $collected11] 1 "shared roster address watched once"
 
 # ════════════════════════════════════════════════════════════════════════

@@ -47,6 +47,10 @@ oo::class create ::spar::transitions::Transition {
     method supports_reauthor          {} { my param -supports-reauthor 0 }
     method ui_tree_row                {} { my param -ui-tree-row 1 }
     method requires_send_confirmation {} { my param -requires-send-confirmation 0 }
+    # outgoing=1 marks transitions whose dispatch contacts the outside
+    # world (T6/T8/T9/T10). transition_eligible holds their dispatchable
+    # tasks back until the campaign's start_date says it has launched.
+    method outgoing                   {} { my param -outgoing 0 }
 
     # Default build_opts — no extra opts. Subclasses that need per-runner
     # setup override.
