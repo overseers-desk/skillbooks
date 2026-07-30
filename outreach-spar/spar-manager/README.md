@@ -106,11 +106,14 @@ The message's `mode` key (`invite` or `dm`) picks the primitive; absent, text wi
 
 ```
 tclsh9.0 spar-progress.tcl <campaign-dir-or-yaml>
+tclsh9.0 spar-progress.tcl <campaign-yaml> <campaign-yaml> ...
 tclsh9.0 spar-progress.tcl <campaign-dir-or-yaml> --json
 tclsh9.0 spar-progress.tcl <campaign-dir-or-yaml> --no-reply-check
 ```
 
-Positional argument is either a campaign directory or the yaml inside it. `--json` emits machine-readable output; `--no-reply-check` omits the T7 reply-check row; `--legend` is accepted (no-op kept for compatibility).
+Positional argument is either a campaign directory or the yaml inside it. Name several and each gets its own name line, table and warnings, in the order given, separated by a blank line. One that will not resolve prints its reason on stderr and makes the exit status 1; the campaigns named beside it still report.
+
+The whole human-readable report, campaign name included, goes to stdout; stderr carries only errors. `--json` emits machine-readable output for one campaign, since the object shape is the contract; naming more than one with `--json` is an error. `--no-reply-check` omits the T7 reply-check row; `--legend` prints the column definitions, and without it the report says so in one line; `-v` / `--verbose` lists the member names behind each grouped warning.
 
 ### Harness (usually dispatched, runnable standalone for debugging)
 

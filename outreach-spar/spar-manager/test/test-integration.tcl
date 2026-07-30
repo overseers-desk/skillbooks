@@ -81,5 +81,37 @@ set json_str2 [exec tclsh9.0 $progress_script [file join $cdir campaigns camp.ya
 set parsed2 [::json::json2dict $json_str2]
 assert_eq [dict get $parsed2 campaign] "Test Campaign" "json: YAML as positional arg"
 
+# ════════════════════════════════════════════════════════════════════════
+# 21. Several campaigns in one run (spar-progress.tcl)
+# ════════════════════════════════════════════════════════════════════════
+section "21. Several campaigns in one run"
+
+# A second campaign over the same segment, so the run has two YAMLs to walk.
+file mkdir [file join $cdir campaigns camp2]
+set fd [open [file join $cdir campaigns camp2.yaml] w]
+puts -nonewline $fd "campaign: Second Campaign\nsegments:\n  - seg-a\nfilter:\n  min_star: 3\n"
+close $fd
+
+set both [exec tclsh9.0 $progress_script \
+    [file join $cdir campaigns camp.yaml] [file join $cdir campaigns camp2.yaml]]
+set name_lines [lsearch -all -inline [split $both \n] "Campaign:*"]
+assert_eq [llength $name_lines] 2 "multi: one name line per campaign"
+assert_eq [lindex $name_lines 0] "Campaign:    Test Campaign" "multi: first name, in argument order"
+assert_eq [lindex $name_lines 1] "Campaign:    Second Campaign" "multi: second name"
+assert_eq [llength [lsearch -all -inline [split $both \n] "|TOTAL*"]] 2 "multi: one table per campaign"
+
+# A campaign that will not resolve costs its own report, not the others'.
+set rc [catch {exec tclsh9.0 $progress_script \
+    [file join $cdir campaigns nope.yaml] [file join $cdir campaigns camp2.yaml] \
+    2>/dev/null} out]
+assert_eq $rc 1 "multi: unresolvable campaign exits nonzero"
+assert_eq [llength [lsearch -all -inline [split $out \n] "Campaign:*"]] 1 \
+    "multi: the campaigns beside it still report"
+
+# --json publishes one object, so it takes one campaign.
+set rc [catch {exec tclsh9.0 $progress_script \
+    [file join $cdir campaigns camp.yaml] [file join $cdir campaigns camp2.yaml] --json} out]
+assert_eq $rc 1 "multi + --json: exits nonzero"
+
 
 finish_tests
