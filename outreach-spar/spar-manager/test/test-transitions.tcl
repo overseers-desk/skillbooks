@@ -759,6 +759,25 @@ assert_eq [dict get [lindex $au_none 0] severity] "error" \
     "audit: missing-skill issues are severity=error"
 assert_eq [dict get [lindex $au_none 0] contact_name] "Test Contact" \
     "audit: contact_name carried through"
+assert_match [dict get [lindex $au_none 0] message] "*Skill calls seen: send-email*" \
+    "audit: miss message lists the Skill ids the session did call"
+
+# Plugin-namespaced ids (magazines:linkedin-com, skillbooks:facebook-com)
+# satisfy the platform-token match — the deployed id is deployment
+# detail, and an exact-id audit rejected real work (2026-07-31).
+set au_ns [spar::audit_skills_in_transcript "sess-ns" {linkedin facebook} "Test Contact" $audit_root]
+assert_eq [llength $au_ns] 0 "audit: namespaced skill ids → 0 issues"
+
+# Gapped record, no skill calls → not_provable per skill, severity
+# warning, so the fix loop's severity=error filter drops it.
+set au_gap [spar::audit_skills_in_transcript "sess-gap" {linkedin facebook} "Test Contact" $audit_root]
+assert_eq [llength $au_gap] 2 "audit: gapped record → 2 issues"
+set au_gap_codes {}
+foreach _i $au_gap { lappend au_gap_codes [dict get $_i code] }
+assert_eq [lsort $au_gap_codes] {facebook_audit_not_provable linkedin_audit_not_provable} \
+    "audit: gapped record → codes are <skill>_audit_not_provable"
+assert_eq [dict get [lindex $au_gap 0] severity] "warning" \
+    "audit: not_provable issues are severity=warning"
 
 # Asymmetric: only linkedin required, sess-both has both — must yield 0.
 set au_one [spar::audit_skills_in_transcript "sess-both" {linkedin} "Test Contact" $audit_root]

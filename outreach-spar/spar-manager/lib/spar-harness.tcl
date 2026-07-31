@@ -600,9 +600,9 @@ oo::class create spar::ProfileHarness {
         set parts {}
         foreach c $audit_present {
             if {$c eq "linkedin_lookup_missing"} {
-                lappend parts "invoke the linkedin skill (Skill tool with skill=linkedin) to fetch and parse the LinkedIn profile per SPAR-P §4.3"
+                lappend parts "fetch and parse the LinkedIn profile per SPAR-P §4.3, using the LinkedIn skill available in this environment (Skill tool)"
             } else {
-                lappend parts "invoke the facebook skill (Skill tool with skill=facebook) to fetch and parse the Facebook profile per SPAR-P §4.4"
+                lappend parts "fetch and parse the Facebook profile per SPAR-P §4.4, using the Facebook skill available in this environment (Skill tool)"
             }
         }
         return "FIRST: [join $parts { AND }]. Then re-derive any front-matter fields whose values depend on that data (star_rating, yield).\n\n"

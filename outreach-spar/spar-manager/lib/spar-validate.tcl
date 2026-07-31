@@ -542,16 +542,22 @@ proc spar::_pred_invalid_star_rating {node meta} {
 # read_profile_front_matter -- extract and parse the YAML front-matter block
 # of a profile file. Returns parsed dict, or "" on any failure (missing file,
 # audit_skills_in_transcript -- the SPAR reading of a session's Skill
-# calls: linesman::tool_counts does the counting (the worker's
-# parent session plus its research subagents), and this wrapper turns
-# zero counts into issue dicts (same shape as validate_profile output),
-# code "<skill>_lookup_missing" per required skill with no invocation.
-# A missing transcript becomes a single warning-severity issue with
-# code transcript_not_found rather than masquerading as a skill miss —
-# a future Claude storage-layout change should not loop the agent.
+# calls (the worker's parent session plus its research subagents).
+# linesman::sweep reads the record once; linesman::rule then asks, per
+# required platform token, whether any Skill call's input.skill names
+# that platform (glob *<token>*). The token is the platform, not a
+# skill id: deployed ids vary by plugin install (magazines:linkedin-com,
+# skillbooks:linkedin-com, linkedin), and an exact-id match rejects
+# work that was done. A "no" becomes an error issue, code
+# "<skill>_lookup_missing", carrying the Skill ids the session did
+# call, so the log line shows what the auditor read, not just what it
+# missed. A "not_provable" (gapped or truncated record) becomes a
+# warning-severity issue: an absence only certifies on a whole record,
+# and a storage artefact must not loop the agent. A missing transcript
+# likewise stays a single warning, code transcript_not_found.
 #
 # session_id      UUID returned by claude --output-format json
-# required_skills list of skill IDs (e.g. {linkedin facebook})
+# required_skills list of platform tokens (e.g. {linkedin facebook})
 # contact_name    for issue dicts (consumed by validate_and_correct)
 proc spar::audit_skills_in_transcript {session_id required_skills contact_name {transcripts_root ""}} {
     if {$transcripts_root eq ""} {
@@ -563,22 +569,41 @@ proc spar::audit_skills_in_transcript {session_id required_skills contact_name {
     # (this file's own vendor tm path makes it resolvable here).
     package require linesman
     if {[catch {
-        linesman::tool_counts $session_id $transcripts_root Skill skill
-    } counts opts]} {
+        linesman::sweep $session_id $transcripts_root
+    } rec opts]} {
         if {[dict getdef $opts -errorcode {}] eq {LINESMAN NO_TRANSCRIPT}} {
             return [list [dict create severity warning code transcript_not_found \
                 contact_name $contact_name \
                 message "Session transcript $session_id.jsonl not found under ~/.claude/projects/*/ — audit skipped"]]
         }
-        return -options $opts $counts
+        return -options $opts $rec
     }
+    # Every Skill id the session called, for the miss message: an
+    # absence claim is checkable only beside what was found.
+    set seen {}
+    foreach a [dict get $rec acts] {
+        if {[dict get $a tool] ne "Skill"} continue
+        set id [dict getdef [dict get $a input] skill ""]
+        if {$id ne "" && $id ni $seen} { lappend seen $id }
+    }
+    set seen_text [expr {[llength $seen] > 0 ? [join $seen ", "] : "none"}]
     set issues {}
     set sec [dict create linkedin §4.3 facebook §4.4]
     foreach s $required_skills {
-        if {[dict getdef $counts $s 0] == 0} {
-            set sref [dict getdef $sec $s "(spec)"]
-            lappend issues [spar::_issue error "${s}_lookup_missing" $contact_name \
-                "SPAR-P $sref requires the $s skill; transcript shows zero Skill invocations with input.skill=$s."]
+        set sref [dict getdef $sec $s "(spec)"]
+        set verdict [dict get \
+            [linesman::rule $rec -tool Skill -field skill -match *${s}*] verdict]
+        switch -- $verdict {
+            yes {}
+            no {
+                lappend issues [spar::_issue error "${s}_lookup_missing" $contact_name \
+                    "Nothing in this session called a $s skill (SPAR-P $sref). Skill calls seen: $seen_text."]
+            }
+            not_provable {
+                lappend issues [dict create severity warning \
+                    code "${s}_audit_not_provable" contact_name $contact_name \
+                    message "Session record has gaps ([llength [dict get $rec gaps]] unparsed or truncated lines); a $s skill call cannot be ruled out — audit skipped"]
+            }
         }
     }
     return $issues

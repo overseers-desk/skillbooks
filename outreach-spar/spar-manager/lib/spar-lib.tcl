@@ -325,7 +325,7 @@ proc spar::instance_root_for_yaml {yaml_path} {
 }
 
 # extract_required_skills — convert a segment's profile_reject_if list into
-# the skill list audit_skills_in_transcript expects. Validates the closed
+# the platform-token list audit_skills_in_transcript expects. Validates the closed
 # vocabulary; errors on unknown conditions or wrong shape. Empty list when
 # the field is absent or empty (no audit).
 #

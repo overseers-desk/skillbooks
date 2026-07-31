@@ -1,0 +1,4 @@
+{"type":"user","message":{"role":"user","content":[{"type":"text","text":"Profile this contact"}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Working."},{"type":"tool_use","id":"toolu_01","name":"WebSearch","input":{"query":"contact name"}}]}}
+not json — an unparsed line the sweep records as a gap
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Done."}]}}
