@@ -508,21 +508,12 @@ if {$dispatching} {
         set ::_alldone 0
         set ::_total_seen 0
         set ::_total_expected 0
-        foreach batch $batches {
-            incr ::_total_expected [llength [lindex $batch 2]]
-        }
 
         set disp [spar::Dispatcher new $jobs]
         set ::spar::control_dispatcher $disp
         spar::subscribe_pool_domain $disp
         $disp set_kind_cap ses_send 1
         $disp set_kind_cap linkedin_send 1
-
-        if {$step_callback ne ""} {
-            set ::spar::_step_ordinal 0
-            $disp set_pre_launch_callback \
-                [list ::spar::_pool_pre_launch $step_callback $::_total_expected]
-        }
 
         $disp subscribe job-done     [list ::_dispatch_on_done]
         $disp subscribe job-failed   [list ::_dispatch_on_failed]
@@ -532,19 +523,42 @@ if {$dispatching} {
         # Pause the queue while every batch is enqueued so step_callback
         # (when present) sees the final total, not a growing one.
         $disp pause_queue
+        set enqueued_stems [dict create]
         foreach batch $batches {
             lassign $batch tid worker_proc rows
             foreach pair $rows {
                 lassign $pair stem row_opts
+                # The pool keys a job by its stem, so one stem is one job
+                # for the whole pass. A contact listed in two segments'
+                # rosters prepares a row under each, and the second row
+                # would be refused by the pool; refuse it here instead, so
+                # the skip is named and ::_total_expected counts only what
+                # became a job. The vwait below waits on that count: a row
+                # counted but not enqueued never reports, and the pass
+                # never ends.
+                if {[dict exists $enqueued_stems $stem]} {
+                    ${::spar::transitions_log}::warn \
+                        "  $tid $stem: listed in more than one segment — one row dispatched, [dict getdef $row_opts prompt_dir {}] skipped"
+                    continue
+                }
+                dict set enqueued_stems $stem 1
                 # A row may name its own worker (T6 linkedin rows carry
                 # linkedin_send); the batch worker_proc is the default.
                 set wp [dict getdef $row_opts worker_proc $worker_proc]
                 $disp enqueue $stem $wp $row_opts
+                incr ::_total_expected
                 dict set ::_row_tid $stem $tid
                 # Mirror the legacy `[START] slug` line at enqueue time
                 # so output ordering matches the historical queue.
                 exec_on_progress $stem started ""
             }
+        }
+        # Installed after the loop, while the queue is still paused: the
+        # step gate's total is the enqueued count, known only now.
+        if {$step_callback ne ""} {
+            set ::spar::_step_ordinal 0
+            $disp set_pre_launch_callback \
+                [list ::spar::_pool_pre_launch $step_callback $::_total_expected]
         }
         $disp resume_queue
 
