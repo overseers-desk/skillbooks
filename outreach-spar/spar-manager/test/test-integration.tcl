@@ -92,13 +92,21 @@ set fd [open [file join $cdir campaigns camp2.yaml] w]
 puts -nonewline $fd "campaign: Second Campaign\nsegments:\n  - seg-a\nfilter:\n  min_star: 3\n"
 close $fd
 
-set both [exec tclsh9.0 $progress_script \
-    [file join $cdir campaigns camp.yaml] [file join $cdir campaigns camp2.yaml]]
-set name_lines [lsearch -all -inline [split $both \n] "Campaign:*"]
+# Capture the two streams apart: name and table on stdout, warnings on stderr.
+set errfile [file join $cdir err.txt]
+set out [exec tclsh9.0 $progress_script \
+    [file join $cdir campaigns camp.yaml] [file join $cdir campaigns camp2.yaml] 2>$errfile]
+set fd [open $errfile r]; set err [read $fd]; close $fd
+
+set name_lines [lsearch -all -inline [split $out \n] "Campaign:*"]
 assert_eq [llength $name_lines] 2 "multi: one name line per campaign"
 assert_eq [lindex $name_lines 0] "Campaign:    Test Campaign" "multi: first name, in argument order"
 assert_eq [lindex $name_lines 1] "Campaign:    Second Campaign" "multi: second name"
-assert_eq [llength [lsearch -all -inline [split $both \n] "|TOTAL*"]] 2 "multi: one table per campaign"
+assert_eq [llength [lsearch -all -inline [split $out \n] "|TOTAL*"]] 2 "multi: one table per campaign"
+
+# Warnings go to stderr, so 2>/dev/null leaves the tables.
+assert_eq [string match "*## Warnings*" $out] 0 "multi: no warnings on stdout"
+assert_eq [string match "*## Warnings*" $err] 1 "multi: warnings on stderr"
 
 # A campaign that will not resolve costs its own report, not the others'.
 set rc [catch {exec tclsh9.0 $progress_script \

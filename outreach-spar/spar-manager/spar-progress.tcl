@@ -185,8 +185,9 @@ proc pad_right {s w} { format "%-${w}s" $s }
 proc pad_left  {s w} { format "%${w}s" $s }
 
 # print_report -- one campaign's name line, progress table and warnings.
-# All of it goes to stdout, so a run over several campaigns reads (and
-# redirects) as one document.
+# The name, table and legend go to stdout, so a multi-campaign run reads
+# and redirects as one document; the warnings go to stderr, so 2>/dev/null
+# drops them and leaves the tables.
 proc print_report {analysis} {
     global verbose show_legend
     dict with analysis {}
@@ -327,9 +328,9 @@ proc print_report {analysis} {
     set head_messages [lrange $warn_messages 0 end-$nval]
 
     if {[llength $head_messages] > 0 || $nval > 0} {
-        puts "\n## Warnings\n"
+        puts stderr "\n## Warnings\n"
         foreach msg $head_messages {
-            puts "- $msg"
+            puts stderr "- $msg"
         }
 
         # Group the per-contact issues by problem text (carrying its severity),
@@ -357,16 +358,16 @@ proc print_report {analysis} {
             foreach {seg names} $segs {
                 lappend seg_parts "$seg ([llength $names])"
             }
-            puts "- \[$sev\] $m: [join $seg_parts {, }]"
+            puts stderr "- \[$sev\] $m: [join $seg_parts {, }]"
             if {$verbose} {
                 foreach {seg names} $segs {
-                    puts "    - $seg ([llength $names]): [join $names {, }]"
+                    puts stderr "    - $seg ([llength $names]): [join $names {, }]"
                 }
             }
         }
 
         if {$nval > 0 && !$verbose} {
-            puts "\n(pass --verbose / -v to list the members behind each warning)"
+            puts stderr "\n(pass --verbose / -v to list the members behind each warning)"
         }
     }
 }
