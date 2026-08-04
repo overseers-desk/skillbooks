@@ -18,16 +18,15 @@ Method for finding and maintaining programmatic access to websites. It covers bo
 
 Remember to spawn a subagent when suitable — it involves many tool calls and large outputs. Include the diagnostic procedure in the subagent prompt.
 
-## How to write a skill as a modular skill, not as a prompt to the AI that overshadows other skills
+## A skill doc is executable context, so it stays modular
 
-A skill covers only what the target site's own API or DOM can do. Rules:
+A skill doc loads into future sessions as instructions, obeyed over the session's own judgment. It covers what the target site's API or DOM provides and how to reach it. Beyond that, a sentence speaks with stale authority:
 
-- Do not list capabilities that belong to other skills, even as a fallback or suggestion.
-- Do not mention what the AI should do when this skill cannot fulfil the request.
-- Do not assume or name the tools, browsers, or environment the user has — those are defined in `CLAUDE.md`.
-- Do not list a missing capability as a capability. If the site cannot provide it, say nothing.
+- Another route's method, even as a fallback, pre-answers routing the reading session judges better with the skills it holds that day.
+- Tools, browsers, and environment live in `CLAUDE.md`; a copy here drifts until swept.
+- A capability claim the build never exercised becomes the next session's false premise. What the site cannot provide gets silence; what the skill merely leaves unbuilt gets one line: unbuilt, undecided.
 
-The Known access patterns section below is for hints when building access to a new site — not instructions for accessing any specific site. Entries are examples; they must not grow into full access guides.
+The Known access patterns section below is for hints when building access to a new site, not instructions for accessing any specific site. Entries are examples; they must not grow into full access guides.
 
 ## Driving a page: prefer the constant action, and match by name not visible text
 
