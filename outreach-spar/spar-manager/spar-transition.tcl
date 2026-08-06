@@ -191,15 +191,32 @@ if {$campaign_path eq ""} {
 # The positional is either a campaign YAML (campaigns/<name>.yaml) or a
 # segment (segments/<name> or segments/<name>.yaml). A segment runs the
 # population-tier transitions with no campaign context.
-set segment_mode 0
-set _pos [file normalize $campaign_path]
-if {[file tail [file dirname [expr {[file extension $_pos] eq ".yaml" ? [file rootname $_pos] : $_pos}]]] eq "segments"} {
-    set segment_mode 1
+# A path positional under segments/ selects segment mode; several (a
+# segments/* glob) are one run over the set, the virtual campaign
+# covering exactly those segments. A campaign YAML stands alone.
+proc _is_segment_path {p} {
+    set p [file normalize $p]
+    set stem [expr {[file extension $p] eq ".yaml" ? [file rootname $p] : $p}]
+    return [expr {[file tail [file dirname $stem]] eq "segments"}]
 }
+set extra_paths [dict getdef $spec extra_paths {}]
+set segment_mode [_is_segment_path $campaign_path]
 if {$segment_mode} {
+    set segment_inputs [list [file normalize $campaign_path]]
+    foreach _e $extra_paths {
+        if {![_is_segment_path $_e]} {
+            puts stderr "Error: $_e is not a segments/<name> path; segment mode takes segments only"
+            exit 1
+        }
+        lappend segment_inputs [file normalize $_e]
+    }
     set yaml_path ""
     set approach_dir ""
 } else {
+    if {[llength $extra_paths] > 0} {
+        puts stderr "Error: only one campaign path may be supplied"
+        exit 1
+    }
     if {![string match *.yaml $campaign_path]} {
         puts stderr "Error: campaign argument must be a YAML file (or a segments/<name> path): $campaign_path"
         exit 1
@@ -291,7 +308,7 @@ proc step_prompt {tid slug idx total} {
 
 # --- Load campaign YAML and discover segments ---
 if {$segment_mode} {
-    set resolved [spar::resolve_segment $_pos]
+    set resolved [spar::resolve_segments $segment_inputs]
     set campaign_dir [dict get $resolved campaign_dir]
 } else {
     set resolved [spar::resolve_campaign $yaml_path ""]
@@ -321,7 +338,8 @@ set segment_dirs_opt [expr {$segment_mode \
     ? [lmap _sp $all_segment_paths {lindex $_sp 1}] : {}}]
 # The report and log header names what the run is anchored on.
 set run_label [expr {$segment_mode \
-    ? "Segment: $campaign_name" : "Campaign: $campaign_name"}]
+    ? "Segment[expr {[llength $segment_inputs] > 1 ? "s" : ""}]: $campaign_name" \
+    : "Campaign: $campaign_name"}]
 
 # --- Classify all contacts ---
 # In --auto mode, T1/T2/T3/T4 are the only active transitions and none

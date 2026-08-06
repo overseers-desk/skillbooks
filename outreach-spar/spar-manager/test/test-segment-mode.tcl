@@ -143,4 +143,32 @@ lassign [run_bounded [list tclsh9.0 $pcli $seg] 60000] st out
 assert_eq $st ok "progress accepts the segment path"
 assert_match $out "*lender*" "the segment row renders"
 
+section "several segments, one virtual campaign"
+
+set root2 [file dirname [file dirname [make_segment_only alpha]]]
+set segA [file join $root2 segments alpha]
+file mkdir [file join $root2 segments beta]
+set segB [file join $root2 segments beta]
+write_roster_tsv $segA $::std_headers [list \
+    [make_base_row {stem "a1" contact_name "Ann" star_rating 4 email a@x.test}]]
+write_roster_tsv $segB $::std_headers [list \
+    [make_base_row {stem "b1" contact_name "Ben" star_rating 3 email b@x.test}]]
+write_segment_yaml $segA "version: \"2.0\"\ntitle: A\ndate: 2026-08-01\ndiscovery_criteria: |\n  test\n"
+write_segment_yaml $segB "version: \"2.0\"\ntitle: B\ndate: 2026-08-01\ndiscovery_criteria: |\n  test\n"
+
+set multi [spar::resolve_segments [list $segA $segB]]
+assert_eq [llength [dict get $multi segment_paths]] 2 "both segments in one resolution"
+assert_eq [dict get $multi campaign_name] "alpha, beta" "the set names the run"
+
+lassign [run_bounded [list tclsh9.0 $pcli $segA $segB] 60000] st out
+assert_eq $st ok "progress over two segments completes"
+assert_eq [regexp -all {\|TOTAL} $out] 1 "one table, one TOTAL row"
+assert_match $out "*Segments:*" "header names the set"
+assert_eq [string match "*Reach*" $out] 0 "campaign columns absent without a campaign"
+assert_eq [string match "*Sent*" $out] 0 "engagement columns absent without a campaign"
+
+lassign [run_bounded [list tclsh9.0 $cli $segA $segB --dispatchable --control-port=0] 60000] st out
+assert_eq $st ok "transition report over two segments completes"
+assert_match $out "*Segments: alpha, beta*" "run label names the set"
+
 finish_tests

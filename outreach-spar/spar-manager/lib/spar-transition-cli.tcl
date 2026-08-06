@@ -33,6 +33,8 @@ namespace eval spar {}
 #
 # spec keys:
 #   campaign_path  raw positional (file or dir, or "" if unspecified)
+#   extra_paths    further path positionals: a segments/* glob expands
+#                  to several segment folders, one run over all of them
 #   tid_scopes     list of {tid segment stem} triples; empty == "all"
 #   filter_state   "" | "dispatchable" | "awaiting" | "blocked"
 #   auto_mode      0/1   (--auto)
@@ -48,6 +50,7 @@ namespace eval spar {}
 proc spar::parse_cli {argv} {
     set spec [dict create \
         campaign_path ""   \
+        extra_paths   {}   \
         tid_scopes    {}   \
         filter_state  ""   \
         auto_mode     0    \
@@ -155,15 +158,16 @@ proc spar::parse_cli {argv} {
                     set saw_positional_tid 1
                     dict lappend spec tid_scopes [list $tid $seg $stem]
                 } else {
-                    # Campaign path positional. Captured verbatim;
-                    # the script layer enforces "yaml file that exists".
-                    # parse_cli stays filesystem-pure so tests run
-                    # without temp YAMLs.
-                    if {[dict get $spec campaign_path] ne ""} {
-                        return [dict create ok 0 error \
-                            "only one campaign path may be supplied"]
+                    # Path positional. Captured verbatim; the script
+                    # layer enforces existence and kind. The first is
+                    # the anchor; the rest ride in extra_paths (a
+                    # segments/* glob hands the shell's expansion over
+                    # as one run, judged together at the script layer).
+                    if {[dict get $spec campaign_path] eq ""} {
+                        dict set spec campaign_path $arg
+                    } else {
+                        dict lappend spec extra_paths $arg
                     }
-                    dict set spec campaign_path $arg
                 }
             }
         }

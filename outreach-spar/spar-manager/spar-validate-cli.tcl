@@ -32,7 +32,7 @@ foreach arg $argv {
             set _n [file normalize $arg]
             set _stem [expr {[file extension $_n] eq ".yaml" ? [file rootname $_n] : $_n}]
             if {[file tail [file dirname $_stem]] eq "segments"} {
-                set segment_input $_n
+                lappend segment_inputs $_n
             } elseif {[string match *.yaml $arg]} {
                 set campaign_file $_n
                 set campaign_dir [file dirname $campaign_file]
@@ -92,8 +92,8 @@ if {[llength $seed_bases] > 0} {
 # --- Resolve the input: a segment alone, or a campaign ---
 # A segments/<name> input runs the population-tier checks (versions,
 # roster and profile integrity) with no campaign and no approach files.
-if {[info exists segment_input]} {
-    if {[catch {set rc [spar::resolve_segment $segment_input]} err]} {
+if {[info exists segment_inputs]} {
+    if {[catch {set rc [spar::resolve_segments $segment_inputs]} err]} {
         puts stderr $err
         exit 2
     }
