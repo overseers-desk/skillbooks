@@ -461,6 +461,10 @@ proc spar::load_roster {tsv_path} {
 # If $headers is empty, reads the header line from $tsv_path (the classic
 # same-file rewrite). Pass $headers explicitly when writing to a tmp file
 # for atomic rename (the target doesn't exist yet).
+# date_excluded is rendered YYYY-MM-DD here, whatever form the caller
+# holds: dates are written bare in YAML, tcllib types them to epoch
+# seconds, and this funnel is the one place every roster write passes
+# through, so the column's ISO contract is enforced once.
 proc spar::write_roster {tsv_path rows {headers {}}} {
     if {[llength $rows] == 0} return
 
@@ -479,7 +483,12 @@ proc spar::write_roster {tsv_path rows {headers {}}} {
     foreach row $rows {
         set fields {}
         foreach h $headers {
-            lappend fields [dict getdef $row $h ""]
+            set v [dict getdef $row $h ""]
+            if {$h eq "date_excluded" && [string is wideinteger -strict $v]
+                    && $v > 100000000} {
+                set v [clock format $v -format %Y-%m-%d]
+            }
+            lappend fields $v
         }
         puts $fd [join $fields \t]
     }
@@ -1162,6 +1171,9 @@ proc spar::_sweep_write {path text} {
 
 # read_sweep_yaml — parse a segment's sweep file. Parsing goes through
 # spar::yaml_parse, never ::yaml::yaml2dict directly (the 0.4.2 hang).
+# Date fields (round date, market_estimate.estimated) are written bare
+# and arrive as epoch seconds; this read boundary renders them ISO so
+# every consumer sees YYYY-MM-DD.
 proc spar::read_sweep_yaml {path} {
     if {![file exists $path]} {
         error "sweep file not found: $path"
@@ -1169,6 +1181,23 @@ proc spar::read_sweep_yaml {path} {
     set data [spar::yaml_parse [spar::_sweep_read $path]]
     if {[llength $data] % 2 != 0} {
         error "sweep file $path did not parse as a mapping"
+    }
+    if {[dict exists $data rounds]} {
+        set rounds [lmap r [dict get $data rounds] {
+            set d [dict getdef $r date ""]
+            if {[string is wideinteger -strict $d] && $d > 100000000} {
+                set r [dict replace $r date [clock format $d -format %Y-%m-%d]]
+            }
+            set r
+        }]
+        dict set data rounds $rounds
+    }
+    if {[dict exists $data market_estimate estimated]} {
+        set e [dict get $data market_estimate estimated]
+        if {[string is wideinteger -strict $e] && $e > 100000000} {
+            dict set data market_estimate estimated \
+                [clock format $e -format %Y-%m-%d]
+        }
     }
     return $data
 }
@@ -1207,11 +1236,15 @@ proc spar::sweep_task_stem {segment source_name} {
 # ── Quote-safe YAML emission ──────────────────────────────────────────
 
 # yaml_scalar — render one single-line value as a YAML scalar, quoting
-# whenever the bare form would re-parse as something other than the
-# string handed in: a date (epoch seconds), a ": " (a nested mapping), a
-# leading indicator character, a bool/null token, trailing space, an
-# inline comment. A multi-line value errors instead: that is the block
-# scalar's job, and silently flattening it would lose the text.
+# whenever the bare form would re-parse as something the reader cannot
+# recover the string from: a ": " (a nested mapping), a leading indicator
+# character, a bool/null token, trailing space, an inline comment. An
+# exact ISO date stays bare: dates are written bare by convention, the
+# parser types them to epoch seconds, and every consumer renders them
+# ISO at use. A date-led longer string still quotes, since YAML 1.1
+# reads date-plus-time as a timestamp and the tail would be lost. A
+# multi-line value errors instead: that is the block scalar's job, and
+# silently flattening it would lose the text.
 proc spar::yaml_scalar {value} {
     if {[string first "\n" $value] >= 0} {
         error "spar::yaml_scalar: value spans lines; emit it as a block scalar"
@@ -1230,7 +1263,7 @@ proc spar::yaml_scalar {value} {
     if {[string first "\t" $value] >= 0}                       { set quote 1 }
     if {[string index $value 0] in \
             {- ? : , \[ \] \{ \} # & * ! | > ' \" % @ `}}      { set quote 1 }
-    if {[regexp {^\d{4}-\d{2}-\d{2}} $value]}                  { set quote 1 }
+    if {[regexp {^\d{4}-\d{2}-\d{2}.} $value]}                 { set quote 1 }
     if {[string tolower $value] in {true false yes no on off null ~}} { set quote 1 }
     if {!$quote} { return $value }
     return "\"[string map [list \\ \\\\ \" \\\"] $value]\""

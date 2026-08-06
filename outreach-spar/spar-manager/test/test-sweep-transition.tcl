@@ -92,7 +92,7 @@ section "3. yaml_scalar"
 
 assert_eq [spar::yaml_scalar "partial: 40 of 120"] {"partial: 40 of 120"} \
     "a mid-text ': ' is quoted"
-assert_eq [spar::yaml_scalar "2026-08-06"] {"2026-08-06"} "a date is quoted"
+assert_eq [spar::yaml_scalar "2026-08-06"] "2026-08-06" "an exact date stays bare"
 assert_eq [spar::yaml_scalar "unharvested"] "unharvested" "a plain token stays bare"
 assert_eq [spar::yaml_scalar 3] 3 "an integer stays bare"
 assert_eq [spar::yaml_scalar ""] {""} "an empty value is quoted"
@@ -349,13 +349,25 @@ set issues [row_issues {
     "source_status: partial — halfway"
     "reconciliation: 1 row returned."
     "rows_new:"
-    "  - stem: epoch-date-row"
+    "  - stem: bare-date-row"
     "    contact_name: Dana Fox"
     "    organisation: Fox Ltd"
     "    date_excluded: 2026-08-06"
 }]
+assert_eq [has_issue $issues invalid_row] 0 \
+    "a bare date_excluded passes; write_roster renders it ISO"
+
+set issues [row_issues {
+    "source_status: partial — halfway"
+    "reconciliation: 1 row returned."
+    "rows_new:"
+    "  - stem: quoted-date-row"
+    "    contact_name: Dana Fox"
+    "    organisation: Fox Ltd"
+    "    date_excluded: \"2026-08-06\""
+}]
 assert_match [dict get [lindex [issues_with_code $issues invalid_row] 0] message] \
-    "*epoch seconds*" "an unquoted date_excluded is caught as epoch seconds"
+    "*was quoted*" "a quoted date_excluded is rejected"
 
 set issues [row_issues {
     "source_status: partial — halfway"

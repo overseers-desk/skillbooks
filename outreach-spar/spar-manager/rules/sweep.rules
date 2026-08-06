@@ -54,10 +54,9 @@ rule predicate root escape_verdicts -code escape_missing_verdict -groups {sweep}
 rule predicate root segment_name -needs expected_segment \
     -code segment_name_mismatch -groups {sweep}
 
-# Same epoch-date warning as segment.rules (market_estimate.estimated and
+# Same quoted-date check as segment.rules (market_estimate.estimated and
 # round dates are the exposed fields).
-rule predicate root seed_date_epoch -code unquoted_date -severity warning \
-    -groups {sweep}
+rule predicate root seed_date_quoted -code quoted_date -groups {sweep}
 
 # ── MARKET_ESTIMATE rules ────────────────────────────────────────────────
 rule vocab market_estimate -groups {sweep}
