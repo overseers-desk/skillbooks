@@ -884,9 +884,6 @@ foreach tid [spar::transition_tids] {
     # Apply state filter — only omits rows when a state filter is set and
     # the relevant bucket is empty. With no state filter, zero-count rows
     # still print so the reader can see the full transition ladder.
-    if {$filter_state eq "dispatchable" && [llength $dispatchable_list] == 0} continue
-    if {$filter_state eq "awaiting"     && [llength $awaiting_list]     == 0} continue
-    if {$filter_state eq "blocked"      && [llength $blocked_list]      == 0} continue
 
     set nd [llength $dispatchable_list]
     set na [llength $awaiting_list]
