@@ -57,7 +57,10 @@ The front matter carries what the harness applies:
     sweep_feedback:      # optional; omit when the source taught nothing
       - kind: new-source
         note: the register links a state association directory at <url>
-    escapes: []          # optional; a member this sweep should have found earlier
+    escapes:             # optional; a member an earlier round should have caught
+      - member: Vale Holdings
+        verdict: missing-keyword
+        note: trades as "co-op", which round 1's queries did not cover
 
 Row conventions:
 
@@ -70,6 +73,8 @@ Row conventions:
 - Use only the column names listed above. A fact that has no column belongs in `s_note` or in the body.
 
 `source_status` is the status line the sweep file will carry after your work, and it leads with one base token — `unharvested`, `partial`, `exhausted`, `unreachable` or `stale` — with your reason after it. `exhausted` is a claim about the whole source and needs the evidence in your body to back it: what you read, and how you know nothing is left. `partial` with a precise reason is worth more than an `exhausted` you cannot defend.
+
+`escapes` is for a member you met that an earlier round should already have caught: the row goes in `rows_new` like any other, and the miss goes here with a `verdict` naming its cause (`missing-keyword`, `missing-source`, `source-not-exhausted`, `filter-too-tight`, `process-defect`). The harness appends it to the sweep file's standing escapes list, where it stays as a test case the next round has to catch, so an entry with no verdict is dropped rather than recorded: the verdict is what decides which part of the sweep head gets fixed.
 
 `reconciliation` reconciles your count against the source: how many entries the source holds, how many you got through, how many survived the criteria, how many were already on the roster, how many rows you returned. This is the number that turns into the round's coverage.
 

@@ -849,6 +849,7 @@ oo::class create spar::SweepHarness {
             if {[my validate_and_correct]} { return 1 }
             spar::update_source_status $SweepPath $SourceName [my declared_status]
             my record_round
+            my record_escapes
             my do_summary
             return 0
         } on error {err opts} {
@@ -937,6 +938,19 @@ oo::class create spar::SweepHarness {
             dict set round surprises $surprises
         }
         spar::append_sweep_round $SweepPath $round
+    }
+
+    # A member the sweep should have found earlier and met anyway goes to
+    # the escapes list, the segment's standing set of test cases
+    # (spar-S-search.md §7). The row itself came through rows_new like any
+    # other; this is the miss being recorded as a miss.
+    method record_escapes {} {
+        set n [spar::append_sweep_escapes $SweepPath \
+            [dict getdef [my front_matter] escapes {}]]
+        if {$n > 0} {
+            ${::spar::harness_log}::info \
+                "\[[my slug]\] $n escape(s) recorded against the sweep"
+        }
     }
 
     # coverage_after per spar-S-search.md §10 check 10: the roster's live
