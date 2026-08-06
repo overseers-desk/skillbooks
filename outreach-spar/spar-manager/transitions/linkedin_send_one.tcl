@@ -196,11 +196,41 @@ proc ::spar::li::send_one {opts} {
     }
     set at_probe [expr {$note ne "" ? " (at probe: $note)" : ""}]
 
+    # The runner holds no skills checkout: the caller resolves the skill body
+    # and the serialiser lib dir and hands both in (ducks-protocol.md, POST
+    # /run). BI_SKILLS_ROOT names the checkout's skills/ directory, the same
+    # variable the overseer runbook uses. Absent or wrong, fail before the
+    # queue: a half-resolved payload would refuse server-side anyway.
+    if {![info exists ::env(BI_SKILLS_ROOT)]} {
+        return [list error "BI_SKILLS_ROOT is not set; export it as <skills-checkout>/skills so the send leg can hand the overseer skillPath and libDir (ducks-protocol.md POST /run)"]
+    }
+    set skills_root $::env(BI_SKILLS_ROOT)
+    set skill_path [file join $skills_root "$skill_ref.tcl"]
+    if {![file exists $skill_path]} {
+        return [list error "BI_SKILLS_ROOT does not resolve: skill body missing at $skill_path"]
+    }
+    # libDir is the dir holding serialiser-harness.tcl. The contract sketches
+    # <root>/skills/lib; the deployed toolbox keeps it at <root>/lib beside
+    # skills/. Accept whichever holds the harness; neither is a fault.
+    set lib_dir ""
+    foreach cand [list [file join $skills_root lib] \
+                       [file join [file dirname $skills_root] lib]] {
+        if {[file exists [file join $cand serialiser-harness.tcl]]} {
+            set lib_dir $cand
+            break
+        }
+    }
+    if {$lib_dir eq ""} {
+        return [list error "no serialiser-harness.tcl under $skills_root/lib or [file dirname $skills_root]/lib; BI_SKILLS_ROOT points at the wrong checkout"]
+    }
+
     set args_json [json::write array \
         [json::write string $vanity] \
         [json::write string $text]]
     set body [json::write object \
         skillRef [json::write string $skill_ref] \
+        skillPath [json::write string $skill_path] \
+        libDir [json::write string $lib_dir] \
         argsJson [json::write string $args_json]]
 
     if {[catch {
