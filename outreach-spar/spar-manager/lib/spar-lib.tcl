@@ -1184,8 +1184,8 @@ proc spar::approach_path_in_dir {approach_dir stem} {
 # The segment's discovery record (spar-S-search.md §7): the denominator,
 # the source census, the rounds log. T0 is the first transition to write
 # it. Until now it was hand-written after a sweep, and files were broken
-# by the same defect class: a scalar carrying ": " mid-text, read back
-# as a nested mapping.
+# by the same defect: a scalar carrying ": " mid-text, read back as a
+# nested mapping.
 #
 # So the two writers here never hand a raw string to the file. Every
 # scalar goes through spar::yaml_scalar (quotes what the reader could
