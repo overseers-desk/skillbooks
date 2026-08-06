@@ -16,7 +16,7 @@ source [file join $script_dir .. lib spar-state.tcl]
 source [file join $script_dir test-helpers.tcl]
 
 # Error-tagged approach-rule count, pinned from rules/approach.rules. The
-# ruleset compiles to 21 rules; 5 are warning-declared, leaving 16 error rules:
+# ruleset compiles to 24 rules; 5 are warning-declared, leaving 19 error rules:
 #
 #   error   vocab root, decisions, round, message, parent,            (8)
 #           fact_check_item, fact_provenance_item, script_item
@@ -28,15 +28,16 @@ source [file join $script_dir test-helpers.tcl]
 #   error   predicate linkedin_guard                                  (1)
 #   error   atmost too_many_final_emails                              (1)
 #   error   require reply_missing_parent_message_id (parent level)    (1)
-#   ------------------------------------------------------------------ 16
+#   error   predicate dates_bare (root, roster_patch, message)        (3)
+#   ------------------------------------------------------------------ 19
 #   warning require draft_missing_number, review_missing_number,      (3)
 #           require email_missing_content
 #   warning predicate unsent_final_requires, chosen_usps_presence     (2)
 #
 # The gate passes approach_path, so both -needs-gated hash predicates select;
-# rules_selected below asserts the 16 back from the engine, failing loudly if
+# rules_selected below asserts the 19 back from the engine, failing loudly if
 # the ruleset's error count ever drifts from this pin.
-set ERROR_RULES 16
+set ERROR_RULES 19
 
 # ════════════════════════════════════════════════════════════════════════
 # 1. Clean fixture: the gate returns no error and evaluates no warning rule.

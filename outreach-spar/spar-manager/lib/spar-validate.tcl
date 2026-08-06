@@ -90,6 +90,7 @@ proc spar::_yamlmuster_approach {} {
     # Host predicates: the checks that read files or aggregate across levels,
     # which the declarative DSL cannot express. Registered before load so a
     # rules-file typo is a line-numbered load error, not a validate surprise.
+    $inst predicate dates_bare                  ::spar::_pred_dates_bare
     $inst predicate rounds_structural           ::spar::_pred_rounds_structural
     $inst predicate placeholder_to              ::spar::_pred_placeholder_to
     $inst predicate linkedin_guard              ::spar::_pred_linkedin_guard
@@ -540,6 +541,23 @@ proc spar::_pred_invalid_star_rating {node meta} {
     return {}
 }
 
+# dates_bare -- generic quoted-date check for any level: each named date
+# key present at the node must not hold an ISO string, which post-parse
+# is the tell that the date was quoted in the file. Attached per level
+# by the rules file; keys absent at the node skip.
+proc spar::_pred_dates_bare {node meta} {
+    set out {}
+    foreach key {actioned_date replied_date date_excluded roster_patch_applied} {
+        if {![dict exists $node $key]} continue
+        set v [string trim [dict get $node $key]]
+        if {[regexp {^\d{4}-\d{2}-\d{2}$} $v]} {
+            lappend out [dict create message \
+                "$key \"$v\" was quoted; write the date bare: $key: $v"]
+        }
+    }
+    return $out
+}
+
 # profile_dates_bare -- dates are written bare; the parser types them to
 # epoch seconds and the harness renders them ISO at each boundary
 # (spar::write_roster for the roster's date_excluded). A date field
@@ -710,7 +728,7 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
                 set cur_has_date [expr {![spar::is_null $cur] && $cur ne ""}]
                 if {$snap_has_date && !$cur_has_date} {
                     lappend issues [spar::_issue warning stale_date_excluded $contact_name \
-                        "profile snapshot had date_excluded='$snap'; roster now empty — contact re-validated, re-profile"]
+                        "profile snapshot had date_excluded='[spar::iso_date_if_epoch $snap]'; roster now empty — contact re-validated, re-profile"]
                 }
             }
         }
@@ -1605,8 +1623,8 @@ proc spar::_pred_return_status_token {node meta} {
 
 # Per-row checks that need nothing but the row. A row failing any of them
 # is a row the roster cannot hold: an unusable stem keys a file path, a
-# tab splits the record, an epoch integer is a date the author did not
-# write, and a row with neither a name nor an organisation names nobody.
+# tab splits the record, a quoted date defeats the bare-date convention,
+# and a row with neither a name nor an organisation names nobody.
 #
 # A blank organisation alone is not fatal: spar-roster-format.md makes
 # contact_name the identity anchor and organisation optional, and consumer
