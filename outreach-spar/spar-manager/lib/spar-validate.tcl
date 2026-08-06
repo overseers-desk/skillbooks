@@ -1188,6 +1188,45 @@ proc spar::validate_roster {segment_contacts} {
 #                        caller (spar-progress) group by problem instead of
 #                        printing one line per contact.
 #
+# validate_campaign_stems — cross-check each plan block's stems:
+# allowlist (spar-campaign-yaml.md, "Per-segment plan block") against
+# the classified contacts' actual roster stems. An allowlisted stem
+# absent from its segment's roster is dead weight the campaign will
+# silently never engage, so it warns, in the same shape as
+# orphan_profile / orphan_approach. Shape errors (empty list, blank
+# entries, duplicates) are load_campaign's job, not repeated here.
+proc spar::validate_campaign_stems {all_classified_contacts cdata} {
+    set issues {}
+    if {[llength $cdata] == 0 || ![dict exists $cdata segments]} { return $issues }
+    set segs [dict get $cdata segments]
+    if {![spar::_segments_is_map $segs]} { return $issues }
+
+    array set seg_roster_stems {}
+    foreach contact $all_classified_contacts {
+        set segment [file tail [dict getdef $contact _segment_dir ""]]
+        set stem [string trim [dict getdef $contact stem ""]]
+        if {$segment ne "" && $stem ne ""} {
+            lappend seg_roster_stems($segment) $stem
+        }
+    }
+
+    dict for {segment plan} $segs {
+        if {$plan eq "" || ![dict exists $plan stems]} continue
+        set known {}
+        if {[info exists seg_roster_stems($segment)]} {
+            set known $seg_roster_stems($segment)
+        }
+        foreach st [dict get $plan stems] {
+            if {$st ni $known} {
+                lappend issues [spar::_issue warning stems_unknown "" \
+                    "Campaign stems entry '$st' matches no roster row in segment '$segment'" \
+                    [list segment $segment]]
+            }
+        }
+    }
+    return $issues
+}
+
 proc spar::build_warnings {all_classified_contacts {cdata {}}} {
     set messages {}
     set dup_to_count 0
@@ -1272,7 +1311,17 @@ proc spar::build_warnings {all_classified_contacts {cdata {}}} {
 
     # Validation — semantics only (cross-file). Per-file approach schema
     # validation is a transition dependency, not a progress concern (#43 principle 6).
-    foreach issue [spar::validate_campaign_semantics $all_classified_contacts] {
+    # The stems cross-check joins the semantics issues here, inside the
+    # same trailing run of messages: spar-progress.tcl trims the head by
+    # the validation_issues count, so every contributor to that list must
+    # append its message in this tail block, reshaped to the
+    # {severity segment contact message} shape the list declares.
+    set _semantic_issues [spar::validate_campaign_semantics $all_classified_contacts]
+    if {[llength $cdata] > 0} {
+        lappend _semantic_issues \
+            {*}[spar::validate_campaign_stems $all_classified_contacts $cdata]
+    }
+    foreach issue $_semantic_issues {
         set sev [dict get $issue severity]
         set seg [dict getdef $issue segment ""]
         set cname [dict getdef $issue contact_name ""]

@@ -210,6 +210,36 @@ proc spar::load_campaign {yaml_path} {
         puts stderr "Campaign $yaml_path: skip_segments is retired (spec 2.0) and ignored"
     }
 
+    # Validate per-segment stems allowlists. A plan block's optional
+    # stems: list confines the campaign's view of that segment to the
+    # named roster rows (spar-campaign-yaml.md, "Per-segment plan
+    # block"). Shape is checkable from the YAML alone: a list of
+    # non-empty single-word slugs with no duplicates. Whether each stem
+    # exists in the roster is a validate_campaign_stems warning, since
+    # the roster is not read here.
+    if {[dict exists $data segments]} {
+        set _segs [dict get $data segments]
+        if {[spar::_segments_is_map $_segs]} {
+            dict for {_seg _plan} $_segs {
+                if {$_plan eq "" || ![dict exists $_plan stems]} continue
+                set _stems [dict get $_plan stems]
+                if {[llength $_stems] == 0} {
+                    error "Campaign $yaml_path: segments.$_seg.stems is empty; omit the key to engage the whole segment"
+                }
+                set _seen [dict create]
+                foreach _st $_stems {
+                    if {[string trim $_st] eq "" || [llength $_st] != 1} {
+                        error "Campaign $yaml_path: segments.$_seg.stems entries must be non-empty stem slugs (got '$_st')"
+                    }
+                    if {[dict exists $_seen $_st]} {
+                        error "Campaign $yaml_path: segments.$_seg.stems lists '$_st' twice"
+                    }
+                    dict set _seen $_st 1
+                }
+            }
+        }
+    }
+
     # Validate a_max_passes (hard ceiling on A-phase challenger passes).
     # Integer ≥ 0. 0 disables the challenger entirely (initial draft flows
     # straight to assembly with no fact-check). Absent = default 3, applied
@@ -900,6 +930,26 @@ proc spar::campaign_segment_names {cdata} {
         return [dict keys $segs]
     }
     return $segs
+}
+
+# campaign_stem_in_scope — true when the campaign engages this roster
+# stem of this segment. A plan block's optional stems: list confines the
+# campaign to the named rows; absent (or a legacy list-form segments:)
+# means the whole segment. Distinct from the runtime opts.stems /
+# sel_stems CLI selector, which narrows one invocation: this is the
+# campaign's declared membership, honoured identically by eligibility
+# and dispatch so the two can never disagree about who is in scope.
+proc spar::campaign_stem_in_scope {cdata segment stem} {
+    if {[llength $cdata] == 0} { return 1 }
+    if {![dict exists $cdata segments]} { return 1 }
+    set segs [dict get $cdata segments]
+    if {![spar::_segments_is_map $segs]} { return 1 }
+    if {![dict exists $segs $segment]} { return 1 }
+    set plan [dict get $segs $segment]
+    if {$plan eq "" || ![dict exists $plan stems]} { return 1 }
+    set stems [dict get $plan stems]
+    if {[llength $stems] == 0} { return 1 }
+    return [expr {$stem in $stems}]
 }
 
 # _segments_is_map — true when a parsed `segments` value is the map form

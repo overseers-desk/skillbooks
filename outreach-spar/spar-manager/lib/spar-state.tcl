@@ -1247,6 +1247,16 @@ oo::define spar::State method transition_eligible {classified_contacts transitio
 
     set out {}
     foreach contact $classified_contacts {
+        # Campaign stems allowlist: a plan block's stems: list confines
+        # the campaign to named rows of that segment. Out-of-list
+        # contacts are out of campaign scope for every transition, so
+        # they emit no task at all — the report and the dispatch task
+        # list exclude them identically by construction.
+        if {[llength $cdata] > 0} {
+            set _seg [file tail [dict getdef $contact _segment_dir ""]]
+            set _stem [dict getdef $contact stem ""]
+            if {![spar::campaign_stem_in_scope $cdata $_seg $_stem]} continue
+        }
         foreach task [$t eligible [self] $contact $primary_channel $cdata $today_iso] {
             if {$launch_block ne "" \
                     && [dict get $task task_state] eq "dispatchable"} {
