@@ -944,6 +944,9 @@ proc spar::segment_yaml_for_segment {segment_dir} {
 proc spar::sweep_feedback_path_for_segment {segment_dir} {
     return "${segment_dir}.sweep-feedback.tsv"
 }
+proc spar::sweep_yaml_for_segment {segment_dir} {
+    return "${segment_dir}.sweep.yaml"
+}
 proc spar::profile_path_for_stem {segment_dir stem} {
     return [file join [spar::profile_dir_for_segment $segment_dir] "${stem}.md"]
 }
@@ -958,6 +961,370 @@ proc spar::approach_path_for_stem {campaign_yaml stem} {
 }
 proc spar::approach_path_in_dir {approach_dir stem} {
     return [file join $approach_dir "${stem}.yaml"]
+}
+
+# ══ The sweep file: segments/<seg>.sweep.yaml ═════════════════════════
+#
+# The segment's discovery record (spar-S-search.md §7): the denominator,
+# the source census, the rounds log. T0 is the first transition to write
+# it — until now it was hand-written after a sweep, and four files were
+# broken by the same defect class: a scalar carrying ": " mid-text, or an
+# unquoted date, which tcllib yaml turns into epoch seconds.
+#
+# So the two writers here never hand a raw string to the file. Every
+# scalar goes through spar::yaml_scalar (quotes what would otherwise
+# re-parse as something else) and every multi-line value becomes a block
+# scalar. And they are surgical: a writer rewrites the lines it owns and
+# leaves the rest of the file byte-identical, so an author's comments and
+# block scalars survive a round record.
+
+# _sweep_read / _sweep_write — UTF-8 text IO for the sweep file, atomic on
+# the write (tmp + rename), like every roster write here.
+proc spar::_sweep_read {path} {
+    set fd [open $path r]
+    fconfigure $fd -encoding utf-8
+    set raw [read $fd]
+    close $fd
+    return $raw
+}
+
+proc spar::_sweep_write {path text} {
+    set tmp [exec mktemp "${path}.XXXXXX"]
+    try {
+        set fd [open $tmp w]
+        fconfigure $fd -encoding utf-8 -translation lf
+        puts -nonewline $fd $text
+        close $fd
+        file rename -force $tmp $path
+        set tmp ""
+    } finally {
+        if {$tmp ne "" && [file exists $tmp]} { catch {file delete $tmp} }
+    }
+}
+
+# read_sweep_yaml — parse a segment's sweep file. Parsing goes through
+# spar::yaml_parse, never ::yaml::yaml2dict directly (the 0.4.2 hang).
+proc spar::read_sweep_yaml {path} {
+    if {![file exists $path]} {
+        error "sweep file not found: $path"
+    }
+    set data [spar::yaml_parse [spar::_sweep_read $path]]
+    if {[llength $data] % 2 != 0} {
+        error "sweep file $path did not parse as a mapping"
+    }
+    return $data
+}
+
+# sweep_status_token — a source's status leads with a base token from the
+# closed vocabulary and may carry a free-text reason after it ("partial —
+# 40 of 120 resolved"). This is the single tokeniser: the sweep-file
+# validator, the T0 task selector, and the return validator all split the
+# same way, so a status that reads as exhausted to one reads that way to
+# all three.
+proc spar::sweep_status_token {status} {
+    return [string tolower [lindex [split [string trim $status] " ;:(,.-"] 0]]
+}
+
+# sweep_status_vocab — the closed vocabulary of base tokens.
+proc spar::sweep_status_vocab {} {
+    return {unharvested partial exhausted unreachable stale}
+}
+
+# sweep_source_open — 1 when a source still holds work for T0. Exhausted
+# and unreachable are the two closed states; everything else (including a
+# status whose token is not in the vocabulary, which the seed validator
+# flags separately) is work.
+proc spar::sweep_source_open {status} {
+    return [expr {[spar::sweep_status_token $status] ni {exhausted unreachable}}]
+}
+
+# ── Quote-safe YAML emission ──────────────────────────────────────────
+
+# yaml_scalar — render one single-line value as a YAML scalar, quoting
+# whenever the bare form would re-parse as something other than the
+# string handed in: a date (epoch seconds), a ": " (a nested mapping), a
+# leading indicator character, a bool/null token, trailing space, an
+# inline comment. Errors on a multi-line value — that is the block
+# scalar's job, and silently flattening it would lose the text.
+proc spar::yaml_scalar {value} {
+    if {[string first "\n" $value] >= 0} {
+        error "spar::yaml_scalar: value spans lines; emit it as a block scalar"
+    }
+    if {$value eq ""} { return {""} }
+    # Bare numbers stay bare, except when a leading zero carries meaning
+    # (a phone number, a postcode) that renumbering would eat.
+    if {[string is integer -strict $value] && ![string match {0?*} $value]} {
+        return $value
+    }
+    set quote 0
+    if {[string trim $value] ne $value}                        { set quote 1 }
+    if {[string first ": " $value] >= 0}                       { set quote 1 }
+    if {[string index $value end] eq ":"}                      { set quote 1 }
+    if {[string first " #" $value] >= 0}                       { set quote 1 }
+    if {[string first "\t" $value] >= 0}                       { set quote 1 }
+    if {[string index $value 0] in \
+            {- ? : , \[ \] \{ \} # & * ! | > ' \" % @ `}}      { set quote 1 }
+    if {[regexp {^\d{4}-\d{2}-\d{2}} $value]}                  { set quote 1 }
+    if {[string tolower $value] in {true false yes no on off null ~}} { set quote 1 }
+    if {!$quote} { return $value }
+    return "\"[string map [list \\ \\\\ \" \\\"] $value]\""
+}
+
+# _yaml_block_lines — a multi-line value as a literal block scalar
+# (`key: |-`), the one form that carries prose containing colons, dashes
+# and quotes without any escaping. Leading whitespace on the first line
+# is dropped: YAML would need an explicit indentation indicator to keep
+# it, and no value here depends on it.
+proc spar::_yaml_block_lines {key value indent} {
+    set pad   [string repeat " " $indent]
+    set inner [string repeat " " [expr {$indent + 2}]]
+    set out [list "${pad}${key}: |-"]
+    set body [split [string trimright $value "\n"] "\n"]
+    set body [lreplace $body 0 0 [string trimleft [lindex $body 0]]]
+    foreach line $body { lappend out "${inner}${line}" }
+    return $out
+}
+
+# _yaml_emit_pairs — a dict as YAML mapping lines at $indent. Keys named
+# in $list_keys are emitted as block sequences of scalars; every other
+# value is a scalar, or a block scalar when it spans lines. Typing is by
+# key name, not by guessing at Tcl's string/list ambiguity.
+proc spar::_yaml_emit_pairs {d indent {list_keys {}}} {
+    set pad [string repeat " " $indent]
+    set out {}
+    dict for {k v} $d {
+        if {$k in $list_keys} {
+            if {[llength $v] == 0} {
+                lappend out "${pad}${k}: \[\]"
+                continue
+            }
+            lappend out "${pad}${k}:"
+            foreach item $v {
+                lappend out "${pad}  - [spar::yaml_scalar $item]"
+            }
+            continue
+        }
+        if {[string first "\n" $v] >= 0} {
+            lappend out {*}[spar::_yaml_block_lines $k $v $indent]
+            continue
+        }
+        lappend out "${pad}${k}: [spar::yaml_scalar $v]"
+    }
+    return $out
+}
+
+# _yaml_unquote — strip one layer of surrounding quotes from a parsed-
+# by-eye scalar (these readers work on lines, not on the parse tree).
+proc spar::_yaml_unquote {s} {
+    set s [string trim $s]
+    if {[string length $s] >= 2} {
+        set a [string index $s 0]
+        set b [string index $s end]
+        if {($a eq "\"" && $b eq "\"") || ($a eq "'" && $b eq "'")} {
+            return [string range $s 1 end-1]
+        }
+    }
+    return $s
+}
+
+# ── Surgical line edits on the sweep file ─────────────────────────────
+
+# _yaml_block_entries — locate a top-level block sequence (`sources:`,
+# `rounds:`) and the line range of each of its items. Returns a dict:
+#   key_line   index of the `<key>:` line, -1 when absent
+#   inline     what followed the key on that line ("" or "[]")
+#   entries    list of {first_line last_line key_indent}
+#   block_end  index of the first line after the block
+# Nested sequences inside an item are not items: only dashes at the
+# first item's indentation start a new one.
+proc spar::_yaml_block_entries {lines key} {
+    set n [llength $lines]
+    set key_line -1
+    set inline ""
+    for {set i 0} {$i < $n} {incr i} {
+        if {[regexp "^${key}:(.*)\$" [lindex $lines $i] -> rest]} {
+            set key_line $i
+            set inline [string trim $rest]
+            break
+        }
+    }
+    if {$key_line < 0} {
+        return [dict create key_line -1 inline "" entries {} block_end $n]
+    }
+    set entries {}
+    set cur_start -1
+    set cur_indent 0
+    set item_indent -1
+    set block_end $n
+    for {set i [expr {$key_line + 1}]} {$i < $n} {incr i} {
+        set line [lindex $lines $i]
+        if {[string trim $line] eq ""} continue
+        if {[string index $line 0] ni {" " "\t"}} { set block_end $i; break }
+        if {[regexp {^(\s*)-(\s+)} $line -> ind dash]} {
+            set this_indent [string length $ind]
+            if {$item_indent < 0} { set item_indent $this_indent }
+            if {$this_indent != $item_indent} continue
+            if {$cur_start >= 0} {
+                lappend entries [list $cur_start [expr {$i - 1}] $cur_indent]
+            }
+            set cur_start $i
+            set cur_indent [expr {$this_indent + 1 + [string length $dash]}]
+        }
+    }
+    if {$cur_start >= 0} {
+        lappend entries [list $cur_start [expr {$block_end - 1}] $cur_indent]
+    }
+    return [dict create key_line $key_line inline $inline \
+        entries $entries block_end $block_end]
+}
+
+# _entry_scalar — read one key's raw value from an entry's line range.
+proc spar::_entry_scalar {lines first last key} {
+    for {set i $first} {$i <= $last} {incr i} {
+        if {[regexp "^\\s*(?:-\\s+)?${key}:\\s*(.*)\$" [lindex $lines $i] -> v]} {
+            return [list $i [spar::_yaml_unquote $v]]
+        }
+    }
+    return {}
+}
+
+# update_source_status — set one census source's status line. The rest of
+# the file is untouched, so the author's derivation block scalars and
+# comments survive. Errors when the source is not in the census (a worker
+# renaming its own source would otherwise write a second entry) or when
+# the existing status is a block scalar (nothing here should produce one,
+# so a hand edit that did is left for a human).
+proc spar::update_source_status {sweep_path source_name status} {
+    set lines [split [string trimright [spar::_sweep_read $sweep_path] "\n"] "\n"]
+    set blk [spar::_yaml_block_entries $lines sources]
+    foreach entry [dict get $blk entries] {
+        lassign $entry first last indent
+        set nm [spar::_entry_scalar $lines $first $last name]
+        if {[llength $nm] == 0 || [lindex $nm 1] ne $source_name} continue
+        set st [spar::_entry_scalar $lines $first $last status]
+        if {[llength $st] > 0} {
+            set idx [lindex $st 0]
+            if {[string index [lindex $st 1] 0] in {| >}} {
+                error "update_source_status: '$source_name' status is a block scalar in $sweep_path; rewrite it by hand"
+            }
+            set lead [string repeat " " $indent]
+            regexp {^(\s*-\s+)status:} [lindex $lines $idx] -> lead
+            set lines [lreplace $lines $idx $idx \
+                "${lead}status: [spar::yaml_scalar $status]"]
+        } else {
+            set lines [linsert $lines [expr {[lindex $nm 0] + 1}] \
+                "[string repeat { } $indent]status: [spar::yaml_scalar $status]"]
+        }
+        spar::_sweep_write $sweep_path "[join $lines \n]\n"
+        return 1
+    }
+    error "update_source_status: no source named '$source_name' in $sweep_path"
+}
+
+# append_sweep_round — write a round record into the rounds log.
+#
+# One T0 dispatch is one round worked source by source, and each source's
+# worker lands independently: there is no batch-end hook in either front
+# end, and inventing one would change the dispatch contract both consume.
+# So the round is written incrementally and keyed by its number — the
+# first source to finish creates round n, the rest merge into it. A batch
+# that dies half way leaves a truthful partial round rather than nothing.
+#
+# Merge rule per key: `inputs` and `surprises` union, `reconciliation`
+# gains a line, `yield` sums when both sides are integers, everything else
+# is last-writer (the later worker's `coverage_after` is the fresher count).
+proc spar::append_sweep_round {sweep_path round} {
+    if {![dict exists $round n]} {
+        error "append_sweep_round: round record has no 'n'"
+    }
+    set data [spar::read_sweep_yaml $sweep_path]
+    set existing [dict getdef $data rounds {}]
+    set merged $round
+    set match -1
+    set idx 0
+    foreach r $existing {
+        if {[dict exists $r n] && [dict get $r n] eq [dict get $round n]} {
+            set match $idx
+            set merged [spar::_merge_round $r $round]
+        }
+        incr idx
+    }
+
+    set lines [split [string trimright [spar::_sweep_read $sweep_path] "\n"] "\n"]
+    set blk [spar::_yaml_block_entries $lines rounds]
+    set block [spar::_emit_round_block $merged 2]
+    set key_line [dict get $blk key_line]
+    set entries  [dict get $blk entries]
+
+    if {$key_line < 0} {
+        lappend lines "rounds:"
+        set lines [concat $lines $block]
+    } elseif {$match >= 0 && $match < [llength $entries]} {
+        lassign [lindex $entries $match] first last _
+        set lines [lreplace $lines $first $last {*}$block]
+    } elseif {[llength $entries] == 0} {
+        # `rounds: []` or a bare `rounds:` — the key line carries the
+        # empty flow sequence, so it is replaced, not appended to.
+        set lines [lreplace $lines $key_line $key_line "rounds:" {*}$block]
+    } else {
+        lassign [lindex $entries end] first last _
+        set lines [linsert $lines [expr {$last + 1}] {*}$block]
+    }
+    spar::_sweep_write $sweep_path "[join $lines \n]\n"
+    return [dict get $merged n]
+}
+
+proc spar::_merge_round {old new} {
+    set out $old
+    dict for {k v} $new {
+        switch -- $k {
+            inputs - surprises {
+                set acc [dict getdef $old $k {}]
+                foreach item $v {
+                    if {$item ni $acc} { lappend acc $item }
+                }
+                dict set out $k $acc
+            }
+            reconciliation {
+                set prev [string trim [dict getdef $old $k ""]]
+                if {$prev eq ""} {
+                    dict set out $k $v
+                } elseif {[string first $v $prev] < 0} {
+                    dict set out $k "$prev\n$v"
+                }
+            }
+            yield {
+                set prev [dict getdef $old $k ""]
+                if {[string is integer -strict $prev] \
+                        && [string is integer -strict $v]} {
+                    dict set out $k [expr {$prev + $v}]
+                } else {
+                    dict set out $k $v
+                }
+            }
+            default { dict set out $k $v }
+        }
+    }
+    return $out
+}
+
+# _emit_round_block — one round as a block-sequence item at $indent.
+# Keys come out in the order spar-S-search.md §7 lists them, so a rounds
+# log reads the same whoever wrote the entry; unknown keys follow.
+proc spar::_emit_round_block {round indent} {
+    set order {n date method inputs reconciliation surprises \
+               coverage_after merge lesson yield}
+    set ordered [dict create]
+    foreach k $order {
+        if {[dict exists $round $k]} { dict set ordered $k [dict get $round $k] }
+    }
+    dict for {k v} $round {
+        if {![dict exists $ordered $k]} { dict set ordered $k $v }
+    }
+    set lines [spar::_yaml_emit_pairs $ordered [expr {$indent + 2}] \
+        {inputs surprises}]
+    set pad [string repeat " " $indent]
+    return [lreplace $lines 0 0 "${pad}- [string trimleft [lindex $lines 0]]"]
 }
 
 # ── Per-worker cost metering (#114) ───────────────────────────────────
