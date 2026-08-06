@@ -468,6 +468,7 @@ proc spar::_yamlmuster_profile {} {
     $inst predicate engagement_leak     ::spar::_pred_engagement_leak
     $inst predicate invalid_yield       ::spar::_pred_invalid_yield
     $inst predicate invalid_star_rating ::spar::_pred_invalid_star_rating
+    $inst predicate profile_dates_bare  ::spar::_pred_profile_dates_bare
     spar::_yamlmuster_load $inst profile.rules profile
     set _yamlmuster_profile_inst $inst
     return $inst
@@ -537,6 +538,28 @@ proc spar::_pred_invalid_star_rating {node meta} {
             "star_rating '$s' — must be integer 1..5 (0 only on an exclusion profile with dependent_data.date_excluded set, SPAR-P §5.4)"]]
     }
     return {}
+}
+
+# profile_dates_bare -- dates are written bare; the parser types them to
+# epoch seconds and the harness renders them ISO at each boundary
+# (spar::write_roster for the roster's date_excluded). A date field
+# arriving as an ISO string was quoted in the front matter. A root
+# predicate so the two nested date_excluded reaches are one walk.
+proc spar::_pred_profile_dates_bare {node meta} {
+    set out {}
+    foreach path {
+        {profile_date} {roster_patch_applied}
+        {dependent_data date_excluded} {roster_patch date_excluded}
+    } {
+        if {![dict exists $node {*}$path]} continue
+        set v [string trim [dict get $node {*}$path]]
+        if {[regexp {^\d{4}-\d{2}-\d{2}$} $v]} {
+            set key [join $path .]
+            lappend out [dict create message \
+                "$key \"$v\" was quoted; write the date bare: [lindex $path end]: $v"]
+        }
+    }
+    return $out
 }
 
 # read_profile_front_matter -- extract and parse the YAML front-matter block
@@ -1363,7 +1386,7 @@ proc spar::_yamlmuster_segment {} {
     }
     package require yamlmuster
     set inst [yamlmuster new]
-    $inst predicate seed_date_epoch  ::spar::_pred_seed_date_epoch
+    $inst predicate seed_date_quoted ::spar::_pred_seed_date_quoted
     $inst predicate sweeper_resolves ::spar::_pred_sweeper_resolves
     $inst predicate reject_if_vocab  ::spar::_pred_reject_if_vocab
     spar::_yamlmuster_load $inst segment.rules segment
@@ -1381,7 +1404,7 @@ proc spar::_yamlmuster_sweep {} {
     set inst [yamlmuster new]
     $inst predicate census_source       ::spar::_pred_census_source
     $inst predicate segment_name        ::spar::_pred_segment_name
-    $inst predicate seed_date_epoch     ::spar::_pred_seed_date_epoch
+    $inst predicate seed_date_quoted    ::spar::_pred_seed_date_quoted
     $inst predicate source_status_token ::spar::_pred_source_status_token
     $inst predicate escape_verdicts     ::spar::_pred_escape_verdicts
     spar::_yamlmuster_load $inst sweep.rules sweep
@@ -1389,28 +1412,26 @@ proc spar::_yamlmuster_sweep {} {
     return $inst
 }
 
-# Unquoted YAML dates parse to epoch seconds (tcllib yaml 0.4.2), so the
-# value on disk is not what the author wrote. Warning-severity: the fields
-# this fires on are metadata. Fires on any date-named key at the node whose
-# value is a large wideinteger.
-proc spar::_pred_seed_date_epoch {node meta} {
+# Dates are written bare; the parser types them to epoch seconds, which
+# every consumer renders ISO at use. A date arriving as an ISO string is
+# the tell that it was quoted in the file: flag it. Fires on any
+# date-named key at the node.
+proc spar::_pred_seed_date_quoted {node meta} {
     set out {}
     foreach key {date estimated} {
         if {![dict exists $node $key]} continue
-        set v [dict get $node $key]
-        if {[string is wideinteger -strict $v] && $v > 100000000} {
-            set iso [clock format $v -format %Y-%m-%d]
+        set v [string trim [dict get $node $key]]
+        if {[regexp {^\d{4}-\d{2}-\d{2}$} $v]} {
             lappend out [dict create message \
-                "$key parsed as epoch seconds ($v, i.e. $iso) — quote the date: $key: \"$iso\""]
+                "$key \"$v\" was quoted; write the date bare: $key: $v"]
         }
     }
     # market_estimate.estimated is a nested reach when validating at root.
     if {[dict exists $node market_estimate estimated]} {
-        set v [dict get $node market_estimate estimated]
-        if {[string is wideinteger -strict $v] && $v > 100000000} {
-            set iso [clock format $v -format %Y-%m-%d]
+        set v [string trim [dict get $node market_estimate estimated]]
+        if {[regexp {^\d{4}-\d{2}-\d{2}$} $v]} {
             lappend out [dict create message \
-                "market_estimate.estimated parsed as epoch seconds ($v) — quote the date: estimated: \"$iso\""]
+                "market_estimate.estimated \"$v\" was quoted; write the date bare: estimated: $v"]
         }
     }
     return $out
@@ -1631,12 +1652,15 @@ proc spar::_pred_rows_new_shape {node meta} {
         }
         set dx [string trim [dict getdef $row date_excluded ""]]
         if {$dx ne ""} {
-            if {[string is wideinteger -strict $dx]} {
+            if {[string is wideinteger -strict $dx] && $dx > 100000000} {
+                # A bare date, typed to epoch seconds by the parser;
+                # write_roster renders it ISO at the funnel.
+            } elseif {[regexp {^\d{4}-\d{2}-\d{2}$} $dx]} {
                 lappend out [dict create message \
-                    "$label date_excluded '$dx' parsed as epoch seconds; quote it: date_excluded: \"[clock format $dx -format %Y-%m-%d]\""]
-            } elseif {![regexp {^\d{4}-\d{2}-\d{2}$} $dx]} {
+                    "$label date_excluded \"$dx\" was quoted; write the date bare: date_excluded: $dx"]
+            } else {
                 lappend out [dict create message \
-                    "$label date_excluded '$dx' is not an ISO date (YYYY-MM-DD)"]
+                    "$label date_excluded '$dx' is not a date (bare YYYY-MM-DD)"]
             }
         }
         dict for {k v} $row {

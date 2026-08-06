@@ -85,6 +85,14 @@ rule predicate root engagement_leak -needs raw -code engagement_leak \
 # engagement_leak, matching legacy order.
 rule predicate root invalid_star_rating -code invalid_star_rating -groups {profile}
 
+# Dates are written bare: the parser types them to epoch seconds and the
+# harness renders them ISO at each boundary (spar::write_roster for the
+# roster's date_excluded). A date field arriving as an ISO string was
+# quoted in the front matter. HOST PREDICATE at root so the two nested
+# date_excluded reaches (dependent_data, roster_patch) are covered in one
+# walk. Covers profile_date, roster_patch_applied and both date_excluded.
+rule predicate root profile_dates_bare -code quoted_date -groups {profile}
+
 # ── DEPENDENT_DATA level ─────────────────────────────────────────────────
 # vocab walk: legacy 580-585 (guarded by even-length; -badnode ignore
 # reproduces the skip).

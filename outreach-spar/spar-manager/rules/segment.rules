@@ -41,12 +41,11 @@ rule oneof root target_type {qualification-only cue-required} \
     -message {target_type '%v' — closed vocabulary: qualification-only | cue-required} \
     -groups {seed}
 
-# Unquoted dates parse to epoch seconds under tcllib yaml 0.4.2. Metadata-only
-# here, so a warning: the file still works, but the value on disk is not what
-# the author wrote. Predicate, because the check is "value became a
-# wideinteger", not a pattern over the written text.
-rule predicate root seed_date_epoch -code unquoted_date -severity warning \
-    -groups {seed}
+# Dates are written bare: the parser types them to epoch seconds and every
+# consumer renders them ISO at use. A date arriving as an ISO string was
+# quoted in the file. Predicate, because the check reads the post-parse
+# type, not a pattern over the written text.
+rule predicate root seed_date_quoted -code quoted_date -groups {seed}
 
 # sweeper: <family> promises sweeper-<family>.yaml at the instance root.
 rule predicate root sweeper_resolves -needs instance_root \
