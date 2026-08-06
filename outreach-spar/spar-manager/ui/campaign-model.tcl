@@ -42,7 +42,7 @@ namespace eval spar::ui {}
 
 oo::class create spar::ui::CampaignModel {
     variable CampaignFile CampaignDir CampaignName SenderText FilterDesc
-    variable Cdata SegmentOrder SegmentPaths ApproachDir
+    variable Cdata SegmentOrder SegmentPaths AllSegmentPaths ApproachDir
     variable Segments AllContacts Transitions Warnings
     variable FullLoadDone SegmentPathsForAsync
     variable LoaderCoro LoaderAfterId
@@ -61,6 +61,7 @@ oo::class create spar::ui::CampaignModel {
         set Cdata        [dict create]
         set SegmentOrder {}
         set SegmentPaths {}
+        set AllSegmentPaths {}
         set Segments     {}
         set AllContacts  {}
         set Transitions  {}
@@ -98,6 +99,7 @@ oo::class create spar::ui::CampaignModel {
     method get_filter_desc     {} { return $FilterDesc }
     method get_cdata           {} { return $Cdata }
     method get_segments        {} { return $Segments }
+    method get_all_segment_paths {} { return $AllSegmentPaths }
     method get_all_contacts    {} { return $AllContacts }
     method get_transitions     {} { return $Transitions }
     method get_warnings        {} { return $Warnings }
@@ -238,9 +240,12 @@ oo::class create spar::ui::CampaignModel {
         # segment load errors instead of failing the campaign load.
         set SegmentOrder {}
         set SegmentPaths {}
+        set AllSegmentPaths {}
         foreach seg [spar::campaign_segment_names $Cdata] {
             set seg_dir [file join $CampaignDir segments $seg]
-            if {[file isdirectory $seg_dir]                     && [file exists [spar::roster_path_for_segment $seg_dir]]} {
+            lappend AllSegmentPaths [list $seg $seg_dir]
+            if {[file isdirectory $seg_dir] \
+                    && [file exists [spar::roster_path_for_segment $seg_dir]]} {
                 lappend SegmentOrder $seg
                 lappend SegmentPaths [list $seg $seg_dir]
             }
@@ -319,7 +324,7 @@ oo::class create spar::ui::CampaignModel {
         # transition class, not from a contact; the CLI's
         # compute_ready_by_tid folds them in at the same point.
         lappend eligible {*}[spar::transition_campaign_tasks \
-            $tid $Cdata $CampaignFile]
+            $tid $Cdata $CampaignFile $AllSegmentPaths]
         set tasks {}
         foreach contact $eligible {
             set cname  [dict get $contact contact_name]
