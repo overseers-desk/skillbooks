@@ -19,7 +19,7 @@ One file per campaign, at `campaigns/{campaign}.yaml` in the instance root (`spa
 | `sender.email` | string | Sender's email address (used as From: address) |
 | `usp_document` | path | Path to the organisation overview / USP document. Relative to the YAML file's directory. This is the ground truth about the organisation that A1 reads before drafting. |
 | `language` | string | Language code: `en-gb`, `en-au`, `en`, or a BCP-47 code |
-| `segments` | map | Maps each segment name this campaign operates over to that segment's **plan block** (the campaign×segment intersection: objective, USP framings, message_goal, first_ask, ask_stance, conversion_funnel, approach_sequencing). See "Per-segment plan block" below. Names resolve to `segments/{name}` in the instance root (`spar-campaign-directory.md`). The same segment name may appear under the `segments:` of more than one campaign YAML in the instance, each carrying its own plan: segments are not owned by any one campaign, and the plan changes with the campaign's ask, so it is the campaign's, not the segment's (see the invariance test in `spar-methodology.md`, "Campaigns and segments"). |
+| `segments` | map | Maps each segment name this campaign operates over to that segment's **plan block** (the campaign×segment intersection: objective, USP framings, message_goal, first_ask, ask_stance, conversion_funnel, approach_sequencing, and optionally a `stems` allowlist confining the campaign to named roster rows). See "Per-segment plan block" below. Names resolve to `segments/{name}` in the instance root (`spar-campaign-directory.md`). The same segment name may appear under the `segments:` of more than one campaign YAML in the instance, each carrying its own plan: segments are not owned by any one campaign, and the plan changes with the campaign's ask, so it is the campaign's, not the segment's (see the invariance test in `spar-methodology.md`, "Campaigns and segments"). |
 | `usps` | map | USP registry: maps each USP identifier to its human-readable label. This is the single source of truth for USP names. A segment's plan block references USPs by `id`; the label is resolved from this registry. Registry and per-segment framing now live in the same file, so a referenced `id` always resolves. The full USP prose lives in the `usp_document`. |
 
 ### Required (channels)
@@ -103,6 +103,7 @@ Each plan block may carry:
 | `conversion_funnel` | list | The sequence from first contact to outcome; each step has `step`, `name`, `description`. |
 | `approach_sequencing` | list | Operational order of actions for this segment; each step has `step`, `action`. |
 | `subsegments` | list | Optional variations within the segment. A subsegment shares the segment's objective and USPs but may override `message_goal`, `first_ask`, `ask_stance`, `recipient_problem`, `deciding_interest`, `state_want`, `conversion_funnel`, and `discovery_criteria`. Only differing fields appear. |
+| `stems` | list | Optional allowlist of roster stems. When present, the campaign engages only the named rows of this segment, for every transition: eligibility reports, dispatch, and sends all exclude the rest identically. Omit the key to engage the whole segment; an empty list is a load error. Membership of the segment stays a population fact; which rows this campaign engages is a campaign fact, which is why the list lives here. A listed stem absent from the roster draws a `stems_unknown` warning. Use case: a segment holding a broader population than one campaign's offer fits (e.g. general inbound operators of whom a named subset also carries school groups). An additive optional field per the versioning rule in `spar-methodology.md`: no spec version bump. |
 
 A plan block may be sparse: a segment still being discovered (S&P only, A not yet in scope) carries `objective` and little else. Do not fabricate plan fields to fill the shape.
 
@@ -184,6 +185,9 @@ segments:
     objective: |
       What this campaign aims to accomplish with segment-b.
     # remaining plan fields as above; a sparse block is valid
+    stems:                         # optional: engage only these roster rows of segment-b
+      - jane-doe-example-co
+      - example-org
 
 filter:
   skip_excluded: true

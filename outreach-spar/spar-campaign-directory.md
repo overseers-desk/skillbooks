@@ -92,6 +92,7 @@ Every fact about the campaign has one authoritative home. Before creating any ne
 | USP prose | the file named in `usp_document:` |
 | Anti-claims / do-not-say list | the file named in `antifacts:` |
 | Segment objective, USP framings, message goal, first ask, funnel, approach sequencing | campaign YAML `segments.<name>` plan block |
+| Which roster rows of a segment this campaign engages (when narrower than the whole segment) | campaign YAML `segments.<name>.stems` |
 | Segment-level qualification gates (who belongs in the population) | `segments/{segment}.yaml` `discovery_criteria:` |
 | Segment rating rubric (how useful a member is to us) | `segments/{segment}.yaml` `rating_rubric:` |
 | A-phase and P-phase prompt guidance (reminders, rules, apology behaviour) | campaign YAML `prompt_appendices:` |
