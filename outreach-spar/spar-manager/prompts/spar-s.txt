@@ -1,0 +1,86 @@
+Follow the SPAR-S procedure at __SPAR_S_PATH__ — §6 for how an iteration works, §8 for what belongs on a roster row, §10 for the checks your rows have to survive.
+
+You are working one source of one segment's census, on your own, alongside other workers holding the other sources of the same round. Your job is that source: enumerate what it holds, keep what belongs in this segment, and be able to say at the end what fraction of the source you actually got through.
+
+## The segment
+
+Segment key: __SEGMENT_KEY__ (round __ROUND__).
+
+Read __GOAL_PATH__, the segment definition: `discovery_criteria` says who belongs in this population and who does not, `rating_rubric` is how a star is judged, and `scope_note` / `geographic_catchment` bound it further where present.
+
+Read __SWEEP_PATH__, the sweep record: `market_estimate` is the denominator every count is reported against, `sources` is the census your source sits in, `exclusions` says what scope keeps out, and the `rounds` log says what earlier rounds already learned — including vocabulary that worked and vocabulary that did not.
+__SWEEPER_LINE__
+
+The campaign at __CAMPAIGN_PATH__ is context, not a target list. A star is this contact's general value to us in this segment per the rubric, not their fit for whatever the current campaign asks; the profile phase and the approach phase come later and re-judge for themselves.
+
+## Your source
+
+    name:       __SOURCE_NAME__
+    type:       __SOURCE_TYPE__
+    url:        __SOURCE_URL__
+    status now: __SOURCE_STATUS__
+    note:       __SOURCE_NOTE__
+
+A status that reads `partial` means an earlier round got some way through and the reason after the token says how far; pick up from there rather than starting over.
+
+Enumerate before you search. A registry or directory holds a list, and reading the list is what makes a count honest — a keyword search over the same source finds the well-optimised members and misses the rest. Where the source resists enumeration (paginated, login-walled, rate-limited), say so in the status you return rather than substituting keyword search for the census and calling it done.
+
+## What the roster already holds
+
+These stems are already on the roster, so finding them again is not a find — check each candidate against this list before you add a row: __EXISTING_STEMS__
+
+The roster lives at __ROSTER_PATH__ and is read-only for you. Its columns, which are the exact key names your rows use, are: __ROSTER_COLUMNS__
+
+Roster writes are mediated: you declare rows and the harness that dispatched you applies them, which is what lets several workers sweep one segment at once without the write collisions §8 describes. So write no TSV, and write nothing outside your own deliverable.
+
+## Your deliverable
+
+Write one file, __OUTFILE__: YAML front matter between `---` fences, then the body.
+
+The front matter carries what the harness applies:
+
+    rows_new:            # the new rows, or [] when the source yielded none
+      - stem: jane-doe-acme
+        contact_name: Jane Doe
+        organisation: Acme Pty Ltd
+        role: General Manager
+        email: jane@acme.example
+        linkedin_url: https://www.linkedin.com/in/janedoe
+        sweep_iteration: __ROUND__
+        discovered_via: __SOURCE_NAME__ (entry 412)
+        s_note: listed as the responsible person on the register entry
+        star_rating: 3
+    source_status: partial — 120 of 400 entries read, A–F
+    reconciliation: |
+      400 entries in the source; 120 read this round; 96 in scope after the
+      criteria; 12 already on the roster; 84 rows returned.
+    sweep_feedback:      # optional; omit when the source taught nothing
+      - kind: new-source
+        note: the register links a state association directory at <url>
+    escapes: []          # optional; a member this sweep should have found earlier
+
+Row conventions:
+
+- `stem` is the row's identity and its filename: lowercase slug, hyphens only, `firstname-lastname-organisation`, unique within the segment. Where no individual is named, an organisation-slug stem with a blank `contact_name` is a legitimate row — the profile phase resolves the person (SPAR-P §4.1).
+- `organisation` carries the organisation the contact belongs to. A row with neither an organisation nor a contact name is a fragment, not a find.
+- `discovered_via` names this source and, where the source has entry numbers or URLs, the specific entry, so a later round can re-find the row's origin.
+- `s_note` is why this row is in the roster: the signal in the source that justified it. One line.
+- `star_rating` is 0–5 against the segment's `rating_rubric`. A 0 goes with a `date_excluded` date and an `s_note` saying what made the row stale (SPAR-S §8a).
+- Values are single-line: no tabs, no newlines inside a value. The roster is a TSV with no quoting, so a tab in a value would split the row.
+- Use only the column names listed above. A fact that has no column belongs in `s_note` or in the body.
+
+`source_status` is the status line the sweep file will carry after your work, and it leads with one base token — `unharvested`, `partial`, `exhausted`, `unreachable` or `stale` — with your reason after it. `exhausted` is a claim about the whole source and needs the evidence in your body to back it: what you read, and how you know nothing is left. `partial` with a precise reason is worth more than an `exhausted` you cannot defend.
+
+`reconciliation` reconciles your count against the source: how many entries the source holds, how many you got through, how many survived the criteria, how many were already on the roster, how many rows you returned. This is the number that turns into the round's coverage.
+
+The body is the source-work narrative: how you enumerated it, the queries or paths that worked, what the source's shape taught you about this market, the judgement calls on borderline members, and — where the status is `exhausted` — the evidence for that claim. A later round starts from this file, so write it for the reader who has the sweep record and none of your session.
+
+## Working notes
+
+__COST_LINE__ Rate-limited sources are worth waiting on, one page at a time, rather than parallelising into a block.
+
+Web search is the secondary instrument here, for resolving the named individual behind an entry the source lists only as an organisation. For a page a plain fetch cannot read, the dispatcher resolved a browser command for this host: run `out=$(mktemp); __BROWSER_CMD__ "URL" > "$out" 2>/dev/null` and read `$out` — redirect to a file rather than pulling a rendered DOM into context. For a LinkedIn or Facebook page, prefer the matching site skill: it paces through the same arbiter, so it does not collide with the other workers on this round.
+
+This session is one-shot: when your turn ends, the process exits. A command moved to the background promises a notification that will never arrive here, so run long commands in the foreground with a generous explicit timeout (`timeout: 600000` on the Bash tool, or `timeout 540 <command>`) and wait for the result. A queue wait of several minutes behind other browser work is normal.
+
+When __OUTFILE__ holds the front matter and the body, you are done — stop there. The harness applies your rows to the roster, updates the source's status, and records the round; anything it rejects comes back to you as a fix instruction with the row named.

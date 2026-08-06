@@ -72,7 +72,7 @@ assert_eq [dict exists $jch phone_only] 1 "json: channels has phone_only"
 assert_eq [dict exists $parsed segments] 1 "json: has segments"
 assert_eq [llength [dict get $parsed segments]] 1 "json: one segment"
 assert_eq [dict exists $parsed transitions] 1 "json: has transitions"
-assert_eq [llength [dict get $parsed transitions]] 7 "json: 7 transitions"
+assert_eq [llength [dict get $parsed transitions]] 8 "json: 8 transitions"
 assert_eq [dict exists $parsed warnings] 1 "json: has warnings"
 assert_eq [dict exists $parsed validation] 1 "json: has validation"
 

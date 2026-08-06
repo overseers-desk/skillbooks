@@ -353,6 +353,17 @@ proc spar::extract_required_skills {segment_data segment_path} {
     return $skills
 }
 
+# roster_core_columns — the 14 columns spar-roster-format.md defines, in
+# its order. A live roster's header is authoritative (campaigns add their
+# own columns, e.g. application_url) and every reader takes the header it
+# finds; this list is for the one case where there is no header yet — the
+# first sweep of a segment, creating the roster.
+proc spar::roster_core_columns {} {
+    return {stem contact_name organisation role phone email linkedin_url \
+            facebook_url sweep_iteration discovered_via date_excluded \
+            s_note p_note star_rating}
+}
+
 # load_roster — read TSV, return list of dicts keyed by header columns
 # Port of spar-p-batch.sh lines 129-167 and spar_lib.py load_roster()
 proc spar::load_roster {tsv_path} {
@@ -1036,6 +1047,14 @@ proc spar::sweep_status_vocab {} {
 # flags separately) is work.
 proc spar::sweep_source_open {status} {
     return [expr {[spar::sweep_status_token $status] ni {exhausted unreachable}}]
+}
+
+# sweep_task_stem — the pool key for one T0 task: one segment's one
+# census source. The pool keys a job by its stem and both front ends
+# filter selections by it, so a sweep task needs the same shape a contact
+# has. The `sweep-` prefix keeps it out of any roster stem's space.
+proc spar::sweep_task_stem {segment source_name} {
+    return "sweep-[spar::slugify "${segment}-${source_name}"]"
 }
 
 # ── Quote-safe YAML emission ──────────────────────────────────────────

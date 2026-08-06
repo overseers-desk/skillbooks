@@ -245,6 +245,11 @@ oo::class create spar::ui::DispatchController {
         }
         set eligible [[$Campaign get_state] transition_eligible \
             [$Campaign get_all_contacts] $tid $primary_channel $cdata]
+        # Same fold the tree rows were built with (CampaignModel
+        # _transition_entry) and the CLI's compute_ready_by_tid does:
+        # without it a selected T0 row would filter down to nothing here.
+        lappend eligible {*}[spar::transition_campaign_tasks \
+            $tid $cdata $CampaignFile]
         set stem_set [dict create]
         foreach s $sel_stems { dict set stem_set $s 1 }
         set filtered {}

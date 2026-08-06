@@ -315,6 +315,11 @@ oo::class create spar::ui::CampaignModel {
     method _transition_entry {tid primary_channel} {
         set label [spar::transition_label $tid]
         set eligible [$State transition_eligible $AllContacts $tid $primary_channel $Cdata]
+        # Campaign-level tasks (T0's census sources) come from the
+        # transition class, not from a contact; the CLI's
+        # compute_ready_by_tid folds them in at the same point.
+        lappend eligible {*}[spar::transition_campaign_tasks \
+            $tid $Cdata $CampaignFile]
         set tasks {}
         foreach contact $eligible {
             set cname  [dict get $contact contact_name]

@@ -162,4 +162,61 @@ assert_eq [dict get [lindex [dict get $data rounds] 1] n] 2 "in order"
 assert_eq [dict get $data exclusions] "out-of-state operators" \
     "keys after rounds: survive the splice"
 
+# ── 6. Task selection ──────────────────────────────────────────────────
+
+section "6. task selection from the census"
+
+set camp [file join $root campaigns camp.yaml]
+set fd [open $camp w]
+puts $fd "campaign: test"
+puts $fd {version: "2.0"}
+puts $fd "primary_channel: email"
+puts $fd "segments:"
+puts $fd "  vic:"
+puts $fd "    plan: sweep it"
+close $fd
+
+set cdata [spar::load_campaign $camp]
+set tasks [spar::transition_campaign_tasks T0 $cdata $camp]
+set names {}
+foreach t $tasks { lappend names [dict get $t contact_name] }
+assert_eq [lsort $names] {{State register} {Trade directory}} \
+    "one task per open source; exhausted and unreachable skipped"
+assert_eq [dict get [lindex $tasks 0] task_state] dispatchable \
+    "open sources are dispatchable"
+assert_eq [dict get [lindex $tasks 0] segment] vic "task carries its segment"
+assert_eq [dict get [lindex $tasks 0] stem] \
+    [spar::sweep_task_stem vic "State register"] "stem is the pool key"
+
+# Every contact-driven transition ignores the campaign-task seam.
+assert_eq [spar::transition_campaign_tasks T1 $cdata $camp] {} \
+    "T1 has no campaign-level tasks"
+
+# A source worked to exhaustion drops out of the next pass.
+spar::update_source_status $sweep "State register" "exhausted — all 120 entries read"
+set tasks [spar::transition_campaign_tasks T0 $cdata $camp]
+assert_eq [llength $tasks] 1 "an exhausted source is no longer ready"
+assert_eq [dict get [lindex $tasks 0] contact_name] "Trade directory" \
+    "the remaining open source is the one left"
+
+# A sweep file that does not parse blocks rather than disappears.
+set bad_seg [write_seed_pair $root nsw]
+set fd [open [spar::sweep_yaml_for_segment $bad_seg] w]
+puts $fd "segment: nsw"
+puts $fd "sources: \[oops"
+close $fd
+set fd [open $camp w]
+puts $fd "campaign: test"
+puts $fd {version: "2.0"}
+puts $fd "primary_channel: email"
+puts $fd "segments:"
+puts $fd "  nsw:"
+puts $fd "    plan: sweep it"
+close $fd
+set tasks [spar::transition_campaign_tasks T0 [spar::load_campaign $camp] $camp]
+assert_eq [llength $tasks] 1 "an unparseable sweep file yields one row"
+assert_eq [dict get [lindex $tasks 0] task_state] blocked "and it is blocked"
+assert_match [dict get [lindex $tasks 0] reason] "*does not parse*" \
+    "with the parse failure as its reason"
+
 finish_tests
