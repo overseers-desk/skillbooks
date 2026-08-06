@@ -63,6 +63,7 @@ oo::class create ::spar::transitions::ProfileTransition {
 ::spar::transitions::register \
     -class ::spar::transitions::ProfileTransition \
     -tid T1 \
+    -tier population \
     -label "Sweep → Profile" \
     -auto-safe 1 \
     -dispatch-status available \
@@ -72,6 +73,7 @@ oo::class create ::spar::transitions::ProfileTransition {
 ::spar::transitions::register \
     -class ::spar::transitions::ProfileTransition \
     -tid T3 \
+    -tier population \
     -label "Stale → Re-profile" \
     -auto-safe 1 \
     -dispatch-status available \

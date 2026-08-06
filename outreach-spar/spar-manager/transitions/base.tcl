@@ -51,6 +51,11 @@ oo::class create ::spar::transitions::Transition {
     # world (T6/T8/T9/T10). transition_eligible holds their dispatchable
     # tasks back until the campaign's start_date says it has launched.
     method outgoing                   {} { my param -outgoing 0 }
+    # tier names which of the methodology's record tiers the transition
+    # works on (spar-methodology.md, "Campaigns and segments"): population
+    # transitions (T1/T3 profiling) read nothing campaign-bound and run
+    # from a segment alone; campaign is the default for the rest.
+    method tier                       {} { my param -tier campaign }
 
     # Default build_opts — no extra opts. Subclasses that need per-runner
     # setup override.
@@ -98,7 +103,11 @@ oo::class create ::spar::transitions::Transition {
     #
     # Returns task dicts of the same shape spar::_task builds. Default
     # empty, so every contact-driven T-id inherits it unchanged.
-    method campaign_tasks {cdata campaign_file} {
+    # segment_paths is the resolved {label seg_dir} list the caller
+    # already walked (resolve_campaign or resolve_segment); a segment-
+    # mode caller has no campaign, so tasks derive from that list, not
+    # from cdata.
+    method campaign_tasks {cdata campaign_file segment_paths} {
         return {}
     }
 }
@@ -218,10 +227,9 @@ proc spar::transition_supports_reauthor {tid} {
 # transition_campaign_tasks -- the T-id's campaign-level ready tasks (see
 # the class method). Empty for an unregistered T-id and for a caller with
 # no campaign file in hand, so a consumer folds the call in unconditionally.
-proc spar::transition_campaign_tasks {tid cdata campaign_file} {
+proc spar::transition_campaign_tasks {tid cdata campaign_file segment_paths} {
     if {$tid ni [::spar::transitions::all]} { return {} }
-    if {$campaign_file eq "" || ![file exists $campaign_file]} { return {} }
-    return [[::spar::transitions::get $tid] campaign_tasks $cdata $campaign_file]
+    return [[::spar::transitions::get $tid] campaign_tasks $cdata $campaign_file $segment_paths]
 }
 
 # transition_tids -- all registered T-ids in registration order.

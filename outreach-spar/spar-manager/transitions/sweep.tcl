@@ -19,11 +19,10 @@ oo::class create ::spar::transitions::SweepTransition {
     # does not parse contributes one blocked row naming the defect,
     # rather than vanishing. Both front ends drop blocked rows from
     # dispatch and show them to the operator.
-    method campaign_tasks {cdata campaign_file} {
-        set root [spar::instance_root_for_yaml $campaign_file]
+    method campaign_tasks {cdata campaign_file segment_paths} {
         set out {}
-        foreach seg [spar::campaign_segment_names $cdata] {
-            set seg_dir [file join $root segments $seg]
+        foreach item $segment_paths {
+            lassign $item seg seg_dir
             set sweep_path [spar::sweep_yaml_for_segment $seg_dir]
             if {![file exists $sweep_path]} continue
             if {[catch {spar::read_sweep_yaml $sweep_path} data]} {

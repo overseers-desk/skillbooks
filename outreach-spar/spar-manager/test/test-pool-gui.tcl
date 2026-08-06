@@ -121,6 +121,7 @@ oo::class create FakeCampaign {
     method get_cdata           {} { return $Cdata }
     method get_state           {} { return $State }
     method get_all_contacts    {} { return $Contacts }
+    method get_all_segment_paths {} { return {} }
     method set_contacts    {cs} { set Contacts $cs }
     method get_transitions     {} { return $Transitions }
     method refresh             {} { return }

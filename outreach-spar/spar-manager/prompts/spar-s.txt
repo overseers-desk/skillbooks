@@ -11,7 +11,7 @@ Read __GOAL_PATH__, the segment definition: `discovery_criteria` says who belong
 Read __SWEEP_PATH__, the sweep record: `market_estimate` is the denominator every count is reported against, `sources` is the census your source sits in, `exclusions` says what scope keeps out, and the `rounds` log says what earlier rounds already learned — including vocabulary that worked and vocabulary that did not.
 __SWEEPER_LINE__
 
-The campaign at __CAMPAIGN_PATH__ is context, not a target list. A star is this contact's general value to us in this segment per the rubric, not their fit for whatever the current campaign asks; the profile phase and the approach phase come later and re-judge for themselves.
+__CAMPAIGN_LINE__
 
 ## Your source
 
