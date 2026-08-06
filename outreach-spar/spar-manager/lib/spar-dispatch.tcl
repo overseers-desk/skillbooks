@@ -285,6 +285,15 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
 
         if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
 
+        # Campaign stems allowlist (segments.<seg>.stems in the campaign
+        # YAML): rows outside it are out of campaign scope, mirroring
+        # transition_eligible so report and dispatch agree.
+        if {![spar::campaign_stem_in_scope $cdata $segment_name $stem]} {
+            incr skipped
+            {*}$on_progress $stem skipped "not in campaign stems"
+            continue
+        }
+
         set outfile [spar::profile_path_for_stem $segment_dir $stem]
 
         # Skip existing profile unless caller supplied an explicit stems
@@ -560,6 +569,25 @@ proc spar::a::_build_prompts {opts on_progress} {
 
             if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
 
+            # Approach file always {stem}.yaml (stem is authoritative —
+            # classify_segment reads it from the same path). Rows without
+            # a stem are sweep artefacts and cannot be approached; checked
+            # before the stems allowlist so they keep their legible label.
+            if {$stem eq ""} {
+                incr skipped
+                {*}$on_progress "[spar::slugify $name]-[spar::slugify $org]" skipped "no stem"
+                continue
+            }
+
+            # Campaign stems allowlist (segments.<seg>.stems): rows
+            # outside it are out of campaign scope, mirroring
+            # transition_eligible so report and dispatch agree.
+            if {![spar::campaign_stem_in_scope $cdata $segment $stem]} {
+                incr skipped
+                {*}$on_progress $stem skipped "not in campaign stems"
+                continue
+            }
+
             # SSOT for approach-dispatch gates (#56): shared with
             # spar::State's transition_eligible T2 so the UI tree and this
             # loop can never disagree about who is dispatchable.
@@ -576,14 +604,6 @@ proc spar::a::_build_prompts {opts on_progress} {
             set slug_name [spar::slugify $name]
             set slug_org [spar::slugify $org]
 
-            # Approach file always {stem}.yaml (stem is authoritative —
-            # classify_segment reads it from the same path). Rows without
-            # a stem are sweep artefacts and cannot be approached.
-            if {$stem eq ""} {
-                incr skipped
-                {*}$on_progress "${slug_name}-${slug_org}" skipped "no stem"
-                continue
-            }
             set outfile [spar::approach_path_in_dir $approach_dir $stem]
 
             if {[file exists $outfile]} {
