@@ -381,6 +381,32 @@ proc spar::resolve_segment {path} {
         campaign_name $name min_star 0 primary_channel ""]
 }
 
+# resolve_segments -- several segment inputs judged as one run: the
+# virtual campaign covering exactly those segments. All must live under
+# one instance root. The result is the resolve_campaign shape, with the
+# label naming the set.
+proc spar::resolve_segments {paths} {
+    set segment_paths {}
+    set all_segment_paths {}
+    set names {}
+    set root ""
+    foreach path $paths {
+        set one [spar::resolve_segment $path]
+        if {$root eq ""} {
+            set root [dict get $one campaign_dir]
+        } elseif {$root ne [dict get $one campaign_dir]} {
+            error "Segments span two instance roots: $root and [dict get $one campaign_dir]"
+        }
+        lappend segment_paths {*}[dict get $one segment_paths]
+        lappend all_segment_paths {*}[dict get $one all_segment_paths]
+        lappend names [dict get $one campaign_name]
+    }
+    return [dict create yaml_path "" campaign_dir $root \
+        cdata {} segment_paths $segment_paths \
+        all_segment_paths $all_segment_paths \
+        campaign_name [join $names ", "] min_star 0 primary_channel ""]
+}
+
 # instance_root_for_yaml: the instance root of a campaign YAML at
 # <root>/campaigns/<camp>.yaml. Errors when the YAML does not sit in a
 # campaigns/ folder, which is the spec-2.0 shape the tool supports.
