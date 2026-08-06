@@ -761,7 +761,7 @@ Emit exactly one of these lines as the very last line of your output:"
 # ════════════════════════════════════════════════════════════════════════
 #
 # One task is one census source of one segment, worked to exhaustion.
-# Returns {logs_dir <path> rows {{stem pdir} ...}} — the same shape
+# Returns {logs_dir <path> rows {{stem pdir} ...}}, the same shape
 # spar::p::prepare_for_pool returns, so transitions/sweep.tcl repackages
 # it into pool rows exactly as transitions/profile.tcl does.
 #
