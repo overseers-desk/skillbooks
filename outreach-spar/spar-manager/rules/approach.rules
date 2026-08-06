@@ -52,6 +52,7 @@ level script_item          -keys {point text}
 # Legacy never vocab-walks replies (it is a valid round key, no descent).
 child root    decisions       dict decisions
 child root    rounds          list round
+child root    roster_patch    dict roster_patch
 child root    fact_provenance list fact_provenance_item
 child round   messages        list message
 child round   fact_check      list fact_check_item
@@ -66,6 +67,12 @@ child message parent          dict parent
 #   unknown_key : "unknown key '<k>' at <level> — not in canonical vocabulary"
 #   wrong_level : "'<k>' at <level> belongs at <found_at>; move it there"
 rule vocab root -groups {approach}
+
+# Quoted-date check at root (roster_patch_applied) and, below, at the
+# roster_patch and message levels: dates are written bare, and an ISO
+# string post-parse is the tell that the file quoted it.
+rule predicate root dates_bare -code quoted_date -groups {approach}
+rule predicate roster_patch dates_bare -code quoted_date -groups {approach}
 
 # missing_decisions: legacy 187-190. Existence only.
 rule require root decisions -code missing_decisions \
@@ -184,6 +191,12 @@ rule atmost round messages 1 -where {channel email} -when {type final} \
 
 # ── MESSAGE level rules ─────────────────────────────────────────────────
 rule vocab message -groups {approach}
+
+# Dates are written bare (the parser types them to epoch seconds; readers
+# render ISO at use). A date arriving as an ISO string was quoted:
+# actioned_date / replied_date here, mirroring profile.rules'
+# profile_dates_bare.
+rule predicate message dates_bare -code quoted_date -groups {approach}
 
 # invitation_unavailable, the boolean recording that this LinkedIn
 # profile offers no way to attach a note to a connection invitation, is

@@ -342,6 +342,38 @@ proc spar::resolve_campaign {campaign_file campaign_dir} {
         min_star $min_star primary_channel $primary_channel]
 }
 
+# resolve_segment -- segment-mode counterpart of resolve_campaign. The
+# input names a segment (segments/<name> or segments/<name>.yaml); the
+# result carries the same keys resolve_campaign returns so the CLIs can
+# consume either, with cdata {} (population-tier work reads nothing
+# campaign-bound) and an empty primary_channel. Throws when the path is
+# not under a segments/ folder or the roster is missing.
+proc spar::resolve_segment {path} {
+    set path [file normalize $path]
+    if {[file extension $path] eq ".yaml"} {
+        set seg_dir [file rootname $path]
+    } else {
+        set seg_dir $path
+    }
+    set parent [file dirname $seg_dir]
+    if {[file tail $parent] ne "segments"} {
+        error "Segment path $path is not under a segments/ folder (spec 2.0 layout; see spar-campaign-directory.md)"
+    }
+    set name [file tail $seg_dir]
+    set has_roster [file exists [spar::roster_path_for_segment $seg_dir]]
+    if {!$has_roster && ![file exists [spar::segment_yaml_for_segment $seg_dir]] \
+            && ![file exists [spar::sweep_yaml_for_segment $seg_dir]]} {
+        error "Nothing at $seg_dir: no roster, definition, or sweep file"
+    }
+    # A seeded segment with no roster yet is a valid input (T0 sweeps it
+    # into existence); it just has nothing for classification to walk.
+    return [dict create yaml_path "" campaign_dir [file dirname $parent] \
+        cdata {} \
+        segment_paths [expr {$has_roster ? [list [list $name $seg_dir]] : {}}] \
+        all_segment_paths [list [list $name $seg_dir]] \
+        campaign_name $name min_star 0 primary_channel ""]
+}
+
 # instance_root_for_yaml: the instance root of a campaign YAML at
 # <root>/campaigns/<camp>.yaml. Errors when the YAML does not sit in a
 # campaigns/ folder, which is the spec-2.0 shape the tool supports.
@@ -457,6 +489,17 @@ proc spar::load_roster {tsv_path} {
     return $rows
 }
 
+# iso_date_if_epoch — render a bare-date value ISO. Dates are written
+# bare in YAML and the parser types them to epoch seconds; every
+# boundary that shows or stores a date as text passes it through here.
+# Anything that is not an epoch-sized integer returns unchanged.
+proc spar::iso_date_if_epoch {v} {
+    if {[string is wideinteger -strict $v] && $v > 100000000} {
+        return [clock format $v -format %Y-%m-%d]
+    }
+    return $v
+}
+
 # write_roster — write rows back to a TSV, preserving column order.
 # If $headers is empty, reads the header line from $tsv_path (the classic
 # same-file rewrite). Pass $headers explicitly when writing to a tmp file
@@ -484,9 +527,8 @@ proc spar::write_roster {tsv_path rows {headers {}}} {
         set fields {}
         foreach h $headers {
             set v [dict getdef $row $h ""]
-            if {$h eq "date_excluded" && [string is wideinteger -strict $v]
-                    && $v > 100000000} {
-                set v [clock format $v -format %Y-%m-%d]
+            if {$h eq "date_excluded"} {
+                set v [spar::iso_date_if_epoch $v]
             }
             lappend fields $v
         }
@@ -1134,16 +1176,17 @@ proc spar::approach_path_in_dir {approach_dir stem} {
 #
 # The segment's discovery record (spar-S-search.md §7): the denominator,
 # the source census, the rounds log. T0 is the first transition to write
-# it. Until now it was hand-written after a sweep, and four files were
-# broken by the same defect class: a scalar carrying ": " mid-text, or an
-# unquoted date, which tcllib yaml turns into epoch seconds.
+# it. Until now it was hand-written after a sweep, and files were broken
+# by the same defect class: a scalar carrying ": " mid-text, read back
+# as a nested mapping.
 #
 # So the two writers here never hand a raw string to the file. Every
-# scalar goes through spar::yaml_scalar (quotes what would otherwise
-# re-parse as something else) and every multi-line value becomes a block
-# scalar. And they are surgical: a writer rewrites the lines it owns and
-# leaves the rest of the file byte-identical, so an author's comments and
-# block scalars survive a round record.
+# scalar goes through spar::yaml_scalar (quotes what the reader could
+# not otherwise recover the string from; exact dates stay bare, and
+# read_sweep_yaml renders them ISO) and every multi-line value becomes a
+# block scalar. And they are surgical: a writer rewrites the lines it
+# owns and leaves the rest of the file byte-identical, so an author's
+# comments and block scalars survive a round record.
 
 # _sweep_read / _sweep_write — UTF-8 text IO for the sweep file, atomic on
 # the write (tmp + rename), like every roster write here.
@@ -1184,20 +1227,17 @@ proc spar::read_sweep_yaml {path} {
     }
     if {[dict exists $data rounds]} {
         set rounds [lmap r [dict get $data rounds] {
-            set d [dict getdef $r date ""]
-            if {[string is wideinteger -strict $d] && $d > 100000000} {
-                set r [dict replace $r date [clock format $d -format %Y-%m-%d]]
+            if {[dict exists $r date]} {
+                set r [dict replace $r date \
+                    [spar::iso_date_if_epoch [dict get $r date]]]
             }
             set r
         }]
         dict set data rounds $rounds
     }
     if {[dict exists $data market_estimate estimated]} {
-        set e [dict get $data market_estimate estimated]
-        if {[string is wideinteger -strict $e] && $e > 100000000} {
-            dict set data market_estimate estimated \
-                [clock format $e -format %Y-%m-%d]
-        }
+        dict set data market_estimate estimated \
+            [spar::iso_date_if_epoch [dict get $data market_estimate estimated]]
     }
     return $data
 }

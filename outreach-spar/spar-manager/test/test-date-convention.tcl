@@ -130,7 +130,27 @@ set issues [sweep_return_issues "late july"]
 assert_match [dict get [lindex $issues 0] message] "*not a date*" \
     "non-date date_excluded rejected"
 
-# 7. validate_seed: a quoted segment date errors, a bare one passes.
+# 7. approach validation: a quoted actioned_date or roster_patch date
+# errors; the bare form (epoch post-parse) passes.
+proc approach_data {dx} {
+    return [dict create \
+        decisions [dict create channel email] \
+        rounds [list [dict create type final messages [list \
+            [dict create channel email subject S body B to a@b.example \
+                actioned_date $dx]]]] \
+        roster_patch [dict create date_excluded $dx]]
+}
+set codes [lmap i [spar::validate_approach_data \
+        [approach_data "2026-07-18"] "" a@b.example "Jane Doe"] \
+    {dict get $i code}]
+assert_eq [llength [lsearch -all -exact $codes quoted_date]] 2 \
+    "quoted actioned_date and roster_patch.date_excluded each error"
+set codes [lmap i [spar::validate_approach_data \
+        [approach_data $epoch] "" a@b.example "Jane Doe"] \
+    {dict get $i code}]
+assert_eq [expr {"quoted_date" in $codes}] 0 "bare approach dates pass"
+
+# 8. validate_seed: a quoted segment date errors, a bare one passes.
 set segbase [file join $tmpdir seg]
 proc write_seed {segbase datestr} {
     set fd [open "$segbase.yaml" w]

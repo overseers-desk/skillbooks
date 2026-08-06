@@ -312,12 +312,18 @@ oo::class create spar::ui::Inspector {
                 if {[llength $val] % 2 == 0} {
                     foreach {sk sv} $val {
                         set disp [expr {[spar::is_null $sv] ? "" : $sv}]
+                        if {[string match *date* $sk]} {
+                            set disp [spar::iso_date_if_epoch $disp]
+                        }
                         ::spar::ui::inspector_widgets::kv_row $body $sk $disp 1
                     }
                 }
             }
             default {
                 set disp [expr {[spar::is_null $val] ? "" : $val}]
+                if {[string match *date* $key]} {
+                    set disp [spar::iso_date_if_epoch $disp]
+                }
                 ::spar::ui::inspector_widgets::kv_row $body $key $disp
             }
         }
