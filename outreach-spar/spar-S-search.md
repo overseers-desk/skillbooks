@@ -56,6 +56,8 @@ Classification is an evidence-bearing claim, recorded in the sweep file's source
 
 Discovery progresses through iterations that expand the roster in two ways: **social-graph expansion** (following referral chains from known contacts to their peers) and **semantic expansion** (broadening search queries based on how discovered contacts describe themselves and their industry).
 
+Where the spar-manager engine drives the segment, an iteration runs as the T0 transition: one worker per open source in the segment's sweep file, rows landing through the harness's mediated batch applier, the round record and source statuses written back by the harness. The seed pair T0 consumes (the segment definition and the sweep file) validates with `spar-validate-cli.tcl --seed`; authoring guidance is the seeding section of `segment-schema.yaml`. The iteration discipline below is the same either way; T0 mechanises the dispatch, the merge, and the record, not the judgement.
+
 ### S&P₀: Size the market (gate)
 
 Before any contact search, establish the denominator: how many members does this segment's addressable market hold, top-down (population and density reasoning) and bottom-up (which enumerable sources hold the population, with an expected yield each). Write the estimate with its derivation, and the source census it rests on, into the segment's `sweep.yaml` (§7). No searching starts while the denominator is absent.
@@ -123,7 +125,7 @@ S&P₁ through S&P₃ run autonomously. Any iteration beyond S&P₃ is human-ini
 
 ## 7. The sweep file (sweep.yaml)
 
-One `sweep.yaml` per segment, beside the roster. It is the segment's discovery record and the S phase's working memory: the denominator, the instruments, what each round did, and what the next round should do. Future work on the segment starts from this file rather than rediscovering the vocabulary. It supersedes the earlier `summary-[segment-name].md`.
+One sweep file per segment (`segments/<segment>.sweep.yaml`, beside the roster and the segment definition). It is the segment's discovery record and the S phase's working memory: the denominator, the instruments, what each round did, and what the next round should do. Future work on the segment starts from this file rather than rediscovering the vocabulary, and the T0 transition reads it as its input: one task per source not yet exhausted. It supersedes the earlier `summary-[segment-name].md`.
 
 The head is forward-only (it states current reality); the rounds log is append-only (it states what happened). Structure:
 
