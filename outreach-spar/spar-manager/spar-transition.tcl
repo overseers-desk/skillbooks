@@ -319,6 +319,9 @@ set all_segment_paths [dict get $resolved all_segment_paths]
 # segment mode; empty in campaign mode, where campaign_file speaks.
 set segment_dirs_opt [expr {$segment_mode \
     ? [lmap _sp $all_segment_paths {lindex $_sp 1}] : {}}]
+# The report and log header names what the run is anchored on.
+set run_label [expr {$segment_mode \
+    ? "Segment: $campaign_name" : "Campaign: $campaign_name"}]
 
 # --- Classify all contacts ---
 # In --auto mode, T1/T2/T3/T4 are the only active transitions and none
@@ -384,7 +387,11 @@ if {$segment_mode} {
         }
     }
     if {[llength $refused] > 0 && [llength $tid_scopes] > 0} {
-        puts stderr "Segment mode: [join $refused {, }] need a campaign YAML (campaign-tier); running [join $filtered_active {, }]."
+        if {[llength $filtered_active] > 0} {
+            puts stderr "Segment mode: [join $refused {, }] need a campaign YAML (campaign-tier); running [join $filtered_active {, }]."
+        } else {
+            puts stderr "Segment mode: [join $refused {, }] need a campaign YAML (campaign-tier)."
+        }
     }
     set active_tids $filtered_active
     if {[llength $active_tids] == 0} {
@@ -687,7 +694,7 @@ if {$dispatching} {
     # and T3→T4 happen in a single invocation.
     # ────────────────────────────────────────────────────────────────────
     if {$auto_mode} {
-        ${::spar::transitions_log}::info "Campaign: $campaign_name"
+        ${::spar::transitions_log}::info $run_label
         if {$dry_run} { ${::spar::transitions_log}::info "(dry run — writes disabled)" }
 
         set MAX_ITER 8
@@ -763,7 +770,7 @@ if {$dispatching} {
         $primary_channel $cdata $yaml_path $all_segment_paths]
 
     if {[dict size $ready_by_tid] == 0} {
-        ${::spar::transitions_log}::info "Campaign: $campaign_name"
+        ${::spar::transitions_log}::info $run_label
         ${::spar::transitions_log}::info "No ready tasks for the requested transitions."
         exit 0
     }
@@ -777,7 +784,7 @@ if {$dispatching} {
         }
     }
 
-    ${::spar::transitions_log}::info "Campaign: $campaign_name"
+    ${::spar::transitions_log}::info $run_label
     if {$dry_run} { ${::spar::transitions_log}::info "(dry run — writes disabled)" }
 
     # Up-front confirmation lives at the CLI layer (not inside the
@@ -825,7 +832,7 @@ if {$dispatching} {
 # Report mode — honours per-TID scopes so `T1:vic` shows only T1's vic
 # rows when the user asked for that scope.
 # ────────────────────────────────────────────────────────────────────────
-puts "Campaign: $campaign_name\n"
+puts "$run_label\n"
 
 set any_output 0
 foreach tid [spar::transition_tids] {

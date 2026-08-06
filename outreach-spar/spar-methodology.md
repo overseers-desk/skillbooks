@@ -68,6 +68,8 @@ What the recipient cares about, the lens through which they decide, is **the rec
 
 ## Prong 1: S&P in detail
 
+S&P is population-tier work and needs no campaign: the sweep (T0) and profiling (T1/T3) run from the segment alone (`spar-transition.tcl segments/<name> T1`), which is the operational face of invariant I1. A campaign, when attached, adds only context.
+
 ### S — Sweep
 
 Each S&P iteration begins with discovery. S casts a wide net across all available sources. The source mix varies by campaign but the method is constant: exhaust the most direct source first, then broaden.
