@@ -7,8 +7,8 @@
 # T0 is the one transition whose tasks are not contacts. A segment swept
 # for the first time has no roster, so the per-contact classifier has
 # nothing to classify; the work is the source census in the sweep file.
-# That is what the base class's campaign_tasks exists for — see
-# transitions/base.tcl.
+# That is what the base class's campaign_tasks exists for (see
+# transitions/base.tcl).
 
 oo::class create ::spar::transitions::SweepTransition {
     superclass ::spar::transitions::Transition
@@ -17,7 +17,7 @@ oo::class create ::spar::transitions::SweepTransition {
     # nor unreachable (spar::sweep_source_open). A segment with no sweep
     # file is not seeded yet and contributes nothing; a sweep file that
     # does not parse contributes one blocked row naming the defect,
-    # rather than vanishing — both front ends drop blocked rows from
+    # rather than vanishing. Both front ends drop blocked rows from
     # dispatch and show them to the operator.
     method campaign_tasks {cdata campaign_file} {
         set root [spar::instance_root_for_yaml $campaign_file]

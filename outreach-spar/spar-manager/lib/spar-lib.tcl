@@ -356,8 +356,8 @@ proc spar::extract_required_skills {segment_data segment_path} {
 # roster_core_columns — the 14 columns spar-roster-format.md defines, in
 # its order. A live roster's header is authoritative (campaigns add their
 # own columns, e.g. application_url) and every reader takes the header it
-# finds; this list is for the one case where there is no header yet — the
-# first sweep of a segment, creating the roster.
+# finds. This list covers the one case where no header exists yet: the
+# first sweep of a segment, which creates the roster.
 proc spar::roster_core_columns {} {
     return [list stem contact_name organisation role phone email \
         linkedin_url facebook_url sweep_iteration discovered_via \
@@ -711,8 +711,8 @@ proc spar::_apply_patch_only {fm roster_path stem} {
 # dicts; empty when the batch landed (or when the stamp says it already
 # has).
 #
-# The roster is created when absent, with the core header — the first
-# sweep of a segment is what creates it. Where one exists, its header is
+# The roster is created when absent, with the core header, since the
+# first sweep of a segment is what creates it. Where one exists, its header is
 # authoritative: campaign-specific columns are real, and a declared column
 # the header does not carry is a defect in the declaration, not a reason
 # to widen the roster.
@@ -1075,7 +1075,7 @@ proc spar::approach_path_in_dir {approach_dir stem} {
 #
 # The segment's discovery record (spar-S-search.md §7): the denominator,
 # the source census, the rounds log. T0 is the first transition to write
-# it — until now it was hand-written after a sweep, and four files were
+# it. Until now it was hand-written after a sweep, and four files were
 # broken by the same defect class: a scalar carrying ": " mid-text, or an
 # unquoted date, which tcllib yaml turns into epoch seconds.
 #
@@ -1160,7 +1160,7 @@ proc spar::sweep_task_stem {segment source_name} {
 # whenever the bare form would re-parse as something other than the
 # string handed in: a date (epoch seconds), a ": " (a nested mapping), a
 # leading indicator character, a bool/null token, trailing space, an
-# inline comment. Errors on a multi-line value — that is the block
+# inline comment. A multi-line value errors instead: that is the block
 # scalar's job, and silently flattening it would lose the text.
 proc spar::yaml_scalar {value} {
     if {[string first "\n" $value] >= 0} {
@@ -1342,7 +1342,7 @@ proc spar::update_source_status {sweep_path source_name status} {
 # One T0 dispatch is one round worked source by source, and each source's
 # worker lands independently: there is no batch-end hook in either front
 # end, and inventing one would change the dispatch contract both consume.
-# So the round is written incrementally and keyed by its number — the
+# So the round is written incrementally and keyed by its number: the
 # first source to finish creates round n, the rest merge into it. A batch
 # that dies half way leaves a truthful partial round rather than nothing.
 #
@@ -1379,7 +1379,7 @@ proc spar::append_sweep_round {sweep_path round} {
         lassign [lindex $entries $match] first last _
         set lines [lreplace $lines $first $last {*}$block]
     } elseif {[llength $entries] == 0} {
-        # `rounds: []` or a bare `rounds:` — the key line carries the
+        # `rounds: []` or a bare `rounds:`. The key line carries the
         # empty flow sequence, so it is replaced, not appended to.
         set lines [lreplace $lines $key_line $key_line "rounds:" {*}$block]
     } else {
