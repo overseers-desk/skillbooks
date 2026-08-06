@@ -1,0 +1,59 @@
+# segment.rules — yamlmuster ruleset for a segment definition
+# (segments/<name>.yaml). Loaded by spar::_yamlmuster_segment and driven by
+# spar::validate_seed, which validates the seed pair a sweep (T0) consumes.
+# Field set per segment-schema.yaml; T0 needs discovery_criteria and
+# rating_rubric present because discovery workers judge from them.
+#
+# Call shape:
+#   validate <data> -groups {seed} -context {instance_root <dir>}
+# instance_root is the spar-campaigns directory; the sweeper_resolves
+# predicate needs it to check sweeper-<family>.yaml exists.
+
+# ── Levels ───────────────────────────────────────────────────────────────
+# priority appears in 9 of the 12 live segment files (a sweep-tier tag,
+# Tier 1/2); segment-schema.yaml does not list it. Tolerated here until the
+# owner either admits it to the schema or strikes it from the data.
+level root -keys {version title date sweeper target_type provenance \
+                  discovery_criteria rating_rubric scope_note \
+                  geographic_catchment profile_reject_if priority}
+
+# ── Rules ────────────────────────────────────────────────────────────────
+rule vocab root -groups {seed}
+
+rule require root version -nonblank -code missing_version \
+    -message {Segment definition missing required key '%k'} -groups {seed}
+rule require root title -nonblank -code missing_title \
+    -message {Segment definition missing required key '%k'} -groups {seed}
+rule require root date -code missing_date \
+    -message {Segment definition missing required key '%k'} -groups {seed}
+rule require root discovery_criteria -nonblank -code missing_discovery_criteria \
+    -message {Segment definition missing '%k' — a sweep worker cannot judge membership without it} \
+    -groups {seed}
+rule require root rating_rubric -nonblank -code missing_rating_rubric \
+    -severity warning \
+    -message {Segment definition has no '%k' — sweep workers fall back to the methodology's general-value judgement; a rubric makes stars reproducible} \
+    -groups {seed}
+
+rule oneof root version {2.0} -code segment_version_unsupported \
+    -message {version '%v' — segment definitions are authored at "2.0"} -groups {seed}
+rule oneof root target_type {qualification-only cue-required} \
+    -code invalid_target_type \
+    -message {target_type '%v' — closed vocabulary: qualification-only | cue-required} \
+    -groups {seed}
+
+# Unquoted dates parse to epoch seconds under tcllib yaml 0.4.2. Metadata-only
+# here, so a warning: the file still works, but the value on disk is not what
+# the author wrote. Predicate, because the check is "value became a
+# wideinteger", not a pattern over the written text.
+rule predicate root seed_date_epoch -code unquoted_date -severity warning \
+    -groups {seed}
+
+# sweeper: <family> promises sweeper-<family>.yaml at the instance root.
+rule predicate root sweeper_resolves -needs instance_root \
+    -code sweeper_unresolved -groups {seed}
+
+# profile_reject_if entries come from the closed vocabulary in
+# segment-schema.yaml; spar::extract_required_skills hard-errors on anything
+# else at dispatch time, so catch it at authoring time instead.
+rule predicate root reject_if_vocab -code invalid_profile_reject_if \
+    -groups {seed}

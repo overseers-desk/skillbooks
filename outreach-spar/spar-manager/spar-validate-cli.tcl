@@ -1,6 +1,6 @@
 #!/usr/bin/env tclsh9.0
 # spar-validate-cli.tcl — Validate SPAR campaign data from the command line.
-# Usage: tclsh9.0 spar-validate-cli.tcl [campaign_dir_or_yaml] [--campaign=YAML]
+# Usage: tclsh9.0 spar-validate-cli.tcl [campaign_dir_or_yaml] [--campaign=YAML] [--seed=segments/NAME ...]
 #                                       [--segment=NAME ...] [--json]
 #
 # Runs the DATA-INTEGRITY validation pass (spec version gate + per-file
@@ -20,10 +20,12 @@ set campaign_dir ""
 set campaign_file ""
 set json_mode 0
 set only_segments {}
+set seed_bases {}
 foreach arg $argv {
     switch -glob -- $arg {
         --campaign=* { set campaign_file [string range $arg 11 end] }
         --segment=*  { lappend only_segments [string range $arg 10 end] }
+        --seed=*     { lappend seed_bases [string range $arg 7 end] }
         --json       { set json_mode 1 }
         --*          { puts stderr "Unknown flag: $arg"; exit 2 }
         default      {
@@ -35,6 +37,52 @@ foreach arg $argv {
             }
         }
     }
+}
+
+# --- Seed mode: validate segment-definition + sweep pairs, no campaign ---
+# --seed=<instance>/segments/<name> (extension optional). Runs before
+# campaign resolution because a seed pair exists before any campaign
+# references it; that is the point of T0.
+if {[llength $seed_bases] > 0} {
+    set issues {}
+    foreach base $seed_bases {
+        regsub {\.(sweep\.)?yaml$} $base {} base
+        lappend issues {*}[spar::validate_seed [file normalize $base]]
+    }
+    set errors {}
+    set warnings {}
+    foreach issue $issues {
+        if {[dict get $issue severity] eq "error"} {
+            lappend errors $issue
+        } else {
+            lappend warnings $issue
+        }
+    }
+    if {$json_mode} {
+        package require json::write
+        proc _seed_issue_json {issue} {
+            ::json::write object \
+                severity [::json::write string [dict get $issue severity]] \
+                code     [::json::write string [dict get $issue code]] \
+                segment  [::json::write string [dict getdef $issue segment ""]] \
+                message  [::json::write string [dict get $issue message]]
+        }
+        set ej {}
+        foreach i $errors { lappend ej [_seed_issue_json $i] }
+        set wj {}
+        foreach i $warnings { lappend wj [_seed_issue_json $i] }
+        puts [::json::write object \
+            error_count [llength $errors] \
+            warning_count [llength $warnings] \
+            errors [::json::write array {*}$ej] \
+            warnings [::json::write array {*}$wj]]
+    } else {
+        foreach i [concat $errors $warnings] {
+            puts "\[[string toupper [dict get $i severity]]\] [dict get $i code]: [dict getdef $i segment {}]: [dict get $i message]"
+        }
+        puts "[llength $errors] errors, [llength $warnings] warnings"
+    }
+    exit [expr {[llength $errors] > 0 ? 1 : 0}]
 }
 
 # --- Resolve campaign (discover YAML, load, build segment paths) ---

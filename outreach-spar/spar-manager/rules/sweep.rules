@@ -1,0 +1,85 @@
+# sweep.rules — yamlmuster ruleset for a segment's sweep file
+# (segments/<name>.sweep.yaml). Loaded by spar::_yamlmuster_sweep and driven
+# by spar::validate_seed. Field vocabulary per spar-S-search.md §7; the seed
+# state a T0 sweep starts from is the same shape with sources unharvested and
+# rounds/escapes empty.
+#
+# Call shape:
+#   validate <data> -groups {sweep} -context {expected_segment <name>}
+# expected_segment is the filename stem; segment: must equal it, since the
+# file is found by that name.
+
+# ── Levels ───────────────────────────────────────────────────────────────
+level root -keys {version segment market_estimate sources exclusions \
+                  escapes rounds next_round rows_to_verify}
+level market_estimate -keys {value derivation estimated}
+level source -keys {name type url status note yield}
+level round  -keys {n date method inputs reconciliation surprises \
+                    coverage_after merge lesson yield}
+
+child root market_estimate dict market_estimate
+child root sources list source
+child root rounds  list round
+# escapes stays un-levelled: live entries vary in shape (member/verdict/note
+# vs found/verdict/cause) and the spec fixes only that a verdict is named.
+
+# ── ROOT rules ───────────────────────────────────────────────────────────
+rule vocab root -groups {sweep}
+
+rule require root version -nonblank -code missing_version \
+    -message {Sweep file missing required key '%k'} -groups {sweep}
+rule require root segment -nonblank -code missing_segment \
+    -message {Sweep file missing required key '%k'} -groups {sweep}
+rule require root market_estimate -code missing_market_estimate \
+    -message {Sweep file missing '%k' — the denominator is the S&P0 gate (spar-S-search.md §6)} \
+    -groups {sweep}
+rule require root sources -nonempty -code missing_sources \
+    -message {Sweep file missing '%k' — a sweep is dispatched per source} -groups {sweep}
+rule require root exclusions -nonblank -code missing_exclusions \
+    -message {Sweep file missing required key '%k'} -groups {sweep}
+rule require root escapes -code missing_escapes \
+    -message {Sweep file missing required key '%k' (empty list when none)} -groups {sweep}
+rule require root rounds -code missing_rounds \
+    -message {Sweep file missing required key '%k' (empty list before round 1)} -groups {sweep}
+
+# The census-first gate: at least one source a census can be read from.
+rule predicate root census_source -code no_census_source -groups {sweep}
+
+# segment: equals the filename stem, or the file will never be found by the
+# name it claims.
+rule predicate root segment_name -needs expected_segment \
+    -code segment_name_mismatch -groups {sweep}
+
+# Same epoch-date warning as segment.rules (market_estimate.estimated and
+# round dates are the exposed fields).
+rule predicate root seed_date_epoch -code unquoted_date -severity warning \
+    -groups {sweep}
+
+# ── MARKET_ESTIMATE rules ────────────────────────────────────────────────
+rule vocab market_estimate -groups {sweep}
+rule require market_estimate value -nonblank -code missing_estimate_value \
+    -message {market_estimate missing '%k' (the denominator or range)} -groups {sweep}
+rule require market_estimate derivation -nonblank -code missing_estimate_derivation \
+    -message {market_estimate missing '%k' (top-down and bottom-up reasoning)} -groups {sweep}
+
+# ── SOURCE rules ─────────────────────────────────────────────────────────
+rule vocab source -groups {sweep}
+rule require source name -nonblank -code missing_source_name \
+    -message {source missing '%k'} -groups {sweep}
+rule require source type -nonblank -code missing_source_type \
+    -message {source missing '%k'} -groups {sweep}
+rule require source status -nonblank -code missing_source_status \
+    -message {source missing '%k'} -groups {sweep}
+rule oneof source type {registry directory informal outlet platform} \
+    -code invalid_source_type \
+    -message {source type '%v' — closed vocabulary: registry | directory | informal | outlet | platform (spar-S-search.md §6)} \
+    -groups {sweep}
+
+# status leads with a base token; free-text reason may follow. T0 selects
+# tasks by that token, so an unrecognised lead word makes the source
+# invisible to dispatch.
+rule predicate source source_status_token -code invalid_source_status \
+    -groups {sweep}
+
+# ── ROUND rules ──────────────────────────────────────────────────────────
+rule vocab round -groups {sweep}
