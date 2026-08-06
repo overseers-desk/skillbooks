@@ -551,7 +551,8 @@ oo::class create spar::ProfileHarness {
         set segment_dir [file rootname $RosterPath]
         if {$my_cname ne ""} {
             if {[catch {[my state] classify_segment $segment_dir \
-                    [spar::approach_dir_for_campaign $CampaignFile]} seg_contacts]} {
+                    [expr {$CampaignFile ne "" \
+                        ? [spar::approach_dir_for_campaign $CampaignFile] : ""}]} seg_contacts]} {
                 set seg_contacts {}
             }
             foreach ri [spar::validate_roster $seg_contacts] {
@@ -667,7 +668,7 @@ oo::class create spar::ProfileHarness {
         set meta [my load_meta]
         set Outfile      [dict get $meta OUTFILE]
         set RosterPath   [dict get $meta ROSTER_PATH]
-        set CampaignFile [dict get $meta CAMPAIGN_FILE]
+        set CampaignFile [dict getdef $meta CAMPAIGN_FILE ""]
         set Stem         [dict get $meta STEM]
         set RequiredSkills [dict getdef $meta REQUIRED_SKILLS ""]
         set ContactLinkedin [dict getdef $meta CONTACT_LINKEDIN ""]

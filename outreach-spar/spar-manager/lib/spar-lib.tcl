@@ -325,20 +325,27 @@ proc spar::resolve_campaign {campaign_file campaign_dir} {
     }
     set segments_list [spar::campaign_segment_names $cdata]
 
+    # segment_paths carries the rostered segments (what classification
+    # can walk); all_segment_paths carries every named segment, rostered
+    # or not, for the campaign-level task derivations (T0 sweeps a
+    # seeded segment before any roster exists).
     set segment_paths {}
+    set all_segment_paths {}
     foreach seg $segments_list {
         set seg_dir [file join $campaign_dir segments $seg]
+        lappend all_segment_paths [list $seg $seg_dir]
         if {[file isdirectory $seg_dir] \
                 && [file exists [spar::roster_path_for_segment $seg_dir]]} {
             lappend segment_paths [list $seg $seg_dir]
         }
     }
-    if {[llength $segment_paths] == 0} {
+    if {[llength $all_segment_paths] == 0} {
         error "No segments found."
     }
 
     return [dict create yaml_path $yaml_path campaign_dir $campaign_dir \
-        cdata $cdata segment_paths $segment_paths campaign_name $campaign_name \
+        cdata $cdata segment_paths $segment_paths \
+        all_segment_paths $all_segment_paths campaign_name $campaign_name \
         min_star $min_star primary_channel $primary_channel]
 }
 

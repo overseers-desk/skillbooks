@@ -110,6 +110,34 @@ proc spar::_pool_pre_launch {step_callback total row kind} {
 }
 
 
+# _population_prep_scope — shared scope resolution for the population-
+# tier dispatch entries (P and S). Campaign mode (opts.campaign_file):
+# load the campaign, run its version pre-flight, walk its segments: map.
+# Segment mode (opts.segment_dirs, absolute segments/<name> paths): no
+# campaign exists; cdata is {} and each segment's own version pre-flight
+# in the per-segment prep still runs. Returns
+# {cdata root segment_names logs_path_src}; logs_path_src is whatever
+# path names the run in the logs-directory slug.
+proc spar::_population_prep_scope {opts phase} {
+    set campaign_file [dict getdef $opts campaign_file ""]
+    set segment_dirs  [dict getdef $opts segment_dirs {}]
+    if {$campaign_file ne ""} {
+        set cdata [spar::load_campaign $campaign_file]
+        spar::assert_supported_version "campaign.yaml" [spar::campaign_version $cdata]
+        set root [spar::instance_root_for_yaml $campaign_file]
+        set segments [spar::filter_segments \
+            [spar::campaign_segment_names $cdata] \
+            [dict getdef $opts segments {}]]
+        return [list $cdata $root $segments $campaign_file]
+    }
+    if {[llength $segment_dirs] == 0} {
+        error "spar::${phase}: opts needs campaign_file or segment_dirs"
+    }
+    set root [file dirname [file dirname [lindex $segment_dirs 0]]]
+    set segments [lmap d $segment_dirs {file tail $d}]
+    return [list {} $root $segments [lindex $segment_dirs 0]]
+}
+
 # spar::p::prepare_for_pool — P-phase dispatch entry. Runs per-segment
 # prep (roster read, YAML validation, prompt assembly, DbC-Pre
 # snapshot) and returns a list of {stem prompt_dir} tuples plus the
@@ -119,7 +147,9 @@ proc spar::_pool_pre_launch {step_callback total row kind} {
 # GUI share this single entry point.
 #
 # opts dict keys:
-#   campaign_file  (required) path to campaign YAML
+#   campaign_file  path to campaign YAML, or segment_dirs instead
+#   segment_dirs   (segment mode) absolute segments/<name> paths; no
+#                  campaign exists and cdata stays {}
 #   logs_dir       (string, optional) override log directory base
 #   segments       (list, optional) only process named segments
 #   stems          (list, optional) only process rows with matching stems;
@@ -131,22 +161,12 @@ proc spar::_pool_pre_launch {step_callback total row kind} {
 #
 # Returns: dict {logs_dir <abs path> rows {{stem pdir} ...}}
 proc spar::p::prepare_for_pool {opts on_progress} {
+    lassign [spar::_population_prep_scope $opts p] cdata root segments logs_path_src
     set campaign_file [dict getdef $opts campaign_file ""]
-    if {$campaign_file eq ""} {
-        error "spar::p::prepare_for_pool: opts.campaign_file is required"
-    }
     set user_logs    [dict getdef $opts logs_dir ""]
-    set sel_segments [dict getdef $opts segments {}]
-
-    set cdata    [spar::load_campaign $campaign_file]
-    # Version pre-flight (refuse-to-start): do not run P on a campaign whose
-    # declared spec version this tool does not support. Unstamped is allowed.
-    spar::assert_supported_version "campaign.yaml" [spar::campaign_version $cdata]
-    set root     [spar::instance_root_for_yaml $campaign_file]
-    set segments [spar::filter_segments [spar::campaign_segment_names $cdata] $sel_segments]
 
     set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
-    set logs_dir  [spar::resolve_logs_dir $campaign_file p $datestamp $user_logs]
+    set logs_dir  [spar::resolve_logs_dir $logs_path_src p $datestamp $user_logs]
 
     set rows {}
     foreach segment $segments {
@@ -393,7 +413,8 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             # carry stale entries into the snapshot the post-pass diffs against.
             set _pre_state [spar::State new]
             set _pre_contacts [$_pre_state classify_segment $segment_dir \
-                [spar::approach_dir_for_campaign $campaign_file]]
+                [expr {$campaign_file ne "" \
+                    ? [spar::approach_dir_for_campaign $campaign_file] : ""}]]
             $_pre_state destroy
             foreach _issue [spar::validate_roster $_pre_contacts] {
                 set _cn [dict get $_issue contact_name]
@@ -786,27 +807,19 @@ Emit exactly one of these lines as the very last line of your output:"
 # it into pool rows exactly as transitions/profile.tcl does.
 #
 # opts dict keys:
-#   campaign_file  (required) path to campaign YAML
+#   campaign_file  path to campaign YAML, or segment_dirs instead
+#   segment_dirs   (segment mode) absolute segments/<name> paths
 #   logs_dir       (string, optional) override log directory base
 #   segments       (list, optional) only these segments
 #   stems          (list, optional) only these task stems (a GUI selection
 #                  or a T0:<seg>/<stem> scope names sources this way)
 proc spar::s::prepare_for_pool {opts on_progress} {
+    lassign [spar::_population_prep_scope $opts s] cdata root segments logs_path_src
     set campaign_file [dict getdef $opts campaign_file ""]
-    if {$campaign_file eq ""} {
-        error "spar::s::prepare_for_pool: opts.campaign_file is required"
-    }
     set user_logs    [dict getdef $opts logs_dir ""]
-    set sel_segments [dict getdef $opts segments {}]
-
-    set cdata [spar::load_campaign $campaign_file]
-    spar::assert_supported_version "campaign.yaml" [spar::campaign_version $cdata]
-    set root [spar::instance_root_for_yaml $campaign_file]
-    set segments [spar::filter_segments \
-        [spar::campaign_segment_names $cdata] $sel_segments]
 
     set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
-    set logs_dir  [spar::resolve_logs_dir $campaign_file s $datestamp $user_logs]
+    set logs_dir  [spar::resolve_logs_dir $logs_path_src s $datestamp $user_logs]
 
     set rows {}
     foreach segment $segments {
@@ -856,6 +869,15 @@ proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
     if {$segment_data ne ""} {
         spar::assert_supported_version "segment '[file tail $segment_dir]'" \
             [spar::segment_version $segment_data]
+    }
+
+    # The sweep judges general value per the segment rubric either way;
+    # a campaign, when one is attached, is context only, and segment-mode
+    # runs have none to point at.
+    if {$campaign_file ne ""} {
+        set campaign_line "The campaign at $campaign_file is context, not a target list. A star is this contact's general value to us in this segment per the rubric, not their fit for whatever the current campaign asks; the profile phase and the approach phase come later and re-judge for themselves."
+    } else {
+        set campaign_line "No campaign is attached to this run. A star is this contact's general value to us in this segment per the rubric; the profile phase and the approach phase come later and judge campaign fit for themselves."
     }
 
     # The sweeper file carries what holds across a market family
@@ -940,7 +962,7 @@ proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
             __SOURCE_STATUS__  $status \
             __SOURCE_NOTE__    [dict getdef $src note ""] \
             __ROUND__          $round_n \
-            __CAMPAIGN_PATH__  $campaign_file \
+            __CAMPAIGN_LINE__  $campaign_line \
             __ROSTER_PATH__    $roster_path \
             __ROSTER_COLUMNS__ [join $columns ", "] \
             __EXISTING_STEMS__ $stems_text \

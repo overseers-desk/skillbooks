@@ -781,9 +781,17 @@ oo::define spar::State method classify_contact {roster_row segment_dir approach_
     #    approach's stored profile_hash will mismatch the freshly-written
     #    profile and T4 will route the re-approach (#63).
     set profile_path [spar::profile_path_for_stem $segment_dir $stem]
-    set approach_path [spar::approach_path_in_dir $approach_dir $stem]
+    # An empty approach_dir means classification without campaign context
+    # (segment-mode callers): no approach path exists to probe. Joining ""
+    # would otherwise resolve <stem>.yaml against the process cwd.
+    if {$approach_dir eq ""} {
+        set approach_path ""
+        set approach_exists 0
+    } else {
+        set approach_path [spar::approach_path_in_dir $approach_dir $stem]
+        set approach_exists [file exists $approach_path]
+    }
     set profile_exists [file exists $profile_path]
-    set approach_exists [file exists $approach_path]
     if {!$profile_exists && !$approach_exists} {
         dict set base state DISCOVERED
         return $base

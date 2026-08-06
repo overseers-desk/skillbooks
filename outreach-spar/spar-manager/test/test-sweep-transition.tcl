@@ -178,7 +178,8 @@ puts $fd "    plan: sweep it"
 close $fd
 
 set cdata [spar::load_campaign $camp]
-set tasks [spar::transition_campaign_tasks T0 $cdata $camp]
+set seg_paths [list [list vic [file join $root segments vic]]]
+set tasks [spar::transition_campaign_tasks T0 $cdata $camp $seg_paths]
 set names {}
 foreach t $tasks { lappend names [dict get $t contact_name] }
 assert_eq [lsort $names] {{State register} {Trade directory}} \
@@ -190,12 +191,12 @@ assert_eq [dict get [lindex $tasks 0] stem] \
     [spar::sweep_task_stem vic "State register"] "stem is the pool key"
 
 # Every contact-driven transition ignores the campaign-task seam.
-assert_eq [spar::transition_campaign_tasks T1 $cdata $camp] {} \
+assert_eq [spar::transition_campaign_tasks T1 $cdata $camp $seg_paths] {} \
     "T1 has no campaign-level tasks"
 
 # A source worked to exhaustion drops out of the next pass.
 spar::update_source_status $sweep "State register" "exhausted — all 120 entries read"
-set tasks [spar::transition_campaign_tasks T0 $cdata $camp]
+set tasks [spar::transition_campaign_tasks T0 $cdata $camp $seg_paths]
 assert_eq [llength $tasks] 1 "an exhausted source is no longer ready"
 assert_eq [dict get [lindex $tasks 0] contact_name] "Trade directory" \
     "the remaining open source is the one left"
@@ -214,7 +215,8 @@ puts $fd "segments:"
 puts $fd "  nsw:"
 puts $fd "    plan: sweep it"
 close $fd
-set tasks [spar::transition_campaign_tasks T0 [spar::load_campaign $camp] $camp]
+set tasks [spar::transition_campaign_tasks T0 [spar::load_campaign $camp] $camp \
+    [list [list nsw [file join $root segments nsw]]]]
 assert_eq [llength $tasks] 1 "an unparseable sweep file yields one row"
 assert_eq [dict get [lindex $tasks 0] task_state] blocked "and it is blocked"
 assert_match [dict get [lindex $tasks 0] reason] "*does not parse*" \
