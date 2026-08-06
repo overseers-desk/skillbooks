@@ -34,7 +34,7 @@ The roster schema — file naming, TSV conventions, the core columns, programmat
 
 S-specific rules:
 
-- Every row should have a **contact_name** where one can be identified. If a source lists only an organisation and a quick check of the organisation's website, LinkedIn, and Facebook does not surface a named individual, retain the organisation as a row with a blank `contact_name`: write a provisional `stem` using the organisation slug, and leave `date_excluded` empty. Exclusion is a P-phase judgement: SPAR-P §4.1 runs the exhaustive name search, so sweep leaves `date_excluded` empty even when it could not surface a named individual. The blank-name row ensures future sweep iterations recognise the organisation as already discovered and do not re-add it.
+- Every row should have a **contact_name** where one can be identified. If a source lists only an organisation and a quick check of the organisation's website and its platform presences does not surface a named individual, retain the organisation as a row with a blank `contact_name`: write a provisional `stem` using the organisation slug, and leave `date_excluded` empty. Exclusion is a P-phase judgement: SPAR-P §4.1 runs the exhaustive name search, so sweep leaves `date_excluded` empty even when it could not surface a named individual. The blank-name row ensures future sweep iterations recognise the organisation as already discovered and do not re-add it.
 - Each S&P iteration updates the same file via the `sweep_iteration` column. Do not create separate files per iteration.
 - `discovered_via` is authored at sweep time: for seeds, the source name (e.g. "government school directory", "Google Maps", "industry association member list"); for social-graph contacts, the `contact_name` of the person whose profile surfaced the entry, creating a referral chain traceable to the original seed.
 
@@ -66,27 +66,27 @@ S&P₀ produces no roster rows and can run inside the same session as S&P₁.
 
 ### S&P₁: Seed
 
-Build the initial roster from the most direct source available. For registry segments, export the registry and resolve named contacts. For directory segments, pull from the directory and search LinkedIn for individuals. For informal segments, use the keyword searches defined in the campaign plan, recording the query in `discovered_via`.
+Build the initial roster from the most direct source available. For registry segments, export the registry and resolve named contacts. For directory segments, pull from the directory and search the platforms the campaign plan names for individuals. For informal segments, use the keyword searches defined in the campaign plan, recording the query in `discovered_via`.
 
-**Facebook keyword search (for segments where targets can be reasonably expected to be active on Facebook):**
+**Platform keyword search:**
 
-If the campaign targets can be reasonably expected to be active on Facebook, run direct Facebook searches by keyword alongside other seed searches:
+Platforms hold populations no register lists, and the campaign plan names the ones its market and geography actually use. Run their keyword searches alongside the other seed searches:
 
-- Search Facebook groups and pages by campaign keywords
-- From each result, extract the page/group name and identify administrators or organisers from the About section
+- Search the platform's groups, pages, and business listings by campaign keywords
+- From each result, identify the administrators, organisers or owners the listing names
 - Note contact details found (email, phone, website link)
-- Add discovered contacts to the roster with `discovered_via` recording the Facebook search query
+- Add discovered contacts to the roster with `discovered_via` recording the platform and the query
 
 When a CRM or existing contact database is available as a seed source, use it — but also run a **CRM gap analysis** after web research is complete. Compare CRM entries against web research results to identify structurally invisible segments — contacts that exist in the CRM but cannot be found by any web search query. Categorise the unmatched entries by why they are invisible (different self-description vocabulary, weak web presence, B2B rather than B2C, niche specialisation, outside search radius). This analysis reveals whether the invisible segment is reachable through alternative search vocabulary or whether the CRM is the only path to them.
 
 ### S&P₂: Verify and expand
 
-For each S&P₁ contact, verify their current role and activity via their LinkedIn profile or Facebook page:
+For each S&P₁ contact, verify their current role and activity via their profile or page on the platforms the campaign plan names:
 
 - **Role confirmation:** Does their current title match the roster entry? If they have moved on, find their replacement at the same organisation.
 - **Activity confirmation:** Have they posted or commented on topics relevant to the campaign? (Note: detailed activity research, cue collection, and profiling are P-phase work. S confirms identity and detects role changes; P builds the full profile.)
 
-Then expand via social graph: on LinkedIn, check who commented on or shared their posts — commenters are likely peers at other organisations. On Facebook, check co-admins, regular commenters, and linked groups. On Instagram, check tagged collaborators and location tags at similar venues or events.
+Then expand via social graph, following each platform's own graph: who commented on or shared a post, who co-administers a page or group, who is tagged as a collaborator, and who is tagged at the same venues or events. Commenters and co-admins are likely peers at other organisations.
 
 Run the **reverse-search diagnostic** on the S&P₁ roster: search known contacts by name, note what co-occurring keywords appear in the results, then search by those keywords alone (hiding the names) to test whether they surface contacts invisible to the original search vocabulary. This catches vocabulary gaps — segments that use different terms to describe themselves.
 
@@ -106,6 +106,12 @@ Discovery for a segment closes when either:
 
 - Coverage (roster count over the S&P₀ denominator) reaches the target the campaign plan sets — high for registry segments, lower for informal ones; or
 - every source in the census is marked exhausted with evidence, and the last modality-changing iteration added fewer than 5 new contacts.
+
+Neither branch closes a sweep whose census leaves a kind of source unattempted. Registers, directories, outlets and platforms each make a population findable a different way. A register holds who is licensed. A directory holds who pays to be listed. An outlet writes about who is notable. A platform holds who is active. A population thin in three of these is often plain in the fourth.
+
+Which register, which directory, which outlet and which platform serve a market is the campaign plan's to name. That set turns on geography and language, and is not the same in two countries. The kinds are.
+
+Recording a kind as holding nothing meets the evidential standard §5 sets for calling a segment informal: the search was run and returned nothing. An expectation that the population is not there does not meet it. Neither does a productive vein in another kind.
 
 Repeats prove instrument saturation, not market exhaustion: an iteration that re-runs earlier queries and re-finds swept contacts says nothing about the market, so each further iteration changes modality (a different register, platform, social graph, or geography) rather than re-running old queries. Three iterations remain the autonomous bound; going past S&P₃ is human-initiated (below). For informal segments with every census source exhausted, accept the count reached and record the shortfall against the denominator rather than absorbing it.
 
@@ -129,8 +135,8 @@ market_estimate:            # S&P₀ output; the denominator
   derivation: <top-down and bottom-up reasoning, source by source>
   estimated: <date>
 sources:                    # the census; every discovered_via maps to an entry here
-  - name: <register/directory/platform/method>
-    type: registry | directory | informal
+  - name: <register/directory/outlet/platform/method>
+    type: registry | directory | outlet | platform | informal   # every kind carries an entry; §6
     url: <where>
     status: exhausted | partial | unreachable | unharvested | stale, each with its reason
     yield: <n found / n in source after filter>
@@ -226,7 +232,7 @@ When an AI agent delegates discovery work to a subagent, the prompt must tell th
 
 Do not replicate SPAR-S content in prompts — copies drift and cannot be corrected.
 
-**Sequencing constraint:** Social media profile checks (LinkedIn, Facebook, Instagram) must run sequentially, one at a time. Concurrent requests trigger rate limiting and may result in account restrictions. When delegating to subagents, spawn them sequentially for social media lookups. Non-social-media searches (web, registry, GitHub, conference directories) can run concurrently.
+**Sequencing constraint:** Platform profile checks run sequentially, one at a time. Concurrent requests trigger rate limiting and may result in account restrictions. When delegating to subagents, spawn them sequentially for platform lookups. Searches that do not sign in to a platform (web, register, directory) can run concurrently.
 
 This AESOP does not prescribe how to access social media; each operator uses their own method and tooling. The sequencing constraint is the only requirement.
 

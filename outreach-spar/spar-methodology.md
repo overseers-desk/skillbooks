@@ -72,23 +72,22 @@ What the recipient cares about, the lens through which they decide, is **the rec
 
 Each S&P iteration begins with discovery. S casts a wide net across all available sources. The source mix varies by campaign but the method is constant: exhaust the most direct source first, then broaden.
 
-Sources (not exhaustive; the campaign plan specifies which apply):
+Sources fall into kinds. The campaign plan names the instruments within each kind that its own market, geography and language use:
 
-- Web search (Google, industry directories, review sites)
-- LinkedIn direct connections of the operator or their existing network
-- LinkedIn 2nd-degree connection search
-- Government registries and public databases
-- CRM or existing contact databases (e.g. a spreadsheet of past clients)
-- GitHub contributor data, package dependency graphs
-- Conference speaker lists and attendee directories
-- Facebook groups, Instagram location tags, community forums
-- Reverse-search diagnostic (from S&P₂ onward): search known contacts by name, note co-occurring keywords in results, then search by those keywords alone to test whether they surface contacts invisible to the original search vocabulary
+- **Registers** — government registries, licensing databases, public filings. Who is licensed.
+- **Directories** — industry directories, association member lists, review sites, conference speaker and attendee lists. Who pays or qualifies to be listed.
+- **Outlets** — trade press, local news, industry publications, broadcast. Who is written about.
+- **Platforms** — the networks a market actually uses, their groups, pages, business listings and location tags. Who is active.
+- **Owned data** — CRM, past clients, the operator's own connections and their second degree.
+- **Open web search** — the seed queries the campaign plan defines, and from S&P₂ onward the reverse-search diagnostic: search known contacts by name, note co-occurring keywords in results, then search by those keywords alone to test whether they surface contacts invisible to the original search vocabulary.
+
+Which register, directory, outlet or platform serves a market turns on geography and language, and two countries rarely answer alike. The kinds are the same everywhere. A sweep that leaves a kind unattempted has not closed; `spar-S-search.md` §6 sets the standard for recording one as empty.
 
 Each iteration applies the appropriate search methods:
 
-**S&P₁ (Seed):** Build the initial roster from the most direct source. For a registry segment, export the registry. For a LinkedIn-network campaign, export direct and 2nd-degree connections. For a web-sourced campaign, run the seed queries defined in the campaign plan.
+**S&P₁ (Seed):** Build the initial roster from the most direct source. For a registry segment, export the registry. For a network campaign, export the operator's own connections and their second degree. For a web-sourced campaign, run the seed queries defined in the campaign plan.
 
-**S&P₂ (Verify and expand):** Verify each S&P₁ contact's current role and activity. Expand via social graph: who commented on their posts, who are co-admins of their groups, who appears in "People Also Viewed." Run the reverse-search diagnostic on the S&P₁ roster to discover vocabulary gaps. New names found during verification enter the roster with `discovered_via` tracing the referral chain.
+**S&P₂ (Verify and expand):** Verify each S&P₁ contact's current role and activity. Expand via social graph: who commented on their posts, who are co-admins of their groups, whom the platform's own suggestions surface as similar. Run the reverse-search diagnostic on the S&P₁ roster to discover vocabulary gaps. New names found during verification enter the roster with `discovered_via` tracing the referral chain.
 
 **S&P₃ (Snowball and refine):** Repeat verify-and-expand on S&P₂ additions. Yield will decline. Run any expanded keyword queries identified by the reverse-search diagnostic. Accept whatever count is reached if yield falls below the stopping threshold.
 
