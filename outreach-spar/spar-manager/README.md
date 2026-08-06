@@ -72,7 +72,7 @@ wish9.0 spar-ui.tcl /path/to/campaign.yaml  # mount campaign directly
 
 ### Transition report and dispatch
 
-`spar-transition.tcl` decides between report and dispatch by argv. A bare campaign yaml prints the eligibility ladder. One or more `Tn` tokens dispatch those transitions live. `--auto` drives auto-safe transitions (those with no external side effects) to convergence and refuses positional `Tn`. `--dry-run` disables writes and combines with any mode. `Tn` tokens accept `Tn:<segment>` or `Tn:<segment>/<stem>` for narrower scope, are repeatable, and may mix TIDs.
+`spar-transition.tcl` decides between report and dispatch by argv. A bare campaign yaml prints the eligibility ladder; a `segments/<name>` path does the same for one segment with no campaign attached, running population-tier transitions only (T0/T1/T3), and `spar-validate-cli.tcl` and `spar-progress.tcl` accept the same segment input. One or more `Tn` tokens dispatch those transitions live. `--auto` drives auto-safe transitions (those with no external side effects) to convergence and refuses positional `Tn`. `--dry-run` disables writes and combines with any mode. `Tn` tokens accept `Tn:<segment>` or `Tn:<segment>/<stem>` for narrower scope, are repeatable, and may mix TIDs.
 
 ```
 tclsh9.0 spar-transition.tcl /path/to/campaign.yaml             # eligibility report

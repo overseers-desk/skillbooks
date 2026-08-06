@@ -29,8 +29,12 @@ foreach arg $argv {
         --json       { set json_mode 1 }
         --*          { puts stderr "Unknown flag: $arg"; exit 2 }
         default      {
-            if {[string match *.yaml $arg]} {
-                set campaign_file [file normalize $arg]
+            set _n [file normalize $arg]
+            set _stem [expr {[file extension $_n] eq ".yaml" ? [file rootname $_n] : $_n}]
+            if {[file tail [file dirname $_stem]] eq "segments"} {
+                set segment_input $_n
+            } elseif {[string match *.yaml $arg]} {
+                set campaign_file $_n
                 set campaign_dir [file dirname $campaign_file]
             } else {
                 set campaign_dir $arg
@@ -85,13 +89,22 @@ if {[llength $seed_bases] > 0} {
     exit [expr {[llength $errors] > 0 ? 1 : 0}]
 }
 
-# --- Resolve campaign (discover YAML, load, build segment paths) ---
-if {[catch {set rc [spar::resolve_campaign $campaign_file $campaign_dir]} err]} {
+# --- Resolve the input: a segment alone, or a campaign ---
+# A segments/<name> input runs the population-tier checks (versions,
+# roster and profile integrity) with no campaign and no approach files.
+if {[info exists segment_input]} {
+    if {[catch {set rc [spar::resolve_segment $segment_input]} err]} {
+        puts stderr $err
+        exit 2
+    }
+    set approach_dir ""
+} elseif {[catch {set rc [spar::resolve_campaign $campaign_file $campaign_dir]} err]} {
     puts stderr $err
     exit 2
+} else {
+    set approach_dir [spar::approach_dir_for_campaign [dict get $rc yaml_path]]
 }
 set cdata         [dict get $rc cdata]
-set approach_dir  [spar::approach_dir_for_campaign [dict get $rc yaml_path]]
 set campaign_name [dict get $rc campaign_name]
 set segment_paths [dict get $rc segment_paths]
 
@@ -123,8 +136,20 @@ foreach item $segment_paths {
 
 # --- Run validators (reuse the existing library; sender block excluded) ---
 set issues {}
-lappend issues {*}[spar::validate_versions $cdata $segment_paths]
-lappend issues {*}[spar::validate_campaign $all_contacts 1 1]
+if {[llength $cdata] > 0} {
+    lappend issues {*}[spar::validate_versions $cdata $segment_paths]
+    lappend issues {*}[spar::validate_campaign $all_contacts 1 1]
+} else {
+    # Segment mode: no campaign exists to stamp, so only the segment
+    # side of the version gate runs, and there are no approach files.
+    foreach item $segment_paths {
+        lassign $item label seg_dir
+        set sdata [spar::read_segment_yaml [spar::segment_yaml_for_segment $seg_dir]]
+        set declared [expr {$sdata eq "" ? "" : [spar::segment_version $sdata]}]
+        lappend issues {*}[spar::validate_spec_version $declared             "segment '$label'" [list segment $label]]
+    }
+    lappend issues {*}[spar::validate_campaign $all_contacts 0 1]
+}
 
 # Send-readiness codes are AR/send-time concerns, not data integrity. They are
 # always reported as warnings here, never as failures, regardless of the

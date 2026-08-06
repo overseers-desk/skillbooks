@@ -31,9 +31,12 @@ foreach arg $argv {
         --legend         { set show_legend 1 }
         --*              { puts stderr "Unknown flag: $arg"; exit 1 }
         default          {
-            if {[string match *.yaml $arg]} {
-                set f [file normalize $arg]
-                lappend campaign_specs [list $f [file dirname $f]]
+            set _n [file normalize $arg]
+            set _stem [expr {[file extension $_n] eq ".yaml" ? [file rootname $_n] : $_n}]
+            if {[file tail [file dirname $_stem]] eq "segments"} {
+                lappend campaign_specs [list segment $_n]
+            } elseif {[string match *.yaml $arg]} {
+                lappend campaign_specs [list $_n [file dirname $_n]]
             } else {
                 lappend campaign_specs [list "" $arg]
             }
@@ -48,12 +51,22 @@ if {[llength $campaign_specs] == 0} { set campaign_specs [list [list "" ""]] }
 # or "" when the campaign will not resolve, its reason on stderr.
 # The State is passed in so its cache spans every campaign in the run.
 proc analyse_campaign {State campaign_file campaign_dir} {
-    if {[catch {set rc [spar::resolve_campaign $campaign_file $campaign_dir]} err]} {
-        puts stderr $err
-        return ""
+    # A `segment` kind in the campaign_file slot analyses one segment
+    # with no campaign: cdata {}, no approach folder, Reach = 3+ star.
+    if {$campaign_file eq "segment"} {
+        if {[catch {set rc [spar::resolve_segment $campaign_dir]} err]} {
+            puts stderr $err
+            return ""
+        }
+        set approach_dir ""
+    } else {
+        if {[catch {set rc [spar::resolve_campaign $campaign_file $campaign_dir]} err]} {
+            puts stderr $err
+            return ""
+        }
+        set approach_dir [spar::approach_dir_for_campaign [dict get $rc yaml_path]]
     }
     set cdata        [dict get $rc cdata]
-    set approach_dir [spar::approach_dir_for_campaign [dict get $rc yaml_path]]
     set all_contacts {}
     set segment_counts {}   ;# list of {label counts_dict}
 
@@ -197,7 +210,8 @@ proc print_report {analysis} {
     global verbose show_legend
     dict with analysis {}
 
-    puts "Campaign:    $campaign_name"
+    puts [expr {$yaml_path eq "" \
+        ? "Segment:     $campaign_name" : "Campaign:    $campaign_name"}]
 
     set headers {Segment Valid Profile "3+★ " Reach "A/Reach " Email LinkedIn Facebook "Only ☎ " Sent Repl}
 
