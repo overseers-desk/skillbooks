@@ -166,7 +166,8 @@ if {$json_mode} {
         # T0's tasks are census sources rather than contacts, so they
         # arrive from the transition class (transitions/base.tcl), as
         # they do in the CLI report and the GUI tree.
-        lappend tasks {*}[spar::transition_campaign_tasks $tid $cdata $yaml_path]
+        lappend tasks {*}[spar::transition_campaign_tasks $tid $cdata $yaml_path \
+            $all_segment_paths]
         lappend transitions [dict create label "$tid: $tlabel" count [llength $tasks] tasks $tasks]
     }
     puts [progress_to_json [dict create campaign $campaign_name min_star $min_star \

@@ -188,17 +188,30 @@ if {$campaign_path eq ""} {
     print_help
     exit 1
 }
-if {![string match *.yaml $campaign_path]} {
-    puts stderr "Error: campaign argument must be a YAML file: $campaign_path"
-    exit 1
+# The positional is either a campaign YAML (campaigns/<name>.yaml) or a
+# segment (segments/<name> or segments/<name>.yaml). A segment runs the
+# population-tier transitions with no campaign context.
+set segment_mode 0
+set _pos [file normalize $campaign_path]
+if {[file tail [file dirname [expr {[file extension $_pos] eq ".yaml" ? [file rootname $_pos] : $_pos}]]] eq "segments"} {
+    set segment_mode 1
 }
-set yaml_path [file normalize $campaign_path]
-if {![file isfile $yaml_path]} {
-    puts stderr "Error: campaign YAML not found: $campaign_path"
-    exit 1
+if {$segment_mode} {
+    set yaml_path ""
+    set approach_dir ""
+} else {
+    if {![string match *.yaml $campaign_path]} {
+        puts stderr "Error: campaign argument must be a YAML file (or a segments/<name> path): $campaign_path"
+        exit 1
+    }
+    set yaml_path [file normalize $campaign_path]
+    if {![file isfile $yaml_path]} {
+        puts stderr "Error: campaign YAML not found: $campaign_path"
+        exit 1
+    }
+    set campaign_dir [spar::instance_root_for_yaml $yaml_path]
+    set approach_dir [spar::approach_dir_for_campaign $yaml_path]
 }
-set campaign_dir [spar::instance_root_for_yaml $yaml_path]
-set approach_dir [spar::approach_dir_for_campaign $yaml_path]
 
 # tid_scope_filter — return {segments stems} pair for one TID by
 # unioning every scope that names this TID. An unscoped scope ({tid {}
@@ -277,7 +290,12 @@ proc step_prompt {tid slug idx total} {
 }
 
 # --- Load campaign YAML and discover segments ---
-set resolved [spar::resolve_campaign $yaml_path ""]
+if {$segment_mode} {
+    set resolved [spar::resolve_segment $_pos]
+    set campaign_dir [dict get $resolved campaign_dir]
+} else {
+    set resolved [spar::resolve_campaign $yaml_path ""]
+}
 set cdata [dict get $resolved cdata]
 set campaign_name [dict get $resolved campaign_name]
 set primary_channel [dict get $resolved primary_channel]
@@ -286,7 +304,7 @@ set primary_channel [dict get $resolved primary_channel]
 # the log root so a real run is traceable without shell redirection. Skipped
 # for --dry-run (no real outcomes) and for the bare overview report. Path
 # policy lives in ensure_orchestration_file.
-if {$dispatching && !$dry_run} {
+if {$dispatching && !$dry_run && !$segment_mode} {
     set _orch_log [spar::ensure_orchestration_file $yaml_path $dry_run]
     spar::install_orchestration_log {spar::transitions spar::dispatch}
     ${::spar::transitions_log}::info "Orchestration log: $_orch_log"
@@ -296,6 +314,11 @@ if {$dispatching && !$dry_run} {
 # compute_ready_by_tid; segment_paths here is the campaign-wide set so
 # any scope can pick from any segment. Discovery is resolve_campaign's.
 set segment_paths [dict get $resolved segment_paths]
+set all_segment_paths [dict get $resolved all_segment_paths]
+# Absolute segment folders handed to the population dispatch entries in
+# segment mode; empty in campaign mode, where campaign_file speaks.
+set segment_dirs_opt [expr {$segment_mode \
+    ? [lmap _sp $all_segment_paths {lindex $_sp 1}] : {}}]
 
 # --- Classify all contacts ---
 # In --auto mode, T1/T2/T3/T4 are the only active transitions and none
@@ -345,6 +368,29 @@ if {$auto_mode} {
         if {[spar::transition_auto_safe $t]} { lappend filtered_active $t }
     }
     set active_tids $filtered_active
+}
+
+# Segment mode runs population-tier transitions only: everything else
+# reads campaign facts (plan block, sender, start_date) or writes into a
+# campaign's approach folder, and there is no campaign here.
+if {$segment_mode} {
+    set filtered_active {}
+    set refused {}
+    foreach t $active_tids {
+        if {[[::spar::transitions::get $t] tier] eq "population"} {
+            lappend filtered_active $t
+        } else {
+            lappend refused $t
+        }
+    }
+    if {[llength $refused] > 0 && [llength $tid_scopes] > 0} {
+        puts stderr "Segment mode: [join $refused {, }] need a campaign YAML (campaign-tier); running [join $filtered_active {, }]."
+    }
+    set active_tids $filtered_active
+    if {[llength $active_tids] == 0} {
+        puts stderr "No population-tier transitions requested; give a campaign YAML for the rest."
+        exit 1
+    }
 }
 
 # ────────────────────────────────────────────────────────────────────────
@@ -402,7 +448,8 @@ if {$dispatching} {
     # rows twice. cdata is the full campaign dict — T9/T10 need it to
     # read secondary/tertiary channel slots.
     proc compute_ready_by_tid {state all_contacts active_tids tid_scopes \
-                               primary_channel {cdata {}} {yaml_path ""}} {
+                               primary_channel {cdata {}} {yaml_path ""} \
+                               {all_segment_paths {}}} {
         set ready_by_tid [dict create]
         foreach tid $active_tids {
             lassign [tid_scope_filter $tid_scopes $tid] segs stems
@@ -412,7 +459,7 @@ if {$dispatching} {
             # from any contact, so they join here rather than through
             # transition_eligible. Empty for every contact-driven TID.
             lappend eligible {*}[spar::transition_campaign_tasks \
-                $tid $cdata $yaml_path]
+                $tid $cdata $yaml_path $all_segment_paths]
             set seen_stems [dict create]
             set ready_list {}
             foreach c $eligible {
@@ -447,7 +494,7 @@ if {$dispatching} {
     # the pool while harness_run rows (T1/T2/T3/T4) parallelise. See
     # docs/concurrency.md "Per-worker cap".
     proc dispatch_ready {ready_by_tid active_tids tid_scopes \
-                         yaml_path cdata dry_run jobs delay \
+                         yaml_path segment_dirs cdata dry_run jobs delay \
                          limit assume_yes actions step_callback} {
         if {$::spar::control_draining} {
             ${::spar::transitions_log}::warn "control: drain active — dispatching nothing"
@@ -478,6 +525,7 @@ if {$dispatching} {
             lassign [tid_scope_filter $tid_scopes $tid] f_segs f_stems
             set base_opts [dict create \
                 campaign_file $yaml_path \
+                segment_dirs $segment_dirs \
                 dry_run $dry_run \
                 jobs $jobs \
                 delay $delay \
@@ -653,7 +701,7 @@ if {$dispatching} {
             set all_contacts [reclassify_contacts $State $segment_paths $approach_dir 0]
             set ready_by_tid [compute_ready_by_tid \
                 $State $all_contacts $active_tids $tid_scopes \
-                $primary_channel $cdata $yaml_path]
+                $primary_channel $cdata $yaml_path $all_segment_paths]
 
             if {[dict size $ready_by_tid] == 0} {
                 if {$iter == 1} {
@@ -683,7 +731,7 @@ if {$dispatching} {
             ${::spar::transitions_log}::info "── Iteration $iter ──"
 
             dispatch_ready $ready_by_tid $active_tids $tid_scopes \
-                $yaml_path $cdata $dry_run $jobs $delay \
+                $yaml_path $segment_dirs_opt $cdata $dry_run $jobs $delay \
                 $limit $assume_yes $actions \
                 [expr {$stepping ? "step_prompt" : ""}]
 
@@ -712,7 +760,7 @@ if {$dispatching} {
     # ────────────────────────────────────────────────────────────────────
     set ready_by_tid [compute_ready_by_tid \
         $State $all_contacts $active_tids $tid_scopes \
-        $primary_channel $cdata $yaml_path]
+        $primary_channel $cdata $yaml_path $all_segment_paths]
 
     if {[dict size $ready_by_tid] == 0} {
         ${::spar::transitions_log}::info "Campaign: $campaign_name"
@@ -755,7 +803,7 @@ if {$dispatching} {
     }
 
     dispatch_ready $ready_by_tid $active_tids $tid_scopes \
-        $yaml_path $cdata $dry_run $jobs $delay \
+        $yaml_path $segment_dirs_opt $cdata $dry_run $jobs $delay \
         $limit $assume_yes $actions \
         [expr {$stepping ? "step_prompt" : ""}]
 
@@ -788,7 +836,7 @@ foreach tid [spar::transition_tids] {
     set eligible [$State transition_eligible $all_contacts $tid $primary_channel $cdata]
     # As in compute_ready_by_tid: campaign-level tasks (T0) join the
     # per-contact ones, so the report ladder counts them too.
-    lappend eligible {*}[spar::transition_campaign_tasks $tid $cdata $yaml_path]
+    lappend eligible {*}[spar::transition_campaign_tasks $tid $cdata $yaml_path $all_segment_paths]
 
     set dispatchable_list {}
     set awaiting_list {}
