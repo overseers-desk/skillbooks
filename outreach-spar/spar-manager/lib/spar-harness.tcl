@@ -814,4 +814,158 @@ oo::class create spar::ProfileHarness {
     }
 }
 
+# ── SweepHarness class ────────────────────────────────────────────────
+
+oo::class create spar::SweepHarness {
+    superclass spar::Harness
+
+    variable Outfile RosterPath SweepPath SegmentDir SegmentKey \
+             SourceName Round Model
+
+    # Same allow-list as the profile worker, for the same reason: a
+    # discovery session that could spawn full-tool agents turns one
+    # source into a research swarm (#132). Enumeration is the work here,
+    # and the read-only Explore subagent covers the one legitimate
+    # delegation (isolating a large page from the session's context).
+    method permission_args {} {
+        return [list \
+            --permission-mode dontAsk \
+            --allowedTools "WebSearch,WebFetch,Read,Write,Edit,Glob,Grep,ToolSearch,TodoWrite,Skill,Bash,Agent(Explore),SendMessage" \
+            --disallowedTools "Agent(general-purpose),Agent(claude),Agent(general),Workflow,Skill(deep-research),Skill(ot:build-dossier)"]
+    }
+
+    # Run one source end to end. Returns 0 on success, 1 on failure.
+    #
+    # A cost-cap kill (3) or an external kill (2) is not discarded: the
+    # deliverable on disk is the verdict, and the fix loop resumes the
+    # captured session to finish it, which is cheap next to reading the
+    # source again. The sweep file is written only after the rows land, so
+    # a source whose batch never applied keeps the status it had and the
+    # next round re-dispatches it.
+    method run {} {
+        try {
+            my load_my_meta
+            if {[my do_sweep_call] == 1} { return 1 }
+            if {[my validate_and_correct]} { return 1 }
+            spar::update_source_status $SweepPath $SourceName [my declared_status]
+            my record_round
+            my do_summary
+            return 0
+        } on error {err opts} {
+            my _fail \
+                "FAIL ([my slug]): uncaught error in SweepHarness::run — $err"
+            return 1
+        }
+    }
+
+    method load_my_meta {} {
+        set meta [my load_meta]
+        set Outfile    [dict get $meta OUTFILE]
+        set RosterPath [dict get $meta ROSTER_PATH]
+        set SweepPath  [dict get $meta SWEEP_PATH]
+        set SegmentDir [dict get $meta SEGMENT_DIR]
+        set SegmentKey [dict get $meta SEGMENT_KEY]
+        set SourceName [dict get $meta SOURCE_NAME]
+        set Round      [dict getdef $meta SWEEP_ROUND 1]
+        set Model      [dict getdef $meta MODEL opus]
+    }
+
+    method do_sweep_call {} {
+        ${::spar::harness_log}::info "\[[my slug]\] \[phase: sweeping $SourceName\]"
+        set prompt [spar::read_file [file join [my prompt_dir] prompt.txt]]
+        return [my call "sweep" "[my log_prefix]-sweep.log" $prompt \
+            --model $Model]
+    }
+
+    # DbC-Post loop. The validator applies as it validates: the worker
+    # declares rows, spar::apply_sweep_batch is the process that writes
+    # them, and its rejections are the fix loop's error list.
+    method validate_and_correct {} {
+        return [my run_fix_loop validate_sweep_errors build_sweep_fix_prompt]
+    }
+
+    method validate_sweep_errors {attempt} {
+        return [spar::apply_sweep_batch $Outfile $RosterPath $SegmentKey]
+    }
+
+    method build_sweep_fix_prompt {attempt hard error_text} {
+        return [my load_prompt spar-s-fix [dict create \
+            ERROR_TEXT $error_text \
+            OUTFILE    $Outfile]]
+    }
+
+    method report_fix_failure {hard max_fix} {
+        my _fail "FAIL (sweep return rejected after $max_fix retries): [my slug] — [dict get [lindex $hard 0] message]"
+    }
+
+    method front_matter {} {
+        set fm [spar::read_profile_front_matter $Outfile]
+        return [expr {$fm eq "" ? [dict create] : $fm}]
+    }
+
+    # The status the sweep file carries after this worker, flattened to
+    # one line: a status is one line of a YAML mapping, and the applier
+    # has already accepted its base token.
+    method declared_status {} {
+        set s [dict getdef [my front_matter] source_status ""]
+        return [string trim [string map {\n " " \t " "} $s]]
+    }
+
+    # This source's contribution to round <n>, merged by
+    # spar::append_sweep_round. One worker holds one source and neither
+    # front end has a batch-end hook, so each worker writes its own part
+    # and the merge keyed by round number assembles them.
+    method record_round {} {
+        set fm [my front_matter]
+        set rows [llength [dict getdef $fm rows_new {}]]
+        set recon [string trim [dict getdef $fm reconciliation ""]]
+        set surprises {}
+        foreach entry [dict getdef $fm sweep_feedback {}] {
+            set note [string trim [dict getdef $entry note ""]]
+            if {$note eq ""} continue
+            lappend surprises "[dict getdef $entry kind observation] ($SourceName): [string map [list \n " "] $note]"
+        }
+        set round [dict create \
+            n              $Round \
+            date           [clock format [clock seconds] -format %Y-%m-%d] \
+            method         "T0 dispatch: one discovery worker per open source" \
+            inputs         [list $SourceName] \
+            reconciliation "${SourceName}: $recon" \
+            coverage_after [my coverage] \
+            yield          $rows]
+        if {[llength $surprises] > 0} {
+            dict set round surprises $surprises
+        }
+        spar::append_sweep_round $SweepPath $round
+    }
+
+    # coverage_after per spar-S-search.md §10 check 10: the roster's live
+    # row count over the denominator, computed from the files rather than
+    # asserted by the worker.
+    method coverage {} {
+        set live 0
+        if {[file exists $RosterPath]} {
+            foreach r [spar::load_roster $RosterPath] {
+                if {[string trim [dict getdef $r date_excluded ""]] eq ""} {
+                    incr live
+                }
+            }
+        }
+        set denom "?"
+        if {![catch {spar::read_sweep_yaml $SweepPath} sd]} {
+            set v [string trim \
+                [dict getdef [dict getdef $sd market_estimate {}] value ""]]
+            if {$v ne ""} { set denom [lindex [split $v "\n"] 0] }
+        }
+        return "$live/$denom"
+    }
+
+    method do_summary {} {
+        set fm [my front_matter]
+        set rows [llength [dict getdef $fm rows_new {}]]
+        ${::spar::harness_log}::info \
+            "DONE: [my slug] ($rows row(s) from $SourceName, status now [my declared_status], cost=\$[my cost_total])"
+    }
+}
+
 package provide spar-harness 1.0

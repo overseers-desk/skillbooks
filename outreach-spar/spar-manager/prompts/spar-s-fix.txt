@@ -1,0 +1,7 @@
+The harness read your deliverable at __OUTFILE__ and could not apply it. What it found:
+
+__ERROR_TEXT__
+
+Fix the deliverable, not the roster: the harness applies the rows, and it re-reads the file after you edit it. Where a row is the problem, correct that row or drop it and say in the body why it was dropped. Where a stem is already on the roster, the row is a re-find rather than a find, so drop it and let your reconciliation count it as already held. Where a column is not one this roster carries, move the fact into `s_note` or the body.
+
+Change only what the errors name. The rest of the file is already accepted, and a rewrite risks the rows that landed.

@@ -7,6 +7,7 @@
 package require logger
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir .. lib spar-state.tcl]
+source [file join $script_dir .. lib spar-harness.tcl]
 source [file join $script_dir test-helpers.tcl]
 
 set tmpdir [exec mktemp -d /tmp/spar-test-sweep.XXXXXX]
@@ -415,5 +416,92 @@ set issues [row_issues {
     "rows_new: \[\]"
 }]
 assert_eq [llength $issues] 0 "a source that yielded nothing still validates"
+
+# ── 9. SweepHarness ────────────────────────────────────────────────────
+#
+# The claude call is the one part not exercised here: the harness's own
+# work is what happens either side of it, and each of those methods runs
+# standalone against a deliverable already on disk.
+
+section "9. SweepHarness applies, records and stamps"
+
+set h_seg [write_seed_pair $root tas]
+set h_sweep [spar::sweep_yaml_for_segment $h_seg]
+set h_roster [spar::roster_path_for_segment $h_seg]
+set h_prompt [file join $tmpdir prompts sweep-tas-state-register]
+file mkdir $h_prompt
+set h_logs [file join $tmpdir logs-tas]
+file mkdir $h_logs
+set h_out [file join $h_logs "sweep-tas-state-register-return.md"]
+
+set fd [open [file join $h_prompt meta.env] w]
+puts $fd "STEM=\"sweep-tas-state-register\""
+puts $fd "OUTFILE=\"$h_out\""
+puts $fd "ROSTER_PATH=\"$h_roster\""
+puts $fd "SWEEP_PATH=\"$h_sweep\""
+puts $fd "SEGMENT_DIR=\"$h_seg\""
+puts $fd "SEGMENT_KEY=\"tas\""
+puts $fd "SOURCE_NAME=\"State register\""
+puts $fd "SWEEP_ROUND=\"1\""
+puts $fd "MODEL=\"opus\""
+close $fd
+
+write_return $h_out {
+    "source_status: partial — 60 of 120 entries read, A-F"
+    "reconciliation: |"
+    "  120 listed; 60 read; 1 in scope; 1 row returned."
+    "sweep_feedback:"
+    "  - kind: new-source"
+    "    note: the register links a state association directory"
+    "rows_new:"
+    "  - stem: rae-quinn-tasco"
+    "    contact_name: Rae Quinn"
+    "    organisation: Tasco"
+    "    sweep_iteration: 1"
+    "    discovered_via: State register entry 12"
+    "    star_rating: 3"
+}
+
+set harness [spar::SweepHarness new $h_prompt $h_logs]
+$harness load_my_meta
+assert_eq [$harness declared_status] "partial — 60 of 120 entries read, A-F" \
+    "the declared status is read back off the deliverable"
+
+set errs [$harness validate_sweep_errors 1]
+set hard {}
+foreach e $errs { if {[dict get $e severity] eq "error"} { lappend hard $e } }
+assert_eq [llength $hard] 0 "the batch applies with no hard errors"
+assert_eq [llength [spar::load_roster $h_roster]] 1 "the row reached the roster"
+assert_eq [$harness coverage] "1/120" \
+    "coverage is the live roster count over the denominator"
+
+spar::update_source_status $h_sweep "State register" [$harness declared_status]
+$harness record_round
+$harness destroy
+
+set data [spar::read_sweep_yaml $h_sweep]
+set st ""
+foreach s [dict get $data sources] {
+    if {[dict get $s name] eq "State register"} { set st [dict get $s status] }
+}
+assert_eq $st "partial — 60 of 120 entries read, A-F" "the source status is updated"
+assert_eq [llength [dict get $data rounds]] 1 "the round is recorded"
+set r [lindex [dict get $data rounds] 0]
+assert_eq [dict get $r n] 1 "round 1"
+assert_eq [dict get $r yield] 1 "yield is the rows applied"
+assert_eq [dict get $r coverage_after] "1/120" "coverage recorded"
+assert_match [dict get $r reconciliation] "State register:*120 listed*" \
+    "the worker's reconciliation is attributed to its source"
+assert_match [dict get $r surprises] "*new-source*association directory*" \
+    "sweep_feedback becomes the round's surprises"
+
+# A second run of the same deliverable (a replay, or a fix-loop retry
+# after the batch already landed) applies nothing further.
+set harness2 [spar::SweepHarness new $h_prompt $h_logs]
+$harness2 load_my_meta
+set errs [$harness2 validate_sweep_errors 2]
+assert_eq [llength $errs] 0 "a stamped deliverable re-validates clean"
+assert_eq [llength [spar::load_roster $h_roster]] 1 "and appends nothing"
+$harness2 destroy
 
 finish_tests
