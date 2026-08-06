@@ -82,6 +82,33 @@ assert_eq [dict get [dict get $by_stem alice-acme] approach_path] "" \
 assert_eq [dict get [dict get $by_stem bob-none] state] DISCOVERED \
     "unprofiled contact classifies DISCOVERED"
 
+section "campaign-free S prep (T0 from a seeded segment)"
+
+set swseg [make_segment_only swept]
+write_segment_yaml $swseg "version: \"2.0\"\ntitle: Swept\ndate: 2026-08-01\ndiscovery_criteria: |\n  test\n"
+set fd [open [spar::sweep_yaml_for_segment $swseg] w]
+puts $fd {version: "2.0"}
+puts $fd "segment: swept"
+puts $fd "market_estimate:"
+puts $fd "  denominator: 10"
+puts $fd "  basis: test"
+puts $fd "sources:"
+puts $fd "- name: State register"
+puts $fd "  type: registry"
+puts $fd "  status: open"
+puts $fd "exclusions: \[\]"
+puts $fd "escapes: \[\]"
+puts $fd "rounds: \[\]"
+close $fd
+set t0_tasks [spar::transition_campaign_tasks T0 {} "" \
+    [list [list swept $swseg]]]
+assert_eq [llength $t0_tasks] 1 "T0 derives its census task with no campaign"
+assert_eq [dict get [lindex $t0_tasks 0] task_state] dispatchable \
+    "the open source is dispatchable"
+set sprep [spar::s::prepare_for_pool \
+    [dict create segment_dirs [list $swseg]] {apply {args {}}}]
+assert_eq [llength [dict get $sprep rows]] 1 "S prep builds the source row campaign-free"
+
 section "campaign-free P prep"
 
 set prep [spar::p::prepare_for_pool \

@@ -96,6 +96,7 @@ oo::class create ::spar::transitions::SweepTransition {
 ::spar::transitions::register \
     -class ::spar::transitions::SweepTransition \
     -tid T0 \
+    -tier population \
     -label "Seed → Sweep" \
     -auto-safe 0 \
     -dispatch-status available \
