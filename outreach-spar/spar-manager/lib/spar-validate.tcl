@@ -1491,6 +1491,7 @@ proc spar::_yamlmuster_sweep_return {} {
     $inst predicate return_status_token   ::spar::_pred_return_status_token
     $inst predicate rows_new_shape        ::spar::_pred_rows_new_shape
     $inst predicate return_feedback_shape ::spar::_pred_return_feedback_shape
+    $inst predicate return_escape_shape   ::spar::_pred_return_escape_shape
     spar::_yamlmuster_load $inst sweep-return.rules sweep_return
     set _yamlmuster_sweep_return_inst $inst
     return $inst
@@ -1577,8 +1578,10 @@ proc spar::_pred_rows_new_shape {node meta} {
     return $out
 }
 
-# sweep_feedback entries: the kinds spar-P-profile.md §4.15 and
-# spar-S-search.md §7 name, each with a note worth reading.
+# sweep_feedback entries: the four kinds prompts/spar-p.txt declares to
+# the profile worker, which is where the vocabulary is defined and what
+# spar::apply_roster_patch already queues on the P side. Each carries a
+# note worth reading.
 proc spar::_pred_return_feedback_shape {node meta} {
     if {![dict exists $node sweep_feedback]} { return {} }
     set allowed {new-source new-vocabulary surprise misfit}
@@ -1597,6 +1600,33 @@ proc spar::_pred_return_feedback_shape {node meta} {
         if {[string trim [dict getdef $entry note ""]] eq ""} {
             lappend out [dict create message \
                 "sweep_feedback entry of kind '$kind' has an empty note"]
+        }
+    }
+    return $out
+}
+
+# escapes entries: a member the sweep should have found earlier, with the
+# verdict naming the cause (spar-S-search.md §7). Shape varies by how the
+# miss surfaced (member/verdict/note, found/verdict/cause), so only the
+# verdict is fixed; spar::append_sweep_escapes drops an entry without one.
+proc spar::_pred_return_escape_shape {node meta} {
+    if {![dict exists $node escapes]} { return {} }
+    set allowed {missing-keyword missing-source source-not-exhausted \
+                 filter-too-tight process-defect}
+    set out {}
+    foreach entry [dict get $node escapes] {
+        if {[llength $entry] % 2 != 0} {
+            lappend out [dict create message \
+                "escapes entry is not a mapping; nothing was recorded for it"]
+            continue
+        }
+        set verdict [string trim [dict getdef $entry verdict ""]]
+        if {$verdict eq ""} {
+            lappend out [dict create message \
+                "escapes entry has no verdict, so it is not recorded; the verdict decides which part of the sweep head gets fixed ([join $allowed { | }])"]
+        } elseif {$verdict ni $allowed} {
+            lappend out [dict create message \
+                "escapes verdict '$verdict' — closed vocabulary: [join $allowed { | }]"]
         }
     }
     return $out

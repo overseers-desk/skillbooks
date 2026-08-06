@@ -1390,6 +1390,62 @@ proc spar::append_sweep_round {sweep_path round} {
     return [dict get $merged n]
 }
 
+# append_sweep_escapes — add worker-declared escapes to the escapes list.
+#
+# An escape is a market member the sweep should have found and did not
+# (spar-S-search.md §7); it stays in the file as a test case the next
+# round has to catch, so the list is append-only and never rewritten. An
+# entry without a verdict is dropped rather than written: the verdict is
+# what decides which part of the head gets fixed, and an entry that names
+# none is a note, not a test case. Already-listed members are skipped, so
+# a second worker meeting the same escape does not double it.
+#
+# Returns the number of entries appended.
+proc spar::append_sweep_escapes {sweep_path entries} {
+    if {[llength $entries] == 0} { return 0 }
+    set data [spar::read_sweep_yaml $sweep_path]
+    set known {}
+    foreach e [dict getdef $data escapes {}] {
+        if {[llength $e] % 2 != 0} continue
+        foreach k {member found} {
+            set v [string trim [dict getdef $e $k ""]]
+            if {$v ne ""} { lappend known $v }
+        }
+    }
+    set blocks {}
+    foreach entry $entries {
+        if {[llength $entry] % 2 != 0} continue
+        if {![dict exists $entry verdict]} continue
+        set who ""
+        foreach k {member found} {
+            set v [string trim [dict getdef $entry $k ""]]
+            if {$v ne ""} { set who $v; break }
+        }
+        if {$who ne "" && $who in $known} continue
+        if {$who ne ""} { lappend known $who }
+        lappend blocks [spar::_emit_seq_item $entry 2 {}]
+    }
+    if {[llength $blocks] == 0} { return 0 }
+
+    set lines [split [string trimright [spar::_sweep_read $sweep_path] "\n"] "\n"]
+    set blk [spar::_yaml_block_entries $lines escapes]
+    set key_line [dict get $blk key_line]
+    set entries_found [dict get $blk entries]
+    set flat {}
+    foreach b $blocks { lappend flat {*}$b }
+    if {$key_line < 0} {
+        lappend lines "escapes:"
+        set lines [concat $lines $flat]
+    } elseif {[llength $entries_found] == 0} {
+        set lines [lreplace $lines $key_line $key_line "escapes:" {*}$flat]
+    } else {
+        lassign [lindex $entries_found end] first last _
+        set lines [linsert $lines [expr {$last + 1}] {*}$flat]
+    }
+    spar::_sweep_write $sweep_path "[join $lines \n]\n"
+    return [llength $blocks]
+}
+
 proc spar::_merge_round {old new} {
     set out $old
     dict for {k v} $new {
@@ -1437,8 +1493,13 @@ proc spar::_emit_round_block {round indent} {
     dict for {k v} $round {
         if {![dict exists $ordered $k]} { dict set ordered $k $v }
     }
-    set lines [spar::_yaml_emit_pairs $ordered [expr {$indent + 2}] \
-        {inputs surprises}]
+    return [spar::_emit_seq_item $ordered $indent {inputs surprises}]
+}
+
+# _emit_seq_item — a dict as one block-sequence item at $indent: the
+# mapping's first line takes the dash, the rest align under it.
+proc spar::_emit_seq_item {d indent list_keys} {
+    set lines [spar::_yaml_emit_pairs $d [expr {$indent + 2}] $list_keys]
     set pad [string repeat " " $indent]
     return [lreplace $lines 0 0 "${pad}- [string trimleft [lindex $lines 0]]"]
 }

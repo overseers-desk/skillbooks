@@ -495,6 +495,35 @@ assert_match [dict get $r reconciliation] "State register:*120 listed*" \
 assert_match [dict get $r surprises] "*new-source*association directory*" \
     "sweep_feedback becomes the round's surprises"
 
+# An escape the worker declares reaches the sweep file's standing list;
+# one with no verdict is dropped, since the verdict is what the list is for.
+set esc_issues [spar::validate_sweep_return $h_out]
+assert_eq [llength $esc_issues] 0 "the deliverable validates clean"
+assert_eq [spar::append_sweep_escapes $h_sweep [list \
+    [dict create member "Vale Holdings" verdict missing-keyword \
+        note "trades as a co-op"] \
+    [dict create member "No Verdict Ltd" note "just a note"]]] 1 \
+    "one escape of two recorded; the verdictless one dropped"
+set data [spar::read_sweep_yaml $h_sweep]
+assert_eq [llength [dict get $data escapes]] 1 "escapes: \[\] became one entry"
+assert_eq [dict get [lindex [dict get $data escapes] 0] verdict] missing-keyword \
+    "the verdict survives the round trip"
+assert_eq [spar::append_sweep_escapes $h_sweep [list \
+    [dict create member "Vale Holdings" verdict missing-keyword]]] 0 \
+    "a member already listed is not doubled"
+
+set issues [row_issues {
+    "source_status: partial — halfway"
+    "reconciliation: 1 row returned."
+    "escapes:"
+    "  - member: Vale Holdings"
+    "    verdict: forgot-to-look"
+}]
+assert_eq [has_issue $issues invalid_escape] 1 \
+    "an escape verdict outside the vocabulary warns"
+assert_eq [dict get [lindex [issues_with_code $issues invalid_escape] 0] severity] \
+    warning "and it warns rather than bouncing the batch"
+
 # A second run of the same deliverable (a replay, or a fix-loop retry
 # after the batch already landed) applies nothing further.
 set harness2 [spar::SweepHarness new $h_prompt $h_logs]

@@ -39,7 +39,11 @@ rule predicate root return_status_token -code invalid_source_status \
 # no newline, since the roster has no quoting to survive either).
 rule predicate root rows_new_shape -code invalid_row -groups {sweep_return}
 
-# sweep_feedback is optional; a malformed entry loses the observation but
-# costs no rows, so it warns rather than bouncing the batch.
+# sweep_feedback and escapes are optional; a malformed entry loses the
+# observation but costs no rows, so each warns rather than bouncing the
+# batch. An escape without a verdict is dropped by the applier, which is
+# what the warning tells the worker.
 rule predicate root return_feedback_shape -code invalid_sweep_feedback \
+    -severity warning -groups {sweep_return}
+rule predicate root return_escape_shape -code invalid_escape \
     -severity warning -groups {sweep_return}
