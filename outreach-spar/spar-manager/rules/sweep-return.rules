@@ -1,0 +1,45 @@
+# sweep-return.rules — yamlmuster ruleset for the front matter of a T0
+# discovery worker's deliverable (prompts/spar-s.txt names the keys).
+# Loaded by spar::_yamlmuster_sweep_return and driven by
+# spar::validate_sweep_return, which spar::apply_sweep_batch runs before
+# it touches the roster: a worker declares rows, the harness applies them,
+# and a defect can reach at most the worker's own declaration.
+#
+# Call shape:
+#   validate <front matter dict> -groups {sweep_return}
+#
+# The roster-relative checks (a stem already on the roster, a column this
+# roster does not have) are not here: they need the roster, and they live
+# in spar::apply_sweep_batch. Everything a row must be true of on its own
+# is here.
+
+# ── Levels ───────────────────────────────────────────────────────────────
+# rows_new entries carry roster column names, which vary by campaign
+# (application_url, lender_type), so the row level declares no closed
+# vocabulary; the roster's own header decides, in the applier.
+level root -keys {rows_new source_status reconciliation sweep_feedback \
+                  escapes sweep_batch_applied}
+
+# ── Rules ────────────────────────────────────────────────────────────────
+rule vocab root -groups {sweep_return}
+
+rule require root source_status -nonblank -code missing_source_status \
+    -message {Front matter missing '%k' — the sweep file records the status you leave the source in} \
+    -groups {sweep_return}
+rule require root reconciliation -nonblank -code missing_reconciliation \
+    -message {Front matter missing '%k' — the rows returned have to reconcile against the source's own count} \
+    -groups {sweep_return}
+
+# The status leads with a base token: the next round's task selection
+# reads that token and nothing else.
+rule predicate root return_status_token -code invalid_source_status \
+    -groups {sweep_return}
+
+# Per-row shape: identity, star, date, and the TSV's own limits (no tab,
+# no newline, since the roster has no quoting to survive either).
+rule predicate root rows_new_shape -code invalid_row -groups {sweep_return}
+
+# sweep_feedback is optional; a malformed entry loses the observation but
+# costs no rows, so it warns rather than bouncing the batch.
+rule predicate root return_feedback_shape -code invalid_sweep_feedback \
+    -severity warning -groups {sweep_return}

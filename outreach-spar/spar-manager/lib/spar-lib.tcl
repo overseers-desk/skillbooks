@@ -359,9 +359,9 @@ proc spar::extract_required_skills {segment_data segment_path} {
 # finds; this list is for the one case where there is no header yet — the
 # first sweep of a segment, creating the roster.
 proc spar::roster_core_columns {} {
-    return {stem contact_name organisation role phone email linkedin_url \
-            facebook_url sweep_iteration discovered_via date_excluded \
-            s_note p_note star_rating}
+    return [list stem contact_name organisation role phone email \
+        linkedin_url facebook_url sweep_iteration discovered_via \
+        date_excluded s_note p_note star_rating]
 }
 
 # load_roster — read TSV, return list of dicts keyed by header columns
@@ -698,10 +698,107 @@ proc spar::_apply_patch_only {fm roster_path stem} {
     return {}
 }
 
-# _stamp_patch_applied — insert roster_patch_applied into the deliverable's
-# front matter, before the closing --- delimiter. tmp+rename like the
-# roster writes, so a crash leaves the old file whole.
-proc spar::_stamp_patch_applied {profile_path} {
+# apply_sweep_batch — harness-mediated roster writes, S side. A T0
+# discovery worker declares the rows it found in its deliverable's front
+# matter; this proc validates the declaration and appends what survives,
+# so a worker never opens the TSV. That is what lets a round run several
+# workers on one segment at once: spar-S-search.md §8 gives a segment one
+# writer at a time, and this dispatcher process is it.
+#
+# All-or-nothing, like _apply_patch_only: any issue and the roster is
+# untouched, so the fix loop bounces a whole batch back to the worker
+# rather than leaving half of it applied and half described. Returns issue
+# dicts; empty when the batch landed (or when the stamp says it already
+# has).
+#
+# The roster is created when absent, with the core header — the first
+# sweep of a segment is what creates it. Where one exists, its header is
+# authoritative: campaign-specific columns are real, and a declared column
+# the header does not carry is a defect in the declaration, not a reason
+# to widen the roster.
+proc spar::apply_sweep_batch {deliverable_path roster_path segment} {
+    set issues [spar::validate_sweep_return $deliverable_path]
+    foreach i $issues {
+        if {[dict get $i severity] eq "error"} { return $issues }
+    }
+    set warnings $issues
+    set fm [spar::read_profile_front_matter $deliverable_path]
+    if {[dict exists $fm sweep_batch_applied]} { return $warnings }
+
+    set rows_new [dict getdef $fm rows_new {}]
+    if {[llength $rows_new] == 0} {
+        spar::_stamp_patch_applied $deliverable_path sweep_batch_applied
+        return $warnings
+    }
+
+    if {[file exists $roster_path]} {
+        set fd [open $roster_path r]
+        fconfigure $fd -translation binary
+        gets $fd header_line
+        close $fd
+        set columns [split [string map {\r\n "" \r ""} $header_line] \t]
+        set existing [spar::load_roster $roster_path]
+    } else {
+        set columns [spar::roster_core_columns]
+        set existing {}
+    }
+
+    set seen [dict create]
+    foreach r $existing {
+        set s [string trim [dict getdef $r stem ""]]
+        if {$s ne ""} { dict set seen $s roster }
+    }
+
+    set errors {}
+    set accepted {}
+    foreach row $rows_new {
+        set stem [string trim [dict getdef $row stem ""]]
+        if {[dict exists $seen $stem]} {
+            set where [dict get $seen $stem]
+            lappend errors [dict create severity error code duplicate_stem \
+                message "$segment: stem '$stem' is already [expr {$where eq "roster"
+                    ? "on the roster; a row already held is not a find"
+                    : "declared earlier in this batch"}]"]
+            continue
+        }
+        set unknown {}
+        dict for {k v} $row {
+            if {$k ni $columns} { lappend unknown $k }
+        }
+        if {[llength $unknown] > 0} {
+            lappend errors [dict create severity error code unknown_column \
+                message "$segment: row '$stem' declares column(s) [join $unknown {, }] that [file tail $roster_path] does not carry (its columns: [join $columns {, }])"]
+            continue
+        }
+        dict set seen $stem batch
+        set out [dict create]
+        foreach c $columns {
+            dict set out $c [string trim [dict getdef $row $c ""]]
+        }
+        lappend accepted $out
+    }
+    if {[llength $errors] > 0} { return [concat $errors $warnings] }
+
+    set out_rows [concat $existing $accepted]
+    set tmp [exec mktemp "${roster_path}.XXXXXX"]
+    try {
+        spar::write_roster $tmp $out_rows $columns
+        file rename -force $tmp $roster_path
+        set tmp ""
+    } finally {
+        if {$tmp ne "" && [file exists $tmp]} { catch {file delete $tmp} }
+    }
+    spar::_stamp_patch_applied $deliverable_path sweep_batch_applied
+    return $warnings
+}
+
+# _stamp_patch_applied — insert the applied-stamp key into the
+# deliverable's front matter, before the closing --- delimiter. tmp+rename
+# like the roster writes, so a crash leaves the old file whole. The key is
+# an argument because a sweep return stamps sweep_batch_applied, on the
+# same one-shot reasoning: a later comparison cannot tell "not yet
+# applied" from "a human corrected the roster afterwards".
+proc spar::_stamp_patch_applied {profile_path {key roster_patch_applied}} {
     set fd [open $profile_path r]
     set content [read $fd]
     close $fd
@@ -711,7 +808,7 @@ proc spar::_stamp_patch_applied {profile_path} {
     set today [clock format [clock seconds] -format %Y-%m-%d]
     foreach line $lines {
         if {[string trim $line] eq "---" && [incr delims] == 2} {
-            lappend out "roster_patch_applied: $today"
+            lappend out "${key}: $today"
         }
         lappend out $line
     }

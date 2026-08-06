@@ -219,4 +219,201 @@ assert_eq [dict get [lindex $tasks 0] task_state] blocked "and it is blocked"
 assert_match [dict get [lindex $tasks 0] reason] "*does not parse*" \
     "with the parse failure as its reason"
 
+# ── 7. Batch applier ───────────────────────────────────────────────────
+
+section "7. apply_sweep_batch"
+
+# write_return -- a worker deliverable: front-matter lines, then a body.
+proc write_return {path fm_lines} {
+    set fd [open $path w]
+    puts $fd "---"
+    foreach l $fm_lines { puts $fd $l }
+    puts $fd "---"
+    puts $fd ""
+    puts $fd "Worked the register A-F; 120 entries listed."
+    close $fd
+    return $path
+}
+
+set batch_seg [write_seed_pair $root qld]
+set batch_roster [spar::roster_path_for_segment $batch_seg]
+set ret [file join $tmpdir return-1.md]
+
+write_return $ret {
+    "source_status: partial — 60 of 120 entries read"
+    "reconciliation: |"
+    "  120 listed; 60 read; 2 in scope; 2 rows returned."
+    "rows_new:"
+    "  - stem: jane-doe-acme"
+    "    contact_name: Jane Doe"
+    "    organisation: Acme Pty Ltd"
+    "    role: General Manager"
+    "    email: jane@acme.example"
+    "    sweep_iteration: 1"
+    "    discovered_via: State register entry 412"
+    "    s_note: named as the responsible person"
+    "    star_rating: 4"
+    "  - stem: sam-lee-borden"
+    "    contact_name: Sam Lee"
+    "    organisation: Borden Ltd"
+    "    sweep_iteration: 1"
+    "    discovered_via: State register entry 480"
+    "    star_rating: 2"
+}
+set issues [spar::apply_sweep_batch $ret $batch_roster qld]
+assert_eq [llength $issues] 0 "clean batch returns no issues"
+assert_eq [file exists $batch_roster] 1 "the first sweep creates the roster"
+set rows [spar::load_roster $batch_roster]
+assert_eq [llength $rows] 2 "both rows appended"
+assert_eq [dict get [lindex $rows 0] contact_name] "Jane Doe" "first row landed"
+assert_eq [dict get [lindex $rows 0] star_rating] 4 "star recorded"
+set fd [open $batch_roster r]; gets $fd hdr; close $fd
+assert_eq [split $hdr \t] [spar::roster_core_columns] \
+    "created with the core column header"
+
+# The stamp makes a replay inert, so a reconcile cannot double-append.
+set issues [spar::apply_sweep_batch $ret $batch_roster qld]
+assert_eq [llength $issues] 0 "replay returns no issues"
+assert_eq [llength [spar::load_roster $batch_roster]] 2 "replay appends nothing"
+set fd [open $ret r]; set rtext [read $fd]; close $fd
+assert_match $rtext "*sweep_batch_applied:*" "stamp written into the front matter"
+
+# A stem already on the roster is a re-find, not a find.
+set ret2 [file join $tmpdir return-2.md]
+write_return $ret2 {
+    "source_status: exhausted — all 120 entries read"
+    "reconciliation: 120 listed; 120 read; 1 row returned."
+    "rows_new:"
+    "  - stem: jane-doe-acme"
+    "    contact_name: Jane Doe"
+    "    organisation: Acme Pty Ltd"
+}
+set issues [spar::apply_sweep_batch $ret2 $batch_roster qld]
+assert_eq [has_issue $issues duplicate_stem] 1 "a stem already on the roster is rejected"
+assert_eq [llength [spar::load_roster $batch_roster]] 2 "and nothing is appended"
+
+# Twice within one batch is the same defect.
+set ret3 [file join $tmpdir return-3.md]
+write_return $ret3 {
+    "source_status: partial — halfway"
+    "reconciliation: 2 rows returned."
+    "rows_new:"
+    "  - stem: kim-ng-orbit"
+    "    contact_name: Kim Ng"
+    "    organisation: Orbit"
+    "  - stem: kim-ng-orbit"
+    "    contact_name: Kim Ng"
+    "    organisation: Orbit Pty Ltd"
+}
+set issues [spar::apply_sweep_batch $ret3 $batch_roster qld]
+assert_eq [has_issue $issues duplicate_stem] 1 "a stem repeated inside the batch is rejected"
+assert_eq [llength [spar::load_roster $batch_roster]] 2 "the whole batch is held back"
+
+# A column this roster does not carry.
+set ret4 [file join $tmpdir return-4.md]
+write_return $ret4 {
+    "source_status: partial — halfway"
+    "reconciliation: 1 row returned."
+    "rows_new:"
+    "  - stem: pat-ray-vale"
+    "    contact_name: Pat Ray"
+    "    organisation: Vale"
+    "    lender_type: broker"
+}
+set issues [spar::apply_sweep_batch $ret4 $batch_roster qld]
+assert_eq [has_issue $issues unknown_column] 1 "an undeclared column is rejected"
+
+# ── 8. Row shape ───────────────────────────────────────────────────────
+
+section "8. sweep-return row validation"
+
+proc row_issues {fm_lines} {
+    global tmpdir
+    set p [file join $tmpdir return-shape.md]
+    write_return $p $fm_lines
+    return [spar::validate_sweep_return $p]
+}
+
+set issues [row_issues {
+    "source_status: partial — halfway"
+    "reconciliation: 1 row returned."
+    "rows_new:"
+    "  - stem: no-org-row"
+    "    contact_name: \"\""
+    "    organisation: \"\""
+}]
+assert_eq [has_issue $issues invalid_row] 1 "a row naming nobody is rejected"
+
+set issues [row_issues {
+    "source_status: partial — halfway"
+    "reconciliation: 1 row returned."
+    "rows_new:"
+    "  - stem: epoch-date-row"
+    "    contact_name: Dana Fox"
+    "    organisation: Fox Ltd"
+    "    date_excluded: 2026-08-06"
+}]
+assert_match [dict get [lindex [issues_with_code $issues invalid_row] 0] message] \
+    "*epoch seconds*" "an unquoted date_excluded is caught as epoch seconds"
+
+set issues [row_issues {
+    "source_status: partial — halfway"
+    "reconciliation: 1 row returned."
+    "rows_new:"
+    "  - stem: tabbed-row"
+    "    contact_name: Dana Fox"
+    "    organisation: \"Fox\tLtd\""
+}]
+assert_match [dict get [lindex [issues_with_code $issues invalid_row] 0] message] \
+    "*tab or a newline*" "a tab inside a value is caught"
+
+set issues [row_issues {
+    "source_status: partial — halfway"
+    "reconciliation: 1 row returned."
+    "rows_new:"
+    "  - stem: Bad Stem"
+    "    contact_name: Dana Fox"
+    "    organisation: Fox Ltd"
+}]
+assert_match [dict get [lindex [issues_with_code $issues invalid_row] 0] message] \
+    "*slug-shaped*" "a stem that is not a slug is caught"
+
+set issues [row_issues {
+    "source_status: partial — halfway"
+    "reconciliation: 1 row returned."
+    "rows_new:"
+    "  - stem: over-starred"
+    "    contact_name: Dana Fox"
+    "    organisation: Fox Ltd"
+    "    star_rating: 9"
+}]
+assert_match [dict get [lindex [issues_with_code $issues invalid_row] 0] message] \
+    "*integer 0-5*" "a star outside 0-5 is caught"
+
+set issues [row_issues {
+    "source_status: harvested-ish"
+    "reconciliation: 1 row returned."
+}]
+assert_eq [has_issue $issues invalid_source_status] 1 \
+    "a status whose lead word is outside the vocabulary is caught"
+
+set issues [row_issues {
+    "reconciliation: 1 row returned."
+}]
+assert_eq [has_issue $issues missing_source_status] 1 "a missing status is caught"
+
+set issues [row_issues {
+    "source_status: exhausted"
+    "rows_new: \[\]"
+}]
+assert_eq [has_issue $issues missing_reconciliation] 1 \
+    "a batch that reconciles against nothing is caught"
+
+set issues [row_issues {
+    "source_status: exhausted — all read"
+    "reconciliation: 0 rows returned."
+    "rows_new: \[\]"
+}]
+assert_eq [llength $issues] 0 "a source that yielded nothing still validates"
+
 finish_tests

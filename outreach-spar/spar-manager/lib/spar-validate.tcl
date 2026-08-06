@@ -1475,4 +1475,150 @@ proc spar::validate_seed {segment_base} {
     return $issues
 }
 
+# ── Sweep-return validation (a T0 worker's deliverable) ───────────────────
+# The seed pair above is what a sweep reads; this is what it returns. Rules
+# live in rules/sweep-return.rules, the roster-relative half in
+# spar::apply_sweep_batch, which calls this first.
+
+namespace eval spar { variable _yamlmuster_sweep_return_inst "" }
+proc spar::_yamlmuster_sweep_return {} {
+    variable _yamlmuster_sweep_return_inst
+    if {$_yamlmuster_sweep_return_inst ne ""} {
+        return $_yamlmuster_sweep_return_inst
+    }
+    package require yamlmuster
+    set inst [yamlmuster new]
+    $inst predicate return_status_token   ::spar::_pred_return_status_token
+    $inst predicate rows_new_shape        ::spar::_pred_rows_new_shape
+    $inst predicate return_feedback_shape ::spar::_pred_return_feedback_shape
+    spar::_yamlmuster_load $inst sweep-return.rules sweep_return
+    set _yamlmuster_sweep_return_inst $inst
+    return $inst
+}
+
+# The returned status is the line the sweep file will carry, so it obeys
+# the same token rule the census does (spar::sweep_status_token).
+proc spar::_pred_return_status_token {node meta} {
+    if {![dict exists $node source_status]} { return {} }
+    set status [string trim [dict get $node source_status]]
+    if {$status eq ""} { return {} }
+    set allowed [spar::sweep_status_vocab]
+    if {[spar::sweep_status_token $status] ni $allowed} {
+        return [list [dict create message \
+            "source_status '$status' — lead with a base token ([join $allowed { | }]); your reason follows it"]]
+    }
+    return {}
+}
+
+# Per-row checks that need nothing but the row. A row failing any of them
+# is a row the roster cannot hold: an unusable stem keys a file path, a
+# tab splits the record, an epoch integer is a date the author did not
+# write, and a row with neither a name nor an organisation names nobody.
+#
+# A blank organisation alone is not fatal: spar-roster-format.md makes
+# contact_name the identity anchor and organisation optional, and consumer
+# segments carry named individuals with no organisation. It warns, since a
+# sweep of a register or directory that produces one has usually lost the
+# entry it came from.
+proc spar::_pred_rows_new_shape {node meta} {
+    if {![dict exists $node rows_new]} { return {} }
+    set rows [dict get $node rows_new]
+    set out {}
+    set i 0
+    foreach row $rows {
+        incr i
+        if {[llength $row] % 2 != 0} {
+            lappend out [dict create message \
+                "rows_new entry $i is not a mapping of column names to values"]
+            continue
+        }
+        set stem [string trim [dict getdef $row stem ""]]
+        set label [expr {$stem ne "" ? "row '$stem'" : "rows_new entry $i"}]
+        if {$stem eq ""} {
+            lappend out [dict create message \
+                "$label has no stem; the stem is the row's identity and its profile filename"]
+        } elseif {![regexp {^[a-z0-9][a-z0-9-]*$} $stem]} {
+            lappend out [dict create message \
+                "$label stem is not slug-shaped (lowercase, digits and hyphens: firstname-lastname-organisation)"]
+        }
+        set name [string trim [dict getdef $row contact_name ""]]
+        set org  [string trim [dict getdef $row organisation ""]]
+        if {$name eq "" && $org eq ""} {
+            lappend out [dict create message \
+                "$label has neither contact_name nor organisation; it names nobody"]
+        } elseif {$org eq ""} {
+            lappend out [dict create severity warning message \
+                "$label has no organisation; check the source entry it came from"]
+        }
+        if {[dict exists $row star_rating]} {
+            set s [string trim [dict get $row star_rating]]
+            if {![string is integer -strict $s] || $s < 0 || $s > 5} {
+                lappend out [dict create message \
+                    "$label star_rating '$s' is not an integer 0-5 (rate against the segment's rating_rubric)"]
+            }
+        }
+        set dx [string trim [dict getdef $row date_excluded ""]]
+        if {$dx ne ""} {
+            if {[string is wideinteger -strict $dx]} {
+                lappend out [dict create message \
+                    "$label date_excluded '$dx' parsed as epoch seconds; quote it: date_excluded: \"[clock format $dx -format %Y-%m-%d]\""]
+            } elseif {![regexp {^\d{4}-\d{2}-\d{2}$} $dx]} {
+                lappend out [dict create message \
+                    "$label date_excluded '$dx' is not an ISO date (YYYY-MM-DD)"]
+            }
+        }
+        dict for {k v} $row {
+            if {[string first "\t" $v] >= 0 || [string first "\n" $v] >= 0} {
+                lappend out [dict create message \
+                    "$label value for '$k' holds a tab or a newline; the roster is a TSV with no quoting, so the row would split"]
+            }
+        }
+    }
+    return $out
+}
+
+# sweep_feedback entries: the kinds spar-P-profile.md §4.15 and
+# spar-S-search.md §7 name, each with a note worth reading.
+proc spar::_pred_return_feedback_shape {node meta} {
+    if {![dict exists $node sweep_feedback]} { return {} }
+    set allowed {new-source new-vocabulary surprise misfit}
+    set out {}
+    foreach entry [dict get $node sweep_feedback] {
+        if {[llength $entry] % 2 != 0} {
+            lappend out [dict create message \
+                "sweep_feedback entry is not a mapping of kind and note"]
+            continue
+        }
+        set kind [string trim [dict getdef $entry kind ""]]
+        if {$kind ni $allowed} {
+            lappend out [dict create message \
+                "sweep_feedback kind '$kind' — closed vocabulary: [join $allowed { | }]"]
+        }
+        if {[string trim [dict getdef $entry note ""]] eq ""} {
+            lappend out [dict create message \
+                "sweep_feedback entry of kind '$kind' has an empty note"]
+        }
+    }
+    return $out
+}
+
+# validate_sweep_return — the deliverable at $path, front matter first.
+# Returns issue dicts {severity code message ...}; empty when clean.
+proc spar::validate_sweep_return {path} {
+    if {![file exists $path]} {
+        return [list [dict create severity error code missing_deliverable \
+            message "The sweep deliverable was not written to $path"]]
+    }
+    set fm [spar::read_profile_front_matter $path]
+    if {$fm eq ""} {
+        return [list [dict create severity error code missing_front_matter \
+            message "No parseable YAML front matter between --- fences in $path; a value carrying ': ' or a bare date needs quoting"]]
+    }
+    return [spar::validate_sweep_return_data $fm]
+}
+
+proc spar::validate_sweep_return_data {fm} {
+    return [[spar::_yamlmuster_sweep_return] validate $fm -groups {sweep_return}]
+}
+
 package provide spar-validate 1.0
