@@ -158,6 +158,8 @@ discovery_criteria: |
 #   exclusions: ...
 #   escapes: []
 #   rounds: []
+#   next_round:               # optional; compiled between rounds from sweep feedback
+#   rows_to_verify: []        # optional; roster rows a later source disputed
 #
 # Parser constraints (tcllib yaml 0.4.2), all four checked by the validator:
 #   1. Quote any scalar containing ": " mid-text, or use a block scalar.
