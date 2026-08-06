@@ -1298,4 +1298,181 @@ proc spar::build_warnings {all_classified_contacts {cdata {}}} {
 }
 
 
+# ── Seed validation (segment definition + sweep file) ──────────────────────
+# validate_seed checks the pair a T0 sweep consumes: segments/<name>.yaml
+# (market definition) and segments/<name>.sweep.yaml (denominator, sources,
+# rounds). Rules live in rules/segment.rules and rules/sweep.rules; the
+# predicates below carry the checks the DSL cannot express. Separate lazy
+# instances, like profile and approach, because every ruleset declares
+# `level root`.
+
+namespace eval spar { variable _yamlmuster_segment_inst "" }
+proc spar::_yamlmuster_segment {} {
+    variable _yamlmuster_segment_inst
+    if {$_yamlmuster_segment_inst ne ""} {
+        return $_yamlmuster_segment_inst
+    }
+    package require yamlmuster
+    set inst [yamlmuster new]
+    $inst predicate seed_date_epoch  ::spar::_pred_seed_date_epoch
+    $inst predicate sweeper_resolves ::spar::_pred_sweeper_resolves
+    $inst predicate reject_if_vocab  ::spar::_pred_reject_if_vocab
+    spar::_yamlmuster_load $inst segment.rules segment
+    set _yamlmuster_segment_inst $inst
+    return $inst
+}
+
+namespace eval spar { variable _yamlmuster_sweep_inst "" }
+proc spar::_yamlmuster_sweep {} {
+    variable _yamlmuster_sweep_inst
+    if {$_yamlmuster_sweep_inst ne ""} {
+        return $_yamlmuster_sweep_inst
+    }
+    package require yamlmuster
+    set inst [yamlmuster new]
+    $inst predicate census_source       ::spar::_pred_census_source
+    $inst predicate segment_name        ::spar::_pred_segment_name
+    $inst predicate seed_date_epoch     ::spar::_pred_seed_date_epoch
+    $inst predicate source_status_token ::spar::_pred_source_status_token
+    spar::_yamlmuster_load $inst sweep.rules sweep
+    set _yamlmuster_sweep_inst $inst
+    return $inst
+}
+
+# Unquoted YAML dates parse to epoch seconds (tcllib yaml 0.4.2), so the
+# value on disk is not what the author wrote. Warning-severity: the fields
+# this fires on are metadata. Fires on any date-named key at the node whose
+# value is a large wideinteger.
+proc spar::_pred_seed_date_epoch {node meta} {
+    set out {}
+    foreach key {date estimated} {
+        if {![dict exists $node $key]} continue
+        set v [dict get $node $key]
+        if {[string is wideinteger -strict $v] && $v > 100000000} {
+            set iso [clock format $v -format %Y-%m-%d]
+            lappend out [dict create message \
+                "$key parsed as epoch seconds ($v, i.e. $iso) — quote the date: $key: \"$iso\""]
+        }
+    }
+    # market_estimate.estimated is a nested reach when validating at root.
+    if {[dict exists $node market_estimate estimated]} {
+        set v [dict get $node market_estimate estimated]
+        if {[string is wideinteger -strict $v] && $v > 100000000} {
+            set iso [clock format $v -format %Y-%m-%d]
+            lappend out [dict create message \
+                "market_estimate.estimated parsed as epoch seconds ($v) — quote the date: estimated: \"$iso\""]
+        }
+    }
+    return $out
+}
+
+# sweeper: <family> promises sweeper-<family>.yaml at the instance root
+# (spar-S-search.md §7.1). instance_root arrives via -context from the caller.
+proc spar::_pred_sweeper_resolves {node meta} {
+    if {![dict exists $node sweeper]} { return {} }
+    set family [string trim [dict get $node sweeper]]
+    if {$family eq ""} { return {} }
+    set root [dict getdef [dict get $meta context] instance_root ""]
+    if {$root eq ""} { return {} }
+    set expect [file join $root "sweeper-$family.yaml"]
+    if {![file exists $expect]} {
+        return [list [dict create message \
+            "sweeper: '$family' does not resolve — no sweeper-$family.yaml at [file tail $root]/"]]
+    }
+    return {}
+}
+
+# profile_reject_if entries: the closed vocabulary spar::extract_required_skills
+# hard-errors on at dispatch time. Catch at authoring time.
+proc spar::_pred_reject_if_vocab {node meta} {
+    if {![dict exists $node profile_reject_if]} { return {} }
+    set allowed {linkedin_not_invoked facebook_not_invoked}
+    set out {}
+    foreach entry [dict get $node profile_reject_if] {
+        if {$entry ni $allowed} {
+            lappend out [dict create message \
+                "profile_reject_if entry '$entry' — closed vocabulary: [join $allowed { | }]"]
+        }
+    }
+    return $out
+}
+
+# The census-first gate (spar-S-search.md S&P0): a sweep starts from at least
+# one enumerable source, not keyword search alone.
+proc spar::_pred_census_source {node meta} {
+    if {![dict exists $node sources]} { return {} }
+    foreach src [dict get $node sources] {
+        if {[dict getdef $src type ""] in {registry directory}} { return {} }
+    }
+    return [list [dict create message \
+        "no source of type registry or directory — the census-first gate needs at least one enumerable source"]]
+}
+
+# segment: must equal the filename stem the file is found by.
+proc spar::_pred_segment_name {node meta} {
+    set expected [dict getdef [dict get $meta context] expected_segment ""]
+    if {$expected eq "" || ![dict exists $node segment]} { return {} }
+    set got [string trim [dict get $node segment]]
+    if {$got ne $expected} {
+        return [list [dict create message \
+            "segment: '$got' does not match the filename stem '$expected'"]]
+    }
+    return {}
+}
+
+# A source's status leads with a base token from the closed vocabulary; free
+# text may follow. T0 selects work by that token, so an unrecognised lead
+# word hides the source from dispatch.
+proc spar::_pred_source_status_token {node meta} {
+    if {![dict exists $node status]} { return {} }
+    set status [string trim [dict get $node status]]
+    if {$status eq ""} { return {} }
+    set token [string tolower [lindex [split $status " ;:(,.-"] 0]]
+    set allowed {unharvested partial exhausted unreachable stale}
+    if {$token ni $allowed} {
+        return [list [dict create message \
+            "status '$status' — lead with a base token ([join $allowed { | }]); free-text reason may follow"]]
+    }
+    return {}
+}
+
+# validate_seed — validate the seed pair for one segment. segment_base is the
+# path without extension (…/segments/<name>); both <name>.yaml and
+# <name>.sweep.yaml must exist and parse. Returns issue dicts
+# {severity code message segment} like every other validator here.
+proc spar::validate_seed {segment_base} {
+    set name [file tail $segment_base]
+    set instance_root [file dirname [file dirname $segment_base]]
+    set issues {}
+    foreach {path label} [list "$segment_base.yaml" segment \
+                               "$segment_base.sweep.yaml" sweep] {
+        if {![file exists $path]} {
+            lappend issues [dict create severity error code seed_file_missing \
+                segment $name message "$label file missing: $path"]
+            continue
+        }
+        set fd [open $path r]
+        fconfigure $fd -encoding utf-8
+        set raw [read $fd]
+        close $fd
+        if {[catch {set data [spar::yaml_parse $raw]} perr]} {
+            lappend issues [dict create severity error code yaml_parse_error \
+                segment $name message "$label file does not parse: $perr"]
+            continue
+        }
+        if {$label eq "segment"} {
+            set found [[spar::_yamlmuster_segment] validate $data \
+                -groups {seed} -context [dict create instance_root $instance_root]]
+        } else {
+            set found [[spar::_yamlmuster_sweep] validate $data \
+                -groups {sweep} -context [dict create expected_segment $name]]
+        }
+        foreach issue $found {
+            dict set issue segment $name
+            lappend issues $issue
+        }
+    }
+    return $issues
+}
+
 package provide spar-validate 1.0
