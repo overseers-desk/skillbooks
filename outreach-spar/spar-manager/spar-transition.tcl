@@ -402,12 +402,17 @@ if {$dispatching} {
     # rows twice. cdata is the full campaign dict — T9/T10 need it to
     # read secondary/tertiary channel slots.
     proc compute_ready_by_tid {state all_contacts active_tids tid_scopes \
-                               primary_channel {cdata {}}} {
+                               primary_channel {cdata {}} {yaml_path ""}} {
         set ready_by_tid [dict create]
         foreach tid $active_tids {
             lassign [tid_scope_filter $tid_scopes $tid] segs stems
             set eligible [$state transition_eligible \
                 $all_contacts $tid $primary_channel $cdata]
+            # Campaign-level tasks (T0's census sources) are not derived
+            # from any contact, so they join here rather than through
+            # transition_eligible. Empty for every contact-driven TID.
+            lappend eligible {*}[spar::transition_campaign_tasks \
+                $tid $cdata $yaml_path]
             set seen_stems [dict create]
             set ready_list {}
             foreach c $eligible {
@@ -648,7 +653,7 @@ if {$dispatching} {
             set all_contacts [reclassify_contacts $State $segment_paths $approach_dir 0]
             set ready_by_tid [compute_ready_by_tid \
                 $State $all_contacts $active_tids $tid_scopes \
-                $primary_channel $cdata]
+                $primary_channel $cdata $yaml_path]
 
             if {[dict size $ready_by_tid] == 0} {
                 if {$iter == 1} {
@@ -707,7 +712,7 @@ if {$dispatching} {
     # ────────────────────────────────────────────────────────────────────
     set ready_by_tid [compute_ready_by_tid \
         $State $all_contacts $active_tids $tid_scopes \
-        $primary_channel $cdata]
+        $primary_channel $cdata $yaml_path]
 
     if {[dict size $ready_by_tid] == 0} {
         ${::spar::transitions_log}::info "Campaign: $campaign_name"
@@ -781,6 +786,9 @@ foreach tid [spar::transition_tids] {
 
     lassign [tid_scope_filter $tid_scopes $tid] segs stems
     set eligible [$State transition_eligible $all_contacts $tid $primary_channel $cdata]
+    # As in compute_ready_by_tid: campaign-level tasks (T0) join the
+    # per-contact ones, so the report ladder counts them too.
+    lappend eligible {*}[spar::transition_campaign_tasks $tid $cdata $yaml_path]
 
     set dispatchable_list {}
     set awaiting_list {}

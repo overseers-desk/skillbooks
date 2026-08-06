@@ -238,6 +238,7 @@ T1–T4 are the cheap (no-parse) transitions; T5 is reserved for a future cheap 
 
 | # | Label | Eligible contacts | Dispatch | Dispatch status |
 |---|-------|-------------------|----------|-----------------|
+| T0 | Seed → Sweep | not a contact row: one task per census source in `segments/<seg>.sweep.yaml` whose status base token is neither `exhausted` nor `unreachable`. No roster need exist | `spar-transition.tcl <campaign.yaml> T0` (one discovery worker per source; the harness applies the returned rows to the roster, updates the source status, and merges the round record) | available |
 | T1 | Sweep → Profile | state = DISCOVERED | `spar-transition.tcl <campaign.yaml> T1` (runs §4.1 first if `contact_name` is blank, else §4.2+) | available |
 | T2 | Profile → Approach | state = PROFILED, star≥3 | `spar-transition.tcl <campaign.yaml> T2` | available |
 | T3 | Stale → Re-profile | state = PROFILE_STALE | `spar-transition.tcl <campaign.yaml> T3` | available |
@@ -278,6 +279,10 @@ T6 tasks carry the send channel that routed them (the `channel` key on the task 
 ## State diagram
 
 ```
+  seed pair (segments/<seg>.yaml + <seg>.sweep.yaml)
+       │
+      T0  one worker per unexhausted census source; rows land on the roster
+       ▼
   DISCOVERED ──T1──▶ PROFILED ──T2──▶ APPROACHED ──T6──▶ SENT ──T7──▶ REPLIED
                          │                  │
                          ▼                  ▼
@@ -293,6 +298,11 @@ T6 tasks carry the send channel that routed them (the `channel` key on the task 
              spar-A-approach.md §4.0 step 2. There is no operator-initiated arrow.
              T7, T8, detect_duplicates skip EXCLUDED. T2 cannot reach EXCLUDED
              because its gate requires PROFILED.
+
+  T0 — the one campaign-level transition: its tasks are census sources, not contacts,
+       so it is the only edge with no entry state. Both front ends collect them through
+       the transition class's campaign_tasks (transitions/base.tcl) beside the per-contact
+       eligible walk.
 
   T8 — LinkedIn→Email cross-message transition within APPROACHED/SENT (same primary state).
   T9, T10 — secondary/tertiary follow-ups (documented but not wired in transition_eligible).
@@ -312,6 +322,7 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 
 | T   | State                | Secondary predicates (all, for dispatchable)            | Awaiting / blocked branch                                      | Source            |
 |-----|----------------------|---------------------------------------------------------|----------------------------------------------------------------|-------------------|
+| T0  | (no contact state)   | sweep.yaml source status base token ∉ {exhausted, unreachable} | sweep.yaml unparseable → blocked, "sweep.yaml does not parse". Segment with no sweep.yaml → no rows (not seeded) | transitions/sweep.tcl |
 | T1  | DISCOVERED           | —                                                       | —                                                              | lib/spar-state.tcl |
 | T2  | PROFILED             | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — `spar::_approach_dispatch_gate`, SSOT with T4; #56) | — | transitions/approach.tcl |
 | T3  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |

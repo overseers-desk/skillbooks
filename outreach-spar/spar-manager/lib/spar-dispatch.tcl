@@ -23,6 +23,7 @@ namespace eval spar {
 }
 namespace eval spar::p {}
 namespace eval spar::a {}
+namespace eval spar::s {}
 
 # ── Prompt templates ──────────────────────────────────────────────────
 # Prompts live as standalone files under prompts/ with __PLACEHOLDER__
@@ -753,6 +754,209 @@ Emit exactly one of these lines as the very last line of your output:"
         prompt_dirs  $fresh_prompt_dirs \
         logs_dir     $logs_dir \
         stem_map     $stem_map]
+}
+
+# ════════════════════════════════════════════════════════════════════════
+# spar::s::prepare_for_pool — SPAR-S dispatch entry (T0, sweep).
+# ════════════════════════════════════════════════════════════════════════
+#
+# One task is one census source of one segment, worked to exhaustion.
+# Returns {logs_dir <path> rows {{stem pdir} ...}} — the same shape
+# spar::p::prepare_for_pool returns, so transitions/sweep.tcl repackages
+# it into pool rows exactly as transitions/profile.tcl does.
+#
+# opts dict keys:
+#   campaign_file  (required) path to campaign YAML
+#   logs_dir       (string, optional) override log directory base
+#   segments       (list, optional) only these segments
+#   stems          (list, optional) only these task stems (a GUI selection
+#                  or a T0:<seg>/<stem> scope names sources this way)
+proc spar::s::prepare_for_pool {opts on_progress} {
+    set campaign_file [dict getdef $opts campaign_file ""]
+    if {$campaign_file eq ""} {
+        error "spar::s::prepare_for_pool: opts.campaign_file is required"
+    }
+    set user_logs    [dict getdef $opts logs_dir ""]
+    set sel_segments [dict getdef $opts segments {}]
+
+    set cdata [spar::load_campaign $campaign_file]
+    spar::assert_supported_version "campaign.yaml" [spar::campaign_version $cdata]
+    set root [spar::instance_root_for_yaml $campaign_file]
+    set segments [spar::filter_segments \
+        [spar::campaign_segment_names $cdata] $sel_segments]
+
+    set datestamp [clock format [clock seconds] -format %Y%m%d-%H%M%S]
+    set logs_dir  [spar::resolve_logs_dir $campaign_file s $datestamp $user_logs]
+
+    set rows {}
+    foreach segment $segments {
+        set segdir [file join $root segments $segment]
+        if {![file exists [spar::sweep_yaml_for_segment $segdir]]} continue
+        if {[catch {
+            set prepared [spar::s::_prepare_segment \
+                $segdir $cdata $opts $datestamp $logs_dir $campaign_file $segment]
+        } err]} {
+            {*}$on_progress "_segment_${segment}" failed "setup error: $err"
+            continue
+        }
+        foreach pdir $prepared {
+            lappend rows [list [file tail $pdir] $pdir]
+        }
+    }
+    return [dict create logs_dir $logs_dir rows $rows]
+}
+
+# _prepare_segment — write one prompt dir per open source in this
+# segment's census. Returns the list of prompt dirs created (their
+# basenames are the task stems, as P's are).
+#
+# No roster is required: the first sweep of a segment creates it, through
+# the harness's batch applier. What the worker is told about the roster is
+# its column vocabulary and the stems already in it, so a later round does
+# not re-find what an earlier one found.
+proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
+                                campaign_file segment_name} {
+    set segment_dir [file normalize $segment_dir]
+    set sel_stems   [dict getdef $opts stems {}]
+
+    set sweep_path  [spar::sweep_yaml_for_segment $segment_dir]
+    set goal_path   [spar::segment_yaml_for_segment $segment_dir]
+    set roster_path [spar::roster_path_for_segment $segment_dir]
+
+    variable ::spar::dispatch_script_dir
+    set spar_s [file normalize \
+        [file join $::spar::dispatch_script_dir .. .. spar-S-search.md]]
+    foreach {path label} [list $sweep_path Sweep $goal_path Goal \
+                               $spar_s SPAR-S] {
+        if {![file exists $path]} { error "$label not found: $path" }
+    }
+
+    set sweep_data [spar::read_sweep_yaml $sweep_path]
+    set segment_data [spar::read_segment_yaml $goal_path]
+    if {$segment_data ne ""} {
+        spar::assert_supported_version "segment '[file tail $segment_dir]'" \
+            [spar::segment_version $segment_data]
+    }
+
+    # The sweeper file carries what holds across a market family
+    # (spar-S-search.md §7.1); a segment swept alone declares no family.
+    set sweeper_line ""
+    set family ""
+    if {$segment_data ne ""} {
+        set family [string trim [dict getdef $segment_data sweeper ""]]
+    }
+    if {$family ne ""} {
+        set sweeper_path [file join [file dirname [file dirname $segment_dir]] \
+            "sweeper-${family}.yaml"]
+        if {[file exists $sweeper_path]} {
+            set sweeper_line "Shared with the sibling segments of this market family: $sweeper_path — it holds this source's access mechanics and quirks, so read it before working them out again."
+        }
+    }
+
+    # Roster vocabulary and the stems already held. A roster that does not
+    # exist yet contributes the core columns and no stems.
+    if {[file exists $roster_path]} {
+        set fd [open $roster_path r]
+        fconfigure $fd -translation binary
+        gets $fd header_line
+        close $fd
+        set columns [split [string map {\r\n "" \r ""} $header_line] \t]
+        set stems {}
+        foreach r [spar::load_roster $roster_path] {
+            set s [string trim [dict getdef $r stem ""]]
+            if {$s ne ""} { lappend stems $s }
+        }
+    } else {
+        set columns [spar::roster_core_columns]
+        set stems {}
+    }
+    set stems_text [expr {[llength $stems] == 0
+                          ? "(the roster does not exist yet — this is the segment's first sweep)"
+                          : [join [lsort $stems] ", "]}]
+
+    # The round this dispatch belongs to: one past the highest recorded.
+    # Every worker in the batch carries the same number, and the round
+    # record they merge into is keyed by it (spar::append_sweep_round).
+    set round_n 1
+    foreach r [dict getdef $sweep_data rounds {}] {
+        set n [dict getdef $r n 0]
+        if {[string is integer -strict $n] && $n >= $round_n} {
+            set round_n [expr {$n + 1}]
+        }
+    }
+
+    set cost_cap [dict getdef $cdata worker_cost_cap_usd ""]
+    set cost_line [expr {$cost_cap eq ""
+        ? "Work the source to a real end rather than to a token budget."
+        : "This session is metered and killed at \$$cost_cap, so spend it on the source itself rather than on wide web search."}]
+
+    set workdir "/tmp/spar-s-[file tail $segment_dir]-$datestamp-[pid]"
+    set prompts_dir [file join $workdir prompts]
+    file mkdir $prompts_dir
+
+    set template [spar::load_prompt_template spar-s.txt]
+    set created {}
+    foreach src [dict getdef $sweep_data sources {}] {
+        set name [string trim [dict getdef $src name ""]]
+        if {$name eq ""} continue
+        set status [string trim [dict getdef $src status ""]]
+        if {![spar::sweep_source_open $status]} continue
+        set stem [spar::sweep_task_stem $segment_name $name]
+        if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
+
+        set pdir [file join $prompts_dir $stem]
+        file mkdir $pdir
+        set outfile [file join $logs_dir "${stem}-return.md"]
+
+        set prompt [string map [list \
+            __SPAR_S_PATH__    $spar_s \
+            __SEGMENT_KEY__    $segment_name \
+            __GOAL_PATH__      $goal_path \
+            __SWEEP_PATH__     $sweep_path \
+            __SWEEPER_LINE__   $sweeper_line \
+            __SOURCE_NAME__    $name \
+            __SOURCE_TYPE__    [dict getdef $src type ""] \
+            __SOURCE_URL__     [dict getdef $src url ""] \
+            __SOURCE_STATUS__  $status \
+            __SOURCE_NOTE__    [dict getdef $src note ""] \
+            __ROUND__          $round_n \
+            __CAMPAIGN_PATH__  $campaign_file \
+            __ROSTER_PATH__    $roster_path \
+            __ROSTER_COLUMNS__ [join $columns ", "] \
+            __EXISTING_STEMS__ $stems_text \
+            __OUTFILE__        $outfile \
+            __COST_LINE__      $cost_line \
+            __BROWSER_CMD__    [spar::detect_browser_cmd] \
+        ] $template]
+
+        set fd [open [file join $pdir prompt.txt] w]
+        fconfigure $fd -encoding utf-8
+        puts $fd $prompt
+        close $fd
+
+        set fd [open [file join $pdir meta.env] w]
+        fconfigure $fd -encoding utf-8
+        puts $fd "STEM=\"$stem\""
+        puts $fd "OUTFILE=\"$outfile\""
+        puts $fd "ROSTER_PATH=\"$roster_path\""
+        puts $fd "SWEEP_PATH=\"$sweep_path\""
+        puts $fd "SEGMENT_DIR=\"$segment_dir\""
+        puts $fd "SEGMENT_KEY=\"$segment_name\""
+        puts $fd "CAMPAIGN_FILE=\"$campaign_file\""
+        puts $fd "SOURCE_NAME=\"$name\""
+        puts $fd "SWEEP_ROUND=\"$round_n\""
+        # Discovery is judgement over a whole population, so the owner set
+        # these workers opus-tier. SweepHarness reads MODEL and passes it
+        # to its call; coachman's own default is sonnet.
+        puts $fd "MODEL=\"opus\""
+        if {$cost_cap ne ""} {
+            puts $fd "WORKER_COST_CAP_USD=$cost_cap"
+        }
+        close $fd
+
+        lappend created $pdir
+    }
+    return $created
 }
 
 package provide spar-dispatch 1.0

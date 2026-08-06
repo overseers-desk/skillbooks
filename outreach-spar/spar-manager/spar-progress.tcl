@@ -163,6 +163,10 @@ if {$json_mode} {
         if {$skip_reply_check && $tid eq "T7"} continue
         set tlabel [spar::transition_label $tid]
         set tasks [$State transition_eligible $all_contacts $tid $primary_channel $cdata]
+        # T0's tasks are census sources rather than contacts, so they
+        # arrive from the transition class (transitions/base.tcl), as
+        # they do in the CLI report and the GUI tree.
+        lappend tasks {*}[spar::transition_campaign_tasks $tid $cdata $yaml_path]
         lappend transitions [dict create label "$tid: $tlabel" count [llength $tasks] tasks $tasks]
     }
     puts [progress_to_json [dict create campaign $campaign_name min_star $min_star \

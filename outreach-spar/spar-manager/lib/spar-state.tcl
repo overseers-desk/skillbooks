@@ -14,8 +14,8 @@ apply {{} {
     set here [file dirname [file normalize [info script]]]
     set td [file join $here .. transitions]
     uplevel #0 [list source [file join $td base.tcl]]
-    foreach f {profile.tcl approach.tcl send_email.tcl check_replies.tcl \
-               linkedin_followup.tcl manual_followup.tcl} {
+    foreach f {sweep.tcl profile.tcl approach.tcl send_email.tcl \
+               check_replies.tcl linkedin_followup.tcl manual_followup.tcl} {
         uplevel #0 [list source [file join $td $f]]
     }
     # Drift check: registered T-ids must match state-machine.md.
@@ -40,7 +40,7 @@ namespace eval spar {
         final_email_message \
         has_transition_runner \
         transition_label transition_auto_safe transition_dispatch_status \
-        transition_supports_reauthor \
+        transition_supports_reauthor transition_campaign_tasks \
         transition_tids ui_transition_tids
 }
 

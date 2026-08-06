@@ -86,6 +86,21 @@ oo::class create ::spar::transitions::Transition {
     method eligible {state contact primary_channel cdata today_iso} {
         return {}
     }
+
+    # campaign_tasks — ready tasks a transition derives from the campaign
+    # itself rather than from a contact. `eligible` walks classified
+    # contacts, and T0's work is not among them: its tasks are the census
+    # sources in each segment's sweep.yaml, and a segment being swept for
+    # the first time has no roster, so it contributes no contacts at all.
+    # Every ready-task assembly (both front ends, report and dispatch)
+    # folds this in beside the eligible walk, so a campaign-level
+    # transition needs no special case in either dispatch path.
+    #
+    # Returns task dicts of the same shape spar::_task builds. Default
+    # empty, so every contact-driven T-id inherits it unchanged.
+    method campaign_tasks {cdata campaign_file} {
+        return {}
+    }
 }
 
 # register — construct a subclass instance and record it under its T-id.
@@ -198,6 +213,15 @@ proc spar::transition_dispatch_status {tid} {
 proc spar::transition_supports_reauthor {tid} {
     if {$tid ni [::spar::transitions::all]} { return 0 }
     return [[::spar::transitions::get $tid] supports_reauthor]
+}
+
+# transition_campaign_tasks -- the T-id's campaign-level ready tasks (see
+# the class method). Empty for an unregistered T-id and for a caller with
+# no campaign file in hand, so a consumer folds the call in unconditionally.
+proc spar::transition_campaign_tasks {tid cdata campaign_file} {
+    if {$tid ni [::spar::transitions::all]} { return {} }
+    if {$campaign_file eq "" || ![file exists $campaign_file]} { return {} }
+    return [[::spar::transitions::get $tid] campaign_tasks $cdata $campaign_file]
 }
 
 # transition_tids -- all registered T-ids in registration order.
