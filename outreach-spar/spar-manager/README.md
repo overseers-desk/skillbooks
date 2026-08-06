@@ -130,6 +130,15 @@ Dispatch supplies both arguments, with `<log-dir>` resolved by `spar::resolve_lo
 tclsh9.0 test/run.tcl   # parallel; honours SPAR_TEST_JOBS
 ```
 
+### LinkedIn sends (T6)
+
+The overseer on `127.0.0.1:11402` owns the browser and the per-host send cadence. Before a send run:
+
+- Probe with `tclsh9.0 spar-overseer-health.tcl`, not a hand-rolled parse of `/health` (distinct exits: 0 healthy, 1 faulted, 2 unreachable, 3 malformed; the raw body always prints). An ad-hoc probe once read a schema change as "not answering" and misdiagnosed a healthy overseer.
+- Export `BI_SKILLS_ROOT=<skills-checkout>/skills`. The runner holds no skills checkout, so the send leg resolves and hands in `skillPath` and `libDir` with each `/run` (ducks-protocol.md) and fails loudly when the variable is unset.
+
+`T6 --dry-run` validates every row (message present, vanity extractable, note within the invite limit) without contacting the overseer. A successful send stamps `actioned_date` on the approach's message; an `uncertain` result stays unstamped for a human check before any retry.
+
 ## Logs
 
 `spar::resolve_logs_dir` (`lib/spar-lib.tcl`) creates `/var/local/log/spar/<folder>` if `/var/local/log/spar` exists, otherwise `$HOME/logs/spar/<folder>`. `<folder>` is `<dir_slug>-<stem>-<phase>-<datestamp>`, where `dir_slug` is the campaign yaml's normalised parent path with `/` replaced by `-`, `stem` is the yaml filename without extension, `phase` is `p` or `a`, and `datestamp` is Tcl `%Y%m%d-%H%M%S`. The dispatch API's `logs_dir` opt (`lib/spar-dispatch.tcl`) overrides path derivation; the supplied directory must already exist or `resolve_logs_dir` raises an error.

@@ -42,8 +42,12 @@ rule require root escapes -code missing_escapes \
 rule require root rounds -code missing_rounds \
     -message {Sweep file missing required key '%k' (empty list before round 1)} -groups {sweep}
 
-# The census-first gate: at least one source a census can be read from.
+# Source-kind requirement (spar-S-search.md §5/§6): at least one source a census can be read from.
 rule predicate root census_source -code no_census_source -groups {sweep}
+
+# Each escape entry names a verdict from §7's vocabulary; other keys stay
+# free (live entries vary in shape).
+rule predicate root escape_verdicts -code escape_missing_verdict -groups {sweep}
 
 # segment: equals the filename stem, or the file will never be found by the
 # name it claims.

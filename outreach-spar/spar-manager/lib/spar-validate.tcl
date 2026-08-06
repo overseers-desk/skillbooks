@@ -1334,6 +1334,7 @@ proc spar::_yamlmuster_sweep {} {
     $inst predicate segment_name        ::spar::_pred_segment_name
     $inst predicate seed_date_epoch     ::spar::_pred_seed_date_epoch
     $inst predicate source_status_token ::spar::_pred_source_status_token
+    $inst predicate escape_verdicts     ::spar::_pred_escape_verdicts
     spar::_yamlmuster_load $inst sweep.rules sweep
     set _yamlmuster_sweep_inst $inst
     return $inst
@@ -1397,7 +1398,7 @@ proc spar::_pred_reject_if_vocab {node meta} {
     return $out
 }
 
-# The census-first gate (spar-S-search.md S&P0): a sweep starts from at least
+# Source-kind requirement (spar-S-search.md §5/§6): a sweep starts from at least
 # one enumerable source, not keyword search alone.
 proc spar::_pred_census_source {node meta} {
     if {![dict exists $node sources]} { return {} }
@@ -1434,6 +1435,27 @@ proc spar::_pred_source_status_token {node meta} {
             "status '$status' — lead with a base token ([join $allowed { | }]); free-text reason may follow"]]
     }
     return {}
+}
+
+# Each escape entry names a verdict from the closed vocabulary in
+# spar-S-search.md §7 (Escapes); the entry's other keys vary by case and
+# stay unchecked.
+proc spar::_pred_escape_verdicts {node meta} {
+    if {![dict exists $node escapes]} { return {} }
+    set allowed {missing-keyword missing-source source-not-exhausted filter-too-tight process-defect}
+    set out {}
+    foreach entry [dict get $node escapes] {
+        if {[catch {dict size $entry}]} { continue }
+        set v [string trim [dict getdef $entry verdict ""]]
+        if {$v eq ""} {
+            lappend out [dict create message \
+                "escape entry '[dict getdef $entry member [dict getdef $entry stem ?]]' names no verdict — each escape carries one of: [join $allowed {, }]"]
+        } elseif {$v ni $allowed} {
+            lappend out [dict create message \
+                "escape verdict '$v' — closed vocabulary: [join $allowed {, }]"]
+        }
+    }
+    return $out
 }
 
 # validate_seed — validate the seed pair for one segment. segment_base is the
