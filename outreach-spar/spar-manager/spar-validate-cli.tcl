@@ -146,7 +146,8 @@ if {[llength $cdata] > 0} {
         lassign $item label seg_dir
         set sdata [spar::read_segment_yaml [spar::segment_yaml_for_segment $seg_dir]]
         set declared [expr {$sdata eq "" ? "" : [spar::segment_version $sdata]}]
-        lappend issues {*}[spar::validate_spec_version $declared             "segment '$label'" [list segment $label]]
+        lappend issues {*}[spar::validate_spec_version $declared \
+            "segment '$label'" [list segment $label]]
     }
     lappend issues {*}[spar::validate_campaign $all_contacts 0 1]
 }

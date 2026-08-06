@@ -53,8 +53,9 @@ oo::class create ::spar::transitions::Transition {
     method outgoing                   {} { my param -outgoing 0 }
     # tier names which of the methodology's record tiers the transition
     # works on (spar-methodology.md, "Campaigns and segments"): population
-    # transitions (T1/T3 profiling) read nothing campaign-bound and run
-    # from a segment alone; campaign is the default for the rest.
+    # transitions (the T0 sweep, T1/T3 profiling) read nothing campaign-
+    # bound and run from a segment alone; campaign is the default for the
+    # rest.
     method tier                       {} { my param -tier campaign }
 
     # Default build_opts — no extra opts. Subclasses that need per-runner
