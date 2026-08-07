@@ -65,6 +65,8 @@ If an invalid entry has already passed Profile and reached the approach queue, t
 
 ### 4.3 Fetch and parse the LinkedIn profile
 
+This step stands when the segment definition lists `linkedin` in its `platforms:` map (`segment-schema.yaml`). `required` means the profile audit expects the skill invoked for this contact; a profile written without it is rejected and comes back as fix instructions. `expected` means the population usually holds profiles and the look-up is a standing step, with the judgment to skip a given row yours. A segment whose map is silent on linkedin gives this step no standing; the skill remains available when your own evidence calls for it, and a roster row that already carries a `linkedin_url` has passed discovery, so reading it when the rubric needs it is ordinary research, not this step.
+
 If §4.1 already fetched the profile via the roster's `linkedin_url`, the data is captured — proceed to §4.4.
 
 Otherwise: if the roster provides a LinkedIn URL, fetch and parse it. If no URL is provided, search for the person by name and location first, identify the correct profile, then fetch it.
@@ -84,6 +86,8 @@ Prefer the LinkedIn skill for the fetch. It routes through the user's serialised
 Social media fetches run sequentially — see §6.
 
 ### 4.4 Fetch and parse the Facebook profile
+
+This step stands on the same terms as §4.3, read from the map's `facebook` entry.
 
 Run this step after §4.3. Use the Facebook skill under the same rule as §4.3 — prefer the serialised skill, hand-roll a chromium fetch if none is available. "No verified match found" (see Verification, below) is a legitimate outcome of having actually fetched and checked a candidate profile, not a substitute for fetching one.
 

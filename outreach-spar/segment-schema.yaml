@@ -21,7 +21,7 @@
 #     - usps registry        - discovery_criteria   - messages
 #     - segments: map        - rating_rubric        - response_likelihood
 #       (campaign × segment  - scope_note           - a_note, r_note
-#        plan blocks)        - profile_reject_if
+#        plan blocks)        - platforms
 #
 # What lives where (single source of truth):
 #
@@ -106,18 +106,22 @@ discovery_criteria: |
 # OPTIONAL SECTIONS — include only when applicable
 # ---------------------------------------------------------------------------
 
-# --- Profile-phase reject conditions (segment-level audit list — names the
-#     conditions that, if observed in the agent's transcript, cause the harness
-#     to reject the P-phase profile and re-trigger the fix-and-resume loop.
-#     Closed vocabulary; each entry must be one of:
-#         linkedin_not_invoked   — agent did not invoke the linkedin skill (§4.3)
-#         facebook_not_invoked   — agent did not invoke the facebook skill (§4.4)
-#     Include conditions only for channels where the segment's population has a
-#     meaningful presence. Omit the field entirely when no audit applies.) ---
+# --- Platform declarations (population facts, platform -> strength. The
+#     profiling prompt and the §4.3/§4.4 audit both derive from this map.
+#     Closed vocabularies: keys among linkedin | facebook, values among:
+#         required — the audit expects that platform's skill invoked per
+#                    contact; a profile written without it is rejected and
+#                    re-enters the fix-and-resume loop (§4.3/§4.4)
+#         expected — the population usually holds a presence there; the
+#                    look-up is a standing step, and skipping a given row
+#                    stays within the agent's judgment
+#     A platform absent from the map carries no instruction either way: the
+#     prompt says nothing about it, and the skill remains available. Omit
+#     the field entirely when no platform earns an entry.) ---
 
-# profile_reject_if:
-#   - linkedin_not_invoked
-#   - facebook_not_invoked
+# platforms:
+#   linkedin: required
+#   facebook: expected
 
 # --- Scope note (boundary conditions with other segments, or exclusions from
 #     this segment's scope) ---

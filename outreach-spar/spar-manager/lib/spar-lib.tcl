@@ -419,31 +419,45 @@ proc spar::instance_root_for_yaml {yaml_path} {
     return [file dirname $parent]
 }
 
-# extract_required_skills — convert a segment's profile_reject_if list into
-# the platform-token list audit_skills_in_transcript expects. Validates the closed
-# vocabulary; errors on unknown conditions or wrong shape. Empty list when
-# the field is absent or empty (no audit).
+# Platform declarations (segment.yaml `platforms:`): a map of population
+# facts, platform -> strength. `required` means the §4.3/§4.4 audit
+# expects that platform's skill invoked per contact (a profile without it
+# is rejected); `expected` means the population usually holds a presence
+# there and the look-up is a standing step, skippable on the agent's own
+# judgment; a platform absent from the map gets no instruction at all.
+# The closed vocabularies below are what spar::extract_platforms
+# hard-errors on at dispatch time.
+
+# extract_platforms — return a segment's platform map as a dict
+# (platform -> required|expected), validated. Empty dict when the field
+# is absent (no platform carries an instruction).
 #
 # segment_data    parsed segment.yaml dict
 # segment_path    path used for error messages
-proc spar::extract_required_skills {segment_data segment_path} {
-    if {![dict exists $segment_data profile_reject_if]} {
-        return {}
+proc spar::extract_platforms {segment_data segment_path} {
+    if {![dict exists $segment_data platforms]} {
+        return [dict create]
     }
-    set conditions [dict get $segment_data profile_reject_if]
-    set skills {}
-    foreach cond $conditions {
-        switch -- $cond {
-            linkedin_not_invoked {
-                if {"linkedin" ni $skills} { lappend skills linkedin }
-            }
-            facebook_not_invoked {
-                if {"facebook" ni $skills} { lappend skills facebook }
-            }
-            default {
-                error "Segment $segment_path: unknown profile_reject_if condition '$cond' (allowed: linkedin_not_invoked, facebook_not_invoked)"
-            }
+    set platforms [dict get $segment_data platforms]
+    dict for {platform strength} $platforms {
+        if {$platform ni {linkedin facebook}} {
+            error "Segment $segment_path: unknown platform '$platform' (allowed: linkedin, facebook)"
         }
+        if {$strength ni {required expected}} {
+            error "Segment $segment_path: platforms.$platform is '$strength' (allowed: required, expected)"
+        }
+    }
+    return $platforms
+}
+
+# extract_required_skills — the platform-token list
+# audit_skills_in_transcript expects: the `required` entries of the
+# segment's platform map. Empty list when nothing is required (no audit).
+proc spar::extract_required_skills {segment_data segment_path} {
+    set skills {}
+    dict for {platform strength} \
+            [spar::extract_platforms $segment_data $segment_path] {
+        if {$strength eq "required"} { lappend skills $platform }
     }
     return $skills
 }

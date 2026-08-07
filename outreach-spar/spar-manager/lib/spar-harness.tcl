@@ -504,8 +504,9 @@ oo::class create spar::ProfileHarness {
 
     # DbC-Post loop for profile files. Per-call args stashed as instance
     # vars; retry skeleton lives in spar::Harness::run_fix_loop. The
-    # required_skills list (derived from segment.yaml's profile_reject_if)
-    # opts into the §4.3/§4.4 mandatory-skill audit per skill named.
+    # required_skills list (the `required` entries of segment.yaml's
+    # platforms map) opts into the §4.3/§4.4 mandatory-skill audit per
+    # skill named.
     method validate_and_correct {outfile roster_path required_skills} {
         set Outfile        $outfile
         set RosterPath     $roster_path
@@ -561,9 +562,9 @@ oo::class create spar::ProfileHarness {
                 lappend errors $ri
             }
         }
-        # Issue #76: transcript-based audit. Skipped when the segment lists
-        # no required skills (profile_reject_if absent or empty), the row
-        # is excluded, or session_id was never captured.
+        # Issue #76: transcript-based audit. Skipped when the segment's
+        # platforms map has no required entry, the row is excluded, or
+        # session_id was never captured.
         if {[llength $RequiredSkills] > 0 \
                 && [string trim [dict getdef $row date_excluded ""]] eq "" \
                 && [my session_id] ne ""} {

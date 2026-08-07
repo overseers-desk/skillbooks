@@ -38,6 +38,32 @@ proc spar::load_prompt_template {name} {
     return [string trimright $s "\n"]
 }
 
+# platform_guidance — the research passage a segment's platform map earns:
+# one paragraph per declared platform (prompts/platform-<strength>.txt),
+# then the mechanics sentence every profile ships — how to touch a
+# platform page safely says nothing about whether to. A platform absent
+# from the map contributes nothing.
+proc spar::platform_guidance {platforms} {
+    set meta {
+        linkedin {title LinkedIn url_field linkedin_url host linkedin.com}
+        facebook {title Facebook url_field facebook_url host facebook.com}
+    }
+    set parts {}
+    foreach platform {linkedin facebook} {
+        if {![dict exists $platforms $platform]} continue
+        set m [dict get $meta $platform]
+        lappend parts [string map [list \
+            __PLATFORM__       $platform \
+            __PLATFORM_TITLE__ [dict get $m title] \
+            __URL_FIELD__      [dict get $m url_field] \
+            __HOST__           [dict get $m host] \
+        ] [spar::load_prompt_template \
+            platform-[dict get $platforms $platform].txt]]
+    }
+    lappend parts [spar::load_prompt_template platform-mechanics.txt]
+    return [join $parts " "]
+}
+
 # spar::detect_browser_cmd — Probe the host once for a usable browser and
 # return the leading shell command that the agent's bash splices in front of
 # a `"URL"` argument. Memoised after first call so every per-segment prompt
@@ -240,18 +266,20 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
     set prompts_dir [file join $workdir prompts]
     file mkdir $prompts_dir
 
-    # Read profile_reject_if from segment.yaml. Empty list when the field
-    # is absent — no audit. The harness §4.3/§4.4 audit fires only when
-    # this list is non-empty.
+    # Read the platform map from segment.yaml. Empty when the field is
+    # absent — no platform carries an instruction, and no audit. The
+    # harness §4.3/§4.4 audit fires only on the map's `required` entries.
     set segment_yaml [spar::segment_yaml_for_segment $segment_dir]
     set segment_data [spar::read_segment_yaml $segment_yaml]
     if {$segment_data eq ""} {
+        set platforms [dict create]
         set required_skills {}
     } else {
         # Version pre-flight (refuse-to-start): refuse a segment whose declared
         # spec version this tool does not support. Unstamped is allowed.
         spar::assert_supported_version "segment '[file tail $segment_dir]'" \
             [spar::segment_version $segment_data]
+        set platforms [spar::extract_platforms $segment_data $segment_yaml]
         set required_skills [spar::extract_required_skills $segment_data $segment_yaml]
     }
 
@@ -365,6 +393,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             __ROSTER_PATH__   $roster_path \
             __STEM__          $stem \
             __BROWSER_CMD__   [spar::detect_browser_cmd] \
+            __PLATFORM_GUIDANCE__ [spar::platform_guidance $platforms] \
         ] [spar::load_prompt_template spar-p.txt]]
 
         # p_author (campaign prompt_appendices) is NOT appended to the profiler:
