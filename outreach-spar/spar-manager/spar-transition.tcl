@@ -81,10 +81,11 @@ OPTIONS
                       trying a bounded batch of a large band before
                       committing to the rest. Under --auto the cap
                       applies to each iteration's pass.
-    --control-port=N  listen on 127.0.0.1 for operator commands while
-                      dispatching, preferring port N (default 25519; 0
-                      disables). A taken port steps up to the next free
-                      one; the bound port is logged at startup.
+    --control-port=N  listen on 127.0.0.1:N for operator commands while
+                      dispatching (default 25519; 0 disables). The run
+                      fails at startup if N is taken, so give each
+                      concurrent dispatch its own N and you always know
+                      which port controls which campaign.
                       `echo drain | nc 127.0.0.1 <port>` stops launching
                       and lets the in-flight workers finish.
                       `echo "jobs N" | nc 127.0.0.1 <port>` resizes the
@@ -273,18 +274,18 @@ if {$dispatching && $filter_state ne "" && $filter_state ne "dispatchable"} {
     exit 1
 }
 
-# Operator drain channel for live runs (spar-control.tcl). The port is
-# this run's own stop channel, so a busy preferred port steps up to the
-# next free one rather than sharing or skipping; the bound port is
-# reported so the operator knows where to send drain. A total failure
-# (no free port at all) leaves the run without a channel, warned.
+# Operator control channel for live runs (spar-control.tcl). The port
+# is exact: a taken one fails the run here, before any worker launches,
+# so a second concurrent dispatch is given its own with --control-port
+# rather than ending up somewhere the operator has to go looking for.
+# The port a run answers on is then the port its operator chose for it.
 if {$dispatching && $control_port != 0} {
-    if {[catch {spar::control_listen_from $control_port} res]} {
-        ${::spar::transitions_log}::warn "control socket: none bound ($res) — run continues without one"
-    } else {
-        lassign $res _control_srv _bound_port
-        ${::spar::transitions_log}::info "Control socket: 127.0.0.1:$_bound_port — stop with: echo drain | nc 127.0.0.1 $_bound_port ; resize with: echo \"jobs N\" | nc 127.0.0.1 $_bound_port ; swap worker env with: echo \"setenv NAME=VALUE\" | nc 127.0.0.1 $_bound_port"
+    if {[catch {spar::control_listen $control_port} _control_srv]} {
+        puts stderr "Error: control port $control_port is already in use, most likely by another dispatch."
+        puts stderr "Give this run its own port with --control-port=N, or --control-port=0 to run without a control channel."
+        exit 1
     }
+    ${::spar::transitions_log}::info "Control socket: 127.0.0.1:$control_port. Stop with: echo drain | nc 127.0.0.1 $control_port . Resize with: echo \"jobs N\" | nc 127.0.0.1 $control_port . Swap worker env with: echo \"setenv NAME=VALUE\" | nc 127.0.0.1 $control_port"
 }
 
 # --jobs=0 is the stepping signal: one item at a time, gated by a

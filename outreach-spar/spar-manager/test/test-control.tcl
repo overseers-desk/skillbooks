@@ -21,6 +21,14 @@ proc wait_for {script {timeout_ms 5000}} {
     return 0
 }
 
+# listen_ephemeral — a listener on an OS-assigned port, returned as
+# {chan port}. Port 0 keeps parallel test runs from colliding, and the
+# assignment is read back from the channel.
+proc listen_ephemeral {} {
+    set srv [spar::control_listen 0]
+    return [list $srv [lindex [chan configure $srv -sockname] 2]]
+}
+
 # send_command — one client exchange against the listener: connect,
 # send the line, read the one-line reply. Client and server share this
 # interpreter's event loop, so the read must pump events rather than
@@ -91,26 +99,22 @@ assert_eq $::spar::control_draining 1 "flag set with no pool live"
 close $srv
 
 # ════════════════════════════════════════════════════════════════════════
-# 4. control_listen_from steps over a taken port
+# 4. a taken port raises rather than sliding to another
 # ════════════════════════════════════════════════════════════════════════
-section "4. control_listen_from steps over a taken port"
+section "4. a taken port raises rather than sliding to another"
 
-# Hold a port, then probe from it: the second bind must step to a
-# higher free port, not fail. The successor need not be exactly +1 (a
-# neighbour may be taken by another process), so the contract is
-# "strictly higher and distinct", not a fixed offset.
-lassign [spar::control_listen_from 0] first_srv first_port
-lassign [spar::control_listen_from $first_port] second_srv second_port
-assert_eq [expr {$second_port > $first_port}] 1 \
-    "taken port steps up to a higher free one"
+# The CLI turns this error into a startup failure, so the port an
+# operator was given stays the port that answers.
+lassign [listen_ephemeral] held_srv held_port
+assert_eq [catch {spar::control_listen $held_port}] 1 \
+    "binding a port already held raises"
 
-close $first_srv
-close $second_srv
+close $held_srv
 
 # ── setenv: the second protocol verb ─────────────────────────────────
 section "setenv sets ::env for later worker launches"
 
-lassign [spar::control_listen_from 0] env_srv env_port
+lassign [listen_ephemeral] env_srv env_port
 catch {unset ::env(SPAR_TEST_SETENV)}
 set reply [send_command $env_port "setenv SPAR_TEST_SETENV=/tmp/claude-b"]
 assert_match $reply "ok: SPAR_TEST_SETENV*" "setenv replies ok naming the variable"
@@ -127,7 +131,7 @@ close $env_srv
 # ── jobs: resize the pool cap mid-run ────────────────────────────────
 section "jobs resizes the live pool and outlives it"
 
-lassign [spar::control_listen_from 0] jobs_srv jobs_port
+lassign [listen_ephemeral] jobs_srv jobs_port
 set ::spar::control_jobs_cap ""
 set disp [spar::Dispatcher new 1]
 set ::spar::control_dispatcher $disp
