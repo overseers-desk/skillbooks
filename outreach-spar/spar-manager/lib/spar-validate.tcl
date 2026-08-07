@@ -1406,7 +1406,7 @@ proc spar::_yamlmuster_segment {} {
     set inst [yamlmuster new]
     $inst predicate seed_date_quoted ::spar::_pred_seed_date_quoted
     $inst predicate sweeper_resolves ::spar::_pred_sweeper_resolves
-    $inst predicate reject_if_vocab  ::spar::_pred_reject_if_vocab
+    $inst predicate platforms_vocab  ::spar::_pred_platforms_vocab
     spar::_yamlmuster_load $inst segment.rules segment
     set _yamlmuster_segment_inst $inst
     return $inst
@@ -1471,16 +1471,18 @@ proc spar::_pred_sweeper_resolves {node meta} {
     return {}
 }
 
-# profile_reject_if entries: the closed vocabulary spar::extract_required_skills
+# platforms entries: the closed vocabularies spar::extract_platforms
 # hard-errors on at dispatch time. Catch at authoring time.
-proc spar::_pred_reject_if_vocab {node meta} {
-    if {![dict exists $node profile_reject_if]} { return {} }
-    set allowed {linkedin_not_invoked facebook_not_invoked}
+proc spar::_pred_platforms_vocab {node meta} {
+    if {![dict exists $node platforms]} { return {} }
     set out {}
-    foreach entry [dict get $node profile_reject_if] {
-        if {$entry ni $allowed} {
+    dict for {platform strength} [dict get $node platforms] {
+        if {$platform ni {linkedin facebook}} {
             lappend out [dict create message \
-                "profile_reject_if entry '$entry' — closed vocabulary: [join $allowed { | }]"]
+                "platforms key '$platform' — closed vocabulary: linkedin | facebook"]
+        } elseif {$strength ni {required expected}} {
+            lappend out [dict create message \
+                "platforms.$platform value '$strength' — closed vocabulary: required | expected"]
         }
     }
     return $out

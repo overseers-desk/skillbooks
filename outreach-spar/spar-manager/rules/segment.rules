@@ -15,7 +15,7 @@
 # owner either admits it to the schema or strikes it from the data.
 level root -keys {version title date sweeper target_type provenance \
                   discovery_criteria rating_rubric scope_note \
-                  geographic_catchment profile_reject_if priority}
+                  geographic_catchment platforms priority}
 
 # ── Rules ────────────────────────────────────────────────────────────────
 rule vocab root -groups {seed}
@@ -51,8 +51,8 @@ rule predicate root seed_date_quoted -code quoted_date -groups {seed}
 rule predicate root sweeper_resolves -needs instance_root \
     -code sweeper_unresolved -groups {seed}
 
-# profile_reject_if entries come from the closed vocabulary in
-# segment-schema.yaml; spar::extract_required_skills hard-errors on anything
+# platforms entries come from the closed vocabularies in
+# segment-schema.yaml; spar::extract_platforms hard-errors on anything
 # else at dispatch time, so catch it at authoring time instead.
-rule predicate root reject_if_vocab -code invalid_profile_reject_if \
+rule predicate root platforms_vocab -code invalid_platforms \
     -groups {seed}

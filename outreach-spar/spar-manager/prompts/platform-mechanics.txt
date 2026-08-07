@@ -1,0 +1,1 @@
+When you read a LinkedIn or Facebook page, use the matching site skill (the linkedin or facebook skill): it drives the shared browser through the serialised-browsing arbiter, so the fetch paces correctly and does not collide with concurrent workers on the logged-in session.

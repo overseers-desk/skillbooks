@@ -52,7 +52,7 @@ Each campaign YAML names in its `segments:` map the segments it operates over, m
 
 **One roster per segment.** The file is `segments/{segment}.tsv`. The roster schema is defined in `spar-roster-format.md`.
 
-**One segment file per segment.** The file is `segments/{segment}.yaml`. It defines the campaign-independent population: `discovery_criteria` (who belongs), `rating_rubric` (how useful a member is to us), `scope_note` (boundaries with neighbouring segments), and `profile_reject_if`. It carries no campaign plan content; the objective, USP framings, message goal, first ask, conversion funnel, approach sequencing, and subsegments live in the campaign's per-segment plan block, because they change with the campaign's ask. The schema is defined in `segment-schema.yaml`.
+**One segment file per segment.** The file is `segments/{segment}.yaml`. It defines the campaign-independent population: `discovery_criteria` (who belongs), `rating_rubric` (how useful a member is to us), `scope_note` (boundaries with neighbouring segments), and `platforms` (which platforms the population lives on, and how strongly). It carries no campaign plan content; the objective, USP framings, message goal, first ask, conversion funnel, approach sequencing, and subsegments live in the campaign's per-segment plan block, because they change with the campaign's ask. The schema is defined in `segment-schema.yaml`.
 
 **Profile filenames** are `segments/{segment}/{stem}.md`, `{stem}` being the roster row's stem (`spar-roster-format.md`). Contact state is derived by file existence at that exact path, so the stem is the whole convention. The segment folder holds profiles only.
 
