@@ -87,6 +87,10 @@ OPTIONS
                       one; the bound port is logged at startup.
                       `echo drain | nc 127.0.0.1 <port>` stops launching
                       and lets the in-flight workers finish.
+                      `echo "jobs N" | nc 127.0.0.1 <port>` resizes the
+                      --jobs cap mid-run: raised, queued rows launch
+                      into the freed slots at once; lowered, running
+                      rows finish and launches wait under the new cap.
                       `echo "setenv NAME=VALUE" | nc 127.0.0.1 <port>`
                       changes a worker environment variable mid-run
                       (e.g. CLAUDE_CONFIG_DIR to swap accounts); the
@@ -279,7 +283,7 @@ if {$dispatching && $control_port != 0} {
         ${::spar::transitions_log}::warn "control socket: none bound ($res) — run continues without one"
     } else {
         lassign $res _control_srv _bound_port
-        ${::spar::transitions_log}::info "Control socket: 127.0.0.1:$_bound_port — stop with: echo drain | nc 127.0.0.1 $_bound_port ; swap worker env with: echo \"setenv NAME=VALUE\" | nc 127.0.0.1 $_bound_port"
+        ${::spar::transitions_log}::info "Control socket: 127.0.0.1:$_bound_port — stop with: echo drain | nc 127.0.0.1 $_bound_port ; resize with: echo \"jobs N\" | nc 127.0.0.1 $_bound_port ; swap worker env with: echo \"setenv NAME=VALUE\" | nc 127.0.0.1 $_bound_port"
     }
 }
 
@@ -587,6 +591,9 @@ if {$dispatching} {
         set ::_total_seen 0
         set ::_total_expected 0
 
+        # An operator's `jobs N` outlives the pool it hit: a later pass
+        # (--auto) builds its pool at the resized cap, not the CLI's.
+        if {$::spar::control_jobs_cap ne ""} { set jobs $::spar::control_jobs_cap }
         set disp [spar::Dispatcher new $jobs]
         set ::spar::control_dispatcher $disp
         spar::subscribe_pool_domain $disp

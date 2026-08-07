@@ -73,7 +73,7 @@ set reply [send_command $port drain]
 assert_eq $reply "ok: draining (0 queued row(s) cancelled)" "second drain finds nothing to cancel"
 
 set reply [send_command $port status]
-assert_eq $reply "error: unknown command (try: drain | setenv NAME=VALUE)" "unknown verb refused"
+assert_eq $reply "error: unknown command (try: drain | jobs N | setenv NAME=VALUE)" "unknown verb refused"
 
 $disp destroy
 set ::spar::control_dispatcher ""
@@ -120,8 +120,46 @@ set reply [send_command $env_port "setenv 1BAD=x"]
 assert_match $reply "error: unknown command*" "malformed name rejected"
 
 set reply [send_command $env_port "bogus"]
-assert_match $reply "*setenv NAME=VALUE*" "unknown-command reply names both verbs"
+assert_match $reply "*jobs N*setenv NAME=VALUE*" "unknown-command reply names every verb"
 unset ::env(SPAR_TEST_SETENV)
 close $env_srv
+
+# ── jobs: resize the pool cap mid-run ────────────────────────────────
+section "jobs resizes the live pool and outlives it"
+
+lassign [spar::control_listen_from 0] jobs_srv jobs_port
+set ::spar::control_jobs_cap ""
+set disp [spar::Dispatcher new 1]
+set ::spar::control_dispatcher $disp
+$disp register fake fake_worker
+$disp enqueue slow-a fake {plan {{sleep 400}}}
+$disp enqueue slow-b fake {plan {{sleep 400}}}
+$disp enqueue slow-c fake {plan {{sleep 400}}}
+assert_eq [wait_for [list expr {[$disp state slow-a] eq "running"}]] 1 \
+    "first row launches (cap 1 queues the rest)"
+assert_eq [llength [$disp queued_jobs]] 2 "two rows wait behind cap 1"
+
+set reply [send_command $jobs_port "jobs 3"]
+assert_eq $reply "ok: jobs cap 3 (was 1)" "jobs reply names new and old cap"
+assert_eq [llength [$disp queued_jobs]] 0 "raised cap launches the queue at once"
+assert_eq $::spar::control_jobs_cap 3 "the value is recorded for later pools"
+
+set reply [send_command $jobs_port "jobs 0"]
+assert_match $reply "error: unknown command*" "jobs 0 refused"
+set reply [send_command $jobs_port "jobs many"]
+assert_match $reply "error: unknown command*" "non-numeric jobs refused"
+
+foreach r {slow-a slow-b slow-c} {
+    assert_eq [wait_for [list expr {[$disp state $r] eq "done"}]] 1 "$r completes"
+}
+$disp destroy
+set ::spar::control_dispatcher ""
+
+set reply [send_command $jobs_port "jobs 7"]
+assert_eq $reply "ok: jobs cap 7 (no live pool — applies from the next pass)" \
+    "no-pool jobs answers ok and records"
+assert_eq $::spar::control_jobs_cap 7 "no-pool jobs still records the value"
+set ::spar::control_jobs_cap ""
+close $jobs_srv
 
 finish_tests
