@@ -28,11 +28,13 @@
 #                     echo "jobs 20" | nc 127.0.0.1 <port>
 #                     echo "setenv CLAUDE_CONFIG_DIR=$HOME/.claude-b" | nc 127.0.0.1 <port>
 #
-# The port is a per-process stop channel, not a lock: each dispatch
-# gets its own so it can be stopped on its own. When the preferred
-# port is taken (another dispatch already listening there, a leftover),
-# the next free port up is used, and the chosen port is reported to the
-# operator so they know where to send drain.
+# The port is a per-process control channel, not a lock, and it is
+# exact: the run binds the port it was given or fails at startup. A
+# concurrent dispatch is given its own port on the command line, which
+# is what makes the port-to-campaign mapping something the operator
+# authored and can therefore rely on. Sliding to another port would
+# leave the operator hunting through listening sockets to find which
+# process answers where, at the moment they want to stop one.
 #
 # The socket is TCP on loopback because core Tcl's [socket] speaks TCP
 # only; a Unix-domain socket would need a compiled extension on every
@@ -50,24 +52,9 @@ namespace eval spar {
 # control_listen — open the listener on 127.0.0.1:$port and return the
 # server channel. port 0 asks the OS for an ephemeral port (tests);
 # read the assignment back from [chan configure $srv -sockname]. A
-# busy port raises; the caller decides whether that is fatal.
+# taken port raises, which the CLI turns into a startup failure.
 proc spar::control_listen {port} {
     return [socket -server ::spar::_control_accept -myaddr 127.0.0.1 $port]
-}
-
-# control_listen_from — bind the first free port at or above $start,
-# returning {chan port}. A busy port is stepped over, not fatal, so
-# concurrent dispatches each get their own stop channel. Gives up after
-# $tries ports and rethrows the last error (a persistent failure is a
-# real fault, e.g. no loopback, not a contended port).
-proc spar::control_listen_from {start {tries 64}} {
-    for {set p $start} {$p < $start + $tries} {incr p} {
-        if {![catch {spar::control_listen $p} srv]} {
-            set bound [lindex [chan configure $srv -sockname] 2]
-            return [list $srv $bound]
-        }
-    }
-    return -code error "no free control port in $start..[expr {$start + $tries - 1}]: $srv"
 }
 
 proc spar::_control_accept {chan addr peer_port} {
