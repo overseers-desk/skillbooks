@@ -219,14 +219,14 @@ proc print_report {analysis} {
 
     # The table's columns, one spec each: header, counts-dict key, and
     # the key of the denominator column ({} = plain count). Campaign-
-    # tier columns carry the campaign flag: Reach needs the campaign's
+    # tier columns carry the campaign flag: Reachable needs the campaign's
     # channel scope and the engagement columns are campaign facts, so a
     # run no campaign anchors ends at the channel counts.
     set col_specs {
         {Valid      valid            {}           population}
         {Profile    profiled         valid        population}
         {"3+★ "     star3            valid        population}
-        {Reach      approachable     star3        campaign}
+        {Reachable      approachable     star3        campaign}
         {"A/Reach " approached_star3 approachable campaign}
         {Email      has_email        star3        population}
         {LinkedIn   has_linkedin     star3        population}
@@ -331,7 +331,7 @@ proc print_report {analysis} {
         puts "  3+★       Rated 3 stars or higher — the qualified pool. Denominator for"
         puts "            the channel counts."
         if {!$population_only} {
-            puts "  Reach     Approachable: 3+★ holding at least one channel the campaign declares,"
+            puts "  Reachable Approachable: 3+★ holding at least one channel the campaign declares,"
             puts "            as % of 3+★. The gap to 3+★ is the no-channel backlog — recorded"
             puts "            reality, not an error; those contacts sit outside every denominator"
             puts "            below until a channel is found."
