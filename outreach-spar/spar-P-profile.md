@@ -83,7 +83,7 @@ Prefer the LinkedIn skill for the fetch. It routes through the user's serialised
 
 **DOM parsing note.** LinkedIn's DOM parser sometimes returns category labels (e.g. "Startup") rather than company names, and when a person lists multiple roles at the same organisation, the parser may present them as separate entries. Cross-reference roles by date overlap and description content to identify entries that belong to the same organisation. If a "Co-Founder" entry describes a crowdfunding platform and a "Business Development Manager" entry is at "Startup" during the same period, these are almost certainly the same company.
 
-Social media fetches run sequentially — see §6.
+Social media fetches follow the access cadence in §6.
 
 ### 4.4 Fetch and parse the Facebook profile
 
@@ -394,4 +394,4 @@ If this procedure is delegated to a subagent, the calling agent must provide:
 - The campaign context document paths (only those likely to be relevant)
 - The profile output directory path
 
-**Sequential social media fetches.** LinkedIn, Facebook, and Instagram fetches must run sequentially, one at a time. Do not spawn concurrent subagents for social media lookups on different targets. Non-social-media research (web search, GitHub, registry lookups) can run concurrently. This rule is the canonical constraint referenced from §4.3, §4.4, and §4.11.
+**Social media fetch cadence.** LinkedIn, Facebook, and Instagram share a per-site access cadence that the serialised-browsing skill paces across all workers, so fetches may run concurrently when it is in use (see `spar-methodology.md`, "Web fetching and browser serialisation"). Only where no serialiser exists and fetches are hand-rolled do they run one at a time. Non-social-media research (web search, GitHub, registry lookups) is unpaced and always concurrent-safe. This rule is the canonical constraint referenced from §4.3, §4.4, and §4.11.

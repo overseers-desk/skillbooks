@@ -234,8 +234,8 @@ When an AI agent delegates discovery work to a subagent, the prompt must tell th
 
 Do not replicate SPAR-S content in prompts — copies drift and cannot be corrected.
 
-**Sequencing constraint:** Platform profile checks run sequentially, one at a time. Concurrent requests trigger rate limiting and may result in account restrictions. When delegating to subagents, spawn them sequentially for platform lookups. Searches that do not sign in to a platform (web, register, directory) can run concurrently.
+**Access cadence:** Signed-in platform lookups (LinkedIn, Facebook) share a per-site access cadence that the serialised-browsing skill paces across every worker at once, so subagents may be dispatched concurrently when it is in use (see `spar-methodology.md`, "Web fetching and browser serialisation"). Only where no serialiser is available and lookups are hand-rolled do they run one at a time. Searches that do not sign in (web, register, directory) are exempt.
 
-This AESOP does not prescribe how to access social media; each operator uses their own method and tooling. The sequencing constraint is the only requirement.
+This AESOP does not prescribe how to access social media; each operator uses their own method and tooling. The access-cadence constraint is the only requirement.
 
 **Context management for web page fetching:** covered in `spar-methodology.md`, "Web fetching and browser serialisation" — convert pages to plain text before they enter context, one page at a time.
