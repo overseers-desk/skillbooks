@@ -446,14 +446,20 @@ assert_eq [lindex $::domain_got 0] r1 "payload row arrives at the subscriber"
 assert_eq [llength $::domain_got] 6 "payload arrives whole"
 $d destroy
 
-section "6. usage-limit halt helpers"
+section "6. wall halt helpers"
 
-# is_usage_limit_halt keys on coachman's stable token wherever it sits in
-# the failure reason harness_run passes through.
-assert_eq [spar::is_usage_limit_halt \
-    {harness exited rc=1 | FAIL (author-draft: USAGE_LIMIT_UNRECOGNIZED, suspected usage limit): slug}] 1 \
-    "the halt token in a wrapped reason is recognised"
-assert_eq [spar::is_usage_limit_halt {harness exited rc=1 | FAIL (no draft markers): slug}] 0 \
+# halt_kind keys on coachman's stable tokens wherever they sit in the
+# failure reason harness_run passes through, and names which wall it is
+# so each front-end can close with the advice that fits.
+assert_eq [spar::halt_kind \
+    {harness exited rc=1 | FAIL (author-draft: USAGE_LIMIT_UNRECOGNIZED, suspected usage limit): slug}] \
+    usage_limit \
+    "the usage-limit token in a wrapped reason names its wall"
+assert_eq [spar::halt_kind \
+    {harness exited rc=1 | FAIL (profile: API_ACCESS_DENIED, HTTP 403 refusing the account this run authenticates as; claude said: Your organization has disabled Claude subscription access for Claude Code): slug}] \
+    api_access_denied \
+    "the access-denied token in a wrapped reason names its wall"
+assert_eq [spar::halt_kind {harness exited rc=1 | FAIL (no draft markers): slug}] {} \
     "an ordinary failure reason does not halt"
 
 # halt_dispatch_queue cancels every still-queued row and returns the

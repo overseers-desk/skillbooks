@@ -685,18 +685,28 @@ if {$dispatching} {
         set tid ""; catch {set tid [dict get $::_row_tid $row]}
         lappend ::_rollcall [dict create slug $row tid $tid outcome failed reason $reason]
         exec_on_progress $row failed $reason
-        # A claude usage limit coachman could not parse: halt the batch
+        # A wall every remaining row would meet as well: halt the batch
         # loudly, once. Draining the queue lets the run end (in-flight
         # rows finish) rather than sending every remaining row into the
         # same wall. Reported to both the log and stderr, since an
-        # unattended `T*` run is watched through neither reliably.
-        if {[spar::is_usage_limit_halt $reason] && ![info exists ::_usage_limit_halted]} {
-            set ::_usage_limit_halted 1
+        # unattended `T*` run is watched through neither reliably. The
+        # kind picks the closing advice: a usage window is a clock to
+        # wait out, a refused account is a thing to correct first.
+        set kind [spar::halt_kind $reason]
+        if {$kind ne "" && ![info exists ::_wall_halted]} {
+            set ::_wall_halted 1
             set n 0
             if {$::spar::control_dispatcher ne ""} {
                 set n [spar::halt_dispatch_queue $::spar::control_dispatcher]
             }
-            set line "USAGE LIMIT (unrecognized wording): halting after $row; cancelled $n queued row(s), in-flight rows finish. Check the claude usage window and re-run."
+            if {$kind eq "usage_limit"} {
+                set what "USAGE LIMIT (unrecognized wording)"
+                set next "Check the claude usage window and re-run."
+            } else {
+                set what "API ACCESS DENIED"
+                set next "The claude account this run authenticates as was refused (HTTP 401/403). Check which account CLAUDE_CONFIG_DIR selects, then re-run."
+            }
+            set line "$what: halting after $row; cancelled $n queued row(s), in-flight rows finish. $next"
             ${::spar::transitions_log}::error $line
             puts stderr "spar: $line"
         }

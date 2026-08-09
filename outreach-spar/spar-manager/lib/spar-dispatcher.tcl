@@ -135,21 +135,31 @@ oo::class create spar::Dispatcher {
 proc spar::subscribe_pool_domain {disp} {
     $disp subscribe domain-roster_update ::spar::_pool_roster_update
 }
-# is_usage_limit_halt — true when a worker's failure reason carries
-# coachman's stable USAGE_LIMIT_UNRECOGNIZED token: a claude usage limit
-# whose wording coachman no longer parses (a reworded window, or a
-# monthly/spend/fast limit). Both front-ends test it to halt dispatch
-# loudly instead of grinding every remaining row into the same limit.
-# The token is coachman's contract (documented at its _invoke); this is
-# the single place spar names it.
-proc spar::is_usage_limit_halt {reason} {
-    return [string match {*USAGE_LIMIT_UNRECOGNIZED*} $reason]
+# halt_kind — which batch-fatal wall a worker's failure reason names, or
+# "" for an ordinary per-row failure. Two walls, both coachman's stable
+# tokens (its _invoke documents the contract; this proc is the single
+# place spar names them):
+#
+#   usage_limit        a claude usage limit whose wording coachman no
+#                      longer parses (a reworded window, or a monthly,
+#                      spend or fast limit)
+#   api_access_denied  the API refusing the account the run
+#                      authenticates as, HTTP 401 or 403
+#
+# Both front-ends test this to halt dispatch loudly instead of grinding
+# every remaining row into the same wall. It returns the kind rather
+# than a yes/no because the operator's next move differs: one is a clock
+# to wait out, the other is the wrong account to correct.
+proc spar::halt_kind {reason} {
+    if {[string match {*USAGE_LIMIT_UNRECOGNIZED*} $reason]} { return usage_limit }
+    if {[string match {*API_ACCESS_DENIED*} $reason]}        { return api_access_denied }
+    return ""
 }
 
 # halt_dispatch_queue — cancel every still-queued row on the dispatcher so
 # no new job launches; in-flight rows finish on their own. Returns the
-# count cancelled. The shared half of each front-end's usage-limit halt;
-# the front-end adds its own loud report (stderr line, or a dialog).
+# count cancelled. The shared half of each front-end's wall halt; the
+# front-end adds its own loud report (stderr line, or a dialog).
 proc spar::halt_dispatch_queue {disp} {
     set queued [$disp queued_jobs]
     foreach r $queued { $disp cancel $r }
