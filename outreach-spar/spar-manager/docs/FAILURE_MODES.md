@@ -97,6 +97,28 @@ though the transcript existed. With `--output-format stream-json`, `_extract_ses
 session. `cost` is in the final result line and is still unrecorded on a kill (the transcript
 retains per-turn usage if needed).
 
+### FM-HARNESS-6 — an API refusal reported as a clean turn · `c26842e`, `c152d9e`
+
+A claude session the API refuses closes with a result envelope marked `subtype: success` and
+`is_error: true`, carrying `terminal_reason: api_error` and `api_error_status: 403`. coachman's
+`is_error` branch classified usage limits only, so an envelope naming neither a window nor a
+reset time fell through to the ordinary success path: the refusal text was written out as the
+turn's product and `_invoke` returned 0 for a clean close. `ProfileHarness::run` then found no
+profile, reported `missing_profile`, and resumed three times into the same refusal, so the
+operator's evidence blamed the agent for not writing a file when the account could not run at
+all. `spar::is_usage_limit_halt` matched one token and never fired. The 2026-08-09 23:28 T1 run
+of `2026-08-craft-shop-tenant` launched 137 sessions in 2.5 minutes for $0 and was still
+dispatching when the operator killed it; the full queue would have reached about 2,400. The
+account came from a second `CLAUDE_CONFIG_DIR` whose organisation had Claude Code access
+disabled, which is why the healthy config dir showed nothing.
+
+coachman 1.13 fails an `api_error` carrying 401 or 403 with the stable token
+`API_ACCESS_DENIED`, and returns 2 for every other error envelope, so no error text reaches
+the product write at all. `spar::halt_kind` recognises both tokens and names which wall it is,
+and each front-end closes with the advice that fits. Re-run against the same refused account:
+halted 7 seconds in after 10 sessions, 571 queued rows cancelled, no `missing_profile`, no fix
+resumes.
+
 ### FM-LOG-1 — orchestration log not persisted · `73dcfae`
 
 The `spar::transitions` / `spar::dispatch` services emitted only to stderr, so a run launched
