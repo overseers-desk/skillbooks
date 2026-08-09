@@ -96,7 +96,7 @@ proc harness_run {row opts} {
         # first occurrence. The token routes spar::Dispatcher::on_failed to
         # requeue the row at the queue tail; the harness's prompt-dir marker
         # caps it at one retry.
-        failed $row "PROFILE_UNTOUCHED_RETRY: profile not written by a cleanly-closed run"
+        failed $row "PROFILE_UNTOUCHED_RETRY: profile not written by this run"
     } else {
         failed $row "harness exited rc=$rc[expr {$cause ne "" ? " | $cause" : ""}]"
     }

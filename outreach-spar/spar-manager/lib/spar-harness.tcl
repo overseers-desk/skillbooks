@@ -645,10 +645,15 @@ oo::class create spar::ProfileHarness {
             set pc [my do_profile_call]
             if {$pc == 1} { return 1 }
             if {$pc == 3} { my do_finalise_after_cost_kill }
-            # Truth-check (#181): a clean close that left a pre-existing
-            # outfile byte-identical goes to the requeue path, not to
-            # validation, which a stale file passes.
-            if {$pc == 0 && [my _outfile_untouched]} {
+            # Truth-check (#181): a run that left a pre-existing outfile
+            # byte-identical goes to the requeue path, not to validation,
+            # which a stale file passes. The question is whether this run
+            # produced new bytes, so how the turn ended does not change
+            # the answer: a clean close and a cut-short one (2) are both
+            # judged on what landed. A cost kill (3) is exempt, having
+            # just resumed to finalise, and its own product is the
+            # verdict.
+            if {$pc in {0 2} && [my _outfile_untouched]} {
                 return [my _request_requeue]
             }
             # DbC-Post: sanitise masked emails written to the roster, then
@@ -707,7 +712,7 @@ oo::class create spar::ProfileHarness {
         spar::write_file $marker \
             "attempt 1 session_id [my session_id]\n"
         ${::spar::harness_log}::info \
-            "RETRY: [my slug] profile untouched after clean close, requeued to queue tail (cost=\$[my cost_total])"
+            "RETRY: [my slug] profile untouched by this run, requeued to queue tail (cost=\$[my cost_total])"
         return 4
     }
 
