@@ -48,7 +48,7 @@ oo::class create spar::ui::DispatchController {
     variable RowTid RowReason RowPhase RowMeta RowDryRun
     variable BurstStems BurstFinished BurstFailed BurstActive
     variable RetryPending
-    variable UsageLimitHalted
+    variable WallHalted
     variable RowMenu RowMenuRow
 
     constructor {campaign transitions log dispatcher \
@@ -341,11 +341,11 @@ oo::class create spar::ui::DispatchController {
         set BurstFinished 0
         set BurstFailed 0
         incr BurstActive [llength $enqueued]
-        # Re-arm the usage-limit halt for this burst: the controller lives
-        # for the whole GUI session, and an operator who cleared the window
-        # and dispatched again needs the halt to fire on a fresh block, not
-        # stay disarmed from a batch ago.
-        unset -nocomplain UsageLimitHalted
+        # Re-arm the wall halt for this burst: the controller lives for
+        # the whole GUI session, and an operator who cleared the window or
+        # switched account and dispatched again needs the halt to fire on
+        # a fresh wall, not stay disarmed from a batch ago.
+        unset -nocomplain WallHalted
 
         my _update_progress_display
         if {$AggregateAfter eq ""} { my aggregate_animate }
@@ -600,19 +600,29 @@ oo::class create spar::ui::DispatchController {
         # reason-column text die with the session. Prep failures take the
         # on_prep_progress path instead; a row hits exactly one of the two.
         spar::log_row_outcome $row failed $reason
-        # A claude usage limit coachman could not parse: drain the queue so
-        # no new row launches, and raise one dialog. Every remaining row
-        # would hit the same wall, so halting once beats a wall of
-        # identical failures behind the operator's back.
-        if {[spar::is_usage_limit_halt $reason]
-                && ![info exists UsageLimitHalted]} {
-            set UsageLimitHalted 1
+        # A wall every remaining row would meet as well: drain the queue
+        # so no new row launches, and raise one dialog. Halting once
+        # beats a wall of identical failures behind the operator's back.
+        # The kind picks the dialog, since a usage window is a clock to
+        # wait out and a refused account is a thing to correct first.
+        set kind [spar::halt_kind $reason]
+        if {$kind ne "" && ![info exists WallHalted]} {
+            set WallHalted 1
             set n [spar::halt_dispatch_queue $Dispatcher]
-            $Log log "USAGE LIMIT (unrecognized wording): halted after $row; cancelled $n queued row(s), in-flight rows finish."
-            tk_messageBox -icon warning -type ok \
-                -title "Usage limit reached" \
-                -message "Claude reported a usage limit in wording spar did not recognise." \
-                -detail "Halted after $row. Cancelled $n queued row(s); in-flight rows finish. Check the claude usage window before re-running."
+            set tail "Cancelled $n queued row(s); in-flight rows finish."
+            if {$kind eq "usage_limit"} {
+                $Log log "USAGE LIMIT (unrecognized wording): halted after $row; cancelled $n queued row(s), in-flight rows finish."
+                tk_messageBox -icon warning -type ok \
+                    -title "Usage limit reached" \
+                    -message "Claude reported a usage limit in wording spar did not recognise." \
+                    -detail "Halted after $row. $tail Check the claude usage window before re-running."
+            } else {
+                $Log log "API ACCESS DENIED: halted after $row; cancelled $n queued row(s), in-flight rows finish."
+                tk_messageBox -icon warning -type ok \
+                    -title "Claude refused the account" \
+                    -message "Claude refused the account this run authenticates as (HTTP 401/403)." \
+                    -detail "Halted after $row. $tail Check which account CLAUDE_CONFIG_DIR selects before re-running."
+            }
         }
     }
 
