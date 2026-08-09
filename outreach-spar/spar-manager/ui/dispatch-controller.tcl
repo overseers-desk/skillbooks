@@ -540,7 +540,7 @@ oo::class create spar::ui::DispatchController {
     method on_row_requeued {row} {
         dict set RetryPending $row 1
         spar::log_row_outcome $row retry \
-            "profile untouched by a cleanly-closed run; requeued to queue tail"
+            "profile untouched by this run; requeued to queue tail"
     }
 
     method on_row_state {row state} {

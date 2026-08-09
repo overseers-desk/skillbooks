@@ -201,7 +201,7 @@ oo::objdefine $dc method test_burst_counts {} {
 $dc test_burst {rq1} 2
 $dc on_row_requeued rq1
 $dc on_row_state rq1 failed
-$dc on_row_failed rq1 "PROFILE_UNTOUCHED_RETRY: profile not written by a cleanly-closed run"
+$dc on_row_failed rq1 "PROFILE_UNTOUCHED_RETRY: profile not written by this run"
 assert_eq [$dc test_burst_counts] {2 0 0} \
     "intermediate failed pair consumed no burst state"
 $dc on_row_state rq1 done

@@ -674,7 +674,7 @@ if {$dispatching} {
     # is consumed by the job-failed handler, the second of the pair.
     proc ::_dispatch_on_requeued {row} {
         set ::_retry_pending($row) 1
-        exec_on_progress $row retry "profile untouched by a cleanly-closed run; requeued to queue tail"
+        exec_on_progress $row retry "profile untouched by this run; requeued to queue tail"
     }
     proc ::_dispatch_on_failed {row reason} {
         if {[info exists ::_retry_pending($row)]} {

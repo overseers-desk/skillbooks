@@ -696,6 +696,71 @@ $ph5 destroy
 assert_eq $rc_rq3 0 "a rewritten outfile passes through to validation and DONE"
 assert_eq $::rq_validated 1 "validation ran for the rewritten outfile"
 
+# The same truth-check on a cut-short turn (rc=2 from do_profile_call: an
+# external kill, or an error envelope coachman could not attribute to a
+# wall). The question the check asks is whether this run produced new
+# bytes, which the manner of ending does not answer, so an untouched
+# pre-existing outfile requeues here too rather than letting a stale file
+# pass validation into a false DONE. A fresh prompt dir: the retry marker
+# above would otherwise make this the second attempt.
+set cs_prompt_dir [file join $tmp_root prompt-cs]
+file mkdir $cs_prompt_dir
+set cs_outfile [file join $tmp_root profiles-cs cs-stem.md]
+file mkdir [file dirname $cs_outfile]
+spar::write_file $cs_outfile "---\nprofile_date: 2026-01-01\n---\nstale body\n"
+set fd [open [file join $cs_prompt_dir meta.env] w]
+puts $fd "STEM=\"cs-stem\""
+puts $fd "OUTFILE=\"$cs_outfile\""
+puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
+puts $fd "CAMPAIGN_FILE=\"/tmp/none/campaigns/camp.yaml\""
+close $fd
+spar::write_file [file join $cs_prompt_dir prompt.txt] \
+    "research the contact\n__LINKEDIN_SECTION__\nwrite the profile"
+
+set ph7 [spar::ProfileHarness new $cs_prompt_dir [file join $tmp_root logs-cs]]
+oo::objdefine $ph7 {
+    method do_profile_call {} { return 2 }
+    method session_id {} { return "cs-sess" }
+    method sanitise_roster_email {rp slug} {}
+    method validate_and_correct {o r s} { error "must not validate an untouched outfile" }
+    method do_summary {} { error "must not reach DONE" }
+}
+set rc_cs [$ph7 run]
+$ph7 destroy
+assert_eq $rc_cs 4 "cut-short turn with untouched pre-existing outfile returns rc=4"
+
+# The recovery the code-2 path exists for is intact: a cut-short turn that
+# did write reaches validation, so work done before the ending is judged
+# rather than discarded.
+set cs2_prompt_dir [file join $tmp_root prompt-cs2]
+file mkdir $cs2_prompt_dir
+set fd [open [file join $cs2_prompt_dir meta.env] w]
+puts $fd "STEM=\"cs2-stem\""
+puts $fd "OUTFILE=\"$cs_outfile\""
+puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
+puts $fd "CAMPAIGN_FILE=\"/tmp/none/campaigns/camp.yaml\""
+close $fd
+spar::write_file [file join $cs2_prompt_dir prompt.txt] \
+    "research the contact\n__LINKEDIN_SECTION__\nwrite the profile"
+set ph8 [spar::ProfileHarness new $cs2_prompt_dir \
+             [file join $tmp_root logs-cs2]]
+set ::cs_validated 0
+oo::objdefine $ph8 {
+    method do_profile_call {} {
+        my variable Outfile
+        spar::write_file $Outfile "---\nprofile_date: 2026-08-09\n---\npartial body\n"
+        return 2
+    }
+    method session_id {} { return "cs-sess-2" }
+    method sanitise_roster_email {rp slug} {}
+    method validate_and_correct {o r s} { incr ::cs_validated; return 0 }
+    method do_summary {} {}
+}
+set rc_cs2 [$ph8 run]
+$ph8 destroy
+assert_eq $rc_cs2 0 "a cut-short turn that wrote reaches validation and DONE"
+assert_eq $::cs_validated 1 "validation ran for the cut-short turn's product"
+
 # No pre-existing outfile (the T1 shape): a clean close that wrote
 # nothing keeps the missing_profile fix-loop path, not the requeue.
 set t1_prompt_dir [file join $tmp_root prompt-t1]
