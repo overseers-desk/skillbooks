@@ -239,6 +239,42 @@ assert_contains $stamped "replied_date: null" "replied_date unchanged"
 set changed2 [spar::stamp_actioned_date $ap "2026-04-11"]
 assert_eq $changed2 0 "stamp_actioned_date returns 0 when already stamped"
 
+# 5b1. One send stamps one message. A final round often carries two
+# messages of the same channel — the invitation note and the DM that
+# follows acceptance — and a send dispatches the first of them
+# (final_channel_message). Stamping both would mark a message that has
+# not gone out, and the contact would read as further along than it is.
+set seg_two [make_temp_segment]
+set yaml_two {decisions:
+  channel: linkedin
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: linkedin
+    text: Connection note, sent first
+    actioned_date: null
+    replied_date: null
+  - channel: linkedin
+    text: Follow-up DM, sent after acceptance
+    actioned_date: null
+    replied_date: null
+}
+set ap_two [write_approach_yaml $seg_two "stamp-two-li" $yaml_two]
+set changed_two [spar::stamp_actioned_date $ap_two "2026-08-12" linkedin]
+assert_eq $changed_two 1 "stamp(linkedin) returns 1 with two linkedin messages"
+set fd [open $ap_two r]; set stamped_two [read $fd]; close $fd
+assert_eq [regexp -all {actioned_date: 2026-08-12} $stamped_two] 1 \
+    "only one message is stamped"
+assert_eq [regexp -all {actioned_date: null} $stamped_two] 1 \
+    "the second message stays unstamped"
+set data_two [spar::read_approach_yaml $ap_two]
+set first_two [spar::final_channel_message $data_two linkedin]
+# The YAML reader coerces a bare date to an epoch, so read presence,
+# not the literal text; the file content above pins the date itself.
+assert_eq [expr {[dict get $first_two actioned_date] ne "" ? 1 : 0}] 1 \
+    "the stamped one is the message a send dispatches"
+
 # 5b2. channel=linkedin stamps the linkedin message and leaves the
 # email message's actioned_date untouched.
 set seg_li [make_temp_segment]

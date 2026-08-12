@@ -470,7 +470,7 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
         if {$in_channel_msg && $trimmed ne ""} {
             regexp {^(\s*)} $line -> lead
             if {[string length $lead] < $msg_field_indent} {
-                if {!$msg_has_ad} {
+                if {!$msg_has_ad && !$changed} {
                     set pad [string repeat " " $msg_field_indent]
                     set result [linsert $result [expr {$msg_last_ridx + 1}] \
                         "${pad}actioned_date: $today"]
@@ -501,7 +501,7 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
             }
         }
         # Replace actioned_date: null in target-channel message context
-        if {$in_final && $in_channel_msg && [regexp {^(\s*)actioned_date:\s*(null|~|)\s*$} $line -> indent]} {
+        if {!$changed && $in_final && $in_channel_msg && [regexp {^(\s*)actioned_date:\s*(null|~|)\s*$} $line -> indent]} {
             lappend result "${indent}actioned_date: $today"
             set changed 1
         } else {
@@ -520,7 +520,7 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
     }
 
     # EOF closes any still-open target-channel message block.
-    if {$in_channel_msg && !$msg_has_ad} {
+    if {$in_channel_msg && !$msg_has_ad && !$changed} {
         set pad [string repeat " " $msg_field_indent]
         set result [linsert $result [expr {$msg_last_ridx + 1}] \
             "${pad}actioned_date: $today"]
