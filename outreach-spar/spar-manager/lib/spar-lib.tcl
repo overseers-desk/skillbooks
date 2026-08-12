@@ -1167,6 +1167,18 @@ proc spar::install_orchestration_log {services} {
 # log_row_outcome — the one renderer for per-row dispatch outcomes, shared
 # by both front-ends so the line format has a single home (FM-LOG-1).
 # dry_run swaps the done glyph so a rehearsal is visibly not a send.
+# row_done_detail — the detail a finished row reports, read out of the pool's
+# job-done payload. Shared by both front-ends so a send's own words (for a
+# LinkedIn invite, what the server said about it) read the same in the CLI
+# stream and the GUI log window. An email leg names its message id; every
+# other worker returns its detail under `result`.
+proc spar::row_done_detail {result} {
+    set msg ""
+    catch {set msg [dict get $result message_id]}
+    if {$msg eq ""} { catch {set msg [dict get $result result]} }
+    return $msg
+}
+
 proc spar::log_row_outcome {slug status message {dry_run 0}} {
     switch -- $status {
         started { if {$message eq ""} { ${::spar::transitions_log}::info "  \[START\] $slug" } }

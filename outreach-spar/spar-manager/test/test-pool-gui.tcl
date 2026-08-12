@@ -186,6 +186,24 @@ foreach r {r1 r2} { assert_eq [$pool state $r] done "$r reached done" }
 #     accounting whole (#181): job-requeued marks the row, the failed
 #     pair is skipped, and only the retry's final outcome counts.
 # ════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════
+# 1a. A finished row's own words reach the log window. The GUI is the
+#     surface an operator watches during a send, so what the worker
+#     reports — for a LinkedIn invite, what the server said about it —
+#     has to arrive there, not only in the CLI stream.
+# ════════════════════════════════════════════════════════════════════
+section "1a. A finished row's detail reaches the log window"
+$pool enqueue r-detail fake_worker \
+    {plan {{msg_done {result "sent; API 201; modal closed"}}}}
+wait_for_terminal $pool r-detail 3000
+set logged 0
+foreach entry [$log get_buffer] {
+    if {[string match "*r-detail*sent; API 201; modal closed*" [lindex $entry 0]]} {
+        set logged 1
+    }
+}
+assert_eq $logged 1 "the done line carries the worker's detail"
+
 section "1b. Requeue skips the intermediate failed pair"
 oo::objdefine $dc method test_burst {stems active} {
     my variable BurstStems BurstActive BurstFinished BurstFailed

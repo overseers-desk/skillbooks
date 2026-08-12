@@ -662,10 +662,7 @@ if {$dispatching} {
     # block reads.
     proc ::_dispatch_on_done {row result} {
         incr ::_total_done
-        set msg ""
-        catch {set msg [dict get $result message_id]}
-        if {$msg eq ""} { catch {set msg [dict get $result result]} }
-        exec_on_progress $row done $msg
+        exec_on_progress $row done [spar::row_done_detail $result]
     }
     # job-requeued arrives before the failed pair (job-state failed,
     # job-failed) of a row the Dispatcher is about to requeue (#181).
