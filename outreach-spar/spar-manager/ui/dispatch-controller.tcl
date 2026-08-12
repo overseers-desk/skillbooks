@@ -628,6 +628,8 @@ oo::class create spar::ui::DispatchController {
 
     method on_row_done {row result} {
         dict set RowReason $row [clock format [clock seconds] -format "%H:%M"]
+        spar::log_row_outcome $row done \
+            [spar::row_done_detail $result] $LastWasDryRun
     }
 
     # ─── Campaign / tree event handlers ───────────────────────────────────
