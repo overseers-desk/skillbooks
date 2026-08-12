@@ -129,6 +129,51 @@ proc ::spar::li::health_note {h host {lane ""}} {
     return [join $parts "; "]
 }
 
+# What the server said, as one phrase for the dispatch log. The primitive
+# decides "sent" from a disjunction of unequal strength: an invitation or
+# message API that answered 2xx is proof, while a modal that merely closed
+# with no API call captured is inference. Both arrive as the same word, so
+# the phrase names the evidence and the operator can tell one from the
+# other without opening the browser.
+#
+# Reads the fields the two send primitives return (send-invite.tcl,
+# send-message.tcl): api_responses, server_message_echo, toast, and the
+# per-primitive cleared flag (modal_closed / compose_cleared).
+proc ::spar::li::send_proof {r} {
+    set parts {}
+
+    set codes {}
+    foreach e [dict getdef $r api_responses {}] {
+        catch {lappend codes [dict get $e status]}
+    }
+    set api_ok 0
+    foreach c $codes { if {$c in {200 201 204}} { set api_ok 1 } }
+    if {[llength $codes]} {
+        lappend parts "API [join $codes {, }]"
+    } else {
+        lappend parts "no API call captured"
+    }
+
+    set echo [dict getdef $r server_message_echo ""]
+    if {$echo ni {"" null}} {
+        lappend parts "server echoed the text"
+    }
+    set toast [dict getdef $r toast ""]
+    if {$toast ni {"" null}} {
+        lappend parts "toast: [string range $toast 0 79]"
+    }
+    foreach {k phrase} {modal_closed {modal closed} compose_cleared {compose cleared}} {
+        set v [dict getdef $r $k ""]
+        if {$v ni {"" null}} {
+            lappend parts [expr {[string is true -strict $v] ? $phrase : "$phrase: no"}]
+        }
+    }
+
+    # The operator's cue that this send rests on inference alone.
+    if {!$api_ok} { lappend parts "unconfirmed by server" }
+    return [join $parts "; "]
+}
+
 proc ::spar::li::send_one {opts} {
     variable default_overseer
     set approach_path [dict get $opts approach_path]
@@ -266,7 +311,7 @@ proc ::spar::li::send_one {opts} {
             if {!$stamped} {
                 return [list error "sent ok but stamp made no change: $approach_path"]
             }
-            return [list ok sent]
+            return [list ok "sent; [::spar::li::send_proof $r]"]
         }
         default {
             set reason [dict getdef $r reason ""]
