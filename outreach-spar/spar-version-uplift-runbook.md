@@ -1,6 +1,17 @@
 # SPAR version-uplift runbook
 
-**Applies to:** bringing an existing SPAR campaign instance up to the current spec version (`2.0`), so it declares conformance and the tooling will process it. Read `spar-methodology.md` "Versioning" first for what a version number means.
+**Applies to:** bringing an existing SPAR campaign instance up to the current spec version (`2.1`), so it declares conformance and the tooling will process it. Read `spar-methodology.md` "Versioning" first for what a version number means.
+
+## 2.0 → 2.1: the selling point moves into the campaign
+
+Spec 2.1 changes the campaign YAML only. `usp_document:` becomes `fact_sources:`, a list, and the `usps:` registry gains a block form carrying provenance (`spar-campaign-yaml.md`). Segment YAMLs are untouched and stay valid at `2.0`; the tool supports both numbers.
+
+```
+tclsh9.0 spar-manager/migrate-to-2.1.tcl <instance-root>              # dry-run plan
+tclsh9.0 spar-manager/migrate-to-2.1.tcl <instance-root> --execute
+```
+
+The script renames the field, carries each registry label through unchanged, and stamps `version: "2.1"`. What it leaves for a person or an agent is the judgement: which selling points came from a document and so take the block form with a `rests_on`, and which the campaign made itself and stay a bare label. A campaign that ran on prompt-appendix prose naming further source documents moves those paths into `fact_sources` in the same pass.
 
 ## 1.0 → 2.0: the layout migration
 
@@ -59,7 +70,8 @@ Markers, in order of appearance in the spec history, tell you how far an instanc
 - **Pre-model:** no `segment.yaml`, no `roster.tsv`; profiles are prose-headed markdown (no YAML front matter); a non-standard seed list (e.g. `seed-list.tsv`); segments nested inside a dated campaign directory. The validator cannot even start (no `campaign.yaml`/roster). This is a reconstruction.
 - **Early-formal:** has `segment.yaml` and front-matter profiles, but `segment.yaml` still carries the plan fields (objective, USP framings, message_goal, first_ask, conversion_funnel, approach_sequencing) that now belong in the campaign's per-segment plan block; the roster column order predates the current schema (organisation before contact_name) and may still carry the retired A/R columns (`response_likelihood`, `a_note`, `r_note`) inline; the layout may use a grouping parent (e.g. a `rosters/` wrapper) or dated campaign-segment directories. The tooling tolerates the roster (it keys by header name) and ignores the extra columns, so the roster work is dropping those three columns, and the plan work is lifting the six fields into `campaign.yaml`'s `segments:` map.
 - **Formal 1.0:** segments and campaign YAMLs as siblings with no grouping parent; per-segment plan blocks in the campaign YAML; population-only `segment.yaml`; the roster ends at `star_rating`; front-matter profiles; approaches under each segment's `approach/`. Uplift is the scripted 1.0 → 2.0 migration above.
-- **Current (`2.0`):** `segments/` and `campaigns/` folders with dotted stem siblings; approaches keyed by campaign (`spar-campaign-directory.md`). Uplift is stamping plus any data-integrity fixes the validator surfaces.
+- **Formal 2.0:** `segments/` and `campaigns/` folders with dotted stem siblings; approaches keyed by campaign (`spar-campaign-directory.md`). A campaign YAML carrying `usp_document:` is at this generation whatever it declares. Uplift is the 2.0 → 2.1 pass above.
+- **Current (`2.1`):** campaign YAMLs carry `fact_sources:` and a `usps:` registry whose entries record their provenance. Uplift is stamping plus any data-integrity fixes the validator surfaces.
 
 ## Deferred hard cases
 
