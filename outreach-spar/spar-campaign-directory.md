@@ -90,7 +90,7 @@ Every fact about the campaign has one authoritative home. Before creating any ne
 | Spec version a campaign conforms to | `campaigns/{campaign}.yaml` `version:` |
 | Spec version a segment conforms to | `segments/{segment}.yaml` `version:` |
 | Campaign display name, sender, channels, filters, start date | `campaigns/{campaign}.yaml` |
-| A selling point: its label, its claim, and what the claim rests on | campaign YAML `usps:` map |
+| A USP: its label, its claim, and what the claim rests on | campaign YAML `usps:` registry |
 | Documents a campaign's claims draw on | the files listed in `fact_sources:` |
 | Anti-claims / do-not-say list | the file named in `antifacts:` |
 | Segment objective, USP framings, message goal, first ask, funnel, approach sequencing | campaign YAML `segments.<name>` plan block |
