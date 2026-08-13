@@ -68,9 +68,9 @@ The population-tier work (the T0 sweep, T1/T3 profiling, roster validation, prog
 
 Outgoing transitions (the send and follow-up T-ids) are additionally gated by the campaign's `start_date` (`spar-campaign-yaml.md`): a campaign with no `start_date` has not launched, and nothing sends.
 
-## Organisation-level documents
+## Source documents
 
-A `usp_document` or `antifacts` file shared by several campaigns describes the organisation, not one campaign, and keeps a single home outside `campaigns/` (typically the parent repository), referenced by path from each campaign YAML. Only a document scoped to one campaign takes the `{campaign}.{word}.{ext}` name beside its YAML.
+A `fact_sources` entry or an `antifacts` file shared by several campaigns describes the organisation or a product, not one campaign, and keeps a single home outside `campaigns/` (typically the parent repository), referenced by path from each campaign YAML. Only a document scoped to one campaign takes the `{campaign}.{word}.{ext}` name beside its YAML.
 
 ## What does not belong under `segments/` or `campaigns/`
 
@@ -90,8 +90,8 @@ Every fact about the campaign has one authoritative home. Before creating any ne
 | Spec version a campaign conforms to | `campaigns/{campaign}.yaml` `version:` |
 | Spec version a segment conforms to | `segments/{segment}.yaml` `version:` |
 | Campaign display name, sender, channels, filters, start date | `campaigns/{campaign}.yaml` |
-| USP labels | campaign YAML `usps:` map |
-| USP prose | the file named in `usp_document:` |
+| A selling point: its label, its claim, and what the claim rests on | campaign YAML `usps:` map |
+| Documents a campaign's claims draw on | the files listed in `fact_sources:` |
 | Anti-claims / do-not-say list | the file named in `antifacts:` |
 | Segment objective, USP framings, message goal, first ask, funnel, approach sequencing | campaign YAML `segments.<name>` plan block |
 | Which roster rows of a segment this campaign engages (when narrower than the whole segment) | campaign YAML `segments.<name>.stems` |

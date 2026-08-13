@@ -26,8 +26,8 @@
 # What lives where (single source of truth):
 #
 #   - sender, channels, filters        -> campaign.yaml
-#   - usps registry (id -> label)      -> campaign.yaml usps:
-#   - usp prose                        -> campaign usp_document
+#   - usps: label, claim, provenance   -> campaign.yaml usps:
+#   - documents the claims draw on     -> campaign.yaml fact_sources:
 #   - per-segment plan (objective, usp framings, message_goal, first_ask,
 #     conversion_funnel, approach_sequencing, subsegments)
 #                                      -> campaign.yaml segments.<name> block

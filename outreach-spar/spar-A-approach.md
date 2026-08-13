@@ -108,7 +108,7 @@ A first-touch message has three elements: (a) self-introduction, (b) the concret
 
 **USP selection:**
 
-Read the campaign's USP document (declared in the campaign YAML as `usp_document`). Select the USPs relevant to this contact's segment and angle — typically 1–3. Record the identifiers (not the wording) in `chosen_usps` for this round. The wording lives in the USP document; only the selection belongs in the approach file.
+Read the campaign YAML's `usps:` registry and the segment plan block's framings. Select the ones relevant to this contact's angle, typically 1 to 3. Record the identifiers in `chosen_usps` for this round; only the selection belongs in the approach file.
 
 **Subject line:**
 
@@ -147,7 +147,7 @@ Spawn one subagent (C2) to perform two sequential steps. Use a Sonnet-class mode
 
 **Step 1 — Role-play (context-isolated).** C2 receives only the profile and the draft. No campaign files, no method files. C2 reacts in character as the recipient — a stranger who has never heard of the sender. No rubric, no structured format: a natural reaction. If the message is in a non-default language, C2 responds in that language.
 
-**Step 2 — Fact-check.** C2 breaks character and reads the campaign's source files (USP document, segment file, offering description). It checks every factual claim in the draft and appends corrections. Do not cite file paths in corrections — state what the source says.
+**Step 2 — Fact-check.** C2 breaks character and checks every factual claim in the draft, then appends corrections. Its authority is the campaign YAML: the `usps:` registry and the segment plan block, with the anti-claims file. A selling point's claim is taken as written there, because the campaign was verified once when it was defined and C2 runs once per contact. C2 opens a `fact_sources` document only where a `rests_on` sends it to one. Corrections state what the source says rather than citing a file path.
 
 The two steps must be sequential: role-play before fact-check, so source-file knowledge does not contaminate the persona.
 

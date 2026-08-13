@@ -291,7 +291,7 @@ The S&P = Sonnet / AR = Opus allocation has been independently validated outside
 
 ## Versioning
 
-The SPAR spec is versioned. Each campaign YAML and each segment definition carries a `version` field naming the spec generation it conforms to. The current generation is `2.0`. The two files version independently: a segment may be re-stamped to a later generation without re-stamping the campaign, and vice versa.
+The SPAR spec is versioned. Each campaign YAML and each segment definition carries a `version` field naming the spec generation it conforms to. The current generation is `2.1`. The two files version independently: a segment may be re-stamped to a later generation without re-stamping the campaign, and vice versa. A generation that changes one file type leaves the other's number where it stands, which is why the tooling supports a set of numbers rather than one.
 
 This section is the single source of truth for what a version number means and when it changes. A version bump is warranted when a spec change invalidates data authored under the previous number: a renamed or removed field, a changed file layout, or a changed meaning for an existing field. Additive changes that older data still satisfies do not require a bump. Generation `1.0` is the spec as of the campaign/segment coordinate-axis layout (segments and campaigns as siblings, no grouping parents) and the roster schema in `spar-roster-format.md`.
 
