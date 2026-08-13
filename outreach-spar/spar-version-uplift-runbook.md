@@ -2,7 +2,7 @@
 
 **Applies to:** bringing an existing SPAR campaign instance up to the current spec version (`2.1`), so it declares conformance and the tooling will process it. Read `spar-methodology.md` "Versioning" first for what a version number means.
 
-## 2.0 → 2.1: the selling point moves into the campaign
+## 2.0 → 2.1: the USP moves into the campaign
 
 Spec 2.1 changes the campaign YAML only. `usp_document:` becomes `fact_sources:`, a list, and the `usps:` registry gains a block form carrying provenance (`spar-campaign-yaml.md`). Segment YAMLs are untouched and stay valid at `2.0`; the tool supports both numbers.
 
@@ -11,7 +11,7 @@ tclsh9.0 spar-manager/migrate-to-2.1.tcl <instance-root>              # dry-run 
 tclsh9.0 spar-manager/migrate-to-2.1.tcl <instance-root> --execute
 ```
 
-The script renames the field, carries each registry label through unchanged, and stamps `version: "2.1"`. What it leaves for a person or an agent is the judgement: which selling points came from a document and so take the block form with a `rests_on`, and which the campaign made itself and stay a bare label. A campaign that ran on prompt-appendix prose naming further source documents moves those paths into `fact_sources` in the same pass.
+The script renames the field, carries each registry label through unchanged, and stamps `version: "2.1"`. What it leaves for a person or an agent is the judgement: which USPs came from a document, so taking that document's numbering and a `rests_on`, and which the campaign made itself, so keeping a bare label under an unnumbered key. A campaign that ran on prompt-appendix prose naming further source documents moves those paths into `fact_sources` in the same pass.
 
 ## 1.0 → 2.0: the layout migration
 

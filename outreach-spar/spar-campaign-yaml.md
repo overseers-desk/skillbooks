@@ -19,7 +19,7 @@ One file per campaign, at `campaigns/{campaign}.yaml` in the instance root (`spa
 | `sender.email` | string | Sender's email address (used as From: address) |
 | `language` | string | Language code: `en-gb`, `en-au`, `en`, or a BCP-47 code |
 | `segments` | map | Maps each segment name this campaign operates over to that segment's **plan block** (the campaign×segment intersection: objective, USP framings, message_goal, first_ask, ask_stance, conversion_funnel, approach_sequencing, and optionally a `stems` allowlist confining the campaign to named roster rows). See "Per-segment plan block" below. Names resolve to `segments/{name}` in the instance root (`spar-campaign-directory.md`). The same segment name may appear under the `segments:` of more than one campaign YAML in the instance, each carrying its own plan: segments are not owned by any one campaign, and the plan changes with the campaign's ask, so it is the campaign's, not the segment's (see the invariance test in `spar-methodology.md`, "Campaigns and segments"). |
-| `usps` | map | The campaign's selling points, each under an identifier a segment plan block references by `id`. A selling point is a claim about what is offered, measured against what competitors offer in a market, and the market is the campaign's; so it is authored here, and a campaign may make a claim no document states. See "Registry entries" below for the two forms an entry takes. |
+| `usps` | map | USP registry: the campaign's USPs, each under an identifier a segment plan block references by `id`. A USP is a claim about what is offered, measured against what competitors offer in a market, and the market is the campaign's; so it is authored here, and a campaign may make a claim no document states. See "USP registry entries" below for the two forms an entry takes and what its identifier means. |
 
 ### Required (channels)
 
@@ -75,7 +75,7 @@ venue:
 | `start_date` | date string | (none) | The campaign's planned first-approach date, `YYYY-MM-DD`, written bare (the parser types a bare date to epoch seconds and the loader renders it back to ISO; a quoted ISO string is also normalised, but bare is the convention). Absent means the campaign has not launched: outgoing transitions (send and follow-up T-ids) hold every dispatchable task as blocked. Present, it is a planned floor: sends before the date are blocked, so real sends land on or after it, and downstream consumers (the BI reply derivation) can key on it as the earliest possible send. The related epistemic rule: a message with no `actioned_date` has not been sent, and a campaign with no `start_date` has not launched. |
 | `sender.organisation` | string | (none) | Organisation name for prompt text (e.g. "Historic Rivermill"). When absent, prompts use the sender's name and role without an org name. |
 | `sender.bcc` | string | (none) | BCC address for outgoing emails |
-| `fact_sources` | list of paths | (none) | Documents the campaign's claims draw on: an organisation overview, a product or offer definition, a competitor register. A1 reads them before drafting, for the ground truth a message needs beyond the selling points themselves; the challenger opens one only where a `rests_on` names it. No precedence holds between entries, so keeping them consistent is the campaign author's job. |
+| `fact_sources` | list of paths | (none) | Documents the campaign's claims draw on: an organisation overview, a product or offer definition, a competitor register. A1 reads them before drafting, for the ground truth a message needs beyond the USPs themselves; the challenger opens one only where a `rests_on` names it. A source document that numbers its own USPs lends that numbering to the registry. No precedence holds between entries, so keeping them consistent is the campaign author's job. |
 | `antifacts` | path | (none) | Path to the antifact/fact-check document. When present, the A2 challenger fact-checks the draft against this file. When absent, fact-check uses only the overview and segment file. Relative to the YAML file's directory. |
 | `campaign_principles` | path | (none) | Path to campaign-level principles document. When present, A1 reads it before drafting. When absent, A1 relies on the method document and segment file alone. Relative to the YAML file's directory. |
 | `ses_region` | string | `ap-southeast-2` | AWS SES region for email sending |
@@ -84,20 +84,28 @@ venue:
 | `reply_check.folder` | string | (none) | IMAP folder to search for replies (e.g. `Partnerships`). |
 | `prompt_appendices` | map | (none) | Per-agent appendix text appended verbatim to the composed prompt at dispatch time. Closed vocabulary — allowed sub-keys: `p_author`, `a_author`, `a_challenger`, `a_assembly`. Any other sub-key is rejected by the campaign loader. Each value is an inline string; empty string or missing key = no appendix. Use this slot for campaign-specific tone guidance, exclusion rules, or strategy-revision notes that must not pollute the methodology documents. |
 
-## Registry entries
+## USP registry entries
 
-An entry is a label or a block. A label alone is the whole entry where the campaign made the claim and no document states it: nothing can be pointed at, and the label is the claim.
+**The identifier says which numbering the USP belongs to.** A source document that numbers its own USPs keeps that numbering here, so a reader of either file can follow a claim from one to the other, and two documents numbering from 1 do not collide:
+
+- **`U1`, `U2`** — the organisation's own numbering, from the overview or equivalent.
+- **`u1`, `u2`** — a product's numbering, from the document defining that product.
+- **no identifier** — a claim the campaign made itself, which no document numbers.
+
+A campaign inventing its own numbering over documents that already number is the failure this prevents: the same token means different claims in two files, and a drafting agent cites whichever it read last.
+
+**An entry is a label or a block.** A label alone is the whole entry where the campaign made the claim and no document states it: nothing can be pointed at, and the label is the claim.
 
 The block exists to record provenance. `rests_on` names what the claim stands on and where to read it: an entry in `fact_sources` and the part of it that applies, a decision, or a market finding. It is also where a standing offer is marked as one, since an offer can be withdrawn and a fact about the organisation cannot. `claim` is optional, for an assertion a label cannot carry.
 
 ```yaml
 usps:
-  U5:
-    label: Horse contact no other venue publishes
+  u6:
+    label: Contact, not viewing
     rests_on: |
-      Product definition, sessions section. The no-other-venue half
-      rests on the catchment competition register of 2026-08-10.
-  U9: A cash contribution to the coaches for a school's first booking
+      Product USP document, u6 and its grounding row: school horse
+      contact appears at 3 of 215 corpus venues and none in the catchment.
+  cash-contribution: A contribution to the coach hire for a school's first booking
 ```
 
 ## Per-segment plan block
@@ -109,7 +117,7 @@ Each plan block may carry:
 | Plan field | Type | Purpose |
 |---|---|---|
 | `objective` | prose | What this campaign aims to accomplish with this segment, in 1–3 sentences. |
-| `usps` | list | Which of the campaign's selling points apply to this segment, and why. Each entry has `id` (from the campaign `usps:` registry), `type` (`emotional` or `functional`, segment-specific), and `framing` (prose: why this one lands with contacts in this segment). The segment selects, orders and reframes; it authors no claim, so a `framing` that would read the same for every segment belongs in the registry entry instead. A selling point a segment wants that the registry lacks is added to the registry. |
+| `usps` | list | Which of the campaign's USPs apply to this segment, and why. Each entry has `id` (from the USP registry), `type` (`emotional` or `functional`, segment-specific), and `framing` (prose: why this one lands with contacts in this segment). The segment selects, orders and reframes; it authors no claim, so a `framing` that would read the same for every segment belongs in the registry entry instead. A USP a segment wants that the registry lacks is added to the registry. |
 | `message_goal` | prose | The outcome the first message aims for (e.g. "agree to a site visit"). |
 | `first_ask` | prose | The model message or pattern for first contact. May contain placeholders the A phase fills from the profile. |
 | `ask_stance` | `direct` or `problem-led` | The stance chosen via the classifier in `spar-methodology.md` ("Classifying the ask"). `direct`: state the want plainly (we are the buyer, or a plain mutual offer). `problem-led`: frame around the recipient's problem, because naming the want would weaken us (we compete to be selected). |
@@ -159,11 +167,14 @@ secondary_channel:
 
 usps:
   U1:
-    label: Example selling point one
+    label: An example USP carrying the organisation's own numbering
     rests_on: |
       Where this claim comes from, and where to read it.
-  U2: Example selling point the campaign made itself
-  U3: Example selling point three
+  u1:
+    label: An example USP carrying a product's numbering
+    rests_on: |
+      Where this claim comes from, and where to read it.
+  example-offer: An example USP the campaign made itself, which no document numbers
 
 segments:
   segment-a:
@@ -174,10 +185,10 @@ segments:
         type: emotional
         framing: |
           Why U1 matters to contacts in segment-a.
-      - id: U2
+      - id: u1
         type: functional
         framing: |
-          Why U2 matters to contacts in segment-a.
+          Why u1 matters to contacts in segment-a.
     message_goal: |
       Agree to a complimentary site visit.
     first_ask: |
