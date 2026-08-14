@@ -1,6 +1,6 @@
 # Aesop — notes for AI sessions
 
-This repo holds the **AESOP methodologies** (SPAR/SIFT/TEND) and their working data, in
+This repo holds the **AESOP methodologies** (SPAR/SIFT/TEND/SAGE) and their working data, in
 the top-level dirs (almanac, articles, contact-graph, correspondence-tend, events,
 listing-sift, outreach-spar, travel, tests, webworks). These are SOPs written for AI
 agents to execute.

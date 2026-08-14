@@ -77,13 +77,38 @@ Three methodologies for three directions of information flow. Each is a four-pha
 
 **Rivermill director inbox** (`../weiwu/email-processing.tend/`). Taxonomy built from 226 emails across 5 batches covering the full sender spectrum (internal staff, retained professionals, external partners, job applicants, board members). 64 categories with 64 corresponding processing rules. The taxonomy and ruleset are the domain-specific artefacts; TEND defines how an agent uses them.
 
+### SAGE — Product Development to Fit in a Proven Market
+
+**Phases:** Survey, Adjudicate, Game, Establish
+
+**Direction:** Inward. The operator must decide what to build in a market that already exists; the discipline is that the market's evidence decides it, against the operator's own priors, drafts, and internal opinion.
+
+**What each phase does:**
+
+- **Survey** builds the evidence at research grade: comparable operators worldwide drawn from published registers and coded under a codebook frozen blind, an adversarial frame review before any collection, the local rival register with demand signals, and distributor evidence from intermediaries whose transactions cross the whole market. Findings are numbered so every later document cites a number instead of restating a claim.
+- **Adjudicate** is a human phase. Every product parameter is decided on a card: prior values, ruling, provenance chip (inherited, anchored, derived, radical), four boundary tests. A ruling stands on named demand evidence plus named capability. The output table bounds what any downstream agent may design, promise, or claim, and a parameter absent from it is design freedom.
+- **Game** has isolated model arms derive the product's interior context-free from the evidence, passes every sheet through a reviewer gate that strikes what oversteps the rulings, and judges the blinded sheets through role-played, individually profiled buyers returning booking-grade verdicts. Winners are absorbed into one sheet and crowned on a held-out panel of fresh judges.
+- **Establish** ships it: numbered selling-point claims whose scarcity is measured against the Survey corpus, the definition folded by stated rules with a dedup pass and an independent cold read, every value migrated to its single home, and a displacement offer put to named prospects the operator already holds, testing whether buyers switch.
+
+**Model allocation:** Survey collection and coding are Sonnet-tier under a frozen codebook; the codebook author and frame reviewer are Opus-tier. Adjudicate is human with AI clerking. Game arms, reviewer, and judges are Opus-tier. Establish folding is Opus-tier, migrations Sonnet-tier.
+
+**Procedure documents:** `pmf-sage/sage-methodology.md`, the phase AESOPs (`sage-S-survey.md`, `sage-A-adjudicate.md`, `sage-G-game.md`, `sage-E-establish.md`), and `pmf-sage/INVARIANTS.md`.
+
+#### SAGE use cases
+
+**Rivermill River Day** (`../rivermill/product-development/school-excursion/2026-08-10-how-the-river-day-was-decided/`). The full pipeline: a 400-venue comparables frame with 196 profiled programmes and 27 numbered findings, a section-numbered catchment competition register, eighteen decision cards over roughly ten correction rounds, a three-arm design game whose first round was voided for format smuggling, an absorbed sheet crowned 15/15 on the main panel and 5/5 on a held-out panel, and eight numbered claims grounded in corpus prevalence. The run predates the methodology's extraction and is its source; its folder README records the run against these phase documents.
+
+**Rivermill inbound study-tour survey** (`../rivermill/product-development/study-tour/`). A Survey-phase deployment on its own: a two-sided design reading both the supplier side (four destination countries) and the seller side (six origin markets, in origin languages), with frame review, frozen codebook, inter-coder check and corrections all exercised. Demonstrates that SAGE's phases separate: a market can be surveyed to review grade before anyone commits to Adjudicate.
+
 ### How the methodologies relate
 
 SPAR generates outbound messages. Those messages produce replies. The replies arrive in an inbox processed by TEND. TEND's thread assembly recognises the SPAR outreach message in the conversation history and can route the reply accordingly — flagging a positive response rather than filing it as unsolicited inbound.
 
 SIFT evaluates inbound listings. When SIFT's Target phase marks a listing as `network-approach` (pursue through a relationship rather than a direct application), that contact may enter a SPAR roster for outreach.
 
-The three methodologies share a structural principle: read before writing. SPAR profiles a contact before drafting a message. SIFT investigates a listing before scoring it. TEND threads a conversation before classifying the email. In each case, the comprehension phase precedes the action phase, and the scoring rubric or taxonomy does the intellectual heavy lifting so that Sonnet-tier models can apply it reliably.
+SAGE defines what there is to sell. Its Establish phase produces the numbered claims a SPAR campaign's approach messages cite by number, and its displacement offer runs naturally as a SPAR campaign over an owned roster, with replies arriving through TEND. SAGE's decisions table is also the bounding box those messages may not escape: an approach draft promising anything outside it is caught at review, not sent.
+
+The methodologies share a structural principle: read before writing. SPAR profiles a contact before drafting a message. SIFT investigates a listing before scoring it. TEND threads a conversation before classifying the email. SAGE surveys a market before anyone rules on a parameter. In each case, the comprehension phase precedes the action phase, and the scoring rubric or taxonomy does the intellectual heavy lifting so that Sonnet-tier models can apply it reliably.
 
 ## Other directories
 
