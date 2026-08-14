@@ -27,7 +27,7 @@ Buyer profiles of the whole catchment, one file per prospect, live with the oper
 
 ## 3. Distributor evidence — the transaction view
 
-Intermediaries who transact across many operators hold the knowledge published text cannot: transport operators who carry the buyers, booking platforms that see conversion by price and season, brokers and underwriters who know who really runs what, trade bodies whose staff talk to every member. They answer factual aggregate questions cheaply, because answering is their sales call. Ask what is growing, what died, what buyers complain about on the way home; do not ask what to build, and do not ask for any one client's business.
+Intermediaries who transact across many operators hold the knowledge published text cannot; their kinds vary by market, and the run names its own: carriers who move the buyers, platforms that see conversion by price and season, brokers and underwriters who know who really runs what, trade bodies whose staff talk to every member. They answer factual aggregate questions cheaply, because answering is their sales call. Ask what is growing, what died, what buyers complain about on the way home; do not ask what to build, and do not ask for any one client's business.
 
 This channel is the corrective for the publication blind spot in the corpus, and the cheapest evidence in the whole phase. A run that skips it should say why.
 
