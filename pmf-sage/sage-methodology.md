@@ -56,7 +56,7 @@ Each phase has its own procedure document; this file states what each phase is f
 |---|---|---|---|
 | Comparables frame, codebook, coded corpus, numbered findings | S | A, G, E | run folder, survey stage |
 | Rival register (section-numbered), demand signals | S | A, G, E | run folder, survey stage |
-| Distributor evidence notes | S | A, E | run folder, survey stage |
+| Distributor evidence notes | S | A, G, E | run folder, survey stage |
 | Fence index and generated blacklists (conditional) | S | G briefs | run folder |
 | Decision cards and the decisions table | A | G, E, every brief | run folder; compact table repeated in the definition |
 | Arm sheets, reviewer cuts, blind keys, verdicts | G | G absorption, E | run folder, game stage |

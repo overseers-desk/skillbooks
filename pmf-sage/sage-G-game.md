@@ -26,9 +26,9 @@ Blind copies are built outside the repository: frontmatter stripped, each sheet'
 
 ## The judges
 
-Judges are cast from the operator's profiled buyer roster: a main panel diversified across the dimensions that segment the market (size, sector, distance, cohort), each judge role-playing one named profile. The orchestrator assigns each judge a concrete scenario (occasion, cohort, season, incumbent supplier, budget pressure) and records it in the blind key; an unrecorded scenario cannot be re-judged, so the record is part of the round.
+Judges are cast from the operator's profiled buyer roster (where the operator runs SPAR, these are SPAR profiles): a main panel diversified across whatever dimensions segment the market, each judge role-playing one named profile. The orchestrator assigns each judge a concrete scenario (occasion, cohort, season, incumbent supplier, budget pressure) and records it in the blind key; an unrecorded scenario cannot be re-judged, so the record is part of the round.
 
-Judges return booking-grade verdicts: a ranking, what they would actually book, their own all-in cost including the expenses the product does not bill (transport being the classic), dealbreakers, and the one change that would win them. Verdicts are persisted verbatim in the run; scoring is rank points summed across the panel, wins counted as first places. Judge-estimated costs are the judge's own figures, a standing instrument caveat worth restating in every results document.
+Judges return booking-grade verdicts: a ranking, what they would actually book, their own all-in cost including the expenses the product does not bill but the buyer pays to use it, dealbreakers, and the one change that would win them. Verdicts are persisted verbatim in the run; scoring is rank points summed across the panel, wins counted as first places. Judge-estimated costs are the judge's own figures, a standing instrument caveat worth restating in every results document.
 
 Judges find defects authors cannot see in their own work; an arithmetic slip in a price floor is a typical catch. That alone pays for the panel.
 

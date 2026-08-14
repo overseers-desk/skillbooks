@@ -6,7 +6,7 @@ Adjudicate is where the run's human hours go, and it exists for one reason: an A
 
 Every product parameter is decided on a card, not carried in prose. A card shows:
 
-- the **prior values**: what old drafts, the interim definition, or local practice held;
+- the **prior values**: what old drafts, any earlier definition, or local practice held;
 - the **ruling**: the owner's decision;
 - a **provenance chip** on the value the ruling started from: *inherited* (copied with no market derivation), *anchored* (evidence fitted around a pre-held value), *derived* (traced from evidence independently), *radical* (a new decision that breaks the structure, not just the number). Compound chips are allowed and honest, and a card wearing *inherited* or *anchored* is the card to spend the most minutes on;
 - the **four boundary tests** the ruling survives: *opposite* (why not the opposite direction), *further* (why not further in the chosen direction), *joint* (proof it was decided together with its neighbours rather than one at a time), *buyer* (where one exists, a prediction against a named live buyer from the rival register's demand data);
@@ -14,7 +14,7 @@ Every product parameter is decided on a card, not carried in prose. A card shows
 
 ## The two legs
 
-A ruling is legitimate when it can name the demand evidence it answers and the capability that delivers it, both by citation: a finding number, a register section, a distributor note on one side; a standing capability record on the other. A card missing a leg is not ruled; the parameter stays open.
+A ruling is legitimate when it can name the demand evidence it answers and the capability that delivers it, both by citation: a finding number, a register section, a distributor note on one side; a standing capability record on the other. Where the operator keeps no capability records, Survey writes down the capability facts the run needs, so this leg has something to cite. A card missing a leg is not ruled; the parameter stays open.
 
 This bounds the phase on both sides. Over-ruling, decisions with no demand leg, is the owner guessing, and it costs the Game phase its inventiveness, because every ruled parameter is one the arms may not explore. Under-ruling leaves the million-dollar pen open. The card discipline makes both visible: the legs are written on the card, and an unruled parameter is listed as design freedom, on purpose.
 
