@@ -794,12 +794,20 @@ proc spar::validate_sender_block {cdata} {
 # Spec versioning
 #
 # campaign.yaml and segment.yaml each declare a top-level `version:` naming the
-# SPAR spec generation they conform to. The tool supports CURRENT_SPEC_VERSION;
-# data declaring a different version is refused (version_unsupported, error).
+# SPAR spec generation they conform to. The tool supports the generations in
+# SUPPORTED_SPEC_VERSIONS — a set, because a generation that changes one file
+# type leaves the other's number standing (spar-methodology.md "Versioning");
+# data declaring any other version is refused (version_unsupported, error).
 # Data with no version field is legacy/unstamped — a warning, not an error, so
 # instances that still validate clean keep running until they are stamped.
+# CURRENT_SPEC_VERSION is the newest supported generation, used for stamping
+# advice. Files at an older supported generation are lifted to the current
+# in-memory shape by the loader (spar-lib.tcl), so consumers read one shape.
 # ---------------------------------------------------------------------------
-namespace eval spar { variable CURRENT_SPEC_VERSION "2.0" }
+namespace eval spar {
+    variable CURRENT_SPEC_VERSION "2.1"
+    variable SUPPORTED_SPEC_VERSIONS {2.0 2.1}
+}
 
 # campaign_version / segment_version -- read the declared `version` from an
 # already-parsed campaign or segment dict; "" when absent. The field name is
@@ -845,16 +853,16 @@ proc spar::_pred_version_unstamped {node meta} {
         "$label has no version: field — treating as pre-$CURRENT_SPEC_VERSION (unstamped). Stamp it with version: \"$CURRENT_SPEC_VERSION\"."]]
 }
 
-# version_unsupported -- error when a non-empty declared version is not the one
-# this tool supports.
+# version_unsupported -- error when a non-empty declared version is outside
+# the supported set.
 proc spar::_pred_version_unsupported {node meta} {
-    variable CURRENT_SPEC_VERSION
+    variable SUPPORTED_SPEC_VERSIONS
     set ctx [dict get $meta context]
     set declared [dict getdef $ctx declared ""]
     set label [dict getdef $ctx label ""]
-    if {$declared eq "" || $declared eq $CURRENT_SPEC_VERSION} { return {} }
+    if {$declared eq "" || $declared in $SUPPORTED_SPEC_VERSIONS} { return {} }
     return [list [dict create message \
-        "$label declares spec version '$declared' but this tool supports $CURRENT_SPEC_VERSION. To bring a 1.0 instance up, run the migration in spar-version-uplift-runbook.md (1.0 → 2.0)."]]
+        "$label declares spec version '$declared' but this tool supports [join $SUPPORTED_SPEC_VERSIONS { and }]. spar-version-uplift-runbook.md names the uplift path from each older generation."]]
 }
 
 # validate_spec_version -- gate one declared version against CURRENT_SPEC_VERSION.
