@@ -174,6 +174,24 @@ proc spar::load_campaign {yaml_path} {
         }
     }
 
+    # fact_sources (spec 2.1) is a list of paths; resolve each entry the same
+    # way. A 2.0 file carries the single usp_document instead, lifted here into
+    # a one-entry fact_sources: every consumer reads the current spec's shape,
+    # and the version difference ends at the loader.
+    set fsrc {}
+    foreach val [dict getdef $data fact_sources {}] {
+        if {$val eq "" || $val eq "~" || $val eq "null"} { continue }
+        if {[string index $val 0] ne "/"} {
+            set val [file normalize [file join $base $val]]
+        }
+        lappend fsrc $val
+    }
+    if {[llength $fsrc] == 0 && [dict getdef $data usp_document ""] ne ""} {
+        set fsrc [list [dict get $data usp_document]]
+    }
+    dict set data fact_sources $fsrc
+    dict unset data usp_document
+
     # Validate prompt_appendices (closed vocabulary)
     if {[dict exists $data prompt_appendices]} {
         set app [dict get $data prompt_appendices]
