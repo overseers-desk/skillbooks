@@ -771,12 +771,12 @@ ${item_num}. Campaign principles: $campaign_principles — read the \"Profile-in
             }
             close $fd
 
-            set factcheck_files "Files to read:
-1. $campaign_file (the segments.$segment plan block and the usps registry — the authority for the campaign's claims)
-2. Fact sources — open one where a usps entry's rests_on names it, or to verify a claim the registry does not settle: [join $fact_sources {, }]"
+            set factcheck_files "Files:
+1. $campaign_file — read the segments.$segment plan block and the usps registry, the authority for the campaign's claims.
+2. Fact sources, to open only where a usps entry's rests_on names one: [join $fact_sources {, }]"
             if {$antifacts ne ""} {
                 append factcheck_files "
-3. $antifacts"
+3. Antifact checklist, read in full: $antifacts"
             }
 
             if {$antifacts ne "" || [llength $fact_sources] > 0} {

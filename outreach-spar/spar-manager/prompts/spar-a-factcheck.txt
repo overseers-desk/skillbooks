@@ -1,6 +1,6 @@
 ## Step 2: Fact-check (break character)
 
-Break character. Now read the following files and check every factual claim in the draft message against them. Flag any errors or claims that cannot be verified.
+Break character. Now check every factual claim in the draft message against the authority below. Flag any errors or claims that cannot be verified.
 
 __FACTCHECK_FILES__
 Do not flag drive-time or distance claims (e.g. "X minutes from Y"). These are approximate figures and do not need fact-check verification.
