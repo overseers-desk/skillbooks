@@ -239,15 +239,14 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
     set script_dir $::spar::dispatch_script_dir
     set spar_p [file normalize [file join $script_dir .. .. spar-P-profile.md]]
 
-    set overview [dict getdef $cdata usp_document ""]
     set antifacts [dict getdef $cdata antifacts ""]
     set appendices [dict getdef $cdata prompt_appendices [dict create]]
     set appendix_p_author [dict getdef $appendices p_author ""]
 
     # Limited-knowledge profiling (INVARIANTS.md I1): P reads only the roster
-    # and the segment definition. The campaign usp_document/overview is NOT a
-    # profiler input — it is campaign-bound (our pitch and our current facts),
-    # and feeding it is what let our facts seep into reusable profiles.
+    # and the segment definition. The campaign's fact_sources are NOT profiler
+    # inputs: they are campaign-bound (our pitch and our current facts),
+    # and feeding them is what let our facts seep into reusable profiles.
     foreach {path label} [list \
         $roster_path Roster $goal_path Goal $spar_p SPAR-P] {
         if {![file exists $path]} {
@@ -386,7 +385,6 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             __GOAL_PATH__     $goal_path \
             __CAMPAIGN_PATH__ $campaign_file \
             __SEGMENT_KEY__   $segment_name \
-            __OVERVIEW__      $overview \
             __ANTIFACTS_LINE__ $antifacts_line \
             __VENUE_LINE__    $venue_line \
             __OUTFILE__       $outfile \
@@ -525,7 +523,7 @@ proc spar::a::_build_prompts {opts on_progress} {
     set appendix_a_author [dict getdef $appendices a_author ""]
     set appendix_a_challenger [dict getdef $appendices a_challenger ""]
     set appendix_a_assembly [dict getdef $appendices a_assembly ""]
-    set overview [dict get $cdata usp_document]
+    set fact_sources [dict getdef $cdata fact_sources {}]
     set antifacts [dict getdef $cdata antifacts ""]
     set campaign_principles [dict getdef $cdata campaign_principles ""]
     set a_max_passes_ceiling [dict getdef $cdata a_max_passes 3]
@@ -545,8 +543,13 @@ proc spar::a::_build_prompts {opts on_progress} {
     if {![file exists $method]} {
         error "Method file not found: $method"
     }
-    if {![file exists $overview]} {
-        error "Overview file not found: $overview"
+    if {[llength $fact_sources] == 0} {
+        error "campaign.yaml names no fact_sources (2.0: usp_document) — A drafting needs the campaign's ground-truth documents"
+    }
+    foreach _fs $fact_sources {
+        if {![file exists $_fs]} {
+            error "Fact source not found: $_fs"
+        }
     }
     if {$antifacts ne "" && ![file exists $antifacts]} {
         error "Antifacts file not found: $antifacts"
@@ -721,7 +724,7 @@ s_note: $s_note"
             puts $fd "OUTFILE=$outfile"
             puts $fd "SEGMENT_DIR=$seg_dir"
             puts $fd "METHOD=$method"
-            puts $fd "OVERVIEW=$overview"
+            puts $fd "FACT_SOURCES=[join $fact_sources {, }]"
             puts $fd "ANTIFACTS=$antifacts"
             puts $fd "GOAL=$goal_path"
             puts $fd "CONTACT_SUMMARY=$name | $org | $segment"
@@ -738,7 +741,7 @@ s_note: $s_note"
             }
 
             set file_items "1. Method: $method — read §4.1 through §4.5 (warmth, channel, language, angle, draft). Skip §4.6 (spar) — that is handled separately.
-2. Organisation overview: $overview — read in full. This is the ground truth about the organisation. The campaign plan block (the segments.$segment block in $campaign_file) lists which USPs apply to this segment and whether each is functional or emotional. Use those USPs, do not invent your own from the overview.
+2. Fact sources: [join $fact_sources {, }] — read in full. These are the ground truth about the organisation and the offer. The campaign plan block (the segments.$segment block in $campaign_file) lists which USPs apply to this segment and whether each is functional or emotional. Use those USPs, do not invent your own from the sources.
 $profile_a1_instruction
 4. Campaign plan block: read the \"segments.$segment\" block in $campaign_file (campaign.yaml) — \"message_goal\" for the specific objective this message must achieve (e.g. secure a FAM visit, collect a roster expression of interest); \"objective\" for the long-term commercial goal, not what this message asks for; \"first_ask\" for approach style guidance; and the USP framings. If the block has subsegments, determine which applies to this contact and use its overrides where present. The segment file $goal_path holds only the population definition (discovery_criteria, rating_rubric)."
             set item_num 5
@@ -769,14 +772,14 @@ ${item_num}. Campaign principles: $campaign_principles — read the \"Profile-in
             close $fd
 
             set factcheck_files "Files to read:
-1. $overview
-2. $campaign_file (the segments.$segment plan block)"
+1. $campaign_file (the segments.$segment plan block and the usps registry — the authority for the campaign's claims)
+2. Fact sources — open one where a usps entry's rests_on names it, or to verify a claim the registry does not settle: [join $fact_sources {, }]"
             if {$antifacts ne ""} {
                 append factcheck_files "
 3. $antifacts"
             }
 
-            if {$antifacts ne "" || [file exists $overview]} {
+            if {$antifacts ne "" || [llength $fact_sources] > 0} {
                 set factcheck_section [string map [list \
                     __FACTCHECK_FILES__ $factcheck_files \
                 ] [spar::load_prompt_template spar-a-factcheck.txt]]
