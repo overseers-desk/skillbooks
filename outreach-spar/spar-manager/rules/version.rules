@@ -10,8 +10,9 @@
 # Call shape: the facts arrive via -context, so
 # the data argument is a throwaway root dict (may be {}):
 #   validate {} -groups {version} -context {declared <declared> label <label>}
-# The wrapper (validate_spec_version) stays thin around this; CURRENT_SPEC_
-# VERSION is the host constant the predicates read (spar::CURRENT_SPEC_VERSION).
+# The wrapper (validate_spec_version) stays thin around this; the predicates
+# read the host constants spar::CURRENT_SPEC_VERSION (stamping advice) and
+# spar::SUPPORTED_SPEC_VERSIONS (the accepted set).
 
 level root -keys {}
 
@@ -24,9 +25,9 @@ rule predicate root version_unstamped -severity warning -needs {declared label} 
     -groups {version}
 
 # version_unsupported: legacy 771-775. Error, emitted when declared is
-# non-empty and != CURRENT_SPEC_VERSION (predicate guards declared ne ""
-# first so the two are mutually exclusive, as in legacy). Builds:
-#   "<label> declares spec version '<declared>' but this tool supports <CURRENT>."
+# non-empty and outside SUPPORTED_SPEC_VERSIONS (predicate guards declared
+# ne "" first so the two are mutually exclusive, as in legacy). Builds:
+#   "<label> declares spec version '<declared>' but this tool supports <SUPPORTED set>."
 rule predicate root version_unsupported -severity error -needs {declared label} \
     -code version_unsupported \
     -message {declared spec version is not supported by this tool} \
