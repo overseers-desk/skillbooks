@@ -120,8 +120,8 @@ Repeat until the stop condition fires:
 7. **Drafting.** Only for `verified` candidates that returned `not_connected` at step 6.5.
 
    At session start (once, then cache in your working memory):
-   - Read `/home/alex/code/oldmill/overview.md`.
-   - Read `/home/alex/code/palacioexample-street.com/docs/overview.md`.
+   - Read `~/code/oldmill/overview.md`.
+   - Read `~/code/palacioexample-street.com/docs/overview.md`.
    - Note: Example Street is in validation posture, not booking pitch. The
      overview file is explicit on the framing the message must carry.
 
