@@ -3,17 +3,102 @@
 # actually produces useful results. This file is a living resource, not a spec.
 #
 # productivity: how useful this query has been historically (high/medium/low/untested)
+#
+# Last revised: 2026-08-17 sweep (window 17 Aug to 31 Dec 2026, 101 events recorded).
+
+# ── How to search, learned the hard way ──────────────────────────
+# Read this before spending queries. Most of a sweep's wasted effort in
+# 2026-08 went on problems this section now names.
+technique:
+
+  - rule: Budget the built-in web search.
+    detail: >
+      A session carries roughly 200 WebSearch calls and subagents draw on the
+      same pool, so six parallel researchers exhaust it in under ten minutes.
+      Spend search on discovering that an event exists, then switch to fetching
+      the official domain directly for dates, prices and deadlines. The
+      brave-search skill is the fallback once the built-in budget is gone.
+
+  - rule: Fetch the domain, do not search the name.
+    detail: >
+      Event names collide constantly. Two unrelated things called "AI Summit
+      Europe" (Milan in February at aisummiteu.com, Vilnius in November at
+      aisummiteurope.eu); two "Vilnius AI Summit"; two Maker Faire Rome weeks
+      (March AI & Tech Week, October European Edition); aisummitbrussels.com in
+      May is not the December "International AI Summit" at
+      global-aiconference.com. Resolve on the domain every time.
+
+  - rule: Sessionize and the ticket platform outrank the marketing page.
+    detail: >
+      AI Engineer Paris still invited CFP applications on its own site after the
+      Sessionize CFP had closed on 31 July. Something Fest's homepage and its
+      Eventbrite disagreed on the day split. Where a marketing page and the
+      system that actually runs the thing disagree, believe the system.
+
+  - rule: Search the registration window, not the event date.
+    detail: >
+      Trade events close their trading floor months ahead. In this window ATEC
+      Meeting Place seller registration closed 19 July for a 26 October event,
+      and G'day Australia closed 8 June for 13 October. Both were already shut
+      when the sweep ran. For any B2B or hosted-buyer event, find the
+      registration deadline first and treat the event date as secondary.
+
+  - rule: Check whether the domain still belongs to the event.
+    detail: >
+      qodebrisbane.com now serves an online casino, investors.asn.au redirects
+      to an unrelated fintech lender, techbbq.com is parked for sale (the live
+      site is techbbq.dk), and gitex.africa is parked. A confident-looking answer
+      built on a lapsed domain is worse than no answer.
+
+  - rule: Watch for renames and relocations between years.
+    detail: >
+      Italian Tech Week is now Wave by Vento. SuperVenture is now SuperReturn
+      Venture and moved London to Berlin. StartmeupHK merged into Hong Kong
+      FinTech Week. Hello Tomorrow moved Paris to Amsterdam permanently. GITEX
+      Global moved from October to December for 2026. Lisbon AI Week moved from
+      October to September. Searching last year's name or slot finds nothing, or
+      worse, finds a stale listing.
+
+  - rule: Exclude conference mills.
+    detail: >
+      allconferencealert, conferencealerts, mindspaceconferences and
+      vartusconferences generate plausible-looking "International Conference on
+      AI" listings for any city and month. They are pay-to-present operations.
+      Discard them rather than recording them.
+
+  - rule: Prior-year figures get reused as this-year projections.
+    detail: >
+      ai-PULSE, Adopt AI Summit, BIG by Bpifrance, Oslo Innovation Week and
+      Zurich AI Festival all publish last edition's attendance in the present
+      tense. Some label it, most do not. Treat any round number without a year
+      attached as prior-year and widen the estimate range accordingly.
 
 keywords:
 
   # ── AI + speaking ──────────────────────────────────────────
   - query: "AI conference Europe 2026 speaking opportunity"
     surfaces: EU AI events with open speaker calls
+    productivity: medium
+    note: >
+      Downgraded from high. Broad enough that it mostly returns aggregators.
+      The open CFPs in this window were found by fetching sessionize.com
+      organiser pages and by reading co-located event federations, not by this.
+
+  - query: "sessionize.com <event name> <year>"
+    surfaces: authoritative CFP open/closed status, deadline, slot lengths, speaker perks
     productivity: high
+    note: >
+      The single highest-yield speaking query. Sessionize states the closing
+      timestamp and timezone, whether travel is reimbursed, and the track list.
+      Also try cfpwatch.dev for deadline aggregation across events.
 
   - query: "AI summit Spain 2026"
     surfaces: Spain-native AI events
     productivity: high
+    note: >
+      For Andalusia specifically, juntadeandalucia.es press releases carried the
+      2026 AI congress dates months before the event's own site was updated.
+      Regional government newsrooms beat regional event sites.
 
   - query: "AI conference Singapore 2026"
     surfaces: Singapore AI events
@@ -22,19 +107,91 @@ keywords:
   - query: "AI conference London Paris 2026"
     surfaces: proximity destination AI events
     productivity: high
+    note: >
+      Paris is the densest AI city in the window by a wide margin: Big Data & AI
+      Paris, dotAI, AI Engineer Paris, ai-PULSE, the CNIT Forest December
+      federation and Adopt AI Summit. Search Paris on its own rather than paired.
 
   - query: "AI conference Rome Milan 2026"
     surfaces: Italy proximity AI events
+    productivity: low
+    note: >
+      Downgraded from medium. Rome produced nothing dated in the window except
+      Rome Future Week and Maker Faire; the rest were conference-mill listings.
+      Rome Future Week's open call to run your own event is the real find here.
+
+  # ── AI companies and research labs ─────────────────────────
+  # This branch was absent from the ledger before 2026-08 and is now the most
+  # reliable route to the ai_company_engagement pull event.
+  - query: "anthropic.com/events"
+    surfaces: Claude Founder Houses and lab-run founder or developer days
+    productivity: high
+    note: >
+      Fetch the page directly and ask for every row with its date, city and
+      link. The page sorts newest-first, so later pages are older, not further
+      ahead. Applications for the London founder house had already closed when
+      this sweep ran, so check monthly rather than per-sweep.
+
+  - query: "devday.openai.com"
+    surfaces: OpenAI DevDay and the regional DevDay Exchange editions
+    productivity: high
+    note: >
+      The Exchange editions (Paris, London, Berlin, Tokyo, Seoul, Bengaluru,
+      São Paulo, Mexico City) are the reachable ones. Dates were unannounced in
+      August 2026; the flagship's in-person applications had already closed.
+
+  - query: "ai.engineer partner conferences"
+    surfaces: every AI Engineer edition worldwide on one page
+    productivity: high
+    note: >
+      One fetch of the hub returned Paris, Shanghai, Sydney and the US editions
+      with dates. The Sydney edition is run by Web Directions at
+      webdirections.org/ai-engineer and aiweek.com.au, which carry the CFP,
+      pricing ladder and the co-located AI Investor day.
+
+  - query: "nvidia.com/en-eu/gtc"
+    surfaces: the European GTC edition and its dates
     productivity: medium
+    note: >
+      The autumn 2026 European GTC is Berlin, 20-22 Oct. The other European
+      appearance was a June keynote inside VivaTech, so "GTC Paris" is a
+      misleading search.
+
+  - query: "neurips.cc"
+    surfaces: NeurIPS location, satellite sites and the deadlines still open
+    productivity: high
+    note: >
+      NeurIPS 2026 main site is Sydney, 6-12 Dec, with Atlanta and Paris
+      satellites 9-13 Dec. Worth checking every year: the location moves and it
+      collided with AI Week Sydney this time.
 
   # ── Angel investing + fund raising ─────────────────────────
   - query: "angel investor meetup Europe 2026"
     surfaces: European angel investor calendar
+    productivity: medium
+    note: >
+      Downgraded from high. Returns institutional LP/GP conferences (SuperReturn,
+      IPEM, 0100, Invest Europe) far more often than angel events. Add "business
+      angel" or the national angel body's name to filter those out.
+
+  - query: "<country> business angel association events 2026"
+    surfaces: national angel bodies, which run the actual angel rooms
     productivity: high
+    note: >
+      This is the query that works where the generic one does not. UKBAA (UK),
+      BIGBAN and AEBAN (Spain), BAND (Germany), France Angels, EBAN (Europe),
+      AngelCentral (Singapore). Their own events pages carry dated pitch nights
+      and summits that no aggregator lists.
 
   - query: "angel investor event Australia 2026"
     surfaces: Australian angel investor events
-    productivity: medium
+    productivity: low
+    note: >
+      Downgraded from medium. Sydney Angels publishes only members-only screening
+      dates; Brisbane Angels' events page 404s; Melbourne Angels had nothing
+      after August. The productive Australian finds came from accelerator and
+      hub calendars instead: cohortspace.com.au, cicadainnovations.com,
+      cbrin.com.au, gchub.com.au, ventures.uq.edu.au.
 
   - query: "startup fund raising event Europe 2026"
     surfaces: fund-raising opportunities
@@ -47,110 +204,289 @@ keywords:
   - query: "startup pitch investor Gold Coast Brisbane 2026"
     surfaces: Australia base investor events
     productivity: medium
+    note: >
+      Found InvestFest (Gold Coast, 5-6 Nov, 30 investors and 175 one-to-one VC
+      meetings), which is the best investor-meeting ratio anywhere in the file.
+      QODE Brisbane appears discontinued and its domain has lapsed.
 
   - query: "angel investor forum meetup China 2026"
     surfaces: China-leg events
-    productivity: untested
+    productivity: medium
+    note: >
+      Upgraded from untested. The productive route is the China Hi-Tech Fair
+      投融资对接会 investor matchmaking track at chtf.com, which runs vetted 1:1
+      meetings behind an accreditation form with a hard November deadline. Also
+      check cvcf.cyberport.hk for Hong Kong, though Cloudflare blocks fetching.
 
   - query: "EBAN Congress 2026"
     surfaces: angel network congress updates
     productivity: high
+    note: >
+      Returns the June Congress only. See the separate autumn entry below.
+
+  - query: "European Angel Investment Summit EBAN autumn 2026"
+    surfaces: EBAN's October summit, distinct from the June Congress
+    productivity: high
+    note: >
+      Confirmed again this sweep. europeanangelsummit.com redirects to
+      events.venture-days.lu, because the 2026 edition is run jointly with
+      Luxembourg Venture Days. Searching "EBAN Congress" alone still misses it.
 
   # ── Tourism + tech ─────────────────────────────────────────
   - query: "Tourism Innovation Summit 2026"
     surfaces: tourism + tech overlap
     productivity: high
+    note: >
+      Still the single best fit in the file: 79 km from home, AI-framed for 2026,
+      with the Touristech Startup Fest pitching 40 finalists to VCs and a live
+      call for speakers.
 
   - query: "tourism AI technology conference 2026"
     surfaces: tourism + AI overlap globally
     productivity: low
-    note: too generic; better with specific region
+    note: >
+      Unchanged: too generic, better with a specific region. The one thing it is
+      good for is spotting themes, for example UN Tourism's 2026 World Tourism
+      Day theme being AI and the digital agenda.
 
-  # ── Broader tech + startup ─────────────────────────────────
-  - query: "VivaTech Paris 2026"
-    surfaces: Paris mega tech event with investor focus
+  - query: "<tourism body> convention 2026 call for speakers"
+    surfaces: tourism audiences explicitly asking for AI speakers
     productivity: high
-
-  - query: "London Tech Week 2026 angel investor startup"
-    surfaces: London Tech Week investor-adjacent events
-    productivity: high
-
-  - query: "Sifted Summit 2026 London startup investor"
-    surfaces: European startup/VC summit
-    productivity: high
-
-  - query: "Web Summit Lisbon 2026"
-    surfaces: largest European tech conference
-    productivity: medium
-    note: huge but generic; useful for ALPHA startup programme
-
-  - query: "Echelon Asia Summit Singapore 2026"
-    surfaces: SE Asia startup + investor event
-    productivity: high
-
-  - query: "SWITCH Singapore 2026 Singapore Week of Innovation and Technology dates"
-    surfaces: Singapore's flagship innovation week and its SLINGSHOT pitch competition
-    productivity: high
-
-  - query: "TOKEN2049 Singapore 2026 dates"
-    surfaces: Singapore crypto/Web3 week and the investor side-event cluster around it
-    productivity: high
-
-  - query: "Tech Week Singapore 2026 Big Data AI World Asia dates"
-    surfaces: Singapore enterprise AI trade show
-    productivity: medium
-
-  - query: "Milken Institute Asia Summit 2026 Singapore dates"
-    surfaces: capital-allocator summit in Singapore
-    productivity: medium
-    note: invitation-gated, so a hit does not mean access
-
-  - query: "Singapore FinTech Festival 2026 dates"
-    surfaces: the November Singapore anchor event
-    productivity: high
-
-  - query: "European Angel Investment Summit EBAN autumn 2026"
-    surfaces: EBAN's October summit, distinct from the June Congress
-    productivity: high
-    note: searching "EBAN Congress" alone misses this one
-
-  - query: "Slush 2026 Helsinki dates"
-    surfaces: Nordic founder/investor event
-    productivity: medium
+    note: >
+      New and productive. The Australian Regional Tourism Convention's speaker
+      EOI names "Technology and AI" in its wanted-topics list with no deadline,
+      which is the best topical match for speaking anywhere in the window. Peak
+      industry bodies want this content and rarely get it.
 
   - query: "ATEC Meeting Place 2026 dates"
     surfaces: Australian inbound tourism trade event
     productivity: medium
-    note: registration shuts months ahead — search for the registration window, not the event date
+    note: >
+      The existing warning proved correct and should be read as a rule, not a
+      caution: seller registration closed 19 July for a 26-28 October event, so
+      the trading floor was shut a month before this sweep. Same for G'day
+      Australia (closed 8 June). Search "<event> seller registration deadline".
+      ATE 2027 in Sydney is 16-20 May 2027 and its national registration has
+      historically opened in the October of the preceding year, so it should
+      open inside this window.
+
+  # ── Broader tech + startup ─────────────────────────────────
+  - query: "VivaTech Paris 2026"
+    surfaces: Paris mega tech event with investor focus
+    productivity: low
+    note: >
+      Downgraded from high for autumn sweeps: VivaTech is 17-20 June and never
+      falls in an Aug-Dec window. Keep the query for spring sweeps only.
+
+  - query: "London Tech Week 2026 angel investor startup"
+    surfaces: London Tech Week investor-adjacent events
+    productivity: low
+    note: >
+      Downgraded from high for the same reason: London Tech Week is 8-12 June.
+      The autumn London finds were UKBAA's November summit, Sifted Summit and
+      droidCon's December CFP, none of which this query returns.
+
+  - query: "Sifted Summit 2026 London startup investor"
+    surfaces: European startup/VC summit
+    productivity: high
+    note: >
+      2026 moved to 30 Sep-1 Oct at Protein Studios, Shoreditch. Aggregators are
+      still circulating the 2025 dates and venue (7-8 Oct, Magazine London).
+
+  - query: "Web Summit Lisbon 2026"
+    surfaces: largest European tech conference
+    productivity: high
+    note: >
+      Upgraded from medium. Lisbon is 349 km from Jerez, inside the base radius,
+      which makes this a domestic-scale trip rather than a journey. The free
+      application-gated investor ticket is the thing to find; go straight to
+      websummit.com/tickets/investors rather than the homepage.
+
+  - query: "Slush 2026 Helsinki dates"
+    surfaces: Nordic founder/investor event
+    productivity: high
+    note: >
+      Upgraded from medium. 3,300 investors, a 25-minute Meeting Tool, and Slush
+      100 offering EUR 500,000 at zero equity with applications closing 7 Sep.
+      The strongest fundraising mechanism in the window despite the distance.
+
+  - query: "Bits & Pretzels Munich 2026 investor matchmaking"
+    surfaces: the richest named investor-matching machinery in Europe
+    productivity: high
+    note: >
+      New. What the organisers call a "Data-Driven Matchmaking Engine", 70+ human matchmakers, First Investment
+      Speeddating, LP roundtables and the Golden Pretzel award where 20 angels
+      present portfolio companies. 1,700+ GPs and 300+ institutional LPs.
+
+  - query: "Echelon Asia Summit Singapore 2026"
+    surfaces: SE Asia startup + investor event
+    productivity: low
+    note: >
+      Downgraded from high: Echelon 2026 ran 3-4 June and sold out. Spring query
+      only. Its autumn equivalent for enterprise AI is the Tech in Asia
+      Conference, 15-16 Sep.
+
+  - query: "SWITCH Singapore 2026 Singapore Week of Innovation and Technology dates"
+    surfaces: Singapore's flagship innovation week and its SLINGSHOT pitch competition
+    productivity: high
+    note: >
+      27-29 Oct, free attendee pass. Caution: the SWITCH homepage and the Agorize
+      platform that actually runs SLINGSHOT publish different closing dates
+      (30 June versus 27 July plus a 17 August video round). Trust Agorize.
+
+  - query: "TOKEN2049 Singapore 2026 dates"
+    surfaces: Singapore crypto/Web3 week and the investor side-event cluster around it
+    productivity: high
+    note: >
+      7-8 Oct, with TOKEN2049 Week 5-11 Oct carrying a reported 1,000+ side
+      events. The subject matches no stated interest, but the week is the densest
+      investor concentration in the window. NEXUS applications close 14 Sep and
+      its jury can make investment offers outside the prize.
+
+  - query: "Tech Week Singapore 2026 Big Data AI World Asia dates"
+    surfaces: Singapore enterprise AI trade show
+    productivity: medium
+    note: >
+      29-30 Sep. The show itself is the excluded enterprise-trade-show category,
+      but its mainstage speaker application is open with no deadline, which makes
+      it one of the more accessible AI stages in the window. Search it for the
+      CFP, not for the content.
+
+  - query: "Milken Institute Asia Summit 2026 Singapore dates"
+    surfaces: capital-allocator summit in Singapore
+    productivity: medium
+    note: >
+      7-9 Oct, and the 2026 factsheet adds a track on AI innovation, investment
+      and sovereignty. Still invitation-gated with no published price, so a hit
+      does not mean access. Unchanged judgement.
+
+  - query: "Singapore FinTech Festival 2026 dates"
+    surfaces: the November Singapore anchor event
+    productivity: high
+    note: >
+      18-20 Nov. Investor Hours are curated 1:1s with VCs and SFF MeetUp books up
+      to 20 double-opt-in meetings. The Global FinTech Hackcelerator deadline
+      moves and was extended to 21 Aug this year, so check it early.
+
+  - query: "SuperReturn Asia 2026 Singapore"
+    surfaces: the largest concentration of institutional capital in the window
+    productivity: medium
+    note: >
+      New. 28 Sep-1 Oct, 1,200+ LPs with USD 20trn AUM. Free LP passes exist but
+      require qualifying as an institutional allocator, so this is the wrong room
+      for an angel or early-stage raise however large it is.
 
   - query: "lu.ma <city> <topic> <month year>"
     surfaces: meetup-scale AI and investor side events, especially the Singapore October week
     productivity: high
     note: >
-      Restrict web search to luma.com; listing and calendar pages render dates client-side so a
-      plain fetch loses them, but individual event pages carry date, venue and host. For a whole
-      city calendar, dump the rendered page with the serialised-browsing skill if available.
+      Restrict web search to luma.com; listing and calendar pages render dates
+      client-side so a plain fetch loses them, but individual event pages carry
+      date, venue and host. Confirmed again in 2026-08: luma.com/ai returned no
+      dated events, while named organiser calendars worked, notably
+      lu.ma/lorong-ai (the most active Singapore AI community) and
+      lu.ma/singapore-demo-nights. For a whole city calendar, dump the rendered
+      page with the serialised-browsing skill if available.
+
+  - query: "sginnovate.com/events"
+    surfaces: dated, free, investor-facing Singapore events with named VCs
+    productivity: high
+    note: >
+      New and unusually high-yield. Government-backed, so pages render plainly
+      and carry real dates: Morning Pitch Asia with Wavemaker, the Shanghai
+      Pudong demo day, Founder Institute fireside with Golden Gate Ventures.
+      Mostly free.
 
   - query: "ai-PULSE 2026 Paris Station F"
     surfaces: focused AI practitioner event
     productivity: medium
+    note: >
+      13 Oct. Note that registration is application-based rather than open sale,
+      and applying does not guarantee a seat; rejected applicants get a stream.
+
+  - query: "apidays CNIT Forest Paris December call for speakers"
+    surfaces: three open AI CFPs co-located in one Paris venue in one week
+    productivity: high
+    note: >
+      New and the best speaking find of the sweep. GenerationAI Paris (rolling),
+      MCP Paris / ContextCon (closes 30 Sep) and Cloud Native AI Summit Europe
+      (closes 18 Sep) share CNIT Forest, La Defense, 1-3 Dec, and one ticket
+      covers several. Adopt AI Summit at the Grand Palais follows on 3-4 Dec.
 
   - query: "Gartner IT Symposium Gold Coast 2026"
     surfaces: enterprise IT event on home base
     productivity: medium
+    note: >
+      14-16 Sep, 1,500+ CIOs. Gartner blocks automated fetching, so pricing has
+      to come from their newsroom releases. Aggregators had the wrong month.
+
+  - query: "Something Fest Brisbane 2026"
+    surfaces: the Brisbane startup and tech festival that replaced QODE
+    productivity: medium
+    note: >
+      New. 24-28 Aug at Brisbane City Hall with a River Rival pitch finale.
+      Worth a standing entry because it is 71 km from the Australian base and
+      QODE Brisbane, the old answer to this query, is gone.
 
   # ── Georgia ───────────────────────────────────────────────
   - query: "AI conference Georgia Tbilisi 2026"
     surfaces: Georgia tech events
     productivity: medium
-    note: found Global Tech Weekend Tbilisi
+    note: >
+      Global Tech Weekend is June, so it is out of range for autumn sweeps; the
+      2026 sequence continues with GTW Baku in October. The autumn Tbilisi finds
+      were the AI for Georgia Summit (30-31 Oct, priced investor pass and an open
+      speaker call) and the Tbilisi Finance Summit (27-28 Oct). The Silk Road
+      Forum is biennial and next runs in 2027. events.gita.gov.ge refused
+      connections and Impact Hub Tbilisi publishes mainly via Facebook.
 
   # ── Academic AI in Spain ──────────────────────────────────
   - query: "IEEE CAI 2026 Granada Spain"
     surfaces: academic AI conferences in Andalusia
-    productivity: medium
+    productivity: low
+    note: >
+      Downgraded from medium. The Spanish academic AI calendar in this window is
+      CAEPIA (Jaen, 11-13 Nov) and IberSPEECH (Madrid, 18-20 Nov), neither found
+      by this query. Search "AEPIA" and the host university instead. IJCAI-ECAI
+      2026 was Bremen, not Spain.
 
   # ── Personal / cultural ────────────────────────────────────
   - query: "equestrian event Spain Andalusia 2026"
     surfaces: horse riding events near home base
     productivity: medium
+    note: >
+      The reliable sources are sunshinetour.net's calendar page for Montenmedio
+      fixtures, sicab.org for the November Seville show, and jerez.es plus
+      turismojerez.com for the home-city calendar. rfhe.com hides its national
+      championship calendar behind a competition-management system, which is why
+      the doma vaquera championship's move from Coin to Dos Hermanas could not be
+      confirmed. Golega's Feira Nacional do Cavalo (6-15 Nov) pairs with a Lisbon
+      trip and is 366 km from Jerez.
+
+  - query: "festival iberoamericano cine teatro Espana 2026"
+    surfaces: Latin American cultural events in Spain
+    productivity: high
+    note: >
+      New. culture_latino carries salience "always" in almanac.yaml, unlike the
+      two region-bound cultural interests, so it applies without interpretation.
+      Productive finds: Festival de Huelva de Cine Iberoamericano (13-21 Nov,
+      150 km), Festival Iberoamericano de Teatro de Cadiz (14-24 Oct, 23 km) and
+      Casa de America's free Madrid programming. Note fitdecadiz.org still shows
+      the 2025 edition, so its dates rest on one source.
+
+# ── Checked and empty, so that later sweeps do not re-cover the ground ──
+# Recorded for the 17 Aug to 31 Dec 2026 window specifically. Re-test in a
+# different window rather than treating these as permanently dead.
+negative_results:
+  - "SXSW Sydney: cancelled for 2026 and 2027. Resale pages advertising 12-19 October 2026 are stale scrapes."
+  - "Global AI Summit / GAIN Riyadh: moved on 6 Aug 2026 from Sept 2026 out to 7-9 Sept 2027. Most listing sites still show the old dates."
+  - "Singapore in December: genuinely empty at conference scale. The regional December weight is Dubai, Seoul, Kuala Lumpur and Sydney."
+  - "Tokyo: no dated AI, startup or investor event of scale in the window. Academic only."
+  - "Alhambra Venture Granada: their published 2026 calendar ends 8-10 July. Nothing after 17 August."
+  - "Keiretsu Forum Spain: no in-scope physical forum date published for autumn. Re-check in September."
+  - "enlightED Madrid: no 2026 edition found in any live source. Possibly discontinued."
+  - "Cordoba, Cadiz and Jerez professional events: nothing in range. Every 'Foro de Inversiones Cordoba' hit is Cordoba, Argentina."
+  - "Malaga after Greencities (15-16 Sep): thin. TechPark and Polo Digital publish piecemeal with no forward calendar."
+  - "Athens and Stockholm: no AI or startup event confirmed in the window."
+  - "Baidu World and Tencent Global Digital Ecosystem Summit: no announced 2026 dates; both sites serve prior-year content."
+  - "BANSEA and XA Network (Singapore): invitation-only, no public dated events. BANSEA's public calendar last updated 2021."
