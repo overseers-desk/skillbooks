@@ -4,7 +4,7 @@
 
 **Relationship to other SOPs**:
 - Orchestrated by: `sop-travel-master.md`
-- Consumed by: `sop-twinyo-analysis.md` (for date-specific constraint analysis), `sop-itinerary-management.md` (for activity selection)
+- Consumed by: `sop-twinyo.md` (for date-specific constraint analysis), `sop-itinerary-management.md` (for activity selection)
 - Input: Journey folder with transport/accommodation bookings
 - Output: `build/research/[destination]-cluster.md`
 
@@ -78,7 +78,7 @@ Each document contains:
 5. **Transport mode recommendation**: Car vs public transport
 
 **Each output file is consumed by:**
-1. `sop-twinyo-analysis.md` - for date-specific constraint analysis and opportunity discovery
+1. `sop-twinyo.md` - for date-specific constraint analysis and opportunity discovery
 2. `sop-itinerary-management.md` - for activity selection and scheduling
 
 ---
@@ -215,7 +215,7 @@ Based on cluster geography, conclude:
 
 Limited-time seasonal events should be prioritised as they define unique opportunities that won't exist on other trips.
 
-**Scope Boundary**: This phase documents event PATTERNS and typical schedules (e.g., "Christmas markets typically Nov 25 - Dec 23", "Vienna Silvesterpfad Dec 31 annually"). Date-specific verification (is this event actually happening on Dec 31 2025? At what times?) is performed by `sop-twinyo-analysis.md`.
+**Scope Boundary**: This phase documents event PATTERNS and typical schedules (e.g., "Christmas markets typically Nov 25 - Dec 23", "Vienna Silvesterpfad Dec 31 annually"). Date-specific verification (is this event actually happening on Dec 31 2025? At what times?) is performed by `sop-twinyo.md`.
 
 **4.1 Check Major Seasonal Events**
 
@@ -277,7 +277,7 @@ For each destination, create an events section:
 
 For each destination in the cluster (including day trips and rebase candidates), research what it offers.
 
-**Scope Boundary**: This phase documents operating PATTERNS (e.g., "Closed Mondays", "Opens 10:00-18:00 Nov-Mar"). Date-specific mapping (Dec 29 = Monday = CLOSED, Jan 1 = holiday = reduced hours) is performed by `sop-twinyo-analysis.md`.
+**Scope Boundary**: This phase documents operating PATTERNS (e.g., "Closed Mondays", "Opens 10:00-18:00 Nov-Mar"). Date-specific mapping (Dec 29 = Monday = CLOSED, Jan 1 = holiday = reduced hours) is performed by `sop-twinyo.md`.
 
 **5.1 Attraction Categories**
 
@@ -479,7 +479,7 @@ Where `[destination]` is the primary city name in lowercase (e.g., `edinburgh-cl
 For a multi-city journey, run this SOP once per destination segment.
 
 Each file is consumed by:
-1. `sop-twinyo-analysis.md` - for date-specific constraint analysis and opportunity discovery
+1. `sop-twinyo.md` - for date-specific constraint analysis and opportunity discovery
 2. `sop-itinerary-management.md` - for activity selection when building the itinerary
 
 ---

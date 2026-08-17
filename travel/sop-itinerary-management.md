@@ -6,7 +6,7 @@
 - Orchestrated by: `sop-travel-master.md`
 - Depends on: `build/extraction/*.yaml` (from `sop-booking-extraction.md`)
 - Depends on: `build/research/[destination]-cluster.md` (from `sop-cluster-research.md`)
-- Depends on: `build/research/[journey]-twinyo.md` (from `sop-twinyo-analysis.md`) - constraint analysis and recommended strategy
+- Depends on: `build/research/[journey]-twinyo.md` (from `sop-twinyo.md`) - constraint analysis and recommended strategy
 - Validated by: `sop-mental-journey-simulation.md`
 
 ## Purpose Statement
@@ -64,7 +64,7 @@ This SOP applies to the creation, planning, evaluation, and documentation of tra
 
 **Boundaries:**
 
-- This SOP is **NOT** for file organisation or naming. For folder structure verification, file naming conventions, and email synchronisation, see the Travel Admin Folder Management SOP (`travel-admin-folder-management.md`).
+- This SOP is **NOT** for file organisation or naming. For folder structure verification, file naming conventions, and email synchronisation, see the Travel Admin Folder Management SOP (`sop-travel-folder-management.md`).
 - This SOP **CAN** recommend bookings. When gaps are identified, the procedure suggests what needs to be booked and provides guidance on options, formatted as: "To book this, you need to do X. There are certain options: A, B, C..." with considerations for each option.
 - This SOP is **NOT** for making bookings. It does not prescribe the actual booking process or actions.
 
@@ -76,7 +76,7 @@ Before executing this SOP, ensure folder management is complete:
 2. Email confirmations have been synchronised with folder contents
 3. Reimbursement documents are properly categorised
 
-The folder management SOP (`travel-admin-folder-management.md`) must be completed first, as itinerary management depends on well-organised, correctly named files.
+The folder management SOP (`sop-travel-folder-management.md`) must be completed first, as itinerary management depends on well-organised, correctly named files.
 
 ## Journey Folders
 
@@ -119,7 +119,7 @@ This SOP assumes the folder management SOP has already been executed and the jou
 
 0. **Prerequisites Check**: Verify upstream outputs exist before starting
    - `build/research/[destination]-cluster.md` (from `sop-cluster-research.md`)
-   - `build/research/[journey]-twinyo.md` (from `sop-twinyo-analysis.md`) - if complex scenario
+   - `build/research/[journey]-twinyo.md` (from `sop-twinyo.md`) - if complex scenario
    - If prerequisites missing, run upstream SOPs first
 
 1. **Itinerary Creation and Planning** (Procedure 1): Create or update travel plans with activity recommendations, accommodation selection, and child-specific considerations when applicable
@@ -138,7 +138,7 @@ This RUN is typically triggered after folder management RUN completes, or separa
 
 **TWINYO Integration (When Required):**
 
-For complex scenarios, the TWINYO analysis SOP ([`sop-twinyo-analysis.md`](sop-twinyo-analysis.md)) should be executed BEFORE this RUN:
+For complex scenarios, the TWINYO analysis SOP ([`sop-twinyo.md`](sop-twinyo.md)) should be executed BEFORE this RUN:
 
 **Require TWINYO when:**
 - Peak travel periods (New Year's, Christmas, summer holidays)
@@ -398,7 +398,7 @@ This will extract text including flight numbers, departure times, arrival times,
 
 **Input**: 
 - `build/research/[destination]-cluster.md` (from `sop-cluster-research.md`) - attractions inventory, operating patterns
-- `build/research/[journey]-twinyo.md` (from `sop-twinyo-analysis.md`) - date-specific availability, discovered opportunities, recommended strategy
+- `build/research/[journey]-twinyo.md` (from `sop-twinyo.md`) - date-specific availability, discovered opportunities, recommended strategy
 
 **TWINYO Integration (Critical)**:
 
