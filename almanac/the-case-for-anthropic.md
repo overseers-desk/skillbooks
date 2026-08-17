@@ -22,7 +22,7 @@ A meetup has no speaking-slot branch. A cultural event near the home base needs 
 
 ### Subagent delegation maps naturally to tool calls
 
-The accommodation feasibility check — querying whether an IHG Platinum or Marriott Gold property near the conference city has family suites available on the relevant dates — is a well-defined subtask with clear inputs and outputs. In the orchestrator pattern, it is a tool: `check_accommodation_feasibility(city, dates, loyalty_programs, party_size)`. The orchestrator calls it when it judges the check is relevant, reads the structured result, and incorporates it into the event score. No graph wiring is needed to connect this capability; it is available whenever the orchestrator needs it.
+The accommodation feasibility check, querying whether a property in the user's loyalty programmes near the conference city has suitable rooms available on the relevant dates, is a well-defined subtask with clear inputs and outputs. In the orchestrator pattern, it is a tool: `check_accommodation_feasibility(city, dates, loyalty_programs, party_size)`. The orchestrator calls it when it judges the check is relevant, reads the structured result, and incorporates it into the event score. No graph wiring is needed to connect this capability; it is available whenever the orchestrator needs it.
 
 ### The existing system already follows this pattern
 

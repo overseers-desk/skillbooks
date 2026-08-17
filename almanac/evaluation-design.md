@@ -10,7 +10,7 @@ Vector-based, not a single composite score. Each event is scored on multiple ind
 
 ### Clustering
 
-Clusters are identified by the orchestrator's judgment, not a deterministic algorithm. The reference scale is Gold Coast–Brisbane: cities close enough in geography and time to combine into a single trip. The orchestrator decides which events can be clustered based on proximity and date overlap.
+Clusters are identified by the orchestrator's judgment, not a deterministic algorithm. The reference scale is each base's `cluster_radius_km` in `profile.yaml`: cities close enough in geography and time to combine into a single trip, which differs by base and by how the user travels. The orchestrator decides which events can be clustered from proximity and date overlap.
 
 ### Speaking-opportunity tool behaviour
 
@@ -36,7 +36,7 @@ Are these the right axes, or is a different decomposition needed?
 
 ### 2. Accommodation tool
 
-IHG and Marriott do not offer simple public APIs for availability lookups. Options under consideration:
+Hotel loyalty programmes do not generally offer simple public APIs for availability lookups. Options under consideration:
 
 - **Headless browser** against loyalty programme booking pages (fragile, slow, but answers the actual question)
 - **Web search heuristic** — search for "[loyalty brand] hotel [city]" to confirm properties exist near the venue, without checking live availability for specific dates
@@ -47,8 +47,8 @@ IHG and Marriott do not offer simple public APIs for availability lookups. Optio
 
 Where the evaluation results are written:
 
-- **New fields in `events/2026.yaml`** (e.g. `evaluation.scores`, `evaluation.recommendation`) — keeps everything in one file, visible in diffs
-- **A separate report file** (e.g. `events/2026-evaluation.yaml` or `.md`) — keeps the event list clean, evaluation is a derived artefact
+- **New fields in the ratings file** (e.g. `evaluation.scores`, `evaluation.recommendation`) — keeps decisions in one file, visible in diffs
+- **A separate report file** in the data folder — keeps the ratings file clean, evaluation being a derived artefact
 - **Stdout only** — user reads it, makes decisions, updates YAML manually
 
 ### 4. Trigger and scope
