@@ -24,6 +24,10 @@ events:
   # ============================== 5 stars ==============================
 
   - name: Al Andalus Innovation Venture 2026
+    description: >-
+      Andalusian startup and investment forum where selected finalists meet
+      investors, corporates and CIOs across dedicated tracks over two days in
+      Seville.
     url: https://alandalusinnovation.com/
     date_start: 2026-09-22
     date_end: 2026-09-23
@@ -50,6 +54,10 @@ events:
       event rather than a side stage.
 
   - name: Claude Founder House London
+    description: >-
+      A day hosted by Anthropic for AI founders and developers: talks on
+      Claude's direction, office hours, guided builds and a community
+      showcase.
     url: https://www.anthropic.com/events/claude-founder-house-london
     date_start: 2026-09-23
     date_end: 2026-09-23
@@ -76,6 +84,10 @@ events:
       reception is 16:00-20:00 on the 23rd, so the two are mutually exclusive.
 
   - name: Tourism Innovation Summit 2026 (TIS)
+    description: >-
+      International trade summit on technology in travel, where destinations,
+      hotels and operators meet vendors, and selected startups pitch to
+      investors.
     url: https://www.tisglobalsummit.com/
     date_start: 2026-10-06
     date_end: 2026-10-08
@@ -103,6 +115,10 @@ events:
       Collides with WTTC Valletta and Fintech Meetup Lisbon on the same dates.
 
   - name: VDS 2026 (Valencia Digital Summit)
+    description: >-
+      Spanish tech and startup congress pairing founders with funds and family
+      offices through a matchmaking programme, a pitch competition and stage
+      talks.
     url: https://vds.tech/
     date_start: 2026-10-21
     date_end: 2026-10-22
@@ -128,6 +144,10 @@ events:
       year, so the value here is capital, not stage time.
 
   - name: Horizon Deep Tech Summit 2026
+    description: >-
+      Madrid summit on deep technology where research spinouts and founders
+      meet funds and public agencies, closing with a day of private investor
+      meetings.
     url: https://www.horizondeeptech.com/
     date_start: 2026-11-10
     date_end: 2026-11-12
@@ -155,6 +175,10 @@ events:
       CDTI, Plug and Play, ADARA and Bullnet.
 
   - name: Web Summit 2026
+    description: >-
+      Europe's largest technology conference: tens of thousands of founders,
+      investors and press across dozens of stages, with a startup exhibition
+      and pitch competition.
     url: https://websummit.com/
     date_start: 2026-11-09
     date_end: 2026-11-12
@@ -182,6 +206,10 @@ events:
       and Golegã's horse fair (6-15 Nov), both within reach of Lisbon.
 
   - name: Slush 2026
+    description: >-
+      Founder-run Helsinki startup event where early-stage companies meet
+      venture investors through booked one-to-one meetings, a pitch contest
+      and stage programming.
     url: https://slush.org/
     date_start: 2026-11-17
     date_end: 2026-11-19
@@ -208,6 +236,10 @@ events:
       close 7 September and the general startup application closes 31 August.
 
   - name: BIGBAN Investors Congress 2026
+    description: >-
+      Congress of the Spanish business angel network, gathering angels, family
+      offices and funds in Valencia for panels, deal talk and an awards
+      dinner.
     url: https://bigbaninvestorscongress.com/
     date_start: 2026-11-25
     date_end: 2026-11-26
@@ -235,6 +267,9 @@ events:
       angels is named in pull_events, and this is one.
 
   - name: UKBAA Early-Stage Investment Summit 2026
+    description: >-
+      Afternoon summit of the UK Business Angels Association bringing angels,
+      funds and founders together for panels and closing company pitches.
     url: https://ukbaa.org.uk/events/the-early-stage-investment-summit-2026l
     date_start: 2026-11-23
     date_end: 2026-11-23
@@ -260,6 +295,9 @@ events:
       combinable with anything else in London that week.
 
   - name: GenerationAI Paris 2026
+    description: >-
+      Practitioner conference on building and deploying generative AI, co-
+      located with apidays and several sister events under a shared ticket.
     url: https://apidays.global/genai/events-g/paris/
     date_start: 2026-12-01
     date_end: 2026-12-03
@@ -287,6 +325,10 @@ events:
       a single Paris trip covers both.
 
   - name: Singapore FinTech Festival 2026
+    description: >-
+      Vast financial-technology festival run with Singapore's central bank,
+      where banks, fintechs, regulators and investors meet across halls,
+      curated meetings and a hackathon.
     url: https://www.fintechfestival.sg/
     date_start: 2026-11-18
     date_end: 2026-11-20
@@ -315,6 +357,10 @@ events:
       Hackcelerator applications close 2026-08-21 23:59 SGT.
 
   - name: SWITCH 2026 (Singapore Week of Innovation and Technology)
+    description: >-
+      Enterprise Singapore's deep-tech festival, with national pavilions,
+      exhibitors and the SLINGSHOT startup competition whose finalists pitch
+      for grant funding.
     url: https://www.switchsg.org/
     date_start: 2026-10-27
     date_end: 2026-10-29
@@ -344,6 +390,10 @@ events:
       closed 27 July and the Top-250 video round closed 17 August.
 
   - name: NeurIPS 2026
+    description: >-
+      The largest machine-learning research conference: peer-reviewed papers,
+      tutorials and workshops, with an expo hall where major labs recruit and
+      demonstrate.
     url: https://neurips.cc/
     date_start: 2026-12-06
     date_end: 2026-12-12
@@ -374,6 +424,9 @@ events:
       NeurIPS, AI Engineer Sydney and AI Investor.
 
   - name: AI Engineer Sydney 2026
+    description: >-
+      Conference for engineers building AI systems in production, with talks,
+      a workshop day, a leadership track and a free hack day.
     url: https://webdirections.org/ai-engineer/
     date_start: 2026-12-07
     date_end: 2026-12-08
@@ -401,6 +454,10 @@ events:
       sell-out signal, not marketing urgency.
 
   - name: AI Investor 2026
+    description: >-
+      One-day Sydney conference for investors, founders and strategy leaders,
+      held inside AI Week. Programme, venue and speakers were unannounced when
+      researched.
     url: https://aiweek.com.au/
     date_start: 2026-12-11
     date_end: 2026-12-11
@@ -428,6 +485,10 @@ events:
       the reason to watch it rather than assume it.
 
   - name: InvestFest 2026
+    description: >-
+      Gold Coast matchmaking event pairing startups with venture investors
+      through scheduled one-to-one meetings, alongside a mayoral tech lunch
+      and afterparty.
     url: https://cohortspace.com.au/event/investfest-2026/
     date_start: 2026-11-05
     date_end: 2026-11-06
@@ -457,6 +518,10 @@ events:
   # ============================== 4 stars ==============================
 
   - name: Cicada x Tech23 2026
+    description: >-
+      Australian deep-tech demo day where twenty-three selected science and
+      technology startups pitch to investors, corporates and government in a
+      single day.
     url: https://www.cicadainnovations.com/cicada-x-tech23
     date_start: 2026-09-09
     date_end: 2026-09-09
@@ -481,6 +546,9 @@ events:
       closed, so it works as an investor room, not a raise.
 
   - name: Tech in Asia Conference 2026
+    description: >-
+      Enterprise-focused AI conference for Asian technology leaders, with
+      talks from major platforms, an exhibition and a startup showcase zone.
     url: https://conference.techinasia.com/
     date_start: 2026-09-15
     date_end: 2026-09-16
@@ -506,6 +574,10 @@ events:
       2026-08-31, first come first served.
 
   - name: France Digitale Day 2026
+    description: >-
+      Annual gathering of the French startup association, where founders and
+      investors meet over stage sessions and a structured matchmaking
+      programme.
     url: https://fdday.eu/
     date_start: 2026-09-16
     date_end: 2026-09-16
@@ -532,6 +604,9 @@ events:
       17th, so three days covers all three.
 
   - name: AI Engineer Paris 2026
+    description: >-
+      Technical conference for AI engineers hosted by Mistral at Station F,
+      with talks, workshops and a developer-tools expo over two days.
     url: https://www.ai.engineer/paris
     date_start: 2026-09-23
     date_end: 2026-09-24
@@ -557,6 +632,10 @@ events:
       closed. Direct clash with Claude Founder House London on 23 September.
 
   - name: Rome Future Week 2026
+    description: >-
+      Distributed week of several hundred independently organised events
+      across Rome on innovation and technology, including a startup hub with
+      pitches and hackathons.
     url: https://romefutureweek.it/
     date_start: 2026-09-21
     date_end: 2026-09-27
@@ -583,6 +662,9 @@ events:
       unquantified.
 
   - name: Bits & Pretzels 2026
+    description: >-
+      Munich founders festival ending in an Oktoberfest tent, built around
+      structured investor matchmaking, speed-dating sessions and stage talks.
     url: https://www.bitsandpretzels.com/
     date_start: 2026-09-28
     date_end: 2026-09-30
@@ -608,6 +690,10 @@ events:
       portfolio companies. Second only to Slush on fundraising mechanism.
 
   - name: Sifted Summit 2026
+    description: >-
+      Two-day London summit run by the European startup publication Sifted,
+      gathering founders, operators and investors for stage sessions and
+      networking.
     url: https://summit.sifted.eu/
     date_start: 2026-09-30
     date_end: 2026-10-01
@@ -633,6 +719,9 @@ events:
       organiser. Aimed at Series A and later, which may not match the raise stage.
 
   - name: WiT Singapore 2026
+    description: >-
+      Web in Travel's Asian conference on travel technology and distribution,
+      with a startup pitch competition running across two Singapore venues.
     url: https://witevents.com/witsingapore/
     date_start: 2026-09-30
     date_end: 2026-10-02
@@ -661,6 +750,9 @@ events:
       trip covers several.
 
   - name: World Summit AI 2026
+    description: >-
+      Large Amsterdam AI conference for industry and research, with an
+      exhibition, an investor club and a startup battleground competition.
     url: https://worldsummit.ai/
     date_start: 2026-10-07
     date_end: 2026-10-08
@@ -688,6 +780,10 @@ events:
       Clashes head-on with TIS Seville and Milken Asia on 7-8 October.
 
   - name: FF Europe x Left Lane Fast Growth Summit 2026
+    description: >-
+      Invitation-only Founders Forum gathering at Station F pairing growth-
+      stage founders with partner-level investors over an AI-weighted
+      programme.
     url: https://ff.co/events-for-founders/founders-forum-europe
     date_start: 2026-10-07
     date_end: 2026-10-08
@@ -713,6 +809,10 @@ events:
       before planning around it. Same dates as World Summit AI and Milken Asia.
 
   - name: Startup OLÉ 2026
+    description: >-
+      Salamanca startup event drawing European and Latin American founders,
+      with an investors section, a pitch competition and a tool for booking
+      private meetings.
     url: https://startupole.eu/
     date_start: 2026-10-13
     date_end: 2026-10-15
@@ -738,6 +838,10 @@ events:
       institutional LP/GP conferences elsewhere in this file.
 
   - name: EBAN European Angel Investment Summit 2026
+    description: >-
+      Autumn summit of Europe's angel investor federation, run with Luxembourg
+      Venture Days, featuring a live term-sheet negotiation staged between
+      investor and founder.
     url: https://events.venture-days.lu/e/european-angel-investment-summit-2026
     date_start: 2026-10-14
     date_end: 2026-10-15
@@ -764,6 +868,10 @@ events:
       for "EBAN Congress" alone will surface instead.
 
   - name: ITB Asia 2026
+    description: >-
+      Asia's largest travel trade show, where hotels, airlines, tour operators
+      and destinations meet buyers through tens of thousands of pre-scheduled
+      appointments.
     url: https://www.itb-asia.com/
     date_start: 2026-10-21
     date_end: 2026-10-23
@@ -789,6 +897,10 @@ events:
       Oct), so a single Singapore trip in late October covers both.
 
   - name: IV Congreso de Inteligencia Artificial de Andalucía
+    description: >-
+      Regional AI congress run by the Andalusian government in Granada, with
+      talks, an exhibition and satellite meetups for developers and
+      researchers.
     url: https://www.juntadeandalucia.es/congresoIA/
     date_start: 2026-10-26
     date_end: 2026-10-28
@@ -814,6 +926,9 @@ events:
       exhibition has startup and networking areas but nothing organiser-run.
 
   - name: AI for Georgia Summit 2026
+    description: >-
+      Tbilisi AI summit gathering founders, engineers and investors, with a
+      startup pitch, an investor lounge and an open speaker programme.
     url: https://www.aiforgeorgia.ai/
     date_start: 2026-10-30
     date_end: 2026-10-31
@@ -840,6 +955,9 @@ events:
       way. That caveat is why it sits here rather than higher.
 
   - name: World Travel Market London 2026
+    description: >-
+      Global travel trade exhibition at ExCeL where destinations and suppliers
+      meet buyers, media and the wider industry over three days.
     url: https://www.wtm.com/london/en-gb.html
     date_start: 2026-11-03
     date_end: 2026-11-05
@@ -866,6 +984,9 @@ events:
       base without returning home.
 
   - name: QTIC Tourism Week 2026
+    description: >-
+      Queensland's tourism industry week: two conference days on destination
+      strategy and data, closing with the state tourism awards gala.
     url: https://www.qtic.com.au/tourism-week/
     date_start: 2026-11-04
     date_end: 2026-11-06
@@ -891,6 +1012,10 @@ events:
       and the investor meetings.
 
   - name: Portugal Tech Week 2026
+    description: >-
+      Nationwide week of free community technology events across Portuguese
+      cities, with a central Lisbon hub and a pitch initiative. Programme
+      published late.
     url: https://portugaltechweek.com/
     date_start: 2026-11-06
     date_end: 2026-11-15
@@ -917,6 +1042,9 @@ events:
       published yet.
 
   - name: Feira Nacional do Cavalo 2026
+    description: >-
+      Ten-day national horse fair in Golegã with Lusitano breeding classes,
+      working equitation, carriage driving and riders through the streets.
     url: https://feiranacionaldocavalo.com/
     date_start: 2026-11-06
     date_end: 2026-11-15
@@ -944,6 +1072,10 @@ events:
       once. Dates are multi-source but not first-party confirmed.
 
   - name: SICAB 2026
+    description: >-
+      Annual show of the Spanish purebred horse run by the breeders'
+      association, with world championship classes, nightly gala performances
+      and a trade hall.
     url: https://www.sicab.org/
     date_start: 2026-11-17
     date_end: 2026-11-22
@@ -969,6 +1101,9 @@ events:
       keeps it below the professional entries rather than any weakness of fit.
 
   - name: Milken Institute Asia Summit 2026
+    description: >-
+      Invitation-based summit of investors, executives and policymakers
+      convened by the Milken Institute, with tracks on capital markets and AI.
     url: https://milkeninstitute.org/events/asia-summit-2026
     date_start: 2026-10-07
     date_end: 2026-10-09
@@ -996,6 +1131,9 @@ events:
       with TOKEN2049 and Forbes Global CEO on the same days in the same city.
 
   - name: MCP Paris / ContextCon 2026
+    description: >-
+      Conference on the Model Context Protocol and agent tooling, drawing
+      specification authors, tool builders and enterprise practitioners.
     url: https://contextcon.org/
     date_start: 2026-12-01
     date_end: 2026-12-02
@@ -1022,6 +1160,10 @@ events:
       Native AI Summit Europe.
 
   - name: Cloud Native AI Summit Europe 2026
+    description: >-
+      Conference on running AI in cloud-native infrastructure, covering
+      inference engineering, agent architecture, operations, security and
+      governance.
     url: https://sessionize.com/cloud-native-summit-europe-2026
     date_start: 2026-12-02
     date_end: 2026-12-03
@@ -1049,6 +1191,9 @@ events:
       Engineer Sydney.
 
   - name: Adopt AI Summit 2026
+    description: >-
+      Large Paris AI conference run by the consultancy Artefact at the Grand
+      Palais, with sector summits for health, finance, industry and climate.
     url: https://adoptai.artefact.com/
     date_start: 2026-12-03
     date_end: 2026-12-04
@@ -1076,6 +1221,9 @@ events:
       content and volume of people, not organiser-run meetings.
 
   - name: Something Fest 2026
+    description: >-
+      Brisbane technology and startup festival at City Hall, combining digital
+      and tech programmes with a pitch final for emerging companies.
     url: https://somethingfest.com.au/
     date_start: 2026-08-24
     date_end: 2026-08-28
@@ -1103,6 +1251,10 @@ events:
       immediately actionable entry in this file.
 
   - name: Tech Week Singapore 2026
+    description: >-
+      Co-located enterprise technology exhibitions covering cloud and AI
+      infrastructure, devops, cyber security and data centres, with a shared
+      main stage.
     url: https://www.singaporetechnologyweek.com/
     date_start: 2026-09-29
     date_end: 2026-09-30
@@ -1129,6 +1281,9 @@ events:
       (30 Sep-2 Oct) and SuperReturn Asia (28 Sep-1 Oct) in the same city.
 
   - name: AngelCentral Pitch Days
+    description: >-
+      Monthly members-only session where a handful of vetted pre-seed and seed
+      startups pitch to a room of Singapore angel investors.
     url: https://www.angelcentral.co/events/pitch-days
     date_start: 2026-09-18
     date_end: 2026-09-18
@@ -1156,6 +1311,9 @@ events:
   # ============================== 3 stars ==============================
 
   - name: Carreras de Caballos de Sanlúcar de Barrameda
+    description: >-
+      Thoroughbred races run on the beach at low tide over three evenings,
+      watched free from the sand or from ticketed grandstands.
     url: https://www.carrerassanlucar.es/
     date_start: 2026-08-21
     date_end: 2026-08-23
@@ -1179,6 +1337,10 @@ events:
       Australian presence window, so the constraint is location rather than cost.
 
   - name: Bienal de Flamenco de Sevilla (XXIV)
+    description: >-
+      Biennial flamenco festival across Seville's theatres and venues, with
+      dozens of performances and premieres from leading dancers, singers and
+      guitarists.
     url: https://www.labienal.com/programa-general
     date_start: 2026-09-09
     date_end: 2026-10-03
@@ -1203,6 +1365,9 @@ events:
       for an event held in Spain; rated as near-and-notable and flagged.
 
   - name: Día Europeo del Caballo, Jerez
+    description: >-
+      Free civic celebration of the horse in Jerez, centred on a mounted
+      parade through the city and a riding-school display.
     url: https://www.turismojerez.com/detalle-evento/dia-europeo-del-caballo
     date_start: 2026-09-12
     date_end: 2026-09-13
@@ -1226,6 +1391,10 @@ events:
       mid-September, which the default seasonal presence suggests.
 
   - name: Festival Centroamérica Cuenta Madrid 2026
+    description: >-
+      Free literary festival at Casa de América bringing Central and Latin
+      American writers to Madrid for four evenings of readings and
+      conversation.
     url: https://www.casamerica.es/literatura/festival-centroamerica-cuenta-2026
     date_start: 2026-09-15
     date_end: 2026-09-18
@@ -1250,6 +1419,9 @@ events:
       week if a northward trip is already happening.
 
   - name: Startup Summit Lisbon 2026
+    description: >-
+      Startup event at Lisbon's Unicorn Factory with separate founder and
+      investor ticket classes, exhibition booths and pitch sessions.
     url: https://startupsummit.io/
     date_start: 2026-09-17
     date_end: 2026-09-18
@@ -1273,6 +1445,9 @@ events:
       claimed scale, since every published figure is aspirational.
 
   - name: Big Data & AI Paris 2026
+    description: >-
+      France's main data and AI trade show at Porte de Versailles, with a few
+      hundred exhibitors and a co-located executive forum.
     url: https://www.bigdataparis.com/
     date_start: 2026-09-15
     date_end: 2026-09-16
@@ -1297,6 +1472,9 @@ events:
       Digitale Day (16 Sep) and dotAI (17 Sep).
 
   - name: dotAI 2026
+    description: >-
+      Single-track technical AI conference for practitioners at the Folies
+      Bergère, part of the dot conference series.
     url: https://www.dotai.io/
     date_start: 2026-09-17
     date_end: 2026-09-17
@@ -1321,6 +1499,9 @@ events:
       week, which makes a single mid-September trip unusually efficient.
 
   - name: Lisbon AI Week 2026
+    description: >-
+      City-wide week of independently organised AI events across Lisbon, open
+      to anyone who submits an event to the programme.
     url: https://lisbonaiweek.com/
     date_start: 2026-09-21
     date_end: 2026-09-27
@@ -1343,6 +1524,9 @@ events:
       in one trip.
 
   - name: LisbonAI 2026
+    description: >-
+      Small curated conference for engineers running AI in production,
+      covering agents, foundation models, training, evaluation and security.
     url: https://lisbonai.org/
     date_start: 2026-09-23
     date_end: 2026-09-24
@@ -1367,6 +1551,9 @@ events:
       which makes that date the most contested in the window.
 
   - name: AI Summit Barcelona 2026
+    description: >-
+      Barcelona AI conference held within a wider city AI week, with a large
+      exhibition and a startup pitch session in front of investors.
     url: https://aisummitbarcelona.com/
     date_start: 2026-09-22
     date_end: 2026-09-23
@@ -1393,6 +1580,10 @@ events:
       event rather than a side stage.
 
   - name: SuperReturn Asia 2026
+    description: >-
+      Private-equity and venture dealmaking conference where institutional
+      investors and fund managers meet through large volumes of scheduled one-
+      to-one meetings.
     url: https://informaconnect.com/superreturnasia/
     date_start: 2026-09-28
     date_end: 2026-10-01
@@ -1419,6 +1610,9 @@ events:
       tech investing track.
 
   - name: ai-PULSE 2026
+    description: >-
+      One-day technical AI conference at Station F across three stages, with
+      in-person attendance granted by application rather than open sale.
     url: https://www.ai-pulse.eu/
     date_start: 2026-10-13
     date_end: 2026-10-13
@@ -1443,6 +1637,9 @@ events:
       SuperReturn Infrastructure London.
 
   - name: Festival Iberoamericano de Teatro de Cádiz (41st)
+    description: >-
+      Long-running festival of Latin American and Spanish theatre in Cádiz,
+      mixing ticketed productions with free performances in public squares.
     url: https://fitdecadiz.org/
     date_start: 2026-10-14
     date_end: 2026-10-24
@@ -1466,6 +1663,10 @@ events:
       aggregator while the official site still shows last year.
 
   - name: Wave by Vento 2026
+    description: >-
+      Turin technology festival run by Exor's early-stage venture arm,
+      gathering founders, investors and headline speakers around a meetings
+      programme.
     url: https://wavebyvento.com/
     date_start: 2026-10-07
     date_end: 2026-10-09
@@ -1491,6 +1692,9 @@ events:
       stronger claim on their respective legs.
 
   - name: BIG by Bpifrance 2026
+    description: >-
+      Free single-day convention for entrepreneurs staged in an arena by the
+      French public investment bank, across a dozen thematic tracks.
     url: https://big.bpifrance.fr/en
     date_start: 2026-10-08
     date_end: 2026-10-08
@@ -1516,6 +1720,10 @@ events:
       the same week as World Summit AI.
 
   - name: xFutures Summit 2026
+    description: >-
+      Madrid congress on emerging technology for executives, covering AI,
+      robotics, autonomous systems, fintech and medtech with international
+      speakers.
     url: https://www.xfutures.net/
     date_start: 2026-10-23
     date_end: 2026-10-24
@@ -1540,6 +1748,9 @@ events:
       proximity. The Comunidad de Madrid is lead institutional partner.
 
   - name: Porto Tech Hub Conference 2026
+    description: >-
+      Community engineering conference organised by Porto's technology
+      employers, covering AI, machine learning and software practice.
     url: https://portotechhub.com/conference-2026/
     date_start: 2026-11-10
     date_end: 2026-11-10
@@ -1564,6 +1775,10 @@ events:
       Golegã horse fair, both of which are reachable on the same northward trip.
 
   - name: NVIDIA GTC Berlin 2026
+    description: >-
+      NVIDIA's European developer conference: a keynote plus sessions and
+      training on AI infrastructure, agents, robotics and accelerated
+      computing.
     url: https://www.nvidia.com/en-eu/gtc/
     date_start: 2026-10-20
     date_end: 2026-10-22
@@ -1588,6 +1803,10 @@ events:
       event mechanism.
 
   - name: Fintech Meetup Europe 2026
+    description: >-
+      Financial services event built almost entirely around algorithmically
+      scheduled short meetings between banks, fintechs, payments firms and
+      vendors.
     url: https://europe.fintechmeetup.com/home
     date_start: 2026-10-06
     date_end: 2026-10-08
@@ -1612,6 +1831,9 @@ events:
       better interest match.
 
   - name: TOKEN2049 Singapore 2026
+    description: >-
+      Large crypto and Web3 conference anchoring a week of side events, with a
+      startup competition judged by investment funds.
     url: https://www.token2049.com/singapore
     date_start: 2026-10-07
     date_end: 2026-10-08
@@ -1637,6 +1859,10 @@ events:
       close 2026-09-14; judges can make investment offers outside the prize.
 
   - name: Hong Kong FinTech Week x StartmeupHK 2026
+    description: >-
+      Government-backed financial technology week spanning Hong Kong and
+      Shenzhen, with an accelerator track that flies semi-finalists in to
+      exhibit.
     url: https://www.fintechweek.hk/
     date_start: 2026-11-02
     date_end: 2026-11-06
@@ -1662,6 +1888,10 @@ events:
       semi-finalist list. Fintech rather than AI, which caps the interest match.
 
   - name: China Hi-Tech Fair 2026 (CHTF)
+    description: >-
+      Vast state-run technology trade fair in Shenzhen across many sector
+      halls, including a vetted investment matchmaking programme and paid
+      pitch slots.
     url: https://www.chtf.com/
     date_start: 2026-11-26
     date_end: 2026-11-28
@@ -1688,6 +1918,9 @@ events:
       by 20 November.
 
   - name: AI Engineer Shanghai 2026
+    description: >-
+      A partner-run Shanghai edition of the AI Engineer conference series.
+      Venue, programme and pricing were all unpublished when researched.
     url: https://www.ai.engineer/
     date_start: 2026-11-05
     date_end: 2026-11-06
@@ -1712,6 +1945,9 @@ events:
       Shanghai (5-10 Nov), which fills the city's hotels.
 
   - name: Expand North Star 2026
+    description: >-
+      Dubai startup and investor exhibition held alongside GITEX, with pre-
+      arranged meetings and an equity-free pitch competition.
     url: https://expandnorthstar.com/
     date_start: 2026-12-08
     date_end: 2026-12-10
@@ -1738,6 +1974,10 @@ events:
       Sydney AI week (6-13 Dec).
 
   - name: Gartner IT Symposium/Xpo 2026
+    description: >-
+      Gartner's Australian conference for chief information officers and IT
+      executives, with analyst sessions, research briefings and a vendor
+      exhibition.
     url: https://www.gartner.com/en/conferences/apac/symposium-australia
     date_start: 2026-09-14
     date_end: 2026-09-16
@@ -1762,6 +2002,9 @@ events:
       the AI content.
 
   - name: AusBiotech Biggest Week in Biotech 2026
+    description: >-
+      Australian life-sciences industry week combining the national biotech
+      conference, a medtech programme and a day-long investment forum.
     url: https://www.ausbiotech.org/ABT/ABT/Events/Biggest-Week-in-Biotech.aspx
     date_start: 2026-10-19
     date_end: 2026-10-23
@@ -1786,6 +2029,10 @@ events:
       otherwise the room is wrong regardless of the distance.
 
   - name: Australian Regional Tourism Convention 2026
+    description: >-
+      National convention for regional tourism operators and destination
+      bodies, run by Australian Regional Tourism, with sessions on funding and
+      technology.
     url: https://regionaltourism.com.au/convention/
     date_start: 2026-10-20
     date_end: 2026-10-23
@@ -1811,6 +2058,9 @@ events:
       submitting costs nothing.
 
   - name: Singapore AI & Robotics Demo Nights
+    description: >-
+      Free monthly meetup where builders demonstrate working AI and robotics
+      projects to a Singapore practitioner audience.
     url: https://lu.ma/singapore-demo-nights
     date_start: 2026-12-08
     date_end: 2026-12-08
@@ -1834,6 +2084,9 @@ events:
       run major events. A demo slot is a low-friction way to be on a stage.
 
   - name: droidCon London 2026
+    description: >-
+      Android developer conference at the Business Design Centre, with tracks
+      including machine learning, AI agents and prompt engineering.
     url: https://www.londroid.com/
     date_start: 2026-12-10
     date_end: 2026-12-11
@@ -1858,6 +2111,9 @@ events:
       second. Falls in the same week as the Sydney AI cluster.
 
   - name: Apply AI Summit 2026
+    description: >-
+      European Commission summit on applying AI across European industry,
+      closing the bloc's AI innovation month, with a first startup award.
     url: https://digital-strategy.ec.europa.eu/en/policies/apply-ai-summit
     date_start: 2026-11-17
     date_end: 2026-11-17
@@ -1882,6 +2138,9 @@ events:
       open, and a Commission event of this profile will fill.
 
   - name: Madrid Horse Week 2026
+    description: >-
+      Indoor equestrian show at IFEMA hosting World Cup rounds in jumping,
+      dressage and driving, alongside amateur classes and a trade village.
     url: https://www.madridhorseweek.com/
     date_start: 2026-11-26
     date_end: 2026-11-29
@@ -1905,6 +2164,10 @@ events:
       Adding Driving for 2026 makes this the fuller card of the two.
 
   - name: Festival de Huelva de Cine Iberoamericano (52nd)
+    description: >-
+      Long-running competitive festival of Latin American and Spanish cinema
+      in Huelva, with several competitive sections and screenings across the
+      city.
     url: https://festicinehuelva.com/
     date_start: 2026-11-13
     date_end: 2026-11-21
@@ -1931,6 +2194,10 @@ events:
   # ============================== 2 stars ==============================
 
   - name: IJCAI-ECAI 2026
+    description: >-
+      The main international AI research conference, held jointly with its
+      European counterpart, with peer-reviewed papers, workshops and
+      tutorials.
     url: https://ijcai-26.org/
     date_start: 2026-08-15
     date_end: 2026-08-21
@@ -1953,6 +2220,10 @@ events:
       rediscovering it.
 
   - name: IberSPEECH 2026
+    description: >-
+      Academic conference on speech and language technology for the Iberian
+      languages, with paper sessions, demonstrations and evaluation
+      challenges.
     url: https://iberspeech.tech/2026/
     date_start: 2026-11-18
     date_end: 2026-11-20
@@ -1974,6 +2245,10 @@ events:
       realistic route in.
 
   - name: CAEPIA 2026
+    description: >-
+      Spain's national AI research conference, run by the Spanish AI
+      association and hosted at a university, federating several sub-
+      conferences.
     url: https://simidat.ujaen.es/caepia26
     date_start: 2026-11-11
     date_end: 2026-11-13
@@ -1994,6 +2269,9 @@ events:
       investor dimension, so attending is a listening exercise.
 
   - name: Elastic{ON} Tour Amsterdam 2026
+    description: >-
+      Single-day user conference run by the search company Elastic, one stop
+      on a touring series, with customer and technical sessions.
     url: https://www.elastic.co/elasticon/tour
     date_start: 2026-10-20
     date_end: 2026-10-20
@@ -2015,6 +2293,9 @@ events:
       covers is the more interesting half, but it falls in 2027.
 
   - name: IBTM World 2026
+    description: >-
+      Global trade show for business events and incentive travel, where venues
+      and destinations meet corporate and agency buyers through appointments.
     url: https://www.ibtmworld.com/
     date_start: 2026-11-17
     date_end: 2026-11-19
@@ -2040,6 +2321,10 @@ events:
       tourism the interest points at. Clashes with SICAB in Seville.
 
   - name: ATEC Meeting Place 2026
+    description: >-
+      Australian inbound tourism trade event where local operators sell to
+      international travel buyers through scheduled appointments, alongside
+      conference sessions.
     url: https://atec.net.au/events/meeting-place/
     date_start: 2026-10-26
     date_end: 2026-10-28
@@ -2062,6 +2347,9 @@ events:
       the event date, and it was missed.
 
   - name: WTTC Global Summit 2026
+    description: >-
+      Invitation-only annual summit of the World Travel & Tourism Council,
+      gathering travel chief executives and tourism ministers.
     url: https://wttc.org/events-webinars/global-summit
     date_start: 2026-10-07
     date_end: 2026-10-09
@@ -2083,6 +2371,9 @@ events:
       trade-off is visible rather than forgotten.
 
   - name: Tech Show Madrid 2026 (Big Data & AI World)
+    description: >-
+      Co-located enterprise IT exhibitions at IFEMA covering data and AI,
+      cloud, cyber security, data centres, HR and learning technology.
     url: https://www.techshowmadrid.es/en/big-data-ai-world
     date_start: 2026-11-04
     date_end: 2026-11-05
@@ -2108,6 +2399,9 @@ events:
       trade buyers for business_connections alone.
 
   - name: Foro Tecnológico Sevilla 2026
+    description: >-
+      Free one-day regional forum run by the @aslan association, where
+      Andalusian IT leaders meet vendors on infrastructure and AI topics.
     url: https://aslan.es/actividades/foro-sevilla/
     date_start: 2026-10-22
     date_end: 2026-10-22
@@ -2130,6 +2424,9 @@ events:
       needs almost no justification, not because the fit is good.
 
   - name: UKBAA Angel Investor Summit 2026
+    description: >-
+      Investor-only day run by the UK Business Angels Association for private
+      investors, capped at a few hundred, with no founder track.
     url: https://angelinvestorsummit.co.uk/
     date_start: 2026-09-22
     date_end: 2026-09-22
@@ -2150,6 +2447,10 @@ events:
       summit is the better of the two: it admits founders and ends with pitches.
 
   - name: Tbilisi Finance Summit 2026
+    description: >-
+      Curated Georgian finance and technology summit run by the Global Finance
+      & Technology Network, covering stablecoins, tokenisation and regional
+      trade policy.
     url: https://tbilisifinancesummit.gftn.co/
     date_start: 2026-10-27
     date_end: 2026-10-28
@@ -2172,6 +2473,9 @@ events:
       stronger of the two.
 
   - name: Fiestas de la Vendimia de Jerez 2026
+    description: >-
+      Jerez's harvest festival: grape treading and a cathedral blessing, with
+      sherry bodega events, tastings and flamenco across sixteen days.
     url: https://www.jerez.es/vendimia
     date_start: 2026-08-29
     date_end: 2026-09-13
@@ -2193,6 +2497,9 @@ events:
       because a home-city street festival competes with nothing.
 
   - name: Festival de Cine Europeo de Sevilla (23rd)
+    description: >-
+      Seville's competitive European film festival, with an industry strand
+      where selected projects and production companies meet.
     url: https://festivalcinesevilla.eu/
     date_start: 2026-11-06
     date_end: 2026-11-14
@@ -2213,6 +2520,9 @@ events:
       as Web Summit in Lisbon, and Web Summit has the stronger claim.
 
   - name: Campeonato de España de Doma Vaquera (55th)
+    description: >-
+      Spain's national championship in doma vaquera, the mounted stockman's
+      riding discipline derived from working cattle on Andalusian estates.
     url: https://rfhe.com/doma-vaquera/
     date_start: null
     date_end: null
@@ -2234,6 +2544,9 @@ events:
       calendar in September.
 
   - name: NeurIPS 2026 Paris satellite
+    description: >-
+      An official European satellite site of the NeurIPS machine-learning
+      conference, carrying the programme without the main expo hall.
     url: https://neurips.cc/
     date_start: 2026-12-09
     date_end: 2026-12-13
@@ -2255,6 +2568,9 @@ events:
       droidCon London and the Sydney cluster.
 
   - name: AI Leadership Summit 2026
+    description: >-
+      Executive summit on AI adoption and governance, run by the policy body
+      CEDA with Australia's National AI Centre.
     url: https://www.ai.gov.au/news-and-insights/events/ai-leadership-summit-2026
     date_start: 2026-10-27
     date_end: 2026-10-28
@@ -2277,6 +2593,10 @@ events:
       better.
 
   - name: Intersekt 2026
+    description: >-
+      FinTech Australia's annual industry festival in Melbourne, with stage
+      sessions, a pitch competition and awards for Australian financial
+      technology companies.
     url: https://www.intersektfestival.com/
     date_start: 2026-09-03
     date_end: 2026-09-04
@@ -2297,6 +2617,9 @@ events:
       open, but the sector is fintech and the early-bird window has already gone.
 
   - name: COMEUP 2026
+    description: >-
+      South Korea's government-backed startup festival in Seoul, with a
+      selected company cohort and an investor-matching stage for global funds.
     url: https://comeup.org/en
     date_start: 2026-12-09
     date_end: 2026-12-11
@@ -2322,6 +2645,9 @@ events:
   # not spend search budget rediscovering them.
 
   - name: OpenAI DevDay 2026
+    description: >-
+      OpenAI's annual developer conference: a keynote on new models and tools,
+      followed by sessions for people building on its platform.
     url: https://devday.openai.com/
     date_start: 2026-09-29
     date_end: 2026-09-29
@@ -2343,6 +2669,10 @@ events:
       recorded separately with null dates.
 
   - name: AWS re:Invent 2026
+    description: >-
+      Amazon Web Services' annual cloud conference in Las Vegas, with
+      keynotes, technical sessions, certification and a large partner
+      exhibition.
     url: https://aws.amazon.com/events/reinvent
     date_start: 2026-11-30
     date_end: 2026-12-04
@@ -2365,6 +2695,9 @@ events:
       not read as an oversight.
 
   - name: Meta Connect 2026
+    description: >-
+      Meta's livestreamed product event: a keynote on AI, smart glasses and
+      virtual reality, followed by a day of developer sessions.
     url: https://www.meta.com/connect/
     date_start: 2026-09-23
     date_end: 2026-09-24
@@ -2386,6 +2719,10 @@ events:
       it falls on the same contested 23 September as three physical events.
 
   - name: Skift Global Forum 2026
+    description: >-
+      Travel industry conference run by the news outlet Skift, where
+      executives from hotels, airlines and booking platforms are interviewed
+      on stage.
     url: https://live.skift.com/events/skift-global-forum-2026/
     date_start: 2026-09-22
     date_end: 2026-09-24
@@ -2407,6 +2744,9 @@ events:
       interest at 79 km with a pitch programme and an open speaker call.
 
   - name: Tallinn Digital Summit 2026
+    description: >-
+      Invitation-only Estonian government forum where ministers and officials
+      discuss digital policy, themed this year on autonomous AI agents.
     url: https://tds.icds.ee/2026
     date_start: 2026-11-05
     date_end: 2026-11-06
@@ -2430,6 +2770,9 @@ events:
   # Expected inside the window but not yet published. Re-check these each sweep.
 
   - name: OpenAI DevDay Exchange (regional editions)
+    description: >-
+      Regional spin-offs of OpenAI's developer conference planned for several
+      cities. Format, dates and application terms were not yet announced.
     url: https://devday.openai.com/
     date_start: null
     date_end: null
@@ -2456,6 +2799,9 @@ events:
       applications before this sweep ran, so the failure mode is proven.
 
   - name: World Internet Conference Wuzhen Summit 2026
+    description: >-
+      China's state-convened internet governance conference in Wuzhen, with an
+      expo and a global startup competition running alongside it.
     url: https://cn.wicinternet.org/
     date_start: null
     date_end: null
@@ -2482,6 +2828,10 @@ events:
       announcement has historically come.
 
   - name: Cyberport Venture Capital Forum 2026
+    description: >-
+      Hong Kong venture capital forum run by the government technology park
+      Cyberport, with pitch slots and scheduled deal-flow sessions between
+      startups and investors.
     url: https://cvcf.cyberport.hk/
     date_start: null
     date_end: null
