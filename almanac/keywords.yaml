@@ -88,6 +88,49 @@ keywords:
     surfaces: SE Asia startup + investor event
     productivity: high
 
+  - query: "SWITCH Singapore 2026 Singapore Week of Innovation and Technology dates"
+    surfaces: Singapore's flagship innovation week and its SLINGSHOT pitch competition
+    productivity: high
+
+  - query: "TOKEN2049 Singapore 2026 dates"
+    surfaces: Singapore crypto/Web3 week and the investor side-event cluster around it
+    productivity: high
+
+  - query: "Tech Week Singapore 2026 Big Data AI World Asia dates"
+    surfaces: Singapore enterprise AI trade show
+    productivity: medium
+
+  - query: "Milken Institute Asia Summit 2026 Singapore dates"
+    surfaces: capital-allocator summit in Singapore
+    productivity: medium
+    note: invitation-gated, so a hit does not mean access
+
+  - query: "Singapore FinTech Festival 2026 dates"
+    surfaces: the November Singapore anchor event
+    productivity: high
+
+  - query: "European Angel Investment Summit EBAN autumn 2026"
+    surfaces: EBAN's October summit, distinct from the June Congress
+    productivity: high
+    note: searching "EBAN Congress" alone misses this one
+
+  - query: "Slush 2026 Helsinki dates"
+    surfaces: Nordic founder/investor event
+    productivity: medium
+
+  - query: "ATEC Meeting Place 2026 dates"
+    surfaces: Australian inbound tourism trade event
+    productivity: medium
+    note: registration shuts months ahead — search for the registration window, not the event date
+
+  - query: "lu.ma <city> <topic> <month year>"
+    surfaces: meetup-scale AI and investor side events, especially the Singapore October week
+    productivity: high
+    note: >
+      Restrict web search to luma.com; listing and calendar pages render dates client-side so a
+      plain fetch loses them, but individual event pages carry date, venue and host. For a whole
+      city calendar, dump the rendered page with the serialised-browsing skill if available.
+
   - query: "ai-PULSE 2026 Paris Station F"
     surfaces: focused AI practitioner event
     productivity: medium

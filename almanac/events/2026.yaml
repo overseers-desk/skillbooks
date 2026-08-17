@@ -1,6 +1,6 @@
 # Almanac event list — 2026
 # Generated: 2026-03-31
-# Last sweep: 2026-03-31T23:59+02:00
+# Last sweep: 2026-08-17T15:30+02:00
 #
 # participation.status: null | ticket | speaker | rejected | waitlist | closed
 # speaker.too_late: whether the speaker application window has passed
@@ -19,8 +19,9 @@ events:
     categories: [investor-event, speaking-opportunity, angel-fund-raising]
     stars: 5
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 3-5 Jun 2026
     speaker:
       too_late: false
       deadline: null
@@ -38,8 +39,9 @@ events:
     categories: [ai-conference, ai-company, speaking-opportunity]
     stars: 5
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 10-11 Jun 2026
     speaker:
       too_late: false
       deadline: null
@@ -76,8 +78,9 @@ events:
     categories: [investor-event, angel-fund-raising]
     stars: 5
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 1-2 Jun 2026
     speaker:
       too_late: false
       deadline: null
@@ -94,8 +97,9 @@ events:
     categories: [ai-conference, speaking-opportunity, ai-company]
     stars: 5
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 10-11 Jun 2026
     speaker:
       too_late: false
       deadline: null
@@ -114,14 +118,33 @@ events:
     categories: [ai-conference, investor-event, angel-fund-raising]
     stars: 5
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 8-9 Jul 2026
     speaker:
       too_late: false
       deadline: null
       apply_url: https://www.raisesummit.com
     url: https://www.raisesummit.com
     notes: 9,000+ attendees; 360+ speakers; investors managing €570B+; €10M+ startup competition (apply by 1 Jun); PRO ticket €999 early-bird; Paris proximity destination
+
+  - id: eais_brussels_2026
+    name: European Angel Investment Summit 2026
+    date_start: 2026-10-28
+    date_end: 2026-10-29
+    location:
+      city: Brussels
+      country: Belgium
+    categories: [investor-event, angel-fund-raising]
+    stars: 5
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.europeanangelsummit.com
+    notes: EBAN's autumn summit, run with the InvestEU Portal and the European Commission; the angel-side counterpart to EBAN Congress; short-haul from Seville
 
   # ── 4-star ─────────────────────────────────────────────────
 
@@ -135,8 +158,9 @@ events:
     categories: [ai-conference, speaking-opportunity]
     stars: 4
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 20-22 May 2026
     speaker:
       too_late: false
       deadline: null
@@ -147,21 +171,22 @@ events:
 
   - id: investfest_gold_coast_2026
     name: InvestFest Gold Coast 2026
-    date_start: null  # TBC
-    date_end: null
+    date_start: 2026-08-07
+    date_end: 2026-08-09
     location:
       city: Gold Coast
       country: Australia
     categories: [investor-event, angel-fund-raising]
     stars: 4
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 7-9 Aug 2026
     speaker:
-      too_late: false
+      too_late: true
       deadline: null
     url: https://cohortspace.com.au/investfest
-    notes: 30 investors; 175 one-on-one VC/founder meetings; on Gold Coast base
+    notes: 30 investors; 175 one-on-one VC/founder meetings; on Gold Coast base; recurs annually — track for 2027
 
   - id: data_ai_conference_london_2026
     name: Data & AI Conference Europe 2026
@@ -176,11 +201,11 @@ events:
       status: null
       confirmed_date: null
     speaker:
-      too_late: false
+      too_late: true
       deadline: 2026-04-17
       apply_url: https://irmuk.co.uk/cfs-data-ai-conference-2026
     url: https://irmuk.co.uk/data-ai-conference-2026
-    notes: Speaker call deadline 17 Apr 2026 midnight — 17 days away; London proximity; workshops 2/5/6 Nov
+    notes: Conference 3-4 Nov at etc.venues Fenchurch Street, workshops 2/5/6 Nov; agenda published Aug 2026; 250+ data professionals; London proximity
 
   - id: world_summit_ai_2026
     name: World Summit AI 2026
@@ -212,9 +237,9 @@ events:
     categories: [ai-conference, speaking-opportunity]
     stars: 4
     participation:
-      status: null
+      status: closed
       confirmed_date: null
-      note: sold out — waitlist only
+      note: event took place 8-10 Apr 2026; sold out — waitlist only
     speaker:
       too_late: true
       deadline: null
@@ -231,8 +256,9 @@ events:
     categories: [investor-event]
     stars: 4
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 17 Jun 2026
     speaker:
       too_late: false
       deadline: null
@@ -249,8 +275,9 @@ events:
     categories: [horse-riding, cultural]
     stars: 4
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 9-16 May 2026
     speaker:
       too_late: false
       deadline: null
@@ -267,8 +294,9 @@ events:
     categories: [cultural]
     stars: 4
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 21-26 Apr 2026
     speaker:
       too_late: false
       deadline: null
@@ -303,8 +331,9 @@ events:
     categories: [investor-event, angel-fund-raising]
     stars: 4
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 7-8 May 2026
     speaker:
       too_late: true
       deadline: null
@@ -321,8 +350,9 @@ events:
     categories: [ai-conference, investor-event, speaking-opportunity]
     stars: 4
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 17-20 Jun 2026
     speaker:
       too_late: false
       deadline: null
@@ -339,13 +369,50 @@ events:
     categories: [ai-conference, investor-event, speaking-opportunity]
     stars: 4
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 8-10 Jun 2026
     speaker:
       too_late: false
       deadline: null
     url: https://londontechweek.com
     notes: 30,000+ attendees; 400+ speakers; 5,500 startups; Founders Angels Forum alongside; Olympia London; fringe events Jun 8–12; London proximity destination
+
+  - id: switch_singapore_2026
+    name: SWITCH 2026 (Singapore Week of Innovation and Technology)
+    date_start: 2026-10-27
+    date_end: 2026-10-29
+    location:
+      city: Singapore
+      country: Singapore
+    categories: [ai-conference, investor-event, angel-fund-raising, speaking-opportunity]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.switchsg.org
+    notes: 10th anniversary; Sands Expo; Singapore's flagship innovation week; SLINGSHOT deep-tech pitch (S$2M+ grants) closed applications 30 Jun 2026; Singapore frequent destination
+
+  - id: token2049_singapore_2026
+    name: TOKEN2049 Singapore 2026
+    date_start: 2026-10-07
+    date_end: 2026-10-08
+    location:
+      city: Singapore
+      country: Singapore
+    categories: [investor-event, ai-conference, angel-fund-raising]
+    stars: 4
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.token2049.com/singapore
+    notes: 25,000 attendees from 160 countries, 300 speakers, Marina Bay Sands; NEXUS startup competition judged by Dragonfly and Multicoin; dense side-event week; Singapore frequent destination
 
   # ── 3-star ─────────────────────────────────────────────────
 
@@ -359,8 +426,9 @@ events:
     categories: [investor-event, ai-conference]
     stars: 3
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 3-4 Jun 2026
     speaker:
       too_late: false
       deadline: null
@@ -395,8 +463,9 @@ events:
     categories: [ai-conference, investor-event]
     stars: 3
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 19-21 Jun 2026
     speaker:
       too_late: false
       deadline: null
@@ -424,8 +493,8 @@ events:
 
   - id: ai_summit_barcelona_2026
     name: AI Summit Barcelona 2026
-    date_start: null  # Oct 2026, exact TBC
-    date_end: null
+    date_start: 2026-09-22
+    date_end: 2026-09-23
     location:
       city: Barcelona
       country: Spain
@@ -438,7 +507,7 @@ events:
       too_late: false
       deadline: null
     url: https://aisummitbarcelona.com
-    notes: 10,000+ attendees; €5M startup prize; date TBC
+    notes: 22-23 Sep at WTC Barcelona (September, not October as previously recorded); 10,000+ attendees; €5M startup prize; "Apply to speak" open, no stated deadline
 
   - id: gen_ai_summit_valencia_2026
     name: Gen AI Summit EU 2026
@@ -450,8 +519,9 @@ events:
     categories: [ai-conference, speaking-opportunity]
     stars: 3
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 17-18 Apr 2026
     speaker:
       too_late: true
       deadline: null
@@ -486,8 +556,9 @@ events:
     categories: [investor-event]
     stars: 3
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 15 Jul 2026
     speaker:
       too_late: false
       deadline: null
@@ -504,8 +575,9 @@ events:
     categories: [ai-conference, speaking-opportunity]
     stars: 3
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 19-20 May 2026
     speaker:
       too_late: true
       deadline: null
@@ -529,6 +601,97 @@ events:
       deadline: null
     url: https://www.traveltechasia.com
     notes: 260+ speakers; AI + travel tech; Singapore frequent destination
+
+  - id: techinnovation_aimx_singapore_2026
+    name: TechInnovation x AIMX Singapore 2026
+    date_start: 2026-08-26
+    date_end: 2026-08-27
+    location:
+      city: Singapore
+      country: Singapore
+    categories: [ai-conference, ai-company]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: true
+      deadline: null
+    url: https://www.techinnovation.com.sg
+    notes: Sands Expo; first joint edition of IPI Singapore's TechInnovation and AIMX, on AI deployment rather than awareness; nine days out at time of sweep — attendance decision needed now
+
+  - id: tech_week_singapore_2026
+    name: Tech Week Singapore 2026 (Big Data & AI World Asia)
+    date_start: 2026-09-29
+    date_end: 2026-09-30
+    location:
+      city: Singapore
+      country: Singapore
+    categories: [ai-conference, speaking-opportunity]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.singaporetechnologyweek.com
+    notes: Sands Expo; 29,000+ attendees across five co-located shows; Big Data & AI World Asia is the relevant hall; Singapore frequent destination
+
+  - id: milken_asia_summit_2026
+    name: Milken Institute Asia Summit 2026
+    date_start: 2026-10-07
+    date_end: 2026-10-09
+    location:
+      city: Singapore
+      country: Singapore
+    categories: [investor-event, ai-conference]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+      note: attendance is by Milken invitation or membership — confirm access before planning around it
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://milkeninstitute.org/events/asia-summit-2026
+    notes: Four Seasons Singapore; 2026 theme is leadership in an AI-driven world; capital-allocator audience; overlaps TOKEN2049 exactly
+
+  - id: sff_singapore_2026
+    name: Singapore FinTech Festival 2026
+    date_start: 2026-11-18
+    date_end: 2026-11-20
+    location:
+      city: Singapore
+      country: Singapore
+    categories: [investor-event, ai-conference]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.fintechfestival.sg
+    notes: 11th edition, Singapore Expo; 70,000+ attendees from 140+ countries; Global FinTech Hackcelerator runs alongside; clashes with Slush Helsinki
+
+  - id: slush_helsinki_2026
+    name: Slush 2026
+    date_start: 2026-11-18
+    date_end: 2026-11-19
+    location:
+      city: Helsinki
+      country: Finland
+    categories: [investor-event, angel-fund-raising]
+    stars: 3
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://slush.org
+    notes: Messukeskus; 12,000 founders and investors; Investor Day and Founders Day 0 on 17 Nov for those ticket classes; clashes with Singapore FinTech Festival
 
   # ── 2-star ─────────────────────────────────────────────────
 
@@ -568,7 +731,7 @@ events:
       deadline: null
       note: academic paper track; submission deadline passed
     url: https://2026.ijcai.org
-    notes: World's leading academic AI conference; 3,500–4,000 AI experts
+    notes: World's leading academic AI conference; 3,500–4,000 AI experts; running during this sweep (15-21 Aug), too late to arrange attendance
 
   - id: web_summit_lisbon_2026
     name: Web Summit Lisbon 2026
@@ -598,14 +761,88 @@ events:
     categories: [ai-conference]
     stars: 2
     participation:
-      status: null
+      status: closed
       confirmed_date: null
+      note: event took place 8-10 May 2026
     speaker:
       too_late: true
       deadline: null
       note: academic paper track; submission deadline passed
     url: https://ieeecai2026.org
     notes: IEEE AI conference; Granada Conference Centre; late registration until Apr 30; Andalusia — accessible from Jerez
+
+  - id: superreturn_asia_2026
+    name: SuperReturn Asia 2026
+    date_start: 2026-09-28
+    date_end: 2026-10-01
+    location:
+      city: Singapore
+      country: Singapore
+    categories: [investor-event]
+    stars: 2
+    participation:
+      status: null
+      confirmed_date: null
+      note: institutional LP/GP audience and pricing, not an angel room
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.superreturnasia.com
+    notes: Marina Bay Sands; 2,500 private-markets professionals, 1,200 LPs, 1,000 GPs; sources differ on whether it runs 28 Sep-1 Oct or 29 Sep-2 Oct — confirm before booking
+
+  - id: skal_world_congress_2026
+    name: Skål International World Congress 2026
+    date_start: 2026-09-29
+    date_end: 2026-10-02
+    location:
+      city: Gqeberha (Nelson Mandela Bay)
+      country: South Africa
+    categories: [tourism-industry]
+    stars: 2
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://skal.org/WorldCongress
+    notes: 84th congress, Boardwalk Hotel and Convention Centre; tourism-industry network; far from both bases and clashes with Sifted Summit and SuperReturn Asia
+
+  - id: ai_congress_barcelona_2026
+    name: AI Congress Barcelona 2026
+    date_start: 2026-10-20
+    date_end: 2026-10-22
+    location:
+      city: Barcelona
+      country: Spain
+    categories: [ai-conference]
+    stars: 2
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://aicongress.barcelona/en/
+    notes: 12th edition at L'illa Auditorium, run by CIDAI and Eurecat under Catalonia.AI; distinct from AI Summit Barcelona in September; AI & Big Data Congress runs 21-22 Oct at Auditori AXA in the same week
+
+  - id: gartner_symposium_gold_coast_2026
+    name: Gartner IT Symposium/Xpo Gold Coast 2026
+    date_start: 2026-09-14
+    date_end: 2026-09-16
+    location:
+      city: Gold Coast
+      country: Australia
+    categories: [ai-conference]
+    stars: 2
+    participation:
+      status: null
+      confirmed_date: null
+    speaker:
+      too_late: false
+      deadline: null
+    url: https://www.gartner.com.au/en/conferences/apac/symposium-australia
+    notes: Gold Coast Convention and Exhibition Centre, on the Australia base, but enterprise-IT rather than the AI-company scope in the profile; September falls outside the Jun-Aug Australia window
 
   # ── 1-star ─────────────────────────────────────────────────
 
@@ -627,3 +864,22 @@ events:
       deadline: null
     url: https://www.tourism.australia.com/en/news-and-events/events/tourism-australia-industry-events/ate-2026.html
     notes: Participation window closed; included for future-year tracking
+
+  - id: atec_meeting_place_hobart_2026
+    name: ATEC Meeting Place 2026
+    date_start: 2026-10-26
+    date_end: 2026-10-28
+    location:
+      city: Hobart
+      country: Australia
+    categories: [tourism-industry]
+    stars: 1
+    participation:
+      status: closed
+      confirmed_date: null
+      note: registrations closed 19 Jul 2026
+    speaker:
+      too_late: true
+      deadline: null
+    url: https://www.atec.net.au/events/meeting-place/
+    notes: 500 delegates, 120 inbound buyers covering the USA, UK, Greater China, Singapore and New Zealand; registration window shut before this sweep; recurs annually — track the 2027 opening
