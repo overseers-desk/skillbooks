@@ -113,7 +113,7 @@ The methodologies share a structural principle: read before writing. SPAR profil
 ## Other directories
 
 - `travel/` — Travel planning and itinerary management (master orchestrator with sub-SOPs)
-- `almanac/` — Event discovery, evaluation, and presence planning
+- `almanac/` — Event discovery, evaluation, and presence planning (method only; data lives in the user's own repository)
 - `events/` — Event discovery and tracking
 - `roster/` — Roster management (architectural notes only)
 - `articles/` — Lessons learned from building and testing AESOPs

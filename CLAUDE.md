@@ -5,6 +5,11 @@ the top-level dirs (almanac, articles, contact-graph, correspondence-tend, event
 listing-sift, outreach-spar, travel, tests, webworks). These are SOPs written for AI
 agents to execute.
 
+The almanac is the exception: it is method only. Its data (the user's profile, the rated
+event list, the event cache) lives in the user's own repository and is handed to the sweep
+as a data root at run time. Nothing naming the user's cities, interests or decisions
+belongs under `almanac/`.
+
 Each methodology states its hard rules in its own `INVARIANTS.md`, which the procedures and validators cite.
 
 ## Authoring AESOPs
