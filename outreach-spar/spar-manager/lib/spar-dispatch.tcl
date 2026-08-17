@@ -1019,10 +1019,12 @@ proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
         puts $fd "CAMPAIGN_FILE=\"$campaign_file\""
         puts $fd "SOURCE_NAME=\"$name\""
         puts $fd "SWEEP_ROUND=\"$round_n\""
-        # Discovery is judgement over a whole population, so the owner set
-        # these workers opus-tier. SweepHarness reads MODEL and passes it
-        # to its call; coachman's own default is sonnet.
-        puts $fd "MODEL=\"opus\""
+        # Sweep workers run sonnet-tier per the spec's tier table
+        # (spar-methodology.md: S is Sonnet-tier) and the owner's 2026-08-17
+        # ruling that discovery runs on the cheaper tier with an opus-tier
+        # supervisor reviewing each round. SweepHarness reads MODEL and passes
+        # it to its call; coachman's own default is also sonnet.
+        puts $fd "MODEL=\"sonnet\""
         if {$cost_cap ne ""} {
             puts $fd "WORKER_COST_CAP_USD=$cost_cap"
         }
