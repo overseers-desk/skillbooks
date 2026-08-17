@@ -1,0 +1,406 @@
+#!/usr/bin/env python3
+"""Render an almanac data folder as a scannable HTML page.
+
+Usage: render-almanac DATA_ROOT OUT_HTML [YEAR]
+
+Joins three sources, each the single home of what it holds:
+  <root>/profile.yaml         whose year is being planned, and what they care about
+  <root>/<year>.yaml          the stars, the shortlist, the participation decisions
+  <root>/cache/events/*.yaml  what is known about each event
+
+The page's spine is a pair of log-scale bars per event: a faint bar for the
+estimated total audience and a solid bar for the segment worth meeting. The gap
+between them is the density a headcount never shows.
+"""
+import sys, os, glob, math, html, datetime, collections
+import yaml
+
+MECH = {
+    "matched_1to1":  ("Matched 1:1",   "m4"),
+    "curated_intro": ("Curated intro", "m3"),
+    "pitch_stage":   ("Pitch stage",   "m2"),
+    "open_floor":    ("Open floor",    "m1"),
+}
+MONTHS = ["", "January", "February", "March", "April", "May", "June", "July",
+          "August", "September", "October", "November", "December"]
+
+# Lens groups, matched against the interest ids the rated list tags each event
+# with. Pairing AI with investment is deliberate: someone raising for an AI
+# company reads both together, and splitting them buries the events that are
+# strongest precisely because they sit on both.
+LENS_GROUPS = [
+    ("aiinv", "AI &amp; investment", ("artificial_intelligence", "ai_", "angel_")),
+    ("ai",    "AI only",             ("artificial_intelligence", "ai_")),
+    ("inv",   "Investment only",     ("angel_",)),
+    ("tour",  "Tourism",             ("tourism",)),
+    ("pers",  "Personal",            ("horse_riding", "culture_")),
+]
+
+
+def esc(s):
+    return html.escape(str(s or ""))
+
+
+def rng(d, key):
+    v = (d or {}).get(key)
+    if isinstance(v, list) and len(v) == 2 and all(isinstance(x, (int, float)) for x in v):
+        return v
+    return None
+
+
+def human(n):
+    if n is None:
+        return ""
+    if n >= 10000:
+        return f"{n/1000:.0f}k"
+    if n >= 1000:
+        return f"{n/1000:.1f}k".replace(".0k", "k")
+    return str(int(n))
+
+
+def load(root, year):
+    profile = yaml.safe_load(open(os.path.join(root, "profile.yaml")))
+    rated = yaml.safe_load(open(os.path.join(root, f"{year}.yaml")))["events"]
+    cache = {}
+    for path in glob.glob(os.path.join(root, "cache", "events", "*.yaml")):
+        d = yaml.safe_load(open(path))
+        if isinstance(d, dict) and d.get("slug"):
+            cache[d["slug"]] = d
+    return profile, rated, cache
+
+
+def merge(rated, cache, year):
+    """One record per rated event, facts from the cache, judgments from the list."""
+    out, orphans = [], []
+    for r in rated:
+        slug = r.get("slug")
+        c = cache.get(slug)
+        if not c:
+            orphans.append(slug)
+            continue
+        ed = ((c.get("editions") or {}).get(year)
+              or (c.get("editions") or {}).get(str(year)) or {})
+        out.append({
+            "slug": slug,
+            "name": c.get("name", slug),
+            "description": c.get("description", ""),
+            "city": c.get("city", ""),
+            "country": c.get("country", ""),
+            "url": c.get("url", ""),
+            "access": c.get("access") or {},
+            "audience": c.get("audience") or {},
+            "start": ed.get("date_start"),
+            "end": ed.get("date_end"),
+            "availability": ed.get("availability"),
+            "deadlines": ed.get("deadlines") or [],
+            "stars": r.get("stars", 0),
+            "shortlisted": bool(r.get("shortlisted")),
+            "participation": r.get("participation") or {},
+            "why": r.get("notes", ""),
+            "interests": r.get("interests") or [],
+        })
+    return out, orphans
+
+
+def scale_bounds(events):
+    """Log bounds from the data, rounded out to whole decades."""
+    vals = []
+    for e in events:
+        for k, v in (e["audience"] or {}).items():
+            if k != "basis" and rng(e["audience"], k):
+                vals += rng(e["audience"], k)
+    if not vals:
+        return 10, 100_000
+    lo = 10 ** math.floor(math.log10(max(1, min(vals))))
+    hi = 10 ** math.ceil(math.log10(max(vals)))
+    return max(1, lo), max(hi, lo * 10)
+
+
+def main():
+    if len(sys.argv) < 3:
+        sys.exit(__doc__.strip())
+    root, out = sys.argv[1], sys.argv[2]
+    year = int(sys.argv[3]) if len(sys.argv) > 3 else datetime.date.today().year
+
+    profile, rated, cache = load(root, year)
+    events, orphans = merge(rated, cache, year)
+    if orphans:
+        print(f"warning: {len(orphans)} rated events have no cache file: "
+              f"{', '.join(str(o) for o in orphans[:8])}"
+              f"{' ...' if len(orphans) > 8 else ''}", file=sys.stderr)
+
+    pull_ids = [p["id"] for p in (profile.get("pull_events") or [])]
+    interest_ids = [i["id"] for i in (profile.get("interests") or [])]
+    lo, hi = scale_bounds(events)
+
+    def logpos(v):
+        if not v or v <= 0:
+            return 0.0
+        return max(0.0, min(100.0, (math.log10(v) - math.log10(lo))
+                            / (math.log10(hi) - math.log10(lo)) * 100))
+
+    # Lenses the profile actually supports, plus a catch-all for the rest.
+    tagged = {i for e in events for i in e["interests"]} | set(interest_ids)
+    lenses = [("all", "Everything", None)]
+    for key, label, prefixes in LENS_GROUPS:
+        cats = {c for c in tagged if any(c.startswith(p) or c == p for p in prefixes)}
+        if cats:
+            lenses.append((key, label, cats))
+
+    # A cache file names its segments in plain language, because it knows nothing
+    # about whose year is being planned. This maps the profile's pull events onto
+    # those names, so the bar shows the segment this user came for.
+    PULL_SEGMENT = {
+        "angel_investor_events": "investors",
+        "angel_fund_raising": "investors",
+        "ai_company_engagement": "ai_companies",
+        "ai_speaking_opportunity": "speakers",
+    }
+    wanted = [PULL_SEGMENT.get(p, p) for p in pull_ids]
+
+    def primary_segment(e):
+        aud = e["audience"] or {}
+        for k in wanted:
+            if rng(aud, k):
+                return k, rng(aud, k)
+        for k in aud:
+            if k not in ("attendees", "basis", "checked", "source") and rng(aud, k):
+                return k, rng(aud, k)
+        return None, None
+
+    def row(e):
+        aud = e["audience"] or {}
+        tot = rng(aud, "attendees")
+        seg_key, seg = primary_segment(e)
+        mech_label, mech_class = MECH.get(e["access"].get("mechanism"), ("", "m0"))
+
+        cats = set(e["interests"])
+        lens_keys = " ".join(k for k, _, c in lenses if c is None or (c & cats))
+
+        when = ""
+        if e["start"]:
+            when = str(e["start"])[8:10].lstrip("0")
+            if e["end"] and str(e["end"]) != str(e["start"]):
+                when += "–" + str(e["end"])[8:10].lstrip("0")
+
+        flags = []
+        if e["shortlisted"]:
+            flags.append('<span class="flag short">shortlisted</span>')
+        if e["availability"] in ("sold_out", "closed"):
+            flags.append(f'<span class="flag shut">{esc(e["availability"].replace("_", " "))}</span>')
+        gate = e["access"].get("gate")
+        if gate in ("application", "membership"):
+            flags.append(f'<span class="flag gate">{esc(gate)}</span>')
+        for d in e["deadlines"][:2]:
+            if d.get("date"):
+                flags.append(f'<span class="flag live">{esc(d.get("name", "deadline"))} {esc(d["date"])}</span>')
+
+        bars = ""
+        if tot:
+            bars += (f'<span class="bar total" style="left:{logpos(tot[0]):.1f}%;'
+                     f'width:{max(0.6, logpos(tot[1]) - logpos(tot[0])):.1f}%"></span>')
+        if seg:
+            bars += (f'<span class="bar seg {mech_class}" style="left:{logpos(seg[0]):.1f}%;'
+                     f'width:{max(0.8, logpos(seg[1]) - logpos(seg[0])):.1f}%"></span>')
+
+        figure = ""
+        if seg:
+            figure = human(seg[0]) if seg[0] == seg[1] else f"{human(seg[0])}–{human(seg[1])}"
+            figure += f' <span class="segname">{esc(seg_key.replace("_", " "))}</span>'
+        elif tot:
+            figure = f'{human(tot[0])}–{human(tot[1])} <span class="segname">attendees</span>'
+
+        basis = (aud.get("basis") or "").strip()
+        pnote = (e["participation"].get("note") or "").strip()
+
+        return f'''<article class="ev{" sl" if e["shortlisted"] else ""}" data-country="{esc(e["country"])}" data-stars="{e["stars"]}" data-lens="{lens_keys}" data-short="{"1" if e["shortlisted"] else "0"}">
+  <div class="when"><b>{esc(when)}</b></div>
+  <div class="what">
+    <h3><a href="{esc(e["url"])}" target="_blank" rel="noopener">{esc(e["name"])}</a></h3>
+    <div class="meta"><span class="city">{esc(e["city"])}</span>
+      <span class="dot">·</span><span class="mech {mech_class}">{esc(mech_label)}</span>
+      {"".join(flags)}</div>
+    {f'<p class="desc">{esc(e["description"])}</p>' if e["description"] else ""}
+    {f'<p class="note"><span>why it rates</span> {esc(e["why"])}</p>' if e["why"] else ""}
+    {f'<p class="basis"><span>estimate</span> {esc(basis)}</p>' if basis else ""}
+    {f'<p class="basis"><span>access</span> {esc(pnote)}</p>' if pnote else ""}
+  </div>
+  <div class="scale"><div class="track">{bars}</div><div class="figure">{figure}</div></div>
+  <div class="rate"><span class="meter">{"".join('<i class="on"></i>' for _ in range(e["stars"]))}{"".join("<i></i>" for _ in range(5 - e["stars"]))}</span></div>
+</article>'''
+
+    dated = sorted((e for e in events if e["start"]), key=lambda e: (str(e["start"]), -e["stars"]))
+    undated = [e for e in events if not e["start"]]
+    by_month = collections.OrderedDict()
+    for e in dated:
+        d = e["start"] if isinstance(e["start"], datetime.date) else datetime.date.fromisoformat(str(e["start"]))
+        by_month.setdefault((d.year, d.month), []).append(e)
+
+    body = []
+    for (y, m), evs in by_month.items():
+        body.append(f'<section class="month"><header class="mh"><h2>{MONTHS[m]}</h2>'
+                    f'<span class="mcount">{len(evs)} events · best {max(e["stars"] for e in evs)}★</span></header>'
+                    + "".join(row(e) for e in evs) + "</section>")
+    if undated:
+        body.append('<section class="month"><header class="mh"><h2>Undated</h2>'
+                    f'<span class="mcount">{len(undated)} events · organiser has not published dates</span></header>'
+                    + "".join(row(e) for e in undated) + "</section>")
+
+    countries = sorted({e["country"] for e in events if e["country"]})
+    opts = "".join(f'<option value="{esc(c)}">{esc(c)}</option>' for c in countries)
+    lens_buttons = "".join(
+        '<button data-l="%s" aria-pressed="%s">%s</button>' % (k, "true" if k == "all" else "false", lab)
+        for k, lab, _ in lenses)
+    n_short = sum(1 for e in events if e["shortlisted"])
+    n_seg = sum(1 for e in events if primary_segment(e)[1])
+
+    page = f'''<title>Almanac Field, {year}</title>
+<style>
+:root{{
+ --paper:#fbfaf8;--card:#fff;--edge:#e3e1dc;--ink:#191c22;--soft:#565d6b;--faint:#8c93a0;
+ --ink-accent:#2c3e78;--m1:#c3c9d8;--m2:#8fa2cf;--m3:#5470b4;--m4:#2c3e78;--m0:#d6d4cf;
+ --shut:#9a9691;--live:#8a5a2b;--live-bg:#f6eee3;--gate-bg:#eceff6;
+ --short:#1d6b52;--short-bg:#e4f0eb;
+ --display:Georgia,"Iowan Old Style","Times New Roman",serif;
+ --body:system-ui,"Segoe UI",Roboto,sans-serif;
+ --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,monospace;
+}}
+@media (prefers-color-scheme:dark){{:root:not([data-theme="light"]){{
+ --paper:#12141a;--card:#181b22;--edge:#2b2f3a;--ink:#eceef3;--soft:#a7aebd;--faint:#767d8c;
+ --ink-accent:#8fa6e8;--m1:#3a4152;--m2:#4a5c8f;--m3:#6b83c8;--m4:#9db2ee;--m0:#2e323c;
+ --shut:#6e747f;--live:#d8a76a;--live-bg:#2c2418;--gate-bg:#1e2331;
+ --short:#6cc7a4;--short-bg:#153026;}}}}
+:root[data-theme="dark"]{{
+ --paper:#12141a;--card:#181b22;--edge:#2b2f3a;--ink:#eceef3;--soft:#a7aebd;--faint:#767d8c;
+ --ink-accent:#8fa6e8;--m1:#3a4152;--m2:#4a5c8f;--m3:#6b83c8;--m4:#9db2ee;--m0:#2e323c;
+ --shut:#6e747f;--live:#d8a76a;--live-bg:#2c2418;--gate-bg:#1e2331;
+ --short:#6cc7a4;--short-bg:#153026;}}
+*{{box-sizing:border-box}}
+body{{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}}
+.wrap{{max-width:76rem;margin:0 auto;padding:3rem 1.25rem 5rem;display:flex;flex-direction:column;gap:1.75rem}}
+h1{{font-family:var(--display);font-weight:400;font-size:clamp(2rem,5vw,3rem);margin:0;letter-spacing:-.02em;text-wrap:balance}}
+.eyebrow{{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}}
+.stand{{font-family:var(--display);font-size:1.08rem;color:var(--soft);max-width:44rem;margin:.5rem 0 0}}
+.legend{{display:flex;flex-wrap:wrap;gap:1.25rem;align-items:center;border:1px solid var(--edge);background:var(--card);padding:.9rem 1.1rem}}
+.legend .lk{{display:flex;align-items:center;gap:.45rem;font-size:.8rem;color:var(--soft)}}
+.sw{{width:26px;height:9px;display:block;border-radius:1px}}
+.sw.t{{background:var(--m0);opacity:.55}}
+.controls{{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;font-size:.85rem}}
+select,button{{font:inherit;font-size:.85rem;padding:.35rem .6rem;background:var(--card);color:var(--ink);border:1px solid var(--edge);border-radius:2px}}
+button{{cursor:pointer}}
+button[aria-pressed="true"]{{background:var(--ink-accent);color:var(--paper);border-color:var(--ink-accent)}}
+button#fs[aria-pressed="true"]{{background:var(--short);border-color:var(--short)}}
+:focus-visible{{outline:2px solid var(--ink-accent);outline-offset:2px}}
+.month{{display:flex;flex-direction:column;gap:1px;background:var(--edge);border:1px solid var(--edge)}}
+.mh{{background:var(--paper);padding:.85rem 1.1rem;display:flex;justify-content:space-between;align-items:baseline;gap:1rem}}
+.mh h2{{font-family:var(--display);font-weight:400;font-size:1.45rem;margin:0}}
+.mcount{{font-family:var(--mono);font-size:.72rem;color:var(--faint);letter-spacing:.05em}}
+.ev{{background:var(--card);display:grid;grid-template-columns:3.4rem minmax(0,1fr) 15rem 3.6rem;gap:1rem;padding:.85rem 1.1rem;align-items:start}}
+.ev.sl{{box-shadow:inset 3px 0 0 var(--short)}}
+.ev.hide{{display:none}}
+.when b{{font-family:var(--mono);font-size:.95rem;font-variant-numeric:tabular-nums}}
+.what h3{{margin:0;font-size:1rem;font-weight:600;line-height:1.3}}
+.what h3 a{{color:inherit;text-decoration:none}}
+.what h3 a:hover{{text-decoration:underline;text-underline-offset:2px}}
+.meta{{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-top:.2rem;font-size:.78rem;color:var(--soft)}}
+.dot{{color:var(--faint)}}
+.mech{{font-family:var(--mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase}}
+.mech.m4{{color:var(--m4)}}.mech.m3{{color:var(--m3)}}.mech.m2{{color:var(--m2)}}.mech.m1{{color:var(--faint)}}
+.flag{{font-family:var(--mono);font-size:.64rem;letter-spacing:.05em;text-transform:uppercase;padding:.1rem .35rem;border-radius:2px}}
+.flag.shut{{color:var(--shut);border:1px solid var(--edge)}}
+.flag.live{{color:var(--live);background:var(--live-bg)}}
+.flag.gate{{color:var(--ink-accent);background:var(--gate-bg)}}
+.flag.short{{color:var(--short);background:var(--short-bg)}}
+.desc{{margin:.3rem 0 0;font-size:.88rem;color:var(--ink);max-width:52ch}}
+.note,.basis{{margin:.3rem 0 0;font-size:.8rem;color:var(--soft)}}
+.basis{{color:var(--faint);font-size:.78rem}}
+.note span,.basis span{{font-family:var(--mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);margin-right:.4rem}}
+.scale{{padding-top:.15rem}}
+.track{{position:relative;height:13px;background:linear-gradient(to right,var(--edge) 1px,transparent 1px) 0 0/25% 100%;border-bottom:1px solid var(--edge)}}
+.bar{{position:absolute;top:2px;height:9px;border-radius:1px}}
+.bar.total{{background:var(--m0);opacity:.6}}
+.bar.seg.m4{{background:var(--m4)}}.bar.seg.m3{{background:var(--m3)}}.bar.seg.m2{{background:var(--m2)}}.bar.seg.m1{{background:var(--m1)}}.bar.seg.m0{{background:var(--m0)}}
+.figure{{font-family:var(--mono);font-size:.75rem;color:var(--soft);margin-top:.3rem;font-variant-numeric:tabular-nums}}
+.segname{{color:var(--faint)}}
+.meter{{display:flex;gap:2px;padding-top:.3rem}}
+.meter i{{width:5px;height:13px;background:var(--edge);display:block}}
+.meter i.on{{background:var(--ink-accent)}}
+footer{{border-top:1px solid var(--edge);padding-top:1rem;font-size:.82rem;color:var(--faint)}}
+@media(max-width:60rem){{
+ .ev{{grid-template-columns:3rem minmax(0,1fr) 3.6rem;gap:.75rem}}
+ .scale{{grid-column:2/4}}
+}}
+</style>
+<div class="wrap">
+<header>
+ <span class="eyebrow">Almanac · {len(events)} events · {n_short} shortlisted</span>
+ <h1>Almanac Field, {year}</h1>
+ <p class="stand">Rated on fit with the profile and reachability from the bases. The bars are logarithmic. The faint bar is the estimated crowd; the solid bar is the estimated number of people you came for. The gap between them is the part a headcount never shows.</p>
+</header>
+
+<div class="legend">
+ <span class="lk"><span class="sw t"></span>estimated total audience</span>
+ <span class="lk"><span class="sw" style="background:var(--m4)"></span>matched 1:1</span>
+ <span class="lk"><span class="sw" style="background:var(--m3)"></span>curated intro</span>
+ <span class="lk"><span class="sw" style="background:var(--m2)"></span>pitch stage</span>
+ <span class="lk"><span class="sw" style="background:var(--m1)"></span>open floor</span>
+ <span class="lk" style="margin-left:auto;font-family:var(--mono);font-size:.7rem">bar width = confidence · scale {human(lo)} → {human(hi)}</span>
+</div>
+
+<div class="controls">{lens_buttons}</div>
+<div class="controls">
+ <button id="fs" aria-pressed="false">Shortlisted only</button>
+ <label>Country <select id="fc"><option value="">all</option>{opts}</select></label>
+ <span>Minimum rating</span>
+ <button data-s="0" aria-pressed="true">all</button>
+ <button data-s="3">3★+</button>
+ <button data-s="4">4★+</button>
+ <button data-s="5">5★</button>
+ <span id="count" style="font-family:var(--mono);font-size:.75rem;color:var(--faint)"></span>
+</div>
+
+{"".join(body)}
+
+<footer>{n_seg} of {len(events)} entries carry an estimate for a segment rather than a bare headcount. Every estimate is a range whose width carries its confidence, with the reasoning recorded beside it. Facts come from the event cache; stars, shortlisting and participation come from the rated list.</footer>
+</div>
+<script>
+const evs=[...document.querySelectorAll('.ev')],cnt=document.getElementById('count');
+let country='',minStars=0,lens='all',shortOnly=false;
+function apply(){{
+ let n=0;
+ evs.forEach(e=>{{
+  const ok=(!country||e.dataset.country===country)
+        &&(+e.dataset.stars>=minStars)
+        &&(!shortOnly||e.dataset.short==='1')
+        &&(lens==='all'||e.dataset.lens.split(' ').includes(lens));
+  e.classList.toggle('hide',!ok); if(ok)n++;
+ }});
+ document.querySelectorAll('.month').forEach(m=>{{
+  m.style.display=[...m.querySelectorAll('.ev')].some(e=>!e.classList.contains('hide'))?'':'none';
+ }});
+ cnt.textContent=n+' shown';
+}}
+document.getElementById('fc').addEventListener('change',e=>{{country=e.target.value;apply();}});
+document.getElementById('fs').addEventListener('click',e=>{{
+ shortOnly=!shortOnly; e.target.setAttribute('aria-pressed',String(shortOnly)); apply();
+}});
+document.querySelectorAll('button[data-s]').forEach(b=>b.addEventListener('click',()=>{{
+ document.querySelectorAll('button[data-s]').forEach(x=>x.setAttribute('aria-pressed','false'));
+ b.setAttribute('aria-pressed','true'); minStars=+b.dataset.s; apply();
+}}));
+document.querySelectorAll('button[data-l]').forEach(b=>b.addEventListener('click',()=>{{
+ document.querySelectorAll('button[data-l]').forEach(x=>x.setAttribute('aria-pressed','false'));
+ b.setAttribute('aria-pressed','true'); lens=b.dataset.l; apply();
+}}));
+apply();
+</script>'''
+
+    os.makedirs(os.path.dirname(os.path.abspath(out)) or ".", exist_ok=True)
+    with open(out, "w") as f:
+        f.write(page)
+    print(f"wrote {out}: {len(events)} events, {n_short} shortlisted, "
+          f"{n_seg} with a segment estimate, scale {lo}-{hi}")
+
+
+if __name__ == "__main__":
+    main()

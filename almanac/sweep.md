@@ -75,7 +75,7 @@ A star says how well an event fits. It says nothing about how much of the thing 
 
 Organisers rarely publish a segment breakdown, and an unpublished figure is not a null. Spend one search, then estimate from what is observable: which ticket classes are sold, whether the programme names the cohort, the organiser's figures for adjacent segments, and comparable events already cached. Record a range and widen it rather than omitting the estimate. Put the reasoning in `basis`. Reserve `none` for a segment that genuinely does not attend.
 
-Segment keys come from the `interests` and `pull_events` ids in `profile.yaml`, so a segment is named the same way across every entry.
+Name segments in plain language: `investors`, `buyers`, `speakers`, `exhibitors`. A cache file knows nothing about whose year is being planned, so the profile's own vocabulary has no place in it. Use the same name for the same segment across every entry, and let the renderer map the profile's pull events onto those names.
 
 `access` is observed rather than estimated, and it is what makes the population count for anything: a matched programme turns a large crowd into meetings, an open floor does not. Keep the two separate. Combining them into one score would need weights nobody has measured.
 
