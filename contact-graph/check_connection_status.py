@@ -30,8 +30,8 @@ import re
 import subprocess
 import sys
 
-# browser-serialiser ships with the serialised-browsing skill (overseer-toolbox
-# plugin) and is on PATH when that plugin is installed.
+# browser-serialiser is the serialised-browsing skill's CLI, on PATH when that
+# skill is installed.
 BROWSER_SERIALISER = 'browser-serialiser'
 
 

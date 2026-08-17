@@ -54,7 +54,7 @@ Three methodologies for three directions of information flow. Each is a four-pha
 
 #### SIFT use cases
 
-**Published job listings** (`../career-development/published-jobs.sift/`). 180+ job listings scored on four dimensions (influence/knowledge access, compensation, stepping-stone value, labour fit) with five amplifier tags (cross-culture, cross-domain, multilingual, china-west, regulated+technical). Dossiers archived in `jobs/`. Registry in `jobs.tsv`. This campaign predates the SIFT generalisation and retains the original file naming; new campaigns use `registry.tsv` and `dossiers/`.
+**Published job listings** (`../holotapes-career/career/published-jobs.sift/`). 180+ job listings scored on four dimensions (influence/knowledge access, compensation, stepping-stone value, labour fit) with five amplifier tags (cross-culture, cross-domain, multilingual, china-west, regulated+technical). Registry in `registry.tsv`, dossiers in `dossiers/`.
 
 ### TEND — Correspondence Processing
 
@@ -75,7 +75,7 @@ Three methodologies for three directions of information flow. Each is a four-pha
 
 #### TEND use cases
 
-**Rivermill director inbox** (`../weiwu/email-processing.tend/`). Taxonomy built from 226 emails across 5 batches covering the full sender spectrum (internal staff, retained professionals, external partners, job applicants, board members). 64 categories with 64 corresponding processing rules. The taxonomy and ruleset are the domain-specific artefacts; TEND defines how an agent uses them.
+**Rivermill director inbox** (`../holotapes/email-processing.tend/`). Taxonomy built from 226 emails across 5 batches covering the full sender spectrum (internal staff, retained professionals, external partners, job applicants, board members). 64 categories with 64 corresponding processing rules. The taxonomy and ruleset are the domain-specific artefacts; TEND defines how an agent uses them.
 
 ### SAGE — Product Development to Fit in a Proven Market
 
@@ -116,8 +116,6 @@ The methodologies share a structural principle: read before writing. SPAR profil
 - `almanac/` — Event discovery, evaluation, and presence planning
 - `events/` — Event discovery and tracking
 - `roster/` — Roster management (architectural notes only)
-- `linkedin-lookup-method/` — LinkedIn profile lookup via headless browser
-- `facebook-lookup-method/` — Facebook profile lookup via headless browser
 - `articles/` — Lessons learned from building and testing AESOPs
 - `tests/` — Test cases and results for validating SOPs through iterative rounds
 - `sop-authoring-rules.md` — Meta-guide for creating and updating SOPs

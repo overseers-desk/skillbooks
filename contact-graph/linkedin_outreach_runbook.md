@@ -120,8 +120,8 @@ Repeat until the stop condition fires:
 7. **Drafting.** Only for `verified` candidates that returned `not_connected` at step 6.5.
 
    At session start (once, then cache in your working memory):
-   - Read `/home/weiwu/code/rivermill/overview.md`.
-   - Read `/home/weiwu/code/palaciobizcocheros.com/docs/overview.md`.
+   - Read `~/code/rivermill/overview.md`.
+   - Read `~/code/palaciobizcocheros.com/docs/overview.md`.
    - Note: Bizcocheros is in validation posture, not booking pitch. The
      overview file is explicit on the framing the message must carry.
 
