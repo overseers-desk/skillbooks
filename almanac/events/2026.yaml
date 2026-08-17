@@ -554,7 +554,7 @@ events:
       city: Brisbane
       country: Australia
     categories: [investor-event]
-    stars: 3
+    stars: 4
     participation:
       status: closed
       confirmed_date: null
@@ -563,7 +563,7 @@ events:
       too_late: false
       deadline: null
     url: https://www.startupworldcup.io
-    notes: Pitch competition; Brisbane hub rank 1; winner to SF finale
+    notes: Pitch competition; winner to SF finale; Brisbane is 71 km from the Gold Coast base and the rank-1 hub, so it rates level with the Sydney leg at 683 km rather than below it
 
   - id: ai_week_milan_2026
     name: AI Week Milan 2026
@@ -582,7 +582,7 @@ events:
       too_late: true
       deadline: null
     url: https://www.aiweek.it/en
-    notes: 700+ speakers, 25,000+ attendees; Rome proximity extends to Milan
+    notes: 700+ speakers, 25,000+ attendees; Milan is 1,608 km from Jerez, outside the Spain base's 600 km radius, and is not a frequent destination — an earlier note credited it with Rome's proximity, which Rome does not confer
 
   - id: travel_tech_asia_2026
     name: Travel Tech Asia + ITB Asia 2026
@@ -697,8 +697,8 @@ events:
 
   - id: angel_investor_summit_uk_2026
     name: Angel Investor Summit UK 2026
-    date_start: 2026-09-10
-    date_end: 2026-09-10
+    date_start: 2026-09-22
+    date_end: 2026-09-22
     location:
       city: Brighton
       country: UK
@@ -711,8 +711,8 @@ events:
     speaker:
       too_late: false
       deadline: null
-    url: https://www.angelinvestorsummit.co.uk
-    notes: Curated angel investor list; Brighton not London but near
+    url: https://angelinvestorsummit.co.uk
+    notes: 22 Sep at Brighton Dome Corn Exchange, third year, run by South East Angels with UKBAA; audience is private investors and family offices rather than a founder pitch room, which is what holds the rating down
 
   - id: ijcai_ecai_2026
     name: IJCAI-ECAI 2026
@@ -769,7 +769,7 @@ events:
       deadline: null
       note: academic paper track; submission deadline passed
     url: https://ieeecai2026.org
-    notes: IEEE AI conference; Granada Conference Centre; late registration until Apr 30; Andalusia — accessible from Jerez
+    notes: IEEE's applications-and-industry AI conference, not its research one; business track with CaixaBank, T-Systems and Fidesol, plus a startup and AI-company exhibition that needs no paper to attend; Granada Conference Centre, 231 km from Jerez, the nearest event city in this file after Seville. The closed paper deadline settled a question it does not govern; re-rate for 2027 on exhibition and industry access
 
   - id: superreturn_asia_2026
     name: SuperReturn Asia 2026
