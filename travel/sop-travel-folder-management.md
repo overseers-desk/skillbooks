@@ -20,7 +20,7 @@ This SOP applies to file organization and email synchronization within the "Trav
 
 - This SOP is **NOT** for journey completeness evaluation. It does not assess travel gaps, evaluate transport connections, or verify accommodation continuity.
 - This SOP is **NOT** for itinerary generation. It does not create travel timelines or generate itinerary documents.
-- For journey evaluation and itinerary creation, see the Travel Itinerary Management SOP (`travel-itinerary-management.md`).
+- For journey evaluation and itinerary creation, see the Travel Itinerary Management SOP (`sop-itinerary-management.md`).
 
 The execution can be performed on:
 
@@ -57,7 +57,7 @@ A booking can arrive before any journey folder exists ("archive the ticket we ju
 
 ### RUN: Folder Management Execution
 
-A **RUN** is a complete folder management pass through a journey folder, executing all procedures in sequence to ensure files are properly organized, named correctly, and synchronized with email confirmations. This SOP covers the folder management aspects only—for journey completeness evaluation and itinerary generation, see the Travel Itinerary Management SOP (`travel-itinerary-management.md`).
+A **RUN** is a complete folder management pass through a journey folder, executing all procedures in sequence to ensure files are properly organized, named correctly, and synchronized with email confirmations. This SOP covers the folder management aspects only—for journey completeness evaluation and itinerary generation, see the Travel Itinerary Management SOP (`sop-itinerary-management.md`).
 
 **RUN Workflow:**
 
@@ -83,7 +83,7 @@ This re-runnable design allows the journey folder to evolve naturally as booking
 
 **Subsequent Processing:**
 
-After completing folder management RUN, you may optionally proceed to journey evaluation and itinerary generation using the Travel Itinerary Management SOP (`travel-itinerary-management.md`). That SOP handles:
+After completing folder management RUN, you may optionally proceed to journey evaluation and itinerary generation using the Travel Itinerary Management SOP (`sop-itinerary-management.md`). That SOP handles:
 
 - Mental journey simulation and completeness evaluation
 - Itinerary document creation/update with gap analysis
@@ -1184,7 +1184,7 @@ Properly named file following convention:
 
 After completing folder management RUN, you may proceed to journey completeness evaluation and itinerary generation:
 
-**Travel Itinerary Management SOP** (`travel-itinerary-management.md`)
+**Travel Itinerary Management SOP** (`sop-itinerary-management.md`)
 
 This separate SOP handles:
 
