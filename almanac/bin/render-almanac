@@ -78,8 +78,15 @@ def merge(rated, cache, year):
         if not c:
             orphans.append(slug)
             continue
-        ed = ((c.get("editions") or {}).get(year)
-              or (c.get("editions") or {}).get(str(year)) or {})
+        eds = c.get("editions") or {}
+        ed = eds.get(year) or eds.get(str(year)) or {}
+        # A deadline can gate a later edition and still fall due now, so every
+        # edition's deadlines travel, not only the one being rendered.
+        all_dl = []
+        for ey, e in eds.items():
+            if isinstance(e, dict):
+                for dline in e.get("deadlines") or []:
+                    all_dl.append({**dline, "edition": ey})
         out.append({
             "slug": slug,
             "name": c.get("name", slug),
@@ -93,6 +100,7 @@ def merge(rated, cache, year):
             "end": ed.get("date_end"),
             "availability": ed.get("availability"),
             "deadlines": ed.get("deadlines") or [],
+            "all_deadlines": all_dl,
             "stars": r.get("stars", 0),
             "shortlisted": bool(r.get("shortlisted")),
             "participation": r.get("participation") or {},
@@ -213,7 +221,7 @@ def main():
         basis = (aud.get("basis") or "").strip()
         pnote = (e["participation"].get("note") or "").strip()
 
-        return f'''<article class="ev{" sl" if e["shortlisted"] else ""}" data-country="{esc(e["country"])}" data-stars="{e["stars"]}" data-lens="{lens_keys}" data-short="{"1" if e["shortlisted"] else "0"}">
+        return f'''<article id="{esc(e["slug"])}" class="ev{" sl" if e["shortlisted"] else ""}" data-country="{esc(e["country"])}" data-stars="{e["stars"]}" data-lens="{lens_keys}" data-short="{"1" if e["shortlisted"] else "0"}">
   <div class="when"><b>{esc(when)}</b></div>
   <div class="what">
     <h3><a href="{esc(e["url"])}" target="_blank" rel="noopener">{esc(e["name"])}</a></h3>
@@ -228,6 +236,59 @@ def main():
   <div class="scale"><div class="track">{bars}</div><div class="figure">{figure}</div></div>
   <div class="rate"><span class="meter">{"".join('<i class="on"></i>' for _ in range(e["stars"]))}{"".join("<i></i>" for _ in range(5 - e["stars"]))}</span></div>
 </article>'''
+
+
+    KIND_LABEL = {"cfp": "Speak", "application": "Apply", "early_bird": "Early bird",
+                  "registration": "Register", "other": "Act"}
+    today = datetime.date.today()
+
+    def as_date(v):
+        if isinstance(v, datetime.date):
+            return v
+        try:
+            return datetime.date.fromisoformat(str(v)[:10])
+        except (ValueError, TypeError):
+            return None
+
+    def deadline_rows():
+        """Every dated act still ahead, soonest first, whichever edition it gates."""
+        rows = []
+        for e in events:
+            for d in e["all_deadlines"]:
+                when = as_date(d.get("date") or d.get("closes"))
+                if not when or when < today:
+                    continue
+                rows.append((when, e, d))
+        rows.sort(key=lambda r: (r[0], r[1]["name"]))
+        return rows
+
+    def deadline_table():
+        rows = deadline_rows()
+        if not rows:
+            return ""
+        body = []
+        for when, e, d in rows:
+            days = (when - today).days
+            urgent = " soon" if days <= 21 else ""
+            act = KIND_LABEL.get(d.get("kind"), "Act")
+            url = d.get("url") or e["url"]
+            where = f'{esc(e["city"])}' if e["city"] else ""
+            body.append(
+                f'<tr class="dl{urgent}" data-stars="{e["stars"]}" data-short="{"1" if e["shortlisted"] else "0"}">'
+                f'<td class="d-when"><b>{when.strftime("%-d %b")}</b>'
+                f'<span class="d-days">{days} d</span></td>'
+                f'<td><span class="d-kind k-{esc(d.get("kind","other"))}">{esc(act)}</span></td>'
+                f'<td class="d-what">{esc(d.get("name",""))}</td>'
+                f'<td class="d-ev"><a href="#{esc(e["slug"])}">{esc(e["name"])}</a>'
+                f'{f"<span class=\"d-city\">{where}</span>" if where else ""}</td>'
+                f'<td class="d-go">{f'<a href="{esc(url)}" target="_blank" rel="noopener">open</a>' if url else ""}</td>'
+                f'</tr>')
+        return (
+            '<section class="deadlines"><header class="mh"><h2>Dates to act on</h2>'
+            f'<span class="mcount">{len(rows)} still ahead · soonest first</span></header>'
+            '<div class="dwrap"><table><thead><tr><th>When</th><th></th><th>What</th>'
+            '<th>Event</th><th></th></tr></thead><tbody>'
+            + "".join(body) + '</tbody></table></div></section>')
 
     dated = sorted((e for e in events if e["start"]), key=lambda e: (str(e["start"]), -e["stars"]))
     undated = [e for e in events if not e["start"]]
@@ -325,6 +386,28 @@ button#fs[aria-pressed="true"]{{background:var(--short);border-color:var(--short
 .meter{{display:flex;gap:2px;padding-top:.3rem}}
 .meter i{{width:5px;height:13px;background:var(--edge);display:block}}
 .meter i.on{{background:var(--ink-accent)}}
+
+.deadlines{{border:1px solid var(--edge);background:var(--card)}}
+.deadlines .mh{{background:var(--card);border-bottom:1px solid var(--edge)}}
+.dwrap{{overflow-x:auto}}
+.deadlines table{{border-collapse:collapse;width:100%;font-size:.86rem}}
+.deadlines th{{text-align:left;font-family:var(--mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.09em;color:var(--faint);font-weight:400;padding:.5rem .8rem;border-bottom:1px solid var(--edge)}}
+.deadlines td{{padding:.5rem .8rem;border-bottom:1px solid var(--edge);vertical-align:baseline}}
+.deadlines tr:last-child td{{border-bottom:0}}
+.dl.hide{{display:none}}
+.d-when{{white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums}}
+.d-days{{display:block;font-size:.66rem;color:var(--faint)}}
+.dl.soon .d-when b{{color:var(--live)}}
+.dl.soon .d-days{{color:var(--live)}}
+.d-kind{{font-family:var(--mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;padding:.12rem .4rem;border-radius:2px;white-space:nowrap;background:var(--gate-bg);color:var(--ink-accent)}}
+.d-kind.k-cfp{{background:var(--short-bg);color:var(--short)}}
+.d-kind.k-early_bird{{background:var(--live-bg);color:var(--live)}}
+.d-what{{color:var(--soft);max-width:26ch}}
+.d-ev a{{color:var(--ink);text-decoration:none;font-weight:600}}
+.d-ev a:hover{{text-decoration:underline;text-underline-offset:2px}}
+.d-city{{display:block;font-size:.7rem;color:var(--faint)}}
+.d-go a{{font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-accent)}}
+.ev:target{{box-shadow:inset 0 0 0 2px var(--ink-accent)}}
 footer{{border-top:1px solid var(--edge);padding-top:1rem;font-size:.82rem;color:var(--faint)}}
 @media(max-width:60rem){{
  .ev{{grid-template-columns:3rem minmax(0,1fr) 3.6rem;gap:.75rem}}
@@ -359,12 +442,14 @@ footer{{border-top:1px solid var(--edge);padding-top:1rem;font-size:.82rem;color
  <span id="count" style="font-family:var(--mono);font-size:.75rem;color:var(--faint)"></span>
 </div>
 
+{deadline_table()}
+
 {"".join(body)}
 
 <footer>{n_seg} of {len(events)} entries carry an estimate for a segment rather than a bare headcount. Every estimate is a range whose width carries its confidence, with the reasoning recorded beside it. Facts come from the event cache; stars, shortlisting and participation come from the rated list.</footer>
 </div>
 <script>
-const evs=[...document.querySelectorAll('.ev')],cnt=document.getElementById('count');
+const evs=[...document.querySelectorAll('.ev')],dls=[...document.querySelectorAll('tr.dl')],cnt=document.getElementById('count');
 let country='',minStars=0,lens='all',shortOnly=false;
 function apply(){{
  let n=0;
@@ -374,6 +459,9 @@ function apply(){{
         &&(!shortOnly||e.dataset.short==='1')
         &&(lens==='all'||e.dataset.lens.split(' ').includes(lens));
   e.classList.toggle('hide',!ok); if(ok)n++;
+ }});
+ dls.forEach(r=>{{
+  r.classList.toggle('hide',(shortOnly&&r.dataset.short!=='1')||(+r.dataset.stars<minStars));
  }});
  document.querySelectorAll('.month').forEach(m=>{{
   m.style.display=[...m.querySelectorAll('.ev')].some(e=>!e.classList.contains('hide'))?'':'none';
