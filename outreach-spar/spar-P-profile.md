@@ -149,7 +149,7 @@ Record the target address used, the OSRM driving distance in km, and the duratio
 
 This responsibility is temporary; the harness will absorb the OSRM call once `venue` is consistently populated and a target-side location field is added to the roster. See #93.
 
-### 4.7 (removed) Warmth and prior correspondence are not profile content
+### 4.7 Warmth and prior correspondence are not profile content
 
 P does not check IMAP and does not record warmth. Prior correspondence and warmth are engagement state: they change between campaigns and the first message we send falsifies them, so a profile carrying them is stale on reuse (INVARIANTS.md, I1). The approach phase determines warmth fresh at contact time, from the per-contact approach log and a current IMAP check.
 
