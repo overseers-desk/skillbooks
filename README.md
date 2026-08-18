@@ -6,7 +6,7 @@ SOPs written for AI agents to follow autonomously. These are not documentation f
 
 ## Methodologies
 
-Three methodologies for three directions of information flow. Each is a four-phase pipeline executed by AI agents, with domain-specific content (segments, taxonomies, scoring rubrics) supplied by a campaign configuration rather than by the methodology itself.
+Each methodology covers one direction of information flow as a four-phase pipeline executed by AI agents, with domain-specific content (segments, taxonomies, scoring rubrics) supplied by a campaign configuration rather than by the methodology itself.
 
 ### SPAR — Outreach Discovery and Engagement
 
@@ -17,7 +17,7 @@ Three methodologies for three directions of information flow. Each is a four-pha
 **What each phase does:**
 
 - **Search** discovers names from registries, directories, social graphs, and web searches. Iterates up to three times, each expanding the roster through social-graph and semantic expansion.
-- **Profile** builds a dossier for each contact: what they have said publicly, who they know, their current role, and how relevant they are to the campaign. Produces a star rating (value to us) and a response-likelihood estimate (value of us to them).
+- **Profile** builds a dossier for each contact: what they have said publicly, who they know, their current role, and how relevant they are to the campaign. Produces a star rating: how valuable the contact is to us, independent of any one campaign. The response-likelihood estimate belongs to Approach, because it turns on the angle chosen.
 - **Approach** drafts a personalised message for each contact, tested against a context-isolated challenger agent that role-plays the recipient. The challenger has never read the campaign files and reacts as a stranger would.
 - **Revise** is a human phase. After each band of messages is sent and responses arrive, the human reviews what worked, what did not, and adjusts the strategy for the next band.
 

@@ -51,7 +51,7 @@
 # ---------------------------------------------------------------------------
 
 title: ...                                        # human-readable segment name
-version: "1.0"                                     # SPAR spec generation (see spar-methodology.md, "Versioning")
+version: "2.0"                                     # SPAR spec generation (see spar-methodology.md, "Versioning")
 date: 2026-03-30                                   # date this file was last substantively revised
 sweeper: ...                                       # optional: market family this segment sweeps with; resolves to
                                                    # sweeper-<name>.yaml beside the campaign YAMLs (spar-S-search.md §7.1).

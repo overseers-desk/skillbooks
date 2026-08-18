@@ -1,6 +1,6 @@
 # SPAR Campaign Directory Structure
 
-**Applies to:** campaign planners setting up a new SPAR outreach campaign (spec 2.0)
+**Applies to:** campaign planners setting up a new SPAR outreach campaign
 
 **Prerequisite reading:** `spar-methodology.md`, `spar-campaign-yaml.md`
 

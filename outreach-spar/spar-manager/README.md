@@ -88,11 +88,15 @@ Common flags: `--dispatchable`/`--awaiting`/`--blocked` (report filters), `--job
 
 ### T6 LinkedIn sends
 
+The overseer on `127.0.0.1:11402` owns the browser and the per-host send cadence.
+
 1. Start an overseer on the machine whose Chromium profile is logged in to the sending LinkedIn account, pointing it at a skills checkout that carries `linkedin.com/send-invite` and `linkedin.com/send-message`:
 
    `BI_SKILLS_ROOT=<skills-checkout>/skills <overseer-repo>/desktop/overseer -cli -no-poll`
 
-2. Confirm it answers: `curl http://127.0.0.1:11402/health` (expect `"ok":true`). For an unattended run, do this pre-flight before approach drafting finishes, not at send time: an overseer absent when the send leg fires leaves the sends failing until someone looks.
+   The runner holds no skills checkout of its own, so the send leg resolves `skillPath` and `libDir` from that variable and hands them in with each `/run` (ducks-protocol.md). It fails loudly when the variable is unset.
+
+2. Confirm it answers with `tclsh9.0 spar-overseer-health.tcl`, not a hand-rolled parse of `/health`. The exits are distinct (0 healthy, 1 faulted, 2 unreachable, 3 malformed) and the raw body always prints; an ad-hoc probe once read a schema change as "not answering" and misdiagnosed a healthy overseer. For an unattended run, do this pre-flight before approach drafting finishes, not at send time: an overseer absent when the send leg fires leaves the sends failing until someone looks.
 
 3. Dry run first: `tclsh9.0 spar-transition.tcl <campaign.yaml> T6 --dry-run` validates every row (message present, vanity extractable, note within the 300-char invite limit) without contacting the overseer.
 
@@ -129,15 +133,6 @@ Dispatch supplies both arguments, with `<log-dir>` resolved by `spar::resolve_lo
 ```
 tclsh9.0 test/run.tcl   # parallel; honours SPAR_TEST_JOBS
 ```
-
-### LinkedIn sends (T6)
-
-The overseer on `127.0.0.1:11402` owns the browser and the per-host send cadence. Before a send run:
-
-- Probe with `tclsh9.0 spar-overseer-health.tcl`, not a hand-rolled parse of `/health` (distinct exits: 0 healthy, 1 faulted, 2 unreachable, 3 malformed; the raw body always prints). An ad-hoc probe once read a schema change as "not answering" and misdiagnosed a healthy overseer.
-- Export `BI_SKILLS_ROOT=<skills-checkout>/skills`. The runner holds no skills checkout, so the send leg resolves and hands in `skillPath` and `libDir` with each `/run` (ducks-protocol.md) and fails loudly when the variable is unset.
-
-`T6 --dry-run` validates every row (message present, vanity extractable, note within the invite limit) without contacting the overseer. A successful send stamps `actioned_date` on the approach's message; an `uncertain` result stays unstamped for a human check before any retry.
 
 ## Logs
 
