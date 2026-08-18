@@ -60,13 +60,15 @@ def human(n):
 
 def load(root, year):
     profile = yaml.safe_load(open(os.path.join(root, "profile.yaml")))
+    rpath = os.path.join(root, "rates.yaml")
+    rates = yaml.safe_load(open(rpath)) if os.path.exists(rpath) else {}
     rated = yaml.safe_load(open(os.path.join(root, f"{year}.yaml")))["events"]
     cache = {}
     for path in glob.glob(os.path.join(root, "cache", "events", "*.yaml")):
         d = yaml.safe_load(open(path))
         if isinstance(d, dict) and d.get("slug"):
             cache[d["slug"]] = d
-    return profile, rated, cache
+    return profile, rated, cache, rates
 
 
 def merge(rated, cache, year):
@@ -130,7 +132,7 @@ def main():
     root, out = sys.argv[1], sys.argv[2]
     year = int(sys.argv[3]) if len(sys.argv) > 3 else datetime.date.today().year
 
-    profile, rated, cache = load(root, year)
+    profile, rated, cache, rates = load(root, year)
     events, orphans = merge(rated, cache, year)
     if orphans:
         print(f"warning: {len(orphans)} rated events have no cache file: "
@@ -238,6 +240,57 @@ def main():
 </article>'''
 
 
+
+    SYMBOL = {"AUD": "A$", "USD": "US$", "EUR": "\u20ac", "GBP": "\u00a3",
+              "SGD": "S$", "CNY": "\u00a5", "GEL": "\u20be", "NZD": "NZ$",
+              "JPY": "\u00a5", "CHF": "CHF ", "SEK": "SEK ", "HKD": "HK$"}
+
+    base = rates.get("base", "EUR")
+    rate_table = rates.get("rates") or {}
+    base_sym = SYMBOL.get(base, base + " ")
+
+    def money(p):
+        """A price is shown only with its currency; a bare number spanning four
+        continents says nothing. Where a rate exists the base-currency figure
+        follows, converted rather than stored."""
+        amt, cur = p.get("amount"), p.get("currency")
+        if amt in (None, "") or not cur or not isinstance(amt, (int, float)):
+            return None
+        sym = SYMBOL.get(cur, cur + " ")
+        shown = f"{sym}{amt:,.0f}"
+        if cur == base:
+            return shown
+        r = rate_table.get(cur)
+        if not r:
+            return shown          # no rate published for it; say nothing further
+        return f"{shown}<span class=\'d-eur\'>{base_sym}{amt / r:,.0f}</span>"
+
+    def gated_price(e, d):
+        """The price this deadline ends, derived rather than duplicated: the
+        amount stays in prices, the deadline only says when it stops."""
+        # Only an early-bird deadline reliably gates a price. A registration
+        # date says when a desk opens, not what it charges.
+        if d.get("kind") != "early_bird":
+            return None
+        eds = (cache.get(e["slug"]) or {}).get("editions") or {}
+        ed = eds.get(d.get("edition")) or {}
+        prices = ed.get("prices") or []
+        if not prices:
+            return None
+        pool = [p for p in prices if "early" in str(p.get("tier", "")).lower()] or prices
+        # A free concessionary tier is not what an early-bird deadline is about,
+        # so it does not get to be the "from" figure while paid tiers exist.
+        paid = [p for p in pool if (p.get("amount") or 0) > 0]
+        pool = paid or pool
+        priced = [(money(p), p) for p in pool]
+        priced = [(m, p) for m, p in priced if m]
+        if not priced:
+            return None
+        priced.sort(key=lambda mp: mp[1].get("amount") or 0)
+        low, plow = priced[0]
+        prefix = '<span class="d-from">from </span>' if len(priced) > 1 else ""
+        return prefix + low, plow.get("tier", "")
+
     KIND_LABEL = {"cfp": "Speak", "application": "Apply", "early_bird": "Early bird",
                   "registration": "Register", "other": "Act"}
     today = datetime.date.today()
@@ -271,6 +324,15 @@ def main():
             days = (when - today).days
             urgent = " soon" if days <= 21 else ""
             act = KIND_LABEL.get(d.get("kind"), "Act")
+            gp = gated_price(e, d)
+            if gp:
+                price, tier = gp
+                what = (f'<span class="d-price">{price}</span>'
+                        f'<span class="d-tier">{esc(tier)}</span>')
+            else:
+                what = esc(d.get("name", ""))
+            stars_html = ("".join('<i class="on"></i>' for _ in range(e["stars"]))
+                          + "".join("<i></i>" for _ in range(5 - e["stars"])))
             url = d.get("url") or e["url"]
             where = f'{esc(e["city"])}' if e["city"] else ""
             body.append(
@@ -278,8 +340,9 @@ def main():
                 f'<td class="d-when"><b>{when.strftime("%-d %b")}</b>'
                 f'<span class="d-days">{days} d</span></td>'
                 f'<td><span class="d-kind k-{esc(d.get("kind","other"))}">{esc(act)}</span></td>'
-                f'<td class="d-what">{esc(d.get("name",""))}</td>'
-                f'<td class="d-ev"><a href="#{esc(e["slug"])}">{esc(e["name"])}</a>'
+                f'<td class="d-what">{what}</td>'
+                f'<td class="d-ev"><span class="d-meter" title="{e["stars"]} of 5 for this event">{stars_html}</span>'
+                f'<a href="#{esc(e["slug"])}">{esc(e["name"])}</a>'
                 f'{f"<span class=\"d-city\">{where}</span>" if where else ""}</td>'
                 f'<td class="d-go">{f'<a href="{esc(url)}" target="_blank" rel="noopener">open</a>' if url else ""}</td>'
                 f'</tr>')
@@ -287,7 +350,7 @@ def main():
             '<section class="deadlines"><header class="mh"><h2>Dates to act on</h2>'
             f'<span class="mcount">{len(rows)} still ahead · soonest first</span></header>'
             '<div class="dwrap"><table><thead><tr><th>When</th><th></th><th>What</th>'
-            '<th>Event</th><th></th></tr></thead><tbody>'
+            '<th>Rating and event</th><th></th></tr></thead><tbody>'
             + "".join(body) + '</tbody></table></div></section>')
 
     dated = sorted((e for e in events if e["start"]), key=lambda e: (str(e["start"]), -e["stars"]))
@@ -405,6 +468,15 @@ button#fs[aria-pressed="true"]{{background:var(--short);border-color:var(--short
 .d-what{{color:var(--soft);max-width:26ch}}
 .d-ev a{{color:var(--ink);text-decoration:none;font-weight:600}}
 .d-ev a:hover{{text-decoration:underline;text-underline-offset:2px}}
+
+.d-price{{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600;display:block}}
+
+.d-eur{{display:block;font-size:.72rem;color:var(--faint);font-weight:400}}
+.d-from{{font-family:var(--body);font-size:.7rem;font-weight:400;color:var(--faint)}}
+.d-tier{{display:block;font-size:.7rem;color:var(--faint)}}
+.d-meter{{display:inline-flex;gap:2px;margin-right:.45rem;vertical-align:baseline}}
+.d-meter i{{width:4px;height:10px;background:var(--edge);display:block}}
+.d-meter i.on{{background:var(--ink-accent)}}
 .d-city{{display:block;font-size:.7rem;color:var(--faint)}}
 .d-go a{{font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-accent)}}
 .ev:target{{box-shadow:inset 0 0 0 2px var(--ink-accent)}}
