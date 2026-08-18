@@ -103,6 +103,8 @@ def merge(rated, cache, year):
             "availability": ed.get("availability"),
             "deadlines": ed.get("deadlines") or [],
             "all_deadlines": all_dl,
+            "capital": next((e["capital"] for e in eds.values()
+                             if isinstance(e, dict) and e.get("capital")), None),
             "stars": r.get("stars", 0),
             "shortlisted": bool(r.get("shortlisted")),
             "participation": r.get("participation") or {},
@@ -194,6 +196,14 @@ def main():
                 when += "–" + str(e["end"])[8:10].lstrip("0")
 
         flags = []
+        cap = e["capital"] or {}
+        if cap and cap.get("dilutive") is False:
+            amt = plain_money(cap) or ""
+            flags.append(f'<span class="flag free">no equity{" " + amt if amt else ""}</span>')
+        elif cap and cap.get("dilutive") is True:
+            pct = cap.get("equity_pct")
+            flags.append(f'<span class="flag takes">takes {pct}%</span>' if pct
+                         else '<span class="flag takes">takes equity</span>')
         if e["shortlisted"]:
             flags.append('<span class="flag short">shortlisted</span>')
         if e["availability"] in ("sold_out", "closed"):
@@ -265,6 +275,13 @@ def main():
             return shown          # no rate published for it; say nothing further
         return f"{shown}<span class=\'d-eur\'>{base_sym}{amt / r:,.0f}</span>"
 
+    def plain_money(p):
+        """The local figure alone, for places too small to carry a conversion."""
+        amt, cur = p.get("amount"), p.get("currency")
+        if amt in (None, "") or not cur or not isinstance(amt, (int, float)):
+            return None
+        return f"{SYMBOL.get(cur, cur + ' ')}{amt:,.0f}"
+
     def gated_price(e, d):
         """The price this deadline ends, derived rather than duplicated: the
         amount stays in prices, the deadline only says when it stops."""
@@ -323,6 +340,12 @@ def main():
         for when, e, d in rows:
             days = (when - today).days
             urgent = " soon" if days <= 21 else ""
+            cap = e["capital"] or {}
+            cap_tag = ""
+            if cap.get("dilutive") is False:
+                cap_tag = '<span class="d-free">no equity</span>'
+            elif cap.get("dilutive") is True:
+                cap_tag = '<span class="d-takes">takes equity</span>' 
             act = KIND_LABEL.get(d.get("kind"), "Act")
             gp = gated_price(e, d)
             if gp:
@@ -342,7 +365,7 @@ def main():
                 f'<td><span class="d-kind k-{esc(d.get("kind","other"))}">{esc(act)}</span></td>'
                 f'<td class="d-what">{what}</td>'
                 f'<td class="d-ev"><span class="d-meter" title="{e["stars"]} of 5 for this event">{stars_html}</span>'
-                f'<a href="#{esc(e["slug"])}">{esc(e["name"])}</a>'
+                f'<a href="#{esc(e["slug"])}">{esc(e["name"])}</a>{cap_tag}'
                 f'{f"<span class=\"d-city\">{where}</span>" if where else ""}</td>'
                 f'<td class="d-go">{f'<a href="{esc(url)}" target="_blank" rel="noopener">open</a>' if url else ""}</td>'
                 f'</tr>')
@@ -434,6 +457,12 @@ button#fs[aria-pressed="true"]{{background:var(--short);border-color:var(--short
 .flag.shut{{color:var(--shut);border:1px solid var(--edge)}}
 .flag.live{{color:var(--live);background:var(--live-bg)}}
 .flag.gate{{color:var(--ink-accent);background:var(--gate-bg)}}
+
+.flag.free{{color:var(--short);background:var(--short-bg);font-weight:600}}
+.flag.takes{{color:var(--live);background:var(--live-bg)}}
+.d-free,.d-takes{{font-family:var(--mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;padding:.1rem .3rem;border-radius:2px;margin-left:.4rem;white-space:nowrap}}
+.d-free{{color:var(--short);background:var(--short-bg)}}
+.d-takes{{color:var(--live);background:var(--live-bg)}}
 .flag.short{{color:var(--short);background:var(--short-bg)}}
 .desc{{margin:.3rem 0 0;font-size:.88rem;color:var(--ink);max-width:52ch}}
 .note,.basis{{margin:.3rem 0 0;font-size:.8rem;color:var(--soft)}}
