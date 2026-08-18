@@ -25,7 +25,7 @@ The discovery steps are the same for both types. The differences — whether P i
 ## 3. Outputs
 
 - **Roster TSV file:** One file per segment, in the location specified by the campaign plan. Contains every discovered contact with metadata tracking how and when they were found.
-- **Sweep file:** `sweep.yaml` in the same directory as the roster (§7). Carries the market denominator, the source census with per-source status, escapes, and one record per round. It replaces the earlier `summary-[segment-name].md`; a segment still carrying a summary file migrates its content into `sweep.yaml` at the next sweep and deletes the summary.
+- **Sweep file:** `segments/{segment}.sweep.yaml`, the dotted stem sibling of the roster (§7). Carries the market denominator, the source census with per-source status, escapes, and one record per round. It replaces the earlier `summary-[segment-name].md`; a segment still carrying a summary file migrates its content into `sweep.yaml` at the next sweep and deletes the summary.
 - **New names for P:** Contacts discovered during S enter P within the same S&P iteration. Names that belong to a different segment are tagged with the destination segment and picked up by that segment's next S phase.
 
 ## 4. Roster file format
