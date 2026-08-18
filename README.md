@@ -10,13 +10,13 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 ### SPAR — Outreach Discovery and Engagement
 
-**Phases:** Search, Profile, Approach, Revise
+**Phases:** Sweep, Profile, Approach, Revise
 
 **Direction:** Outbound. The operator has something to offer and needs to find people who might want it, research them, and write a message specific enough that the recipient can tell it was written for them.
 
 **What each phase does:**
 
-- **Search** discovers names from registries, directories, social graphs, and web searches. Iterates up to three times, each expanding the roster through social-graph and semantic expansion.
+- **Sweep** discovers names from registries, directories, social graphs, and web searches. Iterates up to three times, each expanding the roster through social-graph and semantic expansion.
 - **Profile** builds a dossier for each contact: what they have said publicly, who they know, their current role, and how relevant they are to the campaign. Produces a star rating: how valuable the contact is to us, independent of any one campaign. The response-likelihood estimate belongs to Approach, because it turns on the angle chosen.
 - **Approach** drafts a personalised message for each contact, tested against a context-isolated challenger agent that role-plays the recipient. The challenger has never read the campaign files and reacts as a stranger would.
 - **Revise** is a human phase. After each band of messages is sent and responses arrive, the human reviews what worked, what did not, and adjusts the strategy for the next band.
@@ -116,7 +116,7 @@ The methodologies share a structural principle: read before writing. SPAR profil
 - `almanac/` — Event discovery, evaluation, and presence planning (method only; data lives in the user's own repository)
 - `events/` — Event discovery and tracking
 - `roster/` — Roster management (architectural notes only)
-- `articles/` — Lessons learned from building and testing AESOPs
+- `lessons/` — What building and testing the AESOPs taught, written up as it was learned
 - `tests/` — Test cases and results for validating SOPs through iterative rounds
 - `sop-authoring-rules.md` — Meta-guide for creating and updating SOPs
 - `authoring/` — Start here to create or revise an AESOP: the prompt that runs the author-test-fix loop, and a worked headless example
