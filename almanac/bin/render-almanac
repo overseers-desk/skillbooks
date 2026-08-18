@@ -196,14 +196,9 @@ def main():
                 when += "–" + str(e["end"])[8:10].lstrip("0")
 
         flags = []
-        cap = e["capital"] or {}
-        if cap and cap.get("dilutive") is False:
-            amt = plain_money(cap) or ""
-            flags.append(f'<span class="flag free">no equity{" " + amt if amt else ""}</span>')
-        elif cap and cap.get("dilutive") is True:
-            pct = cap.get("equity_pct")
-            flags.append(f'<span class="flag takes">takes {pct}%</span>' if pct
-                         else '<span class="flag takes">takes equity</span>')
+        kind_c, text_c = capital_tag(e["capital"])
+        if text_c:
+            flags.append(f'<span class="flag cap-{kind_c}">{esc(text_c)}</span>')
         if e["shortlisted"]:
             flags.append('<span class="flag short">shortlisted</span>')
         if e["availability"] in ("sold_out", "closed"):
@@ -282,6 +277,22 @@ def main():
             return None
         return f"{SYMBOL.get(cur, cur + ' ')}{amt:,.0f}"
 
+    def capital_tag(cap):
+        """Money first. What it costs qualifies it, and a qualifier that leads
+        makes the reader hear the caveat instead of the amount."""
+        if not cap:
+            return None, ""
+        amt = plain_money(cap)
+        dil = cap.get("dilutive")
+        offered = str(cap.get("offered") or "grant")
+        if dil is True:
+            pct = cap.get("equity_pct")
+            return "takes", (f"{amt} for {pct}%" if amt and pct
+                             else f"{amt} for equity" if amt else "takes equity")
+        if dil is False:
+            return "free", (f"{amt}, no equity" if amt else f"{offered}, no equity")
+        return "unknown", (f"{amt} {offered}" if amt else offered)
+
     def gated_price(e, d):
         """The price this deadline ends, derived rather than duplicated: the
         amount stays in prices, the deadline only says when it stops."""
@@ -340,12 +351,9 @@ def main():
         for when, e, d in rows:
             days = (when - today).days
             urgent = " soon" if days <= 21 else ""
-            cap = e["capital"] or {}
-            cap_tag = ""
-            if cap.get("dilutive") is False:
-                cap_tag = '<span class="d-free">no equity</span>'
-            elif cap.get("dilutive") is True:
-                cap_tag = '<span class="d-takes">takes equity</span>' 
+            kind_c, text_c = capital_tag(e["capital"])
+            cap_tag = (f'<span class="d-cap dc-{kind_c}">{esc(text_c)}</span>'
+                       if text_c else "") 
             act = KIND_LABEL.get(d.get("kind"), "Act")
             gp = gated_price(e, d)
             if gp:
@@ -458,6 +466,11 @@ button#fs[aria-pressed="true"]{{background:var(--short);border-color:var(--short
 .flag.live{{color:var(--live);background:var(--live-bg)}}
 .flag.gate{{color:var(--ink-accent);background:var(--gate-bg)}}
 
+
+.flag.cap-free,.dc-free{{color:var(--short);background:var(--short-bg);font-weight:600}}
+.flag.cap-takes,.dc-takes{{color:var(--live);background:var(--live-bg)}}
+.flag.cap-unknown,.dc-unknown{{color:var(--ink-accent);background:var(--gate-bg)}}
+.d-cap{{font-family:var(--mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;padding:.1rem .32rem;border-radius:2px;margin-left:.4rem;white-space:nowrap}}
 .flag.free{{color:var(--short);background:var(--short-bg);font-weight:600}}
 .flag.takes{{color:var(--live);background:var(--live-bg)}}
 .d-free,.d-takes{{font-family:var(--mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;padding:.1rem .3rem;border-radius:2px;margin-left:.4rem;white-space:nowrap}}
