@@ -79,6 +79,20 @@ Name segments in plain language: `investors`, `buyers`, `speakers`, `exhibitors`
 
 `access` is observed rather than estimated, and it is what makes the population count for anything: a matched programme turns a large crowd into meetings, an open floor does not. Keep the two separate. Combining them into one score would need weights nobody has measured.
 
+## Money without a purchase
+
+Where an event puts capital in front of a founder, record what it costs. A prize that buys nothing and an accelerator's cheque that buys eight per cent both read as money on a listing, and they are opposite: one leaves the cap table untouched, the other prices the company as a condition of entry. `capital` holds this, and `dilutive` is the field that decides it.
+
+Then go one step further, because eligibility is not addressability.
+
+**An open door is not an invitation.** Entry criteria are what an organiser publishes, and a wide funnel costs them nothing and makes the competition look larger. Who they award to is never published as a policy and is demonstrated every year. Before recording a competition as an opportunity, read last year's winners, or the criteria that actually bind: the jury's own portfolio, the problem statements a sponsor has set, the sectors the past three cohorts came from.
+
+Money given away goes to a niche far more often than to the field. A crypto conference's competition admits any sector and has awarded only crypto, because its jury is three crypto funds selecting deal flow. A fintech programme's entrants answer problem statements set by banks, so what the banks asked for decides who can compete, whatever the entry form says.
+
+Record the finding against the event, not the rating, because it is equally true for anyone reading it. An entry that carries open criteria and an equity-free prize, and nothing about who wins, reads as an opportunity to a company that has no precedent for winning one.
+
+**Note the exceptions, because they are the valuable half.** A competition that is genuinely wide is worth more than several narrow ones, and the only way to know is the same check. Where the winner history crosses sectors and the criteria bind on stage and size rather than subject, say so plainly in the record, so a later sweep does not discount it by the general rule.
+
 ## Searching well
 
 Lessons this procedure has paid for.
