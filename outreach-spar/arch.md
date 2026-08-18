@@ -70,7 +70,7 @@ The comparison was run in detail against OpenClaw in April 2026, and is kept wit
 
 Of the design problems SPAR had accumulated by then, none would have been prevented by the platform. They concerned what the pipeline should track (contact identity across segments, email-to-person relationships, profile-to-approach dependencies) and when it should check (discovery time or profiling time, drafting time or send time). Those are domain-model problems. A workflow platform supplies an execution substrate and no domain model, so the same problems arrive in the same form.
 
-Two things would have come free rather than being invented: per-session sandboxing for the challenger, and declarative step composition in place of shell control flow. Both are implementation conveniences on subproblems. Neither would have changed what the pipeline had to learn to handle.
+Two things would have come free rather than being invented: per-session sandboxing for the challenger, and declarative step composition in place of the Tcl dispatcher's imperative control flow. Both are implementation conveniences on subproblems. Neither would have changed what the pipeline had to learn to handle.
 
 Against that, a platform whose agents extend themselves at runtime and decide their own next step widens exactly the surface this pipeline narrows on purpose.
 

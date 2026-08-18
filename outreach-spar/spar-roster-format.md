@@ -10,7 +10,7 @@ Every row must have a `contact_name`. A row without a named person is not a cont
 
 **Delimiter and line-break conventions:** Tab (`\t`) separates fields; newline (`\n`) separates rows. Neither may appear inside a field value. When a field needs to represent a line break within its content (e.g. a multi-sentence note), use carriage return (`\r`) instead of newline. Standard tools (LibreOffice, Python `csv` with `delimiter='\t'`, pandas) read `\r` inside a field without treating it as a row boundary.
 
-**Programmatic access (interactive sessions):** Use `sqlite3` for SQL operations on roster files. Do not use `trdsql`, `q`, `csvq`, or Python's `csv` module — they apply CSV quoting rules to TSV output, corrupting fields that contain double quotes; sqlite3 `.mode tabs` is a true literal-delimiter mode. For updates, UPDATE + `SELECT *` also avoids enumerating columns — a SELECT that lists columns silently drops any the author forgets.
+**Programmatic access (interactive sessions):** Use `sqlite3` for SQL operations on roster files. Do not use `trdsql`, `q`, `csvq`, `dsq`, or Python's `csv` module — they apply CSV quoting rules to TSV output, corrupting fields that contain double quotes; sqlite3 `.mode tabs` is a true literal-delimiter mode. For updates, UPDATE + `SELECT *` also avoids enumerating columns — a SELECT that lists columns silently drops any the author forgets.
 
 Read:
 
