@@ -103,49 +103,9 @@ Of eight design issues, none would be fully prevented by building on OpenClaw. O
 
 ## Part 3: Methodology decisions — how OpenClaw handles the same choices
 
-### Deterministic pipeline vs. autonomous agent
+Each of SPAR's load-bearing choices was set against how OpenClaw handles the same question: deterministic pipeline against autonomous agent, model tier per phase, file-based state against a database, separation of procedure from data, exclusion gates, context isolation for the challenger, and single source of truth.
 
-SPAR chose a deterministic pipeline: S runs to completion, then P, then human review, then A in bands, then R. The order is fixed. The human decides when to proceed.
-
-OpenClaw's Lobster Shell documentation advocates the same principle: "Don't orchestrate with LLMs." Flow control should be handled by deterministic code; LLMs handle content generation. This is stated as a design guideline, not enforced as a default. An OpenClaw user who does not read this guideline — or who is attracted by OpenClaw's self-extension capability — might build an autonomous pipeline where the agent decides when to move from profiling to approach drafting. The MoltMatch incident (February 2026), in which an OpenClaw agent autonomously created a dating profile and screened matches without explicit direction, illustrates the consequences of insufficient constraint on autonomous decision-making.
-
-SPAR and OpenClaw's Lobster Shell agree on the principle. The difference is that SPAR enforces it structurally (the batch scripts define the order), while OpenClaw offers it as an option alongside autonomous execution. A disciplined OpenClaw user would arrive at the same design; an undisciplined one might not.
-
-### Model tier assignment
-
-SPAR assigns Sonnet to S&P and Opus to A. The rationale: when a rubric does the intellectual heavy lifting, Sonnet applies it reliably; Opus is needed when the task requires generating the rubric or making judgment calls not covered by it. This was validated empirically and cross-checked against the SIFT methodology's deployment on job listings.
-
-OpenClaw's documentation recommends model routing as a cost-control measure, and the mechanism is configuration-level: different workflow steps can specify different models. The principle is identical. The difference is that SPAR's assignment was discovered through production experience and cross-project validation, while OpenClaw's documentation presents it as a known best practice. An OpenClaw user would have the guidance from the start but would still need to determine which phases require which tier for their specific domain.
-
-### File-based state vs. database
-
-SPAR stores state in TSV rosters, Markdown profiles, and YAML approach files, all version-controlled in Git. The development chronicle documents the costs: the backfill gap (P discovers data but does not write back to the roster), the SSOT violations (star ratings appearing in three places), and the approach regeneration problem (roster updates not propagating to approach files). Issue #14 explicitly considers whether SQL with referential integrity would resolve several of these problems.
-
-OpenClaw also uses file-based state (Markdown files, version-controllable with Git). This is a deliberate architectural choice: auditability and human readability are prioritised over referential integrity. OpenClaw does not provide a relational database. The same backfill and propagation problems would arise on OpenClaw for the same structural reason: files are independent documents, not rows in a relational schema.
-
-The difference is that OpenClaw's Lobster workflows pass data between steps as JSON. If the pipeline were designed so that the `to:` address is derived from the roster JSON at send time rather than baked into a YAML file at approach-drafting time, the propagation problem would not arise for that specific field. This requires designing the pipeline with late binding in mind — a design choice available on any platform but more naturally expressed in Lobster's step-to-step data flow than in standalone file generation.
-
-### Separation of procedure from data
-
-The hallucination reset of 30 March established that methodology documents must not contain content that could be mistaken for real input. A placeholder example describing "stone buildings" was treated as a factual venue description by 78 independent agent runs.
-
-OpenClaw's Skills system stores instructions in `SKILL.md` files with metadata and step-by-step procedures. There is no structural mechanism preventing a skill file from containing example data that an agent treats as real. The discipline of separating procedure from data is equally necessary on OpenClaw and equally unsupported by the platform. It is a content-design discipline, not a platform feature.
-
-### Exclusion gates
-
-SPAR originally had no mechanism to exclude contacts from the pipeline. Star ratings ran from 1 to 5; every discovered contact was assumed valid. The addition of `star_rating = 0` as an exclusion marker, and the §4.0 validity gate, came after a competing venue owner received a complete approach file.
-
-OpenClaw's Lobster workflows support conditional steps and approval gates. A validity check could be expressed as a workflow condition. But the need for the check — the recognition that discovery does not imply validity — is a methodology insight that emerged from a specific production failure. OpenClaw would provide a convenient syntax for expressing the gate once designed, but would not prompt the designer to include it. The gate's existence reflects learned experience, not platform capability.
-
-### Context isolation for A2 sparring
-
-As discussed in Part 1, OpenClaw's per-session sandboxing provides this capability as a platform feature. SPAR had to invent the pattern from the observation that instructing an agent to "pretend you don't know this" does not work — one must create an agent that genuinely does not know it. This is the single methodology decision where OpenClaw offers a clear structural advantage. The principle ("context isolation is structural, not procedural") was one of the seven emergent principles recorded in the development chronicle; on OpenClaw it would have been a configuration parameter.
-
-### Single source of truth
-
-SPAR learned through production experience that AI agents, when writing a document, include all relevant information in it — producing SSOT violations by default. Star ratings appeared in the roster, the profile, and the approach file. The fix was to designate the roster TSV as the single authority and strip redundant data from 523 profile files and 40 approach files.
-
-OpenClaw's documentation does not address this pattern. Its agents, like SPAR's, write state into whatever file they are producing. The same violations would occur unless the workflow designer explicitly constrains what each step is allowed to write. OpenClaw's tool profiles (allowlists and denylists for file access) could enforce this at the tool level — for example, preventing the A-phase agent from writing rating data into approach files. This would be a more robust enforcement mechanism than SPAR's procedural instruction ("do not include the star rating in the approach file"), but it requires the designer to anticipate the violation, which SPAR's designer did not until it happened in production.
+Those choices and their grounds are now the standing record in the SPAR methodology's own architecture document, stated in their own terms rather than as a contrast. What survives here is the comparison's verdict, below.
 
 ## Conclusions
 

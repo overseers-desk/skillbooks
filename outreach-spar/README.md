@@ -1,4 +1,4 @@
-# SPAR — Search, Profile, Approach, Revise
+# SPAR — Sweep, Profile, Approach, Revise
 
 AI-executed outreach methodology for discovering contacts, researching them, and writing personalised messages. Each phase has a procedure document that AI agents read and follow during dispatch.
 
@@ -6,15 +6,20 @@ AI-executed outreach methodology for discovering contacts, researching them, and
 
 ```
 outreach-spar/
+  INVARIANTS.md                Hard rules; the rest of the methodology may not contradict them
+  arch.md                      Why the pipeline is built this way, and what each choice cost
   spar-methodology.md          Methodology overview (all four phases)
   spar-S-search.md             S-phase procedure (sweep, roster building)
   spar-P-profile.md            P-phase procedure (contact research, dossier)
   spar-A-approach.md           A-phase procedure (drafting, A2 sparring)
   spar-roster-format.md        Roster TSV schema and quality checklist
   spar-campaign-yaml.md        Campaign YAML schema
-  spar-campaign-directory.md   Campaign directory structure
+  segment-schema.yaml          Segment definition YAML schema
+  spar-campaign-directory.md   Instance layout, and the fact-to-home table
   spar-segment-categorisation.md  Segment merge/split guidance
+  spar-version-uplift-runbook.md  Migrating an instance to the current spec generation
   spar-manager/                Tcl dispatcher, state machine, CLI, GUI
+  experiments/                 Run data from model and host comparisons; not part of the spec
 ```
 
 ## How dispatch works
@@ -26,7 +31,3 @@ Post-assembly guard rails (`spar-manager/spar-a-harness.tcl`) validate the appro
 ## Quick start
 
 See `spar-manager/README.md` for CLI and GUI usage, dependencies, and test commands.
-
-## Migration note
-
-Legacy Python/Bash scripts formerly in `bin/` were replaced by the Tcl implementation in `spar-manager/`. The pre-removal state is preserved at tag `v0.1-pre-tcl-migration`.
