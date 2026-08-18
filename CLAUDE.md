@@ -10,7 +10,7 @@ event list, the event cache) lives in the user's own repository and is handed to
 as a data root at run time. Nothing naming the user's cities, interests or decisions
 belongs under `almanac/`.
 
-Each methodology states its hard rules in its own `INVARIANTS.md`, which the procedures and validators cite.
+Each methodology carries its hard rules in its own `INVARIANTS.md`, imported by that directory's `CLAUDE.md` so they arrive in context when you work there. The procedures and validators cite them by number.
 
 ## Authoring AESOPs
 
