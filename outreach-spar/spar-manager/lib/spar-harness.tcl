@@ -792,17 +792,17 @@ oo::class create spar::ProfileHarness {
 
     # do_finalise_after_cost_kill — recover a cost-cap-killed profile worker.
     # The watchdog SIGTERM lands after the costly research and the profile
-    # body are written but before the cheap finalisation (the roster
-    # star_rating sqlite write and the YAML front matter, which the prompt
-    # orders last), so discarding the worker loses near-all the spend and
-    # leaves a body-only profile with no front matter that the validator
-    # rejects. coachman's finalise_resume does the single bounded resume
-    # under the cap plus its headroom, with a self-contained finalise
-    # prompt that does no research, so it cannot re-spend the research
-    # budget; absent a captured session it warns and resumes nothing. The
-    # post-profile validate_and_correct in run() is the verdict either
-    # way: a now-complete profile lands DONE, a still-partial one resumes
-    # to be fixed.
+    # body are written but before the cheap finalisation (the YAML front
+    # matter, which the prompt orders last and which carries star_rating
+    # for the applier to sync), so discarding the worker loses near-all
+    # the spend and leaves a body-only profile with no front matter that
+    # the validator rejects. coachman's finalise_resume does the single
+    # bounded resume under the cap plus its headroom, with a self-contained
+    # finalise prompt that does no research, so it cannot re-spend the
+    # research budget; absent a captured session it warns and resumes
+    # nothing. The post-profile validate_and_correct in run() is the
+    # verdict either way: a now-complete profile lands DONE, a
+    # still-partial one resumes to be fixed.
     method do_finalise_after_cost_kill {} {
         if {[my session_id] ne ""} {
             ${::spar::harness_log}::info \
