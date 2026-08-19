@@ -848,7 +848,7 @@ proc spar::_apply_patch_only {fm roster_path stem} {
 # discovery worker declares the rows it found in its deliverable's front
 # matter; this proc validates the declaration and appends what survives,
 # so a worker never opens the TSV. That is what lets a round run several
-# workers on one segment at once: spar-S-search.md §8 gives a segment one
+# workers on one segment at once: spar-S-sweep.md §8 gives a segment one
 # writer at a time, and this dispatcher process is it.
 #
 # All-or-nothing, like _apply_patch_only: any issue and the roster is
@@ -1251,7 +1251,7 @@ proc spar::approach_path_in_dir {approach_dir stem} {
 
 # ══ The sweep file: segments/<seg>.sweep.yaml ═════════════════════════
 #
-# The segment's discovery record (spar-S-search.md §7): the denominator,
+# The segment's discovery record (spar-S-sweep.md §7): the denominator,
 # the source census, the rounds log. T0 is the first transition to write
 # it. Until now it was hand-written after a sweep, and files were broken
 # by the same defect: a scalar carrying ": " mid-text, read back as a
@@ -1593,7 +1593,7 @@ proc spar::append_sweep_round {sweep_path round} {
 # append_sweep_escapes — add worker-declared escapes to the escapes list.
 #
 # An escape is a market member the sweep should have found and did not
-# (spar-S-search.md §7); it stays in the file as a test case the next
+# (spar-S-sweep.md §7); it stays in the file as a test case the next
 # round has to catch, so the list is append-only and never rewritten. An
 # entry without a verdict is dropped rather than written: the verdict is
 # what decides which part of the head gets fixed, and an entry that names
@@ -1681,7 +1681,7 @@ proc spar::_merge_round {old new} {
 }
 
 # _emit_round_block — one round as a block-sequence item at $indent.
-# Keys come out in the order spar-S-search.md §7 lists them, so a rounds
+# Keys come out in the order spar-S-sweep.md §7 lists them, so a rounds
 # log reads the same whoever wrote the entry; unknown keys follow.
 proc spar::_emit_round_block {round indent} {
     set order {n date method inputs reconciliation surprises \

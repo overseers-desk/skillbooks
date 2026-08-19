@@ -949,7 +949,7 @@ oo::class create spar::SweepHarness {
 
     # A member the sweep should have found earlier and met anyway goes to
     # the escapes list, the segment's standing set of test cases
-    # (spar-S-search.md §7). The row itself came through rows_new like any
+    # (spar-S-sweep.md §7). The row itself came through rows_new like any
     # other; this is the miss being recorded as a miss.
     method record_escapes {} {
         set n [spar::append_sweep_escapes $SweepPath \
@@ -960,7 +960,7 @@ oo::class create spar::SweepHarness {
         }
     }
 
-    # coverage_after per spar-S-search.md §10 check 10: the roster's live
+    # coverage_after per spar-S-sweep.md §10 check 10: the roster's live
     # row count over the denominator, computed from the files rather than
     # asserted by the worker.
     method coverage {} {

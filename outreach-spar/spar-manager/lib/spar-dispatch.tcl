@@ -890,7 +890,7 @@ proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
 
     variable ::spar::dispatch_script_dir
     set spar_s [file normalize \
-        [file join $::spar::dispatch_script_dir .. .. spar-S-search.md]]
+        [file join $::spar::dispatch_script_dir .. .. spar-S-sweep.md]]
     foreach {path label} [list $sweep_path Sweep $goal_path Goal \
                                $spar_s SPAR-S] {
         if {![file exists $path]} { error "$label not found: $path" }
@@ -913,7 +913,7 @@ proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
     }
 
     # The sweeper file carries what holds across a market family
-    # (spar-S-search.md §7.1); a segment swept alone declares no family.
+    # (spar-S-sweep.md §7.1); a segment swept alone declares no family.
     set sweeper_line ""
     set family ""
     if {$segment_data ne ""} {
