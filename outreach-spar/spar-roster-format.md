@@ -10,7 +10,31 @@ Every row must have a `contact_name`. A row without a named person is not a cont
 
 **Delimiter and line-break conventions:** Tab (`\t`) separates fields; newline (`\n`) separates rows. Neither may appear inside a field value. When a field needs to represent a line break within its content (e.g. a multi-sentence note), use carriage return (`\r`) instead of newline. Standard tools (LibreOffice, Python `csv` with `delimiter='\t'`, pandas) read `\r` inside a field without treating it as a row boundary.
 
-**Programmatic access (interactive sessions):** Use `sqlite3` for SQL operations on roster files. Do not use `trdsql`, `q`, `csvq`, `dsq`, or Python's `csv` module — they apply CSV quoting rules to TSV output, corrupting fields that contain double quotes; sqlite3 `.mode tabs` is a true literal-delimiter mode. For updates, UPDATE + `SELECT *` also avoids enumerating columns — a SELECT that lists columns silently drops any the author forgets.
+**Programmatic access (interactive sessions):** Edit roster files with `mlr --tsvlite`. The `--tsvlite` flag is the one that matters: plain `--tsv` applies IANA TSV escaping and rewrites an in-field carriage return to the two characters `\r`, which breaks the line-break convention above. `mlr --tsvlite` reads and writes the file literally, so a round trip is byte-identical, and it agrees with the harness's own reader (`spar::load_roster`, which splits on tab and handles no quoting). Install with `brew install miller` on macOS, `apt install miller` on Ubuntu.
+
+Read:
+
+```bash
+mlr --tsvlite filter '$email == ""' roster.tsv
+```
+
+Update one row in place:
+
+```bash
+mlr -I --tsvlite put 'if ($stem == "jane-doe-acme") { $email = "jane@acme.com" }' roster.tsv
+```
+
+`-I` edits the file in place and leaves it untouched when the run errors. Every column survives without being named, so there is no column list to forget. A name holding an apostrophe needs no escaping. There is no heredoc and no temp file to get wrong.
+
+Three faults to guard:
+
+- **A tab or newline assigned into a value splits the row.** mlr writes both out literally and a TSV record is one line, so flatten a multi-line value to spaces before assigning it. (First hit: co-location round 8, 21 records rejoined from 26 physical lines.)
+- **`-I` empties a roster carrying a header and no data rows**, at exit 0, because mlr writes no header when it has no records. Such a file has nothing to update; the guard is to not run an update against one.
+- **A ragged row aborts the run**, at exit 1, file untouched. Fix the row, or pass `--allow-ragged-csv-input` when the short row is intended.
+
+For concurrent access (worker scripts), wrap the mlr call with `flock -x <lockfile>`; when a dispatcher provides the canonical lockfile path in the prompt, use that path verbatim rather than inventing a new filename.
+
+**Where mlr is absent,** `sqlite3` in `.mode tabs` is the backup. It is a backup rather than the tool because its `.import` applies CSV quoting rules: a field whose value begins with a double quote swallows the following record, so the row count silently drops. It warns on stderr and exits 0. A ragged row is filled with NULL, also at exit 0. Check both before trusting a result.
 
 Read:
 
@@ -36,9 +60,9 @@ EOF
 mv /tmp/out.tsv roster.tsv
 ```
 
-For concurrent access (worker scripts), wrap the sqlite3 call with `flock -x <lockfile>`; when a dispatcher provides the canonical lockfile path in the prompt, use that path verbatim rather than inventing a new filename.
+Write `SELECT *` rather than a column list, which silently drops any column the author forgets, and double an apostrophe inside a WHERE clause (`WHERE contact_name='O''Neil'`).
 
-**Harnessed writes are mediated.** A worker running under the spar-manager harness does not write the roster: it declares changes in its own deliverable (the profile front matter's `roster_patch` block and `star_rating`, or the approach file's root `roster_patch`), and the harness validates and applies them (`spar::apply_roster_patch` / `spar::apply_approach_patch`), stamping `roster_patch_applied` back into the deliverable so a replay is inert and a later human roster edit stands. `star_rating`'s authoritative home is the profile front matter; the roster column is a cache the harness syncs. The sqlite3 discipline above is the interactive regime: S sweeps, maintenance sessions, and anything else with no harness to mediate. (A worker defect once wrote one facility's contacts across 249 rows in a single unguarded UPDATE; mediation bounds that class to one row.)
+**Harnessed writes are mediated.** A worker running under the spar-manager harness does not write the roster: it declares changes in its own deliverable (the profile front matter's `roster_patch` block and `star_rating`, or the approach file's root `roster_patch`), and the harness validates and applies them (`spar::apply_roster_patch` / `spar::apply_approach_patch`), stamping `roster_patch_applied` back into the deliverable so a replay is inert and a later human roster edit stands. `star_rating`'s authoritative home is the profile front matter; the roster column is a cache the harness syncs. The discipline above is the interactive regime: S sweeps, maintenance sessions, and anything else with no harness to mediate. (A worker defect once wrote one facility's contacts across 249 rows in a single unguarded UPDATE; mediation bounds that class to one row.)
 
 ## Core columns
 
