@@ -14,11 +14,15 @@ What beat it: the artefacts are read by a human before anything is sent. A direc
 
 The cost is real and is paid continuously. Data flows forward through the pipeline and not backward. An approach file is a standalone document that bakes in a snapshot of roster state at generation time, so a later roster correction leaves it stale and silent. This was accepted rather than solved: `spar::validate_campaign` carries an `email_desync` check that compares the roster `email` against the `to:` address in each approach file's final-round email messages and warns when they differ. Detection, not prevention. `profile_hash` on the approach file does the same job for the profile it was drafted from.
 
-## sqlite3 is the tool over the roster, not the store
+## The roster is edited literally, not through a CSV layer
 
-The roster is a TSV file. Interactive sessions manipulate it through `sqlite3` in `.mode tabs`, which is a true literal-delimiter mode. Every other candidate tested treats TSV as CSV with tabs and re-quotes fields containing double quotes on output, which is silent corruption of exactly the fields a roster carries: quoted speech, notes, free text. That rules out `trdsql`, `q`, `csvq`, `dsq`, and Python's `csv` module.
+The roster is a TSV file with no quoting: a tab separates fields, a newline separates records, and neither may appear inside a value. The harness reads it that way (`spar::load_roster` splits on tab), so an interactive session's tool has to read it the same way or the two disagree about what is in the file.
 
-Literal-delimiter cuts both ways. `sqlite3` writes embedded newlines out literally, and a TSV record is one line, so a multi-line value must be flattened to spaces before the UPDATE. The first time this was missed, 21 records were rejoined from 26 physical lines.
+`mlr --tsvlite` is that tool. It round-trips a roster byte-identically, including a field whose value begins with a double quote and a field carrying a literal carriage return, and it aborts on a ragged row rather than guessing. `spar-roster-format.md`, "Programmatic access", carries the recipes and the faults to guard.
+
+What it beat. `sqlite3` in `.mode tabs` is literal on output but not on input: `.import` applies CSV quoting rules, so a value beginning with a double quote swallows the following record and the row count drops, with a stderr warning and exit 0. It stays as the documented backup for a machine without mlr, because that fault is loud enough to check for and the tool is on every machine. `trdsql` was tried first and dropped when its UPDATE, INSERT and DELETE turned out to no-op silently on file sources: it imports the file into a temporary in-memory database, modifies that, and exits 0 having touched nothing (issue #10). `q` corrupted files on round-trip by treating a carriage return as a record separator. Python's `csv` writer re-quotes every field, so every line of the diff reads as changed.
+
+The residual cost is that a literal writer will write anything it is given. A newline assigned into a value lands in the file as a newline and splits the record. The first time this was missed, 21 records were rejoined from 26 physical lines.
 
 TSV rather than CSV for the same reason one level up: roster fields hold quoted speech, URLs, and free text that make comma quoting a liability.
 
