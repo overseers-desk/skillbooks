@@ -23,8 +23,6 @@ An instance root holds two folders, `segments/` and `campaigns/`. Everything the
       {stem}.yaml
     {campaign}.yaml               # campaign definition (schema: spar-campaign-yaml.md)
     {campaign}.usp.md             # campaign-scoped documents, named {campaign}.{word}.{ext}
-    {campaign}.principles.md
-    {campaign}.antifacts.md
 ```
 
 The pairing rule: a definition file and a same-stem folder of its contents sit side by side, and everything scoped to that stem is a dotted sibling (`{stem}.{word}.{ext}`). The symmetry is an affordance: an unpaired entry is visibly wrong at `ls`, and a scoped document visually belongs to its stem. This enumeration of name patterns is complete, and `INVARIANTS.md` I2 holds it closed: a file whose name matches none of them does not belong under `segments/` or `campaigns/`. Analysis notes, worklogs, and issue write-ups live at the instance root or elsewhere in the repository.
