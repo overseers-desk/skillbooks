@@ -79,28 +79,21 @@ A `fact_sources` entry or an `antifacts` file shared by several campaigns descri
 - **Principles or policy prose that duplicates YAML content** — put the content into the campaign YAML's `prompt_appendices` block or the segment YAML's `discovery_criteria` first; the `campaign_principles:` path field is for content that genuinely cannot fit into the YAML.
 - **Grouping parents around segments** beyond `segments/` itself: no axis-named wrapper (`rosters/`, an industry parent) may wrap segment entries. A classification of segments by role or industry is a tag inside the segment file, not a directory layer.
 
-## Single source of truth — fact-to-home table
+## Single source of truth — realm-to-owner table
 
-Every fact about the campaign has one authoritative home. Before creating any new file in an instance, locate the fact you are about to write on this table. If the designated home already exists, edit it; do not add a parallel file.
+Every fact about a campaign or a segment has one authoritative home, and each realm of facts has one owner document that maps its facts to fields and files. Before creating any new file in an instance, find the fact's realm below and locate its home in the owner document. If the designated home already exists, edit it; do not add a parallel file.
 
-| Fact | Authoritative home |
+| Realm | Owner document |
 |---|---|
-| Spec version a campaign conforms to | `campaigns/{campaign}.yaml` `version:` |
-| Spec version a segment conforms to | `segments/{segment}.yaml` `version:` |
-| Campaign display name, sender, channels, filters, start date | `campaigns/{campaign}.yaml` |
-| A USP: its label, its claim, and what the claim rests on | campaign YAML `usps:` registry |
-| Documents a campaign's claims draw on | the files listed in `fact_sources:` |
-| Anti-claims / do-not-say list | the file named in `antifacts:` |
-| Segment objective, USP framings, message goal, first ask, funnel, approach sequencing | campaign YAML `segments.<name>` plan block |
-| Which roster rows of a segment this campaign engages (when narrower than the whole segment) | campaign YAML `segments.<name>.stems` |
-| Segment-level qualification gates (who belongs in the population) | `segments/{segment}.yaml` `discovery_criteria:` |
-| Segment rating rubric (how useful a member is to us) | `segments/{segment}.yaml` `rating_rubric:` |
-| A-phase and P-phase prompt guidance (reminders, rules, apology behaviour) | campaign YAML `prompt_appendices:` |
-| Per-contact population data (identity, channels, s_note, p_note, star_rating) | `segments/{segment}.tsv` |
-| Per-contact profile | `segments/{segment}/{stem}.md` |
-| Per-contact engagement (messages, sends, replies) | `campaigns/{campaign}/{stem}.yaml` |
-| Which campaign an approach belongs to | the approach file's parent directory |
-| Campaign intro for human readers | `campaign:` display-name field + top-of-file banner comment in the campaign YAML |
+| Campaign definition (sender, channels, filters, USPs, `fact_sources`, `antifacts`, `prompt_appendices`, version) | `spar-campaign-yaml.md` |
+| Campaign × segment plan (objective, framings, first ask, funnel, sequencing, `stems`) | `spar-campaign-yaml.md`, per-segment plan block |
+| Population definition (who belongs, rating rubric, boundaries) | `segment-schema.yaml` |
+| Per-contact population data (identity, channels, notes, `star_rating`) | `spar-roster-format.md` |
+| Per-contact profile | `spar-P-profile.md` §5 |
+| Engagement, campaign × contact (messages, sends, `response_likelihood`, `a_note`, `r_note`) | `spar-A-approach.md` |
+| Layout: which file sits where, name patterns, campaign attribution by parent directory | this document |
+
+No fact is mapped at two altitudes: this table maps realms to owner documents, and each owner document maps its own facts to fields and files.
 
 **Pattern-matching warning.** An existing repository may contain files or directories that predate or contradict this guidance. Their existence is not a template for new work. When the spec and a neighbouring example disagree, follow the spec. The failure mode this warning addresses is the next AI session inferring layout from what is on disk rather than from this document, then extending the unrecognised pattern further.
 
