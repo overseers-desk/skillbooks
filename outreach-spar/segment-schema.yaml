@@ -23,26 +23,20 @@
 #       (campaign × segment  - scope_note           - a_note, r_note
 #        plan blocks)        - platforms
 #
-# What lives where (single source of truth):
+# What lives where (the segment realm: the population):
 #
-#   - sender, channels, filters        -> campaign.yaml
-#   - usps: label, claim, provenance   -> campaign.yaml usps:
-#   - documents the claims draw on     -> campaign.yaml fact_sources:
-#   - per-segment plan (objective, usp framings, message_goal, first_ask,
-#     conversion_funnel, approach_sequencing, subsegments)
-#                                      -> campaign.yaml segments.<name> block
 #   - who belongs in this population   -> THIS FILE discovery_criteria
 #   - how useful a member is to us     -> THIS FILE rating_rubric
 #   - segment boundaries vs neighbours -> THIS FILE scope_note
-#   - roster (per-contact identity)    -> segments/{seg}.tsv
-#   - per-contact profile              -> segments/{seg}/{stem}.md
-#   - engagement (per campaign)        -> campaigns/{camp}/{stem}.yaml
-#   - methodology rules                -> methodology documents
+#   - per-contact identity, channels,
+#     notes, star_rating               -> segments/{seg}.tsv (spar-roster-format.md)
+#   - per-contact profile              -> segments/{seg}/{stem}.md (spar-P-profile.md 5)
 #
-# The fields that used to live here — objective, usps, message_goal, first_ask,
-# conversion_funnel, approach_sequencing — moved to the campaign's per-segment
-# plan block, because they fail that test: change the campaign's ask and the
-# objective, message_goal, first_ask, and the rest change with it. See
+# Everything that changes with a campaign's ask (sender, USPs, per-segment
+# plans, engagement) is the campaign realm: spar-campaign-yaml.md. Plan fields
+# (objective, usp framings, message_goal, first_ask, conversion_funnel,
+# approach_sequencing, subsegments) belong to the campaign's per-segment plan
+# block for that reason: change the ask and they change with it. See
 # spar-campaign-yaml.md, "Per-segment plan block".
 # =============================================================================
 
