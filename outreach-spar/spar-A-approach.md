@@ -13,13 +13,10 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 - **Roster entry:** The contact's row in the roster TSV, including `s_note`, `p_note`, and `star_rating`. `star_rating` is P-owned: read it from the roster row, which the harness syncs from the profile front matter, its authoritative home (`spar-P-profile.md` §4.13). The roster carries campaign-independent population data only; A's outputs (`response_likelihood`, `a_note`) are written to the approach file, not the roster (see §4.8 and §6).
 - **Campaign plan block:** The segment's entry under `segments:` in `campaign.yaml` — the objective, USP framings, `message_goal`, `first_ask`, `conversion_funnel`, and `approach_sequencing` for this segment, including the approach type (FAM invitation, phone call, personal email, etc.) and collateral prerequisites. Read this before drafting. The dispatcher passes the campaign YAML path and the segment key.
 - **Segment file:** (`segments/{segment}.yaml`) The population definition — `discovery_criteria`, `scope_note`, `rating_rubric`. Consult for boundary and rating context. The per-campaign plan now lives in the campaign plan block above, not here.
-- **Communication index:** `comms-index.md`, the running index of all prior A outputs. Read this before drafting to find cross-references, shared connections, and angles already used with related contacts.
-- **Strategy revision notes:** If this is not the first AR band, read the most recent `strategy-revision-[band].md` for revised angle priorities and messaging guidance from R.
 
 ## 3. Outputs
 
 - **Approach file:** `campaigns/{campaign}/{stem}.yaml`, `{stem}` being the contact's roster stem — the state machine derives contact state from file existence at that exact path, and the parent directory is the campaign attribution (`spar-campaign-directory.md`). The structure is shown in §6. Contains the angle selection rationale, all A1/A2 drafts and responses, chosen USP identifiers per round, and the final send-ready messages.
-- **Communication index entry:** One line appended to `comms-index.md`: contact name, organisation, segment, angle used, key relationship hooks, channel selection.
 - **Approach-file notes:** Write the `a_note` root key in the approach file with: angle used, channel selected, warmth level, language, and any notable drafting consideration. Set the `response_likelihood` root key to the estimated reply probability under the chosen angle. These are A's outputs and live in the approach file, not the roster.
 
 ## 4. Procedure
@@ -159,13 +156,11 @@ Write the approach file as `campaigns/{campaign}/{stem}.yaml` following the stru
 
 The default sender and BCC address come from the campaign YAML (`sender.name`, `sender.email`, `sender.bcc`) and do not need to be written into the approach file. Write a `decisions.sender` block only when this specific outreach should go from someone other than the campaign's default sender — e.g. a colleague with a prior relationship to the contact. When present, `decisions.sender.email` (and optional `sender.name`) overrides the campaign sender for this contact; per-message `bcc` / `cc` likewise override `sender.bcc`. All of this is resolved by the T3 dispatcher at send time.
 
-### 4.8 Update the communication index
+### 4.8 Engagement notes and the roster backfill
 
 `a_note` and `response_likelihood`, like the messages, are engagement-tier and campaign-bound: write them into the approach file (§6), never the roster.
 
 **Contact-detail backfill (the one roster change A declares).** A contact detail is population-tier, not engagement: a verified email, or a corrected or newly found `linkedin_url` / `facebook_url`, is the same fact for any campaign, so its home is the roster. When A discovers one at send time (typically a member's shared email from the §4.2 contact-info lookup), A declares it in the approach file's root `roster_patch:` block and the harness applies it to the segment's roster, the same mediation P uses. A backfilled email must pass the same gates P uses: the format gate (an `@` with a plausible `user@domain` shape; no masked, placeholder, or non-email value), the name-mismatch check, and the shared-inbox rule (all in `spar-P-profile.md`); the harness rejects a masked value before it reaches the roster. This contact detail is the only roster change A declares; everything campaign-bound stays in the approach file.
-
-**Communication index:** Append one line to `comms-index.md`: contact ID, name, organisation, segment, angle used, key relationship hooks, channel selection.
 
 ## 5. Band processing
 
