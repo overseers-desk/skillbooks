@@ -513,6 +513,23 @@ if {$dispatching} {
         return $ready_by_tid
     }
 
+    # The pause between "rows are ready" and "the first worker runs",
+    # counted down on stdout so an operator who recognises the wrong
+    # campaign, scope or account has a Ctrl-C window before any spend.
+    # Once per process: the --auto loop's later iterations continue a
+    # run already let through. A dry run launches no worker, so it has
+    # nothing to stop and skips the wait.
+    proc countdown_before_first_row {dry_run} {
+        if {$dry_run || [info exists ::_countdown_done]} return
+        set ::_countdown_done 1
+        for {set n 5} {$n >= 0} {incr n -1} {
+            puts -nonewline stdout "\rStarting in $n (Ctrl-C to stop) "
+            flush stdout
+            if {$n > 0} { after 1000 }
+        }
+        puts stdout ""
+    }
+
     # Dispatch every ready T-id through one shared spar::Dispatcher.
     # Per-TID scope filters flow into build_opts as filter_segments /
     # filter_stems so each runner sees only the scope its TID asked
@@ -584,6 +601,8 @@ if {$dispatching} {
         }
 
         if {[llength $batches] == 0} return
+
+        countdown_before_first_row $dry_run
 
         # Build the shared Dispatcher and pre-install per-worker caps.
         # ses_send is unconditionally capped at 1 (harmless when no T6
