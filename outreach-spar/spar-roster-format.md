@@ -28,7 +28,7 @@ mlr -I --tsvlite put 'if ($stem == "jane-doe-acme") { $email = "jane@acme.com" }
 
 Three faults to guard:
 
-- **A tab or newline assigned into a value splits the row.** mlr writes both out literally and a TSV record is one line, so flatten a multi-line value to spaces before assigning it. (First hit: co-location round 8, 21 records rejoined from 26 physical lines.)
+- **A tab or newline assigned into a value splits the row.** mlr writes both out literally and a TSV record is one line, so flatten a multi-line value to spaces before assigning it. (First hit: 21 records rejoined from 26 physical lines.)
 - **`-I` empties a roster carrying a header and no data rows**, at exit 0, because mlr writes no header when it has no records. Such a file has nothing to update; the guard is to not run an update against one.
 - **A ragged row aborts the run**, at exit 1, file untouched. Fix the row, or pass `--allow-ragged-csv-input` when the short row is intended.
 
