@@ -81,7 +81,7 @@ Every row must have at least one of email, linkedin_url, or facebook_url populat
 
 ### Phase handover
 
-The S and P phases each have one note column in the roster. Only that phase writes to it; subsequent phases read it as context before doing their work. Notes are roster-level summaries, not replacements for full artefacts (profile documents, approach files, strategy revision notes). The A and R phases do not write their campaign-bound output to the roster: `response_likelihood`, `a_note`, and `r_note` are campaign-bound, and a segment's roster is shared across campaigns, so that output lives in the per-contact approach YAML instead (see `spar-methodology.md`, "Campaigns and segments", and `spar-A-approach.md`). The one exception is population-tier contact details: when A discovers a verified email, or a corrected `linkedin_url` / `facebook_url`, at send time, it backfills the roster, the same as P (see `spar-A-approach.md` §4.8). Such a detail is campaign-independent, so the roster is its home, not the approach file.
+The S and P phases each have one note column in the roster. Only that phase writes to it; subsequent phases read it as context before doing their work. Notes are roster-level summaries, not replacements for full artefacts (profile documents, approach files). The A and R phases do not write their campaign-bound output to the roster: `response_likelihood`, `a_note`, and `r_note` are campaign-bound, and a segment's roster is shared across campaigns, so that output lives in the per-contact approach YAML instead (see `spar-methodology.md`, "Campaigns and segments", and `spar-A-approach.md`). The one exception is population-tier contact details: when A discovers a verified email, or a corrected `linkedin_url` / `facebook_url`, at send time, it backfills the roster, the same as P (see `spar-A-approach.md` §4.8). Such a detail is campaign-independent, so the roster is its home, not the approach file.
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
@@ -98,7 +98,7 @@ Columns 13–14 are empty during S and populated by P. Empty columns are expecte
 | S | Roster row (this is S's primary output) | roster `s_note`: why this person was included |
 | P | Profile document (`segments/{segment}/{stem}.md` with YAML front matter) | roster `p_note`: one-line relevance summary and routing for A |
 | A | Approach file (`{stem}.yaml`) | approach YAML `a_note` root key: angle and outcome summary for R |
-| R | Strategy revision notes (`strategy-revision-[band].md`) | approach YAML `r_note` root key: per-contact observation from the human reviewer |
+| R | Campaign YAML updates (plan-block angle priorities, `prompt_appendices` guidance) | approach YAML `r_note` root key: per-contact observation from the human reviewer |
 
 A phase note should answer: "what does the next phase need to know about this contact from my phase, in one line?" If the observation requires more than a short sentence, it belongs in the full artefact, not in the note. The S and P notes live in the roster; the A and R notes live in the approach YAML, beside the messages they summarise.
 

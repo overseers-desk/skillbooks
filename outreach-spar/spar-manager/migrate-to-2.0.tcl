@@ -118,7 +118,7 @@ foreach stem [array names camp_segments] {
     }
 }
 
-set seg_doc_words {summary profiles-summary comms-index sweep sweep-feedback}
+set seg_doc_words {summary profiles-summary sweep sweep-feedback}
 foreach seg [lsort [array names seg_campaigns]] {
     set sdir [file join $root $seg]
     if {![file isdirectory $sdir]} {
@@ -136,7 +136,6 @@ foreach seg [lsort [array names seg_campaigns]] {
     foreach {old new} [list sweep.yaml "$seg.sweep.yaml" \
                            sweep-feedback.tsv "$seg.sweep-feedback.tsv" \
                            profiles-summary.md "$seg.profiles-summary.md" \
-                           comms-index.md "$seg.comms-index.md" \
                            "summary-$seg.md" "$seg.summary.md"] {
         if {[file exists [file join $sdir $old]]} {
             plan_move [file join $sdir $old] [file join $root segments $new]
@@ -170,7 +169,7 @@ foreach seg [lsort [array names seg_campaigns]] {
     # anything left in the segment dir is reported, not guessed at
     foreach f [glob -nocomplain [file join $sdir *]] {
         set tail [file tail $f]
-        if {$tail in {segment.yaml roster.tsv sweep.yaml sweep-feedback.tsv profiles approach profiles-summary.md comms-index.md}} continue
+        if {$tail in {segment.yaml roster.tsv sweep.yaml sweep-feedback.tsv profiles approach profiles-summary.md}} continue
         if {$tail eq "summary-$seg.md"} continue
         finding "unplaced (left where it is): $f — move it by hand to segments/$seg.<word>.<ext> or the instance root"
     }

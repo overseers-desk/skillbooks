@@ -155,8 +155,6 @@ A has two sub-phases:
 
 **Output:** A communications file at `campaigns/{campaign}/{stem}.yaml`. At creation the file records the drafting of the first outbound message: the profile summary, the angle chosen, the A1/A2 iteration history (all drafts and C2 responses, so the human can see how the message took shape), the message body, and the contact method. Subsequent messages and replies on the same contact extend the same log.
 
-A also appends a one-line entry to a communication index file (`comms-index.md`): target name, organisation, segment, angle used, key relationship hooks. This index is what subsequent A runs read to find cross-references, rather than reading all prior approach files in full.
-
 ### R — Revise
 
 R is a human phase, not an AI phase. After each band of A completes and enough time has passed for responses to arrive, the human reviews:
@@ -166,7 +164,7 @@ R is a human phase, not an AI phase. After each band of A completes and enough t
 - **Unexpected themes:** Did respondents raise concerns not anticipated in the campaign plan? These may indicate a value proposition the campaign has not articulated.
 - **Network effects:** Did any respondent offer introductions or mention colleagues who should be contacted? These are warm leads that bypass the pipeline entirely and should be prioritised in the next band or handled outside SPAR through direct relationship channels.
 
-The output of R is a revised connection strategy: updated angle priorities, adjusted messaging emphasis, and any new relationship hooks to reference in subsequent bands. This revision is recorded in a strategy log (`strategy-revision-[band].md`) so that the evolution of the campaign's understanding is traceable.
+The output of R is a revised connection strategy: updated angle priorities, adjusted messaging emphasis, and any new relationship hooks to reference in subsequent bands. The revision lands where the next band reads: angle priorities in the campaign's plan blocks, drafting guidance in `prompt_appendices`, and per-contact observations in each approach YAML's `r_note`.
 
 ## Stage notation
 
@@ -244,8 +242,6 @@ The marker tells you where the campaign is. The band index tells you what each b
 | Per-segment plan block (objective, USP framings, message goal, first ask, funnel, sequencing) | campaign planner | P, A | `campaign.yaml` `segments.<name>` |
 | Profile documents | P | A, human review | Segment folder (`segments/{segment}/`) |
 | Communications log files (`{stem}.yaml`, engagement: messages, `response_likelihood`, `a_note`, `r_note`) | A; replies and follow-ups extend the file over time | A subsequent runs, R | Campaign folder (`campaigns/{campaign}/`) |
-| Communication index (`comms-index.md`) | A (append) | A (read) | Segment directory |
-| Strategy revision notes (`strategy-revision-[band].md`) | R (human) | A (next band) | Campaign directory (one per band) |
 | Segment summary (search vocabulary, invisible segments) | S&P₃ | Future S&P runs on same segment | Segment directory |
 
 ## Web fetching and browser serialisation
