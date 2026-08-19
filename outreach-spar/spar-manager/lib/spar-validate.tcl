@@ -1464,7 +1464,7 @@ proc spar::_pred_seed_date_quoted {node meta} {
 }
 
 # sweeper: <family> promises sweeper-<family>.yaml at the instance root
-# (spar-S-search.md §7.1). instance_root arrives via -context from the caller.
+# (spar-S-sweep.md §7.1). instance_root arrives via -context from the caller.
 proc spar::_pred_sweeper_resolves {node meta} {
     if {![dict exists $node sweeper]} { return {} }
     set family [string trim [dict get $node sweeper]]
@@ -1496,7 +1496,7 @@ proc spar::_pred_platforms_vocab {node meta} {
     return $out
 }
 
-# Source-kind requirement (spar-S-search.md §5/§6): a sweep starts from at least
+# Source-kind requirement (spar-S-sweep.md §5/§6): a sweep starts from at least
 # one enumerable source, not keyword search alone.
 proc spar::_pred_census_source {node meta} {
     if {![dict exists $node sources]} { return {} }
@@ -1536,7 +1536,7 @@ proc spar::_pred_source_status_token {node meta} {
 }
 
 # Each escape entry names a verdict from the closed vocabulary in
-# spar-S-search.md §7 (Escapes); the entry's other keys vary by case and
+# spar-S-sweep.md §7 (Escapes); the entry's other keys vary by case and
 # stay unchecked.
 proc spar::_pred_escape_verdicts {node meta} {
     if {![dict exists $node escapes]} { return {} }
@@ -1729,7 +1729,7 @@ proc spar::_pred_return_feedback_shape {node meta} {
 }
 
 # escapes entries: a member the sweep should have found earlier, with the
-# verdict naming the cause (spar-S-search.md §7). Shape varies by how the
+# verdict naming the cause (spar-S-sweep.md §7). Shape varies by how the
 # miss surfaced (member/verdict/note, found/verdict/cause), so only the
 # verdict is fixed; spar::append_sweep_escapes drops an entry without one.
 proc spar::_pred_return_escape_shape {node meta} {

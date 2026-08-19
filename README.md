@@ -23,7 +23,7 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 **Model allocation:** S and P are Sonnet-tier (high volume, rubric-following). A is Opus-tier (tone, angle selection, cross-referencing prior relationships). R is human.
 
-**Procedure documents:** `outreach-spar/spar-methodology.md` and the phase-specific AESOPs (`spar-S-search.md`, `spar-P-profile.md`, `spar-A-approach.md`).
+**Procedure documents:** `outreach-spar/spar-methodology.md` and the phase-specific AESOPs (`spar-S-sweep.md`, `spar-P-profile.md`, `spar-A-approach.md`).
 
 **Tooling:** `outreach-spar/spar-manager/` holds its runnable scripts at the top: a transition dispatcher (`spar-transition.tcl`), a progress reporter (`spar-progress.tcl`), a validator (`spar-validate-cli.tcl`), a Tk GUI (`spar-ui.tcl`), and the two phase harnesses. The libraries they source sit under `lib/`. These read a campaign YAML, classify contacts via the state machine (`lib/spar-state.tcl`), and dispatch work to the Claude Code CLI.
 

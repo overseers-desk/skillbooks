@@ -294,7 +294,7 @@ T6 tasks carry the send channel that routed them (the `channel` key on the task 
 
   EXCLUDED — terminal; reached as an in-process outcome of S (sweep), P (profile),
              or A (approach) writing `date_excluded` on the roster row, per the rules
-             in spar-S-search.md, spar-P-profile.md §§4.1/4.2/4.13/4.15, and
+             in spar-S-sweep.md, spar-P-profile.md §§4.1/4.2/4.13/4.15, and
              spar-A-approach.md §4.0 step 2. There is no operator-initiated arrow.
              T7, T8, detect_duplicates skip EXCLUDED. T2 cannot reach EXCLUDED
              because its gate requires PROFILED.

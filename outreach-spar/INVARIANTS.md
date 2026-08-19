@@ -37,5 +37,5 @@ A second TSV created to be merged into the first one later is the recurring form
 I2 was violated the same day it was written into the S procedure, by the session that wrote it, under the first reason on that list. Prose alone did not hold, so it rests on:
 
 1. **Conformance** — `spar-campaign-directory.md` shows the layout with no optional extras, so a planner copying the template creates nothing else.
-2. **Procedure** — `spar-S-search.md` §8 gives a sweep one output, the roster, and one writer at a time per segment.
+2. **Procedure** — `spar-S-sweep.md` §8 gives a sweep one output, the roster, and one writer at a time per segment.
 3. **This file** — the statement a procedure or template is measured against when they disagree.

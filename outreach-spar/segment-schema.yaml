@@ -54,7 +54,7 @@ title: ...                                        # human-readable segment name
 version: "2.0"                                     # SPAR spec generation (see spar-methodology.md, "Versioning")
 date: 2026-03-30                                   # date this file was last substantively revised
 sweeper: ...                                       # optional: market family this segment sweeps with; resolves to
-                                                   # sweeper-<name>.yaml beside the campaign YAMLs (spar-S-search.md §7.1).
+                                                   # sweeper-<name>.yaml beside the campaign YAMLs (spar-S-sweep.md §7.1).
                                                    # Membership is authored here only; the sweeper file lists no segments.
 
 # --- Target type (profile depth) — optional; default cue-required ---
@@ -63,7 +63,7 @@ sweeper: ...                                       # optional: market family thi
 # qualification-only  : members qualify by role and geography or sector alone,
 #                       usually from a register; SPAR-P §5.5 thin profile
 #                       (contact-or-office-channel, mechanism evidence, rating).
-# Vocabulary from spar-S-search.md §1. Segment-owned because profile depth
+# Vocabulary from spar-S-sweep.md §1. Segment-owned because profile depth
 # follows the population, not any campaign's ask. The declaration is a claim
 # about the population's plausible uses: should a later campaign need
 # cue-required treatment of these contacts, re-profile the affected stems at
@@ -141,7 +141,7 @@ discovery_criteria: |
 #
 # A T0 sweep consumes two files: this one (segments/{segment}.yaml) and the
 # segment's sweep file (segments/{segment}.sweep.yaml). Field meanings for
-# the sweep file are in spar-S-search.md §7; its seed state is that shape
+# the sweep file are in spar-S-sweep.md §7; its seed state is that shape
 # with every source `unharvested` and `escapes: []`, `rounds: []`.
 #
 # Seed skeleton for segments/{segment}.sweep.yaml:

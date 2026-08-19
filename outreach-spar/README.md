@@ -9,7 +9,7 @@ outreach-spar/
   INVARIANTS.md                Hard rules; the rest of the methodology may not contradict them
   arch.md                      Why the pipeline is built this way, and what each choice cost
   spar-methodology.md          Methodology overview (all four phases)
-  spar-S-search.md             S-phase procedure (sweep, roster building)
+  spar-S-sweep.md             S-phase procedure (sweep, roster building)
   spar-P-profile.md            P-phase procedure (contact research, dossier)
   spar-A-approach.md           A-phase procedure (drafting, A2 sparring)
   spar-roster-format.md        Roster TSV schema and quality checklist

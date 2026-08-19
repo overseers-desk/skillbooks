@@ -138,7 +138,7 @@ These assertions apply to the core columns. Campaign-specific checks are defined
 
 This document defines the roster schema. The operational procedures for populating it are:
 
-- **SPAR-S** (`spar-S-search.md`) — populates columns 1–12 (including `stem` at discovery)
+- **SPAR-S** (`spar-S-sweep.md`) — populates columns 1–12 (including `stem` at discovery)
 - **SPAR-P** (`spar-P-profile.md`) — populates columns 13–14, corrects columns 3–8 and 11; creates `segments/{segment}/{stem}.md` using the pre-existing `stem`
 - **SPAR-A** (`spar-A-approach.md`) — creates `campaigns/{campaign}/{stem}.yaml` using the pre-existing `stem`, writing `response_likelihood`, `a_note`, and the messages into it; writes to the roster only to backfill a population-tier contact detail discovered at send time (a verified email, a corrected `linkedin_url`/`facebook_url`; see §4.8)
 - **R** (human, no procedure document) — writes the `r_note` root key into the campaign's approach file; does not write to the roster

@@ -1,6 +1,6 @@
 # sweep.rules — yamlmuster ruleset for a segment's sweep file
 # (segments/<name>.sweep.yaml). Loaded by spar::_yamlmuster_sweep and driven
-# by spar::validate_seed. Field vocabulary per spar-S-search.md §7; the seed
+# by spar::validate_seed. Field vocabulary per spar-S-sweep.md §7; the seed
 # state a T0 sweep starts from is the same shape with sources unharvested and
 # rounds/escapes empty.
 #
@@ -31,7 +31,7 @@ rule require root version -nonblank -code missing_version \
 rule require root segment -nonblank -code missing_segment \
     -message {Sweep file missing required key '%k'} -groups {sweep}
 rule require root market_estimate -code missing_market_estimate \
-    -message {Sweep file missing '%k' — the denominator is the S&P0 gate (spar-S-search.md §6)} \
+    -message {Sweep file missing '%k' — the denominator is the S&P0 gate (spar-S-sweep.md §6)} \
     -groups {sweep}
 rule require root sources -nonempty -code missing_sources \
     -message {Sweep file missing '%k' — a sweep is dispatched per source} -groups {sweep}
@@ -42,7 +42,7 @@ rule require root escapes -code missing_escapes \
 rule require root rounds -code missing_rounds \
     -message {Sweep file missing required key '%k' (empty list before round 1)} -groups {sweep}
 
-# Source-kind requirement (spar-S-search.md §5/§6): at least one source a census can be read from.
+# Source-kind requirement (spar-S-sweep.md §5/§6): at least one source a census can be read from.
 rule predicate root census_source -code no_census_source -groups {sweep}
 
 # Each escape entry names a verdict from §7's vocabulary; other keys stay
@@ -75,7 +75,7 @@ rule require source status -nonblank -code missing_source_status \
     -message {source missing '%k'} -groups {sweep}
 rule oneof source type {registry directory informal outlet platform} \
     -code invalid_source_type \
-    -message {source type '%v' — closed vocabulary: registry | directory | informal | outlet | platform (spar-S-search.md §6)} \
+    -message {source type '%v' — closed vocabulary: registry | directory | informal | outlet | platform (spar-S-sweep.md §6)} \
     -groups {sweep}
 
 # status leads with a base token; free-text reason may follow. T0 selects

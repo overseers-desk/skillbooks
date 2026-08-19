@@ -83,7 +83,7 @@ Sources fall into kinds. The campaign plan names the instruments within each kin
 - **Owned data** — CRM, past clients, the operator's own connections and their second degree.
 - **Open web search** — the seed queries the campaign plan defines, and from S&P₂ onward the reverse-search diagnostic: search known contacts by name, note co-occurring keywords in results, then search by those keywords alone to test whether they surface contacts invisible to the original search vocabulary.
 
-Which register, directory, outlet or platform serves a market turns on geography and language, and two countries rarely answer alike. The kinds are the same everywhere. A sweep that leaves a kind unattempted has not closed; `spar-S-search.md` §6 sets the standard for recording one as empty.
+Which register, directory, outlet or platform serves a market turns on geography and language, and two countries rarely answer alike. The kinds are the same everywhere. A sweep that leaves a kind unattempted has not closed; `spar-S-sweep.md` §6 sets the standard for recording one as empty.
 
 Each iteration applies the appropriate search methods:
 
@@ -185,7 +185,7 @@ Before engagement begins, the marker is just `S&P{n}`. Once the first AR band st
 
 ### Rules
 
-1. The S&P counter only increases. S&P1 → S&P2 → S&P3 is the standard autonomous progression. S&P0 precedes it: market sizing and the source census, written to the segment's `sweep.yaml` (`spar-S-search.md` §7) with no roster rows produced. A segment whose `sweep.yaml` exists with no rounds recorded stands at S&P0; file existence carries the state, the same way profile and approach files carry P and A states.
+1. The S&P counter only increases. S&P1 → S&P2 → S&P3 is the standard autonomous progression. S&P0 precedes it: market sizing and the source census, written to the segment's `sweep.yaml` (`spar-S-sweep.md` §7) with no roster rows produced. A segment whose `sweep.yaml` exists with no rounds recorded stands at S&P0; file existence carries the state, the same way profile and approach files carry P and A states.
 2. S&P > 3 implies that AR work surfaced new names and a human triggered an additional S&P iteration. This is the normal case, not an exception.
 3. The AR counter only increases. Each band gets one A pass (approach) and one R pass (revise) before the counter increments.
 4. A can begin after any S&P iteration, not only after S&P3. A campaign with a small universe may begin engagement after S&P1.
@@ -297,7 +297,7 @@ The version field is read by the tooling for two purposes. The validate command 
 
 This methodology does not replace any existing document. It provides the conceptual framework from which specific AESOPs are derived:
 
-- **SPAR-S** (`spar-S-search.md`) — the operational procedure for the sweep phase. Generalises iterative discovery techniques first developed in project-specific SOPs and the research phase of a foundation's direct-outreach-pipeline into a campaign-agnostic procedure.
+- **SPAR-S** (`spar-S-sweep.md`) — the operational procedure for the sweep phase. Generalises iterative discovery techniques first developed in project-specific SOPs and the research phase of a foundation's direct-outreach-pipeline into a campaign-agnostic procedure.
 - **SPAR-P** (`spar-P-profile.md`) — the operational procedure for profile building, a standalone profiling step that does not also draft messages.
 - **SPAR-A** (`spar-A-approach.md`) — the operational procedure for drafting connection messages, including the A1/A2 sparring loop, communication-log cross-referencing, and band-ordered processing.
 - **R has no procedure document** — it is a human review process. Its inputs and outputs are defined here; its execution is not automatable.
