@@ -141,7 +141,7 @@ A processes contacts in bands, ordered by response likelihood (from P's estimate
 
 **The A phase for each contact:**
 
-A is Opus-tier work. For each contact, Opus receives the profile document, the communication index (a running summary of all prior A outputs), and the full communication logs of contacts in the same segment or cluster.
+A is Opus-tier work. For each contact, Opus receives the profile document and the full communication logs of contacts in the same segment or cluster; each log's `a_note` summarises the angle used.
 
 A has two sub-phases:
 
@@ -223,7 +223,7 @@ Within a single AR band, the A pass is itself an author/challenger exchange. Two
 
 ### What the marker does not encode
 
-The response-likelihood threshold and star-rating floor for each AR band are operational parameters, not position coordinates. They belong in the band plan or strategy revision log. A separate band index serves this purpose:
+The response-likelihood threshold and star-rating floor for each AR band are operational parameters, not position coordinates. They belong in the band plan. A separate band index serves this purpose:
 
 ```
 AR1: ≥90% response likelihood (learning band)

@@ -89,7 +89,7 @@ Read the full profile document. Then:
 1. **Note what the contact has said publicly.** These are the hooks: specific statements, positions, or activities that connect their situation to the campaign's offering.
 2. **Note what the contact has NOT said.** The profile records a bearing absence inline where it found one (`No public statements found on [topic].`), and says nothing where it found nothing. Neither licenses inventing relevance; respect both throughout drafting.
 3. **Derive the angles.** The profile carries no angle list (angles are campaign-bound; INVARIANTS.md I1). Construct candidate angles from the profile's `## Relevance assessment` and evidence sections together with the campaign plan's angle table, order them by evidence strength, select the primary angle, and record the rationale in the approach file.
-4. **Cross-reference the communication index.** If a related contact (same organisation, network, or segment) has already been approached, use a compatible angle — not identical, but consistent, so the campaign's voice does not contradict itself across contacts who may compare notes.
+4. **Cross-reference prior approaches.** If a related contact (same organisation, network, or segment) has already been approached (the campaign folder's approach YAMLs; each `a_note` summarises the angle used), use a compatible angle — not identical, but consistent, so the campaign's voice does not contradict itself across contacts who may compare notes.
 
 ### 4.5 Draft the message (A1)
 
@@ -169,9 +169,9 @@ A processes contacts in bands ordered by response likelihood, as defined in the 
 1. Order contacts by star rating (highest first).
 2. Process sequentially, not in parallel. Each approach file may inform the next.
 3. After the band is complete, the human reviews all drafts, approves/edits/rejects each one, and sends approved messages.
-4. After responses arrive, the human writes the strategy revision note for the next band.
+4. After responses arrive, the human revises the campaign for the next band: angle priorities in the plan blocks, drafting guidance in `prompt_appendices`, per-contact observations in `r_note`.
 
-Read the latest strategy revision note before starting each new band. It may change angle priorities, tone guidance, or the ask.
+Re-read the campaign's plan block and `prompt_appendices` before starting each new band; R may have changed angle priorities, tone guidance, or the ask.
 
 ## 6. Approach file structure
 
@@ -327,4 +327,4 @@ Do not default to a generic email when the plan block prescribes a specific form
 
 ## 9. Subagent delegation
 
-Point the subagent at this file, the profile document, the roster entry, the campaign plan, and the communication index. Include the current band parameters and the latest strategy revision note if applicable. Do not transcribe SPAR-A content into the prompt — reference the file path.
+Point the subagent at this file, the profile document, the roster entry, and the campaign plan. Include the current band parameters. Do not transcribe SPAR-A content into the prompt — reference the file path.
