@@ -1,0 +1,15 @@
+FIELD	ENTITY	VALUE	QUOTE
+V6	-	2	Download our wedding brochure for pricing details.
+AMOUNT	"download our wedding brochure"	pricing guide route	condition
+NOTE	V6	undecidable text about price availability
+
+FIELD	ENTITY	V7_package_total	1	The Valley Estate sets no per-head or site fee directly, only a brochure request.
+FIELD	ENTITY	V7_per_head	0	
+FIELD	ENTITY	V7_site_fee	0	
+FIELD	ENTITY	V7_min_spend	0	
+FIELD	ENTITY	V7_tier_day	0	
+FIELD	ENTITY	V7_tier_season	0	
+FIELD	ENTITY	V7_tier_year	0	
+FIELD	ENTITY	V7_addon_priced	0	
+FIELD	ENTITY	V7_fee_waived	0	
+FIELD	ENTITY	V7_commission_or_percentage	0

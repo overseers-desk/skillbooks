@@ -1,0 +1,23 @@
+V9_deposit	Binna Burra Lodge	1	Full Payment is required as a deposit to secure all reservations.
+AMOUNT	Full Payment	The total cost of the reservation	
+V9_deposit_refundable	Binna Burra Lodge	8	Cannot determine refundability from provided text; note explains.
+NOTE	V9_deposit_refundable	Cannot determine refundability from provided text
+V9_payment_schedule	Binna Burra Lodge	1	Payment plans are only available for online bookings in our Sky Lodges, you can click here to view payment plan policies. All payment plans must be finalised 28 days prior to arrival.
+AMOUNT	28 days	payment plans must be finalised
+V9_instalments_offered	Binna Burra Lodge	1	Payment Plans are a great way for you to secure your next visit to Binna Burra and spread the cost over time. We have some important terms and conditions that you need to be aware of before you go ahead with your Payment Plan.
+AMOUNT	varies	payment plans available
+V9_balance_deadline	Binna Burra Lodge	1	Payment Plans must be finalised 28 days prior to arrival.
+AMOUNT	28 days	finalisation period for payment plans
+V9_full_prepay	Binna Burra Lodge	0	
+V9_min_spend	Binna Burra Lodge	8	Cannot determine minimum spend from provided text; note explains.
+NOTE	V9_min_spend	Cannot determine minimum spend from provided text
+V9_final_numbers_deadline	Binna Burra Lodge	1	Final numbers are required 28 days before your wedding and cannot be reduced after.
+AMOUNT	28 days	final numbers deadline
+V9_cancellation_terms	Binna Burra Lodge	1-Cancellations 28 days prior to arrival, a full refund will be provided. Cancellations within 28 days of arrival are non-refundable, with the full deposit forfeited. Cancellations on day of arrival are not eligible for credit or refund.
+AMOUNT	varies	cancellation terms
+V9_service_charge	Binna Burra Lodge	1-All credit card transactions are subject to a non-refundable transaction fee of 1.65% – with a 30 cent flat fee – for VISA and MASTERCARD and 3% for AMEX which is processed by Binna Burra Lodge.
+AMOUNT	1.65%-3%	service charge
+V9_card_fee	Binna Burra Lodge	1-All credit card transactions are subject to a non-refundable transaction fee of 1.65% – with a 30 cent flat fee – for VISA and MASTERCARD and 3% for AMEX which is processed by Binna Burra Lodge.
+AMOUNT	1.65%-3%	card fee
+V9_wedding_insurance	Binna Burra Lodge	1-Binna Burra Lodge recommends individual travel insurance to cover unforeseen circumstances and offers cancellation insurance through a recommended third-party partner for online bookings only.
+AMOUNT	varies	wedding insurance recommendation

@@ -1,0 +1,62 @@
+[
+ {
+  "venue": "colliston.com.au",
+  "V6": "ok",
+  "V4": "ok",
+  "offers": "4/1",
+  "amounts": "1/0",
+  "V21_jacc": 0.2,
+  "V22_jacc": 0.0,
+  "V9_dep": "ok"
+ },
+ {
+  "venue": "albertriverwines.com.au",
+  "V6": "got ['4'] want 1",
+  "V4": "ok",
+  "offers": "10/12",
+  "amounts": "1/3",
+  "V21_jacc": 0.6,
+  "V22_jacc": 0.0,
+  "V9_dep": "ok"
+ },
+ {
+  "venue": "hilltopestate.com.au",
+  "V6": "ok",
+  "V4": "ok",
+  "offers": "2/1",
+  "amounts": "1/0",
+  "V21_jacc": 0.67,
+  "V22_jacc": 0.33,
+  "V9_dep": "ok"
+ },
+ {
+  "venue": "thevalleyestate.com.au",
+  "V6": "ok",
+  "V4": "ok",
+  "offers": "5/1",
+  "amounts": "1/0",
+  "V21_jacc": 0.75,
+  "V22_jacc": 0.33,
+  "V9_dep": "ok"
+ },
+ {
+  "venue": "binnaburralodge.com.au",
+  "V6": "got ['3'] want 1",
+  "V4": "got ['0'] want 2",
+  "offers": "4/3",
+  "amounts": "4/0",
+  "V21_jacc": 0.6,
+  "V22_jacc": 0.0,
+  "V9_dep": "X"
+ },
+ {
+  "venue": "goldcoastfarmhouse.com.au",
+  "V6": "got ['4'] want 5",
+  "V4": "got ['4'] want 7",
+  "offers": "10/9",
+  "amounts": "14/24",
+  "V21_jacc": 0.17,
+  "V22_jacc": 0.0,
+  "V9_dep": "ok"
+ }
+]

@@ -1,0 +1,70 @@
+FIELD	ENTITY	VALUE	QUOTE
+V1_ceremony	Colliston Farm packages	1	"Colliston Farm is available for weddings, elopements, micro-weddings, celebrations and styled shoots."
+V1_reception	Colliston Farm packages	0	
+V1_ceremony_only_option	Colliston Farm packages	0	
+V1_reception_only_option	Colliston Farm packages	0	
+V1_prewedding_event	Colliston Farm packages	0	
+V1_postwedding_event	Colliston Farm packages	0	
+V1_multiday	Colliston Farm packages	0	
+V1_elopement_tier	Colliston Farm packages	1	"Colliston Farm is available for weddings, elopements, micro-weddings, celebrations and styled shoots."
+V1_full_wedding	Colliston Farm packages	0	
+V1_venue_only	Colliston Farm packages	1	"We’re a venue hire-only space — you bring your own creative vision and we’ll provide the backdrop. So, bring your florals, signage, props, you name it!"
+V1_packaged	Colliston Farm packages	0	
+V1_legal_ceremony	Colliston Farm packages	0	
+V1_symbolic_only	Colliston Farm packages	0	
+V1_vow_renewal	Colliston Farm packages	0	
+
+FIELD	ENTITY	VALUE	QUOTE
+V2_c_indoor_room	Colliston Farm packages	8	"Indoor / Outdoor Ceremony"
+NOTE	V2_c_indoor_room	The text does not specify if the ceremony is indoor or outdoor.
+V2_c_chapel_church	Colliston Farm packages	0	
+V2_c_garden_lawn	Colliston Farm packages	1	"Pine Point, The Milking Shed, or Creekside"
+V2_c_beach_waterfront	Colliston Farm packages	0	
+V2_c_barn_shed	Colliston Farm packages	1	"Ceremony table and two chairs"
+V2_c_marquee_tent	Colliston Farm packages	0	
+V2_c_covered_outdoor	Colliston Farm packages	8	"Indoor / Outdoor Ceremony"
+NOTE	V2_c_covered_outdoor	The text does not specify if the ceremony is covered outdoor.
+V2_c_paddock_field_orchard	Colliston Farm packages	0	
+V2_c_forest_bush	Colliston Farm packages	0	
+V2_c_rooftop_terrace	Colliston Farm packages	0	
+V2_c_other	Colliston Farm packages	8	"Indoor / Outdoor Ceremony"
+NOTE	V2_c_other	The text does not specify the type of ceremony space.
+V2_r_indoor_room	Colliston Farm packages	0	
+V2_r_barn_shed	Colliston Farm packages	1	"Ceremony table and two chairs"
+V2_r_marquee_tent	Colliston Farm packages	0	
+V2_r_covered_outdoor	Colliston Farm packages	8	"Indoor / Outdoor Ceremony"
+NOTE	V2_r_covered_outdoor	The text does not specify if the reception is covered outdoor.
+V2_r_open_outdoor	Colliston Farm packages	0	
+V2_r_restaurant_bar	Colliston Farm packages	0	
+V2_r_whole_venue	Colliston Farm packages	1	"We’re a venue hire-only space — you bring your own creative vision and we’ll provide the backdrop."
+V2_r_other	Colliston Farm packages	8	"Indoor / Outdoor Ceremony"
+NOTE	V2_r_other	The text does not specify the type of reception space.
+V2_multi_space	Colliston Farm packages	1	"Ceremony table and two chairs"
+V2_wet_weather_alt	Colliston Farm packages	0	
+V2_ceremony_location_choice	Colliston Farm packages	1	"Choice of ceremony settings – Pine Point, The Milking Shed, or Creekside"
+V2_c_locations_verbatim	Colliston Farm packages	Pine Point, The Milking Shed, or Creekside
+V2_space_names_verbatim	Colliston Farm packages	The Barn
+
+FIELD	ENTITY	VALUE	QUOTE
+V3_ceremony_rows	Colliston Farm packages	0	
+V3_ceremony_standing	Colliston Farm packages	8	"Min 3 / Max 100 Ceremony Guests"
+NOTE	V3_ceremony_standing	The text does not specify if the ceremony layout is standing.
+V3_seated_round_tables	Colliston Farm packages	0	
+V3_seated_long_tables	Colliston Farm packages	0	
+V3_seated_unspecified	Colliston Farm packages	8	"Min 3 / Max 100 Ceremony Guests"
+NOTE	V3_seated_unspecified	The text does not specify if the ceremony layout is seated.
+V3_standing_cocktail	Colliston Farm packages	0	
+V3_theatre	Colliston Farm packages	0	
+V3_dance_floor_within	Colliston Farm packages	0	
+V3_layout_other	Colliston Farm packages	8	"Min 3 / Max 100 Ceremony Guests"
+NOTE	V3_layout_other	The text does not specify if the ceremony layout is other.
+V3_layout_flexible_claim	Colliston Farm packages	0	
+
+FIELD	ENTITY	VALUE	QUOTE
+AMOUNT	50 or more guests	professional wedding planner or coordinator required, when you have 50 or more guests, to ensure your day runs smoothly.
+
+FIELD	ENTITY	VALUE	QUOTE
+V4_max_band	Colliston Farm packages	2	"Min 3 / Max 100 Ceremony Guests"
+V4_min_guests	Colliston Farm packages	3	
+V4_min_guests_condition_verbatim	Colliston Farm packages	ceremony guests
+V4_guest_ceiling_verbatim	Colliston Farm packages	100

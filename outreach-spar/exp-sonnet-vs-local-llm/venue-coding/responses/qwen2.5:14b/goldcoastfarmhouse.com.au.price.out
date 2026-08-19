@@ -1,0 +1,38 @@
+FIELD	ENTITY	VALUE	QUOTE
+V6	-	5	
+AMOUNT	13950	Sun-Fri price for 40 – 60 guests	CONDITION	Sat prices are higher
+AMOUNT	14950	Sat price for 40 – 60 guests	CONDITION	Sat prices are higher
+AMOUNT	14950	Sun-Fri price for 60 – 80 guests	
+AMOUNT	15950	Sat price for 60 – 80 guests	
+AMOUNT	15950	Sun-Fri price for 80 – 100 guests	
+AMOUNT	16950	Sat price for 80 – 100 guests	
+AMOUNT	16950	Sun-Fri price for 100 – 120 guests	
+AMOUNT	17950	Sat price for 100 – 120 guests	
+AMOUNT	17950	Sun-Fri price for 120 – 150 guests	
+AMOUNT	18950	Sat price for 120 – 150 guests	
+V6	-	5	
+AMOUNT	2450	Up to 20 guests package for 2 hours	CONDITION	Children over 5 years included in guest count
+V7_package_total	-	1	
+V8_unit	-	package_total	
+V7_site_fee	-	1	
+V8_unit	-	site_fee	
+AMOUNT	7950	Package price for January and February 2026/2027	CONDITION	Get married in January or February 2027 for less
+V6	-	5	
+AMOUNT	4950	Special pricing for January and February 2027	CONDITION	usual price is $7,950
+AMOUNT	11950	Single Kata Tipi package price	for up to 50 guests
+V8_unit	-	package_total	
+V6	-	5	
+AMOUNT	14450	Double Kata Tipi package price	for up to 100 guests
+V8_unit	-	package_total	
+V6	-	5	
+AMOUNT	16450	Triple Kata Tipi package price	for up to 150 guests
+V8_unit	-	package_total	
+V6	-	5	
+AMOUNT	13950	The 8x12m marquee with fairy lights seating up to 60 guests
+V8_unit	-	package_total	
+V6	-	5	
+AMOUNT	15950	The 10x15m marquee with fairy lights seating up to 100 guests
+V8_unit	-	package_total	
+V6	-	5	
+AMOUNT	17950	The 10x21m marquee with fairy lights seating up to 150 guests
+V8_unit	-	package_total

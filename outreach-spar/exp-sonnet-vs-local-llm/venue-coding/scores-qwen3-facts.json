@@ -1,0 +1,22 @@
+[
+ {
+  "venue": "colliston.com.au",
+  "V6": "got ['1'] want 2",
+  "V4": "ok",
+  "offers": "0/1",
+  "amounts": "1/0",
+  "V21_jacc": 0.0,
+  "V22_jacc": 0.0,
+  "V9_dep": "ok"
+ },
+ {
+  "venue": "albertriverwines.com.au",
+  "V6": "got ['3'] want 1",
+  "V4": "got ['4'] want 5",
+  "offers": "12/12",
+  "amounts": "4/3",
+  "V21_jacc": 0.0,
+  "V22_jacc": 0.0,
+  "V9_dep": "ok"
+ }
+]

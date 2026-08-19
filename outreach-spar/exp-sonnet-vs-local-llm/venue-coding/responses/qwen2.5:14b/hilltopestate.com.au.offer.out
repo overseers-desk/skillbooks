@@ -1,0 +1,52 @@
+FIELD	ENTITY	VALUE	QUOTE
+V1_ceremony	-	1	Hilltop Estate combines a 120-year-old Heritage Chapel with modern luxury facilities, offering 360-degree views from sunrise over the Gold Coast beaches to sunset behind the mountain ranges.
+V1_reception	-	1	You can host your ceremony in our beautiful chapel or garden pavilion, followed by your reception in our elegant reception area.
+V1_prewedding_event	-	0	
+V1_postwedding_event	-	0	
+V1_multiday	-	0	
+V1_elopement_tier	-	0	
+V1_full_wedding	-	1	Hilltop Estate caters for weddings and events of up to 70 guests. We offer flexible spaces for intimate ceremonies through to celebrations at full capacity.
+V1_venue_only	-	0	
+V1_packaged	-	1	Our wedding packages include exclusive venue hire, ceremony and reception spaces, tables, chairs, white linens, coordinated catering with customizable menus through our preferred partners, professional service staff, setup and cleanup, parking facilities, and complimentary Bridal Suite access.
+V1_legal_ceremony	-	0	
+V1_symbolic_only	-	0	
+V1_vow_renewal	-	0	
+
+AMOUNT	70	guests	flexibly for intimate ceremonies through to celebrations at full capacity
+
+FIELD	ENTITY	VALUE	QUOTE
+V2_c_indoor_room	-	1	Hilltop Estate combines a 120-year-old Heritage Chapel with modern luxury facilities, offering 360-degree views from sunrise over the Gold Coast beaches to sunset behind the mountain ranges.
+V2_c_chapel_church	-	1	The chapel in its original location, circa early 1900s
+V2_c_garden_lawn	-	1	Champagne on the lawn, mountain air, and a Garden Pavilion made for golden afternoons.
+V2_c_beach_waterfront	-	0	
+V2_c_barn_shed	-	0	
+V2_c_marquee_tent	-	0	
+V2_c_covered_outdoor	-	1	Hilltop Estate offers beautiful indoor and covered options to ensure your day proceeds smoothly regardless of weather.
+V2_c_paddock_field_orchard	-	0	
+V2_c_forest_bush	-	0	
+V2_c_rooftop_terrace	-	0	
+V2_c_other	-	0	
+
+FIELD	ENTITY	VALUE	QUOTE
+V2_r_indoor_room	-	1	Hilltop Estate offers beautiful indoor and covered options to ensure your day proceeds smoothly regardless of weather.
+V2_r_barn_shed	-	0	
+V2_r_marquee_tent	-	0	
+V2_r_covered_outdoor	-	1	The reception area features floor-to-ceiling windows with panoramic views.
+V2_r_open_outdoor	-	0	
+V2_r_restaurant_bar	-	0	
+V2_r_whole_venue	-	1	Hilltop Estate caters for weddings and events of up to 70 guests. We offer flexible spaces for intimate ceremonies through to celebrations at full capacity.
+V2_r_other	-	0	
+
+FIELD	ENTITY	VALUE	QUOTE
+V3_ceremony_rows	-	8	The chapel in its original location, circa early 1900s
+V3_ceremony_standing	-	0	
+V3_seated_round_tables	-	0	
+V3_seated_long_tables	-	0	
+V3_seated_unspecified	-	1	Hilltop Estate caters for weddings and events of up to 70 guests. We offer flexible spaces for intimate ceremonies through to celebrations at full capacity.
+V3_standing_cocktail	-	0	
+V3_theatre	-	0	
+V3_dance_floor_within	-	0	
+V3_layout_other	-	0	
+V3_layout_flexible_claim	-	1	Hilltop Estate caters for weddings and events of up to 70 guests. We offer flexible spaces for intimate ceremonies through to celebrations at full capacity.
+
+NOTE	V3_ceremony_rows	unclear if rows are stated

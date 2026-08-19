@@ -1,0 +1,70 @@
+FIELD	ENTITY	VALUE	QUOTE
+V1_ceremony	-	1	The Pier, Point of the Lake, Under the Trees or The Gazebo.
+V1_reception	-	1	Celebrate your special day with your closest family and friends, our pavilion welcomes up to 150 guests – cocktail style or fully seated.
+V1_ceremony_only_option	-	0	
+V1_reception_only_option	-	0	
+V1_prewedding_event	-	8	The text does not specify if a rehearsal dinner is included.
+NOTE	V1_prewedding_event	unstated
+V1_postwedding_event	-	8	The text does not specify if a post-wedding event is included.
+NOTE	V1_postwedding_event	unstated
+V1_multiday	-	0	
+V1_elopement_tier	Mid Week Elopement Package	1	Up to 20 guests – $2,450 (For 2 hours)
+AMOUNT	2,450	An elopement package for up to 20 guests	For 2 hours
+V1_full_wedding	The Lake House Wedding Package	1	
+V1_venue_only	-	8	The text does not specify if the offer is just the space alone.
+NOTE	V1_venue_only	unstated
+V1_packaged	The Lake House Wedding Package	1	The wedding ceremony and furniture hire is included with your reception.
+V1_legal_ceremony	-	0	
+V1_symbolic_only	-	0	
+V1_vow_renewal	-	8	The text does not specify if vow renewal ceremonies are offered.
+NOTE	V1_vow_renewal	unstated
+
+FIELD	ENTITY	VALUE	QUOTE
+V2_c_indoor_room	-	0	
+V2_c_chapel_church	-	0	
+V2_c_garden_lawn	-	1	The Pier, Point of the Lake, Under the Trees or The Gazebo.
+V2_c_beach_waterfront	-	0	
+V2_c_barn_shed	-	0	
+V2_c_marquee_tent	-	0	
+V2_c_covered_outdoor	-	0	
+V2_c_paddock_field_orchard	-	0	
+V2_c_forest_bush	-	0	
+V2_c_rooftop_terrace	-	0	
+V2_c_other	-	8	The text does not specify other ceremony locations.
+NOTE	V2_c_other	unstated
+V2_r_indoor_room	-	0	
+V2_r_barn_shed	-	0	
+V2_r_marquee_tent	-	1	Celebrate your special day with your closest family and friends, our pavilion welcomes up to 150 guests – cocktail style or fully seated.
+V2_r_covered_outdoor	-	0	
+V2_r_open_outdoor	-	1	The large deck can hold up to 40 people seated for an intimate wedding or a large family gathering.
+V2_r_restaurant_bar	-	0	
+V2_r_whole_venue	-	8	The text does not specify if the whole venue is available for hire.
+NOTE	V2_r_whole_venue	unstated
+V2_r_other	-	8	The text does not specify other reception locations.
+NOTE	V2_r_other	unstated
+V2_multi_space	-	1	Celebrate your special day with your closest family and friends, our pavilion welcomes up to 150 guests – cocktail style or fully seated. The large deck can hold up to 40 people seated for an intimate wedding or a large family gathering.
+V2_wet_weather_alt	-	8	The text does not specify wet weather alternatives.
+NOTE	V2_wet_weather_alt	unstated
+V2_ceremony_location_choice	-	1	The Pier, Point of the Lake, Under the Trees or The Gazebo.
+V2_c_locations_verbatim	The Pier, Point of the Lake, Under the Trees or The Gazebo.
+V2_space_names_verbatim	The Pier, Point of the Lake, Under the Trees or The Gazebo., Pavilion
+
+FIELD	ENTITY	VALUE	QUOTE
+V3_ceremony_rows	-	8	The text does not specify seating arrangements for ceremonies.
+NOTE	V3_ceremony_rows	unstated
+V3_ceremony_standing	-	0	
+V3_seated_round_tables	-	0	
+V3_seated_long_tables	-	0	
+V3_seated_unspecified	-	1	The large deck can hold up to 40 people seated for an intimate wedding or a large family gathering.
+V3_standing_cocktail	-	1	Celebrate your special day with your closest family and friends, our pavilion welcomes up to 150 guests – cocktail style or fully seated.
+V3_theatre	-	0	
+V3_dance_floor_within	-	8	The text does not specify if a dance floor is included within the reception space.
+NOTE	V3_dance_floor_within	unstated
+V3_layout_other	-	0	
+V3_layout_flexible_claim	-	1	Choose between an interior or exterior dance floor to dance the night away.
+
+FIELD	ENTITY	VALUE	QUOTE
+V4_max_band	The Lake House Wedding Package	7	120 – 150 guests $17,950 (Sun-Fri) · 
+AMOUNT	17,950	A wedding reception for up to 150 guests	Sun-Fri
+V4_guest_ceiling_verbatim	Mid Week Elopement Package	20	
+AMOUNT	2,450	An elopement package for up to 20 guests	For 2 hours

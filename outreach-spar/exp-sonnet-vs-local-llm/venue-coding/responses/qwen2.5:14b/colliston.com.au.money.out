@@ -1,0 +1,4 @@
+V9_deposit	-	1	A **deposit secures your date**, with the balance due closer to your event.
+AMOUNT	-	deposit secures your date	
+V9_payment_schedule	-	8	
+NOTE	V9_payment_schedule	The text does not specify the exact stages of payment, only that a deposit and balance are required.

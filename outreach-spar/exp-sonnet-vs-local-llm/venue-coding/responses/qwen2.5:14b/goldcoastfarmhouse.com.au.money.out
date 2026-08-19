@@ -1,0 +1,25 @@
+V9_deposit	0	
+V9_deposit_refundable	0	
+V9_bond	0	
+V9_bond_refundable	0	
+V9_payment_schedule	0	
+V9_instalments_offered	0	
+V9_balance_deadline	0	
+V9_full_prepay	0	
+V9_min_spend	0	
+V9_min_spend_scope	0	
+V9_min_guests_charged	0	
+V9_final_numbers_deadline	0	
+V9_cancellation_terms	0	
+V9_postponement_terms	0	
+V9_price_hold	0	
+V9_price_validity	0	
+V9_price_increase_term	0	
+V9_surcharge	0	
+V9_service_charge	0	
+V9_card_fee	0	
+V9_booking_fee	0	
+V9_no_hire_fee_stated	1	No venue hire fee
+NOTE	V9_no_hire_fee_stated	The text states no venue hire fee is charged, but there's a conflict with the statement "All that extra room in your budget? Spend it on florals, food, entertainment or that killer acoustic duo you’ve had your eye on."
+V9_wedding_insurance	0	
+AMOUNT	4000	Overall spend	Conflict with no hire fee statement

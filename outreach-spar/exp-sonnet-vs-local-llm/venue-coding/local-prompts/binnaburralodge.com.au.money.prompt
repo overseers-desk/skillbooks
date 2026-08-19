@@ -1,0 +1,158 @@
+You are a content-analysis coder. Below is one section of a frozen codebook, then numbered excerpt lines from one wedding venue website capture (line format NUMBER:TEXT; ## PAGE lines mark page boundaries and their URLs).
+
+Apply ONLY the variables defined in this codebook section, exactly as its rules state. Text-only coding: no inference, no arithmetic, no outside knowledge. Silence is 0. Unclear text is 8. Output ONLY tab-separated lines, one per coded field, format:
+FIELD	ENTITY	VALUE	QUOTE
+ENTITY is the offer or package name the field belongs to, or - for venue-level. VALUE per the section (1, 8, a band number, or verbatim for *_verbatim fields; omit 0 fields entirely). QUOTE is the deciding passage copied exactly from an excerpt line, or empty after the tab for value 8 explained in a trailing note line NOTE	<field>	<why>. For every monetary figure output also a line:
+AMOUNT	<figure exactly as written>	<what it buys>	<conditions>
+No prose, no explanation, no markdown.
+
+=== CODEBOOK SECTION ===
+### 5.4 V9 — Money commitments, thresholds and the payment schedule
+
+**Level:** wedding-offer row, except where a commitment is stated venue-wide, when it is recorded at unit level with `V9_level` = "unit". **Scope:** A-wedding / B-listing, extended to B-platform for platform-set policies.
+
+**Definition.** V9 records what the couple must commit and when. Each field 1/0/8/9; every associated figure is also a V8 record.
+
+| Field | Commitment |
+|---|---|
+| `V9_deposit` | A deposit is required to hold the date |
+| `V9_deposit_refundable` | The deposit's refundability is stated; `V9_deposit_direction` records refundable / non-refundable / partly, verbatim |
+| `V9_bond` | A damage bond, security deposit or bank guarantee is stated |
+| `V9_bond_refundable` | The bond's return terms are stated; verbatim |
+| `V9_payment_schedule` | A staged payment schedule is stated; the stages verbatim in `V9_schedule_verbatim` |
+| `V9_instalments_offered` | Payment by instalments or a payment plan is offered |
+| `V9_balance_deadline` | A date or period by which the balance is due; period verbatim |
+| `V9_full_prepay` | Full payment is required before the wedding day |
+| `V9_min_spend` | A minimum spend is stated |
+| `V9_min_spend_scope` | Closed: `food`, `beverage`, `food_and_beverage`, `overall`, `not_stated` |
+| `V9_min_guests_charged` | A minimum guest number is charged for regardless of attendance |
+| `V9_final_numbers_deadline` | A deadline by which final guest numbers must be confirmed; period verbatim |
+| `V9_cancellation_terms` | Cancellation, postponement or refund terms are stated |
+| `V9_postponement_terms` | Postponement or date-change terms are stated separately from cancellation |
+| `V9_price_hold` | The quoted price is stated to be held or fixed once booked; wording verbatim |
+| `V9_price_validity` | A period for which the published prices are stated to be valid; period verbatim |
+| `V9_price_increase_term` | The text states prices may rise before the wedding |
+| `V9_surcharge` | A surcharge is stated: public holiday, long weekend, peak date, overtime, extra staff |
+| `V9_service_charge` | A service charge, gratuity or administration percentage is stated |
+| `V9_card_fee` | A payment-method fee is stated |
+| `V9_booking_fee` | A booking or platform fee is stated |
+| `V9_no_hire_fee_stated` | The text states no venue hire fee is charged |
+| `V9_wedding_insurance` | Wedding insurance is required, recommended, or offered; direction verbatim |
+
+**Inclusion.** I1: the commitment is stated anywhere in the row's scope, including a terms panel or an in-scope linked terms document. I2: a commitment stated as a number of days, weeks or months is coded 1 with the period recorded verbatim; the coder never converts a period into a date (S4). I3: a platform-set policy shown on the listing sets its field with `V9_set_by` = "platform". I4: a deposit stated as a percentage sets the field with the percentage recorded verbatim at V8 and nothing computed.
+
+**Exclusion.** E1: a site-wide terms page not linked from the wedding scope sets nothing (S8); record its existence. E2: a statement about accepted payment methods is not a commitment; record in `V9_payment_methods`. E3: a public liability requirement on the couple or their suppliers is not a money commitment; it is coded at V20. E4: the coder never infers a deposit from the existence of an online payment step. E5: a third-party supplier's own deposit terms set nothing; record verbatim with `V9_set_by` = "third_party".
+
+**Ambiguous cases.**
+
+- "A \$2,000 non-refundable deposit secures your date, 50 per cent at six months, balance 30 days prior" → `V9_deposit` = 1, `V9_deposit_refundable` = 1, `V9_payment_schedule` = **1**, stages verbatim, figures to V8.
+- "Final numbers are required 21 days before your wedding and cannot be reduced after" → `V9_final_numbers_deadline` = **1**, period verbatim.
+- "Prices are valid for weddings held before 31 December 2027" → `V9_price_validity` = **1**, period verbatim.
+- "Your price is locked in at the time of booking" → `V9_price_hold` = **1**.
+- "No venue hire fee" and elsewhere a brochure showing \$4,000 → both `V9_no_hire_fee_stated` = 1 and the \$4,000 recorded, `V9_conflict` = **1**, both quoted. The coder does not reconcile.
+- "We strongly recommend wedding insurance" → `V9_wedding_insurance` = **1**, direction "recommended" verbatim.
+
+
+=== VENUE EXCERPTS (binnaburralodge.com.au) ===
+347:**Payment Terms**
+348-
+349:Full Payment is required as a deposit to secure all reservations. Bookings cannot be held on a tentative basis without a paid deposit. Upon receipt of full payment, a booking confirmation email will be sent, it is your responsibility to check all details and contact reservations immediately with any questions. Please note whilst we do our best to meet room requests, specific allocations cannot be guaranteed.
+350-
+351:Reservations for which payment has failed to process will be deemed as invalid and may be cancelled 24 hours from the time which the booker was contacted for alternative payment, either via phone or email.
+352-
+353-The credit card used for the reservation must be presented at time of check-in for security purposes. If paid via voucher or other means, a valid credit card is still required at check-in. Some stays may require a credit card pre-authorisation –released post-departure.
+--
+355:All credit card transactions are subject to a non-refundable transaction fee of 1.65% – with a 30 cent flat fee – for VISA and MASTERCARD and 3% for AMEX which is processed by Binna Burra Lodge. Personal cheques or cash on arrival is not an accepted payment method.
+356-
+357-All advertised rates are published in $AUD and inclusive of Goods Service Tax (GST/VAT)
+--
+363:**Payment Plans**
+364-
+365:Payment plans are only available for online bookings in our Sky Lodges, you can click **here** to view payment plan policies. All payment plans must be finalised 28 days prior to arrival.
+366-
+367-
+368:**Cancellation / Amendment Terms**
+369-
+370:- Cancellation 28 days prior to arrival, a full refund will be provided
+371-
+372:- Cancellations within 28 days of arrival are non-refundable, with the full deposit forfeited
+373:- Cancellation within 24 hours of making reservation – full refund (cooling-off period)
+374:- Cancellations on day of arrival are not eligible for credit or refund, as same day cancellations leave us unable to rebook the space.
+375:- No refund will be offered for early room departures, or unused pre-paid meal packages. All nights booked will be charged if checking out prematurely
+376-- Booking amendments or 12-month credit vouchers for **Sky Lodge, Safari Tents, Bunkroom accommodation** are permitted 7 days or more prior to arrival.
+377-- Booking amendments or 12-month credit vouchers for **campsite** reservations are permitted 72 hours or more prior to arrival.
+378:- Rebooked reservations are subject to availability and additional charges on the new dates. If new dates, room type or packages are cheaper, no refund will be given outside the stated cancellation terms.
+379:- Cancellations and amendments for bookings on promotional/sale and non-standard rates are permitted. However, they will be subject to additional charges if moved to a period outside of the promotional period.
+380-- Sales and promotions are for new bookings only and cannot be combined with any other offer or promotion, unless otherwise stated in the individual promotion terms and conditions.
+381:- Binna Burra Lodge recommends individual travel insurance to cover unforeseen circumstances and offers cancellation insurance through a recommended third-party partner for online bookings only.
+382-- Force Majeure – Binna Burra Lodge is not liable for failures due to unforeseen circumstances beyond their control (e.g. natural disasters, pandemics, war, terrorism, government actions) Obligations are suspended during such events, with no resulting liability.
+383-
+--
+386:Where death, severe illness or serious injury occurs in the immediate family before or during the booking period and written details (such as a certificate) has been received by Binna Burra Lodge – a refund or credit voucher may be offered outside of the Standard Booking Terms.
+387-
+388:Other extenuating circumstances not outlined above may be considered on a case-by-case basis by Binna Burra Lodge.  Applications for a refund outside of our standard Cancellation Terms must be made in writing to: [email protected]*.* 
+389-
+390:**Refunds**
+391-
+392:- accepted refunds shall be credited to a Visa, Mastercard or bank account only. Cash refunds will not be provided under any circumstances.
+393:- refunds typically process within 5 working days, but in some circumstances may take up to 30 days to process.
+394:- additional security information may be requested to authorize a refund to a different payment card or bank account to that which initial payment was made.
+395:- all refunds will be made in $AUD. Binna Burra Lodge bares no responsibility for changes in international currency conversion rates or bank international exchange fees which may impact refund amounts.
+396-
+397-**Gift Voucher**
+--
+646:##### What is your cancellation policy?
+647-
+648-##### Do I have to stay 2 nights?
+--
+741:##### What is your cancellation policy?
+742-
+743-##### Can I cook in the safari tents or on the deck?
+--
+809:##### What is your cancelation policy?
+810-
+811-Tiny Wild Houses
+--
+1227:Binna Burra is an easily accessible venue, only 90 minutes from Brisbane or 1 hour from the Gold Coast, with great road access (for buses too) and ample parking. It features a range of accommodation from the luxurious Sky Lodge Apartments to our rainforest Safari tents. Staying at Binna Burra Lodge is a wilderness experience that inspires team bonding and confidence to achieve your business goals.
+1228-
+1229-We offer purpose-built conference areas secluded from guest facilities for total privacy without distractions, as well as a range of exciting team building adventure activities and rainforest walks to help grow your delegates from individuals into a winning team.
+--
+1919:Keen to become a member of FOBBs? Then please complete the application form with your chosen membership and payment details to the FOBBs account information on this page.
+1920-
+1921-# **Become a FOBBs member:**
+--
+1924:### Please make membership payment to:
+1925-
+1926-### Friends of Binna Burra
+--
+2844:The circuit provides excellent views into the Coomera Valley and passes a large red cedar and fine specimens of other rainforest tree species. The major cliff line opposite is of a flow of rhyolite and deposits of boulders and ash (tuff) can be seen in overhanging caves. Possibly the largest intact stand of hoop pine Araucaria cunninghamii in Australia can be seen along the Darlington Range.
+2845-
+2846-White-throated treecreepers, members of one of the oldest groups of songbirds, are frequently seen on this circuit. Koalas are often seen in open forest areas along the walk. Take care when walking beside the bitumen road to return to the start of the circuit, especially on weekends when traffic is busy, or alternatively walk back along the circuit. A self-guiding brochure produced by the Lamington Natural History Association for this circuit is available at the national park’s information centre, and the Lamington Teahouse.
+--
+3308:## PAGE [other]: https://www.binnaburralodge.com.au/payment-plans/
+3309-
+3310:# Payment Plans
+3311-
+3312:Payment Plans are a great way for you to secure your next visit to Binna Burra and spread the cost over time. We have some important terms and conditions that you need to be aware of before you go ahead with your Payment Plan. When you sign up to our payment plan, you are agreeing to our terms and conditions.
+3313-
+3314-**GENERAL TERMS**
+--
+3316:Payment Plans only apply to selected Accommodation Types at Binna Burra. A transaction fee of $2 per payment instalment applies.
+3317-
+3318:Payment Plans will be available (unless otherwise stated) to any booking that is:
+3319-
+3320-- Booked online via the Binna Burra Lodge website only;
+--
+3322:- Paid for by Direct Deposit or Visa / Mastercard;
+3323-
+3324:Payment Plans are not available to any booking that:
+3325-
+3326-- Relates to Safari Tent or Campsite Bookings regardless of value;
+--
+3329:- Will have fewer than 2 scheduled payments
+3330-
+3331:Payment frequency options may include weekly, fortnight or monthly; but may be subject to the arrival date of your booking. Once you have selected a payment frequency and payment day of the week, the payment dates are automated and not changeable.
+3332-
+3333:**PAYMENT INSTALLMENT AMOUNT**
+
+=== OUTPUT ===

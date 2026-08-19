@@ -1,0 +1,14 @@
+NOTE	V9_deposit	No deposit requirement stated.
+NOTE	V9_bond	No bond requirement stated.
+NOTE	V9_payment_schedule	No payment schedule details provided.
+NOTE	V9_instalments_offered	Payment by instalments or a plan not mentioned.
+NOTE	V9_balance_deadline	Balance due date not specified.
+NOTE	V9_full_prepay	Full prepayment before the event is not required.
+NOTE	V9_min_spend	Minimum spend requirement not stated.
+NOTE	V9_final_numbers_deadline	Final numbers deadline not provided.
+NOTE	V9_cancellation_terms	Cancellation terms are venue-wide and do not specify a deposit or payment commitment.
+NOTE	V9_price_hold	Price hold policy not mentioned.
+NOTE	V9_service_charge	Service charge details not specified.
+NOTE	V9_card_fee	Payment method fees not stated.
+NOTE	V9_booking_fee	Booking fee not mentioned.
+NOTE	V9_no_hire_fee_stated	No venue hire fee statement found, conflicting information about tickets being non-refundable but no specific venue hire fee is mentioned.

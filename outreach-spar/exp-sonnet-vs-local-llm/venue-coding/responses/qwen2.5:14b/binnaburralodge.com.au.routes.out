@@ -1,0 +1,31 @@
+FIELD	ENTITY	VALUE	QUOTE
+V21_instant_book	-	0	
+V21_online_request	-	0	
+V21_enquiry_form	-	1	Binna Burra Lodge welcomes your enquiries and feedback. Please use the form below to get in contact and one of our friendly staff will be in touch.
+V21_form_fields_verbatim	-	Contact Us
+For detailed location information and map, visit our ***How to Get Here*** page.
+V21_email	-	1	Please use the form below to get in contact and one of our friendly staff will be in touch.
+V21_phone	-	0	
+V21_messaging	-	0	
+V21_pack_request	-	0	
+V21_third_party	-	0	
+V21_calendar_shown	-	0	
+V21_pdf_form	-	0	
+V21_lowest_friction	-	form	
+FIELD	ENTITY	VALUE	QUOTE
+V22_private_tour	-	0	
+V22_tour_by_appointment	-	0	
+V22_tour_booking_route	-	not_stated	
+V22_tour_days_times_verbatim	-	0	
+V22_tour_charged	-	0	
+V22_open_day	-	0	
+V22_open_day_dates_verbatim	-	0	
+V22_open_day_registration	-	0	
+V22_wedding_fair_attendance	-	0	
+V22_styled_shoot_event	-	0	
+V22_virtual_tour_offered	-	0	
+V22_video_call_offered	-	0	
+V22_tour_required_before_booking	-	0	
+V22_no_tour_stated	-	1	All people who act in a responsible way will be welcome to visit the new lodge and stay in the new accommodation. We have the responsibility to provide comfortable and secure accommodation also to guarantee the safety of people and their property staying overnight in any form of accommodation on the Binna Burra Cultural Landscape.
+NOTE	V21_form_fields_verbatim	Contact Us
+For detailed location information and map, visit our ***How to Get Here*** page.

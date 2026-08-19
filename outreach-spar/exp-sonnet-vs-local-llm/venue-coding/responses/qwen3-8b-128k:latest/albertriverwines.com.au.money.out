@@ -1,0 +1,13 @@
+FIELD	ENTITY	VALUE	QUOTE
+V9_deposit	venue-level	1	"A \$2,000 non-refundable deposit secures your date"
+V9_deposit_refundable	venue-level	1	"A \$2,000 non-refundable deposit secures your date"
+V9_deposit_direction	venue-level	non-refundable	"A \$2,000 non-refundable deposit secures your date"
+V9_payment_schedule	venue-level	1	"A \$2,000 non-refundable deposit secures your date, 50 per cent at six months, balance 30 days prior"
+V9_schedule_verbatim	venue-level	"50 per cent at six months, balance 30 days prior"	"A \$2,000 non-refundable deposit secures your date, 50 per cent at six months, balance 30 days prior"
+V9_final_numbers_deadline	venue-level	1	"Final numbers are required 21 days before your wedding and cannot be reduced after"
+V9_price_validity	venue-level	1	"Prices are valid for weddings held before 31 December 2027"
+V9_price_hold	venue-level	1	"Your price is locked in at the time of booking"
+V9_no_hire_fee_stated	venue-level	1	"No venue hire fee"
+V9_conflict	venue-level	1	"No venue hire fee"	NOTE	V9_no_hire_fee_stated	"brochure showing \$4,000"
+AMOUNT	\$2,000	secures your date	-
+AMOUNT	\$4,000	-	NOTE	V9_conflict	"brochure showing \$4,000"

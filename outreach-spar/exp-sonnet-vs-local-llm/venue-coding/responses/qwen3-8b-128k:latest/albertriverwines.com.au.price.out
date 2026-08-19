@@ -1,0 +1,16 @@
+FIELD	ENTITY	VALUE	QUOTE
+V6	venue	5	"$600 bar tab"
+V7	venue	V7_per_head	1	"priced per person"
+V8	venue	V8_amount_verbatim	"$600 bar tab"	$600 bar tab		bar tab
+V6	venue	5	"$1000 Bar tab"
+V7	venue	V7_per_head	1	"priced per person"
+V8	venue	V8_amount_verbatim	"$1000 Bar tab"	$1000 Bar tab		bar tab
+V6	venue	5	"$200 bridal bar tab ( 4 person minimum)"
+V7	venue	V7_per_head	1	"4 person minimum"
+V8	venue	V8_amount_verbatim	"$200 bridal bar tab ( 4 person minimum)"	$200 bridal bar tab ( 4 person minimum)		bridal bar tab ( 4 person minimum)
+V6	venue	5	"$30 per dozen bottles"
+V8	venue	V8_amount_verbatim	"$30 per dozen bottles"	$30 per dozen bottles		per dozen bottles
+AMOUNT	$600 bar tab		bar tab		firm
+AMOUNT	$1000 Bar tab		bar tab		firm
+AMOUNT	$200 bridal bar tab ( 4 person minimum)		bridal bar tab ( 4 person minimum)		firm
+AMOUNT	$30 per dozen bottles		per dozen bottles		firm

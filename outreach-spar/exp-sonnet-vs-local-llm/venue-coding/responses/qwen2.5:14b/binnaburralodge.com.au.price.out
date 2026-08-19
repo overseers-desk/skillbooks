@@ -1,0 +1,17 @@
+FIELD	ENTITY	VALUE	QUOTE
+AMOUNT	$69.00	Current price is: $69.00	for two people – $48
+AMOUNT	$35.00	Price for the item	For two people (Vegan) – $52
+AMOUNT	$60.00	Price for the item	For two people – $60
+FIELD	-	5	all prices shown are in AUD (Australian Dollars).
+FIELD	-	AMBIGUOUS	AMBIGUOUS	not_stated
+FIELD	-	AUD	AMBIGUOUS	AMBIGUOUS
+AMOUNT	$3.00	Price for the item	Rainforest Circuit Map and Guide – Lamington National Park Maps
+AMOUNT	$40.00	Price for the item	Discover the richness of the mountain forests through the playful, diverse and beautiful pages of Paula’s nature journal.
+AMOUNT	$35.00	Price for the item	Take this book for a walk and discover your own personal response to nature.
+AMOUNT	$3.00	Price for the item	Coomera Falls Lookout Map and Guide – Lamington National Park Maps
+AMOUNT	$3.00	Price for the item	Tullawallal Circuit Map and Guide – Lamington National Park Maps.
+AMOUNT	$3.00	Price for the item	Upper Ballanjui Track Map and Guide – Lamington National Park Maps
+FIELD	-	AMBIGUOUS	AMBIGUOUS	not_stated
+FIELD	-	AUD	AMBIGUOUS	AMBIGUOUS
+AMOUNT	$2.00	Transaction fee of $2 per payment instalment applies	Payment Plans only apply to selected Accommodation Types at Binna Burra.
+NOTE	V6	No price and no text bearing on price at all

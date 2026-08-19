@@ -1,0 +1,31 @@
+FIELD	ENTITY	VALUE	QUOTE
+V1_ceremony	-	1	
+V1_reception	-	1	
+V1_prewedding_event	-	0	
+V1_postwedding_event	-	0	
+V1_multiday	-	0	
+V1_elopement_tier	Sunlight Elopement	1	
+V1_full_wedding	Country Celebration (Micro-package)	0	
+V1_venue_only	-	0	
+V1_packaged	Country Celebration (Micro-package)	1	
+V1_legal_ceremony	-	8	The text does not explicitly state whether the venue is a registered marriage licence holder or not.
+NOTE	V1_legal_ceremony	<why> The text does not provide explicit information about legal ceremonies, only mentions historical buildings and capacity for events.
+AMOUNT	30	guests	Sunlight Elopement
+V4_guest_ceiling_verbatim	30	Sunlight Elopement
+V4_max_band	Sunlight Elopement	1	
+FIELD	ENTITY	VALUE	QUOTE
+V2_c_indoor_room	Ceremony & Pre dinner	1	
+V2_r_indoor_room	Auchenflower Ballroom	1	
+V2_r_whole_venue	Vineyard Deck	1	
+V2_multi_space	Country Celebration (Micro-package)	1	
+V2_wet_weather_alt	Sunlight Elopement	1	Newly restored with large bifold doors, opening out to our Vineyard Deck, this space allows you and your guests to enjoy the comforts of indoors and the ambiance of the outdoors.
+FIELD	ENTITY	VALUE	QUOTE
+V3_ceremony_rows	Country Celebration (Micro-package)	0	
+V3_seated_unspecified	Auchenflower Ballroom	1	
+V3_standing_cocktail	Vineyard Deck	1	
+V3_layout_flexible_claim	Sunlight Elopement	1	Set the space however you wish
+AMOUNT	150	seated guests	Auchenflower Ballroom
+V4_max_band	Auchenflower Ballroom	4	
+FIELD	ENTITY	VALUE	QUOTE
+V2_c_garden_lawn	The fig tree	1	
+V2_r_covered_outdoor	Vineyard Deck	1

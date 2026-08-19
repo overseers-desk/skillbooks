@@ -1,0 +1,7 @@
+{"venue": "colliston.com.au", "rc": 126, "secs": 0, "parse_error": "Expecting value: line 1 column 1 (char 0)"}
+{"venue": "albertriverwines.com.au", "rc": 126, "secs": 0, "parse_error": "Expecting value: line 1 column 1 (char 0)"}
+{"venue": "colliston.com.au", "rc": 0, "secs": 325, "cost": 1.4736231, "turns": 4, "cache_read": 411557, "out": 34302}
+{"venue": "albertriverwines.com.au", "rc": 0, "secs": 511, "cost": 1.9015643999999998, "turns": 3, "cache_read": 287958, "out": 55557}
+{"venue": "hilltopestate.com.au", "rc": 0, "secs": 495, "cost": 1.917744, "turns": 3, "cache_read": 312510, "out": 52879}
+{"venue": "thevalleyestate.com.au", "rc": 0, "secs": 551, "cost": 2.6518758000000004, "turns": 10, "cache_read": 1863666, "out": 60122}
+{"venue": "binnaburralodge.com.au", "rc": 0, "secs": 675, "cost": 4.1798742, "turns": 32, "cache_read": 5995264, "out": 72013}

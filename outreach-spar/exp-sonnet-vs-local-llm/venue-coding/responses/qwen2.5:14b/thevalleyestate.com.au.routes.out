@@ -1,0 +1,30 @@
+V21_instant_book	-	0	
+V21_online_request	-	0	
+V21_enquiry_form	-	0	
+V21_form_fields_verbatim	-	8	"Register your interest to receive our bespoke packages and to organise a tour by appointment only."
+NOTE	V21_form_fields_verbatim	The text does not specify the form fields.
+V21_email	-	1	"Email: enquiries@thevalleyestate.com.au"
+V21_phone	-	1	"Telephone: 1800 90 80 90"
+V21_messaging	-	0	
+V21_pack_request	-	0	
+V21_third_party	-	0	
+V21_calendar_shown	-	0	
+V21_pdf_form	-	0	
+V21_lowest_friction	-	form	
+
+V22_private_tour	-	1	"Register your interest to receive our bespoke packages and to organise a tour by appointment only."
+V22_tour_by_appointment	-	1	"Register your interest to receive our bespoke packages and to organise a tour by appointment only."
+V22_tour_booking_route	-	form	
+V22_tour_days_times_verbatim	-	8	No specific days or times are stated for tours.
+NOTE	V22_tour_days_times_verbatim	The text does not specify the days or times for tours.
+V22_tour_charged	-	0	
+V22_open_day	-	0	
+V22_open_day_dates_verbatim	-	8	No open day dates are stated.
+NOTE	V22_open_day_dates_verbatim	The text does not mention any specific open days or their dates.
+V22_open_day_registration	-	0	
+V22_wedding_fair_attendance	-	0	
+V22_styled_shoot_event	-	0	
+V22_virtual_tour_offered	-	0	
+V22_video_call_offered	-	0	
+V22_tour_required_before_booking	-	0	
+V22_no_tour_stated	-	0

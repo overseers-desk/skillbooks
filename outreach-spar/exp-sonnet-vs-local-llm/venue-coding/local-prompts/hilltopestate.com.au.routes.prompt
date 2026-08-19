@@ -1,0 +1,214 @@
+You are a content-analysis coder. Below is one section of a frozen codebook, then numbered excerpt lines from one wedding venue website capture (line format NUMBER:TEXT; ## PAGE lines mark page boundaries and their URLs).
+
+Apply ONLY the variables defined in this codebook section, exactly as its rules state. Text-only coding: no inference, no arithmetic, no outside knowledge. Silence is 0. Unclear text is 8. Output ONLY tab-separated lines, one per coded field, format:
+FIELD	ENTITY	VALUE	QUOTE
+ENTITY is the offer or package name the field belongs to, or - for venue-level. VALUE per the section (1, 8, a band number, or verbatim for *_verbatim fields; omit 0 fields entirely). QUOTE is the deciding passage copied exactly from an excerpt line, or empty after the tab for value 8 explained in a trailing note line NOTE	<field>	<why>. For every monetary figure output also a line:
+AMOUNT	<figure exactly as written>	<what it buys>	<conditions>
+No prose, no explanation, no markdown.
+
+=== CODEBOOK SECTION ===
+### 9.1 V21 — Enquiry and booking routes
+
+**Level:** unit for type A, listing for type B. **Scope:** A-wedding extended to Scope A-venue for a contact route published site-wide / B-listing extended to B-platform.
+
+**Definition.** V21 records every route by which the text says a couple may enquire or book. Each field 1/0/8/9.
+
+| Field | Route | Sets when the scope shows |
+|---|---|---|
+| `V21_instant_book` | Instant booking | A flow stating the booking is confirmed on completion, with date and payment taken online, and no stated human step |
+| `V21_online_request` | Online request | A flow or form producing a request, a hold, a pending booking, or an availability check by staff |
+| `V21_enquiry_form` | Enquiry form | A form on the page collecting the couple's details |
+| `V21_form_fields_verbatim` | The enquiry form's field labels, verbatim, in order |
+| `V21_email` | An email address is published |
+| `V21_phone` | A telephone number is published |
+| `V21_messaging` | A live chat widget, WhatsApp, Messenger or SMS route is published |
+| `V21_pack_request` | A route to request a brochure, pricing guide or wedding pack |
+| `V21_third_party` | The scope directs the couple to a directory, marketplace or third-party booking site |
+| `V21_calendar_shown` | An availability calendar showing dates is displayed |
+| `V21_pdf_form` | A downloadable booking form to be returned |
+
+`V21_lowest_friction` records one closed value taken as the lowest-friction route the scope publishes, in this order: `instant`, `request`, `form`, `message`, `phone`, `pack`, `none`.
+
+**Inclusion.** I1: a route is set by a working, visible control or a published contact detail. I2: a button label naming a route sets that route even where the coder does not click it. I3: a phone number in the header or footer of a page inside the scope sets `V21_phone`. I4: for type A, a phone number or email published site-wide on the contact page sets its field with `V21_source` = "venue-wide".
+
+**Exclusion.** E1: a coder never submits a form, creates an account, enters card details, requests a pack, or completes a booking, because doing so would obtain material no couple can read without asking and would corrupt the measurement V6 makes. Where a flow cannot be read further without transacting, the route is coded from what is visible and `V21_flow_truncated` = 1. E2: a social media profile link is not a messaging route unless the scope names messaging as an enquiry route. E3: a bare "contact us" link with no detail behind it inside the scope sets nothing; record it. E4: where a flow does not state that the booking is confirmed, `V21_online_request` = 1 and `V21_instant_book` = 0, because the codebook resolves that ambiguity by rule rather than by the coder's guess.
+
+**Ambiguous cases.**
+
+- A widget with a date picker, a card field and "Confirm and pay" → `V21_instant_book` = **1**.
+- "Send us your date and we will reply within 48 hours" → `V21_online_request` = 1, and the promise is coded at V28.
+- An enquiry form asking for date, guest numbers and budget → `V21_enquiry_form` = 1, `V21_form_fields_verbatim` recorded, `V21_lowest_friction` = **"form"**.
+- "Download our pricing guide" behind an email field → `V21_pack_request` = **1**, the wall recorded under §13.2, and V6 coded 2.
+- An email address published as an image → `V21_email` = **1**. Text in an image is text (S1).
+- A wedding page with no contact detail and a site-wide phone number on the contact page → `V21_phone` = 1, source "venue-wide".
+
+### 9.2 V22 — Viewing mechanics
+
+**Level:** unit for type A, listing for type B. **Scope:** A-wedding extended to Scope A-venue for a site-wide events calendar / B-listing.
+
+**Definition.** V22 records how a couple gets to see the venue before booking, which in this market is a step of the sale rather than a courtesy.
+
+| Field | Content |
+|---|---|
+| `V22_private_tour` | 1 where a private tour, inspection or site visit is offered |
+| `V22_tour_by_appointment` | 1 where tours are stated to be by appointment only |
+| `V22_tour_booking_route` | The route by which a tour is arranged, closed: `online_booking`, `form`, `email`, `phone`, `not_stated` |
+| `V22_tour_days_times_verbatim` | Stated days or times for tours, verbatim |
+| `V22_tour_charged` | 1 where a charge for a tour is stated; figure to V8 |
+| `V22_open_day` | 1 where an open day, open house or inspection day is stated |
+| `V22_open_day_dates_verbatim` | The stated open-day dates, verbatim |
+| `V22_open_day_registration` | 1 where registration for an open day is required |
+| `V22_wedding_fair_attendance` | 1 where the venue states it attends or hosts a wedding fair or expo |
+| `V22_styled_shoot_event` | 1 where a styled-shoot evening, showcase or twilight event is stated |
+| `V22_virtual_tour_offered` | 1 where a virtual tour, 360-degree view or video walkthrough is offered as a viewing route |
+| `V22_video_call_offered` | 1 where a video call, online consultation or remote meeting is offered |
+| `V22_tour_required_before_booking` | 1 where the text states a visit is required before a booking is accepted |
+| `V22_no_tour_stated` | 1 where the text states tours are not offered |
+
+**Inclusion.** I1: any of these stated in the scope, including an events panel inside scope. I2: a bookable tour widget sets `V22_private_tour` = 1 and `V22_tour_booking_route` = "online_booking". I3: an open day listed with a past date still sets `V22_open_day` = 1, with the date recorded verbatim, because the study records what the page tells a couple on the capture date.
+
+**Exclusion.** E1: a public ticketed event at the venue that is not a wedding viewing sets nothing; record it. E2: a photograph gallery is not a virtual tour; the field requires a stated tour, walkthrough or 360-degree view. E3: the coder never books a tour, submits a tour form, or telephones. E4: "come and see us" with no route sets `V22_private_tour` = 1 only where the text states a visit is available; a closing pleasantry with no arrangement sets nothing, and the phrase is recorded.
+
+**Ambiguous cases.**
+
+- "Book a private tour" with a calendar widget → `V22_private_tour` = 1, `V22_tour_booking_route` = **"online_booking"**.
+- "Inspections by appointment, Tuesdays and Thursdays" → `V22_private_tour` = 1, `V22_tour_by_appointment` = 1, days verbatim.
+- "Join us for our Spring Open Day, 14 September, registration essential" → `V22_open_day` = 1, date verbatim, `V22_open_day_registration` = **1**.
+- "We are at the Coast Wedding Expo in March" → `V22_wedding_fair_attendance` = **1**.
+- "Take our 360 tour" → `V22_virtual_tour_offered` = **1**, and V26 records the virtual tour as documentation.
+- "We do not offer walk-ins" and nothing else about tours → `V22_private_tour` = **0**, phrase recorded; a refusal of walk-ins states no tour route.
+
+
+=== VENUE EXCERPTS (hilltopestate.com.au) ===
+4:## PAGE [wedding]: https://www.hilltopestate.com.au/
+5-
+--
+49:Our on-site restaurant is temporarily closed while we take a short break. Weddings and private events are unaffected — get in touch anytime.
+50-
+--
+53:Walk the estate, watch the sun fall behind the hinterland, and picture the day. Tours are private, unhurried, and yours.
+54-
+--
+65:Our on-site restaurant is temporarily closed and bookings are currently paused. We'll announce our reopening date here as soon as it's confirmed. In the meantime, Hilltop Estate remains open for weddings and private events.
+66-
+--
+71:Hilltop Estate caters for weddings and events of up to 70 guests. We offer flexible spaces for intimate ceremonies through to celebrations at full capacity. Get in touch with our team to discuss your vision and we'll tailor the perfect setup for your day. Contact us on 1300 912 765 or via our Contact page.
+72-
+73:Yes — we coordinate wedding dining through our experienced preferred catering partners, and approved external caterers are also welcome. Choose from formal plated dinners, shared feasts, buffet-style service and cocktail receptions. All menus can be customized to accommodate dietary requirements including vegetarian, vegan, gluten-free, and other special needs.
+74-
+--
+83:Absolutely! We encourage all couples to visit Hilltop Estate before making their decision. You can schedule a private tour with our team by calling 1300 912 765 or book online through our Book a Tour page.
+84-
+--
+88:## PAGE [wedding]: https://www.hilltopestate.com.au
+89-
+--
+133:Our on-site restaurant is temporarily closed while we take a short break. Weddings and private events are unaffected — get in touch anytime.
+134-
+--
+137:Walk the estate, watch the sun fall behind the hinterland, and picture the day. Tours are private, unhurried, and yours.
+138-
+--
+149:Our on-site restaurant is temporarily closed and bookings are currently paused. We'll announce our reopening date here as soon as it's confirmed. In the meantime, Hilltop Estate remains open for weddings and private events.
+150-
+--
+155:Hilltop Estate caters for weddings and events of up to 70 guests. We offer flexible spaces for intimate ceremonies through to celebrations at full capacity. Get in touch with our team to discuss your vision and we'll tailor the perfect setup for your day. Contact us on 1300 912 765 or via our Contact page.
+156-
+157:Yes — we coordinate wedding dining through our experienced preferred catering partners, and approved external caterers are also welcome. Choose from formal plated dinners, shared feasts, buffet-style service and cocktail receptions. All menus can be customized to accommodate dietary requirements including vegetarian, vegan, gluten-free, and other special needs.
+158-
+--
+167:Absolutely! We encourage all couples to visit Hilltop Estate before making their decision. You can schedule a private tour with our team by calling 1300 912 765 or book online through our Book a Tour page.
+168-
+--
+172:## PAGE [wedding]: https://www.hilltopestate.com.au/events/wedding-menu-tasting
+173-
+--
+242:There is no formal sales presentation — just a relaxed evening of exceptional food in a beautiful setting.
+243-
+--
+262:Bookings for the tasting evening are now closed. Contact us to join the waitlist in case a ticket becomes available — call 1300 912 765 or email [email protected].
+263-
+264:Tickets are non-refundable for cancellations or change of mind but may be transferred to another guest by contacting Hilltop Estate before the event. This does not limit any rights available under Australian Consumer Law.
+265-
+266:In the unlikely event that Hilltop Estate cancels or materially changes the evening, all ticket holders will be contacted as soon as possible and provided with the appropriate remedy, including a full refund where required.
+267-
+--
+276:The tasting menu includes a range of gluten-free, dairy-free and vegetarian dishes as identified on the menu. As this is a curated tasting event, we may not be able to accommodate every dietary requirement or menu substitution. Guests should contact Hilltop Estate before purchasing if they have a serious allergy or specific dietary requirement.
+277-
+278:Yes — guests are welcome to explore the estate's principal wedding and reception spaces during the evening. If you'd like a dedicated private tour of the full estate, you can also book one for another day.
+279-
+--
+282:Yes. Tickets may be transferred to another guest — just contact Hilltop Estate before the event with the new guest's name.
+283-
+--
+290:Explore the estate's chapel, reception spaces and accommodation — or book a private tour and see the mountaintop for yourself.
+291-
+--
+293:## PAGE [other]: https://www.hilltopestate.com.au/restaurant
+294-
+--
+310:A ticketed one-night event — separate from regular restaurant bookings.
+311-
+--
+347:The restaurant is temporarily closed and bookings are paused for now. We'll share our reopening date here soon — Hilltop Estate remains open for weddings and private events.
+348-
+--
+350:## PAGE [wedding]: https://www.hilltopestate.com.au/gallery
+351-
+--
+382:Come see the estate in person — the views don't fit in a photograph. Book a private tour or request our wedding packages.
+383-
+--
+385:## PAGE [other]: https://www.hilltopestate.com.au/about
+386-
+--
+462:## PAGE [other]: https://www.hilltopestate.com.au/book-tour
+463-
+464:Venue Tours
+465-
+466:# Book YourVenue Tour
+467-
+468:Book your private venue tour Thursday to Saturday between 10am and 3pm in the Gold Coast Hinterland
+469-
+--
+478:### Private Tours
+479-
+--
+490:## Book Your Tour
+491-
+492:Pick a time, leave your details, and you're booked — it takes less than a minute.
+493-
+--
+497:## PAGE [wedding]: https://www.hilltopestate.com.au/weddings
+498-
+--
+628:Want the full picture — pricing, menus and options? Leave us your details and we'll email our complete wedding packages straight to your inbox.
+629-
+--
+632:Come stand on the mountaintop and see it for yourself. Book a private tour, or request our full wedding packages and we'll email them straight to your inbox.
+633-
+--
+635:## PAGE [wedding]: https://www.hilltopestate.com.au/weddings/spaces
+636-
+--
+714:## PAGE [wedding]: https://www.hilltopestate.com.au/weddings/recommended-vendors
+715-
+--
+782:Sula and her team are storytellers at heart, capturing your wedding day with elegance and intention. Transforming moments into timeless memories you'll treasure for a lifetime.
+783-
+--
+792:Let us help you create an unforgettable celebration at Hilltop Estate. Book a tour to experience our stunning venue and discuss how our recommended vendors can bring your vision to life.
+793-
+--
+795:## PAGE [other]: https://www.hilltopestate.com.au/availability
+796-
+--
+827:Booked
+828-
+--
+837:Our team is here to help you plan the perfect celebration. Get in touch for a personalized consultation.
+838-
+--
+840:## PAGE [other]: https://www.hilltopestate.com.au/book-table/policy
+
+=== OUTPUT ===

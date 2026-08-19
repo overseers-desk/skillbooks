@@ -1,0 +1,7 @@
+venue_key	V6	V4_max_band	offer_row_count	pcr_count	amount_count	V21_routes	V22_fields	V9_deposit
+colliston.com.au	2	3	1	1	0	enquiry_form,email,online_request,pack_request	private_tour	1
+albertriverwines.com.au	1	5	12	9	3	enquiry_form,email,online_request,phone,third_party	-	0
+hilltopestate.com.au	2	3	1	1	0	enquiry_form,email,online_request,pack_request,phone,calendar_shown	private_tour,styled_shoot_event,tour_by_appointment	0
+thevalleyestate.com.au	2	0	1	1	0	enquiry_form,email,pack_request,phone	private_tour,tour_by_appointment,virtual_tour_offered	0
+binnaburralodge.com.au	1	2	3	3	0	enquiry_form,email,online_request,phone	-	0
+goldcoastfarmhouse.com.au	5	7	9	20	24	enquiry_form,email,online_request,phone,calendar_shown	private_tour	0

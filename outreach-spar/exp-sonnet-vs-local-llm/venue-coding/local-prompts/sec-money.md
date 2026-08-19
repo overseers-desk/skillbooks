@@ -1,0 +1,45 @@
+### 5.4 V9 — Money commitments, thresholds and the payment schedule
+
+**Level:** wedding-offer row, except where a commitment is stated venue-wide, when it is recorded at unit level with `V9_level` = "unit". **Scope:** A-wedding / B-listing, extended to B-platform for platform-set policies.
+
+**Definition.** V9 records what the couple must commit and when. Each field 1/0/8/9; every associated figure is also a V8 record.
+
+| Field | Commitment |
+|---|---|
+| `V9_deposit` | A deposit is required to hold the date |
+| `V9_deposit_refundable` | The deposit's refundability is stated; `V9_deposit_direction` records refundable / non-refundable / partly, verbatim |
+| `V9_bond` | A damage bond, security deposit or bank guarantee is stated |
+| `V9_bond_refundable` | The bond's return terms are stated; verbatim |
+| `V9_payment_schedule` | A staged payment schedule is stated; the stages verbatim in `V9_schedule_verbatim` |
+| `V9_instalments_offered` | Payment by instalments or a payment plan is offered |
+| `V9_balance_deadline` | A date or period by which the balance is due; period verbatim |
+| `V9_full_prepay` | Full payment is required before the wedding day |
+| `V9_min_spend` | A minimum spend is stated |
+| `V9_min_spend_scope` | Closed: `food`, `beverage`, `food_and_beverage`, `overall`, `not_stated` |
+| `V9_min_guests_charged` | A minimum guest number is charged for regardless of attendance |
+| `V9_final_numbers_deadline` | A deadline by which final guest numbers must be confirmed; period verbatim |
+| `V9_cancellation_terms` | Cancellation, postponement or refund terms are stated |
+| `V9_postponement_terms` | Postponement or date-change terms are stated separately from cancellation |
+| `V9_price_hold` | The quoted price is stated to be held or fixed once booked; wording verbatim |
+| `V9_price_validity` | A period for which the published prices are stated to be valid; period verbatim |
+| `V9_price_increase_term` | The text states prices may rise before the wedding |
+| `V9_surcharge` | A surcharge is stated: public holiday, long weekend, peak date, overtime, extra staff |
+| `V9_service_charge` | A service charge, gratuity or administration percentage is stated |
+| `V9_card_fee` | A payment-method fee is stated |
+| `V9_booking_fee` | A booking or platform fee is stated |
+| `V9_no_hire_fee_stated` | The text states no venue hire fee is charged |
+| `V9_wedding_insurance` | Wedding insurance is required, recommended, or offered; direction verbatim |
+
+**Inclusion.** I1: the commitment is stated anywhere in the row's scope, including a terms panel or an in-scope linked terms document. I2: a commitment stated as a number of days, weeks or months is coded 1 with the period recorded verbatim; the coder never converts a period into a date (S4). I3: a platform-set policy shown on the listing sets its field with `V9_set_by` = "platform". I4: a deposit stated as a percentage sets the field with the percentage recorded verbatim at V8 and nothing computed.
+
+**Exclusion.** E1: a site-wide terms page not linked from the wedding scope sets nothing (S8); record its existence. E2: a statement about accepted payment methods is not a commitment; record in `V9_payment_methods`. E3: a public liability requirement on the couple or their suppliers is not a money commitment; it is coded at V20. E4: the coder never infers a deposit from the existence of an online payment step. E5: a third-party supplier's own deposit terms set nothing; record verbatim with `V9_set_by` = "third_party".
+
+**Ambiguous cases.**
+
+- "A \$2,000 non-refundable deposit secures your date, 50 per cent at six months, balance 30 days prior" → `V9_deposit` = 1, `V9_deposit_refundable` = 1, `V9_payment_schedule` = **1**, stages verbatim, figures to V8.
+- "Final numbers are required 21 days before your wedding and cannot be reduced after" → `V9_final_numbers_deadline` = **1**, period verbatim.
+- "Prices are valid for weddings held before 31 December 2027" → `V9_price_validity` = **1**, period verbatim.
+- "Your price is locked in at the time of booking" → `V9_price_hold` = **1**.
+- "No venue hire fee" and elsewhere a brochure showing \$4,000 → both `V9_no_hire_fee_stated` = 1 and the \$4,000 recorded, `V9_conflict` = **1**, both quoted. The coder does not reconcile.
+- "We strongly recommend wedding insurance" → `V9_wedding_insurance` = **1**, direction "recommended" verbatim.
+

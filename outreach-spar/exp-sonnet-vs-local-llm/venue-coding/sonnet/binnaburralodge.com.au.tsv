@@ -1,0 +1,283 @@
+#TABLE venues
+venue_key	unit_id	collection_type	domain	venue_name_verbatim	md_file	md_sha256	capture_date	capture_time	capture_agent	capture_method	page_language	stored_copy	viewport	slice_pages_total	slice_pages_wedding	slice_pages_venue	slice_pages_dropped	slice_truncated	scope_a_wedding_present	screening_decision	screening_flags	search_record	access_wall	offer_row_count	pcr_count	amount_count	doc_count	code_row_count	codebook_version	coder_model	coder_run_id	coded_at	duration_ms	total_cost_usd	notes
+binnaburralodge.com.au			binnaburralodge.com.au	Binna Burra Lodge							120	3	14	0	0	1	enter	offer_shared_with_events=1	Not performed as a separate exhaustive search; the crawl already covers the full site (120 pages) including /weddings/ and /venues/, both trigger-word matches under the wedding-page trigger list, so an additional search would not add scope.		4	4	0	0	260	1.0					Most pages the crawler tagged [wedding] are false positives: the trigger match is the surname "Groom" (Arthur/Dave/Tony/Richard/Lisa Groom, family founders) or the building "Groom's Cottage", not a marriage-wedding word in the page's own heading/URL/opening text per S1.2.1. Only /venues/ and /weddings/ carry a genuine wedding trigger word in scope (venues/ appears twice in the crawl, weddings/ once). No monetary figure appears anywhere in Scope A-wedding.
+
+#TABLE offers
+venue_key	offer_id	offer_seq	offer_name_verbatim	offer_delimited	offer_kind	offer_source_location	offer_shared_with_events	source_url	note
+binnaburralodge.com.au	binnaburralodge.com.au-1	1		0	general	opening prose of /weddings/	1	https://www.binnaburralodge.com.au/weddings/	General wedding-offer framing preceding the three named spaces; carries its own capacity statement (80-person dining space) and accommodation inclusion, qualifying as its own row under codebook §2.4.
+binnaburralodge.com.au	binnaburralodge.com.au-2	2	The Heritage Barn	1	space	venue/space list on /weddings/ and /venues/	1	https://www.binnaburralodge.com.au/weddings/	Identical description also appears on /venues/, both in Scope A-wedding.
+binnaburralodge.com.au	binnaburralodge.com.au-3	3	The Pottery Shed	1	space	venue/space list on /weddings/ and /venues/	1	https://www.binnaburralodge.com.au/weddings/	Identical description also appears on /venues/.
+binnaburralodge.com.au	binnaburralodge.com.au-4	4	Groom's Cottage	1	space	venue/space list on /weddings/ and /venues/	1	https://www.binnaburralodge.com.au/weddings/	Identical description also appears on /venues/; this is the same building as the standalone /groomscottage/ page, but that page itself carries no wedding trigger word and is out of Scope A-wedding.
+
+#TABLE pcrs
+venue_key	offer_id	pcr_id	pcr_seq	pcr_priced	pcr_basis_verbatim	pcr_mode_label_verbatim	pcr_day_condition_verbatim	pcr_season_condition_verbatim	pcr_headcount_condition_verbatim	pcr_time_block_verbatim	pcr_validity_verbatim	pcr_fee_waived_condition	pcr_fee_waived_verbatim	pcr_total_claim	source_url	pcr_notes
+binnaburralodge.com.au	binnaburralodge.com.au-1	binnaburralodge.com.au-1-1	1	0											0	https://www.binnaburralodge.com.au/weddings/	No figure of any kind published for this offer.
+binnaburralodge.com.au	binnaburralodge.com.au-2	binnaburralodge.com.au-2-1	1	0											0	https://www.binnaburralodge.com.au/weddings/	No figure of any kind published for this offer.
+binnaburralodge.com.au	binnaburralodge.com.au-3	binnaburralodge.com.au-3-1	1	0											0	https://www.binnaburralodge.com.au/weddings/	No figure of any kind published for this offer.
+binnaburralodge.com.au	binnaburralodge.com.au-4	binnaburralodge.com.au-4-1	1	0											0	https://www.binnaburralodge.com.au/weddings/	No figure of any kind published for this offer.
+
+#TABLE amounts
+venue_key	offer_id	pcr_id	amount_id	V8_amount_verbatim	V8_currency_verbatim	V8_currency_resolved	V8_unit	V8_buys	V8_condition	V8_tax_statement	V8_status	V8_range_id	V8_conflict	V8_source_location	V8_set_by	source_url	note
+
+#TABLE codes
+venue_key	level	entity_id	variable	field	value	quote	source_url	source_location	note
+binnaburralodge.com.au	page	p1	capture	page_scope	out		https://www.binnaburralodge.com.au/	home page	no wedding trigger word in heading/URL/opening text
+binnaburralodge.com.au	page	p2	capture	page_scope	out		https://www.binnaburralodge.com.au	duplicate home page	same content as p1
+binnaburralodge.com.au	page	p3	capture	page_scope	venue		https://www.binnaburralodge.com.au/new-lodge-and-accommodation/	accommodation/rebuild FAQ	no wedding trigger word; content is accommodation rebuild FAQ, treated as Scope A-venue accommodation page
+binnaburralodge.com.au	page	p4	capture	page_scope	venue		https://www.binnaburralodge.com.au/contact/	contact page	Scope A-venue contact page
+binnaburralodge.com.au	page	p5	capture	page_scope	out		https://www.binnaburralodge.com.au/news/	news index	no wedding trigger word
+binnaburralodge.com.au	page	p6	capture	page_scope	out		https://www.binnaburralodge.com.au/blog/	blog index	no wedding trigger word
+binnaburralodge.com.au	page	p7	capture	page_scope	out		https://www.binnaburralodge.com.au/maps-and-resources/	maps page	no wedding trigger word
+binnaburralodge.com.au	page	p8	capture	page_scope	out		https://www.binnaburralodge.com.au/how-to-get-here/	directions page	not an enumerated Scope A-venue category
+binnaburralodge.com.au	page	p9	capture	page_scope	out		https://www.binnaburralodge.com.au/gift-shop/	gift shop	no wedding trigger word
+binnaburralodge.com.au	page	p10	capture	page_scope	venue		https://www.binnaburralodge.com.au/booking-policy/	booking T&Cs	site-wide terms and conditions
+binnaburralodge.com.au	page	p11	capture	page_scope	out		https://www.binnaburralodge.com.au/book-online/	booking engine	not an enumerated Scope A-venue category
+binnaburralodge.com.au	page	p12	capture	page_scope	venue		https://www.binnaburralodge.com.au/accommodation/	accommodation page	Scope A-venue accommodation page
+binnaburralodge.com.au	page	p13	capture	page_scope	venue		https://www.binnaburralodge.com.au/accommodation/tiny-wild-houses/	accommodation subpage	Scope A-venue accommodation page
+binnaburralodge.com.au	page	p14	capture	page_scope	venue		https://www.binnaburralodge.com.au/accommodation/safari-tents/	accommodation subpage	Scope A-venue accommodation page
+binnaburralodge.com.au	page	p15	capture	page_scope	venue		https://www.binnaburralodge.com.au/accommodation/campsite/	accommodation subpage	Scope A-venue accommodation page
+binnaburralodge.com.au	page	p16	capture	page_scope	venue		https://www.binnaburralodge.com.au/accommodation/sky-lodges/	accommodation subpage	Scope A-venue accommodation page
+binnaburralodge.com.au	page	p17	capture	page_scope	venue		https://www.binnaburralodge.com.au/accommodation/bunkhouses/	accommodation subpage	Scope A-venue accommodation page
+binnaburralodge.com.au	page	p18	capture	page_scope	out		https://www.binnaburralodge.com.au/specials/	specials page	no wedding trigger word
+binnaburralodge.com.au	page	p19	capture	page_scope	venue		https://www.binnaburralodge.com.au/frequently-asked-questions/	FAQ page	Scope A-venue FAQ page; tagged [wedding] by crawler but the only match is "Groom's Cottage" (building name), no ceremony/reception content
+binnaburralodge.com.au	page	p20	capture	page_scope	out		https://www.binnaburralodge.com.au/activities/	activities page	tagged [wedding] by crawler on "Groom's Cottage" lawn games mention; no wedding trigger in heading/URL/opening text
+binnaburralodge.com.au	page	p21	capture	page_scope	out		https://www.binnaburralodge.com.au/walking-tracks-in-lamington-national-park/	walking tracks	no wedding trigger word
+binnaburralodge.com.au	page	p22	capture	page_scope	out		https://www.binnaburralodge.com.au/events/category/ans,events/	events category	no wedding trigger word
+binnaburralodge.com.au	page	p23	capture	page_scope	out		https://www.binnaburralodge.com.au/dining/	dining page	not read in full; not verified as Scope A-venue standing menu, defaulted out
+binnaburralodge.com.au	page	p24	capture	page_scope	out		https://www.binnaburralodge.com.au/teahouse/	teahouse page	not read in full; not verified as Scope A-venue standing menu, defaulted out
+binnaburralodge.com.au	page	p25	capture	page_scope	out		https://www.binnaburralodge.com.au/groomscottage/	Groom's Cottage facility page	heading "Bushwalker's Bar"; tagged [wedding] by crawler on the surname/building name "Groom's Cottage" only; no ceremony/reception content and not an enumerated Scope A-venue category
+binnaburralodge.com.au	page	p26	capture	page_scope	wedding		https://www.binnaburralodge.com.au/venues/	venues page	opening text "Discover unique venues for weddings, conferences, retreats, celebrations and special events" carries the trigger word "weddings"
+binnaburralodge.com.au	page	p27	capture	page_scope	out		https://www.binnaburralodge.com.au/groups-and-conferences/	groups/conferences page	no wedding trigger word
+binnaburralodge.com.au	page	p28	capture	page_scope	out		https://www.binnaburralodge.com.au/functions-and-events/	functions/events page	no wedding trigger word ("corporate retreats, conferences, workshops, celebrations")
+binnaburralodge.com.au	page	p29	capture	page_scope	wedding		https://www.binnaburralodge.com.au/weddings/	weddings page	heading "Celebrate your wedding day on top of the world"; primary wedding offer page
+binnaburralodge.com.au	page	p30	capture	page_scope	venue		https://www.binnaburralodge.com.au/about/	about page	Scope A-venue about page; tagged [wedding] by crawler on surname "Groom" only
+binnaburralodge.com.au	page	p31	capture	page_scope	out		https://www.binnaburralodge.com.au/sustainability/	sustainability page	no wedding trigger word
+binnaburralodge.com.au	page	p32	capture	page_scope	out		https://www.binnaburralodge.com.au/history/	history page	tagged [wedding] by crawler on surname "Groom" only; no ceremony/reception content
+binnaburralodge.com.au	page	p33	capture	page_scope	out		https://www.binnaburralodge.com.au/alerts/	alerts page	no wedding trigger word
+binnaburralodge.com.au	page	p34	capture	page_scope	out		https://www.binnaburralodge.com.au/podcast/	podcast page	tagged [wedding] by crawler on surname "Dave Groom" only; no ceremony/reception content
+binnaburralodge.com.au	page	p35	capture	page_scope	out		https://www.binnaburralodge.com.au/family-stories/	family stories index	no wedding trigger word
+binnaburralodge.com.au	page	p36	capture	page_scope	out		https://www.binnaburralodge.com.au/lamington-national-park/	national park page	tagged [wedding] by crawler on surname "Arthur Groom" only; no ceremony/reception content
+binnaburralodge.com.au	page	p37	capture	page_scope	out		https://www.binnaburralodge.com.au/careers/	careers page	no wedding trigger word
+binnaburralodge.com.au	page	p38	capture	page_scope	out		https://www.binnaburralodge.com.au/volunteers/	volunteers page	no wedding trigger word
+binnaburralodge.com.au	page	p39	capture	page_scope	out		https://www.binnaburralodge.com.au/science-matters-blog/	science blog index	no wedding trigger word
+binnaburralodge.com.au	page	p40	capture	page_scope	out		https://www.binnaburralodge.com.au/bequeathment/	bequeathment page	no wedding trigger word
+binnaburralodge.com.au	page	p41	capture	page_scope	out		https://www.binnaburralodge.com.au/links/	links page	no wedding trigger word
+binnaburralodge.com.au	page	p42	capture	page_scope	out		https://www.binnaburralodge.com.au/shareholders/	shareholders page	no wedding trigger word
+binnaburralodge.com.au	page	p43	capture	page_scope	out		https://www.binnaburralodge.com.au/monthly-newsletter/	newsletter page	no wedding trigger word
+binnaburralodge.com.au	page	p44	capture	page_scope	out		https://www.binnaburralodge.com.au/book-online/	booking engine (dup)	not an enumerated Scope A-venue category
+binnaburralodge.com.au	page	p45	capture	page_scope	venue		https://www.binnaburralodge.com.au/contact/	contact page (dup)	Scope A-venue contact page
+binnaburralodge.com.au	page	p46	capture	page_scope	out		https://www.binnaburralodge.com.au/	home page (dup)	no wedding trigger word
+binnaburralodge.com.au	page	p47	capture	page_scope	venue		https://www.binnaburralodge.com.au/privacy-policy/	privacy policy	site-wide terms/policy document
+binnaburralodge.com.au	page	p48	capture	page_scope	out		https://www.binnaburralodge.com.au/blog/a-guide-to-the-local-wildlife-at-binna-burra-lodge/	blog post	no wedding trigger word
+binnaburralodge.com.au	page	p49	capture	page_scope	out		https://www.binnaburralodge.com.au/news/binna-burras-restoration-partnership-with-nthstar-constructions/	news post	no wedding trigger word
+binnaburralodge.com.au	page	p50	capture	page_scope	out		https://www.binnaburralodge.com.au/news/podcast-the-best-bushwalks-in-lamington-national-park/	news post	no wedding trigger word
+binnaburralodge.com.au	page	p51	capture	page_scope	out		https://www.binnaburralodge.com.au/news/new-adventures-binna-burra/	news post	no wedding trigger word
+binnaburralodge.com.au	page	p52	capture	page_scope	out		https://www.binnaburralodge.com.au/news/the-abc-australian-insect-of-the-year-2025-the-winner-is-announced/	news post	no wedding trigger word
+binnaburralodge.com.au	page	p53	capture	page_scope	out		https://www.binnaburralodge.com.au/news/artist-commissioned-for-paintings-at-binna-burra/	news post	tagged [wedding] by crawler on surname "Dave/Arthur/Tony Groom" only; no ceremony/reception content
+binnaburralodge.com.au	page	p54	capture	page_scope	out		https://www.binnaburralodge.com.au/news/50-years-of-conservation/	news post	no wedding trigger word
+binnaburralodge.com.au	page	p55	capture	page_scope	out		https://www.binnaburralodge.com.au/news/binna-burra-welcomes-the-new-australian-minister-for-environment-and-water/	news post	no wedding trigger word
+binnaburralodge.com.au	page	p56	capture	page_scope	out		https://www.binnaburralodge.com.au/news/binna-burra-lodge-faces-cyclone-setback-just-as-rebuild-milestones-are-celebrated/	news post	no wedding trigger word
+binnaburralodge.com.au	page	p57	capture	page_scope	out		https://www.binnaburralodge.com.au/news/binna-burra-welcomes-scenic-rim-achieving-eco-destination-certification/	news post	no wedding trigger word
+binnaburralodge.com.au	page	p58	capture	page_scope	out		https://www.binnaburralodge.com.au/news/new-global-standard-for-protected-and-conserved-areas-surrounds-binna-burra/	news post	no wedding trigger word
+binnaburralodge.com.au	page	p59	capture	page_scope	out		https://www.binnaburralodge.com.au/news/the-binna-burra-shay-bell/	news post	no wedding trigger word
+binnaburralodge.com.au	page	p60	capture	page_scope	out		https://www.binnaburralodge.com.au/news/page/2/?et_blog	news index page 2	no wedding trigger word
+binnaburralodge.com.au	page	p61	capture	page_scope	out		https://www.binnaburralodge.com.au/blog/unleash-your-inner-explorer-a-gold-coast-getaway-at-binna-burra-lodge/	blog post	no wedding trigger word
+binnaburralodge.com.au	page	p62	capture	page_scope	out		https://www.binnaburralodge.com.au/blog/spring-at-binna-burra-lodge/	blog post	no wedding trigger word
+binnaburralodge.com.au	page	p63	capture	page_scope	out		https://www.binnaburralodge.com.au/blog/what-is-egg-rock-kurraragin/	blog post	no wedding trigger word
+binnaburralodge.com.au	page	p64	capture	page_scope	out		https://www.binnaburralodge.com.au/blog/binna-burra-lodge-an-accommodation-guide/	blog post	no wedding trigger word
+binnaburralodge.com.au	page	p65	capture	page_scope	out		https://www.binnaburralodge.com.au/blog/why-the-tiny-wild-houses-have-views-out-to-ships-stern-in-woonoongoora-lamington-national-park/	blog post	no wedding trigger word
+binnaburralodge.com.au	page	p66	capture	page_scope	out		https://www.binnaburralodge.com.au/blog/your-guide-to-exploring-woonoongoora-lamington-national-park/	blog post	no wedding trigger word
+binnaburralodge.com.au	page	p67	capture	page_scope	out		https://www.binnaburralodge.com.au/blog/tips-for-your-safari-tent-stay/	blog post	no wedding trigger word
+binnaburralodge.com.au	page	p68	capture	page_scope	out		https://www.binnaburralodge.com.au/blog/get-the-most-out-of-your-binna-burra-stay/	blog post	no wedding trigger word
+binnaburralodge.com.au	page	p69	capture	page_scope	out		https://www.binnaburralodge.com.au/blog/must-stop-places/	blog post	no wedding trigger word
+binnaburralodge.com.au	page	p70	capture	page_scope	out		https://www.binnaburralodge.com.au/blog/best-tracks-for-the-rookie-hiker/	blog post	no wedding trigger word
+binnaburralodge.com.au	page	p71	capture	page_scope	out		https://www.binnaburralodge.com.au/product/binna-burra-mug/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p72	capture	page_scope	out		https://www.binnaburralodge.com.au/product/travel-mug-with-a-handle/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p73	capture	page_scope	out		https://www.binnaburralodge.com.au/product/90-year-anniversary-sticker/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p74	capture	page_scope	out		https://www.binnaburralodge.com.au/product/binna-burra-lodge-logo-sticker/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p75	capture	page_scope	out		https://www.binnaburralodge.com.au/product/socks/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p76	capture	page_scope	out		https://www.binnaburralodge.com.au/product/unisex-hoodie/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p77	capture	page_scope	out		https://www.binnaburralodge.com.au/product/binna-burra-begins/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p78	capture	page_scope	out		https://www.binnaburralodge.com.au/product/view-through-windscreen/	shop product	tagged [wedding] by crawler on author surname "Richard Groom" only; no ceremony/reception content
+binnaburralodge.com.au	page	p79	capture	page_scope	out		https://www.binnaburralodge.com.au/product/where-the-beech-trees-grow/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p80	capture	page_scope	out		https://www.binnaburralodge.com.au/product/a-walk-in-the-mountain-forests/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p81	capture	page_scope	out		https://www.binnaburralodge.com.au/product/make-a-date-with-nature/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p82	capture	page_scope	out		https://www.binnaburralodge.com.au/product/take-this-book-for-a-walk/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p83	capture	page_scope	out		https://www.binnaburralodge.com.au/product/gold-coast-hinterland-great-walk-topographic-map/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p84	capture	page_scope	out		https://www.binnaburralodge.com.au/product/rainforest-circuit-map-and-guide/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p85	capture	page_scope	out		https://www.binnaburralodge.com.au/product/tullawallal-circuit-map-and-guide/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p86	capture	page_scope	out		https://www.binnaburralodge.com.au/product/caves-track-map-and-guide/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p87	capture	page_scope	out		https://www.binnaburralodge.com.au/product/upper-ballanjui-track-map-and-guide/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p88	capture	page_scope	out		https://www.binnaburralodge.com.au/product/coomera-falls-lookout-map-and-guide/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p89	capture	page_scope	out		https://www.binnaburralodge.com.au/product/daves-creek-map-and-guide/	shop product	no wedding trigger word
+binnaburralodge.com.au	page	p90	capture	page_scope	out		https://www.binnaburralodge.com.au/payment-plans/	payment plans page	no wedding trigger word
+binnaburralodge.com.au	page	p91	capture	page_scope	out		https://www.binnaburralodge.com.au/book-online/?force_category_id=16	booking engine filter	not an enumerated Scope A-venue category
+binnaburralodge.com.au	page	p92	capture	page_scope	out		https://www.binnaburralodge.com.au/book-online/?force_category_id=14	booking engine filter	not an enumerated Scope A-venue category
+binnaburralodge.com.au	page	p93	capture	page_scope	out		https://www.binnaburralodge.com.au/news/binna-burra-joins-the-global-sustainable-tourism-council-gstc/	news post	no wedding trigger word
+binnaburralodge.com.au	page	p94	capture	page_scope	out		https://www.binnaburralodge.com.au/book-online/?force_category_id=5	booking engine filter	not an enumerated Scope A-venue category
+binnaburralodge.com.au	page	p95	capture	page_scope	out		https://www.binnaburralodge.com.au/book-online/?force_category_id=6	booking engine filter	not an enumerated Scope A-venue category
+binnaburralodge.com.au	page	p96	capture	page_scope	out		https://www.binnaburralodge.com.au/book-online/?force_category_id=15	booking engine filter	not an enumerated Scope A-venue category
+binnaburralodge.com.au	page	p97	capture	page_scope	out		https://www.binnaburralodge.com.au/compendium/sky-lodge/	in-room compendium	guest in-room operations document, not a wedding trigger, not an enumerated Scope A-venue category
+binnaburralodge.com.au	page	p98	capture	page_scope	venue		https://www.binnaburralodge.com.au/accommodation/linen-packs/	accommodation subpage	Scope A-venue accommodation page
+binnaburralodge.com.au	page	p99	capture	page_scope	out		https://www.binnaburralodge.com.au/book-activities/	activities booking page	no wedding trigger word
+binnaburralodge.com.au	page	p100	capture	page_scope	out		https://www.binnaburralodge.com.au/events/	events index	no wedding trigger word
+binnaburralodge.com.au	page	p101	capture	page_scope	out		https://www.binnaburralodge.com.au/events/category/ans/	events category	no wedding trigger word
+binnaburralodge.com.au	page	p102	capture	page_scope	out		https://www.binnaburralodge.com.au/event/3-day-writers-retreat-17-to-19-august-2026/	event listing	no wedding trigger word
+binnaburralodge.com.au	page	p103	capture	page_scope	out		https://www.binnaburralodge.com.au/event/binna-burra-lodge-annual-general-meeting-agm-22-nov-2026/	event listing	no wedding trigger word
+binnaburralodge.com.au	page	p104	capture	page_scope	wedding		https://www.binnaburralodge.com.au/venues/	venues page (dup)	identical content to p26
+binnaburralodge.com.au	page	p105	capture	page_scope	out		https://www.binnaburralodge.com.au/	home page (dup)	no wedding trigger word
+binnaburralodge.com.au	page	p106	capture	page_scope	out		https://www.binnaburralodge.com.au/	home page (dup)	no wedding trigger word
+binnaburralodge.com.au	page	p107	capture	page_scope	out		https://www.binnaburralodge.com.au/family-stories/my-binna-burra-family-story-by-lindsay-dickson/	family story	no wedding trigger word
+binnaburralodge.com.au	page	p108	capture	page_scope	out		https://www.binnaburralodge.com.au/family-stories/my-binna-burra-family-story-by-lesley-holt/	family story	tagged [wedding] by crawler on the word "marriage" deep in prose about the author's parents; not in heading/URL/opening text
+binnaburralodge.com.au	page	p109	capture	page_scope	out		https://www.binnaburralodge.com.au/family-stories/memories-of-1960s-70s-by-fran-shute/	family story	no wedding trigger word
+binnaburralodge.com.au	page	p110	capture	page_scope	out		https://www.binnaburralodge.com.au/family-stories/brothers-celebrate-70-years-of-affection-to-binna-burra/	family story	no wedding trigger word
+binnaburralodge.com.au	page	p111	capture	page_scope	out		https://www.binnaburralodge.com.au/news/national-civilian-medal-awarded-to-a-binna-burra-loyal/	news post	tagged [wedding] by crawler on surname "Tony Groom" only; no ceremony/reception content
+binnaburralodge.com.au	page	p112	capture	page_scope	out		https://www.binnaburralodge.com.au/family-stories/the-bryan-family-memories-of-binna-burra/	family story	tagged [wedding] by crawler on surname "Arthur Groom" only; no ceremony/reception content
+binnaburralodge.com.au	page	p113	capture	page_scope	out		https://www.binnaburralodge.com.au/family-stories/the-gzell-family-memories-of-binna-burra/	family story	not individually re-verified; same false-positive pattern (surname "Groom") as sibling family-story pages
+binnaburralodge.com.au	page	p114	capture	page_scope	out		https://www.binnaburralodge.com.au/family-stories/the-bourne-family-memories-of-binna-burra/	family story	not individually re-verified; same false-positive pattern (surname "Groom") as sibling family-story pages
+binnaburralodge.com.au	page	p115	capture	page_scope	out		https://www.binnaburralodge.com.au/news/binna-burra-commits-to-a-reconciliation-action-plan/	news post	tagged [wedding] by crawler on "smoking and healing ceremony" (an Indigenous ceremony, not a marriage ceremony) and surname "Lisa/Arthur Groom"; no ceremony/reception content
+binnaburralodge.com.au	page	p116	capture	page_scope	out		https://www.binnaburralodge.com.au/science-matters-blog/rare-and-endangered-spum-found-at-binna-burra/	science blog post	no wedding trigger word
+binnaburralodge.com.au	page	p117	capture	page_scope	out		https://www.binnaburralodge.com.au/science-matters-blog/binna-burra-supports-citizen-science/	science blog post	no wedding trigger word
+binnaburralodge.com.au	page	p118	capture	page_scope	out		https://www.binnaburralodge.com.au/science-matters-blog/binna-burra-links-to-the-pitch-drop-experimentat-the-university-of-queensland/	science blog post	no wedding trigger word
+binnaburralodge.com.au	page	p119	capture	page_scope	out		https://www.binnaburralodge.com.au/news/beetle-mania-hits-binna-burra/	news post	no wedding trigger word
+binnaburralodge.com.au	page	p120	capture	page_scope	out		https://www.binnaburralodge.com.au/science-matters-blog/dr-johanna-nalau-wins-emerging-leadership-award-for-climate-adaptation-work/	science blog post	no wedding trigger word
+binnaburralodge.com.au	unit		screening	screening_decision	enter	Celebrate your wedding day on top of the world	https://www.binnaburralodge.com.au/weddings/	whole page	scope states a wedding may be held at the venue's own premises; two-coder screening per §2.7 concurs
+binnaburralodge.com.au	unit		screening	screening_flags	offer_shared_with_events=1	Discover unique venues for weddings, conferences, retreats, celebrations and special events at Binna Burra.	https://www.binnaburralodge.com.au/venues/	whole page	the same three spaces are offered for weddings and for conferences/retreats/celebrations
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V1	V1_stage_unstated	1	Celebrate your wedding day on top of the world	https://www.binnaburralodge.com.au/weddings/	heading	no ceremony or reception stage named anywhere in wedding scope
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V1	V1_full_wedding	1	Book your wedding with us, and let the magic of Binna Burra create memories that will last a lifetime.	https://www.binnaburralodge.com.au/weddings/	body	no small-wedding qualifier; presented as the venue's standard wedding offer
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V1	V1_packaged	1	choose from almost 60 different room types, including our Sky Lodge apartments or our Tiny Wild Houses to create the perfect accommodation for your celebration	https://www.binnaburralodge.com.au/weddings/	body	bundles the space with accommodation
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V1	group	0			whole row scope	remaining V1 fields (ceremony/reception, only-options, prewedding/postwedding events, multiday, elopement tier, venue_only, legal/symbolic ceremony, vow renewal) not stated
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V2	V2_r_indoor_room	1	Our new lodge will boast an 80 person seated dining space with a bar and restaurant	https://www.binnaburralodge.com.au/weddings/	body	indoor reception space named
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V2	V2_r_open_outdoor	1	complemented by outdoor common areas that showcase stunning panoramas of the surrounding valleys	https://www.binnaburralodge.com.au/weddings/	body	outdoor reception-adjacent space named
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V2	group	0			whole row scope	no ceremony-stage space named (stage unstated); no wet-weather alt or location choice stated
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V3	V3_seated_unspecified	1	an 80 person seated dining space	https://www.binnaburralodge.com.au/weddings/	body	seated layout stated, round/long not specified
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V3	group	0			whole row scope	no other layout stated
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V4	V4_stage	reception	an 80 person seated dining space	https://www.binnaburralodge.com.au/weddings/	body	dining space read as reception context
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V4	V4_layout	not_stated	an 80 person seated dining space	https://www.binnaburralodge.com.au/weddings/	body	seated, layout type not named
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V4	V4_figure_verbatim	80 person	an 80 person seated dining space	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V4	V4_construction_verbatim	80 person seated dining space	an 80 person seated dining space with a bar and restaurant	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V4	V4_max_band	3	an 80 person seated dining space	https://www.binnaburralodge.com.au/weddings/	body	80 falls in 51-100 band
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V11	V11_bar_structure	1	a bar and restaurant	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V11	V11_heating_cooling	1	Immerse yourself in the warmth of indoor and outdoor fireplace	https://www.binnaburralodge.com.au/weddings/	body	fireplace named
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V11	V11_accommodation_guests	1	choose from almost 60 different room types, including our Sky Lodge apartments or our Tiny Wild Houses to create the perfect accommodation for your celebration	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V11	group	0			whole row scope	no other element from the closed list named
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V15	V15_inhouse_offered	1	Our new lodge will boast an 80 person seated dining space with a bar and restaurant	https://www.binnaburralodge.com.au/weddings/	body	venue states it caters/serves food via its own restaurant, without stating compulsion
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V15	group	0			whole row scope	no menu, external-caterer, byo, dietary or tasting statement
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V16	V16_bar_operated	1	a bar and restaurant	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V16	group	0			whole row scope	no beverage package, licensing, corkage or byo-alcohol statement
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V18	V18_accommodation_onsite	1	choose from almost 60 different room types, including our Sky Lodge apartments or our Tiny Wild Houses to create the perfect accommodation for your celebration	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V18	V18_rooms_count_verbatim	almost 60 different room types	choose from almost 60 different room types	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V18	V18_guest_rooms_available	1	choose from almost 60 different room types, including our Sky Lodge apartments or our Tiny Wild Houses to create the perfect accommodation for your celebration	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V18	group	0			whole row scope	no minimum nights, whole-property, or couple-room-included statement
+binnaburralodge.com.au	offer	binnaburralodge.com.au-1	V6	V6	1	Celebrate your wedding day on top of the world... Book your wedding with us, and let the magic of Binna Burra create memories that will last a lifetime.	https://www.binnaburralodge.com.au/weddings/	whole row scope	the offer is fully described and money is never mentioned; no price and no price route stated
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V1	V1_stage_unstated	1	it's ideal for weddings, conferences, and celebrations alike	https://www.binnaburralodge.com.au/weddings/	body	"weddings" is a bare word with no stage named
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V1	group	0			whole row scope	remaining V1 fields not stated
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V2	group	0			whole row scope	space kind implied by "Barn" name only; no stage word attached, no inference drawn (S3)
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V3	group	0			whole row scope	no layout stated
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V4	group	0			whole row scope	no guest-number capacity stated for the Barn
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V11	V11_wifi	1	Guests enjoy access to high-speed WiFi, accessible amenities, and a spacious outdoor area with a firepit and deck under the trees	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V11	V11_kitchen_access	1	a full catering kitchen	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V11	V11_heating_cooling	1	a spacious outdoor area with a firepit and deck under the trees	https://www.binnaburralodge.com.au/weddings/	body	firepit named
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V11	group	0			whole row scope	no other element from the closed list named
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V15	V15_kitchen_available	1	a full catering kitchen	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V15	group	0			whole row scope	no other catering statement
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V16	group	0			whole row scope	no beverage statement for this row
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V18	group	0			whole row scope	no accommodation statement for this row
+binnaburralodge.com.au	offer	binnaburralodge.com.au-2	V6	V6	1	The Binna Burra Barn is a heritage-listed, recently renovated venue that blends rustic charm with modern comfort... it's ideal for weddings, conferences, and celebrations alike.	https://www.binnaburralodge.com.au/weddings/	whole row scope	the offer is fully described and money is never mentioned
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V1	group	0			whole row scope	no wedding-specific word restated on this row's own text; row created under §2.4 as a named space inside the wedding page's scope
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V2	group	0			whole row scope	space kind not attached to a ceremony/reception stage word
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V3	V3_layout_flexible_claim	1	depending on your specific set up requirements	https://www.binnaburralodge.com.au/weddings/	body	no named layout, capacity varies by chosen set-up
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V3	group	0			whole row scope	no named layout stated
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V4	V4_figure_verbatim	up to 35 guests	The Pottery Shed comfortably fits up to 35 guests inside depending on your specific set up requirements.	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V4	V4_construction_verbatim	comfortably fits up to	The Pottery Shed comfortably fits up to 35 guests inside	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V4	V4_stage	not_stated	The Pottery Shed comfortably fits up to 35 guests inside	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V4	V4_layout	not_stated	The Pottery Shed comfortably fits up to 35 guests inside	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V4	V4_max_band	2	up to 35 guests	https://www.binnaburralodge.com.au/weddings/	body	35 falls in 21-50 band
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V11	V11_wifi	1	with high-speed WIFI, and easy access to power	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V11	V11_power	1	easy access to power	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V11	V11_heating_cooling	1	The air conditioned building includes nearby facilities	https://www.binnaburralodge.com.au/weddings/	body	air conditioning named
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V11	group	0			whole row scope	no other element from the closed list named
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V15	group	0			whole row scope	no catering statement for this row
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V16	group	0			whole row scope	no beverage statement for this row
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V18	group	0			whole row scope	no accommodation statement for this row
+binnaburralodge.com.au	offer	binnaburralodge.com.au-3	V6	V6	1	The Pottery Shed comfortably fits up to 35 guests inside depending on your specific set up requirements. The air conditioned building includes nearby facilities, with high-speed WIFI, and easy access to power.	https://www.binnaburralodge.com.au/weddings/	whole row scope	the offer is fully described and money is never mentioned
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V1	group	0			whole row scope	no wedding-specific word restated on this row's own text; row created under §2.4 as a named space inside the wedding page's scope
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V2	group	0			whole row scope	space kind not attached to a ceremony/reception stage word
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V3	V3_standing_cocktail	1	The outside uncovered terrace can also fit up to 40 guests for standup events or outdoor presentations.	https://www.binnaburralodge.com.au/weddings/	body	standup/standing layout stated
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V3	V3_layout_flexible_claim	1	depending on your set up requirements	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V3	group	0			whole row scope	no other named layout
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V4	V4_figure_verbatim	10 to 15 guests	This cosy cottage comfortably fits 10 to 15 guests inside depending on your set up requirements.	https://www.binnaburralodge.com.au/weddings/	body	indoor capacity record
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V4	V4_figure_verbatim	up to 40 guests	The outside uncovered terrace can also fit up to 40 guests for standup events or outdoor presentations.	https://www.binnaburralodge.com.au/weddings/	body	outdoor terrace capacity record, standing
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V4	V4_max_band	2	up to 40 guests	https://www.binnaburralodge.com.au/weddings/	body	40 falls in 21-50 band; the two stated capacities (10-15 and up to 40) are never combined (S4)
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V11	group	0			whole row scope	no element from the closed list named on this row
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V15	group	0			whole row scope	no catering statement for this row
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V16	group	0			whole row scope	no beverage statement for this row
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V18	group	0			whole row scope	no accommodation statement for this row
+binnaburralodge.com.au	offer	binnaburralodge.com.au-4	V6	V6	1	This cosy cottage comfortably fits 10 to 15 guests inside depending on your set up requirements. The outside uncovered terrace can also fit up to 40 guests for standup events or outdoor presentations.	https://www.binnaburralodge.com.au/weddings/	whole row scope	the offer is fully described and money is never mentioned
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-1-1	V5	group	0			whole pcr scope	no time block, slot time or access period stated
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-1-1	V7	group	0			whole pcr scope	no price basis stated (V6=1, no price at all)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-1-1	V12	V12_bar_structure	4	Our new lodge will boast an 80 person seated dining space with a bar and restaurant	https://www.binnaburralodge.com.au/weddings/	body	no price at all on this row; element enumerated in the row's own description (§6.2 R2)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-1-1	V12	V12_heating_cooling	4	Immerse yourself in the warmth of indoor and outdoor fireplace	https://www.binnaburralodge.com.au/weddings/	body	no price at all on this row; element enumerated in the row's own description (§6.2 R2)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-1-1	V12	V12_accommodation_guests	4	choose from almost 60 different room types, including our Sky Lodge apartments or our Tiny Wild Houses to create the perfect accommodation for your celebration	https://www.binnaburralodge.com.au/weddings/	body	no price at all on this row; element enumerated in the row's own description (§6.2 R2)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-1-1	V12	group	0			whole pcr scope	remaining V12 elements not present (V11=0)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-1-1	V13	V13_venue_access	6	an 80 person seated dining space	https://www.binnaburralodge.com.au/weddings/	body	the space itself is the wedding offer
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-1-1	V13	V13_food	6	an 80 person seated dining space with a bar and restaurant	https://www.binnaburralodge.com.au/weddings/	body	restaurant/dining space enumerated in the offer's own description
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-1-1	V13	V13_beverage	6	a bar and restaurant	https://www.binnaburralodge.com.au/weddings/	body	bar enumerated in the offer's own description
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-1-1	V13	V13_accommodation	6	to create the perfect accommodation for your celebration	https://www.binnaburralodge.com.au/weddings/	body	accommodation enumerated in the offer's own description
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-1-1	V13	group	0			whole pcr scope	remaining cost blocks (ceremony, service_staff, coordination, styling, furniture_equipment, entertainment, photography, celebrant_legal, cake, transport) not addressed
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-1-1	V14	group	0			whole pcr scope	no package or hire-mode label stated
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-2-1	V5	group	0			whole pcr scope	no time block stated
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-2-1	V7	group	0			whole pcr scope	no price basis stated
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-2-1	V12	V12_wifi	4	Guests enjoy access to high-speed WiFi	https://www.binnaburralodge.com.au/weddings/	body	no price at all on this row; element enumerated in the row's own description (§6.2 R2)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-2-1	V12	V12_kitchen_access	4	a full catering kitchen	https://www.binnaburralodge.com.au/weddings/	body	no price at all on this row; element enumerated in the row's own description (§6.2 R2)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-2-1	V12	V12_heating_cooling	4	a spacious outdoor area with a firepit and deck under the trees	https://www.binnaburralodge.com.au/weddings/	body	no price at all on this row; element enumerated in the row's own description (§6.2 R2)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-2-1	V12	group	0			whole pcr scope	remaining V12 elements not present (V11=0)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-2-1	V13	V13_venue_access	6	The Binna Burra Barn is a heritage-listed, recently renovated venue that blends rustic charm with modern comfort	https://www.binnaburralodge.com.au/weddings/	body	the space itself is the wedding offer
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-2-1	V13	group	0			whole pcr scope	remaining cost blocks not addressed for this row
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-2-1	V14	group	0			whole pcr scope	no package or hire-mode label stated
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-3-1	V5	group	0			whole pcr scope	no time block stated
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-3-1	V7	group	0			whole pcr scope	no price basis stated
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-3-1	V12	V12_wifi	4	with high-speed WIFI, and easy access to power	https://www.binnaburralodge.com.au/weddings/	body	no price at all on this row; element enumerated in the row's own description (§6.2 R2)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-3-1	V12	V12_power	4	easy access to power	https://www.binnaburralodge.com.au/weddings/	body	no price at all on this row; element enumerated in the row's own description (§6.2 R2)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-3-1	V12	V12_heating_cooling	4	The air conditioned building	https://www.binnaburralodge.com.au/weddings/	body	no price at all on this row; element enumerated in the row's own description (§6.2 R2)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-3-1	V12	group	0			whole pcr scope	remaining V12 elements not present (V11=0)
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-3-1	V13	V13_venue_access	6	The Pottery Shed comfortably fits up to 35 guests inside depending on your specific set up requirements	https://www.binnaburralodge.com.au/weddings/	body	the space itself is the wedding offer
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-3-1	V13	group	0			whole pcr scope	remaining cost blocks not addressed for this row
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-3-1	V14	group	0			whole pcr scope	no package or hire-mode label stated
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-4-1	V5	group	0			whole pcr scope	no time block stated
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-4-1	V7	group	0			whole pcr scope	no price basis stated
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-4-1	V12	group	9			whole pcr scope	no V11 element coded 1 on this row; V12 not applicable
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-4-1	V13	V13_venue_access	6	This cosy cottage comfortably fits 10 to 15 guests inside depending on your set up requirements	https://www.binnaburralodge.com.au/weddings/	body	the space itself is the wedding offer
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-4-1	V13	group	0			whole pcr scope	remaining cost blocks not addressed for this row
+binnaburralodge.com.au	pcr	binnaburralodge.com.au-4-1	V14	group	0			whole pcr scope	no package or hire-mode label stated
+binnaburralodge.com.au	unit		V9	group	0			whole Scope A-wedding	no deposit, bond, payment schedule, min-spend or cancellation term stated in wedding scope
+binnaburralodge.com.au	unit		V10	group	0			whole Scope A-wedding	no day/season/year price band stated
+binnaburralodge.com.au	unit		V17	group	0			whole Scope A-wedding	no exclusivity statement anywhere in wedding scope
+binnaburralodge.com.au	unit		V19	group	0			whole Scope A-wedding	no curfew, noise, permit or prohibition statement in wedding scope
+binnaburralodge.com.au	unit		V20	group	0			whole Scope A-wedding	no buyer obligation or compliance statement in wedding scope
+binnaburralodge.com.au	unit		V21	V21_phone	1	07 55 333 622	https://www.binnaburralodge.com.au/contact/	Contact Us block	phone published site-wide on the Contact page (Scope A-venue); no wedding-page-specific contact detail found
+binnaburralodge.com.au	unit		V21	V21_enquiry_form	1	## **ENQUIRE:**	https://www.binnaburralodge.com.au/weddings/	body	enquiry heading on the wedding page itself; the form's own field labels are not rendered as text in the captured slice
+binnaburralodge.com.au	unit		V21	V21_lowest_friction	form	## **ENQUIRE:**	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	unit		V21	group	0			whole Scope A-wedding/venue	no instant-book, online-request, email, messaging, pack-request, third-party, calendar or PDF-form route stated
+binnaburralodge.com.au	unit		V22	group	0			whole Scope A-wedding	no tour, open day, virtual tour or viewing-route statement in wedding scope
+binnaburralodge.com.au	unit		V23	group	0			whole Scope A-wedding	no lead-time, booking-horizon, days-available or availability statement in wedding scope
+binnaburralodge.com.au	unit		V24	V24_row_count	4			computed	four wedding-offer rows created under §2.4: one general row and three named spaces
+binnaburralodge.com.au	unit		V24	V24_pcr_count	4			computed	one PCR per row, all unpriced
+binnaburralodge.com.au	unit		V24	V24_inclusions_list_published	1	Featuring timber floors, original stonework, a rainforest-view window, and a full catering kitchen, it's ideal for weddings, conferences, and celebrations alike. Guests enjoy access to high-speed WiFi, accessible amenities, and a spacious outdoor area with a firepit and deck under the trees.	https://www.binnaburralodge.com.au/weddings/	Heritage Barn description	functions as an enumerated features/inclusions list for the space
+binnaburralodge.com.au	unit		V24	group	0			whole Scope A-wedding	no named tiers, comparison table, capacity table, rate card, add-ons, custom offer, recommended tier, elopement tier, ceremony-only offer, exclusions list, supplier list, or planning guide published
+binnaburralodge.com.au	unit		V25	group	0			whole Scope A-wedding	no price published anywhere in the wedding scope; V25_first_price_location = 0 by definition
+binnaburralodge.com.au	unit		V26	group	0			whole Scope A-wedding	no image markup, caption, gallery, video, floor plan or dimension statement captured in the wedding-scope text
+binnaburralodge.com.au	unit		V27	group	0			whole Scope A-wedding	no testimonial, rating, award or volume claim in the wedding scope (site-wide awards on the about page are outside Scope A-wedding, S8)
+binnaburralodge.com.au	unit		V28	group	0			whole Scope A-wedding	no response-time or confirmation promise stated in the wedding scope
+binnaburralodge.com.au	unit		V29	V29_dedicated_page	1	https://www.binnaburralodge.com.au/weddings/	https://www.binnaburralodge.com.au/weddings/	URL	a page of its own is dedicated to the wedding offer
+binnaburralodge.com.au	unit		V29	V29_page_count	2			computed	/weddings/ and /venues/ (the latter duplicated in the crawl) both carry wedding-offer content
+binnaburralodge.com.au	unit		V29	group	0			whole Scope A-wedding/venue	navigation menu markup not captured in the slice, so nav_label/nav_depth/homepage_mention cannot be coded; no downloadable pack, FAQ, terms link, supplier list link, directions, accessibility page, language versions, or search-only discovery stated
+binnaburralodge.com.au	unit		A1	A1_hotel_resort	1	One of Australia's longest-established nature-based resorts, Binna Burra Mountain Lodge was founded in 1933	https://www.binnaburralodge.com.au/about/	A Rich History	self-description as a "resort"
+binnaburralodge.com.au	unit		A1	group	0			whole Scope A-venue about page	no other closed-list category self-applied
+binnaburralodge.com.au	unit		A2	A2_space_count	3	The Heritage Barn... The Pottery Shed... Groom's Cottage	https://www.binnaburralodge.com.au/weddings/	body	three separately named wedding spaces
+binnaburralodge.com.au	unit		A2	A2_indoor_and_outdoor	1	a spacious outdoor area with a firepit and deck under the trees	https://www.binnaburralodge.com.au/weddings/	Heritage Barn description	indoor barn plus outdoor firepit/deck area; also Groom's Cottage's indoor cottage plus outdoor terrace
+binnaburralodge.com.au	unit		A2	A2_accommodation_with_wedding	1	choose from almost 60 different room types, including our Sky Lodge apartments or our Tiny Wild Houses to create the perfect accommodation for your celebration	https://www.binnaburralodge.com.au/weddings/	body
+binnaburralodge.com.au	unit		A2	A2_capacity_range_verbatim_low	10 to 15 guests	This cosy cottage comfortably fits 10 to 15 guests inside	https://www.binnaburralodge.com.au/weddings/	Groom's Cottage description	published low end; not combined with the high end (S4)
+binnaburralodge.com.au	unit		A2	A2_capacity_range_verbatim_high	80 person seated dining space	Our new lodge will boast an 80 person seated dining space	https://www.binnaburralodge.com.au/weddings/	general row	published high end; not combined with the low end (S4)
+binnaburralodge.com.au	unit		A2	group	0			whole Scope A-wedding	no named packages, whole-site option, off-site catering/wedding, equipment hire-out, venue-only statement, or weddings-per-year figure
+binnaburralodge.com.au	unit		A3	group	0			whole Scope A-wedding	no directory, review platform, social-booking, planner or fair channel named in wedding scope; no third-party-only statement

@@ -1,0 +1,32 @@
+V21_instant_book	-	0	
+V21_online_request	-	0	
+V21_enquiry_form	-	0	
+V21_form_fields_verbatim	-	8	## Unclear if there is an enquiry form; no specific fields mentioned.
+V21_email	-	1	# Please note this is an enquiry, your booking needs to be confirmed
+V21_phone	-	1	433:Tours run at 11am Wednesday to Friday, bookings are essential (5543 6622)
+V21_messaging	-	0	
+V21_pack_request	-	0	
+V21_third_party	-	0	
+V21_calendar_shown	-	0	
+V21_pdf_form	-	0	
+
+NOTE V21_form_fields_verbatim	Unclear if there is an enquiry form; no specific fields mentioned.
+
+V21_lowest_friction	-	form
+
+V22_private_tour	-	1	433:Tours run at 11am Wednesday to Friday, bookings are essential (5543 6622)
+V22_tour_by_appointment	-	1	420:Monday & Tuesday by appointment (minimum numbers apply
+V22_tour_booking_route	-	email	433:Tours run at 11am Wednesday to Friday, bookings are essential (5543 6622)
+V22_tour_days_times_verbatim	-	Monday & Tuesday by appointment (minimum numbers apply; Tours run at 11am Wednesday to Friday
+V22_tour_charged	-	0	
+V22_open_day	-	0	
+V22_open_day_dates_verbatim	-	8	## No specific open day dates mentioned.
+V22_open_day_registration	-	0	
+V22_wedding_fair_attendance	-	0	
+V22_styled_shoot_event	-	0	
+V22_virtual_tour_offered	-	0	
+V22_video_call_offered	-	0	
+V22_tour_required_before_booking	-	0	
+V22_no_tour_stated	-	0	
+
+NOTE V22_open_day_dates_verbatim	No specific open day dates mentioned.

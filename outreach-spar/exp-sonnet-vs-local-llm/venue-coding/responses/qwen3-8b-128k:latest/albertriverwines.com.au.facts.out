@@ -1,0 +1,24 @@
+V6_value	3
+V6_quote	PACKAGE DETAILS * 32 Ceremony Chairs * Pre dinner fruit and cheese platter * Vintage soft drink station * 2 course alternate drop menu * Wedding cake served on platters * $600 bar tab * Wet weather options
+AMOUNT	$600	<bar tab>	<none>
+AMOUNT	$1000	<bar tab>	<none>
+AMOUNT	$200	<bridal bar tab>	<4 person minimum>
+AMOUNT	$30	<shipping per dozen bottles>	<minimum shipment is 1 dozen>
+V4_max_band	4
+V4_quote	### Capacity 150 guests
+OFFER	Sunlight Elopement
+OFFER	Country Celebration (Micro-package)
+OFFER	Cocktail
+OFFER	Elegant Affair
+OFFER	Create Your Own
+OFFER	Ceremony & Pre dinner
+OFFER	Reception
+OFFER	Auchenflower Ballroom
+OFFER	Historic Chapel
+OFFER	Chapel Garden
+OFFER	The fig tree
+OFFER	Vineyard Deck
+V21_routes	none stated
+V22_tour	by_appointment
+V28_response_promise	not stated
+V9_deposit	0	V9_quote	

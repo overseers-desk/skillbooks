@@ -1,0 +1,36 @@
+FIELD	ENTITY	VALUE	QUOTE
+V21_instant_book	-	0	
+V21_online_request	-	0	
+V21_enquiry_form	-	0	
+V21_form_fields_verbatim	-	
+V21_email	-	1	Get in touch with us with your information, and we will quickly get back to you!
+V21_phone	-	0	
+V21_messaging	-	0	
+V21_pack_request	-	0	
+V21_third_party	-	0	
+V21_calendar_shown	-	1	Check if your desired dates are available on our calendar and get in touch to organise a viewing.
+V21_pdf_form	-	0	
+
+AMOUNT	-	-	-
+
+FIELD	ENTITY	VALUE	QUOTE
+V22_private_tour	-	1	
+V22_tour_by_appointment	-	0	
+V22_tour_booking_route	-	email	
+V22_tour_days_times_verbatim	-	
+V22_tour_charged	-	0	
+V22_open_day	-	0	
+V22_open_day_dates_verbatim	-	
+V22_open_day_registration	-	0	
+V22_wedding_fair_attendance	-	0	
+V22_styled_shoot_event	-	1	
+V22_virtual_tour_offered	-	0	
+V22_video_call_offered	-	0	
+V22_tour_required_before_booking	-	0	
+V22_no_tour_stated	-	0	
+
+AMOUNT	-	-	-
+
+NOTE	V21_form_fields_verbatim	The form fields are not listed verbatim.
+NOTE	V21_lowest_friction	form
+NOTE	V22_tour_days_times_verbatim	The days or times for tours are not stated.

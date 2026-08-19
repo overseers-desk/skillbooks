@@ -1,0 +1,14 @@
+FIELD	ENTITY	VALUE	QUOTE
+V6	-	8	
+NOTE	V6	No clear price is published as a number for the venue, but there are per-guest catering figures which do not qualify as wedding prices.
+AMOUNT	$99	per guest	catering figure verbatim
+V8_unit	per_head	catering figure unit
+V8_buys	Wagyu Beef Sirloin — from the plated wedding menu	what the figure buys
+V8_condition	Sold Out	condition attached to the figure
+V8_tax_statement	incl. GST	tax statement
+V8_status	range end	status of the figure as a range end
+V8_source_location	page 186, page 254, page 307, page 935, page 1003, page 1056	source location of the figure
+V8_set_by	venue	set by the venue
+FIELD	ENTITY	V6_catering_only	VALUE	QUOTE
+V6	-	1	
+AMOUNT	$99	per guest	catering figure verbatim

@@ -1,0 +1,282 @@
+You are a content-analysis coder. Below is one section of a frozen codebook, then numbered excerpt lines from one wedding venue website capture (line format NUMBER:TEXT; ## PAGE lines mark page boundaries and their URLs).
+
+Apply ONLY the variables defined in this codebook section, exactly as its rules state. Text-only coding: no inference, no arithmetic, no outside knowledge. Silence is 0. Unclear text is 8. Output ONLY tab-separated lines, one per coded field, format:
+FIELD	ENTITY	VALUE	QUOTE
+ENTITY is the offer or package name the field belongs to, or - for venue-level. VALUE per the section (1, 8, a band number, or verbatim for *_verbatim fields; omit 0 fields entirely). QUOTE is the deciding passage copied exactly from an excerpt line, or empty after the tab for value 8 explained in a trailing note line NOTE	<field>	<why>. For every monetary figure output also a line:
+AMOUNT	<figure exactly as written>	<what it buys>	<conditions>
+No prose, no explanation, no markdown.
+
+=== CODEBOOK SECTION ===
+## 5. Price shape
+
+### 5.1 V6 — Price visibility
+
+**Level:** wedding-offer row. **Scope:** A-wedding / B-listing.
+
+**Definition.** V6 records whether a price for the row is published as a number a couple can read without asking. The variable is ordinal; apply the tests in order from 5 downward and take the first that passes.
+
+| Code | Label |
+|---|---|
+| 5 | A complete price is published as a number for the row: a package price, a site fee, or a per-head figure that the text states is the price of this offer |
+| 4 | Prices are published as numbers only in banded, tiered, seasonal, day-conditional or guest-count form, with no single figure for the row |
+| 3 | A from-price, a starting-price, an indicative price, a "typically" price, an average-spend statement, or a price range is published |
+| 2 | No number, but a price route is stated: on enquiry, on application, request our pricing guide, download the brochure, prices on request, tailored to your day |
+| 1 | No number and no price route: the offer is described and money is never mentioned |
+| 0 | No price and no text bearing on price at all |
+| 8 | Undecidable |
+| 9 | Scope not captured |
+
+**Inclusion.** I1: a number in a price panel, a rate table, a bullet, a heading, a package card, or an enquiry widget passes tests 5 or 4. I2: a price published as text inside an image is a published price (S1). I3: a price inside an in-scope downloadable brochure or pricing guide passes the same tests as an on-page price, with `V6_source` = "document". I4: a platform's structured price-range field passes test 3 at most, with `V6_set_by` = "platform", unless the field states a single figure for a named package, which passes at its own level. I5: a price-band symbol set published by a platform, such as a row of currency symbols, passes test 3 with the symbols recorded verbatim and nothing inferred about their monetary meaning.
+
+**Exclusion.** E1: a deposit, bond, booking fee or cancellation charge alone is not a wedding price; it passes no test above 2 on its own and is recorded at V9. E2: a minimum spend alone passes test 5 only where the text states the minimum spend **is** the commercial term in place of a hire fee; otherwise it is recorded at V9 and the row is coded by the remaining tests. This is the one place where a minimum spend can be a price, and the text must say so. E3: a per-head catering figure published with no statement that it prices this offer passes no test above 3; record at V8 and set `V6_catering_only` = 1. E4: a price for an add-on only passes test 3 at most, with `V6_addon_only` = 1. E5: a price behind a login, an account, an enquiry form, a brochure request, a mailing-list sign-up or a payment step is **not published**; the correct code is 2 where a route is stated. A coder who attempted access has committed a protocol breach and it is logged. E6: a price stated in prose with no numeral ("most couples spend a few thousand") passes test 2. E7: a price published for a non-wedding function on the same page sets nothing for a wedding row (S8); record it.
+
+**Ambiguous cases.**
+
+- "The Barn Package \$14,500" → **5**.
+- "Saturday \$16,000, Friday \$13,000, Sunday \$11,000" → **4**, three PCRs.
+- "Weddings from \$135 per person" → **3**.
+- "Download our 2027 pricing guide" behind an email field → **2**, the wall recorded under §13.2.
+- "Minimum spend \$20,000 on a Saturday; no venue hire fee" → **5**, `V9_min_spend` = 1 and `pcr_fee_waived_condition` = 1, because the text states the minimum spend is the commercial term in place of a fee (E2).
+- A directory field reading "\$\$\$" with no figures → **3**, symbols recorded verbatim, `V6_set_by` = "platform", and no monetary meaning assigned.
+
+**Fields recorded alongside V6.** `V6_value`; `V6_source`; `V6_set_by`; `V6_addon_only`; `V6_catering_only`; `V6_quote` (the deciding passage verbatim).
+
+### 5.2 V7 — Price basis
+
+**Level:** PCR. **Scope:** A-wedding / B-listing.
+
+**Definition.** V7 records the unit against which the configuration's price is expressed. Independent fields, each 1/0/8/9, because this market commonly states two or three at once. The variable is coded whenever any price statement exists, including where V6 is 2 or 3, because a stated basis without a number is still a stated basis.
+
+| Field | Basis | Counts when a price is expressed |
+|---|---|---|
+| `V7_package_total` | A total for the offer | A package price, a wedding price, a price for the day, per wedding, per booking |
+| `V7_per_head` | Per head | Per person, per guest, per head, pp, per adult |
+| `V7_per_head_child` | Per head, child or supplier rate | A separate per-head figure for children, teenagers, suppliers or vendors |
+| `V7_site_fee` | Venue or site fee | Venue hire, site fee, hire fee, facility fee, a figure for the space itself |
+| `V7_ceremony_fee` | Ceremony fee | A figure stated for the ceremony, the ceremony space, or ceremony setup |
+| `V7_min_spend` | Minimum spend | A stated total the couple must spend, on food, beverage, or overall |
+| `V7_min_guests_charged` | Minimum headcount charged | A minimum guest number charged at a per-head rate regardless of attendance |
+| `V7_per_hour` | Per hour | Per hour, hourly, or a rate for additional hours |
+| `V7_per_night` | Per night | Where the offer includes accommodation or site occupancy charged nightly |
+| `V7_tier_day` | Tiered by day | Different figures for Saturday, Friday, Sunday, midweek, or public holidays |
+| `V7_tier_season` | Tiered by season | Different figures by month, by peak, shoulder and off-peak, or by a named season |
+| `V7_tier_headcount` | Tiered by headcount | Different figures against different guest numbers |
+| `V7_tier_year` | Tiered by year of the wedding | Different figures for different wedding years |
+| `V7_per_extra_guest` | Per additional guest | A rate for each guest above a stated included number |
+| `V7_per_extra_hour` | Per additional hour | A rate for time beyond the stated block |
+| `V7_addon_priced` | Add-ons priced separately | Any element carrying its own number at V12 status 3 |
+| `V7_fee_waived` | Fee waived on a condition | A site fee, ceremony fee or hire fee stated to be reduced or removed where another threshold is met |
+| `V7_commission_or_percentage` | A percentage term | A service charge, administration percentage, or a percentage of spend |
+
+**Inclusion.** I1: the basis word appears attached to a number in the same sentence, table row, or column heading. I2: a basis stated without a number is coded 1: "charged per person, menus on request" sets `V7_per_head` = 1 while V6 is 2. I3: "\$8,000 venue hire plus \$120 per person" sets `V7_site_fee` = 1 and `V7_per_head` = 1 on the same PCR, and V8 records two figures. I4: a stated tiering with no figures is still a stated basis and sets its tier field. I5: a platform's structured basis label sets its field with `V7_set_by` = "platform".
+
+**Exclusion.** E1: a deposit's or bond's basis is not the offer's basis. E2: a menu's per-head price is not the offer's basis unless the text states the offer is charged that way; the figure is still recorded at V8. E3: the coder never derives a basis from a figure's size or roundness. E4: a currency symbol with no basis word and no table position sets every field 0, and the amount is still recorded at V8 with unit `not_stated`. E5: the coder never sets `V7_package_total` from a site fee and a per-head figure, nor a per-head figure from a package total and a guest count (S4, S10). E6: a label sets nothing (S9): "all-inclusive" does not set `V7_package_total`.
+
+**Ambiguous cases.**
+
+- "\$150pp, minimum 80 guests" → `V7_per_head` = 1, `V7_min_guests_charged` = **1**.
+- "\$6,500 venue hire; catering by our approved caterers, priced by them" → `V7_site_fee` = **1**, `V7_per_head` = 0, and V13 codes the food block as third-party.
+- "Venue hire waived with a \$25,000 minimum spend" → `V7_min_spend` = 1, `V7_fee_waived` = **1**, condition verbatim.
+- "Peak season Saturdays attract a premium" with no figures → `V7_tier_season` = 1, `V7_tier_day` = **1**.
+- "Children under 12 half price" → `V7_per_head_child` = **1**, wording verbatim, and no figure computed.
+- "2027 packages from \$18,000; 2028 pricing released in March" → `V7_tier_year` = **1**, and the 2028 statement recorded with no figure.
+
+### 5.3 V8 — Published amount records
+
+**Level:** amount rows inside a PCR, or at row level where the figure attaches to no configuration. **Scope:** A-wedding / B-listing.
+
+**Definition.** V8 is the structured record of **every monetary figure** in the row's scope. It is the study's primary price evidence and the field an analyst uses to place one venue's price beside another's. Each figure is one record.
+
+| Field | Content |
+|---|---|
+| `V8_amount_verbatim` | The figure exactly as published, with its symbol, separators, decimals, and any attached word: "\$14,500", "\$135pp", "from \$9,000 + GST" |
+| `V8_currency_verbatim` | The currency symbol or code exactly as published |
+| `V8_currency_resolved` | The ISO currency code **only** where the scope itself states it; otherwise "AMBIGUOUS". A coder never resolves a bare symbol from the venue's country |
+| `V8_unit` | One closed value: `package_total`, `per_head`, `per_head_child`, `per_head_supplier`, `site_fee`, `ceremony_fee`, `min_spend`, `per_hour`, `per_night`, `per_room_night`, `per_extra_guest`, `per_extra_hour`, `deposit`, `bond`, `cleaning_fee`, `security_fee`, `staffing_fee`, `corkage`, `cakeage`, `service_charge`, `surcharge`, `booking_fee`, `card_fee`, `cancellation`, `addon`, `catering`, `beverage`, `styling`, `coordination`, `accommodation`, `supplier_fee`, `percentage`, `not_stated` |
+| `V8_buys` | What the figure buys, verbatim from the text |
+| `V8_condition` | Every condition attached, verbatim: day, season, year, guest band, time block, minimum, exclusivity, membership |
+| `V8_tax_statement` | Any statement about tax, GST, VAT, or inclusiveness, verbatim; blank where none |
+| `V8_status` | Firm price, from-price, range end, indicative, average, discount, historic, waived, taken from the text's own word |
+| `V8_pcr_id` | The configuration the figure attaches to, or blank where it attaches to none |
+| `V8_source_location` | Where in the scope the figure sits, including the document filename where it came from an in-scope document |
+| `V8_set_by` | `venue`, `platform`, or `third_party`, taken from what the text states about who charges it |
+
+**Rules.**
+
+R1. **Every** figure in scope is recorded, including ones the coder judges irrelevant. Selection is an analytical act, not a coding one.
+
+R2. **No arithmetic (S4, S10).** The coder never totals, never divides, never applies a discount, never adds tax, never multiplies a per-head figure by a guest number. A total the venue itself publishes is its own record; a total the coder would have to compute is never recorded.
+
+R3. **No conversion (S4).** `V8_currency_resolved` is "AMBIGUOUS" wherever the scope does not itself state the currency, and a bare dollar sign is ambiguous however obvious the country is.
+
+R4. A range is two records, one per end, each with `V8_status` = "range end", linked by a shared `V8_range_id`.
+
+R5. Where the same figure appears twice in scope, it is recorded once with both locations listed. Where two different figures are published for the same thing, both are recorded and `V8_conflict` = 1. A page and a brochure that disagree are the common case, and the coder picks neither, dates neither, and never prefers the one that looks newer, because the study measures what the couple is told and the couple is told both.
+
+R6. A figure the text states is waived, removed or credited is recorded as published with `V8_status` = "waived" and the condition in `V8_condition`. The base figure is never adjusted.
+
+R7. A figure a third party is stated to charge — a celebrant, a preferred caterer, a registry fee — is recorded with `V8_set_by` = "third_party" and never merged with the venue's own figures.
+
+**Ambiguous cases.**
+
+- "Saturday \$18,000, Friday \$15,000, Sunday \$12,000" → three records, unit `package_total`, conditions verbatim, each on its own PCR.
+- "\$135 per person + GST" → one record, unit `per_head`, tax statement "+ GST". The coder does not compute the inclusive figure.
+- "Venue hire \$7,500 and catering from \$110pp" → two records, units `site_fee` and `per_head`, both on the same PCR, and no total.
+- "Packages \$12,000–\$22,000" → two records, both `V8_status` = "range end", shared range id.
+- "Celebrant fees, paid direct, are typically \$800" → one record, `V8_set_by` = "third_party", status "indicative".
+- "Was \$16,000, now \$13,500 for remaining 2027 dates" → two records, the first status "historic", the second "firm", both verbatim with the condition.
+
+
+=== VENUE EXCERPTS (binnaburralodge.com.au) ===
+68:For more than two years, different options were considered on how to raise the necessary capital (initially estimated at about $20 million) for such a rebuild. On 21 June 2022, the 51st Treasurer of the Queensland announced in the State budget a grant of $18 million to Binna Burra to rebuild a lodge and accommodation. The initial concepts for about $20 million will be scaled back to fit the $18 million grant.
+69-
+70-##### 2. Where can I see the proposed design of the new lodge and accommodation?
+--
+82:##### 4. Is $18 million enough to build the new lodge and accommodation?
+83-
+84:Initial lodge and accommodation designs, were based on shareholder and stakeholder feedback and had to be prepared as part of some major funding opportunities Binna Burra has pursued since the 2019 bushfire devastation. For the current concepts, $18 million is less than the Quantity Surveyor’s figure of $20.5 million, however the $18 million announced by the Treasurer is $18 million more than Binna Burra had before the June 2022 announcement! The Binna Burra Board has decided not to enter into additional debt to raise the extra $2.5 million, but rather scale the Lodge design or number of cabins to fit within the $18 million. However increasing building costs meant further construction funding was needed and in. early 2025 Carolyn Vincent’s Ubuntu Foundation kindly donated $1 million towards the building costs. The State Government funds do not include furniture, fixtures, and equipment (FF&E) which is estimated to cost between $600,000 and $1 million. In 2024/2025 the Board opened a new share offer (‘Offer Information Statement’ – OIS) to raise funds towards the necessary FF&E. Further funding will be needed to complete the FF&E as well as over $100,000 for the landscaping.
+85-
+86-##### 5. Why should a private enterprise company like Binna Burra Lodge Ltd get taxpayers money to rebuild their lodge?
+--
+158:Both the 2008 and current 2022 master plans for Binna Burra have a welcome/reception building in the ‘saddle’ area. The welcome building has been designed to cater for office staff – Senior Management, Finance, Marketing, Reception, Activities etc. The concept is to remove the previous congestion at the Lodge and current congestion at the Teahouse, by having this Welcome Building in the ‘saddle’ – on the left as you enter the Binna Burra Cultural Landscape. As guests arrive they will go to reception in the Welcome Building to check in and then drive to their accommodation (Lodge, Sky Lodges, Tiny Houses, Campground Hill etc), park their car and hopefully then walk around for the duration of their stay. Binna Burra was awarded a $2 million Commonwealth Government grant to build the welcome building and ‘back of house’ (housekeeping and maintenance shed) below the Barn. They were completed and operational in 2024.
+159-
+160-##### 21. What happens to guest activities?
+--
+176:| **June 2022** | Treasurer announces potential funding support of $18M, BBL apply for RTRP Grant | 
+177-| **Jul – Sep 2022** | Lodge Design Committee (LDC) progresses designs | 
+178-| **Oct 2022 – Jan 2023** | Feedback on two-level Lodge design from shareholders/stakeholders | 
+179:| **Nov 2022** | DTIS approve RTRP Grant of $18M, Agreement signed in Feb 2023 | 
+180-| **Feb – May 2023** | LDC refines design and materials to be as cost-effective as possible | 
+181:| **Jun – Jul 2023** | LDC advises BBL Board that the cost of the current design is still $2.5-$3M more than Grant funds BBL Board considers borrowing extra funds and decides to stay within grant funds for construction BBL Board agrees with LDC proposal to reduce Lodge to one level and keep 30 accommodation rooms | 
+182-| **Aug – Sep 2023** | Feedback on one-level Lodge design from shareholders/stakeholders | 
+183-| **Sep – Oct 2023** | Detailed documentation | 
+--
+408:Booking detailsArrival date:Departure date:Nights:Guests:* 2A Adults:Children (5-12):Infants (0-4): Promotional code:FeaturesBalconyBathroomBBQBoard GamesBunk BedsCook TopDining AreaDishwasherFireplaceFree Parking (short walk)Full KitchenLaundry FacilitiesLinen ProvidedLounge RoomMicrowaveNo Smoking PermittedSofa BedSpa BathStoveTVWheelchair Accessible Show hot deals InformationLoading availabilityAll prices shown are in AUD (Australian Dollars). Powered by Newbook
+409-
+410-
+--
+654:We’re always striving to offer the most competitive prices – therefore nightly rates can vary throughout the year and throughout the days of the week. Generally by booking further into the future, and on days which are less popular you’ll secure our lowest pricing.
+655-
+656-##### When is check in and check out?
+--
+666:Our booking website features 100% of our live availability. We’d recommend booking online to take advantage of our best prices and promotions.
+667-
+668-##### Can I order breakfast and BBQ packs?
+--
+715:*A small number of Safari Tents currently feature their own private fire pits. These tents (88, 90, 91, 97, 98) may be specifically requested for an additional $20 per night.*
+716-
+717-*Fires would not be permitted during a Total Fire Ban, and may be prohibited at the discretion of Binna Burra Management.*
+--
+747:##### Does the safari tent price include linen?
+748-
+749:No. Safari Tents advertised price does not include linen. You should bring your own bedding, pillows and towels. You can hire linen packs from us for either double or single beds. These include sheets, blankets, pillows and towels. You can add these as a booking add-on at the time of booking on our website, or by managing your reservation online through the link in your confirmation email.
+750-
+751-##### Do the Safari Tents have heating / power?
+--
+793:We constantly strive to offer the most competitive prices possible. As such, the cost of staying per night may vary throughout the year and on different days of the week. We recommend booking well in advance and choosing less popular days to secure the best value for your stay. Our team is always available to provide you with a personalized quote and to answer any questions you may have regarding our rates.
+794-
+795-##### Is there a fireplace in the room?
+--
+851:We constantly strive to offer the most competitive prices possible. As such, the cost of staying per night may vary throughout the year and on different days of the week. We recommend booking well in advance and choosing less popular days to secure the best value for your stay. Our team is always available to provide you with a personalized quote and to answer any questions you may have regarding our rates.
+852-
+853-##### Is your accommodation wheelchair accessible?
+--
+917:Make sure to come prepared for a full day of walking with essentials like food, water, sunscreen, and basic first aid. If needed, additional transfers are available upon request (minimum 3 passengers, $70 per seat). For more details, contact our front desk team at Binna Burra Lodge at 07 5533 3622 or email [email protected]. Enjoy your adventure!
+918-
+919-**For up-to-date information on walking tracks, track standards and closures visit the Queensland Parks & Forests website for Lamington National Park.**
+--
+1087:**For two people – $48**
+1088-
+1089-4 x chipolatas sausages
+--
+1109:**For two people – $60**
+1110-
+1111-2 x minute steaks
+--
+1129:**For two people (Vegan) – $52**
+1130-
+1131-2 x beetroot and quinoa patties
+--
+2044:Booking detailsArrival date:Departure date:Nights:Guests:* 2A Adults:Children (5-12):Infants (0-4): Promotional code:FeaturesBalconyBathroomBBQBoard GamesBunk BedsCook TopDining AreaDishwasherFireplaceFree Parking (short walk)Full KitchenLaundry FacilitiesLinen ProvidedLounge RoomMicrowaveNo Smoking PermittedSofa BedSpa BathStoveTVWheelchair Accessible Show hot deals InformationLoading availabilityAll prices shown are in AUD (Australian Dollars). Powered by Newbook
+2045-
+2046-
+--
+2265:The multi-million-dollar project kickstarted with a $1.6 million grant from the Queensland Government.
+2266-
+2267-The adventure experience begins with The Arete Via Ferrata Climb where guests step over the edge for a breathtaking ascent across an 80-metre bridge, moving through tightropes and timber crossings suspended high above the valley. From there, they launch into Total Exposure, the park’s longest and highest zipline, gliding 200 metres above Lamington National Park. Next, thrill-seekers take on The Overhang Zipline Course, soaring past waterfalls and rugged cliff faces, before concluding with The Edge Park Explorer, a chance to slow down, wander shaded bush trails, dip into crystal-clear natural pools and take in sweeping views from a 12-metre cantilevered platform suspended 400 metres above the valley floor.
+--
+2347:Sponsorship (in perpetuity and including all four paintings) of up to $15,000 is available from one or more individual or organisations who share the common interest of landscape art and the historical and heritage values represented since 1933 by Binna Burra Lodge and the Binna Burra Cultural Landscape. If you know someone who may be interested, please contact Steve Noakes on email: [email protected]
+2348-
+2349-**About the artist, Dave Groom[1]:**
+--
+2653:Reference: Jarrott, K. (1990) History of Lamington National Park, J.K. Jarrott and the National Parks Association of Queensland (pp 30).
+2654-
+2655-
+--
+3068:Original price was: $99.00.$69.00Current price is: $69.00.
+3069-
+3070-- Black and White
+--
+3095:$35.00
+3096-
+3097-Richard Groom, the youngest son of Arthur Groom (co-founder of Binna Burra Lodge and the National Parks Association of Queensland) grew up at Binna Burra. Richard’s book, The View Through the Windscreen, provides a unique insight into the history of Binna Burra and the pioneering men and women who created a Lodge on the edge of Lamington National Park. It is also a story of personal love and loss, of success and failure, of fortune and fire.
+--
+3113:$0.00
+3114-
+3115-A free, low resolution PDF copy of Where The Beech Trees Grow – The Story of Binna Burra.
+--
+3146:$40.00
+3147-
+3148-Discover the richness of the mountain forests through the playful, diverse and beautiful pages of Paula’s nature journal.
+--
+3177:$35.00
+3178-
+3179-Take this book for a walk and discover your own personal response to nature. The journey begins with nature, a pencil, a page and you. But so many treasures await! Slow down and observe nature, and feel yourself becoming calmer and more connected to place. Think analytically to explore how nature works, and fire up your curiosity to learn more. Use your imagination to view the world from a bug’s perspective, to dream up stories, and to reflect on your own memories. Explore your creativity by using colours, shapes and lines to respond to what you see and hear. A nature journal is your conversation with nature. Enjoy! Paula Peters is an artist, writer, ecologist and teacher. See more of her work at www.paperbarkwriter.com
+--
+3205:$3.00
+3206-
+3207-Rainforest Circuit Map and Guide – Lamington National Park Maps
+--
+3225:$3.00
+3226-
+3227-Tullawallal Circuit Map and Guide – Lamington National Park Maps.
+--
+3261:$3.00
+3262-
+3263-Upper Ballanjui Track Map and Guide – Lamington National Park Maps
+--
+3281:$3.00
+3282-
+3283-Coomera Falls Lookout Map and Guide – Lamington National Park Maps
+--
+3316:Payment Plans only apply to selected Accommodation Types at Binna Burra. A transaction fee of $2 per payment instalment applies.
+3317-
+3318-Payment Plans will be available (unless otherwise stated) to any booking that is:
+--
+3321:- Valued at $300 or more;
+3322-- Paid for by Direct Deposit or Visa / Mastercard;
+3323-
+--
+3381:- You will be liable for the total price of the Booking as at the time of booking (i.e. the day of purchase). Any discounts, promotions or other changes to the tariffs advertised by Binna Burra Lodge will not apply to the cost of your Booking retrospectively.
+3382-- You are allowed to make additional payments in instalments during the Payment Plan Period, however, this will not necessarily change the payment plan debits unless the entire amount is paid. If you are unsure when the debit will be processed to your credit card, you should ask your financial institution. You must ensure that there are sufficient funds available on your credit card so that the debit is successful.
+3383-- If your credit card payment is declined is unsuccessful, we will use reasonable endeavours to notify you that an amount is overdue. If the amount outstanding is not immediately paid, Binna Burra will reattempt the debit of your credit card again after 3 business days.
+--
+3396:Booking detailsArrival date:Departure date:Nights:Guests:* 2A Adults:Children (5-12):Infants (0-4): Promotional code:FeaturesBalconyBathroomBBQBoard GamesBunk BedsCook TopDining AreaDishwasherFireplaceFree Parking (short walk)Full KitchenLaundry FacilitiesLinen ProvidedLounge RoomMicrowaveNo Smoking PermittedSofa BedSpa BathStoveTVWheelchair Accessible Show hot deals InformationLoading availabilityAll prices shown are in AUD (Australian Dollars). Powered by Newbook
+3397-
+3398-
+--
+3401:Booking detailsArrival date:Departure date:Nights:Guests:* 2A Adults:Children (5-12):Infants (0-4): Promotional code:FeaturesBalconyBathroomBBQBoard GamesBunk BedsCook TopDining AreaDishwasherFireplaceFree Parking (short walk)Full KitchenLaundry FacilitiesLinen ProvidedLounge RoomMicrowaveNo Smoking PermittedSofa BedSpa BathStoveTVWheelchair Accessible Show hot deals InformationLoading availabilityAll prices shown are in AUD (Australian Dollars). Powered by Newbook
+3402-
+3403-
+--
+3445:Booking detailsArrival date:Departure date:Nights:Guests:* 2A Adults:Children (5-12):Infants (0-4): Promotional code:FeaturesBalconyBathroomBBQBoard GamesBunk BedsCook TopDining AreaDishwasherFireplaceFree Parking (short walk)Full KitchenLaundry FacilitiesLinen ProvidedLounge RoomMicrowaveNo Smoking PermittedSofa BedSpa BathStoveTVWheelchair Accessible Show hot deals InformationLoading availabilityAll prices shown are in AUD (Australian Dollars). Powered by Newbook
+3446-
+3447-
+--
+3450:Booking detailsArrival date:Departure date:Nights:Guests:* 2A Adults:Children (5-12):Infants (0-4): Promotional code:FeaturesBalconyBathroomBBQBoard GamesBunk BedsCook TopDining AreaDishwasherFireplaceFree Parking (short walk)Full KitchenLaundry FacilitiesLinen ProvidedLounge RoomMicrowaveNo Smoking PermittedSofa BedSpa BathStoveTVWheelchair Accessible Show hot deals InformationLoading availabilityAll prices shown are in AUD (Australian Dollars). Powered by Newbook
+3451-
+3452-
+--
+3455:Booking detailsArrival date:Departure date:Nights:Guests:* 2A Adults:Children (5-12):Infants (0-4): Promotional code:FeaturesBalconyBathroomBBQBoard GamesBunk BedsCook TopDining AreaDishwasherFireplaceFree Parking (short walk)Full KitchenLaundry FacilitiesLinen ProvidedLounge RoomMicrowaveNo Smoking PermittedSofa BedSpa BathStoveTVWheelchair Accessible Show hot deals InformationLoading availabilityAll prices shown are in AUD (Australian Dollars). Powered by Newbook
+
+=== OUTPUT ===

@@ -1,0 +1,31 @@
+V6_value	4	the deciding passage copied exactly: "We have a variety of wedding packages to suit all budgets and sizing for your big day!"
+AMOUNT	$13,950	40 – 60 guests package (Sun-Fri) · $14,950 (Sat)	catering and drinks not included
+AMOUNT	$14,950	60 – 80 guests package (Sun-Fri)	catering and drinks not included
+AMOUNT	$15,950	80 – 100 guests package (Sun-Fri)	catering and drinks not included
+AMOUNT	$16,950	100 – 120 guests package (Sun-Fri)	catering and drinks not included
+AMOUNT	$17,950	120 – 150 guests package (Sun-Fri)	catering and drinks not included
+AMOUNT	$18,950	120 – 150 guests package (Sat)	catering and drinks not included
+AMOUNT	$7,950	Intimate Wedding Package	includes full wedding experience with closest guests for an affordable price; catering and drinks not included
+AMOUNT	$4,950	Summer Special Package	January and February 2027 pricing; save $3,000 compared to usual Intimate Wedding Package; catering and drinks not included
+AMOUNT	$11,950	Single Kata Tipi for up to 50 guests	catering and drinks not included
+AMOUNT	$14,450	Double Kata Tipi for up to 100 guests	catering and drinks not included
+AMOUNT	$16,450	Triple Kata Tipi for up to 150 guests	catering and drinks not included
+AMOUNT	$13,950	The 8x12m marquee with fairy lights (clear or white roof) seating up to 60 guests	catering and drinks not included
+AMOUNT	$15,950	The 10x15m marquee with fairy lights (clear or white roof) seating up to 100 guests	catering and drinks not included
+AMOUNT	$17,950	The 10x21m marquee with fairy lights (clear or white roof) seating up to 150 guests	catering and drinks not included
+V4_max_band	4
+V4_quote	depending on the size and style of your wedding, you can choose the package that suits you best!
+OFFER	The Lake House Wedding Package
+OFFER	Intimate Wedding Package
+OFFER	Summer Special Package
+OFFER	Mid Week Elopement Package
+OFFER	Single Tipi Packages
+OFFER	Double Tipi Packages
+OFFER	Triple Tipi Packages
+OFFER	Small Pavilion Marquee
+OFFER	Pavilion Marquee
+OFFER	Premium Pavilion Marquee
+V21_routes	email,pack_request
+V22_tour	by_appointment
+V28_response_promise	not stated
+V9_deposit	0

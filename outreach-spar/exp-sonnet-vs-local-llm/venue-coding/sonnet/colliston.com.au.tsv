@@ -1,0 +1,108 @@
+#TABLE venues
+venue_key	unit_id	collection_type	domain	venue_name_verbatim	md_file	md_sha256	capture_date	capture_time	capture_agent	capture_method	page_language	stored_copy	viewport	slice_pages_total	slice_pages_wedding	slice_pages_venue	slice_pages_dropped	slice_truncated	scope_a_wedding_present	screening_decision	screening_flags	search_record	access_wall	offer_row_count	pcr_count	amount_count	doc_count	code_row_count	codebook_version	coder_model	coder_run_id	coded_at	duration_ms	total_cost_usd	notes
+colliston.com.au			A	colliston.com.au	Colliston Farm								en						1	enter	none	Single page captured; wedding trigger words (Weddings, Ceremony, Packages, Elopements) present in body heading and text; whole domain is one page, no further navigation search required.	None identified in visible text; frontmatter records brochure_links=1 but no visible link label or document reference appears in the captured body text, so no document is registered at A4.	1	1	0	0	91	1.0								Page opens with a dated (June 2026) notice pausing wedding enquiries and bookings pending regulatory approvals, then later states "Bookings are now available for 2026 and beyond." The two statements conflict; both are recorded verbatim at V23 with value 8 and neither is reconciled by the coder (S3, S5).
+
+#TABLE offers
+venue_key	offer_id	offer_seq	offer_name_verbatim	offer_delimited	offer_kind	offer_source_location	offer_shared_with_events	source_url	note
+colliston.com.au	colliston.com.au-1	1	Colliston Farm	1	package	2026 Packages section	1	https://colliston.com.au	Single named package under the "2026 Packages" heading; the page also lists proposals, engagements and functions/retreats as occasions the venue serves.
+
+#TABLE pcrs
+venue_key	offer_id	pcr_id	pcr_seq	pcr_priced	pcr_basis_verbatim	pcr_mode_label_verbatim	pcr_day_condition_verbatim	pcr_season_condition_verbatim	pcr_headcount_condition_verbatim	pcr_time_block_verbatim	pcr_validity_verbatim	pcr_fee_waived_condition	pcr_fee_waived_verbatim	pcr_total_claim	source_url	pcr_notes
+colliston.com.au	colliston.com.au-1	colliston.com.au-1-1	1	0		venue hire-only		Min 3 / Max 100 Ceremony Guests	Extended hire time for setup and pack-down flexibility		0		0	https://colliston.com.au	No monetary figure of any kind is published in scope; every V8 amount and V6 test above 2 therefore fails.
+
+#TABLE amounts
+venue_key	offer_id	pcr_id	amount_id	V8_amount_verbatim	V8_currency_verbatim	V8_currency_resolved	V8_unit	V8_buys	V8_condition	V8_tax_statement	V8_status	V8_range_id	V8_conflict	V8_source_location	V8_set_by	source_url	note
+
+#TABLE codes
+venue_key	level	entity_id	variable	field	value	quote	source_url	source_location	note
+colliston.com.au	page	p1	capture	page_scope	wedding		https://colliston.com.au		Body contains wedding trigger words (Weddings, Ceremony, Packages, Elopements) throughout; matches the bracket tag.
+colliston.com.au	group		V3	V3	0		https://colliston.com.au	whole scope	No layout term (rounds, long tables, cocktail, theatre, flexible-layout claim) is stated anywhere in scope.
+colliston.com.au	group		V7	V7	0		https://colliston.com.au	whole scope	No monetary figure of any kind is published, so no basis word can attach to one.
+colliston.com.au	group		V10	V10	0		https://colliston.com.au	whole scope	No day, season or year price band is stated; no prices are published at all.
+colliston.com.au	group		V18	V18	0		https://colliston.com.au	whole scope	No statement of any kind about on-site accommodation appears in scope.
+colliston.com.au	group		V25	V25	0		https://colliston.com.au	whole scope	No price appears anywhere in scope, so the price-placement ordinal is not stated.
+colliston.com.au	group		V26	V26	0		https://colliston.com.au	whole scope	No image, gallery, video, floor plan, dimension or capacity-chart reference appears in the captured markdown text.
+colliston.com.au	group		V27	V27	0		https://colliston.com.au	whole scope	No testimonial, rating, review count, award or volume claim appears in scope.
+colliston.com.au	group		A3	A3	0		https://colliston.com.au	whole scope	No directory, review-platform, social-booking, planner or fair channel is named in the venue's own text; frontmatter lists a directory but that is capture metadata, not published text.
+colliston.com.au	offer	colliston.com.au-1	V1	V1_ceremony	1	Indoor / Outdoor Ceremony	https://colliston.com.au	2026 Packages bullet list
+colliston.com.au	offer	colliston.com.au-1	V1	V1_venue_only	1	We're a venue hire-only space — you bring your own creative vision and we'll provide the backdrop.	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V1	V1_packaged	1	Your hire includes:	https://colliston.com.au	FAQ inclusions list	Several named elements are enumerated under this heading (see V11).
+colliston.com.au	offer	colliston.com.au-1	V2	V2_c_indoor_room	1	Indoor / Outdoor Ceremony	https://colliston.com.au	2026 Packages bullet list
+colliston.com.au	offer	colliston.com.au-1	V2	V2_c_forest_bush	1	under the towering pines	https://colliston.com.au	Our Story section	Pine Point ceremony setting.
+colliston.com.au	offer	colliston.com.au-1	V2	V2_c_barn_shed	1	The Milking Shed	https://colliston.com.au	FAQ ceremony settings
+colliston.com.au	offer	colliston.com.au-1	V2	V2_c_beach_waterfront	1	Creekside	https://colliston.com.au	FAQ ceremony settings
+colliston.com.au	offer	colliston.com.au-1	V2	V2_r_barn_shed	1	celebrating in the Barn	https://colliston.com.au	Our Story section	Text does not state whether the Barn is the same structure as The Milking Shed.
+colliston.com.au	offer	colliston.com.au-1	V2	V2_ceremony_location_choice	1	Choice of ceremony settings – Pine Point, The Milking Shed, or Creekside	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V2	V2_multi_space	1	Choice of ceremony settings – Pine Point, The Milking Shed, or Creekside	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V2	V2_space_names_verbatim	Pine Point, The Milking Shed, Creekside, Barn	Choice of ceremony settings – Pine Point, The Milking Shed, or Creekside	https://colliston.com.au	FAQ / Our Story	Barn is named separately in prose; possible overlap with The Milking Shed is not stated either way.
+colliston.com.au	offer	colliston.com.au-1	V4	V4_figure_verbatim	Min 3 / Max 100 Ceremony Guests	Min 3 / Max 100 Ceremony Guests	https://colliston.com.au	2026 Packages bullet list
+colliston.com.au	offer	colliston.com.au-1	V4	V4_max_band	3	Max 100 Ceremony Guests	https://colliston.com.au	2026 Packages bullet list	Stage ceremony, layout not stated; 51-100 band.
+colliston.com.au	offer	colliston.com.au-1	V4	V4_min_guests	3	Min 3 Ceremony Guests	https://colliston.com.au	2026 Packages bullet list
+colliston.com.au	offer	colliston.com.au-1	V5	V5_access_before	1	Extended hire time for setup and pack-down flexibility	https://colliston.com.au	FAQ hire includes
+colliston.com.au	offer	colliston.com.au-1	V5	V5_access_after	1	Extended hire time for setup and pack-down flexibility	https://colliston.com.au	FAQ hire includes
+colliston.com.au	offer	colliston.com.au-1	V5	V5_end_time_stated	1	Time restrictions: 10:00 PM	https://colliston.com.au	2026 Packages bullet list
+colliston.com.au	offer	colliston.com.au-1	V6	V6	2	Reach out to start planning your perfect day at Colliston Farm.	https://colliston.com.au	closing section	No numeral appears anywhere in scope; the only route to any figure is enquiry.
+colliston.com.au	offer	colliston.com.au-1	V9	V9_deposit	1	A deposit secures your date, with the balance due closer to your event.	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V9	V9_payment_schedule	1	A deposit secures your date, with the balance due closer to your event.	https://colliston.com.au	FAQ	Two stages (deposit, then balance) are named; no specific dates or percentages are stated.
+colliston.com.au	offer	colliston.com.au-1	V11	V11_signing_table	1	Ceremony table and two chairs	https://colliston.com.au	FAQ hire includes
+colliston.com.au	offer	colliston.com.au-1	V11	V11_tables	1	2 x 3metre long teak tables	https://colliston.com.au	FAQ hire includes
+colliston.com.au	offer	colliston.com.au-1	V11	V11_fridge_ice	1	Use of commercial fridge	https://colliston.com.au	FAQ hire includes
+colliston.com.au	offer	colliston.com.au-1	V11	V11_cake_table	1	cake stand	https://colliston.com.au	FAQ hire includes
+colliston.com.au	offer	colliston.com.au-1	V11	V11_chairs	1	Chairs, Tables & Sofas	https://colliston.com.au	Prop Hire
+colliston.com.au	offer	colliston.com.au-1	V11	V11_signage_stationery	1	Games, Signage & more	https://colliston.com.au	Prop Hire
+colliston.com.au	offer	colliston.com.au-1	V11	V11_florals	1	bring your florals, signage, props, you name it!	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V11	V11_staff_bar	1	drinks and alcohol (with RSA-qualified staff serving)	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V11	V11_coordinator_day	1	a professional wedding planner or coordinator is required, when you have 50 or more guests	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V15	V15_external_permitted	1	Yes! You can bring your own food trucks, grazing tables, caterers	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V15	V15_byo_food	1	Yes! You can bring your own food trucks, grazing tables, caterers	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V16	V16_byo_alcohol	1	drinks and alcohol (with RSA-qualified staff serving)	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V16	V16_rsa_staff	1	RSA-qualified staff serving	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V17	V17	5	Exclusive use of the farm and grounds for your event and photography	https://colliston.com.au	FAQ hire includes	Whole-site exclusive use of "the farm and grounds".
+colliston.com.au	offer	colliston.com.au-1	V19	V19_curfew_time	1	Time restrictions: 10:00 PM	https://colliston.com.au	2026 Packages bullet list
+colliston.com.au	offer	colliston.com.au-1	V19	V19_music_end_time	1	Music must end by 9:30 PM	https://colliston.com.au	2026 Packages bullet list
+colliston.com.au	offer	colliston.com.au-1	V19	V19_confetti_rule	1	Just no nails, staples, confetti or glitter, please.	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V19	V19_decor_fixing_rule	1	Just no nails, staples, confetti or glitter, please.	https://colliston.com.au	FAQ
+colliston.com.au	offer	colliston.com.au-1	V20	V20_contract_signed	1	We'll provide a full hire agreement and terms & conditions outlining all the details before booking.	https://colliston.com.au	FAQ
+colliston.com.au	pcr	colliston.com.au-1-1	V12	V12_signing_table	4	Your hire includes: ... Ceremony table and two chairs	https://colliston.com.au	FAQ hire includes
+colliston.com.au	pcr	colliston.com.au-1-1	V12	V12_tables	4	2 x 3metre long teak tables	https://colliston.com.au	FAQ hire includes
+colliston.com.au	pcr	colliston.com.au-1-1	V12	V12_fridge_ice	4	Use of commercial fridge	https://colliston.com.au	FAQ hire includes
+colliston.com.au	pcr	colliston.com.au-1-1	V12	V12_cake_table	4	cake stand	https://colliston.com.au	FAQ hire includes
+colliston.com.au	pcr	colliston.com.au-1-1	V12	V12_chairs	2	Additional props and styling items are available to hire.	https://colliston.com.au	Prop Hire	No figure published for this extra.
+colliston.com.au	pcr	colliston.com.au-1-1	V12	V12_signage_stationery	2	Additional props and styling items are available to hire.	https://colliston.com.au	Prop Hire	No figure published for this extra.
+colliston.com.au	pcr	colliston.com.au-1-1	V12	V12_florals	1	bring your florals, signage, props, you name it!	https://colliston.com.au	FAQ
+colliston.com.au	pcr	colliston.com.au-1-1	V12	V12_staff_bar	1	drinks and alcohol (with RSA-qualified staff serving)	https://colliston.com.au	FAQ
+colliston.com.au	pcr	colliston.com.au-1-1	V12	V12_coordinator_day	1	a professional wedding planner or coordinator is required, when you have 50 or more guests	https://colliston.com.au	FAQ	Venue states it can recommend planners but does not require a specific list.
+colliston.com.au	pcr	colliston.com.au-1-1	V13	V13_venue_access	6	Exclusive use of the farm and grounds for your event and photography	https://colliston.com.au	FAQ hire includes
+colliston.com.au	pcr	colliston.com.au-1-1	V13	V13_ceremony	6	Choice of ceremony settings – Pine Point, The Milking Shed, or Creekside	https://colliston.com.au	FAQ	Ceremony table and two chairs also included.
+colliston.com.au	pcr	colliston.com.au-1-1	V13	V13_food	3	Yes! You can bring your own food trucks, grazing tables, caterers	https://colliston.com.au	FAQ	Couple engages freely; no compulsory list stated.
+colliston.com.au	pcr	colliston.com.au-1-1	V13	V13_beverage	3	drinks and alcohol (with RSA-qualified staff serving)	https://colliston.com.au	FAQ	Couple supplies own alcohol.
+colliston.com.au	pcr	colliston.com.au-1-1	V13	V13_service_staff	3	with RSA-qualified staff serving	https://colliston.com.au	FAQ	Staff arranged by the couple, not billed by the venue.
+colliston.com.au	pcr	colliston.com.au-1-1	V13	V13_coordination	3	a professional wedding planner or coordinator is required, when you have 50 or more guests	https://colliston.com.au	FAQ	Venue recommends, does not require, a specific planner.
+colliston.com.au	pcr	colliston.com.au-1-1	V13	V13_styling	1	bring your florals, signage, props, you name it!	https://colliston.com.au	FAQ	Couple supplies; nobody bills it.
+colliston.com.au	pcr	colliston.com.au-1-1	V13	V13_furniture_equipment	6	2 x 3metre long teak tables	https://colliston.com.au	FAQ hire includes	Core furniture inside the hire.
+colliston.com.au	pcr	colliston.com.au-1-1	V13	V13_furniture_equipment_partial	1	Additional props and styling items are available to hire.	https://colliston.com.au	Prop Hire	Extra prop-hire items (vintage collection, chairs, tables, sofas, games, signage) charged beyond core hire, no figure published.
+colliston.com.au	pcr	colliston.com.au-1-1	V14	V14_label_verbatim	venue hire-only	We're a venue hire-only space	https://colliston.com.au	FAQ
+colliston.com.au	pcr	colliston.com.au-1-1	V14	V14_exclusive_word	1	Exclusive use of the farm and grounds	https://colliston.com.au	FAQ hire includes
+colliston.com.au	pcr	colliston.com.au-1-1	V14	V14_package_word	1	2026 Packages	https://colliston.com.au	2026 Packages heading
+colliston.com.au	unit		V21	V21_enquiry_form	1	Send us a message:	https://colliston.com.au	closing section
+colliston.com.au	unit		V21	V21_lowest_friction	form	Send us a message:	https://colliston.com.au	closing section
+colliston.com.au	unit		V22	V22_private_tour	1	Reach out to arrange a private viewing — we'll walk you through the spaces and chat about your ideas.	https://colliston.com.au	FAQ
+colliston.com.au	unit		V23	V23_availability_stated	8	we have made the difficult decision to pause wedding enquiries and bookings at Colliston Farm for the time being ... Bookings are now available for 2026 and beyond.	https://colliston.com.au	June 2026 update / closing section	The page opens with a notice pausing enquiries and bookings pending regulatory approvals, then closes stating bookings are now open for 2026 and beyond; the two statements are not reconciled by the coder.
+colliston.com.au	unit		V24	V24_row_count	1		https://colliston.com.au		Structural count.
+colliston.com.au	unit		V24	V24_pcr_count	1		https://colliston.com.au		Structural count.
+colliston.com.au	unit		V24	V24_addons_listed	1	Large Vintage Collection ... Chairs, Tables & Sofas ... Games, Signage & more	https://colliston.com.au	Prop Hire
+colliston.com.au	unit		V24	V24_addon_count	3		https://colliston.com.au	Prop Hire	Three listed items: Large Vintage Collection; Chairs, Tables & Sofas; Games, Signage & more.
+colliston.com.au	unit		V24	V24_inclusions_list_published	1	Your hire includes:	https://colliston.com.au	FAQ
+colliston.com.au	unit		V24	V24_custom_offered	1	This gives you the freedom to tailor your celebration exactly how you want.	https://colliston.com.au	FAQ
+colliston.com.au	unit		V28	V28_named_contact	1	Kylie & Jamie	https://colliston.com.au	June 2026 update sign-off	Owners named in the sign-off; no separate wedding-coordinator title is given.
+colliston.com.au	unit		V29	V29_dedicated_page	1		https://colliston.com.au		Single-page site; the home page itself is the wedding offer page.
+colliston.com.au	unit		V29	V29_page_count	1		https://colliston.com.au
+colliston.com.au	unit		V29	V29_faq	1	Frequently Asked Questions	https://colliston.com.au	FAQ heading
+colliston.com.au	unit		V29	V29_homepage_mention	1	Celebrate Your Love Story at Colliston Farm	https://colliston.com.au	H1
+colliston.com.au	unit		V29	V29_nav_depth	0		https://colliston.com.au		Single-page site; wedding content sits on the home page itself.
+colliston.com.au	unit		A1	A1_farm_rural_property	1	a rich farming history dating back to the 1850s, our family-owned property	https://colliston.com.au	Our Story section
+colliston.com.au	unit		A2	A2_space_count	4	Pine Point, The Milking Shed, or Creekside	https://colliston.com.au	FAQ / Our Story	Four named spaces (Pine Point, The Milking Shed, Creekside, Barn); overlap between Barn and The Milking Shed is not stated either way.
+colliston.com.au	unit		A2	A2_whole_site_option	1	Exclusive use of the farm and grounds for your event and photography	https://colliston.com.au	FAQ hire includes
+colliston.com.au	unit		A2	A2_indoor_and_outdoor	1	Indoor / Outdoor Ceremony	https://colliston.com.au	2026 Packages bullet list
+colliston.com.au	unit		A2	A2_venue_only_stated	1	We're a venue hire-only space	https://colliston.com.au	FAQ
+colliston.com.au	unit		A2	A2_package_count	1		https://colliston.com.au	2026 Packages

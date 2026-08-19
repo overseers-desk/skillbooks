@@ -1,0 +1,20 @@
+NOTE	V9_deposit	No deposit requirement stated.
+NOTE	V9_bond	No bond requirement stated.
+NOTE	V9_payment_schedule	No payment schedule stated.
+NOTE	V9_instalments_offered	Payment by instalments not offered or mentioned.
+NOTE	V9_balance_deadline	Balance deadline not specified.
+NOTE	V9_full_prepay	Full prepayment before the wedding day not required.
+NOTE	V9_min_spend	Minimum spend requirement not stated.
+NOTE	V9_final_numbers_deadline	Final numbers deadline not specified.
+NOTE	V9_cancellation_terms	Cancellation terms not detailed.
+NOTE	V9_postponement_terms	Postponement or date-change terms not detailed separately from cancellation.
+NOTE	V9_price_hold	Price hold not mentioned.
+NOTE	V9_price_validity	Published prices validity period not stated.
+NOTE	V9_price_increase_term	No mention of price increases before the wedding.
+NOTE	V9_surcharge	Surcharge for public holidays, long weekends, peak dates, overtime or extra staff not mentioned.
+NOTE	V9_service_charge	Service charge, gratuity or administration percentage not mentioned.
+NOTE	V9_card_fee	Payment-method fee not stated.
+NOTE	V9_booking_fee	Booking or platform fee not mentioned.
+V9_no_hire_fee_stated	unit	1	No venue hire fee
+AMOUNT	0	No venue hire fee	
+NOTE	V9_wedding_insurance	Wedding insurance requirement, recommendation, or offer not mentioned.

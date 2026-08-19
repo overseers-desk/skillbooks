@@ -1,0 +1,225 @@
+#TABLE venues
+venue_key	unit_id	collection_type	domain	venue_name_verbatim	md_file	md_sha256	capture_date	capture_time	capture_agent	capture_method	page_language	stored_copy	viewport	slice_pages_total	slice_pages_wedding	slice_pages_venue	slice_pages_dropped	slice_truncated	scope_a_wedding_present	screening_decision	screening_flags	search_record	access_wall	offer_row_count	pcr_count	amount_count	doc_count	code_row_count	codebook_version	coder_model	coder_run_id	coded_at	duration_ms	total_cost_usd	notes
+goldcoastfarmhouse.com.au		A	goldcoastfarmhouse.com.au	Gold Coast Farm House					en									1	Enters study: ceremony and reception held at venue's own 60-acre premises, with published packages, capacity and price.	small_wedding_only=0 at venue level (both full tipi/marquee packages and elopement/intimate small offers published); ceremony_only_venue=0; public_authority_permit=0	Trigger terms wedding/weddings/ceremony/reception/packages/pricing/venue hire/gallery found throughout main nav and URL paths (wedding-packages, wedding-ceremony-gold-coast, wedding-calendar, wedding-vendors); no absence-of-scope condition arose.		10	19	26	1		1.0							Two internal contradictions found: (1) accommodation add-on ($800/night, sleeps 6) is listed as a bullet inclusion on the Large Pavilion Marquee package page, yet that same page's own FAQ states "we do not have the utilities to allow overnight stays on the property" (V8_conflict/V9 conflict, both recorded verbatim). (2) 52-seater bus is included on most packages but explicitly excluded ("There is no bus included") on the Summer Wedding Special, itself a discount variant of the Intimate package. No deposit, bond, or payment-schedule text was found anywhere in the captured scope (V9 mostly not-stated). No image markup survives in this text capture (no alt text, captions, or image counts observable), so V26 image-structural fields are coded 9 (scope not captured) rather than 0.
+
+#TABLE offers
+venue_key	offer_id	offer_seq	offer_name_verbatim	offer_delimited	offer_kind	offer_source_location	offer_shared_with_events	source_url	note
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	1	The Lake House Wedding Package	1	package	package details heading	0	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/	Opens April 2027; guest-band x day-band price table
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-2	2	Mid Week Elopement Package	1	package	package details heading	0	https://goldcoastfarmhouse.com.au/elopement-package-gold-coast/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-3	3	Intimate Wedding Package	1	package	package details heading	0	https://goldcoastfarmhouse.com.au/wedding-packages/intimate-wedding/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-4	4	Intimate Summer Wedding Offer	1	package	package details heading	0	https://goldcoastfarmhouse.com.au/wedding-packages/wedding-specials/	Seasonal discount variant of Intimate package, own page/name/price
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-5	5	Single Tipi Wedding Package	1	package	package details heading	0	https://goldcoastfarmhouse.com.au/wedding-packages/single-tipi/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-6	6	Double Tipi Wedding Package	1	package	package details heading	0	https://goldcoastfarmhouse.com.au/wedding-packages/double-tipi/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-7	7	Triple Tipi Wedding Package	1	package	package details heading	0	https://goldcoastfarmhouse.com.au/wedding-packages/triple-tipi/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-8	8	Small Pavilion Marquee Wedding Package	1	package	package details heading	0	https://goldcoastfarmhouse.com.au/wedding-packages/small-pavilion-marquee/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-9	9	Medium Pavilion Marquee Wedding Package	1	package	package details heading	0	https://goldcoastfarmhouse.com.au/wedding-packages/pavilion-marquee/	page titled "Medium Pavilion Marquee Wedding Package"
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-10	10	Large Pavilion Marquee Wedding Package	1	package	package details heading	0	https://goldcoastfarmhouse.com.au/wedding-packages/premium-pavilion-marquee/	page titled "Large Pavilion Marquee Wedding Package"; URL slug says premium
+
+#TABLE pcrs
+venue_key	offer_id	pcr_id	pcr_seq	pcr_priced	pcr_basis_verbatim	pcr_mode_label_verbatim	pcr_day_condition_verbatim	pcr_season_condition_verbatim	pcr_headcount_condition_verbatim	pcr_time_block_verbatim	pcr_validity_verbatim	pcr_fee_waived_condition	pcr_fee_waived_verbatim	pcr_total_claim	source_url	pcr_notes
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-1	1	1	package price		Sun-Fri		40 – 60 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-2	2	1	package price		Sat		40 – 60 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-3	3	1	package price		Sun-Fri		60 – 80 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-4	4	1	package price		Sat		60 – 80 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-5	5	1	package price		Sun-Fri		80 – 100 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-6	6	1	package price		Sat		80 – 100 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-7	7	1	package price		Sun-Fri		100 – 120 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-8	8	1	package price		Sat		100 – 120 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-9	9	1	package price		Sun-Fri		120 – 150 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-10	10	1	package price		Sat		120 – 150 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-2	goldcoastfarmhouse.com.au-2-1	1	1	package price		Monday, Tuesday, or Wednesday	during January, February, June, July, and December	Up to 20 guests	For 2 hours		0		3	https://goldcoastfarmhouse.com.au/elopement-package-gold-coast/	Children over 5 years of age are included in the guest count
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-3	goldcoastfarmhouse.com.au-3-1	1	1	package price		Monday-Thursday & Sunday		Up to 40 guests		2026/2027 pricing	0		3	https://goldcoastfarmhouse.com.au/wedding-packages/intimate-wedding/	Children over 5 years of age are included in the guest count
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-4	goldcoastfarmhouse.com.au-4-1	1	1	package price		Monday, Tuesday, Wednesday, Thursday or Sunday	January and February 2027	Up to 40 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/wedding-specials/	Children over 5 years of age are included in the count; "usually $7,950 – save $3,000"
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-5	goldcoastfarmhouse.com.au-5-1	1	1	package price			Up to 50 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/single-tipi/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-6	goldcoastfarmhouse.com.au-6-1	1	1	package price			Up to 100 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/double-tipi/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-7	goldcoastfarmhouse.com.au-7-1	1	1	package price			Up to 150 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/triple-tipi/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-8	goldcoastfarmhouse.com.au-8-1	1	1	package price			Up to 60 Guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/small-pavilion-marquee/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-9	goldcoastfarmhouse.com.au-9-1	1	1	package price			Up to 100 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/pavilion-marquee/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-10	goldcoastfarmhouse.com.au-10-1	1	1	package price			Up to 150 guests			0		3	https://goldcoastfarmhouse.com.au/wedding-packages/premium-pavilion-marquee/
+
+#TABLE amounts
+venue_key	offer_id	pcr_id	amount_id	V8_amount_verbatim	V8_currency_verbatim	V8_currency_resolved	V8_unit	V8_buys	V8_condition	V8_tax_statement	V8_status	V8_range_id	V8_conflict	V8_source_location	V8_set_by	source_url	note
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-1	goldcoastfarmhouse.com.au-a1	$13,950	$	AMBIGUOUS	package_total	Lake House package	40 – 60 guests, Sun-Fri		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-2	goldcoastfarmhouse.com.au-a2	$14,950	$	AMBIGUOUS	package_total	Lake House package	40 – 60 guests, Sat		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-3	goldcoastfarmhouse.com.au-a3	$14,950	$	AMBIGUOUS	package_total	Lake House package	60 – 80 guests, Sun-Fri		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-4	goldcoastfarmhouse.com.au-a4	$15,950	$	AMBIGUOUS	package_total	Lake House package	60 – 80 guests, Sat		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-5	goldcoastfarmhouse.com.au-a5	$15,950	$	AMBIGUOUS	package_total	Lake House package	80 – 100 guests, Sun-Fri		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-6	goldcoastfarmhouse.com.au-a6	$16,950	$	AMBIGUOUS	package_total	Lake House package	80 – 100 guests, Sat		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-7	goldcoastfarmhouse.com.au-a7	$16,950	$	AMBIGUOUS	package_total	Lake House package	100 – 120 guests, Sun-Fri		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-8	goldcoastfarmhouse.com.au-a8	$17,950	$	AMBIGUOUS	package_total	Lake House package	100 – 120 guests, Sat		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-9	goldcoastfarmhouse.com.au-a9	$17,950	$	AMBIGUOUS	package_total	Lake House package	120 – 150 guests, Sun-Fri		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-1	goldcoastfarmhouse.com.au-1-10	goldcoastfarmhouse.com.au-a10	$18,950	$	AMBIGUOUS	package_total	Lake House package	120 – 150 guests, Sat		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-2	goldcoastfarmhouse.com.au-2-1	goldcoastfarmhouse.com.au-a11	$2,450	$	AMBIGUOUS	package_total	Mid Week Elopement Package	Up to 20 guests, For 2 hours, Mon/Tue/Wed, Jan/Feb/Jun/Jul/Dec		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/elopement-package-gold-coast/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-2		goldcoastfarmhouse.com.au-a12	$800	$	AMBIGUOUS	per_night	optional 1 night stay at the house, up to 6 people	additional to package price		firm		0	FAQ "Can I stay at the house?"	venue	https://goldcoastfarmhouse.com.au/elopement-package-gold-coast/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-3	goldcoastfarmhouse.com.au-3-1	goldcoastfarmhouse.com.au-a13	$7,950	$	AMBIGUOUS	package_total	Intimate Wedding Package	Up to 40 guests, Mon-Thu & Sun, 2026/2027 pricing		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/intimate-wedding/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-3		goldcoastfarmhouse.com.au-a14	$800	$	AMBIGUOUS	per_night	optional night before/after wedding, sleeps 6	should there not be a wedding the day before or after		firm		0	package details bullet	venue	https://goldcoastfarmhouse.com.au/wedding-packages/intimate-wedding/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-4	goldcoastfarmhouse.com.au-4-1	goldcoastfarmhouse.com.au-a15	$4,950	$	AMBIGUOUS	package_total	Intimate Summer Wedding Offer	Up to 40 guests, Jan/Feb 2027, Mon-Thu or Sun		firm		0	package details heading	venue	https://goldcoastfarmhouse.com.au/wedding-packages/wedding-specials/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-4	goldcoastfarmhouse.com.au-4-1	goldcoastfarmhouse.com.au-a16	$7,950	$	AMBIGUOUS	package_total	Intimate Summer Wedding Offer, reference base price	"usually $7,950 – save $3,000"		historic		0	package details heading	venue	https://goldcoastfarmhouse.com.au/wedding-packages/wedding-specials/	stated as the non-discounted comparison price, not itself charged
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-4		goldcoastfarmhouse.com.au-a17	$800	$	AMBIGUOUS	per_night	optional night before/after wedding, sleeps 6	should there not be a wedding the day before or after		firm		0	package details bullet	venue	https://goldcoastfarmhouse.com.au/wedding-packages/wedding-specials/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-5	goldcoastfarmhouse.com.au-5-1	goldcoastfarmhouse.com.au-a18	$11,950	$	AMBIGUOUS	package_total	Single Tipi Wedding Package	Up to 50 guests		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/single-tipi/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-5		goldcoastfarmhouse.com.au-a19	$800	$	AMBIGUOUS	per_night	optional night before/after wedding, sleeps 6	should there not be a wedding the day before or after		firm		0	package details bullet	venue	https://goldcoastfarmhouse.com.au/wedding-packages/single-tipi/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-6	goldcoastfarmhouse.com.au-6-1	goldcoastfarmhouse.com.au-a20	$14,450	$	AMBIGUOUS	package_total	Double Tipi Wedding Package	Up to 100 guests		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/double-tipi/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-7	goldcoastfarmhouse.com.au-7-1	goldcoastfarmhouse.com.au-a21	$16,450	$	AMBIGUOUS	package_total	Triple Tipi Wedding Package	Up to 150 guests		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/triple-tipi/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-8	goldcoastfarmhouse.com.au-8-1	goldcoastfarmhouse.com.au-a22	$13,950	$	AMBIGUOUS	package_total	Small Pavilion Marquee Wedding Package	Up to 60 Guests		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/small-pavilion-marquee/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-9	goldcoastfarmhouse.com.au-9-1	goldcoastfarmhouse.com.au-a23	$15,950	$	AMBIGUOUS	package_total	Medium Pavilion Marquee Wedding Package	Up to 100 guests		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/pavilion-marquee/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-10	goldcoastfarmhouse.com.au-10-1	goldcoastfarmhouse.com.au-a24	$17,950	$	AMBIGUOUS	package_total	Large Pavilion Marquee Wedding Package	Up to 150 guests		firm		0	package details	venue	https://goldcoastfarmhouse.com.au/wedding-packages/premium-pavilion-marquee/
+goldcoastfarmhouse.com.au	goldcoastfarmhouse.com.au-10		goldcoastfarmhouse.com.au-a25	$800	$	AMBIGUOUS	per_night	optional night before/after wedding, sleeps 6	should there not be a wedding the day before or after		1	1	package details bullet	venue	https://goldcoastfarmhouse.com.au/wedding-packages/premium-pavilion-marquee/	Conflicts with this same page's own FAQ stating "we do not have the utilities to allow overnight stays on the property" (V8_conflict=1, both recorded verbatim, neither reconciled per R5)
+goldcoastfarmhouse.com.au			goldcoastfarmhouse.com.au-a26	$500	$	AMBIGUOUS	addon	car hire per vehicle, includes transport to ceremony and photography session access	available on the premises only		firm		0	Available for hire	venue	https://goldcoastfarmhouse.com.au/car-hire/
+
+#TABLE codes
+venue_key	level	entity_id	variable	field	value	quote	source_url	source_location	note
+goldcoastfarmhouse.com.au	page	p1	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au		home page, opening heading "Our Wedding Packages"
+goldcoastfarmhouse.com.au	page	p2	capture	page_scope	wedding	perfect location for a private wedding or function	https://goldcoastfarmhouse.com.au/about-us/	about-us	trigger word in opening text
+goldcoastfarmhouse.com.au	page	p3	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/	URL path trigger
+goldcoastfarmhouse.com.au	page	p4	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/	URL path trigger
+goldcoastfarmhouse.com.au	page	p5	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/elopement-package-gold-coast/	URL/heading trigger
+goldcoastfarmhouse.com.au	page	p6	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/intimate-wedding/	URL path trigger
+goldcoastfarmhouse.com.au	page	p7	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/wedding-specials/	URL path trigger
+goldcoastfarmhouse.com.au	page	p8	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/single-tipi/	URL path trigger
+goldcoastfarmhouse.com.au	page	p9	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/double-tipi/	URL path trigger
+goldcoastfarmhouse.com.au	page	p10	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/triple-tipi/	URL path trigger
+goldcoastfarmhouse.com.au	page	p11	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/small-pavilion-marquee/	URL path trigger
+goldcoastfarmhouse.com.au	page	p12	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/pavilion-marquee/	URL path trigger
+goldcoastfarmhouse.com.au	page	p13	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/premium-pavilion-marquee/	URL path trigger
+goldcoastfarmhouse.com.au	page	p14	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-ceremony-gold-coast/	URL path trigger
+goldcoastfarmhouse.com.au	page	p15	capture	page_scope	wedding	Looking to hire styling accessories to take your wedding at Gold Coast Farm House to the next level?	https://goldcoastfarmhouse.com.au/styling-hire/	styling-hire	crawler tagged [other]; opening text carries trigger word, and page is linked from package pages ("styling hire" add-on)
+goldcoastfarmhouse.com.au	page	p16	capture	page_scope	wedding	special touch to your wedding at Gold Coast Farm House	https://goldcoastfarmhouse.com.au/car-hire/	car-hire	opening text trigger
+goldcoastfarmhouse.com.au	page	p17	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-furniture-hire/	URL path trigger
+goldcoastfarmhouse.com.au	page	p18	capture	page_scope	out		https://goldcoastfarmhouse.com.au/event-venue/	event-venue	no ceremony/reception/wedding trigger word found anywhere in captured content (corporate events, engagement parties, photoshoots only); screened out under §2.7
+goldcoastfarmhouse.com.au	page	p19	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-calendar/	URL path trigger
+goldcoastfarmhouse.com.au	page	p20	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/weddings/	URL path trigger
+goldcoastfarmhouse.com.au	page	p21	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-vendors/	URL path trigger
+goldcoastfarmhouse.com.au	page	p22	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/virtual-tour/	virtual-tour	reached only via wedding-labelled site nav; no unique own-page text captured beyond nav
+goldcoastfarmhouse.com.au	page	p23	capture	page_scope	wedding	Our Wedding Packages	https://goldcoastfarmhouse.com.au/contact/	contact	page repeats homepage wedding-offer text
+goldcoastfarmhouse.com.au	page	p24	capture	page_scope	wedding	the newest wedding destination at Gold Coast Farm House	https://goldcoastfarmhouse.com.au/blog/	blog	opening excerpt text trigger
+goldcoastfarmhouse.com.au	page	p25	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/dog-friendly-wedding-at-the-farm-house/	URL path trigger
+goldcoastfarmhouse.com.au	page	p26	capture	page_scope	wedding	Catering options for your wedding	https://goldcoastfarmhouse.com.au/mobile-food-truck-gold-coast/	heading trigger
+goldcoastfarmhouse.com.au	page	p27	capture	page_scope	out		https://goldcoastfarmhouse.com.au/gold-coast-mobile-bars/	gold-coast-mobile-bars	no wedding/ceremony/reception trigger word anywhere in captured content (generic bar-hire recommendations)
+goldcoastfarmhouse.com.au	page	p28	capture	page_scope	wedding	the newest wedding destination at Gold Coast Farm House	https://goldcoastfarmhouse.com.au/introducing-the-lake-house/	heading/opening text trigger
+goldcoastfarmhouse.com.au	page	p29	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/	dup of p1
+goldcoastfarmhouse.com.au	page	p30	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/category/wedding/	URL path trigger
+goldcoastfarmhouse.com.au	page	p31	capture	page_scope	wedding	Your First Steps to Planning the Wedding of Your Dreams	https://goldcoastfarmhouse.com.au/youre-engaged-now-what/	opening text trigger
+goldcoastfarmhouse.com.au	page	p32	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/	dup of p1
+goldcoastfarmhouse.com.au	page	p33	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/how-to-host-a-dry-wedding/	URL/heading trigger
+goldcoastfarmhouse.com.au	page	p34	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/	dup of p1
+goldcoastfarmhouse.com.au	page	p35	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-pet-portraits/	URL path trigger
+goldcoastfarmhouse.com.au	page	p36	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/about-us/	dup of p2
+goldcoastfarmhouse.com.au	page	p37	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/	dup of p3
+goldcoastfarmhouse.com.au	page	p38	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/	dup of p4
+goldcoastfarmhouse.com.au	page	p39	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/elopement-package-gold-coast/	dup of p5
+goldcoastfarmhouse.com.au	page	p40	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/mobile-food-truck-gold-coast/	dup of p26
+goldcoastfarmhouse.com.au	page	p41	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/intimate-wedding/	dup of p6
+goldcoastfarmhouse.com.au	page	p42	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/wedding-specials/	dup of p7
+goldcoastfarmhouse.com.au	page	p43	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/single-tipi/	dup of p8
+goldcoastfarmhouse.com.au	page	p44	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/double-tipi/	dup of p9
+goldcoastfarmhouse.com.au	page	p45	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/triple-tipi/	dup of p10
+goldcoastfarmhouse.com.au	page	p46	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/small-pavilion-marquee/	dup of p11
+goldcoastfarmhouse.com.au	page	p47	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-musicians-gold-coast/	URL path trigger
+goldcoastfarmhouse.com.au	page	p48	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/pavilion-marquee/	dup of p12
+goldcoastfarmhouse.com.au	page	p49	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-packages/premium-pavilion-marquee/	dup of p13
+goldcoastfarmhouse.com.au	page	p50	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-ceremony-gold-coast/	dup of p14
+goldcoastfarmhouse.com.au	page	p51	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/styling-hire/	dup of p15
+goldcoastfarmhouse.com.au	page	p52	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/styling-looks/	styling-looks	linked from in-scope styling-hire page, offering priced add-ons for the wedding package
+goldcoastfarmhouse.com.au	page	p53	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wishing-well/	linked from in-scope styling-hire page
+goldcoastfarmhouse.com.au	page	p54	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/table-decor/	linked from in-scope styling-hire page
+goldcoastfarmhouse.com.au	page	p55	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/vases/	linked from in-scope styling-hire page
+goldcoastfarmhouse.com.au	page	p56	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/reception-decor/	linked from in-scope styling-hire page
+goldcoastfarmhouse.com.au	page	p57	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/cooling-heating/	linked from in-scope styling-hire page
+goldcoastfarmhouse.com.au	page	p58	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/outdoor-styling/	linked from in-scope styling-hire page
+goldcoastfarmhouse.com.au	page	p59	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/candles/	linked from in-scope styling-hire page
+goldcoastfarmhouse.com.au	page	p60	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/cutlery/	linked from in-scope styling-hire page
+goldcoastfarmhouse.com.au	page	p61	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/glasses/	linked from in-scope styling-hire page
+goldcoastfarmhouse.com.au	page	p62	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/plates/	linked from in-scope styling-hire page
+goldcoastfarmhouse.com.au	page	p63	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/table-cloths/	linked from in-scope styling-hire page
+goldcoastfarmhouse.com.au	page	p64	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/napkins/	linked from in-scope styling-hire page
+goldcoastfarmhouse.com.au	page	p65	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/car-hire/	dup of p16
+goldcoastfarmhouse.com.au	page	p66	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-furniture-hire/	dup of p17
+goldcoastfarmhouse.com.au	page	p67	capture	page_scope	out		https://goldcoastfarmhouse.com.au/event-venue/	dup of p18
+goldcoastfarmhouse.com.au	page	p68	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-calendar/	dup of p19
+goldcoastfarmhouse.com.au	page	p69	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-checklist/	URL path trigger
+goldcoastfarmhouse.com.au	page	p70	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/weddings/	dup of p20
+goldcoastfarmhouse.com.au	page	p71	capture	page_scope	out		https://goldcoastfarmhouse.com.au/mahen-van/	mahen-van	page rendered only site navigation; no body text was captured for this real-wedding gallery page, so no trigger-word evidence exists in scope
+goldcoastfarmhouse.com.au	page	p72	capture	page_scope	wedding	VENDORS Photo @tomjudsonphoto Celebrant @married_bybeck Catering @blueplatescatering	https://goldcoastfarmhouse.com.au/karlee-john/	real-wedding page shows a vendor-credit block; parent nav labelled "Wedding Packages" is site-wide and not itself dispositive, but page is part of the Weddings gallery reached from the wedding-labelled "Weddings" nav item
+goldcoastfarmhouse.com.au	page	p73	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-vendors/	dup of p21
+goldcoastfarmhouse.com.au	page	p74	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/the-best-gold-coast-wedding-cake-designers/	URL path trigger
+goldcoastfarmhouse.com.au	page	p75	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/gold-coast-wedding-photographers/	URL path trigger
+goldcoastfarmhouse.com.au	page	p76	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/gold-coast-wedding-videographers-2/	URL path trigger
+goldcoastfarmhouse.com.au	page	p77	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/gold-coast-wedding-stylists/	URL path trigger
+goldcoastfarmhouse.com.au	page	p78	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-florists-gold-coast/	URL path trigger
+goldcoastfarmhouse.com.au	page	p79	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/recommended-wedding-hair-and-makeup/	URL path trigger
+goldcoastfarmhouse.com.au	page	p80	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-celebrants-gold-coast/	URL path trigger
+goldcoastfarmhouse.com.au	page	p81	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/wedding-cars/	URL path trigger
+goldcoastfarmhouse.com.au	page	p82	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/best-wedding-dress-designers/	URL path trigger
+goldcoastfarmhouse.com.au	page	p83	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/best-bridesmaids-dresses/	linked as a wedding vendor/necessities recommendation from wedding-vendors page
+goldcoastfarmhouse.com.au	page	p84	capture	page_scope	wedding	Aleisha and Alex's wedding was a magical celebration	https://goldcoastfarmhouse.com.au/aleisha-alex-party-vibes-at-the-farm/	opening text trigger (real-wedding feature)
+goldcoastfarmhouse.com.au	page	p85	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/	dup of p1
+goldcoastfarmhouse.com.au	page	p86	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/category/real-wedding/	URL path trigger
+goldcoastfarmhouse.com.au	page	p87	capture	page_scope	wedding	Kelly and Keenan held their dream wedding at the Gold Coast Farm House	https://goldcoastfarmhouse.com.au/kelly-keenan-cocktails-dreams/	opening text trigger
+goldcoastfarmhouse.com.au	page	p88	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/	dup of p1
+goldcoastfarmhouse.com.au	page	p89	capture	page_scope	wedding	The marriage of Monique and Jesse was a beautiful celebration	https://goldcoastfarmhouse.com.au/monique-jesse-festival-on-the-farm/	opening text trigger
+goldcoastfarmhouse.com.au	page	p90	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/	dup of p1
+goldcoastfarmhouse.com.au	page	p91	capture	page_scope	wedding	Gemma and Brent professed their love for one another. In a love-filled ceremony	https://goldcoastfarmhouse.com.au/gemma-brent-fun-love-on-the-farm/	opening text trigger
+goldcoastfarmhouse.com.au	page	p92	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/	dup of p1
+goldcoastfarmhouse.com.au	page	p93	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/virtual-tour/	dup of p22
+goldcoastfarmhouse.com.au	page	p94	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/contact/	dup of p23
+goldcoastfarmhouse.com.au	page	p95	capture	page_scope	wedding	Nick and Aleisha's wedding at the Gold Coast Farm House was filled with love	https://goldcoastfarmhouse.com.au/blog/page/2/	opening excerpt text trigger
+goldcoastfarmhouse.com.au	page	p96	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/the-wedding-day-fix-list/	URL/heading trigger
+goldcoastfarmhouse.com.au	page	p97	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/	dup of p1
+goldcoastfarmhouse.com.au	page	p98	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/our-favourite-ceremony-spots/	URL/heading trigger (ceremony)
+goldcoastfarmhouse.com.au	page	p99	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/	dup of p1
+goldcoastfarmhouse.com.au	page	p100	capture	page_scope	wedding	At Gold Coast Farm House, we've seen hundreds of couples take to the dance floor for that all-important first dance	https://goldcoastfarmhouse.com.au/what-your-first-dance-says-about-you/	opening text trigger
+goldcoastfarmhouse.com.au	page	p101	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/	dup of p1
+goldcoastfarmhouse.com.au	page	p102	capture	page_scope	wedding	wedding-photos	https://goldcoastfarmhouse.com.au/top-10-wedding-photos-of-2025-so-far/	URL trigger
+goldcoastfarmhouse.com.au	page	p103	capture	page_scope	wedding	their intimate wedding on the deck at the Gold Coast Farm House	https://goldcoastfarmhouse.com.au/emily-joshua-a-garden-party/	opening text trigger
+goldcoastfarmhouse.com.au	page	p104	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/	dup of p1
+goldcoastfarmhouse.com.au	page	p105	capture	page_scope	wedding	their intimate elopement at the Gold Coast Farm House	https://goldcoastfarmhouse.com.au/chloe-sunny-a-magical-day/	opening text trigger
+goldcoastfarmhouse.com.au	page	p106	capture	page_scope	wedding	2021 Wedding Venue Trends	https://goldcoastfarmhouse.com.au/blog/page/12/	opening excerpt text trigger
+goldcoastfarmhouse.com.au	page	p107	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/dog-friendly-wedding-at-the-farm-house/	dup of p25
+goldcoastfarmhouse.com.au	page	p108	capture	page_scope	wedding		https://goldcoastfarmhouse.com.au/	dup of p1
+goldcoastfarmhouse.com.au	page	p109	capture	page_scope	wedding	Lauryn and Luke's Wedding	https://goldcoastfarmhouse.com.au/lauryn-and-luke/	heading trigger
+goldcoastfarmhouse.com.au	unit		A1	A1_farm_rural_property	1	Gold Coast Farm House ... 60 acres	https://goldcoastfarmhouse.com.au/about-us/	about-us / trading name	trading name itself contains "Farm House" (I2)
+goldcoastfarmhouse.com.au	unit		A1	A1_estate_homestead	1	The 100 plus year-old Queenslander sits at the top of the property	https://goldcoastfarmhouse.com.au/about-us/	about-us
+goldcoastfarmhouse.com.au	unit		A1	A1_other	0			whole scope	no other self-applied category words (hotel, winery, chapel, club, etc.) found
+goldcoastfarmhouse.com.au	unit		A2	A2_space_count	8			offer rows §2.4	Lake House, Deck (shared by Elopement/Intimate/Summer), Single/Double/Triple Tipi, Small/Medium/Large Marquee
+goldcoastfarmhouse.com.au	unit		A2	A2_package_count	10			offer rows §2.4
+goldcoastfarmhouse.com.au	unit		A2	A2_indoor_and_outdoor	1	Deck of the house with fairy lights (including full use of kitchen)	https://goldcoastfarmhouse.com.au/wedding-packages/intimate-wedding/	package details	covered deck reception plus outdoor tipi/marquee/ceremony spaces
+goldcoastfarmhouse.com.au	unit		A2	A2_accommodation_with_wedding	1	you can add on a night at the Farm House ($800 per night, sleeps 6)	https://goldcoastfarmhouse.com.au/wedding-packages/single-tipi/	package details	see also V8_conflict on offer 10
+goldcoastfarmhouse.com.au	unit		A2	A2_capacity_range_verbatim	Up to 20 guests / Up to 150 guests	Up to 20 guests – $2,450 (For 2 hours) ... Up to 150 guests $16,450	https://goldcoastfarmhouse.com.au/elopement-package-gold-coast/	elopement + triple tipi package details	two published figures, not combined
+goldcoastfarmhouse.com.au	unit		A2	A2_price_range_verbatim	$2,450 / $18,950	Up to 20 guests – $2,450 ... 120 – 150 guests $17,950 (Sun-Fri) · $18,950 (Sat)	https://goldcoastfarmhouse.com.au/elopement-package-gold-coast/	elopement + lake-house package details	two published figures, not combined
+goldcoastfarmhouse.com.au	unit		A2	A2_weddings_per_year_verbatim	we've hosted 300 here / we've seen hundreds of couples	we've seen hundreds of couples take to the dance floor	https://goldcoastfarmhouse.com.au/what-your-first-dance-says-about-you/	blog post	vague volume claim, no number
+goldcoastfarmhouse.com.au	unit		A2	A2_offsite_wedding	0			whole scope	not stated
+goldcoastfarmhouse.com.au	unit		A2	A2_venue_only_stated	0			whole scope	not stated
+goldcoastfarmhouse.com.au	unit		A2	A2_equipment_hire_out	0			whole scope	styling/furniture hire is for use on-site with a wedding booked here, not hired out off-site
+goldcoastfarmhouse.com.au	unit		A3		0			whole scope	no directory, review-platform, social-booking, planner or fair channel named anywhere in captured scope; no "direct only" statement either
+goldcoastfarmhouse.com.au	unit		A4	A4_doc_id	goldcoastfarmhouse.com.au-doc1				introducing-the-lake-house
+goldcoastfarmhouse.com.au	unit		A4	A4_doc_label_verbatim	download the Lake House brochure	Reach out to Gold Coast Farm House to explore packages, check availability or download the Lake House brochure	https://goldcoastfarmhouse.com.au/introducing-the-lake-house/	closing paragraph
+goldcoastfarmhouse.com.au	unit		A4	A4_doc_gated	8	download the Lake House brochure	https://goldcoastfarmhouse.com.au/introducing-the-lake-house/	closing paragraph	text does not state whether the download is direct or requires contacting the venue first; both readings remain
+goldcoastfarmhouse.com.au	unit		A4	A4_doc_obtained	0			closing paragraph	not obtained (S1 protocol: no data-entry attempted; nothing else in scope confirms it is ungated)
+goldcoastfarmhouse.com.au	unit		V21	V21_email	1	bookings@goldcoastfarmhouse.com.au	https://goldcoastfarmhouse.com.au/styling-hire/	styling hire pages	repeated on every styling-hire subpage
+goldcoastfarmhouse.com.au	unit		V21	V21_online_request	1	get in touch to organise a viewing	https://goldcoastfarmhouse.com.au/	homepage "CHECK YOUR DATES"
+goldcoastfarmhouse.com.au	unit		V21	V21_lowest_friction	request			homepage	no instant-book widget; enquiry/contact route only
+goldcoastfarmhouse.com.au	unit		V22	V22_private_tour	1	get in touch to organise a viewing	https://goldcoastfarmhouse.com.au/	homepage
+goldcoastfarmhouse.com.au	unit		V22	V22_tour_booking_route	form	get in touch with us using the enquiry form to book a viewing	https://goldcoastfarmhouse.com.au/wedding-calendar/	FAQ
+goldcoastfarmhouse.com.au	unit		V23	V23_availability_stated	1	If the date is in gold, that means that it's already booked. If the date is in light grey, then you're in luck	https://goldcoastfarmhouse.com.au/wedding-calendar/	Availability calendar	specific dates not recorded per S4/§9.3 I3 (calendar state changes daily)
+goldcoastfarmhouse.com.au	unit		V25	V25_first_price_location	5	40 – 60 guests $13,950 (Sun-Fri) · $14,950 (Sat)	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/	package details, near top of page	pattern representative of all 10 package pages: price table sits directly under the "package details" heading near the top
+goldcoastfarmhouse.com.au	unit		V25	V25_price_next_to_inclusions	1	package details	https://goldcoastfarmhouse.com.au/wedding-packages/single-tipi/	single-tipi page	price sits immediately above the bulleted inclusions list on every package page
+goldcoastfarmhouse.com.au	unit		V25	V25_price_count	19			amounts table	count of package-price V8 records (excludes addon/accommodation/car-hire records)
+goldcoastfarmhouse.com.au	unit		V25	V25_price_page_exists	1	wedding-packages	https://goldcoastfarmhouse.com.au/wedding-packages/	nav label "Wedding Packages"
+goldcoastfarmhouse.com.au	unit		V26	V26_images_present	9			whole scope	this text-only capture preserves no image tags, alt text, or captions anywhere in the 109-page slice; structural image facts are not observable from this scope (capture-method limitation, not a stated absence)
+goldcoastfarmhouse.com.au	unit		V27	V27_testimonial	1	If you're looking for a beautiful hinterland wedding venue, look not further!	https://goldcoastfarmhouse.com.au/	homepage
+goldcoastfarmhouse.com.au	unit		V27	V27_testimonial_count_band	1 to 3			homepage	three quotations (Amanda Jensen; Victor and Fenny; Emili Matsumoto)
+goldcoastfarmhouse.com.au	unit		V27	V27_testimonial_attributed	1	— Amanda Jensen	https://goldcoastfarmhouse.com.au/	homepage
+goldcoastfarmhouse.com.au	unit		V27	V27_testimonial_dated	0			homepage	no dates on the testimonial quotations themselves (one mentions "married in January" inline, which is content not a publication date)
+goldcoastfarmhouse.com.au	unit		V27	V27_rating_displayed	0			whole scope	no aggregate rating figure found anywhere in captured scope
+goldcoastfarmhouse.com.au	unit		V27	V27_volume_claim	1	we've seen hundreds of couples take to the dance floor	https://goldcoastfarmhouse.com.au/what-your-first-dance-says-about-you/	blog post	vague count word, no number
+goldcoastfarmhouse.com.au	unit		V28		0			whole scope	no response-time or confirmation promise found anywhere in captured scope
+goldcoastfarmhouse.com.au	unit		V29	V29_nav_label	1	Weddings	https://goldcoastfarmhouse.com.au/	site nav	"Wedding Packages" and "Weddings" both appear as top-level nav items
+goldcoastfarmhouse.com.au	unit		V29	V29_nav_depth	1			site nav	wedding-packages reachable directly from top-level nav
+goldcoastfarmhouse.com.au	unit		V29	V29_homepage_mention	1	Our Wedding Packages	https://goldcoastfarmhouse.com.au/	homepage top heading
+goldcoastfarmhouse.com.au	unit		V29	V29_dedicated_page	1			wedding-packages	each package has its own dedicated page
+goldcoastfarmhouse.com.au	unit		V29	V29_page_count	13			wedding-packages index and its 10 package sub-pages plus ceremony page and calendar
+goldcoastfarmhouse.com.au	unit		V29	V29_faq	1	FAQ's	https://goldcoastfarmhouse.com.au/wedding-packages/lake-house/	package pages	FAQ panel present on every package page
+goldcoastfarmhouse.com.au	unit		V29	V29_downloadable_pack	1	download the Lake House brochure	https://goldcoastfarmhouse.com.au/introducing-the-lake-house/	closing paragraph
+goldcoastfarmhouse.com.au	unit		V29	V29_pack_gated	8	download the Lake House brochure	https://goldcoastfarmhouse.com.au/introducing-the-lake-house/	closing paragraph	same undecidable case as A4_doc_gated
+goldcoastfarmhouse.com.au	unit		V29	V29_supplier_list_link	1	Please click on this link for some recommended vendors	https://goldcoastfarmhouse.com.au/wedding-packages/single-tipi/	package details bullet	present on every package page
+goldcoastfarmhouse.com.au	unit		V29	V29_terms_link	0			whole scope	no dedicated terms-and-conditions page or link found in captured scope

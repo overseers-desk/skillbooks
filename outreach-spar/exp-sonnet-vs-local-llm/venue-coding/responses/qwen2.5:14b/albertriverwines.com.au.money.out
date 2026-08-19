@@ -1,0 +1,13 @@
+FIELD	ENTITY	VALUE	QUOTE
+V9_deposit	-	1	A non-refundable deposit of $500 is required to secure your date.
+AMOUNT	$500	To secure the wedding date	none
+V9_deposit_refundable	-	1	non-refundable
+V9_payment_schedule	-	1	50% balance due 6 months prior, remaining balance due 30 days before the event.
+AMOUNT	50%	balance due 6 months prior	none
+AMOUNT	remaining balance	due 30 days before the event	none
+V9_balance_deadline	-	1	30 days before the event
+V9_min_spend	-	8	
+NOTE	V9_min_spend	Scope unclear from provided text.
+V9_final_numbers_deadline	-	1	21 days prior to your wedding date
+V9_cancellation_terms	-	8	
+NOTE	V9_cancellation_terms	Terms not stated clearly in the given excerpt.

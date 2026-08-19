@@ -1,0 +1,35 @@
+136:PACKAGE DETAILS * 32 Ceremony Chairs * 2 course restaurant menu (priced per person) * Dining at our Auchenflower Restaurant * Wedding cake served on platters * Wet Weather Options
+137-
+138-### Country Celebration (Micro-package)
+--
+147:PACKAGE DETAILS * 32 Ceremony Chairs * Pre dinner fruit and cheese platter * Vintage softdrink station * 2 course alternate drop menu * Wedding cake served on platters * $600 bar tab
+148-
+149-### Cocktail
+--
+158:PACKAGE DETAILS * 42 Ceremony chairs * Pre dinner grazing board * Vintage softdrink station * Selection of 6 Canapes * Sweet heart bridal table with casual guest seating and wine barrel high bars * $1000 Bar tab
+159-
+160-### Elegant Affair
+--
+233:PACKAGE DETAILS * 32 Ceremony Chairs * 2 course restaurant menu (priced per person) * Wedding cake served on platters * Dining at our Auchenflower Restaurant * Wet weather options
+234-
+235-### Country Celebration (Micro-package)
+--
+244:PACKAGE DETAILS * 32 Ceremony Chairs * Pre dinner fruit and cheese platter * Vintage soft drink station * 2 course alternate drop menu * Wedding cake served on platters * $600 bar tab * Wet weather options
+245-
+246-### Cocktail
+--
+255:PACKAGE DETAILS * 42 Ceremony chairs * Pre dinner grazing board * Vintage soft drink station * Selection of 6 Canapes * Sweetheart bridal table with casual guest seating and wine barrel high bars * $1000 Bar tab * Wet weather options
+256-
+257-### Elegant Affair
+--
+266:PACKAGE DETAILS * 42 Ceremony Chairs * Pre dinner Canapes * Pre dinner glass of ARW Sparkling * Vintage soft drink station * 2 course alternate drop menu * Wedding cake plated with cream & coulis * $200 bridal bar tab ( 4 person minimum) * 5 hour premium beverage package * 5 hour DJ * 2 night stay in our Bridal Cottage * Wet weather options
+267-
+268-### Create Your Own
+--
+393:Shipping is available Australia-wide for only $30 per dozen bottles (minimum shipment is 1 dozen).
+394-
+395-## Our Inspiration
+--
+397:At Albert River Wines, we are passionate about producing premium wines that are uniquely Queensland. Our estate-grown fruit, harvested from our Tamborine vineyards, and quality contract-grown Queensland grapes are blended to create brilliant wines that suit our climate and the preferred tastes of our state. Our commitment to quality has been recognized with numerous awards, including several gold medals at prestigious shows across Australia and the world. We are proud to be a part of the new generation of Queensland wine producers, offering great quality wine at a price that suits all of our customers.
+398-
+399-

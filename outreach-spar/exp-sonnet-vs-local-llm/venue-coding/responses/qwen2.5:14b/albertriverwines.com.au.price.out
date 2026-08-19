@@ -1,0 +1,41 @@
+FIELD	ENTITY	VALUE	QUOTE
+V6	-	2	
+AMOUNT	Download our 2027 pricing guide	AMOUNT	platform pricing guide
+NOTE	V6	No number, but a price route is stated: on enquiry, on application, request our pricing guide, download the brochure, prices on request, tailored to your day.
+FIELD	ENTITY	V7_package_total	1	
+FIELD	ENTITY	V7_per_head	0	
+FIELD	ENTITY	V7_site_fee	0	
+FIELD	ENTITY	V7_ceremony_fee	0	
+FIELD	ENTITY	V7_min_spend	0	
+FIELD	ENTITY	V7_min_guests_charged	0	
+FIELD	ENTITY	V7_per_hour	0	
+FIELD	ENTITY	V7_per_night	0	
+FIELD	ENTITY	V7_tier_day	0	
+FIELD	ENTITY	V7_tier_season	0	
+FIELD	ENTITY	V7_tier_headcount	0	
+FIELD	ENTITY	V7_tier_year	0	
+FIELD	ENTITY	V7_per_extra_guest	0	
+FIELD	ENTITY	V7_per_extra_hour	0	
+FIELD	ENTITY	V7_addon_priced	0	
+FIELD	ENTITY	V7_fee_waived	0	
+FIELD	ENTITY	V7_commission_or_percentage	0	
+AMOUNT	$600 bar tab	AMOUNT	bar tab for Country Celebration (Micro-package)
+V8_unit	supplier_fee
+V8_condition	Wet weather options
+V8_status	firm
+V8_source_location	Package DETAILS * 32 Ceremony Chairs * Pre dinner fruit and cheese platter * Vintage softdrink station * 2 course alternate drop menu * Wedding cake served on platters * $600 bar tab * Wet weather options
+AMOUNT	$1000 Bar tab	AMOUNT	bar tab for Cocktail package
+V8_unit	supplier_fee
+V8_condition	Wet weather options
+V8_status	firm
+V8_source_location	PACKAGE DETAILS * 42 Ceremony chairs * Pre dinner grazing board * Vintage soft drink station * Selection of 6 Canapes * Sweetheart bridal table with casual guest seating and wine barrel high bars * $1000 Bar tab * Wet weather options
+AMOUNT	$200 bridal bar tab ( 4 person minimum)	AMOUNT	bar tab for Create Your Own package
+V8_unit	supplier_fee
+V8_condition	5 hour premium beverage package, 5 hour DJ, 2 night stay in our Bridal Cottage, Wet weather options
+V8_status	firm
+V8_source_location	PACKAGE DETAILS * 42 Ceremony Chairs * Pre dinner Canapes * Pre dinner glass of ARW Sparkling * Vintage soft drink station * 2 course alternate drop menu * Wedding cake plated with cream & coulis * $200 bridal bar tab ( 4 person minimum) * 5 hour premium beverage package * 5 hour DJ * 2 night stay in our Bridal Cottage * Wet weather options
+AMOUNT	$30 per dozen bottles	AMOUNT	shipping cost for wine orders
+V8_unit	per_head_supplier
+V8_condition	minimum shipment is 1 dozen
+V8_status	firm
+V8_source_location	Shipping is available Australia-wide for only $30 per dozen bottles (minimum shipment is 1 dozen).

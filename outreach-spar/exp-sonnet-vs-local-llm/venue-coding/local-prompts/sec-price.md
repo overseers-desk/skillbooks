@@ -1,0 +1,119 @@
+## 5. Price shape
+
+### 5.1 V6 — Price visibility
+
+**Level:** wedding-offer row. **Scope:** A-wedding / B-listing.
+
+**Definition.** V6 records whether a price for the row is published as a number a couple can read without asking. The variable is ordinal; apply the tests in order from 5 downward and take the first that passes.
+
+| Code | Label |
+|---|---|
+| 5 | A complete price is published as a number for the row: a package price, a site fee, or a per-head figure that the text states is the price of this offer |
+| 4 | Prices are published as numbers only in banded, tiered, seasonal, day-conditional or guest-count form, with no single figure for the row |
+| 3 | A from-price, a starting-price, an indicative price, a "typically" price, an average-spend statement, or a price range is published |
+| 2 | No number, but a price route is stated: on enquiry, on application, request our pricing guide, download the brochure, prices on request, tailored to your day |
+| 1 | No number and no price route: the offer is described and money is never mentioned |
+| 0 | No price and no text bearing on price at all |
+| 8 | Undecidable |
+| 9 | Scope not captured |
+
+**Inclusion.** I1: a number in a price panel, a rate table, a bullet, a heading, a package card, or an enquiry widget passes tests 5 or 4. I2: a price published as text inside an image is a published price (S1). I3: a price inside an in-scope downloadable brochure or pricing guide passes the same tests as an on-page price, with `V6_source` = "document". I4: a platform's structured price-range field passes test 3 at most, with `V6_set_by` = "platform", unless the field states a single figure for a named package, which passes at its own level. I5: a price-band symbol set published by a platform, such as a row of currency symbols, passes test 3 with the symbols recorded verbatim and nothing inferred about their monetary meaning.
+
+**Exclusion.** E1: a deposit, bond, booking fee or cancellation charge alone is not a wedding price; it passes no test above 2 on its own and is recorded at V9. E2: a minimum spend alone passes test 5 only where the text states the minimum spend **is** the commercial term in place of a hire fee; otherwise it is recorded at V9 and the row is coded by the remaining tests. This is the one place where a minimum spend can be a price, and the text must say so. E3: a per-head catering figure published with no statement that it prices this offer passes no test above 3; record at V8 and set `V6_catering_only` = 1. E4: a price for an add-on only passes test 3 at most, with `V6_addon_only` = 1. E5: a price behind a login, an account, an enquiry form, a brochure request, a mailing-list sign-up or a payment step is **not published**; the correct code is 2 where a route is stated. A coder who attempted access has committed a protocol breach and it is logged. E6: a price stated in prose with no numeral ("most couples spend a few thousand") passes test 2. E7: a price published for a non-wedding function on the same page sets nothing for a wedding row (S8); record it.
+
+**Ambiguous cases.**
+
+- "The Barn Package \$14,500" → **5**.
+- "Saturday \$16,000, Friday \$13,000, Sunday \$11,000" → **4**, three PCRs.
+- "Weddings from \$135 per person" → **3**.
+- "Download our 2027 pricing guide" behind an email field → **2**, the wall recorded under §13.2.
+- "Minimum spend \$20,000 on a Saturday; no venue hire fee" → **5**, `V9_min_spend` = 1 and `pcr_fee_waived_condition` = 1, because the text states the minimum spend is the commercial term in place of a fee (E2).
+- A directory field reading "\$\$\$" with no figures → **3**, symbols recorded verbatim, `V6_set_by` = "platform", and no monetary meaning assigned.
+
+**Fields recorded alongside V6.** `V6_value`; `V6_source`; `V6_set_by`; `V6_addon_only`; `V6_catering_only`; `V6_quote` (the deciding passage verbatim).
+
+### 5.2 V7 — Price basis
+
+**Level:** PCR. **Scope:** A-wedding / B-listing.
+
+**Definition.** V7 records the unit against which the configuration's price is expressed. Independent fields, each 1/0/8/9, because this market commonly states two or three at once. The variable is coded whenever any price statement exists, including where V6 is 2 or 3, because a stated basis without a number is still a stated basis.
+
+| Field | Basis | Counts when a price is expressed |
+|---|---|---|
+| `V7_package_total` | A total for the offer | A package price, a wedding price, a price for the day, per wedding, per booking |
+| `V7_per_head` | Per head | Per person, per guest, per head, pp, per adult |
+| `V7_per_head_child` | Per head, child or supplier rate | A separate per-head figure for children, teenagers, suppliers or vendors |
+| `V7_site_fee` | Venue or site fee | Venue hire, site fee, hire fee, facility fee, a figure for the space itself |
+| `V7_ceremony_fee` | Ceremony fee | A figure stated for the ceremony, the ceremony space, or ceremony setup |
+| `V7_min_spend` | Minimum spend | A stated total the couple must spend, on food, beverage, or overall |
+| `V7_min_guests_charged` | Minimum headcount charged | A minimum guest number charged at a per-head rate regardless of attendance |
+| `V7_per_hour` | Per hour | Per hour, hourly, or a rate for additional hours |
+| `V7_per_night` | Per night | Where the offer includes accommodation or site occupancy charged nightly |
+| `V7_tier_day` | Tiered by day | Different figures for Saturday, Friday, Sunday, midweek, or public holidays |
+| `V7_tier_season` | Tiered by season | Different figures by month, by peak, shoulder and off-peak, or by a named season |
+| `V7_tier_headcount` | Tiered by headcount | Different figures against different guest numbers |
+| `V7_tier_year` | Tiered by year of the wedding | Different figures for different wedding years |
+| `V7_per_extra_guest` | Per additional guest | A rate for each guest above a stated included number |
+| `V7_per_extra_hour` | Per additional hour | A rate for time beyond the stated block |
+| `V7_addon_priced` | Add-ons priced separately | Any element carrying its own number at V12 status 3 |
+| `V7_fee_waived` | Fee waived on a condition | A site fee, ceremony fee or hire fee stated to be reduced or removed where another threshold is met |
+| `V7_commission_or_percentage` | A percentage term | A service charge, administration percentage, or a percentage of spend |
+
+**Inclusion.** I1: the basis word appears attached to a number in the same sentence, table row, or column heading. I2: a basis stated without a number is coded 1: "charged per person, menus on request" sets `V7_per_head` = 1 while V6 is 2. I3: "\$8,000 venue hire plus \$120 per person" sets `V7_site_fee` = 1 and `V7_per_head` = 1 on the same PCR, and V8 records two figures. I4: a stated tiering with no figures is still a stated basis and sets its tier field. I5: a platform's structured basis label sets its field with `V7_set_by` = "platform".
+
+**Exclusion.** E1: a deposit's or bond's basis is not the offer's basis. E2: a menu's per-head price is not the offer's basis unless the text states the offer is charged that way; the figure is still recorded at V8. E3: the coder never derives a basis from a figure's size or roundness. E4: a currency symbol with no basis word and no table position sets every field 0, and the amount is still recorded at V8 with unit `not_stated`. E5: the coder never sets `V7_package_total` from a site fee and a per-head figure, nor a per-head figure from a package total and a guest count (S4, S10). E6: a label sets nothing (S9): "all-inclusive" does not set `V7_package_total`.
+
+**Ambiguous cases.**
+
+- "\$150pp, minimum 80 guests" → `V7_per_head` = 1, `V7_min_guests_charged` = **1**.
+- "\$6,500 venue hire; catering by our approved caterers, priced by them" → `V7_site_fee` = **1**, `V7_per_head` = 0, and V13 codes the food block as third-party.
+- "Venue hire waived with a \$25,000 minimum spend" → `V7_min_spend` = 1, `V7_fee_waived` = **1**, condition verbatim.
+- "Peak season Saturdays attract a premium" with no figures → `V7_tier_season` = 1, `V7_tier_day` = **1**.
+- "Children under 12 half price" → `V7_per_head_child` = **1**, wording verbatim, and no figure computed.
+- "2027 packages from \$18,000; 2028 pricing released in March" → `V7_tier_year` = **1**, and the 2028 statement recorded with no figure.
+
+### 5.3 V8 — Published amount records
+
+**Level:** amount rows inside a PCR, or at row level where the figure attaches to no configuration. **Scope:** A-wedding / B-listing.
+
+**Definition.** V8 is the structured record of **every monetary figure** in the row's scope. It is the study's primary price evidence and the field an analyst uses to place one venue's price beside another's. Each figure is one record.
+
+| Field | Content |
+|---|---|
+| `V8_amount_verbatim` | The figure exactly as published, with its symbol, separators, decimals, and any attached word: "\$14,500", "\$135pp", "from \$9,000 + GST" |
+| `V8_currency_verbatim` | The currency symbol or code exactly as published |
+| `V8_currency_resolved` | The ISO currency code **only** where the scope itself states it; otherwise "AMBIGUOUS". A coder never resolves a bare symbol from the venue's country |
+| `V8_unit` | One closed value: `package_total`, `per_head`, `per_head_child`, `per_head_supplier`, `site_fee`, `ceremony_fee`, `min_spend`, `per_hour`, `per_night`, `per_room_night`, `per_extra_guest`, `per_extra_hour`, `deposit`, `bond`, `cleaning_fee`, `security_fee`, `staffing_fee`, `corkage`, `cakeage`, `service_charge`, `surcharge`, `booking_fee`, `card_fee`, `cancellation`, `addon`, `catering`, `beverage`, `styling`, `coordination`, `accommodation`, `supplier_fee`, `percentage`, `not_stated` |
+| `V8_buys` | What the figure buys, verbatim from the text |
+| `V8_condition` | Every condition attached, verbatim: day, season, year, guest band, time block, minimum, exclusivity, membership |
+| `V8_tax_statement` | Any statement about tax, GST, VAT, or inclusiveness, verbatim; blank where none |
+| `V8_status` | Firm price, from-price, range end, indicative, average, discount, historic, waived, taken from the text's own word |
+| `V8_pcr_id` | The configuration the figure attaches to, or blank where it attaches to none |
+| `V8_source_location` | Where in the scope the figure sits, including the document filename where it came from an in-scope document |
+| `V8_set_by` | `venue`, `platform`, or `third_party`, taken from what the text states about who charges it |
+
+**Rules.**
+
+R1. **Every** figure in scope is recorded, including ones the coder judges irrelevant. Selection is an analytical act, not a coding one.
+
+R2. **No arithmetic (S4, S10).** The coder never totals, never divides, never applies a discount, never adds tax, never multiplies a per-head figure by a guest number. A total the venue itself publishes is its own record; a total the coder would have to compute is never recorded.
+
+R3. **No conversion (S4).** `V8_currency_resolved` is "AMBIGUOUS" wherever the scope does not itself state the currency, and a bare dollar sign is ambiguous however obvious the country is.
+
+R4. A range is two records, one per end, each with `V8_status` = "range end", linked by a shared `V8_range_id`.
+
+R5. Where the same figure appears twice in scope, it is recorded once with both locations listed. Where two different figures are published for the same thing, both are recorded and `V8_conflict` = 1. A page and a brochure that disagree are the common case, and the coder picks neither, dates neither, and never prefers the one that looks newer, because the study measures what the couple is told and the couple is told both.
+
+R6. A figure the text states is waived, removed or credited is recorded as published with `V8_status` = "waived" and the condition in `V8_condition`. The base figure is never adjusted.
+
+R7. A figure a third party is stated to charge — a celebrant, a preferred caterer, a registry fee — is recorded with `V8_set_by` = "third_party" and never merged with the venue's own figures.
+
+**Ambiguous cases.**
+
+- "Saturday \$18,000, Friday \$15,000, Sunday \$12,000" → three records, unit `package_total`, conditions verbatim, each on its own PCR.
+- "\$135 per person + GST" → one record, unit `per_head`, tax statement "+ GST". The coder does not compute the inclusive figure.
+- "Venue hire \$7,500 and catering from \$110pp" → two records, units `site_fee` and `per_head`, both on the same PCR, and no total.
+- "Packages \$12,000–\$22,000" → two records, both `V8_status` = "range end", shared range id.
+- "Celebrant fees, paid direct, are typically \$800" → one record, `V8_set_by` = "third_party", status "indicative".
+- "Was \$16,000, now \$13,500 for remaining 2027 dates" → two records, the first status "historic", the second "firm", both verbatim with the condition.
+
