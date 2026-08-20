@@ -6,7 +6,7 @@ You are working one source of one segment's census, on your own, alongside other
 
 Segment key: __SEGMENT_KEY__ (round __ROUND__).
 
-Read __GOAL_PATH__, the segment definition: `discovery_criteria` says who belongs in this population and who does not, `rating_rubric` is how a star is judged, and `scope_note` / `geographic_catchment` bound it further where present.
+Read __GOAL_PATH__, the segment definition: `discovery_criteria` says who belongs in this population and who does not, and `scope_note` / `geographic_catchment` bound it further where present.
 
 Read __SWEEP_PATH__, the sweep record: `market_estimate` is the denominator every count is reported against, `sources` is the census your source sits in, `exclusions` says what scope keeps out, and the `rounds` log says what earlier rounds already learned — including vocabulary that worked and vocabulary that did not.
 __SWEEPER_LINE__
@@ -49,7 +49,6 @@ The front matter carries what the harness applies:
         sweep_iteration: __ROUND__
         discovered_via: __SOURCE_NAME__ (entry 412)
         s_note: listed as the responsible person on the register entry
-        star_rating: 3
     source_status: partial — 120 of 400 entries read, A–F
     reconciliation: |
       400 entries in the source; 120 read this round; 96 in scope after the
@@ -68,7 +67,7 @@ Row conventions:
 - `organisation` carries the organisation the contact belongs to. A row with neither an organisation nor a contact name is a fragment, not a find.
 - `discovered_via` names this source and, where the source has entry numbers or URLs, the specific entry, so a later round can re-find the row's origin.
 - `s_note` is why this row is in the roster: the signal in the source that justified it. One line.
-- `star_rating` is 0–5 against the segment's `rating_rubric`. A 0 goes with a `date_excluded` date and an `s_note` saying what made the row stale (SPAR-S §8a).
+- `star_rating` and `p_note` are the profile phase's columns (SPAR-S §8); leave them unset. A stale row carries a `date_excluded` date and an `s_note` saying what made it stale (SPAR-S §8a).
 - Values are single-line: no tabs, no newlines inside a value. The roster is a TSV with no quoting, so a tab in a value would split the row.
 - Use only the column names listed above. A fact that has no column belongs in `s_note` or in the body.
 
