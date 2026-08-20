@@ -67,7 +67,6 @@ Row conventions:
 - `organisation` carries the organisation the contact belongs to. A row with neither an organisation nor a contact name is a fragment, not a find.
 - `discovered_via` names this source and, where the source has entry numbers or URLs, the specific entry, so a later round can re-find the row's origin.
 - `s_note` is why this row is in the roster: the signal in the source that justified it. One line.
-- `star_rating` and `p_note` are the profile phase's columns (SPAR-S §8); leave them unset. A stale row carries a `date_excluded` date and an `s_note` saying what made it stale (SPAR-S §8a).
 - Values are single-line: no tabs, no newlines inside a value. The roster is a TSV with no quoting, so a tab in a value would split the row.
 - Use only the column names listed above. A fact that has no column belongs in `s_note` or in the body.
 
