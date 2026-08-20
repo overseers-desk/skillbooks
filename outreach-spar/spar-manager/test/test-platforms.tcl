@@ -25,8 +25,8 @@ assert_eq [spar::extract_required_skills [dict create title X] seg.yaml] {} \
     "absent map requires nothing"
 
 assert_eq [catch {spar::extract_platforms \
-    [dict create platforms {instagram required}] seg.yaml}] 1 \
-    "unknown platform refused"
+    [dict create platforms {myspace required}] seg.yaml}] 1 \
+    "unknown platform refused (no platforms/myspace.md module)"
 assert_eq [catch {spar::extract_platforms \
     [dict create platforms {linkedin mandatory}] seg.yaml}] 1 \
     "unknown strength refused"
