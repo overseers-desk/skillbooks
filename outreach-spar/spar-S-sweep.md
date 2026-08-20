@@ -193,7 +193,7 @@ Serialising costs less than it appears, and less than the alternative. An agent 
 
 S will routinely discover that a contact is stale: the person has left the organisation, changed roles, or retired from the field. A stale contact is not simply removed from the roster. The procedure is:
 
-1. Mark the contact with `date_excluded` and record the reason in `s_note` (e.g. "current team page no longer lists this person, [date]" or "LinkedIn shows role ended [date]"). S's observations belong in `s_note`; `p_note` is written only by P.
+1. Mark the contact with `date_excluded` and record the reason in `s_note` (e.g. "current team page no longer lists this person, [date]" or "platform profile shows role ended [date]"). S's observations belong in `s_note`; `p_note` is written only by P.
 2. Attempt to find the replacement — the person who now holds the role that made the original contact relevant.
 3. The replacement enters the roster as a new contact in the current iteration, with `discovered_via` recording that they were found as a replacement for the stale contact.
 4. If no replacement can be found (the organisation has closed, the role no longer exists), the stale contact is left marked and no replacement is added.
@@ -214,7 +214,7 @@ Run this checklist against all roster files after each iteration. Each check is 
 2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)"), or has a blank `contact_name` with a provisional organisation-slug stem. Rows with blank `contact_name` and no `date_excluded` are P-phase leads awaiting SPAR-P §4.1 name resolution — they are not errors.
 3. **No duplicate contacts:** no two rows in the same roster file share the same (`contact_name`, `organisation`) pair (case-insensitive). Multiple contacts at the same organisation is permitted.
 4. **Email format:** every non-empty `email` field contains an `@` sign. Strings like `via website`, `(07) 5572 3588`, or `[email obtained during call]` are not email addresses and must not pass validation. This is the gate that prevents non-email strings from inflating counts downstream.
-5. **Reachable:** every row has at least one of email (valid, per check 4), `linkedin_url`, or `facebook_url` populated. Phone alone is insufficient for campaigns that begin with a written introduction.
+5. **Reachable:** every row has at least one of email (valid, per check 4) or a platform URL populated. Phone alone is insufficient for campaigns that begin with a written introduction.
 6. **Iteration recorded:** every row has a `sweep_iteration` value.
 7. **Segment matches file:** if the roster uses a `segment` column, the value on every row matches the roster filename.
 8. **Iteration progress:** for each roster, confirm that `sweep_iteration` is populated on every row and that the stopping criteria in §6 have been evaluated.
@@ -234,7 +234,7 @@ When an AI agent delegates discovery work to a subagent, the prompt must tell th
 
 Do not replicate SPAR-S content in prompts — copies drift and cannot be corrected.
 
-**Access cadence:** Signed-in platform lookups (LinkedIn, Facebook) share a per-site access cadence that the serialised-browsing skill paces across every worker at once, so subagents may be dispatched concurrently when it is in use (see `spar-methodology.md`, "Web fetching and browser serialisation"). Only where no serialiser is available and lookups are hand-rolled do they run one at a time. Searches that do not sign in (web, register, directory) are exempt.
+**Access cadence:** Signed-in platform lookups share a per-site access cadence that the serialised-browsing skill paces across every worker at once, so subagents may be dispatched concurrently when it is in use (see `spar-methodology.md`, "Web fetching and browser serialisation"). Only where no serialiser is available and lookups are hand-rolled do they run one at a time. Searches that do not sign in (web, register, directory) are exempt.
 
 This AESOP does not prescribe how to access social media; each operator uses their own method and tooling. The access-cadence constraint is the only requirement.
 

@@ -34,7 +34,7 @@ RATIONALE_END
 Output your draft message(s) between these markers:
 
 DRAFT_START
-[your draft messages here — email, LinkedIn note, phone script as applicable per channel]
+[your draft messages here — email, platform note, phone script as applicable per channel]
 DRAFT_END
 
 Do NOT write any files. Only output text to stdout with the markers above.

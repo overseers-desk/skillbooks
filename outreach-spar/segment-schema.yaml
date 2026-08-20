@@ -102,20 +102,21 @@ discovery_criteria: |
 
 # --- Platform declarations (population facts, platform -> strength. The
 #     profiling prompt and the §4.3/§4.4 audit both derive from this map.
-#     Closed vocabularies: keys among linkedin | facebook, values among:
+#     Closed vocabularies: keys are the platform modules (platforms/{key}.md
+#     in the method directory); check the file exists before declaring the
+#     key. Values among:
 #         required — the audit expects that platform's skill invoked per
 #                    contact; a profile written without it is rejected and
 #                    re-enters the fix-and-resume loop (§4.3/§4.4)
 #         expected — the population usually holds a presence there; the
 #                    look-up is a standing step, and skipping a given row
 #                    stays within the agent's judgment
-#     A platform absent from the map carries no instruction either way: the
-#     prompt says nothing about it, and the skill remains available. Omit
-#     the field entirely when no platform earns an entry.) ---
+#     A platform absent from the map carries no instruction about it: not
+#     searched, but a profile that evidence surfaces is read after loading
+#     its module (spar-P-profile.md §4.3). Omit the field when empty.) ---
 
 # platforms:
-#   linkedin: required
-#   facebook: expected
+#   {platform}: required | expected
 
 # --- Scope note (boundary conditions with other segments, or exclusions from
 #     this segment's scope) ---

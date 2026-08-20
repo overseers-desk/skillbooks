@@ -59,7 +59,7 @@ This is appropriate when:
 This is not appropriate when:
 
 - The sub-segment is large enough that its contacts would dominate the segment's metrics, obscuring the main sub-segment's progress.
-- The sub-segment's approach procedure differs in channel (e.g., LinkedIn-first vs email-first) or in collateral requirements.
+- The sub-segment's approach procedure differs in channel (e.g., platform-first vs email-first) or in collateral requirements.
 - The sub-segment's contacts would never be discovered by the main segment's search queries.
 
 ## 6. Handling shared contacts across segments
