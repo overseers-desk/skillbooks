@@ -352,8 +352,13 @@ def main():
             days = (when - today).days
             urgent = " soon" if days <= 21 else ""
             kind_c, text_c = capital_tag(e["capital"])
+            # The money belongs to one route in, not to the event: a chip on a
+            # ticket row reads as prize money for buying a ticket.
+            cap_link = (e["capital"] or {}).get("deadline")
+            cap_here = (d.get("name") == cap_link if cap_link
+                        else d.get("kind") in ("application", "cfp"))
             cap_tag = (f'<span class="d-cap dc-{kind_c}">{esc(text_c)}</span>'
-                       if text_c else "") 
+                       if text_c and cap_here else "")
             act = KIND_LABEL.get(d.get("kind"), "Act")
             gp = gated_price(e, d)
             if gp:

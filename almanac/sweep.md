@@ -67,6 +67,10 @@ Three inputs, weighed together.
 
 Rate from these three every time you touch an entry, rather than carrying a rating forward because it is already written. Say why in the entry's reasoning, in terms a reader can argue with. An adjective alone ("generic", "academic", "massive") is not a reason, and travels between entries and between sweeps doing damage.
 
+A star is a treatment, not a mood. 5: act now, and plan the season around it. 4: act when its named condition lands, an invitation secured, regional outreach done, a trip committed. 3: join when already in the region, never fly for it. 2: tracked for one stated narrow reason. 1: recorded so the search does not repeat. Rate by picking the level whose treatment fits, and name the treatment in the reasoning.
+
+Where the data folder carries a `rubric.md`, that is the user's own weighing of these inputs and it binds: read it before rating, and argue each entry's reasoning from it. A star lowered on its authority holds against later sweeps the way a user-worded lowering does.
+
 `shortlisted: true` marks an event the user has chosen to pursue. It is the user's to set. Leave the key absent otherwise; absent reads as not shortlisted.
 
 ## Opportunity estimates
@@ -85,7 +89,7 @@ Where an event puts capital in front of a founder, record what it costs. A prize
 
 Then go one step further, because eligibility is not addressability.
 
-**An open door is not an invitation.** Entry criteria are what an organiser publishes, and a wide funnel costs them nothing and makes the competition look larger. Who they award to is never published as a policy and is demonstrated every year. Before recording a competition as an opportunity, read last year's winners, or the criteria that actually bind: the jury's own portfolio, the problem statements a sponsor has set, the sectors the past three cohorts came from.
+**An open door is not an invitation.** Entry criteria are what an organiser publishes, and a wide funnel costs them nothing and makes the competition look larger. Who they award to is never published as a policy and is demonstrated every year. Before recording a competition as an opportunity, read last year's winners, or the criteria that actually bind: the jury's own portfolio, the problem statements a sponsor has set, the sectors the past three cohorts came from. The same check reads a speaker call: last year's roster shows who gets the stage, as the winner list shows who gets the money.
 
 Money given away goes to a niche far more often than to the field. A crypto conference's competition admits any sector and has awarded only crypto, because its jury is three crypto funds selecting deal flow. A fintech programme's entrants answer problem statements set by banks, so what the banks asked for decides who can compete, whatever the entry form says.
 
@@ -112,6 +116,10 @@ Lessons this procedure has paid for.
 **Discard conference mills.** Several operations generate plausible "International Conference on X" listings for any city and month, and sell presentation slots. They are not events worth tracking.
 
 **Treat a round number without a year as prior-year.** Organisers reuse last edition's attendance in the present tense. Widen the estimate range accordingly.
+
+**A target is not a confession.** An organiser publishing target numbers may still have run before; read a prior edition's actuals before treating targets as evidence of no history.
+
+**Give the range, not the archaeology.** Two sources with two figures make one range in the reasoning; which source carried which number stays in the cache.
 
 ## 4. Alert on deadlines
 
