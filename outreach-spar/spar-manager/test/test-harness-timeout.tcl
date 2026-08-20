@@ -649,7 +649,7 @@ puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
 puts $fd "CAMPAIGN_FILE=\"/tmp/none/campaigns/camp.yaml\""
 close $fd
 set fd [open [file join $rq_prompt_dir prompt.txt] w]
-puts $fd "research the contact\n__LINKEDIN_SECTION__\nwrite the profile"
+puts $fd "research the contact\n__PREFETCH_SECTION__\nwrite the profile"
 close $fd
 
 set ph3 [spar::ProfileHarness new $rq_prompt_dir [file join $tmp_root logs-rq]]
@@ -715,7 +715,7 @@ puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
 puts $fd "CAMPAIGN_FILE=\"/tmp/none/campaigns/camp.yaml\""
 close $fd
 spar::write_file [file join $cs_prompt_dir prompt.txt] \
-    "research the contact\n__LINKEDIN_SECTION__\nwrite the profile"
+    "research the contact\n__PREFETCH_SECTION__\nwrite the profile"
 
 set ph7 [spar::ProfileHarness new $cs_prompt_dir [file join $tmp_root logs-cs]]
 oo::objdefine $ph7 {
@@ -741,7 +741,7 @@ puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
 puts $fd "CAMPAIGN_FILE=\"/tmp/none/campaigns/camp.yaml\""
 close $fd
 spar::write_file [file join $cs2_prompt_dir prompt.txt] \
-    "research the contact\n__LINKEDIN_SECTION__\nwrite the profile"
+    "research the contact\n__PREFETCH_SECTION__\nwrite the profile"
 set ph8 [spar::ProfileHarness new $cs2_prompt_dir \
              [file join $tmp_root logs-cs2]]
 set ::cs_validated 0
@@ -772,7 +772,7 @@ puts $fd "ROSTER_PATH=\"/tmp/none/roster.tsv\""
 puts $fd "CAMPAIGN_FILE=\"/tmp/none/campaigns/camp.yaml\""
 close $fd
 set fd [open [file join $t1_prompt_dir prompt.txt] w]
-puts $fd "research the contact\n__LINKEDIN_SECTION__\nwrite the profile"
+puts $fd "research the contact\n__PREFETCH_SECTION__\nwrite the profile"
 close $fd
 set ph6 [spar::ProfileHarness new $t1_prompt_dir [file join $tmp_root logs-t1]]
 set ::t1_validated 0
@@ -818,7 +818,7 @@ puts $fd "CAMPAIGN_FILE=\"/tmp/none/campaigns/camp.yaml\""
     }
     close $fd
     set fd [open [file join $d prompt.txt] w]
-    puts $fd "research the contact\n__LINKEDIN_SECTION__\nwrite the profile"
+    puts $fd "research the contact\n__PREFETCH_SECTION__\nwrite the profile"
     close $fd
     return $d
 }
@@ -834,7 +834,7 @@ set li_prompt [spar::read_file [file join $li_ok prompt.txt]]
 $ph7 destroy
 assert_match $li_prompt "*headline: Test Person*" \
     "prefetched parse lands in prompt.txt"
-assert_eq [string match "*__LINKEDIN_SECTION__*" $li_prompt] 0 \
+assert_eq [string match "*__PREFETCH_SECTION__*" $li_prompt] 0 \
     "placeholder substituted away on success"
 # RequiredSkills is instance state, so a second harness re-runs the
 # same inject to read the audit adjustment.
@@ -864,7 +864,7 @@ oo::objdefine $ph8 method test_required {} {
 $ph8 load_my_meta
 $ph8 inject_linkedin
 set li_prompt_f [spar::read_file [file join $li_fail prompt.txt]]
-assert_eq [string match "*__LINKEDIN_SECTION__*" $li_prompt_f] 0 \
+assert_eq [string match "*__PREFETCH_SECTION__*" $li_prompt_f] 0 \
     "placeholder cleared on a failed fetch"
 assert_eq [string match "*headline*" $li_prompt_f] 0 \
     "no parse injected on a failed fetch"
@@ -886,7 +886,7 @@ $ph9 inject_linkedin
 $ph9 destroy
 assert_eq [file exists [file join $bs_dir was-run]] 0 \
     "no linkedin_url: browser-serialiser not invoked"
-assert_eq [string match "*__LINKEDIN_SECTION__*" \
+assert_eq [string match "*__PREFETCH_SECTION__*" \
     [spar::read_file [file join $li_none prompt.txt]]] 0 \
     "no linkedin_url: placeholder still cleared"
 

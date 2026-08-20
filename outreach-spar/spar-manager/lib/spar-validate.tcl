@@ -242,8 +242,9 @@ proc spar::_pred_linkedin_guard {node meta} {
         set li_len  [string length $li_text]
         # The 300-char cap is measured on every LinkedIn message, whether it
         # goes out as an invitation note or (invitation_unavailable) a direct
-        # Message: a longer body is an authoring error to shorten (see
-        # spar-A-approach.md, the invitation_unavailable entry).
+        # Message: a longer body is an authoring error to shorten. The cap's
+        # home is platforms/linkedin.md (200 free / 300 premium; this guard
+        # is the mechanical backstop at the premium bound).
         if {$li_len > 300} {
             lappend out [dict create code linkedin_note_too_long \
                 message "LinkedIn note is $li_len chars, limit 300; shorten it. The cap binds every LinkedIn message, invitation or direct"]
@@ -629,9 +630,8 @@ proc spar::audit_skills_in_transcript {session_id required_skills contact_name {
     }
     set seen_text [expr {[llength $seen] > 0 ? [join $seen ", "] : "none"}]
     set issues {}
-    set sec [dict create linkedin §4.3 facebook §4.4]
     foreach s $required_skills {
-        set sref [dict getdef $sec $s "(spec)"]
+        set sref "§4.3"
         set verdict [dict get \
             [linesman::rule $rec -tool Skill -field skill -match *${s}*] verdict]
         switch -- $verdict {
@@ -1480,14 +1480,16 @@ proc spar::_pred_sweeper_resolves {node meta} {
 }
 
 # platforms entries: the closed vocabularies spar::extract_platforms
-# hard-errors on at dispatch time. Catch at authoring time.
+# hard-errors on at dispatch time (keys: the platform module set,
+# spar::platform_modules). Catch at authoring time.
 proc spar::_pred_platforms_vocab {node meta} {
     if {![dict exists $node platforms]} { return {} }
     set out {}
+    set allowed [spar::platform_modules]
     dict for {platform strength} [dict get $node platforms] {
-        if {$platform ni {linkedin facebook}} {
+        if {$platform ni $allowed} {
             lappend out [dict create message \
-                "platforms key '$platform' — closed vocabulary: linkedin | facebook"]
+                "platforms key '$platform' — closed vocabulary (platform modules): [join $allowed { | }]"]
         } elseif {$strength ni {required expected}} {
             lappend out [dict create message \
                 "platforms.$platform value '$strength' — closed vocabulary: required | expected"]

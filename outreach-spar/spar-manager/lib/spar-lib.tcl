@@ -442,9 +442,28 @@ proc spar::instance_root_for_yaml {yaml_path} {
 # expects that platform's skill invoked per contact (a profile without it
 # is rejected); `expected` means the population usually holds a presence
 # there and the look-up is a standing step, skippable on the agent's own
-# judgment; a platform absent from the map gets no instruction at all.
-# The closed vocabularies below are what spar::extract_platforms
-# hard-errors on at dispatch time.
+# judgment; a platform absent from the map gets no instruction about it.
+# The key vocabulary is the platform module set (platforms/{key}.md in
+# the method directory); spar::extract_platforms hard-errors at dispatch
+# time on a key with no module.
+
+namespace eval spar {
+    variable lib_script_dir [file dirname [file normalize [info script]]]
+}
+
+# platform_modules — the platform key vocabulary: the {key} stems of the
+# method directory's platforms/{key}.md modules. The module file is what
+# admits a key into segment.yaml's platforms: map, so the file set is the
+# vocabulary's single home.
+proc spar::platform_modules {} {
+    variable lib_script_dir
+    set stems {}
+    foreach f [glob -nocomplain -directory \
+            [file join $lib_script_dir .. .. platforms] *.md] {
+        lappend stems [file rootname [file tail $f]]
+    }
+    return [lsort $stems]
+}
 
 # extract_platforms — return a segment's platform map as a dict
 # (platform -> required|expected), validated. Empty dict when the field
@@ -457,9 +476,10 @@ proc spar::extract_platforms {segment_data segment_path} {
         return [dict create]
     }
     set platforms [dict get $segment_data platforms]
+    set allowed [spar::platform_modules]
     dict for {platform strength} $platforms {
-        if {$platform ni {linkedin facebook}} {
-            error "Segment $segment_path: unknown platform '$platform' (allowed: linkedin, facebook)"
+        if {$platform ni $allowed} {
+            error "Segment $segment_path: unknown platform '$platform' (allowed: [join $allowed {, }])"
         }
         if {$strength ni {required expected}} {
             error "Segment $segment_path: platforms.$platform is '$strength' (allowed: required, expected)"

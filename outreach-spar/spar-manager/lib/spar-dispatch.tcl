@@ -49,9 +49,15 @@ proc spar::platform_guidance {platforms} {
         facebook {title Facebook url_field facebook_url host facebook.com}
     }
     set parts {}
-    foreach platform {linkedin facebook} {
-        if {![dict exists $platforms $platform]} continue
-        set m [dict get $meta $platform]
+    foreach platform [lsort [dict keys $platforms]] {
+        if {[dict exists $meta $platform]} {
+            set m [dict get $meta $platform]
+        } else {
+            # A module-backed platform with no meta row: derive the
+            # conventional shape ({platform}_url, {platform}.com).
+            set m [dict create title [string totitle $platform] \
+                url_field ${platform}_url host $platform.com]
+        }
         lappend parts [string map [list \
             __PLATFORM__       $platform \
             __PLATFORM_TITLE__ [dict get $m title] \
@@ -315,6 +321,14 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         set email [string trim [dict getdef $row email ""]]
         set linkedin [string trim [dict getdef $row linkedin_url ""]]
         set facebook [string trim [dict getdef $row facebook_url ""]]
+        # __PLATFORM_URLS__: one " column: value." clause per populated
+        # platform URL column, named by the column so the worker knows the
+        # roster_patch key it corresponds to.
+        set platform_urls ""
+        foreach _uk [lsort [dict keys $row *_url]] {
+            set _uv [string trim [dict get $row $_uk]]
+            if {$_uv ne ""} { append platform_urls " $_uk: $_uv." }
+        }
         set date_invalid [string trim [dict getdef $row date_excluded ""]]
         set s_note [string trim [dict getdef $row s_note ""]]
         set p_note [string trim [dict getdef $row p_note ""]]
@@ -378,8 +392,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             __ROLE__          $role \
             __PHONE__         $phone \
             __EMAIL__         $email \
-            __LINKEDIN__      $linkedin \
-            __FACEBOOK__      $facebook \
+            __PLATFORM_URLS__ $platform_urls \
             __S_NOTE__        $s_note \
             __P_NOTE__        $p_note \
             __GOAL_PATH__     $goal_path \

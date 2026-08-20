@@ -717,7 +717,7 @@ oo::class create spar::ProfileHarness {
     }
 
     # inject_linkedin (skillbooks#182) — prefetch the roster row's
-    # LinkedIn parse and substitute __LINKEDIN_SECTION__ in prompt.txt.
+    # LinkedIn parse and substitute __PREFETCH_SECTION__ in prompt.txt.
     # Runs here so the wait sits in Tcl, inside the overseer's fair
     # queue, before any token is spent; a worker-side fetch under a
     # saturated queue outlives its foreground window instead. The
@@ -769,7 +769,7 @@ oo::class create spar::ProfileHarness {
             }
         }
         set prompt [spar::read_file $prompt_path]
-        set prompt [string map [list __LINKEDIN_SECTION__ $section] $prompt]
+        set prompt [string map [list __PREFETCH_SECTION__ $section] $prompt]
         spar::write_file $prompt_path $prompt
         return 0
     }
