@@ -47,7 +47,10 @@ proc spar::platform_guidance {platforms} {
     set meta {
         linkedin {title LinkedIn url_field linkedin_url host linkedin.com}
         facebook {title Facebook url_field facebook_url host facebook.com}
+        instagram {title Instagram url_field p_note host instagram.com}
     }
+    # instagram's url_field is p_note: the roster has no instagram_url
+    # column (platforms/instagram.md), so a confirmed handle lands there.
     set parts {}
     foreach platform [lsort [dict keys $platforms]] {
         if {[dict exists $meta $platform]} {
@@ -320,7 +323,6 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         set phone [string trim [dict getdef $row phone ""]]
         set email [string trim [dict getdef $row email ""]]
         set linkedin [string trim [dict getdef $row linkedin_url ""]]
-        set facebook [string trim [dict getdef $row facebook_url ""]]
         # __PLATFORM_URLS__: one " column: value." clause per populated
         # platform URL column, named by the column so the worker knows the
         # roster_patch key it corresponds to.

@@ -714,6 +714,10 @@ oo::class create spar::ProfileHarness {
 
     # inject_linkedin (skillbooks#182) — prefetch the roster row's
     # LinkedIn parse and substitute __PREFETCH_SECTION__ in prompt.txt.
+    # LinkedIn-only by design: it is the one platform with a cacheable
+    # parse worth fetching ahead, and the one whose cost model makes the
+    # saved fetch matter; the placeholder name stays platform-neutral so
+    # an empty substitution needs no per-platform branch.
     # Runs here so the wait sits in Tcl, inside the overseer's fair
     # queue, before any token is spent; a worker-side fetch under a
     # saturated queue outlives its foreground window instead. The
