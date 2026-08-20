@@ -85,7 +85,7 @@ Columns are ordered left-to-right by pipeline stage: identity, contact channels,
 |---|-------|------|------------|---------|---------|
 | 5 | phone | text | S; P updates | A | |
 | 6 | email | text | S; P updates; A backfills on discovery | A | A may write a verified email found at send time (see `spar-A-approach.md` §4.8) |
-| 7–8 | {platform}_url | URL | S; A corrects on discovery | P (fetches it) | Platform profile URL columns, one per platform module (`platforms/{platform}.md` documents its own column) |
+| 7–8 | {platform}_url | URL | S; A corrects on discovery | P (fetches it) | Platform profile URL columns, one per platform module (`platforms/{platform}.md` documents its own column, or its absence). A new URL column is a change to this table, not implied by a new module. |
 
 Every row must have at least one of email or a platform URL column populated. Phone alone is insufficient for campaigns that begin with a written introduction.
 
