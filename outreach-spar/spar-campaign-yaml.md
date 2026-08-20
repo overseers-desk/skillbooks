@@ -48,7 +48,7 @@ Channel vocabulary: `email`, `phone`, and one channel per platform module (the m
 | Field | Type | Default | Purpose |
 |---|---|---|---|
 | `filter.min_star` | integer | 0 | Skip entries with `star_rating` below this threshold |
-| `filter.require_profile` | boolean | false | Skip entries that have no matching profile document |
+| `filter.require_profile` | boolean | true | Skip entries that have no profile document; `false` lets A draft from the roster row alone, which the P phase exists to prevent, so state it only when that is wanted |
 
 ### Optional (venue)
 
