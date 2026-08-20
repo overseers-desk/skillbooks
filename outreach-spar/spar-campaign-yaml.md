@@ -31,7 +31,7 @@ The campaign declares which outreach channels are in scope and the cadence betwe
 | `secondary_channel` | map | Contingent follow-up. Requires `channel`, `wait_days`, `wait_condition`. Omit the slot for campaigns that do not follow up. |
 | `tertiary_channel` | map | Second contingent follow-up, same shape as secondary. Omit if unused. |
 
-Channel vocabulary: `email`, `phone`, `linkedin`, `facebook`. A channel not named in any slot is out of scope for this campaign — contacts whose only channel is out of scope are filtered at dispatch time, not marked invalid.
+Channel vocabulary: `email`, `phone`, and one channel per platform module (the module's key, e.g. `platforms/{platform}.md` → `{platform}`). A channel not named in any slot is out of scope for this campaign — contacts whose only channel is out of scope are filtered at dispatch time, not marked invalid.
 
 `wait_condition` values defined today:
 

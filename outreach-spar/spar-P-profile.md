@@ -5,14 +5,13 @@
 
 ## 1. When to use this procedure
 
-Use this procedure when you have a roster entry — a name, an organisation, and optionally a LinkedIn URL or other seed data — and need to produce a profile document that the A (Approach) phase can consume. P runs within each S&P iteration on the contacts discovered in that iteration's S phase.
+Use this procedure when you have a roster entry — a name, an organisation, and optionally a platform profile URL or other seed data — and need to produce a profile document that the A (Approach) phase can consume. P runs within each S&P iteration on the contacts discovered in that iteration's S phase.
 
 ## 2. Inputs
 
-- **Target:** Name, organisation, and whatever seed data the roster contains (LinkedIn URL, role, segment, discovered_via). If the roster entry has no `contact_name`, resolving one is the first task of this phase — see §4.1. Entries with a blank `contact_name` are P-phase leads, not invalid data.
+- **Target:** Name, organisation, and whatever seed data the roster contains (platform URLs, role, segment, discovered_via). If the roster entry has no `contact_name`, resolving one is the first task of this phase — see §4.1. Entries with a blank `contact_name` are P-phase leads, not invalid data.
 - **Segment file:** The segment definition (`segments/{segment}.yaml`) that defines the segment's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
 - **Rating rubric (in the segment file):** the segment's `rating_rubric` defines what "valuable to us" means for this population, campaign-independent. It is the standing standard you judge the contact against. You are not given the campaign's ask, pitch, or USP, nor any campaign overview document; the profile is reused across campaigns and over time, so that knowledge belongs to the approach phase (INVARIANTS.md I1).
-- **LinkedIn lookup method:** Use the LinkedIn skill or MCP available in your environment. Read its documentation before the first fetch in a session — it specifies sequencing constraints and any parsing scripts.
 
 ## 3. Output
 
@@ -20,7 +19,7 @@ A markdown file named `{stem}.md` directly in the segment's folder (`segments/{s
 
 Additionally, P produces:
 - **Roster updates:** If the target's role, organisation, or contact details have changed or were missing and are now known, update the roster entry directly (see §4.15).
-- **New names:** If profiling surfaces names not already in the roster, add them to the roster with `discovered_via` pointing to the target being profiled and the specific mechanism by which they were found (e.g. "LinkedIn post commenter on [contact]", "co-admin of Facebook group with [contact]", "named in FOSSASIA Summit post by [contact]").
+- **New names:** If profiling surfaces names not already in the roster, add them to the roster with `discovered_via` pointing to the target being profiled and the specific mechanism by which they were found (e.g. "post commenter on [contact]", "co-admin of a community group with [contact]", "named in FOSSASIA Summit post by [contact]").
 
 ## 4. Procedure
 
@@ -28,16 +27,15 @@ Additionally, P produces:
 
 If the roster entry has no `contact_name`, the organisation has been discovered by sweep but no individual has been identified. This step must complete before §4.2.
 
-**If the roster entry carries `linkedin_url`, fetch that profile first** using the LinkedIn skill. A direct profile view is not subject to LinkedIn's search-rate protections, so when the URL is already known the fetch is cheap, the name resolves immediately, and the profile yields organisation, community, and collaborator names that seed later keyword and cross-platform work. The skill writes its saved HTML to the canonical path that §4.3 reads, so running it here doubles as the §4.3 fetch: the same artefact serves both steps. WebFetch, raw chromium, or any other channel produces no such artefact, so §4.3 will still need the skill to run.
+**If the roster entry carries a platform profile URL, fetch it first** using that platform's skill, its module read beforehand. A direct profile view is the cheap access form (each module states its cost model), the name resolves immediately, and the profile yields organisation, community, and collaborator names that seed later keyword and cross-platform work. The skill writes its saved HTML to the canonical path that §4.3 reads, so running it here doubles as the §4.3 fetch: the same artefact serves both steps. WebFetch, raw chromium, or any other channel produces no such artefact, so §4.3 will still need the skill to run.
 
 **Otherwise, search these sources in order:**
 
 1. **Company website** — About, Team, or Contact pages often name the owner or manager.
-2. **Facebook** — Small operators frequently maintain their primary presence here. Search for the company name; check the About section and any "Run by" attribution. Use the Facebook skill if available.
-3. **LinkedIn by search** — Search for the company; check the People section for the managing director or owner. Use the LinkedIn skill if available. Search is rate-limited where direct URL view is not, so this step comes after the cheaper ones.
-4. **ABN registry** — For sole traders and small Pty Ltd companies, the ABN Lookup may name an individual.
-5. **Yellow Pages, TrueLocal, Google Maps reviews** — Reviews and listings sometimes name the owner.
-6. **Web search** — `"[company name]" owner OR director OR founder OR operator`.
+2. **Declared platforms** — look the company up on each platform the segment declares, cheapest access first per its module (a company-page read before a people-search; each module names where an owner's name surfaces).
+3. **ABN registry** — For sole traders and small Pty Ltd companies, the ABN Lookup may name an individual.
+4. **Yellow Pages, TrueLocal, Google Maps reviews** — Reviews and listings sometimes name the owner.
+5. **Web search** — `"[company name]" owner OR director OR founder OR operator`.
 
 **If a name is found:**
 - Update `contact_name` in the roster.
@@ -46,7 +44,7 @@ If the roster entry has no `contact_name`, the organisation has been discovered 
 
 **If no name is found after exhausting all sources:**
 - If the roster entry has no `stem`, write one using the organisation slug (e.g. `a-team-coaches` for "A-Team Coaches"). This ensures the row is identifiable in the state machine.
-- Record in `p_note`: "name search attempted [date]: no individual identified via website, Facebook, LinkedIn, ABN, web search."
+- Record in `p_note`: "name search attempted [date]: no individual identified via website, declared platforms, ABN, web search."
 - Set `date_excluded` to today with reason "name search exhausted ([date])." This is the P-phase's responsibility — sweep does not set `date_excluded` for entries whose individual was never identified.
 - Exception, organisation-population segments: where the segment's population is organisations (facilities, villages, clubs) and its plan treats a published office channel as a viable first contact, an exhausted name search alone does not exclude. The organisation remains a targetable row contacted at its office address; record "no individual identified ([date])" in `p_note` and rate the organisation on the segment rubric. Exclusion still applies when the row fails the mechanism test (§4.2) or no written channel exists at all. (A 2026-07 pilot excluded 18 reachable organisations on the person-centric reading of this rule; office-bearer registers such as ACNC Responsible People later named individuals for several.)
 - Do not proceed to §4.2 or produce a profile document. The roster entry is the permanent record.
@@ -63,49 +61,29 @@ If the contact cannot deliver the outcome through the mechanism the segment desc
 
 If an invalid entry has already passed Profile and reached the approach queue, the failure is at the P stage. The question to ask is whether the segment file was specific enough to make this check possible. If the exclusion was not obvious from the segment file, the segment file may need a `discovery_criteria` section that names the contact types that do not belong, so future sweeps and profile runs do not repeat the error.
 
-### 4.3 Fetch and parse the LinkedIn profile
+### 4.3 Fetch declared platform profiles
 
-This step stands when the segment definition lists `linkedin` in its `platforms:` map (`segment-schema.yaml`). `required` means the profile audit expects the skill invoked for this contact; a profile written without it is rejected and comes back as fix instructions. `expected` means the population usually holds profiles and the look-up is a standing step, with the judgment to skip a given row yours. A segment whose map is silent on linkedin gives this step no standing; the skill remains available when your own evidence calls for it, and a roster row that already carries a `linkedin_url` has passed discovery, so reading it when the rubric needs it is ordinary research, not this step.
+The segment definition lists the population's platforms in its `platforms:` map (`segment-schema.yaml`); this step runs once per listed platform, its module (`platforms/{platform}.md`) read before the first access. `required` means the profile audit expects that platform's skill invoked for this contact; a profile written without it is rejected and comes back as fix instructions. `expected` means the population usually holds profiles and the look-up is a standing step, with the judgment to skip a given row yours.
 
-If §4.1 already fetched the profile via the roster's `linkedin_url`, the data is captured — proceed to §4.4.
+A platform the map does not declare is not searched. When evidence surfaces that the target holds a profile there (a link in a search result, on a web page, in another profile), read its module, then access; the module states the cost model an improvised fetch would otherwise trip over. A roster row that already carries a platform URL has passed discovery, so reading it when the rubric needs it is ordinary research, not this step. Email addresses and phone numbers are not platforms: whenever one is discovered, collect it (roster backfill, §4.15) or discard it on your judgment of correctness and currency.
 
-Otherwise: if the roster provides a LinkedIn URL, fetch and parse it. If no URL is provided, search for the person by name and location first, identify the correct profile, then fetch it.
+Per platform: if the roster provides a URL, fetch and parse it directly (if §4.1 already fetched it, the data is captured — proceed to §4.4). Only where no URL is known, and within the platform's cost model, search for the person by name and location, identify the correct profile, then fetch it. Prefer the platform's site skill for the fetch: it routes through the user's serialised browser, which paces access so a burst of profile views does not throttle the address or flag the logged-in session (see `spar-methodology.md`, "Web fetching and browser serialisation"). If no serialised-browsing skill is available in your environment, hand-roll a headless chromium fetch instead; do not halt. Fetches follow the access cadence in §6.
 
-Prefer the LinkedIn skill for the fetch. It routes through the user's serialised browser, which paces access so a burst of profile views does not throttle the address or flag the logged-in session (see `spar-methodology.md`, "Web fetching and browser serialisation"). If no serialised-browsing skill is available in your environment, hand-roll a headless chromium fetch instead; do not halt.
+### 4.4 Verify the match and extract
 
-**From the parsed profile, extract:**
-- Current role and organisation
-- Full career history with dates
-- Education (degrees, certifications, current study)
-- Volunteer and mentorship roles
-- Location
-- **Employment-currency signal**, if present: an "Open to work" / "#OpenToWork" banner, a "Providing services" / freelance section, or a headline whose named employer or role the current-experience entry or recent activity contradicts ("ex-", a different current employer). Capture verbatim; record it in the body `## Current role`. Its presence means the stated role may be ending — see §4.13.
+**Verification:** before recording data from a profile found by search rather than by a roster URL, confirm the match. A match requires at least two corroborating signals: same name, same location (city/region), same employer as other sources, or profile photo consistent with other known images. If the match cannot be confirmed, record "{platform}: no verified match found" in the profile and do not use the unverified data. That finding is a legitimate outcome of having actually fetched and checked a candidate profile, not a substitute for fetching one.
 
-**DOM parsing note.** LinkedIn's DOM parser sometimes returns category labels (e.g. "Startup") rather than company names, and when a person lists multiple roles at the same organisation, the parser may present them as separate entries. Cross-reference roles by date overlap and description content to identify entries that belong to the same organisation. If a "Co-Founder" entry describes a crowdfunding platform and a "Business Development Manager" entry is at "Startup" during the same period, these are almost certainly the same company.
-
-Social media fetches follow the access cadence in §6.
-
-### 4.4 Fetch and parse the Facebook profile
-
-This step stands on the same terms as §4.3, read from the map's `facebook` entry.
-
-Run this step after §4.3. Use the Facebook skill under the same rule as §4.3 — prefer the serialised skill, hand-roll a chromium fetch if none is available. "No verified match found" (see Verification, below) is a legitimate outcome of having actually fetched and checked a candidate profile, not a substitute for fetching one.
-
-The purpose of this step is twofold: (1) verify the person found is the same individual as on LinkedIn, and (2) collect details not available on LinkedIn, in particular current workplace, community affiliations, and recent activity. Fetch both the main profile page and the About page.
-
-**Verification:** Before recording any data, confirm the match. A match requires at least two corroborating signals: same name, same location (city/region), same employer as other sources, or profile photo consistent with other known images. If the match cannot be confirmed, record "Facebook: no verified match found" in the profile and do not use unverified data.
-
-**If match confirmed, extract:**
-- Current workplace and role (often more current than LinkedIn)
-- Location
-- Community groups or pages they admin or follow (relevant to campaign angles)
-- Any public posts relevant to the campaign
+**From each parsed profile, extract:**
+- Current role, organisation, and location
+- Full career history with dates; education (degrees, certifications, current study)
+- Volunteer and mentorship roles; community groups or pages they admin or follow; public posts relevant to the campaign
+- The platform-specific signals its module names (employment currency, role-currency contradictions, parser quirks to cross-reference). A currency signal means the stated role may be ending — see §4.13. Where platforms disagree on the current role, weigh source currency per the modules.
 
 ### 4.5 Keyword search for relevance terms
 
 Run keyword searches on the saved HTML using terms drawn from the segment's `rating_rubric` and `discovery_criteria`. This determines which relevance signals have direct evidence.
 
-If you fetched via the LinkedIn skill or MCP, use its keyword-search tool, passing the saved profile HTML and the keyword list; if you hand-rolled a chromium fetch, grep the saved DOM for the keyword list.
+If you fetched via a site skill that offers a keyword-search tool, use it, passing the saved profile HTML and the keyword list; if you hand-rolled a chromium fetch, grep the saved DOM for the keyword list.
 
 **Choose keywords from two sources:**
 
@@ -168,26 +146,26 @@ Never write a masked or redacted email address (e.g. `b***@example.com`) to the 
 
 **Name-mismatch check.** If the email found is associated with a different name than the roster contact — e.g. the roster says "Jess" but the contact page email is `athena@example.com` — do not write it yet. Investigate who currently runs the business; the result feeds the Person-vs-company correction in §4.15.
 
-**Shared-inbox rule.** Before writing an email, check whether the same address is already carried by another row in this segment at the same organisation. If it is, do not write the duplicate and do not overwrite the other row. Research for a non-shared alternate — a personal mailbox, a direct-dial address, a `firstname@` form — and write that. If no non-shared alternate can be found, leave this contact's `email` field empty; the approach will proceed via LinkedIn or phone, or (if no reachable channel remains) the contact simply sits outside the approachable population until one is found. A single shared inbox (`admin@`, `info@`, `hello@`, `grow@`, etc.) must belong to at most one roster row per organisation, because two outreach emails landing in the same inbox on behalf of two different people reads as bulk outreach, not considered correspondence. The runtime post-validator (`roster_shared_inbox_collision`) will reject the second write and re-prompt for this rule.
+**Shared-inbox rule.** Before writing an email, check whether the same address is already carried by another row in this segment at the same organisation. If it is, do not write the duplicate and do not overwrite the other row. Research for a non-shared alternate — a personal mailbox, a direct-dial address, a `firstname@` form — and write that. If no non-shared alternate can be found, leave this contact's `email` field empty; the approach will proceed via a platform channel or phone, or (if no reachable channel remains) the contact simply sits outside the approachable population until one is found. A single shared inbox (`admin@`, `info@`, `hello@`, `grow@`, etc.) must belong to at most one roster row per organisation, because two outreach emails landing in the same inbox on behalf of two different people reads as bulk outreach, not considered correspondence. The runtime post-validator (`roster_shared_inbox_collision`) will reject the second write and re-prompt for this rule.
 
 If the email passes the format gate, the name check, and the shared-inbox check, declare it in the profile front matter's `roster_patch:` block; the harness applies it to the roster (an interactive, unharnessed session writes the roster itself per `spar-roster-format.md`, "Programmatic access"). If not found, record in `p_note` via the same block: "email search attempted [date]: no public email found."
 
-### 4.9 Web search for public activity beyond LinkedIn
+### 4.9 Web search for public activity beyond the fetched platforms
 
-Search for the target's name plus campaign-relevant terms, excluding LinkedIn:
+Search for the target's name plus campaign-relevant terms, excluding the platforms already fetched:
 
 ```
 "[Full Name]" [campaign topic keywords] [current year OR previous year]
 "[Full Name]" [organisation name]
 ```
 
-This catches conference talks, blog posts, published papers, media quotes, and GitHub activity that do not appear on LinkedIn. If nothing turns up, note "no public activity found beyond LinkedIn" — the absence is informative for yield.
+This catches conference talks, blog posts, published papers, media quotes, and GitHub activity that do not appear on the fetched platforms. If nothing turns up, note "no public activity found beyond the fetched platforms" — the absence is informative for yield.
 
 ### 4.10 Record what the target has said publicly
 
-For each substantive public statement found (LinkedIn posts, blog posts, conference talks, tweets, mailing list messages), record:
+For each substantive public statement found (platform posts, blog posts, conference talks, mailing list messages), record:
 - The quote or close paraphrase
-- The source (LinkedIn post, blog URL, conference name and year)
+- The source (platform post, blog URL, conference name and year)
 - What it reveals about the target's concerns, positions, or interests
 
 When the target has published an article or given a talk, extract specific recommendations, proposals, or calls to action — not just the general argument. "Wrote about XZ" is less useful to the A phase than "recommended SBOMs as industry standard and called for a partnership model among OSS communities, enterprises, and federal agencies." These specifics are the hooks the A phase uses to connect the target's stated views to the campaign's offering. A summary that captures the framing but omits the concrete proposals strips out the most actionable material.
@@ -196,7 +174,7 @@ Do not invent or infer statements. The A phase sometimes fabricates a connection
 
 ### 4.11 Record who the target knows
 
-From LinkedIn posts (names mentioned or tagged), profile connections visible in the parse, and web search results, identify people connected to the target who are relevant to the campaign. For each:
+From posts on the fetched platforms (names mentioned or tagged), profile connections visible in the parse, and web search results, identify people connected to the target who are relevant to the campaign. For each:
 - Name and their role/organisation
 - How they are connected to the target (tagged in post, co-organiser, commenter, co-admin) — record the mechanism, not a vague "appears to know"
 - Why they are relevant to the campaign (bridges to a target community, works at a target organisation, holds a relevant role)
@@ -211,7 +189,7 @@ grep -ril "PERSON NAME" <instance-root>/segments/
 
 If the person already has a profile, update it to record the new information. Examples: "this person was replaced at [org] by [target] as of [date]" (useful for inferring the departing person's industry experience); or "this person is the predecessor of [target] at [org], whose background may inform [target]'s approach." Prior industry experience — especially if the person came from the operator side of the same industry — changes the register of any approach written for them. A profile that records only the current role and misses a relevant predecessor role causes the A phase to write to a stranger who already speaks the trade's language. If the person is in the roster but has no profile yet, note the cross-reference in the current profile; the next P run for that contact will pick it up. Do not touch approach files — approach regeneration in response to a cross-reference update is a graph-type transition that the batch pipeline does not currently handle (see #4).
 
-**New names for the roster.** Any person found in this step who is not already in the roster and who is relevant to the campaign (by role, organisation, or community membership) should be added to the roster as a new contact. Record `discovered_via` as the target being profiled together with the specific mechanism (e.g. "tagged in LinkedIn post about FOSSASIA Summit 2024 by [contact]"). After completing all social media fetches for the current target, profile each newly added contact immediately by spawning a P subagent — do not defer to a future sweep, which may never run. If the seed data for a new contact is insufficient to produce a meaningful profile (name only, no organisation or role), write the roster entry and accept it will not be profiled in this session.
+**New names for the roster.** Any person found in this step who is not already in the roster and who is relevant to the campaign (by role, organisation, or community membership) should be added to the roster as a new contact. Record `discovered_via` as the target being profiled together with the specific mechanism (e.g. "tagged in a post about FOSSASIA Summit 2024 by [contact]"). After completing all platform fetches for the current target, profile each newly added contact immediately by spawning a P subagent — do not defer to a future sweep, which may never run. If the seed data for a new contact is insufficient to produce a meaningful profile (name only, no organisation or role), write the roster entry and accept it will not be profiled in this session.
 
 ### 4.12 Judge usefulness to us
 
@@ -244,9 +222,9 @@ Compare what the profile reveals against what the roster entry says. If any of t
 - The person has left the organisation listed in the roster
 - Their role title is different from what the roster says
 - Their location has changed
-- Contact details (email, LinkedIn URL, Facebook URL) are incorrect — update the wrong value
+- Contact details (email, platform URLs) are incorrect — update the wrong value
 
-**Backfill empty contact fields.** If the roster entry has a blank `email`, `linkedin_url`, or `facebook_url` and profiling discovers a value for it, that is not a correction — it is a backfill, and it is equally required. For `email` specifically, §4.8 runs a dedicated search earlier in the procedure; this backfill clause covers emails discovered incidentally during later steps (§4.9 web search, §4.11 connections) that §4.8 did not find. The sweep phase often finds only a phone number; the profile phase researches the person and their organisation in depth and routinely surfaces emails (from company websites, directories, ABN records) and social URLs (from Facebook pages, LinkedIn search) that the sweep did not capture. These must be written back to the roster, not left only in the profile prose.
+**Backfill empty contact fields.** If the roster entry has a blank `email` or a blank platform URL column and profiling discovers a value for it, that is not a correction — it is a backfill, and it is equally required. For `email` specifically, §4.8 runs a dedicated search earlier in the procedure; this backfill clause covers emails discovered incidentally during later steps (§4.9 web search, §4.11 connections) that §4.8 did not find. The sweep phase often finds only a phone number; the profile phase researches the person and their organisation in depth and routinely surfaces emails (from company websites, directories, ABN records) and platform URLs that the sweep did not capture. These must be written back to the roster, not left only in the profile prose.
 
 Backfilled emails must pass the §4.8 format gate, name-mismatch check, and shared-inbox rule — this section does not repeat those rules.
 
@@ -258,7 +236,7 @@ For each empty contact field where a value was discovered, declare the value in 
 
 If the person has left the relevant role entirely (e.g. left the industry, retired), mark the roster entry with `date_excluded` and the reason, then search for their replacement at the same organisation. The replacement enters the roster as a new contact with `discovered_via` recording they were found as a replacement.
 
-If after §4.8 the entry still has no email, no `linkedin_url`, and no `facebook_url`, the contact is unreachable through any messaging channel. That is recorded reality, not an exclusion: `date_excluded` stays empty (it records a human do-not-contact decision), the row keeps its place in the roster, and the progress table counts the contact outside the approachable population until a channel is found. Do not produce a profile document; the research is better spent on contacts a campaign can reach. Phone-only contacts are not unreachable — they continue via the phone path (state-machine `has_phone_only`).
+If after §4.8 the entry still has no email and no platform URL, the contact is unreachable through any messaging channel. That is recorded reality, not an exclusion: `date_excluded` stays empty (it records a human do-not-contact decision), the row keeps its place in the roster, and the progress table counts the contact outside the approachable population until a channel is found. Do not produce a profile document; the research is better spent on contacts a campaign can reach. Phone-only contacts are not unreachable — they continue via the phone path (state-machine `has_phone_only`).
 
 Record all corrections and backfills in the profile document under a "Verification corrections" section so the change history is traceable.
 
@@ -280,7 +258,7 @@ The body's job is to be a useful index for the A phase. Every sentence either re
 
 Specifics: write them literally. `0.76` beats `very low`. `founded 2013` beats `long-established`. `1,228 followers` beats `modest following`. Quotes go verbatim or close-paraphrase; do not collapse to a topic label.
 
-Epistemic markers distinguish absence-of-evidence from evidence-of-absence. `LinkedIn fetch failed, activity not assessed` is not the same as `no relevant public activity found`. The first is a retryable search-state; the second is a closed finding. Use `unobtainable` or `not attempted` when a search did not run or could not run; use `empty` or `none found` when the search ran and returned nothing.
+Epistemic markers distinguish absence-of-evidence from evidence-of-absence. `platform fetch failed, activity not assessed` is not the same as `no relevant public activity found`. The first is a retryable search-state; the second is a closed finding. Use `unobtainable` or `not attempted` when a search did not run or could not run; use `empty` or `none found` when the search ran and returned nothing.
 
 Do not write trailing-restate sentences (a final clause that summarises the prior list). Do not write editor-gloss clauses (`makes her a strong candidate for...`, `can accompany...`, `indicating breadth of...`). Do not expand a single fact into three sentences for paragraph rhythm. Each is filler that doubles word count without adding indexable signal.
 
@@ -290,7 +268,7 @@ This style applies at generation time. A separate densification pass over alread
 
 ### 5.1 Front matter
 
-Delimited by `---` fences at the very top of the file, standard Jekyll/Hugo/Pandoc convention. All listed fields are required; the validator rejects files with missing or unknown keys. Three further keys are optional: `roster_patch` (a dict of roster columns the worker declares for the harness to apply — contact_name, organisation, role, phone, email, linkedin_url, facebook_url, date_excluded, p_note), `roster_patch_applied` (the harness's stamp; the worker leaves it alone), and `sweep_feedback` (a list of `{kind, note}` observations the harness appends to the segment's queue).
+Delimited by `---` fences at the very top of the file, standard Jekyll/Hugo/Pandoc convention. All listed fields are required; the validator rejects files with missing or unknown keys. Three further keys are optional: `roster_patch` (a dict of roster columns the worker declares for the harness to apply — contact_name, organisation, role, phone, email, the platform URL columns, date_excluded, p_note), `roster_patch_applied` (the harness's stamp; the worker leaves it alone), and `sweep_feedback` (a list of `{kind, note}` observations the harness appends to the segment's queue).
 
 ```yaml
 ---
@@ -307,7 +285,7 @@ dependent_data:                     # snapshot of roster fields whose change inv
 
 **Field ownership.** `profile_date`, `star_rating`, `yield` are P-authored at profile generation time. They are not copies of roster values — they are the authorial record of P's assessment. If the roster is later hand-edited, git history of this profile preserves what P originally decided.
 
-**What is *not* in the front matter.** Approach-time decisions (`channel`, chosen `angle`, `sender`, `language`, `response_likelihood`) belong in the approach YAML, authored by A. Contact channels (`email`, `linkedin_url`, `facebook_url`, `phone`) belong in the roster TSV. Do not duplicate them here.
+**What is *not* in the front matter.** Approach-time decisions (`channel`, chosen `angle`, `sender`, `language`, `response_likelihood`) belong in the approach YAML, authored by A. Contact channels (`email`, the platform URL columns, `phone`) belong in the roster TSV. Do not duplicate them here.
 
 ### 5.2 Body
 
@@ -338,7 +316,7 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 
 **On [topic] ([source]):** "[Quote or close paraphrase]"
 
-[Repeat for each substantive statement. This section is the canonical home for direct quotes attributable to the target, whether the source is a public post (LinkedIn, blog, conference) or a private email exchange with the campaign sender. Each quote appears exactly once in the profile. If the target has said nothing on a relevant topic and the absence bears on the rating, mention it inline once: e.g. `No public statements found on [topic].` Do not write a dedicated absent-themes block; absences that do not change the rating are not worth a line.]
+[Repeat for each substantive statement. This section is the canonical home for direct quotes attributable to the target, whether the source is a public post (a platform, a blog, a conference) or a private email exchange with the campaign sender. Each quote appears exactly once in the profile. If the target has said nothing on a relevant topic and the absence bears on the rating, mention it inline once: e.g. `No public statements found on [topic].` Do not write a dedicated absent-themes block; absences that do not change the rating are not worth a line.]
 
 ## Who they know (connections relevant to campaign)
 
@@ -394,4 +372,4 @@ If this procedure is delegated to a subagent, the calling agent must provide:
 - The campaign context document paths (only those likely to be relevant)
 - The profile output directory path
 
-**Social media fetch cadence.** LinkedIn, Facebook, and Instagram share a per-site access cadence that the serialised-browsing skill paces across all workers, so fetches may run concurrently when it is in use (see `spar-methodology.md`, "Web fetching and browser serialisation"). Only where no serialiser exists and fetches are hand-rolled do they run one at a time. Non-social-media research (web search, GitHub, registry lookups) is unpaced and always concurrent-safe. This rule is the canonical constraint referenced from §4.3, §4.4, and §4.11.
+**Platform fetch cadence.** Declared and evidence-surfaced platforms share a per-site access cadence that the serialised-browsing skill paces across all workers, so fetches may run concurrently when it is in use (see `spar-methodology.md`, "Web fetching and browser serialisation"). Only where no serialiser exists and fetches are hand-rolled do they run one at a time. Non-platform research (web search, GitHub, registry lookups) is unpaced and always concurrent-safe. This rule is the canonical constraint referenced from §4.3, §4.4, and §4.11.

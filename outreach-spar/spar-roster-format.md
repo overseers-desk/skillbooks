@@ -85,10 +85,9 @@ Columns are ordered left-to-right by pipeline stage: identity, contact channels,
 |---|-------|------|------------|---------|---------|
 | 5 | phone | text | S; P updates | A | |
 | 6 | email | text | S; P updates; A backfills on discovery | A | A may write a verified email found at send time (see `spar-A-approach.md` §4.8) |
-| 7 | linkedin_url | URL | S; A corrects on discovery | P (fetches it) | Contact channel and profiling source |
-| 8 | facebook_url | URL | S; A backfills on discovery | P (fetches it) | Contact channel and profiling source |
+| 7–8 | {platform}_url | URL | S; A corrects on discovery | P (fetches it) | Platform profile URL columns, one per platform module (`platforms/{platform}.md` documents its own column) |
 
-Every row must have at least one of email, linkedin_url, or facebook_url populated. Phone alone is insufficient for campaigns that begin with a written introduction.
+Every row must have at least one of email or a platform URL column populated. Phone alone is insufficient for campaigns that begin with a written introduction.
 
 ### Discovery provenance
 
@@ -101,11 +100,11 @@ Every row must have at least one of email, linkedin_url, or facebook_url populat
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
-| 11 | date_excluded | ISO date (YYYY-MM-DD) | S, P, or A | S (skips row), A (skips row), human review | Marks contacts that should not be advanced further, without deleting them. The date rather than a flag allows periodic re-checking. Set when the person has left the relevant role entirely (retired, changed industry), when profiling determines the contact is not a campaign target (wrong mechanism, no individual identifiable after exhaustive search, or low relevance), or when approach drafting concludes no viable angle exists. The roster carries the date; the reason lives in the writing agent's note — `s_note` for S-authored exclusions (stale contacts discovered during sweep), `p_note` for P-authored exclusions, and the approach YAML's `a_note` root key for A-authored exclusions. By SSOT, the note records only the cause (the circumstance the exclusion was derived from, e.g. "LinkedIn is email-gated and no email is on file"); the fact that the contact is excluded is asserted once, by `date_excluded` being set. The note must not restate that fact (no "excluded", "unreachable", "no viable channel", nor the exclusion date), since that content already has its home in this column. See §Artefact retention below. |
+| 11 | date_excluded | ISO date (YYYY-MM-DD) | S, P, or A | S (skips row), A (skips row), human review | Marks contacts that should not be advanced further, without deleting them. The date rather than a flag allows periodic re-checking. Set when the person has left the relevant role entirely (retired, changed industry), when profiling determines the contact is not a campaign target (wrong mechanism, no individual identifiable after exhaustive search, or low relevance), or when approach drafting concludes no viable angle exists. The roster carries the date; the reason lives in the writing agent's note — `s_note` for S-authored exclusions (stale contacts discovered during sweep), `p_note` for P-authored exclusions, and the approach YAML's `a_note` root key for A-authored exclusions. By SSOT, the note records only the cause (the circumstance the exclusion was derived from, e.g. "the platform is email-gated and no email is on file"); the fact that the contact is excluded is asserted once, by `date_excluded` being set. The note must not restate that fact (no "excluded", "unreachable", "no viable channel", nor the exclusion date), since that content already has its home in this column. See §Artefact retention below. |
 
 ### Phase handover
 
-The S and P phases each have one note column in the roster. Only that phase writes to it; subsequent phases read it as context before doing their work. Notes are roster-level summaries, not replacements for full artefacts (profile documents, approach files). The A and R phases do not write their campaign-bound output to the roster: `response_likelihood`, `a_note`, and `r_note` are campaign-bound, and a segment's roster is shared across campaigns, so that output lives in the per-contact approach YAML instead (see `spar-methodology.md`, "Campaigns and segments", and `spar-A-approach.md`). The one exception is population-tier contact details: when A discovers a verified email, or a corrected `linkedin_url` / `facebook_url`, at send time, it backfills the roster, the same as P (see `spar-A-approach.md` §4.8). Such a detail is campaign-independent, so the roster is its home, not the approach file.
+The S and P phases each have one note column in the roster. Only that phase writes to it; subsequent phases read it as context before doing their work. Notes are roster-level summaries, not replacements for full artefacts (profile documents, approach files). The A and R phases do not write their campaign-bound output to the roster: `response_likelihood`, `a_note`, and `r_note` are campaign-bound, and a segment's roster is shared across campaigns, so that output lives in the per-contact approach YAML instead (see `spar-methodology.md`, "Campaigns and segments", and `spar-A-approach.md`). The one exception is population-tier contact details: when A discovers a verified email, or a corrected platform URL, at send time, it backfills the roster, the same as P (see `spar-A-approach.md` §4.8). Such a detail is campaign-independent, so the roster is its home, not the approach file.
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
@@ -151,7 +150,7 @@ These assertions apply to the core columns. Campaign-specific checks are defined
 1. Every row has a non-empty `contact_name` that is not a placeholder, or has a blank `contact_name` that P §4.1 will resolve (organisation identified, person not yet found).
 2. Every row has the expected number of tab-separated fields.
 3. No two rows share the same (`contact_name`, `organisation`) pair (case-insensitive).
-4. Every row has at least one of email, `linkedin_url`, or `facebook_url`.
+4. Every row has at least one of email or a platform URL.
 5. Every row has a `sweep_iteration` value.
 6. Every row with `star_rating = 0` has a non-empty `date_excluded`.
 7. Every row has a non-empty `stem`.
@@ -164,6 +163,6 @@ This document defines the roster schema. The operational procedures for populati
 
 - **SPAR-S** (`spar-S-sweep.md`) — populates columns 1–12 (including `stem` at discovery)
 - **SPAR-P** (`spar-P-profile.md`) — populates columns 13–14, corrects columns 3–8 and 11; creates `segments/{segment}/{stem}.md` using the pre-existing `stem`
-- **SPAR-A** (`spar-A-approach.md`) — creates `campaigns/{campaign}/{stem}.yaml` using the pre-existing `stem`, writing `response_likelihood`, `a_note`, and the messages into it; writes to the roster only to backfill a population-tier contact detail discovered at send time (a verified email, a corrected `linkedin_url`/`facebook_url`; see §4.8)
+- **SPAR-A** (`spar-A-approach.md`) — creates `campaigns/{campaign}/{stem}.yaml` using the pre-existing `stem`, writing `response_likelihood`, `a_note`, and the messages into it; writes to the roster only to backfill a population-tier contact detail discovered at send time (a verified email, a corrected platform URL; see §4.8)
 - **R** (human, no procedure document) — writes the `r_note` root key into the campaign's approach file; does not write to the roster
 - **spar-state.tcl** — reads `stem` from the roster and checks for the presence of the profile and the campaign's approach file on disk to classify contact state; never writes to the roster
