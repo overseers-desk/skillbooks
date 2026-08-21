@@ -379,7 +379,7 @@ proc spar::_pred_profile_hash_actual {node meta} {
 #   severity, code, contact_name, message
 #
 # Path form: parses the YAML on every call. Used by CLI / harness
-# callers (spar-a-harness.tcl) that don't construct a State and so
+# callers (ApproachHarness::validate_and_correct) that don't construct a State and so
 # can't share a cached projection. Render-path callers go through
 # spar::State approach_validation_error → validate_approach_data, which
 # reuses the cached projection.
