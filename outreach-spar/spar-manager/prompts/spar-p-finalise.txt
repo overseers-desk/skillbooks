@@ -13,6 +13,6 @@ Using only what is already in this session, complete the finalisation steps (SPA
 
 2. Compute `star_rating` for STEM against the segment's `rating_rubric`, from the evidence already in this session.
 
-3. Write the YAML front matter at the top of OUTFILE: `profile_date`, `star_rating` (its authoritative home; the harness syncs the roster cache), `yield`, a `dependent_data` snapshot of `contact_name`, `organisation`, `role`, and `date_excluded`, plus a `roster_patch:` block for any contact-detail backfills or corrections you found (§4.15) and a `sweep_feedback:` list for any sweep-relevant observations. The harness validates and applies these; you write no TSV.
+3. Write the YAML front matter at the top of OUTFILE: `profile_date`, `star_rating` (its authoritative home; the harness syncs the roster cache), `yield`, a `dependent_data` snapshot of `contact_name`, `organisation`, `role`, and `date_excluded`, plus a `roster_patch:` block for any contact-detail backfills or corrections you found (§4.15), and `rows_new:` / `sources_new:` lists for any contacts or sources the profiling surfaced (each entry's `discovered_via` leading with `profile:<stem>`). The harness validates and applies these; you write no TSV.
 
 Do not commit, reset, or inspect version control. When OUTFILE holds the body, the front matter, and your declarations, the task is done — stop.
