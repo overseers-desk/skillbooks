@@ -368,7 +368,7 @@ oo::class create spar::State {
 }
 
 # forget_approach -- drop the cached projection for a specific approach
-# path. Used by writers (spar-a-harness.tcl's validate_and_correct loop)
+# path. Used by writers (ApproachHarness's validate_and_correct loop)
 # that rewrite the file mid-run: mtime granularity is 1s on some
 # filesystems and the line-1 profile_hash often stays the same across
 # retries, so neither hash+mtime invalidator can be relied on for

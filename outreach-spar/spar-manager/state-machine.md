@@ -62,17 +62,17 @@ if {[llength $issues] > 0} { ... resume agent with the diff ... }
 2. The pair count equals the number of AI invocation sites, **not** the number of validation checks. A single `validate_campaign` call may run 10+ checks; that is one pre/post pair, not ten.
 3. Markers live in **orchestration logic** (dispatch scripts, harness scripts), not in validation procs. The validation library does not know whether it is being called pre or post.
 4. The two halves of a pair must call equivalent validation. Adding a check to the pre side without adding it to the post side breaks the contract — agent regressions slip through silently.
-5. Failure handling differs: pre-failure refuses to start; post-failure resumes the agent with the diff for correction (see `spar::Harness` subclasses' `validate_and_correct` method, implemented by `spar::ApproachHarness` in `spar-a-harness.tcl` and `spar::ProfileHarness` in `spar-p-harness.tcl`).
+5. Failure handling differs: pre-failure refuses to start; post-failure resumes the agent with the diff for correction (see `spar::Harness` subclasses' `validate_and_correct` method, implemented by `spar::ApproachHarness` and `spar::ProfileHarness` in `lib/spar-harness.tcl`).
 
 ### Where pairs live
 
 | AI call | Orchestration site | Pre-check | Post-check |
 |---|---|---|---|
-| P-phase profile generation | `spar-p-harness.tcl` | roster row well-formed (dispatcher-enforced) | `sanitise_roster_email` + `ProfileHarness::validate_and_correct` (`validate_profile` + resume-to-fix) |
-| A-phase author draft | `spar-a-harness.tcl` author section | meta.env + roster row complete | draft markers extractable |
-| A-phase challenger spar | `spar-a-harness.tcl` spar loop | profile + draft accessible | verdict marker extractable |
-| A-phase author revision | `spar-a-harness.tcl` rev loop | challenger feedback present | draft + rationale markers extractable |
-| A-phase assembly | `spar-a-harness.tcl` assembly | all logs present | `ApproachHarness::validate_and_correct` (`validate_approach` + resume-to-fix) |
+| P-phase profile generation | `ProfileHarness` (`lib/spar-harness.tcl`) | roster row well-formed (dispatcher-enforced) | `sanitise_roster_email` + `ProfileHarness::validate_and_correct` (`validate_profile` + resume-to-fix) |
+| A-phase author draft | `ApproachHarness` author section | meta.env + roster row complete | draft markers extractable |
+| A-phase challenger spar | `ApproachHarness` spar loop | profile + draft accessible | verdict marker extractable |
+| A-phase author revision | `ApproachHarness` rev loop | challenger feedback present | draft + rationale markers extractable |
+| A-phase assembly | `ApproachHarness` assembly | all logs present | `ApproachHarness::validate_and_correct` (`validate_approach` + resume-to-fix) |
 
 Missing or unpaired markers should be tracked as data-integrity issues under #4.
 
