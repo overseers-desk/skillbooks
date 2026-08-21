@@ -41,7 +41,7 @@ The dispatch pool used to run on `jobpool`, the thread twin of jobloop with the 
 
 **`spar::Dispatcher`** in `lib/spar-dispatcher.tcl` is the coordinator. The generic machinery (the heterogeneous queue, the per-row state map, the global `jobs` cap, the per-kind caps, pacing, holds, cooperative cancel/pause, and the `on_*` report surface with its event stream) is `jobloop`; spar::Dispatcher subclasses it. The subclass supplies spar's logger service and adds the four reports a spar worker sends that a generic pool does not carry: `cost`, `retry`, and `credit_warning` (informational), and `roster_update`, relayed whole to the `domain-roster_update` subscriber `spar::subscribe_pool_domain` installs beside each front-end. Holds no Tk references and creates no widgets. Its constructor no longer takes a worker bootstrap: jobloop's workers are commands in this interpreter, so `lib/spar-dispatcher.tcl` sources the harness, email, and per-row transition code once at the bottom of the file, into the main interpreter, where the pool is built.
 
-**Worker proc family** in `lib/spar-dispatcher-initcmd.tcl`, now sourced into the main interpreter rather than seeded into worker threads. `harness_run` for the AI-driven transitions, `ses_send` and `linkedin_send` for delivery, `imap_poll` for reply checking. Each runs as a coroutine and reports through the jobloop verbs, picked up by the file's one `namespace path ::jobloop::worker` line. The file also defines the coroutine-aware I/O helpers the bodies wait on (`spar::pool_sleep`, `spar::pool_exec`, `spar::pool_http`) and the test fixtures (`fake_worker`, `FakeHarness`).
+**Worker proc family** at the foot of `lib/spar-dispatcher.tcl`, defined in the main interpreter. `harness_run` for the AI-driven transitions, `ses_send` and `linkedin_send` for delivery, `imap_poll` for reply checking. Each runs as a coroutine and reports through the jobloop verbs, picked up by the file's one `namespace path ::jobloop::worker` line. The coroutine-aware I/O helpers the bodies wait on (`spar::pool_sleep`, `spar::pool_exec`, `spar::pool_http`) live in `lib/spar-lib.tcl`; the test fixtures (`fake_worker`, `FakeHarness`) in `test/test-helpers.tcl`.
 
 **Harness library** in `lib/spar-harness.tcl`, the body of `harness_run`. The validate-and-correct fix loop, credit-limit retry, session-resume bookkeeping, cost ledger. The claude pipe runs under the vendored deadman watchdog (`vendor/deadman-1.0.tm`): stall detection, the budget poll's kill, and the process-group teardown are the module's, and the harness keeps only the policy. deadman completes into the coroutine (`_invoke` hands it `[info coroutine]` as `-done` and yields), so a minutes-long claude run drives the loop instead of freezing it.
 
@@ -71,7 +71,7 @@ There is no `killed` state. Cancel is cooperative: the worker observes it at a `
 
 ## The worker verbs
 
-A worker reports by calling a verb in `::jobloop::worker`, resolved through the `namespace path` line at the top of `lib/spar-dispatcher-initcmd.tcl`; each verb finds its owning pool from `[info coroutine]` and lands on a matching `on_<name>` method. There is no `thread::send` and no `msg_*` proc: the coroutine already runs on the main thread, so a verb is a direct call. `test/test-pool.tcl` §1 guards that the worker file carries no `thread::send`, no `tsv::`, and no `msg_*` proc.
+A worker reports by calling a verb in `::jobloop::worker`, resolved through the `namespace path` line ahead of the worker bodies in `lib/spar-dispatcher.tcl`; each verb finds its owning pool from `[info coroutine]` and lands on a matching `on_<name>` method. There is no `thread::send` and no `msg_*` proc: the coroutine already runs on the main thread, so a verb is a direct call. `test/test-pool.tcl` §1 guards that the worker file carries no `thread::send`, no `tsv::`, and no `msg_*` proc.
 
 ### Generic (jobloop's own)
 
@@ -110,7 +110,7 @@ A cancel that arrives while the coroutine is parked on a wait (a credit-limit sl
 
 ## The waits
 
-A worker never blocks the loop on a synchronous read or a bare `vwait`; that would stall every other job in the process. Three helpers in `lib/spar-dispatcher-initcmd.tcl` do the waiting the loop's way, and each falls back to the blocking form when called outside a coroutine (a standalone or a test run), so the same body works in both settings.
+A worker never blocks the loop on a synchronous read or a bare `vwait`; that would stall every other job in the process. Three helpers in `lib/spar-lib.tcl` do the waiting the loop's way, and each falls back to the blocking form when called outside a coroutine (a standalone or a test run), so the same body works in both settings.
 
 | helper | replaces | in a coroutine |
 |---|---|---|
@@ -124,7 +124,7 @@ A worker never blocks the loop on a synchronous read or a bare `vwait`; that wou
 
 Two mechanisms.
 
-**No marshalling layer.** `test/test-pool.tcl` §1 reads `lib/spar-dispatcher-initcmd.tcl` and asserts it contains no `thread::send`, no `tsv::`, and no `msg_*` proc, and that `spar::Dispatcher` still carries its four domain `on_*` methods. The marshalling the thread runtime needed cannot creep back in unnoticed.
+**No marshalling layer.** `test/test-pool.tcl` §1 reads `lib/spar-dispatcher.tcl` and asserts it contains no `thread::send`, no `tsv::`, and no `msg_*` proc, and that `spar::Dispatcher` still carries its four domain `on_*` methods. The marshalling the thread runtime needed cannot creep back in unnoticed.
 
 **State-machine validation in the pool.** Each `on_*` method consults the current row state before mutating it. A report that does not fit the state (a `done` for a queued row, anything after a terminal state) is logged at warning level and dropped, not raised. `test/test-pool.tcl` §8 posts malformed reports directly to the Dispatcher and asserts the drops.
 

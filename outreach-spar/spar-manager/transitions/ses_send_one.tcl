@@ -4,7 +4,7 @@
 # round email message of one approach YAML via SES, then stamps
 # actioned_date on success. No callbacks, no thread::send, no registry,
 # no event loop — the caller (production: ses_send worker in
-# spar-dispatcher-initcmd.tcl; tests: test-pool.tcl) does its own
+# spar-dispatcher.tcl; tests: test-pool.tcl) does its own
 # signalling.
 #
 # This file holds the per-row body that the previous CLI's per-
