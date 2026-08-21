@@ -471,6 +471,9 @@ proc spar::_yamlmuster_profile {} {
     $inst predicate invalid_yield       ::spar::_pred_invalid_yield
     $inst predicate invalid_star_rating ::spar::_pred_invalid_star_rating
     $inst predicate profile_dates_bare  ::spar::_pred_profile_dates_bare
+    $inst predicate rows_new_shape      ::spar::_pred_rows_new_shape
+    $inst predicate source_status_token ::spar::_pred_source_status_token
+    $inst predicate profile_discovered_via ::spar::_pred_profile_discovered_via
     spar::_yamlmuster_load $inst profile.rules profile
     set _yamlmuster_profile_inst $inst
     return $inst
@@ -576,6 +579,39 @@ proc spar::_pred_profile_dates_bare {node meta} {
             set key [join $path .]
             lappend out [dict create message \
                 "$key \"$v\" was quoted; write the date bare: [lindex $path end]: $v"]
+        }
+    }
+    return $out
+}
+
+# profile_discovered_via -- every rows_new row and sources_new entry a
+# profile declares leads its discovered_via with profile:<stem>, the stem
+# of the profile declaring it (context `stem`). The prefix is the one
+# mark that tells a P-found row or source from a swept one: the
+# discovery-yield count reads it, and a later reader follows it back to
+# the profile that holds the evidence. The mechanism or evidence may
+# follow the prefix in free text.
+proc spar::_pred_profile_discovered_via {node meta} {
+    set stem [string trim [dict getdef [dict get $meta context] stem ""]]
+    if {$stem eq ""} { return {} }
+    set want "profile:$stem"
+    set out {}
+    foreach {key label_key} {rows_new stem sources_new name} {
+        if {![dict exists $node $key]} continue
+        set i 0
+        foreach entry [dict get $node $key] {
+            incr i
+            if {[llength $entry] % 2 != 0} continue
+            set id [string trim [dict getdef $entry $label_key ""]]
+            set label [expr {$id ne "" ? "$key '$id'" : "$key entry $i"}]
+            set dv [string trim [dict getdef $entry discovered_via ""]]
+            if {$dv eq ""} {
+                lappend out [dict create message \
+                    "$label has no discovered_via; write $want followed by how it was found"]
+            } elseif {![string equal -length [string length $want] $dv $want]} {
+                lappend out [dict create message \
+                    "$label discovered_via '$dv' does not lead with $want, the profile it was found in"]
+            }
         }
     }
     return $out
@@ -701,9 +737,12 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
     # -extra for the issue shape. Reachability and staleness stay imperative
     # below (roster-row comparisons), appended after these issues to preserve
     # the legacy near-last emission order.
+    # The profile's stem is its filename (segments/{segment}/{stem}.md);
+    # the discovered_via predicate reads it from context.
+    set stem [file rootname [file tail $profile_path]]
     foreach ei [[spar::_yamlmuster_profile] validate $fm \
             -groups profile -badnode ignore \
-            -context [list raw $raw] -extra [list contact_name $contact_name]] {
+            -context [list raw $raw stem $stem] -extra [list contact_name $contact_name]] {
         lappend issues [spar::_xlate_engine_issue $ei $contact_name]
     }
 
@@ -1703,10 +1742,9 @@ proc spar::_pred_rows_new_shape {node meta} {
     return $out
 }
 
-# sweep_feedback entries: the four kinds prompts/spar-p.txt declares to
-# the profile worker, which is where the vocabulary is defined and what
-# spar::apply_roster_patch already queues on the P side. Each carries a
-# note worth reading.
+# sweep_feedback entries on a sweep worker's return: the observations the
+# harness folds into the round's surprises (SweepHarness::record_round).
+# Each carries a note worth reading.
 proc spar::_pred_return_feedback_shape {node meta} {
     if {![dict exists $node sweep_feedback]} { return {} }
     set allowed {new-source new-vocabulary surprise misfit}

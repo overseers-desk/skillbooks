@@ -222,7 +222,59 @@ write_test_profile $profile {
 set issues [spar::apply_roster_patch $profile $roster jane-doe-acme]
 assert_eq [lmap i $issues {dict get $i code}] sources_new_no_sweep "sources_new without a sweep file is rejected"
 
-# 8. Approach-side patch: applies and appends the stamp as a root line.
+# 8. validate_profile on the declarations: a discovered_via not leading
+# with profile:<stem> and a source outside the type vocabulary are errors;
+# the well-formed set from case 6 passes clean.
+write_test_roster $roster
+write_test_profile $profile {
+    "profile_date: 2026-07-18"
+    "star_rating: 3"
+    "yield: 2"
+    "dependent_data:"
+    "  contact_name: Jane Doe"
+    "  organisation: Acme"
+    "  role: \"\""
+    "  date_excluded: \"\""
+    "rows_new:"
+    "  - stem: bob-roe-beta"
+    "    contact_name: Bob Roe"
+    "    organisation: Beta"
+    "    discovered_via: co-organiser on Jane's page"
+    "sources_new:"
+    "  - name: Beta newsletter"
+    "    type: magazine"
+    "    status: unharvested"
+    "    discovered_via: profile:someone-else"
+}
+set row [lindex [spar::load_roster $roster] 0]
+set codes [lsort -unique [lmap i [spar::validate_profile $profile $row "Jane Doe"] {dict get $i code}]]
+assert_eq [expr {"discovered_via_not_profile" in $codes}] 1 "discovered_via without the profile:<stem> lead is flagged"
+assert_eq [expr {"invalid_source_type" in $codes}] 1 "source type outside the vocabulary is flagged"
+assert_eq [llength [lsearch -all -inline -glob [lmap i [spar::validate_profile $profile $row "Jane Doe"] {dict get $i message}] "*profile:jane-doe-acme*"]] 2 "both entries name the expected lead"
+write_test_profile $profile {
+    "profile_date: 2026-07-18"
+    "star_rating: 3"
+    "yield: 2"
+    "dependent_data:"
+    "  contact_name: Jane Doe"
+    "  organisation: Acme"
+    "  role: \"\""
+    "  date_excluded: \"\""
+    "rows_new:"
+    "  - stem: bob-roe-beta"
+    "    contact_name: Bob Roe"
+    "    organisation: Beta"
+    "    discovered_via: \"profile:jane-doe-acme · co-organiser on Jane's page\""
+    "sources_new:"
+    "  - name: Beta newsletter"
+    "    type: outlet"
+    "    status: unharvested"
+    "    discovered_via: profile:jane-doe-acme"
+}
+set errs [lmap i [spar::validate_profile $profile $row "Jane Doe"] {expr {[dict get $i severity] eq "error" ? [dict get $i code] : [continue]}}]
+assert_eq $errs {} "well-formed rows_new and sources_new validate clean"
+
+# 9. Approach-side patch: applies and appends the stamp as a root line.
 write_test_roster $roster
 set approach [file join $tmpdir jane-doe-acme.yaml]
 set fd [open $approach w]

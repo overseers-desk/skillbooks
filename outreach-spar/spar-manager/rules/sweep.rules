@@ -13,7 +13,7 @@
 level root -keys {version segment market_estimate sources exclusions \
                   escapes rounds next_round rows_to_verify}
 level market_estimate -keys {value derivation estimated}
-level source -keys {name type url status note yield}
+level source -keys {name type url status note yield discovered_via}
 level round  -keys {n date method inputs reconciliation surprises \
                     coverage_after merge lesson yield}
 

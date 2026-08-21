@@ -23,7 +23,7 @@
 # root's -keys must stay in sync with the front-matter fields listed in
 # spar-P-profile.md §5.1.
 level root           -keys {profile_date star_rating yield dependent_data \
-                            roster_patch roster_patch_applied sweep_feedback}
+                            roster_patch roster_patch_applied rows_new sources_new}
 level dependent_data -keys {contact_name organisation role date_excluded}
 # roster_patch carries the worker's declared one-shot roster writes; the
 # harness applies them (spar::apply_roster_patch) and stamps
@@ -31,8 +31,17 @@ level dependent_data -keys {contact_name organisation role date_excluded}
 level roster_patch   -keys {contact_name organisation role phone email \
                             linkedin_url facebook_url date_excluded p_note}
 
+# sources_new carries the census entries profiling surfaced (a register,
+# a directory, a keyword on a platform); the harness appends them to the
+# segment's sweep file (spar::append_sweep_sources), so an entry has the
+# shape a census source has (sweep.rules `source`) plus discovered_via.
+# rows_new is level-free, as in sweep-return.rules: its columns are the
+# roster's own, which vary by campaign.
+level source_new     -keys {name type url status note discovered_via}
+
 child root dependent_data dict dependent_data
 child root roster_patch   dict roster_patch
+child root sources_new    list source_new
 
 # ── ROOT level rules ─────────────────────────────────────────────────────
 
@@ -93,7 +102,36 @@ rule predicate root invalid_star_rating -code invalid_star_rating -groups {profi
 # walk. Covers profile_date, roster_patch_applied and both date_excluded.
 rule predicate root profile_dates_bare -code quoted_date -groups {profile}
 
+# rows_new: the per-row shape a sweep batch passes (shared predicate with
+# sweep-return.rules). The roster-relative checks (a stem already held, a
+# column the roster lacks) live in the applier, which has the roster.
+rule predicate root rows_new_shape -code invalid_row -groups {profile}
+
+# Every declared row and source names the profile it came from:
+# discovered_via leads with profile:<this stem>. That prefix is what the
+# discovery-yield count reads and what a later reader follows back to
+# the evidence. -needs stem: a caller without the stem skips it.
+rule predicate root profile_discovered_via -needs stem \
+    -code discovered_via_not_profile -groups {profile}
+
 # ── DEPENDENT_DATA level ─────────────────────────────────────────────────
 # vocab walk: legacy 580-585 (guarded by even-length; -badnode ignore
 # reproduces the skip).
 rule vocab dependent_data -groups {profile}
+
+# ── SOURCE_NEW level ─────────────────────────────────────────────────────
+# The census entry's own rules (sweep.rules SOURCE), so what the harness
+# appends validates as a source once it is in the sweep file.
+rule vocab source_new -groups {profile}
+rule require source_new name -nonblank -code missing_source_name \
+    -message {sources_new entry missing '%k'} -groups {profile}
+rule require source_new type -nonblank -code missing_source_type \
+    -message {sources_new entry missing '%k'} -groups {profile}
+rule require source_new status -nonblank -code missing_source_status \
+    -message {sources_new entry missing '%k'} -groups {profile}
+rule oneof source_new type {registry directory informal outlet platform} \
+    -code invalid_source_type \
+    -message {sources_new type '%v' — closed vocabulary: registry | directory | informal | outlet | platform (spar-S-sweep.md §6)} \
+    -groups {profile}
+rule predicate source_new source_status_token -code invalid_source_status \
+    -groups {profile}
