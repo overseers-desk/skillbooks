@@ -668,30 +668,47 @@ proc spar::update_roster_field {tsv_path key_col key_val field_col new_val} {
     return $updated
 }
 
-# apply_roster_patch — harness-mediated roster writes. A harnessed worker
-# declares roster changes in its deliverable's front matter instead of
-# writing the TSV itself; this proc validates the declaration and applies
-# it, so a worker defect can corrupt at most its own declaration, not the
-# roster (the 2026-07-17 incident was a worker UPDATE without a WHERE
-# clause reaching 249 rows). Three declaration surfaces:
+# apply_roster_patch — harness-mediated roster and census writes from a
+# profile deliverable. A harnessed worker declares its changes in the
+# deliverable's front matter instead of writing the TSV or the sweep file
+# itself; this proc validates the declarations and applies them, so a
+# worker defect can corrupt at most its own declaration, not the roster
+# (the 2026-07-17 incident was a worker UPDATE without a WHERE clause
+# reaching 249 rows). Four declaration surfaces:
 #   star_rating          — authoritative in the deliverable; the roster
 #                          column is a derived cache, synced whenever the
 #                          two differ. No stamp: sync is unconditional.
-#   roster_patch         — dict of one-shot column writes. One-shot
-#                          because a later comparison cannot distinguish
-#                          "not yet applied" from "a human corrected the
-#                          roster afterwards"; the roster_patch_applied
-#                          stamp written back into the deliverable makes
-#                          a replay inert and protects the human's edit.
-#   sweep_feedback       — list of {kind note} observations, appended to
-#                          the segment's sweep-feedback.tsv. Gated by the
-#                          same stamp so a reconcile replay cannot
-#                          double-append.
-# Serialisation matches update_roster_field: the dispatcher's single
-# event loop is the sole writer. Returns a list of issue dicts
-# (severity/code/message), empty when applied clean; issues feed the
-# caller's fix loop.
-proc spar::apply_roster_patch {profile_path roster_path stem} {
+#   roster_patch         — dict of one-shot column writes to the worker's
+#                          own row. One-shot because a later comparison
+#                          cannot distinguish "not yet applied" from "a
+#                          human corrected the roster afterwards"; the
+#                          roster_patch_applied stamp written back into
+#                          the deliverable makes a replay inert and
+#                          protects the human's edit.
+#   rows_new             — roster rows for contacts the profiling
+#                          surfaced (an unswept peer, a named successor),
+#                          in the row shape the sweep worker declares and
+#                          through the same check a sweep batch passes,
+#                          so a stem already held is a rejection, not a
+#                          second row. A blank sweep_iteration is filled
+#                          from the profiled contact's own: the row was
+#                          found in that iteration's profiling.
+#   sources_new          — census entries for sources or keywords the
+#                          profiling surfaced, appended to the segment's
+#                          sweep file with the status declared
+#                          (unharvested for work T0 should pick up). A
+#                          name the census already holds is a rejection:
+#                          the census is the record of what was tried,
+#                          and profiling never reopens an exhausted
+#                          source.
+# roster_patch, rows_new and sources_new share the roster_patch_applied
+# stamp and land all-or-nothing: every declaration is checked before the
+# first write, so a rejected set leaves roster and census untouched and
+# the fix loop sees the whole set at once. Serialisation matches
+# update_roster_field: the dispatcher's single event loop is the sole
+# writer. Returns a list of issue dicts (severity/code/message), empty
+# when applied clean; issues feed the caller's fix loop.
+proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""}} {
     set fm [spar::read_profile_front_matter $profile_path]
     if {$fm eq ""} { return {} }
 
@@ -745,21 +762,58 @@ proc spar::apply_roster_patch {profile_path roster_path stem} {
         }
     }
 
+    # rows_new and sources_new: checked here, written below, so a
+    # rejection in either leaves the roster as it was.
+    set accepted {}
+    set columns {}
+    set sources_new {}
+    if {!$stamped} {
+        set declared [dict getdef $fm rows_new {}]
+        if {[llength $declared] > 0} {
+            set iteration [string trim [dict getdef $row sweep_iteration ""]]
+            set rows_new {}
+            foreach r $declared {
+                if {[string trim [dict getdef $r sweep_iteration ""]] eq "" \
+                        && $iteration ne ""} {
+                    dict set r sweep_iteration $iteration
+                }
+                lappend rows_new $r
+            }
+            set chk [spar::_check_roster_rows $rows_new $roster_path \
+                         [file tail [file rootname $roster_path]]]
+            lappend issues {*}[dict get $chk issues]
+            set accepted [dict get $chk accepted]
+            set columns  [dict get $chk columns]
+        }
+        set sources_new [dict getdef $fm sources_new {}]
+        if {[llength $sources_new] > 0} {
+            if {$sweep_path eq "" || ![file exists $sweep_path]} {
+                lappend issues [dict create severity error \
+                    code sources_new_no_sweep \
+                    message "sources_new: this segment has no sweep file[expr {$sweep_path ne "" ? " at $sweep_path" : ""}]; a census must exist before sources can be declared into it"]
+            } else {
+                lappend issues {*}[spar::_check_sweep_sources $sweep_path $sources_new]
+            }
+        }
+    }
+
     if {[llength $issues]} { return $issues }
 
-    if {[dict size $pending]} {
+    if {[dict size $pending] || [llength $accepted]} {
         set fd [open $roster_path r]
         fconfigure $fd -translation binary
         gets $fd header_line
         close $fd
         set header_line [string map {\r\n "" \r ""} $header_line]
         set headers [split $header_line \t]
+        set out_rows {}
         foreach r $rows {
             if {[dict getdef $r stem ""] eq $stem} {
                 dict for {k v} $pending { dict set r $k $v }
             }
             lappend out_rows $r
         }
+        lappend out_rows {*}$accepted
         set tmp [exec mktemp "${roster_path}.XXXXXX"]
         try {
             spar::write_roster $tmp $out_rows $headers
@@ -770,18 +824,13 @@ proc spar::apply_roster_patch {profile_path roster_path stem} {
         }
     }
 
+    if {[llength $sources_new] > 0} {
+        spar::append_sweep_sources $sweep_path $sources_new
+    }
+
     if {!$stamped && ([dict exists $fm roster_patch] \
-                      || [dict exists $fm sweep_feedback])} {
-        if {[dict exists $fm sweep_feedback]} {
-            set fb_path [spar::sweep_feedback_path_for_segment [file rootname $roster_path]]
-            set fd [open $fb_path a]
-            foreach entry [dict get $fm sweep_feedback] {
-                set kind [dict getdef $entry kind observation]
-                set note [string map {\t " " \n " "} [dict getdef $entry note ""]]
-                if {$note ne ""} { puts $fd "$stem\t$kind\t$note" }
-            }
-            close $fd
-        }
+                      || [dict exists $fm rows_new] \
+                      || [dict exists $fm sources_new])} {
         spar::_stamp_patch_applied $profile_path
     }
     return {}
@@ -897,6 +946,24 @@ proc spar::apply_sweep_batch {deliverable_path roster_path segment} {
         return $warnings
     }
 
+    set res [spar::_append_roster_rows $rows_new $roster_path $segment]
+    if {[llength $res] > 0} { return [concat $res $warnings] }
+    spar::_stamp_patch_applied $deliverable_path sweep_batch_applied
+    return $warnings
+}
+
+# _check_roster_rows — the acceptance check a batch of declared rows
+# passes before any of them is written: a stem already on the roster or
+# earlier in the batch is a rejection (a row already held is not a find),
+# and so is a column the roster's own header does not carry (campaign
+# columns are real; a declared column outside them is a defect in the
+# declaration, not a reason to widen the roster). A roster that does not
+# exist yet contributes the core columns and no stems. Returns a dict:
+#   issues    error dicts, empty when every row passed
+#   columns   the roster's column list (the header to write with)
+#   existing  the rows already held
+#   accepted  the declared rows, one value per column, in roster order
+proc spar::_check_roster_rows {rows roster_path segment} {
     if {[file exists $roster_path]} {
         set fd [open $roster_path r]
         fconfigure $fd -translation binary
@@ -917,7 +984,7 @@ proc spar::apply_sweep_batch {deliverable_path roster_path segment} {
 
     set errors {}
     set accepted {}
-    foreach row $rows_new {
+    foreach row $rows {
         set stem [string trim [dict getdef $row stem ""]]
         if {[dict exists $seen $stem]} {
             set where [dict get $seen $stem]
@@ -943,9 +1010,19 @@ proc spar::apply_sweep_batch {deliverable_path roster_path segment} {
         }
         lappend accepted $out
     }
-    if {[llength $errors] > 0} { return [concat $errors $warnings] }
+    return [dict create issues $errors columns $columns \
+                existing $existing accepted $accepted]
+}
 
-    set out_rows [concat $existing $accepted]
+# _append_roster_rows — check a batch of declared rows and append the
+# lot, or none: any rejection returns the issues with the roster
+# untouched. tmp+rename, so a crash leaves the old file whole. Returns
+# the issue list, empty when the rows landed.
+proc spar::_append_roster_rows {rows roster_path segment} {
+    set chk [spar::_check_roster_rows $rows $roster_path $segment]
+    if {[llength [dict get $chk issues]] > 0} { return [dict get $chk issues] }
+    set columns [dict get $chk columns]
+    set out_rows [concat [dict get $chk existing] [dict get $chk accepted]]
     set tmp [exec mktemp "${roster_path}.XXXXXX"]
     try {
         spar::write_roster $tmp $out_rows $columns
@@ -954,8 +1031,86 @@ proc spar::apply_sweep_batch {deliverable_path roster_path segment} {
     } finally {
         if {$tmp ne "" && [file exists $tmp]} { catch {file delete $tmp} }
     }
-    spar::_stamp_patch_applied $deliverable_path sweep_batch_applied
-    return $warnings
+    return {}
+}
+
+# _check_sweep_sources — the acceptance check for census entries a
+# profile declares. A name the census already holds is a rejection
+# (whatever its status: the census is the record of what was tried, and
+# an exhausted source is not reopened by being found again), and so is
+# a name repeated within the batch or left blank. Returns issue dicts,
+# empty when every entry passed.
+proc spar::_check_sweep_sources {sweep_path entries} {
+    set data [spar::read_sweep_yaml $sweep_path]
+    set known [dict create]
+    foreach src [dict getdef $data sources {}] {
+        if {[llength $src] % 2 != 0} continue
+        set name [string trim [dict getdef $src name ""]]
+        if {$name ne ""} {
+            dict set known $name [spar::sweep_status_token [dict getdef $src status ""]]
+        }
+    }
+    set issues {}
+    set batch [dict create]
+    foreach entry $entries {
+        if {[llength $entry] % 2 != 0} {
+            lappend issues [dict create severity error code invalid_source \
+                message "sources_new entry is not a mapping: $entry"]
+            continue
+        }
+        set name [string trim [dict getdef $entry name ""]]
+        if {$name eq ""} {
+            lappend issues [dict create severity error code invalid_source \
+                message "sources_new entry has no name"]
+            continue
+        }
+        if {[dict exists $known $name]} {
+            lappend issues [dict create severity error code duplicate_source \
+                message "sources_new: '$name' is already in the census (status [dict get $known $name]); a source already tried is not a find, and an exhausted one is not reopened from profiling"]
+            continue
+        }
+        if {[dict exists $batch $name]} {
+            lappend issues [dict create severity error code duplicate_source \
+                message "sources_new: '$name' is declared twice in this batch"]
+            continue
+        }
+        dict set batch $name 1
+    }
+    return $issues
+}
+
+# append_sweep_sources — add profile-declared entries to the census, or
+# none: the check above rejects the whole batch before any write. Each
+# entry lands as declared (name, type, url, status, note, discovered_via)
+# after the last existing source, so the head stays forward-only and T0
+# sees the new entry as one more task on its next pass. Returns the issue
+# list, empty when the entries landed.
+proc spar::append_sweep_sources {sweep_path entries} {
+    if {[llength $entries] == 0} { return {} }
+    set issues [spar::_check_sweep_sources $sweep_path $entries]
+    if {[llength $issues] > 0} { return $issues }
+
+    set blocks {}
+    foreach entry $entries {
+        lappend blocks [spar::_emit_seq_item $entry 2 {}]
+    }
+    set lines [split [string trimright [spar::_sweep_read $sweep_path] "\n"] "\n"]
+    set blk [spar::_yaml_block_entries $lines sources]
+    set key_line [dict get $blk key_line]
+    set entries_found [dict get $blk entries]
+    set flat {}
+    foreach b $blocks { lappend flat {*}$b }
+    if {$key_line < 0} {
+        lappend lines "sources:"
+        set lines [concat $lines $flat]
+    } elseif {[llength $entries_found] == 0} {
+        set lines [lreplace $lines $key_line $key_line "sources:" {*}$flat]
+    } else {
+        lassign [lindex $entries_found end] first last _
+        set lines [linsert $lines [expr {$last + 1}] {*}$flat]
+    }
+    spar::_sweep_write $sweep_path "[join $lines \n]\n"
+    return {}
 }
 
 # _stamp_patch_applied — insert the applied-stamp key into the
@@ -1246,9 +1401,6 @@ proc spar::roster_path_for_segment {segment_dir} {
 }
 proc spar::segment_yaml_for_segment {segment_dir} {
     return "${segment_dir}.yaml"
-}
-proc spar::sweep_feedback_path_for_segment {segment_dir} {
-    return "${segment_dir}.sweep-feedback.tsv"
 }
 proc spar::sweep_yaml_for_segment {segment_dir} {
     return "${segment_dir}.sweep.yaml"

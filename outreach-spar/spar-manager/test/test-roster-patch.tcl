@@ -102,7 +102,107 @@ assert_eq [roster_field $roster email] "" "roster untouched on rejection"
 set fd [open $profile r]; set ptext [read $fd]; close $fd
 assert_eq [string match "*roster_patch_applied*" $ptext] 0 "no stamp on rejection"
 
-# 6. sweep_feedback appends to the queue, once.
+# 6. rows_new: a found row lands with sweep_iteration copied from the
+# profiled contact; a second apply is inert.
+proc write_test_sweep {path} {
+    set fd [open $path w]
+    puts $fd {version: "1.0"}
+    puts $fd "segment: roster"
+    puts $fd "market_estimate:"
+    puts $fd "  value: 120"
+    puts $fd "  derivation: top-down"
+    puts $fd {  estimated: "2026-08-06"}
+    puts $fd "sources:"
+    puts $fd "  - name: State register"
+    puts $fd "    type: registry"
+    puts $fd "    status: unharvested"
+    puts $fd "  - name: Local paper"
+    puts $fd "    type: outlet"
+    puts $fd "    status: exhausted — archive read to 2019"
+    puts $fd "exclusions: none"
+    puts $fd "escapes: \[\]"
+    puts $fd "rounds: \[\]"
+    close $fd
+}
+set sweep [file join $tmpdir roster.sweep.yaml]
+write_test_roster $roster
+write_test_sweep $sweep
+write_test_profile $profile {
+    "profile_date: 2026-07-18"
+    "star_rating: 3"
+    "yield: 2"
+    "dependent_data:"
+    "  contact_name: Jane Doe"
+    "  organisation: Acme"
+    "  role: \"\""
+    "  date_excluded: \"\""
+    "rows_new:"
+    "  - stem: bob-roe-beta"
+    "    contact_name: Bob Roe"
+    "    organisation: Beta"
+    "    email: bob@beta.example"
+    "    discovered_via: \"profile:jane-doe-acme · named as co-organiser on Jane's page\""
+    "sources_new:"
+    "  - name: \"web search: \\\"marriage officiant\\\"\""
+    "    type: platform"
+    "    status: unharvested"
+    "    note: probe found 6 unrostered hits"
+    "    discovered_via: profile:jane-doe-acme"
+}
+set issues [spar::apply_roster_patch $profile $roster jane-doe-acme $sweep]
+assert_eq [llength $issues] 0 "rows_new + sources_new apply clean"
+set rows [spar::load_roster $roster]
+assert_eq [llength $rows] 2 "found row appended"
+set bob [lindex $rows 1]
+assert_eq [dict get $bob stem] bob-roe-beta "appended row is the declared stem"
+assert_eq [dict get $bob sweep_iteration] 1 "sweep_iteration copied from the profiled row"
+assert_match [dict get $bob discovered_via] "profile:jane-doe-acme*" "discovered_via kept as declared"
+set data [spar::read_sweep_yaml $sweep]
+assert_eq [llength [dict get $data sources]] 3 "census gained the declared source"
+set newsrc [lindex [dict get $data sources] end]
+assert_eq [dict get $newsrc name] {web search: "marriage officiant"} "source name as declared"
+assert_eq [dict get $newsrc discovered_via] profile:jane-doe-acme "source carries discovered_via"
+assert_eq [spar::sweep_source_open [dict get $newsrc status]] 1 "new source is open work for T0"
+set issues [spar::apply_roster_patch $profile $roster jane-doe-acme $sweep]
+assert_eq [llength $issues] 0 "stamped re-apply returns no issues"
+assert_eq [llength [spar::load_roster $roster]] 2 "stamped re-apply appends no row"
+assert_eq [llength [dict get [spar::read_sweep_yaml $sweep] sources]] 3 "stamped re-apply appends no source"
+
+# 7. Rejections leave roster and census untouched: a stem already held,
+# a source already in the census (even exhausted), a source with no
+# sweep file.
+write_test_roster $roster
+write_test_sweep $sweep
+write_test_profile $profile {
+    "profile_date: 2026-07-18"
+    "star_rating: 3"
+    "yield: 2"
+    "dependent_data:"
+    "  contact_name: Jane Doe"
+    "  organisation: Acme"
+    "  role: \"\""
+    "  date_excluded: \"\""
+    "roster_patch:"
+    "  email: jane@acme.example"
+    "rows_new:"
+    "  - stem: jane-doe-acme"
+    "    contact_name: Jane Doe"
+    "    discovered_via: profile:jane-doe-acme"
+    "sources_new:"
+    "  - name: Local paper"
+    "    type: outlet"
+    "    status: unharvested"
+    "    discovered_via: profile:jane-doe-acme"
+}
+set issues [spar::apply_roster_patch $profile $roster jane-doe-acme $sweep]
+set codes [lsort [lmap i $issues {dict get $i code}]]
+assert_eq $codes {duplicate_source duplicate_stem} "held stem and known source both rejected"
+assert_eq [roster_field $roster email] "" "patch not applied when a sibling declaration is rejected"
+assert_eq [llength [spar::load_roster $roster]] 1 "no row appended on rejection"
+assert_eq [llength [dict get [spar::read_sweep_yaml $sweep] sources]] 2 "no source appended on rejection"
+set fd [open $profile r]; set ptext [read $fd]; close $fd
+assert_eq [string match "*roster_patch_applied*" $ptext] 0 "no stamp on rejection"
+
 write_test_roster $roster
 write_test_profile $profile {
     "profile_date: 2026-07-18"
@@ -113,17 +213,16 @@ write_test_profile $profile {
     "  organisation: Acme"
     "  role: \"\""
     "  date_excluded: \"\""
-    "sweep_feedback:"
-    "  - kind: new-source"
-    "    note: test register at example.org"
+    "sources_new:"
+    "  - name: New register"
+    "    type: registry"
+    "    status: unharvested"
+    "    discovered_via: profile:jane-doe-acme"
 }
-spar::apply_roster_patch $profile $roster jane-doe-acme
-spar::apply_roster_patch $profile $roster jane-doe-acme
-set fb [file join $tmpdir roster.sweep-feedback.tsv]
-set fd [open $fb r]; set fbtext [read $fd]; close $fd
-assert_eq [llength [lsearch -all [split $fbtext \n] "jane-doe-acme*"]] 1 "feedback appended exactly once across two applies"
+set issues [spar::apply_roster_patch $profile $roster jane-doe-acme]
+assert_eq [lmap i $issues {dict get $i code}] sources_new_no_sweep "sources_new without a sweep file is rejected"
 
-# 7. Approach-side patch: applies and appends the stamp as a root line.
+# 8. Approach-side patch: applies and appends the stamp as a root line.
 write_test_roster $roster
 set approach [file join $tmpdir jane-doe-acme.yaml]
 set fd [open $approach w]
