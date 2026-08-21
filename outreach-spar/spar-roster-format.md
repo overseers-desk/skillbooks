@@ -94,7 +94,7 @@ Every row must have at least one of email or a platform URL column populated. Ph
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
 | 9 | sweep_iteration | integer | S | Human review | Which sweep iteration added this row |
-| 10 | discovered_via | text | S; P for new names found during profiling | Human review, future S | Referral chain traceable to the original seed source |
+| 10 | discovered_via | text | S; P for new names found during profiling | Human review, future S, discovery-yield count | Referral chain traceable to the original seed source. A row profiling surfaced leads with `profile:{stem}` of the profile that found it (SPAR-P §4.15); that prefix is what tells a P-found row from a swept one |
 
 ### Validation
 

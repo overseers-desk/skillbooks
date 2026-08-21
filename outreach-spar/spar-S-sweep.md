@@ -142,9 +142,10 @@ sources:                    # the census; every discovered_via maps to an entry 
     url: <where>
     status: exhausted | partial | unreachable | unharvested | stale, each with its reason
     yield: <n found / n in source after filter>
+    discovered_via: <profile:{stem} when profiling surfaced the source (P §4.15); absent for seeded sources>
 exclusions: <what this segment's scope keeps out, sharpened as misfits teach>
 escapes: []                 # permanent test cases; see below
-next_round:                 # staging block compiled from feedback between rounds
+next_round:                 # staging block a human compiles between rounds; profile-found sources enter `sources` directly
 rows_to_verify: []          # roster rows a later source disputed
 rounds:
   - n: <iteration>
@@ -158,7 +159,7 @@ rounds:
 
 **Escapes.** When a market member surfaces that the sweep should have found (a user hands one over, a later source disputes the roster, profiling turns up an unswept peer), the member enters the roster immediately and the miss enters `escapes` with a verdict naming the cause: `missing-keyword`, `missing-source`, `source-not-exhausted`, `filter-too-tight`, or `process-defect`. The verdict decides which part of the head gets fixed, and the escape stays in the file as a test case the next round demonstrably catches.
 
-**New-source claims.** Feedback from profiling or later rounds routinely proposes "new" sources. Check the claim against the source census before accepting it; a proposed source the census already lists as exhausted is a re-discovery, not an input for the next round. Both a worker and a compiling agent have skipped this check in the same pilot; the census caught it at validation.
+**New-source claims.** Profiling and later rounds routinely propose "new" sources. A profile declares one as a `sources_new` entry (SPAR-P §4.15) and the harness refuses a name the census already holds, whatever its status: a source already listed as exhausted is a re-discovery, not an input for the next round. A human staging a source by hand makes the same check against the census before adding it. Both a worker and a compiling agent have skipped this check in the same pilot; the census caught it at validation.
 
 The per-round `surprises` field absorbs what the old summary file recorded (vocabulary gaps, invisible sub-segments, CRM gap analysis results).
 
