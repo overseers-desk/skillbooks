@@ -10,17 +10,16 @@
 #
 # Strategy: drive the Dispatcher with fake_worker coroutine jobs that run
 # scripted report sequences. No real claude / SES / IMAP calls. The
-# fake_worker proc is defined in spar-dispatcher-initcmd.tcl alongside the
-# production worker procs, sourced into this interpreter by
-# spar-dispatcher.tcl.
+# fake_worker proc is defined in test-helpers.tcl; the production worker
+# procs it stands in for are defined by spar::dispatcher.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir test-helpers.tcl]
 
-# spar-dispatcher.tcl needs spar-state.tcl in scope for spar::update_roster_field
+# spar::dispatcher needs spar::state in scope for spar::update_roster_field
 # (called by on_roster_update). Source it so the file loads cleanly.
-source [file join $script_dir .. lib spar-state.tcl]
-source [file join $script_dir .. lib spar-dispatcher.tcl]
+package require spar::state
+package require spar::dispatcher
 
 set ::log_messages {}
 proc test_log {msg} { lappend ::log_messages $msg }
@@ -58,7 +57,7 @@ proc wait_for_terminal {dispatcher row {timeout_ms 5000}} {
 # spar-domain reports still land on matching on_* methods.
 section "1. No marshalling layer"
 
-set worker_path [file join $script_dir .. lib spar-dispatcher.tcl]
+set worker_path [file join $script_dir .. lib spar dispatcher-1.0.tm]
 set fd [open $worker_path r]; set worker_src [read $fd]; close $fd
 assert_eq [regexp {thread::send} $worker_src] 0 \
     "worker file has no thread::send"

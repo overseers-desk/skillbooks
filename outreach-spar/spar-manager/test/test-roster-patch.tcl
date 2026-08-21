@@ -7,8 +7,8 @@
 
 package require logger
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. lib spar-state.tcl]
 source [file join $script_dir test-helpers.tcl]
+package require spar::state
 
 set tmpdir [exec mktemp -d /tmp/spar-test-roster-patch.XXXXXX]
 set roster [file join $tmpdir roster.tsv]

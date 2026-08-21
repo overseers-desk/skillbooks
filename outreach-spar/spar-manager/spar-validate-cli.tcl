@@ -13,7 +13,8 @@
 # data-integrity error is found; warnings do not fail the run.
 
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir lib spar-state.tcl]
+::tcl::tm::path add [file join $script_dir lib] [file join $script_dir vendor]
+package require spar::state
 
 # --- Argument parsing (per-tool; campaign resolution is shared) ---
 set campaign_dir ""

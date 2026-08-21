@@ -16,24 +16,12 @@
 # The generic protocol is documented in the jobloop man page; the spar
 # additions and the per-kind cap policy live in docs/concurrency.md.
 #
-# Idempotent: oo::class create is not idempotent, so guard against
-# multiple sources.
-
 package require logger
 
-if {[info exists ::spar::_pool_loaded]} {
-    package provide spar-dispatcher 1.0
-    return
-}
-
 namespace eval spar {
-    variable _pool_loaded 1
     # Live coachman harnesses, keyed by row, published by harness_run for
     # the span of its run() so a front-end's cancel can abort them.
     variable live_harnesses [dict create]
-    variable pool_script_dir [file dirname [file normalize [info script]]]
-    # vendor/ carries the jobloop module; a checkout runs as-is.
-    ::tcl::tm::path add [file join $pool_script_dir .. vendor]
     # Logger service for the pool's dropped/out-of-order warnings.
     variable dispatch_log [logger::init spar::dispatch]
 }
@@ -203,9 +191,9 @@ proc spar::_pool_roster_update {row roster_path key_col key_val field new_val} {
 #
 # jobloop's workers are commands in this interpreter, not procs seeded into
 # a thread pool. The harness and email libraries the worker bodies call
-# are sourced here; the per-row legs (spar::ses, spar::li, spar::imap)
-# arrive with the transition classes. The bodies (harness_run / ses_send /
-# linkedin_send / imap_poll) follow.
+# are required here; the per-row legs (spar::ses, spar::li, spar::imap)
+# arrive with the transition classes in spar::state. The bodies
+# (harness_run / ses_send / linkedin_send / imap_poll) follow.
 #
 # Under jobloop each job runs as a coroutine on the front-end's event
 # loop, in this interpreter. A worker reports through the jobloop verbs
@@ -218,14 +206,11 @@ proc spar::_pool_roster_update {row roster_path key_col key_val field new_val} {
 # A worker waits the loop's way: it never blocks on a synchronous read or
 # a bare vwait, which would stall every other job in the process. The
 # coroutine-aware waits (spar::pool_sleep / pool_exec / pool_http) live in
-# spar-lib.tcl, the shared base, so the harness path reaches them too; each
+# spar::lib, the shared base, so the harness path reaches them too; each
 # falls back to the blocking form when called outside a coroutine.
-apply {{} {
-    variable ::spar::pool_script_dir
-    set d $::spar::pool_script_dir
-    source [file join $d spar-email.tcl]
-    source [file join $d spar-harness.tcl]
-}}
+package require spar::state
+package require spar::email
+package require spar::harness
 
 
 # The worker bodies are global procs; this line lets an unqualified
@@ -256,7 +241,7 @@ namespace path ::jobloop::worker
 #                   the same constructor + run shape.
 #
 # The claude session inside the harness is driven through deadman with an
-# async completion (see spar-harness.tcl _invoke), so a long run yields the
+# async completion (see spar::harness _invoke), so a long run yields the
 # loop rather than freezing it. Cancel-checked once before the harness
 # starts; a mid-run cancel reaches the harness through
 # spar::abort_live_harnesses, which the harness is published for below.
@@ -384,5 +369,3 @@ proc imap_poll {row opts} {
         failed $row $detail
     }
 }
-
-package provide spar-dispatcher 1.0

@@ -155,7 +155,7 @@ These assertions apply to the core columns. Campaign-specific checks are defined
 6. Every row with `star_rating = 0` has a non-empty `date_excluded`.
 7. Every row has a non-empty `stem`.
 8. No two rows share the same `stem` (it is the primary key of the segment roster).
-9. The roster file must contain a `stem` column header. A roster lacking it is rejected by the state machine (`spar-state.tcl`) at load time with a schema error. This is a hard failure, not a warning.
+9. The roster file must contain a `stem` column header. A roster lacking it is rejected by the state machine (`spar::state`) at load time with a schema error. This is a hard failure, not a warning.
 
 ## Relationship to other documents
 
@@ -165,4 +165,4 @@ This document defines the roster schema. The operational procedures for populati
 - **SPAR-P** (`spar-P-profile.md`) — populates columns 13–14, corrects columns 3–8 and 11, and appends whole rows (columns 1–12) for members it discovers, declared as `rows_new` and applied by the harness (§4.15); creates `segments/{segment}/{stem}.md` using the pre-existing `stem`
 - **SPAR-A** (`spar-A-approach.md`) — creates `campaigns/{campaign}/{stem}.yaml` using the pre-existing `stem`, writing `response_likelihood`, `a_note`, and the messages into it; writes to the roster only to backfill a population-tier contact detail discovered at send time (a verified email, a corrected platform URL; see §4.8)
 - **R** (human, no procedure document) — writes the `r_note` root key into the campaign's approach file; does not write to the roster
-- **spar-state.tcl** — reads `stem` from the roster and checks for the presence of the profile and the campaign's approach file on disk to classify contact state; never writes to the roster
+- **spar::state** — reads `stem` from the roster and checks for the presence of the profile and the campaign's approach file on disk to classify contact state; never writes to the roster

@@ -1,7 +1,13 @@
-#!/usr/bin/env tclsh9.0
-# spar-lib.tcl — Shared library for SPAR batch scripts (Tcl port)
-# Source this file or package require spar-lib.
+# spar::lib — shared library for the SPAR dispatcher, state machine and CLIs.
 # Works under both tclsh (CLI) and wish (GUI).
+
+# ::spar::root is the spar-manager checkout root (this module sits at
+# lib/spar/ under it). Every module locates its resources from it:
+# prompts/, rules/, transitions/, state-machine.md, and the method
+# directory one level up.
+namespace eval spar {
+    variable root [file dirname [file dirname [file dirname [file normalize [info script]]]]]
+}
 
 package require yaml
 package require json
@@ -447,19 +453,15 @@ proc spar::instance_root_for_yaml {yaml_path} {
 # the method directory); spar::extract_platforms hard-errors at dispatch
 # time on a key with no module.
 
-namespace eval spar {
-    variable lib_script_dir [file dirname [file normalize [info script]]]
-}
-
 # platform_modules — the platform key vocabulary: the {key} stems of
 # outreach-spar's platforms/{key}.md modules. The module file is what
 # admits a key into segment.yaml's platforms: map, so the file set is the
 # vocabulary's single home.
 proc spar::platform_modules {} {
-    variable lib_script_dir
+    variable root
     set stems {}
     foreach f [glob -nocomplain -directory \
-            [file join $lib_script_dir .. .. platforms] *.md] {
+            [file join [file dirname $root] platforms] *.md] {
         lappend stems [file rootname [file tail $f]]
     }
     return [lsort $stems]
@@ -1153,8 +1155,8 @@ proc spar::get_max_passes {profile_path} {
     if {$profile_path eq "" || ![file exists $profile_path]} {
         return 1
     }
-    # read_profile_front_matter lives in spar-state.tcl; guard for callers that
-    # source only spar-lib.tcl. Use the fully-qualified name: this proc runs in
+    # read_profile_front_matter lives in spar::state; guard for callers that
+    # load only spar::lib. Use the fully-qualified name: this proc runs in
     # the ::spar namespace, where a relative pattern resolves against
     # ::spar:: and never matches the real ::spar::read_profile_front_matter.
     if {[info procs ::spar::read_profile_front_matter] eq ""} {
@@ -1951,4 +1953,3 @@ proc spar::pool_http {args} {
     return $tok
 }
 
-package provide spar-lib 1.0

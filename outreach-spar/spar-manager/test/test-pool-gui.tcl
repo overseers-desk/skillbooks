@@ -16,24 +16,18 @@ source [file join $script_dir test-helpers.tcl]
 # here drives that method. Check the names it lists resolve against the
 # directory spar-ui.tcl hands it as ScriptDir. Runs before the display
 # gate below: it needs no Tk.
-section "0. DispatchController's lazy sources resolve"
+section "0. DispatchController's lazy requires resolve"
 
 set dc_path [file join $script_dir .. ui dispatch-controller.tcl]
 set fd [open $dc_path r]; set dc_src [read $fd]; close $fd
 
-# Take the loop's file list and the path expression built from it, then
-# run that expression against the real directory. Whatever the source
-# line says is what gets checked.
-set found [regexp {foreach\s+(\w+)\s+\{([^\}]*)\}[^\n]*\n\s*(set path \[file join \$ScriptDir[^\n]*\])} \
-    $dc_src -> loop_var lazy_libs path_expr]
-assert_eq $found 1 "DispatchController still lazy-sources a list of libraries"
-if {$found} {
-    set ScriptDir [file join $script_dir ..]
-    foreach $loop_var $lazy_libs {
-        eval $path_expr
-        assert_eq [file exists $path] 1 \
-            "lazy source resolves: [set $loop_var]"
-    }
+# Every module the controller requires on first dispatch must be on the
+# module path test-helpers registered. Whatever the require lines say is
+# what gets checked.
+set lazy_pkgs [lmap {- pkg} [regexp -all -inline {package require (spar::[a-z]+)} $dc_src] {set pkg}]
+assert_eq [expr {[llength $lazy_pkgs] > 0}] 1 "DispatchController requires its dispatch modules lazily"
+foreach pkg $lazy_pkgs {
+    assert_eq [catch {package require $pkg}] 0 "lazy require resolves: $pkg"
 }
 
 # ── Display detection ───────────────────────────────────────────────
@@ -66,8 +60,8 @@ package require Thread
 
 # Same load pattern the bootstrap uses, sufficient for what the smoke
 # test exercises.
-source [file join $script_dir .. lib spar-state.tcl]
-source [file join $script_dir .. lib spar-dispatcher.tcl]
+package require spar::state
+package require spar::dispatcher
 source [file join $script_dir .. ui campaign-model.tcl]
 source [file join $script_dir .. ui log-window.tcl]
 source [file join $script_dir .. ui transition-tree.tcl]

@@ -186,9 +186,9 @@ proc ::spar::transitions::assert_matches_doc {doc_path} {
 
 # ── spar::* accessors ─────────────────────────────────────────────────
 # Thin delegators around the registry. Live here, alongside the registry
-# itself, rather than in spar-state.tcl — every consumer that wants the
+# itself, rather than in spar::state — every consumer that wants the
 # accessors already sources transitions/base.tcl (transitively, via
-# spar-state.tcl), and keeping them next to the registry makes the
+# spar::state), and keeping them next to the registry makes the
 # dependency obvious.
 
 # has_transition_runner -- 1 if the T-id's class has dispatch_status

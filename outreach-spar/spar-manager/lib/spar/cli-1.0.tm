@@ -1,7 +1,7 @@
-# spar-transition-cli.tcl — argv parser for spar-transition.tcl.
+# spar::cli — argv parser for spar-transition.tcl.
 #
-# Lifted out of the script body so test/test-cli-parser.tcl can drive
-# the grammar in isolation. The script sources this file, calls
+# Its own module so test/test-cli-parser.tcl can drive the grammar in
+# isolation. The script requires it, calls
 # spar::parse_cli $argv, and either dispatches the resulting spec dict
 # or exits with the error.
 #
@@ -183,8 +183,8 @@ proc spar::parse_cli {argv} {
 
 # _tid_known — predicate for the registry. Defined as a separate proc
 # so tests can stub it if they want to exercise parse_cli without
-# loading the full transition registry; production callers source
-# spar-state.tcl first which registers all T-ids at load time.
+# loading the full transition registry; production callers load
+# spar::state first, which registers all T-ids at load time.
 proc spar::_tid_known {tid} {
     if {[catch {::spar::transitions::all} all]} {
         return 0

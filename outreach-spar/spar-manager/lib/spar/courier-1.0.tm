@@ -1,4 +1,4 @@
-# spar-courier.tcl — Courier prefetch helpers used by the SPAR-A prompt
+# spar::courier — Courier prefetch helpers used by the SPAR-A prompt
 # builder (SPAR-P deliberately excludes prior correspondence from
 # profiles, per spar-P-profile.md §4.7). Builds the "## Courier —
 # prefetched by dispatcher" block injected into the approach prompt: an
@@ -9,6 +9,8 @@
 # organisation. Uses `courier -A` (multi-account) with `--format text`;
 # both shipped in courier 1.0.3 along with the [Gmail]/All Mail folder
 # default and exit-1-on-empty.
+
+package require spar::lib
 
 namespace eval spar::courier {
     variable accounts_block_cache ""
@@ -83,4 +85,3 @@ proc spar::courier::_run {query} {
     return [list $rc [string trim $out]]
 }
 
-package provide spar-courier 1.0

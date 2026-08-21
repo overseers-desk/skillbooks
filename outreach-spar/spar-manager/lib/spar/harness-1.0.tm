@@ -1,4 +1,4 @@
-# spar-harness.tcl — TclOO base class plus Approach and Profile subclasses
+# spar::harness — TclOO base class plus Approach and Profile subclasses
 # for harnessed Claude CLI sessions.
 #
 # A "harness" wraps a single claude session with the machinery the DbC
@@ -7,9 +7,7 @@
 # spar::ProfileHarness subclasses supply the phase-specific
 # validate_and_correct loop and orchestration.
 #
-# Requires spar-state.tcl sourced first (for spar::State
-# and the validators).
-
+package require spar::state
 package require json
 package require json::write
 package require TclOO
@@ -17,34 +15,21 @@ package require logger
 # vendor/ carries the modules this app depends on: a checkout runs as-is,
 # and an upstream bump lands as a reviewable diff. deadman's home, man
 # page, and full test suite live in the teatotal repository.
-::tcl::tm::path add \
-    [file join [file dirname [file normalize [info script]]] .. vendor]
 package require deadman
 # coachman carries the generic claude-session harness base; spar::Harness
 # below subclasses it. Authored and published in the questlog repository,
 # which spar is the only consumer of so far, so a bump comes from there.
 package require coachman
 
-# Idempotent: oo::class create is not idempotent, so guard against
-# multiple sources.
-if {[info exists ::spar::_harness_loaded]} {
-    package provide spar-harness 1.0
-    return
-}
 
 namespace eval spar {
-    variable _harness_loaded 1
-    # Capture the directory holding this file at source time. prompt_root
-    # derives the checkout root from it, where load_prompt resolves
-    # prompts/<name>.txt.
-    variable harness_dir [file dirname [file normalize [info script]]]
     # Logger service for harness runtime output. Per-row context
     # (slug, phase) goes in the message body; logger adds the
     # timestamp, service tag, and level.
     variable harness_log [logger::init spar::harness]
 }
 
-source [file join $::spar::harness_dir spar-courier.tcl]
+package require spar::courier
 
 oo::class create spar::Harness {
     superclass coachman::Harness
@@ -58,7 +43,7 @@ oo::class create spar::Harness {
     # cost meter stays coachman's default: tallyman and anthropic-rates.tcl
     # sit beside the vendored module, so the cap is metered as shipped.
     method log_service {}         { return $::spar::harness_log }
-    method prompt_root {}         { return [file dirname $::spar::harness_dir] }
+    method prompt_root {}         { return $::spar::root }
     method claude_bin {}          { return [spar::find_tool claude] }
 
     # inject_courier — substitute __COURIER_SECTION__ in the prompt file with the
@@ -989,5 +974,3 @@ oo::class create spar::SweepHarness {
             "DONE: [my slug] ($rows row(s) from $SourceName, status now [my declared_status], cost=\$[my cost_total])"
     }
 }
-
-package provide spar-harness 1.0

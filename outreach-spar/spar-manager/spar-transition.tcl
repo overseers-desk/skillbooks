@@ -23,7 +23,7 @@
 #   Tn:<segment>         Tn restricted to one segment
 #   Tn:<segment>/<stem>  Tn for one specific contact
 # Tokens are repeatable and mixable across TIDs. The grammar is parsed
-# in spar-transition-cli.tcl (test/test-cli-parser.tcl drives it).
+# in spar::cli (test/test-cli-parser.tcl drives it).
 #
 # --auto refuses any positional Tn token. Transitions with external-
 # action side-effects (e.g. SES send) declare auto_safe=0 and are
@@ -36,11 +36,23 @@
 # transition with requires_send_confirmation=1 (T6 SES). Cron uses --yes.
 
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir lib spar-state.tcl]
-source [file join $script_dir lib spar-dispatch.tcl]
-source [file join $script_dir lib spar-email.tcl]
-source [file join $script_dir lib spar-transition-cli.tcl]
-source [file join $script_dir lib spar-control.tcl]
+::tcl::tm::path add [file join $script_dir lib] [file join $script_dir vendor]
+package require spar::state
+package require spar::prompts
+package require spar::email
+package require spar::cli
+package require spar::control
+
+# _pool_pre_launch - bridge the Dispatcher's (row kind) pre-launch hook
+# to the CLI's (tid slug idx total) step_callback. Used by dispatch_ready
+# when --jobs=0 steps the shared pool one row at a time. The ordinal is counted here (each row passes
+# the gate once) and the total is curried in at install, where the
+# batch count is already known.
+proc spar::_pool_pre_launch {step_callback total row kind} {
+    variable _step_ordinal
+    incr _step_ordinal
+    return [{*}$step_callback $kind $row $_step_ordinal $total]
+}
 
 package require logger
 
@@ -274,7 +286,7 @@ if {$dispatching && $filter_state ne "" && $filter_state ne "dispatchable"} {
     exit 1
 }
 
-# Operator control channel for live runs (spar-control.tcl). The port
+# Operator control channel for live runs (spar::control). The port
 # is exact: a taken one fails the run here, before any worker launches,
 # so a second concurrent dispatch is given its own with --control-port
 # rather than ending up somewhere the operator has to go looking for.

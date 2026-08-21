@@ -22,8 +22,8 @@
 package require yaml
 package require sha256
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. lib spar-state.tcl]
 source [file join $script_dir test-helpers.tcl]
+package require spar::state
 
 # Approach YAML helper — line 1 is `profile_hash: sha256:<hex>` matching
 # the profile bytes, so classify_contact returns APPROACHED.

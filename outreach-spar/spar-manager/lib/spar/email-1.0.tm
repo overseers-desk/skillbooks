@@ -1,5 +1,4 @@
-#!/usr/bin/env tclsh9.0
-# spar-email.tcl — Shared helpers for the email send/reply-check transitions.
+# spar::email — shared helpers for the email send/reply-check transitions.
 #
 # The SES integration lives in transitions/send_email.tcl and the inbox
 # integration lives in transitions/check_replies.tcl. This file keeps only
@@ -7,7 +6,7 @@
 # extraction, HTML-to-text cleanup, reply-fingerprint matching, approach
 # YAML reply append, sent-approach collection, and the actioned_date stamp.
 
-source [file join [file dirname [file normalize [info script]]] spar-lib.tcl]
+package require spar::lib
 
 namespace eval spar {
     namespace export stamp_actioned_date collect_sent_approaches \
@@ -712,4 +711,3 @@ proc spar::filter_approaches_by_stems {approaches stems} {
     return $out
 }
 
-package provide spar-email 1.0

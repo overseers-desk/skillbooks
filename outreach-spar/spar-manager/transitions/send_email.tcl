@@ -236,7 +236,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
 # round email message of one approach YAML via SES, then stamps
 # actioned_date on success. No callbacks, no thread::send, no registry,
 # no event loop — the caller (production: ses_send worker in
-# spar-dispatcher.tcl; tests: test-pool.tcl) does its own
+# spar::dispatcher; tests: test-pool.tcl) does its own
 # signalling.
 #
 # The SMTP exchange itself is the subprocess smtp_send.tcl beside this

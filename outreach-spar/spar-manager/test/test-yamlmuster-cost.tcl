@@ -12,8 +12,8 @@
 
 package require yaml
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. lib spar-state.tcl]
 source [file join $script_dir test-helpers.tcl]
+package require spar::state
 
 # Error-tagged approach-rule count, pinned from rules/approach.rules. The
 # ruleset compiles to 24 rules; 5 are warning-declared, leaving 19 error rules:

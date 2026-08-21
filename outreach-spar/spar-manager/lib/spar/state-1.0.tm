@@ -1,9 +1,8 @@
-#!/usr/bin/env tclsh9.0
-# spar-state.tcl — State machine library for SPAR campaign manager
+# spar::state — state machine library for the SPAR campaign manager.
 # Pure read-only library: reads filesystem and TSV, returns current state.
-# Sourced by both wish (GUI) and tclsh (CLI).
+# Loaded by both wish (GUI) and tclsh (CLI).
 
-source [file join [file dirname [file normalize [info script]]] spar-lib.tcl]
+package require spar::lib
 
 # Transition classes populate ::spar::transitions::registry at load time.
 # base.tcl declares the base class + registration proc; subclass files
@@ -11,8 +10,7 @@ source [file join [file dirname [file normalize [info script]]] spar-lib.tcl]
 # each T-id. This file's accessors then delegate to the registry — no
 # parallel list of T-ids is maintained anywhere else.
 apply {{} {
-    set here [file dirname [file normalize [info script]]]
-    set td [file join $here .. transitions]
+    set td [file join $::spar::root transitions]
     uplevel #0 [list source [file join $td base.tcl]]
     foreach f {sweep.tcl profile.tcl approach.tcl send_email.tcl \
                check_replies.tcl linkedin_followup.tcl manual_followup.tcl} {
@@ -20,15 +18,9 @@ apply {{} {
     }
     # Drift check: registered T-ids must match state-machine.md.
     # Silent no-op if the doc is absent (tests, migrations).
-    ::spar::transitions::assert_matches_doc [file join $here .. state-machine.md]
+    ::spar::transitions::assert_matches_doc [file join $::spar::root state-machine.md]
 }}
 
-# Captured at source time for the prefetch_approach_cache worker initcmd:
-# tpool workers run in fresh interps and `source $::spar::_state_file`
-# bootstraps them with the same projection helpers and yaml dependency
-# the main interp has. Resolved against the symlinked-resolved path so
-# workers see the same file even if callers source via a relative path.
-namespace eval spar { variable _state_file [file normalize [info script]] }
 
 namespace eval spar {
     namespace export detect_duplicates progress_counts \
@@ -394,13 +386,13 @@ oo::define spar::State method forget_approach {approach_path} {
 # -minworkers = -maxworkers so all workers run their initcmd in parallel
 # at pool creation; the alternative (-minworkers 0, lazy spawn) costs
 # more on first prefetch because the first refine_contact that joins a
-# pending job blocks while the worker spawns and sources spar-state.tcl
+# pending job blocks while the worker spawns and loads spar::state
 # (~300 ms). Sized to _NPROCESSORS_ONLN capped at 8 — past ~4 workers the
 # main-thread join cost of projection dicts becomes the serial floor.
 # -idletime 30 still decays workers if the pool sits unused, matching
-# the State's lifetime hygiene. Workers source spar-state.tcl wholesale;
-# the transitions/* files come along but are dead weight (workers never
-# call them).
+# the State's lifetime hygiene. Workers load spar::state wholesale; the
+# transitions/* files come along but are dead weight (workers never call
+# them).
 oo::define spar::State method _ensure_pool {} {
     if {$Pool ne ""} return
     package require Thread
@@ -409,7 +401,10 @@ oo::define spar::State method _ensure_pool {} {
         -minworkers $n \
         -maxworkers $n \
         -idletime   30 \
-        -initcmd    [list source $::spar::_state_file]]
+        -initcmd    [list apply {{root} {
+            ::tcl::tm::path add [file join $root lib] [file join $root vendor]
+            package require spar::state
+        }} $::spar::root]]
 }
 
 # prefetch_approach_cache -- fire-and-forget tpool dispatch for a list
@@ -457,7 +452,7 @@ oo::define spar::State method prefetch_approach_cache {paths} {
 # T6+T7+T9+T10 incurs one parse per State lifetime, not four.
 #
 # Bypass-site rule: write paths (transitions/send_email.tcl), DbC
-# snapshots in spar-dispatch.tcl, and the inspector continue to call
+# snapshots in spar::prompts, and the inspector continue to call
 # spar::read_approach_yaml directly — they need fresh bytes and a
 # cached projection would mask post-agent edits / in-flight writes.
 #
@@ -943,7 +938,7 @@ oo::define spar::State method classify_segment {segment_dir approach_dir} {
     if {[llength $rows] > 0} {
         set first_row [lindex $rows 0]
         if {![dict exists $first_row stem]} {
-            error "Error: roster missing required column 'stem' — run schema migration before using spar-state.tcl"
+            error "Error: roster missing required column 'stem' — run schema migration before using spar::state"
         }
     }
 
@@ -1769,6 +1764,5 @@ proc spar::_profile_is_stale {profile_path roster_row} {
 }
 
 
-source [file join [file dirname [file normalize [info script]]] spar-validate.tcl]
+package require spar::validate
 
-package provide spar-state 1.0
