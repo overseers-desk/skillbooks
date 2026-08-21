@@ -1,0 +1,2456 @@
+[
+ {
+  "file": "crates/app/src/tmux.rs",
+  "A": 1,
+  "B": 30,
+  "C": 326,
+  "leak": 29,
+  "score": 315,
+  "vocab": [
+   "tmux",
+   "teardown",
+   "PaneGate",
+   "sent_size",
+   "TightWire",
+   "new_window"
+  ]
+ },
+ {
+  "file": "crates/app/src/window.rs",
+  "A": 1,
+  "B": 25,
+  "C": 217,
+  "leak": 24,
+  "score": 208,
+  "vocab": [
+   "on_air",
+   "cell_at",
+   "is_digit",
+   "ime_area",
+   "has_bank",
+   "key_text"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/oracle.rs",
+  "A": 5,
+  "B": 19,
+  "C": 269,
+  "leak": 14,
+  "score": 198,
+  "vocab": [
+   "hash12",
+   "vnoise",
+   "size_px",
+   "rrect_px",
+   "bevel_px",
+   "light_dir"
+  ]
+ },
+ {
+  "file": "crates/term/src/cells.rs",
+  "A": 4,
+  "B": 35,
+  "C": 194,
+  "leak": 31,
+  "score": 172,
+  "vocab": [
+   "cells",
+   "charset",
+   "row_mut",
+   "fill_row",
+   "CellGrid",
+   "from_lines"
+  ]
+ },
+ {
+  "file": "crates/app/src/channels.rs",
+  "A": 2,
+  "B": 8,
+  "C": 210,
+  "leak": 6,
+  "score": 158,
+  "vocab": [
+   "PageId",
+   "rows_mut",
+   "ViewPage",
+   "PageKind",
+   "set_title",
+   "window_id"
+  ]
+ },
+ {
+  "file": "crates/config/src/schema.rs",
+  "A": 17,
+  "B": 23,
+  "C": 324,
+  "leak": 11,
+  "score": 155,
+  "vocab": [
+   "rgb_shift",
+   "SlideRule",
+   "font_source",
+   "Annunciator",
+   "SystemFonts",
+   "static_noise"
+  ]
+ },
+ {
+  "file": "crates/term/src/size.rs",
+  "A": 4,
+  "B": 21,
+  "C": 160,
+  "leak": 17,
+  "score": 130,
+  "vocab": [
+   "CellSize",
+   "TermSize",
+   "MIN_COLS",
+   "MIN_ROWS",
+   "term_size",
+   "scale_factor"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/metrics.rs",
+  "A": 9,
+  "B": 18,
+  "C": 258,
+  "leak": 9,
+  "score": 129,
+  "vocab": [
+   "end_pad",
+   "pad_cells",
+   "dot_pitch",
+   "column_gap",
+   "LedMetrics",
+   "pager_extra"
+  ]
+ },
+ {
+  "file": "crates/config/src/lib.rs",
+  "A": 16,
+  "B": 31,
+  "C": 231,
+  "leak": 15,
+  "score": 112,
+  "vocab": [
+   "Config",
+   "raw_frame_size",
+   "raw_frame_color",
+   "SCREEN_RADIUS_PX",
+   "raw_screen_radius",
+   "raw_frame_shininess"
+  ]
+ },
+ {
+  "file": "crates/config/src/toml.rs",
+  "A": 5,
+  "B": 16,
+  "C": 159,
+  "leak": 11,
+  "score": 109,
+  "vocab": [
+   "toml",
+   "FILE_NAME",
+   "write_keys",
+   "set_dotted",
+   "deserialize",
+   "Deserialize"
+  ]
+ },
+ {
+  "file": "crates/crt-burnin/src/headless.rs",
+  "A": 1,
+  "B": 22,
+  "C": 108,
+  "leak": 21,
+  "score": 103,
+  "vocab": [
+   "GpuLock",
+   "cast_f32",
+   "px_index",
+   "GpuError",
+   "make_input",
+   "make_output"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/shaders.rs",
+  "A": 2,
+  "B": 39,
+  "C": 102,
+  "leak": 37,
+  "score": 97,
+  "vocab": [
+   "shaders",
+   "TAPE_LABEL_SLANG",
+   "LED_MATRIX_SLANG",
+   "PLATE_METAL_SLANG",
+   "FRAME_METAL_SLANG",
+   "CHASSIS_METAL_SLANG"
+  ]
+ },
+ {
+  "file": "crates/term/src/selection.rs",
+  "A": 2,
+  "B": 8,
+  "C": 124,
+  "leak": 6,
+  "score": 93,
+  "vocab": [
+   "act_sel",
+   "set_end",
+   "drag_to",
+   "word_end",
+   "is_valid",
+   "top_left"
+  ]
+ },
+ {
+  "file": "crates/term/src/fonts/sizing.rs",
+  "A": 3,
+  "B": 12,
+  "C": 114,
+  "leak": 9,
+  "score": 86,
+  "vocab": [
+   "dpr_scale",
+   "ScalePolicy",
+   "compute_font",
+   "ComputedFont",
+   "ResolvedFont",
+   "texture_scale"
+  ]
+ },
+ {
+  "file": "crates/app/tests/size_badge.rs",
+  "A": 0,
+  "B": 4,
+  "C": 84,
+  "leak": 4,
+  "score": 84,
+  "vocab": [
+   "WINDOW_H",
+   "WINDOW_W",
+   "SENTINEL_F",
+   "FRAME_FORMAT",
+   "frame_with_badge",
+   "the_fade_is_visible_in_the_pixels"
+  ]
+ },
+ {
+  "file": "crates/term/src/session.rs",
+  "A": 4,
+  "B": 20,
+  "C": 94,
+  "leak": 17,
+  "score": 80,
+  "vocab": [
+   "is_idle",
+   "READ_BUF",
+   "grid_rows",
+   "grid_cols",
+   "INPUT_CAP",
+   "child_gone"
+  ]
+ },
+ {
+  "file": "crates/crt-render/src/params.rs",
+  "A": 4,
+  "B": 15,
+  "C": 106,
+  "leak": 11,
+  "score": 78,
+  "vocab": [
+   "Params",
+   "raster_mode",
+   "output_width",
+   "virtual_width",
+   "output_height",
+   "screen_colors"
+  ]
+ },
+ {
+  "file": "crates/tmux-cc/src/ids.rs",
+  "A": 7,
+  "B": 14,
+  "C": 145,
+  "leak": 7,
+  "score": 72,
+  "vocab": [
+   "PaneId",
+   "WindowId",
+   "SessionId",
+   "the_number_is_the_tail",
+   "a_sigil_belongs_to_exactly_one_kind",
+   "a_bare_sigil_or_a_non_numeric_tail_is_not_an_id"
+  ]
+ },
+ {
+  "file": "crates/term/src/render.rs",
+  "A": 2,
+  "B": 12,
+  "C": 84,
+  "leak": 10,
+  "score": 70,
+  "vocab": [
+   "set_row",
+   "BLOCK_BG",
+   "origin_x",
+   "set_grid",
+   "origin_y",
+   "set_atlas"
+  ]
+ },
+ {
+  "file": "crates/app/src/settings.rs",
+  "A": 2,
+  "B": 10,
+  "C": 87,
+  "leak": 8,
+  "score": 70,
+  "vocab": [
+   "look_path",
+   "config_dir",
+   "config_path",
+   "ScreenPreset",
+   "SavedProfile",
+   "known_screens"
+  ]
+ },
+ {
+  "file": "crates/term/src/hotspots.rs",
+  "A": 1,
+  "B": 8,
+  "C": 78,
+  "leak": 7,
+  "score": 68,
+  "vocab": [
+   "regex",
+   "HotSpot",
+   "UrlType",
+   "url_type",
+   "hotspots",
+   "hot_spots"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/bank.rs",
+  "A": 6,
+  "B": 13,
+  "C": 118,
+  "leak": 7,
+  "score": 64,
+  "vocab": [
+   "track_gap",
+   "content_x",
+   "row_height",
+   "pad_cells_y",
+   "strip_width",
+   "from_setting"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/displays/tape/mod.rs",
+  "A": 3,
+  "B": 7,
+  "C": 106,
+  "leak": 4,
+  "score": 61,
+  "vocab": [
+   "END_PAD",
+   "BEVEL_PX",
+   "FONT_NAME",
+   "DILATE_PX",
+   "slot_color",
+   "tape_color"
+  ]
+ },
+ {
+  "file": "crates/app/src/input.rs",
+  "A": 1,
+  "B": 6,
+  "C": 62,
+  "leak": 5,
+  "score": 52,
+  "vocab": [
+   "PageUp",
+   "any_mod",
+   "f1_shift",
+   "PageDown",
+   "SsLetter",
+   "KeyAction"
+  ]
+ },
+ {
+  "file": "crates/crt-render/src/degauss.rs",
+  "A": 4,
+  "B": 11,
+  "C": 79,
+  "leak": 7,
+  "score": 50,
+  "vocab": [
+   "scale_y",
+   "Degauss",
+   "is_active",
+   "is_running",
+   "DegaussState",
+   "PEAK_SCALE_Y"
+  ]
+ },
+ {
+  "file": "crates/app/src/mouse.rs",
+  "A": 1,
+  "B": 7,
+  "C": 56,
+  "leak": 6,
+  "score": 48,
+  "vocab": [
+   "WheelUp",
+   "WheelDown",
+   "encode_sgr",
+   "encode_x10",
+   "button_code",
+   "MouseButton"
+  ]
+ },
+ {
+  "file": "crates/term/src/atlas.rs",
+  "A": 4,
+  "B": 12,
+  "C": 69,
+  "leak": 8,
+  "score": 46,
+  "vocab": [
+   "atlas_y",
+   "font_id",
+   "atlas_x",
+   "for_face",
+   "GlyphSlot",
+   "GlyphAtlas"
+  ]
+ },
+ {
+  "file": "crates/term/src/fonts/mod.rs",
+  "A": 16,
+  "B": 26,
+  "C": 117,
+  "leak": 10,
+  "score": 45,
+  "vocab": [
+   "FontData",
+   "FontEntry",
+   "is_system",
+   "base_width",
+   "BundledFont",
+   "resolve_all"
+  ]
+ },
+ {
+  "file": "crates/term/src/search.rs",
+  "A": 1,
+  "B": 13,
+  "C": 47,
+  "leak": 12,
+  "score": 43,
+  "vocab": [
+   "search",
+   "SearchHit",
+   "BLOCK_LINES",
+   "search_range",
+   "literal_pattern",
+   "find_line_number"
+  ]
+ },
+ {
+  "file": "crates/term/src/tmux_cc.rs",
+  "A": 2,
+  "B": 13,
+  "C": 48,
+  "leak": 11,
+  "score": 41,
+  "vocab": [
+   "tmux_cc",
+   "TMUX_DCS",
+   "take_body",
+   "take_ended",
+   "TMUX_PARAMS",
+   "TMUX_ACTION"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/displays/led/mod.rs",
+  "A": 6,
+  "B": 10,
+  "C": 79,
+  "leak": 5,
+  "score": 40,
+  "vocab": [
+   "DOT_RADIUS",
+   "SPILL_DEAD",
+   "LED_PAD_CELLS",
+   "LED_DOT_PITCH",
+   "window_colors",
+   "spill_margins"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/paint.rs",
+  "A": 8,
+  "B": 9,
+  "C": 164,
+  "leak": 2,
+  "score": 36,
+  "vocab": [
+   "ArcOp",
+   "Serif",
+   "TextOp",
+   "RectOp",
+   "radial_t",
+   "PolygonOp"
+  ]
+ },
+ {
+  "file": "crates/term/src/grid.rs",
+  "A": 6,
+  "B": 11,
+  "C": 76,
+  "leak": 5,
+  "score": 35,
+  "vocab": [
+   "GridView",
+   "copy_line",
+   "char_width",
+   "ToEndOfLine",
+   "write_range",
+   "with_history"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/color.rs",
+  "A": 11,
+  "B": 14,
+  "C": 116,
+  "leak": 4,
+  "score": 33,
+  "vocab": [
+   "to_hsv",
+   "from_hsv",
+   "substring",
+   "with_alpha",
+   "scale_color",
+   "str_to_color"
+  ]
+ },
+ {
+  "file": "crates/xtask/src/x11.rs",
+  "A": 2,
+  "B": 7,
+  "C": 40,
+  "leak": 5,
+  "score": 29,
+  "vocab": [
+   "x11",
+   "shell_xy",
+   "window_name",
+   "min_size_hint",
+   "geometry_width",
+   "sizable_windows"
+  ]
+ },
+ {
+  "file": "crates/app/src/shell.rs",
+  "A": 2,
+  "B": 7,
+  "C": 41,
+  "leak": 5,
+  "score": 29,
+  "vocab": [
+   "wake_at",
+   "last_tick",
+   "event_loop",
+   "user_event",
+   "ShellEvent",
+   "open_window"
+  ]
+ },
+ {
+  "file": "crates/crt-burnin/src/lib.rs",
+  "A": 4,
+  "B": 10,
+  "C": 38,
+  "leak": 7,
+  "score": 27,
+  "vocab": [
+   "set_mask",
+   "for_device",
+   "BurnInPass",
+   "last_pushed",
+   "write_shader",
+   "BURN_IN_SLANG"
+  ]
+ },
+ {
+  "file": "crates/term/src/gpu.rs",
+  "A": 3,
+  "B": 9,
+  "C": 30,
+  "leak": 8,
+  "score": 27,
+  "vocab": [
+   "write_pgm",
+   "read_rgba",
+   "ascii_preview",
+   "TARGET_FORMAT",
+   "upscale_nearest",
+   "max_channel_delta"
+  ]
+ },
+ {
+  "file": "crates/crt-render/src/preset.rs",
+  "A": 2,
+  "B": 9,
+  "C": 29,
+  "leak": 8,
+  "score": 26,
+  "vocab": [
+   "body_at",
+   "scale_of",
+   "NOISE_PNG",
+   "BURN_PASS",
+   "FrameBody",
+   "FRAME_PASS"
+  ]
+ },
+ {
+  "file": "crates/term/src/dcs.rs",
+  "A": 4,
+  "B": 7,
+  "C": 60,
+  "leak": 3,
+  "score": 26,
+  "vocab": [
+   "dcs",
+   "DcsTap",
+   "DcsOnly",
+   "NoopTap",
+   "ScanState",
+   "DcsParser"
+  ]
+ },
+ {
+  "file": "crates/crt-burnin/src/decay.rs",
+  "A": 1,
+  "B": 8,
+  "C": 29,
+  "leak": 7,
+  "score": 25,
+  "vocab": [
+   "max_dt",
+   "decay_step",
+   "MASK_PARAM",
+   "DecayClock",
+   "DECAY_PARAM",
+   "MAX_FADE_TIME"
+  ]
+ },
+ {
+  "file": "crates/app/tests/shed_notice.rs",
+  "A": 0,
+  "B": 4,
+  "C": 25,
+  "leak": 4,
+  "score": 25,
+  "vocab": [
+   "DEAF_CHILD",
+   "shed_notice",
+   "wait_for_screen",
+   "typing_thrown_away_by_a_full_queue_says_so_on_the_glass"
+  ]
+ },
+ {
+  "file": "crates/crt-render/tests/support/mod.rs",
+  "A": 0,
+  "B": 3,
+  "C": 25,
+  "leak": 3,
+  "score": 25,
+  "vocab": [
+   "lit_rows",
+   "BAR_LEVEL",
+   "mean_luma",
+   "draw_dark",
+   "draw_field",
+   "PICTURE_WGSL"
+  ]
+ },
+ {
+  "file": "crates/term/src/lib.rs",
+  "A": 2,
+  "B": 9,
+  "C": 31,
+  "leak": 7,
+  "score": 24,
+  "vocab": [
+   "build_font",
+   "ascii_charset",
+   "DEFAULT_THRESHOLD"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/strip.rs",
+  "A": 5,
+  "B": 8,
+  "C": 61,
+  "leak": 3,
+  "score": 23,
+  "vocab": [
+   "StripRow",
+   "pointer_y",
+   "BankStrips",
+   "cold_start",
+   "current_row",
+   "numeral_text"
+  ]
+ },
+ {
+  "file": "crates/tmux-cc/src/command.rs",
+  "A": 4,
+  "B": 6,
+  "C": 43,
+  "leak": 3,
+  "score": 22,
+  "vocab": [
+   "to_wire",
+   "SendKeys",
+   "HostName",
+   "ClientSize",
+   "CapturePane",
+   "ListWindows"
+  ]
+ },
+ {
+  "file": "crates/tmux-cc/src/event.rs",
+  "A": 3,
+  "B": 5,
+  "C": 56,
+  "leak": 2,
+  "score": 22,
+  "vocab": [
+   "WindowAdd",
+   "WindowClose",
+   "window_index",
+   "LayoutChange",
+   "GuardMismatch",
+   "ClientDetached"
+  ]
+ },
+ {
+  "file": "crates/term/src/viewport.rs",
+  "A": 3,
+  "B": 5,
+  "C": 55,
+  "leak": 2,
+  "score": 22,
+  "vocab": [
+   "to_top",
+   "page_up",
+   "to_bottom",
+   "page_down",
+   "lines_for",
+   "WHEEL_LINES"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/layout.rs",
+  "A": 15,
+  "B": 12,
+  "C": 42,
+  "leak": 6,
+  "score": 21,
+  "vocab": [
+   "WindowLayout",
+   "chassis_field",
+   "MINIMUM_HEIGHT",
+   "NORMALISATION_WIDTH",
+   "min_inner_size_physical",
+   "the_well_never_goes_negative"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/tape_label.rs",
+  "A": 0,
+  "B": 11,
+  "C": 21,
+  "leak": 11,
+  "score": 21,
+  "vocab": [
+   "SIZE_H",
+   "SIZE_W",
+   "tape_label",
+   "tape_label_letter_and_body_read_correctly"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/led_matrix.rs",
+  "A": 0,
+  "B": 10,
+  "C": 21,
+  "leak": 10,
+  "score": 21,
+  "vocab": [
+   "OUT_W",
+   "OUT_H",
+   "GRID_W",
+   "GRID_H",
+   "led_matrix",
+   "led_matrix_lit_and_dark_cells_read_correctly"
+  ]
+ },
+ {
+  "file": "crates/term/src/pointer.rs",
+  "A": 3,
+  "B": 2,
+  "C": 42,
+  "leak": 1,
+  "score": 21,
+  "vocab": [
+   "on_press",
+   "with_shift",
+   "mouse_marks",
+   "PastePrimary",
+   "frozen_glass",
+   "PointerAction"
+  ]
+ },
+ {
+  "file": "crates/app/tests/clipboard_keys.rs",
+  "A": 0,
+  "B": 1,
+  "C": 21,
+  "leak": 1,
+  "score": 21,
+  "vocab": [
+   "CTRL_SHIFT",
+   "clipboard_keys",
+   "the_clipboard_chords_reach_the_child_as_nothing"
+  ]
+ },
+ {
+  "file": "crates/crt-render/src/chain.rs",
+  "A": 2,
+  "B": 5,
+  "C": 25,
+  "leak": 4,
+  "score": 20,
+  "vocab": [
+   "frame_at",
+   "set_params",
+   "preset_path",
+   "last_burn_in_decay"
+  ]
+ },
+ {
+  "file": "crates/crt-render/src/pacing.rs",
+  "A": 5,
+  "B": 12,
+  "C": 33,
+  "leak": 7,
+  "score": 19,
+  "vocab": [
+   "tick_by",
+   "FrameTime"
+  ]
+ },
+ {
+  "file": "crates/term/src/fonts/subpixel.rs",
+  "A": 2,
+  "B": 7,
+  "C": 26,
+  "leak": 5,
+  "score": 19,
+  "vocab": [
+   "Configs",
+   "subpixel",
+   "APPEND_RGB",
+   "filter_row",
+   "rgba_value",
+   "host_layout"
+  ]
+ },
+ {
+  "file": "crates/app/src/crashlog.rs",
+  "A": 1,
+  "B": 11,
+  "C": 20,
+  "leak": 10,
+  "score": 18,
+  "vocab": [
+   "LOG_PATH",
+   "crashlog",
+   "PATH_MAX",
+   "backtrace",
+   "write_all",
+   "MAX_FRAMES"
+  ]
+ },
+ {
+  "file": "crates/app/tests/ime.rs",
+  "A": 0,
+  "B": 2,
+  "C": 18,
+  "leak": 2,
+  "score": 18,
+  "vocab": [
+   "ime",
+   "ECHOING_CHILD",
+   "never_on_screen",
+   "the_preedit_is_held_and_not_sent",
+   "an_abandoned_composition_sends_nothing",
+   "a_committed_string_reaches_the_child_as_utf8"
+  ]
+ },
+ {
+  "file": "crates/tmux-cc/src/escape.rs",
+  "A": 2,
+  "B": 6,
+  "C": 23,
+  "leak": 4,
+  "score": 15,
+  "vocab": [
+   "unvis",
+   "unvis_text",
+   "is_escaped",
+   "escape_octal",
+   "hex_arguments",
+   "unescape_octal"
+  ]
+ },
+ {
+  "file": "crates/app/src/frame_stats.rs",
+  "A": 2,
+  "B": 3,
+  "C": 44,
+  "leak": 1,
+  "score": 15,
+  "vocab": [
+   "GridEnd",
+   "grid_ms",
+   "FrameEnd",
+   "chain_ms",
+   "frame_ms",
+   "ChainEnd"
+  ]
+ },
+ {
+  "file": "crates/term/src/fonts/led.rs",
+  "A": 4,
+  "B": 8,
+  "C": 27,
+  "leak": 4,
+  "score": 14,
+  "vocab": [
+   "LedRaster",
+   "led_text_image"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/shells/slide_rule.rs",
+  "A": 2,
+  "B": 7,
+  "C": 20,
+  "leak": 5,
+  "score": 14,
+  "vocab": [
+   "TRACK_X",
+   "RIM_DARK",
+   "rail_rect",
+   "RIM_LIGHT",
+   "NUMERAL_INK",
+   "NUMERAL_EDGE"
+  ]
+ },
+ {
+  "file": "crates/term/src/rio_grid.rs",
+  "A": 3,
+  "B": 5,
+  "C": 35,
+  "leak": 2,
+  "score": 14,
+  "vocab": [
+   "RioGrid",
+   "rio_grid",
+   "all_text",
+   "cell_char",
+   "live_text",
+   "row_cells"
+  ]
+ },
+ {
+  "file": "crates/app/src/overlay.rs",
+  "A": 2,
+  "B": 4,
+  "C": 29,
+  "leak": 2,
+  "score": 14,
+  "vocab": [
+   "GridSize",
+   "visible_at",
+   "opacity_at",
+   "NOTICE_HOLD",
+   "SizeOverlay",
+   "set_enabled"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/shells/switchboard.rs",
+  "A": 2,
+  "B": 4,
+  "C": 18,
+  "leak": 3,
+  "score": 14,
+  "vocab": [
+   "WELL_DARK",
+   "PLATE_REACH",
+   "serif_width",
+   "PAGER_HEIGHT",
+   "PLATE_SHADOW",
+   "NUMERAL_PAINT"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/shells/annunciator.rs",
+  "A": 2,
+  "B": 4,
+  "C": 18,
+  "leak": 3,
+  "score": 14,
+  "vocab": [
+   "KEY_TOP",
+   "CUT_DARK",
+   "LIP_LIGHT",
+   "KEY_WIDTH",
+   "plate_rect",
+   "KEY_HEIGHT"
+  ]
+ },
+ {
+  "file": "crates/term/tests/preedit.rs",
+  "A": 0,
+  "B": 2,
+  "C": 13,
+  "leak": 2,
+  "score": 13,
+  "vocab": [
+   "lit_in",
+   "terminess",
+   "cursor_at",
+   "cell_rect",
+   "CURSOR_COL",
+   "CURSOR_ROW"
+  ]
+ },
+ {
+  "file": "crates/tmux-cc/src/codec.rs",
+  "A": 3,
+  "B": 6,
+  "C": 24,
+  "leak": 3,
+  "score": 12,
+  "vocab": [
+   "Codec",
+   "next_id",
+   "in_block",
+   "OpenBlock",
+   "line_done",
+   "CommandId"
+  ]
+ },
+ {
+  "file": "crates/term/tests/pixel_properties.rs",
+  "A": 0,
+  "B": 5,
+  "C": 10,
+  "leak": 5,
+  "score": 10,
+  "vocab": [
+   "commodore_pet",
+   "pixel_properties",
+   "property_1_antialiasing_is_off",
+   "damage_updates_only_the_rows_that_changed",
+   "property_3_dpr_changes_do_not_touch_the_atlas",
+   "property_2_integer_scaling_is_exact_duplication"
+  ]
+ },
+ {
+  "file": "crates/app/src/bank.rs",
+  "A": 1,
+  "B": 5,
+  "C": 13,
+  "leak": 4,
+  "score": 10,
+  "vocab": [
+   "BankView",
+   "BankPager",
+   "last_view",
+   "rows_on_page",
+   "ensure_visible",
+   "slot_prefix_exists"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/shells/common.rs",
+  "A": 5,
+  "B": 7,
+  "C": 30,
+  "leak": 2,
+  "score": 9,
+  "vocab": [
+   "screw_head",
+   "ScrewColors",
+   "FieldMapping",
+   "field_mapping",
+   "screw_head_with",
+   "frame_viewport_size"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/cabinet.rs",
+  "A": 5,
+  "B": 6,
+  "C": 14,
+  "leak": 4,
+  "score": 9,
+  "vocab": [
+   "is_shown",
+   "remeasure",
+   "SeamUpdate",
+   "apply_config",
+   "bank_width_physical",
+   "the_display_kit_travels_with_the_profile"
+  ]
+ },
+ {
+  "file": "crates/term/src/distortion.rs",
+  "A": 3,
+  "B": 5,
+  "C": 23,
+  "leak": 2,
+  "score": 9,
+  "vocab": [
+   "total_width",
+   "total_height",
+   "forward_distort",
+   "DistortionParams",
+   "correct_distortion",
+   "screen_curvature_size"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/lib.rs",
+  "A": 5,
+  "B": 8,
+  "C": 16,
+  "leak": 4,
+  "score": 8,
+  "vocab": [
+   "led_metrics",
+   "display_kit",
+   "tape_metrics",
+   "shell_metrics",
+   "a_reload_re_measures_the_kit_and_not_only_the_geometry",
+   "the_stock_profile_measures_its_lamp_font_rather_than_a_fixture"
+  ]
+ },
+ {
+  "file": "crates/config/src/presets.rs",
+  "A": 5,
+  "B": 8,
+  "C": 21,
+  "leak": 3,
+  "score": 8,
+  "vocab": [
+   "screen_presets",
+   "chassis_presets"
+  ]
+ },
+ {
+  "file": "crates/tmux-cc/tests/support/mod.rs",
+  "A": 1,
+  "B": 5,
+  "C": 10,
+  "leak": 4,
+  "score": 8,
+  "vocab": [
+   "client_pid",
+   "kill_client",
+   "control_stream",
+   "envelope_closed"
+  ]
+ },
+ {
+  "file": "crates/term/tests/font_parity.rs",
+  "A": 1,
+  "B": 5,
+  "C": 10,
+  "leak": 4,
+  "score": 8,
+  "vocab": [
+   "LED_TEXT",
+   "golden_led",
+   "fixture_dir",
+   "font_parity",
+   "empty_text_has_no_raster",
+   "scaled_metrics_match_golden"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/seam.rs",
+  "A": 3,
+  "B": 5,
+  "C": 20,
+  "leak": 2,
+  "score": 8,
+  "vocab": [
+   "SeamDrag",
+   "SeamCursor",
+   "SeamContext",
+   "is_dragging",
+   "window_width",
+   "characters_at"
+  ]
+ },
+ {
+  "file": "crates/app/tests/settings_live_reload.rs",
+  "A": 0,
+  "B": 2,
+  "C": 8,
+  "leak": 2,
+  "score": 8,
+  "vocab": [
+   "wait_until",
+   "logged_the_rejection",
+   "settings_live_reload",
+   "sigusr1_forces_a_reload",
+   "invalid_edit_keeps_last_good_and_logs",
+   "zero_config_launch_resolves_to_the_frozen_v1_default"
+  ]
+ },
+ {
+  "file": "crates/config/src/structural.rs",
+  "A": 1,
+  "B": 2,
+  "C": 15,
+  "leak": 1,
+  "score": 8,
+  "vocab": [
+   "KeyClass",
+   "every_structural_key_resolves_against_the_schema",
+   "a_structural_move_and_a_parameter_move_classify_apart"
+  ]
+ },
+ {
+  "file": "crates/app/src/column.rs",
+  "A": 1,
+  "B": 1,
+  "C": 8,
+  "leak": 1,
+  "score": 8,
+  "vocab": [
+   "ChainKey",
+   "chain_for",
+   "BLIT_WGSL",
+   "draw_over",
+   "make_bind",
+   "make_dest"
+  ]
+ },
+ {
+  "file": "crates/xtask/src/proc.rs",
+  "A": 4,
+  "B": 5,
+  "C": 36,
+  "leak": 1,
+  "score": 7,
+  "vocab": [
+   "proc",
+   "run_ok",
+   "capture_lenient",
+   "reexec_under_xvfb",
+   "run_ignore_status"
+  ]
+ },
+ {
+  "file": "crates/app/tests/bank_column.rs",
+  "A": 0,
+  "B": 3,
+  "C": 7,
+  "leak": 3,
+  "score": 7,
+  "vocab": [
+   "bank_column",
+   "oracle_params",
+   "frame_with_column",
+   "frame_with_furniture",
+   "a_hidden_chassis_draws_no_column_at_all",
+   "the_tape_shell_stamps_its_label_and_screws_on_no_plate"
+  ]
+ },
+ {
+  "file": "crates/config/src/profile.rs",
+  "A": 2,
+  "B": 3,
+  "C": 10,
+  "leak": 2,
+  "score": 7,
+  "vocab": [
+   "round4",
+   "save_to",
+   "apply_to",
+   "read_axis",
+   "to_scalar",
+   "json_value"
+  ]
+ },
+ {
+  "file": "crates/term/src/fonts/metrics.rs",
+  "A": 8,
+  "B": 10,
+  "C": 28,
+  "leak": 2,
+  "score": 6,
+  "vocab": [
+   "scale_26_6",
+   "round_26_6",
+   "ascent_int",
+   "height_int",
+   "descent_int",
+   "ascent_26_6"
+  ]
+ },
+ {
+  "file": "crates/crt-render/tests/device_features.rs",
+  "A": 0,
+  "B": 5,
+  "C": 6,
+  "leak": 5,
+  "score": 6,
+  "vocab": [
+   "device_features",
+   "every_device_the_chain_runs_on_asks_for_the_same_features",
+   "the_wanted_set_is_a_filter_and_never_more_than_the_adapter_has"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/furniture.rs",
+  "A": 7,
+  "B": 5,
+  "C": 14,
+  "leak": 2,
+  "score": 6,
+  "vocab": [
+   "led_grid",
+   "LedMatrix",
+   "led_piece",
+   "TapeLabel",
+   "led_params",
+   "tape_piece"
+  ]
+ },
+ {
+  "file": "crates/app/src/cli.rs",
+  "A": 1,
+  "B": 3,
+  "C": 9,
+  "leak": 2,
+  "score": 6,
+  "vocab": [
+   "cli",
+   "default_settings",
+   "contract_flags_parse",
+   "missing_option_value_fails",
+   "unknown_option_fails_loudly",
+   "help_and_version_print_and_stop"
+  ]
+ },
+ {
+  "file": "crates/crt-render/src/oracle.rs",
+  "A": 0,
+  "B": 2,
+  "C": 6,
+  "leak": 2,
+  "score": 6,
+  "vocab": [
+   "rand2",
+   "STEPS_PER_TEXEL",
+   "gaussian_blur_1d",
+   "TerminalFrameParams",
+   "terminal_frame_noise"
+  ]
+ },
+ {
+  "file": "crates/crt-burnin/src/chain.rs",
+  "A": 0,
+  "B": 2,
+  "C": 6,
+  "leak": 2,
+  "score": 6,
+  "vocab": [
+   "BurnInChain"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/js.rs",
+  "A": 4,
+  "B": 6,
+  "C": 15,
+  "leak": 2,
+  "score": 5,
+  "vocab": [
+   "js",
+   "round_i32",
+   "halves_go_up_not_away_from_zero",
+   "ordinary_values_agree_with_rust"
+  ]
+ },
+ {
+  "file": "crates/term/tests/system_fonts.rs",
+  "A": 0,
+  "B": 4,
+  "C": 5,
+  "leak": 4,
+  "score": 5,
+  "vocab": [
+   "dejavu",
+   "system_fonts",
+   "a_selected_system_face_shapes_and_measures",
+   "the_enumeration_offers_dejavu_sans_mono_under_the_filter_rules"
+  ]
+ },
+ {
+  "file": "crates/xtask/src/compare.rs",
+  "A": 1,
+  "B": 3,
+  "C": 7,
+  "leak": 2,
+  "score": 5,
+  "vocab": [
+   "chroma",
+   "load_rgb",
+   "crop_rgb",
+   "BANK_WIDTH",
+   "parse_crop",
+   "GLASS_INSET"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/frame.rs",
+  "A": 4,
+  "B": 3,
+  "C": 15,
+  "leak": 1,
+  "score": 5,
+  "vocab": [
+   "FrameStyle",
+   "FrameScale",
+   "ChassisStyle",
+   "slide_rule_frame",
+   "switchboard_frame",
+   "annunciator_frame"
+  ]
+ },
+ {
+  "file": "crates/config/src/watch.rs",
+  "A": 1,
+  "B": 2,
+  "C": 10,
+  "leak": 1,
+  "score": 5,
+  "vocab": [
+   "_watcher",
+   "spawn_with",
+   "reload_into",
+   "ConfigWatcher",
+   "event_touches",
+   "spawn_with_loader"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/metrics_homes.rs",
+  "A": 0,
+  "B": 4,
+  "C": 4,
+  "leak": 4,
+  "score": 4,
+  "vocab": [
+   "same_shell",
+   "metrics_homes",
+   "the_tape_well_metrics_composes_the_bare_functions",
+   "the_led_strip_metrics_composes_the_bare_functions",
+   "the_slide_rule_shell_metrics_composes_the_bare_constants",
+   "the_annunciator_shell_metrics_composes_the_bare_constants"
+  ]
+ },
+ {
+  "file": "crates/term/src/bin/esctest_harness.rs",
+  "A": 0,
+  "B": 3,
+  "C": 4,
+  "leak": 3,
+  "score": 4,
+  "vocab": [
+   "WinOps",
+   "set_size",
+   "checksum",
+   "send_event",
+   "csi_dispatch",
+   "wait_for_child"
+  ]
+ },
+ {
+  "file": "crates/app/src/gpu.rs",
+  "A": 1,
+  "B": 3,
+  "C": 6,
+  "leak": 2,
+  "score": 4,
+  "vocab": [
+   "discard_timing",
+   "frame_stats_enabled",
+   "frame_stats_available"
+  ]
+ },
+ {
+  "file": "crates/term/src/fonts/text.rs",
+  "A": 4,
+  "B": 5,
+  "C": 13,
+  "leak": 1,
+  "score": 3,
+  "vocab": [
+   "iosevka",
+   "TextSpec",
+   "TextRaster",
+   "text_image",
+   "all_channels",
+   "align_offset"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/shells/mod.rs",
+  "A": 1,
+  "B": 3,
+  "C": 4,
+  "leak": 2,
+  "score": 3,
+  "vocab": [
+   "row_overhang",
+   "plate_region"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/displays/raster.rs",
+  "A": 1,
+  "B": 3,
+  "C": 5,
+  "leak": 2,
+  "score": 3,
+  "vocab": [
+   "to_rgba8",
+   "widens_one_alpha_byte_to_four"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/bank_frame_render.rs",
+  "A": 0,
+  "B": 1,
+  "C": 3,
+  "leak": 1,
+  "score": 3,
+  "vocab": [
+   "params_pair",
+   "WINDOW_SIZES",
+   "stock_bank_width",
+   "bank_frame_render",
+   "moulding_thickness",
+   "a_wider_bank_thickens_the_moulding_it_leaves"
+  ]
+ },
+ {
+  "file": "crates/xtask/src/snap.rs",
+  "A": 1,
+  "B": 2,
+  "C": 3,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "_scratch",
+   "SnapArgs",
+   "fit_units",
+   "find_window",
+   "DETERMINISTIC_LINE",
+   "reexec_under_xvfb_for_snap"
+  ]
+ },
+ {
+  "file": "crates/tmux-cc/tests/live_tmux.rs",
+  "A": 0,
+  "B": 2,
+  "C": 2,
+  "leak": 2,
+  "score": 2,
+  "vocab": [
+   "live_tmux",
+   "the_whole_command_set_is_a_dialect_tmux_speaks",
+   "keys_sent_as_hex_reach_the_pane_and_come_back_as_output",
+   "the_bootstrap_replies_are_the_shapes_the_reference_reads",
+   "a_new_window_asked_for_through_the_codec_arrives_and_parses",
+   "a_killed_client_leaves_the_envelope_open_and_the_session_standing"
+  ]
+ },
+ {
+  "file": "crates/crt-render/tests/glyph_survival.rs",
+  "A": 0,
+  "B": 2,
+  "C": 2,
+  "leak": 2,
+  "score": 2,
+  "vocab": [
+   "MIN_INK",
+   "lit_runs",
+   "MIN_RUNS",
+   "glyph_survival",
+   "the_measurement_can_see_strokes_go_missing",
+   "a_stem_that_reaches_the_grid_reaches_the_glass"
+  ]
+ },
+ {
+  "file": "crates/crt-render/tests/burn_in_chain.rs",
+  "A": 0,
+  "B": 2,
+  "C": 2,
+  "leak": 2,
+  "score": 2,
+  "vocab": [
+   "GHOST_TRIM",
+   "burn_in_chain",
+   "the_freshness_mask_survives_the_mount",
+   "switching_burn_in_off_takes_the_ghost_with_it",
+   "the_mounted_accumulator_decays_at_the_rate_the_settings_set"
+  ]
+ },
+ {
+  "file": "crates/app/tests/keyboard_scroll.rs",
+  "A": 0,
+  "B": 2,
+  "C": 2,
+  "leak": 2,
+  "score": 2,
+  "vocab": [
+   "SIXTY_LINES",
+   "keyboard_scroll",
+   "typing_snaps_a_scrolled_view_to_the_bottom",
+   "shift_up_and_down_move_the_viewport_one_line",
+   "a_key_the_keytab_binds_to_bytes_does_not_scroll_back",
+   "shift_page_up_moves_the_viewport_back_through_the_scrollback"
+  ]
+ },
+ {
+  "file": "crates/app/src/badge.rs",
+  "A": 1,
+  "B": 1,
+  "C": 2,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "BadgeRect",
+   "CORNER_RADIUS",
+   "the_uniform_block_is_the_size_the_shader_declares"
+  ]
+ },
+ {
+  "file": "crates/app/src/paths.rs",
+  "A": 2,
+  "B": 3,
+  "C": 3,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "data_dir",
+   "crash_dir",
+   "cache_dir",
+   "preset_dir"
+  ]
+ },
+ {
+  "file": "crates/crt-render/tests/pass_graph.rs",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "pass_graph",
+   "still_config",
+   "mean_luma_rows",
+   "a_structural_change_rebuilds_the_chain",
+   "the_term_target_renders_through_the_chain",
+   "the_preset_is_the_documented_six_pass_graph"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/region_layout.rs",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "CHASSIS_SIZES",
+   "region_layout",
+   "slide_rule_regions_at_sampled_sizes",
+   "annunciator_regions_at_sampled_sizes",
+   "field_mapping_at_sampled_window_sizes",
+   "switchboard_has_no_plate_or_rail_region"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/led_display.rs",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "led_display",
+   "led_display_composes_the_proven_raster_with_led_matrix"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/bank_frame_geometry.rs",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "stock_bank",
+   "led_strip_width",
+   "bank_frame_geometry",
+   "the_pointer_law_at_every_shell",
+   "the_bank_never_moves_with_the_window",
+   "rows_per_page_at_sampled_window_heights"
+  ]
+ },
+ {
+  "file": "crates/app/tests/profile_cli.rs",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "profile_cli",
+   "launched_look",
+   "scratch_command",
+   "XDG_CONFIG_HOME_LOCK",
+   "an_unknown_profile_is_refused",
+   "a_known_profile_changes_the_launched_look"
+  ]
+ },
+ {
+  "file": "crates/app/tests/channel_bank.rs",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "channel_bank",
+   "ROWS_ON_PAGE",
+   "release_chord",
+   "wait_for_prompt",
+   "surface_of_height",
+   "ctrl_shift_w_closes_the_channel_on_the_air"
+  ]
+ },
+ {
+  "file": "crates/term/src/fonts/system.rs",
+  "A": 5,
+  "B": 5,
+  "C": 10,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "sans_face",
+   "named_face",
+   "SystemFace",
+   "source_path",
+   "default_sans",
+   "default_serif"
+  ]
+ },
+ {
+  "file": "crates/term/src/fonts/raster.rs",
+  "A": 3,
+  "B": 3,
+  "C": 5,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "glyph_mask",
+   "glyph_mask_thirds"
+  ]
+ },
+ {
+  "file": "crates/app/src/geometry.rs",
+  "A": 2,
+  "B": 2,
+  "C": 2,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "DEFAULT_SIZE"
+  ]
+ },
+ {
+  "file": "crates/term/src/tmux_pane.rs",
+  "A": 2,
+  "B": 2,
+  "C": 12,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "pty_mut",
+   "take_input",
+   "tmux_pane_mut",
+   "ChannelSession",
+   "a_resize_reflows_the_grid_alone",
+   "fed_bytes_land_on_the_grid_and_input_queues_until_drained"
+  ]
+ },
+ {
+  "file": "crates/xtask/src/verify.rs",
+  "A": 1,
+  "B": 1,
+  "C": 1,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "VerifyArgs",
+   "children_of",
+   "run_capturing",
+   "wait_for_children",
+   "start_window_manager"
+  ]
+ },
+ {
+  "file": "crates/xtask/src/install.rs",
+  "A": 1,
+  "B": 1,
+  "C": 3,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "DebArgs",
+   "lay_out",
+   "DistArgs",
+   "set_mode",
+   "shlibdeps",
+   "staged_root"
+  ]
+ },
+ {
+  "file": "crates/xtask/src/fanout.rs",
+  "A": 1,
+  "B": 1,
+  "C": 5,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "fanout",
+   "strip_inline_tests"
+  ]
+ },
+ {
+  "file": "crates/app/src/instance.rs",
+  "A": 2,
+  "B": 1,
+  "C": 1,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "ENV_GUARD",
+   "with_guard",
+   "runtime_dir",
+   "socket_path",
+   "read_request",
+   "drop_cleans_up"
+  ]
+ },
+ {
+  "file": "crates/app/src/clipboard.rs",
+  "A": 1,
+  "B": 1,
+  "C": 1,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "bracket_paste",
+   "ClipboardError",
+   "bracket_paste_empty_string",
+   "bracket_paste_enabled_wraps",
+   "bracket_paste_disabled_passes_through"
+  ]
+ },
+ {
+  "file": "crates/app/src/chord.rs",
+  "A": 1,
+  "B": 1,
+  "C": 4,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "ChordInput",
+   "store_mode",
+   "is_pending",
+   "feed_digit",
+   "COMMIT_TIMEOUT",
+   "zero_is_slot_ten"
+  ]
+ },
+ {
+  "file": "crates/term/src/color.rs",
+  "A": 4,
+  "B": 1,
+  "C": 1,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "full_color",
+   "dim_factor",
+   "xterm_palette",
+   "palette_landmarks_match_xterm",
+   "monochrome_scheme_cannot_produce_a_third_colour"
+  ]
+ },
+ {
+  "file": "crates/xtask/src/main.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "Fanout"
+  ]
+ },
+ {
+  "file": "crates/xtask/src/mask.rs",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "MASK_PY",
+   "SHINE_BAND"
+  ]
+ },
+ {
+  "file": "crates/tmux-cc/tests/transcripts.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "the_zoo_holds_one_of_each",
+   "the_server_can_throw_the_client_off",
+   "the_pairing_queue_comes_out_in_order",
+   "every_transcript_is_a_control_stream",
+   "all_256_bytes_come_back_off_the_wire",
+   "a_window_closing_always_says_unlinked"
+  ]
+ },
+ {
+  "file": "crates/tmux-cc/examples/record.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "readme",
+   "output_octal",
+   "fresh_session",
+   "second_window",
+   "notification_zoo",
+   "reattach_after_kill"
+  ]
+ },
+ {
+  "file": "crates/term/tests/transcript.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "on_screen",
+   "assert_child_agrees",
+   "a_child_that_exits_is_reported_as_eof",
+   "transcript_survives_a_resize_and_a_dpr_change",
+   "scrollback_survives_the_lines_leaving_the_screen",
+   "a_dcs_block_reaches_the_tap_and_stays_off_the_grid"
+  ]
+ },
+ {
+  "file": "crates/term/tests/selection_tests.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "selection_tests",
+   "block_selection_takes_a_rectangle",
+   "double_click_drops_a_trailing_at_sign",
+   "is_selected_agrees_with_the_copied_text",
+   "drag_left_then_copy_returns_the_same_span",
+   "double_click_keeps_a_path_and_a_url_whole"
+  ]
+ },
+ {
+  "file": "crates/term/tests/search_tests.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "search_grid",
+   "search_tests",
+   "search_misses_cleanly",
+   "search_takes_a_real_regex_too",
+   "search_forwards_wraps_round_to_the_top",
+   "search_backwards_finds_the_previous_hit"
+  ]
+ },
+ {
+  "file": "crates/term/tests/scrollback.rs",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "twenty_lines",
+   "scrollback_viewport_follows_history",
+   "untouched_cells_read_as_blanks_not_nuls",
+   "ordinary_output_does_not_force_a_full_rebuild",
+   "touchpad_pixels_move_the_view_by_fractions_of_a_row",
+   "a_wheel_notch_glides_three_lines_and_lands_on_the_line"
+  ]
+ },
+ {
+  "file": "crates/term/tests/rio_grid_tests.rs",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "term_with",
+   "rio_grid_tests",
+   "hotspots_run_over_a_live_grid",
+   "search_reaches_into_rio_scrollback",
+   "untouched_cells_never_reach_a_text_path_as_nul",
+   "a_selection_over_a_live_grid_copies_what_is_on_it"
+  ]
+ },
+ {
+  "file": "crates/term/tests/hotspot_tests.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "matched_rows",
+   "hotspot_tests",
+   "a_link_that_wraps_spans_two_lines",
+   "url_type_and_activation_match_each_url_kind",
+   "the_url_fixtures_match_the_recorded_matches",
+   "a_link_does_not_fuse_with_the_line_below_it"
+  ]
+ },
+ {
+  "file": "crates/term/tests/grid_tests.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "grid_tests",
+   "untouched_cells_are_not_part_of_a_line",
+   "double_width_characters_do_not_double_on_the_way_out"
+  ]
+ },
+ {
+  "file": "crates/term/tests/antialias.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "ink_at",
+   "atlas_total",
+   "image_intermediate",
+   "atlas_intermediate",
+   "terminess_takes_its_strike_even_with_antialiasing_on",
+   "every_scalable_catalogue_face_takes_the_coverage_path"
+  ]
+ },
+ {
+  "file": "crates/crt-render/tests/user_lut.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "user_lut",
+   "PROBE_PRESET",
+   "render_probe",
+   "probe_shader",
+   "the_noise_lut_reaches_the_shader_and_repeats"
+  ]
+ },
+ {
+  "file": "crates/crt-render/tests/terminal_frame.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "terminal_frame_matches_oracle"
+  ]
+ },
+ {
+  "file": "crates/crt-render/tests/contracts.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "params_for",
+   "only_structural_keys_move_the_structure",
+   "contrast_and_saturation_reach_the_shader",
+   "the_degauss_curve_is_the_mockups_keyframe",
+   "a_parameter_can_be_overridden_after_it_is_built",
+   "window_opacity_reaches_the_output_and_the_flood"
+  ]
+ },
+ {
+  "file": "crates/crt-render/tests/bloom.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "SRC_W",
+   "SRC_H",
+   "shader_dir",
+   "mask_image",
+   "column_band",
+   "bloom_h_matches_oracle"
+  ]
+ },
+ {
+  "file": "crates/crt-burnin/tests/mount.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "fp32_accumulator_is_available_and_better_than_fp16",
+   "a_generated_preset_mounts_the_pass_after_another_one"
+  ]
+ },
+ {
+  "file": "crates/crt-burnin/tests/burn_in.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "ramp_error",
+   "ghost_mask",
+   "rate_error",
+   "decay_tracks_the_set_rate",
+   "the_float_framebuffer_is_what_buys_that_accuracy",
+   "burn_in_zero_leaves_no_ghost_and_needs_no_rebuild"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/tape_display.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "mask_at",
+   "tape_display",
+   "DISPLAY_HEIGHT",
+   "find_saturated_interior",
+   "tape_display_composes_the_proven_raster_with_tape_label"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/shader_recipes.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "shader_recipes",
+   "assert_rgb_close",
+   "switchboard_has_no_plate_metal_call_at_all",
+   "slide_rule_rail_is_plate_metal_not_chassis_metal",
+   "annunciator_plate_metal_recipe_matches_the_recorded_values",
+   "annunciator_frame_metal_recipe_matches_the_recorded_values"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/plate_metal.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "plate_metal_matches_oracle"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/metrics_tables.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "metrics_tables",
+   "slide_rule_metrics_match_the_recorded_metrics",
+   "switchboard_metrics_match_the_recorded_metrics",
+   "annunciator_metrics_match_the_recorded_metrics"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/gpu_annunciator.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "gpu_annunciator",
+   "annunciator_chassis_metal_region_renders_as_the_oracle_predicts"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/frame_metal.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "frame_metal_matches_oracle"
+  ]
+ },
+ {
+  "file": "crates/chassis/tests/chassis_metal.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "chassis_metal_matches_oracle"
+  ]
+ },
+ {
+  "file": "crates/app/tests/tmux_flow.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "rows_of",
+   "tmux_flow",
+   "pump_until",
+   "type_attach",
+   "phase_3_a_rename_lands_unescaped_in_the_bank",
+   "phase_5_a_killed_window_loses_its_channel_and_the_page_stands"
+  ]
+ },
+ {
+  "file": "crates/app/tests/structure_subset.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "structure_subset",
+   "structure_reads_only_structural_keys",
+   "both_crates_derive_the_same_frame_size"
+  ]
+ },
+ {
+  "file": "crates/app/tests/seam_drag.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "seam_drag",
+   "STOCK_BANK",
+   "a_hidden_chassis_has_no_seam_and_no_column",
+   "a_press_the_seam_took_never_also_marks_the_screen",
+   "a_drag_with_no_settings_moves_the_bank_and_writes_nothing",
+   "a_drag_re_fits_the_bank_writes_the_count_and_survives_the_reload"
+  ]
+ },
+ {
+  "file": "crates/app/tests/redraw_pacing.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "redraw_pacing",
+   "a_flood_of_output_buys_one_frame_per_cadence_not_one_per_tick"
+  ]
+ },
+ {
+  "file": "crates/app/tests/profile_pixels.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "glass_tint",
+   "read_window",
+   "tools_present",
+   "profile_pixels",
+   "a_named_profile_reaches_the_glass_under_default_settings"
+  ]
+ },
+ {
+  "file": "crates/app/tests/pointer_live_settings.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "pointer_live_settings",
+   "select_at_fixed_pixels",
+   "a_click_lands_on_the_same_cell_at_dpr_1_and_dpr_2",
+   "a_config_edit_changes_the_pointer_mapping_without_restart"
+  ]
+ },
+ {
+  "file": "crates/app/tests/pointer.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "scrolling_back_down_re_follows_the_output",
+   "a_short_drag_selects_only_what_it_crossed",
+   "press_drag_release_selects_the_dragged_run",
+   "a_wheel_notch_scrolls_the_view_three_lines_back",
+   "a_double_click_takes_the_word_under_the_pointer",
+   "trackpad_pixels_scroll_the_view_by_fractions_of_a_row"
+  ]
+ },
+ {
+  "file": "crates/app/tests/frame_stats.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "burn_some_gpu_time",
+   "on_an_adapter_with_the_feature_pair_the_instrument_reports_plausible_timings",
+   "forcing_the_feature_pair_off_the_device_reports_unavailable_without_panicking"
+  ]
+ },
+ {
+  "file": "crates/app/tests/crashlog_signal.rs",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "read_soon",
+   "crashlog_signal",
+   "a_fatal_signal_writes_a_backtrace_and_still_kills_the_process"
+  ]
+ },
+ {
+  "file": "crates/crt-render/src/device.rs",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "supports_pipeline_cache",
+   "supports_fp32_accumulator"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/displays/tape/metrics.rs",
+  "A": 3,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "unit_width_is_the_departure_mono_m_advance_at_20px"
+  ]
+ },
+ {
+  "file": "crates/chassis/src/displays/led/metrics.rs",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "unit_width_matches_the_defining_formula"
+  ]
+ }
+]

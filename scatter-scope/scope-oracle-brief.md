@@ -10,11 +10,12 @@ What a blind estimator receives in the Oracle phase, and nothing else. Assemble 
 
 ## The ask
 
-Three integers per module, output as `path | A | B | C`:
+Four integers per module, output as `path | A | B | C | D`:
 
 - A: other non-test source files that use a type, function or constant the module defines.
 - B: other files of any kind (sources including tests, docs, manifests) that mention any of the module's distinctive identifiers or its file stem anywhere, comments and prose included.
 - C: total such mentions across those files.
+- D: other non-test source files whose types, functions or constants this module uses.
 
 Then the decided-once list: eight to twelve design facts a program of this description decides once, each with the number of places in the code the estimator would expect to edit if the fact changed, as `fact | expected places`. Where the run already has a fact under study, its kind is named in the ask ("include the side a panel sits on") without the measured figure.
 

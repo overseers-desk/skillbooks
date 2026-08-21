@@ -1,0 +1,13466 @@
+[
+ {
+  "file": "server/shared/access.js",
+  "lines": 219,
+  "A": 1,
+  "eA": 15,
+  "gA": -2.46,
+  "B": 1,
+  "eB": 18,
+  "gB": -2.63,
+  "C": 8,
+  "eC": 30,
+  "leak": 1,
+  "score": 8,
+  "flag": "A low, B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    15,
+    12,
+    25
+   ],
+   "e2": [
+    8,
+    18,
+    30
+   ],
+   "e3": [
+    20,
+    25,
+    50
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/providers/local.js",
+  "lines": 109,
+  "A": 4,
+  "eA": 1,
+  "gA": 1.26,
+  "B": 238,
+  "eB": 4,
+  "gB": 3.72,
+  "C": 731,
+  "eC": 5,
+  "leak": 235,
+  "score": 722,
+  "flag": "A high, B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "server/shared/testdb.js",
+  "lines": 25,
+  "A": 0,
+  "eA": 8,
+  "gA": -2.52,
+  "B": 36,
+  "eB": 5,
+  "gB": 1.8,
+  "C": 276,
+  "eC": 8,
+  "leak": 36,
+  "score": 276,
+  "flag": "A low, B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    15,
+    3,
+    5
+   ],
+   "e2": [
+    8,
+    12,
+    16
+   ],
+   "e3": [
+    3,
+    5,
+    8
+   ]
+  }
+ },
+ {
+  "file": "web/src/pipeline/api.ts",
+  "lines": 331,
+  "A": 16,
+  "eA": 4,
+  "gA": 1.26,
+  "B": 104,
+  "eB": 7,
+  "gB": 2.46,
+  "C": 1236,
+  "eC": 10,
+  "leak": 90,
+  "score": 1070,
+  "flag": "A high, B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    6,
+    4,
+    6
+   ],
+   "e2": [
+    4,
+    7,
+    10
+   ],
+   "e3": [
+    4,
+    8,
+    15
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/ReachNote.tsx",
+  "lines": 34,
+  "A": 30,
+  "eA": 5,
+  "gA": 1.63,
+  "B": 57,
+  "eB": 7,
+  "gB": 1.91,
+  "C": 254,
+  "eC": 10,
+  "leak": 27,
+  "score": 120,
+  "flag": "A high, B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    10,
+    3,
+    4
+   ],
+   "e2": [
+    5,
+    8,
+    10
+   ],
+   "e3": [
+    5,
+    7,
+    12
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/CtxMenu.tsx",
+  "lines": 195,
+  "A": 6,
+  "eA": 3,
+  "gA": 0.63,
+  "B": 107,
+  "eB": 5,
+  "gB": 2.79,
+  "C": 316,
+  "eC": 6,
+  "leak": 101,
+  "score": 298,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    5,
+    2,
+    3
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    3,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/ui/api.ts",
+  "lines": 281,
+  "A": 7,
+  "eA": 2,
+  "gA": 1.14,
+  "B": 43,
+  "eB": 4,
+  "gB": 2.16,
+  "C": 275,
+  "eC": 6,
+  "leak": 38,
+  "score": 243,
+  "flag": "A high, B high",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    3,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "connectors/facebook/api/graph-client.js",
+  "lines": 167,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 0,
+  "eB": 6,
+  "gB": -2.26,
+  "C": 0,
+  "eC": 9,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    2,
+    5,
+    8
+   ],
+   "e2": [
+    3,
+    6,
+    9
+   ],
+   "e3": [
+    3,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "spheres/relationships/api/read.js",
+  "lines": 670,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 0,
+  "eB": 6,
+  "gB": -2.26,
+  "C": 0,
+  "eC": 10,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    6,
+    10
+   ],
+   "e2": [
+    3,
+    6,
+    9
+   ],
+   "e3": [
+    3,
+    12,
+    26
+   ]
+  }
+ },
+ {
+  "file": "spheres/relationships/ui/api.ts",
+  "lines": 300,
+  "A": 3,
+  "eA": 2,
+  "gA": 0.37,
+  "B": 92,
+  "eB": 4,
+  "gB": 2.85,
+  "C": 455,
+  "eC": 6,
+  "leak": 89,
+  "score": 440,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    3,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/url-state.ts",
+  "lines": 131,
+  "A": 20,
+  "eA": 5,
+  "gA": 1.26,
+  "B": 65,
+  "eB": 8,
+  "gB": 1.91,
+  "C": 174,
+  "eC": 12,
+  "leak": 45,
+  "score": 120,
+  "flag": "A high, B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    8,
+    2,
+    3
+   ],
+   "e2": [
+    5,
+    8,
+    12
+   ],
+   "e3": [
+    5,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/Rolodex.tsx",
+  "lines": 1026,
+  "A": 3,
+  "eA": 1,
+  "gA": 1.0,
+  "B": 32,
+  "eB": 3,
+  "gB": 2.15,
+  "C": 389,
+  "eC": 4,
+  "leak": 29,
+  "score": 353,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/AuthGate.tsx",
+  "lines": 234,
+  "A": 6,
+  "eA": 1,
+  "gA": 1.63,
+  "B": 21,
+  "eB": 4,
+  "gB": 1.51,
+  "C": 75,
+  "eC": 6,
+  "leak": 15,
+  "score": 54,
+  "flag": "A high, B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    1,
+    6,
+    11
+   ]
+  }
+ },
+ {
+  "file": "connectors/sonas/api/upsert.js",
+  "lines": 317,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 0,
+  "eB": 5,
+  "gB": -2.1,
+  "C": 0,
+  "eC": 7,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    3,
+    7,
+    14
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/auth.ts",
+  "lines": 480,
+  "A": 11,
+  "eA": 6,
+  "gA": 0.55,
+  "B": 114,
+  "eB": 7,
+  "gB": 2.54,
+  "C": 630,
+  "eC": 9,
+  "leak": 106,
+  "score": 586,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    6,
+    5,
+    8
+   ],
+   "e2": [
+    4,
+    7,
+    9
+   ],
+   "e3": [
+    6,
+    12,
+    22
+   ]
+  }
+ },
+ {
+  "file": "server/shared/credentials.js",
+  "lines": 278,
+  "A": 24,
+  "eA": 4,
+  "gA": 1.63,
+  "B": 38,
+  "eB": 8,
+  "gB": 1.42,
+  "C": 145,
+  "eC": 12,
+  "leak": 14,
+  "score": 53,
+  "flag": "A high, B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    6,
+    10
+   ],
+   "e2": [
+    4,
+    8,
+    12
+   ],
+   "e3": [
+    7,
+    14,
+    26
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/api.ts",
+  "lines": 589,
+  "A": 15,
+  "eA": 4,
+  "gA": 1.2,
+  "B": 59,
+  "eB": 8,
+  "gB": 1.82,
+  "C": 490,
+  "eC": 12,
+  "leak": 48,
+  "score": 399,
+  "flag": "A high, B high",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    8,
+    6,
+    10
+   ],
+   "e2": [
+    4,
+    8,
+    12
+   ],
+   "e3": [
+    3,
+    8,
+    16
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/sphere.ts",
+  "lines": 33,
+  "A": 18,
+  "eA": 4,
+  "gA": 1.37,
+  "B": 1,
+  "eB": 6,
+  "gB": -1.63,
+  "C": 2,
+  "eC": 10,
+  "leak": 0,
+  "score": 0,
+  "flag": "A high, B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    8,
+    3,
+    4
+   ],
+   "e2": [
+    4,
+    7,
+    10
+   ],
+   "e3": [
+    4,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/FilterBar.tsx",
+  "lines": 144,
+  "A": 2,
+  "eA": 4,
+  "gA": -0.63,
+  "B": 39,
+  "eB": 3,
+  "gB": 2.33,
+  "C": 449,
+  "eC": 5,
+  "leak": 37,
+  "score": 426,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    6,
+    2,
+    3
+   ],
+   "e2": [
+    4,
+    6,
+    8
+   ],
+   "e3": [
+    2,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "connectors/awsconnect/api/sync.test.js",
+  "lines": 302,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 50,
+  "eB": 2,
+  "gB": 2.93,
+  "C": 102,
+  "eC": 2,
+  "leak": 50,
+  "score": 102,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/CampaignPipeline.tsx",
+  "lines": 151,
+  "A": 2,
+  "eA": 1,
+  "gA": 0.63,
+  "B": 24,
+  "eB": 2,
+  "gB": 2.26,
+  "C": 228,
+  "eC": 3,
+  "leak": 22,
+  "score": 209,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/events.js",
+  "lines": 57,
+  "A": 1,
+  "eA": 4,
+  "gA": -1.26,
+  "B": 1,
+  "eB": 6,
+  "gB": -1.63,
+  "C": 6,
+  "eC": 8,
+  "leak": 1,
+  "score": 6,
+  "flag": "A low, B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    3,
+    4,
+    6
+   ],
+   "e2": [
+    4,
+    6,
+    8
+   ],
+   "e3": [
+    4,
+    7,
+    12
+   ]
+  }
+ },
+ {
+  "file": "connectors/linkedin/api/memdb.js",
+  "lines": 185,
+  "A": 0,
+  "eA": 2,
+  "gA": -1.26,
+  "B": 0,
+  "eB": 3,
+  "gB": -1.63,
+  "C": 0,
+  "eC": 5,
+  "leak": 0,
+  "score": 0,
+  "flag": "A low, B low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    5,
+    3,
+    5
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/party.js",
+  "lines": 424,
+  "A": 1,
+  "eA": 5,
+  "gA": -1.46,
+  "B": 2,
+  "eB": 9,
+  "gB": -1.37,
+  "C": 3,
+  "eC": 13,
+  "leak": 2,
+  "score": 3,
+  "flag": "A low, B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    3,
+    6,
+    10
+   ],
+   "e2": [
+    5,
+    9,
+    13
+   ],
+   "e3": [
+    6,
+    12,
+    22
+   ]
+  }
+ },
+ {
+  "file": "spheres/publicity/ui/api.ts",
+  "lines": 45,
+  "A": 3,
+  "eA": 2,
+  "gA": 0.37,
+  "B": 58,
+  "eB": 4,
+  "gB": 2.43,
+  "C": 179,
+  "eC": 5,
+  "leak": 55,
+  "score": 170,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    5,
+    8
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/HoverTip.tsx",
+  "lines": 36,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 21,
+  "eB": 3,
+  "gB": 1.77,
+  "C": 99,
+  "eC": 5,
+  "leak": 20,
+  "score": 94,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    4,
+    2,
+    3
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    2,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/SectionHeader.tsx",
+  "lines": 37,
+  "A": 19,
+  "eA": 8,
+  "gA": 0.79,
+  "B": 78,
+  "eB": 9,
+  "gB": 1.97,
+  "C": 207,
+  "eC": 12,
+  "leak": 59,
+  "score": 157,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    10,
+    3,
+    4
+   ],
+   "e2": [
+    6,
+    9,
+    12
+   ],
+   "e3": [
+    8,
+    10,
+    18
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/use-api-view.ts",
+  "lines": 165,
+  "A": 38,
+  "eA": 11,
+  "gA": 1.13,
+  "B": 95,
+  "eB": 16,
+  "gB": 1.62,
+  "C": 315,
+  "eC": 24,
+  "leak": 57,
+  "score": 189,
+  "flag": "A high, B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    25,
+    6,
+    10
+   ],
+   "e2": [
+    10,
+    16,
+    24
+   ],
+   "e3": [
+    11,
+    16,
+    30
+   ]
+  }
+ },
+ {
+  "file": "connectors/xero/api/sync.js",
+  "lines": 242,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 0,
+  "eB": 5,
+  "gB": -2.1,
+  "C": 0,
+  "eC": 8,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    5,
+    8
+   ],
+   "e2": [
+    2,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "spheres/library/api/providers.js",
+  "lines": 50,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 0,
+  "eB": 5,
+  "gB": -2.1,
+  "C": 0,
+  "eC": 7,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/providers/rezdy.js",
+  "lines": 215,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 78,
+  "eB": 4,
+  "gB": 2.7,
+  "C": 290,
+  "eC": 5,
+  "leak": 77,
+  "score": 286,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "web/src/pipeline/ContactPanel.tsx",
+  "lines": 319,
+  "A": 3,
+  "eA": 1,
+  "gA": 1.0,
+  "B": 19,
+  "eB": 3,
+  "gB": 1.68,
+  "C": 45,
+  "eC": 4,
+  "leak": 16,
+  "score": 38,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/atoms.tsx",
+  "lines": 77,
+  "A": 44,
+  "eA": 10,
+  "gA": 1.35,
+  "B": 51,
+  "eB": 12,
+  "gB": 1.32,
+  "C": 357,
+  "eC": 18,
+  "leak": 37,
+  "score": 259,
+  "flag": "A high, B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    15,
+    3,
+    5
+   ],
+   "e2": [
+    8,
+    12,
+    18
+   ],
+   "e3": [
+    10,
+    12,
+    22
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/stream.ts",
+  "lines": 108,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 59,
+  "eB": 5,
+  "gB": 2.25,
+  "C": 434,
+  "eC": 6,
+  "leak": 57,
+  "score": 419,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/boardDrag.ts",
+  "lines": 182,
+  "A": 4,
+  "eA": 2,
+  "gA": 0.63,
+  "B": 26,
+  "eB": 3,
+  "gB": 1.97,
+  "C": 311,
+  "eC": 6,
+  "leak": 22,
+  "score": 263,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    1,
+    3,
+    6
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/DeepLink.tsx",
+  "lines": 101,
+  "A": 8,
+  "eA": 5,
+  "gA": 0.43,
+  "B": 62,
+  "eB": 6,
+  "gB": 2.13,
+  "C": 175,
+  "eC": 11,
+  "leak": 54,
+  "score": 152,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    8,
+    3,
+    4
+   ],
+   "e2": [
+    5,
+    8,
+    11
+   ],
+   "e3": [
+    4,
+    6,
+    11
+   ]
+  }
+ },
+ {
+  "file": "connectors/otter/api/memdb.js",
+  "lines": 187,
+  "A": 0,
+  "eA": 2,
+  "gA": -1.26,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "A low, B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    3,
+    2,
+    3
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/rezdy/api/sync.js",
+  "lines": 204,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 0,
+  "eB": 4,
+  "gB": -1.89,
+  "C": 0,
+  "eC": 6,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "connectors/sonas/api/sync.js",
+  "lines": 251,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 0,
+  "eB": 4,
+  "gB": -1.89,
+  "C": 0,
+  "eC": 6,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "spheres/reputation/api/read.js",
+  "lines": 174,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 0,
+  "eB": 4,
+  "gB": -1.89,
+  "C": 0,
+  "eC": 6,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    6,
+    11
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/instance.js",
+  "lines": 43,
+  "A": 0,
+  "eA": 1,
+  "gA": -0.63,
+  "B": 0,
+  "eB": 4,
+  "gB": -1.89,
+  "C": 0,
+  "eC": 5,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    0,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "server/shared/connector-tenant.js",
+  "lines": 45,
+  "A": 21,
+  "eA": 6,
+  "gA": 1.14,
+  "B": 41,
+  "eB": 9,
+  "gB": 1.38,
+  "C": 144,
+  "eC": 14,
+  "leak": 20,
+  "score": 70,
+  "flag": "A high, B high",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    8,
+    6,
+    10
+   ],
+   "e2": [
+    6,
+    10,
+    14
+   ],
+   "e3": [
+    5,
+    9,
+    16
+   ]
+  }
+ },
+ {
+  "file": "server/shared/sync-runs.js",
+  "lines": 199,
+  "A": 26,
+  "eA": 8,
+  "gA": 1.07,
+  "B": 65,
+  "eB": 14,
+  "gB": 1.4,
+  "C": 259,
+  "eC": 24,
+  "leak": 39,
+  "score": 155,
+  "flag": "A high, B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    8,
+    6,
+    12
+   ],
+   "e2": [
+    9,
+    16,
+    24
+   ],
+   "e3": [
+    8,
+    14,
+    26
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/fy.ts",
+  "lines": 115,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 25,
+  "eB": 5,
+  "gB": 1.46,
+  "C": 155,
+  "eC": 7,
+  "leak": 24,
+  "score": 149,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    3,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "connectors/awsconnect/api/sync.js",
+  "lines": 384,
+  "A": 13,
+  "eA": 2,
+  "gA": 1.7,
+  "B": 11,
+  "eB": 5,
+  "gB": 0.72,
+  "C": 30,
+  "eC": 7,
+  "leak": 11,
+  "score": 30,
+  "flag": "A high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/ParamChips.tsx",
+  "lines": 69,
+  "A": 9,
+  "eA": 5,
+  "gA": 0.54,
+  "B": 52,
+  "eB": 7,
+  "gB": 1.83,
+  "C": 201,
+  "eC": 10,
+  "leak": 43,
+  "score": 166,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    6,
+    2,
+    3
+   ],
+   "e2": [
+    5,
+    8,
+    10
+   ],
+   "e3": [
+    5,
+    7,
+    12
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/FreshnessNote.tsx",
+  "lines": 57,
+  "A": 11,
+  "eA": 6,
+  "gA": 0.55,
+  "B": 56,
+  "eB": 8,
+  "gB": 1.77,
+  "C": 166,
+  "eC": 10,
+  "leak": 45,
+  "score": 133,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    10,
+    3,
+    4
+   ],
+   "e2": [
+    5,
+    8,
+    10
+   ],
+   "e3": [
+    6,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "scripts/import-meta-exports.mjs",
+  "lines": 804,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 37,
+  "eB": 3,
+  "gB": 2.29,
+  "C": 161,
+  "eC": 5,
+  "leak": 37,
+  "score": 161,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    3,
+    5
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    0,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/clicklog.ts",
+  "lines": 34,
+  "A": 6,
+  "eA": 3,
+  "gA": 0.63,
+  "B": 31,
+  "eB": 5,
+  "gB": 1.66,
+  "C": 70,
+  "eC": 6,
+  "leak": 25,
+  "score": 56,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    8,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "server/shared/grants.js",
+  "lines": 224,
+  "A": 3,
+  "eA": 12,
+  "gA": -1.26,
+  "B": 6,
+  "eB": 18,
+  "gB": -1.0,
+  "C": 141,
+  "eC": 28,
+  "leak": 5,
+  "score": 118,
+  "flag": "A low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    15,
+    10,
+    20
+   ],
+   "e2": [
+    10,
+    18,
+    28
+   ],
+   "e3": [
+    12,
+    22,
+    45
+   ]
+  }
+ },
+ {
+  "file": "web/src/pipeline/Campaigns.tsx",
+  "lines": 144,
+  "A": 3,
+  "eA": 1,
+  "gA": 1.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "connectors/github/hook.js",
+  "lines": 53,
+  "A": 0,
+  "eA": 1,
+  "gA": -0.63,
+  "B": 0,
+  "eB": 3,
+  "gB": -1.63,
+  "C": 0,
+  "eC": 5,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/GroupedList.tsx",
+  "lines": 51,
+  "A": 3,
+  "eA": 4,
+  "gA": -0.26,
+  "B": 31,
+  "eB": 4,
+  "gB": 1.86,
+  "C": 117,
+  "eC": 7,
+  "leak": 28,
+  "score": 106,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    4,
+    2,
+    3
+   ],
+   "e2": [
+    4,
+    6,
+    8
+   ],
+   "e3": [
+    2,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "server/shared/ready.js",
+  "lines": 329,
+  "A": 1,
+  "eA": 6,
+  "gA": -1.63,
+  "B": 20,
+  "eB": 12,
+  "gB": 0.46,
+  "C": 124,
+  "eC": 18,
+  "leak": 19,
+  "score": 118,
+  "flag": "A low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    3,
+    6,
+    10
+   ],
+   "e2": [
+    6,
+    12,
+    18
+   ],
+   "e3": [
+    8,
+    15,
+    30
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/instance.js",
+  "lines": 45,
+  "A": 0,
+  "eA": 1,
+  "gA": -0.63,
+  "B": 20,
+  "eB": 4,
+  "gB": 1.46,
+  "C": 66,
+  "eC": 7,
+  "leak": 20,
+  "score": 66,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    0,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "server/shared/contract.js",
+  "lines": 154,
+  "A": 1,
+  "eA": 5,
+  "gA": -1.46,
+  "B": 4,
+  "eB": 8,
+  "gB": -0.63,
+  "C": 43,
+  "eC": 11,
+  "leak": 3,
+  "score": 32,
+  "flag": "A low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    3,
+    6,
+    10
+   ],
+   "e2": [
+    5,
+    8,
+    11
+   ],
+   "e3": [
+    6,
+    11,
+    20
+   ]
+  }
+ },
+ {
+  "file": "web/src/pipeline/StagesEditor.tsx",
+  "lines": 198,
+  "A": 2,
+  "eA": 1,
+  "gA": 0.63,
+  "B": 10,
+  "eB": 2,
+  "gB": 1.46,
+  "C": 29,
+  "eC": 3,
+  "leak": 8,
+  "score": 23,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    2,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "connectors/googlechat/api/sync.js",
+  "lines": 304,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 1,
+  "eB": 5,
+  "gB": -1.46,
+  "C": 5,
+  "eC": 8,
+  "leak": 1,
+  "score": 5,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    5,
+    8
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "server/shared/auth.js",
+  "lines": 1679,
+  "A": 3,
+  "eA": 10,
+  "gA": -1.1,
+  "B": 44,
+  "eB": 15,
+  "gB": 0.98,
+  "C": 230,
+  "eC": 30,
+  "leak": 42,
+  "score": 220,
+  "flag": "A low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    10,
+    15,
+    30
+   ],
+   "e2": [
+    6,
+    15,
+    25
+   ],
+   "e3": [
+    15,
+    30,
+    65
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/use-anchor.ts",
+  "lines": 26,
+  "A": 2,
+  "eA": 4,
+  "gA": -0.63,
+  "B": 29,
+  "eB": 6,
+  "gB": 1.43,
+  "C": 35,
+  "eC": 8,
+  "leak": 27,
+  "score": 33,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    8,
+    2,
+    3
+   ],
+   "e2": [
+    4,
+    6,
+    8
+   ],
+   "e3": [
+    4,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/view-registry.ts",
+  "lines": 108,
+  "A": 8,
+  "eA": 6,
+  "gA": 0.26,
+  "B": 50,
+  "eB": 7,
+  "gB": 1.79,
+  "C": 129,
+  "eC": 9,
+  "leak": 42,
+  "score": 108,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    6,
+    3,
+    4
+   ],
+   "e2": [
+    4,
+    7,
+    9
+   ],
+   "e3": [
+    6,
+    10,
+    18
+   ]
+  }
+ },
+ {
+  "file": "scripts/refresh-meta-recent.mjs",
+  "lines": 235,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 19,
+  "eB": 2,
+  "gB": 2.05,
+  "C": 97,
+  "eC": 3,
+  "leak": 19,
+  "score": 97,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/view-scope.ts",
+  "lines": 27,
+  "A": 11,
+  "eA": 3,
+  "gA": 1.18,
+  "B": 13,
+  "eB": 5,
+  "gB": 0.87,
+  "C": 40,
+  "eC": 6,
+  "leak": 2,
+  "score": 6,
+  "flag": "A high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    4,
+    2,
+    3
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    3,
+    5,
+    8
+   ]
+  }
+ },
+ {
+  "file": "spheres/reputation/ui/api.ts",
+  "lines": 71,
+  "A": 5,
+  "eA": 2,
+  "gA": 0.83,
+  "B": 15,
+  "eB": 4,
+  "gB": 1.2,
+  "C": 129,
+  "eC": 5,
+  "leak": 12,
+  "score": 103,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    5,
+    8
+   ]
+  }
+ },
+ {
+  "file": "server/shared/click-log.js",
+  "lines": 11,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 18,
+  "eB": 6,
+  "gB": 1.0,
+  "C": 35,
+  "eC": 8,
+  "leak": 17,
+  "score": 33,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    4,
+    6
+   ],
+   "e2": [
+    4,
+    6,
+    8
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "connectors/spar/api/parse.js",
+  "lines": 315,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 2,
+  "eB": 6,
+  "gB": -1.0,
+  "C": 45,
+  "eC": 9,
+  "leak": 1,
+  "score": 22,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    6,
+    9
+   ],
+   "e3": [
+    3,
+    7,
+    14
+   ]
+  }
+ },
+ {
+  "file": "connectors/otter/api/jobs.js",
+  "lines": 274,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 1,
+  "eB": 6,
+  "gB": -1.63,
+  "C": 18,
+  "eC": 9,
+  "leak": 1,
+  "score": 18,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    5,
+    8
+   ],
+   "e2": [
+    3,
+    6,
+    9
+   ],
+   "e3": [
+    3,
+    9,
+    18
+   ]
+  }
+ },
+ {
+  "file": "connectors/xero/api/upsert.js",
+  "lines": 333,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 2,
+  "eB": 6,
+  "gB": -1.0,
+  "C": 28,
+  "eC": 9,
+  "leak": 1,
+  "score": 14,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    5,
+    8
+   ],
+   "e2": [
+    3,
+    6,
+    9
+   ],
+   "e3": [
+    3,
+    7,
+    15
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/read.js",
+  "lines": 335,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 2,
+  "eB": 6,
+  "gB": -1.0,
+  "C": 8,
+  "eC": 8,
+  "leak": 2,
+  "score": 8,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    5,
+    8
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    3,
+    9,
+    18
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/Chips.tsx",
+  "lines": 38,
+  "A": 3,
+  "eA": 6,
+  "gA": -0.63,
+  "B": 25,
+  "eB": 6,
+  "gB": 1.3,
+  "C": 122,
+  "eC": 10,
+  "leak": 22,
+  "score": 107,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    6,
+    2,
+    3
+   ],
+   "e2": [
+    6,
+    9,
+    13
+   ],
+   "e3": [
+    4,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/breakpoint.ts",
+  "lines": 18,
+  "A": 3,
+  "eA": 5,
+  "gA": -0.46,
+  "B": 30,
+  "eB": 6,
+  "gB": 1.46,
+  "C": 64,
+  "eC": 10,
+  "leak": 27,
+  "score": 58,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    10,
+    2,
+    3
+   ],
+   "e2": [
+    5,
+    8,
+    10
+   ],
+   "e3": [
+    4,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "spheres/library/ui/SearchBar.tsx",
+  "lines": 104,
+  "A": 2,
+  "eA": 1,
+  "gA": 0.63,
+  "B": 8,
+  "eB": 2,
+  "gB": 1.26,
+  "C": 51,
+  "eC": 3,
+  "leak": 6,
+  "score": 38,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/providers/sonas.js",
+  "lines": 157,
+  "A": 4,
+  "eA": 1,
+  "gA": 1.26,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 25,
+  "eC": 5,
+  "leak": 2,
+  "score": 25,
+  "flag": "A high",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/SearchInput.tsx",
+  "lines": 39,
+  "A": 1,
+  "eA": 4,
+  "gA": -1.26,
+  "B": 12,
+  "eB": 6,
+  "gB": 0.63,
+  "C": 23,
+  "eC": 8,
+  "leak": 11,
+  "score": 21,
+  "flag": "A low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    8,
+    2,
+    3
+   ],
+   "e2": [
+    4,
+    6,
+    8
+   ],
+   "e3": [
+    4,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/api/read.js",
+  "lines": 904,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 3,
+  "eB": 8,
+  "gB": -0.89,
+  "C": 18,
+  "eC": 15,
+  "leak": 3,
+  "score": 18,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    8,
+    15
+   ],
+   "e2": [
+    4,
+    8,
+    12
+   ],
+   "e3": [
+    3,
+    14,
+    30
+   ]
+  }
+ },
+ {
+  "file": "spheres/publicity/ui/CoverageSection.tsx",
+  "lines": 96,
+  "A": 2,
+  "eA": 1,
+  "gA": 0.63,
+  "B": 8,
+  "eB": 2,
+  "gB": 1.26,
+  "C": 23,
+  "eC": 3,
+  "leak": 6,
+  "score": 17,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "connectors/deputy/api/upsert.js",
+  "lines": 134,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 1,
+  "eB": 4,
+  "gB": -1.26,
+  "C": 13,
+  "eC": 6,
+  "leak": 1,
+  "score": 13,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    6,
+    13
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/read.js",
+  "lines": 1491,
+  "A": 1,
+  "eA": 4,
+  "gA": -1.26,
+  "B": 5,
+  "eB": 10,
+  "gB": -0.63,
+  "C": 9,
+  "eC": 20,
+  "leak": 5,
+  "score": 9,
+  "flag": "A low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    10,
+    20
+   ],
+   "e2": [
+    5,
+    10,
+    16
+   ],
+   "e3": [
+    4,
+    20,
+    45
+   ]
+  }
+ },
+ {
+  "file": "spheres/library/api/read.js",
+  "lines": 99,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 1,
+  "eB": 4,
+  "gB": -1.26,
+  "C": 9,
+  "eC": 6,
+  "leak": 1,
+  "score": 9,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    5,
+    8
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/reconcile.js",
+  "lines": 80,
+  "A": 0,
+  "eA": 1,
+  "gA": -0.63,
+  "B": 1,
+  "eB": 4,
+  "gB": -1.26,
+  "C": 9,
+  "eC": 5,
+  "leak": 1,
+  "score": 9,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "server/app.js",
+  "lines": 1352,
+  "A": 0,
+  "eA": 1,
+  "gA": -0.63,
+  "B": 5,
+  "eB": 20,
+  "gB": -1.26,
+  "C": 8,
+  "eC": 35,
+  "leak": 5,
+  "score": 8,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    15,
+    25
+   ],
+   "e2": [
+    5,
+    20,
+    35
+   ],
+   "e3": [
+    1,
+    30,
+    70
+   ]
+  }
+ },
+ {
+  "file": "spheres/customer-service/api/read.js",
+  "lines": 125,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 1,
+  "eB": 4,
+  "gB": -1.26,
+  "C": 6,
+  "eC": 6,
+  "leak": 1,
+  "score": 6,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "server/shared/http-json.js",
+  "lines": 50,
+  "A": 1,
+  "eA": 4,
+  "gA": -1.26,
+  "B": 3,
+  "eB": 6,
+  "gB": -0.63,
+  "C": 8,
+  "eC": 8,
+  "leak": 2,
+  "score": 5,
+  "flag": "A low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    3,
+    3,
+    5
+   ],
+   "e2": [
+    4,
+    6,
+    8
+   ],
+   "e3": [
+    4,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "connectors/square/api/upsert.js",
+  "lines": 137,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 1,
+  "eB": 4,
+  "gB": -1.26,
+  "C": 5,
+  "eC": 5,
+  "leak": 1,
+  "score": 5,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    3,
+    5
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    5,
+    10
+   ]
+  }
+ },
+ {
+  "file": "spheres/publicity/api/read.js",
+  "lines": 115,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 1,
+  "eB": 4,
+  "gB": -1.26,
+  "C": 5,
+  "eC": 6,
+  "leak": 1,
+  "score": 5,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/jobs.js",
+  "lines": 725,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 3,
+  "eB": 8,
+  "gB": -0.89,
+  "C": 4,
+  "eC": 12,
+  "leak": 2,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    6,
+    10
+   ],
+   "e2": [
+    4,
+    8,
+    12
+   ],
+   "e3": [
+    3,
+    12,
+    24
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/prelink.js",
+  "lines": 74,
+  "A": 0,
+  "eA": 1,
+  "gA": -0.63,
+  "B": 1,
+  "eB": 4,
+  "gB": -1.26,
+  "C": 3,
+  "eC": 5,
+  "leak": 1,
+  "score": 3,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "agent/server.js",
+  "lines": 561,
+  "A": 0,
+  "eA": 1,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 8,
+  "gB": -1.26,
+  "C": 2,
+  "eC": 14,
+  "leak": 2,
+  "score": 2,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    8,
+    14
+   ],
+   "e2": [
+    2,
+    8,
+    12
+   ],
+   "e3": [
+    1,
+    9,
+    17
+   ]
+  }
+ },
+ {
+  "file": "connectors/clover/api/sync.js",
+  "lines": 214,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 1,
+  "eB": 4,
+  "gB": -1.26,
+  "C": 1,
+  "eC": 5,
+  "leak": 1,
+  "score": 1,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    3,
+    5
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "connectors/github/api/sync.js",
+  "lines": 131,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 4,
+  "gB": -1.89,
+  "C": 0,
+  "eC": 6,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "connectors/spar/api/upsert.js",
+  "lines": 215,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 2,
+  "eB": 5,
+  "gB": -0.83,
+  "C": 65,
+  "eC": 7,
+  "leak": 1,
+  "score": 32,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    3,
+    7,
+    14
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/FilterRow.tsx",
+  "lines": 23,
+  "A": 3,
+  "eA": 3,
+  "gA": 0.0,
+  "B": 15,
+  "eB": 2,
+  "gB": 1.83,
+  "C": 35,
+  "eC": 3,
+  "leak": 12,
+  "score": 28,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    4,
+    1,
+    2
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    1,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "web/src/pipeline/Roster.tsx",
+  "lines": 159,
+  "A": 3,
+  "eA": 1,
+  "gA": 1.0,
+  "B": 5,
+  "eB": 2,
+  "gB": 0.83,
+  "C": 5,
+  "eC": 3,
+  "leak": 4,
+  "score": 4,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    2,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/download.ts",
+  "lines": 17,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 2,
+  "eB": 5,
+  "gB": -0.83,
+  "C": 6,
+  "eC": 6,
+  "leak": 1,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    4,
+    2,
+    3
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    3,
+    5,
+    8
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/PersonRow.tsx",
+  "lines": 66,
+  "A": 3,
+  "eA": 5,
+  "gA": -0.46,
+  "B": 35,
+  "eB": 8,
+  "gB": 1.34,
+  "C": 137,
+  "eC": 10,
+  "leak": 32,
+  "score": 125,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    6,
+    2,
+    3
+   ],
+   "e2": [
+    5,
+    8,
+    10
+   ],
+   "e3": [
+    5,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/useCardSelection.ts",
+  "lines": 142,
+  "A": 3,
+  "eA": 3,
+  "gA": 0.0,
+  "B": 21,
+  "eB": 3,
+  "gB": 1.77,
+  "C": 51,
+  "eC": 5,
+  "leak": 18,
+  "score": 44,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    4,
+    2,
+    3
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    2,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/Overlay.tsx",
+  "lines": 75,
+  "A": 11,
+  "eA": 10,
+  "gA": 0.09,
+  "B": 62,
+  "eB": 10,
+  "gB": 1.66,
+  "C": 215,
+  "eC": 13,
+  "leak": 51,
+  "score": 177,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    12,
+    3,
+    4
+   ],
+   "e2": [
+    6,
+    10,
+    13
+   ],
+   "e3": [
+    10,
+    14,
+    26
+   ]
+  }
+ },
+ {
+  "file": "server/shared/access.test.js",
+  "lines": 421,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 20,
+  "eB": 3,
+  "gB": 1.73,
+  "C": 62,
+  "eC": 4,
+  "leak": 20,
+  "score": 62,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    1,
+    1
+   ],
+   "e2": [
+    0,
+    3,
+    4
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "connectors/awsconnect/api/upsert.js",
+  "lines": 238,
+  "A": 0,
+  "eA": 2,
+  "gA": -1.26,
+  "B": 3,
+  "eB": 5,
+  "gB": -0.46,
+  "C": 47,
+  "eC": 7,
+  "leak": 3,
+  "score": 47,
+  "flag": "A low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    6,
+    13
+   ]
+  }
+ },
+ {
+  "file": "server/shared/job-runs.js",
+  "lines": 74,
+  "A": 6,
+  "eA": 4,
+  "gA": 0.37,
+  "B": 26,
+  "eB": 6,
+  "gB": 1.33,
+  "C": 84,
+  "eC": 10,
+  "leak": 20,
+  "score": 65,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    10,
+    6,
+    10
+   ],
+   "e2": [
+    4,
+    8,
+    10
+   ],
+   "e3": [
+    3,
+    5,
+    8
+   ]
+  }
+ },
+ {
+  "file": "agent/transcribe.js",
+  "lines": 115,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 26,
+  "eB": 4,
+  "gB": 1.7,
+  "C": 46,
+  "eC": 5,
+  "leak": 25,
+  "score": 44,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/SelectableCard.tsx",
+  "lines": 72,
+  "A": 3,
+  "eA": 3,
+  "gA": 0.0,
+  "B": 32,
+  "eB": 5,
+  "gB": 1.69,
+  "C": 139,
+  "eC": 6,
+  "leak": 29,
+  "score": 126,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    6,
+    2,
+    3
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    3,
+    5,
+    8
+   ]
+  }
+ },
+ {
+  "file": "spheres/customer-service/ui/api.ts",
+  "lines": 164,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 12,
+  "eB": 4,
+  "gB": 1.0,
+  "C": 214,
+  "eC": 6,
+  "leak": 11,
+  "score": 196,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "server/shared/hash.js",
+  "lines": 8,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 24,
+  "eB": 4,
+  "gB": 1.63,
+  "C": 73,
+  "eC": 5,
+  "leak": 22,
+  "score": 67,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    2,
+    3
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "server/shared/chat.js",
+  "lines": 85,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 3,
+  "eB": 6,
+  "gB": -0.63,
+  "C": 17,
+  "eC": 8,
+  "leak": 2,
+  "score": 11,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    5,
+    8
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    6,
+    12,
+    22
+   ]
+  }
+ },
+ {
+  "file": "web/src/pipeline/CampaignBoard.tsx",
+  "lines": 260,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 1,
+  "eB": 3,
+  "gB": -1.0,
+  "C": 11,
+  "eC": 4,
+  "leak": 1,
+  "score": 11,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "spheres/customer-service/api/policy.js",
+  "lines": 36,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 1,
+  "eB": 3,
+  "gB": -1.0,
+  "C": 4,
+  "eC": 4,
+  "leak": 1,
+  "score": 4,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/gesture-state.ts",
+  "lines": 42,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 6,
+  "eC": 6,
+  "leak": 1,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    4,
+    2,
+    3
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    2,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "server/shared/model-retry.js",
+  "lines": 44,
+  "A": 2,
+  "eA": 4,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 6,
+  "gB": -1.0,
+  "C": 8,
+  "eC": 8,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    3,
+    3,
+    4
+   ],
+   "e2": [
+    4,
+    6,
+    8
+   ],
+   "e3": [
+    4,
+    7,
+    12
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/chat-icon.tsx",
+  "lines": 9,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 1,
+  "eB": 3,
+  "gB": -1.0,
+  "C": 4,
+  "eC": 4,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    2,
+    1,
+    2
+   ],
+   "e2": [
+    2,
+    3,
+    4
+   ],
+   "e3": [
+    2,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/statements.js",
+  "lines": 36,
+  "A": 2,
+  "eA": 1,
+  "gA": 0.63,
+  "B": 1,
+  "eB": 3,
+  "gB": -1.0,
+  "C": 2,
+  "eC": 5,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/ui/views/Board.tsx",
+  "lines": 141,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 3,
+  "gB": -1.63,
+  "C": 0,
+  "eC": 4,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/views/Labour.tsx",
+  "lines": 276,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 3,
+  "gB": -1.63,
+  "C": 0,
+  "eC": 4,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/ui/views/Week.tsx",
+  "lines": 306,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 3,
+  "gB": -1.63,
+  "C": 0,
+  "eC": 4,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/PeopleSection.tsx",
+  "lines": 251,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 3,
+  "gB": -1.63,
+  "C": 0,
+  "eC": 4,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "connectors/tiktok/insights-sync.js",
+  "lines": 84,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 3,
+  "gB": -1.63,
+  "C": 0,
+  "eC": 4,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/api/read.test.js",
+  "lines": 652,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 3,
+  "gB": -1.63,
+  "C": 0,
+  "eC": 4,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    3,
+    4
+   ],
+   "e3": [
+    0,
+    3,
+    6
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/read.test.js",
+  "lines": 1443,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 3,
+  "gB": -1.63,
+  "C": 0,
+  "eC": 4,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    3,
+    4
+   ],
+   "e3": [
+    0,
+    3,
+    6
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/slot-store.ts",
+  "lines": 100,
+  "A": 7,
+  "eA": 3,
+  "gA": 0.77,
+  "B": 12,
+  "eB": 5,
+  "gB": 0.8,
+  "C": 120,
+  "eC": 6,
+  "leak": 5,
+  "score": 50,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    2,
+    3
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    3,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/period.ts",
+  "lines": 146,
+  "A": 5,
+  "eA": 2,
+  "gA": 0.83,
+  "B": 9,
+  "eB": 4,
+  "gB": 0.74,
+  "C": 66,
+  "eC": 5,
+  "leak": 4,
+  "score": 29,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    3,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/ChatPane.tsx",
+  "lines": 86,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 11,
+  "eB": 2,
+  "gB": 1.55,
+  "C": 28,
+  "eC": 3,
+  "leak": 10,
+  "score": 25,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/api.ts",
+  "lines": 105,
+  "A": 9,
+  "eA": 3,
+  "gA": 1.0,
+  "B": 11,
+  "eB": 6,
+  "gB": 0.55,
+  "C": 52,
+  "eC": 8,
+  "leak": 5,
+  "score": 24,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    6,
+    5,
+    8
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    3,
+    6,
+    11
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/format.ts",
+  "lines": 121,
+  "A": 28,
+  "eA": 14,
+  "gA": 0.63,
+  "B": 38,
+  "eB": 14,
+  "gB": 0.91,
+  "C": 324,
+  "eC": 22,
+  "leak": 16,
+  "score": 136,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    25,
+    4,
+    6
+   ],
+   "e2": [
+    8,
+    14,
+    22
+   ],
+   "e3": [
+    14,
+    20,
+    40
+   ]
+  }
+ },
+ {
+  "file": "server/shared/spar-pipeline.js",
+  "lines": 623,
+  "A": 5,
+  "eA": 4,
+  "gA": 0.2,
+  "B": 39,
+  "eB": 9,
+  "gB": 1.33,
+  "C": 105,
+  "eC": 13,
+  "leak": 34,
+  "score": 92,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    6,
+    10
+   ],
+   "e2": [
+    4,
+    9,
+    13
+   ],
+   "e3": [
+    6,
+    12,
+    22
+   ]
+  }
+ },
+ {
+  "file": "spheres/relationships/api/identity.js",
+  "lines": 286,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 5,
+  "gB": -0.83,
+  "C": 66,
+  "eC": 7,
+  "leak": 1,
+  "score": 33,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "spheres/library/ui/api.ts",
+  "lines": 82,
+  "A": 5,
+  "eA": 2,
+  "gA": 0.83,
+  "B": 8,
+  "eB": 4,
+  "gB": 0.63,
+  "C": 43,
+  "eC": 5,
+  "leak": 5,
+  "score": 27,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    3,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    5,
+    8
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/locale.ts",
+  "lines": 186,
+  "A": 3,
+  "eA": 9,
+  "gA": -1.0,
+  "B": 6,
+  "eB": 10,
+  "gB": -0.46,
+  "C": 32,
+  "eC": 15,
+  "leak": 3,
+  "score": 16,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    15,
+    4,
+    6
+   ],
+   "e2": [
+    6,
+    10,
+    15
+   ],
+   "e3": [
+    9,
+    14,
+    26
+   ]
+  }
+ },
+ {
+  "file": "server/shared/error-codes.test.js",
+  "lines": 82,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 10,
+  "eB": 2,
+  "gB": 1.46,
+  "C": 13,
+  "eC": 3,
+  "leak": 10,
+  "score": 13,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    1,
+    1
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    6
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/useDoorbell.ts",
+  "lines": 29,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 3,
+  "eB": 5,
+  "gB": -0.46,
+  "C": 5,
+  "eC": 6,
+  "leak": 2,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    4,
+    2,
+    3
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    3,
+    5,
+    8
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/api/policy.js",
+  "lines": 34,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 5,
+  "gB": -0.83,
+  "C": 4,
+  "eC": 7,
+  "leak": 1,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/journey.ts",
+  "lines": 181,
+  "A": 11,
+  "eA": 7,
+  "gA": 0.41,
+  "B": 18,
+  "eB": 6,
+  "gB": 1.0,
+  "C": 111,
+  "eC": 8,
+  "leak": 13,
+  "score": 80,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    8,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    7,
+    12,
+    22
+   ]
+  }
+ },
+ {
+  "file": "spheres/library/ui/Results.tsx",
+  "lines": 260,
+  "A": 3,
+  "eA": 1,
+  "gA": 1.0,
+  "B": 3,
+  "eB": 2,
+  "gB": 0.37,
+  "C": 12,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/ui/api.ts",
+  "lines": 204,
+  "A": 5,
+  "eA": 4,
+  "gA": 0.2,
+  "B": 21,
+  "eB": 6,
+  "gB": 1.14,
+  "C": 114,
+  "eC": 8,
+  "leak": 18,
+  "score": 98,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    4,
+    4,
+    6
+   ],
+   "e2": [
+    4,
+    6,
+    8
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/api.ts",
+  "lines": 121,
+  "A": 34,
+  "eA": 15,
+  "gA": 0.74,
+  "B": 34,
+  "eB": 18,
+  "gB": 0.58,
+  "C": 151,
+  "eC": 30,
+  "leak": 11,
+  "score": 49,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    20,
+    6,
+    10
+   ],
+   "e2": [
+    10,
+    18,
+    30
+   ],
+   "e3": [
+    15,
+    22,
+    42
+   ]
+  }
+ },
+ {
+  "file": "connectors/xero/api/xero-client.js",
+  "lines": 211,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 17,
+  "eB": 6,
+  "gB": 0.95,
+  "C": 56,
+  "eC": 9,
+  "leak": 15,
+  "score": 49,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    5,
+    8
+   ],
+   "e2": [
+    3,
+    6,
+    9
+   ],
+   "e3": [
+    3,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "connectors/linkedin/api/jobs.js",
+  "lines": 579,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 5,
+  "eB": 7,
+  "gB": -0.31,
+  "C": 52,
+  "eC": 10,
+  "leak": 5,
+  "score": 52,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    6,
+    10
+   ],
+   "e2": [
+    3,
+    7,
+    10
+   ],
+   "e3": [
+    3,
+    10,
+    20
+   ]
+  }
+ },
+ {
+  "file": "connectors/rezdy/api/upsert.js",
+  "lines": 356,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 7,
+  "eB": 5,
+  "gB": 0.31,
+  "C": 35,
+  "eC": 8,
+  "leak": 6,
+  "score": 30,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    5,
+    8
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    3,
+    7,
+    14
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/navigate.ts",
+  "lines": 57,
+  "A": 8,
+  "eA": 10,
+  "gA": -0.2,
+  "B": 32,
+  "eB": 10,
+  "gB": 1.06,
+  "C": 103,
+  "eC": 14,
+  "leak": 24,
+  "score": 77,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    10,
+    3,
+    4
+   ],
+   "e2": [
+    6,
+    10,
+    14
+   ],
+   "e3": [
+    12,
+    15,
+    28
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/App.tsx",
+  "lines": 421,
+  "A": 1,
+  "eA": 0,
+  "gA": 0.63,
+  "B": 8,
+  "eB": 4,
+  "gB": 0.63,
+  "C": 38,
+  "eC": 6,
+  "leak": 8,
+  "score": 38,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    4,
+    6
+   ],
+   "e2": [
+    1,
+    4,
+    6
+   ],
+   "e3": [
+    0,
+    9,
+    17
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/cards.tsx",
+  "lines": 152,
+  "A": 4,
+  "eA": 3,
+  "gA": 0.26,
+  "B": 12,
+  "eB": 4,
+  "gB": 1.0,
+  "C": 55,
+  "eC": 5,
+  "leak": 8,
+  "score": 37,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    2,
+    3
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    3,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/tool-labels.ts",
+  "lines": 132,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 8,
+  "eB": 4,
+  "gB": 0.63,
+  "C": 38,
+  "eC": 5,
+  "leak": 7,
+  "score": 33,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "server/shared/connector-health.js",
+  "lines": 119,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 8,
+  "eB": 6,
+  "gB": 0.26,
+  "C": 33,
+  "eC": 8,
+  "leak": 7,
+  "score": 29,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    4,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/config.js",
+  "lines": 85,
+  "A": 3,
+  "eA": 1,
+  "gA": 1.0,
+  "B": 4,
+  "eB": 3,
+  "gB": 0.26,
+  "C": 25,
+  "eC": 5,
+  "leak": 4,
+  "score": 25,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/window.ts",
+  "lines": 46,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 20,
+  "eC": 5,
+  "leak": 1,
+  "score": 10,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    2,
+    3
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "connectors/deputy/api/sync.js",
+  "lines": 240,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 10,
+  "eC": 6,
+  "leak": 2,
+  "score": 10,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/api/jobs.js",
+  "lines": 228,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 20,
+  "eC": 5,
+  "leak": 1,
+  "score": 10,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "server/shared/versions.js",
+  "lines": 31,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 15,
+  "eC": 5,
+  "leak": 1,
+  "score": 8,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/drive.ts",
+  "lines": 285,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 14,
+  "eC": 6,
+  "leak": 1,
+  "score": 7,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    4,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "connectors/clover/api/upsert.js",
+  "lines": 214,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 7,
+  "eC": 5,
+  "leak": 2,
+  "score": 7,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    3,
+    5
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    6,
+    13
+   ]
+  }
+ },
+ {
+  "file": "spheres/customer-service/api/calls.js",
+  "lines": 457,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 12,
+  "eC": 6,
+  "leak": 1,
+  "score": 6,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/match.ts",
+  "lines": 38,
+  "A": 6,
+  "eA": 3,
+  "gA": 0.63,
+  "B": 6,
+  "eB": 3,
+  "gB": 0.63,
+  "C": 29,
+  "eC": 5,
+  "leak": 1,
+  "score": 5,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    4,
+    2,
+    3
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "connectors/square/api/square-client.js",
+  "lines": 108,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 6,
+  "eC": 5,
+  "leak": 1,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    3,
+    5
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    5,
+    10
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/AccessGrants.tsx",
+  "lines": 226,
+  "A": 2,
+  "eA": 4,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 18,
+  "eC": 6,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    4,
+    3,
+    5
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    4,
+    8,
+    15
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/PrefsPanel.tsx",
+  "lines": 181,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "web/src/vite-env.d.ts",
+  "lines": 10,
+  "A": 1,
+  "eA": 0,
+  "gA": 0.63,
+  "B": 0,
+  "eB": 1,
+  "gB": -0.63,
+  "C": 0,
+  "eC": 1,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    1,
+    1
+   ],
+   "e2": [
+    0,
+    1,
+    1
+   ],
+   "e3": [
+    0,
+    1,
+    1
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/view-slot.test.tsx",
+  "lines": 233,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/views/Products.tsx",
+  "lines": 199,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/projects/ui/views/Portfolio.tsx",
+  "lines": 169,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/relationships/ui/views/People.tsx",
+  "lines": 233,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/ui/views/Almanac.tsx",
+  "lines": 432,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/CampaignsSection.tsx",
+  "lines": 163,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "connectors/awsconnect/api/client.test.js",
+  "lines": 86,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/awsconnect/api/upsert.test.js",
+  "lines": 170,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/deputy/api/upsert.test.js",
+  "lines": 187,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/dropbox/api/dropbox-client.test.js",
+  "lines": 395,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "connectors/github/api/sync.test.js",
+  "lines": 168,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/googlereviews/api/client.test.js",
+  "lines": 116,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/googlereviews/api/sync.test.js",
+  "lines": 273,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/googlereviews/api/upsert.test.js",
+  "lines": 216,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/linkedin/api/bl00.test.js",
+  "lines": 68,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/linkedin/api/bl01.test.js",
+  "lines": 70,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/linkedin/api/bl02.test.js",
+  "lines": 88,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/linkedin/api/bl03.test.js",
+  "lines": 91,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/linkedin/api/bl04.test.js",
+  "lines": 81,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/linkedin/api/bl05.test.js",
+  "lines": 84,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/onedrive/api/graph-client.test.js",
+  "lines": 434,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "connectors/rezdy/api/upsert.test.js",
+  "lines": 344,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/sonas/api/client.test.js",
+  "lines": 264,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/sonas/api/upsert.test.js",
+  "lines": 325,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/spar/api/upsert.test.js",
+  "lines": 212,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/tiktok/api/credentials.test.js",
+  "lines": 141,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/xero/api/sync.test.js",
+  "lines": 327,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/xero/api/upsert.test.js",
+  "lines": 242,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/api/decode.test.js",
+  "lines": 140,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/api/instance.test.js",
+  "lines": 75,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/api/jobs-a.test.js",
+  "lines": 307,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/customer-service/api/read.test.js",
+  "lines": 99,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/customer-service/api/transcripts.test.js",
+  "lines": 118,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/api/deals.test.js",
+  "lines": 212,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/library/api/read.test.js",
+  "lines": 164,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/partnership/api/read.test.js",
+  "lines": 302,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/projects/api/derive.test.js",
+  "lines": 162,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/projects/api/read.test.js",
+  "lines": 338,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/publicity/api/cursor.test.js",
+  "lines": 155,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/publicity/api/look-claim.test.js",
+  "lines": 116,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/relationships/api/read.test.js",
+  "lines": 663,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    6
+   ]
+  }
+ },
+ {
+  "file": "spheres/reputation/api/dismiss-plural.test.js",
+  "lines": 51,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/reputation/api/read.test.js",
+  "lines": 168,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/almanac.test.js",
+  "lines": 450,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/config.test.js",
+  "lines": 104,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/read.test.js",
+  "lines": 464,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/reconcile-logic.test.js",
+  "lines": 231,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/reconcile.test.js",
+  "lines": 203,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/ai01.test.js",
+  "lines": 87,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/ai02.test.js",
+  "lines": 157,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/ai03.test.js",
+  "lines": 98,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/bi02.test.js",
+  "lines": 103,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/contacts-filter.test.js",
+  "lines": 233,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/drafts.test.js",
+  "lines": 227,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/flip-subset.test.js",
+  "lines": 129,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/freshness.test.js",
+  "lines": 53,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/performance.test.js",
+  "lines": 362,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/stage-cursor.test.js",
+  "lines": 142,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/anthropic.test.js",
+  "lines": 81,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/chat.test.js",
+  "lines": 214,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/click-log.test.js",
+  "lines": 33,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/contract.test.js",
+  "lines": 200,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/credential-manifests.test.js",
+  "lines": 80,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/deepseek.test.js",
+  "lines": 63,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/events.test.js",
+  "lines": 68,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/job-claims.test.js",
+  "lines": 197,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/ollama.test.js",
+  "lines": 50,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/ready.test.js",
+  "lines": 114,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/runbook.test.js",
+  "lines": 46,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/spar-pipeline.walls.test.js",
+  "lines": 236,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/stage-advance.test.js",
+  "lines": 146,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/tenancy.test.js",
+  "lines": 139,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "server/shared/trail.test.js",
+  "lines": 81,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/venue-date.test.js",
+  "lines": 67,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 2,
+  "gB": -1.26,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "B low",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "server/shared/model-api.js",
+  "lines": 14,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 4,
+  "eB": 5,
+  "gB": -0.2,
+  "C": 12,
+  "eC": 6,
+  "leak": 3,
+  "score": 9,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    5,
+    9,
+    16
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/interaction-context.ts",
+  "lines": 262,
+  "A": 2,
+  "eA": 4,
+  "gA": -0.63,
+  "B": 11,
+  "eB": 6,
+  "gB": 0.55,
+  "C": 53,
+  "eC": 9,
+  "leak": 9,
+  "score": 43,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    5,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    6,
+    9
+   ],
+   "e3": [
+    4,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "agent/system-prompt.js",
+  "lines": 37,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 11,
+  "eB": 3,
+  "gB": 1.18,
+  "C": 26,
+  "eC": 5,
+  "leak": 10,
+  "score": 24,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/library/api/hits.js",
+  "lines": 86,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 18,
+  "eB": 5,
+  "gB": 1.17,
+  "C": 98,
+  "eC": 8,
+  "leak": 17,
+  "score": 93,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/api/jobs-a.js",
+  "lines": 399,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 9,
+  "eB": 5,
+  "gB": 0.54,
+  "C": 20,
+  "eC": 7,
+  "leak": 8,
+  "score": 18,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "spheres/projects/api/read.js",
+  "lines": 652,
+  "A": 1,
+  "eA": 3,
+  "gA": -1.0,
+  "B": 5,
+  "eB": 6,
+  "gB": -0.17,
+  "C": 15,
+  "eC": 10,
+  "leak": 5,
+  "score": 15,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    6,
+    10
+   ],
+   "e2": [
+    3,
+    6,
+    9
+   ],
+   "e3": [
+    3,
+    12,
+    25
+   ]
+  }
+ },
+ {
+  "file": "server/shared/datasets.js",
+  "lines": 72,
+  "A": 3,
+  "eA": 8,
+  "gA": -0.89,
+  "B": 9,
+  "eB": 12,
+  "gB": -0.26,
+  "C": 38,
+  "eC": 25,
+  "leak": 6,
+  "score": 25,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    20,
+    10,
+    25
+   ],
+   "e2": [
+    8,
+    15,
+    25
+   ],
+   "e3": [
+    6,
+    12,
+    22
+   ]
+  }
+ },
+ {
+  "file": "server/shared/anthropic.js",
+  "lines": 63,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 14,
+  "eB": 6,
+  "gB": 0.77,
+  "C": 58,
+  "eC": 8,
+  "leak": 12,
+  "score": 50,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    4,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "connectors/instagram/api/shortcode.js",
+  "lines": 45,
+  "A": 3,
+  "eA": 3,
+  "gA": 0.0,
+  "B": 14,
+  "eB": 4,
+  "gB": 1.14,
+  "C": 131,
+  "eC": 7,
+  "leak": 11,
+  "score": 103,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    3,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    4,
+    8
+   ]
+  }
+ },
+ {
+  "file": "agent/agreement.test.js",
+  "lines": 263,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 7,
+  "eB": 2,
+  "gB": 1.14,
+  "C": 11,
+  "eC": 3,
+  "leak": 7,
+  "score": 11,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    1,
+    2
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/PeriodPicker.tsx",
+  "lines": 192,
+  "A": 3,
+  "eA": 2,
+  "gA": 0.37,
+  "B": 9,
+  "eB": 4,
+  "gB": 0.74,
+  "C": 23,
+  "eC": 6,
+  "leak": 6,
+  "score": 15,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/export.ts",
+  "lines": 208,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 10,
+  "eB": 3,
+  "gB": 1.1,
+  "C": 134,
+  "eC": 4,
+  "leak": 9,
+  "score": 121,
+  "flag": "B high",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/api/meetings.js",
+  "lines": 241,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 3,
+  "eB": 5,
+  "gB": -0.46,
+  "C": 51,
+  "eC": 7,
+  "leak": 2,
+  "score": 34,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    2,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    6,
+    11
+   ]
+  }
+ },
+ {
+  "file": "server/shared/closure.js",
+  "lines": 87,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 3,
+  "eB": 5,
+  "gB": -0.46,
+  "C": 39,
+  "eC": 7,
+  "leak": 2,
+  "score": 26,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    5,
+    7
+   ],
+   "e3": [
+    4,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/performance.js",
+  "lines": 642,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 3,
+  "eB": 5,
+  "gB": -0.46,
+  "C": 27,
+  "eC": 8,
+  "leak": 2,
+  "score": 18,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    5,
+    8
+   ],
+   "e2": [
+    2,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    7,
+    14
+   ]
+  }
+ },
+ {
+  "file": "connectors/tiktok/api/insights-sync.js",
+  "lines": 181,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 3,
+  "eB": 5,
+  "gB": -0.46,
+  "C": 17,
+  "eC": 7,
+  "leak": 2,
+  "score": 11,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    6,
+    11
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/chat-starters.ts",
+  "lines": 65,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 5,
+  "eB": 3,
+  "gB": 0.46,
+  "C": 10,
+  "eC": 4,
+  "leak": 4,
+  "score": 8,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    2,
+    3
+   ],
+   "e2": [
+    2,
+    3,
+    4
+   ],
+   "e3": [
+    2,
+    4,
+    6
+   ]
+  }
+ },
+ {
+  "file": "server/shared/db.js",
+  "lines": 92,
+  "A": 44,
+  "eA": 25,
+  "gA": 0.51,
+  "B": 38,
+  "eB": 20,
+  "gB": 0.58,
+  "C": 104,
+  "eC": 30,
+  "leak": 15,
+  "score": 41,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    25,
+    8,
+    15
+   ],
+   "e2": [
+    10,
+    20,
+    30
+   ],
+   "e3": [
+    25,
+    28,
+    55
+   ]
+  }
+ },
+ {
+  "file": "server/shared/job-claims.js",
+  "lines": 108,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 13,
+  "eB": 6,
+  "gB": 0.7,
+  "C": 47,
+  "eC": 8,
+  "leak": 11,
+  "score": 40,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/Board.tsx",
+  "lines": 445,
+  "A": 7,
+  "eA": 8,
+  "gA": -0.12,
+  "B": 28,
+  "eB": 10,
+  "gB": 0.94,
+  "C": 138,
+  "eC": 15,
+  "leak": 21,
+  "score": 104,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    8,
+    4,
+    6
+   ],
+   "e2": [
+    6,
+    10,
+    15
+   ],
+   "e3": [
+    8,
+    12,
+    22
+   ]
+  }
+ },
+ {
+  "file": "connectors/instagram/api/insights-sync.js",
+  "lines": 512,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 9,
+  "eB": 6,
+  "gB": 0.37,
+  "C": 70,
+  "eC": 9,
+  "leak": 8,
+  "score": 62,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    6,
+    9
+   ],
+   "e3": [
+    2,
+    8,
+    16
+   ]
+  }
+ },
+ {
+  "file": "agent/tools.js",
+  "lines": 202,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 9,
+  "eB": 6,
+  "gB": 0.37,
+  "C": 61,
+  "eC": 10,
+  "leak": 8,
+  "score": 54,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    7,
+    10
+   ],
+   "e3": [
+    2,
+    6,
+    11
+   ]
+  }
+ },
+ {
+  "file": "spheres/projects/ui/views/Gantt.tsx",
+  "lines": 1113,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 9,
+  "eB": 3,
+  "gB": 1.0,
+  "C": 32,
+  "eC": 4,
+  "leak": 8,
+  "score": 28,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/bi01.test.js",
+  "lines": 372,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 6,
+  "eB": 2,
+  "gB": 1.0,
+  "C": 25,
+  "eC": 2,
+  "leak": 6,
+  "score": 25,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/ui/ConfirmMove.tsx",
+  "lines": 74,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 6,
+  "eB": 2,
+  "gB": 1.0,
+  "C": 27,
+  "eC": 3,
+  "leak": 5,
+  "score": 22,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "connectors/rezdy/api/rezdy-client.js",
+  "lines": 156,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 6,
+  "eB": 4,
+  "gB": 0.37,
+  "C": 26,
+  "eC": 6,
+  "leak": 5,
+  "score": 22,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    5,
+    10
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/PerformanceSection.tsx",
+  "lines": 1026,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 3,
+  "gB": -1.0,
+  "C": 15,
+  "eC": 4,
+  "leak": 1,
+  "score": 15,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    6,
+    11
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/ChatAssistant.tsx",
+  "lines": 433,
+  "A": 0,
+  "eA": 1,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 3,
+  "gB": -0.37,
+  "C": 9,
+  "eC": 4,
+  "leak": 2,
+  "score": 9,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    6,
+    11
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/views/ProfitAndLoss.tsx",
+  "lines": 452,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 3,
+  "gB": -1.0,
+  "C": 9,
+  "eC": 4,
+  "leak": 1,
+  "score": 9,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/CampaignBoard.tsx",
+  "lines": 605,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 3,
+  "gB": -1.0,
+  "C": 8,
+  "eC": 4,
+  "leak": 1,
+  "score": 8,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "server/shared/party.test.js",
+  "lines": 454,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 6,
+  "eB": 2,
+  "gB": 1.0,
+  "C": 6,
+  "eC": 3,
+  "leak": 6,
+  "score": 6,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/tenant-conformance.test.js",
+  "lines": 250,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 6,
+  "eB": 2,
+  "gB": 1.0,
+  "C": 6,
+  "eC": 3,
+  "leak": 6,
+  "score": 6,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    1,
+    1
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "web/src/ui/highlight.ts",
+  "lines": 59,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 2,
+  "eB": 3,
+  "gB": -0.37,
+  "C": 7,
+  "eC": 4,
+  "leak": 1,
+  "score": 4,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/customer-service/ui/views/Calls.tsx",
+  "lines": 761,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 3,
+  "gB": -1.0,
+  "C": 2,
+  "eC": 4,
+  "leak": 1,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/dispatch.test.js",
+  "lines": 430,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 3,
+  "gB": -1.0,
+  "C": 1,
+  "eC": 4,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    1,
+    1
+   ],
+   "e2": [
+    0,
+    3,
+    4
+   ],
+   "e3": [
+    0,
+    3,
+    6
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/AccessTenants.tsx",
+  "lines": 242,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 3,
+  "gB": -1.0,
+  "C": 3,
+  "eC": 4,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "spheres/projects/api/statements.js",
+  "lines": 115,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 3,
+  "gB": -1.0,
+  "C": 11,
+  "eC": 5,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/projects/ui/api.ts",
+  "lines": 272,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 11,
+  "eB": 4,
+  "gB": 0.92,
+  "C": 146,
+  "eC": 6,
+  "leak": 9,
+  "score": 119,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "server/shared/secret-box.js",
+  "lines": 43,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 9,
+  "eB": 5,
+  "gB": 0.54,
+  "C": 16,
+  "eC": 6,
+  "leak": 7,
+  "score": 12,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    4,
+    7,
+    12
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/labour-matrix.ts",
+  "lines": 137,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 3,
+  "eB": 4,
+  "gB": -0.26,
+  "C": 75,
+  "eC": 5,
+  "leak": 2,
+  "score": 50,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    2,
+    3
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "agent/drive-tools.js",
+  "lines": 163,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 8,
+  "eB": 6,
+  "gB": 0.26,
+  "C": 26,
+  "eC": 9,
+  "leak": 7,
+  "score": 23,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    2,
+    6,
+    10
+   ],
+   "e2": [
+    3,
+    6,
+    9
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "connectors/googlereviews/api/sync.js",
+  "lines": 232,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 3,
+  "eB": 4,
+  "gB": -0.26,
+  "C": 6,
+  "eC": 6,
+  "leak": 3,
+  "score": 6,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/api/instance.js",
+  "lines": 58,
+  "A": 0,
+  "eA": 1,
+  "gA": -0.63,
+  "B": 3,
+  "eB": 4,
+  "gB": -0.26,
+  "C": 3,
+  "eC": 5,
+  "leak": 3,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    0,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/ui/week.ts",
+  "lines": 91,
+  "A": 3,
+  "eA": 2,
+  "gA": 0.37,
+  "B": 7,
+  "eB": 4,
+  "gB": 0.51,
+  "C": 66,
+  "eC": 5,
+  "leak": 5,
+  "score": 47,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    2,
+    3
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/error-codes.ts",
+  "lines": 213,
+  "A": 9,
+  "eA": 6,
+  "gA": 0.37,
+  "B": 14,
+  "eB": 8,
+  "gB": 0.51,
+  "C": 66,
+  "eC": 12,
+  "leak": 5,
+  "score": 24,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    6,
+    4,
+    6
+   ],
+   "e2": [
+    5,
+    8,
+    12
+   ],
+   "e3": [
+    9,
+    15,
+    28
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/moves.js",
+  "lines": 112,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 4,
+  "eB": 5,
+  "gB": -0.2,
+  "C": 30,
+  "eC": 6,
+  "leak": 3,
+  "score": 22,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/assistant-runtime.ts",
+  "lines": 268,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 5,
+  "eB": 4,
+  "gB": 0.2,
+  "C": 19,
+  "eC": 5,
+  "leak": 4,
+  "score": 15,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    4,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "connectors/deputy/api/deputy-client.js",
+  "lines": 135,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 5,
+  "eB": 4,
+  "gB": 0.2,
+  "C": 15,
+  "eC": 6,
+  "leak": 4,
+  "score": 12,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    5,
+    10
+   ]
+  }
+ },
+ {
+  "file": "connectors/awsconnect/api/aws-client.js",
+  "lines": 132,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 4,
+  "eB": 5,
+  "gB": -0.2,
+  "C": 9,
+  "eC": 8,
+  "leak": 3,
+  "score": 7,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    5,
+    8
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    5,
+    10
+   ]
+  }
+ },
+ {
+  "file": "connectors/googlechat/api/chat-client.js",
+  "lines": 119,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 5,
+  "eB": 4,
+  "gB": 0.2,
+  "C": 7,
+  "eC": 6,
+  "leak": 4,
+  "score": 6,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    5,
+    10
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/overseer.ts",
+  "lines": 32,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 3,
+  "eB": 5,
+  "gB": -0.46,
+  "C": 5,
+  "eC": 6,
+  "leak": 1,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    3,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    4,
+    7,
+    12
+   ]
+  }
+ },
+ {
+  "file": "server/shared/ollama.js",
+  "lines": 51,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 10,
+  "eB": 4,
+  "gB": 0.83,
+  "C": 27,
+  "eC": 5,
+  "leak": 8,
+  "score": 22,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/ui/views/Pending.tsx",
+  "lines": 164,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 5,
+  "eB": 2,
+  "gB": 0.83,
+  "C": 14,
+  "eC": 3,
+  "leak": 5,
+  "score": 14,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/tenant-registry.test.js",
+  "lines": 132,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 5,
+  "eB": 2,
+  "gB": 0.83,
+  "C": 5,
+  "eC": 2,
+  "leak": 5,
+  "score": 5,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "scripts/stage-flip-harness.mjs",
+  "lines": 142,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 5,
+  "eB": 2,
+  "gB": 0.83,
+  "C": 5,
+  "eC": 3,
+  "leak": 5,
+  "score": 5,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/matrix.ts",
+  "lines": 109,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 8,
+  "eB": 5,
+  "gB": 0.43,
+  "C": 66,
+  "eC": 7,
+  "leak": 6,
+  "score": 50,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    3,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "server/shared/walls.js",
+  "lines": 159,
+  "A": 4,
+  "eA": 5,
+  "gA": -0.2,
+  "B": 15,
+  "eB": 8,
+  "gB": 0.57,
+  "C": 65,
+  "eC": 11,
+  "leak": 11,
+  "score": 48,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    5,
+    5,
+    8
+   ],
+   "e2": [
+    5,
+    8,
+    11
+   ],
+   "e3": [
+    6,
+    11,
+    20
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/chat-handle.tsx",
+  "lines": 39,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 7,
+  "eB": 3,
+  "gB": 0.77,
+  "C": 35,
+  "eC": 4,
+  "leak": 5,
+  "score": 25,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    2,
+    3
+   ],
+   "e2": [
+    2,
+    3,
+    4
+   ],
+   "e3": [
+    2,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/auth.test.js",
+  "lines": 2080,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 7,
+  "eB": 3,
+  "gB": 0.77,
+  "C": 10,
+  "eC": 4,
+  "leak": 7,
+  "score": 10,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    1,
+    1
+   ],
+   "e2": [
+    0,
+    3,
+    4
+   ],
+   "e3": [
+    0,
+    3,
+    6
+   ]
+  }
+ },
+ {
+  "file": "connectors/onedrive/api/graph-client.js",
+  "lines": 343,
+  "A": 3,
+  "eA": 2,
+  "gA": 0.37,
+  "B": 4,
+  "eB": 6,
+  "gB": -0.37,
+  "C": 50,
+  "eC": 9,
+  "leak": 1,
+  "score": 12,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    6,
+    9
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/use-pathname.ts",
+  "lines": 29,
+  "A": 6,
+  "eA": 5,
+  "gA": 0.17,
+  "B": 9,
+  "eB": 5,
+  "gB": 0.54,
+  "C": 26,
+  "eC": 8,
+  "leak": 3,
+  "score": 9,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    8,
+    1,
+    2
+   ],
+   "e2": [
+    5,
+    7,
+    9
+   ],
+   "e3": [
+    4,
+    5,
+    8
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/api/read.js",
+  "lines": 282,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 13,
+  "eB": 6,
+  "gB": 0.7,
+  "C": 41,
+  "eC": 10,
+  "leak": 13,
+  "score": 41,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    6,
+    10
+   ],
+   "e2": [
+    2,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    8,
+    15
+   ]
+  }
+ },
+ {
+  "file": "connectors/awsconnect/api/sigv4.js",
+  "lines": 76,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 8,
+  "eB": 4,
+  "gB": 0.63,
+  "C": 47,
+  "eC": 5,
+  "leak": 6,
+  "score": 35,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    3,
+    5
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/api/decode.js",
+  "lines": 153,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 70,
+  "eC": 5,
+  "leak": 1,
+  "score": 35,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/chat-store.ts",
+  "lines": 222,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 4,
+  "eB": 4,
+  "gB": 0.0,
+  "C": 34,
+  "eC": 5,
+  "leak": 3,
+  "score": 26,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "spheres/reputation/ui/ReviewCard.tsx",
+  "lines": 113,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 6,
+  "eB": 3,
+  "gB": 0.63,
+  "C": 25,
+  "eC": 4,
+  "leak": 4,
+  "score": 17,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    2,
+    3
+   ],
+   "e2": [
+    2,
+    3,
+    4
+   ],
+   "e3": [
+    2,
+    4,
+    6
+   ]
+  }
+ },
+ {
+  "file": "connectors/googlereviews/api/import-historical.js",
+  "lines": 105,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 8,
+  "eB": 4,
+  "gB": 0.63,
+  "C": 15,
+  "eC": 5,
+  "leak": 7,
+  "score": 13,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/CampaignDelete.tsx",
+  "lines": 67,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 4,
+  "eB": 2,
+  "gB": 0.63,
+  "C": 24,
+  "eC": 3,
+  "leak": 2,
+  "score": 12,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    2,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    2,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "connectors/googlereviews/api/serpapi-client.js",
+  "lines": 70,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 4,
+  "eB": 4,
+  "gB": 0.0,
+  "C": 16,
+  "eC": 5,
+  "leak": 3,
+  "score": 12,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    3,
+    5
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "spheres/customer-service/api/calls.test.js",
+  "lines": 199,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 11,
+  "eC": 2,
+  "leak": 1,
+  "score": 11,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/clover/api/clover-client.js",
+  "lines": 137,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 4,
+  "eB": 4,
+  "gB": 0.0,
+  "C": 14,
+  "eC": 6,
+  "leak": 3,
+  "score": 10,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    5,
+    10
+   ]
+  }
+ },
+ {
+  "file": "connectors/github/api/github-client.js",
+  "lines": 156,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 4,
+  "eB": 4,
+  "gB": 0.0,
+  "C": 12,
+  "eC": 5,
+  "leak": 3,
+  "score": 9,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    3,
+    5
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    5,
+    10
+   ]
+  }
+ },
+ {
+  "file": "spheres/customer-service/api/transcripts.js",
+  "lines": 90,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 4,
+  "gB": -0.63,
+  "C": 15,
+  "eC": 6,
+  "leak": 1,
+  "score": 8,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/publicity/api/jobs.js",
+  "lines": 110,
+  "A": 1,
+  "eA": 2,
+  "gA": -0.63,
+  "B": 4,
+  "eB": 4,
+  "gB": 0.0,
+  "C": 8,
+  "eC": 5,
+  "leak": 3,
+  "score": 6,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    6,
+    11
+   ]
+  }
+ },
+ {
+  "file": "spheres/relationships/ui/views/Matches.tsx",
+  "lines": 321,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 4,
+  "eB": 2,
+  "gB": 0.63,
+  "C": 5,
+  "eC": 3,
+  "leak": 4,
+  "score": 5,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/manifest.test.js",
+  "lines": 122,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 4,
+  "eB": 2,
+  "gB": 0.63,
+  "C": 5,
+  "eC": 2,
+  "leak": 4,
+  "score": 5,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/route-manifest.test.js",
+  "lines": 66,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 4,
+  "eB": 2,
+  "gB": 0.63,
+  "C": 5,
+  "eC": 3,
+  "leak": 4,
+  "score": 5,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    1,
+    1
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/access-sections.ts",
+  "lines": 45,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 3,
+  "eB": 4,
+  "gB": -0.26,
+  "C": 15,
+  "eC": 6,
+  "leak": 1,
+  "score": 5,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    6,
+    2,
+    3
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    4,
+    6
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/api/walls.test.js",
+  "lines": 153,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 5,
+  "eC": 2,
+  "leak": 1,
+  "score": 5,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "server/shared/invariants.test.js",
+  "lines": 142,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 4,
+  "eB": 2,
+  "gB": 0.63,
+  "C": 4,
+  "eC": 3,
+  "leak": 4,
+  "score": 4,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    1,
+    1
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/schema-conformance.test.js",
+  "lines": 110,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 4,
+  "eB": 2,
+  "gB": 0.63,
+  "C": 4,
+  "eC": 3,
+  "leak": 4,
+  "score": 4,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    1,
+    1
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/ui/views/ByPerson.tsx",
+  "lines": 196,
+  "A": 2,
+  "eA": 1,
+  "gA": 0.63,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 3,
+  "eC": 3,
+  "leak": 2,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/jobsdesc.test.js",
+  "lines": 237,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 3,
+  "eC": 2,
+  "leak": 1,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "scripts/import-meta-exports.test.mjs",
+  "lines": 151,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 1,
+  "gB": 0.63,
+  "C": 2,
+  "eC": 2,
+  "leak": 2,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "file": "connectors/spar/api/parse.test.js",
+  "lines": 321,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 2,
+  "eC": 2,
+  "leak": 1,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/ai00.test.js",
+  "lines": 158,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 2,
+  "eC": 2,
+  "leak": 1,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/walls.test.js",
+  "lines": 150,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 2,
+  "eC": 2,
+  "leak": 1,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "connectors/otter/api/bo02.test.js",
+  "lines": 141,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 1,
+  "eC": 2,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/moves.test.js",
+  "lines": 246,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 1,
+  "eC": 2,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/bi03.test.js",
+  "lines": 432,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 1,
+  "eC": 2,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/jobrun-version.test.js",
+  "lines": 71,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 1,
+  "eC": 2,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/closure.test.js",
+  "lines": 105,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 1,
+  "eC": 2,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/connector-health.test.js",
+  "lines": 142,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 1,
+  "eC": 2,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/job-runs.test.js",
+  "lines": 144,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 1,
+  "eC": 2,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "server/shared/sync-runs.test.js",
+  "lines": 408,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 1,
+  "eC": 3,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    6
+   ]
+  }
+ },
+ {
+  "file": "server/shared/versions.test.js",
+  "lines": 49,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 1,
+  "eC": 2,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "scripts/import-env-credentials.mjs",
+  "lines": 103,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 1,
+  "eC": 3,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/letterhead.ts",
+  "lines": 66,
+  "A": 3,
+  "eA": 2,
+  "gA": 0.37,
+  "B": 3,
+  "eB": 4,
+  "gB": -0.26,
+  "C": 14,
+  "eC": 5,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/library/ui/ItemOverlay.tsx",
+  "lines": 91,
+  "A": 2,
+  "eA": 1,
+  "gA": 0.63,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 6,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/reputation/ui/PlaceChips.tsx",
+  "lines": 30,
+  "A": 2,
+  "eA": 1,
+  "gA": 0.63,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 10,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    2,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/sweep.ts",
+  "lines": 20,
+  "A": 2,
+  "eA": 1,
+  "gA": 0.63,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 4,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    1,
+    2
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    2,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/useUnreadNotifier.ts",
+  "lines": 76,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 3,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    2
+   ],
+   "e3": [
+    2,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/PerformanceChart.tsx",
+  "lines": 281,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 2,
+  "gB": -0.63,
+  "C": 5,
+  "eC": 3,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    2,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "scripts/import-otter-corpus.test.js",
+  "lines": 340,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 0,
+  "eB": 1,
+  "gB": -0.63,
+  "C": 0,
+  "eC": 2,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ {
+  "file": "server/shared/tenancy.js",
+  "lines": 124,
+  "A": 6,
+  "eA": 7,
+  "gA": -0.14,
+  "B": 16,
+  "eB": 10,
+  "gB": 0.43,
+  "C": 61,
+  "eC": 14,
+  "leak": 11,
+  "score": 42,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    8,
+    5,
+    8
+   ],
+   "e2": [
+    6,
+    10,
+    14
+   ],
+   "e3": [
+    7,
+    12,
+    22
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/chat.ts",
+  "lines": 254,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 5,
+  "eB": 4,
+  "gB": 0.2,
+  "C": 43,
+  "eC": 5,
+  "leak": 3,
+  "score": 26,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    3,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    5,
+    9,
+    16
+   ]
+  }
+ },
+ {
+  "file": "server/shared/db-errors.js",
+  "lines": 19,
+  "A": 7,
+  "eA": 5,
+  "gA": 0.31,
+  "B": 8,
+  "eB": 6,
+  "gB": 0.26,
+  "C": 9,
+  "eC": 10,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    6,
+    3,
+    5
+   ],
+   "e2": [
+    5,
+    8,
+    10
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/org-identity.ts",
+  "lines": 103,
+  "A": 3,
+  "eA": 3,
+  "gA": 0.0,
+  "B": 11,
+  "eB": 6,
+  "gB": 0.55,
+  "C": 20,
+  "eC": 8,
+  "leak": 9,
+  "score": 16,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/components.tsx",
+  "lines": 366,
+  "A": 6,
+  "eA": 5,
+  "gA": 0.17,
+  "B": 9,
+  "eB": 6,
+  "gB": 0.37,
+  "C": 131,
+  "eC": 8,
+  "leak": 3,
+  "score": 44,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    8,
+    3,
+    5
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    5,
+    8,
+    15
+   ]
+  }
+ },
+ {
+  "file": "connectors/facebook/api/insights-sync.js",
+  "lines": 311,
+  "A": 3,
+  "eA": 2,
+  "gA": 0.37,
+  "B": 6,
+  "eB": 5,
+  "gB": 0.17,
+  "C": 52,
+  "eC": 7,
+  "leak": 5,
+  "score": 43,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    7,
+    14
+   ]
+  }
+ },
+ {
+  "file": "connectors/sonas/api/sonas-client.js",
+  "lines": 376,
+  "A": 3,
+  "eA": 2,
+  "gA": 0.37,
+  "B": 6,
+  "eB": 5,
+  "gB": 0.17,
+  "C": 56,
+  "eC": 7,
+  "leak": 4,
+  "score": 37,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "server/shared/credential-manifests.js",
+  "lines": 77,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 5,
+  "eB": 6,
+  "gB": -0.17,
+  "C": 27,
+  "eC": 8,
+  "leak": 3,
+  "score": 16,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    3,
+    5,
+    8
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    4,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "server/shared/trail.js",
+  "lines": 45,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 5,
+  "eB": 6,
+  "gB": -0.17,
+  "C": 27,
+  "eC": 8,
+  "leak": 3,
+  "score": 16,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    3,
+    5
+   ],
+   "e2": [
+    4,
+    6,
+    8
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "server/shared/runbook.js",
+  "lines": 68,
+  "A": 4,
+  "eA": 4,
+  "gA": 0.0,
+  "B": 12,
+  "eB": 7,
+  "gB": 0.49,
+  "C": 51,
+  "eC": 9,
+  "leak": 8,
+  "score": 34,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    4,
+    6
+   ],
+   "e2": [
+    4,
+    7,
+    9
+   ],
+   "e3": [
+    6,
+    10,
+    18
+   ]
+  }
+ },
+ {
+  "file": "scripts/import-otter-corpus.mjs",
+  "lines": 755,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 5,
+  "eB": 3,
+  "gB": 0.46,
+  "C": 61,
+  "eC": 5,
+  "leak": 5,
+  "score": 61,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    3,
+    5
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    0,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "server/shared/grants.test.js",
+  "lines": 318,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 5,
+  "eB": 3,
+  "gB": 0.46,
+  "C": 16,
+  "eC": 4,
+  "leak": 5,
+  "score": 16,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    0,
+    3,
+    4
+   ],
+   "e3": [
+    0,
+    4,
+    8
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/valid.js",
+  "lines": 30,
+  "A": 4,
+  "eA": 3,
+  "gA": 0.26,
+  "B": 4,
+  "eB": 5,
+  "gB": -0.2,
+  "C": 21,
+  "eC": 8,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    3,
+    4
+   ],
+   "e2": [
+    4,
+    6,
+    8
+   ],
+   "e3": [
+    3,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/grants.ts",
+  "lines": 83,
+  "A": 6,
+  "eA": 8,
+  "gA": -0.26,
+  "B": 7,
+  "eB": 8,
+  "gB": -0.12,
+  "C": 47,
+  "eC": 11,
+  "leak": 2,
+  "score": 13,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    8,
+    5,
+    8
+   ],
+   "e2": [
+    5,
+    8,
+    11
+   ],
+   "e3": [
+    8,
+    12,
+    22
+   ]
+  }
+ },
+ {
+  "file": "spheres/projects/api/derive.js",
+  "lines": 138,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 6,
+  "eB": 4,
+  "gB": 0.37,
+  "C": 70,
+  "eC": 6,
+  "leak": 5,
+  "score": 58,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "connectors/googlereviews/api/upsert.js",
+  "lines": 183,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 5,
+  "eB": 5,
+  "gB": 0.0,
+  "C": 55,
+  "eC": 8,
+  "leak": 3,
+  "score": 33,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    5,
+    8
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    3,
+    7,
+    14
+   ]
+  }
+ },
+ {
+  "file": "server/shared/manifest.js",
+  "lines": 166,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 6,
+  "eB": 6,
+  "gB": 0.0,
+  "C": 26,
+  "eC": 8,
+  "leak": 4,
+  "score": 17,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    4,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "server/shared/pipeline-fixture.js",
+  "lines": 86,
+  "A": 2,
+  "eA": 3,
+  "gA": -0.37,
+  "B": 5,
+  "eB": 5,
+  "gB": 0.0,
+  "C": 24,
+  "eC": 6,
+  "leak": 3,
+  "score": 14,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    5,
+    2,
+    3
+   ],
+   "e2": [
+    3,
+    5,
+    6
+   ],
+   "e3": [
+    3,
+    5,
+    8
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/api/stage-advance.js",
+  "lines": 252,
+  "A": 3,
+  "eA": 2,
+  "gA": 0.37,
+  "B": 5,
+  "eB": 5,
+  "gB": 0.0,
+  "C": 14,
+  "eC": 7,
+  "leak": 4,
+  "score": 11,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    2,
+    6,
+    11
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/ui/views/MeetingFollowUp.tsx",
+  "lines": 134,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 2,
+  "gB": 0.37,
+  "C": 17,
+  "eC": 3,
+  "leak": 2,
+  "score": 11,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "connectors/dropbox/api/dropbox-client.js",
+  "lines": 359,
+  "A": 3,
+  "eA": 2,
+  "gA": 0.37,
+  "B": 6,
+  "eB": 6,
+  "gB": 0.0,
+  "C": 20,
+  "eC": 9,
+  "leak": 3,
+  "score": 10,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    5,
+    8
+   ],
+   "e2": [
+    3,
+    6,
+    9
+   ],
+   "e3": [
+    2,
+    6,
+    12
+   ]
+  }
+ },
+ {
+  "file": "server/shared/credentials.test.js",
+  "lines": 447,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 2,
+  "gB": 0.37,
+  "C": 10,
+  "eC": 3,
+  "leak": 3,
+  "score": 10,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    6
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/AccessApps.tsx",
+  "lines": 459,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 3,
+  "gB": -0.37,
+  "C": 8,
+  "eC": 4,
+  "leak": 1,
+  "score": 4,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "web/src/lib/interaction-context.test.ts",
+  "lines": 296,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 2,
+  "gB": 0.37,
+  "C": 3,
+  "eC": 3,
+  "leak": 3,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    2,
+    4
+   ]
+  }
+ },
+ {
+  "file": "connectors/otter/api/bo01.test.js",
+  "lines": 169,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 2,
+  "gB": 0.37,
+  "C": 3,
+  "eC": 2,
+  "leak": 3,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/api/meetings.test.js",
+  "lines": 230,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 2,
+  "gB": 0.37,
+  "C": 3,
+  "eC": 2,
+  "leak": 3,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/tiktok/api/tiktok-client.js",
+  "lines": 134,
+  "A": 3,
+  "eA": 2,
+  "gA": 0.37,
+  "B": 4,
+  "eB": 4,
+  "gB": 0.0,
+  "C": 9,
+  "eC": 5,
+  "leak": 1,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    3,
+    5
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    5,
+    10
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/AccessPeople.tsx",
+  "lines": 513,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 3,
+  "gB": -0.37,
+  "C": 4,
+  "eC": 4,
+  "leak": 1,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/AccessWalls.tsx",
+  "lines": 249,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 3,
+  "gB": -0.37,
+  "C": 4,
+  "eC": 4,
+  "leak": 1,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "agent/server.test.js",
+  "lines": 549,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 3,
+  "gB": -0.37,
+  "C": 2,
+  "eC": 4,
+  "leak": 2,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    1,
+    2
+   ],
+   "e2": [
+    0,
+    3,
+    4
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/ui/cards.tsx",
+  "lines": 94,
+  "A": 3,
+  "eA": 2,
+  "gA": 0.37,
+  "B": 3,
+  "eB": 3,
+  "gB": 0.0,
+  "C": 8,
+  "eC": 4,
+  "leak": 0,
+  "score": 0,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    2,
+    3
+   ],
+   "e2": [
+    2,
+    3,
+    4
+   ],
+   "e3": [
+    2,
+    4,
+    6
+   ]
+  }
+ },
+ {
+  "file": "connectors/instagram/api/jobs.js",
+  "lines": 559,
+  "A": 3,
+  "eA": 3,
+  "gA": 0.0,
+  "B": 11,
+  "eB": 8,
+  "gB": 0.29,
+  "C": 61,
+  "eC": 14,
+  "leak": 10,
+  "score": 55,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    3,
+    8,
+    14
+   ],
+   "e2": [
+    4,
+    8,
+    12
+   ],
+   "e3": [
+    3,
+    10,
+    20
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/almanac.js",
+  "lines": 296,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 4,
+  "gB": -0.26,
+  "C": 45,
+  "eC": 6,
+  "leak": 2,
+  "score": 30,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    4,
+    6
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "web/src/app/AccessRoles.tsx",
+  "lines": 499,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 4,
+  "eB": 3,
+  "gB": 0.26,
+  "C": 12,
+  "eC": 4,
+  "leak": 3,
+  "score": 9,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "scripts/deploy-skills.mjs",
+  "lines": 93,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 4,
+  "eB": 3,
+  "gB": 0.26,
+  "C": 6,
+  "eC": 4,
+  "leak": 4,
+  "score": 6,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/deepseek.js",
+  "lines": 52,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 4,
+  "gB": -0.26,
+  "C": 18,
+  "eC": 5,
+  "leak": 1,
+  "score": 6,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/ui/windows.tsx",
+  "lines": 40,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 4,
+  "gB": -0.26,
+  "C": 15,
+  "eC": 6,
+  "leak": 1,
+  "score": 5,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    4,
+    6
+   ]
+  }
+ },
+ {
+  "file": "spheres/financial/ui/vocab.ts",
+  "lines": 68,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 4,
+  "gB": -0.26,
+  "C": 13,
+  "eC": 6,
+  "leak": 1,
+  "score": 4,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "server/shared/stage-vocabulary.js",
+  "lines": 118,
+  "A": 4,
+  "eA": 4,
+  "gA": 0.0,
+  "B": 9,
+  "eB": 7,
+  "gB": 0.23,
+  "C": 29,
+  "eC": 9,
+  "leak": 5,
+  "score": 16,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    3,
+    4,
+    6
+   ],
+   "e2": [
+    4,
+    7,
+    9
+   ],
+   "e3": [
+    4,
+    8,
+    14
+   ]
+  }
+ },
+ {
+  "file": "server/shared/stage-advance.js",
+  "lines": 323,
+  "A": 5,
+  "eA": 5,
+  "gA": 0.0,
+  "B": 7,
+  "eB": 9,
+  "gB": -0.23,
+  "C": 30,
+  "eC": 13,
+  "leak": 3,
+  "score": 13,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    5,
+    8
+   ],
+   "e2": [
+    5,
+    9,
+    13
+   ],
+   "e3": [
+    7,
+    13,
+    24
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/perf-derive.ts",
+  "lines": 689,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 5,
+  "eB": 4,
+  "gB": 0.2,
+  "C": 254,
+  "eC": 6,
+  "leak": 3,
+  "score": 152,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    6
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/capture.js",
+  "lines": 31,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 4,
+  "eB": 5,
+  "gB": -0.2,
+  "C": 12,
+  "eC": 8,
+  "leak": 2,
+  "score": 6,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    2,
+    4,
+    6
+   ],
+   "e2": [
+    3,
+    6,
+    8
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "server/shared/contract-helpers.js",
+  "lines": 41,
+  "A": 4,
+  "eA": 4,
+  "gA": 0.0,
+  "B": 5,
+  "eB": 6,
+  "gB": -0.17,
+  "C": 68,
+  "eC": 10,
+  "leak": 1,
+  "score": 14,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    15,
+    5,
+    8
+   ],
+   "e2": [
+    4,
+    7,
+    10
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "server/shared/http-raw.js",
+  "lines": 54,
+  "A": 18,
+  "eA": 20,
+  "gA": -0.1,
+  "B": 20,
+  "eB": 20,
+  "gB": 0.0,
+  "C": 35,
+  "eC": 30,
+  "leak": 2,
+  "score": 4,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    20,
+    6,
+    12
+   ],
+   "e2": [
+    12,
+    20,
+    30
+   ],
+   "e3": [
+    20,
+    20,
+    45
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/reconcile-logic.js",
+  "lines": 165,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 4,
+  "eB": 4,
+  "gB": 0.0,
+  "C": 64,
+  "eC": 5,
+  "leak": 2,
+  "score": 32,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    2,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "server/shared/venue-date.js",
+  "lines": 64,
+  "A": 6,
+  "eA": 6,
+  "gA": 0.0,
+  "B": 10,
+  "eB": 10,
+  "gB": 0.0,
+  "C": 54,
+  "eC": 14,
+  "leak": 4,
+  "score": 22,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    6,
+    4,
+    6
+   ],
+   "e2": [
+    6,
+    10,
+    14
+   ],
+   "e3": [
+    8,
+    12,
+    22
+   ]
+  }
+ },
+ {
+  "file": "spheres/reputation/ui/lanes.ts",
+  "lines": 101,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 3,
+  "gB": 0.0,
+  "C": 33,
+  "eC": 4,
+  "leak": 2,
+  "score": 22,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    1,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/coord/ui/views/Meetings.tsx",
+  "lines": 299,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 19,
+  "eC": 3,
+  "leak": 2,
+  "score": 19,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/sql-static.js",
+  "lines": 408,
+  "A": 3,
+  "eA": 3,
+  "gA": 0.0,
+  "B": 5,
+  "eB": 5,
+  "gB": 0.0,
+  "C": 41,
+  "eC": 7,
+  "leak": 2,
+  "score": 16,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    3,
+    5,
+    7
+   ],
+   "e3": [
+    3,
+    6,
+    10
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/ContactDetail.tsx",
+  "lines": 818,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 3,
+  "gB": 0.0,
+  "C": 12,
+  "eC": 4,
+  "leak": 3,
+  "score": 12,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    1,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    5,
+    9
+   ]
+  }
+ },
+ {
+  "file": "connectors/spar/sync.js",
+  "lines": 175,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 3,
+  "gB": 0.0,
+  "C": 8,
+  "eC": 5,
+  "leak": 3,
+  "score": 8,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    4,
+    5
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/ui/slots.tsx",
+  "lines": 30,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 10,
+  "eC": 3,
+  "leak": 1,
+  "score": 5,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    2,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "connectors/awsconnect/api/presign.js",
+  "lines": 34,
+  "A": 2,
+  "eA": 2,
+  "gA": 0.0,
+  "B": 3,
+  "eB": 3,
+  "gB": 0.0,
+  "C": 12,
+  "eC": 4,
+  "leak": 1,
+  "score": 4,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    2,
+    3,
+    4
+   ],
+   "e2": [
+    2,
+    3,
+    4
+   ],
+   "e3": [
+    1,
+    3,
+    6
+   ]
+  }
+ },
+ {
+  "file": "spheres/relationships/ui/views/PersonPanel.tsx",
+  "lines": 334,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 9,
+  "eC": 3,
+  "leak": 1,
+  "score": 4,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    4,
+    7
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/ui/EntryEditor.tsx",
+  "lines": 115,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 9,
+  "eC": 3,
+  "leak": 1,
+  "score": 4,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/schedule/api/providers.test.js",
+  "lines": 426,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 3,
+  "eC": 3,
+  "leak": 2,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    3
+   ],
+   "e3": [
+    0,
+    3,
+    6
+   ]
+  }
+ },
+ {
+  "file": "server/shared/connector-tenant.test.js",
+  "lines": 134,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 3,
+  "eC": 2,
+  "leak": 2,
+  "score": 3,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/drafts.tsx",
+  "lines": 206,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 5,
+  "eC": 3,
+  "leak": 1,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    2,
+    4,
+    6
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/CampaignWizard.tsx",
+  "lines": 370,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 4,
+  "eC": 3,
+  "leak": 1,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    3
+   ],
+   "e3": [
+    1,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "spheres/social/ui/useAutoSweep.ts",
+  "lines": 82,
+  "A": 1,
+  "eA": 1,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 4,
+  "eC": 3,
+  "leak": 1,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e3",
+  "per": {
+   "e1": [
+    1,
+    2,
+    3
+   ],
+   "e2": [
+    1,
+    2,
+    2
+   ],
+   "e3": [
+    2,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "server/shared/spar-pipeline.test.js",
+  "lines": 444,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 2,
+  "eC": 2,
+  "leak": 2,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    0,
+    0
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    3,
+    5
+   ]
+  }
+ },
+ {
+  "file": "agent/descriptions.test.js",
+  "lines": 126,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 2,
+  "eB": 2,
+  "gB": 0.0,
+  "C": 2,
+  "eC": 2,
+  "leak": 2,
+  "score": 2,
+  "flag": "",
+  "n": 3,
+  "furthest": "e1",
+  "per": {
+   "e1": [
+    0,
+    1,
+    2
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "file": "connectors/awsconnect/api/sigv4.test.js",
+  "lines": 52,
+  "A": 0,
+  "eA": 0,
+  "gA": 0.0,
+  "B": 1,
+  "eB": 1,
+  "gB": 0.0,
+  "C": 1,
+  "eC": 2,
+  "leak": 1,
+  "score": 1,
+  "flag": "",
+  "n": 3,
+  "furthest": "e2",
+  "per": {
+   "e1": [
+    0,
+    1,
+    2
+   ],
+   "e2": [
+    0,
+    2,
+    2
+   ],
+   "e3": [
+    0,
+    1,
+    2
+   ]
+  }
+ }
+]

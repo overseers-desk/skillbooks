@@ -1,0 +1,156 @@
+[
+ {
+  "fact": "Multi-tenant scoping: the tenant dimension and its enforcement",
+  "e1": 40,
+  "e2": 8,
+  "e3": 4,
+  "expected": 8,
+  "files": 306,
+  "sites": 5560,
+  "gap": 3.32,
+  "flag": "scattered"
+ },
+ {
+  "fact": "Dataset / grant vocabulary a route or token may name",
+  "e1": 15,
+  "e2": 6,
+  "e3": 3,
+  "expected": 6,
+  "files": 104,
+  "sites": 745,
+  "gap": 2.6,
+  "flag": "scattered"
+ },
+ {
+  "fact": "Mirror-table upsert convention (first_seen_at / last_seen_at)",
+  "e1": null,
+  "e2": 10,
+  "e3": 6,
+  "expected": 8.0,
+  "files": 46,
+  "sites": 380,
+  "gap": 1.59,
+  "flag": "scattered"
+ },
+ {
+  "fact": "Connector mirror-table name prefix (connector_*)",
+  "e1": 20,
+  "e2": null,
+  "e3": null,
+  "expected": 20,
+  "files": 89,
+  "sites": 194,
+  "gap": 1.36,
+  "flag": "scattered"
+ },
+ {
+  "fact": "Route-declaration contract every sphere/connector publishes (handleApi)",
+  "e1": 10,
+  "e2": 5,
+  "e3": 3,
+  "expected": 5,
+  "files": 55,
+  "sites": 407,
+  "gap": 2.18,
+  "flag": "scattered"
+ },
+ {
+  "fact": "Machine error-code vocabulary and its wire shape",
+  "e1": 2,
+  "e2": 4,
+  "e3": 3,
+  "expected": 3,
+  "files": 34,
+  "sites": 94,
+  "gap": 2.21,
+  "flag": "scattered"
+ },
+ {
+  "fact": "URL-as-state convention for filters and windows",
+  "e1": 15,
+  "e2": null,
+  "e3": 8,
+  "expected": 11.5,
+  "files": 24,
+  "sites": 100,
+  "gap": 0.67,
+  "flag": ""
+ },
+ {
+  "fact": "Doorbell / SSE \"poll now\" event shape",
+  "e1": null,
+  "e2": 4,
+  "e3": null,
+  "expected": 4,
+  "files": 32,
+  "sites": 117,
+  "gap": 1.89,
+  "flag": "scattered"
+ },
+ {
+  "fact": "Wall (secrecy circle) enforcement semantics",
+  "e1": null,
+  "e2": null,
+  "e3": 3,
+  "expected": 3,
+  "files": 20,
+  "sites": 95,
+  "gap": 1.73,
+  "flag": "scattered"
+ },
+ {
+  "fact": "Pipeline stage vocabulary",
+  "e1": null,
+  "e2": 6,
+  "e3": null,
+  "expected": 6,
+  "files": 13,
+  "sites": 17,
+  "gap": 0.7,
+  "flag": ""
+ },
+ {
+  "fact": "Venue-local timezone and calendar arithmetic",
+  "e1": 5,
+  "e2": 5,
+  "e3": 2,
+  "expected": 5,
+  "files": 4,
+  "sites": 5,
+  "gap": -0.2,
+  "flag": ""
+ },
+ {
+  "fact": "Passwordless email sign-in mechanism",
+  "e1": 3,
+  "e2": 3,
+  "e3": 2,
+  "expected": 3,
+  "files": 64,
+  "sites": 145,
+  "gap": 2.79,
+  "flag": "scattered"
+ },
+ {
+  "fact": "Connector HTTP transport: plain node:https, no vendor SDK",
+  "e1": null,
+  "e2": 14,
+  "e3": 12,
+  "expected": 13.0,
+  "files": 3,
+  "sites": 3,
+  "gap": -1.33,
+  "flag": "hidden"
+ },
+ {
+  "fact": "Product working name \"bibi\" pending the marketing rename",
+  "e1": 30,
+  "e2": null,
+  "e3": null,
+  "expected": 30,
+  "files": 2,
+  "sites": 3,
+  "gap": -2.46,
+  "flag": "hidden"
+ }
+]

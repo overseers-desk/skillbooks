@@ -1,0 +1,6185 @@
+[
+ {
+  "file": "web/src/pipeline/api.ts",
+  "A": 16,
+  "B": 104,
+  "C": 1236,
+  "leak": 90,
+  "score": 1070,
+  "vocab": [
+   "r_note",
+   "s_note",
+   "p_note",
+   "a_note",
+   "hasNote",
+   "relTime"
+  ],
+  "lines": 331,
+  "doc": "The spar-pipeline data client, shared by every sphere that runs a spar campaign pipeline: a roster across campaigns, a kanban per campaign, and a contact drawer. The shapes here are the pipeline core; a sphere's own extras , publicity's ..."
+ },
+ {
+  "file": "spheres/schedule/api/providers/local.js",
+  "A": 4,
+  "B": 238,
+  "C": 731,
+  "leak": 235,
+  "score": 722,
+  "vocab": [
+   "local",
+   "toMin",
+   "shiftEnd",
+   "MOVE_SQL",
+   "getEntry"
+  ],
+  "lines": 109,
+  "doc": "The local provider: the sphere's own schedule_entry rows, things on the venue's calendar that no booking platform holds (db/schema.sql owns the shape). There is no slot model: an entry competes for no capacity. There is no external syste..."
+ },
+ {
+  "file": "web/src/lib/auth.ts",
+  "A": 11,
+  "B": 114,
+  "C": 630,
+  "leak": 106,
+  "score": 586,
+  "vocab": [
+   "AppRun",
+   "addedAt",
+   "addedBy",
+   "AppUser",
+   "authHint",
+   "grantsOf"
+  ],
+  "lines": 480,
+  "doc": "Client half of the shell sign-in (server/shared/auth.js). All same-origin, cookie-carried; no token ever touches JS, so nothing here reads or holds a secret \u2014 the HttpOnly session cookie is the browser's whole credential."
+ },
+ {
+  "file": "spheres/relationships/ui/api.ts",
+  "A": 3,
+  "B": 92,
+  "C": 455,
+  "leak": 89,
+  "score": 440,
+  "vocab": [
+   "userId",
+   "eventId",
+   "claimId",
+   "lastname",
+   "linkedin",
+   "removedAt"
+  ],
+  "lines": 300,
+  "doc": "Typed access to the relationships sphere's API, over the kit's useApiView hook (web/src/lib/use-api-view). The shape mirrors relationships/api/read.js: the server owns the cross-source union and the read-time identity resolve (stored jud..."
+ },
+ {
+  "file": "web/src/ui/FilterBar.tsx",
+  "A": 2,
+  "B": 39,
+  "C": 449,
+  "leak": 37,
+  "score": 426,
+  "vocab": [
+   "onAll",
+   "onNone",
+   "optionsOf",
+   "FilterBar",
+   "FilterCheck",
+   "FacetButton"
+  ],
+  "lines": 144,
+  "doc": ""
+ },
+ {
+  "file": "web/src/lib/stream.ts",
+  "A": 2,
+  "B": 59,
+  "C": 434,
+  "leak": 57,
+  "score": 419,
+  "vocab": [
+   "stream",
+   "isAbort",
+   "readSse",
+   "postSse",
+   "onFrame",
+   "SseFrame"
+  ],
+  "lines": 108,
+  "doc": "The streaming door beside api.ts: a credentialed POST whose answer is a text/event-stream body, read frame by frame. EventSource cannot POST, so this transport consumes the body with a reader itself; the doorbell (useDoorbell.ts) is the ..."
+ },
+ {
+  "file": "spheres/social/ui/api.ts",
+  "A": 15,
+  "B": 59,
+  "C": 490,
+  "leak": 48,
+  "score": 399,
+  "vocab": [
+   "tiktok",
+   "sentAt",
+   "LastMsg",
+   "takenAt",
+   "PerfPost",
+   "GrowthRow"
+  ],
+  "lines": 589,
+  "doc": "Typed access to the social component's API: the rendered reads ride the kit's useApiView hook (web/src/lib/use-api-view), the writes (grade override, dismiss/undo, the campaign and draft writes) ride the shell's browser client (web/src/l..."
+ },
+ {
+  "file": "spheres/social/ui/Rolodex.tsx",
+  "A": 3,
+  "B": 32,
+  "C": 389,
+  "leak": 29,
+  "score": 353,
+  "vocab": [
+   "NO_STAR",
+   "onSweep",
+   "listIcon",
+   "isSoured",
+   "gridIcon",
+   "setQuery"
+  ],
+  "lines": 1026,
+  "doc": ""
+ },
+ {
+  "file": "web/src/ui/CtxMenu.tsx",
+  "A": 6,
+  "B": 107,
+  "C": 316,
+  "leak": 101,
+  "score": 298,
+  "vocab": [
+   "CtxSub",
+   "CtxMenu",
+   "CtxItem",
+   "viewport",
+   "CtxButton",
+   "subOffsets"
+  ],
+  "lines": 195,
+  "doc": "A context menu at viewport coordinates, clamped to the window, one submenu level deep and that submenu clamped the same way. It closes on outside click, Escape, or any scroll; an entry with a submenu opens on hover and is not itself an a..."
+ },
+ {
+  "file": "spheres/schedule/api/providers/rezdy.js",
+  "A": 1,
+  "B": 78,
+  "C": 290,
+  "leak": 77,
+  "score": 286,
+  "vocab": [
+   "rezdy",
+   "GRID_SQL",
+   "deriveSlots",
+   "OCCUPANCY_SQL"
+  ],
+  "lines": 215,
+  "doc": "The Rezdy provider: confirmed booking items read off the connector's mirror (connectors/rezdy/), one calendar entry per rezdy_booking_item on a CONFIRMED order. nativeId is the item's own key, order_number:item_seq, the identity a schedu..."
+ },
+ {
+  "file": "server/shared/testdb.js",
+  "A": 0,
+  "B": 36,
+  "C": 276,
+  "leak": 36,
+  "score": 276,
+  "vocab": [
+   "testdb",
+   "withTxn"
+  ],
+  "lines": 25,
+  "doc": "Integration-test harness. The DB user can only touch the one live database (no privilege to create a test database), so tests run inside a transaction that is always rolled back: seeded fixture rows never persist. Tests assert on sentine..."
+ },
+ {
+  "file": "web/src/ui/boardDrag.ts",
+  "A": 4,
+  "B": 26,
+  "C": 311,
+  "leak": 22,
+  "score": 263,
+  "vocab": [
+   "onDrop",
+   "onLift",
+   "canDrag",
+   "specFor",
+   "fromKey",
+   "dropSpec"
+  ],
+  "lines": 182,
+  "doc": "The board's drag vocabulary and its decision logic. Spheres speak these shapes and nothing library-shaped: the drag library (@dnd-kit/core today) lives inside Board.tsx and is swappable there. Everything in this file is pure \u2014 no DOM, no..."
+ },
+ {
+  "file": "web/src/ui/atoms.tsx",
+  "A": 44,
+  "B": 51,
+  "C": 357,
+  "leak": 37,
+  "score": 259,
+  "vocab": [
+   "PillTone",
+   "AvatarSize",
+   "CountBadge",
+   "StatusPill"
+  ],
+  "lines": 77,
+  "doc": "The kit's presentational atoms: the avatar, the star row, the status pill, the count badge, and the status message. Domain-blind: a sphere gives each its words and numbers; vocabulary-carrying badges (a health word, a pipeline state) sta..."
+ },
+ {
+  "file": "spheres/schedule/ui/api.ts",
+  "A": 7,
+  "B": 43,
+  "C": 275,
+  "leak": 38,
+  "score": 243,
+  "vocab": [
+   "footer",
+   "moveId",
+   "TermRow",
+   "fromDate",
+   "MoveBody",
+   "postMove"
+  ],
+  "lines": 281,
+  "doc": "Typed access to the schedule sphere's API: the rendered reads ride the kit's useApiView hook (web/src/lib/use-api-view), the writes (entry upsert, the move loop) ride the shell's browser client (web/src/lib/api). The shape mirrors schedu..."
+ },
+ {
+  "file": "server/shared/auth.js",
+  "A": 3,
+  "B": 44,
+  "C": 230,
+  "leak": 42,
+  "score": 220,
+  "vocab": [
+   "newCode",
+   "startMs",
+   "codeStr",
+   "newToken",
+   "sendMail",
+   "setPrefs"
+  ],
+  "lines": 1679,
+  "doc": "Shell sign-in: passwordless email codes for the PWA's read tier. The trust anchor is the company mailbox: a 6-digit code goes to an allowlisted address (a shell_auth_users registry row, or the break-glass env lists), and typing it back i..."
+ },
+ {
+  "file": "spheres/social/ui/CampaignPipeline.tsx",
+  "A": 2,
+  "B": 24,
+  "C": 228,
+  "leak": 22,
+  "score": 209,
+  "vocab": [
+   "onNew",
+   "onPeople",
+   "selectedId",
+   "CampaignList",
+   "deleteAction",
+   "CampaignPipeline"
+  ],
+  "lines": 151,
+  "doc": ""
+ },
+ {
+  "file": "spheres/customer-service/ui/api.ts",
+  "A": 1,
+  "B": 12,
+  "C": 214,
+  "leak": 11,
+  "score": 196,
+  "vocab": [
+   "agentId",
+   "CallDay",
+   "CallRow",
+   "CallRep",
+   "rangOut",
+   "waitSecs"
+  ],
+  "lines": 164,
+  "doc": "Typed access to the customer-service sphere's API, over the kit's useApiView hook. The shape mirrors customer-service/api/calls.js: the server owns the window defaulting (the venue's own today), every aggregate, and the ring-back resolve..."
+ },
+ {
+  "file": "web/src/lib/use-api-view.ts",
+  "A": 38,
+  "B": 95,
+  "C": 315,
+  "leak": 57,
+  "score": 189,
+  "vocab": [
+   "paramsOf",
+   "staleTime",
+   "useApiView",
+   "apiViewKey",
+   "apiViewPath",
+   "resolveRoute"
+  ],
+  "lines": 165,
+  "doc": "The kit data hook: a sphere view fetches a declared route through this, and the assertion (route + params) that produced the rows is captured as a side effect of the fetch itself. The sphere cannot render served data without the hook kno..."
+ },
+ {
+  "file": "web/src/ui/Overlay.tsx",
+  "A": 11,
+  "B": 62,
+  "C": 215,
+  "leak": 51,
+  "score": 177,
+  "vocab": [
+   "Overlay",
+   "panelClassName"
+  ],
+  "lines": 75,
+  "doc": "A modal layer: the scrim that dims and dismisses, an Escape that does the same, and a role=\"dialog\" panel whose skin the caller may rename (a drawer off the edge, a card in the centre; the default is the centred card). Rendered through t..."
+ },
+ {
+  "file": "spheres/publicity/ui/api.ts",
+  "A": 3,
+  "B": 58,
+  "C": 179,
+  "leak": 55,
+  "score": 170,
+  "vocab": [
+   "created_at",
+   "addCoverage",
+   "coverageCount",
+   "CoverageCount",
+   "CoverageInput",
+   "published_date"
+  ],
+  "lines": 45,
+  "doc": "Typed access to the publicity sphere's spar pipeline: the shared pipeline client (web/src/pipeline) bound to /publicity, widened with this sphere's own facts, a per-member coverage count on the roster and board (PX), and a coverage list ..."
+ },
+ {
+  "file": "web/src/ui/ParamChips.tsx",
+  "A": 9,
+  "B": 52,
+  "C": 201,
+  "leak": 43,
+  "score": 166,
+  "vocab": [
+   "allLabel",
+   "ParamChips",
+   "ChipOption"
+  ],
+  "lines": 69,
+  "doc": "The URL-bound filter-chip row: one query param carries which chip is on, so a narrowing survives a section switch, rides a shared link, and restores on back/forward \u2014 the URL-as-state rule decided once instead of per sphere. The row owns..."
+ },
+ {
+  "file": "scripts/import-meta-exports.mjs",
+  "A": 0,
+  "B": 37,
+  "C": 161,
+  "leak": 37,
+  "score": 161,
+  "vocab": [
+   "winKey",
+   "mdyToIso",
+   "basename",
+   "fileLabel",
+   "permalink",
+   "postIdCell"
+  ],
+  "lines": 804,
+  "doc": "Import Meta Business Suite CSV exports into the platform mirror tables. Meta Business Suite exports a venue's published content as a set of per-window CSVs, one file per (platform, content kind, reporting window). Three shapes arrive, to..."
+ },
+ {
+  "file": "web/src/ui/SectionHeader.tsx",
+  "A": 19,
+  "B": 78,
+  "C": 207,
+  "leak": 59,
+  "score": 157,
+  "vocab": [
+   "SectionHeader"
+  ],
+  "lines": 37,
+  "doc": "The header row every section opens with: the title with its count, a meta sentence under it (freshness, medians, whatever the sphere measures), and the section's actions at the right end. One layout so sections read alike; the sphere sup..."
+ },
+ {
+  "file": "server/shared/sync-runs.js",
+  "A": 26,
+  "B": 65,
+  "C": 259,
+  "leak": 39,
+  "score": 155,
+  "vocab": [
+   "endRun",
+   "syncDue",
+   "BEAT_MS",
+   "syncBusy",
+   "beginRun",
+   "elapsedMs"
+  ],
+  "lines": 199,
+  "doc": "The one implementation of the C-job pass leg of the activity ledger (job_runs in schema.sql), shared by every connector's sync entrypoint and hook. A pass writes a pass-grain row: entity_type/entity_id NULL, since the pass acts on the wh..."
+ },
+ {
+  "file": "web/src/ui/DeepLink.tsx",
+  "A": 8,
+  "B": 62,
+  "C": 175,
+  "leak": 54,
+  "score": 152,
+  "vocab": [
+   "DeepLink"
+  ],
+  "lines": 101,
+  "doc": "The uniform act-on-site control: wherever a sphere lets the operator act on an external platform (reply to a review, open a DM, post to a group), this pill renders, never a hand-rolled button. At rest it shows only its verb; hover or key..."
+ },
+ {
+  "file": "spheres/social/ui/perf-derive.ts",
+  "A": 2,
+  "B": 5,
+  "C": 254,
+  "leak": 3,
+  "score": 152,
+  "vocab": [
+   "DAY_RE",
+   "DayRow",
+   "PerfRow",
+   "SortKey",
+   "ChartRow",
+   "deltasOf"
+  ],
+  "lines": 689,
+  "doc": "The Performance section's client-side derivations: one payload arrives and every filter \u2014 the date window, the type chips, the caption search, the table sort, the chart metric \u2014 narrows or reshapes it here, in pure functions, so the view..."
+ },
+ {
+  "file": "spheres/financial/ui/fy.ts",
+  "A": 1,
+  "B": 25,
+  "C": 155,
+  "leak": 24,
+  "score": 149,
+  "vocab": [
+   "fy",
+   "FYRow",
+   "fyRows",
+   "fyYear",
+   "fyLabel",
+   "fyWindow"
+  ],
+  "lines": 115,
+  "doc": "The financial-year shape of the picker: which month a tenant's FY opens on, and the window math and labels that follow from it. A fiscal year is a jurisdiction-and-entity property, not a fact any library ships with authority, so the star..."
+ },
+ {
+  "file": "web/src/lib/format.ts",
+  "A": 28,
+  "B": 38,
+  "C": 324,
+  "leak": 16,
+  "score": 136,
+  "vocab": [
+   "prefs",
+   "fmtParts",
+   "weekStart",
+   "DateOrder",
+   "dateOrder",
+   "fmtRegion"
+  ],
+  "lines": 121,
+  "doc": "Locale-aware number and date formatting for every view. One module-level preference pair, set by the locale runtime (locale \u2014 the active catalog tag carrying the browser's region, locale.ts formatLocale) and the signed-in account's store..."
+ },
+ {
+  "file": "web/src/ui/FreshnessNote.tsx",
+  "A": 11,
+  "B": 56,
+  "C": 166,
+  "leak": 45,
+  "score": 133,
+  "vocab": [
+   "FreshnessNote"
+  ],
+  "lines": 57,
+  "doc": "The freshness sentence a section's meta line carries: which mirror it reads and how old each one is. Every sphere reads through a mirror, so the phrasing is decided once \u2014 \"<label> mirror as of <relative>\" for a completed pass, \"<label> ..."
+ },
+ {
+  "file": "web/src/ui/SelectableCard.tsx",
+  "A": 3,
+  "B": 32,
+  "C": 139,
+  "leak": 29,
+  "score": 126,
+  "vocab": [
+   "openLabel",
+   "SelectableCard"
+  ],
+  "lines": 72,
+  "doc": "The shell every selectable card in a gathered grid shares: a cell that draws the selection ring, forwards the click grammar (useCardSelection owns what each gesture means), and carries the hover-revealed open control in its top-right cor..."
+ },
+ {
+  "file": "web/src/ui/PersonRow.tsx",
+  "A": 3,
+  "B": 35,
+  "C": 137,
+  "leak": 32,
+  "score": 125,
+  "vocab": [
+   "PersonRow"
+  ],
+  "lines": 66,
+  "doc": "The kit's person row: the identity line a people list draws for each member (avatar initials, the display name, an optional star rating, a muted subtitle). Domain-blind: a vocabulary-carrying element (a stage pill, a coverage count, a du..."
+ },
+ {
+  "file": "spheres/financial/ui/export.ts",
+  "A": 1,
+  "B": 10,
+  "C": 134,
+  "leak": 9,
+  "score": 121,
+  "vocab": [
+   "setOff",
+   "NUM_FMT",
+   "viewWord",
+   "localName",
+   "sheetName",
+   "viewLabel"
+  ],
+  "lines": 208,
+  "doc": "The statement as a file: the on-screen matrix laid out the way commercial accounting software exports a P&L. One sheet: a letterhead block (the registry's paperwork identity for the tenant whose books these are), the title, period, basis..."
+ },
+ {
+  "file": "web/src/lib/url-state.ts",
+  "A": 20,
+  "B": 65,
+  "C": 174,
+  "leak": 45,
+  "score": 120,
+  "vocab": [
+   "readRaw",
+   "url-state",
+   "writeParam",
+   "useUrlParam",
+   "useStringParam"
+  ],
+  "lines": 131,
+  "doc": ""
+ },
+ {
+  "file": "web/src/ui/ReachNote.tsx",
+  "A": 30,
+  "B": 57,
+  "C": 254,
+  "leak": 27,
+  "score": 120,
+  "vocab": [
+   "useReach",
+   "ReachNote"
+  ],
+  "lines": 34,
+  "doc": "The degradation pair every sphere view uses when grants may not cover its primary dataset: useReach answers whether the signed-in person's grants reach a dataset ref (or all of several) at a verb, and ReachNote is the quiet placeholder a..."
+ },
+ {
+  "file": "spheres/projects/ui/api.ts",
+  "A": 2,
+  "B": 11,
+  "C": 146,
+  "leak": 9,
+  "score": 119,
+  "vocab": [
+   "notedBy",
+   "notedAt",
+   "locator",
+   "setBall",
+   "stageAt",
+   "LivesAt"
+  ],
+  "lines": 272,
+  "doc": "Typed access to the projects sphere's API, over the shell's browser client (web/src/lib/api) for the writes and the kit's useApiView hook for the two rendered reads. The shapes mirror projects/api/read.js key for key: the server derives ..."
+ },
+ {
+  "file": "server/shared/ready.js",
+  "A": 1,
+  "B": 20,
+  "C": 124,
+  "leak": 19,
+  "score": 118,
+  "vocab": [
+   "staleIds",
+   "freshIds",
+   "workQueue",
+   "readyWork",
+   "makeReader",
+   "describeWork"
+  ],
+  "lines": 329,
+  "doc": "The single-source-of-truth read of the eligible (\"ready\") work set, shared by the dispatch loop and the read-only web tier. For each job it resolves the runbook (type A), selects the job's pending set from its cursor view, and applies th..."
+ },
+ {
+  "file": "server/shared/grants.js",
+  "A": 3,
+  "B": 6,
+  "C": 141,
+  "leak": 5,
+  "score": 118,
+  "vocab": [
+   "needVerb",
+   "VERB_ORDER",
+   "DATA_TOKEN",
+   "formatToken",
+   "parseGrants",
+   "warnedTokens"
+  ],
+  "lines": 224,
+  "doc": "The grant-token grammar and its cover logic \u2014 the pure core of the permission system (no IO, no DB; console.warn is its only side effect). A registry row's grants string parses here into the resolved shape every gate decision reads; the ..."
+ },
+ {
+  "file": "web/src/lib/view-registry.ts",
+  "A": 8,
+  "B": 50,
+  "C": 129,
+  "leak": 42,
+  "score": 108,
+  "vocab": [
+   "nextId",
+   "ChoiceSet",
+   "view-registry",
+   "anchorElement",
+   "registerAnchor",
+   "registerChoice"
+  ],
+  "lines": 108,
+  "doc": "What the current screen declares about itself, read at descriptor build time: the assertions (declared route + params) whose answers the screen is rendering, and the choices (filter params with their offered option sets) the interface ho..."
+ },
+ {
+  "file": "web/src/ui/Chips.tsx",
+  "A": 3,
+  "B": 25,
+  "C": 122,
+  "leak": 22,
+  "score": 107,
+  "vocab": [
+   "ChipRow"
+  ],
+  "lines": 38,
+  "doc": "The filter-chip row: a horizontal strip of toggle chips (sources, places, windows). A chip is a plain pressed/unpressed button; single- versus multi-select is the caller's state, not the chip's."
+ },
+ {
+  "file": "web/src/ui/GroupedList.tsx",
+  "A": 3,
+  "B": 31,
+  "C": 117,
+  "leak": 28,
+  "score": 106,
+  "vocab": [
+   "renderBody",
+   "GroupedList"
+  ],
+  "lines": 51,
+  "doc": "The grouped list: titled, collapsible groups with a count and an optional badge on each head (tasks by person, equipment by servicing company, team by department). Open state is the caller's, so a group's body can be fetched lazily on fi..."
+ },
+ {
+  "file": "web/src/ui/Board.tsx",
+  "A": 7,
+  "B": 28,
+  "C": 138,
+  "leak": 21,
+  "score": 104,
+  "vocab": [
+   "DropZone",
+   "DragCard",
+   "snapIndex",
+   "DragBoard",
+   "DropColumn",
+   "scrollLeft"
+  ],
+  "lines": 445,
+  "doc": "The column surface: the one layout for every columns-shaped view (a kanban's stages, a week's days). Columns come data-driven from the sphere; the kit owns only geometry and gesture. On a phone one column fills the screen with a sliver o..."
+ },
+ {
+  "file": "spheres/reputation/ui/api.ts",
+  "A": 5,
+  "B": 15,
+  "C": 129,
+  "leak": 12,
+  "score": 103,
+  "vocab": [
+   "avgRating",
+   "localGuide",
+   "totalScore",
+   "placeTitle",
+   "publishedAt",
+   "ownerResponse"
+  ],
+  "lines": 71,
+  "doc": "Typed access to the reputation sphere's API, over the shell's browser client (web/src/lib/api). The shape mirrors reputation/api/read.js: the server owns the join, this file only names what comes back. A rendered view's read rides the ki..."
+ },
+ {
+  "file": "connectors/instagram/api/shortcode.js",
+  "A": 3,
+  "B": 14,
+  "C": 131,
+  "leak": 11,
+  "score": 103,
+  "vocab": [
+   "shortcode",
+   "IG_ALPHABET",
+   "shortcodeToPk",
+   "pkToShortcode",
+   "shortcodeFromPermalink"
+  ],
+  "lines": 45,
+  "doc": "Instagram media-pk \u2194 permalink-shortcode codec. Pure, no DB: the bridge between the two Instagram id namespaces. A permalink shortcode (the /p/<code>/ or /reel/<code>/ segment) is base64 over Instagram's alphabet, big-endian, and decodes..."
+ },
+ {
+  "file": "connectors/awsconnect/api/sync.test.js",
+  "A": 0,
+  "B": 50,
+  "C": 102,
+  "leak": 50,
+  "score": 102,
+  "vocab": [
+   "upserts",
+   "dimHandlers"
+  ],
+  "lines": 302,
+  "doc": "Unit tests for the awsconnect pass: runSyncPass driven by a fake client, a fake connection, and fake upserts (no AWS, no DB \u2014 the client and upserts are injected deps, so aws-client.js and upsert.js are never loaded here). The live end-t..."
+ },
+ {
+  "file": "spheres/coord/ui/api.ts",
+  "A": 5,
+  "B": 21,
+  "C": 114,
+  "leak": 18,
+  "score": 98,
+  "vocab": [
+   "sweepNow",
+   "TaskState",
+   "LeaderRow",
+   "sourceKind",
+   "methodDate",
+   "createTime"
+  ],
+  "lines": 204,
+  "doc": "Typed access to the coord component's API: the rendered reads ride the kit's useApiView hook (web/src/lib/use-api-view), the board's one write rides the shell's browser client (web/src/lib/api). The shape mirrors coord/api/read.js: the s..."
+ },
+ {
+  "file": "scripts/refresh-meta-recent.mjs",
+  "A": 0,
+  "B": 19,
+  "C": 97,
+  "leak": 19,
+  "score": 97,
+  "vocab": [
+   "skillRef",
+   "runSkill",
+   "faultText",
+   "overseerUp",
+   "IG_HANDLES",
+   "resolveOwnPk"
+  ],
+  "lines": 235,
+  "doc": "Post-import refresh: pull each own Instagram account's recent posts through the running overseer and merge them into the raw mirror, so the freshly-imported Meta export is topped up with whatever has been posted since the export was cut...."
+ },
+ {
+  "file": "web/src/ui/HoverTip.tsx",
+  "A": 1,
+  "B": 21,
+  "C": 99,
+  "leak": 20,
+  "score": 94,
+  "vocab": [
+   "HoverTip"
+  ],
+  "lines": 36,
+  "doc": "A small dark tooltip trailing the cursor. It waits a beat before showing so a pointer passing through draws nothing. Rendered through the shell's #app-layer portal like the kit's other floating surfaces, so it floats by document order; t..."
+ },
+ {
+  "file": "spheres/library/api/hits.js",
+  "A": 2,
+  "B": 18,
+  "C": 98,
+  "leak": 17,
+  "score": 93,
+  "vocab": [
+   "Q_MAX",
+   "HIT_KINDS",
+   "isNotFound",
+   "PAGE_LIMIT",
+   "EMPTY_SEARCH",
+   "searchParams"
+  ],
+  "lines": 86,
+  "doc": "The library's shared vocabulary around a hit, pure and provider-free: the hit kinds both clients emit, the search kinds a caller may ask for, the closed set of provider error codes the wire carries, and the two mappings read.js applies t..."
+ },
+ {
+  "file": "server/shared/spar-pipeline.js",
+  "A": 5,
+  "B": 39,
+  "C": 105,
+  "leak": 34,
+  "score": 92,
+  "vocab": [
+   "claimSql",
+   "LAST_TOUCH",
+   "loadClaims",
+   "configPath",
+   "MEMBER_SQL",
+   "memberJson"
+  ],
+  "lines": 623,
+  "doc": "The spar-pipeline sphere family's stage pipeline, run over contacts the SPAR mirror carries, written once so a second sphere composes it instead of cloning the first (publicity). The pipeline reads the spar connector's mirror tables (spa..."
+ },
+ {
+  "file": "web/src/lib/journey.ts",
+  "A": 11,
+  "B": 18,
+  "C": 111,
+  "leak": 13,
+  "score": 80,
+  "vocab": [
+   "loadSeq",
+   "saveTail",
+   "sphereOf",
+   "loadTail",
+   "JourneyVerb",
+   "JOURNEY_CAP"
+  ],
+  "lines": 181,
+  "doc": "The platform's interaction journal: the person's recent trajectory over the app (navigations, filter changes, opens, board moves, gestures), recorded for any consumer that needs one. Browser-held by design (docs/interaction-seam.md \u00a7Stor..."
+ },
+ {
+  "file": "web/src/lib/navigate.ts",
+  "A": 8,
+  "B": 32,
+  "C": 103,
+  "leak": 24,
+  "score": 77,
+  "vocab": [
+   "navigate",
+   "closeSecondary"
+  ],
+  "lines": 57,
+  "doc": "In-app navigation without a router: push the URL and dispatch a synthetic popstate so every listener (the shell, each sphere's own section router) re-reads the path. pushState alone does not fire popstate; the browser's own back/forward ..."
+ },
+ {
+  "file": "server/shared/connector-tenant.js",
+  "A": 21,
+  "B": 41,
+  "C": 144,
+  "leak": 20,
+  "score": 70,
+  "vocab": [
+   "tenantOf",
+   "connector-tenant"
+  ],
+  "lines": 45,
+  "doc": "The one read of the connector_tenant attribution row (schema.sql, the registry family): which platform tenant a company connector's credentials, and with them every row its passes write, belong to. Every resolution of that question goes ..."
+ },
+ {
+  "file": "server/shared/hash.js",
+  "A": 2,
+  "B": 24,
+  "C": 73,
+  "leak": 22,
+  "score": 67,
+  "vocab": [
+   "sha256"
+  ],
+  "lines": 8,
+  "doc": "The hex SHA-256 of a buffer. The import scripts key their import_runs ledger on it (source_ref -> file_sha256), so a re-import of an unchanged file is a no-op; one home keeps the two scripts' digests byte-for-byte comparable."
+ },
+ {
+  "file": "spheres/social/api/instance.js",
+  "A": 0,
+  "B": 20,
+  "C": 66,
+  "leak": 20,
+  "score": 66,
+  "vocab": [
+   "loadVocab",
+   "stagePassDue"
+  ],
+  "lines": 45,
+  "doc": "The IG instance config: everything the generic core (ready.js's makeReader and readyWork, used by the BI server) needs to run the social sphere without knowing anything about it. All IG/social knowledge (the job table, the vocab tables, ..."
+ },
+ {
+  "file": "server/shared/job-runs.js",
+  "A": 6,
+  "B": 26,
+  "C": 84,
+  "leak": 20,
+  "score": 65,
+  "vocab": [
+   "runBase",
+   "job-runs",
+   "runBPersist",
+   "normalizeResolvedVersion"
+  ],
+  "lines": 74,
+  "doc": ""
+ },
+ {
+  "file": "server/shared/access.test.js",
+  "A": 0,
+  "B": 20,
+  "C": 62,
+  "leak": 20,
+  "score": 62,
+  "vocab": [
+   "agentP",
+   "machineP",
+   "PL_EMPTY",
+   "openDecl",
+   "listDecl",
+   "noSession"
+  ],
+  "lines": 421,
+  "doc": "The gate's decision table, pinned DB-free: gate() against a fake ctx, per route kind (list / report / entity / write) \u00d7 principal state (Bearer / granted session / ungranted session / no session) \u00d7 enforcement (dark / on, flipped through..."
+ },
+ {
+  "file": "connectors/instagram/api/insights-sync.js",
+  "A": 1,
+  "B": 9,
+  "C": 70,
+  "leak": 8,
+  "score": 62,
+  "vocab": [
+   "dayUtc",
+   "ownerPk",
+   "mediaPk",
+   "pollSet",
+   "fullWalk",
+   "dayBounds"
+  ],
+  "lines": 512,
+  "doc": "The Instagram per-post insights cursor pass: a server-side Graph API pull (neither browser nor model) that keeps own-post owner metrics (reach, views, follows, interactions) current and accumulates a growth series. It is a pump, not a pe..."
+ },
+ {
+  "file": "scripts/import-otter-corpus.mjs",
+  "A": 0,
+  "B": 5,
+  "C": 61,
+  "leak": 5,
+  "score": 61,
+  "vocab": [
+   "fmDoc",
+   "mdBody",
+   "fmText",
+   "asArray",
+   "inLedger",
+   "stemDate"
+  ],
+  "lines": 755,
+  "doc": "Import the historical Otter meeting corpus (the rivermill repo's knowledge-capture/{incoming,staging} files) into the coord sphere's meeting tables. One coord_meetings row per filename stem: incoming/<stem>.txt carries the transcript, st..."
+ },
+ {
+  "file": "web/src/lib/breakpoint.ts",
+  "A": 3,
+  "B": 30,
+  "C": 64,
+  "leak": 27,
+  "score": 58,
+  "vocab": [
+   "breakpoint",
+   "useDesktop",
+   "DESKTOP_QUERY",
+   "DESKTOP_MIN_PX",
+   "subscribeDesktop"
+  ],
+  "lines": 18,
+  "doc": "Mirrors the CSS desktop breakpoint (the shell's one width breakpoint) for JS probes: the constant for one-off matchMedia checks, the hook for components whose rendered tree differs across the line."
+ },
+ {
+  "file": "spheres/projects/api/derive.js",
+  "A": 1,
+  "B": 6,
+  "C": 70,
+  "leak": 5,
+  "score": 58,
+  "vocab": [
+   "prereqId",
+   "statusAt",
+   "statusOf",
+   "prereqsOf",
+   "wouldCycle",
+   "dependentId"
+  ],
+  "lines": 138,
+  "doc": "Pure derivations over the sphere's flat rows: no DB, no clock of its own (now rides in as an argument), so every rule here is unit-testable in isolation and read.js stays a thin fetch-then-derive layer. The graphs are small (~22 mileston..."
+ },
+ {
+  "file": "web/src/lib/clicklog.ts",
+  "A": 6,
+  "B": 31,
+  "C": 70,
+  "leak": 25,
+  "score": 56,
+  "vocab": [
+   "clicklog",
+   "logDeepLink",
+   "openDeepLink"
+  ],
+  "lines": 34,
+  "doc": "Fire-and-forget deep-link click telemetry: one POST per outbound click, landing in the shell's click_log via /api/click-log, alongside a journaled Opened event (journey.ts) \u2014 the click row is outbound-click audit, the journey event is as..."
+ },
+ {
+  "file": "connectors/instagram/api/jobs.js",
+  "A": 3,
+  "B": 11,
+  "C": 61,
+  "leak": 10,
+  "score": 55,
+  "vocab": [
+   "longId",
+   "shortPk",
+   "viewerId",
+   "DUMP_SQL",
+   "normCount",
+   "handlesOf"
+  ],
+  "lines": 559,
+  "doc": "Instagram connector: the raw-ingest jobs and the shared instagram_-only helpers/SQL. This file reads and writes ONLY instagram_* tables, never a derived/CRM (social-prefixed) table. The CRM sphere (spheres/social/api) depends on this con..."
+ },
+ {
+  "file": "web/src/app/AuthGate.tsx",
+  "A": 6,
+  "B": 21,
+  "C": 75,
+  "leak": 15,
+  "score": 54,
+  "vocab": [
+   "AuthCtx",
+   "AuthGate",
+   "onSignedIn",
+   "LoginScreen",
+   "AuthUpdateCtx",
+   "applyStoredPrefs"
+  ],
+  "lines": 234,
+  "doc": "The sign-in wall around the whole shell. On boot it asks the server who we are and whether the gate is live (GET /api/auth/me); while that is out it shows nothing, so a signed-in reload never flashes the login screen. When the gate is en..."
+ },
+ {
+  "file": "agent/tools.js",
+  "A": 1,
+  "B": 9,
+  "C": 61,
+  "leak": 8,
+  "score": 54,
+  "vocab": [
+   "BI_BASE",
+   "rowFault",
+   "toolNames",
+   "toolEntries",
+   "deriveTools",
+   "fetchEntries"
+  ],
+  "lines": 202,
+  "doc": "Manifest-driven tool derivation for the agent runtime. The BI server's mounts declare their API routes in a manifest: every sphere (config.handleApi.manifest on spheres/<name>/api/instance.js) and the party mount (server/shared/party.js,..."
+ },
+ {
+  "file": "server/shared/credentials.js",
+  "A": 24,
+  "B": 38,
+  "C": 145,
+  "leak": 14,
+  "score": 53,
+  "vocab": [
+   "fieldOf",
+   "readToken",
+   "updatedBy",
+   "writeToken",
+   "setCredential",
+   "clearCredential"
+  ],
+  "lines": 278,
+  "doc": "The Apps credential store's two faces over connector_credential (schema.sql) and the connector manifests (credential-manifests.js): listConnections is the wire the Apps screen reads, resolveCredentials is the runtime seam a sync calls fo..."
+ },
+ {
+  "file": "connectors/linkedin/api/jobs.js",
+  "A": 1,
+  "B": 5,
+  "C": 52,
+  "leak": 5,
+  "score": 52,
+  "vocab": [
+   "isSelf",
+   "ownerUrn",
+   "profileUrn",
+   "connectedAt",
+   "connectedUrn",
+   "validateInbox"
+  ],
+  "lines": 579,
+  "doc": "LinkedIn connector: the raw-ingest jobs and the shared linkedin_-only SQL. This file reads and writes ONLY linkedin_* tables, never a derived/CRM (social-prefixed) table. The CRM sphere (spheres/social/api) depends on this connector; the..."
+ },
+ {
+  "file": "server/shared/anthropic.js",
+  "A": 2,
+  "B": 14,
+  "C": 58,
+  "leak": 12,
+  "score": 50,
+  "vocab": [
+   "anthropic",
+   "MODEL_IDS",
+   "runRunbook"
+  ],
+  "lines": 63,
+  "doc": "A type-A runbook's model leg over the Anthropic messages API \u2014 the server- side executor. Plain node:https so it runs on the host's Node 16 (no SDK, no global fetch), following the rezdy/xero client shape: injectable http and sleep so te..."
+ },
+ {
+  "file": "web/src/lib/slot-store.ts",
+  "A": 7,
+  "B": 12,
+  "C": 120,
+  "leak": 5,
+  "score": 50,
+  "vocab": [
+   "wakeView",
+   "SlotView",
+   "clearSlot",
+   "wakeParam",
+   "slot-store",
+   "getSnapshot"
+  ],
+  "lines": 100,
+  "doc": "Where the secondary pane's view state lives. The primary pane's is the URL: its path is window.location.pathname and its params are the query string, with the browser's own history behind them. The secondary pane has no URL to hold: one ..."
+ },
+ {
+  "file": "spheres/financial/ui/matrix.ts",
+  "A": 2,
+  "B": 8,
+  "C": 66,
+  "leak": 6,
+  "score": 50,
+  "vocab": [
+   "perfNet",
+   "DisplayRow",
+   "MonthMatrix",
+   "modifierNet",
+   "monthMatrix",
+   "perfSegments"
+  ],
+  "lines": 109,
+  "doc": "The month-table arithmetic over the server's row set. The table is the performative view: every displayed figure \u2014 row totals, section subtotals, gross profit, the performative and Xero-ledger nets \u2014 is computed over the segments minus N..."
+ },
+ {
+  "file": "spheres/financial/ui/labour-matrix.ts",
+  "A": 1,
+  "B": 3,
+  "C": 75,
+  "leak": 2,
+  "score": 50,
+  "vocab": [
+   "round1",
+   "unitIds",
+   "wagePct",
+   "perUnit",
+   "unitNames",
+   "LabourDay"
+  ],
+  "lines": 137,
+  "doc": "The month-table arithmetic over the labour payload, sibling of matrix.ts: the server hands raw per-day-per-area sums, this module shapes one month \u2014 which areas appear as columns, each day's worked hours per area beside the day's rostere..."
+ },
+ {
+  "file": "web/src/lib/api.ts",
+  "A": 34,
+  "B": 34,
+  "C": 151,
+  "leak": 11,
+  "score": 49,
+  "vocab": [
+   "apiGet",
+   "apiPost",
+   "ApiError",
+   "refusalOf"
+  ],
+  "lines": 121,
+  "doc": "Browser-side API client. A component's ui/ reaches the server through this, never the database. The base tracks the server mount; the per-component prefix is settled when the first component front end is built. Reads ride useApiView (use..."
+ },
+ {
+  "file": "connectors/xero/api/xero-client.js",
+  "A": 2,
+  "B": 17,
+  "C": 56,
+  "leak": 15,
+  "score": 49,
+  "vocab": [
+   "xero-client",
+   "extractList",
+   "accessToken",
+   "PRODUCT_BASES",
+   "makeXeroClient",
+   "CONNECTIONS_URL"
+  ],
+  "lines": 211,
+  "doc": "The Xero read client: accounting (api.xro/2.0) and payroll AU (payroll.xro/1.0) over plain node:https, so it runs on the host's Node 16 (no SDK, no global fetch), mirroring connectors/googlechat/api/chat-client.js. sync.js takes a client..."
+ },
+ {
+  "file": "server/shared/walls.js",
+  "A": 4,
+  "B": 15,
+  "C": 65,
+  "leak": 11,
+  "score": 48,
+  "vocab": [
+   "pairKey",
+   "WAGES_WALL",
+   "wallContext",
+   "placeholders",
+   "warnedNoWalls",
+   "missingTables"
+  ],
+  "lines": 159,
+  "doc": "Everything below is wall enforcement's single home (docs/access-control.md \u00a7Walls). A wall is secrecy over matter narrower than its datasets: the registry tables (wall / wall_circle / wall_campaign, DDL in schema.sql) name each wall and ..."
+ },
+ {
+  "file": "spheres/schedule/ui/week.ts",
+  "A": 3,
+  "B": 7,
+  "C": 66,
+  "leak": 5,
+  "score": 47,
+  "vocab": [
+   "DayCell",
+   "isToday",
+   "todayIso",
+   "mondayOf",
+   "weekRange",
+   "weekCells"
+  ],
+  "lines": 91,
+  "doc": "Pure week-grid logic for the schedule Week view: an anchor date resolves to its seven Mon\u2013Sun venue-local dates, each flagged if it is today, and prev/next step a whole week either way. Kept DOM-free and free of Date's zone pitfalls \u2014 IS..."
+ },
+ {
+  "file": "connectors/awsconnect/api/upsert.js",
+  "A": 0,
+  "B": 3,
+  "C": 47,
+  "leak": 3,
+  "score": 47,
+  "vocab": [
+   "fmtFor",
+   "DAY_NUM",
+   "localOf",
+   "fmtCache",
+   "tsToMysql",
+   "upsertUsers"
+  ],
+  "lines": 238,
+  "doc": "Row mapping and upserts for the awsconnect mirror: raw API records in, idempotent INSERT ... ON DUPLICATE KEY UPDATE out, every promoted column and raw_json taking the new value, last_seen_at advancing, the key and first_seen_at never ch..."
+ },
+ {
+  "file": "agent/transcribe.js",
+  "A": 1,
+  "B": 26,
+  "C": 46,
+  "leak": 25,
+  "score": 44,
+  "vocab": [
+   "dialogueOf",
+   "transcribe",
+   "MAX_AUDIO_BYTES",
+   "transcribeChannel",
+   "transcribeEnabled",
+   "transcribeAuthorized"
+  ],
+  "lines": 115,
+  "doc": "One-shot call transcription for the BI server: fetch the short-lived audio link it presigned, resample, run the local whisper build on this box's GPU, answer the text. The runtime stays stateless (the tier invariant: no business state ou..."
+ },
+ {
+  "file": "web/src/ui/useCardSelection.ts",
+  "A": 3,
+  "B": 21,
+  "C": 51,
+  "leak": 18,
+  "score": 44,
+  "vocab": [
+   "groupFor",
+   "shiftKey",
+   "ClickLike",
+   "CardGestures",
+   "CardSelection",
+   "useCardSelection"
+  ],
+  "lines": 142,
+  "doc": ""
+ },
+ {
+  "file": "spheres/social/ui/components.tsx",
+  "A": 6,
+  "B": 9,
+  "C": 131,
+  "leak": 3,
+  "score": 44,
+  "vocab": [
+   "ageOf",
+   "msgLine",
+   "FacetTags",
+   "dateRange",
+   "MsgPreview",
+   "CollabStat"
+  ],
+  "lines": 366,
+  "doc": "Social's vocabulary-carrying components: the relationship-health badge, the pipeline badge, the facet tags, the follower formatter, and the collab cluster. Each is a plain function component with no state; the domain-blind atoms (Avatar,..."
+ },
+ {
+  "file": "web/src/lib/interaction-context.ts",
+  "A": 2,
+  "B": 11,
+  "C": 53,
+  "leak": 9,
+  "score": 43,
+  "vocab": [
+   "byteSize",
+   "buildView",
+   "EMPTY_EXTRAS",
+   "JOURNEY_TAIL",
+   "ContextExtras",
+   "choiceFilters"
+  ],
+  "lines": 262,
+  "doc": ""
+ },
+ {
+  "file": "connectors/facebook/api/insights-sync.js",
+  "A": 3,
+  "B": 6,
+  "C": 52,
+  "leak": 5,
+  "score": 43,
+  "vocab": [
+   "postPk",
+   "endTime",
+   "graphId",
+   "pageIdOf",
+   "fbPostIdOf",
+   "upsertPost"
+  ],
+  "lines": 311,
+  "doc": "The Facebook Page cursor pass (CF01): a server-side Graph API pull that keeps the Page mirror moving between CSV exports \u2014 the instagram connector's CI01 shape applied to the Page. One bounded, single-flight pass: snapshot the Page's fol..."
+ },
+ {
+  "file": "server/shared/tenancy.js",
+  "A": 6,
+  "B": 16,
+  "C": 61,
+  "leak": 11,
+  "score": 42,
+  "vocab": [
+   "warnMissing",
+   "groupTenants",
+   "tenantContext",
+   "creationTenant",
+   "FOUNDING_TENANT"
+  ],
+  "lines": 124,
+  "doc": "The request's tenant scope \u2014 the walls.js pattern applied to tenancy: one resolution per request, beside principalFor at the mounts (server/app.js), frozen into ctx.tenancy for every consumer downstream. It answers the one question the t..."
+ },
+ {
+  "file": "server/shared/db.js",
+  "A": 44,
+  "B": 38,
+  "C": 104,
+  "leak": 15,
+  "score": 41,
+  "vocab": [
+   "loadEnv",
+   "withWrite",
+   "savepointSeq"
+  ],
+  "lines": 92,
+  "doc": "MySQL access for the platform. For local dev (the tests and a locally-run server), loadEnv reads the gitignored repo-root .env (MYSQL_*) when those vars are not already set; this is the Node convention. The deployed BI server sets MYSQL_..."
+ },
+ {
+  "file": "spheres/coord/api/read.js",
+  "A": 2,
+  "B": 13,
+  "C": 41,
+  "leak": 13,
+  "score": 41,
+  "vocab": [
+   "IN_SCOPE",
+   "listTasks",
+   "listSpaces",
+   "SCOPE_JOIN",
+   "taskSource",
+   "syncStatus"
+  ],
+  "lines": 282,
+  "doc": "The coord sphere's API: the half the PWA's ui/ calls over /bi/api/coord/*. The BI server (server/app.js) forwards everything under /api/coord/ here with an open DB connection. Reads, plus the board's one write: task-state, which moves a ..."
+ },
+ {
+  "file": "server/shared/job-claims.js",
+  "A": 2,
+  "B": 13,
+  "C": 47,
+  "leak": 11,
+  "score": 40,
+  "vocab": [
+   "ttlMinutes",
+   "job-claims",
+   "intervalMinutes",
+   "sweepExpiredClaims"
+  ],
+  "lines": 108,
+  "doc": "The job_claims protocol, one home: how a single row of work is handed to a single executor, whichever end asked for it. Two callers today. app.js's /b-input claims (transition, entity_id) for the asking desktop so two overseers sharing o..."
+ },
+ {
+  "file": "web/src/pipeline/ContactPanel.tsx",
+  "A": 3,
+  "B": 19,
+  "C": 45,
+  "leak": 16,
+  "score": 38,
+  "vocab": [
+   "eventDate",
+   "NoteEditor",
+   "afterWrite",
+   "memberStage",
+   "ContactPanel",
+   "stageGuidance"
+  ],
+  "lines": 319,
+  "doc": "One member in full, in a kit Overlay drawer: the correspondence trail (sent messages and replies interleaved by date, unsent final drafts collapsed), the SPAR profile body, the approach rationale, the flip history, and the note / next-to..."
+ },
+ {
+  "file": "web/src/app/App.tsx",
+  "A": 1,
+  "B": 8,
+  "C": 38,
+  "leak": 8,
+  "score": 38,
+  "vocab": [
+   "resetKey",
+   "accessIcon",
+   "NoSuchPage",
+   "queryClient",
+   "settingsIcon",
+   "PaneBoundary"
+  ],
+  "lines": 421,
+  "doc": ""
+ },
+ {
+  "file": "spheres/library/ui/SearchBar.tsx",
+  "A": 2,
+  "B": 8,
+  "C": 51,
+  "leak": 6,
+  "score": 38,
+  "vocab": [
+   "setText",
+   "SearchBar",
+   "SETTLE_MS",
+   "useAnyReach",
+   "useQueryParam",
+   "useSelectedSources"
+  ],
+  "lines": 104,
+  "doc": "The head of both Library sections: the title with its honesty sentence, the kit search box, and the source chip. The query lives in the URL (`q`), like the chip's `source`, so a search is shareable and back-navigable; typing lands in the..."
+ },
+ {
+  "file": "spheres/social/ui/cards.tsx",
+  "A": 4,
+  "B": 12,
+  "C": 55,
+  "leak": 8,
+  "score": 37,
+  "vocab": [
+   "onFunnel",
+   "inCampaign",
+   "campaignNames",
+   "openMenuItems"
+  ],
+  "lines": 152,
+  "doc": ""
+ },
+ {
+  "file": "connectors/sonas/api/sonas-client.js",
+  "A": 3,
+  "B": 6,
+  "C": 56,
+  "leak": 4,
+  "score": 37,
+  "vocab": [
+   "WS_URL",
+   "ejsonDate",
+   "ejsonToMysql",
+   "sonas-client",
+   "EPOCH_2100_MS",
+   "EPOCH_1900_MS"
+  ],
+  "lines": 376,
+  "doc": "The Sonas DDP read client. Sonas (app.sonas.events) is a Meteor app with no REST API: everything rides DDP \u2014 JSON messages over one TLS websocket. Reads are subscriptions collected into a minimongo-style store until 'ready'; list views a..."
+ },
+ {
+  "file": "connectors/awsconnect/api/sigv4.js",
+  "A": 2,
+  "B": 8,
+  "C": 47,
+  "leak": 6,
+  "score": 35,
+  "vocab": [
+   "sigv4",
+   "rfc3986",
+   "amzDate",
+   "datestamp",
+   "sha256hex",
+   "signingKey"
+  ],
+  "lines": 76,
+  "doc": "AWS Signature Version 4 over node:crypto, the signing half of the client: pure functions from request pieces to the Authorization header, so the whole algorithm is exercised in sigv4.test.js against fixed inputs with no network and no cl..."
+ },
+ {
+  "file": "spheres/coord/api/decode.js",
+  "A": 1,
+  "B": 2,
+  "C": 70,
+  "leak": 1,
+  "score": 35,
+  "vocab": [
+   "decodeTask",
+   "lastAtName",
+   "lifecycleOf",
+   "messageName",
+   "ASSIGN_VERBS",
+   "spaceOfMessage"
+  ],
+  "lines": 153,
+  "doc": "The Google Chat task decoder, kept isolated so it lifts to a shared domain layer the day a second consumer (customer-service, a userland tool, a WhatsApp decoder) needs the same task shape. Pure: a Chat message (its `text` and `name`) pl..."
+ },
+ {
+  "file": "server/shared/runbook.js",
+  "A": 4,
+  "B": 12,
+  "C": 51,
+  "leak": 8,
+  "score": 34,
+  "vocab": [
+   "loadRunbook",
+   "jobCodeLower",
+   "extractPrompt",
+   "resolveRunbook"
+  ],
+  "lines": 68,
+  "doc": "Load a type-A job's runbook: a Markdown file with a YAML front-matter header (model, version, output schema) and the prompt as the body. This is the backend-agnostic job definition; the same file feeds claude -p here and would feed an AP..."
+ },
+ {
+  "file": "spheres/coord/api/meetings.js",
+  "A": 1,
+  "B": 3,
+  "C": 51,
+  "leak": 2,
+  "score": 34,
+  "vocab": [
+   "getMeeting",
+   "clampLimit",
+   "likeFragment",
+   "getTranscript",
+   "searchMeetings",
+   "addressMeeting"
+  ],
+  "lines": 241,
+  "doc": "The coord sphere's meeting queries: plain (conn, params) -> data functions, no HTTP or dispatch coupling. read.js wraps them for the PWA's /api/coord/* surface, and the top-level bearer read surface (server/app.js's /meetings/*) imports ..."
+ },
+ {
+  "file": "web/src/lib/use-anchor.ts",
+  "A": 2,
+  "B": 29,
+  "C": 35,
+  "leak": 27,
+  "score": 33,
+  "vocab": [
+   "useAnchor",
+   "use-anchor"
+  ],
+  "lines": 26,
+  "doc": "The kit's way onto the anchor registry (view-registry.ts): a callback ref that registers its element under the given name, in the slot the component is mounted in, for exactly as long as the element is attached. A kit component that self..."
+ },
+ {
+  "file": "server/shared/click-log.js",
+  "A": 1,
+  "B": 18,
+  "C": 35,
+  "leak": 17,
+  "score": 33,
+  "vocab": [
+   "click-log",
+   "recordClick"
+  ],
+  "lines": 11,
+  "doc": "The single INSERT into click_log, the deep-link click telemetry behind the shell's /api/click-log endpoint: who (session email, NULL while the sign-in gate runs unenforced) opened which external url, from which sphere and row. Pure write..."
+ },
+ {
+  "file": "web/src/lib/tool-labels.ts",
+  "A": 1,
+  "B": 8,
+  "C": 38,
+  "leak": 7,
+  "score": 33,
+  "vocab": [
+   "tool-labels",
+   "activityLine",
+   "LABELLED_TOOLS"
+  ],
+  "lines": 132,
+  "doc": "The activity-line vocabulary: what the pane says while the assistant works. The wire's `tool` event carries the SDK's own tool identifier (`mcp__bi__schedule_almanac`, `mcp__drive__drive_navigate`, `WebSearch`) and nothing else, and that..."
+ },
+ {
+  "file": "connectors/googlereviews/api/upsert.js",
+  "A": 2,
+  "B": 5,
+  "C": 55,
+  "leak": 3,
+  "score": 33,
+  "vocab": [
+   "rawCols",
+   "dataIds",
+   "placeSQL",
+   "placeRow",
+   "reviewRow",
+   "ownerCols"
+  ],
+  "lines": 183,
+  "doc": "The one home for the two-source reconciliation rule, shared by both importers (import-historical.js for Apify, sync.js for SerpApi) so the precedence logic is authored once. Each importer maps its source records to the canonical shape th..."
+ },
+ {
+  "file": "spheres/relationships/api/identity.js",
+  "A": 1,
+  "B": 2,
+  "C": 66,
+  "leak": 1,
+  "score": 33,
+  "vocab": [
+   "personId",
+   "igHandle",
+   "sparKeys",
+   "normName",
+   "sonasKeys",
+   "normEmail"
+  ],
+  "lines": 286,
+  "doc": "Read-time identity resolution for the relationships sphere: which source records (a spar contact, an instagram account, a sonas event client) are one person. Nothing here touches a database or persists anything \u2014 the resolver is a pure f..."
+ },
+ {
+  "file": "spheres/schedule/api/reconcile-logic.js",
+  "A": 2,
+  "B": 4,
+  "C": 64,
+  "leak": 2,
+  "score": 32,
+  "vocab": [
+   "agedOut",
+   "targetOf",
+   "listOpenMoves",
+   "matchesTarget",
+   "decidePending",
+   "parseNativeId"
+  ],
+  "lines": 165,
+  "doc": "The reconcile pass's decision core. A pending move (schedule_pending_move, db/schema.sql) is a request the operator recorded, executed by a human in the external platform; the mirror observing the change is the done-fact, so this module ..."
+ },
+ {
+  "file": "server/shared/contract.js",
+  "A": 1,
+  "B": 4,
+  "C": 43,
+  "leak": 3,
+  "score": 32,
+  "vocab": [
+   "isFunc",
+   "isString",
+   "jobProblems",
+   "validateOwnerConfig",
+   "reservedNameProblem",
+   "RESERVED_SHELL_NAMES"
+  ],
+  "lines": 154,
+  "doc": "The written owner-config contract, checked at boot. A sphere's instance.js `config` and a connector's jobs.js `config` are the two registration shapes the bootstrap discovers (docs/hier.md \u00a7Owner configs), and each job definition a confi..."
+ },
+ {
+  "file": "connectors/spar/api/upsert.js",
+  "A": 1,
+  "B": 2,
+  "C": 65,
+  "leak": 1,
+  "score": 32,
+  "vocab": [
+   "pkCount",
+   "clipRow",
+   "segRows",
+   "valueRows",
+   "passStart",
+   "upsertRows"
+  ],
+  "lines": 215,
+  "doc": "The writers from parsed rows to the spar_* mirror. Every parent table follows the house shape: INSERT ... ON DUPLICATE KEY UPDATE, where a merge advances last_seen_at to the pass timestamp and leaves first_seen_at and the primary key unt..."
+ },
+ {
+  "file": "connectors/awsconnect/api/sync.js",
+  "A": 13,
+  "B": 11,
+  "C": 30,
+  "leak": 11,
+  "score": 30,
+  "vocab": [
+   "venueTz",
+   "listKey",
+   "listAll",
+   "syncCost",
+   "windowMs",
+   "syncUsers"
+  ],
+  "lines": 384,
+  "doc": "The awsconnect cursor sync: a server-side API pull (kind C) that mirrors the Connect instance into awsconnect_*. One pass is single-flight (a MySQL GET_LOCK), budget-bounded (wall clock plus a record cap), and resumable; run from an exte..."
+ },
+ {
+  "file": "connectors/rezdy/api/upsert.js",
+  "A": 1,
+  "B": 7,
+  "C": 35,
+  "leak": 6,
+  "score": 30,
+  "vocab": [
+   "categoryId",
+   "voucherCode",
+   "localToMysql",
+   "storedLocalText",
+   "captureBookingChanges",
+   "upsertCategoryProducts"
+  ],
+  "lines": 356,
+  "doc": "The entity registry and the generic upsert. ENTITIES is the single list of what the connector replicates, in the pass's dependency order (a category before its membership rows, products before the bookings that name them): each entry nam..."
+ },
+ {
+  "file": "spheres/schedule/api/almanac.js",
+  "A": 2,
+  "B": 3,
+  "C": 45,
+  "leak": 2,
+  "score": 30,
+  "vocab": [
+   "termRow",
+   "optDate",
+   "optText",
+   "MONTH_RE",
+   "entryRow",
+   "FILE_SQL"
+  ],
+  "lines": 296,
+  "doc": "The sphere's reading of the guest calendar: the hand-authored YAML the github connector mirrors into github_file, parsed into the one shape the almanac read puts on the wire. The connector replicates bytes and gates well-formedness only ..."
+ },
+ {
+  "file": "spheres/financial/ui/period.ts",
+  "A": 5,
+  "B": 9,
+  "C": 66,
+  "leak": 4,
+  "score": 29,
+  "vocab": [
+   "fyStart",
+   "extendTo",
+   "monthsOf",
+   "shortMonth",
+   "orderRange",
+   "monthLabel"
+  ],
+  "lines": 146,
+  "doc": "The P&L's month-window math: the picker's universe and presets, the pure window edits (nudge, a drag's commit, a shift-click's extension), and the URL binding the view and picker share. Sphere-local on purpose: coord's window is a relati..."
+ },
+ {
+  "file": "server/shared/connector-health.js",
+  "A": 1,
+  "B": 8,
+  "C": 33,
+  "leak": 7,
+  "score": 29,
+  "vocab": [
+   "RUN_STRIP",
+   "healthRows",
+   "recentRuns",
+   "HEALTH_KINDS",
+   "HEALTH_REASONS",
+   "connector-health"
+  ],
+  "lines": 119,
+  "doc": "Connector health: the pass-ledger truth layer (one row per owner, the sick/healthy verdict, and the recent-run history) read by the Apps wire (credentials.js listConnections) and rendered on the Apps view's cards. The row source is pass_..."
+ },
+ {
+  "file": "web/src/ui/FilterRow.tsx",
+  "A": 3,
+  "B": 15,
+  "C": 35,
+  "leak": 12,
+  "score": 28,
+  "vocab": [
+   "FilterRow"
+  ],
+  "lines": 23,
+  "doc": ""
+ },
+ {
+  "file": "spheres/projects/ui/views/Gantt.tsx",
+  "A": 1,
+  "B": 9,
+  "C": 32,
+  "leak": 8,
+  "score": 28,
+  "vocab": [
+   "Gantt",
+   "MsPanel",
+   "onWrite",
+   "chainOf",
+   "SEC_HEAD",
+   "todayUTC"
+  ],
+  "lines": 1113,
+  "doc": "The project page: a dependency timeline over one project's milestones. The reader's questions, in order: what holds the outcome up (the verdict card and the blocker-chain card), who holds the ball and for how long (the wait bars), which ..."
+ },
+ {
+  "file": "spheres/library/ui/api.ts",
+  "A": 5,
+  "B": 8,
+  "C": 43,
+  "leak": 5,
+  "score": 27,
+  "vocab": [
+   "HitKind",
+   "sourceOf",
+   "SourceId",
+   "SearchKind",
+   "ItemResponse",
+   "ProviderError"
+  ],
+  "lines": 82,
+  "doc": "Typed access to the Library sphere's API, over the kit's useApiView hook. The shape mirrors spheres/library/api/read.js: the server asks each drive live under the company account and answers one hit shape from both; this file names what ..."
+ },
+ {
+  "file": "web/src/lib/chat.ts",
+  "A": 2,
+  "B": 5,
+  "C": 43,
+  "leak": 3,
+  "score": 26,
+  "vocab": [
+   "onTool",
+   "onError",
+   "onDrive",
+   "ChatSend",
+   "sendChat",
+   "probeChat"
+  ],
+  "lines": 254,
+  "doc": ""
+ },
+ {
+  "file": "web/src/lib/chat-store.ts",
+  "A": 1,
+  "B": 4,
+  "C": 34,
+  "leak": 3,
+  "score": 26,
+  "vocab": [
+   "headId",
+   "isRecord",
+   "setChatId",
+   "chat-store",
+   "chatThread",
+   "saveRecord"
+  ],
+  "lines": 222,
+  "doc": "The pane's reload persistence: the transcript this browser rendered and the conversation id that resumes it, kept per person in IndexedDB the way the journey ring keeps its tail (journey.ts; the browser-held posture docs/interaction-seam..."
+ },
+ {
+  "file": "server/shared/closure.js",
+  "A": 1,
+  "B": 3,
+  "C": 39,
+  "leak": 2,
+  "score": 26,
+  "vocab": [
+   "rowFor",
+   "libRefs",
+   "notFound",
+   "storeDir",
+   "findTypeB",
+   "artifactRef"
+  ],
+  "lines": 87,
+  "doc": "Assemble a type-B job's file closure for distribution to an overseer. The overseer asks for one job by its skill ref (instagram.com/ig-inbox) and gets back the closure's members: its manifest `travels` plus the serialiser harness lib fil..."
+ },
+ {
+  "file": "web/src/app/ChatPane.tsx",
+  "A": 1,
+  "B": 11,
+  "C": 28,
+  "leak": 10,
+  "score": 25,
+  "vocab": [
+   "ChatPane",
+   "ChatUnreachable"
+  ],
+  "lines": 86,
+  "doc": ""
+ },
+ {
+  "file": "server/shared/datasets.js",
+  "A": 3,
+  "B": 9,
+  "C": 38,
+  "leak": 6,
+  "score": 25,
+  "vocab": [
+   "knownDataset",
+   "servedDatasets"
+  ],
+  "lines": 72,
+  "doc": "The dataset vocabulary: the names a route declaration or a grant token may use, one per business thing the platform serves (docs/access-control.md \u00a7Datasets). Served things only \u2014 an anticipated dataset (metrics, budgets, emails) joins t..."
+ },
+ {
+  "file": "web/src/app/chat-handle.tsx",
+  "A": 2,
+  "B": 7,
+  "C": 35,
+  "leak": 5,
+  "score": 25,
+  "vocab": [
+   "ChatHandle",
+   "chat-handle"
+  ],
+  "lines": 39,
+  "doc": ""
+ },
+ {
+  "file": "spheres/social/api/bi01.test.js",
+  "A": 0,
+  "B": 6,
+  "C": 25,
+  "leak": 6,
+  "score": 25,
+  "vocab": [
+   "OWN_LONG",
+   "inboxPage",
+   "aRealPair",
+   "OWN_SHORT",
+   "bi01.test",
+   "igThreadId"
+  ],
+  "lines": 372,
+  "doc": "BI01 discover integration: transaction-rollback against the live DB. The overseer pages the inbox, runs the skill per page, and posts ONE neutral paged envelope ({args, pageResults, pages, stoppedBy, fault}) to /bi/b-persist; the server ..."
+ },
+ {
+  "file": "spheres/schedule/api/config.js",
+  "A": 3,
+  "B": 4,
+  "C": 25,
+  "leak": 4,
+  "score": 25,
+  "vocab": [
+   "isPosInt",
+   "validateConfig"
+  ],
+  "lines": 85,
+  "doc": "The sphere's tunables: config/schedule.config.json loaded and validated once per process (file now, table when an editing UI exists; the rezdy connector's config/sync.config.json is the precedent). Unlike the rezdy sync, which defaults o..."
+ },
+ {
+  "file": "spheres/schedule/api/providers/sonas.js",
+  "A": 4,
+  "B": 2,
+  "C": 25,
+  "leak": 2,
+  "score": 25,
+  "vocab": [
+   "headcount",
+   "WEDDINGS_SQL",
+   "utcSqlString",
+   "VENUE_TZ_SQL",
+   "mapWeddingRow",
+   "WEDDING_STATUS"
+  ],
+  "lines": 157,
+  "doc": "The Sonas provider: weddings and staff appointments read off the connector's mirror (connectors/sonas/). Sonas is read-only by design (its writes have side effects: mail, contracts), so nothing here is movable and applyMove never exists...."
+ },
+ {
+  "file": "web/src/lib/error-codes.ts",
+  "A": 9,
+  "B": 14,
+  "C": 66,
+  "leak": 5,
+  "score": 24,
+  "vocab": [
+   "ErrorCode",
+   "errorText",
+   "localizeParams"
+  ],
+  "lines": 213,
+  "doc": "The client half of the error-code vocabulary (server/shared/error-codes.js): a refusal carries a stable machine `code` beside its English prose, and this module turns that code into a localized sentence, so the screen reads in the user's..."
+ },
+ {
+  "file": "spheres/financial/ui/api.ts",
+  "A": 9,
+  "B": 11,
+  "C": 52,
+  "leak": 5,
+  "score": 24,
+  "vocab": [
+   "PLRow",
+   "exGst",
+   "PLSource",
+   "prevExGst",
+   "LabourRow",
+   "ProductRow"
+  ],
+  "lines": 105,
+  "doc": "Typed access to the financial sphere's API. The shape mirrors financial/api/read.js: the server owns the mirror queries and the row assembly, this file only names what comes back; the table arithmetic on top of it lives in matrix.ts. The..."
+ },
+ {
+  "file": "agent/system-prompt.js",
+  "A": 1,
+  "B": 11,
+  "C": 26,
+  "leak": 10,
+  "score": 24,
+  "vocab": [
+   "systemPrompt",
+   "system-prompt"
+  ],
+  "lines": 37,
+  "doc": "The assistant's system prompt. One function, one string: the conversation loop passes the signed-in person and, when the interaction context carries one, their interface language, and gets the full prompt back."
+ },
+ {
+  "file": "web/src/pipeline/StagesEditor.tsx",
+  "A": 2,
+  "B": 10,
+  "C": 29,
+  "leak": 8,
+  "score": 23,
+  "vocab": [
+   "StageRow",
+   "onRemove",
+   "StagesEditor"
+  ],
+  "lines": 198,
+  "doc": "The process's stage vocabulary as an editable list: relabel, reorder, rewrite the per-stage guidance, add a stage, remove one nothing references. Rendered only by a sphere whose composition turned editableStages on; the entry stage is sh..."
+ },
+ {
+  "file": "agent/drive-tools.js",
+  "A": 1,
+  "B": 8,
+  "C": 26,
+  "leak": 7,
+  "score": 23,
+  "vocab": [
+   "driveSeq",
+   "driveTool",
+   "driveTools",
+   "DRIVE_CODES",
+   "drive-tools",
+   "resolveDrive"
+  ],
+  "lines": 163,
+  "doc": "The drive class: the assistant's write side of the interaction seam (docs/interaction-seam.md Part D). Where the bi tools derive from routes the platform declares, these five are pinned by hand, because their contract is the pane's primi..."
+ },
+ {
+  "file": "server/shared/venue-date.js",
+  "A": 6,
+  "B": 10,
+  "C": 54,
+  "leak": 4,
+  "score": 22,
+  "vocab": [
+   "fmtDay",
+   "venueDate",
+   "venue-date",
+   "epochSeconds"
+  ],
+  "lines": 64,
+  "doc": "One home for venue-local DATE handling. This is the neutral tier, so it imports no connector and no sphere; connectors and spheres import it. Two distinct jobs live here, and they are NOT interchangeable: (1) venueDate(epochSeconds): an ..."
+ },
+ {
+  "file": "server/shared/ollama.js",
+  "A": 2,
+  "B": 10,
+  "C": 27,
+  "leak": 8,
+  "score": 22,
+  "vocab": [
+   "ollama",
+   "runRunbookLocal"
+  ],
+  "lines": 51,
+  "doc": "A type-A runbook's model leg over a local Ollama server \u2014 the zero-cost, private executor. Sibling of anthropic.js with the same contract (runbook + input -> { value, usage, modelId }); the caller chooses the executor, the guards downstr..."
+ },
+ {
+  "file": "spheres/schedule/ui/ConfirmMove.tsx",
+  "A": 1,
+  "B": 6,
+  "C": 27,
+  "leak": 5,
+  "score": 22,
+  "vocab": [
+   "onConfirm",
+   "ConfirmMove"
+  ],
+  "lines": 74,
+  "doc": "The confirmation that stands between a drop and the write. Its copy follows the provider's declared confirm capability: 'simple' is a plain from \u2192 to check (the venue's own entries have no customer behind them), while 'customer-contact' ..."
+ },
+ {
+  "file": "connectors/rezdy/api/rezdy-client.js",
+  "A": 1,
+  "B": 6,
+  "C": 26,
+  "leak": 5,
+  "score": 22,
+  "vocab": [
+   "payloadOf",
+   "rezdy-client",
+   "makeRezdyClient"
+  ],
+  "lines": 156,
+  "doc": "The Rezdy Supplier API read client (base https://api.rezdy.com/v1) over plain node:https, so it runs on the host's Node 16 (no SDK, no global fetch), sibling to connectors/xero/api/xero-client.js. Callers take this client through depende..."
+ },
+ {
+  "file": "spheres/schedule/api/moves.js",
+  "A": 1,
+  "B": 4,
+  "C": 30,
+  "leak": 3,
+  "score": 22,
+  "vocab": [
+   "OPEN_SQL",
+   "CANCEL_SQL",
+   "cancelMove",
+   "INSERT_SQL",
+   "requestMove",
+   "RESOLVE_SQL"
+  ],
+  "lines": 112,
+  "doc": "The schedule sphere's move loop: the one write path that records a requested move in schedule_pending_move and, where the provider applies it at once, resolves the row in the same transaction. Kept out of read.js so the read API stays a ..."
+ },
+ {
+  "file": "spheres/reputation/ui/lanes.ts",
+  "A": 1,
+  "B": 3,
+  "C": 33,
+  "leak": 2,
+  "score": 22,
+  "vocab": [
+   "LaneKpi",
+   "overTarget",
+   "deriveLanes",
+   "responseDays",
+   "negativeFirst",
+   "repliedWindowDays"
+  ],
+  "lines": 101,
+  "doc": "Lane derivation for the needs-reply board, pure so the boundaries (the policy window, the negative cut, dismissal) are unit-testable without a DOM. Three lanes: New is the working set (unanswered, published inside the policy window); the..."
+ },
+ {
+  "file": "connectors/spar/api/parse.js",
+  "A": 1,
+  "B": 2,
+  "C": 45,
+  "leak": 1,
+  "score": 22,
+  "vocab": [
+   "dateN",
+   "tsvText",
+   "asGiven",
+   "fileStem",
+   "needsFix",
+   "indentOf"
+  ],
+  "lines": 315,
+  "doc": "Pure parsers from SPAR checkout files to mirror-table rows. Each function takes a file's text (plus the filesystem identity the file's path carries \u2014 the campaign or contact stem, which the file body does not repeat) and returns plain va..."
+ },
+ {
+  "file": "web/src/ui/SearchInput.tsx",
+  "A": 1,
+  "B": 12,
+  "C": 23,
+  "leak": 11,
+  "score": 21,
+  "vocab": [
+   "autoFocus",
+   "SearchInput"
+  ],
+  "lines": 39,
+  "doc": "The shared search box: one narrowing field, the shape every list-with-a-filter screen already draws by hand. It is a bare controlled input, so the caller keeps the query and decides what searching means; the kit owns only the look and th..."
+ },
+ {
+  "file": "spheres/coord/ui/views/Meetings.tsx",
+  "A": 1,
+  "B": 2,
+  "C": 19,
+  "leak": 2,
+  "score": 19,
+  "vocab": [
+   "monthKey",
+   "setPages",
+   "setAfter",
+   "groupByMonth",
+   "PERSON_CHIPS",
+   "MeetingDetail"
+  ],
+  "lines": 299,
+  "doc": "The meetings section: search across every captured meeting (FULLTEXT on the server), narrowed by who was in the room and by month, grouped by month newest first. A row expands to the meeting's summary and people, with the transcript page..."
+ },
+ {
+  "file": "spheres/coord/api/jobs-a.js",
+  "A": 1,
+  "B": 9,
+  "C": 20,
+  "leak": 8,
+  "score": 18,
+  "vocab": [
+   "jobs-a",
+   "entityRows",
+   "buildMeetingJobs"
+  ],
+  "lines": 399,
+  "doc": "Coord sphere: the meeting jobs, AO01 (type-A derive) and BO03 (type-B retitle). Both read the Otter connector's raw mirror (otter_recordings, otter_transcripts) beside the sphere's own coord_* tables: the sphere depends on the connector,..."
+ },
+ {
+  "file": "spheres/financial/api/read.js",
+  "A": 1,
+  "B": 3,
+  "C": 18,
+  "leak": 3,
+  "score": 18,
+  "vocab": [
+   "putCell",
+   "rentRow",
+   "SEG_CAT",
+   "rezdyRows",
+   "sonasRows",
+   "sectionOf"
+  ],
+  "lines": 904,
+  "doc": "The financial sphere's API: the segmented profit-and-loss the PWA's ui/ calls over /bi/api/financial/*. One read assembles the whole statement from three connector mirrors \u2014 the Xero general ledger (the only complete posting record; docu..."
+ },
+ {
+  "file": "spheres/social/api/performance.js",
+  "A": 1,
+  "B": 3,
+  "C": 27,
+  "leak": 2,
+  "score": 18,
+  "vocab": [
+   "fbType",
+   "igType",
+   "ownPks",
+   "fbPosts",
+   "igPosts",
+   "monthOf"
+  ],
+  "lines": 642,
+  "doc": "The Performance read: how the venue's own posting performs on each platform, assembled from the two connector mirrors the sphere stands on \u2014 instagram_media (own posts, owner insights on the wide columns) and facebook_post with its long-..."
+ },
+ {
+  "file": "connectors/otter/api/jobs.js",
+  "A": 2,
+  "B": 1,
+  "C": 18,
+  "leak": 1,
+  "score": 18,
+  "vocab": [
+   "ACCOUNT_ID",
+   "UPSERT_CHUNK",
+   "validateList",
+   "recordingRow",
+   "validateFetch",
+   "UPSERT_RECORDINGS_SQL"
+  ],
+  "lines": 274,
+  "doc": "Otter connector: the raw-ingest jobs and the shared otter_-only SQL. This file reads and writes ONLY otter_* tables (plus the platform's control-plane job_runs ledger for BO01's cadence gate), never a sphere table. The coord sphere depen..."
+ },
+ {
+  "file": "spheres/publicity/ui/CoverageSection.tsx",
+  "A": 2,
+  "B": 8,
+  "C": 23,
+  "leak": 6,
+  "score": 17,
+  "vocab": [
+   "onAdded",
+   "coverageBadge",
+   "coverageSection",
+   "CoverageSection"
+  ],
+  "lines": 96,
+  "doc": "Publicity's own pipeline extras: the per-member coverage badge (roster rows, board cards) and the coverage section slotted into the contact drawer, a list of recorded pieces with a minimal add form. Both hang off this sphere's coverage e..."
+ },
+ {
+  "file": "spheres/reputation/ui/ReviewCard.tsx",
+  "A": 2,
+  "B": 6,
+  "C": 25,
+  "leak": 4,
+  "score": 17,
+  "vocab": [
+   "isLong",
+   "ClampText",
+   "showPlace",
+   "reviewsUrl",
+   "ReviewCard",
+   "CLAMP_CHARS"
+  ],
+  "lines": 113,
+  "doc": "One review as a card body, shared by the needs-reply board and the all-reviews stream. The kit's .ui-card supplies the frame; this renders only the review."
+ },
+ {
+  "file": "server/shared/manifest.js",
+  "A": 2,
+  "B": 6,
+  "C": 26,
+  "leak": 4,
+  "score": 17,
+  "vocab": [
+   "skillsRoot",
+   "loadManifest",
+   "REQUIRED_KEYS",
+   "manifestPaths",
+   "validateManifest",
+   "scanManifestPaths"
+  ],
+  "lines": 166,
+  "doc": "The per-job closure manifest: load each sphere's or connector's jobs.manifest.yaml and check that every job's declared file closure (logic, its deps, its contract) is real and self-consistent. The manifest is the single source of truth m..."
+ },
+ {
+  "file": "web/src/lib/org-identity.ts",
+  "A": 3,
+  "B": 11,
+  "C": 20,
+  "leak": 9,
+  "score": 16,
+  "vocab": [
+   "TaxRegister",
+   "org-identity",
+   "TAX_REGISTERS",
+   "taxRegisterFor",
+   "LetterheadLines",
+   "OrgIdentityFields"
+  ],
+  "lines": 103,
+  "doc": "An organisation's paperwork identity, the shared half: which tax register a country uses, and how the stored fields compose into the letterhead lines the statements print. One home, because three surfaces read it: the Organisations edito..."
+ },
+ {
+  "file": "server/shared/stage-vocabulary.js",
+  "A": 4,
+  "B": 9,
+  "C": 29,
+  "leak": 5,
+  "score": 16,
+  "vocab": [
+   "subsetAllows",
+   "stage-vocabulary",
+   "buildStageVocabulary"
+  ],
+  "lines": 118,
+  "doc": "The stage vocabulary's composable half: the scoped read of a sphere's pipeline_stages rows and the two editing routes, written once so every sphere that borrows the vocabulary table composes them instead of cloning the first composer's. ..."
+ },
+ {
+  "file": "web/src/lib/locale.ts",
+  "A": 3,
+  "B": 6,
+  "C": 32,
+  "leak": 3,
+  "score": 16,
+  "vocab": [
+   "regionIn",
+   "formatLocale",
+   "ES_419_REGIONS",
+   "activateLocale",
+   "ZH_HANT_REGIONS",
+   "ZH_HANS_REGIONS"
+  ],
+  "lines": 186,
+  "doc": "The locale runtime: which languages the app ships, which of them a person gets, and the act of switching. This file is the single home of the document's lang/dir wiring: nothing else writes those attributes, so the RTL flip cannot drift ..."
+ },
+ {
+  "file": "server/shared/credential-manifests.js",
+  "A": 2,
+  "B": 5,
+  "C": 27,
+  "leak": 3,
+  "score": 16,
+  "vocab": [
+   "manifestFor",
+   "DEFAULT_ROOT",
+   "listManifests",
+   "credential-manifests"
+  ],
+  "lines": 77,
+  "doc": "Discovery of the connector credential manifests: each connector that takes credentials declares them in its own connectors/<name>/credentials.js (the `credentials` export: connector, ownerKind, fields, and the optional flow, hint, sessio..."
+ },
+ {
+  "file": "server/shared/trail.js",
+  "A": 2,
+  "B": 5,
+  "C": 27,
+  "leak": 3,
+  "score": 16,
+  "vocab": [
+   "recordWrite"
+  ],
+  "lines": 45,
+  "doc": "The write trail (write_trail): one row per write decision or registry edit \u2014 who did what, on which surface, with what outcome. This is the named-writes step's evidence table (docs/access-control.md \u00a7The trail), extending the click_log p..."
+ },
+ {
+  "file": "server/shared/sql-static.js",
+  "A": 3,
+  "B": 5,
+  "C": 41,
+  "leak": 2,
+  "score": 16,
+  "vocab": [
+   "sqlRaw",
+   "cleanIdent",
+   "sql-static",
+   "matchParen",
+   "parseSchema",
+   "parseWrites"
+  ],
+  "lines": 408,
+  "doc": "The static-SQL reading shared by the conformance tests (schema-conformance, tenant-conformance): committed schema.sql files parsed to their tables and columns, committed JS scanned for the SQL string literals it sends to conn.query, and ..."
+ },
+ {
+  "file": "server/shared/grants.test.js",
+  "A": 0,
+  "B": 5,
+  "C": 16,
+  "leak": 5,
+  "score": 16,
+  "vocab": [
+   "grants.test",
+   "COVERS_VECTORS",
+   "ALLOWED_VECTORS",
+   "VERB_COVER_VECTORS",
+   "TOKEN_COVER_VECTORS"
+  ],
+  "lines": 318,
+  "doc": "The token grammar's contract, DB-free. The cover logic runs on both sides of the wire, so the MIRRORED VECTOR TABLE below is duplicated verbatim in web/test/grants.test.ts (vitest), which names this file as its twin: a behaviour change e..."
+ },
+ {
+  "file": "spheres/financial/ui/PeriodPicker.tsx",
+  "A": 3,
+  "B": 9,
+  "C": 23,
+  "leak": 6,
+  "score": 15,
+  "vocab": [
+   "atDefault",
+   "PeriodPicker"
+  ],
+  "lines": 192,
+  "doc": "The period control: \u2039 [window label] \u203a with a popover organised by the tenant's financial years \u2014 each FY a row of badge and four quarters, so a quarter or a whole FY is one click and a free range is one drag. The label is the control an..."
+ },
+ {
+  "file": "web/src/lib/assistant-runtime.ts",
+  "A": 1,
+  "B": 5,
+  "C": 19,
+  "leak": 4,
+  "score": 15,
+  "vocab": [
+   "onChatId",
+   "ackedSeq",
+   "frameQueue",
+   "lastUserText",
+   "restoreChatId",
+   "ChatAdapterHandle"
+  ],
+  "lines": 268,
+  "doc": "The pane's @assistant-ui/react LocalRuntime adapter (\"runtime\" in that package's sense: the client-side thread state). The agent runtime, the server tier the adapter ultimately talks to, is chat.ts's subject."
+ },
+ {
+  "file": "spheres/projects/api/read.js",
+  "A": 1,
+  "B": 5,
+  "C": 15,
+  "leak": 5,
+  "score": 15,
+  "vocab": [
+   "slugOk",
+   "badSlug",
+   "livesAt",
+   "postLink",
+   "parseRefs",
+   "projectId"
+  ],
+  "lines": 652,
+  "doc": "The projects sphere's API: the half the PWA's ui/ calls over /bi/api/projects/*. First-party data throughout: the reads pull the sphere's own flat rows in a few bulk queries and hand them to api/derive.js (status, stage, ready/blocked, b..."
+ },
+ {
+  "file": "spheres/social/ui/PerformanceSection.tsx",
+  "A": 1,
+  "B": 1,
+  "C": 15,
+  "leak": 1,
+  "score": 15,
+  "vocab": [
+   "SortTh",
+   "onSort",
+   "labelOf",
+   "DeltaChip",
+   "FIRST_SLICE",
+   "genderLabel"
+  ],
+  "lines": 1026,
+  "doc": "The Performance section: how the venue's own posting is doing on Instagram, Facebook and TikTok in one read. One payload arrives (routes.performance) and the All/Instagram/Facebook/TikTok chips narrow it client-side: view state in the UR..."
+ },
+ {
+  "file": "spheres/schedule/ui/views/Pending.tsx",
+  "A": 1,
+  "B": 5,
+  "C": 14,
+  "leak": 5,
+  "score": 14,
+  "vocab": [
+   "MoveRow",
+   "canWrite"
+  ],
+  "lines": 164,
+  "doc": "The requested-move ledger, grouped by where each row stands: pending and stale are the open set (a Cancel closes them), contradicted is the mirror saying the entry went somewhere else, and the trailing week's resolutions sit collapsed un..."
+ },
+ {
+  "file": "server/shared/contract-helpers.js",
+  "A": 4,
+  "B": 5,
+  "C": 68,
+  "leak": 1,
+  "score": 14,
+  "vocab": [
+   "faultReason",
+   "callerMetaUrl",
+   "contractReason",
+   "compileContract",
+   "contract-helpers"
+  ],
+  "lines": 41,
+  "doc": "The contract helpers every connector's persist leg shares: compile a JSON Schema into an Ajv validator, and render a browser-leg fault or the first Ajv failure into a one-line reason. This is the neutral tier, so it imports no connector ..."
+ },
+ {
+  "file": "server/shared/pipeline-fixture.js",
+  "A": 2,
+  "B": 5,
+  "C": 24,
+  "leak": 3,
+  "score": 14,
+  "vocab": [
+   "viewBody",
+   "VIEW_BODY",
+   "platformSql",
+   "tempTableDdl",
+   "statementFrom",
+   "setupPipelineCore"
+  ],
+  "lines": 86,
+  "doc": "Test fixture: the pipeline core tables as session-local TEMPORARY tables, built from the committed DDL (schema.sql beside this file), so DB-backed suites exercise the real shapes and the real view SQL without depending on any standing pi..."
+ },
+ {
+  "file": "connectors/xero/api/upsert.js",
+  "A": 1,
+  "B": 2,
+  "C": 28,
+  "leak": 1,
+  "score": 14,
+  "vocab": [
+   "mysqlDt",
+   "LINE_SQL",
+   "LINE_COLS",
+   "xeroDateMs",
+   "TRACKING_SQL",
+   "paymentTarget"
+  ],
+  "lines": 333,
+  "doc": "The entity registry and the generic upsert. ENTITIES is the single list of what the connector replicates: each entry names the Xero product + collection path, the table and its natural-key column, the walk mode \u2014 incremental (paginated +..."
+ },
+ {
+  "file": "server/shared/error-codes.test.js",
+  "A": 0,
+  "B": 10,
+  "C": 13,
+  "leak": 10,
+  "score": 13,
+  "vocab": [
+   "error-codes.test"
+  ],
+  "lines": 82,
+  "doc": "The error-code vocabulary's pins, DB-free: everything here is the frozen array, the tagging helper, and a static scan of tracked server source (the invariants.test.js posture). What is pinned: the grammar every code obeys, that errcode()..."
+ },
+ {
+  "file": "connectors/googlereviews/api/import-historical.js",
+  "A": 1,
+  "B": 8,
+  "C": 15,
+  "leak": 7,
+  "score": 13,
+  "vocab": [
+   "runImport",
+   "import-historical"
+  ],
+  "lines": 105,
+  "doc": "The one-shot historical import: read an Apify \"Google-Maps-Reviews-Scraper\" JSON dump and mirror it into googlereviews_* as the 'apify' source. The rich source, so it sets every field it carries; the SerpApi pump only fills holes later. ..."
+ },
+ {
+  "file": "web/src/lib/grants.ts",
+  "A": 6,
+  "B": 7,
+  "C": 47,
+  "leak": 2,
+  "score": 13,
+  "vocab": [
+   "AuthReach",
+   "GrantVerb",
+   "GrantToken"
+  ],
+  "lines": 83,
+  "doc": "Client half of the grant cover logic \u2014 the browser twin of server/shared/grants.js. Only the cover functions live here: the wire (/api/auth/me, /verify) carries grants as structured tokens, so the client never parses a grant string, and ..."
+ },
+ {
+  "file": "server/shared/stage-advance.js",
+  "A": 5,
+  "B": 7,
+  "C": 30,
+  "leak": 3,
+  "score": 13,
+  "vocab": [
+   "sqlDate",
+   "FLIP_UTC",
+   "frameLook",
+   "envPrefix",
+   "STAGE_GUARD",
+   "graceMinutesFor"
+  ],
+  "lines": 323,
+  "doc": "The stage-advance machinery every pipeline process composes: the sweep loop, the guard ladder, the persist that lands a consideration (and, on a guard-passing advance, the flip), and the look-claim arbitration between a job's executors. ..."
+ },
+ {
+  "file": "connectors/deputy/api/upsert.js",
+  "A": 1,
+  "B": 1,
+  "C": 13,
+  "leak": 1,
+  "score": 13,
+  "vocab": [
+   "dateOnly",
+   "epochToMysql"
+  ],
+  "lines": 134,
+  "doc": "The entity registry and the generic upsert. ENTITIES is the single list of what the connector replicates, dimensions before the shift facts that reference them: each entry names the Resource API object to QUERY, the table and its natural..."
+ },
+ {
+  "file": "server/shared/secret-box.js",
+  "A": 2,
+  "B": 9,
+  "C": 16,
+  "leak": 7,
+  "score": 12,
+  "vocab": [
+   "IV_LEN",
+   "TAG_LEN",
+   "plaintext",
+   "secret-box"
+  ],
+  "lines": 43,
+  "doc": "Seal and open credential values for the connector_credential store (schema.sql). AES-256-GCM; a sealed blob is iv (12) || tag (16) || ciphertext, the layout the schema comment names, so one VARBINARY column carries everything open() need..."
+ },
+ {
+  "file": "connectors/deputy/api/deputy-client.js",
+  "A": 1,
+  "B": 5,
+  "C": 15,
+  "leak": 4,
+  "score": 12,
+  "vocab": [
+   "deputy-client",
+   "makeDeputyClient"
+  ],
+  "lines": 135,
+  "doc": "The Deputy Resource API read client over plain node:https, so it runs on the host's Node 16 (no SDK, no global fetch), sibling to connectors/rezdy/api/ rezdy-client.js. Callers take this client through dependency injection; nowMs, sleep,..."
+ },
+ {
+  "file": "spheres/social/ui/CampaignDelete.tsx",
+  "A": 2,
+  "B": 4,
+  "C": 24,
+  "leak": 2,
+  "score": 12,
+  "vocab": [
+   "onDeleted",
+   "CampaignDelete",
+   "CampaignDeleteButton"
+  ],
+  "lines": 67,
+  "doc": "The campaign delete affordance both campaign surfaces share: the board's title row and the list page's funnel summary, so a campaign dies without opening its board. The first click only arms (an in-place confirm, no dialog) and auto-disa..."
+ },
+ {
+  "file": "connectors/googlereviews/api/serpapi-client.js",
+  "A": 1,
+  "B": 4,
+  "C": 16,
+  "leak": 3,
+  "score": 12,
+  "vocab": [
+   "SEARCH_URL",
+   "serpapi-client",
+   "makeSerpapiClient"
+  ],
+  "lines": 70,
+  "doc": "The SerpApi read client for Google Maps reviews, plain REST over node:https (no SDK, Node-16-clean like the Chat connector's chat-client.js). The connector calls SerpApi directly with its own key rather than through the magazines serpapi..."
+ },
+ {
+  "file": "connectors/onedrive/api/graph-client.js",
+  "A": 3,
+  "B": 4,
+  "C": 50,
+  "leak": 1,
+  "score": 12,
+  "vocab": [
+   "pathOf",
+   "postGrant",
+   "searchUrl",
+   "GRAPH_BASE",
+   "filterKind",
+   "driveOwner"
+  ],
+  "lines": 343,
+  "doc": "The OneDrive client: live search and item reads over Microsoft Graph (graph.microsoft.com/v1.0, the personal drive under the office account's consent), on the shared transport (server/shared/http-raw.js) so it runs on the host's Node 16...."
+ },
+ {
+  "file": "spheres/social/ui/ContactDetail.tsx",
+  "A": 1,
+  "B": 3,
+  "C": 12,
+  "leak": 3,
+  "score": 12,
+  "vocab": [
+   "onPick",
+   "PostRow",
+   "onJoined",
+   "shortTime",
+   "onRemoved",
+   "mediaLabel"
+  ],
+  "lines": 818,
+  "doc": ""
+ },
+ {
+  "file": "agent/agreement.test.js",
+  "A": 0,
+  "B": 7,
+  "C": 11,
+  "leak": 7,
+  "score": 11,
+  "vocab": [
+   "pathParams",
+   "derivedNames",
+   "agreement.test"
+  ],
+  "lines": 263,
+  "doc": "Agreement between the chat's tool surface and the routes the platform declares. The service derives its tools from rows the BI server publishes at GET /api/chat/tools; this test re-reads the same population straight from the disk manifes..."
+ },
+ {
+  "file": "spheres/social/api/stage-advance.js",
+  "A": 3,
+  "B": 5,
+  "C": 14,
+  "leak": 4,
+  "score": 11,
+  "vocab": [
+   "PK_OF",
+   "entryPass",
+   "CAMPAIGN_OF",
+   "entryPassDue",
+   "HAS_NEW_OUTBOUND",
+   "HAS_INBOUND_TEXT"
+  ],
+  "lines": 252,
+  "doc": "The aI03 composition over the shared advance machinery (server/shared/stage-advance.js). This file declares what is social's own: the member serialisation ('<campaign_id>:<ig_user_pk>', the job's entity-id spelling and the core tables' m..."
+ },
+ {
+  "file": "spheres/coord/ui/views/MeetingFollowUp.tsx",
+  "A": 1,
+  "B": 3,
+  "C": 17,
+  "leak": 2,
+  "score": 11,
+  "vocab": [
+   "meetingPath",
+   "spaceRoomUrl",
+   "composeFollowUp",
+   "MeetingFollowUp"
+  ],
+  "lines": 134,
+  "doc": "Turning a meeting into a follow-up task. A meeting is a source, not a card, and Google Chat \u2014 not this platform \u2014 owns tasks, so the platform never creates one: it composes a task-shaped message carrying the meeting's path and hands it o..."
+ },
+ {
+  "file": "connectors/tiktok/api/insights-sync.js",
+  "A": 1,
+  "B": 3,
+  "C": 17,
+  "leak": 2,
+  "score": 11,
+  "vocab": [
+   "openId",
+   "videoRow",
+   "unixToVenue",
+   "unixSeconds",
+   "upsertVideo",
+   "loadTokenFile"
+  ],
+  "lines": 181,
+  "doc": "The TikTok cursor pass (CK01): one bounded, single-flight pull of the venue's own account through the Display API \u2014 the CI01/CF01 shape on a third platform. A pass snapshots the account's counts into tiktok_profile_snapshot (day-grain), ..."
+ },
+ {
+  "file": "server/shared/chat.js",
+  "A": 1,
+  "B": 3,
+  "C": 17,
+  "leak": 2,
+  "score": 11,
+  "vocab": [
+   "toolRoutes",
+   "handleChat"
+  ],
+  "lines": 85,
+  "doc": "The chat mount ('chat' is the shell's name, like 'auth', 'click-log' and 'party', never a sphere's): the pane's plumbing for the standalone agent runtime, which the pane reaches directly at the origin this tier names. The assistant runti..."
+ },
+ {
+  "file": "web/src/pipeline/CampaignBoard.tsx",
+  "A": 1,
+  "B": 1,
+  "C": 11,
+  "leak": 1,
+  "score": 11,
+  "vocab": [
+   "boardColumns",
+   "strayColumns",
+   "offFunnelColumns"
+  ],
+  "lines": 260,
+  "doc": "One campaign as a kanban on the kit Board: a column per on-funnel stage (seq set, in seq order), a card per member at it. Movement is a drag (desktop) or the card's context menu, both funnelling into one optimistic flip over the query ca..."
+ },
+ {
+  "file": "spheres/customer-service/api/calls.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 11,
+  "leak": 1,
+  "score": 11,
+  "vocab": [
+   "TZ_ROW",
+   "totalsRow",
+   "calls.test"
+  ],
+  "lines": 199,
+  "doc": "The calls read on a fake connection (no live DB): the window defaulting through the instance's own zone, the days spelling, the per-tenant totals fold, the tenant-correlated ring-back matching, the caps, and the cost month truncation. Th..."
+ },
+ {
+  "file": "server/shared/auth.test.js",
+  "A": 0,
+  "B": 7,
+  "C": 10,
+  "leak": 7,
+  "score": 10,
+  "vocab": [
+   "adminReq",
+   "usersApi",
+   "wallState",
+   "APPS_RUNS",
+   "auth.test",
+   "roleState"
+  ],
+  "lines": 2080,
+  "doc": "The sign-in tier's contract, DB-free: a fake connection answers the exact queries auth.js issues, so what is pinned here is the security behaviour \u2014 allowlist edges, uniform answers, binding, attempt burn, hashing at rest \u2014 not MySQL. Th..."
+ },
+ {
+  "file": "connectors/dropbox/api/dropbox-client.js",
+  "A": 3,
+  "B": 6,
+  "C": 20,
+  "leak": 3,
+  "score": 10,
+  "vocab": [
+   "API_BASE",
+   "EXT_KIND",
+   "HOME_URL",
+   "homeLink",
+   "matchMeta",
+   "parentPath"
+  ],
+  "lines": 359,
+  "doc": "The Dropbox live-read client: files/search_v2, metadata, thumbnails, sharing links and file tags over plain node:https through the shared transport, so it runs on the host's Node 16 (no SDK, no global fetch), sibling to connectors/xero/a..."
+ },
+ {
+  "file": "connectors/clover/api/clover-client.js",
+  "A": 1,
+  "B": 4,
+  "C": 14,
+  "leak": 3,
+  "score": 10,
+  "vocab": [
+   "elementsOf",
+   "clover-client",
+   "makeCloverClient"
+  ],
+  "lines": 137,
+  "doc": "The Clover REST read client (v3, default base https://api.clover.com) over plain node:https so it runs on the host's Node 16, sibling to the Rezdy and Xero clients. Callers take it through dependency injection; nowMs, sleep and http are ..."
+ },
+ {
+  "file": "server/shared/credentials.test.js",
+  "A": 0,
+  "B": 3,
+  "C": 10,
+  "leak": 3,
+  "score": 10,
+  "vocab": [
+   "hookFor",
+   "staleRow",
+   "tenantRows"
+  ],
+  "lines": 447,
+  "doc": "The credential store's two faces over a stub connection (never the default DB: the repo .env points at production, so rows here are canned per query). resolveCredentials: store beats environment per field, the environment fills gaps, a m..."
+ },
+ {
+  "file": "spheres/financial/ui/window.ts",
+  "A": 1,
+  "B": 2,
+  "C": 20,
+  "leak": 1,
+  "score": 10,
+  "vocab": [
+   "filterRows",
+   "OptionalSource",
+   "OPTIONAL_SOURCES"
+  ],
+  "lines": 46,
+  "doc": "The statement over the picker's window: rows filtered to the chosen data sources, months collapsed into one synthetic column, and matrix.ts left as the untouched arithmetic authority. The view's model: Xero is the pinned baseline; Rezdy ..."
+ },
+ {
+  "file": "connectors/deputy/api/sync.js",
+  "A": 1,
+  "B": 2,
+  "C": 10,
+  "leak": 2,
+  "score": 10,
+  "vocab": [
+   "maxId",
+   "maxMs",
+   "floorSec",
+   "sinceText",
+   "syncIncremental"
+  ],
+  "lines": 240,
+  "doc": "The Deputy cursor sync: a server-side API pull (kind C \u2014 neither browser nor model) that mirrors each replicated entity into deputy_*. Like the Xero sync it is a pump, not a per-entity job: its state is the per-entity cursors in deputy_s..."
+ },
+ {
+  "file": "spheres/coord/api/jobs.js",
+  "A": 1,
+  "B": 2,
+  "C": 20,
+  "leak": 1,
+  "score": 10,
+  "vocab": [
+   "threadKey",
+   "replayLifecycle",
+   "reconstructTasks",
+   "LIFECYCLE_STATUS"
+  ],
+  "lines": 228,
+  "doc": "The coord sphere's deterministic reconstruction pass: read the connector's mirrored messages, decode the task-creation events (api/decode.js), and upsert them into coord_tasks. No AI and no fetch, so this is neither a type-A nor a type-B..."
+ },
+ {
+  "file": "web/src/lib/use-pathname.ts",
+  "A": 6,
+  "B": 9,
+  "C": 26,
+  "leak": 3,
+  "score": 9,
+  "vocab": [
+   "usePathname",
+   "use-pathname"
+  ],
+  "lines": 29,
+  "doc": ""
+ },
+ {
+  "file": "spheres/social/api/read.js",
+  "A": 1,
+  "B": 5,
+  "C": 9,
+  "leak": 5,
+  "score": 9,
+  "vocab": [
+   "ownPk",
+   "isMember",
+   "draftRow",
+   "actorFor",
+   "unreadFor",
+   "unpackMsg"
+  ],
+  "lines": 1491,
+  "doc": "The social component's read/write API: the half the PWA's ui/ calls over /bi/api/social/*. The BI server (server/app.js) owns no social knowledge; it discovers this component and forwards everything under /api/social/ here, with an open ..."
+ },
+ {
+  "file": "web/src/app/AccessRoles.tsx",
+  "A": 1,
+  "B": 4,
+  "C": 12,
+  "leak": 3,
+  "score": 9,
+  "vocab": [
+   "onSet",
+   "SegRow",
+   "roleCell",
+   "CellPair",
+   "CellTone",
+   "RoleDrawer"
+  ],
+  "lines": 499,
+  "doc": "The Roles view of the Access screen (Access.tsx routes here at /bi/access/roles): the role-by-dataset table, read-only in place, because a row here is a decision about everyone who holds it \u2014 editing happens in a role's own drawer, one s..."
+ },
+ {
+  "file": "connectors/github/api/github-client.js",
+  "A": 1,
+  "B": 4,
+  "C": 12,
+  "leak": 3,
+  "score": 9,
+  "vocab": [
+   "USER_AGENT",
+   "encodePath",
+   "API_VERSION",
+   "resetWaitMs",
+   "github-client",
+   "isRateLimited"
+  ],
+  "lines": 156,
+  "doc": "The GitHub Contents API read client (base https://api.github.com) over plain node:https, so it runs on the host's Node 16 (no SDK, no global fetch), sibling to connectors/rezdy/api/rezdy-client.js. Callers take this client through depend..."
+ },
+ {
+  "file": "server/shared/model-api.js",
+  "A": 1,
+  "B": 4,
+  "C": 12,
+  "leak": 3,
+  "score": 9,
+  "vocab": [
+   "model-api",
+   "runRunbookApi"
+  ],
+  "lines": 14,
+  "doc": "The API executor's provider chooser: the server accepts both keys, and a runbook's api leg runs on whichever is configured \u2014 Anthropic when its key is present (the production provider), else DeepSeek (the test provider). Neither key is a..."
+ },
+ {
+  "file": "web/src/app/ChatAssistant.tsx",
+  "A": 0,
+  "B": 2,
+  "C": 9,
+  "leak": 2,
+  "score": 9,
+  "vocab": [
+   "DOCK_KEY",
+   "UserText",
+   "dockIcon",
+   "ToolLine",
+   "floatIcon",
+   "PanelMode"
+  ],
+  "lines": 433,
+  "doc": ""
+ },
+ {
+  "file": "spheres/financial/ui/views/ProfitAndLoss.tsx",
+  "A": 1,
+  "B": 1,
+  "C": 9,
+  "leak": 1,
+  "score": 9,
+  "vocab": [
+   "NetRow",
+   "segCount",
+   "parseSrc",
+   "monthNets",
+   "dashBelow",
+   "serializeSrc"
+  ],
+  "lines": 452,
+  "doc": "The one financial view: a Profit & Loss statement in the classical shape \u2014 every business segment a column, the chart of accounts down, one aggregated table over the picker's window (a single-month window is exactly Xero's own layout) \u2014 ..."
+ },
+ {
+  "file": "spheres/library/api/read.js",
+  "A": 1,
+  "B": 1,
+  "C": 9,
+  "leak": 1,
+  "score": 9,
+  "vocab": [
+   "itemRoute",
+   "defaultLog",
+   "searchRoute",
+   "buildHandleApi"
+  ],
+  "lines": 99,
+  "doc": "The library sphere's API: the half the PWA's ui/ calls over /bi/api/library/*. A live read over the office's OneDrive and Dropbox (hier.md's bare read-view shape: no tables of its own, no writes): each request builds the source's client ..."
+ },
+ {
+  "file": "spheres/schedule/reconcile.js",
+  "A": 0,
+  "B": 1,
+  "C": 9,
+  "leak": 1,
+  "score": 9,
+  "vocab": [
+   "CLOSE_SQL",
+   "STALE_SQL",
+   "reconcilePass"
+  ],
+  "lines": 80,
+  "doc": "Run the schedule sphere's reconcile pass over the open pending moves. Deterministic and idempotent: for each open (pending|stale) move, ask its provider's checkPending what the mirror says (a provider without one offers no evidence, so o..."
+ },
+ {
+  "file": "web/src/lib/chat-starters.ts",
+  "A": 1,
+  "B": 5,
+  "C": 10,
+  "leak": 4,
+  "score": 8,
+  "vocab": [
+   "BY_SPHERE",
+   "chat-starters",
+   "STARTER_SPHERES"
+  ],
+  "lines": 65,
+  "doc": "The empty pane's starter questions: a couple per sphere, in the operator's words, each sent as an ordinary message when tapped. The identifier-to- sentence pattern is tool-labels.ts's: authored here, translated like any other chrome, and..."
+ },
+ {
+  "file": "server/app.js",
+  "A": 0,
+  "B": 5,
+  "C": 8,
+  "leak": 5,
+  "score": 8,
+  "vocab": [
+   "_mods",
+   "readGate",
+   "relToRepo",
+   "checkAuth",
+   "adminOnly",
+   "_hookSweep"
+  ],
+  "lines": 1352,
+  "doc": "BI HTTP API for the cPanel/Passenger Node tier (host startup file ~/bi/server/app.js, served at the host's /bi path): '/', '/dbcheck', '/jobs', '/events', and the write routes. Bootstrap is the Passenger convention: a plain http.createSe..."
+ },
+ {
+  "file": "connectors/spar/sync.js",
+  "A": 0,
+  "B": 3,
+  "C": 8,
+  "leak": 3,
+  "score": 8,
+  "vocab": [
+   "readText",
+   "listFiles"
+  ],
+  "lines": 175,
+  "doc": "External-timer entrypoint for the SPAR filesystem mirror. A host cron entry or the BI app's request-fired spawn runs this; it opens a DB connection, walks the SPAR campaign checkouts once, and exits. A developer verifies it from the CLI:..."
+ },
+ {
+  "file": "spheres/customer-service/api/transcripts.js",
+  "A": 1,
+  "B": 2,
+  "C": 15,
+  "leak": 1,
+  "score": 8,
+  "vocab": [
+   "transcribeCall",
+   "readTranscript"
+  ],
+  "lines": 90,
+  "doc": "The transcript pair behind the log's View-transcript control. The read serves the cached row and nothing else; the write is the on-demand pipeline: presign the recording with the connector's key, hand the link to the GPU workstation's tr..."
+ },
+ {
+  "file": "spheres/schedule/api/read.js",
+  "A": 1,
+  "B": 2,
+  "C": 8,
+  "leak": 2,
+  "score": 8,
+  "vocab": [
+   "metaRoute",
+   "slotsRoute",
+   "ghostEntry",
+   "rangeRoute",
+   "upsertEntry",
+   "mergePending"
+  ],
+  "lines": 335,
+  "doc": "The schedule sphere's API: the half the PWA's ui/ calls over /bi/api/schedule/*. The BI server (server/app.js) forwards everything under /api/schedule/ here with an open DB connection. GETs stay open; the writes (the move loop in moves.j..."
+ },
+ {
+  "file": "server/shared/versions.js",
+  "A": 1,
+  "B": 2,
+  "C": 15,
+  "leak": 1,
+  "score": 8,
+  "vocab": [
+   "latestRow",
+   "commitSha",
+   "decideAppend"
+  ],
+  "lines": 31,
+  "doc": "Pure logic over the distributed_versions ledger for ONE (repo, artifact_ref): the write-side decision (decideAppend) that the deploy script uses to append-on-change. No DB and no clock live here: the caller reads the rows (see the distri..."
+ },
+ {
+  "file": "spheres/social/ui/CampaignBoard.tsx",
+  "A": 1,
+  "B": 1,
+  "C": 8,
+  "leak": 1,
+  "score": 8,
+  "vocab": [
+   "onReview",
+   "DraftChip",
+   "MemberCard"
+  ],
+  "lines": 605,
+  "doc": ""
+ },
+ {
+  "file": "server/shared/access.js",
+  "A": 1,
+  "B": 1,
+  "C": 8,
+  "leak": 1,
+  "score": 8,
+  "vocab": [
+   "routeOf",
+   "missingRefs",
+   "emptyAnswer"
+  ],
+  "lines": 219,
+  "doc": "The dataset access gate \u2014 the one home of the access decision. Both dispatch and any non-dispatch surface (the social branch pre-migration, the shell mounts in app.js) import gate() from here; no sphere re-implements the decision, the de..."
+ },
+ {
+  "file": "connectors/awsconnect/api/aws-client.js",
+  "A": 1,
+  "B": 4,
+  "C": 9,
+  "leak": 3,
+  "score": 7,
+  "vocab": [
+   "aws-client",
+   "makeAwsClient"
+  ],
+  "lines": 132,
+  "doc": "The AWS read client over plain node:https, so it runs on the host's Node 16 (no SDK, no global fetch), sibling to connectors/deputy/api/deputy-client.js. Callers take this client through dependency injection; nowMs, sleep and http are in..."
+ },
+ {
+  "file": "web/src/lib/drive.ts",
+  "A": 1,
+  "B": 2,
+  "C": 14,
+  "leak": 1,
+  "score": 7,
+  "vocab": [
+   "slotOf",
+   "DriveView",
+   "driveSplit",
+   "DriveEvent",
+   "driveFilter",
+   "surfaceView"
+  ],
+  "lines": 285,
+  "doc": "The pane's drive executor: the write side of the interaction seam (docs/interaction-seam.md Part D), the leg that runs in the browser because the primitives live here. The agent runtime carries a drive down the conversation's SSE stream ..."
+ },
+ {
+  "file": "connectors/clover/api/upsert.js",
+  "A": 1,
+  "B": 2,
+  "C": 7,
+  "leak": 2,
+  "score": 7,
+  "vocab": [
+   "lineMods",
+   "sumCents",
+   "lineTaxes",
+   "msToLocal",
+   "lineDiscounts"
+  ],
+  "lines": 214,
+  "doc": "The entity registry and the generic upsert. ENTITIES is the single list of what the connector replicates, in the pass's dependency order (the merchant root first \u2014 its timezone is what stamps every order's local wall clock \u2014 then the cat..."
+ },
+ {
+  "file": "web/src/lib/view-scope.ts",
+  "A": 11,
+  "B": 13,
+  "C": 40,
+  "leak": 2,
+  "score": 6,
+  "vocab": [
+   "useSlot",
+   "ViewScope",
+   "view-scope"
+  ],
+  "lines": 27,
+  "doc": ""
+ },
+ {
+  "file": "server/shared/party.test.js",
+  "A": 0,
+  "B": 6,
+  "C": 6,
+  "leak": 6,
+  "score": 6,
+  "vocab": [
+   "CLAIM_ROW",
+   "party.test"
+  ],
+  "lines": 454,
+  "doc": "The people core's routes on a fake connection: the route set is pinned, the SQL names the party tables and the adapter mirrors, a claim validates its source against the code list before any write, a superseding claim closes the prior liv..."
+ },
+ {
+  "file": "server/shared/tenant-conformance.test.js",
+  "A": 0,
+  "B": 6,
+  "C": 6,
+  "leak": 6,
+  "score": 6,
+  "vocab": [
+   "GROUP_TABLES",
+   "OWNER_COLUMNS",
+   "NO_TENANT_SCHEMA",
+   "PLATFORM_PIPELINE",
+   "tenant-conformance.test"
+  ],
+  "lines": 250,
+  "doc": "Tenant conformance: every committed INSERT into a tenant-scoped table names the tenant column. The net's scope is the tree, not a list: every owner whose committed schema carries a tenant column is checked, so a new owner, a new table, o..."
+ },
+ {
+  "file": "connectors/googlechat/api/chat-client.js",
+  "A": 1,
+  "B": 5,
+  "C": 7,
+  "leak": 4,
+  "score": 6,
+  "vocab": [
+   "chat-client",
+   "makeChatClient"
+  ],
+  "lines": 119,
+  "doc": "The Google Chat read client, plain REST over node:https so it runs on the host's Node 16 (the @googleapis/chat SDK pulls googleapis-common, which requires Node 18, to gain one method we use, spaces.messages.list). We call exactly two end..."
+ },
+ {
+  "file": "spheres/coord/capture.js",
+  "A": 2,
+  "B": 4,
+  "C": 12,
+  "leak": 2,
+  "score": 6,
+  "vocab": [
+   "doneSignal",
+   "CAPTURE_REPO",
+   "OTHER_BUSINESS_PREFIX"
+  ],
+  "lines": 31,
+  "doc": "The capture vocabulary: the words the meeting corpus and the Otter title channel exchange. One home for the server half: the pre-link read (prelink.js), the retitle job's readiness gate and its title builds (api/jobs-a.js) all read the p..."
+ },
+ {
+  "file": "spheres/publicity/api/jobs.js",
+  "A": 1,
+  "B": 4,
+  "C": 8,
+  "leak": 3,
+  "score": 6,
+  "vocab": [
+   "memberFromId",
+   "buildPublicityJobs"
+  ],
+  "lines": 110,
+  "doc": "The publicity sphere's job map: aT00, the stage auto-flip, registered on the work queue so a desktop can run it beside the server hook. The three legs live in stage-advance.js; this file adapts them to the platform's per-row job shape (s..."
+ },
+ {
+  "file": "scripts/deploy-skills.mjs",
+  "A": 0,
+  "B": 4,
+  "C": 6,
+  "leak": 4,
+  "score": 6,
+  "vocab": [
+   "arefs",
+   "isSkillRef",
+   "deploy-skills"
+  ],
+  "lines": 93,
+  "doc": "Stamp the distributed_versions ledger with the current commit of every artifact a type-B job travels with: the manifest's skill refs plus the harness lib files every run sources. The BI server's GET /bi/closure route reads these rows to ..."
+ },
+ {
+  "file": "connectors/googlereviews/api/sync.js",
+  "A": 1,
+  "B": 3,
+  "C": 6,
+  "leak": 3,
+  "score": 6,
+  "vocab": [
+   "isoDate",
+   "markRun",
+   "reviewId",
+   "syncPlace",
+   "loadPlaces",
+   "searchesLast30d"
+  ],
+  "lines": 232,
+  "doc": "The SerpApi review pump: a server-side API pull (neither browser nor model) that mirrors each place's newest reviews into googlereviews_* as the 'serpapi' source. It is a pump, not a per-entity job \u2014 its state is the per-place forward cu..."
+ },
+ {
+  "file": "server/shared/deepseek.js",
+  "A": 2,
+  "B": 3,
+  "C": 18,
+  "leak": 1,
+  "score": 6,
+  "vocab": [
+   "deepseek",
+   "MODEL_ID",
+   "runRunbookDeepseek"
+  ],
+  "lines": 52,
+  "doc": "The DeepSeek leg of the API executor \u2014 same contract as anthropic.js (runbook + input -> { value, usage, modelId }), OpenAI-shaped wire. It exists so the api route can be exercised end-to-end with the DeepSeek key when no Anthropic key i..."
+ },
+ {
+  "file": "spheres/customer-service/api/calls.js",
+  "A": 1,
+  "B": 2,
+  "C": 12,
+  "leak": 1,
+  "score": 6,
+  "vocab": [
+   "daysOf",
+   "heatOf",
+   "costOf",
+   "repsOf",
+   "repName",
+   "todayIn"
+  ],
+  "lines": 457,
+  "doc": "The Calls read: how the venue's phone line is doing over a window, assembled from the awsconnect mirror. One response carries the totals, the per-day series, the hour-by-weekday heat, the per-rep table, the missed calls with their ring-b..."
+ },
+ {
+  "file": "spheres/customer-service/api/read.js",
+  "A": 1,
+  "B": 1,
+  "C": 6,
+  "leak": 1,
+  "score": 6,
+  "vocab": [
+   "DAYS_MAX",
+   "CAL_DATE",
+   "callsParams"
+  ],
+  "lines": 125,
+  "doc": "The customer-service sphere's API: the half the PWA's ui/ calls over /bi/api/customer-service/*. The sphere is the inquiry-to-booking aspect the vision anticipates; its first surface is the phone line, a reader-only view over the awsconn..."
+ },
+ {
+  "file": "server/shared/events.js",
+  "A": 1,
+  "B": 1,
+  "C": 6,
+  "leak": 1,
+  "score": 6,
+  "vocab": [
+   "createDoorbell"
+  ],
+  "lines": 57,
+  "doc": "The doorbell \u2014 a contentless SSE stream at GET /events. Clients (overseers, PWA tabs) hold the response open; every accepted state-changing write calls ring(), which broadcasts one empty `doorbell` event meaning \"poll now\". The event car..."
+ },
+ {
+  "file": "web/src/app/match.ts",
+  "A": 6,
+  "B": 6,
+  "C": 29,
+  "leak": 1,
+  "score": 5,
+  "vocab": [
+   "activeNav",
+   "atAppRoot",
+   "activeSphere"
+  ],
+  "lines": 38,
+  "doc": ""
+ },
+ {
+  "file": "server/shared/tenant-registry.test.js",
+  "A": 0,
+  "B": 5,
+  "C": 5,
+  "leak": 5,
+  "score": 5,
+  "vocab": [
+   "withRegistry",
+   "FOUNDING_TENANTS",
+   "tenant-registry.test"
+  ],
+  "lines": 132,
+  "doc": "The tenant registry round-trip (schema.sql: tenant_group, tenant, tenant_member, tenant_member_grant): the founding rows stand exactly as the committed seed writes them, a membership row links a user to a tenant with consent defaulted of..."
+ },
+ {
+  "file": "scripts/stage-flip-harness.mjs",
+  "A": 0,
+  "B": 5,
+  "C": 5,
+  "leak": 5,
+  "score": 5,
+  "vocab": [
+   "stage-flip-harness"
+  ],
+  "lines": 142,
+  "doc": "The stage-advance acceptance harness: work item 57's 17 real Instagram cases run through a model executor and the self-consistency guard, scored against the blind-adjudicated truth. The gate for any executor a stage auto-flip job wants t..."
+ },
+ {
+  "file": "spheres/relationships/ui/views/Matches.tsx",
+  "A": 1,
+  "B": 4,
+  "C": 5,
+  "leak": 4,
+  "score": 5,
+  "vocab": [
+   "QueueRow",
+   "memberId",
+   "RowMember",
+   "buildRows",
+   "sourceLabel",
+   "evidenceLabel"
+  ],
+  "lines": 321,
+  "doc": "The review queue: records that look like one person but hold no recorded judgment, listed for a human to settle. Two feeds fill it. The people core's candidates read supplies the groups a mirrored attribute ties together (a shared email,..."
+ },
+ {
+  "file": "server/shared/manifest.test.js",
+  "A": 0,
+  "B": 4,
+  "C": 5,
+  "leak": 4,
+  "score": 5,
+  "vocab": [
+   "manifest.test"
+  ],
+  "lines": 122,
+  "doc": "The closure manifest's loader and validator: every job's declared file closure must resolve (skill refs under the magazines skills repo, repo-relative refs under the BI repo), and the ig-profile entry must carry its known shape. No DB; t..."
+ },
+ {
+  "file": "server/shared/route-manifest.test.js",
+  "A": 0,
+  "B": 4,
+  "C": 5,
+  "leak": 4,
+  "score": 5,
+  "vocab": [
+   "route-manifest.test"
+  ],
+  "lines": 66,
+  "doc": "The platform's route manifest, rendered and pinned. Every sphere's handleApi (and party's) carries the declaration manifest the dispatcher builds; this test renders the whole platform's declarations deterministically and compares them to..."
+ },
+ {
+  "file": "web/src/app/access-sections.ts",
+  "A": 2,
+  "B": 3,
+  "C": 15,
+  "leak": 1,
+  "score": 5,
+  "vocab": [
+   "AccessSection",
+   "accessSection",
+   "ACCESS_SECTIONS",
+   "access-sections",
+   "accessSectionFor",
+   "accessSectionsFor"
+  ],
+  "lines": 45,
+  "doc": ""
+ },
+ {
+  "file": "spheres/coord/ui/windows.tsx",
+  "A": 2,
+  "B": 3,
+  "C": 15,
+  "leak": 1,
+  "score": 5,
+  "vocab": [
+   "isWindow",
+   "WindowChips",
+   "useWindowParam"
+  ],
+  "lines": 40,
+  "doc": "The window filter both sections share: rolling last-seven-days (the default), the previous calendar week, the previous calendar month. The pick rides the ?window= query param on the kit's URL-bound chip row, so both sections read one nar..."
+ },
+ {
+  "file": "server/shared/http-json.js",
+  "A": 1,
+  "B": 3,
+  "C": 8,
+  "leak": 2,
+  "score": 5,
+  "vocab": [
+   "http-json"
+  ],
+  "lines": 50,
+  "doc": "The BI shell's three request/response helpers, one home for the two files that answer HTTP directly: app.js, the whole tier's handler, and chat.js, which holds its responses open (a piped SSE stream) and so cannot go through dispatch()'s..."
+ },
+ {
+  "file": "spheres/schedule/ui/slots.tsx",
+  "A": 1,
+  "B": 2,
+  "C": 10,
+  "leak": 1,
+  "score": 5,
+  "vocab": [
+   "slotZones"
+  ],
+  "lines": 30,
+  "doc": "The lifted card's landing places, in the kit's vocabulary: one day's slots mapped onto BoardZone. The label stays the mandatory screen-reader string (\"10:00 \u00b7 2 of 4 left\"); render draws the same facts richer. A full session is disabled,..."
+ },
+ {
+  "file": "connectors/googlechat/api/sync.js",
+  "A": 1,
+  "B": 1,
+  "C": 5,
+  "leak": 1,
+  "score": 5,
+  "vocab": [
+   "nowIso",
+   "floorIso",
+   "syncSpace",
+   "dumpSpaces",
+   "persistPage",
+   "upsertSpaces"
+  ],
+  "lines": 304,
+  "doc": "The Google Chat cursor sync: a server-side API pull (neither browser nor model) that mirrors each accessible space's messages into googlechat_*. It is a pump, not a per-entity job \u2014 its state is the per-space cursors in googlechat_space_..."
+ },
+ {
+  "file": "connectors/square/api/upsert.js",
+  "A": 1,
+  "B": 1,
+  "C": 5,
+  "leak": 1,
+  "score": 5,
+  "vocab": [
+   "isoToLocal"
+  ],
+  "lines": 137,
+  "doc": "The entity registry and the generic upsert for the Square historical mirror. Two parents \u2014 locations, then the orders that name them \u2014 each a `cols` list of promoted columns with a getter from the raw document, everything else kept in ra..."
+ },
+ {
+  "file": "spheres/financial/api/walls.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 5,
+  "leak": 1,
+  "score": 5,
+  "vocab": [
+   "WAGE_CODE",
+   "seedLedger",
+   "sourceType",
+   "seedJournal",
+   "admitToWages"
+  ],
+  "lines": 153,
+  "doc": "DB-backed leak tests for the wages wall on the financial reads, on the house harness: testdb.js withTxn (fixtures roll back), sentinel keys in a far-future month no live row can reach, constructed principals with wall_circle fixture rows..."
+ },
+ {
+  "file": "spheres/publicity/api/read.js",
+  "A": 1,
+  "B": 1,
+  "C": 5,
+  "leak": 1,
+  "score": 5,
+  "vocab": [
+   "buildApi",
+   "coverageList",
+   "coverageCounts"
+  ],
+  "lines": 115,
+  "doc": "The publicity sphere's API: the half the PWA's ui/ calls over /bi/api/publicity/*. The pipeline itself, derived membership over the spar mirror, the stage reads, the flip/note writes, is the spar-pipeline (server/shared/spar-pipeline.js)..."
+ },
+ {
+  "file": "server/shared/http-raw.js",
+  "A": 18,
+  "B": 20,
+  "C": 35,
+  "leak": 2,
+  "score": 4,
+  "vocab": [
+   "http-raw"
+  ],
+  "lines": 54,
+  "doc": "The one HTTP transport bottom under every connector client and model executor: one request over node's own http/https, Node-16-clean (no SDK, no global fetch). Resolves { status, headers, json } for ANY status code (the caller decides wh..."
+ },
+ {
+  "file": "web/src/pipeline/Roster.tsx",
+  "A": 3,
+  "B": 5,
+  "C": 5,
+  "leak": 4,
+  "score": 4,
+  "vocab": [
+   "isDue",
+   "rowBadges"
+  ],
+  "lines": 159,
+  "doc": "The marketing roster across every claimed campaign: the section a pipeline sphere opens to. The server pre-sorts warm-first (a next-touch date at all, then the soonest of those, then last-touch \u2014 nothing weighed against today), so the li..."
+ },
+ {
+  "file": "server/shared/invariants.test.js",
+  "A": 0,
+  "B": 4,
+  "C": 4,
+  "leak": 4,
+  "score": 4,
+  "vocab": [
+   "isTest",
+   "invariants.test",
+   "FOUNDING_SLUG_HOMES"
+  ],
+  "lines": 142,
+  "doc": "The invariants that grep can check, checked on every npm test so a breach fails loudly at commit time instead of waiting for the next audit. The rules' home and reasoning: docs/INVARIANTS.md. DB-free: everything here reads the git index ..."
+ },
+ {
+  "file": "server/shared/schema-conformance.test.js",
+  "A": 0,
+  "B": 4,
+  "C": 4,
+  "leak": 4,
+  "score": 4,
+  "vocab": [
+   "schema-conformance.test"
+  ],
+  "lines": 110,
+  "doc": "Schema conformance: every column a committed INSERT or UPDATE names must exist in that owner's db/schema.sql. The defect class this kills: a sphere once shipped an UPDATE naming a column (resolution_detail) its schema.sql lacked; every f..."
+ },
+ {
+  "file": "spheres/financial/ui/vocab.ts",
+  "A": 2,
+  "B": 3,
+  "C": 13,
+  "leak": 1,
+  "score": 4,
+  "vocab": [
+   "LocalName",
+   "localNameIn",
+   "VOCAB_ROUTE",
+   "useLocalName",
+   "SOURCE_LOCALE"
+  ],
+  "lines": 68,
+  "doc": "The display dictionary, client side: what to render for the words this sphere does not own. The statement and the labour view carry vocabulary the books supply \u2014 Xero's account names, its standard-layout section names, the 'Business Segm..."
+ },
+ {
+  "file": "connectors/awsconnect/api/presign.js",
+  "A": 2,
+  "B": 3,
+  "C": 12,
+  "leak": 1,
+  "score": 4,
+  "vocab": [
+   "presign",
+   "presignS3Get"
+  ],
+  "lines": 34,
+  "doc": "S3 GET presigning (SigV4 query auth): a short-lived URL for one object, the write-nothing way to let a browser fetch a stored call recording. Pure function of the key pair, the object address and the clock, so presign.test.js proves it a..."
+ },
+ {
+  "file": "web/src/ui/highlight.ts",
+  "A": 1,
+  "B": 2,
+  "C": 7,
+  "leak": 1,
+  "score": 4,
+  "vocab": [
+   "highlightAnchor"
+  ],
+  "lines": 59,
+  "doc": "The highlight surface: the one place in the tree that imports Driver.js, by owner decision. Everything above it \u2014 the drive executor, the model's tool, any future kit caller \u2014 speaks declared anchor names over the view registry (docs/int..."
+ },
+ {
+  "file": "web/src/app/AccessApps.tsx",
+  "A": 1,
+  "B": 2,
+  "C": 8,
+  "leak": 1,
+  "score": 4,
+  "vocab": [
+   "FieldRow",
+   "RunBlock",
+   "reasonText",
+   "AccessApps",
+   "SessionRow",
+   "PRODUCT_NAME"
+  ],
+  "lines": 459,
+  "doc": "The Apps view of the Access screen (Access.tsx routes here at /bi/access/apps): the connected external accounts, one card per connector. A connection is how the platform signs in to somebody else's system (an accounting grant, a booking ..."
+ },
+ {
+  "file": "spheres/relationships/ui/views/PersonPanel.tsx",
+  "A": 1,
+  "B": 2,
+  "C": 9,
+  "leak": 1,
+  "score": 4,
+  "vocab": [
+   "onGone",
+   "PersonPanel",
+   "ProfileStats"
+  ],
+  "lines": 334,
+  "doc": "One resolved person in full, in a kit Overlay drawer off the People list: the identity keys, the involvement across sources, and every matched source record (spar contacts, instagram accounts, sonas clients). Reads the person route throu..."
+ },
+ {
+  "file": "spheres/schedule/ui/EntryEditor.tsx",
+  "A": 1,
+  "B": 2,
+  "C": 9,
+  "leak": 1,
+  "score": 4,
+  "vocab": [
+   "EntryEditor"
+  ],
+  "lines": 115,
+  "doc": "The editor for the venue's own calendar entries \u2014 the one thing the sphere writes with no booking platform behind it. A kit Overlay form over the authed entry routes: a blank draft creates, an id-bearing one edits, and Delete soft-delete..."
+ },
+ {
+  "file": "spheres/customer-service/api/policy.js",
+  "A": 1,
+  "B": 1,
+  "C": 4,
+  "leak": 1,
+  "score": 4,
+  "vocab": [
+   "loadPolicy"
+  ],
+  "lines": 36,
+  "doc": "The sphere's policy: config/customer-service.config.json loaded once per process (schedule's config.js is the precedent; table when an editing UI exists). Unlike schedule's capacities, a missing file or key here defaults open (repList nu..."
+ },
+ {
+  "file": "web/src/lib/useDoorbell.ts",
+  "A": 1,
+  "B": 3,
+  "C": 5,
+  "leak": 2,
+  "score": 3,
+  "vocab": [
+   "useDoorbell"
+  ],
+  "lines": 29,
+  "doc": ""
+ },
+ {
+  "file": "web/src/lib/interaction-context.test.ts",
+  "A": 0,
+  "B": 3,
+  "C": 3,
+  "leak": 3,
+  "score": 3,
+  "vocab": [
+   "interaction-context.test"
+  ],
+  "lines": 296,
+  "doc": ""
+ },
+ {
+  "file": "connectors/otter/api/bo01.test.js",
+  "A": 0,
+  "B": 3,
+  "C": 3,
+  "leak": 3,
+  "score": 3,
+  "vocab": [
+   "bo01.test"
+  ],
+  "lines": 169,
+  "doc": "BO01 recording-list sweep: the overseer pages the speeches list, runs the skill per page, and posts the neutral paged envelope ({args, pageResults, pages, stoppedBy, fault}) to /bi/b-persist, which runs BO01.persistB over it. The test dr..."
+ },
+ {
+  "file": "spheres/coord/api/instance.js",
+  "A": 0,
+  "B": 3,
+  "C": 3,
+  "leak": 3,
+  "score": 3,
+  "vocab": [
+   "prelinkDue",
+   "reconstructDue"
+  ],
+  "lines": 58,
+  "doc": "The coord instance config: what the BI server needs to mount the sphere. The sphere reads two connector mirrors. From the Google Chat mirror it reconstructs tasks, a deterministic pass (jobs.js, run by reconstruct.js), not an overseer-di..."
+ },
+ {
+  "file": "spheres/coord/api/meetings.test.js",
+  "A": 0,
+  "B": 3,
+  "C": 3,
+  "leak": 3,
+  "score": 3,
+  "vocab": [
+   "responder",
+   "meetings.test"
+  ],
+  "lines": 230,
+  "doc": "The meeting query module against injected fake connections (no live DB: the FULLTEXT SQL's correctness against real tables is the browser/boot pass's job; here we pin what SQL each function asks for, in what argument order, and what it m..."
+ },
+ {
+  "file": "spheres/social/api/jobs.js",
+  "A": 1,
+  "B": 3,
+  "C": 4,
+  "leak": 2,
+  "score": 3,
+  "vocab": [
+   "GATE_BATCH",
+   "buildCrmJobs",
+   "anyMarketing",
+   "CLEAN_HEALTH",
+   "threadMembers",
+   "truncateLines"
+  ],
+  "lines": 725,
+  "doc": "Social CRM sphere: the derived/CRM jobs. These read and write social_* tables (the screening/read/grade outputs and the account flags), and they may read the instagram_* raw tables the Instagram connector owns \u2014 a sphere depends on its c..."
+ },
+ {
+  "file": "web/src/lib/gesture-state.ts",
+  "A": 1,
+  "B": 2,
+  "C": 6,
+  "leak": 1,
+  "score": 3,
+  "vocab": [
+   "gesture-state",
+   "useGestureState"
+  ],
+  "lines": 42,
+  "doc": "The gesture seam: transient view state that belongs off the URL (a multi-select set, an open drawer) but still deserves a recorded home. Each change lands in the journal as a held Selected event; held events stay out of the journey tail ..."
+ },
+ {
+  "file": "web/src/lib/download.ts",
+  "A": 1,
+  "B": 2,
+  "C": 6,
+  "leak": 1,
+  "score": 3,
+  "vocab": [
+   "saveBlob"
+  ],
+  "lines": 17,
+  "doc": "Hand a generated file to the browser's download machinery. The one home for object-URL downloads: api.ts is the network client and touches no DOM, so the DOM half of saving a file lives here."
+ },
+ {
+  "file": "spheres/coord/ui/views/ByPerson.tsx",
+  "A": 2,
+  "B": 2,
+  "C": 3,
+  "leak": 2,
+  "score": 3,
+  "vocab": [
+   "TaskSource",
+   "PersonTasks"
+  ],
+  "lines": 196,
+  "doc": "The section the sphere opens to: tasks by person, most-assigned first, each row expanding to that person's task list. The sync runs on its own each hour off request traffic; \"Sync now\" only forces an immediate run (unless one is going)."
+ },
+ {
+  "file": "connectors/square/api/square-client.js",
+  "A": 1,
+  "B": 2,
+  "C": 6,
+  "leak": 1,
+  "score": 3,
+  "vocab": [
+   "square-client",
+   "SQUARE_VERSION",
+   "makeSquareClient"
+  ],
+  "lines": 108,
+  "doc": "The Square REST client (base https://connect.squareup.com) over plain node:https, sibling to the Clover client and shaped like it: one serialized queue paced minIntervalMs apart, a 429 honoured via Retry-After, 5xx and transport faults r..."
+ },
+ {
+  "file": "spheres/schedule/api/providers.test.js",
+  "A": 0,
+  "B": 2,
+  "C": 3,
+  "leak": 2,
+  "score": 3,
+  "vocab": [
+   "providers.test"
+  ],
+  "lines": 426,
+  "doc": "The provider adapters (api/providers/): row-to-entry mappers for all three, the sonas UTC-to-venue-local conversion (the Brisbane DST-less zone, the midnight boundary, the live-verified wedding case), and listRange/applyMove over injecte..."
+ },
+ {
+  "file": "server/shared/party.js",
+  "A": 1,
+  "B": 2,
+  "C": 3,
+  "leak": 2,
+  "score": 3,
+  "vocab": [
+   "claimKey",
+   "postClaim",
+   "liveClaims",
+   "jsonEmails",
+   "postRetire",
+   "listParties"
+  ],
+  "lines": 424,
+  "doc": "The people core's routes: cross-source person linkage and nothing else (tables party/party_source in schema.sql, contract in ../../docs/party.md). The core stores linkage judgments; every person attribute stays in the connector mirrors, ..."
+ },
+ {
+  "file": "server/shared/connector-tenant.test.js",
+  "A": 0,
+  "B": 2,
+  "C": 3,
+  "leak": 2,
+  "score": 3,
+  "vocab": [
+   "withAttribution",
+   "connector-tenant.test"
+  ],
+  "lines": 134,
+  "doc": "The connector_tenant attribution round-trip (schema.sql, the registry family; the read is connector-tenant.js tenantOf): a seeded row resolves to its tenant, a connector with no row refuses loudly by name (the guard that stops an unattri..."
+ },
+ {
+  "file": "spheres/coord/prelink.js",
+  "A": 0,
+  "B": 1,
+  "C": 3,
+  "leak": 1,
+  "score": 3,
+  "vocab": [
+   "prelinkMeetings"
+  ],
+  "lines": 74,
+  "doc": "Deterministic corpus\u2194recording pre-link, the step that runs before any model derivation: a mirrored recording whose Otter title is exactly the capture done-signal '<repo>/<slug>.txt' IS the recording of the imported meeting carrying that..."
+ },
+ {
+  "file": "spheres/social/api/jobsdesc.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 3,
+  "leak": 1,
+  "score": 3,
+  "vocab": [
+   "T_BI03",
+   "T_SOLO",
+   "T_AI01",
+   "T_GROUP",
+   "addMember",
+   "CONTACT_A"
+  ],
+  "lines": 237,
+  "doc": "Work-queue labels: each job's describe()/describeBatch() builds the name, description and optional Instagram link the overseer renders in its job tree. The link is present only for a 1:1 thread with a known handle (and for an account); a..."
+ },
+ {
+  "file": "connectors/tiktok/api/tiktok-client.js",
+  "A": 3,
+  "B": 4,
+  "C": 9,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "API_HOST",
+   "tokenCall",
+   "AUTH_HOST",
+   "USER_FIELDS",
+   "VIDEO_FIELDS",
+   "tiktok-client"
+  ],
+  "lines": 134,
+  "doc": "The TikTok Display API client, plain REST over node:https so it runs on the host's Node 16 \u2014 the per-connector client shape every API connector here keeps (googlechat, googlereviews, instagram, facebook, xero). Two surfaces: the OAuth ha..."
+ },
+ {
+  "file": "web/src/lib/overseer.ts",
+  "A": 2,
+  "B": 3,
+  "C": 5,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "probeOverseer",
+   "overseerSecret"
+  ],
+  "lines": 32,
+  "doc": "Client for the staff desktop's local overseer (the execution half; the server at /bi is the data half). This lib speaks no job vocabulary: it holds the connection constants and the health gate, and a sphere that dispatches a job names th..."
+ },
+ {
+  "file": "web/src/app/AccessPeople.tsx",
+  "A": 1,
+  "B": 2,
+  "C": 4,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "InviteRow",
+   "AccessPeople",
+   "effectiveAccess"
+  ],
+  "lines": 513,
+  "doc": "The People view of the Access screen (Access.tsx routes here at /bi/access): one card per person who can sign in. What a person may reach comes first from the roles they hold \u2014 the card shows those as chips, and the expander toggles memb..."
+ },
+ {
+  "file": "web/src/app/AccessWalls.tsx",
+  "A": 1,
+  "B": 2,
+  "C": 4,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "WallCard",
+   "AccessWalls"
+  ],
+  "lines": 249,
+  "doc": "The Walls view of the Access screen (Access.tsx routes here at /bi/access/walls): the registry's secrecy rows. A wall hides specific matter from everyone outside its circle, even people whose roles would otherwise show it. A campaign wal..."
+ },
+ {
+  "file": "spheres/social/ui/drafts.tsx",
+  "A": 1,
+  "B": 2,
+  "C": 5,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "onPatch",
+   "DraftDrawer"
+  ],
+  "lines": 206,
+  "doc": ""
+ },
+ {
+  "file": "spheres/social/ui/CampaignWizard.tsx",
+  "A": 1,
+  "B": 2,
+  "C": 4,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "CampaignWizard"
+  ],
+  "lines": 370,
+  "doc": ""
+ },
+ {
+  "file": "spheres/social/ui/useAutoSweep.ts",
+  "A": 1,
+  "B": 2,
+  "C": 4,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "SWEEP_MS",
+   "LAST_KEY",
+   "useAutoSweep",
+   "stampDispatch",
+   "lastDispatchAt"
+  ],
+  "lines": 82,
+  "doc": ""
+ },
+ {
+  "file": "spheres/financial/api/policy.js",
+  "A": 1,
+  "B": 2,
+  "C": 4,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "dealsClaims",
+   "frozenClaims",
+   "claimedDealsCampaigns"
+  ],
+  "lines": 34,
+  "doc": "The financial sphere's policy numbers: the rent-normalisation model (docs/2026-07-04-pl-process-knowledge.md \u00a78). Rent hits the ledger on payment date, not service month, so the P&L carries an adjustment row per month of `rentMonthly \u2212 p..."
+ },
+ {
+  "file": "server/shared/spar-pipeline.test.js",
+  "A": 0,
+  "B": 2,
+  "C": 2,
+  "leak": 2,
+  "score": 2,
+  "vocab": [
+   "STAGE_GATE",
+   "spar-pipeline.test"
+  ],
+  "lines": 444,
+  "doc": "The pipeline on a fake connection, instantiated as a second sphere ('boardgame') so what publicity's read.test.js proves for the first composition this proves for the family: the reads name the core tables and bind the composed owner as ..."
+ },
+ {
+  "file": "agent/descriptions.test.js",
+  "A": 0,
+  "B": 2,
+  "C": 2,
+  "leak": 2,
+  "score": 2,
+  "vocab": [
+   "WORD_CEILING",
+   "descriptions.test",
+   "EXCEPTION_CEILING"
+  ],
+  "lines": 126,
+  "doc": "Description shape: every described GET states its parameters, or their absence, in the prose the model reads. A tool's description is all the model has about how to call the read, and the platform's practice is that each one either names..."
+ },
+ {
+  "file": "agent/server.js",
+  "A": 0,
+  "B": 2,
+  "C": 2,
+  "leak": 2,
+  "score": 2,
+  "vocab": [
+   "TLS_KEY",
+   "newTurn",
+   "TLS_CERT",
+   "BODY_CAP",
+   "logDetail",
+   "toolWiring"
+  ],
+  "lines": 561,
+  "doc": "The agent runtime: a small HTTP server that runs the conversation loop. The assistant runtime is its own tier, remote from the web application by design (docs/interaction-seam.md, the third standard): Node 18+ ESM, deployed and scaled ap..."
+ },
+ {
+  "file": "agent/server.test.js",
+  "A": 0,
+  "B": 2,
+  "C": 2,
+  "leak": 2,
+  "score": 2,
+  "vocab": [
+   "signJwt",
+   "toolUse",
+   "extraEnv",
+   "ORIGIN_A",
+   "bootFeed",
+   "ORIGIN_B"
+  ],
+  "lines": 549,
+  "doc": "The service's front doors over a real socket: server.js boots whole (spawned as its own process, the shape it deploys in) on an ephemeral loopback port, with a throwaway Ed25519 keypair minted here standing in for the BI tier's key and a..."
+ },
+ {
+  "file": "scripts/import-meta-exports.test.mjs",
+  "A": 0,
+  "B": 2,
+  "C": 2,
+  "leak": 2,
+  "score": 2,
+  "vocab": [
+   "import-meta-exports.test"
+  ],
+  "lines": 151,
+  "doc": "Parse-layer unit tests for the Meta-export importer. No database: only the pure helpers (id decoding, header mapping, time/window parsing, content coordinate)."
+ },
+ {
+  "file": "spheres/customer-service/ui/views/Calls.tsx",
+  "A": 1,
+  "B": 1,
+  "C": 2,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "hadOne",
+   "foldDays",
+   "sliceFor",
+   "LOG_SLICE",
+   "foldRepDays",
+   "TenantBlock"
+  ],
+  "lines": 761,
+  "doc": "The Calls view: the phone line over a window. The owner's questions in order: are we answering (the tiles and the daily bars), when do they call (the hour-by-weekday heat, with the line's own hours beside it), who did we fail to ring bac..."
+ },
+ {
+  "file": "connectors/spar/api/parse.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 2,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "ROW_B",
+   "ROW_A",
+   "ROW_C",
+   "HEADER_A",
+   "HEADER_B",
+   "parse.test"
+  ],
+  "lines": 321,
+  "doc": "Unit tests for the SPAR parsers: header-order independence and extras of the roster, the \\r-in-field rule, the approach round flattening (messages and replies), profile front matter, and empty\u2192null. Fixtures are small excerpts modelled o..."
+ },
+ {
+  "file": "spheres/social/api/ai00.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 2,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "T_NON",
+   "T_MKT",
+   "T_MISS",
+   "ai00.test",
+   "batchPersist",
+   "seedAccounts"
+  ],
+  "lines": 158,
+  "doc": "AI00 batch gate: one model call classifies a batch of pending_screen threads from a head+tail view, writing a social_thread_screenings row per verdict. Transaction-rollback against the live DB. The test drives the server-contract batch w..."
+ },
+ {
+  "file": "server/shared/walls.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 2,
+  "leak": 1,
+  "score": 2,
+  "vocab": [
+   "seedWall",
+   "emptyConn",
+   "missingConn"
+  ],
+  "lines": 150,
+  "doc": "Unit rows for wall enforcement: intersection semantics, no-email denial, admin crossing, missing-table degradation, and the two wages arms' fragment shapes. DB-backed cases ride withTxn (rolled back; sentinel names) and skip when the wal..."
+ },
+ {
+  "file": "server/shared/db-errors.js",
+  "A": 7,
+  "B": 8,
+  "C": 9,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "db-errors"
+  ],
+  "lines": 19,
+  "doc": "The driver's error shapes, read once so every caller reads them the same way. mysql2 reports a missing table twice over, as the symbolic `ER_NO_SUCH_TABLE` and as the numeric 1146, and a hand-built error in a test fixture often carries o..."
+ },
+ {
+  "file": "connectors/awsconnect/api/sigv4.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "sigv4.test"
+  ],
+  "lines": 52,
+  "doc": "The signer against AWS's own published example (the SigV4 developer-guide GET vector: iam ListUsers, 2015-08-30, the AKIDEXAMPLE key), so the whole canonical-request/string-to-sign/key-derivation chain is proven against a fixture the ser..."
+ },
+ {
+  "file": "connectors/clover/api/sync.js",
+  "A": 1,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "syncOrders",
+   "watermarkMs",
+   "localZoneOf"
+  ],
+  "lines": 214,
+  "doc": "The Clover cursor sync: a server-side API pull (kind C \u2014 neither browser nor model) that mirrors each replicated entity into clover_*. Like the other cursor connectors it is a pump, not a per-entity job: its state is the per-entity curso..."
+ },
+ {
+  "file": "connectors/otter/api/bo02.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "bo02.test",
+   "seededConn"
+  ],
+  "lines": 141,
+  "doc": "BO02 transcript fetch: selectReady picks every processed recording whose transcript is not yet mirrored and whose title is not already a capture done-signal or the triage marker; persistB stores the canonical ot-fetch result. Driven agai..."
+ },
+ {
+  "file": "spheres/schedule/api/moves.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "goodBody",
+   "moves.test",
+   "localHandlers"
+  ],
+  "lines": 246,
+  "doc": "The move loop's gates and its transaction shape, against injected fake connections (no live DB). The happy paths run through the real local provider; the gates that no real provider can trip (unmovable entry, a missing applyMove beside a..."
+ },
+ {
+  "file": "spheres/social/api/bi03.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "bi03.test",
+   "postsPage",
+   "liveMember",
+   "seedApprovedThread",
+   "seedMultiMemberThread",
+   "seedRestedMarketingThread"
+  ],
+  "lines": 432,
+  "doc": "BI03 visit integration: a thread-side job over pending_profile_visit threads (screened marketing, not yet visited). The overseer fetches each contact member's profile (and posts when public), parses them, and posts ONE canonical envelope..."
+ },
+ {
+  "file": "spheres/social/api/jobrun-version.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "jobrun-version.test"
+  ],
+  "lines": 71,
+  "doc": "recordRun stamps the optional resolved_version into job_runs, and omitting it leaves the column NULL (the existing-caller behaviour is unchanged). This is the write-half of the distributed-version stamp: server/shared/versions.js classif..."
+ },
+ {
+  "file": "server/shared/closure.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "makeStore",
+   "publicRow",
+   "closure.test"
+  ],
+  "lines": 105,
+  "doc": "buildClosureMeta lists a type-B job's closure members (travels + harness lib) with sha and, for public repos, a raw URL; buildClosure serves only the private members' bodies from the store. Pure: stubs stand in for the DB ledger and a /t..."
+ },
+ {
+  "file": "server/shared/connector-health.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "connector-health.test"
+  ],
+  "lines": 142,
+  "doc": "The health classifier and its ledger reads, with no database and no clock of their own: healthRows runs against an in-process stand-in for a mysql2 connection (the connectors/linkedin/api/memdb.js manner), and classify takes its `now`, s..."
+ },
+ {
+  "file": "server/shared/dispatch.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "trailConn",
+   "personWith",
+   "dispatch.test"
+  ],
+  "lines": 430,
+  "doc": "The shared route dispatcher's contract \u2014 exactly what the spheres' hand-rolled switches agreed on: the authed gate answers before any handler (and so any DB) is touched, GETs are open by default while everything else demands the bearer, ..."
+ },
+ {
+  "file": "server/shared/job-runs.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "fakeDeps",
+   "RUN_BASE",
+   "job-runs.test"
+  ],
+  "lines": 144,
+  "doc": "The /b-persist handler's normalisation of the wire resolvedVersion into recordRun's resolvedVersion argument. Pure: the stamp is telemetry beside the persist, so every malformed shape must come out NULL (never a throw that would fail the..."
+ },
+ {
+  "file": "server/shared/sync-runs.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "gateConn",
+   "makeFakeDb",
+   "sync-runs.test",
+   "makeFrameHarness"
+  ],
+  "lines": 408,
+  "doc": "The shared pass-liveness helpers and the runSyncMain entrypoint frame, run against an in-process stand-in for a mysql2 connection (the connectors/linkedin/api/memdb.js manner): the activity ledger's pass rows are modelled in memory, keye..."
+ },
+ {
+  "file": "server/shared/versions.test.js",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "versions.test"
+  ],
+  "lines": 49,
+  "doc": "The deploy script's append-on-change decision over a distributed_versions row set for ONE (repo, artifact_ref). Pure: it builds row arrays in-memory and asserts the append/skip decision and the next deploy_seq. No DB."
+ },
+ {
+  "file": "scripts/import-env-credentials.mjs",
+  "A": 0,
+  "B": 1,
+  "C": 1,
+  "leak": 1,
+  "score": 1,
+  "vocab": [
+   "import-env-credentials"
+  ],
+  "lines": 103,
+  "doc": "One-time seed of the connector_credential store from the host's own environment. Runs on the deploy host, where the environment already holds the live connector secrets; nothing here prints a value or ships one over a wire, so no operato..."
+ },
+ {
+  "file": "spheres/schedule/api/valid.js",
+  "A": 4,
+  "B": 4,
+  "C": 21,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "isHHMM",
+   "DATE_RE",
+   "HHMM_RE",
+   "spanDays",
+   "isISODate"
+  ],
+  "lines": 30,
+  "doc": "Wall-clock shape validators shared by the sphere's API halves (read.js's query bounds, moves.js's move body, the entry upsert). Everything the sphere says about time is a venue-local ISO date ('YYYY-MM-DD') or an HH:mm \u2014 never a JS Date,..."
+ },
+ {
+  "file": "spheres/financial/ui/letterhead.ts",
+  "A": 3,
+  "B": 3,
+  "C": 14,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "useTenants",
+   "TenantInfo",
+   "soleCountry",
+   "letterheadFor"
+  ],
+  "lines": 66,
+  "doc": "Which business's paperwork identity heads the statement. The exported and printed faces both key on the data, not the caller's memberships: the rows the selection admits each carry their tenant stamp, and exactly one distinct stamp names..."
+ },
+ {
+  "file": "spheres/library/ui/Results.tsx",
+  "A": 3,
+  "B": 3,
+  "C": 12,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "fmtSize",
+   "KindGlyph",
+   "kindLabel",
+   "MediaGrid",
+   "reachLabel",
+   "SourceGroup"
+  ],
+  "lines": 260,
+  "doc": "The result groups: one per selected drive, each its own read through the kit hook with the section's kind fixed (media or documents). A group keeps the pages it has fetched so far and asks for the next by handing back the drive's own cur..."
+ },
+ {
+  "file": "spheres/schedule/ui/cards.tsx",
+  "A": 3,
+  "B": 3,
+  "C": 8,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "timeFace",
+   "shortDate",
+   "EntryCard",
+   "PeopleGlyph"
+  ],
+  "lines": 94,
+  "doc": "The entry card body, shared by the week's day columns. The kit's .ui-card supplies the frame; this renders the entry \u2014 its time, title, detail, headcount, and status \u2014 behind a left-edge tone bar that carries the provider's identity. The..."
+ },
+ {
+  "file": "web/src/app/AccessGrants.tsx",
+  "A": 2,
+  "B": 2,
+  "C": 18,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "refOf",
+   "ownToken",
+   "GrantCell",
+   "roleCover",
+   "VerbState",
+   "cellVerbs"
+  ],
+  "lines": 226,
+  "doc": "The grant-cell machinery the Access views share: the column model over the served inventory, the per-person draft shape, the toggle recomputation, the implied-state rules, and the V/W/E cell itself. People renders these cells editable in..."
+ },
+ {
+  "file": "spheres/library/ui/ItemOverlay.tsx",
+  "A": 2,
+  "B": 2,
+  "C": 6,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "ItemOverlay"
+  ],
+  "lines": 91,
+  "doc": "One hit, opened: the kit overlay over the results, with what the search already knew (thumbnail, name, kind, size, date, path) drawn at once and the item route's additions (the two links, the caption or tags) once they arrive. Opening in..."
+ },
+ {
+  "file": "spheres/reputation/ui/PlaceChips.tsx",
+  "A": 2,
+  "B": 2,
+  "C": 10,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "PlaceChips",
+   "usePlaceParam"
+  ],
+  "lines": 30,
+  "doc": "The place filter both sections share, on the kit's URL-bound chip row: the narrowing follows a switch between Needs reply and All reviews and rides a shared link. This file only names the param once and supplies the places; the binding (..."
+ },
+ {
+  "file": "spheres/social/ui/sweep.ts",
+  "A": 2,
+  "B": 2,
+  "C": 4,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "dispatchSweep"
+  ],
+  "lines": 20,
+  "doc": ""
+ },
+ {
+  "file": "server/shared/model-retry.js",
+  "A": 2,
+  "B": 2,
+  "C": 8,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "model-retry",
+   "sendWithRetry",
+   "FIVEXX_BACKOFF_MS"
+  ],
+  "lines": 44,
+  "doc": "The retry policy the hosted model executors share, one stratum above the transport (http-raw.js) that was unified for the same reason. Both API legs had written it out: three attempts, a 429 honouring Retry-After under a ceiling, a 5xx b..."
+ },
+ {
+  "file": "web/src/app/sphere.ts",
+  "A": 18,
+  "B": 1,
+  "C": 2,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "NavItem"
+  ],
+  "lines": 33,
+  "doc": ""
+ },
+ {
+  "file": "web/src/app/chat-icon.tsx",
+  "A": 1,
+  "B": 1,
+  "C": 4,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "chatIcon",
+   "chat-icon"
+  ],
+  "lines": 9,
+  "doc": "Lucide message-circle (ISC), monoline like the shell's other glyphs. Shared by the working pane (ChatAssistant.tsx) and the dimmed unreachable twin (ChatPane.tsx), which live in separate chunks."
+ },
+ {
+  "file": "web/src/app/AccessTenants.tsx",
+  "A": 1,
+  "B": 1,
+  "C": 3,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "OrgRow",
+   "OrgDrawer",
+   "AccessTenants"
+  ],
+  "lines": 242,
+  "doc": "The Organisations view of the Access screen (Access.tsx routes here at /bi/access/tenants; the platform word 'tenant' stays internal per the INVARIANTS.md screen-language rule \u2014 file name, view id, URL path and wire paths deliberately ke..."
+ },
+ {
+  "file": "spheres/social/ui/useUnreadNotifier.ts",
+  "A": 1,
+  "B": 1,
+  "C": 3,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "useUnreadNotifier"
+  ],
+  "lines": 76,
+  "doc": ""
+ },
+ {
+  "file": "spheres/social/ui/PerformanceChart.tsx",
+  "A": 1,
+  "B": 1,
+  "C": 5,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "niceMax",
+   "useWidth",
+   "PerformanceChart"
+  ],
+  "lines": 281,
+  "doc": "The Performance section's line chart: the chosen measure (the owning card's picker decides and passes the label) as a line per platform, every line on All. Serves two cards with two data natures: the posting series (monthly, covered gaps..."
+ },
+ {
+  "file": "spheres/projects/api/statements.js",
+  "A": 1,
+  "B": 1,
+  "C": 11,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "clearBall",
+   "updateBall",
+   "upsertLink",
+   "deleteLink",
+   "insertEvent",
+   "upsertProject"
+  ],
+  "lines": 115,
+  "doc": "The projects sphere's write SQL as exported static strings. The text lives here, in-sphere, because the shared schema-conformance test scans spheres/*/api for INSERT/UPDATE column lists against this sphere's net (its db/schema.sql plus t..."
+ },
+ {
+  "file": "spheres/social/api/statements.js",
+  "A": 2,
+  "B": 1,
+  "C": 2,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "insertSubset"
+  ],
+  "lines": 36,
+  "doc": "The social sphere's static write SQL for the pipeline core tables the routes (read.js) and the shared advance machinery (server/shared/stage-advance.js) write on its behalf. The text lives here, in-sphere, because the shared schema-confo..."
+ },
+ {
+  "file": "web/src/app/PrefsPanel.tsx",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "DATE_SAMPLE"
+  ],
+  "lines": 181,
+  "doc": "The settings panel: the two display choices a person makes about the app itself, and nothing else. It is shell chrome, not a sphere: it owns no URL, registers nothing, and draws no navigation of its own (docs/INVARIANTS.md, section navig..."
+ },
+ {
+  "file": "web/src/vite-env.d.ts",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "vite-env.d"
+  ],
+  "lines": 10,
+  "doc": "/ <reference types=\"vite/client\" /> / <reference types=\"vite-plugin-pwa/client\" />"
+ },
+ {
+  "file": "web/src/lib/view-slot.test.tsx",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "view-slot.test"
+  ],
+  "lines": 233,
+  "doc": ""
+ },
+ {
+  "file": "web/src/pipeline/Campaigns.tsx",
+  "A": 3,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "CampaignCard"
+  ],
+  "lines": 144,
+  "doc": "The campaigns section: a card per claimed campaign (title, segments, per-stage member counts). Selecting a card opens its kanban board; the selection rides URL params (repo, campaign) so a board is deep-linkable and back/forward work. Th..."
+ },
+ {
+  "file": "spheres/coord/ui/views/Board.tsx",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "columnOf"
+  ],
+  "lines": 141,
+  "doc": "The same tasks by state: a card's column is its status, and moving it writes the status back through the sphere's API. Movement is a drag (desktop), a button (the next stage), or the right-click menu (any stage); all three funnel into th..."
+ },
+ {
+  "file": "spheres/financial/ui/views/Labour.tsx",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "pctLabel",
+   "deltaLabel",
+   "hoursLabel",
+   "moneyOrDash",
+   "hoursOrDash"
+  ],
+  "lines": 276,
+  "doc": "The labour view on the statement's frame: the window edited in place (PeriodPicker), KPI tiles above, then one card per month from the Deputy mirror \u2014 a row per day, the day's worked total against its rostered total, the variance, Deputy..."
+ },
+ {
+  "file": "spheres/financial/ui/views/Products.tsx",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "MoveChip",
+   "CHANNEL_NAME"
+  ],
+  "lines": 199,
+  "doc": "The Products view: what sells over the picker's window \u2014 every selling channel's products ranked by ex-GST revenue, a movement chip against the equal window immediately before, and a channel chip row derived from the data (never a hardco..."
+ },
+ {
+  "file": "spheres/projects/ui/views/Portfolio.tsx",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "ProjectCard",
+   "PortfolioBoard"
+  ],
+  "lines": 169,
+  "doc": "The portfolio: every project as a card in the operator's stage funnel. The section owns /bi/projects whole (one nav item; the shell's longest-prefix match keeps slug pages here), so this file is also the section's router: a trailing path..."
+ },
+ {
+  "file": "spheres/relationships/ui/views/People.tsx",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "handleOf",
+   "subtitleOf",
+   "stagePills",
+   "presenceMarks",
+   "SOURCE_OPTIONS"
+  ],
+  "lines": 233,
+  "doc": "The relationships sphere's primary view: a searchable, source-filterable directory of everyone the platform knows across sources, one row per resolved person. Each row is the kit PersonRow \u2014 the display name primary, an organisation/role..."
+ },
+ {
+  "file": "spheres/schedule/ui/views/Week.tsx",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "ISO_DAY",
+   "draftOf",
+   "parseWeek",
+   "rangeLabel",
+   "serializeWeek",
+   "PendingConfirm"
+  ],
+  "lines": 306,
+  "doc": "The week the sphere opens to: seven Mon\u2013Sun day columns on the kit Board's fill layout. The columns come from a week anchor riding the ?week= query param (the week's Monday; absent means the week containing today), so a deep link lands o..."
+ },
+ {
+  "file": "spheres/schedule/ui/views/Almanac.tsx",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "dayOf",
+   "termTag",
+   "windowOf",
+   "termSpan",
+   "CAT_WORD",
+   "parseYear"
+  ],
+  "lines": 432,
+  "doc": "The published guest calendar the github connector mirrors, read through GET almanac. The document spans several calendar years; the view shows one January\u2013December window at a time, chosen by ?year=, and paging only slices the one fetche..."
+ },
+ {
+  "file": "spheres/social/ui/CampaignsSection.tsx",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "CampRoute",
+   "routeFromPath"
+  ],
+  "lines": 163,
+  "doc": ""
+ },
+ {
+  "file": "spheres/social/ui/PeopleSection.tsx",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "parseOff",
+   "pkFromPath",
+   "parseQuery",
+   "parseCollab",
+   "desktopLike",
+   "STARS_CODEC"
+  ],
+  "lines": 251,
+  "doc": ""
+ },
+ {
+  "file": "connectors/awsconnect/api/client.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "fakeSign",
+   "clientWith"
+  ],
+  "lines": 86,
+  "doc": "Unit tests for the AWS client: retry classification (AWS spells throttling two ways), secret redaction, and the signed-vs-sent query agreement, all against injected http/sleep/nowMs (no network, no wall-clock waits, no real signing \u2014 sig..."
+ },
+ {
+  "file": "connectors/awsconnect/api/upsert.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "contactFixture"
+  ],
+  "lines": 170,
+  "doc": "Unit tests for the awsconnect mapping and upserts: the timestamp and local-clock helpers, column promotion out of synthetic records, and each upsert driven against a fake mysql2-shaped connection (no AWS, no DB). Every fixture is invente..."
+ },
+ {
+  "file": "connectors/deputy/api/upsert.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "unitFixture",
+   "rosterFixture",
+   "employeeFixture",
+   "timesheetFixture"
+  ],
+  "lines": 187,
+  "doc": "Unit tests for the Deputy registry and upsert: the date/epoch helpers, column promotion out of synthetic records, and upsertEntity driven against a fake mysql2-shaped connection (no Deputy, no DB). Every fixture is invented to mirror the..."
+ },
+ {
+  "file": "connectors/dropbox/api/dropbox-client.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "tokenOk",
+   "makeConn",
+   "dropbox-client.test"
+  ],
+  "lines": 395,
+  "doc": "Unit tests for the Dropbox client: hit normalisation from search_v2, kind mapping and the documents post-filter, thumbnail batching into data URIs, getItem's links and tags, tag chunking and the tag setters' bodies, and the error path (4..."
+ },
+ {
+  "file": "connectors/facebook/api/graph-client.js",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "POST_FIELDS"
+  ],
+  "lines": 167,
+  "doc": "The Facebook Page Graph API read client, plain REST over node:https so it runs on the host's Node 16 \u2014 the same shape as the instagram, googlechat and googlereviews connectors' clients (each connector owns its client; the duplication of ..."
+ },
+ {
+  "file": "connectors/github/hook.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "subscriptionCount"
+  ],
+  "lines": 53,
+  "doc": "The connector's self-registered hook. The BI app discovers connectors/*/hook.js and fires due hooks on request traffic; the sync is the connector's own job, declared here, not by any sphere that reads the mirror. A hook is { name, steps,..."
+ },
+ {
+  "file": "connectors/github/api/sync.js",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "loadShas",
+   "touchFile",
+   "upsertFile"
+  ],
+  "lines": 131,
+  "doc": "The GitHub file mirror pass: a server-side API pull (kind C, neither browser nor model) that brings each subscribed file into github_file. Unlike the Rezdy and Xero syncs there is no cursor and no budget: the subscription list is short, ..."
+ },
+ {
+  "file": "connectors/github/api/sync.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "BAD_YAML",
+   "GOOD_YAML"
+  ],
+  "lines": 168,
+  "doc": "Unit tests for the GitHub file mirror pass: runSyncPass driven by a fake client and a fake connection (no GitHub, no DB). The format gates are the real ones, because the guarantee under test is that malformed content never reaches the up..."
+ },
+ {
+  "file": "connectors/googlereviews/api/client.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "fakeHttps"
+  ],
+  "lines": 116,
+  "doc": "Unit tests for the SerpApi client: the constructor guard, query assembly for the google_maps_reviews engine, the 2xx parse, error mapping, and the retry branch. Unlike the Deputy/Rezdy clients this one has no injected http/clock seams (i..."
+ },
+ {
+  "file": "connectors/googlereviews/api/sync.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "provIds",
+   "serpReview"
+  ],
+  "lines": 273,
+  "doc": "Unit tests for the SerpApi review pump: mapReview's canonical shape, and runSyncPass driven by a fake client and a fake connection (no SerpApi, no DB). The pump imports upsertReviews/upsertPlaces from upsert.js directly rather than throu..."
+ },
+ {
+  "file": "connectors/googlereviews/api/upsert.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "findSQL",
+   "placeFixture",
+   "reviewFixture",
+   "PLACE_SCHEMA_COLS",
+   "REVIEW_SCHEMA_COLS"
+  ],
+  "lines": 216,
+  "doc": "Unit tests for the two-source reconciliation upsert: the id/date/fingerprint helpers, the generated upsert SQL and its apify-precedence merge, and the row mapping driven against a fake mysql2-shaped connection (no DB). Every fixture is i..."
+ },
+ {
+  "file": "connectors/linkedin/api/memdb.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "rowKey"
+  ],
+  "lines": 185,
+  "doc": "An in-process stand-in for a mysql2 connection, used by this connector's tests. The connector's persist legs run against the live DB through a rolled-back transaction elsewhere in the platform, but the linkedin_* tables are not yet on th..."
+ },
+ {
+  "file": "connectors/linkedin/api/bl00.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "LIVE_URN",
+   "bl00.test"
+  ],
+  "lines": 68,
+  "doc": "BL00 identity pre-flight: the operator runs it under the browser profile an import is about to use, naming the member they intend (as the entity id, a display name or a profile URN). persistB refuses on mismatch, writing nothing, and on ..."
+ },
+ {
+  "file": "connectors/linkedin/api/bl01.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "bl01.test"
+  ],
+  "lines": 70,
+  "doc": "BL01 inbox-discovery persist: the overseer pages the inbox, runs the skill per page, and posts the neutral paged envelope ({args, pageResults, pages, stoppedBy, fault}) to /bi/b-persist, which runs BL01.persistB over it. The test drives ..."
+ },
+ {
+  "file": "connectors/linkedin/api/bl02.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "bl02.test",
+   "inboxEnvelope"
+  ],
+  "lines": 88,
+  "doc": "BL02 thread-backfill persist: the overseer fetches one thread, the skill emits the canonical envelope, and /bi/b-persist runs BL02.persistB over it. The conversation key is the persist's own entity id, not trusted from the payload. Drive..."
+ },
+ {
+  "file": "connectors/linkedin/api/bl03.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "bl03.test"
+  ],
+  "lines": 91,
+  "doc": "BL03 connections-discovery persist: the overseer pages the logged-in member's own connection list, runs the skill per page, and posts the neutral paged envelope ({args, pageResults, pages, stoppedBy, fault}) to /bi/b-persist, which runs ..."
+ },
+ {
+  "file": "connectors/linkedin/api/bl04.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "seedEdges",
+   "bl04.test",
+   "profFixture",
+   "connFixture"
+  ],
+  "lines": 81,
+  "doc": "BL04 profile-visit: selectReady lists connection targets with no snapshot in the staleness window, buildBInput turns the stored profile URL into the skill's slug arg, and persistB writes one day-grained snapshot row. Driven against the m..."
+ },
+ {
+  "file": "connectors/linkedin/api/bl05.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "bl05.test"
+  ],
+  "lines": 84,
+  "doc": "BL05 contact-info persist: one observation row per (member, viewer), the viewer taken from the haul's viewer_urn, never from configuration. The composite key is the design under test: viewer A's fetched-empty row and viewer B's shared-em..."
+ },
+ {
+  "file": "connectors/onedrive/api/graph-client.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "UNFACETED_AUDIO",
+   "graph-client.test"
+  ],
+  "lines": 434,
+  "doc": "Unit tests for the OneDrive Graph client: hit normalisation from a recorded-shape search payload, the kind post-filter, the paging cursor and the 200-hit ceiling, getItem's links and caption, the caption PATCH, and the token path (refres..."
+ },
+ {
+  "file": "connectors/otter/api/memdb.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "COALESCE_COLS"
+  ],
+  "lines": 187,
+  "doc": "An in-process stand-in for a mysql2 connection, used by this connector's tests (the linkedin memdb pattern). It models the DB's response to exactly the statements jobs.js issues: the otter_* upserts, the handful of reads, and the job_run..."
+ },
+ {
+  "file": "connectors/rezdy/api/sync.js",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "syncPerCategory"
+  ],
+  "lines": 204,
+  "doc": "The Rezdy cursor sync: a server-side API pull (kind C \u2014 neither browser nor model) that mirrors each replicated entity into rezdy_*. Like the Xero sync it is a pump, not a per-entity job: its state is the per-entity cursors in rezdy_sync..."
+ },
+ {
+  "file": "connectors/rezdy/api/upsert.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "bookingFixture"
+  ],
+  "lines": 344,
+  "doc": "Unit tests for the Rezdy registry and upsert: the date helpers, the child-row mapping out of one synthetic booking, and upsertEntity / upsertCategoryProducts driven against a fake mysql2-shaped connection (no Rezdy, no DB). Every fixture..."
+ },
+ {
+  "file": "connectors/sonas/api/upsert.js",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "captureEventChanges"
+  ],
+  "lines": 317,
+  "doc": "The entity registry and the generic upsert. ENTITIES is the single list of what the connector replicates, in the pass's dependency order (catalog dimensions before events, events before the finance documents that name them): each entry n..."
+ },
+ {
+  "file": "connectors/sonas/api/sync.js",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "syncPub",
+   "syncTabular",
+   "syncTabularDetail"
+  ],
+  "lines": 251,
+  "doc": "The Sonas cursor sync: a server-side DDP pull (kind C \u2014 neither browser nor model) that mirrors each replicated entity into sonas_*. Like the other cursor connectors it is a pump, not a per-entity job: its state is the per-entity cursors..."
+ },
+ {
+  "file": "connectors/sonas/api/client.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "makeFakeWs",
+   "sonasServer"
+  ],
+  "lines": 264,
+  "doc": "Unit tests for the DDP client: the protocol paths (connect, login, resume, tenant selection, publication collect, the tabular two-step) driven against a scripted fake websocket \u2014 no network, no Sonas. The fixture server answers the way a..."
+ },
+ {
+  "file": "connectors/sonas/api/upsert.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "eventFixture",
+   "financialRecordFixture"
+  ],
+  "lines": 325,
+  "doc": "Unit tests for the Sonas registry and upsert: the child-row mapping out of synthetic documents, upsertEntity driven against a fake mysql2-shaped connection, and the schema-drift check (no Sonas, no DB). Every fixture is invented to mirro..."
+ },
+ {
+  "file": "connectors/spar/api/upsert.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "callFor",
+   "insertCols",
+   "approachRow",
+   "campaignRow"
+  ],
+  "lines": 212,
+  "doc": "Unit tests for the SPAR upserts, driven against a fake mysql2-shaped connection that records every statement. They prove the merge semantics (first_seen_at preserved, last_seen_at advanced, key untouched), the approach children are DELET..."
+ },
+ {
+  "file": "connectors/tiktok/insights-sync.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "TOKEN_FILE"
+  ],
+  "lines": 84,
+  "doc": "External-timer entrypoint for the TikTok cursor pass (CK01). A host cron entry runs this daily; one bounded single-flight pass, then exit \u2014 the instagram/facebook entrypoint shape, on the shared sync frame (server/shared/sync-runs.js), s..."
+ },
+ {
+  "file": "connectors/tiktok/api/credentials.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "TIKTOK_ENV"
+  ],
+  "lines": 141,
+  "doc": "The connector's credential manifest and the resolution both of its entrypoints run on (connectors/tiktok/insights-sync.js preflight and api/auth-bootstrap.js), read through the real manifest rather than a fixture: the manifest is the thi..."
+ },
+ {
+  "file": "connectors/xero/api/sync.js",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "syncSettings",
+   "OFFSET_CHUNK",
+   "syncPaginated",
+   "syncOffsetWalk",
+   "newWatermarkMs",
+   "setOffsetCursor"
+  ],
+  "lines": 242,
+  "doc": "The Xero cursor sync: a server-side API pull (kind C \u2014 neither browser nor model) that mirrors each replicated entity into xero_*. Like the Google Chat sync it is a pump, not a per-entity job: its state is the per-entity cursors in xero_..."
+ },
+ {
+  "file": "connectors/xero/api/sync.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "mkJournal",
+   "journalRange"
+  ],
+  "lines": 327,
+  "doc": "Unit tests for the Xero cursor sync: the date/envelope helpers, and runSyncPass driven by a fake client and a fake connection (no Xero, no DB). The live end-to-end run (one `node connectors/xero/sync.js` after auth-bootstrap) exercises t..."
+ },
+ {
+  "file": "connectors/xero/api/upsert.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "invoiceFixture",
+   "accountFixture",
+   "journalFixture",
+   "bankTransferFixture",
+   "bankTransactionFixture"
+  ],
+  "lines": 242,
+  "doc": "Unit tests for the Xero registry and upsert: column promotion out of synthetic records, upsertEntity against a fake mysql2-shaped connection (no Xero, no DB), and the GL journal child-row writer landing inside the same transaction. Every..."
+ },
+ {
+  "file": "spheres/coord/api/decode.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "chatMsg",
+   "taskMsg",
+   "decode.test",
+   "selfTaskMsg",
+   "completedMsg"
+  ],
+  "lines": 140,
+  "doc": "Decoder tests, pinned to the real task-creation format captured from the live mirror: \"Created a task for @Name (via Tasks)\", assignee parsed from the text."
+ },
+ {
+  "file": "spheres/coord/api/instance.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "prelinkHook",
+   "instance.test"
+  ],
+  "lines": 75,
+  "doc": "The coord sphere's hooks (instance.js): coord-reconstruct and coord-meeting-prelink, each a shape check plus its due() gate over a stubbed connection. No DB anywhere: the stub hands back the gate's single row. Reconstruction's gate is th..."
+ },
+ {
+  "file": "spheres/coord/api/jobs-a.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "recRow",
+   "REC_TENANT",
+   "fullVerdict",
+   "jobs-a.test",
+   "derivedConn"
+  ],
+  "lines": 307,
+  "doc": "The meeting jobs' DB choreography, pinned against a routed fake connection (the sphere's testing idiom, jobs.test.js): which statements each leg issues and with what arguments. Query correctness against real tables is the live CLI run's ..."
+ },
+ {
+  "file": "spheres/customer-service/api/read.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "okPlan"
+  ],
+  "lines": 99,
+  "doc": "The customer-service API's route contract, on a fake connection (no live DB): the reader-only surface (one GET, no writes), the declaration the dispatcher publishes, and the loud 422 on a malformed or inverted window."
+ },
+ {
+  "file": "spheres/customer-service/api/transcripts.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "transcripts.test"
+  ],
+  "lines": 118,
+  "doc": "The transcript pair on fakes (no DB, no runtime, no AWS): the cached short-circuit, the honest refusals (no recording, unconfigured server, missing connector credential), the runtime round trip with the shared secret, and the row the suc..."
+ },
+ {
+  "file": "spheres/financial/api/deals.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "plainApi",
+   "deals.test"
+  ],
+  "lines": 212,
+  "doc": "The deals process's route contract, on a fake connection (no live DB in this suite). It pins the family routes mounted under the deals/ path segment, the emitted SQL scoping the core tables to this process's owner id, the write statement..."
+ },
+ {
+  "file": "spheres/financial/api/read.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "SRC_FRAG",
+   "getVocab",
+   "fullPlan",
+   "ACCT_FRAG",
+   "labourPlan",
+   "VOCAB_ROWS"
+  ],
+  "lines": 652,
+  "doc": "The financial API's contract on a fake connection (no live DB): the window validation, the section/sign rules from the chart of accounts, the off-ledger Rezdy/Sonas/rent rows and their nonledger flag, the segment column order, and the do..."
+ },
+ {
+  "file": "spheres/library/api/providers.js",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "appCreds"
+  ],
+  "lines": 50,
+  "doc": "The provider registry: the one place a library source is spelled. read.js generates its route table from this list (GET <id>/search, GET <id>/items/:id per entry), the dataset each route serves is files.<id>, and the UI's source chip car..."
+ },
+ {
+  "file": "spheres/library/api/read.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "fakeRegistry"
+  ],
+  "lines": 164,
+  "doc": "The library API's route contract on a registry of fake providers (no connector, no network, no DB): the surface the dispatcher publishes from the real registry, the search and item answers, the 422s by name, and the degradation a provide..."
+ },
+ {
+  "file": "spheres/partnership/api/read.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "emptyApi"
+  ],
+  "lines": 302,
+  "doc": "The partnership API's route contract, on a fake connection (no live DB in this suite). It pins the family six are mounted, the emitted SQL scopes the core pipeline tables to this sphere, the write statements' column lists match the platf..."
+ },
+ {
+  "file": "spheres/projects/api/derive.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "derive.test"
+  ],
+  "lines": 162,
+  "doc": "The derivation rules, pinned pure: status from history, stage from flips, the satisfaction rule, ready/blocked over fan-in and fan-out, transitive blocker chains with their paths, cycle refusal, and the overdue/stalled boundaries against..."
+ },
+ {
+  "file": "spheres/projects/api/read.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "WRITE_ROUTES"
+  ],
+  "lines": 338,
+  "doc": "The projects API's route contract, on a fake connection (no live DB in this suite): the write gates (401 unauthed before any query, validation 400s before any query), server-side actor stamping, the flip's stage check, the dependency cyc..."
+ },
+ {
+  "file": "spheres/publicity/api/cursor.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "seedMember",
+   "cursor.test"
+  ],
+  "lines": 155,
+  "doc": "The auto-flip ready queue (publicity_member_cursor) against the committed view SQL, inside an always-rolled-back transaction: membership requires an inbound reply fact; a consideration's watermark or a newer flip silences the row; newer ..."
+ },
+ {
+  "file": "spheres/publicity/api/look-claim.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "HOOK_CLAIMS",
+   "look-claim.test"
+  ],
+  "lines": 116,
+  "doc": "The look claim \u2014 the pre-model arbitration between aT00's two executors (the desktop's work-queue dispatch and the server's stage-pass hook), added after the 2026-07-08 live run where a hook sweep, fired by the desktop's own request traf..."
+ },
+ {
+  "file": "spheres/relationships/api/read.js",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "jsonStr",
+   "tripleKey",
+   "groupName",
+   "matchSide",
+   "personJson",
+   "buildPeople"
+  ],
+  "lines": 670,
+  "doc": "The relationships sphere's API: the half the PWA's ui/ calls over /bi/api/relationships/*. A reader-only cross-sphere view on the person axis: it unions everyone the platform knows across sources, resolves who is the same person at read ..."
+ },
+ {
+  "file": "spheres/relationships/api/read.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "withClaims"
+  ],
+  "lines": 663,
+  "doc": "The relationships API's route contract, on a fake connection (no live DB in this suite). It pins the reader-only surface (three GETs, no write routes at all), the read directions the SQL takes (mirrors and platform tables only, pipeline_..."
+ },
+ {
+  "file": "spheres/reputation/api/read.js",
+  "A": 1,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "cleanText",
+   "listPlaces",
+   "listReviews",
+   "undismissReview"
+  ],
+  "lines": 174,
+  "doc": "The reputation sphere's API: the half the PWA's ui/ calls over /bi/api/reputation/*. The BI server forwards everything under /api/reputation/ here with an open DB connection. The reads join the googlereviews connector's mirror (a sphere ..."
+ },
+ {
+  "file": "spheres/reputation/api/dismiss-plural.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "missingColumn",
+   "dismiss-plural.test"
+  ],
+  "lines": 51,
+  "doc": "The dismiss derivation's plural-tenant refusal, proven against the real schema: uk_fingerprint leads with tenant, so the same review mirrored under two tenants is two rows behind one bare fingerprint, and the dismiss must refuse by name ..."
+ },
+ {
+  "file": "spheres/reputation/api/read.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "REVIEW_ROW"
+  ],
+  "lines": 168,
+  "doc": "The reputation API's route contract, on a fake connection (no live DB in this suite): the dismiss/undismiss writes and their gates (401 unauthed, 400 malformed, 404 unknown), and the reviews read's dismissed annotation. The fake conn ans..."
+ },
+ {
+  "file": "spheres/schedule/api/almanac.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "almanac.test"
+  ],
+  "lines": 450,
+  "doc": "The guest calendar's parse and its route (api/almanac.js). parseAlmanac is pure, so the fixture below spans two full August\u2013July windows, twenty-four month cards over a two-year coverage. It carries every shape the real file uses: a fuzz..."
+ },
+ {
+  "file": "spheres/schedule/api/config.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "goodRaw",
+   "config.test"
+  ],
+  "lines": 104,
+  "doc": "The schedule sphere's config loader (api/config.js): the committed file loads, validates, and freezes; validateConfig rejects every malformed shape a hand-edit could produce. Pure unit tests, no DB."
+ },
+ {
+  "file": "spheres/schedule/api/instance.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "reconcileDue"
+  ],
+  "lines": 43,
+  "doc": "The schedule instance config: what the BI server needs to mount the sphere at /api/schedule. The sphere is a calendar over the booking mirrors (rezdy_*, sonas_*) plus its own schedule_entry and schedule_pending_move tables; the provider ..."
+ },
+ {
+  "file": "spheres/schedule/api/read.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "PENDING_NOW",
+   "pendingWindow",
+   "providerHandlers",
+   "withinPendingWeek"
+  ],
+  "lines": 464,
+  "doc": "The schedule read API's routing and shaping, against injected fake connections (no live DB: the queries' correctness against real tables is the browser pass's job; here we pin the merge across providers, the span clamp, the pending annot..."
+ },
+ {
+  "file": "spheres/schedule/api/reconcile-logic.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "reconcile-logic.test"
+  ],
+  "lines": 231,
+  "doc": "The reconcile decision core (reconcile-logic.js): native_id parsing edges, every decidePending path over hand-built evidence (pure, no DB), and the rezdy evidence gatherer + the adapter's checkPending over an injected fake connection, in..."
+ },
+ {
+  "file": "spheres/schedule/api/reconcile.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "dueConn",
+   "passConn",
+   "reconcile.test",
+   "CURRENT_BY_ORDER",
+   "CHANGES_BY_ORDER"
+  ],
+  "lines": 203,
+  "doc": "The reconcile pass (../reconcile.js) and the schedule-reconcile hook (instance.js): a whole pass over fixture rows asserting exactly what is written \u2014 the close/stale UPDATE sets and the job_runs record \u2014 and the hook's due() gate over a..."
+ },
+ {
+  "file": "spheres/social/api/ai01.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "ai01.test"
+  ],
+  "lines": 87,
+  "doc": "AI01 read: the marketing gate. It reads the trade from FOLLOWERS + the 12 RECENT POSTS (primary) with the bio/conversation secondary. Transaction-rollback against the live DB. The tests exercise the server-contract methods directly (the ..."
+ },
+ {
+  "file": "spheres/social/api/ai02.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "NON_INFL",
+   "ai02.test",
+   "SMALL_INFL"
+  ],
+  "lines": 157,
+  "doc": "AI02 grade: grades a gated influencer (Proven-Partner star + audience_fit) and records the audience codes. The cursor's WHERE is the entry gate (trade includes 'influencer', latest follower_count over 10000); a non-influencer or an under..."
+ },
+ {
+  "file": "spheres/social/api/ai03.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "ai03.test"
+  ],
+  "lines": 98,
+  "doc": "aI03 as the work queue sees it, inside rolled-back transactions: a ready member is offered through makeReader with the sphere config and carries the runbook's floor; an ok job_runs row does NOT close it (recurring \u2014 only a consideration ..."
+ },
+ {
+  "file": "spheres/social/api/bi02.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "bi02.test",
+   "threadPage"
+  ],
+  "lines": 103,
+  "doc": "BI02 backfill integration: transaction-rollback against the live DB. The overseer parses the thread and posts the CANONICAL envelope to /bi/b-persist; the server is a pure DB writer. The test drives that write half directly \u2014 jobs.BI02.p..."
+ },
+ {
+  "file": "spheres/social/api/contacts-filter.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "seededPks",
+   "seedMatrix",
+   "nextThread",
+   "contacts-filter.test"
+  ],
+  "lines": 233,
+  "doc": "The contacts-list facet narrowing (read.js listContacts / GET contacts): the server-side filter the People bar drives. Each facet sends the option codes switched OFF; the route returns the marketing population narrowed by all the facets ..."
+ },
+ {
+  "file": "spheres/social/api/drafts.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "drafts.test",
+   "makeCampaign",
+   "seedMarketingContact"
+  ],
+  "lines": 227,
+  "doc": "The message-draft routes (read.js handleApi): the per-member outbound draft a campaign board queues, edits, requeues and marks sent. Draft state is derived from the row's columns (body NULL = queued, body set = ready, sent_at set = sent)..."
+ },
+ {
+  "file": "spheres/social/api/flip-subset.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "gateRow",
+   "CAMP_ROW",
+   "IS_MEMBER",
+   "KNOWN_STAGE",
+   "flip-subset.test"
+  ],
+  "lines": 129,
+  "doc": "The campaign stage subset on the sphere's own flip route, on a fake connection so the suite opens no database (read.test.js exercises the same route against the live schema under a rollback transaction; this half is about which target th..."
+ },
+ {
+  "file": "spheres/social/api/freshness.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "A_STALE",
+   "A_FRESH",
+   "seedMarketingVisited"
+  ],
+  "lines": 53,
+  "doc": "Regression: an A-job that ran OK at the current runbook version is excluded from ready work even when it wrote no domain row (the empty-AI02 re-loop bug). Completion is read from job_runs, not from the grade row. Reads through the server..."
+ },
+ {
+  "file": "spheres/social/api/performance.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "MEDIA_B",
+   "MEDIA_A",
+   "FB_POST_ID",
+   "LONG_CAPTION",
+   "seedPerformance",
+   "performance.test"
+  ],
+  "lines": 362,
+  "doc": "The Performance read (GET performance): the venue's own posting across the two mirrors, normalised to one metric vocabulary. Transaction-rollback against the live DB (testdb.js): fixtures seed inside a transaction that is always rolled b..."
+ },
+ {
+  "file": "spheres/social/api/read.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "seedUnreadThread"
+  ],
+  "lines": 1443,
+  "doc": "The social read/write API (read.js handleApi): the half the PWA's ui/ calls over /bi/api/social/*. Exercises the routes the server forwards here \u2014 GET contacts (the rolodex list), GET contacts/<pk> (the detail), the dated-history reads G..."
+ },
+ {
+  "file": "spheres/social/api/stage-cursor.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "stage-cursor.test"
+  ],
+  "lines": 142,
+  "doc": "The auto-flip ready queue (social_stage_advance_cursor, rebuilt over the pipeline core) against the committed schema, inside always-rolled-back transactions: membership is the pipeline's latest flip; candidates and off-funnel members nev..."
+ },
+ {
+  "file": "server/shared/anthropic.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "anthropic.test"
+  ],
+  "lines": 81,
+  "doc": "The server-side model executor on a stubbed http: the request it builds (model alias resolution, runbook prompt as system, schema wrapping, thinking off), the value it parses back, and the retry/error branches \u2014 no network, no wall-clock..."
+ },
+ {
+  "file": "server/shared/chat.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "DB_STUB",
+   "chat.test"
+  ],
+  "lines": 214,
+  "doc": "The chat mount's behaviour on fake req/res pairs, DB-free: the config route, the tool feed, the token mint, and the 404 on everything else (the retired relaying routes included). What is pinned is the mount's contract (who gets in, what ..."
+ },
+ {
+  "file": "server/shared/click-log.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "recordingConn",
+   "click-log.test"
+  ],
+  "lines": 33,
+  "doc": "recordClick against a recording stand-in connection: pins the column list (schema-conformance.test.js cross-checks it against schema.sql) and the null-normalisation of the optional email/entity fields."
+ },
+ {
+  "file": "server/shared/contract.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "fakeSphere",
+   "fakeConnector"
+  ],
+  "lines": 200,
+  "doc": "The owner-config contract: the five live registrations pass, and each class of violation (missing field, wrong type, broken job shape) comes back as a problem naming the field \u2014 the same strings server/app.js mods() composes into its boo..."
+ },
+ {
+  "file": "server/shared/credential-manifests.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "fixtureRoot",
+   "writeManifest",
+   "credential-manifests.test"
+  ],
+  "lines": 80,
+  "doc": "Manifest discovery over a fixture connectors tree (the injectable root): a connector with a credentials.js appears, one without is absent rather than an error, a manifest that will not import throws naming its connector, and manifestFor ..."
+ },
+ {
+  "file": "server/shared/deepseek.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "deepseek.test"
+  ],
+  "lines": 63,
+  "doc": "The DeepSeek leg on a stubbed http (request shape, parse, retry, fail-fast) and the model-api chooser's key precedence."
+ },
+ {
+  "file": "server/shared/events.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "eventsIn",
+   "fakeClient",
+   "events.test"
+  ],
+  "lines": 68,
+  "doc": "Doorbell unit tests: registry, burst coalescing, keepalive, disconnect. No DB, no sockets \u2014 fake req/res pairs and tiny timing windows."
+ },
+ {
+  "file": "server/shared/job-claims.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "fakeTable",
+   "job-claims.test"
+  ],
+  "lines": 197,
+  "doc": "The job_claims protocol on a fake connection that keeps the table, so the interleaving the live suites cannot stage is the thing under test: two actors' protocol runs overlapping on one key, which is the shape that had been handing the s..."
+ },
+ {
+  "file": "server/shared/ollama.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "ollama.test"
+  ],
+  "lines": 50,
+  "doc": "The local executor on a stubbed http: the work-item-57 config it must reproduce exactly (think off, temperature 0, seed 42, ctx 4096, schema format, floor model), the parsed value, and the failure branches."
+ },
+ {
+  "file": "server/shared/ready.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "ready.test",
+   "betaConfig",
+   "alphaConfig"
+  ],
+  "lines": 114,
+  "doc": "The /jobs read model over more than one owner: workQueueRows merges every reader's rows into the one flat list (per-entity rows with labels, batch splitting, no-work transitions), and assertUniqueJobCodes rejects a code registered twice...."
+ },
+ {
+  "file": "server/shared/runbook.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "dirWith",
+   "runbook.test"
+  ],
+  "lines": 46,
+  "doc": "resolveRunbook: a job code resolves to exactly one runbook file. One match resolves, none is null (the dispatch loop's \"blocked, no runbook\" signal), and two files sharing a code prefix is a named error \u2014 readdir order is filesystem-depe..."
+ },
+ {
+  "file": "server/shared/spar-pipeline.walls.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "ctxOf",
+   "spar-pipeline.walls.test"
+  ],
+  "lines": 236,
+  "doc": "Leak tests for the pipeline family's wall seam: a walled campaign is existence-hidden from every family surface for a signed-in, dataset-granted viewer outside the wall's circle \u2014 absent from the campaign list and its counts, absent from..."
+ },
+ {
+  "file": "server/shared/stage-advance.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "viewRow"
+  ],
+  "lines": 146,
+  "doc": "The shared advance machinery on a fake connection, composed as a sentinel sphere ('boardgame', the spar-pipeline test's idiom) so what the publicity suites prove for the first composition this proves for any: the guard ladder is one pure..."
+ },
+ {
+  "file": "server/shared/tenancy.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "tenancy.test"
+  ],
+  "lines": 139,
+  "doc": "The tenant-scope seam's contract, DB-free: a fake connection answers the two registry reads tenancy.js issues, so what is pinned here is the resolution behaviour (memberships for a person, the whole registry for the machine, the empty sc..."
+ },
+ {
+  "file": "server/shared/trail.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "trail.test"
+  ],
+  "lines": 81,
+  "doc": "The write trail's contract, DB-free: the row shape recordWrite lands (bind order, defaults, the column-width cuts) and the never-throws posture \u2014 a failed trail insert logs one warning and resolves, because the trail is evidence about th..."
+ },
+ {
+  "file": "server/shared/venue-date.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "venue-date.test"
+  ],
+  "lines": 67,
+  "doc": "The shared venue-local DATE helpers. venueDate turns an epoch instant into the venue's Australia/Sydney calendar day with explicit AEST/AEDT arithmetic (the host Node is small-icu, so Intl would silently give the UTC day); ymd/ym read a ..."
+ },
+ {
+  "file": "scripts/import-otter-corpus.test.js",
+  "A": 0,
+  "B": 0,
+  "C": 0,
+  "leak": 0,
+  "score": 0,
+  "vocab": [
+   "SCHEMA_FM",
+   "BROKEN_FM",
+   "import-otter-corpus.test"
+  ],
+  "lines": 340,
+  "doc": "Parse-layer unit tests for the Otter corpus importer. No database: only the pure helpers (frontmatter split, YAML repair, dialect mapping, merging, glossary split). Fixtures are invented, shaped like the corpus's three frontmatter dialec..."
+ }
+]
