@@ -108,7 +108,7 @@ The S and P phases each have one note column in the roster. Only that phase writ
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
-| 12 | s_note | short text | S only; frozen after discovery | P, A | Why S included this person — the source statement, event, or signal that justified the entry. P reads this before profiling to check whether the person matches the rationale. |
+| 12 | s_note | short text | S; P on a row it declares through `rows_new` (SPAR-P §4.15); frozen after discovery | P, A | Why the discovering phase included this person — the source statement, event, or signal that justified the entry. P reads this before profiling to check whether the person matches the rationale. |
 | 13 | p_note | short text | P only | A, human review | What P found: the evidence of interest, the recommended angle, any cautions for A. Broader than evidence of interest alone — includes corrections, routing advice, and warnings. |
 | 14 | star_rating | 0–5 | P; A may set to 0 | A (band ordering), human review | General value of this contact to us in this segment, today — a property of the contact, not of any one campaign (the campaign-dependent counterpart is `response_likelihood`, on the approach). Question and procedure defined in `spar-methodology.md` (P section) and `spar-P-profile.md` §4.13 — segment file's `rating_rubric` governs where present, otherwise judge general value to us directly, without importing the current campaign's ask. A value of 0 means "excluded — not a campaign target." When star_rating is set to 0, date_excluded must also be set. The date_excluded field records when the determination was made; p_note (or, for an A-authored exclusion, the approach YAML's a_note) records the reason. A star_rating of 0 is distinct from 1: a 1-star contact is low-priority but targetable; a 0-star contact is excluded from the pipeline entirely. |
 
@@ -162,7 +162,7 @@ These assertions apply to the core columns. Campaign-specific checks are defined
 This document defines the roster schema. The operational procedures for populating it are:
 
 - **SPAR-S** (`spar-S-sweep.md`) — populates columns 1–12 (including `stem` at discovery)
-- **SPAR-P** (`spar-P-profile.md`) — populates columns 13–14, corrects columns 3–8 and 11; creates `segments/{segment}/{stem}.md` using the pre-existing `stem`
+- **SPAR-P** (`spar-P-profile.md`) — populates columns 13–14, corrects columns 3–8 and 11, and appends whole rows (columns 1–12) for members it discovers, declared as `rows_new` and applied by the harness (§4.15); creates `segments/{segment}/{stem}.md` using the pre-existing `stem`
 - **SPAR-A** (`spar-A-approach.md`) — creates `campaigns/{campaign}/{stem}.yaml` using the pre-existing `stem`, writing `response_likelihood`, `a_note`, and the messages into it; writes to the roster only to backfill a population-tier contact detail discovered at send time (a verified email, a corrected platform URL; see §4.8)
 - **R** (human, no procedure document) — writes the `r_note` root key into the campaign's approach file; does not write to the roster
 - **spar-state.tcl** — reads `stem` from the roster and checks for the presence of the profile and the campaign's approach file on disk to classify contact state; never writes to the roster

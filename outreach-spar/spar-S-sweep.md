@@ -145,7 +145,7 @@ sources:                    # the census; every discovered_via maps to an entry 
     discovered_via: <profile:{stem} when profiling surfaced the source (P §4.15); absent for seeded sources>
 exclusions: <what this segment's scope keeps out, sharpened as misfits teach>
 escapes: []                 # permanent test cases; see below
-next_round:                 # staging block a human compiles between rounds; profile-found sources enter `sources` directly
+next_round:                 # a human stages non-profile proposals here between rounds; sources_new entries (SPAR-P §4.15) go straight into sources, no staging
 rows_to_verify: []          # roster rows a later source disputed
 rounds:
   - n: <iteration>
