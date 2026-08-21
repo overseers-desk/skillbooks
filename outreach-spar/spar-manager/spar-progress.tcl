@@ -52,10 +52,42 @@ if {[llength $segment_inputs] > 0} {
 # No campaign named: resolve_campaign discovers one under the working directory.
 if {[llength $campaign_specs] == 0} { set campaign_specs [list [list "" ""]] }
 
+# --- Discovery yield: what profiling fed back to the sweep ---
+# A row or a census source that profiling surfaced leads its
+# discovered_via with profile:<stem> (SPAR-P §4.15); counting that lead
+# against the profiles on disk is the rate at which the profile phase
+# discovers what the sweep missed. Read from the files each time, never
+# stored: the roster and the sweep file are the only record.
+proc discovery_yield {seg_dir} {
+    set profiles [llength [glob -nocomplain -directory \
+        [spar::profile_dir_for_segment $seg_dir] *.md]]
+    set rows 0
+    set roster_path [spar::roster_path_for_segment $seg_dir]
+    if {[file exists $roster_path]} {
+        foreach r [spar::load_roster $roster_path] {
+            if {[string match "profile:*" [string trim [dict getdef $r discovered_via ""]]]} {
+                incr rows
+            }
+        }
+    }
+    set sources 0
+    set sweep_path [spar::sweep_yaml_for_segment $seg_dir]
+    if {[file exists $sweep_path] && ![catch {spar::read_sweep_yaml $sweep_path} sd]} {
+        foreach src [dict getdef $sd sources {}] {
+            if {[llength $src] % 2 != 0} continue
+            if {[string match "profile:*" [string trim [dict getdef $src discovered_via ""]]]} {
+                incr sources
+            }
+        }
+    }
+    return [dict create profiles $profiles rows $rows sources $sources]
+}
+
 # --- Resolve one campaign, classify its segments, collect its counts ---
-# Returns the resolve_campaign dict plus all_contacts and segment_counts,
-# or "" when the campaign will not resolve, its reason on stderr.
-# The State is passed in so its cache spans every campaign in the run.
+# Returns the resolve_campaign dict plus all_contacts, segment_counts and
+# segment_discovery, or "" when the campaign will not resolve, its reason
+# on stderr. The State is passed in so its cache spans every campaign in
+# the run.
 proc analyse_campaign {State campaign_file campaign_dir} {
     # A `segment` kind in the campaign_file slot analyses the named
     # segments as one set, with no campaign: cdata {}, no approach
@@ -76,6 +108,7 @@ proc analyse_campaign {State campaign_file campaign_dir} {
     set cdata        [dict get $rc cdata]
     set all_contacts {}
     set segment_counts {}   ;# list of {label counts_dict}
+    set segment_discovery {} ;# list of {label discovery_dict}
 
     foreach item [dict get $rc segment_paths] {
         lassign $item label seg_dir
@@ -92,9 +125,11 @@ proc analyse_campaign {State campaign_file campaign_dir} {
         }
         lappend all_contacts {*}$classified
         lappend segment_counts [list $label [spar::progress_counts $classified $cdata]]
+        lappend segment_discovery [list $label [discovery_yield $seg_dir]]
     }
     return [dict merge $rc [dict create \
-        all_contacts $all_contacts segment_counts $segment_counts]]
+        all_contacts $all_contacts segment_counts $segment_counts \
+        segment_discovery $segment_discovery]]
 }
 
 # One State for the whole CLI run — its lifetime matches this script's.
@@ -134,10 +169,15 @@ if {$json_mode} {
     proc progress_to_json {progress_dict} {
         set seg_list {}
         foreach s [dict get $progress_dict segments] {
+            set d [dict get $s discovery]
             lappend seg_list [::json::write object \
                 name [::json::write string [dict get $s name]] \
                 active [expr {[dict get $s active] ? "true" : "false"}] \
-                counts [_counts_tree [dict get $s counts]]]
+                counts [_counts_tree [dict get $s counts]] \
+                discovery [::json::write object \
+                    profiles [dict get $d profiles] \
+                    rows_from_profiles [dict get $d rows] \
+                    sources_from_profiles [dict get $d sources]]]
         }
         set tr_list {}
         foreach t [dict get $progress_dict transitions] {
@@ -164,9 +204,10 @@ if {$json_mode} {
 
     # Build the progress dict
     set seg_results {}
-    foreach item $segment_counts {
+    foreach item $segment_counts disc $segment_discovery {
         lassign $item label counts
-        lappend seg_results [dict create name $label active 1 counts $counts]
+        lappend seg_results [dict create name $label active 1 counts $counts \
+            discovery [lindex $disc 1]]
     }
     set totals [dict create valid 0 profiled 0 star3 0 approachable 0 \
         approached_star3 0 has_email 0 has_linkedin 0 has_facebook 0 \
@@ -322,6 +363,16 @@ proc print_report {analysis} {
             }
         }
         puts "|[join $parts |]|"
+    }
+
+    # Discovery yield: what profiling fed back to the sweep, per segment.
+    # Rows and sources are those whose discovered_via leads profile:<stem>;
+    # the denominator is the profiles on disk.
+    puts "\nDiscovery yield (rows and sources profiling added, over profiles written)"
+    foreach item $segment_discovery {
+        lassign $item label d
+        puts [format "  %s: %d profiles → %d rows, %d sources" \
+            $label [dict get $d profiles] [dict get $d rows] [dict get $d sources]]
     }
 
     if {$show_legend} {
