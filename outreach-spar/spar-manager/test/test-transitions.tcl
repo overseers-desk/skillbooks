@@ -798,7 +798,6 @@ assert_eq [dict get [lindex $au_miss 0] severity] "warning" \
 # ════════════════════════════════════════════════════════════════════════
 section "spar::li::health_note: what stands in a send's way"
 
-source [file join $script_dir .. transitions linkedin_send_one.tcl]
 
 # A healthy overseer with every host free: nothing to say.
 set hn_clear {ok true version 0.1 pools {browser {cap 1 inUse 0}} \

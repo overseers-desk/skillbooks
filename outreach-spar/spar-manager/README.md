@@ -26,7 +26,7 @@ For deeper internals: `state-machine.md` covers the TIDs, validation gates, warn
 | `claude` | `lib/spar-harness.tcl` (harness) | Claude Code CLI for profile/approach generation |
 | `courier` | `lib/spar-email.tcl` | Query email account for reply checking |
 | `flock` | `lib/spar-dispatch.tcl` | Serialises the profile workers' chromium launches |
-| `mktemp` | `lib/spar-lib.tcl`, `transitions/ses_send_one.tcl` | Temporary files for atomic TSV/YAML rewrites and the SMTP params file |
+| `mktemp` | `lib/spar-lib.tcl`, `transitions/send_email.tcl` | Temporary files for atomic TSV/YAML rewrites and the SMTP params file |
 
 Email sending (`transitions/smtp_send.tcl`) connects directly to the SES SMTP endpoint. The system is written assuming SES: SES rewrites the RFC 822 `Message-ID` header on every send, and the SES-assigned tracking id is captured from the `250 Ok <id>` SMTP response rather than from an API reply.
 

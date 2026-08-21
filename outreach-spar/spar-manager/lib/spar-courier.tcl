@@ -75,7 +75,7 @@ proc spar::courier::_run {query} {
     # non-zero exit is not by itself a failure. pool_exec merges stderr into
     # stdout the way `2>@1` did and, on a non-zero exit, throws with that
     # merged output as its message; capture it either way, the way
-    # imap_check_one does. rc 0 means the search returned hits, which the
+    # spar::imap::check_one does. rc 0 means the search returned hits, which the
     # caller reads to decide whether the email pass already satisfied the
     # cascade.
     set rc [catch {spar::pool_exec {*}$courier -A search --format text \
