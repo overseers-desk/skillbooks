@@ -43,9 +43,9 @@ set cdir [make_temp_campaign]
 set seg_a [file join $cdir segments seg-a]
 file mkdir $seg_a
 file mkdir [file join $cdir campaigns camp]
-write_roster_tsv $seg_a $::std_headers [list \
+write_roster_tsv $seg_a [concat $::std_headers discovered_via] [list \
     [make_base_row {stem "alice" contact_name "Alice" star_rating "5" email "a@test.com"}] \
-    [make_base_row {stem "bob" contact_name "Bob" star_rating "3" email "b@test.com"}] \
+    [make_base_row {stem "bob" contact_name "Bob" star_rating "3" email "b@test.com" discovered_via "profile:alice · named on Alice's page"}] \
 ]
 write_profile $seg_a "alice"
 write_campaign_yaml $cdir "campaign: Test Campaign\nsegments:\n  - seg-a\nfilter:\n  min_star: 3\n"
@@ -71,6 +71,10 @@ assert_eq [dict exists $jch facebook] 1 "json: channels has facebook"
 assert_eq [dict exists $jch phone_only] 1 "json: channels has phone_only"
 assert_eq [dict exists $parsed segments] 1 "json: has segments"
 assert_eq [llength [dict get $parsed segments]] 1 "json: one segment"
+set jdisc [dict get [lindex [dict get $parsed segments] 0] discovery]
+assert_eq [dict get $jdisc profiles] 1 "json: discovery counts the profile on disk"
+assert_eq [dict get $jdisc rows_from_profiles] 1 "json: discovery counts the profile:-led row"
+assert_eq [dict get $jdisc sources_from_profiles] 0 "json: no sweep file, no sources from profiles"
 assert_eq [dict exists $parsed transitions] 1 "json: has transitions"
 assert_eq [llength [dict get $parsed transitions]] 8 "json: 8 transitions"
 assert_eq [dict exists $parsed warnings] 1 "json: has warnings"
