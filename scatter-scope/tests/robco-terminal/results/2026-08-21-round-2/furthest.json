@@ -1,0 +1,182 @@
+[
+ {
+  "file": "crates/chassis/src/oracle.rs",
+  "flags": "A high, B high",
+  "estimator": 3,
+  "err": 4.16
+ },
+ {
+  "file": "crates/chassis/src/metrics.rs",
+  "flags": "B high, D high (hub)",
+  "estimator": 2,
+  "err": 3.86
+ },
+ {
+  "file": "crates/crt-render/src/params.rs",
+  "flags": "B high, D high (hub)",
+  "estimator": 2,
+  "err": 3.94
+ },
+ {
+  "file": "crates/chassis/src/shells/annunciator.rs",
+  "flags": "B high",
+  "estimator": 2,
+  "err": 3.1
+ },
+ {
+  "file": "crates/config/src/schema.rs",
+  "flags": "A high, B high",
+  "estimator": 3,
+  "err": 3.34
+ },
+ {
+  "file": "crates/chassis/src/shells/slide_rule.rs",
+  "flags": "B high",
+  "estimator": 2,
+  "err": 1.97
+ },
+ {
+  "file": "crates/term/src/atlas.rs",
+  "flags": "A high, B high",
+  "estimator": 2,
+  "err": 2.52
+ },
+ {
+  "file": "crates/term/src/fonts/mod.rs",
+  "flags": "A high, B high",
+  "estimator": 3,
+  "err": 3.06
+ },
+ {
+  "file": "crates/tmux-cc/src/command.rs",
+  "flags": "A high",
+  "estimator": 2,
+  "err": 1.26
+ },
+ {
+  "file": "crates/term/src/gpu.rs",
+  "flags": "B high",
+  "estimator": 2,
+  "err": 2.4
+ },
+ {
+  "file": "crates/app/src/channels.rs",
+  "flags": "A low, B high, leak signature",
+  "estimator": 1,
+  "err": 2.3
+ },
+ {
+  "file": "crates/chassis/src/furniture.rs",
+  "flags": "D high (hub)",
+  "estimator": 2,
+  "err": 2.82
+ },
+ {
+  "file": "crates/chassis/src/layout.rs",
+  "flags": "A high",
+  "estimator": 2,
+  "err": 1.83
+ },
+ {
+  "file": "crates/crt-burnin/src/headless.rs",
+  "flags": "B high, leak signature",
+  "estimator": 1,
+  "err": 2.18
+ },
+ {
+  "file": "crates/app/src/window.rs",
+  "flags": "B high, D high (hub)",
+  "estimator": 1,
+  "err": 3.76
+ },
+ {
+  "file": "crates/config/src/lib.rs",
+  "flags": "B high",
+  "estimator": 3,
+  "err": 2.76
+ },
+ {
+  "file": "crates/crt-render/src/pacing.rs",
+  "flags": "B high",
+  "estimator": 2,
+  "err": 2.73
+ },
+ {
+  "file": "crates/term/src/viewport.rs",
+  "flags": "B high",
+  "estimator": 2,
+  "err": 2.29
+ },
+ {
+  "file": "crates/crt-render/src/degauss.rs",
+  "flags": "B high",
+  "estimator": 2,
+  "err": 2.79
+ },
+ {
+  "file": "crates/app/src/tmux.rs",
+  "flags": "B high, leak signature",
+  "estimator": 1,
+  "err": 2.59
+ },
+ {
+  "file": "crates/chassis/src/displays/tape/metrics.rs",
+  "flags": "D high (hub)",
+  "estimator": 2,
+  "err": 2.46
+ },
+ {
+  "file": "crates/chassis/src/shells/mod.rs",
+  "flags": "D high (hub)",
+  "estimator": 1,
+  "err": 2.44
+ },
+ {
+  "file": "crates/crt-render/src/oracle.rs",
+  "flags": "B high, leak signature",
+  "estimator": 1,
+  "err": 1.81
+ },
+ {
+  "file": "crates/term/src/session.rs",
+  "flags": "B high",
+  "estimator": 2,
+  "err": 2.49
+ },
+ {
+  "file": "crates/crt-render/src/preset.rs",
+  "flags": "B high",
+  "estimator": 1,
+  "err": 1.54
+ },
+ {
+  "file": "crates/config/src/toml.rs",
+  "flags": "B high",
+  "estimator": 2,
+  "err": 1.76
+ },
+ {
+  "file": "crates/crt-render/src/chain.rs",
+  "flags": "B high",
+  "estimator": 1,
+  "err": 1.58
+ },
+ {
+  "file": "crates/crt-burnin/src/decay.rs",
+  "flags": "B high",
+  "estimator": 1,
+  "err": 1.26
+ },
+ {
+  "file": "crates/term/src/fonts/sizing.rs",
+  "flags": "B high",
+  "estimator": 2,
+  "err": 1.57
+ },
+ {
+  "file": "crates/xtask/src/main.rs",
+  "flags": "B high",
+  "estimator": 1,
+  "err": 1.73
+ }
+]

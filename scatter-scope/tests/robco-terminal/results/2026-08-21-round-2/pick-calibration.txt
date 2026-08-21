@@ -1,0 +1,6 @@
+modules with estimates: 106; flagged: 30
+  A: inside band 99/106 (93%), median gap +0.23 log3 (x1.3)
+  B: inside band 72/106 (67%), median gap +0.51 log3 (x1.8)
+  C: inside band 34/106 (32%), median gap +1.40 log3 (x4.7)
+  D: inside band 80/106 (75%), median gap -0.63 log3 (x0.5)
+wrote /home/weiwu/code/aesop/scatter-scope/tests/robco-terminal/results/2026-08-21-round-2/pick.json and pick-table.md (disposition column empty, for Explain to fill)

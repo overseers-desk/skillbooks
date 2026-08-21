@@ -1,0 +1,29 @@
+# Tail triage: round 2, batch disposition
+
+| module | flags | disposition | one-line reason |
+|---|---|---|---|
+| `crates/config/src/schema.rs` | A high, B high | by design | defines the config struct types (`ChassisSettings`, `ScreenSettings`, `GeneralSettings`…) every config-consuming module across app/chassis/config/crt-render must reference; `Switchboard` (the capitalised-word fault) covers only 24 of 348 C. |
+| `crates/config/src/lib.rs` | B high | by design | crate root exporting the central `Config` type, naturally threaded through settings.rs, window.rs, cabinet.rs, toml.rs, profile.rs, and render params/preset. |
+| `crates/term/src/session.rs` | B high | by design | the PTY/tmux session engine at the app's core, exercised by nearly every app integration test (clipboard_keys, ime, pointer, tmux_flow…); `Pumped`/`Session` explain only 45 of 178 C. |
+| `crates/config/src/toml.rs` | B high | by design | the toml read/write/edit API is called by every config-writing module and documented in docs/config.md; `General`/`Screen`/`Boolean`/etc. touch 14 of 25 B files but carry only 28 of 172 C; the rest in those same files is real work. |
+| `crates/term/src/fonts/sizing.rs` | B high | by design | pixel-exact font scaling math, the direct subject of the pixel test suite (pixel_properties.rs 36 mentions, antialias.rs 12…); `Floor`/`Round` explain only 18 of 136 C. |
+| `crates/term/src/fonts/mod.rs` | A high, B high | by design | font catalogue types shared across term (atlas/sizing/metrics) and chassis (furniture/paint/shells; LED and tape displays use bundled fonts); `Bundled`/`System` explain 8 of 125 C. |
+| `crates/crt-render/src/degauss.rs` | B high | by design | CRT degauss state consumed by app's window render loop (17 mentions) and exercised by crt-render's own pass_graph/contracts tests (61); `is_active`/`is_running` are generic enough to add minor uncatalogued name-collision noise. |
+| `crates/chassis/src/shells/annunciator.rs` | B high | by design | annunciator is the *default* chassis shell (`default_chassis_is_annunciator`), so it is the fixture every chassis geometry/metrics/shader test reaches for; nearly all B files are its own crate's tests. |
+| `crates/crt-burnin/src/headless.rs` | B high, leak signature | by design | a GPU test harness (`make_input`/`make_output`/`render_single_pass`) meant to be called from render test suites across chassis, term, crt-render and crt-burnin; A is 1 because its whole purpose is to be a cross-crate test fixture, not production code. |
+| `crates/chassis/src/shells/slide_rule.rs` | B high | by design | same fixture pattern as annunciator; one of the tested shell types read by the shared metrics/geometry/shader test suite; D high because a shell module necessarily calls shared chassis plumbing (metrics, furniture, bank). |
+| `crates/crt-render/src/chain.rs` | B high | artefact | `Applied`/`Chain`/`Parameters`/`Rebuilt` hit 18 of 19 B files and carry 50 of 75 C; the small remainder is real pass_graph.rs test coupling. |
+| `crates/term/src/atlas.rs` | A high, B high | by design | the glyph atlas/cache, consumed by render.rs/window.rs/badge.rs and the direct subject of the term pixel-rendering test suite (pixel_properties.rs, 27 mentions). |
+| `crates/crt-render/src/pacing.rs` | B high | artefact-leaning | `Pacing` hits 9 of 12 B files and carries 29 of 62 C; the rest is real; pass_graph.rs's 25 mentions test frame ticking, and app/window.rs drives the render loop's pacing. |
+| `crates/crt-render/src/preset.rs` | B high | artefact-leaning | `Scale`/`Structure` hit 12 of 18 B files and carry 32 of 61 C; the rest is real coupling to crt-burnin's quality presets and app/config's structural-settings tests. |
+| `crates/chassis/src/furniture.rs` | D high (hub) | by design | shared piece-drawing primitives (`Piece`, `Plate`, `TapeLabel`, `LedMatrix`) every shell and cabinet.rs must call to render; D high is exactly what a rendering-primitives hub looks like. |
+| `crates/term/src/gpu.rs` | B high | mixed | `Target` hits 9 of 14 B files and carries 23 of 50 C; the rest is a real shared GPU-pixel-readback test helper used by crt-render's, term's and app's render test suites. |
+| `crates/tmux-cc/src/command.rs` | A high | by design | the tmux command-builder used by its own crate's codec/lib, the app's tmux gateway, and an example recorder; a small protocol module with the expected small set of real consumers. |
+| `crates/chassis/src/layout.rs` | A high | by design (hub) | computes `WindowLayout`, consulted by every drawing module (frame, furniture, cabinet, seam, all four shells) as the shared geometry source. |
+| `crates/crt-burnin/src/decay.rs` | B high | by design | burn-in ghost decay physics, owned by its crate's own tests (burn_in.rs, mount.rs) with real integration coupling to crt-render's burn_in_chain/contracts tests. |
+| `crates/crt-render/src/oracle.rs` | B high, leak signature | by design | a golden-reference generator (`terminal_frame`, `gaussian_blur_1d`) meant to be called only from render test suites (bloom, contracts, pass_graph, terminal_frame); A is 0 because it has no non-test consumer by design. |
+| `crates/xtask/src/main.rs` | B high | artefact | `Compare`/`Contract`/`Install`/`Verify` are xtask's own subcommand names; they account for all 10 of 10 measured C; a full match, not partial. |
+
+## Closing note
+
+Five rows (`chain.rs`, `preset.rs`, `pacing.rs`, `gpu.rs`, `xtask/main.rs`) are explained primarily by the capitalised-English-word vocabulary hole, and a further four (`schema.rs`, `toml.rs`, `sizing.rs`, `fonts/mod.rs`) carry a minor, non-decisive share of it. No row here matches the lowercase-collision (`params.rs`) or decoder-instability faults specifically, though `degauss.rs`'s generic `is_active`/`is_running` booleans look like the same class of problem.

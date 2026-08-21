@@ -46,12 +46,12 @@ The decided-once list comes from the Oracle's estimators, before they see anythi
 
 For each module concept, four figures:
 
-- **A**, type consumers: files outside the module, tests excluded, that reference a symbol the module defines. Read from the index; exact.
+- **A**, type consumers: files outside the module, tests excluded, that reference a symbol the module defines. Read from the index; exact for what the index sees. A static index does not see runtime discovery or dynamic import (a directory listed and loaded by computed path, a string-literal `import()`), so in a codebase that loads that way a low A is checked for it before it is read as sealed.
 - **D**, out-degree: files, tests excluded, whose symbols the module references. A module far above its expected D is a hub, a file holding several subsystems; A alone does not show it, since a hub is driven, not depended on.
 - **B**, vocabulary spread: files of any kind in the tree (sources, tests, docs, manifests) that mention any name in the module's vocabulary. Read by grep. The corpus is the tree as a reader would meet it: agent-session folders, build output, dependency trees, lockfiles and generated catalogs (translation files, bundled design output) are out, and the run's notes say what was excluded and why.
 - **C**, sites: total mentions across those B files.
 
-Leak is B minus the files the graph already counted in A; it is the set of files that speak the concept's words without using its types: fields of the same name on shared structs, a lower layer that cannot import upward and carries the concept in its own vocabulary, comments, docs. `tools/scope-count.py` computes all of this from the index JSON and the tree, ranks modules by sites weighted by leak share, which alone (no oracle) puts a leaking module at the top of the table, and writes the convention table beside it.
+Leak is B minus the files the graph already counted in A; it is the set of files that speak the concept's words without using its types: fields of the same name on shared structs, a lower layer that cannot import upward and carries the concept in its own vocabulary, comments, docs. `tools/scope-count.py` computes all of this from the index JSON and the tree, ranks modules by sites weighted by leak share, which alone (no oracle) puts a leaking module at the top of the table, and writes the convention table beside it. B is a function of the vocabulary rule, so two runs compare on B only at the same tool version; the run notes record the tools' commit.
 
 B has a floor. A module whose distinctive names are few, or whose names collide with dictionary words or external types, measures B near zero however widely it is used; the tool marks such rows, and a low B is read as "the instrument had little to grep for", never as "well hidden". A is the figure that carries the low side.
 
@@ -73,7 +73,11 @@ A decided-once fact is flagged the same way: expected places against measured si
 
 ### E — Explain
 
-For each flagged concept, revive the estimator whose guess was furthest off, in its own context, with the measured figures and the one instruction that matters: check the instrument before the cause. It re-derives the count (what are the B files; does the corpus include anything a reader would not meet; is a vocabulary word doing the work alone), and only if the count holds does it read the code for the mechanism and name it: the shared struct carrying the fields, the layer that duplicates the vocabulary, the scalar every consumer rebuilds geometry from, the prose. Under two hundred words, most consequential first.
+For each flagged concept, revive the estimator whose guess was furthest off, in its own context, with the measured figures, the module's exact vocabulary as the count used it (the measured JSON carries it; a sample misleads), the list of B files or the command that lists them, and the one instruction that matters: check the instrument before the cause. It re-derives the count (what are the B files; does the corpus include anything a reader would not meet; is one vocabulary word doing the work alone), and only if the count holds does it read the code for the mechanism and name it: the shared struct carrying the fields, the layer that duplicates the vocabulary, the scalar every consumer rebuilds geometry from, the prose. Under two hundred words, most consequential first.
+
+Two readings a revival gets wrong when it stops early. A stem's share of the count is not a verdict: when the bare word carries most mentions, the question moves to the carriers, one by one, and for each: could this file have used the module's types, and does it hold the concept's facts in fields of its own? A sibling crate named for the same protocol, a lower layer that cannot import upward, and prose are by design; a same-layer file that restates the concept's state and routes behaviour off it is the second encoding, and it is scattered however generic the word. A hub flagged on D is not closed as "orchestrator" by its doc line: the revival names what the file holds, region by region, and which regions have a home elsewhere; orchestration is by design when the content is glue, and scattered when the subsystems themselves live there.
+
+The runner reads each revival against the code where the verdict decides a finding, and may overrule it with a direct check, saying so in the report; a revival is an instrument too.
 
 Three outcomes close a flag: scattered, with the mechanism and its cost named; by design, where a shared vocabulary (configuration, colour, layout types, a UI kit) reads by many files because that is its job; artefact, where the count was the instrument's. A flag whose cause is plain from the table itself (an artefact the vocabulary column shows, a shared vocabulary the graph alone establishes) may be triaged in a batch, one context reading the table; every other flag gets its own revival, since a batch verdict on a real candidate is the weakest verdict a run produces. What remains is the list the owner acts on.
 
@@ -82,7 +86,7 @@ Three outcomes close a flag: scattered, with the mechanism and its cost named; b
 | Artefact | Created by | Consumed by | Lives in |
 |---|---|---|---|
 | Symbol index (SCIP and its JSON), build output the indexer needed | S | C | beside the run, outside the repository and the run folder, named by path in the run's notes |
-| Run notes: indexer and tiers, corpus rule and exclusions, tiers used, what the index does not cover | S, C | report | run folder |
+| Run notes: indexer and tiers, corpus rule and exclusions, the tools' commit, model tiers used, what the index does not cover | S, C | report | run folder |
 | Concept list: modules with vocabulary, the convention table, decided-once facts with expected places | S, O | C, P | run folder |
 | Measured table: A, D, B, C, leak, score per module; sites per fact | C | P, E | run folder |
 | Oracle brief and the estimators' replies | O | P, E | run folder |
