@@ -427,7 +427,7 @@ oo::class create spar::ApproachHarness {
 oo::class create spar::ProfileHarness {
     superclass spar::Harness
 
-    variable State Outfile RosterPath RequiredSkills Stem \
+    variable State Outfile RosterPath SweepPath RequiredSkills Stem \
              ContactLinkedin OutfilePreexisted OutfileSnapshot CampaignFile
 
     # Profile workers run under an explicit allow-list instead of
@@ -533,14 +533,14 @@ oo::class create spar::ProfileHarness {
             return [list [dict create severity error code missing_profile \
                           message "The profile file was not written to $Outfile"]]
         }
-        # Mediated roster writes: apply the deliverable's declarations
-        # (star sync, one-shot roster_patch, sweep_feedback) before
-        # validating, so validation sees the roster the declaration
-        # produced. Runs on every attempt: idempotent by stamp, and a
+        # Mediated roster and census writes: apply the deliverable's
+        # declarations (star sync, one-shot roster_patch, rows_new,
+        # sources_new) before validating, so validation sees the roster
+        # the declaration produced. Runs on every attempt: idempotent by stamp, and a
         # fix-loop resume that edits the declaration gets it applied on
         # the re-validate. Rejections join the error list and drive the
         # same fix loop.
-        set errors [spar::apply_roster_patch $Outfile $RosterPath $Stem]
+        set errors [spar::apply_roster_patch $Outfile $RosterPath $Stem $SweepPath]
         if {[llength $errors] == 0} {
             set row [my _roster_row $RosterPath $slug]
         }
@@ -670,6 +670,7 @@ oo::class create spar::ProfileHarness {
         set meta [my load_meta]
         set Outfile      [dict get $meta OUTFILE]
         set RosterPath   [dict get $meta ROSTER_PATH]
+        set SweepPath    [dict getdef $meta SWEEP_PATH ""]
         set CampaignFile [dict getdef $meta CAMPAIGN_FILE ""]
         set Stem         [dict get $meta STEM]
         set RequiredSkills [dict getdef $meta REQUIRED_SKILLS ""]
