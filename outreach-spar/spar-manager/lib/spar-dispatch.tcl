@@ -238,6 +238,30 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
     set profile_dir [spar::profile_dir_for_segment $segment_dir]
     set goal_path [spar::segment_yaml_for_segment $segment_dir]
 
+    # The segment's census, when the segment has been swept under T0: the
+    # worker declares sources it surfaces (sources_new) against it, so it
+    # is told the names the census already holds, with each one's status
+    # token, and the harness applies into it. A segment with no sweep file
+    # gets an empty path and the worker is told so.
+    set sweep_path [spar::sweep_yaml_for_segment $segment_dir]
+    set source_names "none: this segment has no sweep file, so declare no sources_new"
+    if {[file exists $sweep_path]} {
+        set _names {}
+        foreach _src [dict getdef [spar::read_sweep_yaml $sweep_path] sources {}] {
+            if {[llength $_src] % 2 != 0} continue
+            set _n [string trim [dict getdef $_src name ""]]
+            if {$_n eq ""} continue
+            lappend _names "$_n \[[spar::sweep_status_token [dict getdef $_src status ""]]\]"
+        }
+        if {[llength $_names] > 0} {
+            set source_names [join $_names "; "]
+        } else {
+            set source_names "(the census is empty)"
+        }
+    } else {
+        set sweep_path ""
+    }
+
     # Roster writes are harness-mediated: workers declare changes in their
     # deliverable's front matter and spar::apply_roster_patch applies them,
     # so worker prompts carry no lock and no TSV tooling. Stale locks from
@@ -306,7 +330,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         if {$_stem eq ""} continue
         set _ppath [spar::profile_path_for_stem $segment_dir $_stem]
         if {![file exists $_ppath]} continue
-        foreach _issue [spar::apply_roster_patch $_ppath $roster_path $_stem] {
+        foreach _issue [spar::apply_roster_patch $_ppath $roster_path $_stem $sweep_path] {
             ${::spar::dispatch_log}::warn \
                 "reconcile \[$_stem\] [dict getdef $_issue message ?]"
         }
@@ -404,6 +428,8 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             __VENUE_LINE__    $venue_line \
             __OUTFILE__       $outfile \
             __ROSTER_PATH__   $roster_path \
+            __SWEEP_PATH__    $sweep_path \
+            __SOURCE_NAMES__  $source_names \
             __STEM__          $stem \
             __BROWSER_CMD__   [spar::detect_browser_cmd] \
             __PLATFORM_GUIDANCE__ [spar::platform_guidance $platforms] \
@@ -422,6 +448,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         puts $fd "STEM=\"$stem\""
         puts $fd "OUTFILE=\"$outfile\""
         puts $fd "ROSTER_PATH=\"$roster_path\""
+        puts $fd "SWEEP_PATH=\"$sweep_path\""
         puts $fd "CAMPAIGN_FILE=\"$campaign_file\""
         puts $fd "REQUIRED_SKILLS=\"[join $required_skills { }]\""
         puts $fd "CONTACT_NAME=\"$name\""
