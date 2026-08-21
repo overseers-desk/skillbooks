@@ -58,14 +58,14 @@ proc wait_for_terminal {dispatcher row {timeout_ms 5000}} {
 # spar-domain reports still land on matching on_* methods.
 section "1. No marshalling layer"
 
-set initcmd_path [file join $script_dir .. lib spar-dispatcher-initcmd.tcl]
-set fd [open $initcmd_path r]; set initcmd_src [read $fd]; close $fd
-assert_eq [regexp {thread::send} $initcmd_src] 0 \
+set worker_path [file join $script_dir .. lib spar-dispatcher.tcl]
+set fd [open $worker_path r]; set worker_src [read $fd]; close $fd
+assert_eq [regexp {thread::send} $worker_src] 0 \
     "worker file has no thread::send"
-assert_eq [regexp {tsv::} $initcmd_src] 0 \
+assert_eq [regexp {tsv::} $worker_src] 0 \
     "worker file has no tsv sentinel"
 set msg_names {}
-foreach line [split $initcmd_src \n] {
+foreach line [split $worker_src \n] {
     if {[regexp {^proc\s+(msg_[a-z_]+)\s} $line -> name]} {
         lappend msg_names $name
     }
@@ -84,7 +84,7 @@ foreach on {on_cost on_retry on_credit_warning on_roster_update} {
 # PATH plus a fully-built prompt_dir (prompt.txt, meta.env, roster, etc.)
 # to exercise end-to-end. That is heavier than this test wants. Instead
 # we instantiate FakeHarness — a stand-in defined alongside fake_worker
-# in spar-dispatcher-initcmd.tcl that mimics the (prompt_dir log_dir)
+# in test-helpers.tcl that mimics the (prompt_dir log_dir)
 # constructor and the run-returns-0/1 contract — to verify only the
 # routing path: enqueue → coroutine → harness_run → done/failed.
 # Coverage of the real harness body lives in test-state.tcl /

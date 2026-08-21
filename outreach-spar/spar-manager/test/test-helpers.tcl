@@ -424,3 +424,82 @@ proc write_segment_yaml {segment_dir content} {
     close $fd
     return $path
 }
+
+# ─── Pool fixtures (used by test-pool, test-control, test-pool-gui) ──────
+# fake_worker reports through the jobloop verbs by bare name, which the
+# dispatcher module's `namespace path ::jobloop::worker` resolves once it
+# is loaded; a test that never loads the dispatcher never calls it.
+
+# fake_worker - runs a scripted plan of report and checkpoint steps. Drives the Dispatcher without real
+# claude/SES/IMAP backends.
+#
+# opts is a dict with at least one key, "plan", a list of tuples. If the
+# plan does not end with a terminal verb, auto-emits done.
+#
+# Plan tuples:
+#   {sleep ms}                - yield to the loop for ms (timer + yield)
+#   {msg_<verb> arg ...}      - call the named jobloop verb (the msg_
+#                               prefix is the historical spelling)
+#   {check_cancel}            - checkpoint: unwind as cancelled if flagged
+proc fake_worker {row opts} {
+    set plan [dict get $opts plan]
+    set terminal_emitted 0
+    foreach step $plan {
+        set action [lindex $step 0]
+        set rest   [lrange $step 1 end]
+        switch -- $action {
+            sleep {
+                spar::pool_sleep [lindex $rest 0]
+            }
+            check_cancel {
+                checkpoint $row
+            }
+            default {
+                # A step names a jobloop verb, historically msg_<verb>.
+                set verb [regsub {^msg_} $action {}]
+                if {$verb in {done failed}} { set terminal_emitted 1 }
+                {*}[concat [list $verb $row] $rest]
+            }
+        }
+    }
+    if {!$terminal_emitted} { done $row {} }
+}
+
+# FakeHarness - minimal harness shape used by test/test-pool.tcl to
+# exercise harness_run without sourcing the real harness or invoking
+# claude. Mirrors the constructor signature of spar::ProfileHarness /
+# spar::ApproachHarness ([new $prompt_dir $log_dir]) and the run contract
+# (returns 0 = success, 1 = failure, 4 = untouched-outfile retry). Reads
+# a single token from $prompt_dir/run-rc to choose its return: "0"
+# passes, "1" fails, "4" requests the requeue, "throw" raises an error to
+# exercise the catch path. Production code never instantiates it.
+package require TclOO
+oo::class create FakeHarness {
+    variable PromptDir LogDir
+    constructor {prompt_dir log_dir} {
+        set PromptDir $prompt_dir
+        set LogDir    $log_dir
+        file mkdir $log_dir
+    }
+    method run {} {
+        set rc_file [file join $PromptDir run-rc]
+        if {![file exists $rc_file]} { return 0 }
+        set fd [open $rc_file r]; set rc [string trim [read $fd]]; close $fd
+        switch -- $rc {
+            0       { return 0 }
+            1       { return 1 }
+            4       { return 4 }
+            throw   { error "fake harness deliberate error" }
+            default { return 0 }
+        }
+    }
+    # Mirror spar::Harness::fail_cause so harness_run can fold a cause into
+    # the failure reason for the run-end roll-call. Reads an optional
+    # run-cause file.
+    method fail_cause {} {
+        set f [file join $PromptDir run-cause]
+        if {![file exists $f]} { return "" }
+        set fd [open $f r]; set c [string trim [read $fd]]; close $fd
+        return $c
+    }
+}
