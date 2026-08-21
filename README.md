@@ -100,6 +100,28 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 **Rivermill inbound study-tour survey** (`../rivermill/product-development/study-tour/`). A Survey-phase deployment on its own: a two-sided design reading both the supplier side (four destination countries) and the seller side (six origin markets, in origin languages), with frame review, frozen codebook, inter-coder check and corrections all exercised. Demonstrates that SAGE's phases separate: a market can be surveyed to review grade before anyone commits to Adjudicate.
 
+### SCOPE — Finding Where a Codebase Decides One Thing in Many Places
+
+**Phases:** Survey, Count, Oracle, Pick, Explain
+
+**Direction:** Inward, on the operator's own code. The question is which concepts are decided in more places than a competent architect would expect: the condition the literature calls change amplification, shotgun surgery, or scattering. A count of consumers is not a finding; the gap between the count and a blind expectation is.
+
+**What each phase does:**
+
+- **Survey** lists the concepts: every module, from a symbol-reference index of the code, plus the design facts the program decides once, listed by a blind architect from the README.
+- **Count** measures each module three ways: files using its types (the graph), files mentioning its names anywhere including prose (grep), and total sites. The difference is vocabulary leakage, which no reference graph sees. Decided-once facts are counted by grep, pattern rule, or a removal drill through the compiler.
+- **Oracle** asks several blind estimators, given only the README, crate sizes and each module's one-line doc, to guess the same figures.
+- **Pick** compares on a log scale and keeps what falls outside a factor of three; file counts calibrate, site counts do not.
+- **Explain** revives the estimator furthest off with the measured figures; it verifies the count first, then names the mechanism, or "by design".
+
+**Model allocation:** Survey and Count are scripts plus a cheap-tier agent for pattern rules and drills. Oracle estimators are cheap-tier. Explain revives the same estimators; a consequential concept can be explained on a stronger tier in a fresh context.
+
+**Procedure documents:** `scatter-scope/scope-methodology.md`, `scatter-scope/scope-oracle-brief.md`, `scatter-scope/INVARIANTS.md`, and the counting tool `scatter-scope/tools/scope-count.py`.
+
+#### SCOPE use cases
+
+**RobCo Terminal** (`../RobCo-Terminal`, run of 2026-08-21). Sixteen modules of a Rust workspace of roughly 59,000 lines, three Sonnet estimators. File-count estimates landed within a factor of three for ten of sixteen modules; site estimates were low by ten to thirty times across the board, which set the calibration rule. Flagged: the window module (a hub, twelve type consumers against two expected), the tmux gateway module (one type consumer against three expected, thirty mentioning files against nine, the leak signature), and the side the channel bank sits on (thirteen sites against three expected, no constant naming it). Two revivals verified their counts and named the mechanisms: the gateway concept carried on shared channel structs and in a lower crate's own vocabulary; the bank side recomputed from a scalar width at every consumer while a layout type already held the rectangles. The run predates the methodology's extraction and is its source.
+
 ### How the methodologies relate
 
 SPAR generates outbound messages. Those messages produce replies. The replies arrive in an inbox processed by TEND. TEND's thread assembly recognises the SPAR outreach message in the conversation history and can route the reply accordingly — flagging a positive response rather than filing it as unsolicited inbound.
