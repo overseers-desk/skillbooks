@@ -18,8 +18,8 @@ The script renames the field, carries each registry label through unchanged, and
 Spec 2.0 restructures the instance into `segments/` and `campaigns/` folders with campaign-keyed approach files (`spar-campaign-directory.md`). The tool supports 2.0 only, so a 1.0 instance is migrated, not merely stamped. The migration is scripted:
 
 ```
-tclsh9.0 spar-manager/migrate-to-2.0.tcl <instance-root>              # dry-run plan + findings
-tclsh9.0 spar-manager/migrate-to-2.0.tcl <instance-root> --execute
+tclsh9.0 spar-manager/tools/migrate-to-2.0.tcl <instance-root>              # dry-run plan + findings
+tclsh9.0 spar-manager/tools/migrate-to-2.0.tcl <instance-root> --execute
 ```
 
 The script plans every move (rosters and segment definitions to dotted stem siblings, profiles into the segment folder, approaches into their campaign's folder, single-campaign docs to `{campaign}.{word}.md`), rewrites the campaign YAMLs' relative path fields for the one-level-deeper location, drops the retired `skip_segments` key, and stamps `version: "2.0"`. It performs moves with `git mv` so history follows.

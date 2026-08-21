@@ -96,7 +96,7 @@ The overseer on `127.0.0.1:11402` owns the browser and the per-host send cadence
 
    The runner holds no skills checkout of its own, so the send leg resolves `skillPath` and `libDir` from that variable and hands them in with each `/run` (ducks-protocol.md). It fails loudly when the variable is unset.
 
-2. Confirm it answers with `tclsh9.0 spar-overseer-health.tcl`, not a hand-rolled parse of `/health`. The exits are distinct (0 healthy, 1 faulted, 2 unreachable, 3 malformed) and the raw body always prints; an ad-hoc probe once read a schema change as "not answering" and misdiagnosed a healthy overseer. For an unattended run, do this pre-flight before approach drafting finishes, not at send time: an overseer absent when the send leg fires leaves the sends failing until someone looks.
+2. Confirm it answers with `tclsh9.0 tools/spar-overseer-health.tcl`, not a hand-rolled parse of `/health`. The exits are distinct (0 healthy, 1 faulted, 2 unreachable, 3 malformed) and the raw body always prints; an ad-hoc probe once read a schema change as "not answering" and misdiagnosed a healthy overseer. For an unattended run, do this pre-flight before approach drafting finishes, not at send time: an overseer absent when the send leg fires leaves the sends failing until someone looks.
 
 3. Dry run first: `tclsh9.0 spar-transition.tcl <campaign.yaml> T6 --dry-run` validates every row (message present, vanity extractable, note within the 300-char invite limit) without contacting the overseer.
 
