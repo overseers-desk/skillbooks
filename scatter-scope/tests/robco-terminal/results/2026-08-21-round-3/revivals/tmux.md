@@ -1,0 +1,7 @@
+**1. B files.** All 30 are things a reader of this repo would meet: the sibling protocol crate `tmux-cc` (name shared on purpose), the lower-layer `term` crate (`tmux_cc.rs`, `tmux_pane.rs`, `session.rs`, `dcs.rs`, `pointer.rs`, `lib.rs`, `esctest_harness.rs`: app depends on term, not the reverse), manifests and docs (`Cargo.toml` ×3, `README.md`, `docs/keys.md`), and tests of the tmux integration. Nothing foreign.
+
+**2. One word carrying the count.** `tmux` alone supplies 322 of 327 mentions. Checked carrier by carrier: sibling crate, lower layer, manifests, docs, tests: all by-design uses of the external program's own name. One carrier needed the second question: `crates/app/src/channels.rs`, same crate and layer as `tmux.rs`, 34 bare-`tmux` sites, with its own `tmux_host`/`tmux_window`/`tmux_pane` fields on `Row`/`Page` and methods (`attach`, `tmux_host_changed`, `open_tmux_pane`) dispatching on `ChannelKind`. That looks like restated state: but `tmux.rs`'s `GatewayEvent::HostChanged` doc comment names `channels::Channels::tmux_host_changed` as its consumer directly: this is a documented one-way event → cached-display-fact handoff, not an independent reimplementation of gateway/protocol logic. The channel bank has to hold a plain-string title fact outliving the live `Gateway`.
+
+**3.** No further mechanism to name; the count never survives past a common word doing expected, designed work.
+
+**artefact**: the 327 is `tmux` the program's name appearing everywhere it is supposed to; no undesigned duplicate of the module's logic exists.

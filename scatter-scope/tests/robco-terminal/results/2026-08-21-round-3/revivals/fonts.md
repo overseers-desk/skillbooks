@@ -1,0 +1,7 @@
+**Instrument check.** Every B file for both modules is expected company: sibling submodules of `fonts` (`sizing.rs`, `system.rs`, `metrics.rs`, `text.rs`), the crate's own tests (`system_fonts.rs`, `font_parity.rs`, `pixel_properties.rs`, `antialias.rs`, `preedit.rs`, `scrollback.rs`, `glyph_survival.rs`), and real call sites in `chassis`/`app`. Nothing foreign; both leak lists are entirely tests, so B runs high without being suspicious on its own.
+
+**A high, checked at the call sites.** `fonts/mod.rs`'s 16 A files and `atlas.rs`'s 4 all take the same thing: a type, not a recomputed number. Every chassis/app caller does `term::fonts::font_by_name(name)` then reads fields off the returned `&FontEntry` (`entry.pixel_size`, `entry.data()`), or calls the shared `term::fonts::metrics::scaled_metrics`/`char_advance_px` rather than deriving a size itself. `atlas.rs`'s consumers (`badge.rs`, `render.rs`, `window.rs`) pass `GlyphAtlas`/`FontContext`/`CellMetrics` around and read `slot.atlas_x`/`atlas_y` off the type; `term/lib.rs`'s appearance in A is a `pub use` re-export. No file recomputes `base_width`, `pixel_size`, or a cell metric itself; the similarly-named `pixel_size` fields in `chassis::paint`'s `PaintOp` and the shells' `sans_width`/`serif_width` are a distinct, local text-layout concept, not a duplicate of the catalogue's.
+
+The fan-out is real: one bundled-font accessor and one atlas type, drawn on by three cabinet shells, two display kits, badges, and the terminal core, a genuinely shared vocabulary, not parallel arithmetic.
+
+**by design.**

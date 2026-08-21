@@ -1,0 +1,770 @@
+{
+ "crates/chassis/src/metrics.rs": {
+  "estimator": 3,
+  "dist": 4.23,
+  "per_estimator": {
+   "1": {
+    "A": 3,
+    "B": 5,
+    "C": 8,
+    "D": 2
+   },
+   "2": {
+    "A": 3,
+    "B": 5,
+    "C": 9,
+    "D": 2
+   },
+   "3": {
+    "A": 4,
+    "B": 5,
+    "C": 8,
+    "D": 1
+   }
+  }
+ },
+ "crates/chassis/src/shells/annunciator.rs": {
+  "estimator": 3,
+  "dist": 3.93,
+  "per_estimator": {
+   "1": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 5
+   },
+   "2": {
+    "A": 1,
+    "B": 3,
+    "C": 5,
+    "D": 5
+   },
+   "3": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 4
+   }
+  }
+ },
+ "crates/chassis/src/shells/slide_rule.rs": {
+  "estimator": 3,
+  "dist": 3.6,
+  "per_estimator": {
+   "1": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 5
+   },
+   "2": {
+    "A": 1,
+    "B": 3,
+    "C": 5,
+    "D": 5
+   },
+   "3": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 4
+   }
+  }
+ },
+ "crates/config/src/lib.rs": {
+  "estimator": 1,
+  "dist": 3.62,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 5,
+    "C": 8,
+    "D": 3
+   },
+   "2": {
+    "A": 2,
+    "B": 5,
+    "C": 8,
+    "D": 5
+   },
+   "3": {
+    "A": 4,
+    "B": 6,
+    "C": 10,
+    "D": 4
+   }
+  }
+ },
+ "crates/crt-render/src/degauss.rs": {
+  "estimator": 1,
+  "dist": 3.79,
+  "per_estimator": {
+   "1": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 1
+   },
+   "2": {
+    "A": 2,
+    "B": 4,
+    "C": 6,
+    "D": 1
+   },
+   "3": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 1
+   }
+  }
+ },
+ "crates/crt-render/src/pacing.rs": {
+  "estimator": 1,
+  "dist": 3.73,
+  "per_estimator": {
+   "1": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 1
+   },
+   "2": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 1
+   },
+   "3": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 0
+   }
+  }
+ },
+ "crates/app/src/window.rs": {
+  "estimator": 1,
+  "dist": 3.17,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 8,
+    "C": 16,
+    "D": 12
+   },
+   "2": {
+    "A": 1,
+    "B": 6,
+    "C": 15,
+    "D": 15
+   },
+   "3": {
+    "A": 2,
+    "B": 8,
+    "C": 20,
+    "D": 15
+   }
+  }
+ },
+ "crates/config/src/schema.rs": {
+  "estimator": 1,
+  "dist": 3.54,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 4,
+    "C": 6,
+    "D": 1
+   },
+   "2": {
+    "A": 3,
+    "B": 5,
+    "C": 8,
+    "D": 1
+   },
+   "3": {
+    "A": 3,
+    "B": 5,
+    "C": 8,
+    "D": 1
+   }
+  }
+ },
+ "crates/chassis/src/oracle.rs": {
+  "estimator": 1,
+  "dist": 6.05,
+  "per_estimator": {
+   "1": {
+    "A": 0,
+    "B": 3,
+    "C": 5,
+    "D": 4
+   },
+   "2": {
+    "A": 2,
+    "B": 3,
+    "C": 6,
+    "D": 3
+   },
+   "3": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 3
+   }
+  }
+ },
+ "crates/crt-render/src/params.rs": {
+  "estimator": 3,
+  "dist": 3.52,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 4,
+    "C": 7,
+    "D": 2
+   },
+   "2": {
+    "A": 2,
+    "B": 4,
+    "C": 7,
+    "D": 2
+   },
+   "3": {
+    "A": 2,
+    "B": 4,
+    "C": 6,
+    "D": 1
+   }
+  }
+ },
+ "crates/term/src/atlas.rs": {
+  "estimator": 2,
+  "dist": 2.79,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 4,
+    "C": 6,
+    "D": 3
+   },
+   "2": {
+    "A": 1,
+    "B": 3,
+    "C": 6,
+    "D": 3
+   },
+   "3": {
+    "A": 1,
+    "B": 3,
+    "C": 5,
+    "D": 3
+   }
+  }
+ },
+ "crates/term/src/fonts/mod.rs": {
+  "estimator": 2,
+  "dist": 3.43,
+  "per_estimator": {
+   "1": {
+    "A": 4,
+    "B": 6,
+    "C": 10,
+    "D": 3
+   },
+   "2": {
+    "A": 4,
+    "B": 6,
+    "C": 10,
+    "D": 5
+   },
+   "3": {
+    "A": 4,
+    "B": 6,
+    "C": 10,
+    "D": 3
+   }
+  }
+ },
+ "crates/tmux-cc/src/command.rs": {
+  "estimator": 1,
+  "dist": 2.52,
+  "per_estimator": {
+   "1": {
+    "A": 1,
+    "B": 3,
+    "C": 5,
+    "D": 1
+   },
+   "2": {
+    "A": 1,
+    "B": 3,
+    "C": 5,
+    "D": 1
+   },
+   "3": {
+    "A": 1,
+    "B": 3,
+    "C": 5,
+    "D": 1
+   }
+  }
+ },
+ "crates/chassis/src/displays/tape/metrics.rs": {
+  "estimator": 1,
+  "dist": 3.73,
+  "per_estimator": {
+   "1": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 1
+   },
+   "2": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 1
+   },
+   "3": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 1
+   }
+  }
+ },
+ "crates/chassis/src/layout.rs": {
+  "estimator": 1,
+  "dist": 4.36,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 2
+   },
+   "2": {
+    "A": 3,
+    "B": 5,
+    "C": 8,
+    "D": 2
+   },
+   "3": {
+    "A": 3,
+    "B": 4,
+    "C": 6,
+    "D": 2
+   }
+  }
+ },
+ "crates/crt-burnin/src/headless.rs": {
+  "estimator": 2,
+  "dist": 3.71,
+  "per_estimator": {
+   "1": {
+    "A": 1,
+    "B": 3,
+    "C": 4,
+    "D": 2
+   },
+   "2": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 2
+   },
+   "3": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 2
+   }
+  }
+ },
+ "crates/term/src/fonts/metrics.rs": {
+  "estimator": 1,
+  "dist": 2.36,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 1
+   },
+   "2": {
+    "A": 3,
+    "B": 5,
+    "C": 8,
+    "D": 1
+   },
+   "3": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 1
+   }
+  }
+ },
+ "crates/term/src/fonts/system.rs": {
+  "estimator": 1,
+  "dist": 2.93,
+  "per_estimator": {
+   "1": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 2
+   },
+   "2": {
+    "A": 1,
+    "B": 2,
+    "C": 4,
+    "D": 1
+   },
+   "3": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 1
+   }
+  }
+ },
+ "crates/term/src/lib.rs": {
+  "estimator": 3,
+  "dist": 4.22,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 5,
+    "C": 8,
+    "D": 3
+   },
+   "2": {
+    "A": 2,
+    "B": 4,
+    "C": 6,
+    "D": 10
+   },
+   "3": {
+    "A": 3,
+    "B": 5,
+    "C": 8,
+    "D": 0
+   }
+  }
+ },
+ "crates/crt-render/src/oracle.rs": {
+  "estimator": 2,
+  "dist": 3.44,
+  "per_estimator": {
+   "1": {
+    "A": 0,
+    "B": 3,
+    "C": 5,
+    "D": 3
+   },
+   "2": {
+    "A": 1,
+    "B": 2,
+    "C": 4,
+    "D": 2
+   },
+   "3": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 2
+   }
+  }
+ },
+ "crates/chassis/src/displays/led/mod.rs": {
+  "estimator": 1,
+  "dist": 2.1,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 3
+   },
+   "2": {
+    "A": 2,
+    "B": 4,
+    "C": 6,
+    "D": 3
+   },
+   "3": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 3
+   }
+  }
+ },
+ "crates/app/src/tmux.rs": {
+  "estimator": 2,
+  "dist": 2.57,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 6,
+    "C": 10,
+    "D": 6
+   },
+   "2": {
+    "A": 3,
+    "B": 8,
+    "C": 18,
+    "D": 6
+   },
+   "3": {
+    "A": 2,
+    "B": 6,
+    "C": 12,
+    "D": 5
+   }
+  }
+ },
+ "crates/chassis/src/furniture.rs": {
+  "estimator": 1,
+  "dist": 3.71,
+  "per_estimator": {
+   "1": {
+    "A": 1,
+    "B": 3,
+    "C": 5,
+    "D": 6
+   },
+   "2": {
+    "A": 3,
+    "B": 6,
+    "C": 12,
+    "D": 6
+   },
+   "3": {
+    "A": 4,
+    "B": 6,
+    "C": 12,
+    "D": 6
+   }
+  }
+ },
+ "crates/tmux-cc/src/codec.rs": {
+  "estimator": 2,
+  "dist": 2.46,
+  "per_estimator": {
+   "1": {
+    "A": 3,
+    "B": 5,
+    "C": 9,
+    "D": 4
+   },
+   "2": {
+    "A": 1,
+    "B": 4,
+    "C": 8,
+    "D": 3
+   },
+   "3": {
+    "A": 2,
+    "B": 4,
+    "C": 8,
+    "D": 3
+   }
+  }
+ },
+ "crates/chassis/src/shells/mod.rs": {
+  "estimator": 1,
+  "dist": 1.81,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 3
+   },
+   "2": {
+    "A": 1,
+    "B": 3,
+    "C": 5,
+    "D": 4
+   },
+   "3": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 3
+   }
+  }
+ },
+ "crates/term/src/session.rs": {
+  "estimator": 3,
+  "dist": 3.0,
+  "per_estimator": {
+   "1": {
+    "A": 3,
+    "B": 5,
+    "C": 8,
+    "D": 3
+   },
+   "2": {
+    "A": 3,
+    "B": 5,
+    "C": 9,
+    "D": 5
+   },
+   "3": {
+    "A": 2,
+    "B": 4,
+    "C": 6,
+    "D": 4
+   }
+  }
+ },
+ "crates/term/src/fonts/subpixel.rs": {
+  "estimator": 1,
+  "dist": 2.4,
+  "per_estimator": {
+   "1": {
+    "A": 1,
+    "B": 2,
+    "C": 4,
+    "D": 1
+   },
+   "2": {
+    "A": 1,
+    "B": 3,
+    "C": 4,
+    "D": 1
+   },
+   "3": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 1
+   }
+  }
+ },
+ "crates/crt-render/src/preset.rs": {
+  "estimator": 1,
+  "dist": 1.7,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 4,
+    "C": 6,
+    "D": 2
+   },
+   "2": {
+    "A": 2,
+    "B": 5,
+    "C": 8,
+    "D": 3
+   },
+   "3": {
+    "A": 2,
+    "B": 4,
+    "C": 6,
+    "D": 2
+   }
+  }
+ },
+ "crates/term/src/fonts/sizing.rs": {
+  "estimator": 1,
+  "dist": 2.33,
+  "per_estimator": {
+   "1": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 2
+   },
+   "2": {
+    "A": 2,
+    "B": 4,
+    "C": 6,
+    "D": 2
+   },
+   "3": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 2
+   }
+  }
+ },
+ "crates/term/src/gpu.rs": {
+  "estimator": 1,
+  "dist": 3.44,
+  "per_estimator": {
+   "1": {
+    "A": 1,
+    "B": 3,
+    "C": 4,
+    "D": 2
+   },
+   "2": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 1
+   },
+   "3": {
+    "A": 2,
+    "B": 3,
+    "C": 5,
+    "D": 1
+   }
+  }
+ },
+ "crates/term/src/size.rs": {
+  "estimator": 1,
+  "dist": 2.1,
+  "per_estimator": {
+   "1": {
+    "A": 3,
+    "B": 4,
+    "C": 6,
+    "D": 1
+   },
+   "2": {
+    "A": 3,
+    "B": 5,
+    "C": 8,
+    "D": 1
+   },
+   "3": {
+    "A": 3,
+    "B": 4,
+    "C": 6,
+    "D": 0
+   }
+  }
+ },
+ "crates/crt-burnin/src/decay.rs": {
+  "estimator": 1,
+  "dist": 1.89,
+  "per_estimator": {
+   "1": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 1
+   },
+   "2": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 1
+   },
+   "3": {
+    "A": 1,
+    "B": 2,
+    "C": 3,
+    "D": 0
+   }
+  }
+ }
+}

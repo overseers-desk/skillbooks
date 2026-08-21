@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "ESNext", "moduleResolution": "bundler",
+    "allowJs": true, "checkJs": false, "noEmit": true, "skipLibCheck": true,
+    "allowImportingTsExtensions": true, "resolveJsonModule": true
+  },
+  "include": [
+    "/home/weiwu/code/rivermill-bi-pwa/connectors/**/*.js",
+    "/home/weiwu/code/rivermill-bi-pwa/connectors/**/*.mjs",
+    "/home/weiwu/code/rivermill-bi-pwa/spheres/**/*.js",
+    "/home/weiwu/code/rivermill-bi-pwa/server/**/*.js",
+    "/home/weiwu/code/rivermill-bi-pwa/agent/**/*.js",
+    "/home/weiwu/code/rivermill-bi-pwa/scripts/**/*.mjs",
+    "/home/weiwu/code/rivermill-bi-pwa/scripts/**/*.js",
+    "/home/weiwu/code/rivermill-bi-pwa/desktop/**/*.js"
+  ],
+  "exclude": ["**/node_modules/**"]
+}

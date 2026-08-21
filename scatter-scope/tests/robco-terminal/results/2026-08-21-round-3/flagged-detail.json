@@ -1,0 +1,7089 @@
+{
+ "crates/chassis/src/metrics.rs": {
+  "measured": {
+   "file": "crates/chassis/src/metrics.rs",
+   "A": 9,
+   "D": 7,
+   "B": 33,
+   "C": 348,
+   "leak": 24,
+   "score": 253,
+   "vocab": [
+    "end_pad",
+    "pad_cells",
+    "dot_pitch",
+    "LedMetrics",
+    "column_gap",
+    "annunciator"
+   ],
+   "vocabulary": [
+    "DisplayMetrics",
+    "LedMetrics",
+    "SWITCHBOARD_PAGER_HEIGHT",
+    "ShellMetrics",
+    "TAPE_LETTER_PIXEL_SIZE",
+    "TAPE_NATURAL_HEIGHT",
+    "TapeMetrics",
+    "annunciator",
+    "casting_color",
+    "casting_light_dir",
+    "chassis_carries_track",
+    "column_gap",
+    "dot_pitch",
+    "end_pad",
+    "from_hex_literal",
+    "hex_literal_divides_by_255",
+    "led_metrics_match_the_defining_formulas",
+    "min_characters",
+    "min_row_height",
+    "numeral_width",
+    "pad_cells",
+    "pager_extra",
+    "pager_natural_height",
+    "pager_squeeze_span",
+    "right_padding",
+    "side_pad_cells",
+    "strip_padding",
+    "tape_metrics_match_the_defining_formulas"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/chassis/src/metrics.rs",
+   "A": 9,
+   "eA": 3,
+   "gA": 1.0,
+   "B": 33,
+   "eB": 5,
+   "gB": 1.72,
+   "C": 348,
+   "eC": 8,
+   "gC": 3.43,
+   "D": 7,
+   "eD": 2,
+   "gD": 1.14,
+   "leak": 24,
+   "note": "",
+   "flags": "B high, D high (hub)",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "DisplayMetrics",
+   "LedMetrics",
+   "SWITCHBOARD_PAGER_HEIGHT",
+   "ShellMetrics",
+   "TAPE_LETTER_PIXEL_SIZE",
+   "TAPE_NATURAL_HEIGHT",
+   "TapeMetrics",
+   "annunciator",
+   "casting_color",
+   "casting_light_dir",
+   "chassis_carries_track",
+   "column_gap",
+   "dot_pitch",
+   "end_pad",
+   "from_hex_literal",
+   "hex_literal_divides_by_255",
+   "led_metrics_match_the_defining_formulas",
+   "min_characters",
+   "min_row_height",
+   "numeral_width",
+   "pad_cells",
+   "pager_extra",
+   "pager_natural_height",
+   "pager_squeeze_span",
+   "right_padding",
+   "side_pad_cells",
+   "strip_padding",
+   "tape_metrics_match_the_defining_formulas"
+  ],
+  "A_files": [
+   "crates/app/src/bank.rs",
+   "crates/chassis/src/bank.rs",
+   "crates/chassis/src/cabinet.rs",
+   "crates/chassis/src/frame.rs",
+   "crates/chassis/src/furniture.rs",
+   "crates/chassis/src/lib.rs",
+   "crates/chassis/src/seam.rs",
+   "crates/chassis/src/shells/slide_rule.rs",
+   "crates/chassis/src/strip.rs"
+  ],
+  "B_files": {
+   "crates/chassis/tests/metrics_homes.rs": {
+    "sites": 104,
+    "by_name": {
+     "casting_color": 10,
+     "ShellMetrics": 9,
+     "LedMetrics": 7,
+     "annunciator": 7,
+     "right_padding": 6,
+     "column_gap": 6,
+     "numeral_width": 6,
+     "strip_padding": 6,
+     "min_row_height": 6,
+     "chassis_carries_track": 6,
+     "casting_light_dir": 6,
+     "TapeMetrics": 4,
+     "DisplayMetrics": 4,
+     "pager_natural_height": 3,
+     "pager_squeeze_span": 3,
+     "pager_extra": 3,
+     "TAPE_LETTER_PIXEL_SIZE": 2,
+     "TAPE_NATURAL_HEIGHT": 2,
+     "min_characters": 2,
+     "from_hex_literal": 1,
+     "SWITCHBOARD_PAGER_HEIGHT": 1,
+     "dot_pitch": 1,
+     "pad_cells": 1,
+     "side_pad_cells": 1,
+     "end_pad": 1
+    }
+   },
+   "crates/chassis/src/bank.rs": {
+    "sites": 34,
+    "by_name": {
+     "LedMetrics": 9,
+     "annunciator": 4,
+     "ShellMetrics": 3,
+     "DisplayMetrics": 2,
+     "min_row_height": 2,
+     "strip_padding": 2,
+     "column_gap": 2,
+     "TapeMetrics": 2,
+     "dot_pitch": 2,
+     "chassis_carries_track": 1,
+     "numeral_width": 1,
+     "right_padding": 1,
+     "end_pad": 1,
+     "min_characters": 1,
+     "pad_cells": 1
+    }
+   },
+   "crates/chassis/src/lib.rs": {
+    "sites": 29,
+    "by_name": {
+     "LedMetrics": 6,
+     "TapeMetrics": 3,
+     "min_characters": 3,
+     "DisplayMetrics": 2,
+     "ShellMetrics": 2,
+     "annunciator": 2,
+     "end_pad": 2,
+     "numeral_width": 2,
+     "dot_pitch": 1,
+     "pad_cells": 1,
+     "side_pad_cells": 1,
+     "min_row_height": 1,
+     "casting_light_dir": 1,
+     "column_gap": 1,
+     "right_padding": 1
+    }
+   },
+   "crates/chassis/tests/bank_frame_geometry.rs": {
+    "sites": 26,
+    "by_name": {
+     "annunciator": 10,
+     "LedMetrics": 5,
+     "TapeMetrics": 2,
+     "end_pad": 2,
+     "numeral_width": 1,
+     "column_gap": 1,
+     "right_padding": 1,
+     "side_pad_cells": 1,
+     "dot_pitch": 1,
+     "min_row_height": 1,
+     "min_characters": 1
+    }
+   },
+   "crates/chassis/src/cabinet.rs": {
+    "sites": 19,
+    "by_name": {
+     "LedMetrics": 6,
+     "ShellMetrics": 3,
+     "TapeMetrics": 3,
+     "pad_cells": 3,
+     "DisplayMetrics": 2,
+     "end_pad": 1,
+     "min_characters": 1
+    }
+   },
+   "crates/chassis/src/frame.rs": {
+    "sites": 17,
+    "by_name": {
+     "from_hex_literal": 6,
+     "annunciator": 4,
+     "ShellMetrics": 3,
+     "casting_light_dir": 2,
+     "casting_color": 2
+    }
+   },
+   "crates/chassis/src/furniture.rs": {
+    "sites": 14,
+    "by_name": {
+     "ShellMetrics": 4,
+     "annunciator": 3,
+     "LedMetrics": 2,
+     "TapeMetrics": 2,
+     "numeral_width": 1,
+     "column_gap": 1,
+     "min_characters": 1
+    }
+   },
+   "crates/chassis/src/displays/led/metrics.rs": {
+    "sites": 14,
+    "by_name": {
+     "dot_pitch": 8,
+     "min_characters": 2,
+     "side_pad_cells": 2,
+     "LedMetrics": 1,
+     "DisplayMetrics": 1
+    }
+   },
+   "crates/chassis/src/shells/mod.rs": {
+    "sites": 13,
+    "by_name": {
+     "annunciator": 13
+    }
+   },
+   "crates/chassis/tests/bank_frame_render.rs": {
+    "sites": 8,
+    "by_name": {
+     "casting_color": 3,
+     "LedMetrics": 2,
+     "annunciator": 2,
+     "casting_light_dir": 1
+    }
+   },
+   "crates/chassis/src/seam.rs": {
+    "sites": 8,
+    "by_name": {
+     "LedMetrics": 5,
+     "annunciator": 2,
+     "DisplayMetrics": 1
+    }
+   },
+   "crates/chassis/src/displays/tape/metrics.rs": {
+    "sites": 7,
+    "by_name": {
+     "end_pad": 3,
+     "pad_cells": 2,
+     "TapeMetrics": 1,
+     "DisplayMetrics": 1
+    }
+   },
+   "crates/chassis/tests/shader_recipes.rs": {
+    "sites": 6,
+    "by_name": {
+     "annunciator": 6
+    }
+   },
+   "crates/chassis/tests/region_layout.rs": {
+    "sites": 6,
+    "by_name": {
+     "annunciator": 6
+    }
+   },
+   "crates/chassis/src/shells/switchboard.rs": {
+    "sites": 5,
+    "by_name": {
+     "ShellMetrics": 2,
+     "annunciator": 2,
+     "SWITCHBOARD_PAGER_HEIGHT": 1
+    }
+   },
+   "crates/chassis/src/strip.rs": {
+    "sites": 4,
+    "by_name": {
+     "LedMetrics": 2,
+     "annunciator": 2
+    }
+   },
+   "crates/chassis/src/shells/annunciator.rs": {
+    "sites": 4,
+    "by_name": {
+     "annunciator": 2,
+     "ShellMetrics": 2
+    }
+   },
+   "crates/chassis/src/shells/slide_rule.rs": {
+    "sites": 4,
+    "by_name": {
+     "ShellMetrics": 2,
+     "annunciator": 2
+    }
+   },
+   "crates/chassis/tests/metrics_tables.rs": {
+    "sites": 3,
+    "by_name": {
+     "annunciator": 2,
+     "min_row_height": 1
+    }
+   },
+   "crates/chassis/tests/gpu_annunciator.rs": {
+    "sites": 3,
+    "by_name": {
+     "annunciator": 3
+    }
+   },
+   "crates/chassis/src/color.rs": {
+    "sites": 3,
+    "by_name": {
+     "annunciator": 2,
+     "from_hex_literal": 1
+    }
+   },
+   "crates/chassis/src/shells/common.rs": {
+    "sites": 3,
+    "by_name": {
+     "annunciator": 3
+    }
+   },
+   "docs/config.md": {
+    "sites": 2,
+    "by_name": {
+     "annunciator": 2
+    }
+   },
+   "crates/app/tests/channel_bank.rs": {
+    "sites": 2,
+    "by_name": {
+     "annunciator": 2
+    }
+   },
+   "crates/app/src/bank.rs": {
+    "sites": 2,
+    "by_name": {
+     "annunciator": 1,
+     "LedMetrics": 1
+    }
+   },
+   "crates/chassis/src/paint.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/crt-render/tests/pass_graph.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/term/src/fonts/subpixel.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/app/tests/seam_drag.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/app/src/column.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/app/src/shell.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/config/src/profile.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/config/src/schema.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/src/column.rs",
+   "crates/app/src/shell.rs",
+   "crates/app/tests/channel_bank.rs",
+   "crates/app/tests/seam_drag.rs",
+   "crates/chassis/src/color.rs",
+   "crates/chassis/src/displays/led/metrics.rs",
+   "crates/chassis/src/displays/tape/metrics.rs",
+   "crates/chassis/src/paint.rs",
+   "crates/chassis/src/shells/annunciator.rs",
+   "crates/chassis/src/shells/common.rs",
+   "crates/chassis/src/shells/mod.rs",
+   "crates/chassis/src/shells/switchboard.rs",
+   "crates/chassis/tests/bank_frame_geometry.rs",
+   "crates/chassis/tests/bank_frame_render.rs",
+   "crates/chassis/tests/gpu_annunciator.rs",
+   "crates/chassis/tests/metrics_homes.rs",
+   "crates/chassis/tests/metrics_tables.rs",
+   "crates/chassis/tests/region_layout.rs",
+   "crates/chassis/tests/shader_recipes.rs",
+   "crates/config/src/profile.rs",
+   "crates/config/src/schema.rs",
+   "crates/crt-render/tests/pass_graph.rs",
+   "crates/term/src/fonts/subpixel.rs",
+   "docs/config.md"
+  ]
+ },
+ "crates/chassis/src/shells/annunciator.rs": {
+  "measured": {
+   "file": "crates/chassis/src/shells/annunciator.rs",
+   "A": 2,
+   "D": 10,
+   "B": 30,
+   "C": 114,
+   "leak": 28,
+   "score": 106,
+   "vocab": [
+    "KEY_TOP",
+    "CUT_DARK",
+    "KEY_WIDTH",
+    "LIP_LIGHT",
+    "KEY_HEIGHT",
+    "plate_rect"
+   ],
+   "vocabulary": [
+    "CUT_DARK",
+    "KEY_HEIGHT",
+    "KEY_TOP",
+    "KEY_WIDTH",
+    "LABEL_COLOR",
+    "LIP_LIGHT",
+    "NUMERAL_FILL",
+    "NUMERAL_SHADOW",
+    "REST_OPACITY",
+    "annunciator",
+    "channel_button",
+    "pager_painting",
+    "plate_metal_params",
+    "plate_rect"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/chassis/src/shells/annunciator.rs",
+   "A": 2,
+   "eA": 1,
+   "gA": 0.63,
+   "B": 30,
+   "eB": 2,
+   "gB": 2.46,
+   "C": 114,
+   "eC": 3,
+   "gC": 3.31,
+   "D": 10,
+   "eD": 5,
+   "gD": 0.63,
+   "leak": 28,
+   "note": "",
+   "flags": "B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "CUT_DARK",
+   "KEY_HEIGHT",
+   "KEY_TOP",
+   "KEY_WIDTH",
+   "LABEL_COLOR",
+   "LIP_LIGHT",
+   "NUMERAL_FILL",
+   "NUMERAL_SHADOW",
+   "REST_OPACITY",
+   "annunciator",
+   "channel_button",
+   "pager_painting",
+   "plate_metal_params",
+   "plate_rect"
+  ],
+  "A_files": [
+   "crates/chassis/src/metrics.rs",
+   "crates/chassis/src/shells/mod.rs"
+  ],
+  "B_files": {
+   "crates/chassis/src/shells/mod.rs": {
+    "sites": 17,
+    "by_name": {
+     "annunciator": 13,
+     "plate_rect": 2,
+     "plate_metal_params": 2
+    }
+   },
+   "crates/chassis/src/shells/switchboard.rs": {
+    "sites": 11,
+    "by_name": {
+     "plate_rect": 9,
+     "annunciator": 2
+    }
+   },
+   "crates/chassis/tests/bank_frame_geometry.rs": {
+    "sites": 10,
+    "by_name": {
+     "annunciator": 10
+    }
+   },
+   "crates/chassis/tests/region_layout.rs": {
+    "sites": 9,
+    "by_name": {
+     "annunciator": 6,
+     "plate_rect": 3
+    }
+   },
+   "crates/chassis/tests/shader_recipes.rs": {
+    "sites": 8,
+    "by_name": {
+     "annunciator": 6,
+     "plate_metal_params": 2
+    }
+   },
+   "crates/chassis/src/metrics.rs": {
+    "sites": 8,
+    "by_name": {
+     "annunciator": 8
+    }
+   },
+   "crates/chassis/tests/metrics_homes.rs": {
+    "sites": 7,
+    "by_name": {
+     "annunciator": 7
+    }
+   },
+   "crates/chassis/src/bank.rs": {
+    "sites": 4,
+    "by_name": {
+     "annunciator": 4
+    }
+   },
+   "crates/chassis/src/frame.rs": {
+    "sites": 4,
+    "by_name": {
+     "annunciator": 4
+    }
+   },
+   "crates/chassis/tests/gpu_annunciator.rs": {
+    "sites": 3,
+    "by_name": {
+     "annunciator": 3
+    }
+   },
+   "crates/chassis/src/furniture.rs": {
+    "sites": 3,
+    "by_name": {
+     "annunciator": 3
+    }
+   },
+   "crates/chassis/src/shells/common.rs": {
+    "sites": 3,
+    "by_name": {
+     "annunciator": 3
+    }
+   },
+   "docs/config.md": {
+    "sites": 2,
+    "by_name": {
+     "annunciator": 2
+    }
+   },
+   "crates/chassis/tests/bank_frame_render.rs": {
+    "sites": 2,
+    "by_name": {
+     "annunciator": 2
+    }
+   },
+   "crates/chassis/tests/metrics_tables.rs": {
+    "sites": 2,
+    "by_name": {
+     "annunciator": 2
+    }
+   },
+   "crates/chassis/src/lib.rs": {
+    "sites": 2,
+    "by_name": {
+     "annunciator": 2
+    }
+   },
+   "crates/chassis/src/seam.rs": {
+    "sites": 2,
+    "by_name": {
+     "annunciator": 2
+    }
+   },
+   "crates/chassis/src/color.rs": {
+    "sites": 2,
+    "by_name": {
+     "annunciator": 2
+    }
+   },
+   "crates/chassis/src/strip.rs": {
+    "sites": 2,
+    "by_name": {
+     "annunciator": 2
+    }
+   },
+   "crates/chassis/src/shells/slide_rule.rs": {
+    "sites": 2,
+    "by_name": {
+     "annunciator": 2
+    }
+   },
+   "crates/app/tests/channel_bank.rs": {
+    "sites": 2,
+    "by_name": {
+     "annunciator": 2
+    }
+   },
+   "crates/chassis/src/paint.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/crt-render/tests/pass_graph.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/term/src/fonts/subpixel.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/app/tests/seam_drag.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/app/src/bank.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/app/src/column.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/app/src/shell.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/config/src/profile.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   },
+   "crates/config/src/schema.rs": {
+    "sites": 1,
+    "by_name": {
+     "annunciator": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/src/bank.rs",
+   "crates/app/src/column.rs",
+   "crates/app/src/shell.rs",
+   "crates/app/tests/channel_bank.rs",
+   "crates/app/tests/seam_drag.rs",
+   "crates/chassis/src/bank.rs",
+   "crates/chassis/src/color.rs",
+   "crates/chassis/src/frame.rs",
+   "crates/chassis/src/furniture.rs",
+   "crates/chassis/src/lib.rs",
+   "crates/chassis/src/paint.rs",
+   "crates/chassis/src/seam.rs",
+   "crates/chassis/src/shells/common.rs",
+   "crates/chassis/src/shells/slide_rule.rs",
+   "crates/chassis/src/shells/switchboard.rs",
+   "crates/chassis/src/strip.rs",
+   "crates/chassis/tests/bank_frame_geometry.rs",
+   "crates/chassis/tests/bank_frame_render.rs",
+   "crates/chassis/tests/gpu_annunciator.rs",
+   "crates/chassis/tests/metrics_homes.rs",
+   "crates/chassis/tests/metrics_tables.rs",
+   "crates/chassis/tests/region_layout.rs",
+   "crates/chassis/tests/shader_recipes.rs",
+   "crates/config/src/profile.rs",
+   "crates/config/src/schema.rs",
+   "crates/crt-render/tests/pass_graph.rs",
+   "crates/term/src/fonts/subpixel.rs",
+   "docs/config.md"
+  ]
+ },
+ "crates/chassis/src/shells/slide_rule.rs": {
+  "measured": {
+   "file": "crates/chassis/src/shells/slide_rule.rs",
+   "A": 2,
+   "D": 16,
+   "B": 13,
+   "C": 77,
+   "leak": 11,
+   "score": 65,
+   "vocab": [
+    "TRACK_X",
+    "RIM_DARK",
+    "rail_rect",
+    "RIM_LIGHT",
+    "slide_rule",
+    "NUMERAL_INK"
+   ],
+   "vocabulary": [
+    "CHASSIS_CARRIES_TRACK",
+    "NUMERAL_EDGE",
+    "NUMERAL_INK",
+    "RIM_DARK",
+    "RIM_LIGHT",
+    "TRACK_X",
+    "bracket_screw",
+    "counter_lamps",
+    "rail_metal_params",
+    "rail_rect",
+    "slide_rule"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/chassis/src/shells/slide_rule.rs",
+   "A": 2,
+   "eA": 1,
+   "gA": 0.63,
+   "B": 13,
+   "eB": 2,
+   "gB": 1.7,
+   "C": 77,
+   "eC": 3,
+   "gC": 2.95,
+   "D": 16,
+   "eD": 5,
+   "gD": 1.06,
+   "leak": 11,
+   "note": "",
+   "flags": "B high, D high (hub)",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "CHASSIS_CARRIES_TRACK",
+   "NUMERAL_EDGE",
+   "NUMERAL_INK",
+   "RIM_DARK",
+   "RIM_LIGHT",
+   "TRACK_X",
+   "bracket_screw",
+   "counter_lamps",
+   "rail_metal_params",
+   "rail_rect",
+   "slide_rule"
+  ],
+  "A_files": [
+   "crates/chassis/src/metrics.rs",
+   "crates/chassis/src/shells/mod.rs"
+  ],
+  "B_files": {
+   "crates/chassis/src/shells/mod.rs": {
+    "sites": 17,
+    "by_name": {
+     "slide_rule": 12,
+     "rail_rect": 2,
+     "rail_metal_params": 2,
+     "bracket_screw": 1
+    }
+   },
+   "crates/chassis/tests/metrics_homes.rs": {
+    "sites": 10,
+    "by_name": {
+     "slide_rule": 8,
+     "CHASSIS_CARRIES_TRACK": 1,
+     "TRACK_X": 1
+    }
+   },
+   "crates/chassis/src/metrics.rs": {
+    "sites": 9,
+    "by_name": {
+     "slide_rule": 7,
+     "CHASSIS_CARRIES_TRACK": 1,
+     "TRACK_X": 1
+    }
+   },
+   "crates/chassis/tests/region_layout.rs": {
+    "sites": 8,
+    "by_name": {
+     "slide_rule": 5,
+     "rail_rect": 3
+    }
+   },
+   "crates/chassis/tests/shader_recipes.rs": {
+    "sites": 7,
+    "by_name": {
+     "slide_rule": 5,
+     "rail_metal_params": 2
+    }
+   },
+   "crates/chassis/tests/metrics_tables.rs": {
+    "sites": 7,
+    "by_name": {
+     "TRACK_X": 4,
+     "slide_rule": 2,
+     "CHASSIS_CARRIES_TRACK": 1
+    }
+   },
+   "crates/chassis/tests/bank_frame_geometry.rs": {
+    "sites": 5,
+    "by_name": {
+     "slide_rule": 5
+    }
+   },
+   "crates/config/src/profile.rs": {
+    "sites": 5,
+    "by_name": {
+     "slide_rule": 5
+    }
+   },
+   "crates/chassis/src/furniture.rs": {
+    "sites": 3,
+    "by_name": {
+     "slide_rule": 2,
+     "counter_lamps": 1
+    }
+   },
+   "crates/app/tests/profile_cli.rs": {
+    "sites": 2,
+    "by_name": {
+     "slide_rule": 2
+    }
+   },
+   "crates/config/src/toml.rs": {
+    "sites": 2,
+    "by_name": {
+     "slide_rule": 2
+    }
+   },
+   "crates/chassis/src/lib.rs": {
+    "sites": 1,
+    "by_name": {
+     "slide_rule": 1
+    }
+   },
+   "crates/chassis/src/bank.rs": {
+    "sites": 1,
+    "by_name": {
+     "slide_rule": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/tests/profile_cli.rs",
+   "crates/chassis/src/bank.rs",
+   "crates/chassis/src/furniture.rs",
+   "crates/chassis/src/lib.rs",
+   "crates/chassis/tests/bank_frame_geometry.rs",
+   "crates/chassis/tests/metrics_homes.rs",
+   "crates/chassis/tests/metrics_tables.rs",
+   "crates/chassis/tests/region_layout.rs",
+   "crates/chassis/tests/shader_recipes.rs",
+   "crates/config/src/profile.rs",
+   "crates/config/src/toml.rs"
+  ]
+ },
+ "crates/config/src/lib.rs": {
+  "measured": {
+   "file": "crates/config/src/lib.rs",
+   "A": 16,
+   "D": 4,
+   "B": 25,
+   "C": 155,
+   "leak": 11,
+   "score": 68,
+   "vocab": [
+    "Config",
+    "raw_frame_size",
+    "raw_frame_color",
+    "SCREEN_RADIUS_PX",
+    "raw_screen_radius",
+    "raw_frame_shininess"
+   ],
+   "vocabulary": [
+    "Config",
+    "SCREEN_RADIUS_PX",
+    "a_single_changed_key_deserializes_with_every_other_key_defaulted",
+    "an_empty_file_resolves_to_every_default",
+    "chassis_settings_default_round_trips_through_toml",
+    "config_default_round_trips_through_toml",
+    "default_chassis_is_annunciator",
+    "default_screen_is_default_amber",
+    "every_chassis_preset_round_trips_through_toml",
+    "every_screen_preset_round_trips_through_toml",
+    "general_settings_default_round_trips_through_toml",
+    "preset_counts_match_the_built_in_lists",
+    "raw_frame_color",
+    "raw_frame_shininess",
+    "raw_frame_size",
+    "raw_screen_radius",
+    "screen_settings_default_round_trips_through_toml"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/config/src/lib.rs",
+   "A": 16,
+   "eA": 2,
+   "gA": 1.89,
+   "B": 25,
+   "eB": 5,
+   "gB": 1.46,
+   "C": 155,
+   "eC": 8,
+   "gC": 2.7,
+   "D": 4,
+   "eD": 4,
+   "gD": 0.0,
+   "leak": 11,
+   "note": "",
+   "flags": "A high, B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "Config",
+   "SCREEN_RADIUS_PX",
+   "a_single_changed_key_deserializes_with_every_other_key_defaulted",
+   "an_empty_file_resolves_to_every_default",
+   "chassis_settings_default_round_trips_through_toml",
+   "config_default_round_trips_through_toml",
+   "default_chassis_is_annunciator",
+   "default_screen_is_default_amber",
+   "every_chassis_preset_round_trips_through_toml",
+   "every_screen_preset_round_trips_through_toml",
+   "general_settings_default_round_trips_through_toml",
+   "preset_counts_match_the_built_in_lists",
+   "raw_frame_color",
+   "raw_frame_shininess",
+   "raw_frame_size",
+   "raw_screen_radius",
+   "screen_settings_default_round_trips_through_toml"
+  ],
+  "A_files": [
+   "crates/app/src/column.rs",
+   "crates/app/src/main.rs",
+   "crates/app/src/settings.rs",
+   "crates/app/src/window.rs",
+   "crates/chassis/src/cabinet.rs",
+   "crates/chassis/src/frame.rs",
+   "crates/chassis/src/furniture.rs",
+   "crates/chassis/src/lib.rs",
+   "crates/chassis/src/shells/mod.rs",
+   "crates/chassis/src/shells/slide_rule.rs",
+   "crates/config/src/profile.rs",
+   "crates/config/src/structural.rs",
+   "crates/config/src/toml.rs",
+   "crates/crt-render/src/chain.rs",
+   "crates/crt-render/src/params.rs",
+   "crates/crt-render/src/preset.rs"
+  ],
+  "B_files": {
+   "crates/app/src/settings.rs": {
+    "sites": 31,
+    "by_name": {
+     "Config": 24,
+     "raw_frame_size": 3,
+     "raw_screen_radius": 2,
+     "SCREEN_RADIUS_PX": 2
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 17,
+    "by_name": {
+     "Config": 17
+    }
+   },
+   "crates/chassis/src/cabinet.rs": {
+    "sites": 12,
+    "by_name": {
+     "Config": 12
+    }
+   },
+   "crates/chassis/src/lib.rs": {
+    "sites": 11,
+    "by_name": {
+     "Config": 11
+    }
+   },
+   "crates/crt-render/tests/contracts.rs": {
+    "sites": 10,
+    "by_name": {
+     "Config": 10
+    }
+   },
+   "crates/crt-render/src/params.rs": {
+    "sites": 9,
+    "by_name": {
+     "raw_frame_size": 3,
+     "Config": 2,
+     "raw_frame_shininess": 1,
+     "raw_frame_color": 1,
+     "SCREEN_RADIUS_PX": 1,
+     "raw_screen_radius": 1
+    }
+   },
+   "crates/chassis/src/furniture.rs": {
+    "sites": 7,
+    "by_name": {
+     "Config": 7
+    }
+   },
+   "crates/crt-render/tests/pass_graph.rs": {
+    "sites": 7,
+    "by_name": {
+     "Config": 7
+    }
+   },
+   "crates/chassis/src/frame.rs": {
+    "sites": 6,
+    "by_name": {
+     "Config": 6
+    }
+   },
+   "crates/app/tests/seam_drag.rs": {
+    "sites": 5,
+    "by_name": {
+     "Config": 5
+    }
+   },
+   "crates/config/src/structural.rs": {
+    "sites": 5,
+    "by_name": {
+     "Config": 5
+    }
+   },
+   "crates/app/tests/structure_subset.rs": {
+    "sites": 4,
+    "by_name": {
+     "Config": 4
+    }
+   },
+   "crates/config/src/profile.rs": {
+    "sites": 4,
+    "by_name": {
+     "Config": 4
+    }
+   },
+   "crates/chassis/tests/bank_frame_render.rs": {
+    "sites": 3,
+    "by_name": {
+     "Config": 3
+    }
+   },
+   "crates/crt-render/tests/burn_in_chain.rs": {
+    "sites": 3,
+    "by_name": {
+     "Config": 3
+    }
+   },
+   "crates/crt-render/src/preset.rs": {
+    "sites": 3,
+    "by_name": {
+     "Config": 3
+    }
+   },
+   "crates/crt-render/src/chain.rs": {
+    "sites": 3,
+    "by_name": {
+     "Config": 3
+    }
+   },
+   "crates/app/tests/bank_column.rs": {
+    "sites": 3,
+    "by_name": {
+     "Config": 3
+    }
+   },
+   "crates/config/src/toml.rs": {
+    "sites": 3,
+    "by_name": {
+     "Config": 3
+    }
+   },
+   "crates/crt-render/tests/glyph_survival.rs": {
+    "sites": 2,
+    "by_name": {
+     "Config": 2
+    }
+   },
+   "crates/app/tests/channel_bank.rs": {
+    "sites": 2,
+    "by_name": {
+     "Config": 2
+    }
+   },
+   "crates/app/tests/settings_live_reload.rs": {
+    "sites": 2,
+    "by_name": {
+     "Config": 2
+    }
+   },
+   "crates/chassis/src/shells/slide_rule.rs": {
+    "sites": 1,
+    "by_name": {
+     "Config": 1
+    }
+   },
+   "crates/chassis/src/shells/mod.rs": {
+    "sites": 1,
+    "by_name": {
+     "Config": 1
+    }
+   },
+   "crates/app/tests/profile_cli.rs": {
+    "sites": 1,
+    "by_name": {
+     "Config": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/tests/bank_column.rs",
+   "crates/app/tests/channel_bank.rs",
+   "crates/app/tests/profile_cli.rs",
+   "crates/app/tests/seam_drag.rs",
+   "crates/app/tests/settings_live_reload.rs",
+   "crates/app/tests/structure_subset.rs",
+   "crates/chassis/tests/bank_frame_render.rs",
+   "crates/crt-render/tests/burn_in_chain.rs",
+   "crates/crt-render/tests/contracts.rs",
+   "crates/crt-render/tests/glyph_survival.rs",
+   "crates/crt-render/tests/pass_graph.rs"
+  ]
+ },
+ "crates/crt-render/src/degauss.rs": {
+  "measured": {
+   "file": "crates/crt-render/src/degauss.rs",
+   "A": 4,
+   "D": 0,
+   "B": 16,
+   "C": 124,
+   "leak": 12,
+   "score": 93,
+   "vocab": [
+    "Degauss",
+    "scale_y",
+    "degauss",
+    "is_active",
+    "is_running",
+    "PEAK_SCALE_Y"
+   ],
+   "vocabulary": [
+    "Degauss",
+    "DegaussState",
+    "PEAK_BRIGHTNESS",
+    "PEAK_SCALE_Y",
+    "degauss",
+    "is_active",
+    "is_running",
+    "scale_y"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/crt-render/src/degauss.rs",
+   "A": 4,
+   "eA": 1,
+   "gA": 1.26,
+   "B": 16,
+   "eB": 2,
+   "gB": 1.89,
+   "C": 124,
+   "eC": 3,
+   "gC": 3.39,
+   "D": 0,
+   "eD": 1,
+   "gD": -0.63,
+   "leak": 12,
+   "note": "",
+   "flags": "A high, B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "Degauss",
+   "DegaussState",
+   "PEAK_BRIGHTNESS",
+   "PEAK_SCALE_Y",
+   "degauss",
+   "is_active",
+   "is_running",
+   "scale_y"
+  ],
+  "A_files": [
+   "crates/app/src/column.rs",
+   "crates/app/src/window.rs",
+   "crates/crt-render/src/lib.rs",
+   "crates/crt-render/src/params.rs"
+  ],
+  "B_files": {
+   "crates/crt-render/tests/pass_graph.rs": {
+    "sites": 34,
+    "by_name": {
+     "DegaussState": 14,
+     "degauss": 11,
+     "scale_y": 4,
+     "Degauss": 2,
+     "is_active": 2,
+     "is_running": 1
+    }
+   },
+   "crates/crt-render/tests/contracts.rs": {
+    "sites": 27,
+    "by_name": {
+     "DegaussState": 7,
+     "PEAK_BRIGHTNESS": 6,
+     "degauss": 4,
+     "PEAK_SCALE_Y": 4,
+     "scale_y": 3,
+     "Degauss": 2,
+     "is_running": 1
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 17,
+    "by_name": {
+     "degauss": 11,
+     "Degauss": 3,
+     "DegaussState": 3
+    }
+   },
+   "crates/crt-render/src/params.rs": {
+    "sites": 12,
+    "by_name": {
+     "degauss": 6,
+     "DegaussState": 4,
+     "PEAK_BRIGHTNESS": 1,
+     "scale_y": 1
+    }
+   },
+   "crates/app/tests/channel_bank.rs": {
+    "sites": 12,
+    "by_name": {
+     "DegaussState": 4,
+     "degauss": 3,
+     "is_active": 3,
+     "Degauss": 1,
+     "scale_y": 1
+    }
+   },
+   "crates/crt-render/src/lib.rs": {
+    "sites": 6,
+    "by_name": {
+     "degauss": 4,
+     "Degauss": 1,
+     "DegaussState": 1
+    }
+   },
+   "crates/crt-render/tests/burn_in_chain.rs": {
+    "sites": 3,
+    "by_name": {
+     "DegaussState": 3
+    }
+   },
+   "crates/crt-render/tests/glyph_survival.rs": {
+    "sites": 2,
+    "by_name": {
+     "DegaussState": 2
+    }
+   },
+   "crates/app/tests/structure_subset.rs": {
+    "sites": 2,
+    "by_name": {
+     "DegaussState": 2
+    }
+   },
+   "crates/app/src/channels.rs": {
+    "sites": 2,
+    "by_name": {
+     "degauss": 2
+    }
+   },
+   "crates/app/src/column.rs": {
+    "sites": 2,
+    "by_name": {
+     "DegaussState": 2
+    }
+   },
+   "crates/crt-render/Cargo.toml": {
+    "sites": 1,
+    "by_name": {
+     "degauss": 1
+    }
+   },
+   "crates/crt-render/tests/support/mod.rs": {
+    "sites": 1,
+    "by_name": {
+     "degauss": 1
+    }
+   },
+   "crates/crt-render/src/chain.rs": {
+    "sites": 1,
+    "by_name": {
+     "degauss": 1
+    }
+   },
+   "crates/app/tests/settings_live_reload.rs": {
+    "sites": 1,
+    "by_name": {
+     "DegaussState": 1
+    }
+   },
+   "crates/app/src/instance.rs": {
+    "sites": 1,
+    "by_name": {
+     "degauss": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/src/channels.rs",
+   "crates/app/src/instance.rs",
+   "crates/app/tests/channel_bank.rs",
+   "crates/app/tests/settings_live_reload.rs",
+   "crates/app/tests/structure_subset.rs",
+   "crates/crt-render/Cargo.toml",
+   "crates/crt-render/src/chain.rs",
+   "crates/crt-render/tests/burn_in_chain.rs",
+   "crates/crt-render/tests/contracts.rs",
+   "crates/crt-render/tests/glyph_survival.rs",
+   "crates/crt-render/tests/pass_graph.rs",
+   "crates/crt-render/tests/support/mod.rs"
+  ]
+ },
+ "crates/crt-render/src/pacing.rs": {
+  "measured": {
+   "file": "crates/crt-render/src/pacing.rs",
+   "A": 5,
+   "D": 0,
+   "B": 12,
+   "C": 51,
+   "leak": 7,
+   "score": 30,
+   "vocab": [
+    "Pacing",
+    "tick_by",
+    "FrameTime"
+   ],
+   "vocabulary": [
+    "FrameTime",
+    "Pacing",
+    "tick_by"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/crt-render/src/pacing.rs",
+   "A": 5,
+   "eA": 1,
+   "gA": 1.46,
+   "B": 12,
+   "eB": 2,
+   "gB": 1.63,
+   "C": 51,
+   "eC": 3,
+   "gC": 2.58,
+   "D": 0,
+   "eD": 1,
+   "gD": -0.63,
+   "leak": 7,
+   "note": "",
+   "flags": "A high, B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "FrameTime",
+   "Pacing",
+   "tick_by"
+  ],
+  "A_files": [
+   "crates/app/src/column.rs",
+   "crates/app/src/window.rs",
+   "crates/crt-render/src/chain.rs",
+   "crates/crt-render/src/lib.rs",
+   "crates/crt-render/src/params.rs"
+  ],
+  "B_files": {
+   "crates/crt-render/tests/pass_graph.rs": {
+    "sites": 18,
+    "by_name": {
+     "tick_by": 13,
+     "Pacing": 5
+    }
+   },
+   "crates/crt-render/tests/contracts.rs": {
+    "sites": 5,
+    "by_name": {
+     "Pacing": 3,
+     "tick_by": 2
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 5,
+    "by_name": {
+     "Pacing": 3,
+     "FrameTime": 2
+    }
+   },
+   "crates/crt-render/tests/burn_in_chain.rs": {
+    "sites": 4,
+    "by_name": {
+     "tick_by": 2,
+     "Pacing": 2
+    }
+   },
+   "crates/crt-render/src/params.rs": {
+    "sites": 4,
+    "by_name": {
+     "FrameTime": 4
+    }
+   },
+   "crates/crt-render/src/chain.rs": {
+    "sites": 4,
+    "by_name": {
+     "FrameTime": 4
+    }
+   },
+   "crates/crt-render/tests/glyph_survival.rs": {
+    "sites": 3,
+    "by_name": {
+     "Pacing": 2,
+     "tick_by": 1
+    }
+   },
+   "crates/crt-render/src/lib.rs": {
+    "sites": 2,
+    "by_name": {
+     "FrameTime": 1,
+     "Pacing": 1
+    }
+   },
+   "crates/app/tests/structure_subset.rs": {
+    "sites": 2,
+    "by_name": {
+     "tick_by": 1,
+     "Pacing": 1
+    }
+   },
+   "crates/app/tests/settings_live_reload.rs": {
+    "sites": 2,
+    "by_name": {
+     "tick_by": 1,
+     "Pacing": 1
+    }
+   },
+   "crates/crt-render/tests/support/mod.rs": {
+    "sites": 1,
+    "by_name": {
+     "FrameTime": 1
+    }
+   },
+   "crates/app/src/column.rs": {
+    "sites": 1,
+    "by_name": {
+     "tick_by": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/tests/settings_live_reload.rs",
+   "crates/app/tests/structure_subset.rs",
+   "crates/crt-render/tests/burn_in_chain.rs",
+   "crates/crt-render/tests/contracts.rs",
+   "crates/crt-render/tests/glyph_survival.rs",
+   "crates/crt-render/tests/pass_graph.rs",
+   "crates/crt-render/tests/support/mod.rs"
+  ]
+ },
+ "crates/app/src/window.rs": {
+  "measured": {
+   "file": "crates/app/src/window.rs",
+   "A": 1,
+   "D": 46,
+   "B": 34,
+   "C": 254,
+   "leak": 33,
+   "score": 247,
+   "vocab": [
+    "on_air",
+    "cell_at",
+    "degauss",
+    "relayout",
+    "SHED_PTY",
+    "is_digit"
+   ],
+   "vocabulary": [
+    "AppSession",
+    "BASE_FONT_SCALING",
+    "DOUBLE_CLICK_INTERVAL",
+    "EFFECTS_BASE_FRAME",
+    "ImeState",
+    "POLL_INTERVAL",
+    "SHED_PTY",
+    "SHED_TMUX",
+    "TerminalSurface",
+    "announce_bank_width",
+    "apply_cabinet_settings",
+    "apply_chord",
+    "apply_live_settings",
+    "bank_physical",
+    "bank_strips",
+    "cabinet_cfg",
+    "cell_at",
+    "chain_geometry",
+    "channel_changed",
+    "chord_digit",
+    "chord_modifier",
+    "commit_chord",
+    "copy_on_select",
+    "copy_selection",
+    "cycle_channel",
+    "degauss",
+    "degauss_state",
+    "distortion_params",
+    "drag_selection_to",
+    "draw_frame",
+    "end_selection",
+    "ensure_font",
+    "ensure_margin",
+    "font_entry",
+    "gateway_key",
+    "has_bank",
+    "ime_area",
+    "ime_cursor_area",
+    "ime_input",
+    "ime_state",
+    "is_digit",
+    "is_gateway_on_air",
+    "key_input",
+    "key_text",
+    "last_click",
+    "last_selection",
+    "live_config",
+    "logged_geometry",
+    "logical_cell",
+    "logical_x",
+    "mode_contains",
+    "modifiers_from",
+    "move_channel",
+    "next_effects_frame",
+    "next_output_frame",
+    "on_air",
+    "output_pending",
+    "pending_led_characters",
+    "pointer_button",
+    "pointer_cell",
+    "pointer_context",
+    "press_strip",
+    "publish_ime_cursor",
+    "pump_gateway",
+    "pump_gateways",
+    "relayout",
+    "report_button",
+    "report_mouse",
+    "scroll_key",
+    "scroll_offset",
+    "seam_cursor",
+    "seam_landed",
+    "seam_moved",
+    "seam_press",
+    "seam_pressed",
+    "seam_released",
+    "select_word_at",
+    "selection_window",
+    "session_config",
+    "set_cabinet",
+    "set_config",
+    "set_seam_cursor",
+    "set_settings",
+    "set_shell_events",
+    "settle_bank",
+    "settle_rows",
+    "sheds_seen",
+    "shell_events",
+    "shift_physical",
+    "shortcut_key",
+    "size_badge",
+    "sizing_request",
+    "step_bank",
+    "strip_pressed",
+    "sync_geometry",
+    "the_chain_is_measured_in_logical_pixels_on_a_2x_display",
+    "the_grid_is_inset_by_the_distortion_margin_before_dividing_by_the_cell",
+    "the_virtual_resolution_takes_the_font_width_and_floors",
+    "type_bytes",
+    "watch_the_write_queues",
+    "wheel_pixels"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/app/src/window.rs",
+   "A": 1,
+   "eA": 2,
+   "gA": -0.63,
+   "B": 34,
+   "eB": 8,
+   "gB": 1.32,
+   "C": 254,
+   "eC": 16,
+   "gC": 2.52,
+   "D": 46,
+   "eD": 15,
+   "gD": 1.02,
+   "leak": 33,
+   "note": "",
+   "flags": "B high, D high (hub), leak signature",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "AppSession",
+   "BASE_FONT_SCALING",
+   "DOUBLE_CLICK_INTERVAL",
+   "EFFECTS_BASE_FRAME",
+   "ImeState",
+   "POLL_INTERVAL",
+   "SHED_PTY",
+   "SHED_TMUX",
+   "TerminalSurface",
+   "announce_bank_width",
+   "apply_cabinet_settings",
+   "apply_chord",
+   "apply_live_settings",
+   "bank_physical",
+   "bank_strips",
+   "cabinet_cfg",
+   "cell_at",
+   "chain_geometry",
+   "channel_changed",
+   "chord_digit",
+   "chord_modifier",
+   "commit_chord",
+   "copy_on_select",
+   "copy_selection",
+   "cycle_channel",
+   "degauss",
+   "degauss_state",
+   "distortion_params",
+   "drag_selection_to",
+   "draw_frame",
+   "end_selection",
+   "ensure_font",
+   "ensure_margin",
+   "font_entry",
+   "gateway_key",
+   "has_bank",
+   "ime_area",
+   "ime_cursor_area",
+   "ime_input",
+   "ime_state",
+   "is_digit",
+   "is_gateway_on_air",
+   "key_input",
+   "key_text",
+   "last_click",
+   "last_selection",
+   "live_config",
+   "logged_geometry",
+   "logical_cell",
+   "logical_x",
+   "mode_contains",
+   "modifiers_from",
+   "move_channel",
+   "next_effects_frame",
+   "next_output_frame",
+   "on_air",
+   "output_pending",
+   "pending_led_characters",
+   "pointer_button",
+   "pointer_cell",
+   "pointer_context",
+   "press_strip",
+   "publish_ime_cursor",
+   "pump_gateway",
+   "pump_gateways",
+   "relayout",
+   "report_button",
+   "report_mouse",
+   "scroll_key",
+   "scroll_offset",
+   "seam_cursor",
+   "seam_landed",
+   "seam_moved",
+   "seam_press",
+   "seam_pressed",
+   "seam_released",
+   "select_word_at",
+   "selection_window",
+   "session_config",
+   "set_cabinet",
+   "set_config",
+   "set_seam_cursor",
+   "set_settings",
+   "set_shell_events",
+   "settle_bank",
+   "settle_rows",
+   "sheds_seen",
+   "shell_events",
+   "shift_physical",
+   "shortcut_key",
+   "size_badge",
+   "sizing_request",
+   "step_bank",
+   "strip_pressed",
+   "sync_geometry",
+   "the_chain_is_measured_in_logical_pixels_on_a_2x_display",
+   "the_grid_is_inset_by_the_distortion_margin_before_dividing_by_the_cell",
+   "the_virtual_resolution_takes_the_font_width_and_floors",
+   "type_bytes",
+   "watch_the_write_queues",
+   "wheel_pixels"
+  ],
+  "A_files": [
+   "crates/app/src/main.rs"
+  ],
+  "B_files": {
+   "crates/app/tests/channel_bank.rs": {
+    "sites": 48,
+    "by_name": {
+     "bank_strips": 18,
+     "TerminalSurface": 10,
+     "degauss_state": 8,
+     "degauss": 3,
+     "key_input": 3,
+     "press_strip": 2,
+     "on_air": 2,
+     "set_cabinet": 1,
+     "channel_changed": 1
+    }
+   },
+   "crates/app/tests/ime.rs": {
+    "sites": 38,
+    "by_name": {
+     "ime_input": 18,
+     "TerminalSurface": 8,
+     "ime_state": 8,
+     "ime_cursor_area": 3,
+     "ImeState": 1
+    }
+   },
+   "crates/app/tests/tmux_flow.rs": {
+    "sites": 22,
+    "by_name": {
+     "TerminalSurface": 14,
+     "cycle_channel": 5,
+     "key_text": 1,
+     "key_input": 1,
+     "AppSession": 1
+    }
+   },
+   "crates/app/tests/keyboard_scroll.rs": {
+    "sites": 20,
+    "by_name": {
+     "scroll_offset": 11,
+     "TerminalSurface": 6,
+     "key_input": 3
+    }
+   },
+   "crates/app/tests/pointer.rs": {
+    "sites": 17,
+    "by_name": {
+     "TerminalSurface": 6,
+     "scroll_offset": 6,
+     "last_selection": 5
+    }
+   },
+   "crates/app/tests/pointer_live_settings.rs": {
+    "sites": 12,
+    "by_name": {
+     "TerminalSurface": 6,
+     "last_selection": 2,
+     "set_settings": 2,
+     "ensure_margin": 1,
+     "distortion_params": 1
+    }
+   },
+   "crates/crt-render/tests/pass_graph.rs": {
+    "sites": 11,
+    "by_name": {
+     "degauss": 11
+    }
+   },
+   "crates/app/tests/seam_drag.rs": {
+    "sites": 11,
+    "by_name": {
+     "TerminalSurface": 5,
+     "set_cabinet": 4,
+     "set_settings": 1,
+     "last_selection": 1
+    }
+   },
+   "crates/app/tests/clipboard_keys.rs": {
+    "sites": 8,
+    "by_name": {
+     "TerminalSurface": 6,
+     "key_input": 2
+    }
+   },
+   "crates/app/tests/shed_notice.rs": {
+    "sites": 8,
+    "by_name": {
+     "TerminalSurface": 5,
+     "SHED_PTY": 2,
+     "size_badge": 1
+    }
+   },
+   "crates/crt-render/src/params.rs": {
+    "sites": 6,
+    "by_name": {
+     "degauss": 6
+    }
+   },
+   "crates/app/src/main.rs": {
+    "sites": 6,
+    "by_name": {
+     "TerminalSurface": 3,
+     "set_shell_events": 1,
+     "set_config": 1,
+     "set_settings": 1
+    }
+   },
+   "crates/crt-render/tests/contracts.rs": {
+    "sites": 4,
+    "by_name": {
+     "degauss": 4
+    }
+   },
+   "crates/crt-render/src/lib.rs": {
+    "sites": 4,
+    "by_name": {
+     "degauss": 4
+    }
+   },
+   "crates/app/tests/redraw_pacing.rs": {
+    "sites": 4,
+    "by_name": {
+     "TerminalSurface": 3,
+     "EFFECTS_BASE_FRAME": 1
+    }
+   },
+   "crates/app/src/lib.rs": {
+    "sites": 4,
+    "by_name": {
+     "TerminalSurface": 3,
+     "ime_input": 1
+    }
+   },
+   "crates/app/src/frame_stats.rs": {
+    "sites": 4,
+    "by_name": {
+     "draw_frame": 3,
+     "EFFECTS_BASE_FRAME": 1
+    }
+   },
+   "crates/term/src/session.rs": {
+    "sites": 3,
+    "by_name": {
+     "TerminalSurface": 3
+    }
+   },
+   "crates/app/src/channels.rs": {
+    "sites": 3,
+    "by_name": {
+     "degauss": 2,
+     "TerminalSurface": 1
+    }
+   },
+   "crates/app/src/tmux.rs": {
+    "sites": 3,
+    "by_name": {
+     "TerminalSurface": 2,
+     "SHED_TMUX": 1
+    }
+   },
+   "crates/crt-render/src/degauss.rs": {
+    "sites": 2,
+    "by_name": {
+     "degauss": 2
+    }
+   },
+   "crates/app/tests/settings_live_reload.rs": {
+    "sites": 2,
+    "by_name": {
+     "TerminalSurface": 1,
+     "apply_live_settings": 1
+    }
+   },
+   "crates/app/src/settings.rs": {
+    "sites": 2,
+    "by_name": {
+     "TerminalSurface": 1,
+     "apply_live_settings": 1
+    }
+   },
+   "crates/app/src/gpu.rs": {
+    "sites": 2,
+    "by_name": {
+     "TerminalSurface": 1,
+     "draw_frame": 1
+    }
+   },
+   "crates/chassis/src/cabinet.rs": {
+    "sites": 1,
+    "by_name": {
+     "TerminalSurface": 1
+    }
+   },
+   "crates/crt-render/Cargo.toml": {
+    "sites": 1,
+    "by_name": {
+     "degauss": 1
+    }
+   },
+   "crates/crt-render/tests/glyph_survival.rs": {
+    "sites": 1,
+    "by_name": {
+     "chain_geometry": 1
+    }
+   },
+   "crates/crt-render/tests/support/mod.rs": {
+    "sites": 1,
+    "by_name": {
+     "degauss": 1
+    }
+   },
+   "crates/crt-render/src/chain.rs": {
+    "sites": 1,
+    "by_name": {
+     "degauss": 1
+    }
+   },
+   "crates/app/tests/frame_stats.rs": {
+    "sites": 1,
+    "by_name": {
+     "draw_frame": 1
+    }
+   },
+   "crates/app/tests/size_badge.rs": {
+    "sites": 1,
+    "by_name": {
+     "SHED_PTY": 1
+    }
+   },
+   "crates/app/src/instance.rs": {
+    "sites": 1,
+    "by_name": {
+     "degauss": 1
+    }
+   },
+   "crates/app/src/shell.rs": {
+    "sites": 1,
+    "by_name": {
+     "EFFECTS_BASE_FRAME": 1
+    }
+   },
+   "crates/app/src/badge.rs": {
+    "sites": 1,
+    "by_name": {
+     "draw_frame": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/src/badge.rs",
+   "crates/app/src/channels.rs",
+   "crates/app/src/frame_stats.rs",
+   "crates/app/src/gpu.rs",
+   "crates/app/src/instance.rs",
+   "crates/app/src/lib.rs",
+   "crates/app/src/settings.rs",
+   "crates/app/src/shell.rs",
+   "crates/app/src/tmux.rs",
+   "crates/app/tests/channel_bank.rs",
+   "crates/app/tests/clipboard_keys.rs",
+   "crates/app/tests/frame_stats.rs",
+   "crates/app/tests/ime.rs",
+   "crates/app/tests/keyboard_scroll.rs",
+   "crates/app/tests/pointer.rs",
+   "crates/app/tests/pointer_live_settings.rs",
+   "crates/app/tests/redraw_pacing.rs",
+   "crates/app/tests/seam_drag.rs",
+   "crates/app/tests/settings_live_reload.rs",
+   "crates/app/tests/shed_notice.rs",
+   "crates/app/tests/size_badge.rs",
+   "crates/app/tests/tmux_flow.rs",
+   "crates/chassis/src/cabinet.rs",
+   "crates/crt-render/Cargo.toml",
+   "crates/crt-render/src/chain.rs",
+   "crates/crt-render/src/degauss.rs",
+   "crates/crt-render/src/lib.rs",
+   "crates/crt-render/src/params.rs",
+   "crates/crt-render/tests/contracts.rs",
+   "crates/crt-render/tests/glyph_survival.rs",
+   "crates/crt-render/tests/pass_graph.rs",
+   "crates/crt-render/tests/support/mod.rs",
+   "crates/term/src/session.rs"
+  ]
+ },
+ "crates/config/src/schema.rs": {
+  "measured": {
+   "file": "crates/config/src/schema.rs",
+   "A": 17,
+   "D": 1,
+   "B": 23,
+   "C": 337,
+   "leak": 11,
+   "score": 161,
+   "vocab": [
+    "SlideRule",
+    "rgb_shift",
+    "Annunciator",
+    "Switchboard",
+    "SystemFonts",
+    "font_source"
+   ],
+   "vocabulary": [
+    "Annunciator",
+    "BundledFonts",
+    "ChannelDisplay",
+    "ChassisSettings",
+    "GeneralSettings",
+    "ModernRasterization",
+    "NoRasterization",
+    "PixelRasterization",
+    "ScanlineRasterization",
+    "ScreenSettings",
+    "SlideRule",
+    "SubpixelRasterization",
+    "Switchboard",
+    "SystemFonts",
+    "blinking_cursor",
+    "channel_display",
+    "chroma_color",
+    "custom_command",
+    "effects_frame_skip",
+    "font_source",
+    "glowing_line",
+    "horizontal_sync",
+    "rgb_shift",
+    "saturation_color",
+    "show_menubar",
+    "static_noise",
+    "use_custom_command",
+    "window_opacity"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/config/src/schema.rs",
+   "A": 17,
+   "eA": 3,
+   "gA": 1.58,
+   "B": 23,
+   "eB": 5,
+   "gB": 1.39,
+   "C": 337,
+   "eC": 8,
+   "gC": 3.4,
+   "D": 1,
+   "eD": 1,
+   "gD": 0.0,
+   "leak": 11,
+   "note": "",
+   "flags": "A high, B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "Annunciator",
+   "BundledFonts",
+   "ChannelDisplay",
+   "ChassisSettings",
+   "GeneralSettings",
+   "ModernRasterization",
+   "NoRasterization",
+   "PixelRasterization",
+   "ScanlineRasterization",
+   "ScreenSettings",
+   "SlideRule",
+   "SubpixelRasterization",
+   "Switchboard",
+   "SystemFonts",
+   "blinking_cursor",
+   "channel_display",
+   "chroma_color",
+   "custom_command",
+   "effects_frame_skip",
+   "font_source",
+   "glowing_line",
+   "horizontal_sync",
+   "rgb_shift",
+   "saturation_color",
+   "show_menubar",
+   "static_noise",
+   "use_custom_command",
+   "window_opacity"
+  ],
+  "A_files": [
+   "crates/app/src/column.rs",
+   "crates/app/src/main.rs",
+   "crates/app/src/settings.rs",
+   "crates/app/src/window.rs",
+   "crates/chassis/src/cabinet.rs",
+   "crates/chassis/src/frame.rs",
+   "crates/chassis/src/furniture.rs",
+   "crates/chassis/src/lib.rs",
+   "crates/chassis/src/shells/mod.rs",
+   "crates/chassis/src/shells/slide_rule.rs",
+   "crates/config/src/lib.rs",
+   "crates/config/src/presets.rs",
+   "crates/config/src/profile.rs",
+   "crates/config/src/structural.rs",
+   "crates/config/src/toml.rs",
+   "crates/crt-render/src/params.rs",
+   "crates/crt-render/src/preset.rs"
+  ],
+  "B_files": {
+   "crates/config/src/presets.rs": {
+    "sites": 115,
+    "by_name": {
+     "ScreenSettings": 32,
+     "chroma_color": 13,
+     "saturation_color": 12,
+     "horizontal_sync": 11,
+     "glowing_line": 9,
+     "ChassisSettings": 6,
+     "static_noise": 6,
+     "ModernRasterization": 6,
+     "ScanlineRasterization": 5,
+     "ChannelDisplay": 4,
+     "channel_display": 3,
+     "rgb_shift": 2,
+     "window_opacity": 2,
+     "Annunciator": 2,
+     "SlideRule": 1,
+     "Switchboard": 1
+    }
+   },
+   "crates/config/src/profile.rs": {
+    "sites": 33,
+    "by_name": {
+     "ChassisSettings": 6,
+     "ScreenSettings": 5,
+     "font_source": 4,
+     "ChannelDisplay": 4,
+     "channel_display": 4,
+     "GeneralSettings": 2,
+     "SystemFonts": 2,
+     "blinking_cursor": 2,
+     "Annunciator": 1,
+     "SubpixelRasterization": 1,
+     "PixelRasterization": 1,
+     "ScanlineRasterization": 1
+    }
+   },
+   "crates/config/src/lib.rs": {
+    "sites": 28,
+    "by_name": {
+     "ChassisSettings": 9,
+     "ScreenSettings": 9,
+     "GeneralSettings": 7,
+     "Annunciator": 2,
+     "ChannelDisplay": 1
+    }
+   },
+   "crates/crt-render/src/params.rs": {
+    "sites": 24,
+    "by_name": {
+     "horizontal_sync": 4,
+     "window_opacity": 4,
+     "rgb_shift": 3,
+     "glowing_line": 3,
+     "ScreenSettings": 2,
+     "static_noise": 1,
+     "chroma_color": 1,
+     "NoRasterization": 1,
+     "ScanlineRasterization": 1,
+     "PixelRasterization": 1,
+     "SubpixelRasterization": 1,
+     "ModernRasterization": 1,
+     "saturation_color": 1
+    }
+   },
+   "docs/config.md": {
+    "sites": 21,
+    "by_name": {
+     "Annunciator": 3,
+     "font_source": 2,
+     "channel_display": 2,
+     "effects_frame_skip": 2,
+     "static_noise": 2,
+     "show_menubar": 1,
+     "use_custom_command": 1,
+     "custom_command": 1,
+     "window_opacity": 1,
+     "saturation_color": 1,
+     "chroma_color": 1,
+     "horizontal_sync": 1,
+     "rgb_shift": 1,
+     "glowing_line": 1,
+     "blinking_cursor": 1
+    }
+   },
+   "crates/chassis/src/shells/mod.rs": {
+    "sites": 21,
+    "by_name": {
+     "Annunciator": 7,
+     "SlideRule": 7,
+     "Switchboard": 7
+    }
+   },
+   "crates/chassis/src/lib.rs": {
+    "sites": 20,
+    "by_name": {
+     "Annunciator": 5,
+     "SlideRule": 4,
+     "ChannelDisplay": 4,
+     "Switchboard": 4,
+     "channel_display": 3
+    }
+   },
+   "crates/chassis/src/furniture.rs": {
+    "sites": 15,
+    "by_name": {
+     "ChannelDisplay": 5,
+     "SlideRule": 4,
+     "channel_display": 3,
+     "saturation_color": 2,
+     "Annunciator": 1
+    }
+   },
+   "crates/crt-render/tests/contracts.rs": {
+    "sites": 10,
+    "by_name": {
+     "saturation_color": 3,
+     "window_opacity": 2,
+     "rgb_shift": 1,
+     "horizontal_sync": 1,
+     "glowing_line": 1,
+     "SubpixelRasterization": 1,
+     "PixelRasterization": 1
+    }
+   },
+   "crates/config/src/toml.rs": {
+    "sites": 8,
+    "by_name": {
+     "ScreenSettings": 6,
+     "ChassisSettings": 2
+    }
+   },
+   "crates/crt-render/tests/pass_graph.rs": {
+    "sites": 7,
+    "by_name": {
+     "static_noise": 2,
+     "horizontal_sync": 1,
+     "glowing_line": 1,
+     "rgb_shift": 1,
+     "chroma_color": 1,
+     "saturation_color": 1
+    }
+   },
+   "crates/crt-render/tests/burn_in_chain.rs": {
+    "sites": 6,
+    "by_name": {
+     "horizontal_sync": 1,
+     "static_noise": 1,
+     "glowing_line": 1,
+     "rgb_shift": 1,
+     "chroma_color": 1,
+     "saturation_color": 1
+    }
+   },
+   "crates/app/src/settings.rs": {
+    "sites": 5,
+    "by_name": {
+     "ModernRasterization": 2,
+     "ScreenSettings": 1,
+     "NoRasterization": 1,
+     "Annunciator": 1
+    }
+   },
+   "crates/chassis/src/cabinet.rs": {
+    "sites": 4,
+    "by_name": {
+     "channel_display": 2,
+     "ChannelDisplay": 1,
+     "Switchboard": 1
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 4,
+    "by_name": {
+     "effects_frame_skip": 4
+    }
+   },
+   "crates/config/src/structural.rs": {
+    "sites": 4,
+    "by_name": {
+     "font_source": 2,
+     "channel_display": 2
+    }
+   },
+   "crates/chassis/src/displays/led/mod.rs": {
+    "sites": 3,
+    "by_name": {
+     "ScreenSettings": 2,
+     "GeneralSettings": 1
+    }
+   },
+   "crates/app/tests/structure_subset.rs": {
+    "sites": 2,
+    "by_name": {
+     "channel_display": 1,
+     "font_source": 1
+    }
+   },
+   "crates/app/tests/settings_live_reload.rs": {
+    "sites": 2,
+    "by_name": {
+     "Annunciator": 2
+    }
+   },
+   "crates/app/tests/bank_column.rs": {
+    "sites": 2,
+    "by_name": {
+     "channel_display": 1,
+     "ChannelDisplay": 1
+    }
+   },
+   "README.md": {
+    "sites": 1,
+    "by_name": {
+     "Annunciator": 1
+    }
+   },
+   "crates/chassis/tests/led_display.rs": {
+    "sites": 1,
+    "by_name": {
+     "ScreenSettings": 1
+    }
+   },
+   "crates/app/tests/profile_cli.rs": {
+    "sites": 1,
+    "by_name": {
+     "Annunciator": 1
+    }
+   }
+  },
+  "leak_files": [
+   "README.md",
+   "crates/app/tests/bank_column.rs",
+   "crates/app/tests/profile_cli.rs",
+   "crates/app/tests/settings_live_reload.rs",
+   "crates/app/tests/structure_subset.rs",
+   "crates/chassis/src/displays/led/mod.rs",
+   "crates/chassis/tests/led_display.rs",
+   "crates/crt-render/tests/burn_in_chain.rs",
+   "crates/crt-render/tests/contracts.rs",
+   "crates/crt-render/tests/pass_graph.rs",
+   "docs/config.md"
+  ]
+ },
+ "crates/chassis/src/oracle.rs": {
+  "measured": {
+   "file": "crates/chassis/src/oracle.rs",
+   "A": 5,
+   "D": 0,
+   "B": 29,
+   "C": 372,
+   "leak": 24,
+   "score": 308,
+   "vocab": [
+    "vnoise",
+    "hash12",
+    "size_px",
+    "rrect_px",
+    "bevel_px",
+    "seam_gain"
+   ],
+   "vocabulary": [
+    "ChassisMetalParams",
+    "FrameMetalParams",
+    "MetalParams",
+    "PlateMetalParams",
+    "base_color",
+    "bevel_px",
+    "chassis_color",
+    "chassis_metal",
+    "corner_radius",
+    "field_offset",
+    "field_scale",
+    "frame_metal",
+    "hash12",
+    "highlight_color",
+    "light_dir",
+    "metal_field",
+    "normalize2",
+    "plate_metal",
+    "rrect_px",
+    "seam_gain",
+    "shadow_color",
+    "size_px",
+    "vnoise",
+    "wear_amount"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/chassis/src/oracle.rs",
+   "A": 5,
+   "eA": 2,
+   "gA": 0.83,
+   "B": 29,
+   "eB": 3,
+   "gB": 2.07,
+   "C": 372,
+   "eC": 5,
+   "gC": 3.92,
+   "D": 0,
+   "eD": 3,
+   "gD": -1.63,
+   "leak": 24,
+   "note": "",
+   "flags": "B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "ChassisMetalParams",
+   "FrameMetalParams",
+   "MetalParams",
+   "PlateMetalParams",
+   "base_color",
+   "bevel_px",
+   "chassis_color",
+   "chassis_metal",
+   "corner_radius",
+   "field_offset",
+   "field_scale",
+   "frame_metal",
+   "hash12",
+   "highlight_color",
+   "light_dir",
+   "metal_field",
+   "normalize2",
+   "plate_metal",
+   "rrect_px",
+   "seam_gain",
+   "shadow_color",
+   "size_px",
+   "vnoise",
+   "wear_amount"
+  ],
+  "A_files": [
+   "crates/chassis/src/furniture.rs",
+   "crates/chassis/src/shells/annunciator.rs",
+   "crates/chassis/src/shells/mod.rs",
+   "crates/chassis/src/shells/slide_rule.rs",
+   "crates/chassis/src/shells/switchboard.rs"
+  ],
+  "B_files": {
+   "crates/chassis/src/shells/slide_rule.rs": {
+    "sites": 45,
+    "by_name": {
+     "MetalParams": 5,
+     "PlateMetalParams": 4,
+     "light_dir": 4,
+     "size_px": 4,
+     "ChassisMetalParams": 3,
+     "FrameMetalParams": 3,
+     "chassis_metal": 2,
+     "plate_metal": 2,
+     "chassis_color": 2,
+     "base_color": 2,
+     "highlight_color": 2,
+     "shadow_color": 2,
+     "corner_radius": 2,
+     "bevel_px": 2,
+     "wear_amount": 2,
+     "seam_gain": 2,
+     "field_scale": 1,
+     "field_offset": 1
+    }
+   },
+   "crates/chassis/src/shells/switchboard.rs": {
+    "sites": 42,
+    "by_name": {
+     "MetalParams": 5,
+     "light_dir": 4,
+     "ChassisMetalParams": 3,
+     "FrameMetalParams": 3,
+     "PlateMetalParams": 3,
+     "chassis_metal": 2,
+     "chassis_color": 2,
+     "plate_metal": 2,
+     "size_px": 2,
+     "base_color": 2,
+     "highlight_color": 2,
+     "shadow_color": 2,
+     "corner_radius": 2,
+     "bevel_px": 2,
+     "wear_amount": 2,
+     "seam_gain": 2,
+     "field_scale": 1,
+     "field_offset": 1
+    }
+   },
+   "crates/chassis/src/shells/annunciator.rs": {
+    "sites": 37,
+    "by_name": {
+     "MetalParams": 4,
+     "chassis_metal": 3,
+     "ChassisMetalParams": 3,
+     "FrameMetalParams": 3,
+     "PlateMetalParams": 3,
+     "light_dir": 3,
+     "size_px": 3,
+     "field_scale": 2,
+     "field_offset": 2,
+     "chassis_color": 2,
+     "plate_metal": 1,
+     "frame_metal": 1,
+     "base_color": 1,
+     "highlight_color": 1,
+     "shadow_color": 1,
+     "corner_radius": 1,
+     "bevel_px": 1,
+     "wear_amount": 1,
+     "seam_gain": 1
+    }
+   },
+   "crates/chassis/tests/shader_recipes.rs": {
+    "sites": 35,
+    "by_name": {
+     "light_dir": 6,
+     "chassis_color": 5,
+     "field_scale": 2,
+     "chassis_metal": 2,
+     "size_px": 2,
+     "base_color": 2,
+     "highlight_color": 2,
+     "shadow_color": 2,
+     "corner_radius": 2,
+     "bevel_px": 2,
+     "wear_amount": 2,
+     "seam_gain": 2,
+     "plate_metal": 2,
+     "field_offset": 1,
+     "frame_metal": 1
+    }
+   },
+   "crates/chassis/tests/plate_metal.rs": {
+    "sites": 33,
+    "by_name": {
+     "base_color": 4,
+     "highlight_color": 4,
+     "shadow_color": 4,
+     "plate_metal": 3,
+     "size_px": 3,
+     "light_dir": 3,
+     "chassis_metal": 2,
+     "corner_radius": 2,
+     "bevel_px": 2,
+     "wear_amount": 2,
+     "seam_gain": 2,
+     "PlateMetalParams": 1,
+     "MetalParams": 1
+    }
+   },
+   "crates/app/tests/bank_column.rs": {
+    "sites": 29,
+    "by_name": {
+     "plate_metal": 5,
+     "chassis_metal": 4,
+     "PlateMetalParams": 2,
+     "light_dir": 2,
+     "MetalParams": 2,
+     "ChassisMetalParams": 2,
+     "size_px": 1,
+     "base_color": 1,
+     "highlight_color": 1,
+     "shadow_color": 1,
+     "corner_radius": 1,
+     "bevel_px": 1,
+     "wear_amount": 1,
+     "seam_gain": 1,
+     "field_scale": 1,
+     "field_offset": 1,
+     "chassis_color": 1,
+     "frame_metal": 1
+    }
+   },
+   "crates/chassis/src/furniture.rs": {
+    "sites": 22,
+    "by_name": {
+     "plate_metal": 3,
+     "base_color": 3,
+     "highlight_color": 3,
+     "shadow_color": 3,
+     "PlateMetalParams": 2,
+     "size_px": 2,
+     "light_dir": 2,
+     "corner_radius": 1,
+     "bevel_px": 1,
+     "wear_amount": 1,
+     "seam_gain": 1
+    }
+   },
+   "crates/chassis/tests/chassis_metal.rs": {
+    "sites": 20,
+    "by_name": {
+     "chassis_color": 4,
+     "chassis_metal": 3,
+     "field_scale": 3,
+     "field_offset": 3,
+     "light_dir": 3,
+     "hash12": 1,
+     "vnoise": 1,
+     "ChassisMetalParams": 1,
+     "MetalParams": 1
+    }
+   },
+   "crates/chassis/tests/gpu_annunciator.rs": {
+    "sites": 16,
+    "by_name": {
+     "chassis_metal": 7,
+     "chassis_color": 3,
+     "field_scale": 2,
+     "field_offset": 2,
+     "light_dir": 2
+    }
+   },
+   "crates/chassis/tests/bank_frame_render.rs": {
+    "sites": 13,
+    "by_name": {
+     "frame_metal": 8,
+     "FrameMetalParams": 2,
+     "light_dir": 1,
+     "chassis_color": 1,
+     "MetalParams": 1
+    }
+   },
+   "crates/chassis/tests/frame_metal.rs": {
+    "sites": 13,
+    "by_name": {
+     "chassis_color": 4,
+     "frame_metal": 3,
+     "light_dir": 3,
+     "chassis_metal": 1,
+     "FrameMetalParams": 1,
+     "MetalParams": 1
+    }
+   },
+   "crates/chassis/src/shells/mod.rs": {
+    "sites": 13,
+    "by_name": {
+     "plate_metal": 6,
+     "size_px": 3,
+     "PlateMetalParams": 2,
+     "chassis_metal": 1,
+     "frame_metal": 1
+    }
+   },
+   "crates/chassis/src/frame.rs": {
+    "sites": 11,
+    "by_name": {
+     "frame_metal": 3,
+     "field_scale": 3,
+     "field_offset": 3,
+     "chassis_metal": 2
+    }
+   },
+   "crates/app/src/column.rs": {
+    "sites": 9,
+    "by_name": {
+     "chassis_metal": 5,
+     "frame_metal": 2,
+     "plate_metal": 2
+    }
+   },
+   "crates/chassis/src/shaders.rs": {
+    "sites": 7,
+    "by_name": {
+     "frame_metal": 2,
+     "chassis_metal": 2,
+     "plate_metal": 2,
+     "metal_field": 1
+    }
+   },
+   "crates/crt-render/src/oracle.rs": {
+    "sites": 5,
+    "by_name": {
+     "size_px": 3,
+     "frame_metal": 2
+    }
+   },
+   "crates/chassis/src/shells/common.rs": {
+    "sites": 4,
+    "by_name": {
+     "field_offset": 2,
+     "chassis_metal": 1,
+     "field_scale": 1
+    }
+   },
+   "crates/chassis/src/lib.rs": {
+    "sites": 3,
+    "by_name": {
+     "frame_metal": 1,
+     "chassis_metal": 1,
+     "plate_metal": 1
+    }
+   },
+   "crates/chassis/src/layout.rs": {
+    "sites": 3,
+    "by_name": {
+     "field_scale": 1,
+     "field_offset": 1,
+     "chassis_metal": 1
+    }
+   },
+   "crates/chassis/tests/tape_label.rs": {
+    "sites": 2,
+    "by_name": {
+     "chassis_metal": 1,
+     "hash12": 1
+    }
+   },
+   "crates/crt-render/src/params.rs": {
+    "sites": 2,
+    "by_name": {
+     "chassis_metal": 1,
+     "frame_metal": 1
+    }
+   },
+   "crates/chassis/tests/led_matrix.rs": {
+    "sites": 1,
+    "by_name": {
+     "chassis_metal": 1
+    }
+   },
+   "crates/chassis/tests/tape_display.rs": {
+    "sites": 1,
+    "by_name": {
+     "light_dir": 1
+    }
+   },
+   "crates/chassis/tests/region_layout.rs": {
+    "sites": 1,
+    "by_name": {
+     "chassis_metal": 1
+    }
+   },
+   "crates/crt-render/tests/terminal_frame.rs": {
+    "sites": 1,
+    "by_name": {
+     "chassis_metal": 1
+    }
+   },
+   "crates/crt-render/tests/contracts.rs": {
+    "sites": 1,
+    "by_name": {
+     "frame_metal": 1
+    }
+   },
+   "crates/crt-render/tests/bloom.rs": {
+    "sites": 1,
+    "by_name": {
+     "chassis_metal": 1
+    }
+   },
+   "crates/crt-render/tests/pass_graph.rs": {
+    "sites": 1,
+    "by_name": {
+     "frame_metal": 1
+    }
+   },
+   "crates/crt-render/src/preset.rs": {
+    "sites": 1,
+    "by_name": {
+     "frame_metal": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/src/column.rs",
+   "crates/app/tests/bank_column.rs",
+   "crates/chassis/src/frame.rs",
+   "crates/chassis/src/layout.rs",
+   "crates/chassis/src/lib.rs",
+   "crates/chassis/src/shaders.rs",
+   "crates/chassis/src/shells/common.rs",
+   "crates/chassis/tests/bank_frame_render.rs",
+   "crates/chassis/tests/chassis_metal.rs",
+   "crates/chassis/tests/frame_metal.rs",
+   "crates/chassis/tests/gpu_annunciator.rs",
+   "crates/chassis/tests/led_matrix.rs",
+   "crates/chassis/tests/plate_metal.rs",
+   "crates/chassis/tests/region_layout.rs",
+   "crates/chassis/tests/shader_recipes.rs",
+   "crates/chassis/tests/tape_display.rs",
+   "crates/chassis/tests/tape_label.rs",
+   "crates/crt-render/src/oracle.rs",
+   "crates/crt-render/src/params.rs",
+   "crates/crt-render/src/preset.rs",
+   "crates/crt-render/tests/bloom.rs",
+   "crates/crt-render/tests/contracts.rs",
+   "crates/crt-render/tests/pass_graph.rs",
+   "crates/crt-render/tests/terminal_frame.rs"
+  ]
+ },
+ "crates/crt-render/src/params.rs": {
+  "measured": {
+   "file": "crates/crt-render/src/params.rs",
+   "A": 4,
+   "D": 8,
+   "B": 12,
+   "C": 84,
+   "leak": 9,
+   "score": 63,
+   "vocab": [
+    "Geometry",
+    "raster_mode",
+    "output_width",
+    "output_height",
+    "virtual_width",
+    "screen_colors"
+   ],
+   "vocabulary": [
+    "Geometry",
+    "NOISE_TEXTURE_SIZE",
+    "output_height",
+    "output_width",
+    "raster_mode",
+    "screen_colors",
+    "screen_density",
+    "total_font_scaling",
+    "virtual_height",
+    "virtual_width"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/crt-render/src/params.rs",
+   "A": 4,
+   "eA": 2,
+   "gA": 0.63,
+   "B": 12,
+   "eB": 4,
+   "gB": 1.0,
+   "C": 84,
+   "eC": 7,
+   "gC": 2.26,
+   "D": 8,
+   "eD": 2,
+   "gD": 1.26,
+   "leak": 9,
+   "note": "",
+   "flags": "D high (hub)",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "Geometry",
+   "NOISE_TEXTURE_SIZE",
+   "output_height",
+   "output_width",
+   "raster_mode",
+   "screen_colors",
+   "screen_density",
+   "total_font_scaling",
+   "virtual_height",
+   "virtual_width"
+  ],
+  "A_files": [
+   "crates/app/src/column.rs",
+   "crates/app/src/window.rs",
+   "crates/crt-render/src/chain.rs",
+   "crates/crt-render/src/lib.rs"
+  ],
+  "B_files": {
+   "crates/crt-render/tests/contracts.rs": {
+    "sites": 23,
+    "by_name": {
+     "Geometry": 9,
+     "output_width": 4,
+     "output_height": 4,
+     "virtual_width": 2,
+     "virtual_height": 2,
+     "total_font_scaling": 2
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 21,
+    "by_name": {
+     "virtual_width": 5,
+     "virtual_height": 5,
+     "Geometry": 4,
+     "output_width": 3,
+     "output_height": 3,
+     "total_font_scaling": 1
+    }
+   },
+   "crates/app/tests/structure_subset.rs": {
+    "sites": 9,
+    "by_name": {
+     "output_width": 2,
+     "output_height": 2,
+     "Geometry": 2,
+     "virtual_width": 1,
+     "virtual_height": 1,
+     "total_font_scaling": 1
+    }
+   },
+   "crates/crt-render/tests/burn_in_chain.rs": {
+    "sites": 8,
+    "by_name": {
+     "Geometry": 3,
+     "output_width": 1,
+     "output_height": 1,
+     "virtual_width": 1,
+     "virtual_height": 1,
+     "total_font_scaling": 1
+    }
+   },
+   "crates/crt-render/tests/pass_graph.rs": {
+    "sites": 8,
+    "by_name": {
+     "Geometry": 3,
+     "output_width": 1,
+     "output_height": 1,
+     "virtual_width": 1,
+     "virtual_height": 1,
+     "total_font_scaling": 1
+    }
+   },
+   "crates/crt-render/tests/glyph_survival.rs": {
+    "sites": 6,
+    "by_name": {
+     "output_width": 1,
+     "output_height": 1,
+     "virtual_width": 1,
+     "virtual_height": 1,
+     "total_font_scaling": 1,
+     "Geometry": 1
+    }
+   },
+   "crates/chassis/src/furniture.rs": {
+    "sites": 2,
+    "by_name": {
+     "screen_colors": 2
+    }
+   },
+   "crates/term/src/fonts/sizing.rs": {
+    "sites": 2,
+    "by_name": {
+     "total_font_scaling": 2
+    }
+   },
+   "crates/app/src/column.rs": {
+    "sites": 2,
+    "by_name": {
+     "output_width": 1,
+     "output_height": 1
+    }
+   },
+   "crates/crt-render/src/lib.rs": {
+    "sites": 1,
+    "by_name": {
+     "Geometry": 1
+    }
+   },
+   "crates/app/tests/settings_live_reload.rs": {
+    "sites": 1,
+    "by_name": {
+     "Geometry": 1
+    }
+   },
+   "crates/xtask/src/x11.rs": {
+    "sites": 1,
+    "by_name": {
+     "Geometry": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/tests/settings_live_reload.rs",
+   "crates/app/tests/structure_subset.rs",
+   "crates/chassis/src/furniture.rs",
+   "crates/crt-render/tests/burn_in_chain.rs",
+   "crates/crt-render/tests/contracts.rs",
+   "crates/crt-render/tests/glyph_survival.rs",
+   "crates/crt-render/tests/pass_graph.rs",
+   "crates/term/src/fonts/sizing.rs",
+   "crates/xtask/src/x11.rs"
+  ]
+ },
+ "crates/term/src/atlas.rs": {
+  "measured": {
+   "file": "crates/term/src/atlas.rs",
+   "A": 4,
+   "D": 4,
+   "B": 12,
+   "C": 69,
+   "leak": 8,
+   "score": 46,
+   "vocab": [
+    "atlas_y",
+    "atlas_x",
+    "font_id",
+    "for_face",
+    "GlyphSlot",
+    "GlyphAtlas"
+   ],
+   "vocabulary": [
+    "CellMetrics",
+    "FALLBACK_FACE",
+    "FontContext",
+    "GlyphAtlas",
+    "GlyphSlot",
+    "a_face_with_no_data_builds_the_context_on_the_bundled_fallback",
+    "atlas_x",
+    "atlas_y",
+    "build_atlas",
+    "distinct_values",
+    "font_id",
+    "font_system",
+    "for_face",
+    "intermediate_value_count",
+    "scale_context",
+    "shape_to_glyph_ids",
+    "total_value_count",
+    "value_histogram"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/term/src/atlas.rs",
+   "A": 4,
+   "eA": 1,
+   "gA": 1.26,
+   "B": 12,
+   "eB": 3,
+   "gB": 1.26,
+   "C": 69,
+   "eC": 6,
+   "gC": 2.22,
+   "D": 4,
+   "eD": 3,
+   "gD": 0.26,
+   "leak": 8,
+   "note": "",
+   "flags": "A high, B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "CellMetrics",
+   "FALLBACK_FACE",
+   "FontContext",
+   "GlyphAtlas",
+   "GlyphSlot",
+   "a_face_with_no_data_builds_the_context_on_the_bundled_fallback",
+   "atlas_x",
+   "atlas_y",
+   "build_atlas",
+   "distinct_values",
+   "font_id",
+   "font_system",
+   "for_face",
+   "intermediate_value_count",
+   "scale_context",
+   "shape_to_glyph_ids",
+   "total_value_count",
+   "value_histogram"
+  ],
+  "A_files": [
+   "crates/app/src/badge.rs",
+   "crates/app/src/window.rs",
+   "crates/term/src/lib.rs",
+   "crates/term/src/render.rs"
+  ],
+  "B_files": {
+   "crates/term/tests/pixel_properties.rs": {
+    "sites": 27,
+    "by_name": {
+     "intermediate_value_count": 9,
+     "FontContext": 6,
+     "build_atlas": 6,
+     "total_value_count": 3,
+     "value_histogram": 3
+    }
+   },
+   "crates/term/src/lib.rs": {
+    "sites": 9,
+    "by_name": {
+     "FontContext": 3,
+     "GlyphAtlas": 2,
+     "for_face": 2,
+     "CellMetrics": 1,
+     "build_atlas": 1
+    }
+   },
+   "crates/term/src/render.rs": {
+    "sites": 9,
+    "by_name": {
+     "GlyphAtlas": 7,
+     "atlas_x": 1,
+     "atlas_y": 1
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 4,
+    "by_name": {
+     "FontContext": 3,
+     "CellMetrics": 1
+    }
+   },
+   "crates/app/src/badge.rs": {
+    "sites": 4,
+    "by_name": {
+     "GlyphAtlas": 2,
+     "atlas_x": 1,
+     "atlas_y": 1
+    }
+   },
+   "crates/crt-render/tests/glyph_survival.rs": {
+    "sites": 3,
+    "by_name": {
+     "FontContext": 2,
+     "build_atlas": 1
+    }
+   },
+   "crates/term/tests/scrollback.rs": {
+    "sites": 3,
+    "by_name": {
+     "FontContext": 2,
+     "build_atlas": 1
+    }
+   },
+   "crates/term/tests/preedit.rs": {
+    "sites": 3,
+    "by_name": {
+     "FontContext": 2,
+     "build_atlas": 1
+    }
+   },
+   "crates/term/tests/system_fonts.rs": {
+    "sites": 3,
+    "by_name": {
+     "FontContext": 2,
+     "for_face": 1
+    }
+   },
+   "crates/term/tests/antialias.rs": {
+    "sites": 2,
+    "by_name": {
+     "intermediate_value_count": 1,
+     "total_value_count": 1
+    }
+   },
+   "crates/term/src/bin/esctest_harness.rs": {
+    "sites": 1,
+    "by_name": {
+     "CellMetrics": 1
+    }
+   },
+   "crates/app/tests/size_badge.rs": {
+    "sites": 1,
+    "by_name": {
+     "GlyphAtlas": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/tests/size_badge.rs",
+   "crates/crt-render/tests/glyph_survival.rs",
+   "crates/term/src/bin/esctest_harness.rs",
+   "crates/term/tests/antialias.rs",
+   "crates/term/tests/pixel_properties.rs",
+   "crates/term/tests/preedit.rs",
+   "crates/term/tests/scrollback.rs",
+   "crates/term/tests/system_fonts.rs"
+  ]
+ },
+ "crates/term/src/fonts/mod.rs": {
+  "measured": {
+   "file": "crates/term/src/fonts/mod.rs",
+   "A": 16,
+   "D": 2,
+   "B": 26,
+   "C": 117,
+   "leak": 10,
+   "score": 45,
+   "vocab": [
+    "System",
+    "Bundled",
+    "FontData",
+    "FontEntry",
+    "is_system",
+    "base_width"
+   ],
+   "vocabulary": [
+    "BASE_FONT_PIXEL_HEIGHT",
+    "Bundled",
+    "BundledFont",
+    "FontData",
+    "FontEntry",
+    "MODERN_RASTERIZATION",
+    "SYSTEM_FONT_PIXEL_SIZE",
+    "System",
+    "a_filtered_out_name_falls_back_to_the_first_offered",
+    "base_width",
+    "each_rasterization_mode_offers_its_own_half",
+    "fallback_base_width",
+    "fallback_name",
+    "filtered_fonts",
+    "font_by_name",
+    "is_system",
+    "low_resolution_fonts",
+    "missing_system_face",
+    "resolve_all",
+    "resolve_bundled",
+    "resolve_font_name",
+    "the_catalogue_matches_the_recorded_entries",
+    "the_low_resolution_list_is_what_the_displays_letter_from",
+    "the_system_half_is_populate_system_fonts"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/term/src/fonts/mod.rs",
+   "A": 16,
+   "eA": 4,
+   "gA": 1.26,
+   "B": 26,
+   "eB": 6,
+   "gB": 1.33,
+   "C": 117,
+   "eC": 10,
+   "gC": 2.24,
+   "D": 2,
+   "eD": 3,
+   "gD": -0.37,
+   "leak": 10,
+   "note": "",
+   "flags": "A high, B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "BASE_FONT_PIXEL_HEIGHT",
+   "Bundled",
+   "BundledFont",
+   "FontData",
+   "FontEntry",
+   "MODERN_RASTERIZATION",
+   "SYSTEM_FONT_PIXEL_SIZE",
+   "System",
+   "a_filtered_out_name_falls_back_to_the_first_offered",
+   "base_width",
+   "each_rasterization_mode_offers_its_own_half",
+   "fallback_base_width",
+   "fallback_name",
+   "filtered_fonts",
+   "font_by_name",
+   "is_system",
+   "low_resolution_fonts",
+   "missing_system_face",
+   "resolve_all",
+   "resolve_bundled",
+   "resolve_font_name",
+   "the_catalogue_matches_the_recorded_entries",
+   "the_low_resolution_list_is_what_the_displays_letter_from",
+   "the_system_half_is_populate_system_fonts"
+  ],
+  "A_files": [
+   "crates/app/src/window.rs",
+   "crates/chassis/src/displays/led/mod.rs",
+   "crates/chassis/src/displays/tape/metrics.rs",
+   "crates/chassis/src/furniture.rs",
+   "crates/chassis/src/lib.rs",
+   "crates/chassis/src/paint.rs",
+   "crates/chassis/src/shells/annunciator.rs",
+   "crates/chassis/src/shells/slide_rule.rs",
+   "crates/chassis/src/shells/switchboard.rs",
+   "crates/term/examples/led_diff.rs",
+   "crates/term/src/atlas.rs",
+   "crates/term/src/fonts/metrics.rs",
+   "crates/term/src/fonts/sizing.rs",
+   "crates/term/src/fonts/system.rs",
+   "crates/term/src/fonts/text.rs",
+   "crates/term/src/lib.rs"
+  ],
+  "B_files": {
+   "crates/term/tests/system_fonts.rs": {
+    "sites": 18,
+    "by_name": {
+     "filtered_fonts": 3,
+     "MODERN_RASTERIZATION": 3,
+     "is_system": 3,
+     "resolve_font_name": 3,
+     "font_by_name": 2,
+     "SYSTEM_FONT_PIXEL_SIZE": 2,
+     "FontEntry": 1,
+     "base_width": 1
+    }
+   },
+   "crates/term/src/fonts/sizing.rs": {
+    "sites": 16,
+    "by_name": {
+     "font_by_name": 8,
+     "FontEntry": 4,
+     "BASE_FONT_PIXEL_HEIGHT": 2,
+     "fallback_name": 1,
+     "base_width": 1
+    }
+   },
+   "crates/term/tests/font_parity.rs": {
+    "sites": 14,
+    "by_name": {
+     "font_by_name": 5,
+     "base_width": 3,
+     "is_system": 2,
+     "fallback_name": 2,
+     "FontEntry": 1,
+     "low_resolution_fonts": 1
+    }
+   },
+   "crates/term/tests/pixel_properties.rs": {
+    "sites": 8,
+    "by_name": {
+     "font_by_name": 4,
+     "FontEntry": 4
+    }
+   },
+   "crates/term/tests/antialias.rs": {
+    "sites": 8,
+    "by_name": {
+     "font_by_name": 4,
+     "FontEntry": 3,
+     "is_system": 1
+    }
+   },
+   "crates/term/src/fonts/system.rs": {
+    "sites": 8,
+    "by_name": {
+     "FontEntry": 3,
+     "font_by_name": 2,
+     "resolve_all": 2,
+     "is_system": 1
+    }
+   },
+   "crates/term/src/atlas.rs": {
+    "sites": 7,
+    "by_name": {
+     "FontEntry": 4,
+     "font_by_name": 2,
+     "missing_system_face": 1
+    }
+   },
+   "crates/chassis/src/furniture.rs": {
+    "sites": 4,
+    "by_name": {
+     "font_by_name": 4
+    }
+   },
+   "crates/term/tests/preedit.rs": {
+    "sites": 4,
+    "by_name": {
+     "font_by_name": 2,
+     "FontEntry": 2
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 4,
+    "by_name": {
+     "FontEntry": 2,
+     "font_by_name": 2
+    }
+   },
+   "crates/chassis/src/lib.rs": {
+    "sites": 3,
+    "by_name": {
+     "font_by_name": 3
+    }
+   },
+   "crates/chassis/src/shells/slide_rule.rs": {
+    "sites": 3,
+    "by_name": {
+     "font_by_name": 3
+    }
+   },
+   "crates/term/src/lib.rs": {
+    "sites": 3,
+    "by_name": {
+     "FontEntry": 2,
+     "font_by_name": 1
+    }
+   },
+   "crates/crt-render/tests/glyph_survival.rs": {
+    "sites": 2,
+    "by_name": {
+     "font_by_name": 2
+    }
+   },
+   "crates/term/tests/scrollback.rs": {
+    "sites": 2,
+    "by_name": {
+     "font_by_name": 2
+    }
+   },
+   "crates/term/src/fonts/metrics.rs": {
+    "sites": 2,
+    "by_name": {
+     "font_by_name": 2
+    }
+   },
+   "crates/term/src/fonts/text.rs": {
+    "sites": 2,
+    "by_name": {
+     "FontEntry": 1,
+     "font_by_name": 1
+    }
+   },
+   "crates/chassis/tests/led_display.rs": {
+    "sites": 1,
+    "by_name": {
+     "font_by_name": 1
+    }
+   },
+   "crates/chassis/tests/metrics_homes.rs": {
+    "sites": 1,
+    "by_name": {
+     "font_by_name": 1
+    }
+   },
+   "crates/chassis/tests/tape_display.rs": {
+    "sites": 1,
+    "by_name": {
+     "font_by_name": 1
+    }
+   },
+   "crates/chassis/src/paint.rs": {
+    "sites": 1,
+    "by_name": {
+     "font_by_name": 1
+    }
+   },
+   "crates/chassis/src/shells/annunciator.rs": {
+    "sites": 1,
+    "by_name": {
+     "font_by_name": 1
+    }
+   },
+   "crates/chassis/src/shells/switchboard.rs": {
+    "sites": 1,
+    "by_name": {
+     "font_by_name": 1
+    }
+   },
+   "crates/chassis/src/displays/led/mod.rs": {
+    "sites": 1,
+    "by_name": {
+     "font_by_name": 1
+    }
+   },
+   "crates/chassis/src/displays/tape/metrics.rs": {
+    "sites": 1,
+    "by_name": {
+     "font_by_name": 1
+    }
+   },
+   "crates/term/examples/led_diff.rs": {
+    "sites": 1,
+    "by_name": {
+     "font_by_name": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/chassis/tests/led_display.rs",
+   "crates/chassis/tests/metrics_homes.rs",
+   "crates/chassis/tests/tape_display.rs",
+   "crates/crt-render/tests/glyph_survival.rs",
+   "crates/term/tests/antialias.rs",
+   "crates/term/tests/font_parity.rs",
+   "crates/term/tests/pixel_properties.rs",
+   "crates/term/tests/preedit.rs",
+   "crates/term/tests/scrollback.rs",
+   "crates/term/tests/system_fonts.rs"
+  ]
+ },
+ "crates/tmux-cc/src/command.rs": {
+  "measured": {
+   "file": "crates/tmux-cc/src/command.rs",
+   "A": 4,
+   "D": 2,
+   "B": 6,
+   "C": 43,
+   "leak": 3,
+   "score": 22,
+   "vocab": [
+    "to_wire",
+    "HostName",
+    "SendKeys",
+    "ClientSize",
+    "CapturePane",
+    "ListWindows"
+   ],
+   "vocabulary": [
+    "CAPTURE_HISTORY",
+    "CapturePane",
+    "ClientSize",
+    "CursorPosition",
+    "DetachClient",
+    "HostName",
+    "ListWindowPanes",
+    "ListWindows",
+    "SEND_KEYS_CHUNK",
+    "SendKeys",
+    "a_paste_is_chunked_into_whole_commands",
+    "capture_pane",
+    "nothing_to_send_is_no_command_at_all",
+    "quote_format",
+    "quoting_protects_the_three_that_bite_and_spares_the_hash",
+    "send_keys_is_hex_and_needs_no_quoting",
+    "the_attach_pair_carries_the_references_flags_and_depth",
+    "the_bootstrap_pair_is_the_references_own_text",
+    "the_rename_sweep_and_the_layout_requery",
+    "the_short_commands",
+    "to_wire"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/tmux-cc/src/command.rs",
+   "A": 4,
+   "eA": 1,
+   "gA": 1.26,
+   "B": 6,
+   "eB": 3,
+   "gB": 0.63,
+   "C": 43,
+   "eC": 5,
+   "gC": 1.96,
+   "D": 2,
+   "eD": 1,
+   "gD": 0.63,
+   "leak": 3,
+   "note": "",
+   "flags": "A high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "CAPTURE_HISTORY",
+   "CapturePane",
+   "ClientSize",
+   "CursorPosition",
+   "DetachClient",
+   "HostName",
+   "ListWindowPanes",
+   "ListWindows",
+   "SEND_KEYS_CHUNK",
+   "SendKeys",
+   "a_paste_is_chunked_into_whole_commands",
+   "capture_pane",
+   "nothing_to_send_is_no_command_at_all",
+   "quote_format",
+   "quoting_protects_the_three_that_bite_and_spares_the_hash",
+   "send_keys_is_hex_and_needs_no_quoting",
+   "the_attach_pair_carries_the_references_flags_and_depth",
+   "the_bootstrap_pair_is_the_references_own_text",
+   "the_rename_sweep_and_the_layout_requery",
+   "the_short_commands",
+   "to_wire"
+  ],
+  "A_files": [
+   "crates/app/src/tmux.rs",
+   "crates/tmux-cc/examples/record.rs",
+   "crates/tmux-cc/src/codec.rs",
+   "crates/tmux-cc/src/lib.rs"
+  ],
+  "B_files": {
+   "crates/tmux-cc/examples/record.rs": {
+    "sites": 17,
+    "by_name": {
+     "DetachClient": 9,
+     "ListWindows": 4,
+     "HostName": 2,
+     "ClientSize": 1,
+     "quote_format": 1
+    }
+   },
+   "crates/tmux-cc/tests/live_tmux.rs": {
+    "sites": 10,
+    "by_name": {
+     "HostName": 2,
+     "ListWindows": 2,
+     "ListWindowPanes": 1,
+     "capture_pane": 1,
+     "CursorPosition": 1,
+     "ClientSize": 1,
+     "DetachClient": 1,
+     "to_wire": 1
+    }
+   },
+   "crates/app/src/tmux.rs": {
+    "sites": 8,
+    "by_name": {
+     "DetachClient": 2,
+     "HostName": 1,
+     "ClientSize": 1,
+     "capture_pane": 1,
+     "CursorPosition": 1,
+     "ListWindows": 1,
+     "ListWindowPanes": 1
+    }
+   },
+   "crates/tmux-cc/src/codec.rs": {
+    "sites": 6,
+    "by_name": {
+     "HostName": 5,
+     "to_wire": 1
+    }
+   },
+   "crates/tmux-cc/tests/transcripts.rs": {
+    "sites": 1,
+    "by_name": {
+     "quote_format": 1
+    }
+   },
+   "crates/tmux-cc/src/escape.rs": {
+    "sites": 1,
+    "by_name": {
+     "quote_format": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/tmux-cc/src/escape.rs",
+   "crates/tmux-cc/tests/live_tmux.rs",
+   "crates/tmux-cc/tests/transcripts.rs"
+  ]
+ },
+ "crates/chassis/src/displays/tape/metrics.rs": {
+  "measured": {
+   "file": "crates/chassis/src/displays/tape/metrics.rs",
+   "A": 3,
+   "D": 5,
+   "B": 0,
+   "C": 0,
+   "leak": 0,
+   "score": 0,
+   "vocab": [
+    "unit_width_is_the_departure_mono_m_advance_at_20px"
+   ],
+   "vocabulary": [
+    "unit_width_is_the_departure_mono_m_advance_at_20px"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/chassis/src/displays/tape/metrics.rs",
+   "A": 3,
+   "eA": 1,
+   "gA": 1.0,
+   "B": 0,
+   "eB": 2,
+   "gB": -1.26,
+   "C": 0,
+   "eC": 3,
+   "gC": -1.63,
+   "D": 5,
+   "eD": 1,
+   "gD": 1.46,
+   "leak": 0,
+   "note": "",
+   "flags": "D high (hub)",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "unit_width_is_the_departure_mono_m_advance_at_20px"
+  ],
+  "A_files": [
+   "crates/chassis/src/displays/tape/mod.rs",
+   "crates/chassis/src/lib.rs",
+   "crates/chassis/src/metrics.rs"
+  ],
+  "B_files": {},
+  "leak_files": []
+ },
+ "crates/chassis/src/layout.rs": {
+  "measured": {
+   "file": "crates/chassis/src/layout.rs",
+   "A": 15,
+   "D": 0,
+   "B": 12,
+   "C": 42,
+   "leak": 6,
+   "score": 21,
+   "vocab": [
+    "WindowLayout",
+    "chassis_field",
+    "MINIMUM_HEIGHT",
+    "NORMALISATION_WIDTH",
+    "min_inner_size_physical",
+    "the_well_never_goes_negative"
+   ],
+   "vocabulary": [
+    "MINIMUM_HEIGHT",
+    "NORMALISATION_WIDTH",
+    "WindowLayout",
+    "a_hidden_chassis_gives_the_well_the_whole_window",
+    "chassis_field",
+    "min_inner_size_physical",
+    "min_inner_size_tracks_the_bank",
+    "normalized_scale_measures_the_well_not_the_window",
+    "the_chassis_field_continues_the_frame_leftwards",
+    "the_physical_hint_is_the_logical_one_scaled",
+    "the_scale_guard_survives_a_window_of_no_size",
+    "the_well_never_goes_negative",
+    "the_well_takes_what_the_bank_leaves"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/chassis/src/layout.rs",
+   "A": 15,
+   "eA": 3,
+   "gA": 1.46,
+   "B": 12,
+   "eB": 4,
+   "gB": 1.0,
+   "C": 42,
+   "eC": 6,
+   "gC": 1.77,
+   "D": 0,
+   "eD": 2,
+   "gD": -1.26,
+   "leak": 6,
+   "note": "",
+   "flags": "A high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "MINIMUM_HEIGHT",
+   "NORMALISATION_WIDTH",
+   "WindowLayout",
+   "a_hidden_chassis_gives_the_well_the_whole_window",
+   "chassis_field",
+   "min_inner_size_physical",
+   "min_inner_size_tracks_the_bank",
+   "normalized_scale_measures_the_well_not_the_window",
+   "the_chassis_field_continues_the_frame_leftwards",
+   "the_physical_hint_is_the_logical_one_scaled",
+   "the_scale_guard_survives_a_window_of_no_size",
+   "the_well_never_goes_negative",
+   "the_well_takes_what_the_bank_leaves"
+  ],
+  "A_files": [
+   "crates/app/src/column.rs",
+   "crates/app/src/shell.rs",
+   "crates/chassis/src/cabinet.rs",
+   "crates/chassis/src/displays/tape/mod.rs",
+   "crates/chassis/src/frame.rs",
+   "crates/chassis/src/furniture.rs",
+   "crates/chassis/src/lib.rs",
+   "crates/chassis/src/paint.rs",
+   "crates/chassis/src/seam.rs",
+   "crates/chassis/src/shells/annunciator.rs",
+   "crates/chassis/src/shells/common.rs",
+   "crates/chassis/src/shells/mod.rs",
+   "crates/chassis/src/shells/slide_rule.rs",
+   "crates/chassis/src/shells/switchboard.rs",
+   "crates/crt-render/src/params.rs"
+  ],
+  "B_files": {
+   "crates/chassis/src/frame.rs": {
+    "sites": 10,
+    "by_name": {
+     "WindowLayout": 9,
+     "chassis_field": 1
+    }
+   },
+   "crates/chassis/src/cabinet.rs": {
+    "sites": 8,
+    "by_name": {
+     "WindowLayout": 6,
+     "min_inner_size_physical": 2
+    }
+   },
+   "crates/chassis/tests/bank_frame_render.rs": {
+    "sites": 7,
+    "by_name": {
+     "WindowLayout": 7
+    }
+   },
+   "crates/chassis/tests/bank_frame_geometry.rs": {
+    "sites": 3,
+    "by_name": {
+     "WindowLayout": 3
+    }
+   },
+   "crates/chassis/src/lib.rs": {
+    "sites": 3,
+    "by_name": {
+     "WindowLayout": 3
+    }
+   },
+   "crates/app/src/column.rs": {
+    "sites": 3,
+    "by_name": {
+     "WindowLayout": 2,
+     "chassis_field": 1
+    }
+   },
+   "crates/app/src/shell.rs": {
+    "sites": 2,
+    "by_name": {
+     "min_inner_size_physical": 2
+    }
+   },
+   "crates/app/src/geometry.rs": {
+    "sites": 2,
+    "by_name": {
+     "MINIMUM_HEIGHT": 1,
+     "min_inner_size_physical": 1
+    }
+   },
+   "crates/crt-render/tests/contracts.rs": {
+    "sites": 1,
+    "by_name": {
+     "WindowLayout": 1
+    }
+   },
+   "crates/crt-render/src/params.rs": {
+    "sites": 1,
+    "by_name": {
+     "WindowLayout": 1
+    }
+   },
+   "crates/crt-render/src/chain.rs": {
+    "sites": 1,
+    "by_name": {
+     "WindowLayout": 1
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 1,
+    "by_name": {
+     "WindowLayout": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/src/geometry.rs",
+   "crates/app/src/window.rs",
+   "crates/chassis/tests/bank_frame_geometry.rs",
+   "crates/chassis/tests/bank_frame_render.rs",
+   "crates/crt-render/src/chain.rs",
+   "crates/crt-render/tests/contracts.rs"
+  ]
+ },
+ "crates/crt-burnin/src/headless.rs": {
+  "measured": {
+   "file": "crates/crt-burnin/src/headless.rs",
+   "A": 1,
+   "D": 0,
+   "B": 22,
+   "C": 108,
+   "leak": 21,
+   "score": 103,
+   "vocab": [
+    "GpuLock",
+    "cast_f32",
+    "px_index",
+    "GpuError",
+    "make_input",
+    "read_output"
+   ],
+   "vocabulary": [
+    "GpuError",
+    "GpuLock",
+    "OUTPUT_FORMAT",
+    "blends_float32",
+    "cast_f32",
+    "centre_index",
+    "float32_blendable",
+    "float32_filterable",
+    "frame_pixels",
+    "make_input",
+    "make_output",
+    "pipeline_cache",
+    "px_index",
+    "read_output",
+    "render_single_pass",
+    "render_single_pass_io"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/crt-burnin/src/headless.rs",
+   "A": 1,
+   "eA": 2,
+   "gA": -0.63,
+   "B": 22,
+   "eB": 3,
+   "gB": 1.81,
+   "C": 108,
+   "eC": 5,
+   "gC": 2.8,
+   "D": 0,
+   "eD": 2,
+   "gD": -1.26,
+   "leak": 21,
+   "note": "",
+   "flags": "B high, leak signature",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "GpuError",
+   "GpuLock",
+   "OUTPUT_FORMAT",
+   "blends_float32",
+   "cast_f32",
+   "centre_index",
+   "float32_blendable",
+   "float32_filterable",
+   "frame_pixels",
+   "make_input",
+   "make_output",
+   "pipeline_cache",
+   "px_index",
+   "read_output",
+   "render_single_pass",
+   "render_single_pass_io"
+  ],
+  "A_files": [
+   "crates/crt-burnin/src/chain.rs"
+  ],
+  "B_files": {
+   "crates/app/tests/bank_column.rs": {
+    "sites": 28,
+    "by_name": {
+     "px_index": 20,
+     "OUTPUT_FORMAT": 6,
+     "make_output": 1,
+     "read_output": 1
+    }
+   },
+   "crates/crt-burnin/src/chain.rs": {
+    "sites": 12,
+    "by_name": {
+     "GpuError": 5,
+     "frame_pixels": 2,
+     "OUTPUT_FORMAT": 2,
+     "make_input": 1,
+     "make_output": 1,
+     "read_output": 1
+    }
+   },
+   "crates/crt-render/tests/bloom.rs": {
+    "sites": 10,
+    "by_name": {
+     "px_index": 5,
+     "render_single_pass": 3,
+     "render_single_pass_io": 2
+    }
+   },
+   "crates/crt-render/tests/burn_in_chain.rs": {
+    "sites": 8,
+    "by_name": {
+     "make_output": 2,
+     "OUTPUT_FORMAT": 2,
+     "read_output": 2,
+     "px_index": 2
+    }
+   },
+   "crates/chassis/tests/bank_frame_render.rs": {
+    "sites": 6,
+    "by_name": {
+     "render_single_pass": 4,
+     "px_index": 2
+    }
+   },
+   "crates/chassis/tests/led_matrix.rs": {
+    "sites": 4,
+    "by_name": {
+     "render_single_pass_io": 2,
+     "px_index": 2
+    }
+   },
+   "crates/term/tests/scrollback.rs": {
+    "sites": 4,
+    "by_name": {
+     "GpuLock": 4
+    }
+   },
+   "crates/app/tests/frame_stats.rs": {
+    "sites": 4,
+    "by_name": {
+     "GpuLock": 4
+    }
+   },
+   "crates/chassis/tests/tape_label.rs": {
+    "sites": 3,
+    "by_name": {
+     "px_index": 2,
+     "render_single_pass": 1
+    }
+   },
+   "crates/chassis/tests/tape_display.rs": {
+    "sites": 3,
+    "by_name": {
+     "px_index": 2,
+     "render_single_pass_io": 1
+    }
+   },
+   "crates/term/tests/pixel_properties.rs": {
+    "sites": 3,
+    "by_name": {
+     "GpuLock": 3
+    }
+   },
+   "crates/term/tests/antialias.rs": {
+    "sites": 3,
+    "by_name": {
+     "GpuLock": 3
+    }
+   },
+   "crates/term/tests/preedit.rs": {
+    "sites": 3,
+    "by_name": {
+     "GpuLock": 3
+    }
+   },
+   "crates/chassis/tests/plate_metal.rs": {
+    "sites": 2,
+    "by_name": {
+     "render_single_pass": 1,
+     "px_index": 1
+    }
+   },
+   "crates/chassis/tests/chassis_metal.rs": {
+    "sites": 2,
+    "by_name": {
+     "render_single_pass": 1,
+     "px_index": 1
+    }
+   },
+   "crates/chassis/tests/led_display.rs": {
+    "sites": 2,
+    "by_name": {
+     "render_single_pass_io": 1,
+     "px_index": 1
+    }
+   },
+   "crates/chassis/tests/frame_metal.rs": {
+    "sites": 2,
+    "by_name": {
+     "render_single_pass": 1,
+     "px_index": 1
+    }
+   },
+   "crates/chassis/tests/gpu_annunciator.rs": {
+    "sites": 2,
+    "by_name": {
+     "render_single_pass": 1,
+     "px_index": 1
+    }
+   },
+   "crates/crt-render/tests/terminal_frame.rs": {
+    "sites": 2,
+    "by_name": {
+     "render_single_pass": 1,
+     "px_index": 1
+    }
+   },
+   "crates/crt-burnin/tests/burn_in.rs": {
+    "sites": 2,
+    "by_name": {
+     "centre_index": 2
+    }
+   },
+   "crates/crt-burnin/tests/mount.rs": {
+    "sites": 2,
+    "by_name": {
+     "centre_index": 1,
+     "float32_filterable": 1
+    }
+   },
+   "crates/term/Cargo.toml": {
+    "sites": 1,
+    "by_name": {
+     "GpuLock": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/tests/bank_column.rs",
+   "crates/app/tests/frame_stats.rs",
+   "crates/chassis/tests/bank_frame_render.rs",
+   "crates/chassis/tests/chassis_metal.rs",
+   "crates/chassis/tests/frame_metal.rs",
+   "crates/chassis/tests/gpu_annunciator.rs",
+   "crates/chassis/tests/led_display.rs",
+   "crates/chassis/tests/led_matrix.rs",
+   "crates/chassis/tests/plate_metal.rs",
+   "crates/chassis/tests/tape_display.rs",
+   "crates/chassis/tests/tape_label.rs",
+   "crates/crt-burnin/tests/burn_in.rs",
+   "crates/crt-burnin/tests/mount.rs",
+   "crates/crt-render/tests/bloom.rs",
+   "crates/crt-render/tests/burn_in_chain.rs",
+   "crates/crt-render/tests/terminal_frame.rs",
+   "crates/term/Cargo.toml",
+   "crates/term/tests/antialias.rs",
+   "crates/term/tests/pixel_properties.rs",
+   "crates/term/tests/preedit.rs",
+   "crates/term/tests/scrollback.rs"
+  ]
+ },
+ "crates/term/src/fonts/metrics.rs": {
+  "measured": {
+   "file": "crates/term/src/fonts/metrics.rs",
+   "A": 8,
+   "D": 1,
+   "B": 10,
+   "C": 28,
+   "leak": 2,
+   "score": 6,
+   "vocab": [
+    "round_26_6",
+    "height_int",
+    "ascent_int",
+    "scale_26_6",
+    "descent_int",
+    "ascent_26_6"
+   ],
+   "vocabulary": [
+    "ScaledMetrics",
+    "TARGET_RATIO",
+    "ascent_26_6",
+    "ascent_int",
+    "char_advance_26_6",
+    "char_advance_px",
+    "char_advance_px_is_none_for_garbage_bytes",
+    "char_advance_px_matches_the_26_6_value_it_wraps",
+    "compute_base_width",
+    "descent_26_6",
+    "descent_int",
+    "family_name",
+    "height_int",
+    "hhea_ascender_descender",
+    "round_26_6",
+    "scale_26_6",
+    "scaled_metrics",
+    "scaled_metrics_for",
+    "strike_line_metrics"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/term/src/fonts/metrics.rs",
+   "A": 8,
+   "eA": 2,
+   "gA": 1.26,
+   "B": 10,
+   "eB": 3,
+   "gB": 1.1,
+   "C": 28,
+   "eC": 5,
+   "gC": 1.57,
+   "D": 1,
+   "eD": 1,
+   "gD": 0.0,
+   "leak": 2,
+   "note": "",
+   "flags": "A high, B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "ScaledMetrics",
+   "TARGET_RATIO",
+   "ascent_26_6",
+   "ascent_int",
+   "char_advance_26_6",
+   "char_advance_px",
+   "char_advance_px_is_none_for_garbage_bytes",
+   "char_advance_px_matches_the_26_6_value_it_wraps",
+   "compute_base_width",
+   "descent_26_6",
+   "descent_int",
+   "family_name",
+   "height_int",
+   "hhea_ascender_descender",
+   "round_26_6",
+   "scale_26_6",
+   "scaled_metrics",
+   "scaled_metrics_for",
+   "strike_line_metrics"
+  ],
+  "A_files": [
+   "crates/chassis/src/displays/led/mod.rs",
+   "crates/chassis/src/displays/tape/metrics.rs",
+   "crates/chassis/src/shells/annunciator.rs",
+   "crates/chassis/src/shells/slide_rule.rs",
+   "crates/chassis/src/shells/switchboard.rs",
+   "crates/term/src/fonts/led.rs",
+   "crates/term/src/fonts/mod.rs",
+   "crates/term/src/fonts/text.rs"
+  ],
+  "B_files": {
+   "crates/term/src/fonts/led.rs": {
+    "sites": 7,
+    "by_name": {
+     "char_advance_26_6": 3,
+     "scaled_metrics_for": 2,
+     "ascent_int": 1,
+     "height_int": 1
+    }
+   },
+   "crates/term/src/fonts/text.rs": {
+    "sites": 7,
+    "by_name": {
+     "char_advance_26_6": 3,
+     "scaled_metrics_for": 2,
+     "ascent_int": 1,
+     "height_int": 1
+    }
+   },
+   "crates/term/tests/font_parity.rs": {
+    "sites": 3,
+    "by_name": {
+     "scaled_metrics": 1,
+     "height_int": 1,
+     "ascent_int": 1
+    }
+   },
+   "crates/chassis/src/shells/switchboard.rs": {
+    "sites": 2,
+    "by_name": {
+     "scaled_metrics": 2
+    }
+   },
+   "crates/chassis/src/displays/led/mod.rs": {
+    "sites": 2,
+    "by_name": {
+     "char_advance_px": 1,
+     "scaled_metrics": 1
+    }
+   },
+   "crates/chassis/src/displays/tape/metrics.rs": {
+    "sites": 2,
+    "by_name": {
+     "char_advance_px": 2
+    }
+   },
+   "crates/term/src/fonts/mod.rs": {
+    "sites": 2,
+    "by_name": {
+     "family_name": 1,
+     "compute_base_width": 1
+    }
+   },
+   "crates/chassis/src/shells/annunciator.rs": {
+    "sites": 1,
+    "by_name": {
+     "scaled_metrics": 1
+    }
+   },
+   "crates/chassis/src/shells/slide_rule.rs": {
+    "sites": 1,
+    "by_name": {
+     "scaled_metrics": 1
+    }
+   },
+   "crates/term/src/fonts/system.rs": {
+    "sites": 1,
+    "by_name": {
+     "family_name": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/term/src/fonts/system.rs",
+   "crates/term/tests/font_parity.rs"
+  ]
+ },
+ "crates/term/src/fonts/system.rs": {
+  "measured": {
+   "file": "crates/term/src/fonts/system.rs",
+   "A": 5,
+   "D": 1,
+   "B": 5,
+   "C": 10,
+   "leak": 0,
+   "score": 0,
+   "vocab": [
+    "SERIF",
+    "sans_face",
+    "SystemFace",
+    "named_face",
+    "source_path",
+    "default_sans"
+   ],
+   "vocabulary": [
+    "SANS_CANDIDATES",
+    "SERIF",
+    "SERIF_CANDIDATES",
+    "SystemFace",
+    "an_excluded_family_is_not_offered",
+    "default_sans",
+    "default_serif",
+    "every_entry_points_at_a_file_that_can_be_read",
+    "families_from",
+    "monospace_families",
+    "named_face",
+    "one_family_appears_once_however_many_faces_carry_it",
+    "sans_face",
+    "source_path",
+    "the_family_name_is_the_one_the_catalogue_uses",
+    "the_list_is_one_entry_per_family_sorted"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/term/src/fonts/system.rs",
+   "A": 5,
+   "eA": 1,
+   "gA": 1.46,
+   "B": 5,
+   "eB": 2,
+   "gB": 0.83,
+   "C": 10,
+   "eC": 4,
+   "gC": 0.83,
+   "D": 1,
+   "eD": 1,
+   "gD": 0.0,
+   "leak": 0,
+   "note": "",
+   "flags": "A high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "SANS_CANDIDATES",
+   "SERIF",
+   "SERIF_CANDIDATES",
+   "SystemFace",
+   "an_excluded_family_is_not_offered",
+   "default_sans",
+   "default_serif",
+   "every_entry_points_at_a_file_that_can_be_read",
+   "families_from",
+   "monospace_families",
+   "named_face",
+   "one_family_appears_once_however_many_faces_carry_it",
+   "sans_face",
+   "source_path",
+   "the_family_name_is_the_one_the_catalogue_uses",
+   "the_list_is_one_entry_per_family_sorted"
+  ],
+  "A_files": [
+   "crates/chassis/src/paint.rs",
+   "crates/chassis/src/shells/annunciator.rs",
+   "crates/chassis/src/shells/slide_rule.rs",
+   "crates/chassis/src/shells/switchboard.rs",
+   "crates/term/src/fonts/mod.rs"
+  ],
+  "B_files": {
+   "crates/chassis/src/paint.rs": {
+    "sites": 4,
+    "by_name": {
+     "default_sans": 2,
+     "default_serif": 2
+    }
+   },
+   "crates/chassis/src/shells/switchboard.rs": {
+    "sites": 3,
+    "by_name": {
+     "default_serif": 2,
+     "default_sans": 1
+    }
+   },
+   "crates/chassis/src/shells/annunciator.rs": {
+    "sites": 1,
+    "by_name": {
+     "default_sans": 1
+    }
+   },
+   "crates/chassis/src/shells/slide_rule.rs": {
+    "sites": 1,
+    "by_name": {
+     "default_sans": 1
+    }
+   },
+   "crates/term/src/fonts/mod.rs": {
+    "sites": 1,
+    "by_name": {
+     "monospace_families": 1
+    }
+   }
+  },
+  "leak_files": []
+ },
+ "crates/term/src/lib.rs": {
+  "measured": {
+   "file": "crates/term/src/lib.rs",
+   "A": 2,
+   "D": 19,
+   "B": 9,
+   "C": 31,
+   "leak": 7,
+   "score": 24,
+   "vocab": [
+    "build_font",
+    "ascii_charset",
+    "DEFAULT_THRESHOLD"
+   ],
+   "vocabulary": [
+    "DEFAULT_THRESHOLD",
+    "ascii_charset",
+    "build_font"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/term/src/lib.rs",
+   "A": 2,
+   "eA": 2,
+   "gA": 0.0,
+   "B": 9,
+   "eB": 5,
+   "gB": 0.54,
+   "C": 31,
+   "eC": 8,
+   "gC": 1.23,
+   "D": 19,
+   "eD": 3,
+   "gD": 1.68,
+   "leak": 7,
+   "note": "",
+   "flags": "D high (hub)",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "DEFAULT_THRESHOLD",
+   "ascii_charset",
+   "build_font"
+  ],
+  "A_files": [
+   "crates/app/src/window.rs",
+   "crates/term/src/atlas.rs"
+  ],
+  "B_files": {
+   "crates/term/tests/pixel_properties.rs": {
+    "sites": 11,
+    "by_name": {
+     "ascii_charset": 7,
+     "DEFAULT_THRESHOLD": 4
+    }
+   },
+   "crates/crt-render/tests/glyph_survival.rs": {
+    "sites": 4,
+    "by_name": {
+     "ascii_charset": 2,
+     "DEFAULT_THRESHOLD": 2
+    }
+   },
+   "crates/term/tests/scrollback.rs": {
+    "sites": 4,
+    "by_name": {
+     "ascii_charset": 2,
+     "DEFAULT_THRESHOLD": 2
+    }
+   },
+   "crates/term/tests/preedit.rs": {
+    "sites": 4,
+    "by_name": {
+     "ascii_charset": 2,
+     "DEFAULT_THRESHOLD": 2
+    }
+   },
+   "crates/term/tests/antialias.rs": {
+    "sites": 2,
+    "by_name": {
+     "build_font": 2
+    }
+   },
+   "crates/term/tests/system_fonts.rs": {
+    "sites": 2,
+    "by_name": {
+     "ascii_charset": 2
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 2,
+    "by_name": {
+     "build_font": 2
+    }
+   },
+   "crates/term/src/atlas.rs": {
+    "sites": 1,
+    "by_name": {
+     "DEFAULT_THRESHOLD": 1
+    }
+   },
+   "crates/app/tests/size_badge.rs": {
+    "sites": 1,
+    "by_name": {
+     "build_font": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/tests/size_badge.rs",
+   "crates/crt-render/tests/glyph_survival.rs",
+   "crates/term/tests/antialias.rs",
+   "crates/term/tests/pixel_properties.rs",
+   "crates/term/tests/preedit.rs",
+   "crates/term/tests/scrollback.rs",
+   "crates/term/tests/system_fonts.rs"
+  ]
+ },
+ "crates/crt-render/src/oracle.rs": {
+  "measured": {
+   "file": "crates/crt-render/src/oracle.rs",
+   "A": 0,
+   "D": 0,
+   "B": 11,
+   "C": 25,
+   "leak": 11,
+   "score": 25,
+   "vocab": [
+    "rand2",
+    "terminal_frame",
+    "STEPS_PER_TEXEL",
+    "gaussian_blur_1d",
+    "TerminalFrameParams",
+    "terminal_frame_noise"
+   ],
+   "vocabulary": [
+    "STEPS_PER_TEXEL",
+    "TerminalFrameParams",
+    "gaussian_blur_1d",
+    "rand2",
+    "terminal_frame",
+    "terminal_frame_noise"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/crt-render/src/oracle.rs",
+   "A": 0,
+   "eA": 1,
+   "gA": -0.63,
+   "B": 11,
+   "eB": 2,
+   "gB": 1.55,
+   "C": 25,
+   "eC": 4,
+   "gC": 1.67,
+   "D": 0,
+   "eD": 2,
+   "gD": -1.26,
+   "leak": 11,
+   "note": "",
+   "flags": "B high, leak signature",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "STEPS_PER_TEXEL",
+   "TerminalFrameParams",
+   "gaussian_blur_1d",
+   "rand2",
+   "terminal_frame",
+   "terminal_frame_noise"
+  ],
+  "A_files": [],
+  "B_files": {
+   "crates/crt-render/tests/terminal_frame.rs": {
+    "sites": 7,
+    "by_name": {
+     "terminal_frame": 5,
+     "rand2": 1,
+     "TerminalFrameParams": 1
+    }
+   },
+   "crates/crt-render/tests/bloom.rs": {
+    "sites": 4,
+    "by_name": {
+     "gaussian_blur_1d": 4
+    }
+   },
+   "crates/crt-render/src/preset.rs": {
+    "sites": 4,
+    "by_name": {
+     "terminal_frame": 4
+    }
+   },
+   "crates/chassis/src/oracle.rs": {
+    "sites": 2,
+    "by_name": {
+     "terminal_frame": 2
+    }
+   },
+   "crates/crt-render/tests/contracts.rs": {
+    "sites": 2,
+    "by_name": {
+     "terminal_frame": 2
+    }
+   },
+   "crates/chassis/tests/chassis_metal.rs": {
+    "sites": 1,
+    "by_name": {
+     "terminal_frame": 1
+    }
+   },
+   "crates/chassis/src/shaders.rs": {
+    "sites": 1,
+    "by_name": {
+     "terminal_frame": 1
+    }
+   },
+   "crates/chassis/src/frame.rs": {
+    "sites": 1,
+    "by_name": {
+     "terminal_frame": 1
+    }
+   },
+   "crates/crt-render/tests/pass_graph.rs": {
+    "sites": 1,
+    "by_name": {
+     "terminal_frame": 1
+    }
+   },
+   "crates/crt-render/src/lib.rs": {
+    "sites": 1,
+    "by_name": {
+     "terminal_frame": 1
+    }
+   },
+   "crates/crt-render/src/params.rs": {
+    "sites": 1,
+    "by_name": {
+     "terminal_frame": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/chassis/src/frame.rs",
+   "crates/chassis/src/oracle.rs",
+   "crates/chassis/src/shaders.rs",
+   "crates/chassis/tests/chassis_metal.rs",
+   "crates/crt-render/src/lib.rs",
+   "crates/crt-render/src/params.rs",
+   "crates/crt-render/src/preset.rs",
+   "crates/crt-render/tests/bloom.rs",
+   "crates/crt-render/tests/contracts.rs",
+   "crates/crt-render/tests/pass_graph.rs",
+   "crates/crt-render/tests/terminal_frame.rs"
+  ]
+ },
+ "crates/chassis/src/displays/led/mod.rs": {
+  "measured": {
+   "file": "crates/chassis/src/displays/led/mod.rs",
+   "A": 6,
+   "D": 3,
+   "B": 10,
+   "C": 79,
+   "leak": 5,
+   "score": 40,
+   "vocab": [
+    "Colors",
+    "DOT_RADIUS",
+    "SPILL_DEAD",
+    "window_colors",
+    "LED_PAD_CELLS",
+    "LED_DOT_PITCH"
+   ],
+   "vocabulary": [
+    "Colors",
+    "DEFAULT_LED_CHARACTERS",
+    "DEFAULT_LED_FONT_NAME",
+    "DOT_RADIUS",
+    "LED_DOT_PITCH",
+    "LED_PAD_CELLS",
+    "LED_SIDE_PAD_CELLS",
+    "MIN_LED_CHARACTERS",
+    "SPILL_DEAD",
+    "cell_metrics_are_at_least_one_pixel",
+    "grid_size_matches_the_defining_formula",
+    "spill_margins",
+    "spill_margins_both_come_from_height",
+    "spill_strength",
+    "spill_strength_and_glow_match_the_defining_formulas",
+    "visible_text_truncates_from_the_head",
+    "window_colors",
+    "window_colors_amber_powered_bright",
+    "window_colors_unpowered_is_darker_than_powered_dark"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/chassis/src/displays/led/mod.rs",
+   "A": 6,
+   "eA": 2,
+   "gA": 1.0,
+   "B": 10,
+   "eB": 3,
+   "gB": 1.1,
+   "C": 79,
+   "eC": 5,
+   "gC": 2.51,
+   "D": 3,
+   "eD": 3,
+   "gD": 0.0,
+   "leak": 5,
+   "note": "",
+   "flags": "B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "Colors",
+   "DEFAULT_LED_CHARACTERS",
+   "DEFAULT_LED_FONT_NAME",
+   "DOT_RADIUS",
+   "LED_DOT_PITCH",
+   "LED_PAD_CELLS",
+   "LED_SIDE_PAD_CELLS",
+   "MIN_LED_CHARACTERS",
+   "SPILL_DEAD",
+   "cell_metrics_are_at_least_one_pixel",
+   "grid_size_matches_the_defining_formula",
+   "spill_margins",
+   "spill_margins_both_come_from_height",
+   "spill_strength",
+   "spill_strength_and_glow_match_the_defining_formulas",
+   "visible_text_truncates_from_the_head",
+   "window_colors",
+   "window_colors_amber_powered_bright",
+   "window_colors_unpowered_is_darker_than_powered_dark"
+  ],
+  "A_files": [
+   "crates/chassis/src/displays/led/metrics.rs",
+   "crates/chassis/src/displays/tape/metrics.rs",
+   "crates/chassis/src/displays/tape/mod.rs",
+   "crates/chassis/src/furniture.rs",
+   "crates/chassis/src/lib.rs",
+   "crates/chassis/src/shells/slide_rule.rs"
+  ],
+  "B_files": {
+   "crates/chassis/src/furniture.rs": {
+    "sites": 20,
+    "by_name": {
+     "LED_SIDE_PAD_CELLS": 6,
+     "spill_strength": 4,
+     "window_colors": 3,
+     "SPILL_DEAD": 2,
+     "DEFAULT_LED_FONT_NAME": 2,
+     "spill_margins": 2,
+     "DOT_RADIUS": 1
+    }
+   },
+   "crates/chassis/src/displays/led/metrics.rs": {
+    "sites": 17,
+    "by_name": {
+     "LED_DOT_PITCH": 11,
+     "LED_PAD_CELLS": 3,
+     "LED_SIDE_PAD_CELLS": 3
+    }
+   },
+   "crates/chassis/tests/metrics_homes.rs": {
+    "sites": 15,
+    "by_name": {
+     "LED_DOT_PITCH": 6,
+     "LED_PAD_CELLS": 3,
+     "LED_SIDE_PAD_CELLS": 3,
+     "MIN_LED_CHARACTERS": 3
+    }
+   },
+   "crates/chassis/tests/led_display.rs": {
+    "sites": 11,
+    "by_name": {
+     "spill_strength": 4,
+     "window_colors": 2,
+     "SPILL_DEAD": 2,
+     "DEFAULT_LED_FONT_NAME": 1,
+     "DEFAULT_LED_CHARACTERS": 1,
+     "DOT_RADIUS": 1
+    }
+   },
+   "crates/chassis/src/lib.rs": {
+    "sites": 5,
+    "by_name": {
+     "DEFAULT_LED_FONT_NAME": 1,
+     "LED_DOT_PITCH": 1,
+     "MIN_LED_CHARACTERS": 1,
+     "LED_PAD_CELLS": 1,
+     "LED_SIDE_PAD_CELLS": 1
+    }
+   },
+   "crates/chassis/src/shells/slide_rule.rs": {
+    "sites": 5,
+    "by_name": {
+     "LED_DOT_PITCH": 2,
+     "DEFAULT_LED_FONT_NAME": 1,
+     "spill_margins": 1,
+     "window_colors": 1
+    }
+   },
+   "crates/chassis/src/strip.rs": {
+    "sites": 2,
+    "by_name": {
+     "window_colors": 1,
+     "spill_strength": 1
+    }
+   },
+   "crates/app/tests/bank_column.rs": {
+    "sites": 2,
+    "by_name": {
+     "window_colors": 2
+    }
+   },
+   "crates/chassis/tests/tape_display.rs": {
+    "sites": 1,
+    "by_name": {
+     "DEFAULT_LED_CHARACTERS": 1
+    }
+   },
+   "crates/chassis/src/displays/tape/metrics.rs": {
+    "sites": 1,
+    "by_name": {
+     "MIN_LED_CHARACTERS": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/tests/bank_column.rs",
+   "crates/chassis/src/strip.rs",
+   "crates/chassis/tests/led_display.rs",
+   "crates/chassis/tests/metrics_homes.rs",
+   "crates/chassis/tests/tape_display.rs"
+  ]
+ },
+ "crates/app/src/tmux.rs": {
+  "measured": {
+   "file": "crates/app/src/tmux.rs",
+   "A": 1,
+   "D": 4,
+   "B": 30,
+   "C": 327,
+   "leak": 29,
+   "score": 316,
+   "vocab": [
+    "tmux",
+    "Intent",
+    "Capture",
+    "Detached",
+    "PaneGate",
+    "teardown"
+   ],
+   "vocabulary": [
+    "BACKLOG_CAP",
+    "BOOTSTRAP_DEADLINE",
+    "Capture",
+    "Detached",
+    "GatewayEvent",
+    "HostChanged",
+    "Intent",
+    "LayoutPanes",
+    "PENDING_CAP",
+    "PaneGate",
+    "RESIZE_DEBOUNCE",
+    "TightWire",
+    "WindowAdded",
+    "WindowClosed",
+    "WindowNames",
+    "a_bootstrap_no_flagged_reply_ever_answers_is_given_up_at_warn",
+    "a_bootstrap_that_was_answered_outlives_the_deadline",
+    "a_close_forgets_the_window_and_its_pane",
+    "a_pane_switch_reroutes_and_recaptures_into_the_same_channel",
+    "a_pane_whose_cursor_never_arrives_stops_banking_and_shows_what_it_has",
+    "a_silent_wire_is_not_the_watchdogs_business",
+    "a_transport_that_never_drains_bounds_the_queue_and_keeps_the_pairing",
+    "a_transport_that_takes_a_prefix_loses_no_command_and_keeps_the_pairing",
+    "a_window_add_relists_and_only_the_new_window_is_news",
+    "an_errored_capture_still_opens_the_gate",
+    "an_errored_capture_takes_its_cursor_down_with_it",
+    "attach_window",
+    "bootstrapped",
+    "control_mode_ended",
+    "exit_detaches_and_a_foreign_line_is_the_protocol_lost",
+    "finish_pane_bootstrap",
+    "flush_client_size",
+    "lost_protocol",
+    "neutralise_cursor_intent",
+    "new_window",
+    "queued_bytes",
+    "resize_due",
+    "sent_size",
+    "switch_active_pane",
+    "teardown",
+    "the_attach_burst_consumes_no_pending_command",
+    "the_bootstrap_goes_out_at_construction_with_no_timer",
+    "the_first_client_size_flushes_at_once_and_a_burst_settles_to_one",
+    "the_listing_becomes_windows_and_the_sweep_corrects_a_late_rename",
+    "the_pane_gate_drops_buffers_and_releases_in_the_references_order",
+    "tmux",
+    "wanted_size",
+    "what_tmux_says_to_the_user_is_logged_and_changes_nothing_it_arrives_before"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/app/src/tmux.rs",
+   "A": 1,
+   "eA": 2,
+   "gA": -0.63,
+   "B": 30,
+   "eB": 6,
+   "gB": 1.46,
+   "C": 327,
+   "eC": 12,
+   "gC": 3.01,
+   "D": 4,
+   "eD": 6,
+   "gD": -0.37,
+   "leak": 29,
+   "note": "",
+   "flags": "B high, leak signature",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "BACKLOG_CAP",
+   "BOOTSTRAP_DEADLINE",
+   "Capture",
+   "Detached",
+   "GatewayEvent",
+   "HostChanged",
+   "Intent",
+   "LayoutPanes",
+   "PENDING_CAP",
+   "PaneGate",
+   "RESIZE_DEBOUNCE",
+   "TightWire",
+   "WindowAdded",
+   "WindowClosed",
+   "WindowNames",
+   "a_bootstrap_no_flagged_reply_ever_answers_is_given_up_at_warn",
+   "a_bootstrap_that_was_answered_outlives_the_deadline",
+   "a_close_forgets_the_window_and_its_pane",
+   "a_pane_switch_reroutes_and_recaptures_into_the_same_channel",
+   "a_pane_whose_cursor_never_arrives_stops_banking_and_shows_what_it_has",
+   "a_silent_wire_is_not_the_watchdogs_business",
+   "a_transport_that_never_drains_bounds_the_queue_and_keeps_the_pairing",
+   "a_transport_that_takes_a_prefix_loses_no_command_and_keeps_the_pairing",
+   "a_window_add_relists_and_only_the_new_window_is_news",
+   "an_errored_capture_still_opens_the_gate",
+   "an_errored_capture_takes_its_cursor_down_with_it",
+   "attach_window",
+   "bootstrapped",
+   "control_mode_ended",
+   "exit_detaches_and_a_foreign_line_is_the_protocol_lost",
+   "finish_pane_bootstrap",
+   "flush_client_size",
+   "lost_protocol",
+   "neutralise_cursor_intent",
+   "new_window",
+   "queued_bytes",
+   "resize_due",
+   "sent_size",
+   "switch_active_pane",
+   "teardown",
+   "the_attach_burst_consumes_no_pending_command",
+   "the_bootstrap_goes_out_at_construction_with_no_timer",
+   "the_first_client_size_flushes_at_once_and_a_burst_settles_to_one",
+   "the_listing_becomes_windows_and_the_sweep_corrects_a_late_rename",
+   "the_pane_gate_drops_buffers_and_releases_in_the_references_order",
+   "tmux",
+   "wanted_size",
+   "what_tmux_says_to_the_user_is_logged_and_changes_nothing_it_arrives_before"
+  ],
+  "A_files": [
+   "crates/app/src/window.rs"
+  ],
+  "B_files": {
+   "crates/app/src/window.rs": {
+    "sites": 54,
+    "by_name": {
+     "tmux": 30,
+     "GatewayEvent": 8,
+     "lost_protocol": 7,
+     "PENDING_CAP": 1,
+     "control_mode_ended": 1,
+     "HostChanged": 1,
+     "WindowAdded": 1,
+     "attach_window": 1,
+     "WindowClosed": 1,
+     "teardown": 1,
+     "new_window": 1,
+     "Detached": 1
+    }
+   },
+   "crates/app/tests/tmux_flow.rs": {
+    "sites": 47,
+    "by_name": {
+     "tmux": 47
+    }
+   },
+   "crates/app/src/channels.rs": {
+    "sites": 34,
+    "by_name": {
+     "tmux": 34
+    }
+   },
+   "crates/tmux-cc/tests/support/mod.rs": {
+    "sites": 22,
+    "by_name": {
+     "tmux": 22
+    }
+   },
+   "crates/tmux-cc/examples/record.rs": {
+    "sites": 17,
+    "by_name": {
+     "tmux": 17
+    }
+   },
+   "crates/term/src/tmux_cc.rs": {
+    "sites": 17,
+    "by_name": {
+     "tmux": 17
+    }
+   },
+   "crates/term/src/tmux_pane.rs": {
+    "sites": 16,
+    "by_name": {
+     "tmux": 16
+    }
+   },
+   "crates/tmux-cc/src/event.rs": {
+    "sites": 15,
+    "by_name": {
+     "tmux": 15
+    }
+   },
+   "crates/tmux-cc/src/command.rs": {
+    "sites": 11,
+    "by_name": {
+     "tmux": 11
+    }
+   },
+   "crates/tmux-cc/src/escape.rs": {
+    "sites": 11,
+    "by_name": {
+     "tmux": 11
+    }
+   },
+   "crates/tmux-cc/src/lib.rs": {
+    "sites": 10,
+    "by_name": {
+     "tmux": 10
+    }
+   },
+   "crates/tmux-cc/tests/transcripts.rs": {
+    "sites": 9,
+    "by_name": {
+     "tmux": 9
+    }
+   },
+   "crates/tmux-cc/tests/live_tmux.rs": {
+    "sites": 9,
+    "by_name": {
+     "tmux": 9
+    }
+   },
+   "README.md": {
+    "sites": 8,
+    "by_name": {
+     "tmux": 8
+    }
+   },
+   "crates/tmux-cc/src/codec.rs": {
+    "sites": 8,
+    "by_name": {
+     "tmux": 7,
+     "teardown": 1
+    }
+   },
+   "crates/tmux-cc/tests/transcripts/README.md": {
+    "sites": 6,
+    "by_name": {
+     "tmux": 6
+    }
+   },
+   "crates/tmux-cc/Cargo.toml": {
+    "sites": 5,
+    "by_name": {
+     "tmux": 5
+    }
+   },
+   "crates/term/src/session.rs": {
+    "sites": 5,
+    "by_name": {
+     "tmux": 5
+    }
+   },
+   "crates/term/src/lib.rs": {
+    "sites": 4,
+    "by_name": {
+     "tmux": 4
+    }
+   },
+   "crates/term/src/dcs.rs": {
+    "sites": 4,
+    "by_name": {
+     "tmux": 4
+    }
+   },
+   "crates/tmux-cc/src/ids.rs": {
+    "sites": 3,
+    "by_name": {
+     "tmux": 3
+    }
+   },
+   "crates/app/Cargo.toml": {
+    "sites": 3,
+    "by_name": {
+     "tmux": 3
+    }
+   },
+   "crates/app/tests/profile_pixels.rs": {
+    "sites": 2,
+    "by_name": {
+     "tmux": 2
+    }
+   },
+   "Cargo.toml": {
+    "sites": 1,
+    "by_name": {
+     "tmux": 1
+    }
+   },
+   "docs/keys.md": {
+    "sites": 1,
+    "by_name": {
+     "tmux": 1
+    }
+   },
+   "crates/term/tests/transcript.rs": {
+    "sites": 1,
+    "by_name": {
+     "tmux": 1
+    }
+   },
+   "crates/term/src/pointer.rs": {
+    "sites": 1,
+    "by_name": {
+     "tmux": 1
+    }
+   },
+   "crates/term/src/bin/esctest_harness.rs": {
+    "sites": 1,
+    "by_name": {
+     "tmux": 1
+    }
+   },
+   "crates/app/src/lib.rs": {
+    "sites": 1,
+    "by_name": {
+     "tmux": 1
+    }
+   },
+   "crates/app/src/overlay.rs": {
+    "sites": 1,
+    "by_name": {
+     "tmux": 1
+    }
+   }
+  },
+  "leak_files": [
+   "Cargo.toml",
+   "README.md",
+   "crates/app/Cargo.toml",
+   "crates/app/src/channels.rs",
+   "crates/app/src/lib.rs",
+   "crates/app/src/overlay.rs",
+   "crates/app/tests/profile_pixels.rs",
+   "crates/app/tests/tmux_flow.rs",
+   "crates/term/src/bin/esctest_harness.rs",
+   "crates/term/src/dcs.rs",
+   "crates/term/src/lib.rs",
+   "crates/term/src/pointer.rs",
+   "crates/term/src/session.rs",
+   "crates/term/src/tmux_cc.rs",
+   "crates/term/src/tmux_pane.rs",
+   "crates/term/tests/transcript.rs",
+   "crates/tmux-cc/Cargo.toml",
+   "crates/tmux-cc/examples/record.rs",
+   "crates/tmux-cc/src/codec.rs",
+   "crates/tmux-cc/src/command.rs",
+   "crates/tmux-cc/src/escape.rs",
+   "crates/tmux-cc/src/event.rs",
+   "crates/tmux-cc/src/ids.rs",
+   "crates/tmux-cc/src/lib.rs",
+   "crates/tmux-cc/tests/live_tmux.rs",
+   "crates/tmux-cc/tests/support/mod.rs",
+   "crates/tmux-cc/tests/transcripts.rs",
+   "crates/tmux-cc/tests/transcripts/README.md",
+   "docs/keys.md"
+  ]
+ },
+ "crates/chassis/src/furniture.rs": {
+  "measured": {
+   "file": "crates/chassis/src/furniture.rs",
+   "A": 7,
+   "D": 19,
+   "B": 8,
+   "C": 36,
+   "leak": 2,
+   "score": 9,
+   "vocab": [
+    "Piece",
+    "Plate",
+    "led_grid",
+    "TapeLabel",
+    "LedMatrix",
+    "led_piece"
+   ],
+   "vocabulary": [
+    "LedMatrix",
+    "Piece",
+    "Plate",
+    "TapeLabel",
+    "WELL_INSET",
+    "a_hidden_chassis_has_no_furniture",
+    "a_press_lands_in_the_window_it_was_drawn_in",
+    "a_rows_furniture_strikes_its_numeral_and_moulds_its_window",
+    "a_screw_head_is_domed_lit_and_slotted",
+    "bank_pieces",
+    "every_shell_and_kit_paints_a_bank_that_rasterises",
+    "led_grid",
+    "led_params",
+    "led_piece",
+    "strip_rect",
+    "tape_params",
+    "tape_piece",
+    "the_lamp_grid_lays_the_proven_raster_in_a_field_of_dark_ones",
+    "the_lamps_are_struck_from_the_derived_font_colour_not_the_stored_hex",
+    "the_pager_puts_its_two_keys_where_the_mock_measured_them",
+    "the_shipped_appliance_puts_a_plate_and_a_strip_per_row_on_the_casting",
+    "the_slide_rule_bolts_its_hinge_bracket_screws_to_the_casting",
+    "the_slide_rule_pagers_counter_lamps_burn_the_page_number",
+    "the_slide_rule_screws_its_rail_over_the_casting",
+    "the_switchboard_has_no_plate_and_stamps_tape",
+    "the_switchboard_lever_lies_flat_over_the_well_at_rest",
+    "the_switchboard_tape_well_composites_its_chrome"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/chassis/src/furniture.rs",
+   "A": 7,
+   "eA": 3,
+   "gA": 0.77,
+   "B": 8,
+   "eB": 6,
+   "gB": 0.26,
+   "C": 36,
+   "eC": 12,
+   "gC": 1.0,
+   "D": 19,
+   "eD": 6,
+   "gD": 1.05,
+   "leak": 2,
+   "note": "",
+   "flags": "D high (hub)",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "LedMatrix",
+   "Piece",
+   "Plate",
+   "TapeLabel",
+   "WELL_INSET",
+   "a_hidden_chassis_has_no_furniture",
+   "a_press_lands_in_the_window_it_was_drawn_in",
+   "a_rows_furniture_strikes_its_numeral_and_moulds_its_window",
+   "a_screw_head_is_domed_lit_and_slotted",
+   "bank_pieces",
+   "every_shell_and_kit_paints_a_bank_that_rasterises",
+   "led_grid",
+   "led_params",
+   "led_piece",
+   "strip_rect",
+   "tape_params",
+   "tape_piece",
+   "the_lamp_grid_lays_the_proven_raster_in_a_field_of_dark_ones",
+   "the_lamps_are_struck_from_the_derived_font_colour_not_the_stored_hex",
+   "the_pager_puts_its_two_keys_where_the_mock_measured_them",
+   "the_shipped_appliance_puts_a_plate_and_a_strip_per_row_on_the_casting",
+   "the_slide_rule_bolts_its_hinge_bracket_screws_to_the_casting",
+   "the_slide_rule_pagers_counter_lamps_burn_the_page_number",
+   "the_slide_rule_screws_its_rail_over_the_casting",
+   "the_switchboard_has_no_plate_and_stamps_tape",
+   "the_switchboard_lever_lies_flat_over_the_well_at_rest",
+   "the_switchboard_tape_well_composites_its_chrome"
+  ],
+  "A_files": [
+   "crates/app/src/column.rs",
+   "crates/chassis/src/cabinet.rs",
+   "crates/chassis/src/lib.rs",
+   "crates/chassis/src/shells/annunciator.rs",
+   "crates/chassis/src/shells/mod.rs",
+   "crates/chassis/src/shells/slide_rule.rs",
+   "crates/chassis/src/shells/switchboard.rs"
+  ],
+  "B_files": {
+   "crates/chassis/src/shells/slide_rule.rs": {
+    "sites": 9,
+    "by_name": {
+     "Piece": 4,
+     "LedMatrix": 2,
+     "led_params": 2,
+     "led_grid": 1
+    }
+   },
+   "crates/chassis/src/shells/mod.rs": {
+    "sites": 7,
+    "by_name": {
+     "Piece": 7
+    }
+   },
+   "crates/chassis/src/shells/switchboard.rs": {
+    "sites": 7,
+    "by_name": {
+     "Piece": 6,
+     "Plate": 1
+    }
+   },
+   "crates/app/tests/bank_column.rs": {
+    "sites": 4,
+    "by_name": {
+     "LedMatrix": 2,
+     "TapeLabel": 1,
+     "Piece": 1
+    }
+   },
+   "crates/chassis/src/shaders.rs": {
+    "sites": 3,
+    "by_name": {
+     "led_params": 1,
+     "led_grid": 1,
+     "tape_params": 1
+    }
+   },
+   "crates/app/src/column.rs": {
+    "sites": 3,
+    "by_name": {
+     "LedMatrix": 1,
+     "TapeLabel": 1,
+     "Piece": 1
+    }
+   },
+   "crates/chassis/src/cabinet.rs": {
+    "sites": 2,
+    "by_name": {
+     "bank_pieces": 1,
+     "Piece": 1
+    }
+   },
+   "crates/chassis/src/lib.rs": {
+    "sites": 1,
+    "by_name": {
+     "Piece": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/tests/bank_column.rs",
+   "crates/chassis/src/shaders.rs"
+  ]
+ },
+ "crates/tmux-cc/src/codec.rs": {
+  "measured": {
+   "file": "crates/tmux-cc/src/codec.rs",
+   "A": 3,
+   "D": 4,
+   "B": 15,
+   "C": 94,
+   "leak": 12,
+   "score": 75,
+   "vocab": [
+    "Codec",
+    "codec",
+    "next_id",
+    "in_block",
+    "CommandId",
+    "line_done"
+   ],
+   "vocabulary": [
+    "Codec",
+    "CommandId",
+    "OpenBlock",
+    "a_block_survives_arbitrary_chunk_boundaries",
+    "a_body_line_reaches_its_block_in_the_buffer_it_arrived_in",
+    "a_foreign_line_is_reported_not_swallowed",
+    "a_known_name_with_the_wrong_shape_is_malformed_not_unknown",
+    "a_line_without_its_newline_is_not_an_event_yet",
+    "a_mismatched_guard_drops_the_body_and_says_so",
+    "a_percent_line_inside_a_block_is_body_not_notification",
+    "a_reply_pairs_with_the_command_that_asked",
+    "a_solicited_block_with_nothing_pending_is_unsolicited",
+    "a_window_name_is_the_rest_of_the_line",
+    "an_empty_output_payload_is_still_an_output",
+    "an_error_block_still_pairs_and_says_so",
+    "an_unknown_notification_keeps_its_bytes",
+    "clear_pending",
+    "close_block",
+    "codec",
+    "exit_carries_a_reason_only_when_there_is_one",
+    "extended_output_splits_at_the_first_colon_and_keeps_later_ones",
+    "guard_fields",
+    "in_block",
+    "line_done",
+    "next_id",
+    "output_arrives_unescaped_and_keeps_its_spacing",
+    "parse_notification",
+    "rest_after_first_space",
+    "the_attach_burst_never_takes_a_pending_slot"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/tmux-cc/src/codec.rs",
+   "A": 3,
+   "eA": 2,
+   "gA": 0.37,
+   "B": 15,
+   "eB": 4,
+   "gB": 1.2,
+   "C": 94,
+   "eC": 8,
+   "gC": 2.24,
+   "D": 4,
+   "eD": 3,
+   "gD": 0.26,
+   "leak": 12,
+   "note": "",
+   "flags": "B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "Codec",
+   "CommandId",
+   "OpenBlock",
+   "a_block_survives_arbitrary_chunk_boundaries",
+   "a_body_line_reaches_its_block_in_the_buffer_it_arrived_in",
+   "a_foreign_line_is_reported_not_swallowed",
+   "a_known_name_with_the_wrong_shape_is_malformed_not_unknown",
+   "a_line_without_its_newline_is_not_an_event_yet",
+   "a_mismatched_guard_drops_the_body_and_says_so",
+   "a_percent_line_inside_a_block_is_body_not_notification",
+   "a_reply_pairs_with_the_command_that_asked",
+   "a_solicited_block_with_nothing_pending_is_unsolicited",
+   "a_window_name_is_the_rest_of_the_line",
+   "an_empty_output_payload_is_still_an_output",
+   "an_error_block_still_pairs_and_says_so",
+   "an_unknown_notification_keeps_its_bytes",
+   "clear_pending",
+   "close_block",
+   "codec",
+   "exit_carries_a_reason_only_when_there_is_one",
+   "extended_output_splits_at_the_first_colon_and_keeps_later_ones",
+   "guard_fields",
+   "in_block",
+   "line_done",
+   "next_id",
+   "output_arrives_unescaped_and_keeps_its_spacing",
+   "parse_notification",
+   "rest_after_first_space",
+   "the_attach_burst_never_takes_a_pending_slot"
+  ],
+  "A_files": [
+   "crates/app/src/tmux.rs",
+   "crates/tmux-cc/src/event.rs",
+   "crates/tmux-cc/src/lib.rs"
+  ],
+  "B_files": {
+   "crates/app/src/tmux.rs": {
+    "sites": 23,
+    "by_name": {
+     "codec": 16,
+     "CommandId": 3,
+     "Codec": 3,
+     "clear_pending": 1
+    }
+   },
+   "crates/tmux-cc/src/lib.rs": {
+    "sites": 15,
+    "by_name": {
+     "codec": 6,
+     "Codec": 5,
+     "CommandId": 4
+    }
+   },
+   "crates/tmux-cc/tests/support/mod.rs": {
+    "sites": 14,
+    "by_name": {
+     "codec": 10,
+     "Codec": 4
+    }
+   },
+   "crates/tmux-cc/src/event.rs": {
+    "sites": 10,
+    "by_name": {
+     "codec": 8,
+     "CommandId": 2
+    }
+   },
+   "crates/app/tests/tmux_flow.rs": {
+    "sites": 6,
+    "by_name": {
+     "codec": 6
+    }
+   },
+   "crates/tmux-cc/Cargo.toml": {
+    "sites": 4,
+    "by_name": {
+     "codec": 4
+    }
+   },
+   "crates/tmux-cc/tests/transcripts.rs": {
+    "sites": 4,
+    "by_name": {
+     "codec": 3,
+     "CommandId": 1
+    }
+   },
+   "crates/tmux-cc/tests/live_tmux.rs": {
+    "sites": 4,
+    "by_name": {
+     "codec": 3,
+     "CommandId": 1
+    }
+   },
+   "crates/tmux-cc/examples/record.rs": {
+    "sites": 4,
+    "by_name": {
+     "codec": 4
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 3,
+    "by_name": {
+     "codec": 3
+    }
+   },
+   "crates/tmux-cc/tests/transcripts/README.md": {
+    "sites": 2,
+    "by_name": {
+     "codec": 2
+    }
+   },
+   "crates/app/Cargo.toml": {
+    "sites": 2,
+    "by_name": {
+     "codec": 2
+    }
+   },
+   "crates/tmux-cc/src/command.rs": {
+    "sites": 1,
+    "by_name": {
+     "codec": 1
+    }
+   },
+   "crates/tmux-cc/src/escape.rs": {
+    "sites": 1,
+    "by_name": {
+     "codec": 1
+    }
+   },
+   "crates/term/src/tmux_cc.rs": {
+    "sites": 1,
+    "by_name": {
+     "codec": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/Cargo.toml",
+   "crates/app/src/window.rs",
+   "crates/app/tests/tmux_flow.rs",
+   "crates/term/src/tmux_cc.rs",
+   "crates/tmux-cc/Cargo.toml",
+   "crates/tmux-cc/examples/record.rs",
+   "crates/tmux-cc/src/command.rs",
+   "crates/tmux-cc/src/escape.rs",
+   "crates/tmux-cc/tests/live_tmux.rs",
+   "crates/tmux-cc/tests/support/mod.rs",
+   "crates/tmux-cc/tests/transcripts.rs",
+   "crates/tmux-cc/tests/transcripts/README.md"
+  ]
+ },
+ "crates/chassis/src/shells/mod.rs": {
+  "measured": {
+   "file": "crates/chassis/src/shells/mod.rs",
+   "A": 1,
+   "D": 11,
+   "B": 3,
+   "C": 4,
+   "leak": 2,
+   "score": 3,
+   "vocab": [
+    "plate_region",
+    "row_overhang"
+   ],
+   "vocabulary": [
+    "plate_region",
+    "row_overhang"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/chassis/src/shells/mod.rs",
+   "A": 1,
+   "eA": 2,
+   "gA": -0.63,
+   "B": 3,
+   "eB": 3,
+   "gB": 0.0,
+   "C": 4,
+   "eC": 5,
+   "gC": -0.2,
+   "D": 11,
+   "eD": 3,
+   "gD": 1.18,
+   "leak": 2,
+   "note": "",
+   "flags": "D high (hub)",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "plate_region",
+   "row_overhang"
+  ],
+  "A_files": [
+   "crates/chassis/src/furniture.rs"
+  ],
+  "B_files": {
+   "crates/chassis/src/furniture.rs": {
+    "sites": 2,
+    "by_name": {
+     "plate_region": 1,
+     "row_overhang": 1
+    }
+   },
+   "crates/chassis/src/shaders.rs": {
+    "sites": 1,
+    "by_name": {
+     "plate_region": 1
+    }
+   },
+   "crates/chassis/src/paint.rs": {
+    "sites": 1,
+    "by_name": {
+     "row_overhang": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/chassis/src/paint.rs",
+   "crates/chassis/src/shaders.rs"
+  ]
+ },
+ "crates/term/src/session.rs": {
+  "measured": {
+   "file": "crates/term/src/session.rs",
+   "A": 4,
+   "D": 2,
+   "B": 27,
+   "C": 146,
+   "leak": 23,
+   "score": 124,
+   "vocab": [
+    "Pumped",
+    "is_idle",
+    "Session",
+    "READ_BUF",
+    "INPUT_CAP",
+    "grid_cols"
+   ],
+   "vocabulary": [
+    "INPUT_CAP",
+    "Pumped",
+    "READ_BUF",
+    "Session",
+    "SessionConfig",
+    "child_gone",
+    "control_mode_writer",
+    "drop_input_in_control_mode",
+    "expire_sync",
+    "flush_input",
+    "grid_cols",
+    "grid_rows",
+    "is_finished",
+    "is_idle",
+    "leave_control_mode",
+    "queued_input",
+    "scrollback",
+    "working_directory"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/term/src/session.rs",
+   "A": 4,
+   "eA": 3,
+   "gA": 0.26,
+   "B": 27,
+   "eB": 5,
+   "gB": 1.54,
+   "C": 146,
+   "eC": 8,
+   "gC": 2.64,
+   "D": 2,
+   "eD": 4,
+   "gD": -0.63,
+   "leak": 23,
+   "note": "",
+   "flags": "B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "INPUT_CAP",
+   "Pumped",
+   "READ_BUF",
+   "Session",
+   "SessionConfig",
+   "child_gone",
+   "control_mode_writer",
+   "drop_input_in_control_mode",
+   "expire_sync",
+   "flush_input",
+   "grid_cols",
+   "grid_rows",
+   "is_finished",
+   "is_idle",
+   "leave_control_mode",
+   "queued_input",
+   "scrollback",
+   "working_directory"
+  ],
+  "A_files": [
+   "crates/app/src/main.rs",
+   "crates/app/src/window.rs",
+   "crates/term/src/lib.rs",
+   "crates/term/src/tmux_pane.rs"
+  ],
+  "B_files": {
+   "crates/term/tests/transcript.rs": {
+    "sites": 31,
+    "by_name": {
+     "SessionConfig": 6,
+     "scrollback": 5,
+     "queued_input": 5,
+     "working_directory": 4,
+     "is_finished": 3,
+     "Session": 3,
+     "grid_cols": 2,
+     "grid_rows": 2,
+     "INPUT_CAP": 1
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 20,
+    "by_name": {
+     "scrollback": 7,
+     "SessionConfig": 6,
+     "control_mode_writer": 2,
+     "leave_control_mode": 2,
+     "Session": 2,
+     "INPUT_CAP": 1
+    }
+   },
+   "crates/term/src/tmux_pane.rs": {
+    "sites": 8,
+    "by_name": {
+     "Pumped": 3,
+     "Session": 3,
+     "scrollback": 2
+    }
+   },
+   "crates/app/tests/keyboard_scroll.rs": {
+    "sites": 7,
+    "by_name": {
+     "scrollback": 3,
+     "SessionConfig": 3,
+     "working_directory": 1
+    }
+   },
+   "crates/app/src/tmux.rs": {
+    "sites": 7,
+    "by_name": {
+     "scrollback": 4,
+     "control_mode_writer": 2,
+     "leave_control_mode": 1
+    }
+   },
+   "crates/term/src/lib.rs": {
+    "sites": 6,
+    "by_name": {
+     "scrollback": 2,
+     "SessionConfig": 1,
+     "INPUT_CAP": 1,
+     "Pumped": 1,
+     "Session": 1
+    }
+   },
+   "crates/app/tests/shed_notice.rs": {
+    "sites": 6,
+    "by_name": {
+     "SessionConfig": 2,
+     "INPUT_CAP": 2,
+     "working_directory": 1,
+     "scrollback": 1
+    }
+   },
+   "crates/app/tests/clipboard_keys.rs": {
+    "sites": 5,
+    "by_name": {
+     "SessionConfig": 3,
+     "working_directory": 1,
+     "scrollback": 1
+    }
+   },
+   "crates/app/tests/ime.rs": {
+    "sites": 5,
+    "by_name": {
+     "SessionConfig": 3,
+     "working_directory": 1,
+     "scrollback": 1
+    }
+   },
+   "crates/app/tests/pointer_live_settings.rs": {
+    "sites": 5,
+    "by_name": {
+     "SessionConfig": 3,
+     "working_directory": 1,
+     "scrollback": 1
+    }
+   },
+   "crates/app/tests/channel_bank.rs": {
+    "sites": 5,
+    "by_name": {
+     "SessionConfig": 3,
+     "working_directory": 1,
+     "scrollback": 1
+    }
+   },
+   "crates/app/tests/pointer.rs": {
+    "sites": 5,
+    "by_name": {
+     "SessionConfig": 3,
+     "working_directory": 1,
+     "scrollback": 1
+    }
+   },
+   "crates/app/tests/tmux_flow.rs": {
+    "sites": 5,
+    "by_name": {
+     "SessionConfig": 3,
+     "working_directory": 1,
+     "scrollback": 1
+    }
+   },
+   "crates/app/tests/seam_drag.rs": {
+    "sites": 5,
+    "by_name": {
+     "SessionConfig": 3,
+     "working_directory": 1,
+     "scrollback": 1
+    }
+   },
+   "crates/app/tests/redraw_pacing.rs": {
+    "sites": 4,
+    "by_name": {
+     "SessionConfig": 2,
+     "working_directory": 1,
+     "scrollback": 1
+    }
+   },
+   "crates/tmux-cc/src/command.rs": {
+    "sites": 3,
+    "by_name": {
+     "scrollback": 3
+    }
+   },
+   "crates/term/src/grid.rs": {
+    "sites": 3,
+    "by_name": {
+     "scrollback": 3
+    }
+   },
+   "crates/term/src/render.rs": {
+    "sites": 3,
+    "by_name": {
+     "scrollback": 3
+    }
+   },
+   "crates/term/src/dcs.rs": {
+    "sites": 2,
+    "by_name": {
+     "control_mode_writer": 2
+    }
+   },
+   "crates/term/src/rio_grid.rs": {
+    "sites": 2,
+    "by_name": {
+     "scrollback": 2
+    }
+   },
+   "crates/term/src/viewport.rs": {
+    "sites": 2,
+    "by_name": {
+     "scrollback": 2
+    }
+   },
+   "crates/app/src/main.rs": {
+    "sites": 2,
+    "by_name": {
+     "SessionConfig": 2
+    }
+   },
+   "crates/crt-render/tests/glyph_survival.rs": {
+    "sites": 1,
+    "by_name": {
+     "scrollback": 1
+    }
+   },
+   "crates/term/Cargo.toml": {
+    "sites": 1,
+    "by_name": {
+     "scrollback": 1
+    }
+   },
+   "crates/term/tests/rio_grid_tests.rs": {
+    "sites": 1,
+    "by_name": {
+     "scrollback": 1
+    }
+   },
+   "crates/term/tests/scrollback.rs": {
+    "sites": 1,
+    "by_name": {
+     "scrollback": 1
+    }
+   },
+   "crates/term/src/search.rs": {
+    "sites": 1,
+    "by_name": {
+     "scrollback": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/src/tmux.rs",
+   "crates/app/tests/channel_bank.rs",
+   "crates/app/tests/clipboard_keys.rs",
+   "crates/app/tests/ime.rs",
+   "crates/app/tests/keyboard_scroll.rs",
+   "crates/app/tests/pointer.rs",
+   "crates/app/tests/pointer_live_settings.rs",
+   "crates/app/tests/redraw_pacing.rs",
+   "crates/app/tests/seam_drag.rs",
+   "crates/app/tests/shed_notice.rs",
+   "crates/app/tests/tmux_flow.rs",
+   "crates/crt-render/tests/glyph_survival.rs",
+   "crates/term/Cargo.toml",
+   "crates/term/src/dcs.rs",
+   "crates/term/src/grid.rs",
+   "crates/term/src/render.rs",
+   "crates/term/src/rio_grid.rs",
+   "crates/term/src/search.rs",
+   "crates/term/src/viewport.rs",
+   "crates/term/tests/rio_grid_tests.rs",
+   "crates/term/tests/scrollback.rs",
+   "crates/term/tests/transcript.rs",
+   "crates/tmux-cc/src/command.rs"
+  ]
+ },
+ "crates/term/src/fonts/subpixel.rs": {
+  "measured": {
+   "file": "crates/term/src/fonts/subpixel.rs",
+   "A": 2,
+   "D": 0,
+   "B": 7,
+   "C": 36,
+   "leak": 5,
+   "score": 26,
+   "vocab": [
+    "Layout",
+    "Configs",
+    "subpixel",
+    "APPEND_RGB",
+    "rgba_value",
+    "filter_row"
+   ],
+   "vocabulary": [
+    "APPEND_RGB",
+    "Configs",
+    "DEFAULT_FILTER",
+    "Layout",
+    "a_conditional_match_is_not_the_default",
+    "a_strokes_left_edge_goes_blue_and_its_right_edge_goes_red_under_rgb",
+    "an_append_does_not_displace_a_value_already_at_the_front",
+    "an_unconfigured_machine_renders_grey",
+    "default_config_files",
+    "filter_row",
+    "from_fc_rgba",
+    "host_layout",
+    "is_subpixel",
+    "layout_from_files",
+    "none_and_the_vertical_layouts_all_render_grey",
+    "rgba_first_value",
+    "rgba_value",
+    "subpixel",
+    "the_filter_spreads_a_lone_stripe_without_losing_it",
+    "the_filter_weights_are_freetypes_and_conserve_coverage",
+    "the_shipped_sub_pixel_rgb_file_reads_as_rgb"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/term/src/fonts/subpixel.rs",
+   "A": 2,
+   "eA": 1,
+   "gA": 0.63,
+   "B": 7,
+   "eB": 2,
+   "gB": 1.14,
+   "C": 36,
+   "eC": 4,
+   "gC": 2.0,
+   "D": 0,
+   "eD": 1,
+   "gD": -0.63,
+   "leak": 5,
+   "note": "",
+   "flags": "B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "APPEND_RGB",
+   "Configs",
+   "DEFAULT_FILTER",
+   "Layout",
+   "a_conditional_match_is_not_the_default",
+   "a_strokes_left_edge_goes_blue_and_its_right_edge_goes_red_under_rgb",
+   "an_append_does_not_displace_a_value_already_at_the_front",
+   "an_unconfigured_machine_renders_grey",
+   "default_config_files",
+   "filter_row",
+   "from_fc_rgba",
+   "host_layout",
+   "is_subpixel",
+   "layout_from_files",
+   "none_and_the_vertical_layouts_all_render_grey",
+   "rgba_first_value",
+   "rgba_value",
+   "subpixel",
+   "the_filter_spreads_a_lone_stripe_without_losing_it",
+   "the_filter_weights_are_freetypes_and_conserve_coverage",
+   "the_shipped_sub_pixel_rgb_file_reads_as_rgb"
+  ],
+  "A_files": [
+   "crates/chassis/src/paint.rs",
+   "crates/term/src/fonts/text.rs"
+  ],
+  "B_files": {
+   "crates/term/src/fonts/text.rs": {
+    "sites": 20,
+    "by_name": {
+     "Layout": 10,
+     "subpixel": 7,
+     "is_subpixel": 3
+    }
+   },
+   "crates/chassis/src/paint.rs": {
+    "sites": 8,
+    "by_name": {
+     "subpixel": 7,
+     "host_layout": 1
+    }
+   },
+   "crates/term/src/atlas.rs": {
+    "sites": 3,
+    "by_name": {
+     "subpixel": 3
+    }
+   },
+   "crates/xtask/src/compare.rs": {
+    "sites": 2,
+    "by_name": {
+     "subpixel": 2
+    }
+   },
+   "crates/term/Cargo.toml": {
+    "sites": 1,
+    "by_name": {
+     "subpixel": 1
+    }
+   },
+   "crates/term/src/fonts/raster.rs": {
+    "sites": 1,
+    "by_name": {
+     "subpixel": 1
+    }
+   },
+   "crates/term/src/fonts/mod.rs": {
+    "sites": 1,
+    "by_name": {
+     "subpixel": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/term/Cargo.toml",
+   "crates/term/src/atlas.rs",
+   "crates/term/src/fonts/mod.rs",
+   "crates/term/src/fonts/raster.rs",
+   "crates/xtask/src/compare.rs"
+  ]
+ },
+ "crates/crt-render/src/preset.rs": {
+  "measured": {
+   "file": "crates/crt-render/src/preset.rs",
+   "A": 2,
+   "D": 4,
+   "B": 13,
+   "C": 46,
+   "leak": 11,
+   "score": 39,
+   "vocab": [
+    "Scale",
+    "body_at",
+    "scale_of",
+    "NOISE_PNG",
+    "FrameBody",
+    "BURN_PASS"
+   ],
+   "vocabulary": [
+    "BURN_PASS",
+    "BloomQuality",
+    "BurnInQuality",
+    "CHASSIS_FRAME",
+    "FRAME_PASS",
+    "FrameBody",
+    "NOISE_PNG",
+    "NOISE_TEXTURE",
+    "Scale",
+    "Structure",
+    "WindowScaling",
+    "body_at",
+    "chassis_frame",
+    "filter_linear",
+    "float_framebuffer",
+    "pass_zero_is_the_block_the_mount_contract_asks_for",
+    "scale_of",
+    "the_accumulator_is_not_the_last_pass",
+    "the_first_pass_carries_the_chains_filter_for_the_terminal_grid",
+    "write_if_changed"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/crt-render/src/preset.rs",
+   "A": 2,
+   "eA": 2,
+   "gA": 0.0,
+   "B": 13,
+   "eB": 4,
+   "gB": 1.07,
+   "C": 46,
+   "eC": 6,
+   "gC": 1.85,
+   "D": 4,
+   "eD": 2,
+   "gD": 0.63,
+   "leak": 11,
+   "note": "",
+   "flags": "B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "BURN_PASS",
+   "BloomQuality",
+   "BurnInQuality",
+   "CHASSIS_FRAME",
+   "FRAME_PASS",
+   "FrameBody",
+   "NOISE_PNG",
+   "NOISE_TEXTURE",
+   "Scale",
+   "Structure",
+   "WindowScaling",
+   "body_at",
+   "chassis_frame",
+   "filter_linear",
+   "float_framebuffer",
+   "pass_zero_is_the_block_the_mount_contract_asks_for",
+   "scale_of",
+   "the_accumulator_is_not_the_last_pass",
+   "the_first_pass_carries_the_chains_filter_for_the_terminal_grid",
+   "write_if_changed"
+  ],
+  "A_files": [
+   "crates/crt-render/src/chain.rs",
+   "crates/crt-render/src/lib.rs"
+  ],
+  "B_files": {
+   "crates/crt-render/tests/pass_graph.rs": {
+    "sites": 11,
+    "by_name": {
+     "FRAME_PASS": 5,
+     "Structure": 4,
+     "CHASSIS_FRAME": 2
+    }
+   },
+   "crates/crt-burnin/MOUNT.md": {
+    "sites": 8,
+    "by_name": {
+     "float_framebuffer": 4,
+     "filter_linear": 2,
+     "pass_zero_is_the_block_the_mount_contract_asks_for": 1,
+     "the_first_pass_carries_the_chains_filter_for_the_terminal_grid": 1
+    }
+   },
+   "crates/crt-render/src/chain.rs": {
+    "sites": 6,
+    "by_name": {
+     "Structure": 6
+    }
+   },
+   "crates/crt-burnin/src/lib.rs": {
+    "sites": 5,
+    "by_name": {
+     "float_framebuffer": 4,
+     "filter_linear": 1
+    }
+   },
+   "crates/crt-render/tests/contracts.rs": {
+    "sites": 3,
+    "by_name": {
+     "Structure": 3
+    }
+   },
+   "crates/crt-render/src/lib.rs": {
+    "sites": 2,
+    "by_name": {
+     "CHASSIS_FRAME": 1,
+     "Structure": 1
+    }
+   },
+   "crates/crt-render/src/params.rs": {
+    "sites": 2,
+    "by_name": {
+     "WindowScaling": 1,
+     "CHASSIS_FRAME": 1
+    }
+   },
+   "crates/crt-render/src/device.rs": {
+    "sites": 2,
+    "by_name": {
+     "float_framebuffer": 2
+    }
+   },
+   "crates/crt-burnin/tests/mount.rs": {
+    "sites": 2,
+    "by_name": {
+     "float_framebuffer": 2
+    }
+   },
+   "crates/app/tests/structure_subset.rs": {
+    "sites": 2,
+    "by_name": {
+     "Structure": 2
+    }
+   },
+   "crates/crt-render/Cargo.toml": {
+    "sites": 1,
+    "by_name": {
+     "CHASSIS_FRAME": 1
+    }
+   },
+   "crates/crt-burnin/tests/burn_in.rs": {
+    "sites": 1,
+    "by_name": {
+     "float_framebuffer": 1
+    }
+   },
+   "crates/crt-render/tests/user_lut.rs": {
+    "sites": 1,
+    "by_name": {
+     "Structure": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/tests/structure_subset.rs",
+   "crates/crt-burnin/MOUNT.md",
+   "crates/crt-burnin/src/lib.rs",
+   "crates/crt-burnin/tests/burn_in.rs",
+   "crates/crt-burnin/tests/mount.rs",
+   "crates/crt-render/Cargo.toml",
+   "crates/crt-render/src/device.rs",
+   "crates/crt-render/src/params.rs",
+   "crates/crt-render/tests/contracts.rs",
+   "crates/crt-render/tests/pass_graph.rs",
+   "crates/crt-render/tests/user_lut.rs"
+  ]
+ },
+ "crates/term/src/fonts/sizing.rs": {
+  "measured": {
+   "file": "crates/term/src/fonts/sizing.rs",
+   "A": 3,
+   "D": 1,
+   "B": 13,
+   "C": 128,
+   "leak": 10,
+   "score": 98,
+   "vocab": [
+    "Round",
+    "Floor",
+    "antialias",
+    "dpr_scale",
+    "ScalePolicy",
+    "ResolvedFont"
+   ],
+   "vocabulary": [
+    "ComputedFont",
+    "Floor",
+    "ResolvedFont",
+    "Round",
+    "ScalePolicy",
+    "SizingRequest",
+    "a_scalable_face_is_squeezed_freely",
+    "antialias",
+    "base_font_scaling",
+    "compute_font",
+    "dpr_only_multiplies_the_geometric_scale",
+    "dpr_scale",
+    "fallback_chain",
+    "fallback_family",
+    "floor_policy_can_render_a_quarter_smaller_than_asked",
+    "font_width_is_accepted_only_on_whole_pixel_cells",
+    "integer_scale",
+    "is_pixel_exact_width",
+    "low_resolution_face_never_changes_raster_size",
+    "platform_monospace",
+    "scalable_face_moves_raster_size_and_keeps_scale_at_one",
+    "screen_scaling",
+    "snap_font_width",
+    "texture_scale"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/term/src/fonts/sizing.rs",
+   "A": 3,
+   "eA": 2,
+   "gA": 0.37,
+   "B": 13,
+   "eB": 3,
+   "gB": 1.33,
+   "C": 128,
+   "eC": 5,
+   "gC": 2.95,
+   "D": 1,
+   "eD": 2,
+   "gD": -0.63,
+   "leak": 10,
+   "note": "",
+   "flags": "B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "ComputedFont",
+   "Floor",
+   "ResolvedFont",
+   "Round",
+   "ScalePolicy",
+   "SizingRequest",
+   "a_scalable_face_is_squeezed_freely",
+   "antialias",
+   "base_font_scaling",
+   "compute_font",
+   "dpr_only_multiplies_the_geometric_scale",
+   "dpr_scale",
+   "fallback_chain",
+   "fallback_family",
+   "floor_policy_can_render_a_quarter_smaller_than_asked",
+   "font_width_is_accepted_only_on_whole_pixel_cells",
+   "integer_scale",
+   "is_pixel_exact_width",
+   "low_resolution_face_never_changes_raster_size",
+   "platform_monospace",
+   "scalable_face_moves_raster_size_and_keeps_scale_at_one",
+   "screen_scaling",
+   "snap_font_width",
+   "texture_scale"
+  ],
+  "A_files": [
+   "crates/app/src/window.rs",
+   "crates/term/src/atlas.rs",
+   "crates/term/src/lib.rs"
+  ],
+  "B_files": {
+   "crates/term/tests/pixel_properties.rs": {
+    "sites": 32,
+    "by_name": {
+     "SizingRequest": 11,
+     "integer_scale": 8,
+     "ScalePolicy": 6,
+     "ResolvedFont": 4,
+     "screen_scaling": 2,
+     "Floor": 1
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 28,
+    "by_name": {
+     "integer_scale": 11,
+     "ScalePolicy": 5,
+     "SizingRequest": 5,
+     "Floor": 4,
+     "ResolvedFont": 3
+    }
+   },
+   "crates/term/tests/antialias.rs": {
+    "sites": 12,
+    "by_name": {
+     "SizingRequest": 5,
+     "ScalePolicy": 2,
+     "integer_scale": 2,
+     "base_font_scaling": 2,
+     "Floor": 1
+    }
+   },
+   "crates/crt-render/tests/glyph_survival.rs": {
+    "sites": 8,
+    "by_name": {
+     "SizingRequest": 3,
+     "ScalePolicy": 2,
+     "integer_scale": 2,
+     "Floor": 1
+    }
+   },
+   "crates/term/tests/font_parity.rs": {
+    "sites": 8,
+    "by_name": {
+     "compute_font": 3,
+     "screen_scaling": 2,
+     "SizingRequest": 1,
+     "base_font_scaling": 1,
+     "fallback_family": 1
+    }
+   },
+   "crates/term/src/atlas.rs": {
+    "sites": 8,
+    "by_name": {
+     "ResolvedFont": 6,
+     "antialias": 2
+    }
+   },
+   "crates/term/src/lib.rs": {
+    "sites": 7,
+    "by_name": {
+     "ResolvedFont": 3,
+     "ScalePolicy": 2,
+     "SizingRequest": 2
+    }
+   },
+   "crates/term/tests/system_fonts.rs": {
+    "sites": 6,
+    "by_name": {
+     "ScalePolicy": 2,
+     "SizingRequest": 2,
+     "integer_scale": 1,
+     "antialias": 1
+    }
+   },
+   "crates/app/tests/size_badge.rs": {
+    "sites": 6,
+    "by_name": {
+     "ScalePolicy": 2,
+     "SizingRequest": 2,
+     "integer_scale": 1,
+     "Floor": 1
+    }
+   },
+   "crates/term/tests/scrollback.rs": {
+    "sites": 5,
+    "by_name": {
+     "ScalePolicy": 2,
+     "SizingRequest": 2,
+     "Floor": 1
+    }
+   },
+   "crates/term/tests/preedit.rs": {
+    "sites": 5,
+    "by_name": {
+     "ScalePolicy": 2,
+     "SizingRequest": 2,
+     "Floor": 1
+    }
+   },
+   "crates/term/src/render.rs": {
+    "sites": 2,
+    "by_name": {
+     "ResolvedFont": 1,
+     "integer_scale": 1
+    }
+   },
+   "crates/chassis/src/paint.rs": {
+    "sites": 1,
+    "by_name": {
+     "antialias": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/tests/size_badge.rs",
+   "crates/chassis/src/paint.rs",
+   "crates/crt-render/tests/glyph_survival.rs",
+   "crates/term/src/render.rs",
+   "crates/term/tests/antialias.rs",
+   "crates/term/tests/font_parity.rs",
+   "crates/term/tests/pixel_properties.rs",
+   "crates/term/tests/preedit.rs",
+   "crates/term/tests/scrollback.rs",
+   "crates/term/tests/system_fonts.rs"
+  ]
+ },
+ "crates/term/src/gpu.rs": {
+  "measured": {
+   "file": "crates/term/src/gpu.rs",
+   "A": 3,
+   "D": 0,
+   "B": 11,
+   "C": 38,
+   "leak": 8,
+   "score": 28,
+   "vocab": [
+    "Target",
+    "write_pgm",
+    "read_rgba",
+    "ascii_preview",
+    "TARGET_FORMAT",
+    "upscale_nearest"
+   ],
+   "vocabulary": [
+    "TARGET_FORMAT",
+    "Target",
+    "ascii_preview",
+    "distinct_luma_values",
+    "intermediate_channel_values",
+    "max_channel_delta",
+    "read_rgba",
+    "upscale_nearest",
+    "write_pgm"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/term/src/gpu.rs",
+   "A": 3,
+   "eA": 2,
+   "gA": 0.37,
+   "B": 11,
+   "eB": 3,
+   "gB": 1.18,
+   "C": 38,
+   "eC": 5,
+   "gC": 1.85,
+   "D": 0,
+   "eD": 1,
+   "gD": -0.63,
+   "leak": 8,
+   "note": "",
+   "flags": "B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "TARGET_FORMAT",
+   "Target",
+   "ascii_preview",
+   "distinct_luma_values",
+   "intermediate_channel_values",
+   "max_channel_delta",
+   "read_rgba",
+   "upscale_nearest",
+   "write_pgm"
+  ],
+  "A_files": [
+   "crates/app/src/window.rs",
+   "crates/term/src/lib.rs",
+   "crates/term/src/render.rs"
+  ],
+  "B_files": {
+   "crates/term/tests/pixel_properties.rs": {
+    "sites": 11,
+    "by_name": {
+     "intermediate_channel_values": 6,
+     "upscale_nearest": 3,
+     "distinct_luma_values": 2
+    }
+   },
+   "crates/term/src/render.rs": {
+    "sites": 5,
+    "by_name": {
+     "TARGET_FORMAT": 2,
+     "Target": 2,
+     "read_rgba": 1
+    }
+   },
+   "crates/app/tests/size_badge.rs": {
+    "sites": 5,
+    "by_name": {
+     "Target": 3,
+     "read_rgba": 2
+    }
+   },
+   "crates/crt-render/tests/support/mod.rs": {
+    "sites": 4,
+    "by_name": {
+     "TARGET_FORMAT": 2,
+     "read_rgba": 1,
+     "Target": 1
+    }
+   },
+   "crates/app/src/window.rs": {
+    "sites": 4,
+    "by_name": {
+     "Target": 4
+    }
+   },
+   "crates/crt-render/tests/user_lut.rs": {
+    "sites": 3,
+    "by_name": {
+     "TARGET_FORMAT": 1,
+     "read_rgba": 1,
+     "distinct_luma_values": 1
+    }
+   },
+   "crates/crt-render/tests/pass_graph.rs": {
+    "sites": 2,
+    "by_name": {
+     "max_channel_delta": 2
+    }
+   },
+   "crates/crt-render/tests/glyph_survival.rs": {
+    "sites": 1,
+    "by_name": {
+     "read_rgba": 1
+    }
+   },
+   "crates/term/tests/antialias.rs": {
+    "sites": 1,
+    "by_name": {
+     "intermediate_channel_values": 1
+    }
+   },
+   "crates/app/src/gpu.rs": {
+    "sites": 1,
+    "by_name": {
+     "TARGET_FORMAT": 1
+    }
+   },
+   "crates/term/src/lib.rs": {
+    "sites": 1,
+    "by_name": {
+     "Target": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/src/gpu.rs",
+   "crates/app/tests/size_badge.rs",
+   "crates/crt-render/tests/glyph_survival.rs",
+   "crates/crt-render/tests/pass_graph.rs",
+   "crates/crt-render/tests/support/mod.rs",
+   "crates/crt-render/tests/user_lut.rs",
+   "crates/term/tests/antialias.rs",
+   "crates/term/tests/pixel_properties.rs"
+  ]
+ },
+ "crates/term/src/size.rs": {
+  "measured": {
+   "file": "crates/term/src/size.rs",
+   "A": 4,
+   "D": 0,
+   "B": 15,
+   "C": 82,
+   "leak": 11,
+   "score": 60,
+   "vocab": [
+    "CellSize",
+    "MIN_ROWS",
+    "MIN_COLS",
+    "TermSize",
+    "term_size",
+    "physical_cell"
+   ],
+   "vocabulary": [
+    "CellSize",
+    "MIN_COLS",
+    "MIN_ROWS",
+    "TermSize",
+    "a_dpr_change_halves_the_grid_without_touching_the_window",
+    "a_window_too_small_for_one_cell_still_yields_a_usable_grid",
+    "fractional_dpr_rounds_the_cell_rather_than_truncating",
+    "grid_divides_the_window_by_the_cell",
+    "physical_cell",
+    "term_size"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/term/src/size.rs",
+   "A": 4,
+   "eA": 3,
+   "gA": 0.26,
+   "B": 15,
+   "eB": 4,
+   "gB": 1.2,
+   "C": 82,
+   "eC": 6,
+   "gC": 2.38,
+   "D": 0,
+   "eD": 1,
+   "gD": -0.63,
+   "leak": 11,
+   "note": "",
+   "flags": "B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "CellSize",
+   "MIN_COLS",
+   "MIN_ROWS",
+   "TermSize",
+   "a_dpr_change_halves_the_grid_without_touching_the_window",
+   "a_window_too_small_for_one_cell_still_yields_a_usable_grid",
+   "fractional_dpr_rounds_the_cell_rather_than_truncating",
+   "grid_divides_the_window_by_the_cell",
+   "physical_cell",
+   "term_size"
+  ],
+  "A_files": [
+   "crates/app/src/window.rs",
+   "crates/term/src/lib.rs",
+   "crates/term/src/session.rs",
+   "crates/term/src/tmux_pane.rs"
+  ],
+  "B_files": {
+   "crates/app/src/window.rs": {
+    "sites": 23,
+    "by_name": {
+     "term_size": 15,
+     "CellSize": 4,
+     "physical_cell": 3,
+     "TermSize": 1
+    }
+   },
+   "crates/term/tests/transcript.rs": {
+    "sites": 20,
+    "by_name": {
+     "term_size": 11,
+     "CellSize": 9
+    }
+   },
+   "crates/term/src/tmux_pane.rs": {
+    "sites": 9,
+    "by_name": {
+     "TermSize": 9
+    }
+   },
+   "crates/term/src/session.rs": {
+    "sites": 5,
+    "by_name": {
+     "TermSize": 5
+    }
+   },
+   "crates/app/tests/tmux_flow.rs": {
+    "sites": 4,
+    "by_name": {
+     "CellSize": 3,
+     "term_size": 1
+    }
+   },
+   "crates/app/tests/pointer_live_settings.rs": {
+    "sites": 3,
+    "by_name": {
+     "CellSize": 3
+    }
+   },
+   "crates/term/src/lib.rs": {
+    "sites": 2,
+    "by_name": {
+     "CellSize": 1,
+     "TermSize": 1
+    }
+   },
+   "crates/app/tests/clipboard_keys.rs": {
+    "sites": 2,
+    "by_name": {
+     "CellSize": 2
+    }
+   },
+   "crates/app/tests/ime.rs": {
+    "sites": 2,
+    "by_name": {
+     "CellSize": 2
+    }
+   },
+   "crates/app/tests/keyboard_scroll.rs": {
+    "sites": 2,
+    "by_name": {
+     "CellSize": 2
+    }
+   },
+   "crates/app/tests/channel_bank.rs": {
+    "sites": 2,
+    "by_name": {
+     "CellSize": 2
+    }
+   },
+   "crates/app/tests/pointer.rs": {
+    "sites": 2,
+    "by_name": {
+     "CellSize": 2
+    }
+   },
+   "crates/app/tests/seam_drag.rs": {
+    "sites": 2,
+    "by_name": {
+     "CellSize": 2
+    }
+   },
+   "crates/app/tests/shed_notice.rs": {
+    "sites": 2,
+    "by_name": {
+     "CellSize": 2
+    }
+   },
+   "crates/app/tests/redraw_pacing.rs": {
+    "sites": 2,
+    "by_name": {
+     "CellSize": 2
+    }
+   }
+  },
+  "leak_files": [
+   "crates/app/tests/channel_bank.rs",
+   "crates/app/tests/clipboard_keys.rs",
+   "crates/app/tests/ime.rs",
+   "crates/app/tests/keyboard_scroll.rs",
+   "crates/app/tests/pointer.rs",
+   "crates/app/tests/pointer_live_settings.rs",
+   "crates/app/tests/redraw_pacing.rs",
+   "crates/app/tests/seam_drag.rs",
+   "crates/app/tests/shed_notice.rs",
+   "crates/app/tests/tmux_flow.rs",
+   "crates/term/tests/transcript.rs"
+  ]
+ },
+ "crates/crt-burnin/src/decay.rs": {
+  "measured": {
+   "file": "crates/crt-burnin/src/decay.rs",
+   "A": 1,
+   "D": 0,
+   "B": 8,
+   "C": 29,
+   "leak": 7,
+   "score": 25,
+   "vocab": [
+    "max_dt",
+    "MASK_PARAM",
+    "decay_step",
+    "DecayClock",
+    "DECAY_PARAM",
+    "MIN_FADE_TIME"
+   ],
+   "vocabulary": [
+    "DECAY_PARAM",
+    "DecayClock",
+    "MASK_PARAM",
+    "MAX_FADE_TIME",
+    "MAX_FRAME_DELTA",
+    "MIN_FADE_TIME",
+    "a_backwards_clock_decays_by_nothing",
+    "burn_in_zero_decays_fully",
+    "changing_burn_in_does_not_restart_the_ghost",
+    "decay_step",
+    "decay_step_is_dt_over_fade_time",
+    "fade_time_matches_the_recorded_endpoints",
+    "fade_time_seconds",
+    "first_tick_decays_by_nothing",
+    "long_stall_is_clamped_to_one_frame_of_decay",
+    "max_dt"
+   ],
+   "note": ""
+  },
+  "expected": {},
+  "pick": {
+   "file": "crates/crt-burnin/src/decay.rs",
+   "A": 1,
+   "eA": 1,
+   "gA": 0.0,
+   "B": 8,
+   "eB": 2,
+   "gB": 1.26,
+   "C": 29,
+   "eC": 3,
+   "gC": 2.07,
+   "D": 0,
+   "eD": 1,
+   "gD": -0.63,
+   "leak": 7,
+   "note": "",
+   "flags": "B high",
+   "estimators": 3
+  },
+  "vocabulary": [
+   "DECAY_PARAM",
+   "DecayClock",
+   "MASK_PARAM",
+   "MAX_FADE_TIME",
+   "MAX_FRAME_DELTA",
+   "MIN_FADE_TIME",
+   "a_backwards_clock_decays_by_nothing",
+   "burn_in_zero_decays_fully",
+   "changing_burn_in_does_not_restart_the_ghost",
+   "decay_step",
+   "decay_step_is_dt_over_fade_time",
+   "fade_time_matches_the_recorded_endpoints",
+   "fade_time_seconds",
+   "first_tick_decays_by_nothing",
+   "long_stall_is_clamped_to_one_frame_of_decay",
+   "max_dt"
+  ],
+  "A_files": [
+   "crates/crt-burnin/src/lib.rs"
+  ],
+  "B_files": {
+   "crates/crt-burnin/src/lib.rs": {
+    "sites": 10,
+    "by_name": {
+     "DecayClock": 4,
+     "DECAY_PARAM": 3,
+     "MASK_PARAM": 3
+    }
+   },
+   "crates/crt-burnin/tests/burn_in.rs": {
+    "sites": 7,
+    "by_name": {
+     "decay_step": 7
+    }
+   },
+   "crates/crt-render/tests/burn_in_chain.rs": {
+    "sites": 4,
+    "by_name": {
+     "decay_step": 4
+    }
+   },
+   "crates/crt-burnin/tests/mount.rs": {
+    "sites": 3,
+    "by_name": {
+     "decay_step": 3
+    }
+   },
+   "crates/crt-render/tests/contracts.rs": {
+    "sites": 2,
+    "by_name": {
+     "fade_time_seconds": 2
+    }
+   },
+   "crates/crt-render/src/lib.rs": {
+    "sites": 1,
+    "by_name": {
+     "DecayClock": 1
+    }
+   },
+   "crates/crt-render/src/params.rs": {
+    "sites": 1,
+    "by_name": {
+     "DecayClock": 1
+    }
+   },
+   "crates/crt-render/src/pacing.rs": {
+    "sites": 1,
+    "by_name": {
+     "DecayClock": 1
+    }
+   }
+  },
+  "leak_files": [
+   "crates/crt-burnin/tests/burn_in.rs",
+   "crates/crt-burnin/tests/mount.rs",
+   "crates/crt-render/src/lib.rs",
+   "crates/crt-render/src/pacing.rs",
+   "crates/crt-render/src/params.rs",
+   "crates/crt-render/tests/burn_in_chain.rs",
+   "crates/crt-render/tests/contracts.rs"
+  ]
+ }
+}
