@@ -1,14 +1,14 @@
 #!/usr/bin/env tclsh9.0
-# Tests for spar-control.tcl: the drain socket a running dispatch
+# Tests for spar::control: the drain socket a running dispatch
 # listens on. Strategy mirrors test-pool.tcl: a Dispatcher driven by
 # fake_worker jobs, no real backends. The listener takes port 0 here so
 # the OS assigns a free port and parallel test runs never collide.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir test-helpers.tcl]
-source [file join $script_dir .. lib spar-state.tcl]
-source [file join $script_dir .. lib spar-dispatcher.tcl]
-source [file join $script_dir .. lib spar-control.tcl]
+package require spar::state
+package require spar::dispatcher
+package require spar::control
 
 proc wait_for {script {timeout_ms 5000}} {
     set deadline [expr {[clock milliseconds] + $timeout_ms}]

@@ -91,8 +91,9 @@ set script_dir  [file dirname $script_path]
 # Source backend libraries
 # ============================================================
 
-source [file join $script_dir lib spar-state.tcl]
-source [file join $script_dir lib spar-dispatcher.tcl]
+::tcl::tm::path add [file join $script_dir lib] [file join $script_dir vendor]
+package require spar::state
+package require spar::dispatcher
 source [file join $script_dir ui campaign-model.tcl]
 source [file join $script_dir ui log-window.tcl]
 source [file join $script_dir ui progress-table.tcl]

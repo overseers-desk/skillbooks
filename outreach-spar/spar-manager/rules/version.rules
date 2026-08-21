@@ -1,5 +1,5 @@
 # version.rules — yamlmuster ruleset for the SPAR spec-version gate.
-# Wired in Wave 2c. Translated from spar-validate.tcl validate_spec_version;
+# Wired in Wave 2c. Translated from spar::validate validate_spec_version;
 # loaded by spar::_yamlmuster_version and driven by that proc.
 #
 # BOTH rules are PREDICATES. Each message interpolates the per-call $label

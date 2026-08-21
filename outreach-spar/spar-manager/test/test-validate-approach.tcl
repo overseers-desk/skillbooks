@@ -1,9 +1,9 @@
 #!/usr/bin/env tclsh9.0
 package require yaml
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. lib spar-state.tcl]
-source [file join $script_dir .. lib spar-email.tcl]
 source [file join $script_dir test-helpers.tcl]
+package require spar::state
+package require spar::email
 
 set State [spar::State new]
 
@@ -728,7 +728,7 @@ set li3_issues [spar::validate_approach $li3_path "" "LI DM"]
 assert_eq [has_issue $li3_issues linkedin_note_too_long] 1 \
     "validate_approach: 450-char invitation_unavailable message → linkedin_note_too_long (cap binds either route)"
 
-# 27f. Render path: the projection keeps linkedin bodies (spar-state.tcl
+# 27f. Render path: the projection keeps linkedin bodies (spar::state
 # _project_message), so approach_validation_error's T6-T10 gate sees the
 # same length the dispatcher will send. Body-authored over-long note must
 # still fail through project_approach_data.

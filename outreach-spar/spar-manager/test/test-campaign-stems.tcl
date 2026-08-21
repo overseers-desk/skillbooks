@@ -4,8 +4,8 @@
 # cross-check warning, and P-dispatch agreement.
 package require yaml
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. lib spar-state.tcl]
 source [file join $script_dir test-helpers.tcl]
+package require spar::state
 
 set State [spar::State new]
 
@@ -93,7 +93,7 @@ assert_eq [llength $te_tasks_ns] 2 "plan block without stems → both rows eligi
 # ════════════════════════════════════════════════════════════════════════
 section "4. stems_unknown warning"
 
-source [file join $script_dir .. lib spar-validate.tcl]
+package require spar::validate
 
 set wu_cdata [dict create segments [dict create $te_segname [dict create stems {alpha ghost}]]]
 set wu_issues [spar::validate_campaign_stems $te_contacts $wu_cdata]
@@ -137,7 +137,7 @@ assert_eq [llength $wu_grouped] [llength $wu_vi] \
 # ════════════════════════════════════════════════════════════════════════
 section "5. P prepare_for_pool honours campaign stems"
 
-source [file join $script_dir .. lib spar-dispatch.tcl]
+package require spar::prompts
 
 proc _cs_make_dispatch_campaign {seg_name stems_yaml} {
     set base [make_temp_campaign]

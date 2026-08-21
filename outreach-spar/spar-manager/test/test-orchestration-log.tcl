@@ -16,8 +16,8 @@ source [file join $script_dir test-helpers.tcl]
 package require Tk
 wm withdraw .
 
-source [file join $script_dir .. lib spar-state.tcl]
-source [file join $script_dir .. lib spar-dispatcher.tcl]
+package require spar::state
+package require spar::dispatcher
 source [file join $script_dir .. ui log-window.tcl]
 
 # ── Scratch orchestration-log root, mirroring test-lib.tcl's idiom ─────

@@ -1,15 +1,16 @@
 #!/usr/bin/env tclsh9.0
-# test-email.tcl — Test suite for spar-email.tcl
+# test-email.tcl — Test suite for spar::email
 #
 # Run:  tclsh9.0 test/test-email.tcl
 # Exit: 0 on all pass, 1 on any failure.
 
 package require yaml
 
-# ── Source the library under test ────────────────────────────────────────
+# ── Load the library under test ──────────────────────────────────────────
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. lib spar-state.tcl]
-source [file join $script_dir .. lib spar-email.tcl]
+::tcl::tm::path add [file join $script_dir .. lib] [file join $script_dir .. vendor]
+package require spar::state
+package require spar::email
 
 # ── Minimal test framework ──────────────────────────────────────────────
 set ::passes   0

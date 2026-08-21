@@ -205,17 +205,8 @@ oo::class create spar::ui::DispatchController {
         set tids [spar::ui_transition_tids]
         set tid [lindex $tids $tnum]
 
-        foreach libfile {spar-dispatch.tcl spar-email.tcl} {
-            set path [file join $ScriptDir lib $libfile]
-            if {![file exists $path]} {
-                $Log log "Dispatch library not available ($libfile not found)."
-                return
-            }
-            if {[catch {uplevel #0 [list source $path]} err]} {
-                $Log log "Error loading $libfile: $err"
-                return
-            }
-        }
+        package require spar::prompts
+        package require spar::email
 
         # Parent-only selection: the implicit cohort is every leaf.
         if {[llength $child_items] == 0} {

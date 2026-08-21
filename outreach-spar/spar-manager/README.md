@@ -4,9 +4,11 @@ Tcl libraries and GUI for managing SPAR outreach campaigns. Provides a state mac
 
 ## Architecture
 
-A campaign is anchored on `campaign.yaml`. `lib/spar-state.tcl` classifies each roster row against the transition registry and exposes the eligibility ladder used by the progress table and the dispatcher. The registry is built at load time from per-class files under `transitions/` (`sweep.tcl`, `profile.tcl`, `approach.tcl`, `send_email.tcl`, `check_replies.tcl`, `linkedin_followup.tcl`, `manual_followup.tcl`); each class binds itself to a TID (`T1`, `T2`, `T6`, `T7`, and so on). T0 is the exception to the roster-row reading: its tasks are the census sources in a segment's `sweep.yaml`, since the segment it sweeps may have no roster yet, and the class supplies them through `campaign_tasks` (see `transitions/base.tcl`).
+The Tcl code under `lib/spar/` is a set of Tcl modules (`package require spar::state`, `spar::prompts`, `spar::dispatcher`, and so on); each entry script registers `lib/` and `vendor/` on the module path and requires what it needs, and `::spar::root` (set by `spar::lib`) is the checkout root every module locates `prompts/`, `rules/`, `transitions/` and the method directory from.
 
-Dispatch runs over one shared pool for both the CLI and the GUI. Each transition class exposes a `prepare_for_pool` method (in `transitions/*.tcl`, with the P/A phase prep in `lib/spar-dispatch.tcl`) that returns the worker proc and the per-row opts batch. The CLI (`spar-transition.tcl`) and the GUI (`spar-ui.tcl` via `ui/dispatch-controller.tcl`) each enqueue that batch onto a `spar::Dispatcher`, the mixed-type job pool defined in `lib/spar-dispatcher.tcl`. It subclasses the vendored `jobloop` module, so each job runs as a coroutine on the front-end's own event loop, with no worker thread. The state machine, validation, harnesses (`lib/spar-harness.tcl`), email helpers, and shared library (`lib/spar-lib.tcl`) are common to both paths. Validation (`lib/spar-validate.tcl`) runs on the vendored `yamlmuster` rule engine, so the checks live as declarative rules in `rules/*.rules`.
+A campaign is anchored on `campaign.yaml`. `lib/spar/state-1.0.tm` classifies each roster row against the transition registry and exposes the eligibility ladder used by the progress table and the dispatcher. The registry is built at load time from per-class files under `transitions/` (`sweep.tcl`, `profile.tcl`, `approach.tcl`, `send_email.tcl`, `check_replies.tcl`, `linkedin_followup.tcl`, `manual_followup.tcl`); each class binds itself to a TID (`T1`, `T2`, `T6`, `T7`, and so on). T0 is the exception to the roster-row reading: its tasks are the census sources in a segment's `sweep.yaml`, since the segment it sweeps may have no roster yet, and the class supplies them through `campaign_tasks` (see `transitions/base.tcl`).
+
+Dispatch runs over one shared pool for both the CLI and the GUI. Each transition class exposes a `prepare_for_pool` method (in `transitions/*.tcl`, with the P/A phase prep in `lib/spar/prompts-1.0.tm`) that returns the worker proc and the per-row opts batch. The CLI (`spar-transition.tcl`) and the GUI (`spar-ui.tcl` via `ui/dispatch-controller.tcl`) each enqueue that batch onto a `spar::Dispatcher`, the mixed-type job pool defined in `lib/spar/dispatcher-1.0.tm`. It subclasses the vendored `jobloop` module, so each job runs as a coroutine on the front-end's own event loop, with no worker thread. The state machine, validation, harnesses (`lib/spar/harness-1.0.tm`), email helpers, and shared library (`lib/spar/lib-1.0.tm`) are common to both paths. Validation (`lib/spar/validate-1.0.tm`) runs on the vendored `yamlmuster` rule engine, so the checks live as declarative rules in `rules/*.rules`.
 
 For deeper internals: `state-machine.md` covers the TIDs, validation gates, warnings catalogue, and pre/post Design-by-Contract markers. `docs/concurrency.md` covers the Dispatcher's coroutine model, the worker verbs, and the per-kind cap policy. `ui-design.md` covers the GUI zone layout. `spar-transition.tcl --help` prints the live transition catalogue with each transition's wiring status (`available`, `not-implemented`, `manual`, `blocked`, `n/a`).
 
@@ -23,10 +25,10 @@ For deeper internals: `state-machine.md` covers the TIDs, validation gates, warn
 
 | Tool | Used by | Purpose |
 |------|---------|---------|
-| `claude` | `lib/spar-harness.tcl` (harness) | Claude Code CLI for profile/approach generation |
-| `courier` | `lib/spar-email.tcl` | Query email account for reply checking |
-| `flock` | `lib/spar-dispatch.tcl` | Serialises the profile workers' chromium launches |
-| `mktemp` | `lib/spar-lib.tcl`, `transitions/send_email.tcl` | Temporary files for atomic TSV/YAML rewrites and the SMTP params file |
+| `claude` | `lib/spar/harness-1.0.tm` (harness) | Claude Code CLI for profile/approach generation |
+| `courier` | `lib/spar/email-1.0.tm` | Query email account for reply checking |
+| `flock` | `lib/spar/prompts-1.0.tm` | Serialises the profile workers' chromium launches |
+| `mktemp` | `lib/spar/lib-1.0.tm`, `transitions/send_email.tcl` | Temporary files for atomic TSV/YAML rewrites and the SMTP params file |
 
 Email sending (`transitions/smtp_send.tcl`) connects directly to the SES SMTP endpoint. The system is written assuming SES: SES rewrites the RFC 822 `Message-ID` header on every send, and the SES-assigned tracking id is captured from the `250 Ok <id>` SMTP response rather than from an API reply.
 
@@ -120,7 +122,7 @@ The campaign name, table and legend go to stdout; the warnings block and any err
 
 ### Harness
 
-The profile and approach harnesses (`spar::ProfileHarness`, `spar::ApproachHarness` in `lib/spar-harness.tcl`) run only inside the dispatcher; `<log-dir>` is resolved by `spar::resolve_logs_dir` (see Logs). To reproduce one profile or approach run, dispatch that row alone: `spar-transition.tcl <campaign.yaml> T1:<segment>/<stem>`.
+The profile and approach harnesses (`spar::ProfileHarness`, `spar::ApproachHarness` in `lib/spar/harness-1.0.tm`) run only inside the dispatcher; `<log-dir>` is resolved by `spar::resolve_logs_dir` (see Logs). To reproduce one profile or approach run, dispatch that row alone: `spar-transition.tcl <campaign.yaml> T1:<segment>/<stem>`.
 
 ### Tests
 
@@ -130,11 +132,11 @@ tclsh9.0 test/run.tcl   # parallel; honours SPAR_TEST_JOBS
 
 ## Logs
 
-`spar::resolve_logs_dir` (`lib/spar-lib.tcl`) creates `/var/local/log/spar/<folder>` if `/var/local/log/spar` exists, otherwise `$HOME/logs/spar/<folder>`. `<folder>` is `<dir_slug>-<stem>-<phase>-<datestamp>`, where `dir_slug` is the campaign yaml's normalised parent path with `/` replaced by `-`, `stem` is the yaml filename without extension, `phase` is `p` or `a`, and `datestamp` is Tcl `%Y%m%d-%H%M%S`. The dispatch API's `logs_dir` opt (`lib/spar-dispatch.tcl`) overrides path derivation; the supplied directory must already exist or `resolve_logs_dir` raises an error.
+`spar::resolve_logs_dir` (`lib/spar/lib-1.0.tm`) creates `/var/local/log/spar/<folder>` if `/var/local/log/spar` exists, otherwise `$HOME/logs/spar/<folder>`. `<folder>` is `<dir_slug>-<stem>-<phase>-<datestamp>`, where `dir_slug` is the campaign yaml's normalised parent path with `/` replaced by `-`, `stem` is the yaml filename without extension, `phase` is `p` or `a`, and `datestamp` is Tcl `%Y%m%d-%H%M%S`. The dispatch API's `logs_dir` opt (`lib/spar/prompts-1.0.tm`) overrides path derivation; the supplied directory must already exist or `resolve_logs_dir` raises an error.
 
 Created by dispatch runs only. `spar-transition.tcl` (CLI) and `spar-ui.tcl` (GUI) resolve identical paths for the same campaign and phase. `spar-progress.tcl`, state classification, and validation write nothing here.
 
-Per-stem files inside the run folder, written by `spar::Harness` (`lib/spar-harness.tcl`), with `<slug>` set to the file tail of `prompt_dir`:
+Per-stem files inside the run folder, written by `spar::Harness` (`lib/spar/harness-1.0.tm`), with `<slug>` set to the file tail of `prompt_dir`:
 
 - `<slug>-cost.jsonl`: one JSON record per `claude` invocation, summed by `spar::Harness cost_total`
 - `<slug>-profile.log` plus `<slug>-profile.log.json` (Claude session JSON, used for `--resume`): P-phase

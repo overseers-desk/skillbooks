@@ -2,7 +2,7 @@
 
 This document defines the file-based state machine that backs the SPAR Manager GUI. Both the **progress table** and the **transition manager** are derived views of the same underlying state — they are not separate scanning systems.
 
-The implementation target is `lib/spar-state.tcl`, a pure read-only library sourced by both `wish` (GUI) and `tclsh` (CLI).
+The implementation target is `lib/spar/state-1.0.tm`, a pure read-only library loaded by both `wish` (GUI) and `tclsh` (CLI).
 
 ## Architecture: two separate concerns
 
@@ -10,7 +10,7 @@ The implementation target is `lib/spar-state.tcl`, a pure read-only library sour
 
 **Transition registry** — a data table mapping each state to the set of valid transitions. Consulted to enumerate eligible contacts per transition type, and to decide which dispatch action to invoke.
 
-**Dispatch** — the proc or batch script that executes a transition. Called by the GUI when the user triggers a transition. Not part of `lib/spar-state.tcl`.
+**Dispatch** — the proc or batch script that executes a transition. Called by the GUI when the user triggers a transition. Not part of `lib/spar/state-1.0.tm`.
 
 ### Design principle: independent deployability
 
@@ -38,7 +38,7 @@ Before dispatch launches a Claude session that mutates project state (roster TSV
 
 After the AI session returns, the *same* validation runs again. Any new failure is the agent's fault. The orchestrator can then resume the agent (`claude --resume`) with a specific message: "you broke X, fix it" — the agent cannot deny responsibility because the pre-check passed.
 
-This is a pre/post-condition contract in the Design by Contract sense (Meyer, Eiffel). The contract holds an invariant: project state remains valid across each AI invocation. The orchestration layer enforces the contract; the validation library (`lib/spar-state.tcl`) defines what "valid" means.
+This is a pre/post-condition contract in the Design by Contract sense (Meyer, Eiffel). The contract holds an invariant: project state remains valid across each AI invocation. The orchestration layer enforces the contract; the validation library (`lib/spar/state-1.0.tm`) defines what "valid" means.
 
 ### Coding standard: `DbC-Pre` / `DbC-Post` markers
 
@@ -62,13 +62,13 @@ if {[llength $issues] > 0} { ... resume agent with the diff ... }
 2. The pair count equals the number of AI invocation sites, **not** the number of validation checks. A single `validate_campaign` call may run 10+ checks; that is one pre/post pair, not ten.
 3. Markers live in **orchestration logic** (dispatch scripts, harness scripts), not in validation procs. The validation library does not know whether it is being called pre or post.
 4. The two halves of a pair must call equivalent validation. Adding a check to the pre side without adding it to the post side breaks the contract — agent regressions slip through silently.
-5. Failure handling differs: pre-failure refuses to start; post-failure resumes the agent with the diff for correction (see `spar::Harness` subclasses' `validate_and_correct` method, implemented by `spar::ApproachHarness` and `spar::ProfileHarness` in `lib/spar-harness.tcl`).
+5. Failure handling differs: pre-failure refuses to start; post-failure resumes the agent with the diff for correction (see `spar::Harness` subclasses' `validate_and_correct` method, implemented by `spar::ApproachHarness` and `spar::ProfileHarness` in `lib/spar/harness-1.0.tm`).
 
 ### Where pairs live
 
 | AI call | Orchestration site | Pre-check | Post-check |
 |---|---|---|---|
-| P-phase profile generation | `ProfileHarness` (`lib/spar-harness.tcl`) | roster row well-formed (dispatcher-enforced) | `sanitise_roster_email` + `ProfileHarness::validate_and_correct` (`validate_profile` + resume-to-fix) |
+| P-phase profile generation | `ProfileHarness` (`lib/spar/harness-1.0.tm`) | roster row well-formed (dispatcher-enforced) | `sanitise_roster_email` + `ProfileHarness::validate_and_correct` (`validate_profile` + resume-to-fix) |
 | A-phase author draft | `ApproachHarness` author section | meta.env + roster row complete | draft markers extractable |
 | A-phase challenger spar | `ApproachHarness` spar loop | profile + draft accessible | verdict marker extractable |
 | A-phase author revision | `ApproachHarness` rev loop | challenger feedback present | draft + rationale markers extractable |
@@ -150,7 +150,7 @@ A profile missing its front matter, or with unparseable front matter, is classif
 `classify_segment` validates the roster schema before classifying any contacts. If the loaded roster lacks a `stem` column, `classify_segment` returns an error and halts — it does not silently produce wrong results.
 
 ```
-Error: roster missing required column 'stem' — run schema migration before using spar-state.tcl
+Error: roster missing required column 'stem' — run schema migration before using spar::state
 ```
 
 This is a hard failure, not a warning. Contact state is determined by file presence on disk (`segments/{segment}/{stem}.md`, `campaigns/{campaign}/{stem}.yaml`); without `stem` those paths cannot be constructed.
@@ -323,15 +323,15 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 | T   | State                | Secondary predicates (all, for dispatchable)            | Awaiting / blocked branch                                      | Source            |
 |-----|----------------------|---------------------------------------------------------|----------------------------------------------------------------|-------------------|
 | T0  | (no contact state)   | sweep.yaml source status base token ∉ {exhausted, unreachable} | sweep.yaml unparseable → blocked, "sweep.yaml does not parse". Segment with no sweep.yaml → no rows (not seeded) | transitions/sweep.tcl |
-| T1  | DISCOVERED           | —                                                       | —                                                              | lib/spar-state.tcl |
+| T1  | DISCOVERED           | —                                                       | —                                                              | lib/spar/state-1.0.tm |
 | T2  | PROFILED             | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — `spar::_approach_dispatch_gate`, SSOT with T4; #56) | — | transitions/approach.tcl |
 | T3  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
 | T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
-| T6  | APPROACHED ∨ SENT    | channel = `final_auto_send_channel`(contact): email → has_email ∧ ¬email_sent ∧ A(approach_path); linkedin → has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". channel ∉ {email, linkedin} (e.g. phone-first, or no final message): row is omitted entirely | lib/spar-state.tcl |
-| T7  | any ≠ EXCLUDED       | any_sent ∧ ¬any_replied ∧ email-known ∧ A(approach_path) | A invalid → "invalid_approach_yaml". No watchable address → row omitted. Dispatchable rows dispatch through spar::r::run (courier reply-check) | lib/spar-state.tcl |
-| T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | lib/spar-state.tcl |
-| T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | lib/spar-state.tcl (T9 branch) |
-| T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | lib/spar-state.tcl (T10 branch) |
+| T6  | APPROACHED ∨ SENT    | channel = `final_auto_send_channel`(contact): email → has_email ∧ ¬email_sent ∧ A(approach_path); linkedin → has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". channel ∉ {email, linkedin} (e.g. phone-first, or no final message): row is omitted entirely | lib/spar/state-1.0.tm |
+| T7  | any ≠ EXCLUDED       | any_sent ∧ ¬any_replied ∧ email-known ∧ A(approach_path) | A invalid → "invalid_approach_yaml". No watchable address → row omitted. Dispatchable rows dispatch through spar::r::run (courier reply-check) | lib/spar/state-1.0.tm |
+| T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | lib/spar/state-1.0.tm |
+| T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | lib/spar/state-1.0.tm (T9 branch) |
+| T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | lib/spar/state-1.0.tm (T10 branch) |
 
 [†] T6 sends each contact's own primary touch: `final_auto_send_channel` reads the contact's final round and returns the channel of its first email-or-linkedin message, so routing is per contact, not per campaign — an email-only contact in a linkedin-primary campaign dispatches by email (ses_send), a linkedin contact by linkedin_send. The contact's secondary and tertiary channels belong to T9/T10 with wait_days/wait_condition (issue #174); T6 sends only the first.
 
@@ -344,7 +344,7 @@ T7's coverage is bounded by its actuator: it watches one known address per conta
 
 ### Warnings catalog
 
-Grouped by validator proc; all live in `lib/spar-state.tcl`.
+Grouped by validator proc; all live in `lib/spar/state-1.0.tm`.
 
 #### `validate_roster` (per-segment roster quality)
 

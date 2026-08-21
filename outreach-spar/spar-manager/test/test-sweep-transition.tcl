@@ -6,9 +6,9 @@
 
 package require logger
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. lib spar-state.tcl]
-source [file join $script_dir .. lib spar-harness.tcl]
 source [file join $script_dir test-helpers.tcl]
+package require spar::state
+package require spar::harness
 
 set tmpdir [exec mktemp -d /tmp/spar-test-sweep.XXXXXX]
 lappend ::cleanup_dirs $tmpdir

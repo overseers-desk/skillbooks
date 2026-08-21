@@ -1,3 +1,8 @@
+# Module search path: lib/ (spar::*) and vendor/, registered once here so a
+# test's loader lines are plain `package require`.
+::tcl::tm::path add [file join [file dirname [file normalize [info script]]] .. lib] \
+    [file join [file dirname [file normalize [info script]]] .. vendor]
+
 # ── Minimal test framework ──────────────────────────────────────────────
 set ::passes   0
 set ::failures 0

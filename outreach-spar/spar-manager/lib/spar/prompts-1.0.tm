@@ -1,26 +1,12 @@
-# spar-dispatch.tcl — Async dispatcher class + phase runners (P, A).
-# Callable from both tclsh (CLI) and wish (GUI).
-# Does NOT call vwait — the caller's event loop handles that.
+# spar::prompts — the S, P and A phase preparers: each builds one prompt
+# directory per row from the templates under prompts/ and returns the
+# worker proc and per-row opts batch the Dispatcher runs
+# (spar::s/p/a::prepare_for_pool). Callable from both tclsh (CLI) and
+# wish (GUI); never calls vwait — the caller's event loop handles that.
 
 package require TclOO
+package require spar::lib
 
-# Idempotent load — top-level scripts (spar-transition.tcl, spar-ui.tcl,
-# test/test-*.tcl) may source this via multiple paths.
-# oo::class create is not idempotent, so guard it.
-if {[info exists ::spar::_dispatch_loaded]} {
-    package provide spar-dispatch 1.0
-    return
-}
-
-source [file join [file dirname [file normalize [info script]]] spar-lib.tcl]
-
-namespace eval spar {
-    variable _dispatch_loaded 1
-    # Captured at source time — info script inside a proc resolves to the
-    # calling script at invocation, not this file, which breaks path
-    # resolution when run from a test one dir deeper.
-    variable dispatch_script_dir [file dirname [file normalize [info script]]]
-}
 namespace eval spar::p {}
 namespace eval spar::a {}
 namespace eval spar::s {}
@@ -30,8 +16,7 @@ namespace eval spar::s {}
 # markers. Loader trims the trailing newline a text editor adds, so the
 # substituted result is byte-identical to the previous heredocs.
 proc spar::load_prompt_template {name} {
-    variable dispatch_script_dir
-    set path [file join $dispatch_script_dir .. prompts $name]
+    set path [file join $::spar::root prompts $name]
     set fd [open $path r]
     set s [read $fd]
     close $fd
@@ -130,20 +115,7 @@ proc spar::detect_browser_cmd {} {
     error "spar::detect_browser_cmd: neither browser-serialiser nor chromium on PATH"
 }
 
-source [file join $::spar::dispatch_script_dir spar-dispatcher.tcl]
-
-# _pool_pre_launch - bridge the Dispatcher's (row kind) pre-launch hook
-# to the CLI's (tid slug idx total) step_callback. Used by
-# spar-transition.tcl's dispatch_ready when --jobs=0 steps the shared
-# pool one row at a time. The ordinal is counted here (each row passes
-# the gate once) and the total is curried in at install, where the
-# batch count is already known.
-proc spar::_pool_pre_launch {step_callback total row kind} {
-    variable _step_ordinal
-    incr _step_ordinal
-    return [{*}$step_callback $kind $row $_step_ordinal $total]
-}
-
+package require spar::dispatcher
 
 # _population_prep_scope — shared scope resolution for the population-
 # tier dispatch entries (P and S). Campaign mode (opts.campaign_file):
@@ -268,9 +240,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
     # the pre-mediation era are swept once here.
     catch {file delete -force -- [file join $segment_dir .roster.lock]}
 
-    variable ::spar::dispatch_script_dir
-    set script_dir $::spar::dispatch_script_dir
-    set spar_p [file normalize [file join $script_dir .. .. spar-P-profile.md]]
+    set spar_p [file join [file dirname $::spar::root] spar-P-profile.md]
 
     set antifacts [dict getdef $cdata antifacts ""]
     set appendices [dict getdef $cdata prompt_appendices [dict create]]
@@ -455,7 +425,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         puts $fd "CONTACT_ORG=\"$org\""
         puts $fd "CONTACT_EMAIL=\"$email\""
         puts $fd "CONTACT_LINKEDIN=\"$linkedin\""
-        # Per-campaign cost-cap override (spar-harness.tcl reads
+        # Per-campaign cost-cap override (spar::harness reads
         # WORKER_COST_CAP_USD from meta.env). The profile path previously
         # never wrote it, so campaign.yaml could not tune the cap the
         # harness comment promised; this supplies it when the campaign
@@ -558,9 +528,7 @@ proc spar::a::_build_prompts {opts on_progress} {
     set sender_email [dict get $cdata sender email]
     set sender_org [dict getdef [dict get $cdata sender] organisation ""]
     set language [dict get $cdata language]
-    variable ::spar::dispatch_script_dir
-    set script_dir $::spar::dispatch_script_dir
-    set method [file normalize [file join $script_dir .. .. spar-A-approach.md]]
+    set method [file join [file dirname $::spar::root] spar-A-approach.md]
     set appendices [dict getdef $cdata prompt_appendices [dict create]]
     set appendix_a_author [dict getdef $appendices a_author ""]
     set appendix_a_challenger [dict getdef $appendices a_challenger ""]
@@ -930,9 +898,7 @@ proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
     set goal_path   [spar::segment_yaml_for_segment $segment_dir]
     set roster_path [spar::roster_path_for_segment $segment_dir]
 
-    variable ::spar::dispatch_script_dir
-    set spar_s [file normalize \
-        [file join $::spar::dispatch_script_dir .. .. spar-S-sweep.md]]
+    set spar_s [file join [file dirname $::spar::root] spar-S-sweep.md]
     foreach {path label} [list $sweep_path Sweep $goal_path Goal \
                                $spar_s SPAR-S] {
         if {![file exists $path]} { error "$label not found: $path" }
@@ -1076,5 +1042,3 @@ proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
     }
     return $created
 }
-
-package provide spar-dispatch 1.0

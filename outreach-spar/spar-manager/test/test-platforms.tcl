@@ -6,9 +6,9 @@
 package require yaml
 package require TclOO
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. lib spar-state.tcl]
-source [file join $script_dir .. lib spar-dispatch.tcl]
 source [file join $script_dir test-helpers.tcl]
+package require spar::state
+package require spar::prompts
 
 section "extract_platforms: vocabularies and derivation"
 

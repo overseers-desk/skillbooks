@@ -14,8 +14,8 @@
 package require yaml
 package require sha256
 set script_dir [file dirname [file normalize [info script]]]
-source [file join $script_dir .. lib spar-state.tcl]
 source [file join $script_dir test-helpers.tcl]
+package require spar::state
 
 # Approach YAML helper — line 1 is `profile_hash: sha256:<hex>` matching
 # the profile bytes, so classify_contact returns APPROACHED (not
@@ -278,7 +278,7 @@ $State destroy
 # Meta-assertion: the three direct approach_summary callers documented
 # in the issue body's bypass list (transitions/send_email.tcl,
 # ui/inspector.tcl) do NOT call approach_summary — they read fresh via
-# spar::read_approach_yaml. spar-dispatch.tcl's DbC sites construct a
+# spar::read_approach_yaml. spar::prompts's DbC sites construct a
 # fresh State per call so the cache is always empty there; they are
 # allowed to call either. This grep guards against accidental migration
 # of the two file-level bypass sites.

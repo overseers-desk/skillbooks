@@ -175,7 +175,7 @@ Re-read the campaign's plan block and `prompt_appendices` before starting each n
 
 ## 6. Approach file structure
 
-Approach files are YAML documents with a **closed vocabulary**: the runtime validator (`spar::validate_approach` in `spar-manager/lib/spar-validate.tcl`, which holds the authoritative key set) rejects any key you write outside the set below, emitting plain-language errors such as `unknown key 'X' at <level>` or `'X' at <level> belongs at <other_level>`.
+Approach files are YAML documents with a **closed vocabulary**: the runtime validator (`spar::validate_approach` in `spar-manager/lib/spar/validate-1.0.tm`, which holds the authoritative key set) rejects any key you write outside the set below, emitting plain-language errors such as `unknown key 'X' at <level>` or `'X' at <level> belongs at <other_level>`.
 
 **Canonical keys by level:**
 
@@ -261,14 +261,14 @@ rounds:
         date: "2026-04-15T10:00:00"
         from: "Name <email@example.com>"
         body: |
-          Reply body (ingested mechanically by spar-email.tcl).
+          Reply body (ingested mechanically by spar::email).
 fact_provenance:
   - claim: Fact asserted somewhere in the file.
     source: URL or profile reference.
 quality_checklist: Notes on §7 checks passed or flagged.
 ```
 
-Lifecycle fields (`actioned_date`, `replied_date`, `reply_summary`) are written by the dispatcher and reply-ingest stages — start them as `null` (or omit). Entries under `replies` are ingested by `spar-email.tcl`; its item shape (`direction`, `channel`, `date`, `from`, `body`) is mechanical, not part of the AI-authored vocabulary. `channel` names the channel the reply arrived on; the inbox ingest writes `email`, a manually recorded reply names its own.
+Lifecycle fields (`actioned_date`, `replied_date`, `reply_summary`) are written by the dispatcher and reply-ingest stages — start them as `null` (or omit). Entries under `replies` are ingested by `spar::email`; its item shape (`direction`, `channel`, `date`, `from`, `body`) is mechanical, not part of the AI-authored vocabulary. `channel` names the channel the reply arrived on; the inbox ingest writes `email`, a manually recorded reply names its own.
 
 **Reply email skeleton** (issue #79). When the §4.1.1 rule selects reply-on-thread, the final email message replaces `subject` and `to` with a `parent` block carrying the captured threading state:
 

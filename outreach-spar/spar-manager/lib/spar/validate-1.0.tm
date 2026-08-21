@@ -1,6 +1,6 @@
-# spar-validate.tcl — Validators for SPAR campaign artefacts: approach
+# spar::validate — validators for SPAR campaign artefacts: approach
 # YAML, profile front matter, roster TSV, campaign-level cross-checks,
-# sender block, and aggregated warnings. Sourced by spar-state.tcl which
+# sender block, and aggregated warnings. Required by spar::state, which
 # provides the readers used here.
 #
 # This file owns _approach_validation_error and _profile_validation_error
@@ -9,19 +9,14 @@
 
 package require sha256
 
-# yamlmuster is vendored beside the other modules in vendor/, found via the
-# same search path spar-harness.tcl registers; spar-validate.tcl adds it too
-# because the CLI, tests, GUI, and tpool parse workers source this file but not
-# spar-harness.tcl. The line only registers a module search path (no I/O, no
-# load); the actual `package require yamlmuster`, the instance, and the rules
-# load are deferred to spar::_yamlmuster_approach on first validation, so
-# sourcing this file, including in the tpool parse workers that never validate,
-# costs nothing.
-::tcl::tm::path add [file join [file dirname [file normalize [info script]]] .. vendor]
+package require spar::lib
 
-# Directory of this file, captured at source time so the lazy bootstrap can
-# locate rules/approach.rules independent of the caller's cwd.
-namespace eval spar { variable _validate_dir [file dirname [file normalize [info script]]] }
+# yamlmuster is vendored in vendor/, on the module path the entry script
+# registers. The `package require yamlmuster`, the instance, and the rules
+# load are deferred to spar::_yamlmuster_approach on first validation, so
+# loading this module, including in the tpool parse workers that never
+# validate, costs nothing.
+
 
 # approach_validation_error -- return first error-severity validation message for
 # a contact's approach file, or "" if clean. Used by transition `eligible` methods
@@ -59,8 +54,7 @@ proc spar::_issue {severity code contact_name message {extra {}}} {
 # text. Shared by the four per-kind accessors; the predicate registrations that
 # must precede the load stay in each accessor, since they differ by kind.
 proc spar::_yamlmuster_load {inst file label} {
-    variable _validate_dir
-    set fd [open [file join $_validate_dir .. rules $file] r]
+    set fd [open [file join $::spar::root rules $file] r]
     fconfigure $fd -encoding utf-8
     set script [read $fd]
     close $fd
@@ -841,7 +835,7 @@ proc spar::validate_sender_block {cdata} {
 # instances that still validate clean keep running until they are stamped.
 # CURRENT_SPEC_VERSION is the newest supported generation, used for stamping
 # advice. Files at an older supported generation are lifted to the current
-# in-memory shape by the loader (spar-lib.tcl), so consumers read one shape.
+# in-memory shape by the loader (spar::lib), so consumers read one shape.
 # ---------------------------------------------------------------------------
 namespace eval spar {
     variable CURRENT_SPEC_VERSION "2.1"
@@ -1814,4 +1808,3 @@ proc spar::validate_sweep_return_data {fm} {
     return [[spar::_yamlmuster_sweep_return] validate $fm -groups {sweep_return}]
 }
 
-package provide spar-validate 1.0
