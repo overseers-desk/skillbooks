@@ -8,15 +8,16 @@ and the tree it was built from. For each file that defines symbols the tool repo
   D      files, tests excluded, whose symbols it references (its out-degree; a hub is high D)
   B      files of any kind that mention any name in its vocabulary (grep)
   C      total such mentions
-  leak   B minus the files the graph already counted in A
-  score  C x leak/B, the rank that puts a leaking module first with no oracle
+  leak   B's non-test files minus the files the graph already counted in A (tests are in B,
+         reported beside it as B_tests, and are never leakage)
+  score  C x leak/(B's non-test files), the rank that puts a leaking module first with no oracle
 
 A file's vocabulary is the set of names it alone defines, plus its stem, filtered so that
 prose cannot inflate the count: a name with an underscore or an inner capital stays; a
 capitalised name stays, matched case-sensitively and, when it is also an English word, counted
 only in code with comments and strings stripped and prose files left out; a lowercase name or a stem goes when
 it is an English word (dictionary file, inflections stripped); any name that also names a
-symbol defined outside the tree (a standard-library or dependency type) goes; a programming
+symbol defined outside the tree (a standard-library or dependency type) or a directory in the tree goes; a programming
 commonplace the dictionary lacks (params, config, utils, upsert) goes; a stem that several files
 share, that names a dependency type, or that names a directory in the tree goes, and a shared stem
 is measured as a convention row instead. The JSON carries each module's full vocabulary, which a
@@ -182,25 +183,27 @@ def main():
     modules = []
     for f, ns in names_in.items():
         stem = os.path.splitext(os.path.basename(f))[0]
-        ws = {n for n in ns if len(defined_in[n]) == 1 and keep(n, stem) and n not in external}
+        ws = {n for n in ns if len(defined_in[n]) == 1 and keep(n, stem) and n not in external
+              and n.lower() not in dir_names}           # a name that is also a directory's name is a homonym
         if (len(stem) >= 3 and not english(stem) and len(stem_homes[stem]) == 1
                 and stem.lower() not in external_lower and stem.lower() not in dir_names):
             ws.add(stem)   # a stem shared by several files, named like a dependency type or a directory, is not one module's word
         if not ws:
-            modules.append(dict(file=f, A=len(graph_in[f]), D=len(graph_out[f]), B=0, C=0, leak=0,
-                                score=0, vocab=[], note="no distinctive vocabulary; B not measured"))
+            modules.append(dict(file=f, A=len(graph_in[f]), D=len(graph_out[f]), B=0, B_tests=0, C=0, leak=0,
+                                score=0, vocab=[], vocabulary=[], note="no distinctive vocabulary; B not measured"))
             continue
         gfiles, sites = grep(ws, {f})
-        leak = gfiles - graph_in[f]
-        score = round(sites * (len(leak) / max(len(gfiles), 1)))
-        modules.append(dict(file=f, A=len(graph_in[f]), D=len(graph_out[f]), B=len(gfiles), C=sites,
-                            leak=len(leak), score=score, vocab=sorted(ws, key=len)[:6],
+        nontest = {g for g in gfiles if not is_test(g)}
+        leak = nontest - graph_in[f]                    # tests are not leakage: A excludes them, so B's tests must too
+        score = round(sites * (len(leak) / max(len(nontest), 1)))
+        modules.append(dict(file=f, A=len(graph_in[f]), D=len(graph_out[f]), B=len(gfiles), B_tests=len(gfiles) - len(nontest),
+                            C=sites, leak=len(leak), score=score, vocab=sorted(ws, key=len)[:6],
                             vocabulary=sorted(ws), note=""))
     modules.sort(key=lambda r: (-r["score"], -r["B"]))
 
     conventions = []
     for n, homes in defined_in.items():
-        if len(homes) < 2 or not keep(n, "") or n in external or all(is_test(h) for h in homes):
+        if len(homes) < 2 or not keep(n, "") or n in external or n.lower() in dir_names or all(is_test(h) for h in homes):
             continue
         consumers = set()
         for s, f in home.items():
@@ -217,9 +220,9 @@ def main():
                                 A=sum(len(graph_in[h]) for h in homes), B=len(gfiles), C=sites))
     conventions.sort(key=lambda r: (-r["homes"], -r["B"]))
 
-    print("MODULES   score | leak |  A  |  D  |  B  |  C   | file | vocabulary sample")
+    print("MODULES   score | leak |  A  |  D  |  B (tests) |  C   | file | vocabulary sample")
     for r in modules[:a.top]:
-        print(f"{r['score']:5d} {r['leak']:5d} {r['A']:4d} {r['D']:4d} {r['B']:5d} {r['C']:6d}  {r['file']:44s} {','.join(r['vocab'])}{'  ' + r['note'] if r['note'] else ''}")
+        print(f"{r['score']:5d} {r['leak']:5d} {r['A']:4d} {r['D']:4d} {r['B']:4d} ({r['B_tests']:3d}) {r['C']:6d}  {r['file']:44s} {','.join(r['vocab'])}{'  ' + r['note'] if r['note'] else ''}")
     unmeasured = sum(1 for r in modules if r["note"])
     if unmeasured:
         print(f"({unmeasured} modules with no distinctive vocabulary: B, C not measured, A and D still hold)")
