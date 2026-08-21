@@ -202,8 +202,9 @@ proc spar::_pool_roster_update {row roster_path key_col key_val field new_val} {
 # ─── Worker code, loaded once into the main interpreter ──────────────────
 #
 # jobloop's workers are commands in this interpreter, not procs seeded into
-# a thread pool. The harness, email, and per-row transition helpers the
-# worker bodies call are sourced here; the bodies (harness_run / ses_send /
+# a thread pool. The harness and email libraries the worker bodies call
+# are sourced here; the per-row legs (spar::ses, spar::li, spar::imap)
+# arrive with the transition classes. The bodies (harness_run / ses_send /
 # linkedin_send / imap_poll) follow.
 #
 # Under jobloop each job runs as a coroutine on the front-end's event
@@ -224,9 +225,6 @@ apply {{} {
     set d $::spar::pool_script_dir
     source [file join $d spar-email.tcl]
     source [file join $d spar-harness.tcl]
-    source [file join $d .. transitions ses_send_one.tcl]
-    source [file join $d .. transitions linkedin_send_one.tcl]
-    source [file join $d .. transitions imap_check_one.tcl]
 }}
 
 
@@ -269,7 +267,7 @@ proc harness_run {row opts} {
     # prompt dir exactly as a live run would. The only side-effecting step
     # left is the claude exec inside the harness, which authors and writes
     # the output file, so skip it and report done. This mirrors
-    # ses_send_one's dry-run return. Read with plain dict ops so the check
+    # spar::ses::send_one's dry-run return. Read with plain dict ops so the check
     # needs no spar:: helpers.
     if {[dict exists $opts dry_run] && [dict get $opts dry_run]} {
         done $row [list dry_run 1]
@@ -341,7 +339,7 @@ proc ses_send {row opts} {
 }
 
 # linkedin_send - drive one row through the overseer's POST /run
-# (spar::li::send_one in transitions/linkedin_send_one.tcl). No delay_ms
+# (spar::li::send_one in transitions/send_email.tcl). No delay_ms
 # pacing here: the overseer's linkedin.com rate gate owns the cadence.
 # Serialised by set_kind_cap linkedin_send 1, installed beside ses_send's
 # cap.
