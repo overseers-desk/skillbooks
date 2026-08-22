@@ -40,17 +40,7 @@ Two ways a click-and-submit skill breaks on a machine other than the one it was 
 
 A response code is an observation, not a diagnosis. A 403 means the server rejected the request. It does not reveal why — the cause could be a User-Agent string, a missing header, a TLS fingerprint, an unsolved JS challenge, an IP block, or something else entirely. Each cause requires a different fix, and they must be distinguished by evidence, not by inference.
 
-Do not write a causal explanation into a skill or access pattern unless you have verified it with a test that would have produced a different result if the cause were different. An unverified explanation written into a file becomes a false premise for every future session that reads it.
-
-## Reject a cause that would block the human control too
-
-The user can often get the same data by hand: open the site in a real browser, click through, read the price off the page. When that succeeds, it is a control case, and it constrains what the cause of an automated failure can be.
-
-A proposed cause is invalid the moment it would have stopped the human control too. "The site needs a solved JS challenge," "the endpoint requires a signed token," "this is sophisticated bot detection": each of these, stated as the reason automation fails, describes an obstacle a human clicking the same site would also hit. If the human got through and the automation did not, the true cause is a local, resident difference between the two requests: a header, a TLS fingerprint, a cookie, a request pattern, a rate. Nothing else survives the control case.
-
-Check this before filing a cause, not after: does a normal human, through the site's own UI, get the data the automated path is being denied? If yes, a candidate cause needs to name what differs between that human's request and the automated one, since it cannot be a property of the site alone when the site let the human through. A cause that fails this check is rejected outright, not filed as a finding, however plausible it reads.
-
-This sharpens "diff the evidence between a working case and a broken case" above into a veto: the human control, once it succeeds, rules out every site-side explanation that fails to discriminate the two request paths.
+Do not write a causal explanation into a skill or access pattern unless you have verified it with a test that would have produced a different result if the cause were different. An unverified explanation written into a file becomes a false premise for every future session that reads it. A cause that would have blocked a human who succeeded on the same site fails this test too, and is rejected outright.
 
 ## When a fetch hangs or returns empty (not the same as blocked)
 
