@@ -124,6 +124,28 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 **RobCo Terminal** (`../RobCo-Terminal`, run of 2026-08-21, then three blind rounds recorded under `scatter-scope/tests/robco-terminal/`). Sixteen modules of a Rust workspace of roughly 59,000 lines, three Sonnet estimators. File-count estimates landed within a factor of three for ten of sixteen modules; site estimates were low by ten to thirty times across the board, which set the calibration rule. Flagged: the window module (a hub, twelve type consumers against two expected), the tmux gateway module (one type consumer against three expected, thirty mentioning files against nine, the leak signature), and the side the channel bank sits on (thirteen sites against three expected, no constant naming it). Two revivals verified their counts and named the mechanisms: the gateway concept carried on shared channel structs and in a lower crate's own vocabulary; the bank side recomputed from a scalar width at every consumer while a layout type already held the rectangles. The run predates the methodology's extraction and is its source. The three blind rounds that followed reproduced the bank side and the hub each time, added the coordinate unit (no type carries logical or physical, 57 sites) and the setting fan-out (one new setting, eight to twelve homes), and left the tmux carrier in the channel model as a judgment the owner holds: read as a second encoding in two rounds and as a shared vocabulary behind one translation seam in the third.
 
+### PLACE — Asserting the Market Position of Something Already Built
+
+**Phases:** Poll, Landscape, Audit, Contrast, Establish
+
+**Direction:** Inward, after the fact. The product exists and rivals are published; what is missing is an account of its position that a stranger could check. SAGE decides what to build before it exists; PLACE describes what was built, against a field that was not consulted while building.
+
+**What each phase does:**
+
+- **Poll** collects verbatim quotes from public discussion of this kind of product, each dated, linked, and mapped to a numbered pain. The pain taxonomy is authored once, over the merged corpus, in one file every other file cites by number; a demand reading sits beside it with the biases of the public corpus stated.
+- **Landscape** records what the rivals supply against the same pain numbers in a dated matrix, as their authors describe it, with a supply note per pain. The operator's own product is not a row. A companion table reads the discussion dynamics of the same venues: what kinds of post draw replies and what kinds draw only approval.
+- **Audit** is the one file written from the code: per pain, Solved, Partial, or None, with the mechanism, the source paths, and the ceiling the architecture imposes; plus a feature catalogue.
+- **Contrast** rates each shipped capability common, rare, or unique against the recorded field, and sorts the gaps into architectural and feasible. A description of the built product, not a build-priority ranking.
+- **Establish** derives the positioning the corpus supports and its ceiling, says plainly when there is no hook, and checks the name against the Audit, retiring one that overclaims.
+
+**Model allocation:** Poll collection and Landscape cells are Sonnet-tier under a fixed entry form. Taxonomy authoring, supply notes, the Audit, and Establish are Opus-tier. Contrast is Sonnet-tier once Landscape and Audit exist.
+
+**Procedure documents:** `market-place/place-methodology.md` and `market-place/INVARIANTS.md`.
+
+#### PLACE use cases
+
+**questlog** (`../questlog/research/`, snapshot May–June 2026). A native session browser for an AI coding agent, positioned against a field of about twenty session viewers, managers, and cost dashboards. Thirteen numbered pains authored from a corpus of verbatim forum and issue-tracker quotes; a dated matrix of the field against those numbers; a discussion-dynamics table showing that launches in this category top out around twenty-five comments without a grievance or numeric hook; a coverage table with source paths and rarity per capability; and a naming note that retired two overclaiming names. The run predates the methodology's extraction and is its source.
+
 ### How the methodologies relate
 
 SPAR generates outbound messages. Those messages produce replies. The replies arrive in an inbox processed by TEND. TEND's thread assembly recognises the SPAR outreach message in the conversation history and can route the reply accordingly — flagging a positive response rather than filing it as unsolicited inbound.
@@ -132,7 +154,9 @@ SIFT evaluates inbound listings. When SIFT's Target phase marks a listing as `ne
 
 SAGE defines what there is to sell. Its Establish phase produces the numbered claims a SPAR campaign's approach messages cite by number, and its displacement offer runs naturally as a SPAR campaign over an owned roster, with replies arriving through TEND. SAGE's decisions table is also the bounding box those messages may not escape: an approach draft promising anything outside it is caught at review, not sent.
 
-The methodologies share a structural principle: read before writing. SPAR profiles a contact before drafting a message. SIFT investigates a listing before scoring it. TEND threads a conversation before classifying the email. SAGE surveys a market before anyone rules on a parameter. In each case, the comprehension phase precedes the action phase, and the scoring rubric or taxonomy does the intellectual heavy lifting so that Sonnet-tier models can apply it reliably.
+PLACE positions what already shipped. Its Landscape answers, after the fact, the question SAGE's Survey asks before a market is entered, and its Establish produces the positioning and the user-language corpus a launch post or a SPAR campaign draws on; replies again arrive through TEND.
+
+The methodologies share a structural principle: read before writing. SPAR profiles a contact before drafting a message. SIFT investigates a listing before scoring it. TEND threads a conversation before classifying the email. SAGE surveys a market before anyone rules on a parameter. PLACE polls the users and records the field before the code is read. In each case, the comprehension phase precedes the action phase, and the scoring rubric or taxonomy does the intellectual heavy lifting so that Sonnet-tier models can apply it reliably.
 
 ## Other directories
 
