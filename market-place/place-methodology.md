@@ -47,16 +47,16 @@ Verbatim quotes from public discussion of this kind of product: forums, issue tr
 The form, as it reads in a run's file (a made-up entry):
 
 ```
-> "the one thing I want from it is to stop losing my place when it reloads"
+> "it still asks me twice before it will save, and the second time I have forgotten what I changed"
 > — handle, venue, Month YYYY (score N)
 > https://venue.example/thread/123#comment-456
-> Context: a release thread; said in reply to a feature the release added.
+> Context: a comparison thread; said of the product the speaker had just left.
 > Maps to: P4
 ```
 
 Where a claim has no quote behind it, the file says so in those words ("no verbatim complaint found; the closest is ..."), so that absence of evidence is never silently promoted to evidence of absence.
 
-An issue the category's upstream project has declined is marked as declined: it shows the maintainers turning away a need users plainly feel, which is the opening a third-party product fills.
+A request a rival's maintainers declined is marked as declined: it shows a need users plainly feel being turned away, which is an opening for another product.
 
 The Poll is also a corpus of language. Whoever later writes the product's copy takes their words from it, so that the product speaks to users in the vocabulary they already think in. The file says this at its head.
 
@@ -68,11 +68,11 @@ The counter-segment is part of the corpus: the voices that say this kind of prod
 
 ### L — Landscape
 
-A feature matrix of the field, dated. Rows are the rival products, including the category's own built-in baseline where one exists; columns are the pain numbers; cells are Yes, No, Partial, or unconfirmed, each with a few words of how. Capabilities are recorded as their authors describe them in launch posts and READMEs, not re-verified, and the file says so at its head. Star counts and last-active dates are approximate and omitted where unknown. The operator's own product does not appear: its coverage belongs to the Audit, and a row for it here would be the product reading the field through itself.
+A feature matrix of the field, dated. Rows are the rival products, including the incumbent or default the buyer already has where one exists; columns are the pain numbers; cells are Yes, No, Partial, or unconfirmed, each with a few words of how. Capabilities are recorded as their authors describe them in launch posts and READMEs, not re-verified, and the file says so at its head. Traction and activity figures are given in the venue's own currency, approximate, and omitted where unknown; where the field is commercial, price and licence are columns too. The operator's own product does not appear: its coverage belongs to the Audit, and a row for it here would be the product reading the field through itself.
 
 Below the matrix, a supply note per pain: how much of the field serves it, how, and what is absent from the whole field. The absences are what Contrast later rates as rare or unique, so they are stated carefully, as "documented in none of the surveyed products" rather than "nobody does this".
 
-The file names its re-snapshot trigger: a new product reaching the top tier, one abandoned, the upstream project shipping something that changes the ground, or a stated interval.
+The file names its re-snapshot trigger: a new rival reaching the top tier, one abandoned, a platform or standard the field depends on changing, or a stated interval.
 
 A companion file, where the corpus supports it, reads the discussion dynamics of the same venues: what kinds of post about this category draw replies and what kinds draw only approval, measured as comments against score across a table of posts with links, and the precedent for a launch of this product's kind in particular (what the nearest prior product drew, how often, with what comments). A venue with a search API is tabulated first, since its figures are cheap and complete; a venue without one is tabulated only as far as the collection reached, and the file says which. This is market fact, and lives with the market files; the positioning that follows from it is strategy and lives with the Audit.
 
@@ -80,9 +80,9 @@ The matrix is transcribed from the products' own pages, not from a summariser's 
 
 ### A — Audit
 
-The one file in the run written from the code rather than from the field, and it says so at its head. A coverage table, one row per pain: Solved, Partial, or None; the mechanism in a sentence; the source paths; and the ceiling, where the architecture or the upstream system forbids more than was built. A feature catalogue follows: each shipped feature with its code home and the pains it serves, including the quality properties that serve no single pain.
+The one file in the run written from the code rather than from the field, and it says so at its head. A coverage table, one row per pain: Solved, Partial, or None; the mechanism in a sentence; the source paths; and the ceiling, where the architecture or a dependency the product sits on forbids more than was built. A feature catalogue follows: each shipped feature with its code home and the pains it serves, including the quality properties that serve no single pain.
 
-The Audit reads the code, not the product's README, and is written by a reader with the source open; a coverage claim without a path behind it is a claim about intent. Three statuses a feature can have, and the third is the one a README never admits: built and wired, built but unreachable from the running binary (no key, no flag, no caller), and intended only (a config key or a doc sentence with nothing behind it). The Audit lists, separately, the README claims it found no code behind, the capabilities in the code the README does not mention, and the defects or stale comments that would mislead a reader of the source; a tree with no TODO markers is not thereby clean, since deferred work is often prose at the code that owns it.
+The Audit reads the code, not the product's README, and is written by a reader with the source open; a coverage claim without a path behind it is a claim about intent. Three statuses a feature can have, and the third is the one a README never admits: built and wired, built but unreachable from the shipped product (no control, no entry point, no caller), and intended only (a config key or a doc sentence with nothing behind it). The Audit lists, separately, the README claims it found no code behind, the capabilities in the code the README does not mention, and the defects or stale comments that would mislead a reader of the source; a tree with no TODO markers is not thereby clean, since deferred work is often prose at the code that owns it.
 
 ### C — Contrast
 
