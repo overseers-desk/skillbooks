@@ -28,7 +28,7 @@ Not a build-priority ranking: Contrast describes the built product, and a rare c
 
 ## Runs and the methodology
 
-A run is one product positioned once: a dated set of files the operator keeps beside the product, and re-snapshots when the field or the code changes. This methodology holds what every run shares. Nothing naming a run's product, its field, or its sources belongs here; INVARIANTS.md carries the rule.
+A run is one product positioned once: a set of files the operator keeps beside the product, each carrying its snapshot date in its head, re-snapshotted when the field or the code changes. This methodology holds what every run shares. Nothing naming a run's product, its field, or its sources belongs here; INVARIANTS.md carries the rule.
 
 ## The spine: one numbered taxonomy
 
@@ -43,6 +43,16 @@ Beside the taxonomy sits the demand reading: per pain, how often and how loudly 
 ### P — Poll
 
 Verbatim quotes from public discussion of this kind of product: forums, issue trackers of the product category's projects, long-form posts, talks. One entry per quote, in a fixed form: the quote in the speaker's own punctuation, an attribution line (handle or name, venue, date, and the venue's engagement figure where it has one), a working link, one or two lines of context, and the pain number or numbers. Where only a paraphrase can be had, it is marked as one and linked, and treated as a debt to repay with the verbatim text. A date known only roughly is written roughly; precision is not invented. Within a pain, entries sort oldest first, so the section reads as a timeline of the pain.
+
+The form, as it reads in a run's file (a made-up entry):
+
+```
+> "the one thing I want from it is to stop losing my place when it reloads"
+> — handle, venue, Month YYYY (score N)
+> https://venue.example/thread/123#comment-456
+> Context: a release thread; said in reply to a feature the release added.
+> Maps to: P4
+```
 
 Where a claim has no quote behind it, the file says so in those words ("no verbatim complaint found; the closest is ..."), so that absence of evidence is never silently promoted to evidence of absence.
 
