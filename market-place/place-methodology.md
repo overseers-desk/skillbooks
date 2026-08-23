@@ -26,6 +26,10 @@ The demand reading the taxonomy carries is published with the biases that shape 
 
 Not a build-priority ranking: Contrast describes the built product, and a rare capability is not thereby the next thing to build. Not a product-design method: no parameter is ruled on and no design competes; for that, SAGE. Not a review of the rivals: their capabilities are recorded as self-described and marked unconfirmed where they could not be, and the account says so.
 
+## Where the method has been
+
+The runs behind this document were products with a public engineering discourse: users who post on scored forums and file issues, rivals that publish READMEs and launch posts, a field where traction is visible. The mechanics here (engagement figures in the entry form, a discussion-dynamics table, issue trackers as a venue, self-described matrix cells) are that habitat's. A product whose buyers do not post, or a commercial field where the rival's claim is a price list and a sales page, keeps the spine and the phase order and re-chooses the venues and the matrix columns; the run's README says what it swapped and why, so the next run in that habitat starts from it.
+
 ## Runs and the methodology
 
 A run is one product positioned once: a set of files the operator keeps beside the product, each carrying its snapshot date in its head, re-snapshotted when the field or the code changes. This methodology holds what every run shares. Nothing naming a run's product, its field, or its sources belongs here; INVARIANTS.md carries the rule.
