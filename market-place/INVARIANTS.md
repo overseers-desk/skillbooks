@@ -26,13 +26,13 @@ Why: the corpus is evidence, and its entries are quoted downstream as user langu
 
 **Enforcement:** the entry form in the Poll procedure; the run README's conventions; the paraphrase marker is a standing debt.
 
-## I4. Rarity is rated against the recorded field, not against the world
+## I4. Rarity is rated against the recorded field, not against the world; position is argued against the marked competitors, not against the field
 
-**Test:** for each capability rated rare or unique, does the clause say which surveyed rivals come closest, and is "unique" phrased as documented in none of the surveyed products? A claim that nobody anywhere does this fails.
+**Test:** for each capability rated rare or unique, does the clause say which surveyed products come closest, and is "unique" phrased as documented in none of the surveyed products? A claim that nobody anywhere does this fails. For the positioning, does the matrix carry a competitor mark with its rule stated, and do the positioning sentences name rivals from the marked set? A file that calls every surveyed row a rival, or a positioning sentence whose rival is an unmarked row, fails.
 
-Why: the field matrix records self-descriptions of a surveyed set; it cannot prove a negative about the world, only about itself.
+Why: the field matrix records self-descriptions of a surveyed set; it cannot prove a negative about the world, only about itself. And the survey answers a supply question, so it is wide; the buyer weighs a few products at one moment, so the competition is narrow; the two are not the same set, and position argued against the wide one is argued against nobody.
 
-**Enforcement:** the Contrast procedure's wording; the matrix head states that cells are self-described and unconfirmed where not confirmed.
+**Enforcement:** the Contrast procedure's wording; the matrix head states that cells are self-described and unconfirmed where not confirmed, and states the competitor rule; Establish names the competitor set before it names a move.
 
 ## I5. The name and the outward claims stay inside the Audit
 
