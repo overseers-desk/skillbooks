@@ -4,7 +4,7 @@ Hard rules the rest of the methodology must not contradict. When a procedure, te
 
 ## I1. Pain numbers have one authoring home
 
-**Test:** for any pain number cited in a run, is there exactly one file that defines it, and does every other file cite it rather than restate it? A second file that defines a pain, or a number that means different things in two files, fails.
+**Test:** for any pain number cited in a run, grep the run for its defining sentence (the bold name and the sentence after it): one file holds it. Every other file carries the number, or the number with a short label, and no second definition. A second file that defines a pain, or a number that means different things in two files, fails.
 
 Why: the numbers are the spine; a second home lets the corpus, the field, and the code drift apart while still appearing to agree.
 
