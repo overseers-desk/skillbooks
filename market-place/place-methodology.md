@@ -52,6 +52,10 @@ The Poll is also a corpus of language. Whoever later writes the product's copy t
 
 Collection fans out by source; each collector returns entries in the fixed form and nothing else, and the taxonomy is authored by one reader over the merged corpus. Collection stops when a further sweep adds no new pain, and the run's notes record how many sweeps that took.
 
+Two mechanics decide whether the fan-out returns anything. Venues reached through an API (a search index, an issue tracker's CLI) fan out freely; venues reached through a shared headless browser are collected serially, one collector at a time, because parallel collectors starve one another and a starved fetch can read as an authentication failure. Every collector is briefed to return on a budget (so many calls, so many entries) rather than to wait on work of its own; a collector that stops with "waiting" and no entries is nudged once to return what it holds, and what it holds is taken, with the sweeps that did not return recorded as absences.
+
+The counter-segment is part of the corpus: the voices that say this kind of product is unnecessary, that the default is fine, that the feature everyone argues about was never noticed. They are often the highest-scored comments in a thread, and Establish needs them; they earn a pain number of their own rather than a footnote.
+
 ### L — Landscape
 
 A feature matrix of the field, dated. Rows are the rival products, including the category's own built-in baseline where one exists; columns are the pain numbers; cells are Yes, No, Partial, or unconfirmed, each with a few words of how. Capabilities are recorded as their authors describe them in launch posts and READMEs, not re-verified, and the file says so at its head. Star counts and last-active dates are approximate and omitted where unknown. The operator's own product does not appear: its coverage belongs to the Audit, and a row for it here would be the product reading the field through itself.
@@ -60,13 +64,15 @@ Below the matrix, a supply note per pain: how much of the field serves it, how, 
 
 The file names its re-snapshot trigger: a new product reaching the top tier, one abandoned, the upstream project shipping something that changes the ground, or a stated interval.
 
-A companion file, where the corpus supports it, reads the discussion dynamics of the same venues: what kinds of post about this category draw replies and what kinds draw only approval, measured as comments against score across a table of posts with links. This is market fact, and lives with the market files; the positioning that follows from it is strategy and lives with the Audit.
+A companion file, where the corpus supports it, reads the discussion dynamics of the same venues: what kinds of post about this category draw replies and what kinds draw only approval, measured as comments against score across a table of posts with links, and the precedent for a launch of this product's kind in particular (what the nearest prior product drew, how often, with what comments). A venue with a search API is tabulated first, since its figures are cheap and complete; a venue without one is tabulated only as far as the collection reached, and the file says which. This is market fact, and lives with the market files; the positioning that follows from it is strategy and lives with the Audit.
+
+The matrix is transcribed from the products' own pages, not from a summariser's account of them: a fetcher that returns a summary can invent a capability for a product that makes no such claim, and the run that taught this caught one before it reached the matrix. A cell the collector cannot see on the primary page is unconfirmed.
 
 ### A — Audit
 
 The one file in the run written from the code rather than from the field, and it says so at its head. A coverage table, one row per pain: Solved, Partial, or None; the mechanism in a sentence; the source paths; and the ceiling, where the architecture or the upstream system forbids more than was built. A feature catalogue follows: each shipped feature with its code home and the pains it serves, including the quality properties that serve no single pain.
 
-The Audit reads the code, not the product's README, and is written by a reader with the source open; a coverage claim without a path behind it is a claim about intent. A known defect that would mislead a reader of the code is listed.
+The Audit reads the code, not the product's README, and is written by a reader with the source open; a coverage claim without a path behind it is a claim about intent. Three statuses a feature can have, and the third is the one a README never admits: built and wired, built but unreachable from the running binary (no key, no flag, no caller), and intended only (a config key or a doc sentence with nothing behind it). The Audit lists, separately, the README claims it found no code behind, the capabilities in the code the README does not mention, and the defects or stale comments that would mislead a reader of the source; a tree with no TODO markers is not thereby clean, since deferred work is often prose at the code that owns it.
 
 ### C — Contrast
 
