@@ -4,7 +4,7 @@
 
 Every book read is a stat permanently raised.
 
-skillbooks is a Claude Code plugin of crafts your agent keeps. Each one reads the work cold, the way its next reader will: the editor who never saw the chat, the reviewer who takes no refactor at its word, the colleague who brings you only the questions that are really yours. That cold read is the one thing you cannot do to your own work, because you were in the room. Claude runs a skill automatically when a request fits its description, or you invoke one directly as `/skillbooks:<skill>`.
+skillbooks is a Claude Code plugin of crafts your agent keeps. Most read the work cold, the way its next reader will: the editor who never saw the chat, the reviewer who takes no refactor at its word, the colleague who brings you only the questions that are really yours. That cold read is the one thing you cannot do to your own work, because you were in the room. Claude runs a skill automatically when a request fits its description, or you invoke one directly as `/skillbooks:<skill>`.
 
 ## The moments it exists for
 
@@ -39,6 +39,7 @@ becomes
 | **nswp-scout** | Scout a codebase for redundant solutions, most sharply one problem solved twice in two vocabularies where neither arm earns its place, and other solutions that answer no live problem. | Codebase audit |
 | **drift-scout** | Find the stale debris a refactor, rename, or move left in a codebase's edges: extract each change's retired vocabulary, sweep the periphery, confirm by running, and report only what provably breaks or misleads. | Codebase audit |
 | **halfway-house** | Tell a decision your agent can safely settle from one that blocks the path: settle it, land the change, file the road not taken, and bring only the true forks to you. | Agent workflow |
+| **writing-invariants** | Write or amend a repository's `INVARIANTS.md`: the five questions a candidate rule has to pass, the single-line form, and why changing one is the owner's call rather than the author's. | Agent workflow |
 | **worklog** | Write a durable WORKLOG in the repository so a session's knowledge survives when its JSONL is gone or you continue the work on another machine or in a fresh session. | Handoff |
 | **typst-pdf** | Render a markdown file to PDF with Typst, optionally applying a per-repo template. | Rendering |
 
