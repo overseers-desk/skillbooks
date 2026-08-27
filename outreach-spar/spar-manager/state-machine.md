@@ -376,7 +376,7 @@ Codes: `invalid_yaml`, `unknown_key_<level>`, `wrong_level`, `missing_decisions`
 
 #### `validate_profile` (per profile file, only when file exists)
 
-Codes: `invalid_front_matter`, `unknown_key_<level>`, `wrong_level`, `missing_<key>` (×4 required root keys), `invalid_yield`, `invalid_star_rating`, `engagement_leak` (warmth, prior-correspondence, or angle content in the profile — I1), `profile_unreachable_without_exclusion`, `stale_<field>` (×3 warnings), `stale_date_excluded` (warning).
+Codes: `invalid_front_matter`, `unknown_key_<level>`, `wrong_level`, `missing_<key>` (×4 required root keys), `invalid_yield`, `invalid_star_rating`, `engagement_leak` (a warmth line, a prior-correspondence heading, a "no prior contact" claim, or angle content in the profile — I1; the contact's dated conduct is not a leak), `profile_unreachable_without_exclusion`, `stale_<field>` (×3 warnings), `stale_date_excluded` (warning).
 
 #### `detect_duplicates` (cross-segment; skips EXCLUDED)
 
