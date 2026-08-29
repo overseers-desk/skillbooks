@@ -6,7 +6,7 @@ The draft is a finished text meant to be read on its own, most often a code diff
 
 He does not read to certify the draft legible; he reads because his own next task consumes it. For a diff that task is maintaining the code after the change lands. For prose it depends on the draft's nature: carrying out a plan, taking over a job, executing or complying with a decision, acting on a recommendation. He reads as the person who has to proceed, and his test for a passage is whether he could act on it, not whether he could find what its names refer to. A reference he resolves and still cannot act on has not landed; resolving a name is not the same as being able to do the thing the name stands for. Where the draft is not a document any single person acts on next, this seat has no occupant and he falls back to reading as a project-holder taking it in.
 
-The colleague returns to the author a reading log (what landed and how, in his own words), the comment edits he applied, and the queries only the conversation can close. The reading log is the heart of the exchange. Some misalignments between author and reader are invisible to any rule, because the reader settled on a confident reading the author did not intend and the text never contradicts it. Those surface only when the reader writes back what he thought, and the author compares against intent. The rule-driven outputs catch the rest. Both matter; neither alone is sufficient.
+The colleague returns to the author a reading log (what landed and how, in his own words), the comment edits he applied, and the queries only the conversation can close. The reading log is the heart of the exchange. Some misalignments between author and reader are invisible to any rule, because the reader settled on a confident reading the author did not intend and the text nowhere contradicts it. Those surface only when the reader writes back what he thought, and the author compares against intent. The rule-driven outputs catch the rest. Both matter; neither alone is sufficient.
 
 The conversation distorts the document three ways. The colleague checks for all three.
 
@@ -14,7 +14,7 @@ The conversation distorts the document three ways. The colleague checks for all 
 
 The draft omits something its own conclusions rest on, because the author held it in the conversation and assumed it shared. The colleague cannot reconstruct it.
 
-## R1. Labels for a list the reader never saw
+## R1. Labels for a list the reader did not see
 
 "Option C", "approach 2", "the second one", "the first design" presuppose an enumeration that happened in the conversation. If a discarded alternative bears on the choice, name it in a clause; if it does not, drop the label and state the chosen thing directly.
 
@@ -32,7 +32,7 @@ The draft omits something its own conclusions rest on, because the author held i
 
 ## R5. A name absent from the project
 
-A part, a role, a place, a term referred to as though it exists. If it is in the project and what the reader finds there lets him act, fine. If it exists only because the conversation coined it, define it where it first appears. A name that resolves in the project yet still leaves the reader unable to do his task (the referent is there, but the act the name stands for is never stated) is a gap, not a resolution: the draft owes the missing part where the name first appears, and resolving the name elsewhere does not discharge it.
+A part, a role, a place, a term referred to as though it exists. If it is in the project and what the reader finds there lets him act, fine. If it exists only because the conversation coined it, define it where it first appears. A name that resolves in the project yet still leaves the reader unable to do his task (the referent is there, but the act the name stands for is nowhere stated) is a gap, not a resolution: the draft owes the missing part where the name first appears, and resolving the name elsewhere does not discharge it.
 
 ## R6. A solution with its problem left behind
 
@@ -42,9 +42,9 @@ The draft says what to do but not what is wrong, because the problem was establi
 
 A change settles, in the conversation, the fate of what it touches: removed, replaced, folded in, or left alone. Once settled, the author stops seeing it, so the draft states the new thing and not what becomes of the old. The colleague knows the prior state, so he reads the change the other way round: not only "does each reference resolve?" but "does the change account for everything it displaces?"
 
-Work from the project, not from the draft's own list. Take stock of what currently occupies the area the change affects, including the parts the draft never names; the part most likely dropped is the one the draft is silent about, because the conversation already retired it. For each, the draft should say whether it stays, goes, changes, or merges. A part left unaccounted is a gap; a part the draft elsewhere still leans on as though it survives is the same gap twice. Do not stop at the first.
+Work from the project, not from the draft's own list. Take stock of what currently occupies the area the change affects, including the parts the draft does not name; the part most likely dropped is the one the draft is silent about, because the conversation already retired it. For each, the draft should say whether it stays, goes, changes, or merges. A part left unaccounted is a gap; a part the draft elsewhere still leans on as though it survives is the same gap twice. Do not stop at the first.
 
-Example: a draft recommends moving the weekly review to Monday morning. The team already holds its planning meeting in that slot. If the draft never says whether the two merge or one of them moves, the colleague asks what becomes of the planning meeting.
+Example: a draft recommends moving the weekly review to Monday morning. The team already holds its planning meeting in that slot. If the draft does not say whether the two merge or one of them moves, the colleague asks what becomes of the planning meeting.
 
 ## R10. A common word silently narrowed
 
@@ -64,11 +64,11 @@ Example: a runbook says "the cache cluster is offline during the migration windo
 
 ## R12. A surprising choice or value with no reason on the page
 
-A value, a parameter, or a structural choice reads as odd or arbitrary, carries no reason in the draft or the project, and is still perfectly actionable. The reader proceeds, so nothing is unresolved and no other rule fires; the oddity passes in silence, and the author, who held the reason in the conversation, never learns it is missing. This generalises R3 and R6 from a decision and a solution to any choice. Where the reason existed and was dropped, that is failure mode 1 proper; where no reason ever existed, the choice is genuinely arbitrary, which sits outside this skill's remit, yet surfacing it is the same service and the same query closes it.
+A value, a parameter, or a structural choice reads as odd or arbitrary, carries no reason in the draft or the project, and is still perfectly actionable. The reader proceeds, so nothing is unresolved and no other rule fires; the oddity passes in silence, and the author, who held the reason in the conversation, does not learn it is missing. This generalises R3 and R6 from a decision and a solution to any choice. Where the reason existed and was dropped, that is failure mode 1 proper; where no reason ever existed, the choice is genuinely arbitrary, which sits outside this skill's remit, yet surfacing it is the same service and the same query closes it.
 
 The check is not "can the reader act on this?" but "does the choice read as arbitrary, with no reason the reader can find?" The cure is to state the reason at the choice, or to confirm it was left open. The reading log carries the catch, as it does for R10 and R11: flag a choice only when it genuinely made you pause, the way a sentence that reframed an earlier one made you pause, not by hunting for oddities to fill a quota. Ask rather than judge: you may not know the domain well enough to call the value wrong, but you can report that it reads as unexplained.
 
-Example: a runbook sets a worker's wall-clock limit to 1800 seconds. The reader can act on it and nothing is unresolved, but 1800 reads as arbitrary and the runbook gives no reason. The reason, that it bounds each worker's memory to head off an out-of-memory kill, lived in the conversation and never reached the page. The reader pauses and asks "why 1800 seconds, or was it left open?"
+Example: a runbook sets a worker's wall-clock limit to 1800 seconds. The reader can act on it and nothing is unresolved, but 1800 reads as arbitrary and the runbook gives no reason. The reason, that it bounds each worker's memory to head off an out-of-memory kill, lived in the conversation and did not reach the page. The reader pauses and asks "why 1800 seconds, or was it left open?"
 
 # Failure mode 2: conversation residue
 
@@ -82,13 +82,13 @@ Example: a memo recommending a venue lists, in full, the three venues considered
 
 # Failure mode 3: pitched at an insider
 
-The draft has the context but tells it from the seat of someone who walked the conversation. Nothing is missing and nothing is surplus; the angle is wrong, so even complete facts read as the middle of a talk the reader never joined. The cure is not more context but the same content re-told from where a newcomer stands.
+The draft has the context but tells it from the seat of someone who walked the conversation. Nothing is missing and nothing is surplus; the angle is wrong, so even complete facts read as the middle of a talk the reader was not in. The cure is not more context but the same content re-told from where a newcomer stands.
 
 ## R9. Written to someone who was there
 
-Re-pitch the passage for a reader arriving cold. The tells: a present stated as a change from a before only an insider knew ("now it does X", "the new approach"); a defence of an objection the reader never raised; an opening that resumes instead of introducing; an order that follows how the conversation found things rather than what the reader needs first. Ask whether a newcomer would feel addressed, or feel he is overhearing.
+Re-pitch the passage for a reader arriving cold. The tells: a present stated as a change from a before only an insider knew ("now it does X", "the new approach"); a defence of an objection the reader did not raise; an opening that resumes instead of introducing; an order that follows how the conversation found things rather than what the reader needs first. Ask whether a newcomer would feel addressed, or feel he is overhearing.
 
-Example: a report opens "The switch to monthly billing fixes the backlog." A newcomer meets a fix for a problem he was never shown, framed as a change from a state he never knew; re-told for him, it says what monthly billing does and the backlog it prevents, problem before resolution. A blunter form is the conversational opener itself: a draft that begins "As we discussed, we are moving to monthly billing" or "Following up on the problem you raised" addresses the reader as a party to a talk he never joined. Cut the connector and open on the subject and the problem it solves, so the first sentence introduces rather than resumes.
+Example: a report opens "The switch to monthly billing fixes the backlog." A newcomer meets a fix for a problem he was not shown, framed as a change from a state he did not know; re-told for him, it says what monthly billing does and the backlog it prevents, problem before resolution. A blunter form is the conversational opener itself: a draft that begins "As we discussed, we are moving to monthly billing" or "Following up on the problem you raised" addresses the reader as a party to a talk he was not in. Cut the connector and open on the subject and the problem it solves, so the first sentence introduces rather than resumes.
 
 # Code diffs
 
@@ -106,47 +106,44 @@ Example: `retries += 1` under the comment "increment the retry counter" fails; t
 
 # Comments: the rules that edit
 
-The reading above finds; these rules cut. They apply to every comment and docstring in the diff, and the colleague applies them himself with his edit tools, one edit per finding, code lines untouched. The order is the order of consequence: C1 is the reason this skill exists.
+The reading above finds; these rules cut. They apply to the comments and docstrings the diff touches, and the colleague applies them with his edit tools, one edit per finding, code lines left as they are. Each rule states a cost and what earns it; the reader weighs both, and where the weighing needs domain knowledge he lacks, the comment stays and goes to QUERIES.
 
-## C1. Fan-out: a name outside its definition
+## C1. A name outside its definition site
 
-A mechanism (a type, a function, a field, a config key, a shader, a file) is defined in one place. A comment anywhere else that carries its name in prose is a place that changes when the mechanism does, and a rename becomes a hunt through comments. Each such comment has one of three fates.
+A mechanism (a type, a function, a field, a config key, a shader, a file) is defined in one place. A comment elsewhere that carries its name is one more place a rename touches. That is the cost, one edit per rename per mention, and it is worth paying when the name does work a role phrase would not:
 
-(a) The name is a pointer whose value is the reference itself: the test that guards the invariant the comment states, the authoritative copy of a set this code restates across a boundary it cannot import over, third-party source for a behaviour the code works around, a crate or module index. Keep it, and put it in the form the toolchain checks where one exists (a Rust intra-doc link `[`crate::path::Item`]`, a path the tree contains), so a rename breaks it loudly instead of silently. Verify that it resolves: open the path, find the item. A pointer to a place that no longer exists is fixed to where the thing now lives, or queried when you cannot find it.
+- A pointer whose value is the reference: the test that guards the invariant the comment states, the authoritative copy this code restates across a boundary it cannot import over, third-party source for a behaviour the code works around, a module or crate index. Where the toolchain offers a checked form (a Rust intra-doc link, a path that exists), prefer it, so a rename breaks the pointer loudly instead of leaving it stale; open the target once to see that it resolves, and correct a pointer to a thing that has moved.
+- The domain's own word, where a role phrase would say less: a shader pass, a protocol state, a named algorithm. That the sibling files spell it the same way is a fair sign it is the word.
 
-(b) The name is decoration on a sentence that says the same thing as a role: "`flush_outbox` runs before `close_socket`" carries no more than "the outbox is flushed before the socket closes" when both calls sit in the lines below; "matches `RateLimiter::window_ms`" no more than "matches the limiter's window". Rewrite as the role. A role phrase is stable across renames; that is its whole point.
-
-(c) The comment only repeats the name of the thing beside it, or the name of a sibling it calls, adding nothing a reader of the line does not have. Delete.
-
-A pointer is one of the four kinds in (a), and its sentence exists to send the reader there. Nothing else is a pointer: a name that resolves to a real thing is still a name; a name spelled the same way in every sibling file is house convention, which is the fan-out this rule exists to cut, not an exemption from it; a name at the definition site of another module or crate is outside its own site. The test that decides between (a) and (b) is whether the sentence keeps its meaning with the name replaced by a role. If it does, rewrite it, however many siblings spell the name. A tree that prefers names over roles so that grep finds every mention is not in conflict with this: names live in code, where grep finds them, and a comment outside the definition site either points in a checked form or speaks in roles. The name's own definition site is free to name it, and its docstring is where the mechanism is explained once.
+What is not worth the cost is decoration: a sentence that keeps its meaning with a role in place of the name ("`flush_outbox` runs before `close_socket`" beside the two calls, "matches `RateLimiter::window_ms`" for "matches the limiter's window"), or a comment that repeats the name of the thing on the next line. Rewrite the first as the role; cut the second. A tree that prefers names so that grep finds every mention loses nothing here: the code carries the names grep needs, and a comment that only decorated with one was not helping grep.
 
 ## C2. Counts in words
 
-"the three metals", "nineteen strips", "both callers": a count of homogeneous things becomes wrong the day a fourth arrives, and every comment that carried it changes. Write "each", "every", "the callers". A count a test asserts is a pointer under C1(a) and stays.
+"the three metals", "nineteen strips", "both callers": a count of homogeneous things is wrong the day one more arrives, and every comment that carried it changes. Prefer "each" and "every". A count the reader needs (a protocol fixes three phases, a test asserts nineteen) stays.
 
 ## C3. Change narration
 
-"previously", "no longer", "used to", "fixed to handle", "now uses": history belongs to version control. Delete the sentence when it describes what the code was; keep it when the same words state a present contract ("the export still writes the two-space indent the v1 importer used to require, since v1 files are still read back" is a contract, not a memory). The test is whether a reader who never saw the old code loses anything by the cut.
+"previously", "no longer", "used to", "fixed to handle", "now uses": history belongs to version control. Cut the sentence when it describes what the code was; keep it when the same words state a present contract ("the export still writes the two-space indent the v1 importer used to require, since v1 files are still read back" is a contract, not a memory). The test is whether a reader who did not see the old code loses anything by the cut.
 
 ## C4. Restated operation
 
-A comment that says what the code beside it visibly does is deleted. A reason, a constraint, a quirk, a contract, or an argument for a choice is never recoverable from the code and stays, however plain the code under it looks: "sleeps a whole second, not the 50ms the loop wants: the vendor's rate limiter counts on wall-clock seconds and bills a partial one as a full one" sits on a line that visibly sleeps one second, and the sentence is the only place the reason lives. Where one comment wraps a reason inside restatement, cut to the reason.
+A comment that says what the code beside it visibly does is cut. A reason, a constraint, a quirk, a contract, or an argument for a choice is not on the page unless the comment carries it, however plain the code under it looks: "sleeps a whole second, not the 50ms the loop wants: the vendor's rate limiter counts on wall-clock seconds and bills a partial one as a full one" sits on a line that visibly sleeps one second, and the sentence is the only place the reason lives. Where one comment wraps a reason inside restatement, cut to the reason.
 
 ## C5. One fact, one home
 
-A fact stated in a docstring, again in an inline comment, and again in a README has three homes that drift apart. Keep it where it is authoritative and cut the copies, when the copies have no derivation relationship (nothing keeps them equal). A copy the owner chose and guards with a test that asserts the two agree is a derivation and stays. Example values in user-facing documentation are the user's contract and stay.
+A fact stated in a docstring, again in an inline comment, and again in a README has three homes that drift apart. Keep it where it is authoritative and cut the copies, when nothing keeps the copies equal. A copy the owner chose and guards with a test that asserts the two agree is a derivation and stays. Example values in user-facing documentation are the user's contract and stay.
 
 ## C6. Promotion
 
-A comment stating an invariant that an assert or a test could hold ("`len` is always even here", "never called before init") is reported, not rewritten and not deleted: promoting it changes what the code does at runtime, which is the author's decision.
+A comment stating an invariant that an assert or a test could hold ("`len` is even here", "not called before init") is reported rather than edited: promoting it changes what the code does at runtime, which is the author's decision.
 
-## C7. Adds nothing
+## C7. Subtractive
 
-The pass adds no comment. Where a cut leaves a fact homeless that the code cannot show, compress the comment to that fact rather than writing a new one. The net comment line count of the pass does not rise.
+This pass cuts and rewrites; adding a comment is the author's job, and a pass that both added and cut would have no measurable effect. Where a cut leaves a fact homeless that the code cannot show, compress the comment to that fact.
 
-## What stays without question
+## What stays
 
-A pointer of kind C1(a). An argument for a choice. A present contract. An example value in user-facing documentation. A comment whose value may sit in domain knowledge you lack: leave it, and put it in QUERIES with what you would need to know.
+A pointer or a domain word under C1. An argument for a choice. A present contract. An example value in user-facing documentation. A comment whose value may sit in domain knowledge you lack: leave it, and put it in QUERIES with what you would need to know.
 
 # How the colleague responds
 
@@ -158,6 +155,6 @@ Four outputs, in this order:
 
 - **Edits applied (EDITS).** Each comment edit you made under the Comments rules, as path:line, the text before, the text after (or "deleted"), and the rule. Under `--report`, the same list for edits you would make, with nothing touched. Include a C6 promotion as a line with "reported" in place of an edit. If you made none, say so.
 
-- **Write a query (QUERIES).** Anything that needs the conversation to close, and any comment you left alone under "what stays without question" because its value may sit in knowledge you lack. Quote the sentence, name what only the conversation can resolve, ask the question. Do not invent the answer, and do not telegraph it. A thing the conversation settled and the draft left out is short of context, failure mode 1; a thing the conversation never settled is not a withholding and not the draft's fault. Having missed the conversation, the colleague cannot tell the two apart, so he surfaces the gap that blocks his task and phrases the query so "this was left open" closes it. The author classifies: fold the settled answer into the draft, or mark the open matter open.
+- **Write a query (QUERIES).** Anything that needs the conversation to close, and any comment you left alone under "what stays without question" because its value may sit in knowledge you lack. Quote the sentence, name what only the conversation can resolve, ask the question. Do not invent the answer, and do not telegraph it. A thing the conversation settled and the draft left out is short of context, failure mode 1; a thing the conversation did not settle is not a withholding and not the draft's fault. Having missed the conversation, the colleague cannot tell the two apart, so he surfaces the gap that blocks his task and phrases the query so "this was left open" closes it. The author classifies: fold the settled answer into the draft, or mark the open matter open.
 
-- **Metrics (METRICS).** For the files the diff touches, before and after your edits: comment lines; fan-out lines, meaning comment lines that carry the name of a mechanism defined elsewhere, split into pointers kept and repetitions cut; comment/code ratio. Counts by your own reading of the files are enough; say how you counted.
+- **Metrics (METRICS).** For the files the diff touches, before and after your edits: comment lines; names outside their definition site, meaning comment lines that carry the name of a mechanism defined elsewhere, split into those kept and those rewritten or cut, a count to watch rather than to zero; comment/code ratio. Counts by your own reading of the files are enough; say how you counted.
