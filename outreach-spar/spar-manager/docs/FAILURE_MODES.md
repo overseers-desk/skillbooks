@@ -166,30 +166,33 @@ active. Observed in the 2026-06-14 run as HEAD moving forward then back; it also
 loop in FM-AGENT-1 (the worker saw a confusing git state and chased it). Filed then closed as
 not-a-code-bug: #137.
 
-### FM-CC-1 — a run started as a Claude Code background task is reaped while it is quiet
+### FM-CC-1 — a run started as a Claude Code background task is reaped unpredictably
 
-Claude Code kills a background shell task that produces no output for a while. The task's output file
-is left holding the single word `[killed]`, with no signal and no entry in the journal, so the death
-looks unexplained from inside the session.
+Claude Code kills background shell tasks mid-run. The task's output file is left holding the single
+word `[killed]`, with no signal and nothing in the system journal, so the death looks unexplained
+from inside the session.
 
-A spar run is mostly quiet. It prints when a row starts and when it finishes, and a profile takes
-around five minutes, so the gap between lines is long enough to be reaped. One T1 run died at 5m51s
-this way, taking three in-flight profiles with it, and two silent watcher loops died within seconds
-of launch. A chatty watcher printing every 30s survived the same window, which is what separates
-this from a duration limit.
+Observed six times in one session. A T1 run died at 5m51s, taking three in-flight profiles with it.
+Four watcher loops were launched afterwards: two died within seconds, one ran its 8m30s course and
+exited 0, and one died at 3m04s while printing a progress line every 30 seconds. Output volume,
+duration and quietness were each tested and none of them predicts which tasks die. Kernel OOM,
+systemd-oomd, memory pressure and spar's own code are all ruled out by direct evidence.
 
-The fix is to detach rather than background:
+No mechanism is established. What is established is that the failure is frequent and silent, which
+is enough to stop using the channel for anything long.
+
+Detach instead of backgrounding:
 
     setsid nohup bash -c "./spar-transition <segment> T1 --jobs=3 >> run.log 2>&1; \
       ec=$?; [ $ec -gt 128 ] && echo \"killed by signal $((ec-128))\" >> run.log \
       || echo \"exit $ec\" >> run.log" < /dev/null > /dev/null 2>&1 &
 
-A detached run outlives the session and cannot be reaped with it. Wrapping the exit code is what
-turns the next unexplained death into a named signal, since the bare `[killed]` marker carries none.
-Four detached runs have since completed at exit 0, including one of 146 rows.
+A detached run has no host task to be reaped with. Five have since completed at exit 0, including
+one of 146 rows, against six deaths on the backgrounded channel. Wrapping the exit code is what
+turns the next death into a named signal, since the bare `[killed]` marker carries none.
 
 Distinct from FM-HARNESS-4 below, which is about workers dying inside a running dispatcher; this is
-the dispatcher itself dying with its host task.
+the dispatcher dying with its host task.
 
 ### FM-HARNESS-4 — first-wave workers SIGKILLed ~75s in (external, unidentified)
 
