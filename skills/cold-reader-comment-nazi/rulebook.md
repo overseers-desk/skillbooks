@@ -106,7 +106,7 @@ Example: `retries += 1` under the comment "increment the retry counter" fails; t
 
 # Comments: the rules that edit
 
-The reading above finds; these rules cut. They apply to the comments and docstrings the diff touches, and the colleague applies them with his edit tools, one edit per finding, code lines left as they are. Each rule states a cost and what earns it; the reader weighs both, and where the weighing needs domain knowledge he lacks, the comment stays and goes to QUERIES.
+The reading above finds; these rules cut. The unit of scope is the comment attached to changed code: the whole of a comment or docstring the diff touches in part, and a comment on code the diff changes even when the comment's own lines sit outside the hunk. The colleague applies the rules with his edit tools, one edit per finding, code lines left as they are. Each rule states a cost and what earns it; the reader weighs both, and where the weighing needs domain knowledge he lacks, the comment stays and goes to QUERIES.
 
 ## C1. A name outside its definition site
 
