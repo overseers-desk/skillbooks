@@ -118,7 +118,7 @@ A mechanism (a type, a function, a field, a config key, a shader, a file) is def
 
 (c) The comment only repeats the name of the thing beside it, or the name of a sibling it calls, adding nothing a reader of the line does not have. Delete.
 
-A tree that prefers names over roles so that grep finds every mention is not in conflict with this rule: names live in code, where grep finds them, and a comment outside the definition site either points in a checked form or speaks in roles. The name's own definition site is free to name it, and its docstring is where the mechanism is explained once.
+A pointer is one of the four kinds in (a), and its sentence exists to send the reader there. Nothing else is a pointer: a name that resolves to a real thing is still a name; a name spelled the same way in every sibling file is house convention, which is the fan-out this rule exists to cut, not an exemption from it; a name at the definition site of another module or crate is outside its own site. The test that decides between (a) and (b) is whether the sentence keeps its meaning with the name replaced by a role. If it does, rewrite it, however many siblings spell the name. A tree that prefers names over roles so that grep finds every mention is not in conflict with this: names live in code, where grep finds them, and a comment outside the definition site either points in a checked form or speaks in roles. The name's own definition site is free to name it, and its docstring is where the mechanism is explained once.
 
 ## C2. Counts in words
 
