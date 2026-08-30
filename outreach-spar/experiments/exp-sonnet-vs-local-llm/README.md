@@ -4,7 +4,7 @@ Can SPAR-P profiles be produced by a local LLM instead of hosted Sonnet, and how
 
 ## Two machines, several models
 
-- **yoga**: Lunar Lake laptop, Intel Arc 140V, Vulkan backend (shared UMA memory, no discrete VRAM). Has live web and LinkedIn reach, so its runs do real retrieval. Models: Qwen3-30B-A3B, then Qwen3.5-35B-A3B.
+- **yoga**: Lunar Lake laptop, Intel Arc 140V, Vulkan backend (shared UMA memory, no discrete VRAM). Has live web and LinkedIn reach, so its runs do real retrieval. Models: Qwen3-30B-A3B, then Qwen3.5-35B-A3B. The laptop's own configuration for local inference, its measured token rates and its driver limits are kept in the office repository's host issue book under `issues/host=yoga,*`.
 - **GPU-Workstation**: desktop, NVIDIA RTX 2070 SUPER (8 GB), CUDA backend, ollama. The box has live web and LinkedIn reach (the probe used the LinkedIn skill on it), but its batch runs were facts-fed one-shot from a reconstructed facts sheet; a live-retrieval batch re-run is the open follow-up. Models: llama3.1:8b, qwen3:8b, qwen2.5:14b.
 - **Hosted Sonnet** is the quality baseline both machines are judged against.
 
