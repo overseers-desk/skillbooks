@@ -55,7 +55,7 @@ Red herrings observed once, worth skipping: the snap browser's process name is `
 
 ## Prerequisites
 
-- A headless browser (use the serialised-browsing skill if available; see its BROWSER.md for context)
+- A headless browser (use the serialised-browsing skill if available; see its BROWSER.md for context) -- where that skill is present, probe logged-in or interactive pages through a throwaway skill file it runs: its verbs are this document's dump and net-log technique in policed form, and an inline browser launch on the shared profile is barred there
 - curl
 
 ## When repairing a broken skill
