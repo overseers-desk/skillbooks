@@ -137,32 +137,39 @@ discovery_criteria: |
 # A T0 sweep consumes two files: this one (segments/{segment}.yaml) and the
 # segment's sweep file (segments/{segment}.sweep.yaml). Field meanings for
 # the sweep file are in spar-S-sweep.md §7; its seed state is that shape
-# with every source `unharvested` and `escapes: []`, `rounds: []`.
+# with every source `unharvested` and `rounds: []`, and `escapes` already
+# holding the segment's ground-truth test members (spar-S-sweep.md §6, S&P₀).
 #
 # Seed skeleton for segments/{segment}.sweep.yaml:
 #
-#   version: "1.0"
+#   version: "2.0"
 #   segment: {segment}          # equals the filename stem
 #   market_estimate:
 #     value: ...                # denominator or range, unharvested layers named
 #     derivation: ...           # top-down and bottom-up, source by source
-#     estimated: "2026-08-06"
+#     estimated: 2026-08-06
 #   sources:                    # one T0 task per source; at least one of
 #     - name: ...               # type registry or directory (census-first)
 #       type: registry          # registry | directory | informal | outlet | platform
+#       role: enumerates        # registers only: enumerates | bounds | verifies
 #       url: ...
 #       status: unharvested     # base token first: unharvested | partial |
 #                               # exhausted | unreachable | stale; free-text
 #                               # reason may follow after the token
+#                               # a zero or negative status carries control: /
+#                               # probe: beside it (spar-S-sweep.md §6)
 #   exclusions: ...
-#   escapes: []
+#   escapes:                    # seeded from owned ground truth before round 1
+#     - member: ...             # a market member the operation already knows
+#       provenance: ...         # where it is known from (ledger, mailbox, ...)
 #   rounds: []
 #   next_round:               # optional; compiled between rounds from sweep feedback
 #   rows_to_verify: []        # optional; roster rows a later source disputed
 #
 # Parser constraints (tcllib yaml 0.4.2), all four checked by the validator:
 #   1. Quote any scalar containing ": " mid-text, or use a block scalar.
-#   2. Quote dates ("YYYY-MM-DD"); unquoted dates parse to epoch seconds.
+#   2. Write dates bare (YYYY-MM-DD, no quotes); they parse to epoch seconds
+#      and every consumer renders them ISO. A quoted date is flagged.
 #   3. No YAML anchors or aliases.
 #   4. End the file with a newline; no trailing bare valueless key.
 #
