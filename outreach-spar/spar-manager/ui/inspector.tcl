@@ -2,7 +2,7 @@
 #
 # spar::ui::Inspector — per-contact detail pane with four tabs labelled
 # S, P, A, R (the pipeline's own vocabulary: Roster, Profile, Approach,
-# Reply). Fills .pw.right (already created by spar-ui.tcl) with a header
+# Reply). Fills .pw.right (already created by spar-ui) with a header
 # strip and a ttk::notebook. Each tab's enabled/disabled state reflects
 # which data exists for the contact; render selects the latest-reached
 # tab so arrow-keying down the tree lands on whichever surface carries

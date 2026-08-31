@@ -852,7 +852,7 @@ oo::define spar::State method classify_contact {roster_row segment_dir approach_
 #
 # Callers that need refined fields call this on a per-contact basis
 # (UI inspector, send transitions) or via refine_segment (UI render,
-# spar-progress.tcl, T6/T7/T8/T9/T10 eligibility).
+# spar-progress, T6/T7/T8/T9/T10 eligibility).
 oo::define spar::State method refine_contact {contact} {
     set state [dict getdef $contact state ""]
     if {$state ne "APPROACHED" && $state ne "APPROACH_STALE"} {

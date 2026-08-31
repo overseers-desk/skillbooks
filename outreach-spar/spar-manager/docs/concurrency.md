@@ -47,7 +47,7 @@ The dispatch pool used to run on `jobpool`, the thread twin of jobloop with the 
 
 **`spar::ui::DispatchController`** in `ui/dispatch-controller.tcl` is the Tk controller. Owns the Play/Pause/Cancel buttons, the right-click menu on tree rows, and the progress bar. Translates user actions into Dispatcher method calls and renders Dispatcher row-state events back onto the `TransitionTree`. Reads `active_jobs` and `queued_jobs` for the progress bar.
 
-The CLI's equivalent is `dispatch_ready` in `spar-transition.tcl`. Same shape: it consults each transition's `prepare_for_pool`, builds one shared Dispatcher, wires `spar::subscribe_pool_domain`, installs the send caps, enqueues every row, and `vwait`s once on a counter the row-state subscriber maintains. The `vwait` runs the event loop, which is where the coroutines actually make progress.
+The CLI's equivalent is `dispatch_ready` in `spar-transition`. Same shape: it consults each transition's `prepare_for_pool`, builds one shared Dispatcher, wires `spar::subscribe_pool_domain`, installs the send caps, enqueues every row, and `vwait`s once on a counter the row-state subscriber maintains. The `vwait` runs the event loop, which is where the coroutines actually make progress.
 
 ## Row state machine
 

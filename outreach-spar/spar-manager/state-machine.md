@@ -238,13 +238,13 @@ T1–T4 are the cheap (no-parse) transitions; T5 is reserved for a future cheap 
 
 | # | Label | Eligible contacts | Dispatch | Dispatch status |
 |---|-------|-------------------|----------|-----------------|
-| T0 | Seed → Sweep | not a contact row: one task per census source in `segments/<seg>.sweep.yaml` whose status base token is neither `exhausted` nor `unreachable`. No roster need exist | `spar-transition.tcl <campaign.yaml> T0` (one discovery worker per source; the harness applies the returned rows to the roster, updates the source status, and merges the round record) | available |
-| T1 | Sweep → Profile | state = DISCOVERED | `spar-transition.tcl <campaign.yaml> T1` (runs §4.1 first if `contact_name` is blank, else §4.2+) | available |
-| T2 | Profile → Approach | state = PROFILED, star≥3 | `spar-transition.tcl <campaign.yaml> T2` | available |
-| T3 | Stale → Re-profile | state = PROFILE_STALE | `spar-transition.tcl <campaign.yaml> T3` | available |
-| T4 | Re-profile → Re-approach | state = APPROACH_STALE (profile_hash mismatch, #63) | `spar-transition.tcl <campaign.yaml> T4` | available |
-| T6 | Approach → Send | state = APPROACHED or SENT; routed by the contact's own send channel (`final_auto_send_channel`, its final round's first email-or-linkedin message): email → has_email, not email_sent; linkedin → has_linkedin, not linkedin_sent | `spar-transition.tcl <campaign.yaml> T6` (email: AWS SES, serial with --delay; linkedin: overseer POST /run, serial, overseer-paced) | available |
-| T7 | Send → Reply | any_sent, not any_replied, email address known | `spar-transition.tcl <campaign.yaml> T7` (courier reply-check against the known address, appends replies to approach YAML) | available |
+| T0 | Seed → Sweep | not a contact row: one task per census source in `segments/<seg>.sweep.yaml` whose status base token is neither `exhausted` nor `unreachable`. No roster need exist | `spar-transition <campaign.yaml> T0` (one discovery worker per source; the harness applies the returned rows to the roster, updates the source status, and merges the round record) | available |
+| T1 | Sweep → Profile | state = DISCOVERED | `spar-transition <campaign.yaml> T1` (runs §4.1 first if `contact_name` is blank, else §4.2+) | available |
+| T2 | Profile → Approach | state = PROFILED, star≥3 | `spar-transition <campaign.yaml> T2` | available |
+| T3 | Stale → Re-profile | state = PROFILE_STALE | `spar-transition <campaign.yaml> T3` | available |
+| T4 | Re-profile → Re-approach | state = APPROACH_STALE (profile_hash mismatch, #63) | `spar-transition <campaign.yaml> T4` | available |
+| T6 | Approach → Send | state = APPROACHED or SENT; routed by the contact's own send channel (`final_auto_send_channel`, its final round's first email-or-linkedin message): email → has_email, not email_sent; linkedin → has_linkedin, not linkedin_sent | `spar-transition <campaign.yaml> T6` (email: AWS SES, serial with --delay; linkedin: overseer POST /run, serial, overseer-paced) | available |
+| T7 | Send → Reply | any_sent, not any_replied, email address known | `spar-transition <campaign.yaml> T7` (courier reply-check against the known address, appends replies to approach YAML) | available |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
 | T9 | Secondary follow-up | `secondary_ready` | render script + manual marker | manual |
 | T10 | Tertiary follow-up | `tertiary_ready` | render script + manual marker | manual |

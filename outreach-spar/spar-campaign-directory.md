@@ -61,7 +61,7 @@ Each campaign YAML names in its `segments:` map the segments it operates over, m
 
 ## Discovery by batch scripts
 
-`spar-progress.tcl` and `spar-transition.tcl` read the `segments:` map from the campaign YAML; only named segments are processed. `spar-transition.tcl <campaign.yaml> T1` drives profile generation from the classified state machine, one campaign at a time. `T1:<segment>` narrows to a single segment, `T1:<segment>/<roster-stem>` narrows to a single contact. Add `--dry-run` to simulate without writes.
+`spar-progress` and `spar-transition` read the `segments:` map from the campaign YAML; only named segments are processed. `spar-transition <campaign.yaml> T1` drives profile generation from the classified state machine, one campaign at a time. `T1:<segment>` narrows to a single segment, `T1:<segment>/<roster-stem>` narrows to a single contact. Add `--dry-run` to simulate without writes.
 
 The population-tier work (the T0 sweep, T1/T3 profiling, roster validation, progress; the tiers are `spar-methodology.md`, "Campaigns and segments") also runs from a segment alone: give any of the three CLIs `segments/<name>` (or its `.yaml`) instead of a campaign YAML, or several at once (`segments/*` expands in the shell), which run as one set with one table and one total. No campaign context exists in that mode, which is invariant I1 stated operationally; campaign-tier transitions are refused by name.
 

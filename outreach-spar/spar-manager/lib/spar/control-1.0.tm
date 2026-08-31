@@ -1,6 +1,6 @@
 # spar::control — TCP control socket for a running dispatch.
 #
-# Its own module rather than spar-transition.tcl script body so
+# Its own module rather than spar-transition script body so
 # test/test-control.tcl can drive it against a stub dispatcher. The
 # CLI requires this module, listens when dispatch begins, and keeps
 # ::spar::control_dispatcher pointing at the live pool while one

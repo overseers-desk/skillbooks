@@ -8,9 +8,9 @@ The Tcl code under `lib/spar/` is a set of Tcl modules (`package require spar::s
 
 A campaign is anchored on `campaign.yaml`. `lib/spar/state-1.0.tm` classifies each roster row against the transition registry and exposes the eligibility ladder used by the progress table and the dispatcher. The registry is built at load time from per-class files under `transitions/` (`sweep.tcl`, `profile.tcl`, `approach.tcl`, `send_email.tcl`, `check_replies.tcl`, `linkedin_followup.tcl`, `manual_followup.tcl`); each class binds itself to a TID (`T1`, `T2`, `T6`, `T7`, and so on). T0 is the exception to the roster-row reading: its tasks are the census sources in a segment's `sweep.yaml`, since the segment it sweeps may have no roster yet, and the class supplies them through `campaign_tasks` (see `transitions/base.tcl`).
 
-Dispatch runs over one shared pool for both the CLI and the GUI. Each transition class exposes a `prepare_for_pool` method (in `transitions/*.tcl`, with the P/A phase prep in `lib/spar/prompts-1.0.tm`) that returns the worker proc and the per-row opts batch. The CLI (`spar-transition.tcl`) and the GUI (`spar-ui.tcl` via `ui/dispatch-controller.tcl`) each enqueue that batch onto a `spar::Dispatcher`, the mixed-type job pool defined in `lib/spar/dispatcher-1.0.tm`. It subclasses the vendored `jobloop` module, so each job runs as a coroutine on the front-end's own event loop, with no worker thread. The state machine, validation, harnesses (`lib/spar/harness-1.0.tm`), email helpers, and shared library (`lib/spar/lib-1.0.tm`) are common to both paths. Validation (`lib/spar/validate-1.0.tm`) runs on the vendored `yamlmuster` rule engine, so the checks live as declarative rules in `rules/*.rules`.
+Dispatch runs over one shared pool for both the CLI and the GUI. Each transition class exposes a `prepare_for_pool` method (in `transitions/*.tcl`, with the P/A phase prep in `lib/spar/prompts-1.0.tm`) that returns the worker proc and the per-row opts batch. The CLI (`spar-transition`) and the GUI (`spar-ui` via `ui/dispatch-controller.tcl`) each enqueue that batch onto a `spar::Dispatcher`, the mixed-type job pool defined in `lib/spar/dispatcher-1.0.tm`. It subclasses the vendored `jobloop` module, so each job runs as a coroutine on the front-end's own event loop, with no worker thread. The state machine, validation, harnesses (`lib/spar/harness-1.0.tm`), email helpers, and shared library (`lib/spar/lib-1.0.tm`) are common to both paths. Validation (`lib/spar/validate-1.0.tm`) runs on the vendored `yamlmuster` rule engine, so the checks live as declarative rules in `rules/*.rules`.
 
-For deeper internals: `state-machine.md` covers the TIDs, validation gates, warnings catalogue, and pre/post Design-by-Contract markers. `docs/concurrency.md` covers the Dispatcher's coroutine model, the worker verbs, and the per-kind cap policy. `ui-design.md` covers the GUI zone layout. `spar-transition.tcl --help` prints the live transition catalogue with each transition's wiring status (`available`, `not-implemented`, `manual`, `blocked`, `n/a`).
+For deeper internals: `state-machine.md` covers the TIDs, validation gates, warnings catalogue, and pre/post Design-by-Contract markers. `docs/concurrency.md` covers the Dispatcher's coroutine model, the worker verbs, and the per-kind cap policy. `ui-design.md` covers the GUI zone layout. `spar-transition --help` prints the live transition catalogue with each transition's wiring status (`available`, `not-implemented`, `manual`, `blocked`, `n/a`).
 
 ## Dependencies
 
@@ -61,28 +61,28 @@ On macOS, Keychain presents a one-time "Allow / Always Allow / Deny" dialog the 
 
 ## Usage
 
-`spar-transition.tcl --help` is the live reference for transition grammar and prints the wired-transition catalogue. Examples below are starting points.
+`spar-transition --help` is the live reference for transition grammar and prints the wired-transition catalogue. Examples below are starting points.
 
 ### GUI
 
 ```
-wish9.0 spar-ui.tcl                         # welcome screen
-wish9.0 spar-ui.tcl /path/to/campaign-dir   # file picker rooted at dir
-wish9.0 spar-ui.tcl /path/to/campaign.yaml  # mount campaign directly
+wish9.0 spar-ui                         # welcome screen
+wish9.0 spar-ui /path/to/campaign-dir   # file picker rooted at dir
+wish9.0 spar-ui /path/to/campaign.yaml  # mount campaign directly
 ```
 
 ### Transition report and dispatch
 
-`spar-transition.tcl` decides between report and dispatch by argv. A bare campaign yaml prints the eligibility ladder; a `segments/<name>` path does the same for one segment with no campaign attached, running population-tier transitions only (T0/T1/T3), and `spar-validate-cli.tcl` and `spar-progress.tcl` accept the same segment input. One or more `Tn` tokens dispatch those transitions live. `--auto` drives auto-safe transitions (those with no external side effects) to convergence and refuses positional `Tn`. `--dry-run` disables writes and combines with any mode. `Tn` tokens accept `Tn:<segment>` or `Tn:<segment>/<stem>` for narrower scope, are repeatable, and may mix TIDs.
+`spar-transition` decides between report and dispatch by argv. A bare campaign yaml prints the eligibility ladder; a `segments/<name>` path does the same for one segment with no campaign attached, running population-tier transitions only (T0/T1/T3), and `spar-validate-cli.tcl` and `spar-progress` accept the same segment input. One or more `Tn` tokens dispatch those transitions live. `--auto` drives auto-safe transitions (those with no external side effects) to convergence and refuses positional `Tn`. `--dry-run` disables writes and combines with any mode. `Tn` tokens accept `Tn:<segment>` or `Tn:<segment>/<stem>` for narrower scope, are repeatable, and may mix TIDs.
 
 ```
-tclsh9.0 spar-transition.tcl /path/to/campaign.yaml             # eligibility report
-tclsh9.0 spar-transition.tcl /path/to/campaign.yaml --dispatchable   # dispatchable rows only
-tclsh9.0 spar-transition.tcl /path/to/campaign.yaml T1          # dispatch one TID live
-tclsh9.0 spar-transition.tcl /path/to/campaign.yaml T1 --dry-run
-tclsh9.0 spar-transition.tcl /path/to/campaign.yaml T6:vic/jane-doe   # one contact
-tclsh9.0 spar-transition.tcl /path/to/campaign.yaml --auto      # converge auto-safe
-tclsh9.0 spar-transition.tcl /path/to/campaign.yaml T6 --yes    # cron, skip [y/N]
+tclsh9.0 spar-transition /path/to/campaign.yaml             # eligibility report
+tclsh9.0 spar-transition /path/to/campaign.yaml --dispatchable   # dispatchable rows only
+tclsh9.0 spar-transition /path/to/campaign.yaml T1          # dispatch one TID live
+tclsh9.0 spar-transition /path/to/campaign.yaml T1 --dry-run
+tclsh9.0 spar-transition /path/to/campaign.yaml T6:vic/jane-doe   # one contact
+tclsh9.0 spar-transition /path/to/campaign.yaml --auto      # converge auto-safe
+tclsh9.0 spar-transition /path/to/campaign.yaml T6 --yes    # cron, skip [y/N]
 ```
 
 Common flags: `--dispatchable`/`--awaiting`/`--blocked` (report filters), `--jobs=N` (parallelism, default 4; `--jobs=0` steps one row at a time with a `[y/N]` gate), `--delay=N` (seconds between sends for SES-type transitions, default 2), `--yes` (skip the upfront confirmation for transitions that require it, e.g. `T6` SES sends), `-v`/`--verbose` (list each contact in report mode rather than counts).
@@ -99,9 +99,9 @@ The overseer on `127.0.0.1:11402` owns the browser and the per-host send cadence
 
 2. Confirm it answers with `tclsh9.0 tools/spar-overseer-health.tcl`, not a hand-rolled parse of `/health`. The exits are distinct (0 healthy, 1 faulted, 2 unreachable, 3 malformed) and the raw body always prints; an ad-hoc probe once read a schema change as "not answering" and misdiagnosed a healthy overseer. For an unattended run, do this pre-flight before approach drafting finishes, not at send time: an overseer absent when the send leg fires leaves the sends failing until someone looks.
 
-3. Dry run first: `tclsh9.0 spar-transition.tcl <campaign.yaml> T6 --dry-run` validates every row (message present, vanity extractable, note within the 300-char invite limit) without contacting the overseer.
+3. Dry run first: `tclsh9.0 spar-transition <campaign.yaml> T6 --dry-run` validates every row (message present, vanity extractable, note within the 300-char invite limit) without contacting the overseer.
 
-4. Send stepped: `tclsh9.0 spar-transition.tcl <campaign.yaml> T6 --jobs=0` confirms each contact on stdin before its send. A plain `T6` sends the whole band serially; the overseer's linkedin.com gate spaces the sends (minutes-scale, jittered), so a band of N takes on the order of N × 2–4 minutes.
+4. Send stepped: `tclsh9.0 spar-transition <campaign.yaml> T6 --jobs=0` confirms each contact on stdin before its send. A plain `T6` sends the whole band serially; the overseer's linkedin.com gate spaces the sends (minutes-scale, jittered), so a band of N takes on the order of N × 2–4 minutes.
 
 5. A successful send stamps `actioned_date` on the approach YAML's linkedin message; `uncertain` results are left unstamped and reported as failures for a human to check on LinkedIn before retrying.
 
@@ -110,19 +110,19 @@ The message's `mode` key (`invite` or `dm`) picks the primitive; absent, text wi
 ### Progress table
 
 ```
-tclsh9.0 spar-progress.tcl <campaign-dir-or-yaml>
-tclsh9.0 spar-progress.tcl <campaign-yaml> <campaign-yaml> ...
-tclsh9.0 spar-progress.tcl <campaign-dir-or-yaml> --json
-tclsh9.0 spar-progress.tcl <campaign-dir-or-yaml> --no-reply-check
+tclsh9.0 spar-progress <campaign-dir-or-yaml>
+tclsh9.0 spar-progress <campaign-yaml> <campaign-yaml> ...
+tclsh9.0 spar-progress <campaign-dir-or-yaml> --json
+tclsh9.0 spar-progress <campaign-dir-or-yaml> --no-reply-check
 ```
 
 Positional argument is either a campaign directory or the yaml inside it. Name several and each gets its own name line, table and warnings, in the order given, separated by a blank line. One that will not resolve prints its reason on stderr and makes the exit status 1; the campaigns named beside it still report.
 
-The campaign name, table and legend go to stdout; the warnings block and any errors go to stderr, so `tclsh9.0 spar-progress.tcl <campaign> 2>/dev/null` leaves the tables. `--json` emits machine-readable output for one campaign, since the object shape is the contract; naming more than one with `--json` is an error. `--no-reply-check` omits the T7 reply-check row; `--legend` prints the column definitions, and without it the report says so in one line; `-v` / `--verbose` lists the member names behind each grouped warning.
+The campaign name, table and legend go to stdout; the warnings block and any errors go to stderr, so `tclsh9.0 spar-progress <campaign> 2>/dev/null` leaves the tables. `--json` emits machine-readable output for one campaign, since the object shape is the contract; naming more than one with `--json` is an error. `--no-reply-check` omits the T7 reply-check row; `--legend` prints the column definitions, and without it the report says so in one line; `-v` / `--verbose` lists the member names behind each grouped warning.
 
 ### Harness
 
-The profile and approach harnesses (`spar::ProfileHarness`, `spar::ApproachHarness` in `lib/spar/harness-1.0.tm`) run only inside the dispatcher; `<log-dir>` is resolved by `spar::resolve_logs_dir` (see Logs). To reproduce one profile or approach run, dispatch that row alone: `spar-transition.tcl <campaign.yaml> T1:<segment>/<stem>`.
+The profile and approach harnesses (`spar::ProfileHarness`, `spar::ApproachHarness` in `lib/spar/harness-1.0.tm`) run only inside the dispatcher; `<log-dir>` is resolved by `spar::resolve_logs_dir` (see Logs). To reproduce one profile or approach run, dispatch that row alone: `spar-transition <campaign.yaml> T1:<segment>/<stem>`.
 
 ### Tests
 
@@ -134,7 +134,7 @@ tclsh9.0 test/run.tcl   # parallel; honours SPAR_TEST_JOBS
 
 `spar::resolve_logs_dir` (`lib/spar/lib-1.0.tm`) creates `/var/local/log/spar/<folder>` if `/var/local/log/spar` exists, otherwise `$HOME/logs/spar/<folder>`. `<folder>` is `<dir_slug>-<stem>-<phase>-<datestamp>`, where `dir_slug` is the campaign yaml's normalised parent path with `/` replaced by `-`, `stem` is the yaml filename without extension, `phase` is `p` or `a`, and `datestamp` is Tcl `%Y%m%d-%H%M%S`. The dispatch API's `logs_dir` opt (`lib/spar/prompts-1.0.tm`) overrides path derivation; the supplied directory must already exist or `resolve_logs_dir` raises an error.
 
-Created by dispatch runs only. `spar-transition.tcl` (CLI) and `spar-ui.tcl` (GUI) resolve identical paths for the same campaign and phase. `spar-progress.tcl`, state classification, and validation write nothing here.
+Created by dispatch runs only. `spar-transition` (CLI) and `spar-ui` (GUI) resolve identical paths for the same campaign and phase. `spar-progress`, state classification, and validation write nothing here.
 
 Per-stem files inside the run folder, written by `spar::Harness` (`lib/spar/harness-1.0.tm`), with `<slug>` set to the file tail of `prompt_dir`:
 

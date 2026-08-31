@@ -29,7 +29,7 @@ This is a compact summary, not an editor. Campaign YAML editing is a planned fea
 
 ### 1.2 Progress table
 
-A table built with the grid geometry manager, using ttk::Label widgets for cells and ttk::Checkbutton for the segment selection column. All columns are visible without horizontal scrolling; column widths are sized to fit the window. This reproduces the output of `spar-progress.tcl`.
+A table built with the grid geometry manager, using ttk::Label widgets for cells and ttk::Checkbutton for the segment selection column. All columns are visible without horizontal scrolling; column widths are sized to fit the window. This reproduces the output of `spar-progress`.
 
 **Why grid, not ttk::treeview.** The progress table requires per-cell background colouring for denominator bands and checkbox widgets in the segment column. ttk::Treeview supports neither: it cannot colour individual cells and cannot embed widgets in cells. The grid geometry manager with individual ttk::Label and ttk::Checkbutton widgets provides full control over cell appearance and per-cell styling. The transition manager (§2) uses ttk::treeview because it has a genuine parent-child hierarchy (transition types containing tasks, with a channel-group level when a send band mixes channels), which is what treeview is designed for.
 
@@ -199,7 +199,7 @@ No scrollbar wraps a whole zone or the campaign panel.
 ### Running the GUI
 
 ```bash
-wish9.0 spar-manager/spar-ui.tcl
+wish9.0 spar-manager/spar-ui
 ```
 
 ### Screenshot debug cycle (Wayland + XWayland)
@@ -207,7 +207,7 @@ wish9.0 spar-manager/spar-ui.tcl
 `wish9.0` uses Tk, which runs on X11. Under a Wayland compositor it runs via XWayland, not as a native Wayland client. This means `ydotool` (which operates on Wayland input events and cannot query X11 window IDs) does not apply. Use `xdotool` to find the window ID and ImageMagick `import` to capture it:
 
 ```bash
-wish9.0 spar-manager/spar-ui.tcl &
+wish9.0 spar-manager/spar-ui &
 PID=$!
 sleep 2
 WID=$(xdotool search --name "SPAR Campaign Manager" | head -1)

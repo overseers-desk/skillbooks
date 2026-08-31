@@ -336,7 +336,7 @@ namespace eval ::spar::ui::inspector_widgets {
     # Flat.TEntry — a borderless, padding-less ttk::entry style whose
     # field background matches the root window, so a readonly entry
     # renders as a flat selectable label. Configured at source-time (Tk
-    # is up by the time utils.tcl is loaded from spar-ui.tcl).
+    # is up by the time utils.tcl is loaded from spar-ui).
     ttk::style configure Flat.TEntry -borderwidth 0 -relief flat -padding 0
     ttk::style map Flat.TEntry \
         -fieldbackground [list readonly [. cget -background]]
