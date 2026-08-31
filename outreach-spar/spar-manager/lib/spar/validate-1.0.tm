@@ -1469,6 +1469,7 @@ proc spar::_yamlmuster_sweep {} {
     $inst predicate escape_verdicts     ::spar::_pred_escape_verdicts
     $inst predicate negative_evidence   ::spar::_pred_negative_evidence
     $inst predicate escapes_seeded      ::spar::_pred_escapes_seeded
+    $inst predicate denominator_reconciled ::spar::_pred_denominator_reconciled
     spar::_yamlmuster_load $inst sweep.rules sweep
     set _yamlmuster_sweep_inst $inst
     return $inst
@@ -1636,6 +1637,35 @@ proc spar::_pred_negative_evidence {node meta} {
                 && [string trim [dict getdef $src control ""]] eq ""} {
             lappend out [dict create message \
                 "source '$name' claims yield $yield with no control: name the known member found through the same instrument and query shape"]
+        }
+    }
+    return $out
+}
+
+# From schema 2.0: an instrument's count supersedes the seeded estimate.
+# The denominator's lead number or range and each census source's
+# in-source total (the second figure of "kept / total") are read the way
+# _sweep_roster_checks reads coverage_after; a registry or directory
+# holding more than the denominator's upper bound blocks closure until
+# the derivation reconciles them.
+proc spar::_pred_denominator_reconciled {node meta} {
+    if {![spar::sweep_schema_v2 $node]} { return {} }
+    set value [string trim [dict getdef $node market_estimate value ""]]
+    if {![regexp {^(\d[\d,]*)(?:\s*(?:-|–|to)\s*(\d[\d,]*))?} $value -> lo hi]} {
+        return {}
+    }
+    set upper [string map {, ""} [expr {$hi ne "" ? $hi : $lo}]]
+    if {![string is integer -strict $upper]} { return {} }
+    set out {}
+    foreach src [dict getdef $node sources {}] {
+        if {[catch {dict size $src}]} { continue }
+        if {[dict getdef $src type ""] ni {registry directory}} { continue }
+        set yield [string trim [dict getdef $src yield ""]]
+        if {![regexp {/\s*(\d[\d,]*)} $yield -> total]} { continue }
+        set total [string map {, ""} $total]
+        if {[string is integer -strict $total] && $total > $upper} {
+            lappend out [dict create message \
+                "source '[dict getdef $src name ?]' holds $total members against a denominator of $value: reconcile the estimate against the instrument's count before closing"]
         }
     }
     return $out

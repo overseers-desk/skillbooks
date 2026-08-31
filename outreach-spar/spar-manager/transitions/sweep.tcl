@@ -14,14 +14,16 @@ oo::class create ::spar::transitions::SweepTransition {
     superclass ::spar::transitions::Transition
 
     # One task per source whose status base token is neither exhausted
-    # nor unreachable (spar::sweep_source_open). An unreachable source
-    # with no probe record is still open: nothing distinguishes a closed
-    # gate from a wrong query until a probe is recorded, so it dispatches
-    # for the probe rather than staying skipped. A segment with no sweep
-    # file is not seeded yet and contributes nothing; a sweep file that
-    # does not parse contributes one blocked row naming the defect,
-    # rather than vanishing. Both front ends drop blocked rows from
-    # dispatch and show them to the operator.
+    # nor unreachable (spar::sweep_source_open). Unreachable closes a
+    # source for the round that probed it, not forever: with no probe
+    # record it dispatches for the probe (nothing distinguishes a closed
+    # gate from a wrong query until one is recorded), and with a probe
+    # from an earlier round it dispatches for a varied re-probe. The
+    # harness stamps the probe with its round; the stamp is what decides.
+    # A segment with no sweep file is not seeded yet and contributes
+    # nothing; a sweep file that does not parse contributes one blocked
+    # row naming the defect, rather than vanishing. Both front ends drop
+    # blocked rows from dispatch and show them to the operator.
     method campaign_tasks {cdata campaign_file segment_paths} {
         set out {}
         foreach item $segment_paths {
@@ -33,14 +35,28 @@ oo::class create ::spar::transitions::SweepTransition {
                     blocked "sweep.yaml does not parse: $data"]
                 continue
             }
+            set latest_n 0
+            foreach r [dict getdef $data rounds {}] {
+                if {![catch {dict size $r}]} {
+                    set n [string trim [dict getdef $r n 0]]
+                    if {[string is integer -strict $n] && $n > $latest_n} {
+                        set latest_n $n
+                    }
+                }
+            }
             foreach src [dict getdef $data sources {}] {
                 set name [string trim [dict getdef $src name ""]]
                 if {$name eq ""} continue
                 set status [string trim [dict getdef $src status ""]]
                 if {![spar::sweep_source_open $status]} {
-                    if {[spar::sweep_status_token $status] ne "unreachable" \
-                        || [string trim [dict getdef $src probe ""]] ne ""} continue
-                    set status "unreachable, no probe recorded: probe it (vary the parameters, record what was tried)"
+                    if {[spar::sweep_status_token $status] ne "unreachable"} continue
+                    set probe [string trim [dict getdef $src probe ""]]
+                    if {$probe eq ""} {
+                        set status "unreachable, no probe recorded: probe it (vary the parameters, record what was tried)"
+                    } elseif {![regexp {\(round (\d+)\)} $probe -> pn] \
+                              || $pn < $latest_n} {
+                        set status "unreachable, probe predates round $latest_n: re-probe with varied parameters"
+                    } else continue
                 }
                 lappend out [my _task $seg $seg_dir $name \
                     [dict getdef $src type ""] dispatchable $status]
