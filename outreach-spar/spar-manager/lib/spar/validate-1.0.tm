@@ -1465,7 +1465,10 @@ proc spar::_yamlmuster_sweep {} {
     $inst predicate segment_name        ::spar::_pred_segment_name
     $inst predicate seed_date_quoted    ::spar::_pred_seed_date_quoted
     $inst predicate source_status_token ::spar::_pred_source_status_token
+    $inst predicate source_role_vocab   ::spar::_pred_source_role_vocab
     $inst predicate escape_verdicts     ::spar::_pred_escape_verdicts
+    $inst predicate negative_evidence   ::spar::_pred_negative_evidence
+    $inst predicate escapes_seeded      ::spar::_pred_escapes_seeded
     spar::_yamlmuster_load $inst sweep.rules sweep
     set _yamlmuster_sweep_inst $inst
     return $inst
@@ -1571,24 +1574,80 @@ proc spar::_pred_source_status_token {node meta} {
 }
 
 # Each escape entry names a verdict from the closed vocabulary in
-# spar-S-sweep.md §7 (Escapes); the entry's other keys vary by case and
-# stay unchecked.
+# spar-S-sweep.md §7 (Escapes). A 2.0 seed entry (planted at S&P₀, no
+# round has resolved it yet) carries provenance in place of a verdict.
+# The entry's other keys vary by case and stay unchecked.
 proc spar::_pred_escape_verdicts {node meta} {
     if {![dict exists $node escapes]} { return {} }
     set allowed {missing-keyword missing-source source-not-exhausted filter-too-tight process-defect}
+    set v2 [spar::sweep_schema_v2 $node]
     set out {}
     foreach entry [dict get $node escapes] {
         if {[catch {dict size $entry}]} { continue }
         set v [string trim [dict getdef $entry verdict ""]]
         if {$v eq ""} {
+            if {$v2 && [string trim [dict getdef $entry provenance ""]] ne ""} continue
             lappend out [dict create message \
-                "escape entry '[dict getdef $entry member [dict getdef $entry stem ?]]' names no verdict — each escape carries one of: [join $allowed {, }]"]
+                "escape entry '[dict getdef $entry member [dict getdef $entry stem ?]]' names no verdict — each escape carries one of: [join $allowed {, }][expr {$v2 ? {, or a provenance while it stands unresolved} : {}}]"]
         } elseif {$v ni $allowed} {
             lappend out [dict create message \
                 "escape verdict '$v' — closed vocabulary: [join $allowed {, }]"]
         }
     }
     return $out
+}
+
+# sweep_schema_v2 — 1 when the file declares schema 2.0 or later. The 2.0
+# duties (controls behind negatives, seeded escapes) bind at the version
+# that introduces them; a 1.0 file validates under 1.0 rules and upgrades
+# at its next sweep.
+proc spar::sweep_schema_v2 {node} {
+    set v [string trim [dict getdef $node version ""]]
+    return [expr {[regexp {^(\d+)} $v -> major] && $major >= 2}]
+}
+
+# role, where a source carries one, comes from spar-S-sweep.md §5.
+proc spar::_pred_source_role_vocab {node meta} {
+    if {![dict exists $node role]} { return {} }
+    set role [string trim [dict get $node role]]
+    if {$role eq "" || $role in {enumerates bounds verifies}} { return {} }
+    return [list [dict create message \
+        "role '$role' — closed vocabulary: enumerates | bounds | verifies"]]
+}
+
+# From schema 2.0: a negative claim about a source carries its backing
+# record — `unreachable` a probe (what was tried, at parameter level), a
+# zero yield a control (the known member found through the same
+# instrument and query shape as the misses it licenses). Root-level so
+# the version gate can read the file's own declaration.
+proc spar::_pred_negative_evidence {node meta} {
+    if {![spar::sweep_schema_v2 $node] || ![dict exists $node sources]} { return {} }
+    set out {}
+    foreach src [dict get $node sources] {
+        if {[catch {dict size $src}]} { continue }
+        set name [string trim [dict getdef $src name ?]]
+        set token [spar::sweep_status_token [dict getdef $src status ""]]
+        if {$token eq "unreachable" && [string trim [dict getdef $src probe ""]] eq ""} {
+            lappend out [dict create message \
+                "source '$name' is unreachable with no probe: record what was tried, at parameter level — a wrong query and a closed gate look identical without it"]
+        }
+        set yield [string trim [dict getdef $src yield ""]]
+        if {$token in {exhausted partial} && [regexp {^0\s*/} $yield] \
+                && [string trim [dict getdef $src control ""]] eq ""} {
+            lappend out [dict create message \
+                "source '$name' claims yield $yield with no control: name the known member found through the same instrument and query shape"]
+        }
+    }
+    return $out
+}
+
+# From schema 2.0: the escapes list is seeded from owned ground truth at
+# S&P₀, so a census is tested against something it did not produce.
+proc spar::_pred_escapes_seeded {node meta} {
+    if {![spar::sweep_schema_v2 $node]} { return {} }
+    if {[llength [dict getdef $node escapes {}]] > 0} { return {} }
+    return [list [dict create message \
+        "escapes is empty — seed it at S&P₀ with members the operation already knows (ledger, mailbox, own records), each with its provenance"]]
 }
 
 # validate_seed — validate the seed pair for one segment. segment_base is the
@@ -1626,6 +1685,57 @@ proc spar::validate_seed {segment_base} {
             dict set issue segment $name
             lappend issues $issue
         }
+    }
+    lappend issues {*}[spar::_sweep_roster_checks $segment_base $name]
+    return $issues
+}
+
+# The arithmetic half of the sweep record, from schema 2.0: the record's
+# numbers are recomputed from the roster rather than accepted as
+# narrative. Two checks. Every sweep_iteration value on the roster has a
+# round record, or work landed that no round accounts for. The latest
+# round's coverage_after lead count equals the roster's live row count,
+# or the record has drifted from the file it describes. Absent roster or
+# a 1.0 file: nothing to check.
+proc spar::_sweep_roster_checks {segment_base name} {
+    set sweep_path "$segment_base.sweep.yaml"
+    set roster_path "$segment_base.tsv"
+    if {![file exists $sweep_path] || ![file exists $roster_path]} { return {} }
+    if {[catch {spar::read_sweep_yaml $sweep_path} data]} { return {} }
+    if {![spar::sweep_schema_v2 $data]} { return {} }
+    if {[catch {spar::load_roster $roster_path} rows]} { return {} }
+
+    set issues {}
+    set round_ns {}
+    set last_cov ""
+    foreach r [dict getdef $data rounds {}] {
+        if {[catch {dict size $r}]} { continue }
+        lappend round_ns [string trim [dict getdef $r n ""]]
+        set cov [string trim [dict getdef $r coverage_after ""]]
+        if {$cov ne ""} { set last_cov $cov }
+    }
+
+    set live 0
+    set iters {}
+    foreach row $rows {
+        set it [string trim [dict getdef $row sweep_iteration ""]]
+        if {$it ne "" && $it ni $iters} { lappend iters $it }
+        if {[string trim [dict getdef $row date_excluded ""]] eq ""} { incr live }
+    }
+
+    foreach it $iters {
+        if {$it ni $round_ns} {
+            lappend issues [dict create severity error code round_unrecorded \
+                segment $name message \
+                "roster rows carry sweep_iteration $it but rounds holds no record n: $it — work landed that the sweep file does not account for"]
+        }
+    }
+
+    if {$last_cov ne "" && [regexp {^(\d+)} $last_cov -> claimed] \
+            && $claimed != $live} {
+        lappend issues [dict create severity error code coverage_drift \
+            segment $name message \
+            "latest coverage_after claims $claimed rows; the roster holds $live live rows — recompute the record from the files"]
     }
     return $issues
 }

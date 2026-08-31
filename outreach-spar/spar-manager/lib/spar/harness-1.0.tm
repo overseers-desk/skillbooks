@@ -841,6 +841,13 @@ oo::class create spar::SweepHarness {
             if {[my do_sweep_call] == 1} { return 1 }
             if {[my validate_and_correct]} { return 1 }
             spar::update_source_status $SweepPath $SourceName [my declared_status]
+            foreach {fmkey field} {source_control control source_probe probe} {
+                set v [string trim [string map {\n " " \t " "} \
+                    [dict getdef [my front_matter] $fmkey ""]]]
+                if {$v ne ""} {
+                    spar::update_source_field $SweepPath $SourceName $field $v
+                }
+            }
             my record_round
             my record_escapes
             my do_summary

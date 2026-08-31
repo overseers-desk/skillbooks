@@ -1678,37 +1678,41 @@ proc spar::_entry_scalar {lines first last key} {
     return {}
 }
 
-# update_source_status — set one census source's status line. The rest of
-# the file is untouched, so the author's derivation block scalars and
-# comments survive. Errors when the source is not in the census (a worker
-# renaming its own source would otherwise write a second entry) or when
-# the existing status is a block scalar (nothing here should produce one,
-# so a hand edit that did is left for a human).
-proc spar::update_source_status {sweep_path source_name status} {
+# update_source_field — set one scalar field on one census source. The
+# rest of the file is untouched, so the author's derivation block scalars
+# and comments survive. Errors when the source is not in the census (a
+# worker renaming its own source would otherwise write a second entry) or
+# when the existing value is a block scalar (nothing here should produce
+# one, so a hand edit that did is left for a human).
+proc spar::update_source_field {sweep_path source_name key value} {
     set lines [split [string trimright [spar::_sweep_read $sweep_path] "\n"] "\n"]
     set blk [spar::_yaml_block_entries $lines sources]
     foreach entry [dict get $blk entries] {
         lassign $entry first last indent
         set nm [spar::_entry_scalar $lines $first $last name]
         if {[llength $nm] == 0 || [lindex $nm 1] ne $source_name} continue
-        set st [spar::_entry_scalar $lines $first $last status]
+        set st [spar::_entry_scalar $lines $first $last $key]
         if {[llength $st] > 0} {
             set idx [lindex $st 0]
             if {[string index [lindex $st 1] 0] in {| >}} {
-                error "update_source_status: '$source_name' status is a block scalar in $sweep_path; rewrite it by hand"
+                error "update_source_field: '$source_name' $key is a block scalar in $sweep_path; rewrite it by hand"
             }
             set lead [string repeat " " $indent]
-            regexp {^(\s*-\s+)status:} [lindex $lines $idx] -> lead
+            regexp "^(\\s*-\\s+)$key:" [lindex $lines $idx] -> lead
             set lines [lreplace $lines $idx $idx \
-                "${lead}status: [spar::yaml_scalar $status]"]
+                "${lead}$key: [spar::yaml_scalar $value]"]
         } else {
             set lines [linsert $lines [expr {[lindex $nm 0] + 1}] \
-                "[string repeat { } $indent]status: [spar::yaml_scalar $status]"]
+                "[string repeat { } $indent]$key: [spar::yaml_scalar $value]"]
         }
         spar::_sweep_write $sweep_path "[join $lines \n]\n"
         return 1
     }
-    error "update_source_status: no source named '$source_name' in $sweep_path"
+    error "update_source_field: no source named '$source_name' in $sweep_path"
+}
+
+proc spar::update_source_status {sweep_path source_name status} {
+    return [spar::update_source_field $sweep_path $source_name status $status]
 }
 
 # append_sweep_round — write a round record into the rounds log.

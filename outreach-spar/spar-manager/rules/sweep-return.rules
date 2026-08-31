@@ -18,7 +18,7 @@
 # (application_url, lender_type), so the row level declares no closed
 # vocabulary; the roster's own header decides, in the applier.
 level root -keys {rows_new source_status reconciliation sweep_feedback \
-                  escapes sweep_batch_applied}
+                  escapes sweep_batch_applied source_control source_probe}
 
 # ── Rules ────────────────────────────────────────────────────────────────
 rule vocab root -groups {sweep_return}
