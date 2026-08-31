@@ -65,7 +65,7 @@ Before any contact search, establish the denominator: how many members does this
 
 Report every later progress claim as a fraction against this denominator ("412 of ~520"); a bare count measures the roster against itself, and the question this gate moves to the front is "how many exist in the world?". Instruments revise the denominator; reasoning alone does not. A census source's own count supersedes the seeded estimate, and a contradiction between the working figure and any instrument's count is reconciled before the sweep closes. A downward revision cites the instrument that produced it and keeps the figure it replaces in the derivation. Without that citation, the smaller number is the roster measuring itself.
 
-S&P₀ also plants the segment's first escapes (§7): members the operation already knows from its own ground truth, such as paid suppliers in the ledger, correspondents in the mailbox, members met or photographed. They enter `escapes` before any search runs, each with its provenance, and round 1 either finds each one or files the verdict its miss earns. A census tested only against itself has not been tested.
+S&P₀ also plants the segment's first escapes (§7): members the operation already knows from its own ground truth, such as paid suppliers in the ledger, correspondents in the mailbox, members met or photographed. They enter `escapes` before any search runs, each with its provenance, and round 1 either finds each one or files the verdict its miss earns. A census tested only against itself has not been tested. Where the owned records hold no member of this segment, that checked-empty search is itself the seed entry, the records searched named as its provenance.
 
 S&P₀ produces no roster rows and can run inside the same session as S&P₁.
 
