@@ -104,5 +104,11 @@ rule predicate root negative_evidence -code negative_without_evidence \
 # recorded miss) or a provenance (a planted test member).
 rule predicate root escapes_seeded -code escapes_unseeded -groups {sweep}
 
+# From schema 2.0 (spar-S-sweep.md §6): an instrument's count supersedes
+# the seeded estimate, so a census source holding more members than the
+# denominator's upper bound is a contradiction to reconcile, not a detail.
+rule predicate root denominator_reconciled -code denominator_contradicted \
+    -groups {sweep}
+
 # ── ROUND rules ──────────────────────────────────────────────────────────
 rule vocab round -groups {sweep}

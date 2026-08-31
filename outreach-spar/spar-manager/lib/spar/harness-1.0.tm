@@ -844,9 +844,13 @@ oo::class create spar::SweepHarness {
             foreach {fmkey field} {source_control control source_probe probe} {
                 set v [string trim [string map {\n " " \t " "} \
                     [dict getdef [my front_matter] $fmkey ""]]]
-                if {$v ne ""} {
-                    spar::update_source_field $SweepPath $SourceName $field $v
+                if {$v eq ""} continue
+                if {$field eq "probe" && ![regexp {\(round \d+\)} $v]} {
+                    # T0 skips an unreachable source only for the round
+                    # that probed it; this stamp is what it reads.
+                    append v " (round $Round)"
                 }
+                spar::update_source_field $SweepPath $SourceName $field $v
             }
             my record_round
             my record_escapes
