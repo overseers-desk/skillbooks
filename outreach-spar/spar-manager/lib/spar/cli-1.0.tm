@@ -1,4 +1,4 @@
-# spar::cli — argv parser for spar-transition.tcl.
+# spar::cli — argv parser for spar-transition.
 #
 # Its own module so test/test-cli-parser.tcl can drive the grammar in
 # isolation. The script requires it, calls

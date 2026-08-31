@@ -1394,7 +1394,7 @@ proc spar::build_warnings {all_classified_contacts {cdata {}}} {
     # Validation — semantics only (cross-file). Per-file approach schema
     # validation is a transition dependency, not a progress concern (#43 principle 6).
     # The stems cross-check joins the semantics issues here, inside the
-    # same trailing run of messages: spar-progress.tcl trims the head by
+    # same trailing run of messages: spar-progress trims the head by
     # the validation_issues count, so every contributor to that list must
     # append its message in this tail block, reshaped to the
     # {severity segment contact message} shape the list declares.

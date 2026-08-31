@@ -65,7 +65,7 @@ oo::class create ::spar::transitions::Transition {
     }
 
     # prepare_for_pool — return {worker_proc <name> rows {{stem opts} ...}}
-    # for the unified dispatch_ready in spar-transition.tcl. Each row's
+    # for the unified dispatch_ready in spar-transition. Each row's
     # `opts` is the per-row dict the worker_proc consumes (e.g.
     # {prompt_dir log_dir harness_class} for harness_run).
     #

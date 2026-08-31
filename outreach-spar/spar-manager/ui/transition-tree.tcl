@@ -164,7 +164,7 @@ oo::class create spar::ui::TransitionTree {
 
     # populate — rebuild the treeview from the Campaign's current
     # transitions. Resets RowNames / SlugToRow / NextTransitionIdx.
-    # Used by the initial empty render in spar-ui.tcl and by
+    # Used by the initial empty render in spar-ui and by
     # on_reloading (where Transitions is empty, so the call effectively
     # clears). The loader coroutine fills the tree incrementally via
     # on_transition_loaded.

@@ -1,6 +1,6 @@
 #!/usr/bin/env tclsh9.0
-# spar-progress.tcl — Campaign progress table and duplicate detection (CLI)
-# Usage: tclsh9.0 spar-progress.tcl [campaign_dir_or_yaml ...] [--campaign=YAML ...] [--no-reply-check] [--json] [--legend] [-v|--verbose]
+# spar-progress — Campaign progress table and duplicate detection (CLI)
+# Usage: tclsh9.0 spar-progress [campaign_dir_or_yaml ...] [--campaign=YAML ...] [--no-reply-check] [--json] [--legend] [-v|--verbose]
 # Positional arg may be a directory or a campaign YAML file (directory derived from YAML path).
 # Several campaigns may be named in one run: each gets its own name line,
 # table and warnings, in the order given.
@@ -16,7 +16,7 @@ package require spar::state
 
 # --- Argument parsing ---
 # Hand-rolled (not tcllib cmdline) for style consistency with
-# spar-transition.tcl — see that file for the rationale.
+# spar-transition — see that file for the rationale.
 set campaign_specs {}   ;# list of {campaign_file campaign_dir}, in argument order
 set segment_inputs {}   ;# segments/<name> positionals: one run over the set
 set json_mode 0
