@@ -8,7 +8,7 @@
 # for one that can never arrive, and the run hangs after its last worker
 # finishes.
 #
-# Strategy: build the two-segment campaign, then run spar-transition.tcl
+# Strategy: build the two-segment campaign, then run spar-transition
 # against it under a wall-clock bound. --dry-run keeps the rows off
 # claude, so a bounded run that has not exited is the hang itself.
 package require yaml
@@ -68,7 +68,7 @@ set stems [lmap pair [dict get $prep rows] {lindex $pair 0}]
 assert_eq [llength $stems] 4 "prep builds one row per segment listing"
 assert_eq [llength [lsort -unique $stems]] 3 "one stem carries two of them"
 
-set cli [file join $script_dir .. spar-transition.tcl]
+set cli [file join $script_dir .. spar-transition]
 lassign [run_bounded [list tclsh9.0 $cli \
     [file join $cdir campaigns camp.yaml] T1 --dry-run --control-port=0] \
     60000] state out

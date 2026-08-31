@@ -530,7 +530,7 @@ assert_eq [expr {"Sent Sam" in $t7_names}] 1 "T7: SENT+email_sent → in monitor
 assert_eq [dict get [lindex $t7 0] channel] "" "T7: task channel is empty"
 
 # transition_eligible result dicts must carry stem and _segment_dir so
-# downstream callers (spar-transition.tcl dispatch) can route without
+# downstream callers (spar-transition dispatch) can route without
 # re-classifying.
 set t1_first [lindex $t1 0]
 assert_eq [dict exists $t1_first stem] 1 "transition_eligible: result has stem key"

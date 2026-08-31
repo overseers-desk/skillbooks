@@ -1,5 +1,5 @@
 #!/usr/bin/env tclsh9.0
-# Tests for spar-transition.tcl's positional `Tn[:seg[/stem]]` token grammar.
+# Tests for spar-transition's positional `Tn[:seg[/stem]]` token grammar.
 #
 # Strategy: load spar::cli, which exposes parse_cli as a
 # library. The proc returns a dict {ok 1 spec {...}} on success, or
