@@ -14,7 +14,7 @@ source [file join $script_dir test-helpers.tcl]
 # rather than at load time, so a wrong path there surfaces as a logged
 # "not available" and a silent return, not a load error. Nothing else
 # here drives that method. Check the names it lists resolve against the
-# directory spar-ui.tcl hands it as ScriptDir. Runs before the display
+# directory spar-ui hands it as ScriptDir. Runs before the display
 # gate below: it needs no Tk.
 section "0. DispatchController's lazy requires resolve"
 

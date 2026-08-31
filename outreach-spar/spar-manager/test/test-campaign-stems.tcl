@@ -107,7 +107,7 @@ set wu_clean [spar::validate_campaign_stems $te_contacts \
 assert_eq [llength $wu_clean] 0 "all stems known → no warning"
 
 # Integration: through build_warnings the issue must arrive in the
-# {severity segment contact message} shape spar-progress.tcl reads, in
+# {severity segment contact message} shape spar-progress reads, in
 # the trailing validation_issues run its head-trim arithmetic assumes.
 set wu_warn [spar::build_warnings $te_contacts $wu_cdata]
 set wu_vi [dict get $wu_warn validation_issues]
@@ -120,13 +120,13 @@ assert_eq [dict exists [lindex $wu_ghost 0] contact] 1 \
     "issue reshaped to the declared contact key"
 # Trailing-run invariant: the last llength(validation_issues) entries of
 # messages are exactly the validation issues, so the head-trim
-# arithmetic in spar-progress.tcl stays valid with stems included.
+# arithmetic in spar-progress stays valid with stems included.
 set wu_msgs [dict get $wu_warn messages]
 set wu_tail [lrange $wu_msgs end-[expr {[llength $wu_vi]-1}] end]
 set wu_tail_ghost 0
 foreach _m $wu_tail { if {[string match "*ghost*" $_m]} { incr wu_tail_ghost } }
 assert_eq $wu_tail_ghost 1 "stems message sits in the trailing validation run"
-# The spar-progress.tcl grouping loop must not throw on any issue shape.
+# The spar-progress grouping loop must not throw on any issue shape.
 set wu_grouped {}
 foreach _i $wu_vi { lappend wu_grouped [dict get $_i contact] }
 assert_eq [llength $wu_grouped] [llength $wu_vi] \

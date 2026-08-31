@@ -121,7 +121,7 @@ assert_match $env_text "*CAMPAIGN_FILE=\"\"*" "meta.env carries an empty campaig
 
 section "tier filtering at the CLI"
 
-set cli [file join $script_dir .. spar-transition.tcl]
+set cli [file join $script_dir .. spar-transition]
 lassign [run_bounded [list tclsh9.0 $cli $seg --dispatchable --control-port=0] 60000] st out
 assert_eq $st ok "segment-path report run completes"
 assert_match $out "*T1*" "population transition reported"
@@ -138,7 +138,7 @@ lassign [run_bounded [list tclsh9.0 $vcli $seg] 60000] st out
 assert_eq $st ok "validate-cli accepts the segment path"
 assert_eq [string match "*version_unsupported*" $out] 0 "no campaign version is demanded"
 
-set pcli [file join $script_dir .. spar-progress.tcl]
+set pcli [file join $script_dir .. spar-progress]
 lassign [run_bounded [list tclsh9.0 $pcli $seg] 60000] st out
 assert_eq $st ok "progress accepts the segment path"
 assert_match $out "*lender*" "the segment row renders"

@@ -32,7 +32,7 @@ if {![file isdirectory $campaign_dir]} {
 }
 
 # ════════════════════════════════════════════════════════════════════════
-# 20. --json integration test (spar-progress.tcl)
+# 20. --json integration test (spar-progress)
 # ════════════════════════════════════════════════════════════════════════
 section "20. --json integration test"
 
@@ -50,7 +50,7 @@ write_roster_tsv $seg_a [concat $::std_headers discovered_via] [list \
 write_profile $seg_a "alice"
 write_campaign_yaml $cdir "campaign: Test Campaign\nsegments:\n  - seg-a\nfilter:\n  min_star: 3\n"
 
-set progress_script [file join $script_dir .. spar-progress.tcl]
+set progress_script [file join $script_dir .. spar-progress]
 set json_str [exec tclsh9.0 $progress_script $cdir --json 2>/dev/null]
 set parsed [::json::json2dict $json_str]
 
@@ -86,7 +86,7 @@ set parsed2 [::json::json2dict $json_str2]
 assert_eq [dict get $parsed2 campaign] "Test Campaign" "json: YAML as positional arg"
 
 # ════════════════════════════════════════════════════════════════════════
-# 21. Several campaigns in one run (spar-progress.tcl)
+# 21. Several campaigns in one run (spar-progress)
 # ════════════════════════════════════════════════════════════════════════
 section "21. Several campaigns in one run"
 
