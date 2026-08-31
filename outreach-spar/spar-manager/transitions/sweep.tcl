@@ -14,7 +14,10 @@ oo::class create ::spar::transitions::SweepTransition {
     superclass ::spar::transitions::Transition
 
     # One task per source whose status base token is neither exhausted
-    # nor unreachable (spar::sweep_source_open). A segment with no sweep
+    # nor unreachable (spar::sweep_source_open). An unreachable source
+    # with no probe record is still open: nothing distinguishes a closed
+    # gate from a wrong query until a probe is recorded, so it dispatches
+    # for the probe rather than staying skipped. A segment with no sweep
     # file is not seeded yet and contributes nothing; a sweep file that
     # does not parse contributes one blocked row naming the defect,
     # rather than vanishing. Both front ends drop blocked rows from
@@ -34,7 +37,11 @@ oo::class create ::spar::transitions::SweepTransition {
                 set name [string trim [dict getdef $src name ""]]
                 if {$name eq ""} continue
                 set status [string trim [dict getdef $src status ""]]
-                if {![spar::sweep_source_open $status]} continue
+                if {![spar::sweep_source_open $status]} {
+                    if {[spar::sweep_status_token $status] ne "unreachable" \
+                        || [string trim [dict getdef $src probe ""]] ne ""} continue
+                    set status "unreachable, no probe recorded: probe it (vary the parameters, record what was tried)"
+                }
                 lappend out [my _task $seg $seg_dir $name \
                     [dict getdef $src type ""] dispatchable $status]
             }

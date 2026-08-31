@@ -137,6 +137,14 @@ foreach item $segment_paths {
 
 # --- Run validators (reuse the existing library; sender block excluded) ---
 set issues {}
+# Segment pairs are data like any other: a segment carrying a sweep file
+# gets the seed-pair pass here, not only under --seed.
+foreach item $segment_paths {
+    lassign $item label seg_dir
+    if {[file exists [spar::sweep_yaml_for_segment $seg_dir]]} {
+        lappend issues {*}[spar::validate_seed $seg_dir]
+    }
+}
 if {[llength $cdata] > 0} {
     lappend issues {*}[spar::validate_versions $cdata $segment_paths]
     lappend issues {*}[spar::validate_campaign $all_contacts 1 1]
