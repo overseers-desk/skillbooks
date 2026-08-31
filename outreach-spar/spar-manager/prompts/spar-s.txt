@@ -25,6 +25,8 @@ A status that reads `partial` means an earlier round got some way through and th
 
 Enumerate before you search. A registry or directory holds a list, and reading the list is what makes a count honest — a keyword search over the same source finds the well-optimised members and misses the rest. Where the source resists enumeration (paginated, login-walled, rate-limited), say so in the status you return rather than substituting keyword search for the census and calling it done.
 
+Where you do search, search the word-set, not a word: the plain noun, the trade's synonyms, the self-descriptors the sweep record's earlier rounds collected. Note each word's in-catchment yield in your body; which words win differs by trade and platform, and a miss only counts against the whole set.
+
 ## What the roster already holds
 
 These stems are already on the roster, so finding them again is not a find — check each candidate against this list before you add a row: __EXISTING_STEMS__
@@ -71,6 +73,8 @@ Row conventions:
 - Use only the column names listed above. A fact that has no column belongs in `s_note` or in the body.
 
 `source_status` is the status line the sweep file will carry after your work, and it leads with one base token — `unharvested`, `partial`, `exhausted`, `unreachable` or `stale` — with your reason after it. `exhausted` is a claim about the whole source and needs the evidence in your body to back it: what you read, and how you know nothing is left. `partial` with a precise reason is worth more than an `exhausted` you cannot defend.
+
+A zero yield, and every not-found your rows or notes assert, is a claim about your instrument until a control backs it: a member you know the source holds (an escape entry, a roster row citing it, a member named in the sweep record), found through the same query shape as your misses. Put the control in `source_control:` (what you looked for, where, and the query shape shared with the verdicts it backs); a zero against the source's expected yield in `market_estimate.derivation` with no control is a reason to suspect your query before the market. `unreachable` likewise carries `source_probe:`: what you tried at parameter level. A wrong parameter and a closed gate look identical from outside, and the probe record is what lets the next round vary the attempt instead of repeating it.
 
 `escapes` is for a member you met that an earlier round should already have caught: the row goes in `rows_new` like any other, and the miss goes here with a `verdict` naming its cause (`missing-keyword`, `missing-source`, `source-not-exhausted`, `filter-too-tight`, `process-defect`). The harness appends it to the sweep file's standing escapes list, where it stays as a test case the next round has to catch, so an entry with no verdict is dropped rather than recorded: the verdict is what decides which part of the sweep head gets fixed.
 
