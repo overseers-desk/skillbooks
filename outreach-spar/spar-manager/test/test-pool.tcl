@@ -319,7 +319,8 @@ $d destroy
 # The worker shells out to courier. We override courier_bin in opts
 # to point at a fake script that returns canned JSON for both `search`
 # and `read`. The fake script branches on its first positional arg
-# after "--imap <account>" to mimic the real courier CLI.
+# after "--imap <account>" to mimic the real courier CLI; `list` returns
+# the identity table T7 resolves the account from.
 section "4. imap_poll happy path"
 
 set fake_courier [file join $tmp_root fake-courier.tcl]
@@ -338,6 +339,8 @@ if {$op eq "search"} {
     puts {{"search": {"acct": {"results": [{"uid": "U1", "from": "Dest <dest@acme-venues.au>", "to": ["Me <me@acme-venues.au>"], "cc": [], "date": "2026-04-25T10:00:00"}], "provenance": {}}}}}
 } elseif {$op eq "read"} {
     puts {{"read": {"acct": {"body": "Hello back from Dest", "from": "dest@acme-venues.au", "to": ["me@acme-venues.au"], "date": "2026-04-25T10:00:00"}}}}
+} elseif {$op eq "list"} {
+    puts {{"default_imap": "acct", "imap": {"acct": {"username": "login@acme-venues.au", "identities": ["me"]}}, "identity": {"me": {"imap": "acct", "address": "Me@Acme-Venues.au"}}}}
 }
 exit 0
 }
@@ -429,6 +432,58 @@ if {[string first "Hello back from Dest" $after4] >= 0} {
 $d destroy
 
 # ── 5. roster_update relays to the domain subscriber ──────────────────────
+# 4c. The account T7 searches is the one courier's identity table names
+# for the campaign's sender address; no campaign field carries it.
+section "4c. T7 resolves the courier account from sender.email"
+
+assert_eq [spar::imap::account_for_address $fake_courier "me@acme-venues.au"] acct \
+    "account_for_address: identity address matches case-insensitively"
+assert_eq [spar::imap::account_for_address $fake_courier "nobody@acme-venues.au"] "" \
+    "account_for_address: unknown address resolves to nothing"
+
+# A campaign with sender.email and no reply_check block builds T7 rows
+# against that account, folder INBOX.
+set inst7 [file join $tmp_root inst-t7]
+file mkdir [file join $inst7 segments seg-t7]
+file mkdir [file join $inst7 campaigns camp]
+set camp7 [file join $inst7 campaigns camp.yaml]
+set fd [open $camp7 w]
+puts $fd "campaign: Test"
+puts $fd "sender:"
+puts $fd "  email: me@acme-venues.au"
+puts $fd "segments:"
+puts $fd "  - seg-t7"
+close $fd
+set fd [open [file join $inst7 campaigns camp carol.yaml] w]
+puts -nonewline $fd $approach_yaml_sent; close $fd
+
+set ::t7_events {}
+set prep7 [[::spar::transitions::get T7] prepare_for_pool \
+    [dict create campaign_file $camp7 courier_bin $fake_courier] \
+    {apply {args {lappend ::t7_events $args}}}]
+set rows7 [dict get $prep7 rows]
+assert_eq [llength $rows7] 1 "T7 without reply_check builds one row per sent approach"
+set row7 [lindex [lindex $rows7 0] 1]
+assert_eq [dict get $row7 account] acct  "T7 row account comes from courier's identity table"
+assert_eq [dict get $row7 folder]  INBOX "T7 row folder defaults to INBOX"
+assert_eq $::t7_events {} "T7 emits no failure when reply_check is absent"
+
+# A sender address no courier identity carries fails T7 naming it.
+set fd [open $camp7 w]
+puts $fd "campaign: Test"
+puts $fd "sender:"
+puts $fd "  email: stranger@acme-venues.au"
+puts $fd "segments:"
+puts $fd "  - seg-t7"
+close $fd
+set ::t7_events {}
+set prep7 [[::spar::transitions::get T7] prepare_for_pool \
+    [dict create campaign_file $camp7 courier_bin $fake_courier] \
+    {apply {args {lappend ::t7_events $args}}}]
+assert_eq [llength [dict get $prep7 rows]] 0 "T7 builds no rows for an unknown sender"
+assert_match [lindex $::t7_events 0] "*failed*stranger@acme-venues.au*" \
+    "T7 failure names the address no identity sends as"
+
 section "5. roster_update relays to the domain subscriber"
 
 # Without a subscriber the relay logs and drops; with one, the payload
