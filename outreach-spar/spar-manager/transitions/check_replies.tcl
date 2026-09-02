@@ -275,22 +275,36 @@ proc ::spar::imap::check_one {opts} {
     catch {spar::pool_exec $courier_bin --imap $account search -f $folder \
         --limit 50 "from:$to_email"} search_out
 
-    # On the exit-1 path the output may carry a trailing Tcl "child process
-    # exited abnormally" note; isolate the JSON object by its outer braces.
+    # The merged output carries courier's stderr before the JSON (a
+    # connect failure is warned there with the server's reason) and may
+    # carry a trailing Tcl "child process exited abnormally" note after
+    # it; isolate the JSON object by its outer braces and keep the
+    # preamble for the failure message.
     set jb [string first "\{" $search_out]
     set je [string last  "\}" $search_out]
+    set preamble ""
     if {$jb >= 0 && $je > $jb} {
+        set preamble [string trim [string range $search_out 0 $jb-1]]
         set search_out [string range $search_out $jb $je]
     }
 
     # courier wraps the payload as
     #   {"<op_str>": {"<account>": {"results": [...], "provenance": ...}}}
+    # and, for an account it could not search, as
+    #   {"<op_str>": {"<account>": {"error": "..."}}}
     if {[catch {
         set raw [::json::json2dict $search_out]
         set inner [dict get $raw [lindex [dict keys $raw] 0]]
         set per_account [dict get $inner [lindex [dict keys $inner] 0]]
-        set messages [dict get $per_account results]
     } perr]} {
+        return [list error "mailbox search JSON parse: $perr"]
+    }
+    if {[dict exists $per_account error]} {
+        set why [dict get $per_account error]
+        if {$preamble ne ""} { append why " ($preamble)" }
+        return [list error "mailbox search: $why"]
+    }
+    if {[catch {set messages [dict get $per_account results]} perr]} {
         return [list error "mailbox search JSON parse: $perr"]
     }
 

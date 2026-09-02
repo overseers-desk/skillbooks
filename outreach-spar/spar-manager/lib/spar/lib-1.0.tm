@@ -1371,6 +1371,10 @@ proc spar::row_done_detail {result} {
     set msg ""
     catch {set msg [dict get $result message_id]}
     if {$msg eq ""} { catch {set msg [dict get $result result]} }
+    if {$msg eq "" && [dict exists $result new_replies]} {
+        set n [dict get $result new_replies]
+        set msg [expr {$n == 0 ? "no new replies" : ($n == 1 ? "1 new reply" : "$n new replies")}]
+    }
     return $msg
 }
 
