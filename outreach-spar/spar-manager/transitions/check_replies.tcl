@@ -1,8 +1,8 @@
 # spar-manager/transitions/check_replies.tcl
 #
-# CheckRepliesTransition (T7, Send → Reply). Queries the campaign's
-# configured inbox for replies to sent approaches and appends any new
-# ones to the approach YAML. The class carries the transition metadata,
+# CheckRepliesTransition (T7, Send → Reply). Queries the inbox courier
+# reads for the campaign's sender address for replies to sent approaches
+# and appends any new ones to the approach YAML. The class carries the transition metadata,
 # the build_opts hook the dispatcher reads, and the prepare_for_pool
 # method that builds the per-row Pool batch; the per-row search-and-
 # fetch leg the Pool's imap_poll worker proc invokes, spar::imap::check_one,
@@ -47,35 +47,58 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
 
     # _build_rows — per-row opts dict construction for prepare_for_pool.
     # Returns {rows {{stem opts} ...}} on success, or "" if a
-    # precondition failed (missing reply_check config, no sent approaches)
-    # so the pool skips with no rows. Synchronous failed/skipped events
-    # are emitted through on_progress.
+    # precondition failed (no sender address, no courier identity for
+    # it, no sent approaches) so the pool skips with no rows.
+    # Synchronous failed/skipped events are emitted through on_progress.
+    #
+    # The mailbox to search is the courier account whose identity sends
+    # as sender.email: a reply to a message lands where its From address
+    # is read, and courier's identity table is where that mapping lives.
+    # The folder is reply_check.folder, INBOX unless the receiving
+    # account's mail rules file this campaign's replies elsewhere.
     method _build_rows {opts on_progress} {
         set campaign_file [dict get $opts campaign_file]
         set dry_run       [dict getdef $opts dry_run 0]
         set segments      [dict getdef $opts segments {}]
         set stems         [dict getdef $opts stems    {}]
+        set courier_bin   [dict getdef $opts courier_bin ""]
 
         set cdata [spar::load_campaign $campaign_file]
 
-        if {![dict exists $cdata reply_check courier_account] \
-            || ![dict exists $cdata reply_check folder]} {
-            if {$on_progress ne ""} {
-                {*}$on_progress "" failed \
-                    "campaign YAML missing reply_check.courier_account or reply_check.folder"
-            }
-            return ""
-        }
         if {![dict exists $cdata sender email]} {
             if {$on_progress ne ""} {
                 {*}$on_progress "" failed "campaign YAML missing sender.email"
             }
             return ""
         }
+        set sender [dict get $cdata sender email]
+        set folder [dict getdef $cdata reply_check folder INBOX]
 
-        set account [dict get $cdata reply_check courier_account]
-        set folder  [dict get $cdata reply_check folder]
-        set sender  [dict get $cdata sender email]
+        if {$courier_bin eq ""} {
+            set courier_bin [spar::find_tool courier]
+        }
+        if {$courier_bin eq ""} {
+            if {$on_progress ne ""} {
+                {*}$on_progress "" failed "courier not found — check Settings"
+            }
+            return ""
+        }
+        if {[catch {
+            set account [spar::imap::account_for_address $courier_bin $sender]
+        } aerr]} {
+            if {$on_progress ne ""} {
+                {*}$on_progress "" failed "courier list: $aerr"
+            }
+            return ""
+        }
+        if {$account eq ""} {
+            if {$on_progress ne ""} {
+                {*}$on_progress "" failed \
+                    "no courier identity sends as $sender; `courier list` names the addresses it knows"
+            }
+            return ""
+        }
+
         set campaign_dir [spar::instance_root_for_yaml $campaign_file]
         set approach_dir [spar::approach_dir_for_campaign $campaign_file]
 
@@ -120,7 +143,8 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
                 fingerprints  $fingerprints \
                 account       $account \
                 folder        $folder \
-                sender        $sender]]
+                sender        $sender \
+                courier_bin   $courier_bin]]
         }
 
         # Stems requested but with no watchable sent approach get a
@@ -201,6 +225,29 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
 
 
 namespace eval ::spar::imap {}
+
+# spar::imap::account_for_address courier_bin address — the courier IMAP
+# account label whose identity sends as `address`, or "" when no identity
+# carries it. Reads `courier list`, the sanctioned view of courier's
+# configuration (labels, hosts and addresses; no credentials), so the
+# mapping is never copied into a campaign file by hand. Raises when
+# courier itself fails or its output does not parse.
+proc ::spar::imap::account_for_address {courier_bin address} {
+    set out [spar::pool_exec $courier_bin list]
+    set jb [string first "\{" $out]
+    set je [string last  "\}" $out]
+    if {$jb < 0 || $je <= $jb} {
+        error "no JSON in `courier list` output"
+    }
+    set cfg [::json::json2dict [string range $out $jb $je]]
+    set wanted [string tolower [string trim $address]]
+    dict for {label ident} [dict getdef $cfg identity {}] {
+        if {[string tolower [dict getdef $ident address ""]] eq $wanted} {
+            return [dict getdef $ident imap ""]
+        }
+    }
+    return ""
+}
 
 proc ::spar::imap::check_one {opts} {
     set approach_path [dict get $opts approach_path]
