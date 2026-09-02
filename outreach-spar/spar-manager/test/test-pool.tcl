@@ -335,7 +335,11 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
     lappend positional $a
 }
 set op [lindex $positional 0]
-if {$op eq "search"} {
+if {$op eq "search" && [lindex $positional end] eq "from:down@acme-venues.au"} {
+    puts stderr {warning: connect failed for [imap.acct]: [ALERT] Too many simultaneous connections. (Failure)}
+    puts {{"search": {"acct": {"error": "connection failed"}}}}
+    exit 2
+} elseif {$op eq "search"} {
     puts {{"search": {"acct": {"results": [{"uid": "U1", "from": "Dest <dest@acme-venues.au>", "to": ["Me <me@acme-venues.au>"], "cc": [], "date": "2026-04-25T10:00:00"}], "provenance": {}}}}}
 } elseif {$op eq "read"} {
     puts {{"read": {"acct": {"body": "Hello back from Dest", "from": "dest@acme-venues.au", "to": ["me@acme-venues.au"], "date": "2026-04-25T10:00:00"}}}}
@@ -483,6 +487,19 @@ set prep7 [[::spar::transitions::get T7] prepare_for_pool \
 assert_eq [llength [dict get $prep7 rows]] 0 "T7 builds no rows for an unknown sender"
 assert_match [lindex $::t7_events 0] "*failed*stranger@acme-venues.au*" \
     "T7 failure names the address no identity sends as"
+
+# 4d. An account courier could not search comes back as an error
+# object, not a result set; the row fails with courier's reason and the
+# server's own words, and a done row says how many replies it appended.
+section "4d. courier's error object and the done-row count"
+
+set down [spar::imap::check_one [dict replace $imap_opts to_email "down@acme-venues.au"]]
+assert_eq [lindex $down 0] error "a connect failure is an error result"
+assert_match [lindex $down 1] "mailbox search: connection failed*Too many simultaneous connections*" \
+    "the failure carries courier's reason and the server's alert"
+assert_eq [spar::row_done_detail {new_replies 0}] "no new replies" "done detail: zero replies"
+assert_eq [spar::row_done_detail {new_replies 1}] "1 new reply"    "done detail: one reply"
+assert_eq [spar::row_done_detail {new_replies 3}] "3 new replies"  "done detail: several"
 
 section "5. roster_update relays to the domain subscriber"
 
