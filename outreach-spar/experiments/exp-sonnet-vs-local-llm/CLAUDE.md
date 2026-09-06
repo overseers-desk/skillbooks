@@ -42,10 +42,11 @@ model + KV fits with headroom:
 
 **/tmp is tmpfs (RAM-backed): keep large files off it** — a big file there consumes the
 very memory the model needs. Write big artifacts to disk:
-- Models + builds: `/usr/local/ai/spar/` (separate NVMe, `nvme0n1p3`, ~318 GiB free — NOT root).
+- Model weights: `/var/local/models/llama/` (`nvme0n1p9`, its own btrfs partition — NOT root, NOT `/tmp`).
+- llama.cpp checkout and its builds: `/windows/spar/src/` (`nvme0n1p3`, the Windows partition, mounted at `/windows`).
 - Run artifacts (streams, profiles, logs): the engine folder under this experiment.
 - Runtime `.log` noise goes in each engine's `logs/` and is git-ignored (`*.log`).
 
 Host GPU-driver stability (`xe` hangs on 6.x, clean on 7.x) is tracked in the host issue
-book `~/code/holotapes-main/issues/host=yoga,*` — not here. This file is about running
+book the office repo's host issue book, `issues/host=yoga,*` — not here. This file is about running
 the experiments; that one is about the hardware.

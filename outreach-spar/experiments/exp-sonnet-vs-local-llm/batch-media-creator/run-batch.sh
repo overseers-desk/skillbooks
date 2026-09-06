@@ -10,7 +10,7 @@
 set -u
 
 REC="$HOME/code/aesop/outreach-spar/exp-sonnet-vs-local-llm/batch-media-creator"
-RUN=/usr/local/ai/spar/runs/holotapes-career-qwen35
+RUN=/windows/spar/runs/holotapes-career-qwen35
 CAMPAIGN="$HOME/code/holotapes-career/spar-campaigns"
 SEG=media-creator
 ROSTER="$CAMPAIGN/$SEG/roster.tsv"
@@ -21,8 +21,8 @@ STREAMS="$RUN/streams"
 LOGS="$RUN/logs"
 DRIVERLOG="$LOGS/driver.log"
 
-MODEL=/usr/local/ai/spar/models/Qwen3.5-35B-A3B-Q4_K_M.gguf
-LLAMA_BIN=/usr/local/ai/spar/src/llama.cpp/build-vulkan/bin/llama-server
+MODEL=/var/local/models/llama/Qwen3.5-35B-A3B-Q4_K_M.gguf
+LLAMA_BIN=/windows/spar/src/llama.cpp/build-vulkan/bin/llama-server
 LLAMA_LOG="$LOGS/llama-server.log"
 
 PERPROFILE_TIMEOUT=1800   # 30 min hard cap per attempt (circuit-breaker for decode loops;
@@ -31,7 +31,7 @@ MAX_ATTEMPTS=2            # auto-fix: retry non-hardware failures once
 
 # The research tools the prompt names bare (brave-search, browser-serialiser) resolve via PATH,
 # so the same prompt file drives any box; each box's driver supplies its own locations here.
-export PATH="$HOME/code/skillbooks/bin:/usr/local/ai/spar/bin:$HOME/.npm-global/bin:$PATH"
+export PATH="$HOME/code/skillbooks/bin:/windows/spar/bin:$HOME/.npm-global/bin:$PATH"
 
 ALLOWED="Bash,WebFetch,Read,Write,Edit,Glob,Agent"
 DISALLOWED="WebSearch,Grep,ToolSearch,Skill,TodoWrite,SendMessage,NotebookEdit,Workflow,CronCreate,CronDelete,CronList,TaskCreate,TaskGet,TaskList,TaskOutput,TaskStop,TaskUpdate,DesignSync,EnterWorktree,ExitWorktree,ScheduleWakeup,ReportFindings,WaitForMcpServers"

@@ -1,6 +1,6 @@
 # WORKLOG 2026-07-01 — SPAR-P on a local model (Qwen3-30B-A3B, Vulkan) vs hosted Sonnet
 
-Forward-only record for a future agent asked "can SPAR-P run on the local box instead of hosted Claude, to stop bleeding tokens?" It documents the working local stack, the fair like-for-like comparison against a current-spec hosted-Sonnet profile of the same contact, and where the real limit is. Host `xe`/GPU-driver behaviour is tracked separately in `~/code/holotapes-main/issues/host=yoga,*`; this file is about SPAR, not the host.
+Forward-only record for a future agent asked "can SPAR-P run on the local box instead of hosted Claude, to stop bleeding tokens?" It documents the working local stack, the fair like-for-like comparison against a current-spec hosted-Sonnet profile of the same contact, and where the real limit is. Host `xe`/GPU-driver behaviour is tracked separately in the office repo's host issue book, `issues/host=yoga,*`; this file is about SPAR, not the host.
 
 **Result.** A local Qwen3-30B run, given the same reach as the hosted harness (web search + LinkedIn, both wired through Bash CLIs), produces a structurally valid, non-fabricated SPAR-P profile with the **full real career history** — matching the facts the hosted current-spec Sonnet run gathers. The residual gap is not tools and not speed: it is **rating calibration and active-verification judgement**. On the same facts the local model rated the contact 4; the hosted run rated it 2 after weighing what the facts imply. Detail below.
 
@@ -10,18 +10,18 @@ Forward-only record for a future agent asked "can SPAR-P run on the local box in
 
 A local inference stack a Claude-Code agent loop drives end-to-end to write a SPAR-P profile, with web + LinkedIn reach:
 
-- **Model** `/usr/local/ai/spar/models/Qwen3-30B-A3B-Q4_K_M.gguf` — base Qwen3-30B-A3B, Q4_K_M, 18,556,685,824 bytes, sha256 `0d003f6662faee786ed5da3e31b29c978de5ae5d275c8794c606a7f3c01aa8f5`. llama.cpp model size 17.28 GiB. Arch: 30.5B total, 3.3B active (MoE, 128 experts / 8 active), 48 layers, 4 KV heads, head_dim 128. Native ctx 32k, ~131k via YaRN (degrades toward the top; treat ~100k as the practical ceiling). Obtained via **ModelScope** (`Qwen/Qwen3-30B-A3B-GGUF`); HF throttles anonymous downloads and its Xet backend breaks aria2 resume, so ModelScope is the no-token re-fetch path. File persists on `/usr/local/ai` (nvme0n1p3, separate partition, survives reboot).
-- **Binaries** built on this host at llama.cpp commit `8c146a8`: Vulkan (Arc 140V) `/usr/local/ai/spar/src/llama.cpp/build-vulkan/bin/{llama-server,llama-bench,llama-cli}`; CPU build alongside.
+- **Model** `/var/local/models/llama/Qwen3-30B-A3B-Q4_K_M.gguf` — base Qwen3-30B-A3B, Q4_K_M, 18,556,685,824 bytes, sha256 `0d003f6662faee786ed5da3e31b29c978de5ae5d275c8794c606a7f3c01aa8f5`. llama.cpp model size 17.28 GiB. Arch: 30.5B total, 3.3B active (MoE, 128 experts / 8 active), 48 layers, 4 KV heads, head_dim 128. Native ctx 32k, ~131k via YaRN (degrades toward the top; treat ~100k as the practical ceiling). Obtained via **ModelScope** (`Qwen/Qwen3-30B-A3B-GGUF`); HF throttles anonymous downloads and its Xet backend breaks aria2 resume, so ModelScope is the no-token re-fetch path. File persists on `/var/local` (nvme0n1p9, separate btrfs partition, survives reboot).
+- **Binaries** built on this host at llama.cpp commit `8c146a8`: Vulkan (Arc 140V) `/windows/spar/src/llama.cpp/build-vulkan/bin/{llama-server,llama-bench,llama-cli}`; CPU build alongside.
 - **Bridge** claude-code-router (`ccr`, npm `@musistudio/claude-code-router`), config `~/.claude-code-router/config.json`: provider `local-qwen` → `http://127.0.0.1:8080/v1/chat/completions`, model id `qwen3-30b-a3b`, `Router.default = "local-qwen,qwen3-30b-a3b"`. Lets `claude -p` talk to the local server instead of Anthropic.
-- **Reach, both via Bash (no tool schema — see §3):** web search `/usr/local/ai/spar/bin/brave-search "<q>" [n]`; LinkedIn `browser-serialiser linkedin.com/parse-profile <slug>` (the `linkedin.com` skill's CLI, on PATH from the overseer-toolbox plugin; needs a logged-in session).
+- **Reach, both via Bash (no tool schema — see §3):** web search `/windows/spar/bin/brave-search "<q>" [n]`; LinkedIn `browser-serialiser linkedin.com/parse-profile <slug>` (the `linkedin.com` skill's CLI, on PATH from the overseer-toolbox plugin; needs a logged-in session).
 - **Prompt** `spar-p-vulkan-qwen3-30b-a3b/prompt3.txt`: the run brief — parse-profile as identity ground-truth, capped web search, a verification rule, mandatory write.
 - **Outputs** (one subfolder per engine, so `spar-p-cuda-*` can slot in as a sibling): the local Qwen/Vulkan run lives under `spar-p-vulkan-qwen3-30b-a3b/` (profile `marco-fredriks.local-qwen3-vulkan-linkedin.md`, star 4; trace `stream.linkedin.jsonl`; run log `run-trace-linkedin.md`; the no-LinkedIn control `marco-fredriks.local-qwen3-vulkan.md` + `prompt2.txt`, §4 dead-end 5). The hosted baseline lives under `spar-p-sonnet/` (profile `marco-fredriks.sonnet-current-spec.md`, star 2).
 
 ## 2. Reproduce it (verbatim)
 
 ```bash
-M=/usr/local/ai/spar/models/Qwen3-30B-A3B-Q4_K_M.gguf
-VK=/usr/local/ai/spar/src/llama.cpp/build-vulkan/bin
+M=/var/local/models/llama/Qwen3-30B-A3B-Q4_K_M.gguf
+VK=/windows/spar/src/llama.cpp/build-vulkan/bin
 
 # 1. inference server on the GPU, thinking OFF (critical — dead-end 4)
 "$VK/llama-server" -m "$M" --host 127.0.0.1 --port 8080 -ngl 99 -c 32768 --jinja \
@@ -33,7 +33,7 @@ ccr start                     # 127.0.0.1:3456, reads ~/.claude-code-router/conf
 
 # 3. confirm LinkedIn session is live (once), then run the agent loop
 browser-serialiser linkedin.com/login --check           # expect {"status":"already_logged_in"}
-mkdir -p /usr/local/ai/spar/runs/lr && cd /usr/local/ai/spar/runs/lr   # copy prompt3.txt here
+mkdir -p /windows/spar/runs/lr && cd /windows/spar/runs/lr   # copy prompt3.txt here
 ccr code -p "$(cat prompt3.txt)" \
   --strict-mcp-config \
   --allowedTools "Bash,WebFetch,Read,Write,Edit,Glob,Agent" \
@@ -52,7 +52,7 @@ Two capabilities the hosted harness gets from Claude Code's tool layer must be r
 - **The `Skill` tool cannot be enabled cheaply.** `llama-server --jinja` builds a GBNF grammar from every tool schema; `Skill` (and the rest of the full catalog) blows the grammar threshold (dead-end 2).
 
 Both are solved the same way: **call the underlying CLI through Bash.** These add no JSON tool schema, so they cost nothing against the grammar limit.
-- Web: `/usr/local/ai/spar/bin/brave-search "<q>" [n]` — `curl`s the Brave Search API (`X-Subscription-Token` key inside the wrapper; also in LastPass, do not commit it), prints title/url/snippet. `serpapi` would substitute identically.
+- Web: `/windows/spar/bin/brave-search "<q>" [n]` — `curl`s the Brave Search API (`X-Subscription-Token` key inside the wrapper; also in LastPass, do not commit it), prints title/url/snippet. `serpapi` would substitute identically.
 - LinkedIn: the `linkedin.com` skill is a set of tcl CLIs driven by `browser-serialiser` (`browser-serialiser linkedin.com/parse-profile <slug>` returns the parsed profile: name, headline, location, experience, skills). Needs a logged-in session in the browser user-data-dir the serialiser targets (`login --check` reports state) and draws on LinkedIn's monthly Commercial-Use quota. Any skill with a CLI wires in this way; the `Skill` tool schema was never the only door.
 
 ## 4. Dead-ends mapped (do not re-walk)

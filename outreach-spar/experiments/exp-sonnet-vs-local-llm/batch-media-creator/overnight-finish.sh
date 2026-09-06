@@ -51,7 +51,7 @@ fresh session once credit is reset.
 
 ## Where the outputs are
 - Profiles: $PROFILES (committed to branch $BRANCH).
-- Per-turn cost/context data: /usr/local/ai/spar/runs/holotapes-career-qwen35/streams/*.jsonl (peak context + output tokens recoverable here; run-batch's peak_ctx column reads llama-server.log, absent this run because the server was started warm).
+- Per-turn cost/context data: /windows/spar/runs/holotapes-career-qwen35/streams/*.jsonl (peak context + output tokens recoverable here; run-batch's peak_ctx column reads llama-server.log, absent this run because the server was started warm).
 - progress.log: per-profile duration, star, yield, out_tok, tool_calls (committed to aesop).
 
 ## What still needs a credit-reset session (needs judgment — not automatable locally)

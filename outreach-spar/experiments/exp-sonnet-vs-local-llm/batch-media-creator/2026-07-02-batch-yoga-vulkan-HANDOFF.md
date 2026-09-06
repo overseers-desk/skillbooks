@@ -13,7 +13,7 @@ Redo every SPAR-P profile in the `holotapes-career` campaign using the **local Q
 ## Prerequisites (in order)
 1. **`git pull`** in `~/code/holotapes-career` and `~/code/aesop` before anything (user's instruction; my observations below are pre-pull and may be stale).
 2. **Log in to LinkedIn** — `browser-serialiser linkedin.com/login` (checked 2026-07-02: session was **NOT logged in**; `parse-profile` needs it or career tables come back thin — WORKLOG §9 condition note).
-3. **Start the engine once**: `llama-server -m /usr/local/ai/spar/models/Qwen3.5-35B-A3B-Q4_K_M.gguf -ngl 99 -c 16384 --jinja --chat-template-kwargs '{"enable_thinking":false}'` (22 GB, ~24 GB peak — fits under Wayland if GUI is light; console gives more headroom). Then `ccr start`. Confirm `curl :8080/health`.
+3. **Start the engine once**: `llama-server -m /var/local/models/llama/Qwen3.5-35B-A3B-Q4_K_M.gguf -ngl 99 -c 16384 --jinja --chat-template-kwargs '{"enable_thinking":false}'` (22 GB, ~24 GB peak — fits under Wayland if GUI is light; console gives more headroom). Then `ccr start`. Confirm `curl :8080/health`.
 
 ## What I found about the target campaign (the new, undocumented part)
 `~/code/holotapes-career/spar-campaigns/` is a **multi-segment** campaign, NOT the flat layout of chris-insurance-broking:
@@ -29,7 +29,7 @@ Drive the **local** model directly via `ccr code` per contact — do NOT use `sp
 #   build prompt = generic SPAR-P brief (adapted to that segment.yaml's rules)
 #                  + contact fields (name, linkedin slug, org, role, country)
 #                  + output path = <segment>/profiles/<stem>.md   (override)
-#   cd <a scratch run dir under /usr/local/ai/spar/runs/>   # NOT /tmp
+#   cd <a scratch run dir under /windows/spar/runs/>   # NOT /tmp
 #   ccr code -p "$PROMPT" --strict-mcp-config \
 #     --allowedTools "Bash,WebFetch,Read,Write,Edit,Glob,Agent" \
 #     --disallowedTools "WebSearch,Grep,ToolSearch,Skill,TodoWrite,SendMessage,NotebookEdit,Workflow,Cron*,Task*,DesignSync,EnterWorktree,ExitWorktree,ScheduleWakeup,ReportFindings,WaitForMcpServers" \
