@@ -43,7 +43,8 @@ model + KV fits with headroom:
 **/tmp is tmpfs (RAM-backed): keep large files off it** — a big file there consumes the
 very memory the model needs. Write big artifacts to disk:
 - Model weights: `/var/local/models/llama/` (`nvme0n1p9`, its own btrfs partition — NOT root, NOT `/tmp`).
-- llama.cpp checkout and its builds: `/windows/spar/src/` (`nvme0n1p3`, the Windows partition, mounted at `/windows`).
+- llama.cpp checkout and its builds: `/usr/local/src/llama.cpp/`.
+- Run artifacts too large for the repository: `/var/local/`, never the Windows partition and never `/tmp`.
 - Run artifacts (streams, profiles, logs): the engine folder under this experiment.
 - Runtime `.log` noise goes in each engine's `logs/` and is git-ignored (`*.log`).
 

@@ -29,7 +29,7 @@ Drive the **local** model directly via `ccr code` per contact — do NOT use `sp
 #   build prompt = generic SPAR-P brief (adapted to that segment.yaml's rules)
 #                  + contact fields (name, linkedin slug, org, role, country)
 #                  + output path = <segment>/profiles/<stem>.md   (override)
-#   cd <a scratch run dir under /windows/spar/runs/>   # NOT /tmp
+#   cd <a scratch run dir under /var/local/llm-runs/>   # NOT /tmp
 #   ccr code -p "$PROMPT" --strict-mcp-config \
 #     --allowedTools "Bash,WebFetch,Read,Write,Edit,Glob,Agent" \
 #     --disallowedTools "WebSearch,Grep,ToolSearch,Skill,TodoWrite,SendMessage,NotebookEdit,Workflow,Cron*,Task*,DesignSync,EnterWorktree,ExitWorktree,ScheduleWakeup,ReportFindings,WaitForMcpServers" \

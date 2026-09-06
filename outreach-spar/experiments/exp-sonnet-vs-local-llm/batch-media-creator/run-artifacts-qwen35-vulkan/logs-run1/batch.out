@@ -1,0 +1,44 @@
+15:14:24 === batch start: 47 stem(s) ===
+15:14:24 josh-muccio-the-pitch: attempt 1 starting
+15:34:24 josh-muccio-the-pitch: attempt 1 TIMED OUT (1200s)
+15:34:24 josh-muccio-the-pitch: attempt 2 starting
+15:42:36 josh-muccio-the-pitch: DONE outcome=success star=4 dur=492s peak_ctx=15863 turns=11
+15:42:36 james-pringle-riding-unicorns: attempt 1 starting
+15:50:12 james-pringle-riding-unicorns: attempt 1 HARDWARE/CONTEXT limit (peak=11178)
+15:50:12 james-pringle-riding-unicorns: DONE outcome=fail-hardware star= dur=456s peak_ctx=11178 turns=10
+15:50:12 jason-lemkin-saastr: attempt 1 starting
+16:01:46 jason-lemkin-saastr: DONE outcome=success star=4 dur=694s peak_ctx=16365 turns=10
+16:01:46 josiah-mackenzie-hospitality-daily: attempt 1 starting
+16:13:22 josiah-mackenzie-hospitality-daily: DONE outcome=success star=4 dur=695s peak_ctx=14412 turns=8
+16:13:22 joern-menninger-startupradio: attempt 1 starting
+16:27:39 joern-menninger-startupradio: DONE outcome=success star=4 dur=857s peak_ctx=16338 turns=9
+16:27:39 laura-lacurezeanu-ai-founders-hq: attempt 1 starting
+16:40:06 laura-lacurezeanu-ai-founders-hq: attempt 1 HARDWARE/CONTEXT limit (peak=15367)
+16:40:06 laura-lacurezeanu-ai-founders-hq: DONE outcome=fail-hardware star= dur=747s peak_ctx=15367 turns=22
+16:40:06 skip lenny-rachitsky-lennys-podcast (already success)
+16:40:07 lex-fridman-lex-fridman-podcast: attempt 1 starting
+16:52:17 lex-fridman-lex-fridman-podcast: DONE outcome=success star=4 dur=730s peak_ctx=15072 turns=9
+16:52:17 matt-watson-startup-hustle: attempt 1 starting
+17:05:58 matt-watson-startup-hustle: DONE outcome=success star=4 dur=821s peak_ctx=16383 turns=16
+17:05:58 matt-wolfe-future-tools: attempt 1 starting
+17:14:36 matt-wolfe-future-tools: DONE outcome=success star=4 dur=518s peak_ctx=14861 turns=11
+17:14:36 matt-wolfe-next-wave: attempt 1 starting
+17:21:22 matt-wolfe-next-wave: attempt 1 HARDWARE/CONTEXT limit (peak=11139)
+17:21:22 matt-wolfe-next-wave: DONE outcome=fail-hardware star= dur=406s peak_ctx=11139 turns=9
+17:21:22 matthew-berman-forward-future: attempt 1 starting
+17:29:42 matthew-berman-forward-future: attempt 1 HARDWARE/CONTEXT limit (peak=12924)
+17:29:42 matthew-berman-forward-future: DONE outcome=fail-hardware star= dur=500s peak_ctx=12924 turns=13
+17:29:42 mike-allton-ai-hat: attempt 1 starting
+17:36:15 mike-allton-ai-hat: attempt 1 HARDWARE/CONTEXT limit (peak=11212)
+17:36:15 mike-allton-ai-hat: DONE outcome=fail-hardware star= dur=393s peak_ctx=11212 turns=9
+17:36:15 mike-maples-pattern-breakers: attempt 1 starting
+17:41:33 mike-maples-pattern-breakers: attempt 1 HARDWARE/CONTEXT limit (peak=10593)
+17:41:33 mike-maples-pattern-breakers: DONE outcome=fail-hardware star= dur=318s peak_ctx=10593 turns=8
+17:41:33 nate-herk-truehorizon-ai: attempt 1 starting
+17:46:41 nate-herk-truehorizon-ai: attempt 1 HARDWARE/CONTEXT limit (peak=10516)
+17:46:41 nate-herk-truehorizon-ai: DONE outcome=fail-hardware star= dur=308s peak_ctx=10516 turns=8
+17:46:42 nathan-labenz-cognitive-revolution: attempt 1 starting
+17:52:28 nathan-labenz-cognitive-revolution: attempt 1 no valid profile written (rc=0)
+17:52:28 nathan-labenz-cognitive-revolution: attempt 2 starting
+17:59:13 nathan-labenz-cognitive-revolution: DONE outcome=success star=4 dur=405s peak_ctx=13499 turns=8
+17:59:13 nathaniel-whittemore-ai-daily-brief: attempt 1 starting
