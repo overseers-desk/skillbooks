@@ -39,3 +39,11 @@ Why: downstream agents lift claim sentences whole into outward messages, and int
 Why: a product noun surviving here rebinds the method to one market, and the next run inherits a frame it should not have.
 
 **Enforcement:** the grep is run at authoring time against each finished run's vocabulary; this file is the tie-breaker when an example seems too useful to generalise. Abstract the example, keep its lesson.
+
+## I6. Status marks weigh as buyers weigh them
+
+**Test:** for any fact class about third-party standing (registration, licensing, accreditation, authenticity, awards) collected or asked as a study question, can you point to evidence that buyers or their intermediaries consult it when choosing? Without that evidence it appears only as source-list provenance, never as a question the study answers.
+
+What fails the test: a survey verifying an operator's registration before reading its buyer appeal; striking an unregistered comparable from a frame; a codebook variable on official standing with no buyer-behaviour citation behind it. An operator trading without the right permissions is still a comparable, and its bookings are still demand: the survey describes the market, it does not police it.
+
+**Enforcement:** the survey procedure derives frame sourcing from buyer choice; the codebook author receives this rule in the drafting brief; the frame review strikes status-mark questions with no buyer-evidence leg; this file is the tie-breaker. First case: a run's survey opened with heritage-register verification no buyer asks for; the owner ruled it out on 2026-09-07.
