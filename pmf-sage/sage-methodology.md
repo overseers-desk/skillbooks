@@ -30,7 +30,7 @@ The named failure modes, each countered by a specific mechanism:
 
 ## What SAGE is not
 
-Not a startup validation method: it assumes the category sells and tests displacement, not existence. Not a documentation exercise: reading substitutes for trial and error only where the market publishes its behaviour, and Survey names that blind spot rather than hiding it (what is bought is not always printed). Not a committee: exactly one human, the owner, rules, and rules on cards.
+Not a startup validation method: it assumes the category sells and tests displacement, not existence. Not a documentation exercise: reading substitutes for trial and error only where the market publishes its behaviour, and Survey names that blind spot rather than hiding it (what is bought is not always printed). Not an audit: the survey describes the market as buyers meet it, an operator trading outside its permissions is still market signal, and legality, registration or authenticity enter the evidence only as far as buyers weigh them when choosing. Not a committee: exactly one human, the owner, rules, and rules on cards.
 
 ## Runs and the methodology
 
