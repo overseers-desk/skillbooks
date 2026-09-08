@@ -24,7 +24,7 @@ The primary ask is the trunk. Facts that directly support the ask are primary; f
 
 ## R6. Faithful surface for borrowed facts
 
-The user's words are data. Paraphrase that adds ownership, status, specificity, or detail is inference. The subeditor cannot verify this against a brief it does not have; where the draft contains a paraphrasable fact (an ownership claim, a residency status, a numerical value, a date, a relationship), the subeditor queries the caller and the caller checks the brief.
+The user's words are data. Paraphrase that adds ownership, status, specificity, or detail is inference. The subeditor cannot verify this against a brief it does not have; where the draft contains a paraphrasable fact (an ownership claim, a residency status, a numerical value, a date, a relationship), the subeditor queries the caller and the caller checks the brief. A decision, assignment or instruction the brief left open, written as made, is the same inference at sentence scale. The subeditor lists each under ASSERTIONS and the caller answers on the brief.
 
 ## R7. Volunteer only what advances the ask
 
@@ -32,7 +32,7 @@ Each fact in the draft should be there because the ask depends on it. Incidental
 
 ## R8. The mail acts; it does not narrate the act
 
-A sentence narrating what the email is doing, or hedging on the recipient's behalf, is doing the recipient's work out loud. Cut. (See CLAUDE.md SDT.)
+A sentence narrating what the email is doing, what it is not doing, what nobody will do, or hedging on the recipient's behalf, is doing the recipient's work out loud. Cut, and record the cut under ASSERTIONS so the caller cannot reinstate it unseen. (See CLAUDE.md SDT.)
 
 ## R9. Sender identity match
 

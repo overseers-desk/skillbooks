@@ -9,6 +9,7 @@ Key:
 - `91fd118f` = `-home-weiwu-code-aesop-edit-email/91fd118f-ca2f-4cac-8b9b-9e0f4bc8363b.jsonl` (skill authoring)
 - `7b04d366` = `-home-weiwu-code-aesop-edit-email/7b04d366-59bb-4917-9b66-aab931e6e8ce.jsonl` (READING log / R10)
 - `c51b8f6c` = `-home-weiwu-code-aesop/c51b8f6c-90c4-4071-939b-3be6f42e9b2b.jsonl` (director email / D-rules)
+- `03393d8a` = `-usr-local-src-magazines-skills-instagram-com/03393d8a-6a57-4f21-9e4a-6a5734b54c2a.jsonl` (riding-instructor email, 7 September 2026 / ASSERTIONS)
 
 ---
 
@@ -438,3 +439,41 @@ Committed in `e4fdd79` (2026-05-27).
 > Internal director-to-staff mail closes with the writer's name. Ornamental sign-offs ("Best regards", "Warm regards") and anticipatory thanks ("thanks in advance") belong to peer or vendor register; here they read as the writer adopting the manners of the wrong relationship.
 
 **Audit note**: D5 was included in the AI's initial D-rules enumeration rather than arising from a specific user quote. The user's corrected emails do close with just the name, which is consistent with D5, but no session turn says "remove 'Best regards', it doesn't fit director register." D5 is implicitly validated by the user approving the overall D-rules direction and the skill being committed, but the specific offending text and user objection are absent from the record.
+
+---
+
+## ASSERTIONS. What the draft states on someone's authority
+
+**Status**: real
+
+**Offending text** (from `03393d8a`, assistant turn at `2026-09-07T02:57:12`, the draft as shown to the user):
+
+> Molly takes the trail rides, the adult lessons and the after-school slot, once her trial has run.
+>
+> Judith takes NDIS and a kids' games class, Monday and Thursday afternoons.
+>
+> Three rides: I taught the first, Alice taught the two after.
+>
+> Take this from Renee and from Alice's own words only. Anything that reached us through Liansu, set aside. It came to us secondhand twice and one of those arrived changed. No criticism of Liansu in that.
+>
+> Nobody tells Alice any of this. She is a contractor, so there is nothing to announce. We simply stop offering lessons.
+
+The header's from line carried Liansu's address over a signature of "Weiwu".
+
+**User's objections** (from `03393d8a`, four user turns):
+
+> `03:09:24` Molly takes the trail rides -> The way you write it, as if I have decided, is the case. She offered the papers. Just say that shortly. Similar to other things, this letter is mostly informative.
+
+> `03:12:41` "Three rides: I taught the first, Alice taught the two after" -> This is not how I remembered. I remembered I took Renée for a ride once, and Alice only did once.
+
+> `03:16:33` Diderot. I hate when it happens. I said, 'Make no mention of what Lian Su said, because it came to us second hand.' And you said, instead of deleting that, you wrote into the letter that we take nothing of what Lian Su said, because it came second hand.
+
+> `03:30:34` If this email is not about yoga, you don't have to write this email is not about yoga. And if you advise to do not talk to Alice, you don't have to write We don't talk to Alice.
+
+The from address was found by the drafting agent itself at the send step (`03:32:59`), by matching the courier identities against the signature.
+
+**Abstraction into rule** (this session, 8 September 2026):
+
+The subeditor's free-form QUERIES had run once on that draft, and its one substantive query went the other way (assistant turn at `01:25:57`: "the email never said what you had decided ... There is now a second paragraph stating it plainly"). The roster decisions came from the drafter's own strategy answer, which the user had asked for as advice. The claim about who taught which ride came from the capture's cleaned summary, not the transcript, which does not attribute the rides. The Liansu paragraph was a removal instruction answered by a sentence about the removal. Each objection is a sentence asserted on an authority the reader cannot see: whose decision, whose instruction, whose address. So the reader lists them, typed D, N, F, and the caller, who holds the brief, answers each; the sender sees the exceptions beside the draft. The cold reader is told not to ask for a decision the draft does not state, since that is the query that produced the roster.
+
+A fourth kind was tried and dropped. C, a claim about a named person's conduct or words with the question of its primary source, answered the `03:12` objection on paper. In a blind run on this draft (8 September 2026) it produced sixteen lines, every remark of Renee's and every quote of Alice's, and did not list the ride attribution it existed for. That is the profile of a feature that sends the email back for being overdone, so the block carries no C kind, and the `03:12` objection stands here as observed and not answered by the reader.

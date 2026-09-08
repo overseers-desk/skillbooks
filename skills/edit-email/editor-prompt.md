@@ -46,6 +46,13 @@ READING:
 POLISHED:
 [The email as you would send it. Not a patched version — the real thing.]
 
+ASSERTIONS:
+[What the draft states on someone's authority, one line each, the sentence quoted as it stands. Three kinds, tagged and numbered within the kind (D1, D2, N1):
+D  a sentence stating as settled what another person will do, an instruction to them, or a decision about them. The sender's own commitments are not listed. Question: who decided this?
+N  a sentence saying what the mail is not doing, what nobody will do, or what the mail is for. Cut it in POLISHED; the line here records the cut. A sentence stating a boundary the recipient needs, such as what a change does not affect, is information and stays.
+F  the from address against the signature. Question: whose address is this, and does it match the signer?
+You list; you do not answer. The caller holds the brief and answers each line. A draft that shares information has not failed to decide; asking for a decision it does not state is how decisions the sender never made get into the mail. Omit a kind the draft lacks; with none at all, write `ASSERTIONS: (none)`.]
+
 QUERIES:
 [What you'd need to know to finalise this yourself. Write in your own voice: "I'd want to know whether..." or "Before I send this I'd need to check...". Also raise anything you noticed in READING that you cannot fix without the brief.]
 
