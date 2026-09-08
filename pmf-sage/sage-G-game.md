@@ -38,6 +38,8 @@ Blind copies are built outside the repository: frontmatter stripped, each sheet'
 
 Judges are cast from the operator's profiled buyer roster (where the operator runs SPAR, these are SPAR profiles): a main panel diversified across whatever dimensions segment the market, each judge role-playing one named profile. The orchestrator assigns each judge a concrete scenario (occasion, cohort, season, incumbent supplier, budget pressure) and records it in the blind key; an unrecorded scenario cannot be re-judged, so the record is part of the round.
 
+Judging runs one subagent per judge, a single run each, launched in parallel, with an isolation clause in the launch itself: read only the brief, the profile and the sheets in the given order, write no files, the verdict is the final message. A judge that can browse the repository can find the blind key, so the clause is part of the blinding, not a courtesy.
+
 Judges return booking-grade verdicts: a ranking, what they would actually book, their own all-in cost including the expenses the product does not bill but the buyer pays to use it, dealbreakers, and the one change that would win them. Verdicts are persisted verbatim in the run; scoring is rank points summed across the panel, wins counted as first places. Judge-estimated costs are the judge's own figures, a standing instrument caveat worth restating in every results document.
 
 Judges find defects authors cannot see in their own work; an arithmetic slip in a price floor is a typical catch. That alone pays for the panel.
