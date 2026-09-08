@@ -8,7 +8,7 @@ Hard rules the rest of the methodology must not contradict. When a procedure, br
 
 What fails the test: a brief that fixes a group size the owner left open; a summary that upgrades a recommendation to a rule; a later run citing an earlier run's unruled default as policy.
 
-**Enforcement:** the reviewer gate checks briefs and sheets against the table; the phase documents state the rule at the point of temptation (brief-writing and absorption); this file is the tie-breaker.
+**Enforcement:** every frame line in an arm brief carries RULED with its card or DEFAULT with its finding, and an arm reads an unmarked line as a default (`sage-G-game.md`, the arms); the reviewer gate checks briefs and sheets against the table; the phase documents state the rule at the point of temptation (brief-writing and absorption); this file is the tie-breaker.
 
 ## I2. Every kept design element carries a demand justification
 
