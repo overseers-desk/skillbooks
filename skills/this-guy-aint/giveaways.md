@@ -1,6 +1,6 @@
 # giveaways
 
-The ways belief breaks when a text claims an identity its author does not inhabit. The judge reads first and classifies after: these categories name the common breaks so a felt wrongness can be reported precisely, not a checklist to hunt with. A giveaway that fits no category is still a giveaway; report it as `other` and describe it. The three closing categories, restate, secretary, and officialese, are the exception to felt-first: they name registers that read as thorough, competent, and courteous and so trip no felt read; the judge checks the draft against those three deliberately, as its prompt directs.
+The ways belief breaks when a text claims an identity its author does not inhabit. The judge reads first and classifies after: these categories name the common breaks so a felt wrongness can be reported precisely, not a checklist to hunt with. A giveaway that fits no category is still a giveaway; report it as `other` and describe it. The four closing categories, restate, secretary, gradgrind, and officialese, are the exception to felt-first: they name registers that read as thorough, competent, decisive, and courteous and so trip no felt read; the judge checks the draft against those four deliberately, as its prompt directs.
 
 The author's goal is never the impersonation; it is the work, done in that identity, without leaking that a non-member did it. Every category below is therefore a leak — something present in the text that a member would not have produced. The absence of persona is not a leak: plain, unadorned, workmanlike text with no opinions and no flavour is fully believable, because members write that way all the time. Never report what the text failed to perform; report only what it let slip.
 
@@ -85,6 +85,14 @@ The pragmatics of a service role where a peer's voice was claimed. A peer has st
 Question: is the author doing their own work among peers, or presenting finished work to a principal?
 
 Example: a pull-request description that ends "happy to split this into smaller commits if preferred" — a peer splits it or doesn't. A status mail whose middle says "Priya, your migration already handles the enum case" — Priya knows what her migration handles; a colleague writes "Priya's migration already handles the enum case" and moves on.
+
+## gradgrind
+
+The pragmatics of a schoolroom where a colleague's brief was claimed. Mr Gradgrind forbids Sissy Jupe to fancy flowers on a carpet; the author of a brief closes ground the reader could have designed, in the author's own voice. A peer who closes something borrows the authority and says whose it is: a dated ruling, a named owner, a row in a record. The leak is a closing that names none, or a block header ("these are ruled") that lends one attribution to every line beneath it, where one unruled line hides among ruled ones. The softest form carries no closing verb at all: a property stated as fact and then the leftover granted, "the window is thirty minutes; within that, the sequencing is yours". The tell there is the grant bounded by a premise. Closings of this kind gather where the author felt safest, which is where a recommended answer already sat in front of him, so the ground they take is the ground a designer was most likely to beat. None of it reads as harsh; a brief that decides reads as competent and spares the reader work, which is why it trips no felt read.
+
+Question: does the author say whose authority each closing borrows, or spend authority he does not hold?
+
+Example: a deployment brief that says "deploys go out on Tuesday; the rollback window is thirty minutes; within that, the sequencing is yours", where the owner ruled Tuesday and nobody ruled thirty minutes. A colleague writes "Tuesday (ruled, ops meeting 3 June); thirty minutes is what the last three deploys used, and a case for longer is yours to make".
 
 ## officialese
 
