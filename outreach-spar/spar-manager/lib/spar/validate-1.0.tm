@@ -49,16 +49,12 @@ proc spar::_issue {severity code contact_name message {extra {}}} {
     return $d
 }
 
-# _yamlmuster_load -- read rules/<file> as UTF-8 and load it into $inst under
-# $label. yamlmuster does no I/O: the host reads the rules file and passes the
-# text. Shared by the four per-kind accessors; the predicate registrations that
-# must precede the load stay in each accessor, since they differ by kind.
+# _yamlmuster_load -- load rules/<file> into $inst under $label. yamlmuster
+# opens the file itself, which is what puts the offending line number in a
+# load error. Shared by the per-kind accessors; the predicate registrations
+# that must precede the load stay in each accessor, since they differ by kind.
 proc spar::_yamlmuster_load {inst file label} {
-    set fd [open [file join $::spar::root rules $file] r]
-    fconfigure $fd -encoding utf-8
-    set script [read $fd]
-    close $fd
-    $inst load $script -name $label
+    $inst load [file join $::spar::root rules $file] -name $label
 }
 
 # ── yamlmuster rules-engine bootstrap (approach) ───────────────────────────
