@@ -1,14 +1,22 @@
 # SAGE Game — designs compete blind, buyers judge
 
-Game produces the product's interior by contest rather than by one author's draft. Isolated arms derive designs from the evidence, a reviewer strips what oversteps the rulings, blinded judges cast from real buyer profiles rule as buyers, the winners are absorbed into one sheet, and a held-out panel confirms the crown. The strongest evidence a game produces is independent arms converging on the same correction.
+Game produces the product's interior by contest rather than by one author's draft. A base sheet drafted from the rulings sets the mark, isolated arms derive designs from the evidence and vary them against it, a reviewer strips what oversteps the rulings, blinded judges cast from real buyer profiles rule as buyers, the winners are absorbed into one sheet, and a held-out panel confirms the crown. The strongest evidence a game produces is independent arms converging on the same correction, and that independence is bought partly by drawing the arms from different model families.
 
 ## Scoping ruling
 
 The game opens with a ruling from the owner: what the game is about, and how many games run. The subject follows the nature of the product; the arms compete on that dimension and on nothing else, with every other dimension held by the decisions table. A game whose subject nobody ruled is a game whose arms will invent format.
 
+## The base sheet
+
+Before the arms run, a base sheet is drafted from the decisions table and the evidence: the product as the rulings and findings alone would write it. It enters the round as a sheet like any other, reviewer-cut, blinded and judged beside the variations. The arms are then measured against what the table already buys, and a game whose arms cannot beat the base says so in scores rather than in opinion.
+
 ## The arms
 
-Several model arms derive the design content context-free: behind the fence where one exists, reading only the Survey evidence and the operator's standing capability records, under a whitelist and blacklist written into the brief. Banned channels are listed alongside banned paths, version-control history included, since an arm that can read history can read the fenced drafts. General domain knowledge is welcome; live lookups are not.
+Several model arms derive the design content, drawn from different model families where the roster allows, one family per arm. Arms sharing one family converge on shared temperament rather than on demand, and hand the judges near-identical sheets with nothing to discriminate; a run that cannot diversify families records that in the round and reads convergence accordingly.
+
+Each arm first derives context-free: behind the fence where one exists, reading only the Survey evidence and the operator's standing capability records, under a whitelist and blacklist written into the brief. Banned channels are listed alongside banned paths, version-control history included, since an arm that can read history can read the fenced drafts. General domain knowledge is welcome; live lookups are not.
+
+Derivation is the first of two steps. In the second, the fence lifts on exactly one file, the base sheet, and the arm judges both directions element by element: where its design improves on the base, where the base's element is the one demand actually supports, and where the base can be bettered beyond either document. It then writes its variation, keeping, taking or synthesising, with every kept element carrying a demand justification whichever document said it first; loyalty to either document is text generation. The variation, not the first-step design, is what enters review.
 
 Each arm's brief opens with role priming: the arm recites that its job is product development, meeting demand with supply, not growing text from a corpus, and after each substantial read it restates in one sentence what a text generator would conclude against what a product developer would. This is a cheap recalibration against text-generation inheritance, and it works.
 

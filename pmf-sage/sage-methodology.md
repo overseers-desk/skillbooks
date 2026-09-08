@@ -8,7 +8,7 @@ SAGE develops a product for a market that already exists. The category is proven
 
 - **Survey** builds the evidence: comparable operators worldwide drawn from enumerable published lists and coded under a frozen codebook, the local rivals a booking is won or lost against, the demand signals around them, and the distributors whose transactions cross the whole market.
 - **Adjudicate** puts every product parameter on a card in front of the owner: prior values, ruling, provenance, boundary tests. The output table bounds what any later agent may design, promise or claim.
-- **Game** has isolated design arms derive the product's interior from the evidence alone, passes them through a reviewer gate, and judges them blind through role-played, individually profiled buyers. The winners are absorbed into one sheet and crowned on a held-out panel.
+- **Game** drafts a base sheet from the rulings, has isolated design arms, one model family per arm, derive from the evidence alone and vary against that base, passes every sheet through a reviewer gate, and judges them blind through role-played, individually profiled buyers. The winners are absorbed into one sheet and crowned on a held-out panel.
 - **Establish** turns the crowned design into the shipped definition: numbered selling-point claims with measured scarcity, the definition folded by stated rules, every value migrated to its single home, and a displacement offer put to named prospects the operator already holds.
 
 **Direction:** inward. The operator must decide what to build, and the discipline is that the market's evidence decides it. Everything internal that could pre-decide the product (old drafts, meeting opinions, half-built local practice) is either fenced off or made to survive adjudication in daylight.
@@ -46,7 +46,7 @@ Each phase has its own procedure document; this file states what each phase is f
 
 **A — Adjudicate** (`sage-A-adjudicate.md`). Consumes the evidence; produces the decisions table, via cards the owner rules on. A ruling stands on two legs, named demand evidence and named capability. The table is the single register of ruled against recommended, and the bounding box for every later phase.
 
-**G — Game** (`sage-G-game.md`). Consumes the evidence and the decisions table; produces a crowned design sheet and the persisted verdicts behind it. Arms derive context-free, the reviewer cuts what oversteps the table, blinded judges cast from profiled buyers rule, absorption folds the winners, and a held-out panel confirms the crown.
+**G — Game** (`sage-G-game.md`). Consumes the evidence and the decisions table; produces a crowned design sheet and the persisted verdicts behind it. A base sheet drafted from the table is judged beside the arms; arms derive context-free and then vary against the base, the reviewer cuts what oversteps the table, blinded judges cast from profiled buyers rule, absorption folds the winners, and a held-out panel confirms the crown.
 
 **E — Establish** (`sage-E-establish.md`). Consumes the crowned sheet, the verdicts and the corpus; produces the numbered claims, the shipped definition, the migration of every value to its home, and the displacement offer to named prospects.
 
@@ -59,7 +59,7 @@ Each phase has its own procedure document; this file states what each phase is f
 | Distributor evidence notes | S | A, G, E | run folder, survey stage |
 | Fence index and generated blacklists (conditional) | S | G briefs | run folder |
 | Decision cards and the decisions table | A | G, E, every brief | run folder; compact table repeated in the definition |
-| Arm sheets, reviewer cuts, blind keys, verdicts | G | G absorption, E | run folder, game stage |
+| Base sheet, arm variations, reviewer cuts, blind keys, verdicts | G | G absorption, E | run folder, game stage |
 | Crowned sheet and crown-check record | G | E | run folder |
 | Numbered claims with grounding table | E | outreach campaigns | run folder |
 | Product definition | E | the operator's business | beside the run folder |
@@ -72,7 +72,8 @@ Each phase has its own procedure document; this file states what each phase is f
 | S | Sonnet-tier, many agents | High-volume register pulls, collection and coding under a frozen codebook; the codebook does the intellectual work |
 | S frame review, codebook author | Opus-tier | Adversarial reading and blind drafting carry the run's validity |
 | A | Human, with AI clerking the cards | The owner's judgement is the phase |
-| G arms, reviewer, judges | Opus-tier | Design quality, table enforcement and buyer role-play reward the strongest models |
+| G arms | Strongest tier, one model family per arm where available | Independent convergence is the game's evidence; same-family arms converge on temperament |
+| G reviewer, judges | Opus-tier | Table enforcement and buyer role-play reward the strongest models |
 | E folding and claims | Opus-tier | Quotable-clean writing under provenance quarantine |
 | E migrations and sweeps | Sonnet-tier | Mechanical, rule-following |
 
