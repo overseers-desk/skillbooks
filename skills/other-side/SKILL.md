@@ -30,6 +30,8 @@ The remedy is a partition of information, not of instruction. The party's view i
 
 7. **Reconcile.** Read ANALYSIS against your own view. Every fact you want to argue back with that has no ledger entry is a fact the party does not hold; list those, since they are where our side's picture and theirs diverge. WOULD SEEK names what the party's next grade would contain. Deliver the impersonation, the divergence list, and WOULD SEEK to the owner. The skill decides nothing about our response; that is the owner's.
 
+8. **Artifact gate**, when the owner will hand the party a document (a reply, a reference, a declaration, an offer). The divergence list from step 7 is the list of what that document must not carry, and the author cannot see their own carrying of it. Spawn a fresh general-purpose agent with `model: "sonnet"` using `${CLAUDE_PLUGIN_ROOT}/skills/other-side/artifact-gate-prompt.md`, substituting `$LEDGER_PATH` and `$ARTIFACT_PATH`. It reads the ledger and the document and nothing else, and returns DISCLOSED (facts the document hands the party that no ledger entry says they hold), IMPLIED (what a reader in the party's position would conclude about our intentions or decisions that the document does not state), and CLEAN. Repair and rerun until CLEAN. Each rerun is a fresh agent; the repaired text is judged by a reader who never saw the failing version.
+
 ## Files
 
 `${CLAUDE_PLUGIN_ROOT}/skills/other-side/`:
@@ -37,6 +39,7 @@ The remedy is a partition of information, not of instruction. The party's view i
 - `ledger-template.md`: the shape of the party's information set, with provenance marks
 - `checker-prompt.md`: the ignorant checker's prompt
 - `impersonator-prompt.md`: the party's agent's prompt
+- `artifact-gate-prompt.md`: the prompt for reading a document we will hand the party, as the party
 
 ## Why the impersonator has no tools
 
