@@ -17,7 +17,7 @@ Marks: `signed <date>`, `sent <date> by <channel>`, `attended <date>`, `told <da
 | The site briefing | attended 9 February |
 | Our shortlisting of their earlier bid in 2024 | told 3 March 2024 by the procurement officer, letter on their file |
 
-Items that sit in our tree and carry no mark are not here. A price model, a draft letter, an internal note, a board minute, a staffing count: each stays out unless a mark shows it crossed.
+Items that sit in our tree and carry no mark are not here. Our cost model, an unsent clarification, a partner's note on their earlier bid, the margin we would accept: each stays out unless a mark shows it crossed.
 
 ## 2. What the party knows and we do not
 
