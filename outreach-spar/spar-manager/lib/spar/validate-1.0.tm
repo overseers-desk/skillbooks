@@ -1863,9 +1863,12 @@ proc spar::_pred_rows_new_shape {node meta} {
             }
         }
         dict for {k v} $row {
-            if {[string first "\t" $v] >= 0 || [string first "\n" $v] >= 0} {
+            # A line break survives the write as CR, which the row split does
+            # not see. A tab has no in-field form, so it is reported rather
+            # than spent: the writer would render it a space and lose it.
+            if {[string first "\t" $v] >= 0} {
                 lappend out [dict create message \
-                    "$label value for '$k' holds a tab or a newline; the roster is a TSV with no quoting, so the row would split"]
+                    "$label value for '$k' holds a tab; the roster is a TSV with no quoting, so a tab cannot sit inside a value"]
             }
         }
     }

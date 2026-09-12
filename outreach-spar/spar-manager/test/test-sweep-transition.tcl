@@ -380,7 +380,7 @@ set issues [row_issues {
     "    organisation: \"Fox\tLtd\""
 }]
 assert_match [dict get [lindex [issues_with_code $issues invalid_row] 0] message] \
-    "*tab or a newline*" "a tab inside a value is caught"
+    "*holds a tab*" "a tab inside a value is caught"
 
 set issues [row_issues {
     "source_status: partial — halfway"
