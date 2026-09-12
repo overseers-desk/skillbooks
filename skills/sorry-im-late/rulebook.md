@@ -16,7 +16,7 @@ The draft omits something its own conclusions rest on, because the author held i
 
 ## R1. Labels for a list the reader never saw
 
-"Option C", "approach 2", "the second one", "the first design" presuppose an enumeration that happened in the conversation. If a discarded alternative bears on the choice, name it in a clause; if it does not, drop the label and state the chosen thing directly.
+"Option C", "approach 2", "the second one", "the first design" presuppose an enumeration that happened in the conversation. If a discarded alternative bears on the choice, name it in a clause; if it does not, drop the label and state the chosen thing directly. A rank or a comparison is the same presupposition: "the second most common", "a fraction of the other", "the larger of the two" place the thing against a first, a comparand, or a ratio the reader never saw. Name it in the same sentence.
 
 ## R2. Deixis pointing into the conversation
 
@@ -70,6 +70,18 @@ The check is not "can the reader act on this?" but "does the choice read as arbi
 
 Example: a runbook sets a worker's wall-clock limit to 1800 seconds. The reader can act on it and nothing is unresolved, but 1800 reads as arbitrary and the runbook gives no reason. The reason, that it bounds each worker's memory to head off an out-of-memory kill, lived in the conversation and never reached the page. The reader pauses and asks "why 1800 seconds, or was it left open?"
 
+## R13. A thing named without the handle to reach it
+
+A party, a document, a record referred to in a way the reader cannot act on: "a supplier's manager rang", "the flyer", "the earlier enquiry". The author knows which; the reader has to reopen the thread, read the record, weigh the firm, and cannot. The fixed line names the party, dates the contact, states the channel, and links or paths the record. An anonymised business counterparty in a document for the owner reads as a gap by default; where a brief withheld the identity on purpose, the mention says so.
+
+Example: a handover note says "the landlord's agent agreed to the extension by phone last month". The reader taking over has no name, date or file reference to hold anyone to it.
+
+## R14. Certainty added in transit
+
+A figure or claim reaches the draft firmer than its source holds it: the source's own hedge (an unverified reading, a secondary report, an estimate) dropped on the way. The reader acts on the figure as settled. The colleague has the project, so where the draft names a source he checks it, and where it names none he reports the figure as unsourced. The cure is to carry the source's hedge in the sentence.
+
+Example: a budget memo says "the venue holds 200". The source is a listing site's summary; the venue's own floor plan, in the project, seats 140.
+
 # Failure mode 2: conversation residue
 
 The draft replays the conversation instead of standing as a document. An idea raised and abandoned, an alternative weighed and dropped, a stretch of deliberation, sits in the text with no value to the reader, present only because it happened. That a thing was discussed is not a reason to include it.
@@ -95,6 +107,10 @@ Example: a report opens "The switch to monthly billing fixes the backlog." A new
 When the draft is a staged diff, the three failure modes take their code forms. Short of context: a comment referencing a discussion the file nowhere records ("the bug", "as agreed", a machine constraint named only in the talk), an identifier coined in the conversation rather than the project's vocabulary, a workaround whose reason lives only in the talk (R12's code form). R5's code form is the term of art: a comment that names a mechanism, structure, or stage as if established ("parks the request in the holding arena", "advances the ledger") when neither the code nor the project defines any such thing. The trap is that such a term reads paraphrasable, and a reader who accepts his own paraphrase misses that the referent is absent; the check is pointing to the thing, not construing the sentence. The harder case is the near-miss referent (R10's code form): the term lands close to a real concept but under a word the project does not use: the code keeps a pool, the comment says "the nursery"; the structure is a list, the comment calls it "the lattice". The pull is to read the stray word as a synonym and move on; resist it, because the mechanism resolves but the word does not, and a word the project does not use came from somewhere — usually the conversation. When you point to a referent, check the name too: a term-of-art noun in a comment that matches no identifier, no type, and no documented concept in the tree is a finding even when you know perfectly well what it means. Residue: a commented-out alternative, a TODO restating a settled decision, a comment narrating the change instead of the code. Insider pitch: a comment describing the new state as a change from a before only the conversation knew.
 
 The cure order differs from prose. For code, prefer deleting the conversational reference; explain only when the reference earns its place in the file, because a maintainer reads code, and the shortest comment that still carries the reason beats a paragraph reconstructing a conversation. The query discipline is unchanged: surface the gap, and "this was left open" remains a complete answer; a diff owes the reader what it needs to maintain the code, not a clarification of everything the conversation touched.
+
+# Published pages
+
+When the draft is an HTML page bound for publication (the file itself tells: markup, a title, a stylesheet), the colleague reads it as it renders, not only as its text. Text in cells and cards takes every prose rule above. Two further checks belong to the page's own layout, and both go in POLISHED with the line and the fix. A table, code block or diagram confined to a reading column, where the paragraphs already hold their own measure, wants the column cap moved from the page to the paragraphs, or the wide element broken out to the viewport; a long line is hard to read, a table is not, and the reader of a table wants every column he can get. A column heading that asks a narrower question than its cells answer, so a cell reads as "none" where the row holds the evidence, wants the heading reworded to the question the reader brings.
 
 # On call: but-also-you-are-not-my-mum
 
