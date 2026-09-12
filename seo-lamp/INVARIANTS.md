@@ -22,4 +22,4 @@ Why: a capture inside a run is invisible to the next run and to the site-wide se
 
 ## I5. Nothing product-specific belongs in the methodology
 
-**Test:** does any file under this folder name a product, a query, a competitor, or a run's figure? If yes, it belongs in the run.
+**Test:** does any file under this methodology folder in the aesop repository name a product, a query, a competitor, or a run's figure? If yes, it belongs in the operator's repository: in the run, or in the product inventory that sits beside the runs.
