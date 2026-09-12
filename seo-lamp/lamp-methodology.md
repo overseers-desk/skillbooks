@@ -30,7 +30,7 @@ Captures a run makes (a located results page, a Maps list, a performance export)
 
 ## The instruments
 
-A run draws on four kinds of source. The run names the instances; this methodology names the kinds.
+A run draws on four kinds of source. The run names the instances; this methodology names the kinds, and a run's headings call each by its kind name (the console, the located capture, the rank database, the pages) rather than by its number here.
 
 1. **The search performance console** of the operator's site: queries, pages, impressions, clicks and average position by day, device and country. The only source that shows what real searchers saw. It counts a local pack as one position shared by every site in it, and it is subject to the provider's own anomaly notes, which the run reads before charting.
 2. **A located results-page capture**: the page as a searcher at the operator's location sees it, with the local pack, the organic order, the questions block, any tours or product carousel, and the related searches. A capture is one searcher's view on one day. The operator keeps a standing monthly set of such captures; a run reuses those before spending on new ones, and any new capture joins the set.
