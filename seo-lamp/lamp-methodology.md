@@ -51,7 +51,7 @@ A run may also cite the operator's site analytics where their tag coverage is cl
 
 ## Seams
 
-A series that spans a change in how it was measured, or in what it measured, describes neither side. Before charting, list the seams: the provider's anomaly windows, the date a different page took over the query, the date the analytics tag coverage changed, the date the site was rebuilt. Chart each seam as a dated line on the series; never compute an average across one. Where a metric is unsafe inside a window, say so at the chart and use the metric that is not.
+A series that spans a change in how it was measured, or in what it measured, describes neither side. Before charting, list the seams: the provider's anomaly windows, the date a different page took over the query, the date the analytics tag coverage changed, the date the site was rebuilt. Chart each seam as a dated line on the series; never compute an average across one. Where a metric is unsafe inside a window, say so at the chart and use the metric that is not. Where the provider's note says only that a metric was not accurately reported, without size or direction, the period is kept and every comparison that crosses it carries a footnote quoting the provider's entry with its date and URL, rather than the period being dropped: a large error in a metric this widely watched would have been caught early, so the default reading is that the error is small, and the footnote lets a later reader revise that if the provider says more.
 
 ## Artefacts
 
