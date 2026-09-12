@@ -526,8 +526,11 @@ proc spar::load_roster {tsv_path} {
     # Latin-1 and emerge as mojibake on a UTF-8 stdout.
     set raw [encoding convertfrom utf-8 $raw]
 
-    # Normalise line endings: CRLF → LF, bare CR → LF
-    set raw [string map {\r\n \n \r \n} $raw]
+    # Normalise row endings: CRLF → LF. A bare CR is field content and
+    # stays. The roster TSV has no quoting, so a value can hold neither LF
+    # nor TAB, and CR is what carries a line break inside one (see
+    # spar-roster-format.md). Mapping it to LF would split the row.
+    set raw [string map {\r\n \n} $raw]
     set lines [split $raw \n]
 
     if {[llength $lines] == 0} {
@@ -587,6 +590,13 @@ proc spar::iso_date_if_epoch {v} {
     return $v
 }
 
+# note_to_lines — render a field's CR line breaks as real lines for a
+# reader outside the TSV: a prompt, a report, a display. The indent keeps a
+# multi-line value inside the "key: value" shape it is interpolated into.
+proc spar::note_to_lines {v {indent "  "}} {
+    return [string map [list \r "\n$indent"] $v]
+}
+
 # write_roster — write rows back to a TSV, preserving column order.
 # If $headers is empty, reads the header line from $tsv_path (the classic
 # same-file rewrite). Pass $headers explicitly when writing to a tmp file
@@ -594,7 +604,10 @@ proc spar::iso_date_if_epoch {v} {
 # date_excluded is rendered YYYY-MM-DD here, whatever form the caller
 # holds: dates are written bare in YAML, tcllib types them to epoch
 # seconds, and this funnel is the one place every roster write passes
-# through, so the column's ISO contract is enforced once.
+# through, so the column's ISO contract is enforced once. The field
+# contract rides the same funnel: a value's line break is written as CR,
+# which the row split does not see, and a TAB becomes a space, the format
+# offering it no in-field form.
 proc spar::write_roster {tsv_path rows {headers {}}} {
     if {[llength $rows] == 0} return
 
@@ -617,6 +630,7 @@ proc spar::write_roster {tsv_path rows {headers {}}} {
             if {$h eq "date_excluded"} {
                 set v [spar::iso_date_if_epoch $v]
             }
+            set v [string map [list \r\n \r \n \r \t " "] $v]
             lappend fields $v
         }
         puts $fd [join $fields \t]

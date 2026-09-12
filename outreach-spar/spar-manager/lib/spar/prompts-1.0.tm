@@ -326,8 +326,9 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             if {$_uv ne ""} { append platform_urls " $_uk: $_uv." }
         }
         set date_invalid [string trim [dict getdef $row date_excluded ""]]
-        set s_note [string trim [dict getdef $row s_note ""]]
-        set p_note [string trim [dict getdef $row p_note ""]]
+        # A note's line breaks travel as CR in the TSV; a prompt reads lines.
+        set s_note [spar::note_to_lines [string trim [dict getdef $row s_note ""]]]
+        set p_note [spar::note_to_lines [string trim [dict getdef $row p_note ""]]]
         set stem [string trim [dict getdef $row stem ""]]
 
         # Header fragments and invalidated rows never dispatched.
@@ -621,9 +622,10 @@ proc spar::a::_build_prompts {opts on_progress} {
             set email [string trim [dict getdef $row email ""]]
             set linkedin [string trim [dict getdef $row linkedin_url ""]]
             set facebook [string trim [dict getdef $row facebook_url ""]]
-            set p_note [string trim [dict getdef $row p_note ""]]
+            # A note's line breaks travel as CR in the TSV; a prompt reads lines.
+            set p_note [spar::note_to_lines [string trim [dict getdef $row p_note ""]]]
             set star [string trim [dict getdef $row star_rating ""]]
-            set s_note [string trim [dict getdef $row s_note ""]]
+            set s_note [spar::note_to_lines [string trim [dict getdef $row s_note ""]]]
             set date_invalid [string trim [dict getdef $row date_excluded ""]]
             set stem [string trim [dict getdef $row stem ""]]
 
