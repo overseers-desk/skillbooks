@@ -1,0 +1,87 @@
+# LAMP — the search standing of one product, and whether a change moved it
+
+**Phases:** Locate, Attribute, Move, Prove
+
+## What LAMP is
+
+LAMP studies one product's standing in web search over time: where its page and its query family appear, why they sit where they do, which lever to pull next, and whether the lever moved anything once pulled. It is inward-facing and longitudinal. The unit is a product, not a site: a site-wide study answers "where did the clicks go", a LAMP run answers "does this product get found by the people looking for it, and what changed when we acted".
+
+LAMP is not a ranking audit of a whole site, not a content plan, and not a decision to build. It is a measurement discipline around a single product, with the actions as the experiment and the search series as the instrument. Its posture is the one that runs a test: a change is not done when it is deployed; it is done when its effect has been read off the series with the seams and the seasons accounted for.
+
+## What a product is, for LAMP
+
+A product is a query family that a searcher types when they want the thing, together with the page meant to answer them. The family is found from the search performance data, not from the price list: cluster the non-brand queries by what the searcher wants, and each cluster with its own page is a product.
+
+Three cases need a decision, recorded in the run's inventory:
+
+- **Similar products are one product** when their query families overlap and one page answers both. A guided ride and a riding lesson may be two prices and one query family. The test is whether a searcher of one family would be satisfied by the other's page.
+- **A by-product is not a product** when nobody searches for it on its own. Something bought on site as an extra, that appears in no query family with impressions of its own, is a line on the parent product's page and is studied there. Mark it as such in the inventory so a later reader does not go looking for its run.
+- **A page without a family** (a page exists, the search data shows no query cluster reaching it) is still a product if the operator sells it; its run's first finding is the absence of demand reaching the page, which is itself the thing to attribute.
+
+A product's run is dated, so a product can be merged or split later without rewriting old runs.
+
+## Runs and the methodology
+
+A run is one product studied once, on one date: a dated document in the operator's own repository, beside the operator's capture series. This methodology holds what every run shares; the run holds everything about one product.
+
+The dividing test, applied to any fact: would a run for a different product use it unchanged? If yes, it belongs in the operator's standing records or capture series, referenced by the run. If the fact exists only because of this product, it belongs in the run. Nothing product-specific belongs here.
+
+Captures a run makes (a located results page, a Maps list, a performance export) go into the operator's capture series under that series' naming, never into the run folder. The run cites the capture file. A capture that sits inside one run's folder is invisible to the next product's run and to the site-wide series, and it will be fetched again at a cost.
+
+## The instruments
+
+A run draws on four kinds of source. The run names the instances; this methodology names the kinds.
+
+1. **The search performance console** of the operator's site: queries, pages, impressions, clicks and average position by day, device and country. The only source that shows what real searchers saw. It counts a local pack as one position shared by every site in it, and it is subject to the provider's own anomaly notes, which the run reads before charting.
+2. **A located results-page capture**: the page as a searcher at the operator's location sees it, with the local pack, the organic order, the questions block, any tours or product carousel, and the related searches. A capture is one searcher's view on one day. The operator keeps a standing monthly set of such captures; a run reuses those before spending on new ones, and any new capture joins the set.
+3. **A rank database** with an authority score, a keyword volume, the positions of any domain on any keyword, and referring domains. National, refreshed on the vendor's cycle, un-personalised. Good for the competitor set and for volume; not a substitute for the located capture.
+4. **The pages themselves**: the operator's page and each competitor's, fetched raw for title, headings, structured data, and the presence of prices, and read for what they answer.
+
+A budgeted instrument (a capture service with a monthly quota) is spent under a cap the run's brief sets, after the standing set has been reused, and every result is saved to the series whether or not it turned out useful. The cap and the spend are recorded in the run.
+
+## The phases
+
+**L — Locate.** Where the product stands, with the population and the instance kept apart. The instance is the located capture: pack members with category and review count, the organic order, the product page's position or absence. The population is the console: the product's query family across all pages, and the product page across all queries, as impressions, clicks and position by day, with the share of searches on which the site appears at all against the vendor's volume. The two disagree by design, since the console records only the searches on which the site was shown; the run states the gap rather than averaging it away. Locate ends with the product's standing in one sentence a stranger could check.
+
+**A — Attribute.** Why it stands there. Hold at least three candidate causes before naming one, and for each state what the data shows and a status: verified, inferred, or open, with the observation that would settle an open one. The recurring causes for a local product are the profile's category against what the pack rewards, the profile's review count against the pack's, the page's topical focus and its age on the query, the citations on the pages that outrank every venue, and the site's authority. Two things usually turn out not to be causes and are worth ruling out explicitly: raw authority, and on-page technique. Attribute also names the easier targets: the competitors directly above the product whose standing rests on less than ours, since passing them is the realistic next step and passing an aggregator list the product is already on is not.
+
+**M — Move.** The levers, ranked by expected effect against cost, each tied to the cause it addresses, and split into the floor (clearly correct, no judgment needed: a missing redirect, a listing category, a citation to request) and the forks (the operator's decision: which profile owns the product, whether to rename anything, whether a price shown by a reseller is intended). A lever taken is dated in the run. Move proposes; it does not act. The floors across several runs are what the operator approves in one sitting.
+
+**P — Prove.** Whether a taken lever moved anything. For each dated action: the metric before and after per day over matched windows, the seams inside the window named (a page swap, a tag change, a vendor anomaly window, a redesign), the season named (school holidays, public holidays, the annual fall), and the reading: moved, not moved, or too early. An action whose effect cannot be read yet stays open with the date it can be read. A change that moved impressions but not position, or position but not clicks, is reported as exactly that. Prove is what a later run of the same product opens with.
+
+## Seams
+
+A series that spans a change in how it was measured, or in what it measured, describes neither side. Before charting, list the seams: the provider's anomaly windows, the date a different page took over the query, the date the analytics tag coverage changed, the date the site was rebuilt. Chart each seam as a dated line on the series; never compute an average across one. Where a metric is unsafe inside a window, say so at the chart and use the metric that is not.
+
+## Artefacts
+
+| Artefact | Created by | Consumed by | Lives in |
+|---|---|---|---|
+| Product inventory: families, pages, merges, by-products, run order | the first run of a season | every run | beside the runs, dated |
+| Located captures and Maps lists | L | A, P, the site-wide series | the operator's capture series |
+| Run document: Locate, Attribute, Move, Prove sections | the run | the operator, the next run, the master comparison | the product's folder, dated |
+| Run artifact: the document as a page with the series charted, actions as dated markers, a floor list and a fork list | the run | the operator's morning review | published; URL recorded in the run document |
+| Effect ledger: action, date, before, after, seams, season, reading | P | the next run, the master comparison | inside the run document |
+| Master comparison: one row per product, standing and delta, floor and fork counts | after a season of runs | the operator | beside the runs, dated, plus a published page |
+
+## Model allocation
+
+| Phase | Tier | Rationale |
+|---|---|---|
+| L | Sonnet-tier | Data pulls and table-making under stated rules |
+| A | Opus-tier where causes are contested; Sonnet-tier where the pack composition settles it | Holding candidates apart and ruling out the plausible-but-wrong is the run's validity |
+| M | Same agent as A | The levers follow from the causes |
+| P | Sonnet-tier | Matched-window arithmetic with named seams |
+| Master comparison | Opus-tier | Reading many runs against each other without flattening their caveats |
+
+## Sequencing runs
+
+Runs go one at a time, not in parallel, while the methodology is young: each run is a test of whether this document reads correctly to a fresh agent, and a flaw found by one run is fixed here before the next run starts, with the run that taught it named in the commit. The first run of a season is the product whose evidence is already richest, since it is the cheapest test of the reading.
+
+## Versioning
+
+The methodology carries no version field yet; the first change that would invalidate a completed run's reading introduces one. A run states its date, which fixes which reading governed it.
+
+## Relationship to the other methodologies
+
+A product LAMP studies is usually one SAGE established or PLACE described; LAMP asks whether the market can find it. The site-wide impression study is LAMP's sibling with the site as its unit; the two share the capture series and the seams list, and a cause verified in one is cited by the other rather than re-derived.
