@@ -10,7 +10,9 @@ LAMP is not a ranking audit of a whole site, not a content plan, and not a decis
 
 ## What a product is, for LAMP
 
-A product is a query family that a searcher types when they want the thing, together with the page meant to answer them. The family is found from the search performance data, not from the price list: cluster the non-brand queries by what the searcher wants, and each cluster with its own page is a product.
+A product is a query family that a searcher types when they want the thing, together with the page meant to answer them. The family is found from two sides, and both are needed. From the console, cluster the non-brand queries by what the searcher wants; each cluster with its own page is a product. From the rank database, ask what volume exists for the product's category and for each place name a buyer might attach to it, including the destinations near the operator rather than only the suburb it sits in, and keep the terms whose volume is real whether or not the console has ever shown them.
+
+The console side alone cannot find the demand the operator is absent from, because it lists only the searches on which the site was shown: a term the operator does not rank for returns nothing, and nothing reads as no demand. That silence is the most expensive error available to a run, since the largest opportunities look exactly like it. A family therefore carries its absences as rows with a volume and no impressions, and Locate reports them as standing, not as a gap in the data.
 
 Three cases need a decision, recorded in the run's inventory:
 
