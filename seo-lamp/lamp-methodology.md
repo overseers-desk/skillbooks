@@ -60,7 +60,7 @@ A series that spans a change in how it was measured, or in what it measured, des
 | Product inventory: families, pages, merges, by-products, run order | the first run of a season | every run | beside the runs, dated |
 | Located captures and Maps lists | L | A, P, the site-wide series | the operator's capture series |
 | Run document: Locate, Attribute, Move, Prove sections | the run | the operator, the next run, the master comparison | the product's folder, dated |
-| Run artifact: the document as a page with the series charted, actions as dated markers, a floor list and a fork list | the run | the operator's morning review | published; URL recorded in the run document |
+| Run artifact: the document as a page, opening with Locate's one-sentence standing, the series charted with events as dated markers, the effect ledger with each reading's reason beside its status, the located capture, the causes with a status each, a floor list and a fork list naming what they name, the instrument spend, and sources | the run | the operator's morning review | published; URL recorded in the run document |
 | Effect ledger: one row per dated event, in the shape Prove states | P | the next run, the master comparison | inside the run document |
 | Site-level observations the run met and cannot use | any phase | the site-wide study, where the operator keeps one | a short section at the end of the run document |
 | Master comparison: one row per product, standing and delta, floor and fork counts | after a season of runs | the operator | beside the runs, dated, plus a published page |
