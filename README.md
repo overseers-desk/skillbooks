@@ -124,26 +124,26 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 **RobCo Terminal** (`../RobCo-Terminal`, run of 2026-08-21, then three blind rounds recorded under `scatter-scope/tests/robco-terminal/`). Sixteen modules of a Rust workspace of roughly 59,000 lines, three Sonnet estimators. File-count estimates landed within a factor of three for ten of sixteen modules; site estimates were low by ten to thirty times across the board, which set the calibration rule. Flagged: the window module (a hub, twelve type consumers against two expected), the tmux gateway module (one type consumer against three expected, thirty mentioning files against nine, the leak signature), and the side the channel bank sits on (thirteen sites against three expected, no constant naming it). Two revivals verified their counts and named the mechanisms: the gateway concept carried on shared channel structs and in a lower crate's own vocabulary; the bank side recomputed from a scalar width at every consumer while a layout type already held the rectangles. The run predates the methodology's extraction and is its source. The three blind rounds that followed reproduced the bank side and the hub each time, added the coordinate unit (no type carries logical or physical, 57 sites) and the setting fan-out (one new setting, eight to twelve homes), and left the tmux carrier in the channel model as a judgment the owner holds: read as a second encoding in two rounds and as a shared vocabulary behind one translation seam in the third.
 
-### LAMP — The Search Standing of One Product, and Whether a Change Moved It
+### LAMP — Whether the Market Can Find One Product, and What That Is Worth
 
 **Phases:** Locate, Attribute, Move, Prove
 
-**Direction:** Inward and longitudinal, one product at a time. The product exists and has a page; the question is whether the people searching for that kind of thing find it, why it sits where it sits, which lever to pull, and whether a pulled lever moved anything. A site-wide study asks where the clicks went; LAMP asks whether this product gets found.
+**Direction:** Inward and longitudinal, one product at a time, with the answers denominated in money. The four phases answer the operator's four questions in order: can the people who would want this find us, what is stopping them, what should we do about it ranked by money, and did what we did last time work. A site-wide study asks where the clicks went; LAMP asks whether one product gets found and what finding it is worth.
 
 **What each phase does:**
 
-- **Locate** places the product twice and keeps the two apart: the instance, one located results-page capture with the local pack's categories and review counts and the organic order; and the population, the search console's series for the product's query family and for its page, with the share of searches on which the site appears at all.
-- **Attribute** holds at least three candidate causes with a status each (verified, inferred, open with the settling observation), rules out the plausible-but-wrong ones explicitly, and names the easier targets directly above the product.
-- **Move** ranks the levers by effect against cost, tied to causes, split into the floor the operator can approve in one sitting and the forks only the operator can settle. It proposes; it does not act.
-- **Prove** reads each dated action off the series over matched windows with every seam and the season named, and reports moved, not moved, or too early with the date it can be read.
+- **Locate** sizes the demand from the market map, measures the operator's share of it with the console, prices that share, and ends with a gate: the minimum detectable effect computed from the family's own daily counts. The instance (one located capture, with every results-page feature that takes the click) and the population (the console series) are reported apart.
+- **Attribute** holds at least three candidate causes with a status each (verified, inferred, open with the settling observation), names which blocker binds from a set running from no page exists to demand that is not search-shaped, and takes its competitor set from the market map rather than from the ladder immediately above the operator.
+- **Move** gives every lever a predicted magnitude, a read date and an expected value in money, ranks them in one list, and refuses to propose a lever the series cannot resolve. The floor and fork labels say who acts; a fork still carries its number and the run's recommendation.
+- **Prove** reads delivered against predicted against a control, and reports delivered, underdelivered, no effect, too early with the read date, or not readable with the seam that blocks it.
 
-**Model allocation:** Locate and Prove are Sonnet-tier; Attribute and Move are Opus-tier where the causes are contested. Runs go one at a time while the methodology is young, each run being a test of whether the document reads correctly to a fresh agent.
+**Model allocation:** the market pass is Opus-tier; Locate and Prove are Sonnet-tier; Attribute and Move are Opus-tier where the causes are contested. Runs go one at a time while the methodology is young, each run being a test of whether the document reads correctly to a fresh agent.
 
 **Procedure documents:** `seo-lamp/lamp-methodology.md` and `seo-lamp/INVARIANTS.md`.
 
 #### LAMP use cases
 
-**Rivermill website products** (`../rivermill/historicrivermill.au/research/seo/products/`). The run that produced the methodology: one product's standing on a competitive local query, with the located captures kept in the site's monthly capture series beside a site-wide impression study that shares the same seams list.
+**Rivermill website products** (`../rivermill/historicrivermill.au/research/seo/products/`). Eight product runs of 13 September 2026, and the structural audit that restructured the methodology the same day. The audit found the discipline measuring honestly inside a frame that could not answer the operator's question: everything ranked by impressions with no money anywhere, the unit taken from what the instrument could cluster, the competitor set drawn from the ladder above the operator, and levers with no predicted magnitude, so that verification could never read a disappointment. The eight runs' measurements stand and their recommendations do not; the located captures are kept in the site's monthly capture series beside a site-wide impression study that shares the same seams list.
 
 ### PLACE — Asserting the Market Position of Something Already Built
 
