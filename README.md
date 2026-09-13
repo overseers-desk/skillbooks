@@ -12,6 +12,7 @@ skillbooks is a Claude Code plugin of crafts your agent keeps. Most read the wor
 - A document written across a long conversation goes to a colleague who was not in it, and paragraph two leans on "the approach we discussed".
 - A report states a figure with confidence, and you can no longer say which source it came from, or whether the source agrees.
 - A rename landed weeks ago, and a test fixture, a CI file, and a doc still describe the world as it was.
+- A review ends in a long questionnaire, and the safe fixes sit unapplied among the decisions that are really yours.
 - Your agent hits a decision mid-run and stops the whole plan to ask you, when it could have settled safely and kept walking.
 - The work continues tomorrow on another machine, and everything this session learned lives in a transcript that will expire.
 
@@ -39,6 +40,7 @@ becomes
 | **quote-me** | Locate the exact source passage behind a claim, run a challenge-and-minimum-edit cycle, and verify the fix with a context-free subagent. Triggered by "quote me". | Verification |
 | **nswp-scout** | Scout a codebase for redundant solutions, most sharply one problem solved twice in two vocabularies where neither arm earns its place, and other solutions that answer no live problem. | Codebase audit |
 | **drift-scout** | Find the stale debris a refactor, rename, or move left in a codebase's edges: extract each change's retired vocabulary, sweep the periphery, confirm by running, and report only what provably breaks or misleads. | Codebase audit |
+| **floor-and-fork** | Sort a pile of review findings into the floor (fixes an agent applies) and the forks (decisions you own), treatment by treatment, so a safe fix is never held hostage to the larger option beside it; then find the few master decisions the rest hang on. The pile's sort; halfway-house takes each surviving fork singly. | Agent workflow |
 | **halfway-house** | Tell a decision your agent can safely settle from one that blocks the path: settle it, land the change, file the road not taken, and bring only the true forks to you. | Agent workflow |
 | **writing-invariants** | Write or amend a repository's `INVARIANTS.md`: the five questions a candidate rule has to pass, the single-line form, and why changing one is the owner's call rather than the author's. | Agent workflow |
 | **worklog** | Write a durable WORKLOG in the repository so a session's knowledge survives when its JSONL is gone or you continue the work on another machine or in a fresh session. | Handoff |
