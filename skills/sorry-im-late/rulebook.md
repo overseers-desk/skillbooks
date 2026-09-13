@@ -2,7 +2,7 @@
 
 The standard a late-arriving colleague applies to a draft. Any writing conventions the caller has in force (CLAUDE.md or equivalent) apply concurrently and are not restated here.
 
-This is a document tool, like edit-email and edit-economistly. The draft is a finished text meant to be read on its own. The colleague has the project (its materials, domain, history and vocabulary, in whatever form the project takes: a codebase, a document set, a shared body of work) but was not in the conversation that produced the draft. The job is to make the text read for him, not to summarise the conversation that made it.
+This is a document tool, like edit-email and edit-economistly. The draft is a finished text meant to be read on its own. The colleague has the project (its materials, domain, history and vocabulary, in whatever form the project takes: a codebase, a document set, a shared body of work) but was not in the conversation that produced the draft. The job is to make the text read for him, not to summarise the conversation that made it. A draft addressed to someone outside the project has a different reader again, and this colleague is the wrong one for it: he opens a file path or a scenario name without friction and certifies it, where the recipient of an email holds neither the project nor the thread. A caller holding an email runs edit-email, which carries the same pointing pass against that reader.
 
 He does not read to certify the draft legible; he reads because his own next task consumes it. What that task is depends on the draft's nature: carrying out a plan, taking over a job, executing or complying with a decision, acting on a recommendation. He reads as the person who has to proceed, and his test for a passage is whether he could act on it, not whether he could find what its names refer to. A reference he resolves and still cannot act on has not landed; resolving a name is not the same as being able to do the thing the name stands for. Where the draft is not a document any single person acts on next, this seat has no occupant and he falls back to reading as a project-holder taking it in.
 
@@ -82,6 +82,22 @@ A figure or claim reaches the draft firmer than its source holds it: the source'
 
 Example: a budget memo says "the venue holds 200". The source is a listing site's summary; the venue's own floor plan, in the project, seats 140.
 
+# Pointing, not construing
+
+R1 to R5 name the phrase-classes. This is what makes the colleague check them rather than read past them.
+
+A term coined in the conversation is paraphrasable, so a reader who construes it accepts his own paraphrase, and then adopts the term as though it were the project's own vocabulary. Judgement does not fire, because nothing in the text reads as unresolved. Enumeration fires: the colleague lists every expression that presupposes a referent and points at where the reader gets it, one by one, before he has settled on what the draft means.
+
+Three conditions decide whether a pointer counts.
+
+**It precedes the question, where the answer is in the draft.** A definition below the passage arrives after the reader met the phrase, and by then he has taken a reading. This condition governs an answer inside the draft alone: a project file is neither before nor after the sentence citing it.
+
+**It names the thing in the words the phrase uses.** Pointing "that window" at a sentence that gives a range of dates, where nothing calls the span a window, is the construal the pass exists to defeat; the reader knows what is meant and donates the missing word. The test is whether the earlier text would let him produce the phrase, not whether he can see what it stands for.
+
+**It lets him act.** A name found in the project resolves only if what he finds there lets him do his task, which is R5's requirement. A colleague reading against a project fails in the direction opposite to one reading against a document alone: rather than donate a word, he opens the file, finds the name genuinely there, and certifies a reference the reader still cannot act on.
+
+An expression with no answer meeting the three is unresolved, and the query discipline is the one below: a thing the conversation settled and the draft left out is failure mode 1, a thing it never settled is not the draft's fault, and the colleague cannot tell which, so he surfaces it and the author classifies.
+
 # Failure mode 2: conversation residue
 
 The draft replays the conversation instead of standing as a document. An idea raised and abandoned, an alternative weighed and dropped, a stretch of deliberation, sits in the text with no value to the reader, present only because it happened. That a thing was discussed is not a reason to include it.
@@ -104,7 +120,7 @@ Example: a report opens "The switch to monthly billing fixes the backlog." A new
 
 # Code diffs
 
-When the draft is a staged diff, the three failure modes take their code forms. Short of context: a comment referencing a discussion the file nowhere records ("the bug", "as agreed", a machine constraint named only in the talk), an identifier coined in the conversation rather than the project's vocabulary, a workaround whose reason lives only in the talk (R12's code form). R5's code form is the term of art: a comment that names a mechanism, structure, or stage as if established ("parks the request in the holding arena", "advances the ledger") when neither the code nor the project defines any such thing. The trap is that such a term reads paraphrasable, and a reader who accepts his own paraphrase misses that the referent is absent; the check is pointing to the thing, not construing the sentence. The harder case is the near-miss referent (R10's code form): the term lands close to a real concept but under a word the project does not use: the code keeps a pool, the comment says "the nursery"; the structure is a list, the comment calls it "the lattice". The pull is to read the stray word as a synonym and move on; resist it, because the mechanism resolves but the word does not, and a word the project does not use came from somewhere — usually the conversation. When you point to a referent, check the name too: a term-of-art noun in a comment that matches no identifier, no type, and no documented concept in the tree is a finding even when you know perfectly well what it means. Residue: a commented-out alternative, a TODO restating a settled decision, a comment narrating the change instead of the code. Insider pitch: a comment describing the new state as a change from a before only the conversation knew.
+When the draft is a staged diff, the three failure modes take their code forms. Short of context: a comment referencing a discussion the file nowhere records ("the bug", "as agreed", a machine constraint named only in the talk), an identifier coined in the conversation rather than the project's vocabulary, a workaround whose reason lives only in the talk (R12's code form). R5's code form is the term of art: a comment that names a mechanism, structure, or stage as if established ("parks the request in the holding arena", "advances the ledger") when neither the code nor the project defines any such thing. The trap is that such a term reads paraphrasable, and a reader who accepts his own paraphrase misses that the referent is absent. The harder case is the near-miss referent (R10's code form): the term lands close to a real concept but under a word the project does not use: the code keeps a pool, the comment says "the nursery"; the structure is a list, the comment calls it "the lattice". The pull is to read the stray word as a synonym and move on; resist it, because the mechanism resolves but the word does not, and a word the project does not use came from somewhere — usually the conversation. When you point to a referent, check the name too: a term-of-art noun in a comment that matches no identifier, no type, and no documented concept in the tree is a finding even when you know perfectly well what it means. Residue: a commented-out alternative, a TODO restating a settled decision, a comment narrating the change instead of the code. Insider pitch: a comment describing the new state as a change from a before only the conversation knew.
 
 The cure order differs from prose. For code, prefer deleting the conversational reference; explain only when the reference earns its place in the file, because a maintainer reads code, and the shortest comment that still carries the reason beats a paragraph reconstructing a conversation. The query discipline is unchanged: surface the gap, and "this was left open" remains a complete answer; a diff owes the reader what it needs to maintain the code, not a clarification of everything the conversation touched.
 
@@ -124,7 +140,9 @@ Example: `retries += 1` under the comment "increment the retry counter" fails; t
 
 # How the colleague responds
 
-Three outputs, in this order:
+Four outputs, in this order:
+
+- **The pointing list (GIVENS).** Every expression that presupposes a referent, one line each, against where the reader gets it or the word `nowhere`, under the three conditions above. It comes first because it is the reading you take before you have decided what the draft means; written afterwards it records the reading you settled on, which is the thing it exists to test.
 
 - **Reading log (READING).** Write back, in your own words, what you understood as you read. Section by section or paragraph by paragraph. Where you found a sentence ambiguous and resolved it one way, say which way. Where you supplied an inferential step from your knowledge of the project, say what you supplied. Where you were surprised by a later sentence that reframed an earlier one, or by a choice or value that struck you as odd with no reason for it in the draft or the project, say so. This is a letter from reader to writer, not a verdict. The author reads it and compares against intent; divergences are defects regardless of whether any rule flagged them.
 
