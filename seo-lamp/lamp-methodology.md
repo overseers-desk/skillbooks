@@ -134,6 +134,28 @@ A series that spans a change in how it was measured, or in what it measured, des
 
 Where the provider's note says only that a metric was not accurately reported, the period is kept rather than dropped, and every comparison that crosses it carries a footnote quoting the provider's entry with its date and URL. What the footnote may claim depends on what can be found out, and the run finds out rather than assuming: the provider's own statements to the press, its engineers in public, and the trade coverage often give a direction the help page omits, and sometimes a third-party estimate of size. A common-sense reading that an error this visible would have been caught early is worth holding and worth checking, because it has been wrong: one such error ran about fifty weeks before the provider acknowledged it. Where a direction is known and a magnitude is not, the affected metric carries no delta across the boundary, since the comparison would manufacture a movement of unknown size; the unaffected metric carries the comparison, and the affected one is shown per side, for scale.
 
+## The audit
+
+A run is not delivered as its author leaves it. Between the run document being finished and its artifact being published, a cold agent reads it against the classes below and returns what it finds.
+
+Cold means it holds the run document and the captures the run cites, and nothing else. It does not receive the brief, the analyst's reasoning, the conversation that produced the run, or the run's own account of what it found. An auditor told what the run concluded will confirm it, which is the failure the whole step exists to avoid. It reads the captures and not only the document, because a class of defect shows only when a figure is recomputed from the source it was drawn from.
+
+The classes are what has actually escaped a run and reached a reader, and the list is kept because an auditor asked to find problems returns prose and an auditor given the classes returns defects.
+
+1. **Two sides that are not equivalent.** Any comparison of two windows, populations or segments whose sides differ in length, coverage or composition without the document saying so. A window truncated on one side; a per-day figure standing in for a truncation whose missing days are not random; a year-on-year statement where the source does not hold both years; a set labelled as excluding something it still contains.
+2. **A condemned figure used again.** A window or metric the document has already flagged as not comparable, then carried elsewhere in the same document as a delta, a percentage or evidence.
+3. **A label that does not match what it sits on.** A population named for what it does not hold; a crossing or turn marked where fewer than two series hold values on both sides of it; a range labelled with dates the series does not cover; a status outside the document's own stated set.
+4. **A claim about material not read to the end.** Any characterisation of a source, a sibling document or another artefact the run holds only an excerpt of.
+5. **A known instrument defect not applied.** The run lists what is wrong with each instrument, then states a figure the listed defect covers, without the correction or the caveat.
+6. **A verification sharing a source with the thing verified.** Two figures agreeing where one derives from the other, reported as confirmation. It passes by construction and reads as a strong result.
+7. **An event dated or attributed from prose.** A date or cause taken from a narrative summary rather than from the record that fixes it, and not tested against the bulk changes of the same period.
+
+The auditor also returns one finding outside the list, or says it found none. The list is a frame, and a frame returns the defects it was drawn around; the run that first met a defect no class covers is the run that adds the class, named in the commit.
+
+Findings come back split the way Move splits levers. A **floor** finding is arithmetic with no judgement in it: recompute on matched days, drop a delta and show both sides, state a coverage the page omits. It is fixed before publication. A **fork** finding changes what the run concludes, or turns on data the captures cannot settle. It is published with the run and carries the auditor's reading, because what the run concludes is the operator's to settle and an audit that quietly rewrote a conclusion would be a second analyst rather than a check.
+
+The audit is recorded in the run: the classes checked, the findings, and which were floor and which fork. A run whose audit found nothing records that, since a clean audit is evidence about the run and an absent one is evidence about nothing.
+
 ## Artefacts
 
 | Artefact | Created by | Consumed by | Lives in |
@@ -147,6 +169,7 @@ Where the provider's note says only that a metric was not accurately reported, t
 | Segment table: the series as means over each stretch bounded by a seam or an event, with days, impressions, clicks, position and click-through per segment | L | A, P, the master comparison | inside the run document |
 | Minimum detectable effect and the gate's verdict | L | M, the master comparison | inside the run document |
 | Site-level observations the run met and cannot use | any phase | the site-wide study, where the operator keeps one; otherwise the market map's next refresh | a short section at the end of the run document |
+| Audit record: the classes checked, the findings, and which were floor and which fork | the cold agent at the audit | the operator, the next run, the class list itself | inside the run document |
 | Master comparison: opening with the highest expected-value finding of the season; one row per product with standing, money and delta against the control, with the window and seams named; every lever of every run in one list ranked by expected value and marked floor or fork with the run's recommendation; the parked site-level observations; the instrument spend | after a season of runs | the operator's approval sitting | beside the runs, dated, plus a published page |
 
 ## Model allocation
@@ -158,6 +181,7 @@ Where the provider's note says only that a metric was not accurately reported, t
 | A | Opus-tier where causes are contested; Sonnet-tier where the pack composition settles it | Holding candidates apart and ruling out the plausible-but-wrong is the run's validity |
 | M | Same agent as A | The levers follow from the causes, and the ranking follows from the money |
 | P | Sonnet-tier | Matched-window arithmetic against a control, with named seams |
+| Audit | Fresh context, tier set by what the run will be used to decide | The class checks are mechanical, and the finding outside the list is not. A run the operator will spend against is audited on the higher tier, since the defect that reaches him is the one no class was drawn around |
 | Master comparison | Opus-tier | Reading many runs against each other without flattening their caveats, and forming the one recommendation that opens it |
 
 ## Sequencing runs

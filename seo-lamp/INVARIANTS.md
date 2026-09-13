@@ -49,3 +49,9 @@ Why: a capture inside a run is invisible to the next run and to the site-wide se
 ## I9. Nothing product-specific belongs in the methodology, and no value has a second home
 
 **Test:** does any file under this methodology folder in the aesop repository name a product, a query, a competitor, an instrument vendor, or a run's figure? If yes, it belongs in the operator's repository: in the run, the market map, or the product inventory beside the runs. Does any run restate a price, a capacity or a limit that already has a home in the operator's records, rather than referencing it? If yes, it fails. A figure computed from such a value, an expected value in money being the one that matters, is not a restatement, provided the run names the section a reader opens to check it.
+
+## I10. A run is read by someone who was not told what it concluded
+
+**Test:** does the run carry an audit record, made by an agent holding the run document and its captures and nothing else, listing the classes checked and the findings split into floor and fork? A run published without one fails, as does one audited by the agent that wrote it, or by an agent given the brief, the reasoning or the run's own account of its findings.
+
+Why: an auditor told what the run concluded confirms it, and a self-audit from inside the frame returns only the defects the frame was drawn around. The classes are what has escaped before; the finding outside them is what the class list cannot yet see, and a run that returns neither has not been read.
