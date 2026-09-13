@@ -16,13 +16,13 @@ Why: a unit taken from the instrument hides the demand no single product owns, a
 
 ## I3. No lever is proposed without a predicted magnitude, a read date and an expected value in money
 
-**Test:** does every lever, floor and fork carry the metric it should move, by how much, by when, and what that is worth a year with each factor's source named? A lever ranked by impressions, or handed back as an unpriced question, fails.
+**Test:** does every lever, floor and fork carry the metric it should move, by how much, by when, and what that is worth a year with each factor's source named and each end of any band attributed either to the operator's record or to the analyst's judgement? A lever ranked by impressions, an unattributed band, or a question handed back unpriced, fails.
 
 Why: without a prediction, verification can only ever conclude that the work worked. Without money, the ranking of actions is the wrong ranking, and the operator cannot tell which of two forks is worth thirty times the other.
 
 ## I4. A lever the series cannot resolve is refused before it is proposed, not after
 
-**Test:** does the run state a minimum detectable effect computed from the family's own daily counts, and is every proposed lever's predicted magnitude above it? A run that discovers at Prove that the product was unmeasurable fails.
+**Test:** does the run state a minimum detectable effect computed from the family's own daily counts, and is every proposed lever's predicted magnitude above it? A bundle counts as one lever with one magnitude, which is how a precondition with no magnitude of its own is proposed at all. A run that discovers at Prove that the product was unmeasurable fails.
 
 Why: the refusal is itself the finding, and it is worth something only if it arrives before the operator has paid for the study.
 
@@ -48,4 +48,4 @@ Why: a capture inside a run is invisible to the next run and to the site-wide se
 
 ## I9. Nothing product-specific belongs in the methodology, and no value has a second home
 
-**Test:** does any file under this methodology folder in the aesop repository name a product, a query, a competitor, an instrument vendor, or a run's figure? If yes, it belongs in the operator's repository: in the run, the market map, or the product inventory beside the runs. Does any run restate a price, a capacity or a limit that already has a home in the operator's records, rather than referencing it? If yes, it fails.
+**Test:** does any file under this methodology folder in the aesop repository name a product, a query, a competitor, an instrument vendor, or a run's figure? If yes, it belongs in the operator's repository: in the run, the market map, or the product inventory beside the runs. Does any run restate a price, a capacity or a limit that already has a home in the operator's records, rather than referencing it? If yes, it fails. A figure computed from such a value, an expected value in money being the one that matters, is not a restatement, provided the run names the section a reader opens to check it.
