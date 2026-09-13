@@ -36,6 +36,16 @@ If there is no real personal moment with *this* recipient, do not force one, and
 
 The reader already opened the email and already knows who you are. You are past the headline, so do not write one. Open with the plain real thing: thank them for the actual event, name the genuine shared moment, or say why you are writing. A general observation engineered to catch attention is a newspaper lede pointed at someone already reading; it reads as performance and the reader feels handled. A genuine shared specific stated plainly is welcome; an abstract hook engineered to land is not.
 
+## What the recipient has not seen
+
+You hold the working that produced this mail: the files you read, the conversation behind it, the words you coined while thinking. The recipient holds what has been said to him and nothing else. Two habits carry your side of that gap into the text, and both reach him as the same experience, being told that something exists which he cannot place.
+
+The first is a word you made up while working, used as though it were agreed. Read the draft for any term naming a thing the recipient has never been given a name for. Introduce it where it first appears, or use the plain words instead.
+
+The second is a sentence narrating a change. "I have rewritten it by role rather than by name", "we have moved to the revised schedule", "the backup plan was chosen": each tells him a prior state existed and leaves him wondering what it was. This is forward only at sentence scale. State the current reality as the frame, keep any history he needs as a parenthetical, and delete the transition.
+
+The cures are opposite, so name which one you are looking at before you fix it. A missing introduction wants a sentence added. A narrated change wants a sentence removed. The subeditor can tell you the recipient cannot place a phrase; only you can tell which of the two produced it, because only you know what he was told.
+
 ## Does it still do its job
 
 Put your version beside the original and ask one question: is the reader at least as likely to do the intended thing? If your warmer, shorter version is less likely to get the action because it lost what earned it, you have over-corrected. Restore the goal-bearing piece and cut elsewhere. A human note that no longer does its job is a worse failure than a slightly stiff one that does.
