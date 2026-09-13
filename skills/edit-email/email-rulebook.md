@@ -56,6 +56,18 @@ Specific patterns this principle exposes:
 
 R7 still applies: shorter does not mean dropping facts the ask depends on.
 
+## R11. Nothing arrives as already known
+
+An email is read by one person holding what was said to them and nothing else. No project, no repository, no conversation with the sender's agent. A phrase that arrives as already known asserts that the recipient holds a referent. The drafting agent holds that referent from its own working, so it cannot see that the referent was never sent.
+
+This is R6's borrowed fact at the level of reference rather than content, and it fails the same way. The surfaces that carry it: a definite noun phrase on first mention, a demonstrative, a pronoun reaching back past a paragraph, a comparative or an ordinal, a state called old, new, current or existing, and a term used as settled vocabulary. Those are prompts for the eye. The test is whether the recipient was given the referent, not which words the phrase uses.
+
+The subeditor cannot know what the recipient was told, and does not need to. Its baseline is what it can see: this email's own earlier text, and the THREAD block. A phrase whose referent sits in neither is listed, not judged, and the caller answers it against the brief. Two conditions govern what counts as resolved. The answer precedes the question, since a key below its table or a term defined by the following sentence reaches the recipient after he has met the phrase. And the answer names the thing in the words the phrase uses: a subeditor who points "that window" at a sentence giving a range of dates has supplied the word from its own grasp of the sense, which is the construal the pass exists to defeat. Where THREAD is `(none)`, the email introduces everything it uses.
+
+The check runs again on the polished text. An edit that moves a sentence can strand a reference that resolved before it moved, and no reading of the draft can catch damage that did not exist when it was read.
+
+Example: a supplier email says "the revised figure covers freight". Nothing earlier names a figure or a revision. The sender's agent knows which quote was revised and when; the supplier has two open quotes and cannot tell. The fixed line names the quote and its date at first mention.
+
 ## Relationship registers
 
 Rules that depend on who the email is pitched to (writing down to staff, across to a supplier, up to a lawyer) live in their own register guides, loaded as `$REGISTER_GUIDE` (for example `register-staff.md`). The R-rules above are the universal backstop and hold under every register.

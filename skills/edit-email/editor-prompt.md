@@ -38,13 +38,37 @@ $EMAIL
 
 ---
 
+Open with the pointing pass, before you read for sense.
+
+Go through the email one sentence at a time. At each phrase that refers to something, ask the question the recipient would ask on meeting it. Most raise no question. A name, a date, a figure the sentence itself supplies, a fact stated as it arrives: these introduce their referent, and they stay off the list. List the phrases where he asks "which one?" or "what is that?", where the sentence works only if he already holds something the mail has not given him.
+
+For each, quote the earlier sentence of this email that answers him, or name the THREAD message that does, or write `nowhere`.
+
+Two conditions on what counts as an answer. Both are routes by which this defect survives a careful reading.
+
+The answer comes before the question. A key printed under the table it explains, a term defined by the sentence after the one that uses it: the recipient has already met the phrase and been unable to place it. That is `nowhere` at the point of reading.
+
+The answer names the thing in the words the phrase uses. Suppose the phrase is "that window" and the sentence you point at gives a range of dates. You supplied the word "window" yourself, from your own grasp of what was meant. The recipient cannot do that. A phrase resolves when the earlier text would let him produce it, rather than when you can see what it stands for. The same applies to "the backup plan" pointed at a sentence describing an alternative, or to "Option C" pointed at a paragraph that lists three things and numbers none of them. Where you find yourself explaining the link instead of quoting it, write `nowhere`.
+
+You will understand most of these phrases perfectly well. That is not the test, and understanding them is how the defect survives. A term coined outside the email reads as established vocabulary to anyone able to construe it, and a reader who construes it goes on to use it himself.
+
+Where THREAD is `(none)`, the email is the only source there is.
+
+Run the pass a second time on your own POLISHED text, and compare. An edit that moves or deletes a sentence can strand a reference that resolved before the edit, so a line that pointed somewhere in the draft can point `nowhere` after you have finished with it. Damage you did is not visible in the reading you did first.
+
 Return exactly:
+
+GIVENS:
+[The pointing pass over the EMAIL block. One line per expression: the expression quoted, then `<` and where the recipient gets the referent — the earlier sentence of this email quoted, the THREAD message named, or `nowhere`. Order of appearance. If the email presupposes nothing, write `GIVENS: (none)`.]
 
 READING:
 [Your reaction, paragraph by paragraph, in first person as the author. Where it feels right, say so. Where it doesn't, say what you'd actually write instead and why.]
 
 POLISHED:
 [The email as you would send it. Not a patched version — the real thing.]
+
+GIVENS-AFTER:
+[The same pass over your POLISHED text. Same format. Then one line naming any expression that pointed somewhere in GIVENS and points `nowhere` here, or `no references stranded` if none.]
 
 ASSERTIONS:
 [What the draft states on someone's authority, one line each, the sentence quoted as it stands. Three kinds, tagged and numbered within the kind (D1, D2, N1):
