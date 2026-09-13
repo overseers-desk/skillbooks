@@ -180,7 +180,7 @@ The audit is recorded in the run: the classes checked, the findings, and which w
 | Market map: demand clusters with volume, difficulty, seasonality and site impressions; visitor-job clusters above products; value per conversion and conversion rate per product, by reference; the market's occupants and the keyword gap against them; products sold without a page | a market pass before the call's first run, refreshed on a cycle | every run, the run order, the master comparison | beside the runs, dated |
 | Product inventory: products, merges, by-products, pages, run order by expected value, instrument cap in queries, the operator's standing grant with the document stating it | the first run of a call, from the market map | every run | beside the runs, dated |
 | Located captures and Maps lists, with results-page features and overview content | L | A, P, the site-wide series | the operator's capture series |
-| Run document: Locate, Attribute, Move, Prove sections | the run | the operator, the next run, the master comparison | the product's folder, dated |
+| Run document: Locate, Attribute, Move, Prove sections; self-contained, corrected in place | the run | the operator, the next run, the master comparison | the product's folder, dated |
 | Movement report artifact: the movement named and dated, the instruments with what is wrong with each, the candidates with a status each and none selected, the discriminating observation per candidate with who can make it, and the output contract the runs consume | the movement report | every run of the call, the operator | published; the report cites its own URL |
 | Run artifact: the document as a page, opening with Locate's standing sentence and the ranked levers with their money, the series charted with events as dated markers, the effect ledger with each reading's reason beside its status, the located capture, the causes with a status each, the levers in one ranked list marked floor or fork, the instrument spend, and sources | the run | the operator's morning review | published; URL in the run document's front matter under `artifact:`, reading PENDING until it is published |
 | Effect ledger: one row per dated event, in the shape Prove states, including the prediction and the control | P | the next run, the master comparison | inside the run document |
@@ -188,7 +188,7 @@ The audit is recorded in the run: the classes checked, the findings, and which w
 | Minimum detectable effect and the gate's verdict | L | M, the master comparison | inside the run document |
 | Site-level observations the run met and cannot use | any phase | the call's movement report, whose causal section stays open for them | a short section at the end of the run document |
 | Audit record: the classes checked, the findings, and which were floor and which fork | the cold agent at the audit | the operator, the next run, the class list itself | inside the run document |
-| Master comparison: opening with the highest expected-value finding of the call; one row per product with standing, money and delta against the control, with the window and seams named; every lever of every run in one list ranked by expected value and marked floor or fork with the run's recommendation; the parked site-level observations; the instrument spend | after the runs of one call | the operator's approval sitting | beside the runs, dated, plus a published page |
+| Master comparison, self-contained and corrected in place: opening with the highest expected-value finding of the call; one row per product with standing, money and delta against the control, with the window and seams named; every lever of every run in one list ranked by expected value and marked floor or fork with the run's recommendation; the parked site-level observations; the instrument spend | after the runs of one call | the operator's approval sitting | beside the runs, dated, plus a published page |
 
 A published artifact carries its own limits on its face, where a reader meets them at the same moment as the thing limited. Each series' date coverage belongs in the legend, not in a footnote. A table that crosses a known error carries the warning on the table. A date resting on one instrument says so where the date is given. An instrument note in prose is met only by a reader who reaches the prose, and the reader who acts on a chart may never get there.
 
@@ -215,7 +215,17 @@ Runs go one at a time, not in parallel, while the methodology is young: each run
 
 The restructure of 13 September 2026 is the first change that invalidates a completed run's reading, because runs made before it rank by impressions and carry no prediction, no control and no money. Runs from before that date are read as measurements and not as recommendations; the measurements are sound and stand. A run states its date, which fixes which reading governed it.
 
-An artefact rebuilt under a new reading is a new dated artefact beside the old one, not an edit of it. Overwriting the inventory or the master comparison of a past call would leave that call's runs citing figures that no longer exist, and a run whose citations cannot be checked is no longer a measurement of anything.
+Whether an artefact is versioned or rebuilt is decided by what cites it, not by its age. An artefact other artefacts cite by figure is versioned: the market map and the product inventory, because a run takes its run order and its family estimates from them, and overwriting one strands a citation that can no longer be checked. A new dated file goes beside the old.
+
+An artefact nothing cites by figure is corrected in place, and a run and the master comparison are both of that kind. Correcting one strands nothing, because the dependency runs one way: runs cite the inventory, the master cites the runs, and nothing sits below the master.
+
+Most redrafting is correction rather than a new reading. A run redone because it was wrong is an edit of that run: the same file, the same name, and nothing in it pointing at what it said before. Version control holds the earlier text for anyone who needs it, and the folder holds one document per subject. A second file invites a reader to open the wrong one, and a reader who has to hold two documents and work out which half of each is live has been handed the history of how the answer was reached instead of the answer.
+
+The corrected document is therefore self-contained. It absorbs whatever it needs from what it replaces rather than citing it, and it carries no account of what changed. Its published page is rebuilt at the same URL, so a link already circulated resolves to the current answer, and two pages for one subject is the failure at its most visible.
+
+A correction reads what it replaces in full before writing, and carries forward everything the new work does not supersede. A money ranking rebuilt over a standing measurement can silently drop the measurement. That is a merge requirement rather than a versioning one, and it is what makes correcting in place safe.
+
+A date does not version anything, and a correction usually lands the same day as the thing it corrects. Two artefacts on one subject bearing one date cannot be told apart by their names, and a suffix reached for to separate them is the signal that one of them should have been an edit.
 
 ## Relationship to the other methodologies
 
