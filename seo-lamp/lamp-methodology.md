@@ -168,7 +168,7 @@ The classes are what has actually escaped a run and reached a reader, and the li
 2. **A condemned figure used again.** A window or metric the document has already flagged as not comparable, then carried elsewhere in the same document as a delta, a percentage or evidence.
 3. **A label that does not match what it sits on.** A population named for what it does not hold; a crossing or turn marked where fewer than two series hold values on both sides of it; a range labelled with dates the series does not cover; a status outside the document's own stated set.
 4. **A claim about material not read to the end.** Any characterisation of a source, a sibling document or another artefact the run holds only an excerpt of.
-5. **A known instrument defect not applied.** The run lists what is wrong with each instrument, then states a figure the listed defect covers, without the correction or the caveat.
+5. **A known instrument defect not applied.** A figure that a listed defect covers, stated without the correction. The caveat being present elsewhere in the document is not a defence and is the commonest form: the tell is a document that states the limitation in one section and computes across it in another, so the check reads the arithmetic against the caveat rather than looking for the caveat.
 6. **A verification sharing a source with the thing verified.** Two figures agreeing where one derives from the other, reported as confirmation. It passes by construction and reads as a strong result.
 7. **A quantity assembled from part of a source, without saying a part was taken.** A demand, family or population figure built from hand-picked members while the source assigns the whole to that unit. The narrowing is often right, since a unit is entitled to exclude what it cannot serve; the defect is that it is silent, and that the excluded part is frequently larger than the part kept.
 8. **An event dated or attributed from prose.** A date or cause taken from a narrative summary rather than from the record that fixes it, and not tested against the bulk changes of the same period.
@@ -178,6 +178,14 @@ The auditor also returns one finding outside the list, or says it found none. Th
 Findings come back split the way Move splits levers. A **floor** finding is arithmetic with no judgement in it: recompute on matched days, drop a delta and show both sides, state a coverage the page omits. It is fixed before publication. A **fork** finding changes what the run concludes, or turns on data the captures cannot settle. It is published with the run and carries the auditor's reading, because what the run concludes is the operator's to settle and an audit that quietly rewrote a conclusion would be a second analyst rather than a check.
 
 The audit is recorded in the run: the classes checked, the findings, and which were floor and which fork. A run whose audit found nothing records that, since a clean audit is evidence about the run and an absent one is evidence about nothing.
+
+## Known instrument defects
+
+Naming an instrument's vendor is otherwise kept out of this document. A dated defect in a widely used instrument is the exception, because every operator reading this meets the same one, and leaving it to each run means each run rediscovers it or fails to. Each entry carries the instrument, the affected metric, the dates, the direction, what is known of the magnitude, the metric that still carries a comparison, and the condition under which the entry lapses. An entry that cannot say when it stops applying becomes a superstition, the same way a window pinned to a date does.
+
+**Google Search Console, impressions, 13 May 2025 to 27 April 2026.** Over-reported, by an amount the provider has never published; the one third-party estimate is 30 to 50 per cent. The provider's own entry is dated 3 April 2026 and the fix rolled forward from 27 April 2026, with the earlier data left uncorrected. Clicks are unaffected and carry every comparison crossing the boundary. Impressions carry none, in either direction, and no figure derived from such a difference is reported: two counts may sit side by side, each labelled with its window, and a reader may see that one is larger, but a delta, a percentage or any arithmetic resting on one may not exist. The entry applies to any window whose earlier side falls before 28 April 2026, and lapses when the console's retention makes such a window undrawable.
+
+Knowing this is demonstrably not enough to act on it. Two separate analyses breached it on the same day, each having written the caveat into its own document first. So it is stated here as forbidden arithmetic rather than as a caution, and the audit looks for the breach rather than for the caveat.
 
 ## Artefacts
 
