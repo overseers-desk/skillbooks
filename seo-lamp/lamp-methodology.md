@@ -162,7 +162,8 @@ The classes are what has actually escaped a run and reached a reader, and the li
 4. **A claim about material not read to the end.** Any characterisation of a source, a sibling document or another artefact the run holds only an excerpt of.
 5. **A known instrument defect not applied.** The run lists what is wrong with each instrument, then states a figure the listed defect covers, without the correction or the caveat.
 6. **A verification sharing a source with the thing verified.** Two figures agreeing where one derives from the other, reported as confirmation. It passes by construction and reads as a strong result.
-7. **An event dated or attributed from prose.** A date or cause taken from a narrative summary rather than from the record that fixes it, and not tested against the bulk changes of the same period.
+7. **A quantity assembled from part of a source, without saying a part was taken.** A demand, family or population figure built from hand-picked members while the source assigns the whole to that unit. The narrowing is often right, since a unit is entitled to exclude what it cannot serve; the defect is that it is silent, and that the excluded part is frequently larger than the part kept.
+8. **An event dated or attributed from prose.** A date or cause taken from a narrative summary rather than from the record that fixes it, and not tested against the bulk changes of the same period.
 
 The auditor also returns one finding outside the list, or says it found none. The list is a frame, and a frame returns the defects it was drawn around; the run that first met a defect no class covers is the run that adds the class, named in the commit.
 
