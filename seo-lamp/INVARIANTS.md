@@ -42,9 +42,9 @@ Why: organic traffic moves with the season, with the provider's updates and with
 
 ## I8. A capture lives in the operator's capture series, never in a run folder
 
-**Test:** for any results page, Maps list or performance export a run cites, is the file under the operator's capture series with that series' naming? A file under the run's own folder fails.
+**Test:** for any results page, Maps list or performance export a run cites, is the file under the operator's capture series with that series' naming, and is it committed? A file under the run's own folder fails, and so does an uncommitted one wherever it sits.
 
-Why: a capture inside a run is invisible to the next run and to the site-wide series, and gets fetched again at a cost.
+Why: a capture inside a run is invisible to the next run and to the site-wide series, and gets fetched again at a cost. An uncommitted capture is invisible to everything except the machine that wrote it, so the report citing it cannot be checked by the reader it was written for, and the correction rule that relies on recovering an earlier version has nothing to recover.
 
 ## I9. Nothing product-specific belongs in the methodology, and no value has a second home
 
