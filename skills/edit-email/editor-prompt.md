@@ -68,7 +68,7 @@ POLISHED:
 [The email as you would send it. Not a patched version — the real thing.]
 
 GIVENS-AFTER:
-[The same pass over your POLISHED text. Same format. Then one line naming any expression that pointed somewhere in GIVENS and points `nowhere` here, or `no references stranded` if none.]
+[The same pass over your POLISHED text. Same format. List what you changed and what each phrase now points at. Do not certify the result: a reference you stranded is one you could not see when you wrote it, so a separate reader who never saw this draft settles whether any were stranded.]
 
 ASSERTIONS:
 [What the draft states on someone's authority, one line each, the sentence quoted as it stands. Three kinds, tagged and numbered within the kind (D1, D2, N1):
