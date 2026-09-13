@@ -48,7 +48,7 @@ Why: a capture inside a run is invisible to the next run and to the site-wide se
 
 ## I9. Nothing product-specific belongs in the methodology, and no value has a second home
 
-**Test:** does any file under this methodology folder in the aesop repository name a product, a query, a competitor, an instrument vendor, or a run's figure? If yes, it belongs in the operator's repository: in the run, the market map, or the product inventory beside the runs. Does any run restate a price, a capacity or a limit that already has a home in the operator's records, rather than referencing it? If yes, it fails. A figure computed from such a value, an expected value in money being the one that matters, is not a restatement, provided the run names the section a reader opens to check it.
+**Test:** does any file under this methodology folder in the aesop repository name a product, a query, a competitor, an instrument vendor, or a run's figure? The known-instrument-defects section is the one exception, and it is narrow: a dated defect in a named instrument, carried with the condition under which the entry lapses, because the defect is shared by every operator and a run left to rediscover it will not. If yes, it belongs in the operator's repository: in the run, the market map, or the product inventory beside the runs. Does any run restate a price, a capacity or a limit that already has a home in the operator's records, rather than referencing it? If yes, it fails. A figure computed from such a value, an expected value in money being the one that matters, is not a restatement, provided the run names the section a reader opens to check it.
 
 ## I10. A report is read by someone who was not told what it concluded
 
