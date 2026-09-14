@@ -81,7 +81,7 @@ Each phase has its own procedure document; this file states what each phase is f
 
 ## Versioning
 
-The methodology carries a dated reading; this one is dated 2026-09-15. A run states the date it started and is read under the reading in force that day, so a completed run's record is not re-judged under a later reading. A change that a finished run's record would fail is what moves the date.
+The methodology carries a dated reading; this one is dated 2026-09-15. A run states the date it started and the reading it runs under; where it states no reading, it is read under the reading in force on its start date. A run that adopts a later reading is written as if it had run under it from the start, in the method's own terms, since a record that narrates the change is a seam the next reader trips on. A completed run's record is not re-judged under a later reading. A change that a finished run's record would fail is what moves the date.
 
 ## Relationship to the other methodologies
 
