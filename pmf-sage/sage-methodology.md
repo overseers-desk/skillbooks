@@ -6,12 +6,12 @@
 
 SAGE develops a product for a market that already exists. The category is proven: comparable operators already sell days, packages, services of this kind, and buyers already buy them. The open question is not whether anyone wants such a thing, so SAGE runs no existence experiment. The open question is fit: exactly which composition, price shape, group mechanics and claims win a booking against the incumbent the buyer already uses. SAGE reaches that fit by reading the market at research grade where its peers rely on trial and error, then deciding on cards, then letting designs compete blind in front of simulated buyers, then folding the winner into one definition whose every claim has a number behind it.
 
-- **Survey** builds the evidence: comparable operators worldwide drawn from enumerable published lists and coded under a frozen codebook, the local rivals a booking is won or lost against, the demand signals around them, and the distributors whose transactions cross the whole market.
-- **Adjudicate** puts every product parameter on a card in front of the owner: prior values, ruling, provenance, boundary tests. The output table bounds what any later agent may design, promise or claim.
+- **Survey** builds the evidence: comparable operators worldwide drawn from enumerable published lists and coded under a frozen codebook, the local rivals a booking is won or lost against, the demand signals around them, what buyers type among them, and the distributors whose transactions cross the whole market.
+- **Adjudicate** puts every product parameter on a card in front of the owner: prior values, ruling, provenance, boundary tests. The first two cards, one offer or several and for whom, and the scoping buyer, are ruled before Survey launches. The output table bounds what any later agent may design, promise or claim.
 - **Game** drafts a base sheet from the rulings, has isolated design arms, one model family per arm, derive from the evidence alone and vary against that base, passes every sheet through a reviewer gate, and judges them blind through role-played, individually profiled buyers. The winners are absorbed into one sheet and crowned on a held-out panel.
-- **Establish** turns the crowned design into the shipped definition: numbered selling-point claims with measured scarcity, the definition folded by stated rules, every value migrated to its single home, and a displacement offer put to named prospects the operator already holds.
+- **Establish** turns the crowned design into the shipped definition: numbered selling-point claims with measured scarcity, the definition folded by stated rules, every value migrated to its single home, the market map's handoff to LAMP among them, and a displacement offer put to named prospects the operator already holds.
 
-**Direction:** inward. The operator must decide what to build, and the discipline is that the market's evidence decides it. Everything internal that could pre-decide the product (old drafts, meeting opinions, half-built local practice) is either fenced off or made to survive adjudication in daylight.
+**Direction:** inward. The operator must decide what to build, and the discipline is that the market's evidence decides it. Everything internal that could pre-decide the product (old drafts, meeting opinions, half-built local practice) is either fenced off or made to survive adjudication in daylight. The owner's own latest sentence anchors as surely as an old draft: an example he gives to widen or narrow the frame is a prior on a card and a named row in the frame, and the scoping is ruled on its own cards.
 
 ## Why the method exists
 
@@ -23,6 +23,7 @@ The named failure modes, each countered by a specific mechanism:
 - **Librarian anchoring**: asked for market analysis, the AI mines internal opinion and old plans, and the loudest internal adjective becomes the product. Countered by Survey giving the deriving AI a real market to read.
 - **Confabulated offers**: asked to sell, an AI invents what it does not have; told to sell a pen, it offers a million dollars with the pen. Countered by the Adjudicate table as a bounding box on every downstream promise.
 - **Self-infantisation**: an AI briefing other AIs hardens an undecided parameter into a fixed rule the owner never granted. Countered by the rule that a parameter absent from the decisions table is design freedom.
+- **Silent scoping**: the orchestrator or a brief author fills in the buyer, or presupposes one product, and the answer shapes the frame and the codebook before the owner has ruled it. Countered by the two opening cards ruled before Survey launches and the RULED/DEFAULT mark on Survey briefs.
 - **Format smuggling**: a design arm mandated to compete on one dimension quietly alters decided format, and downstream documents record the invention as ruled. Countered by the reviewer gate.
 - **Presentation artefact**: a judging round decided by document polish rather than the product inside it. Countered by mechanical blinding and uniform presentation.
 - **Panel overfitting**: a design tuned to the judges who scored it. Countered by the held-out crown-check panel.
@@ -30,7 +31,7 @@ The named failure modes, each countered by a specific mechanism:
 
 ## What SAGE is not
 
-Not a startup validation method: it assumes the category sells and tests displacement, not existence. Not a documentation exercise: reading substitutes for trial and error only where the market publishes its behaviour, and Survey names that blind spot rather than hiding it (what is bought is not always printed). Not an audit: the survey describes the market as buyers meet it, an operator trading outside its permissions is still market signal, and legality, registration or authenticity enter the evidence only as far as buyers weigh them when choosing. Not a committee: exactly one human, the owner, rules, and rules on cards.
+Not a startup validation method: it assumes the category sells and tests displacement, not existence. Not a documentation exercise: reading substitutes for trial and error only where the market publishes its behaviour, and Survey names that blind spot rather than hiding it (what is bought is not always printed). Not an audit: the survey describes the market as buyers meet it, an operator trading outside its permissions is still market signal, and legality, registration or authenticity enter the evidence only as far as buyers weigh them when choosing. Not a search study: a demand figure never vetoes a build; it tells the run whether being found can be the plan. Not a committee: exactly one human, the owner, rules, and rules on cards.
 
 ## Runs and the methodology
 
@@ -42,20 +43,20 @@ The dividing test, applied to any fact: would a different product run by the sam
 
 Each phase has its own procedure document; this file states what each phase is for and what crosses its boundary.
 
-**S — Survey** (`sage-S-survey.md`). Produces numbered findings from a coded comparables corpus, a section-numbered rival register, demand signals, and distributor evidence. Later documents cite finding numbers and register sections instead of restating claims. Where the product had prior internal drafts, Survey also produces the fence: an index of every file carrying pre-decided parameters, from which clean-room blacklists are generated. A wholly new product skips the fence.
+**S — Survey** (`sage-S-survey.md`). Produces numbered findings from a coded comparables corpus, a section-numbered rival register, demand signals with the search-demand findings among them, and distributor evidence. Later documents cite finding numbers and register sections instead of restating claims. Where the product had prior internal drafts, Survey also produces the fence: an index of every file carrying pre-decided parameters, from which clean-room blacklists are generated. A wholly new product skips the fence.
 
-**A — Adjudicate** (`sage-A-adjudicate.md`). Consumes the evidence; produces the decisions table, via cards the owner rules on. A ruling stands on two legs, named demand evidence and named capability. The table is the single register of ruled against recommended, and the bounding box for every later phase.
+**A — Adjudicate** (`sage-A-adjudicate.md`). Consumes the evidence; produces the decisions table, via cards the owner rules on, the first two of them ruled before Survey launches. A ruling stands on two legs, named demand evidence and named capability. The table is the single register of ruled against recommended, and the bounding box for every later phase.
 
 **G — Game** (`sage-G-game.md`). Consumes the evidence and the decisions table; produces a crowned design sheet and the persisted verdicts behind it. A base sheet drafted from the table is judged beside the arms; arms derive context-free and then vary against the base, the reviewer cuts what oversteps the table, blinded judges cast from profiled buyers rule, absorption folds the winners, and a held-out panel confirms the crown.
 
-**E — Establish** (`sage-E-establish.md`). Consumes the crowned sheet, the verdicts and the corpus; produces the numbered claims, the shipped definition, the migration of every value to its home, and the displacement offer to named prospects.
+**E — Establish** (`sage-E-establish.md`). Consumes the crowned sheet, the verdicts and the corpus; produces the numbered claims, the shipped definition, the migration of every value to its home, the market-map handoff among them, and the displacement offer to named prospects.
 
 ## Artefacts
 
 | Artefact | Created by | Consumed by | Lives in |
 |---|---|---|---|
 | Comparables frame, codebook, coded corpus, numbered findings | S | A, G, E | run folder, survey stage |
-| Rival register (section-numbered), demand signals | S | A, G, E | run folder, survey stage |
+| Rival register (section-numbered), demand signals, search-demand findings | S | A, G, E | run folder, survey stage |
 | Distributor evidence notes | S | A, G, E | run folder, survey stage |
 | Fence index and generated blacklists (conditional) | S | G briefs | run folder |
 | Decision cards and the decisions table | A | G, E, every brief | run folder; compact table repeated in the definition |
@@ -64,6 +65,7 @@ Each phase has its own procedure document; this file states what each phase is f
 | Numbered claims with grounding table | E | outreach campaigns | run folder |
 | Product definition | E | the operator's business | beside the run folder |
 | Migrated values | E | standing records | each value's own home |
+| Market-map handoff (the name and its terms, surface, unit, buyer, price band, value per conversion, cadence, ceiling) | E | LAMP | the operator's market map |
 
 ## Model allocation
 
@@ -79,8 +81,8 @@ Each phase has its own procedure document; this file states what each phase is f
 
 ## Versioning
 
-The methodology carries no version field yet; the first change that would invalidate a completed run's record introduces one. A run states the date it started, which fixes which reading of the methodology governed it.
+The methodology carries a dated reading; this one is dated 2026-09-15. A run states the date it started and is read under the reading in force that day, so a completed run's record is not re-judged under a later reading. A change that a finished run's record would fail is what moves the date.
 
 ## Relationship to the other methodologies
 
-Establish's numbered claims are what a SPAR campaign's approach messages cite by number, and the displacement offer is naturally run as a SPAR campaign over an owned roster. The Adjudicate table is the bounding box those messages may not escape: an approach draft promising anything outside it is the confabulated-offer failure, caught at review. Replies to the displacement offer arrive through TEND.
+Establish's numbered claims are what a SPAR campaign's approach messages cite by number, and the displacement offer is naturally run as a SPAR campaign over an owned roster. The Adjudicate table is the bounding box those messages may not escape: an approach draft promising anything outside it is the confabulated-offer failure, caught at review. Replies to the displacement offer arrive through TEND. LAMP reads the market-map handoff Establish leaves and studies the offering once it has a surface; what it cannot reconstruct after the fact, the name's intended target and the value per conversion, is what Establish hands it.
