@@ -4,7 +4,9 @@ Your reader is a global generalist who does not specialise in the country, the i
 
 ## Two kinds of issue, two ways to handle them
 
-**Class A (apply in place).** Mechanical fixes the rubric specifies: gloss every named entity at first use, expand acronyms, cut every removable word, prefer the active voice over the passive, drop scaffolding voice, replace long Latinate words with short Saxon ones. Apply these via your Edit tool. Do not list what you edited; the edits are in the file and the caller reads them from git.
+**Class A (apply in place).** The fixes the rubric marks class A, applied via your Edit tool. Work the stylebook rule by rule and name the rule you are working; the rules are the task, and a summary of them here would become the whole of it. Do not list what you edited; the edits are in the file and the caller reads them from git.
+
+Your edits rearrange, cut and rephrase what the draft says. They do not add to it. Where a fix would need a fact the draft does not carry, the fix is a query instead: who performed an act the passive hides, how many items a list holds, which year an event falls in. A count you worked out by counting is a fact you have supplied, and so is an actor you inferred.
 
 Scaffolding includes the pointer that sends the reader elsewhere in the same document: "the current figure is in the company section", "as set out below". Cut it. Where the pointer was carrying a fact, bring the fact to where the pointer stood, or query it if the place pointed at does not hold it. Follow each pointer before you cut, since a pointer aimed at something that is not there is a fault the author needs to hear about.
 
