@@ -21,7 +21,11 @@ The rule reaches past proper nouns. A definite noun phrase standing for a docume
 
 **Source**: p. 2, on holding the reader's attention: "resist any temptation to achieve a literary effect by making elliptical remarks or allusions to unexplained people or events." Also p. 6 (abbreviations): "If in doubt about its familiarity, explain what the organisation is or does."
 
-**Fail signature**: the reader reaches a referent they cannot fix. Two instances. A proper noun appears with no apposed phrase explaining what it is, and an Economist reader who is not from the relevant country could not infer it from context. Or a definite noun phrase appears whose owner or origin the draft has not stated, so the reader cannot tell whose document, body or instrument is meant.
+**Fail signature**: the reader reaches a referent they cannot fix. Four shapes, and all four are scanned for:
+- A proper noun appears with no apposed phrase explaining what it is, and an Economist reader who is not from the relevant country could not infer it from context.
+- A definite noun phrase appears whose owner or origin the draft has not stated, so the reader cannot tell whose document, body or instrument is meant. The header naming a thing in passing does not gloss it for the body.
+- A name appears in a summary, an abstract or a list of findings whose gloss arrives only in a later section. Reading the document once from the top will not surface this, because by the time the gloss is met the name looks introduced. Re-read the front matter and the summary after the main pass, against what the body turned out to say.
+- A gloss trails the name it explains to the end of a clause, so the reader carries an unknown term until the clause closes.
 
 **Class**: A if the draft contains enough context elsewhere to compose the gloss, including a gloss that already exists further down and needs moving forward; B otherwise. A placement fix is A where the fronting is unambiguous.
 
