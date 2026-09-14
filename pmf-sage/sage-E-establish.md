@@ -22,7 +22,7 @@ Two passes run before it ships. A dedup pass leaves every number one home inside
 
 ## Migration — every value to its home
 
-Confirmed values leave the run for their standing homes: prices to the fee schedule, procedures to the operating documents, copy to the website, capability facts to the capability records. The run folder keeps the whole record in stage order; the homes carry the live values. A value living in two places with no derivation between them is the defect this step exists to prevent.
+Confirmed values leave the run for their standing homes: prices to the fee schedule, procedures to the operating documents, copy to the website, capability facts to the capability records. The run folder keeps the whole record in stage order; the homes carry the live values. Eight values go to the operator's market map, which LAMP reads, so that its first study of the offering is a measurement rather than a post-mortem: the chosen name and the terms it was chosen against with their volumes and difficulties; the owned-surface decision, or the explicit statement that no page will exist and why; the unit; the buyer, in enough detail to draw a query-family boundary; the price band and the fee-schedule section that will hold it; the value per conversion with its home named, or its absence stated; the cadence or season; and the capacity ceiling in the units the offering is sold in. The first two are unrecoverable once the offering exists. A value living in two places with no derivation between them is the defect this step exists to prevent.
 
 ## The displacement offer
 
