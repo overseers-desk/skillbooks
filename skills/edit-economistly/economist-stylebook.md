@@ -13,11 +13,17 @@ Rule of thumb for the A/B split: if the fix can be written without consulting an
 ### R1: Glossed first mention
 Every named person, organisation, fund, law, place smaller than a national capital, and programme is glossed at first appearance with a phrase a global generalist reader would need to follow the sentence.
 
+The rule reaches past proper nouns. A definite noun phrase standing for a document, body, agreement, scheme or instrument is in scope whenever the draft has not said whose it is or which one is meant: *the agreement*, *the register*, *the report*, *the scheme*, *the panel*. The test belongs to the reader rather than to the grammar, and it is one question. From what they have read so far, can the reader say whose this is, or which one?
+
+**First appearance means first in reading order**, front matter included. A name introduced in section four is not introduced for a summary on page one. The failure concentrates in a summary, an abstract or a list of findings at the head of a document, because the author writes that part last and reads it in the order they wrote it rather than the order the reader meets it.
+
+**Gloss placement**: the description arrives before the name or apposed to it, not trailing at the end of a clause. "...well below the 4.2 of Larkhill, a family-run guesthouse in the same valley" asks the reader to carry an unknown name until the clause ends. "...well below the 4.2 of a family-run guesthouse in the same valley, Larkhill" does not.
+
 **Source**: p. 2, on holding the reader's attention: "resist any temptation to achieve a literary effect by making elliptical remarks or allusions to unexplained people or events." Also p. 6 (abbreviations): "If in doubt about its familiarity, explain what the organisation is or does."
 
-**Fail signature**: a proper noun appears with no apposed phrase explaining what it is, and an Economist reader who is not from the relevant country could not infer it from context.
+**Fail signature**: the reader reaches a referent they cannot fix. Two instances. A proper noun appears with no apposed phrase explaining what it is, and an Economist reader who is not from the relevant country could not infer it from context. Or a definite noun phrase appears whose owner or origin the draft has not stated, so the reader cannot tell whose document, body or instrument is meant.
 
-**Class**: A if the draft contains enough context elsewhere to compose the gloss; B otherwise.
+**Class**: A if the draft contains enough context elsewhere to compose the gloss, including a gloss that already exists further down and needs moving forward; B otherwise. A placement fix is A where the fronting is unambiguous.
 
 ### R2: Dated events carry their significance
 Every date that is given for a reason (a turning point, an inflection, a treaty, an election, a crisis) has its significance stated in the same sentence or the next. Dates included as scenery do not need it; dates included as load-bearing do.
@@ -75,7 +81,9 @@ No metaphor, simile or other figure of speech of the kind seen in print regularl
 
 **Fail signature**: agentless passive construction (*was decided that*, *it is held that*) where the agent is named or knowable in the surrounding text.
 
-**Class**: A.
+**The actor must come from the draft.** A conversion to the active voice names someone, and the someone has to be one the draft has already established. Where the rewrite would supply the actor from inference, the passive stays and the sentence becomes a query. Watch the first person in particular: a document whose *we* means one party will read as attributing the act to that party, even when a different party performed it, so a passive about work the author did is not made active with the *we* that elsewhere means the business.
+
+**Class**: A where the draft names the actor; B where the actor has to be supplied or the *we* would shift.
 
 ### R8: Ordinary English over jargon
 "Never use a foreign phrase, a scientific word or a jargon word if you can think of an everyday English equivalent." The Style Guide singles out the Americanisms list (p. 12–15) and warns against MBA, bureaucratic and academic jargon (p. 3).
@@ -104,9 +112,11 @@ Every numeric fact and every named claim is attributable from the text itself: e
 
 **Source**: p. 2, "Edit it ruthlessly... whether by cutting or polishing or sharpening, on each occasion. Avoid repetition. Cut out anything superfluous."  The Style Guide treats sloppiness as the sixth vice (introduction frames the no-noes as five named plus the catch-all of being lucid).
 
-**Fail signature**: a number or specific claim appears with no traceable source in the same document.
+The rule runs in both directions. A source listed and never drawn on is the mirror failure: an entry in a Sources block that no sentence in the body rests on is dead weight, and it leaves the reader hunting for the claim it belongs to. Check the block against the body, entry by entry, and report any entry the body never uses.
 
-**Class**: B (the source is external to the draft).
+**Fail signature**: a number or specific claim appears with no traceable source in the same document. Or a Sources entry appears that no sentence in the body draws on.
+
+**Class**: B in both directions. The source is external to the draft, and only the author knows whether an unused entry was meant to support a claim that got cut or was listed in error.
 
 ---
 
