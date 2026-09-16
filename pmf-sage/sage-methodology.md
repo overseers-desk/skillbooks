@@ -11,7 +11,7 @@ SAGE develops a product for a market that already exists. The category is proven
 - **Game** drafts a base sheet from the rulings, has isolated design arms, one model family per arm, derive from the evidence alone and vary against that base, passes every sheet through a reviewer gate, and judges them blind through role-played, individually profiled buyers. The winners are absorbed into one sheet and crowned on a held-out panel.
 - **Establish** turns the crowned design into the shipped definition: numbered selling-point claims with measured scarcity, the definition folded by stated rules, every value migrated to its single home, the market map's handoff to LAMP among them, and a displacement offer put to named prospects the operator already holds.
 
-**Direction:** inward. The operator must decide what to build, and the discipline is that the market's evidence decides it. Everything internal that could pre-decide the product (old drafts, meeting opinions, half-built local practice) is either fenced off or made to survive adjudication in daylight. The owner's own latest sentence anchors as surely as an old draft: an example he gives is a prior on a card, tested rather than assumed, and the scoping is ruled on its own cards.
+**Direction:** inward. The operator must decide what to build, and the discipline is that the market's evidence decides it. Everything internal that could pre-decide the product (old drafts, meeting opinions, half-built local practice) is either fenced off or made to survive adjudication in daylight. The owner's own latest sentence anchors as surely as an old draft: an example he gives is a prior on a card, tested rather than assumed, and the scoping is ruled on its own cards. Every parameter of the product is a question, and a card that arrives with one answer is the tell that the answer came from a document rather than from the market, which never speaks in one voice.
 
 ## Why the method exists
 
@@ -19,8 +19,8 @@ AI fails at product work in specific, repeatable ways, while being better than a
 
 The named failure modes, each countered by a specific mechanism:
 
-- **Text-generation inheritance**: a parameter copied because a nearby document said it, with evidence fitted around it afterwards. Countered by provenance chips at Adjudicate and the clean-room fence at Game.
-- **Librarian anchoring**: asked for market analysis, the AI mines internal opinion and old plans, and the loudest internal adjective becomes the product. Countered by Survey giving the deriving AI a real market to read.
+- **Text-generation inheritance**: a parameter copied because a nearby document said it, with evidence fitted around it afterwards. Countered by the card's options drawn from the corpus taxonomy with priors listed last, the second blind derivation on any recommendation that lands on a prior, provenance chips, and the clean-room fence at Adjudicate and Game, sibling runs included.
+- **Librarian anchoring**: asked for market analysis, the AI mines internal opinion and old plans, and the loudest internal adjective becomes the product. Countered by Survey giving the deriving AI a real market to read, and by the rule that a card with one option goes back to Survey.
 - **Confabulated offers**: asked to sell, an AI invents what it does not have; told to sell a pen, it offers a million dollars with the pen. Countered by the Adjudicate table as a bounding box on every downstream promise.
 - **Self-infantisation**: an AI briefing other AIs hardens an undecided parameter into a fixed rule the owner never granted. Countered by the rule that a parameter absent from the decisions table is design freedom.
 - **Silent scoping**: the orchestrator or a brief author fills in the buyer, or presupposes one product, and the answer shapes the frame and the codebook before the owner has ruled it. Countered by the two opening cards ruled before Survey launches and the RULED/DEFAULT mark on Survey briefs.
