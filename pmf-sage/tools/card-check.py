@@ -57,10 +57,14 @@ def prior_match(recommended, priors, options):
     """Inside the prior's stated range, or the prior's own word; a word every option shares is a unit, not a prior."""
     if not priors or priors.startswith("<"):
         return False
+    # a figure written as a word (one, two, twelve) is a figure to the range rule
+    WORDS = {w: str(i) for i, w in enumerate("zero one two three four five six seven eight nine ten eleven twelve".split())}
+    words_to_digits = lambda t: re.sub(r"\b(" + "|".join(WORDS) + r")\b", lambda m: WORDS[m.group(1).lower()], t, flags=re.I)
+    recommended, priors = words_to_digits(recommended), words_to_digits(priors)
     rec_nums = [num(x) for x in NUM.findall(recommended)]
     # a cited file's date or name is not a prior's value: strip dates and backticked paths before reading numbers
     priors = re.sub(r"`[^`]*`|\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2} (?:January|February|March|April|May|June|July|August|September|October|November|December) \d{4}\b|\b(?:19|20)\d{2}\b", " ", priors)
-    for a, b in re.findall(r"(\d+(?:\.\d+)?)\s*(?:–|-|to)\s*(\d+(?:\.\d+)?)", priors):
+    for a, b in re.findall(r"(\d+(?:\.\d+)?)\s*(?:–|-|to|or)\s*(\d+(?:\.\d+)?)", priors):
         lo, hi = sorted((num(a), num(b)))
         if any(lo <= r <= hi for r in rec_nums):
             return True
