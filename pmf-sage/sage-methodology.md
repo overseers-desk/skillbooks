@@ -7,11 +7,11 @@
 SAGE develops a product for a market that already exists. The category is proven: comparable operators already sell days, packages, services of this kind, and buyers already buy them. The open question is not whether anyone wants such a thing, so SAGE runs no existence experiment. The open question is fit: exactly which composition, price shape, group mechanics and claims win a booking against the incumbent the buyer already uses. SAGE reaches that fit by reading the market at research grade where its peers rely on trial and error, then deciding on cards, then letting designs compete blind in front of simulated buyers, then folding the winner into one definition whose every claim has a number behind it.
 
 - **Survey** builds the evidence: comparable operators worldwide drawn from enumerable published lists and coded under a frozen codebook, the local rivals a booking is won or lost against, the demand signals around them, what buyers type among them, and the distributors whose transactions cross the whole market.
-- **Adjudicate** puts every product parameter on a card in front of the owner: prior values, ruling, provenance, boundary tests. The first two cards, one offer or several and for whom, and the scoping buyer, are ruled before Survey launches. The output table bounds what any later agent may design, promise or claim.
+- **Adjudicate** puts every product parameter on a card in front of the owner as a question with the market's options, each carrying a figure and a seller's sentence, priors last. Day one is a strike list of buyers the owner edits before any frame, the first owner gate; the second, after the corpus is coded, opens with the buyer card. The output table bounds what any later agent may design, promise or claim.
 - **Game** drafts a base sheet from the rulings, has isolated design arms, one model family per arm, derive from the evidence alone and vary against that base, passes every sheet through a reviewer gate, and judges them blind through role-played, individually profiled buyers. The winners are absorbed into one sheet and crowned on a held-out panel.
 - **Establish** turns the crowned design into the shipped definition: numbered selling-point claims with measured scarcity, the definition folded by stated rules, every value migrated to its single home, the market map's handoff to LAMP among them, and a displacement offer put to named prospects the operator already holds.
 
-**Direction:** inward. The operator must decide what to build, and the discipline is that the market's evidence decides it. Everything internal that could pre-decide the product (old drafts, meeting opinions, half-built local practice) is either fenced off or made to survive adjudication in daylight. The owner's own latest sentence anchors as surely as an old draft: an example he gives is a prior on a card, tested rather than assumed, and the scoping is ruled on its own cards. Every parameter of the product is a question, and a card that arrives with one answer is the tell that the answer came from a document rather than from the market, which never speaks in one voice.
+**Direction:** inward. The operator must decide what to build, and the discipline is that the market's evidence decides it. Everything internal that could pre-decide the product (old drafts, meeting opinions, half-built local practice) is either fenced off or made to survive adjudication in daylight. The owner's own latest sentence anchors as surely as an old draft: an example he gives is a prior on a card, tested rather than assumed, and the scoping is ruled on its own cards. Every parameter of the product is a question, and a card that arrives with one answer is the tell that the answer came from a document rather than from the market, which never speaks in one voice; the card check refuses it before anyone reads it.
 
 ## Why the method exists
 
@@ -19,11 +19,11 @@ AI fails at product work in specific, repeatable ways, while being better than a
 
 The named failure modes, each countered by a specific mechanism:
 
-- **Text-generation inheritance**: a parameter copied because a nearby document said it, with evidence fitted around it afterwards. Countered by the card's options drawn from the corpus taxonomy with priors listed last, the second blind derivation on any recommendation that lands on a prior, provenance chips, and the clean-room fence at Adjudicate and Game, sibling runs included.
+- **Text-generation inheritance**: a parameter copied because a nearby document said it, with evidence fitted around it afterwards. Countered by clerks who derive with the fenced files, the sibling runs and the venue's own current prices and shapes closed to them, a separate priors clerk who appends the priors last, a third derivation on any recommendation that lands on a prior, and a card check that refuses a card with one figured option.
 - **Librarian anchoring**: asked for market analysis, the AI mines internal opinion and old plans, and the loudest internal adjective becomes the product. Countered by Survey giving the deriving AI a real market to read, and by the rule that a card with one option goes back to Survey.
 - **Confabulated offers**: asked to sell, an AI invents what it does not have; told to sell a pen, it offers a million dollars with the pen. Countered by the Adjudicate table as a bounding box on every downstream promise.
 - **Self-infantisation**: an AI briefing other AIs hardens an undecided parameter into a fixed rule the owner never granted. Countered by the rule that a parameter absent from the decisions table is design freedom.
-- **Silent scoping**: the orchestrator or a brief author fills in the buyer, or presupposes one product, and the answer shapes the frame and the codebook before the owner has ruled it. Countered by the two opening cards ruled before Survey launches and the RULED/DEFAULT mark on Survey briefs.
+- **Silent scoping**: the orchestrator or a brief author fills in the buyer, or presupposes one product, and the answer shapes the frame and the codebook before the owner has ruled it. Countered by the day-one strike list the owner edits before any frame, the launch check that fails a brief naming a buyer without a mark, and the codebook's variable for whom each operator sells to.
 - **Format smuggling**: a design arm mandated to compete on one dimension quietly alters decided format, and downstream documents record the invention as ruled. Countered by the reviewer gate.
 - **Presentation artefact**: a judging round decided by document polish rather than the product inside it. Countered by mechanical blinding and uniform presentation.
 - **Panel overfitting**: a design tuned to the judges who scored it. Countered by the held-out crown-check panel.
@@ -37,7 +37,7 @@ Not a startup validation method: it assumes the category sells and tests displac
 
 A run is one product developed once: a dated folder in the operator's own repository holding the evidence, the cards, the game record and the definition, in stage order. This methodology holds what every run shares; the run holds everything about one product and one market.
 
-The dividing test, applied to any fact: would a different product run by the same operator use this fact unchanged? If yes, it belongs in the operator's standing records (fee schedules, capability notes, buyer rosters), referenced by the run. If the fact exists only because of this product, it belongs in the run. Nothing product-specific belongs here: a methodology document that names one run's product category is the bug, and INVARIANTS.md carries the rule.
+The dividing test, applied to any fact: would a different product run by the same operator use this fact unchanged? If yes, it belongs in the operator's standing records (fee schedules, capability notes, buyer rosters), referenced by the run. If the fact exists only because of this product, it belongs in the run. Nothing product-specific belongs here: a methodology document that names one run's product category is the bug, and INVARIANTS.md carries the rule. The method holds `forms/`, the forms a run copies, and `tools/`, the checks a run runs before its briefs launch and before its cards reach the owner; a run that changes a form makes the tools fail loudly, which is how a later reader knows the shape held.
 
 ## The phases
 
@@ -59,7 +59,10 @@ Each phase has its own procedure document; this file states what each phase is f
 | Rival register (section-numbered), demand signals, search-demand findings | S | A, G, E | run folder, survey stage |
 | Distributor evidence notes | S | A, G, E | run folder, survey stage |
 | Fence index and generated blacklists (conditional) | S | G briefs | run folder |
+| Day-one strike list | A (orchestrator), returned by the owner | S briefs, the launch check | run folder, decisions stage |
 | Decision cards and the decisions table | A | G, E, every brief | run folder; compact table repeated in the definition |
+| Decision review, assembled by the method's tool from the cards | A | the owner | run folder, decisions stage |
+| The run's `forms/`, the method's forms as used | every phase | later runs, the tools | run folder |
 | Base sheet, arm variations, reviewer cuts, blind keys, verdicts | G | G absorption, E | run folder, game stage |
 | Crowned sheet and crown-check record | G | E | run folder |
 | Numbered claims with grounding table | E | outreach campaigns | run folder |
@@ -73,7 +76,9 @@ Each phase has its own procedure document; this file states what each phase is f
 |---|---|---|
 | S | Sonnet-tier, many agents | High-volume register pulls, collection and coding under a frozen codebook; the codebook does the intellectual work |
 | S frame review, codebook author | Opus-tier | Adversarial reading and blind drafting carry the run's validity |
-| A | Human, with AI clerking the cards | The owner's judgement is the phase |
+| A derivation clerks | Opus-tier, fence-blind | The options and the seller's sentences carry the phase's market reading |
+| A priors clerk, integrator fields | Sonnet-tier | Mechanical: append, stamp by rule, fill named fields |
+| A | Human rules | The owner's judgement is the phase |
 | G arms | Strongest tier, one model family per arm where available | Independent convergence is the game's evidence; same-family arms converge on temperament |
 | G reviewer, judges | Opus-tier | Table enforcement and buyer role-play reward the strongest models |
 | E folding and claims | Opus-tier | Quotable-clean writing under provenance quarantine |
