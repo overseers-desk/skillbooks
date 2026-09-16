@@ -15,7 +15,3 @@ The run's decision cards, in card order. Each card is a question, the ways the m
 Which cards stand or fall together, in each card's own words; rule from here, with the cards above read.
 
 {{collisions}}
-
-### What each ruling unlocks
-
-{{unlock}}
