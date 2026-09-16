@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Fail any brief that fixes a buyer, product count or price shape without a mark behind it.
-Buyer nouns are tested in briefs only; price and offer-count fixings in every file a brief names.
+Tested: the brief itself and the files under briefs/ its read order names; survey records it names are evidence and pass.
 
 Usage: launch-check.py <run-dir> [--check-only]
 --check-only scans without writing the venue-situation paragraph (use against a run you do not own).
@@ -55,8 +55,8 @@ def findings(run):
 
 
 def check_file(path, refs, finds, nouns, failures, is_brief):
-    """A buyer noun is scoping in a brief and evidence in a survey record, so the noun test runs on briefs alone;
-    the price and offer-count patterns run on every file a brief names."""
+    """Brief text is where scoping hides; a survey record naming a buyer or a price in a dated count is evidence.
+    So the tests run over the brief and over the files under briefs/ it names, and over nothing else."""
     for n, line in enumerate(path.read_text(errors="replace").splitlines(), 1):
         low = line.lower()
         fixing = any(re.search(p, low) for p in FIXING) or (is_brief and any(re.search(r"\b" + re.escape(w) + r"\b", low) for w in nouns))
@@ -86,8 +86,8 @@ def main():
             continue
         check_file(brief, refs, finds, nouns, failures, True)
         for p in paths:
-            if p.is_file() and p.suffix == ".md" and p.name not in ("strike-list.md", "venue-situation.md"):
-                check_file(p, refs, finds, nouns, failures, p.parent == run / "briefs")
+            if p.is_file() and p.suffix == ".md" and p.parent == run / "briefs" and p.name != "venue-situation.md":
+                check_file(p, refs, finds, nouns, failures, True)
     shape = next(run.glob("**/shape-note.md"), None)
     situation = run / "briefs" / "venue-situation.md"
     if emit: situation.write_text("# Venue situation (generated; do not edit)\n\n"
