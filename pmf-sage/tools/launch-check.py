@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Fail any brief that fixes a buyer, product count, format or price shape without a mark behind it.
+"""Fail any brief that fixes a buyer, product count or price shape without a mark behind it.
 
 Usage: launch-check.py <run-dir> [--check-only]
 --check-only scans without writing the venue-situation paragraph (use against a run you do not own).
 Reads every brief under <run-dir>/briefs/ and every file its read-order paragraph names.
-Emits <run-dir>/briefs/venue-situation.md from the ruled strike-list rows and the shape note.
+Emits <run-dir>/briefs/venue-situation.md from the unstruck strike-list rows and the shape note.
 """
 import re, sys
 from pathlib import Path

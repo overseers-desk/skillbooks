@@ -2,7 +2,7 @@
 """Assemble the decision review from the card files; the integrator's prose enters only through named fields.
 
 Usage: assemble-review.py <run-dir>
-Reads <run-dir>/3-decisions/**/*.md cards (quoting each card's Joint line into Collisions), <run-dir>/3-decisions/integrator-fields.md (sections
+Reads <run-dir>/3-decisions/**/*.md cards (quoting each card's Joint line into Collisions), <run-dir>/3-decisions/integrator-fields.md (on forms/integrator-fields.md, sections
 ## Unlock and ## Collisions) and <run-dir>/3-decisions/joint-ledger.md if present.
 Writes <run-dir>/3-decisions/review.md from forms/review.md beside this script.
 """
