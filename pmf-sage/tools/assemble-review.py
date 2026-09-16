@@ -21,7 +21,11 @@ def main():
     template = (here.parent / "forms" / "review.md").read_text()
     decisions = run / "3-decisions"
     cards, joints = [], []
-    for p in sorted(decisions.glob("**/*.md")):
+    def card_number(path):
+        m = re.search(r"^## Card\s+(\d+)", path.read_text(errors="replace"), re.M)
+        return int(m.group(1)) if m else 10**6
+    files = [p for p in decisions.glob("**/*.md") if p.name != "review.md"]
+    for p in sorted(files, key=card_number):
         t = p.read_text(errors="replace")
         if not re.search(r"^## Card\s", t, re.M) or re.search(r"^## Third derivation", t, re.M):
             continue
