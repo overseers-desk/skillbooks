@@ -31,8 +31,12 @@ def main():
             continue
         keep = []
         in_table = False
+        field = None
         for line in t.splitlines():
             s = line.strip()
+            fm = re.match(r"\*\*([A-Za-z ]+):?\*\*", s)
+            if fm:
+                field = fm.group(1)
             if s.startswith("## Card") or s.startswith("**Question:**") or s.startswith("**Recommended:**") or s.startswith("**Ruled:**") or s.startswith("**Chip:**"):
                 keep.append(line)
             elif s.startswith("**Corrections:**") and s != "**Corrections:**":
@@ -42,11 +46,16 @@ def main():
                 keep.append(line)
             elif in_table and s.startswith("|"):
                 keep.append(line)
+            elif s and not fm and not s.startswith("#") and not s.startswith("|") and not s.startswith("-") and keep:
+                in_table = False
+                # the card's face is the question, the options, the recommendation and what the clerk wrote beside them; prose under any other field is not in the review
+                if field in ("Question", "Recommended"):
+                    keep.append("")
+                    keep.append(line)
+                else:
+                    print(f"DROPPED {p.name}: paragraph under {field}: {s[:70]}", file=sys.stderr)
             elif in_table and s:
                 in_table = False
-            elif s and not s.startswith("**") and not s.startswith("#") and not s.startswith("|") and not s.startswith("-") and keep:
-                # prose outside a named field is not in the review; say so rather than drop it silently
-                print(f"DROPPED {p.name}: unfielded paragraph: {s[:70]}", file=sys.stderr)
             jm = re.search(r"\*\*Joint:\*\*\s*([^·*]+?)(?:\s*·|$)", s)
             if jm and jm.group(1).strip():
                 joints.append(f"{keep[0].lstrip('# ').split(' ·')[0]}: {jm.group(1).strip()}")
