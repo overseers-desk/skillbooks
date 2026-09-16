@@ -95,7 +95,7 @@ def main():
             mm = re.search(r"margin:\s*([^;]+?)\s+over\s+(.+)$", rec)
             runner = next((o for o in others if mm and o["name"] == mm.group(2).strip()), None)
             # a value card (minutes, dollars) states its margin as the count lead behind the recommendation, since a distance between values is not evidence
-            COUNT = r"units?|walks?|places?|programmes?|searches|asks?|enquir|bookings?|%"
+            COUNT = r"\b(units?|walks?|places?|programmes?|search(es)?|asks?|enquir\w*|bookings?)\b|%"
             count_lead = mm and runner and not re.search(COUNT, unit(runner["figure"])) and re.search(COUNT, unit(mm.group(1)))
             if mm and runner and unit(mm.group(1)) != unit(runner["figure"]) and not count_lead:
                 mismatched += 1
