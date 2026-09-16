@@ -57,7 +57,7 @@ def main():
         extra = len(with_third) - returned
         counts = (f"{n} cards. Every card offers at least two ways the market sells this, each with a figure. "
                   f"{matched} recommendations landed on a value an internal document already held, and each was re-derived blind by a fresh clerk"
-                  + (f"; {extra} more were re-derived for another reason (the price card always is; the rest as extra evidence)" if extra > 0 else "")
+                  + (f"; {extra} more were re-derived for a reason each card's Corrections line states" if extra > 0 else "")
                   + f". Of the {len(with_third)} blind re-derivations, {len(with_third) - len(diverged)} agreed with the first"
                   + (f" and {len(diverged)} diverged ({', '.join(diverged)}); both readings sit on those cards' Corrections lines." if diverged else ".")
                   + (f" {outstanding} matched recommendations have no blind re-derivation yet." if outstanding else "")
