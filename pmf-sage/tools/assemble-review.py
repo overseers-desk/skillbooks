@@ -44,6 +44,9 @@ def main():
                 keep.append(line)
             elif in_table and s:
                 in_table = False
+            elif s and not s.startswith("**") and not s.startswith("#") and not s.startswith("|") and not s.startswith("-") and keep:
+                # prose outside a named field is not in the review; say so rather than drop it silently
+                print(f"DROPPED {p.name}: unfielded paragraph: {s[:70]}", file=sys.stderr)
             jm = re.search(r"\*\*Joint:\*\*\s*([^·*]+?)(?:\s*·|$)", s)
             if jm and jm.group(1).strip():
                 joints.append(f"{keep[0].lstrip('# ').split(' ·')[0]}: {jm.group(1).strip()}")
