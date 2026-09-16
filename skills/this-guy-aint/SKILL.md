@@ -1,6 +1,6 @@
 ---
 name: this-guy-aint
-description: Run on anything written under an assumed identity (human, aussie, developer, artist, manager, or any phrase) before handing it over: a fresh-context reader who is one judges whether he believes the author is what the author claims to be, and reports the giveaways. Detection only; the judge edits nothing. Comma-separate identities for one verdict each. --speak-like hands the findings to the speak-like skill for repair and re-judges once. `this-guy-aint human` is the light gate for short pieces and code with comments where speak-like's line pipeline is too heavy. `this-guy-aint Gradgrind` is the gate for a brief written to another agent: the judge sits at the addressee's desk and lists every line that closes ground with the authority it names, for the caller to answer.
+description: Run on anything written under an assumed identity (human, aussie, developer, artist, manager, or any phrase) before handing it over: a fresh-context reader who is one judges whether he believes the author is one, and reports the giveaways. Detection only; the judge edits nothing. Comma-separate identities for one verdict each. --speak-like hands the findings to the speak-like skill for repair and re-judges once. `this-guy-aint human` is the light gate for short pieces and code with comments where speak-like's line pipeline is too heavy. `this-guy-aint Gradgrind` is the gate for a brief written to another agent: the judge sits at the addressee's desk and lists every line that closes ground with the authority it names, for the caller to answer.
 argument-hint: <identity>[, <identity>...] [--speak-like <identity> [manner flags]] [<draft-path> | --staged]
 ---
 
@@ -14,7 +14,7 @@ Writing produced under an instruction to be some identity often fails as that id
 
 The goal of the writing is never the impersonation; it is the work, done in that identity, without leaking that a non-member did it. So the skill detects leaks only, and demands no performance: plain, unopinionated, workmanlike text is fully believable, because members write that way all the time. Overplaying the identity still gets caught, not as bad acting but as a leak in its own right — a costume worn at the reader is itself something no member would produce. The verdict is a reader's, not a coach's.
 
-The check must run in fresh context. The author wrote under the instruction and cannot un-know the effort it made to comply; a fork of the author would grade the intention. The judge knows only the claim and the text, which is exactly what the real reader will know.
+The check must run in fresh context. The author wrote under the instruction and cannot un-know the effort it made to comply; a fork of the author would grade the intention. The judge knows only the identity in question and the text, which is exactly what the real reader will know.
 
 The most common invocation is `this-guy-aint human`: does this read as written by a person at all? That is a lighter instrument than speak-like, suited to things speak-like's line-by-line pipeline is too heavy for — a code file with comments, a commit message, a short reply, a bio line. The boundary: speak-like writes, with sidecars and thresholds; this-guy-aint reads once, believes or does not, and hands back why. A long prose draft that fails `this-guy-aint human` is a candidate for `speak-like human` — or run both at once with `--speak-like`.
 
@@ -53,7 +53,7 @@ Everything after `--speak-like` (an identity and any manner adverbs like `--warm
 
 ## Why a fresh-context subagent
 
-The reader this skill simulates knows the claim and nothing else. The calling context knows the instruction, the persona effort, and the conversation, and would read all three into the text. Fresh context is not a convenience here; it is the mechanism. The judge is also never told the author is a model, because the question is impersonation-agnostic: a human faking a trade fails the same reading, and a judge told to hunt AI would hunt tells instead of reading.
+The reader this skill simulates knows the identity in question and nothing else. The calling context knows the instruction, the persona effort, and the conversation, and would read all three into the text. Fresh context is not a convenience here; it is the mechanism. The judge is also never told the author is a model, because the question is impersonation-agnostic: a human faking a trade fails the same reading, and a judge told to hunt AI would hunt tells instead of reading.
 
 ## Anti-cheating discipline
 
