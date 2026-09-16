@@ -49,12 +49,17 @@ def main():
     raw = subprocess.run([sys.executable, str(here / "card-check.py"), str(run)], capture_output=True, text=True).stdout.strip()
     # the owner reads facts in words; the check's own lines stay in the run record
     m = re.search(r"(\d+) cards; (\d+) prior matches; (\d+) returned by third derivation; (\d+) outstanding; (\d+) mismatched margin units", raw)
-    diverged = [c.split(" ·")[0].replace("## ", "") for c in cards if re.search(r"\*\*Corrections:\*\*.*\b(diverg|did not reach|landed on a different)", c, re.I)]
+    # derivations and agreements are counted from the cards' own Corrections lines; the match count comes from the check
+    with_third = [c for c in cards if re.search(r"\*\*Corrections:\*\*.*`third-", c)]
+    diverged = [c.split(" ·")[0].replace("## ", "") for c in with_third if re.search(r"\*\*Corrections:\*\*.*\b(diverg|did not reach|landed on a different)", c, re.I)]
     if m:
         n, matched, returned, outstanding, mism = (int(x) for x in m.groups())
+        extra = len(with_third) - returned
         counts = (f"{n} cards. Every card offers at least two ways the market sells this, each with a figure. "
-                  f"{matched} recommendations landed on a value an internal document already held; {returned} of them were re-derived blind by a fresh clerk"
-                  + (f", {returned - len(diverged)} agreeing and {len(diverged)} diverging ({', '.join(diverged)}); both readings sit on those cards' Corrections lines." if diverged else ", all agreeing.")
+                  f"{matched} recommendations landed on a value an internal document already held, and each was re-derived blind by a fresh clerk"
+                  + (f"; {extra} more were re-derived for another reason (the price card always is; the rest as extra evidence)" if extra > 0 else "")
+                  + f". Of the {len(with_third)} blind re-derivations, {len(with_third) - len(diverged)} agreed with the first"
+                  + (f" and {len(diverged)} diverged ({', '.join(diverged)}); both readings sit on those cards' Corrections lines." if diverged else ".")
                   + (f" {outstanding} matched recommendations have no blind re-derivation yet." if outstanding else "")
                   + (f" {mism} margins are stated in a unit other than their runner-up's." if mism else ""))
         (decisions / "card-check.txt").write_text(raw + "\n")
