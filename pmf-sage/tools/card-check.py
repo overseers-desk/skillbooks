@@ -4,14 +4,18 @@
 Usage: card-check.py <run-dir>
 Reads every card under <run-dir>/3-decisions/ written on forms/card.md.
 Refuses: fewer than two options carrying a figure; a recommendation naming no option or stating its
-margin in a unit other than the runner-up's; prior matches with no third derivation recorded (a backticked
+margin in a unit other than the runner-up's, or not the difference of the two figures unless the line states its derivation; prior matches with no third derivation recorded (a backticked
 file named on the Corrections line that exists) above one in ten across the set.
 Reports: figured options per card, prior matches, mismatched margin units, legs marked differs.
 """
 import re, sys
 from pathlib import Path
 
-NUM = re.compile(r"\d+(?:\.\d+)?")
+NUM = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
+
+
+def num(tok):
+    return float(tok.replace(",", ""))
 STOP = {"the", "and", "with", "from", "that", "this", "over", "into", "than", "each", "about", "hour", "hours"}
 
 
@@ -52,14 +56,14 @@ def prior_match(recommended, priors, options):
     """Inside the prior's stated range, or the prior's own word; a word every option shares is a unit, not a prior."""
     if not priors or priors.startswith("<"):
         return False
-    rec_nums = [float(x) for x in NUM.findall(recommended)]
+    rec_nums = [num(x) for x in NUM.findall(recommended)]
     # a cited file's date or name is not a prior's value: strip dates and backticked paths before reading numbers
     priors = re.sub(r"`[^`]*`|\b\d{4}-\d{2}-\d{2}\b|\b(?:19|20)\d{2}\b", " ", priors)
     for a, b in re.findall(r"(\d+(?:\.\d+)?)\s*(?:–|-|to)\s*(\d+(?:\.\d+)?)", priors):
-        lo, hi = sorted((float(a), float(b)))
+        lo, hi = sorted((num(a), num(b)))
         if any(lo <= r <= hi for r in rec_nums):
             return True
-    if any(float(p) in rec_nums for p in NUM.findall(priors)):
+    if any(num(p) in rec_nums for p in NUM.findall(priors)):
         return True
     shared = {w for w in re.findall(r"[a-z]{4,}", " ".join(o["name"].lower() for o in options))
               if sum(w in o["name"].lower() for o in options) >= 2}
@@ -92,6 +96,11 @@ def main():
             if mm and runner and unit(mm.group(1)) != unit(runner["figure"]):
                 mismatched += 1
                 refusals.append(f"card {c['id']}: margin unit '{unit(mm.group(1))}' is not the runner-up's '{unit(runner['figure'])}'")
+            elif mm and runner:
+                # where both figures are plain numbers in one unit, the margin is their difference or the line says how it was derived
+                a_, b_, m_ = NUM.search(chosen["figure"]), NUM.search(runner["figure"]), NUM.search(mm.group(1))
+                if a_ and b_ and m_ and abs(abs(num(a_.group()) - num(b_.group())) - num(m_.group())) > 0.005 and ";" not in rec.split("margin:")[0].strip(" ;"):
+                    refusals.append(f"card {c['id']}: margin {m_.group()} is not {chosen['figure']} less {runner['figure']}, and the line does not say how it was derived")
         matched = prior_match(rec, c.get("Priors", ""), c["options"])
         # a matched card is returned once its Corrections line names a third-derivation file that exists
         third = [f for f in re.findall(r"`([^`]+)`", c.get("Corrections", "")) if (run / "3-decisions" / f).exists() or (run / f).exists()]
