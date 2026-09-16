@@ -6,7 +6,7 @@ The run's decision cards, in card order. Each card is a question, the ways the m
 
 {{counts}}
 
-## Rule these together
+## Rule these together (each card's Joint line)
 
 {{collisions}}
 
