@@ -63,7 +63,7 @@ def main():
     fields = (decisions / "integrator-fields.md").read_text(errors="replace") if (decisions / "integrator-fields.md").exists() else ""
     collisions = "\n".join(("- " + j for j in joints)) if joints else ""
     if section(fields, "Collisions"):
-        collisions = (collisions + "\n\n" + section(fields, "Collisions")).strip()
+        collisions = (collisions + "\n\n### Where rulings collide\n\n" + section(fields, "Collisions")).strip()
     ledger = decisions / "joint-ledger.md"
     if ledger.exists():
         collisions = (collisions + "\n\n" + ledger.read_text(errors="replace").strip()).strip()
