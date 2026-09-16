@@ -58,7 +58,7 @@ def prior_match(recommended, priors, options):
         return False
     rec_nums = [num(x) for x in NUM.findall(recommended)]
     # a cited file's date or name is not a prior's value: strip dates and backticked paths before reading numbers
-    priors = re.sub(r"`[^`]*`|\b\d{4}-\d{2}-\d{2}\b|\b(?:19|20)\d{2}\b", " ", priors)
+    priors = re.sub(r"`[^`]*`|\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2} (?:January|February|March|April|May|June|July|August|September|October|November|December) \d{4}\b|\b(?:19|20)\d{2}\b", " ", priors)
     for a, b in re.findall(r"(\d+(?:\.\d+)?)\s*(?:–|-|to)\s*(\d+(?:\.\d+)?)", priors):
         lo, hi = sorted((num(a), num(b)))
         if any(lo <= r <= hi for r in rec_nums):
@@ -114,7 +114,9 @@ def main():
                 a_, b_, m_ = NUM.search(chosen["figure"]), NUM.search(runner["figure"]), NUM.search(mm.group(1))
                 if a_ and b_ and m_ and abs(abs(num(a_.group()) - num(b_.group())) - num(m_.group())) > 0.005 and ";" not in rec.split("margin:")[0].strip(" ;"):
                     refusals.append(f"card {c['id']}: margin {m_.group()} is not {chosen['figure']} less {runner['figure']}, and the line does not say how it was derived")
-        matched = prior_match(rec, c.get("Priors", ""), c["options"])
+        # the match is judged on the recommended option's name, which carries its value; a prevalence count is not a value
+        judged = chosen["name"] if chosen else rec.split(";")[0]
+        matched = prior_match(judged, c.get("Priors", ""), c["options"])
         # a matched card is returned once its Corrections line names a third-derivation file that exists
         third = [f for f in re.findall(r"`([^`]+)`", c.get("Corrections", "")) if (run / "3-decisions" / f).exists() or (run / f).exists()]
         if matched:
