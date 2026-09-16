@@ -81,6 +81,18 @@ def main():
         (decisions / "card-check.txt").write_text(raw + "\n")
     else:
         counts = raw
+    # a card's own words about its match must agree with the check's count of it
+    checked = {int(a): b == "True" for a, b in re.findall(r"^card (\d+):.*?prior match: (True|False)", raw, re.M)}
+    for c in cards:
+        cid = re.search(r"^## Card\s+(\d+)", c, re.M)
+        if not cid or int(cid.group(1)) not in checked:
+            continue
+        audit = " ".join(l for l in c.splitlines() if l.startswith("**Chip:**") or l.startswith("**Corrections:**"))
+        says_no = re.search(r"\b(did|does) not match a prior|not among the nine matched|re-derived for another reason", audit)
+        if checked[int(cid.group(1))] and says_no:
+            print(f"MISMATCH: Card {cid.group(1)} says it did not match a prior; the check counts it as matched", file=sys.stderr)
+        if not checked[int(cid.group(1))] and re.search(r"\bmatched a prior on the check|counts among the nine", audit):
+            print(f"MISMATCH: Card {cid.group(1)} says it matched a prior on the check; the check does not count it", file=sys.stderr)
     fields = (decisions / "integrator-fields.md").read_text(errors="replace") if (decisions / "integrator-fields.md").exists() else ""
     collisions = "\n".join(("- " + j for j in joints)) if joints else ""
     # the integrator's two fields print under one heading, and only where they say something the Joint lines do not
