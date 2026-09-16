@@ -24,7 +24,7 @@ One file per card under the run's `3-decisions/`, named by number. Field names a
 
 **Opposite:** · **Further:** · **Joint:** · **Buyer:** <argued between the options>
 
-**Priors:** <appended by the priors clerk only: what old drafts, a sibling run or local practice held, with the file in backticks and its value as a number, a range written `a–b`, or a word; the card check reads numbers here and ignores dates and paths>
+**Priors:** <appended by the priors clerk only, values and nothing else: one entry per source, the file in backticks, its date, and the value it held as a number, a range written `a–b`, or the word it used. No sentence about the recommendation belongs here; a line that discusses the card echoes the card's own words and the match rule fires on the echo. Discussion goes to the priors pass note beside the cards.>
 
 **Corrections:** <dated ruled-lines; where a third derivation exists, its file and where it landed>
 
