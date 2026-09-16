@@ -4,7 +4,7 @@
 Usage: card-check.py <run-dir>
 Reads every card under <run-dir>/3-decisions/ written on forms/card.md.
 Refuses: fewer than two options carrying a figure; a recommendation naming no option or stating its
-margin in a unit other than the runner-up's, or not the difference of the two figures unless the line states its derivation; prior matches with no third derivation recorded (a backticked
+margin in a unit other than the runner-up's, or not the difference of the two figures unless the line states its derivation, or stated against an option weaker than the strongest other; prior matches with no third derivation recorded (a backticked
 file named on the Corrections line that exists) above one in ten across the set.
 Reports: figured options per card, prior matches, mismatched margin units, legs marked differs.
 """
@@ -96,7 +96,20 @@ def main():
             if mm and runner and unit(mm.group(1)) != unit(runner["figure"]):
                 mismatched += 1
                 refusals.append(f"card {c['id']}: margin unit '{unit(mm.group(1))}' is not the runner-up's '{unit(runner['figure'])}'")
-            elif mm and runner:
+            if mm and runner:
+                # the runner-up is the strongest other option in the chosen option's unit; a margin against a weaker one hides the front-runner
+                # comparable figures: counts over the same denominator ("N of M ..."), or the same count unit; a value (minutes, dollars) is not a strength
+                def denom(fig):
+                    d = re.search(r"\bof\s+([\d,]+)", fig)
+                    return d.group(1) if d else None
+                cd, cu = denom(chosen["figure"]), unit(chosen["figure"])
+                same = [o for o in others if NUM.search(o["figure"]) and denom(o["figure"]) == cd and unit(o["figure"]) == cu
+                        and (cd or re.search(r"units|walks|places|programmes|searches|asks|enquir|bookings|%", cu))]
+                if same:
+                    strongest = max(same, key=lambda o: num(NUM.search(o["figure"]).group()))
+                    if strongest is not runner:
+                        refusals.append(f"card {c['id']}: margin is stated over '{runner['name']}' but '{strongest['name']}' ({strongest['figure']}) is the strongest other option; state the margin against it, negative if it is")
+            if mm and runner and unit(mm.group(1)) == unit(runner["figure"]):
                 # where both figures are plain numbers in one unit, the margin is their difference or the line says how it was derived
                 a_, b_, m_ = NUM.search(chosen["figure"]), NUM.search(runner["figure"]), NUM.search(mm.group(1))
                 if a_ and b_ and m_ and abs(abs(num(a_.group()) - num(b_.group())) - num(m_.group())) > 0.005 and ";" not in rec.split("margin:")[0].strip(" ;"):
