@@ -29,7 +29,7 @@ def main():
         in_table = False
         for line in t.splitlines():
             s = line.strip()
-            if s.startswith("## Card") or s.startswith("**Question:**") or s.startswith("**Recommended:**") or s.startswith("**Ruled:**") or s.startswith("**Chip:**"):
+            if s.startswith("## Card") or s.startswith("**Question:**") or s.startswith("**Recommended:**") or s.startswith("**Ruled:**") or s.startswith("**Chip:**") or s.startswith("**Corrections:**"):
                 keep.append(line)
             elif s.startswith("**Options**"):
                 in_table = True
