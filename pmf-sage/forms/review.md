@@ -6,6 +6,10 @@ The run's decision cards, in card order, for the owner to rule. Each card is a q
 
 {{counts}}
 
+## Rule these together
+
+{{collisions}}
+
 ## Cards
 
 {{cards}}
@@ -13,7 +17,3 @@ The run's decision cards, in card order, for the owner to rule. Each card is a q
 ## Unlock
 
 {{unlock}}
-
-## Collisions
-
-{{collisions}}
