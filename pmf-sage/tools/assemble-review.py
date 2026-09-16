@@ -23,7 +23,7 @@ def main():
     cards, joints = [], []
     for p in sorted(decisions.glob("**/*.md")):
         t = p.read_text(errors="replace")
-        if not re.search(r"^## Card\s", t, re.M):
+        if not re.search(r"^## Card\s", t, re.M) or re.search(r"^## Third derivation", t, re.M):
             continue
         keep = []
         in_table = False
