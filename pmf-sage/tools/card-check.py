@@ -94,7 +94,10 @@ def main():
             others = [o for o in figured if o is not chosen]
             mm = re.search(r"margin:\s*([^;]+?)\s+over\s+(.+)$", rec)
             runner = next((o for o in others if mm and o["name"] == mm.group(2).strip()), None)
-            if mm and runner and unit(mm.group(1)) != unit(runner["figure"]):
+            # a value card (minutes, dollars) states its margin as the count lead behind the recommendation, since a distance between values is not evidence
+            COUNT = r"units|walks|places|programmes|searches|asks|enquir|bookings|%"
+            count_lead = mm and runner and not re.search(COUNT, unit(runner["figure"])) and re.search(COUNT, unit(mm.group(1)))
+            if mm and runner and unit(mm.group(1)) != unit(runner["figure"]) and not count_lead:
                 mismatched += 1
                 refusals.append(f"card {c['id']}: margin unit '{unit(mm.group(1))}' is not the runner-up's '{unit(runner['figure'])}'")
             if mm and runner:
@@ -105,7 +108,7 @@ def main():
                     return d.group(1) if d else None
                 cd, cu = denom(chosen["figure"]), unit(chosen["figure"])
                 same = [o for o in others if NUM.search(o["figure"]) and denom(o["figure"]) == cd and unit(o["figure"]) == cu
-                        and (cd or re.search(r"units|walks|places|programmes|searches|asks|enquir|bookings|%", cu))]
+                        and (cd or re.search(COUNT, cu))]
                 if same:
                     strongest = max(same, key=lambda o: num(NUM.search(o["figure"]).group()))
                     if strongest is not runner:
