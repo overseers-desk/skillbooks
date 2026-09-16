@@ -53,14 +53,16 @@ def main():
     m = re.search(r"(\d+) cards; (\d+) prior matches; (\d+) returned by third derivation; (\d+) outstanding; (\d+) mismatched margin units", raw)
     # derivations and agreements are counted from the cards' own Corrections lines; the match count comes from the check
     with_third = [c for c in cards if re.search(r"\*\*Corrections:\*\*.*`third-", c)]
-    diverged = [c.split(" ·")[0].replace("## ", "") for c in with_third if re.search(r"\*\*Corrections:\*\*.*\b(diverg|did not reach|landed on a different)", c, re.I)]
+    name = lambda c: c.split(" ·")[0].replace("## ", "")
+    diverged = [name(c) for c in with_third if re.search(r"\*\*Corrections:\*\*.*\b(diverg|did not reach|landed on a different)", c, re.I)]
+    agreed = [name(c) for c in with_third if name(c) not in diverged]
     if m:
         n, matched, returned, outstanding, mism = (int(x) for x in m.groups())
         extra = len(with_third) - returned
         counts = (f"{n} cards. Every card offers at least two ways the market sells this, each with a figure. "
                   f"{matched} recommendations landed on a value an internal document already held, and each was re-derived blind by a fresh clerk"
                   + (f"; {extra} more were re-derived for a reason each card's Corrections line states" if extra > 0 else "")
-                  + f". Of the {len(with_third)} blind re-derivations, {len(with_third) - len(diverged)} agreed with the first"
+                  + f". Of the {len(with_third)} blind re-derivations ({', '.join(name(c) for c in with_third)}), {len(agreed)} agreed with the first"
                   + (f" and {len(diverged)} diverged ({', '.join(diverged)}); both readings sit on those cards' Corrections lines." if diverged else ".")
                   + (f" {outstanding} matched recommendations have no blind re-derivation yet." if outstanding else "")
                   + (f" {mism} margins are stated in a unit other than their runner-up's." if mism else ""))
@@ -69,8 +71,11 @@ def main():
         counts = raw
     fields = (decisions / "integrator-fields.md").read_text(errors="replace") if (decisions / "integrator-fields.md").exists() else ""
     collisions = "\n".join(("- " + j for j in joints)) if joints else ""
-    if section(fields, "Collisions"):
-        collisions = (collisions + "\n\n### Where rulings collide\n\n" + section(fields, "Collisions")).strip()
+    # the integrator's two fields print under one heading, and only where they say something the Joint lines do not
+    beyond = [section(fields, name) for name in ("Collisions", "Unlock")]
+    beyond = [b for b in beyond if b and not b.lstrip("(").lower().startswith("none")]
+    if beyond:
+        collisions = (collisions + "\n\n### Beyond the Joint lines\n\n" + "\n\n".join(beyond)).strip()
     ledger = decisions / "joint-ledger.md"
     if ledger.exists():
         collisions = (collisions + "\n\n" + ledger.read_text(errors="replace").strip()).strip()
@@ -83,7 +88,6 @@ def main():
                 print(f"MISQUOTE: {card_ref} does not say \"{quoted[:60]}\"", file=sys.stderr)
     out = (template.replace("{{counts}}", counts or "(no cards)")
            .replace("{{cards}}", "\n\n".join(cards) or "(no cards)")
-           .replace("{{unlock}}", section(fields, "Unlock") or "(none)")
            .replace("{{collisions}}", collisions or "(none)"))
     (decisions / "review.md").write_text(out)
     print(f"wrote {decisions / 'review.md'} from {len(cards)} cards")
