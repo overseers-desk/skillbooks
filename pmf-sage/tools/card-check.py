@@ -4,7 +4,8 @@
 Usage: card-check.py <run-dir>
 Reads every card under <run-dir>/3-decisions/ written on forms/card.md.
 Refuses: fewer than two options carrying a figure; a recommendation naming no option or stating its
-margin in a unit other than the runner-up's; prior matches above one in ten across the set.
+margin in a unit other than the runner-up's; prior matches with no third derivation recorded (a backticked
+file named on the Corrections line that exists) above one in ten across the set.
 Reports: figured options per card, prior matches, mismatched margin units, legs marked differs.
 """
 import re, sys
@@ -41,7 +42,7 @@ def parse(text):
             continue
         if in_table and s and not s.startswith("|"):
             in_table = False
-        for key in ("Recommended", "Priors", "Measured in", "Ruled"):
+        for key in ("Recommended", "Priors", "Measured in", "Ruled", "Corrections"):
             if s.startswith(f"**{key}:**"):
                 card[key] = s.split("**", 2)[2].strip()
     return card
@@ -71,7 +72,7 @@ def main():
     cards = [parse(p.read_text(errors="replace")) for p in sorted((run / "3-decisions").glob("**/*.md"))
              if p.name != "review.md" and re.search(r"^## Card\s", p.read_text(errors="replace"), re.M)
              and not re.search(r"^## Third derivation", p.read_text(errors="replace"), re.M)]
-    refusals, matches, mismatched, differs = [], 0, 0, 0
+    refusals, matches, returned, mismatched, differs = [], 0, 0, 0, 0
     if not cards:
         print("REFUSED no card on forms/card.md found under 3-decisions/ (a `## Card N` heading per card)")
         sys.exit(1)
@@ -92,13 +93,18 @@ def main():
                 mismatched += 1
                 refusals.append(f"card {c['id']}: margin unit '{unit(mm.group(1))}' is not the runner-up's '{unit(runner['figure'])}'")
         matched = prior_match(rec, c.get("Priors", ""), c["options"])
+        # a matched card is returned once its Corrections line names a third-derivation file that exists
+        third = [f for f in re.findall(r"`([^`]+)`", c.get("Corrections", "")) if (run / "3-decisions" / f).exists() or (run / f).exists()]
         if matched:
             matches += 1
+            if third:
+                returned += 1
         differs += c.get("Measured in", "").lower().count("differs")
-        print(f"card {c['id']}: {len(figured)} figured options; prior match: {matched}")
-    if cards and matches / len(cards) > 0.1:
-        refusals.append(f"{matches} of {len(cards)} recommendations match a prior; the set returns to the clerks")
-    print(f"{len(cards)} cards; {matches} prior matches; {mismatched} mismatched margin units; {differs} legs marked differs")
+        print(f"card {c['id']}: {len(figured)} figured options; prior match: {matched}" + ("; returned by third derivation" if matched and third else ""))
+    outstanding = matches - returned
+    if cards and outstanding / len(cards) > 0.1:
+        refusals.append(f"{outstanding} of {len(cards)} recommendations match a prior with no third derivation recorded; the set returns to the clerks")
+    print(f"{len(cards)} cards; {matches} prior matches; {returned} returned by third derivation; {outstanding} outstanding; {mismatched} mismatched margin units; {differs} legs marked differs")
     for r in refusals:
         print("REFUSED " + r)
     sys.exit(1 if refusals else 0)
