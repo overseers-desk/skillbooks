@@ -24,7 +24,8 @@ def unit(figure):
     if "%" in figure:
         return "%"
     tokens = [t for t in NUM.sub(" ", figure).split() if t not in ("of",)]
-    return tokens[-1].strip(" ,;") if tokens else ""
+    u = tokens[-1].strip(" ,;") if tokens else ""
+    return u[:-1] if len(u) > 3 and u.endswith("s") else u  # "unit" and "units" are one unit
 
 
 def parse(text):
