@@ -4,7 +4,7 @@ Written by the orchestrator from the owner's words and four market-side pulls; r
 
 **Owner's words, verbatim:** <>
 
-**Returned:** <date the owner sent it back>
+**Returned:** <date the owner sent it back; or the date and "unmarked" where the owner declined to read it, which under the method means every row is in>
 
 | buyer | what they type | who addresses them | our records | rivals selling to them | strike |
 |---|---|---|---|---|---|
