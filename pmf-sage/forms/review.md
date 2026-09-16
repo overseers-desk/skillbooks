@@ -8,6 +8,8 @@ The run's decision cards, in card order. Each card is a question, the ways the m
 
 ## Rule these together (each card's Joint line)
 
+Which cards stand or fall together, in each card's own words. Read the cards below first; rule from here.
+
 {{collisions}}
 
 ## Cards
