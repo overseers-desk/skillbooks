@@ -16,7 +16,7 @@ NUM = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
 
 def num(tok):
     return float(tok.replace(",", ""))
-STOP = {"the", "and", "with", "from", "that", "this", "over", "into", "than", "each", "about", "hour", "hours"}
+STOP = {"the", "and", "with", "from", "that", "this", "over", "into", "than", "each", "about"}
 
 
 def unit(figure):
