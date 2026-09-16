@@ -24,6 +24,8 @@ One file per card under the run's `3-decisions/`, named by number. Field names a
 
 **Opposite:** · **Further:** · **Joint:** · **Buyer:** <argued between the options>
 
-**Priors:** <appended by the priors clerk only: what old drafts, a sibling run or local practice held, with the file and its range or word>
+**Priors:** <appended by the priors clerk only: what old drafts, a sibling run or local practice held, with the file in backticks and its value as a number, a range written `a–b`, or a word; the card check reads numbers here and ignores dates and paths>
 
-**Corrections:** <dated ruled-lines>
+**Corrections:** <dated ruled-lines; where a third derivation exists, its file and where it landed>
+
+A third derivation is a separate file headed `## Third derivation of Card N`, which the tools do not count as a card; the review shows the original card and the Corrections line points at it.

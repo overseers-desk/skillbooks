@@ -52,6 +52,8 @@ def prior_match(recommended, priors, options):
     if not priors or priors.startswith("<"):
         return False
     rec_nums = [float(x) for x in NUM.findall(recommended)]
+    # a cited file's date or name is not a prior's value: strip dates and backticked paths before reading numbers
+    priors = re.sub(r"`[^`]*`|\b\d{4}-\d{2}-\d{2}\b|\b(?:19|20)\d{2}\b", " ", priors)
     for a, b in re.findall(r"(\d+(?:\.\d+)?)\s*(?:–|-|to)\s*(\d+(?:\.\d+)?)", priors):
         lo, hi = sorted((float(a), float(b)))
         if any(lo <= r <= hi for r in rec_nums):
@@ -67,7 +69,8 @@ def prior_match(recommended, priors, options):
 def main():
     run = Path(sys.argv[1]).resolve()
     cards = [parse(p.read_text(errors="replace")) for p in sorted((run / "3-decisions").glob("**/*.md"))
-             if p.name != "review.md" and re.search(r"^## Card\s", p.read_text(errors="replace"), re.M)]
+             if p.name != "review.md" and re.search(r"^## Card\s", p.read_text(errors="replace"), re.M)
+             and not re.search(r"^## Third derivation", p.read_text(errors="replace"), re.M)]
     refusals, matches, mismatched, differs = [], 0, 0, 0
     if not cards:
         print("REFUSED no card on forms/card.md found under 3-decisions/ (a `## Card N` heading per card)")
