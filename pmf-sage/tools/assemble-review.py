@@ -72,13 +72,13 @@ def main():
     ledger = decisions / "joint-ledger.md"
     if ledger.exists():
         collisions = (collisions + "\n\n" + ledger.read_text(errors="replace").strip()).strip()
-    # a phrase Unlock credits to a card's Joint line must appear in that line verbatim; the integrator's prose has no other check
+    # a phrase Unlock or Collisions credits to a card's Joint line must appear in that line verbatim; the integrator's prose has no other check
     unlock = section(fields, "Unlock")
     joint_by_card = {j.split(":")[0]: j for j in joints}
-    for line in unlock.splitlines():
+    for line in (unlock + "\n" + section(fields, "Collisions")).splitlines():
         for card_ref, quoted in re.findall(r"(Card \d+)'s (?:own )?Joint line states[^\"]*\"([^\"]+)\"", line):
             if card_ref in joint_by_card and quoted not in joint_by_card[card_ref]:
-                print(f"UNLOCK MISQUOTE: {card_ref} does not say \"{quoted[:60]}\"", file=sys.stderr)
+                print(f"MISQUOTE: {card_ref} does not say \"{quoted[:60]}\"", file=sys.stderr)
     out = (template.replace("{{counts}}", counts or "(no cards)")
            .replace("{{cards}}", "\n\n".join(cards) or "(no cards)")
            .replace("{{unlock}}", section(fields, "Unlock") or "(none)")
