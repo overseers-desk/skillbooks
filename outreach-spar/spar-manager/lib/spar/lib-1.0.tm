@@ -166,11 +166,44 @@ proc spar::load_campaign {yaml_path} {
     close $fd
     set data [spar::yaml_parse $raw]
 
+    # Instance-wide defaults (campaigns.yaml beside campaigns/). A fact the
+    # whole instance shares has one home there instead of one copy per
+    # campaign; the campaign's own value wins, and `none` opts out of a
+    # default that exists. Fixture YAMLs outside a campaigns/ folder have no
+    # instance root, so the lookup is best-effort.
+    if {![catch {spar::instance_root_for_yaml $yaml_path} _iroot]} {
+        set _dfile [file join $_iroot campaigns.yaml]
+        if {[file exists $_dfile]} {
+            set _fd [open $_dfile r]
+            set _defaults [spar::yaml_parse [read $_fd]]
+            close $_fd
+            foreach key {antifacts campaign_principles} {
+                if {[dict exists $data $key]} continue
+                if {![dict exists $_defaults $key]} continue
+                set _val [dict get $_defaults $key]
+                if {$_val in {"" "~" "null"}} continue
+                if {$_val eq "none"} {
+                    dict set data $key none
+                    continue
+                }
+                if {[string index $_val 0] ne "/"} {
+                    set _val [file normalize [file join $_iroot $_val]]
+                }
+                dict set data $key $_val
+            }
+        }
+    }
+
     # Resolve path fields relative to YAML directory
     foreach key {usp_document antifacts campaign_principles} {
         if {[dict exists $data $key]} {
             set val [dict get $data $key]
-            if {$val ne "" && $val ne "~" && $val ne "null"} {
+            if {$val eq "none"} {
+                # An explicit decline, kept distinct from absence so a
+                # consumer can tell "the instance chose not to" from
+                # "nobody said".
+                dict set data $key none
+            } elseif {$val ni {"" "~" "null"}} {
                 if {[string index $val 0] ne "/"} {
                     dict set data $key [file normalize [file join $base $val]]
                 }
