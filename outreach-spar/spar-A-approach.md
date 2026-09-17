@@ -11,7 +11,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 
 - **Profile document:** The full profile produced by SPAR-P for this contact.
 - **Roster entry:** The contact's row in the roster TSV, including `s_note`, `p_note`, and `star_rating`. `star_rating` is P-owned: read it from the roster row, which the harness syncs from the profile front matter, its authoritative home (`spar-P-profile.md` §4.13). The roster carries campaign-independent population data only; A's outputs (`response_likelihood`, `a_note`) are written to the approach file, not the roster (see §4.8 and §6).
-- **Campaign plan block:** The segment's entry under `segments:` in `campaign.yaml` — the objective, USP framings, `message_goal`, `first_ask`, `conversion_funnel`, and `approach_sequencing` for this segment, including the approach type (FAM invitation, phone call, personal email, etc.) and collateral prerequisites. Read this before drafting. The dispatcher passes the campaign YAML path and the segment key.
+- **Campaign plan block:** The segment's entry under `segments:` in `campaign.yaml` — the objective, USP framings, `message_goal`, `first_ask`, `conversion_funnel`, and `approach_sequencing` for this segment, including the approach type (firsthand-experience invitation, phone call, personal email, etc.) and collateral prerequisites. Read this before drafting. The dispatcher passes the campaign YAML path and the segment key.
 - **Segment file:** (`segments/{segment}.yaml`) The population definition — `discovery_criteria`, `scope_note`, `rating_rubric`. Consult for boundary and rating context. The per-campaign plan now lives in the campaign plan block above, not here.
 
 ## 3. Outputs
@@ -200,7 +200,7 @@ decisions:
   channel: email
   channel_detail: Email primary, phone fallback.
   language: en
-  angle: shared-venue-history
+  angle: shared-conference-history
   sender:
     name: Director
     email: director@example.com
@@ -280,20 +280,20 @@ rounds:
       - channel: email
         reply_all: true
         body: |
-          Following up on the Chef requirement we discussed in August.
+          Following up on the maintenance contract we discussed in August.
           ...
         actioned_date: null
         replied_date: null
         parent:
-          account: admin-rivermill-au
+          account: admin-example-co
           folder: "[Gmail]/All Mail"
           uid: 34937
           message_id: "<CADxn=...example.com>"
           references:
             - "<earlier-thread-root@example.com>"
-          subject: Requirement of Chef
-          from: Andrew Kerby <andrew@chefsontherun.example>
-          to: director@rivermill.au
+          subject: Maintenance Contract Renewal
+          from: Priya Nair <priya@fieldservicepro.example>
+          to: ops@example-co.example
           cc: ""
 ```
 
@@ -317,7 +317,7 @@ Before presenting an approach file for human review:
 
 The campaign plan block (the segment's entry under `segments:` in `campaign.yaml`) defines the approach type for each segment. Common patterns across campaigns:
 
-- **FAM invitation:** An invitation to experience the offering firsthand. The ask is a visit date, not a commitment.
+- **Firsthand-experience invitation:** An invitation to experience the offering firsthand. The ask is a visit date, not a commitment.
 - **Personal email with collateral:** A short message with attached or linked materials. The collateral must exist before the message is sent.
 - **Meeting request:** A request for a consultative conversation, typically referencing an existing organisational relationship.
 - **Exhibitor or participation enquiry:** An enquiry to an organiser about joining their event or programme.

@@ -55,7 +55,7 @@ Channel vocabulary: `email`, `phone`, and one channel per platform module (the m
 | Field | Type | Default | Purpose |
 |---|---|---|---|
 | `start_date` | date string | (none) | The campaign's planned first-approach date, `YYYY-MM-DD`, written bare (the parser types a bare date to epoch seconds and the loader renders it back to ISO; a quoted ISO string is also normalised, but bare is the convention). Absent means the campaign has not launched: outgoing transitions (send and follow-up T-ids) hold every dispatchable task as blocked. Present, it is a planned floor: sends before the date are blocked, so real sends land on or after it, and downstream consumers (the BI reply derivation) can key on it as the earliest possible send. The related epistemic rule: a message with no `actioned_date` has not been sent, and a campaign with no `start_date` has not launched. |
-| `sender.organisation` | string | (none) | Organisation name for prompt text (e.g. "Historic Rivermill"). When absent, prompts use the sender's name and role without an org name. |
+| `sender.organisation` | string | (none) | Organisation name for prompt text (e.g. "Acme Corp"). When absent, prompts use the sender's name and role without an org name. |
 | `sender.bcc` | string | (none) | BCC address for outgoing emails |
 | `fact_sources` | list of paths | (none) | Documents the campaign's claims draw on: an organisation overview, a product or offer definition, a competitor register. A1 reads them before drafting, for the ground truth a message needs beyond the USPs themselves; the challenger opens one only where a `rests_on` names it. A source document that numbers its own USPs lends that numbering to the registry. No precedence holds between entries, so keeping them consistent is the campaign author's job. |
 | `antifacts` | path or `none` | inherited | Path to the anti-claim document A1 checks its draft against and the A2 challenger fact-checks from. A campaign that supplies no value inherits the instance's (`campaigns.yaml`, see Path resolution); a campaign that means to draft without a checklist writes `none`. With neither, A dispatch fails rather than drafting unchecked. Relative to the YAML file's directory. |
@@ -84,9 +84,9 @@ usps:
   u6:
     label: Contact, not viewing
     rests_on: |
-      Product USP document, u6 and its grounding row: school horse
-      contact appears at 3 of 215 corpus venues and none in the catchment.
-  cash-contribution: A contribution to the coach hire for a school's first booking
+      Product USP document, u6 and its grounding row: loaner-equipment
+      contact appears at 3 of 215 corpus accounts and none in the catchment.
+  freight-contribution: A contribution to freight costs for a customer's first order
 ```
 
 ## Per-segment plan block

@@ -301,4 +301,4 @@ This methodology does not replace any existing document. It provides the concept
 - **R has no procedure document** — it is a human review process. Its inputs and outputs are defined here; its execution is not automatable.
 - **Segment categorisation** (`spar-segment-categorisation.md`) — criteria for deciding when contacts belong in one segment versus two, when to merge or split segments, and how to handle sub-segments and cross-segment duplicates.
 
-Domain-specific content — target segments, angle tables, roster schemas, conversion benchmarks, funnel math — remains in the campaign plan for each project (e.g. `opensource.foundation/outreach/direct-outreach-pipeline.md` for the foundation, `rivermill/management-outreach/` for Rivermill). SPAR defines the method; the campaign plan defines the targets.
+Domain-specific content — target segments, angle tables, roster schemas, conversion benchmarks, funnel math — remains in the campaign plan for each project (e.g. `acme-foundation/outreach/direct-outreach-pipeline.md` for one instance, `example-co/management-outreach/` for another). SPAR defines the method; the campaign plan defines the targets.

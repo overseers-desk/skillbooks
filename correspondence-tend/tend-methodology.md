@@ -157,9 +157,9 @@ Thread-first evaluation costs more per email (the agent reads N messages instead
 
 ## Relationship to existing artefacts
 
-The taxonomy and ruleset in `email-processing/` were built empirically from 226 emails sampled across 5 batches, covering the full year of director@rivermill.au correspondence. They contain 64 categories and 64 corresponding processing rules. These artefacts are the knowledge base that E and N consult — they are not executable code. TEND defines how an agent uses them; the artefacts define what the agent knows.
+The taxonomy and ruleset in `email-processing/` were built empirically from 226 emails sampled across 5 batches, covering the full year of director@example-co.example correspondence. They contain 64 categories and 64 corresponding processing rules. These artefacts are the knowledge base that E and N consult — they are not executable code. TEND defines how an agent uses them; the artefacts define what the agent knows.
 
-The TEND methodology is domain-independent. The taxonomy and ruleset are domain-specific to Rivermill. Applying TEND to a different inbox would require building a new taxonomy (Phase 1: sample, classify, iterate) and ruleset (Phase 2: write rules per category), but the four-phase pipeline and the stage model remain the same.
+The TEND methodology is domain-independent. The taxonomy and ruleset are domain-specific to Example Co. Applying TEND to a different inbox would require building a new taxonomy (Phase 1: sample, classify, iterate) and ruleset (Phase 2: write rules per category), but the four-phase pipeline and the stage model remain the same.
 
 ## Relationship to SPAR
 

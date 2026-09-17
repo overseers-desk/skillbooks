@@ -48,7 +48,7 @@ Each campaign YAML names in its `segments:` map the segments it operates over, m
 
 ## Conventions
 
-**Segment names** are lowercase hyphenated nouns describing the contact type (e.g. `wedding-planner`, `tour-operator-domestic`). The name appears as the folder/file stem under `segments/`, as a key in `segments:` maps, and in progress reports.
+**Segment names** are lowercase hyphenated nouns describing the contact type (e.g. `software-reseller`, `physiotherapy-clinic`). The name appears as the folder/file stem under `segments/`, as a key in `segments:` maps, and in progress reports.
 
 **One roster per segment.** The file is `segments/{segment}.tsv`. The roster schema is defined in `spar-roster-format.md`.
 
