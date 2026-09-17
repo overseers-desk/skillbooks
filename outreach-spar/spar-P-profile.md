@@ -107,26 +107,6 @@ If the employer's website reveals programmes or focus areas relevant to the camp
 
 When the segment's value turns on the outlet's reach and the outlet is not one independently recognisable as large, do not inherit a "large / major / global" label from the profile seed or the outlet's own copy. Verify current reach against an external figure (a traffic source such as Similarweb) and record the number with its date and source. A size label without a number and a date is not evidence (§5.0).
 
-### 4.6.1 Distance from venue (when proximity bears on relevance)
-
-Run this step only when (a) the prompt declares a campaign venue (line beginning "Campaign venue:") and (b) proximity to that venue is a factor in the segment's angle table or otherwise bears on the relevance assessment for this campaign. If neither condition holds, skip — distance is not free context to collect for its own sake.
-
-When the conditions hold, do not estimate distance. Geocode the target's primary work address (resolved during §4.6) via Nominatim:
-
-```
-https://nominatim.openstreetmap.org/search?q={URL-encoded address}&format=json&limit=1
-```
-
-Then call OSRM using the venue coordinate from the prompt and the target coordinate from Nominatim:
-
-```
-https://router.project-osrm.org/route/v1/driving/{venue_lng},{venue_lat};{target_lng},{target_lat}?overview=false
-```
-
-Record the target address used, the OSRM driving distance in km, and the duration in minutes inline with the institutional context written in §4.6. If geocoding or routing fails, record the failure reason and proceed without a distance value — never substitute a guess.
-
-This responsibility is temporary; the harness will absorb the OSRM call once `venue` is consistently populated and a target-side location field is added to the roster. See #93.
-
 ### 4.7 Engagement state is not profile content; the contact's dated conduct is
 
 P does not sweep IMAP and does not record warmth. Warmth, connection status, "no prior contact", and our outreach record are engagement state: a new message falsifies them, so a profile carrying them is stale on reuse (INVARIANTS.md, I1). The approach phase determines warmth fresh at contact time, from the per-contact approach log and a current IMAP check, whatever the profile says. A dated event in which the contact acted on us (quoted a job, disputed an invoice) is their conduct and enters the profile as evidence (`## Mechanism evidence`, the relevance assessment), sourced from `s_note` or a thread the roster names, not from a mailbox sweep.
