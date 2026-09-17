@@ -1,0 +1,5 @@
+# Invariants — AESOP
+
+Hard rules every methodology in this repository holds. When a procedure, schema, template, prompt or example disagrees with one, the invariant wins and the other is the bug to fix. A methodology's own `INVARIANTS.md` holds the rules specific to it; this file holds the ones that bind all of them.
+
+- **A methodology's syntax names the role, not the business.** A field name, a closed-vocabulary value, or a string the tooling emits into a prompt names the part a value plays in the method, never the trade of the instance supplying it, and it does not presume that instance exists physically: a business with no premises, no visitors and no address runs the same schema as one with a street door. Instance data belongs to the instance; the vocabulary belongs to nobody. Two things this rules out, because a rename fixes only the first: a name answerable by one industry alone, and a slot only a business with a place can fill. First case: `venue`, an address and coordinate block in SPAR's campaign schema, deleted rather than renamed.
