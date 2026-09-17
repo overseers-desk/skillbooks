@@ -154,31 +154,45 @@ fi
 OUT_DIR="$(dirname "$OUT")"
 [[ -d "$OUT_DIR" ]] || mkdir -p "$OUT_DIR"
 
-TMP="$(mktemp -d)"
-WRAPPER_IN_REPO=""
-cleanup() {
-  rm -rf "$TMP"
-  if [[ -n "$WRAPPER_IN_REPO" && -f "$WRAPPER_IN_REPO" ]]; then
-    rm -f "$WRAPPER_IN_REPO"
-  fi
-  return 0
-}
-trap cleanup EXIT
+# Snap-confined typst reads and writes only visible folders under $HOME, so all
+# compile inputs and the output are staged where it can reach them.
+case "$(command -v typst)" in
+  /snap/*) STAGE="$(mktemp -d "$HOME/typst-pdf.XXXXXX")" ;;
+  *)       STAGE="$(mktemp -d)" ;;
+esac
+trap 'rm -rf "$STAGE"' EXIT
 
-BODY="$TMP/body.typ"
-pandoc -t typst -o "$BODY" "$INPUT_ABS"
+# pandoc's writer emits #horizontalrule, which only pandoc's own template defines.
+BODY="$STAGE/body.typ"
+printf '#let horizontalrule = line(start: (25%%,0%%), end: (75%%,0%%))\n\n' > "$BODY"
+pandoc -t typst "$INPUT_ABS" >> "$BODY"
 
 if [[ -n "$TEMPLATE_BASENAME" ]]; then
-  WRAPPER_IN_REPO="$REPO_ROOT/.aesop/.aesop-build.$$.typ"
+  mkdir -p "$STAGE/.aesop"
+  cp "$REPO_ROOT"/.aesop/*.typ "$STAGE/.aesop/"
+  # Stage each repo file the templates name in a string literal: "/x" from the repo root, "x" from .aesop/.
+  { grep -ho '"[^"]*"' "$REPO_ROOT"/.aesop/*.typ || true; } | tr -d '"' | while IFS= read -r ref; do
+    case "$ref" in
+      /*) src="$REPO_ROOT$ref";        dst="$STAGE$ref" ;;
+      *)  src="$REPO_ROOT/.aesop/$ref"; dst="$STAGE/.aesop/$ref" ;;
+    esac
+    if [[ -f "$src" ]]; then
+      mkdir -p "$(dirname "$dst")"
+      cp "$src" "$dst"
+    fi
+  done
+  MAIN="$STAGE/.aesop/main.typ"
   {
     printf '#import "%s": template\n' "$TEMPLATE_BASENAME"
     printf '#show: template\n\n'
     cat "$BODY"
-  } > "$WRAPPER_IN_REPO"
-  typst compile --root "$REPO_ROOT" "$WRAPPER_IN_REPO" "$OUT"
+  } > "$MAIN"
 else
-  typst compile --root "$(dirname "$BODY")" "$BODY" "$OUT"
+  MAIN="$BODY"
 fi
+
+typst compile --root "$STAGE" "$MAIN" "$STAGE/out.pdf"
+mv "$STAGE/out.pdf" "$OUT"
 
 echo "Saved: $OUT" >&2
 

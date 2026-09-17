@@ -41,15 +41,7 @@ The skill looks for two files at `<repo>/.aesop/`:
 - `default.typ` — required if any template is to be applied. Must export a function named `template` taking the document body, e.g. `#let template(body) = { ...; body }`.
 - `letterhead.typ` — optional. Same `template(body)` contract. Typically imports or composes with `default.typ` and adds page-1 letterhead elements (logo, header).
 
-The driver wraps the converted markdown body with the chosen template by writing a small wrapper file:
-
-```typst
-#import "<repo>/.aesop/<chosen>.typ": template
-#show: template
-#include "body.typ"
-```
-
-It compiles with `typst compile --root <repo>` so the template can reference relative paths inside the repo (logos, fonts, included files).
+The driver compiles in a staging directory, never inside the repo, with the staging directory as `--root`. It copies `.aesop/*.typ` there, prepends the converted body with the chosen template's `#show: template`, and copies each repo file the templates name as a string literal: `"/res/logo.pdf"` from the repo root, `"logo.pdf"` from `.aesop/`. A template file reached any other way (a path built at run time) is not staged and fails the compile. Where `typst` is a snap, the staging directory is a visible folder under `$HOME`, the only place a snap-confined `typst` can read and write.
 
 ## What this skill does NOT do
 
