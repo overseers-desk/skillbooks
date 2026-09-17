@@ -58,8 +58,8 @@ Channel vocabulary: `email`, `phone`, and one channel per platform module (the m
 | `sender.organisation` | string | (none) | Organisation name for prompt text (e.g. "Historic Rivermill"). When absent, prompts use the sender's name and role without an org name. |
 | `sender.bcc` | string | (none) | BCC address for outgoing emails |
 | `fact_sources` | list of paths | (none) | Documents the campaign's claims draw on: an organisation overview, a product or offer definition, a competitor register. A1 reads them before drafting, for the ground truth a message needs beyond the USPs themselves; the challenger opens one only where a `rests_on` names it. A source document that numbers its own USPs lends that numbering to the registry. No precedence holds between entries, so keeping them consistent is the campaign author's job. |
-| `antifacts` | path | (none) | Path to the antifact/fact-check document. When present, the A2 challenger fact-checks the draft against this file. When absent, fact-check uses only the overview and segment file. Relative to the YAML file's directory. |
-| `campaign_principles` | path | (none) | Path to campaign-level principles document. When present, A1 reads it before drafting. When absent, A1 relies on the method document and segment file alone. Relative to the YAML file's directory. |
+| `antifacts` | path or `none` | inherited | Path to the anti-claim document A1 checks its draft against and the A2 challenger fact-checks from. A campaign that supplies no value inherits the instance's (`campaigns.yaml`, see Path resolution); a campaign that means to draft without a checklist writes `none`. With neither, A dispatch fails rather than drafting unchecked. Relative to the YAML file's directory. |
+| `campaign_principles` | path or `none` | inherited | Path to campaign-level principles document. When present, A1 reads it before drafting. A campaign that supplies no value inherits the instance's (`campaigns.yaml`); with neither, A1 relies on the method document and segment file alone. Relative to the YAML file's directory. |
 | `ses_region` | string | `ap-southeast-2` | AWS SES region for email sending |
 | `a_max_passes` | integer | 3 | Hard ceiling on challenger passes per contact in the A phase. The effective value for each contact is `min(a_max_passes, profile-derived)`. Profile-derived comes from the profile's `yield` front-matter field: `yield >= 6` yields 3, otherwise 1 (see `spar-P-profile.md` §5.1). Must be an integer ≥ 0. A ceiling does not force passes; the challenger can still return `DONE` earlier. Quality/cost ladder: `0` disables the challenger entirely — the initial draft flows straight to assembly with no fact-check (cheapest, no adversarial review). `1` runs the challenger once; the author revises based on its feedback, but that revision is never re-validated (feedback applied, not verified). `2` re-challenges the first revision. `3` (default) allows up to two re-challenges. Note that at any `a_max_passes ≥ 1` the *last* revision is still unvalidated — there is no pass that both critiques and then re-challenges the final draft. |
 | `reply_check.folder` | string | `INBOX` | IMAP folder the reply checker searches. The account is not a campaign field: it is the courier account whose identity sends as `sender.email`, read from `courier list` at run time. Set the folder when the receiving account's mail rules file this campaign's replies elsewhere (e.g. `Partnerships`). Replies found are appended to the matching approach YAML as `replies:` entries with `direction: received`. |
@@ -117,6 +117,14 @@ The P phase reads the plan block for profiling context — the objective and USP
 ## Path resolution
 
 Path fields (`antifacts`, `campaign_principles`, and each entry of `fact_sources`) are resolved relative to the YAML file's parent directory. Absolute paths are used as-is. The SPAR-A procedure document is resolved by the dispatcher as a sibling of its own script (`../spar-A-approach.md`) and is not a campaign-level path.
+
+### Instance defaults
+
+A fact the whole instance shares has one home rather than one copy per campaign. `campaigns.yaml`, at the instance root beside `campaigns/` and `segments/` (`spar-campaign-directory.md`), supplies `antifacts` and `campaign_principles` to every campaign in the instance. Its own paths resolve against its own directory, which is the instance root.
+
+A campaign's value wins where it has one. Where it has none, the instance's applies. `none` declines a default that exists, and reads as a decision rather than an oversight, which is why `antifacts` distinguishes the two: absent in both places is a dispatch error, `none` is a campaign that means to draft without a checklist.
+
+An instance with no `campaigns.yaml` loses nothing: every campaign carries its own values as before.
 
 ## Example
 

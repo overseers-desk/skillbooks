@@ -242,7 +242,6 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
 
     set spar_p [file join [file dirname $::spar::root] spar-P-profile.md]
 
-    set antifacts [dict getdef $cdata antifacts ""]
     set appendices [dict getdef $cdata prompt_appendices [dict create]]
     set appendix_p_author [dict getdef $appendices p_author ""]
 
@@ -255,9 +254,6 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         if {![file exists $path]} {
             error "$label not found: $path"
         }
-    }
-    if {$antifacts ne "" && ![file exists $antifacts]} {
-        error "Antifacts not found: $antifacts"
     }
     file mkdir $profile_dir
 
@@ -545,7 +541,10 @@ proc spar::a::_build_prompts {opts on_progress} {
             error "Fact source not found: $_fs"
         }
     }
-    if {$antifacts ne "" && ![file exists $antifacts]} {
+    if {$antifacts eq ""} {
+        error "campaign.yaml names no antifacts. Set it here, or in the instance's campaigns.yaml, or write 'antifacts: none' to draft without an anti-claim checklist"
+    }
+    if {$antifacts ne "none" && ![file exists $antifacts]} {
         error "Antifacts file not found: $antifacts"
     }
     if {$campaign_principles ne "" && ![file exists $campaign_principles]} {
@@ -740,7 +739,7 @@ s_note: $s_note"
 $profile_a1_instruction
 4. Campaign plan block: read the \"segments.$segment\" block in $campaign_file (campaign.yaml) — \"message_goal\" for the specific objective this message must achieve (e.g. secure a FAM visit, collect a roster expression of interest); \"objective\" for the long-term commercial goal, not what this message asks for; \"first_ask\" for approach style guidance; and the USP framings. If the block has subsegments, determine which applies to this contact and use its overrides where present. The segment file $goal_path holds only the population definition (discovery_criteria, rating_rubric)."
             set item_num 5
-            if {$antifacts ne ""} {
+            if {$antifacts ni {"" "none"}} {
                 append file_items "
 ${item_num}. Antifact checklist: $antifacts — check your draft against every false claim listed here before outputting."
                 incr item_num
@@ -769,12 +768,12 @@ ${item_num}. Campaign principles: $campaign_principles — read the \"Profile-in
             set factcheck_files "Files:
 1. $campaign_file — read the segments.$segment plan block and the usps registry, the authority for the campaign's claims.
 2. Fact sources, to open only where a usps entry's rests_on names one: [join $fact_sources {, }]"
-            if {$antifacts ne ""} {
+            if {$antifacts ni {"" "none"}} {
                 append factcheck_files "
 3. Antifact checklist, read in full: $antifacts"
             }
 
-            if {$antifacts ne "" || [llength $fact_sources] > 0} {
+            if {$antifacts ni {"" "none"} || [llength $fact_sources] > 0} {
                 set factcheck_section [string map [list \
                     __FACTCHECK_FILES__ $factcheck_files \
                 ] [spar::load_prompt_template spar-a-factcheck.txt]]

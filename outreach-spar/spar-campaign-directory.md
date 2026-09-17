@@ -6,10 +6,11 @@
 
 ## Layout
 
-An instance root holds two folders, `segments/` and `campaigns/`. Everything the tooling reads lives under those two; anything else at the root is invisible to it, so no fencing key exists or is needed.
+An instance root holds two folders, `segments/` and `campaigns/`, and the few files the tooling reads by name beside them: `campaigns.yaml` and the `sweeper-{family}.yaml` files. Anything else at the root is invisible to it, so no fencing key exists or is needed.
 
 ```
 <instance-root>/
+  campaigns.yaml                  # instance defaults for campaign fields (spar-campaign-yaml.md)
   segments/
     {segment}/                    # profile documents, one per contact, directly inside
       {stem}.md
@@ -69,7 +70,7 @@ Outgoing transitions (the send and follow-up T-ids) are additionally gated by th
 
 ## Source documents
 
-A `fact_sources` entry or an `antifacts` file shared by several campaigns describes the organisation or a product, not one campaign, and keeps a single home outside `campaigns/` (typically the parent repository), referenced by path from each campaign YAML. Only a document scoped to one campaign takes the `{campaign}.{word}.{ext}` name beside its YAML.
+A `fact_sources` entry or an `antifacts` file shared by several campaigns describes the organisation or a product, not one campaign, and keeps a single home outside `campaigns/` (typically the parent repository). A campaign YAML names it by path; where every campaign in the instance would name the same one, `campaigns.yaml` names it once and they inherit. Only a document scoped to one campaign takes the `{campaign}.{word}.{ext}` name beside its YAML.
 
 ## What does not belong under `segments/` or `campaigns/`
 
@@ -92,6 +93,7 @@ Every fact about a campaign or a segment has one authoritative home, and each re
 | Per-contact population data (identity, channels, notes, `star_rating`) | `spar-roster-format.md` |
 | Per-contact profile | `spar-P-profile.md` §5 |
 | Engagement, campaign × contact (messages, sends, `response_likelihood`, `a_note`, `r_note`) | `spar-A-approach.md` |
+| Instance-wide defaults for campaign fields (`antifacts`, `campaign_principles`) | `campaigns.yaml` at the instance root, schema in `spar-campaign-yaml.md` |
 | Layout: which file sits where, name patterns, campaign attribution by parent directory | this document |
 
 No fact is mapped at two altitudes: this table maps realms to owner documents, and each owner document maps its own facts to fields and files.
