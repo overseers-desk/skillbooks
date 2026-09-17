@@ -45,7 +45,7 @@ Segments fall into three types that affect how S is seeded and how quickly the r
 
 - **Registry segments** (e.g. schools, childcare centres, licensed trades): An official register bounds the population, and its census entry records which of three roles it can play. A register **enumerates** when it offers a bulk export with names and locality, readable as a list: that register seeds the roster, typically exhausted in 1–2 iterations, and its rows enter keyed on the register's own unique id. A register **bounds** when it counts the population without listing it reachably: it supplies the denominator and no rows. A register **verifies** when it answers one key at a time: it serves P, not S. Licensing decides none of this: a licensed trade can be as hard to enumerate as an unlicensed one. A register that counts a market may still barely populate it, carrying legal entities while the market advertises under trading names. The route from such a register to a contact is its key field, not the name.
 
-- **Directory segments** (e.g. wedding planners, tour operators, professional associations, industry member directories): An industry directory provides a partial list. S typically exhausts known directories in 2–3 iterations.
+- **Directory segments** (e.g. software resellers, veterinary clinics, professional associations, industry member directories): An industry directory provides a partial list. S typically exhausts known directories in 2–3 iterations.
 
 - **Informal segments** (e.g. community groups, mothers' groups, open source maintainers, meetup organisers): No central listing exists. S may not reach target even after 3 iterations; the roster continues to grow during AR as conversations surface referrals. Accept whatever count is reached.
 
@@ -86,7 +86,7 @@ For each S&P₁ contact, verify their current role and activity via their profil
 
 Found and reachable are separate counts, and the round reports both. A row without a written channel is inert downstream, so verification includes the cheap conversion steps before the round closes: the listing's website redirect resolved, the site's contact page read, the platform page's own details read.
 
-Then expand via social graph, following each platform's own graph: who commented on or shared a post, who co-administers a page or group, who is tagged as a collaborator, and who is tagged at the same venues or events. Commenters and co-admins are likely peers at other organisations.
+Then expand via social graph, following each platform's own graph: who commented on or shared a post, who co-administers a page or group, who is tagged as a collaborator, and who is tagged at the same sites or events. Commenters and co-admins are likely peers at other organisations.
 
 Run the **reverse-search diagnostic** on the S&P₁ roster: search known contacts by name, note what co-occurring keywords appear in the results, then search by those keywords alone (hiding the names) to test whether they surface contacts invisible to the original search vocabulary. This catches vocabulary gaps — segments that use different terms to describe themselves.
 

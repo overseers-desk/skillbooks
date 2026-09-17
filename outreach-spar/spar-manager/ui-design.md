@@ -61,7 +61,7 @@ The tree is communicated by the Legend popup (§1.5), not by header rows: the ta
 Each row represents one segment. Segments fall into two categories:
 
 - **Campaign segments** — named as keys in the campaign YAML's `segments:` map. These rows have a checkbox. All checkboxes are checked by default. Unchecking a segment excludes it from the totals row and from the transition treeview below. The checkbox state does not persist across sessions; it is a transient filter.
-- **Non-campaign segments** — segment directories that exist in the campaign folder but are not named in `segments:` (e.g. `bridal-expo`). These rows are displayed in a muted style (greyed out text, no checkbox). They appear in the table for awareness but do not contribute to the totals row or the transition treeview, and cannot be selected.
+- **Non-campaign segments** — segment directories that exist in the campaign folder but are not named in `segments:` (e.g. `trade-expo`). These rows are displayed in a muted style (greyed out text, no checkbox). They appear in the table for awareness but do not contribute to the totals row or the transition treeview, and cannot be selected.
 
 The final row is a **Totals** row that sums only the checked campaign segments. It updates dynamically when checkboxes change.
 
@@ -164,10 +164,10 @@ If the block-by-block segmented progress bar is not achievable with ttk::progres
 
 The two zones are linked by the segment checkboxes:
 
-1. User unchecks "wedding-planner" in the progress table.
-2. Totals row recalculates excluding wedding-planner.
-3. Transition treeview counts recalculate excluding wedding-planner contacts.
-4. If a transition type is expanded, wedding-planner contacts disappear from its child items.
+1. User unchecks "software-reseller" in the progress table.
+2. Totals row recalculates excluding software-reseller.
+3. Transition treeview counts recalculate excluding software-reseller contacts.
+4. If a transition type is expanded, software-reseller contacts disappear from its child items.
 
 This filtering is immediate and does not require a refresh button.
 

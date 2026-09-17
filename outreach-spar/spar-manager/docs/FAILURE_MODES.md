@@ -40,11 +40,11 @@ distinct ways; their UUIDs key the entries below.
 
 | session-id | stem | failure mode |
 |---|---|---|
-| ed9357e7-6a04-429b-83e5-5a2da5201971 | nicole-my-forever-weddings | FM-AGENT-1 (loop) + FM-HARNESS-2 (discard) + FM-HARNESS-3 (1800s kill) |
-| 30656bff-00f3-4f75-be07-0f1b6c40ed08 | lara-galanthia | FM-HARNESS-4 (early SIGKILL) + FM-HARNESS-1 (mislabel) |
-| 2d6fe635-a486-4de5-9cee-03ef603d12fb | jolanda-tarifa-events | FM-HARNESS-4 + FM-HARNESS-1 |
-| b688ebf0-00e0-4eec-a4c0-872a3e25649b | juan-medinas | FM-HARNESS-4 + FM-HARNESS-1 |
-| 73268a63-6f32-48d7-8db4-a32d83e45d86 | maria-jose-que-se-besen | FM-HARNESS-4 + FM-HARNESS-1 |
+| ed9357e7-6a04-429b-83e5-5a2da5201971 | alice-park-brightline | FM-AGENT-1 (loop) + FM-HARNESS-2 (discard) + FM-HARNESS-3 (1800s kill) |
+| 30656bff-00f3-4f75-be07-0f1b6c40ed08 | ben-osei-fieldworks | FM-HARNESS-4 (early SIGKILL) + FM-HARNESS-1 (mislabel) |
+| 2d6fe635-a486-4de5-9cee-03ef603d12fb | carla-mendes-northgate | FM-HARNESS-4 + FM-HARNESS-1 |
+| b688ebf0-00e0-4eec-a4c0-872a3e25649b | dev-patel-summit | FM-HARNESS-4 + FM-HARNESS-1 |
+| 73268a63-6f32-48d7-8db4-a32d83e45d86 | elena-ruiz-parkside | FM-HARNESS-4 + FM-HARNESS-1 |
 
 ---
 
@@ -57,7 +57,7 @@ file, with no exception for an excluded contact. SPAR-P §5.4 requires an exclud
 have *no* profile, so the spec-correct terminal state (date_excluded set, no profile) was
 exactly what the gate rejected; an excluded row oscillated and failed after three retries.
 The gate now reads the roster row first and treats an absent file next to a `date_excluded`
-row as the correct outcome. Seen on `ana-c-anaceventos` and `anna-ambrosiewicz-ambrosia-wedding`
+row as the correct outcome. Seen on `farah-khoury-lighthouse` and `grace-lin-logiflow`
 in the 2026-06-14 14:07 run.
 
 ### FM-HARNESS-1 — `timeout after 1800s` mislabel · `111f548`

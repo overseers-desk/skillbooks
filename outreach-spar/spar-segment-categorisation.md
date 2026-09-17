@@ -22,7 +22,7 @@ The threshold is practical, not taxonomic. A campaign does not need a segment fo
 
 The following are signs that separate segments create overhead without adding targeting precision.
 
-**Same event or transaction.** If both segments recruit participants for the same event — a market day, a conference, a community gathering — the contacts are operationally interchangeable. A nursery and a cheesemaker both need to hear the same venue description, the same visitor numbers, and the same stall logistics. The difference in what they sell is a per-contact detail, not a segment-level distinction.
+**Same event or transaction.** If both segments recruit participants for the same event — a trade show, a conference, an industry meetup — the contacts are operationally interchangeable. A software vendor and a hardware vendor both need to hear the same floor-plan details, the same attendee numbers, and the same booth logistics. The difference in what they sell is a per-contact detail, not a segment-level distinction.
 
 **Nearly identical first ask.** Compare the "first ask" sections of both segment files. If they could be combined by parameterising one or two words (the product name, the market name), the segments are doing the same work twice. A segment file that reads "we've seen your [product] and think you'd be a good fit" is the same goal regardless of whether [product] is "sourdough" or "succulents."
 
@@ -34,7 +34,7 @@ The following are signs that separate segments create overhead without adding ta
 
 The following are signs that merging would harm targeting precision or operational clarity.
 
-**Materially different pitch.** If the value proposition changes depending on which segment the contact belongs to, merging forces the approach writer to maintain two mental models within one segment file. An operator serving domestic coach tourists needs to hear about convenient hinterland stops and group catering. An operator serving inbound international visitors needs to hear about cultural authenticity and trade distribution. These are different arguments for different audiences, not parametric variations of one argument.
+**Materially different pitch.** If the value proposition changes depending on which segment the contact belongs to, merging forces the approach writer to maintain two mental models within one segment file. A supplier serving small independent retailers needs to hear about flexible order minimums and fast restock. A supplier serving large chain accounts needs to hear about volume pricing and dedicated account management. These are different arguments for different audiences, not parametric variations of one argument.
 
 **Different conversion timeline or priority.** If one segment is Tier 1 with a 6-18 month sales cycle involving trade shows and offshore distribution, and the other is Tier 2 with a simple trial-period model, merging flattens the priority distinction. The high-priority cohort becomes a subsection of a larger segment rather than a standalone pipeline with its own sequencing.
 
@@ -82,6 +82,6 @@ Segment structure should be revisited at two points:
 
 **After S&P3, before AR begins.** The roster is complete. The progress report shows the actual contact counts and overlap. If two segments have high structural redundancy (same ask, same funnel) with only cosmetic differences, this is the cheapest time to merge — no approaches have been sent, so no coordination is needed.
 
-**After AR1, during R.** The first band of responses may reveal that the campaign's assumed segmentation does not match how contacts see themselves. A contact classified as "inbound tour operator" may respond as a domestic operator who happens to also handle inbound groups. If this pattern recurs across multiple contacts, the segment split may not reflect reality.
+**After AR1, during R.** The first band of responses may reveal that the campaign's assumed segmentation does not match how contacts see themselves. A contact classified as "enterprise reseller" may respond as a small reseller who happens to also carry enterprise accounts. If this pattern recurs across multiple contacts, the segment split may not reflect reality.
 
 Do not revisit segment structure mid-S&P unless discovery reveals that the two segments' search vocabularies are identical (the same queries find the same people). In that case, the segments are empirically the same and should be merged before P begins.
