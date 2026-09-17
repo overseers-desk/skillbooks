@@ -50,24 +50,6 @@ Channel vocabulary: `email`, `phone`, and one channel per platform module (the m
 | `filter.min_star` | integer | 0 | Skip entries with `star_rating` below this threshold |
 | `filter.require_profile` | boolean | true | Skip entries that have no profile document; `false` lets A draft from the roster row alone, which the P phase exists to prevent, so state it only when that is wanted |
 
-### Optional (venue)
-
-The campaign may declare a physical venue. When present, the dispatcher exposes it to the P prompt so the AI can compute target-to-venue driving distance via OSRM where proximity bears on angle assessment (see `spar-P-profile.md` §4.6.1). Until #93 lands, the OSRM call is AI-side; once it lands, the harness will use the same fields to compute distance deterministically and substitute it into the prompt as a literal.
-
-| Field | Type | Default | Purpose |
-|---|---|---|---|
-| `venue.address` | string | (none) | Postal address used for context and as a geocoding fallback. Required when `venue` is present. |
-| `venue.coordinate.latitude` | float | (none) | WGS84 latitude. Required when `venue` is present. |
-| `venue.coordinate.longitude` | float | (none) | WGS84 longitude. Required when `venue` is present. |
-
-```yaml
-venue:
-  address: "950 Beaudesert Nerang Rd Mount Nathan QLD 4211, Australia"
-  coordinate:
-    latitude: -27.9769223
-    longitude: 153.2520029
-```
-
 ### Optional
 
 | Field | Type | Default | Purpose |
