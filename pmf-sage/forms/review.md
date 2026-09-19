@@ -4,7 +4,7 @@ The run's decision cards. Each card is a question, the ways the market answers i
 
 ## The ruling sheet
 
-One row a card. *Recommended* reads withheld where no option is carried. *What is held* says whether the recommendation keeps or leaves a value the venue already held. *Third derivation* says where a fresh clerk, reading the market alone, landed against the recommendation.
+One row a card. *Recommended* reads withheld where no option is carried, and the margin column then gives the counts the card stands at. A negative margin means the largest count runs against the recommendation, which then rests on the other evidence its card names. *Rests on* says whether the recommendation stands on the market, on this venue's own buyers, or on both. *What is held* says whether the recommendation keeps or leaves a value the venue already held. *Third derivation* says where a fresh clerk, reading the market alone, landed against the recommendation.
 
 {{sheet}}
 

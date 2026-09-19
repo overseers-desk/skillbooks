@@ -5,7 +5,7 @@ Usage: card-check.py <run-dir>
 Reads every card under <run-dir>/3-decisions/ written on forms/card.md.
 Refuses: fewer than two options carrying a figure; a recommendation naming no option or stating its
 margin in a unit other than the runner-up's, or not the difference of the two figures unless the line states its derivation, or stated against an option weaker than the strongest other; a withheld recommendation that does not name
-two options and the observation that would carry either; a held value (a Priors line citing a file) with no third derivation recorded (a backticked third-derivation file, on the Third derivation line or the Corrections line, that exists).
+two options, the counts it stands at and the observation that would carry either; a recommending line that does not say what it rests on; a held value (the Held stamp, or without one a Priors line citing a file) with no third derivation recorded (a backticked third-derivation file, on the Third derivation line or the Corrections line, that exists).
 Reports: figured options per card; recommendations that match a held value, leave one, or are withheld, as counts and no more; mismatched margin units; legs marked differs.
 """
 import re, sys
@@ -47,7 +47,7 @@ def parse(text):
             continue
         if in_table and s and not s.startswith("|"):
             in_table = False
-        for key in ("Recommended", "Priors", "Measured in", "Ruled", "Third derivation", "Corrections"):
+        for key in ("Recommended", "Held", "Priors", "Measured in", "Ruled", "Third derivation", "Corrections"):
             if s.startswith(f"**{key}:**"):
                 card[key] = s.split("**", 2)[2].strip()
     return card
@@ -96,8 +96,8 @@ def main():
         if is_withheld:
             # no option is carried: the line names the two readings and what would carry either
             named = [o for o in c["options"] if o["name"] in rec]
-            if len(named) < 2 or not re.search(r"carried by:\s*\S", rec, re.I):
-                refusals.append(f"card {c['id']}: a withheld recommendation names two options and, after 'carried by:', the observation that would carry either")
+            if len(named) < 2 or not re.search(r"standing at:\s*\S", rec, re.I) or not re.search(r"carried by:\s*\S", rec, re.I):
+                refusals.append(f"card {c['id']}: a withheld recommendation names two options, the counts after 'standing at:', and after 'carried by:' the observation that would carry either")
         elif not chosen:
             refusals.append(f"card {c['id']}: recommended ruling names no option")
         else:
@@ -136,9 +136,17 @@ def main():
                     refusals.append(f"card {c['id']}: margin {m_.group()} is not {chosen['figure']} less {runner['figure']}, and the line does not say how it was derived")
         # the match is judged on the recommended option's name, which carries its value; a prevalence count is not a value
         judged = chosen["name"] if chosen else rec.split(";")[0]
-        matched = not is_withheld and prior_match(judged, c.get("Priors", ""), c["options"])
-        # a value is held where the priors clerk cited a file for it; staying with it and leaving it take the same third derivation
-        is_held = "`" in c.get("Priors", "") and not c.get("Priors", "").startswith("<")
+        scripted = not is_withheld and prior_match(judged, c.get("Priors", ""), c["options"])
+        # the priors clerk's stamp judges the match in substance; the script reads ranges and words, and where the two disagree the check says so
+        stamp = re.match(r"(keeps|leaves|nothing held)\b", c.get("Held", "").lower())
+        matched = (stamp.group(1) == "keeps" and not is_withheld) if stamp else scripted
+        if stamp and not is_withheld and scripted != matched:
+            print(f"NOTE card {c['id']}: the stamp says {stamp.group(1)} and the script reads {'a match' if scripted else 'no match'}")
+        # staying with a held value and leaving it take the same third derivation
+        is_held = stamp.group(1) != "nothing held" if stamp else ("`" in c.get("Priors", "") and not c.get("Priors", "").startswith("<"))
+        rests = re.search(r"rests on:\s*(market|own buyers|both)\b", rec, re.I)
+        if not is_withheld and chosen and not rests:
+            refusals.append(f"card {c['id']}: the Recommended line does not say what it rests on (rests on: market, own buyers, or both)")
         third = [f for f in re.findall(r"`([^`]+)`", c.get("Third derivation", "") + " " + c.get("Corrections", "")) if "third-" in Path(f).name and ((run / "3-decisions" / f).exists() or (run / f).exists())]
         withheld += is_withheld
         matches += matched
@@ -153,7 +161,7 @@ def main():
         differs += len(re.findall(r"(?<!marked )(?<!no )(?<!none )\bdiffers\b(?! is marked)", re.sub(r"\b(nothing|none|no \w+)( \w+){0,3} marked differs\b|\bnot marked differs\b", "", c.get("Measured in", "").lower())))
         stance = ("withheld held" if is_held else "withheld") if is_withheld else "matches" if matched else "leaves" if is_held else "none held"
         runner_name = runner["name"] if chosen and mm and runner else ""
-        print(f"card {c['id']}: {len(figured)} figured options; prior match: {matched}; held value: {stance}; third derivation: {bool(third)}; chosen: {chosen['name'] if chosen else ''} | runner-up: {runner_name}")
+        print(f"card {c['id']}: {len(figured)} figured options; prior match: {matched}; held value: {stance}; third derivation: {bool(third)}; rests on: {rests.group(1).lower() if rests else ''}; chosen: {chosen['name'] if chosen else ''} | runner-up: {runner_name}")
     outstanding = held - returned
     print(f"{len(cards)} cards; {held} hold a value; {matches} match it; {leaves} leave it; {withheld} withheld; {returned} third derivations; {outstanding} outstanding; {mismatched} mismatched margin units; {differs} legs marked differs")
     for r in refusals:
