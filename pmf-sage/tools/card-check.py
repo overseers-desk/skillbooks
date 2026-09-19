@@ -132,7 +132,7 @@ def main():
         judged = chosen["name"] if chosen else rec.split(";")[0]
         matched = prior_match(judged, c.get("Priors", ""), c["options"])
         # a matched card is returned once its Corrections line names a third-derivation file that exists
-        third = [f for f in re.findall(r"`([^`]+)`", c.get("Corrections", "")) if (run / "3-decisions" / f).exists() or (run / f).exists()]
+        third = [f for f in re.findall(r"`([^`]+)`", c.get("Corrections", "")) if "third-" in Path(f).name and ((run / "3-decisions" / f).exists() or (run / f).exists())]
         if matched:
             matches += 1
             if third:
