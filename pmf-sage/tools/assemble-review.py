@@ -102,7 +102,7 @@ def main():
     cid_of = lambda c: re.search(r"^## Card\s+(\S+)", c["head"]).group(1).rstrip("·").strip()
     value = lambda c, f: c["fields"].get(f, "").split("**", 2)[-1].strip()
 
-    sheet = ["| card | your part | the question | recommended | margin, or the counts it stands at | rests on | what is held | third derivation | ruled |", "|---|---|---|---|---|---|---|---|---|"]
+    sheet = ["| card | your part | the question | recommended | margin, or the counts it stands at | rests on | what is held | market-only reading | ruled |", "|---|---|---|---|---|---|---|---|---|"]
     open_cards, ruled_cards, joints, landings = [], [], [], {}
     for c in cards:
         k = checked.get(cid_of(c), {"match": False, "stance": "", "third": False, "rests": "", "chosen": "", "runner": ""})
@@ -152,15 +152,17 @@ def main():
         n, held, matches, leaves, withheld, thirds, outstanding, mism, differs = (int(x) for x in m.groups())
         part = [k for k, v in landings.items() if "/" in v]
         by = lambda w: [k for k, v in landings.items() if v == w]
+        read = [k for k, v in landings.items() if v not in ("none", "not stated")]
         counts = (f"{n} cards. Every card offers at least two ways the market sells this, each with a figure. "
-                  f"On {held} cards the venue already held a value: {matches} recommendations keep it and {leaves} leave it"
-                  + (f", and {withheld} are withheld because no option is carried" if withheld else "")
-                  + ". Keeping and leaving were asked for the same proof, a second derivation by a fresh clerk reading the market alone. "
-                  + f"Of {thirds} such derivations, {len(by('agrees'))} agree with the first"
+                  f"{matches} recommendations keep a value the venue already holds, {leaves} leave one"
+                  + (f", {withheld} are withheld because no option is carried" if withheld else "")
+                  + "." + (f" On {n - held} of the {n} the venue held nothing, whatever the line reads." if n - held else "")
+                  + " Keeping and leaving were asked for the same proof, a market-only reading by a fresh clerk who saw neither the venue's records nor the first clerk's work. "
+                  + f"Of {len(read)} such readings, {len(by('agrees'))} agree with the card"
                   + (f", {len(by('differs'))} differ ({', '.join(by('differs'))})" if by("differs") else "")
-                  + (f", {len(by('declines'))} decline to recommend ({', '.join(by('declines'))})" if by("declines") else "")
+                  + (f", {len(by('declines'))} found nothing in the market to recommend on ({', '.join(by('declines'))})" if by("declines") else "")
                   + (f", {len(part)} agree on one half of the question and not the other ({', '.join(part)})" if part else "") + "."
-                  + (f" {outstanding} held values have no second derivation yet." if outstanding else "")
+                  + (f" {outstanding} held values have no market-only reading yet." if outstanding else "")
                   + (f" {mism} margins are stated in a unit other than their runner-up's." if mism else "")
                   + (f" The measured-in lines mark a measured population as differing from this venue's shape {differs} times." if differs else ""))
     else:
