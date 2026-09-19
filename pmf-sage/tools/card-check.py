@@ -138,7 +138,7 @@ def main():
         judged = chosen["name"] if chosen else rec.split(";")[0]
         scripted = not is_withheld and prior_match(judged, c.get("Priors", ""), c["options"])
         # the priors clerk's stamp judges the match in substance; the script reads ranges and words, and where the two disagree the check says so
-        stamp = re.match(r"(keeps|leaves|nothing held)\b", c.get("Held", "").lower())
+        stamp = re.match(r"(keeps|leaves|nothing held|held)\b", c.get("Held", "").lower())
         matched = (stamp.group(1) == "keeps" and not is_withheld) if stamp else scripted
         if stamp and not is_withheld and scripted != matched:
             print(f"NOTE card {c['id']}: the stamp says {stamp.group(1)} and the script reads {'a match' if scripted else 'no match'}")
