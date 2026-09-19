@@ -57,9 +57,12 @@ def read_card(path):
 
 def landing(card, has_third):
     """Where the third derivation landed against the recommendation, in the card's own word."""
-    m = re.search(r"\b(agrees|differs|declines)\b", card["fields"].get("Third derivation", ""), re.I)
-    if m:
-        return m.group(1).lower()
+    # the verdict is the clause after the file; a landing split across two halves of a question keeps both words
+    clauses = card["fields"].get("Third derivation", "").split(";")
+    verdict = re.split(r"\.\s", clauses[1] if len(clauses) > 1 else clauses[0])[0]
+    words = list(dict.fromkeys(w.lower() for w in re.findall(r"\b(agrees|differs|declines)\b", verdict, re.I)))
+    if words:
+        return " / ".join(words)
     if "Third derivation" in card["fields"]:
         print(f"UNSTATED {card['file']}: the Third derivation line says neither agrees, differs nor declines", file=sys.stderr)
         return "not stated"
@@ -105,7 +108,7 @@ def main():
         is_ruled = bool(ruled) and ruled.lower() != "open" and not ruled.startswith("<")
         mm = re.search(r"margin:\s*([^;]+?)\s+over\s", rec)
         landings[name(c)] = landing(c, k["third"])
-        held = {"matches": "keeps it", "leaves": "leaves it", "withheld": "", "none held": "nothing held"}.get(k["stance"], "")
+        held = {"matches": "keeps it", "leaves": "leaves it", "withheld held": "held; neither kept nor left", "withheld": "nothing held", "none held": "nothing held"}.get(k["stance"], "")
         title = c["head"].split("·", 1)[1].strip() if "·" in c["head"] else ""
         sheet.append(f"| {cid_of(c)} | {title} | {rec.split(';')[0].strip()} | {mm.group(1) if mm else ''} | {held} | {landings[name(c)]} | {'ruled' if is_ruled else 'open'} |")
         if c["joint"]:
@@ -125,9 +128,10 @@ def main():
         (ruled_cards if is_ruled else open_cards).append("\n\n".join(keep))
 
     # the owner reads facts in words; the check's own lines stay in the run record
-    m = re.search(r"(\d+) cards; (\d+) hold a value; (\d+) match it; (\d+) leave it; (\d+) withheld; (\d+) third derivations; (\d+) outstanding; (\d+) mismatched margin units", raw)
+    m = re.search(r"(\d+) cards; (\d+) hold a value; (\d+) match it; (\d+) leave it; (\d+) withheld; (\d+) third derivations; (\d+) outstanding; (\d+) mismatched margin units; (\d+) legs marked differs", raw)
     if m:
-        n, held, matches, leaves, withheld, thirds, outstanding, mism = (int(x) for x in m.groups())
+        n, held, matches, leaves, withheld, thirds, outstanding, mism, differs = (int(x) for x in m.groups())
+        part = [k for k, v in landings.items() if "/" in v]
         by = lambda w: [k for k, v in landings.items() if v == w]
         counts = (f"{n} cards. Every card offers at least two ways the market sells this, each with a figure. "
                   f"On {held} cards the venue already held a value: {matches} recommendations keep it and {leaves} leave it"
@@ -135,9 +139,11 @@ def main():
                   + ". Keeping and leaving were asked for the same proof, a second derivation by a fresh clerk reading the market alone. "
                   + f"Of {thirds} such derivations, {len(by('agrees'))} agree with the first"
                   + (f", {len(by('differs'))} differ ({', '.join(by('differs'))})" if by("differs") else "")
-                  + (f", {len(by('declines'))} decline to recommend ({', '.join(by('declines'))})" if by("declines") else "") + "."
+                  + (f", {len(by('declines'))} decline to recommend ({', '.join(by('declines'))})" if by("declines") else "")
+                  + (f", {len(part)} agree on one half of the question and not the other ({', '.join(part)})" if part else "") + "."
                   + (f" {outstanding} held values have no second derivation yet." if outstanding else "")
-                  + (f" {mism} margins are stated in a unit other than their runner-up's." if mism else ""))
+                  + (f" {mism} margins are stated in a unit other than their runner-up's." if mism else "")
+                  + (f" The measured-in lines mark a measured population as differing from this venue's shape {differs} times." if differs else ""))
     else:
         counts = raw
     # a card's own words about its match must agree with the check's count of it

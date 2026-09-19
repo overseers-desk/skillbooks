@@ -151,7 +151,7 @@ def main():
                 refusals.append(f"card {c['id']}: a value is held on this parameter and no third derivation is recorded")
         # a mark reads "<dimension>: differs" or "differs on <dimension>"; "nothing is marked differs" is not one
         differs += len(re.findall(r"(?<!marked )(?<!no )(?<!none )\bdiffers\b(?! is marked)", re.sub(r"\b(nothing|none|no \w+)( \w+){0,3} marked differs\b|\bnot marked differs\b", "", c.get("Measured in", "").lower())))
-        stance = "withheld" if is_withheld else "matches" if matched else "leaves" if is_held else "none held"
+        stance = ("withheld held" if is_held else "withheld") if is_withheld else "matches" if matched else "leaves" if is_held else "none held"
         runner_name = runner["name"] if chosen and mm and runner else ""
         print(f"card {c['id']}: {len(figured)} figured options; prior match: {matched}; held value: {stance}; third derivation: {bool(third)}; chosen: {chosen['name'] if chosen else ''} | runner-up: {runner_name}")
     outstanding = held - returned
