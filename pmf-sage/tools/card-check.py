@@ -137,7 +137,8 @@ def main():
             matches += 1
             if third:
                 returned += 1
-        differs += c.get("Measured in", "").lower().count("differs")
+        # a mark reads "<dimension>: differs" or "differs on <dimension>"; "nothing is marked differs" is not one
+        differs += len(re.findall(r"(?<!marked )(?<!no )(?<!none )\bdiffers\b(?! is marked)", re.sub(r"\b(nothing|none|no \w+)( \w+){0,3} marked differs\b|\bnot marked differs\b", "", c.get("Measured in", "").lower())))
         print(f"card {c['id']}: {len(figured)} figured options; prior match: {matched}" + ("; returned by third derivation" if matched and third else ""))
     outstanding = matches - returned
     if cards and outstanding / len(cards) > 0.1:
