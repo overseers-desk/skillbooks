@@ -96,7 +96,10 @@ def main():
         if is_withheld:
             # no option is carried: the line names the two readings and what would carry either
             named = [o for o in c["options"] if o["name"] in rec]
-            if len(named) < 2 or not re.search(r"standing at:\s*\S", rec, re.I) or not re.search(r"carried by:\s*\S", rec, re.I):
+            standing = re.search(r"standing at:\s*([^;]+)", rec, re.I)
+            if standing and len(standing.group(1).split()) > 20:
+                refusals.append(f"card {c['id']}: the standing-at clause runs to {len(standing.group(1).split())} words; the form asks for twenty or fewer, the rest belongs in the corrections")
+            if len(named) < 2 or not standing or not re.search(r"carried by:\s*\S", rec, re.I):
                 refusals.append(f"card {c['id']}: a withheld recommendation names two options, the counts after 'standing at:', and after 'carried by:' the observation that would carry either")
         elif not chosen:
             refusals.append(f"card {c['id']}: recommended ruling names no option")
@@ -147,6 +150,9 @@ def main():
         rests = re.search(r"rests on:\s*(market|own buyers|both)\b", rec, re.I)
         if not is_withheld and chosen and not rests:
             refusals.append(f"card {c['id']}: the Recommended line does not say what it rests on (rests on: market, own buyers, or both)")
+        # leaving a held value rests on an instrument that could have shown the held value winning, and the line names it
+        if is_held and not matched and not is_withheld and chosen and not re.search(r"seen by:\s*\S", rec, re.I):
+            refusals.append(f"card {c['id']}: the line leaves a held value and does not name, after 'seen by:', the instrument that could have shown the held value winning")
         third = [f for f in re.findall(r"`([^`]+)`", c.get("Third derivation", "") + " " + c.get("Corrections", "")) if "third-" in Path(f).name and ((run / "3-decisions" / f).exists() or (run / f).exists())]
         withheld += is_withheld
         matches += matched

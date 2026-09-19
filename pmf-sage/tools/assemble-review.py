@@ -102,7 +102,7 @@ def main():
     cid_of = lambda c: re.search(r"^## Card\s+(\S+)", c["head"]).group(1).rstrip("·").strip()
     value = lambda c, f: c["fields"].get(f, "").split("**", 2)[-1].strip()
 
-    sheet = ["| card | the question | recommended | margin, or the counts it stands at | rests on | what is held | third derivation | ruled |", "|---|---|---|---|---|---|---|---|"]
+    sheet = ["| card | your part | the question | recommended | margin, or the counts it stands at | rests on | what is held | third derivation | ruled |", "|---|---|---|---|---|---|---|---|---|"]
     open_cards, ruled_cards, joints, landings = [], [], [], {}
     for c in cards:
         k = checked.get(cid_of(c), {"match": False, "stance": "", "third": False, "rests": "", "chosen": "", "runner": ""})
@@ -118,7 +118,12 @@ def main():
         standing = re.search(r"standing at:\s*([^;]+)", rec, re.I)
         margin = mm.group(1) if mm else standing.group(1).strip() if standing else ""
         ruled_cell = ("ruled; the card leaves the ruling" if k["stance"] == "leaves" else "ruled") if is_ruled else "open"
-        sheet.append(f"| {cid_of(c)} | {title} | {recommended} | {margin} | {k['rests']} | {held} | {landings[name(c)]} | {ruled_cell} |")
+        withheld_row = k["stance"].startswith("withheld")
+        if is_ruled:
+            part = "rule again, or let your ruling stand" if k["stance"] == "leaves" else "nothing: the evidence neither confirms nor overturns your ruling" if withheld_row else "nothing: the card agrees with your ruling"
+        else:
+            part = "commission the observation, or rule between the two" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
+        sheet.append(f"| {cid_of(c)} | {part} | {title} | {recommended} | {margin} | {k['rests']} | {held} | {landings[name(c)]} | {ruled_cell} |")
         if c["joint"]:
             joints.append(f"{name(c)}: {c['joint']}")
         if is_ruled:
