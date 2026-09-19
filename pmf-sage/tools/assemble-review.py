@@ -93,17 +93,17 @@ def main():
     raw = subprocess.run([sys.executable, str(here / "card-check.py"), str(run)], capture_output=True, text=True).stdout.strip()
     (decisions / "card-check.txt").write_text(raw + "\n")
     checked = {}
-    for cid, match, stance, third, chosen, runner in re.findall(
-            r"^card (\S+):.*?prior match: (True|False); held value: ([a-z ]+); third derivation: (True|False); chosen: (.*?) \| runner-up: (.*)$", raw, re.M):
-        checked[cid] = {"match": match == "True", "stance": stance, "third": third == "True", "chosen": chosen, "runner": runner}
+    for cid, match, stance, third, rests, chosen, runner in re.findall(
+            r"^card (\S+):.*?prior match: (True|False); held value: ([a-z ]+); third derivation: (True|False); rests on: ([a-z ]*); chosen: (.*?) \| runner-up: (.*)$", raw, re.M):
+        checked[cid] = {"match": match == "True", "stance": stance, "third": third == "True", "rests": rests, "chosen": chosen, "runner": runner}
     name = lambda c: c["head"].split(" ·")[0].replace("## ", "")
     cid_of = lambda c: re.search(r"^## Card\s+(\S+)", c["head"]).group(1).rstrip("·").strip()
     value = lambda c, f: c["fields"].get(f, "").split("**", 2)[-1].strip()
 
-    sheet = ["| card | the question | recommended | margin | what is held | third derivation | ruled |", "|---|---|---|---|---|---|---|"]
+    sheet = ["| card | the question | recommended | margin, or the counts it stands at | rests on | what is held | third derivation | ruled |", "|---|---|---|---|---|---|---|---|"]
     open_cards, ruled_cards, joints, landings = [], [], [], {}
     for c in cards:
-        k = checked.get(cid_of(c), {"match": False, "stance": "", "third": False, "chosen": "", "runner": ""})
+        k = checked.get(cid_of(c), {"match": False, "stance": "", "third": False, "rests": "", "chosen": "", "runner": ""})
         rec, ruled = value(c, "Recommended"), value(c, "Ruled")
         is_ruled = bool(ruled) and ruled.lower() != "open" and not ruled.startswith("<")
         mm = re.search(r"margin:\s*([^;]+?)\s+over\s", rec)
@@ -113,7 +113,10 @@ def main():
         landings[name(c)] = landing(c, k["third"])
         held = {"matches": "keeps it", "leaves": "leaves it", "withheld held": "held; neither kept nor left", "withheld": "nothing held", "none held": "nothing held"}.get(k["stance"], "")
         title = c["head"].split("·", 1)[1].strip() if "·" in c["head"] else ""
-        sheet.append(f"| {cid_of(c)} | {title} | {recommended} | {mm.group(1) if mm else ''} | {held} | {landings[name(c)]} | {'ruled' if is_ruled else 'open'} |")
+        standing = re.search(r"standing at:\s*([^;]+)", rec, re.I)
+        margin = mm.group(1) if mm else standing.group(1).strip() if standing else ""
+        ruled_cell = ("ruled; the card leaves the ruling" if k["stance"] == "leaves" else "ruled") if is_ruled else "open"
+        sheet.append(f"| {cid_of(c)} | {title} | {recommended} | {margin} | {k['rests']} | {held} | {landings[name(c)]} | {ruled_cell} |")
         if c["joint"]:
             joints.append(f"{name(c)}: {c['joint']}")
         if is_ruled:
