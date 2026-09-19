@@ -58,7 +58,8 @@ def check_file(path, refs, finds, nouns, failures, is_brief):
     """Brief text is where scoping hides; a survey record naming a buyer or a price in a dated count is evidence.
     So the tests run over the brief and over the files under briefs/ it names, and over nothing else."""
     for n, line in enumerate(path.read_text(errors="replace").splitlines(), 1):
-        low = line.lower()
+        # a cited path is a file's name, not a line fixing a buyer
+        low = re.sub(r"`[^`]*`", " ", line).lower()
         fixing = any(re.search(p, low) for p in FIXING) or (is_brief and any(re.search(r"\b" + re.escape(w) + r"\b", low) for w in nouns))
         if not fixing:
             continue
