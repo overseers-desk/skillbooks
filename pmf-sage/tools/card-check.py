@@ -96,7 +96,7 @@ def main():
         if is_withheld:
             # no option is carried: the line names the two readings and what would carry either
             named = [o for o in c["options"] if o["name"] in rec]
-            if len(named) < 2 or not re.search(r"carried by:\s*\S", rec):
+            if len(named) < 2 or not re.search(r"carried by:\s*\S", rec, re.I):
                 refusals.append(f"card {c['id']}: a withheld recommendation names two options and, after 'carried by:', the observation that would carry either")
         elif not chosen:
             refusals.append(f"card {c['id']}: recommended ruling names no option")
