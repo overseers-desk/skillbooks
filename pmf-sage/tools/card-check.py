@@ -136,10 +136,16 @@ def main():
                     strongest = max(same, key=lambda o: num(NUM.search(o["figure"]).group()))
                     if strongest is not runner:
                         refusals.append(f"card {c['id']}: margin is stated over '{runner['name']}' but '{strongest['name']}' ({strongest['figure']}) is the strongest other option; state the margin against it, negative if it is")
+            # the sign of a margin follows the two figures: a recommended option with the smaller count leads by a negative number
+            if mm and runner and chosen and unit(chosen["figure"]) == unit(runner["figure"]) and denom(chosen["figure"]) == denom(runner["figure"]):
+                a0, b0 = NUM.search(chosen["figure"]), NUM.search(runner["figure"])
+                negative = mm.group(1).strip().startswith(("-", "−"))
+                if a0 and b0 and num(a0.group()) < num(b0.group()) and not negative and unit(mm.group(1)) == unit(runner["figure"]) and not re.search(r"derived on:\s*\S", rec, re.I):
+                    refusals.append(f"card {c['id']}: the recommended option's figure ({chosen['figure']}) is below the runner-up's ({runner['figure']}) and the margin is written without a minus sign")
             if mm and runner and unit(mm.group(1)) == unit(runner["figure"]):
                 # where both figures are plain numbers in one unit, the margin is their difference or the line says how it was derived
                 a_, b_, m_ = NUM.search(chosen["figure"]), NUM.search(runner["figure"]), NUM.search(mm.group(1))
-                if a_ and b_ and m_ and abs(abs(num(a_.group()) - num(b_.group())) - num(m_.group())) > 0.005 and not tail[len(runner["name"]):].strip(" ;."):
+                if a_ and b_ and m_ and abs(abs(num(a_.group()) - num(b_.group())) - num(m_.group())) > 0.005 and not re.search(r"derived on:\s*\S", rec, re.I):
                     refusals.append(f"card {c['id']}: margin {m_.group()} is not {chosen['figure']} less {runner['figure']}, and the line does not say how it was derived")
         # the match is judged on the recommended option's name, which carries its value; a prevalence count is not a value
         judged = chosen["name"] if chosen else rec.split(";")[0]
@@ -155,8 +161,8 @@ def main():
         if not is_withheld and chosen and not rests:
             refusals.append(f"card {c['id']}: the Recommended line does not say what it rests on (rests on: market, own buyers, or both)")
         # leaving a held value rests on an instrument that could have shown the held value winning, and the line names it
-        if is_held and not matched and not is_withheld and chosen and not re.search(r"seen by:\s*\S", rec, re.I):
-            refusals.append(f"card {c['id']}: the line leaves a held value and does not name, after 'seen by:', the instrument that could have shown the held value winning")
+        if is_held and not is_withheld and chosen and not re.search(r"seen by:\s*\S", rec, re.I):
+            refusals.append(f"card {c['id']}: the line does not name, after 'seen by:', the instrument that could see both options it ranks; keeping a held value and leaving it are asked alike")
         third = [f for f in re.findall(r"`([^`]+)`", c.get("Third derivation", "") + " " + c.get("Corrections", "")) if "third-" in Path(f).name and ((run / "3-decisions" / f).exists() or (run / f).exists())]
         withheld += is_withheld
         matches += matched
