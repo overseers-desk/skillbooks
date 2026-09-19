@@ -119,6 +119,10 @@ def main():
             if mm and runner and unit(mm.group(1)) != unit(runner["figure"]) and not count_lead:
                 mismatched += 1
                 refusals.append(f"card {c['id']}: margin unit '{unit(mm.group(1))}' is not the runner-up's '{unit(runner['figure'])}'")
+            # a count lead of one or two is erased by one operator coded the other way, which the method reads as a tie
+            lead = NUM.search(mm.group(1)) if mm else None
+            if lead and "%" not in mm.group(1) and "$" not in mm.group(1) and not mm.group(1).strip().startswith(("-", "−")) and 0 < num(lead.group()) <= 2 and num(lead.group()) == int(num(lead.group())):
+                refusals.append(f"card {c['id']}: a lead of {lead.group()} is erased by one operator coded the other way; the method reads it as a tie, so the line is withheld or rests on a wider lead")
             if mm and runner:
                 # the runner-up is the strongest other option in the chosen option's unit; a margin against a weaker one hides the front-runner
                 # comparable figures: counts over the same denominator ("N of M ..."), or the same count unit; a value (minutes, dollars) is not a strength
