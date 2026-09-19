@@ -173,10 +173,10 @@ def main():
     fields = (decisions / "integrator-fields.md").read_text(errors="replace") if (decisions / "integrator-fields.md").exists() else ""
     order = [section(fields, title) for title in ("Unlock", "Collisions")]
     order = "\n\n".join(b for b in order if b and not b.lstrip("(").lower().startswith("none"))
-    joint_text = "\n".join("- " + j for j in joints)
+    # a run's joint ledger, where it keeps one, follows the order of ruling; the Joint lines stay in the card files and are read here only to check quotations
     ledger = decisions / "joint-ledger.md"
     if ledger.exists():
-        joint_text = (joint_text + "\n\n" + ledger.read_text(errors="replace").strip()).strip()
+        order = (order + "\n\n" + ledger.read_text(errors="replace").strip()).strip()
     # a phrase the integrator credits to a card's Joint line must appear in that line verbatim; the integrator's prose has no other check
     joint_by_card = {j.split(":")[0]: j for j in joints}
     for line in order.splitlines():
@@ -187,8 +187,7 @@ def main():
            .replace("{{order}}", order or "(the integrator named no order)")
            .replace("{{counts}}", counts or "(no cards)")
            .replace("{{cards}}", "\n\n".join(open_cards) or "(no open cards)")
-           .replace("{{ruled}}", "\n\n".join(ruled_cards) or "(no card is ruled yet)")
-           .replace("{{joints}}", joint_text or "(none)"))
+           .replace("{{ruled}}", "\n\n".join(ruled_cards) or "(no card is ruled yet)"))
     (decisions / "review.md").write_text(out)
     print(f"wrote {decisions / 'review.md'} from {len(cards)} cards")
 
