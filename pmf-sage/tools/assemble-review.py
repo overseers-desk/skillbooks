@@ -60,6 +60,8 @@ def landing(card, has_third):
     # the verdict is the clause after the file; a landing split across two halves of a question keeps both words
     clauses = card["fields"].get("Third derivation", "").split(";")
     verdict = re.split(r"\.\s", clauses[1] if len(clauses) > 1 else clauses[0])[0]
+    # "differs from nothing" and "declines nothing" say the opposite of the word they carry
+    verdict = re.sub(r"\b(differs|declines)( \w+){0,2} (nothing|nowhere)\b|\bnowhere (differs|declines)\b", " ", verdict, flags=re.I)
     words = list(dict.fromkeys(w.lower() for w in re.findall(r"\b(agrees|differs|declines)\b", verdict, re.I)))
     if words:
         return " / ".join(words)
