@@ -117,10 +117,13 @@ def main():
         title = c["head"].split("·", 1)[1].strip() if "·" in c["head"] else ""
         standing = re.search(r"standing at:\s*([^;]+)", rec, re.I)
         margin = mm.group(1) if mm else standing.group(1).strip() if standing else ""
+        # beside a margin, the two figures it was taken between, so a lead of 6 to 1 and one of 27 to 26 do not read alike
+        if mm and k["chosen"] in c["rows"] and k["runner"] in c["rows"]:
+            margin += f" ({c['rows'][k['chosen']][1]} against {c['rows'][k['runner']][1]})"
         ruled_cell = ("ruled; the card leaves the ruling" if k["stance"] == "leaves" else "ruled") if is_ruled else "open"
         withheld_row = k["stance"].startswith("withheld")
         if is_ruled:
-            part = "rule again, or let your ruling stand" if k["stance"] == "leaves" else "nothing: the evidence neither confirms nor overturns your ruling" if withheld_row else "nothing: the card agrees with your ruling"
+            part = "rule again, or let your ruling stand" if k["stance"] == "leaves" else "your ruling stands; read the counts in this row against it" if withheld_row else "nothing: the card agrees with your ruling"
         else:
             part = "commission the observation, or rule between the two" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
         sheet.append(f"| {cid_of(c)} | {part} | {title} | {recommended} | {margin} | {k['rests']} | {held} | {landings[name(c)]} | {ruled_cell} |")
