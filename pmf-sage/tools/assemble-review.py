@@ -10,7 +10,7 @@ ruling, the counts from the card check, the open cards with the recommended opti
 import re, subprocess, sys
 from pathlib import Path
 
-FACE = ("Question", "Recommended")
+FACE = ("Question", "Options", "Recommended")  # the line under the options table counts the silent operators once
 
 
 def section(text, title):
@@ -129,7 +129,7 @@ def main():
             table = c["table"] + [c["rows"][n][0] for n in (full if len(full) >= 2 else c["rows"])]
             rest = [f"{n} ({fig})" for n, (row, fig) in c["rows"].items() if n not in full] if len(full) >= 2 else []
             keep = ([c["head"]] + with_prose(c, "Question") + ["**Options**", "\n".join(table)]
-                    + (["Other options, each with its figure: " + "; ".join(rest) + "."] if rest else []) + with_prose(c, "Recommended"))
+                    + (["Other options, each with its figure: " + "; ".join(rest) + "."] if rest else []) + c["prose"].get("Options", []) + with_prose(c, "Recommended"))
         keep += [c["fields"][f] for f in ("Third derivation", "Ruled") if f in c["fields"]]
         (ruled_cards if is_ruled else open_cards).append("\n\n".join(keep))
 
