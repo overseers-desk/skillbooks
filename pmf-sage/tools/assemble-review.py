@@ -118,7 +118,10 @@ def main():
         standing = re.search(r"standing at:\s*([^;]+)", rec, re.I)
         margin = mm.group(1) if mm else standing.group(1).strip() if standing else ""
         # beside a margin, the two figures it was taken between, so a lead of 6 to 1 and one of 27 to 26 do not read alike
-        if mm and k["chosen"] in c["rows"] and k["runner"] in c["rows"]:
+        derived = re.search(r"derived on:\s*([^;]+)", rec, re.I)
+        if mm and derived:
+            margin += f" (derived on {derived.group(1).strip()})"
+        elif mm and k["chosen"] in c["rows"] and k["runner"] in c["rows"]:
             margin += f" ({c['rows'][k['chosen']][1]} against {c['rows'][k['runner']][1]})"
         ruled_cell = ("ruled; the card leaves the ruling" if k["stance"] == "leaves" else "ruled") if is_ruled else "open"
         withheld_row = k["stance"].startswith("withheld")
