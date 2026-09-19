@@ -2,12 +2,15 @@
 """Assemble the decision review from the card files; the integrator's prose enters only through named fields.
 
 Usage: assemble-review.py <run-dir>
-Reads <run-dir>/3-decisions/**/*.md cards (quoting each card's Joint line into Collisions), <run-dir>/3-decisions/integrator-fields.md (on forms/integrator-fields.md, sections
+Reads <run-dir>/3-decisions/**/*.md cards, <run-dir>/3-decisions/integrator-fields.md (on forms/integrator-fields.md, sections
 ## Unlock and ## Collisions) and <run-dir>/3-decisions/joint-ledger.md if present.
-Writes <run-dir>/3-decisions/review.md from forms/review.md beside this script.
+Writes <run-dir>/3-decisions/review.md from forms/review.md beside this script: the ruling sheet (one row a card), the order of
+ruling, the counts from the card check, the open cards with the recommended option and its runner-up in full, the ruled cards in short, and each card's Joint line.
 """
 import re, subprocess, sys
 from pathlib import Path
+
+FACE = ("Question", "Recommended")
 
 
 def section(text, title):
@@ -15,106 +18,158 @@ def section(text, title):
     return m.group(1).strip() if m else ""
 
 
+def read_card(path):
+    """The card's face by field: the line under each label, the option rows, and the Joint line."""
+    card = {"file": path.name, "head": "", "fields": {}, "prose": {}, "table": [], "rows": {}, "joint": ""}
+    field, in_table = None, False
+    for line in path.read_text(errors="replace").splitlines():
+        s = line.strip()
+        fm = re.match(r"\*\*([A-Za-z ]+):?\*\*", s)
+        if fm:
+            field = fm.group(1)
+        if s.startswith("## Card"):
+            card["head"] = s
+        elif s.startswith("**Options**"):
+            in_table = True
+        elif in_table and s.startswith("|"):
+            cells = [c.strip() for c in s.strip("|").split("|")]
+            if cells[0] in ("option", "---") or set(cells[0]) <= set("-: "):
+                card["table"].append(s)
+            else:
+                card["rows"][cells[0]] = (s, cells[1] if len(cells) > 1 else "")
+        elif fm:
+            card["fields"].setdefault(field, s)
+            in_table = False
+        elif s and not fm and not s.startswith(("#", "|", "-")) and card["head"]:
+            in_table = False
+            # the face is the question, the options and the recommendation with what the clerk wrote beside them; prose under another field is not in the review
+            if field in FACE:
+                card["prose"].setdefault(field, []).append(s)
+            elif field != "Cost lines":
+                # the form asks for cost lines one to a line, so plain lines there are the form kept, not a paragraph lost
+                print(f"DROPPED {path.name}: paragraph under {field}: {s[:70]}", file=sys.stderr)
+        # the Joint line runs to the next field label or the line's end; a bullet after the label and emphasis inside the text are both the clerk's
+        jm = re.search(r"\*\*Joint:\*\*\s*(?:·\s*)?(.*?)(?=\s*(?:·\s*)?\*\*[A-Za-z ]+:\*\*|$)", s)
+        if jm and jm.group(1).strip():
+            card["joint"] = jm.group(1).strip()
+    return card
+
+
+def landing(card, has_third):
+    """Where the third derivation landed against the recommendation, in the card's own word."""
+    m = re.search(r"\b(agrees|differs|declines)\b", card["fields"].get("Third derivation", ""), re.I)
+    if m:
+        return m.group(1).lower()
+    if "Third derivation" in card["fields"]:
+        print(f"UNSTATED {card['file']}: the Third derivation line says neither agrees, differs nor declines", file=sys.stderr)
+        return "not stated"
+    if not has_third:
+        return "none"
+    return "differs" if re.search(r"\b(diverg|did not reach|landed on a different)", card["fields"].get("Corrections", ""), re.I) else "agrees"
+
+
+def with_prose(card, field):
+    return [card["fields"][field]] + card["prose"].get(field, []) if field in card["fields"] else []
+
+
 def main():
     run = Path(sys.argv[1]).resolve()
     here = Path(__file__).resolve().parent
     template = (here.parent / "forms" / "review.md").read_text()
     decisions = run / "3-decisions"
-    cards, joints = [], []
+
     def card_number(path):
         m = re.search(r"^## Card\s+(\d+)", path.read_text(errors="replace"), re.M)
         return int(m.group(1)) if m else 10**6
-    files = [p for p in decisions.glob("**/*.md") if p.name != "review.md"]
-    for p in sorted(files, key=card_number):
+    cards = []
+    for p in sorted((p for p in decisions.glob("**/*.md") if p.name != "review.md"), key=card_number):
         t = p.read_text(errors="replace")
-        if not re.search(r"^## Card\s", t, re.M) or re.search(r"^## Third derivation", t, re.M):
-            continue
-        keep = []
-        in_table = False
-        field = None
-        for line in t.splitlines():
-            s = line.strip()
-            fm = re.match(r"\*\*([A-Za-z ]+):?\*\*", s)
-            if fm:
-                field = fm.group(1)
-            if s.startswith("## Card") or s.startswith("**Question:**") or s.startswith("**Recommended:**") or s.startswith("**Ruled:**") or s.startswith("**Chip:**"):
-                keep.append(line)
-            elif s.startswith("**Corrections:**") and s != "**Corrections:**":
-                keep.append(line)
-            elif s.startswith("**Options**"):
-                in_table = True
-                keep.append(line)
-            elif in_table and s.startswith("|"):
-                keep.append(line)
-            elif s and not fm and not s.startswith("#") and not s.startswith("|") and not s.startswith("-") and keep:
-                in_table = False
-                # the card's face is the question, the options, the recommendation and what the clerk wrote beside them; prose under any other field is not in the review
-                if field in ("Question", "Recommended"):
-                    keep.append("")
-                    keep.append(line)
-                elif field != "Cost lines":
-                    # the form asks for cost lines one to a line, so plain lines there are the form kept, not a paragraph lost
-                    print(f"DROPPED {p.name}: paragraph under {field}: {s[:70]}", file=sys.stderr)
-            elif in_table and s:
-                in_table = False
-            # the line runs to the next field label or the line's end; a bullet after the label and emphasis inside the text are both the clerk's
-            jm = re.search(r"\*\*Joint:\*\*\s*(?:·\s*)?(.*?)(?=\s*(?:·\s*)?\*\*[A-Za-z ]+:\*\*|$)", s)
-            if jm and jm.group(1).strip():
-                joints.append(f"{keep[0].lstrip('# ').split(' ·')[0]}: {jm.group(1).strip()}")
-        cards.append("\n".join(keep))
+        if re.search(r"^## Card\s", t, re.M) and not re.search(r"^## Third derivation", t, re.M):
+            cards.append(read_card(p))
+
     raw = subprocess.run([sys.executable, str(here / "card-check.py"), str(run)], capture_output=True, text=True).stdout.strip()
+    (decisions / "card-check.txt").write_text(raw + "\n")
+    checked = {}
+    for cid, match, stance, third, chosen, runner in re.findall(
+            r"^card (\S+):.*?prior match: (True|False); held value: ([a-z ]+); third derivation: (True|False); chosen: (.*?) \| runner-up: (.*)$", raw, re.M):
+        checked[cid] = {"match": match == "True", "stance": stance, "third": third == "True", "chosen": chosen, "runner": runner}
+    name = lambda c: c["head"].split(" ·")[0].replace("## ", "")
+    cid_of = lambda c: re.search(r"^## Card\s+(\S+)", c["head"]).group(1).rstrip("·").strip()
+    value = lambda c, f: c["fields"].get(f, "").split("**", 2)[-1].strip()
+
+    sheet = ["| card | the question | recommended | margin | what is held | third derivation | ruled |", "|---|---|---|---|---|---|---|"]
+    open_cards, ruled_cards, joints, landings = [], [], [], {}
+    for c in cards:
+        k = checked.get(cid_of(c), {"match": False, "stance": "", "third": False, "chosen": "", "runner": ""})
+        rec, ruled = value(c, "Recommended"), value(c, "Ruled")
+        is_ruled = bool(ruled) and ruled.lower() != "open" and not ruled.startswith("<")
+        mm = re.search(r"margin:\s*([^;]+?)\s+over\s", rec)
+        landings[name(c)] = landing(c, k["third"])
+        held = {"matches": "keeps it", "leaves": "leaves it", "withheld": "", "none held": "nothing held"}.get(k["stance"], "")
+        title = c["head"].split("·", 1)[1].strip() if "·" in c["head"] else ""
+        sheet.append(f"| {cid_of(c)} | {title} | {rec.split(';')[0].strip()} | {mm.group(1) if mm else ''} | {held} | {landings[name(c)]} | {'ruled' if is_ruled else 'open'} |")
+        if c["joint"]:
+            joints.append(f"{name(c)}: {c['joint']}")
+        if is_ruled:
+            keep = [c["head"]] + with_prose(c, "Question")[:1] + with_prose(c, "Recommended")[:1]
+        else:
+            # the two contenders in full; a withheld card's two readings are the options its line names
+            full = [n for n in (k["chosen"], k["runner"]) if n in c["rows"]]
+            if len(full) < 2:
+                full = [n for n in c["rows"] if n in rec]
+            table = c["table"] + [c["rows"][n][0] for n in (full if len(full) >= 2 else c["rows"])]
+            rest = [f"{n} ({fig})" for n, (row, fig) in c["rows"].items() if n not in full] if len(full) >= 2 else []
+            keep = ([c["head"]] + with_prose(c, "Question") + ["**Options**", "\n".join(table)]
+                    + (["Other options, each with its figure: " + "; ".join(rest) + "."] if rest else []) + with_prose(c, "Recommended"))
+        keep += [c["fields"][f] for f in ("Third derivation", "Ruled") if f in c["fields"]]
+        (ruled_cards if is_ruled else open_cards).append("\n\n".join(keep))
+
     # the owner reads facts in words; the check's own lines stay in the run record
-    m = re.search(r"(\d+) cards; (\d+) prior matches; (\d+) returned by third derivation; (\d+) outstanding; (\d+) mismatched margin units", raw)
-    # derivations and agreements are counted from the cards' own Corrections lines; the match count comes from the check
-    with_third = [c for c in cards if re.search(r"\*\*Corrections:\*\*.*`[^`]*third-[^`]*`", c)]
-    name = lambda c: c.split(" ·")[0].replace("## ", "")
-    diverged = [name(c) for c in with_third if re.search(r"\*\*Corrections:\*\*.*\b(diverg|did not reach|landed on a different)", c, re.I)]
-    agreed = [name(c) for c in with_third if name(c) not in diverged]
+    m = re.search(r"(\d+) cards; (\d+) hold a value; (\d+) match it; (\d+) leave it; (\d+) withheld; (\d+) third derivations; (\d+) outstanding; (\d+) mismatched margin units", raw)
     if m:
-        n, matched, returned, outstanding, mism = (int(x) for x in m.groups())
-        extra = len(with_third) - returned
+        n, held, matches, leaves, withheld, thirds, outstanding, mism = (int(x) for x in m.groups())
+        by = lambda w: [k for k, v in landings.items() if v == w]
         counts = (f"{n} cards. Every card offers at least two ways the market sells this, each with a figure. "
-                  f"{matched} recommendations landed on a value an internal document already held, and each was re-derived blind by a fresh clerk"
-                  + (f"; {extra} more were re-derived for a reason each card's Corrections line states" if extra > 0 else "")
-                  + f". Of the {len(with_third)} blind re-derivations ({', '.join(name(c) for c in with_third)}), {len(agreed)} agreed with the first"
-                  + (f" and {len(diverged)} diverged ({', '.join(diverged)}); both readings sit on those cards' Corrections lines." if diverged else ".")
-                  + (f" {outstanding} matched recommendations have no blind re-derivation yet." if outstanding else "")
+                  f"On {held} cards the venue already held a value: {matches} recommendations keep it and {leaves} leave it"
+                  + (f", and {withheld} are withheld because no option is carried" if withheld else "")
+                  + ". Keeping and leaving were asked for the same proof, a second derivation by a fresh clerk reading the market alone. "
+                  + f"Of {thirds} such derivations, {len(by('agrees'))} agree with the first"
+                  + (f", {len(by('differs'))} differ ({', '.join(by('differs'))})" if by("differs") else "")
+                  + (f", {len(by('declines'))} decline to recommend ({', '.join(by('declines'))})" if by("declines") else "") + "."
+                  + (f" {outstanding} held values have no second derivation yet." if outstanding else "")
                   + (f" {mism} margins are stated in a unit other than their runner-up's." if mism else ""))
-        (decisions / "card-check.txt").write_text(raw + "\n")
     else:
         counts = raw
     # a card's own words about its match must agree with the check's count of it
-    checked = {int(a): b == "True" for a, b in re.findall(r"^card (\d+):.*?prior match: (True|False)", raw, re.M)}
     for c in cards:
-        cid = re.search(r"^## Card\s+(\d+)", c, re.M)
-        if not cid or int(cid.group(1)) not in checked:
+        k = checked.get(cid_of(c))
+        if not k:
             continue
-        audit = " ".join(l for l in c.splitlines() if l.startswith("**Chip:**") or l.startswith("**Corrections:**"))
-        says_no = re.search(r"\b(did|does) not match a prior|not among the nine matched|re-derived for another reason", audit)
-        if checked[int(cid.group(1))] and says_no:
-            print(f"MISMATCH: Card {cid.group(1)} says it did not match a prior; the check counts it as matched", file=sys.stderr)
-        if not checked[int(cid.group(1))] and re.search(r"\bmatched a prior on the check|counts among the nine", audit):
-            print(f"MISMATCH: Card {cid.group(1)} says it matched a prior on the check; the check does not count it", file=sys.stderr)
+        audit = c["fields"].get("Chip", "") + " " + c["fields"].get("Corrections", "")
+        if k["match"] and re.search(r"\b(did|does) not match a prior|re-derived for another reason", audit):
+            print(f"MISMATCH: {name(c)} says it did not match a prior; the check counts it as matched", file=sys.stderr)
+        if not k["match"] and re.search(r"\bmatched a prior on the check", audit):
+            print(f"MISMATCH: {name(c)} says it matched a prior on the check; the check does not count it", file=sys.stderr)
+
     fields = (decisions / "integrator-fields.md").read_text(errors="replace") if (decisions / "integrator-fields.md").exists() else ""
-    collisions = "\n".join(("- " + j for j in joints)) if joints else ""
-    # the integrator's two fields print under one heading, and only where they say something the Joint lines do not
-    beyond = [section(fields, name) for name in ("Collisions", "Unlock")]
-    beyond = [b for b in beyond if b and not b.lstrip("(").lower().startswith("none")]
-    if beyond:
-        collisions = (collisions + "\n\n### Beyond the Joint lines\n\n" + "\n\n".join(beyond)).strip()
+    order = [section(fields, title) for title in ("Unlock", "Collisions")]
+    order = "\n\n".join(b for b in order if b and not b.lstrip("(").lower().startswith("none"))
+    joint_text = "\n".join("- " + j for j in joints)
     ledger = decisions / "joint-ledger.md"
     if ledger.exists():
-        collisions = (collisions + "\n\n" + ledger.read_text(errors="replace").strip()).strip()
-    # a phrase Unlock or Collisions credits to a card's Joint line must appear in that line verbatim; the integrator's prose has no other check
-    unlock = section(fields, "Unlock")
+        joint_text = (joint_text + "\n\n" + ledger.read_text(errors="replace").strip()).strip()
+    # a phrase the integrator credits to a card's Joint line must appear in that line verbatim; the integrator's prose has no other check
     joint_by_card = {j.split(":")[0]: j for j in joints}
-    for line in (unlock + "\n" + section(fields, "Collisions")).splitlines():
+    for line in order.splitlines():
         for card_ref, quoted in re.findall(r"(Card \d+)'s (?:own )?Joint line states[^\"]*\"([^\"]+)\"", line):
             if card_ref in joint_by_card and quoted not in joint_by_card[card_ref]:
                 print(f"MISQUOTE: {card_ref} does not say \"{quoted[:60]}\"", file=sys.stderr)
-    out = (template.replace("{{counts}}", counts or "(no cards)")
-           .replace("{{cards}}", "\n\n".join(cards) or "(no cards)")
-           .replace("{{collisions}}", collisions or "(none)"))
+    out = (template.replace("{{sheet}}", "\n".join(sheet) if cards else "(no cards)")
+           .replace("{{order}}", order or "(the integrator named no order)")
+           .replace("{{counts}}", counts or "(no cards)")
+           .replace("{{cards}}", "\n\n".join(open_cards) or "(no open cards)")
+           .replace("{{ruled}}", "\n\n".join(ruled_cards) or "(no card is ruled yet)")
+           .replace("{{joints}}", joint_text or "(none)"))
     (decisions / "review.md").write_text(out)
     print(f"wrote {decisions / 'review.md'} from {len(cards)} cards")
 

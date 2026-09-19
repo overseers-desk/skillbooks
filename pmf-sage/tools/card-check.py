@@ -4,9 +4,9 @@
 Usage: card-check.py <run-dir>
 Reads every card under <run-dir>/3-decisions/ written on forms/card.md.
 Refuses: fewer than two options carrying a figure; a recommendation naming no option or stating its
-margin in a unit other than the runner-up's, or not the difference of the two figures unless the line states its derivation, or stated against an option weaker than the strongest other; prior matches with no third derivation recorded (a backticked
-file named on the Corrections line that exists) above one in ten across the set.
-Reports: figured options per card, prior matches, mismatched margin units, legs marked differs.
+margin in a unit other than the runner-up's, or not the difference of the two figures unless the line states its derivation, or stated against an option weaker than the strongest other; a withheld recommendation that does not name
+two options and the observation that would carry either; a held value (a Priors line citing a file) with no third derivation recorded (a backticked third-derivation file, on the Third derivation line or the Corrections line, that exists).
+Reports: figured options per card; recommendations that match a held value, leave one, or are withheld, as counts and no more; mismatched margin units; legs marked differs.
 """
 import re, sys
 from pathlib import Path
@@ -47,7 +47,7 @@ def parse(text):
             continue
         if in_table and s and not s.startswith("|"):
             in_table = False
-        for key in ("Recommended", "Priors", "Measured in", "Ruled", "Corrections"):
+        for key in ("Recommended", "Priors", "Measured in", "Ruled", "Third derivation", "Corrections"):
             if s.startswith(f"**{key}:**"):
                 card[key] = s.split("**", 2)[2].strip()
     return card
@@ -81,7 +81,7 @@ def main():
     cards = [parse(p.read_text(errors="replace")) for p in sorted((run / "3-decisions").glob("**/*.md"))
              if p.name != "review.md" and re.search(r"^## Card\s", p.read_text(errors="replace"), re.M)
              and not re.search(r"^## Third derivation", p.read_text(errors="replace"), re.M)]
-    refusals, matches, returned, mismatched, differs = [], 0, 0, 0, 0
+    refusals, matches, leaves, withheld, held, returned, mismatched, differs = [], 0, 0, 0, 0, 0, 0, 0
     if not cards:
         print("REFUSED no card on forms/card.md found under 3-decisions/ (a `## Card N` heading per card)")
         sys.exit(1)
@@ -92,7 +92,13 @@ def main():
         rec = c.get("Recommended", "")
         name = rec.split(";")[0].strip()
         chosen = next((o for o in c["options"] if o["name"] == name), None)
-        if not chosen:
+        is_withheld = name.lower() == "withheld"
+        if is_withheld:
+            # no option is carried: the line names the two readings and what would carry either
+            named = [o for o in c["options"] if o["name"] in rec]
+            if len(named) < 2 or not re.search(r"carried by:\s*\S", rec):
+                refusals.append(f"card {c['id']}: a withheld recommendation names two options and, after 'carried by:', the observation that would carry either")
+        elif not chosen:
             refusals.append(f"card {c['id']}: recommended ruling names no option")
         else:
             others = [o for o in figured if o is not chosen]
@@ -130,20 +136,26 @@ def main():
                     refusals.append(f"card {c['id']}: margin {m_.group()} is not {chosen['figure']} less {runner['figure']}, and the line does not say how it was derived")
         # the match is judged on the recommended option's name, which carries its value; a prevalence count is not a value
         judged = chosen["name"] if chosen else rec.split(";")[0]
-        matched = prior_match(judged, c.get("Priors", ""), c["options"])
-        # a matched card is returned once its Corrections line names a third-derivation file that exists
-        third = [f for f in re.findall(r"`([^`]+)`", c.get("Corrections", "")) if "third-" in Path(f).name and ((run / "3-decisions" / f).exists() or (run / f).exists())]
-        if matched:
-            matches += 1
+        matched = not is_withheld and prior_match(judged, c.get("Priors", ""), c["options"])
+        # a value is held where the priors clerk cited a file for it; staying with it and leaving it take the same third derivation
+        is_held = "`" in c.get("Priors", "") and not c.get("Priors", "").startswith("<")
+        third = [f for f in re.findall(r"`([^`]+)`", c.get("Third derivation", "") + " " + c.get("Corrections", "")) if "third-" in Path(f).name and ((run / "3-decisions" / f).exists() or (run / f).exists())]
+        withheld += is_withheld
+        matches += matched
+        leaves += is_held and not matched and not is_withheld
+        if is_held:
+            held += 1
             if third:
                 returned += 1
+            else:
+                refusals.append(f"card {c['id']}: a value is held on this parameter and no third derivation is recorded")
         # a mark reads "<dimension>: differs" or "differs on <dimension>"; "nothing is marked differs" is not one
         differs += len(re.findall(r"(?<!marked )(?<!no )(?<!none )\bdiffers\b(?! is marked)", re.sub(r"\b(nothing|none|no \w+)( \w+){0,3} marked differs\b|\bnot marked differs\b", "", c.get("Measured in", "").lower())))
-        print(f"card {c['id']}: {len(figured)} figured options; prior match: {matched}" + ("; returned by third derivation" if matched and third else ""))
-    outstanding = matches - returned
-    if cards and outstanding / len(cards) > 0.1:
-        refusals.append(f"{outstanding} of {len(cards)} recommendations match a prior with no third derivation recorded; the set returns to the clerks")
-    print(f"{len(cards)} cards; {matches} prior matches; {returned} returned by third derivation; {outstanding} outstanding; {mismatched} mismatched margin units; {differs} legs marked differs")
+        stance = "withheld" if is_withheld else "matches" if matched else "leaves" if is_held else "none held"
+        runner_name = runner["name"] if chosen and mm and runner else ""
+        print(f"card {c['id']}: {len(figured)} figured options; prior match: {matched}; held value: {stance}; third derivation: {bool(third)}; chosen: {chosen['name'] if chosen else ''} | runner-up: {runner_name}")
+    outstanding = held - returned
+    print(f"{len(cards)} cards; {held} hold a value; {matches} match it; {leaves} leave it; {withheld} withheld; {returned} third derivations; {outstanding} outstanding; {mismatched} mismatched margin units; {differs} legs marked differs")
     for r in refusals:
         print("REFUSED " + r)
     sys.exit(1 if refusals else 0)
