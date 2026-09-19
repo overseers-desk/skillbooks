@@ -52,11 +52,13 @@ def main():
                 if field in ("Question", "Recommended"):
                     keep.append("")
                     keep.append(line)
-                else:
+                elif field != "Cost lines":
+                    # the form asks for cost lines one to a line, so plain lines there are the form kept, not a paragraph lost
                     print(f"DROPPED {p.name}: paragraph under {field}: {s[:70]}", file=sys.stderr)
             elif in_table and s:
                 in_table = False
-            jm = re.search(r"\*\*Joint:\*\*\s*([^·*]+?)(?:\s*·|$)", s)
+            # the line runs to the next field label or the line's end; a bullet after the label and emphasis inside the text are both the clerk's
+            jm = re.search(r"\*\*Joint:\*\*\s*(?:·\s*)?(.*?)(?=\s*(?:·\s*)?\*\*[A-Za-z ]+:\*\*|$)", s)
             if jm and jm.group(1).strip():
                 joints.append(f"{keep[0].lstrip('# ').split(' ·')[0]}: {jm.group(1).strip()}")
         cards.append("\n".join(keep))
@@ -64,7 +66,7 @@ def main():
     # the owner reads facts in words; the check's own lines stay in the run record
     m = re.search(r"(\d+) cards; (\d+) prior matches; (\d+) returned by third derivation; (\d+) outstanding; (\d+) mismatched margin units", raw)
     # derivations and agreements are counted from the cards' own Corrections lines; the match count comes from the check
-    with_third = [c for c in cards if re.search(r"\*\*Corrections:\*\*.*`third-", c)]
+    with_third = [c for c in cards if re.search(r"\*\*Corrections:\*\*.*`[^`]*third-[^`]*`", c)]
     name = lambda c: c.split(" ·")[0].replace("## ", "")
     diverged = [name(c) for c in with_third if re.search(r"\*\*Corrections:\*\*.*\b(diverg|did not reach|landed on a different)", c, re.I)]
     agreed = [name(c) for c in with_third if name(c) not in diverged]
