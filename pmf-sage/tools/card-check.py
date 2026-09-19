@@ -132,7 +132,7 @@ def main():
             if mm and runner and unit(mm.group(1)) == unit(runner["figure"]):
                 # where both figures are plain numbers in one unit, the margin is their difference or the line says how it was derived
                 a_, b_, m_ = NUM.search(chosen["figure"]), NUM.search(runner["figure"]), NUM.search(mm.group(1))
-                if a_ and b_ and m_ and abs(abs(num(a_.group()) - num(b_.group())) - num(m_.group())) > 0.005 and ";" not in rec.split("margin:")[0].strip(" ;"):
+                if a_ and b_ and m_ and abs(abs(num(a_.group()) - num(b_.group())) - num(m_.group())) > 0.005 and not tail[len(runner["name"]):].strip(" ;."):
                     refusals.append(f"card {c['id']}: margin {m_.group()} is not {chosen['figure']} less {runner['figure']}, and the line does not say how it was derived")
         # the match is judged on the recommended option's name, which carries its value; a prevalence count is not a value
         judged = chosen["name"] if chosen else rec.split(";")[0]
