@@ -107,10 +107,13 @@ def main():
         rec, ruled = value(c, "Recommended"), value(c, "Ruled")
         is_ruled = bool(ruled) and ruled.lower() != "open" and not ruled.startswith("<")
         mm = re.search(r"margin:\s*([^;]+?)\s+over\s", rec)
+        parts = [x.strip() for x in rec.split(";")]
+        # a withheld row names the two readings it stands between, so the sheet says what is undecided
+        recommended = ", ".join(parts[:2]) if parts[0].lower() == "withheld" and len(parts) > 1 and parts[1].lower().startswith("between") else parts[0]
         landings[name(c)] = landing(c, k["third"])
         held = {"matches": "keeps it", "leaves": "leaves it", "withheld held": "held; neither kept nor left", "withheld": "nothing held", "none held": "nothing held"}.get(k["stance"], "")
         title = c["head"].split("·", 1)[1].strip() if "·" in c["head"] else ""
-        sheet.append(f"| {cid_of(c)} | {title} | {rec.split(';')[0].strip()} | {mm.group(1) if mm else ''} | {held} | {landings[name(c)]} | {'ruled' if is_ruled else 'open'} |")
+        sheet.append(f"| {cid_of(c)} | {title} | {recommended} | {mm.group(1) if mm else ''} | {held} | {landings[name(c)]} | {'ruled' if is_ruled else 'open'} |")
         if c["joint"]:
             joints.append(f"{name(c)}: {c['joint']}")
         if is_ruled:
