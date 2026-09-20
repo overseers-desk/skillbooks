@@ -4,7 +4,7 @@ The almanac answers the question: given that time is finite and geography is con
 
 A conference in one city, an investor meetup in another, and a family obligation on the far side of the world may all fall within the same month. One cannot attend all. The almanac exists to make that trade-off explicit rather than leaving it to whichever invitation arrives last.
 
-The methodology has three stages. The first, discovery, is implemented. The second and third are not yet built.
+Two methods share the work. Discovery, in this folder, keeps a rated list of events current. Election, in `../presence-move/`, chooses over a date range which plan of places and events to run. They work on different ranges: a sweep covers a year or a season, an election covers the range the owner names, and the election checks that its range lies inside a swept one.
 
 ## Where the data lives
 
@@ -12,12 +12,13 @@ This repository holds the method. The event data lives in the user's own reposit
 
 - `profile.yaml` — bases, interests, pull events (opportunities important enough to override the default location plan), frequent destinations, and seasonal presence constraints.
 - `keywords.yaml` — a living ledger of search terms that have surfaced relevant events here.
-- `<year>.yaml` — the rated list: a star, a shortlist flag, a participation status and the reasoning behind each.
+- `<year>.yaml` — the rated list: a star, a shortlist flag, a participation status and the reasoning behind each. A mostly add-only ledger, updated by each sweep.
 - `cache/` — one file per event holding what was observed about it, and a record of every search run, including those that found nothing.
+- `moves/` — one election per date range, written by the election method and never by the sweep.
 
-The split is by profile dependence. A fact about an event is the same for everyone and caches. A star depends on whose year is being planned and does not.
+The split is by profile dependence and by rate of change. A fact about an event is the same for everyone and caches. A star depends on whose year is being planned and does not. An election depends on the range and on travel factors that move faster than either, so it has a file of its own.
 
-## Stage 1: Discovery
+## Discovery
 
 **Goal:** maintain a complete, current list of events and opportunities worth considering.
 
@@ -27,62 +28,14 @@ The output is a rated list with a star reflecting how well each event matches th
 
 What discovery does not do: decide which events to attend. It presents the field of possibilities.
 
-## Stage 2: Evaluation
+## Election
 
-**Goal:** given the discovered events and the user's constraints, determine which combinations of events and locations yield the most value across a planning window, typically one to three months.
+`../presence-move/move-methodology.md`. Given a date range, MOVE maps the rated events in it into clusters, offers two to four presence plans, values them on a vector of dimensions with the owner's rubric binding, and records the owner's election with what was foregone. Its output is a presence schedule and the constraints around it, which is what the travel procedures start a journey from: the almanac decides where and when, travel decides how.
 
-This is the hard problem. A single event is easy to evaluate. What is difficult is the interaction between events, because attending one often precludes attending others, not through a clash on the same day but through the geographic commitment that surrounds it.
+## Where each stage lives
 
-### The clustering problem
-
-Events are not independent. Three conferences in one city across a month amount to a single "be in that region" commitment. If the user is committed elsewhere that month, all three are lost as a group. Conversely, a single five-star event might not justify a long-haul trip alone, but two three-star events in the same week nearby make the cluster compelling.
-
-Evaluation therefore works with clusters rather than individual events. A cluster is a set of events attendable from a single geographic position within a contiguous window.
-
-### Weighing presence against absence
-
-For each planning window, the evaluator weighs:
-
-**Value of being in location A:**
-- Event value in reachable clusters: stars, pull-event matches, speaking slots secured
-- Non-event obligations from `seasonal_presence`: family commitments, school terms, visa or residency requirements
-- Ongoing work that benefits from a specific timezone or locale
-
-**Cost of not being in location B:**
-- Events in B's reachable clusters that are foregone
-- Deadlines or relationships that decay without physical presence
-- Whether the event recurs: a conference missed this year may exist next year
-
-The output is a set of **presence decisions**, each naming a base or region and a date range, with an explicit accounting of what is gained and what is foregone. The user reviews and adjusts before they pass to Stage 3.
-
-### What evaluation does not do
-
-It does not book flights. It does not produce an itinerary. It produces a commitment to be in a region during a window, and the events within that window worth attending.
-
-## Stage 3: Agenda and travel optimisation
-
-**Goal:** given the presence decisions from Stage 2, produce a concrete travel plan: flights, accommodation, and a day-by-day agenda.
-
-This stage connects to the `travel/` SOPs, which handle trip-level logistics. The almanac's job ends where the trip begins:
-
-- Presence decisions become journey folders in `travel/`.
-- Each is processed by `travel/sop-travel-master.md`, which coordinates booking extraction, cluster research, itinerary assembly and mental journey simulation.
-- The almanac may influence routing. Where presence decisions produce an out-and-back sequence through the same region twice, the optimiser should consider whether the legs combine into a single loop.
-
-### Interface between almanac and travel
-
-The almanac produces, per planning window:
-
-1. Confirmed events with dates and locations.
-2. A presence schedule: which base or region, which dates.
-3. Constraints: must-attend events, family travel segments, visa limits.
-
-Travel consumes these and produces journeys. The boundary is clean: the almanac decides *where and when*; travel decides *how*.
-
-## Current state
-
-| Stage | Status |
+| Stage | Where |
 |---|---|
-| Discovery | Implemented: `sweep.md`, `bin/render-almanac`, and the data folder's rated list, cache and keyword ledger |
-| Evaluation | Not yet built; design decisions and open questions in `evaluation-design.md` |
-| Agenda and travel optimisation | Partially exists in `travel/`; interface from the almanac not yet defined |
+| Discovery | `sweep.md`, `bin/render-almanac`, and the data folder's rated list, cache and keyword ledger |
+| Election | `../presence-move/` |
+| Agenda and travel | `../travel/`, from a move file's hand-off |
