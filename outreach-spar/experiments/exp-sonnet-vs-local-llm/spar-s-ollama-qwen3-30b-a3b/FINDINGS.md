@@ -227,3 +227,13 @@ An earlier note here recorded the model returning its reasoning as untagged pros
 On the Anthropic Messages API path, the worker's stream carries `thinking` and `tool_use` as distinct content blocks. The reasoning arrives structurally separated, so it does not contaminate a deliverable and needs no stripping.
 
 It still costs generation time, which now exceeds prefill, so it remains the place to look for speed. What it is not is a quality problem, and the earlier note overstated it by generalising from one endpoint to another.
+
+## The margin is too thin, and the cap turns into a retry tax
+
+The working configuration completes turns, but not on the first attempt. A representative stretch: 500 at 6m0s, 500 at 6m0s, 500 at 6m0s, then 200 at 17m13s. The uncached attempt is cut at the cap; the retry inherits a warm cache, so its prefill is short, the first byte arrives in time, and it runs to completion.
+
+So the turn succeeds and costs about three attempts to do it. Eighteen minutes of wall-clock buys one turn's work.
+
+The cause is margin. A 6,215-token prompt is roughly 5.2 minutes of prefill against a 360-second limit, and ordinary variance in the prefill rate pushes it over. Getting under the cap once is not the same as staying under it.
+
+Two ways to buy headroom, neither of them further prompt-trimming, which is close to exhausted. Raise the limit, which needs finding where it lives, since the name that looked right is set to ninety minutes and changes nothing. Or make the first turn's prompt materially smaller than the threshold rather than marginally under it, which is what a worker per segment does by paying the opening once and amortising it over every source in that segment.
