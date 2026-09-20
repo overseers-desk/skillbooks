@@ -305,7 +305,11 @@ So one tool call is 63% of the worker's elapsed time. The fetch returned what wa
 
 The model server's side of that same call settles what the cost is made of. The request carried 22,605 tokens, of which 22,457 were already in the prompt cache from an earlier attempt on the same page, so prefill read 148 new tokens in 20 seconds. Generation produced 1,977 tokens in 3,415 seconds, at 0.58 tokens per second. Prefill was 0.6% of the call and generation was 99.4%.
 
-This is the cleanest available demonstration that generation is the constraint, because it is the case where prefill was almost entirely free and the call still took an hour. Across all sixteen requests that ran to completion and logged a final timing block, prefill totals 29 minutes against generation's 137, a generation share of 82%.
+This is the cleanest available demonstration that generation is the constraint, because it is the case where prefill was almost entirely free and the call still took an hour.
+
+The night's whole time accounting, taken from the model server's own phase boundaries, comes to this. Seventy-nine requests were started. Forty reached generation, and across those, prefill took 94 minutes against generation's 301, a generation share of 76%. The other thirty-nine were cut during prefill, before producing a single token, and they held the slot for 225 minutes between them. That last figure is the cost of the six-minute idle timeout, which is now fixed, and it is the second largest item of the night after generation itself.
+
+Two cautions on how those numbers were obtained. Task identifiers restart when the model reloads, so keying requests by identifier alone merges separate requests into one and produces figures that look precise and are not; the phases above are paired by walking the log in order instead, which is safe because the server runs a single slot and therefore handles requests strictly in sequence. And a request whose prompt is already cached shows a prefill of zero, correctly, so the 94 minutes is prefill actually performed rather than prompt tokens presented.
 
 `WebFetch` is not a fetch. It retrieves the page and then has the model read it and answer a prompt about it, and on this bridge that model is the local one. The hosted arm makes the same call against hosted Claude and pays nothing comparable for it.
 

@@ -7,10 +7,12 @@ per-request rows plus a summary text file next to this script:
   1. The remote ollama journal (`journalctl -u ollama`), read over SSH.
      Gives per-request prefill (prompt processing) and generation
      (token-by-token print_timing) traces, keyed by (pid, task).
-  2. The dispatcher's own console logs (pilot*.out under whatever
-     scratchpad directory --scratchpad points at), which carry local-time
-     [START] lines per worker and any FAIL lines with the worker's own
-     elapsed seconds.
+  2. The dispatcher's own console logs: every pilot*.out under whatever
+     scratchpad directory --scratchpad points at, plus the stdout file of
+     any dispatcher currently running (found via /proc, not by matching
+     a command line), so a live run's log is seen even before it has a
+     pilot*.out name. These carry local-time [START] lines per worker and
+     any FAIL lines with the worker's own elapsed seconds.
   3. The per-attempt directories under --spar-log-dir, whose name suffix
      is the attempt's start timestamp, used only to confirm which attempt
      a given stretch of ollama activity belongs to.
@@ -325,10 +327,51 @@ def parse_aest(ts_str):
     return dt.replace(tzinfo=AEST).astimezone(timezone.utc)
 
 
-def parse_pilot_logs(scratchpad_dir, segment_filter=None):
-    """Parse pilot*.out files into a list of attempts, each with its workers."""
+def find_running_dispatcher_stdout_paths(scratchpad_dir):
+    """Find the scratchpad log file(s) any currently-running dispatcher is
+    writing to.
+
+    A dispatcher is identified by 'spar-transition' appearing in its
+    /proc/<pid>/cmdline -- never by matching against a full command line
+    with something like pgrep -f, which also matches whatever process is
+    doing the searching. For each match, fd 1 is resolved with
+    os.readlink to find the file the process is writing to; only a
+    regular file inside scratchpad_dir is kept. A pid that cannot be
+    read (permission, or the process exiting mid-scan) is skipped rather
+    than failing the harvest.
+    """
+    scratchpad_dir = os.path.realpath(scratchpad_dir)
+    live_paths = set()
+    for entry in os.listdir("/proc"):
+        if not entry.isdigit():
+            continue
+        try:
+            with open(f"/proc/{entry}/cmdline", "rb") as f:
+                cmdline = f.read()
+        except OSError:
+            continue
+        if b"spar-transition" not in cmdline:
+            continue
+        try:
+            target = os.readlink(f"/proc/{entry}/fd/1")
+        except OSError:
+            continue
+        target = os.path.realpath(target)
+        if not os.path.isfile(target):
+            continue
+        if target == scratchpad_dir or target.startswith(scratchpad_dir + os.sep):
+            live_paths.add(target)
+    return live_paths
+
+
+def parse_pilot_logs(scratchpad_dir, segment_filter=None, live_stdout_paths=None):
+    """Parse pilot*.out files, plus any running dispatcher's live stdout
+    file, into a list of attempts, each with its workers."""
+    if live_stdout_paths is None:
+        live_stdout_paths = find_running_dispatcher_stdout_paths(scratchpad_dir)
     attempts = []
-    paths = sorted(glob.glob(os.path.join(scratchpad_dir, "pilot*.out")))
+    glob_paths = {os.path.realpath(p) for p in glob.glob(os.path.join(scratchpad_dir, "pilot*.out"))}
+    paths = sorted(glob_paths | live_stdout_paths)
     for path in paths:
         name = os.path.basename(path)
         try:
@@ -339,7 +382,7 @@ def parse_pilot_logs(scratchpad_dir, segment_filter=None):
             continue
 
         attempt = {
-            "file": name, "t0_ts": None, "segment": None,
+            "file": name, "path": path, "t0_ts": None, "segment": None,
             "n_sources": None, "workers": [],
         }
         worker_starts = {}  # source -> ts ([START] line: scheduled, not necessarily launched)
@@ -411,19 +454,20 @@ def parse_pilot_logs(scratchpad_dir, segment_filter=None):
             continue
         attempts.append(attempt)
 
-    # Fill in end_ts for workers with no FAIL line: bounded by the next
-    # attempt's T0 (operator moved on / restarted), or left open (still
-    # running) for the very last attempt's workers.
+    # Fill in end_ts for workers with no FAIL line. Whether the run is
+    # over is a property of the process, not of the log text or of
+    # whether a later attempt happens to exist: a log is only genuinely
+    # still being written if some running dispatcher has it open as its
+    # own fd 1 right now. A dead log's true end is its own last write
+    # (mtime), which is always at least as tight a bound as guessing from
+    # a subsequent attempt's T0 -- the gap between a dispatcher dying and
+    # an operator noticing and restarting is not this worker's runtime.
     for i, attempt in enumerate(attempts):
         next_t0 = attempts[i + 1]["t0_ts"] if i + 1 < len(attempts) else None
+        is_live_log = attempt["path"] in live_stdout_paths
         for w in attempt["workers"]:
             if w["outcome"] == "unresolved_in_this_log":
-                if next_t0 is not None:
-                    w["outcome"] = "ended_by_operator (assumed, no FAIL line logged)"
-                    w["end_ts"] = next_t0
-                    if w["start_ts"]:
-                        w["elapsed_s"] = (next_t0 - w["start_ts"]).total_seconds()
-                else:
+                if is_live_log:
                     # No end event exists, but the elapsed-so-far is knowable
                     # (start to now), and is the main thing worth reading
                     # while the run is live.
@@ -432,6 +476,23 @@ def parse_pilot_logs(scratchpad_dir, segment_filter=None):
                     w["elapsed_s"] = (
                         (datetime.now(timezone.utc) - w["start_ts"]).total_seconds()
                         if w["start_ts"] else None
+                    )
+                else:
+                    # The dispatcher that was writing this log has since
+                    # exited, so nothing is still running: the last moment
+                    # it could conceivably have been alive is the last time
+                    # the log file itself was written to.
+                    try:
+                        end = datetime.fromtimestamp(os.path.getmtime(attempt["path"]), tz=timezone.utc)
+                    except OSError:
+                        end = next_t0
+                    w["outcome"] = ("ended_without_end_line (dispatcher exited; "
+                                     "elapsed is a lower bound, measured to "
+                                     "last log write)")
+                    w["end_ts"] = end
+                    w["elapsed_s"] = (
+                        (end - w["start_ts"]).total_seconds()
+                        if end and w["start_ts"] else None
                     )
             elif w["outcome"].startswith("queued_not_reached"):
                 # Never launched, so it has no run of its own, but it was
@@ -729,7 +790,9 @@ def main():
     print(f"Parsed {len(rows)} request(s), {len(gin_events)} HTTP closure(s), "
           f"{len(model_loads)} model load(s)", file=sys.stderr)
 
-    attempts = parse_pilot_logs(args.scratchpad, segment_filter=args.segment)
+    live_stdout_paths = find_running_dispatcher_stdout_paths(args.scratchpad)
+    attempts = parse_pilot_logs(args.scratchpad, segment_filter=args.segment,
+                                 live_stdout_paths=live_stdout_paths)
     print(f"Parsed {len(attempts)} dispatcher attempt(s) for segment '{args.segment}'", file=sys.stderr)
 
     dir_hits = confirm_spar_log_dirs(args.spar_log_dir, args.segment, attempts)
