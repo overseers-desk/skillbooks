@@ -13,6 +13,7 @@ keywords.yaml         queries that have worked here before
 cache/SCHEMA.md       the shape of a cache file
 cache/events/         one file per event: dates, access, audience, prices
 cache/searches/       what has been looked for, including what came back empty
+moves/                one election per date range, written by MOVE (../presence-move/), never by the sweep
 ```
 
 The split matters when you write. A fact about an event goes in `cache/events/`. A judgment about whether it suits this user goes in `<year>.yaml`. The same fact belongs in one file, never two.
@@ -128,9 +129,10 @@ After updating, surface what needs the user's attention:
 - Application deadlines inside 14 days.
 - Events inside 30 days with no participation decision.
 - Events whose dates are still unset but expected soon.
+- Where the data folder carries `moves/`, any move file whose range holds an event this sweep added at four or five stars, moved, cancelled or changed the status of. Name the file and the change; re-running the election is MOVE's work (`../presence-move/move-methodology.md`), not the sweep's.
 
 ## 5. After the sweep
 
-- Update the `# Last sweep:` comment at the top of the ratings file.
+- Update the `# Last sweep:` comment at the top of the ratings file with the date and the window this sweep covered, so an election can check that its range was swept.
 - Rebuild the page: `<method-repo>/almanac/bin/render-almanac <data-root> out/<year>.html`.
 - Commit the data folder with a message summarising what changed. The generated page is not committed.
