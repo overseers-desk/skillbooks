@@ -259,3 +259,13 @@ It also explains the earlier observation that generation had overtaken prefill. 
 What follows for the design. Prompt size was worth attacking and has been attacked. The remaining cost is context length at generation time, which a smaller opening prompt does not fix, because the context that matters is the material the worker gathers. A worker per segment makes this worse rather than better, since it accumulates more sources in one conversation. A worker per source, which is what the dispatcher already does, keeps each conversation short.
 
 That reverses the recommendation this document has carried. Paying the preamble thirty-five times is expensive, but it caps how long any single conversation gets. The right design pays the preamble once and keeps the working context small, which means neither the current per-source shape nor a per-segment one, but a worker that fetches, extracts and discards rather than carrying every page forward.
+
+## The collapse is context, not memory, and half the machine is idle
+
+The decode figure above was attributed to context length before that was checked. Checked now: swap is 975 MB total with none used, 26 GB of memory remains available, and `vmstat` reports no paging. No other process competes. Context length stands as the explanation.
+
+The same check turned up something separate. Load average sits at exactly 4.00 on a machine with four cores and eight threads, and `vmstat` reports 49% idle. The model server is using four threads, which is the physical core count and a common default, leaving the hardware threads unused.
+
+Whether that is worth changing is a measurement nobody has taken. Hyperthreading often gives little for this kind of arithmetic and can cost throughput by contending for the same execution units, so the honest position is that a lever may exist and its size is unknown. It is cheap to test by setting the thread count and re-measuring decode at a comparable context length.
+
+Recorded because 49% idle on the machine that is the bottleneck is the kind of thing that reads as obviously wasteful and may not be.
