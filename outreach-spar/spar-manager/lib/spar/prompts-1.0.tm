@@ -374,7 +374,6 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             __S_NOTE__        $s_note \
             __P_NOTE__        $p_note \
             __GOAL_PATH__     $goal_path \
-            __CAMPAIGN_PATH__ $campaign_file \
             __SEGMENT_KEY__   $segment_name \
             __OUTFILE__       $outfile \
             __ROSTER_PATH__   $roster_path \
@@ -735,7 +734,7 @@ s_note: $s_note"
             }
 
             set file_items "1. Method: $method — read §4.1 through §4.5 (warmth, channel, language, angle, draft). Skip §4.6 (spar) — that is handled separately.
-2. Fact sources: [join $fact_sources {, }] — read in full. These are the ground truth about the organisation and the offer. The campaign plan block (the segments.$segment block in $campaign_file) lists which USPs apply to this segment and whether each is functional or emotional. Use those USPs, do not invent your own from the sources.
+2. Fact sources: [join $fact_sources {, }] — read in full. These are the ground truth about the organisation and the offer. The plan block (the segments.$segment block in $campaign_file) lists which USPs apply to this segment and whether each is functional or emotional. Use those USPs, do not invent your own from the sources.
 $profile_a1_instruction
 4. Campaign plan block: read the \"segments.$segment\" block in $campaign_file (campaign.yaml) — \"message_goal\" for the specific objective this message must achieve (e.g. secure a firsthand visit, collect a roster expression of interest); \"objective\" for the long-term commercial goal, not what this message asks for; \"first_ask\" for approach style guidance; and the USP framings. If the block has subsegments, determine which applies to this contact and use its overrides where present. The segment file $goal_path holds only the population definition (discovery_criteria, rating_rubric)."
             set item_num 5
