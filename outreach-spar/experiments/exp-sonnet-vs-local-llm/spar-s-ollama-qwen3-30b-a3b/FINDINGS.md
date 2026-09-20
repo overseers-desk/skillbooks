@@ -190,3 +190,11 @@ That settles the diagnosis for good. The total ran well past six minutes and sur
 The reduction, in three measured steps from a starting point of 24,985 tokens: removing the router changed the path without changing the size but deleted three faults; `--safe-mode` dropped the operator's own injected context and reached 10,178; trimming eleven tool definitions to six reached 6,207. Each figure is ollama's own count of a real request, not a projection, after two projections proved optimistic by threefold.
 
 The margin is thin. 6,207 tokens is about 5.2 minutes of prefill against a 360-second limit, and a worker's later turns grow: the second turn measured 7,513. The configuration works and is not comfortable, so the architectural fix stands: a worker per segment rather than per source pays this cost five times instead of thirty-five, and buys headroom instead of spending it.
+
+## Turns chain, and caching pays for the growth
+
+The worker completed a second turn as well, a 200 at 10m41s on a 7,513-token prompt, and went on to a third at 8,644. Its tool calls so far are `Read` then `WebFetch`: reading its instructions, then fetching a source. That is the sweep doing what it exists to do.
+
+The growth was expected to be fatal and is not. At the uncached rate a 7,513-token prompt is over six minutes of prefill, which should have breached the cap. Prompt caching carries the shared prefix between turns, so only the new portion is read, and the silence stays under the limit even as the conversation grows.
+
+That revises the threshold from a hard ceiling into a first-turn constraint. What has to fit under the cap is the opening prompt, because every turn after it reuses most of what came before. A worker per segment, carrying more sources through one conversation, is therefore better placed than the per-source design in a second way: it pays the uncached opening once and then rides the cache.
