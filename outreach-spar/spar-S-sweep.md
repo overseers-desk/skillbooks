@@ -133,7 +133,7 @@ market_estimate:            # S&P₀ output; the denominator
   value: <number or range, with any known unharvested layers>
   derivation: <top-down and bottom-up reasoning, source by source; a revision cites its instrument and keeps the figure it replaces>
   estimated: <date>
-coverage_target: <fraction of the denominator the owner asked this sweep to reach; absent when none was given>
+coverage_target: <fraction of the denominator the owner asked this sweep to reach; absent when none was given, and closure then rests on the census alone>
 sources:                    # the census; every discovered_via maps to an entry here
   - name: <register/directory/outlet/platform/method>
     type: registry | directory | outlet | platform | informal   # every kind carries an entry; §6
