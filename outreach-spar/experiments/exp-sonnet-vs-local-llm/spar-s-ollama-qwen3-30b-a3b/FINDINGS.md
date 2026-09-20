@@ -269,3 +269,13 @@ The same check turned up something separate. Load average sits at exactly 4.00 o
 Whether that is worth changing is a measurement nobody has taken. Hyperthreading often gives little for this kind of arithmetic and can cost throughput by contending for the same execution units, so the honest position is that a lever may exist and its size is unknown. It is cheap to test by setting the thread count and re-measuring decode at a comparable context length.
 
 Recorded because 49% idle on the machine that is the bottleneck is the kind of thing that reads as obviously wasteful and may not be.
+
+## The decode figure, qualified
+
+The 0.58 tokens per second above is one observation, not the rate. A later generation on the same worker ran at about 1.9, and within a single generation the rate declines steadily as tokens accumulate, from 2.00 to 1.87 over a few hundred tokens.
+
+So the range seen on real worker traffic is roughly 0.6 to 2.0 tokens per second, against 14.99 measured on a short prompt at the start of the night. Decode is somewhere between seven and twenty-five times slower once a worker is carrying gathered material, and it degrades further as each answer lengthens.
+
+The direction is solid and the curve is not measured. What would settle it is decode timed at several known context sizes on an idle machine, which is a clean experiment and needs the slot free.
+
+The conclusion drawn from the figure survives the qualification. Generation is the expensive half, it worsens with context, and a design that accumulates sources in one conversation makes the dominant cost worse. That holds at 2.0 tokens per second as it does at 0.58.
