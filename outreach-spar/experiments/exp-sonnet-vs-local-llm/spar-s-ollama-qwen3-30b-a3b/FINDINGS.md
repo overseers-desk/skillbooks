@@ -247,3 +247,15 @@ It was found by reading the strings of the CLI binary for environment names cont
 Three things this settles. The limit measures silence, as the arithmetic said and one intervening account denied. The retry tax is gone, so a turn costs one attempt rather than three. And the prompt no longer has to sit under about 7,000 tokens, which removes the thin margin that made every turn a coin toss.
 
 The general lesson is about where to look. Three timeouts were configured in the layers that seemed responsible, and the binding one lived in the binary at the end of the chain, discoverable in a minute by reading its strings rather than by reasoning about which component ought to own it.
+
+## Decode collapses as context grows, and that is the real ceiling
+
+Measured on a live worker with 22,605 tokens of context: generation at 0.58 tokens per second, steady across 1,578 generated tokens. The early probe on a short prompt measured 14.99. Decode is therefore about 25 times slower once a worker is carrying a fetched page.
+
+This dominates everything else found here. At 0.58 tokens per second a 3,000-token answer takes 86 minutes, and a sweep worker's job is to read pages and write roster rows, so its context grows with every source it touches and its writing slows accordingly.
+
+It also explains the earlier observation that generation had overtaken prefill. That was not the preamble cut revealing a fixed cost underneath; it was decode degrading as the conversation filled.
+
+What follows for the design. Prompt size was worth attacking and has been attacked. The remaining cost is context length at generation time, which a smaller opening prompt does not fix, because the context that matters is the material the worker gathers. A worker per segment makes this worse rather than better, since it accumulates more sources in one conversation. A worker per source, which is what the dispatcher already does, keeps each conversation short.
+
+That reverses the recommendation this document has carried. Paying the preamble thirty-five times is expensive, but it caps how long any single conversation gets. The right design pays the preamble once and keeps the working context small, which means neither the current per-source shape nor a per-segment one, but a worker that fetches, extracts and discards rather than carrying every page forward.
