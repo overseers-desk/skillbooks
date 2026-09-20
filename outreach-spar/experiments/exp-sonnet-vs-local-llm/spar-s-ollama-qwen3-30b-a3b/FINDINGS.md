@@ -16,6 +16,8 @@ Prefill does not run at the rate the hardware benchmark suggests. `local-inferen
 
 At 20 tokens per second, one worker turn is roughly 19 minutes of prefill. Workers run two to three turns. T0 dispatches one worker per census source, which across the five seeded segments is 35 workers, confirmed by the dispatcher's own dry run at 35 of 35 validated.
 
+A worker's turns do not get cheaper as it proceeds. Observed on a live worker, the prompt grew from 22,578 tokens on its first turn to 32,209 on a later one, while prompt caching reused 10,261, leaving about 22,000 new tokens to prefill either way. The conversation grows about as fast as the cache saves, so each turn costs roughly the same as the first.
+
 So one segment of six workers is four to six hours, and the full set is 22 to 33 hours. Generation is not the cost; decode measured 14.99 tokens per second on a 1,106-token answer, and a worker generates far less than it reads.
 
 Ollama serves one slot on this configuration, so `--jobs` buys nothing. Everything serialises whatever the dispatcher is told.
