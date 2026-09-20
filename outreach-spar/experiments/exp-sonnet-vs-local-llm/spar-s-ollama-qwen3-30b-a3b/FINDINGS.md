@@ -43,3 +43,22 @@ It can report something the experiment did not set out to ask. A dispatcher that
 The 128k context was inherited from another machine's setup rather than chosen for these prompts, which fit in a quarter of it. A smaller context would shrink the KV cache and may let ollama serve more than one slot, which is the only route to real parallelism here. Worth measuring before the next arm.
 
 The tool catalogue is 15,353 tokens of the fixed cost across 38 definitions, and ten of those account for about 10,700. A worker that needs six tools is paying for thirty-eight on every turn.
+
+## The lever, measured
+
+The tool definitions can be cut, but not with the flags the dispatcher currently uses. Measured against a capture endpoint, counting with `cl100k_base`:
+
+| invocation | tools declared | tool-definition tokens | whole request |
+|---|---|---|---|
+| no flags | 38 | 15,754 | 32,257 |
+| the dispatcher's current flags | 43 | 17,547 | 33,778 |
+| `--tools` with six built-ins | 20 | 3,960 | 16,529 |
+| `--tools` plus `--strict-mcp-config` | 6 | 2,598 | 14,835 |
+
+The dispatcher's own flags make the request larger than passing nothing. `--allowedTools` adds permission metadata and never removes a definition, and naming a tool outside the default catalogue makes the server declare it in full. `--disallowedTools` drops a definition only when the name is bare; a scoped exclusion such as `Agent(general-purpose)` leaves the parent tool's entire schema in the request.
+
+What works is `--tools` with an exact list, which governs what is declared rather than what is permitted, together with `--strict-mcp-config` to drop tools contributed by MCP servers. On the real worker's 22,578 tokens that points at 9,500 to 11,500, and a prefill nearer five minutes than nineteen.
+
+A larger lever sits beside it and was not adopted. `--safe-mode` collapses the system-prompt portion from 18,370 tokens to 3,853, more than the tools fix saves, by disabling skills, hooks and MCP entirely. Whether a sweep worker can work without those is a question for whoever owns the dispatcher, not one to settle by measurement alone.
+
+These figures come from a session in this repository with its plugins loaded, so the absolute numbers are local. The direction and the proportions are the finding.
