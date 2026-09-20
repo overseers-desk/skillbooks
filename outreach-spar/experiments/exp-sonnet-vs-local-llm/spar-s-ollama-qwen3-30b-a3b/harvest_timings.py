@@ -51,6 +51,7 @@ import re
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
+from statistics import median
 
 AEST = timezone(timedelta(hours=10))
 REMOTE_TZ_NOTE = "remote journal read with its own +08:00 offset; all comparisons done in UTC"
@@ -721,20 +722,50 @@ def build_lifecycle_section(lifecycle_reqs):
         lines.append(f"Generation share of prefill+generation time: {gen_total_s / denom * 100:,.0f}%")
 
     if abandoned:
-        held_total_s = 0.0
-        abandon_starts = []
-        for r in abandoned:
-            end = r["next_start_ts"] or r["start_ts"]
-            held_total_s += (end - r["start_ts"]).total_seconds()
-            abandon_starts.append(r["start_ts"])
+        # An abandoned request is always followed by another, since the
+        # server runs one slot -- but what the successor does with it
+        # splits into two events a combined total hides. Same prompt size
+        # means the successor resubmitted the identical work and it
+        # succeeded on the now-warm cache: the clock is lost, nothing
+        # else is. A different prompt size means the work itself was
+        # dropped, not just delayed. The median is reported per group
+        # because it is what identifies the limit doing the cutting; the
+        # combined median buries it between two different distributions.
+        recovered, lost, undetermined = [], [], []
+        for i, r in enumerate(lifecycle_reqs):
+            if r["init_sampler_ts"] is not None:
+                continue
+            successor = lifecycle_reqs[i + 1] if i + 1 < len(lifecycle_reqs) else None
+            if successor is None:
+                undetermined.append(r)
+            elif successor["prompt_tokens"] == r["prompt_tokens"]:
+                recovered.append(r)
+            else:
+                lost.append(r)
+
+        def _report(label, group):
+            holds_s = [(r["next_start_ts"] - r["start_ts"]).total_seconds() for r in group]
+            starts = [r["start_ts"] for r in group]
+            lines.append(
+                f"{label}: {len(group)} events, {sum(holds_s) / 60:,.1f} min held, "
+                f"first {fmt_ts(min(starts))} AEST, last {fmt_ts(max(starts))} AEST, "
+                f"median hold {median(holds_s):,.0f}s"
+            )
+
+        if recovered:
+            _report("Recovered (successor resubmitted the same prompt, cache warm)", recovered)
+        if lost:
+            _report("Lost (successor's prompt size differed, work not resubmitted)", lost)
         lines.append(
-            f"Slot-time held by abandoned requests (each one's new prompt to the next "
-            f"request's new prompt): {held_total_s / 60:,.1f} min"
+            "A recovered cut costs time without losing work; a lost cut costs both."
         )
-        lines.append(
-            f"First abandonment: {fmt_ts(min(abandon_starts))} AEST; "
-            f"last abandonment: {fmt_ts(max(abandon_starts))} AEST"
-        )
+        if undetermined:
+            r = undetermined[0]
+            lines.append(
+                f"Undetermined: {len(undetermined)} (window ended before a successor "
+                f"appeared for the abandonment at {fmt_ts(r['start_ts'])} AEST, so it "
+                f"cannot be placed in either group)"
+            )
     return lines
 
 
