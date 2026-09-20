@@ -307,7 +307,7 @@ The model server's side of that same call settles what the cost is made of. The 
 
 This is the cleanest available demonstration that generation is the constraint, because it is the case where prefill was almost entirely free and the call still took an hour.
 
-The night's whole time accounting, taken from the model server's own phase boundaries, comes to this. Seventy-nine requests were started. Forty reached generation, and across those, prefill took 94 minutes against generation's 301, a generation share of 76%. The other thirty-nine were cut during prefill, before producing a single token, and they held the slot for 225 minutes between them. That last figure is the cost of the six-minute idle timeout, which is now fixed, and it is the second largest item of the night after generation itself.
+The night's whole time accounting, taken from the model server's own phase boundaries, comes to this. Seventy-nine requests were started. Forty reached generation, and across those, prefill took 94 minutes against generation's 301, a generation share of 76%. The other thirty-nine were cut during prefill, before producing a single token, and they held the slot for 225 minutes between them. That last figure is the cost of requests cut before they could generate a token, and it is the second largest item of the night after generation itself. They stop at 06:48:33 on 21 September, and the bridge wrapper was last modified at 07:19:48, three minutes before the run that has had none. So whatever cured it dates from that edit rather than from the byte-stream idle timeout raised the previous evening, which was recorded as the cure and did not hold: cuts resumed at 20:40 and continued through the night at roughly four an hour. The current run is two hours old and its requests are long, so the absence rests on few observations and is not yet proof.
 
 Two cautions on how those numbers were obtained. Task identifiers restart when the model reloads, so keying requests by identifier alone merges separate requests into one and produces figures that look precise and are not; the phases above are paired by walking the log in order instead, which is safe because the server runs a single slot and therefore handles requests strictly in sequence. And a request whose prompt is already cached shows a prefill of zero, correctly, so the 94 minutes is prefill actually performed rather than prompt tokens presented.
 
@@ -325,7 +325,7 @@ One caveat on the separation: the 22,605-token prompt is about three times the a
 
 ## Concurrency does not divide the work
 
-The plan named concurrency as the one lever that divides rather than subtracts, and deferred measuring it until a slot fell idle. It can be settled without an idle slot, by asking what the machine is doing while one request runs.
+Concurrency looked like the one lever that divides the work rather than subtracting from it, and measuring it looked as though it needed a free slot to load a second model into. It can be settled without one, by asking what the machine is doing while a single request runs.
 
 Four logical cores sit at 100% and four at 2% or less. That reads as a half-idle machine and is not one: the topology pairs them 0 with 4, 1 with 5, 2 with 6, 3 with 7, so the busy four are one thread from each of the four physical cores, and the idle four are their hyperthread siblings. Every physical core is saturated by a single request. Load average sits at 4.00 against four cores.
 
@@ -335,7 +335,7 @@ So the thirty-five-worker estimate carries no concurrency discount, and the leve
 
 ## Almost everything the agent generates is reasoning
 
-The other measurement the plan called a prerequisite, the share of a worker's output that is reasoning rather than answer, also did not need a completed worker. The live worker's session log separates the two.
+The share of a worker's output that is reasoning rather than answer looked as though it needed a worker that had finished, so its output could be read. It does not: the live worker's session log separates the two as it goes.
 
 | Turn | Reasoning tokens | Answer tokens | Reasoning share |
 |---|---|---|---|
@@ -346,4 +346,4 @@ The answer in both cases is a tool call, sixty-odd tokens of arguments, arrived 
 
 The reasoning tokens are the harness's own estimate and the answer tokens are measured from the emitted text, so the two columns come from different estimators. The gap is large enough that this does not matter.
 
-This makes suppressing reasoning a larger lever than it appeared when the plan called it cheap to try, because it reaches three quarters of what the machine spends its time writing. The caution recorded then still stands: a model that reasons before answering may answer better, so the thing to measure is roster quality with and without, not speed alone. On this path the reasoning arrives as its own content block and never reaches the deliverable, so suppressing it changes what is paid for rather than what is produced.
+This makes suppressing reasoning a larger lever than it first appeared, because it reaches three quarters of what the machine spends its time writing. The caution against reaching for it blind still stands: a model that reasons before answering may answer better, so the thing to measure is roster quality with and without, not speed alone. On this path the reasoning arrives as its own content block and never reaches the deliverable, so suppressing it changes what is paid for rather than what is produced.
