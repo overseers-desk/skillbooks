@@ -168,3 +168,15 @@ What is established: a limit near 360 seconds ends the whole request, it is not 
 What follows for the workload: a turn needs longer than six minutes on this hardware even with the preamble stripped, because generation alone runs past it. Shrinking the prompt helps the arithmetic and does not clear the constraint.
 
 Recorded as unresolved rather than carried further. Ten limits have been found by lifting the one above, each time revealing another, and the sequence has not converged. The remaining value is in the architectural change already identified, not in locating an eleventh.
+
+## Correcting the correction: it is first byte after all, and the threshold is about 7,000 tokens
+
+The section above concluded the six-minute limit governs total duration. That was wrong, and one observation settles it: a request completed with a 200 after 8m23s, comfortably past six minutes. It was a retry that hit full prompt cache, so it skipped prefill and began generating immediately. Every request cut at 6m0s was one that had to prefill first.
+
+So the limit measures silence, as the arithmetic originally said. What misled the intervening conclusion was the prefill rate: 99 tokens per second came from a progress line on a partially cached request, and the uncached rate is nearer 20. At 20, a 10,178-token prompt is about 8.5 minutes of silence, which is over the cap rather than under it. Safe mode moved the prompt in the right direction and stopped short of the line.
+
+That gives a concrete threshold. Prefill has to finish inside roughly 360 seconds, which at the uncached rate is about 7,000 tokens. The measured safe-mode prompt is 10,178, so it misses by around 3,000 tokens, or by about 30%.
+
+Three observations now agree, where two accounts previously conflicted: uncached requests with large prompts are cut at the cap, a fully cached request ran well past it, and lowering the prompt from 24,985 to 10,178 shortened the silence without clearing the threshold.
+
+The rate figure is the lesson. A single progress line from a cached request described a speed the workload does not get, and using it inverted the diagnosis for several hours.
