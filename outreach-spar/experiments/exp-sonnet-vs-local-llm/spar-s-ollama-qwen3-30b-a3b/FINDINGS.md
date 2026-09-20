@@ -136,3 +136,13 @@ Sweeps of the open web, registers and directories use WebSearch, WebFetch, Read,
 Sweeps of signed-in platforms lose their only working mechanism. Transcripts show workers invoking platform skills for Instagram and Facebook as a matter of course rather than as a possibility, and those skills carry the authenticated session and the site-specific navigation. The methodology provides a fallback for the generic browser pacing, so losing that alone is an inconvenience. It provides no substitute for an authenticated session, and no built-in tool can sign in.
 
 So the practical shape is a split rather than a switch: the majority of sweeps can run in safe mode at a fifth of the prefill cost, and platform sweeps need either their own path or a pre-authenticated fetch that does not depend on a plugin being loaded.
+
+## The router was never needed, and the fix that was checked most was never running
+
+Ollama 0.34.2 speaks the Anthropic Messages API natively. Pointing the CLI's base URL at ollama's bare origin returns a properly shaped message, so the router's one genuine function, protocol translation, was redundant. Its sixty-minute cap, its shell-based argument reconstruction and its field-stripping transformer were faults, not capabilities. Removing it cost nothing. The base URL takes no `/v1` suffix, because the CLI appends the path itself and doubling it produces a 404.
+
+The installed `claude` binary is compiled with Bun, and Bun ignores `NODE_OPTIONS`. Demonstrated by pointing it at a script that throws unconditionally and watching the binary run clean. So the preload that raises Node's fetch timeouts, described in its own comments as load-bearing, never executed at any point. Every check that read `NODE_OPTIONS` from a process environment confirmed the variable was set and proved nothing about whether it was honoured. `BUN_OPTIONS` is the name this binary reads.
+
+The limit that actually cut requests short on the direct path is `CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS`, named in the CLI's own error text and defaulting to about six minutes. It measures exactly the silence that prefill produces, which is why raising every total-duration budget in the stack had no effect on it.
+
+So of the seven limits, the one that mattered most is the one named for the quantity the arithmetic identified, and the fix applied hardest was inert the whole time.
