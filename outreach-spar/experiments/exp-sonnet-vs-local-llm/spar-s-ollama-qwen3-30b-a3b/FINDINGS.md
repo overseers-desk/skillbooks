@@ -78,3 +78,17 @@ What remains true is the shape: `--allowedTools` enlarges a request and `--tools
 A larger lever sits beside it and was not adopted. `--safe-mode` collapses the system-prompt portion from 18,370 tokens to 3,853, more than the tools fix saves, by disabling skills, hooks and MCP entirely. Whether a sweep worker can work without those is a question for whoever owns the dispatcher, not one to settle by measurement alone.
 
 These figures come from a session in this repository with its plugins loaded, so the absolute numbers are local. The direction and the proportions are the finding.
+
+## What would make this work
+
+The costs above are not evenly distributed, and that decides where effort is worth spending.
+
+**The fixed preamble is the target, not the machine.** About 16,000 tokens of every 22,578-token turn is the same system prompt and tool catalogue, re-sent because each worker is a fresh agent session. A faster box divides that cost; removing it deletes it. The measured trim of the tool list, which is the only lever reachable without changing the dispatcher, recovered 4% on the real path, so the remaining saving lives in the architecture rather than in configuration.
+
+**One worker per census source is the expensive choice.** T0 spawns 35 sessions for five segments, and each pays the preamble afresh. A worker that took a segment's whole source list in one session would pay it once per segment instead of once per source, cutting the fixed cost by roughly the ratio of sources to segments, which here is seven to one. Nothing about the sweep's logic requires a session boundary at each source; that boundary exists because it is cheap on a hosted model.
+
+**Generation is not free here either.** A turn measured 39 minutes of writing against 21 of reading, and the model spends much of it composing reasoning as prose before the answer. A model that returns reasoning in a separable field, or a prompt that forbids it, recovers a large share of that without touching anything else.
+
+**Concurrency is the only lever that divides rather than subtracts, and it is untested.** The 128k context puts the resident footprint at 32 GB of 62, which is why ollama serves one slot and why `--jobs` changes nothing. Worker prompts are 22k. A 32k-context variant is built and waiting; if it admits two or three slots, the wall-clock divides by that. This is the first thing to measure next, because every other finding here is about the cost of one turn and this one is about how many turns run at once.
+
+**What the hardware is not.** Nothing measured tonight argues the model is unfit. It answered a short prompt in 3 seconds and wrote competently. The question this arm could not reach, whether its roster rows are any good, remains open, and reaching it needs the changes above rather than more patience.
