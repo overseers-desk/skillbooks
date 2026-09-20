@@ -59,6 +59,11 @@ range: {start: 2027-03-01, end: 2027-04-15}
 almanac_as_of:
   2027: {last_sweep: 2027-01-20, window: [2027-01-20, 2027-06-30]}
   commit: 0f3a9c1        # the data root's commit when read, where the root is a repository
+field:
+  - {slug: <slug>, stars: 5, cluster: <region>-mar, pull: [<pull event id>]}
+  - {slug: <slug>, stars: 3, cluster: <region>-mar}
+  - {slug: <slug>, stars: 2, cluster: <base id>, why_two_star: the narrow reason its entry gives, in play here}
+  - {slug: <slug>, stars: 4, cluster: <region>-apr, shortlisted: true}
 fixed:
   - {kind: presence, base: <base id>, from: 2027-03-01, to: 2027-03-10, why: seasonal_presence, certainty high}
   - {kind: event, slug: <slug>, why: participation.status speaker}
@@ -79,10 +84,13 @@ offers:
       - {where: <base id>, from: 2027-03-01, to: 2027-04-15, attend: [<slug>]}
   - letter: B
     name: anchor on <region>-mar
+    idea: one leg into <region> for its cluster, the base held either side
     stays:
       - {where: <base id>, from: 2027-03-01, to: 2027-03-10, attend: []}
       - {where: <region>, from: 2027-03-11, to: 2027-03-21, attend: [<slug>, <slug>], via: <hub>}
       - {where: <base id>, from: 2027-03-22, to: 2027-04-15, attend: [<slug>]}
+    foregone_by_clash:
+      - {slug: <slug>, why: its dates fall inside the <region> leg}
 values:
   dimensions: [event_value, presence, cost_of_absence, travel_burden, money, risk]
   table:

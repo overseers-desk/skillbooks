@@ -41,4 +41,4 @@ Name clusters by region and month so an offer can cite them. Do not rank them; t
 
 ## Output
 
-The `almanac_as_of`, `fixed`, `deadlines` and `clusters` sections of the move file, in the shape `move-methodology.md` shows. Where a judgment was made (why a two-star entered, why two cities clustered), write the reason in terms a reader can argue with.
+The `almanac_as_of`, `field`, `fixed`, `deadlines` and `clusters` sections of the move file, in the shape `move-methodology.md` shows. Where a judgment was made (why a two-star entered, why two cities clustered), write the reason in terms a reader can argue with.
