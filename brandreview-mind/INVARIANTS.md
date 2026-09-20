@@ -20,13 +20,25 @@ Why: a run that measures first has redrawn a snapshot, and a series of snapshots
 
 Why: a zero in a mean is a measurement that was never made, and the smallest names in a panel are exactly the ones an instrument cannot see, so the error lands on the comparison the operator most needs.
 
-## I4. A decision names the finding it answers and the series that would show it worked
+## I4. A change is called a movement only where it exceeds the detector's own threshold, computed before the change is read
 
-**Test:** does every row of the decision table carry a finding number, a series named by instrument and window, and a read date? A decision citing prose rather than a number, or naming no series, fails.
+**Test:** does every moved verdict carry a threshold beside it, computed from that series' own prior periods, and does the run state that thresholds were set before the new window was read? A verdict without a threshold fails, a threshold set after the change was seen fails, and a series too short for one carries no moved verdict.
+
+Why: without a threshold every wobble is a movement and the operator spends against noise; a threshold set after seeing the change is set to fit it.
+
+## I5. The name term set and the theme list are fixed across runs, and a change to either is a dated seam
+
+**Test:** do the run's name term set and theme list match the instrument list's, and does any difference carry a seam date with the series read on both sides of it? A run reading a set or a list the instrument list does not carry fails.
+
+Why: a detector re-pointed at different terms, or reviews coded under a different list, measures a different thing, and the series breaks without saying so.
+
+## I6. A decision names the finding it answers and the detector that would show it worked
+
+**Test:** does every row of the decision table carry a finding number, a detector and market, and a read date? A decision citing prose rather than a number, or naming no detector, fails.
 
 Why: a decision naming neither cannot be read at the next run, and the roadmap the review ends with becomes a list of wishes that no run can mark as kept or broken.
 
-## I5. Nothing in this folder names a trading name, a panel member, an instrument vendor or a trade
+## I7. Nothing in this folder names a trading name, a panel member, an instrument vendor or a trade
 
 **Test:** grep this folder for any campaign's trading name, any register member, any instrument's vendor name and any industry noun: zero hits. Instance names belong in the campaign folder, in the register, the instrument list and the runs.
 
