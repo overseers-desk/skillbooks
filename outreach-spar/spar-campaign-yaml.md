@@ -112,7 +112,7 @@ Each plan block may carry:
 
 A plan block may be sparse: a segment still being discovered (S&P only, A not yet in scope) carries `objective` and little else. Do not fabricate plan fields to fill the shape.
 
-The P phase reads the plan block for profiling context — the objective and USP framings define what relevance looks like, which P uses to assess applicable angles (SPAR-P §4.12) and gather alignment evidence for A. P does not use them to set `star_rating`, which is campaign-independent general value to us (see `spar-methodology.md`, "Campaigns and segments"). The A phase reads the whole block to draft. Both reach it through the segment's entry in this map, which the dispatcher surfaces to the prompt by path and segment key.
+The A phase reads the whole block to draft; the dispatcher surfaces it to the prompt by path and segment key. P reads none of it: profiling judges the contact against the segment definition alone (INVARIANTS.md I1), which is what keeps `star_rating` campaign-independent general value to us (see `spar-methodology.md`, "Campaigns and segments").
 
 ## Path resolution
 

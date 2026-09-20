@@ -40,7 +40,7 @@ If the roster entry has no `contact_name`, the organisation has been discovered 
 **If a name is found:**
 - Update `contact_name` in the roster.
 - If the entry had `date_excluded` set **solely because it lacked a contact name**, clear `date_excluded` and re-run §4.2 (the structural validation check). The entry may be revalidated if it passes §4.2.
-- If `date_excluded` was set for a structural reason (contact type does not fit the campaign mechanism), finding a name does not revalidate the entry — the structural reason stands.
+- If `date_excluded` was set for a structural reason (contact type does not fit the segment's mechanism), finding a name does not revalidate the entry — the structural reason stands.
 
 **If no name is found after exhausting all sources:**
 - If the roster entry has no `stem`, write one using the organisation slug (e.g. `a-team-coaches` for "A-Team Coaches"). This ensures the row is identifiable in the state machine.
@@ -53,7 +53,7 @@ If the roster entry has no `contact_name`, the organisation has been discovered 
 
 Before any further research, read the segment file and answer one question: can this contact deliver the outcome the segment describes, through the mechanism the segment describes?
 
-This is a structural check, not a relevance check. A contact may be in the right domain, at the right seniority, with strong apparent fit — and still be the wrong type of contact for the segment. The segment file specifies a mechanism: the particular way a contact is expected to act on the campaign's behalf. The check is whether this contact operates through that mechanism. A contact who is adjacent to the mechanism — who knows the right people, or works in the same field, or whose platform could theoretically be adapted — does not pass the check unless the segment file explicitly includes that adjacent role.
+This is a structural check, not a relevance check. A contact may be in the right domain, at the right seniority, with strong apparent fit — and still be the wrong type of contact for the segment. The segment file specifies a mechanism: the particular way a contact is expected to deliver the segment's outcome. The check is whether this contact operates through that mechanism. A contact who is adjacent to the mechanism — who knows the right people, or works in the same field, or whose platform could theoretically be adapted — does not pass the check unless the segment file explicitly includes that adjacent role.
 
 If the contact cannot deliver the outcome through the mechanism the segment describes, set `date_excluded` to today's date, record the reason in `p_note`, and write a short profile document recording why the contact was excluded. The profile is the only durable record of the reasoning (`spar-roster-format.md`, Artefact retention); a future sweep that rediscovers the name reads it instead of repeating the evaluation. Do not proceed to §4.3.
 
@@ -76,7 +76,7 @@ Per platform: if the roster provides a URL, fetch and parse it directly (if §4.
 **From each parsed profile, extract:**
 - Current role, organisation, and location
 - Full career history with dates; education (degrees, certifications, current study)
-- Volunteer and mentorship roles; community groups or pages they admin or follow; public posts relevant to the campaign
+- Volunteer and mentorship roles; community groups or pages they admin or follow; public posts the segment's rubric values
 - The platform-specific signals its module names (employment currency, role-currency contradictions, parser quirks to cross-reference). A currency signal means the stated role may be ending — see §4.13. Where platforms disagree on the current role, weigh source currency per the modules.
 
 ### 4.5 Keyword search for relevance terms
@@ -91,7 +91,7 @@ If you fetched via a site skill that offers a keyword-search tool, use it, passi
 
 2. **Profile-derived keywords.** After parsing the profile, note organisations, projects, and people mentioned. Run a second keyword search for these to extract context (what the target said about them, how they are connected). This is the step that surfaces connections — not the initial parse.
 
-Run multiple rounds of keyword search if needed. The first round checks campaign relevance. The second round chases threads found in the first (e.g. if the first round finds "FOSSASIA" 24 times, the second round searches for specific people and partner organisations mentioned in FOSSASIA context).
+Run multiple rounds of keyword search if needed. The first round checks relevance to the segment's rubric. The second round chases threads found in the first (e.g. if the first round finds "FOSSASIA" 24 times, the second round searches for specific people and partner organisations mentioned in FOSSASIA context).
 
 ### 4.6 Research the target's employer
 
@@ -99,11 +99,11 @@ Visit the website of the target's current employer (and previous employer if the
 - The organisation's mission statement and focus areas
 - Programmes, labs, working groups, or convenings the organisation runs — especially those that involve external stakeholders, policymakers, or industry participants
 - Named leaders (the target's direct supervisor or programme director)
-- Any institutional assets that create campaign-relevant access (e.g. the employer runs policy education for government staff, or convenes industry standards discussions, or operates a conference series)
+- Any institutional assets that create access the segment's rubric values (e.g. the employer runs policy education for government staff, or convenes industry standards discussions, or operates a conference series)
 
 This step is critical for targets whose personal public statements are limited but whose institutional position creates value. A junior programme officer who has written one relevant article may appear low-value if assessed on personal statements alone, but may be high-value if their employer runs a technology policy education programme for lawmakers. The A phase needs the institutional context to frame the outreach correctly — as an institutional proposition rather than a personal one.
 
-If the employer's website reveals programmes or focus areas relevant to the campaign, record them in a dedicated section of the profile document ("Institutional context" or similar, under the domain-specific operational context section). Note which programmes the target is personally involved in versus which are run by their team or organisation more broadly.
+If the employer's website reveals programmes or focus areas the segment's rubric values, record them in a dedicated section of the profile document ("Institutional context" or similar, under the domain-specific operational context section). Note which programmes the target is personally involved in versus which are run by their team or organisation more broadly.
 
 When the segment's value turns on the outlet's reach and the outlet is not one independently recognisable as large, do not inherit a "large / major / global" label from the profile seed or the outlet's own copy. Verify current reach against an external figure (a traffic source such as Similarweb) and record the number with its date and source. A size label without a number and a date is not evidence (§5.0).
 
@@ -132,10 +132,10 @@ If the email passes the format gate, the name check, and the shared-inbox check,
 
 ### 4.9 Web search for public activity beyond the fetched platforms
 
-Search for the target's name plus campaign-relevant terms, excluding the platforms already fetched:
+Search for the target's name plus the rubric's topic terms, excluding the platforms already fetched:
 
 ```
-"[Full Name]" [campaign topic keywords] [current year OR previous year]
+"[Full Name]" [rubric topic keywords] [current year OR previous year]
 "[Full Name]" [organisation name]
 ```
 
@@ -154,12 +154,12 @@ Do not invent or infer statements. The A phase sometimes fabricates a connection
 
 ### 4.11 Record who the target knows
 
-From posts on the fetched platforms (names mentioned or tagged), profile connections visible in the parse, and web search results, identify people connected to the target who are relevant to the campaign. For each:
+From posts on the fetched platforms (names mentioned or tagged), profile connections visible in the parse, and web search results, identify people connected to the target whom the segment's rubric values. For each:
 - Name and their role/organisation
 - How they are connected to the target (tagged in post, co-organiser, commenter, co-admin) — record the mechanism, not a vague "appears to know"
-- Why they are relevant to the campaign (bridges to a target community, works at a target organisation, holds a relevant role)
+- Why the rubric values them (bridges to a target community, works at a target organisation, holds a relevant role)
 
-This is where the "network / connection value" angle is assessed. A target may have said nothing about the campaign's technical themes but may know people and communities the campaign needs to reach. The connections table is evidence for this angle. Connection value requires specific, named paths — "500+ connections" or any raw count is not evidence. What qualifies is a visible relationship to a named community, organisation, or person the campaign needs to reach.
+This is where the "network / connection value" angle is assessed. A target may have said nothing about the rubric's themes but may know people and communities the segment values. The connections table is evidence for this angle. Connection value requires specific, named paths — "500+ connections" or any raw count is not evidence. What qualifies is a visible relationship to a named community, organisation, or person the segment values.
 
 **Cross-reference people already in the system.** For each surfaced name, grep the segment's profiles directory and roster before continuing:
 
@@ -191,7 +191,7 @@ If profiling reveals that the contact cannot deliver the segment's intended outc
 
 ### 4.14 Record profile yield
 
-Count substantive data points. The following all qualify as data points: (a) public statements with extractable quotes, (b) specific recommendations or proposals the target has made, (c) career history entries that demonstrate relevant domain experience (e.g. cybersecurity crisis communications background at a consultancy), (d) current institutional context that creates campaign-relevant access (e.g. employer runs policy education programmes for government staff, or operates a technology convening series), (e) named connections relevant to the campaign, (f) recent activity indicating current engagement (posts, conference appearances, publications within the past 12 months). Do not count only quoted public statements — a target who has said little publicly but whose employer operates a programme directly relevant to the campaign has more data points than a narrow reading would suggest.
+Count substantive data points. The following all qualify as data points: (a) public statements with extractable quotes, (b) specific recommendations or proposals the target has made, (c) career history entries that demonstrate relevant domain experience (e.g. cybersecurity crisis communications background at a consultancy), (d) current institutional context that creates access the rubric values (e.g. employer runs policy education programmes for government staff, or operates a technology convening series), (e) named connections the rubric values, (f) recent activity indicating current engagement (posts, conference appearances, publications within the past 12 months). Do not count only quoted public statements — a target who has said little publicly but whose employer operates a programme the rubric values directly has more data points than a narrow reading would suggest.
 
 Record the count as `yield: N` in the profile front matter. Downstream consumers derive behaviour from the count; thresholds belong in the A-phase AESOP, not here. The A phase reads the count and budgets challenger passes from it (`spar-A-approach.md` §4.6). The thresholds live there, not here: P reports the count, A decides how to use it.
 
@@ -219,7 +219,7 @@ For each empty contact field where a value was discovered, declare the value in 
 
 A row that appears to belong to another segment, or out of scope, is not a discovery: it is a `date_excluded` with the reason in `p_note`. Interactive sessions write the same row to the roster and the same entry to the census directly, so both regimes leave identical records.
 
-**Person vs. company.** Ask whether the campaign wants this person or the person currently in this role at this company. If the answer is the role — which is true for most contacts discovered via directories or company listings — and profiling shows someone else now holds it, the roster entry is wrong. Invalidate it per §4.2, declare the current person as a new row (`rows_new`, below), and do not pass the displaced entry to the A phase. Delete any existing profile for them; git history preserves it. This is the canonical application point for the §4.8 name-mismatch signal.
+**Person vs. company.** Ask whether the segment's `discovery_criteria` name this person or the person currently in this role at this company. If the answer is the role — which is true for most contacts discovered via directories or company listings — and profiling shows someone else now holds it, the roster entry is wrong. Invalidate it per §4.2, declare the current person as a new row (`rows_new`, below), and do not pass the displaced entry to the A phase. Delete any existing profile for them; git history preserves it. This is the canonical application point for the §4.8 name-mismatch signal.
 
 If the person has left the relevant role entirely (e.g. left the industry, retired), mark the roster entry with `date_excluded` and the reason, then search for their replacement at the same organisation. The replacement is declared as a new row (`rows_new`, below) with `discovered_via` recording they were found as a replacement ("profile:{stem} · successor in the role").
 
@@ -297,7 +297,7 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 
 ## Volunteer and mentorship
 
-- [Items relevant to the campaign]
+- [Items the rubric values]
 
 ## What they have said publicly
 
@@ -305,15 +305,15 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 
 [Repeat for each substantive statement. This section is the canonical home for direct quotes attributable to the target, whether the source is a public post (a platform, a blog, a conference) or a private email exchange with the campaign sender. Each quote appears exactly once in the profile. If the target has said nothing on a relevant topic and the absence bears on the rating, mention it inline once: e.g. `No public statements found on [topic].` Do not write a dedicated absent-themes block; absences that do not change the rating are not worth a line.]
 
-## Who they know (connections relevant to campaign)
+## Who they know (connections relevant to the segment)
 
-| Person | Relationship | Relevance to campaign |
+| Person | Relationship | Relevance to segment |
 |---|---|---|
 | ... | ... | ... |
 
 ## [Domain-specific operational context, if applicable]
 
-[e.g. "FOSSASIA operational role" — only include if the target has operational experience relevant to the campaign that does not fit in the career history table]
+[e.g. "FOSSASIA operational role" — only include if the target has operational experience the rubric values that does not fit in the career history table]
 
 ## Relevance assessment
 
@@ -352,11 +352,6 @@ Body sections: `# Profile:` heading, `## Current role` (or contact), `## Mechani
 
 ## 6. Subagent delegation and sequencing
 
-If this procedure is delegated to a subagent, the calling agent must provide:
-- The path to this AESOP
-- The roster file path and the specific entry to profile
-- The segment file path (`rating_rubric`, `discovery_criteria`)
-- The campaign context document paths (only those likely to be relevant)
-- The profile output directory path
+If this procedure is delegated to a subagent, the calling agent provides the §2 inputs by path (the roster and its entry, the segment file, the sweep file for the census check in §4.15), this AESOP's path, and the output path.
 
 **Platform fetch cadence.** Declared and evidence-surfaced platforms share a per-site access cadence that the serialised-browsing skill paces across all workers, so fetches may run concurrently when it is in use (see `spar-methodology.md`, "Web fetching and browser serialisation"). Only where no serialiser exists and fetches are hand-rolled do they run one at a time. Non-platform research (web search, GitHub, registry lookups) is unpaced and always concurrent-safe. This rule is the canonical constraint referenced from §4.3, §4.4, and §4.11.
