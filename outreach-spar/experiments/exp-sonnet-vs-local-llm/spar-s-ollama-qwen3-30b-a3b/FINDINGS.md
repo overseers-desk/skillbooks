@@ -180,3 +180,13 @@ That gives a concrete threshold. Prefill has to finish inside roughly 360 second
 Three observations now agree, where two accounts previously conflicted: uncached requests with large prompts are cut at the cap, a fully cached request ran well past it, and lowering the prompt from 24,985 to 10,178 shortened the silence without clearing the threshold.
 
 The rate figure is the lesson. A single progress line from a cached request described a speed the workload does not get, and using it inverted the diagnosis for several hours.
+
+## It runs: 6,207 tokens, a completed turn, a tool call
+
+Trimming the tool list to six (WebSearch, WebFetch, Read, Write, Bash, Agent) brought a worker's prompt to 6,207 tokens, under the threshold. The request completed with a 200 after 9 minutes 42 seconds, and the worker then invoked its first tool.
+
+That settles the diagnosis for good. The total ran well past six minutes and survived, because prefill finished inside the cap and the first byte arrived in time. The limit measures silence, not duration.
+
+The reduction, in three measured steps from a starting point of 24,985 tokens: removing the router changed the path without changing the size but deleted three faults; `--safe-mode` dropped the operator's own injected context and reached 10,178; trimming eleven tool definitions to six reached 6,207. Each figure is ollama's own count of a real request, not a projection, after two projections proved optimistic by threefold.
+
+The margin is thin. 6,207 tokens is about 5.2 minutes of prefill against a 360-second limit, and a worker's later turns grow: the second turn measured 7,513. The configuration works and is not comfortable, so the architectural fix stands: a worker per segment rather than per source pays this cost five times instead of thirty-five, and buys headroom instead of spending it.
