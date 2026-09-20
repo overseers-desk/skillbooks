@@ -384,8 +384,7 @@ def parse_pilot_logs(scratchpad_dir, segment_filter=None):
                         "outcome": "unresolved_in_this_log", "reached": True,
                     })
                 else:
-                    # The dispatcher runs one worker at a time (see harness
-                    # control-socket note in the log header); a source with
+                    # The dispatcher runs one worker at a time; a source with
                     # no "[phase: ...]" line was never actually launched in
                     # this attempt -- it was queued behind another worker
                     # and the attempt ended (or was interrupted) before its
@@ -425,8 +424,7 @@ def parse_pilot_logs(scratchpad_dir, segment_filter=None):
 
 # ---------------------------------------------------------------------------
 # /var/local/log/spar attempt directories (used only to sanity-check the
-# dispatcher-vs-journal timestamp match; not otherwise re-parsed here since
-# tonight's attempts never produced a usable sweep.log.json body)
+# dispatcher-vs-journal timestamp match; not otherwise re-parsed here)
 # ---------------------------------------------------------------------------
 
 def confirm_spar_log_dirs(spar_log_dir, segment, attempts):
@@ -442,10 +440,9 @@ def confirm_spar_log_dirs(spar_log_dir, segment, attempts):
 
 
 # ---------------------------------------------------------------------------
-# Correlate journal requests with dispatcher attempts (best-effort; only one
-# worker per attempt reached the model tonight, so this is a time-window
-# match rather than an identity join -- there is no request id shared
-# between the dispatcher and ollama to join on exactly).
+# Correlate journal requests with dispatcher attempts (best-effort: a
+# time-window match rather than an identity join -- there is no request id
+# shared between the dispatcher and ollama to join on exactly).
 # ---------------------------------------------------------------------------
 
 def attach_requests_to_attempts(attempts, requests):
