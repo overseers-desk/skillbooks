@@ -276,9 +276,14 @@ def parse_journal(text):
             gen_tokens / gen_duration_s if gen_duration_s and gen_duration_s > 0 and gen_tokens else None
         )
 
-        total_duration_s = (
-            (end_ts - rec["start_ts"]).total_seconds() if end_ts is not None else None
-        )
+        if end_ts is not None:
+            total_duration_s = (end_ts - rec["start_ts"]).total_seconds()
+        elif status == "in_flight":
+            # Still running: no release event exists to mark an end, but the
+            # elapsed-so-far is knowable from the start time to now.
+            total_duration_s = (datetime.now(timezone.utc) - rec["start_ts"]).total_seconds()
+        else:
+            total_duration_s = None
 
         rows.append({
             "pid": pid,
@@ -388,10 +393,13 @@ def parse_pilot_logs(scratchpad_dir, segment_filter=None):
                     # no "[phase: ...]" line was never actually launched in
                     # this attempt -- it was queued behind another worker
                     # and the attempt ended (or was interrupted) before its
-                    # turn. It gets no requests attributed to it.
+                    # turn. It gets no requests attributed to it. end_ts and
+                    # elapsed_s are filled in below, once we know whether the
+                    # attempt has since ended (next attempt's T0) or is still
+                    # the live one (elapsed since being queued, to now).
                     attempt["workers"].append({
                         "source": source, "start_ts": start_ts, "elapsed_s": None,
-                        "end_ts": start_ts, "exit_code": None, "reason": None,
+                        "end_ts": None, "exit_code": None, "reason": None,
                         "outcome": "queued_not_reached (dispatcher runs one worker at a "
                                    "time; never got a phase line before the attempt ended)",
                         "reached": False,
@@ -416,9 +424,27 @@ def parse_pilot_logs(scratchpad_dir, segment_filter=None):
                     if w["start_ts"]:
                         w["elapsed_s"] = (next_t0 - w["start_ts"]).total_seconds()
                 else:
+                    # Genuinely still running: no end event exists, but the
+                    # elapsed-so-far is knowable (start to now), and is the
+                    # main thing worth reading while the run is live.
                     w["outcome"] = "in_flight"
                     w["end_ts"] = None
-                    w["elapsed_s"] = None
+                    w["elapsed_s"] = (
+                        (datetime.now(timezone.utc) - w["start_ts"]).total_seconds()
+                        if w["start_ts"] else None
+                    )
+            elif w["outcome"].startswith("queued_not_reached"):
+                # Never launched, so it has no run of its own, but it was
+                # queued for a span: from its [START] line to either the
+                # next attempt's T0 (the dispatcher moved on without ever
+                # reaching it) or now (this is still the live attempt).
+                # queue_wait_s is left alone -- it never received a request,
+                # so how long it would have waited for one is genuinely
+                # unknown, not merely unrecorded.
+                if w["start_ts"]:
+                    end = next_t0 if next_t0 is not None else datetime.now(timezone.utc)
+                    w["end_ts"] = next_t0
+                    w["elapsed_s"] = (end - w["start_ts"]).total_seconds()
     return attempts
 
 
@@ -481,6 +507,16 @@ def fmt_num(x, nd=1):
     return f"{x:.{nd}f}"
 
 
+def fmt_duration(x, nd=0, unit="s"):
+    """Render a duration (elapsed, queue wait, ...), or an explicit
+    unavailable marker when the value could not be determined. Never
+    prints a bare unit with no number, and never stands in zero or blank
+    for "we don't know"."""
+    if x is None:
+        return "n/a"
+    return f"{x:.{nd}f}{unit}"
+
+
 def write_requests_csv(path, rows):
     import csv
     cols = [
@@ -497,7 +533,7 @@ def write_requests_csv(path, rows):
                 r["prompt_tokens"], r["prefill_tokens_processed"],
                 fmt_num(r["prefill_duration_s"]), fmt_num(r["prefill_rate_tps"], 2),
                 r["gen_tokens"], fmt_num(r["gen_duration_s"]), fmt_num(r["gen_rate_tps"], 3),
-                fmt_num(r["total_duration_s"]), fmt_ts(r["end_ts_utc"]),
+                fmt_duration(r["total_duration_s"], 1, unit=""), fmt_ts(r["end_ts_utc"]),
             ])
 
 
@@ -521,8 +557,8 @@ def write_workers_csv(path, attempts):
                 w.writerow([
                     attempt["file"], attempt["segment"], fmt_ts(attempt["t0_ts"]),
                     wk["source"], fmt_ts(wk["start_ts"]), fmt_ts(wk["end_ts"]),
-                    fmt_num(wk["elapsed_s"], 0), wk["outcome"], len(reqs),
-                    fmt_num(wk.get("queue_wait_s")), fmt_num(compute_s), max_prompt,
+                    fmt_duration(wk["elapsed_s"], 0, unit=""), wk["outcome"], len(reqs),
+                    fmt_duration(wk.get("queue_wait_s"), 1, unit=""), fmt_num(compute_s), max_prompt,
                 ])
 
 
@@ -627,8 +663,8 @@ def build_summary(rows, gin_events, model_loads, attempts, args):
             compute_s = sum((r["prefill_duration_s"] or 0) + (r["gen_duration_s"] or 0) for r in reqs)
             lines.append(
                 f"  - {w['source']}: start {fmt_ts(w['start_ts'])} AEST, outcome={w['outcome']}, "
-                f"elapsed={fmt_num(w['elapsed_s'],0)}s, requests_in_window={len(reqs)}, "
-                f"queue_wait={fmt_num(qw,0)}s, compute_in_window={compute_s:,.0f}s"
+                f"elapsed={fmt_duration(w['elapsed_s'], 0)}, requests_in_window={len(reqs)}, "
+                f"queue_wait={fmt_duration(qw, 0)}, compute_in_window={compute_s:,.0f}s"
             )
 
     total_wall_s = None
