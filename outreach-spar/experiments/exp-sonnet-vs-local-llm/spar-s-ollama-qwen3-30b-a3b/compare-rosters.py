@@ -62,7 +62,7 @@ LEADING_ARTICLES = {"the"}
 
 def _normalise(name, strip_suffixes):
     """Fold case, strip punctuation, drop a leading article, and, if asked,
-    company-suffix words that do not belong to a person's name."""
+    company-suffix words."""
     name = name.lower()
     name = re.sub(r"[^a-z0-9\s]", " ", name)
     words = name.split()
@@ -110,7 +110,6 @@ def base_key(row):
 
 
 def colliding_base_keys(rows):
-    """Base keys shared by more than one row of this same roster."""
     counts = Counter(base_key(r) for r in rows)
     return {key for key, count in counts.items() if count > 1}
 

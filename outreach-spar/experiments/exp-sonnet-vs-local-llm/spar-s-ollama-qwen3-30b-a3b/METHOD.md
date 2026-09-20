@@ -4,9 +4,9 @@ Written before any result exists, so that the scoring cannot be shaped by the ro
 
 ## What is being compared, and what is not
 
-A hosted arm swept horse supply for the estate across five segments, producing 96 roster rows. This arm reruns the same five segments on `qwen3:30b-a3b`, served by ollama on dappnode and reached through claude-code-router over an SSH tunnel.
+A hosted arm swept horse supply for the estate across five segments, producing 97 roster rows. Its own handover says 96, having reported one segment's reachable rows rather than its rows; the files on disk hold 97. This arm reruns the same five segments on `qwen3:30b-a3b`, served by ollama on dappnode and reached through claude-code-router over an SSH tunnel.
 
-The two arms did not do the same job, and the difference is deliberate. The hosted arm worked out its own denominators, its own source census and its own family sweeper before it found a single business. This arm is handed all of that, and produces only the rows. The comparison therefore speaks to finding and recording members of a defined segment. It does not speak to whether a local model can frame a sweep, which is the question the experiment was set up to ask and which a later arm still has to answer.
+The two arms did not do the same job, and the difference is deliberate. The hosted arm worked out its own denominators, its own source census and its own family sweeper before it found a single business. This arm is handed all of that, and produces only the rows. The comparison therefore speaks to finding and recording members of a defined segment. It does not speak to whether a local model can frame a sweep, which a later arm still has to answer. Note that the umbrella tracker one directory up states this experiment's question as producing SPAR-P profiles on a local model, a profiling question rather than a sweeping one, and does not mention dappnode among its machines. This S-phase run was commissioned as a sibling to that work, so the tracker is behind rather than contradicting; updating it is not this run's to do.
 
 The segment definitions and the family sweeper are byte-identical across the two arms, verified by checksum before the run. Both arms inherit the same blind spot: `supplier-horse-rehoming` is built substantially around Racing Queensland's off-the-track retrainers, while the estate's staff have stated a preference for horses that are not thoroughbreds. Neither arm was told. Since both inherit it equally it does not bias the comparison, though it bears on what either roster is worth to the business.
 
@@ -28,7 +28,9 @@ Each sampled row is checked by an agent that is not told which arm produced it, 
 
 ## Half three: the counts that need no judgement
 
-Rows per segment per arm. Businesses appearing in both arms, matched on trading name and locality rather than on stem, since the two arms will not have agreed on stems. Businesses unique to each arm. Rows each arm placed that the other's own exclusions would have rejected.
+Rows per segment per arm. Businesses appearing in both arms, matched on trading name and locality rather than on stem, since the two arms will not have agreed on stems.
+
+That key needs one guard. Eighteen rows in `supplier-horse-rehoming` carry "QOTT Acknowledged Retrainer" in the organisation column, which is a category rather than a business. Nine of those fall into four groups sharing a postcode, of three, two, two and two, and under name and locality alone each group collapses to a single business. Comparing that roster against itself reported 18 matches for its 23 rows before the guard, the five lost being exactly the nine collapsing into four. So where a key is not unique within a single roster, it cannot identify a business across two, and the contact name disambiguates it. Businesses unique to each arm. Rows each arm placed that the other's own exclusions would have rejected.
 
 Row count alone is reported next to the sampled-accuracy figure, never on its own, because the cheapest way to win on count is to invent.
 
