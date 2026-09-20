@@ -1,7 +1,7 @@
 # SPAR-A: Approach (draft + separate-agent spar)
 
 **Applies to:** AI agents (Opus tier) performing the A phase of the SPAR outreach methodology. "A" means draft then spar, where the spar is a context-cleared separate agent, not self-review within the drafting agent.
-**Prerequisite reading:** The profile document for the contact being approached, the campaign plan (defines segments, approach sequencing, and angle tables), and the SPAR methodology (`spar-methodology.md`, A section).
+**Prerequisite reading:** The profile document for the contact being approached, the campaign's plan block for the segment (approach sequencing, angle tables; `spar-campaign-yaml.md`), and the SPAR methodology (`spar-methodology.md`, A section).
 
 ## 1. When to use this procedure
 
@@ -12,7 +12,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 - **Profile document:** The full profile produced by SPAR-P for this contact.
 - **Roster entry:** The contact's row in the roster TSV, including `s_note`, `p_note`, and `star_rating`. `star_rating` is P-owned: read it from the roster row, which the harness syncs from the profile front matter, its authoritative home (`spar-P-profile.md` §4.13). The roster carries campaign-independent population data only; A's outputs (`response_likelihood`, `a_note`) are written to the approach file, not the roster (see §4.8 and §6).
 - **Campaign plan block:** The segment's entry under `segments:` in `campaign.yaml` — the objective, USP framings, `message_goal`, `first_ask`, `conversion_funnel`, and `approach_sequencing` for this segment, including the approach type (firsthand-experience invitation, phone call, personal email, etc.) and collateral prerequisites. Read this before drafting. The dispatcher passes the campaign YAML path and the segment key.
-- **Segment file:** (`segments/{segment}.yaml`) The population definition — `discovery_criteria`, `scope_note`, `rating_rubric`. Consult for boundary and rating context. The per-campaign plan now lives in the campaign plan block above, not here.
+- **Segment file:** (`segments/{segment}.yaml`) The population definition — `discovery_criteria`, `scope_note`, `rating_rubric`. Consult for boundary and rating context. The plan block above holds the campaign's per-segment plan, not this file.
 
 ## 3. Outputs
 
@@ -63,7 +63,7 @@ If frequent prior correspondence already establishes that the contact knows the 
 
 ### 4.2 Select channel
 
-Read the campaign plan block (the segment's entry under `segments:` in `campaign.yaml`) for the prescribed approach type. Then check what channels are available in the roster (email, the platform URL columns, phone). An email is usable when the `email` column contains a deliverable `user@domain` value (the §4.8 format gate); masked or placeholder values do not count.
+Read the plan block (the segment's entry under `segments:` in `campaign.yaml`) for the prescribed approach type. Then check what channels are available in the roster (email, the platform URL columns, phone). An email is usable when the `email` column contains a deliverable `user@domain` value (the §4.8 format gate); masked or placeholder values do not count.
 
 Channel selection rules, in priority order:
 
@@ -80,7 +80,7 @@ The approach file includes all pieces for the selected combination. Sequencing a
 
 ### 4.3 Select language
 
-The default language is English. The campaign plan may specify language rules based on the contact's background and the sender's capability. When a non-default language is used, the A2 spar also runs in that language — the simulated recipient responds as they actually would. Record the language decision and its rationale in the approach file's `decisions` block.
+The default language is English. The plan block may specify language rules based on the contact's background and the sender's capability. When a non-default language is used, the A2 spar also runs in that language — the simulated recipient responds as they actually would. Record the language decision and its rationale in the approach file's `decisions` block.
 
 ### 4.4 Read the profile and select the angle
 
@@ -88,7 +88,7 @@ Read the full profile document. Then:
 
 1. **Note what the contact has said publicly.** These are the hooks: specific statements, positions, or activities that connect their situation to the campaign's offering.
 2. **Note what the contact has NOT said.** The profile records a bearing absence inline where it found one (`No public statements found on [topic].`), and says nothing where it found nothing. Neither licenses inventing relevance; respect both throughout drafting.
-3. **Derive the angles.** The profile carries no angle list (angles are campaign-bound; INVARIANTS.md I1). Construct candidate angles from the profile's `## Relevance assessment` and evidence sections together with the campaign plan's angle table, order them by evidence strength, select the primary angle, and record the rationale in the approach file.
+3. **Derive the angles.** The profile carries no angle list (angles are campaign-bound; INVARIANTS.md I1). Construct candidate angles from the profile's `## Relevance assessment` and evidence sections together with the plan block's angle table, order them by evidence strength, select the primary angle, and record the rationale in the approach file.
 4. **Cross-reference prior approaches.** If a related contact (same organisation, network, or segment) has already been approached (the campaign folder's approach YAMLs; each `a_note` summarises the angle used), use a compatible angle — not identical, but consistent, so the campaign's voice does not contradict itself across contacts who may compare notes.
 
 ### 4.5 Draft the message (A1)
@@ -315,7 +315,7 @@ Before presenting an approach file for human review:
 
 ## 8. Approach types
 
-The campaign plan block (the segment's entry under `segments:` in `campaign.yaml`) defines the approach type for each segment. Common patterns across campaigns:
+The plan block (the segment's entry under `segments:` in `campaign.yaml`) defines the approach type for each segment. Common patterns across campaigns:
 
 - **Firsthand-experience invitation:** An invitation to experience the offering firsthand. The ask is a visit date, not a commitment.
 - **Personal email with collateral:** A short message with attached or linked materials. The collateral must exist before the message is sent.
@@ -327,4 +327,4 @@ Do not default to a generic email when the plan block prescribes a specific form
 
 ## 9. Subagent delegation
 
-Point the subagent at this file, the profile document, the roster entry, and the campaign plan. Include the current band parameters. Do not transcribe SPAR-A content into the prompt — reference the file path.
+Point the subagent at this file, the profile document, the roster entry, and the campaign YAML. Include the current band parameters. Do not transcribe SPAR-A content into the prompt — reference the file path.

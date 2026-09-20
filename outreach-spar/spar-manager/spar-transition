@@ -13,7 +13,7 @@
 #                                          transition.
 #
 # Usage:
-#   tclsh9.0 spar-transition <campaign.yaml> [Tn[:seg[/stem]] ...] \
+#   tclsh9.0 spar-transition <campaign.yaml | segments/<name> ...> [Tn[:seg[/stem]] ...] \
 #       [--dry-run] [--auto] [--dispatchable|--awaiting|--blocked] [-v|--verbose] \
 #       [--jobs=N] [--delay=N] [--yes]
 #
@@ -63,7 +63,7 @@ proc print_help {} {
     puts {spar-transition — report and dispatch SPAR state transitions.
 
 USAGE
-    tclsh9.0 spar-transition <campaign.yaml> [Tn[:seg[/stem]] ...] [options]
+    tclsh9.0 spar-transition <campaign.yaml | segments/<name> ...> [Tn[:seg[/stem]] ...] [options]
 
 POSITIONAL TRANSITION TOKENS
     Tn                  all rows of TID Tn, campaign-wide (live dispatch)
@@ -200,7 +200,7 @@ set stepping      0
 # (filesystem-pure for testability); rejection of empty/non-yaml/missing
 # happens here.
 if {$campaign_path eq ""} {
-    puts stderr "Error: campaign YAML file required."
+    puts stderr "Error: a campaign YAML or a segments/<name> path is required."
     puts stderr ""
     print_help
     exit 1
