@@ -237,3 +237,13 @@ So the turn succeeds and costs about three attempts to do it. Eighteen minutes o
 The cause is margin. A 6,215-token prompt is roughly 5.2 minutes of prefill against a 360-second limit, and ordinary variance in the prefill rate pushes it over. Getting under the cap once is not the same as staying under it.
 
 Two ways to buy headroom, neither of them further prompt-trimming, which is close to exhausted. Raise the limit, which needs finding where it lives, since the name that looked right is set to ninety minutes and changes nothing. Or make the first turn's prompt materially smaller than the threshold rather than marginally under it, which is what a worker per segment does by paying the opening once and amortising it over every source in that segment.
+
+## The limit has a name: `CLAUDE_BYTE_STREAM_IDLE_TIMEOUT_MS`
+
+Setting it to 5400000 in the worker's environment ends the six-minute cuts. Twenty minutes of running produced zero of them, against three consecutive successes at 17m13s, 9m20s and 48.7s. Before, three cuts at 6m0s preceded every completion.
+
+It was found by reading the strings of the CLI binary for environment names containing TIMEOUT, after the router and ollama had both been ruled out and after two better-sounding names had been set to ninety minutes with no effect. `API_TIMEOUT_MS` governs the client's patience with its endpoint. `CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS` sounds exactly right and changes nothing here. The one that matters is an idle timeout on the byte stream, which is what a silent prefill trips.
+
+Three things this settles. The limit measures silence, as the arithmetic said and one intervening account denied. The retry tax is gone, so a turn costs one attempt rather than three. And the prompt no longer has to sit under about 7,000 tokens, which removes the thin margin that made every turn a coin toss.
+
+The general lesson is about where to look. Three timeouts were configured in the layers that seemed responsible, and the binding one lived in the binary at the end of the chain, discoverable in a minute by reading its strings rather than by reasoning about which component ought to own it.
