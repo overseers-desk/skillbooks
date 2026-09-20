@@ -349,3 +349,19 @@ The answer in both cases is a tool call, sixty-odd tokens of arguments, arrived 
 The reasoning tokens are the harness's own estimate and the answer tokens are measured from the emitted text, so the two columns come from different estimators. The gap is large enough that this does not matter.
 
 This makes suppressing reasoning a larger lever than it first appeared, because it reaches three quarters of what the machine spends its time writing. The caution against reaching for it blind still stands: a model that reasons before answering may answer better, so the thing to measure is roster quality with and without, not speed alone. On this path the reasoning arrives as its own content block and never reaches the deliverable, so suppressing it changes what is paid for rather than what is produced.
+
+## The first quality finding: the model skipped the reading its brief assigned it
+
+The local arm's first segment, `supplier-horse-owner`, turned out to be the one the hosted arm deliberately declined to roster. Hosted row counts run 38 for `horse-introducer`, 26 for `supplier-riding-school`, 23 for `supplier-horse-rehoming`, 9 for `supplier-horse-breeder`, and 1 for `supplier-horse-owner`. That single row came from a staff conversation rather than a sweep.
+
+The hosted arm's own sweep record explains the one. It swept the same horsezone page, found 204 live Queensland listings, and rostered none of them, because the segment holds 36,000 to 46,000 private horse carers and cannot be swept to closure, so a row count against that denominator measures nothing. Closure for the segment is source exhaustion instead.
+
+The local worker spent two hours enumerating those sellers one at a time.
+
+The reason is not that it was briefed differently. Its brief names the sweep record by path and says what to take from it: `market_estimate` is the denominator every count is reported against. The worker's own first turn of reasoning says "First step: Read the source's definition." It then made no `Read` call across three turns, having `Read` among its six tools, and went straight to fetching the listings page. The phrase "cannot be swept to closure" appears nowhere in its log, against control phrases from the same brief that the same search finds.
+
+So the model was told which file to read, said it would read it, and did not. Everything downstream followed from that: it enumerated a population its own segment record says cannot be enumerated, and produced no roster row in two hours of work that was, by the hosted arm's judgement, the wrong work.
+
+This is the first substantive quality finding of the experiment, and it is about judgement rather than output format. A model that skips the framing and goes to the data will look productive and be wrong, and on a segment whose brief happens to suit enumeration the same behaviour would have passed unnoticed.
+
+The arm has moved to `horse-introducer`, whose nine sources are registers and directories, pony club club lists, a farriers' register, hoofcare practitioners, an agent index. Those enumerate cleanly, the hosted arm rostered 38 rows from them, and a like-for-like comparison exists there.
