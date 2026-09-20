@@ -279,8 +279,8 @@ def parse_journal(text):
         if end_ts is not None:
             total_duration_s = (end_ts - rec["start_ts"]).total_seconds()
         elif status == "in_flight":
-            # Still running: no release event exists to mark an end, but the
-            # elapsed-so-far is knowable from the start time to now.
+            # No release event exists to mark an end, but the elapsed-so-far
+            # is knowable from the start time to now.
             total_duration_s = (datetime.now(timezone.utc) - rec["start_ts"]).total_seconds()
         else:
             total_duration_s = None
@@ -424,9 +424,9 @@ def parse_pilot_logs(scratchpad_dir, segment_filter=None):
                     if w["start_ts"]:
                         w["elapsed_s"] = (next_t0 - w["start_ts"]).total_seconds()
                 else:
-                    # Genuinely still running: no end event exists, but the
-                    # elapsed-so-far is knowable (start to now), and is the
-                    # main thing worth reading while the run is live.
+                    # No end event exists, but the elapsed-so-far is knowable
+                    # (start to now), and is the main thing worth reading
+                    # while the run is live.
                     w["outcome"] = "in_flight"
                     w["end_ts"] = None
                     w["elapsed_s"] = (
