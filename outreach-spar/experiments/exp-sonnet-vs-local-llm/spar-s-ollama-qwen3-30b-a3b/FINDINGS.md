@@ -59,7 +59,11 @@ The tool definitions can be cut, but not with the flags the dispatcher currently
 
 The dispatcher's own flags make the request larger than passing nothing. `--allowedTools` adds permission metadata and never removes a definition, and naming a tool outside the default catalogue makes the server declare it in full. `--disallowedTools` drops a definition only when the name is bare; a scoped exclusion such as `Agent(general-purpose)` leaves the parent tool's entire schema in the request.
 
-What works is `--tools` with an exact list, which governs what is declared rather than what is permitted, together with `--strict-mcp-config` to drop tools contributed by MCP servers. On the real worker's 22,578 tokens that points at 9,500 to 11,500, and a prefill nearer five minutes than nineteen.
+`--tools` with an exact list governs what is declared rather than what is permitted, and `--strict-mcp-config` drops tools contributed by MCP servers. Together they cut the captured request by 37%.
+
+**That saving does not survive the router.** Applied to a live worker, the prompt reaching ollama went from 22,578 tokens to 21,678, a cut of 4%. The table above was captured by pointing the CLI straight at a capture endpoint, and the router path is not the same request: a trivial prompt measures 40,337 tokens captured directly and 15,950 as ollama receives it. The router is already dropping most of what the capture counts, so trimming the tool list removes something that was largely not being sent. The measurement was taken on the wrong path, and the same mistake had already appeared once tonight before being repeated here.
+
+What remains true is the shape: `--allowedTools` enlarges a request and `--tools` shrinks it. What is not true is that this makes the sweep feasible. At 21,678 tokens the cost per turn is essentially unchanged.
 
 A larger lever sits beside it and was not adopted. `--safe-mode` collapses the system-prompt portion from 18,370 tokens to 3,853, more than the tools fix saves, by disabling skills, hooks and MCP entirely. Whether a sweep worker can work without those is a question for whoever owns the dispatcher, not one to settle by measurement alone.
 
