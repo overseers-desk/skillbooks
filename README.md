@@ -190,6 +190,23 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 **Rivermill brand reviews** (`../rivermill/research-branding/`). Six reviews between April 2025 and February 2026 by two model families, each a single-date snapshot carrying the same five sections, with no series, no panel and no instrument behind them. They are the source the methodology was extracted from, and the defects it corrects are theirs. The brand decision of 27 February 2026 in the same folder is a Decide artefact made before the method existed. No run has yet been made.
 
+### MOVE — Where to Be, Given a Date Range
+
+**Phases:** Map, Offer, Value, Elect
+
+**Direction:** Inward and windowed. The almanac has already rated the events of a year or a season one at a time; MOVE reads that rated list over a shorter range the operator names and decides between plans rather than between events, because events interact through geography: three events in one region are one commitment to be there, and one strong event may not justify a trip that two nearby middling ones make worthwhile. Its output is an election, one presence plan chosen by the operator from lettered offers, with what was foregone and a hand-off the travel SOPs start a journey from.
+
+**What each phase does:**
+
+- **Map** checks that the range lies inside a swept window, gathers the rated events in it, marks what is fixed before any choice (high-certainty presence, committed events, the operator's shortlist) and the deadlines the range turns on, and groups the rest into clusters by region and time.
+- **Offer** assembles two to four presence plans that span the range, each feasible in gross terms and anchored on a different cluster, the first always the plan of not moving.
+- **Value** scores each offer on a vector of dimensions kept apart (event value, presence, cost of absence, travel burden, money, risk), with the operator's rubric binding, and recommends one with the trade it makes stated.
+- **Elect** is the operator's. The election, the events foregone and the presence schedule with its constraints are recorded in a move file, one per range in the almanac's data root, rewritten on each re-election and never written into the almanac's own ledger.
+
+**Model allocation:** Map and Offer are Sonnet-tier. Value is Opus-tier. Elect is human.
+
+**Procedure documents:** `presence-move/move-methodology.md`, the phase documents (`move-M-map.md`, `move-O-offer.md`, `move-V-value.md`, `move-E-elect.md`) and `presence-move/INVARIANTS.md`.
+
 ### How the methodologies relate
 
 SPAR generates outbound messages. Those messages produce replies. The replies arrive in an inbox processed by TEND. TEND's thread assembly recognises the SPAR outreach message in the conversation history and can route the reply accordingly — flagging a positive response rather than filing it as unsolicited inbound.
@@ -202,12 +219,14 @@ PLACE positions what already shipped. Its Landscape answers, after the fact, the
 
 LAMP and MIND divide the series between them. LAMP measures whether the market can find one product and what finding it is worth; MIND measures how the trading name above the products is sought, spoken of and seen, and reads it against a panel of comparable businesses. Where a MIND run shares an instrument with a LAMP run of the same operator it cites LAMP's measurement ground, the retention walls, error windows and withheld-row fraction, rather than re-deriving it, and the claims SAGE ruled or PLACE established are what MIND's Name tests the market's words against.
 
+The almanac and MOVE divide presence between them. The almanac's sweep discovers and rates events for a year or a season into a mostly add-only ledger in the operator's own repository; MOVE elects, over a date range the operator names, which plan of places and events to run, and writes the election beside the ledger rather than into it. The election's presence schedule is what the travel SOPs take as a journey's start: the almanac and MOVE decide where and when, travel decides how.
+
 The methodologies share a structural principle: read before writing. SPAR profiles a contact before drafting a message. SIFT investigates a listing before scoring it. TEND threads a conversation before classifying the email. SAGE surveys a market before anyone rules on a parameter. PLACE polls the users and records the field before the code is read. MIND reads the prior run and the panel before it names anything. In each case, the comprehension phase precedes the action phase, and the scoring rubric or taxonomy does the intellectual heavy lifting so that Sonnet-tier models can apply it reliably.
 
 ## Other directories
 
 - `travel/` — Travel planning and itinerary management (master orchestrator with sub-SOPs)
-- `almanac/` — Event discovery, evaluation, and presence planning (method only; data lives in the user's own repository)
+- `almanac/` — Event discovery and rating for a year or a season, the ledger MOVE elects from (method only; data lives in the user's own repository)
 - `events/` — Event discovery and tracking
 - `roster/` — Roster management (architectural notes only)
 - `lessons/` — What building and testing the AESOPs taught, written up as it was learned
