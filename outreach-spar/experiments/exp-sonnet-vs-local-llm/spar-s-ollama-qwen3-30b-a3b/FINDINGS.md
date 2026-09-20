@@ -116,3 +116,23 @@ That is why the 300-second dispatcher limit, the six-minute cap on the direct pa
 It also explains which fix worked. The sixty-minute router abort was a total-duration limit, and raising the two limits around it let a turn reach 59m59s. The limits that measure silence cannot be satisfied by any budget while prefill stays this long.
 
 So the number to attack is not the timeout and not the total turn cost. It is the prompt that has to be read before anything can be emitted.
+
+## Most of the preamble is the operator's own context, not the tool's
+
+Captured in the real worker directory with the workers' own tool flags: 26,608 tokens without `--safe-mode` and 9,128 with it. The system field accounts for 1,300 and the eleven tool definitions for 5,640, unchanged either way. The difference is entirely in the messages, which fall from 19,668 tokens to 2,656.
+
+What occupies those 19,668 tokens is an operator-side methodology injected at session start, around 53 KB, together with the repository's own instruction files at around 27 KB, and the catalogue of installed skills. None of it is Claude Code's baseline, and none of it is cited by the sweep task.
+
+That revises an earlier conclusion here. Trying a bare working directory changed the prompt by three tokens, which was read as evidence that the cost was inherent to the tool. It was not: the injection is installed globally rather than per-directory, so changing directory could not have moved it.
+
+Projected onto a worker, this puts the prompt near 3,677 tokens and time-to-first-byte near three minutes, inside every limit in the stack. The timeouts stop mattering because the silence they measure is no longer there.
+
+## What the flag costs, and to which sweeps
+
+Not uniform, and the distinction is sharp.
+
+Sweeps of the open web, registers and directories use WebSearch, WebFetch, Read, Write, Edit, Bash, Grep and the subagent tools. The flag touches none of them, and those workers lose nothing.
+
+Sweeps of signed-in platforms lose their only working mechanism. Transcripts show workers invoking platform skills for Instagram and Facebook as a matter of course rather than as a possibility, and those skills carry the authenticated session and the site-specific navigation. The methodology provides a fallback for the generic browser pacing, so losing that alone is an inconvenience. It provides no substitute for an authenticated session, and no built-in tool can sign in.
+
+So the practical shape is a split rather than a switch: the majority of sweeps can run in safe mode at a fifth of the prefill cost, and platform sweeps need either their own path or a pre-authenticated fetch that does not depend on a plugin being loaded.
