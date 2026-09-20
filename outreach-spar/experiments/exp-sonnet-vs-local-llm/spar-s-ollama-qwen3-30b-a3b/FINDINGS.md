@@ -22,9 +22,15 @@ So one segment of six workers is four to six hours, and the full set is 22 to 33
 
 Ollama serves one slot on this configuration, so `--jobs` buys nothing. Everything serialises whatever the dispatcher is told.
 
-## Two defects worth more than the timing
+## Four defects worth more than the timing
+
+Each of the four produces the same symptom, which is that nothing happens. That is why three of them were diagnosed as the last one's recurrence before being seen as separate.
 
 **The router mangles any argument containing punctuation.** `ccr <preset> "$@"` re-spawns the CLI through `child_process.spawn` with `shell: true`, which joins the argument array into a single string for `/bin/sh -c` without escaping. A bare prompt survives. A sweep prompt does not, because it carries apostrophes and parentheses, and the result is `/bin/sh: Syntax error: end of file unexpected` with exit 2 in zero seconds. Node's own DEP0190 deprecation warning, printed on every call, is warning about precisely this. The fix is to set `ANTHROPIC_BASE_URL` to the router's preset endpoint and exec the real binary with the arguments untouched. This affects any caller passing prose through that path, not only this dispatcher.
+
+**The wrapper started the router before exporting the timeout fix.** It called `ccr start` at line 128 and exported `NODE_OPTIONS` with the preload at line 146, so every daemon it started was born without the raised timeout and every call reverted to the 300-second default. This was declared fixed twice on evidence that did not bear on it: once against a daemon that had been started another way, and once by watching a single request survive 25 minutes, which showed the preload could work rather than that it was loaded. The check that settles it is reading `NODE_OPTIONS` from the environ of whatever is listening on the router's port.
+
+**The wrapper's `ccr start` guard blocks when it has to start a daemon.** It is instant when one is already up, which is the case it was written against. When it genuinely starts one, it holds the foreground, the wrapper never reaches its `exec`, and no worker runs at all. The dispatcher logs the job as started, the worker's log stays at zero bytes, and the process tree shows a child that reads as the worker and is the router. Bring the daemon up separately before any dispatcher, and the guard becomes the no-op it was meant to be.
 
 **Ollama does not stop generating when its client disconnects.** A killed client leaves its request holding the single slot for the full remaining prefill, starving everything behind it. This happened twice during the run and each time looked like a hang elsewhere. Restarting the service is the reliable way to clear it. Killing a client is not stopping the work.
 
