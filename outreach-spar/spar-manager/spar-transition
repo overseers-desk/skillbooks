@@ -196,7 +196,7 @@ set assume_yes    [dict get $spec assume_yes]
 set verbose       [dict get $spec verbose]
 set stepping      0
 
-# Campaign YAML is required. The parser captures the positional verbatim
+# A campaign YAML or a segments/<name> path is required. The parser captures the positional verbatim
 # (filesystem-pure for testability); rejection of empty/non-yaml/missing
 # happens here.
 if {$campaign_path eq ""} {
