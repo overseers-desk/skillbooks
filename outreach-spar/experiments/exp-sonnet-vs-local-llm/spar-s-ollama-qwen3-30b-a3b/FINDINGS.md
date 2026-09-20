@@ -16,13 +16,15 @@ Prefill does not run at the rate the hardware benchmark suggests. `local-inferen
 
 At 20 tokens per second, one worker turn is roughly 19 minutes of prefill. Workers run two to three turns. T0 dispatches one worker per census source, which across the five seeded segments is 35 workers, confirmed by the dispatcher's own dry run at 35 of 35 validated.
 
-A worker's turns do not get cheaper as it proceeds. Observed on a live worker, the prompt grew from 22,578 tokens on its first turn to 32,209 on a later one, while prompt caching reused 10,261, leaving about 22,000 new tokens to prefill either way. The conversation grows about as fast as the cache saves, so each turn costs roughly the same as the first.
+A worker's turns do not get cheaper as it proceeds.
+
+A complete turn measured about 21 minutes prefilling and roughly 39 minutes generating before the sixty-minute cut, so generation is not the small half once the model is writing for real. It emits its reasoning as prose before answering, at around 15 tokens per second, and pays for every word. Observed on a live worker, the prompt grew from 22,578 tokens on its first turn to 32,209 on a later one, while prompt caching reused 10,261, leaving about 22,000 new tokens to prefill either way. The conversation grows about as fast as the cache saves, so each turn costs roughly the same as the first.
 
 So one segment of six workers is four to six hours, and the full set is 22 to 33 hours. Generation is not the cost; decode measured 14.99 tokens per second on a 1,106-token answer, and a worker generates far less than it reads.
 
 Ollama serves one slot on this configuration, so `--jobs` buys nothing. Everything serialises whatever the dispatcher is told.
 
-## Four defects worth more than the timing
+## Five defects worth more than the timing
 
 Each of the four produces the same symptom, which is that nothing happens. That is why three of them were diagnosed as the last one's recurrence before being seen as separate.
 
@@ -31,6 +33,8 @@ Each of the four produces the same symptom, which is that nothing happens. That 
 **The wrapper started the router before exporting the timeout fix.** It called `ccr start` at line 128 and exported `NODE_OPTIONS` with the preload at line 146, so every daemon it started was born without the raised timeout and every call reverted to the 300-second default. This was declared fixed twice on evidence that did not bear on it: once against a daemon that had been started another way, and once by watching a single request survive 25 minutes, which showed the preload could work rather than that it was loaded. The check that settles it is reading `NODE_OPTIONS` from the environ of whatever is listening on the router's port.
 
 **The wrapper's `ccr start` guard blocks when it has to start a daemon.** It is instant when one is already up, which is the case it was written against. When it genuinely starts one, it holds the foreground, the wrapper never reaches its `exec`, and no worker runs at all. The dispatcher logs the job as started, the worker's log stays at zero bytes, and the process tree shows a child that reads as the worker and is the router. Bring the daemon up separately before any dispatcher, and the guard becomes the no-op it was meant to be.
+
+**The router aborts every request at sixty minutes, and the value is unreachable from configuration.** Three consecutive worker turns ran to 59m58s, 59m59s and 59m58s and were cut. The source carries `AbortSignal.timeout(r.TIMEOUT ?? 60*1e3*60)`, so sixty minutes is a fallback, but a grep of the whole bundle finds `.TIMEOUT` written nowhere: not from a provider entry, a preset manifest, the top-level configuration, or any environment variable. The only route that reaches it without patching vendored code is a custom transformer, whose `transformRequestIn` may return `{ body, config }`, and that `config` merges into the request options. Our existing plugin now supplies ninety minutes that way. Note that `API_TIMEOUT_MS` is a different timeout, governing the spawned CLI's patience with the router rather than the router's own outbound call.
 
 **Ollama does not stop generating when its client disconnects.** A killed client leaves its request holding the single slot for the full remaining prefill, starving everything behind it. This happened twice during the run and each time looked like a hang elsewhere. Restarting the service is the reliable way to clear it. Killing a client is not stopping the work.
 
