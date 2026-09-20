@@ -208,3 +208,13 @@ The two flags are not alternatives. `--tools` governs which definitions are sent
 The model diagnosed this itself, and its output is the best evidence so far about its quality: it named the three tools it had been refused, said what each was needed for, and listed the four things it could not compute without them, including counting entries against the market estimate.
 
 Passing both flags with the same six built-in names costs about eight tokens, because naming a built-in adds permission metadata and no new definition. The prompt went from 6,207 to 6,215 and the worker began fetching sources.
+
+## With the preamble gone, generation becomes the bottleneck
+
+Harvested over the working configuration: generation 81.7 minutes against prefill 76.8. Through the router, with a 22,578-token prompt, prefill dominated generation by roughly five to one. Cutting the opening prompt to 6,215 tokens removed most of the reading cost and left the writing cost where it was, so the two are now level and generation is marginally ahead.
+
+Queueing cost is zero over this window, against 47,109 seconds earlier, which reflects runs that complete rather than a pile of abandoned callers contending for the single slot.
+
+That moves the next lever. Prompt size was the thing worth attacking and is now largely spent; further trimming buys less than it did. What is left is that the model composes its reasoning as prose before answering, at roughly 15 tokens per second, and pays for every word of it. A model that returns reasoning in a separable field, or a prompt that forbids it, attacks the half that now dominates.
+
+The wall-clock figure over this window, 8.79 hours against 2.64 hours of compute, is not a property of the workload. It counts the intervals when the machine sat idle between my own diagnoses and restarts.
