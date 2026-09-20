@@ -392,3 +392,17 @@ What remains is to find what Bun's native fetch does by default, which is a meas
 ### What follows for the bridge
 
 The three `CLAUDE_*` and `API_TIMEOUT_MS` variables are present on the live worker, read from its own `/proc` entry, so whatever the client itself governs with them is governed. The preload is not doing the job it was added for. Anyone rebuilding this should treat `BRIDGE.md`'s preload section as documenting a file that loads and has no effect, which it now says.
+
+## The cut has a name, and it belongs to the runtime
+
+`BUN_CONFIG_HTTP_IDLE_TIMEOUT`. Bun's native fetch applies an idle timeout, and its default measures 360.4 seconds, timed by fetching a socket that accepts a connection and never answers. Prefill emits nothing, so a long prompt holds the stream idle for its entire duration and is cut at six minutes. Setting the variable to 10 produces a cut at 16 seconds, which is how the knob was identified and which shows it scales.
+
+Nothing in the CLI's own vocabulary reaches it. The three `CLAUDE_*` variables and `API_TIMEOUT_MS` are all set to 5,400,000 and all present on the live worker, read from its own process entry. The preload that was supposed to cover the rest configures `undici`, which this runtime does not use. The limit was one layer below every place that was searched, in the runtime rather than in the application, and it was found by listing the binary's timeout-shaped strings and testing the one that was not a `CLAUDE_` name.
+
+The observed cuts in the clean window sit at 430 seconds rather than 360, and the difference is consistent with the mechanism: the timer measures idleness, not total duration, so a request that exchanges something early has its clock start late. Seventy seconds of opening activity followed by 360 idle gives 430.
+
+### On the sample that nearly misled
+
+The overnight cut durations ran from 52 to 1,506 seconds, a spread no fixed timeout produces, and that spread almost argued the timeout hypothesis away. It was contamination. Seventeen dispatcher restarts were made during the night, and each kills a worker mid-request, which the model server records exactly as it records a timeout: a task released before it generated. Restricting to the window since 07:22, which has no restarts, gives three cuts in eleven requests at 430, 430 and 292 seconds. Two identical readings are a limit; the spread was the operator.
+
+The fix is in the wrapper and `BRIDGE.md` carries it.
