@@ -146,3 +146,13 @@ The installed `claude` binary is compiled with Bun, and Bun ignores `NODE_OPTION
 The limit that actually cut requests short on the direct path is `CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS`, named in the CLI's own error text and defaulting to about six minutes. It measures exactly the silence that prefill produces, which is why raising every total-duration budget in the stack had no effect on it.
 
 So of the seven limits, the one that mattered most is the one named for the quantity the arithmetic identified, and the fix applied hardest was inert the whole time.
+
+## Safe mode, measured rather than projected
+
+A worker's prompt under `--safe-mode`, as ollama reports it: 10,178 tokens, against 24,985 without. A 59% cut.
+
+The projection here was 3,677, arrived at by applying the delta from one capture to a baseline taken from another. It was wrong by nearly threefold in the optimistic direction, for the same reason the earlier 54% tool-trim claim was: a capture taken on one path does not describe a request sent on another, and a delta borrowed between them compounds the error.
+
+10,178 tokens is still a real improvement. At the prefill rates the direct path reaches it is a few minutes of silence rather than fifteen, which is what the limits measure.
+
+The general lesson for this experiment's numbers: every figure that came from a capture has been optimistic, and every figure that came from ollama's own log of a real request has held. Prefer the latter, and treat a projection as a hypothesis to check rather than a result to report.
