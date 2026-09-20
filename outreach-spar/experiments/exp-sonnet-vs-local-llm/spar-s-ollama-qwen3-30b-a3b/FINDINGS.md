@@ -376,3 +376,19 @@ So the model was told which file to read, said it would read it, and did not. Ev
 This is the first substantive quality finding of the experiment, and it is about judgement rather than output format. A model that skips the framing and goes to the data will look productive and be wrong, and on a segment whose brief happens to suit enumeration the same behaviour would have passed unnoticed.
 
 The arm has moved to `horse-introducer`, whose nine sources are registers and directories, pony club club lists, a farriers' register, hoofcare practitioners, an agent index. Those enumerate cleanly, the hosted arm rostered 38 rows from them, and a like-for-like comparison exists there.
+
+## The timeout fix has been inert since it was written
+
+The limit that cuts requests during prefill has a cause, and it is one layer below where the last five attempts looked.
+
+The bridge loads a preload script that raises the HTTP client's timeouts to ninety minutes. The script runs: pointing `BUN_OPTIONS` at a file that throws unconditionally kills the process, while the same file under `NODE_OPTIONS` leaves it printing its version, which confirms both that the preload mechanism works and that Bun is the runtime. Last night that test was taken as proof the timeout fix was live.
+
+It proves the script runs. It says nothing about whether what the script configures governs anything. The script calls `setGlobalDispatcher` on `undici`. Probed inside the same process, the runtime reports as Bun 1.4.3, `globalThis.fetch` reports as native code, and it compares unequal to `undici.fetch`. Bun implements fetch itself and does not consult undici's dispatcher. So the ninety-minute timeout has never applied to a single request this bridge has made.
+
+That is the same error as the `NODE_OPTIONS` one, made one level deeper. The first version verified that a variable was set. The second verified that the script it named actually ran. Neither verified that the thing the script configures is the thing doing the work, which is the only question that was ever being asked.
+
+What remains is to find what Bun's native fetch does by default, which is a measurement against a socket that accepts and never answers rather than another guess.
+
+### What follows for the bridge
+
+The three `CLAUDE_*` and `API_TIMEOUT_MS` variables are present on the live worker, read from its own `/proc` entry, so whatever the client itself governs with them is governed. The preload is not doing the job it was added for. Anyone rebuilding this should treat `BRIDGE.md`'s preload section as documenting a file that loads and has no effect, which it now says.

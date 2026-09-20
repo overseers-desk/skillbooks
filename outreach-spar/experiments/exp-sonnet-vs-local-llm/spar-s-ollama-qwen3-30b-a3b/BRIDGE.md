@@ -40,7 +40,9 @@ exec "$REAL_CLAUDE" "${NEW_ARGS[@]}"
 
 The base URL is ollama's bare origin with no path suffix. Ollama speaks the Anthropic Messages API natively, so no router is needed, and the CLI appends the path itself. Adding `/v1` produces a doubled path and a 404. The auth token can be any non-empty string; the endpoint does not check it, but an empty value sends the CLI into an interactive login.
 
-`BUN_OPTIONS` carries the preload because the binary is Bun-compiled and ignores `NODE_OPTIONS`. Both are set so the wrapper keeps working if the binary changes runtime.
+`BUN_OPTIONS` carries the preload because the binary is Bun-compiled and ignores `NODE_OPTIONS`. Both are set so the wrapper keeps working if the binary changes runtime. Verified by pointing each at a script that throws unconditionally: under `BUN_OPTIONS` the process dies, under `NODE_OPTIONS` it prints its version and exits clean.
+
+The preload nevertheless does nothing for the timeouts it was written for, and anyone rebuilding this should know that before trusting it. It calls `setGlobalDispatcher` on `undici`. The runtime is Bun 1.4.3, whose `fetch` is native and is not undici's: probed inside the same process, `globalThis.fetch` reports as native code and compares unequal to `undici.fetch`. Configuring undici therefore governs nothing the CLI sends. The preload loads, succeeds, and is inert.
 
 Of the three timeouts, only `CLAUDE_BYTE_STREAM_IDLE_TIMEOUT_MS` governs the failure that mattered, an idle timeout on the byte stream tripped by the silence prefill produces. `API_TIMEOUT_MS` governs the client's patience with its endpoint. `CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS` is named for exactly this behaviour and has no effect here. A near neighbour, `CLAUDE_STREAM_IDLE_TIMEOUT_MS`, supplies a fallback floor only when the byte-stream variable is absent.
 
@@ -50,6 +52,6 @@ The `exec` passes the caller's arguments through an array, untouched. An earlier
 
 Ollama runs on a separate machine, bound to localhost, reached through an SSH tunnel on port 11434. That tunnel has no supervisor: if it dies the bridge loses the model silently, and the symptom looks like an unreachable model.
 
-The preload beside the wrapper raises Node's global fetch timeouts. It resolves `undici` from the bridge's own `node_modules`, installed as a declared dependency, having previously borrowed it from an unrelated global package's internals.
+The preload beside the wrapper resolves `undici` from the bridge's own `node_modules`, installed as a declared dependency, having previously borrowed it from an unrelated global package's internals. What it raises is undici's timeouts, which the Bun runtime does not consult, so the file is currently doing no work. It is kept because it is correct under Node and the binary's runtime is not ours to fix.
 
 Set the model server's keep-alive long enough to outlast a run. It unloads an idle model after five minutes by default, and a reload costs tens of seconds before it can accept anything.
