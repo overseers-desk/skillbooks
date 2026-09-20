@@ -2,11 +2,11 @@
 
 **Applies to:** AI agents (Sonnet tier) performing the S phase of the SPAR outreach methodology
 
-**Prerequisite reading:** The campaign plan for the segment being researched (defines segments, estimated universe sizes, catchment area, seed sources, and search queries) and the SPAR methodology (`spar-methodology.md`, S section)
+**Prerequisite reading:** the segment definition (`segments/{segment}.yaml`: `discovery_criteria`, `scope_note`, `geographic_catchment`, `platforms`), its sweep file (`segments/{segment}.sweep.yaml`: `market_estimate`, the source census, the rounds; §7), the sweeper file where the segment declares one (§7.1), and the SPAR methodology (`spar-methodology.md`, S section)
 
 ## 1. When to use this procedure
 
-Use this procedure whenever a campaign needs a list of named people to contact. It applies to any outreach or sales campaign — membership recruitment, hospitality sales, community building, investor outreach — provided the campaign plan defines the target segments and estimated universe.
+Use this procedure whenever a campaign needs a list of named people to contact. It applies to any outreach or sales campaign — membership recruitment, hospitality sales, community building, investor outreach — provided the segment is defined and its sweep file carries a denominator (§7).
 
 Campaigns may define two types of targets, or only one:
 
@@ -14,30 +14,30 @@ Campaigns may define two types of targets, or only one:
 
 **Qualification-only targets** are organisations that are potential customers or members — they qualify by role and geography (or role and sector) alone and enter the outreach sequence without requiring a cue or detailed profile. P is minimal for these targets: the segment declares `target_type: qualification-only` in its definition (`segments/{segment}.yaml`) (see `segment-schema.yaml`), and `spar-P-profile.md` §5.5 defines the profile shape that declaration selects. Profile depth follows the population, not the campaign's ask, which is why the declaration lives with the segment.
 
-The discovery steps are the same for both types. The differences — whether P is required, which roster columns apply, what the handoff looks like — are defined by the campaign plan, not by this AESOP.
+The discovery steps are the same for both types. The differences — whether P is required, which roster columns apply, what the handoff looks like — follow the segment's `target_type` declaration above and its roster header, not this AESOP.
 
 ## 2. Inputs
 
-- **Campaign plan:** Specifies segments, estimated universe sizes, catchment area, seed sources, and search queries. The plan may also define campaign-specific roster columns beyond the core set defined in §4.
+- **Segment definition, sweep file, sweeper file:** who belongs and where (`discovery_criteria`, `scope_note`, `geographic_catchment`, `platforms`); the denominator, the source census and the rounds' vocabulary (§7); the family's shared catchment and instruments (§7.1). Columns beyond the core set are whatever the roster header carries (§4).
 - **Existing roster (if any):** Check whether a roster file already exists for the segment. If one exists, continue from where it left off — do not create a new file.
 - **SPAR methodology:** `spar-methodology.md` — for context on how S feeds P and how S&P iterations work.
 
 ## 3. Outputs
 
-- **Roster TSV file:** One file per segment, in the location specified by the campaign plan. Contains every discovered contact with metadata tracking how and when they were found.
+- **Roster TSV file:** One file per segment, `segments/{segment}.tsv` (`spar-campaign-directory.md`). Contains every discovered contact with metadata tracking how and when they were found.
 - **Sweep file:** `segments/{segment}.sweep.yaml`, the dotted stem sibling of the roster (§7). Carries the market denominator, the source census with per-source status, escapes, and one record per round. It replaces the earlier `summary-[segment-name].md`; a segment still carrying a summary file migrates its content into `sweep.yaml` at the next sweep and deletes the summary.
-- **New names for P:** Contacts discovered during S enter P within the same S&P iteration. Names that belong to a different segment are tagged with the destination segment and picked up by that segment's next S phase.
+- **New names for P:** Contacts discovered during S enter P within the same S&P iteration. Names that belong to a different segment go into that segment's roster (§9).
 
 ## 4. Roster file format
 
-The roster schema — file naming, TSV conventions, the core columns, programmatic access — is defined in `spar-roster-format.md` and not restated here. S populates the identity, channel, and provenance columns; the phase-handover columns (`p_note`, `star_rating`) are P's. The campaign plan may add columns beyond the core set (segment tags, postcode, type, source_url are common) and defines what they mean.
+The roster schema — file naming, TSV conventions, the core columns, programmatic access — is defined in `spar-roster-format.md` and not restated here. S populates the identity, channel, and provenance columns; the phase-handover columns (`p_note`, `star_rating`) are P's. A roster may carry columns beyond the core set (postcode, type, source_url are common); nothing else defines them, so each name says what the column holds.
 
 S-specific rules:
 
 - Every row should have a **contact_name** where one can be identified. If a source lists only an organisation and a quick check of the organisation's website and its platform presences does not surface a named individual, retain the organisation as a row with a blank `contact_name`: write a provisional `stem` using the organisation slug, and leave `date_excluded` empty. Exclusion is a P-phase judgement: SPAR-P §4.1 runs the exhaustive name search, so sweep leaves `date_excluded` empty even when it could not surface a named individual. The blank-name row ensures future sweep iterations recognise the organisation as already discovered and do not re-add it.
 - Each S&P iteration updates the same file via the `sweep_iteration` column. Do not create separate files per iteration.
 - `discovered_via` is authored at sweep time: for seeds, the source name (e.g. "government school directory", "Google Maps", "industry association member list"); for social-graph contacts, the `contact_name` of the person whose profile surfaced the entry, creating a referral chain traceable to the original seed.
-- Where a source carries its own unique key (a register id, an ABN, a licence number), the row records it in the column the campaign plan assigns (`s_note` failing that), and duplicate detection runs on that key. A name identifies nothing on its own: two members can normalise to one name, and one member can trade under several.
+- Where a source carries its own unique key (a register id, an ABN, a licence number), the row records it in the column the roster header carries for it (`s_note` failing that), and duplicate detection runs on that key. A name identifies nothing on its own: two members can normalise to one name, and one member can trade under several.
 
 ## 5. Segment types
 
@@ -49,7 +49,7 @@ Segments fall into three types that affect how S is seeded and how quickly the r
 
 - **Informal segments** (e.g. community groups, mothers' groups, open source maintainers, meetup organisers): No central listing exists. S may not reach target even after 3 iterations; the roster continues to grow during AR as conversations surface referrals. Accept whatever count is reached.
 
-The campaign plan specifies which type each segment is. If the plan does not classify segments explicitly, determine the type from the seed sources: if the plan names a government registry, it is a registry segment; if it names an industry directory, it is a directory segment; if it names only keyword searches, it is an informal segment.
+A segment's type is the type of its most direct census source (§7 `type`): a government registry makes a registry segment, an industry directory a directory segment, keyword searches alone an informal segment.
 
 Classification is an evidence-bearing claim, recorded in the sweep file's source census (§7). Classifying a segment as informal requires having looked for a registry and a directory and recording that the search came up empty; the licensing question is a cheap test (a licensed or government-subsidised activity almost always has a register, though the register found may only bound or verify). A scope filter applied to any source names the class it expects to discard, in the segment's `exclusions`; a filter that cannot name its discard is drawn from convenience and drops members silently.
 
@@ -71,18 +71,18 @@ S&P₀ produces no roster rows and can run inside the same session as S&P₁.
 
 ### S&P₁: Seed
 
-Build the initial roster from the most direct source available. For registry segments, export the registry and resolve named contacts. For directory segments, pull from the directory and search the platforms the campaign plan names for individuals. For informal segments, use the keyword searches defined in the campaign plan, recording the query in `discovered_via`.
+Build the initial roster from the most direct source available. For registry segments, export the registry and resolve named contacts. For directory segments, pull from the directory and search the platforms the segment definition names (`platforms`) for individuals. For informal segments, run the census's keyword sources (§7), recording the query in `discovered_via`.
 
-Queries run as word-sets, not words. For each category the set holds the plain noun, the trade's synonyms, the self-descriptors its members use, and phrases lifted from owned corpora; the round records each word's in-catchment yield, because which words win differs by trade and by platform. A miss is a verdict against the set: a population invisible under one word is routinely plain under its neighbour. Platforms hold populations no register lists, and the campaign plan names the ones its market and geography actually use. Search each platform's groups, pages, and business listings by the word-set; from each result take the administrators, organisers or owners the listing names, with any contact details, and roster them with `discovered_via` recording the platform and the query.
+Queries run as word-sets, not words. For each category the set holds the plain noun, the trade's synonyms, the self-descriptors its members use, and phrases lifted from owned corpora; the round records each word's in-catchment yield, because which words win differs by trade and by platform. A miss is a verdict against the set: a population invisible under one word is routinely plain under its neighbour. Platforms hold populations no register lists, and the segment definition's `platforms` names the ones its market and geography actually use. Search each platform's groups, pages, and business listings by the word-set; from each result take the administrators, organisers or owners the listing names, with any contact details, and roster them with `discovered_via` recording the platform and the query.
 
 When a CRM or existing contact database is available as a seed source, use it, and after web research run a **CRM gap analysis**: which CRM contacts can no web query find, and why (different self-description vocabulary, weak web presence, niche specialisation, outside search radius). The categorisation says whether the invisible segment is reachable through expanded vocabulary or the CRM is the only path to them.
 
 ### S&P₂: Verify and expand
 
-For each S&P₁ contact, verify their current role and activity via their profile or page on the platforms the campaign plan names:
+For each S&P₁ contact, verify their current role and activity via their profile or page on the platforms the segment definition names:
 
 - **Role confirmation:** Does their current title match the roster entry? If they have moved on, find their replacement at the same organisation.
-- **Activity confirmation:** Have they posted or commented on topics relevant to the campaign? (Note: detailed activity research, cue collection, and profiling are P-phase work. S confirms identity and detects role changes; P builds the full profile.)
+- **Activity confirmation:** Have they posted or commented on topics the segment's rubric values? (Note: detailed activity research, cue collection, and profiling are P-phase work. S confirms identity and detects role changes; P builds the full profile.)
 
 Found and reachable are separate counts, and the round reports both. A row without a written channel is inert downstream, so verification includes the cheap conversion steps before the round closes: the listing's website redirect resolved, the site's contact page read, the platform page's own details read.
 
@@ -108,11 +108,11 @@ A found contact proves itself. A negative (a checked-empty search, a zero-yield 
 
 ### Closure
 
-Closure is earned or escalated, never declared, because the roster cannot certify its own completeness; closing takes external evidence at the denominator, the census, and a spot-check. Discovery for a segment closes when coverage (live roster count over the S&P₀ denominator) reaches the target the campaign plan sets, every census source is exhausted or carries an evidence-backed verdict with its control, and no instrument's count stands unreconciled against the denominator.
+Closure is earned or escalated, never declared, because the roster cannot certify its own completeness; closing takes external evidence at the denominator, the census, and a spot-check. Discovery for a segment closes when coverage (live roster count over the S&P₀ denominator) reaches the target the sweep was given, where the owner set one (`coverage_target`, §7), every census source is exhausted or carries an evidence-backed verdict with its control, and no instrument's count stands unreconciled against the denominator.
 
 Closing includes a spot-check: a blind sample spanning every source kind the census holds, a positive and a negative conclusion from each, re-verified through an instrument that did not produce it: a row retired as unfindable re-run through a platform's own search, an absence from a directory re-run through the register. A spot-check finding reopens the census, because a defect surfaced by a random probe is one of a class.
 
-No closure stands while the census leaves a kind of source unattempted. Registers, directories, outlets and platforms each make a population findable a different way: a register holds who is licensed, a directory who pays to be listed, an outlet who is notable, a platform who is active. A population thin in three of these is often plain in the fourth. Which register, which directory, which outlet and which platform serve a market is the campaign plan's to name; that set turns on geography and language, the kinds do not. Recording a kind as holding nothing meets the evidential standard §5 sets: the search was run, with its control, and returned nothing. An expectation that the population is not there does not meet it. Repeats prove instrument saturation, not market exhaustion: an iteration that re-runs earlier queries and re-finds swept contacts says nothing about the market, so each further iteration changes modality (a different register, platform, social graph, or geography) rather than re-running old queries. Three iterations remain the autonomous bound; going past S&P₃ is human-initiated (below).
+No closure stands while the census leaves a kind of source unattempted. Registers, directories, outlets and platforms each make a population findable a different way: a register holds who is licensed, a directory who pays to be listed, an outlet who is notable, a platform who is active. A population thin in three of these is often plain in the fourth. Which register, which directory, which outlet and which platform serve a market is the census's to name (§7), with the family's shared instruments in the sweeper file (§7.1); that set turns on geography and language, the kinds do not. Recording a kind as holding nothing meets the evidential standard §5 sets: the search was run, with its control, and returned nothing. An expectation that the population is not there does not meet it. Repeats prove instrument saturation, not market exhaustion: an iteration that re-runs earlier queries and re-finds swept contacts says nothing about the market, so each further iteration changes modality (a different register, platform, social graph, or geography) rather than re-running old queries. Three iterations remain the autonomous bound; going past S&P₃ is human-initiated (below).
 
 A sweep that reaches the autonomous bound without earning closure escalates rather than closing or grinding on: it stops and reports the coverage arithmetic, the unharvested and contradicting sources by name, and each one's blocking reason, so the owner decides with the specific sources in hand. For informal segments with every census source exhausted, accept the count reached and record the shortfall against the denominator rather than absorbing it. S may terminate early within an S&P iteration once closure is earned, while P continues on accumulated contacts.
 
@@ -133,6 +133,7 @@ market_estimate:            # S&P₀ output; the denominator
   value: <number or range, with any known unharvested layers>
   derivation: <top-down and bottom-up reasoning, source by source; a revision cites its instrument and keeps the figure it replaces>
   estimated: <date>
+coverage_target: <fraction of the denominator the owner asked this sweep to reach; absent when none was given>
 sources:                    # the census; every discovered_via maps to an entry here
   - name: <register/directory/outlet/platform/method>
     type: registry | directory | outlet | platform | informal   # every kind carries an entry; §6
@@ -205,15 +206,15 @@ The stale contact's date allows periodic re-checking — a person who left a rol
 
 ## 9. Cross-lead capture
 
-During S (and more commonly during P), names may surface that belong to a different segment from the one being researched — a contact relevant to a different campaign segment entirely.
+During S (and more commonly during P), names may surface that belong to a different segment from the one being researched — a member of a different segment entirely.
 
-These cross-leads must not be discarded because they fall outside the current segment's scope. Record them in the roster with `discovered_via` pointing to the originating contact and tag them with the destination segment (using whatever segment-tagging mechanism the campaign plan defines). The S phase of the appropriate segment picks them up in its next iteration. In campaigns with multiple segments running concurrently, cross-lead capture is one of the primary mechanisms by which segments inform each other.
+These cross-leads must not be discarded because they fall outside the current segment's scope. Write the row into the destination segment's roster with `discovered_via` naming the originating contact and segment. A dispatcher-run worker reaches only its own roster: it marks the row `date_excluded` with the destination in `p_note`, and the owner carries it across by hand. Where several segments are swept concurrently, cross-lead capture is one of the primary mechanisms by which segments inform each other.
 
 ## 10. Quality checklist
 
 Run this checklist against all roster files after each iteration. Each check is a pass/fail assertion on the TSV data.
 
-1. **Column count:** every row has the expected number of tab-separated fields (core columns per `spar-roster-format.md` plus any campaign-specific columns the plan defines).
+1. **Column count:** every row has the expected number of tab-separated fields (core columns per `spar-roster-format.md` plus any further columns the header carries).
 2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)"), or has a blank `contact_name` with a provisional organisation-slug stem. Rows with blank `contact_name` and no `date_excluded` are P-phase leads awaiting SPAR-P §4.1 name resolution — they are not errors.
 3. **No duplicate contacts:** no two rows in the same roster file share the same (`contact_name`, `organisation`) pair (case-insensitive), and where rows carry a source key (§4) no two share it. Multiple contacts at the same organisation is permitted.
 4. **Email format:** every non-empty `email` field contains an `@` sign. Strings like `via website`, `(07) 5572 3588`, or `[email obtained during call]` are not email addresses and must not pass validation. This is the gate that prevents non-email strings from inflating counts downstream.
@@ -224,16 +225,11 @@ Run this checklist against all roster files after each iteration. Each check is 
 9. **Provenance maps to census:** every row's `discovered_via` corresponds to an entry in the sweep file's source census (§7), and a census entry claiming a zero yield or unreachable status carries its control or probe (§6). A row citing a source the census does not hold means either an undeclared source (add it, with status) or a provenance error (investigate).
 10. **Coverage computed:** the round record's `coverage_after` equals the roster's live row count over the S&P₀ denominator, computed from the files rather than asserted.
 
-Campaign-specific checks (e.g. "every outreach row has a non-empty p_note") are defined by the campaign plan, not by this AESOP.
+Checks a campaign adds at dispatch (a profile required, a minimum star) live in its `filter` block (`spar-campaign-yaml.md`), not in this AESOP.
 
 ## 11. Subagent delegation
 
-When an AI agent delegates discovery work to a subagent, the prompt must tell the subagent to read this file rather than transcribing roster format definitions or iteration rules. The prompt should contain:
-
-- The file path to this AESOP
-- The roster file path
-- The specific task (which segment, which iteration, what to search for)
-- The campaign plan path
+When an AI agent delegates discovery work to a subagent, the prompt must tell the subagent to read this file rather than transcribing roster format definitions or iteration rules. The prompt carries the §2 inputs by path, the roster path, and the specific task (which segment, which iteration, which source).
 
 Do not replicate SPAR-S content in prompts — copies drift and cannot be corrected.
 

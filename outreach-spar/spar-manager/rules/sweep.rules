@@ -10,7 +10,7 @@
 # file is found by that name.
 
 # ── Levels ───────────────────────────────────────────────────────────────
-level root -keys {version segment market_estimate sources exclusions \
+level root -keys {version segment market_estimate coverage_target sources exclusions \
                   escapes rounds next_round rows_to_verify}
 level market_estimate -keys {value derivation estimated}
 level source -keys {name type role url status note yield discovered_via \
