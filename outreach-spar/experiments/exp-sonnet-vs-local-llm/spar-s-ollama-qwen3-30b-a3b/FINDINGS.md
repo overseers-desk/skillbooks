@@ -104,3 +104,15 @@ Two more belong to the same family without being timeouts: a guard that blocked 
 None of these is a bug in the sense of being wrong. Each default is sensible for a hosted model answering in seconds. Together they encode an assumption that a request completes in minutes, and a model taking an hour per turn violates it at every layer independently. Lifting one reveals the next, and the sequence gives no sign of being finished.
 
 That is the practical finding for anyone porting this stack to local inference. The work is not tuning a timeout. It is that the per-turn cost has to come down to where the stack's assumptions hold, which means not re-sending a five-figure token preamble on every turn.
+
+## Why every layer fires: time to first byte, not total time
+
+The seven limits look like a series of unlucky ceilings. They are one problem seen seven times.
+
+Prefill produces no output. A worker's prompt of 18,000 to 22,000 tokens takes fifteen to nineteen minutes to read at the rate this hardware achieves, and during all of it the connection is silent. So time-to-first-byte here is fifteen minutes or more, and any limit shorter than that fires before the model has said anything, whatever the total request budget is set to.
+
+That is why the 300-second dispatcher limit, the six-minute cap on the direct path and the ten-minute client limit all bite identically, and why raising a total-duration setting did not help against them. Streaming does not help either: a streamed response still sends its first chunk only after prefill.
+
+It also explains which fix worked. The sixty-minute router abort was a total-duration limit, and raising the two limits around it let a turn reach 59m59s. The limits that measure silence cannot be satisfied by any budget while prefill stays this long.
+
+So the number to attack is not the timeout and not the total turn cost. It is the prompt that has to be read before anything can be emitted.
