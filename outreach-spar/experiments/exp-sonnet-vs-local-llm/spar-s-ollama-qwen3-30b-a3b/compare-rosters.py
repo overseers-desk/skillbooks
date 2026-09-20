@@ -22,6 +22,22 @@ drop a leading "the" and drop trailing/embedded company-suffix words (pty, ltd,
 limited, inc, incorporated, llc, co) that the two sweeps routinely disagree on
 whether to include.
 
+THE COLLISION GUARD. Some rosters carry rows whose "organisation" column is not a
+business name at all but a category label, e.g. "QOTT Acknowledged Retrainer" in
+`supplier-horse-rehoming`, with the actual identity sitting in `contact_name`. Under
+(organisation, postcode) alone, several such rows collapse into one key, and a key
+that is not unique within a single roster cannot identify a business across two. So
+each roster is checked on its own for (organisation, postcode) keys that more than
+one of its rows share. Where a key collides in EITHER roster, every row carrying that
+key, in both rosters, is matched on the longer key (organisation, postcode, normalised
+contact name) instead. Checking both rosters, not just the one under comparison, is
+what keeps a business matching across the two when the collision only shows up on one
+side: the other roster's rows for the same organisation/postcode may look unique in
+isolation, but they must be keyed the same way as their colliding counterpart or the
+join misses them. The contact name is normalised the same way as the organisation
+name, minus the company-suffix stripping, since a suffix like "Pty Ltd" belongs to a
+company, not a person.
+
 THE SAMPLE (half two). Under --sample, print up to 8 rows per roster (or every row,
 whichever file holds fewer than 8), chosen by sorting the roster's rows by `stem` and
 then taking evenly spaced indices across that sorted order, so the picked rows span
@@ -32,6 +48,7 @@ import argparse
 import csv
 import re
 import sys
+from collections import Counter
 
 REQUIRED_COLUMNS = [
     "stem", "contact_name", "organisation", "role", "phone", "email",
@@ -43,15 +60,27 @@ SUFFIX_WORDS = {"pty", "ltd", "limited", "inc", "incorporated", "llc", "co"}
 LEADING_ARTICLES = {"the"}
 
 
-def normalise_organisation(name):
-    """Fold case, strip punctuation, and drop company suffixes / leading articles."""
+def _normalise(name, strip_suffixes):
+    """Fold case, strip punctuation, drop a leading article, and, if asked,
+    company-suffix words that do not belong to a person's name."""
     name = name.lower()
     name = re.sub(r"[^a-z0-9\s]", " ", name)
     words = name.split()
-    words = [w for w in words if w not in SUFFIX_WORDS]
+    if strip_suffixes:
+        words = [w for w in words if w not in SUFFIX_WORDS]
     if words and words[0] in LEADING_ARTICLES:
         words = words[1:]
     return " ".join(words)
+
+
+def normalise_organisation(name):
+    """Fold case, strip punctuation, and drop company suffixes / leading articles."""
+    return _normalise(name, strip_suffixes=True)
+
+
+def normalise_contact_name(name):
+    """Same normalisation as an organisation name, minus company-suffix stripping."""
+    return _normalise(name, strip_suffixes=False)
 
 
 def read_roster(path):
@@ -76,8 +105,28 @@ def read_roster(path):
     return rows
 
 
-def match_key(row):
+def base_key(row):
     return (normalise_organisation(row["organisation"]), row["postcode"].strip())
+
+
+def colliding_base_keys(rows):
+    """Base keys shared by more than one row of this same roster."""
+    counts = Counter(base_key(r) for r in rows)
+    return {key for key, count in counts.items() if count > 1}
+
+
+def match_key(row, collisions):
+    """The join key for a row.
+
+    A base key that is unique in both rosters is used as-is. A base key that
+    collides in either roster is not safe to identify a business by, in that
+    roster or the other one, so every row carrying it, on both sides, is keyed
+    with the normalised contact name added.
+    """
+    key = base_key(row)
+    if key in collisions:
+        return key + (normalise_contact_name(row["contact_name"]),)
+    return key
 
 
 def evenly_spaced_sample(rows, sample_size=8):
@@ -113,8 +162,10 @@ def main():
     control_rows = read_roster(args.control)
     local_rows = read_roster(args.local)
 
-    control_keys = {match_key(r): r for r in control_rows}
-    local_keys = {match_key(r): r for r in local_rows}
+    collisions = colliding_base_keys(control_rows) | colliding_base_keys(local_rows)
+
+    control_keys = {match_key(r, collisions): r for r in control_rows}
+    local_keys = {match_key(r, collisions): r for r in local_rows}
 
     both = set(control_keys) & set(local_keys)
     only_control = set(control_keys) - set(local_keys)
