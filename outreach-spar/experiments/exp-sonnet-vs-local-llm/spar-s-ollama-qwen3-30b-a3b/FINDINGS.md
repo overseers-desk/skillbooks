@@ -156,3 +156,15 @@ The projection here was 3,677, arrived at by applying the delta from one capture
 10,178 tokens is still a real improvement. At the prefill rates the direct path reaches it is a few minutes of silence rather than fifteen, which is what the limits measure.
 
 The general lesson for this experiment's numbers: every figure that came from a capture has been optimistic, and every figure that came from ollama's own log of a real request has held. Prefer the latter, and treat a projection as a hypothesis to check rather than a result to report.
+
+## The six-minute limit is total duration, not first byte
+
+Cutting the prompt from 24,985 tokens to 10,178 did not change the outcome. The request was still cut at 6m0s. At the direct path's prefill rate that prompt is under two minutes of reading, so the first byte had long arrived and roughly four minutes of generation followed before the cut.
+
+That refutes the first-byte account offered above. The arithmetic was right about prefill's silence and wrong about which limit was binding. `CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS` is set to 5400000 in the worker's own environment and the cut is unchanged, so either that name is not honoured by this Bun-compiled binary or it governs something else.
+
+What is established: a limit near 360 seconds ends the whole request, it is not the router's (the router is gone), it is not ollama's (which has no such setting and logs the client as the party that left), and it is not satisfied by reducing the prompt. Its source is not located.
+
+What follows for the workload: a turn needs longer than six minutes on this hardware even with the preamble stripped, because generation alone runs past it. Shrinking the prompt helps the arithmetic and does not clear the constraint.
+
+Recorded as unresolved rather than carried further. Ten limits have been found by lifting the one above, each time revealing another, and the sequence has not converged. The remaining value is in the architectural change already identified, not in locating an eleventh.
