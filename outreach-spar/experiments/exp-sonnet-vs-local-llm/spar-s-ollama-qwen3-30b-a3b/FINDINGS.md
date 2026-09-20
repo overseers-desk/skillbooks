@@ -294,3 +294,27 @@ What it costs to write a thousand tokens, then, is 5.8 minutes at 6,000 tokens o
 The 0.58 quoted earlier is not an outlier and not noise. It is what 22,605 tokens of context buys, and the 1.84 measured later is what 8,431 buys. One law covers both.
 
 So the reversal stands on a measurement rather than on a single reading. A worker that accumulates fetched pages in one conversation pays for every later token at the rate its accumulated context sets, and the penalty compounds because the answers that matter come last, when the context is longest. The design that avoids it fetches a source, extracts the rows, discards the page, and carries forward only what it extracted.
+
+## Where a worker's time actually goes: one tool call
+
+The worker running this morning gives the first complete account, because its session log and the model server's log can be lined up against each other.
+
+It started at 07:22:26 and by 08:55 had done three things. It reasoned for 1,979 tokens and called `WebFetch` on the horsezone Queensland listings page. The fetch took 57.2 minutes. It then began reasoning on the result, which is what it is still doing.
+
+So one tool call is 63% of the worker's elapsed time. The fetch returned what was asked of it, listings in the requested shape, priced and placed: a German riding pony at Laravale, an allrounder gelding at Carindale, and so on down the page. The tool works. It is the cost that is the problem.
+
+The model server's side of that same call settles what the cost is made of. The request carried 22,605 tokens, of which 22,457 were already in the prompt cache from an earlier attempt on the same page, so prefill read 148 new tokens in 20 seconds. Generation produced 1,977 tokens in 3,415 seconds, at 0.58 tokens per second. Prefill was 0.6% of the call and generation was 99.4%.
+
+This is the cleanest available demonstration that generation is the constraint, because it is the case where prefill was almost entirely free and the call still took an hour. Across all sixteen requests that ran to completion and logged a final timing block, prefill totals 29 minutes against generation's 137, a generation share of 82%.
+
+`WebFetch` is not a fetch. It retrieves the page and then has the model read it and answer a prompt about it, and on this bridge that model is the local one. The hosted arm makes the same call against hosted Claude and pays nothing comparable for it.
+
+### What this corrects
+
+The 0.58 tokens per second that drove the per-segment reversal is this call. Its 22,605-token context is a fetched web page handed to the model by the tool, not an agent conversation that grew by accumulating sources. The agent's own conversation over the same period ran from 6,819 tokens to 8,431.
+
+Worker shape does not reach this. Whether one worker takes six sources or six workers take one each, `WebFetch` sends a page-sized prompt every time it is called, and the page is the same size either way. The reversal's direction was right, that generation dominates and worsens with context, but the lever it named was the wrong one. What is left of the shape question is smaller than it looked: the opening preamble, paid once per worker, against a conversation that grows.
+
+The lever that reaches the real cost is to keep the page out of the model. A plain retrieval with extraction done by a script sends nothing to be generated, and removes the largest single item in the run. Where a page genuinely needs a model to read it, capping what is sent is the next thing to try, since the cost is the answer's length multiplied by the context it is written against.
+
+One caveat on the separation: the 22,605-token prompt is about three times the agent's conversation at that moment, so the page is plainly the bulk of it, but the log does not show whether the tool's call also carries the conversation. That would change the size of the effect and not its direction.
