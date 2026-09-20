@@ -169,6 +169,27 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 **RobCo Terminal** (`../RobCo-Terminal/research/`, run of 2026-08-23, the first run after extraction). A CRT-look terminal emulator with a channel bank and tmux control-mode integration, positioned against twenty-one terminals and multiplexers. Five Poll collectors over forums, issue trackers and long-form posts, one of which returned nothing on its first pass because the machine's one headless browser was held by a sibling collector, and was re-run serially; thirteen numbered pains, about a hundred quotes; a discussion-dynamics table from a search API showing the incumbent retro terminal reaching the front page six times in twelve years on its looks alone, at a low comment ratio; a source-open Audit that found three README claims without code behind them, ten capabilities built but unreachable, and the one gap between the code and daily use (an ASCII-only glyph atlas); a name that passes. The run drove three additions to the methodology: serialising browser-bound collectors, the built-but-unwired status in the Audit, and the counter-segment as a numbered pain.
 
+### MIND — How the Market Holds One Trading Name, and Whether a Movement Is Ours
+
+**Phases:** Measure, Index, Name, Decide
+
+**Direction:** Inward and longitudinal, one trading name at a time, with every movement attributed before it is read. The four phases answer the operator's four questions in order: how is the name held now on instruments, is a movement ours or the market's, what does the market call us against what we claim and for whom, and what do we elect to change. A brand review drawn on one date can only describe; a MIND run reads itself against the last run and against a panel of comparable businesses measured on the same instrument and window, so a movement is attributed to the operator, to the operator's market, or to the market as a whole.
+
+**What each phase does:**
+
+- **Measure** reads the prior run first, then measures how the name is held now: demand for the name on a rank database and the operator's console, perception of it on review platforms and in the modifiers the market attaches to it, presence of it across listings, profiles and social accounts. Every figure carries its instrument, its window and the prior run's figure beside it.
+- **Index** measures the panel, the closest band of the campaign's register of comparable businesses, on the same instruments and windows, and attributes each movement in the operator's series: the panel moved with it, the members sharing the operator's market moved, or the operator moved alone. A figure no instrument can index is reported as unindexed, and a member under an instrument's floor as under the floor.
+- **Name** states what the market calls the name, against what the operator claims, and for whom, as numbered findings: positioning and differentiation, the competitor framing, the audience segments, presence by channel, reputation themes. Each finding cites its evidence and says whether it moved since the prior run. The run ends here and chooses nothing.
+- **Decide** is the operator's. Each decision names the finding it answers and the series that would show it worked, with a read date, and the next run's Measure reads it.
+
+**Model allocation:** Measure and Index are Sonnet-tier under the campaign's instrument list and register; Name is Opus-tier; Decide is human with AI clerking; the cold read before publication is a fresh context at the tier the run's use warrants.
+
+**Procedure documents:** `brandreview-mind/mind-methodology.md` and `brandreview-mind/INVARIANTS.md`.
+
+#### MIND use cases
+
+**Rivermill brand reviews** (`../rivermill/research-branding/`). Six reviews between April 2025 and February 2026 by two model families, each a single-date snapshot carrying the same five sections, with no series, no panel and no instrument behind them. They are the source the methodology was extracted from, and the defects it corrects are theirs. The brand decision of 27 February 2026 in the same folder is a Decide artefact made before the method existed. No run has yet been made.
+
 ### How the methodologies relate
 
 SPAR generates outbound messages. Those messages produce replies. The replies arrive in an inbox processed by TEND. TEND's thread assembly recognises the SPAR outreach message in the conversation history and can route the reply accordingly — flagging a positive response rather than filing it as unsolicited inbound.
@@ -179,7 +200,9 @@ SAGE defines what there is to sell. Its Establish phase produces the numbered cl
 
 PLACE positions what already shipped. Its Landscape answers, after the fact, the question SAGE's Survey asks before a market is entered, and its Establish produces the positioning and the user-language corpus a launch post or a SPAR campaign draws on; replies again arrive through TEND.
 
-The methodologies share a structural principle: read before writing. SPAR profiles a contact before drafting a message. SIFT investigates a listing before scoring it. TEND threads a conversation before classifying the email. SAGE surveys a market before anyone rules on a parameter. PLACE polls the users and records the field before the code is read. In each case, the comprehension phase precedes the action phase, and the scoring rubric or taxonomy does the intellectual heavy lifting so that Sonnet-tier models can apply it reliably.
+LAMP and MIND divide the series between them. LAMP measures whether the market can find one product and what finding it is worth; MIND measures how the trading name above the products is sought, spoken of and displayed, and reads it against a panel of comparable businesses. Where a MIND run shares an instrument with a LAMP run of the same operator it cites LAMP's measurement ground, the retention walls, error windows and withheld-row fraction, rather than re-deriving it, and the claims SAGE ruled or PLACE established are what MIND's Name tests the market's words against.
+
+The methodologies share a structural principle: read before writing. SPAR profiles a contact before drafting a message. SIFT investigates a listing before scoring it. TEND threads a conversation before classifying the email. SAGE surveys a market before anyone rules on a parameter. PLACE polls the users and records the field before the code is read. MIND reads the prior run and the panel before it names anything. In each case, the comprehension phase precedes the action phase, and the scoring rubric or taxonomy does the intellectual heavy lifting so that Sonnet-tier models can apply it reliably.
 
 ## Other directories
 
