@@ -198,3 +198,13 @@ The worker completed a second turn as well, a 200 at 10m41s on a 7,513-token pro
 The growth was expected to be fatal and is not. At the uncached rate a 7,513-token prompt is over six minutes of prefill, which should have breached the cap. Prompt caching carries the shared prefix between turns, so only the new portion is read, and the silence stays under the limit even as the conversation grows.
 
 That revises the threshold from a hard ceiling into a first-turn constraint. What has to fit under the cap is the opening prompt, because every turn after it reuses most of what came before. A worker per segment, carrying more sources through one conversation, is therefore better placed than the per-source design in a second way: it pays the uncached opening once and then rides the cache.
+
+## `--tools` and `--allowedTools` do different jobs, and you need both
+
+Trimming the tool list to get under the prefill threshold meant stripping the dispatcher's `--allowedTools` along with its `--disallowedTools`, and passing `--tools` with six names instead. The prompt came down and the worker was then refused every tool it tried.
+
+The two flags are not alternatives. `--tools` governs which definitions are sent, which is what costs tokens. `--allowedTools` grants permission to call them. With `--permission-mode dontAsk`, which the dispatcher passes, a tool that is declared but not permitted is refused outright rather than prompting.
+
+The model diagnosed this itself, and its output is the best evidence so far about its quality: it named the three tools it had been refused, said what each was needed for, and listed the four things it could not compute without them, including counting entries against the market estimate.
+
+Passing both flags with the same six built-in names costs about eight tokens, because naming a built-in adds permission metadata and no new definition. The prompt went from 6,207 to 6,215 and the worker began fetching sources.
