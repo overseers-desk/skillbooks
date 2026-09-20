@@ -1,6 +1,6 @@
 # SPAR Roster Format
 
-**Applies to:** all SPAR campaigns. Campaign-specific columns are appended after the core set and documented in the campaign plan, not here.
+**Applies to:** all SPAR segments. Columns beyond the core set follow it in the header, whose names are their only definition.
 
 ## File format
 
@@ -133,19 +133,19 @@ The same applies when a contact is replaced (e.g. a new person takes over the ro
 
 Old-slug duplicates — where the same content exists under two filenames due to a rename or slug normalisation — may be deleted. The test is whether the content is reachable from any current roster row's `stem` field. If it is, the other copy is redundant. If neither copy is reachable, the content is an orphan and should be linked to a roster row or investigated, not deleted.
 
-## Campaign-specific columns
+## Columns beyond the core set
 
-Campaigns may append columns after column 14. The campaign plan defines them. Common additions include:
+A roster may append columns after column 14; write each name so it explains the column. Common additions include:
 
 - **postcode** or **location** — for geographic filtering
 - **type** — contact category within a segment (e.g. "strategic", "corporate", "community")
 - **source_url** — the specific page that justified inclusion
 
-Each roster fact has one canonical column. If a campaign needs a field that serves the same purpose as a core column, use the core column rather than add a parallel one under a different name.
+Each roster fact has one canonical column. If a segment needs a field that serves the same purpose as a core column, use the core column rather than add a parallel one under a different name.
 
 ## Quality checklist
 
-These assertions apply to the core columns. Campaign-specific checks are defined by the campaign plan.
+These assertions apply to the core columns. Checks a campaign adds at dispatch live in its `filter` block (`spar-campaign-yaml.md`).
 
 1. Every row has a non-empty `contact_name` that is not a placeholder, or has a blank `contact_name` that P §4.1 will resolve (organisation identified, person not yet found).
 2. Every row has the expected number of tab-separated fields.
