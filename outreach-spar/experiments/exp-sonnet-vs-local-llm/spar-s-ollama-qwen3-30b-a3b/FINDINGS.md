@@ -270,12 +270,27 @@ Whether that is worth changing is a measurement nobody has taken. Hyperthreading
 
 Recorded because 49% idle on the machine that is the bottleneck is the kind of thing that reads as obviously wasteful and may not be.
 
-## The decode figure, qualified
+## Decode against context: the curve, measured
 
-The 0.58 tokens per second above is one observation, not the rate. A later generation on the same worker ran at about 1.9, and within a single generation the rate declines steadily as tokens accumulate, from 2.00 to 1.87 over a few hundred tokens.
+Decode rate is a function of how much context the model is carrying, and the relationship is tight enough to plan against. Every request the model server logged last night carries both its prompt size and its achieved generation rate, so the curve came out of the existing log rather than a new experiment. Seventeen requests spanning 55 to 22,609 tokens of prompt:
 
-So the range seen on real worker traffic is roughly 0.6 to 2.0 tokens per second, against 14.99 measured on a short prompt at the start of the night. Decode is somewhere between seven and twenty-five times slower once a worker is carrying gathered material, and it degrades further as each answer lengthens.
+| Prompt tokens | Decode, tokens per second |
+|---|---|
+| 55 | 15.01 |
+| 6,215 | 3.16 |
+| 7,435 | 2.50 |
+| 8,431 | 1.84 |
+| 9,707 | 1.60 |
+| 10,178 | 1.48 |
+| 15,953 | 0.88 |
+| 18,194 | 0.76 |
+| 21,689 | 0.63 |
+| 22,605 | 0.58 |
 
-The direction is solid and the curve is not measured. What would settle it is decode timed at several known context sizes on an idle machine, which is a clean experiment and needs the slot free.
+Seconds per generated token runs linearly in context length, at about 79 microseconds per token of context, with an R-squared of 0.99 over the measured range. That is the shape CPU inference gives when attention over the accumulated cache dominates, and it means the cost of writing an answer is roughly the answer's length multiplied by the context it is written against.
 
-The conclusion drawn from the figure survives the qualification. Generation is the expensive half, it worsens with context, and a design that accumulates sources in one conversation makes the dominant cost worse. That holds at 2.0 tokens per second as it does at 0.58.
+What it costs to write a thousand tokens, then, is 5.8 minutes at 6,000 tokens of context, 11.0 at 10,000, and 24.2 at 20,000. The fit is measured between 6,000 and 22,600 tokens and should not be read much past that; its negative intercept is an artifact of a straight line over a bounded range rather than a claim about short prompts, where the observed ceiling is 15 tokens per second.
+
+The 0.58 quoted earlier is not an outlier and not noise. It is what 22,605 tokens of context buys, and the 1.84 measured later is what 8,431 buys. One law covers both.
+
+So the reversal stands on a measurement rather than on a single reading. A worker that accumulates fetched pages in one conversation pays for every later token at the rate its accumulated context sets, and the penalty compounds because the answers that matter come last, when the context is longest. The design that avoids it fetches a source, extracts the rows, discards the page, and carries forward only what it extracted.
