@@ -322,3 +322,28 @@ Worker shape does not reach this. Whether one worker takes six sources or six wo
 The lever that reaches the real cost is to keep the page out of the model. A plain retrieval with extraction done by a script sends nothing to be generated, and removes the largest single item in the run. Where a page genuinely needs a model to read it, capping what is sent is the next thing to try, since the cost is the answer's length multiplied by the context it is written against.
 
 One caveat on the separation: the 22,605-token prompt is about three times the agent's conversation at that moment, so the page is plainly the bulk of it, but the log does not show whether the tool's call also carries the conversation. That would change the size of the effect and not its direction.
+
+## Concurrency does not divide the work
+
+The plan named concurrency as the one lever that divides rather than subtracts, and deferred measuring it until a slot fell idle. It can be settled without an idle slot, by asking what the machine is doing while one request runs.
+
+Four logical cores sit at 100% and four at 2% or less. That reads as a half-idle machine and is not one: the topology pairs them 0 with 4, 1 with 5, 2 with 6, 3 with 7, so the busy four are one thread from each of the four physical cores, and the idle four are their hyperthread siblings. Every physical core is saturated by a single request. Load average sits at 4.00 against four cores.
+
+A second slot would run on those sibling threads, sharing the execution units and the memory bandwidth of cores already at full stretch. Hyperthreading returns something on work that stalls waiting for memory and close to nothing on dense arithmetic that keeps the units busy, which is what this is. Memory allows it, with 22 GB free against a 32 GB resident model, so a second slot at reduced context would load. It would not halve the wall clock.
+
+So the thirty-five-worker estimate carries no concurrency discount, and the levers that remain all reduce tokens rather than parallelise them: send less to be read, generate less in reply, or change the model or the machine.
+
+## Almost everything the agent generates is reasoning
+
+The other measurement the plan called a prerequisite, the share of a worker's output that is reasoning rather than answer, also did not need a completed worker. The live worker's session log separates the two.
+
+| Turn | Reasoning tokens | Answer tokens | Reasoning share |
+|---|---|---|---|
+| 1 | 1,979 | 68 | 97% |
+| 2 | 3,667 | 59 | 98% |
+
+The answer in both cases is a tool call, sixty-odd tokens of arguments, arrived at after two to four thousand tokens of deliberation. Counting the tool's own extraction output as answer, which is fair since those 1,977 tokens are the listings themselves, the worker's generation so far divides into roughly 76% reasoning and 24% product.
+
+The reasoning tokens are the harness's own estimate and the answer tokens are measured from the emitted text, so the two columns come from different estimators. The gap is large enough that this does not matter.
+
+This makes suppressing reasoning a larger lever than it appeared when the plan called it cheap to try, because it reaches three quarters of what the machine spends its time writing. The caution recorded then still stands: a model that reasons before answering may answer better, so the thing to measure is roster quality with and without, not speed alone. On this path the reasoning arrives as its own content block and never reaches the deliverable, so suppressing it changes what is paid for rather than what is produced.
