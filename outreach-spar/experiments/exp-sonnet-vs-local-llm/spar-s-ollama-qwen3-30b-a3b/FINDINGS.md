@@ -92,3 +92,15 @@ The costs above are not evenly distributed, and that decides where effort is wor
 **Concurrency is the only lever that divides rather than subtracts, and it is untested.** The 128k context puts the resident footprint at 32 GB of 62, which is why ollama serves one slot and why `--jobs` changes nothing. Worker prompts are 22k. A 32k-context variant is built and waiting; if it admits two or three slots, the wall-clock divides by that. This is the first thing to measure next, because every other finding here is about the cost of one turn and this one is about how many turns run at once.
 
 **What the hardware is not.** Nothing measured tonight argues the model is unfit. It answered a short prompt in 3 seconds and wrote competently. The question this arm could not reach, whether its roster rows are any good, remains open, and reaching it needs the changes above rather than more patience.
+
+## The timeouts are the story
+
+Seven distinct limits cut a request short tonight, each hidden behind the one above it, each revealed only when its predecessor was lifted.
+
+Node's global fetch dispatcher at 300 seconds, undocumented by the router and not exposed as a setting. The CLI-to-router limit at ten minutes. A wrapper that started the router daemon before exporting the fix for the first of these, so every daemon it started reverted. The router's own abort at sixty minutes, reachable only through a transformer that a preset route never runs. And, once the router was removed entirely, a further cap near six minutes on the direct path, with the CLI carrying a ninety-minute setting and ollama carrying none.
+
+Two more belong to the same family without being timeouts: a guard that blocked instead of starting a daemon, so no worker ran at all, and a server that keeps generating after its client disconnects, so a killed request holds the only slot for its full remaining prefill.
+
+None of these is a bug in the sense of being wrong. Each default is sensible for a hosted model answering in seconds. Together they encode an assumption that a request completes in minutes, and a model taking an hour per turn violates it at every layer independently. Lifting one reveals the next, and the sequence gives no sign of being finished.
+
+That is the practical finding for anyone porting this stack to local inference. The work is not tuning a timeout. It is that the per-turn cost has to come down to where the stack's assumptions hold, which means not re-sending a five-figure token preamble on every turn.
