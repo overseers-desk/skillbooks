@@ -218,3 +218,12 @@ Queueing cost is zero over this window, against 47,109 seconds earlier, which re
 That moves the next lever. Prompt size was the thing worth attacking and is now largely spent; further trimming buys less than it did. What is left is that the model composes its reasoning as prose before answering, at roughly 15 tokens per second, and pays for every word of it. A model that returns reasoning in a separable field, or a prompt that forbids it, attacks the half that now dominates.
 
 The wall-clock figure over this window, 8.79 hours against 2.64 hours of compute, is not a property of the workload. It counts the intervals when the machine sat idle between my own diagnoses and restarts.
+
+
+## Reasoning is separable on the path that matters
+
+An earlier note here recorded the model returning its reasoning as untagged prose, and judged that worse than tagged reasoning because nothing could strip it by rule. That holds for ollama's `/api/generate` endpoint, where the observation was made, and not for the path the workers use.
+
+On the Anthropic Messages API path, the worker's stream carries `thinking` and `tool_use` as distinct content blocks. The reasoning arrives structurally separated, so it does not contaminate a deliverable and needs no stripping.
+
+It still costs generation time, which now exceeds prefill, so it remains the place to look for speed. What it is not is a quality problem, and the earlier note overstated it by generalising from one endpoint to another.
