@@ -1,24 +1,45 @@
-# Timing harvest -- 2026-09-21 08:56:58 AEST
+# Timing harvest -- 2026-09-21 09:30:49 AEST
 
 Segment filter: supplier-horse-owner
-Journal window requested: --since '12 hours ago' from dappnode@dappnode
+Journal window requested: --since '14 hours ago' from dappnode@dappnode
 remote journal read with its own +08:00 offset; all comparisons done in UTC
 
-Note: 8 request(s) in the fetched journal window predate this run's first dispatcher attempt (2026-09-20 22:00:11 AEST) and are excluded from every count and sum below (they are traffic from something earlier, not this segment's run); they remain in the per-request CSV for the record.
+Note: 13 request(s) in the fetched journal window predate this run's first dispatcher attempt (2026-09-20 22:00:11 AEST) and are excluded from every count and sum below (they are traffic from something earlier, not this segment's run); they remain in the per-request CSV for the record.
 
 ## Requests observed on the ollama journal (this run's window)
-Total requests (new-prompt events): 61
+Total requests (new-prompt events): 64
   - aborted_or_superseded: 5
   - in_flight: 1
-  - success: 55
+  - success: 58
 
-Sum of prefill time across all requests (incl. in-flight/aborted, as observed so far): 16,008s (266.8 min)
-Sum of generation time across all requests (as observed so far): 19,296s (321.6 min)
-Average prefill rate over completed requests: 78.94 tok/s
-Average generation rate over completed requests: 2.636 tok/s
+Sum of prefill time across all requests (incl. in-flight/aborted, as observed so far): 16,532s (275.5 min)
+Sum of generation time across all requests (as observed so far): 21,200s (353.3 min)
+Average prefill rate over completed requests: 76.32 tok/s
+Average generation rate over completed requests: 2.763 tok/s
 
 In-flight requests (NOT zero-duration -- still running as of this harvest):
-  - pid 114665 task 10511: started 2026-09-21 08:29:33 AEST, prompt 8431 tok, 1,646s elapsed so far (27.4 min), generated 2277 tok so far
+  - pid 114665 task 14877: started 2026-09-21 09:13:09 AEST, prompt 11013 tok, 1,061s elapsed so far (17.7 min), generated 1294 tok so far
+
+## Request lifecycle and the cost of abandonment
+Requests started (new-prompt events): 82
+Reached generation: 42
+Abandoned during prefill: 40
+Prefill actually performed, summed over requests that reached generation: 121.5 min (a fully cached prompt correctly shows zero here -- this is prefill done, not prompt tokens presented)
+Generation, summed over the same requests: 380.7 min
+Generation share of prefill+generation time: 76%
+Slot-time held by abandoned requests (each one's new prompt to the next request's new prompt): 232.5 min
+First abandonment: 2026-09-20 20:40:52 AEST; last abandonment: 2026-09-21 09:05:59 AEST
+
+## Decode rate against context length
+Points: 34; observed prompt size 13-22,609 tokens; fit holds over that range
+Fit: seconds/token = -0.076494 + 76.7 us/token of context x prompt_tokens (R-squared = 0.99)
+The intercept is slightly negative, which is a straight line's artifact over a bounded interval rather than a claim about short prompts; the table below is not extrapolated below the observed minimum.
+Cost of generating 1,000 tokens, at context sizes spanning the observed range:
+  - 5,662 tokens of context: 357.6s
+  - 11,311 tokens of context: 790.8s
+  - 16,960 tokens of context: 1,223.9s
+  - 22,609 tokens of context: 1,657.0s
+Dropped from the table, the fit predicting a negative duration there: 13 tokens of context. Short prompts sit above the line, not on it: the shortest prompt observed in this window ran far faster than the fit extended down to it would say.
 
 ## Server-side HTTP churn (all POST /v1/chat/completions|/api/generate closures, this run's window)
 Total closures logged: 92
@@ -109,17 +130,17 @@ worker, because ollama logs no request id linking a GIN closure back to a caller
   - sweep-supplier-horse-owner-biosecurity-queensland-property-identification-codes: start 2026-09-21 04:47:47 AEST, outcome=queued_not_reached (dispatcher runs one worker at a time; never got a phase line before the attempt ended), elapsed=9274s, requests_in_window=0, queue_wait=n/a, compute_in_window=0s
   - sweep-supplier-horse-owner-the-estate-s-own-ledger-and-mailbox: start 2026-09-21 04:47:47 AEST, outcome=queued_not_reached (dispatcher runs one worker at a time; never got a phase line before the attempt ended), elapsed=9274s, requests_in_window=0, queue_wait=n/a, compute_in_window=0s
 ### spar-transition-test.log  (segment=supplier-horse-owner, T0=2026-09-21 07:22:21 AEST, 6 source(s))
-  - sweep-supplier-horse-owner-horsezone-com-au: start 2026-09-21 07:22:26 AEST, outcome=in_flight, elapsed=5673s, requests_in_window=3, queue_wait=1s, compute_in_window=4,333s
-  - sweep-supplier-horse-owner-horsedeals-com-au-search-endpoint: start 2026-09-21 07:22:26 AEST, outcome=queued_not_reached (dispatcher runs one worker at a time; never got a phase line before the attempt ended), elapsed=5673s, requests_in_window=0, queue_wait=n/a, compute_in_window=0s
-  - sweep-supplier-horse-owner-facebook-sale-and-lease-groups: start 2026-09-21 07:22:26 AEST, outcome=queued_not_reached (dispatcher runs one worker at a time; never got a phase line before the attempt ended), elapsed=5673s, requests_in_window=0, queue_wait=n/a, compute_in_window=0s
-  - sweep-supplier-horse-owner-gumtree-horses-and-ponies: start 2026-09-21 07:22:26 AEST, outcome=queued_not_reached (dispatcher runs one worker at a time; never got a phase line before the attempt ended), elapsed=5673s, requests_in_window=0, queue_wait=n/a, compute_in_window=0s
-  - sweep-supplier-horse-owner-biosecurity-queensland-property-identification-codes: start 2026-09-21 07:22:26 AEST, outcome=queued_not_reached (dispatcher runs one worker at a time; never got a phase line before the attempt ended), elapsed=5673s, requests_in_window=0, queue_wait=n/a, compute_in_window=0s
-  - sweep-supplier-horse-owner-the-estate-s-own-ledger-and-mailbox: start 2026-09-21 07:22:26 AEST, outcome=queued_not_reached (dispatcher runs one worker at a time; never got a phase line before the attempt ended), elapsed=5673s, requests_in_window=0, queue_wait=n/a, compute_in_window=0s
+  - sweep-supplier-horse-owner-horsezone-com-au: start 2026-09-21 07:22:26 AEST, outcome=in_flight, elapsed=7704s, requests_in_window=6, queue_wait=1s, compute_in_window=6,760s
+  - sweep-supplier-horse-owner-horsedeals-com-au-search-endpoint: start 2026-09-21 07:22:26 AEST, outcome=queued_not_reached (dispatcher runs one worker at a time; never got a phase line before the attempt ended), elapsed=7704s, requests_in_window=0, queue_wait=n/a, compute_in_window=0s
+  - sweep-supplier-horse-owner-facebook-sale-and-lease-groups: start 2026-09-21 07:22:26 AEST, outcome=queued_not_reached (dispatcher runs one worker at a time; never got a phase line before the attempt ended), elapsed=7704s, requests_in_window=0, queue_wait=n/a, compute_in_window=0s
+  - sweep-supplier-horse-owner-gumtree-horses-and-ponies: start 2026-09-21 07:22:26 AEST, outcome=queued_not_reached (dispatcher runs one worker at a time; never got a phase line before the attempt ended), elapsed=7704s, requests_in_window=0, queue_wait=n/a, compute_in_window=0s
+  - sweep-supplier-horse-owner-biosecurity-queensland-property-identification-codes: start 2026-09-21 07:22:26 AEST, outcome=queued_not_reached (dispatcher runs one worker at a time; never got a phase line before the attempt ended), elapsed=7704s, requests_in_window=0, queue_wait=n/a, compute_in_window=0s
+  - sweep-supplier-horse-owner-the-estate-s-own-ledger-and-mailbox: start 2026-09-21 07:22:26 AEST, outcome=queued_not_reached (dispatcher runs one worker at a time; never got a phase line before the attempt ended), elapsed=7704s, requests_in_window=0, queue_wait=n/a, compute_in_window=0s
 
 ## Segment / run summary -- tonight's attempts for this segment
-Total wall-clock across all attempts (T0 of first attempt to end/now of last): 39,408s (10.95 h)
-Time the model was computing (prefill+generation, all requests observed): 35,304s (9.81 h)
-Time that was something-else-waiting (wall-clock minus computing): 4,104s (1.14 h)
+Total wall-clock across all attempts (T0 of first attempt to end/now of last): 41,439s (11.51 h)
+Time the model was computing (prefill+generation, all requests observed): 37,732s (10.48 h)
+Time that was something-else-waiting (wall-clock minus computing): 3,707s (1.03 h)
 
 ## Largest consumers of time (ranked)
 The first two rows are actual compute, bounded by wall-clock. The third is
@@ -127,6 +148,6 @@ client-side dead time summed across every competing, eventually-abandoned caller
 (see the churn note above) -- it is not additional compute, it is the queueing cost
 the single slot imposed on everyone contending for it, and it is reported separately
 because it cannot be added to the first two without double-counting wall-clock.
-  - generation (sum across requests, actual compute): 19,296s (321.6 min)
-  - prefill (sum across requests, actual compute): 16,008s (266.8 min)
+  - generation (sum across requests, actual compute): 21,200s (353.3 min)
+  - prefill (sum across requests, actual compute): 16,532s (275.5 min)
   - queueing cost: summed client-side dead time across abandoned callers (not compute, see above): 95,077s (1,584.6 min)

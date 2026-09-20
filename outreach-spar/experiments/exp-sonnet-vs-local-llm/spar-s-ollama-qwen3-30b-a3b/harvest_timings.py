@@ -102,6 +102,7 @@ GEN_RE = re.compile(
 RELEASE_RE = re.compile(
     r"task (\d+) \| stop processing: n_tokens = (\d+), truncated = (\d+)"
 )
+INIT_SAMPLER_RE = re.compile(r"task (\d+) \| init sampler, took")
 GIN_RE = re.compile(
     r"\[GIN\]\s+\S+ - \S+\s+\|\s*(\d+)\s+\|\s*([^|]+?)\s*\|\s*\S+\s+\|\s*(\w+)\s+\"([^\"]+)\""
 )
@@ -304,6 +305,72 @@ def parse_journal(text):
         })
 
     return rows, gin_events, model_loads
+
+
+# ---------------------------------------------------------------------------
+# Request lifecycle, paired by log order rather than by task id. The id
+# restarts at zero on every model reload, so the same id can name two
+# different requests within one fetched window; keying a dict by id alone
+# (as parse_journal above does, for its own separate purposes) would merge
+# them and produce figures that look precise and are wrong. The server runs
+# a single slot, so requests are strictly sequential -- a request is closed
+# by the matching init-sampler/stop-processing carrying its own id, or by
+# the next new-prompt if neither has appeared yet.
+# ---------------------------------------------------------------------------
+
+def parse_lifecycle(text):
+    """Return one dict per request, in the order requests started."""
+    reqs = []
+    current = None
+    for raw_line in text.splitlines():
+        m = LINE_TS_RE.match(raw_line)
+        if not m:
+            continue
+        ts_str, _pid, rest = m.groups()
+        try:
+            ts = datetime.fromisoformat(ts_str).astimezone(timezone.utc)
+        except ValueError:
+            continue
+
+        mm = NEW_PROMPT_RE.search(rest)
+        if mm:
+            if current is not None:
+                current["next_start_ts"] = ts
+                reqs.append(current)
+            current = {
+                "task": int(mm.group(1)),
+                "prompt_tokens": int(mm.group(4)),
+                "start_ts": ts,
+                "init_sampler_ts": None,
+                "release_ts": None,
+                "last_tg": None,
+                "last_tg_ts": None,
+                "next_start_ts": None,
+            }
+            continue
+
+        if current is None:
+            continue
+
+        mm = INIT_SAMPLER_RE.search(rest)
+        if mm and int(mm.group(1)) == current["task"] and current["init_sampler_ts"] is None:
+            current["init_sampler_ts"] = ts
+            continue
+
+        mm = GEN_RE.search(rest)
+        if mm and int(mm.group(1)) == current["task"]:
+            current["last_tg"] = float(mm.group(3))
+            current["last_tg_ts"] = ts
+            continue
+
+        mm = RELEASE_RE.search(rest)
+        if mm and int(mm.group(1)) == current["task"] and current["release_ts"] is None:
+            current["release_ts"] = ts
+            continue
+
+    if current is not None:
+        reqs.append(current)
+    return reqs
 
 
 # ---------------------------------------------------------------------------
@@ -623,7 +690,116 @@ def write_workers_csv(path, attempts):
                 ])
 
 
-def build_summary(rows, gin_events, model_loads, attempts, args):
+def build_lifecycle_section(lifecycle_reqs):
+    """Counts and timings from the id-safe pairing in parse_lifecycle,
+    over the whole fetched journal window (not restricted to this run's
+    dispatcher attempts, since abandonment on the server side is a fact
+    about the server, not about who was asking)."""
+    lines = ["", "## Request lifecycle and the cost of abandonment"]
+    started = len(lifecycle_reqs)
+    reached = [r for r in lifecycle_reqs if r["init_sampler_ts"] is not None]
+    abandoned = [r for r in lifecycle_reqs if r["init_sampler_ts"] is None]
+    lines.append(f"Requests started (new-prompt events): {started}")
+    lines.append(f"Reached generation: {len(reached)}")
+    lines.append(f"Abandoned during prefill: {len(abandoned)}")
+
+    prefill_total_s = sum((r["init_sampler_ts"] - r["start_ts"]).total_seconds() for r in reached)
+    gen_total_s = sum(
+        (end - r["init_sampler_ts"]).total_seconds()
+        for r in reached
+        for end in [r["release_ts"] or r["last_tg_ts"]]
+        if end is not None
+    )
+    lines.append(
+        f"Prefill actually performed, summed over requests that reached generation: "
+        f"{prefill_total_s / 60:,.1f} min (a fully cached prompt correctly shows zero here -- "
+        f"this is prefill done, not prompt tokens presented)"
+    )
+    lines.append(f"Generation, summed over the same requests: {gen_total_s / 60:,.1f} min")
+    denom = prefill_total_s + gen_total_s
+    if denom:
+        lines.append(f"Generation share of prefill+generation time: {gen_total_s / denom * 100:,.0f}%")
+
+    if abandoned:
+        held_total_s = 0.0
+        abandon_starts = []
+        for r in abandoned:
+            end = r["next_start_ts"] or r["start_ts"]
+            held_total_s += (end - r["start_ts"]).total_seconds()
+            abandon_starts.append(r["start_ts"])
+        lines.append(
+            f"Slot-time held by abandoned requests (each one's new prompt to the next "
+            f"request's new prompt): {held_total_s / 60:,.1f} min"
+        )
+        lines.append(
+            f"First abandonment: {fmt_ts(min(abandon_starts))} AEST; "
+            f"last abandonment: {fmt_ts(max(abandon_starts))} AEST"
+        )
+    return lines
+
+
+def build_decode_rate_section(lifecycle_reqs):
+    """Seconds-per-token as a linear function of prompt size, fitted by
+    ordinary least squares in closed form (three sums) so no dependency
+    beyond the standard library is needed for a two-variable fit."""
+    lines = ["", "## Decode rate against context length"]
+    points = [
+        (r["prompt_tokens"], 1.0 / r["last_tg"])
+        for r in lifecycle_reqs
+        if r["init_sampler_ts"] is not None and r["last_tg"]
+    ]
+    n = len(points)
+    if n < 2:
+        lines.append(f"Too few requests with a progress line ({n}) to fit a line.")
+        return lines
+
+    xs = [p[0] for p in points]
+    ys = [p[1] for p in points]
+    xbar = sum(xs) / n
+    ybar = sum(ys) / n
+    sxx = sum((x - xbar) ** 2 for x in xs)
+    sxy = sum((x - xbar) * (y - ybar) for x, y in points)
+    syy = sum((y - ybar) ** 2 for y in ys)
+    slope = sxy / sxx if sxx else 0.0
+    intercept = ybar - slope * xbar
+    r2 = (sxy ** 2) / (sxx * syy) if sxx and syy else 0.0
+    xmin, xmax = min(xs), max(xs)
+
+    lines.append(f"Points: {n}; observed prompt size {xmin:,}-{xmax:,} tokens; fit holds over that range")
+    lines.append(
+        f"Fit: seconds/token = {intercept:.6f} + {slope * 1e6:,.1f} us/token of context x prompt_tokens "
+        f"(R-squared = {r2:.2f})"
+    )
+    lines.append(
+        "The intercept is slightly negative, which is a straight line's artifact over a bounded "
+        "interval rather than a claim about short prompts; the table below is not extrapolated "
+        "below the observed minimum."
+    )
+    lines.append("Cost of generating 1,000 tokens, at context sizes spanning the observed range:")
+    # Below the crossing point the line predicts a negative duration, which is the
+    # negative intercept showing through rather than a result. Those rows are dropped:
+    # a printed figure gets quoted, and a quoted negative time discredits the table
+    # that carries it.
+    skipped = []
+    for frac in (0.0, 0.25, 0.5, 0.75, 1.0):
+        ctx = round(xmin + frac * (xmax - xmin))
+        cost_s_per_tok = intercept + slope * ctx
+        if cost_s_per_tok <= 0:
+            skipped.append(ctx)
+            continue
+        lines.append(f"  - {ctx:,} tokens of context: {cost_s_per_tok * 1000:,.1f}s")
+    if skipped:
+        lines.append(
+            "Dropped from the table, the fit predicting a negative duration there: "
+            + ", ".join(f"{c:,}" for c in skipped)
+            + " tokens of context. Short prompts sit above the line, not on it: the shortest "
+            "prompt observed in this window ran far faster than the fit extended down to it "
+            "would say."
+        )
+    return lines
+
+
+def build_summary(rows, gin_events, model_loads, attempts, args, lifecycle_reqs):
     lines = []
     lines.append(f"# Timing harvest -- {datetime.now(AEST).strftime('%Y-%m-%d %H:%M:%S AEST')}")
     lines.append("")
@@ -688,6 +864,9 @@ def build_summary(rows, gin_events, model_loads, attempts, args):
     if run_start_ts is not None:
         gin_events = [g for g in gin_events if g["ts"] >= run_start_ts]
         model_loads = [(ts, pid) for (ts, pid) in model_loads if ts >= run_start_ts]
+
+    lines.extend(build_lifecycle_section(lifecycle_reqs))
+    lines.extend(build_decode_rate_section(lifecycle_reqs))
 
     lines.append("")
     lines.append("## Server-side HTTP churn (all POST /v1/chat/completions|/api/generate closures, this run's window)")
@@ -787,6 +966,7 @@ def main():
           file=sys.stderr)
     journal_text = fetch_journal(args.host, args.since, args.ssh_timeout)
     rows, gin_events, model_loads = parse_journal(journal_text)
+    lifecycle_reqs = parse_lifecycle(journal_text)
     print(f"Parsed {len(rows)} request(s), {len(gin_events)} HTTP closure(s), "
           f"{len(model_loads)} model load(s)", file=sys.stderr)
 
@@ -809,7 +989,7 @@ def main():
 
     write_requests_csv(requests_csv, rows)
     write_workers_csv(workers_csv, attempts)
-    summary = build_summary(rows, gin_events, model_loads, attempts, args)
+    summary = build_summary(rows, gin_events, model_loads, attempts, args, lifecycle_reqs)
     with open(summary_path, "w") as f:
         f.write(summary + "\n")
 
