@@ -490,3 +490,17 @@ That matters more than a roster of rows would have. The failure mode this experi
 Two qualifications. One deliverable is one deliverable, and the same model on a source that half works is the harder test. And its own account is slightly generous to itself: it says the serialiser returned full HTML with no accessible data, which is true, but it reached that conclusion from a 2 KB preview of a 284 KB result, its `grep` having failed to narrow anything because the document is a single enormous line. It was right, and it was right without having seen most of what it was judging.
 
 An open question for the tooling rather than the model: the serialiser was invoked with a 20-second budget and returned unrendered markup. Whether a longer budget or a different flag would have rendered the club list is not something this arm should answer, since working that out is the sweep's job and the answer would change what is being measured.
+
+## The arm could never have recorded a row, whatever the model did
+
+The harness records a completed source by writing a status field back into the segment's YAML. Its surgical writer ends a block at the first line whose first character is not a space, so a block sequence whose items begin at column 0 reads as containing nothing. The project's real parser reads that style correctly, and the style is valid YAML. The writer does not.
+
+The consequence is that no source in such a file can be found by name, whatever the name is, and the caller fails with "no source named X" after the worker has already written its deliverable. The work is discarded and nothing signals it. That is what happened at 12:50 on 21 September, fourteen minutes after the arm's first deliverable was written.
+
+Four of the five segments seeded for this experiment were written in that style, and so was the fifth. So the finding is larger than one lost result. Across the eleven hours before this was found, no roster row could have been recorded from any segment, whatever the model produced. The timeout at 360 seconds and the stall watchdog at 600 were each sufficient on their own to prevent a deliverable. This third fault would have discarded the deliverable had either of the first two not.
+
+The outcome was overdetermined, which is worth stating plainly because it changes what the night's silence meant. An arm that produces nothing looks like an arm whose model cannot do the work. Three independent faults in the path around the model produced exactly that appearance, and the first evidence about the model itself arrived only once all three were cleared.
+
+Across the wider campaign, eight of seventy-two sweep files use the column-zero style. Each of them silently discards results from any surgical write, and the failure gives no signal to whoever's work is being dropped.
+
+The repair on this arm's side is to indent the sequences by two spaces, which changes no parsed value: the real parser returns an identical structure before and after, verified on each file. The repair on the harness's side, which is the one that matters for everyone else, is a block-end test that does not assume a sequence is indented relative to its key.
