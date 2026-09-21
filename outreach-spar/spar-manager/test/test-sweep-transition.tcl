@@ -102,6 +102,61 @@ assert_eq [spar::yaml_scalar "- leading dash"] {"- leading dash"} \
 assert_error {spar::yaml_scalar "two\nlines"} "*block scalar*" \
     "a multi-line value is refused, not flattened"
 
+# ── 3b. _yaml_block_entries ─────────────────────────────────────────────
+
+section "3b. _yaml_block_entries"
+
+# Column-0 style: items dash at the same indentation as the key itself.
+set c0_lines [list \
+    {sources:} \
+    {- name: Alpha} \
+    {  type: registry} \
+    {- name: Beta} \
+    {  type: directory} \
+    {exclusions: out-of-state}]
+set c0_blk [spar::_yaml_block_entries $c0_lines sources]
+assert_eq [llength [dict get $c0_blk entries]] 2 \
+    "column-0 items: both entries seen"
+assert_eq [dict get $c0_blk entries] {{1 2 2} {3 4 2}} \
+    "column-0 items: line ranges cover the item and its own fields"
+assert_eq [dict get $c0_blk block_end] 5 \
+    "column-0 items: block ends at the following top-level key, not before"
+
+# Indented style: unchanged from today's behaviour.
+set ind_lines [list \
+    {sources:} \
+    {  - name: Alpha} \
+    {    type: registry} \
+    {  - name: Beta} \
+    {    type: directory} \
+    {exclusions: out-of-state}]
+set ind_blk [spar::_yaml_block_entries $ind_lines sources]
+assert_eq [llength [dict get $ind_blk entries]] 2 \
+    "indented items: both entries seen"
+assert_eq [dict get $ind_blk entries] {{1 2 4} {3 4 4}} \
+    "indented items: line ranges unchanged"
+assert_eq [dict get $ind_blk block_end] 5 \
+    "indented items: block ends at the following top-level key"
+
+# A second top-level sequence follows: the two blocks do not merge.
+set two_seq_lines [list \
+    {sources:} \
+    {- name: Alpha} \
+    {rounds:} \
+    {- n: 1}]
+set two_seq_blk [spar::_yaml_block_entries $two_seq_lines sources]
+assert_eq [llength [dict get $two_seq_blk entries]] 1 \
+    "a following top-level sequence: sources keeps only its own item"
+assert_eq [dict get $two_seq_blk block_end] 2 \
+    "a following top-level sequence: sources ends at 'rounds:', not merged into it"
+
+# End-of-file with no key following: the last item still closes.
+set eof_lines [list {sources:} {- name: Alpha} {  type: registry}]
+set eof_blk [spar::_yaml_block_entries $eof_lines sources]
+assert_eq [dict get $eof_blk entries] {{1 2 2}} \
+    "column-0 items: end-of-file closes the last entry"
+assert_eq [dict get $eof_blk block_end] 3 "end-of-file: block_end is the line count"
+
 # ── 4. update_source_status ────────────────────────────────────────────
 
 section "4. update_source_status"
@@ -120,6 +175,70 @@ assert_match [spar::_sweep_read $sweep] "*Top-down: 120 in the state register.*"
     "the derivation block scalar is untouched"
 assert_error {spar::update_source_status $sweep "No such source" partial} \
     "*no source named*" "an unknown source errors rather than appending one"
+
+# ── 4b. update_source_field round-trip (column-0 sources) ───────────────
+
+section "4b. update_source_field round-trip (column-0 sources)"
+
+set c0_sweep [file join $tmpdir col0.sweep.yaml]
+set fd [open $c0_sweep w]
+puts $fd {version: "1.0"}
+puts $fd "segment: col0test"
+puts $fd "sources:"
+puts $fd "- name: State register"
+puts $fd "  type: registry"
+puts $fd "  status: unharvested"
+puts $fd "- name: Trade directory"
+puts $fd "  type: directory"
+puts $fd "  status: partial — 40 of 120 pages read"
+puts $fd "exclusions: out-of-state operators"
+puts $fd "rounds: \[\]"
+close $fd
+
+set c0_before [spar::read_sweep_yaml $c0_sweep]
+
+# Set a field that already exists on one entry.
+spar::update_source_field $c0_sweep "State register" status \
+    "exhausted — all 120 entries read"
+
+# Set a field that does not yet exist on the other entry.
+spar::update_source_field $c0_sweep "Trade directory" note \
+    "flagged for follow-up"
+
+assert_eq [expr {![catch {spar::read_sweep_yaml $c0_sweep}]}] 1 \
+    "column-0 sources: the file still parses after both edits"
+set c0_after [spar::read_sweep_yaml $c0_sweep]
+
+proc c0_source {data name} {
+    foreach s [dict get $data sources] {
+        if {[dict get $s name] eq $name} { return $s }
+    }
+    error "no source named '$name'"
+}
+
+set sr_before [c0_source $c0_before "State register"]
+set sr_after  [c0_source $c0_after  "State register"]
+assert_eq [dict get $sr_after status] "exhausted — all 120 entries read" \
+    "column-0: existing field set on the named source"
+assert_eq [dict get $sr_after type] [dict get $sr_before type] \
+    "column-0: an untouched field on the edited source survives"
+
+set td_before [c0_source $c0_before "Trade directory"]
+set td_after  [c0_source $c0_after  "Trade directory"]
+assert_eq [dict get $td_after note] "flagged for follow-up" \
+    "column-0: a field absent from the entry is inserted"
+assert_eq [dict get $td_after status] [dict get $td_before status] \
+    "column-0: the other source's pre-existing field is untouched"
+assert_eq [dict get $td_after type] [dict get $td_before type] \
+    "column-0: the other source's other field is untouched"
+
+assert_eq [dict get $c0_after exclusions] [dict get $c0_before exclusions] \
+    "column-0: a key after the sequence survives both edits"
+assert_eq [dict get $c0_after rounds] [dict get $c0_before rounds] \
+    "column-0: rounds is untouched"
+
+assert_error {spar::update_source_field $c0_sweep "No such source" status x} \
+    "*no source named*" "column-0: an unknown source still errors, not appends"
 
 # ── 5. append_sweep_round ──────────────────────────────────────────────
 

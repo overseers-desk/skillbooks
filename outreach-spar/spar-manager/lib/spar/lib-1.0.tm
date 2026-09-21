@@ -1674,7 +1674,6 @@ proc spar::_yaml_block_entries {lines key} {
     for {set i [expr {$key_line + 1}]} {$i < $n} {incr i} {
         set line [lindex $lines $i]
         if {[string trim $line] eq ""} continue
-        if {[string index $line 0] ni {" " "\t"}} { set block_end $i; break }
         if {[regexp {^(\s*)-(\s+)} $line -> ind dash]} {
             set this_indent [string length $ind]
             if {$item_indent < 0} { set item_indent $this_indent }
@@ -1684,7 +1683,15 @@ proc spar::_yaml_block_entries {lines key} {
             }
             set cur_start $i
             set cur_indent [expr {$this_indent + 1 + [string length $dash]}]
+            continue
         }
+        # Not a sequence-item line: it ends the block only when it sits
+        # at column 0, a new top-level key. A dash at column 0 (the
+        # item_indent-0 style handled above) never reaches here, so this
+        # is unambiguously a sibling key, not the block's own items.
+        # Anything indented is content of the item in progress (a nested
+        # scalar, a mapping key, block-scalar text) and is skipped.
+        if {[string index $line 0] ni {" " "\t"}} { set block_end $i; break }
     }
     if {$cur_start >= 0} {
         lappend entries [list $cur_start [expr {$block_end - 1}] $cur_indent]
