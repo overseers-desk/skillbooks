@@ -1,0 +1,58 @@
+---
+star_rating: 3
+yield: 3
+dependent_data:
+  contact_name: Hector Mason
+  organisation: Riding Unicorns
+  role: Co-Host
+  date_excluded: null
+---
+# Profile: James Pringle
+
+## Current role
+Co-host, Riding Unicorns podcast (weekly, since Oct 2020); VC at Redbus Ventures (Oct 2024 – present); founder, Pringle Capital angel network (Jan 2020 – present).
+
+## Career history
+| Period | Role | Organisation | Notes |
+|---|---|---|---|
+| Oct 2024 – present | VC | Redbus Ventures | Family office; co-investor Simon Franks (ex-LOVEFiLM) |
+| Feb 2022 – Apr 2024 | VC Investor | Portfolio Ventures | Subject of Aug 2023 Hardman & Co podcast interview on AI and startups |
+| Jan 2020 – present | Founder | Pringle Capital | Angel network, 435+ members, described as one of UK's largest |
+| Oct 2020 – present | Co-Host | Riding Unicorns | Weekly podcast; co-hosted with Hector Mason (EP1 Ventures GP) |
+| ~2016 – 2019 | Founder / CEO | Suggestv | VC-backed SaaS video-recommendation/ML company; raised £1.2m angel + VC; sold 2019 |
+
+## Certifications and education
+- University of Newcastle-upon-Tyne (undergraduate)
+- PFSA Level 2 Talent Identification (football scouting; unrelated to campaign)
+
+## Volunteer and mentorship
+- None found
+
+## What they have said publicly
+**On AI investment thesis (Hardman & Co podcast, Aug 2023):** "focuses on 'applications rather than the fundamental building blocks of AI'; believes greater opportunity sits in 'practical AI implementations for business problems'."  
+**On AI and workforce (Hardman & Co podcast, Aug 2023):** "AI can 'supercharge employees, enabling them to move faster with less resources'; management teams must learn to handle that acceleration."  
+No host-voiced statements on SMB operations, hospitality, or tourism found.
+
+## Who they know (connections relevant to campaign)
+| Person | Relationship | Relevance to campaign |
+|---|---|---|
+| Hector Mason | Riding Unicorns co-host; GP Episode 1 Ventures | Primary booking contact for the show |
+| Simon Franks | Partner at Redbus Ventures (same firm) | Ex-founder LOVEFiLM (sold to Amazon); prior Riding Unicorns guest; exited-founder profile |
+
+## Catalogue evidence
+**On-topic episodes (signal 1):** No specific episode titles or podcast content covering AI in business, AI agents, automation, or SMB operations provided in facts.  
+**Founder/operator/exited-founder guests (signal 2):** Simon Franks (ex-founder LOVEFiLM, sold to Amazon) — prior guest on Riding Unicorns podcast.  
+**Host-voiced thesis (signal 3):**  
+- "practical AI implementations for business problems" (Hardman & Co podcast, Aug 2023)  
+- "AI can supercharge employees, enabling them to move faster with less resources" (Hardman & Co podcast, Aug 2023)
+
+## Relevance assessment
+1. Signal 1 (topic): Not met. Facts provide no evidence the podcast covers AI in business, AI agents, automation, or SMB operations (e.g., hospitality/tourism). Host's statements on AI applications are from external platforms (Hardman & Co podcast, Twitter), not the podcast itself.  
+2. Signal 2 (guests): Met. Simon Franks (exited founder, LOVEFiLM sold to Amazon) was a guest.  
+3. Signal 3 (stated interest): Met. Host explicitly advocates for "practical AI implementations for business problems" and "AI supercharging employees" in public statements.  
+Audience overlap: High. Podcast targets startup investors and founders (via host's VC role at Redbus Ventures and focus on "unicorns"), matching campaign's target audience.  
+Reach judgment: Mid-size channel (no reach metrics provided; context suggests targeted niche audience but not large-scale).  
+Rating rationale: Two signals met (2 and 3), but signal 1 (core topic) missing. Audience overlap is strong, but channel lacks direct evidence of covering AI in business (required for campaign theme). Conservative rating: 3 (mid-tier relevance due to audience fit and two signals, but not squarely on-domain).
+
+## Verification corrections
+None.
