@@ -1,0 +1,298 @@
+We are given the SOURCE FACTS about Jason M. Lemkin and must write a profile based solely on those facts.
+
+Key points from the facts:
+- He is a Trusted Advisor at SaaStr AI and Seed Stage Lead Investor at SaaStr AI Fund (part of SaaStr, a B2B/SaaS community).
+- His channel is The Official SaaStr Podcast (860+ episodes, launched 2015).
+- It's a weekly interview-based podcast, top 1% globally on Spotify and Apple, #164 in Apple US Technology (Jun 2026).
+- His public statements (from the facts) are about AI in B2B/SaaS, specifically:
+  - Replacing GTM with AI agents (with examples from SaaStr's own operations).
+  - AI curiosity as a baseline expectation.
+  - Future GTM structure (50% AI agents, 50% human).
+  - Displacement of SDRs by AI.
+  - Preference for specialized AI agents over all-in-one platforms.
+  - Market timing for AI in B2B.
+- He has featured guests who are founders, operators, or exited founders (e.g., Brian Halligan, Eran Zinman, Kyle Norton from Owner.com).
+- He has a guest named Kyle Norton (CRO of Owner.com) who is relevant because Owner.com is an AI platform for small restaurants (SMB hospitality), which is a form of SMB operations. However, note that the campaign is about an agri-tourism venue (which is a specific type of SMB in tourism/hospitality) and the facts say "No hospitality, tourism, or SMB owner-operator episodes found in research." But note: Kyle Norton is from Owner.com, which is for small restaurants (a type of SMB in hospitality), so that's a connection.
+
+But note: The campaign subject is an AI system that runs a real multi-line business (agri-tourism venue) end to end and now offers it to other organizations. The campaign is targeting startup investors and founders (SaaS/B2B audience) and the broader AI-in-business audience.
+
+Now, let's break down the rating criteria:
+
+1. Topic (signal 1): Covers AI in business, AI agents and automation, or the owner-run-business operating world (SMB operations, hospitality, tourism).
+   - The facts show that the podcast is exclusively about AI in B2B/SaaS (as per the facts: "Format is SaaS/B2B exclusively"). 
+   - However, note that the campaign subject is about an AI system for an agri-tourism venue (which is a specific SMB in hospitality/tourism). The facts say: "No hospitality, tourism, or SMB owner-operator episodes found in research." But they do have one guest (Kyle Norton) from Owner.com, which is an AI platform for small restaurants (a type of SMB in hospitality). This is a weak connection to the topic of SMB operations, but the podcast itself is not focused on SMB operations in general, only on B2B/SaaS. So signal 1 is partially met because the podcast is about AI in business (B2B/SaaS) but not specifically about SMB operations in tourism/hospitality. However, note that the campaign's subject is an AI system that runs a business (agri-tourism) and is now offered to other organizations. The campaign is targeting the broader AI-in-business audience, which includes B2B/SaaS. So the topic is on-domain for the campaign's target audience (startup investors and founders in B2B/SaaS) but not for the specific SMB tourism context. But the campaign is not about tourism per se, it's about the AI system that runs a business (and the business is tourism, but the audience is B2B/SaaS). So the topic is covered in the podcast (AI in business, specifically B2B/SaaS) and that is the target audience.
+
+2. Guests (signal 2): Features founders, operators, or exited founders.
+   - The facts list multiple guests: Brian Halligan (exited founder), Eran Zinman (founder), Tooey Courtemanche (founder), Victor Rippabelli (CEO), Ron Gabrisko (CRO), Sarah Kennedy (VP). So signal 2 is strongly met.
+
+3. Stated interest (signal 3): The host's own expressed appetite for these themes.
+   - The facts provide multiple public statements by Lemkin on AI in business (B2B/SaaS) and his own implementation at SaaStr. So signal 3 is strongly met.
+
+Now, for the rating:
+
+- Reach: The podcast is top 1% globally, #164 in Apple US Technology (Jun 2026). It's a weekly podcast with 860+ episodes. The target audience (startup investors and founders, broad AI-in-business) is exactly the audience of SaaStr (B2B/SaaS community). So the reach is strong into the target audience.
+
+- Relevance: 
+  - Signal 1: The podcast is about AI in business (B2B/SaaS), which is the domain of the campaign's target audience (startup investors and founders in B2B/SaaS). However, note that the campaign subject is an AI system for an agri-tourism venue (which is a specific SMB in tourism). But the campaign is not targeting tourism, it's targeting the broader AI-in-business audience (which includes B2B/SaaS). The podcast is focused on B2B/SaaS, so it's a perfect fit for the target audience. The fact that the subject is in tourism is not a problem because the campaign is about the AI system (which is being offered to other organizations, including potentially B2B/SaaS companies) and the audience is B2B/SaaS. So signal 1 is met (AI in business, specifically B2B/SaaS) and that is the target.
+
+  - Signal 2: Strongly met (multiple founder/operator guests).
+
+  - Signal 3: Strongly met (multiple public statements by host on AI in business).
+
+So the rating should be high.
+
+But note: The facts say "Format is SaaS/B2B exclusively" and "No hospitality, tourism, or SMB owner-operator episodes found". However, the campaign is not about hospitality, it's about the AI system that runs a business (and the business is tourism, but the audience is B2B/SaaS). The podcast is about AI in B2B/SaaS, which is the same as the campaign's target audience. So the topic is on-domain.
+
+Now, the rating is reach (strong) times relevance (strong for all three signals). 
+
+We must be conservative. The podcast is a top 1% podcast in the technology category, so it has strong reach. The audience is exactly the target (startup investors and founders in B2B/SaaS). The topic is AI in business (B2B/SaaS) which is the domain. The guests are founders/operators. The host has stated his interest.
+
+So we can rate it 5? But note: the campaign is about an AI system that runs a multi-line business (agri-tourism) and now offers it to other organizations. The podcast is about AI in B2B/SaaS, which is a different context (B2B/SaaS vs. SMB hospitality). However, the campaign is not targeting the hospitality industry per se, but the broader AI-in-business audience (which includes B2B/SaaS). The subject is a technology founder who built an AI system for a business (and now offers it to other organizations) and the campaign is for a senior AI-leadership search (so the audience is investors and founders in tech). Therefore, the podcast is a perfect fit.
+
+But note: the facts say "No hospitality, tourism, or SMB owner-operator episodes found". However, the podcast is about AI in business (B2B/SaaS) and the campaign subject is an AI system that is being offered to other organizations (which could include B2B/SaaS companies). The podcast's audience is exactly the target.
+
+So the rating should be 5.
+
+But let's check the criteria: "Reserve 5 for strong reach into our audiences AND squarely on-domain with the right guest type."
+
+- Strong reach: Yes, top 1% globally, #164 in Apple US Technology (which is a strong position for a niche podcast).
+- On-domain: The podcast is about AI in business (B2B/SaaS) and the campaign's target audience is startup investors and founders in B2B/SaaS. The subject is a technology founder (so fits the founder theme) and the AI system is for business operations (which is the topic of the podcast).
+
+Therefore, star_rating: 5.
+
+Now, yield: the number of substantive verified data points. We are to count the number of verified facts that support the profile. But note: the instructions say "count of substantive verified data points". We are to count the number of facts that are used to support the profile. However, the problem says: "rate on the VERIFIED facts you were given, not on how much detail is present". So we are to count the facts that are used in the profile.
+
+But note: the output requires "yield: <integer count of substantive verified data points>". We are to count the facts that are used to support the profile. However, the problem does not specify what counts as a "substantive verified data point". We'll count the key facts that we used to form the profile.
+
+But note: the problem says "Do not invent". We are to count the facts that are in the source.
+
+Looking at the source, we have:
+
+- Current role: Trusted Advisor, SaaStr Ai (Aug 2012 – present, self-employed). Also Seed Stage Lead Investor & Founder Champion, SaaStr AI Fund (Sep 2013 – present).
+- Career history: multiple roles, but we only need the current channel role.
+- Podcast: 860+ episodes, launched 2015, top 1% globally, #164 Apple US Technology (Jun 2026).
+- Public statements: multiple (we listed 7 in the facts).
+- Guests: multiple (we listed several).
+
+But note: the profile must be written from the facts. We are to count the facts that are used to form the profile. However, the problem says "count of substantive verified data points" meaning the number of distinct facts that are used to support the profile.
+
+But to be safe, we'll count the key facts that we used in the profile:
+
+1. The podcast is The Official SaaStr Podcast (860+ episodes, launched 2015).
+2. It's top 1% globally on Spotify and Apple, #164 Apple US Technology (Jun 2026).
+3. Public statements: 7 specific statements (but we don't need to count each, we count the fact that there are multiple statements).
+4. Guests: multiple founder/operator guests (we have names).
+
+However, the problem says "count of substantive verified data points". We'll count the key points that are used to justify the rating.
+
+But note: the problem says "a single row for the channel is acceptable" in career history. We are to count the facts that are used in the profile.
+
+Let's count the facts that are critical to the profile:
+
+- The podcast's topic: B2B/SaaS (from the facts: "Format is SaaS/B2B exclusively").
+- The reach: top 1% globally, #164 Apple US Technology (Jun 2026).
+- The public statements: multiple (we have 7 examples, but we can count as one fact that there are multiple statements).
+- The guests: multiple founder/operator guests (we have 5 names listed as examples).
+
+But note: the problem says "count of substantive verified data points", meaning each distinct fact that is verified and used.
+
+We'll count:
+
+1. The podcast is a weekly interview-based podcast with 860+ episodes (launched 2015).
+2. It is top 1% globally on Spotify and Apple Podcasts.
+3. It is #164 in Apple US Technology chart (Jun 2026).
+4. The host has made multiple public statements on AI in business (we can count the fact that there are multiple statements, but we don't need to count each one).
+5. The host has featured multiple founder/operator guests (we can count the fact that there are multiple guests of that type).
+
+But note: the problem says "count of substantive verified data points", so we are to count the distinct facts that are used to support the profile.
+
+We'll count:
+
+- The podcast's reach and position (2 facts: top 1% and #164) -> but these are two separate facts? Actually, they are two pieces of evidence for reach, but we can count as one data point for reach? However, the problem says "data points", so we count each distinct fact.
+
+But to be safe, let's look at the facts we used:
+
+- "Top 1% globally on Spotify and Apple Podcasts" -> one fact.
+- "#164 Apple US Technology chart (Jun 2026)" -> another fact.
+- "Multiple public statements on AI in business" (we have 7 examples, but we don't count each example as a data point, we count the fact that there are multiple statements) -> one fact.
+- "Multiple founder/operator guests" (we have 5 examples) -> one fact.
+
+So that's 4 facts? But note: the problem says "substantive verified data points", and we have:
+
+1. The podcast's global ranking (top 1%).
+2. The Apple chart position (#164).
+3. The host's public statements on AI (multiple).
+4. The guest list including founders/operators.
+
+But note: the facts also include the specific examples of the statements and guests, but we don't count each example as a data point. We count the fact that they exist.
+
+However, the problem says "count of substantive verified data points", meaning the number of distinct facts that are verified and used. We'll count:
+
+- The podcast's format and reach (as one point: it's a top podcast in the category) -> but we have two metrics (top 1% and #164) so that's two.
+
+But let's see the instructions: "count of substantive verified data points". We'll count:
+
+- The podcast is top 1% globally (one point).
+- The podcast is #164 in Apple US Technology (second point).
+- The host has made multiple public statements on AI in business (third point).
+- The host has featured multiple founder/operator guests (fourth point).
+
+So yield: 4.
+
+But note: the problem says "a single row for the channel is acceptable" in career history. We are not counting the career history as a data point for the profile? We are counting the facts that are used to form the profile.
+
+Alternatively, we can count the key facts that are used in the relevance assessment:
+
+- The podcast is about AI in B2B/SaaS (one fact).
+- The podcast has strong reach (two facts: top 1% and #164).
+- The host has made public statements on AI (one fact).
+- The host has featured founder guests (one fact).
+
+But that's 5? However, the top 1% and #164 are two separate facts.
+
+But note: the problem says "count of substantive verified data points", so we count each distinct fact that is verified and used.
+
+We'll go with 4: 
+1. Top 1% globally (Spotify and Apple).
+2. #164 Apple US Technology (Jun 2026).
+3. Multiple public statements by host on AI in business (with examples provided, but we count the fact that there are multiple).
+4. Multiple founder/operator guests (with examples provided).
+
+So yield: 4.
+
+But note: the problem says "Do not invent", so we are only counting the facts that are in the source.
+
+Now, let's write the profile.
+
+We must follow the exact structure.
+
+First, the front-matter:
+
+---
+profile_date: 2026-07-02
+star_rating: 5
+yield: 4
+dependent_data:
+  contact_name: marketing@saastrinc.com
+  organisation: SaaStr Podcast
+  role: Host
+  date_excluded: null
+---
+
+Then the profile.
+
+Current role: 
+- The facts say: "Trusted Advisor, SaaStr Ai (Aug 2012 – present, self-employed). Also Seed Stage Lead Investor & Founder Champion, SaaStr AI Fund (Sep 2013 – present)." But note: the channel is The Official SaaStr Podcast. So we say: "Host of The Official SaaStr Podcast, a weekly interview-based podcast covering AI in business, B2B/SaaS, and entrepreneurship, with 860+ episodes launched in 2015."
+
+Career history: 
+- We have a table. The facts say: "Trusted Advisor, SaaStr Ai (Aug 2012 – present, self-employed)" and "Seed Stage Lead Investor & Founder Champion, SaaStr AI Fund (Sep 2013 – present)". But note: the channel is the podcast, so we can list the current role as the podcast host. The career history table should have the current channel role as the main one.
+
+We'll do:
+
+| Period | Role | Organisation | Notes |
+|---|---|---|---|
+| Aug 2012 – present | Trusted Advisor | SaaStr Ai | Self-employed; community, events, VC |
+
+But note: the podcast is part of SaaStr, so we can also note that the podcast is the main channel.
+
+However, the facts say: "The Official SaaStr Podcast (~860 episodes as of Jun 2026)".
+
+So in the current role, we'll describe the podcast.
+
+Certifications and education: "None found"
+
+Volunteer and mentorship: "None found"
+
+What they have said publicly: 
+- We'll list the key statements (but the problem says: "the host's OWN statements on our themes, with source (signal 3); or: No host-voiced statements on our themes found." We have multiple, so we'll list a few representative ones.
+
+But note: the problem says "with source", so we'll cite the source (e.g., SaaStr 803, etc.)
+
+We'll write: 
+"Host has made multiple public statements on AI in business, including:
+- 'We replaced our sales team with 20 AI agents...' (SaaStr 803, 2025)
+- 'AI curiosity is now a firing offense to lack...' (SaaStr blog/SaaStr 822, 2025)
+- 'CROs will need to manage teams that are 50% AI agents and 50% human...' (SaaStr 803, 2025)"
+
+But note: the problem says "with source", so we must include the source.
+
+Who they know: 
+- We have the table with Kyle Norton, Brian Halligan, etc.
+
+Catalogue evidence: 
+- We need to list 3-5 episode titles and guests that show:
+  - On-topic episodes (signal 1): AI in business (B2B/SaaS) -> all episodes are on-topic.
+  - Founder/operator guests (signal 2): multiple episodes feature founders.
+  - Host-voiced thesis (signal 3): the solo episodes (like SaaStr 835) and the statements.
+
+We'll group:
+
+On-topic episodes (signal 1):
+- SaaStr 803: "AI, Sales + GTM in 2025/2026: This Changes Everything" (with Kyle Norton, CRO of Owner.com)
+- SaaStr 822: "SaaStr's Top 10+ AI Agents: AI SDR, AI BDR, AI RevOps + More" (with Amelia LeRutte, SaaStr Chief AI Officer)
+- SaaStr 835: "AI + B2B in 2026: Find the Tailwinds or Get Left Behind" (Lemkin solo)
+
+Founder/operator guests (signal 2):
+- SaaStr 803: Kyle Norton (CRO, Owner.com) — operator
+- SaaStr 822: Amelia LeRutte (SaaStr Chief AI Officer) — operator
+- SaaStr 845: Case study on SaaStr's own AI implementation (with Lemkin)
+
+But note: the problem says "grouped by signal". So we'll have:
+
+On-topic episodes (signal 1):
+- SaaStr 803: "AI, Sales + GTM in 2025/2026: This Changes Everything" (with Kyle Norton, CRO of Owner.com)
+- SaaStr 822: "SaaStr's Top 10+ AI Agents: AI SDR, AI BDR, AI RevOps + More" (with Amelia LeRutte, SaaStr Chief AI Officer)
+- SaaStr 835: "AI + B2B in 2026: Find the Tailwinds or Get Left Behind" (Lemkin solo)
+
+Founder/operator guests (signal 2):
+- SaaStr 803: Kyle Norton (CRO, Owner.com)
+- SaaStr 822: Amelia LeRutte (SaaStr Chief AI Officer)
+- SaaStr 845: SaaStr's own case study (with Lemkin)
+
+Host-voiced thesis (signal 3):
+- SaaStr 835: "AI + B2B in 2026: Find the Tailwinds or Get Left Behind" (Lemkin solo)
+- SaaStr 803: "AI, Sales + GTM in 2025/2026: This Changes Everything" (Lemkin + Kyle Norton) — but note: the solo statements are stronger for signal 3.
+
+But note: the problem says "any host-voiced thesis (signal 3)". So we can list the solo episodes.
+
+We'll list:
+
+On-topic episodes (signal 1):
+- SaaStr 803: "AI, Sales + GTM in 2025/2026: This Changes Everything" (with Kyle Norton)
+- SaaStr 822: "SaaStr's Top 10+ AI Agents: AI SDR, AI BDR, AI RevOps + More" (with Amelia LeRutte)
+- SaaStr 835: "AI + B2B in 2026: Find the Tailwinds or Get Left Behind" (Lemkin solo)
+
+Founder/operator guests (signal 2):
+- SaaStr 803: Kyle Norton (CRO, Owner.com)
+- SaaStr 822: Amelia LeRutte (SaaStr Chief AI Officer)
+- SaaStr 845: Case study on SaaStr's AI implementation (with Lemkin)
+
+Host-voiced thesis (signal 3):
+- SaaStr 835: "AI + B2B in 2026: Find the Tailwinds or Get Left Behind" (Lemkin solo)
+- SaaStr 803: "AI, Sales + GTM in 2025/2026: This Changes Everything" (Lemkin solo segment)
+
+But note: the problem says "three to five real episode or video titles and named guests". We are listing 3 for each group? But we only need 3-5 total. We'll list 3-5 in total, grouped.
+
+We'll list:
+
+- SaaStr 803: "AI, Sales + GTM in 2025/2026: This Changes Everything" (with Kyle Norton, CRO of Owner.com) — shows signal 1 and 2.
+- SaaStr 822: "SaaStr's Top 10+ AI Agents: AI SDR, AI BDR, AI RevOps + More" (with Amelia LeRutte, SaaStr Chief AI Officer) — shows signal 1 and 2.
+- SaaStr 835: "AI + B2B in 2026: Find the Tailwinds or Get Left Behind" (Lemkin solo) — shows signal 1 and 3.
+
+That's three.
+
+Relevance assessment:
+- Signal 1: Met (AI in business, specifically B2B/SaaS, which is the target audience).
+- Signal 2: Met (multiple founder/operator guests).
+- Signal 3: Met (multiple host-voiced statements on AI in business).
+- Audience: The podcast's audience is startup investors and founders in B2B/SaaS, which is exactly the target audience.
+- Reach: Strong (top 1% globally, #164 Apple US Technology).
+- Rating: 5 (strong reach into target audience and squarely on-domain with the right guest type).
+
+Verification corrections: None.
+
+Now, write the profile.
+
+Note: The problem says "Do not invent", so we must not add anything not in the facts.
+
+Let's write the profile.
