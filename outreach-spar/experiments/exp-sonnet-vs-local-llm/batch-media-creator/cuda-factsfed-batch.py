@@ -5,8 +5,11 @@ Relevance-assessment and Verification-corrections verdict sections removed), fee
 them one-shot to an ollama model, and write the model's profile to that model's
 worktree. Records wall time and context per profile (incl. failures).
 
-FACTSFED_NUM_CTX and FACTSFED_TIMEOUT in the environment override the request's
-context window (default 8192) and per-request timeout in seconds (default 1800).
+FACTSFED_NUM_CTX, FACTSFED_NUM_PREDICT, FACTSFED_THINK and FACTSFED_TIMEOUT in the
+environment override the request's context window (default 8192), generation cap
+(default 4096), thinking switch (default off; any non-empty value turns it on, and
+the model's thinking then comes back in its own field rather than in the answer)
+and per-request timeout in seconds (default 1800).
 A server holding a model at one context length reloads it for a request naming
 another, which evicts every other caller's runner, so on a shared server pass
 the loaded model's own length.
@@ -39,9 +42,11 @@ def reconstruct_facts(md: str) -> str:
     return "\n".join(out).strip()
 
 def gen(prompt: str):
-    req = {"model": model, "prompt": prompt, "stream": False, "think": False,
+    req = {"model": model, "prompt": prompt, "stream": False,
+           "think": bool(os.environ.get("FACTSFED_THINK")),
            "options": {"num_ctx": int(os.environ.get("FACTSFED_NUM_CTX", 8192)),
-                       "temperature": 0, "num_predict": 4096}}
+                       "temperature": 0,
+                       "num_predict": int(os.environ.get("FACTSFED_NUM_PREDICT", 4096))}}
     body = json.dumps(req).encode()
     r = urllib.request.urlopen(urllib.request.Request(
         "http://127.0.0.1:11434/api/generate", body,
@@ -66,6 +71,11 @@ for stem in stems:
     t0 = time.time(); outcome = "fail-unknown"; star = ""; yld = ""; pe = ec = 0
     try:
         resp = gen(prompt)
+        if resp.get("thinking"):
+            # The model's thinking, when the request asked for it, is not part
+            # of the profile; kept beside the raw response so a profile that
+            # never arrived can still be read for where the budget went.
+            open(os.path.join(raw_dir, stem + ".thinking.txt"), "w").write(resp["thinking"])
         text = clean(resp.get("response", ""))
         pe = resp.get("prompt_eval_count") or 0
         ec = resp.get("eval_count") or 0
