@@ -11,7 +11,7 @@ measurements (tokens in and out, prefill and decode seconds, queue-inclusive
 wall-clock) is appended to the runs TSV. No context length is requested, so a
 server holding the model at its Modelfile length does not reload it.
 """
-import argparse, json, os, sys, time, urllib.request
+import argparse, json, os, re, sys, time, urllib.request
 
 ap = argparse.ArgumentParser()
 ap.add_argument("model"); ap.add_argument("run_name"); ap.add_argument("prompt_file"); ap.add_argument("out_file")
@@ -19,17 +19,25 @@ ap.add_argument("--think", action="store_true")
 ap.add_argument("--runs-tsv", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "decomposed-runs.tsv"))
 ap.add_argument("--server", default="http://127.0.0.1:11434")
 ap.add_argument("--timeout", type=int, default=14400)
+ap.add_argument("--max-tokens", type=int, default=8192,
+                help="generation cap; a roster-shaped answer needs a few thousand, and on a shared server a smaller cap bounds the wait of whoever is queued behind it")
 a = ap.parse_args()
 
 prompt = open(a.prompt_file).read()
 req = {"model": a.model, "prompt": prompt, "stream": False, "think": a.think,
-       "options": {"temperature": 0, "num_predict": 8192}}
+       "options": {"temperature": 0, "num_predict": a.max_tokens}}
 t0 = time.time()
 r = urllib.request.urlopen(urllib.request.Request(
     a.server + "/api/generate", json.dumps(req).encode(), {"Content-Type": "application/json"}),
     timeout=a.timeout)
 j = json.loads(r.read()); wall = time.time() - t0
-with open(a.out_file, "w") as f:
+# A repeated run keeps the earlier output: the same prompt can take a
+# different path and both answers are evidence.
+out_file = a.out_file
+n = 2
+while os.path.exists(out_file):
+    out_file = re.sub(r"(\.[^.]+)$", f"-{n}\\1", a.out_file); n += 1
+with open(out_file, "w") as f:
     if j.get("thinking"):
         f.write("<!-- thinking -->\n" + j["thinking"] + "\n<!-- /thinking -->\n\n")
     f.write(j.get("response", ""))

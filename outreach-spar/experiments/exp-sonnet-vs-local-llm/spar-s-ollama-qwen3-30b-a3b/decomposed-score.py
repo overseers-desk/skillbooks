@@ -45,7 +45,7 @@ def norm(s):
 def ratings(out, july):
     diffs = []
     for f in sorted(glob.glob(os.path.join(out, "rating-*.md"))):
-        stem = os.path.basename(f)[len("rating-"):-3]
+        stem = re.sub(r"-\d+$", "", os.path.basename(f)[len("rating-"):-3])
         m = re.search(r"star_rating:\s*([1-5])", answer(f))
         b = re.search(r"^star_rating:\s*([1-5])", open(os.path.join(july, stem + ".beta.md")).read(), re.M)
         if not m or not b:
