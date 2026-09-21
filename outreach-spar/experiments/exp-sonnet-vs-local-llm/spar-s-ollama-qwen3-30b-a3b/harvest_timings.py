@@ -704,19 +704,29 @@ def build_lifecycle_section(lifecycle_reqs):
     lines.append(f"Reached generation: {len(reached)}")
     lines.append(f"Abandoned during prefill: {len(abandoned)}")
 
-    prefill_total_s = sum((r["init_sampler_ts"] - r["start_ts"]).total_seconds() for r in reached)
+    # Both sums run over the same population. A request that reached
+    # generation but has no end yet, the one in flight when the window
+    # closed, has a prefill that is known and a generation that is not,
+    # so counting its prefill alone would understate generation's share
+    # against a denominator it had contributed to.
+    ended = [r for r in reached if (r["release_ts"] or r["last_tg_ts"]) is not None]
+    in_flight = len(reached) - len(ended)
+    prefill_total_s = sum((r["init_sampler_ts"] - r["start_ts"]).total_seconds() for r in ended)
     gen_total_s = sum(
-        (end - r["init_sampler_ts"]).total_seconds()
-        for r in reached
-        for end in [r["release_ts"] or r["last_tg_ts"]]
-        if end is not None
+        ((r["release_ts"] or r["last_tg_ts"]) - r["init_sampler_ts"]).total_seconds()
+        for r in ended
     )
     lines.append(
-        f"Prefill actually performed, summed over requests that reached generation: "
-        f"{prefill_total_s / 60:,.1f} min (a fully cached prompt correctly shows zero here -- "
-        f"this is prefill done, not prompt tokens presented)"
+        f"Prefill actually performed, summed over the {len(ended)} request(s) that reached "
+        f"generation and finished: {prefill_total_s / 60:,.1f} min (a fully cached prompt "
+        f"correctly shows zero here -- this is prefill done, not prompt tokens presented)"
     )
     lines.append(f"Generation, summed over the same requests: {gen_total_s / 60:,.1f} min")
+    if in_flight:
+        lines.append(
+            f"Excluded from both sums: {in_flight} request(s) still generating when the window "
+            f"closed, whose prefill is known and whose generation is not"
+        )
     denom = prefill_total_s + gen_total_s
     if denom:
         lines.append(f"Generation share of prefill+generation time: {gen_total_s / denom * 100:,.0f}%")
