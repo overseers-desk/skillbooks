@@ -430,3 +430,17 @@ The running arm is unblocked without touching the harness. The prompt directorie
 This holds for one run. The directories are regenerated each time, so the durable change is the harness default, and a value in the low thousands would suit a model reading at 21 tokens a second.
 
 An earlier version of this section said no outside process could place a file there, and that was written without looking. The directories were sitting in `/tmp`, listed and writable, and the check took one command.
+
+## Qualifying the skipped-reading finding, and what a longer-lived worker does instead
+
+The claim that the model skips the file its brief tells it to read rests on two workers that made no read call. Both were observed two or three turns in, and both died before they got further. A worker on `horse-introducer` that survived to ten turns has made three read calls. So the honest version is narrower: the two workers that were killed early had not read their framing by the time they died, and one of them had already committed to enumerating a population its sweep record excludes. Whether a worker that lives long enough reads the framing before it matters is not established, and the evidence that it never reads is withdrawn.
+
+What the longer-lived worker does show is worth more than the claim it weakens.
+
+It fetched the pony club register and got 72 characters back, a tagline, because the page renders its content with JavaScript. It diagnosed that correctly and fell back to the office's own browser serialiser through a shell call, which produced a 287 KB dump. That is resourceful and is the behaviour one would want.
+
+It then tried to read the dump and was refused, the file exceeding the 256 KB limit. It retried with a hundred-line limit and was refused again, the content still measuring 73,369 tokens against a 25,000 limit. It retried with a fifty-line limit and was refused identically. A browser dump of a modern page is a handful of enormously long lines, so a line limit cannot shrink it, and the tool's own message says to search the file instead. The model varied the one parameter that could not help, three times, rather than changing approach.
+
+That is a judgement failure of a different kind from the first one, and it is visible rather than inferred: three identical refusals, three responses that differ only in a number. It also costs whole turns, and on this hardware a turn is minutes.
+
+Both observations point the same way. The model executes competently and adapts poorly. It picks good tools and writes good extraction prompts, and when the world pushes back it repeats itself with a small variation instead of reconsidering.
