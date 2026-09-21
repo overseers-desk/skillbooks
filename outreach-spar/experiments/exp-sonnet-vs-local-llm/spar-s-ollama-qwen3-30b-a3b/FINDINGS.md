@@ -526,3 +526,21 @@ This is the same finding as the per-turn measurements and a good deal starker. E
 It also explains a failure that would otherwise look like a model that cannot follow instructions. The worker did not decline to write its deliverable, and it did not forget. It never arrived at the writing.
 
 The harness's validator deserves credit here. It noticed the missing deliverable and started a fix attempt rather than recording a silent nothing, which is the behaviour the first source's YAML fault lacked.
+
+## Roster rows, at last, and what they look like
+
+The local arm produced its first roster rows at about 14:30 on 21 September, from `EquiDirectory, by locality`. Two of them, recorded into the segment's roster file, with the source marked `exhausted` in the sweep record. The whole pipeline ran end to end for the first time: the model swept, wrote a deliverable, the harness validated it, recorded the source's status, and the rows landed.
+
+The deliverable is good work. Its reconciliation reads: nine entries in the source, nine read this round, two in scope after the discovery criteria, none already on the roster, two rows returned. Its exclusions are itemised with reasons, naming which entries were dropped as veterinary services, as transport, as a rural supplier, and one dropped as too ambiguous to call. A row with no organisation carries an empty organisation rather than an invented one, and a row with no contact name does the same.
+
+One of those exclusions is the experiment's first direct point of comparison. The local arm dropped a Beaudesert entry as lacking equestrian specificity. The hosted arm's roster for this segment carries that same business as a row. So the two arms, given the same source and the same discovery criteria, disagreed about a member. That is exactly the kind of disagreement the blind judging exists to adjudicate, and it should be left to the judge rather than settled here.
+
+Two rows is two rows. The hosted arm holds 38 for this segment across nine sources, and the local arm has now worked two of them. Nothing about coverage can be said yet.
+
+## The tunnel failed, as the notes said it would
+
+The run died some time after 14:30. Every remaining source failed instantly with a connection refused, the SSH tunnel carrying requests to the model having dropped with no supervisor to restart it. Ollama was untouched throughout, still holding the model. This was written up as the bridge's weak point this morning, before it happened.
+
+Seven sources were burned this way, each failing in seconds rather than hours, so the cost is the idle time rather than the work. The tunnel is back and the run relaunched at 20:48.
+
+One thing to do differently. A relaunch builds fresh prompt directories, and those revert the stall timeout to its 600-second default, so the raised value has to be reapplied after every launch. That is a consequence of holding the fix outside the harness and is worth remembering by whoever next restarts this.
