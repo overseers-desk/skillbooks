@@ -464,3 +464,15 @@ Three settings changed during the day, so any table spanning them mixes regimes.
 | 11:18 (approx) | `STALL_TIMEOUT_SECS` set to 3600 in all nine prompt directories of the current run | workers constructed after this survive a prefill longer than 600 seconds; the worker on source one was constructed at 10:52 and is not covered |
 
 Two consequences for reading the tables. Any cut counted before 11:18 belongs to the Bun limit, and the seventeen dispatcher restarts made overnight are recorded by the model server exactly as cuts are, so overnight cut counts are contaminated and the restart-free window since 07:22 is the only clean sample. And any per-source timing that spans 11:18 mixes a regime where long prefills were cut with one where they are not, so the two should not be averaged together.
+
+## Where the blind-judging leak actually is
+
+The scoring method requires that every line identifying the producing arm be stripped before a judge sees a roster, timestamps included. Measured against the hosted arm's `horse-introducer` roster, that requirement bites in exactly one place and bites on every row.
+
+All 38 rows carry a date inside `s_note`, the sweep note, in the form of a bracketed provenance tag. The hosted arm's rows are dated 20 September. Anything the local arm produces will be dated 21 September or later. So the date alone separates the two rosters completely, before a judge reads a word of their content, and it correlates perfectly with the arm.
+
+Nothing else in the file leaks. The other column flagged on a scan was `facebook_url`, whose nineteen matches are ordinary links in the data rather than provenance.
+
+This needs no tooling and no change to the method, which already names timestamps. It needs whoever runs the judging to know that the strip is a single normalisation over one column, applied to every row, and that skipping it makes the blind judging worthless rather than merely imperfect.
+
+This is recorded here rather than in `METHOD.md`, whose value rests on having been fixed before any result existed.
