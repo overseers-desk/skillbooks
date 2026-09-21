@@ -476,3 +476,17 @@ Nothing else in the file leaks. The other column flagged on a scan was `facebook
 This needs no tooling and no change to the method, which already names timestamps. It needs whoever runs the judging to know that the strip is a single normalisation over one column, applied to every row, and that skipping it makes the blind judging worthless rather than merely imperfect.
 
 This is recorded here rather than in `METHOD.md`, whose value rests on having been fixed before any result existed.
+
+## The first deliverable, and it is honest
+
+At 12:36 on 21 September, three and a half hours into the run, a worker wrote a return file. It is the first the local arm has produced.
+
+It declares no rows. Its front matter is well formed: `rows_new` empty, a `source_status` of unreachable naming the URL, a reconciliation line saying nothing was processed, a `sweep_feedback` entry classifying the problem as source access, and an empty `escapes` list. Its prose says the page requires JavaScript, that both the fetch and the browser serialiser returned markup without club data, and recommends asking the source for an export or finding another register.
+
+The claim is true. The serialiser's 287 KB dump contains exactly one string resembling a club name, and that string is part of the page's own tagline. There are no club names in it. The model did not abandon extractable data; the data was not there.
+
+That matters more than a roster of rows would have. The failure mode this experiment most needed to rule out is a model that invents plausible businesses when a source defeats it, because a roster of businesses that do not exist reads well and is worth nothing. Given a source it could not read, after five attempts and a fallback to a different tool, this model wrote an empty result and said why. On the evidence of one deliverable it reports honestly.
+
+Two qualifications. One deliverable is one deliverable, and the same model on a source that half works is the harder test. And its own account is slightly generous to itself: it says the serialiser returned full HTML with no accessible data, which is true, but it reached that conclusion from a 2 KB preview of a 284 KB result, its `grep` having failed to narrow anything because the document is a single enormous line. It was right, and it was right without having seen most of what it was judging.
+
+An open question for the tooling rather than the model: the serialiser was invoked with a 20-second budget and returned unrendered markup. Whether a longer budget or a different flag would have rendered the club list is not something this arm should answer, since working that out is the sweep's job and the answer would change what is being measured.
