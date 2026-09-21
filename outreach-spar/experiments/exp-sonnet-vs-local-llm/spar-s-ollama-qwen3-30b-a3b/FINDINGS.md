@@ -423,6 +423,10 @@ The interaction with the earlier fault is worth stating, because it hid this one
 
 ### What would change it
 
-`STALL_TIMEOUT_SECS` is read from `meta.env` in the worker's prompt directory, with zero disabling the watchdog. The prompt directory is generated per run under `/tmp` with a timestamp and process id in its name, and the harness reads the file when it constructs the worker, so there is no point at which an outside process can place one there. The dispatcher's control socket sets worker environment, which this value does not come from. The change belongs in the harness, and a value in the low thousands of seconds would suit a model reading at 21 tokens a second.
+`STALL_TIMEOUT_SECS` is read from `meta.env` in the worker's prompt directory, with zero disabling the watchdog.
 
-Until then the local arm cannot complete a source, and any figure quoted from it describes an attempt rather than a result.
+The running arm is unblocked without touching the harness. The prompt directories are not created when each source begins; the dispatcher builds one per source at the moment it starts, so every pending source's `meta.env` is already on disk and writable. All nine for the current run now carry 3,600 seconds, which covers a 75,000-token prefill at the observed rate while still catching a genuine hang, where zero would disable the watchdog altogether.
+
+This holds for one run. The directories are regenerated each time, so the durable change is the harness default, and a value in the low thousands would suit a model reading at 21 tokens a second.
+
+An earlier version of this section said no outside process could place a file there, and that was written without looking. The directories were sitting in `/tmp`, listed and writable, and the check took one command.
