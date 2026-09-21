@@ -15,7 +15,8 @@ DIRECT_MODEL="qwen3-30b-128k"
 SPAR_SWEEP_TOOLS="WebSearch,WebFetch,Read,Write,Bash,Agent"
 
 NEW_ARGS+=(--tools "$SPAR_SWEEP_TOOLS" --allowedTools "$SPAR_SWEEP_TOOLS" \
-           --strict-mcp-config --model "$DIRECT_MODEL" --safe-mode)
+           --strict-mcp-config --model "$DIRECT_MODEL" --safe-mode \
+           --include-partial-messages)
 
 export PATH="$CLEAN_PATH"                 # own directory stripped, so it cannot recurse
 export CLAUDE_PATH="$REAL_CLAUDE"
@@ -37,6 +38,8 @@ exec "$REAL_CLAUDE" "${NEW_ARGS[@]}"
 `--safe-mode` drops the operator's session-start injection and the repository's instruction files, which together were 19,668 tokens of a 26,608-token request. This is the single largest saving available.
 
 `--model` is forced because no cloud alias maps to a local model name.
+
+`--include-partial-messages` is there for the harness's stall watchdog, which reads the worker's stdout and kills a child silent past its timeout. Without the flag the CLI prints a system event per thinking delta and then nothing until the message completes, so a tool call or a deliverable generated at a few tokens a second is minutes of silence indistinguishable from a hang: on 22 September a worker's stdout went quiet from 00:29 while the server's journal showed it generating at five tokens a second throughout. The harness parses the transcript line by line and skips event types it does not know, so the extra lines cost bytes and nothing else.
 
 The base URL is ollama's bare origin with no path suffix. Ollama speaks the Anthropic Messages API natively, so no router is needed, and the CLI appends the path itself. Adding `/v1` produces a doubled path and a 404. The auth token can be any non-empty string; the endpoint does not check it, but an empty value sends the CLI into an interactive login.
 
