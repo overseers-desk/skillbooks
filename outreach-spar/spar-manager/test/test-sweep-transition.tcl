@@ -309,7 +309,7 @@ set tasks [spar::transition_campaign_tasks T0 $cdata $camp $seg_paths]
 set names {}
 foreach t $tasks { lappend names [dict get $t contact_name] }
 
-# By this point in the fixture (§5) rounds: holds n 1 and n 2, so the
+# By this point in the fixture (section 5) rounds: holds n 1 and n 2, so the
 # latest round is 2. Closed forum is unreachable with no probe field,
 # which dispatches it for the probe rather than skipping it.
 assert_eq [lsort $names] {{Closed forum} {State register} {Trade directory}} \
