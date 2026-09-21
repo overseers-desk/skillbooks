@@ -296,13 +296,28 @@ puts $fd "  vic:"
 puts $fd "    plan: sweep it"
 close $fd
 
+proc task_named {tasks name} {
+    foreach t $tasks {
+        if {[dict get $t contact_name] eq $name} { return $t }
+    }
+    error "no task named '$name'"
+}
+
 set cdata [spar::load_campaign $camp]
 set seg_paths [list [list vic [file join $root segments vic]]]
 set tasks [spar::transition_campaign_tasks T0 $cdata $camp $seg_paths]
 set names {}
 foreach t $tasks { lappend names [dict get $t contact_name] }
-assert_eq [lsort $names] {{State register} {Trade directory}} \
-    "one task per open source; exhausted and unreachable skipped"
+
+# By this point in the fixture (§5) rounds: holds n 1 and n 2, so the
+# latest round is 2. Closed forum is unreachable with no probe field,
+# which dispatches it for the probe rather than skipping it.
+assert_eq [lsort $names] {{Closed forum} {State register} {Trade directory}} \
+    "exhausted is skipped; open sources and a probe-less unreachable source dispatch"
+assert_match [dict get [task_named $tasks "Closed forum"] reason] \
+    "*no probe recorded*probe it*" \
+    "no probe on record: the reason names the missing probe"
+
 assert_eq [dict get [lindex $tasks 0] task_state] dispatchable \
     "open sources are dispatchable"
 assert_eq [dict get [lindex $tasks 0] segment] vic "task carries its segment"
@@ -312,6 +327,24 @@ assert_eq [dict get [lindex $tasks 0] stem] \
 # Every contact-driven transition ignores the campaign-task seam.
 assert_eq [spar::transition_campaign_tasks T1 $cdata $camp $seg_paths] {} \
     "T1 has no campaign-level tasks"
+
+# A probe stamped with an earlier round than the latest still dispatches,
+# for a varied re-probe.
+spar::update_source_field $sweep "Closed forum" probe \
+    "login wall persists (round 1)"
+set tasks [spar::transition_campaign_tasks T0 $cdata $camp $seg_paths]
+assert_match [dict get [task_named $tasks "Closed forum"] reason] \
+    "*predates round 2*re-probe*" \
+    "a probe older than the latest round dispatches for a varied re-probe"
+
+# A probe stamped with the latest round closes the source for this round.
+spar::update_source_field $sweep "Closed forum" probe \
+    "login wall confirmed (round 2)"
+set tasks [spar::transition_campaign_tasks T0 $cdata $camp $seg_paths]
+set names {}
+foreach t $tasks { lappend names [dict get $t contact_name] }
+assert_eq [lsort $names] {{State register} {Trade directory}} \
+    "a probe stamped at the latest round is skipped"
 
 # A source worked to exhaustion drops out of the next pass.
 spar::update_source_status $sweep "State register" "exhausted — all 120 entries read"
