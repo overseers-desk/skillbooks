@@ -504,3 +504,11 @@ The outcome was overdetermined, which is worth stating plainly because it change
 Across the wider campaign, eight of seventy-two sweep files use the column-zero style. Each of them silently discards results from any surgical write, and the failure gives no signal to whoever's work is being dropped.
 
 The repair on this arm's side is to indent the sequences by two spaces, which changes no parsed value: the real parser returns an identical structure before and after, verified on each file. The repair on the harness's side, which is the one that matters for everyone else, is a block-end test that does not assume a sequence is indented relative to its key.
+
+## The repair is verified on the write path too
+
+Re-indenting the segment files fixed the read side: the harness's block finder returns nine entries where it returned none. That is half of what the run needs. The other half is whether the harness can then write a status back without damaging the file, and a successful parse is not evidence of that. A key written at the wrong indentation parses cleanly as a key of the wrong parent, reports no error, and silently attaches a source's status to whatever precedes it.
+
+Tested on copies, against two segment files with differently shaped sequences, exercising both branches: rewriting a key that already exists, and inserting one that does not. Both pass on both files. An inserted key lands at column 4, the same column as the entry's other keys, rather than at the dash's column 2. The indent the block finder reports is computed from the dash plus the whitespace after it, so it already points at the mapping keys. The defect suspected here does not exist.
+
+Two facts worth carrying rather than rediscovering. The insert path splices a new key immediately after the entry's `name:` line rather than appending at the end, so every field the harness adds will sit directly under the name in a diff; that is placement, not meaning. And a regression test for this procedure should compare per-key values rather than whole-mapping equality, since key order changes on insert and an order-sensitive comparison reports a corruption that has not happened.
