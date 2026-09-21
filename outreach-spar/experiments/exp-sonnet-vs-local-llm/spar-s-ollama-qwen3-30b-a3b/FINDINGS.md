@@ -1,5 +1,24 @@
 # S-phase on local inference: what the run found
 
+## In plain terms: what this model on dappnode can do in SPAR, as of 05:10 on 22 September 2026
+
+The question was what SPAR work a local model can take off hosted Claude, given that hosted Claude costs too much and most SPAR work runs overnight. The condition was that dappnode never idled. Two nights of running the sweep and one night of direct tests give this answer; the numbers behind each line are in the sections below, in the order they were learned, and this section is rewritten as results land.
+
+**The sweep as the harness runs it, one agent session per source: no.** On this hardware a worker's turn at the 13,000 tokens of context a sweep reaches after two file reads generates at one token a second, and this model thinks for thousands of tokens before its first tool call, so a turn is an hour and the client aborted one at its own ninety-minute limit with the model still writing. A source needs ten to twenty turns. Across two nights the whole-task sweep finished one source, a directory, with two honest rows, and declared a register unreachable that a plain fetch reads in full and the hosted arm rostered eleven clubs from. The built-in web search does not exist under the bridge at all, so the source that gave the hosted arm half its rows cannot be worked this way.
+
+**Reading and judging a small piece of text, with the searching and fetching done elsewhere: yes, within limits.** With thinking off, this model moves its deliberation into the answer and runs out of budget before writing anything, twice out of two. With thinking on and a context of two to three thousand tokens it decodes at eight or nine tokens a second, and a rating-only call on a July profile returns a star rating with a rubric-grounded justification in three to ten minutes: on the ratings scored so far the mean absolute difference from Sonnet's rating is 0.75 stars, with one exact match in four, leaning high. Whether the same pattern extracts roster rows from a page section and from a page of search listings is the test running now; its results follow below when they land.
+
+**A whole facts-fed profile in one call: not yet shown.** The July condition, thinking off and a 4,096-token cap, produced deliberation and no profile; thinking on with a 6,000-token cap spent the whole cap thinking and returned an empty answer. A run with a 16,000-token cap is queued and will say whether the profile arrives at all and at what cost.
+
+**A live profile with the tools the bridge gives: honest and mechanically wrong.** On a roster row with a name and a phone number the worker made three web searches, all of which returned unavailable, reported truthfully that it had found nothing, then wrote its profile as a text reply instead of a file, front matter after body, and the validator refused it. The fix attempt's outcome follows below.
+
+**What to share, on this evidence.** The reading and judgement steps at small context, one call each, with search results and page text supplied by something else and the deliverable's mechanics handled outside the model: rating, and, if the running tests confirm it, extraction of rows from a supplied page section. Not the agent loop, not anything that needs the model to search the web, and not anything whose context passes ten thousand tokens.
+
+**What it costs.** Prefill 20 to 27 tokens a second whatever the size; decode 7 to 9 tokens a second at 2,000 to 6,000 tokens of context and about 1 at 13,000 to 15,000. A rating call runs three to ten minutes of box time and the model's thinking varies from 700 to over 3,000 tokens on the same prompt shape, so a cap that fits one call starves another. The model server serves one request at a time, so everything queues. On the hosted side, a sweep worker on this campaign has cost 1.75 to 3.70 USD per source in multi-worker launches.
+
+**What defeats it.** Context size, which sets the decode rate; its own deliberation, which it cannot be told to skip; tools declared to it that have no provider under the bridge; and the mechanics of a deliverable, which it narrates rather than performs.
+
+
 Written 2026-09-20, with the sweep still running. The timing and defect findings below are settled and do not depend on its outcome. The roster comparison does, and is not here yet.
 
 ## The short answer
