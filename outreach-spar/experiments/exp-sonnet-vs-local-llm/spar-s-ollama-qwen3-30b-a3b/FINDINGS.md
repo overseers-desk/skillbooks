@@ -406,3 +406,23 @@ The observed cuts in the clean window sit at 430 seconds rather than 360, and th
 The overnight cut durations ran from 52 to 1,506 seconds, a spread no fixed timeout produces, and that spread almost argued the timeout hypothesis away. It was contamination. Seventeen dispatcher restarts were made during the night, and each kills a worker mid-request, which the model server records exactly as it records a timeout: a task released before it generated. Restricting to the window since 07:22, which has no restarts, gives three cuts in eleven requests at 430, 430 and 292 seconds. Two identical readings are a limit; the spread was the operator.
 
 The fix is in the wrapper and `BRIDGE.md` carries it.
+
+## Why no worker finishes: the harness kills them at 600 seconds of prefill
+
+Raising Bun's idle timeout moved the limit and revealed the one behind it. A request that would previously have been cut around 430 seconds now ran to 629, and at 629 the worker itself was killed. The dispatcher's own log says why:
+
+    FAIL (sweep: stalled -- no output for >= 600s; exit 143)
+
+The harness carries a stall watchdog that sends SIGTERM to a child that has emitted no stdout for `STALL_TIMEOUT_SECS`, default 600. Prefill emits nothing at all, by its nature. So the watchdog is not detecting a hung worker, it is detecting a working one that has a long prompt to read.
+
+On this hardware prefill runs at 21 to 26 tokens per second, so 600 seconds of silence is a prompt of roughly 13,000 tokens. The worker killed at 10:52 was reading 14,814. A worker's conversation grows with every tool result it receives, so it crosses that line after a handful of turns and is then killed and restarted on a fresh session, losing everything it had gathered.
+
+That is the answer to the question this experiment has been asking sideways all night. The local arm produces no roster rows not because it is slow, but because a ceiling sits below the length of conversation a sweep needs. Each source is attempted, grows, is killed, retried twice on fresh sessions, grows, is killed again. Nothing survives to write a deliverable.
+
+The interaction with the earlier fault is worth stating, because it hid this one. While Bun cut at 430 seconds, no request ever reached 600, so the stall watchdog never fired and its threshold was invisible. Fixing the smaller limit exposed the larger. Both were needed, and the order they were found in was the unhelpful one.
+
+### What would change it
+
+`STALL_TIMEOUT_SECS` is read from `meta.env` in the worker's prompt directory, with zero disabling the watchdog. The prompt directory is generated per run under `/tmp` with a timestamp and process id in its name, and the harness reads the file when it constructs the worker, so there is no point at which an outside process can place one there. The dispatcher's control socket sets worker environment, which this value does not come from. The change belongs in the harness, and a value in the low thousands of seconds would suit a model reading at 21 tokens a second.
+
+Until then the local arm cannot complete a source, and any figure quoted from it describes an attempt rather than a result.
