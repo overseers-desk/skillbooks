@@ -1,0 +1,226 @@
+We are given the SOURCE FACTS about James Pringle. We must write the profile strictly from these facts, without adding anything not present.
+
+First, note the SEGMENT: media creator must run a channel covering AI in business, AI agents, automation, entrepreneurship, etc., featuring founder guests.
+
+From the facts:
+- James Pringle is a VC at Redbus Ventures (since Oct 2024) and co-host of "Riding Unicorns" podcast (since Oct 2020). 
+- The podcast is described as "weekly" and co-hosted with Hector Mason (GP at EP1 Ventures).
+
+We are to rate the value to the campaign (which is about a technology founder who built an AI system for his agri-tourism business and now offers it to others, and we want to feature him as a guest to raise his profile ahead of a senior AI-leadership search).
+
+The rating is based on:
+- Reach into our audiences (startup investors and founders; broad AI-in-business audience) multiplied by three signals:
+  (1) topic: covers AI in business, AI agents and automation, or owner-run-business operating world (SMB operations, hospitality, tourism)
+  (2) guests: features founders, operators, or exited founders
+  (3) stated interest: host's own expressed appetite for these themes (only if the host says it, not if a guest does)
+
+We must calibrate conservatively.
+
+Now, let's extract the facts for each section:
+
+1. Current role: 
+   - VC at Redbus Ventures (Oct 2024 – present); co-host, Riding Unicorns podcast (Oct 2020 – present); founder, Pringle Capital angel network (Jan 2020 – present).
+
+2. Career history: 
+   - We have a table. We'll use the relevant parts for the channel (Riding Unicorns) and his role as co-host.
+
+3. Certifications and education: 
+   - University of Newcastle-upon-Tyne (undergraduate); PFSA Level 2 Talent Identification (unrelated).
+
+4. Volunteer and mentorship: 
+   - None found.
+
+5. What they have said publicly:
+   - On AI investment thesis (Hardman & Co podcast, Aug 2023): focuses on "applications rather than the fundamental building blocks of AI"; greater opportunity in "practical AI implementations for business problems".
+   - On AI and workforce (Hardman & Co, Aug 2023): AI can "supercharge employees, enabling them to move faster with less resources"; management teams must handle acceleration.
+   - On founders and scaling (X/Twitter): analysis of UK talent ecosystems producing hot founders (ex-DeepMind, ex-Revolut, etc.) — this is about founder pedigree, but not specifically about SMB operations, hospitality, or tourism.
+
+   Note: No public statements found specifically on SMB operations, hospitality, or tourism.
+
+6. Who they know (connections relevant to campaign):
+   - Hector Mason: co-host of Riding Unicorns, GP at EP1 Ventures (primary booking contact).
+   - Simon Franks: Partner at Redbus Ventures (same firm), ex-founder LOVEFiLM (sold to Amazon), and a prior Riding Unicorns guest. He is an exited founder (LOVEFiLM sold to Amazon) — so he fits signal 2 (exited founder).
+
+7. Catalogue evidence:
+   - We need to list 3-5 real episode titles and guests that show:
+        - On-topic episodes (signal 1): covering AI in business, etc.
+        - Founder/operator guests (signal 2)
+        - Host-voiced thesis (signal 3)
+
+   From the facts, we have:
+   - The podcast is called "Riding Unicorns", and we know it's a weekly podcast co-hosted by James and Hector Mason.
+   - We don't have specific episode titles or guests from the facts, except for the mention of Simon Franks as a prior guest (from the "Who they know" section: "exited-founder profile mirrors the campaign pitch" and "prior Riding Unicorns guest").
+
+   However, the facts do not provide specific episode titles or other guests. We have:
+     - Simon Franks (ex-founder LOVEFiLM) was a guest (from the "Who they know" section, which says he was a prior guest).
+
+   But note: the facts do not list other guests or episode titles. So we cannot invent any.
+
+   Therefore, for "Catalogue evidence", we can only use:
+     - The fact that Simon Franks (exited founder) was a guest (so that's signal 2).
+     - The host's public statements on AI (which we have: the Hardman & Co podcast and Twitter) — but note, the Hardman & Co podcast is a guest appearance by James, not his own podcast. So for his own podcast, we don't have specific episodes.
+
+   However, the facts say: "Subject of Aug 2023 Hardman & Co podcast interview on AI and startups" — that's James being a guest on someone else's show, not his own.
+
+   So for his own podcast (Riding Unicorns), we have:
+     - He co-hosts it, and we know Simon Franks was a guest (from the "Who they know" section).
+
+   But we don't have other guests or episode titles. So we can only list Simon Franks as a guest (for signal 2) and note that the podcast covers AI in business (because the host's statements on AI are about business applications, and the podcast is about unicorns, which are startups, so it's implied to cover AI in business? But we must be cautious: the facts don't explicitly say the podcast covers AI in business, but the host's own statements on AI are about business applications, and the podcast is called "Riding Unicorns" — which typically covers startup journeys, including AI).
+
+   However, the instructions say: "Do not invent episodes, guests, reach numbers, or a host stance that the facts do not contain."
+
+   So we cannot assume the podcast covers AI in business unless the facts say so. The facts do not say that the podcast covers AI in business. They only say that James has made public statements about AI in business (in a different podcast and on Twitter).
+
+   Therefore, for the podcast, we have:
+     - Guest: Simon Franks (exited founder) — so that's signal 2.
+     - But we don't have an episode title.
+
+   We are allowed to list the guest and the fact that he was a guest (without an episode title) because the facts say he was a prior guest.
+
+   However, the instructions say: "Three to five real episode or video titles and named guests". We don't have titles, so we can only list the guest and the fact that he was a guest? But note: the facts don't provide episode titles, so we cannot make up titles.
+
+   We'll have to say: 
+        - Signal 1: Not directly evidenced by episode titles (we don't have any), but we have the host's statements on AI in business (which is signal 3, not 1). For signal 1, we need the podcast to cover the topic. The facts don't say the podcast covers AI in business, so we cannot claim signal 1 from the podcast content.
+
+   But wait: the host's public statements (on his own podcast? or elsewhere) are about AI in business. However, the facts say he was a guest on the Hardman & Co podcast (so that's not his own podcast) and he made statements on Twitter. So for his own podcast, we don't have evidence of the topic.
+
+   Therefore, we cannot claim signal 1 from the podcast content. We have to rely on the host's own statements (which are on other platforms) for signal 3.
+
+   Let's reexamine the facts for signal 1: 
+        "covers AI in business, AI agents and automation, or the owner-run-business operating world"
+
+   The facts do not say that the podcast covers AI in business. They only say that James, as a host, has made statements about AI in business (on other platforms). So we cannot say the podcast covers it.
+
+   However, note: the podcast is called "Riding Unicorns", and the host is a VC who invests in AI startups. It's reasonable to assume it covers AI in business, but we are not allowed to infer. We must stick to the facts.
+
+   Since the facts do not explicitly state that the podcast covers AI in business, we cannot count signal 1 from the podcast. But we have the host's statements (on other platforms) about AI in business — that's signal 3.
+
+   So for the catalog evidence, we can list:
+        - Signal 1: Not evidenced by podcast content (we don't have episode titles that show the topic).
+        - Signal 2: Simon Franks (exited founder) was a guest on the podcast (from the facts).
+        - Signal 3: The host's public statements (on Hardman & Co podcast and Twitter) about AI in business applications.
+
+   But note: the instructions say "grouped by signal". So we can list:
+
+        On-topic episodes (signal 1): [We don't have any specific episode titles, so we cannot list any. We'll have to say "None provided in facts" but the instructions say to list real episode titles. Since we don't have them, we can't list any. So we'll skip this group? But the instructions say "three to five". We have to have three to five, but if we don't have them, we can't make them up. So we'll have to use what we have: the guest and the host's statements as evidence for the signals, but not as episode titles.]
+
+   However, the facts do not provide episode titles. So we cannot list any. Therefore, we'll have to say:
+
+        On-topic episodes (signal 1): [No specific episode titles provided in facts]
+        Founder/operator/exited-founder guests (signal 2): Simon Franks (ex-founder LOVEFiLM, sold to Amazon) — prior guest on Riding Unicorns podcast.
+        Host-voiced thesis (signal 3): 
+            - "focuses on 'applications rather than the fundamental building blocks of AI'; believes greater opportunity sits in 'practical AI implementations for business problems'"
+            - "AI can 'supercharge employees, enabling them to move faster with less resources'"
+
+   But note: the host's statements are not from his own podcast, but from a guest appearance on Hardman & Co and on Twitter. However, they are his own statements, so they count for signal 3.
+
+   We'll list the two statements as evidence for signal 3.
+
+   However, the instructions say: "three to five real episode or video titles and named guests". We don't have titles, so we can't list titles. We'll have to list the guest for signal 2 and the statements for signal 3, and for signal 1 we'll have to say we don't have titles.
+
+   But the problem: we are required to list three to five. We have:
+        - One guest (Simon Franks) for signal 2.
+        - Two statements for signal 3.
+
+   We can list:
+        Signal 2: Simon Franks (exited founder) — guest on Riding Unicorns (from facts)
+        Signal 3: Host's statements on AI applications (from Hardman & Co podcast and Twitter)
+
+   But we don't have a third. So we'll list two for signal 2 and 3? Actually, we have one guest and two statements. We can list the guest as one item and the two statements as two items? But the instructions say "episode or video titles and named guests". The statements are not from an episode, so we'll have to be careful.
+
+   We'll structure the Catalogue evidence as:
+
+        On-topic episodes (signal 1): [No specific episode titles provided in facts]
+        Founder/operator/exited-founder guests (signal 2): Simon Franks (ex-founder LOVEFiLM, sold to Amazon) — guest on Riding Unicorns podcast (prior episode)
+        Host-voiced thesis (signal 3): 
+            - "practical AI implementations for business problems" (Hardman & Co podcast, Aug 2023)
+            - "AI can supercharge employees, enabling them to move faster with less resources" (Hardman & Co podcast, Aug 2023)
+
+   But note: the facts say "Hardman & Co podcast" for both, so we can cite that.
+
+   However, the instructions say "real episode or video titles", and we don't have titles. So we'll have to use the guest and the statements as the evidence, even though they are not from the podcast's episode titles.
+
+   We'll write it as:
+
+        On-topic episodes (signal 1): [No specific titles provided]
+        Founder/operator/exited-founder guests (signal 2): Simon Franks (ex-founder LOVEFiLM, sold to Amazon) — guest on Riding Unicorns podcast
+        Host-voiced thesis (signal 3): 
+            - "practical AI implementations for business problems" (Hardman & Co podcast, Aug 2023)
+            - "AI can supercharge employees, enabling them to move faster with less resources" (Hardman & Co podcast, Aug 2023)
+
+   But note: the Hardman & Co podcast is not his own podcast. However, the statements are his own, so they count for signal 3.
+
+   Now, for the rating:
+
+   We have:
+     - Signal 1: Not met by the podcast content (we don't have evidence the podcast covers AI in business). However, the host's statements (signal 3) are about AI in business, but that doesn't mean the podcast covers it. So signal 1 is not met by the channel's content (we don't have evidence the channel covers it). But note: the channel is the podcast, and we don't have evidence of the topic. So signal 1: no.
+        However, wait: the host's statements (on his own podcast?) — but the facts don't say he made those statements on his own podcast. They were on Hardman & Co. So we cannot assume his podcast covers it.
+
+        Therefore, signal 1: not met.
+
+     - Signal 2: met (Simon Franks was a guest, and he is an exited founder).
+     - Signal 3: met (host has made public statements about AI in business applications).
+
+   But note: the rating is for the channel (the podcast) as a venue. The channel's content (the podcast) must cover the topic (signal 1) for signal 1 to be met. We don't have evidence that the podcast covers AI in business, so signal 1 is not met.
+
+   However, the host's statements (on other platforms) are about AI in business, but that doesn't mean the podcast does. So we cannot count signal 1.
+
+   Therefore, we have:
+        Signal 1: 0 (not met)
+        Signal 2: 1 (met)
+        Signal 3: 1 (met)
+
+   Now, the audience: 
+        The podcast is called "Riding Unicorns", and it's a VC podcast. The host is a VC at a family office (Redbus Ventures) and co-hosts with a GP at EP1 Ventures. The audience is likely startup investors and founders (which matches our target audience).
+
+   Reach: 
+        We don't have reach numbers (like subscribers, downloads). The facts don't provide any. So we have to assume it's a mid-size channel? But we don't know.
+
+   The instructions say: "Do not invent ... reach numbers". So we cannot assume reach. We have to say we don't know the reach.
+
+   However, the rating is "reach-gated". We have to judge reach into our audiences. Without numbers, we have to rely on the context.
+
+   The host is a VC at a family office and co-hosts a podcast. The podcast has a guest (Simon Franks, ex-founder of LOVEFiLM) and the host is a VC. This suggests the podcast has some traction in the VC/startup world. But we don't have numbers.
+
+   We are told: "A mid-size channel with exactly the right audience can outrank a larger general one."
+
+   We don't know if it's mid-size, but we know the audience is relevant (VCs, founders). So we can assume it's a channel that reaches our target audience (startup investors and founders) but we don't know the size.
+
+   Since we don't have reach numbers, we'll have to be conservative. We'll assume it's a mid-size channel (not huge, but not tiny) that reaches our audience.
+
+   Now, the rating formula: 
+        star_rating = (reach into our audiences) * (relevance from three signals)
+
+   But note: the rating is a number from 1 to 5, and we are to multiply the reach (which we don't have a number for) by the relevance (which we have signals for).
+
+   However, the instructions say: "Calibrate conservatively. On-theme but low-reach, or high-reach but audience-mismatched (general consumer or general tech with no founder/investor/operator overlap), is NOT a 4 or 5."
+
+   We have:
+        - Audience overlap: high (VCs, founders, and the podcast is about unicorns, so it's targeted at startup investors and founders).
+        - Signals: 
+            signal 1: not met (so 0)
+            signal 2: met (1)
+            signal 3: met (1)
+
+        But note: the rating is based on the three signals. The instructions say: "relevance from three signals, in rising strength". So we have two signals met (2 and 3) but not 1.
+
+        How to weight? The instructions don't specify, but we are to multiply the reach by the relevance (which is the product of the three signals? or the sum?).
+
+        Actually, the instructions say: "times relevance from three signals, in rising strength". So we have to consider the strength of each signal.
+
+        We have:
+          signal 1: not met -> 0
+          signal 2: met -> 1
+          signal 3: met -> 1
+
+        So the relevance factor would be 0 * 1 * 1 = 0? But that would be a 0 rating, which is not possible.
+
+        Alternatively, the rating might be based on the number of signals met (with signal 1 being the most important). But note: the instructions say "in rising strength", meaning signal 1 is the most important, then 2, then 3.
+
+        However, without signal 1, the relevance is low.
+
+        But note: the campaign is about AI in business (for a business that uses AI end-to-end). The channel must cover AI in business (signal 1) to be relevant. Since we don't have evidence that the channel covers AI in business (only that the host has made statements about it on other platforms), we cannot count signal 1.
+
+        Therefore, the channel is not on-topic for the campaign's core theme (AI in business) as per the channel's content. So it's a weak signal.
+
+        However
