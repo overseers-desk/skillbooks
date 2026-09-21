@@ -512,3 +512,17 @@ Re-indenting the segment files fixed the read side: the harness's block finder r
 Tested on copies, against two segment files with differently shaped sequences, exercising both branches: rewriting a key that already exists, and inserting one that does not. Both pass on both files. An inserted key lands at column 4, the same column as the entry's other keys, rather than at the dash's column 2. The indent the block finder reports is computed from the dash plus the whitespace after it, so it already points at the mapping keys. The defect suspected here does not exist.
 
 Two facts worth carrying rather than rediscovering. The insert path splices a new key immediately after the entry's `name:` line rather than appending at the end, so every field the harness adds will sit directly under the name in a diff; that is placement, not meaning. And a regression test for this procedure should compare per-key values rather than whole-mapping equality, since key order changes on insert and an order-sensitive comparison reports a corruption that has not happened.
+
+## Reasoning overhead, measured at the session rather than the turn
+
+The second source gives the clearest figure yet, and it is worse than the per-turn numbers suggested.
+
+The worker on `EquiDirectory, by locality` ran for 78 minutes. In that time it took four turns, made one tool call, and received one result. When the session ended it was 6,347 tokens into the reasoning for a turn it had not finished. It wrote no deliverable, and the harness's validator caught that and started a fix attempt.
+
+At the decode rates measured on this hardware, roughly 1.5 to 2.5 tokens per second at ten thousand tokens of context, 6,347 tokens of reasoning is between forty and seventy minutes. So the bulk of the session went into a single block of deliberation that produced nothing and was then discarded when the session ended.
+
+This is the same finding as the per-turn measurements and a good deal starker. Earlier the ratio was 1,979 reasoning tokens against 68 of answer on one turn, and 3,667 against 59 on the next. Here a whole session produced one fetch. The reasoning is not merely the larger share of what the machine writes; on a slow machine it can consume the session before any work lands.
+
+It also explains a failure that would otherwise look like a model that cannot follow instructions. The worker did not decline to write its deliverable, and it did not forget. It never arrived at the writing.
+
+The harness's validator deserves credit here. It noticed the missing deliverable and started a fix attempt rather than recording a silent nothing, which is the behaviour the first source's YAML fault lacked.
