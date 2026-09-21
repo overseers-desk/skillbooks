@@ -37,3 +37,13 @@ Row count alone is reported next to the sampled-accuracy figure, never on its ow
 ## What is recorded whatever happens
 
 Measured throughput on a real sweep prompt, against the 17.26 tokens per second that `local-inference/README.md` reports for this model on dappnode from llama-bench. Wall-clock for the run. Any segment the model could not complete, with how it failed, since that is a result and not an absence of one.
+
+## Addendum, 21 September 2026: the fact-check budget
+
+Half two fixed what the checker asks and which rows it asks about. It left open how hard it may look, and that omission would decide the result. A checker allowed to search until it finds something confirms more businesses than one allowed two queries, so verifying the two arms at different moments with different effort measures the effort rather than the arms.
+
+The budget, fixed here: per sampled row, at most five web searches and at most five page fetches, stopping as soon as either question is answered. A row whose budget is exhausted without evidence either way is recorded as unconfirmed. Unconfirmed is a third verdict and not a synonym for absent, because a business that exists and is hard to find is a different thing from one that does not exist, and collapsing the two flatters whichever arm rosters obscure entries.
+
+Both arms' samples are checked in one sitting, by one agent working to one brief, for the same reason.
+
+This is written on 21 September, before the local arm has produced a single roster row, which the empty local roster and this file's commit both date. It is a choice rather than a derivation: five and five are judged sufficient to find a registered Australian business with a web presence, and no measurement here supports that number. Raising or lowering it is the owner's to do, and doing so before the checking starts costs nothing.
