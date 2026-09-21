@@ -47,3 +47,27 @@ The budget, fixed here: per sampled row, at most five web searches and at most f
 Both arms' samples are checked in one sitting, by one agent working to one brief, for the same reason.
 
 This is written on 21 September, before the local arm has produced a single roster row, which the empty local roster and this file's commit both date. It is a choice rather than a derivation: five and five are judged sufficient to find a registered Australian business with a web presence, and no measurement here supports that number. Raising or lowering it is the owner's to do, and doing so before the checking starts costs nothing.
+
+## Addendum, 21 September 2026: the judge's prompt, fixed in advance
+
+Half one describes the judge's conditions and not its words. A prompt composed after the rosters are in hand can be shaped by them, in the choice of what to ask about as much as in the wording, so it is written here first. The local roster is still empty, which dates it.
+
+The judge is spawned fresh, with no knowledge of this experiment, and receives the segment's `discovery_criteria` and rating rubric, the catchment definition from `sweeper-horse-supply.yaml`, and two rosters named only by codename. The prompt is this, with the bracketed parts substituted:
+
+> You are assessing two candidate rosters for a business segment. Each is a list of organisations someone judged to belong to that segment. They were produced independently and you are told nothing about who or what produced either.
+>
+> The segment's own definition of membership is below, along with the rating rubric and the geographic catchment. Judge against those, not against a general sense of what a good list looks like.
+>
+> [discovery criteria, rubric, catchment]
+>
+> Roster [codename A]: [rows]
+>
+> Roster [codename B]: [rows]
+>
+> Say which roster you would rather hand to someone about to contact these organisations, and why. Ground each reason in the definition above: membership, whether the catchment is respected, whether a row carries enough to act on, and whether the rating given to a row is defensible. Name the strongest thing about the roster you did not prefer. If they are close, say so rather than manufacturing a winner, and say what would separate them.
+>
+> You are judging the rosters, not verifying them. Whether these organisations exist is checked separately, so assume every row is real and judge what is there.
+
+Three conditions on how it is used. The codenames are assigned at random per segment, so a judge carries no preference between segments. The order of the two rosters is rotated between segments, against position bias. And every line identifying a producing arm is stripped first, which in practice means one normalisation: each row carries a provenance date in `s_note`, one arm's dated a day before the other's, and that date alone would give the answer away.
+
+The last paragraph of the prompt exists because the fact-check is a separate half. A judge that starts doubting whether businesses exist is doing that half badly and this one instead of it.
