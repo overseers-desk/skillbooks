@@ -451,3 +451,16 @@ That is the fair statement. The model executes competently, picks good tools, wr
 Twice today a claim about the model's judgement was published from an observation that was simply too early. The first said it never reads its framing, taken from two workers seen two or three turns in, and a longer-lived worker refuted it. The second said it repeats itself rather than reconsidering, taken from three failed reads, and its fourth and fifth calls refuted it.
 
 Both errors run the same way, and neither is about the model. A worker on this hardware takes minutes per turn, so any snapshot covers very few turns, and a few turns is not enough to characterise a behaviour. The discipline that follows is to date an observation by the turn count it rests on and to treat a claim drawn from under ten turns as provisional until a worker runs longer.
+
+## The configuration timeline, without which today's timings cannot be read
+
+Three settings changed during the day, so any table spanning them mixes regimes. Times are AEST on 21 September 2026 unless the date is given.
+
+| From | Change | What it does to the numbers |
+|---|---|---|
+| start of the run, 20 Sep | router removed, `--safe-mode`, tool list cut to six | opening prompt 6,207 tokens against 24,985 |
+| 07:19:48 | bridge wrapper last edited before the morning runs | the last configuration the overnight figures describe |
+| 11:18 (approx) | `BUN_CONFIG_HTTP_IDLE_TIMEOUT` set to 7200 in the wrapper | requests stop being cut at roughly 430 seconds; the next limit becomes visible |
+| 11:18 (approx) | `STALL_TIMEOUT_SECS` set to 3600 in all nine prompt directories of the current run | workers constructed after this survive a prefill longer than 600 seconds; the worker on source one was constructed at 10:52 and is not covered |
+
+Two consequences for reading the tables. Any cut counted before 11:18 belongs to the Bun limit, and the seventeen dispatcher restarts made overnight are recorded by the model server exactly as cuts are, so overnight cut counts are contaminated and the restart-free window since 07:22 is the only clean sample. And any per-source timing that spans 11:18 mixes a regime where long prefills were cut with one where they are not, so the two should not be averaged together.
