@@ -26,7 +26,11 @@ The reason is a ceiling rather than slowness. Three limits sat in a row, each hi
 
 ## What the arm has established about the model
 
-One finding, and it is about judgement rather than output. Twice, on two segments, the worker stated in its own reasoning that its first step was to read the segment definition, then made no read call at all and went to the data. On the first segment that mattered: it spent two hours enumerating a population its own sweep record says cannot be enumerated, which is work the hosted arm had considered and declined. A model that skips the framing and goes to the data looks productive and does the wrong thing.
+It executes competently and reconsiders slowly. Given a directory it could read, it enumerated nine entries, kept two against the segment's criteria, and itemised every exclusion with a reason. Given a source it could not read, it wrote an empty result and said why, rather than inventing rows, and the source did genuinely hold nothing. Given a dead end, it recovered without help, after four attempts at the approach that could not work.
+
+Two costs stand against that. Roughly three quarters of everything it generates is reasoning rather than output, and one 78-minute session produced a single tool call and no deliverable. And on a page whose content sat behind an embed, it looked at the page, found nothing, and correctly reported the page empty; the data was one request away and it did not take that step.
+
+Earlier versions of this file carried a stronger claim, that the model skips the framing its brief assigns it. That rested on two workers seen two or three turns in, both killed early by faults since fixed, and a worker that lived longer refuted it. `FINDINGS.md` records the withdrawal and what replaced it.
 
 ## The scope caveat, stated plainly
 
