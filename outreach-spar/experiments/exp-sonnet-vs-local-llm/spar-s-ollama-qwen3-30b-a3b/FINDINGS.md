@@ -544,3 +544,17 @@ The run died some time after 14:30. Every remaining source failed instantly with
 Seven sources were burned this way, each failing in seconds rather than hours, so the cost is the idle time rather than the work. The tunnel is back and the run relaunched at 20:48.
 
 One thing to do differently. A relaunch builds fresh prompt directories, and those revert the stall timeout to its 600-second default, so the raised value has to be reapplied after every launch. That is a consequence of holding the fix outside the harness and is worth remembering by whoever next restarts this.
+
+## The pony club register was readable all along, and the honest empty result was wrong
+
+The first deliverable, at 12:36 on 21 September, declared the Pony Club Queensland Zone 2 register unreachable, and this file recorded that the serialiser's dump held no club names, so that the model had reported honestly. The hosted arm's sweep file for the same segment records the same URL, https://ponyclubqld.com.au/clubs/, as exhausted with 11 clubs and 11 contact points, and its roster carries 11 rows from it.
+
+At 00:00 on 22 September a plain curl of that URL returned 191 KB of server-rendered HTML. Stripped of markup it is 31,000 characters of text carrying every club in the state by zone, each with secretary, postal address, phone and email, 199 email addresses in all; Rathdowney, Jimboomba, Mudgeeraba and Tallebudgera are among the entries. The list needs no JavaScript to render.
+
+What the two local workers did with it. The 09:33 worker asked WebFetch to "fetch the club register page to enumerate entries for SPAR-S segment horse-introducer" and received a summary saying the content is a list of Pony Club Queensland clubs organised by zone with no mention of the segment; it died before acting on that. The 10:19 worker asked WebFetch to "fetch club register listing" and received the page's 72-character tagline. It then dumped the page through the browser serialiser, could not read the 287 KB result within the Read tool's limits, grepped it for "club", which returned the whole single-line file, and wrote the unreachable result. It never ran curl, never grepped for a zone or a suburb, and never asked WebFetch for the entries themselves.
+
+So the failure is not access. WebFetch's summarisation step, which under the bridge is answered by the same local model, took each prompt literally: asked to fetch a listing it returned a tagline, asked about the segment it reported no mention of the segment. The data passed through the worker's hands twice.
+
+The earlier claim that the serialiser dump held no club names cannot be re-checked, the temporary file having gone with the run. On the curl evidence it is likelier that the grep-and-preview by which it was checked failed, the file being one line, than that the serialiser rendered the page without its list. That claim is withdrawn.
+
+For the report: same source, same URL, hosted 11 rows, local none, and the source is readable by the cheapest tool the worker holds. The empty result stands as honest and as wrong. Whether a differently phrased fetch or a curl reflex would have produced the rows is a question the decomposed test can put to the model directly, with the page text in hand.
