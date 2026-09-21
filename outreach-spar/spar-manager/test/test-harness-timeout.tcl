@@ -111,6 +111,21 @@ assert_eq [$inst_def cost_cap] 10.0 \
     "default cost cap (10.0, above the \$7.83 ceiling) when meta key absent"
 $inst_def destroy
 
+# The environment variable is honoured on the same terms as the stall
+# timeout: fallback when meta.env sets nothing, loser when it does.
+set ::env(WORKER_COST_CAP_USD) 2.25
+set cap_env_dir [file join $tmp_root prompt-capenv]
+file mkdir $cap_env_dir
+set inst_cape [spar::Harness new $cap_env_dir [file join $tmp_root logs-cape]]
+assert_eq [$inst_cape cost_cap] 2.25 \
+    "environment: WORKER_COST_CAP_USD read when meta.env sets nothing"
+$inst_cape destroy
+
+set inst_capb [spar::Harness new $cap_meta_dir [file join $tmp_root logs-capb]]
+assert_eq [$inst_capb cost_cap] 3.50 "meta.env wins over the environment when both set"
+$inst_capb destroy
+unset ::env(WORKER_COST_CAP_USD)
+
 # ════════════════════════════════════════════════════════════════════════
 section "6. Cost cap is a deliberate budget kill (rc=3, no resume)"
 # ════════════════════════════════════════════════════════════════════════
@@ -398,6 +413,32 @@ file mkdir $stall_nokey_dir
 set inst_snk [spar::Harness new $stall_nokey_dir [file join $tmp_root logs-snk]]
 assert_eq [$inst_snk stall_timeout] 600 "default stall timeout (600s) when meta key absent"
 $inst_snk destroy
+
+# The environment variable is the fallback a caller reaches for before
+# the harness has even generated the prompt directory's own meta.env.
+set ::env(STALL_TIMEOUT_SECS) 90
+set stall_env_dir [file join $tmp_root prompt-stallenv]
+file mkdir $stall_env_dir
+set inst_se [spar::Harness new $stall_env_dir [file join $tmp_root logs-se]]
+assert_eq [$inst_se stall_timeout] 90 \
+    "environment: STALL_TIMEOUT_SECS read when meta.env sets nothing"
+$inst_se destroy
+
+# meta.env is the more specific statement, so it wins when both are set.
+set stall_both_dir [file join $tmp_root prompt-stallboth]
+file mkdir $stall_both_dir
+set fd [open [file join $stall_both_dir meta.env] w]
+puts $fd "STALL_TIMEOUT_SECS=\"45\""
+close $fd
+set inst_sb [spar::Harness new $stall_both_dir [file join $tmp_root logs-sb]]
+assert_eq [$inst_sb stall_timeout] 45 "meta.env wins over the environment when both set"
+$inst_sb destroy
+unset ::env(STALL_TIMEOUT_SECS)
+
+set inst_snk2 [spar::Harness new $stall_nokey_dir [file join $tmp_root logs-snk2]]
+assert_eq [$inst_snk2 stall_timeout] 600 \
+    "default stall timeout (600s) when neither meta.env nor the environment set it"
+$inst_snk2 destroy
 
 # A worker that emits an init event then falls silent is SIGTERM'd by the stall
 # watchdog. The cost cap is disabled (this leg is the stall path, not the cap),

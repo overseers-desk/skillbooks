@@ -301,25 +301,43 @@ oo::class create coachman::Harness {
         # Zero disables. Stored in ms for direct comparison with clock
         # milliseconds.
         set StallTimeoutMs 600000
+        set meta {}
         if {[file exists [file join $prompt_dir meta.env]]} {
             set meta [my load_meta]
-            # A non-numeric value would otherwise detonate later as an
-            # obscure expr error at the first cap comparison; keep the
-            # default and say so instead.
-            set cap [dict getdef $meta WORKER_COST_CAP_USD $WorkerCostCapUsd]
-            if {[string is double -strict $cap]} {
-                set WorkerCostCapUsd $cap
-            } else {
-                [my log_service]::warn \
-                    "\[$Slug\] meta.env WORKER_COST_CAP_USD='$cap' is not a number; keeping \$$WorkerCostCapUsd"
-            }
-            set secs [dict getdef $meta STALL_TIMEOUT_SECS 600]
-            if {[string is double -strict $secs]} {
-                set StallTimeoutMs [expr {int($secs * 1000)}]
-            } else {
-                [my log_service]::warn \
-                    "\[$Slug\] meta.env STALL_TIMEOUT_SECS='$secs' is not a number; keeping [expr {$StallTimeoutMs / 1000}]s"
-            }
+        }
+        # meta.env wins when it sets the key, since it is the more
+        # specific statement; failing that, the process environment
+        # carries the value for a caller that knows its own dispatch
+        # before meta.env exists (the harness generates that directory
+        # itself, so nothing else can reach the constructor first);
+        # failing that, the default above. A non-numeric value would
+        # otherwise detonate later as an obscure expr error at the
+        # first cap comparison; keep the default and say so instead.
+        if {[dict exists $meta WORKER_COST_CAP_USD]} {
+            set cap [dict get $meta WORKER_COST_CAP_USD]
+        } elseif {[info exists ::env(WORKER_COST_CAP_USD)]} {
+            set cap $::env(WORKER_COST_CAP_USD)
+        } else {
+            set cap $WorkerCostCapUsd
+        }
+        if {[string is double -strict $cap]} {
+            set WorkerCostCapUsd $cap
+        } else {
+            [my log_service]::warn \
+                "\[$Slug\] WORKER_COST_CAP_USD='$cap' is not a number; keeping \$$WorkerCostCapUsd"
+        }
+        if {[dict exists $meta STALL_TIMEOUT_SECS]} {
+            set secs [dict get $meta STALL_TIMEOUT_SECS]
+        } elseif {[info exists ::env(STALL_TIMEOUT_SECS)]} {
+            set secs $::env(STALL_TIMEOUT_SECS)
+        } else {
+            set secs 600
+        }
+        if {[string is double -strict $secs]} {
+            set StallTimeoutMs [expr {int($secs * 1000)}]
+        } else {
+            [my log_service]::warn \
+                "\[$Slug\] STALL_TIMEOUT_SECS='$secs' is not a number; keeping [expr {$StallTimeoutMs / 1000}]s"
         }
         file mkdir $log_dir
         set fd [open $CostLog w]; close $fd
