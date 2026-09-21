@@ -12,7 +12,7 @@ The directory holding it stays off the general PATH. Other work on the host shel
 
 ```sh
 DIRECT_MODEL="qwen3-30b-128k"
-SPAR_SWEEP_TOOLS="WebSearch,WebFetch,Read,Write,Bash,Agent"
+SPAR_SWEEP_TOOLS="WebFetch,Read,Write,Bash,Agent"
 
 NEW_ARGS+=(--tools "$SPAR_SWEEP_TOOLS" --allowedTools "$SPAR_SWEEP_TOOLS" \
            --strict-mcp-config --model "$DIRECT_MODEL" --safe-mode \
