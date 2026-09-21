@@ -20,7 +20,13 @@ Read **FINDINGS.md** first. It is the answer, and it carries its own corrections
 
 ## What is not here
 
-Roster rows from the local arm, and therefore the comparison the experiment exists to make. Every failure until late in the run was in the path between dispatcher and model rather than in the model, and clearing that consumed the time.
+Roster rows from the local arm, and therefore the comparison the experiment exists to make.
+
+The reason is a ceiling rather than slowness. Three limits sat in a row, each hidden by the one in front of it, and the last of them kills any worker whose turn needs more than 600 seconds of prefill. On this hardware that is a prompt of about 13,000 tokens, which a sweep's conversation passes after a handful of turns, so every source is attempted, killed, retried and killed again. All three are now cleared for the running arm and none had been when the earlier attempts were made.
+
+## What the arm has established about the model
+
+One finding, and it is about judgement rather than output. Twice, on two segments, the worker stated in its own reasoning that its first step was to read the segment definition, then made no read call at all and went to the data. On the first segment that mattered: it spent two hours enumerating a population its own sweep record says cannot be enumerated, which is work the hosted arm had considered and declined. A model that skips the framing and goes to the data looks productive and does the wrong thing.
 
 ## The scope caveat, stated plainly
 
