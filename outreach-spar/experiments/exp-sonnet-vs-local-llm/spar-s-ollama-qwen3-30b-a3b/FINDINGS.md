@@ -1,6 +1,6 @@
 # S-phase on local inference: what the run found
 
-## In plain terms: what this model on dappnode can do in SPAR, as of 08:40 on 22 September 2026
+## In plain terms: what this model on dappnode can do in SPAR, as of 08:30 on 22 September 2026
 
 The question was what SPAR work a local model can take off hosted Claude, given that hosted Claude costs too much and most SPAR work runs overnight. The condition was that dappnode never idled. Two nights of running the sweep and one night of direct tests give this answer; the numbers behind each line are in the sections below, in the order they were learned, and this section is rewritten as results land.
 
