@@ -5,6 +5,12 @@ Relevance-assessment and Verification-corrections verdict sections removed), fee
 them one-shot to an ollama model, and write the model's profile to that model's
 worktree. Records wall time and context per profile (incl. failures).
 
+FACTSFED_NUM_CTX and FACTSFED_TIMEOUT in the environment override the request's
+context window (default 8192) and per-request timeout in seconds (default 1800).
+A server holding a model at one context length reloads it for a request naming
+another, which evicts every other caller's runner, so on a shared server pass
+the loaded model's own length.
+
 Usage: cuda-factsfed-batch.py <ollama-model> <stems-file> <src-profiles-dir> \
                               <dest-profiles-dir> <instructions-file> <progress-file> <raw-dir>
 """
@@ -34,11 +40,13 @@ def reconstruct_facts(md: str) -> str:
 
 def gen(prompt: str):
     req = {"model": model, "prompt": prompt, "stream": False, "think": False,
-           "options": {"num_ctx": 8192, "temperature": 0, "num_predict": 4096}}
+           "options": {"num_ctx": int(os.environ.get("FACTSFED_NUM_CTX", 8192)),
+                       "temperature": 0, "num_predict": 4096}}
     body = json.dumps(req).encode()
     r = urllib.request.urlopen(urllib.request.Request(
         "http://127.0.0.1:11434/api/generate", body,
-        {"Content-Type": "application/json"}), timeout=1800)
+        {"Content-Type": "application/json"}),
+        timeout=int(os.environ.get("FACTSFED_TIMEOUT", 1800)))
     return json.loads(r.read())
 
 def clean(text: str) -> str:
