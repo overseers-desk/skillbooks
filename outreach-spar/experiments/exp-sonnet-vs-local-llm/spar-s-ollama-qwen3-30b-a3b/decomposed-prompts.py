@@ -5,10 +5,12 @@ search listings for that trade across every locality queried. The model is
 asked for the sweep's own deliverable, in-scope rows and itemised exclusions,
 from the listings alone.
 
-Usage: decomposed-prompts.py <inputs-dir> <out-dir>
+Usage: decomposed-prompts.py <inputs-dir> <out-dir> [--per-query]
 <inputs-dir> holds segment-and-catchment.txt and websearch/<trade>-<locality>-<state>.txt
 files as the search collection wrote them (first line the query, then
-title/URL/snippet blocks). One prompt file per trade lands in <out-dir>.
+title/URL/snippet blocks). One prompt file per trade lands in <out-dir>; with
+--per-query, one per listing file instead, each a few thousand tokens, which
+on a CPU host decodes several times faster than the per-trade prompt.
 """
 import glob, os, sys
 
@@ -28,6 +30,16 @@ then the Excluded section. No other prose.
 
 === SEGMENT DEFINITION ===
 """
+
+if "--per-query" in sys.argv:
+    for f in sorted(glob.glob(os.path.join(inputs, "websearch", "*.txt"))):
+        query = open(f).readline().strip()
+        body = "".join(open(f).readlines()[1:])
+        path = os.path.join(out, "prompt-query-" + os.path.basename(f))
+        open(path, "w").write(INSTRUCTION.replace("for one trade across several localities", "for one trade in one locality")
+                              + seg + "\n=== SEARCH LISTING ===\n\n--- " + query + " ---\n" + body)
+    print(len(glob.glob(os.path.join(out, "prompt-query-*.txt"))), "per-query prompts")
+    sys.exit(0)
 
 for trade in TRADES:
     files = sorted(glob.glob(os.path.join(inputs, "websearch", trade + "-*.txt")))
