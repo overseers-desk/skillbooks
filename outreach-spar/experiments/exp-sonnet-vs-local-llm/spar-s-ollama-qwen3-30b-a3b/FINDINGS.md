@@ -441,6 +441,13 @@ It fetched the pony club register and got 72 characters back, a tagline, because
 
 It then tried to read the dump and was refused, the file exceeding the 256 KB limit. It retried with a hundred-line limit and was refused again, the content still measuring 73,369 tokens against a 25,000 limit. It retried with a fifty-line limit and was refused identically. A browser dump of a modern page is a handful of enormously long lines, so a line limit cannot shrink it, and the tool's own message says to search the file instead. The model varied the one parameter that could not help, three times, rather than changing approach.
 
-That is a judgement failure of a different kind from the first one, and it is visible rather than inferred: three identical refusals, three responses that differ only in a number. It also costs whole turns, and on this hardware a turn is minutes.
+It made a fourth attempt at ten lines, and then changed approach on its own: `grep -i "club" <file> | head -n 50`, which is what the refusal had suggested. So it does reconsider. It takes four tries to get there, and on this hardware four tries is the better part of an hour.
 
-Both observations point the same way. The model executes competently and adapts poorly. It picks good tools and writes good extraction prompts, and when the world pushes back it repeats itself with a small variation instead of reconsidering.
+That is the fair statement. The model executes competently, picks good tools, writes good extraction prompts, and recovers from a dead end without help. What it lacks is speed of reconsideration, and the cost of that is measured in minutes per attempt rather than the seconds it would cost on hosted infrastructure. A model that needs four attempts to abandon an approach is workable where attempts are cheap and expensive here.
+
+
+## A note on how these observations were made
+
+Twice today a claim about the model's judgement was published from an observation that was simply too early. The first said it never reads its framing, taken from two workers seen two or three turns in, and a longer-lived worker refuted it. The second said it repeats itself rather than reconsidering, taken from three failed reads, and its fourth and fifth calls refuted it.
+
+Both errors run the same way, and neither is about the model. A worker on this hardware takes minutes per turn, so any snapshot covers very few turns, and a few turns is not enough to characterise a behaviour. The discipline that follows is to date an observation by the turn count it rests on and to treat a claim drawn from under ten turns as provisional until a worker runs longer.
