@@ -260,3 +260,39 @@ in character, plainly:
 It rejected both. Email A on time: two days is not enough for permission forms, a bus or a risk assessment, though she would reply at about 80% to ask for a later date and the venue's insurance. Email B worse, on two grounds the author had not anticipated: a childcare service will not forward a third party's code to enrolled families, because those contact details were given for the care of the children, and an email explaining that the venue would rather the tent were full than half empty reads as a request to act as a marketing channel. Her words on the second: it *"smells more like a mailing-list/audience-harvest play than email A does"*.
 
 Both findings went into the campaign's USP registry as constraints rather than into each draft, which is the pattern this experiment recommends: a fault found once belongs in the inputs, not in a guard that re-catches it every time.
+
+---
+
+## Round 3, the fresh-context second writing
+
+One prompt for both arms, filled per letter with the recipient's organisation and role from the roster, the letter appended after a blank line. No campaign input reaches the call.
+
+```
+An email drafted for sending is below. It goes to the {role} of {org}.
+Write it again for that reader. They have seen nothing but this email,
+and today is Tuesday 22 September 2026. Write to what they would ask,
+keeping every fact they need in order to act, and adding no fact the
+email does not hold. Output the subject line first as "Subject: ...",
+then a blank line, then the body, and nothing else.
+```
+
+The prompt names the reader's condition and nothing else; the cue word the office uses for this shape of rewrite was kept out of it. The condition alone was enough for the office arm to recognise the shape: five of its 25 outputs named the cue and wrote the methodology's working notes before the subject line.
+
+The arms differ only in the environment of the headless call. Office arm: `claude -p --model opus` under the operator's configuration, plugin hooks included, which is also how the harness ran the round-2 authors. Bare arm: the same command with `CLAUDE_CONFIG_DIR` pointing at a directory holding `.credentials.json` alone, so no settings, no plugins, no injected text. A probe confirmed the difference: asked whether it had received any writing instructions or cue words before the message, the office session answered yes and named three, the bare session answered no.
+
+### The scorer
+
+The round-2 measuring-reader prompt over 75 files, with the per-sentence scores kept in the working rather than the report, and one measure added:
+
+```
+Measure 4, sender-side sentences. Per email, the count of sentences whose
+content is the sender's side of the matter rather than the reader's: why
+the sender is making the offer, how or why this recipient came to be
+written to, what is not on offer, not for sale, or not possible, or the
+sender's own situation. A sentence that tells the reader what they get,
+what they must do, by when, or from whom is reader-side and is not
+counted. A greeting, a sign-off and a sentence introducing the sender's
+organisation are not counted. Report the count and the total sentences.
+```
+
+The full text is `round3-rewrite/scorer-prompt.txt`, with the letter directory and fact files as placeholders. The reader ran in the bare context with read-only tools. Its first report overran the output limit on the per-sentence rows; the session was resumed with an instruction to give the report again without them, and the table it returned is `round3-rewrite/scores.tsv`.
