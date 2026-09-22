@@ -20,7 +20,7 @@ The existing guard is SPAR-A §4.6 Step 1: a context-isolated agent plays the re
 
 ## Why the existing guard misses it
 
-Four reasons, all structural rather than a failure of the agent.
+Four reasons, all structural rather than a failure of the agent, and a fifth in the prompt's wording whose weight is not yet measured.
 
 **The persona construes.** A model told to react in character makes sense of whatever it is given. Faced with "an excursion in two days isn't realistic" it infers an excursion was offered and carries on. A real recipient with a room full of children does the same, faster. So the reader who would notice the gap is exactly the reader the role-play is not.
 
@@ -29,6 +29,8 @@ Four reasons, all structural rather than a failure of the agent.
 **The persona is asked to react, not to point.** A reaction is the end of reading, and reading is repair: by the time a reader can say how they feel about an offer, every gap has been filled in. The same model given the same letters and asked instead to list each expression it cannot resolve, before any reaction, finds three to four per letter (the round-3 and round-4 scorers, one pass each over 55 to 75 letters). Pointing has to precede reacting; a reader who has already reacted has repaired the gaps without noticing them.
 
 **The persona does not know the facts.** "Not on sale anywhere" and "you were picked" are information to a reader with no way to check them, and the registry the fact-check treats as authority is where those claims are written. Falsity needs the facts, and the persona is given neither the facts nor a reason to doubt what it reads.
+
+**The persona was told, in effect, whose side it was on.** The challenger prompt that ran every round-1 and round-2 pass called the letter an "email draft", the reader a "persona" in "role-play", and set the verdict on whether the draft was "credible". Read blind with the email withheld and asked who it worked for, that prompt named the sender in 3 of 3 runs; reworded with those words gone, 0 of 15 under an open question, though a forced choice still draws the sender 2 of 3 on structure, a third-person dossier about the recipient plus a reply-likelihood ask. The rewording landed on 23 September (commit 2da2367). What it changed in verdicts is unmeasured: the one behavioural probe, a misdirected junk email, drew the same wrong-inbox reaction from both wordings. So the stated allegiance is a confirmed defect of the prompt, and its share in the persona's leniency toward unresolved references is unknown until the round-2 letters are re-challenged under the new wording. The three reasons above hold either way; this one may add to them.
 
 ## Attempts
 
