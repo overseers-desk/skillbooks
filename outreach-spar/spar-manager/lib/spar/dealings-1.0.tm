@@ -1,5 +1,5 @@
 # spar::dealings — the contact's own messages to us, prefetched for the
-# SPAR-P prompt. It answers the question six segment rubrics ask and the
+# SPAR-P prompt. It answers the question the segment rubrics ask and the
 # profile phase could not otherwise reach: what has this contact done to
 # us, and when (spar-P-profile.md §4.7).
 #

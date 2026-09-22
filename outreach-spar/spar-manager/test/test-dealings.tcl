@@ -1,5 +1,5 @@
 #!/usr/bin/env tclsh9.0
-# spar::dealings — the prior-dealings block injected into the P prompt.
+# spar::dealings builds the prior-dealings block for the P prompt.
 # The assertions here are the ones that keep I1 (SPAR INVARIANTS.md):
 # the block never carries our outbound, never carries an aggregate, and
 # says nothing at all when the contact has never written to us. The

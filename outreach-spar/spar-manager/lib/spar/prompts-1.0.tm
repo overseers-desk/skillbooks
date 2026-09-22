@@ -325,9 +325,10 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         # A note's line breaks travel as CR in the TSV; a prompt reads lines.
         set s_note [spar::note_to_lines [string trim [dict getdef $row s_note ""]]]
         set p_note [spar::note_to_lines [string trim [dict getdef $row p_note ""]]]
-        # Where the row came from. For a segment harvested out of our own
-        # accounts or bookings this names a dealing the contact already
-        # had with us, which the rating rubrics weigh (SPAR-P §4.7).
+        # Where the row came from. On an escape (SPAR-S §S&P₀: a member
+        # the operation already knew from its own ground truth) this
+        # names a dealing the contact had with us, which the rating
+        # rubrics weigh (SPAR-P §4.7).
         set discovered_via \
             [spar::note_to_lines [string trim [dict getdef $row discovered_via ""]]]
         set stem [string trim [dict getdef $row stem ""]]
