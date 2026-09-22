@@ -758,6 +758,7 @@ ${item_num}. Campaign principles: $campaign_principles — read the \"Profile-in
                 __FILE_ITEMS__       $file_items \
                 __CONTACT_SUMMARY__  $contact_summary \
                 __CHANNEL_DESC__     $channel_d \
+                __TODAY__            [clock format [clock seconds] -format "%A %d %B %Y"] \
                 __SENDER_LINE__      $sender_line \
                 __LANG_INSTRUCTION__ $lang_inst \
             ] [spar::load_prompt_template spar-a-author.txt]]

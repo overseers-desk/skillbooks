@@ -142,7 +142,7 @@ A2 tests whether the draft would land well with the recipient and whether it con
 
 Spawn one subagent (C2) to perform two sequential steps. Use a Sonnet-class model — less capable models shift behaviour more authentically under persona instructions.
 
-**Step 1 — Role-play (context-isolated).** C2 receives only the profile and the draft. No campaign files, no method files. C2 reacts in character as the recipient — a stranger who has never heard of the sender. No rubric, no structured format: a natural reaction. If the message is in a non-default language, C2 responds in that language.
+**Step 1 — Role-play (context-isolated).** C2 receives only the profile, the draft, and today's date. No campaign files, no method files. The date is the recipient's own situation, like their role and calendar, and a time-bound offer is judged against it. C2 reacts in character as the recipient — a stranger who has never heard of the sender. No rubric, no structured format: a natural reaction. If the message is in a non-default language, C2 responds in that language.
 
 **Step 2 — Fact-check.** C2 breaks character and checks every factual claim in the draft, then appends corrections. Its authority is the campaign YAML: the `usps:` registry and the segment plan block, with the anti-claims file. A USP's claim is taken as written there, because the campaign was verified once when it was defined and C2 runs once per contact. C2 opens a `fact_sources` document only where a `rests_on` sends it to one. Corrections state what the source says rather than citing a file path.
 

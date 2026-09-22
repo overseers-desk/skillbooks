@@ -242,7 +242,10 @@ oo::class create spar::ApproachHarness {
 
             set challenger_template [spar::read_file [file join $prompt_dir challenger-template.txt]]
             set current_draft [spar::read_file [file join $prompt_dir draft-current.txt]]
-            set challenger_prompt [string map [list __DRAFT_PLACEHOLDER__ $current_draft] $challenger_template]
+            set challenger_prompt [string map [list \
+                __DRAFT_PLACEHOLDER__ $current_draft \
+                __TODAY__ [clock format [clock seconds] -format "%A %d %B %Y"] \
+            ] $challenger_template]
 
             set challenger_log "${log_prefix}-challenger-pass${Pass}.log"
             if {[my call "challenger-pass${Pass}" $challenger_log $challenger_prompt --model $ChallengerModel]} {
