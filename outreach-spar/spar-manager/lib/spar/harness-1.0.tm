@@ -30,6 +30,7 @@ namespace eval spar {
 }
 
 package require spar::courier
+package require spar::dealings
 
 oo::class create spar::Harness {
     superclass coachman::Harness
@@ -413,7 +414,8 @@ oo::class create spar::ProfileHarness {
     superclass spar::Harness
 
     variable State Outfile RosterPath SweepPath RequiredSkills Stem \
-             ContactLinkedin OutfilePreexisted OutfileSnapshot CampaignFile
+             ContactLinkedin ContactName ContactOrg ContactEmail \
+             OutfilePreexisted OutfileSnapshot CampaignFile
 
     # Profile workers run under an explicit allow-list instead of
     # skip-permissions, so a research delegation can only reach the
@@ -604,7 +606,7 @@ oo::class create spar::ProfileHarness {
     method run {} {
         try {
             my load_my_meta
-            if {[my inject_linkedin]} { return 1 }
+            if {[my inject_prefetch]} { return 1 }
             # do_profile_call returns one of four codes:
             #   0 — turn closed cleanly
             #   1 — hard failure (no usable product)
@@ -660,6 +662,9 @@ oo::class create spar::ProfileHarness {
         set Stem         [dict get $meta STEM]
         set RequiredSkills [dict getdef $meta REQUIRED_SKILLS ""]
         set ContactLinkedin [dict getdef $meta CONTACT_LINKEDIN ""]
+        set ContactName  [dict getdef $meta CONTACT_NAME ""]
+        set ContactOrg   [dict getdef $meta CONTACT_ORG ""]
+        set ContactEmail [dict getdef $meta CONTACT_EMAIL ""]
         # Snapshot for the post-call truth-check (#181). Bytes, not
         # mtime: consecutive runs can land within mtime granularity (1s),
         # per the ApproachHarness constructor note.
@@ -698,12 +703,21 @@ oo::class create spar::ProfileHarness {
         return 4
     }
 
-    # inject_linkedin (skillbooks#182) — prefetch the roster row's
-    # LinkedIn parse and substitute __PREFETCH_SECTION__ in prompt.txt.
-    # LinkedIn-only by design: it is the one platform with a cacheable
-    # parse worth fetching ahead, and the one whose cost model makes the
-    # saved fetch matter; the placeholder name stays platform-neutral so
-    # an empty substitution needs no per-platform branch.
+    # inject_prefetch (skillbooks#182) — build __PREFETCH_SECTION__ in
+    # prompt.txt from what the dispatcher can fetch ahead of the worker.
+    # Two sources, joined into the one substitution the placeholder's
+    # platform-neutral name was chosen for.
+    #
+    # LinkedIn: the one platform with a cacheable parse worth fetching
+    # ahead, and the one whose cost model makes the saved fetch matter.
+    #
+    # Prior dealings: the contact's own messages to us, which the rating
+    # rubrics weigh and the worker has no other way to reach. Filtered to
+    # their side of the correspondence and silent when there is none, so
+    # what arrives is conduct and never our engagement state; the
+    # properties that hold that line live in spar::dealings, not here.
+    # A miss costs a tenth of a second against the local index, so it
+    # runs for every row rather than on a condition.
     # Runs here so the wait sits in Tcl, inside the overseer's fair
     # queue, before any token is spent; a worker-side fetch under a
     # saturated queue outlives its foreground window instead. The
@@ -725,8 +739,9 @@ oo::class create spar::ProfileHarness {
     # hard failure, 0 otherwise. The outer `timeout 600` bounds a hung
     # serialiser; the overseer queue wait it allows for is minutes,
     # not seconds.
-    method inject_linkedin {} {
+    method inject_prefetch {} {
         set prompt_path [file join [my prompt_dir] prompt.txt]
+        set sections {}
         set section ""
         if {$ContactLinkedin ne "" && [auto_execok browser-serialiser] ne ""} {
             ${::spar::harness_log}::info \
@@ -754,8 +769,13 @@ oo::class create spar::ProfileHarness {
                 set section "\n\n## LinkedIn — prefetched by dispatcher\n\nThe linkedin skill's parse-profile output for $ContactLinkedin, fetched just before this session started. Treat it as your §4.3 LinkedIn lookup; a re-fetch would only repeat the browser queue wait.\n\n\$ browser-serialiser linkedin.com/parse-profile $ContactLinkedin\n[string trim $out]\n"
             }
         }
+        if {$section ne ""} { lappend sections $section }
+        set dealings [spar::dealings::inbound_block \
+            $ContactName $ContactOrg $ContactEmail]
+        if {$dealings ne ""} { lappend sections $dealings }
         set prompt [spar::read_file $prompt_path]
-        set prompt [string map [list __PREFETCH_SECTION__ $section] $prompt]
+        set prompt [string map \
+            [list __PREFETCH_SECTION__ [join $sections ""]] $prompt]
         spar::write_file $prompt_path $prompt
         return 0
     }
