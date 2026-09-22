@@ -1207,9 +1207,10 @@ proc spar::lang_instruction {code} {
 
 # channel_desc — channel selection per SPAR-A §4.2
 # Port of spar-a-batch.sh lines 221-230
-proc spar::channel_desc {linkedin phone} {
+proc spar::channel_desc {linkedin phone email} {
     set has_linkedin [expr {$linkedin ne ""}]
     set has_phone [expr {$phone ne "" && [regexp {\d} $phone]}]
+    set has_email [string match *@* $email]
 
     if {$has_linkedin} {
         if {$has_phone} {
@@ -1217,6 +1218,8 @@ proc spar::channel_desc {linkedin phone} {
         } else {
             return "Per SPAR-A §4.2: LinkedIn + email = prepare (1) LinkedIn connection note, (2) email after acceptance or 5 days."
         }
+    } elseif {$has_phone && !$has_email} {
+        return "Per SPAR-A §4.2: phone only = phone script only; the email comes after the call, in a later round."
     } elseif {$has_phone} {
         return "Per SPAR-A §4.2: email + phone, no LinkedIn = prepare (1) email, (2) phone follow-up script."
     } else {
