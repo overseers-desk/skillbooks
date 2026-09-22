@@ -50,3 +50,8 @@ query-saddlery-toowoomba-qld	qwen3-30b-128k	on	2832	1673	52	246	298	298	4328	202
 query-adult-riding-club-beaudesert-qld	qwen3-30b-128k	on	2998	1385	57	204	261	261	5124	2026-09-22T13:11:20
 query-adult-riding-club-boonah-qld	qwen3-30b-128k	on	2673	1586	46	224	270	270	6052	2026-09-22T13:15:50
 query-adult-riding-club-canungra-qld	qwen3-30b-128k	on	2700	1829	47	266	313	313	4082	2026-09-22T13:21:04
+query-adult-riding-club-jimboomba-qld	qwen3-30b-128k	on	3085	8000	0	2968	3854	3855	33671	2026-09-22T15:01:00
+query-adult-riding-club-kyogle-nsw	qwen3-30b-128k	on	2666	1734	47	249	296	296	6059	2026-09-22T15:05:57
+query-adult-riding-club-murwillumbah-nsw	qwen3-30b-128k	on	3050	1838	59	286	345	345	5379	2026-09-22T15:11:42
+query-adult-riding-club-tamborine-qld	qwen3-30b-128k	on	2941	8000	55	2882	2937	2938	33442	2026-09-22T16:00:40
+query-adult-riding-club-toowoomba-qld	qwen3-30b-128k	on	2795	1500	51	215	266	266	5715	2026-09-22T16:05:07
