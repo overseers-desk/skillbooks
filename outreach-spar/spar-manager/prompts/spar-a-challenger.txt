@@ -12,6 +12,8 @@ __PROFILE_CONTENT__
 
 ### The message you received
 
+Where the draft holds several pieces, they arrive in the order listed, days apart: react to the first cold, and to each later one as someone who has the earlier ones.
+
 __DRAFT_PLACEHOLDER__
 
 ---

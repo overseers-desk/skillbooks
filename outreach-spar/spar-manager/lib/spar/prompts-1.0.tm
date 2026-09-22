@@ -698,7 +698,7 @@ s_note: $s_note"
                 set max_passes $a_max_passes_ceiling
             }
 
-            set channel_d [spar::channel_desc $linkedin $phone]
+            set channel_d [spar::channel_desc $linkedin $phone $email]
 
             set contact_summary "Name: $name
 Organisation: $org
