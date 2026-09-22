@@ -1,0 +1,162 @@
+{
+ "msg-405609.txt": {
+  "arm": "m1-opus-5",
+  "stem": "pine-lake-village",
+  "channel": "email",
+  "words": 222
+ },
+ "msg-180172.txt": {
+  "arm": "m1-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "channel": "email",
+  "words": 287
+ },
+ "msg-303859.txt": {
+  "arm": "m12-opus-5",
+  "stem": "beaudesert-probus-club",
+  "channel": "email",
+  "words": 237
+ },
+ "msg-983473.txt": {
+  "arm": "placebo-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "channel": "email",
+  "words": 292
+ },
+ "msg-269019.txt": {
+  "arm": "placebo-opus-5",
+  "stem": "beaudesert-probus-club",
+  "channel": "email",
+  "words": 329
+ },
+ "msg-997794.txt": {
+  "arm": "none-opus-5",
+  "stem": "pine-lake-village",
+  "channel": "email",
+  "words": 238
+ },
+ "msg-325964.txt": {
+  "arm": "m2-opus-5",
+  "stem": "beaudesert-probus-club",
+  "channel": "email",
+  "words": 222
+ },
+ "beaudesert-probus-club.yaml": {
+  "arm": "N2-sonnet-5",
+  "stem": "beaudesert-probus-club",
+  "skipped": "unparsed: ParserError"
+ },
+ "msg-106143.txt": {
+  "arm": "m12-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "channel": "email",
+  "words": 257
+ },
+ "msg-409936.txt": {
+  "arm": "placebo-opus-5",
+  "stem": "families-magazine",
+  "channel": "email",
+  "words": 191
+ },
+ "msg-663604.txt": {
+  "arm": "placebo-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "channel": "email",
+  "words": 311
+ },
+ "msg-385477.txt": {
+  "arm": "placebo-opus-5",
+  "stem": "pine-lake-village",
+  "channel": "email",
+  "words": 250
+ },
+ "msg-966080.txt": {
+  "arm": "m1-opus-5",
+  "stem": "beaudesert-probus-club",
+  "channel": "email",
+  "words": 235
+ },
+ "msg-856301.txt": {
+  "arm": "N2-sonnet-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "channel": "email",
+  "words": 191
+ },
+ "msg-066979.txt": {
+  "arm": "m2-opus-5",
+  "stem": "families-magazine",
+  "channel": "email",
+  "words": 196
+ },
+ "msg-120442.txt": {
+  "arm": "none-opus-5",
+  "stem": "families-magazine",
+  "channel": "email",
+  "words": 224
+ },
+ "msg-124723.txt": {
+  "arm": "m12-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "channel": "email",
+  "words": 254
+ },
+ "msg-431326.txt": {
+  "arm": "m2-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "channel": "email",
+  "words": 250
+ },
+ "msg-326941.txt": {
+  "arm": "none-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "channel": "email",
+  "words": 307
+ },
+ "msg-521442.txt": {
+  "arm": "N2-sonnet-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "channel": "email",
+  "words": 203
+ },
+ "msg-215637.txt": {
+  "arm": "none-opus-5",
+  "stem": "beaudesert-probus-club",
+  "channel": "email",
+  "words": 338
+ },
+ "msg-255174.txt": {
+  "arm": "m2-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "channel": "email",
+  "words": 247
+ },
+ "msg-072915.txt": {
+  "arm": "none-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "channel": "email",
+  "words": 283
+ },
+ "msg-788224.txt": {
+  "arm": "m1-opus-5",
+  "stem": "families-magazine",
+  "channel": "email",
+  "words": 201
+ },
+ "pine-lake-village.yaml": {
+  "arm": "N2-sonnet-5",
+  "stem": "pine-lake-village",
+  "skipped": "unparsed: ParserError"
+ },
+ "msg-328183.txt": {
+  "arm": "m12-opus-5",
+  "stem": "pine-lake-village",
+  "channel": "email",
+  "words": 249
+ },
+ "msg-293292.txt": {
+  "arm": "N2-sonnet-5",
+  "stem": "families-magazine",
+  "channel": "email",
+  "words": 146
+ }
+}
