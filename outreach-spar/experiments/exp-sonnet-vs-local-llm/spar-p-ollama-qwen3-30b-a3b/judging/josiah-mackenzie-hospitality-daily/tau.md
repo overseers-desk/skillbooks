@@ -1,0 +1,59 @@
+---
+star_rating: 5
+yield: 10
+dependent_data:
+  contact_name: Josiah Mackenzie
+  organisation: Hospitality Daily
+  role: Founder & Producer
+  date_excluded: null
+---
+# Profile: Josiah Mackenzie
+
+## Current role
+VP / Head of Marketing at Actabl (Jan 2025 – present); concurrently Founder & Producer of Hospitality Daily (Apr 2022 – present), a daily hospitality podcast with 5 co-hosts and 1,293 episodes as of June 2026.
+
+## Career history
+| Period | Role | Organisation | Notes |
+|---|---|---|---|
+| Jan 2025 – present | VP / Head of Marketing | Actabl | Hotel operations and profit platform serving 12,000+ hotels |
+| Apr 2022 – present | Founder, Host & Producer | Hospitality Daily | #1 hospitality podcast; 1,293 episodes as of June 2026; 21,000+ LinkedIn followers (Jan 2025) |
+
+## Certifications and education
+- None found
+
+## Volunteer and mentorship
+- None found
+
+## What they have said publicly
+"AI Tinkerer" (LinkedIn headline); "The real unlock is when AI helps move work across actual hotel operating systems" (Actabl blog, 2024–2025); "Technology creates a more level playing field for hospitality entrepreneurs to create concepts and have both operating systems and distribution previously only accessible to big companies" (hertelier.com interview); "AI for Hotels: A Guide to Artificial Intelligence for Hospitality Leaders" (authored, hotelnewsresource.com); "Year of the Operator" (Hospitality Daily, Dec 2025) — first-person analysis framing operational excellence as competitive advantage.
+
+## Who they know (connections relevant to campaign)
+| Person | Relationship | Relevance to campaign |
+|---|---|---|
+| Steven Moore, CEO Actabl | Josiah interviewed him on Hospitality Daily (June 2026) | Actabl works with 12,000+ hotels; bridges editorial and commercial audiences |
+| Arnold Amrhein, CREO Capital | Featured guest, "The Anticipation Layer" / "Hospitality Works Best When Owners Think Like Operators" (May 2026) | Hospitality investor; signals show reach into hospitality capital and operators |
+| Tamara Lohan | Featured guest, 5-episode series (May 2026) | Mr. & Mrs. Smith co-founder, now Hyatt; founder-to-major-brand trajectory |
+| Pam & Ken Cruse | Featured guests (May 2026) | SCP Hotels founders; community/purpose-driven hospitality operators |
+
+## Catalogue evidence
+**Signal 1 (on-topic):**  
+- "Destination AI 2025 Recap" (co-hosted with Drew Potter, 2025) — AI in hospitality operations  
+- "The Anticipation Layer" / "Hospitality Works Best When Owners Think Like Operators" (with Arnold Amrhein, May 2026) — owner-operated hospitality operations  
+
+**Signal 2 (founder/operator guests):**  
+- "5-episode series" with Tamara Lohan (Mr. & Mrs. Smith co-founder, May 2026)  
+- "SCP Hotels founders" (Pam & Ken Cruse, May 2026)  
+
+**Signal 3 (host-voiced thesis):**  
+- "Year of the Operator" (Dec 2025) — Josiah's first-person analysis on operational excellence as competitive advantage  
+
+## Relevance assessment
+1. **Topic (signal 1):** Met. Channel covers AI in hospitality operations (e.g., "Destination AI 2025 Recap", "The Anticipation Layer" episode), directly aligning with the campaign subject's AI-driven hospitality business model (agri-tourism is a hospitality segment).  
+2. **Guests (signal 2):** Met. Features founders (Tamara Lohan, Pam & Ken Cruse) and operators (Arnold Amrhein's episode on owner-operated hospitality).  
+3. **Stated interest (signal 3):** Met. Host explicitly identifies as "AI Tinkerer", authored "AI for Hotels" guide, and framed AI as strategic imperative in hospitality.  
+**Audience overlap:** Hospitality Daily targets hospitality operators, investors, and tech leaders in hospitality — a precise subset of the campaign's target (startup investors and founders in AI/business). The channel's #1 hospitality position ensures strong niche reach.  
+**Reach judgment:** Mid-size channel (21,000+ LinkedIn followers) with exact audience alignment, outperforming larger general AI channels.  
+**Star rating justification:** 5. Strong reach into the target hospitality niche (not broad AI) with all three signals met. The channel's focus on owner-operated hospitality operations (e.g., "The Anticipation Layer" episode) directly mirrors the campaign subject's business model, making it a perfect venue.
+
+## Verification corrections
+None.
