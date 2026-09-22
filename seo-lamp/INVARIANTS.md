@@ -10,7 +10,7 @@ Why: the console reports only queries on which the site appeared, so it is a cen
 
 ## I2. The unit is what the operator sells
 
-**Test:** is the thing the run studies a product line with its own price and its own claim on budget? A run whose unit is a page, or a query family drawn from what the instrument could cluster, fails. A movement report is not a run and is not tested here: its unit is one dated movement, and it carries no lever to place.
+**Test:** is the thing the run studies a product line with its own price and its own claim on budget? A run whose unit is a page, or a query family drawn from what the instrument could cluster, fails. A movement report and a standing report are not runs and are not tested here: the one's unit is a dated movement, the other's is the site among the sites named beside it, and neither carries a lever to place.
 
 Why: a unit taken from the instrument hides the demand no single product owns, and rules a product the operator sells out of scope for lacking a page.
 
@@ -52,6 +52,12 @@ Why: a capture inside a run is invisible to the next run and to the site-wide se
 
 ## I10. A report is read by someone who was not told what it concluded
 
-**Test:** does the run or movement report carry an audit record, made by an agent holding the document and its captures and nothing else, listing the classes checked and the findings split into floor and fork? A report published without one fails, as does one audited by the agent that wrote it, or by an agent given the brief, the reasoning or the document's own account of its findings. A movement report's findings split the same way, and its forks stay forks, since it proposes nothing either way.
+**Test:** does the run, movement report or standing report carry an audit record, made by an agent holding the document and its captures and nothing else, listing the classes checked and the findings split into floor and fork? A report published without one fails, as does one audited by the agent that wrote it, or by an agent given the brief, the reasoning or the document's own account of its findings. A movement report's and a standing report's findings split the same way, and their forks stay forks, since neither proposes anything either way.
 
 Why: an auditor told what the run concluded confirms it, and a self-audit from inside the frame returns only the defects the frame was drawn around. The classes are what has escaped before; the finding outside them is what the class list cannot yet see, and a run that returns neither has not been read.
+
+## I11. No gap is explained by an attribute
+
+**Test:** for every difference between two sites a report states, is it accounted for by something someone did, or stated as not yet accounted for? A gap explained by age, ownership, an address or a score fails, as does a site described as a ceiling nobody could reach.
+
+Why: an attribute explanation marks a failure of thinking rather than a finding. Once a result is put down to age, ownership or an address there is nothing left to learn from it, and that is what makes it comfortable to write. A cause names an act, which is the only thing a lever can repeat or undo. The set itself supplies the test: a member holding the attribute without the result rules the attribute out. The count on any report is therefore zero.
