@@ -27,10 +27,11 @@ email itself never introduced earlier. Point, do not construe: a thing
 introduced only later in the email still counts at the point of use.
 Count per email.
 
-Measure 2, sentence scores. For each email, one CSV row per sentence in
-the order a reader meets them: three integers 0 to 5, confusing,
+Measure 2, sentence scores. For each email, score each sentence in the
+order a reader meets them with three integers 0 to 5: confusing,
 surprising, interesting. Surprising means the reader wonders why they are
-being told this. Report per email the mean of each, and the count of
+being told this. The per-sentence scores stay in your working and do not
+appear in the report; report per email the mean of each, and the count of
 sentences scored 4 or 5 on surprising.
 
 Measure 3, claims. Per email, the count of claims contradicted by the

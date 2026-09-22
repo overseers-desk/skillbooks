@@ -1,6 +1,6 @@
 # exp-writer-based-prose
 
-Can a guard placed around the drafting loop stop a letter carrying the writer's private reasoning to the reader? Ten arms across two rounds, 22 September 2026. None worked. The faults that survived were all written before drafting began, in the campaign's own inputs, where no guard around the loop can reach them.
+Can a guard placed around the drafting loop stop a letter carrying the writer's private reasoning to the reader? Twelve arms across three rounds, 22 September 2026. None worked. The faults that survived were all written before drafting began, in the campaign's own inputs, where no guard around the loop can reach them.
 
 ## Problem
 
@@ -24,7 +24,7 @@ Two reasons, both structural rather than a failure of the agent.
 
 ## Attempts
 
-Ten arms across two rounds, five per round, all delivered through `prompt_appendices`; no method document or prompt was edited. Every appendix text is in [prompts.md](prompts.md).
+Twelve arms across three rounds. Rounds 1 and 2, five arms each, were delivered through `prompt_appendices`; no method document or prompt was edited. Round 3 took the round-2 letters as finished and wrote each one again outside the harness. Every prompt text is in [prompts.md](prompts.md).
 
 ### Round 1 — 22 September, eight contacts per arm, author Sonnet
 
@@ -76,6 +76,26 @@ Method 1 is only half-tested for the same reason. Its cost logs show two of five
 
 Method 2 alone went to revision on four of five, so its author step did fire. That is the one arm whose author-side instruction was properly exercised, and it scores worst of the three on the reader's surprise measure.
 
+### Round 3 — 22 September, a second writing of each round-2 letter
+
+Flower's remedy is a transformation by the writer: step back from the material and write again to the reader's questions. The guards of rounds 1 and 2 never asked for that; they set rules on the first draft or fed the revise step. Round 3 tests the transformation on its own. Each of the 25 scored round-2 letters was handed to a fresh Opus 5 context holding only the letter, the recipient's organisation and role, and the date, with the instruction to write it again for that reader, keeping every fact they need to act and adding none. The letter's inputs, plan block and registry, were out of reach, so nothing the writer's process holds could re-enter except through the letter itself.
+
+Two arms, same prompt, differing in what the headless session carried. The office arm ran under this machine's normal configuration, where the office plugin injects its writing methodology at session start. The bare arm ran under a config directory holding credentials only. Originals and both rewrites, 75 letters, were blinded together and scored in one pass by one Opus 5 reader under the round-2 rubric plus a fourth count, sender-side sentences: why the offer is made, how the recipient came to be written to, what is not on offer or not possible, or the sender's own situation ([round3-rewrite/](round3-rewrite/)).
+
+| Letters, n=25 each | Nowhere | Surprise | Surprising 4-5 | False | Sender-side | Words |
+|---|---|---|---|---|---|---|
+| original | 3.72 | 1.65 | 2.68 | 2.80 | 3.40 | 254 |
+| second writing, office context | 3.80 | 1.61 | 2.44 | 2.84 | 3.28 | 256 |
+| second writing, bare context | 3.96 | 1.64 | 2.72 | 3.20 | 3.44 | 275 |
+
+Paired per letter, the office rewrite changed little: on sender-side sentences 15 of 25 pairs are identical and the rest split 6 better, 4 worse; on unresolved references 11 identical, 7 and 7. Read side by side it is the original with a paragraph moved. The bare rewrite changed more and for the worse: 21 words longer on average, false claims up in 12 pairs and down in 2, unresolved references up in 10 and down in 5, sender-side sentences unmoved. Leading with the offer, it restated the offer in fresh words, and the fresh words carried the selection claim again, in one letter as "tickets set aside for your club", which the original had not said.
+
+The registry-born faults passed through both arms untouched, by lexical count over 25 letters: "not on sale / not advertised" 20 original, 21 office, 19 bare; "picked / a short list / yours is one" 17, 17, 17; "the code" or "the link" unintroduced 24, 23, 20. The reader who holds only the letter cannot tell a fact from a leak, and the instruction to keep every fact the reader needs was read as keep every fact.
+
+So the second writing is not the missing step. A fresh reader-writer reorganises but does not cut, because to it the sender-side sentences are information. Cutting them needs the inputs in view, which is the fact-checker's position with a different question: does this sentence exist because an input said so, or because the reader would ask.
+
+The reader's consistency across rounds is checkable here: the same 25 originals scored 3.72 on unresolved references in this pass against a weighted 3.8 in round 2's, under a rubric written afresh.
+
 ## What survived every arm
 
 | Fault | Letters carrying it, of 25 |
@@ -122,6 +142,10 @@ Round 1 was first scored by a different agent per arm. Their rubrics drifted: on
 
 - **Fable is quota-limited.** All five Fable arms failed at the author call with "You've reached your Fable limit"; three produced nothing at all. The model axis is unmeasured, not negative.
 - **The harness has no author-model setting.** `vendor/coachman-1.13.tm` hardcodes `--model sonnet` for any call that passes none, and the A-phase author calls pass none (`harness-1.0.tm:212, :283`), so `ANTHROPIC_MODEL` is overridden. Round 2 used a copied tree with that one line reading `SPAR_AUTHOR_MODEL`. The office belief that "A runs on Opus" was not true of any run before this.
+- **Refusals track the session's injected context, not the letter.** In round 3 the same 25 rewrite prompts ran twice: under the office configuration, whose plugin injects its methodology at session start, Opus 5's safeguards refused 6 of 25 on the first call, 5 of those again on retry and 1 on a second retry; under a credentials-only config directory, 0 of 25. Round 2's authors ran under the office configuration too, so its three refusals are more plausibly the same effect than a response to the method text.
+- **The office context also writes working notes into the output.** Five of the 25 office-arm rewrites carried the methodology's ceremony before the subject line, one of them 382 words of it; the bare arm carried none. A headless author under this configuration is not a bare model, and a repeat that wants one uses a config directory without the plugin.
+- **A headless session can spin a core for minutes.** With two versions of the office plugin's git shim on PATH, which happens to a session started before a plugin update, each shim resolves the other as the real git and execs it in a loop. Any `git` from the session, or from a headless claude it spawns, spins at 100 % of a core until killed. Verified 22 September: 11.7 s of CPU in a 15 s timeout with both on PATH, 0.1 s with one. Round 3 stripped the duplicate from PATH for every call.
+- **A scorer over 75 letters overran the 64 000-token output limit** by writing its per-sentence rows into the report. The prompt now keeps them in the working; the run was recovered by resuming the same session for the table alone.
 - **Three of 25 Opus drafting calls were refused** by a safety classifier, with the message that Opus 5's safeguards flagged the prompt. Verified from each arm's run log: the three refusals are the three missing cells and nothing else dropped a letter. The two arms with no method text, none and placebo, had no refusal, and all three refusals fell on method arms. Three cases cannot tell a coincidence from a classifier responding to the method text itself, and a refusal that is not independent of the draft would bias exactly the arms under test. A repeat should record the refusal rate per arm as a measure rather than as an operational note. The cells: the men's shed in method 1, the magazine in the composed arm, both refused again on retry, and the retirement village in method 2, whose retry succeeded after the blind extraction had already run, so its letter exists in `round2-drafts/` but not in the scored set.
 - **Two approach files of the reused Sonnet baseline would not parse**, so that row rests on three messages of five. Both carried an unquoted colon inside a value, as did four other round-1 drafts and the campaign file itself. The Tcl loader tolerates it and a strict parser does not, so `validate_approach` passes a file that later tooling cannot read. An approach file that will not parse is a letter lost with no error raised at the time, which is worth its own issue against the harness rather than a line here.
 - **Cost:** about $186 for round 2, of which about $64 went on the blocked Fable arms.
@@ -133,6 +157,7 @@ Round 1 was first scored by a different agent per arm. Their rubrics drifted: on
 - [setarm-round1.py](setarm-round1.py), [setarm-round2.py](setarm-round2.py) — swap a campaign YAML's appendices to one arm, keeping the constant block byte-identical.
 - [blind.py](blind.py) — extract each approach file's final message to a plain-text file under a random name, key written beside it.
 - [scores-round2.tsv](scores-round2.tsv), [key-round2.json](key-round2.json) — the blind scores and the arm key.
+- [round3-rewrite/](round3-rewrite/) — the second-writing round: `rewrite.py` and `prompt.txt` make the rewrites, `blind50.py` shuffles originals and arms together, `scorer-prompt.txt` is the reader's brief, `analyze.py` the paired comparison; `rewrites*/` hold both arms as returned and with preambles removed, `blind/` the 75 letters as scored, `key50.json`, `scores.tsv` and `scorer-report.md` the result.
 
 - `round1-drafts/`, `round2-drafts/` — every approach file both rounds produced, one folder per arm.
 - `round2-blind/` — the 25 letters exactly as the scoring reader saw them, subject and body, random names.
