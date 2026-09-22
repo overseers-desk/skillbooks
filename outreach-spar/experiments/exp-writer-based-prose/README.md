@@ -86,7 +86,15 @@ Method 2 alone went to revision on four of five, so its author step did fire. Th
 
 The first comes from the campaign's own drafting instruction, which reads "the code and the Eventbrite link go in the reply" — the definite article is in the instruction. Every author followed it faithfully.
 
-The second and third come from the campaign's USP registry. `spar-campaign-yaml.md` states that a USP's claim is taken as written there, because the campaign was verified once when defined. So a false registry entry is approved by the fact-check in every letter it touches, by design. Both entries were known to be false and left in place deliberately as a constant across arms.
+The second and third come from one entry in the campaign's USP registry, `chosen-not-advertised`, and they fail in two different ways worth separating.
+
+Its `claim` field is qualified and, as written, true: the free opening-week seats are not advertised and are not offered to the public at any price, *the same shows selling at full price on the venue's own page and on the operator's ticketing*. Its `label` drops the qualifier: "These seats are not on sale anywhere". Standing alone the label is false, and it is the short quotable line at the top of the entry, which is the form a drafting agent reaches for. The letters carry the label's compression, "the seats are not on sale at any price", rather than the claim's careful version. So the mechanism is not that an unsourced claim was believed. The entry is sourced. The registry holds the same statement at two levels of qualification and nothing checks the short one against the long one.
+
+The selection claim fails differently. "The recipient's organisation was chosen by name from the venue's own list" sits in the `claim` field itself, and its own `rests_on` supports only that each recipient is a profiled roster entry on a per-segment allowlist. That is not choosing by name. The entry is contradicted by its own provenance, which a check comparing claim against `rests_on` would catch.
+
+`spar-campaign-yaml.md` states that a USP's claim is taken as written in the registry, because the campaign was verified once when defined, and that the challenger opens a fact source only where a `rests_on` names one. So neither failure has anywhere to surface. Both were known and left in place as a constant across arms.
+
+One more thing the letters show about the selection claim. Counted by keyword, picked or chosen or selected, it appears in 9 of 25. Counted by meaning it is 20. The difference is carried as implicature: "a handful of local organisations and yours is one", "a short list", "offering them to a few publications". Five letters say it outright. A guard that matched words would clear two thirds of the letters that make the claim.
 
 A guard around the writing cannot catch a fault that was not made during the writing. That is the finding.
 
@@ -101,7 +109,9 @@ The date. Adding today's date to both the author and challenger prompts changed 
 The faults live upstream of the drafting loop, in the campaign's model messages and its USP registry. Three places worth a guard, none tested here:
 
 1. **The model message.** A campaign's `first_ask` is prose written by whoever set the campaign up, and it goes into every draft. Nothing reads it for writer-based prose or for definite articles pointing at nothing.
-2. **The USP registry.** It is the one document the fact-check treats as verified, and nothing verifies it. A registry entry asserting a fact about the world, as against a claim about the offer, has no check at all.
+2. **The USP registry.** It is the one document the fact-check treats as verified, and nothing verifies it. Two checks would have caught this campaign's faults and neither exists: the label read against the claim beneath it, since a label is a compression and a compression can drop the qualifier that made the claim true; and the claim read against its own `rests_on`, since an entry can assert more than its stated grounds support. A check asking only whether an entry is sourced passes both faults.
+
+   Whatever does the checking has to work on meaning rather than words. The selection claim appears in 9 of 25 letters by keyword and 20 by meaning, the difference carried by phrases like "a handful of local organisations and yours is one".
 3. **The persona's information state.** The date fix shows the shape: the role-play is stripped of our framing, correctly, and of the recipient's own situation, incorrectly. What a real recipient knows and the isolation removes is worth enumerating.
 
 ## A measurement lesson
