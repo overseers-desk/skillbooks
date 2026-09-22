@@ -1,0 +1,42 @@
+{
+ "carly-bright-horizons-australia-childcare-carbrook": {
+  "session_id": "6e91e4de-c5cd-438a-a827-e8a424ad885b",
+  "transcript": "/home/weiwu/.claude-palacio/projects/-usr-local-src-rivermill-spar-campaigns/6e91e4de-c5cd-438a-a827-e8a424ad885b.jsonl",
+  "prompt_chars": 15773
+ },
+ "pine-lake-village": {
+  "session_id": "fdb6de6b-9223-4ce7-9f43-fbfb33978d21",
+  "transcript": "/home/weiwu/.claude-palacio/projects/-usr-local-src-rivermill-spar-campaigns/fdb6de6b-9223-4ce7-9f43-fbfb33978d21.jsonl",
+  "prompt_chars": 10892
+ },
+ "paul-lennon-oxenford-mens-shed": {
+  "session_id": "03a37f41-c277-416c-9d1d-cf39b3c59e2d",
+  "transcript": "/home/weiwu/.claude-palacio/projects/-usr-local-src-rivermill-spar-campaigns/03a37f41-c277-416c-9d1d-cf39b3c59e2d.jsonl",
+  "prompt_chars": 10828
+ },
+ "beaudesert-probus-club": {
+  "session_id": "5c7aebfe-48f2-43e6-8e65-56300d3d9d12",
+  "transcript": "/home/weiwu/.claude-palacio/projects/-usr-local-src-rivermill-spar-campaigns/5c7aebfe-48f2-43e6-8e65-56300d3d9d12.jsonl",
+  "prompt_chars": 11615
+ },
+ "iona-murray-imaginative-play-matters-gold-coast": {
+  "session_id": "14dd05f1-864a-4b4f-a17f-43dcab2bbcb3",
+  "transcript": "/home/weiwu/.claude-palacio/projects/-usr-local-src-rivermill-spar-campaigns/14dd05f1-864a-4b4f-a17f-43dcab2bbcb3.jsonl",
+  "prompt_chars": 11016
+ },
+ "families-magazine": {
+  "session_id": "ac8042b2-28e1-46c1-b3d8-a76669ad4c48",
+  "transcript": "/home/weiwu/.claude-palacio/projects/-usr-local-src-rivermill-spar-campaigns/ac8042b2-28e1-46c1-b3d8-a76669ad4c48.jsonl",
+  "prompt_chars": 11019
+ },
+ "fiona-harper-freelance": {
+  "session_id": "7d2b6d81-9041-48e8-861e-6fc61ae4cd1b",
+  "transcript": "/home/weiwu/.claude-palacio/projects/-usr-local-src-rivermill-spar-campaigns/7d2b6d81-9041-48e8-861e-6fc61ae4cd1b.jsonl",
+  "prompt_chars": 11692
+ },
+ "dorsett-gold-coast": {
+  "session_id": "887fff3a-44f1-45ab-83e2-32aadbd707ec",
+  "transcript": "/home/weiwu/.claude-palacio/projects/-usr-local-src-rivermill-spar-campaigns/887fff3a-44f1-45ab-83e2-32aadbd707ec.jsonl",
+  "prompt_chars": 11109
+ }
+}

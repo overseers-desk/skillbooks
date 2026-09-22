@@ -17,7 +17,8 @@ for path, kind in items:
         name = f"ltr-{random.randrange(10**6):06d}.txt"
         if name not in used: used.add(name); break
     shutil.copy(path, os.path.join(out, name))
-    key[name] = {'kind': kind, 'source': src, 'arm': k2[src]['arm'], 'stem': k2[src]['stem'],
+    meta = k2.get(src, {'arm': 'round4-A', 'stem': src[:-4]})
+    key[name] = {'kind': kind, 'source': src, 'arm': meta['arm'], 'stem': meta['stem'],
                  'words': len(open(path).read().split())}
 json.dump(key, open(os.path.join(out, os.pardir, 'key50.json'), 'w'), indent=1)
 print(len(key), 'letters written;', {k: sum(1 for v in key.values() if v['kind'] == k) for k, _ in arms})

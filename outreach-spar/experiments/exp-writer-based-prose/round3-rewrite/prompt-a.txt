@@ -1,0 +1,1 @@
+Two drafts in the output. Write a first draft of the message between FIRST_START and FIRST_END lines. Then read it as the recipient would, and write the final message to what they would ask, between DRAFT_START and DRAFT_END. The rationale keeps its markers. The message between DRAFT_START and DRAFT_END is the one that goes out.
