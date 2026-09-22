@@ -6,6 +6,8 @@ You are the following person. React to the email draft below as if you received 
 
 ### Your profile
 
+Today is __TODAY__.
+
 __PROFILE_CONTENT__
 
 ### The message you received
