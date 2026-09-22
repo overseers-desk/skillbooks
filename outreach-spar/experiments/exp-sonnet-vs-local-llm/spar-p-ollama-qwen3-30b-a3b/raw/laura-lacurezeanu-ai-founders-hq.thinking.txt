@@ -1,0 +1,352 @@
+We are given the SOURCE FACTS about Laura Lacurezeanu and must write the profile strictly from those facts.
+
+First, let's break down the required structure and what we have:
+
+- **profile_date**: 2026-07-02 (as given in the output instruction, but note: the facts mention events in 2026, so we use that date)
+- **star_rating**: We must assign a 1-5 based on the criteria (reach into our audiences times relevance from three signals: topic, guests, stated interest). We must be conservative.
+
+Let's analyze the facts for the three signals:
+
+1. **Topic (signal 1)**: 
+   - The channel covers "AI in business, AI agents and automation, entrepreneurship and founders, business automation, fintech, or crypto and web3". 
+   - From the facts: 
+        - The channel is called "AI Founders" (YouTube) and the host's public statements and content titles show a focus on AI agents, automation, and building AI-powered businesses (e.g., "How I'd Build a One-Person AI Business Using Only Claude In 2026", "My $5M AI Business Plan using AI Agents in 2026", "You're Creating Claude Skills Wrong", "3 Ridiculously Simple AI Business Ideas That Actually Work").
+        - The channel does not mention hospitality, tourism, or SMB operations (like agri-tourism) in the facts. The facts say: "No public statements found on hospitality, tourism, SMB operations, or specific sectors." 
+        - However, the campaign subject is an AI system that runs a real multi-line business (agri-tourism) and now offers it to other organizations. The channel's topic is about AI in business (which is broad) but the facts do not show that the channel covers the specific sector (agri-tourism) or SMB operations in the context of hospitality/tourism. 
+        - But note: the channel's topic is "AI in business" (which is a broad category) and the campaign subject is an AI system for a business (so the topic is covered). However, the channel does not specifically cover the hospitality/tourism sector. But the campaign is about AI in business, so the topic is relevant at a high level.
+
+2. **Guests (signal 2)**:
+   - The channel features "founders, operators, or exited founders".
+   - From the facts: 
+        - The channel has an "AI Founders Interviews" playlist (title confirmed) but specific episode titles and guest names are not retrieved. 
+        - The facts say: "Whether Laura accepts external guest pitches for interview-format videos is not confirmed; the primary contact path for external engagement appears to be the booking form at aifoundershq.com/aiss-book-call."
+        - The only named guest mentioned is "Dan Lacurezeanu" (her husband and co-founder) who co-presents on YouTube and manages technical agent builds. But he is not an external guest and is part of the same editorial unit. 
+        - The facts do not list any external founder guests. 
+        - Therefore, we cannot confirm that the channel features external founders, operators, or exited founders (signal 2 is not met by the facts).
+
+3. **Stated interest (signal 3)**:
+   - The host's own expressed appetite for these themes (not inferred from guests).
+   - From the facts: 
+        - The host has made several public statements (as listed) that are directly about building AI-powered businesses, using AI agents, and her own experience (e.g., "I Spent 60 Minutes Onboarding Claude. Now It Runs My Business", "How I'd Build a One-Person AI Business Using Only Claude In 2026", "My $5M AI Business Plan using AI Agents in 2026", "3 Ridiculously Simple AI Business Ideas That Actually Work", and her LinkedIn headline: "Turning AI Innovation into Market Leadership with Proven Growth Playbooks | I talk about the AI Economy and how smart founders leverage AI to scale their business.").
+        - These statements are about the host's own business and the topic of AI in business, so signal 3 is met.
+
+Now, for the rating:
+
+- **Reach**: The channel has 540K+ YouTube subscribers and a Skool community of 14K+. The facts say: "The 14K+ Skool community (AI Business Founders Hive, premium; AI Business Trailblazers Hive, free) is the distribution amplification channel: Laura and Dan run weekly Q&As, an 'AI Agent Vault' of practical agents updated every two weeks, and master-level classes. Community members are founders/operators actively building AI-powered businesses."
+
+  This audience is composed of "founders/operators actively building AI-powered businesses", which overlaps with our target audience (startup investors and founders; the broad AI-in-business audience). The channel is focused on AI in business, so the audience is relevant.
+
+- **Relevance signals**:
+  - Signal 1 (topic): Met (AI in business, agents, automation) but note: the channel does not cover the specific sector (agri-tourism) but the topic is AI in business, which is the core of the campaign. So it's on-topic for the broader category.
+  - Signal 2 (guests): Not met (no external founder guests confirmed; only her husband as co-host, and no external guests listed).
+  - Signal 3 (stated interest): Strongly met (host has made multiple public statements about building AI businesses, using AI agents, and her own experience).
+
+However, note the rating criteria: "star_rating (1-5) = reach into OUR audiences (startup investors and founders; the broad AI-in-business audience) TIMES relevance from three signals, in rising strength". 
+
+We must be conservative. The channel has a strong reach (540K subscribers) and the audience is relevant (founders/operators building AI businesses). But signal 2 (guests) is not met. 
+
+How to rate:
+
+- Signal 1: Met (topic is AI in business, which is the core of the campaign)
+- Signal 2: Not met (no external founder guests confirmed)
+- Signal 3: Met (strongly)
+
+So the relevance is not perfect (because signal 2 is missing). But note: the campaign subject is a founder who built an AI system for his business, so the channel's focus on AI in business (signal 1) and the host's own experience (signal 3) are strong. However, the channel does not feature external founder guests (signal 2) as per the facts.
+
+But note: the campaign is about featuring the founder as a guest. The channel's format is primarily solo content (as per "Content format: The YouTube channel is primarily solo educational/tutorial content") and the interviews playlist exists but we don't have evidence of external guests. So we cannot assume they feature external founders.
+
+Therefore, we have two signals met (1 and 3) and one not (2). 
+
+The rating should be:
+
+- 5: only for strong reach AND squarely on-domain with the right guest type (meaning the channel regularly features the type of guest we want: founders, operators, etc.). But we don't have evidence of that (signal 2 not met).
+
+- 4: might be for strong reach and two signals met? But note: the criteria says "Reserve 5 for strong reach into our audiences AND squarely on-domain with the right guest type." Since we don't have evidence of the channel featuring the right guest type (signal 2 not met), we cannot give 5.
+
+- 3: for a mid-size channel with the right audience? But note: 540K is a strong reach (not mid-size). However, the channel is not featuring the right guest type (so signal 2 missing) and the topic is broad but not specific to the sector (but the campaign is about AI in business, so it's acceptable).
+
+But note: the campaign subject is a founder who built an AI system for his business (so he is a founder who uses AI in business). The channel's topic is AI in business (so it's relevant) and the host has stated interest (signal 3). The missing piece is that the channel doesn't feature external founders (signal 2) but that doesn't mean they wouldn't feature him. However, the rating is based on the facts we have: we don't have evidence that they feature external founders. So we cannot count signal 2 as met.
+
+Therefore, we have two signals met (1 and 3) and one not (2). 
+
+How to weight:
+
+- The rating is "reach times relevance from three signals". The relevance is the product of the three signals (each being 0 or 1, but we have to consider strength). However, the instructions say "in rising strength", meaning signal 3 is the strongest. But note: we have two signals met (1 and 3) and one missing (2). 
+
+But the rating is not a simple product. We are to assign a number from 1-5.
+
+Given:
+- Reach: 540K subscribers is strong (so high reach).
+- Audience overlap: The community is "founders/operators actively building AI-powered businesses", which is exactly our target (startup founders and operators). So the audience is a perfect match.
+
+But the channel does not feature external founder guests (so we cannot say they are a venue for featuring a founder guest). However, the campaign is about featuring the founder as a guest. The channel has an interviews playlist (so they do have a format for interviews) but we don't know if they accept external guests. The facts say: "Whether Laura accepts external guest pitches for interview-format videos is not confirmed". So we cannot assume they would feature him.
+
+But note: the campaign is about the founder, and the channel's topic is AI in business, so it's a good fit. However, the rating criteria says: "a mid-size channel with exactly the right audience can outrank a larger general one". This channel has a large audience (540K) and the right audience (founders/operators building AI businesses). The only missing piece is that we don't have evidence of them featuring external founders (but they have an interviews playlist, so it's possible). 
+
+But the instructions say: "Do not invent ... a host stance that the facts do not contain." So we cannot assume they would accept a guest. Therefore, we must rate based on what we know.
+
+Given that the channel is focused on AI in business and the host has stated interest (signal 3), and the audience is perfect, but we don't have evidence of signal 2 (external founder guests), we cannot give a 5. 
+
+What about 4? 
+- 4: for strong reach and two signals met? But note: the criteria says "Reserve 5 for ...". So 4 would be for strong reach and two signals met? However, the rating is "reach times relevance", and relevance is the product of the three signals. Since one signal is missing, the relevance is not full.
+
+But note: the rating is not a mathematical product. We are to assign a number.
+
+Let's compare to the criteria:
+
+- 5: strong reach AND squarely on-domain with the right guest type (meaning the channel regularly features the type of guest we want). We don't have evidence of that (so not 5).
+- 4: might be for strong reach and two signals met? But the criteria says "a mid-size channel with exactly the right audience can outrank a larger general one". This channel is not general (it's focused on AI in business) and has a large audience (540K) and the right audience. However, the missing signal 2 (guests) is critical because the campaign is about featuring a guest. Without evidence that they feature external founders, we cannot be sure.
+
+But note: the channel has an "AI Founders Interviews" playlist (so they do have interviews). The fact that they have a playlist for interviews suggests they do feature guests. However, the facts do not list any external guests. But the playlist exists, so it's reasonable to assume they feature external guests? But the instructions say: "Do not invent ...". We cannot assume they feature external guests because the facts don't list any. The playlist title is confirmed, but the specific episodes and guests are not retrieved. So we have to say we don't know.
+
+Therefore, we cannot confirm signal 2. So we must treat signal 2 as not met.
+
+Thus, we have two signals met (1 and 3) and one not (2). 
+
+In the rating, we are to be conservative. So we should not give a 4 or 5 because of the missing signal 2.
+
+What about 3?
+- 3: for a channel that has the right topic and audience but not the guest type? But note: the channel has a strong reach and the audience is perfect. The topic is covered (signal 1) and the host's interest is strong (signal 3). The missing signal 2 is a problem, but the channel is focused on the topic and the host is a founder herself (so she is a founder guest in her own right, but we are looking for external guests).
+
+However, the campaign is about featuring the founder as a guest. The channel's format includes interviews (playlist exists) so it's a venue for a guest. The fact that we don't have a list of guests doesn't mean they don't do it. But the instructions say: "Do not invent". So we cannot assume they do. Therefore, we must rate based on what we have.
+
+Given that, the rating should be 3? But let's see:
+
+- The channel has 540K subscribers (strong reach) and the audience is exactly our target (founders/operators building AI businesses). 
+- The topic is AI in business (signal 1 met).
+- The host has stated interest (signal 3 met).
+- But we don't have evidence of signal 2 (external founder guests). However, the channel has an interviews playlist, so it's likely they do. But we cannot confirm.
+
+But note: the rating criteria says "Do not invent". So we must not assume they feature external guests. Therefore, we cannot count signal 2 as met.
+
+So the relevance is two out of three signals. 
+
+How does that translate to a star rating?
+
+- 5: all three signals and strong reach.
+- 4: two signals and strong reach? But the criteria says "Reserve 5 for ...", implying that 4 is for strong reach and two signals? However, the criteria also says "a mid-size channel with exactly the right audience can outrank a larger general one". This channel is not mid-size (540K is large) and has the right audience, but it's missing one signal.
+
+But note: the rating is "reach times relevance". The relevance is the product of the three signals (each being 1 for met, 0 for not). So if two are met, the relevance is 2/3. Then we multiply by reach (which is high). But the rating is a whole number.
+
+Given the conservative calibration, and the fact that the channel does not have evidence of featuring external founders (which is critical for a guest feature), we should not rate it too high.
+
+Let's look at the examples in the criteria:
+
+- "On-theme but low-reach, or high-reach but audience-mismatched ... is NOT a 4 or 5."
+
+This channel has high reach and audience match, but the guest type is not confirmed. However, the channel is about AI in business and the host is a founder, so it's a good fit. But the campaign is about featuring a founder guest, and we don't know if they feature external founders.
+
+Given the facts, we have to say that the channel is a good venue because:
+- The topic is covered (AI in business).
+- The host has stated interest (she is a founder building an AI business).
+- The audience is the target.
+
+But the missing evidence for signal 2 (external founder guests) is a risk. However, the channel has an interviews playlist, so it's a venue for a guest. We are not required to have evidence of past guests, but the rating criteria says "guests: features founders, operators, or exited founders" — meaning we need to know that they do feature them. Since we don't have that evidence, we cannot say they do.
+
+But note: the facts say "the channel is primarily solo educational/tutorial content" and they have an "AI Founders Interviews" playlist. The playlist exists, so they do have interviews. The fact that we don't have the guest names doesn't mean they don't feature external founders. However, the instructions say: "Do not invent". So we cannot assume they do. Therefore, we must not count signal 2 as met.
+
+So we have two signals met (1 and 3) and one not (2). 
+
+In the rating, we'll go with 3 because:
+- It's a strong channel (540K) with the right audience and two signals met, but missing the third (which is critical for a guest feature). 
+- However, note that the campaign is about the founder, and the channel is about AI in business, so it's a good fit. But the rating criteria says to be conservative.
+
+But let's see what the facts say about the channel's content: 
+- The host has made videos about her own business (e.g., "I Spent 60 Minutes Onboarding Claude. Now It Runs My Business") — so she is a founder guest in her own right. But for the campaign, we want her to feature the subject (a different founder). 
+
+Given that the channel has an interviews playlist, it's reasonable to think they would feature other founders. But we cannot confirm from the facts. So we have to be conservative and not count signal 2.
+
+Therefore, we'll rate it 3.
+
+But note: the campaign is for a senior AI-leadership search, and the channel is focused on AI in business and features the host as a founder. The audience is exactly the target. So it's a good fit. However, the rating criteria is strict.
+
+Let's check the yield (number of substantive verified data points):
+
+- We have several public statements (at least 6) that show signal 3.
+- We have the channel name, subscriber count, and community size (540K, 14K) as verified.
+- We have the career history and the fact that the channel has an interviews playlist (but no guest names).
+
+So the yield count (substantive verified data points) should be the number of facts we used to support the rating. But the instruction says: "yield: <integer count of substantive verified data points>". 
+
+What counts as a data point? 
+- The channel has 540K subscribers (one data point).
+- The community has 14K (one data point).
+- The host's public statements (we can count the number of distinct statements that show signal 3: there are 6 listed in the facts).
+
+But note: the facts list multiple statements. We can count each distinct statement as a data point? However, the instruction says "substantive verified data points", meaning each fact that is used to support the rating.
+
+But the rating is based on the signals, so we don't need to count every statement. The yield is just a count of the facts we have that are relevant.
+
+Looking at the facts, we have:
+- Channel: 540K+ subscribers (one fact)
+- Community: 14K+ (one fact)
+- Public statements: 6 distinct statements (but they are all about the same theme, so maybe count as one? But the instruction says "count of substantive verified data points", so we count each distinct fact).
+
+However, the instruction says: "a single row for the channel is acceptable" for career history. So we are to count the facts that are verified and substantive.
+
+Let's list the facts we used:
+1. Channel has 540K+ subscribers.
+2. Community has 14K+.
+3. Host's statement: "I Spent 60 Minutes Onboarding Claude. Now It Runs My Business" (and others).
+4. The channel has an "AI Founders Interviews" playlist (but no guest names).
+5. The host's LinkedIn headline.
+
+But note: the public statements are multiple, but they are all part of the same theme. The yield count is the number of distinct facts that are verified and substantive. We'll count the channel size (540K) as one, the community size (14K) as one, and the public statements as one (since they are all about the same topic and we don't need to count each one separately for the yield). However, the instruction says "count of substantive verified data points", so we count each fact that is a data point.
+
+But to be safe, let's count:
+- 540K subscribers: 1
+- 14K community: 1
+- The host's public statements: we have 6 titles, but they are all part of the same evidence for signal 3. However, the facts list them as separate. But for the yield, we count the distinct facts that are verified.
+
+The facts say: "No public statements found on hospitality, tourism, SMB operations, or specific sectors." — so we have the public statements that are on topic.
+
+We'll count the public statements as one data point (because they are all about the same theme and we don't need to count each one for the yield). But the instruction says "count of substantive verified data points", so we count each distinct fact that is a data point.
+
+Looking at the facts, the public statements are listed as:
+- "I Spent 60 Minutes Onboarding Claude. Now It Runs My Business" (YouTube, April 2026)
+- "How I'd Build a One-Person AI Business Using Only Claude In 2026 ($0 - $1M)" (YouTube, April 2026)
+- ... and so on.
+
+So there are 6 distinct statements. But they are all about the same topic, so for the purpose of the yield, we might count them as one? However, the instruction doesn't specify. 
+
+But note: the yield is for the profile, and the profile is based on the facts. We'll count each distinct fact that is a data point. So:
+
+- 540K subscribers: 1
+- 14K community: 1
+- The 6 public statements: 6
+
+But that would be 8. However, the public statements are all part of the same evidence (signal 3), so we don't need to count each one. The yield count is for the number of facts that are verified and that we used to build the profile.
+
+The instruction says: "yield: <integer count of substantive verified data points>". 
+
+In the context, a "data point" is a fact that is verified and substantive. We have:
+- Channel subscriber count: 540K+ (1)
+- Community size: 14K+ (1)
+- The existence of the interviews playlist (1)
+- The host's public statements (we can count the number of statements, but they are all about the same theme, so maybe count as one? But the facts list 6, so we'll count 6 for the statements).
+
+But note: the facts also include the career history, but that's not a data point for the rating. The yield is for the rating.
+
+We'll count:
+- 540K subscribers: 1
+- 14K community: 1
+- The interviews playlist: 1 (because it's a fact that the playlist exists)
+- The 6 public statements: 6
+
+Total: 9
+
+But wait, the career history has multiple entries, but we don't count those as data points for the rating. We only count the facts that are relevant to the rating.
+
+So the relevant facts for the rating are:
+- Subscriber count (540K)
+- Community size (14K)
+- Interviews playlist exists
+- The 6 public statements
+
+That's 9 data points.
+
+However, the instruction says: "a single row for the channel is acceptable" for career history, meaning we don't count career history as data points for the yield. The yield is for the rating.
+
+But note: the facts also include the fact that the channel is primarily solo content, which is relevant to the format. But we don't count that as a data point for the yield? The yield is the count of substantive verified data points that support the rating.
+
+We'll go with 9.
+
+But let's see: the facts list 6 public statements, so that's 6. Plus the two numbers (540K, 14K) and the playlist (1) -> 9.
+
+However, the playlist is one fact (the existence of the playlist), so that's one.
+
+So yield = 9.
+
+But note: the facts also say "The 14K+ Skool community ...", so that's one fact (the size). Similarly, the 540K is one fact.
+
+So:
+- 540K subscribers: 1
+- 14K community: 1
+- Interviews playlist: 1
+- 6 public statements: 6
+
+Total: 9.
+
+Now, for the profile:
+
+We must write exactly as per the structure.
+
+Let's fill in the profile:
+
+---
+profile_date: 2026-07-02
+star_rating: 3
+yield: 9
+dependent_data:
+  contact_name: Laura Lacurezeanu
+  organisation: AI Founders HQ
+  role: Creator/Founder
+  date_excluded: null
+---
+# Profile: Laura Lacurezeanu
+
+## Current role
+Founder & CEO of Scale Studio (Zürich, Nov 2024–present) and Creator/Founder of AI Founders HQ (YouTube channel, 540K+ subscribers, Dec 2019–present).
+
+## Career history
+| Period | Role | Organisation | Notes |
+|---|---|---|---|
+| Dec 2019–present | Creator/Founder | AI Founders HQ (YouTube/@AIFoundersHQ) | 540K+ YouTube subs; 14K+ Skool community |
+
+## Certifications and education
+- MBA, INSEAD, 2012–2013; specialisations in Marketing, Strategy, Entrepreneurship, Finance
+
+## Volunteer and mentorship
+- CEE Ambassador, Nemes Ventures (per web sources; ongoing date not confirmed)
+- Weekly Q&A sessions for 14K+ Skool community — AI strategy and implementation coaching
+
+## What they have said publicly
+**On AI business implementation (YouTube, April 2026):** "I Spent 60 Minutes Onboarding Claude. Now It Runs My Business"  
+**On building a one-person AI business (YouTube, April 2026):** "How I'd Build a One-Person AI Business Using Only Claude In 2026 ($0 - $1M)"  
+**On AI business planning (YouTube, Jan 2026):** "My $5M AI Business Plan using AI Agents in 2026"  
+**On AI business ideas (YouTube, Feb 2026):** "3 Ridiculously Simple AI Business Ideas That Actually Work | We've sold these"  
+**On AI consulting (YouTube, Nov 2025):** "We Tried Building an AI Consulting Business in 6 Days!"  
+**On AI implementation philosophy (aifoundershq.com/LinkedIn, 2026):** "What actually changes the game is not the tool, but how AI is designed into the business."  
+**LinkedIn headline (2026):** "Turning AI Innovation into Market Leadership with Proven Growth Playbooks | I talk about the AI Economy and how smart founders leverage AI to scale their business."
+
+No host-voiced statements on hospitality, tourism, SMB operations, or specific sectors found.
+
+## Who they know (connections relevant to campaign)
+| Person | Relationship | Relevance to campaign |
+|---|---|---|
+| Dan Lacurezeanu | Husband and co-founder; co-presents on YouTube; manages technical agent builds and Skool community | Not a separate campaign contact; same editorial unit |
+
+## Catalogue evidence
+**On-topic episodes (signal 1):**  
+- "I Spent 60 Minutes Onboarding Claude. Now It Runs My Business" (YouTube, April 2026)  
+- "My $5M AI Business Plan using AI Agents in 2026" (YouTube, Jan 2026)  
+
+**Founder/operator/exited-founder guests (signal 2):**  
+*No external founder guests confirmed; only co-host Dan Lacurezeanu (husband) featured in videos. The channel has an "AI Founders Interviews" playlist but specific external guests not listed in facts.*
+
+**Host-voiced thesis (signal 3):**  
+- "How I'd Build a One-Person AI Business Using Only Claude In 2026 ($0 - $1M)" (YouTube, April 2026)  
+- "3 Ridiculously Simple AI Business Ideas That Actually Work | We've sold these" (YouTube, Feb 2026)  
+- "What actually changes the game is not the tool, but how AI is designed into the business." (aifoundershq.com/LinkedIn, 2026)
+
+## Relevance assessment
+1. **Topic (signal 1):** Met. The channel covers AI in business, AI agents, and automation (e.g., videos on AI agents, business planning, and building AI businesses). The channel does not cover hospitality, tourism, or SMB operations specifically, but the topic of AI in business is directly relevant to the campaign subject (an AI system for a business).
+2. **Guests (signal 2):** Not met. The facts do not list any external founder, operator, or exited founder guests. The only named guest is Dan Lacurezeanu (co-founder, not external). The channel has an "AI Founders Interviews" playlist but no external guests are confirmed in the facts.
+3. **Stated interest (signal 3):** Strongly met. The host has made multiple public statements about building AI-powered businesses, using AI agents, and her own experience (e.g., "I Spent 60 Minutes Onboarding Claude. Now It Runs My Business", "My $5M AI Business Plan using AI Agents in 2026", and her LinkedIn headline).
+
+**Audience overlap:** The channel's audience (14K+ Skool community members) is described as "founders/operators actively building AI-powered businesses", which matches the target audience (startup investors and founders; broad AI-in-business audience).
+
+**Reach judgment:** The channel has 540K+ YouTube subscribers and a 14K+ Skool community, indicating strong reach into the target audience.
+
+**Reasoning for star_rating:** The channel has strong reach (540K subscribers) and the audience is perfectly matched (founders/operators building AI businesses). Two of the three relevance signals are met (topic and stated interest), but the third (guests) is not confirmed. Given the conservative calibration and the fact that the channel does not have evidence of featuring external founder guests (critical for a guest feature), the rating is 3. A 4 would require all three signals to be met or strong evidence of signal 2, which is missing.
+
+## Verification corrections
+None.
+
+Now, let's check the star_rating: we decided 3.
+
+But note: the campaign subject is a founder who built an AI system for his business, and the channel is about AI in business and the host is a founder. The channel has an interviews playlist, so it's a venue for a guest. However, the facts do not confirm they feature external founders, so we cannot count signal 2. Therefore, 3 is conservative.
+
+We'll go with 3.
+
+Let's write the profile accordingly.
