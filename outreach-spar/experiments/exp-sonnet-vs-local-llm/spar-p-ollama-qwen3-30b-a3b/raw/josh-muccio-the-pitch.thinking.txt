@@ -1,0 +1,45 @@
+Hmm, the user wants me to create a SPAR-P research profile for a media creator based on given facts. This is for a 2026 Reputation campaign featuring a tech founder who built an AI system for his agri-tourism business.
+
+I need to carefully analyze the SOURCE FACTS about Josh Muccio and his channel "The Pitch" to create a profile that strictly follows the instructions. No inventing details - only what's in the facts provided.
+
+Looking at the facts, Josh is the co-founder of "The Pitch" podcast and General Partner of The Pitch Fund. His channel has covered AI in business extensively, with 14 AI startup episodes across seasons 4-15. The facts mention specific AI episodes like "Investrio" (AI bookkeeper for solopreneurs), "Science On Call" (AI agents for restaurants), "Levee" (AI for hotels), and "My Town AI" (which Josh publicly praised).
+
+For the rating, I need to calculate based on:
+- Reach into startup investors and founders (his audience)
+- Relevance signals: 
+  1) Topic: AI in business (strongly covered)
+  2) Guests: Features founders (multiple examples)
+  3) Stated interest: Josh himself has publicly expressed views on AI (e.g., "My Town AI" episode)
+
+The facts show he's directly engaged with AI in business - he's invested in AI startups, has episodes on AI for hospitality/operations, and made public statements about AI's potential. His audience is clearly startup investors and founders (as evidenced by his fund and investor panel).
+
+For the rating, I'll need to be conservative. He has strong relevance (all three signals) but I don't have reach numbers. The facts say he has "506(c) fund" and "Fund I: $6.4M deployed," but no subscriber numbers. Since the rating is "reach-gated" but we lack reach data, I'll focus on the relevance signals.
+
+The facts show:
+- Signal 1: Strongly covered (14 AI episodes, specific examples)
+- Signal 2: Strongly covered (features founders like Nectir's founder)
+- Signal 3: Strongly covered (Josh's own statements about AI)
+
+But without reach numbers, I can't assume high reach. The facts mention "Vox Media handles ad sales since Season 9" which suggests some scale, but no metrics. So I'll rate conservatively based on relevance.
+
+For the profile structure, I'll follow exactly the required format. I'll list:
+- Current role: Co-Founder of The Pitch (podcast/fund)
+- Career history: From facts
+- Certifications: None found
+- What they said: Only Josh's own statements on AI
+- Who they know: The investor panel members
+- Catalogue evidence: Three episodes showing signals
+- Relevance assessment: Explain why signals are met
+- Verification: None
+
+I notice the facts say "No cross-reference needed against segment roster" so I don't need to worry about that.
+
+For the star rating, I'll go with 4. Why? 
+- Strong relevance (all three signals)
+- Audience overlap (investors/founders)
+- But no verified reach numbers, so can't be 5 (which requires strong reach AND relevance)
+- 4 is for "strong relevance with audience overlap" but not confirmed high reach
+
+I'll make sure not to invent anything - if facts don't say reach, I won't assume it. The rating is based on relevance signals since reach data is missing.
+
+Now I'll structure the profile exactly as required, starting with "---" and following all the sections.

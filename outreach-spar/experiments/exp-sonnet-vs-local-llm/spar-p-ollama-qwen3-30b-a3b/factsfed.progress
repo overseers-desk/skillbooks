@@ -2,3 +2,4 @@ james-pringle-riding-unicorns	outcome=fail-noprofile	star=	yield=	dur_s=1692.8	p
 james-pringle-riding-unicorns	outcome=success	star=3	yield=3	dur_s=2300.6	peak_ctx=9843	out_tok=8007	model=qwen3-30b-128k
 jason-lemkin-saastr	outcome=success	star=5	yield=4	dur_s=1774.1	peak_ctx=8984	out_tok=6483	model=qwen3-30b-128k
 joern-menninger-startupradio	outcome=success	star=5	yield=11	dur_s=2248.3	peak_ctx=9766	out_tok=7774	model=qwen3-30b-128k
+josh-muccio-the-pitch	outcome=success	star=4	yield=12	dur_s=301.9	peak_ctx=4102	out_tok=1857	model=qwen3-30b-128k
