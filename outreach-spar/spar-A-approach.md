@@ -148,7 +148,7 @@ Spawn one subagent (C2) to perform two sequential steps. Use a Sonnet-class mode
 
 The two steps must be sequential: role-play before fact-check, so source-file knowledge does not contaminate the persona.
 
-A1 reads both steps. If C2 identifies a misalignment or a factual error, A1 revises and the pass repeats. Record all drafts and C2 responses in the approach file — the human needs to see how the message evolved.
+A1 reads both steps. If C2 identifies a misalignment or a factual error, A1 revises and the pass repeats. When the persona raised more than three points, A1 sorts each before revising: answer in this email, leave for the reply, or absorb by reframing a sentence already there; the draft changes only for the first and third, and the sorting is recorded in the round's `revision_note`. The pass criterion matches: a question the reader would ask on replying is not a concern; only what would stop the reply is. Record all drafts and C2 responses in the approach file — the human needs to see how the message evolved.
 
 ### 4.7 Assemble the approach file
 
@@ -243,7 +243,7 @@ rounds:
         note: Clarification about the check.
         correction: Amended wording if the claim was wrong.
     antifact_check: Counter-check against manufactured claims.
-    revision_note: What changed between draft and final.
+    revision_note: What changed between draft and final and, where the persona raised more than three points, how each point was sorted.
     notes: Reviewer-stage freeform notes.
   - type: final
     chosen_usps: [U2, U4]
