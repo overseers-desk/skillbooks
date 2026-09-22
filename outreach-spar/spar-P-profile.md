@@ -107,9 +107,9 @@ If the employer's website reveals programmes or focus areas the segment's rubric
 
 When the segment's value turns on the outlet's reach and the outlet is not one independently recognisable as large, do not inherit a "large / major / global" label from the profile seed or the outlet's own copy. Verify current reach against an external figure (a traffic source such as Similarweb) and record the number with its date and source. A size label without a number and a date is not evidence (§5.0).
 
-### 4.7 Engagement state is not profile content; the contact's dated conduct is
+### 4.7 The contact's dated conduct towards us is profile content
 
-P does not sweep IMAP and does not record warmth. Warmth, connection status, "no prior contact", and our outreach record are engagement state: a new message falsifies them, so a profile carrying them is stale on reuse (INVARIANTS.md, I1). The approach phase determines warmth fresh at contact time, from the per-contact approach log and a current IMAP check, whatever the profile says. A dated event in which the contact acted on us (quoted a job, disputed an invoice) is their conduct and enters the profile as evidence (`## Mechanism evidence`, the relevance assessment), sourced from `s_note` or a thread the roster names, not from a mailbox sweep.
+A dated act by the contact on us is their conduct (an enquiry, a booking, a quote, a complaint, a refusal, a request not to be written to again). The rating rubric reads such an act with no campaign in existence, so record it in `## Mechanism evidence` with its date and source (§5.2). Record what they did and what they said, quoted where the wording carries weight. A reading of how the relationship stands is not a fact about them. Our side of it is not profile content either: warmth, connection status and our outreach record are engagement state, which A determines fresh at contact time (INVARIANTS.md, I1).
 
 ### 4.8 Source contact email
 
@@ -314,6 +314,10 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 ## [Domain-specific operational context, if applicable]
 
 [e.g. "FOSSASIA operational role" — only include if the target has operational experience the rubric values that does not fit in the career history table]
+
+## Mechanism evidence
+
+[Dated evidence that the contact fits the segment's mechanism (`discovery_criteria`), each item with its date and source. A dated act of theirs towards us belongs here (§4.7).]
 
 ## Relevance assessment
 
