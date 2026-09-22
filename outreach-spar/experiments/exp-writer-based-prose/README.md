@@ -1,6 +1,10 @@
 # exp-writer-based-prose
 
-Can a guard placed around the drafting loop stop a letter carrying the writer's private reasoning to the reader? Fourteen arms across four rounds, 22 and 23 September 2026. None worked. The faults that survived were all written before drafting began, in the campaign's own inputs, where no guard around the loop can reach them.
+A letter drafted from a campaign brief carries the brief to the reader: a code and a link that were never introduced, a call that has not happened, reasons for the offer the reader did not ask for. The method already has what looks like the perfect detector for this. Before any fact-check, a context-isolated agent plays the recipient, with the recipient's profile and nothing of ours, and reacts. A reader who does not hold what the writer holds should be exactly the one who trips on a reference to nothing. It did not trip. It read the nonsense references, made sense of them, and passed letters that were not sendable. This experiment is about why, and about what, if anything, around the drafting loop can be made to catch what that reader did not.
+
+Fourteen arms across four rounds, 22 and 23 September 2026. None worked. The faults that survived were all written before drafting began, in the campaign's own inputs, where no guard around the loop can reach them.
+
+The short answer to why the reader passes them, worked out in the sections below and confirmed by the rounds: it was asked to react, and a reaction is robust to gaps, because reading is repair; it was not given the date, so an impossible ask read as advance notice; and it was not given the facts, so a false claim read as information. The same model asked to point at every expression it cannot resolve, before reacting, finds three to four per letter. The capacity was there; the task did not call it, and the isolation that kept our framing out took the reader's own world with it.
 
 ## Problem
 
@@ -16,11 +20,15 @@ The existing guard is SPAR-A §4.6 Step 1: a context-isolated agent plays the re
 
 ## Why the existing guard misses it
 
-Two reasons, both structural rather than a failure of the agent.
+Four reasons, all structural rather than a failure of the agent.
 
 **The persona construes.** A model told to react in character makes sense of whatever it is given. Faced with "an excursion in two days isn't realistic" it infers an excursion was offered and carries on. A real recipient with a room full of children does the same, faster. So the reader who would notice the gap is exactly the reader the role-play is not.
 
 **The persona does not know what day it is.** §4.6 Step 1 gives C2 the profile and the draft and nothing else, so our framing cannot contaminate the reaction. That isolation also removes the fact that decides whether a time-bound offer is actionable. In the draft for Songbirds Early Learning at Pimpama, a vacation-care service, the persona read a show two days away as advance notice: *"this is talking about September, so it's not solving my immediate problem, but a heads-up for later is fine"*, and *"I'd probably reply within a day or two if it fits our calendar"* — a reply time that lands after the show. Controlled comparison: the same persona, same draft, one line added ("Today is Tuesday 22 September 2026") opened with *"first thing I notice: that's two days away"* and rejected the ask on permission forms, bus booking and ratios.
+
+**The persona is asked to react, not to point.** A reaction is the end of reading, and reading is repair: by the time a reader can say how they feel about an offer, every gap has been filled in. The same model given the same letters and asked instead to list each expression it cannot resolve, before any reaction, finds three to four per letter (the round-3 and round-4 scorers, one pass each over 55 to 75 letters). Pointing has to precede reacting; a reader who has already reacted has repaired the gaps without noticing them.
+
+**The persona does not know the facts.** "Not on sale anywhere" and "you were picked" are information to a reader with no way to check them, and the registry the fact-check treats as authority is where those claims are written. Falsity needs the facts, and the persona is given neither the facts nor a reason to doubt what it reads.
 
 ## Attempts
 
