@@ -109,7 +109,7 @@ In both the writer holds the plan block, the registry, the profile, the fact sou
 |---|---|---|---|---|---|---|
 | A, first draft, 7 | 2.86 | 0.29 | 1.00 | 0.86 | 1.14 | 186 |
 | A, final, 7 | 3.14 | 0.43 | 1.14 | 0.43 | 1.43 | 213 |
-| B, sent letter, 19 | 3.14 | 0.59 | 1.14 | 1.09 | 2.09 | 252 |
+| B, sent letter, 19 | 3.11 | 0.63 | 1.16 | 1.11 | 2.21 | 253 |
 | B, second writing, 19 | 3.05 | 0.68 | 1.21 | 1.11 | 2.74 | 290 |
 
 Paired per letter, better / same / worse: A on sender-side sentences 0 / 5 / 2, on unresolved references 1 / 2 / 4, on words 0 / 0 / 7 longer; B on sender-side sentences 1 / 10 / 8, on unresolved references 7 / 7 / 5, on false claims 2 / 15 / 2, on words 1 / 1 / 17 longer. The one movement in the right direction is A's unsupported claims, down in two pairs of seven.
