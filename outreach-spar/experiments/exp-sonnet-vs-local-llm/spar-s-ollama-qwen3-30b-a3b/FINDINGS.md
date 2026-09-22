@@ -18,6 +18,8 @@ The question was what SPAR work a local model can take off hosted Claude, given 
 
 **What defeats it.** Context size, which sets the decode rate; its own deliberation, which it cannot be told to skip; tools declared to it that have no provider under the bridge; and the mechanics of a deliverable, which it narrates rather than performs.
 
+The tracker one directory up states this experiment as a profiling question and names no dappnode; the sweep and profile results here both bear on it, and updating it is its owner's.
+
 
 Written 2026-09-20, with the sweep still running. The timing and defect findings below are settled and do not depend on its outcome. The roster comparison does, and is not here yet.
 
