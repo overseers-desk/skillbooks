@@ -1,0 +1,94 @@
+I've drafted a reply on the April thread with the shed and a phone script for Wednesday morning. Before drafting I read the April email and the season showtimes.
+
+RATIONALE_START
+**Target and addressee.** The roster has 4 stars and no exclusion. The email is the shed's shared Gmail. The profile says the website (March 2026) lists Keith Ward as President and Les Chapman as Secretary, and that Paul Lennon may be a former president. Our April email to this inbox began "Hi Keith". So the email is addressed to Keith and Les. The phone script starts with Paul, whose mobile is on the roster, and falls back to the shed phone.
+
+**Warmth: prior contact, with no reply.** On 9 April 2026 Lia Movsisyan (partnerships@rivermill.au, admin account, UID 74685) emailed oxenfordmensshed@gmail.com with the subject "Group outing to Historic Rivermill from Oxenford". It offered a midweek group morning for 20 to 40 people. Searching both from and to that address finds no reply. The draft mentions the April email in one plain line and does not repeat its ask. For that reason I left out the "bring a group next week" offer (the group-visit-later USP), even though the segment's first_ask includes it.
+
+**Thread.** The §4.1.1 conditions are met: the warmth is prior, a thread exists, and the roster address is on it. The email therefore replies on that thread. Parent Message-ID: <0108019d6d98a661-9fa3d0c6-d323-4ed2-9f28-155f87f16c3b-000000@ap-southeast-2.amazonses.com>, folder [Gmail]/All Mail.
+
+**Channel.** Email on Tuesday 22 September. If there is no reply, a phone call on Wednesday 23 September (the campaign's wait is 1 day). The shed meets Wednesday 8 to 11am, so both the call and a mention to members can happen that morning.
+
+**Angle.** The profile shows a shed with 100+ mostly retired members, a Women's Shed program, and group outings. The shows run in the school holidays, so the obvious families are grandchildren. The message offers tickets for members and their families. The shed only has to pass them on, at a session or by email. The ask matches the message_goal: a reply with roughly how many.
+
+**USPs chosen:** opening-week-seats (functional), nothing-to-organise (functional), chosen-not-advertised (emotional, one short clause), big-top-at-a-heritage-farm (emotional).
+
+**Fact provenance:**
+- Show name, big top on our lawn, family show: campaign YAML and the showtimes file.
+- Opening Thursday 24 September; the seven shows are Thu 1pm, Fri 4pm and 7pm, Sat 4pm and 7pm, Sun 11am and 2pm. Source: the showtimes file, with times from `historicrivermill.au/data/circus.yaml`.
+- Mount Nathan, Coomera River, address: business-overview.md.
+- Phone 0493 563 028: business-overview.md "Facts for outreach drafting".
+
+**Left out:** the code, prices, any running time (the 90-minute figure is our own estimate, not CHARC's), the Oztix links, animal feed, the subscriber discount, and why the tickets are free.
+RATIONALE_END
+
+FIRST_START
+Subject: Re: Group outing to Historic Rivermill from Oxenford
+
+Hi Keith and Les,
+
+I have free tickets for shed members and their families to WANTED – A Cirque Heist, a circus in a big top on our lawn at Historic Rivermill, Mount Nathan. It opens this Thursday, 24 September, and the tickets are good for any of the seven shows from Thursday to Sunday.
+
+I'm Priyanka Das, in partnerships at Historic Rivermill, the heritage venue on the Coomera River at Mount Nathan. Lia from our team wrote to the shed in April about a group morning here.
+
+The shows are:
+Thursday 24 September, 1pm
+Friday 25 September, 4pm and 7pm
+Saturday 26 September, 4pm and 7pm
+Sunday 27 September, 11am and 2pm
+
+Members book whichever show suits them, with grandkids on school holidays or anyone else in the family. The free tickets are set aside for a few local organisations and the shed is one of them. If you reply with roughly how many members might like them, I'll send the booking link and code for you to pass around. They're for members and their families rather than for posting publicly.
+
+Kind regards,
+Priyanka Das
+Partnerships, Historic Rivermill
+partnerships@rivermill.au
+0493 563 028
+FIRST_END
+
+The recipient, reading this in the shed inbox, would ask: Who is this, and is it really free? How many can we have? What exactly do I have to do, and by when, with Thursday two days away? Can I just tell the blokes at the shed tomorrow? Do Women's Shed members count? Where is it? The first draft answers most of these but in a scattered order. The "I'm Priyanka" paragraph comes after the offer, and the reply reads best in one order: what, when, what I do. The final version puts who I am first, gives the dates next, and makes the one thing to do easy to find. It says that Women's Shed members are included and mentions tomorrow's session.
+
+DRAFT_START
+**Email: Tuesday 22 September 2026**
+To: oxenfordmensshed@gmail.com
+Subject: Re: Group outing to Historic Rivermill from Oxenford
+
+Hi Keith and Les,
+
+I'm Priyanka Das from Historic Rivermill, the venue on the Coomera River at Mount Nathan. Lia from our team wrote to the shed in April about a group morning here.
+
+I have free tickets for shed members and their families to WANTED – A Cirque Heist, a family circus in a big top on our lawn. It opens this Thursday, 24 September, and the free tickets cover all seven shows that first weekend:
+
+Thursday 24 September, 1pm
+Friday 25 September, 4pm or 7pm
+Saturday 26 September, 4pm or 7pm
+Sunday 27 September, 11am or 2pm
+
+Each member books the show that suits them, for themselves, the grandkids on school holidays, or anyone else in the family. That includes the Women's Shed. They are set aside for a few local groups, and the shed is one.
+
+Reply with roughly how many members might like them, and I'll send the booking link and code straight back, in time to mention it at tomorrow's session. They're for your members and their families rather than for posting publicly.
+
+Kind regards,
+Priyanka Das
+Partnerships, Historic Rivermill
+950 Beaudesert Nerang Rd, Mount Nathan
+partnerships@rivermill.au
+0493 563 028
+
+---
+
+**Phone follow-up: Wednesday 23 September, morning, if no reply**
+First call: Paul Lennon, 0447 667 606. If Paul is no longer on the committee, or doesn't answer, call the shed on 0410 639 184 while the session runs (8 to 11am) and ask for Keith Ward or Les Chapman.
+
+"Hi, is that Paul? It's Priyanka Das from Historic Rivermill, out at Mount Nathan. I emailed the shed's Gmail yesterday.
+
+We've got free tickets for shed members and their families to a circus that opens tomorrow, Thursday, in a big top on our lawn. It's called WANTED – A Cirque Heist. There are seven shows between tomorrow and Sunday. Members pick whichever one suits them and bring the grandkids or whoever they like.
+
+Would the shed pass it on to members? Roughly how many do you think might want them?"
+
+[If yes:] "Great. I'll email the booking link and the code to the shed's Gmail as soon as we hang up, so you can hand it round. They're for members and their families rather than for posting publicly."
+
+[If Paul has stepped back:] "No worries. Is Keith or Les the best person? I'll give the shed a ring now while they're in."
+
+[If voicemail:] "Hi, it's Priyanka Das from Historic Rivermill at Mount Nathan, about free circus tickets for shed members and their families this Thursday to Sunday. The details are in the email I sent to the shed's Gmail yesterday. You can reach me on 0493 563 028. Thanks."
+DRAFT_END

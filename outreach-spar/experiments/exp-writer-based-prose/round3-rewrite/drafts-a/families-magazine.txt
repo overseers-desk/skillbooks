@@ -1,0 +1,84 @@
+RATIONALE_START
+Segment: travel-blogger-domestic (no subsegments). Message goal: a reply accepting a pass and agreeing to give passes to readers. The first_ask shape is kept: a family pass of four for the contact, five more passes for a reader giveaway, and a reply naming a show. The campaign appendix overrides first_ask's `{eventbrite_link}` line, because the first message carries no code, no price and no link. The Eventbrite link and the code go in the pass confirmation.
+
+Warmth: prior contact, but not with this person, and the email does not mention it. The admin-rivermill-au prefetch holds a thread from 13–14 August 2025. Bárbara Quiñones (marketing@) used the magazine's contact form to ask the price of a listing in its "things to do on the Gold Coast with kids" article. Janine (Mergler, the previous owner and editor) quoted $250 + GST and offered the top spot under Animal Encounters. The last message in the thread is Janine's, asking us to send the listing copy. The search found nothing further from us. A fetch of that page on the day of drafting (560 KB, "Animal encounters" section present) does not mention Rivermill, so the listing never went ahead. The appendix's "we wrote and heard nothing back" line does not apply, because here we are the side that went quiet. The profile records no dated conduct of the contact's towards us. Janine has since handed over to Chinnu Sravya, and the thread is 13 months old and about a paid listing, not this offer. For those reasons I chose a fresh subject with no reference to the thread (§4.1.1, false branch). A human should decide whether Bárbara's unfinished listing is worth raising separately. It should not go into this email.
+
+Channel: email, then a phone follow-up the next morning if there is no reply (campaign secondary_channel wait_days 1). There is no LinkedIn.
+
+Angle: the profile's strongest evidence is its beat and its hosting practice. It runs a school-holiday activities guide, a Gold Coast with kids guide, a February 2025 farm-animal venue feature (Trevena Glen Farm), and its advertise page lists competitions and giveaways. The primary angle is therefore a reader giveaway for a school-holiday outing, with the owner's own family pass alongside it. The profile describes her as a mum of two, so a family pass of four suits her.
+
+USPs chosen: chosen-not-advertised (carried by "held in your name", with no explanation of why or how she was picked), opening-week-seats (any of the seven shows, Thursday 24 to Sunday 27 September), big-top-at-a-heritage-farm, and nothing-to-organise (she picks the winners and we send each family its booking, so no code is ever posted).
+
+Fact provenance:
+- Show name, operator, big top on the lawn: campaign header and circus.yaml.
+- Seven opening-week times (Thu 24 1pm; Fri 25 4pm and 7pm; Sat 26 4pm and 7pm; Sun 27 11am and 2pm): circus.yaml, as the showtimes file directs.
+- Mount Nathan, Gold Coast hinterland, 30 minutes from central Gold Coast: business-overview.md, U6.
+- Cafe, Peruvian Paso horses, alpacas and goats, riverside: business-overview.md, U1–U3.
+- Pass sizes: plan block first_ask.
+
+Antifacts checked: no stone or 100-year-old buildings, no vineyard, not on Tamborine Mountain, no farming claim. The email also carries no feed-bag offer, subscriber discount, code, price, Oztix link or suggestion of unsold seats.
+
+Changes from the first draft after reading it as Chinnu would:
+- The giveaway mechanics are stated: how winners get tickets and that nothing is posted as a code.
+- A line says the pass carries no obligation to publish. She sells venue reviews and would otherwise read the pass as a request for free advertorial.
+- The address and drive time are added.
+- The venue introduction is cut to one clause.
+RATIONALE_END
+
+FIRST_START
+Subject: A circus family pass for Families Magazine, shows from this Thursday
+
+Hi Chinnu,
+
+I'm Priyanka Das, partnerships at Historic Rivermill, the riverside cafe and horse-and-animal venue at Mount Nathan in the Gold Coast hinterland. WANTED – A Cirque Heist, a family circus by CHARC Performance, opens in a big top on our lawn this Thursday, 24 September.
+
+I have a family pass of four held in your name for any show from Thursday to Sunday, and five more passes for you to give away to your readers if you would like to run a giveaway.
+
+The shows are Thursday at 1pm, Friday and Saturday at 4pm and 7pm, and Sunday at 11am and 2pm.
+
+Reply with the show you'd like and I'll send your booking details.
+
+Kind regards,
+Priyanka Das
+Partnerships, Historic Rivermill
+partnerships@rivermill.au
+FIRST_END
+
+DRAFT_START
+**Email**
+
+Subject: A circus family pass for Families Magazine, shows from this Thursday
+
+Hi Chinnu,
+
+I'm Priyanka Das from Historic Rivermill at Mount Nathan in the Gold Coast hinterland. WANTED – A Cirque Heist, a family circus by CHARC Performance, opens in a big top on our lawn this Thursday, 24 September, and I have a family pass of four held in your name for any show from Thursday to Sunday.
+
+With it come five more passes for your readers, if you would like to run a school-holiday giveaway. You pick the winners and send me their names and emails, and I send each family its booking directly, so nothing needs posting except the giveaway itself.
+
+The shows this week:
+
+- Thursday 24 September, 1pm
+- Friday 25 September, 4pm and 7pm
+- Saturday 26 September, 4pm and 7pm
+- Sunday 27 September, 11am and 2pm
+
+We're at 950 Beaudesert Nerang Rd, Mount Nathan, 30 minutes from central Gold Coast. The cafe, the Peruvian Paso horses, and the alpacas and goats by the river are all part of the same visit. The pass is yours whether or not anything runs in the magazine.
+
+Reply with the show you'd like to see and whether you'll take the giveaway passes, and I'll send your booking details the same day.
+
+Kind regards,
+Priyanka Das
+Partnerships, Historic Rivermill
+partnerships@rivermill.au
+
+**Phone follow-up (Wednesday morning, if no reply)**
+
+Number: 0437 866 869
+
+"Hi, is that Chinnu? It's Priyanka Das from Historic Rivermill at Mount Nathan. I emailed you yesterday at editor@ about the circus opening in a big top on our lawn tomorrow, WANTED – A Cirque Heist. I have a family pass of four held for you at any show from Thursday to Sunday, plus five passes for a reader giveaway if you'd like to run one. Which show would suit your family?"
+
+- If she names a show: "I'll email your booking details to editor@ this morning. Would you like the five giveaway passes too? You pick the winners, send me their names, and I send each family its booking."
+- If she asks what it costs or what we expect: "Nothing. The pass is yours to use whether or not you write about it."
+- If she is busy: "No trouble. The details are in yesterday's email from partnerships@rivermill.au. Just reply with a show."
+- Voicemail: "Hi Chinnu, Priyanka Das from Historic Rivermill at Mount Nathan. I have a family pass for you to the circus opening on our lawn this Thursday, and passes for a reader giveaway. The details are in my email to editor@ from partnerships@rivermill.au. Thanks."
+DRAFT_END

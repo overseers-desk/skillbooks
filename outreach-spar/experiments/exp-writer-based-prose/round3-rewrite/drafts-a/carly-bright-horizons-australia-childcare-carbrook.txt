@@ -1,0 +1,84 @@
+RATIONALE_START
+Warmth: cold. The prefetch found two other women named Carly: Carly Easton, who booked a Red Tables party in January 2026 from carlyeaston17@hotmail.com, and Carly Waldock, who made a Rezdy order on 16 September 2026. Neither is linked to Bright Horizons Carbrook, so we have never written to this Carly and there is no earlier note to mention. The profile says the centre's shared inbox was on our subscriber list in the previous manager's time. That is list membership only. It is not anything Carly did with us, so the message leaves it out.
+
+Channel: phone only. The roster has no email, LinkedIn or Facebook, and the profile found only the shared inbox carbrook@bhchildcare.com.au, which belongs to the excluded row for the previous manager. Under §4.2 the first touch is a phone script. Asking for Carly's own email address is part of the call's close, because the certificate and confirmation need an address. The email is drafted in a later round and gets written back to the roster through §4.8.
+
+Language: Australian English.
+
+Angle and USPs: this is the childrens-holiday-outing segment, and the plan asks for a free group visit next week. The profile gives the basis: the register shows Vacation Care as an approved care type, the centre's own page lists Excursions, Carly is the site manager with booking authority, and it is 44 minutes from us. USPs used:
+- group-visit-later: the ask is a day next week and a rough headcount.
+- make-a-day-of-it: animals in the morning, then the show. Only two second-week shows fit a weekday vacation-care day: Wednesday 30 September at 12pm and Thursday 1 October at 11am. Friday and Saturday shows start at 4pm or later, after the weekday venue closes at 3pm, and vacation care does not run on Sunday.
+- credentials-on-request: the public liability certificate and visit details go by email for whoever approves excursions.
+
+chosen-not-advertised is carried by a named person ringing the programme directly, not by a sentence. The appendix rules out sentences about what is on sale or how the recipient was chosen, and on a phone call such a line would sound like a script.
+
+Facts and sources:
+- Opening Thursday 24 September at 1pm: showtimes file.
+- Second-week times: data/circus.yaml, which the showtimes file names as the home of the start times.
+- About an hour and a half per show: the showtimes file's 90-minute listing figure. CHARC has not stated a running time, so the script says "allow".
+- Weekday opening 9am to 3pm and cafe kitchen 9am to 1pm: S2 §2.1.
+- 30 minutes from central Gold Coast: business overview U6. Carly is told "about 45 minutes from Carbrook", from the profile's 44-minute drive.
+
+The call names no code, no price, no Eventbrite link, no feed bags and no subscriber discount. Seats are promised only as "I'll lock them in and email you", because the funnel has the sender check the second-week allocation with the manager. Wheelchair access is not stated in any source, so if Carly asks, the answer is to confirm it by email.
+RATIONALE_END
+
+FIRST_START
+PHONE SCRIPT: Carly, Service Manager, Bright Horizons Carbrook, 07 3287 6477
+
+If someone else answers:
+"Hi, it's Priyanka Das from Historic Rivermill at Mount Nathan. Could I speak with Carly, please? It's about a free excursion for your vacation care children next week."
+
+To Carly:
+"Hi Carly, it's Priyanka Das. I look after partnerships at Historic Rivermill, the riverside venue at Mount Nathan with the horses and animals, about 45 minutes from you. We've got a family circus opening in a big top on our lawn this Thursday, 24 September. It's called WANTED – A Cirque Heist.
+
+I'd like to book your vacation care group in for a free visit next week. They'd spend the morning with the animals, then see the circus at the daytime show. It's either Wednesday the 30th with the show at 12, or Thursday 1 October with the show at 11. Which day suits, and roughly how many children and educators would you bring?"
+
+If she names a day and a number:
+"Lovely. I'll lock that in today. What's the best email for you? I'll send the confirmation with our public liability certificate and the visit details, so you've got what you need for approval."
+
+If she needs to check first:
+"No problem. Can I take an email address? I'll send the two days and the paperwork over today, and you can reply once you've checked."
+
+If she asks:
+- Cost: "The visit is free for the children and educators."
+- Timing: "We open at 9. On the Thursday, the show starts at 11. Allow up to an hour and a half for it."
+- Food: "The cafe kitchen runs 9 till 1 on weekdays, or the children can bring lunch."
+
+Voicemail:
+"Hi Carly, it's Priyanka Das from Historic Rivermill at Mount Nathan. Our family circus opens in a big top on our lawn this Thursday. I'd like to offer your vacation care group a free visit next week, on Wednesday the 30th or Thursday the 1st: the animals in the morning, then the show. Could you call me back on [number]? Thanks."
+FIRST_END
+
+DRAFT_START
+PHONE SCRIPT: Carly, Service Manager, Bright Horizons Carbrook, 07 3287 6477
+Call on Tuesday 22 September.
+
+If someone else answers:
+"Hi, it's Priyanka Das from Historic Rivermill at Mount Nathan. Could I speak with Carly, please? I'm calling to offer her vacation care children a free excursion next week."
+
+To Carly:
+"Hi Carly, it's Priyanka Das. I look after partnerships at Historic Rivermill, the riverside venue at Mount Nathan with the horses and animals, about 45 minutes from you. This Thursday, 24 September, a family circus opens in a big top on our lawn. It's called WANTED – A Cirque Heist, and it's on through the school holidays.
+
+I'd like to book your vacation care group in for a free visit next week. The children would spend the morning with our animals, then watch the circus. There are two days: Wednesday the 30th, with the show at 12, or Thursday 1 October, with the show at 11. Which day suits you better, and roughly how many children and educators?"
+
+If she names a day and a number:
+"Great. I'll lock that in today. What's your best email? I'll send the confirmation with our public liability certificate and the visit details, so whoever signs off your excursions has it all in one place."
+
+If she needs to check with her area manager or the families first:
+"Of course. Can I grab an email address? I'll send both days and the paperwork this afternoon, and you can reply once you've checked."
+
+If she asks:
+- "What does it cost?" "Nothing. The morning and the show are free for the children and the educators with them."
+- "What's the day like?" "We open at 9. The children see the animals and walk the grounds, then go to the show. Allow up to an hour and a half for it. On the Thursday you'd be done by about half past 12."
+- "What about lunch?" "Bring it, or our cafe can cater. The kitchen runs 9 till 1 on weekdays."
+- "What ages is it for?" "It's a family show. If you tell me your age range, I'll mention it in my email."
+- "Is it wheelchair accessible?" "I'll confirm that in the email with the visit details."
+- "Could we come this week?" "Tell me which show you'd like and how many, and I'll check and come back to you today."
+
+Close:
+"Thanks, Carly. You'll have my email this afternoon."
+
+Voicemail:
+"Hi Carly, it's Priyanka Das from Historic Rivermill at Mount Nathan. A family circus opens in a big top on our lawn this Thursday, and I'd like to bring your vacation care group out next week for free: the animals in the morning, then the show. It's Wednesday the 30th or Thursday 1 October. My number is [number]. I'll try you again tomorrow morning."
+DRAFT_END
+
+The script has one placeholder, **[number]** in the voicemail. No source I read gives a callback number for partnerships@rivermill.au, so someone has to fill it in before the call.

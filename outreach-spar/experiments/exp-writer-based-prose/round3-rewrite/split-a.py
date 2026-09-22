@@ -11,7 +11,8 @@ def email_only(block):
     m = re.search(r'^.*Subject:.*$', block, re.M)
     if not m: return None
     tail = block[m.start():]
-    cut = re.search(r'\n\s*(#+\s*|\*\*)?(Phone|Platform|LinkedIn|SMS|Follow-up call|Call script)', tail, re.I)
+    cut = re.search(r'\n\s*(\*\*\d+\.|#{1,3}\s|(\*\*)?(Phone|Platform|LinkedIn|SMS|Follow-up call|Call script)|PHONE SCRIPT|---)', tail[1:], re.I)
+    if cut: cut = type('c', (), {'start': lambda self, o=cut.start() + 1: o})()
     body = tail[:cut.start()] if cut else tail
     body = re.sub(r'^\s*#+\s*', '', body)             # a markdown heading before Subject
     body = re.sub(r'^\*\*Subject:\*\*', 'Subject:', body)

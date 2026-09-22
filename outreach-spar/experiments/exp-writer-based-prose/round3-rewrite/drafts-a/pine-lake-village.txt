@@ -1,0 +1,94 @@
+RATIONALE_START
+Warmth is cold. The prefetch searched every account, by Corey Hegge's address and by subject for his name and the village's name, and found nothing. The profile records no dealing he has had with us. The email therefore opens with the offer and the date, introduces the sender in one sentence, and makes no mention of an earlier note.
+
+Channel: the roster has an email address and a mobile number and no LinkedIn or Facebook, so SPAR-A §4.2 calls for an email first and a phone follow-up if there is no reply. The campaign's `approach_sequencing` for this segment sets that call for the next morning (Wednesday 23 September). The email does not follow a call, so its first line does not name one. The language is Australian English, which is the campaign default.
+
+Angle: the profile has no public statements from Corey Hegge. It rests on his role (Village Manager, one of the segment's named buyer roles) and on the village's facilities: 147 independent-living units, a village bus and an active residents committee. The strongest angle is the segment's first ask. Residents take the tickets themselves, usually with grandchildren visiting over the school holidays, and the bus outing next week is a second option. The village bus confirmed in the profile is what makes the second-week option relevant.
+
+USPs used (from the `segments.retirement-village` block):
+- `opening-week-seats` (functional): seven shows, Thursday to Sunday, free. Times come from `circus.yaml`, which the showtimes file names as home: Thu 24 at 1pm; Fri 25 and Sat 26 at 4pm and 7pm; Sun 27 at 11am and 2pm.
+- `nothing-to-organise` (functional): residents book the show that suits them, and the village has no outing to run.
+- `big-top-at-a-heritage-farm` (emotional): a family circus in a big top on the lawn of a riverside venue.
+- `group-visit-later` (functional): the second-week daytime shows are Wed 30 Sep at 12pm, Thu 1 Oct at 11am and Sun 4 Oct at 11am. The email makes no promise of seats. The sender "comes back with seating", which matches the manager-permission step in the USP.
+- `chosen-not-advertised` (emotional) is conveyed by "set aside for Pine Lake residents" and not stated as a claim. The appendix says no sentence may explain what is or is not on sale or how the recipient was chosen.
+
+Constraints checked:
+- The email has no code, no price, no Eventbrite or Oztix link and no subscriber discount.
+- It says nothing about unsold seats and gives no reason for the offer.
+- It offers no animal feed.
+- The "not for posting publicly" line comes after the offer. It is worded as who the tickets are for, not as "do not share".
+- Show times come only from the showtimes source.
+- Antifacts: the venue is at Mount Nathan, at the foot of Tamborine Mountain. The email makes no claim about buildings, stone, vineyards or the mill.
+- It makes no claim about wheelchair access. The tent's access has not been stated, and that is why the disability segments are being held.
+- No cafe or animals pitch: `make-a-day-of-it` is not in this segment's USP list.
+
+Revision after reading as the recipient: a village manager would ask what the show is and whether it suits older residents and small children, where it is, how many tickets they can have, and what they have to do. The final draft adds "family circus" and the street address. It asks for a rough number of residents, which the conversion funnel's first step needs. It makes the ask a single reply action.
+
+Provenance:
+- Show name, big top on the lawn and operator: campaign header, `circus.yaml`.
+- Dates and times: `circus.yaml`.
+- Address: `business-overview.md` "Facts for outreach drafting".
+- Riverside venue with cafe, horses and farm animals: `business-overview.md` USPs U1–U3, U5.
+- Second-week offer: `usps.group-visit-later`.
+RATIONALE_END
+
+FIRST_START
+Subject: Free circus seats for Pine Lake residents, from this Thursday
+
+Dear Corey,
+
+WANTED – A Cirque Heist opens this Thursday, 24 September, in a big top on our lawn at Historic Rivermill, Mount Nathan. I have free tickets set aside for Pine Lake Village residents and the family who visit them over the school holidays.
+
+I'm Priyanka Das, and I look after partnerships at Historic Rivermill, the riverside venue with the cafe, horses and farm animals at the foot of Tamborine Mountain.
+
+There are seven shows between Thursday and Sunday: Thursday at 1pm, Friday and Saturday at 4pm and 7pm, and Sunday at 11am and 2pm. Residents book whichever suits them, on their own or with the grandchildren, so there is nothing for the village to arrange. Reply to this email and I will send the booking code and link for you to pass on. The tickets are for residents and their families rather than the village's public pages.
+
+If a village bus outing would suit better, the season runs into next week, with daytime shows on Wednesday 30 September at 12pm, Thursday 1 October at 11am and Sunday 4 October at 11am. Tell me a day and I will come back to you with seating.
+
+Kind regards,
+Priyanka Das
+Partnerships, Historic Rivermill
+partnerships@rivermill.au
+FIRST_END
+
+DRAFT_START
+EMAIL
+
+Subject: Free circus tickets for Pine Lake Village residents, from this Thursday
+
+Dear Corey,
+
+WANTED – A Cirque Heist, a family circus in a big top on our lawn at Mount Nathan, opens this Thursday, 24 September. I have free tickets set aside for Pine Lake Village residents and the grandchildren and family who visit them over the school holidays.
+
+I'm Priyanka Das, and I look after partnerships at Historic Rivermill, the riverside venue with the cafe, horses and farm animals at 950 Beaudesert Nerang Road, Mount Nathan, at the foot of Tamborine Mountain.
+
+There are seven shows from Thursday to Sunday:
+
+Thursday 24 September, 1pm
+Friday 25 and Saturday 26 September, 4pm and 7pm
+Sunday 27 September, 11am and 2pm
+
+Residents book the show that suits them, so the village has nothing to arrange. If you reply with roughly how many residents might like to go, I will send the booking code and link for you to pass on to them. The tickets are for residents and their families, not for the village's public pages.
+
+If a village bus outing would suit better, the season continues next week, with daytime shows on Wednesday 30 September at 12pm, Thursday 1 October at 11am and Sunday 4 October at 11am. Tell me a day and I will come back to you about seating.
+
+Kind regards,
+
+Priyanka Das
+Partnerships, Historic Rivermill
+partnerships@rivermill.au
+historicrivermill.au
+
+
+PHONE FOLLOW-UP (Wednesday 23 September, morning, if no reply; 0401 417 480)
+
+"Hi Corey, it's Priyanka Das from Historic Rivermill at Mount Nathan. I emailed you yesterday about free tickets for Pine Lake residents to WANTED – A Cirque Heist, the family circus in a big top on our lawn. It opens tomorrow at 1pm and runs through Sunday.
+
+Could I send you the booking code to pass on to residents? They can go on their own or take the grandchildren, whichever show suits them. Roughly how many do you think might be interested?"
+
+If he would rather run a bus outing: "Next week works for that. There are daytime shows on Wednesday the 30th at 12, Thursday the 1st at 11 and Sunday the 4th at 11. Which day would suit the bus? I'll come back to you today about seating."
+
+If he asks for it in writing: "It's in yesterday's email from partnerships@rivermill.au. Just reply to that and I'll send the code and link straight back."
+
+Voicemail: "Hi Corey, Priyanka Das from Historic Rivermill at Mount Nathan. I have free circus tickets for Pine Lake residents and their families, for shows from tomorrow to Sunday. The details are in my email from yesterday, from partnerships@rivermill.au. If you reply to it, I'll send you the booking code for residents. Thanks, Corey."
+DRAFT_END

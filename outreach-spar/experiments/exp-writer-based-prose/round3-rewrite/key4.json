@@ -1,0 +1,408 @@
+{
+ "ltr-255299.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-215637.txt",
+  "arm": "none-opus-5",
+  "stem": "beaudesert-probus-club",
+  "words": 349
+ },
+ "ltr-640597.txt": {
+  "kind": "original",
+  "source": "msg-215637.txt",
+  "arm": "none-opus-5",
+  "stem": "beaudesert-probus-club",
+  "words": 348
+ },
+ "ltr-621701.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-385477.txt",
+  "arm": "placebo-opus-5",
+  "stem": "pine-lake-village",
+  "words": 269
+ },
+ "ltr-263598.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-328183.txt",
+  "arm": "m12-opus-5",
+  "stem": "pine-lake-village",
+  "words": 236
+ },
+ "ltr-720121.txt": {
+  "kind": "a-final",
+  "source": "pine-lake-village.txt",
+  "arm": "round4-A",
+  "stem": "pine-lake-village",
+  "words": 231
+ },
+ "ltr-252665.txt": {
+  "kind": "a-final",
+  "source": "dorsett-gold-coast.txt",
+  "arm": "round4-A",
+  "stem": "dorsett-gold-coast",
+  "words": 240
+ },
+ "ltr-647357.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-663604.txt",
+  "arm": "placebo-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "words": 319
+ },
+ "ltr-674891.txt": {
+  "kind": "original",
+  "source": "msg-255174.txt",
+  "arm": "m2-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "words": 259
+ },
+ "ltr-425312.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-106143.txt",
+  "arm": "m12-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "words": 262
+ },
+ "ltr-165283.txt": {
+  "kind": "a-first",
+  "source": "families-magazine.txt",
+  "arm": "round4-A",
+  "stem": "families-magazine",
+  "words": 135
+ },
+ "ltr-085329.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-997794.txt",
+  "arm": "none-opus-5",
+  "stem": "pine-lake-village",
+  "words": 277
+ },
+ "ltr-260840.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-325964.txt",
+  "arm": "m2-opus-5",
+  "stem": "beaudesert-probus-club",
+  "words": 274
+ },
+ "ltr-789245.txt": {
+  "kind": "original",
+  "source": "msg-326941.txt",
+  "arm": "none-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "words": 319
+ },
+ "ltr-070331.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-405609.txt",
+  "arm": "m1-opus-5",
+  "stem": "pine-lake-village",
+  "words": 253
+ },
+ "ltr-858640.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-180172.txt",
+  "arm": "m1-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "words": 300
+ },
+ "ltr-567776.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-120442.txt",
+  "arm": "none-opus-5",
+  "stem": "families-magazine",
+  "words": 219
+ },
+ "ltr-780760.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-269019.txt",
+  "arm": "placebo-opus-5",
+  "stem": "beaudesert-probus-club",
+  "words": 381
+ },
+ "ltr-560216.txt": {
+  "kind": "a-final",
+  "source": "beaudesert-probus-club.txt",
+  "arm": "round4-A",
+  "stem": "beaudesert-probus-club",
+  "words": 241
+ },
+ "ltr-460990.txt": {
+  "kind": "original",
+  "source": "msg-303859.txt",
+  "arm": "m12-opus-5",
+  "stem": "beaudesert-probus-club",
+  "words": 249
+ },
+ "ltr-262715.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-431326.txt",
+  "arm": "m2-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "words": 276
+ },
+ "ltr-339622.txt": {
+  "kind": "original",
+  "source": "msg-269019.txt",
+  "arm": "placebo-opus-5",
+  "stem": "beaudesert-probus-club",
+  "words": 339
+ },
+ "ltr-875569.txt": {
+  "kind": "original",
+  "source": "msg-124723.txt",
+  "arm": "m12-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "words": 266
+ },
+ "ltr-030387.txt": {
+  "kind": "original",
+  "source": "msg-966080.txt",
+  "arm": "m1-opus-5",
+  "stem": "beaudesert-probus-club",
+  "words": 245
+ },
+ "ltr-590959.txt": {
+  "kind": "a-first",
+  "source": "beaudesert-probus-club.txt",
+  "arm": "round4-A",
+  "stem": "beaudesert-probus-club",
+  "words": 194
+ },
+ "ltr-310008.txt": {
+  "kind": "a-final",
+  "source": "iona-murray-imaginative-play-matters-gold-coast.txt",
+  "arm": "round4-A",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "words": 236
+ },
+ "ltr-543714.txt": {
+  "kind": "original",
+  "source": "msg-325964.txt",
+  "arm": "m2-opus-5",
+  "stem": "beaudesert-probus-club",
+  "words": 235
+ },
+ "ltr-297320.txt": {
+  "kind": "original",
+  "source": "msg-431326.txt",
+  "arm": "m2-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "words": 261
+ },
+ "ltr-596347.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-788224.txt",
+  "arm": "m1-opus-5",
+  "stem": "families-magazine",
+  "words": 191
+ },
+ "ltr-755528.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-255174.txt",
+  "arm": "m2-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "words": 285
+ },
+ "ltr-224814.txt": {
+  "kind": "original",
+  "source": "msg-983473.txt",
+  "arm": "placebo-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "words": 304
+ },
+ "ltr-798187.txt": {
+  "kind": "original",
+  "source": "msg-663604.txt",
+  "arm": "placebo-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "words": 324
+ },
+ "ltr-015501.txt": {
+  "kind": "original",
+  "source": "msg-328183.txt",
+  "arm": "m12-opus-5",
+  "stem": "pine-lake-village",
+  "words": 261
+ },
+ "ltr-892257.txt": {
+  "kind": "original",
+  "source": "msg-066979.txt",
+  "arm": "m2-opus-5",
+  "stem": "families-magazine",
+  "words": 212
+ },
+ "ltr-680958.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-983473.txt",
+  "arm": "placebo-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "words": 329
+ },
+ "ltr-622030.txt": {
+  "kind": "a-final",
+  "source": "fiona-harper-freelance.txt",
+  "arm": "round4-A",
+  "stem": "fiona-harper-freelance",
+  "words": 178
+ },
+ "ltr-863465.txt": {
+  "kind": "a-first",
+  "source": "iona-murray-imaginative-play-matters-gold-coast.txt",
+  "arm": "round4-A",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "words": 185
+ },
+ "ltr-496147.txt": {
+  "kind": "original",
+  "source": "msg-405609.txt",
+  "arm": "m1-opus-5",
+  "stem": "pine-lake-village",
+  "words": 233
+ },
+ "ltr-062622.txt": {
+  "kind": "original",
+  "source": "msg-997794.txt",
+  "arm": "none-opus-5",
+  "stem": "pine-lake-village",
+  "words": 249
+ },
+ "ltr-758399.txt": {
+  "kind": "a-first",
+  "source": "fiona-harper-freelance.txt",
+  "arm": "round4-A",
+  "stem": "fiona-harper-freelance",
+  "words": 163
+ },
+ "ltr-706078.txt": {
+  "kind": "original",
+  "source": "msg-180172.txt",
+  "arm": "m1-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "words": 300
+ },
+ "ltr-271252.txt": {
+  "kind": "a-final",
+  "source": "families-magazine.txt",
+  "arm": "round4-A",
+  "stem": "families-magazine",
+  "words": 224
+ },
+ "ltr-898259.txt": {
+  "kind": "original",
+  "source": "msg-120442.txt",
+  "arm": "none-opus-5",
+  "stem": "families-magazine",
+  "words": 233
+ },
+ "ltr-845148.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-409936.txt",
+  "arm": "placebo-opus-5",
+  "stem": "families-magazine",
+  "words": 266
+ },
+ "ltr-444607.txt": {
+  "kind": "a-first",
+  "source": "dorsett-gold-coast.txt",
+  "arm": "round4-A",
+  "stem": "dorsett-gold-coast",
+  "words": 114
+ },
+ "ltr-972773.txt": {
+  "kind": "a-first",
+  "source": "paul-lennon-oxenford-mens-shed.txt",
+  "arm": "round4-A",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "words": 202
+ },
+ "ltr-613808.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-326941.txt",
+  "arm": "none-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "words": 322
+ },
+ "ltr-452000.txt": {
+  "kind": "original",
+  "source": "msg-106143.txt",
+  "arm": "m12-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "words": 268
+ },
+ "ltr-099628.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-966080.txt",
+  "arm": "m1-opus-5",
+  "stem": "beaudesert-probus-club",
+  "words": 278
+ },
+ "ltr-585916.txt": {
+  "kind": "original",
+  "source": "msg-072915.txt",
+  "arm": "none-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "words": 295
+ },
+ "ltr-572018.txt": {
+  "kind": "original",
+  "source": "msg-385477.txt",
+  "arm": "placebo-opus-5",
+  "stem": "pine-lake-village",
+  "words": 261
+ },
+ "ltr-832824.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-303859.txt",
+  "arm": "m12-opus-5",
+  "stem": "beaudesert-probus-club",
+  "words": 277
+ },
+ "ltr-043892.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-124723.txt",
+  "arm": "m12-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "words": 256
+ },
+ "ltr-542857.txt": {
+  "kind": "a-final",
+  "source": "paul-lennon-oxenford-mens-shed.txt",
+  "arm": "round4-A",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "words": 204
+ },
+ "ltr-931868.txt": {
+  "kind": "a-first",
+  "source": "pine-lake-village.txt",
+  "arm": "round4-A",
+  "stem": "pine-lake-village",
+  "words": 215
+ },
+ "ltr-750117.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-072915.txt",
+  "arm": "none-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "words": 313
+ },
+ "ltr-735247.txt": {
+  "kind": "original",
+  "source": "msg-788224.txt",
+  "arm": "m1-opus-5",
+  "stem": "families-magazine",
+  "words": 212
+ },
+ "ltr-077991.txt": {
+  "kind": "original",
+  "source": "msg-409936.txt",
+  "arm": "placebo-opus-5",
+  "stem": "families-magazine",
+  "words": 205
+ },
+ "ltr-556040.txt": {
+  "kind": "rewrite-author",
+  "source": "msg-066979.txt",
+  "arm": "m2-opus-5",
+  "stem": "families-magazine",
+  "words": 247
+ }
+}

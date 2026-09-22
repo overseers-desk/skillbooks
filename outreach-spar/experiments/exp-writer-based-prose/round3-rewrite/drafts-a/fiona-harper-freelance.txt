@@ -1,0 +1,112 @@
+RATIONALE_START
+Warmth: cold. Neither courier pass found any mail to or from hello@fionaharper.com.au, and neither found her name or organisation in a subject line. The profile records no dated conduct of hers towards Rivermill. So the message does not mention any earlier note or prior dealing.
+
+Channel: the roster has LinkedIn and email, which gives a LinkedIn connection note followed by an email. The usual wait of 5 days, or until she accepts the connection, is too long for this offer. Five days from today, 22 September, is 27 September, the last opening-week show, and the code works only for opening-week shows. So the email should go out today with the note, not after it. Each piece carries the whole offer on its own, so it does not matter which one she reads first. Sending both at once departs from the §4.2 timing and needs the operator's approval.
+
+Language: English (en-au), as the campaign sets it.
+
+Approach type: the earned-media plan block prescribes a see-it-first invitation. The ask is to accept a family pass of four to one opening-week show and name the show. The message goal is a reply accepting the pass for an opening-week show.
+
+USPs chosen:
+- chosen-not-advertised (emotional): the pass is "held for you" in her name. It is not explained.
+- opening-week-seats (functional): any of the seven shows from Thursday 24 to Sunday 27 September.
+- big-top-at-a-heritage-farm (emotional): a circus in a big top on the lawn of a heritage riverside venue.
+
+The make-a-day-of-it USP is not on this segment's list, so it is left out. The horses, farm animals and cafe appear only in the sentence that introduces the venue, as a description of it.
+
+Angle and evidence: the segment's deciding interest is "a school-holiday story with pictures under a big top". The profile quotes her calling herself "a travel writer who takes pictures", and she is a Getty contributor. The subject line leads with pictures because that is the one detail that ties the offer to her work. It avoids narrating her career back to her, and names no outlet of hers, so nothing claims the story fits AFR or Australian Geographic.
+
+Fit risks the operator should weigh before sending:
+1. She is based in Bundaberg, about five hours' drive away, and the offer gives two days' notice.
+2. Her beat is cruise, wildlife and soft adventure, not family events on the Gold Coast.
+3. Her press-trip page turns down trips offered "just for free travel" and asks for invitations "appropriate to outlets where I am published".
+
+The message does not argue past any of these, because the reader did not ask. Expect a low response rate. If she replies, what she can most plausibly place is a Queensland school-holiday piece or a post on her own blog.
+
+Link and code: the brief says the code and the Eventbrite link go in the reply. The earned-media first_ask, and the campaign header for publisher segments, put the public Eventbrite link in the first message so her readers can buy tickets. The segment block is the more specific source, so the email carries only that public link, with no price and no code. The code goes out only when the pass is confirmed.
+
+Consistency: Carolyne Jasinski, her TravHost co-founder, is also on this segment's list. No approach has been drafted for her yet. When one is, she should get the same kind of pass held in her own name, so that the two can compare notes without finding a contradiction. The note to Fiona does not mention Carolyne.
+
+Fact provenance:
+- Show times (Thu 24 1pm; Fri 25 4pm and 7pm; Sat 26 4pm and 7pm; Sun 27 11am and 2pm) and the season ending Sun 4 October: showtimes file and circus.yaml sessions.
+- Big top on the lawn: campaign header and first_ask.
+- Family pass of four: earned-media first_ask.
+- Eventbrite URL: usps.opening-week-seats.rests_on.
+- Venue description (Mount Nathan, Gold Coast hinterland, Coomera River, Peruvian Paso horses, farm animals, cafe): business-overview.md USPs U1–U3 and "Facts for outreach drafting".
+- Address: business-overview.md.
+- Website: S2 §1.
+
+Antifact check: the draft does not claim stone buildings, old mill structures, a vineyard or a Tamborine Mountain location. It says Mount Nathan in the Gold Coast hinterland. It has no feed-bag offer, no subscriber discount, no Oztix link, no code and no price. Nothing suggests seats are unsold.
+RATIONALE_END
+
+FIRST_START
+LinkedIn connection note:
+
+Hi Fiona, I'm Priyanka at Historic Rivermill, Mount Nathan. I have a family pass of four held for you at WANTED – A Cirque Heist, a circus in a big top on our lawn, any show from this Thursday 24 September to Sunday. Reply here and I'll send the details.
+
+Email:
+
+Subject: Pictures under a big top at Mount Nathan: a family pass in your name, from Thursday
+
+Hi Fiona,
+
+I'm Priyanka Das, and I look after partnerships at Historic Rivermill, a heritage riverside venue at Mount Nathan in the Gold Coast hinterland, with Peruvian Paso horses, farm animals and a cafe on the Coomera River.
+
+I have a family pass of four held for you at WANTED – A Cirque Heist, a family circus in a big top on our lawn. The first show is this Thursday 24 September at 1pm, and the pass is good for any show through to Sunday 27 September:
+
+Thursday 24, 1pm
+Friday 25, 4pm or 7pm
+Saturday 26, 4pm or 7pm
+Sunday 27, 11am or 2pm
+
+Reply with the show that suits and I will send the booking details. The season runs to Sunday 4 October, and public tickets are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924
+
+Priyanka Das
+Partnerships, Historic Rivermill
+partnerships@rivermill.au
+950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+historicrivermill.au
+FIRST_END
+
+DRAFT_START
+LinkedIn connection note:
+
+Hi Fiona, I'm Priyanka at Historic Rivermill in Mount Nathan. I'm holding a family pass for four in your name for WANTED – A Cirque Heist, a circus in a big top on our lawn. It's good for any show from this Thursday 24 September to Sunday. Tell me the show and I'll send the details.
+
+Email:
+
+Subject: A family pass in your name: circus big top at Mount Nathan, from this Thursday
+
+Hi Fiona,
+
+I'm Priyanka Das, and I look after partnerships at Historic Rivermill, a heritage riverside venue at Mount Nathan in the Gold Coast hinterland. We have Peruvian Paso horses, farm animals and a cafe beside the Coomera River.
+
+The circus opens with us this Thursday, 24 September, and I have a family pass for four held in your name. The show is WANTED – A Cirque Heist, a family circus in a big top on our lawn. You can use the pass at any of the opening-week shows:
+
+Thursday 24 September, 1pm
+Friday 25 September, 4pm or 7pm
+Saturday 26 September, 4pm or 7pm
+Sunday 27 September, 11am or 2pm
+
+Tell me which show and how many are coming, and I will reply with the booking details the same day. The season runs until Sunday 4 October. Your readers can buy tickets here:
+https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924
+
+Kind regards,
+
+Priyanka Das
+Partnerships, Historic Rivermill
+partnerships@rivermill.au
+950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+historicrivermill.au
+DRAFT_END
+
+I wrote the second version after reading the first as Fiona would. These are the changes:
+- The opening date now comes before the pass, so the timing is clear from the first lines.
+- "In your name" moved into the subject line. The subject also drops "Pictures", which she might have read as a promise that photography is allowed, and nothing in the sources says whether it is.
+- She is asked how many are coming, so she knows the pass can be used by fewer than four.
+- The reply is promised the same day, because she has two days to plan a five-hour drive.
+- The public link is labelled as the one for her readers, so it does not look like the price of her own pass.
+
+Two things need your decision before this goes out:
+- **Timing.** The method says to send the email after she accepts the LinkedIn note, or after 5 days. Five days from today is Sunday 27 September, the last show the pass covers. I recommend sending both pieces today.
+- **Fit.** She lives in Bundaberg, about five hours' drive away, and her press-trip page turns down trips offered "just for free travel". Expect few replies from her.

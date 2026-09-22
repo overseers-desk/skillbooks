@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Paired comparison, each rewrite kind minus original, per source letter.
-usage: analyze.py <key50.json> <scores.tsv>"""
+usage: analyze.py <key.json> <scores.tsv> [after:before ...]\nWithout pair specs every non-original kind is compared with original."""
 import sys, json, csv, collections
 key = json.load(open(sys.argv[1]))
 rows = {r['file'] + ('' if r['file'].endswith('.txt') else '.txt'): r
@@ -18,18 +18,19 @@ print('mean per letter        ' + ' '.join(f'{c:>8}' for c in COLS))
 for kind in kinds:
     ps = [p for p in pairs.values() if kind in p]
     print(f'{kind:22s} n={len(ps):2d} ' + ' '.join(f'{sum(f(p[kind], c) for p in ps)/len(ps):8.2f}' for c in COLS))
-for kind in kinds[1:]:
-    full = [p for p in pairs.values() if 'original' in p and kind in p]
-    print(f'\n{kind} minus original, {len(full)} pairs: mean delta, and count better / same / worse')
+specs = [s.split(':') for s in sys.argv[3:]] or [[k, 'original'] for k in kinds[1:]]
+for kind, base in specs:
+    full = [p for p in pairs.values() if base in p and kind in p]
+    print(f'\n{kind} minus {base}, {len(full)} pairs: mean delta, and count better / same / worse')
     for c in COLS:
-        d = [f(p[kind], c) - f(p['original'], c) for p in full]
+        d = [f(p[kind], c) - f(p[base], c) for p in full]
         lower = c not in ('sent', 'words')
         b = sum(1 for x in d if x != 0 and (x < 0) == lower)
         w = sum(1 for x in d if x != 0 and (x > 0) == lower)
         print(f'  {c:8s} {sum(d)/len(d):+7.2f}   {b:2d} / {len(d)-b-w:2d} / {w:2d}')
-    print(f'  by original arm, nowhere and sender, original -> {kind}')
+    print(f'  by arm, nowhere and sender, {base} -> {kind}')
     by = collections.defaultdict(list)
     for p in full: by[p['arm']].append(p)
     for arm, ps in sorted(by.items()):
         m = lambda k, c: sum(f(p[k], c) for p in ps) / len(ps)
-        print(f'    {arm:16s} n={len(ps)}  nowhere {m("original","nowhere"):.2f} -> {m(kind,"nowhere"):.2f}   sender {m("original","sender"):.2f} -> {m(kind,"sender"):.2f}')
+        print(f'    {arm:16s} n={len(ps)}  nowhere {m(base,"nowhere"):.2f} -> {m(kind,"nowhere"):.2f}   sender {m(base,"sender"):.2f} -> {m(kind,"sender"):.2f}')
