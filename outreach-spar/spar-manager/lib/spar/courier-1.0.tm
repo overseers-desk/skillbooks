@@ -1,14 +1,8 @@
-# spar::courier — Courier prefetch helpers used by the SPAR-A prompt
-# builder (SPAR-P deliberately excludes prior correspondence from
-# profiles, per spar-P-profile.md §4.7). Builds the "## Courier —
-# prefetched by dispatcher" block injected into the approach prompt: an
-# account-list header (cached) plus a per-contact correspondence
-# cascade. Goal: kill redundant per-agent account-list calls and the
-# email_search/email-search guess pattern observed in courier #13.
-# Cascade: pass 1 by email (from/to), pass 2 by subject for name and
-# organisation. Uses `courier -A` (multi-account) with `--format text`;
-# both shipped in courier 1.0.3 along with the [Gmail]/All Mail folder
-# default and exit-1-on-empty.
+# spar::courier — prefetch helpers for the SPAR-A prompt builder. Builds
+# the "## Courier — prefetched by dispatcher" block: a cached account-list
+# header plus a per-contact cascade (pass 1 from/to the email, pass 2
+# subject-line for name and organisation), so the A worker neither
+# re-lists accounts nor invents a search command (courier #13).
 
 package require spar::lib
 
@@ -64,7 +58,7 @@ proc spar::courier::contact_block {name org email} {
         return $out
     }
     set q2 [join $q2_parts " OR "]
-    append out "\n# Pass 2 — subject-line search for name and organisation (SPAR-P §4.7)\n"
+    append out "\n# Pass 2 — subject-line search for name and organisation\n"
     append out "\$ courier -A search '$q2' --format text --limit 10\n"
     lassign [spar::courier::_run $q2] rc text
     append out "$text\n"

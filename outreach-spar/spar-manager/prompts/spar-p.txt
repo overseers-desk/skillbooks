@@ -1,6 +1,6 @@
 Follow the SPAR-P procedure at __SPAR_P_PATH__.
 
-This profile is reused by every future campaign on this contact and must read the same a month from now (see INVARIANTS.md, I1): record facts about the contact and your campaign-independent judgement of their value to us. Designing the pitch, and anything about our engagement with them or our own facts, is the approach phase's job, not yours.
+This profile is reused by every future campaign on this contact and must read the same a month from now (see INVARIANTS.md, I1): record facts about the contact, dated conduct towards us included, and your campaign-independent judgement of their value to us. The pitch, our warmth, and our own facts are the approach phase's job, not yours.
 
 Target: __NAME__ at __ORG__, role: __ROLE__. Phone: __PHONE__. Email: __EMAIL__.__PLATFORM_URLS__
 Roster notes — s_note: __S_NOTE__, p_note: __P_NOTE__.
