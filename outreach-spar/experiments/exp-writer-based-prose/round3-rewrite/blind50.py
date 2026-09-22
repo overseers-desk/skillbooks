@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Shuffle originals and rewrites into one folder under fresh random names,
-key written beside it. Pairing survives through the key.
-usage: blind50.py <out_dir> <round2_key.json> <originals_dir> <rewrites_dir>"""
+"""Shuffle originals and rewrite arms into one folder under fresh random
+names, key written beside it. Pairing survives through the key.
+usage: blind50.py <out_dir> <round2_key.json> original=<dir> <kind>=<dir> ..."""
 import sys, os, glob, json, random, shutil
-out, keyf, orig, rew = sys.argv[1:5]
+out, keyf = sys.argv[1:3]
+arms = [a.split('=', 1) for a in sys.argv[3:]]
 os.makedirs(out, exist_ok=True)
 k2 = json.load(open(keyf))
 random.seed(20260923)
-items = [(f, 'original') for f in sorted(glob.glob(os.path.join(orig, '*.txt')))] + \
-        [(f, 'rewrite') for f in sorted(glob.glob(os.path.join(rew, '*.txt')))]
+items = [(f, kind) for kind, d in arms for f in sorted(glob.glob(os.path.join(d, '*.txt')))]
 random.shuffle(items)
 key, used = {}, set()
 for path, kind in items:
@@ -20,4 +20,4 @@ for path, kind in items:
     key[name] = {'kind': kind, 'source': src, 'arm': k2[src]['arm'], 'stem': k2[src]['stem'],
                  'words': len(open(path).read().split())}
 json.dump(key, open(os.path.join(out, os.pardir, 'key50.json'), 'w'), indent=1)
-print(len(key), 'letters written')
+print(len(key), 'letters written;', {k: sum(1 for v in key.values() if v['kind'] == k) for k, _ in arms})
