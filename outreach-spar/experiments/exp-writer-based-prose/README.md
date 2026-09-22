@@ -1,6 +1,6 @@
 # exp-writer-based-prose
 
-Can a guard placed around the drafting loop stop a letter carrying the writer's private reasoning to the reader? Nine attempts across two rounds, 22 September 2026. None worked. The faults that survived were all written before drafting began, in the campaign's own inputs, where no guard around the loop can reach them.
+Can a guard placed around the drafting loop stop a letter carrying the writer's private reasoning to the reader? Ten arms across two rounds, 22 September 2026. None worked. The faults that survived were all written before drafting began, in the campaign's own inputs, where no guard around the loop can reach them.
 
 ## Problem
 
@@ -20,11 +20,11 @@ Two reasons, both structural rather than a failure of the agent.
 
 **The persona construes.** A model told to react in character makes sense of whatever it is given. Faced with "an excursion in two days isn't realistic" it infers an excursion was offered and carries on. A real recipient with a room full of children does the same, faster. So the reader who would notice the gap is exactly the reader the role-play is not.
 
-**The persona does not know what day it is.** §4.6 Step 1 gives C2 the profile and the draft and nothing else, so our framing cannot contaminate the reaction. That isolation also removes the fact that decides whether a time-bound offer is actionable. In the Songbirds draft the persona read a show two days away as advance notice: *"this is talking about September, so it's not solving my immediate problem, but a heads-up for later is fine"*, and *"I'd probably reply within a day or two if it fits our calendar"* — a reply time that lands after the show. Controlled comparison: the same persona, same draft, one line added ("Today is Tuesday 22 September 2026") opened with *"first thing I notice: that's two days away"* and rejected the ask on permission forms, bus booking and ratios.
+**The persona does not know what day it is.** §4.6 Step 1 gives C2 the profile and the draft and nothing else, so our framing cannot contaminate the reaction. That isolation also removes the fact that decides whether a time-bound offer is actionable. In the draft for Songbirds Early Learning at Pimpama, a vacation-care service, the persona read a show two days away as advance notice: *"this is talking about September, so it's not solving my immediate problem, but a heads-up for later is fine"*, and *"I'd probably reply within a day or two if it fits our calendar"* — a reply time that lands after the show. Controlled comparison: the same persona, same draft, one line added ("Today is Tuesday 22 September 2026") opened with *"first thing I notice: that's two days away"* and rejected the ask on permission forms, bus booking and ratios.
 
 ## Attempts
 
-Nine arms across two rounds, all delivered through `prompt_appendices`; no method document or prompt was edited. Every appendix text is in [prompts.md](prompts.md).
+Ten arms across two rounds, five per round, all delivered through `prompt_appendices`; no method document or prompt was edited. Every appendix text is in [prompts.md](prompts.md).
 
 ### Round 1 — 22 September, eight contacts per arm, author Sonnet
 
@@ -51,7 +51,7 @@ Nothing separated. The pointing list alone (C) was the worst: longest letters, m
 
 ### Round 2 — 22 September, five contacts per arm, author Opus 5, placebo added
 
-The Director rejected three strategies of the agent's own and supplied two: a reader's reference map with a separate resolvability score, and per-sentence scores for confusing / surprising / interesting with the author naming the question behind any surprising sentence. A placebo arm (an unrelated analytical pre-task of matched length) tests whether any pre-task alone sharpens the challenger.
+The Director supplied two methods after rejecting the agent's own proposals: a reader's reference map with a separate resolvability score, and per-sentence scores for confusing / surprising / interesting with the author naming the question behind any surprising sentence. The rejected proposals were a code-detected referent list, a four-slot template the author writes into, and a two-reader paraphrase comparison; the first because code cannot judge whether a name needs introducing for this reader, the second because it reproduces the fault it prevents, the third as weaker than either. A placebo arm (an unrelated analytical pre-task of matched length) tests whether any pre-task alone sharpens the challenger.
 
 Scored blind: one reader, 25 letters as plain subject and body under random names, no arm labels, key held apart ([blind.py](blind.py), [key-round2.json](key-round2.json), [scores-round2.tsv](scores-round2.tsv)).
 
@@ -62,7 +62,7 @@ Scored blind: one reader, 25 letters as plain subject and body under random name
 | method 1, reference map | 4 | 3.0 | 1.21 | 0.75 | 1.75 | 227 |
 | method 2, sentence scores | 4 | 3.25 | 1.49 | 1.5 | 2.25 | 230 |
 | method 1+2 | 4 | 5.0 | 1.21 | 1.0 | 1.5 | 247 |
-| earlier Sonnet run | 3 | 2.67 | 2.00 | 2.0 | 2.33 | 181 |
+| earlier Sonnet run (round 1's N2, rescored) | 3 | 2.67 | 2.00 | 2.0 | 2.33 | 181 |
 
 Paired on the two contacts present in all five arms, nowhere counts: seniors club 6 / 3 / 3 / 2 / 7; playgroup 5 / 4 / 3 / 4 / 4 (none / placebo / m1 / m2 / m12).
 
@@ -86,6 +86,8 @@ The second and third come from the campaign's USP registry. `spar-campaign-yaml.
 
 A guard around the writing cannot catch a fault that was not made during the writing. That is the finding.
 
+Both registry entries were still live in the campaign file when this was written. They stay until the campaign's owner rules on them; correcting them mid-experiment would have moved the constant every arm was measured against.
+
 ## What did work, and it was not a guard
 
 The date. Adding today's date to both the author and challenger prompts changed the persona from approving a two-day-away offer to rejecting it on operational grounds. That is a fix to an input, not a guard on the output. It landed in the method mid-experiment (commits 82d9ddb, 881215b, 41714cd on the aesop branch) along with the phone-only fix and a three-bin sorting in the revise step; verified from this experiment's own run logs, where "Today is Tuesday 22 September 2026" appears in 11 challenger and 15 author prompts of one arm, the phone-first contact's final round holds one phone message and no email, and every file of that arm carries the sorting in `revision_note`.
@@ -107,6 +109,7 @@ Round 1 was first scored by a different agent per arm. Their rubrics drifted: on
 - **Fable is quota-limited.** All five Fable arms failed at the author call with "You've reached your Fable limit"; three produced nothing at all. The model axis is unmeasured, not negative.
 - **The harness has no author-model setting.** `vendor/coachman-1.13.tm` hardcodes `--model sonnet` for any call that passes none, and the A-phase author calls pass none (`harness-1.0.tm:212, :283`), so `ANTHROPIC_MODEL` is overridden. Round 2 used a copied tree with that one line reading `SPAR_AUTHOR_MODEL`. The office belief that "A runs on Opus" was not true of any run before this.
 - **Three of 25 Opus drafting calls were refused** by a safety classifier, twice on retry for two of them. Same contacts, different arms.
+- **Two approach files of the reused Sonnet baseline would not parse**, so that row rests on three messages of five. Both carried an unquoted colon inside a value. The same fault appeared in four round-1 drafts and in the campaign file itself, where the Tcl loader tolerates it and a strict parser does not.
 - **Cost:** about $186 for round 2, of which about $64 went on the blocked Fable arms.
 - **Worktrees are safe** for parallel arms: nothing in the libraries hardcodes a repo path, the workdir is per-process, the logs directory slugs the campaign path, and `--control-port=0` avoids the one port. They need `--force` to remove, since the harness patches roster TSVs in place.
 
