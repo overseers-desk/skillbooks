@@ -150,7 +150,7 @@ One more thing the letters show about the selection claim. Counted by keyword, p
 
 A guard around the writing cannot catch a fault that was not made during the writing. That is the finding.
 
-Both registry entries were still live in the campaign file when this was written. They stay until the campaign's owner rules on them; correcting them mid-experiment would have moved the constant every arm was measured against.
+Every round was measured against the registry as it stood. On 23 September the Director had both claims cut from the campaign file by deletion: the label, the claim's second sentence, five plan-block framings, three "held in their name" framings, one first_ask and the author appendix, 135 words fewer, the entry renamed `not-advertised`. What remains is the claim's true sentence, that the free opening-week seats are not advertised or offered to the public. The source of the two false claims was the registry entry itself, written by the round-2 session from the Director's ruling: the label dropped the word "free" and the claim turned the roster's per-segment allowlist into "chosen by name". Nothing in the method checks a label against its claim or a claim against its provenance.
 
 ## What did work, and it was not a guard
 
