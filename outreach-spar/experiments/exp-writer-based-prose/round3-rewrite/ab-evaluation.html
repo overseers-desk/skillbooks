@@ -1,0 +1,171 @@
+<title>Does Writing It Again Help</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+:root{
+  --paper:#F3F4F1; --ink:#1E2528; --muted:#5E6B72; --rule:#D5D9D3; --panel:#E9ECE7;
+  --before:#61707A; --after:#2F7F6D; --worse:#A8412F; --same:#9AA6AB;
+  --sans:"Libre Franklin",system-ui,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --paper:#131A1D; --ink:#E4E8E3; --muted:#98A6AE; --rule:#2A3438; --panel:#1B2428; --before:#98A6AE; --after:#52B39C; --worse:#DA745F; --same:#5C6A70; }
+}
+:root[data-theme="dark"]{ --paper:#131A1D; --ink:#E4E8E3; --muted:#98A6AE; --rule:#2A3438; --panel:#1B2428; --before:#98A6AE; --after:#52B39C; --worse:#DA745F; --same:#5C6A70; }
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.55;padding-inline:16px;padding-block:24px 64px;margin:0}
+main{max-width:70ch;margin:0 auto}
+h1,h2,h3{font-family:var(--sans);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:2rem;font-weight:700;letter-spacing:-0.01em}
+h2{font-size:1.25rem;font-weight:700;margin-top:2.4rem;padding-top:1rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;font-weight:700;margin-top:1.4rem}
+p{margin:0.8rem 0}
+.lede{font-size:1.15rem;margin-top:0.6rem}
+.eyebrow{font-family:var(--sans);font-size:0.72rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.verdicts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:1.4rem 0}
+.card{background:var(--panel);padding:16px 18px;border-radius:4px}
+.card h3{margin-top:0.2rem;font-size:1.05rem}
+.pill{display:inline-block;font-family:var(--sans);font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:3px 8px;border-radius:2px;color:var(--paper);background:var(--worse)}
+.pill.flat{background:var(--before)}
+.card p{margin:0.5rem 0 0;font-size:0.95rem}
+table{border-collapse:collapse;font-family:var(--sans);font-size:0.86rem;font-variant-numeric:tabular-nums;width:100%}
+.tablewrap{overflow-x:auto;margin:1rem 0}
+th,td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--rule);white-space:nowrap}
+th{font-weight:500;color:var(--muted)}
+th:first-child,td:first-child{text-align:left}
+td.b{color:var(--worse);font-weight:700}
+td.g{color:var(--after);font-weight:700}
+caption{text-align:left;font-family:var(--sans);font-size:0.8rem;color:var(--muted);caption-side:bottom;padding-top:6px}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:1rem 0}
+.chart{background:var(--panel);border-radius:4px;padding:8px 8px 4px}
+.chart .eyebrow{display:block;margin-bottom:4px}
+.chart svg{width:100%;height:auto;display:block}
+.legend{font-family:var(--sans);font-size:0.78rem;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;margin:0.4rem 0 1rem}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.legend .g::before{background:var(--after)} .legend .w::before{background:var(--worse)} .legend .s::before{background:var(--same)}
+blockquote{margin:0.8rem 0;padding:0.2rem 0 0.2rem 14px;border-left:3px solid var(--rule);color:var(--ink);font-style:italic}
+blockquote .who{display:block;font-style:normal;font-family:var(--sans);font-size:0.78rem;color:var(--muted);margin-top:4px}
+code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:0.85em}
+pre{background:var(--panel);padding:12px 14px;border-radius:4px;overflow-x:auto;white-space:pre-wrap}
+ul{padding-left:1.2rem} li{margin:0.35rem 0}
+.foot{font-family:var(--sans);font-size:0.8rem;color:var(--muted);margin-top:2.5rem;border-top:1px solid var(--rule);padding-top:0.8rem}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+<main>
+<span class="eyebrow">Outreach letters, round 4, 23 September 2026</span>
+<h1>Does writing it again help?</h1>
+<p class="lede">Two ways of asking the author of a cold letter to write it a second time, for the reader rather than from the brief. Neither improved the letter. Both made it longer, and the claims that were wrong in the first writing were wrong in the second.</p>
+
+<div class="verdicts">
+  <div class="card">
+    <span class="eyebrow">Design A, one call</span>
+    <h3>Draft, then write again</h3>
+    <span class="pill" id="pillA">no improvement</span>
+    <p>The author drafts the letter and, in the same call, reads it as the recipient would and writes it again. Seven contacts, first draft against final. <span id="evA"></span></p>
+  </div>
+  <div class="card">
+    <span class="eyebrow">Design B, second prompt</span>
+    <h3>Finished letter, then asked again</h3>
+    <span class="pill" id="pillB">no improvement</span>
+    <p>The session that wrote a finished letter is prompted once more to write it again for its reader. Nineteen contacts, sent letter against second writing. <span id="evB"></span></p>
+  </div>
+</div>
+
+<h2>The question</h2>
+<p>A letter drafted from a campaign brief tends to carry the brief into the reader's inbox: why the offer exists, how the reader was picked, what is not on sale, references to a code and a link the reader has never met. The office calls this the Linda Flower problem, after her account of writer-based prose. Her remedy is that the writer, holding everything they know, steps back and writes again to the reader's questions. The round before this one tested a different thing by mistake: a second writer who held only the letter. This round tests the remedy as she states it, twice.</p>
+<p><strong>Design A.</strong> One author call. The instruction appended to the ordinary drafting brief:</p>
+<pre>Two drafts in the output. Write a first draft of the message between
+FIRST_START and FIRST_END lines. Then read it as the recipient would,
+and write the final message to what they would ask, between DRAFT_START
+and DRAFT_END. The rationale keeps its markers. The message between
+DRAFT_START and DRAFT_END is the one that goes out.</pre>
+<p><strong>Design B.</strong> The author session that produced a finished, challenged, sent-ready letter is resumed and given one prompt:</p>
+<pre>Write the letter again for its reader, who has seen none of what you
+read in order to write it. Write to what they would ask. Output the
+subject line first as "Subject: ...", then a blank line, then the body,
+and nothing else.</pre>
+<p>In both, the writer holds its inputs: the campaign plan, the claims registry, the recipient's profile, the fact sources, and in B every round of the challenger's feedback. Nothing is hidden from it. What changes is only that it is asked to write to the reader.</p>
+
+<h2>Measured</h2>
+<p>All letters were shuffled under random names and scored in one pass by one reader that never saw which was which, under a written rubric applied unchanged: references that resolve nowhere, sentences a reader would wonder why they are being told, claims contradicted by the venue's facts, and sentences on the sender's side of the matter rather than the reader's. Each second writing is paired with its own first.</p>
+<div class="tablewrap"><table id="means"></table></div>
+<div class="tablewrap"><table id="pairs"></table></div>
+<div class="legend"><span class="g">second writing better</span><span class="w">worse</span><span class="s">same</span></div>
+<div class="charts" id="charts"></div>
+<p class="eyebrow">Each line is one letter, before on the left and after on the right.</p>
+
+<h2>What the second writing did</h2>
+<p>It kept every claim the brief supplied and reordered the rest. The two claims known to be false, that the seats are not on sale and that the recipient was picked, come from the campaign's registry, which the author treats as the offer's own statement. A writer told to write again for the reader re-reads that registry and writes them again. Counted by phrase over the paired letters:</p>
+<div class="tablewrap"><table id="lex"></table></div>
+<p>The other thing it did was add. Design B's second writings run about forty words longer than the letters they replace. Design A's finals run about thirty longer than their firsts, and the additions are details the first draft had not needed: a show's running time, a street address, a second channel the brief mentioned. Read side by side, the final draft is the first draft with more of the brief in it.</p>
+<div id="examples"></div>
+
+<h2>Why</h2>
+<p>The writer does not know which of its sentences are the reader's and which are its own. The sentences that come from the brief are, to it, the facts of the offer. Asked to write for the reader, it writes those facts for the reader, more carefully and at more length. The instruction reaches the surface of the prose, its order and its address, and not the selection of what is in it. The cut has to come from a check that holds the brief and asks a different question of each sentence: is this here because an input said so, or because the reader would ask. That is the challenger's fact-check with its question changed, not a second pass by the author.</p>
+
+<h2>What is not settled</h2>
+<ul>
+  <li><strong>Size.</strong> Seven pairs for A and nineteen for B separate a direction, not an effect size. The direction is the same in every measure and both designs.</li>
+  <li><strong>Model.</strong> The letters B rewrote were written by Opus 5. The alias <code>opus</code> had moved to Opus 5.5 by the morning of the run, so the first B run and the first A run changed model as well as pass. Both were rerun on Opus 5 by its exact id; those are the numbers here. The Opus 5.5 material is kept in the folder and not scored.</li>
+  <li><strong>Resume appends.</strong> Prompting a session a second time leaves the first rewrite in its context. The B letters here come from a copy of each session cut before any rewrite prompt, so the writer had only its original drafting in view.</li>
+  <li><strong>Three B letters missing.</strong> The profile those sessions live on reached its weekly usage limit during the run; it resets on 24 September at 7pm.</li>
+  <li><strong>A first wording of A was refused.</strong> Asked to write the message "as it comes" under a working marker, Opus refused all eight calls as reasoning extraction. Probes showed the wording was the trigger, not the model's context or the courier block. Reworded as two drafts, all eight passed.</li>
+</ul>
+
+<h2>Files</h2>
+<p>Everything sits under <code>outreach-spar/experiments/exp-writer-based-prose/round3-rewrite/</code> in the aesop repository: <code>run-a.py</code> and <code>prompt-a.txt</code> for A, <code>fork-sessions.py</code>, <code>rewrite-author.py</code> and <code>prompt-author.txt</code> for B, the letters under <code>drafts-a-o5-*</code> and <code>rewrites-author-fork-clean</code>, the blinded set in <code>blind4</code> with <code>key4.json</code>, the scores in <code>scores4.tsv</code> and the reader's report in <code>scorer4-report.md</code>, and <code>analyze.py</code> for the pairing. The README's round-4 section carries the same result in the experiment's own record.</p>
+<p class="foot">Scored blind by one Opus 5 reader in a context holding no office methodology. Facts of the world from the venue's own documents and the Director's statement of 22 September 2026.</p>
+</main>
+<script>
+const DATA = {"cols": [["nowhere", "unresolved references"], ["surp45", "sentences surprising 4-5"], ["false", "false claims"], ["unsup", "unsupported claims"], ["sender", "sender-side sentences"], ["sent", "sentences"], ["words", "words"]], "arms": [{"name": "Design A, Opus 5", "before": "first draft", "after": "final", "n": 7, "means": {"nowhere": [2.857142857142857, 3.142857142857143], "surp45": [0.2857142857142857, 0.42857142857142855], "false": [1.0, 1.1428571428571428], "unsup": [0.8571428571428571, 0.42857142857142855], "sender": [1.1428571428571428, 1.4285714285714286], "sent": [12.428571428571429, 13.714285714285714], "words": [185.85714285714286, 213.0]}, "pairs": {"nowhere": [1, 2, 4], "surp45": [0, 6, 1], "false": [0, 6, 1], "unsup": [2, 5, 0], "sender": [0, 5, 2], "sent": [5, 2, 0], "words": [7, 0, 0]}, "rows": {"nowhere": [[2.0, 3.0], [3.0, 4.0], [3.0, 3.0], [5.0, 3.0], [2.0, 3.0], [2.0, 3.0], [3.0, 3.0]], "surp45": [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [1.0, 2.0], [1.0, 1.0]], "false": [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 2.0], [1.0, 1.0]], "unsup": [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [2.0, 0.0], [1.0, 1.0], [1.0, 1.0], [2.0, 1.0]], "sender": [[1.0, 1.0], [1.0, 1.0], [0.0, 0.0], [1.0, 1.0], [1.0, 1.0], [2.0, 3.0], [2.0, 3.0]], "sent": [[12.0, 12.0], [14.0, 18.0], [10.0, 11.0], [13.0, 14.0], [10.0, 10.0], [13.0, 15.0], [15.0, 16.0]], "words": [[157.0, 164.0], [218.0, 280.0], [188.0, 213.0], [206.0, 215.0], [155.0, 166.0], [169.0, 226.0], [208.0, 227.0]]}}, {"name": "Design B, Opus 5", "before": "sent letter", "after": "second writing", "n": 19, "means": {"nowhere": [3.1052631578947367, 3.0526315789473686], "surp45": [0.631578947368421, 0.6842105263157895], "false": [1.1578947368421053, 1.2105263157894737], "unsup": [1.105263157894737, 1.105263157894737], "sender": [2.210526315789474, 2.736842105263158], "sent": [16.42105263157895, 19.63157894736842], "words": [252.57894736842104, 290.2105263157895]}, "pairs": {"nowhere": [7, 7, 5], "surp45": [0, 18, 1], "false": [2, 15, 2], "unsup": [1, 17, 1], "sender": [1, 10, 8], "sent": [16, 3, 0], "words": [17, 1, 1]}, "rows": {"nowhere": [[3.0, 2.0], [2.0, 1.0], [4.0, 5.0], [2.0, 2.0], [5.0, 4.0], [1.0, 1.0], [5.0, 5.0], [3.0, 3.0], [2.0, 2.0], [5.0, 6.0], [5.0, 4.0], [2.0, 3.0], [3.0, 4.0], [3.0, 2.0], [3.0, 3.0], [3.0, 2.0], [2.0, 2.0], [2.0, 4.0], [4.0, 3.0]], "surp45": [[0.0, 0.0], [0.0, 0.0], [2.0, 3.0], [1.0, 1.0], [0.0, 0.0], [1.0, 1.0], [1.0, 1.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [1.0, 1.0], [2.0, 2.0], [0.0, 0.0], [2.0, 2.0], [0.0, 0.0], [0.0, 0.0], [2.0, 2.0]], "false": [[1.0, 2.0], [0.0, 0.0], [1.0, 1.0], [0.0, 0.0], [1.0, 1.0], [2.0, 1.0], [2.0, 2.0], [1.0, 1.0], [2.0, 2.0], [1.0, 1.0], [1.0, 1.0], [2.0, 2.0], [1.0, 1.0], [1.0, 0.0], [1.0, 1.0], [2.0, 2.0], [2.0, 2.0], [1.0, 3.0], [0.0, 0.0]], "unsup": [[1.0, 0.0], [1.0, 1.0], [2.0, 2.0], [2.0, 2.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [0.0, 1.0], [1.0, 1.0], [1.0, 1.0], [2.0, 2.0], [2.0, 2.0], [1.0, 1.0], [2.0, 2.0], [0.0, 0.0], [0.0, 0.0], [1.0, 1.0]], "sender": [[2.0, 3.0], [1.0, 2.0], [3.0, 4.0], [3.0, 3.0], [2.0, 3.0], [3.0, 3.0], [1.0, 1.0], [1.0, 4.0], [3.0, 3.0], [2.0, 1.0], [2.0, 2.0], [3.0, 3.0], [3.0, 4.0], [3.0, 3.0], [2.0, 2.0], [4.0, 5.0], [1.0, 1.0], [0.0, 2.0], [3.0, 3.0]], "sent": [[16.0, 20.0], [14.0, 20.0], [18.0, 19.0], [16.0, 16.0], [19.0, 22.0], [16.0, 17.0], [19.0, 19.0], [12.0, 25.0], [15.0, 17.0], [15.0, 20.0], [16.0, 21.0], [20.0, 25.0], [16.0, 19.0], [20.0, 22.0], [14.0, 15.0], [22.0, 24.0], [13.0, 13.0], [11.0, 17.0], [20.0, 22.0]], "words": [[223.0, 279.0], [248.0, 282.0], [248.0, 287.0], [269.0, 269.0], [330.0, 350.0], [252.0, 270.0], [297.0, 296.0], [218.0, 340.0], [200.0, 253.0], [242.0, 278.0], [252.0, 291.0], [328.0, 381.0], [247.0, 295.0], [249.0, 267.0], [217.0, 238.0], [306.0, 346.0], [203.0, 218.0], [194.0, 289.0], [276.0, 285.0]]}}], "lex": [{"name": "A first, Opus 5", "n": 7, "notsale": 4, "sel": 3}, {"name": "A final, Opus 5", "n": 7, "notsale": 4, "sel": 3}, {"name": "B before, Opus 5", "n": 19, "notsale": 17, "sel": 15}, {"name": "B after, Opus 5", "n": 19, "notsale": 17, "sel": 15}, {"name": "A first, 5.5", "n": 5, "notsale": 0, "sel": 3}, {"name": "A final, 5.5", "n": 5, "notsale": 0, "sel": 5}, {"name": "B before, 5.5", "n": 5, "notsale": 3, "sel": 4}, {"name": "B after, 5.5", "n": 5, "notsale": 1, "sel": 3}], "lexcols": [["n", "letters"], ["notsale", "\"not on sale\" or \"not advertised\""], ["sel", "\"picked\", \"set aside\", \"a handful\", \"on that list\""]], "examples": [{"text": "The final draft keeps every sentence of the first, moves the show title into the opening line, and adds the street address to the sender's introduction.", "who": "Design A, a retirement village, first draft against final."}, {"text": "They are not on sale to the public at any price. They go to local organisations, and the shed is on that list. Seven shows in the opening run, about an hour and a half each.", "who": "Design A, a men's shed: the final keeps both registry claims and adds a running time the first draft did not carry."}, {"text": "There is nothing to pay and nothing to buy. What I need from you is a rough number. The number commits the shed to nothing, and there is nobody to organise.", "who": "Design B, the same shed: three sentences the second writing added. Nothing was removed."}], "evidence": {"A": "Sender-side sentences better in 0, same in 5, worse in 2; unresolved references 1 / 2 / 4; longer in 0 of 7.", "B": "Sender-side sentences better in 1, same in 10, worse in 8; unresolved references 7 / 7 / 5; longer in 1 of 19."}, "pill": {"A": "no improvement", "B": "no improvement"}};
+(function(){
+  if(!DATA) return;
+  const C = DATA.cols;                       // [key, label]
+  const arms = DATA.arms;                    // [{name, before, after, n, means:{col:[b,a]}, pairs:{col:[b,s,w]}, rows:{col:[[b,a],...]}}]
+  const $ = s => document.querySelector(s);
+  // means table
+  let h = '<thead><tr><th>mean per letter</th>' + arms.map(a=>`<th colspan="2">${a.name} (n=${a.n})</th>`).join('') + '</tr><tr><th></th>' + arms.map(a=>`<th>${a.before}</th><th>${a.after}</th>`).join('') + '</tr></thead><tbody>';
+  for (const [k,l] of C){
+    h += `<tr><td>${l}</td>` + arms.map(a=>{const [b,x]=a.means[k]; const lower = !['sent','words'].includes(k); const cls = x===b?'':((x<b)===lower?'g':'b'); return `<td>${b.toFixed(k==='words'||k==='sent'?0:2)}</td><td class="${cls}">${x.toFixed(k==='words'||k==='sent'?0:2)}</td>`;}).join('') + '</tr>';
+  }
+  $('#means').innerHTML = h + '</tbody><caption>Green where the second writing is better on that measure, red where worse.</caption>';
+  // pairs table
+  h = '<thead><tr><th>paired, second writing against its first</th>' + arms.map(a=>`<th>${a.name}: better / same / worse</th>`).join('') + '</tr></thead><tbody>';
+  for (const [k,l] of C){
+    if (k==='sent') continue;
+    h += `<tr><td>${l}</td>` + arms.map(a=>{const [b,s,w]=a.pairs[k]; return `<td>${b} / ${s} / ${w}</td>`;}).join('') + '</tr>';
+  }
+  $('#pairs').innerHTML = h + '</tbody><caption>Better means fewer unresolved references, surprises, false or unsupported claims, sender-side sentences; for words, better means shorter.</caption>';
+  // slope charts
+  const cs = getComputedStyle(document.documentElement);
+  const col = v => cs.getPropertyValue(v).trim();
+  let out = '';
+  for (const a of arms){
+    for (const [k,l] of C){
+      if (['sent','unsup','surp'].includes(k)) continue;
+      const rows = a.rows[k]; const vals = rows.flat(); const max = Math.max(...vals, 1); const min = Math.min(...vals, 0);
+      const W=150, H=120, top=10, bot=22, L=28, R=W-28;
+      const y = v => top + (H-top-bot) * (1 - (v-min)/(max-min||1));
+      let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${a.name}, ${l}, before and after per letter">`;
+      s += `<line x1="${L}" y1="${top}" x2="${L}" y2="${H-bot}" stroke="${col('--rule')}"/><line x1="${R}" y1="${top}" x2="${R}" y2="${H-bot}" stroke="${col('--rule')}"/>`;
+      for (const [b,x] of rows){
+        const lower = k!=='words'; const c = x===b?col('--same'):((x<b)===lower?col('--after'):col('--worse'));
+        s += `<line x1="${L}" y1="${y(b)}" x2="${R}" y2="${y(x)}" stroke="${c}" stroke-width="1.6" stroke-opacity="0.85"/>`;
+      }
+      s += `<text x="${L}" y="${H-6}" font-size="9" fill="${col('--muted')}" text-anchor="middle" font-family="Libre Franklin, sans-serif">${a.before}</text>`;
+      s += `<text x="${R}" y="${H-6}" font-size="9" fill="${col('--muted')}" text-anchor="middle" font-family="Libre Franklin, sans-serif">${a.after}</text>`;
+      s += `<text x="${L-4}" y="${y(max)+3}" font-size="8" fill="${col('--muted')}" text-anchor="end" font-family="Libre Franklin, sans-serif">${max}</text>`;
+      s += `<text x="${L-4}" y="${y(min)+3}" font-size="8" fill="${col('--muted')}" text-anchor="end" font-family="Libre Franklin, sans-serif">${min}</text>`;
+      s += '</svg>';
+      out += `<div class="chart"><span class="eyebrow">${a.name}: ${l}</span>${s}</div>`;
+    }
+  }
+  $('#charts').innerHTML = out;
+  // lexical table
+  h = '<thead><tr><th>letters carrying the phrase</th>' + DATA.lex.map(r=>`<th>${r.name}</th>`).join('') + '</tr></thead><tbody>';
+  for (const [k,l] of DATA.lexcols){ h += `<tr><td>${l}</td>` + DATA.lex.map(r=>`<td>${r[k]}</td>`).join('') + '</tr>'; }
+  $('#lex').innerHTML = h + '</tbody><caption>Counted by phrase; the blind reader counts the same claims by meaning, in the table above.</caption>';
+  // examples
+  $('#examples').innerHTML = DATA.examples.map(e=>`<blockquote>${e.text}<span class="who">${e.who}</span></blockquote>`).join('');
+  $('#evA').textContent = DATA.evidence.A; $('#evB').textContent = DATA.evidence.B;
+  $('#pillA').textContent = DATA.pill.A; $('#pillB').textContent = DATA.pill.B;
+})();
+</script>

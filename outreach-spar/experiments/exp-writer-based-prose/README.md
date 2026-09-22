@@ -1,6 +1,6 @@
 # exp-writer-based-prose
 
-Can a guard placed around the drafting loop stop a letter carrying the writer's private reasoning to the reader? Twelve arms across three rounds, 22 September 2026. None worked. The faults that survived were all written before drafting began, in the campaign's own inputs, where no guard around the loop can reach them.
+Can a guard placed around the drafting loop stop a letter carrying the writer's private reasoning to the reader? Fourteen arms across four rounds, 22 and 23 September 2026. None worked. The faults that survived were all written before drafting began, in the campaign's own inputs, where no guard around the loop can reach them.
 
 ## Problem
 
@@ -24,7 +24,7 @@ Two reasons, both structural rather than a failure of the agent.
 
 ## Attempts
 
-Twelve arms across three rounds. Rounds 1 and 2, five arms each, were delivered through `prompt_appendices`; no method document or prompt was edited. Round 3 took the round-2 letters as finished and wrote each one again outside the harness. Every prompt text is in [prompts.md](prompts.md).
+Fourteen arms across four rounds. Rounds 1 and 2, five arms each, were delivered through `prompt_appendices`; no method document or prompt was edited. Round 3 took the round-2 letters as finished and had a second writer, holding only the letter, write each again. Round 4 had the author itself write again, two ways. Every prompt text is in [prompts.md](prompts.md).
 
 ### Round 1 — 22 September, eight contacts per arm, author Sonnet
 
@@ -96,6 +96,28 @@ So a fresh reader-writer reorganises but does not cut, because to it the sender-
 
 The reader's consistency across rounds is checkable here: the same 25 originals scored 3.72 on unresolved references in this pass against a weighted 3.8 in round 2's, under a rubric written afresh.
 
+### Round 4 — 23 September, the writer's own second pass, two designs
+
+Flower's remedy is the writer transforming its own draft with everything it knows. Two designs of that, both set by the Director, with the same instruction shape and no cue word named:
+
+- **Design A, one call.** The author's ordinary drafting brief, with an appended instruction to write a first draft, then read it as the recipient would and write the final message to what they would ask. The pair is the first draft against the final, inside one call. Eight contacts from the round-1 rerun, whose briefs survive with live file paths; one is phone-only and has no letter, so seven pairs.
+- **Design B, second prompt.** The session that wrote a finished round-2 letter is resumed and given one prompt: write the letter again for its reader, who has seen none of what you read in order to write it. The pair is the sent letter against the second writing. The 22 Opus round-2 letters; 19 completed before the profile holding those sessions reached its weekly limit.
+
+In both the writer holds the plan block, the registry, the profile, the fact sources and, in B, every challenger round. Both ran on Opus 5, the model that wrote round 2, by its exact id. The letters were blinded together with their firsts, 55 in one folder, and scored by one Opus 5 reader in a bare context under the round-3 rubric ([round3-rewrite/key4.json](round3-rewrite/key4.json), [scores4.tsv](round3-rewrite/scores4.tsv), [scorer4-report.md](round3-rewrite/scorer4-report.md)). By accident the same 55 were scored a second time by a second run of the same reader ([scores4-second.tsv](round3-rewrite/scores4-second.tsv)); the two readings correlate at 0.95 on sender-side sentences, 0.99 on words, and between 0.64 and 0.77 on the other counts, with the second counting higher throughout. Both readings give the same direction on every measure below; the first is quoted.
+
+| paired, n | unresolved references | surprising 4-5 | false | unsupported | sender-side | words |
+|---|---|---|---|---|---|---|
+| A, first draft, 7 | 2.86 | 0.29 | 1.00 | 0.86 | 1.14 | 186 |
+| A, final, 7 | 3.14 | 0.43 | 1.14 | 0.43 | 1.43 | 213 |
+| B, sent letter, 19 | 3.14 | 0.59 | 1.14 | 1.09 | 2.09 | 252 |
+| B, second writing, 19 | 3.05 | 0.68 | 1.21 | 1.11 | 2.74 | 290 |
+
+Paired per letter, better / same / worse: A on sender-side sentences 0 / 5 / 2, on unresolved references 1 / 2 / 4, on words 0 / 0 / 7 longer; B on sender-side sentences 1 / 10 / 8, on unresolved references 7 / 7 / 5, on false claims 2 / 15 / 2, on words 1 / 1 / 17 longer. The one movement in the right direction is A's unsupported claims, down in two pairs of seven.
+
+The registry-born claims pass through the writer's own second pass as they passed through the fresh reader's, by phrase over the paired letters: B, "not on sale / not advertised" 17 of 19 before and 17 after, the selection claim 15 and 15; A, 4 of 7 and 4, 3 and 3. The writer holds the registry as the offer's own statement and, asked to write for the reader, writes its claims again, at greater length. A's finals add what the first draft had not needed: a show's running time, a street address, a second channel. B's second writings add reader-facing lines ("What I need from you is a rough number", "There is nothing to pay and nothing to buy") and keep everything else.
+
+So the second pass by the writer, with or without its brief, reaches the letter's order and address and not the selection of what is in it. The cut needs a question the writer is not asking of its own sentences: is this here because an input said so, or because the reader would ask. That question needs the inputs in view, and it is the challenger's fact-check step with its question changed, not another pass by the author.
+
 ## What survived every arm
 
 | Fault | Letters carrying it, of 25 |
@@ -146,6 +168,10 @@ Round 1 was first scored by a different agent per arm. Their rubrics drifted: on
 - **The office context also writes working notes into the output.** Five of the 25 office-arm rewrites carried the methodology's ceremony before the subject line, one of them 382 words of it; the bare arm carried none. A headless author under this configuration is not a bare model, and a repeat that wants one uses a config directory without the plugin.
 - **A headless session can spin a core for minutes.** With two versions of the office plugin's git shim on PATH, which happens to a session started before a plugin update, each shim resolves the other as the real git and execs it in a loop. Any `git` from the session, or from a headless claude it spawns, spins at 100 % of a core until killed. Verified 22 September: 11.7 s of CPU in a 15 s timeout with both on PATH, 0.1 s with one. Round 3 stripped the duplicate from PATH for every call.
 - **A scorer over 75 letters overran the 64 000-token output limit** by writing its per-sentence rows into the report. The prompt now keeps them in the working; the run was recovered by resuming the same session for the table alone.
+- **A wording of the design-A instruction was refused outright.** Asked to write the message "as it comes" under a working marker before the final, Opus refused all eight calls as reasoning extraction. Probes: the same brief without the instruction passed; the instruction under a bare configuration was refused; Sonnet accepted it. Reworded as a first draft and a final, all eight passed.
+- **The `opus` alias moved under the experiment.** By 23 September it resolved to Opus 5.5 while the round-2 letters were Opus 5's. A first run of both designs changed model as well as pass; both were rerun by exact id. The Opus 5.5 material is kept under `drafts-a-*` and `rewrites-author-clean/`.
+- **Resume appends.** Prompting a session a second time leaves the first rewrite in its context, so a rerun on the same session is a third writing. `fork-sessions.py` copies each transcript under a fresh id, cut before the first rewrite prompt; the CLI finds a session file only in the compact serialisation.
+- **Weekly limit.** The profile holding the author sessions reached its weekly usage limit during design B, leaving three of 22 unwritten until 24 September, 7pm.
 - **Three of 25 Opus drafting calls were refused** by a safety classifier, with the message that Opus 5's safeguards flagged the prompt. Verified from each arm's run log: the three refusals are the three missing cells and nothing else dropped a letter. The two arms with no method text, none and placebo, had no refusal, and all three refusals fell on method arms. Three cases cannot tell a coincidence from a classifier responding to the method text itself, and a refusal that is not independent of the draft would bias exactly the arms under test. A repeat should record the refusal rate per arm as a measure rather than as an operational note. The cells: the men's shed in method 1, the magazine in the composed arm, both refused again on retry, and the retirement village in method 2, whose retry succeeded after the blind extraction had already run, so its letter exists in `round2-drafts/` but not in the scored set.
 - **Two approach files of the reused Sonnet baseline would not parse**, so that row rests on three messages of five. Both carried an unquoted colon inside a value, as did four other round-1 drafts and the campaign file itself. The Tcl loader tolerates it and a strict parser does not, so `validate_approach` passes a file that later tooling cannot read. An approach file that will not parse is a letter lost with no error raised at the time, which is worth its own issue against the harness rather than a line here.
 - **Cost:** about $186 for round 2, of which about $64 went on the blocked Fable arms.
@@ -157,7 +183,7 @@ Round 1 was first scored by a different agent per arm. Their rubrics drifted: on
 - [setarm-round1.py](setarm-round1.py), [setarm-round2.py](setarm-round2.py) — swap a campaign YAML's appendices to one arm, keeping the constant block byte-identical.
 - [blind.py](blind.py) — extract each approach file's final message to a plain-text file under a random name, key written beside it.
 - [scores-round2.tsv](scores-round2.tsv), [key-round2.json](key-round2.json) — the blind scores and the arm key.
-- [round3-rewrite/](round3-rewrite/) — the second-writing round: `rewrite.py` and `prompt.txt` make the rewrites, `blind50.py` shuffles originals and arms together, `scorer-prompt.txt` is the reader's brief, `analyze.py` the paired comparison; `rewrites*/` hold both arms as returned and with preambles removed, `blind/` the 75 letters as scored, `key50.json`, `scores.tsv` and `scorer-report.md` the result.
+- [round3-rewrite/](round3-rewrite/) — rounds 3 and 4: `run-a.py`, `prompt-a.txt` and `split-a.py` for design A; `fork-sessions.py`, `rewrite-author.py` and `prompt-author.txt` for design B; `page-data.py` and `ab-evaluation.html` for the published evaluation; and, from round 3, `rewrite.py` and `prompt.txt` make the rewrites, `blind50.py` shuffles originals and arms together, `scorer-prompt.txt` is the reader's brief, `analyze.py` the paired comparison; `rewrites*/` hold both arms as returned and with preambles removed, `blind/` the 75 letters as scored, `key50.json`, `scores.tsv` and `scorer-report.md` the result.
 
 - `round1-drafts/`, `round2-drafts/` — every approach file both rounds produced, one folder per arm.
 - `round2-blind/` — the 25 letters exactly as the scoring reader saw them, subject and body, random names.
