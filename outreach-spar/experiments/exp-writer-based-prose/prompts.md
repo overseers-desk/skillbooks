@@ -296,3 +296,30 @@ organisation are not counted. Report the count and the total sentences.
 ```
 
 The full text is `round3-rewrite/scorer-prompt.txt`, with the letter directory and fact files as placeholders. The reader ran in the bare context with read-only tools. Its first report overran the output limit on the per-sentence rows; the session was resumed with an instruction to give the report again without them, and the table it returned is `round3-rewrite/scores.tsv`.
+
+---
+
+## Round 4, the writer's own second pass
+
+**Design A**, appended to the dispatcher's own author brief, one call:
+
+```
+Two drafts in the output. Write a first draft of the message between
+FIRST_START and FIRST_END lines. Then read it as the recipient would,
+and write the final message to what they would ask, between DRAFT_START
+and DRAFT_END. The rationale keeps its markers. The message between
+DRAFT_START and DRAFT_END is the one that goes out.
+```
+
+An earlier wording asked for the message "as it comes" under WORKING markers and was refused by Opus on all eight calls as reasoning extraction; the wording above passed on all eight.
+
+**Design B**, one prompt to the resumed author session, which holds its original drafting and every challenger round:
+
+```
+Write the letter again for its reader, who has seen none of what you
+read in order to write it. Write to what they would ask. Output the
+subject line first as "Subject: ...", then a blank line, then the body,
+and nothing else.
+```
+
+Both are in `round3-rewrite/` as `prompt-a.txt` and `prompt-author.txt`. The scorer is the round-3 prompt unchanged.

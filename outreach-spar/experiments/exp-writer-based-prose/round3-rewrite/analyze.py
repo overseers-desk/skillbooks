@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Paired comparison, each rewrite kind minus original, per source letter.
-usage: analyze.py <key.json> <scores.tsv> [after:before ...]\nWithout pair specs every non-original kind is compared with original."""
+usage: analyze.py <key.json> <scores.tsv> [after:before ...]
+Without pair specs every non-original kind is compared with original."""
 import sys, json, csv, collections
 key = json.load(open(sys.argv[1]))
 rows = {r['file'] + ('' if r['file'].endswith('.txt') else '.txt'): r
