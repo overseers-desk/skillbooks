@@ -1,0 +1,224 @@
+profile_hash: sha256:0b8df3adaa5fbe6cfa59d1973afc0807b0f761c716723271f0bc0d72e9208dea
+# Contact: Fiona Harper | Freelance: AFR, Australian Geographic Adventure | earned-media
+# Channel: LinkedIn connection note, then email (after acceptance or 5 days; no phone on file)
+# Language: en
+# Angle: family/soft-adventure travel beat, cold outreach, chosen-not-advertised + heritage-farm-circus USPs
+decisions:
+  channel: linkedin
+  channel_detail: |
+    LinkedIn connection note first (no phone on the roster row). Email
+    follow-up after the connection is accepted, or after five days with no
+    response, per SPAR-A §4.2's LinkedIn + email rule.
+  language: en
+  angle: family-adventure-travel-beat
+angle_rationale: |
+  Warmth is cold: the IMAP prefetch found no prior correspondence with
+  hello@fionaharper.com.au or her name/organisation on any sender account,
+  and her profile records no prior dealing with Rivermill.
+
+  Her profile shows a working freelance travel and wildlife/adventure
+  writer with active 2026 bylines across national mastheads (AFR Life &
+  Leisure, Australian Geographic Adventure, Travel Monitor), based in
+  Bundaberg. Nothing in the profile evidences Gold Coast or Scenic
+  Rim-specific coverage, so the draft does not claim a regional-beat fit
+  the profile does not support (manufactured-connection test); it presents
+  the venue and the offer plainly and leaves relevance to her own
+  judgement. Her TravHost co-founder role is a real institutional asset
+  noted in the profile, but this campaign's ask is a personal family pass,
+  not a famil-hosting arrangement, so TravHost is left out of the
+  message — raising it would imply an ask the plan block does not make.
+
+  USPs selected from the earned-media plan block: chosen-not-advertised
+  (the pass held in her name) and big-top-at-a-heritage-farm (the
+  circus-on-a-heritage-farm setting is the school-holiday story itself).
+  opening-week-seats is folded into the ask's own wording (any show,
+  Thursday to Sunday) rather than stated as a separate USP line, following
+  the segment's first_ask template.
+
+  earned-media is wave two of the campaign: the message carries the
+  Eventbrite link at the public paid price, and the free-pass code is
+  reserved for the reply that confirms her chosen show, per the campaign's
+  rule that the code never appears in a first touch.
+response_likelihood: 45
+a_note: |
+  Cold outreach to a QLD-based freelance family/adventure travel writer
+  (AFR Life & Leisure, Australian Geographic Adventure); angle is
+  chosen-not-advertised + heritage-farm-circus, no claimed Gold Coast beat.
+  Channel: LinkedIn connection note first, email fallback after acceptance
+  or 5 days (no phone on file). Language: en. Challenger verdict DONE;
+  the one friction the persona raised is the two-day notice against the
+  opening-week window, which her reply naturally surfaces rather than
+  stopping the approach outright.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, big-top-at-a-heritage-farm]
+    notes: |
+      A1 draft. Piece 1 (LinkedIn connection note) and Piece 2 (email,
+      sent after connection acceptance or after 5 days) drafted together
+      per the LinkedIn + email channel sequence.
+    messages:
+      - channel: linkedin
+        text: |
+          Hi Fiona, I'm Priyanka, Partnerships at Historic Rivermill, a
+          heritage venue in the Gold Coast hinterland. I've a family pass
+          held for you to see WANTED – A Cirque Heist, a circus in a big
+          top on our lawn, any show from Thursday. Reply and I'll send
+          details.
+        director_note: LinkedIn connection note; first touch.
+      - channel: email
+        to: hello@fionaharper.com.au
+        subject: A family pass for WANTED – A Cirque Heist, for your family-travel pages
+        body: |
+          Hi Fiona,
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, a heritage
+          venue in the Gold Coast hinterland at Mount Nathan, with a cafe,
+          horse riding and a farm of animals on the Coomera River.
+
+          Today is Tuesday 22 September, and WANTED – A Cirque Heist, a
+          family circus in a big top on our lawn, opens Thursday 24
+          September. I have a family pass of four held for you, for any of
+          the opening-week shows, Thursday through Sunday.
+
+          Reply with the show that suits and I'll send the booking
+          details. Public tickets for the season, which runs to 4 October,
+          are at [WANTED – A Cirque Heist tickets](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924).
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        director_note: |
+          Sent after LinkedIn acceptance or after 5 days with no response.
+  - type: review
+    number: 1
+    verdict: DONE
+    in_character: |
+      Priyanka who? I don't know Historic Rivermill and I don't know her.
+      A cold LinkedIn connection note offering a "family pass" to a
+      circus, with no date attached to "Thursday", would likely sit
+      unanswered along with the other generic pitches in the queue.
+
+      The follow-up email is better: a real date, a show name, and a
+      reason it's newsworthy, squarely inside the family/school-holiday
+      beat. But today's the 22nd, the show opens the 24th, and the ask
+      wants a reply naming a specific opening-week session before that
+      window closes on the 27th. Two days' notice for a family outing,
+      with a piece that would need to run while most of the audience can
+      still catch a show in a season that only goes to 4 October, is
+      tight. Nothing here is a hard stop; the one thing worth asking about
+      in a reply is whether a later date is possible.
+    fact_check:
+      - claim: "Heritage venue in the Gold Coast hinterland at Mount Nathan, with a cafe, horse riding and a farm of animals on the Coomera River."
+        source: business-overview.md
+        result: verified
+      - claim: "Today is Tuesday 22 September."
+        source: System date supplied to the drafting session.
+        result: verified
+      - claim: "WANTED – A Cirque Heist opens Thursday 24 September."
+        source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+        result: verified
+      - claim: "Any of the opening-week shows, Thursday through Sunday."
+        source: "campaign.yaml, segments.earned-media.usps: opening-week-seats"
+        result: verified
+      - claim: "The season runs to 4 October."
+        source: historicrivermill.au/data/circus.yaml (final session date)
+        result: verified
+      - claim: "Reply with the show and I'll send the booking details; no code or price in the first message."
+        source: "campaign.yaml header comment (wave-two rule) and prompt_appendices.a_author"
+        result: verified
+      - claim: Eventbrite link given for public tickets.
+        source: "campaign.yaml, segments.earned-media.usps.opening-week-seats.rests_on, and first_ask template"
+        note: |
+          The showtimes file and circus.yaml both name Oztix as the
+          selling channel for these fourteen performances; the campaign's
+          own earned-media first_ask template and opening-week-seats USP
+          specify the Eventbrite link with this code for the free-pass
+          offer, so the draft follows the campaign's own authorised
+          template rather than the showtimes file's general-sale channel.
+        result: verified against campaign authority
+    antifact_check: |
+      No claim from business-antifacts.md (stone buildings, 100-year-old
+      structures, vineyard, Tamborine Mountain location) appears in the
+      draft.
+    revision_note: |
+      The persona raised one point (whether a later date is possible
+      given two days' notice) that did not stop the reply; sorted as
+      "leave for the reply" — the email already invites a reply naming
+      whichever show suits, which covers this without a draft change.
+      The pointing-list gap (Piece 1's "Thursday" carrying no date) was
+      closed by adding "24 September" to the LinkedIn connection note.
+    notes: Reviewer-stage freeform notes; see Step 1/Step 2 above.
+  - type: final
+    chosen_usps: [chosen-not-advertised, big-top-at-a-heritage-farm]
+    messages:
+      - channel: linkedin
+        text: |
+          Hi Fiona, I'm Priyanka, Partnerships at Historic Rivermill, a
+          heritage venue in the Gold Coast hinterland. I've a family pass
+          held for you to see WANTED – A Cirque Heist, a circus in a big
+          top on our lawn, any show from Thursday 24 September. Reply and
+          I'll send details.
+        actioned_date: null
+        replied_date: null
+      - channel: email
+        to: hello@fionaharper.com.au
+        subject: A family pass for WANTED – A Cirque Heist, for your family-travel pages
+        body: |
+          Hi Fiona,
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, a heritage
+          venue in the Gold Coast hinterland at Mount Nathan, with a cafe,
+          horse riding and a farm of animals on the Coomera River.
+
+          Today is Tuesday 22 September, and WANTED – A Cirque Heist, a
+          family circus in a big top on our lawn, opens Thursday 24
+          September. I have a family pass of four held for you, for any of
+          the opening-week shows, Thursday through Sunday.
+
+          Reply with the show that suits and I'll send the booking
+          details. Public tickets for the season, which runs to 4 October,
+          are at [WANTED – A Cirque Heist tickets](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924).
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: "Heritage venue in the Gold Coast hinterland at Mount Nathan, with a cafe, horse riding and a farm of animals on the Coomera River."
+    source: business-overview.md
+  - claim: "WANTED – A Cirque Heist opens Thursday 24 September."
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: "Opening-week shows run Thursday through Sunday, any show available for the pass."
+    source: "campaign.yaml, segments.earned-media.usps.opening-week-seats"
+  - claim: "The season runs to 4 October."
+    source: historicrivermill.au/data/circus.yaml
+  - claim: "Public tickets are on the named Eventbrite listing."
+    source: "campaign.yaml, segments.earned-media.usps.opening-week-seats.rests_on and first_ask template"
+  - claim: "No code or price appears in the first message."
+    source: "campaign.yaml header comment (wave-two rule) and prompt_appendices.a_author"
+quality_checklist: |
+  1. YAML structure: root keys drawn from the §6 canonical set; every
+     round carries type and number; the final round has one email
+     message and one LinkedIn message (cardinality check passes);
+     hello@fionaharper.com.au is a real, non-placeholder address.
+  2. Coverage: fact_provenance covers every factual claim in the final
+     draft (venue description, show open date, opening-week span, season
+     end date, ticket link, code-in-reply-only rule); a_note states
+     angle, channel, warmth, language; chosen_usps present on both draft
+     and final rounds.
+  3. Presupposition test: no sentence tells Fiona something she already
+     knows about herself; the message presents the sender's world
+     (venue, offer) rather than narrating hers.
+  4. Manufactured-connection test: the draft does not claim a Gold
+     Coast/Scenic Rim beat or cite any profile detail she hasn't stated;
+     it addresses the offer on its own terms.
+  5. Concreteness: the ask ("reply with the show that suits") is
+     answerable in one sentence.
+  6. Band-level pattern check: not applicable to this single-contact
+     draft; deferred to the band-level review across the earned-media
+     segment.
+  7. Final round email cardinality: one email message in the final
+     round; the LinkedIn message is a separate channel, so the cap on
+     emails only is respected.

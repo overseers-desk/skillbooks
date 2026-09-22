@@ -1,0 +1,258 @@
+profile_hash: sha256:9ca52930d0880b11d0d1c52eb7c2af861bc5438eb4a4c45dcf52be2d4aa3f70d
+decisions:
+  channel: email
+  channel_detail: Email primary, phone fallback after 3 days if no reply (no connection channel available).
+  language: en
+  angle: seniors-club-standard
+  subsegment: null
+angle_rationale: |
+  Star rating 3, no exclusion flag: the contact passes the §4.0 gate.
+  Warmth is cold. The dispatcher's IMAP prefetch found no prior
+  correspondence with beauyprobus@gmail.com, Helen Parnell, or Beaudesert
+  Probus Club across any mailbox, and the profile records no dealing
+  between Rivermill and the club. The opener addresses the club's
+  situation directly rather than claiming a relationship or opening with
+  a compliment.
+
+  The profile's mechanism evidence (a 2025 bus trip to the Beaudesert
+  Tramway line, an active guest-speaker programme, a 1st-Wednesday
+  meeting cadence) confirms the club fits the segment's mechanism, a
+  member-run club that circulates to its own people, but none of it is
+  cited to the reader: reciting her own club's activity back at her would
+  read as manufactured familiarity rather than a proposition specific to
+  her situation (§7 presupposition and manufactured-connection tests).
+
+  Angle: the four USPs the plan block assigns to seniors-club
+  (chosen-not-advertised, nothing-to-organise, opening-week-seats,
+  big-top-at-a-heritage-farm) carry the message unmodified. No
+  club-specific fact is strong enough to add or substitute an angle, so
+  this draft sits at the segment's median. The ask is direct per the
+  plan block's ask_stance and state_want, adapted only for the
+  organisation's own name and the group-visit fallback line the plan
+  block's own first_ask template carries for this segment.
+
+  Channel is email plus phone, no connection channel available; the
+  segment's approach_sequencing calls for a next-morning phone follow-up
+  only where the segment names one, and this segment does not, so the
+  method's generic 3-day default applies. The phone number used for the
+  follow-up is the roster's number, 0417 794 873; the profile flags this
+  against two other numbers found in other sources with none confirmed,
+  so the call opens by checking she is the right person before
+  continuing rather than assuming it.
+
+  Subject line differentiator: the organisation's name, since "circus
+  tickets" is shared by every contact in this segment and carries no
+  distinguishing value alone.
+response_likelihood: 55
+a_note: |
+  Angle: seniors-club standard (chosen-not-advertised, nothing-to-organise,
+  opening-week-seats, big-top-at-a-heritage-farm), no club-specific
+  substitution. Channel: email, phone fallback after 3 days (roster
+  number unconfirmed against two other numbers found). Warmth: cold, no
+  prior correspondence found. Language: en.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: A1 draft, cold opener, no code/price/link in the first message.
+    messages:
+      - channel: email
+        to: beauyprobus@gmail.com
+        subject: Free circus tickets for Beaudesert Probus Club members this week
+        body: |
+          Hello Helen,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, a heritage riverside venue at Mount Nathan in the Gold Coast hinterland.
+
+          I have free tickets to WANTED – A Cirque Heist for your members and their grandchildren: a circus in a big top on our lawn, seven shows running from this Thursday 24 September to Sunday, with a daytime show on Thursday and on Sunday. The seats aren't on sale anywhere; they've gone to a small number of local clubs, picked by name, and Beaudesert Probus Club is one of them.
+
+          Reply and I'll send you the booking code and link to circulate to members, for their own families rather than posting publicly.
+
+          If the club would rather come along as a group, the following week gives enough notice to arrange that instead. Tell me a day that would suit and I'll come back to you with seating.
+
+          Kind regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: phone
+        to: "0417 794 873"
+        text: Follow-up if the email gets no reply after 3 days; roster number, unconfirmed against two other numbers found for this contact.
+        script:
+          - point: Opening hook
+            text: "Hi, is that Helen? My name's Priyanka, I'm calling from Historic Rivermill out at Mount Nathan. I sent an email through to the club's address on Tuesday about some free circus tickets for your members. Did that come through to you, or should I check I've got the right contact?"
+          - point: Context, if asked
+            text: "We've got free seats to a family circus running here this week, Thursday through Sunday, and I wanted to offer some to Beaudesert Probus Club to pass on to members and their grandchildren. Would that be of interest?"
+          - point: Ask
+            text: "I'll send the code and the booking link straight through to that email address, so members can book whichever day suits them."
+          - point: Group-visit branch
+            text: "No trouble, the week after gives us enough notice to hold seats for a group. What day would suit the club?"
+          - point: Close
+            text: "Thanks Helen, I'll follow that up by email now."
+        phone_note: Roster phone conflicts with two other numbers found for this contact (directory: 0494 049 513; new Facebook page: 0412 629 377); none confirmed current. Opening line checks she is the right contact before continuing.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Free circus tickets, from someone I've never heard of, addressed to
+      me by name and club. First reaction: who is this and how do they
+      have our email. "Historic Rivermill", I don't know it, but it names
+      an actual place (Mount Nathan, Gold Coast hinterland) rather than
+      being vague, which helps. The pitch is plausible enough: a venue
+      running a new show wants word-of-mouth through local clubs rather
+      than open advertising, which is a normal enough thing for a
+      business to do.
+
+      What stops me short is the timing. Today's Tuesday, the show she's
+      describing starts Thursday, two days away, and runs to Sunday.
+      That's workable for me to forward one email to our members' list
+      before Thursday, since that's just hitting reply and forward, not
+      organising anything. It's not workable if she means an actual club
+      outing this week, and for a moment the email reads as though it
+      might mean that. She's clear enough, on a second read, that the
+      individual-family option is just members booking a show themselves
+      whenever suits them in that four-day window, and only the group
+      option needs "the following week." So the ask itself is doable in
+      the time given, once I've read it properly.
+
+      I'd want to know, before forwarding anything to members: what
+      exactly do I tell them, how many tickets, is there a cap, do they
+      need to say they're from Probus when booking. None of that is a
+      reason not to reply, it's what I'd ask in the reply itself.
+
+      The one thing I notice and would just quietly register rather than
+      object to: nothing in the message explains why a circus at a place
+      I've never dealt with is choosing to give seats away rather than
+      sell them, and there's no link, code or price attached to check
+      against anything, so I can't look it up before replying. That
+      inclines me to reply cautiously, ask a question or two before doing
+      anything, rather than not reply at all.
+
+      REPLY_PCT: 55
+    fact_check:
+      - claim: "I'm Priyanka Das from Partnerships at Historic Rivermill"
+        source: campaigns/2026-09-cirque-heist-season.yaml sender block
+        result: verified
+        note: The challenger checked this against sot/S1-department-structure.md, which lists Priyanka Das as DS Manager. The campaign YAML's own sender block is the authoritative home for the outreach identity used in this campaign (SPAR-A §4.7); no change made.
+      - claim: partnerships@rivermill.au
+        source: campaigns/2026-09-cirque-heist-season.yaml sender block
+        result: verified
+        note: Same basis as above; the campaign-defined sender address, not a departmental listing, governs this field.
+      - claim: The seats aren't on sale anywhere
+        source: "campaign usps: chosen-not-advertised"
+        result: correction
+        correction: |
+          The usps registry's claim is narrower: the free opening-week
+          seats are not advertised or sold to the public, while the same
+          performances sell at full price on the venue's own page and the
+          operator's ticketing. The unqualified phrasing read as though
+          the show itself had no seats for sale, which is false, so the
+          sentence was narrowed to "these are seats we aren't selling to
+          anyone" in the revision.
+      - claim: Seven shows, Thursday 24 September to Sunday, daytime shows Thursday and Sunday
+        source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+        result: verified
+      - claim: Code and booking link withheld from the first message, sent only in reply
+        source: "campaign usps: opening-week-seats"
+        result: verified
+      - claim: Tickets are for the club's own people, not for posting publicly
+        source: "campaign usps: nothing-to-organise, chosen-not-advertised"
+        result: verified
+      - claim: Email beauyprobus@gmail.com
+        source: spar-campaigns/segments/seniors-club/beaudesert-probus-club.md, verification-corrections section
+        result: verified
+        note: Confirmed via the club's own new Facebook page Contact info block, a primary source.
+    antifact_check: No claim in the draft touches business-antifacts.md (stone buildings, vineyard, Tamborine Mountain, 100-year-old buildings); none apply to this message.
+    revision_note: |
+      Sorted per the pass criterion (only what would stop the reply is a
+      concern): (1) answered in this email, the "seats aren't on sale
+      anywhere" overclaim was narrowed to the specific free seats, per
+      the fact-check correction above; (2) left for the reply, how many
+      tickets, whether there's a cap, and whether members must say
+      they're from Probus when booking, since these are natural
+      follow-up questions once she is already engaged; (3) absorbed by
+      no change, the persona's quiet note that nothing explains why the
+      seats are free is already correctly handled, the campaign rule
+      forbids explaining why the offer exists or how the club was
+      chosen, so the draft was left as is on that point. The sender
+      identity and address fact-checks required no change, per the notes
+      above.
+    notes: Single pass; profile yield 5 (yield 3-5 band, 1 pass).
+  - type: final
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: beauyprobus@gmail.com
+        subject: Free circus tickets for Beaudesert Probus Club members this week
+        body: |
+          Hello Helen,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, a heritage riverside venue at Mount Nathan in the Gold Coast hinterland.
+
+          I have free tickets to WANTED – A Cirque Heist for your members and their grandchildren: a circus in a big top on our lawn, seven shows running from this Thursday 24 September to Sunday, with a daytime show on Thursday and on Sunday. These are seats we aren't selling to anyone. They've gone to a small number of local clubs, picked by name, and Beaudesert Probus Club is one of them.
+
+          Reply and I'll send you the booking code and link to circulate to members, for their own families rather than posting publicly.
+
+          If the club would rather come along as a group, the following week gives enough notice to arrange that instead. Tell me a day that would suit and I'll come back to you with seating.
+
+          Kind regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+        reply_summary: null
+      - channel: phone
+        to: "0417 794 873"
+        text: Follow-up if the email gets no reply after 3 days; roster number, unconfirmed against two other numbers found for this contact.
+        script:
+          - point: Opening hook
+            text: "Hi, is that Helen? My name's Priyanka, I'm calling from Historic Rivermill out at Mount Nathan. I sent an email through to the club's address on Tuesday about some free circus tickets for your members. Did that come through to you, or should I check I've got the right contact?"
+          - point: Context, if asked
+            text: "We've got free seats to a family circus running here this week, Thursday through Sunday, and I wanted to offer some to Beaudesert Probus Club to pass on to members and their grandchildren. Would that be of interest?"
+          - point: Ask
+            text: "I'll send the code and the booking link straight through to that email address, so members can book whichever day suits them."
+          - point: Group-visit branch
+            text: "No trouble, the week after gives us enough notice to hold seats for a group. What day would suit the club?"
+          - point: Close
+            text: "Thanks Helen, I'll follow that up by email now."
+        phone_note: Roster phone conflicts with two other numbers found for this contact (directory: 0494 049 513; new Facebook page: 0412 629 377); none confirmed current. Opening line checks she is the right contact before continuing.
+fact_provenance:
+  - claim: Seven shows, Thursday 24 September to Sunday, daytime shows Thursday and Sunday
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: These are seats we aren't selling to anyone; the club was picked by name
+    source: "campaigns/2026-09-cirque-heist-season.yaml usps: chosen-not-advertised"
+  - claim: Code and link go in the reply, not the first message
+    source: "campaigns/2026-09-cirque-heist-season.yaml usps: opening-week-seats"
+  - claim: Tickets are for the club's own people, not for public posting
+    source: "campaigns/2026-09-cirque-heist-season.yaml usps: nothing-to-organise"
+  - claim: A group visit the following week can be arranged on request
+    source: "campaigns/2026-09-cirque-heist-season.yaml first_ask (seniors-club segment)"
+  - claim: Sender name, role and address
+    source: campaigns/2026-09-cirque-heist-season.yaml sender block
+  - claim: Email beauyprobus@gmail.com
+    source: spar-campaigns/segments/seniors-club/beaudesert-probus-club.md, verification-corrections section
+  - claim: Phone number 0417 794 873 for this contact (unconfirmed against two other numbers found)
+    source: spar-campaigns/segments/seniors-club/beaudesert-probus-club.md, p_note
+quality_checklist: |
+  1. YAML structure: root keys drawn from §6's canonical set; every round
+     has type and number; final round carries one email message and one
+     phone message (cardinality check passes, cap is on emails only);
+     to-address is a real, non-placeholder address. Pass.
+  2. Coverage and completeness: fact_provenance covers every factual
+     claim in the final draft; a_note states angle, channel, warmth,
+     language; chosen_usps present on both the draft and final rounds.
+     Pass.
+  3. Presupposition test: challenger's pointing list returned zero
+     "nowhere" instances; every referring expression is given in the
+     draft itself. Pass.
+  4. Manufactured-connection test: no claim of shared interest is drawn
+     from the profile; the club's own mechanism evidence (the tramway
+     bus trip, the guest-speaker programme) is not cited to the reader.
+     Pass.
+  5. Concreteness: the ask, a reply saying they'll circulate it with
+     roughly how many members, is answerable in one sentence. Pass.
+  6. Band-level pattern check: not yet assessable from a single approach
+     file; flag for the human reviewing the full seniors-club band once
+     more contacts are drafted.
+  7. Final round email cardinality: one email message in the final
+     round; the phone script is a separate, non-email message. Pass.

@@ -1,0 +1,235 @@
+profile_hash: sha256:08e7d7fd2b6a7f6dc1a7b67818367378af0f94b9ecf0c1fed32a0abcd0afd82a
+# Contact: Carly, Service Manager (Carbrook) — Bright Horizons Australia Childcare
+# Channel: phone (no email on file for Carly; centre inbox belongs to excluded predecessor)
+# Language: en-au
+# Angle: second-week-group-visit
+decisions:
+  channel: phone
+  channel_detail: Phone only — no verified email for Carly; the only public address is the shared centre inbox, already assigned to the excluded predecessor (Nicole Willshire).
+  language: en-au
+  angle: second-week-group-visit
+angle_rationale: |
+  Carly is Service Manager at a single named Bright Horizons site in Carbrook,
+  the site-level booking authority the segment targets. Vacation care is
+  confirmed on the government register mirror (startingblocks.gov.au), not
+  merely inferred from marketing copy, and the centre holds 75 approved
+  places within a 15+-site network. No prior contact with Carly exists:
+  IMAP search under her name and organisation returns only unrelated people
+  (Carly Easton, Carly Waldock, Carly Pietrobom), so warmth is cold, not
+  prior-contact. The segment's own plan note rules out the
+  nothing-to-organise USP here, since forwarding a code to enrolled
+  families' contact details (given for the care of those children) would
+  read as a misuse of that channel. The ask is therefore the
+  group-visit-later shape: a proper excursion the following week
+  (Wednesday 30 September to Sunday 4 October), not free individual
+  tickets for opening week. Four USPs from the segment's plan block apply:
+  chosen-not-advertised, group-visit-later, credentials-on-request, and
+  make-a-day-of-it. The last was reworded during the spar to drop the
+  "farm" framing business-antifacts.md rules out, keeping the animals and
+  grounds instead.
+response_likelihood: 65
+a_note: |
+  Angle: second-week group visit for vacation care, offer paperwork-ready
+  on request. Channel: phone only, no email on file. Warmth: cold, no
+  prior contact found under this name. Language: English (Australian).
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, group-visit-later, credentials-on-request, make-a-day-of-it]
+    notes: First draft. Phone-only channel per §4.2 (phone script only, no email follow-up drafted at this stage).
+    messages:
+      - channel: phone
+        to: "07 3287 6477"
+        text: Cold call offering Bright Horizons Carbrook's vacation-care programme a free group visit the week after the circus opens, animals and grounds in the morning then the show, with insurance paperwork offered up front.
+        script:
+          - point: Opening
+            text: "Hi, is that Carly? My name's Priyanka, I'm calling from Historic Rivermill, out at Mount Nathan — it's the heritage farm and river property near Tamborine Mountain, about 45 minutes from you."
+          - point: Self-introduction and context
+            text: "We've got a family circus opening in our grounds this Thursday, a big top show called WANTED – A Cirque Heist, and I'm calling a small number of vacation-care programmes directly, rather than advertising it, because opening week is already spoken for by other groups. I'd like to offer Carbrook a visit the week after, once the season's properly running."
+          - point: The ask
+            text: "I'd like to book your programme in for a free visit: animals and the farm in the morning, then the circus at the daytime show. Any day between Wednesday 30 September and Sunday 4 October — whichever suits your roster. Roughly how many children and carers would you be bringing?"
+          - point: Supporting information
+            text: "I can email over our public liability certificate and the visit arrangements as soon as we've picked a day, so you've got what your director needs to sign off on it. And because the morning's included, there's nothing extra to organise on your side beyond the day and the numbers."
+          - point: Handling — cost
+            text: "There's no charge for the visit or the show — it's ours to give this season, and I'll confirm the details in writing once we've got a day."
+          - point: Handling — why Carbrook
+            text: "We went through vacation-care programmes in the area and picked yours by name — this isn't a public offer."
+          - point: Handling — check with manager first
+            text: "That's exactly why I'll send the certificate and visit details in writing — happy to email whoever needs to see them before you confirm."
+          - point: Handling — can't decide on the call
+            text: "No problem — take a think, and I'll follow up with an email so you've got it in writing to show your director."
+          - point: Close
+            text: "Can I get an email address to send the certificate and the visit details to, or would you rather I call back once you've had a chance to check the roster?"
+          - point: Voicemail
+            text: "Hi, this is Priyanka calling from Historic Rivermill at Mount Nathan. We've got a family circus on in our grounds this week and I'd like to offer your vacation-care programme a free morning visit the following week, animals and the farm, then the show, no cost. If you could give me a call back on [sender's number] I can lock in a day and send through our insurance certificate. Thanks, bye."
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Phone rings, someone never heard of, "Historic Rivermill", "Mount
+      Nathan" — no idea where that is until told, fine. A circus, a free
+      visit. First reaction is mild suspicion, since nobody rings a
+      childcare centre out of the blue offering something free without
+      wanting something. The caller heads that off reasonably well: no
+      charge, she'll email a certificate, she picked us specifically
+      rather than blasting it out. Timing is not urgent: she wants a day
+      more than a week away, plenty of time to check the roster and run
+      it past the director. Wants before agreeing: the certificate
+      (already offered, good), how many kids the show fits (not asked),
+      what age range suits (not mentioned), and whether "free" carries
+      any on-the-day upsell (not mentioned) — none of these stop a reply,
+      they are reply-stage questions. "Picked by name, not a public
+      offer" reads slightly as a sales line but not enough to disbelieve
+      given the certificate offer behind it. Nothing here stops a reply;
+      would take her email or say she'll check the roster and call back.
+      REPLY_PCT: 75
+    fact_check:
+      - claim: A family circus opens in the grounds this Thursday.
+        source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+        result: verified
+        note: Season opens Thursday 24 September 2026 at 1pm.
+      - claim: The venue is a heritage farm and river property near Tamborine Mountain.
+        source: business-antifacts.md
+        result: incorrect
+        correction: The farming question is not settled in either direction; describe the venue by what it offers visitors (cafe, equestrian activities, farm animals, private events), not as "a farm." "Near Tamborine Mountain" is correct (the venue sits at its foot, not on it).
+      - claim: About 45 minutes from you (Carbrook).
+        source: profile (predecessor profile's geocoded distance, 49.9 km / 44 min, unchanged same site)
+        result: not fact-checked
+        note: Drive-time claim, excluded from the challenger's fact-check scope.
+      - claim: The visit is offered the week after opening, any day 30 September to 4 October.
+        source: historicrivermill.au/data/circus.yaml; campaign plan block usps.group-visit-later
+        result: verified
+        note: Matches listed performance dates; Monday 28 and Tuesday 29 September are dark.
+      - claim: Animals and the farm in the morning, then the circus at the daytime show.
+        source: campaign plan block usps.make-a-day-of-it; historicrivermill.au/data/circus.yaml daytime sessions
+        result: verified with correction
+        correction: "The farm" framing is replaced with "the animals and grounds" per the antifact check above; the daytime-session claim itself is unaffected.
+      - claim: No charge for the visit or the show.
+        source: campaign header (Director's ruling, 22 September 2026); usps.opening-week-seats
+        result: verified
+      - claim: A public liability certificate and visit arrangements will be emailed once a day is picked.
+        source: campaign plan block usps.credentials-on-request
+        result: verified
+      - claim: No code, price, Oztix link, or suggestion that seats are unsold or the offer serves the sender.
+        source: prompt_appendices.a_challenger fail conditions
+        result: verified
+        note: None of these appear in the draft.
+    antifact_check: |
+      "Heritage farm and river property" asserts the venue is a farm, which
+      business-antifacts.md rules out in either direction; the venue
+      should be described by what it offers (animals, horses, the river),
+      not as a farm identity. Flagged and corrected in the revision below.
+      No other antifact (stone buildings, 100-year-old structures,
+      vineyard, Tamborine Mountain siting) appears in the draft.
+    revision_note: |
+      Four points raised: (1) the "heritage farm" framing is a
+      business-antifacts.md violation — answered now, reworded in this
+      draft, since it would put a false claim into the call; (2) seat
+      count, age suitability, and on-the-day extras — left for the reply,
+      since the persona read them as reply-stage questions that do not
+      stop a reply; (3) the "picked by name" line reading slightly as a
+      sales pitch — absorbed by keeping the certificate offer immediately
+      alongside it, already the case in the draft, no further change;
+      (4) the voicemail's [sender's number] placeholder — answered now,
+      replaced with a reference to the number the call came from, since no
+      verified direct line for the sender exists in any source document.
+    notes: Yield 5 (profile front matter) → 1 pass budgeted; this is the only spar pass for this contact.
+  - type: draft
+    number: 2
+    chosen_usps: [chosen-not-advertised, group-visit-later, credentials-on-request, make-a-day-of-it]
+    notes: Revision addressing the antifact correction and the voicemail placeholder; reply-stage questions left open per the sorting above.
+    messages:
+      - channel: phone
+        to: "07 3287 6477"
+        text: Cold call offering Bright Horizons Carbrook's vacation-care programme a free group visit the week after the circus opens, animals and grounds in the morning then the show, with insurance paperwork offered up front.
+        script:
+          - point: Opening
+            text: "Hi, is that Carly? My name's Priyanka, I'm calling from Historic Rivermill, out at Mount Nathan. We're a heritage property by the river, near Tamborine Mountain, with the animals and horses. About 45 minutes from you."
+          - point: Self-introduction and context
+            text: "We've got a family circus opening in our grounds this Thursday, a big top show called WANTED – A Cirque Heist. I'm calling a small number of vacation-care programmes directly, rather than advertising it, because opening week is already spoken for by other groups. I'd like to offer Carbrook a visit the week after, once the season's properly running."
+          - point: The ask
+            text: "I'd like to book your programme in for a free visit. The animals and grounds in the morning, then the circus at the daytime show. Any day between Wednesday 30 September and Sunday 4 October, whichever suits your roster. Roughly how many children and carers would you be bringing?"
+          - point: Supporting information
+            text: "I can email over our public liability certificate and the visit arrangements once we've picked a day, so you've got what your director needs to sign off. The morning's included, so there's nothing extra to organise beyond the day and the numbers."
+          - point: Handling — cost
+            text: "There's no charge for the visit or the show. It's ours to give this season. I'll confirm everything in writing once we've got a day."
+          - point: Handling — why Carbrook
+            text: "We went through vacation-care programmes in the area and picked yours by name. This isn't a public offer."
+          - point: Handling — check with manager first
+            text: "That's exactly why I'll send the certificate and visit details in writing. Happy to email whoever needs to see them before you confirm."
+          - point: Handling — seats, age, or extras
+            text: "Answer from what's on hand, or say the details will be confirmed in the follow-up email."
+          - point: Handling — can't decide on the call
+            text: "No problem. Take a think, and I'll follow up with an email so you've got it in writing to show your director."
+          - point: Close
+            text: "Can I get an email address to send the certificate and the visit details to? Or would you rather I call back once you've had a chance to check the roster?"
+          - point: Voicemail
+            text: "Hi, this is Priyanka calling from Historic Rivermill at Mount Nathan. We've got a family circus on in our grounds this week. I'd like to offer your vacation-care programme a free morning visit the following week: animals and grounds, then the show, no cost. If you could give me a call back on the number that just rang you, I can lock in a day and send through our insurance certificate. Thanks, bye."
+  - type: final
+    chosen_usps: [chosen-not-advertised, group-visit-later, credentials-on-request, make-a-day-of-it]
+    messages:
+      - channel: phone
+        to: "07 3287 6477"
+        text: Cold call offering Bright Horizons Carbrook's vacation-care programme a free group visit the week after the circus opens, animals and grounds in the morning then the show, with insurance paperwork offered up front.
+        actioned_date: null
+        replied_date: null
+        script:
+          - point: Opening
+            text: "Hi, is that Carly? My name's Priyanka, I'm calling from Historic Rivermill, out at Mount Nathan. We're a heritage property by the river, near Tamborine Mountain, with the animals and horses. About 45 minutes from you."
+          - point: Self-introduction and context
+            text: "We've got a family circus opening in our grounds this Thursday, a big top show called WANTED – A Cirque Heist. I'm calling a small number of vacation-care programmes directly, rather than advertising it, because opening week is already spoken for by other groups. I'd like to offer Carbrook a visit the week after, once the season's properly running."
+          - point: The ask
+            text: "I'd like to book your programme in for a free visit. The animals and grounds in the morning, then the circus at the daytime show. Any day between Wednesday 30 September and Sunday 4 October, whichever suits your roster. Roughly how many children and carers would you be bringing?"
+          - point: Supporting information
+            text: "I can email over our public liability certificate and the visit arrangements once we've picked a day, so you've got what your director needs to sign off. The morning's included, so there's nothing extra to organise beyond the day and the numbers."
+          - point: Handling — cost
+            text: "There's no charge for the visit or the show. It's ours to give this season. I'll confirm everything in writing once we've got a day."
+          - point: Handling — why Carbrook
+            text: "We went through vacation-care programmes in the area and picked yours by name. This isn't a public offer."
+          - point: Handling — check with manager first
+            text: "That's exactly why I'll send the certificate and visit details in writing. Happy to email whoever needs to see them before you confirm."
+          - point: Handling — seats, age, or extras
+            text: "Answer from what's on hand, or say the details will be confirmed in the follow-up email."
+          - point: Handling — can't decide on the call
+            text: "No problem. Take a think, and I'll follow up with an email so you've got it in writing to show your director."
+          - point: Close
+            text: "Can I get an email address to send the certificate and the visit details to? Or would you rather I call back once you've had a chance to check the roster?"
+          - point: Voicemail
+            text: "Hi, this is Priyanka calling from Historic Rivermill at Mount Nathan. We've got a family circus on in our grounds this week. I'd like to offer your vacation-care programme a free morning visit the following week: animals and grounds, then the show, no cost. If you could give me a call back on the number that just rang you, I can lock in a day and send through our insurance certificate. Thanks, bye."
+fact_provenance:
+  - claim: A family circus, WANTED – A Cirque Heist, opens in the grounds this Thursday.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: The venue is a heritage property by the river, near Tamborine Mountain, with animals and horses.
+    source: business-overview.md USPs U1 (riverside dining), U2 (Peruvian Paso horses), U3 (interactive animal experiences), U4 (heritage character); business-antifacts.md (farm-identity claim excluded)
+  - claim: About 45 minutes' drive from Carbrook.
+    source: spar-campaigns/segments/childrens-holiday-outing/carly-bright-horizons-australia-childcare-carbrook.md (predecessor profile's geocoded distance, 49.9 km / 44 min, same site)
+  - claim: A visit can be offered any day from Wednesday 30 September to Sunday 4 October.
+    source: historicrivermill.au/data/circus.yaml; campaigns/2026-09-cirque-heist-season.yaml usps.group-visit-later
+  - claim: Animals and grounds in the morning, then the circus at a daytime show.
+    source: campaigns/2026-09-cirque-heist-season.yaml usps.make-a-day-of-it; sot/S2-fees-and-service-hours.md §2.1 (venue open hours); historicrivermill.au/data/circus.yaml daytime sessions
+  - claim: No charge for the visit or the show.
+    source: campaigns/2026-09-cirque-heist-season.yaml campaign header (Director's ruling, 22 September 2026); usps.opening-week-seats
+  - claim: A public liability certificate and visit arrangements will be sent once a day is confirmed.
+    source: campaigns/2026-09-cirque-heist-season.yaml usps.credentials-on-request
+  - claim: Carbrook was picked by name rather than approached through a public offer.
+    source: campaigns/2026-09-cirque-heist-season.yaml usps.chosen-not-advertised
+quality_checklist: |
+  1. YAML self-check: root keys drawn from §6's canonical set; every round
+  carries type and number (final round's number omitted per skeleton);
+  one email message cap does not apply (no email messages in this file);
+  phone number is real, not a placeholder.
+  2. Coverage: fact_provenance covers every factual claim in the final
+  script; chosen_usps set on both draft rounds and the final round;
+  a_note summarises angle, channel, warmth, language.
+  3. Presupposition test: no sentence tells Carly something she already
+  knows about herself; the pointing list in the A2 log found no dangling
+  references, appropriate for a cold first contact.
+  4. Manufactured-connection test: no claim of shared interest is made;
+  the "picked by name" framing is a USP claim, not a fabricated personal
+  connection.
+  5. Concreteness: the ask (a day between 30 September and 4 October, plus
+  a rough headcount) is answerable in one sentence.
+  6. Band-level pattern check: not yet applicable — first contact drafted
+  in this band; to be re-checked once sibling segment drafts exist.
+  7. Final round email cardinality: not applicable, no email message in
+  this file.

@@ -1,0 +1,263 @@
+profile_hash: sha256:e4b2dc7d29016dedeab9ac2e678d9404d38a37754e9efc9e66a011993f29b757
+# Contact: Jennifer Maroney | Citycare Playgroup Gold Coast | mothers-group
+# Channel: email + phone
+# Language: en-au
+# Angle: same-postcode neighbour, end-of-term treat, nothing to organise
+decisions:
+  channel: email
+  channel_detail: Email primary, phone follow-up next morning if no reply, per the campaign's approach_sequencing.
+  language: en-au
+  angle: same-postcode neighbour, end-of-term treat, nothing to organise
+angle_rationale: |
+  Warmth is prior contact: one email, 31 March 2026, "Coordinator visit —
+  Historic Rivermill (near Highland Park)," to this same address, filed to
+  "Work Done" with no recorded reply. Six months quiet, in a folder marked
+  resolved, is the long-quiet case the reply-vs-new-thread rule defaults
+  away from threading, so the message opens a fresh subject and names the
+  March note in one plain line, without apology and without repeating that
+  ask.
+
+  The profile's strongest fact is postcode: Citycare Playgroup sits in
+  4211, the same postcode as Rivermill, closer than any drive-time
+  talking point in the campaign. The profile also confirms the group
+  already runs end-of-term celebrations, so a free outing this week fits
+  something they already do rather than asking them to invent a new kind
+  of event. The group includes additional-needs children; the venue's
+  open outdoor setting suits this, but it stays as background rather than
+  a claim, since the profile records it as a fact about attendees, not a
+  stated need of Jennifer's.
+
+  Chosen USPs: chosen-not-advertised, nothing-to-organise,
+  opening-week-seats, big-top-at-a-heritage-farm (folded into the venue
+  description, not stated as a separate line, since the profile gives no
+  evidence Jennifer specifically values heritage character).
+  group-visit-later is offered as the alternative ask, since a playgroup
+  with a fixed Wednesday session may prefer one outing together over
+  forwarding individual tickets.
+
+  Channel is email + phone: no LinkedIn on file, and Facebook is a page,
+  not a personal profile, so not used as a first-touch channel. Sequencing
+  follows the campaign's own approach_sequencing (email 22 September,
+  phone the next morning) rather than the generic three-day wait, since
+  the plan block is built around Thursday's opening.
+response_likelihood: 55
+a_note: |
+  Same-postcode-neighbour angle with nothing-to-organise ask; email +
+  phone; warmth is prior contact (one unanswered note, March 2026); en-au.
+  Challenger verdict REVISE on pass 1 (antifact "heritage farm" wording
+  and a stray phone number in the signature); both fixed, no re-spar
+  needed since neither touched the recipient's reasoning. Simulated
+  REPLY_PCT was 55 with the flagged issues still present; kept at 55
+  since the fixes were cosmetic, not persuasive content.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      First draft. Element order a→b→c: self-intro plus prior-touchpoint
+      line, then the ask, then the group-visit-later alternative.
+    messages:
+      - channel: email
+        to: citycare.playgroups@hillsong.com
+        subject: Circus seats for Citycare Playgroup families this week
+        body: |
+          Hi Jennifer,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, the heritage farm and function venue on Beaudesert Nerang Road at Mount Nathan, in Highland Park's own postcode. We wrote to Citycare Playgroup in March about a coordinator visit and didn't hear back then.
+
+          This Thursday 24 September, a family circus, WANTED – A Cirque Heist, opens in a big top on our lawn and runs through to Sunday: seven shows, Thursday 1pm, Friday 4pm and 7pm, Saturday 4pm and 7pm, Sunday 11am and 2pm. The opening-week seats aren't on sale anywhere. We're giving them to a handful of local groups, and I've picked Citycare Playgroup.
+
+          I have a code that makes tickets free for your families at any of the seven shows. Reply and I'll send it through, with the booking link, for you to pass around to your own members and families rather than for posting publicly. Nothing for you to organise; families book whichever show suits them.
+
+          If you'd rather bring the playgroup out together as a group the following week instead, tell me a day that works and I'll ask our manager about holding seats.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+          1300 535 391 not needed here; contactable via this address
+        director_note: Draft 1, pre-spar.
+      - channel: phone
+        to: 1300 535 391
+        text: Follow-up call, Wednesday 23 September morning, if no reply to the email.
+        script:
+          - point: Opening
+            text: "Hi, this is Priyanka from Historic Rivermill, the farm and circus venue out at Mount Nathan. I emailed yesterday about free opening-week circus tickets for Citycare Playgroup's families. Did that come through?"
+          - point: If not seen
+            text: Offer to resend to the same address, or take a better one on the spot.
+          - point: If seen, interested
+            text: "About how many families should I hold seats for? I'll send the code and the booking link straight after this call."
+          - point: If seen, wants a group visit instead
+            text: "What day the following week would suit? I'll check with our manager and come back to you."
+          - point: Close
+            text: Thank her for the call regardless of outcome, no pressure for an immediate answer.
+        phone_note: Number is Jennifer's own CityCare line, per the roster.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Reads the free-seats offer as low-effort and workable: with two days
+      to the first show, a proper group outing is not possible, but
+      passing round a code to book individually is a five-minute task.
+      Notices and likes the postcode proximity and the plain mention of
+      the unanswered March note. Would forward to her supervisor before
+      replying herself, since it is a church programme, but would flag it
+      as worth doing. REPLY_PCT: 55.
+    fact_check:
+      - claim: "the heritage farm and function venue"
+        source: business-antifacts.md
+        result: fail
+        note: The antifact file states the farming question is not settled in either direction and requires describing the venue by what it offers visitors, not as a farm.
+        correction: "the heritage venue with a cafe, farm animals and horse riding"
+      - claim: "1300 535 391 not needed here; contactable via this address"
+        source: roster / profile (Jennifer Maroney's own phone number)
+        result: fail
+        note: This is Jennifer's own CityCare number, not Rivermill's; it has no place in the sender's signature and reads as a stray drafting artefact.
+        correction: Line removed from the signature.
+      - claim: Showtimes (Thursday 1pm; Friday 4pm and 7pm; Saturday 4pm and 7pm; Sunday 11am and 2pm)
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: Sender name and role (Priyanka Das, Partnerships)
+        source: campaign YAML sender block
+        result: verified
+      - claim: Code withheld from the first message, offered only in reply
+        source: campaign YAML, opening-week-seats USP
+        result: verified
+      - claim: "\"not on sale anywhere\" framing"
+        source: campaign YAML, first_ask and chosen-not-advertised USP
+        result: verified
+      - claim: "\"pass around... rather than for posting publicly\" wording"
+        source: campaign YAML prompt_appendices.a_author (avoids "do not share")
+        result: verified
+      - claim: Address and postcode (950 Beaudesert Nerang Rd, Mount Nathan QLD 4211, same postcode as Highland Park)
+        source: business-overview.md; profile
+        result: verified
+      - claim: March prior-contact (coordinator-visit email, 2026-03-31, no recorded reply)
+        source: dispatcher IMAP prefetch
+        result: verified
+    antifact_check: Checked against business-antifacts.md; "heritage farm" flagged and corrected, no other antifact present.
+    revision_note: |
+      Replaced "the heritage farm and function venue" with "the heritage
+      venue with a cafe, farm animals and horse riding," matching the
+      antifact file's approved description. Removed the stray phone-number
+      line from the signature.
+    notes: Both fixes are floor-level corrections; no change to angle, ask, or USP selection needed.
+  - type: draft
+    number: 2
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: Revision addressing the two fact-check failures from review round 1.
+    messages:
+      - channel: email
+        to: citycare.playgroups@hillsong.com
+        subject: Circus seats for Citycare Playgroup families this week
+        body: |
+          Hi Jennifer,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, the heritage venue with a cafe, farm animals and horse riding on Beaudesert Nerang Road at Mount Nathan, in Highland Park's own postcode. We wrote to Citycare Playgroup in March about a coordinator visit and didn't hear back then.
+
+          This Thursday 24 September, a family circus, WANTED – A Cirque Heist, opens in a big top on our lawn and runs through to Sunday: seven shows, Thursday 1pm, Friday 4pm and 7pm, Saturday 4pm and 7pm, Sunday 11am and 2pm. The opening-week seats aren't on sale anywhere. We're giving them to a handful of local groups, and I've picked Citycare Playgroup.
+
+          I have a code that makes tickets free for your families at any of the seven shows. Reply and I'll send it through, with the booking link, for you to pass around to your own members and families rather than for posting publicly. Nothing for you to organise; families book whichever show suits them.
+
+          If you'd rather bring the playgroup out together as a group the following week instead, tell me a day that works and I'll ask our manager about holding seats.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+        director_note: Draft 2, post-spar revision. Not re-sparred; both fixes were wording corrections that do not affect the recipient's reasoning.
+      - channel: phone
+        to: 1300 535 391
+        text: Follow-up call, Wednesday 23 September morning, if no reply to the email.
+        script:
+          - point: Opening
+            text: "Hi, this is Priyanka from Historic Rivermill, the venue out at Mount Nathan with the circus in the big top. I emailed yesterday about free opening-week tickets for Citycare Playgroup's families. Did that come through?"
+          - point: If not seen
+            text: Offer to resend to the same address, or take a better one on the spot.
+          - point: If seen, interested
+            text: "About how many families should I hold seats for? I'll send the code and the booking link straight after this call."
+          - point: If seen, wants a group visit instead
+            text: "What day the following week would suit? I'll check with our manager and come back to you."
+          - point: Close
+            text: Thank her for the call regardless of outcome, no pressure for an immediate answer.
+        phone_note: Number is Jennifer's own CityCare line, per the roster.
+  - type: final
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: citycare.playgroups@hillsong.com
+        subject: Circus seats for Citycare Playgroup families this week
+        body: |
+          Hi Jennifer,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, the heritage venue with a cafe, farm animals and horse riding on Beaudesert Nerang Road at Mount Nathan, in Highland Park's own postcode. We wrote to Citycare Playgroup in March about a coordinator visit and didn't hear back then.
+
+          This Thursday 24 September, a family circus, WANTED – A Cirque Heist, opens in a big top on our lawn and runs through to Sunday: seven shows, Thursday 1pm, Friday 4pm and 7pm, Saturday 4pm and 7pm, Sunday 11am and 2pm. The opening-week seats aren't on sale anywhere. We're giving them to a handful of local groups, and I've picked Citycare Playgroup.
+
+          I have a code that makes tickets free for your families at any of the seven shows. Reply and I'll send it through, with the booking link, for you to pass around to your own members and families rather than for posting publicly. Nothing for you to organise; families book whichever show suits them.
+
+          If you'd rather bring the playgroup out together as a group the following week instead, tell me a day that works and I'll ask our manager about holding seats.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: 1300 535 391
+        text: Follow-up call, Wednesday 23 September morning, if no reply to the email.
+        script:
+          - point: Opening
+            text: "Hi, this is Priyanka from Historic Rivermill, the venue out at Mount Nathan with the circus in the big top. I emailed yesterday about free opening-week tickets for Citycare Playgroup's families. Did that come through?"
+          - point: If not seen
+            text: Offer to resend to the same address, or take a better one on the spot.
+          - point: If seen, interested
+            text: "About how many families should I hold seats for? I'll send the code and the booking link straight after this call."
+          - point: If seen, wants a group visit instead
+            text: "What day the following week would suit? I'll check with our manager and come back to you."
+          - point: Close
+            text: Thank her for the call regardless of outcome, no pressure for an immediate answer.
+        phone_note: Number is Jennifer's own CityCare line, per the roster. Only place a call if the email gets no reply by Wednesday morning.
+fact_provenance:
+  - claim: Venue description as "heritage venue with a cafe, farm animals and horse riding"
+    source: business-antifacts.md (approved description; the farming question stays unsettled)
+  - claim: Address, 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+    source: business-overview.md
+  - claim: Citycare Playgroup's postcode (4211, same as Rivermill)
+    source: profile — jennifer-maroney-citycare-playgroup-gold-coast.md
+  - claim: Season opens Thursday 24 September, runs to Sunday 27 September, seven shows
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: Showtimes (Thursday 1pm; Friday 4pm and 7pm; Saturday 4pm and 7pm; Sunday 11am and 2pm)
+    source: historicrivermill.au/data/circus.yaml
+  - claim: Opening-week seats not on sale, given to local groups picked by name
+    source: campaign YAML, chosen-not-advertised USP
+  - claim: Code sent only in reply, not in first message; free at any of the seven shows
+    source: campaign YAML, opening-week-seats USP
+  - claim: "\"Pass around to your own members and families rather than for posting publicly\" wording"
+    source: campaign YAML, prompt_appendices.a_author
+  - claim: Group-visit-later alternative (a following-week visit, manager's approval needed)
+    source: campaign YAML, group-visit-later USP and first_ask template
+  - claim: Sender identity (Priyanka Das, Partnerships, Historic Rivermill / Colourful.land Pty Ltd)
+    source: campaign YAML sender block
+  - claim: Prior email of 31 March 2026 ("Coordinator visit — Historic Rivermill (near Highland Park)"), no recorded reply
+    source: dispatcher IMAP prefetch (admin-rivermill-au, folder "Work Done")
+quality_checklist: |
+  1. YAML structure: root keys, round types/numbers, and message shapes
+     drawn from §6's canonical set; final round carries exactly one
+     channel: email message plus one channel: phone message (cap is on
+     emails only). Addresses are real, not placeholders.
+  2. Coverage: fact_provenance covers every factual claim in the final
+     draft; a_note states angle, channel, warmth, language, and the
+     challenger outcome; chosen_usps set on both draft rounds and final.
+  3. Presupposition test: no sentence tells Jennifer something she
+     already knows about her own group; the postcode and end-of-term
+     framing are our observations, not hers restated.
+  4. Manufactured-connection test: every claim of fit (postcode, church
+     outreach reach, additional-needs suitability) traces to a specific
+     profile data point; the profile's "no personal statements found" is
+     respected, no relevance invented from silence.
+  5. Concreteness: the ask ("reply and I'll send the code") is answerable
+     in one sentence; the alternative ask (a day for a group visit) is
+     equally concrete.
+  6. Band-level pattern check: not applicable within this file; deferred
+     to the band-level review once other mothers-group drafts exist.
+  7. Final round email cardinality: one email message in the final round,
+     satisfied.

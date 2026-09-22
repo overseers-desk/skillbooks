@@ -1,0 +1,208 @@
+profile_hash: sha256:08e7d7fd2b6a7f6dc1a7b67818367378af0f94b9ecf0c1fed32a0abcd0afd82a
+# Contact: Carly | Bright Horizons Australia Childcare | childrens-holiday-outing
+# Channel: phone
+# Language: en-au
+# Angle: registered vacation-care booking authority, day-trip proximity, second-week free group visit
+decisions:
+  channel: phone
+  channel_detail: Phone only; no email or platform URL on file for Carly. The follow-up email is drafted after the call, once it has produced a day and a headcount to confirm.
+  language: en-au
+  angle: booking-authority-registered-vacation-care
+angle_rationale: |
+  Warmth is cold. The only prior correspondence found under "Carly" or "Bright
+  Horizons" belongs to an unrelated customer and to the excluded predecessor
+  contact at this same centre (Nicole Willshire, excluded 2026-06-02). Nothing
+  shows this office has written to or heard from the current Service Manager
+  before, so no prior dealing is named and the opener leads with her
+  situation, not a claimed relationship.
+
+  The profile's strongest evidence points are booking authority and a
+  registered vacation-care programme. Carly is a Service Manager, a named
+  site-level contact rather than a shared inbox. The government register
+  mirror (startingblocks.gov.au) confirms vacation care directly against the
+  segment's discovery criterion, and the site sits 44 minutes from the venue,
+  within day-trip range.
+
+  The segment's plan block frames the ask as a second-week group visit rather
+  than opening-week tickets, because a vacation-care service cannot turn an
+  excursion around in the two days before Thursday's opening. The script
+  states that reasoning up front so the call does not waste her time asking
+  for something impossible on short notice.
+
+  USPs selected: group-visit-later, credentials-on-request and
+  make-a-day-of-it (all functional), and chosen-not-advertised (emotional).
+  group-visit-later is the whole ask. credentials-on-request answers the
+  gatekeeping step the profile shows Carly holding, a Service Manager needing
+  paperwork to take a booking to her director. make-a-day-of-it gives the
+  call something concrete to describe, restricted to a daytime session per
+  its own rests_on clause. chosen-not-advertised frames the invitation as
+  addressed to her centre by name rather than a public promotion.
+
+  No code and no Eventbrite link appear anywhere in this contact's messages:
+  this segment's ask is a scheduled group visit the venue arranges directly,
+  not an individual ticket purchase, so the campaign's RIVERMILLFRIENDS
+  mechanism does not apply here.
+response_likelihood: 55
+a_note: |
+  Angle: booking authority plus registered vacation-care programme, offered a
+  no-cost second-week group visit with paperwork volunteered up front.
+  Channel: phone only, first touch (no email on file); the follow-up email
+  comes after the call. Warmth: cold, no prior dealing with this contact.
+  Language: en-au. One challenger pass, REVISE then DONE; response likelihood
+  reflects a cold call rather than the persona's own 70% reaction.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, group-visit-later, credentials-on-request, make-a-day-of-it]
+    notes: |
+      First draft. Phone-only channel per roster (no email, no platform URL).
+      Opens with today's date and Thursday's opening to explain why the ask
+      is for the following week, not this one.
+    messages:
+      - channel: phone
+        to: "07 3287 6477"
+        text: Cold call to the Service Manager, offering a free second-week group visit (animals, farm, daytime circus show) for the vacation-care programme.
+        script:
+          - point: Reaching Carly
+            text: |
+              "Hi, my name's Priyanka, I'm calling from Historic Rivermill out at Mount Nathan — could I speak with Carly, please?"
+          - point: Opening, situation not compliment
+            text: |
+              "Hi Carly, thanks for taking the call. I'm calling about your vacation-care programme over the September–October holidays. Quick context: it's Tuesday today, and we've got a circus opening in a big top on our lawn this Thursday — but I know two days isn't enough notice for you to organise an excursion, so that's not what I'm ringing about."
+          - point: The ask
+            text: |
+              "What I'd like to offer instead is a free visit for your programme the following week — any day from Wednesday the 30th of September through to Sunday the 4th of October. The morning would be the animals and the farm, and then the circus show, WANTED – A Cirque Heist, in the big top. Is there a day in that week that would suit your group?"
+          - point: Why it's on offer
+            text: |
+              "We're picking a small number of local programmes to invite directly rather than advertising this — Bright Horizons Carbrook was one we wanted to reach out to."
+          - point: Handling the paperwork question
+            text: |
+              "I know before you can put this to your director you'll need to see our public liability certificate and the visit arrangements — I can send those straight over once we've picked a day, so you've got what you need to get it approved."
+          - point: Numbers
+            text: |
+              "Roughly how many children and carers would you be looking at, so I can check what we can fit that day?"
+          - point: If she can't decide on the call
+            text: |
+              "No problem if you need to check with your director first — what's the best number or email to follow up on, and is there a day this week that suits a call-back?"
+          - point: Close
+            text: |
+              "I'll get that certificate and the visit details ready to send as soon as I hear back from you. Thanks, Carly."
+        phone_note: Best reached during centre operating hours before pickup/drop-off peaks; if Carly is unavailable, leave name, callback number and the one-line reason (free vacation-care visit week of 30 September) with whoever answers rather than the full offer.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      A call out of nowhere from an unfamiliar organisation, but Priyanka is
+      polite and gets to the point fast. The circus-in-two-days framing lands
+      well: it's genuinely true that Thursday is too soon to organise an
+      excursion, and the caller says so upfront rather than wasting time. The
+      actual ask, a free morning at the farm plus the circus the following
+      week, is doable on a real week of notice. The upfront offer of a
+      liability certificate before being asked reads as someone who has
+      dealt with a childcare centre before. The one hesitation: an unfamiliar
+      organisation and an unusual animals-plus-circus combination, hard to
+      picture without a photo or a website first, though nothing in the call
+      forces an on-the-spot decision. REPLY_PCT: 70.
+    fact_check:
+      - claim: A free visit the following week, any day from Wednesday 30 September through Sunday 4 October.
+        source: campaign.yaml, childrens-holiday-outing segment, first_ask
+        result: verified
+        note: Matches the segment's own first_ask template wording and the showtimes window.
+      - claim: The circus show offered as part of the morning-then-show visit, without a daytime qualifier.
+        source: usps.make-a-day-of-it (rests_on) and childrens-holiday-outing first_ask
+        result: correction
+        correction: make-a-day-of-it holds for daytime sessions only; the draft must name "the daytime show" explicitly so an evening session is not implied alongside a morning animal visit.
+    antifact_check: No stone-building, heritage-mill, vineyard, or Tamborine Mountain claims present; checked against business-antifacts.md.
+    revision_note: |
+      One point raised required a draft change: the missing "daytime show"
+      qualifier, a factual error against make-a-day-of-it's rests_on, fixed
+      in the Ask point of Draft 2.
+
+      One point was left for the reply: her wish to see an address, photos
+      or a website before committing a headcount. She named this as what
+      she'd ask in her reply, not something blocking the call, so it was
+      folded into the paperwork line as part of what the follow-up packet
+      will include, rather than expanded on mid-call.
+
+      One point was absorbed without a new line: mild unfamiliarity with the
+      organisation and the animals-plus-circus combination. She said this
+      was not a dealbreaker because the call does not force an immediate
+      decision, a structure already present via the callback option, so no
+      separate line was added.
+
+      Points kept unchanged: the "two days isn't enough notice" opening and
+      the unprompted liability-certificate offer, both landed well.
+    notes: Sonnet-class challenger, context-isolated, one pass (profile yield 5).
+  - type: final
+    chosen_usps: [chosen-not-advertised, group-visit-later, credentials-on-request, make-a-day-of-it]
+    messages:
+      - channel: phone
+        to: "07 3287 6477"
+        text: Cold call to the Service Manager, offering a free second-week group visit (animals, farm, daytime circus show) for the vacation-care programme.
+        script:
+          - point: Reaching Carly
+            text: |
+              "Hi, my name's Priyanka. I'm calling from Historic Rivermill out at Mount Nathan. Could I speak with Carly, please?"
+          - point: Opening, situation not compliment
+            text: |
+              "Hi Carly, thanks for taking the call. I'm calling about your vacation care programme over the September to October holidays. Quick context: it's Tuesday today, and we've got a circus opening in a big top on our lawn this Thursday. I know two days isn't enough notice for you to organise an excursion, so that's not what I'm ringing about."
+          - point: The ask
+            text: |
+              "What I'd like to offer instead is a free visit for your programme the following week, any day from Wednesday the 30th of September through to Sunday the 4th of October. The morning would be the animals and the farm, then the daytime show of WANTED – A Cirque Heist in the big top. Is there a day in that week that would suit your group?"
+          - point: Why it's on offer
+            text: |
+              "We're picking a small number of local programmes to invite directly rather than advertising this. Bright Horizons Carbrook was one we wanted to reach out to."
+          - point: Handling the paperwork question
+            text: |
+              "I know before you can put this to your director you'll need to see our public liability certificate and the visit arrangements. Once we've picked a day I'll send those over, along with our address and some photos of the grounds, so you've got what you need to get it approved."
+          - point: Numbers
+            text: |
+              "Roughly how many children and carers would you be looking at, so I can check what we can fit that day?"
+          - point: If she can't decide on the call
+            text: |
+              "No problem if you need to check with your director first. What's the best number or email to follow up on, and is there a day this week that suits a call back?"
+          - point: Close
+            text: |
+              "I'll get that certificate, the visit details, and a link so you can see the place ready to send as soon as I hear back from you. Thanks, Carly."
+        actioned_date: null
+        replied_date: null
+        reply_summary: null
+        phone_note: Best reached during centre operating hours before pickup and drop-off peaks. If Carly is unavailable, leave name, callback number, and the one-line reason (free vacation-care visit week of 30 September) with whoever answers rather than the full offer.
+fact_provenance:
+  - claim: The circus opens this Thursday (24 September 2026) in a big top on the venue's lawn.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: A free visit is offered for any day from Wednesday 30 September through Sunday 4 October.
+    source: spar-campaigns/campaigns/2026-09-cirque-heist-season.yaml, segments.childrens-holiday-outing.first_ask
+  - claim: The visit pairs the morning animals and farm with the daytime show only.
+    source: spar-campaigns/campaigns/2026-09-cirque-heist-season.yaml, usps.make-a-day-of-it (rests_on)
+  - claim: Animals, a petting-zoo roster, and horse riding are part of the venue's regular offering.
+    source: business-overview.md, USPs U2 and U3
+  - claim: The visit is free of charge to the programme.
+    source: spar-campaigns/campaigns/2026-09-cirque-heist-season.yaml, header note on the Director's ruling of 22 September 2026
+  - claim: A public liability certificate and visit arrangements will be sent once a day is chosen.
+    source: spar-campaigns/campaigns/2026-09-cirque-heist-season.yaml, usps.credentials-on-request
+  - claim: This offer goes to a small number of local programmes invited directly, not advertised.
+    source: spar-campaigns/campaigns/2026-09-cirque-heist-season.yaml, usps.chosen-not-advertised
+quality_checklist: |
+  1. YAML structure self-check: root keys drawn from the §6 canonical set
+     (decisions, angle_rationale, response_likelihood, a_note, rounds,
+     fact_provenance, quality_checklist); every round carries type and
+     number where required; the final round holds one phone message, no
+     email. profile_hash intentionally omitted per instructions.
+  2. Coverage: fact_provenance covers every factual claim in the final
+     script (opening date, second-week window, daytime restriction, animals,
+     no cost, certificate offer, direct-invite framing); a_note states
+     angle, channel, warmth and language; chosen_usps present on draft and
+     final rounds.
+  3. Presupposition test: no sentence tells Carly something she already
+     knows about her own service; the opener addresses the venue's timing
+     constraint, not her circumstances.
+  4. Manufactured-connection test: no claim of shared interest beyond what
+     the profile supports (booking authority, vacation care, proximity);
+     no invented rapport or prior relationship.
+  5. Concreteness: the ask (a day in a named week, and a rough headcount) is
+     answerable in one sentence.
+  6. Antifact check: no stone-building, heritage-mill, vineyard or Tamborine
+     Mountain claim anywhere in the script.
+  7. Final round email cardinality: not applicable; the final round carries
+     one phone message and no email.

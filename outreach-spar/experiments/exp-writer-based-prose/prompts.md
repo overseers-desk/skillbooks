@@ -108,7 +108,7 @@ Both challenger texts in order, map then scores then reaction; both author texts
 
 ### Placebo
 
-Prepended to `a_challenger`, matched in length to the method texts, with no bearing on referents or surprise:
+Prepended to `a_challenger`, with no bearing on referents or surprise. It is shorter than the texts it controls for: 51 words against method 1's 129 and method 2's 85, and it carries no author-side appendix where both methods do. So it controls for a short analytical pre-task on the challenger, not for the methods as delivered. A repeat wanting a true placebo needs one matched on both sides and on length.
 
 ```
 Before the in-character step, an inventory of the draft: list the

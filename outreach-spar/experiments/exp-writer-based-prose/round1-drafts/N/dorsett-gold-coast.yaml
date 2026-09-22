@@ -1,0 +1,445 @@
+profile_hash: sha256:8875f9e63186279613f76edb0f9d0222fc956c1b338c70e66901213675f3f9ec
+# Contact: Christian Wachter, General Manager, Dorsett Gold Coast
+# Channel: email
+# Language: en-au
+# Angle: hinterland-guide-desk-recommendation
+decisions:
+  channel: email
+  channel_detail: |
+    Draft 1 prepared a LinkedIn connection note, an email, and a phone
+    script, following the general connection+email+phone default. The A2
+    fact-check found the accommodation-referral segment's own
+    approach_sequencing specifies only two steps, "Email on 23 September"
+    and "Confirm each pass by reply within the hour" — no LinkedIn note,
+    no phone follow-up. From Draft 2 onward the channel is email only,
+    sent 23 September, per the segment's plan block. His phone number
+    stays on the roster for any follow-up a human reviewer adds; the
+    segment's plan does not call for one.
+  language: en-au
+  angle: hinterland-guide-desk-recommendation
+  subsegment: null
+angle_rationale: |
+  Warmth is cold: the dispatcher prefetch found no prior correspondence
+  with Christian Wachter or Dorsett Gold Coast on any account, so the
+  message opens with his situation rather than a fabricated relationship.
+
+  The segment's plan block frames this contact type around a desk
+  recommending what its own staff have seen (usp chosen-not-advertised),
+  delivered as a family pass rather than the free-ticket giveaway used
+  for the organiser segments. accommodation-referral's first_ask puts the
+  public Eventbrite link in the first message itself, since the only
+  thing held back for the reply is the pass itself, not a public price.
+
+  The profile's one behavioural hook is concrete and traceable: Dorsett
+  Gold Coast's own website publishes a hinterland day-trip guide covering
+  Tamborine Mountain, Springbrook and Canungra, and its general marketing
+  copy describes a concierge that gives guests "insider's recommendations"
+  of where to go. That is evidence of an existing recommend-local-things
+  function. It is not evidence of any relationship with Rivermill, so the
+  message presupposes the function rather than claiming a connection that
+  does not exist.
+
+  Geography carries the rest. The venue sits at the foot of Tamborine
+  Mountain, not on it (business-overview.md; business-antifacts.md), on
+  the same corridor the guide already sends guests along, 30 minutes from
+  central Gold Coast (U6). No claim is made about drive time from
+  Broadbeach specifically, since that figure is not sourced.
+
+  Two challenger passes corrected the draft. Pass 1 found the channel
+  plan did not match the segment's own approach_sequencing (email only,
+  no LinkedIn, no phone); Pass 2 found the pass's opening-week validity
+  window had been blurred with the season's longer run. Pass 3, run
+  against the corrected draft, returned VERDICT: DONE with no further
+  factual errors.
+response_likelihood: 45
+a_note: |
+  Angle: Dorsett's own hinterland day-trip guide as a desk-recommendation
+  hook, paired with a free family-of-four pass so the desk sees the show
+  before recommending it. Channel: email only, sent 23 September, per the
+  segment's approach_sequencing (the segment plan overrides the general
+  connection+email+phone default; two challenger passes caught this).
+  Warmth: cold, no prior correspondence found. Language: en-au.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      First draft prepared a three-touch sequence (LinkedIn connection
+      note, email, phone follow-up) following the general channel
+      default rather than the segment's own approach_sequencing.
+    messages:
+      - channel: linkedin
+        text: |
+          Hi Christian, I'm Priyanka from Historic Rivermill at Mount
+          Nathan. We're opening a family circus in a big top this week
+          and I'd like to send your desk a free pass to see it before we
+          ask you to recommend it to guests. Worth connecting here, or
+          would email suit better?
+        director_note: Superseded — see revision_note on round 2.
+      - channel: email
+        to: christian.wachter@dorsetthotels.com
+        subject: A family pass for the Dorsett desk
+        body: |
+          Christian,
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, the
+          heritage riverside venue at Mount Nathan, 30 minutes from
+          central Gold Coast at the foot of Tamborine Mountain.
+
+          I'd like to send your desk a free family pass for four to see
+          WANTED – A Cirque Heist, a family circus in a big top on our
+          lawn, before you recommend it to guests with children. The
+          season opens this Thursday 24 September and runs with evening
+          shows on Fridays and Saturdays through to 3 October. Reply
+          with the show that suits your desk and I'll send the pass.
+          Guests book directly at
+          https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          Your own hinterland day-trip guide already sends guests up the
+          same road toward Tamborine Mountain and Canungra. This puts a
+          circus at the bottom of that drive, for the weeks your guests
+          are asking what to do with their children.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        director_note: Superseded — see revision_note on round 2.
+      - channel: phone
+        text: Follow-up call if no email reply within 3 days.
+        script:
+          - point: Opening
+            text: "Hi, is that Christian? It's Priyanka calling from Historic Rivermill at Mount Nathan — I sent an email a few days ago about a free family pass to our circus season."
+          - point: Context
+            text: "We've got a big top up on the lawn through until early October, and I wanted your desk to see it firsthand before recommending it to guests."
+          - point: Ask
+            text: "Would a pass for four work for you or your team this week or next? I can hold a show and send the details straight after."
+          - point: If unavailable
+            text: "No trouble — could you point me to whoever handles guest recommendations, or should I try email again?"
+        director_note: Superseded — segment plan calls for no phone follow-up.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      A LinkedIn note from someone called Priyanka at "Historic
+      Rivermill" — never heard of it. I run the desk at a 300-plus room
+      hotel plugged straight into The Star and the convention centre; I
+      get pitches like this weekly and most go nowhere. Reading it:
+      family circus, big top, opening this week. Fine, mildly relevant —
+      we already send guests hinterland-ward and get "what do we do with
+      the kids" questions during school holidays, so the premise isn't a
+      stretch.
+
+      But look at the dates on this. Today is Tuesday 22 September. She
+      says the season opens Thursday 24th. Her own sequence has me
+      accepting a LinkedIn connection first, and only sending the actual
+      email once I accept — or waiting 4 to 5 days if I don't. Four or
+      five days from now is past 27 September. Half the season,
+      including the whole "opening week" she's dangling, would be gone
+      before her own process gets around to emailing me. That's either
+      sloppy planning on her end or she doesn't expect me to accept the
+      connection request quickly, in which case why lead with LinkedIn
+      at all rather than just emailing a GM's public address, which I
+      check daily and LinkedIn I don't.
+
+      If I happen to see the LinkedIn note today and reply today, it's
+      workable — there's a live email address and a real ask. If I'm
+      slow (and I usually am with cold LinkedIn notes), the pass offer
+      is stale before it reaches me. I don't love being pitched as
+      "before we ask you to recommend it," which reads a little
+      presumptuous, but it's honest about what she wants. No price, no
+      discount code, nothing weird. It's a plausible, low-risk ask —
+      free tickets, no money changing hands, no obligation beyond
+      replying.
+
+      REPLY_PCT: 35
+    fact_check:
+      - claim: |
+          Three-touch sequence: LinkedIn connection note, wait for
+          acceptance or 4–5 days, email, phone follow-up after 3 more
+          days.
+        source: campaign.yaml, segments.accommodation-referral.approach_sequencing
+        result: incorrect
+        correction: |
+          The accommodation-referral segment's approach_sequencing lists
+          only two steps: "Email on 23 September" and "Confirm each pass
+          by reply within the hour." No LinkedIn note and no phone
+          follow-up are specified for this segment.
+    antifact_check: |
+      No other claim conflicts with the segment's plan block, the usps
+      it draws on (chosen-not-advertised, opening-week-seats,
+      big-top-at-a-heritage-farm), business-overview.md, the showtimes
+      file, or business-antifacts.md.
+    revision_note: |
+      Dropped the LinkedIn note and the phone script. Channel narrowed
+      to a single email, sent 23 September, per the segment's own
+      approach_sequencing. This also resolves the role-play's dating
+      objection: a note waiting on LinkedIn acceptance, or 4–5 days,
+      would land after half the season had run.
+  - type: draft
+    number: 2
+    chosen_usps: [chosen-not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: Channel narrowed to email only, per round 1's revision_note.
+    messages:
+      - channel: email
+        to: christian.wachter@dorsetthotels.com
+        subject: A family pass for the Dorsett desk
+        body: |
+          Christian,
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, the
+          heritage riverside venue at Mount Nathan, 30 minutes from
+          central Gold Coast at the foot of Tamborine Mountain.
+
+          I'd like to send your desk a free family pass for four to
+          WANTED – A Cirque Heist, a family circus in a big top on our
+          lawn. The season opens this Thursday 24 September and runs
+          with evening shows on Fridays and Saturdays through to
+          3 October. Reply with the show that suits your desk and I'll
+          send the pass. Guests can book directly at
+          [Eventbrite](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924).
+
+          Your own hinterland day-trip guide already sends guests up the
+          same road toward Tamborine Mountain and Canungra. This puts a
+          circus at the bottom of that drive, for the weeks your guests
+          are asking what to do with their children.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        director_note: Superseded — see revision_note on round 2.
+  - type: review
+    number: 2
+    verdict: REVISE
+    in_character: |
+      I'm Christian Wachter, GM of the Dorsett Gold Coast. I don't know
+      this "Historic Rivermill" or this "Priyanka Das." Cold email from
+      an unknown venue, arriving my inbox two days before the thing even
+      starts.
+
+      First reaction: another unsolicited partnership pitch. I get a few
+      of these a month — local operators wanting a foothold in our guest
+      recommendations. Most go straight past me to whoever handles
+      concierge relationships, if I even open them.
+
+      Second read: the pitch itself is coherent. They clearly did some
+      homework — they know we push our own hinterland day-trip content
+      up toward Tamborine and Canungra, and they're positioning
+      themselves as the thing at the bottom of that drive. That's a fair
+      hook, not generic spam boilerplate.
+
+      But the timing is a problem. Today is Tuesday 22 September. They
+      say the season "opens this Thursday" — that's two days away — and
+      want me to reply, wait for them to send a pass, and then somehow
+      route it to a guest, all before opening night if I want to catch
+      the opening-week excitement. That's an unreasonably tight
+      turnaround for a GM's desk to action, especially since I'd first
+      want to check this is legitimate — I've never heard of this place,
+      there's no phone call, no prior relationship, just an email with a
+      link.
+
+      I also notice the offer is a bit fuzzy about what exactly I'm
+      getting and for how long — "runs through to 3 October" reads like
+      the whole season is on the table, which makes me wonder why the
+      urgency about Thursday at all. If it runs for two weeks, what's
+      the rush.
+
+      Realistically, this sits in my inbox, I might forward it to guest
+      services or the concierge team to look into "if it's legit," and
+      it's unlikely I personally engage given the short notice and the
+      fact I don't know these people at all.
+
+      REPLY_PCT: 20
+    fact_check:
+      - claim: |
+          "The season opens this Thursday 24 September and runs with
+          evening shows on Fridays and Saturdays through to 3 October,"
+          presented as the pass's validity window.
+        source: campaign.yaml, segments.accommodation-referral usp opening-week-seats.rests_on and first_ask
+        result: incorrect
+        correction: |
+          The free pass is valid for opening week only, "any show from
+          this Thursday 24 September to Sunday." The Friday/Saturday
+          evening run through 3 October describes the season's later
+          pattern, not the pass's window; the draft conflated the two.
+    antifact_check: |
+      Venue description ("heritage riverside venue... at the foot of
+      Tamborine Mountain") matches the antifact-corrected framing. No
+      code, price, or discount disclosed. Eventbrite link matches the
+      one named in usp opening-week-seats. No Oztix link, no
+      feed-bag/animal-food content.
+    revision_note: |
+      Separated the pass's opening-week validity window from the
+      season's longer run: the pass is stated as opening-week only, and
+      the Friday/Saturday evening shows through 3 October are reframed
+      as what guests can book into directly, after opening week.
+  - type: draft
+    number: 3
+    chosen_usps: [chosen-not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: Pass window separated from season length, per round 2's revision_note.
+    messages:
+      - channel: email
+        to: christian.wachter@dorsetthotels.com
+        subject: A family pass for the Dorsett desk
+        body: |
+          Christian,
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, the
+          heritage riverside venue at Mount Nathan, 30 minutes from
+          central Gold Coast at the foot of Tamborine Mountain.
+
+          I'd like to send your desk a free family pass for four to
+          WANTED – A Cirque Heist, a family circus in a big top on our
+          lawn. The pass is valid for any of the opening-week shows,
+          from this Thursday 24 September to Sunday. Reply with the show
+          that suits your desk and I'll send the pass.
+
+          The season continues after opening week with evening shows on
+          Fridays and Saturdays through to 3 October, for guests who'd
+          rather book directly at
+          [Eventbrite](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924).
+
+          Your own hinterland day-trip guide already sends guests up the
+          same road toward Tamborine Mountain and Canungra. This puts a
+          circus at the bottom of that drive, for the weeks your guests
+          are asking what to do with their children.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+  - type: review
+    number: 3
+    verdict: DONE
+    in_character: |
+      Circus, Mount Nathan, free family pass for four — I don't know
+      this venue and I don't know this Priyanka Das. Cold email to my
+      desk. First read is: is this a company trying to get a freebie
+      review out of me, or an actual local partner? "Free family pass
+      for four" for staff, with no strings visible in this message,
+      reads plausible enough — it's a small ask, reply with a preferred
+      date. Today is Tuesday, opening week runs Thursday to Sunday, so
+      if I want to send someone this week I need to answer in the next
+      day or so, which is tight but doable — it's a two-line reply, not
+      a logistics exercise.
+
+      The line about our own hinterland guide is a nice touch — they've
+      clearly looked at our site rather than blasted a template. That
+      raises it slightly above generic spam in my mind.
+
+      Whether I personally reply: this is the kind of email that gets
+      forwarded to guest services or marketing rather than answered by
+      the GM directly, and plenty of these partnership pitches just sit
+      in the inbox. I might glance at it, think "sure, why not, free
+      tickets for the team to check out," and either reply myself in
+      thirty seconds or flick it to my front-desk team lead to handle.
+      It's low-risk and low-effort to respond to.
+
+      REPLY_PCT: 55
+    fact_check:
+      - claim: Location, "Mount Nathan... at the foot of Tamborine Mountain."
+        source: business-antifacts.md
+        result: verified
+      - claim: |
+          Free family pass for four, valid for any of the opening-week
+          shows, Thursday 24 to Sunday 27 September.
+        source: campaign.yaml, usp opening-week-seats
+        result: verified
+      - claim: No code and no price appear in the first message.
+        source: campaign.yaml, usps registry rests_on; prompt_appendices.a_author
+        result: verified
+      - claim: |
+          Evening shows on Fridays and Saturdays through to 3 October.
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+        note: |
+          The only evening (7pm) sessions after opening week are Friday
+          2 October and Saturday 3 October — matches.
+      - claim: Eventbrite link.
+        source: campaign.yaml, usp opening-week-seats.rests_on
+        result: verified
+      - claim: |
+          Dorsett's own hinterland day-trip guide sends guests toward
+          Tamborine Mountain and Canungra.
+        source: spar-campaigns/segments/accommodation-referral/dorsett-gold-coast.md, Institutional context
+        result: verified
+    antifact_check: |
+      No suggestion that seats are unsold, no feed-bag/animal-food
+      offer, no discount mentioned, no Oztix link. No factual errors
+      found.
+  - type: final
+    chosen_usps: [chosen-not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: christian.wachter@dorsetthotels.com
+        subject: A family pass for the Dorsett desk
+        body: |
+          Christian,
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, the
+          heritage riverside venue at Mount Nathan, 30 minutes from
+          central Gold Coast at the foot of Tamborine Mountain.
+
+          I'd like to send your desk a free family pass for four to
+          WANTED – A Cirque Heist, a family circus in a big top on our
+          lawn. The pass is valid for any of the opening-week shows,
+          from this Thursday 24 September to Sunday. Reply with the show
+          that suits your desk and I'll send the pass.
+
+          The season continues after opening week with evening shows on
+          Fridays and Saturdays through to 3 October, for guests who'd
+          rather book directly at
+          [Eventbrite](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924).
+
+          Your own hinterland day-trip guide already sends guests up the
+          same road toward Tamborine Mountain and Canungra. This puts a
+          circus at the bottom of that drive, for the weeks your guests
+          are asking what to do with their children.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+        reply_summary: null
+fact_provenance:
+  - claim: |
+      Heritage riverside venue at Mount Nathan, 30 minutes from central
+      Gold Coast, at the foot of Tamborine Mountain (not on it).
+    source: business-overview.md (U6); business-antifacts.md
+  - claim: Free family pass for four, offered to accommodation-referral contacts.
+    source: campaign.yaml, segments.accommodation-referral.first_ask
+  - claim: Pass valid for opening-week shows only, Thursday 24 to Sunday 27 September.
+    source: campaign.yaml, usps.opening-week-seats
+  - claim: Season opens Thursday 24 September.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: Evening shows on Fridays and Saturdays through to 3 October.
+    source: historicrivermill.au/data/circus.yaml
+  - claim: |
+      Eventbrite link,
+      https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+    source: campaign.yaml, usps.opening-week-seats.rests_on
+  - claim: |
+      Dorsett Gold Coast's own website publishes a hinterland day-trip
+      guide covering Tamborine Mountain, Springbrook and Canungra.
+    source: spar-campaigns/segments/accommodation-referral/dorsett-gold-coast.md, Institutional context
+quality_checklist: |
+  1. YAML structure: root keys drawn from §6's canonical set; every
+     round has type and number (except final); final round contains one
+     channel:email message; email address is real, not a placeholder.
+  2. Coverage: fact_provenance covers every factual claim in the final
+     draft (location, pass terms, season dates, link, hinterland-guide
+     hook); a_note states angle, channel, warmth, language.
+     chosen_usps set on every draft and final round.
+  3. Presupposition test: no sentence tells Christian something he
+     already knows about himself; the hinterland-guide line is framed
+     as what Rivermill observed about his property, not narrated back
+     to him as news.
+  4. Manufactured-connection test: the hinterland-guide claim traces to
+     a specific profile data point (the Institutional context section);
+     no claim of an existing relationship with Rivermill is made.
+  5. Concreteness: the ask (reply with a preferred opening-week show)
+     is answerable in one sentence.
+  6. Band-level pattern check: not yet applicable — single contact
+     processed; to be checked against the rest of the
+     accommodation-referral band before the band is presented.
+  7. Final round email cardinality: one channel:email message in the
+     final round — passes.

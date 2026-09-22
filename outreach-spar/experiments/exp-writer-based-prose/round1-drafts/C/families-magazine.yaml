@@ -1,0 +1,174 @@
+profile_hash: sha256:83befcdcdf233dc72cbcccb5b92b814e54dc3a807113c93bbd6fa0eb1c04281f
+decisions:
+  channel: email
+  channel_detail: Email primary; phone follow-up if no reply within a day, per the campaign's secondary_channel default.
+  language: en-au
+angle_rationale: |
+  Cold contact. The only prior IMAP hit for editor@familiesmagazine.com.au is
+  an August 2025 "Simple Contact Form" exchange with marketing@rivermill.au,
+  over 12 months old, a different Rivermill address, and no stated topic in
+  common with this campaign — not within the year, and not attributable to a
+  Rivermill-initiated approach we're following up on. Not referenced.
+  The segment plan block (travel-blogger-domestic) prescribes a firsthand
+  family pass plus a reader giveaway, aimed at a reply naming a show and
+  agreeing to run the giveaway. The profile gives two traceable hooks that
+  match this ask directly: an ongoing Brisbane school-holiday activities
+  guide (matches the timing) and a publication that explicitly sells
+  "competitions and giveaways" on its advertise page (matches the ask to run
+  a reader giveaway, not just accept a personal invitation). The Trevena Glen
+  Farm piece was left out of the message itself — good evidence for segment
+  fit, but naming a specific past article reads as research-recitation rather
+  than presupposing her world.
+response_likelihood: 55
+a_note: Angle is school-holiday-guide-and-giveaway fit; channel is email with a one-day phone follow-up; warmth is cold (no usable prior contact within the year); language is Australian English.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, big-top-at-a-heritage-farm]
+    notes: Element order follows self-introduction, then the concrete ask, then two lines of supporting fit (SPAR-A §4.5 a→b→c default).
+    messages:
+      - channel: email
+        to: editor@familiesmagazine.com.au
+        subject: A circus pass for Families Magazine's school-holiday guide
+        body: |
+          Hi Chinnu,
+
+          I'm Priyanka Das, from Partnerships at Historic Rivermill, a heritage riverside venue at Mount Nathan in the Gold Coast hinterland. CHARC Performance has a family circus in a big top on our lawn this school holidays, WANTED – A Cirque Heist, opening this Thursday 24 September.
+
+          I have a family pass of four for you to see it, at any show from Thursday 24 to Sunday 27 September, and five more passes to give away to your readers if Families Magazine would like to run one. These seats aren't on sale anywhere; the pass and the giveaway are for organisations we've picked by name, not the public. Reply with the show that suits you and I'll send the booking details. Tickets for readers otherwise are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          It's the kind of thing your school-holiday guide already covers, and a giveaway readers can enter without you having to organise anything beyond posting it.
+
+          Regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: phone
+        to: "0437 866 869"
+        text: Follow-up call if no reply to the email within a day.
+        script:
+          - point: Opening
+            text: "Hi, is that Chinnu? This is Priyanka calling from Historic Rivermill, out at Mount Nathan. I emailed you yesterday about a family circus we've got on this school holidays."
+          - point: Context
+            text: "We've got CHARC's WANTED – A Cirque Heist running in a big top on our lawn from this Thursday. I've put aside a family pass of four for you, plus five more passes for a reader giveaway, if that's something Families Magazine would run."
+          - point: Ask
+            text: "Is there a show between Thursday and Sunday that would work for you to come out?"
+          - point: If interested but time-pressed
+            text: "No rush on the giveaway decision. Even just you coming out to see it would be great. I can send the details over by email either way."
+          - point: If not interested
+            text: "No problem, thanks for your time."
+        phone_note: If declined, note it in the approach file rather than calling again.
+  - type: review
+    number: 1
+    verdict: DONE
+    in_character: |
+      I don't know Historic Rivermill or Priyanka Das, but the email reads
+      clean: who she is, where the venue is, what the show is, and what's on
+      offer, all in the first two lines. A circus at a heritage farm venue is
+      exactly our what's-on-for-families beat, and a school-holiday circus
+      piece plus a reader giveaway is a page I'd run without having to invent
+      an angle.
+
+      The only friction is the calendar. It's Tuesday, the show opens
+      Thursday, and the window closes Sunday. That's workable for me
+      personally since I can decide by email in five minutes and pick a
+      Thursday-to-Sunday session on short notice, but it would be tight for
+      anything requiring more coordination. She hasn't asked me for that; she
+      is not asking me to bring a school group, just to pick a show for my
+      own family. The giveaway ask is genuinely no-effort: I post it, readers
+      enter, done. That's the kind of collaboration I say yes to.
+
+      "Picked by name, not the public" is a claim I can't verify and would
+      normally take with a grain of salt, but it doesn't cost me anything to
+      accept at face value since I'm not being asked to pay or misrepresent
+      anything to my readers. Before running the giveaway I'd want to know
+      whether there's a formal wording for the entry mechanic, an end date,
+      any terms. That's a question for my reply, not an objection.
+
+      Nothing here would stop me replying. Reply likelihood: 70%.
+    fact_check:
+      - claim: Historic Rivermill is a heritage riverside venue at Mount Nathan in the Gold Coast hinterland.
+        source: business-overview.md line 3; business-antifacts.md (Mount Nathan, Gold Coast Hinterland, not Tamborine Mountain).
+        result: verified
+      - claim: CHARC Performance runs a family circus in a big top on the venue's lawn.
+        source: campaign usps.big-top-at-a-heritage-farm; showtimes file operator field.
+        result: verified
+      - claim: WANTED – A Cirque Heist opens this Thursday 24 September.
+        source: 2026-09-23-stampede-arena-showtimes.md ("The season opens Thursday 24 September at 1pm"); historicrivermill.au/data/circus.yaml first session.
+        result: verified
+      - claim: A family pass of four is offered for any show from Thursday 24 to Sunday 27 September.
+        source: campaign usps.opening-week-seats and the segment's first_ask template; circus.yaml lists seven sessions in that range.
+        result: verified
+      - claim: Five more passes are offered for a reader giveaway.
+        source: campaign usps.nothing-to-organise; segment first_ask template.
+        result: verified
+      - claim: These seats aren't on sale anywhere; the pass and giveaway are for organisations picked by name, not the public.
+        source: campaign usps.chosen-not-advertised claim text.
+        result: verified
+      - claim: The Eventbrite link is the only ticket link named for readers.
+        source: campaign usps.opening-week-seats.rests_on ("the only link a message carries"); no Oztix link used, though circus.yaml's per-session links are Oztix.
+        result: verified
+    antifact_check: No claim of stone or original heritage buildings, no vineyard, no Tamborine Mountain address checked against business-antifacts.md; none present in the draft.
+    revision_note: No revisions. The challenger found no factual errors, no presupposition gaps ("nowhere" cases), and no reply-blocking concerns; the persona's one open question (giveaway entry mechanics and T&Cs) is left for the reply, per the pass criterion in SPAR-A §4.6.
+    notes: Persona reply estimate 70%; response_likelihood set lower at the campaign level to reflect cold-outreach base rates for a first email to a small commercial publication with no prior relationship.
+  - type: final
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: editor@familiesmagazine.com.au
+        subject: A circus pass for Families Magazine's school-holiday guide
+        body: |
+          Hi Chinnu,
+
+          I'm Priyanka Das, from Partnerships at Historic Rivermill, a heritage riverside venue at Mount Nathan in the Gold Coast hinterland. CHARC Performance has a family circus in a big top on our lawn this school holidays, WANTED – A Cirque Heist, opening this Thursday 24 September.
+
+          I have a family pass of four for you to see it, at any show from Thursday 24 to Sunday 27 September, and five more passes to give away to your readers if Families Magazine would like to run one. These seats aren't on sale anywhere; the pass and the giveaway are for organisations we've picked by name, not the public. Reply with the show that suits you and I'll send the booking details. Tickets for readers otherwise are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          It's the kind of thing your school-holiday guide already covers, and a giveaway readers can enter without you having to organise anything beyond posting it.
+
+          Regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "0437 866 869"
+        text: Follow-up call if no reply to the email within a day.
+        script:
+          - point: Opening
+            text: "Hi, is that Chinnu? This is Priyanka calling from Historic Rivermill, out at Mount Nathan. I emailed you yesterday about a family circus we've got on this school holidays."
+          - point: Context
+            text: "We've got CHARC's WANTED – A Cirque Heist running in a big top on our lawn from this Thursday. I've put aside a family pass of four for you, plus five more passes for a reader giveaway, if that's something Families Magazine would run."
+          - point: Ask
+            text: "Is there a show between Thursday and Sunday that would work for you to come out?"
+          - point: If interested but time-pressed
+            text: "No rush on the giveaway decision. Even just you coming out to see it would be great. I can send the details over by email either way."
+          - point: If not interested
+            text: "No problem, thanks for your time."
+        phone_note: If declined, note it in the approach file rather than calling again.
+fact_provenance:
+  - claim: Historic Rivermill is a heritage riverside venue at Mount Nathan in the Gold Coast hinterland.
+    source: business-overview.md line 3.
+  - claim: CHARC Performance runs a family circus, WANTED – A Cirque Heist, in a big top on the venue's lawn.
+    source: campaign usps.big-top-at-a-heritage-farm.
+  - claim: The season opens Thursday 24 September.
+    source: 2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md.
+  - claim: A family pass of four and five giveaway passes are offered for any of the seven opening-week shows, Thursday 24 to Sunday 27 September.
+    source: campaign usps.opening-week-seats, usps.nothing-to-organise, and the travel-blogger-domestic segment's first_ask template.
+  - claim: The seats are not on public sale and the recipient's organisation was picked by name.
+    source: campaign usps.chosen-not-advertised.
+  - claim: Public tickets are at the Eventbrite listing.
+    source: campaign usps.opening-week-seats.rests_on (the only ticket link the campaign authorises in a message).
+  - claim: Families Magazine maintains an ongoing Brisbane school-holiday activities guide.
+    source: spar-campaigns/segments/travel-blogger-domestic/families-magazine.md, roster s_note and Mechanism evidence section.
+  - claim: Families Magazine sells competitions and giveaways as an advertised service.
+    source: spar-campaigns/segments/travel-blogger-domestic/families-magazine.md, Mechanism evidence section (advertise page).
+quality_checklist: |
+  1. YAML structure: root keys drawn from the §6 canonical set; every round has type and number; final round has exactly one channel: email message plus one channel: phone message; email address is real, not a placeholder. Passed.
+  2. Coverage: fact_provenance covers every factual claim in the final draft; chosen_usps set on both the draft and final rounds. Passed.
+  3. Presupposition test: pointing list run by the challenger (A2 Step 1) found no "nowhere" cases; every referent is introduced before use. Passed.
+  4. Manufactured-connection test: both recipient-specific claims (the school-holiday guide, the giveaway-selling advertise page) trace to the profile document, not invented. Passed.
+  5. Concreteness: the ask ("reply with the show that suits you") is answerable in one sentence. Passed.
+  6. Band-level pattern check: not run here (single-contact draft); to be checked against the rest of the travel-blogger-domestic band before the band is presented for review.
+  7. Final round email cardinality: one channel: email message in the final round (plus one channel: phone message, which does not count against the cap). Passed.

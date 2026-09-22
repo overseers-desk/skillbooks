@@ -1,0 +1,243 @@
+profile_hash: sha256:14ae97b90125863b070dcd411e30074982a9c335a05fb45b6f752a83f5a83b8c
+# Contact: Jasper Fishburn | YMCA Shailer Park Outside School Hours Care | childrens-holiday-outing
+# Channel: email (primary) + phone follow-up
+# Language: en
+# Angle: group-visit-second-week
+
+decisions:
+  channel: email
+  channel_detail: >-
+    Site-level email on file (asl@ymcaqueensland.org.au), verified against
+    the site's own listing and phone-matched, plus a registered site phone.
+    No connection channel on file (LinkedIn/Facebook blank in the roster).
+    SPAR-A §4.2 "Email + phone, no connection channel" applies: email first,
+    phone follow-up if no reply after 3 days.
+  language: en
+  angle: group-visit-second-week
+
+angle_rationale: >-
+  The profile confirms a named site-level coordinator, Jasper Fishburn, with
+  a non-shared, verified site email and matching registered phone, and
+  ACECQA register confirmation of Vacation Care approval (70 approved
+  places). The school's own OSHC page states this site already runs "at
+  least one external excursion" per vacation-care cycle, which is
+  site-specific evidence of buyer authority and excursion practice, not
+  brand-wide marketing copy. Per SPAR-A §4.5, this evidence is not narrated
+  back to the recipient ("I saw your site runs excursions") since that would
+  tell him something he already knows about his own programme; instead the
+  specificity shows in the concreteness of the proposition itself, a dated
+  window and a direct ask for a day and a headcount. The
+  childrens-holiday-outing plan block's objective and first_ask both point
+  the same way: opening week is too close to arrange, so the ask is a group
+  visit the following week, with the paperwork a coordinator needs offered
+  upfront. USPs used: chosen-not-advertised (why he is being written to at
+  all), group-visit-later (the actual ask), credentials-on-request (the
+  paperwork gate before a director will approve), and make-a-day-of-it (a
+  one-line add-on, not a second ask). nothing-to-organise and
+  opening-week-seats are excluded by the segment's own plan block: forwarding
+  tickets against enrolled families' contact details, held for the care of
+  those children, would read as a misuse of that data. No prior
+  correspondence with this contact, this address, or this organisation was
+  found across every mailbox searched, so the opener is cold: his situation,
+  not a claimed relationship.
+
+response_likelihood: 60
+a_note: >-
+  Angle: group visit the second week, with paperwork offered upfront.
+  Channel: email primary, phone follow-up script if no reply after 3 days.
+  Warmth: cold, no prior correspondence found. Language: en. Challenger
+  role-play read the offer as concrete and not pushy, put reply likelihood
+  at 55%; one factual correction applied (see fact_check), which strengthens
+  rather than weakens the draft, so the estimate is held near the
+  challenger's figure at 60%.
+
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, group-visit-later, credentials-on-request, make-a-day-of-it]
+    notes: >-
+      Email + phone pattern per §4.2: site email verified, no connection
+      channel on file. Draft prepared as a primary email plus a phone
+      follow-up script for day 3 if there is no reply.
+    messages:
+      - channel: email
+        to: asl@ymcaqueensland.org.au
+        subject: A circus visit for YMCA Shailer Park OSHC's holiday programme
+        body: |
+          Hi Jasper,
+
+          I'm Priyanka Das, from the Partnerships team at Historic Rivermill, a farm and function venue at Mount Nathan in the Gold Coast hinterland. We haven't been in touch before.
+
+          A family circus, WANTED – A Cirque Heist, opens in a big top on our lawn this Thursday 24 September and runs through to Sunday 4 October. The opening-week seats, Thursday to Sunday this week, aren't on sale to the public. We're offering them to a small number of local vacation-care and holiday programmes, and I've picked YMCA Shailer Park.
+
+          Two days isn't enough notice for an excursion, so what I'm offering instead is a visit the following week. Tell me a day between Wednesday 30 September and Sunday 4 October that would suit your group, and roughly how many children, and I'll ask our manager to hold seating for you. I'll send our public liability certificate and the visit arrangements with my reply, so you have what you need to put it to your director.
+
+          The cafe and the animals are open in the morning before the daytime shows, if your group wants to make a day of it.
+
+          Kind regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: phone
+        to: "0484334359"
+        text: Follow-up call to Jasper, OSHC/Vacation Care Coordinator, if no reply after 3 days.
+        script:
+          - point: Opening hook
+            text: "Hi, is that Jasper? This is Priyanka calling from Historic Rivermill, out at Mount Nathan. I sent you an email a couple of days ago about a circus visit for your holiday programme, did it come through?"
+          - point: Context (if not seen)
+            text: "No trouble, I'll give you the short version. There's a family circus in a big top on our lawn this month. Opening week isn't on sale to the public, and I picked YMCA Shailer Park as one of a small number of programmes we're offering a visit to. Two days was too tight for an excursion, so I'm asking about the following week instead."
+          - point: Ask
+            text: "Is there a day between the 30th of September and the 4th of October that could work for your group, and roughly how many kids? I'll take that to our manager and get you our public liability certificate and the visit details to put to your director."
+          - point: Close
+            text: "Happy to send that by email so you've got it in writing, same address I used before, asl@ymcaqueensland.org.au?"
+        phone_note: Day-3 follow-up only, triggered by no reply to the email.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: >-
+      Jasper Fishburn here, OSHC coordinator at Shailer Park. I get a lot of
+      cold emails and this one's better than most, it actually opens with
+      something concrete instead of a pitch. A circus in a big top, free
+      opening-week seats not for sale anywhere, and they picked us
+      specifically. That's flattering, and it's a believable reason: two
+      days really isn't enough runway to get an excursion past our director,
+      so I don't feel pressured into anything I can't deliver. The ask for
+      the second week (30 Sept to 4 Oct) is reasonable and doable, that's
+      over a week away, plenty of time to check a day against our vac-care
+      roster and headcount. I'd want to see the public liability certificate
+      before I take this to my director, and they've already said that's
+      coming in the reply, which is the right order of operations. No code,
+      no price dangled in front of me, nothing that smells like a
+      mailing-list blast, feels like they actually looked us up. My only
+      hesitation: I don't recognise "Historic Rivermill" at all, so I'd
+      probably google it before replying, and the "we haven't been in touch
+      before" line is a small thing that makes me trust it's not a form
+      letter. I'd likely reply with a possible date and rough numbers, maybe
+      after checking with my supervisor first.
+    fact_check:
+      - claim: "Historic Rivermill is a farm and function venue at Mount Nathan in the Gold Coast hinterland."
+        source: business-antifacts.md
+        result: incorrect
+        note: >-
+          business-antifacts.md states the farming question is not settled
+          in either direction and instructs describing the venue by what it
+          offers visitors. The campaign's own USP text for this claim
+          (big-top-at-a-heritage-farm) uses "heritage riverside venue," not
+          "farm."
+        correction: >-
+          Replaced with "a heritage tourism venue at Mount Nathan in the
+          Gold Coast hinterland," the antifact file's approved description.
+      - claim: "WANTED – A Cirque Heist opens Thursday 24 September and runs to Sunday 4 October."
+        source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+        result: verified
+      - claim: "Opening-week seats not sold to the public, offered to a small number of local vacation-care and holiday programmes."
+        source: "campaign YAML, usps.chosen-not-advertised"
+        result: verified
+      - claim: "Second-week visit window Wednesday 30 September to Sunday 4 October matches the remaining sessions."
+        source: "campaign YAML, usps.group-visit-later and segments.childrens-holiday-outing.first_ask; plan-events showtimes file"
+        result: verified
+      - claim: "Public liability certificate and visit arrangements sent on request."
+        source: "campaign YAML, usps.credentials-on-request"
+        result: verified
+      - claim: "Cafe and animals open in the morning before the daytime shows."
+        source: "campaign YAML, usps.make-a-day-of-it; sot/S2-fees-and-service-hours.md Section 2.1"
+        result: verified
+      - claim: "No code, price, discount, or Eventbrite/Oztix link appears in the first message."
+        source: "campaign YAML, usps.opening-week-seats and prompt_appendices.a_author"
+        result: verified
+      - claim: "We haven't been in touch before."
+        source: courier -A search prefetch across all mailboxes for this contact, name, and organisation
+        result: verified
+    antifact_check: >-
+      One violation found and corrected (the "farm" claim, see fact_check).
+      No other claims of stone buildings, a vineyard, Tamborine Mountain
+      location, or 100-year-old buildings; checked against
+      business-antifacts.md.
+    revision_note: >-
+      Replaced "a farm and function venue" with "a heritage tourism venue"
+      in the email's second sentence, and split that sentence into two to
+      fix a 35-plus-word run-on. No other change: the ask, the date window,
+      the credentials line, and the cafe/animals close were read positively
+      and carried through unchanged.
+    notes: >-
+      Single challenger pass (yield 5, within the 3-5 band's 1-pass budget
+      per SPAR-A §4.6). No second pass required since the only flag was a
+      wording fix, not a structural or angle problem.
+  - type: final
+    chosen_usps: [chosen-not-advertised, group-visit-later, credentials-on-request, make-a-day-of-it]
+    messages:
+      - channel: email
+        to: asl@ymcaqueensland.org.au
+        subject: A circus visit for YMCA Shailer Park OSHC's holiday programme
+        body: |
+          Hi Jasper,
+
+          I'm Priyanka Das, from the Partnerships team at Historic Rivermill. We're a heritage tourism venue at Mount Nathan in the Gold Coast hinterland, and we haven't been in touch before.
+
+          A family circus, WANTED – A Cirque Heist, opens in a big top on our lawn this Thursday 24 September and runs through to Sunday 4 October. The opening-week seats, Thursday to Sunday this week, aren't on sale to the public. We're offering them to a small number of local vacation-care and holiday programmes, and I've picked YMCA Shailer Park.
+
+          Two days isn't enough notice for an excursion, so what I'm offering instead is a visit the following week. Tell me a day between Wednesday 30 September and Sunday 4 October that would suit your group, and roughly how many children, and I'll ask our manager to hold seating for you. I'll send our public liability certificate and the visit arrangements with my reply, so you have what you need to put it to your director.
+
+          The cafe and the animals are open in the morning before the daytime shows, if your group wants to make a day of it.
+
+          Kind regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "0484334359"
+        text: Follow-up call to Jasper, OSHC/Vacation Care Coordinator, if no reply after 3 days.
+        script:
+          - point: Opening hook
+            text: "Hi, is that Jasper? This is Priyanka calling from Historic Rivermill, out at Mount Nathan. I sent you an email a couple of days ago about a circus visit for your holiday programme, did it come through?"
+          - point: Context (if not seen)
+            text: "No trouble, I'll give you the short version. There's a family circus in a big top on our lawn this month. Opening week isn't on sale to the public, and I picked YMCA Shailer Park as one of a small number of programmes we're offering a visit to. Two days was too tight for an excursion, so I'm asking about the following week instead."
+          - point: Ask
+            text: "Is there a day between the 30th of September and the 4th of October that could work for your group, and roughly how many kids? I'll take that to our manager and get you our public liability certificate and the visit details to put to your director."
+          - point: Close
+            text: "Happy to send that by email so you've got it in writing, same address I used before, asl@ymcaqueensland.org.au?"
+        phone_note: Day-3 follow-up only, triggered by no reply to the email.
+        actioned_date: null
+        replied_date: null
+
+fact_provenance:
+  - claim: "WANTED – A Cirque Heist opens Thursday 24 September and runs to Sunday 4 October."
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: "Opening-week seats not sold to the public; offered to a small number of local vacation-care and holiday programmes."
+    source: "spar-campaigns/campaigns/2026-09-cirque-heist-season.yaml, usps.chosen-not-advertised"
+  - claim: "Second-week visit window is Wednesday 30 September to Sunday 4 October, with a manager asked to hold seating."
+    source: "spar-campaigns/campaigns/2026-09-cirque-heist-season.yaml, usps.group-visit-later and segments.childrens-holiday-outing.first_ask"
+  - claim: "Public liability certificate and visit arrangements sent on request."
+    source: "spar-campaigns/campaigns/2026-09-cirque-heist-season.yaml, usps.credentials-on-request"
+  - claim: "Cafe and animals open in the morning before the daytime shows."
+    source: "spar-campaigns/campaigns/2026-09-cirque-heist-season.yaml, usps.make-a-day-of-it; sot/S2-fees-and-service-hours.md Section 2.1"
+  - claim: "Historic Rivermill is a heritage tourism venue at Mount Nathan in the Gold Coast hinterland."
+    source: business-antifacts.md
+  - claim: "Jasper Fishburn is Coordinator, OSHC/Vacation Care at YMCA Shailer Park, email asl@ymcaqueensland.org.au, phone 0484334359."
+    source: spar-campaigns/segments/childrens-holiday-outing/ymca-shailer-park-outside-school-hours-care.md
+  - claim: "Shailer Park holds Vacation Care approval (70 approved places) and this site runs at least one external excursion per vacation-care cycle."
+    source: spar-campaigns/segments/childrens-holiday-outing/ymca-shailer-park-outside-school-hours-care.md
+  - claim: "Sender is Priyanka Das, Partnerships, Historic Rivermill, partnerships@rivermill.au."
+    source: "spar-campaigns/campaigns/2026-09-cirque-heist-season.yaml, sender"
+
+quality_checklist: >-
+  YAML structure: root keys drawn from §6's canonical set; every round has
+  type and number; final round carries one email message and one phone
+  message (email cardinality cap satisfied, one channel: email item only).
+  Coverage: fact_provenance covers every factual claim in the final draft;
+  chosen_usps set on both draft and final rounds. Presupposition test: no
+  sentence tells Jasper something he already knows about his own site (the
+  site's own excursion practice is used as drafting evidence, not narrated
+  back to him). Manufactured-connection test: the claim of fit (vacation
+  care approval, a named coordinator with excursion authority) traces to
+  the profile's register- and site-sourced evidence, not invented interest.
+  Concreteness: the ask (a day and a headcount) can be answered in one
+  sentence. Antifact check: one violation found in draft 1 (the "farm"
+  claim) and corrected in the final; no other prohibited claims present.
+  Band-level pattern check: opener structure (self-intro, then the
+  free-seats context, then the second-week ask) matches the pattern used
+  for other childrens-holiday-outing contacts in this band, which is
+  expected within one segment's plan block; wording and the specific
+  evidence cited differ per contact.

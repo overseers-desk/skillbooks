@@ -1,0 +1,319 @@
+profile_hash: sha256:d255aa679f702bd80c3e40710cca5a3d04490602dcf85d87e0d3c6c54d490d89
+decisions:
+  channel: email
+  channel_detail: LinkedIn connection note first; email after acceptance or after 5 days, whichever comes first. No phone number on file.
+  language: en
+  angle: chosen-not-advertised + opening-week-seats + big-top-at-a-heritage-farm
+angle_rationale: |
+  Warmth is cold: courier search on christina@travel2next.com and on her name
+  and organisation returned no prior correspondence across any account, and
+  the profile records no prior dealing with Historic Rivermill. The opener
+  introduces the sender and venue rather than claiming a relationship that
+  does not exist.
+
+  Channel: LinkedIn + email, per the dispatcher's channel note and the
+  roster's available fields (LinkedIn URL, verified email, no phone).
+  Connection note first, email after acceptance or after 5 days.
+
+  USPs: the earned-media plan block fixes one USP set for the whole segment,
+  with no subsegment override, so all three (chosen-not-advertised,
+  opening-week-seats, big-top-at-a-heritage-farm) were used as given. Her
+  profile's strongest personalisation point is her dated, on-beat Gold Coast
+  hinterland coverage (Currumbin Wildlife Sanctuary, Tamborine Mountain
+  village, Dreamworld animal encounters, under her own byline 3 June 2026)
+  and her Queensland base, which removes the travel-logistics barrier that
+  limits other freelancers in this segment. Per SPAR-A §4.5, this was not
+  recited back to her: the draft presents the venue's own specifics and lets
+  the fit stand on its own rather than telling her what she already knows
+  about her own beat.
+
+  Revision (pass 1): the challenger's role-play was favourable, specific,
+  real dates, no price or code, cleared the spam bar on inspection, but
+  flagged "a heritage farm and wildlife venue" against business-antifacts.md,
+  which holds the farming question open in either direction and prescribes
+  describing the venue by what it offers. Revised to the antifact's own
+  phrasing in both the LinkedIn note and the email. No other change: the
+  parts of the draft the challenger reacted well to were left as they were.
+
+  Revision (pass 2): the second challenger pass raised a timing concern, a
+  Tuesday send for a Thursday opening leaves her with realistically only the
+  Sunday 27 September slots against existing commitments earlier in the
+  week, and a light tone note that the subject line ("A circus opens at
+  Mount Nathan this week") does not itself say why she should care. Verdict
+  was DONE; no factual errors were found on either pass, and the segment's
+  fixed opening-week-only ask is not this draft's to redesign. Recorded as a
+  response-likelihood factor rather than a rewrite, consistent with how the
+  same short-notice constraint was handled for fiona-harper-freelance.
+response_likelihood: 45
+a_note: |
+  Cold contact, LinkedIn connection note then email, English. Angle:
+  chosen-not-advertised + opening-week-seats + big-top-at-a-heritage-farm,
+  carried by her existing Gold Coast hinterland wildlife/destination beat
+  and QLD base rather than narrated back to her. One revision: "heritage
+  farm and wildlife venue" replaced with the antifact's prescribed
+  description after pass 1 flagged it. Pass 2 verdict DONE, no factual
+  errors; challenger put reply odds at 45%, held back mainly by the
+  two-to-five-days' notice against her existing commitments early in the
+  opening week, with the Sunday slots most realistic for her.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      First draft. Followed the earned-media segment's first_ask template,
+      substituting the geographic anchor for the recipient placeholder.
+    messages:
+      - channel: linkedin
+        to: https://www.linkedin.com/in/christinapfeiffer/
+        text: |
+          Hi Christina, I'm Priyanka from Historic Rivermill, a heritage farm at Mount Nathan in the Gold Coast hinterland. A family circus opens in our big top this week and I have a pass of four held in your name for an opening show. Keen to connect and send details.
+      - channel: email
+        to: christina@travel2next.com
+        subject: A circus opens at Mount Nathan this week
+        body: |
+          Hi Christina,
+
+          I'm Priyanka Das, from Partnerships at Historic Rivermill, a heritage farm and wildlife venue on the Coomera River at Mount Nathan, in the Gold Coast hinterland. We run horse riding, animal experiences and a cafe on the river, and from Thursday 24 September a family circus, WANTED – A Cirque Heist, opens in a big top on our lawn for the school holidays, running to Sunday 4 October.
+
+          I have a family pass of four held in your name for any of the opening week shows: Thursday 24 September at 1pm, Friday 25 September at 4pm or 7pm, Saturday 26 September at 4pm or 7pm, or Sunday 27 September at 11am or 2pm. The pass isn't offered through any public channel. It's held in your name so you see the show before your readers do. Reply with the show that suits you and I'll hold the seats and send the booking details.
+
+          Public tickets are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      A LinkedIn note from someone I've never heard of, "Priyanka from
+      Historic Rivermill," saying there's a pass held in my name for a
+      circus opening this week. My first instinct is mild suspicion, this
+      reads like the templated influencer-outreach pitches I get several
+      times a month, "we've held something in your name" is a familiar
+      hook. But it's specific: a named venue, a named show, real dates, a
+      real address I can look up (Mount Nathan is a place I actually cover,
+      I've written about Currumbin, Tamborine, that hinterland corridor
+      before). So it clears the spam bar quickly once I check.
+
+      The ask is realistic time-wise. Today's Tuesday, the show opens
+      Thursday, and there are still five days of opening-week sessions
+      through Sunday the 27th to choose from, evenings and a weekend
+      included. I'm QLD-based, this is a 40-minute-ish drive, no flights or
+      interstate logistics, so yes, I could physically make one of these
+      sessions on a few days' notice. That's the one thing that actually
+      makes this offer plausible rather than performative.
+
+      What I like: no price, no discount code dangled at me, no "help us
+      fill seats" vibe, it reads as "you're invited because of who you
+      are," which is the register that makes a journalist actually consider
+      it rather than feel used as a marketing channel. What gives me slight
+      pause: "a heritage farm and wildlife venue" is a slightly odd,
+      over-eager combination of descriptors, makes me wonder exactly what
+      this place is (farm? wildlife park? venue?) before I'd commit, but
+      it's not a dealbreaker, just a thing I'd google before replying.
+
+      Realistically, I get pitched a lot, and a family pass to a circus
+      isn't automatically an editorial story unless I have a hook or an
+      outlet interested. But the specificity, the real dates, and the fact
+      I already cover this exact micro-region tips this from "delete" to
+      "maybe, if I have a free evening or want to scout it for a future
+      roundup."
+
+      REPLY_PCT: 45
+    fact_check:
+      - claim: Season opens Thursday 24 September, runs to Sunday 4 October
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: Opening-week show times (Thu 24 Sep 1pm; Fri 25 Sep 4pm/7pm; Sat 26 Sep 4pm/7pm; Sun 27 Sep 11am/2pm)
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: Eventbrite link, not the Oztix links in circus.yaml
+        source: campaign.yaml usps.opening-week-seats.rests_on
+        result: verified
+      - claim: No code, price, discount, or unsold-seats suggestion
+        source: campaign.yaml prompt_appendices.a_author
+        result: verified
+      - claim: "\"Family pass of four held in your name\" wording"
+        source: campaign.yaml segments.earned-media.first_ask
+        result: verified
+      - claim: "We run horse riding, animal experiences and a cafe on the river"
+        source: business-overview.md (U1, U2, U3, U5)
+        result: verified
+      - claim: "a heritage farm and wildlife venue"
+        source: business-antifacts.md
+        result: correction
+        note: |
+          business-antifacts.md states the farming question is not settled
+          here in either direction, and prescribes describing the venue by
+          what it offers: "a heritage tourism venue with a cafe, equestrian
+          activities, farm animals and private events." Calling it "a
+          heritage farm" asserts the unsettled status rather than
+          describing it by offer.
+        correction: Replace with the antifact's prescribed description in both the LinkedIn note and the email.
+    antifact_check: |
+      One flag, addressed: "heritage farm" wording. No stone-building,
+      100-year/original-mill building, vineyard, or Tamborine Mountain claim
+      present.
+    revision_note: |
+      Replaced "a heritage farm at Mount Nathan" (LinkedIn) and "a heritage
+      farm and wildlife venue" (email) with the antifact's prescribed
+      description. No other change: the elements the role-play reacted well
+      to (specificity, no price/code, real dates, plausible timing) were
+      kept as drafted.
+    notes: Pass 1 of up to 3 (profile yield 12).
+  - type: draft
+    number: 2
+    chosen_usps: [chosen-not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: Revision addressing the pass 1 antifact flag only.
+    messages:
+      - channel: linkedin
+        to: https://www.linkedin.com/in/christinapfeiffer/
+        text: |
+          Hi Christina, I'm Priyanka from Historic Rivermill, a heritage venue at Mount Nathan in the Gold Coast hinterland with horses, farm animals and a cafe. A family circus opens in our big top this week, and I have a pass of four held in your name for an opening show. Keen to connect.
+      - channel: email
+        to: christina@travel2next.com
+        subject: A circus opens at Mount Nathan this week
+        body: |
+          Hi Christina,
+
+          I'm Priyanka Das, from Partnerships at Historic Rivermill, a heritage tourism venue on the Coomera River at Mount Nathan, in the Gold Coast hinterland, with a cafe, equestrian activities, farm animals and private events. From Thursday 24 September a family circus, WANTED – A Cirque Heist, opens in a big top on our lawn for the school holidays, running to Sunday 4 October.
+
+          I have a family pass of four held in your name for any of the opening week shows: Thursday 24 September at 1pm, Friday 25 September at 4pm or 7pm, Saturday 26 September at 4pm or 7pm, or Sunday 27 September at 11am or 2pm. The pass isn't offered through any public channel. It's held in your name so you see the show before your readers do. Reply with the show that suits you and I'll hold the seats and send the booking details.
+
+          Public tickets are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+  - type: review
+    number: 2
+    verdict: DONE
+    in_character: |
+      Never heard of Historic Rivermill before this. First thing I notice:
+      it's Tuesday, and this "opening week" pass is for Thursday, two days
+      out. That's an odd amount of notice to give a journalist, either they
+      don't understand how far in advance we usually plan copy, or they
+      know it's short and are just hoping someone's free. I've got existing
+      commitments this week, so a Thursday 1pm show or Friday evening ones
+      aren't things I can just drop everything for on a whim, but weekends I
+      might be able to shuffle around. The Sunday 11am or 2pm slot is
+      realistically the only one I could turn around in time if I decide to
+      go.
+
+      The offer itself reads fine, a family pass of four, no strings
+      stated, a heritage venue I don't know but sounds like the
+      wildlife/hinterland stuff I already cover (Currumbin, Tamborine). No
+      discount code dangled at me, no "hurry, seats are going" pressure, no
+      request that I post anything specific. It's a plausible, low-key
+      regional PR pitch, a bit generic ("A circus opens at Mount Nathan this
+      week" is a flat subject line, doesn't tell me why I'd care), but not
+      spammy or over-eager. The bit about "you see the show before your
+      readers do" is a nice touch, makes it feel less like a mail-merge.
+
+      My hesitation is mostly logistical: the timing is tight, I don't know
+      this venue, and there's no clear ask about a story or deadline, so I
+      don't know if they expect coverage or just want bums on seats. If
+      Sunday works with my diary I'd probably take it and see if there's a
+      piece in it, hinterland day-trip content is exactly my beat. If Sunday
+      doesn't work, this lapses unanswered, same as most inbound PR pitches
+      with tight turnarounds.
+
+      REPLY_PCT: 45
+    fact_check:
+      - claim: Sender name, role, organisation, email
+        source: campaign.yaml sender block
+        result: verified
+      - claim: Season dates (Thursday 24 September to Sunday 4 October)
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: Opening-week show times (Thu 24 Sep 1pm; Fri 25 Sep 4pm/7pm; Sat 26 Sep 4pm/7pm; Sun 27 Sep 11am/2pm)
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: Eventbrite link matches usps registry, no Oztix link used
+        source: campaign.yaml usps.opening-week-seats
+        result: verified
+      - claim: No code, price, discount, or unsold-seats suggestion
+        source: campaign.yaml prompt_appendices.a_challenger
+        result: verified
+      - claim: Venue description (Coomera River, Mount Nathan, cafe, equestrian activities, farm animals, private events)
+        source: business-overview.md; business-antifacts.md
+        result: verified
+      - claim: "\"Family pass of four held in your name for any opening-week show\" and public-ticket-link phrasing"
+        source: campaign.yaml segments.earned-media.first_ask
+        result: verified
+    antifact_check: |
+      No stone-building, 100-year/original-mill building, vineyard, or
+      Tamborine Mountain claim present. Farming status not asserted either
+      way.
+    revision_note: |
+      No further revisions. The pass 2 concerns (short notice against her
+      existing commitments; a flat subject line) are read as
+      response-likelihood factors rather than drafting errors: the message
+      already states the dates plainly, and the segment's opening-week-only
+      window is the campaign's fixed shape, not this draft's to redesign.
+    notes: Pass 2 of up to 3 (profile yield 12); verdict DONE, no further pass needed.
+  - type: final
+    chosen_usps: [chosen-not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    messages:
+      - channel: linkedin
+        to: https://www.linkedin.com/in/christinapfeiffer/
+        text: |
+          Hi Christina, I'm Priyanka from Historic Rivermill, a heritage venue at Mount Nathan in the Gold Coast hinterland with horses, farm animals and a cafe. A family circus opens in our big top this week, and I have a pass of four held in your name for an opening show. Keen to connect.
+        actioned_date: null
+        replied_date: null
+      - channel: email
+        to: christina@travel2next.com
+        subject: A circus opens at Mount Nathan this week
+        body: |
+          Hi Christina,
+
+          I'm Priyanka Das, from Partnerships at Historic Rivermill, a heritage tourism venue on the Coomera River at Mount Nathan, in the Gold Coast hinterland, with a cafe, equestrian activities, farm animals and private events. From Thursday 24 September a family circus, WANTED – A Cirque Heist, opens in a big top on our lawn for the school holidays, running to Sunday 4 October.
+
+          I have a family pass of four held in your name for any of the opening week shows: Thursday 24 September at 1pm, Friday 25 September at 4pm or 7pm, Saturday 26 September at 4pm or 7pm, or Sunday 27 September at 11am or 2pm. The pass isn't offered through any public channel. It's held in your name so you see the show before your readers do. Reply with the show that suits you and I'll hold the seats and send the booking details.
+
+          Public tickets are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: Venue is a heritage tourism venue with a cafe, equestrian activities, farm animals and private events, on the Coomera River at Mount Nathan
+    source: business-overview.md; business-antifacts.md
+  - claim: Season opens Thursday 24 September, runs to Sunday 4 October
+    source: historicrivermill.au/data/circus.yaml; plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: Opening-week show times (Thu 24 Sep 1pm; Fri 25 Sep 4pm/7pm; Sat 26 Sep 4pm/7pm; Sun 27 Sep 11am/2pm)
+    source: historicrivermill.au/data/circus.yaml
+  - claim: Family pass of four for any opening-week show
+    source: campaign.yaml segments.earned-media.first_ask; usps.opening-week-seats
+  - claim: Public ticket link (no code, no price stated)
+    source: campaign.yaml usps.opening-week-seats.rests_on
+  - claim: The pass lets her see the show before her readers do; not a public offer
+    source: campaign.yaml usps.chosen-not-advertised
+  - claim: Contact's LinkedIn URL and email
+    source: spar-campaigns/segments/earned-media/christina-pfeiffer-freelance.md
+quality_checklist: |
+  1. YAML structure: root keys drawn from §6's canonical set; each round
+     carries type and number where required; final round has exactly one
+     channel: email message plus one channel: linkedin message (cap is on
+     emails only); no placeholder addresses.
+  2. Coverage: fact_provenance covers every factual claim in the final
+     draft; chosen_usps present on draft and final rounds; a_note
+     summarises angle, channel, warmth, language.
+  3. Presupposition test: passed. No sentence tells her something she
+     already knows about herself; her hinterland beat and QLD base inform
+     the geographic anchor but are not narrated back to her.
+  4. Manufactured-connection test: passed. No claim of shared interest
+     beyond what the campaign's own USPs assert.
+  5. Concreteness: passed. The ask (reply with a show, or decline) is
+     answerable in one sentence.
+  6. Band-level pattern check: deferred to R at band review (single-contact
+     file); compared against fiona-harper-freelance.yaml at drafting time,
+     openers vary by geographic and descriptive detail, not identical.
+  7. Final round email cardinality: passed, one email message in the final
+     round, plus one non-email (linkedin) message.
+  8. Antifact check: passed after revision, no stone-building, no
+     100-year/original-mill building, no vineyard, no Tamborine Mountain, no
+     farming claim.

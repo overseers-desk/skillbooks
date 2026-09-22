@@ -1,0 +1,188 @@
+profile_hash: sha256:eec3a0acd73154f24ab99422ff3420ed3c12da93b3af387403a4bacf21fb47d5
+# Contact:  Corey Hegge, Village Manager, Pine Lake Village (11 Araucaria Way, Elanora QLD 4221)
+# Channel:  Email first, phone the next morning where there is no reply
+# Language: en-au
+# Angle:    The manager as the conduit to residents, with a village-bus outing the following week as the alternative
+decisions:
+  channel: email
+  channel_detail: |
+    Email to the address published on the village's own Levande contact page, then a phone call on the morning of Wednesday 23 September if no reply has come. The segment's approach_sequencing sets the one-day wait, which suits an offer whose first show is Thursday 24 September. No LinkedIn or Facebook is on the roster row for this contact.
+  language: en-au
+  angle: manager-passes-tickets-to-residents-bus-outing-as-fallback
+angle_rationale: |
+  Warmth is cold. Both dispatcher prefetch passes returned no hits across all five accounts, so there is no prior correspondence to open on and no earlier unanswered note to name. The profile records no dated conduct with us; it is a qualification-only profile built from the village's Levande contact page and the QLD Retirement Villages Register.
+
+  What the profile establishes is the mechanism, not a personal hook. Village Manager is one of the three buyer roles the segment names. The village has 147 independent-living units, an on-site bus, a community centre and an active residents committee, so residents self-organise and the manager is the person who circulates things to them. No public statements by Corey Hegge were found, so no claim of shared interest is available and none is made.
+
+  The angle follows from that mechanism. He can hand residents something this week without running anything, since residents book their own seats. The bus outing he would otherwise have to plan is offered for the following week, when there is notice for it. The two asks sit in that order because the opening week is two days away and the outing is not.
+
+  USPs used, in the segment's own framings: opening-week-seats and nothing-to-organise carry the offer, group-visit-later carries the second ask, and chosen-not-advertised sits in one plain sentence. The segment's nothing-to-organise caveat about enrolled-family contact lists does not bite here, because circulating an offer to residents is what a village office already does. big-top-at-a-heritage-farm is carried in the descriptive clause rather than argued.
+
+  Timing is stated rather than implied: the message says in its first lines that the show opens this Thursday, and names the daytime sessions first, because a village audience sorts on that before anything else.
+response_likelihood: 50
+a_note: |
+  Cold approach, en-au, email then phone. Angle is the manager as conduit to residents (free opening-week seats, residents book their own), with a village-bus outing the following week as the fallback ask. Challenger scored reply at 55% and found no factual errors; the likely first reply is a question about cost and whether residents can simply turn up with family.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [opening-week-seats, nothing-to-organise, chosen-not-advertised, group-visit-later]
+    notes: |
+      Element order is a to b to c: who I am, the offer and the ask, then the reasons. The code and the Eventbrite link are held for the reply. No price, no subscriber discount, no Oztix link, nothing about how the season is selling and nothing about what the offer does for us.
+    messages:
+      - channel: email
+        to: corey.hegge@levande.com.au
+        subject: "Free circus tickets for Pine Lake residents, this Thursday to Sunday"
+        body: |
+          Hello Corey,
+
+          I am Priyanka Das and I look after partnerships at Historic Rivermill, a heritage property with a cafe, horses and farm animals at Mount Nathan in the Gold Coast hinterland.
+
+          A circus company has put a big top up on our lawn for the school holidays, and I have free tickets to the opening week for your residents and the families who visit them. The show is WANTED – A Cirque Heist. Seven performances run from this Thursday 24 September to Sunday 27 September. The daytime ones are Thursday at 1pm, Sunday at 11am and Sunday at 2pm, and the others are at 4pm and 7pm on the Friday and the Saturday.
+
+          Reply with the sessions that suit and roughly how many people, and I will send you the booking link and a code that takes the price to nil, for you to pass on. Residents book the session they like themselves, so there is no bus to arrange and nothing to organise at your end.
+
+          The free seats are not advertised anywhere and I am offering them to a small number of villages near us. They are for Pine Lake residents and their families, so the code is best kept inside the village rather than going out on social media.
+
+          If a village outing would suit you better, the following week gives the notice a bus needs. Tell me a day and I will come back to you about seating.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        director_note: |
+          The reply is what carries RIVERMILLFRIENDS and the Eventbrite link, with the Sunday cut-off stated. The number he gives goes onto the per-show tally at that point.
+      - channel: phone
+        to: "0401 417 480"
+        text: |
+          Wednesday 23 September, morning, only if the email has drawn no reply. The call is there to recover a reply before the Thursday opening, and to settle what an email cannot, which is whether he is comfortable circulating an outside offer to residents.
+        script:
+          - point: Opening
+            text: "Morning Corey, it's Priyanka from Historic Rivermill at Mount Nathan. I sent you an email yesterday about free circus tickets for your residents. Have you got two minutes, or is there a better time to ring back?"
+          - point: The offer
+            text: "There's a circus in a big top on our lawn for the school holidays, and I've got free tickets to the opening week for Pine Lake residents and the families who visit them."
+          - point: Timing
+            text: "The first show is tomorrow afternoon, one o'clock. It runs through to Sunday, and the other daytime sessions are Sunday at eleven and Sunday at two."
+          - point: Ask
+            text: "If you tell me which sessions and roughly how many, I'll email you the booking link and a code this morning, and residents book whichever one suits them. Nothing for you to organise, no bus."
+          - point: Handling the who-else question
+            text: "They're not advertised. I've gone to a handful of villages close to us, and the tickets are for your residents and their families rather than for anything public."
+          - point: Alternative
+            text: "If you'd rather bring a group on the village bus, next week gives you the notice for that. Give me a day that works and I'll come back to you about seating."
+          - point: Close
+            text: "Either way, is your email the best one for me to send it to?"
+        phone_note: |
+          Village offices are usually reachable earlier in the morning, and the call has to land in time for tickets to reach residents before the Thursday 1pm show.
+  - type: review
+    number: 1
+    verdict: DONE
+    in_character: |
+      Today's Tuesday 22 September. I don't know Historic Rivermill or this Priyanka Das from a bar of soap, though Mount Nathan and a big-top circus rings a bell from somewhere. My first read is another marketing email into the village inbox, and I get a few of those a week from people wanting to sell something to residents.
+
+      What stops me for half a second is the line about the seats not being advertised and going to a small number of villages near us. That makes me wonder why us, and whether there is a catch. Then she asks for nothing except a reply naming sessions and a rough headcount, and residents book their own seats, so there is no admin on me and no money either way. I would reply with a question rather than refuse: is this really no cost to us, and can residents just turn up with family.
+
+      The timing is workable but tight. If I read it today and reply today, there is just enough time to get word out before Thursday's 1pm show. If I do not see it until tomorrow, Thursday is a write-off for us and the weekend shows still give reasonable notice. The village-bus outing the following week is the one I would be more inclined to take up, because that fits how I normally organise things, with a bus booked in advance rather than residents self-booking on a stranger's say-so within 48 hours.
+
+      Nothing reads as a scam. No money asked for, no personal data beyond a headcount, a real address and a specific show name I could check. REPLY_PCT: 55.
+    fact_check:
+      - claim: Seven performances run from Thursday 24 September to Sunday 27 September, daytime at Thursday 1pm, Sunday 11am and Sunday 2pm, the others 4pm and 7pm on Friday and Saturday.
+        source: historicrivermill.au/data/circus.yaml, read through plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+        result: verified
+        note: 24 Sep 13:00; 25 Sep 16:00 and 19:00; 26 Sep 16:00 and 19:00; 27 Sep 11:00 and 14:00. Seven sessions, all inside the stated window.
+      - claim: A code takes the ticket price to nil, and it is sent in the reply rather than the first message.
+        source: campaign usps.opening-week-seats.rests_on
+        result: verified
+        note: The draft names neither the code nor the Eventbrite link.
+      - claim: The free seats are not advertised and the village was approached by name.
+        source: campaign usps.chosen-not-advertised.claim
+        result: verified
+      - claim: Historic Rivermill is a heritage property with a cafe, horses and farm animals at Mount Nathan in the Gold Coast hinterland.
+        source: business-overview.md
+        result: verified
+      - claim: Residents book their own seats, so there is no bus to arrange and nothing to organise at the village's end.
+        source: campaign usps.nothing-to-organise.claim
+        result: verified
+      - claim: A group visit can be arranged for the following week, with seating to come back to him on.
+        source: campaign usps.group-visit-later.claim
+        result: verified
+        note: The draft promises to come back about seating rather than promising the seats, which matches the USP.
+    antifact_check: |
+      Checked against every item in business-antifacts.md. No stone buildings, no 100-year-old timber or original mill structures, no claim about whether the venue farms, no vineyard, and the location is given as Mount Nathan in the Gold Coast hinterland rather than Tamborine Mountain. No drive time is quoted, because the sourced figure is from central Gold Coast and Elanora is not that. No feed-bag or animal-food offer, no subscriber discount, no Oztix link, no price, and nothing about how the season is selling.
+    revision_note: |
+      No revisions. The challenger scored one sentence at 4 for surprise, the ask sentence: "Reply with the sessions that suit and roughly how many people, and I will send you the booking link and a code that takes the price to nil, for you to pass on." The question it was answering is the reader's "what do I actually have to do, and how does a free ticket become free". That is the first point at which the message implies a price existed. That sentence is the ask itself, and the campaign's shape puts the code and the link in the reply, so the implied price cannot be removed without removing the ask. It stands.
+
+      The reader's graph scored "Historic Rivermill" at 1 and "a code that takes the price to nil" at 2. The first is answered in the same sentence that introduces it, which is as far as a cold message can go. The second is the ask, treated above. Everything else resolved at 3 or better.
+  - type: final
+    chosen_usps: [opening-week-seats, nothing-to-organise, chosen-not-advertised, group-visit-later]
+    messages:
+      - channel: email
+        to: corey.hegge@levande.com.au
+        subject: "Free circus tickets for Pine Lake residents, this Thursday to Sunday"
+        body: |
+          Hello Corey,
+
+          I am Priyanka Das and I look after partnerships at Historic Rivermill, a heritage property with a cafe, horses and farm animals at Mount Nathan in the Gold Coast hinterland.
+
+          A circus company has put a big top up on our lawn for the school holidays, and I have free tickets to the opening week for your residents and the families who visit them. The show is WANTED – A Cirque Heist. Seven performances run from this Thursday 24 September to Sunday 27 September. The daytime ones are Thursday at 1pm, Sunday at 11am and Sunday at 2pm, and the others are at 4pm and 7pm on the Friday and the Saturday.
+
+          Reply with the sessions that suit and roughly how many people, and I will send you the booking link and a code that takes the price to nil, for you to pass on. Residents book the session they like themselves, so there is no bus to arrange and nothing to organise at your end.
+
+          The free seats are not advertised anywhere and I am offering them to a small number of villages near us. They are for Pine Lake residents and their families, so the code is best kept inside the village rather than going out on social media.
+
+          If a village outing would suit you better, the following week gives the notice a bus needs. Tell me a day and I will come back to you about seating.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        director_note: |
+          The reply is what carries RIVERMILLFRIENDS and the Eventbrite link, with the Sunday cut-off stated. The number he gives goes onto the per-show tally at that point.
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "0401 417 480"
+        text: |
+          Wednesday 23 September, morning, only if the email has drawn no reply. The call is there to recover a reply before the Thursday opening, and to settle what an email cannot, which is whether he is comfortable circulating an outside offer to residents.
+        script:
+          - point: Opening
+            text: "Morning Corey, it's Priyanka from Historic Rivermill at Mount Nathan. I sent you an email yesterday about free circus tickets for your residents. Have you got two minutes, or is there a better time to ring back?"
+          - point: The offer
+            text: "There's a circus in a big top on our lawn for the school holidays, and I've got free tickets to the opening week for Pine Lake residents and the families who visit them."
+          - point: Timing
+            text: "The first show is tomorrow afternoon, one o'clock. It runs through to Sunday, and the other daytime sessions are Sunday at eleven and Sunday at two."
+          - point: Ask
+            text: "If you tell me which sessions and roughly how many, I'll email you the booking link and a code this morning, and residents book whichever one suits them. Nothing for you to organise, no bus."
+          - point: Handling the who-else question
+            text: "They're not advertised. I've gone to a handful of villages close to us, and the tickets are for your residents and their families rather than for anything public."
+          - point: Alternative
+            text: "If you'd rather bring a group on the village bus, next week gives you the notice for that. Give me a day that works and I'll come back to you about seating."
+          - point: Close
+            text: "Either way, is your email the best one for me to send it to?"
+        phone_note: |
+          Village offices are usually reachable earlier in the morning, and the call has to land in time for tickets to reach residents before the Thursday 1pm show.
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: Seven performances from Thursday 24 September to Sunday 27 September; daytime sessions Thursday 1pm, Sunday 11am and Sunday 2pm; the rest 4pm and 7pm on Friday and Saturday.
+    source: historicrivermill.au/data/circus.yaml, named by plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: The show is WANTED – A Cirque Heist, staged in a big top on the venue's lawn for the school holidays.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md and campaign header
+  - claim: The tickets are free, through a code sent in the reply along with the booking link.
+    source: campaign usps.opening-week-seats
+  - claim: The free seats are not advertised and are offered to a small number of local organisations.
+    source: campaign usps.chosen-not-advertised
+  - claim: Residents book their own seats, so there is no outing to arrange.
+    source: campaign usps.nothing-to-organise
+  - claim: A village outing can be arranged for the following week, with seating to be confirmed.
+    source: campaign usps.group-visit-later
+  - claim: Historic Rivermill is a heritage property with a cafe, horses and farm animals at Mount Nathan in the Gold Coast hinterland.
+    source: business-overview.md
+  - claim: Corey Hegge is Village Manager at Pine Lake Village, reachable on 0401 417 480 and corey.hegge@levande.com.au.
+    source: spar-campaigns/segments/retirement-village/pine-lake-village.md, confirmed there against levande.com.au/community/pine-lake/
+  - claim: The village has an on-site bus, which is why an outing is offered for the week that gives it notice.
+    source: spar-campaigns/segments/retirement-village/pine-lake-village.md, mechanism evidence
+quality_checklist: |
+  1. Structure. Root keys are drawn from the canonical set. Draft and review rounds carry numbers, the final round does not. The final round holds one email and one phone message, within the email cap. Both addresses are real: the recipient's is published on the village's own contact page, and the sender's is the campaign sender.
+  2. Coverage. fact_provenance reaches every factual claim in the final email and the phone script. chosen_usps is on the draft and the final round. a_note carries angle, channel, warmth and language.
+  3. Presupposition. Nothing in the message tells him about his own village. The bus appears only inside an offer, not as a recital of how he runs outings, and the unit count, the operator name and the residents committee stay out.
+  4. Manufactured connection. No shared interest is claimed. The profile found no public statements by him, and the message rests on role and offer alone.
+  5. Concreteness. He can answer with a session and a number, or with a day for the outing, in one sentence.
+  6. Band pattern. This is the first approach file written in the campaign, so there are no sibling openers to vary against yet. Later retirement-village drafts should avoid opening on the sender's own introduction if they are to differ from this one.
+  7. Final email cardinality. One email in the final round.

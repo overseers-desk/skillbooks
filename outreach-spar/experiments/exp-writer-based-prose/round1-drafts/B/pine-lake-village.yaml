@@ -1,0 +1,213 @@
+profile_hash: sha256:eec3a0acd73154f24ab99422ff3420ed3c12da93b3af387403a4bacf21fb47d5
+decisions:
+  channel: email
+  channel_detail: Email primary, phone follow-up if no reply by Wednesday 23 September.
+  language: en
+  angle: retirement-village-role-mechanism-fit
+angle_rationale: |
+  Corey Hegge is a direct match to the retirement-village segment's named
+  buyer role, Village Manager, but the profile carries no public statements
+  or dated prior conduct with us and no IMAP history: the angle rests on
+  role and mechanism fit alone, which the profile itself calls standard for
+  a qualification-only entry. The email opens on the offer, not on a
+  constructed relationship, since warmth is cold. USP selection uses three
+  of the segment's five: chosen-not-advertised (seats not on sale, Pine
+  Lake picked by name), nothing-to-organise (forwarding the code costs the
+  coordinator nothing), and opening-week-seats (the concrete free-seats
+  offer). Group-visit-later is folded in as the secondary path from the
+  segment's own first_ask. Pass 1 of the challenger spar found two factual
+  errors (the draft misattributed the circus to us rather than to CHARC,
+  and asserted an unsettled farming identity) and one wrong date in the
+  phone script; all three are corrected in the final draft, along with
+  three ungrounded presuppositions ("seven shows", "a bus visit", "the
+  group") the pointing list flagged.
+response_likelihood: 55
+a_note: |
+  Angle: retirement-village role/mechanism fit, no personal hook available
+  (yield 4, no prior contact). Channel: email first, phone follow-up
+  Wednesday 23 September if no reply. Warmth: cold. Language: en.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats, group-visit-later]
+    notes: |
+      First draft. Uses the segment's standard first_ask shape with no
+      contact-specific hook, since the profile records none.
+    messages:
+      - channel: email
+        to: corey.hegge@levande.com.au
+        subject: Free circus seats for Pine Lake Village residents, this week
+        body: |
+          Hi Corey,
+
+          I'm Priyanka Das from the partnerships team at Historic Rivermill, the farm and function venue at Mount Nathan. WANTED – A Cirque Heist, our family circus in a big top on the lawn, opens this Thursday 24 September and runs through Sunday.
+
+          Pine Lake Village's residents and the families who visit them can have free seats at any of those seven shows. These seats aren't on sale anywhere; a small number of local organisations were picked to receive them, and Pine Lake is one.
+
+          Reply and I'll send the booking code and link straight away, for residents and visiting families to book whichever show suits them. Nothing to organise on your end.
+
+          If a proper village outing the following week would suit better, that gives a bus visit the notice opening week doesn't allow. Tell me a day from Wednesday 30 September and I'll come back to you with seating for the group.
+
+          Kind regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: phone
+        to: "0401 417 480"
+        text: Follow-up call if no reply by Friday 25 September (later corrected to Wednesday 23 September).
+        script:
+          - point: Opening
+            text: "Hi, is that Corey? This is Priyanka, calling from Historic Rivermill at Mount Nathan. I emailed on Tuesday about free circus tickets for Pine Lake Village residents."
+          - point: Context
+            text: "We've a family circus running in a big top through Sunday, with free seats set aside for a handful of local villages, Pine Lake among them."
+          - point: Ask
+            text: "Would residents like to come along to one of the shows through Sunday, or would a proper village outing the following week suit better?"
+          - point: Close
+            text: "I can send the details over now, whichever way works for you."
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Free circus tickets, out of nowhere, from someone called Priyanka at
+      somewhere called "Historic Rivermill" I've never heard of. First
+      reaction: is this a scam or a genuine local-business thing? There's
+      no cost being asked of me and no link to click, so the risk is low,
+      that's reassuring.
+
+      Today's Tuesday, the circus opens Thursday. That's two days' notice
+      to forward something to residents, doable, I put notices on the
+      noticeboard and send group emails routinely. The "proper village
+      outing" for the week after gives me the breathing room the first
+      week doesn't.
+
+      A few things I'd just ask rather than balk at: how many seats
+      exactly, is this per-resident or a fixed allocation, and what
+      actually is Historic Rivermill. Calling it "our family circus" reads
+      oddly, like they're running the show themselves, but it's not
+      something that stops me replying.
+
+      What would give me pause: "a small number of local organisations
+      were picked" is the kind of line that shows up in every mass
+      cold-marketing email. It's addressed to me by name and role though,
+      which pulls it back from generic spam territory.
+
+      Nothing here would stop me from at least replying to ask for more
+      detail before committing to anything.
+
+      REPLY_PCT: 55
+    fact_check:
+      - claim: "WANTED – A Cirque Heist, our family circus"
+        source: campaigns/2026-09-cirque-heist-season.yaml (header comment)
+        result: incorrect
+        note: CHARC Performance stages the circus; the venue hosts it.
+        correction: The family circus in a big top on our lawn.
+      - claim: "Historic Rivermill, the farm and function venue at Mount Nathan"
+        source: business-antifacts.md
+        result: incorrect
+        note: The farming question is unsettled; describe the venue by what it offers visitors instead.
+        correction: Historic Rivermill, the heritage venue at Mount Nathan.
+      - claim: "phone follow-up if no reply by Friday 25 September"
+        source: campaigns/2026-09-cirque-heist-season.yaml (secondary_channel, wait_days 1)
+        result: incorrect
+        note: Email sent Tuesday 22 September; wait_days 1 points to Wednesday 23 September, not Friday.
+        correction: Follow up Wednesday 23 September.
+      - claim: Seven opening-week shows, Thursday 24 to Sunday 27 September
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: Wednesday 30 September is the earliest second-week date
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: Sender name, role and email
+        source: campaigns/2026-09-cirque-heist-season.yaml (sender block)
+        result: verified
+    antifact_check: |
+      Checked against business-antifacts.md: no stone-building, no
+      100-year-original-structure, no vineyard, and no Tamborine Mountain
+      location claim appear in the draft. The "farm ... venue" line was
+      flagged separately as a farming-identity claim and corrected.
+    revision_note: |
+      Three points from the pointing list ("seven shows", "a bus visit",
+      "the group") were ungrounded presuppositions with no earlier
+      mention in the draft: absorbed by reframing, stating the show count
+      where the date range is first given, dropping the invented "bus"
+      detail, and tying "the group" back to "residents" already named.
+      Two factual errors (circus misattribution, farm-identity claim) and
+      one wrong date (phone follow-up) were corrected in the draft, since
+      leaving them would mislead the reader or the caller. Three questions
+      the persona said she would ask rather than balk at (seat count,
+      per-resident vs fixed allocation, what Historic Rivermill is) were
+      left for the reply, per the segment's conversion funnel step 2. The
+      "small number of organisations picked" framing was left unchanged:
+      the persona said being addressed by name and role already pulled it
+      back from spam territory.
+    notes: Pass 1 of 1 (yield 4, budget: 1 pass).
+  - type: final
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats, group-visit-later]
+    messages:
+      - channel: email
+        to: corey.hegge@levande.com.au
+        subject: Free circus seats for Pine Lake Village residents, this week
+        body: |
+          Hi Corey,
+
+          I'm Priyanka Das from the partnerships team at Historic Rivermill, the heritage venue at Mount Nathan. WANTED – A Cirque Heist, the family circus in a big top on our lawn, opens this Thursday 24 September and runs through Sunday: seven shows in all.
+
+          Pine Lake Village's residents and the families who visit them can have free seats at any of those seven shows. These seats aren't on sale anywhere; a small number of local organisations were picked to receive them, and Pine Lake is one.
+
+          Reply and I'll send the booking code and link straight away, for residents and visiting families to book whichever show suits them. Nothing to organise on your end.
+
+          If a proper village outing the following week would suit better, that gives more notice than opening week allows. Tell me a day from Wednesday 30 September and I'll come back to you with seating for residents.
+
+          Kind regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "0401 417 480"
+        text: Follow-up call if no reply by Wednesday 23 September.
+        script:
+          - point: Opening
+            text: "Hi, is that Corey? This is Priyanka, calling from Historic Rivermill at Mount Nathan. I emailed yesterday about free circus tickets for Pine Lake Village residents."
+          - point: Context
+            text: "There's a family circus running in a big top through Sunday, with free seats set aside for a handful of local villages, Pine Lake among them."
+          - point: Ask
+            text: "Would residents like to come along to one of the shows through Sunday, or would a proper village outing the following week suit better?"
+          - point: Close
+            text: "I can send the details over now, whichever way works for you."
+fact_provenance:
+  - claim: Historic Rivermill is a heritage venue at Mount Nathan.
+    source: business-overview.md; business-antifacts.md (farming-identity item)
+  - claim: WANTED – A Cirque Heist is a family circus in a big top on the venue's lawn.
+    source: campaigns/2026-09-cirque-heist-season.yaml (header comment)
+  - claim: The season opens Thursday 24 September and runs seven shows through Sunday 27 September.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md; historicrivermill.au/data/circus.yaml
+  - claim: The free seats are not on sale anywhere and were offered to a small, named set of local organisations.
+    source: campaigns/2026-09-cirque-heist-season.yaml (usps.chosen-not-advertised)
+  - claim: The booking code and Eventbrite link are sent only in the reply, not the first message.
+    source: campaigns/2026-09-cirque-heist-season.yaml (usps.opening-week-seats; prompt_appendices.a_author)
+  - claim: Wednesday 30 September is the earliest date offered for a second-week village outing.
+    source: historicrivermill.au/data/circus.yaml
+  - claim: Sender name, role and email address.
+    source: campaigns/2026-09-cirque-heist-season.yaml (sender block)
+quality_checklist: |
+  1. YAML structure: root keys drawn from the canonical set; both rounds
+     carry type and number; the final round has exactly one email message
+     and one phone message; email address is real, not a placeholder.
+  2. Coverage: fact_provenance covers every factual claim in the final
+     draft; chosen_usps set on the draft and final rounds; a_note
+     summarises angle, channel, warmth, language.
+  3. Presupposition test: passed after revision. "seven shows", "a bus
+     visit" and "the group" were ungrounded in draft 1 and are now either
+     grounded earlier in the message or removed.
+  4. Manufactured-connection test: no claim of shared interest beyond
+     role/mechanism fit, which the profile supports directly; no
+     invented personal hook.
+  5. Concreteness: the recipient can answer in one sentence, a day and a
+     rough number, or a plain "yes, forward it."
+  6. Band-level pattern check: deferred to band-level review across the
+     retirement-village segment; this file uses the segment's standard
+     first_ask shape since the profile carries no contact-specific hook.
+  7. Final round email cardinality: one email message in the final round;
+     the phone script is a separate channel, not a second email.

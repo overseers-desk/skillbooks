@@ -1,0 +1,373 @@
+profile_hash: sha256:8875f9e63186279613f76edb0f9d0222fc956c1b338c70e66901213675f3f9ec
+decisions:
+  channel: email
+  channel_detail: |
+    Roster carries LinkedIn, email and phone, so per SPAR-A §4.2 three pieces
+    are prepared: a LinkedIn connection note, an email, and a phone
+    follow-up. The LinkedIn note and the email send the same day; the email
+    is not gated on the connection being accepted, since the pass it carries
+    expires Sunday 27 September and a multi-day acceptance wait risked the
+    email landing after the offer closed (raised in A2 pass 3). Phone
+    follows 1 day after the email if there is no reply, matching the
+    campaign's secondary_channel.wait_days.
+  language: en
+  angle: hinterland-concierge-fit
+
+angle_rationale: |
+  Warmth is cold: the IMAP prefetch found no prior correspondence with this
+  address, and the profile records no earlier dealing with Historic
+  Rivermill, so the opener carries no false familiarity.
+
+  The profile's strongest behavioural-fit evidence is that Dorsett Gold
+  Coast already publishes its own hinterland day-trip guide (Tamborine,
+  Springbrook, Canungra) and markets a concierge function built to answer
+  "where should we go" questions from guests. No named partner appears in
+  that guide and no referral habit is proven, so the angle sits at
+  guest-throughput and existing day-trip content, not at an established
+  cross-referral relationship. The draft does not narrate this research
+  back to Wachter; it presupposes his world by shaping the ask for a desk
+  that already fields this question, without saying so.
+
+  The ask is a firsthand-experience pass for the desk, not free public
+  tickets. Guests book and pay through the public Eventbrite listing; the
+  message states this plainly rather than implying free entry for anyone
+  but the pass-holders. No code appears in the first message, consistent
+  with the opening-week-seats USP's rests_on.
+
+response_likelihood: 45
+a_note: |
+  Angle: hinterland-concierge fit (Dorsett's own published day-trip guide
+  and concierge function, presupposed rather than narrated). Channel:
+  LinkedIn connection note + email, sent same day, phone follow-up at 1 day
+  no-reply. Warmth: cold, no prior correspondence found. Language: en.
+  Three A2 passes used (yield 6, budget up to 3); final pass fixed a
+  structural timing collision between a LinkedIn-gated email and the
+  pass's four-day (Thu 24-Sun 27 Sept) validity window by sending the
+  LinkedIn note and email together rather than gating the email on
+  acceptance.
+
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, big-top-at-a-heritage-farm]
+    notes: A1 Draft 1. First pass; email timing gated on LinkedIn acceptance (or 4-5 day fallback), phone follow-up at 3 days.
+    messages:
+      - channel: linkedin
+        to: https://www.linkedin.com/in/christian-w-7a02442a/
+        text: |
+          Hi Christian, I'm Priyanka from Historic Rivermill, a heritage
+          riverside venue in the Gold Coast hinterland. We're running a
+          family circus this month and I'd like to hold a firsthand pass
+          for your desk. Keen to connect and send the details.
+      - channel: email
+        to: christian.wachter@dorsetthotels.com
+        subject: A family pass for Dorsett guests asking about hinterland day trips
+        body: |
+          I'm Priyanka Das, Partnerships at Historic Rivermill (Colourful.land Pty Ltd), a heritage riverside venue at Mount Nathan in the Gold Coast hinterland, about 30 minutes from Broadbeach.
+
+          From this Thursday 24 September we're hosting WANTED – A Cirque Heist, a family circus in a big top on our lawn on the Coomera River. Opening week runs Thursday to Sunday, and the season continues with evening shows on Fridays and Saturdays through to 3 October.
+
+          I'd like to hold a family pass of four for your desk, so your team can see the show before pointing guests with children toward it. This pass isn't a public offer, it's for your own visit. Reply with the day that suits and I'll send the booking details.
+
+          Guests book seats directly at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924. Evening sessions on Fridays and Saturdays may suit guests staying overnight better than a daytime show.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        director_note: Draft 1. Email sequencing gated on LinkedIn acceptance or a 4-5 day fallback; superseded in draft 4.
+      - channel: phone
+        to: "+61 7 5504 1000"
+        text: Follow-up call if no reply 3 days after the email (superseded; campaign sets wait_days to 1).
+        script:
+          - point: Opening
+            text: "Hi, could I speak with Christian Wachter please? It's Priyanka Das from Historic Rivermill, calling about an email I sent through about a family circus pass for your desk."
+          - point: If reaching Christian
+            text: "I sent through a family pass of four for WANTED – A Cirque Heist, the circus running on our lawn at Mount Nathan through to early October. I wanted to check whether a day this week or next would suit your team to come out and see it."
+          - point: Ask
+            text: "Would Thursday, Friday or the weekend work, or would an evening show later in the season suit better?"
+          - point: If unavailable
+            text: "No trouble, I'll leave my number. Historic Rivermill, at Mount Nathan, and my email's in the message I sent through. Thanks for your time."
+        phone_note: Switchboard number only; the call may need to be routed to Christian Wachter by name.
+
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      I don't know Historic Rivermill or Priyanka Das. The LinkedIn note
+      reads as ordinary industry outreach, low commitment, costs nothing to
+      accept. The email is plausible: a heritage venue 30 minutes away, a
+      family circus opening Thursday, a comp pass so my team can speak from
+      firsthand experience before recommending it. That's a normal ask in
+      my business.
+
+      What stops me for a second: today is Tuesday 22 September and the
+      show opens Thursday. If the email waits on LinkedIn acceptance or the
+      stated 4-5 day fallback, it could land around 26-27 September, and a
+      visit "this week" is nearly over by then. Nothing reads as pushy or
+      like they need me to fill an empty tent. My hesitation is a practical
+      scheduling question, which days the pass is actually good for, since
+      the email doesn't say. I'd likely forward this to my duty manager or
+      concierge team rather than organise it myself.
+    fact_check:
+      - claim: "I'd like to hold a family pass of four for your desk... Reply with the day that suits and I'll send the booking details."
+        source: accommodation-referral segment first_ask; opening-week-seats USP rests_on
+        result: correction needed
+        correction: The pass must be bounded to "any show from this Thursday 24 September to Sunday" in the email; the draft stated no date bound at all.
+      - claim: Venue on the Coomera River, Mount Nathan, 30 minutes from Broadbeach; opening week Thursday to Sunday; evening shows Fridays and Saturdays through 3 October; Eventbrite URL; no code/price/antifact claims
+        source: business-overview.md; showtimes file; accommodation-referral first_ask; opening-week-seats rests_on
+        result: verified
+    revision_note: |
+      Only one point required a change: the pass's date window was stated
+      nowhere in the draft, so "reply with the day that suits" had nothing
+      to answer against. Fixed by adding "it covers any show from this
+      Thursday 24 September to Sunday" before the ask. The LinkedIn note not
+      being cross-referenced in the email was raised but judged not a
+      problem: the persona read the email as a fine fresh introduction on
+      its own.
+
+  - type: draft
+    number: 2
+    chosen_usps: [chosen-not-advertised, big-top-at-a-heritage-farm]
+    notes: A1 Draft 2. Added explicit pass date window to the email ask.
+    messages:
+      - channel: linkedin
+        to: https://www.linkedin.com/in/christian-w-7a02442a/
+        text: |
+          Hi Christian, I'm Priyanka from Historic Rivermill, a heritage
+          riverside venue in the Gold Coast hinterland. We're running a
+          family circus this month and I'd like to hold a firsthand pass
+          for your desk. Keen to connect and send the details.
+      - channel: email
+        to: christian.wachter@dorsetthotels.com
+        subject: A family pass for Dorsett guests asking about hinterland day trips
+        body: |
+          I'm Priyanka Das, Partnerships at Historic Rivermill (Colourful.land Pty Ltd), a heritage riverside venue at Mount Nathan in the Gold Coast hinterland, about 30 minutes from Broadbeach.
+
+          From this Thursday 24 September we're hosting WANTED – A Cirque Heist, a family circus in a big top on our lawn on the Coomera River. Opening week runs Thursday to Sunday, and the season continues with evening shows on Fridays and Saturdays through to 3 October.
+
+          I'd like to hold a family pass of four for your desk, so your team can see the show before pointing guests with children toward it. This pass isn't a public offer, it's for your own visit. It covers any show from this Thursday 24 September to Sunday. Reply with the day that suits and I'll send the booking details.
+
+          Guests book seats directly at [the Eventbrite listing](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924). Evening sessions on Fridays and Saturdays may suit guests staying overnight better than a daytime show.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        director_note: Draft 2. Email still gated on LinkedIn acceptance/4-5 day fallback; superseded in draft 4.
+      - channel: phone
+        to: "+61 7 5504 1000"
+        text: Follow-up call if no reply 3 days after the email (superseded; campaign sets wait_days to 1).
+        script:
+          - point: Opening
+            text: "Hi, could I speak with Christian Wachter please? It's Priyanka Das from Historic Rivermill, calling about an email I sent through about a family circus pass for your desk."
+          - point: If reaching Christian
+            text: "I sent through a family pass of four for WANTED – A Cirque Heist, the circus running on our lawn at Mount Nathan. The pass covers this Thursday to Sunday, opening week. I wanted to check whether one of those days would suit your team to come out and see it."
+          - point: Ask
+            text: "Would Thursday, Friday or the weekend work, or would an evening show later in the season suit better?"
+          - point: If unavailable
+            text: "No trouble, I'll leave my number. Historic Rivermill, at Mount Nathan, and my email's in the message I sent through. Thanks for your time."
+        phone_note: Switchboard number only; the call may need to be routed to Christian Wachter by name.
+
+  - type: review
+    number: 2
+    verdict: REVISE
+    in_character: |
+      Odd little LinkedIn note, low commitment, reads as standard
+      tourism-partnership outreach. The email is plausible and matches the
+      sort of hinterland day-trip content we already publish. The pass is a
+      genuine no-strings offer, nothing fishing for a sale.
+
+      What I'd notice: opening week is Thursday to Sunday and today's
+      Tuesday, so two to five days' notice against a 300-room property I run
+      is not always flexible. If I can't get out there by Sunday, the pass
+      as written doesn't roll over, it's opening week only, not the evening
+      shows through 3 October mentioned afterward. The question I'd put back
+      isn't an objection, it's logistics: can someone on my team other than
+      me use it, or is there anything later in the season. Nothing would
+      stop me replying outright; the friction is purely the short runway.
+    fact_check:
+      - claim: Phone follow-up trigger, "if no reply 3 days after the email"
+        source: campaign secondary_channel.wait_days
+        result: correction needed
+        correction: "The campaign sets wait_days to 1, not 3."
+      - claim: Three-touch sequence (LinkedIn connection note, email, phone)
+        source: accommodation-referral approach_sequencing; campaign primary_channel/secondary_channel
+        result: note
+        note: The campaign's approach_sequencing names only email then phone; no linkedin channel field exists in the campaign YAML. This sits outside what a context-isolated C2 can see: the three-channel sequence was authorised at dispatch time under SPAR-A §4.2, since the roster carries a LinkedIn URL alongside email and phone. Not treated as an error.
+      - claim: Family pass of four; opening-week dates; Friday/Saturday evening shows through 3 October; Eventbrite URL; switchboard number; no antifact violations
+        source: accommodation-referral first_ask; showtimes file; circus.yaml; opening-week-seats rests_on; roster_patch
+        result: verified
+    revision_note: |
+      Two changes: the phone follow-up timing corrected from 3 days to 1
+      day, matching secondary_channel.wait_days. The email's ask reframed
+      to state a colleague can use the pass ("you or a colleague on your
+      team"), addressing the logistics friction the persona raised, without
+      extending the pass beyond the authorised opening-week window. Whether
+      the pass could extend to a later-season show was left for the reply,
+      since that is the reader's own follow-up question to raise, not one
+      to pre-empt by expanding an unauthorised window.
+
+  - type: draft
+    number: 3
+    chosen_usps: [chosen-not-advertised, big-top-at-a-heritage-farm]
+    notes: A1 Draft 3. Phone wait corrected to 1 day; email ask allows a colleague to use the pass.
+    messages:
+      - channel: linkedin
+        to: https://www.linkedin.com/in/christian-w-7a02442a/
+        text: |
+          Hi Christian, I'm Priyanka from Historic Rivermill, a heritage
+          riverside venue in the Gold Coast hinterland. We're running a
+          family circus this month and I'd like to hold a firsthand pass
+          for your desk. Keen to connect and send the details.
+      - channel: email
+        to: christian.wachter@dorsetthotels.com
+        subject: A family pass for Dorsett guests asking about hinterland day trips
+        body: |
+          I'm Priyanka Das, Partnerships at Historic Rivermill (Colourful.land Pty Ltd), a heritage riverside venue at Mount Nathan in the Gold Coast hinterland, about 30 minutes from Broadbeach.
+
+          From this Thursday 24 September we're hosting WANTED – A Cirque Heist, a family circus in a big top on our lawn on the Coomera River. Opening week runs Thursday to Sunday, and the season continues with evening shows on Fridays and Saturdays through to 3 October.
+
+          I'd like to hold a family pass of four for your desk, so you or a colleague on your team can see the show before pointing guests with children toward it. This pass isn't a public offer, it's for your own visit. It covers any show from this Thursday 24 September to Sunday. Reply with the day that suits and I'll send the booking details.
+
+          Guests book seats directly at [the Eventbrite listing](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924). Evening sessions on Fridays and Saturdays may suit guests staying overnight better than a daytime show.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        director_note: Draft 3. Email still described as gated on LinkedIn acceptance/4-5 day fallback; the collision with the pass's Sunday 27 September expiry was raised in review 3 and fixed in draft 4.
+      - channel: phone
+        to: "+61 7 5504 1000"
+        text: Follow-up call if no reply 1 day after the email.
+        script:
+          - point: Opening
+            text: "Hi, could I speak with Christian Wachter please? It's Priyanka Das from Historic Rivermill, calling about an email I sent through about a family circus pass for your desk."
+          - point: If reaching Christian
+            text: "I sent through a family pass of four for WANTED – A Cirque Heist, the circus running on our lawn at Mount Nathan. The pass covers this Thursday to Sunday, opening week, and either you or someone on your team can use it. I wanted to check whether one of those days would suit."
+          - point: Ask
+            text: "Would Thursday, Friday, Saturday or Sunday work? If not, an evening show later in the season is worth a separate look."
+          - point: If unavailable
+            text: "No trouble, I'll leave my number. Historic Rivermill, at Mount Nathan, and my email's in the message I sent through. Thanks for your time."
+        phone_note: Switchboard number only; the call may need to be routed to Christian Wachter by name.
+
+  - type: review
+    number: 3
+    verdict: REVISE
+    in_character: |
+      Today's Tuesday, 22 September. The LinkedIn note is mildly odd, low
+      commitment. Then nothing arrives until she gets my LinkedIn acceptance
+      or waits four to five days to email anyway. If she free-runs that
+      clock, the email could land around 26-27 September, after the pass's
+      Thursday-to-Sunday window has closed. That's a real problem: the
+      mechanism, gating the email behind a connection or a multi-day wait,
+      collides with a four-day expiry on the thing being offered.
+
+      Assuming the email lands in time, the ask itself is easy: come see a
+      circus, tell her a day, she sends booking details. I'd probably
+      forward this to my front-desk or guest-relations person rather than
+      handle it myself, since it's a low-stakes freebie. Nothing makes me
+      suspicious. What would stop me replying is purely the timing risk, if
+      it arrives too late to be useful I'd likely ignore it as moot.
+    fact_check:
+      - claim: "after connection accepted, or after 4-5 days if not" (email timing gate)
+        source: accommodation-referral approach_sequencing ("Email on 23 September"); campaign primary_channel/secondary_channel; opening-week-seats rests_on (pass valid opening-week shows only)
+        result: correction needed
+        correction: Gating the email behind LinkedIn acceptance or a 4-5 day fallback has no source and risks the email landing after the pass's Thursday 24-Sunday 27 September window closes. The LinkedIn note and the email must send the same day, with the email not waiting on acceptance.
+      - claim: "an evening show later in the season is worth a separate look" (phone script, as an alternative use of the pass)
+        source: opening-week-seats USP ("Valid for the opening-week shows only"); accommodation-referral first_ask; email body
+        result: correction needed
+        correction: No source extends the pass to a later-season evening show; the line should be removed from the phone script.
+      - claim: Sender name/role/organisation; Coomera River/heritage-riverside framing; season open date; Eventbrite URL; phone switchboard number; no price/discount/unsold-seats suggestion; no antifact violations
+        source: campaign sender block; business-overview.md U1/U4; showtimes file; opening-week-seats rests_on; roster_patch
+        result: verified
+    revision_note: |
+      Two changes, both structural rather than wording. The LinkedIn note
+      and the email now send the same day, with the email not gated on
+      connection acceptance, so the offer cannot arrive after its own
+      Sunday 27 September expiry. The phone script's suggestion that the
+      pass could be used at a later-season evening show is removed, since
+      no source supports it and the email itself bounds the pass to opening
+      week only.
+
+  - type: final
+    chosen_usps: [chosen-not-advertised, big-top-at-a-heritage-farm]
+    messages:
+      - channel: linkedin
+        to: https://www.linkedin.com/in/christian-w-7a02442a/
+        text: |
+          Hi Christian, I'm Priyanka from Historic Rivermill, a heritage
+          riverside venue in the Gold Coast hinterland. We're running a
+          family circus this month and I'd like to hold a firsthand pass
+          for your desk. Keen to connect, and I've also sent the details to
+          your email.
+        actioned_date: null
+      - channel: email
+        to: christian.wachter@dorsetthotels.com
+        subject: A family pass for Dorsett guests asking about hinterland day trips
+        body: |
+          I'm Priyanka Das, Partnerships at Historic Rivermill (Colourful.land Pty Ltd), a heritage riverside venue at Mount Nathan in the Gold Coast hinterland, about 30 minutes from Broadbeach.
+
+          From this Thursday 24 September we're hosting WANTED – A Cirque Heist, a family circus in a big top on our lawn on the Coomera River. Opening week runs Thursday to Sunday, and the season continues with evening shows on Fridays and Saturdays through to 3 October.
+
+          I'd like to hold a family pass of four for your desk, so you or a colleague on your team can see the show before pointing guests with children toward it. This pass isn't a public offer, it's for your own visit. It covers any show from this Thursday 24 September to Sunday. Reply with the day that suits and I'll send the booking details.
+
+          Guests book seats directly at [the Eventbrite listing](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924). Evening sessions on Fridays and Saturdays may suit guests staying overnight better than a daytime show.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "+61 7 5504 1000"
+        text: Follow-up call if no reply 1 day after the email.
+        script:
+          - point: Opening
+            text: "Hi, could I speak with Christian Wachter please? It's Priyanka Das from Historic Rivermill, calling about an email I sent through about a family circus pass for your desk."
+          - point: If reaching Christian
+            text: "I sent through a family pass of four for WANTED – A Cirque Heist, the circus running on our lawn at Mount Nathan. The pass covers this Thursday to Sunday, opening week, and either you or someone on your team can use it."
+          - point: Ask
+            text: "Would Thursday, Friday, Saturday or Sunday suit?"
+          - point: If unavailable
+            text: "No trouble, I'll leave my number. Historic Rivermill, at Mount Nathan, and my email's in the message I sent through. Thanks for your time."
+        phone_note: Switchboard number only; the call may need to be routed to Christian Wachter by name.
+        actioned_date: null
+
+fact_provenance:
+  - claim: Venue at Mount Nathan in the Gold Coast hinterland, about 30 minutes from Broadbeach; circus in a big top on the lawn on the Coomera River
+    source: business-overview.md (address; U1 riverside setting; U4 heritage character)
+  - claim: WANTED – A Cirque Heist opens Thursday 24 September; opening week runs Thursday to Sunday
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: Evening shows on Fridays and Saturdays through to 3 October
+    source: campaigns/2026-09-cirque-heist-season.yaml, segments.accommodation-referral.first_ask
+  - claim: The family pass of four is for the desk's own visit, not a public offer, and covers any show from Thursday 24 September to Sunday 27 September only
+    source: campaigns/2026-09-cirque-heist-season.yaml, usps.opening-week-seats.rests_on and segments.accommodation-referral.first_ask
+  - claim: Eventbrite booking link for public ticket sales
+    source: campaigns/2026-09-cirque-heist-season.yaml, usps.opening-week-seats.rests_on
+  - claim: Phone follow-up at 1 day of no reply
+    source: campaigns/2026-09-cirque-heist-season.yaml, secondary_channel.wait_days
+  - claim: Sender name, role, organisation and reply address
+    source: campaigns/2026-09-cirque-heist-season.yaml, sender block
+  - claim: Phone switchboard number +61 7 5504 1000
+    source: spar-campaigns/segments/accommodation-referral/dorsett-gold-coast.md, roster_patch
+
+quality_checklist: |
+  Root keys and round structure drawn from SPAR-A §6; every draft and
+  review round carries type and number; the final round carries exactly
+  one email message (cap is on emails only, multi-channel finals are
+  fine) alongside the linkedin and phone pieces. Coverage: fact_provenance
+  covers every factual claim carried into the final draft (location, show
+  dates, evening sessions, pass window, ticket link, phone timing, sender
+  identity); chosen_usps set on every draft and final round.
+  Presupposition test: passed after three revision passes, most recently
+  a structural fix (email no longer gated behind LinkedIn acceptance)
+  rather than a wording fix. Manufactured-connection test: the angle
+  (Dorsett's own published hinterland day-trip guide and concierge
+  function) is traceable to the profile's Institutional context section;
+  no claim of shared interest goes beyond what the profile states.
+  Concreteness: the recipient can answer "which day, Thursday to Sunday"
+  in one sentence. Antifact check: no stone buildings, no 100-year timber
+  structures, no vineyard, no Tamborine Mountain placement, no farming
+  claim, no code or price in the first touch, no suggestion seats are
+  unsold. One judgment call recorded in review round 2: C2's fact-check
+  authority (campaign YAML) does not carry the per-contact dispatcher
+  instruction that authorised the LinkedIn+email+phone sequence under
+  SPAR-A §4.2; treated as a visibility gap in C2, not a drafting error.

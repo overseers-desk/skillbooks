@@ -1,0 +1,195 @@
+profile_hash: sha256:1a17971d61577e223fe21d908d1e2f02f9017fa1c7914c5e35374f8d5dab6b0f
+# Contact: Iona Murray
+# Organisation: Imaginative Play Matters Gold Coast
+# Segment: mothers-group
+decisions:
+  channel: email
+  channel_detail: Email primary; phone follow-up script if no reply within 3 days.
+  language: en
+  angle: hub-coordinator-forward-the-offer
+angle_rationale: |
+  Iona Murray is Play Matters Gold Coast's hub coordinator across Northern,
+  Central and Southern Gold Coast plus Scenic Rim, so she can pass the offer
+  further than a single playgroup. Play Matters GC also runs its own outdoor
+  group events (the Easter BBQ at Abraham Park, the Children's Week event
+  with 75+ photo tags), evidence that forwarding an outing offer fits how
+  the hub already operates, used only to support the forward-it framing, not
+  to claim she wants this specific outing. Upper Coomera sits in the
+  northern Gold Coast catchment, a reasonable drive to Mount Nathan.
+  Chosen USPs from the mothers-group plan block: opening-week-seats (the
+  concrete offer), nothing-to-organise (matches her coordinator role, where
+  forwarding costs nothing), and chosen-not-advertised (frames the seats as
+  a placement, not a plea). big-top-at-a-heritage-farm was left out; the
+  hub-reach and forward-it angle carry the message without a fourth USP.
+  Warmth is prior contact: one email sent 2026-03-31, no reply on record,
+  named in one plain line per the campaign's a_author instruction, without
+  apology or repeating the March ask.
+response_likelihood: 58
+a_note: |
+  Angle: hub-coordinator-forward-the-offer (opening-week-seats,
+  nothing-to-organise, chosen-not-advertised). Channel: email, phone
+  follow-up after 3 days. Warmth: prior contact, one unanswered email
+  2026-03-31, named plainly, not apologised for. Language: en.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [opening-week-seats, nothing-to-organise, chosen-not-advertised]
+    notes: |
+      First draft. Element order: self-introduction, concrete ask, supporting
+      evidence, per SPAR-A §4.5 default a-then-b-then-c. Prior March email
+      named in one line, no apology, no repeat of that ask.
+    messages:
+      - channel: email
+        to: imurray@playmatters.org.au
+        subject: Free circus seats for Play Matters Gold Coast families this week
+        body: |
+          Hi Iona,
+
+          Our big top opens on the lawn at Historic Rivermill this Thursday, 24 September, so I'm writing today, Tuesday, while there's still time to pass this on.
+
+          I wrote to you in March about a complimentary visit for Gold Coast playgroup coordinators. This is a different offer.
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, a heritage farm and event venue at Mount Nathan, in the Gold Coast hinterland.
+
+          I have free tickets to WANTED – A Cirque Heist for the families across your playgroup network: seven shows in the big top, Thursday 24 September to Sunday 27 September. Reply and I'll send you the code and the booking link to pass to your coordinators across Northern, Central and Southern Gold Coast, for their own families rather than for posting publicly. Nothing to organise on your end, just forward it on.
+
+          If one of your playgroups would rather come together as a group, next week suits that better. Tell me a day and I'll come back to you.
+
+          Kind regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+      - channel: phone
+        to: "1800 007 529"
+        text: Follow-up call if no reply to the email within 3 days.
+        script:
+          - point: Opening hook
+            text: "Hi, is that Iona? My name's Priyanka, I'm calling from Historic Rivermill at Mount Nathan. I emailed you on Tuesday about free circus tickets for your playgroup families this opening week, wanted to check it landed."
+          - point: Context if needed
+            text: "It's for WANTED – A Cirque Heist, running in a big top on our lawn, Thursday through Sunday this week."
+          - point: Ask
+            text: "Would it suit you to pass a code to some of your coordinators across the Gold Coast, so their families can book a show that works for them?"
+          - point: If interested
+            text: "How many families would you like me to hold seats for, roughly, and I'll send the code and the link straight after this call."
+          - point: If not now
+            text: "No trouble. Would a group visit next week suit better instead? I can hold a day for one of your playgroups."
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Free circus tickets, out of nowhere, from someone the persona doesn't
+      recall dealing with, but the March reference is accepted without
+      suspicion ("that happens"). The forward-a-code ask reads as achievable
+      in the timeframe, unlike an excursion, which the persona says she
+      would have declined. The one hesitation: not knowing the venue, and
+      wanting reassurance before forwarding anything under Play Matters'
+      name. "Heritage farm" registers as a generic tourism phrase, not a
+      blocker on its own. The phone follow-up read as low-pressure. Nothing
+      in the draft would stop a reply outright. REPLY_PCT: 55.
+    fact_check:
+      - claim: "I'm Priyanka Das, Partnerships at Historic Rivermill, a heritage farm and event venue at Mount Nathan"
+        source: business-antifacts.md
+        result: failed
+        note: business-antifacts.md leaves the farming question unsettled and directs description by visitor offerings, not "farm." The mothers-group USP big-top-at-a-heritage-farm renders client-facing as "a heritage riverside venue," never "heritage farm."
+        correction: "a venue at Mount Nathan with horses, farm animals and a cafe, in the Gold Coast hinterland"
+      - claim: We wrote to Iona Murray in March about a complimentary visit for Gold Coast playgroup coordinators, no reply.
+        source: courier -A search (admin-rivermill-au, 2026-03-31, subject "Historic Rivermill: complimentary visit for Gold Coast playgroup coordinators")
+        result: verified
+      - claim: Venue address 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+        source: business-antifacts.md
+        result: verified
+      - claim: Seven shows, Thursday 24 September to Sunday 27 September
+        source: historicrivermill.au/data/circus.yaml; plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+        result: verified
+      - claim: Show name "WANTED – A Cirque Heist"
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+    antifact_check: |
+      Checked against business-antifacts.md: no stone-building claim, no
+      100-year/original-mill-building claim, no vineyard claim, no
+      Tamborine Mountain address claim. "Heritage farm" was the one
+      violation found and corrected.
+    revision_note: |
+      Three points raised, sorted before revising: (1) answer in this
+      email: the "heritage farm" antifact violation, since it stays wrong
+      until fixed; (3) absorb by reframing: the legitimacy hesitation,
+      answered by adding the website to the self-introduction sentence
+      already there rather than a new paragraph; (leave for the reply):
+      none needed, the March reference, the ask, the USP framing and the
+      phone script all passed unchanged.
+    notes: One challenger pass, per the yield-3 budget (1 pass for yield 3-5).
+  - type: final
+    chosen_usps: [opening-week-seats, nothing-to-organise, chosen-not-advertised]
+    messages:
+      - channel: email
+        to: imurray@playmatters.org.au
+        subject: Free circus seats for Play Matters Gold Coast families this week
+        body: |
+          Hi Iona,
+
+          Our big top opens on the lawn at Historic Rivermill this Thursday, 24 September, so I'm writing today, Tuesday, while there's still time to pass this on.
+
+          I wrote to you in March about a complimentary visit for Gold Coast playgroup coordinators. This is a different offer.
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, a venue at Mount Nathan with horses, farm animals and a cafe, in the Gold Coast hinterland. You can see us at historicrivermill.au.
+
+          I have free tickets to WANTED – A Cirque Heist for the families across your playgroup network: seven shows in the big top, Thursday 24 September to Sunday 27 September. Reply and I'll send you the code and the booking link to pass to your coordinators across Northern, Central and Southern Gold Coast, for their own families rather than for posting publicly. Nothing to organise on your end, just forward it on.
+
+          If one of your playgroups would rather come together as a group, next week suits that better. Tell me a day and I'll come back to you.
+
+          Kind regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "1800 007 529"
+        text: Follow-up call if no reply to the email within 3 days.
+        script:
+          - point: Opening hook
+            text: "Hi, is that Iona? My name's Priyanka, I'm calling from Historic Rivermill at Mount Nathan. I emailed you on Tuesday about free circus tickets for your playgroup families this opening week, wanted to check it landed."
+          - point: Context if needed
+            text: "It's for WANTED – A Cirque Heist, running in a big top on our lawn, Thursday through Sunday this week."
+          - point: Ask
+            text: "Would it suit you to pass a code to some of your coordinators across the Gold Coast, so their families can book a show that works for them?"
+          - point: If interested
+            text: "How many families would you like me to hold seats for, roughly, and I'll send the code and the link straight after this call."
+          - point: If not now
+            text: "No trouble. Would a group visit next week suit better instead? I can hold a day for one of your playgroups."
+        phone_note: Best reached during business hours on the hub line, 1800 007 529.
+fact_provenance:
+  - claim: WANTED – A Cirque Heist opens Thursday 24 September, seven shows through Sunday 27 September
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md; historicrivermill.au/data/circus.yaml
+  - claim: Historic Rivermill is at 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211, in the Gold Coast hinterland
+    source: business-overview.md; business-antifacts.md
+  - claim: Venue offers horses, farm animals and a cafe (no "heritage farm" claim)
+    source: business-overview.md; business-antifacts.md
+  - claim: One prior email to Iona Murray, sent 2026-03-31, subject "Historic Rivermill: complimentary visit for Gold Coast playgroup coordinators," no reply on record
+    source: courier -A search 'from:imurray@playmatters.org.au OR to:imurray@playmatters.org.au'
+  - claim: Iona Murray is Program Coordinator, Play Matters Australia Gold Coast hub, covering Northern, Central and Southern Gold Coast and Scenic Rim
+    source: spar-campaigns/segments/mothers-group/iona-murray-imaginative-play-matters-gold-coast.md
+  - claim: Free opening-week seats, code on reply only, not for public posting
+    source: spar-campaigns/campaigns/2026-09-cirque-heist-season.yaml (segments.mothers-group usps, first_ask)
+quality_checklist: |
+  1. YAML structure: root keys drawn from §6 canonical set; both rounds
+     carry type and number where required; final round has exactly one
+     channel:email message plus one channel:phone message; no placeholder
+     addresses.
+  2. Coverage: fact_provenance covers every factual claim in the final
+     draft (dates, venue, address, offerings, prior email, code mechanism);
+     chosen_usps set on both draft and final rounds; a_note states angle,
+     channel, warmth, language.
+  3. Presupposition test: no sentence tells the recipient something about
+     herself she has not already been given in the message or that is not
+     an independently verifiable fact of her public role (confirmed by the
+     challenger's pointing list, no "nowhere" cases).
+  4. Manufactured-connection test: the hub-reach and prior-events framing
+     trace to the profile's documented role and Facebook posts, not
+     invented interest in farm visits.
+  5. Concreteness: the ask (reply with roughly how many families) is
+     answerable in one sentence.
+  6. Antifact check: "heritage farm" corrected; no stone-building, no
+     original-mill-building, no vineyard, no Tamborine Mountain claim.
+  7. Final round email cardinality: one email message in the final round,
+     satisfied.

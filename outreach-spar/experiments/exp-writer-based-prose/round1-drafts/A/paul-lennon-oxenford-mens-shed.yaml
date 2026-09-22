@@ -1,0 +1,209 @@
+profile_hash: sha256:61193146fc75721f31e31faaba7a7d5677c3b795cd0a7aab596edce96c94b04e
+decisions:
+  channel: email
+  channel_detail: Email primary, phone follow-up Wednesday 23 September morning if no reply.
+  language: en
+  angle: free-tickets-no-organising
+
+angle_rationale: |
+  Warmth is prior contact, not cold and not existing: the dispatcher prefetch found one
+  email from Rivermill (partnerships@rivermill.au) to oxenfordmensshed@gmail.com on 9 April
+  2026, subject "Group outing to Historic Rivermill from Oxenford", with no reply found.
+  Per SPAR-A §4.1 this is named in one plain line without apology and without repeating the
+  earlier ask. The profile flags that Paul Lennon may no longer hold the presidency (the
+  shed's own website names Keith Ward as President as of March 2026), so no title is
+  asserted for him anywhere in the draft; the email is addressed to the shed's own inbox,
+  which the recipient forwards regardless of who currently holds office.
+  Chosen USPs: nothing-to-organise (functional — a shed running short weekday morning
+  sessions has no capacity to arrange a bus trip on 48 hours' notice, but forwarding a free
+  code to members costs it nothing) and chosen-not-advertised (emotional — exclusivity
+  framing suits a shed that already circulates grants and donations to members) and
+  opening-week-seats (functional — concrete dates and free price). The profile's one
+  confirmed fact, a prior bus trip to Buderim Men's Shed, is folded into the group-visit-later
+  offer for next week rather than built into a separate angle, since re-raising "group
+  outing" this week would repeat the unanswered April ask.
+
+response_likelihood: 35
+a_note: |
+  Angle: nothing-to-organise + chosen-not-advertised, pitched as a no-effort forward for
+  the shed's members. Channel: email first, phone follow-up Wed 23 Sept morning if no
+  reply. Warmth: prior contact (unanswered April email about a group outing). Language: en.
+  Role uncertainty (Paul may no longer be President) meant no title was asserted; the April
+  reference was reframed from "we wrote to you" to "the shed's email got a note from us" to
+  avoid presuming personal receipt.
+
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [nothing-to-organise, chosen-not-advertised, opening-week-seats, group-visit-later]
+    notes: |
+      First draft. Follows the community-organisation plan block's first_ask closely.
+      Opens with self-introduction, names the unanswered April email in one line, states
+      the free-seats offer without code or price, and closes with the group-visit-later
+      option verbatim in spirit.
+    messages:
+      - channel: email
+        to: oxenfordmensshed@gmail.com
+        subject: Free circus tickets for Oxenford Men's Shed, opening Thursday
+        body: |
+          Hi Paul,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, the heritage riverside venue at Mount Nathan. We wrote to the shed in April about a group outing to Rivermill and didn't hear back, so this note comes from the same desk with something new and quicker to say yes to.
+
+          I have free tickets to WANTED – A Cirque Heist for your members and their families: a circus in a big top on our lawn, seven shows from this Thursday 24 September to Sunday. The seats aren't on sale anywhere, and Oxenford Men's Shed is one of the organisations we picked by name to offer them to directly.
+
+          Reply and I'll send you the code and the Eventbrite link. Pass them to members and their families, who can each book whichever show suits them. There's no outing for you to run and nothing to arrange. They're for your people, not for posting publicly.
+
+          If you'd rather bring a group instead, next week suits that better. Tell me a day and I'll come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+      - channel: phone
+        to: "0447 667 606"
+        text: Follow-up call Wednesday 23 September morning if no email reply.
+        phone_note: Best time to call is morning, before the shed's 8am-11am session starts.
+        script:
+          - point: Opening hook
+            text: "Hi, is that Paul? It's Priyanka from Historic Rivermill, out at Mount Nathan. I emailed the shed yesterday about some free circus tickets for your members, for the show that opens tomorrow."
+          - point: Check receipt
+            text: "Did that email come through to the shed's inbox, or should I read you the details now?"
+          - point: Ask
+            text: "The tickets are free for members and their families, any of the shows from tomorrow through Sunday. Would you be able to pass that on to the members this week?"
+          - point: Close
+            text: "If you can give me a rough idea how many, I'll send the code and the booking link straight over. And if a proper shed visit next week suits better than this week, just tell me a day and I'll hold seats for that instead."
+
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Opens the email cold, uncertain whether he is still President since Keith may be
+      running things now. Does not recall the April note and is unsure he would have seen
+      it, given the presidency doubt. Reads the free-ticket, no-RSVP, no-bus offer as
+      genuinely low-friction and likely to forward to the shed's group chat regardless of
+      who holds the title, but the overall shape reads as a generic "act fast" email he
+      gets a dozen of. Finds the phone script's assumption that he received the email and
+      is still the contact a bit presumptuous. REPLY_PCT: 35.
+    fact_check:
+      - claim: "We wrote to the shed in April about a group outing to Rivermill and didn't hear back."
+        source: Dispatcher IMAP prefetch (admin-rivermill-au), not the campaign authority files.
+        result: unverifiable against campaign yaml / business-overview.md / showtimes file / S2-fees-and-service-hours.md
+        note: |
+          Correctly out of scope for the C2 fact-check step, whose authority is the
+          campaign usps registry and segment plan block, not the per-recipient IMAP
+          prefetch. The claim is grounded in the dispatcher's actual prefetch (an email
+          from partnerships@rivermill.au to oxenfordmensshed@gmail.com, 9 April 2026,
+          "Group outing to Historic Rivermill from Oxenford", no reply found), which A1
+          holds directly. Not a factual error; the claim stands.
+      - claim: Sender name, role and organisation.
+        source: campaign.yaml sender block
+        result: verified
+      - claim: Venue address.
+        source: campaign.yaml venue block
+        result: verified
+      - claim: Seats not on sale anywhere; organisation picked by name.
+        source: campaign.yaml usps.chosen-not-advertised
+        result: verified
+      - claim: No outing to run; tickets for the shed's own people, not for posting publicly.
+        source: campaign.yaml usps.nothing-to-organise
+        result: verified
+      - claim: Seven shows, Thursday 24 to Sunday 27 September.
+        source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+        result: verified
+      - claim: Code and Eventbrite link withheld from the first message, sent only in the reply.
+        source: campaign.yaml usps.opening-week-seats.rests_on
+        result: verified
+    antifact_check: |
+      No claim of stone or century-old original buildings, no vineyard, no Tamborine
+      Mountain location. Venue described only as a heritage riverside venue at Mount
+      Nathan. Checked against business-antifacts.md; no violations.
+    revision_note: |
+      Sorted the challenger's points: (1) answered in this email — reframed the April
+      line from "we wrote to you... didn't hear back" to "the shed's email got a note
+      from us in April... with no reply," addressing the organisation's inbox rather than
+      asserting Paul personally saw it, and softened the phone script's opening from an
+      assumption that he received the email to a direct question ("Did that reach you, or
+      should I send it to whoever's handling this at the shed now?"). (2) left for the
+      reply — the fact-check's inability to verify the April claim against the campaign
+      authority files, since that claim is grounded in the IMAP prefetch A1 holds
+      directly and is not an error to fix. (3) absorbed by the same reframe — the
+      "generic act-fast email" read, since removing the false personal-continuity claim
+      also removes the templated feel without adding a new sentence.
+    notes: One revision pass, consistent with yield 4 (1 pass allowed under SPAR-A §4.6).
+
+  - type: final
+    chosen_usps: [nothing-to-organise, chosen-not-advertised, opening-week-seats, group-visit-later]
+    messages:
+      - channel: email
+        to: oxenfordmensshed@gmail.com
+        subject: Free circus tickets for Oxenford Men's Shed, opening Thursday
+        body: |
+          Hi Paul,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, the heritage riverside venue at Mount Nathan. The shed's email got a note from us in April about a group outing, with no reply, so here's a quicker one.
+
+          I have free tickets to WANTED – A Cirque Heist for your members and their families: a circus in a big top on our lawn, seven shows from this Thursday 24 September to Sunday. The seats aren't on sale anywhere, and Oxenford Men's Shed is one of the organisations we picked by name to offer them to directly.
+
+          Reply and I'll send you the code and the Eventbrite link. Pass them to members and their families, who can each book whichever show suits them. There's no outing for you to run and nothing to arrange. They're for your people, not for posting publicly.
+
+          If you'd rather bring a group instead, next week suits that better. Tell me a day and I'll come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+        actioned_date: null
+        replied_date: null
+        reply_summary: null
+      - channel: phone
+        to: "0447 667 606"
+        text: Follow-up call Wednesday 23 September morning if no email reply.
+        phone_note: Best time to call is morning, before the shed's 8am-11am session starts.
+        script:
+          - point: Opening hook
+            text: "Hi, is that Paul? It's Priyanka from Historic Rivermill, out at Mount Nathan. I emailed the shed yesterday about some free circus tickets, for the show that opens tomorrow."
+          - point: Check receipt
+            text: "Did that reach you, or should I send it to whoever's handling this at the shed now?"
+          - point: Ask
+            text: "The tickets are free for members and their families, any of the shows from tomorrow through Sunday. Would you be able to pass that on this week?"
+          - point: Close
+            text: "If you can give me a rough idea how many, I'll send the code and the booking link straight over. And if a proper shed visit next week suits better than this week, just tell me a day and I'll hold seats for that instead."
+
+fact_provenance:
+  - claim: Sender name Priyanka Das, role Partnerships, organisation Historic Rivermill (Colourful.land Pty Ltd).
+    source: campaigns/2026-09-cirque-heist-season.yaml, sender block
+  - claim: Venue address 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211.
+    source: campaigns/2026-09-cirque-heist-season.yaml, venue block
+  - claim: Seats are not on sale anywhere and the organisation was picked by name.
+    source: campaigns/2026-09-cirque-heist-season.yaml, usps.chosen-not-advertised
+  - claim: No outing for the shed to run; tickets are for the shed's own people, not for posting publicly.
+    source: campaigns/2026-09-cirque-heist-season.yaml, usps.nothing-to-organise
+  - claim: Seven shows, Thursday 24 September to Sunday 27 September.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: The code and Eventbrite link are sent only in the reply, not the first message.
+    source: campaigns/2026-09-cirque-heist-season.yaml, usps.opening-week-seats.rests_on
+  - claim: A group visit can be arranged for the following week instead.
+    source: campaigns/2026-09-cirque-heist-season.yaml, usps.group-visit-later
+  - claim: We wrote to the shed's email in April about a group outing and received no reply.
+    source: Dispatcher IMAP prefetch, admin-rivermill-au account, 9 April 2026 email "Group outing to Historic Rivermill from Oxenford" to oxenfordmensshed@gmail.com, no reply found on search.
+  - claim: Paul Lennon's current role at the shed is unconfirmed (no title asserted in the draft).
+    source: spar-campaigns/segments/community-organisation/paul-lennon-oxenford-mens-shed.md, Current role section
+
+quality_checklist: |
+  1. YAML structure self-check: root keys drawn from §6's canonical set; every round has
+     type and number where required; final round carries exactly one channel: email
+     message plus one channel: phone message; no placeholder addresses. Passed.
+  2. Coverage and completeness: fact_provenance covers every factual claim in the final
+     draft, including the one claim (the April email) sourced outside the campaign
+     authority files; chosen_usps present on the draft and final rounds; a_note states
+     angle, channel, warmth and language. Passed.
+  3. Presupposition test: no sentence tells the recipient something they already know
+     about themselves. Passed.
+  4. Manufactured-connection test: every claim of shared history (the April email) or
+     relevance (shed's forward-to-members pattern) traces to a specific prefetch or
+     profile data point, not an invented one. Passed.
+  5. Concreteness: recipient can answer the ask ("reply with roughly how many") in one
+     sentence. Passed.
+  6. Band-level pattern check: not yet applicable, single-contact file; opener uses this
+     contact's specific prior-contact fact rather than a template line.
+  7. Final round email cardinality: exactly one channel: email message in the final
+     round, plus one channel: phone message. Passed.

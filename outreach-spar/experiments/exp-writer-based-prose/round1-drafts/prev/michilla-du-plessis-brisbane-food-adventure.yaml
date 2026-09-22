@@ -1,0 +1,267 @@
+profile_hash: sha256:c8f700d6db520f782b701690e861f29e16f976578d3b0ef230aae5d06dec0dec
+decisions:
+  channel: email
+  channel_detail: Email only — no phone or LinkedIn on file for this contact.
+  language: en
+  angle: nothing-to-organise
+  subsegment: null
+angle_rationale: |
+  Contact: Michilla Du Plessis, Content Creator / Food and Travel Blogger,
+  Brisbane Food Adventure (travel-blogger-domestic).
+  Channel: email only — no phone or LinkedIn on the roster. Language: English
+  (en-au per campaign default).
+  Primary angle is nothing-to-organise: her account runs on Instagram, TikTok
+  and Facebook with a "Best Eats, Travel & Things to do" positioning, and a
+  reader giveaway (pass the tickets on, readers book their own seats) fits a
+  publisher's existing content format without asking her to build anything.
+  Supported by big-top-at-a-heritage-farm, which introduces the venue and the
+  event to a recipient who has never heard of either, and chosen-not-
+  advertised, which frames the pass as a named selection rather than
+  discount-hunting or an unsold-seats appeal. opening-week-seats supplies the
+  concrete numbers (seven shows, Thursday to Sunday) inside the ask rather
+  than as its own sentence.
+  Warmth: cold. Courier search on hello@thesocialtouch.com.au and on the
+  contact's name/organisation returned no results across all five mailboxes.
+  The profile records no prior dealing with the venue, so no prior touchpoint
+  is referenced, per campaign rule.
+  Profile fit: beat fit is partial (food-led, not family- or farm-led; the
+  profile found no posts on family, farm or hinterland topics), so the draft
+  states the offer plainly rather than presupposing interest she hasn't
+  evidenced. The collaboration address is agency-run (The Social Touch), not
+  her personal inbox, so the email introduces the sender and the venue in
+  full rather than assuming the reader already has context.
+  Presupposition check: no sentence tells her something about her own
+  content or audience that isn't already public in her bio; the fit is
+  carried by the offer's substance (giveaway format, "things to do" scope),
+  not by narrating her published history back to her.
+response_likelihood: 50
+a_note: |
+  Angle nothing-to-organise (reader giveaway) supported by big-top-at-a-
+  heritage-farm and chosen-not-advertised. Channel email only, no phone or
+  LinkedIn on file. Warmth cold. Language en. Two challenger passes: round 1
+  flagged "a heritage farm venue" (unsettled farming claim, business-
+  antifacts.md) and "each school holidays we host a family circus" (no
+  source for a recurring pattern) — both corrected. Round 2 verdict DONE, no
+  further factual issues, reply estimate 45% then 55% in role-play; set to
+  50% here given the single-channel (email-only) path against families-
+  magazine's comparable 55% with a phone fallback.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, big-top-at-a-heritage-farm, opening-week-seats]
+    notes: |
+      First draft. Element order self-intro -> ask -> evidence per SPAR-A 4.5.
+      Public Eventbrite link included per the wave-two rule (publisher
+      segments carry the paid public link; the free code goes only in the
+      pass-confirmation reply).
+    messages:
+      - channel: email
+        to: hello@thesocialtouch.com.au
+        subject: "WANTED – A Cirque Heist: an opening-week pass for Brisbane Food Adventure"
+        body: |
+          Hi Michilla,
+
+          WANTED – A Cirque Heist opens in a big top on our lawn this Thursday, 24 September, and runs through to Sunday, 4 October.
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, a heritage farm venue in the Gold Coast hinterland at Mount Nathan. Each school holidays we host a family circus on site, this season with CHARC Performance, and opening week is going to local organisations by invitation rather than to the public. Your name is on a family pass of four for any of the seven opening-week shows, Thursday to Sunday, and I can hold five more passes for you to give away to your readers if you'd like to run it.
+
+          Reply with the show that suits and I'll send the booking details for your pass, plus the reader passes to give away. There's nothing to organise beyond passing them on; readers book their own seats once they have the details. For readers who'd rather book direct, the season is on sale now at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Cold email, no bio of the sender before this. "Historic Rivermill" —
+      never heard of it, but the details are concrete enough to feel real: a
+      specific venue (Mount Nathan, Gold Coast hinterland), a named circus
+      company, an actual Eventbrite link, and a today's-date-anchored ask
+      (opens this Thursday, runs to Sunday 4 October). Not vague
+      "we'd love to collaborate" spam. The ask is dead simple: pick a show,
+      reply, get a family pass for four plus five passes to hand out.
+      Nothing to build, no content brief, no logistics beyond turning up.
+      The two-day runway isn't actually a problem, since the season runs to
+      4 October and any of seven opening-week slots works. Slight
+      hesitation: it lands in the collab inbox my agency runs, not my
+      personal one, so it's one of many pitches with no guarantee of fast
+      prioritisation. Mildly generic "Partnerships" tone, but not spammy, no
+      discount codes or hard-sell pressure. Would likely forward to Michilla
+      to check availability before replying.
+    fact_check:
+      - claim: "a heritage farm venue in the Gold Coast hinterland"
+        source: business-antifacts.md
+        result: fail
+        note: |
+          business-antifacts.md states the farming question is not settled
+          in either direction and instructs describing the venue by what it
+          offers visitors (a heritage tourism venue with a cafe, equestrian
+          activities, farm animals and private events), not as a "farm
+          venue." Calling it a "farm venue" overstates an unsettled claim.
+        correction: "a heritage tourism venue in the Gold Coast hinterland"
+      - claim: "Each school holidays we host a family circus on site"
+        source: business-overview.md; campaign.yaml
+        result: fail
+        note: |
+          No source establishes this as a recurring pattern.
+          business-overview.md has no circus mention, and the campaign file
+          documents only the single 2026 season; nothing supports "each
+          school holidays" as an established fact.
+        correction: "This school holidays we're hosting a family circus on site"
+      - claim: Opening dates (Thu 24 Sept season open, runs to Sun 4 Oct); seven opening-week sessions Thursday–Sunday; operator name CHARC Performance; sender name/role/email; Eventbrite link; pass structure (family pass of four plus five reader passes); no code, price, discount, Oztix link, or unsold-seats suggestion
+        source: circus.yaml; campaign.yaml segments.travel-blogger-domestic.first_ask; campaign.yaml sender; campaign.yaml usps.opening-week-seats.rests_on; campaign.yaml prompt_appendices
+        result: verified
+    antifact_check: |
+      Two failures found and corrected (see fact_check): "heritage farm
+      venue" and the recurring-circus claim. No stone or 100-year-old-
+      building claim, no vineyard claim, no Tamborine Mountain location
+      claim otherwise. No Oztix link, no code, no discount, no showtime
+      outside the showtimes file.
+    revision_note: |
+      "a heritage farm venue" changed to "a heritage tourism venue";
+      "Each school holidays we host a family circus on site" changed to
+      "This school holidays we're hosting a family circus on site". Two
+      over-length sentences also split per style check (dependency-grammar
+      readability), and the bare Eventbrite URL converted to a markdown
+      link.
+    notes: Two valid findings, both fixed; positive reaction on structure and tone kept unchanged.
+  - type: draft
+    number: 2
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, big-top-at-a-heritage-farm, opening-week-seats]
+    revision_note: "Farm-venue and recurring-circus claims corrected; two long sentences split; Eventbrite URL converted to a markdown link."
+    messages:
+      - channel: email
+        to: hello@thesocialtouch.com.au
+        subject: "WANTED – A Cirque Heist: an opening-week pass for Brisbane Food Adventure"
+        body: |
+          Hi Michilla,
+
+          WANTED – A Cirque Heist opens in a big top on our lawn this Thursday, 24 September, and runs through to Sunday, 4 October.
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, a heritage tourism venue in the Gold Coast hinterland at Mount Nathan. This school holidays we're hosting a family circus on site with CHARC Performance, and opening week is going to local organisations by invitation rather than to the public.
+
+          Your name is on a family pass of four for any of the seven opening-week shows, Thursday to Sunday. I can also hold five passes for you to give away to your readers if you'd like to run it.
+
+          Reply with the show that suits and I'll send the booking details for your pass, plus the reader passes to give away. There's nothing to organise beyond passing them on; readers book their own seats once they have the details. For readers who'd rather book direct, the season is on sale now at [Eventbrite listing](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924).
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+  - type: review
+    number: 2
+    verdict: DONE
+    in_character: |
+      I run inbox triage for The Social Touch, and Brisbane Food Adventure
+      is one of the accounts I handle. This lands as a fairly ordinary
+      partnerships pitch: cold, first contact, no prior relationship with
+      Historic Rivermill or CHARC Performance that I can recall. Nothing
+      about it feels like spam — real name, real signature, a specific venue
+      address I could look up, a working Eventbrite link, and a concrete
+      ask. The two-day runway is tight but not demanding: seven shows across
+      four days means there's room to pick a session, not "come tomorrow or
+      miss it." The five reader passes are a nice touch and don't need an
+      answer today either. What I'd check before replying: whether this is
+      a paid collab or just comps (reads like comps only, no mention of a
+      fee or content deliverable) and whether "invitation rather than to the
+      public" is genuinely selective or a mass send. Nothing here raises a
+      credibility flag. Would likely hold it a day to see if it's worth
+      Michilla's time versus declining or forwarding the reader passes
+      without a formal reply.
+    fact_check:
+      - claim: Sender name, role, organisation, email
+        source: campaign.yaml sender
+        result: verified
+      - claim: "Gold Coast hinterland at Mount Nathan"
+        source: business-overview.md; business-antifacts.md
+        result: verified
+        note: Avoids the antifact ("not on Tamborine Mountain").
+      - claim: "\"Thursday, 24 September\" through \"Sunday, 4 October\""
+        source: circus.yaml
+        result: verified
+        note: First session 2026-09-24, last 2026-10-04.
+      - claim: "seven opening-week shows, Thursday to Sunday"
+        source: circus.yaml
+        result: verified
+        note: Seven sessions dated 24–27 September.
+      - claim: Family pass of four plus five reader passes, reply with a preferred show
+        source: campaign.yaml segments.travel-blogger-domestic.first_ask
+        result: verified
+      - claim: No code, price, discount, Oztix link, or unsold-seats suggestion
+        source: campaign.yaml prompt_appendices.a_author; prompt_appendices.a_challenger
+        result: verified
+      - claim: Public Eventbrite link
+        source: campaign.yaml usps.opening-week-seats.rests_on
+        result: verified
+        note: |
+          The showtimes file states "Oztix sells these fourteen
+          [performances]," a different platform from the Eventbrite link in
+          the draft. The opening-week-seats USP resolves this in
+          Eventbrite's favour (code takes the price to nil on the Eventbrite
+          listing, tested by the Director 22 September 2026), and the
+          a_challenger block bans an Oztix link outright, so the draft
+          follows the campaign's most current internal decision. The two
+          source documents disagree with each other on which platform sells
+          the season; flagged here rather than silently picked.
+    antifact_check: No stone or 100-year-old-building claim, no vineyard claim, no Tamborine Mountain location claim, consistent with business-antifacts.md.
+    revision_note: No further change; draft 2 carried forward to final unchanged.
+    notes: Passed. One open item flagged for the human — see fact_provenance note on the Eventbrite/Oztix source conflict.
+  - type: final
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, big-top-at-a-heritage-farm, opening-week-seats]
+    messages:
+      - channel: email
+        to: hello@thesocialtouch.com.au
+        subject: "WANTED – A Cirque Heist: an opening-week pass for Brisbane Food Adventure"
+        body: |
+          Hi Michilla,
+
+          WANTED – A Cirque Heist opens in a big top on our lawn this Thursday, 24 September, and runs through to Sunday, 4 October.
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, a heritage tourism venue in the Gold Coast hinterland at Mount Nathan. This school holidays we're hosting a family circus on site with CHARC Performance, and opening week is going to local organisations by invitation rather than to the public.
+
+          Your name is on a family pass of four for any of the seven opening-week shows, Thursday to Sunday. I can also hold five passes for you to give away to your readers if you'd like to run it.
+
+          Reply with the show that suits and I'll send the booking details for your pass, plus the reader passes to give away. There's nothing to organise beyond passing them on; readers book their own seats once they have the details. For readers who'd rather book direct, the season is on sale now at [Eventbrite listing](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924).
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+        reply_summary: null
+fact_provenance:
+  - claim: Historic Rivermill is a heritage tourism venue at Mount Nathan in the Gold Coast hinterland
+    source: business-overview.md; business-antifacts.md
+  - claim: WANTED – A Cirque Heist opens Thursday 24 September and runs to Sunday 4 October
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md; campaign.yaml segments.travel-blogger-domestic.first_ask
+  - claim: Seven opening-week shows, Thursday to Sunday
+    source: historicrivermill.au/data/circus.yaml
+  - claim: A family pass of four is held for the recipient at any opening-week show, and five more passes are available to give away to readers
+    source: campaign.yaml segments.travel-blogger-domestic.first_ask
+  - claim: Public tickets for readers are at the Eventbrite listing named
+    source: campaign.yaml usps.opening-week-seats.rests_on
+  - claim: The event is by invitation rather than to the public, and the recipient's name is on the pass
+    source: campaign.yaml usps.chosen-not-advertised
+  - claim: The circus is staged by CHARC Performance
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+quality_checklist: |
+  1. YAML structure self-check: root keys drawn from the canonical set;
+     every round has type and number (final omits number per structure);
+     the final round contains exactly one channel: email message, no other
+     channel available; email address is real, not a placeholder. Pass.
+  2. Coverage and completeness: fact_provenance covers every factual claim
+     in the final draft (venue description, dates, pass structure, ticket
+     link, invitation framing); a_note states angle, channel, warmth,
+     language; chosen_usps present on every draft and final round. Pass.
+  3. Presupposition test: no sentence tells the recipient something she
+     already knows about herself or her account; the fit is carried by the
+     offer's substance, not by narrating her published history. Pass.
+  4. Manufactured-connection test: no claim of shared interest beyond what
+     the offer itself states; her "things to do" positioning was used to
+     select the angle, not quoted back at her. Pass.
+  5. Concreteness: the ask (reply naming a show) is answerable in one
+     sentence. Pass.
+  6. Band-level pattern check: not run at single-contact level; deferred to
+     the band-level review after this segment's other contacts are drafted.
+  7. Final round email cardinality: one channel: email message in the
+     final round, no other channel messages present. Pass.

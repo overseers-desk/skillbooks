@@ -1,0 +1,235 @@
+profile_hash: sha256:1a17971d61577e223fe21d908d1e2f02f9017fa1c7914c5e35374f8d5dab6b0f
+# Contact: Iona Murray, Program Coordinator, Imaginative Play Matters Gold Coast (mothers-group)
+# Channel: email 22 September, phone follow-up 23 September morning
+# Language: en-au
+# Angle: a school-holiday outing to hand her families, sized for under-fives, with nothing for her to run
+decisions:
+  channel: email
+  channel_detail: |
+    Email first on Tuesday 22 September to the address the Play Matters directory publishes for her. Phone follow-up the next morning where there is no reply, per the segment's approach_sequencing, which shortens the usual three-day wait because the opening week closes on Sunday 27 September. The listed number is Play Matters Australia's national 1800 line rather than a direct line, so the call goes through a switchboard and may not reach her. No platform channel exists for this contact beyond the hub's Facebook page, which is institutional and not a messaging channel for her.
+  language: en-au
+  angle: school-holiday-outing-for-under-fives
+angle_rationale: |
+  Warmth is cold. The dispatcher prefetch searched all five accounts for her address in either direction, and for her name and organisation in subject lines, and returned nothing. The admin account timed out on the first pass but answered cleanly on the second, so the no-prior-contact reading does not rest on the timed-out leg. No earlier unanswered note is owed a line.
+
+  The profile gives two hard facts to build on. Her programme serves birth to five at The Well, Upper Coomera, and her role spans the hub's groups across Northern, Central and Southern Gold Coast and the Scenic Rim. It also records a bearing absence: no farm visits and no excursions appear anywhere in the programme. The outdoor events on record, the Easter BBQ at Abraham Park and the Children's Week event at her own venue, are things the hub ran itself at places families drove to individually.
+
+  That absence settles the angle. An approach asking her to assemble a group would rest on nothing in the record, and could not be met two days before opening in any case. The nothing-to-organise shape matches what her hub demonstrably does, which is publish something and let families come.
+
+  The age band supplies the one piece of specificity the message carries about her world. The three daytime sessions are named individually, Thursday at 1pm and Sunday at 11am and 2pm, against the 4pm and 7pm sessions on Friday and Saturday. A coordinator of babies and toddlers reads that and knows which shows are hers. The Children's Week event and its photo tags were deliberately left out: quoting her own Facebook page back at her is the research performance the method warns against, and reads as surveillance to someone who has never heard of us.
+
+  One second ask earns a sentence. Hub reach is the only thing separating her from the other seventy-odd playgroup stems in this segment, so the message offers to hold seats for coordinators of the other groups as well. It is phrased as more free seats for her network rather than as distribution we want, and it sits after the primary ask so it cannot displace the reply the segment is asking for.
+
+  USPs chosen from the segment's list: opening-week-seats, nothing-to-organise, chosen-not-advertised and big-top-at-a-heritage-farm. The fourth is the segment's own emotional framing, and it earns its place because the person choosing at the far end is a parent picking between free holiday activities. chosen-not-advertised is load-bearing here in a way it was not for the retirement-village approach: her hub page is public, has 549 followers and is where she posts term timetables, so posting an offer is her default action. The request names the page rather than asking generally, because a general line would not reach that reflex. make-a-day-of-it holds factually for the daytime sessions under the fees SOT, but it sits outside this segment's list and would lengthen a message whose value is that it is quick to act on.
+
+  Element ordering is a then b then c. She has never heard of Historic Rivermill, so the sender and the venue come first, the offer follows, and the reasons to say yes come after. The timing sits in the first lines.
+response_likelihood: 45
+a_note: |
+  School-holiday-outing angle for an under-fives audience, resting on the programme's birth-to-five band and the hub's published-and-let-families-come habit rather than on any personal hook, since the profile records no personal statements. Email first, phone follow-up the next morning on Play Matters Australia's national 1800 line, which is a switchboard rather than her desk. Cold, no prior correspondence in any account. English (en-au). USPs opening-week-seats, nothing-to-organise, chosen-not-advertised and big-top-at-a-heritage-farm; chosen-not-advertised carries the keep-it-off-the-hub-page request, which matters because her page is public and posting is her default. One extra sentence offers seats to coordinators of the hub's other groups. Challenger passed at one pass with no factual errors and rated the reply chance high; the opener was rewritten afterwards under the section 7 band-pattern check.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [opening-week-seats, nothing-to-organise, chosen-not-advertised, big-top-at-a-heritage-farm]
+    notes: |
+      Subject line carries the Play Matters name and the Thursday. The code and the Eventbrite link are held back for the reply. The seven opening-week performances and the placement of the daytime sessions come from the season data the showtimes file points at. No drive time from Upper Coomera is claimed, because no source gives one.
+    messages:
+      - channel: email
+        to: imurray@playmatters.org.au
+        bcc: partnerships@rivermill.au
+        subject: "Free circus tickets for Play Matters families, first show this Thursday"
+        body: |
+          Hi Iona,
+
+          I am Priyanka Das and I look after partnerships at Historic Rivermill, the heritage riverside venue on Beaudesert Nerang Road at Mount Nathan. A circus company, CHARC Performance, has its big top up on our lawn for the school holidays, and I can hold free tickets for the families in your groups.
+
+          The show is WANTED – A Cirque Heist, a family circus. Opening week is seven performances, from this Thursday 24 September through to Sunday 27 September. Three of them are daytime sessions, which will suit the little ones best: Thursday at 1pm, then Sunday at 11am and again at 2pm. Friday and Saturday run at 4pm and 7pm. Reply with a rough number of families and I will send you the booking link and a code to pass around.
+
+          There is nothing for you to arrange at your end. Each family books the performance that suits them and turns up on the day, so there is no bus, no group to assemble and no list for you to keep. What I would ask is that it goes to your own families and your staff rather than onto the Play Matters Gold Coast page or a community group. The seats are not on sale anywhere, and we are offering them to a small number of local organisations one at a time.
+
+          You have groups well beyond Upper Coomera. If coordinators elsewhere across the hub would want the same for their families, say so and I will put seats aside for them too.
+
+          If bringing a group together would suit you better than sending families off individually, the week after gives you the notice that takes. Tell me a day and I will come back to you about seating.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          Colourful.land Pty Ltd
+          partnerships@rivermill.au
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+        director_note: |
+          The code and the Eventbrite link are held for the reply, per the campaign's first-message rule. On a reply, the number goes onto the per-show tally before the code goes out. If she comes back asking for several groups at once, the hub counts as one organisation for tally purposes, and the total needs checking against the three daytime sessions, which are the ones she will point families at.
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "1800 007 529"
+        text: |
+          Follow-up call on Wednesday 23 September morning where the email has gone unanswered.
+        phone_note: |
+          This is Play Matters Australia's national line, not a direct number for Iona Murray. Expect a switchboard or a general inbox. Ask for Iona Murray at the Gold Coast hub. Where she cannot be reached, ask for the best direct number, or leave the offer with whoever answers and name the Thursday. The code does not go to a third party. Mid-morning is the best window for a coordinator whose sessions tend to run earlier.
+        script:
+          - point: Opening
+            text: "Morning Iona, it's Priyanka from Historic Rivermill out at Mount Nathan. I emailed you yesterday and I am chasing it up because it runs out over the weekend. Have you got two minutes?"
+          - point: What it is
+            text: "There is a circus company with a big top set up on our lawn for the school holidays, a family show called WANTED – A Cirque Heist. It opens tomorrow at one o'clock and runs through to Sunday. I have free tickets I can put aside for the families in your groups."
+          - point: The times
+            text: "There are three daytime sessions across the week, which are the ones that tend to work with small children. Tomorrow at one, then Sunday at eleven and again at two. Friday and Saturday are four o'clock and seven."
+          - point: The ask
+            text: "If you give me a rough number of families, I will send you the booking link and a code this morning. Families book whichever session suits them, so there is nothing for you to run."
+          - point: Where it goes
+            text: "The one thing I would ask is that it stays with your own families and your staff rather than going up on the Play Matters page. The seats are not on sale anywhere, we are offering them to a few local organisations directly."
+          - point: The wider hub
+            text: "You have groups right across the coast. If coordinators in the other groups would want it for their families as well, I can put seats aside for them."
+          - point: The other option
+            text: "And if you would rather bring a group together properly, the week after gives you the notice that needs. Give me a day and I will come back to you about seating."
+          - point: Close
+            text: "Is imurray@playmatters.org.au the right address? I will send it across now."
+          - point: If she asks what it costs
+            text: "Nothing for the tickets themselves. The cafe and the rest of the place are open as usual if people want them, and that part is normal prices."
+          - point: If she says she needs to check with someone
+            text: "Of course. The thing that is time-sensitive is the Thursday, so if you can come back to me today or tomorrow I can hold the seats until then."
+          - point: If she asks whether it suits under-fives
+            text: "It is the family show, and the daytime sessions are the ones parents with little ones have been asking about. I would point your families at the Sunday eleven o'clock first."
+        actioned_date: null
+        replied_date: null
+  - type: review
+    number: 1
+    verdict: DONE
+    in_character: |
+      She runs the Gold Coast hub for Play Matters, from Beaudesert to the Tweed and the Scenic Rim in between, and she gets a lot of cold pitches from venues wanting access to her families. Her first instinct is who are you and why me. The offer still reads better than most: free tickets to a proper circus, no bus, no permission slips, no list to keep, in the school holidays when families are looking for exactly this. The request to keep it off the hub's Facebook page makes sense to her once she thinks about it, since a limited freebie that went public would be swamped, but her first reaction to a stranger saying do not post this is a flicker of is this legitimate. The flicker does not stop her replying. She would look the venue up herself before forwarding anything.
+
+      On the timing, she reads that what is asked of her is not an excursion by Thursday but a rough headcount, and her families then book themselves across the week. That is possible in two days. An excursion would not have been, and she notices the following week was offered for anyone who wants a group outing.
+
+      Nothing stops her replying. She would want the age-appropriateness confirmed, which the email half-answers by flagging the daytime sessions, and she would probably reply saying yes for the Upper Coomera group while asking about the other regional coordinators, since the message opened that door. Self-rated reply chance 65 per cent.
+    fact_check:
+      - claim: Show dates and start times in both messages, Thursday 24 September 1pm, Friday and Saturday 4pm and 7pm, Sunday 11am and 2pm.
+        source: Season data named by the showtimes file.
+        result: verified
+        note: Matches the seven opening-week sessions exactly. No show time appears that the source does not list.
+      - claim: Opening week is seven performances from Thursday 24 September to Sunday 27 September.
+        source: Campaign header note and the season data.
+        result: verified
+      - claim: No code, price, discount, ticketing link, or suggestion that seats are unsold or that the offer serves the sender.
+        source: Campaign author appendix and the opening-week-seats USP.
+        result: verified
+        note: Both messages defer the code and the link to the reply.
+      - claim: Nothing to organise, no bus, no group to assemble, no list to keep.
+        source: Campaign USP registry, nothing-to-organise.
+        result: verified
+        note: The USP's childcare-list exception does not reach a playgroup network, which the registry names as inside scope.
+      - claim: The seats are not on sale anywhere and are offered to a small number of local organisations one at a time.
+        source: Campaign USP registry, chosen-not-advertised.
+        result: verified
+        note: Stated without implying the tent is empty or that the offer serves the sender.
+      - claim: Venue address, sender name and role, and the operator's name.
+        source: Campaign sender and venue blocks.
+        result: verified
+    antifact_check: |
+      No stone buildings, no century-old or original mill structures, no vineyard, no claim that the venue farms, and Mount Nathan is given as its own place on Beaudesert Nerang Road rather than on Tamborine Mountain. No feed-bag or animal-food offer. No subscriber discount. No Oztix link.
+    revision_note: |
+      The challenger returned DONE with no factual errors and raised two reply-stage points: whether the venue is legitimate, which she resolves herself with a search, and whether the sessions suit babies and toddlers, which the email half-answers already and the phone script answers in full. Neither would stop a reply, so neither changes the draft.
+
+      One change was made afterwards, under the section 7 band-pattern check rather than by the challenger. The draft opened with the same sentence as the Pine Lake Village approach, "I am Priyanka Das and I look after partnerships at Historic Rivermill, the heritage riverside venue on ...". Two openers identical to the word read as a template across a campaign whose whole premise is that each organisation was picked by name. The final email opens with a shorter self-introduction and reaches the venue in the following sentence. The phone opening was reworked for the same reason, and because the number is a switchboard, so the caller has to ask for her rather than greet her.
+  - type: final
+    chosen_usps: [opening-week-seats, nothing-to-organise, chosen-not-advertised, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: imurray@playmatters.org.au
+        bcc: partnerships@rivermill.au
+        subject: "Free circus tickets for Play Matters families, first show this Thursday"
+        body: |
+          Hi Iona,
+
+          Priyanka Das here, from Historic Rivermill over at Mount Nathan. We are a heritage riverside venue on Beaudesert Nerang Road, and for the school holidays a circus company, CHARC Performance, has its big top up on our lawn. I can hold free tickets for the families in your groups.
+
+          The show is WANTED – A Cirque Heist, a family circus. Opening week is seven performances, from this Thursday 24 September through to Sunday 27 September. Three of them are daytime sessions, which will suit the little ones best: Thursday at 1pm, then Sunday at 11am and again at 2pm. Friday and Saturday run at 4pm and 7pm. Reply with a rough number of families and I will send you the booking link and a code to pass around.
+
+          There is nothing for you to arrange at your end. Each family books the performance that suits them and turns up on the day, so there is no bus, no group to assemble and no list for you to keep. What I would ask is that it goes to your own families and your staff rather than onto the Play Matters Gold Coast page or a community group. The seats are not on sale anywhere, and we are offering them to a small number of local organisations one at a time.
+
+          You have groups well beyond Upper Coomera. If coordinators elsewhere across the hub would want the same for their families, say so and I will put seats aside for them too.
+
+          If bringing a group together would suit you better than sending families off individually, the week after gives you the notice that takes. Tell me a day and I will come back to you about seating.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          Colourful.land Pty Ltd
+          partnerships@rivermill.au
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+        director_note: |
+          The code and the Eventbrite link are held for the reply, per the campaign's first-message rule. On a reply, the number goes onto the per-show tally before the code goes out. If she comes back asking for several groups at once, the hub counts as one organisation for tally purposes, and the total needs checking against the three daytime sessions, which are the ones she will point families at.
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "1800 007 529"
+        text: |
+          Follow-up call on Wednesday 23 September morning where the email has gone unanswered.
+        phone_note: |
+          This is Play Matters Australia's national line, not a direct number for Iona Murray. Expect a switchboard or a general inbox. Ask for Iona Murray at the Gold Coast hub. Where she cannot be reached, ask for the best direct number, or leave the offer with whoever answers and name the Thursday. The code does not go to a third party. Mid-morning is the best window for a coordinator whose sessions tend to run earlier.
+        script:
+          - point: Opening
+            text: "Good morning, I am after Iona Murray at the Gold Coast hub. It's Priyanka calling from Historic Rivermill, the venue out at Mount Nathan."
+          - point: Once through to her
+            text: "Morning Iona. I sent you an email yesterday and I am chasing it up, because the thing it is about starts on Thursday. Have you got two minutes?"
+          - point: What it is
+            text: "There is a circus company with a big top set up on our lawn for the school holidays, a family show called WANTED – A Cirque Heist. It opens tomorrow at one o'clock and runs through to Sunday. I have free tickets I can put aside for the families in your groups."
+          - point: The times
+            text: "There are three daytime sessions across the week, which are the ones that tend to work with small children. Tomorrow at one, then Sunday at eleven and again at two. Friday and Saturday are four o'clock and seven."
+          - point: The ask
+            text: "If you give me a rough number of families, I will send you the booking link and a code this morning. Families book whichever session suits them, so there is nothing for you to run."
+          - point: Where it goes
+            text: "The one thing I would ask is that it stays with your own families and your staff rather than going up on the Play Matters page. The seats are not on sale anywhere, we are offering them to a few local organisations directly."
+          - point: The wider hub
+            text: "You have groups right across the coast. If coordinators in the other groups would want it for their families as well, I can put seats aside for them."
+          - point: The other option
+            text: "And if you would rather bring a group together properly, the week after gives you the notice that needs. Give me a day and I will come back to you about seating."
+          - point: Close
+            text: "Is imurray@playmatters.org.au the right address? I will send it across now."
+          - point: If she asks what it costs
+            text: "Nothing for the tickets themselves. The cafe and the rest of the place are open as usual if people want them, and that part is normal prices."
+          - point: If she says she needs to check with someone
+            text: "Of course. The thing that is time-sensitive is the Thursday, so if you can come back to me today or tomorrow I can hold the seats until then."
+          - point: If she asks whether it suits under-fives
+            text: "It is the family show, and the daytime sessions are the ones parents with little ones have been asking about. I would point your families at the Sunday eleven o'clock first."
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: Historic Rivermill is a heritage riverside venue on Beaudesert Nerang Road at Mount Nathan.
+    source: Business overview, venue description and the campaign venue block.
+  - claim: CHARC Performance is staging a family circus in a big top on the venue's lawn for the school holidays.
+    source: Season showtimes file and the campaign's description of the season.
+  - claim: The show is WANTED – A Cirque Heist.
+    source: Season showtimes file.
+  - claim: Opening week runs Thursday 24 September to Sunday 27 September and holds seven performances.
+    source: Season showtimes file and the season data it names.
+  - claim: Three of the seven are daytime sessions, Thursday at 1pm and Sunday at 11am and 2pm, with Friday and Saturday at 4pm and 7pm.
+    source: Season data named by the showtimes file.
+  - claim: The seats at those seven shows are free to the organisation, with the code and booking link sent in the reply.
+    source: Campaign USP registry, opening-week-seats.
+  - claim: Families book individually, with no bus, no group to assemble and no list for the organiser to keep.
+    source: Campaign USP registry, nothing-to-organise.
+  - claim: The seats are not on sale anywhere and are offered to a small number of local organisations one at a time.
+    source: Campaign USP registry, chosen-not-advertised.
+  - claim: The tickets are for her own families and her staff, and stay off the hub's Facebook page and community groups.
+    source: Campaign USP registry, chosen-not-advertised, and the campaign author appendix.
+  - claim: Seats can be held for coordinators of the hub's other groups on request.
+    source: Campaign USP registry, opening-week-seats, which allows more on request, read with the offer's shape as a reservation in the organisation's name.
+  - claim: A group visit can be arranged for the following week, with seating sought from the manager.
+    source: Campaign USP registry, group-visit-later.
+  - claim: The cafe and grounds are open at the usual prices on show days.
+    source: Fees and service hours SOT, operating hours; the venue is open to visitors across the daytime session times on both weekdays and weekends.
+  - claim: Iona Murray is Program Coordinator of the Play Matters Gold Coast hub, whose Imaginative Play Matters programme runs at Upper Coomera for children from birth to five, with groups across the wider Gold Coast.
+    source: Profile, drawn from the Play Matters directory listing and the hub's own pages.
+  - claim: She is reachable at imurray@playmatters.org.au and on 1800 007 529.
+    source: Profile and roster entry; the number is Play Matters Australia's national line, recorded as such in the phone note.
+  - claim: The sender is Priyanka Das, Partnerships, writing from partnerships@rivermill.au.
+    source: Campaign sender block.
+quality_checklist: |
+  1. Structure. Root keys drawn from the canonical set. Both non-final rounds carry a number. Addresses are real, taken from the profile and the campaign sender block. No profile_hash line, which the harness prepends.
+  2. Coverage. fact_provenance reaches every factual claim in the final email and the phone script, including the cafe-prices answer the script holds in reserve. chosen_usps is present on the draft and final rounds.
+  3. Presupposition. No sentence tells her something she already knows about her own programme. The Children's Week event and the hub's Facebook activity are used to choose the angle, not recited back at her. The one reference to her groups beyond Upper Coomera exists to extend the offer, not to demonstrate research.
+  4. Manufactured connection. No claim of shared interest appears. The angle rests on the birth-to-five age band and the hub's published-and-let-families-come habit, both evidenced in the profile. The profile is silent on farm visits, and nothing in the message assumes otherwise.
+  5. Concreteness. The ask is answerable in one sentence: a rough number of families, or a day for a group visit.
+  6. Band pattern. Failed on first reading and fixed. The draft opener matched the Pine Lake Village approach word for word, so the final email opens on a shorter self-introduction and reaches the venue a sentence later. The phone opening was reworked for the same reason and to suit a switchboard. This is the first message written in the mothers-group band, and the next contacts in it should vary against this opener.
+  7. Final round email cardinality. One email and one phone message in the final round.

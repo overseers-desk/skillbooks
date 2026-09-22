@@ -1,0 +1,286 @@
+profile_hash: sha256:83befcdcdf233dc72cbcccb5b92b814e54dc3a807113c93bbd6fa0eb1c04281f
+decisions:
+  channel: email
+  channel_detail: Email primary, phone follow-up if no reply after 3 days (no connection channel on file).
+  language: en
+  angle: nothing-to-organise
+  subsegment: null
+angle_rationale: |
+  Contact: Chinnu Sravya, Owner, Families Magazine (travel-blogger-domestic).
+  Channel: email + phone, no LinkedIn on file. Language: English (en-au per campaign default).
+  Primary angle is nothing-to-organise: the profile's strongest evidence is that the
+  magazine's advertise page explicitly sells "competitions and giveaways" as a paid
+  product, so a reader giveaway is a transaction the recipient already runs, not a
+  novel ask. Supported by big-top-at-a-heritage-farm (the magazine has run a farm/
+  animal-experience feature, Trevena Glen Farm, February 2025, matching the venue's
+  beat) and chosen-not-advertised (the pass is by name, not a bulk send, without
+  implying the tent needs filling). opening-week-seats is folded into the concrete
+  ask rather than given its own sentence.
+  Warmth: cold. One IMAP hit exists (Aug 2025, editor@familiesmagazine.com.au to
+  marketing@rivermill.au, "Simple Contact Form") but it is unrelated in topic,
+  addressed to a different mailbox, and not recorded in the profile. Per the
+  campaign's a_author rule, a prior dealing is named only where the profile records
+  the contact's own dated conduct with us; this one is not, so it is not referenced
+  and warmth is treated as cold.
+  Presupposition check: the draft does not narrate the recipient's own history back
+  to them (no explicit mention of the Trevena Glen Farm piece); the fit is carried
+  through the offer's substance (farm venue, giveaway format) rather than through
+  research-performance language.
+response_likelihood: 55
+a_note: |
+  Angle nothing-to-organise (reader giveaway, matches the magazine's own paid
+  giveaway product) supported by big-top-at-a-heritage-farm and chosen-not-
+  advertised. Channel email + phone fallback (3 days). Warmth cold. Language en.
+  Two challenger passes: round 1 flagged an implicit price/scarcity line ("at this
+  price"), fixed; round 2 verdict DONE, no further factual issues, response
+  estimate raised from a starting 45% to 55%.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, big-top-at-a-heritage-farm]
+    notes: |
+      First draft. Element order self-intro -> ask -> evidence per SPAR-A 4.5.
+      Public Eventbrite link included per the wave-two rule (publisher segments
+      carry the paid public link; the free code goes only in the pass-confirmation
+      reply).
+    messages:
+      - channel: email
+        to: editor@familiesmagazine.com.au
+        subject: A circus giveaway for Families Magazine readers, opening Thursday
+        body: |
+          Hello Chinnu,
+
+          I'm Priyanka Das, from Partnerships at Historic Rivermill, a heritage
+          riverside venue at Mount Nathan in the Gold Coast hinterland.
+
+          WANTED – A Cirque Heist, a family circus in a big top on our lawn, opens
+          this Thursday 24 September and runs to Sunday 4 October.
+
+          I have a family pass of four held in your name for any of the
+          opening-week shows, and five more passes to give away to Families
+          Magazine readers if you would like to run one. The seats aren't on sale
+          at this price anywhere. We picked a small number of publications that
+          put family outings and farm experiences in front of South East
+          Queensland parents, and included Families Magazine.
+
+          Reply with the show you would come to and I will send the booking
+          details for your own pass. Public tickets for readers otherwise are at
+          https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: phone
+        to: "0437 866 869"
+        text: Follow-up call if no email reply after 3 days (from 26 September).
+        script:
+          - point: Opening hook
+            text: "Hi, is this Chinnu? My name's Priyanka, I'm calling from Historic Rivermill, out at Mount Nathan. I sent you an email a couple of days ago about a family pass for our circus season, WANTED – A Cirque Heist."
+          - point: Context, if needed
+            text: "It's a family circus in a big top on our lawn, on now through to 4 October. I held a pass of four for you for any of the opening-week shows, and some spare passes if you wanted to run a reader giveaway."
+          - point: Ask
+            text: "Would that be something you'd like to do? If you give me a show that suits, I can lock the pass in today."
+          - point: Close if no
+            text: "No trouble at all. If it's useful later in the season, my email's on the earlier message, feel free to reach out."
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Reads as a legitimate pitch: named venue, real dates, a checkable Eventbrite
+      link, a genuine "what's on this school holidays" item. The Tuesday-for-
+      Thursday timing gives pause but the ask itself (reply with a show) takes
+      thirty seconds regardless of the show date, so it is not a blocker on the
+      ask. One line niggles: "the seats aren't on sale at this price anywhere"
+      reads as dangling a special price on what is actually a free comp ticket,
+      making the message read more like scripted sales copy. Otherwise the offer
+      is clean and low-effort: a pass held in the recipient's name, spare passes
+      for readers, no code demanded up front, no obligation beyond "if you would
+      like to run one." Estimated reply likelihood 45%.
+    fact_check:
+      - claim: "The seats aren't on sale at this price anywhere."
+        source: campaign.yaml prompt_appendices.a_author and usps.chosen-not-advertised.rests_on
+        result: fail
+        note: |
+          a_author states the first message names no code and no price. The
+          chosen-not-advertised USP's rests_on warns that a recipient told the
+          tent is empty, or shown pricing/scarcity framing, reads the offer as a
+          request to be a marketing channel. This sentence is not in the
+          segment's approved first_ask template and introduces an implicit price
+          reference ("at this price") the registry rules out.
+        correction: "These seats aren't for sale."
+      - claim: Show name, opening date (Thursday 24 September), season end date (Sunday 4 October), venue description, Eventbrite link, pass structure (four held, five to give away, reply with a show, code sent only in the follow-up)
+        source: usps registry, showtimes file, business-overview.md
+        result: verified
+    antifact_check: No stone or 100-year-old-building claim, no vineyard claim, no Tamborine Mountain location claim. No Oztix link, no code, no discount, no showtime outside the showtimes file in the draft or phone script.
+    revision_note: Replaced the flagged price/scarcity sentence with the approved chosen-not-advertised framing.
+    notes: Single valid finding; one line revised, rest of the draft kept unchanged per challenger's positive reaction.
+  - type: draft
+    number: 2
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, big-top-at-a-heritage-farm]
+    revision_note: "\"The seats aren't on sale at this price anywhere\" changed to \"These seats aren't for sale.\" to remove the implicit price reference; no other change."
+    messages:
+      - channel: email
+        to: editor@familiesmagazine.com.au
+        subject: A circus giveaway for Families Magazine readers, opening Thursday
+        body: |
+          Hello Chinnu,
+
+          I'm Priyanka Das, from Partnerships at Historic Rivermill, a heritage
+          riverside venue at Mount Nathan in the Gold Coast hinterland.
+
+          WANTED – A Cirque Heist, a family circus in a big top on our lawn, opens
+          this Thursday 24 September and runs to Sunday 4 October.
+
+          I have a family pass of four held in your name for any of the
+          opening-week shows, and five more passes to give away to Families
+          Magazine readers if you would like to run one. These seats aren't for
+          sale. We picked a small number of publications that put family outings
+          and farm experiences in front of South East Queensland parents, and
+          included Families Magazine.
+
+          Reply with the show you would come to and I will send the booking
+          details for your own pass. Public tickets for readers otherwise are at
+          [the Eventbrite listing](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924).
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: phone
+        to: "0437 866 869"
+        text: Follow-up call if no email reply after 3 days (from 26 September).
+        script:
+          - point: Opening hook
+            text: "Hi, is this Chinnu? My name's Priyanka, I'm calling from Historic Rivermill, out at Mount Nathan. I sent you an email a couple of days ago about a family pass for our circus season, WANTED – A Cirque Heist."
+          - point: Context, if needed
+            text: "It's a family circus in a big top on our lawn, on now through to 4 October. I held a pass of four for you for any of the opening-week shows, and some spare passes if you wanted to run a reader giveaway."
+          - point: Ask
+            text: "Would that be something you'd like to do? If you give me a show that suits, I can lock the pass in today."
+          - point: Close if no
+            text: "No trouble at all. If it's useful later in the season, my email's on the earlier message, feel free to reach out."
+  - type: review
+    number: 2
+    verdict: DONE
+    in_character: |
+      No prior relationship with the sender or venue, but the pitch does not smell
+      like spam: no discount code, no "as seen on" puffery, no link-bait subject.
+      A big top on a heritage riverside property at Mount Nathan, opening
+      Thursday, is exactly the kind of thing covered here, and a reader giveaway
+      matches an existing farm-venue feature run before (Trevena Glen, last year).
+      The "picked a small number of publications" line reads as generic enough to
+      assume other outlets were also approached, which is unremarkable for this
+      kind of pitch. The real friction is timing: Tuesday for a Thursday opening
+      leaves about 48 hours to decide, reply, and get any content live, tighter
+      than the normal content-planning cycle (social posts done a few days ahead,
+      next e-newsletter a week or more out). Likely outcome: take the family pass
+      as an easy yes, and possibly a quick social shout-out for the reader passes
+      rather than a full write-up, given the short runway. No pushy or "help us
+      fill the tent" framing. Estimated reply likelihood 55%.
+    fact_check:
+      - claim: No code, price, discount, unsold-seats framing, feed-bag/animal-food offer, or Oztix link in the draft; no antifact-checklist claims present
+        source: campaign.yaml (usps registry, a_author, a_challenger), business-antifacts.md
+        result: verified
+      - claim: "Opens this Thursday 24 September and runs to Sunday 4 October"
+        source: campaign.yaml segments.travel-blogger-domestic.first_ask; showtimes file
+        result: verified
+      - claim: Family pass of four held in recipient's name; five more to give away to readers
+        source: campaign.yaml segments.travel-blogger-domestic.first_ask
+        result: verified
+      - claim: Public tickets for readers at the Eventbrite listing
+        source: campaign.yaml usps.opening-week-seats.rests_on
+        result: verified
+        note: |
+          The showtimes file states "Oztix sells these fourteen [performances]",
+          which names a different platform than the Eventbrite link in the draft.
+          The opening-week-seats USP resolves this in Eventbrite's favour ("the
+          code RIVERMILLFRIENDS takes the price to nil on the operator's
+          Eventbrite listing ... tested by the Director on 22 September 2026"),
+          and the campaign's a_challenger block bans an Oztix link outright, so
+          the draft follows the campaign's most current internal decision. The
+          two source documents disagree with each other on which platform sells
+          the season; that conflict is unresolved on the record and is flagged
+          here rather than silently picking a side.
+      - claim: Venue description ("heritage riverside venue at Mount Nathan in the Gold Coast hinterland")
+        source: business-overview.md; business-antifacts.md
+        result: verified
+    antifact_check: No stone or 100-year-old-building claim, no vineyard claim, no Tamborine Mountain location claim, consistent with business-antifacts.md.
+    revision_note: No further change; draft 2 carried forward to final unchanged.
+    notes: Passed. One open item flagged for the human, not fixed in the draft — see fact_provenance note on the Eventbrite/Oztix source conflict.
+  - type: final
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: editor@familiesmagazine.com.au
+        subject: A circus giveaway for Families Magazine readers, opening Thursday
+        body: |
+          Hello Chinnu,
+
+          I'm Priyanka Das, from Partnerships at Historic Rivermill, a heritage
+          riverside venue at Mount Nathan in the Gold Coast hinterland.
+
+          WANTED – A Cirque Heist, a family circus in a big top on our lawn, opens
+          this Thursday 24 September and runs to Sunday 4 October.
+
+          I have a family pass of four held in your name for any of the
+          opening-week shows, and five more passes to give away to Families
+          Magazine readers if you would like to run one. These seats aren't for
+          sale. We picked a small number of publications that put family outings
+          and farm experiences in front of South East Queensland parents, and
+          included Families Magazine.
+
+          Reply with the show you would come to and I will send the booking
+          details for your own pass. Public tickets for readers otherwise are at
+          [the Eventbrite listing](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924).
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+        reply_summary: null
+      - channel: phone
+        to: "0437 866 869"
+        text: Follow-up call if no email reply after 3 days (from 26 September).
+        phone_note: Trigger only if no reply to the email by 26 September.
+        script:
+          - point: Opening hook
+            text: "Hi, is this Chinnu? My name's Priyanka, I'm calling from Historic Rivermill, out at Mount Nathan. I sent you an email a couple of days ago about a family pass for our circus season, WANTED – A Cirque Heist."
+          - point: Context, if needed
+            text: "It's a family circus in a big top on our lawn, on now through to 4 October. I held a pass of four for you for any of the opening-week shows, and some spare passes if you wanted to run a reader giveaway."
+          - point: Ask
+            text: "Would that be something you'd like to do? If you give me a show that suits, I can lock the pass in today."
+          - point: Close if no
+            text: "No trouble at all. If it's useful later in the season, my email's on the earlier message, feel free to reach out."
+fact_provenance:
+  - claim: Historic Rivermill is a heritage riverside venue at Mount Nathan in the Gold Coast hinterland
+    source: business-overview.md
+  - claim: WANTED – A Cirque Heist opens Thursday 24 September and runs to Sunday 4 October
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md; campaign.yaml segments.travel-blogger-domestic.first_ask
+  - claim: A family pass of four is held for the recipient at any opening-week show, and five more passes are available to give away to readers
+    source: campaign.yaml segments.travel-blogger-domestic.first_ask
+  - claim: Public tickets for readers are at the Eventbrite listing named
+    source: campaign.yaml usps.opening-week-seats.rests_on
+  - claim: The seats are not for sale and a small number of publications were picked by name
+    source: campaign.yaml usps.chosen-not-advertised
+quality_checklist: |
+  1. YAML structure self-check: root keys drawn from the canonical set; every
+     round has type and number (final omits number per structure); the final
+     round contains exactly one channel: email message plus one channel: phone
+     message; email address is real, not a placeholder. Pass.
+  2. Coverage and completeness: fact_provenance covers every factual claim in
+     the final draft (venue description, dates, pass structure, ticket link,
+     not-for-sale framing); a_note states angle, channel, warmth, language;
+     chosen_usps present on every draft and final round. Pass.
+  3. Presupposition test: no sentence tells the recipient something they
+     already know about themselves; the farm/giveaway fit is carried by the
+     offer's substance, not by narrating the recipient's own published history.
+     Pass.
+  4. Manufactured-connection test: no claim of shared interest is asserted
+     beyond what the offer itself states; the Trevena Glen Farm piece and the
+     advertise page's giveaway product were used to select the angle, not
+     quoted at the recipient. Pass.
+  5. Concreteness: the ask (reply naming a show) is answerable in one sentence.
+     Pass.
+  6. Band-level pattern check: not run at single-contact level; deferred to
+     the band-level review after this segment's other contacts are drafted.
+  7. Final round email cardinality: one channel: email message in the final
+     round; the phone script is a separate channel: phone message. Pass.

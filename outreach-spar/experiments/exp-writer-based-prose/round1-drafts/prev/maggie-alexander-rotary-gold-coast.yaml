@@ -1,0 +1,210 @@
+profile_hash: sha256:6b618fd8091672f7d985249f1b1069fdb56b628b55b4d99e393ec55f28d1a544
+decisions:
+  channel: linkedin, email, phone
+  channel_detail: >-
+    Connection channel + email + phone (SPAR-A §4.2): LinkedIn connection
+    note first, email after acceptance or after 4-5 days, phone follow-up
+    if the email gets no reply after 3 days.
+  language: en-au
+  angle: club-own-fellowship-outing-history
+angle_rationale: >-
+  The profile records the club's own pattern of external, family-facing
+  fellowship activities: the Gold Coast Ramble, the "Bulls on the Beach"
+  Rodeo, trivia nights and charity balls, and the "Bush to Beach"
+  programme with McDonald's. The angle rests on this established pattern,
+  not on any stated interest in heritage venues, which the profile marks
+  absent. As club President, Maggie Alexander is the decision-maker who
+  can pass the offer to members or take up a later group visit, so the
+  message goes to her directly while naming the organisation the seats
+  are offered to. The courier prefetch surfaced a real prior dealing: an
+  April 2026 email from Rivermill to the club that Kathy Hogan, the
+  club's Vocation Director, answered with interest, proposing a Sunday
+  vocation visit in May. Rivermill never sent the details she asked for.
+  Draft 1 inverted this, claiming Rivermill wrote and heard nothing back;
+  the A2 fact-check caught the inversion against
+  campaigns/2026-04-B2B-partnership-outreach/maggie-alexander-rotary-gold-coast.yaml,
+  and the final draft names the exchange accurately and briefly, without
+  dwelling on it, before moving to the separate Cirque Heist offer.
+response_likelihood: 55
+a_note: >-
+  Angle: club's own fellowship/outing history (Ramble, Bush to Beach,
+  trivia nights). Channel: LinkedIn connection note, then email, then
+  phone at 3 days. Warmth: cold on the personal level; one prior
+  organisational dealing (April 2026, Kathy Hogan) named accurately after
+  A2 caught an inverted claim in draft 1. Language: en-au.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats]
+    notes: >-
+      First draft opened with a prior-dealing line claiming Rivermill
+      wrote in April and heard nothing back. Not yet checked against the
+      earlier campaign's approach file at draft time.
+    messages:
+      - channel: linkedin
+        to: "https://www.linkedin.com/in/maggiealexander/"
+        text: >-
+          Hi Maggie, I'm Priyanka from Partnerships at Historic Rivermill
+          on the Gold Coast hinterland. We're giving free opening-week
+          seats for our family circus to a handful of local clubs, and
+          I'd like to offer some to the Rotary Club of Gold Coast. Keen
+          to connect and send the details.
+      - channel: email
+        to: info@goldcoastrotary.org.au
+        subject: Free opening-week seats for the Rotary Club of Gold Coast
+        body: |
+          Hi Maggie,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, a heritage venue at Mount Nathan in the Gold Coast hinterland.
+
+          We wrote to the club in April about a fellowship morning here and didn't hear back. This is a separate offer, so nothing to chase from that one.
+
+          A family circus, WANTED - A Cirque Heist, opens in a big top on our lawn this Thursday, 24 September, and runs through to Sunday, 27 September. The opening-week seats aren't on sale anywhere. We're giving them to a small number of local organisations, and I've picked the Rotary Club of Gold Coast.
+
+          I have a code that makes tickets free at any of the seven opening-week shows, for your members and the families they bring along. Nothing to organise: they just book whichever show suits them. Reply and I'll send the code with the booking link. It's for your people, not for posting publicly.
+
+          If the club would rather bring a group out together, that needs a bit more notice than this week allows. Tell me a day between Wednesday 30 September and Sunday 4 October and I'll ask our manager about holding seating for a proper visit.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: phone
+        to: "0411 110 444"
+        text: Follow-up call if the email gets no reply after 3 days.
+        script:
+          - point: Opening hook
+            text: "Hi, is that Maggie? It's Priyanka calling from Historic Rivermill, out at Mount Nathan. I emailed the club last week about some free circus tickets for opening week."
+          - point: Ask
+            text: "Our family circus opens this Thursday and we're offering free seats to a few local clubs, Rotary Club of Gold Coast included. I wanted to check you'd seen the email, and see whether you'd like me to send the code through now."
+          - point: If group visit raised
+            text: "If the club would rather come out together instead, I can check with our manager about holding seats the week after, whatever day suits you."
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: >-
+      Maggie reads the LinkedIn note, then the email, and finds the offer
+      itself workable: seven free shows, book whichever suits, nothing to
+      organise on two days' notice, with a proper club visit the week
+      after as a sensible fallback. But the line "we wrote to the club in
+      April about a fellowship morning here and didn't hear back" does not
+      match her memory. She recalls Kathy handling a Rivermill enquiry in
+      April, flagging it at committee, and asking them to send information
+      through for a Sunday vocation visit in May. If that is the same
+      organisation, the club replied and Rivermill went quiet, not the
+      other way round. Being told "you didn't answer us" when she believes
+      the opposite happened makes her want to check with Kathy before
+      doing anything else, and it needles at an otherwise workable offer.
+      She would likely reply, partly to correct the record about April and
+      partly to take up the free-seats offer.
+    fact_check:
+      - claim: "We wrote to the club in April about a fellowship morning here and didn't hear back."
+        source: campaigns/2026-04-B2B-partnership-outreach/maggie-alexander-rotary-gold-coast.yaml
+        result: incorrect
+        correction: >-
+          The April 9 email was answered on 2026-04-21 by Kathy Hogan,
+          Vocation Director, who proposed a Sunday vocation visit in May.
+          Rivermill never sent the requested details and never followed
+          up. The claim inverts who went silent and breaches the
+          campaign's a_author rule, which allows a "wrote and heard
+          nothing back" line only where that is what happened.
+      - claim: Seven opening-week shows, Thursday 24 to Sunday 27 September.
+        source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+        result: verified
+      - claim: Second-week window offered, Wednesday 30 September to Sunday 4 October.
+        source: 2026-09-cirque-heist-season.yaml, segments.community-organisation.first_ask
+        result: verified
+      - claim: Seats not on sale anywhere; given to a small number of local organisations.
+        source: 2026-09-cirque-heist-season.yaml, usps.chosen-not-advertised
+        result: verified
+      - claim: No price, no code and no Oztix link in the first message.
+        source: 2026-09-cirque-heist-season.yaml, prompt_appendices.a_author
+        result: verified
+    antifact_check: >-
+      No claim about stone buildings, heritage mill structures, a
+      vineyard, or a Tamborine Mountain location. "Mount Nathan in the
+      Gold Coast hinterland" matches business-antifacts.md.
+    revision_note: >-
+      Replaced the inverted prior-dealing line with an accurate,
+      brief acknowledgement: the club's Kathy Hogan raised interest in a
+      vocation visit in April, and Rivermill never sent the details or
+      followed up. No apology paragraph, no repeat of the vocation-visit
+      ask; the message moves straight to the separate Cirque Heist offer.
+      LinkedIn note and phone script were unaffected, since neither
+      referenced the April exchange.
+    notes: 1 of 1 budgeted A2 passes used (profile yield 4, band 3-5).
+  - type: final
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats]
+    messages:
+      - channel: linkedin
+        to: "https://www.linkedin.com/in/maggiealexander/"
+        text: >-
+          Hi Maggie, I'm Priyanka from Partnerships at Historic Rivermill
+          on the Gold Coast hinterland. We're giving free opening-week
+          seats for our family circus to a handful of local clubs, and
+          I'd like to offer some to the Rotary Club of Gold Coast. Keen
+          to connect and send the details.
+      - channel: email
+        to: info@goldcoastrotary.org.au
+        subject: Free opening-week seats for the Rotary Club of Gold Coast
+        body: |
+          Hi Maggie,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, a heritage venue at Mount Nathan in the Gold Coast hinterland.
+
+          Back in April, Kathy got in touch with us about a vocation visit. I think we dropped the ball and never sent through the details she asked for. This is a separate offer, but I wanted to acknowledge that one is still outstanding on our end.
+
+          A family circus, WANTED - A Cirque Heist, opens in a big top on our lawn this Thursday, 24 September, and runs through to Sunday, 27 September. The opening-week seats aren't on sale anywhere. We're giving them to a small number of local organisations, and I've picked the Rotary Club of Gold Coast.
+
+          I have a code that makes tickets free at any of the seven opening-week shows, for your members and the families they bring along. Nothing to organise: they just book whichever show suits them. Reply and I'll send the code with the booking link. It's for your people, not for posting publicly.
+
+          If the club would rather bring a group out together, that needs a bit more notice than this week allows. Tell me a day between Wednesday 30 September and Sunday 4 October and I'll ask our manager about holding seating for a proper visit.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "0411 110 444"
+        text: Follow-up call if the email gets no reply after 3 days.
+        script:
+          - point: Opening hook
+            text: "Hi, is that Maggie? It's Priyanka calling from Historic Rivermill, out at Mount Nathan. I emailed the club last week about some free circus tickets for opening week."
+          - point: Ask
+            text: "Our family circus opens this Thursday and we're offering free seats to a few local clubs, Rotary Club of Gold Coast included. I wanted to check you'd seen the email, and see whether you'd like me to send the code through now."
+          - point: If group visit raised
+            text: "If the club would rather come out together instead, I can check with our manager about holding seats the week after, whatever day suits you."
+        phone_note: Only call if the email is unanswered after 3 days.
+fact_provenance:
+  - claim: "A family circus, WANTED - A Cirque Heist, opens in a big top ... Thursday, 24 September ... Sunday, 27 September."
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: "The opening-week seats aren't on sale anywhere ... local organisations."
+    source: 2026-09-cirque-heist-season.yaml, usps.chosen-not-advertised
+  - claim: "free at any of the seven opening-week shows"
+    source: 2026-09-cirque-heist-season.yaml, usps.opening-week-seats
+  - claim: "Nothing to organise ... they just book whichever show suits them."
+    source: 2026-09-cirque-heist-season.yaml, usps.nothing-to-organise
+  - claim: "a day between Wednesday 30 September and Sunday 4 October ... holding seating for a proper visit"
+    source: 2026-09-cirque-heist-season.yaml, segments.community-organisation.first_ask
+  - claim: "Historic Rivermill, a heritage venue at Mount Nathan in the Gold Coast hinterland."
+    source: business-overview.md
+  - claim: "Back in April, Kathy got in touch with us about a vocation visit ... we dropped the ball and never sent through the details she asked for."
+    source: campaigns/2026-04-B2B-partnership-outreach/maggie-alexander-rotary-gold-coast.yaml (Kathy Hogan reply, 2026-04-21)
+quality_checklist: >-
+  1. YAML structure self-check: root keys within §6's canonical set; every
+  round carries type and number where required; final round carries one
+  email message. 2. Coverage: fact_provenance covers every factual claim
+  in the final draft; chosen_usps set on the draft and final rounds. 3.
+  Presupposition test: no sentence tells Maggie something she already
+  knows about herself; the club's outing history is used as the sender's
+  reason for choosing the club, not recited back to her. 4.
+  Manufactured-connection test: the fellowship/outing angle traces to the
+  profile's outing-history evidence; no claim of interest in heritage
+  venues, which the profile marks absent. 5. Concreteness: the ask (reply
+  to get the code, or name a day for a second-week visit) is answerable
+  in one sentence. 6. Band-level pattern check: not yet run at
+  campaign level; single-contact draft. 7. Final round carries exactly
+  one channel:email message, plus one linkedin and one phone message,
+  within the cap on email messages. The A2 fact-check's inverted
+  prior-dealing claim was corrected in the final draft; no other flagged
+  items.

@@ -1,0 +1,186 @@
+profile_hash: sha256:0b8df3adaa5fbe6cfa59d1973afc0807b0f761c716723271f0bc0d72e9208dea
+# Contact: Fiona Harper | Freelance: AFR, Australian Geographic Adventure
+# Channel: LinkedIn connection note first, then email
+# Language: en
+# Angle: Firsthand pass invitation (earned-media segment default angle)
+decisions:
+  channel: email
+  channel_detail: |
+    LinkedIn connection note sent first, since no prior connection or
+    correspondence with this contact was found. The email follows once the
+    connection is accepted, or after five days if there is no response.
+  language: en
+  angle: firsthand-pass-invitation
+angle_rationale: |
+  Warmth is cold. The IMAP prefetch found no prior correspondence with this
+  contact under her name, organisation, or email, and the profile records no
+  dated prior conduct with the venue. The channel is LinkedIn plus email, so
+  the connection note goes first.
+
+  The angle is the earned-media segment's own angle: a firsthand-experience
+  pass, not a pitch built around a specific story she should write. Her
+  profile's evidence (wildlife and soft-adventure beat, TravHost co-founding)
+  informs the subject line, where TravHost gives a recipient-specific keyword,
+  but does not enter the body as a claim of shared interest. The message_goal
+  is narrow, a reply accepting a pass for one opening-week show, and nothing
+  in her profile licenses a broader claim than that.
+
+  The challenger's role-play surfaced a real mismatch this angle does not
+  solve: she is based in Bundaberg Central, hours from the venue, and the
+  message gives two days' notice with no travel support. This is a timing and
+  distance problem, not a factual error, so no fact was corrected. It is
+  carried instead into a lower response_likelihood.
+response_likelihood: 20
+a_note: |
+  Firsthand-pass angle, LinkedIn connection note then email, cold (no prior
+  contact), English. Challenger rated reply likelihood at 20%: the contact is
+  hours from the venue in Bundaberg Central, and two days' notice does not
+  give her time to plan family travel down for the pass.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      LinkedIn connection note prepared first per the channel instruction for
+      this contact. Email prepared as the follow-up, to send on acceptance or
+      after five days.
+    messages:
+      - channel: linkedin
+        to: https://linkedin.com/in/fionaharper-travel-cruise-boating-adventure-content-writer
+        body: |
+          Hi Fiona, I'm Priyanka from Historic Rivermill, at Mount Nathan in
+          the Gold Coast hinterland. I have a family pass to our circus
+          season's opening week I'd like to send you. Mind if I connect?
+      - channel: email
+        to: hello@fionaharper.com.au
+        subject: "WANTED – A Cirque Heist: a family pass for TravHost"
+        body: |
+          Hi Fiona,
+
+          I'm Priyanka Das, from Partnerships at Historic Rivermill, a
+          heritage venue at Mount Nathan in the Gold Coast hinterland with a
+          cafe, horse riding and animal experiences on the Coomera River.
+
+          I have a family pass of four held for you to see WANTED – A Cirque
+          Heist, a circus in a big top on our lawn, at any show from this
+          Thursday 24 September to Sunday, the season running to 4 October.
+          The pass is not something we are offering publicly; we hold one for
+          you to see it first. Reply with the show that suits and I will send
+          the booking details. Public tickets are at
+          [eventbrite.com.au](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924).
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        to_note: Sent after the LinkedIn connection is accepted, or after five days if there is no response.
+  - type: review
+    number: 1
+    verdict: DONE
+    in_character: |
+      I'm Fiona Harper, a freelance travel writer down in Bundaberg Central.
+      I've never heard of Historic Rivermill or this Priyanka Das before, cold
+      LinkedIn note first, then this email. It's Tuesday 22 September and
+      she's telling me the first show is this Thursday, with the pass good
+      through Sunday. That's two days' notice, and I'm hours away in
+      Bundaberg. There's no travel or accommodation offer, so getting myself
+      and three family members down to Mount Nathan by Thursday, or even by
+      Sunday, on my own dime and short notice, isn't realistic. If she'd
+      written a week or two out, or offered logistics support, I might have
+      taken it seriously; I do run press trips through TravHost, and a family
+      circus and heritage-farm story could fit Australian Geographic
+      Adventure or a lifestyle outlet. The pitch itself reads fine: no hard
+      sell, no price dangled at me, a clear ask, and a public ticket link so I
+      can see what it looks like without a discount code pushed on me. But the
+      timing kills it. I'd probably reply politely to say the timing doesn't
+      work, or more likely I wouldn't get to it before the window closes.
+    fact_check:
+      - claim: Family pass of four; any show from this Thursday 24 September to Sunday; season running to 4 October.
+        source: Campaign earned-media segment first_ask template, cross-checked against the showtimes file.
+        result: verified
+      - claim: Sender name, role and email (Priyanka Das, Partnerships, partnerships@rivermill.au).
+        source: Campaign YAML sender block.
+        result: verified
+      - claim: Eventbrite link, and absence of any code, price, discount or Oztix link in the first message.
+        source: Campaign YAML usps.opening-week-seats.rests_on.
+        result: verified
+      - claim: Venue description (cafe, horse riding, animal experiences, Coomera River, Mount Nathan hinterland).
+        source: business-overview.md
+        result: verified
+      - claim: "The pass is not something we are offering publicly; we hold one for you to see it first."
+        source: Campaign YAML usps.chosen-not-advertised framing for the earned-media segment.
+        result: verified
+    antifact_check: |
+      Checked against business-antifacts.md: no stone-building or 100-year
+      original-structure claim, no vineyard, no Tamborine Mountain location,
+      no claim on the farming question. None of these appear in the draft.
+    revision_note: |
+      No revision made. The fact-check found no errors, so nothing in the
+      wording changed. The role-play raised a genuine timing and distance
+      mismatch, not a factual one: the segment's first_ask template carries no
+      travel-support variant to draw on, so the concern is reflected in a
+      lower response_likelihood rather than in a rewritten message.
+    notes: Single pass; yield 11 falls in the "yield >= 6, up to 3 passes" band, but the fact-check found nothing to revise, so one pass stands.
+  - type: final
+    chosen_usps: [chosen-not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    messages:
+      - channel: linkedin
+        to: https://linkedin.com/in/fionaharper-travel-cruise-boating-adventure-content-writer
+        body: |
+          Hi Fiona, I'm Priyanka from Historic Rivermill, at Mount Nathan in
+          the Gold Coast hinterland. I have a family pass to our circus
+          season's opening week I'd like to send you. Mind if I connect?
+        actioned_date: null
+        replied_date: null
+      - channel: email
+        to: hello@fionaharper.com.au
+        subject: "WANTED – A Cirque Heist: a family pass for TravHost"
+        body: |
+          Hi Fiona,
+
+          I'm Priyanka Das, from Partnerships at Historic Rivermill, a
+          heritage venue at Mount Nathan in the Gold Coast hinterland with a
+          cafe, horse riding and animal experiences on the Coomera River.
+
+          I have a family pass of four held for you to see WANTED – A Cirque
+          Heist, a circus in a big top on our lawn, at any show from this
+          Thursday 24 September to Sunday, the season running to 4 October.
+          The pass is not something we are offering publicly; we hold one for
+          you to see it first. Reply with the show that suits and I will send
+          the booking details. Public tickets are at
+          [eventbrite.com.au](https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924).
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        to_note: Sent after the LinkedIn connection is accepted, or after five days if there is no response.
+        actioned_date: null
+        replied_date: null
+        reply_summary: null
+fact_provenance:
+  - claim: Venue is at Mount Nathan in the Gold Coast hinterland, with a cafe, horse riding, and animal experiences on the Coomera River.
+    source: business-overview.md
+  - claim: Opening-week shows run Thursday 24 September to Sunday, with the season continuing to 4 October.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: "Public ticket link: https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924"
+    source: campaigns/2026-09-cirque-heist-season.yaml, usps.opening-week-seats.rests_on
+  - claim: Sender name, role and email (Priyanka Das, Partnerships, partnerships@rivermill.au).
+    source: campaigns/2026-09-cirque-heist-season.yaml, sender block
+quality_checklist: |
+  1. YAML structure: root keys drawn from the canonical set; each round has
+     type and number where required; the final round carries one email
+     message and one linkedin message, within the email cap; both addresses
+     (LinkedIn URL, email) are real, not placeholders.
+  2. Coverage: fact_provenance covers every factual claim in the final draft;
+     a_note states angle, channel, warmth and language; chosen_usps present
+     on the draft and final rounds.
+  3. Presupposition test: passed. No sentence tells her something she already
+     knows about herself; the message introduces the sender and the offer.
+  4. Manufactured-connection test: passed. No claim of shared interest is
+     made; her beat and TravHost inform only the subject line's
+     distinguishing keyword, not a body claim.
+  5. Concreteness: passed. "Reply with the show that suits" is answerable in
+     one sentence.
+  6. Band-level pattern check: not applicable to a single-contact file; the
+     opener follows the segment's own first_ask template.
+  7. Final round email cardinality: passed, one email message in the final
+     round.

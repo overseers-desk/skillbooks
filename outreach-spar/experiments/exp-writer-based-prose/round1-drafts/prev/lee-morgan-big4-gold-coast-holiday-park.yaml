@@ -1,0 +1,349 @@
+profile_hash: sha256:9406c03b2bc01168e9e0cd1927019de6285a02bf29644432abbd2d3094a6a2d1
+# Contact: Lee Morgan, General Manager, BIG4 Gold Coast Holiday Park
+# Channel: email
+# Language: en-au
+# Angle: opening-week-desk-preview
+decisions:
+  channel: email
+  channel_detail: |
+    Email only, sent 23 September. The segment's own approach_sequencing
+    names step 1 as "Email on 23 September" with no LinkedIn or phone
+    step; Draft 1 planned a LinkedIn-first sequence with no authority in
+    the campaign, and the challenger flagged that its "5 days if not
+    accepted" fallback risked landing the email after opening week
+    (24-27 September) had ended. Revised to a single email.
+  language: en-au
+  angle: opening-week-desk-preview
+  subsegment: null
+angle_rationale: |
+  Warmth is cold: no IMAP hits for lee.morgan@gcpark.com.au or "BIG4 Gold
+  Coast Holiday Park" across any mailbox, and while the profile records a
+  verbally agreed brochure-swap arrangement between Rivermill and Tyrone
+  Russell-Smith (Entertainment and Activities Manager), that is not Lee
+  Morgan's own dated conduct with us, so it is not named in the message.
+  The opener carries no pretence of a relationship.
+
+  Angle: the segment's rating_rubric names BIG4 Gold Coast Holiday Park
+  directly as its top-tier exemplar on both behavioural fit and guest
+  throughput/dwell time, and Lee Morgan is the verified, named GM, not a
+  departmental inbox. Proximity (14.5 km / 17 min, OSRM) makes a firsthand
+  preview a cheap ask. The three USPs the plan block assigns to this
+  segment, chosen-not-advertised, opening-week-seats, big-top-at-a-
+  heritage-farm, carry the message: a pass held in his name, for any
+  opening-week show, at a circus on a heritage farm.
+
+  Per the campaign's a_author instruction, the first message states
+  today's date and the Thursday opening in its first lines and carries no
+  code and no Eventbrite link; both go only in the reply that confirms
+  the pass. The message does not say or imply the tent needs filling; it
+  frames the pass as a pick, not a favour to us.
+
+  Checked against business-antifacts.md: no stone buildings, no
+  "100-year" buildings, no vineyard claim, and Mount Nathan/foot-of-
+  Tamborine phrasing used rather than "on Tamborine Mountain."
+response_likelihood: 20
+a_note: |
+  Cold, opening-week-desk-preview angle (rubric's top exemplar for
+  behavioural fit and throughput, named GM, 17-minute proximity), en-au,
+  single email on 23 September per the segment's own approach_sequencing.
+  Draft 1's LinkedIn-first plan was dropped on challenger review: no
+  channel authority in the campaign, and its 5-day fallback risked
+  landing the email after opening week ended. Revised challenger
+  role-play put reply odds at 20%: a GM reads a two-day-notice ask from
+  an unknown sender as low-risk but operational, and is more likely to
+  forward it to an activities lead than reply personally.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      A1 draft. Planned a two-piece LinkedIn-then-email sequence on the
+      strength of the roster carrying a LinkedIn URL; the email deferred
+      to "after connection acceptance or 5 days." First message
+      deliberately omits the code and the Eventbrite link per the
+      campaign's a_author instruction; the ask is only a reply naming a
+      show.
+    messages:
+      - channel: linkedin_connection
+        text: |
+          Hi Lee, I'm Priyanka Das from the partnerships team at Historic
+          Rivermill in Mount Nathan. We're opening a family circus in a
+          big top this week and I have a pass held for your desk to see
+          it before we ask you to recommend it to guests. Keen to connect
+          and send the details.
+      - channel: email
+        to: lee.morgan@gcpark.com.au
+        subject: "A family pass for BIG4 Gold Coast Holiday Park: Cirque Heist opens Thursday"
+        body: |
+          Dear Lee,
+
+          I'm Priyanka Das, from the partnerships team at Historic
+          Rivermill, a heritage riverside venue at Mount Nathan in the
+          Gold Coast hinterland, about 15 kilometres from your park.
+
+          A family circus, WANTED – A Cirque Heist, opens in a big top on
+          our lawn this Thursday, 24 September, and runs through to
+          Sunday, 4 October, with evening shows on Fridays and Saturdays
+          as well as daytime sessions. These seats are not sold to the
+          public. Each opening-week performance goes to a small number of
+          organisations we have chosen ourselves, and BIG4 Gold Coast
+          Holiday Park is one of them.
+
+          I have a family pass of four held in your name for one of the
+          opening-week shows, so your desk can see it firsthand before
+          recommending it to families staying with you.
+
+          Reply with the show that suits and I will send the booking
+          details.
+
+          Best regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        to_note: |
+          Sent after the LinkedIn connection is accepted, or after 5
+          days if it is not.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      I don't know these people. Priyanka Das, Historic Rivermill, Mount
+      Nathan, never heard of it, never dealt with this venue before. A
+      LinkedIn connection request cold, then an email two days later,
+      telling me a family pass is "held in my name" for a show that opens
+      this Thursday.
+
+      Today's Tuesday, 22 September. The show opens Thursday, 24
+      September, two days out. The email says it goes out after I accept
+      the connection request, or after 5 days if I don't. Five days from
+      now is 27 September, the middle of the very run they're inviting me
+      to see before I recommend it. If I don't touch LinkedIn quickly,
+      this email lands after opening week is basically over. That's a
+      real problem with the mechanics of what they're asking, not just my
+      scepticism.
+
+      Setting that aside: a warm, specific note naming my park by name
+      and saying seats aren't sold to the public is more credible than a
+      generic marketing blast. It doesn't ask me for money, doesn't push
+      a code on me, just asks which night suits. Fifteen minutes' drive
+      is close enough that "come see it yourself" is a real, cheap ask,
+      not a favour. I run a 300-plus site park with families who want
+      exactly this kind of hinterland day out in winter, so the category
+      fits what my guests already ask for.
+
+      But I'm the GM, not the desk that recommends day trips to guests,
+      that's more Tyrone's territory, or reception. I might read this and
+      just forward it to my activities team rather than reply personally.
+      Whether I reply myself, at all, in a two-day window depends heavily
+      on whether I even open a cold LinkedIn connect from a stranger
+      promptly, which most GMs don't.
+    fact_check:
+      - claim: Season opens Thursday 24 September and runs to Sunday 4 October.
+        source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md; historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: Evening shows on Fridays and Saturdays, daytime sessions on the other days.
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: These seats aren't on sale; the organisation was picked by name.
+        source: campaign usps.chosen-not-advertised
+        result: verified
+      - claim: A family pass of four held in the recipient's name.
+        source: campaign segments.accommodation-referral.first_ask
+        result: verified
+      - claim: Sender identity, Priyanka Das, Partnerships, partnerships@rivermill.au.
+        source: campaign sender block
+        result: verified
+      - claim: LinkedIn-first, then email after acceptance or 5 days.
+        source: campaign channel definitions
+        result: error
+        correction: |
+          The campaign defines only email as primary channel and phone as
+          secondary; no LinkedIn channel exists for this campaign. The
+          accommodation-referral segment's own approach_sequencing names
+          step 1 as "Email on 23 September," with no LinkedIn step. Drop
+          the LinkedIn note and the acceptance/5-day gate; send the email
+          directly on 23 September.
+    antifact_check: |
+      No stone-building, 100-year/original-mill, vineyard, or "on
+      Tamborine Mountain" claims present. Checked against
+      business-antifacts.md.
+    revision_note: |
+      Removed the LinkedIn connection note and the acceptance/5-day
+      email-timing rule, both unauthorised by the campaign and, per the
+      challenger, liable to land the email after opening week ended.
+      Retained the email body unchanged; it had already tested clean on
+      substance. Sequenced as a single email on 23 September per the
+      segment's approach_sequencing.
+    notes: Challenger estimated reply likelihood at 35% under the (unauthorised) two-piece plan.
+  - type: draft
+    number: 2
+    chosen_usps: [chosen-not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      A1 revision. Single email, sent 23 September, per the segment's
+      approach_sequencing. Body unchanged from Draft 1's email.
+    messages:
+      - channel: email
+        to: lee.morgan@gcpark.com.au
+        subject: "A family pass for BIG4 Gold Coast Holiday Park: Cirque Heist opens Thursday"
+        body: |
+          Dear Lee,
+
+          I'm Priyanka Das, from the partnerships team at Historic
+          Rivermill, a heritage riverside venue at Mount Nathan in the
+          Gold Coast hinterland, about 15 kilometres from your park.
+
+          A family circus, WANTED – A Cirque Heist, opens in a big top on
+          our lawn this Thursday, 24 September, and runs through to
+          Sunday, 4 October. Evening shows run on Fridays and Saturdays,
+          alongside daytime sessions on the other days. These seats are
+          not sold to the public. Each opening-week performance goes to a
+          small number of organisations we have chosen ourselves, and
+          BIG4 Gold Coast Holiday Park is one of them.
+
+          I have a family pass of four held in your name for one of the
+          opening-week shows, so your desk can see it firsthand before
+          recommending it to families staying with you.
+
+          Reply with the show that suits and I will send the booking
+          details.
+
+          Best regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+  - type: review
+    number: 2
+    verdict: DONE
+    in_character: |
+      Cold email, first thing I'd notice: I don't know Historic Rivermill,
+      and I don't know a Priyanka Das. My desk gets a dozen of these a
+      week, someone with a "family pass" wanting my park to funnel guests
+      their way. Except this one is oddly specific and doesn't ask me for
+      anything upfront: no flyer request, no rate card, no discount code
+      to distribute. It reads like a genuine heads-up rather than a
+      pitch, which is unusual enough that I'd actually read past the
+      first line.
+
+      The timing gives me pause. It's Tuesday, the first show is
+      Thursday, and I'm asked to reply with which show suits before I
+      even know what's involved beyond a name and dates. That's a
+      two-day turnaround to look at something I've never heard of, decide
+      it's worth my desk's time, and commit to naming a show. With my GM
+      hat on I'd probably forward this to whoever handles activities and
+      entertainment recommendations rather than deal with it myself,
+      since replying with a specific date is an operational decision, not
+      a strategic one. It's plausible in the time window, I don't need to
+      book anything, just pick a day, but it's not something I'd action
+      same-day.
+
+      The "we've chosen you, not sold to the public" framing is
+      flattering but also a bit of a soft-sell tell. It's designed to
+      make me feel special rather than tell me why my guests would
+      actually want this. Fifteen minutes from the park, family circus,
+      school holidays, that part tracks with what my guests are after in
+      winter and shoulder season. If I bite, it's low-risk: no money
+      changes hands, no commitment beyond picking a date.
+
+      Realistically, at GM level, this either gets forwarded to my
+      activities and entertainment lead or sits in my inbox until it goes
+      stale. A two-day-notice ask from an unknown sender rarely gets my
+      personal reply.
+    fact_check:
+      - claim: Opens in a big top this Thursday, 24 September, runs through to Sunday, 4 October.
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: Evening shows on Fridays and Saturdays, daytime sessions on the other days.
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: These seats are not sold to the public; each opening-week performance goes to a small number of chosen organisations.
+        source: campaign usps.chosen-not-advertised
+        result: verified
+      - claim: A family pass of four held in the recipient's name for one of the opening-week shows.
+        source: campaign usps.opening-week-seats; segments.accommodation-referral.first_ask
+        result: verified
+      - claim: Reply with the show that suits; no code, no price, no Oztix or Eventbrite link, no suggestion seats are unsold.
+        source: prompt_appendices.a_author; campaign usps.opening-week-seats (code sent in reply only)
+        result: verified
+      - claim: Mount Nathan in the Gold Coast hinterland.
+        source: business-overview.md; business-antifacts.md
+        result: verified
+    antifact_check: |
+      No stone-building, 100-year/original-mill, vineyard, or "on
+      Tamborine Mountain" claims present. Checked against
+      business-antifacts.md.
+    revision_note: No changes; Draft 2's email carried forward as final.
+    notes: Challenger estimated reply likelihood at 20% for the single-email plan.
+  - type: final
+    chosen_usps: [chosen-not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: lee.morgan@gcpark.com.au
+        subject: "A family pass for BIG4 Gold Coast Holiday Park: Cirque Heist opens Thursday"
+        body: |
+          Dear Lee,
+
+          I'm Priyanka Das, from the partnerships team at Historic
+          Rivermill, a heritage riverside venue at Mount Nathan in the
+          Gold Coast hinterland, about 15 kilometres from your park.
+
+          A family circus, WANTED – A Cirque Heist, opens in a big top on
+          our lawn this Thursday, 24 September, and runs through to
+          Sunday, 4 October. Evening shows run on Fridays and Saturdays,
+          alongside daytime sessions on the other days. These seats are
+          not sold to the public. Each opening-week performance goes to a
+          small number of organisations we have chosen ourselves, and
+          BIG4 Gold Coast Holiday Park is one of them.
+
+          I have a family pass of four held in your name for one of the
+          opening-week shows, so your desk can see it firsthand before
+          recommending it to families staying with you.
+
+          Reply with the show that suits and I will send the booking
+          details.
+
+          Best regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+    replies: []
+fact_provenance:
+  - claim: The season opens Thursday 24 September in a big top on the lawn at Mount Nathan and runs through to Sunday 4 October.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md; historicrivermill.au/data/circus.yaml
+  - claim: Evening shows run on Fridays and Saturdays, alongside daytime sessions on the other days.
+    source: historicrivermill.au/data/circus.yaml
+  - claim: These seats are not sold to the public; the organisation was picked by name.
+    source: campaign usps.chosen-not-advertised
+  - claim: A family pass of four held in the recipient's name, for any of the opening-week shows, with no code or link in the first message.
+    source: campaign usps.opening-week-seats; prompt_appendices.a_author
+  - claim: Historic Rivermill is a heritage riverside venue at Mount Nathan in the Gold Coast hinterland.
+    source: business-overview.md; business-antifacts.md
+  - claim: BIG4 Gold Coast Holiday Park is about 15 kilometres, 17 minutes' drive, from Rivermill.
+    source: spar-campaigns/segments/accommodation-referral/lee-morgan-big4-gold-coast-holiday-park.md, "Institutional context" (OSRM, 14.5 km / 17 min)
+  - claim: Lee Morgan is the General Manager of BIG4 Gold Coast Holiday Park.
+    source: spar-campaigns/segments/accommodation-referral/lee-morgan-big4-gold-coast-holiday-park.md, "Current role"
+quality_checklist: |
+  1. YAML structure: root keys drawn from §6's canonical set; every round
+     has type and number; final round carries exactly one email message;
+     no placeholder addresses.
+  2. Coverage: fact_provenance covers every factual claim in the final
+     draft; a_note states angle, channel, warmth, language; chosen_usps
+     set on draft and final rounds.
+  3. Presupposition test: no sentence tells the recipient something they
+     already know about themselves; no reference to the Tyrone
+     Russell-Smith arrangement, since it is not Lee Morgan's own dated
+     conduct with us.
+  4. Manufactured-connection test: proximity, rubric standing, and named
+     decision-maker all trace to the profile's "Relevance assessment";
+     no invented shared interest.
+  5. Concreteness: the ask, "reply with the show that suits," is
+     answerable in one sentence.
+  6. Band-level pattern check: not yet applicable; this is not the first
+     contact drafted in the accommodation-referral band, but the opener
+     (self-introduction, then the concrete ask, then supporting detail)
+     is not a copy of the Dorsett draft's day-trip-guide angle, and uses
+     a different concrete hook (rubric exemplar, proximity) rather than a
+     shared template.
+  7. Final-round email cardinality: one email message in the final round;
+     within the cap.

@@ -66,11 +66,15 @@ Scored blind: one reader, 25 letters as plain subject and body under random name
 
 Paired on the two contacts present in all five arms, nowhere counts: seniors club 6 / 3 / 3 / 2 / 7; playgroup 5 / 4 / 3 / 4 / 4 (none / placebo / m1 / m2 / m12).
 
-Method 1 is lowest or equal-lowest on both paired contacts and beats the placebo, so its effect is not mere priming. Four or five messages per arm separates nothing statistically and the direction is all this supports.
+On the playgroup, method 1 is lowest. On the seniors club it ties the placebo at 3 and sits above method 2 at 2. So the honest reading is that method 1 is lowest on one paired contact and equal-to-placebo on the other, not lowest on both. Four or five messages per arm separates nothing statistically, and no arm here is shown to beat the placebo.
 
 ### Why the composed arm is not a test of the composition
 
-In m1+m12 the challenger returned DONE at pass 1 on four of four drafts. No revision ran, so the author never saw a single score. Its numbers describe a first draft under a guard whose author-side half never fired. Method 2 alone went to revision on four of five, so its author step did fire.
+In the composed arm the challenger returned DONE at pass 1 on four of four drafts. No revision ran, so the author never saw a single score. Its numbers describe a first draft under a guard whose author-side half never fired.
+
+Method 1 is only half-tested for the same reason. Its cost logs show two of five contacts revised (one contact at two revisions, one at one) and the rest settled at the first pass, one of them with no challenger pass recorded at all. So its author-side rule, which says to cut a sentence rather than introduce the thing it names, fired on two letters of five.
+
+Method 2 alone went to revision on four of five, so its author step did fire. That is the one arm whose author-side instruction was properly exercised, and it scores worst of the three on the reader's surprise measure.
 
 ## What survived every arm
 
@@ -108,8 +112,8 @@ Round 1 was first scored by a different agent per arm. Their rubrics drifted: on
 
 - **Fable is quota-limited.** All five Fable arms failed at the author call with "You've reached your Fable limit"; three produced nothing at all. The model axis is unmeasured, not negative.
 - **The harness has no author-model setting.** `vendor/coachman-1.13.tm` hardcodes `--model sonnet` for any call that passes none, and the A-phase author calls pass none (`harness-1.0.tm:212, :283`), so `ANTHROPIC_MODEL` is overridden. Round 2 used a copied tree with that one line reading `SPAR_AUTHOR_MODEL`. The office belief that "A runs on Opus" was not true of any run before this.
-- **Three of 25 Opus drafting calls were refused** by a safety classifier, twice on retry for two of them. Same contacts, different arms.
-- **Two approach files of the reused Sonnet baseline would not parse**, so that row rests on three messages of five. Both carried an unquoted colon inside a value. The same fault appeared in four round-1 drafts and in the campaign file itself, where the Tcl loader tolerates it and a strict parser does not.
+- **Three of 25 Opus drafting calls were refused** by a safety classifier, with the message that Opus 5's safeguards flagged the prompt. They account for exactly the three missing cells: the men's shed in method 1, the magazine in the composed arm, both refused again on retry, and the retirement village in method 2, whose retry succeeded after the blind extraction had already run, so its letter exists in `round2-drafts/` but not in the scored set.
+- **Two approach files of the reused Sonnet baseline would not parse**, so that row rests on three messages of five. Both carried an unquoted colon inside a value, as did four other round-1 drafts and the campaign file itself. The Tcl loader tolerates it and a strict parser does not, so `validate_approach` passes a file that later tooling cannot read. An approach file that will not parse is a letter lost with no error raised at the time, which is worth its own issue against the harness rather than a line here.
 - **Cost:** about $186 for round 2, of which about $64 went on the blocked Fable arms.
 - **Worktrees are safe** for parallel arms: nothing in the libraries hardcodes a repo path, the workdir is per-process, the logs directory slugs the campaign path, and `--control-port=0` avoids the one port. They need `--force` to remove, since the harness patches roster TSVs in place.
 
@@ -120,4 +124,7 @@ Round 1 was first scored by a different agent per arm. Their rubrics drifted: on
 - [blind.py](blind.py) — extract each approach file's final message to a plain-text file under a random name, key written beside it.
 - [scores-round2.tsv](scores-round2.tsv), [key-round2.json](key-round2.json) — the blind scores and the arm key.
 
-The drafts themselves are not in this repo. Round 2's 25 letters and their approach files sat in the session scratchpad and the run logs are under `/var/local/log/spar/` in folders naming the arm and timestamp; both are ephemeral. A repeat should copy the approach files into the experiment folder as it goes.
+- `round1-drafts/`, `round2-drafts/` — every approach file both rounds produced, one folder per arm.
+- `round2-blind/` — the 25 letters exactly as the scoring reader saw them, subject and body, random names.
+
+Round 1's per-message scores are gone. They were reported by five separate agents under drifting rubrics and were never written to a file, which is why the round-1 table should be read as a record that a run happened rather than as a result. Its drafts survive in `round1-drafts/`, so it can be rescored under one rubric if anyone wants a comparable number. The harness run logs are under `/var/local/log/spar/` in folders naming the arm and timestamp, and are not copied here.

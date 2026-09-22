@@ -1,0 +1,176 @@
+profile_hash: sha256:9ca52930d0880b11d0d1c52eb7c2af861bc5438eb4a4c45dcf52be2d4aa3f70d
+# Contact: Helen Parnell, Secretary, Beaudesert Probus Club
+# Channel: email + phone
+# Language: en
+# Angle: club-already-circulates
+
+decisions:
+  channel: email
+  channel_detail: Email first. Phone follow-up next morning if no reply, per the campaign's approach_sequencing.
+  language: en
+  angle: club-already-circulates
+
+angle_rationale: |
+  The profile's strongest evidence is that Beaudesert Probus already runs the mechanism this offer needs. A dated 2025 bus trip (the Beaudesert Tramway line) shows the club organises group outings. A live Facebook page and a monthly meeting with a guest-speaker slot show it has a working channel to members. That licenses nothing-to-organise concretely: this club is already equipped to pass something on, not being asked to build the capability from scratch. chosen-not-advertised and big-top-at-a-heritage-farm add the picture and the reason these seats are not a discount code. group-visit-later is offered as the secondary path, since the bus-trip evidence shows this club already plans outings, so a week's more notice for a proper group visit is a real fit rather than a generic add-on.
+
+  Warmth is cold. IMAP search across every mailbox found no prior correspondence with beauyprobus@gmail.com or with Helen Parnell or Beaudesert Probus Club by name. The profile records the club's own dated conduct with Probus generally, not any prior dealing with Rivermill, so there is no earlier touchpoint to name.
+
+  Two open items sit outside drafting and belong to the human reviewer. The contact name "Helen Parnell" rests on a single uncorroborated directory listing. Three different phone numbers were found across sources with none confirmed; the roster's 0417 794 873 is used because it is the number of record, and the phone script carries a caution note about the other two.
+
+response_likelihood: 70
+a_note: Angle club-already-circulates (nothing-to-organise, chosen-not-advertised, big-top-at-a-heritage-farm, group-visit-later). Channel email + phone. Warmth cold, no prior correspondence found. Language en. Challenger verdict DONE, no revisions; response_likelihood 70% reflects a strong, low-friction ask to an organisation with demonstrated capacity to circulate it, offset by cold warmth and unresolved contact-detail uncertainty.
+
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm, group-visit-later, credentials-on-request]
+    notes: A1 draft, written to the profile's outings-and-channel evidence and the campaign's cold-open rules (no code, no price, no "unsold seats" framing).
+    messages:
+      - channel: email
+        to: beauyprobus@gmail.com
+        subject: Free circus seats for Beaudesert Probus, this week only
+        body: |
+          Hi Helen,
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, the heritage riverside venue at Mount Nathan. We've got a family circus, WANTED – A Cirque Heist, opening in a big top on our lawn this Thursday 24 September and running through to Sunday 27th.
+
+          I have free opening-week seats set aside for Beaudesert Probus Club, for your members and their grandchildren to use. They're not on sale anywhere, the club was picked by name from the local groups we wanted to have in for opening week. The daytime sessions in that window are Thursday at 1:00pm and Sunday at 11:00am and 2:00pm.
+
+          If that suits, reply and let me know roughly how many, and I'll send you the booking code and link to pass on to your members. They're for the club's own people to book, not for posting publicly.
+
+          If the committee would rather bring a group out properly, the week after opening suits that better. Tell me a day and I'll come back to you on holding seats.
+
+          Happy to send our public liability details and the operator's insurance if that helps you put it to the committee.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        director_note: Contact name and role rest on a single uncorroborated directory citation (profile p_note). Reasonable confidence, not independently verified.
+      - channel: phone
+        to: "0417 794 873"
+        text: Follow-up call, next morning, if no email reply. Two other phone numbers were found for this contact elsewhere and left unresolved (profile p_note); verify recognition early in the call.
+        script:
+          - point: Opening
+            text: "Hi, is that Beaudesert Probus Club? My name's Priyanka, I'm calling from Historic Rivermill at Mount Nathan. I emailed yesterday about some free circus tickets for your members this week."
+          - point: Confirm the ask
+            text: "We've got a family circus in a big top on our lawn, opening tomorrow through Sunday, and I've set aside some free seats for your club to hand out to members and grandchildren. No cost, just need a rough headcount from you so I know how many to hold."
+          - point: If they didn't see the email
+            text: "No problem, I can read you the details now, or resend it while we're talking."
+          - point: Close
+            text: "If a number works for you today or tomorrow, I'll send the booking code straight through."
+        phone_note: Number is the roster's number of record. Two other numbers found for this contact elsewhere remain unconfirmed (profile p_note).
+
+  - type: review
+    number: 1
+    verdict: DONE
+    in_character: |
+      Reads as addressed to her club specifically, not a mass blast, since the club is named correctly and the address matches the club's own Facebook contact block. Two days' notice is short, but the ask is only to forward a code, not to organise anything, which eases that concern. The unprompted offer of public liability details reads as a proper business, not a pressure sell. Would likely reply, at minimum to ask a question, rather than let it go unanswered.
+    fact_check:
+      - claim: Season opens Thursday 24 September, runs through Sunday 27th.
+        source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md; historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: Daytime sessions Thursday 1:00pm, Sunday 11:00am and 2:00pm.
+        source: historicrivermill.au/data/circus.yaml (2026-09-24T13:00, 2026-09-27T11:00, 2026-09-27T14:00)
+        result: verified
+      - claim: Free seats not on sale anywhere; the same shows sell at full price elsewhere.
+        source: campaign.yaml usps.chosen-not-advertised
+        result: verified
+      - claim: The club was picked by name.
+        source: campaign.yaml usps.chosen-not-advertised rests_on
+        result: verified
+      - claim: Code and Eventbrite link withheld from the first message, sent only in reply.
+        source: campaign.yaml usps.opening-week-seats rests_on; prompt_appendices.a_author
+        result: verified
+      - claim: Tickets framed as for the club's own people, not for public posting.
+        source: campaign.yaml prompt_appendices.a_author
+        result: verified
+      - claim: A group visit can be arranged for the week after opening.
+        source: campaign.yaml usps.group-visit-later
+        result: verified
+      - claim: Public liability and operator insurance sent on request.
+        source: campaign.yaml usps.credentials-on-request
+        result: verified
+      - claim: Sender identity, Priyanka Das, Partnerships, partnerships@rivermill.au.
+        source: campaign.yaml sender block
+        result: verified
+      - claim: Venue described as a heritage riverside venue at Mount Nathan.
+        source: business-overview.md
+        result: verified
+        note: Checked against business-antifacts.md. No stone-building, 100-year-old-building, vineyard, or Tamborine Mountain claim present.
+      - claim: Phone number 0417 794 873, with a caution that two other numbers were found for this contact.
+        source: spar-campaigns/segments/seniors-club/beaudesert-probus-club.md p_note
+        result: verified
+        note: Profile leaves three conflicting numbers unresolved and does not correct the roster value; the caution is carried into the phone_note rather than into the script text itself.
+    antifact_check: Checked against business-antifacts.md. No stone-building, 100-year-old-building, vineyard, or Tamborine Mountain claim in either message.
+    revision_note: No revisions. The challenger's pointing list found no unresolved presuppositions, and the fact-check found no errors.
+    notes: Challenger reply estimate 70%, carried into response_likelihood.
+
+  - type: final
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm, group-visit-later, credentials-on-request]
+    messages:
+      - channel: email
+        to: beauyprobus@gmail.com
+        subject: Free circus seats for Beaudesert Probus, this week only
+        body: |
+          Hi Helen,
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, the heritage riverside venue at Mount Nathan. We've got a family circus, WANTED – A Cirque Heist, opening in a big top on our lawn this Thursday 24 September and running through to Sunday 27th.
+
+          I have free opening-week seats set aside for Beaudesert Probus Club, for your members and their grandchildren to use. They're not on sale anywhere, the club was picked by name from the local groups we wanted to have in for opening week. The daytime sessions in that window are Thursday at 1:00pm and Sunday at 11:00am and 2:00pm.
+
+          If that suits, reply and let me know roughly how many, and I'll send you the booking code and link to pass on to your members. They're for the club's own people to book, not for posting publicly.
+
+          If the committee would rather bring a group out properly, the week after opening suits that better. Tell me a day and I'll come back to you on holding seats.
+
+          Happy to send our public liability details and the operator's insurance if that helps you put it to the committee.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+        reply_summary: null
+      - channel: phone
+        to: "0417 794 873"
+        text: Follow-up call, next morning, if no email reply.
+        script:
+          - point: Opening
+            text: "Hi, is that Beaudesert Probus Club? My name's Priyanka, I'm calling from Historic Rivermill at Mount Nathan. I emailed yesterday about some free circus tickets for your members this week."
+          - point: Confirm the ask
+            text: "We've got a family circus in a big top on our lawn, opening tomorrow through Sunday, and I've set aside some free seats for your club to hand out to members and grandchildren. No cost, just need a rough headcount from you so I know how many to hold."
+          - point: If they didn't see the email
+            text: "No problem, I can read you the details now, or resend it while we're talking."
+          - point: Close
+            text: "If a number works for you today or tomorrow, I'll send the booking code straight through."
+        phone_note: Number is the roster's number of record. Two other numbers found for this contact elsewhere remain unconfirmed (profile p_note).
+
+fact_provenance:
+  - claim: Season opens Thursday 24 September, runs through Sunday 27th, seven opening-week shows.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: Daytime sessions Thursday 1:00pm, Sunday 11:00am and 2:00pm.
+    source: historicrivermill.au/data/circus.yaml
+  - claim: Free opening-week seats are not offered to the public at any price and were chosen by organisation name.
+    source: campaigns/2026-09-cirque-heist-season.yaml usps.chosen-not-advertised
+  - claim: Code and Eventbrite link are sent only after the recipient replies.
+    source: campaigns/2026-09-cirque-heist-season.yaml usps.opening-week-seats, prompt_appendices.a_author
+  - claim: A group visit can be arranged for the week after opening, subject to the manager's allocation.
+    source: campaigns/2026-09-cirque-heist-season.yaml usps.group-visit-later
+  - claim: Public liability and operator insurance are available on request.
+    source: campaigns/2026-09-cirque-heist-season.yaml usps.credentials-on-request
+  - claim: Sender name, role, organisation and email address.
+    source: campaigns/2026-09-cirque-heist-season.yaml sender block
+  - claim: Venue description as a heritage riverside venue at Mount Nathan.
+    source: business-overview.md
+  - claim: Club's demonstrated outings mechanism and active member-communication channel.
+    source: spar-campaigns/segments/seniors-club/beaudesert-probus-club.md (Mechanism evidence section)
+  - claim: Contact phone number and the unresolved conflict across three sources.
+    source: spar-campaigns/segments/seniors-club/beaudesert-probus-club.md p_note
+
+quality_checklist: |
+  1. YAML structure self-check: root keys drawn from the §6 canonical set; both draft and review rounds carry type and number; the final round has exactly one channel: email message plus one phone message; no placeholder addresses. Passed.
+  2. Coverage and completeness: fact_provenance covers every factual claim in the final draft; a_note states angle, channel, warmth and language. Passed.
+  3. Presupposition test: A2's pointing list found no unresolved "nowhere" cases. Passed.
+  4. Manufactured-connection test: every claim of fit (outings capacity, member channel) traces to the profile's dated bus-trip and Facebook evidence, not to an invented interest. Passed.
+  5. Concreteness: the ask (reply with a rough member count) is answerable in one sentence. Passed.
+  6. Band-level pattern check: single-contact file, not applicable at this stage; deferred to the band-level review after this band is drafted.
+  7. Final round email cardinality: one email message in the final round, one phone message. Passed.

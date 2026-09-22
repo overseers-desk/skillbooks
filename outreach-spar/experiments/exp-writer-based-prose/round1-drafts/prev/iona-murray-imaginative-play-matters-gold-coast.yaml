@@ -1,0 +1,246 @@
+profile_hash: sha256:1a17971d61577e223fe21d908d1e2f02f9017fa1c7914c5e35374f8d5dab6b0f
+# Contact: Iona Murray | Imaginative Play Matters Gold Coast | mothers-group
+# Channel: email + phone
+# Language: en-au
+# Angle: chosen-not-advertised, nothing-to-organise, big-top-at-a-heritage-farm, group-visit-later
+decisions:
+  channel: email
+  channel_detail: Email primary; phone follow-up if no reply by Wednesday 23 September (campaign secondary_channel, wait_days 1, condition no_reply).
+  language: en-au
+  angle: chosen-not-advertised, nothing-to-organise, big-top-at-a-heritage-farm, group-visit-later
+angle_rationale: |
+  Iona Murray's profile records no personal public statements and explicitly notes that
+  farm visits or Rivermill are absent from her public content, so the angle rests on
+  documented facts rather than invented shared interest. Play Matters Gold Coast runs
+  free, register-to-attend sessions for babies, toddlers and pre-prep at The Well, and
+  has a demonstrated appetite for outdoor family events (an Easter BBQ at Abraham Park,
+  a Children's Week event drawing 75+ attendees). That supports the mothers-group
+  segment's standard USP set: chosen-not-advertised (the organisation was picked by
+  name), nothing-to-organise (she forwards to her own families, nothing to arrange in
+  two days' notice), and big-top-at-a-heritage-farm (the setting). group-visit-later is
+  offered as the fallback for anyone who would rather bring a proper group the following
+  week. The offer stays contained to Imaginative Play Matters' own families: although the
+  profile notes Iona coordinates a wider hub across Northern, Central and Southern Gold
+  Coast and the Scenic Rim, the campaign's nothing-to-organise USP restricts the code to
+  the recipient organisation's own members and families, so the message does not invite
+  her to pass it to other coordinators in her network.
+response_likelihood: 60
+a_note: |
+  Angle: chosen-not-advertised + nothing-to-organise + big-top-at-a-heritage-farm,
+  with group-visit-later as fallback. Channel: email first, phone follow-up if no
+  reply by 23 September. Warmth: prior contact (an unanswered March 2026 email from
+  partnerships@rivermill.au, found in the admin-rivermill-au mailbox; not recorded in
+  the profile, which only tracks the contact's own conduct). Language: en-au.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, big-top-at-a-heritage-farm, group-visit-later]
+    notes: |
+      Warmth assessed as prior contact from the dispatcher's courier prefetch: one
+      email, partnerships@rivermill.au to imurray@playmatters.org.au, 2026-03-31,
+      "Historic Rivermill: complimentary visit for Gold Coast playgroup coordinators",
+      no reply found. Six months old and off-topic for the circus offer, so per
+      SPAR-A §4.1.1 this opens on a fresh subject rather than a thread reply.
+    messages:
+      - channel: email
+        to: imurray@playmatters.org.au
+        subject: Free circus tickets for Imaginative Play Matters families
+        body: |
+          Hi Iona,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, a heritage
+          riverside venue at Mount Nathan in the Gold Coast hinterland. We wrote to
+          you in March about a complimentary visit for Gold Coast playgroup
+          coordinators; I don't think that one went anywhere.
+
+          Today is Tuesday 22 September, and a family circus, WANTED – A Cirque
+          Heist, opens in a big top on our lawn this Thursday 24 September and runs
+          through Sunday 27 September. The opening-week seats aren't on sale. We're
+          giving them to a handful of local groups, and I picked Imaginative Play
+          Matters.
+
+          I have a code that makes tickets free at any of the seven shows. Reply
+          and I'll send it with the booking link, for you to pass around your own
+          playgroup families. It's for your families, not for posting publicly.
+
+          If a proper group visit the following week would suit better, tell me a
+          day and I'll ask our manager about holding seating.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: phone
+        to: "1800 007 529"
+        text: Follow-up call if no email reply by Wednesday 23 September.
+        script:
+          - point: Opening
+            text: "Hi, is that Iona? This is Priyanka calling from Historic Rivermill, out at Mount Nathan. I emailed yesterday about some free circus tickets for Imaginative Play Matters families, wanted to check it landed."
+          - point: If she hasn't seen it
+            text: "No trouble, I'll give you the short version. We've got a family circus opening in a big top here this Thursday, and we're setting aside free opening-week seats for a handful of local groups, yours included. I can send you a code, no cost to the programme, for your families to book whichever show suits them."
+          - point: Ask
+            text: "Would that be worth passing on to your families? If so I'll send the code and the link straight through. And if a proper group visit the week after would suit better, I can hold seats for that too, just tell me a day."
+          - point: Close
+            text: "I'll follow that up by email either way. Thanks, Iona."
+        phone_note: Wait one day per campaign secondary_channel (wait_days 1, condition no_reply).
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      I'm Iona Murray, Program Coordinator at Play Matters Gold Coast. An email
+      lands from someone called Priyanka Das at "Historic Rivermill", never heard
+      of them, never heard of her. First line: "We wrote to you in March about a
+      complimentary visit for Gold Coast playgroup coordinators; I don't think
+      that one went anywhere." That stops me. I don't remember any March email
+      from a circus/heritage farm outfit, and nothing in my inbox history rings a
+      bell. It reads presumptuous, implying a relationship I don't recognise, and
+      my first instinct is mild suspicion, not warmth: did I miss something, or is
+      this a line dropped into a cold email to sound familiar?
+
+      Setting that aside, the actual offer is easy to parse: free circus tickets
+      for my playgroup families, opening this Thursday through Sunday, a code on
+      request. That part's plausible and appealing. I do run outdoor family events
+      (Easter BBQ, Children's Week), so a free circus slot is exactly the kind of
+      thing I'd forward to my network. The timing is tight though: today's
+      Tuesday, the show opens Thursday. That's two days' notice to circulate to
+      dozens of playgroup coordinators. Doable for a forward-the-code email, less
+      doable if she expects me to organise anything. She's offering the low-effort
+      version, which is the only version that could work in this window.
+
+      The phone follow-up script, if it comes, would probably land fine, friendly,
+      not pushy, but I'd still be turning over that unexplained "March"
+      reference. Given the short notice and unfamiliarity with the sender, but the
+      genuine appeal of free family tickets and no work required on my part, I'd
+      likely reply to at least ask what the March contact was about and see the
+      link.
+
+      REPLY_PCT: 55
+    fact_check:
+      - claim: "We wrote to you in March about a complimentary visit for Gold Coast playgroup coordinators; I don't think that one went anywhere."
+        source: Iona Murray's profile document (no prior-contact record) and campaign YAML a_author appendix
+        result: flagged
+        note: |
+          The challenger found no support in the profile, which is correct: the
+          profile only records the contact's own conduct, not our outreach
+          history, and A2 step 1 runs on profile plus draft only. The claim itself
+          is true: the dispatcher's courier prefetch surfaced a real email,
+          partnerships@rivermill.au to imurray@playmatters.org.au, 2026-03-31,
+          "Historic Rivermill: complimentary visit for Gold Coast playgroup
+          coordinators", in the admin-rivermill-au mailbox, no reply found. The
+          campaign's a_author appendix separately requires naming an unanswered
+          prior email found by the prefetch. What the role-play correctly caught
+          was tone, not fact: commenting on her silence read as presumptuous to a
+          reader with no memory of the email.
+        correction: |
+          Dropped "I don't think that one went anywhere." Kept the fact that we
+          emailed in March and named the topic, without commentary on the lack of
+          reply.
+      - claim: Sender name, role, organisation and email
+        source: campaign YAML sender block (Priyanka Das, Partnerships, Historic Rivermill, partnerships@rivermill.au)
+        result: verified
+      - claim: Circus opens in a big top on the lawn, Thursday 24 September, runs through Sunday 27 September
+        source: campaign YAML header (opening week Thursday 24-Sunday 27 September, seven shows); plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+        result: verified
+      - claim: Opening-week seats aren't on sale; given to a handful of local groups
+        source: campaign YAML usps.chosen-not-advertised
+        result: verified
+      - claim: A code makes tickets free at any of the seven shows, sent in the reply with the booking link
+        source: campaign YAML usps.opening-week-seats and usps.nothing-to-organise
+        result: verified
+        note: No code string, price or Eventbrite link named in the first message, consistent with the rule that the code goes only in the reply.
+      - claim: A proper group visit the following week can be arranged, seating held on request
+        source: campaign YAML usps.group-visit-later
+        result: verified
+      - claim: Heritage riverside venue at Mount Nathan in the Gold Coast hinterland
+        source: business-overview.md; business-antifacts.md (confirms Mount Nathan, Gold Coast hinterland, not Tamborine Mountain)
+        result: verified
+      - claim: Phone follow-up script content
+        source: campaign YAML approach_sequencing step 3 (phone the next morning if no reply)
+        result: verified
+        note: Carries no code, price, or ticketing link.
+    antifact_check: |
+      Checked against business-antifacts.md: no stone-building claim, no
+      100-year/original-mill-structure claim, no vineyard claim, no
+      Tamborine-Mountain-location claim, no assertion on the farming question.
+    revision_note: |
+      Removed the commentary on the March email going unanswered ("I don't think
+      that one went anywhere"); kept the factual reference to the March email and
+      its topic. No other change.
+    notes: A2 run as a context-isolated Sonnet-class subagent per SPAR-A §4.6.
+  - type: final
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, big-top-at-a-heritage-farm, group-visit-later]
+    messages:
+      - channel: email
+        to: imurray@playmatters.org.au
+        subject: Free circus tickets for Imaginative Play Matters families
+        body: |
+          Hi Iona,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, a heritage
+          riverside venue at Mount Nathan in the Gold Coast hinterland. We emailed
+          you in March about a complimentary visit for Gold Coast playgroup
+          coordinators.
+
+          Today is Tuesday 22 September, and a family circus, WANTED – A Cirque
+          Heist, opens in a big top on our lawn this Thursday 24 September and runs
+          through Sunday 27 September. The opening-week seats aren't on sale. We're
+          giving them to a handful of local groups, and I picked Imaginative Play
+          Matters.
+
+          I have a code that makes tickets free at any of the seven shows. Reply
+          and I'll send it with the booking link, for you to pass around your own
+          playgroup families. It's for your families, not for posting publicly.
+
+          If a proper group visit the following week would suit better, tell me a
+          day and I'll ask our manager about holding seating.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "1800 007 529"
+        text: Follow-up call if no email reply by Wednesday 23 September.
+        script:
+          - point: Opening
+            text: "Hi, is that Iona? This is Priyanka calling from Historic Rivermill, out at Mount Nathan. I emailed yesterday about some free circus tickets for Imaginative Play Matters families. Wanted to check it landed."
+          - point: If she hasn't seen it
+            text: "No trouble, I'll give you the short version. We've got a family circus opening in a big top here this Thursday. We're setting aside free opening-week seats for a handful of local groups, yours included. I can send you a code, no cost to the programme, for your families to book whichever show suits them."
+          - point: Ask
+            text: "Would that be worth passing on to your families? If so I'll send the code and the link straight through. And if a proper group visit the week after would suit better, I can hold seats for that too. Just tell me a day."
+          - point: Close
+            text: "I'll follow that up by email either way. Thanks, Iona."
+        phone_note: Wait one day per campaign secondary_channel (wait_days 1, condition no_reply).
+fact_provenance:
+  - claim: Historic Rivermill is a heritage riverside venue at Mount Nathan in the Gold Coast hinterland.
+    source: business-overview.md
+  - claim: We emailed Iona Murray in March 2026 about a complimentary visit for Gold Coast playgroup coordinators, and heard nothing back.
+    source: courier prefetch, admin-rivermill-au mailbox, 2026-03-31, partnerships@rivermill.au to imurray@playmatters.org.au
+  - claim: The circus opens in a big top on the lawn Thursday 24 September and runs through Sunday 27 September as the free opening week.
+    source: campaign YAML header; plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: Opening-week seats are not on sale and are being given to a handful of local groups, chosen by name.
+    source: campaign YAML usps.chosen-not-advertised
+  - claim: A code makes tickets free at any of the seven shows, sent only in the reply, for the organisation's own families, not for public posting.
+    source: campaign YAML usps.opening-week-seats, usps.nothing-to-organise
+  - claim: A group visit for the following week can be held on request to the manager.
+    source: campaign YAML usps.group-visit-later
+quality_checklist: |
+  1. YAML structure: root keys drawn from §6's canonical set; final round has one
+     channel:email message and one channel:phone message (cap applies to email
+     only); email address (imurray@playmatters.org.au) is the real roster value,
+     not a placeholder.
+  2. Coverage: fact_provenance covers every claim in the final draft (sender
+     identity, venue description, the March email, show dates, the seat offer,
+     the code mechanism, the second-week option).
+  3. Presupposition test: no sentence tells Iona something she already knows
+     about herself; the March-email line states our own past action, not hers.
+  4. Manufactured-connection test: the profile's note on Iona's region-wide hub
+     role informed angle selection only; the message does not claim she has said
+     or done anything she hasn't, and does not invite her to pass the code beyond
+     her own organisation's families.
+  5. Concreteness: she can answer in one sentence (send the code, name a day, or
+     decline).
+  6. Band-level pattern check: the opener is specific to this contact's actual
+     correspondence history (the March email), not a reused template line.
+  7. Final round email cardinality: exactly one channel:email message in the
+     final round; the phone piece is a separate channel.

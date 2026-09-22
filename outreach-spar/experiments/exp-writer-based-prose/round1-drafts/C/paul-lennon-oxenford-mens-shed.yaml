@@ -1,0 +1,221 @@
+profile_hash: sha256:61193146fc75721f31e31faaba7a7d5677c3b795cd0a7aab596edce96c94b04e
+# Contact: Paul Lennon | Oxenford Men's Shed Inc
+# Channel: email + phone
+# Language: en-au
+# Angle: chosen-not-advertised / nothing-to-organise / group-visit-later (community-organisation)
+
+decisions:
+  channel: email
+  channel_detail: Email primary; phone follow-up the next morning if no reply.
+  language: en
+  angle: chosen-not-advertised+nothing-to-organise+group-visit-later
+  subsegment: community-organisation
+angle_rationale: |
+  Warmth is "prior contact": the courier prefetch found a one-way touchpoint,
+  2026-04-09, from partnerships@rivermill.au to oxenfordmensshed@gmail.com,
+  no reply on record. The message names this in one plain line, without
+  apology or repeating the earlier ask, per SPAR-A §4.1 and the campaign's
+  a_author instruction. The topic differs enough from the April note (a
+  general group-outing overture versus this specific circus offer) that a
+  fresh subject line is used rather than reply-on-thread, per §4.1.1.
+  The profile flags that Paul Lennon's presidency is unconfirmed (the
+  shed's website as of March 2026 names Keith Ward as President). The
+  roster email is the shed's shared inbox, not a personal address, so
+  whoever currently handles it will see the note. Paul is addressed by
+  name, as the listed contact, without asserting or referencing a title.
+  USPs chosen from the community-organisation plan block: chosen-not-
+  advertised (the seats aren't on sale, a small allocation for the shed),
+  nothing-to-organise (forward to members and families, nothing to
+  arrange), and group-visit-later (a proper outing the following week,
+  enough notice for a bus). These fit the profile's strongest evidence
+  point: the confirmed Buderim Men's Shed bus trip, direct proof the shed
+  already runs group excursions.
+response_likelihood: 65
+a_note: |
+  Angle: chosen-not-advertised + nothing-to-organise + group-visit-later,
+  built on the shed's confirmed Buderim bus-trip history. Channel: email
+  to the shed's shared inbox, phone follow-up to Paul Lennon's own number
+  the next morning if no reply. Warmth: prior contact (one-way April
+  outreach, no reply, named in one line). Language: en-au. Note: Paul's
+  presidency is unconfirmed per profile; addressed by name only, no title
+  asserted, so a title change since profile date doesn't misfire.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, group-visit-later]
+    notes: |
+      First draft. Element order a→b→c (intro, ask, evidence) per §4.5.
+      No code, price, or Eventbrite link in the first message, per the
+      campaign's a_author instruction.
+    messages:
+      - channel: email
+        to: oxenfordmensshed@gmail.com
+        subject: Free circus seats for Oxenford Men's Shed this week
+        body: |
+          Hi Paul,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, the heritage riverside venue at Mount Nathan. Someone from our team wrote to the shed's email back in April about a group outing here and didn't hear back, so this is a fresh note rather than a repeat of that one.
+
+          WANTED – A Cirque Heist, a family circus in a big top on our lawn, opens this Thursday 24 September and runs seven shows through to Sunday. The seats aren't for sale anywhere; I've got a small allocation set aside for Oxenford Men's Shed to pass on to your members and their families this week, free of charge.
+
+          Reply and I'll send the booking code and link straight back for you to pass around, nothing for you to organise. If the shed would rather bring a group out together instead, the week after gives enough notice to arrange a bus, the way your Buderim trip would have.
+
+          Either way, let me know.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: phone
+        to: "0447 667 606"
+        text: Phone follow-up script, first draft.
+        script:
+          - point: Opening hook
+            text: "Hi, is that Paul? This is Priyanka, calling from Historic Rivermill out at Mount Nathan. I sent an email through to the shed's inbox a few days back about some free circus tickets for your members this week, wanted to check it landed."
+          - point: Context
+            text: "It's for WANTED – A Cirque Heist, the family circus we've got running in a big top on our lawn this week. We've set aside some free seats for the shed to pass on to members and their families."
+          - point: Ask
+            text: "Would that suit, passing tickets around this week, or would the shed rather come out together as a group? If it's a group visit, the following week gives us enough notice to sort a bus."
+          - point: Close
+            text: "Happy to send the details again to whichever email's easiest, and I'll get the booking code straight over once I hear back."
+        phone_note: "Draft header said 3 days; corrected to next-morning in review round to match approach_sequencing."
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      I don't know this Priyanka or Historic Rivermill, never heard of
+      either. First thing that catches my eye: she says someone from her
+      team wrote to us in April and we didn't reply. I'd want to check
+      that's true before I take the rest of the email at face value, but
+      if it is true, fair enough, that's a reasonable way to open a second
+      attempt rather than pretend it's the first.
+
+      The "your Buderim trip" line is odd. I haven't told this woman about
+      our bus trip to Buderim Men's Shed. She must have found that on our
+      Facebook page, but she doesn't say so; it reads like she already
+      knows me, and that's a bit unsettling from a stranger. It doesn't
+      stop me replying, but I'd wonder how she knows that and might ask.
+
+      The offer itself is plausible and appealing: free circus tickets for
+      members and their families, nothing to organise, just forward a
+      code. That's an easy yes to consider. The timing is tight, though:
+      today's Tuesday, the show opens Thursday. If I want to actually get
+      this out to members before the show, that's two days to reply, get
+      the code, and circulate it before people can act on it for the first
+      few shows. It's do-able for the later shows in the run (Saturday,
+      Sunday), less so for Thursday itself, and she does flag that the
+      offer runs right through Sunday, so it's realistic for at least
+      three of the four days.
+
+      Nothing here stops me replying outright. I'd ask, before committing
+      to a number, whether the seats are only good for the days listed or
+      if there's any flexibility, and I might ask how she came across our
+      Buderim trip.
+
+      REPLY_PCT: 65
+    fact_check:
+      - claim: Someone from our team wrote to the shed's email back in April about a group outing here and didn't hear back
+        source: courier prefetch — 2026-04-09 email from partnerships@rivermill.au to oxenfordmensshed@gmail.com, folder Partnerships, admin-rivermill-au account
+        result: verified
+        note: No reply found in the search.
+      - claim: opens this Thursday 24 September and runs seven shows through to Sunday
+        source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+        result: verified
+      - claim: the heritage riverside venue at Mount Nathan
+        source: business-overview.md (U1, U4, U5); business-antifacts.md
+        result: verified
+        note: Correct location; no Tamborine Mountain or stone-building claims made.
+      - claim: the seats aren't for sale anywhere
+        source: campaign.yaml usps.chosen-not-advertised
+        result: verified
+      - claim: Reply and I'll send the booking code and link straight back
+        source: campaign.yaml prompt_appendices.a_author
+        result: verified
+        note: No code, price or link appears in the first message itself.
+      - claim: phone follow-up script header, "(if no reply within 3 days)"
+        source: campaign.yaml segments.community-organisation.approach_sequencing, step 3
+        result: corrected
+        correction: Changed to "(if no reply by the next morning)" to match the segment's approach_sequencing, which specifies phoning the next morning, not waiting three days.
+    antifact_check: |
+      Checked against business-antifacts.md: no stone-building, vineyard,
+      100-year-original-building, or Tamborine Mountain claims present.
+    revision_note: |
+      Challenger raised four points; sorted before revising: (1) answer in
+      this email — the unattributed "your Buderim trip" line reads as
+      unsettling familiarity from a stranger, fixed by naming the source
+      (their own Facebook page). (1) factual error, fixed regardless of
+      channel — the phone script's three-day wait contradicted
+      approach_sequencing's next-morning call; corrected. (2) left for the
+      reply — the timing-tightness question (two days to circulate before
+      Thursday) is not blocking; the persona would still reply and can
+      raise flexibility then, and the email already states the offer runs
+      through Sunday. (3) no change needed — the phone script not being
+      referenced in the email is normal multi-channel practice, not a
+      flaw.
+    notes: One pass; yield 4 falls in the "yield 3–5: 1 pass" band.
+  - type: final
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, group-visit-later]
+    messages:
+      - channel: email
+        to: oxenfordmensshed@gmail.com
+        subject: Free circus seats for Oxenford Men's Shed this week
+        body: |
+          Hi Paul,
+
+          I'm Priyanka Das from Partnerships at Historic Rivermill, the heritage riverside venue at Mount Nathan. Someone from our team wrote to the shed's email back in April about a group outing here and didn't hear back, so this is a fresh note rather than a repeat of that one.
+
+          WANTED – A Cirque Heist, a family circus in a big top on our lawn, opens this Thursday 24 September and runs seven shows through to Sunday. The seats aren't for sale anywhere; I've got a small allocation set aside for Oxenford Men's Shed to pass on to your members and their families this week, free of charge.
+
+          Reply and I'll send the booking code and link straight back for you to pass around, nothing for you to organise. I saw on your Facebook page that the shed ran a bus trip to Buderim Men's Shed. If you'd rather bring a group out together instead of passing tickets around, the week after gives us enough notice to arrange a bus the same way.
+
+          Either way, let me know.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "0447 667 606"
+        text: Phone follow-up if no reply by the next morning.
+        script:
+          - point: Opening hook
+            text: "Hi, is that Paul? This is Priyanka, calling from Historic Rivermill out at Mount Nathan. I sent an email through to the shed's inbox yesterday about some free circus tickets for your members this week, wanted to check it landed."
+          - point: Context
+            text: "It's for WANTED – A Cirque Heist, the family circus we've got running in a big top on our lawn this week. We've set aside some free seats for the shed to pass on to members and their families."
+          - point: Ask
+            text: "Would that suit, passing tickets around this week, or would the shed rather come out together as a group? If it's a group visit, the following week gives us enough notice to sort a bus."
+          - point: Close
+            text: "Happy to send the details again to whichever email's easiest, and I'll get the booking code straight over once I hear back."
+        phone_note: Call the morning after the email if there has been no reply.
+fact_provenance:
+  - claim: Someone from our team wrote to the shed's email back in April about a group outing here and didn't hear back
+    source: courier prefetch — 2026-04-09 email, partnerships@rivermill.au to oxenfordmensshed@gmail.com, folder Partnerships, admin-rivermill-au account
+  - claim: WANTED – A Cirque Heist opens this Thursday 24 September and runs seven shows through to Sunday
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: the heritage riverside venue at Mount Nathan
+    source: business-overview.md (U1, U4)
+  - claim: the seats aren't for sale anywhere; a small allocation set aside for Oxenford Men's Shed
+    source: campaign.yaml usps.chosen-not-advertised
+  - claim: Reply and I'll send the booking code and link straight back
+    source: campaign.yaml usps.opening-week-seats; prompt_appendices.a_author
+  - claim: the shed ran a bus trip to Buderim Men's Shed
+    source: spar-campaigns/segments/community-organisation/paul-lennon-oxenford-mens-shed.md, "Outing history"
+quality_checklist: |
+  1. YAML structure: root keys drawn from the §6 canonical set; final round
+     carries exactly one email message and one phone message; email
+     address (oxenfordmensshed@gmail.com) is the roster value, not a
+     placeholder.
+  2. Coverage: fact_provenance covers every factual claim in the final
+     draft; chosen_usps present on both the draft and final rounds.
+  3. Presupposition test: passed after revision — the Buderim-trip
+     reference now names its source instead of assuming the reader recalls
+     telling us.
+  4. Manufactured-connection test: passed — the Buderim trip traces to the
+     profile's "Outing history" section (a Facebook post), not invented.
+  5. Concreteness: passed — the ask is answerable in one sentence (pass
+     tickets on this week, or a group visit next week).
+  6. Band-level pattern check: not applicable at single-contact assembly;
+     left for R at band-level review.
+  7. Final round email cardinality: passed — one email message in the
+     final round; the phone message is a separate channel and not counted
+     against the cap.

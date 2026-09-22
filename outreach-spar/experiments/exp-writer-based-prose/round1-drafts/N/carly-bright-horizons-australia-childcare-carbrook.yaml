@@ -1,0 +1,289 @@
+profile_hash: sha256:08e7d7fd2b6a7f6dc1a7b67818367378af0f94b9ecf0c1fed32a0abcd0afd82a
+decisions:
+  channel: email
+  channel_detail: Email to the centre's shared inbox (no personal address on file), phone follow-up the next morning if no reply.
+  language: en
+  angle: registered-vacation-care-booking-authority
+  subsegment: null
+angle_rationale: |
+  Carly holds the site-level role the segment's discovery criteria require: Service
+  Manager at a single named centre, not a rostered educator without booking authority.
+  The profile confirms via the ACECQA National Register mirror (startingblocks.gov.au),
+  not just the centre's own marketing copy, that Bright Horizons Carbrook is approved
+  for Outside School Hours Care including Vacation Care. That is the strongest,
+  specific hook available: the message can speak to what her holiday programme is
+  actually doing (running a vacation-care roster through the school holidays) rather
+  than a generic childcare pitch.
+
+  No prior correspondence with Carly or this centre was found in IMAP search under
+  her name or the organisation's name; the one subscriber-list signal on file
+  (carbrook@bhchildcare.com.au on the ActiveCampaign export) is tied to the excluded
+  predecessor's tenure, not a live channel to Carly. Warmth is therefore cold: the
+  opener leads with her situation, not a manufactured connection.
+
+  USPs selected, all four listed in the segment's plan block: chosen-not-advertised
+  (emotional — the visit was offered to her programme directly, not advertised),
+  group-visit-later (functional — the ask itself, a visit the week of 30 September
+  to 4 October, since the two days before opening cannot fit a booked excursion),
+  credentials-on-request (functional — the public liability certificate sent once a
+  day is confirmed, addressing what a director needs to approve it), make-a-day-of-it
+  (functional — animals and the grounds before the show, so the visit is a half-day).
+response_likelihood: 55
+a_note: >-
+  Cold email + phone, English, angle = registered vacation-care booking authority
+  (register-confirmed, not just marketing copy). Sent to the centre's shared inbox
+  since no personal address was found for Carly; director should confirm the address
+  or lead with the phone call. A2 role-play put reply likelihood at 55%, contingent
+  on the recipient verifying the venue independently; one revision removed an
+  unsupported "no cost" claim about the second-week visit.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, group-visit-later, credentials-on-request, make-a-day-of-it]
+    notes: |
+      First draft. Cold opener leading with Carly's situation (running vacation care
+      through the September holidays), self-introduction, then the concrete ask
+      (a visit day the week of 30 September to 4 October), then supporting detail
+      (paperwork, half-day shape). No code, price, or Eventbrite link: this segment's
+      offer is a direct booked group visit in week two, not an opening-week ticket
+      redemption, so opening-week-seats was not selected.
+    messages:
+      - channel: email
+        to: carbrook@bhchildcare.com.au
+        subject: A free vacation-care visit for Bright Horizons Carbrook
+        body: |
+          Hi Carly,
+
+          With the September school holidays running your vacation-care roster at Carbrook, I wanted to put a free half-day visit to you directly.
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, a heritage farm and event venue on the Coomera River at Mount Nathan. Today is Tuesday 22 September, and our first show is this Thursday, too close for a service to arrange an excursion around. I'd rather book your programme in for the week after: any day from Wednesday 30 September to Sunday 4 October, at no cost to the centre.
+
+          The morning would be time with the animals and the grounds; then WANTED – A Cirque Heist, a family circus in a big top on our lawn, at the daytime show. Which day in that window suits your group, and roughly how many children and carers should I plan for? I'll send our public liability certificate and the visit arrangements with my reply, so you have what you need to put it to your director.
+
+          Kind regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        director_note: >-
+          The roster and profile carry no personal email for Carly; the only address
+          on file is the centre's shared inbox, already used for the excluded
+          predecessor. Confirm before sending, or route through the phone call first
+          and get a direct address from Carly.
+        to_note: Unverified for Carly personally — shared centre inbox, not a confirmed personal address.
+      - channel: phone
+        to: "07 3287 6477"
+        text: Next-morning follow-up if the email gets no reply.
+        script:
+          - point: Opening hook
+            text: "Hi, this is Priyanka calling from Historic Rivermill, the farm and venue out at Mount Nathan. I emailed the centre yesterday about a free vacation-care visit — is Carly available?"
+          - point: Context, if needed
+            text: "We're running a family circus in a big top through the school holidays, and I'd like to book your programme in for a free half-day next week, animals and the grounds in the morning, then the show. No cost to the centre."
+          - point: Ask
+            text: "Is there a day between Wednesday 30 September and Sunday 4 October that would suit, and roughly how many children and carers should I plan for?"
+          - point: If she asks about paperwork
+            text: "I'll send our public liability certificate and the visit details as soon as we have a day, so you've got what you need for your director."
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Free half-day visit, sight unseen? I don't know this place — never heard of
+      Historic Rivermill or this Priyanka. Cold email, sent to our centre inbox
+      rather than to me by name, which is a bit odd if she says she wants "to put it
+      to you directly." Still, the ask itself is reasonable: pick a day next week,
+      morning with animals then a circus show, no cost mentioned, and she says
+      she'll send the insurance certificate and visit arrangements once we've got a
+      day. That's the order I'd want it in anyway — I'm not going to commit before
+      I've seen the paperwork, but she's not asking me to.
+
+      The timing works. It's Tuesday now, she's right that Thursday is too soon for
+      an excursion — I couldn't get permission slips and a bus organised in two days
+      regardless of who's asking — and the window she's proposing, 30 September to
+      4 October, is a full ten days out. That's workable for vacation care.
+
+      What would make me pause: no personal email, no phone number to call her back
+      on other than what's in her signature (there isn't one — I'd have to reply to
+      the group inbox), and I can't independently verify this outfit exists beyond
+      what she's told me. I'd probably do a quick search for "Historic Rivermill"
+      before replying, and if it looks like a real venue with a real circus event,
+      I'd reply with a day and headcount, mainly because there's no cost and no
+      obligation stated. If it looks dodgy I'd bin it.
+
+      REPLY_PCT: 55
+    fact_check:
+      - claim: "I'd rather book your programme in for the week after... at no cost to the centre"
+        source: "campaign.yaml usps.group-visit-later; campaign.yaml header"
+        result: incorrect
+        note: >-
+          The group-visit-later USP states only that the sender "asks the manager
+          whether seating can be held for the second week," seeking "the manager's
+          permission for an allocation." No USP confirms free seating for the second
+          week; opening-week-seats, the only entry naming a nil-cost seat via the
+          code RIVERMILLFRIENDS, is explicitly "Valid for the opening-week shows
+          only." The campaign header separately calls week two "the paid second
+          week."
+        correction: >-
+          Remove the "at no cost" claim. State that the sender will check with the
+          manager about holding seats once a day is named, and send the certificate
+          and visit arrangements together with that answer.
+      - claim: Coomera River location
+        source: business-overview.md
+        result: verified
+      - claim: Thursday 24 September opening
+        source: 2026-09-23-stampede-arena-showtimes.md
+        result: verified
+      - claim: Wednesday 30 September to Sunday 4 October window falls within the non-dark run (Mondays and Tuesdays dark)
+        source: 2026-09-23-stampede-arena-showtimes.md
+        result: verified
+      - claim: No code, price, or Oztix link appears in the first message
+        source: campaign.yaml prompt_appendices.a_author, prompt_appendices.a_challenger
+        result: verified
+      - claim: Public liability certificate offered on reply
+        source: "campaign.yaml usps.credentials-on-request"
+        result: verified
+    antifact_check: >-
+      No claim of stone or 100-year-old original mill buildings, no vineyard claim,
+      no Tamborine Mountain location claim, and no assertion on whether the venue
+      farms — none of the antifact items are implicated by either draft.
+    revision_note: >-
+      Removed the unsupported "at no cost to the centre" claim from the email body
+      and the phone script. Replaced it with a statement that the sender will check
+      with the manager about holding seats once a day is confirmed, matching what
+      group-visit-later actually supports. Added a sourced venue contact number
+      (+61 493563028, from business-overview.md) to the email signature, answering
+      the role-play's concern about having no way to call back beyond the shared
+      inbox.
+    notes: One revision pass; yield 5 falls in the 3–5 band, budgeted for 1 pass.
+  - type: draft
+    number: 2
+    chosen_usps: [chosen-not-advertised, group-visit-later, credentials-on-request, make-a-day-of-it]
+    revision_note: See round 1 review revision_note.
+    messages:
+      - channel: email
+        to: carbrook@bhchildcare.com.au
+        subject: A vacation-care visit for Bright Horizons Carbrook
+        body: |
+          Hi Carly,
+
+          With the September school holidays running your vacation-care roster at Carbrook, I wanted to put a visit to you directly.
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, a heritage farm and event venue on the Coomera River at Mount Nathan. Today is Tuesday 22 September. Our first show is this Thursday, too close for a service to arrange an excursion around. I'd like to book your programme in for a visit the following week instead: any day from Wednesday 30 September to Sunday 4 October.
+
+          The morning would be time with the animals and the grounds. Then WANTED – A Cirque Heist, a family circus in a big top on our lawn, at the daytime show. Which day in that window suits your group, and roughly how many children and carers should I plan for? Once I have a day, I'll check with our manager about holding seats for your group, and send our public liability certificate and the visit arrangements with my reply, so you have what you need to put it to your director.
+
+          Kind regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+          +61 493563028
+        director_note: >-
+          The roster and profile carry no personal email for Carly; the only address
+          on file is the centre's shared inbox, already used for the excluded
+          predecessor. Confirm before sending, or route through the phone call first
+          and get a direct address from Carly.
+        to_note: Unverified for Carly personally — shared centre inbox, not a confirmed personal address.
+      - channel: phone
+        to: "07 3287 6477"
+        text: Next-morning follow-up if the email gets no reply.
+        script:
+          - point: Opening hook
+            text: "Hi, this is Priyanka calling from Historic Rivermill, the farm and venue out at Mount Nathan. I emailed the centre yesterday about a vacation-care visit — is Carly available?"
+          - point: Context, if needed
+            text: "We're running a family circus in a big top through the school holidays, and I'd like to book your programme in for a visit next week, animals and the grounds in the morning, then the show."
+          - point: Ask
+            text: "Is there a day between Wednesday 30 September and Sunday 4 October that would suit, and roughly how many children and carers should I plan for?"
+          - point: If she asks about paperwork
+            text: "Once we've got a day, I'll check with our manager about holding seats, and send our public liability certificate and the visit details so you've got what you need for your director."
+  - type: final
+    chosen_usps: [chosen-not-advertised, group-visit-later, credentials-on-request, make-a-day-of-it]
+    messages:
+      - channel: email
+        to: carbrook@bhchildcare.com.au
+        subject: A vacation-care visit for Bright Horizons Carbrook
+        body: |
+          Hi Carly,
+
+          With the September school holidays running your vacation-care roster at Carbrook, I wanted to put a visit to you directly.
+
+          I'm Priyanka Das, Partnerships at Historic Rivermill, a heritage farm and event venue on the Coomera River at Mount Nathan. Today is Tuesday 22 September. Our first show is this Thursday, too close for a service to arrange an excursion around. I'd like to book your programme in for a visit the following week instead: any day from Wednesday 30 September to Sunday 4 October.
+
+          The morning would be time with the animals and the grounds. Then WANTED – A Cirque Heist, a family circus in a big top on our lawn, at the daytime show. Which day in that window suits your group, and roughly how many children and carers should I plan for? Once I have a day, I'll check with our manager about holding seats for your group, and send our public liability certificate and the visit arrangements with my reply, so you have what you need to put it to your director.
+
+          Kind regards,
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+          +61 493563028
+        director_note: >-
+          The roster and profile carry no personal email for Carly; the only address
+          on file is the centre's shared inbox, already used for the excluded
+          predecessor. Confirm before sending, or route through the phone call first
+          and get a direct address from Carly.
+        to_note: Unverified for Carly personally — shared centre inbox, not a confirmed personal address.
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "07 3287 6477"
+        text: Next-morning follow-up if the email gets no reply.
+        script:
+          - point: Opening hook
+            text: "Hi, this is Priyanka calling from Historic Rivermill, the farm and venue out at Mount Nathan. I emailed the centre yesterday about a vacation-care visit — is Carly available?"
+          - point: Context, if needed
+            text: "We're running a family circus in a big top through the school holidays, and I'd like to book your programme in for a visit next week, animals and the grounds in the morning, then the show."
+          - point: Ask
+            text: "Is there a day between Wednesday 30 September and Sunday 4 October that would suit, and roughly how many children and carers should I plan for?"
+          - point: If she asks about paperwork
+            text: "Once we've got a day, I'll check with our manager about holding seats, and send our public liability certificate and the visit details so you've got what you need for your director."
+        phone_note: Best tried mid-morning; the centre inbox is reply-only, this is the confirmed direct number.
+fact_provenance:
+  - claim: Historic Rivermill is a heritage farm and event venue on the Coomera River at Mount Nathan.
+    source: business-overview.md
+  - claim: Today is Tuesday 22 September 2026 and the first show is Thursday 24 September.
+    source: campaign.yaml header; 2026-09-23-stampede-arena-showtimes.md
+  - claim: The visit window Wednesday 30 September to Sunday 4 October falls within the non-dark performance days (Mondays and Tuesdays dark).
+    source: 2026-09-23-stampede-arena-showtimes.md
+  - claim: WANTED – A Cirque Heist is a family circus in a big top on the lawn.
+    source: "campaign.yaml usps.big-top-at-a-heritage-farm; campaign.yaml header"
+  - claim: The sender will check with the manager about holding seats for the group once a day is confirmed.
+    source: "campaign.yaml usps.group-visit-later"
+  - claim: A public liability certificate and visit arrangements will be sent once a day is set.
+    source: "campaign.yaml usps.credentials-on-request"
+  - claim: The morning visit is animals and the grounds, ahead of the daytime show.
+    source: "campaign.yaml usps.make-a-day-of-it; sot/S2-fees-and-service-hours.md §2.1, §4.2"
+  - claim: General venue contact number +61 493563028.
+    source: business-overview.md ("Facts for outreach drafting")
+  - claim: Carly is Service Manager at Bright Horizons Australia Childcare, Carbrook, with excursion-booking authority at that site.
+    source: "segments/childrens-holiday-outing/carly-bright-horizons-australia-childcare-carbrook.md"
+  - claim: Bright Horizons Carbrook is a registered Vacation Care service (government register mirror, not marketing copy alone).
+    source: "segments/childrens-holiday-outing/carly-bright-horizons-australia-childcare-carbrook.md (startingblocks.gov.au, fetched 2026-08-07)"
+  - claim: No personal email found for Carly; the only address on file is the shared centre inbox carbrook@bhchildcare.com.au, already tied to the excluded predecessor.
+    source: "segments/childrens-holiday-outing/carly-bright-horizons-australia-childcare-carbrook.md"
+  - claim: Direct centre phone number 07 3287 6477.
+    source: "segments/childrens-holiday-outing/carly-bright-horizons-australia-childcare-carbrook.md; roster"
+quality_checklist: |
+  1. YAML structure self-check: root keys drawn from §6's canonical set (decisions,
+     rounds, angle_rationale, response_likelihood, a_note, fact_provenance,
+     quality_checklist). Each round carries type and number where required
+     (drafts and review numbered; one final round). The final round carries exactly
+     one channel: email message plus one channel: phone message — passes the
+     final-round email cardinality cap (§7.7). Email addresses are real, not
+     placeholders; the one uncertain address is flagged in to_note and
+     director_note rather than presented as confirmed.
+  2. Coverage and completeness: fact_provenance covers every factual claim in the
+     final draft, including the venue identity, the date/timing claims, the visit
+     structure, the certificate offer, the contact number, and Carly's role and
+     registration status. chosen_usps is present on both draft rounds and the final
+     round. a_note states angle, channel, warmth, and language.
+  3. Presupposition test: no sentence tells Carly something she already knows about
+     herself (e.g. does not narrate "you run vacation care" as news) — it names her
+     situation once, as the opening hook, then moves to the offer.
+  4. Manufactured-connection test: every claim of relevance (registered vacation
+     care, booking authority) traces to a specific profile data point, not an
+     assumed shared interest.
+  5. Concreteness: Carly can answer in one sentence — a day in the window and a
+     rough headcount.
+  6. Band-level pattern check: not yet applicable — this is the first contact
+     processed in this band; the opener (leading with the recipient's own holiday
+     roster rather than a compliment or a manufactured connection) sets a pattern
+     to compare subsequent band contacts against.
+  7. Final round email cardinality: one channel: email message in the final round
+     (plus one channel: phone message, which is not capped) — passes.

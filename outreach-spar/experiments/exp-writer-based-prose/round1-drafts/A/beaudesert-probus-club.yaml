@@ -1,0 +1,184 @@
+profile_hash: sha256:9ca52930d0880b11d0d1c52eb7c2af861bc5438eb4a4c45dcf52be2d4aa3f70d
+# Contact: Helen Parnell (Secretary), Beaudesert Probus Club
+# Channel: email, phone
+# Language: en-au
+# Angle: chosen-by-name-not-advertised
+decisions:
+  channel: email
+  channel_detail: Email primary, phone fallback if no reply by Friday 25 September.
+  language: en-au
+  angle: chosen-by-name-not-advertised
+angle_rationale: |
+  Warmth is cold: the dispatcher prefetch found no prior correspondence with
+  beauyprobus@gmail.com or with Helen Parnell / Beaudesert Probus Club in any
+  mailbox, so the opener carries no borrowed familiarity and no reference to
+  research done. The angle draws on the seniors-club plan block's four USPs
+  in the order that matches a Probus secretary's actual decision: the seats
+  are picked for the club by name, not up for grabs generally
+  (chosen-not-advertised); she only has to forward them, not run anything
+  (nothing-to-organise); the concrete offer is any of seven shows this week,
+  free (opening-week-seats); and, since two days is not enough notice for a
+  club that organises around a monthly meeting, the alternative of a proper
+  group visit the following week is offered alongside it (group-visit-later).
+  The profile's own evidence of a 2025 bus trip and a monthly meeting cadence
+  is not cited back to the recipient, since doing so would narrate research
+  rather than presuppose the club's world; the message instead speaks to
+  what any Probus secretary already knows about her own club.
+response_likelihood: 30
+a_note: |
+  Angle chosen-by-name-not-advertised (seats picked for the club, forward-only ask,
+  group-visit fallback). Channel email with phone fallback. Warmth cold, no prior
+  correspondence found. Language en-au. Challenger rated reply likelihood 35% in
+  role-play, citing the two-day window as too tight for a committee officer to
+  circulate before a general meeting; the group-visit-later fallback is the more
+  plausible path to a reply.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats, group-visit-later]
+    notes: |
+      First-touch email plus a phone follow-up script, per §4.2 (email + phone,
+      no connection channel). Element order a-b-c: self-introduction, then the
+      concrete ask, then supporting detail, per §4.5.
+    messages:
+      - channel: email
+        to: beauyprobus@gmail.com
+        subject: Free circus seats for Beaudesert Probus Club
+        body: |
+          Hello Helen,
+
+          I'm Priyanka Das, from Partnerships at Historic Rivermill, the heritage riverside venue at Mount Nathan. WANTED – A Cirque Heist, a family circus in a big top on our lawn, opens this Thursday 24 September and runs through to Sunday 27 September.
+
+          I have free seats set aside for Beaudesert Probus Club at any of those seven shows, with daytime shows on Thursday and Sunday. They are not on sale anywhere; the venue is offering them to a small number of local organisations by name, and your club is one of them. Reply and I will send the booking code and the link straight back to you, for you to circulate to members and the grandchildren who might be visiting for the school holidays. They are for the club's own people, rather than for posting publicly.
+
+          If the club would rather come out together as a group, the week after opening gives the notice a bus trip needs. Tell me which suits, and roughly how many, and I will come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: phone
+        to: "0417 794 873"
+        text: Follow-up call if the email gets no reply by Friday 25 September.
+        phone_note: |
+          The profile found three conflicting numbers for this contact (roster:
+          0417 794 873; directory: 0494 049 513; new Facebook page: 0412 629
+          377), none confirmed current. Roster number used since there is no
+          basis to prefer another; confirm on the call whether it has reached
+          the right club.
+        script:
+          - point: Opening
+            text: "Hello, is that Helen Parnell? My name is Priyanka Das, I'm calling from Historic Rivermill at Mount Nathan. I emailed the club on Tuesday about some free circus tickets for your members, I wanted to check it landed."
+          - point: If she recalls the email
+            text: "Wonderful. The offer is free seats at any of our seven opening-week shows for the club to hand to members and their grandchildren, no cost and nothing to arrange. Would that be worth putting to the members, or would the club rather come out together another week?"
+          - point: If she doesn't recall it or the address needs checking
+            text: "No trouble. Could I confirm the club's current email address, so I can send the details straight through?"
+          - point: Close
+            text: "I'll leave it with you either way. If members would like the tickets, just reply to the email and I'll send the code and the link straight back."
+  - type: review
+    number: 1
+    verdict: DONE
+    in_character: |
+      Cold recipient reaction: nothing about the message reads as a scam, and
+      the ask is undemanding, but two days between the email and the first
+      show is too tight for a club whose business runs through a monthly
+      general meeting rather than the secretary's own initiative. The
+      group-visit-later offer, with a week's notice for a bus trip, reads as
+      the more realistic path than circulating opening-week seats to members
+      on short notice. Reply likelihood estimated at 35% by the challenger.
+    fact_check:
+      - claim: Show opens Thursday 24 September and runs to Sunday 27 September, seven shows.
+        source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md; historicrivermill.au/data/circus.yaml
+        result: verified
+      - claim: Daytime shows on Thursday and Sunday.
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+        note: Thursday 24 has one 13:00 session; Friday and Saturday are evening-only (16:00/19:00); Sunday 27 has 11:00 and 14:00 sessions. Claim does not overstate Friday or Saturday.
+      - claim: Seats are not sold publicly and are offered to a small number of named local organisations.
+        source: campaign usps.chosen-not-advertised
+        result: verified
+      - claim: Tickets are for the club's own people, not for posting publicly.
+        source: campaign usps.nothing-to-organise; prompt_appendices.a_author
+        result: verified
+      - claim: A group visit the following week can be arranged with more notice.
+        source: campaign usps.group-visit-later
+        result: verified
+      - claim: Historic Rivermill is a heritage riverside venue at Mount Nathan.
+        source: business-overview.md
+        result: verified
+    antifact_check: |
+      No stone-building, vineyard, 100-year-building, or Tamborine Mountain
+      claims present. Checked against business-antifacts.md; none of the
+      false claims listed there appear in the draft.
+    revision_note: |
+      No changes made. The challenger found no factual errors and no
+      disqualifying element (no code, no price, no discount, no Oztix link, no
+      feed-bag offer, no implication that seats are unsold). The one unverified
+      point, the partnerships@rivermill.au sender address, is the campaign's
+      documented default sender (campaign.yaml sender.email), not a claim
+      requiring correction.
+    notes: Single-pass spar per §4.6 (yield 5, so one pass); no revision required.
+  - type: final
+    chosen_usps: [chosen-not-advertised, nothing-to-organise, opening-week-seats, group-visit-later]
+    messages:
+      - channel: email
+        to: beauyprobus@gmail.com
+        subject: Free circus seats for Beaudesert Probus Club
+        body: |
+          Hello Helen,
+
+          I'm Priyanka Das, from Partnerships at Historic Rivermill, the heritage riverside venue at Mount Nathan. WANTED – A Cirque Heist, a family circus in a big top on our lawn, opens this Thursday 24 September and runs through to Sunday 27 September.
+
+          I have free seats set aside for Beaudesert Probus Club at any of those seven shows, with daytime shows on Thursday and Sunday. They are not on sale anywhere; the venue is offering them to a small number of local organisations by name, and your club is one of them. Reply and I will send the booking code and the link straight back to you, for you to circulate to members and the grandchildren who might be visiting for the school holidays. They are for the club's own people, rather than for posting publicly.
+
+          If the club would rather come out together as a group, the week after opening gives the notice a bus trip needs. Tell me which suits, and roughly how many, and I will come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "0417 794 873"
+        text: Follow-up call if the email gets no reply by Friday 25 September.
+        phone_note: |
+          Three conflicting numbers found for this contact across sources
+          (see draft round); roster number used, confirm on the call.
+        script:
+          - point: Opening
+            text: "Hello, is that Helen Parnell? My name is Priyanka Das, I'm calling from Historic Rivermill at Mount Nathan. I emailed the club on Tuesday about some free circus tickets for your members, I wanted to check it landed."
+          - point: If she recalls the email
+            text: "Wonderful. The offer is free seats at any of our seven opening-week shows for the club to hand to members and their grandchildren, no cost and nothing to arrange. Would that be worth putting to the members, or would the club rather come out together another week?"
+          - point: If she doesn't recall it or the address needs checking
+            text: "No trouble. Could I confirm the club's current email address, so I can send the details straight through?"
+          - point: Close
+            text: "I'll leave it with you either way. If members would like the tickets, just reply to the email and I'll send the code and the link straight back."
+fact_provenance:
+  - claim: Show opens Thursday 24 September and runs to Sunday 27 September, seven shows.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: Daytime shows on Thursday and Sunday.
+    source: historicrivermill.au/data/circus.yaml
+  - claim: Seats are not sold publicly and are offered to named local organisations only.
+    source: campaigns/2026-09-cirque-heist-season.yaml usps.chosen-not-advertised
+  - claim: Tickets are for the club's own people, not for posting publicly.
+    source: campaigns/2026-09-cirque-heist-season.yaml usps.nothing-to-organise
+  - claim: A group visit the following week can be arranged with more notice.
+    source: campaigns/2026-09-cirque-heist-season.yaml usps.group-visit-later
+  - claim: Historic Rivermill is a heritage riverside venue at Mount Nathan.
+    source: business-overview.md
+  - claim: Sender identity and address (Priyanka Das, Partnerships, partnerships@rivermill.au).
+    source: campaigns/2026-09-cirque-heist-season.yaml sender block
+quality_checklist: |
+  1. YAML structure: root keys drawn from §6 canonical set; every round carries
+     type and number where required; final round has exactly one email message
+     plus one phone message (cardinality check passed, cap is on emails only).
+  2. Coverage: fact_provenance covers every factual claim in the final draft;
+     chosen_usps set on both draft and final rounds.
+  3. Presupposition test passed: no sentence tells the recipient something
+     about their own club they already know.
+  4. Manufactured-connection test passed: no claim of shared interest beyond
+     "your club is one of them"; the profile's bus-trip evidence is not cited
+     back to the recipient.
+  5. Concreteness: the ask (circulate this week, or a day for a group visit
+     next week, with a rough number either way) is answerable in one reply.
+  6. Band-level pattern check: single-contact file, not applicable here.
+  7. Final round email cardinality: one email message in the final round.

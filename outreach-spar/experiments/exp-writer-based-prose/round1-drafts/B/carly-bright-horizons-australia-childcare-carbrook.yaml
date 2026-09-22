@@ -1,0 +1,203 @@
+profile_hash: sha256:08e7d7fd2b6a7f6dc1a7b67818367378af0f94b9ecf0c1fed32a0abcd0afd82a
+# Contact: Carly, Service Manager, Bright Horizons Australia Childcare Carbrook
+# Channel: phone
+# Language: en
+# Angle: group-visit-later
+decisions:
+  channel: phone
+  language: en
+  angle: group-visit-later
+  channel_detail: |
+    Phone only. No email exists for Carly: the profile's only public address
+    is the shared centre inbox carbrook@bhchildcare.com.au, already assigned
+    to the excluded predecessor row under the shared-inbox rule. Per SPAR-A
+    §4.2, phone-only means a phone script only; an email is drafted in a
+    later round, once the call yields an address.
+angle_rationale: |
+  The segment's plan block rules out the opening-week-seats ask for this
+  segment. The objective states an excursion cannot be arranged in the two
+  days before opening, so the ask goes straight to a group visit the
+  following week. That is the campaign's group-visit-later USP, used here as
+  the primary ask rather than a fallback offered after a tickets-forwarding
+  request.
+
+  Supporting USPs: credentials-on-request, because Carly's role (Service
+  Manager, single site) is the one the segment's discovery criteria mark as
+  holding excursion-booking authority, and a coordinator in that role needs
+  paperwork before taking a proposal to her own director; and
+  make-a-day-of-it, because the visit is offered as one shape (farm and
+  animals in the morning, the show after) rather than as tickets alone.
+  chosen-not-advertised sits underneath as the reason the offer exists at
+  all, carried by "not a public offer" rather than stated as a justification.
+
+  Warmth is cold. The courier prefetch surfaced other people named Carly
+  (Easton, Waldock, Pietrobom) with no connection to Bright Horizons
+  Carbrook, and the profile records no prior dealing between this office and
+  Carly or her centre. There is no touchpoint to reference and no prior note
+  to acknowledge.
+response_likelihood: 55
+a_note: |
+  Angle group-visit-later (free group visit the week of 30 September to
+  4 October, supported by credentials-on-request and make-a-day-of-it).
+  Channel phone only, no email on file. Warmth cold, no prior contact found.
+  Language en. Challenger verdict DONE on first pass, no revisions.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [group-visit-later, credentials-on-request, make-a-day-of-it]
+    notes: |
+      First-touch phone script. Element order follows self-introduction,
+      then the concrete ask (a day and a headcount), then supporting points,
+      per SPAR-A §4.5's default a-then-b-then-c ordering.
+    messages:
+      - channel: phone
+        to: "07 3287 6477"
+        text: |
+          Phone script offering a free group visit (farm, animals, then the
+          daytime circus show) the week of 30 September to 4 October.
+        script:
+          - point: Opening
+            text: "Hi, is that Carly? My name's Priyanka, I'm calling from Historic Rivermill, out at Mount Nathan. I'm calling about your vacation care programme over the September holidays."
+          - point: The ask
+            text: "I'd like to book your programme in for a free visit next week: the animals and the farm in the morning, then our circus, WANTED – A Cirque Heist, in the big top on our lawn, at the daytime show. Today's Tuesday, and the circus opens this Thursday, so I'm looking at next week for your group: Wednesday the 30th of September through to Sunday the 4th of October. Which day would suit, and roughly how many children and carers would you be bringing?"
+          - point: Support — cost and paperwork
+            text: "There's no charge for the programme. Once we've got a day set, I'll send our public liability certificate and the visit details through, so you've got what you need to put it to your director."
+          - point: Support — the shape of the visit
+            text: "It runs as one visit: the kids get the farm and the animals first, then walk over for the circus, so there's nothing else to arrange on the day."
+          - point: Close
+            text: "What's the best email for me to send the certificate and the booking details to once we've settled on a day?"
+          - point: If she asks who else is getting this
+            text: "It's not a public offer, we're calling a small number of programmes directly."
+          - point: If she can't commit on the call
+            text: "No problem, take your time. My direct number is [Priyanka's number] and my email's partnerships@rivermill.au if you'd rather call or write back once you've checked with your director."
+  - type: review
+    number: 1
+    verdict: DONE
+    in_character: |
+      Phone rings at the centre. A stranger, Priyanka, says she's from
+      Historic Rivermill out at Mount Nathan, calling about our vacation
+      care programme. First reaction: who is this, and how did she get this
+      number. She answers that herself a moment later, saying it's not a
+      public offer and she's calling a small number of programmes directly.
+      That lands as reasonable, not a mass sales call.
+
+      The ask is concrete and fast: a free visit, animals and farm in the
+      morning, a circus show after, a day next week (30 September to
+      4 October) and a rough headcount. Today is Tuesday 22 September and
+      the circus opens Thursday 24th. She is not asking me to come this
+      week. Eight-plus days' notice is workable: time to check the roster,
+      ask my director, and organise transport if I want the whole group.
+
+      As Carly, no charge is attractive. I run vacation care, not just
+      after-care, and vacation care already has some days planned, so I'd
+      check the calendar before committing to a day. She doesn't push for an
+      answer on the spot. She offers the certificate once a day is set and
+      leaves a direct line and email.
+
+      The one thing that gives me pause, not enough to refuse but enough to
+      hold back an instant yes, is that I have no way yet to verify who she
+      is or that the venue is legitimate beyond her say-so on a cold call.
+      I'd want the certificate and written detail before I put anything to
+      my director, which is exactly what she offers.
+
+      What I would ask in my reply: what the day looks like timewise
+      (drop-off, pick-up, total length), whether there's a maximum group
+      size, and to send the certificate so I have something concrete for my
+      director.
+
+      REPLY_PCT: 55
+    fact_check:
+      - claim: The circus, WANTED – A Cirque Heist, runs in a big top on the lawn at Mount Nathan.
+        source: business-overview.md (Events) and the campaign header.
+        result: verified
+      - claim: The circus opens Thursday 24 September.
+        source: 2026-09-23-stampede-arena-showtimes.md.
+        result: verified
+      - claim: The visit window offered is Wednesday 30 September to Sunday 4 October.
+        source: campaign.yaml, segments.childrens-holiday-outing.first_ask.
+        result: verified
+      - claim: The visit is free, no charge to the programme.
+        source: campaign.yaml, segments.childrens-holiday-outing.first_ask.
+        result: verified
+      - claim: A public liability certificate is sent once a day is set, for the director.
+        source: campaign.yaml, usps.credentials-on-request (rests_on the venue agreement of 28 August 2026).
+        result: verified
+      - claim: The visit runs as one sequence, farm and animals then the show, nothing else to arrange.
+        source: campaign.yaml, usps.make-a-day-of-it.
+        result: verified
+      - claim: This is not a public offer; a small number of programmes are called directly.
+        source: campaign.yaml, usps.chosen-not-advertised.
+        result: verified
+    antifact_check: |
+      Checked against business-antifacts.md. No stone-building claim, no
+      100-year-old or heritage-structure claim, no vineyard claim, no
+      Tamborine Mountain location claim appears in the draft.
+    revision_note: No revisions. Challenger verdict DONE on first pass.
+    notes: |
+      Pointing list found no unsupported presuppositions; every forward
+      reference (the offer, "your group", the circus) is introduced within
+      the same script before it is relied on.
+  - type: final
+    chosen_usps: [group-visit-later, credentials-on-request, make-a-day-of-it]
+    messages:
+      - channel: phone
+        to: "07 3287 6477"
+        text: |
+          Phone script offering a free group visit (farm, animals, then the
+          daytime circus show) the week of 30 September to 4 October.
+        script:
+          - point: Opening
+            text: "Hi, is that Carly? My name's Priyanka, I'm calling from Historic Rivermill, out at Mount Nathan. I'm calling about your vacation care programme over the September holidays."
+          - point: The ask
+            text: "I'd like to book your programme in for a free visit next week: the animals and the farm in the morning, then our circus, WANTED – A Cirque Heist, in the big top on our lawn, at the daytime show. Today's Tuesday, and the circus opens this Thursday, so I'm looking at next week for your group: Wednesday the 30th of September through to Sunday the 4th of October. Which day would suit, and roughly how many children and carers would you be bringing?"
+          - point: Support — cost and paperwork
+            text: "There's no charge for the programme. Once we've got a day set, I'll send our public liability certificate and the visit details through, so you've got what you need to put it to your director."
+          - point: Support — the shape of the visit
+            text: "It runs as one visit: the kids get the farm and the animals first, then walk over for the circus, so there's nothing else to arrange on the day."
+          - point: Close
+            text: "What's the best email for me to send the certificate and the booking details to once we've settled on a day?"
+          - point: If she asks who else is getting this
+            text: "It's not a public offer, we're calling a small number of programmes directly."
+          - point: If she can't commit on the call
+            text: "No problem, take your time. My direct number is [Priyanka's number] and my email's partnerships@rivermill.au if you'd rather call or write back once you've checked with your director."
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: The circus, WANTED – A Cirque Heist, runs in a big top on the lawn at Mount Nathan.
+    source: business-overview.md (Events section); campaign.yaml header.
+  - claim: The circus opens Thursday 24 September 2026.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md.
+  - claim: The visit window offered is Wednesday 30 September to Sunday 4 October.
+    source: campaign.yaml, segments.childrens-holiday-outing.first_ask.
+  - claim: The visit is free, no charge to the programme.
+    source: campaign.yaml, segments.childrens-holiday-outing.first_ask.
+  - claim: A public liability certificate is available and will be sent for the director.
+    source: campaign.yaml, usps.credentials-on-request.
+  - claim: The visit runs as farm and animals in the morning, then the show, as one sequence.
+    source: campaign.yaml, usps.make-a-day-of-it.
+  - claim: This is not a public offer; a small number of programmes are contacted directly.
+    source: campaign.yaml, usps.chosen-not-advertised.
+  - claim: Venue address and location at Mount Nathan.
+    source: business-overview.md; sot/S2-fees-and-service-hours.md §1.
+quality_checklist: |
+  1. YAML structure: root keys drawn from the §6 canonical set (decisions,
+     angle_rationale, response_likelihood, a_note, rounds, fact_provenance,
+     quality_checklist). One final round, one message in it, channel phone
+     (no email cardinality question). No placeholder contact addresses;
+     "[Priyanka's number]" is a script line for the sender to fill at send
+     time, not a stored contact field.
+  2. Coverage: fact_provenance covers every factual claim in the final
+     script. chosen_usps present on the draft and final rounds. a_note
+     states angle, channel, warmth, language.
+  3. Presupposition test: no sentence tells Carly something about her own
+     situation she has not just been given in the same call; confirmed by
+     the challenger's pointing list, no "nowhere" results.
+  4. Manufactured-connection test: every claim of relevance (vacation care
+     over the holidays, excursion authority) traces to the profile's
+     register-level evidence, not invented.
+  5. Concreteness: the ask (a day between 30 September and 4 October, and a
+     headcount) can be answered in one sentence.
+  6. Band-level pattern check: not yet applicable — single contact drafted;
+     defer to the band review when other childrens-holiday-outing contacts
+     are drafted.
+  7. Final round email cardinality: not applicable, channel is phone.

@@ -1,0 +1,263 @@
+profile_hash: sha256:9ca52930d0880b11d0d1c52eb7c2af861bc5438eb4a4c45dcf52be2d4aa3f70d
+# Contact: Helen Parnell, Secretary, Beaudesert Probus Club (meets 1st Wednesday, 9.30 for 10.00am, The Club, 23-25 William Street, Beaudesert)
+# Channel: email 22 September to the club address, phone follow-up the next morning if no reply
+# Language: en-au
+# Angle: the club's own calendar cannot carry this, so it goes to members direct, with a group visit held open for the second week
+decisions:
+  channel: email
+  channel_detail: Email first on 22 September to beauyprobus@gmail.com, the address the club publishes on its own Facebook page. Phone on the morning of Wednesday 23 September where there is no reply, per the segment's approach_sequencing, which shortens the standard three-day wait because the first show is Thursday 24 September. Three phone numbers were found and none is confirmed, so the phone piece carries a dialling order and an opening line that checks who answered.
+  language: en-au
+  angle: goes-to-members-direct-because-the-october-meeting-is-too-late
+angle_rationale: |
+  Warmth is cold. The dispatcher prefetch searched all five accounts for beauyprobus@gmail.com and for the name and organisation in a subject line, and returned nothing on any account. So the message names no prior dealing. It carries no line about an earlier note that went unanswered, because there was none to name.
+
+  The contact identity is soft and the draft is built to survive that. The profile records Helen Parnell as Secretary from a single mycommunitydirectory.com.au citation that could not be fetched directly, returning 403 on both attempts, and that was not corroborated against any club primary source. The email address is the stronger fact: it is confirmed from the club's own new Facebook page Contact info block. So the draft greets Helen by name and closes with a one-line redirect asking for the name of whoever handles outings. A wrong or stale office-bearer attribution then costs a forward rather than the lead.
+
+  The angle rests on the club's meeting cadence rather than on anything personal. The club meets on the first Wednesday, so the next meeting falls on 7 October. The season ends on Sunday 4 October. Nothing about this offer can be announced from the lectern, whatever the secretary does. The message presupposes that rather than reciting it back to her: one short line saying it will not keep until the October meeting, which moves her channel from the meeting to her own member list. That line is what makes a 48-hour ask answerable instead of absurd.
+
+  The 2025 Beaudesert Tramway bus trip in the profile is real evidence that this club runs outings, and it is deliberately not mentioned. Naming it back to her would be the research-performance gesture section 4.5 warns against, and it also points at the one door that cannot open in time. It earns its keep by justifying the second-week group offer the segment's first_ask prescribes: the club demonstrably assembles bus outings, so the far door is worth holding open even though the near door is the ask.
+
+  The geographic anchor replaces a compliment. The venue's street address is on the Beaudesert Nerang road, which is the road out of her own town. Naming the road places the venue for a Beaudesert reader in four words, without a drive-time claim that no source supports. The arrowroot mill sits in the same sentence as a subordinate clause rather than a paragraph, a heritage hook for a club whose evidenced outing was a local-history trip. It is sourced to business-overview U4 and worded as the site's past, not as surviving buildings, which business-antifacts.md forbids.
+
+  USPs come from the segment plan block. opening-week-seats carries the seven shows and the free price. nothing-to-organise carries the ask. chosen-not-advertised is stated as a fact about how the list was built rather than as flattery. big-top-at-a-heritage-farm supplies the picture in the opening sentence rather than a claim of its own. group-visit-later is drawn from the campaign registry because the segment's first_ask text mandates the second-week line. make-a-day-of-it is not on the segment's list, so the cafe and the animals are left out even though the Thursday and Sunday sessions are daytime.
+
+  Structure is varied from the one sibling in the band, pine-lake-village.yaml, which opens on the self-introduction and closes on the not-advertised line. This one leads the subject with the event and the deadline, compresses the show list to two sentences, puts the not-advertised paragraph before the close rather than at it, and ends on the redirect. Element order stays introduce, ask, then reasons.
+response_likelihood: 55
+a_note: "Cold, en-au. Email to the club's published Gmail with a phone follow-up the next morning across three unconfirmed numbers. Angle: the first-Wednesday meeting cadence puts the next meeting after the season ends, so the tickets go to members direct by her own list, with a second-week group visit held open. Contact name and role rest on a single uncorroborated directory citation, so the email closes with a redirect to whoever handles outings."
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [opening-week-seats, nothing-to-organise, chosen-not-advertised, big-top-at-a-heritage-farm, group-visit-later]
+    notes: Element order is introduce, ask, then evidence. big-top-at-a-heritage-farm supplies the picture in the first sentence rather than a claim of its own. The not-advertised paragraph sits before the close rather than at it, to vary the shape from the sibling file in this band.
+    messages:
+      - channel: email
+        to: beauyprobus@gmail.com
+        bcc: partnerships@rivermill.au
+        subject: "Circus opens Thursday: free seats for Beaudesert Probus members"
+        body: |
+          Hi Helen,
+
+          I am Priyanka Das, partnerships at Historic Rivermill, the riverside venue at Mount Nathan out along the Beaudesert Nerang road, on the site of the old arrowroot mill. CHARC Performance has a big top up on our lawn for the school holidays, and I have free tickets to the opening shows for your members and any grandchildren they have with them.
+
+          The first show is this Thursday 24 September at 1pm. Friday and Saturday run at 4pm and 7pm, Sunday at 11am and 2pm. Seven shows across the four days, and the tickets are good for any of them.
+
+          Reply with a rough number of members and I will send you the code and the booking link to pass around. Everyone books the show that suits them, so there is no outing to run and no bus to fill. It will not keep until your October meeting, so it would want to go out to members by email or phone, and the tickets are for Probus members and their families rather than for a public page.
+
+          These seats are not on sale anywhere. We went through the clubs near us and wrote to them one at a time, and Beaudesert Probus is on that list.
+
+          If the club would rather come together and watch the one show as a group, the season runs through to Sunday 4 October. Tell me a day next week and I will come back to you about seating.
+
+          If outings are someone else's job at the club, send me their name and I will write to them directly.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+        director_note: The subject names the club and the opening day, which distinguishes it from every other subject line in this segment.
+      - channel: phone
+        to: "0417 794 873"
+        text: Morning call on Wednesday 23 September where the email of 22 September drew no reply.
+        script:
+          - point: Who is calling
+            text: "Good morning, is that Helen? It's Priyanka Das from Historic Rivermill, the place out on the Beaudesert Nerang road at Mount Nathan. I sent the club an email yesterday and I am ringing because the timing on it is short."
+          - point: If it is not Helen or not the club
+            text: "Sorry to trouble you, I was after the Probus Club of Beaudesert. Do you have a better number for the secretary?"
+          - point: The offer in one sentence
+            text: "There is a circus big top up on our lawn for the school holidays, a family show that CHARC Performance is running, and I have free tickets to the opening shows for your members and the grandchildren who are down with them."
+          - point: The timing
+            text: "The first one is tomorrow at 1pm. Friday and Saturday at 4 and 7, Sunday at 11 and 2. Seven shows over the four days, and the tickets work for whichever one people pick."
+          - point: What it asks of her
+            text: "There is nothing for you to arrange. Give me a rough number of members now and I will email you the code and the booking link straight after this call, and people book their own seats. They are for your members and their families rather than for putting on a page."
+          - point: If she raises the meeting
+            text: "It will be over before your October meeting, so it would want to go round by email or the phone tree instead."
+          - point: Where the list came from, if she asks
+            text: "The seats are not on sale anywhere. We worked through the clubs near us and wrote to them one at a time."
+          - point: The group option
+            text: "If the club would sooner come together and see the one show, the season runs to Sunday 4 October. Give me a day next week and I will come back to you about seating."
+          - point: If she is not the one who decides
+            text: "Is there someone else at the club who looks after outings? I will write to them if you give me a name."
+          - point: Close
+            text: "How many should I put down for you? I will send the booking details over this morning."
+          - point: Voicemail
+            text: "Good morning, this is Priyanka Das from Historic Rivermill at Mount Nathan, out on the Beaudesert Nerang road. I emailed the club yesterday about free tickets to the circus that is on our lawn these school holidays, for your members and their grandchildren. The first show is tomorrow at 1pm and they run through to Sunday. Reply to that email with a rough number and I will send the booking details the same day. Thank you."
+        phone_note: Three numbers were found for this club and none is confirmed. Try the roster's 0417 794 873 first, then 0412 629 377 from the club's own Facebook page, then 0494 049 513 from the directory listing against Helen Parnell's name. The Facebook number is the club's own published one and is the better second try.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Helen Parnell, Secretary, Tuesday 22 September, having never heard of the sender or the venue. First reaction is whether this is genuine. A stranger writing to the club's Gmail address offering free tickets has the shape of something she would normally bin. What stops her is the specificity: the club is named, the road is named, the show is named, and the dates are real. That does not read as boilerplate.
+
+      The timing stops her short. The first show is two days off. The club's cadence is monthly, so there is no way to put this in front of the membership through the ordinary channel before Thursday, or before the season ends. The message has already spotted that, which she notices, so the ask is that she rings around or emails people herself inside 48 hours. That is real work for a volunteer secretary rather than a forward and be done.
+
+      Questions she would put in a reply rather than raise as objections: how many tickets, is there a cap, can a member bring more than one grandchild, where do people go once they have the code and is it manageable for older members who are not confident online, and whether this is really restricted to her club or every club in the district is getting the same letter. On that last one she takes "not on sale anywhere" with a pinch of salt, as the kind of thing every salesperson says.
+
+      Nothing would stop her replying. The ask is small, and free family tickets in school-holiday week for members with visiting grandchildren are worth passing on even on short notice. The line about no outing to run and no bus to fill is well aimed at a secretary's actual pain point. Persona's own estimate: 65 per cent.
+    fact_check:
+      - claim: These seats are not on sale anywhere.
+        source: historicrivermill.au/data/circus.yaml, which carries a live Oztix ticket link for all fourteen sessions and records tickets on sale since 2026-09-11.
+        result: false
+        note: The show is on public sale, including all four opening-week dates named in the draft. Only these particular complimentary seats sit outside that sale. The campaign's own usps.chosen-not-advertised claim text draws the distinction the draft collapsed, that the same shows sell at full price on the venue's page and the operator's ticketing.
+        correction: The shows are on sale to the public at full price. These tickets are not, and they are not advertised anywhere.
+      - claim: Show times of Thursday 24 September 1pm, Friday 25 and Saturday 26 September at 4pm and 7pm, Sunday 27 September at 11am and 2pm, seven shows across four days.
+        source: historicrivermill.au/data/circus.yaml sessions, which the showtimes file names as the home of the start times.
+        result: verified
+      - claim: The season runs through to Sunday 4 October.
+        source: historicrivermill.au/data/circus.yaml, last session 2026-10-04T11:00.
+        result: verified
+      - claim: No code, no price, no discount and no ticketing link appears in the email or the phone script.
+        source: usps.opening-week-seats.rests_on, which puts the code in the reply rather than the first message.
+        result: verified
+      - claim: Riverside venue at Mount Nathan on the site of the old arrowroot mill.
+        source: business-overview.md U4, former arrowroot mill circa 1910, riverside setting.
+        result: verified
+        note: Checked against business-antifacts.md. The wording does not claim surviving mill structures or 100-year-old buildings.
+      - claim: Address 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211.
+        source: sot/S2-fees-and-service-hours.md section 1.
+        result: verified
+    antifact_check: |
+      Checked item by item against business-antifacts.md. No stone buildings are claimed; no building is described at all. No 100-year-old, heritage or original mill structure is claimed; the arrowroot mill appears as the site's past, circa 1910 per U4, with nothing said about what stands there now. No vineyard and no wine. No farming claim in either direction. Tamborine Mountain is not named; the venue is placed by its own road and by Mount Nathan. The club sits in the Scenic Rim LGA and the venue in City of Gold Coast, and the draft claims neither LGA for the venue.
+    revision_note: |
+      One factual error was fixed and the persona's four questions were sorted before the draft was touched.
+
+      The error. "These seats are not on sale anywhere" is false against the ticketing data, and the correction splits it in two: the shows are on public sale at full price, and these tickets are not and are not advertised. No price figure appears, so the a_author rule against naming a price holds. The fix also answers the persona's pinch-of-salt reaction, since conceding the public sale is what makes the rest of the paragraph credible.
+
+      Sorted as answer-in-this-email: none on blocking grounds alone, the persona putting her own reply likelihood at 65 per cent.
+
+      Sorted as absorb by reframing a sentence already present: three. The cap on numbers goes into the existing ask sentence, which now says the number she gives will be held and can grow. Members who are not confident online get one sentence offering to book seats in the club's name, which is the offer's existing reservation mechanism rather than a new concession. The exclusivity suspicion is absorbed by the corrected not-advertised paragraph.
+
+      Sorted as leave for the reply: one. Whether a member may bring more than one grandchild. She is already paying attention at that point, the answer depends on the per-show tally, and a per-member limit in a first message would shrink the offer before anyone has said yes.
+
+      Not changed: her observation that ringing round in 48 hours is real work for a volunteer secretary. She credited the message with having spotted it, and named the no-outing line as well aimed. Softening the ask would take away the thing she responded to.
+
+      One style fix. The October-meeting sentence ran to 37 words, chaining the meeting point, the members-and-families restriction and the channel instruction. It is now three sentences.
+  - type: draft
+    number: 2
+    chosen_usps: [opening-week-seats, nothing-to-organise, chosen-not-advertised, big-top-at-a-heritage-farm, group-visit-later]
+    notes: Carries the corrected not-advertised wording, the held-number and add-to-it line, the offer to book seats for members who would rather not use a website, and the split of the 37-word sentence.
+    messages:
+      - channel: email
+        to: beauyprobus@gmail.com
+        bcc: partnerships@rivermill.au
+        subject: "Circus opens Thursday: free seats for Beaudesert Probus members"
+        body: |
+          Hi Helen,
+
+          I am Priyanka Das, partnerships at Historic Rivermill, the riverside venue at Mount Nathan out along the Beaudesert Nerang road, on the site of the old arrowroot mill. CHARC Performance has a big top up on our lawn for the school holidays, and I have free tickets to the opening shows for your members and any grandchildren they have with them.
+
+          The first show is this Thursday 24 September at 1pm. Friday and Saturday run at 4pm and 7pm, Sunday at 11am and 2pm. Seven shows across the four days, and the tickets are good for any of them.
+
+          Reply with a rough number of members and I will hold that many. If the number grows after that, tell me and I will add to it. Everyone books the show that suits them, so there is no outing to run and no bus to fill. For any members who would rather not book on a website, send me their names and how many seats each, and I will book those seats in the club's name myself. The tickets are for Probus members and their families rather than for a public page. It will not keep until your October meeting either, so it would want to go round by email or by phone.
+
+          The shows are on sale to the public at full price. These tickets are not, and they are not advertised anywhere. We went through the clubs near us and wrote to them one at a time, and Beaudesert Probus is on that list.
+
+          If the club would rather come together and watch the one show as a group, the season runs through to Sunday 4 October. Tell me a day next week and I will come back to you about seating.
+
+          If outings are someone else's job at the club, send me their name and I will write to them directly.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+  - type: final
+    chosen_usps: [opening-week-seats, nothing-to-organise, chosen-not-advertised, big-top-at-a-heritage-farm, group-visit-later]
+    messages:
+      - channel: email
+        to: beauyprobus@gmail.com
+        bcc: partnerships@rivermill.au
+        subject: "Circus opens Thursday: free seats for Beaudesert Probus members"
+        body: |
+          Hi Helen,
+
+          I am Priyanka Das, partnerships at Historic Rivermill, the riverside venue at Mount Nathan out along the Beaudesert Nerang road, on the site of the old arrowroot mill. CHARC Performance has a big top up on our lawn for the school holidays, and I have free tickets to the opening shows for your members and any grandchildren they have with them.
+
+          The first show is this Thursday 24 September at 1pm. Friday and Saturday run at 4pm and 7pm, Sunday at 11am and 2pm. Seven shows across the four days, and the tickets are good for any of them.
+
+          Reply with a rough number of members and I will hold that many. If the number grows after that, tell me and I will add to it. Everyone books the show that suits them, so there is no outing to run and no bus to fill. For any members who would rather not book on a website, send me their names and how many seats each, and I will book those seats in the club's name myself. The tickets are for Probus members and their families rather than for a public page. It will not keep until your October meeting either, so it would want to go round by email or by phone.
+
+          The shows are on sale to the public at full price. These tickets are not, and they are not advertised anywhere. We went through the clubs near us and wrote to them one at a time, and Beaudesert Probus is on that list.
+
+          If the club would rather come together and watch the one show as a group, the season runs through to Sunday 4 October. Tell me a day next week and I will come back to you about seating.
+
+          If outings are someone else's job at the club, send me their name and I will write to them directly.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+        director_note: The subject names the club and the opening day, which distinguishes it from every other subject line in this segment.
+        to_note: beauyprobus@gmail.com is the club's own published address, taken from the Contact info block of its current Facebook page, a primary source. The greeting uses a name that rests on a single uncorroborated directory citation, which is why the message closes by asking for the right person if outings are someone else's job.
+      - channel: phone
+        to: "0417 794 873"
+        text: Morning call on Wednesday 23 September where the email of 22 September drew no reply.
+        script:
+          - point: Who is calling
+            text: "Good morning, is that Helen? It's Priyanka Das from Historic Rivermill, the place out on the Beaudesert Nerang road at Mount Nathan. I sent the club an email yesterday and I am ringing because the timing on it is short."
+          - point: If it is not Helen or not the club
+            text: "Sorry to trouble you, I was after the Probus Club of Beaudesert. Do you have a better number for the secretary?"
+          - point: The offer in one sentence
+            text: "There is a circus big top up on our lawn for the school holidays, a family show that CHARC Performance is running, and I have free tickets to the opening shows for your members and the grandchildren who are down with them."
+          - point: The timing
+            text: "The first one is tomorrow at 1pm. Friday and Saturday at 4 and 7, Sunday at 11 and 2. Seven shows over the four days, and the tickets work for whichever one people pick."
+          - point: What it asks of her
+            text: "There is nothing for you to arrange. Give me a rough number of members now and I will hold that many. I will email you the code and the booking link straight after this call, and people book their own seats. They are for your members and their families rather than for putting on a page."
+          - point: If members are not confident booking online
+            text: "If some of them would rather not deal with a website, send me their names and how many seats each. I will book those in the club's name at this end."
+          - point: If she raises the meeting
+            text: "It will be over before your October meeting, so it would want to go round by email or the phone tree instead."
+          - point: Where the list came from, if she asks
+            text: "The shows are on sale to the public at the full price. These tickets are not, and they are not advertised. We worked through the clubs near us and wrote to them one at a time."
+          - point: The group option
+            text: "If the club would sooner come together and see the one show, the season runs to Sunday 4 October. Give me a day next week and I will come back to you about seating."
+          - point: If she is not the one who decides
+            text: "Is there someone else at the club who looks after outings? I will write to them if you give me a name."
+          - point: Close
+            text: "How many should I put down for you? I will send the booking details over this morning."
+          - point: Voicemail
+            text: "Good morning, this is Priyanka Das from Historic Rivermill at Mount Nathan, out on the Beaudesert Nerang road. I emailed the club yesterday about free tickets to the circus that is on our lawn these school holidays, for your members and their grandchildren. The first show is tomorrow at 1pm and they run through to Sunday. Reply to that email with a rough number and I will send the booking details the same day. Thank you."
+        actioned_date: null
+        phone_note: Three numbers were found for this club and none is confirmed. Try the roster's 0417 794 873 first, then 0412 629 377 from the club's own Facebook page, then 0494 049 513 from the directory listing against Helen Parnell's name. The Facebook number is the club's own published one and is the better second try. Call mid-morning on Wednesday 23 September.
+fact_provenance:
+  - claim: A big top is up on the lawn for the school holidays, with a family show run by CHARC Performance.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md, and the campaign header of 2026-09-cirque-heist-season.yaml.
+  - claim: The first show is Thursday 24 September at 1pm.
+    source: historicrivermill.au/data/circus.yaml, session 2026-09-24T13:00, the home the showtimes file names for start times.
+  - claim: Friday 25 and Saturday 26 September run at 4pm and 7pm, Sunday 27 September at 11am and 2pm.
+    source: historicrivermill.au/data/circus.yaml, sessions 2026-09-25T16:00 and T19:00, 2026-09-26T16:00 and T19:00, 2026-09-27T11:00 and T14:00.
+  - claim: Seven shows across the four days, free, and the tickets are good for any of them.
+    source: campaign usps.opening-week-seats, free seats at any of the seven opening-week shows.
+  - claim: The number the club gives will be held, and can be added to later.
+    source: campaign usps.opening-week-seats.claim, up to the segment's allocation, more on request; and the campaign header, which has the sender keep a per-show tally and confirm the hold.
+  - claim: The season runs through to Sunday 4 October.
+    source: historicrivermill.au/data/circus.yaml, last session 2026-10-04T11:00.
+  - claim: There is nothing for the secretary to organise, and members book whichever show suits them.
+    source: campaign usps.nothing-to-organise.
+  - claim: Seats can be booked in the club's name for members who would rather not use a website.
+    source: campaign header of 2026-09-cirque-heist-season.yaml, the offer is a reservation in the organisation's name and the sender confirms the hold.
+  - claim: The code and the booking link follow in the reply once a number is given.
+    source: campaign usps.opening-week-seats.rests_on, the code is sent in the reply that answers the recipient, never in the first message.
+  - claim: The tickets are for Probus members and their families rather than for a public page.
+    source: campaign header of 2026-09-cirque-heist-season.yaml, the code is kept off social media and not passed beyond the organisation, and prompt_appendices.a_author.
+  - claim: The shows are on sale to the public at full price, while these tickets are not and are not advertised.
+    source: campaign usps.chosen-not-advertised.claim, the same shows sell at full price on the venue's own page and on the operator's ticketing; and the Oztix links on every session in historicrivermill.au/data/circus.yaml, on sale since 2026-09-11.
+  - claim: The clubs near the venue were written to one at a time, and Beaudesert Probus is on that list.
+    source: campaign usps.chosen-not-advertised, each recipient a profiled roster entry engaged through the segment allowlist rather than a bought list.
+  - claim: A group visit can be arranged for the following week, with seating to come back on.
+    source: campaign usps.group-visit-later.
+  - claim: Historic Rivermill is a riverside venue at Mount Nathan on the Beaudesert Nerang road, on the site of the old arrowroot mill, at 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211.
+    source: business-overview.md U4 and the outreach facts section, sot/S2-fees-and-service-hours.md section 1, checked against business-antifacts.md for the buildings and Tamborine Mountain claims.
+  - claim: The club's next meeting falls after the season ends, so the offer cannot wait for it.
+    source: Roster s_note and the profile's mechanism evidence, first Wednesday of the month at The Club, 23-25 William Street, read against the season's last session on 4 October in historicrivermill.au/data/circus.yaml.
+  - claim: Helen Parnell is Secretary of the Probus Club of Beaudesert, reachable at beauyprobus@gmail.com.
+    source: Profile of Beaudesert Probus Club. The email is confirmed from the club's own Facebook page Contact info block, a primary source. The name and role rest on a single mycommunitydirectory.com.au citation that returned 403 to direct fetch and was not corroborated, which the email's closing redirect allows for.
+  - claim: Three phone numbers exist for this club and none is confirmed.
+    source: Profile of Beaudesert Probus Club, verification corrections section, and the roster p_note.
+quality_checklist: |
+  1. Structure. Root keys are from the section 6 set. Both draft rounds and the review round carry type and number. The final round holds one email and one phone message, so the email cardinality cap holds. The recipient address is the club's own published one, not a pattern guess.
+  2. Coverage. fact_provenance reaches every factual claim in the final email and phone script, including the three that rest on the profile and roster rather than the campaign. chosen_usps is set on both draft rounds and the final round. a_note carries the angle, channel, warmth, language and the identity caveat.
+  3. Presupposition. Nothing tells Helen Parnell something she already knows about her own club. The charter year, the membership, the meeting venue and the 2025 tramway bus trip are all absent. The meeting cadence enters only as the reason the offer cannot wait, in one clause, not as a recital of her calendar.
+  4. Manufactured connection. The group-visit line traces to the profile's dated bus-trip evidence. The grandchildren line is an offer for school-holiday visitors, not a claim about this club's members. Nothing is asserted about Helen Parnell's interests, and the profile's silence on her public activity is respected.
+  5. Concreteness. The ask is answerable in one sentence: a rough number, or a day next week for a group.
+  6. Band pattern. Compared against pine-lake-village.yaml, the one sibling in this band. That file opens on the self-introduction and closes on the not-advertised line; this one leads the subject with the event and the deadline, compresses the show list, moves the not-advertised paragraph off the close, and ends on a redirect to the right office-bearer. The openers do not read as the same template.
+  7. Antifacts. Checked item by item, recorded in the review round's antifact_check.
