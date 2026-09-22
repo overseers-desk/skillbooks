@@ -1,0 +1,128 @@
+This is a Kahneman's system 2 question.
+
+RATIONALE_START
+
+**Warmth: cold.** Both prefetch passes (address search and subject search for name and organisation) returned no results across all five accounts. The profile records no prior dealing and no dated conduct by Corey Hegge towards us. So no prior-contact line goes in the message, and no apology for a silent earlier note, because there was none. Per §4.1 the opener works from the recipient's situation and introduces the sender, rather than constructing a relationship.
+
+**Channel: email now, phone follow-up Wednesday morning.** Roster has email and phone, no platform URLs. The segment's `approach_sequencing` overrides the methodology's generic three-day wait: step 3 is a call the next morning where there is no reply.
+
+**Language: en-AU**, campaign default, no contrary signal in the profile.
+
+**Angle.** The profile is qualification-only: role and organisation fit, no public statements, no distinguishing outing activity. §4.4 forbids inventing relevance from that silence, so the angle rests on the mechanism the segment names and the profile confirms, a Village Manager at a 147-unit independent-living scheme with an on-site bus, community centre and an active residents committee. The primary angle is therefore the circulation angle, not the excursion angle: he already forwards things to residents, and the opening week falls two days out. The bus outing is offered as the second branch for the following week, which is the `message_goal`'s alternative reply.
+
+**USPs chosen**, from the segment plan block's list:
+
+- `opening-week-seats` (functional) — the seven sessions, free.
+- `nothing-to-organise` (functional) — stated plainly, since the segment's mechanism is circulation to residents. The registry's carve-out for childcare services does not bite here: a retirement village circulating an offer to residents is doing what it already does.
+- `chosen-not-advertised` (emotional) — carried by one flat sentence, that the seats are not on public sale. No sentence says who else was approached, how Pine Lake came to be on the list, or why the offer exists.
+- `group-visit-later` (functional) — the second-week branch, phrased as a next step rather than a promise of seating.
+- `big-top-at-a-heritage-farm` (emotional) — carried by the big top on the lawn and by the cafe and animals being open before the daytime sessions, drawn from S2's opening hours rather than pitched as a further claim.
+
+**Fact provenance.** Seven opening-week sessions and their start times: `historicrivermill.au/data/circus.yaml`, the file the showtimes document names as the home of the times (24 Sep 1pm; 25 Sep 4pm and 7pm; 26 Sep 4pm and 7pm; 27 Sep 11am and 2pm). Second week's daytime shows, Wednesday 30 September noon, Thursday 1 October 11am, Sunday 4 October 11am, same source. Ninety minutes: the showtimes file, where it is recorded as the office's own figure, so the message says "about". Cafe and animals open before the daytime sessions: S2 §2.1 and §4.2 read against those start times, which is why the clause is tied to the daytime ones only. Free entry: S2 §3. Parking: U11. Address: business overview.
+
+**Antifact check.** No stone buildings, no hundred-year-old buildings or original mill structures, no vineyard, no claim the venue is a farm, and the location is Mount Nathan, not Tamborine Mountain. The word "heritage" is absent from the draft, since every use of it invites one of those claims and the sentence does not need it.
+
+**Held out.** No code, no price, no discount, no link, no Oztix. No accessibility or Companion Card claim, which is unsettled with the operator; if he asks, that is answered in the reply. No credential from outside the segment's USP list.
+
+**What the recipient's reading changed.** Reading the first draft as a Village Manager at Elanora produced six questions the draft left him holding, and the final answers each:
+
+1. *Which of these would actually suit my residents?* The session list is reordered so the daytime sessions lead, because a 7pm show in the hinterland is the least likely one a village audience takes.
+2. *Where do I put this?* The first draft's "rather than a public notice" would have blocked the noticeboard and the village newsletter, which are the two channels a village manager uses and are both internal. The final names them as the right places and puts the limit on an open Facebook post instead.
+3. *How much work is this for me?* The first draft only implied there was no outing to run. The final says it.
+4. *When do I need to act?* The final asks for a reply today or tomorrow and says what that buys him.
+5. *Where is it and what will it cost a resident to turn up?* Address, free entry, parking.
+6. *How long will my residents be sitting?* The running time moves up out of the closing line.
+
+RATIONALE_END
+
+FIRST_START
+
+**Subject:** Free circus tickets for Pine Lake residents
+
+Dear Corey,
+
+I am Priyanka Das, Partnerships at Historic Rivermill, a riverside venue at Mount Nathan, out past Nerang. A circus company, CHARC Performance, has put a big top up on our lawn for the school holidays, and the family show, WANTED – A Cirque Heist, opens this Thursday 24 September.
+
+I have free tickets for your residents and the families who visit them. Seven shows across the opening weekend: Thursday at 1pm, Friday at 4pm and 7pm, Saturday at 4pm and 7pm, and Sunday at 11am and 2pm. These seats are not on public sale.
+
+Reply with a rough number and which show, and I will hold them in the village's name and send you the booking details to pass on to residents. They are for Pine Lake residents and their families rather than a public notice.
+
+If you would rather bring a group on the village bus, the season runs to Sunday 4 October, with daytime shows on the Wednesday, Thursday and Sunday of that week. Name a day and I will come back to you about seating.
+
+The show runs about ninety minutes. Our cafe and the animals are open before the Thursday and Sunday shows, so residents can make an afternoon of it.
+
+Kind regards,
+
+Priyanka Das
+Partnerships, Historic Rivermill
+partnerships@rivermill.au
+
+FIRST_END
+
+DRAFT_START
+
+## 1. Email (send Tuesday 22 September)
+
+**From:** Priyanka Das, Partnerships, Historic Rivermill, partnerships@rivermill.au
+**To:** corey.hegge@levande.com.au
+**Subject:** Free circus tickets for Pine Lake residents, opening Thursday
+
+Dear Corey,
+
+I am Priyanka Das, Partnerships at Historic Rivermill, a riverside venue at 950 Beaudesert Nerang Road, Mount Nathan. CHARC Performance has pitched a big top on our lawn for the school holidays, and the family show, WANTED – A Cirque Heist, opens this Thursday 24 September.
+
+I have free tickets for Pine Lake residents and the families who visit them. There are seven sessions over the opening weekend. The daytime ones are Thursday at 1pm, Sunday at 11am and Sunday at 2pm, and there are 4pm and 7pm sessions on both Friday and Saturday. These seats are not on public sale.
+
+Nothing needs organising at your end. Residents and their families book their own seats, so there is no bus to arrange and no list to collect.
+
+Reply with a rough number and the session that suits, and I will hold the seats in the village's name and send you the booking details to pass on. The tickets are for Pine Lake residents and their families, so the noticeboard or the village newsletter rather than an open Facebook post. Reply today or tomorrow and I will have it set up before the show opens.
+
+If a village bus outing would suit you better, the season runs to Sunday 4 October, with daytime shows on the Wednesday at noon, the Thursday at 11am and the Sunday at 11am. Tell me a day and I will come back to you about holding seating.
+
+The show runs about ninety minutes. The cafe and the animals are open before the daytime sessions, entry to the grounds is free, and there is parking on site.
+
+Kind regards,
+
+Priyanka Das
+Partnerships
+Historic Rivermill
+950 Beaudesert Nerang Road, Mount Nathan QLD 4211
+partnerships@rivermill.au
+
+## 2. Phone follow-up script (Wednesday 23 September, morning, if no reply)
+
+**Call:** 0401 417 480
+
+**Opening**
+
+"Good morning, is that Corey? Priyanka Das calling from Historic Rivermill at Mount Nathan. I sent you an email yesterday about free circus tickets for your residents, and I wanted to catch you before the show opens tomorrow."
+
+**The offer, in two sentences**
+
+"There is a circus in a big top on our lawn for the school holidays, and I have free seats for Pine Lake residents and the families visiting them. The daytime sessions are tomorrow at 1pm and Sunday at 11am and 2pm, with 4pm and 7pm sessions on Friday and Saturday."
+
+**The ask**
+
+"If you tell me roughly how many and which session, I will hold them in the village's name and email you the booking details this morning for the noticeboard or the newsletter. Residents book their own seats, so there is nothing for you to arrange."
+
+**If he would rather bring a group**
+
+"The season runs to Sunday 4 October, and the daytime shows the week after opening are Wednesday at noon, Thursday at 11am and Sunday at 11am. Give me a day that suits the bus and I will come back to you about holding seating."
+
+**If he asks for the number of tickets**
+
+"Tell me the number you think you will use and I will hold that. If more residents come forward afterwards, ring or email me and I will add them."
+
+**If it is not his area**
+
+"Who looks after activities and outings for the residents? I will send it straight to them, and I will copy you."
+
+**If he asks anything the message does not cover** (access into the tent, seating arrangements, wet weather, whether he can bring residents who need assistance)
+
+"I will check that with the circus company and come back to you today." Do not answer from the message. Record the question for the reply.
+
+**Voicemail**
+
+"Good morning Corey, Priyanka Das from Historic Rivermill at Mount Nathan, on 07 3703 1307. I emailed you yesterday with free circus tickets for Pine Lake residents and their families. The show opens tomorrow afternoon and runs through the weekend. Reply to that email with a rough number and I will hold the seats in the village's name and send you the booking details. Thank you."
+
+DRAFT_END

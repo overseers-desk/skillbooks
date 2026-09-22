@@ -1,0 +1,81 @@
+This is a Kahneman's system 2 question.
+
+RATIONALE_START
+**Warmth: cold.** The prefetch returns three unrelated Carlys (Carly Easton, a January 2026 Red Tables birthday customer; Carly Waldock, a September 2026 Rezdy booking; Carlyle Pietrobom, a 2024 restaurant-manager candidate). None is at Bright Horizons Carbrook, so none is this contact. The profile's one organisational signal, carbrook@bhchildcare.com.au on an ActiveCampaign list, sits under the excluded predecessor's tenure and is list membership, not a dealing. There is no prior note to this contact and no unanswered earlier ask, so the message opens as a first approach with a full self-introduction.
+
+**Channel: phone script only.** The roster carries a phone number and no email, and the profile records that the search for a personal address returned only the shared centre inbox already assigned to the excluded predecessor row. Under §4.2 that is the phone-only case: phone is the first touch, and the email carrying the certificate is a later round drafted after the call yields an address. The script therefore asks for the email outright, which is also the §4.8 roster backfill.
+
+**Language: en-AU.**
+
+**Angle: the second-week group visit, opened on the two sessions that fit a care day.** The segment objective is a group visit in the second week with the paperwork a director needs. The plan's ask window runs Wednesday 30 September to Sunday 4 October, but read against the showtimes only two sessions in that window work for a vacation-care programme: Wednesday 30 September at noon and Thursday 1 October at 11am. Friday and Saturday are 4pm and 7pm, and Sunday is a day the programme does not operate. Naming the two removes the coordinator's first piece of work and makes the ask answerable in one sentence.
+
+**USPs, all four the plan block lists for this segment:**
+- `group-visit-later` (functional) is the offer itself: a day next week, with notice enough for a bus and forms.
+- `make-a-day-of-it` (functional) gives the day its shape, animals and grounds in the morning, the big top after. It holds because both named sessions are daytime and the venue is open from 9am on weekdays.
+- `credentials-on-request` (functional) is what converts a coordinator's interest into a director's approval, and the profile confirms this is a site manager inside a 15-plus-centre network, so an approval step above her is likely.
+- `chosen-not-advertised` (emotional) answers the unspoken "why us" in one line without explaining the selection.
+
+`nothing-to-organise` is deliberately excluded. Its own `rests_on` rules it out for a childcare or outside-school-hours service, whose enrolled families' details were given for the care of those children.
+
+**Evidence the angle rests on:** the register mirror confirms Vacation Care as an approved care type, the centre's own site lists excursions among its programs, 75 approved places gives a group worth holding seats for, and 49.9 km / 44 min puts the venue inside a comfortable bus run. None of that is recited back to her; it is presupposed by the shape of the offer.
+
+**Held out of the first touch:** the code, the Eventbrite link, any price, any discount, any Oztix link, and any statement about how the show is selling. The code and link go in the reply that follows her answer.
+RATIONALE_END
+
+FIRST_START
+**Phone call, Tuesday 22 September 2026. Bright Horizons Australia Childcare Carbrook, 07 3287 6477. Ask for Carly, Service Manager.**
+
+*Reception:* "Good morning, my name is Priyanka Das, I'm calling from Historic Rivermill at Mount Nathan. Could I speak with Carly please?"
+
+*Opening:* "Hi Carly, it's Priyanka Das from Historic Rivermill. We're a riverside venue out at Mount Nathan, about forty-five minutes from Carbrook. There's a circus in a big top on our lawn for the school holidays, a family show called WANTED – A Cirque Heist. I'm ringing to offer your programme a free visit next week: the animals and the grounds in the morning, then the show."
+
+*The ask:* "Which day between Wednesday the 30th of September and Sunday the 4th of October would suit you, and roughly how many children and carers would you bring? I know two days' notice would be no use to anyone, so next week is what I'm proposing."
+
+*Paperwork:* "I'll send our public liability certificate and the visit details so your director has what she needs. What's the best email to send that to?"
+
+*Why you:* "These seats aren't on sale anywhere. We went through the programmes we know in this part of the coast and picked yours by name."
+
+*If she asks about the show:* it's a family circus, staged by CHARC Performance in a big top on our lawn, running through the school holidays.
+
+*If she asks what else is there:* alpacas, goats, sheep and ponies, turtles on the Coomera River, and the cafe is open in the morning.
+
+*If she can't decide on the call:* "I'll send the certificate and the details across today. Have a look and ring me back."
+
+*Close:* "I'll get that away to you this afternoon."
+
+*Voicemail:* "Hi Carly, Priyanka Das from Historic Rivermill at Mount Nathan. We've got a circus in a big top on the lawn for the school holidays, and I'd like to offer your programme a free visit next week. I'll try you again tomorrow."
+FIRST_END
+
+Reading it as Carly, mid-holidays with a floor of children behind her: the window is the problem. "Between Wednesday and Sunday" puts the work of finding a show that fits a care day back on her, and three of those days do not have a session she could use. She would also want to know how much of it is free before she raises it with her director, how long the show runs so she can book a bus both ways, and who she is meant to ring back and on what number. The line about two days' notice explains a decision she never asked about and puts a negative in her ear. The "we went through the programmes" sentence starts narrating our process.
+
+DRAFT_START
+**Phone call, Tuesday 22 September 2026. Bright Horizons Australia Childcare Carbrook, 07 3287 6477. Ask for Carly, Service Manager.**
+
+*Reception:* "Good morning, my name is Priyanka Das, I'm calling from Historic Rivermill at Mount Nathan. Could I speak with Carly please?"
+
+*If she is on the floor:* ask when suits to call back, and ring at that time.
+
+*Opening:* "Hi Carly, it's Priyanka Das from Historic Rivermill. We're a riverside venue out at Mount Nathan, about forty-five minutes from Carbrook. There's a circus in a big top on our lawn for the school holidays, a family show called WANTED – A Cirque Heist. I'd like to book your programme in for a free day with us next week: the animals and the grounds in the morning, then the show."
+
+*The ask:* "Two of next week's shows sit in the middle of the day, so they'd fit a care day. Wednesday the 30th at twelve, or Thursday the 1st of October at eleven. Which of those suits you better, and roughly how many children and carers would you bring?"
+
+*What it costs:* "The seats and the visit cost you nothing, carers included."
+
+*Paperwork:* "I'll send you our public liability certificate and the visit details today, so your director has it all in front of her. What's the best email for that?"
+
+*Why you:* "These seats aren't on sale anywhere. Your programme was picked by name."
+
+*Close:* "I'll get that away to you this afternoon. If you need me before then, I'm on partnerships@rivermill.au, or 07 3703 1307."
+
+**If she asks**
+
+- *How long is the show:* about an hour and a half.
+- *How the day runs:* arrive from nine, the animals and the cafe are open, then the big top.
+- *What the children would see on the grounds:* alpacas, goats, sheep and ponies, and turtles on the Coomera River.
+- *Who puts on the show:* CHARC Performance, a family circus, staged in the big top on our lawn.
+- *Horse rides:* the rides run on the day and are booked at the venue, separately from the visit.
+- *Any other day:* Friday the 2nd and Saturday the 3rd are four o'clock and seven, and Sunday the 4th is eleven.
+- *She needs to check with her director first:* "That's what the certificate is for. Give me your email and I'll have it with you within the hour."
+
+*Voicemail, if the call goes through to one:* "Hi Carly, it's Priyanka Das from Historic Rivermill at Mount Nathan. We've got a circus in a big top on the lawn these school holidays, and I'd like to offer your programme a free day with us next week, the animals in the morning and the show after. I'll try you again tomorrow morning, or you can reach me at partnerships@rivermill.au. Thanks Carly."
+DRAFT_END

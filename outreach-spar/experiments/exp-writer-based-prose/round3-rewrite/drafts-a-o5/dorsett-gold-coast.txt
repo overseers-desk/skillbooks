@@ -1,0 +1,96 @@
+This is a Kahneman's system 2 question.
+
+RATIONALE_START
+
+**Warmth: cold.** Both prefetch passes returned nothing on `christian.wachter@dorsetthotels.com` and nothing on his name or the property in any subject line, across all five accounts. The profile records no dated conduct of his toward us. So the message carries no prior-note line and no "we wrote before" sentence: neither is true here. The opener works from his situation (a desk that guests ask for recommendations), not from a compliment and not from a relationship.
+
+**Channel: email first, LinkedIn note alongside, phone as the third touch.** Roster has all three, so §4.2 gives three pieces. The standard sequence puts the email after connection acceptance or 4–5 days, which lands after the opening week the pass is good for, so the pass would expire before the first message about it arrived. The email therefore goes first and is the first touch; the LinkedIn note goes the same day as a second door to the same offer, written so it stands alone if he reads it before the email; the call follows on Friday 25 September if nothing has come back, which is inside the opening week and still actionable. The listed number is Dorsett's reception switchboard, not a direct line, so the script is built to survive a gatekeeper and a voicemail box.
+
+**Angle: the desk that recommends what its own staff have seen.** The profile's strongest behavioural evidence is the property's own published hinterland day-trip guide (Tamborine, Springbrook, Canungra) and the marketed concierge function that fields "where should we go" questions. That is infrastructure for referral, not a proven referral habit, so the message presupposes it rather than reciting it: the offer is addressed to his desk and the geographic anchor (Mount Nathan, at the foot of Tamborine Mountain, 30 minutes from central Gold Coast) sits where a reader who already publishes that geography will place it without being told. The published guide is not quoted back at him. Naming it would be research-performance in the space where specificity belongs, and would come close to explaining how he was chosen, which the campaign's drafting rules keep out.
+
+Angles considered and set aside: the robot check-in and guest-technology material is the best-evidenced thing he has said publicly, and it has nothing to do with a circus tent, so using it would be a homework gesture with no proposition attached. The convention-delegate throughput (The Star, GCCEC) is real but belongs to the 300-room case, not to a four-seat pass, and leading with his guest volume would read as our interest in his list.
+
+**USPs, from the segment block only:** `chosen-not-advertised` in this segment's framing (a pass held in his name so the desk can recommend what it has seen), `opening-week-seats` (any of the opening-week shows), and `big-top-at-a-heritage-farm` (the school-holiday story). The other registry entries are not this segment's and stay out, including the cafe-and-animals one.
+
+**What the message withholds by design.** No code, no price, no discount. The only link is the Eventbrite listing named in the registry, given as where guests book, which is this segment's public-facing half. The code and the Eventbrite booking for the pass itself go in the reply that answers him. Nothing says or implies seats are unsold, that the tent needs filling, or that the offer serves us; nothing explains why we are offering or how he was picked.
+
+**Timing.** Today is Tuesday 22 September, the season opens Thursday 24 September at 1pm, and the message says both in its first lines rather than leaving him to count. Only show facts the showtimes file carries are stated as times: the 1pm Thursday opening. The season end and the Friday and Saturday evening shows come from the campaign's own ask for this segment.
+
+**Antifact pass.** No stone buildings. No 100-year-old or original mill buildings, and no mill at all: the heritage claim is carried by "heritage riverside venue", which is the antifact file's own permitted description. No vineyard. The venue is placed at Mount Nathan, at the foot of Tamborine Mountain, never on it. The word "farm" is avoided, since that question is unsettled; the venue is described by what a visitor gets: cafe, horse riding, animals. No feed-bag or animal-food offer. No Oztix link.
+
+**Response likelihood: 25%.** A named GM, a concrete four-seat pass, one reply sentence to accept, and no cost to weigh. Against that: a cold approach into a 300-room property two days before the date, where the GM's likeliest move is a forward rather than a reply, which the message is built to convert by inviting exactly that.
+
+RATIONALE_END
+
+FIRST_START
+
+**Email (first touch, Tuesday 22 September)**
+
+**To:** christian.wachter@dorsetthotels.com
+**Subject:** Family pass for the Dorsett desk, circus opens Thursday
+
+Hi Christian,
+
+Historic Rivermill is a heritage riverside venue at Mount Nathan, at the foot of Tamborine Mountain and 30 minutes from central Gold Coast, with a cafe on the river, horse riding and alpacas. CHARC Performance has raised a big top on our lawn for the school holidays. The show is WANTED – A Cirque Heist, a family circus, and it opens this Thursday 24 September at 1pm.
+
+I have a family pass of four for your desk. It is good at any show from Thursday to Sunday. Reply with the one that suits and I will send the booking details.
+
+Guests book their own seats at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924. The season runs to Saturday 3 October, with evening shows on Fridays and Saturdays.
+
+If it is worth recommending once you have seen it, a word from your desk to guests with children is what we are after.
+
+Kind regards,
+Priyanka Das
+Partnerships, Historic Rivermill (Colourful.land Pty Ltd)
+partnerships@rivermill.au
+
+**LinkedIn connection note (same day)**
+
+Hi Christian, Priyanka from Historic Rivermill at Mount Nathan. A circus big top opens on our lawn this Thursday for the school holidays. I have a family pass of four for your desk and have emailed you the details.
+
+**Phone (Friday 25 September, if no reply)**
+
+Ask for Christian Wachter. Say I emailed on Tuesday about a family pass to the circus at Historic Rivermill, ask which show suits, and offer to send the booking details.
+
+FIRST_END
+
+Reading it as Wachter: "family pass of four" does not say four seats at one show, so he cannot tell what he is being given. "Reply with the one that suits" assumes he will action it himself, when a 300-room GM forwards this to front office, and the message gives that forward nowhere to land. The closing sentence is about what we want rather than what he does. The phone piece is not usable as written against a reception switchboard, and it has no voicemail path.
+
+DRAFT_START
+
+**Email — first touch, sent Tuesday 22 September**
+
+**To:** christian.wachter@dorsetthotels.com
+**Subject:** Family pass for the Dorsett desk, circus opens Thursday
+
+Hi Christian,
+
+Historic Rivermill is a heritage riverside venue at Mount Nathan, at the foot of Tamborine Mountain and 30 minutes from central Gold Coast. We have a cafe on the river, horse riding and alpacas. CHARC Performance has raised a big top on our lawn for the school holidays, and the show, WANTED – A Cirque Heist, opens this Thursday 24 September at 1pm.
+
+There is a family pass for your desk: four seats at any one show from Thursday to Sunday. Reply with the show that suits and I will hold the seats and send the booking details. If the front office is the better home for it, pass this along and I will sort out the day with them.
+
+The season runs to Saturday 3 October, with evening shows on Fridays and Saturdays. Guests book their own seats at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+See it first, then tell guests with children about it if it holds up.
+
+Kind regards,
+Priyanka Das
+Partnerships, Historic Rivermill (Colourful.land Pty Ltd)
+partnerships@rivermill.au
+
+**LinkedIn connection note — sent the same day**
+
+Hi Christian, Priyanka from Historic Rivermill at Mount Nathan. A circus big top opens on our lawn this Thursday for the school holidays, and there is a family pass of four seats for your desk. Details are in an email to your work address, or reply here and I will send them.
+
+**Phone — Friday 25 September, if the email has had no reply**
+
+Number: +61 7 5504 1000. This is Dorsett's reception switchboard, not a direct line.
+
+1. Opening, to whoever answers: "Good morning, it's Priyanka Das from Historic Rivermill at Mount Nathan. Could you put me through to Christian Wachter, please?"
+2. If he is unavailable and reception offers to take it: "You may be the right person anyway. We have a circus in a big top on our lawn for the school holidays, and there is a family pass of four seats for the desk, any show through to Sunday. Who looks after guest recommendations there?"
+3. To Christian, or to whoever holds guest recommendations: "I emailed on Tuesday about this. We have a big top on the lawn at Historic Rivermill for the holidays, 30 minutes inland from you at Mount Nathan. There are four seats for your desk at any show through to Sunday. Which show would suit?"
+4. On a show being named: "I will hold those and email you the booking details this afternoon. Can I send them to you at this address, or is there a better one?"
+5. On hesitation: "The season runs to Saturday 3 October, with evening shows on Fridays and Saturdays, so there is time to use them later in the week if this weekend is full."
+6. Voicemail: "Christian, it's Priyanka Das from Historic Rivermill at Mount Nathan, on 07 3703 1307. There is a circus in a big top on our lawn for the school holidays, and a family pass of four seats for your desk at any show through to Sunday. I emailed the details on Tuesday. Reply to that and I will hold the seats."
+
+DRAFT_END

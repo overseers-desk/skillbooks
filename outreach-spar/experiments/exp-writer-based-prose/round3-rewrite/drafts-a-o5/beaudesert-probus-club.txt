@@ -1,0 +1,112 @@
+This is a Kahneman's system 2 question.
+
+Bearing on it: SPAR-A §4.1–4.5 (warmth, channel, angle, draft), campaign invariant I1 (no pitch content read back from the profile), the campaign's `a_author` appendix, and the antifact checklist. Files read: method §4.1–4.5, business overview, showtimes file plus `historicrivermill.au/data/circus.yaml` (where the showtimes file says the seven opening-week start times live), S2 fees and hours, the profile, the `segments.seniors-club` plan block, and the antifacts.
+
+RATIONALE_START
+
+**Warmth: cold.** The prefetch's first pass searched `beauyprobus@gmail.com` as both sender and recipient across all five accounts and returned no results from each. The second pass (name and organisation in subject) timed out on `admin-rivermill-au` and returned nothing on the other four. The gap is immaterial: the address search already covered `admin-rivermill-au` and came back empty. No prior note to name, so no "I wrote to you earlier" line. The profile records no dated conduct by the club toward us either, so no prior dealing is named.
+
+**Channel: email now, phone tomorrow morning.** Roster has email and phone, no LinkedIn, which puts this on the email-first rule of §4.2, and the plan block's `approach_sequencing` sets the same order: email 22 September, phone the next morning where there is no reply. The email address is the strong one, confirmed by P against the club's own Facebook Contact info block. The phone is the weak one: three distinct numbers across three sources, none confirmed. The script is written so it survives reaching the wrong person.
+
+**Language: English (Australian), the campaign default.** Nothing in the profile suggests otherwise.
+
+**Angle.** The profile gives two hooks. The club runs group outings under its own steam, evidenced by a dated 2025 bus trip along the old Beaudesert Tramway line. And it meets once a month, first Wednesday, at The Club in William Street. The second hook decides the angle: the next meeting is Wednesday 7 October, after the whole opening week has passed. Helen cannot put this to a room before the shows, so any angle that leans on the club assembling itself is dead on arrival. The angle is therefore `nothing-to-organise` in its strict form: she forwards it, members book the show that suits them, and nothing needs the club to meet or to hire a coach. The bus-trip evidence is not wasted; it goes to the group-visit line at the end, where the second week is on the table for a club that does run coach outings.
+
+**USPs, from the segment plan block's four.** `nothing-to-organise` (functional) carries the ask. `opening-week-seats` (functional) supplies the seven shows and their times, so a member can pick one before replying. `chosen-not-advertised` (emotional) is stated in one plain sentence and never explained, per the `a_author` appendix: the seats are not on sale and the club is on the list. `big-top-at-a-heritage-farm` (emotional) is the picture, a real big top on the lawn by the river. `make-a-day-of-it` is a registered USP but is not in this segment's list, so the cafe and the animals stay out and the message stays short.
+
+**Subject line.** Carries the club's own name, which distinguishes it from every other message in a segment of ninety-odd clubs, plus the opening day, so an inbox triage answers "must I act, by when" without opening.
+
+**Antifact check.** No stone buildings, no old or original mill structures, no vineyard, not on Tamborine Mountain. "Farm" as a description of the venue is avoided, since the antifacts leave that question open in both directions. The venue is described by what a visitor finds: a riverside venue at Mount Nathan on the Beaudesert Nerang Road. No feed-bag or animal-food offer, no subscriber discount, no price and no code in this message, and no Oztix link. The only link the campaign permits is the Eventbrite one, which goes in the reply.
+
+**Fact provenance.** Seven opening-week shows and their start times: `historicrivermill.au/data/circus.yaml`, the file the showtimes document names as the home of the times (Thu 24 at 1pm; Fri 25 and Sat 26 at 4pm and 7pm; Sun 27 at 11am and 2pm). Show title and operator: the same file and the campaign header. Address: business overview and S2 §1. The 90-minute running time is the office's own figure rather than the operator's, so it stays out of the first message and belongs in the reply if asked.
+
+**Response likelihood: about 35%.** The address is primary-source confirmed and a secretary's job is circulating things to members, which is exactly the ask. Against that, two days' notice and a named contact sourced from one directory listing that was never corroborated.
+
+RATIONALE_END
+
+FIRST_START
+
+**EMAIL**
+
+To: beauyprobus@gmail.com
+Subject: Free circus tickets for Beaudesert Probus members
+
+Dear Helen,
+
+I am Priyanka Das, partnerships at Historic Rivermill, the riverside farm venue at Mount Nathan, out along the Beaudesert Nerang Road about half an hour from Beaudesert.
+
+I have free tickets to WANTED – A Cirque Heist for your members and their grandchildren. CHARC Performance has a big top on our lawn for the school holidays and the season opens this Thursday 24 September. Seven shows run from Thursday to Sunday: Thursday at 1pm, Friday and Saturday at 4pm and 7pm, Sunday at 11am and 2pm.
+
+These seats are not on sale anywhere. Reply with roughly how many members might take them up and I will send you the code and the booking link to circulate, so each family books the show that suits them. They are for the club's people rather than for posting publicly.
+
+Entry to the grounds is free and there is plenty of parking, so anyone arriving early can have lunch at the cafe by the river and see the alpacas before the show.
+
+If the club would rather come together as a group, the following week suits that better. Tell me a day and I will come back to you.
+
+Kind regards,
+Priyanka Das
+Partnerships, Historic Rivermill (Colourful.land Pty Ltd)
+partnerships@rivermill.au
+
+**PHONE FOLLOW-UP, Wednesday 23 September, morning**
+
+Good morning, is that Helen? My name is Priyanka Das, I am with Historic Rivermill at Mount Nathan. I sent you an email yesterday about free circus tickets for your Probus members.
+
+There is a circus in a big top on our lawn, opening tomorrow. I have free seats for your members and their grandchildren, seven shows from tomorrow through to Sunday.
+
+There is nothing for the club to organise. If you tell me roughly how many members might want them, I will email you the code and the booking link this morning and your members book whichever show suits.
+
+If you would rather bring a group, the following week suits that.
+
+FIRST_END
+
+Reading it as Helen Parnell: the drive-time figure is not in any source and she lives there, so she would catch it; "farm venue" walks into the one description the antifacts leave unsettled; the cafe-and-alpacas paragraph is a USP this segment was not given and it pushes the ask down the page; nothing tells her she can do this from her desk today rather than wait for the 7 October meeting; and "roughly how many" reads as a cap she has to guess at.
+
+DRAFT_START
+
+**EMAIL** (first touch, send 22 September 2026)
+
+To: beauyprobus@gmail.com
+Subject: Free circus tickets for Beaudesert Probus members, opens Thursday
+
+Dear Helen,
+
+My name is Priyanka Das and I look after partnerships at Historic Rivermill, the riverside venue at Mount Nathan, on the Beaudesert Nerang Road.
+
+I have free tickets to WANTED – A Cirque Heist for your members and their grandchildren. CHARC Performance has a big top on our lawn for the school holidays, and the season opens this Thursday 24 September. Seven shows run through to Sunday: Thursday at 1pm, Friday and Saturday at 4pm and 7pm, and Sunday at 11am and 2pm.
+
+They are not on sale anywhere, and Beaudesert Probus is on the short list of clubs I am sending them to.
+
+Reply with a rough number and I will send you the code and the booking link the same day, for you to forward to members. Each family then books the show that suits them, so there is no outing for the club to put together. Tell me if you want more than the number you first ask for. The tickets are for the club's people and their families rather than for posting publicly.
+
+If the club would rather come along together instead, the following week suits a group. Tell me a day and I will come back to you.
+
+Kind regards,
+
+Priyanka Das
+Partnerships, Historic Rivermill (Colourful.land Pty Ltd)
+partnerships@rivermill.au
+
+**PHONE FOLLOW-UP SCRIPT** (Wednesday 23 September, morning, if no reply)
+
+*Note for the caller: three different numbers for this club are on file, from the roster, a community directory and the club's Facebook page. Try the roster number, 0417 794 873, first. Whoever answers may not be Helen and may not hold a club role, so open with the club, not the name.*
+
+1. **Opening.** Good morning, my name is Priyanka Das, I am with Historic Rivermill at Mount Nathan, on the Beaudesert Nerang Road. Have I reached the Probus Club of Beaudesert? I am after Helen Parnell, your secretary.
+
+2. **Why calling.** I emailed Helen yesterday about free tickets for your members. The season opens tomorrow, so I thought a call would be quicker than waiting on the email.
+
+3. **The offer.** There is a circus in a big top on our lawn for the school holidays, WANTED – A Cirque Heist. I have free seats for your members and their grandchildren. Seven shows, starting tomorrow Thursday at 1pm, Friday and Saturday at 4pm and 7pm, and Sunday at 11am and 2pm. They are not on sale anywhere.
+
+4. **The ask.** Give me a rough number and I will email you the code and the booking link this morning. You forward it to members and each family books the show that suits them, so there is nothing for the club to arrange. More are available if the number grows.
+
+5. **If they ask how many they can have.** Tell me what you think members will take and I will hold that many. Come back to me if you need more.
+
+6. **If the meeting date comes up (next meeting is Wednesday 7 October).** The shows finish before your October meeting, so this one is better sent round by email or put on the club's Facebook page rather than held for the room.
+
+7. **If this is the wrong person.** Who looks after the club's outings or the members' email list? I will send it to them today.
+
+8. **If they would rather bring a group.** The following week suits a group better. Give me a day that works and I will come back to you on seats.
+
+9. **Close.** I will send that through within the hour. The tickets are for club members and their families rather than for posting publicly.
+
+DRAFT_END

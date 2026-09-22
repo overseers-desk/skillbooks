@@ -1,0 +1,105 @@
+Read: SPAR-A §4.1–4.5, the campaign's `community-organisation` plan block, the profile, the three fact sources, the antifact checklist, and the showtimes (the seven opening-week start times live in `historicrivermill.au/data/circus.yaml`, which the showtimes file names as their home).
+
+RATIONALE_START
+
+**Warmth: prior contact, not cold.** The prefetch shows one outbound message, 9 April 2026, `partnerships@rivermill.au` to `oxenfordmensshed@gmail.com`, subject "Group outing to Historic Rivermill from Oxenford", with no reply in any account. That is inside the year, so the message names it in one line and moves on. It does not repeat the April ask (a group outing), does not apologise for it, and does not build the message on it.
+
+**Fresh subject, not a reply on the April thread.** §4.1.1's reply-on-thread branch wants a *current* thread; this one is a single unanswered outbound note five months old, sent by a different person (Lia Movsisyan, not the campaign sender). Threading a new offer under it would surface a stale subject line about a different ask and put Priyanka's name on someone else's message. A fresh subject with the in-body reference is what the campaign appendix prescribes for a no-reply prior.
+
+**Channel: email now, phone Wednesday morning.** §4.2's email + phone branch, and the plan block's `approach_sequencing` step 3. The phone step lands well here: the shed's Men's Session runs Wednesday 8–11am, so the shed's own number is answered by a person the morning after the email, and that is the last clear window before Thursday's 1pm opening. The phone script directs the call to the shed number with Paul Lennon's mobile as fallback, because of the identity point below.
+
+**Language:** en-AU, the campaign default.
+
+**Addressee: the shed, not a named person.** The profile records that the website as of March 2026 names Keith Ward as President and Les Chapman as Secretary, and that Paul Lennon's current role is unconfirmed. The only email on file is the shed's shared inbox, which is where the April note also went. Greeting a named individual on a shared inbox risks addressing a past president in front of the current committee, and the message goal (a reply passing it on) is served equally by whoever opens the inbox. So the greeting names the shed. The phone script carries a line to ask who looks after outings if the person answering is not the right one.
+
+**Angle: something to hand the members, with no outing to run.** The profile's strongest evidence is the confirmed bus trip to Buderim Men's Shed, the 100+ membership, and the retiree demographic. That evidence supports an outing, which is exactly what April asked for and did not get. Rather than press the same door, the primary angle inverts the effort: the shed circulates a free ticket to its members and their grandchildren, and every family books its own seat. The outing option stays, as the plan block's `first_ask` keeps it, but sits last and in one sentence, because the second week is where a group fits and the reply this message wants is a number.
+
+**USPs, from the plan block's four:** `nothing-to-organise` (functional, the load-bearing one: a committee running Mon/Wed/Fri/Sat sessions has no spare week to assemble a bus by Thursday), `opening-week-seats` (functional, the seven shows listed so a member can pick), `chosen-not-advertised` (emotional, stated in two clauses and not explained), `big-top-at-a-heritage-farm` (emotional, carried by "a big top on our lawn by the river" rather than the word heritage, which the antifact list makes an expensive word here). `make-a-day-of-it` and `credentials-on-request` are not in this segment's list and are not used.
+
+**Grandchildren, not children.** A men's shed of retirees and semi-retirees holds a family audience one generation down. "The kids and grandkids they'd bring" is the one line tuned to this recipient rather than the segment, and it comes from the profile's demographic reading, not invention.
+
+**Antifact check.** No stone buildings, no 100-year-old or original mill buildings, no vineyard, no Tamborine Mountain, no farming claim. The venue is placed by its road and suburb, which is also what a secretary needs to pass on. No code, no price, no discount, no Oztix link, no feed bags. Show times are the seven from the showtimes file's data home; the ninety minutes is the office's listing figure, offered as "about an hour and a half".
+
+**Response likelihood:** moderate. The ask costs the shed one forwarded email, the organisation already circulates things to members, and the reply needed is a number. Against that: two days' notice, a shared inbox, and one unanswered approach already on the record.
+
+RATIONALE_END
+
+FIRST_START
+
+**Email**
+
+To: oxenfordmensshed@gmail.com
+Subject: Free circus tickets for the Oxenford shed, opens Thursday
+
+Hello,
+
+I'm Priyanka Das, from Historic Rivermill at Mount Nathan, up the Beaudesert Nerang Road from you. A circus company has put a big top on our lawn for the school holidays, and the first show is this Thursday, 24 September.
+
+I have free tickets to it for your members and their families. They are not on sale anywhere; they go to local organisations, and the shed is one of them. Reply with roughly how many you could use and I will send you the code and the booking link to pass around.
+
+There are seven shows in the opening run:
+
+Thursday 24 September, 1pm
+Friday 25 September, 4pm and 7pm
+Saturday 26 September, 4pm and 7pm
+Sunday 27 September, 11am and 2pm
+
+Everyone books the one that suits them, so there is nothing for you to organise. The tickets are for your members, their kids and grandkids, rather than for posting publicly.
+
+We sent the shed a note back in April about a group outing here.
+
+If the shed would rather come as a group, the following week suits that better. Tell me a day and I will come back to you.
+
+Priyanka Das
+Partnerships, Historic Rivermill
+partnerships@rivermill.au
+
+FIRST_END
+
+Read back as the person who opens the shed's inbox on Wednesday morning, the questions the first draft leaves unanswered are: what is the show called, so I can tell people what they are booking; how long does it run, since I am putting grandchildren in seats; where exactly is it, since I am passing this on and nobody will ask you, they will ask me. The April line also sits at the end where it reads as a nudge, so it moves up beside the introduction, which is where it does its work of not addressing them as strangers.
+
+DRAFT_START
+
+**Email**
+
+To: oxenfordmensshed@gmail.com
+Subject: Free circus tickets for the Oxenford shed, opens Thursday
+
+Hello all at the Oxenford shed,
+
+Priyanka Das here, from Historic Rivermill on Beaudesert Nerang Road at Mount Nathan. We sent the shed a note back in April about a group outing here.
+
+A circus company has a big top up on our lawn by the river for the school holidays, WANTED – A Cirque Heist, and the first show is this Thursday, 24 September. I have free tickets to it for your members and the kids and grandkids they would bring. They are not on sale to the public at any price. They go to local organisations, and the shed is on that list.
+
+Reply with roughly how many you could use and I will send the code and the booking link for you to pass around the shed. Everyone books the show that suits them, so there is nothing for you to organise. The tickets are for your own people rather than for posting publicly.
+
+Seven shows in the opening run, about an hour and a half each:
+
+Thursday 24 September, 1pm
+Friday 25 September, 4pm and 7pm
+Saturday 26 September, 4pm and 7pm
+Sunday 27 September, 11am and 2pm
+
+If the shed would rather come out as a group, the week after suits that better. Tell me a day and I will come back to you.
+
+Priyanka Das
+Partnerships, Historic Rivermill
+950 Beaudesert Nerang Road, Mount Nathan
+partnerships@rivermill.au
+
+**Phone follow-up (Wednesday 23 September, during the 8am–11am session)**
+
+Call the shed on 0410 639 184 first, since a session runs Wednesday morning and someone is there. Paul Lennon's mobile, 0447 667 606, is the fallback. His role is unconfirmed, so do not open by asking for him.
+
+- *Opening:* "Morning, it's Priyanka from Historic Rivermill, out on Beaudesert Nerang Road at Mount Nathan. Is that the Oxenford shed?"
+- *Why calling:* "I sent an email through to the shed yesterday and thought I would ring in case it went past you."
+- *The offer:* "There is a circus in a big top on our lawn for the school holidays, and the first show is tomorrow afternoon. I have free tickets for your members and their kids and grandkids."
+- *The ask:* "If you can tell me roughly how many you could use, I will send a code and a booking link across today, and people book whichever show suits them. Seven shows, Thursday through to Sunday."
+- *Scope:* "They are for the shed's own people rather than for putting up publicly."
+- *If the wrong person answers:* "Who looks after that sort of thing at the shed? I can ring back or send it straight to them."
+- *If they would rather bring a group:* "The week after has more room for a group. Tell me a day and I will come back to you."
+- *Close:* "Is oxenfordmensshed@gmail.com the right address to send it to?"
+
+DRAFT_END
+
+Two notes outside the draft. The prefetch's April message was sent by Lia Movsisyan, and the draft says "we" rather than "I" on that line, so Priyanka is not claiming to have written it. Separately, `/usr/local/src/rivermill` is 10 commits behind `origin/main`; I read the fact sources at the checked-out state and did not pull, since other A-stage processes may be reading the same working copy.

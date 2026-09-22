@@ -1,0 +1,100 @@
+RATIONALE_START
+
+**Warmth.** The prefetch returns two messages from editor@familiesmagazine.com.au to marketing@rivermill.au, 13 and 14 August 2025, both carrying "Re:/RE: New Entry: Simple Contact Form", filed in INBOX/Work Done on the admin account. That is thirteen months before today (Tuesday 22 September 2026), on an account that is not the sender's, and the subject line is a form notification that does not say what the exchange was about. Warmth is therefore prior-but-long-quiet, and §4.1.1's reply-on-thread test fails: the thread is not current. The campaign's author appendix names a prior dealing in two cases, the contact's own dated conduct recorded in the profile (the profile records none) and a note we sent that drew no reply (this drew two). Neither fires, and a reference to an unreadable thread would presuppose something the message never gives the reader. The message opens as a first approach and names nothing prior. Flagged for the reviewer: if anyone at Rivermill recalls what that August 2025 exchange was, one line naming it belongs at the top and would beat everything constructed here.
+
+**Angle.** Families Magazine sells venue reviews, sponsored editorial, competitions and giveaways as products, runs a standing Brisbane school-holiday activities guide and a sister site on school-holiday activities, and has already published a farm animal venue feature (Trevena Glen, February 2025). The offer is therefore shaped as the thing she already makes rather than as a request for coverage: a pass for herself, and passes to run as a reader giveaway. None of that research is recited in the message; it shows in the shape of the proposition. Her stated readership is 35 to 44 year old mothers across Brisbane, Ipswich, Toowoomba, Gold Coast and Sunshine Coast, so the geography carries itself and needs no argument.
+
+**USPs used,** from the segment plan block: `big-top-at-a-heritage-farm` (the story her audience wants in the holidays), `opening-week-seats` (any of the seven shows, Thursday 24 to Sunday 27 September), `nothing-to-organise` (passes readers redeem on their own week, no group to assemble). `chosen-not-advertised` appears only as "in your name" and carries no explanation of how she was selected, per the author appendix. `make-a-day-of-it` closes the message in one line. The venue is described as a heritage riverside property, never as stone, never as 100-year-old buildings, never on Tamborine Mountain.
+
+**Channel.** Email and phone, no LinkedIn. Email first, phone the next day on no reply, per the campaign's one-day secondary-channel rule. The call opens by naming the email as yesterday's, which stays true whichever of the two send days the dispatcher uses.
+
+**Dates.** The message names Thursday 24 September and Sunday 27 September absolutely and avoids "today" and "tomorrow", so it reads correctly whether it goes out on Tuesday 22 September (the brief's today) or on the 23rd (this segment's `approach_sequencing` step 1, wave two). The only show time named is the 1pm Thursday opening, which the showtimes file states; the remaining thirteen start times live in `circus.yaml` and are not invented here. The ninety-minute running time is left out: the showtimes file records it as our own figure for listings, not CHARC's, and it is not a thing to hand a publisher unasked.
+
+**What the second draft changed.** Read as an editor triaging her inbox in holiday week, the first draft failed on three counts. It asked her to name a show while giving her one show time, so she could not answer it; the ask became the day that suits, with the session held on confirmation. It told her the passes were for readers rather than a public post, which is the wrong instruction for a publisher whose giveaway mechanism is a public post; the final draft separates the two, the post carrying the ticket listing and the winners' booking details coming to her privately. It offered walk-up horse rides, which the fees document makes conditional on the horses being free that day, so that claim is gone.
+
+**Caveat on sources.** The rivermill working copy read for these facts sits ten commits behind its remote. Every claim in the draft traces to the campaign YAML, the showtimes file, the fees document or the business overview as they stand in that copy.
+
+RATIONALE_END
+
+FIRST_START
+
+**Email**
+
+To: editor@familiesmagazine.com.au
+From: Priyanka Das <partnerships@rivermill.au>
+Subject: A circus in a big top at Mount Nathan, opening this Thursday
+
+Dear Chinnu,
+
+I am Priyanka Das, partnerships at Historic Rivermill, a heritage riverside property at Mount Nathan in the Gold Coast hinterland, about 30 minutes from central Gold Coast. CHARC Performance is putting up a big top on our lawn for the September school holidays, and the season of WANTED – A Cirque Heist opens this Thursday 24 September at 1pm.
+
+I have a family pass of four held in your name for any of the seven shows between Thursday 24 and Sunday 27 September, and five more passes for you to give away to your readers.
+
+Reply with the show you would like to come to and how many giveaway passes suit you, and I will send the booking details. The passes are for Families Magazine readers rather than a public post. For readers buying their own seats, the listing is at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+The cafe and the animals are open before the daytime shows, and the horses run walk-up rides through the holidays, so it makes a morning as well as a show.
+
+Priyanka Das
+Partnerships, Historic Rivermill
+Colourful.land Pty Ltd
+950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+partnerships@rivermill.au
+
+FIRST_END
+
+DRAFT_START
+
+**Email**
+
+To: editor@familiesmagazine.com.au
+From: Priyanka Das <partnerships@rivermill.au>
+Subject: Circus in a big top at Mount Nathan from Thursday, and passes for your readers
+
+Dear Chinnu,
+
+My name is Priyanka Das and I look after partnerships at Historic Rivermill, a heritage riverside property at Mount Nathan in the Gold Coast hinterland, half an hour from central Gold Coast. CHARC Performance has put a big top up on our lawn for the September school holidays. Their family show, WANTED – A Cirque Heist, opens this Thursday 24 September at 1pm and runs seven sessions through to Sunday 27 September.
+
+There is a family pass of four in your name for any of those seven shows, and five more passes for you to give away to Families Magazine readers. Tell me the day that suits you and I will hold the seats and send you the booking details.
+
+If you run the giveaway, your post can carry the ticket listing at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924, and the booking details for your winners come from me to you, so they stay off the page. Whoever wins books whichever of the seven sessions suits their own week, so there is no group to bring and nothing to arrange.
+
+The cafe and the animals are open before the daytime shows, so families can make a morning of it as well.
+
+Priyanka Das
+Partnerships, Historic Rivermill (Colourful.land Pty Ltd)
+950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+partnerships@rivermill.au
+
+**Phone follow-up script**
+
+Call 0437 866 869 the day after the email if there is no reply.
+
+Opening, if she answers:
+
+"Hi, is that Chinnu? It's Priyanka Das from Historic Rivermill at Mount Nathan. I sent you an email yesterday about the circus that opens on our lawn this Thursday. Is now a good moment?"
+
+The ask:
+
+"There is a family pass of four in your name for any show between Thursday and Sunday, and five more for you to give away to your readers. If you tell me the day that suits, I will hold the seats and send the details across today."
+
+If she asks what the show is:
+
+"It's CHARC Performance's family show, WANTED – A Cirque Heist, in a big top on the lawn for the school holidays. First session is one o'clock Thursday, and there are seven through to Sunday."
+
+If she asks how the giveaway would work:
+
+"Your post carries the ticket listing, and I send you the booking details for your winners, so those stay off the page. The winners book whichever session suits them. Nothing to organise at your end."
+
+If she asks what else there is for families:
+
+"The cafe and the animals are open before the daytime shows, so people usually come earlier and make a morning of it."
+
+If the timing is wrong for her:
+
+"No trouble. When suits you better, or is there someone else at the magazine I should send it to?"
+
+Voicemail, if she does not answer:
+
+"Hi Chinnu, it's Priyanka Das from Historic Rivermill at Mount Nathan, on 07 3703 1307. I emailed you yesterday about a circus opening on our lawn this Thursday, with a family pass in your name and five more for your readers. A reply to that email is the easiest way, or ring me back. Thanks very much."
+
+DRAFT_END

@@ -1,0 +1,178 @@
+{
+ "msg-405609.txt": {
+  "session_id": "f7a0b6fe-466a-49c8-9a6b-3aa63de8083f",
+  "arm": "m1-opus-5",
+  "stem": "pine-lake-village",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-m1-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/001-corey-hegge-pine-lake-village-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "9abeeb5d-8e1a-4ce9-bcdd-f1dc8578ee23"
+ },
+ "msg-180172.txt": {
+  "session_id": "6c7bc742-fa14-45dc-b3fb-bea340e50bde",
+  "arm": "m1-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-m1-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/004-iona-murray-imaginative-play-matters-gold-coast-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "e3b35a37-a33f-47d0-9c21-b21959a094c1"
+ },
+ "msg-303859.txt": {
+  "session_id": "d9d9e78e-622b-46da-bf51-54a5eeabb30a",
+  "arm": "m12-opus-5",
+  "stem": "beaudesert-probus-club",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-m12-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/003-helen-parnell-beaudesert-probus-club-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "f842e252-8d21-4d29-99f9-7fab1cf21259"
+ },
+ "msg-983473.txt": {
+  "session_id": "406be647-a976-4ba5-9151-787b5f567c7c",
+  "arm": "placebo-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-placebo-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/002-paul-lennon-oxenford-men-s-shed-inc-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "1f2abdad-af49-4159-a5d2-583635e8e5d1"
+ },
+ "msg-269019.txt": {
+  "session_id": "01f4689e-b20a-4a68-a707-29a661da73c6",
+  "arm": "placebo-opus-5",
+  "stem": "beaudesert-probus-club",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-placebo-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/003-helen-parnell-beaudesert-probus-club-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "40aafea3-e7fa-47a3-8982-35ca9f1af2e2"
+ },
+ "msg-997794.txt": {
+  "session_id": "c658ed60-97ca-4822-83a9-94e6c85c9614",
+  "arm": "none-opus-5",
+  "stem": "pine-lake-village",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-none-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/001-corey-hegge-pine-lake-village-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "6eaa4317-5e57-4118-8c28-dc011529ba5f"
+ },
+ "msg-325964.txt": {
+  "session_id": "3e0d728e-9e0a-41b6-8916-103dc00dd2cd",
+  "arm": "m2-opus-5",
+  "stem": "beaudesert-probus-club",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-m2-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/003-helen-parnell-beaudesert-probus-club-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "0537274d-a16d-4754-9dc5-0ea608a29804"
+ },
+ "msg-106143.txt": {
+  "session_id": "37eb2d0d-3a26-4715-80cb-156897290881",
+  "arm": "m12-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-m12-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/002-paul-lennon-oxenford-men-s-shed-inc-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "b14e755b-1262-4915-bd9c-4d838f400ea6"
+ },
+ "msg-409936.txt": {
+  "session_id": "2eb9a707-9326-47d5-95cb-002a8f8e3016",
+  "arm": "placebo-opus-5",
+  "stem": "families-magazine",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-placebo-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/005-chinnu-sravya-families-magazine-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "4af25019-8fe5-4efe-b9ef-182be2ec65d1"
+ },
+ "msg-663604.txt": {
+  "session_id": "9f4000b4-90b7-4961-808d-b51ce2531eb8",
+  "arm": "placebo-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-placebo-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/004-iona-murray-imaginative-play-matters-gold-coast-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "e45f4c28-ed51-4cbd-bbb7-34b9395370da"
+ },
+ "msg-385477.txt": {
+  "session_id": "546b0275-04c9-422c-ae8c-18d6b2e60ac6",
+  "arm": "placebo-opus-5",
+  "stem": "pine-lake-village",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-placebo-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/001-corey-hegge-pine-lake-village-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "9d5520cd-7e17-4025-b390-d42ae99fe367"
+ },
+ "msg-966080.txt": {
+  "session_id": "37ae9dc6-8630-4396-af33-ccac55ac4b1d",
+  "arm": "m1-opus-5",
+  "stem": "beaudesert-probus-club",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-m1-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/003-helen-parnell-beaudesert-probus-club-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "a7460335-f146-44fb-8617-a9a223db546f"
+ },
+ "msg-066979.txt": {
+  "session_id": "28a0db79-3034-437c-9a8d-e793d60d0b3e",
+  "arm": "m2-opus-5",
+  "stem": "families-magazine",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-m2-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/005-chinnu-sravya-families-magazine-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "d7bb4394-1883-4187-a5a0-ebd26b3643d3"
+ },
+ "msg-120442.txt": {
+  "session_id": "48cceb4c-6095-4f22-afc9-87c072e7273d",
+  "arm": "none-opus-5",
+  "stem": "families-magazine",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-none-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/005-chinnu-sravya-families-magazine-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "20bc7d99-deef-4811-ab06-113a3e55f709"
+ },
+ "msg-124723.txt": {
+  "session_id": "2e365abd-07a5-4503-aed5-ce90086e7daf",
+  "arm": "m12-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-m12-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/004-iona-murray-imaginative-play-matters-gold-coast-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "cf00d7df-d07f-45c7-90f8-af6b9aafc60f"
+ },
+ "msg-431326.txt": {
+  "session_id": "b8a09ebb-c083-40be-9f62-57005ca8ac21",
+  "arm": "m2-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-m2-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/002-paul-lennon-oxenford-men-s-shed-inc-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "d9ca0d6f-0e95-47e7-9e48-0f816be6c341"
+ },
+ "msg-326941.txt": {
+  "session_id": "af721d72-7ac5-41b9-bc9e-86df23b89616",
+  "arm": "none-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-none-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/004-iona-murray-imaginative-play-matters-gold-coast-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "b1b4840d-be65-4e6a-b163-405c7095110a"
+ },
+ "msg-215637.txt": {
+  "session_id": "e8a46bac-d932-403b-8d7a-44c34c037d82",
+  "arm": "none-opus-5",
+  "stem": "beaudesert-probus-club",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-none-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/003-helen-parnell-beaudesert-probus-club-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "e5fa4ab4-78a7-437a-88fe-2722c02d5396"
+ },
+ "msg-255174.txt": {
+  "session_id": "e0e4e938-6712-4099-a66f-efc8447261d4",
+  "arm": "m2-opus-5",
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-m2-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/004-iona-murray-imaginative-play-matters-gold-coast-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "6f9025ab-44c6-44ef-a94d-3d4267292285"
+ },
+ "msg-072915.txt": {
+  "session_id": "4c495b3a-6499-44a3-a6a9-368a164f147e",
+  "arm": "none-opus-5",
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-none-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/002-paul-lennon-oxenford-men-s-shed-inc-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "352c2309-58cf-432a-a6e5-8c6e65769f0a"
+ },
+ "msg-788224.txt": {
+  "session_id": "4512c183-d13e-4177-8c03-96f8ea9c6748",
+  "arm": "m1-opus-5",
+  "stem": "families-magazine",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-m1-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/005-chinnu-sravya-families-magazine-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "59f924b2-64bc-4620-8267-a5b232e57a96"
+ },
+ "msg-328183.txt": {
+  "session_id": "7167a760-eea2-4f5e-888f-094ddfd71c08",
+  "arm": "m12-opus-5",
+  "stem": "pine-lake-village",
+  "log": "/var/local/log/spar/-tmp-claude-1000--usr-local-src-rivermill-spar-campaigns-campaigns-2026-09-cirque-heist-season-d0b10951-699e-419b-b0b9-10664968b2bd-scratchpad-wt-m12-opus-5-spar-campaigns-campaigns-2026-09-cirque-heist-season-a-20260922-194827/001-corey-hegge-pine-lake-village-author-draft.log.json",
+  "model": "claude-opus-5",
+  "forked_from": "ef0661a6-0e96-4f61-9177-2933813c62fd"
+ }
+}

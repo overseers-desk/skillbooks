@@ -1,0 +1,81 @@
+This is a Kahneman's system 2 question. Bearing sections of the office methodology: **News editor's hat** (the subject line), **Like Human Do** (no em-dash bridges, no AI tells), **Show don't tell** (the message must not narrate its own purpose), **Anti-fireman** (checking the plan block and showtimes file rather than the first plausible reading), and **Writing for a reader** (the email stands alone cold).
+
+RATIONALE_START
+
+**Warmth: cold.** The prefetch returns no hits on `hello@fionaharper.com.au` or on her name in any of the five accounts, and the profile records no dated conduct with us. So no prior-note line, and the opener presents our world rather than pretending to a relationship.
+
+**Channel: LinkedIn connection note plus email.** The roster carries both a LinkedIn URL and a deliverable address; no phone. The generic rule holds the email until the connection is accepted or five days pass, but the segment's own `approach_sequencing` says "Email on 23 September" and the pass expires when opening week ends on Sunday 27 September. The campaign-specific instruction governs: both pieces go on 23 September, the note as a second door rather than a gate in front of the email.
+
+**Language:** English (en-au), per `language: en-au`. Nothing in the profile suggests otherwise.
+
+**Subsegment:** none. The `earned-media` block has no subsegments, so its own USP framings apply unmodified.
+
+**Angle.** The profile's strongest hooks are her Queensland base (Bundaberg Central, corroborated twice), a wildlife and soft-adventure beat carrying Australian Geographic Adventure and AFR Life & Leisure bylines, and her own statement that she is "a travel writer who takes pictures" who would rather be "a photographer who writes". Her press-trip page also says she declines invitations offered "just for free travel" and wants "maximum research opportunities" to secure editorial coverage, which means the ask has to be a story, stated as one, not a freebie. So the angle is: a picture story sitting in her own state during the school holidays, with the pass held in her name so she sees it before her readers do.
+
+Two things the profile does not support, which I therefore left out. Her TravHost famil-hosting business is a real institutional asset, but this segment's `message_goal` is a reply accepting a pass, and pitching TravHost would be a different campaign's ask. And the profile records nothing about her covering circus or performance, so the message presupposes no interest in circus and leads with the setting and the timing instead.
+
+**USPs, all three from the segment block.** `chosen-not-advertised` (emotional) as a pass held in her name, framed as what she gets and not as an explanation of how she was picked. `opening-week-seats` (functional) as any show Thursday to Sunday. `big-top-at-a-heritage-farm` (emotional) as the tent on the lawn by the river. The `make-a-day-of-it` USP is not listed for this segment, so the cafe and the animals stay out, though they would have tempted a travel writer.
+
+**Facts and their sources.** The 1pm Thursday 24 September opening comes from the showtimes file, which is also the reason no other session time appears: the file lists only that one and the 1 October 11am show, and the rest live in `circus.yaml`. The 4 October season end and the family pass of four come from the segment's `first_ask`. Half an hour from central Gold Coast and the fig trees come from the business overview; "more than 100 years old" for the trees is the antifact file's own correction, which is why the age attaches to the trees and not to any building. The Eventbrite link is the one named in the USP registry.
+
+**Antifact pass.** No stone, no original or century-old buildings, no vineyard, not on Tamborine Mountain, and the word "farm" is avoided in favour of "heritage venue" because the farming question is unsettled.
+
+**Held back for the reply, per the plan block:** the code, any price, and the booking mechanics. The public Eventbrite link is in the first message because the campaign header puts it there for the publisher wave.
+
+**Response likelihood: about 35%.** High star rating, a live Queensland-based practice, and an ask she can answer in one line, set against a Bundaberg-to-Mount-Nathan drive and two days' notice.
+
+RATIONALE_END
+
+FIRST_START
+
+**Piece 1 — LinkedIn connection note**
+
+Fiona, I am Priyanka from Historic Rivermill at Mount Nathan on the Gold Coast. A circus in a big top opens on our lawn by the Coomera River this Thursday for the school holidays, and I have a family pass of four held in your name for any opening-week show. May I send you the details?
+
+**Piece 2 — Email**
+
+Subject: Family pass to a circus under a big top, opens Thursday
+
+Hello Fiona,
+
+I am Priyanka Das, partnerships at Historic Rivermill, a heritage riverside venue at Mount Nathan in the Gold Coast hinterland, half an hour from central Gold Coast. CHARC Performance has put a big top on our lawn beside the Coomera River for the school holidays, and the first show of WANTED – A Cirque Heist is at 1pm this Thursday, 24 September.
+
+I have a family pass of four held in your name for any show from Thursday to Sunday. Reply with the show that suits and I will send you the booking details. The season runs to 4 October.
+
+Given your Australian Geographic Adventure and AFR Life & Leisure work on Queensland destinations, this looked like your kind of subject, and we would be glad of the coverage while the season is on.
+
+Public tickets are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+Priyanka Das
+Partnerships, Historic Rivermill (Colourful.land Pty Ltd)
+partnerships@rivermill.au
+
+FIRST_END
+
+Reading the first draft as Fiona: the third paragraph recites her own bylines back at her, which tells her we looked her up without telling her anything she can use, and "we would be glad of the coverage" makes the sentence about us. She would also ask what there is to photograph, and the draft gives her nothing to see. The subject line names no element that distinguishes it from every other invitation in her inbox. The final draft cuts the recital, puts the picture in its place, and anchors the subject on the river.
+
+DRAFT_START
+
+**Piece 1 — LinkedIn connection note** (send 23 September)
+
+Fiona, I am Priyanka from Historic Rivermill at Mount Nathan on the Gold Coast. A circus in a big top opens on our lawn by the Coomera River this Thursday for the school holidays, and I have a family pass of four held in your name for any opening-week show. May I send you the details?
+
+**Piece 2 — Email** (send 23 September, to hello@fionaharper.com.au)
+
+Subject: Pass held for you: a big top on the Coomera River opens Thursday
+
+Hello Fiona,
+
+I am Priyanka Das and I look after partnerships at Historic Rivermill, a heritage venue on the Coomera River at Mount Nathan, half an hour inland from central Gold Coast. For the school holidays, CHARC Performance has raised a big top on our lawn. The first performance of WANTED – A Cirque Heist is at 1pm this Thursday, 24 September, and the season runs to 4 October.
+
+A family pass of four is held in your name for any show from Thursday to Sunday, so you see it before your readers do. Reply with the show you want and I will send the booking details.
+
+What I am hoping for is the story: a circus tent pitched on the grass under century-old figs, on a river, in the school holidays, and your pictures of it while the season still has days to run.
+
+Public tickets are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+Priyanka Das
+Partnerships, Historic Rivermill (Colourful.land Pty Ltd)
+partnerships@rivermill.au
+
+DRAFT_END
