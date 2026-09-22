@@ -259,7 +259,7 @@ oo::objdefine $ph {
         set RosterLock     /tmp/none/.roster.lock
         set RequiredSkills {}
     }
-    method inject_linkedin {} { return 0 }
+    method inject_prefetch {} { return 0 }
     method do_profile_call {} { return 3 }
     method session_id {} { return "fin-sess" }
     method resume {stage log_file prompt args} {
@@ -295,7 +295,7 @@ oo::objdefine $ph2 {
         set RosterLock     /tmp/none/.roster.lock
         set RequiredSkills {}
     }
-    method inject_linkedin {} { return 0 }
+    method inject_prefetch {} { return 0 }
     method do_profile_call {} { return 3 }
     method session_id {} { return "" }
     method resume {stage log_file prompt args} {
@@ -870,7 +870,7 @@ oo::objdefine $ph7 method test_required {} {
     my variable RequiredSkills; return $RequiredSkills
 }
 $ph7 load_my_meta
-$ph7 inject_linkedin
+$ph7 inject_prefetch
 set li_prompt [spar::read_file [file join $li_ok prompt.txt]]
 $ph7 destroy
 assert_match $li_prompt "*headline: Test Person*" \
@@ -884,7 +884,7 @@ oo::objdefine $ph7b method test_required {} {
     my variable RequiredSkills; return $RequiredSkills
 }
 $ph7b load_my_meta
-$ph7b inject_linkedin
+$ph7b inject_prefetch
 assert_eq [$ph7b test_required] {facebook} \
     "successful prefetch drops linkedin from the required-skill audit"
 $ph7b destroy
@@ -903,7 +903,7 @@ oo::objdefine $ph8 method test_required {} {
     my variable RequiredSkills; return $RequiredSkills
 }
 $ph8 load_my_meta
-$ph8 inject_linkedin
+$ph8 inject_prefetch
 set li_prompt_f [spar::read_file [file join $li_fail prompt.txt]]
 assert_eq [string match "*__PREFETCH_SECTION__*" $li_prompt_f] 0 \
     "placeholder cleared on a failed fetch"
@@ -923,7 +923,7 @@ array unset ::auto_execs browser-serialiser
 set li_none [make_li_prompt_dir none]
 set ph9 [spar::ProfileHarness new $li_none [file join $tmp_root logs-li-none]]
 $ph9 load_my_meta
-$ph9 inject_linkedin
+$ph9 inject_prefetch
 $ph9 destroy
 assert_eq [file exists [file join $bs_dir was-run]] 0 \
     "no linkedin_url: browser-serialiser not invoked"
@@ -956,7 +956,7 @@ assert_eq $::reached_call 0 "the claude call was never made under exit 78"
 assert_match $cause_78 "*exit 78*" "the failure reason names the exit code"
 
 # pool_exec's coroutine branch mirrors exec's CHILDSTATUS errorCode,
-# so inject_linkedin reads the same exit code inside a pool worker as
+# so inject_prefetch reads the same exit code inside a pool worker as
 # in these plain-exec tests.
 set ::pe_code ""
 coroutine pe_test apply {{} {

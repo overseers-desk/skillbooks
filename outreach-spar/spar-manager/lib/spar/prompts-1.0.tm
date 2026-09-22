@@ -325,6 +325,11 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         # A note's line breaks travel as CR in the TSV; a prompt reads lines.
         set s_note [spar::note_to_lines [string trim [dict getdef $row s_note ""]]]
         set p_note [spar::note_to_lines [string trim [dict getdef $row p_note ""]]]
+        # Where the row came from. For a segment harvested out of our own
+        # accounts or bookings this names a dealing the contact already
+        # had with us, which the rating rubrics weigh (SPAR-P §4.7).
+        set discovered_via \
+            [spar::note_to_lines [string trim [dict getdef $row discovered_via ""]]]
         set stem [string trim [dict getdef $row stem ""]]
 
         # Header fragments and invalidated rows never dispatched.
@@ -373,6 +378,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             __PLATFORM_URLS__ $platform_urls \
             __S_NOTE__        $s_note \
             __P_NOTE__        $p_note \
+            __DISCOVERED_VIA__ $discovered_via \
             __GOAL_PATH__     $goal_path \
             __SEGMENT_KEY__   $segment_name \
             __OUTFILE__       $outfile \
