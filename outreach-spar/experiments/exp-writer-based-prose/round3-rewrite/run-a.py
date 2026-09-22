@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Design A: one author call that drafts the letter, then reads it as the
 recipient and writes it again, both in the same call.
-usage: run-a.py <sessions-a.json> <config_dir> <out_dir> [concurrency]
+usage: run-a.py <sessions-a.json> <config_dir> <out_dir> [concurrency] [model]
 sessions-a.json maps stem to the transcript of an earlier author session;
 that session's first user message is the harness's author prompt for the
 contact, reused verbatim with prompt-a.txt appended. The call runs with
@@ -9,6 +9,7 @@ file reads allowed, since the prompt tells the author which files to read."""
 import sys, os, json, re, subprocess, concurrent.futures as cf
 sess, cfg, out = sys.argv[1:4]
 conc = int(sys.argv[4]) if len(sys.argv) > 4 else 3
+model = sys.argv[5] if len(sys.argv) > 5 else 'opus'
 os.makedirs(out, exist_ok=True)
 S = json.load(open(sess))
 APPENDIX = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'prompt-a.txt')).read().strip()
@@ -27,7 +28,7 @@ def one(stem):
     if os.path.exists(dst) and os.path.getsize(dst) > 0:
         return stem, 'kept'
     prompt = author_prompt(S[stem]['transcript']) + '\n\n' + APPENDIX
-    r = subprocess.run(['claude', '-p', '--model', 'opus', '--dangerously-skip-permissions', prompt],
+    r = subprocess.run(['claude', '-p', '--model', model, '--dangerously-skip-permissions', prompt],
                        capture_output=True, text=True, timeout=1800, env=env)
     text = r.stdout.strip()
     if r.returncode or not text or text.startswith('API Error'):
