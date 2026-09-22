@@ -6,6 +6,7 @@ __FACTCHECK_FILES__
 Do not flag drive-time or distance claims (e.g. "X minutes from Y"). These are approximate figures and do not need fact-check verification.
 
 For each issue found, write: "FACTCHECK: [claim in draft] — [what the source says or that no source exists]"
+Any issue found here means VERDICT: REVISE, whatever the reaction said.
 
 ## Step 3: Verdict
 

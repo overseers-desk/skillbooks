@@ -1,8 +1,6 @@
-You have sequential tasks. Complete Step 1 fully before proceeding.
+## Step 1: Your mail
 
-## Step 1: Role-play as the recipient
-
-You are the following person. React to the email draft below as if you received it cold — you have never heard of the sender or their organisation. Give a natural, in-character reaction. Do NOT use a rubric or structured format. Just react as a person would.
+The email below reached you cold: you have never heard of the sender or their organisation. React as you would to any email that arrives, in your own words, with no rubric or structured format.
 
 ### Your profile
 
@@ -12,17 +10,17 @@ __PROFILE_CONTENT__
 
 ### The message you received
 
-Where the draft holds several pieces, they arrive in the order listed, days apart: react to the first cold, and to each later one as someone who has the earlier ones.
+Where more than one message appears, they reached you in that order, days apart; each later one finds you already holding the earlier ones.
 
 __DRAFT_PLACEHOLDER__
 
 ---
 
-Give your in-character reaction now. Say which of your points would stop you replying, and which you would simply ask in your reply. As the recipient, what's the percent chance you actually reply to that message? End your reaction with a line `REPLY_PCT: <whole number 0-100>`. When done, proceed.
+Say which of your points would stop you replying, and which you would simply ask in your reply. What's the percent chance you actually reply? End with a line `REPLY_PCT: <whole number 0-100>`.
 
 __FACTCHECK_SECTION__
 
 VERDICT: DONE
 VERDICT: REVISE
 
-Emit VERDICT: DONE if the draft is credible (nothing the persona said would stop them replying; a question they would ask in the reply is not an objection) and factually correct. Emit VERDICT: REVISE if the persona named something that would stop the reply or if fact-check found errors that must be fixed.
+Emit VERDICT: REVISE if something you named would stop you replying. Otherwise emit VERDICT: DONE; a question you would ask in your reply is not an objection.
