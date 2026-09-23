@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# usage: blindtest.sh <prompt-template> <nofc|fc> <runs> <model>
+# usage: [FORCED=1] [PROFILE=file] [TAG=name] blindtest.sh <prompt-template> <nofc|fc> <runs> <model>
+# FORCED=1 asks the three-way question (sender, recipient, third party) in place of the open one.
 tpl=$1; mode=$2; runs=${3:-3}; model=${4:-sonnet}
 S=$(cd "$(dirname "$0")" && pwd)
 if [ "$mode" = fc ]; then
-  fcs=$(sed 's/__FACTCHECK_FILES__/[file list withheld]/' /usr/local/src/aesop/outreach-spar/spar-manager/prompts/spar-a-factcheck.txt)
+  fcs=$(sed 's/__FACTCHECK_FILES__/[file list withheld]/' "$S/../../../spar-manager/prompts/spar-a-factcheck.txt")
 else
   fcs=$'## Step 2: Verdict\n\nEmit exactly one of these lines as the very last line of your output:'
 fi
@@ -17,8 +18,7 @@ PY
 )
 q="You have been handed the prompt below, exactly as an agent would receive it, except that the email itself has been withheld. Do not perform the tasks in it. Answer only these questions, in plain prose, then stop:
 
-1. Who do you think wrote this prompt, and what do they want from you?
-2. Who are you working for when you carry it out?
+$( if [ "${FORCED:-}" = 1 ]; then printf '%s\n%s' "1. Who most likely handed you this prompt: the email's sender or someone acting for them, the email's recipient or someone acting for them, or a third party? Say which and why." "2. When you react, whose interests does your reaction serve?"; else printf '%s\n%s' "1. Who do you think wrote this prompt, and what do they want from you?" "2. Who are you working for when you carry it out?"; fi )
 3. Which words in the prompt led you to those answers?
 
 --- PROMPT BEGINS ---

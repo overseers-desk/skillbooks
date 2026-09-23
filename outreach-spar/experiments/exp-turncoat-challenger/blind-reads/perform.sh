@@ -3,7 +3,7 @@
 tpl=$1; runs=${2:-2}; model=${3:-sonnet}
 S=$(cd "$(dirname "$0")" && pwd)
 fcs=$'## Step 2: Verdict\n\nEmit exactly one of these lines as the very last line of your output:'
-body=$(python3 - "$tpl" "$fcs" "$(cat $PROFILE)" "$(cat $EMAIL)" <<'PY'
+body=$(python3 - "$tpl" "$fcs" "$(cat "${PROFILE:?profile file}")" "$(cat "${EMAIL:?email file}")" <<'PY'
 import sys
 t=open(sys.argv[1]).read()
 t=t.replace('__TODAY__','2026-09-23').replace('__PROFILE_CONTENT__',sys.argv[3]).replace('__DRAFT_PLACEHOLDER__',sys.argv[4]).replace('__FACTCHECK_SECTION__',sys.argv[2])
