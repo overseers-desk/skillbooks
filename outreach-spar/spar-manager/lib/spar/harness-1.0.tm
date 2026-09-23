@@ -47,19 +47,26 @@ oo::class create spar::Harness {
     method prompt_root {}         { return $::spar::root }
     method claude_bin {}          { return [spar::find_tool claude] }
 
-    # inject_courier — substitute __COURIER_SECTION__ in the prompt file with the
-    # prefetched courier block (accounts header plus per-contact correspondence
-    # cascade). Runs in the harness so the slow `courier -A search` exec
+    # inject_courier: one courier cascade per contact fills both prompts,
+    # __COURIER_SECTION__ in the author's brief (accounts header plus the
+    # correspondence cascade) and __PRIOR_CORRESPONDENCE__ in the challenger
+    # template. Runs in the harness so the slow `courier -A search` exec
     # parallelises across contacts instead of serialising in the dispatcher's
-    # prepare loop. Empty section when courier isn't installed. This is spar's
-    # own concern and stays out of coachman.
-    method inject_courier {prompt_path name org email} {
-        set hdr  [spar::courier::accounts_block]
-        set body [spar::courier::contact_block $name $org $email]
-        set section [expr {$hdr eq "" ? "" : "\n\n${hdr}${body}"}]
+    # prepare loop, and so the lookup is as fresh as the draft it feeds.
+    # Empty sections when courier isn't installed. This is spar's own concern
+    # and stays out of coachman.
+    method inject_courier {prompt_path challenger_path name org email} {
+        set hdr    [spar::courier::accounts_block]
+        set blocks [spar::courier::contact_blocks $name $org $email]
+        set section [expr {$hdr eq "" ? "" : "\n\n${hdr}[dict get $blocks author]"}]
         set prompt [spar::read_file $prompt_path]
         set prompt [string map [list __COURIER_SECTION__ $section] $prompt]
         spar::write_file $prompt_path $prompt
+        if {[file exists $challenger_path]} {
+            set tpl [spar::read_file $challenger_path]
+            set tpl [string map [list __PRIOR_CORRESPONDENCE__ [dict get $blocks prior]] $tpl]
+            spar::write_file $challenger_path $tpl
+        }
         ${::spar::harness_log}::info "\[[my slug]\] \[phase: courier\]"
     }
 }
@@ -217,6 +224,7 @@ oo::class create spar::ApproachHarness {
     method do_inject_courier {} {
         my inject_courier \
             [file join [my prompt_dir] author-draft.txt] \
+            [file join [my prompt_dir] challenger-template.txt] \
             $ContactNameMeta $RosterOrg $RosterEmail
     }
 
