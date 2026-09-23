@@ -1,0 +1,73 @@
+This is a Kahneman's system 2 question.
+
+**Sorting of the challenger's points.**
+
+Answer in this email, because without it the reader will not reply:
+
+The self-contradiction between "not advertised anywhere" and "we wrote to the villages and clubs near us". The challenger is right that one of the two had to go. The campaign's position is that the seats are not sold to the public and that the organisation was picked by name, so the honest form of both sentences is that the tickets are not on public sale and a share of the opening shows is going to a small number of nearby villages and clubs. That version contradicts nothing, and it removes the form-letter admission that "one at a time" carried.
+
+The unsourced specifics. The village bus comes from Pine Lake's own public listings, and the noticeboard and Facebook page were generic filler on my part rather than knowledge of theirs. A reader cannot tell those apart, which is the challenger's point. Both are now spoken generically: a group trip rather than the village bus, a public post rather than a noticeboard or a Facebook page. Nothing is lost, because the offer works the same either way.
+
+No way to check us without going through the sender. The challenger states plainly that this, not any sentence, drove the verdict, and that the fix sits outside the letter's text. The letter can carry part of it. It now gives the street address and the venue's published office number and asks him to look us up before answering. That is the independent path he described, offered rather than withheld.
+
+Absorb by reframing a sentence already there:
+
+"The code" arrives named as a booking code and a ticket link, rather than as a thing already agreed.
+
+"Nothing for you to organise" is aligned with the rough-number ask instead of sitting against it: nothing is committed on his side, and a number is only so I hold enough.
+
+The short fuse is defused by leading on the seven shows and on the second week, rather than on Thursday. The date stays because he needs it.
+
+Leave for the reply:
+
+How the code works and whether there is a portal. The domain question, which the phone number answers indirectly. The size of the allocation. Whether a colleague should handle it, which the letter already invites.
+
+Not actionable: the underlying objection that an unsolicited offer from an unknown sender asking for a headcount is not something a cautious manager waves through. The challenger says so himself, and no wording substitutes for a source he can check. The letter now points at one.
+
+DRAFT_START
+
+**To:** corey.hegge@levande.com.au
+**From:** Priyanka Das, Partnerships, Historic Rivermill, partnerships@rivermill.au
+**Bcc:** partnerships@rivermill.au
+**Subject:** Free circus tickets for Pine Lake residents, Thursday to Sunday
+
+Hi Corey,
+
+My name is Priyanka Das and I look after partnerships at Historic Rivermill, the riverside venue on Beaudesert Nerang Road at Mount Nathan, inland from Nerang. A circus company, CHARC Performance, has its big top up on our lawn for the school holidays, with a family show called WANTED – A Cirque Heist. I have free tickets to the opening shows for your residents and for the grandchildren who visit them.
+
+You will not have heard of us, so please check us before you answer anything. The venue is at 950 Beaudesert Nerang Rd, Mount Nathan, the office number is 07 3703 1307, and the show is on our website.
+
+The shows are Thursday 24 September at 1pm, Friday and Saturday at 4pm and 7pm, and Sunday at 11am and 2pm. Seven in all, and the tickets are good for any of them.
+
+Nothing is committed at your end. Reply with a rough number and I will hold that many in Pine Lake's name, then send you a booking code and the ticket link to pass on. Residents book whichever show suits them. If fewer take it up than you expect, that is no trouble, and there is nothing to pay at any stage.
+
+The tickets are for your residents and their families rather than for a public post.
+
+If bringing a group would suit better than people making their own way, the season runs through to Sunday 4 October. The second week gives the notice that arranging transport needs. Tell me a day and I will come back to you about seating.
+
+These tickets are not on sale to the public. A share of the opening shows is going to a small number of villages and clubs near us, and Pine Lake is one of them.
+
+If someone else there looks after residents' social activities, please pass this on, or send me their name and I will write to them.
+
+Priyanka Das
+Partnerships, Historic Rivermill
+950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+partnerships@rivermill.au
+
+DRAFT_END
+
+RATIONALE_START
+The angle is unchanged: two doors sized to the notice each needs, with residents forwarding tickets to themselves and their visiting grandchildren this week, and a group visit offered for the second week. The chosen USPs are unchanged: opening-week-seats, nothing-to-organise, group-visit-later, chosen-not-advertised.
+
+What this pass changes is the trust problem the challenger raised, which sat outside the angle. Three things moved.
+
+The chosen-not-advertised USP was drafted in a form that cancelled itself. Its claim has two halves, that the seats are not offered to the public at any price and that the organisation was chosen by name. My wording put an exclusivity claim next to an admission of a mailing list, and the challenger read the pair as evidence of a form letter. The revision states the first half plainly and describes the second as a share going to a small number of nearby villages and clubs, which is what the campaign is doing.
+
+The group-visit-later USP was drafted against Pine Lake's village bus, which the profile confirms from the village's public listings. The reader has no way to know where that came from, and neither he nor anyone else can ask their way past an unexplained detail about themselves. Speaking of a group trip and of arranging transport costs the offer nothing and removes the impression of surveillance. The same reasoning removed the noticeboard and the Facebook page from the keep-it-inside-the-village line, which were mine rather than the profile's.
+
+The verification paragraph is new and is the substantive addition. A cold offer of something free to a retirement village sits inside a pattern the recipient's role trains him to distrust, and the challenger identified an independently checkable source as the only thing that moves it. The address and the published office number are both facts of the business, the office number coming from the fees and service hours record. Inviting the check costs nothing and is what a legitimate sender would do first.
+
+The first message still carries no code, no price, no discount and no ticketing link. The booking code and link are named as what will follow the reply, which is where the campaign puts them.
+
+Response likelihood is lowered from 35 to 28. The self-contradiction is gone and a verification path is offered, but the challenger's core position, that an unsolicited approach asking for resident numbers is not waved through from a village manager's chair, is not something the text can dissolve.
+RATIONALE_END
