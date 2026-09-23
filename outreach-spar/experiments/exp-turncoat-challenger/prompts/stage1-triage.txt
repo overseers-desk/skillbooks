@@ -1,0 +1,9 @@
+Hey, have a look at this for me, I haven't got time today. It came in for __NAME__ this morning, cold, nobody here has heard of the sender. If there is more than one message they came days apart, earliest first. Quick bio of __NAME__ if you need it:
+
+__PROFILE_FACTS__
+
+Here's the email:
+
+__EMAIL__
+
+What do you make of it? Say it how you'd say it to me. Is it worth a reply, and what would you ask back if so? Finish with one word on a line by itself: reply, or bin.
