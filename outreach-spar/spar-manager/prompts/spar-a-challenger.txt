@@ -1,6 +1,6 @@
 ## Step 1: Your mail
 
-The email below reached you cold: you have never heard of the sender or their organisation. React as you would to any email that arrives, in your own words, with no rubric or structured format.
+__HISTORY_LINE__ React as you would to any email that arrives, in your own words, with no rubric or structured format.
 
 ### Your profile
 
