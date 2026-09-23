@@ -845,7 +845,7 @@ oo::class create coachman::Harness {
         # Default to sonnet unless the caller supplied --model (fix-loop
         # attempt 3 escalates to opus; a caller may pass its own model); pull
         # the caller's pair out of args so it is not repeated.
-        set model [expr {[info exists ::env(SPAR_AUTHOR_MODEL)] ? $::env(SPAR_AUTHOR_MODEL) : "sonnet"}]
+        set model sonnet
         set idx [lsearch -exact $args --model]
         if {$idx >= 0} {
             set model [lindex $args [expr {$idx + 1}]]
