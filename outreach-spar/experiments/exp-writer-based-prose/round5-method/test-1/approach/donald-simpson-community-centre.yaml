@@ -1,0 +1,296 @@
+profile_hash: sha256:55b33f7aa987e3e0cb442e80d1b1ba62a266cdeb8b89bbb2d03483fbdc77892d
+# Contact: Suze Harpur, OWAD (Out With A Difference) Convenor, Donald Simpson Community Centre Ltd
+# Channel: email + phone follow-up
+# Language: en-au
+# Angle: owad-circulate-opening-week-seats
+
+decisions:
+  channel: email
+  channel_detail: |
+    Email primary to the centre's office inbox contact@thedsc.com.au; the profile records no
+    personal address for Harpur and names the office inbox as the written channel that reaches
+    her. Phone follow-up to her direct mobile 0438 002 713 on the morning of Thursday
+    24 September if the email draws no reply, per the plan block's approach_sequencing
+    (phone the next morning) and the campaign's secondary_channel wait of one day, which is
+    shorter than the method's default three because the season opens that afternoon.
+  language: en-au
+  angle: owad-circulate-opening-week-seats
+
+angle_rationale: |
+  Warmth is cold, on two independent records that agree. The courier prefetch found no mail to
+  or from contact@thedsc.com.au across all five accounts. The only prior approach file for this
+  contact (2026-08-seniors-farm-day-out) carries actioned_date: null and replied_date: null, so
+  it was drafted and never sent. The a_author appendix line about naming an earlier unanswered
+  note therefore does not fire: we did not write to her. The profile records no dated conduct of
+  hers toward us either, so there is no prior dealing to name and the opener works from her
+  situation with no manufactured familiarity.
+
+  The angle is decided by the profile's mechanism evidence rather than by the demographic. OWAD
+  is a live, named outings programme running four to six coach day trips a month, convened by
+  Harpur, whose members travel to and from the centre because the programme runs "no pick up or
+  drop offs on route". A coach trip cannot be assembled between today and tomorrow. The ask that
+  fits the 24-hour window is circulation to members, not an outing, so the message asks her to
+  pass the seats to members and their grandchildren, who book themselves. The nothing-to-organise
+  USP answers her constraint exactly, and its rests_on clears this segment for it: circulating an
+  offer to members is what the centre already does, and the exclusion that USP names (a childcare
+  service circulating to enrolled families) does not apply to a membership club.
+
+  Candidates set aside. A group outing for opening week: rejected on the two-day lead time against
+  a coach-hire mechanism. The heritage and museum angle used in the August draft: rejected because
+  the campaign offer is a circus season rather than a farm day out, and because the antifact
+  checklist forbids presenting original or century-old structures as a feature. The August file's
+  angle (OWAD as a trips-calendar slot) stays compatible rather than identical, per method §4.4
+  step 4: both treat Harpur as the outings decision-maker running a real programme, and the
+  group-visit line keeps the second week open without contradicting the earlier positioning.
+
+  USPs chosen are the four the seniors-club plan block lists. opening-week-seats and
+  nothing-to-organise carry the functional load. not-advertised supplies the emotional framing the
+  block names, that the convenor is handing members something nobody else can get. It is written
+  as an allocation we made rather than as a tent we need to fill: that USP's rests_on records that
+  the Director's reasoning stays out of every message, and that a recipient told seats are unsold
+  reads the offer as a request to be our marketing channel. big-top-at-a-heritage-farm is how the
+  show is described at all.
+
+  Show times. The draft names only the 1pm Thursday start, which is the one time the showtimes
+  file states inside the opening window. The other time in that file, 11am on Thursday 1 October,
+  falls outside it. The ninety-minute running time is ours rather than CHARC's, so it stays out of
+  the message and the booking page carries it in the reply. No code, price or link appears
+  anywhere in the first touch, per the a_author appendix.
+
+response_likelihood: 35
+
+a_note: |
+  Angle owad-circulate-opening-week-seats (Harpur circulates free opening-week seats to OWAD
+  members and their grandchildren, who book themselves; group visit offered for the second week
+  instead); channel email to the centre's office inbox with phone follow-up next morning to her
+  direct mobile; warmth cold (no correspondence in the prefetch, and the August approach file was
+  never sent); language en-au. Single challenger pass, verdict DONE with no factual error, so the
+  final message is draft 1 unchanged.
+
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [not-advertised, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      Element order self-intro then ask then evidence, per method §4.5. Subject line carries
+      "OWAD", her own programme's name, as the recipient-specific differentiator, plus the window.
+      She triages a community-centre inbox and may read nothing else, so the subject answers what
+      it is, who it is for, and by when.
+    messages:
+      - channel: email
+        to: contact@thedsc.com.au
+        subject: Free circus tickets for OWAD members, Thursday to Sunday
+        body: |
+          Hi Suze,
+
+          I'm Priyanka Das, partnerships at Historic Rivermill, a heritage venue on the Coomera River at Mount Nathan in the Gold Coast hinterland. A circus company has put a big top up on our lawn for the school holidays, and I have free tickets for your members and their grandchildren.
+
+          The show is WANTED – A Cirque Heist, a family circus. There are seven shows between tomorrow, Thursday 24 September, and Sunday 27 September, the first at 1pm on Thursday. Reply with roughly how many members you would circulate it to and I will send you a code and a booking link today. Members pick whichever show suits them and book it themselves, so there is no outing to run and no bus to fill.
+
+          We have set opening week aside for community groups. The tickets are not advertised anywhere and the same shows sell at full price to everyone else, so they are for the centre's own members and their families rather than for posting on a public page.
+
+          If OWAD would rather come out as a group, the week after suits that better. Tell me a day and I will come back to you.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        to_note: |
+          No personal address exists for Harpur; the profile confirms the centre's office inbox is
+          the written channel that reaches her.
+      - channel: phone
+        to: "0438 002 713"
+        text: Follow-up call on the morning of Thursday 24 September if the email draws no reply.
+        script:
+          - point: Opening
+            text: "Morning, is that Suze? It's Priyanka calling from Historic Rivermill out at Mount Nathan. I sent an email to the centre yesterday about some free circus tickets for your OWAD members, I just wanted to catch you before the show opens this afternoon."
+          - point: What it is
+            text: "There's a circus company set up in a big top on our lawn for the holidays, a family show called WANTED – A Cirque Heist. Seven shows between this afternoon and Sunday. The first one is at one o'clock today."
+          - point: The ask
+            text: "If you can give me a rough number of members you'd send it round to, I'll email you a code and a booking link straight after this call. Your members book whichever show suits them, so there's nothing for you to arrange at your end."
+          - point: If she asks why they are free
+            text: "Opening week is set aside for community groups. It isn't advertised anywhere and the same shows sell at full price, so it's for your members and their families rather than something to put on a public page."
+          - point: If a group outing suits better
+            text: "The week after opening would suit a group properly. Give me a day that works for OWAD and I'll come back to you on it."
+          - point: If she cannot talk or is not the right person
+            text: "No trouble, when would suit for me to call back? Or if someone else at the centre handles the trips, I'm happy to send it to them."
+        phone_note: |
+          Harpur's direct mobile, per the centre's Travel page. The centre's office hours are
+          Monday to Friday 8:30am to 4:00pm. Call Thursday morning, before the 1pm opening.
+
+  - type: review
+    number: 1
+    verdict: DONE
+    in_character: |
+      Reaction as Suze Harpur. Free tickets arriving two days after her last look at the calendar
+      are worth reading twice, but nothing in the message stops her replying. It came to the
+      centre's own inbox, the address anyone finds for her, so there is no oddity in how they
+      reached her. The ask is as light as these get: no bus, no permission slips, no headcount
+      commitment beyond a rough guess, members booking whichever show suits them. That is
+      actionable without putting it to the committee.
+
+      The one real friction is notice. An email landing Wednesday for a Thursday 1pm opener leaves
+      no time to get the word out before the first show, but the run goes through to Sunday, so
+      three more days remain for the noticeboard and the phone tree. Not a reason to withhold a
+      reply, only a reason her numbers lean toward the weekend shows.
+
+      What she would ask in her reply rather than let stop her: roughly how many tickets she can
+      put her hand up for given OWAD's size; whether there is a cut-off show by show or an overall
+      cap; whether the code should come back to the office inbox or reach her more directly given
+      the speed. She would float the second-week group visit at the same time, since a proper OWAD
+      outing is closer to the centre's normal shape than a forward-it-yourself offer.
+
+      Self-reported REPLY_PCT from the role-play was 80, treated as an upper bound rather than a
+      calibrated estimate: a persona asked whether it would reply overstates its own
+      responsiveness against the cold-institutional-email base rate.
+    fact_check:
+      - claim: Seven shows between Thursday 24 September and Sunday 27 September.
+        source: campaign usps registry, opening-week-seats; campaign preamble (opening week Thu 24 to Sun 27, seven shows).
+        result: verified
+      - claim: The first show starts at 1pm on Thursday 24 September.
+        source: showtimes file, "The season opens Thursday 24 September at 1pm."
+        result: verified
+      - claim: Members book whichever show suits them, so there is no outing to run and no bus to fill.
+        source: campaign usps registry, nothing-to-organise.
+        result: verified
+      - claim: The tickets are not advertised and the same shows sell at full price to everyone else.
+        source: campaign usps registry, not-advertised.
+        result: verified
+      - claim: A group visit can be arranged for the week after opening instead.
+        source: campaign usps registry, group-visit-later.
+        result: verified
+      - claim: Historic Rivermill is a heritage venue on the Coomera River at Mount Nathan in the Gold Coast hinterland.
+        source: business-overview.md, venue overview and U1, U4, U6; campaign venue.address.
+        result: verified
+      - claim: No code, price, discount or booking link appears in the first email or the phone script.
+        source: campaign prompt_appendices.a_author, "The first message names no code and no price; a code and a booking link go in the reply."
+        result: verified
+      - claim: Recipient address contact@thedsc.com.au and follow-up number 0438 002 713 reach Harpur.
+        source: profile roster_patch and Current role section (donaldsimpsoncentre.com.au/travel/, fetched 2026-07-19).
+        result: verified
+    antifact_check: |
+      Checked against business-antifacts.md. No stone buildings. No original or hundred-year-old
+      mill structures: the venue is described by the river, the lawn and its heritage character,
+      never by the age of a building. No vineyard. Location stated as Mount Nathan in the Gold
+      Coast hinterland, not Tamborine Mountain. Nothing in the draft states or implies that seats
+      are unsold, that the tent needs filling, or that the offer serves the sender. No feed-bag or
+      animal-food offer, no subscriber discount, no Oztix link.
+    revision_note: |
+      No revisions. The challenger found no factual error and no misalignment, and its four
+      questions were sorted per method §4.6 before deciding that:
+
+      1. How many tickets she can claim. Left for the reply. The allocation is held per segment by
+         the sender against a per-show tally, and naming a cap in the first touch invites her to
+         book to the cap rather than to her real number, which is what message_goal asks for.
+      2. Whether there is a per-show cut-off or an overall cap. Left for the reply. The funnel puts
+         the Sunday cut-off in the code-sending message.
+      3. Whether the code should come to the office inbox or reach her more directly. Left for the
+         reply: it goes back to whatever address she replies from, so the question answers itself
+         on replying.
+      4. Floating the second-week group visit. Already in the draft's closing line, so nothing to
+         add.
+
+      All four are questions the reader would ask on replying rather than reasons to withhold a
+      reply, which is the §4.6 pass criterion.
+    notes: |
+      Single pass. Profile yield is 6, which falls in the "3 or more passes permitted" band, but
+      the first pass returned DONE with no correction, so no further pass was warranted.
+
+  - type: final
+    chosen_usps: [not-advertised, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: contact@thedsc.com.au
+        subject: Free circus tickets for OWAD members, Thursday to Sunday
+        body: |
+          Hi Suze,
+
+          I'm Priyanka Das, partnerships at Historic Rivermill, a heritage venue on the Coomera River at Mount Nathan in the Gold Coast hinterland. A circus company has put a big top up on our lawn for the school holidays, and I have free tickets for your members and their grandchildren.
+
+          The show is WANTED – A Cirque Heist, a family circus. There are seven shows between tomorrow, Thursday 24 September, and Sunday 27 September, the first at 1pm on Thursday. Reply with roughly how many members you would circulate it to and I will send you a code and a booking link today. Members pick whichever show suits them and book it themselves, so there is no outing to run and no bus to fill.
+
+          We have set opening week aside for community groups. The tickets are not advertised anywhere and the same shows sell at full price to everyone else, so they are for the centre's own members and their families rather than for posting on a public page.
+
+          If OWAD would rather come out as a group, the week after suits that better. Tell me a day and I will come back to you.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        to_note: |
+          No personal address exists for Harpur; the profile confirms the centre's office inbox is
+          the written channel that reaches her.
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "0438 002 713"
+        text: Follow-up call on the morning of Thursday 24 September if the email draws no reply.
+        script:
+          - point: Opening
+            text: "Morning, is that Suze? It's Priyanka calling from Historic Rivermill out at Mount Nathan. I sent an email to the centre yesterday about some free circus tickets for your OWAD members, I just wanted to catch you before the show opens this afternoon."
+          - point: What it is
+            text: "There's a circus company set up in a big top on our lawn for the holidays, a family show called WANTED – A Cirque Heist. Seven shows between this afternoon and Sunday. The first one is at one o'clock today."
+          - point: The ask
+            text: "If you can give me a rough number of members you'd send it round to, I'll email you a code and a booking link straight after this call. Your members book whichever show suits them, so there's nothing for you to arrange at your end."
+          - point: If she asks why they are free
+            text: "Opening week is set aside for community groups. It isn't advertised anywhere and the same shows sell at full price, so it's for your members and their families rather than something to put on a public page."
+          - point: If a group outing suits better
+            text: "The week after opening would suit a group properly. Give me a day that works for OWAD and I'll come back to you on it."
+          - point: If she cannot talk or is not the right person
+            text: "No trouble, when would suit for me to call back? Or if someone else at the centre handles the trips, I'm happy to send it to them."
+        phone_note: |
+          Harpur's direct mobile, per the centre's Travel page. The centre's office hours are
+          Monday to Friday 8:30am to 4:00pm. Call Thursday morning, before the 1pm opening.
+        actioned_date: null
+        replied_date: null
+    notes: |
+      Final is draft 1 unchanged. The email is the first touch and the dispatcher reads message
+      order as channel priority.
+
+fact_provenance:
+  - claim: Seven shows between Thursday 24 September and Sunday 27 September, free to the organisation.
+    source: campaign usps registry, opening-week-seats.
+  - claim: The first show starts at 1pm on Thursday 24 September.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md, season opening line.
+  - claim: The show is a family circus staged in a big top on the venue's lawn for the school holidays.
+    source: campaign usps registry, big-top-at-a-heritage-farm; campaign preamble.
+  - claim: Members book whichever show suits them; no outing to run and no bus to fill.
+    source: campaign usps registry, nothing-to-organise.
+  - claim: The tickets are not advertised and the same shows sell at full price to everyone else; they are for the centre's own members and families rather than for public posting.
+    source: campaign usps registry, not-advertised; campaign preamble on the reservation being in the organisation's name.
+  - claim: A group visit can be arranged for the week after opening.
+    source: campaign usps registry, group-visit-later.
+  - claim: Historic Rivermill is a heritage venue on the Coomera River at Mount Nathan in the Gold Coast hinterland.
+    source: business-overview.md, venue overview and U1, U4, U6; campaign venue.address.
+  - claim: Sender identity Priyanka Das, Partnerships, partnerships@rivermill.au.
+    source: campaign sender block.
+  - claim: OWAD is the centre's day-trip programme and Harpur is its convenor; contact@thedsc.com.au is the written channel and 0438 002 713 her direct mobile.
+    source: profile donald-simpson-community-centre.md, Current role and Mechanism evidence (donaldsimpsoncentre.com.au/travel/, fetched 2026-07-19).
+  - claim: The centre's office hours are Monday to Friday 8:30am to 4:00pm.
+    source: profile donald-simpson-community-centre.md, Current role section.
+
+quality_checklist: |
+  1. YAML structure. Root keys drawn from the §6 canonical set: decisions, angle_rationale,
+     response_likelihood, a_note, rounds, fact_provenance, quality_checklist. No profile_hash, which
+     the harness prepends. Draft and review rounds carry number. Addresses are real, not
+     placeholders. Passed.
+  2. Coverage and completeness. fact_provenance covers every factual claim in the final email and
+     the phone script; chosen_usps is populated on the draft and final rounds; a_note carries angle,
+     channel, warmth, language and the challenger outcome. Passed.
+  3. Presupposition test. Nothing tells Harpur something she already knows about OWAD. Her
+     programme is named in the subject line and used as the addressee, never narrated back to her,
+     and the message presupposes that circulating an offer to members is what the centre does.
+     Passed.
+  4. Manufactured-connection test. The one mechanism claim, that members book for themselves with
+     no outing to run, rests on the profile's own evidence that OWAD runs coach trips with no pick
+     up or drop off on route, which is exactly what cannot be arranged in a day. No shared interest
+     is claimed that the profile does not evidence. Passed.
+  5. Concreteness. The ask is a rough number of members, answerable in one sentence, which is the
+     plan block's message_goal. Passed.
+  6. Band-level pattern check. The opener works from the venue and the offer rather than from a
+     compliment or a template greeting, and it differs in shape from the August seniors-farm-day-out
+     draft to this same contact, which opened on a familiarisation visit. Passed.
+  7. Final round email cardinality. One channel: email message in the final round, plus one phone
+     message, which the cap permits. Passed.

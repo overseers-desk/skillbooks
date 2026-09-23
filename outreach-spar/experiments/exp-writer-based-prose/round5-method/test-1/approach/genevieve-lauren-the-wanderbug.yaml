@@ -1,0 +1,333 @@
+profile_hash: sha256:b65e367cbae3e1db10131b1d7751695169678c0febd5eb931b85410b7be847ff
+# Contact: Genevieve Lauren, Founder and writer, The Wanderbug
+# Channel: email (only; no phone, no platform account reachable)
+# Language: en-au
+# Angle: passes to give away to her readers, with a pass of her own attached on a condition that costs her nothing if she is not in Queensland this week.
+decisions:
+  channel: email
+  channel_detail: |
+    Email today, Wednesday 23 September, from partnerships@rivermill.au to
+    hellowanderbug@gmail.com. That address is published on her own
+    work-with-me page and was backfilled to the roster by P, so it is a
+    shared address rather than a pattern guess and needs no §4.2 lookup.
+    No phone: the roster carries none and none was found. No platform
+    message: her Instagram is @thewanderbugworld, but the campaign has no
+    Instagram send leg, and the roster facebook_url was cleared in P as a
+    different business (an Indian tour agent at wanderbug.in). So the method's
+    "email only" branch applies and the file carries one piece. The segment's
+    approach_sequencing gives no phone step for this segment, only the email
+    and an hour-turnaround confirmation.
+  language: en-au
+  angle: passes-for-her-readers-first
+angle_rationale: |
+  Warmth is cold. The dispatcher prefetch ran both directions on
+  hellowanderbug@gmail.com across all five accounts, and a second pass on
+  "Genevieve Lauren" and "The Wanderbug" in subject lines. Every account
+  returned nothing. The profile records no dated conduct by her towards us
+  either. So there is no touchpoint to open with and nothing to reference,
+  and per method 4.1.1 the false branch applies: a fresh subject, no
+  in-body reference to a prior note, and no "no prior contact" line in the
+  message itself.
+
+  Two profile facts shape the angle. She has a demonstrated hosting practice:
+  Brisbane Whale Watching hosted her and she disclosed it in the post, and her
+  work-with-me page lists hosted experiences with a media kit on request. And
+  her Queensland coverage is day-trip shaped, with a Brisbane guide carrying an
+  eighteen-plus item day-trip section that includes the Gold Coast, plus a
+  dedicated Mt Tamborine eating guide. A school-holiday outing in the
+  hinterland therefore sits inside her existing subject matter, and no
+  argument has to be made for why she would care.
+
+  One profile fact decides the shape, and it is the geography against the
+  clock. She is a Melbourne resident of over a decade who grew up in Brisbane
+  and returns several times a year. The free seats exist only for the seven
+  opening-week shows, Thursday 24 to Sunday 27 September, the first of them
+  tomorrow. A message built around "come and see it" would ask something she
+  most likely cannot do in the time it gives, which is the first thing the
+  campaign's a_challenger appendix tests. So the reader passes lead and her
+  own pass follows on a condition, phrased so that being two thousand
+  kilometres away costs her nothing and needs no explanation back. That
+  inverts the order of the two asks inside the segment's first_ask template
+  while keeping both asks it names. The challenger in character confirmed the
+  bet: she read the condition as leaving her free rather than as a misread of
+  where she lives, and said the personal half failing does not kill the
+  reader half.
+
+  Two further profile facts are respected by omission. Her About page refuses
+  guest posts and back links, and her work-with-me page states that she does
+  not publish paid-for posts written by a third party, with brand partnerships
+  keeping full editorial control with her. So nothing in the message offers
+  copy, asks for a link, or specifies what she should write. Her stated
+  readership is aged 24 to 35 and not parents, so the message does not assert
+  that her audience is families; the campaign's emotional framing is carried
+  in the softer form that her readers would use the seats, which does not
+  describe her audience back to her wrongly.
+
+  Presupposition, per method 4.5: no sentence tells her what she covers or
+  where she lives. The understanding is carried by the shape of the offer,
+  through the condition on her own pass and through pitching the thing as a
+  school-holiday outing, not by reciting her pages at her.
+
+  No sibling approach exists yet in this campaign for the publisher wave, so
+  there was no travel-blogger angle to stay consistent with beyond the plan
+  block's own framings. The organiser-wave files were read for the band
+  pattern check; see quality_checklist.
+response_likelihood: 50
+a_note: |
+  Reader-giveaway passes led, her own pass attached on a condition so the Melbourne base costs her nothing; email only (no phone, no platform leg); cold, prefetch empty on all five accounts both directions; en-au. Watch for a reply asking what age the show suits, which no source in the record answers.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [not-advertised, opening-week-seats, nothing-to-organise]
+    notes: |
+      big-top-at-a-heritage-farm appears only as the plain description of what
+      the show is and where it sits, not worked as an argument, so it is not
+      counted in the selection.
+    messages:
+      - channel: email
+        to: hellowanderbug@gmail.com
+        subject: Five circus passes to give away to Wanderbug readers, from Thursday
+        body: |
+          Hello Genevieve,
+
+          I am Priyanka Das and I look after partnerships at Historic Rivermill, a heritage riverside venue at Mount Nathan in the Gold Coast hinterland, half an hour from the coast at the foot of Tamborine Mountain. CHARC Performance has a big top going up on our lawn for the school holidays, with a family circus called WANTED – A Cirque Heist.
+
+          There are five family passes of four to give away to your readers, and a sixth for you if you are up this way. They are good for any of the seven opening-week shows: Thursday 24 September at 1pm, Friday 25 and Saturday 26 at 4pm and 7pm, and Sunday 27 at 11am and 2pm. The season then runs on through the holidays to Sunday 4 October.
+
+          The passes are held in The Wanderbug's name rather than issued as a public code. Tell me how many you want and which shows, and I will send you the booking details for the winners rather than for the post. Readers buying their own seats can do that at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          The free seats are not advertised anywhere. They go to a small number of writers and local organisations whose readers and members would use them. A day's notice is short, so run it whichever way suits you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+          historicrivermill.au
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      An email from someone I have never dealt with before, at a heritage venue out past Tamborine Mountain, offering circus passes with less than a day's notice before the first show. My first reaction is warmth toward the idea and mild irritation at the timing. A big top show for kids over the school holidays is exactly the kind of thing my readers with families would want to know about, and the Gold Coast hinterland sits inside the geography I already cover. I have written up whale watching in Brisbane and a whole eating guide around Mount Tamborine, which is a few minutes up the road from where this venue sits.
+
+      But Priyanka wants an answer today for shows starting tomorrow. Even in the best case, if I say yes within the hour, I would be trying to get a giveaway post or an Instagram story out same-day so readers have any real chance of entering and booking before Sunday. That is tight but not impossible. I run a fast Instagram giveaway more easily than a blog post on this notice, and she has not specified which format she wants, so that is something to ask rather than a reason to say no.
+
+      The bigger question in my head is whether I can actually take up the sixth pass myself. I am not based up that way day to day, and "if you are up this way" reads like she does not know that, or does not mind either way. I do not need to go in person to give away passes to readers, so that part of the offer not working for me does not kill the rest of it.
+
+      Nothing here trips my guest-post policy or my no-paid-posts line. She is not asking me to publish anyone else's writing, and she is not asking for money to change hands. It reads like the same kind of hosted-experience arrangement I already do, just aimed at a giveaway rather than a review.
+
+      What would stop me: nothing structural. The only thing that could turn this into a pass is if I genuinely cannot get five minutes of content out before the season is more than half gone, but a one-day-notice giveaway is workable if I move now.
+
+      What I would ask in my reply, not object to: which format she would like the giveaway run in, since Instagram is where my readers actually are, more than the blog; whether the sixth pass can convert to a family pass for someone on my team if I cannot get there myself; and roughly what age range the show suits, since I will want to say that to parents deciding on the fly.
+
+      REPLY_PCT: 55
+    fact_check:
+      - claim: "The seven opening-week start times: Thursday 24 September at 1pm, Friday 25 and Saturday 26 at 4pm and 7pm, Sunday 27 at 11am and 2pm."
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+        note: |
+          The challenger flagged these as unverifiable, having been given the
+          showtimes file but not the file it delegates to. The showtimes file
+          names its own successor: "The start times are kept in
+          historicrivermill.au/data/circus.yaml... A change CHARC makes to the
+          season is made there." The seven times were read from that home and
+          match its sessions exactly. No correction was made.
+      - claim: Performances run on Friday 25, Saturday 26 and Sunday 27 September.
+        source: plan-events/2026-09-19-cowboys-and-country/ and the campaign YAML header ruling
+        result: verified
+        note: |
+          The challenger read the showtimes line "the first weekend of the
+          holidays is left to Cowboys and Country" as denying performances
+          that weekend. The event folder dates Cowboys and Country to
+          19 September 2026, the Saturday before the season opens, so the
+          first weekend of the holidays is 19 and 20 September and precedes
+          the season entirely. Two further checks agree: the campaign header's
+          own ruling counts "opening week (Thursday 24 to Sunday 27 September,
+          seven shows)", a figure only reachable if that weekend carries
+          shows, and the plan block's first_ask offers "any show from this
+          Thursday 24 September to Sunday". No correction was made.
+    antifact_check: |
+      Checked against every item in business-antifacts.md. No stone buildings,
+      no original or hundred-year-old mill structures and no building age at
+      all, no farm claim in either direction (the venue is given as a heritage
+      riverside venue), no vineyard, and at the foot of Tamborine Mountain
+      rather than on it. No trace of the checklist itself shows in the text.
+    revision_note: |
+      The persona raised four points, sorted before touching the draft.
+
+      (1) Answer in this email: nothing new. Her only structural hesitation was
+      the notice, and she resolved it herself ("workable if I move now").
+
+      (2) Leave for the reply: what age range the show suits. CHARC has given
+      start times and nothing else, so no source in the record states an age
+      band, and inventing one is the exact failure the challenger is briefed to
+      catch. "A family circus" is the whole of what the record supports and is
+      already in the draft. The confirmation reply, which carries the code and
+      the booking details, is where a checked answer can go once CHARC is asked.
+
+      (3) Absorb by reframing a sentence already present: her own pass
+      converting to someone on her team, and the giveaway format. The pass
+      clause became "for you or someone from The Wanderbug", which the
+      campaign's own terms already allow, the reservation being held in the
+      organisation's name and passed to its staff. The closing clause became
+      explicit that the channel is hers, which answers the Instagram question
+      without naming her account or dictating placement.
+
+      Both changes rewrite existing sentences, so the draft did not grow. The
+      flagged show times were checked and kept; see fact_check.
+  - type: draft
+    number: 2
+    chosen_usps: [not-advertised, opening-week-seats, nothing-to-organise]
+    messages:
+      - channel: email
+        to: hellowanderbug@gmail.com
+        subject: Five circus passes to give away to Wanderbug readers, from Thursday
+        body: |
+          Hello Genevieve,
+
+          I am Priyanka Das and I look after partnerships at Historic Rivermill, a heritage riverside venue at Mount Nathan in the Gold Coast hinterland, half an hour from the coast at the foot of Tamborine Mountain. CHARC Performance has a big top going up on our lawn for the school holidays, with a family circus called WANTED – A Cirque Heist.
+
+          There are five family passes of four to give away to your readers, and a sixth for you or someone from The Wanderbug if any of you are up this way. They are good for any of the seven opening-week shows: Thursday 24 September at 1pm, Friday 25 and Saturday 26 at 4pm and 7pm, and Sunday 27 at 11am and 2pm. The season then runs on through the holidays to Sunday 4 October.
+
+          The passes are held in The Wanderbug's name rather than issued as a public code. Tell me how many you want and which shows, and I will send you the booking details for the winners rather than for the post. Readers buying their own seats can do that at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          The free seats are not advertised anywhere. They go to a small number of writers and local organisations whose readers and members would use them. A day's notice is short, so run it on whichever of your channels suits, in whatever form you like.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+          historicrivermill.au
+  - type: review
+    number: 2
+    verdict: DONE
+    in_character: |
+      An unsolicited pitch, but not a guest-post ask, so the line on my About page does not apply. This is a hosted-experience and giveaway offer, which is the kind of thing my work-with-me page already invites. The location fits my beat: I have covered Mt Tamborine eating and Brisbane whale watching, and Mount Nathan at the foot of Tamborine Mountain sits right in that hinterland ground I already write about.
+
+      Is it possible in the time given? Barely, for the very first show. Thursday 1pm is about eighteen hours out, nowhere near enough runway to announce a giveaway, collect entries and pick winners. But Priyanka's own email concedes that ("a day's notice is short") and leaves the form and channel entirely up to me, and there are six more shows running Friday through Sunday, plus the season continuing to 4 October. So I would run it for a later slot in the week rather than Thursday. Nothing here is actually undoable.
+
+      Nothing stops me replying. The offer is low-friction: no fee, no obligation on format, a pass for me plus five for readers, and the passes are held in my name rather than a public code, which reads as reasonably organised rather than a mass blast. What I would ask in my reply: how many of the five reader passes I should take and for which shows, whether the sixth pass has a preferred date, and whether there is a hi-res image or any material I can use rather than shooting my own. None of that is an objection, just logistics.
+
+      REPLY_PCT: 78
+    fact_check:
+      - claim: "The seven listed show times (Thu 24 Sep 1pm; Fri 25 4pm and 7pm; Sat 26 4pm and 7pm; Sun 27 11am and 2pm)."
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+        note: Match the sessions exactly.
+      - claim: The season runs on through the holidays to Sunday 4 October.
+        source: historicrivermill.au/data/circus.yaml
+        result: verified
+        note: Matches the last session, 2026-10-04T11:00.
+      - claim: The ticket link given for readers buying their own seats.
+        source: campaign YAML, usps.opening-week-seats.rests_on
+        result: verified
+        note: The Eventbrite listing named in the registry, not an Oztix link.
+      - claim: "Venue description: Mount Nathan in the Gold Coast hinterland, at the foot of Tamborine Mountain."
+        source: business-antifacts.md and business-overview.md
+        result: verified
+      - claim: The pass counts, one for her or The Wanderbug and five for readers.
+        source: campaign YAML, segments.travel-blogger-domestic.first_ask
+        result: verified
+      - claim: This contact belongs to the travel-blogger-domestic segment.
+        source: campaign YAML, segments.travel-blogger-domestic.stems
+        result: verified
+        note: genevieve-lauren-the-wanderbug is listed in the stems.
+    antifact_check: |
+      No antifact claim appears: no stone buildings, no hundred-year-old
+      structures, no vineyard, and the venue is at the foot of Tamborine
+      Mountain rather than on it. No code, price, discount, suggestion that
+      seats are unsold or that the offer serves the sender, and no feed-bag or
+      animal-food offer, consistent with prompt_appendices.a_author.
+    revision_note: |
+      The challenger returned DONE with no factual errors. One change was made
+      after it, under the method's own quality checklist rather than the
+      spar: check 6, the band-level pattern check. Read against the
+      organiser-wave files already in this campaign folder, the opener shared
+      the clause "I look after partnerships at Historic Rivermill" verbatim
+      with the Galleon Harbour approach, and the whole first paragraph ran to
+      the same shape as four siblings (self-identification, then "a circus
+      company has put a big top up on our lawn"). The opener now leads with
+      the show, which suits a publisher reading for a subject rather than for
+      an introduction, and the self-identification follows in the same
+      breath. Every fact the challenger verified is unchanged, and nothing was
+      added or removed.
+  - type: final
+    chosen_usps: [not-advertised, opening-week-seats, nothing-to-organise]
+    messages:
+      - channel: email
+        to: hellowanderbug@gmail.com
+        subject: Five circus passes to give away to Wanderbug readers, from Thursday
+        body: |
+          Hello Genevieve,
+
+          WANTED – A Cirque Heist is a family circus from CHARC Performance, playing in a big top on our lawn for the school holidays. I am Priyanka Das, partnerships at Historic Rivermill, the heritage riverside venue hosting it at Mount Nathan, half an hour inland from the Gold Coast at the foot of Tamborine Mountain.
+
+          There are five family passes of four to give away to your readers, and a sixth for you or someone from The Wanderbug if any of you are up this way. They are good for any of the seven opening-week shows: Thursday 24 September at 1pm, Friday 25 and Saturday 26 at 4pm and 7pm, and Sunday 27 at 11am and 2pm. The season then runs on through the holidays to Sunday 4 October.
+
+          The passes are held in The Wanderbug's name rather than issued as a public code. Tell me how many you want and which shows, and I will send you the booking details for the winners rather than for the post. Readers buying their own seats can do that at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          The free seats are not advertised anywhere. They go to a small number of writers and local organisations whose readers and members would use them. A day's notice is short, so run it on whichever of your channels suits, in whatever form you like.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+          historicrivermill.au
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: "Sender identity: Priyanka Das, partnerships, Historic Rivermill, partnerships@rivermill.au."
+    source: campaign YAML, sender block
+  - claim: "The show is WANTED – A Cirque Heist, a family circus, and the operator is CHARC Performance."
+    source: historicrivermill.au/data/circus.yaml (show, operator); campaign YAML header
+  - claim: The big top is on the venue's lawn for the school holidays.
+    source: campaign YAML header and usps.big-top-at-a-heritage-farm
+  - claim: Historic Rivermill is a heritage riverside venue at Mount Nathan in the Gold Coast hinterland.
+    source: business-overview.md (U1, U4, address) and business-antifacts.md
+  - claim: It is half an hour inland from the Gold Coast, at the foot of Tamborine Mountain and not on it.
+    source: business-overview.md (U6) and business-antifacts.md (Tamborine item)
+  - claim: Five family passes of four for readers and a sixth for the contact or her organisation.
+    source: campaign YAML, segments.travel-blogger-domestic.first_ask
+  - claim: There are seven opening-week shows, Thursday 24 to Sunday 27 September.
+    source: campaign YAML header ruling and usps.opening-week-seats
+  - claim: "Start times: Thursday 24 September 1pm, Friday 25 and Saturday 26 at 4pm and 7pm, Sunday 27 at 11am and 2pm."
+    source: historicrivermill.au/data/circus.yaml (sessions), the home named by the showtimes file in plan-events/2026-09-25-wanted-a-cirque-heist/
+  - claim: The season runs on to Sunday 4 October.
+    source: historicrivermill.au/data/circus.yaml (last session, 2026-10-04T11:00)
+  - claim: The passes are held in the organisation's name rather than issued as a public code, and the booking details go to the recipient rather than into a public post.
+    source: campaign YAML header (the reservation-not-a-code rule) and prompt_appendices.a_author
+  - claim: Readers buying their own seats do so at the Eventbrite listing.
+    source: campaign YAML, usps.opening-week-seats.rests_on
+  - claim: The free seats are not advertised anywhere and go to a small number of writers and organisations.
+    source: campaign YAML, usps.not-advertised
+  - claim: "Recipient address: hellowanderbug@gmail.com."
+    source: the profile for this contact, backfilled from her own work-with-me page
+quality_checklist: |
+  1. Structure. Root keys are drawn from the canonical set. Draft and review
+  rounds carry type and number, the final round carries one email message and
+  no number, and the address is a real published one rather than a placeholder.
+
+  2. Coverage. fact_provenance reaches every factual claim in the final draft,
+  including the venue description, the seven start times, the season end, the
+  pass counts, the ticket link and the not-advertised framing. chosen_usps is
+  present on both draft rounds and the final round.
+
+  3. Presupposition. No sentence tells her what she covers, where she lives, or
+  who reads her. The condition on her own pass and the school-holiday framing
+  carry the understanding without reciting her pages back at her.
+
+  4. Manufactured connection. Nothing claims a shared interest. The offer is
+  put as an offer. Her Brisbane and Tamborine coverage informed the angle and
+  is not mentioned in the message. The profile is silent on whether she covers
+  circus or live performance, and nothing in the draft assumes she does.
+
+  5. Concreteness. The ask is answerable in one sentence: how many passes and
+  which shows.
+
+  6. Band pattern. Failed on first reading and was fixed. Against the
+  organiser-wave files already in this campaign folder, the opener shared the
+  clause "I look after partnerships at Historic Rivermill" verbatim with the
+  Galleon Harbour approach, and the paragraph ran to the same shape as four
+  siblings: self-identification, then "a circus company has put a big top up
+  on our lawn", then the ask. The final draft opens with the show instead,
+  which also suits a publisher better than an introduction does. No fact
+  changed.
+
+  7. Final round email cardinality. One email message, no phone message, so
+  the cap holds.

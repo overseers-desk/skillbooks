@@ -1,0 +1,423 @@
+profile_hash: sha256:a49685af7b9d4a0a928009ec7a8887a551d36422139fe0bde7da99f8ee0e73bb
+# Contact: Gregory Pike, Secretary, Gold Coast Legacy Club Ltd
+# Channel: email (primary, reply on the April thread), phone (follow-up Friday morning, no reply)
+# Language: en-au
+# Angle: the office as conduit. It forwarded our last offer to the Laurel Clubs; this one needs only the forward.
+decisions:
+  channel: email
+  channel_detail: |
+    Email today, Wednesday 23 September, from partnerships@rivermill.au to
+    admin@goldcoastlegacy.com.au, sent as a reply on the April thread. Phone
+    (07) 5500 6833 on the morning of Friday 25 September where there is no
+    reply. Legacy House opens Monday, Wednesday and Friday, 8:30am to 2:30pm,
+    so Friday is the first office day after the email; the segment's
+    approach_sequencing step 3 says the next morning, and Thursday is a closed
+    day. No platform channel: the roster carries no LinkedIn, the organisation
+    has a Facebook page but no personal account for Gregory, and
+    facebook-group-admin is out of this campaign.
+  language: en-au
+  angle: office-conduit-april-thread
+angle_rationale: |
+  Warmth is prior contact, and unlike most of this segment it is a two-sided
+  record. The dispatcher prefetch and a direct read of the mailbox agree on
+  three messages in admin-rivermill-au/Partnerships. Lia Movsisyan wrote from
+  partnerships@rivermill.au on 9 April 2026 to admin@goldcoastlegacy.com.au,
+  subject "Midweek outing venue for Legacy Laurel Clubs", addressed to Gregory.
+  Joanne Russell, Office Administrator, replied on 10 April from the same
+  office address: "Thanks for the email. I will absolutely pass this on to the
+  Laurel Clubs for their discussion." Priyanka Das then sent the group-visit
+  detail pack on 13 April, cc'd to the office address, opening "Hi Joanne".
+  Nothing since.
+
+  That record decides the angle. The question every message in this segment
+  turns on is whether the organisation will circulate an offer to its people.
+  Here it is not inferred from the organisation's shape; it is on file, because
+  the office did exactly that five months ago with our own material. So the ask
+  is the one act they have already performed for us, and the difference worth
+  naming is what follows it. April asked them to assemble a bus trip, which
+  needs the clubs' calendars and a committee. This asks for a forward.
+
+  Reply on the April thread rather than a fresh subject (method 4.1.1). Warmth
+  is prior, a thread exists in the prefetch, and the contact's roster address is
+  the From of a message in it, so the rule's true branch applies. The gloss
+  underneath it points the same way: the rule matters most for sparse or
+  long-quiet relationships, where a new subject would read as cold. The thread's
+  topic, a Laurel Club visit to Rivermill, is compatible with the offer.
+
+  Parent selection departs from the letter of 4.1.1 for a reason. The most
+  recent message in the thread is our own 13 April note, addressed to
+  partnerships@rivermill.au with Legacy on Cc, so threading to it would derive a
+  To of our own address. The parent is therefore the message before it, Legacy's
+  10 April reply, whose From is the roster address. Threading and addressing
+  both come out right and the References chain still carries the whole thread.
+
+  The cost of the decision, for the reviewer: the derived subject carries the
+  recipient-specific element method 4.5 requires ("Legacy Laurel Clubs") but
+  says nothing about the school holidays or the four-day window. The urgency
+  sits in the body instead. It buys something the alternative cannot. The
+  challenger's persona said the April history was the one thing that would stop
+  him replying, because he does not recognise it, and a reply on the thread puts
+  the evidence for that history directly beneath the sentence asserting it.
+
+  The audience inside this organisation is not the Laurel Club cohort alone. The
+  members are veteran widows, predominantly 60s to 90s, and the show is a family
+  circus. Legacy supports roughly 850 widows, children and families of deceased
+  veterans, so the message names the wider beneficiary families as well as
+  grandchildren visiting over the holidays. The segment block's own objective
+  uses that framing, so it is the campaign's reading rather than the author's.
+
+  USPs. nothing-to-organise leads, because it is the lever that answers what
+  stalled in April: the plan block marks it as applying where circulating an
+  offer to members is already what the organisation does, and this office has
+  done it. opening-week-seats carries the offer itself, seven shows Thursday 24
+  to Sunday 27 September, free. not-advertised is the emotional lever in the
+  framing the block gives it, written as one flat sentence with no reason
+  attached, since the reasoning behind the give-away stays out of every message.
+  big-top-at-a-heritage-farm is not argued; it sits in the descriptive clause
+  that tells the reader what the thing is.
+
+  group-visit-later closes the message rather than leading it. It is not in this
+  segment's USP list, but the block's own first_ask prescribes the closing offer
+  of a group visit next week, and here it does double duty: it gives the stalled
+  April conversation a live answer, in one conditional sentence that cannot
+  compete with the primary ask.
+response_likelihood: 70
+a_note: |
+  Office-as-conduit angle (forward free opening-week tickets to Laurel Club
+  members and the wider veteran families Legacy supports, no outing to run);
+  email primary, sent as a reply on the April thread, with a phone follow-up
+  Friday 25 September because Legacy House is shut Thursday; warmth prior
+  contact, two-sided (Joanne Russell's 10 April 2026 reply undertaking to pass
+  our outing offer to the clubs, our 13 April detail pack, nothing since); en-au.
+  One challenger pass, verdict REVISE. Its fact-check claimed the April reply
+  and the 13 April follow-up do not exist; that finding is wrong against the
+  mailbox and was not applied, evidence in the round-1 fact_check. Its
+  in-character objection was valid for a different reason and the draft changed
+  for it: Gregory was addressee of the first note only, so the history is now
+  attributed to his office and points at the quoted thread he can check.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [nothing-to-organise, opening-week-seats, not-advertised, big-top-at-a-heritage-farm]
+    notes: |
+      Element order is a-b-c per method 4.5: who I am, the ask, then the
+      reasons. No code, no price, no link in the first message. Antifact pass:
+      no stone buildings, no building age of any kind, no farming claim in
+      either direction, no vineyard, no Tamborine Mountain; location given as
+      Mount Nathan on the Coomera River.
+    messages:
+      - channel: email
+        body: |
+          Dear Gregory,
+
+          Priyanka Das here, from Historic Rivermill, the heritage venue on the Coomera River at Mount Nathan. We wrote to your office in April about a midweek outing for the Laurel Clubs, Joanne said she would pass it to the clubs, and I sent the outing details across on 13 April. I have not heard anything since.
+
+          I am writing now with something easier to take up. A circus company has a big top on our lawn for the school holidays, and I have free tickets to their family show, WANTED – A Cirque Heist, for your Laurel Club members and the families Legacy supports. There are seven shows between Thursday 24 and Sunday 27 September, the first at 1pm this Thursday. Reply with a rough number, and which sessions suit if anyone has a preference, and I will hold them in Legacy's name and send back a code and a booking link for you to pass on.
+
+          There is nothing to organise at your end. No bus, no permission forms, no group to get together. Each family books the session that suits them.
+
+          The tickets are not advertised and are not offered to the public. They are for your own members and the families you support, rather than for posting publicly.
+
+          If a proper group visit would suit Legacy better than a forward, next week suits that. Tell me a day and I will come back to you.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships
+          Historic Rivermill
+          partnerships@rivermill.au
+        director_note: |
+          Sent as a reply on the April thread; the parent block is on the final
+          message. The reply to his answer carries the code, the Eventbrite link
+          and the Sunday cut-off.
+        parent:
+          account: admin-rivermill-au
+          folder: Partnerships
+          uid: 352
+          message_id: "<SYZP282MB3251DFF78940AE4E347B186E9F592@SYZP282MB3251.AUSP282.PROD.OUTLOOK.COM>"
+          references:
+            - "<0108019d6fac939c-d58590ad-f895-47ac-b588-bae70acffce5-000000@ap-southeast-2.amazonses.com>"
+            - "<SYZP282MB32514923B94ACE48E52FDEAA9F582@SYZP282MB3251.AUSP282.PROD.OUTLOOK.COM>"
+            - "<PS2P216MB133024E5836310FC41D57AE0B1582@PS2P216MB1330.KORP216.PROD.OUTLOOK.COM>"
+          subject: "RE: Midweek outing venue for Legacy Laurel Clubs"
+          from: Gold Coast Legacy Club <admin@goldcoastlegacy.com.au>
+          to: partnerships@rivermill.au
+          cc: ""
+      - channel: phone
+        to: (07) 5500 6833
+        text: |
+          Follow-up call the morning of Friday 25 September where the email has
+          drawn no reply. Ask for a rough number, nothing more.
+        script:
+          - point: Who is calling
+            text: "Good morning, it's Priyanka Das from Historic Rivermill, the venue out at Mount Nathan. Is Gregory available? Or Joanne, if she is in."
+          - point: Why the call
+            text: "I sent an email through on Wednesday about the school holidays, on the back of an older thread with your office. I thought I would ring rather than let it sit in the inbox."
+          - point: The offer
+            text: "There is a circus in a big top on our lawn for the holidays, a family show called WANTED – A Cirque Heist. I have free tickets for your Laurel Club members and the families Legacy supports. Shows are running today, tomorrow and Sunday."
+          - point: The ask
+            text: "All I need from you is a rough number. I will hold that many in Legacy's name and email you a code and a booking link this morning, and your families book whichever session suits them."
+          - point: Why it is light on the office
+            text: "There is nothing to arrange at your end. No bus, no forms, nobody has to be got together. It is one email for you to forward."
+          - point: Where the tickets go
+            text: "They are not advertised and they are not offered to the public, so I would ask that they go to your own members and the families you support rather than onto Facebook."
+          - point: If a group outing comes up instead
+            text: "If Legacy would rather bring a group out properly, next week suits that better anyway. Give me a day that works and I will come back to you on it."
+          - point: Close
+            text: "Shall I send the code and the link to admin@goldcoastlegacy.com.au?"
+          - point: If Gregory and Joanne are both unavailable
+            text: "No trouble. Would you let him know Priyanka from Historic Rivermill rang about the free circus tickets for the Laurel Clubs, and that the last show is Sunday? If you can give me a rough number yourself I will hold them now, and the email with the booking link goes to the office address."
+        phone_note: |
+          Legacy House opens Monday, Wednesday and Friday, 8:30am to 2:30pm, so
+          the call is Friday morning. Gregory Pike is the Secretary; Joanne
+          Russell, the Office Administrator, is the one who answered in April.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Today is Wednesday 23 September 2026, an office day, so I would in fact be
+      reading this on the day it arrived.
+
+      What would stop me replying: the claim that "Joanne said she would pass it
+      to the clubs" and that a follow-up went out on 13 April. I don't recognise
+      either of those. If someone tells me about a conversation and a document I
+      have no memory of, my first reaction is not warmth, it is caution about who
+      I am dealing with. Is this a form letter padded with a made-up history to
+      sound personal, or has it gone to the wrong club. That would make me want
+      to check with Joanne before doing anything, not refuse outright, but it is
+      a genuine hesitation, not a passing question.
+
+      What I would just ask, not an objection: which of the seven sessions still
+      have room, whether the offer is Laurel Club members only or extends to the
+      wider 850 families we support, and whether I can split the numbers across
+      more than one club (Nerang, Southport) rather than naming one figure.
+
+      Is it possible in the time given: yes, but only barely for tomorrow. I can
+      give a rough number today for whichever club I can reach by phone this
+      afternoon, but the Laurel Clubs meet monthly and I have no standing
+      headcount to hand. A real rough number covering all clubs needs me to ring
+      around, which is more a Friday job than a same-day one. Thursday's 1pm show
+      is realistically out of reach for an organised reply from us; Friday,
+      Saturday and Sunday are not.
+
+      REPLY_PCT: 70
+    fact_check:
+      - claim: Joanne said she would pass it to the clubs, and the outing details went across on 13 April.
+        source: Mailbox read of admin-rivermill-au/Partnerships, UIDs 352 and 383, 2026-09-23.
+        result: verified
+        note: |
+          The challenger reported this as unsupported, saying the correspondence
+          record holds one outbound message with no reply. That finding is wrong
+          and was not applied. UID 352, dated 2026-04-10T10:03:57+10:00, is From
+          Gold Coast Legacy Club <admin@goldcoastlegacy.com.au> To
+          partnerships@rivermill.au, body "Thanks for the email. I will
+          absolutely pass this on to the Laurel Clubs for their discussion.",
+          signed Joanne Russell, Office Administrator, Gold Coast Legacy Club
+          Ltd. Its Message-ID is the one the dispatcher prefetch printed as the
+          2026-04-10 hit, so prefetch and mailbox agree. UID 383, dated
+          2026-04-13T12:05:22+10:00, is From partnerships@rivermill.au with
+          Legacy on Cc, opening "Hi Joanne, Thank you for passing it along", and
+          carries the group-visit detail pack. Method 4.6 makes the challenger's
+          step-2 authority the campaign YAML, the USP registry and the antifacts
+          file; the correspondence record sits outside it.
+      - claim: Joanne Russell is the Office Administrator at Gold Coast Legacy Club Ltd.
+        source: Her own signature block in UID 352, 2026-04-10.
+        result: verified
+        note: Also flagged by the challenger as unsupported, on the same wrong premise.
+      - claim: The season opens Thursday 24 September at 1pm.
+        source: Showtimes file, 2026-09-23.
+        result: verified
+      - claim: Seven shows from Thursday 24 to Sunday 27 September.
+        source: Campaign YAML header and the opening-week-seats USP.
+        result: verified
+      - claim: The free seats are not advertised and are not offered to the public.
+        source: not-advertised USP.
+        result: verified
+        note: |
+          Written flat, with no reason attached. Nothing in the draft suggests
+          seats are unsold or that the offer serves the sender.
+      - claim: Mount Nathan, on the Coomera River.
+        source: business-overview.md, USP U1 and the address line; venue block in the campaign YAML.
+        result: verified
+    antifact_check: |
+      Checked against every item in the antifact checklist, for both drafts and
+      the phone script. No stone buildings. No 100-year-old buildings, heritage
+      structures or original mill buildings; the text makes no claim about the
+      age of anything built, which also keeps the April pack's "heritage
+      arrowroot mill site dating back to the 1910s" out of this message. No
+      farming claim in either direction. No vineyard. Not placed on Tamborine
+      Mountain; the location is Mount Nathan on the Coomera River. Against the
+      campaign's author appendix: no code, no price, no link of any kind, no
+      discount, no Oztix link, no feed-bag or animal-food offer, and no show
+      time the showtimes file does not carry.
+    revision_note: |
+      The persona raised five points. Sorted before the draft was touched.
+
+      1. Does not recognise Joanne's reply or the 13 April follow-up, and reads
+      unrecognised history as a padded form letter. Answered in this email; it
+      is the one thing that stops the reply. The fact-check above shows the
+      history is real, so the fix is attribution rather than deletion. Gregory
+      was the addressee of the 9 April note and nothing after it: Joanne answered
+      from the shared office address, and the 13 April pack was written to her.
+      Telling him what he said describes events he was not party to. The revision
+      gives the exchange to his office, cuts it from three sentences to two, and
+      points at the thread quoted below the message, which he can check.
+
+      2. Laurel Club members only, or the wider families Legacy supports?
+      Answered in this email. One clause, and it widens the number he can give.
+
+      3. Can the numbers be split across more than one club? Answered in this
+      email. He named this as the reason he cannot produce a single figure, so
+      leaving it for the reply leaves the ask blocked.
+
+      4. A number covering all clubs needs a round of phone calls, more a Friday
+      job, and Thursday's 1pm is out of reach. Absorbed by reframing. The draft
+      led with tomorrow's 1pm opening, which set a deadline he cannot meet and
+      made the offer feel out of reach. The revision names the weekend sessions
+      as the practical ones and makes the figure provisional, splittable, and
+      open to being added to later in the week. The offer's shape supports that:
+      the sender holds a per-show tally against a reservation in the
+      organisation's name, so a number that grows is what the hold is for.
+
+      5. Which sessions still have room? Left for the reply. He asks it while
+      already replying. It is also the question whose answer sits closest to the
+      bar on any suggestion that seats are unsold, so it belongs in a
+      held-reservation conversation rather than a first touch.
+
+      The phone script changed with the email: the ask is pitched at a partial
+      number, and the caller is told to move past the April exchange rather than
+      argue it if Gregory does not recall it.
+  - type: final
+    chosen_usps: [nothing-to-organise, opening-week-seats, not-advertised, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        body: |
+          Dear Gregory,
+
+          Priyanka Das here, from Historic Rivermill, the heritage venue on the Coomera River at Mount Nathan. The thread below is from April, when we asked your office about a midweek outing for the Laurel Clubs. It was passed to the clubs and we sent the details through. Nothing came of it after that.
+
+          This is a lighter thing to take up. A circus company has a big top on our lawn for the school holidays, and I have free tickets to their family show, WANTED – A Cirque Heist. They are for your Laurel Club members and for any of the families Legacy supports, not only the clubs. There are seven shows across Thursday 24 September to Sunday 27 September. The season opens at 1pm tomorrow, which is short notice for you, so the weekend sessions are the practical ones.
+
+          Reply with a rough number and I will hold that many in Legacy's name, then send back a code and a booking link for you to pass on. It does not need to be a final figure. Start with whichever club you can reach, split it across Nerang, Southport and the others however suits, and add to it later in the week.
+
+          There is nothing to organise at your end. No bus, no permission forms, no group to get together. Each family books the session that suits them.
+
+          The tickets are not advertised and are not offered to the public. They are for your own members and the families you support, rather than for posting publicly.
+
+          If a proper group visit would suit Legacy better than a forward, next week suits that. Tell me a day and I will come back to you.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships
+          Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+        director_note: |
+          Reply on the April thread, so T3 derives the Subject from
+          parent.subject and sends to the parent's From,
+          admin@goldcoastlegacy.com.au. Expect him to ask which sessions still
+          have room; answer that with the hold rather than with occupancy. The
+          reply carries the code, the Eventbrite link and the Sunday cut-off,
+          and the number he gives goes onto the per-show tally.
+        parent:
+          account: admin-rivermill-au
+          folder: Partnerships
+          uid: 352
+          message_id: "<SYZP282MB3251DFF78940AE4E347B186E9F592@SYZP282MB3251.AUSP282.PROD.OUTLOOK.COM>"
+          references:
+            - "<0108019d6fac939c-d58590ad-f895-47ac-b588-bae70acffce5-000000@ap-southeast-2.amazonses.com>"
+            - "<SYZP282MB32514923B94ACE48E52FDEAA9F582@SYZP282MB3251.AUSP282.PROD.OUTLOOK.COM>"
+            - "<PS2P216MB133024E5836310FC41D57AE0B1582@PS2P216MB1330.KORP216.PROD.OUTLOOK.COM>"
+          subject: "RE: Midweek outing venue for Legacy Laurel Clubs"
+          from: Gold Coast Legacy Club <admin@goldcoastlegacy.com.au>
+          to: partnerships@rivermill.au
+          cc: ""
+      - channel: phone
+        to: (07) 5500 6833
+        text: |
+          Follow-up call the morning of Friday 25 September where the email has
+          drawn no reply. Ask for a rough number, and take a partial one.
+        script:
+          - point: Who is calling
+            text: "Good morning, it's Priyanka Das from Historic Rivermill, the venue out at Mount Nathan. Is Gregory available? Or Joanne, if she is in."
+          - point: Why the call
+            text: "I sent an email through on Wednesday about the school holidays, on the back of an older thread with your office. I thought I would ring rather than let it sit in the inbox."
+          - point: The offer
+            text: "There is a circus in a big top on our lawn for the holidays, a family show called WANTED – A Cirque Heist. I have free tickets for your Laurel Club members and for the families Legacy supports. Shows are running today, tomorrow and Sunday."
+          - point: The ask, pitched low
+            text: "A rough number is all I need. It does not have to cover every club. Give me whichever one you can reach, I will hold that many in Legacy's name, and you can add to it before the weekend."
+          - point: Why it is light on the office
+            text: "There is nothing to arrange at your end. No bus, no forms, nobody has to be got together. It is one email for you to forward, and each family books the session that suits them."
+          - point: Where the tickets go
+            text: "They are not advertised and they are not offered to the public, so I would ask that they go to your own members and the families you support rather than onto Facebook."
+          - point: If a group outing comes up instead
+            text: "If Legacy would rather bring a group out properly, next week suits that better anyway. Give me a day that works and I will come back to you on it."
+          - point: Close
+            text: "Shall I send the code and the link to admin@goldcoastlegacy.com.au?"
+          - point: If Gregory and Joanne are both unavailable
+            text: "No trouble. Would you let him know Priyanka from Historic Rivermill rang about the free circus tickets for the Laurel Clubs, and that the last show is Sunday? If you can give me a rough number yourself I will hold them now, and the email with the booking link goes to the office address."
+        phone_note: |
+          Legacy House opens Monday, Wednesday and Friday, 8:30am to 2:30pm, so
+          the call is Friday morning, the first office day after the email. By
+          then the Thursday show has gone and Friday, Saturday and Sunday remain.
+          Gregory Pike is the Secretary; Joanne Russell, the Office
+          Administrator, is the one who answered in April. If he does not recall
+          that exchange, say it was handled by the office, offer to forward it,
+          and move on rather than argue it on the phone.
+fact_provenance:
+  - claim: Historic Rivermill is a heritage venue on the Coomera River at Mount Nathan.
+    source: business-overview.md, USP U1 and the address line; venue block in the campaign YAML.
+  - claim: We wrote to the Legacy office in April about a midweek outing for the Laurel Clubs, it was passed to the clubs, and we sent the details through.
+    source: admin-rivermill-au/Partnerships UIDs 306, 352 and 383, 9 to 13 April 2026; the 2026-04-10 hit in the dispatcher prefetch.
+  - claim: Nothing came of it after that.
+    source: Same folder. No message on the thread after 13 April 2026.
+  - claim: A circus company has a big top on our lawn for the school holidays, and the family show is WANTED – A Cirque Heist.
+    source: Campaign YAML header; big-top-at-a-heritage-farm USP.
+  - claim: The tickets are free, for the organisation's own members and the families it supports.
+    source: opening-week-seats USP; campaign YAML header (the offer's terms); a_author appendix.
+  - claim: Seven shows across Thursday 24 September to Sunday 27 September.
+    source: opening-week-seats USP; campaign YAML header.
+  - claim: The season opens at 1pm on Thursday 24 September.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md.
+  - claim: Shows run on Friday, Saturday and Sunday (phone script, Friday call).
+    source: Same showtimes file, read against the Thursday-to-Sunday window in the opening-week-seats USP.
+  - claim: A number given now is held in the organisation's name, and a code and booking link follow in the reply.
+    source: Campaign YAML header (reservation in the organisation's name, per-show tally); opening-week-seats USP; the segment's conversion_funnel steps 1 and 2.
+  - claim: There is no bus, no permission form and no group to assemble; each family books the session that suits them.
+    source: nothing-to-organise USP.
+  - claim: The seats are not advertised and are not offered to the public.
+    source: not-advertised USP.
+  - claim: A group visit the following week can be put to the manager.
+    source: group-visit-later USP; the segment's first_ask.
+  - claim: Legacy runs Laurel Clubs at Nerang and Southport, and supports roughly 850 widows, children and families of deceased veterans.
+    source: Profile, Group profile section (My Community Directory and legacy.com.au listings).
+  - claim: Legacy House opens Monday, Wednesday and Friday, 8:30am to 2:30pm (phone_note only).
+    source: Profile, Current role section; Joanne Russell's signature block in UID 352.
+quality_checklist: |
+  1. Structure: root keys from the canonical set; draft and review rounds both
+     carry number; the final round holds one email and one phone message. The
+     email is a reply, so it carries a parent block and omits subject and to,
+     per the section 6 reply skeleton, and parent.message_id is non-empty. The
+     phone number is the live office line from the roster and the profile. Pass.
+  2. Coverage: fact_provenance reaches every factual claim in the final email
+     and the phone script, marking which appear in the script or notes only.
+     chosen_usps is on the draft and final rounds, and a_note carries the angle,
+     the channel, the two-sided warmth, the language, the threading decision and
+     the challenger's rejected fact-check. Pass.
+  3. Presupposition: no sentence tells Gregory something he already knows about
+     Legacy. The April lines are our own conduct and his office's, not his, and
+     the naming of Nerang and Southport grants him permission to split a figure
+     rather than reciting his own clubs at him. Pass.
+  4. Manufactured connection: the message claims no shared interest. Every
+     specific in it is either the offer or a profile data point (the Laurel
+     Clubs, the beneficiary families, the two named clubs). The profile records
+     no public statements from Gregory and no stated interest in heritage venues
+     or rural outings, and the draft asserts neither. Pass.
+  5. Concreteness: the ask is a rough number, answerable in one sentence, and
+     the revision makes a partial number acceptable. Pass.
+  6. Band pattern: the opener leads with the sender and then the quoted thread,
+     where the rest of the band opens on the sender and the location. The April
+     history is unique to this contact. Pass.
+  7. Final round email cardinality: one. Pass.

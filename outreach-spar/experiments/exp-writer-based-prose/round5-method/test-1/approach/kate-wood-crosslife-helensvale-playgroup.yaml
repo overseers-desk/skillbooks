@@ -1,0 +1,393 @@
+profile_hash: sha256:3af5cdae8086ede6c1d3730680b20ee8e8280c063381ab7df5bc8a75622c66c6
+# Contact: Kate Wood, Playgroup Coordinator, Crosslife Helensvale Playgroup
+# Channel: email (primary), phone (follow-up next morning, no reply)
+# Language: en-au
+# Angle: holiday-week tickets she forwards to her registered families, with no session to hand them out at.
+decisions:
+  channel: email
+  channel_detail: |
+    Email today, Wednesday 23 September, from partnerships@rivermill.au to
+    kate.wood@crosslife.org.au. Phone 07 5573 3644 on the morning of Thursday
+    24 September where there is no reply, per the segment's
+    approach_sequencing step 3. That number is the CrossLife Helensvale office
+    line rather than a direct one, so the script is written to survive being
+    relayed. No platform channel: the playgroup has a Facebook page with 530
+    followers but no personal account for Kate, and facebook-group-admin is out
+    of this campaign because a public group post cannot carry an offer meant to
+    stay inside the organisation.
+  language: en-au
+  angle: tickets-for-a-list-not-a-session
+angle_rationale: |
+  Warmth is prior contact, unanswered. The dispatcher prefetch shows one
+  outbound message, 31 March 2026, from partnerships@rivermill.au to
+  kate.wood@crosslife.org.au, subject "Morning visit for playgroup coordinators
+  - Historic Rivermill", held in two folders of the admin account. The prefetch
+  query ran in both directions on her address across five accounts and returned
+  no inbound message. So we wrote once and no reply is on record. The
+  campaign's a_author appendix requires that be said in one plain line naming
+  what the earlier note was about, and the email does so.
+
+  Fresh subject rather than a thread reply (method 4.1.1). The rule needs
+  warmth in {existing, prior} AND a current thread. What exists is a single
+  outbound of almost six months ago that never became a conversation. Threading
+  a ticket offer that expires on Sunday beneath a dead subject about a morning
+  visit would file it wrongly in her inbox and read as a chase. A fresh subject
+  with an in-body reference to March is the false-branch default.
+
+  Angle: this week she has a list, not a meeting. The playgroup runs Thursdays
+  9:30 to 11:30 in school term, and the offer lands inside the September
+  holidays, so there is no session at which to hand anything out. An ask shaped
+  as an excursion, or as something to announce at playgroup, would fail on the
+  group's own calendar. What she does have is a tracked membership: registration
+  runs through the UCare system, so a list of registered families exists and
+  reaching it over the break is ordinary work for her. That is the
+  nothing-to-organise USP in the exact condition the plan block sets for it, an
+  organisation whose habit is already circulating things to its members. The
+  message therefore says pass it around, never bring the group.
+
+  Helensvale 4212 is about twenty minutes from Mount Nathan, so the ask needs no
+  transport argument and the venue is plausibly local to her families.
+
+  What the profile does not support stays out. It records the absence directly:
+  no evidence of farm outings or external excursions, and public communications
+  limited to playgroup reminders and seasonal messages. So nothing in the draft
+  presumes she organises outings, and nothing claims a shared interest in
+  animals, horses or farms.
+
+  Kirra. The segment's scope_note records that the March round produced two
+  approach emails into this one inbox, because Kate coordinates two rostered
+  groups, caught only by a pre-send check. This campaign's mothers-group stems
+  carry the Helensvale row alone, so there is no second send to collide with.
+  The draft closes the gap from the other side: one sentence puts Kirra inside
+  the same offer, which removes the reason for a second email and answers the
+  question before she asks it. That is the offer's scope rather than a recital
+  of her own job, so it holds against the presupposition test.
+
+  USPs. opening-week-seats carries the offer, and the seven session times are
+  named so she can judge whether any of them suit a family with small children
+  before she spends effort circulating it. nothing-to-organise is the load-
+  bearing functional lever, for the calendar reason above. not-advertised is the
+  emotional lever in the plan block's framing, written as one flat sentence,
+  with the reasoning behind the give-away left out. big-top-at-a-heritage-farm
+  is not argued: it sits in the descriptive clause that tells a cold reader what
+  the thing is. group-visit-later closes the message in one conditional
+  sentence; the line comes from the segment's own first_ask text, and it is the
+  door to the long-term objective without competing with this week's ask.
+response_likelihood: 45
+a_note: |
+  Tickets-for-a-list-not-a-session angle (free opening-week seats she forwards
+  to registered families over the holidays, when the term-time playgroup does
+  not meet); email primary with a phone follow-up Thursday morning on the
+  CrossLife office line; warmth prior-contact-unanswered (31 March 2026 morning
+  visit note, no reply on record) named in one line in the body; en-au. Fresh
+  subject rather than a reply on the March thread. One email covers both her
+  playgroup sites, so nothing second reaches this inbox, which is the March
+  duplication the segment's scope_note records. Challenger passed the draft DONE
+  at one pass with no factual errors; of its four points, one was absorbed by
+  splitting a sentence and the rest are reply-stage.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [opening-week-seats, nothing-to-organise, not-advertised, big-top-at-a-heritage-farm, group-visit-later]
+    notes: |
+      Element order is a-b-c per method 4.5: who I am, the ask, then the
+      reasons. No code, no price, no link in the first message. Session times
+      come from the showtimes file, which names historicrivermill.au/data/
+      circus.yaml as where the operator's start times live; the seven listed are
+      the opening-week subset. The Oztix links in that file are not used, since
+      the campaign's only ticket link is the Eventbrite listing and it goes in
+      the reply. Antifact pass: no stone buildings, no 100-year-old or original
+      mill structures, no vineyard, no Tamborine Mountain.
+    messages:
+      - channel: email
+        to: kate.wood@crosslife.org.au
+        subject: Free circus tickets for CrossLife playgroup families, this week
+        body: |
+          Hi Kate,
+
+          My name is Priyanka and I work at Historic Rivermill, a heritage venue on the river at Mount Nathan with a cafe and farm animals, about twenty minutes up the road from Helensvale. A circus company has a big top up on our lawn for the school holidays, and I have free tickets to the opening shows for your playgroup families.
+
+          The show is WANTED – A Cirque Heist, a family show, and there are seven performances: 1pm tomorrow, Thursday 24 September, then 4pm and 7pm on Friday and Saturday, and 11am and 2pm on Sunday. Reply with roughly how many families you think would use them and I will send you a code and a booking link to pass around the Helensvale families. Send it to the Kirra families as well, if you would like it there. Each family books the show that suits them, so there is nothing for you to arrange.
+
+          They are for your own playgroup families rather than for posting publicly. The free tickets are not part of any public offer; the same shows are on sale at full price to everyone else.
+
+          I wrote to you back in March about a morning visit for playgroup coordinators here, and I do not think we heard back.
+
+          If the families would rather come along together, the following week gives more room to organise it. Tell me a day that suits and I will ask about holding seats.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        director_note: |
+          The reply carries the code, the Eventbrite link and the Sunday
+          cut-off. Expect her to ask whether there is a cap per family and
+          whether the offer runs past the opening week; both are answerable in
+          that reply.
+      - channel: phone
+        to: 07 5573 3644
+        text: |
+          Follow-up call the morning of Thursday 24 September where the email
+          has drawn no reply. Ask for a rough number, nothing more.
+        script:
+          - point: Opening
+            text: "Good morning, I am after Kate Wood, who looks after the playgroup. It is Priyanka calling from Historic Rivermill out at Mount Nathan."
+          - point: If Kate is not there
+            text: "No trouble. Is she about later today, or is there a better way to reach her? What I have is time-limited, so I would rather not leave it sitting in a message."
+          - point: Why I am calling
+            text: "I sent Kate an email yesterday and I thought I would ring rather than leave it sitting there. There is a circus in a big top on our lawn for the school holidays, a family show, and I have free tickets to it for the playgroup families."
+          - point: The ask
+            text: "All I need is a rough number. If you tell me twenty or thirty families might use them, I will email a code and a booking link this morning and you can send it round to your families. Each one books whichever show suits them, so there is nothing for you to organise."
+          - point: If she asks what it costs
+            text: "Nothing at all. The tickets are free for your families. They are not advertised, so it is not something anyone would come across on their own."
+          - point: If she asks when the shows are
+            text: "The first one is at one o'clock this afternoon. Then four and seven on Friday and Saturday, and eleven and two on Sunday. Seven shows between now and Sunday afternoon."
+          - point: If she says playgroup is not meeting over the holidays
+            text: "That is the reason I have put it to you this way. There is nothing to hand out and no session needed, just a link you can send to your families however you normally reach them over the break."
+          - point: If she asks whether it covers the Kirra group
+            text: "Yes, send it to both. The one link does for the Helensvale families and the Kirra families."
+          - point: If she asks how many tickets a family can take
+            text: "Give me your rough number first and I will confirm what I can hold for you when I email the link back."
+          - point: If she needs to run it past someone at the church
+            text: "Of course. If it helps, I can put the same thing in an email your campus team can read, and you tell me a number once you have the nod."
+          - point: If she would rather bring the families together
+            text: "This week is the free week, so it is short notice by its nature. If a group visit is the more useful thing, the following week suits that better. Give me a day that works and I will find out what we can hold."
+          - point: Close
+            text: "I will leave it with you. My email is partnerships@rivermill.au. If you can get me a number by tonight I can still get the link out in time for the weekend shows."
+          - point: Voicemail, if no answer
+            text: "Good morning Kate, this is Priyanka from Historic Rivermill at Mount Nathan. I emailed you yesterday about free tickets to the circus we have on the lawn for the school holidays, for your playgroup families. The shows run from this afternoon through to Sunday. If you reply to that email with a rough number of families, I will send you a code and a booking link to pass around. Thank you."
+        phone_note: |
+          Written for a call on the morning of Thursday 24 September. If the
+          call slips to Friday or Saturday, change "one o'clock this afternoon"
+          to "opened yesterday" or "has been running since Thursday" and keep
+          the rest. This is a church office line and the playgroup runs in
+          school term only, so she may not be on site during the holidays; ask
+          for the best way to reach her today rather than leaving the offer with
+          whoever answers.
+  - type: review
+    number: 1
+    verdict: DONE
+    in_character: |
+      Right, so this is Priyanka from Historic Rivermill. I don't think I've met
+      her, but I do vaguely recall something from the office about a visit
+      invitation earlier in the year that I never got around to answering.
+      That's on me, to be honest; the office line gets a lot of things and half
+      of it doesn't make it to me until days later.
+
+      The offer itself is easy to read: free tickets to the circus for our
+      families, no cost, nothing to organise beyond passing on a code. That's
+      the kind of thing I say yes to without much thought. It's a nice surprise
+      to hand families in the school holidays, and there's no admin burden on
+      me. Nothing here asks me to commit money, run an excursion, or vouch for
+      anything I can't check later.
+
+      What would give me pause, not stop me, is the timing. Tomorrow is the
+      first show, and playgroup doesn't meet again until next term starts back.
+      The group only runs Thursdays in term time, so I can't just hand these out
+      at the door. I'd have to reach families another way, and I'd want to know
+      how long the window really is before I bother doing that.
+
+      Nothing here would stop me replying outright. No cost, no catch I can see,
+      and the ask is easy to answer even with a guess. I'd simply ask, in my
+      reply: does this cover Kirra as well as Helensvale, since I run both; is
+      there a cap on how many tickets per family; and given the holidays, would
+      there be any point circulating this past the opening week, or is it
+      strictly this week's shows only.
+
+      REPLY_PCT: 60
+    fact_check:
+      - claim: Seven performances at 1pm Thursday 24, 4pm and 7pm Friday 25 and Saturday 26, 11am and 2pm Sunday 27 September.
+        source: Showtimes file of 2026-09-23 and historicrivermill.au/data/circus.yaml, which it names as the home of the operator's start times.
+        result: verified
+        note: The seven are the opening-week subset of the season's fourteen sessions.
+      - claim: The season opens Thursday 24 September, a day later than the printed poster shows.
+        source: Showtimes file, 2026-09-23.
+        result: verified
+      - claim: Free seats at any opening-week show, with the code sent in the reply.
+        source: opening-week-seats USP; campaign YAML header.
+        result: verified
+      - claim: Families book individually and there is no outing to arrange.
+        source: nothing-to-organise USP, whose condition is an organisation that already circulates offers to members.
+        result: verified
+      - claim: The tickets are not part of any public offer and the same shows sell at full price.
+        source: not-advertised USP.
+        result: verified
+        note: Written flat. Nothing in the draft suggests seats are unsold or that the offer serves the sender.
+      - claim: A group visit the following week can be put to the manager for held seating.
+        source: group-visit-later USP; the segment's own first_ask carries the line.
+        result: verified
+        note: No price is stated or implied for the second week.
+      - claim: Heritage venue on the river at Mount Nathan with a cafe and farm animals, about twenty minutes from Helensvale.
+        source: business-overview.md (U1, U3, U5) and the antifact checklist's prescribed description; the twenty minutes is the profile's relevance assessment.
+        result: verified
+      - claim: We wrote on 31 March 2026 about a morning visit for playgroup coordinators and no reply is on record.
+        source: Dispatcher prefetch, courier search of kate.wood@crosslife.org.au across five accounts.
+        result: verified
+        note: |
+          The challenger read the prefetch query as a to-address search only and
+          flagged that it could not disprove a reply. The query ran
+          from:kate.wood@crosslife.org.au OR to:kate.wood@crosslife.org.au, so
+          it covered both directions and returned nothing inbound. A reply from
+          some other address of hers remains possible, which is why the draft
+          says "I do not think we heard back" rather than asserting silence.
+    antifact_check: |
+      Checked against every item in the antifact checklist. No stone buildings,
+      no 100-year-old or original mill structures, no heritage buildings of any
+      age claimed, no vineyard, no Tamborine Mountain. The location is given as
+      Mount Nathan, and the venue is described by what a visitor finds there, so
+      the unsettled farming question is not answered in either direction. No
+      feed-bag or animal-food offer. No code, price, discount, subscriber offer
+      or Oztix link in the first message, and no show time the showtimes file
+      does not carry.
+    revision_note: |
+      Verdict DONE at one pass with no factual errors, so the final keeps the
+      draft's substance. Three changes of wording, no change of content.
+
+      The persona raised four points, sorted per method 4.6. Timing, that
+      playgroup does not meet in the holidays and she would have to reach
+      families another way: absorbed, and it was already the angle. The draft
+      asks her to pass a link around rather than to hand anything out at a
+      session, and the phone script answers it directly if she raises it.
+      Kirra: already in the draft, and she still asked, so the sentence was too
+      deep inside a long one. Split out as its own sentence, the third category
+      of sorting, a point absorbed by reframing a line already there. Cap per
+      family: left for the reply, where the sender holds the per-show tally and
+      the segment's allocation. Whether the offer runs past opening week: left
+      for the reply, which carries the Sunday cut-off as the funnel's step 2
+      states.
+
+      The other two changes are band-level (checklist item 6). The opener was
+      recast from "I am Priyanka, from Historic Rivermill at Mount Nathan, a
+      heritage riverside venue" because that is the seniors-club opener almost
+      word for word, and the two messages would have read as one template. The
+      signature dropped the street address and the customer service number, to
+      match the band's form of name, role and address.
+    notes: |
+      The persona's own account of why the March note went unanswered, that the
+      office line buries things for days, is her invention rather than anything
+      the profile records, so nothing in the final leans on it. It does support
+      the phone script's premise that reaching her through the office line takes
+      persistence.
+  - type: final
+    chosen_usps: [opening-week-seats, nothing-to-organise, not-advertised, big-top-at-a-heritage-farm, group-visit-later]
+    messages:
+      - channel: email
+        to: kate.wood@crosslife.org.au
+        subject: Free circus tickets for CrossLife playgroup families, this week
+        body: |
+          Hi Kate,
+
+          My name is Priyanka and I work at Historic Rivermill, a heritage venue on the river at Mount Nathan with a cafe and farm animals, about twenty minutes up the road from Helensvale. A circus company has a big top up on our lawn for the school holidays, and I have free tickets to the opening shows for your playgroup families.
+
+          The show is WANTED – A Cirque Heist, a family show, and there are seven performances: 1pm tomorrow, Thursday 24 September, then 4pm and 7pm on Friday and Saturday, and 11am and 2pm on Sunday. Reply with roughly how many families you think would use them and I will send you a code and a booking link to pass around the Helensvale families. Send it to the Kirra families as well, if you would like it there. Each family books the show that suits them, so there is nothing for you to arrange.
+
+          They are for your own playgroup families rather than for posting publicly. The free tickets are not part of any public offer; the same shows are on sale at full price to everyone else.
+
+          I wrote to you back in March about a morning visit for playgroup coordinators here, and I do not think we heard back.
+
+          If the families would rather come along together, the following week gives more room to organise it. Tell me a day that suits and I will ask about holding seats.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+        director_note: |
+          The reply carries the code, the Eventbrite link and the Sunday
+          cut-off. Expect a cap-per-family question and a how-long-does-it-run
+          question; both are answerable there. If she asks for something to show
+          the campus team, credentials-on-request covers it, though this segment
+          does not lead with it.
+      - channel: phone
+        to: 07 5573 3644
+        text: |
+          Follow-up call the morning of Thursday 24 September where the email
+          has drawn no reply. Ask for a rough number, nothing more.
+        script:
+          - point: Opening
+            text: "Good morning, I am after Kate Wood, who looks after the playgroup. It is Priyanka calling from Historic Rivermill out at Mount Nathan."
+          - point: If Kate is not there
+            text: "No trouble. Is she about later today, or is there a better way to reach her? What I have is time-limited, so I would rather not leave it sitting in a message."
+          - point: Why I am calling
+            text: "I sent Kate an email yesterday and I thought I would ring rather than leave it sitting there. There is a circus in a big top on our lawn for the school holidays, a family show, and I have free tickets to it for the playgroup families."
+          - point: The ask
+            text: "All I need is a rough number. If you tell me twenty or thirty families might use them, I will email a code and a booking link this morning and you can send it round to your families. Each one books whichever show suits them, so there is nothing for you to organise."
+          - point: If she asks what it costs
+            text: "Nothing at all. The tickets are free for your families. They are not advertised, so it is not something anyone would come across on their own."
+          - point: If she asks when the shows are
+            text: "The first one is at one o'clock this afternoon. Then four and seven on Friday and Saturday, and eleven and two on Sunday. Seven shows between now and Sunday afternoon."
+          - point: If she says playgroup is not meeting over the holidays
+            text: "That is the reason I have put it to you this way. There is nothing to hand out and no session needed, just a link you can send to your families however you normally reach them over the break."
+          - point: If she asks whether it covers the Kirra group
+            text: "Yes, send it to both. The one link does for the Helensvale families and the Kirra families."
+          - point: If she asks how many tickets a family can take
+            text: "Give me your rough number first and I will confirm what I can hold for you when I email the link back."
+          - point: If she needs to run it past someone at the church
+            text: "Of course. If it helps, I can put the same thing in an email your campus team can read, and you tell me a number once you have the nod."
+          - point: If she would rather bring the families together
+            text: "This week is the free week, so it is short notice by its nature. If a group visit is the more useful thing, the following week suits that better. Give me a day that works and I will find out what we can hold."
+          - point: Close
+            text: "I will leave it with you. My email is partnerships@rivermill.au. If you can get me a number by tonight I can still get the link out in time for the weekend shows."
+          - point: Voicemail, if no answer
+            text: "Good morning Kate, this is Priyanka from Historic Rivermill at Mount Nathan. I emailed you yesterday about free tickets to the circus we have on the lawn for the school holidays, for your playgroup families. The shows run from this afternoon through to Sunday. If you reply to that email with a rough number of families, I will send you a code and a booking link to pass around. Thank you."
+        phone_note: |
+          Written for a call on the morning of Thursday 24 September. If the
+          call slips to Friday or Saturday, change "one o'clock this afternoon"
+          to "opened yesterday" or "has been running since Thursday" and keep
+          the rest. This is a church office line and the playgroup runs in
+          school term only, so she may not be on site during the holidays; ask
+          for the best way to reach her today rather than leaving the offer with
+          whoever answers.
+fact_provenance:
+  - claim: Historic Rivermill is a heritage venue on the river at Mount Nathan, with a cafe and farm animals.
+    source: business-overview.md, USPs U1, U3 and U5, in the description form the antifact checklist prescribes.
+  - claim: About twenty minutes up the road from Helensvale.
+    source: Profile, relevance assessment point 1 (Helensvale 4212, approximately 20 min from Rivermill).
+  - claim: A circus company has a big top on the lawn for the school holidays, and the family show is WANTED – A Cirque Heist.
+    source: campaign YAML header; big-top-at-a-heritage-farm USP; circus.yaml show title.
+  - claim: Seven performances, 1pm Thursday 24 September, 4pm and 7pm Friday and Saturday, 11am and 2pm Sunday 27 September.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md and historicrivermill.au/data/circus.yaml, which it names as the home of the start times.
+  - claim: The season opens Thursday 24 September, which is tomorrow as the message is sent.
+    source: Showtimes file, 2026-09-23; today's date 23 September 2026.
+  - claim: The seats are free, and a code and a booking link follow in the reply.
+    source: opening-week-seats USP; the segment's first_ask wording.
+  - claim: Each family books the show that suits them and there is nothing for the coordinator to arrange.
+    source: nothing-to-organise USP.
+  - claim: The tickets are for the playgroup's own families rather than for posting publicly.
+    source: campaign YAML header (the offer's terms); a_author appendix.
+  - claim: The free tickets are not part of any public offer and the same shows sell at full price.
+    source: not-advertised USP.
+  - claim: A group visit the following week can be put to the manager for held seating.
+    source: group-visit-later USP; the segment's first_ask.
+  - claim: The offer covers the Kirra families as well as Helensvale.
+    source: Profile, current role and verification corrections (Kate coordinates both Crosslife playgroup sites); segment scope_note on the March duplicate approach.
+  - claim: We wrote on 31 March 2026 about a morning visit for playgroup coordinators and no reply is on record.
+    source: Dispatcher prefetch, courier search of kate.wood@crosslife.org.au in both directions across five accounts; the message in admin-rivermill-au, folders INBOX/Work Done and Partnerships.
+  - claim: The playgroup meets Thursdays 9:30-11:30am in school term (shapes the angle, not stated in the message).
+    source: Profile, group description; roster s_note.
+quality_checklist: |
+  1. Structure: root keys from the canonical set; draft and review rounds carry
+     number; the final round has one email and one phone message; the
+     to-address is the direct address the profile confirms. Pass.
+  2. Coverage: fact_provenance reaches every factual claim in the final email
+     and the phone script, and names the profile-only claim that shapes the
+     angle without appearing in the text. chosen_usps is on the draft and final
+     rounds. Pass.
+  3. Presupposition: no sentence tells Kate something she already knows about
+     her own playgroup. The Kirra line is the offer's scope, and the March line
+     is our conduct. The term-time calendar shaped the ask and stays out of the
+     text. Pass.
+  4. Manufactured connection: the message claims no shared interest. The
+     profile records no farm outings or excursions, and nothing in the draft
+     supposes any. Pass.
+  5. Concreteness: the ask is a rough number of families, answerable in one
+     sentence and answerable as a guess. Pass.
+  6. Band pattern: flagged and acted on. The opener was recast because it had
+     converged on the seniors-club message's opening construction; it now leads
+     with the sender's name and her distance from Helensvale, and the signature
+     matches the band's form. Reading the band's openers end to end remains the
+     human reviewer's check before the send.
+  7. Final round email cardinality: one. Pass.
