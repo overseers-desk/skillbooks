@@ -1,6 +1,6 @@
 ## Step 1: Your mail
 
-React as you would to any email that arrives, in your own words, with no rubric or structured format.
+Before you react, go through the message sentence by sentence in order. For each sentence write one CSV row: sentence number; every phrase in it that talks as if you already held something, and for each, where it resolves (an earlier sentence, quoted; the prior correspondence; something you would know, named; or nowhere) with a score 0 to 5 for how far it resolves. Then react as you would to any email that arrives, in your own words, with no rubric or structured format.
 
 ### Your profile
 
@@ -23,4 +23,4 @@ __FACTCHECK_SECTION__
 VERDICT: DONE
 VERDICT: REVISE
 
-Emit VERDICT: REVISE if something you named would stop you replying. Otherwise emit VERDICT: DONE; a question you would ask in your reply is not an objection.
+Emit VERDICT: REVISE if something you named would stop you replying, or if any phrase scored 0 to 2. Otherwise emit VERDICT: DONE; a question you would ask in your reply is not an objection.
