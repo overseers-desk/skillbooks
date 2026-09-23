@@ -24,7 +24,9 @@ that refers to something as though the reader already held it (a call, an
 excursion, "the seats", "the code", "the booking details", "our earlier
 note", "the group", "your guide", "the notice a bus needs") and that the
 email itself never introduced earlier. Point, do not construe: a thing
-introduced only later in the email still counts at the point of use.
+introduced only later in the email still counts at the point of use. A
+thing the recipient is, owns or runs resolves: their own club, village,
+centre, group, members or residents, named or as a bare definite.
 Count per email.
 
 Measure 2, sentence scores. For each email, score each sentence in the
