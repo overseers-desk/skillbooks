@@ -16,7 +16,6 @@ def facts(stem):
     i = body.find('# Profile'); body = body[i:] if i >= 0 else body
     cut = min([m.start() for m in re.finditer(r'^## (Catalogue evidence|Relevance assessment|Verification corrections)', body, re.M)] or [len(body)])
     body = body[:cut].rstrip()
-    # the word 'campaign' goes from the 'Who they know' section only, whole word
     m = re.search(r'^## Who they know.*?(?=^## |\Z)', body, re.M | re.S)
     if not m: return body
     sec = re.sub(r'(?i)\bcampaign\b ?', '', m.group(0))

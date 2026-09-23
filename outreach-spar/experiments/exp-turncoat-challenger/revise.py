@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """One author revision for each letter whose Gaslight 1 said bin: the author's
 forked session (its original drafting only) is resumed with the method's
-revise template, Turncoat's text standing as the challenger's feedback.
+revise template, Gaslight 1's reaction and Turncoat's text together
+standing as the challenger's feedback.
 The fork transcript is copied into the run configuration's projects dir so
 it resumes there. Writes runs/<letter>/revision.txt with the new draft.
 usage: revise.py <letters.json> <sessions-b-fork.json> <source config dir> <revise template>
