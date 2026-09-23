@@ -1,7 +1,7 @@
 Hey, check this email for me, I've got no time. It came in for __NAME__. If there is more than one message they came days apart, earliest first. Quick bio of __NAME__ if you need it:
 
 __PROFILE_FACTS__
-
+__PRIOR_CORRESPONDENCE__
 __EMAIL__
 
 What do you make of it? Worth a reply? Finish with one word on a line by itself: reply, or bin.
