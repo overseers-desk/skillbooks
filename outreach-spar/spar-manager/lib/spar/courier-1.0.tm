@@ -66,9 +66,9 @@ proc spar::courier::contact_block {name org email} {
 }
 
 # Our dated messages to this address as the mail index holds them, for
-# the persona's prompt. Empty when there are none, when no address is on
-# the roster, or when courier is absent: an index with no hits does not
-# show the message is the first, so the prompt then says nothing.
+# the persona's prompt. An index with no hits does not show the message
+# is the first, so an empty result here just means the prompt says
+# nothing, not that there was no prior contact.
 proc spar::courier::prior_block {email} {
     set email [string trim $email]
     if {$email eq "" || [auto_execok courier] eq ""} { return "" }
