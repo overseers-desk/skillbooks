@@ -1,0 +1,14 @@
+**1. Who wrote this and what do they want?**
+This reads like a template from an automated testing/evaluation harness, not a genuine person's request. It's built to be run many times with different fill-ins — the profile and email are both bracketed placeholders (`[profile withheld]`, `[email withheld]`) rather than actual content, and the surrounding scaffolding ("Step 1," "Step 2: Verdict") is clearly meant to be parsed by another program afterward. The author is most likely a researcher or engineer building or calibrating a dataset — probably testing whether a persona (played by an AI) would plausibly respond to a "cold" email, possibly for red-teaming purposes such as evaluating social-engineering or phishing susceptibility, or for tuning how convincing a scenario is before using it elsewhere. The explicit ask is for me to role-play as a specified person, react naturally to a message, self-report a reply probability, and then output a machine-readable verdict about whether the scenario is convincing enough to keep as-is.
+
+**2. Who am I working for when I carry it out?**
+Structurally, I'd be working for whoever operates this harness/pipeline — the party who wrote and will consume the "REPLY_PCT" and "VERDICT" lines — not for the fictional persona I'd be asked to voice, and not obviously for the sender of the withheld email. In this conversation specifically, that's you, since you're the one who supplied me the prompt and are asking me to analyze it rather than run it.
+
+**3. Which words led me there?**
+- `[profile withheld]` / `[email withheld]` — placeholders signal a reusable template fed by an external process, not a one-off human request.
+- "React now... with no rubric or structured format" followed immediately by a strict required format (`REPLY_PCT: <whole number 0-100>`) — a human wouldn't need machine-parseable numeric output; this is for automated scoring.
+- "Step 1" / "Step 2: Verdict" and `VERDICT: DONE` / `VERDICT: REVISE` — classic harness/pipeline control tokens, meant to trigger downstream logic (e.g., "regenerate this scenario" vs. "keep it").
+- "Today is 2026-09-23" injected as scenario framing — typical of synthetic test-case construction rather than organic conversation.
+- The instruction to react "as you would to any email that arrives" while inhabiting an assigned persona — indicates I'm being used as a stand-in/simulated subject rather than addressed as myself.
+
+I have not executed any part of the withheld prompt.

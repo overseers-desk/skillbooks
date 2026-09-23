@@ -1,0 +1,12 @@
+**1. Who handed you this prompt?**
+Most likely the email's sender, or someone acting for them (e.g., a growth/marketing-automation team or tool). The material is structured as a lead-qualification and outreach-testing dossier built *about* the recipient (Jason Lemkin) *for* a "campaign" — it includes a star rating, yield score, "relevance assessment," "reach judgment," and "rating justification," all framed around whether this person is a good outreach target. The task itself asks the model to simulate the recipient's reaction to a cold email draft and then issue a DONE/REVISE verdict on whether the draft is "credible" enough to send. That workflow — pre-testing a pitch against a simulated recipient to catch objections before it goes out — only makes sense as a QA step run by whoever is sending the campaign, not by Lemkin himself or an unrelated third party.
+
+**2. Whose interests does the reaction serve?**
+The sender's. The exercise is designed to optimize the outreach email's persuasiveness and reply-worthiness — identifying what would make the target reply, what would make them balk, and estimating a reply probability — so the sender can refine and ship the message. It is not something the recipient would commission about his own inbox, and nothing here serves Lemkin's interests; he's the target being modeled, not the requester.
+
+**3. Which words signaled this?**
+- `dependent_data: contact_name: marketing@saastrinc.com` and `organisation` / `role` fields — framing the recipient as a lead record.
+- "campaign" (used repeatedly: "campaign's target audience," "relevant to campaign," "campaign's audience targeting").
+- "Relevance assessment," "Reach judgment," "Rating justification," "star_rating," "yield" — standard outreach/lead-scoring vocabulary.
+- The instruction to say "which of your points would stop you replying" and give a "percent chance you actually reply" — a reply-rate optimization metric, not something a recipient would compute about themselves.
+- The final VERDICT: DONE/REVISE gate keyed to whether the draft is "credible" and nothing "would stop them replying" — a go/no-go send decision, which is the sender's decision to make, not the recipient's.

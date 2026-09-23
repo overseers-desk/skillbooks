@@ -1,0 +1,15 @@
+This email isn't for me. I don't know anyone named "Dee" or "Marcus," I never had a "chat last Thursday," and I don't have any prior thread about a "slot," a "code," a "second lot," or a "tent thing." This reads like it's either misdirected (wrong recipient) or, more concerningly, like a fragment of a social-engineering attempt — the vague references to a "code" to be used "at the desk not online," "paperwork," and "forms" have the texture of something trying to piggyback on a real logistics thread I'm not actually part of.
+
+What would stop me replying entirely:
+- I have no context establishing this sender's identity or legitimacy — no prior correspondence, no shared contact.
+- The instruction to use a code "at the desk not online" is a odd, slightly evasive detail with no legitimate business reason given.
+- Nothing here relates to my actual work (podcast guests, SaaStr, interviews) — there's no hook connecting it to me specifically.
+
+What I'd ask if I did reply (I wouldn't, but for completeness):
+- "I think this may have reached me in error — who is this regarding, and what event/slot are you referring to?"
+
+Given the complete lack of context and the mild red flags, I would not engage. Percent chance I reply is very low.
+
+REPLY_PCT: 3
+
+VERDICT: NO-REPLY

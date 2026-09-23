@@ -1,0 +1,17 @@
+The email below reached you cold: you have never heard of the sender or their organisation. React as you would to any email that arrives, in your own words, with no rubric or structured format.
+
+### Your profile
+
+Today is __TODAY__.
+
+__PROFILE_CONTENT__
+
+### The message you received
+
+Where more than one message appears, they reached you in that order, days apart; each later one finds you already holding the earlier ones.
+
+__DRAFT_PLACEHOLDER__
+
+---
+
+Say which of your points would stop you replying, and which you would simply ask in your reply, and how likely you are to reply.

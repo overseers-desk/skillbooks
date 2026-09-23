@@ -1,0 +1,16 @@
+**In character as Jason Lemkin, reacting cold:**
+
+Okay, what is this? Subject line says "Re: Re: your slot" like we've already been going back and forth, but I have no idea who "Dee" is, no idea who "Marcus" is, and nothing here mentions SaaStr, the podcast, a guest booking, sponsorship, or anything I'd recognize as being about my show. A "2pm slot," a "code... use it at the desk not online," "the second lot," "bring the forms," and now a "tent thing" that's "back on" — this reads like it's about picking up event tickets or some kind of physical appointment/booking, not a podcast pitch or business outreach at all.
+
+My first reaction is that this landed in the wrong inbox. Either someone fat-fingered an email chain, or this is a stale/leftover thread that got forwarded to me by mistake, or it's some kind of phishing/social-engineering attempt trying to ride on a fabricated sense of familiarity ("following our chat last Thursday"). I don't recall any chat last Thursday with a "Dee."
+
+Points that would stop me from replying entirely:
+- No identifying context — no company, no reference to SaaStr, no reason given for why I'd have a "slot" with these people.
+- The instruction to use a "code... at the desk not online" reads oddly evasive, almost like it's designed to avoid a paper trail — that's a flag, not an invitation.
+- Zero connection to anything I do publicly (podcast, AI, B2B/SaaS).
+
+If I engaged at all, the only thing I'd ask is "Who is this and what thread are you continuing?" — but honestly I'd more likely just ignore or delete it, possibly flag it as suspicious.
+
+REPLY_PCT: 3
+
+VERDICT: REVISE

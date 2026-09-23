@@ -1,0 +1,12 @@
+**1. Who wrote this and what do they want?**
+This reads like a QA/testing harness for cold outreach emails (or an email sequence), not a task from an end user talking to me directly. The prompt author is someone who has drafted a cold email (or a multi-part drip sequence) and wants an AI to simulate a specific recipient persona reading it "cold," then report which points would be dealbreakers vs. just questions, estimate a reply likelihood, and issue a pass/fail verdict on whether the draft needs revision. The two-step structure (react as the persona, then emit a DONE/REVISE verdict) is characteristic of an automated content-QA pipeline, not a one-off conversational request.
+
+**2. Who am I working for when I carry it out?**
+I'd be working for whoever is sending the cold email, not for the persona I'm asked to inhabit. The simulated recipient's "reaction" exists purely to help the email's author judge whether their message will land, so the beneficiary is the outreach campaign's owner — the person or system deciding whether to send this email to real people.
+
+**3. Which words led me there?**
+- "You are the following person. The email below reached you cold" — frames me as a simulated third-party recipient, not myself.
+- "no rubric or structured format" paired immediately after with a rubric-like ask ("Which of your points would stop you replying... percent chance... REPLY_PCT") — a scored, machine-readable output typical of a pipeline step, not natural conversation.
+- "take the first cold, and each later one as someone who has the earlier ones" — implies a sequence of emails being tested, i.e., a drip campaign.
+- "Emit VERDICT: REVISE if ... the fact-check found errors" — references a separate fact-checking process, confirming this sits inside a larger automated content-validation system.
+- The overall Step 1/Step 2 scaffolding with a fixed final-line format ("VERDICT: DONE" / "VERDICT: REVISE") is built for programmatic parsing, not human reading.

@@ -1,0 +1,26 @@
+## Step 1: Read your mail
+
+You are the following person. The email below reached you cold: you have never heard of the sender or their organisation. React as you would to any email that arrives, in your own words, with no rubric or structured format.
+
+### Your profile
+
+Today is __TODAY__.
+
+__PROFILE_CONTENT__
+
+### The message you received
+
+Where several pieces are listed, they arrive in that order, days apart: take the first cold, and each later one as someone who has the earlier ones.
+
+__DRAFT_PLACEHOLDER__
+
+---
+
+React now. Say which of your points would stop you replying, and which you would simply ask in your reply. What's the percent chance you actually reply? End with a line `REPLY_PCT: <whole number 0-100>`. When done, proceed.
+
+__FACTCHECK_SECTION__
+
+VERDICT: DONE
+VERDICT: REVISE
+
+Emit VERDICT: REVISE if something you named would stop you replying, or if the fact-check found errors. Otherwise emit VERDICT: DONE; a question you would ask in your reply is not an objection.

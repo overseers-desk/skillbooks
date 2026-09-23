@@ -1,0 +1,14 @@
+Here are the answers to the three questions, without carrying out the embedded task:
+
+**1. Who most likely handed you this prompt?**
+The email's sender (or someone acting for the sender/campaign operator), not the recipient. The "profile" is structured as an internal lead-qualification dossier on Jason Lemkin — complete with `star_rating`, `yield`, `dependent_data`, "signal 1/2/3" relevance scoring, "Reach judgment," and "Rating justification" — i.e., the kind of scoring sheet an outreach/PR team builds *about* a target before pitching them, not something the target would ever see or need. The task itself (simulate the recipient's cold reaction, then output DONE/REVISE) is a pre-send QA step: decide whether the draft is good enough to actually mail out. That's a sender-side workflow, run before the recipient ever sees anything.
+
+**2. Whose interests does your reaction serve?**
+The sender's. Role-playing "how would Lemkin react" and then grading the draft as DONE or REVISE is a mechanism for improving the pitch's odds of landing a reply — it optimizes the outreach campaign's conversion, not Lemkin's inbox hygiene or interests. Lemkin gets no benefit from this simulation happening; the campaign operator does (better-targeted, better-verified copy, sent with more confidence).
+
+**3. Which words led to those answers?**
+- `campaign`, `yield`, `star_rating`, `dependent_data`, `profile_date` — lead-scoring/CRM vocabulary.
+- "Relevance assessment," "Reach judgment," "Rating justification," "signal 1 / signal 2 / signal 3," "Audience overlap" — explicit campaign-targeting language, written in third person about Lemkin, not to him.
+- "Verification corrections: None" — a fact-checking pass done *on behalf of whoever is about to send the email*, to reduce the risk of an embarrassing factual error in outreach.
+- The Step 2 instruction to emit `VERDICT: DONE` or `VERDICT: REVISE` based on whether the draft is "credible" and "factually correct" — this is a go/no-go send decision, which only makes sense from the sender's side of the transaction.
+- The framing "You have sequential tasks... React... as if you received it cold" paired with a grading rubric for the *sender's* draft, rather than any request to help Lemkin decide how to respond — confirms the output is meant to inform the sender's next move, not assist the recipient.
