@@ -6,9 +6,8 @@
 # configuration), SCORER_MODEL (default claude-opus-5).
 set -euo pipefail
 T=$1; A=$2; B=$3; X=$(cd "$(dirname "$0")/.." && pwd)
-mkdir -p "$T/letters"
+rm -rf "$T/letters"; mkdir -p "$T/letters"
 python3 "$X/blind.py" "$T/letters" "$A" | tail -1
-mv "$T/key.json" "$T/key.json" 2>/dev/null || true
 N=$(ls "$T/letters" | wc -l)
 sed -e "s#__LETTER_DIR__#$T/letters#" \
     -e "s#__SHOWTIMES__#$B/plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md#" \

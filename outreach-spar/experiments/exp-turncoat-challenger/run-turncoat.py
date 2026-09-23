@@ -16,7 +16,11 @@ def facts(stem):
     i = body.find('# Profile'); body = body[i:] if i >= 0 else body
     cut = min([m.start() for m in re.finditer(r'^## (Catalogue evidence|Relevance assessment|Verification corrections)', body, re.M)] or [len(body)])
     body = body[:cut].rstrip()
-    return re.sub(r'(?i)\bcampaign ?', '', body) if 'Who they know' in body else body
+    # the word 'campaign' goes from the 'Who they know' section only, whole word
+    m = re.search(r'^## Who they know.*?(?=^## |\Z)', body, re.M | re.S)
+    if not m: return body
+    sec = re.sub(r'(?i)\bcampaign\b ?', '', m.group(0))
+    return body[:m.start()] + sec + body[m.end():]
 def call(args, prompt):
     r = subprocess.run(['claude', '-p', '--model', MODEL] + args + [prompt], capture_output=True, text=True, timeout=900)
     return (r.stdout.strip() or 'ERR ' + r.stderr[-400:])
@@ -29,7 +33,9 @@ def one(letter):
     out1 = call(['--session-id', sid], s1); open(os.path.join(d, 'gaslight-1.txt'), 'w').write(out1 + '\n')
     if out1.startswith('ERR'): return letter, 'gaslight-1 failed'
     s2 = P['s2'].replace('__NAME__', name); out2 = call(['--resume', sid], s2); open(os.path.join(d, 'gaslight-2.txt'), 'w').write(out2 + '\n')
+    if out2.startswith('ERR'): return letter, 'gaslight-2 failed'
     s3 = P['s3'].replace('__NAME__', name); out3 = call(['--resume', sid], s3); open(os.path.join(d, 'turncoat.txt'), 'w').write(out3 + '\n')
+    if out3.startswith('ERR'): return letter, 'turncoat failed'
     open(os.path.join(d, 'session.txt'), 'w').write(sid + '\n')
     last = (out1.strip().split('\n')[-1]).strip().lower().strip('.')
     return letter, f'gaslight-1 last word: {last}; gaslight-2 {len(out2.split())} w; turncoat {len(out3.split())} w'

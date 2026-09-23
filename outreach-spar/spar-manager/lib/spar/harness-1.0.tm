@@ -202,6 +202,18 @@ oo::class create spar::ApproachHarness {
         return [list --model $AuthorModel]
     }
 
+    # Every call and resume of the author's session takes the author's
+    # model unless the caller named one, so the fix loop's resumes and
+    # the assembly resume run on it too; the challenger names its own.
+    method call {stage log_file prompt args} {
+        if {"--model" ni $args} { lappend args {*}[my author_model_args] }
+        next $stage $log_file $prompt {*}$args
+    }
+    method resume {stage log_file prompt args} {
+        if {"--model" ni $args} { lappend args {*}[my author_model_args] }
+        next $stage $log_file $prompt {*}$args
+    }
+
     method do_inject_courier {} {
         my inject_courier \
             [file join [my prompt_dir] author-draft.txt] \
@@ -218,7 +230,7 @@ oo::class create spar::ApproachHarness {
         set author_draft_log "${log_prefix}-author-draft.log"
         set author_prompt [spar::read_file [file join $prompt_dir author-draft.txt]]
 
-        if {[my call "author-draft" $author_draft_log $author_prompt {*}[my author_model_args]]} {
+        if {[my call "author-draft" $author_draft_log $author_prompt]} {
             return 1
         }
 
@@ -290,7 +302,7 @@ oo::class create spar::ApproachHarness {
 
             spar::write_file [file join $prompt_dir "author-rev${Pass}.txt"] $rev_prompt
 
-            if {[my resume "author-rev${Pass}" $author_rev_log $rev_prompt {*}[my author_model_args]]} {
+            if {[my resume "author-rev${Pass}" $author_rev_log $rev_prompt]} {
                 return 1
             }
 
@@ -377,7 +389,7 @@ oo::class create spar::ApproachHarness {
                 return 1
             }
         }
-        if {[my resume "assembly" $assembly_log $assembly_prompt {*}[my author_model_args]]} {
+        if {[my resume "assembly" $assembly_log $assembly_prompt]} {
             return 1
         }
         return 0
