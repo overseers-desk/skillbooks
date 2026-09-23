@@ -1,13 +1,13 @@
 ## Step 1: Your mail
 
-__HISTORY_LINE__ React as you would to any email that arrives, in your own words, with no rubric or structured format.
+React as you would to any email that arrives, in your own words, with no rubric or structured format.
 
 ### Your profile
 
 Today is __TODAY__.
 
 __PROFILE_CONTENT__
-
+__PRIOR_CORRESPONDENCE__
 ### The message you received
 
 Where more than one message appears, they reached you in that order, days apart; each later one finds you already holding the earlier ones.

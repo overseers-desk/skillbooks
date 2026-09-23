@@ -795,7 +795,7 @@ Emit exactly one of these lines as the very last line of your output:"
             # harness substitutes it after Stage 1 produces a draft.
             set challenger_prompt [string map [list \
                 __PROFILE_CONTENT__   $profile_content \
-                __HISTORY_LINE__      [spar::courier::history_line $email] \
+                __PRIOR_CORRESPONDENCE__ [spar::courier::prior_block $email] \
                 __FACTCHECK_SECTION__ $factcheck_section \
             ] [spar::load_prompt_template spar-a-challenger.txt]]
 

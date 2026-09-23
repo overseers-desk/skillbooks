@@ -65,17 +65,16 @@ proc spar::courier::contact_block {name org email} {
     return $out
 }
 
-# What the recipient knows of this sender before the draft arrives, as a
-# fact the mail index holds: our dated messages to the address, or that
-# there are none. Empty when no address is on the roster or courier is
-# absent, so the prompt then says nothing about the history rather than
-# guessing it.
-proc spar::courier::history_line {email} {
+# Our dated messages to this address as the mail index holds them, for
+# the persona's prompt. Empty when there are none, when no address is on
+# the roster, or when courier is absent: an index with no hits does not
+# show the message is the first, so the prompt then says nothing.
+proc spar::courier::prior_block {email} {
     set email [string trim $email]
     if {$email eq "" || [auto_execok courier] eq ""} { return "" }
     lassign [spar::courier::_run "to:$email"] rc text
-    if {$rc != 0} { return "This is the first email from this sender." }
-    return "The sender has written to you before:\n$text\n"
+    if {$rc != 0} { return "" }
+    return "\n### Prior correspondence\n\n$text\n"
 }
 
 proc spar::courier::_run {query} {
