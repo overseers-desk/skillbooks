@@ -733,6 +733,7 @@ s_note: $s_note"
             puts $fd "ROSTER_EMAIL=$email"
             puts $fd "ROSTER_ORGANISATION=$org"
             puts $fd "CHALLENGER_MODEL=sonnet"
+            puts $fd "AUTHOR_MODEL=[expr {[info exists ::env(SPAR_AUTHOR_MODEL)] ? $::env(SPAR_AUTHOR_MODEL) : {}}]"
             close $fd
 
             if {$appendix_a_assembly ne ""} {
