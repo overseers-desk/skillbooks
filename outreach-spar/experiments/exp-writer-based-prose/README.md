@@ -144,7 +144,16 @@ Test 2 meets the number. Per letter it scored 1, 2, 0, 1, 0, 2, 0, 0. Seven of i
 
 Two things about the test itself. Twelve contacts were named to the dispatcher each time and eight came back each time, with no failure line for the rest; one was outside its allowlist and logged as skipped, the others were dropped in silence, and a dry run of three of test 2's absentees found one dispatchable. The reader's first pass over test 1 alone counted the recipient's own club or village as an unresolved definite in five of eight letters and gave 2.62; the amended rubric gave 1.38 on the same letters in the pass that scored test 2, which is why both tests sit in one pass.
 
-The method, as it stands for the campaign: the inputs at 25e0226ca in the business repository, the templates at 32c1e86, the author named by AUTHOR_MODEL or SPAR_AUTHOR_MODEL.
+Tests 1 and 2 shared no contact and differed by the inputs' last two commits as well as the detector, so they could not say what the detector alone did. The campaign's owner also found that four of test 2's eight letters compressed the registry's true claim into "the seats are not on public sale", which is false, and that a name and four framings in the plan blocks carried the same compression; it rewrote the entry with the code as its subject (88033a89d). A paired test then ran test 2's eight contacts twice from those inputs, one arm with the templates at 32c1e86 and one with the templates as before them, same author, one blind pass ([round5-method/paired/](round5-method/paired/)).
+
+| arm, same eight contacts, inputs 88033a89d | n | unresolved references | surprising 4-5 | false | unsupported | sender-side | words |
+|---|---|---|---|---|---|---|---|
+| challenger before the map | 8 | 1.00 (1, 0, 2, 0, 1, 1, 3, 0) | 0.75 | 0.62 | 1.38 | 1.25 | 238 |
+| challenger mapping, revise cutting | 7 | 0.29 (0, 1, 1, 0, 0, 0, 0) | 1.00 | 0.86 | 1.86 | 2.00 | 247 |
+
+Paired, the map takes 0.86 references off a letter, better in five of seven, same in one, worse in one. Neither arm carries the compressed claim in any of its three forms. The inputs alone reach the target on these contacts; the map takes it well under. The map's arm runs a little higher on false and unsupported claims and on sender-side sentences, on seven letters; the fact-check step's brief does not name a fact from nowhere as an error, and that is the next thing to look at for sendability. The dispatcher dropped one of the eight in the map's arm without a line, as it did in tests 1 and 2.
+
+The method, as it stands for the campaign: the inputs at 88033a89d in the business repository, the templates at 32c1e86, the author named by AUTHOR_MODEL or SPAR_AUTHOR_MODEL.
 
 ## What survived every arm
 
