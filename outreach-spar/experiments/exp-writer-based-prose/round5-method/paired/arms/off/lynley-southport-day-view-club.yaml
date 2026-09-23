@@ -1,0 +1,470 @@
+profile_hash: sha256:d14a354c701ead08f765e012990523f122740a17b09ac905c48402b514d1522a
+# Contact:  Lynley, Secretary, Southport Day VIEW Club (community-organisation)
+# Channel:  Email first touch, phone follow-up the next morning if no reply
+# Language: en-au
+# Angle:    Pass-it-on. Free tickets for members to hand to grandchildren, with
+#           nothing for the club to arrange inside the four-day window.
+decisions:
+  channel: email
+  channel_detail: |
+    Email plus phone, no platform channel on the roster, so SPAR-A 4.2 gives
+    email first and a phone follow-up. The campaign's approach_sequencing sets
+    that call for the morning after the email, which is Thursday 24 September,
+    with the first performance that afternoon.
+    New subject rather than a reply on the April thread. SPAR-A 4.1.1 wants a
+    current thread on a compatible topic. The April message is five and a half
+    months old, was never answered, concerns lunch-venue hire rather than the
+    circus, and went out under a different person's name. Threading a four-day
+    offer onto it would bury the ask under a stale subject.
+  language: en-au
+  angle: pass-it-on-nothing-to-organise
+angle_rationale: |
+  Warmth is prior contact, one way, unanswered. The dispatcher prefetch returns
+  one hit across all five mail accounts: an outbound message of 9 April 2026,
+  "Riverside lunch venue for Southport Day VIEW Club", sent by Lia Movsisyan
+  from partnerships@rivermill.au to southportdayview@gmail.com and filed in the
+  admin account's Partnerships folder. No inbound message from that address
+  exists anywhere. Both directions were searched on the club address in one
+  query, so the absence is the result of a search designed for the inbound
+  message rather than an inference from a hit on something else. The campaign's
+  a_author appendix requires that fact in one plain line naming its subject.
+
+  The profile's evidenced facts are a confirmed social-lunch and outing culture
+  at external venues, a club formed in 1987 still recruiting through 2026, and a
+  membership predominantly of women aged 55 to 80 and over. The profile records
+  no statements on heritage venues, hinterland or rural excursions, so nothing
+  in the draft claims an interest in any of them.
+
+  Two things follow, and they fix the angle.
+
+  First, this is a lunch club, not a children's-outing club. A circus is not
+  something its members attend for themselves. It is something they hand to
+  grandchildren. So the offer is framed as tickets to pass on rather than as an
+  outing to attend, which is the segment's nothing-to-organise USP.
+
+  Second, the club meets on the third Wednesday. The third Wednesday of
+  September was the 16th, already past on the send date. The next is 21 October,
+  after the season has ended. No club meeting falls anywhere inside the opening
+  week. Asking her to raise it at the next meeting would be asking for something
+  the calendar cannot deliver. The message therefore asks only for a reply and a
+  rough number, which is the plan block's message_goal, and everything after
+  that moves by email between her and the members. The calendar reasoning stays
+  out of the text, because stating it would narrate her own world back to her
+  (SPAR-A 4.5). It shows instead in what the message does not ask for.
+
+  Carried in one sentence per the plan block's first_ask: the second week suits
+  a group visit, which is the honest home for a club that would rather do what
+  it normally does and go somewhere together.
+
+  USPs are taken from the segment's own list. nothing-to-organise is the spine.
+  opening-week-seats supplies the seven shows and the free seat. free-by-code
+  appears only as the promise that a code and a link come back in the reply; the
+  code itself and any price stay out of the first message.
+  big-top-at-a-heritage-farm is one descriptive clause. make-a-day-of-it is
+  deliberately unused: it is not in this segment's list, it holds for daytime
+  sessions only, and the weekend session times are not in the showtimes file, so
+  any invitation to come early for lunch would rest on times with no source.
+  group-visit-later is not in the segment's USP list but is written into
+  first_ask, so it appears in the sentence the plan block supplies.
+response_likelihood: 45
+a_note: |
+  Pass-it-on angle (free tickets for members to hand to grandchildren, nothing
+  for the club to arrange), email first touch with a Thursday-morning phone
+  follow-up, warmth prior-contact-unanswered (one outbound message of 9 April
+  2026 about the riverside deck, no reply), en-au. Two drafting constraints
+  worth carrying into R: the club's third-Wednesday meeting cycle puts no
+  meeting inside the opening week, so the ask is a forward rather than an agenda
+  item; and the challenger's single fact-check finding was rejected on evidence
+  it could not see, which is recorded in the review round.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [nothing-to-organise, opening-week-seats, free-by-code, big-top-at-a-heritage-farm]
+    notes: |
+      First touch. Element order follows SPAR-A 4.5: introduce the sender,
+      make the ask, then give the reasons. The prior-contact line sits in the
+      opening paragraph as part of establishing who is writing.
+    messages:
+      - channel: email
+        to: southportdayview@gmail.com
+        subject: Free circus tickets for Southport Day VIEW members, Thursday to Sunday
+        body: |
+          Dear Lynley,
+
+          My name is Priyanka Das and I look after partnerships at Historic Rivermill, a heritage venue on the Coomera River at Mount Nathan, about thirty minutes from central Gold Coast. Lia from our office wrote to the club in April about the riverside deck as a lunch venue and we did not hear back from anyone, so this may be the first time the name has come up with you.
+
+          I am writing about something else. A circus company has a big top up on our lawn for the school holidays, and I have free tickets to the family show, WANTED – A Cirque Heist, for your members to pass on to their grandchildren and families. There are seven shows, from tomorrow, Thursday 24 September, through to Sunday the 27th, the first at one o'clock tomorrow afternoon. Reply with a rough number and I will send you a code and a booking link, along with the times of all seven, for you to pass on to members. They are for your own members and the families they bring, rather than for posting publicly.
+
+          There is nothing for the club to organise. Each family books the show that suits them and makes their own way out here. No bus, no list of names, and no date the whole club has to agree on.
+
+          If the club would sooner come along together, the following week suits a group much better. Tell me a day that would work and I will come back to you about seating.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+      - channel: phone
+        to: (07) 5538 3112
+        text: |
+          Follow-up call on the morning of Thursday 24 September, made only if
+          the email has drawn no reply. Ask for Lynley, Secretary.
+        director_note: |
+          The roster number is the club landline and may not be attended between
+          monthly meetings. The club's Facebook page also lists a mobile,
+          0490 263 286, held in reserve if the landline goes unanswered twice.
+          No direct number for the sender is on file, so the voicemail sends the
+          caller back to the email rather than giving a line that would misroute
+          her.
+        script:
+          - point: Who is calling
+            text: |
+              Good morning, my name is Priyanka Das and I am calling from
+              Historic Rivermill out at Mount Nathan. Is Lynley there, or is she
+              the right person for the club's bookings?
+          - point: Why now
+            text: |
+              I sent Lynley an email yesterday and I am following it up by phone
+              because it is time-sensitive. The first show is on this afternoon.
+          - point: What the offer is
+            text: |
+              There is a circus company with a big top set up on our lawn for
+              the school holidays, a family show called WANTED – A Cirque Heist.
+              I have free tickets for your members to pass on to their
+              grandchildren. Seven shows, this afternoon through to Sunday.
+          - point: The ask
+            text: |
+              If you can give me a rough number the club could use, I will email
+              the code and the booking link this morning, with the times of all
+              seven shows. Members book whichever one suits them and drive out
+              on the day. There is nothing for the club to arrange.
+          - point: How the tickets are used
+            text: |
+              They are for your own members and the families they bring along,
+              so best kept to the club rather than put up on the Facebook page.
+          - point: If a group visit suits better
+            text: |
+              If the club would rather come along together instead, the
+              following week suits a group much better. Give me a day that works
+              and I will come back to you about seating.
+          - point: Close
+            text: |
+              Can I confirm the best address to send it to is
+              southportdayview@gmail.com? I will have it across to you within
+              the hour.
+          - point: Voicemail, if no one answers
+            text: |
+              Good morning, this is Priyanka Das from Historic Rivermill at
+              Mount Nathan, calling for Lynley. I emailed the club yesterday
+              about free tickets to the circus show running on our grounds from
+              this afternoon through to Sunday, for your members to pass on to
+              their grandchildren. If you reply to that email with a rough
+              number, I will send the code and the booking link straight back.
+              Thank you.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      An email from someone I've never dealt with, offering free circus tickets
+      for the club to pass on. My first read: pleasant surprise, no ask beyond a
+      headcount, nothing to organise. That's the kind of thing worth bringing to
+      members.
+
+      The one thing that gives me pause is the line about "Lia from our office"
+      writing to us in April about the riverside deck, and getting no reply. I
+      don't recognise that and can't check it against anything. It reads as a
+      familiarity I can't confirm, and it makes me wonder whether this is a form
+      letter recycled for whoever's on a list, or a slightly presumptuous opener
+      meant to pre-empt "who are you". It wouldn't stop me replying, since the
+      actual ask (a rough number) costs me nothing, but it does lower my trust a
+      notch and I'd want to see whether the follow-up holds together before I
+      hand out anything more than a headcount.
+
+      Nothing else in the message would stop me: no money is asked for, no
+      commitment beyond a number, and the offer is squarely the kind of thing I
+      pass to members anyway (Christmas lunches, hat days, this fits the club's
+      rhythm). The short notice (tomorrow afternoon for the first show) is a
+      mild practical obstacle, since Wednesday is an odd day to reach members
+      before a Thursday show, but the club runs on Facebook and email between
+      meetings, and this doesn't need me to organise anything, just forward it.
+
+      What I'd simply ask in my reply rather than object to: how many tickets
+      can the club realistically claim, whether the code works on any of the
+      seven shows or only some, and whether the venue has parking and accessible
+      seating for older members and grandchildren together. I'd also ask,
+      lightly, what the April approach was about, since I can't place it and
+      would like it cleared up before the follow-up phone call raises it again.
+
+      REPLY_PCT: 70
+    fact_check:
+      - claim: Lia from our office wrote to the club in April about the riverside deck as a lunch venue and we did not hear back from anyone.
+        source: Dispatcher courier prefetch, admin mail account, folder Partnerships.
+        result: rejected
+        note: |
+          The challenger called this a fabricated prior-contact claim with no
+          source, on the ground that neither of the a_author appendix's two
+          conditions was met. Its own sentence names both: a dated prior dealing
+          recorded in the profile, or a prefetch showing an earlier message that
+          went unanswered. The second condition is met. The prefetch supplied
+          with the drafting brief returns, on 9 April 2026, "Riverside lunch
+          venue for Southport Day VIEW Club", from Lia Movsisyan at
+          partnerships@rivermill.au to southportdayview@gmail.com, in the admin
+          account's Partnerships folder.
+
+          The challenger could not see it. Under SPAR-A 4.6 the role-play step
+          receives only the profile, the draft and today's date, and the
+          fact-check step's authority is the campaign YAML, the USP registry and
+          the antifacts file. The prefetch is in none of those. The finding is
+          therefore an absence claim drawn from a document set that structurally
+          cannot hold the thing it reports missing, and the profile's silence
+          about April asserts nothing about April.
+
+          Deleting the line would also put the draft out of conformance with the
+          campaign, whose a_author appendix requires it. The line stays. Its
+          wording changed for the separate reason recorded in revision_note.
+      - claim: Historic Rivermill is a heritage venue on the Coomera River at Mount Nathan.
+        source: business-overview.md, U1 and the address block.
+        result: verified
+      - claim: The show is WANTED – A Cirque Heist, opening 1pm Thursday 24 September 2026.
+        source: 2026-09-23-stampede-arena-showtimes.md.
+        result: verified
+      - claim: Seven shows across the opening week, free to the organisation.
+        source: campaign YAML, usps.opening-week-seats.
+        result: verified
+      - claim: No code, price, discount or Oztix link appears in the first message.
+        source: campaign YAML, prompt_appendices.a_author and a_challenger.
+        result: verified
+      - claim: Club email southportdayview@gmail.com and reserve mobile 0490 263 286.
+        source: Roster row and the profile's contact block, sourced from the club's Facebook page.
+        result: verified
+    antifact_check: |
+      Checked against business-antifacts.md. No stone buildings, and no building
+      of any age is claimed. No original or hundred-year-old mill structures.
+      No vineyard. No farming claim: the venue is described as a heritage venue
+      on the river, which is the wording the USP registry itself uses. The venue
+      is placed at Mount Nathan in the Gold Coast hinterland, never on Tamborine
+      Mountain. Nothing in the message states or implies that seats are unsold,
+      that the tent needs filling, or that the club would be doing us a favour;
+      the phrase "there is room" was considered for the ticket-number sentence
+      and dropped for exactly that reason.
+    revision_note: |
+      The persona raised six points. Sorted before touching the draft, per
+      SPAR-A 4.6.
+
+      1. The April line reads as unconfirmable familiarity. Absorbed by
+      reframing. The fact stays, mandated by the campaign appendix and carried
+      by the prefetch; the fault is in the wording. Two things caused it. "Lia
+      from our office" leaned on a first name she has no way to place, and the
+      closing clause, "so this may be the first time the name has come up with
+      you", invited her to search a memory she does not have. The line now
+      states the approach as a dated entry in our own file, gives the date and
+      the subject, and asks her to remember nothing. "Nothing came of it"
+      replaces "we did not hear back from anyone", which carried a faint
+      reproach.
+
+      2. How many tickets can the club claim. Absorbed by reframing. The ask
+      sentence now says the tickets are held in the club's name once she gives a
+      number, so the number is hers to set and no cap is implied. No figure is
+      named and no wording suggests spare capacity.
+
+      3. Does the code work on all seven shows. Absorbed by reframing. Four
+      words added to a sentence already there: the tickets are good for any of
+      the seven. This is the opening-week-seats claim as the registry writes it.
+
+      4. Parking and accessible seating. Left for the reply. Parking is
+      answerable on the spot and goes into the caller's note. Accessible seating
+      is not: the campaign holds both disability segments until CHARC states the
+      tent's wheelchair access and its Companion Card position, so nobody
+      answers that question ahead of CHARC. The phone note says so, because the
+      question is now known to be coming.
+
+      5. Wednesday is an odd day to reach members before a Thursday show. No
+      change. She answered it herself: the club runs on Facebook and email
+      between meetings, and the offer needs forwarding rather than organising.
+      The one adjustment is to the pass-on wording, which now names email as the
+      route and keeps the tickets off a public page, since the club's Facebook
+      presence is a public page rather than a members' group.
+
+      6. She would like April cleared up before the phone call raises it. Left
+      for the reply, with the caller armed. The script does not raise April; the
+      phone note gives the date and subject in case she does.
+
+      The single fact-check finding was rejected. Reasoning in the fact_check
+      entry for that claim.
+    notes: |
+      Challenger: sonnet, context-isolated, one pass. The profile's yield of 4
+      puts this contact in the 3-to-5 band, which the method budgets at one
+      pass, so the round closes here.
+  - type: final
+    chosen_usps: [nothing-to-organise, opening-week-seats, free-by-code, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: southportdayview@gmail.com
+        subject: Free circus tickets for Southport Day VIEW members, Thursday to Sunday
+        body: |
+          Dear Lynley,
+
+          My name is Priyanka Das and I look after partnerships at Historic Rivermill. We are a heritage venue on the Coomera River at Mount Nathan, about thirty minutes from central Gold Coast. Our file shows one earlier approach to the club, on 9 April this year, when a colleague asked whether our riverside deck might suit one of your lunches. Nothing came of it, and I am writing about something quite different.
+
+          A circus company has a big top up on our lawn for the school holidays. I have free tickets to the family show, WANTED – A Cirque Heist, for your members to pass on to their grandchildren and families. There are seven shows, from tomorrow, Thursday 24 September, through to Sunday the 27th. The first is at one o'clock tomorrow afternoon, and the tickets are good for any of the seven. Tell me roughly how many the club could use and I will hold that many in the club's name. I will send back a code and a booking link, with the times of all seven shows, for you to send round to members. They are for your own members and the families they bring, so email suits them better than the club's page.
+
+          There is nothing for the club to organise. Each family books the show that suits them and makes their own way out here. No bus, no list of names, and no date the whole club has to agree on.
+
+          If the club would sooner come along together, the following week suits a group much better. Tell me a day that would work and I will come back to you about seating.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: (07) 5538 3112
+        text: |
+          Follow-up call on the morning of Thursday 24 September, made only if
+          the email has drawn no reply. Ask for Lynley, Secretary.
+        director_note: |
+          The roster number is the club landline and may not be attended between
+          monthly meetings. The club's Facebook page also lists a mobile,
+          0490 263 286, held in reserve if the landline goes unanswered twice.
+          No direct number for the sender is on file, so the voicemail sends the
+          caller back to the email rather than giving a line that would misroute
+          her.
+        phone_note: |
+          Three things she is likely to ask, with what the caller may and may not
+          say.
+
+          Parking: answerable, there are over two hundred spaces on the grounds.
+
+          Accessible seating in the tent: not answerable yet. CHARC has not
+          stated the tent's wheelchair access or its Companion Card position, so
+          take the question, say it is one for the circus operator, and come
+          back to her once CHARC answers.
+
+          The April approach: if she asks, it was an email of 9 April this year
+          about the riverside deck as a lunch venue for the club. Do not raise it
+          first.
+        script:
+          - point: Who is calling
+            text: |
+              Good morning, my name is Priyanka Das and I am calling from
+              Historic Rivermill out at Mount Nathan. Is Lynley there, or is she
+              the right person for the club's bookings?
+          - point: Why now
+            text: |
+              I sent Lynley an email yesterday and I am following it up by phone
+              because it is time-sensitive. The first show is on this afternoon.
+          - point: What the offer is
+            text: |
+              There is a circus company with a big top set up on our lawn for
+              the school holidays, a family show called WANTED – A Cirque Heist.
+              I have free tickets for your members to pass on to their
+              grandchildren. Seven shows, this afternoon through to Sunday, and
+              the tickets are good for any of them.
+          - point: The ask
+            text: |
+              If you can give me a rough number the club could use, I will hold
+              that many in the club's name. The code and the booking link come
+              across by email this morning, with the times of all seven shows.
+              Members book whichever one suits them and drive out on the day.
+              There is nothing for the club to arrange.
+          - point: How the tickets are used
+            text: |
+              They are for your own members and the families they bring along,
+              so they are better sent round to members by email than put up on
+              the club's page.
+          - point: If a group visit suits better
+            text: |
+              If the club would rather come along together instead, the
+              following week suits a group much better. Give me a day that works
+              and I will come back to you about seating.
+          - point: Close
+            text: |
+              Can I confirm the best address to send it to is
+              southportdayview@gmail.com? I will have it across to you within
+              the hour.
+          - point: Voicemail, if no one answers
+            text: |
+              Good morning, this is Priyanka Das from Historic Rivermill at
+              Mount Nathan, calling for Lynley. I emailed the club yesterday
+              about free tickets to the circus show running on our grounds from
+              this afternoon through to Sunday. They are for your members to
+              pass on to their grandchildren. Reply to that email with a rough
+              number and I will send the code and the booking link straight back.
+              Thank you.
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: Historic Rivermill is a heritage venue on the Coomera River at Mount Nathan.
+    source: business-overview.md, U1 and the address block.
+  - claim: About thirty minutes from central Gold Coast.
+    source: business-overview.md, U6.
+  - claim: The sender is Priyanka Das, Partnerships, Historic Rivermill, at partnerships@rivermill.au.
+    source: campaign YAML, sender block.
+  - claim: The venue address is 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211.
+    source: campaign YAML, venue block; business-overview.md.
+  - claim: One earlier approach to the club, 9 April 2026, about the riverside deck as a lunch venue, unanswered.
+    source: Dispatcher courier prefetch, admin mail account, folder Partnerships, message of 2026-04-09 to southportdayview@gmail.com; no inbound message from that address in any account.
+  - claim: A circus company has a big top on the venue's lawn for the school holidays.
+    source: campaign YAML header and usps.big-top-at-a-heritage-farm.
+  - claim: The family show is WANTED – A Cirque Heist.
+    source: 2026-09-23-stampede-arena-showtimes.md.
+  - claim: Seven shows run from Thursday 24 September to Sunday 27 September 2026.
+    source: campaign YAML, usps.opening-week-seats.
+  - claim: The first performance is at 1pm on Thursday 24 September 2026.
+    source: 2026-09-23-stampede-arena-showtimes.md.
+  - claim: The tickets are valid at any of the seven opening-week shows.
+    source: campaign YAML, usps.opening-week-seats.
+  - claim: The code and the booking link are sent in the reply, not in the first message.
+    source: campaign YAML, usps.opening-week-seats and prompt_appendices.a_author.
+  - claim: The seats are held as a reservation in the organisation's name once the recipient replies with a number.
+    source: campaign YAML header.
+  - claim: The tickets are for the organisation's own members and the families they bring, and are not posted publicly.
+    source: campaign YAML header and prompt_appendices.a_author.
+  - claim: Members book individually, so the club has nothing to organise.
+    source: campaign YAML, usps.nothing-to-organise.
+  - claim: A group visit can be arranged for the second week instead.
+    source: campaign YAML, usps.group-visit-later and the segment's first_ask.
+  - claim: The club's email address is southportdayview@gmail.com.
+    source: Roster row lynley-southport-day-view-club; profile contact block.
+  - claim: The club's landline is (07) 5538 3112 and a mobile, 0490 263 286, is listed on its Facebook page.
+    source: Roster row; profile contact block.
+  - claim: The grounds carry over two hundred car parking spaces.
+    source: business-overview.md, U11.
+  - claim: CHARC has not stated the tent's wheelchair access or its Companion Card position.
+    source: campaign YAML header, which holds both disability segments for that reason.
+quality_checklist: |
+  1. Structure. Root keys drawn from the canonical set. Draft and review rounds
+  carry numbers; the final round omits one, as the method's skeleton does. The
+  final round holds one email message and one phone message, inside the
+  one-email cap. The to-address is the club's real roster address. No
+  profile_hash: the harness prepends it.
+
+  2. Coverage. fact_provenance carries an entry for every factual claim in the
+  final email and the phone script, including the two that appear only in the
+  caller's notes (parking, and CHARC's unstated accessibility position).
+  chosen_usps is present on the draft and final rounds.
+
+  3. Presupposition. The message tells her nothing about her own club. The
+  profile's findings on its lunch culture, its age profile and its meeting cycle
+  shape what is asked rather than what is recited. The one sentence that could
+  have narrated her world back to her, about the third-Wednesday meeting falling
+  outside the season, was cut for that reason.
+
+  4. Manufactured connection. The only claim touching her members is that the
+  tickets suit grandchildren and families, which rests on the profile's
+  confirmed 55-to-80-plus membership and on the segment plan block's own framing.
+  The profile is silent on heritage venues and rural outings, and the draft
+  claims no interest in either.
+
+  5. Concreteness. The ask is a rough number, answerable in one sentence, which
+  is the plan block's message_goal exactly.
+
+  6. Band pattern. The opener leads with the sender's own introduction and a
+  dated prior approach, a shape no other message in this band can copy, since
+  the prior approach is particular to this contact.
+
+  7. Final-round email cardinality. One email, one phone script.

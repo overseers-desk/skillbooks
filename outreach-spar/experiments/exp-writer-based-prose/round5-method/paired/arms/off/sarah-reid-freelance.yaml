@@ -1,0 +1,473 @@
+profile_hash: sha256:27e710ee6a4b419bbf673cea2c2a097fadbc0ab989b3e23434125a4b7f84bc83
+# Contact:  Sarah Reid, Freelance: Adventure.com (earned-media)
+# Channel:  Email first touch, LinkedIn connection note the same day
+# Language: en-au
+# Angle:    See it before the audience does. A one-season subject in her own
+#           corner of the country, offered as a pass rather than a pitch.
+decisions:
+  channel: linkedin+email
+  channel_detail: |
+    Roster carries a confirmed personal email and a corrected LinkedIn slug, no
+    phone, so SPAR-A 4.2 gives the connection-channel-plus-email sequence: note
+    first, email at acceptance or after four to five days.
+
+    That sequencing cannot hold here and is deliberately collapsed. The plan
+    block's approach_sequencing step 1 is "Email on 23 September", and the pass
+    is for shows on 24 to 27 September. An email held five days behind a
+    connection note arrives after the thing it offers. Both pieces therefore go
+    out on 23 September, the email carrying the whole ask and the note serving
+    as a second surface that points at it. Message order in the final round puts
+    the email first, which is the first touch the dispatcher reads.
+
+    New subject, not a reply on a thread. SPAR-A 4.1.1 needs a current thread,
+    and there is none: the prefetch returns nothing in either direction.
+  language: en-au
+  angle: see-it-before-the-audience
+angle_rationale: |
+  Warmth is cold. The dispatcher prefetch ran two passes across all five mail
+  accounts, one on her address in both directions and one on her name and
+  organisation in subject lines, and both returned no results everywhere. The
+  profile records no dated conduct by her towards us, so the a_author
+  appendix's prior-dealing clause does not fire and neither does its
+  wrote-before-and-heard-nothing clause. The opener works from her situation
+  rather than from a compliment, and the message introduces the venue from
+  zero, because she has no reason to have heard of it.
+
+  Her profile gives two kinds of evidenced fact and one explicit silence.
+
+  The evidenced facts that bear on the angle are geographic and topical. She is
+  based at Byron Bay. Her most recent Australian byline, the Gidjuum Gulganyi
+  Walk piece in Adventure.com of 22 May 2025, covers the Gondwana Rainforests
+  bioregion that the Scenic Rim sits in, which is the same corner of the
+  country as Mount Nathan. Her specialisation, stated in her own words, is
+  adventure, emerging destinations and positive-impact travel. She has no
+  confirmed Queensland byline.
+
+  The silence is recorded in the profile in terms: no public statements found
+  on Rivermill, farmstay accommodation, weddings or venue hire, and the animal
+  and heritage material found in her work is destination journalism rather than
+  venue coverage. Under SPAR-A 4.4 that silence licenses nothing, so no
+  sentence in the draft claims she covers venues, or attributes to her an
+  interest in circuses, which nothing in the profile evidences either.
+
+  What survives is proximity plus a subject that exists for a fortnight and
+  then stops: a circus in a big top on the lawn of a heritage riverside
+  property, up the coast from where she lives, running only through the school
+  holidays. That is the angle. Her Sumba equine-wellness piece and her award
+  record are deliberately not recited at her. SPAR-A 4.5 asks the drafter to
+  presuppose the reader's world rather than narrate it, and a paragraph of her
+  own clippings would spend the space the concrete proposition needs.
+  Introducing Rivermill is the permitted opposite move, since that is our world
+  being presented to her.
+
+  Her outlets stay unnamed on purpose. She is freelance across Adventure.com,
+  National Geographic Traveller UK and a self-reported further list, and
+  picking one for her would be the sender deciding where her work goes.
+
+  USPs are the segment's own three. free-by-code supplies the opening-week
+  framing, that a reviewer sees it before the audience does, and nothing else:
+  the code and the price stay out of the first message and go in the reply.
+  opening-week-seats supplies the seven performances and the free seat.
+  big-top-at-a-heritage-farm is the subject itself. nothing-to-organise and
+  group-visit-later are not in this segment's list and would be wrong anyway,
+  since she is not circulating tickets to members but being invited to come.
+  make-a-day-of-it is not in the list either; one sourced clause about free
+  entry to the grounds does similar work and is justified in the review round's
+  revision_note.
+response_likelihood: 30
+a_note: |
+  See-it-before-the-audience angle (a one-season subject in her own region,
+  offered as a pass rather than pitched as a story), email first touch with a
+  LinkedIn connection note the same day, warmth cold with a nil prefetch in
+  both directions, en-au. Four things worth carrying into R. Her beat is
+  adventure, emerging destinations and regenerative travel, and the challenger
+  playing her said twice that the property, the horses and the animals sit
+  closer to her work than the circus does, so if she replies expect the
+  question to be about the farm side rather than the show. She has no children
+  on the record, and read "family pass of four" as a mild mismatch, so the
+  offer is worded for her and whoever she brings. She will likely ask what
+  angle we picture; that was sorted to the reply rather than answered here. And
+  no outlet is named in the message, which is a deliberate choice rather than
+  an omission to fix.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [free-by-code, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      First touch. Element order follows SPAR-A 4.5: introduce the sender, make
+      the ask, then give the reasons. The subject line's recipient-specific
+      element is geographic, "north of Byron", which distinguishes her from
+      every Gold Coast resident in the segment, for whom proximity is not the
+      angle.
+    messages:
+      - channel: email
+        to: sarah@sarahreid.com.au
+        subject: Family pass, big-top circus north of Byron, opens Thursday
+        body: |
+          Sarah,
+
+          I'm Priyanka Das and I look after partnerships at Historic Rivermill, a heritage venue on the Coomera River at Mount Nathan, in the Gold Coast hinterland. The property milled arrowroot a century ago and now runs as a cafe with horses, alpacas and goats along six hectares of riverbank. For these school holidays, CHARC Performance has put a big top up on our lawn.
+
+          I have a family pass of four for you at WANTED – A Cirque Heist, at any of the seven opening-week shows between Thursday 24 September and Sunday 27 September. The first is Thursday at 1pm. Reply with the show that suits you and I will send the booking details.
+
+          Opening week means you would see it before anyone writing from the audience side does. The season then runs to 4 October, so there are days left in it afterwards, and a story landing in that window is what I am hoping for. A circus under canvas on a riverbank is not a thing the Gold Coast hinterland offers most holidays, and it gives a photographer somewhere to stand.
+
+          The pass is for you and whoever you bring. Public tickets for the season are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+      - channel: linkedin
+        to: "https://www.linkedin.com/in/sarahreidtravels/"
+        text: |
+          Sarah, I'm Priyanka at Historic Rivermill, a heritage venue on the
+          Coomera River at Mount Nathan. A circus company has its big top on our
+          lawn for the school holidays, and I have a family pass of four for you
+          at any opening-week show. Details are in an email to your
+          sarahreid.com.au address.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Reading this cold: I don't know Priyanka Das, I don't know Historic
+      Rivermill, and I've never had contact with anyone at this venue before. My
+      beat is adventure, emerging destinations and regenerative travel, equine
+      culture in Sumba, a new rainforest trail in the Gondwana bioregion. A
+      family circus in a big top on a heritage farm's lawn, at Mount Nathan in
+      the Gold Coast hinterland, isn't a story I'd normally be pitching
+      anywhere. There's a genuine adjacency, since a heritage property, horses,
+      alpacas and a riverside farm setting are closer to my actual work than
+      "circus" is, but the pitch as written is about the circus, not about the
+      farm.
+
+      Is what's being asked of me possible in the time given? Barely. I'm in
+      Byron Bay; the venue is a couple of hours north. Four days' notice is
+      workable for a personal outing with a comp pass, but it's tight to also
+      line up an editor or outlet on that timeline if I wanted this to be more
+      than a family day out.
+
+      What would stop me replying: nothing here is a hard stop, no code, no
+      price, nothing that reads as a sales pitch. What gives me pause is that
+      the ask doesn't say who this is for or why me specifically: no outlet is
+      named, no sense of whether they want coverage or are simply offering a
+      family day out. The line about hoping a story lands while the season still
+      has days left tells me this is meant as media coverage, which is fine, but
+      it's not phrased as a pitch to any of my actual mastheads.
+
+      What I'd just ask in my reply, not an objection: I'd ask what kind of
+      piece they're picturing, a family what's-on note versus something with a
+      heritage or animal angle I could actually place, and I'd probably ask
+      about the farm side of the property while I'm there, since that's the part
+      that fits my own work.
+
+      REPLY_PCT: 20
+    fact_check:
+      - claim: A story landing in that window is what I am hoping for.
+        source: campaign YAML, prompt_appendices.a_author and a_challenger.
+        result: corrected
+        note: |
+          Upheld. The appendix forbids a message that says or implies the offer
+          helps us, and the challenger criterion names any suggestion that the
+          offer serves the sender as a factual error. This sentence gave our own
+          return as the reason for the offer.
+        correction: |
+          The want is kept, because the plan block sets state_want true and the
+          persona's own complaint was that she could not tell whether coverage
+          was wanted. It moves from benefit to facilitation: the season runs on
+          past opening week if she wants to write, and the sender will arrange
+          whatever access she needs on the day.
+      - claim: Public tickets for the season are at the Eventbrite listing.
+        source: campaign YAML, usps.opening-week-seats; 2026-09-23-stampede-arena-showtimes.md.
+        result: corrected
+        note: |
+          Upheld. The showtimes file records Oztix as the seller of the fourteen
+          performances, and the USP ties the Eventbrite listing to opening week.
+          "For the season" overstated the listing's scope.
+        correction: |
+          Replaced with the plan block's own wording from first_ask, "Public
+          tickets are at", followed by the same link. The link stays the only
+          one in the message, per the a_author appendix.
+      - claim: A circus under canvas on a riverbank.
+        source: campaign YAML header and usps.big-top-at-a-heritage-farm; business-overview.md.
+        result: corrected
+        note: |
+          Upheld. Every source places the tent on the lawn. The river frontage
+          belongs to the dining deck and the ceremony sites. The riverbank
+          picture was the drafter's own.
+        correction: |
+          The sentence is gone. The river now appears only where the sources put
+          it, as the property's frontage.
+      - claim: Historic Rivermill is a heritage venue at Mount Nathan in the Gold Coast hinterland, six hectares beside the Coomera River, with a cafe, horses, alpacas and goats.
+        source: business-overview.md, address block and U1, U2, U3, U5; wording shaped by business-antifacts.md.
+        result: verified
+      - claim: The property milled arrowroot a century ago.
+        source: business-overview.md, U4.
+        result: verified
+        note: |
+          Claims no surviving structures, so it does not trip the antifacts item
+          on hundred-year-old buildings.
+      - claim: The show is WANTED – A Cirque Heist, opening 1pm Thursday 24 September 2026, season running to 4 October.
+        source: 2026-09-23-stampede-arena-showtimes.md; historicrivermill.au/data/circus.yaml, which that file names as the home of the start times.
+        result: verified
+      - claim: Seven shows across opening week, free to the recipient, no code or price in the first message.
+        source: campaign YAML, usps.opening-week-seats and free-by-code; prompt_appendices.a_author.
+        result: verified
+      - claim: Entry to the grounds is free on any day.
+        source: sot/S2-fees-and-service-hours.md, section 3.
+        result: verified
+      - claim: Her email is sarah@sarahreid.com.au and her LinkedIn is linkedin.com/in/sarahreidtravels.
+        source: Roster row sarah-reid-freelance; profile, Verification corrections.
+        result: verified
+    antifact_check: |
+      Checked against business-antifacts.md. No stone. No building of any age is
+      described, so the heritage claim attaches to the property and the milling
+      history alone, and the hundred-year-old-buildings item is not tripped. No
+      vineyard. The venue is placed at Mount Nathan in the Gold Coast
+      hinterland, never on Tamborine Mountain, and the Scenic Rim label is kept
+      out of a message to a journalist who checks boundaries. "Farm" is avoided
+      as a descriptor of the business, per the unsettled-farming item; the venue
+      is described by what it offers visitors, a heritage venue with a cafe,
+      horses and farm animals. Nothing states or implies that seats are unsold,
+      that the tent needs filling, or that the offer helps us. No feed-bag or
+      animal-food offer, no subscriber discount, no Oztix link.
+    revision_note: |
+      Three fact-check findings, all upheld and all fixed, recorded above. The
+      persona raised five points, sorted before touching the draft per SPAR-A
+      4.6.
+
+      Answer in this email. First, whether coverage is wanted or this is a
+      family day out. She said the ask left her unable to tell, and that
+      ambiguity would otherwise have to be resolved by a reply. Answered by the
+      facilitation sentence that replaced the sender-benefit line. Second, the
+      farm side of the property, which she named as the part that fits her work
+      and said she would ask about. The property description was already in the
+      draft as the stand-alone introduction a cold reader needs, so the fix is
+      placement rather than new material: it now reads as part of what she is
+      invited to. One sourced clause is added, that entry to the grounds is free
+      on any day (S2 section 3). This is a fact about visiting, not a pitch, and
+      it answers her without inventing an offer. The judgement call is recorded
+      plainly: it runs close to the make-a-day-of-it USP, which this segment's
+      block does not list, so it is held to a single clause and uses none of
+      that USP's framing.
+
+      Leave for the reply. Third, what kind of piece we picture. She said
+      herself she would ask this in a reply, and it belongs there: answering it
+      first would prescribe her angle before she has seen the show. Fourth, the
+      tight window for lining up an editor. She judged it workable for a
+      personal visit, which is what the pass is, and the season running to
+      4 October gives the placement room. Nothing the message can add changes
+      her editor's calendar.
+
+      Absorb by reframing. Fifth, no outlet named. Naming one for a freelancer
+      of her record would be the sender deciding where her work goes. The
+      sentence offering access on the day carries what naming an outlet was
+      meant to signal, that this is a working invitation.
+    notes: |
+      Challenger: sonnet, context-isolated, two passes. Pass 1 returned REVISE
+      with three fact-check findings and REPLY_PCT 20. Pass 2 returned DONE with
+      no factual errors found and REPLY_PCT 30.
+  - type: review
+    number: 2
+    verdict: DONE
+    in_character: |
+      Two messages in two days from someone I've never dealt with: a LinkedIn
+      note, then the promised email with the substance. Priyanka Das runs
+      partnerships for a heritage property at Mount Nathan I don't know, a
+      cafe-with-animals venue hosting a touring circus for the school holidays,
+      offering me a family pass of four to any of the seven opening-week shows,
+      Thursday to Sunday.
+
+      What would stop me replying: nothing here is a hard stop, but two things
+      weigh against it. First, there's no story brief, just come see it, write
+      about it if you want. I write adventure, emerging-destination and
+      regenerative travel for masthead outlets; a family circus at a hinterland
+      farm venue isn't an obvious fit for Adventure.com or National Geographic
+      Traveller unless there's an angle I'm not being shown. Second, the pass is
+      framed as a family one. I don't have children, so either the offer doesn't
+      quite fit me or I'd bring a plus-one instead, which is a minor mismatch,
+      not a dealbreaker.
+
+      Whether it's possible in the time given: yes, plainly. I have four days of
+      shows to choose from, and the season runs on to 4 October, so there's no
+      pressure to write and publish overnight even though the free seats are
+      opening-week only. It's short notice for a cold pitch with no commission
+      behind it, but not an impossible window.
+
+      What I'd simply ask in my reply, rather than let stop me: which show has
+      room and whether a daytime or evening session suits better for photos;
+      whether there's a specific angle they'd like covered, heritage or
+      regenerative, since that's my beat, or whether this is just a
+      come-and-see invitation; and whether I can bring an adult companion rather
+      than children.
+
+      On balance: a low-cost ask from a venue I don't know, pitching content a
+      little off my usual beat, with no stated outlet or commission. I'd likely
+      reply to ask the clarifying questions above rather than ignore it
+      outright, but I'm not confident I'd follow through to a show or a piece.
+
+      REPLY_PCT: 30
+    fact_check:
+      - claim: Whole draft, checked against the segment plan, the usps registry, the showtimes file, business-overview.md, S2-fees-and-service-hours.md and the antifacts checklist.
+        source: campaign YAML; 2026-09-23-stampede-arena-showtimes.md; business-overview.md; sot/S2-fees-and-service-hours.md; business-antifacts.md.
+        result: verified
+        note: |
+          No factual errors found. Sender identity, address and Eventbrite link
+          match the campaign sender and venue blocks and the opening-week-seats
+          rests_on. The Thursday 1pm opening matches the showtimes file. The
+          season running to 4 October matches the segment's own first_ask. No
+          code, price, discount, feed-bag offer, Oztix link or unsold-seats
+          framing appears. Free entry matches S2 section 3. The arrowroot line
+          does not claim surviving mill buildings, so no antifact item is
+          tripped.
+    antifact_check: |
+      Confirmed by the challenger against business-antifacts.md: no stone
+      buildings, no vineyard, no Tamborine Mountain location, no farming claim.
+    revision_note: |
+      Two changes after this pass, both from the SPAR-A 7 checklist rather than
+      from the persona, and neither touching the facts or the elements.
+
+      The opener was rewritten on check 6. Four approach files already drafted
+      in this campaign open with the same sentence this one did, the sender
+      introducing herself and the venue in the first line. The message now opens
+      with the pass, which is also what SPAR-A 4.5 prefers, since front-loading
+      the proposition lets the reader decide whether to keep reading.
+
+      The seven opening-week start times were added on checks 2 and 5. The
+      persona asked which session suits for photos, and the ask is to name a
+      show, which she cannot do from a list she has not seen. The times come
+      from circus.yaml, which the showtimes file names as the home of the start
+      times, and each is now carried in fact_provenance.
+
+      The show's title also takes the en dash its own sources use.
+    notes: |
+      Two passes is where this closes. The profile's yield is 9, but the second
+      pass returned DONE with no findings, and a third would be spent on a
+      persona whose remaining questions were sorted to the reply.
+  - type: final
+    chosen_usps: [free-by-code, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      The final email differs from the post-spar draft in its opening move and
+      in carrying the seven start times. Reasoning in the second review round's
+      revision_note and in quality_checklist items 2, 5 and 6. The LinkedIn note
+      is unchanged and sits second, so the dispatcher reads the email as the
+      first touch. Both go out on 23 September.
+    messages:
+      - channel: email
+        to: sarah@sarahreid.com.au
+        subject: Family pass, big-top circus north of Byron, opens Thursday
+        body: |
+          Sarah,
+
+          A circus company has a big top up on our lawn for the school holidays, and I have a family pass of four at it, for you and whoever you bring.
+
+          I am Priyanka Das and I look after partnerships at Historic Rivermill, a heritage venue at Mount Nathan in the Gold Coast hinterland. We sit on six hectares beside the Coomera River, with a cafe, horses, alpacas and goats. The property milled arrowroot a century ago.
+
+          The show is WANTED – A Cirque Heist. Seven performances run from this Thursday 24 September through to Sunday the 27th: Thursday at 1pm, Friday and Saturday at 4pm and 7pm, then Sunday at 11am and 2pm. Reply with the one that suits and I will send the booking details.
+
+          Opening week means you would see it before the audience does. The season then runs on to 4 October, so there are shows still standing if you want to write about it. I can sort out whatever access you need on the day. Entry to the grounds is free on any day, so the horses and the rest of the animals are there to walk around before or after the show.
+
+          Public tickets are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: linkedin
+        to: "https://www.linkedin.com/in/sarahreidtravels/"
+        text: |
+          Sarah, I'm Priyanka at Historic Rivermill, a heritage venue on the
+          Coomera River at Mount Nathan. A circus company has its big top on our
+          lawn for the school holidays, and I have a family pass of four for you
+          at any opening-week show. Details are in an email to your
+          sarahreid.com.au address.
+        director_note: |
+          291 characters, inside the connection-note cap. It goes out on
+          23 September alongside the email rather than ahead of it, because the
+          offer expires on 27 September. If the invitation is accepted before
+          she answers the email, treat the acceptance as the opening for a short
+          direct message rather than a second email.
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: The sender is Priyanka Das, Partnerships, Historic Rivermill, at partnerships@rivermill.au.
+    source: campaign YAML, sender block.
+  - claim: Historic Rivermill is a heritage venue at Mount Nathan in the Gold Coast hinterland.
+    source: business-overview.md, address block and U6; description shaped by business-antifacts.md.
+  - claim: The property runs to six hectares beside the Coomera River, with a cafe, horses, alpacas and goats.
+    source: business-overview.md, U1, U2, U3 and U5.
+  - claim: The property milled arrowroot a century ago.
+    source: business-overview.md, U4. No surviving structures are claimed, per business-antifacts.md.
+  - claim: The venue address is 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211.
+    source: campaign YAML, venue block; business-overview.md.
+  - claim: A circus company has a big top on the venue's lawn for the school holidays.
+    source: campaign YAML header and usps.big-top-at-a-heritage-farm.
+  - claim: The show is WANTED – A Cirque Heist.
+    source: 2026-09-23-stampede-arena-showtimes.md; historicrivermill.au/data/circus.yaml.
+  - claim: Seven performances run from Thursday 24 September to Sunday 27 September 2026.
+    source: campaign YAML header and usps.opening-week-seats.
+  - claim: The seven opening-week start times are Thursday 1pm, Friday 4pm and 7pm, Saturday 4pm and 7pm, Sunday 11am and 2pm.
+    source: historicrivermill.au/data/circus.yaml, sessions 2026-09-24 to 2026-09-27, which 2026-09-23-stampede-arena-showtimes.md names as the home of the start times.
+  - claim: The season runs on to 4 October 2026.
+    source: 2026-09-23-stampede-arena-showtimes.md; circus.yaml, final session 2026-10-04; the segment's own first_ask.
+  - claim: The pass covers a family of four at any one opening-week show, free.
+    source: campaign YAML, usps.opening-week-seats and free-by-code; the segment's first_ask.
+  - claim: The code and the booking details are sent in the reply, not in the first message.
+    source: campaign YAML, usps.free-by-code and opening-week-seats; prompt_appendices.a_author.
+  - claim: Opening week means she sees it before the audience does.
+    source: campaign YAML, segments.earned-media.usps.free-by-code framing.
+  - claim: Public tickets are on sale at the Eventbrite listing, which is the only link the message carries.
+    source: campaign YAML, usps.opening-week-seats rests_on; the segment's first_ask wording.
+  - claim: Entry to the grounds is free on any day.
+    source: sot/S2-fees-and-service-hours.md, section 3.
+  - claim: Her email is sarah@sarahreid.com.au and her LinkedIn profile is linkedin.com/in/sarahreidtravels.
+    source: Roster row sarah-reid-freelance; profile, Verification corrections, both backfilled by P on 2026-08-07.
+  - claim: She is based at Byron Bay, which the subject line's geographic anchor rests on.
+    source: Profile, Current role, LinkedIn topcard fetched 2026-08-07.
+  - claim: No prior correspondence exists with this contact in any of the sender's accounts.
+    source: Dispatcher courier prefetch, two passes across all five accounts, no results in either.
+quality_checklist: |
+  1. Structure. Root keys drawn from the canonical set. Both review rounds and
+  the draft round carry numbers; the final round omits one, as the method's
+  skeleton does. The final round holds one email and one LinkedIn message,
+  inside the one-email cap. The to-addresses are the roster's real email and the
+  corrected LinkedIn URL, neither a placeholder. No profile_hash: the harness
+  prepends it.
+
+  2. Coverage. fact_provenance carries an entry for every factual claim in both
+  final messages, including the seven start times added after the second review
+  round and the Byron Bay anchor that appears only in the subject line. The nil
+  prefetch is recorded as its own entry, since the absence of a prior-contact
+  line is a claim about the record. chosen_usps is present on the draft and
+  final rounds.
+
+  3. Presupposition. The message tells her nothing about herself. The profile's
+  findings on her location, her beat and her outlets shape what is offered and
+  what is left unsaid rather than what is recited. Her clippings, her awards and
+  her book do not appear.
+
+  4. Manufactured connection. The body makes no claim of shared interest at all.
+  The only use of her own attributes is the subject line's geographic anchor,
+  which rests on the profile's Byron Bay locality. The profile's recorded
+  silence on Rivermill, venues and accommodation is respected: nothing claims
+  she covers them, and nothing claims she has an interest in circuses, which the
+  profile evidences nowhere either.
+
+  5. Concreteness. The ask is to name one of seven performances, and the seven
+  are listed with their times, so it is answerable in one sentence. Listing them
+  was the second change made after the final spar pass.
+
+  6. Band pattern. This check failed on the post-spar draft and the final email
+  was rewritten for it. Four approach files already drafted in this campaign,
+  for Canungra RSL, Oak Tree Victoria Point, The Verge at Burleigh and Southport
+  Day VIEW, open on the sender introducing herself and the venue in the first
+  sentence, and the draft did the same. A fifth, Robina VIEW, had already been
+  rewritten off that pattern for the same reason. The facts, the USPs, the ask
+  and the elements are unchanged. What changed is the first move: this message
+  opens with the pass itself, which suits a recipient who is being offered
+  something rather than asked to circulate it, and which no message in the
+  organiser segments can copy.
+
+  7. Final-round email cardinality. One email, one LinkedIn note.

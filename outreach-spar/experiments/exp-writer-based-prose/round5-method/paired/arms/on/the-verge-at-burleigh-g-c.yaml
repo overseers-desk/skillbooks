@@ -1,0 +1,459 @@
+profile_hash: sha256:f7377e106ad7957a3c738b3f1321349e1591e52752c310b572c29f0c72f17f48
+# Contact:  Tarmar Christensen, Village Manager, The Verge at Burleigh G.C. (RetireAustralia) (retirement-village)
+# Channel:  Email first 23 September, phone follow-up 24 September morning
+# Language: Australian English
+# Angle:    Tickets residents take with their visiting grandchildren this week, and a bus outing offered for the week after
+decisions:
+  channel: email
+  channel_detail: |
+    Email is the first touch on 23 September, to Tarmar.Christensen@retireaustralia.com.au, an individual
+    address taken from the village's official Form 3 Village Comparison Document. Phone follows on the
+    morning of 24 September where there is no reply, on the village management line 07 5619 3000, per the
+    plan block's approach_sequencing step 3 and the campaign's secondary_channel wait_days of 1. That
+    overrides the generic 3-day wait in SPAR-A section 4.2, which would land the call after the offer
+    closes on Sunday 27 September. No platform channel: the profile found a LinkedIn URL for her but the
+    fetch never completed, so nothing was written to the roster, and the village Facebook page is the
+    organisation's rather than hers.
+  language: en-au
+  angle: pass-on-now-bus-outing-later
+angle_rationale: |
+  Target validity. star_rating 4 clears the campaign's filter.min_star of 3. date_excluded is empty. The
+  profile carries no finding against approaching her.
+
+  Warmth: cold. The dispatcher prefetch searched both directions on
+  Tarmar.Christensen@retireaustralia.com.au, and her name and organisation in subject lines, across all
+  five configured accounts. No matches, remote IMAP. No approach file existed for this contact before this
+  one. So the message carries no prior-dealing line, and no "we wrote before and heard nothing" line,
+  which the campaign's a_author appendix requires only where the prefetch finds an unanswered earlier
+  note. The profile records no dated conduct of hers towards us. New thread, no parent block.
+
+  The profile's strongest material is deliberately unused. She was named Queensland Village Manager of the
+  Year 2026 by the Retirement Living Council and gave a DCM Institute national-finalist interview. Quoting
+  either back at her is the "I did my homework" gesture SPAR-A section 4.5 rules out, and section 4.1 bars
+  a compliment opener for a cold contact. The interview instead sets the angle without being mentioned.
+
+  Channel. Email plus phone, no platform channel, which is the second case in section 4.2's priority list.
+  Both details come from the Form 3 VCD: the individual mailbox and the village management line. The call
+  is timed for 8.30 to 10am on 24 September, inside her published onsite hours of 8.30am to 4.30pm and
+  early in a day her own interview describes as starting just after 8am with school drop-off.
+
+  Angle. The plan block gives a two-branch ask and the profile says why both branches are needed here. The
+  village bus is doubly sourced: the Form 3 VCD checks "village bus or transport" yes, and RetireAustralia's
+  own site names tourist destinations among its regular trips. She has personally introduced inter-village
+  bowls days and group outings since 2023, working with Jeff Burchell of the social committee. The evidence
+  therefore points at a group outing. But the season opens in 48 hours, which is not enough notice for a
+  village bus trip, and the plan block's group-visit-later USP exists for that case. So the ask leads with
+  what 48 hours does allow, tickets residents take themselves with the grandchildren visiting over the
+  school holidays, and offers the outing she would actually organise for the week after. The 200-plus
+  residents at a fully occupied 178-unit village give the numbers to make a per-show hold worth setting
+  aside.
+
+  The one thing the profile marks absent shapes what is asked. She has no confirmed history of engaging
+  outside operators; the outings on record are RetireAustralia-to-RetireAustralia. Neither branch presumes
+  such a habit: the first asks her to forward something, which is what running a social calendar already
+  involves, and the second asks only for a day.
+
+  Jeff Burchell, Head of the Social Committee, is a separate roster row in this same segment
+  (jeff-burchell-the-verge-at-burleigh) and gets his own approach. This message does not claim we have
+  written to him, because at drafting time that is not established, and it does not route her through the
+  committee, which would add a third branch to a two-branch ask. Under section 4.4 step 4 his draft needs a
+  compatible angle: the same two branches, pass-on first, so the two do not read as different offers if
+  they compare notes.
+
+  Withheld. No code, no price, no discount and no link of any kind in the first message. The venue's own
+  website is left out as well, because its circus page sells the same shows at the public price. The
+  Director's ruling of 22 September, that opening week is given away rather than discounted, stays internal
+  per usps.free-by-code.rests_on. The wheelchair and Companion Card position is not stated anywhere,
+  because the campaign holds both disability segments until CHARC states it, and a retirement village
+  manager is likely to ask. The phone script routes that question to a same-day callback rather than a
+  guess.
+response_likelihood: 55
+a_note: |
+  Angle pass-on-now-bus-outing-later: free opening-week seats residents take with visiting grandchildren,
+  with a village bus outing offered for the week after because 48 hours will not cover one. Email first on
+  23 September to her individual Form 3 address, phone the village line on the morning of 24 September if
+  no reply. Warmth cold, prefetch empty across all five accounts. Australian English. Her Village Manager
+  of the Year award and DCM interview are the profile's strongest material and are deliberately unused; the
+  interview sets the angle without being quoted. Access question routed to a callback, since CHARC has not
+  stated the tent's wheelchair access or Companion Card position.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [opening-week-seats, nothing-to-organise, group-visit-later, big-top-at-a-heritage-farm, free-by-code]
+    notes: |
+      Three USPs carry the ask: opening-week-seats (free seats at the seven shows), nothing-to-organise
+      (residents book individually, no bus, no forms) and group-visit-later (the second-week alternative).
+      big-top-at-a-heritage-farm supplies the one descriptive clause. free-by-code operates as the reply
+      mechanism only, and its spoken claim appears just in the phone script's "why are they free" branch.
+      make-a-day-of-it is left out: it is not in this segment's USP list.
+    messages:
+      - channel: email
+        to: Tarmar.Christensen@retireaustralia.com.au
+        subject: Free circus seats for The Verge residents, opening Thursday
+        body: |
+          Hi Tarmar,
+
+          I'm Priyanka Das and I look after partnerships at Historic Rivermill, a heritage riverside venue at Mount Nathan, half an hour from central Gold Coast.
+
+          CHARC Performance has a big top up on our lawn for the school holidays, running a family circus called WANTED – A Cirque Heist. I can hold seats for The Verge at no charge, for residents and for the grandchildren and families visiting them. Tell me roughly how many and which days suit, and I'll set the seats aside in the village's name and send you a booking code and a link to pass on. Residents book the session they like, so there's no outing to run and no bus to arrange. The code is for your residents and their families, so please keep it off public pages.
+
+          The season opens this Thursday 24 September at 1pm, with seven shows through to Sunday. That's short notice for a village bus trip. If an outing with the bus suits better, name a day in the week after and I'll come back to you about holding seating for the group.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+          07 3703 1307
+        director_note: |
+          Send Wednesday 23 September 2026. The reply carries the code, the Eventbrite link and the Sunday
+          cut-off, and her number goes on the per-show tally.
+      - channel: phone
+        to: "07 5619 3000"
+        text: |
+          Thursday 24 September 2026, 8.30 to 10am, only if the email draws no reply. The village
+          management line, likely answered at reception.
+        script:
+          - point: If reception answers
+            text: |
+              Good morning, this is Priyanka Das from Historic Rivermill at Mount Nathan. Is Tarmar Christensen available? I sent her an email yesterday about free circus tickets for your residents and I wanted to make sure it reached her.
+          - point: If reception asks what it concerns
+            text: |
+              We have a family circus in a big top at our place for the school holidays, and I'm holding free seats for The Verge's residents and their visiting families. It just needs a rough number from Tarmar.
+          - point: Opening with Tarmar
+            text: |
+              Hi Tarmar, Priyanka Das from Historic Rivermill at Mount Nathan, half an hour inland from you. I sent you an email yesterday, so I'll be quick. There's a family circus in a big top on our lawn for the school holidays, and I have free seats set aside for The Verge, for residents and for the grandchildren visiting them. Shows run through to Sunday. If you tell me roughly how many and which days, I'll hold them in the village's name and email you a code and a booking link to pass on to residents.
+          - point: The two branches, if she is weighing it
+            text: |
+              There's nothing to organise at your end. Residents book the session that suits them with the code, so no bus and no group to assemble. If you'd rather bring a group properly on the village bus, this week is too short a run-up. Give me a day in the week after and I'll come back to you about holding seating.
+          - point: If she asks why they are free
+            text: |
+              The season is on public sale for the rest of the run. Opening week I've kept for local organisations I'd like to have in the tent, and I'm inviting them directly rather than advertising it.
+          - point: If she asks who we are
+            text: |
+              Historic Rivermill, 950 Beaudesert Nerang Road at Mount Nathan, in the Gold Coast hinterland. Heritage property on the Coomera River, riverside cafe, horse riding, farm animals. The circus is run by CHARC Performance, in a big top on our lawn for the holidays.
+          - point: If she asks about wheelchair access, walkers or Companion Card
+            text: |
+              That one I won't guess at. The tent is the circus operator's, so let me check the access and the Companion Card position with CHARC and come back to you today.
+          - point: If she asks about getting there or parking
+            text: |
+              We're about half an hour from central Gold Coast, and there's parking for more than two hundred cars on site, so a bus or a few carloads are both fine.
+          - point: Close
+            text: |
+              I'll email you the code and the link as soon as we're off the phone. Is Tarmar.Christensen@retireaustralia.com.au the best address, or would you rather it went somewhere else?
+          - point: If she is unavailable and reception offers to take a message
+            text: |
+              Could you let her know Priyanka Das from Historic Rivermill called about the free circus tickets for residents, and that I only need a rough number to hold seats. My email is partnerships@rivermill.au and the shows run to Sunday, so I'll try again this afternoon.
+          - point: Voicemail
+            text: |
+              Hi Tarmar, Priyanka Das from Historic Rivermill at Mount Nathan. I emailed you yesterday about free seats at the family circus in the big top on our lawn, for your residents and their visiting grandchildren. Shows run through to Sunday. Reply to that email with a rough number and the days that suit, and I'll hold the seats in the village's name and send you what residents need to book. If a village bus outing suits better, name a day in the week after and I'll sort seating for the group. I'm on partnerships@rivermill.au, or 07 3703 1307. Thanks, Tarmar.
+        phone_note: |
+          Do not state an access position on the call. Confirm the seat count and the days before hanging
+          up, then log them against the per-show tally.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Well timed and low effort, and it fits what I already do here: I run the social calendar myself and
+      I have organised inter-village outings, so a free family show for residents and visiting
+      grandchildren during the school holidays is squarely in my lane. Nothing is asked of me beyond a
+      headcount and a couple of preferred days, and there is a fallback for a proper village bus trip the
+      following week if Thursday is too tight, which it is. My residents need more notice than that for
+      anything organised, so what is realistic here is forwarding it and letting people book themselves,
+      not an outing.
+
+      What would give me pause: if I rang and asked why the tickets are free, and was told opening week is
+      being kept "for local organisations I'd like to have in the tent", that reframes this from a gift
+      into a favour that fills their seats and gets them word of mouth or cafe trade. Not dishonest
+      exactly, but a different offer from "free for you", and I would want to know before forwarding a
+      code to two hundred residents under my own name. I would also want the wheelchair and Companion
+      Card answer in hand before circulating anything, given the age profile here, but that is something I
+      would simply ask about, not an objection.
+
+      Reply probability, in character: 70 per cent.
+    fact_check:
+      - claim: Opening week I've kept for local organisations I'd like to have in the tent, and I'm inviting them directly rather than advertising it.
+        source: campaign YAML usps.free-by-code.rests_on and prompt_appendices.a_challenger
+        result: error
+        note: |
+          rests_on states that the reasoning behind the free opening week is internal and stays out of
+          every message, and warns that a recipient who learns the tent needs filling reads the offer as a
+          request to be our marketing channel, tested in role-play on 22 September 2026. "I'd like to have
+          them in the tent" carries exactly that suggestion, which the a_challenger appendix names as a
+          factual error. The persona reproduced the predicted reaction unprompted.
+        correction: Cut the sentence. Answer with the offer's shape only, per usps.free-by-code.claim.
+      - claim: Every other factual claim in both pieces, checked against the campaign plan, the USP registry, the business overview, the showtimes file and the fees SOT.
+        source: campaign YAML, business-overview.md, the showtimes file, sot/S2-fees-and-service-hours.md
+        result: verified
+        note: |
+          Address, phone number, Coomera River setting, cafe, horse riding and farm animals, the 200-plus
+          car parks, the Thursday 24 September 1pm opening and the seven shows through to Sunday all
+          check out. No code, no price, no discount, no feed-bag or animal-food offer and no Oztix link
+          appears.
+    antifact_check: |
+      No claim of stone buildings, no building age, no original mill structures, no vineyard, and the
+      venue is placed at Mount Nathan in the Gold Coast hinterland rather than on Tamborine Mountain,
+      which is not mentioned. The venue is described by what it offers visitors, which is the form the
+      antifact file prescribes.
+  - type: draft
+    number: 2
+    chosen_usps: [opening-week-seats, nothing-to-organise, group-visit-later, big-top-at-a-heritage-farm, free-by-code]
+    revision_note: |
+      The persona raised more than three points, so each was sorted before the draft was touched.
+
+      Answer in this pass, because without it the reply is at risk: the "in the tent" answer in the phone
+      script. Its presupposition scored 0 and the persona named the consequence exactly, that it converts
+      a gift into a favour filling our seats, which she would want to know before forwarding a code to 200
+      residents under her own name. Settled by cutting the sentence, per the 0-to-2 rule. Introducing our
+      stake instead would bring the writer's own reasoning back into the message, which is what the rule
+      forbids. The branch now reads: "The season is on public sale at full price. The free seats aren't
+      advertised anywhere. They go out by invitation to local organisations, so I've come to you
+      directly." All three sentences are in usps.free-by-code.claim, which is written to be said, while
+      the Director's ruling sits in rests_on, which is written to be withheld. A caller instruction is
+      added not to go past the claim.
+
+      Leave for the reply: wheelchair access and the Companion Card position. She marked this as something
+      she would simply ask, not an objection, and the campaign holds both disability segments until CHARC
+      states its position. An access caveat in a cold first email raises a doubt she does not yet have and
+      that we cannot answer. The phone script already routes it to a same-day callback, and the answer goes
+      in the reply that carries the code.
+
+      Absorb by reframing a sentence already there: "holding seating for the group" in the email's last
+      sentence resolved to nowhere explicit and scored 3. It now reads "holding seating for your
+      residents", which resolves two sentences earlier. The voicemail carries the same change.
+
+      No change: "There's nothing to organise at your end" (3) and "this week is too short a run-up" (4)
+      both resolve by conversational inference, which is what those sentences are for. The persona's
+      conclusion that forwarding rather than an outing is the realistic action confirms the branch order,
+      so the email keeps pass-on first and the bus second. The remaining 38 sentences scored 4 or 5.
+    notes: |
+      Delta from draft 1. The email is unchanged except for the last sentence, "holding seating for the
+      group" becoming "holding seating for your residents". The phone script is unchanged except for the
+      "why are they free" branch, replaced as quoted in revision_note and followed by the caller
+      instruction, and the voicemail's closing branch, which takes the same "your residents" wording. The
+      access branch gains one line stating that the answer goes in the email carrying the code. Every
+      other branch is carried forward verbatim.
+  - type: review
+    number: 2
+    verdict: DONE
+    in_character: |
+      A local heritage venue I had not dealt with before is offering our residents and their visiting
+      grandkids free seats to a circus that opens tomorrow, at no cost to us, with nothing to organise
+      beyond forwarding a code once I give a rough headcount. That is an easy yes to consider. The one-day
+      notice for a bus outing is genuinely too tight to arrange properly, and they have clearly thought of
+      that themselves by offering the following week instead. Sensible.
+
+      What I would actually check before doing anything: whether the tent and grounds are manageable for
+      residents using walkers or wheelchairs, since we have 200-plus of them; and whether "any of the
+      seven shows" really means any, or there are catches once I reply. Nothing here reads as implausible
+      or as asking something the timeframe cannot support. The ask takes two minutes, and passing a
+      private code to residents is well within what I already do when running outings with Jeff and the
+      social committee.
+
+      Nothing named here would stop me replying. In my reply I would ask about wheelchair and mobility
+      access at the big top, and whether the free allocation covers any of the seven sessions or is capped
+      per show, and I would take up the week-after bus outing separately, naming a day.
+
+      Reply probability, in character: 78 per cent.
+    fact_check:
+      - claim: All claims in draft 2, checked against the retirement-village plan block, the USP registry, the business overview, the showtimes file, the fees SOT and the antifact file.
+        source: campaign YAML, business-overview.md, the showtimes file, sot/S2-fees-and-service-hours.md, business-antifacts.md
+        result: verified
+        note: |
+          Season open date and time match the showtimes file exactly. Seven shows through to Sunday match
+          usps.opening-week-seats. No code, no price, no discount, no Oztix link, and no suggestion that
+          seats are unsold or that the offer serves the sender, so the draft sits inside the a_challenger
+          constraints and inside free-by-code's claim. The no-outing wording matches nothing-to-organise
+          and the week-after offer matches group-visit-later. Venue address, the 07 3703 1307 phone and
+          parking for more than two hundred cars all check out. The access question is correctly deferred
+          rather than answered.
+    antifact_check: |
+      No antifact claims appear. No stone buildings, no 100-year-old or original mill buildings, no
+      vineyard, and the venue is not placed on Tamborine Mountain.
+  - type: draft
+    number: 3
+    chosen_usps: [opening-week-seats, nothing-to-organise, group-visit-later, big-top-at-a-heritage-farm, free-by-code]
+    revision_note: |
+      Section 7 check 6, the band-level pattern check, failed and is the reason this round exists. Read in
+      sequence, the openers of the three approaches already written for this campaign all run "My name is
+      Priyanka Das and I look after partnerships at Historic Rivermill, a heritage venue on the Coomera
+      River at Mount Nathan", varying only the descriptor that follows. Draft 2 opened with the same
+      sentence, making four out of four. Section 4.5 requires structure to vary across a band, and section
+      7 check 6 says to revise when openers read as variations of one template.
+
+      Three changes, all structural or sourced, with no change of angle, USP selection or ask.
+
+      The self-introduction is recast so the venue comes first and the role sits in a supporting clause,
+      which section 4.5 asks for anyway: "Historic Rivermill is a heritage property on the Coomera River
+      at Mount Nathan, half an hour from central Gold Coast, with a cafe, horse riding and farm animals. I
+      look after partnerships here." The introduction still precedes the ask, so the a-then-b ordering
+      holds, and the message still stands alone for a reader who has never heard of us.
+
+      The subject line moves off the siblings' "Free circus tickets for X" form to "Circus opens Thursday
+      at Mount Nathan, free seats for The Verge". It keeps a recipient-specific element and leads with the
+      date, which is what the reader must act on.
+
+      One sentence is added on how to distribute the code: it is one code for everyone, so it can go in the
+      village newsletter or on the noticeboard. This traces to the campaign header, where the code is
+      passed to the organisation's staff, members and the families it brings while being kept off social
+      media, and it matches the same-segment Oak Tree approach, which section 4.4 step 4 asks for. It also
+      answers the practical question a manager with 200-plus residents reaches next, and it makes the
+      existing "keep it off public pages" line concrete rather than restrictive.
+
+      The phone opener's "half an hour inland from you" becomes "half an hour from central Gold Coast",
+      the form the business overview actually states. The earlier wording was a drive time nobody
+      measured, and the profile records that the distance-from-venue step was not run.
+    notes: |
+      This round follows a DONE verdict, so the director should know the final text differs from the draft
+      the challenger passed. The differences are the opening sentence, the subject line, one sourced
+      sentence about newsletter and noticeboard distribution, and one phone phrase. No factual claim in
+      the challenger's verified list was altered, and no new claim enters that is not in fact_provenance.
+  - type: final
+    chosen_usps: [opening-week-seats, nothing-to-organise, group-visit-later, big-top-at-a-heritage-farm, free-by-code]
+    messages:
+      - channel: email
+        to: Tarmar.Christensen@retireaustralia.com.au
+        subject: Circus opens Thursday at Mount Nathan, free seats for The Verge
+        body: |
+          Hi Tarmar,
+
+          Historic Rivermill is a heritage property on the Coomera River at Mount Nathan, half an hour from central Gold Coast, with a cafe, horse riding and farm animals. I look after partnerships here.
+
+          CHARC Performance has a big top up on our lawn for the school holidays, running a family circus called WANTED – A Cirque Heist. I can hold seats for The Verge at no charge, for residents and for the grandchildren and families visiting them. Tell me roughly how many and which days suit, and I'll set the seats aside in the village's name and send you a code and a booking link. It is one code for everyone, so it can go in the village newsletter or up on the noticeboard, and each person books the session that suits them. There's no outing to run and no bus to arrange. The code is for your residents and their families, so please keep it off public pages.
+
+          The season opens this Thursday 24 September at 1pm, with seven shows through to Sunday. That's short notice for a village bus trip. If an outing with the bus suits better, name a day in the week after and I'll come back to you about holding seating for your residents.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+          07 3703 1307
+        director_note: |
+          Send Wednesday 23 September 2026, early in the working day: the offer turns on her seeing it the
+          same day or first thing Thursday. The reply carries the code, the Eventbrite link and the Sunday
+          cut-off, and her number goes on the per-show tally. The reply is also where the wheelchair and
+          Companion Card answer goes, once CHARC states its position.
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "07 5619 3000"
+        text: |
+          Thursday 24 September 2026, 8.30 to 10am, only if the email draws no reply, per the plan block's
+          approach_sequencing step 3. The village management line, likely answered at reception. Her
+          published onsite hours are weekdays 8.30am to 4.30pm. The opening show is at 1pm that same day,
+          so the realistic seats on this call are Friday through Sunday, plus the following-week outing.
+        script:
+          - point: If reception answers
+            text: |
+              Good morning, this is Priyanka Das from Historic Rivermill at Mount Nathan. Is Tarmar Christensen available? I sent her an email yesterday about free circus tickets for your residents and I wanted to make sure it reached her.
+          - point: If reception asks what it concerns
+            text: |
+              We have a family circus in a big top at our place for the school holidays, and I'm holding free seats for The Verge's residents and their visiting families. It just needs a rough number from Tarmar.
+          - point: Opening with Tarmar, first twenty seconds
+            text: |
+              Hi Tarmar, Priyanka Das from Historic Rivermill at Mount Nathan, half an hour from central Gold Coast. I sent you an email yesterday, so I'll be quick. There's a family circus in a big top on our lawn for the school holidays, and I have free seats set aside for The Verge, for residents and for the grandchildren visiting them. Shows run through to Sunday. If you tell me roughly how many and which days, I'll hold them in the village's name and email you a code and a booking link to pass on to residents.
+          - point: The two branches, if she is weighing it
+            text: |
+              There's nothing to organise at your end. It is one code for everyone, so it can go in the newsletter or on the noticeboard, and each person books the session that suits them. No bus and no group to assemble. If you'd rather bring a group properly on the village bus, this week is too short a run-up. Give me a day in the week after and I'll come back to you about holding seating.
+          - point: If she asks why they are free (do not go past this answer)
+            text: |
+              The season is on public sale at full price. The free seats aren't advertised anywhere. They go out by invitation to local organisations, so I've come to you directly.
+          - point: If she asks who we are
+            text: |
+              Historic Rivermill, 950 Beaudesert Nerang Road at Mount Nathan, in the Gold Coast hinterland. Heritage property on the Coomera River, riverside cafe, horse riding, farm animals. The circus is run by CHARC Performance, in a big top on our lawn for the holidays.
+          - point: If she asks about wheelchair access, walkers or Companion Card
+            text: |
+              That one I won't guess at. The tent is the circus operator's, so let me check the access and the Companion Card position with CHARC and come back to you today.
+          - point: If she asks about getting there or parking
+            text: |
+              We're about half an hour from central Gold Coast, and there's parking for more than two hundred cars on site, so a bus or a few carloads are both fine.
+          - point: Close
+            text: |
+              I'll email you the code and the link as soon as we're off the phone. Is Tarmar.Christensen@retireaustralia.com.au the best address, or would you rather it went somewhere else?
+          - point: If she is unavailable and reception offers to take a message
+            text: |
+              Could you let her know Priyanka Das from Historic Rivermill called about the free circus tickets for residents, and that I only need a rough number to hold seats. My email is partnerships@rivermill.au and the shows run to Sunday, so I'll try again this afternoon.
+          - point: Voicemail
+            text: |
+              Hi Tarmar, Priyanka Das from Historic Rivermill at Mount Nathan. I emailed you yesterday about free seats at the family circus in the big top on our lawn, for your residents and their visiting grandchildren. Shows run through to Sunday. Reply to that email with a rough number and the days that suit, and I'll hold the seats in the village's name and send you what residents need to book. If a village bus outing suits better, name a day in the week after and I'll sort seating for your residents. I'm on partnerships@rivermill.au, or 07 3703 1307. Thanks, Tarmar.
+        phone_note: |
+          Two things not to do on this call. Do not state a wheelchair access or Companion Card position,
+          since CHARC has not given one; take it as a callback. Do not go past the scripted answer on why
+          the seats are free: if she presses, the answer is that it is an invitation rather than a sale,
+          and that the code takes the price off for the organisations who write back. Offer no reason
+          beyond that. Confirm the seat count and the days before hanging up, then log them against the
+          per-show tally.
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: The sender is Priyanka Das, Partnerships, Historic Rivermill, writing from partnerships@rivermill.au.
+    source: campaign YAML sender block
+  - claim: Historic Rivermill is a heritage property on the Coomera River at Mount Nathan, with a cafe, horse riding and farm animals, in the Gold Coast hinterland.
+    source: business-overview.md (U1 riverside setting, U4 heritage character, "What the venue offers"); the description-by-offering form is the one business-antifacts.md prescribes
+  - claim: The venue is half an hour from central Gold Coast.
+    source: business-overview.md U6
+  - claim: The address is 950 Beaudesert Nerang Road, Mount Nathan QLD 4211.
+    source: business-overview.md facts for outreach drafting; sot/S2-fees-and-service-hours.md section 1
+  - claim: The venue phone number is 07 3703 1307.
+    source: sot/S2-fees-and-service-hours.md section 1
+  - claim: CHARC Performance has a big top on the venue's lawn for the school holidays, staging the family circus WANTED – A Cirque Heist.
+    source: campaign YAML header
+  - claim: The season opens Thursday 24 September at 1pm.
+    source: the showtimes file ("The season opens Thursday 24 September at 1pm")
+  - claim: Seven shows run from Thursday 24 September through to Sunday 27 September.
+    source: campaign YAML header (Director's ruling of 22 September 2026) and usps.opening-week-seats
+  - claim: No other session time is named anywhere in the message or the script.
+    source: the showtimes file keeps the fourteen start times in the website's data file and does not list them, so any other time would be unsourced. Full times go in the reply with the code.
+  - claim: Seats at those shows are free for the organisation, up to the segment's allocation.
+    source: usps.opening-week-seats
+  - claim: One code, the same for everyone, arrives in the reply with a booking link, and it is what takes the price off.
+    source: usps.free-by-code and usps.opening-week-seats; prompt_appendices.a_author holds the code and the link back for the reply
+  - claim: The code may go to residents through the village newsletter or noticeboard, and is for residents, their families and village staff rather than public pages.
+    source: campaign YAML header ("passed to its staff, members and the families it brings", kept off social media and not passed beyond the organisation)
+  - claim: Residents book individually, so there is no outing to run and no bus to arrange.
+    source: usps.nothing-to-organise, whose rests_on names villages among the cases where circulating an offer to members is already what the organisation does
+  - claim: A village group visit can be requested for the week after, with seating sought on the day named.
+    source: usps.group-visit-later
+  - claim: The season is on public sale at full price and the free seats are not advertised, going out by invitation to local organisations.
+    source: usps.free-by-code.claim. The Director's reasoning behind the free opening week sits in rests_on and is withheld from every message and from the call.
+  - claim: There is parking for more than two hundred cars on site.
+    source: business-overview.md U11
+  - claim: The recipient is Tarmar Christensen, Village Manager, reachable on Tarmar.Christensen@retireaustralia.com.au and 07 5619 3000, onsite full time weekdays 8.30am to 4.30pm.
+    source: profile (Form 3 Village Comparison Document field 1.4, effective 23 September 2024, checked 2026-07-17; currency corroborated by the RLC award announcement of March 2026 and the DCM Institute interview of April 2026)
+  - claim: The village has a village bus, 178 units and more than 200 residents, and she has personally introduced inter-village outings since 2023 with Jeff Burchell of the social committee.
+    source: profile (Form 3 VCD facility checklist "village bus or transport" yes, RetireAustralia site on regular trips including tourist destinations, her own DCM Institute interview, 178 units ref RV00013565). Shapes the angle and the two-branch ask, asserted nowhere in the message.
+  - claim: No wheelchair access or Companion Card position is stated.
+    source: campaign YAML header holds both disability segments until CHARC states the tent's wheelchair access and its Companion Card position, so no position exists to state
+quality_checklist: |
+  1. Structure. Root keys drawn from the section 6 set. Draft and review rounds all carry type and number.
+  The final round holds one email message and one phone message, so the email cardinality cap is met.
+  Addresses are real: Tarmar.Christensen@retireaustralia.com.au from the Form 3 VCD, and
+  partnerships@rivermill.au from the campaign sender block. No profile_hash written, per the harness note
+  and issue 63. No bcc written, since the campaign sender block supplies it (section 4.7). No sender
+  override block, since the campaign default sender applies.
+
+  2. Coverage. fact_provenance reaches every factual claim in the final email and the phone script,
+  including the profile facts that shape the angle without appearing in the message, and the one claim
+  that is an absence: no session time beyond the Thursday 1pm opening is named, because the showtimes file
+  does not list the rest. a_note carries the angle, both channels with their dates, warmth, language, the
+  deliberate non-use of the award and the interview, and the deferred access question.
+
+  3. Presupposition. Passed. The challenger's second table scored every phrase at 3 or above, and the one
+  phrase scoring 0 was settled by cutting its sentence rather than by introducing the thing behind it. No
+  sentence tells her something she already knows about herself: her village bus, her social committee and
+  her outings shape what is asked and are never recited back.
+
+  4. Manufactured connection. No claim of shared interest. The school-holiday hook rests on the plan
+  block's deciding_interest and the offer's own dates. The bus-outing branch rests on the Form 3 VCD
+  facility check, RetireAustralia's own description of the bus, and her own account of the outings she
+  introduced. The profile's note that she has no confirmed history of engaging outside operators is
+  respected: neither branch presumes one.
+
+  5. Concreteness. She can answer in one sentence, either a rough number and a couple of days, or a day in
+  the following week.
+
+  6. Band-level pattern. Failed on draft 2 and fixed in draft 3. All three approaches already written for
+  this campaign open with the same "I am Priyanka Das and I look after partnerships at Historic Rivermill,
+  a heritage venue on the Coomera River" sentence, and draft 2 made it four. The final opens on the venue
+  with the role in a supporting clause, and the subject line moves off the shared "Free circus tickets for
+  X" form. Recorded in draft 3's revision_note, which also records that the final therefore differs from
+  the text the challenger passed, and how.
+
+  7. Final round email cardinality. One email, one phone. Met.

@@ -1,0 +1,450 @@
+profile_hash: sha256:97b6bdf48f795217c7827da1a73d62cbff196c0dc5cdfdda2efe50b74d44d9e0
+# Contact:  Whaea Sissy, Group Organiser, Ngā Mokopuna Playgroup, Upper Coomera
+#           (mothers-group)
+# Channel:  Email first touch, phone follow-up the next morning if no reply
+# Language: en-au, with a te reo greeting and the word whānau
+# Angle:    Pass it on. Free tickets to hand to the group's whānau, with no
+#           excursion to invent for a group that has never run one.
+decisions:
+  channel: email
+  channel_detail: |
+    Email plus phone, no platform channel on the roster, so SPAR-A 4.2 gives
+    email first and a phone follow-up. The campaign's approach_sequencing sets
+    that call for the morning after the email, which is Thursday 24 September,
+    with the first performance that afternoon.
+
+    New subject rather than a reply on the March thread. SPAR-A 4.1.1 wants a
+    current thread on a compatible topic. The March message is nearly six months
+    old, was never answered, and invited her to visit the venue rather than to
+    take tickets. It is an unanswered outbound rather than a live conversation,
+    so there is nothing to continue; the prior approach is named in the body
+    instead.
+
+    The group's Facebook page carries 1,100 followers and is the obvious route
+    to its families, but it is a public page. The campaign keeps the offer off
+    public channels, so the message asks her to send it round her whānau and
+    says so in the same sentence.
+  language: en-au
+  angle: pass-it-on-no-excursion-to-invent
+angle_rationale: |
+  Warmth is prior contact, one way, unanswered. The dispatcher prefetch returns
+  one hit across all five mail accounts: an outbound message of 31 March 2026,
+  "Familiarisation visit: Historic Rivermill, Mount Nathan", from
+  partnerships@rivermill.au to nga.mokopuna.qld@gmail.com, filed in the admin
+  account's INBOX/Work Done and Partnerships folders. No inbound message from
+  that address exists anywhere. Both directions were searched on her address in
+  one query, so the absence is the result of a search designed for the inbound
+  message rather than an inference from a hit on something else. The campaign's
+  a_author appendix requires that fact in one plain line naming its subject.
+
+  The profile's bearing absence sets the angle, and it is stated twice: "No
+  references to farm outings, heritage venues, or nature excursions in available
+  posts", and "No evidence of organised outings or excursions. The group's focus
+  is explicitly cultural and linguistic, not experiential-activity based."
+
+  So the offer cannot be an excursion. Asking a group that has never organised
+  one to organise its first with two days' notice asks for the invention of a
+  format, not for a decision. What she demonstrably does hold is a group of 0-5
+  whānau and a way of reaching them, which is exactly the segment's
+  nothing-to-organise USP: she forwards, the families book themselves. That is
+  also the plan block's message_goal, a reply saying she will pass it on with
+  roughly how many families.
+
+  Her Friday session runs 9:30 to 11:30am "during school term", and this is the
+  school holidays, so whether the group gathers at all on Friday 25 September is
+  unknown. The message therefore never anchors the pass-on to a Friday meeting
+  and never assumes she will see anyone in person. It works either way. The
+  reasoning stays out of the text: telling her when her own playgroup meets
+  would narrate her world back to her (SPAR-A 4.5).
+
+  The profile's fourth relevance point, that Māori culture has deep connections
+  to land and nature and a farm setting could be framed as a nature-connection
+  experience, is deliberately unused. It is an inference the profile draws for
+  us, not something she has said, and the same profile records no statement by
+  her on nature, land or outings. Building the pitch on it would manufacture a
+  shared interest from silence. The cultural register appears only where it is
+  evidenced: she is addressed as Whaea, the greeting is Kia ora, and the
+  families are her whānau. One greeting and one noun, no further reach.
+
+  Carried in one sentence per the plan block's first_ask: the second week suits
+  a group visit, which is the honest home for a group that would rather do
+  something together than forward a link.
+
+  USPs are taken from the segment's own list. nothing-to-organise is the spine.
+  opening-week-seats supplies the seven shows and the free seat. free-by-code
+  appears only as the promise that a code and a link come back in the reply; the
+  code itself and any price stay out of the first message.
+  big-top-at-a-heritage-farm is one descriptive clause. make-a-day-of-it is
+  deliberately unused: it is not in this segment's list, it holds for daytime
+  sessions only, and no session time other than the Thursday 1pm opening is in
+  the showtimes file, so an invitation to come early would rest on times with no
+  source. group-visit-later is not in the segment's USP list but is written into
+  first_ask, so it appears in the sentence the plan block supplies.
+response_likelihood: 35
+a_note: |
+  Pass-it-on angle (free tickets for the playgroup's whānau, no excursion to
+  invent), email first touch with a Thursday-morning phone follow-up, warmth
+  prior-contact-unanswered (one outbound message of 31 March 2026 about a
+  familiarisation visit, no reply), en-au with a te reo greeting. Three things
+  worth carrying into R: the group has never run an outing, so a later group
+  visit is a new format for them rather than a bigger version of something they
+  do; the Friday session is term-time only, so nobody knows whether they gather
+  during the holidays; and the challenger's single fact-check finding was
+  rejected on evidence it could not see, recorded in the review round.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [nothing-to-organise, opening-week-seats, free-by-code, big-top-at-a-heritage-farm]
+    notes: |
+      First touch. Element order follows SPAR-A 4.5: introduce the sender, make
+      the ask, then give the reasons. The prior-contact line sits in the opening
+      paragraph as part of establishing who is writing.
+    messages:
+      - channel: email
+        to: nga.mokopuna.qld@gmail.com
+        subject: Free circus tickets for Ngā Mokopuna families, this Thursday to Sunday
+        body: |
+          Kia ora Whaea Sissy,
+
+          I am Priyanka Das, from Historic Rivermill at Mount Nathan, a heritage venue on the Coomera River with a cafe, horses and farm animals, about twenty minutes from Upper Coomera. I wrote to you back in March inviting you out for a familiarisation visit here and heard nothing back, so this may well be the first you have heard of us.
+
+          I have free tickets to WANTED – A Cirque Heist for the families at Ngā Mokopuna. CHARC Performance has raised a big top on our lawn for the school holidays, with seven shows running from tomorrow, Thursday 24 September, through to Sunday. The first one starts at 1pm.
+
+          Reply with a rough number of families and I will send you a code and a booking link to pass around the group. The tickets are for your whānau rather than for posting publicly.
+
+          There is nothing for you to organise. Each family books whichever show suits them and comes out on the day.
+
+          If the group would rather come together instead, next week suits that better. Tell me a day that works and I will come back to you.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+      - channel: phone
+        to: 0476 437 368
+        text: |
+          Follow-up call on the morning of Thursday 24 September, made only if
+          the email has drawn no reply. Ask for Whaea Sissy.
+        phone_note: |
+          If she says yes on the call, the code and the Eventbrite link still go
+          by email afterwards, never over the phone.
+        script:
+          - point: Who is calling
+            text: |
+              Kia ora, is that Whaea Sissy? My name is Priyanka, I am with
+              Historic Rivermill out at Mount Nathan. I sent you an email
+              yesterday and thought I would follow it up, since the timing is
+              tight.
+          - point: What the offer is
+            text: |
+              There is a circus company performing in a big top on our lawn for
+              the school holidays, WANTED – A Cirque Heist. I have free tickets
+              for the Ngā Mokopuna families. The shows run from today through to
+              Sunday.
+          - point: The ask
+            text: |
+              If you tell me roughly how many families might want to go, I will
+              email you a code and a booking link this morning for you to pass
+              around the group. They are for your whānau rather than for putting
+              on the page.
+          - point: If the group cannot manage this week
+            text: |
+              That is no trouble. If the group would rather come out together,
+              next week is easier for that. Give me a day that suits and I will
+              see what I can hold.
+          - point: If she asks what the venue is
+            text: |
+              We are on Beaudesert Nerang Road at Mount Nathan, about twenty
+              minutes from you. Heritage place on the Coomera River, cafe,
+              horses, alpacas and goats.
+          - point: Close
+            text: |
+              What is the best address to send it to, the gmail one? I will have
+              it with you shortly.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Reading this as Whaea Sissy: a cold email from an organisation I have no
+      memory of, claiming to have written to me back in March. That line doesn't
+      stop me, a March email could easily have gone to my spam folder or the
+      group's gmail didn't check it, but it does make me want to ask what that
+      earlier note actually said, since I can't place it.
+
+      What would stop me replying: nothing here does. There's no price, no code
+      up front, no pressure, and no ask that requires organising anything, I
+      forward a message to the families and they book themselves. That's
+      realistic between now (Wednesday) and Sunday, since Friday is our regular
+      gathering and I can pass it on there or on Facebook the same day I get it.
+
+      What I'd simply ask in my reply, not object to: how many tickets or what
+      number should I give you, whether the code works on any of the seven shows
+      or only specific ones, and, out of plain curiosity, what the March note was
+      about, since I don't recall it.
+
+      Whether what's asked of me is possible in the time given: yes. There's no
+      excursion to arrange, no forms, no bus, I just need to tell families about
+      free tickets to shows running through Sunday, which I can do this week.
+
+      REPLY_PCT: 45
+    fact_check:
+      - claim: I wrote to you back in March inviting you out for a familiarisation visit here and heard nothing back.
+        source: Dispatcher courier prefetch, admin mail account, folders INBOX/Work Done and Partnerships.
+        result: rejected
+        note: |
+          The challenger called this unsourced, on the ground that neither of the
+          a_author appendix's two conditions was met. Its own sentence names
+          both: a dated prior dealing recorded in the profile, or a prefetch
+          showing an earlier message that went unanswered. The second condition
+          is met. The prefetch supplied with the drafting brief returns, on
+          31 March 2026, "Familiarisation visit: Historic Rivermill, Mount
+          Nathan", from partnerships@rivermill.au to nga.mokopuna.qld@gmail.com,
+          message-id 0108019d4298c20f-e23061b9-908a-4a35-aec4-a59f34a1f907-
+          000000@ap-southeast-2.amazonses.com, in two folders of the admin
+          account.
+
+          The challenger could not see it. Under SPAR-A 4.6 the role-play step
+          receives only the profile, the draft and today's date, and the
+          fact-check step's authority is the campaign YAML, the USP registry and
+          the antifacts file. The prefetch is in none of those. The finding is an
+          absence claim drawn from a document set that structurally cannot hold
+          the thing it reports missing.
+
+          The profile's silence is not evidence either way, and for two separate
+          reasons. Engagement state is kept out of profiles by INVARIANTS.md I1,
+          so a profile would not record this even if it were known. And this
+          profile is dated 26 March, five days before the message was sent.
+
+          Deleting the line would also put the draft out of conformance with the
+          campaign, whose a_author appendix requires it where the prefetch finds
+          an unanswered earlier message. The line stays. Its wording changed for
+          two separate reasons recorded in revision_note and in the final round's
+          notes.
+      - claim: Historic Rivermill is a heritage venue on the Coomera River at Mount Nathan, with a cafe, horses and farm animals.
+        source: business-overview.md, U1, U2, U3 and the address block.
+        result: verified
+      - claim: The show is WANTED – A Cirque Heist, opening 1pm Thursday 24 September 2026.
+        source: 2026-09-23-stampede-arena-showtimes.md.
+        result: verified
+      - claim: Seven shows across the opening week, free to the organisation.
+        source: campaign YAML, usps.opening-week-seats.
+        result: verified
+      - claim: No code, price, discount, Eventbrite or Oztix link appears in the first message or in the phone script.
+        source: campaign YAML, prompt_appendices.a_author and a_challenger.
+        result: verified
+      - claim: Upper Coomera is about twenty minutes from the venue.
+        source: Profile, Relevance assessment, "approx. 15-20 min drive".
+        result: verified
+    antifact_check: |
+      Checked against business-antifacts.md. No stone buildings, and no building
+      of any age is claimed. No original or hundred-year-old mill structures. No
+      vineyard. No farming claim: the venue is described as a heritage venue on
+      the river with a cafe, horses and farm animals, which is the
+      what-it-offers wording the antifacts file asks for. The venue is placed at
+      Mount Nathan, never on Tamborine Mountain. Nothing states or implies that
+      seats are unsold, that the tent needs filling, or that she would be doing
+      us a favour. No feed-bag or animal-food offer appears, and the alpacas and
+      goats named in the phone script are named as animals on the place, with
+      nothing said about feeding them.
+    revision_note: |
+      The persona raised four things and said none of them would stop her
+      replying. Sorted before touching the draft, per SPAR-A 4.6.
+
+      1. What the March note was about. Absorbed by reframing. The line already
+      named the subject, but "familiarisation visit" is our word and she read
+      straight past it. Recast in plain terms as an invitation to come out and
+      see the place. The sentence split into two along the way, which reads
+      better. The phone script gained a point covering the same question, since
+      it is now known to be coming; it does not raise March first.
+
+      2. How many tickets, what number should she give. Left for the reply. The
+      draft already asks for a rough number of families, which is the plan
+      block's message_goal. What she is reaching for is whether a cap exists, and
+      that belongs with the code, the link and the per-show tally at step 2 of
+      the conversion funnel.
+
+      3. Whether the code works on all seven shows. Left for the reply. "Each
+      family books whichever show suits them" already carries the answer for her
+      purposes, and the code's scope travels with the code.
+
+      4. No price, no pressure, nothing to organise. Positive, kept unchanged.
+
+      The single fact-check finding was rejected. Reasoning in the fact_check
+      entry for that claim.
+    notes: |
+      Challenger: sonnet, context-isolated, one pass. The profile's yield of 2
+      puts this contact in the under-3 band, which the method budgets at one
+      pass, so the round closes here.
+  - type: final
+    chosen_usps: [nothing-to-organise, opening-week-seats, free-by-code, big-top-at-a-heritage-farm]
+    notes: |
+      One change was made at assembly rather than in the spar round, under the
+      section 7 manufactured-connection and traceability checks. Draft 2 said "I
+      wrote to you back in March". The prefetch supports the message, the date
+      and the subject, but its From line carries the office address with no
+      display name, so who held the pen is not in evidence. The final says "We
+      wrote", which is what the record shows. The phone script's March point
+      moved the same way.
+    messages:
+      - channel: email
+        to: nga.mokopuna.qld@gmail.com
+        subject: Free circus tickets for Ngā Mokopuna families, this Thursday to Sunday
+        body: |
+          Kia ora Whaea Sissy,
+
+          I am Priyanka Das, from Historic Rivermill at Mount Nathan, a heritage venue on the Coomera River with a cafe, horses and farm animals, about twenty minutes from Upper Coomera. We wrote to you back in March, inviting you to come out and see the place for yourself. We heard nothing back, so this may well be the first you have heard of us.
+
+          I have free tickets to WANTED – A Cirque Heist for the families at Ngā Mokopuna. CHARC Performance has raised a big top on our lawn for the school holidays, with seven shows running from tomorrow, Thursday 24 September, through to Sunday. The first one starts at 1pm.
+
+          Reply with a rough number of families and I will send you a code and a booking link to pass around the group. The tickets are for your whānau rather than for posting publicly.
+
+          There is nothing for you to organise. Each family books whichever show suits them and comes out on the day.
+
+          If the group would rather come together instead, next week suits that better. Tell me a day that works and I will come back to you.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: 0476 437 368
+        text: |
+          Follow-up call on the morning of Thursday 24 September, made only if
+          the email has drawn no reply. Ask for Whaea Sissy.
+        phone_note: |
+          If she says yes on the call, the code and the Eventbrite link still go
+          by email afterwards, never over the phone.
+
+          The number is a mobile listed for the group rather than a staffed
+          office line, so expect voicemail or a call taken with children about.
+          Keep it short.
+
+          If she asks about the March email: it went to the group's gmail on
+          31 March this year, inviting her out to see the place. Do not raise it
+          first.
+        script:
+          - point: Who is calling
+            text: |
+              Kia ora, is that Whaea Sissy? My name is Priyanka, I am with
+              Historic Rivermill out at Mount Nathan. I sent you an email
+              yesterday and thought I would follow it up, since the timing is
+              tight.
+          - point: What the offer is
+            text: |
+              There is a circus company performing in a big top on our lawn for
+              the school holidays, WANTED – A Cirque Heist. I have free tickets
+              for the Ngā Mokopuna families. The shows run from today through to
+              Sunday.
+          - point: The ask
+            text: |
+              If you tell me roughly how many families might want to go, I will
+              email you a code and a booking link this morning for you to pass
+              around the group. They are for your whānau rather than for putting
+              on the page.
+          - point: If the group cannot manage this week
+            text: |
+              That is no trouble. If the group would rather come out together,
+              next week is easier for that. Give me a day that suits and I will
+              see what I can hold.
+          - point: If she asks what the venue is
+            text: |
+              We are on Beaudesert Nerang Road at Mount Nathan, about twenty
+              minutes from you. Heritage place on the Coomera River, cafe,
+              horses, alpacas and goats.
+          - point: If she asks about the March email
+            text: |
+              We invited you out to see the place, back at the end of March. It
+              may well have gone to spam. No matter, this one is the more useful
+              of the two.
+          - point: Close
+            text: |
+              What is the best address to send it to, the gmail one? I will have
+              it with you shortly.
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: The sender is Priyanka Das, Partnerships, Historic Rivermill, at partnerships@rivermill.au.
+    source: campaign YAML, sender block.
+  - claim: Historic Rivermill is a heritage venue on the Coomera River at Mount Nathan, with a cafe, horses and farm animals.
+    source: business-overview.md, U1, U2, U3 and "What the venue offers".
+  - claim: Alpacas and goats are among the animals on the property.
+    source: business-overview.md, U3.
+  - claim: The venue address is 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211, on Beaudesert Nerang Road.
+    source: campaign YAML, venue block; business-overview.md, "Facts for outreach drafting".
+  - claim: The venue is about twenty minutes from Upper Coomera.
+    source: Profile, Relevance assessment, "approx. 15-20 min drive".
+  - claim: One earlier approach to this contact, 31 March 2026, inviting her to visit the venue, unanswered.
+    source: 'Dispatcher courier prefetch, admin mail account, folders INBOX/Work Done and Partnerships, message of 2026-03-31 to nga.mokopuna.qld@gmail.com, subject "Familiarisation visit: Historic Rivermill, Mount Nathan"; no inbound message from that address in any of the five accounts searched.'
+  - claim: CHARC Performance has a big top on the venue's lawn for the school holidays.
+    source: campaign YAML header and usps.big-top-at-a-heritage-farm.
+  - claim: The family show is WANTED – A Cirque Heist.
+    source: 2026-09-23-stampede-arena-showtimes.md.
+  - claim: Seven shows run from Thursday 24 September to Sunday 27 September 2026.
+    source: campaign YAML, usps.opening-week-seats.
+  - claim: The first performance is at 1pm on Thursday 24 September 2026.
+    source: 2026-09-23-stampede-arena-showtimes.md, "The season opens Thursday 24 September at 1pm".
+  - claim: The tickets are free to the organisation.
+    source: campaign YAML header, Director's ruling of 22 September 2026; usps.opening-week-seats.
+  - claim: The code and the booking link are sent in the reply, not in the first message.
+    source: campaign YAML, usps.free-by-code and prompt_appendices.a_author.
+  - claim: The tickets are for the organisation's own families, and are not posted publicly.
+    source: campaign YAML header and prompt_appendices.a_author.
+  - claim: Families book individually, so the organiser has nothing to arrange.
+    source: campaign YAML, usps.nothing-to-organise, whose rests_on admits playgroups to this framing.
+  - claim: A group visit can be arranged for the second week instead, subject to seating.
+    source: campaign YAML, usps.group-visit-later and the segment's first_ask.
+  - claim: The contact's email is nga.mokopuna.qld@gmail.com and her phone is 0476 437 368.
+    source: Roster row whaea-sissy-nga-mokopuna-playgroup-coomera; profile, Current role.
+  - claim: The group is addressed as Ngā Mokopuna and the organiser as Whaea.
+    source: Profile, Current role and Group description, sourced from the group's Facebook page.
+quality_checklist: |
+  1. Structure. Root keys drawn from the canonical set. Draft and review rounds
+  carry numbers; the final round omits one, as the method's skeleton does. The
+  final round holds one email message and one phone message, inside the
+  one-email cap. The to-address is the contact's real roster address. No bcc is
+  written: the campaign sender block supplies it. No profile_hash: the harness
+  prepends it.
+
+  2. Coverage. fact_provenance carries an entry for every factual claim in the
+  final email and the phone script, including the two that appear only in the
+  script, the alpacas and goats and the road name. chosen_usps is present on the
+  draft and final rounds.
+
+  3. Presupposition. The message tells her nothing about her own playgroup. The
+  profile's findings on its Friday term-time session, its cultural focus and its
+  1,100-follower page shape what is asked and what is avoided rather than what
+  is recited. Neither the meeting day nor the follower count appears in the text.
+
+  4. Manufactured connection. The profile is explicit twice that the group runs
+  no outings and that its focus is cultural and linguistic, so nothing claims an
+  interest in farms, heritage or nature. The profile's own speculation that a
+  farm setting could be framed as a nature-connection experience is not used: it
+  is an inference about her rather than a statement by her. The cultural register
+  is held to what is evidenced, the Whaea honorific and the te reo posts on her
+  page, which supports a greeting and the word whānau and nothing further.
+
+  This check is also what changed the prior-contact line at assembly. Draft 2
+  said "I wrote to you back in March". The prefetch evidences the message, its
+  date and its subject, but its From line carries partnerships@rivermill.au with
+  no display name, so the claim that Priyanka personally wrote it rests on
+  nothing. "We wrote" is what the record supports. Recorded in the final round's
+  notes.
+
+  5. Concreteness. The ask is answerable in one sentence: a rough number of
+  families, or a day next week.
+
+  6. Band-level pattern. Read against the approach files already in this campaign
+  folder. The mothers-group and community-organisation openers share a structure,
+  an introduction of the venue followed by the unanswered prior approach, because
+  the campaign appendix mandates the second element and SPAR-A 4.5 orders the
+  first. They differ in what follows: this one turns on there being no outing to
+  invent, the Southport Day VIEW one on grandchildren and a meeting cycle that
+  falls outside the season. No two subject lines match.
+
+  7. Final email cardinality. One email, one phone script.

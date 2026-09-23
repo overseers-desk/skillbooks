@@ -1,0 +1,373 @@
+profile_hash: sha256:eefea9e0c2ab22e944d8eb8e4d66fbd2b189091e4a9439d83129b8ded8d83a19
+decisions:
+  channel: email
+  channel_detail: |
+    Roster carries email and phone, no LinkedIn, so SPAR-A §4.2's "email + phone,
+    no connection channel" rule applies: email first, phone on no reply. The wait
+    interval comes from the segment's own approach_sequencing step 3, "phone the
+    next morning where there is no reply", not §4.2's generic three days. With the
+    first show at 1pm on Thursday 24 September, three days runs past the whole
+    opening week. New subject rather than a reply on the April thread: §4.1.1
+    wants a current thread, and a single unanswered outbound from five months ago
+    on a different offer is not one. The sub-branch's listed hours are Thursday
+    evenings 6pm, but the roster carries Jacqueline's mobile, so the call goes to
+    her directly in the morning.
+  language: en-au
+  angle: circulate-to-members-nothing-to-organise
+angle_rationale: |
+  Warmth is "prior contact", not cold and not a relationship. The dispatcher
+  prefetch searched both directions on her address
+  (from:secretary@canungra.rslqld.net.au OR to:...) and returned one outbound:
+  9 April 2026, "Heritage morning out for Canungra RSL members", from Lia
+  Movsisyan at partnerships@rivermill.au, filed in the admin account's
+  Partnerships folder. Nothing inbound. So we wrote once and heard nothing.
+  SPAR-A §4.1 calls for referencing the touchpoint without overstating it, and
+  the campaign's a_author appendix makes it mandatory: one plain line naming
+  what the earlier note was about.
+
+  The profile gives two load-bearing facts and one absence. Facts: the
+  sub-branch runs an active social programme on volunteer labour (ANZAC Day
+  ceremonies, the gunfire breakfast with Canungra Men's Shed, community garage
+  sales), and Jacqueline personally answers public enquiries as Secretary.
+  Absence, recorded explicitly in the profile: "No public statements about
+  heritage tourism or excursions."
+
+  That pair selects the angle. The message asks the sub-branch to circulate
+  something, not to run something. A volunteer secretary approached with two
+  days' notice cannot assemble an excursion. We have already put the excursion
+  ask to this contact in April and heard nothing, which is evidence in the same
+  direction. What she can do inside the week is forward a code to a membership
+  list she already writes to.
+
+  The heritage and proximity material in the profile (Scenic Rim identity,
+  members comfortable in heritage rural settings, Rivermill sitting between the
+  coast and Canungra) supports the offer rather than carrying it, so it sits in
+  the opening self-introduction and not in the ask.
+
+  Element order follows §4.5's a-b-c default: who I am and the April note, then
+  the ask, then the reasons to say yes. The segment's first_ask is reproduced in
+  substance, including the group-visit-next-week fallback, which gives a
+  secretary who cannot move this week a second way to say yes.
+
+  Subject line: the recipient-specific element is "Canungra RSL members"; the
+  time element is Thursday, which is what makes the message urgent. No
+  name-only fallback needed.
+response_likelihood: 65
+a_note: |
+  Circulate-to-members angle (forward a code to the membership list, no outing to
+  run), chosen against the profile's recorded absence of any excursion interest
+  and the unanswered April excursion ask; email to secretary@ with a Thursday-morning
+  phone fallback on her mobile; warmth prior-contact (one outbound 9 Apr 2026, no
+  reply); en-AU. Challenger scored REPLY_PCT 62 and found no factual error; its one
+  REVISE ground rested on a misread of the prefetch query, but its in-character note
+  that "we heard nothing back" reads as a nudge was valid and fixed by reframing.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [opening-week-seats, nothing-to-organise, big-top-at-a-heritage-farm]
+    notes: |
+      free-by-code is present as the mechanics of the ask ("reply and I will send a
+      code and a booking link") rather than as a selling line. The segment's framing
+      for it is the secretary passing members something free, which is what the ask
+      sentence does. nothing-to-organise's registry exclusion covers childcare and
+      OSHC services whose family contact lists were given for the care of those
+      children; an RSL sub-branch circulating to its own financial members is the
+      case the USP was written for.
+    messages:
+      - channel: email
+        to: secretary@canungra.rslqld.net.au
+        subject: Free circus tickets for Canungra RSL members, shows start Thursday
+        body: |
+          Dear Jacqueline,
+
+          My name is Priyanka Das and I look after partnerships at Historic Rivermill, a heritage venue on the Coomera River at Mount Nathan, along the Beaudesert Nerang Road from Canungra. We have a cafe, horses and farm animals, and the property is open to visitors. My colleague Lia Movsisyan wrote to this address in April about a morning out here for your members, and we heard nothing back.
+
+          This one is a much smaller thing to say yes to. CHARC Performance has a big top up on our lawn for the school holidays, and we have free tickets to their family show, WANTED – A Cirque Heist, set aside for local organisations. They are yours for the sub-branch's members and their families if you want them. Seven shows run from tomorrow, Thursday 24 September, through Sunday, starting with the one o'clock on Thursday. Reply with roughly how many you could use and I will send you a code and a booking link to pass around. They are for your members and their families rather than for posting publicly.
+
+          There is nothing for you to run. No bus, no roll call, no forms: each family books whichever show suits them. If the sub-branch would rather come together as a group, the following week suits that better, so tell me a day and I will come back to you.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+          950 Beaudesert Nerang Road, Mount Nathan QLD 4211
+        director_note: |
+          Send Wednesday 23 September 2026. No code, no price and no link in this
+          message; both go in the reply per the segment's conversion funnel step 2.
+      - channel: phone
+        to: "0407 829 293"
+        text: |
+          Thursday 24 September 2026, morning. Only if the email gets no reply.
+        script:
+          - point: Opening
+            text: |
+              Good morning, is that Jacqueline? My name is Priyanka Das, I am with Historic Rivermill at Mount Nathan, along the Beaudesert Nerang Road from you. I sent you an email yesterday and I wanted to follow it up because it is time sensitive. Have you got two minutes?
+          - point: If it is a bad time
+            text: |
+              No trouble. It will take two minutes whenever suits, or I can put it in writing again. What is better?
+          - point: The ask
+            text: |
+              There is a circus in a big top on our lawn for the school holidays, a family show called WANTED – A Cirque Heist. We have free tickets set aside for local organisations, and I would like the sub-branch to have some for your members and their families. Seven shows between this afternoon and Sunday, the first at one o'clock today. If you tell me roughly how many you could pass on, I will email you a code and a booking link this morning and you can send it round to your members.
+          - point: If she says there is no time to organise anything
+            text: |
+              Nothing to organise, that is the point of it. You forward the code and each family books the show that suits them. It never has to become an outing.
+          - point: If she asks why they are free
+            text: |
+              They are set aside for organisations in the district. Nothing to sign, and nothing owed at your end.
+          - point: If she would rather bring a group
+            text: |
+              Then next week suits that far better than this one. Tell me a day that works for the sub-branch and I will come back to you on what we can hold.
+          - point: If she wants it to go through the President or another address
+            text: |
+              Of course. What is the best address for David, or whoever should have it? I will send it there this morning and copy you.
+          - point: If she declines
+            text: |
+              Understood, thank you for telling me straight. If it would be useful to your members another time, I am on partnerships@rivermill.au.
+          - point: Voicemail version
+            text: |
+              Good morning Jacqueline, Priyanka Das calling from Historic Rivermill at Mount Nathan. I emailed you yesterday about free tickets for your members to the circus that is in the big top on our lawn this week. The shows run from this afternoon through Sunday. If you reply to that email with rough numbers I will send you a code and a booking link to pass around. My number is 07 3703 1307 and the email is partnerships@rivermill.au. Thank you.
+        phone_note: |
+          If the mobile does not answer through the morning, the sub-branch office is
+          listed as open Thursday evenings from 6pm on the same number.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      It's a nice thing to get an email that asks nothing of me. No forms, no bus,
+      no roll call, genuinely one of the easier yeses that lands in this inbox. The
+      timing is tight (shows start tomorrow) but it runs through Sunday, so there's
+      actually a few days to pass word around at Thursday's meeting or by phone. I'd
+      want to know roughly how the code works and whether there's a cut-off for
+      numbers, but that's a question, not a hesitation.
+
+      The line about April bothers me a little, not because it isn't plausible (we
+      get a lot of these) but because I genuinely don't remember it, and I can't tell
+      from my own end whether I actually let it drop or whether it went to the wrong
+      inbox. It reads slightly like a nudge ("we heard nothing back"), and I'd want
+      to check my own sent folder before I take that at face value.
+
+      What would stop me replying: nothing in the message itself, it's low-cost and
+      low-risk. What I'd simply ask in my reply: roughly how many tickets I can ask
+      for, whether families need to say which sub-branch they're from when booking,
+      and whether Thursday evening's meeting is soon enough to pass it around or
+      whether I should just email members directly today.
+
+      REPLY_PCT: 62
+
+      Presupposition table scored every phrase 4 or 5 except "we heard nothing back",
+      scored 1.
+    fact_check:
+      - claim: Historic Rivermill is a heritage venue on the Coomera River at Mount Nathan, with a cafe, horses and farm animals.
+        source: business-overview.md U1 and U4; business-antifacts.md prescribed framing.
+        result: verified
+      - claim: 950 Beaudesert Nerang Road, Mount Nathan QLD 4211.
+        source: campaign YAML venue.address; business-overview.md.
+        result: verified
+      - claim: Seven shows from Thursday 24 September through Sunday 27 September, first at 1pm Thursday.
+        source: 2026-09-23-stampede-arena-showtimes.md ("The season opens Thursday 24 September at 1pm"); campaign YAML header.
+        result: verified
+        note: |
+          Challenger cross-checked against historicrivermill.au/data/circus.yaml, the
+          showtimes file's named home for the start times: 24 Sep 13:00, 25 Sep 16:00
+          and 19:00, 26 Sep 16:00 and 19:00, 27 Sep 11:00 and 14:00. Seven sessions,
+          first at 13:00 Thursday.
+      - claim: No code, price, discount or ticket link appears in the first message.
+        source: campaign YAML prompt_appendices.a_author; usps.opening-week-seats.rests_on.
+        result: verified
+      - claim: Tickets are for the organisation's own members and families, not for posting publicly.
+        source: campaign YAML header; segment first_ask.
+        result: verified
+      - claim: A group visit can be arranged for the following week instead.
+        source: campaign YAML usps.group-visit-later.
+        result: verified
+      - claim: Venue phone 07 3703 1307.
+        source: sot/S2-fees-and-service-hours.md §1.
+        result: verified
+      - claim: No Oztix link, no feed-bag or animal-food offer, nothing implying unsold seats or that the offer serves the sender.
+        source: campaign YAML prompt_appendices.a_author and a_challenger.
+        result: verified
+    antifact_check: |
+      Checked against every item in business-antifacts.md. No stone buildings, no
+      100-year-old or original mill structures, no heritage buildings claim, no
+      vineyard, and the venue is placed at Mount Nathan on the Beaudesert Nerang
+      Road rather than on Tamborine Mountain. The farming question is left alone:
+      the draft uses the file's own prescribed description, a heritage venue with a
+      cafe, horses and farm animals. No antifact triggered.
+    revision_note: |
+      The challenger's REVISE ground does not survive checking. It scored "we heard
+      nothing back" a 1 on the basis that the search ran in one direction only,
+      covering mail sent to her address. The prefetch query is
+      "from:secretary@canungra.rslqld.net.au OR to:secretary@canungra.rslqld.net.au".
+      Both directions were searched. A reply from her would have matched the from:
+      arm, and the account that would hold it (admin-rivermill-au, which carries the
+      April outbound) answered from a local index dated 23 September 2026. The claim
+      is supported, so the cut-the-sentence remedy does not apply on the stated
+      ground. The campaign's a_author appendix also requires the line.
+
+      The in-character half of the same finding was valid and stands on its own: the
+      line reads as a nudge, and she cannot settle it from her end without going
+      through her own sent folder. That is a tone fault in a message whose whole
+      point is to ask nothing of her. Fixed by reframing, not by cutting.
+
+      Sorting of the persona's raised points:
+
+      (1) Answer in this email, by reframing a sentence already there: the April
+      line. Recast to state our own record rather than her omission, to allow that
+      the note may have gone astray, and to release her from answering it. Three
+      plain sentences replace the single clause that pointed at her.
+
+      (2) Answer in this email, by reframing: "roughly how many tickets can I ask
+      for". The persona called it a question rather than a hesitation, but the
+      segment's message_goal is a reply carrying a number, so a secretary unsure of
+      the ceiling may reply without one. The existing ask sentence absorbs it with a
+      clause signalling the ceiling is not tight. No figure is named, since the
+      per-show allocation is the sender's to hold.
+
+      (3) Leave for the reply: whether families must name the sub-branch when
+      booking. That is code mechanics, and the code goes in the reply, where she is
+      already paying attention.
+
+      (4) Leave for the reply: the cut-off for numbers. The conversion funnel puts
+      the Sunday cut-off in the same reply as the code and the link.
+
+      (5) No change needed: Thursday meeting versus emailing members today. The
+      persona resolved it herself from the draft's "through Sunday".
+
+      Phone script unchanged. The challenger found no fault in it and no factual
+      error, and it carries no reference to April, which is right for a call that
+      has to make its point in two minutes.
+  - type: final
+    number: 2
+    chosen_usps: [opening-week-seats, nothing-to-organise, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: secretary@canungra.rslqld.net.au
+        subject: Free circus tickets for Canungra RSL members, shows start Thursday
+        body: |
+          Dear Jacqueline,
+
+          My name is Priyanka Das and I look after partnerships at Historic Rivermill, a heritage venue on the Coomera River at Mount Nathan, along the Beaudesert Nerang Road from Canungra. We have a cafe, horses and farm animals, and the property is open to visitors. My colleague Lia Movsisyan wrote to this address in April about a morning out here for your members. We have no reply to it on our side. That may just be where it landed, and it needs no answer now.
+
+          This one is a much smaller thing to say yes to. CHARC Performance has a big top up on our lawn for the school holidays, and we have free tickets to their family show, WANTED – A Cirque Heist, set aside for local organisations. They are yours for the sub-branch's members and their families if you want them. Seven shows run from tomorrow, Thursday 24 September, through Sunday, starting with the one o'clock on Thursday. Reply with a rough number and I will send you a code and a booking link to pass around. Do not be shy with the number. They are for your members and their families rather than for posting publicly.
+
+          There is nothing for you to run. No bus, no roll call, no forms: each family books whichever show suits them. If the sub-branch would rather come together as a group, the following week suits that better, so tell me a day and I will come back to you.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+          950 Beaudesert Nerang Road, Mount Nathan QLD 4211
+        director_note: |
+          Send Wednesday 23 September 2026. The reply carries the code
+          RIVERMILLFRIENDS, the Eventbrite link and the Sunday cut-off, and her
+          number goes on the per-show tally.
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "0407 829 293"
+        text: |
+          Thursday 24 September 2026, morning. Only if the email gets no reply, per
+          the segment's approach_sequencing step 3.
+        script:
+          - point: Opening
+            text: |
+              Good morning, is that Jacqueline? My name is Priyanka Das, I am with Historic Rivermill at Mount Nathan, along the Beaudesert Nerang Road from you. I sent you an email yesterday and I wanted to follow it up because it is time sensitive. Have you got two minutes?
+          - point: If it is a bad time
+            text: |
+              No trouble. It will take two minutes whenever suits, or I can put it in writing again. What is better?
+          - point: The ask
+            text: |
+              There is a circus in a big top on our lawn for the school holidays, a family show called WANTED – A Cirque Heist. We have free tickets set aside for local organisations, and I would like the sub-branch to have some for your members and their families. Seven shows between this afternoon and Sunday, the first at one o'clock today. If you tell me roughly how many you could pass on, I will email you a code and a booking link this morning and you can send it round to your members.
+          - point: If she says there is no time to organise anything
+            text: |
+              Nothing to organise, that is the point of it. You forward the code and each family books the show that suits them. It never has to become an outing.
+          - point: If she asks why they are free
+            text: |
+              They are set aside for organisations in the district. Nothing to sign, and nothing owed at your end.
+          - point: If she would rather bring a group
+            text: |
+              Then next week suits that far better than this one. Tell me a day that works for the sub-branch and I will come back to you on what we can hold.
+          - point: If she wants it to go through the President or another address
+            text: |
+              Of course. What is the best address for David, or whoever should have it? I will send it there this morning and copy you.
+          - point: If she declines
+            text: |
+              Understood, thank you for telling me straight. If it would be useful to your members another time, I am on partnerships@rivermill.au.
+          - point: Voicemail version
+            text: |
+              Good morning Jacqueline, Priyanka Das calling from Historic Rivermill at Mount Nathan. I emailed you yesterday about free tickets for your members to the circus that is in the big top on our lawn this week. The shows run from this afternoon through Sunday. If you reply to that email with rough numbers I will send you a code and a booking link to pass around. My number is 07 3703 1307 and the email is partnerships@rivermill.au. Thank you.
+        phone_note: |
+          If the mobile does not answer through the morning, the sub-branch office is
+          listed as open Thursday evenings from 6pm on the same number. The President
+          is David Day, per the profile, if the Secretary route stalls.
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: Sender is Priyanka Das, Partnerships, Historic Rivermill, partnerships@rivermill.au.
+    source: campaign YAML sender block (2026-09-cirque-heist-season.yaml).
+  - claim: Historic Rivermill is a heritage venue on the Coomera River at Mount Nathan.
+    source: business-overview.md U1 (riverside dining on the Coomera River) and U4 (heritage character); address at 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211.
+  - claim: Described as having a cafe, horses and farm animals.
+    source: business-overview.md (horse riding, animal experiences, on-site cafe); business-antifacts.md, which prescribes this framing in place of any buildings or farming claim.
+  - claim: The property is open to visitors.
+    source: sot/S2-fees-and-service-hours.md §2.1 (venue open to visitors, weekdays 9:00 AM to 3:00 PM, weekends 8:30 AM to 4:00 PM).
+  - claim: The venue sits along the Beaudesert Nerang Road from Canungra.
+    source: address 950 Beaudesert Nerang Rd, Mount Nathan (business-overview.md; campaign YAML venue.address); profile geographic note that Rivermill sits between the Gold Coast and Canungra.
+  - claim: Lia Movsisyan wrote to secretary@canungra.rslqld.net.au in April about a morning out for the sub-branch's members, and we hold no reply.
+    source: dispatcher courier prefetch, 9 April 2026, subject "Heritage morning out for Canungra RSL members", from partnerships@rivermill.au, admin-rivermill-au Partnerships folder; both search directions returned nothing inbound.
+  - claim: CHARC Performance has a big top on the venue's lawn for the school holidays.
+    source: campaign YAML header (2026-09-cirque-heist-season.yaml).
+  - claim: The show is a family show titled WANTED – A Cirque Heist.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md; campaign YAML header.
+  - claim: Free tickets are set aside for local organisations, not advertised publicly.
+    source: campaign YAML header; usps.free-by-code and usps.opening-week-seats.
+  - claim: Seven shows run from Thursday 24 September through Sunday 27 September.
+    source: campaign YAML header and usps.opening-week-seats ("any of the seven shows from Thursday 24 to Sunday 27 September").
+  - claim: The first show is at 1pm on Thursday 24 September.
+    source: 2026-09-23-stampede-arena-showtimes.md ("The season opens Thursday 24 September at 1pm").
+  - claim: A code and a booking link follow in the reply, not in the first message.
+    source: campaign YAML prompt_appendices.a_author; usps.opening-week-seats.rests_on; segment conversion_funnel step 2.
+  - claim: The tickets are for the organisation's own members and families and are not for posting publicly.
+    source: campaign YAML header; segment first_ask.
+  - claim: Nothing needs organising, and each family books the show that suits it.
+    source: campaign YAML usps.nothing-to-organise.
+  - claim: A group visit can be arranged for the following week instead, on a day the organisation names.
+    source: campaign YAML usps.group-visit-later; segment first_ask.
+  - claim: Venue address 950 Beaudesert Nerang Road, Mount Nathan QLD 4211.
+    source: campaign YAML venue.address; business-overview.md; sot/S2-fees-and-service-hours.md §1.
+  - claim: Venue phone 07 3703 1307 (voicemail script).
+    source: sot/S2-fees-and-service-hours.md §1.
+  - claim: Jacqueline Hill's mobile is 0407 829 293, and the sub-branch is open Thursday evenings from 6pm.
+    source: roster row and profile (segments/community-organisation/jacqueline-hill-canungra-rsl-sub-branch.md).
+  - claim: David Day is the President of Canungra RSL Sub-Branch (phone script fallback).
+    source: profile, "Who they know" table and the ANZAC Day 2024 Facebook quotation.
+quality_checklist: |
+  1. YAML structure. Root keys drawn from §6's canonical set only (decisions,
+     angle_rationale, response_likelihood, a_note, rounds, fact_provenance,
+     quality_checklist). No profile_hash, which the harness prepends (issue #63).
+     Draft and review rounds carry number. Addresses are real:
+     secretary@canungra.rslqld.net.au from the roster and confirmed in the profile
+     as the RSL Queensland listing, in preference to the Facebook page's
+     canungrarslsubbranch@outlook.com.
+  2. Coverage. fact_provenance reaches every factual claim in the final email and
+     the phone script, including the April prefetch line and the two contact
+     numbers. chosen_usps present on the draft and final rounds.
+  3. Presupposition test. The challenger's own sentence table scored every
+     presupposing phrase 4 or 5 except "we heard nothing back" at 1, and that
+     clause is gone from the final draft. No sentence recites her role, her
+     organisation's activities or her area back to her.
+  4. Manufactured-connection test. The message claims no shared interest. The
+     profile records no public statement on heritage tourism or excursions, and
+     the final draft asserts none; the angle is built on what she demonstrably
+     does, which is write to her own members.
+  5. Concreteness. The ask is answerable in one sentence: a rough number, or a day
+     next week.
+  6. Band-level pattern check. The opener is a named colleague's unanswered April
+     note, which no other message in this band can carry, since the prefetch found
+     prior correspondence for this contact alone. The second paragraph opens on the
+     comparison to that note rather than on the offer, so the message does not
+     share the band's standard "we have free tickets" first line.
+  7. Final round email cardinality. One email and one phone message in the final
+     round. Within the cap, which counts emails only.

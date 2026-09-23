@@ -1,0 +1,288 @@
+profile_hash: sha256:118eca64c20053fa7235ad4e82bf8bdcfc1604c421f136d2d1fc9fbff9e3626a
+# Contact: Leilani Summers, Program Coordinator, Kalwun Jarjums Playgroup (Burleigh Heads)
+# Channel: email (Kalwun Burleigh branch inbox), phone follow-up
+# Language: en-au
+# Angle: hand-it-to-the-families
+decisions:
+  channel: email
+  channel_detail: |
+    Email first, to the Kalwun Burleigh Child, Family & Support Services inbox
+    marked for Leilani; no personal address or LinkedIn exists in the profile.
+    Phone 07 5520 8600 on Thursday morning where there is no reply, per the
+    segment's approach_sequencing, which shortens the usual three-day wait
+    because the season opens that day.
+  language: en-au
+  angle: hand-it-to-the-families
+angle_rationale: |
+  Warmth is cold. The dispatcher prefetch ran two passes across all five
+  accounts, an address search on the Kalwun Burleigh branch inbox and a subject
+  search on the person and organisation names, and returned no results in any
+  mailbox. The approach file carried no prior rounds. There is no earlier note
+  to acknowledge and no live thread to reply on, so the message opens a fresh
+  subject (SPAR-A 4.1.1, false branch).
+
+  The profile records no public statements at all. No excursion history, no
+  nature-play position, no post naming her, and a checked absence of every
+  campaign-relevant theme. SPAR-A 4.4 forbids building relevance out of that
+  silence, so the angle rests only on institutional and factual ground:
+  Burleigh Heads 4220, about half an hour from Mount Nathan; a coordinated
+  recurring group with one decision-maker; employed educators, so real
+  operational capacity; and a free, ACCO-delivered service with no
+  fee-collecting history, which the profile says needs a complimentary frame
+  rather than a commercial outing.
+
+  The angle is therefore to hand the tickets to the families rather than to
+  propose an excursion. It is the one angle that survives the two facts working
+  against a reply. Her sessions run in school term and this is the holidays, so
+  she may have no gathering at which to announce anything. The show opens
+  tomorrow, which is far inside the notice an ACCO needs to authorise an
+  outing. Both objections dissolve if she is forwarding tickets. The plan
+  block's closing sentence covers the case where she would rather bring a
+  group, moving that to the second week.
+
+  The profile's cultural-safety note governs the register. The venue has no
+  published First Nations programming, so the message is an invitation from one
+  local organisation to another and makes no cultural claim. Whose country the
+  venue sits on is left out: from a stranger with nothing behind it, that reads
+  as a claim rather than a courtesy. The programme is named once, as "Jarjums
+  families", because that is its published name and it is the recipient-specific
+  element the subject line needs.
+response_likelihood: 25
+a_note: |
+  Angle hand-it-to-the-families (forward free opening-week tickets to Jarjums
+  families, nothing to organise, group visit offered for week two as the
+  fallback); channel email to the Kalwun Burleigh branch inbox with a phone
+  follow-up on 07 5520 8600 the next morning; warmth cold, prefetch found no
+  prior correspondence in any account; language en-au. Drafting note: the
+  profile holds no public statement by this contact at all, so nothing in the
+  message claims a shared interest, and the playgroup's meeting day is left out
+  because the roster says Mondays and Kalwun's own site says Tuesdays. The
+  phone script asks that question instead.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [free-by-code, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm, group-visit-later]
+    notes: |
+      First message names no code, no price and no ticket link, per the
+      campaign's a_author appendix. make-a-day-of-it is not in this segment's
+      USP list, so the cafe and the animals appear only in the line that
+      introduces the venue, not as an offer.
+    messages:
+      - channel: email
+        to: BurleighCFSSAdmin@kalwun.com.au
+        to_note: |
+          The published inbox for the Burleigh Child, Family & Support Services
+          branch that runs Jarjums, backfilled to the roster by P. It is an
+          organisational inbox, not Leilani's personal address, so the body
+          stays intelligible to whoever else opens it.
+        subject: Free circus tickets for your Jarjums families, shows from tomorrow
+        body: |
+          Hello Leilani,
+
+          I am Priyanka Das, partnerships at Historic Rivermill, a riverside venue at Mount Nathan with a cafe, horses and farm animals, about half an hour from Burleigh. A circus company has put a big top up on our lawn for the school holidays, and I have free tickets to the family show, WANTED – A Cirque Heist, for your Jarjums families.
+
+          Seven shows run from tomorrow, Thursday 24 September, through to Sunday 27 September, the first at 1pm. Reply with roughly how many families would take them up and I will send you a booking code and a link to pass around. They are for your families rather than for posting publicly.
+
+          There is nothing to organise at your end. Each family books whichever show suits them and comes on the day.
+
+          If the group would rather come together instead, next week suits that better. Tell me a day and I will come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: phone
+        to: "07 5520 8600"
+        text: |
+          Thursday 24 September, morning, where the email has no reply. Kalwun
+          Burleigh branch line. Ask for Leilani Summers, Program Coordinator,
+          Jarjums Playgroup.
+        script:
+          - point: Who is calling
+            text: "Good morning, it's Priyanka Das from Historic Rivermill at Mount Nathan. I sent Leilani an email yesterday about free circus tickets for the Jarjums families. Is she about?"
+          - point: The offer, in one breath
+            text: "There is a circus in a big top on our lawn for the school holidays, and I have free tickets for your families. Seven shows, starting today at 1pm and running through to Sunday."
+          - point: The ask
+            text: "If you tell me roughly how many families would use them, I will email you a code and a booking link this morning and you can send it round. They are for your families, not for putting up publicly."
+          - point: If this week is too soon
+            text: "If you would rather bring the group together, next week works better for that. Give me a day that suits and I will check what we can hold."
+          - point: If she says she will think about it
+            text: "No trouble. The shows finish on Sunday, so if you want them, a note back by Friday gives your families time to book."
+          - point: Before ringing off, if the call is going well
+            text: "One small thing while I have you. I have the Burleigh playgroup down as Mondays, ten till twelve, but the Kalwun site says Tuesdays. Which is right?"
+        phone_note: |
+          Where she is unavailable, leave the first two points as a message with
+          a call-back number and stop there. The offer does not go to a third
+          party beyond that.
+  - type: review
+    number: 1
+    verdict: DONE
+    in_character: |
+      I don't know this person or this venue, and a cold Wednesday email about a
+      circus starting tomorrow would normally make me wary, but nothing here
+      reads as off. She names herself, her organisation, and what she wants in
+      one line, how many families, and doesn't ask me for money, data, or
+      logistics I don't have. "Nothing to organise at your end" is exactly right
+      for how our playgroup works: I don't run a bus roster, I pass things on.
+      The tight bit is that our Burleigh session has already happened this week
+      and won't come round again before the season's opening days, so I can't
+      rely on the group being together to hand this out. I'd need to text or
+      ring around instead. That's workable, since the offer runs right through
+      Sunday rather than just tomorrow, so there are several days for families
+      to use a ticket even if I only get the word out Thursday or Friday. I'd
+      want to know before committing to a number whether anything is payable
+      once families are there, parking or extras, and whether they need to
+      mention the playgroup at the gate. Neither stops me replying. The
+      Monday/Tuesday question in the follow-up call isn't an objection, just an
+      answer I'd give: it's Tuesday.
+
+      Nothing here stops me from replying. REPLY_PCT 85.
+
+      Presupposition table run sentence by sentence over both pieces: no phrase
+      scored below 3. The two lowest, "what we can hold" and the Friday
+      cut-off in the phone script, are new and unelaborated but harmless on a
+      call.
+    fact_check:
+      - claim: This contact is a valid target in the campaign's mothers-group segment.
+        source: campaign segments.mothers-group.stems; profile front matter star_rating 3, date_excluded null; filter.min_star 3
+        result: verified
+      - claim: The season opens Thursday 24 September at 1pm.
+        source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+        result: verified
+        note: The one opening-week start time the showtimes file states; the remaining times live in the website data file, so the draft names only this one and gives the span.
+      - claim: Seven shows run Thursday 24 September to Sunday 27 September.
+        source: campaign header ruling of 22 September 2026; usps.opening-week-seats
+        result: verified
+      - claim: The venue is a riverside venue at Mount Nathan with a cafe, horses and farm animals.
+        source: business-overview.md (address; U1, U2, U3, U5)
+        result: verified
+        note: Phrased to the antifacts file's own pattern, which describes the venue by what it offers visitors because the farming question is unsettled.
+      - claim: The first message carries no code, no price, no discount and no ticket link.
+        source: usps.opening-week-seats.rests_on; prompt_appendices.a_author
+        result: verified
+      - claim: Nothing in the message says or implies the seats are unsold or that the offer serves the sender.
+        source: usps.free-by-code.rests_on; prompt_appendices.a_author
+        result: verified
+        note: No reason for the offer is given at all, since every short honest reason edges towards asking her to be our marketing channel.
+    antifact_check: |
+      Checked against business-antifacts.md, every item. No stone buildings. No
+      100-year-old, original mill or heritage structures, and no building age
+      claimed anywhere. The venue is not called a farm; it is described by what
+      it offers visitors. No vineyard. Not on Tamborine Mountain, and the
+      mountain is not named at all. Campaign-specific prohibitions also clear:
+      no feed-bag or animal-food offer, no subscriber discount, no Oztix link,
+      no show time absent from the showtimes file.
+    revision_note: |
+      The persona raised two points and both sort to "leave for the reply" under
+      SPAR-A 4.6: whether anything is payable at the gate, and whether families
+      need to say who sent them. Each is a question the reader would ask on
+      replying rather than one that stops the reply, and answering either in the
+      first message means naming prices or a code, which the campaign's a_author
+      appendix holds back for the reply. The draft did not change for them.
+
+      One change was made for the SPAR-A section 7 band-level pattern check. The
+      three approaches already in this campaign folder all open on the same
+      self-introduction formula, naming the sender, her role and the venue in
+      one clause, and draft 1 made a fourth of it. The final leads on the venue,
+      then the offer, then the name, which breaks the template while keeping the
+      introduction ahead of the ask. The second sentence of draft 1 was also
+      split in two, one idea each.
+    notes: |
+      The persona's 85 per cent is an in-character willingness figure, and
+      role-play personas over-report it. The recorded response_likelihood of 25
+      weighs it against the cold approach into a shared branch inbox, the
+      holidays, and one day's notice.
+  - type: final
+    chosen_usps: [free-by-code, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm, group-visit-later]
+    messages:
+      - channel: email
+        to: BurleighCFSSAdmin@kalwun.com.au
+        to_note: |
+          The published Burleigh Child, Family & Support Services inbox,
+          backfilled to the roster by P. Organisational, not personal.
+        subject: Free circus tickets for your Jarjums families, shows from tomorrow
+        body: |
+          Hello Leilani,
+
+          Historic Rivermill is a riverside venue at Mount Nathan with a cafe, horses and farm animals, about half an hour from Burleigh. A circus company has put a big top up on our lawn for the school holidays. I have free tickets to the family show, WANTED – A Cirque Heist, for your Jarjums families. I am Priyanka Das, the partnerships person here.
+
+          Seven shows run from tomorrow, Thursday 24 September, through to Sunday 27 September, the first at 1pm. Reply with roughly how many families would take them up and I will send you a booking code and a link to pass around. They are for your families rather than for posting publicly.
+
+          There is nothing to organise at your end. Each family books whichever show suits them and comes on the day.
+
+          If the group would rather come together instead, next week suits that better. Tell me a day and I will come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "07 5520 8600"
+        text: |
+          Thursday 24 September, morning, where the email has no reply. Kalwun
+          Burleigh branch line. Ask for Leilani Summers, Program Coordinator,
+          Jarjums Playgroup.
+        script:
+          - point: Who is calling
+            text: "Good morning, it's Priyanka Das from Historic Rivermill at Mount Nathan. I sent Leilani an email yesterday about free circus tickets for the Jarjums families. Is she about?"
+          - point: The offer, in one breath
+            text: "There is a circus in a big top on our lawn for the school holidays, and I have free tickets for your families. Seven shows, starting today at 1pm and running through to Sunday."
+          - point: The ask
+            text: "If you tell me roughly how many families would use them, I will email you a code and a booking link this morning and you can send it round. They are for your families, not for putting up publicly."
+          - point: If this week is too soon
+            text: "If you would rather bring the group together, next week works better for that. Give me a day that suits and I will check what we can hold."
+          - point: If she says she will think about it
+            text: "No trouble. The shows finish on Sunday, so if you want them, a note back by Friday gives your families time to book."
+          - point: Before ringing off, if the call is going well
+            text: "One small thing while I have you. I have the Burleigh playgroup down as Mondays, ten till twelve, but the Kalwun site says Tuesdays. Which is right?"
+        phone_note: |
+          Where she is unavailable, leave the first two points as a message with
+          a call-back number and stop there. The offer does not go to a third
+          party beyond that.
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: The venue is a riverside venue at Mount Nathan with a cafe, horses and farm animals.
+    source: business-overview.md, address line and U1, U2, U3, U5
+  - claim: About half an hour from Burleigh.
+    source: profile, institutional context, campaign-relevant implications ("~30 min from Burleigh")
+  - claim: A circus company has put a big top up on the lawn for the school holidays.
+    source: campaign header ("CHARC Performance stages a family circus in a big top on the lawn at the venue")
+  - claim: The family show is called WANTED – A Cirque Heist.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+  - claim: Seven shows run from Thursday 24 September to Sunday 27 September.
+    source: campaign header, Director's ruling of 22 September 2026; usps.opening-week-seats
+  - claim: The first of them starts at 1pm.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md ("The season opens Thursday 24 September at 1pm")
+  - claim: The tickets are free, and a booking code and link follow in the reply.
+    source: usps.free-by-code; usps.opening-week-seats.rests_on
+  - claim: The tickets are for the organisation's own families and not for posting publicly.
+    source: usps.free-by-code.claim; campaign header; prompt_appendices.a_author
+  - claim: Nothing needs organising; each family books the show that suits it.
+    source: usps.nothing-to-organise
+  - claim: A group visit can be arranged for the following week instead.
+    source: usps.group-visit-later; segments.mothers-group.first_ask
+  - claim: The branch line and the contact's role as Program Coordinator of the Burleigh playgroup.
+    source: profile, current role; roster row
+  - claim: The roster records Mondays 10am–12pm and the Kalwun site records Tuesdays 10am–12pm for the Burleigh session.
+    source: profile, verification corrections (schedule discrepancy flagged, left for the first phone contact to verify)
+quality_checklist: |
+  1. Structure. Root keys from the section 6 set; both non-final rounds carry
+     type and number; the final round holds one email and one phone message;
+     the addresses are real. No profile_hash written, per the harness contract.
+  2. Coverage. fact_provenance lists every factual claim in the final email and
+     the phone script; chosen_usps is set on the draft and final rounds;
+     a_note carries angle, channel, warmth, language and the two drafting
+     constraints that shaped the text.
+  3. Presupposition. The challenger's sentence-by-sentence table scored no
+     phrase below 3. Nothing tells her something she already knows about her own
+     group, and her meeting day is deliberately absent.
+  4. Manufactured connection. Passes by construction. The profile records no
+     public statement by this contact, so the message claims no shared interest
+     at all and rests on location, group mechanism and the offer.
+  5. Concreteness. The ask is a number of families, answerable in one sentence.
+  6. Band pattern. Failed on draft 1 and fixed in the final. The three approaches
+     already in this campaign folder open on the same self-introduction formula,
+     and draft 1 was a fourth; the final leads on the venue and places the name
+     after the offer.
+  7. Final round email cardinality: one.

@@ -1,0 +1,376 @@
+profile_hash: sha256:c44548e2f8735e59aa02b377724ea5472ecca8d8a7b906d103079a084d7993d1
+# Contact:  Megan Lia, Village Manager, Oak Tree Retirement Village Victoria Point (retirement-village)
+# Channel:  Email first 23 September, LinkedIn note the same day, phone 24 September morning
+# Language: Australian English
+# Angle:    Tickets to pass on to residents and their visiting grandchildren, no outing to run
+decisions:
+  channel: email
+  channel_detail: |
+    Email is the first touch on 23 September, to vmvicpoint@oaktreegroup.com.au. Phone follows on the
+    morning of 24 September where there is no reply, per the plan block's approach_sequencing and the
+    campaign's secondary_channel wait_days of 1. The LinkedIn note goes out beside the email rather than
+    ahead of it: the generic 5-day email wait in SPAR-A section 4.2 would land the email after the offer
+    closes on Sunday 27 September. LinkedIn is the weakest of the three channels here, since the profile
+    itself could not be fetched during P.
+  language: en-au
+  angle: tickets-to-pass-on-no-outing-to-run
+angle_rationale: |
+  Target validity. star_rating 3 meets the campaign's filter.min_star of 3. date_excluded is empty. The
+  profile carries no finding against approaching.
+
+  Warmth: cold. The dispatcher prefetch searched both directions on vmvicpoint@oaktreegroup.com.au, and
+  the name and organisation in subject lines, across all five configured accounts. No matches, remote
+  IMAP. No approach file existed for this contact before this one. So the message carries no prior-dealing
+  line, and no "we wrote before and heard nothing" line, which the campaign's a_author appendix requires
+  only where the prefetch finds an unanswered earlier note. The profile records no dated conduct of hers
+  towards us either. The opener therefore starts from the school holidays and her residents, not from a
+  compliment. New thread, no parent block.
+
+  Channel. The plan block prescribes email first and a call the next morning where there is no reply, and
+  the campaign sets secondary_channel phone with wait_days 1. That overrides the generic 5-day and 3-day
+  waits in the dispatcher's channel note, because the offer ends Sunday 27 September. Email is the strong
+  channel: phone and address are both confirmed against the village's statutory Form 3 Village Comparison
+  Document and the operator's live location page, checked 2026-08-08. The LinkedIn profile at
+  au.linkedin.com/in/megan-lia-0bb19411a could not be fetched during P after two 540-second
+  browser-serialiser timeouts, so the identity behind it rests on a search-result page title alone.
+
+  Language: Australian English, per the campaign's language key. No override in the plan block.
+
+  Angle. Two absences in the profile come from a legal disclosure rather than from missing evidence. The
+  village has no bus, Form 3 item 6.1 unchecked, and no residents committee, item 17.6 answered "No". It
+  is also small, at 54 independent living units, the smallest of the Victoria Point villages profiled in
+  this segment. The segment's usual outing instrument is therefore unavailable, which rules out the bus
+  framing on group-visit-later. nothing-to-organise becomes the angle that carries the message: forwarding
+  tickets is the one thing this manager can do in four days without a committee or a vehicle. Neither
+  absence is narrated back at her. They only shape what the message asks for, which is a rough number
+  rather than a block booking.
+
+  The hook is the school holidays. The plan block's deciding_interest names it: a free outing a resident
+  can take with visiting grandchildren. That is also why a free family ticket is worth more here than a
+  discount would be.
+
+  Cross-reference. Oak Tree Retirement Village Boronia Heights sits in the same segment under the same
+  chain-wide contact pattern, vm{suffix}@oaktreegroup.com.au with a first-name-only manager, and nothing
+  has been drafted for it yet. This angle is the reusable one for that row, so two managers comparing
+  notes would see a consistent offer.
+
+  Antifact pass. No stone buildings, and no buildings of any age are mentioned. No original or
+  100-year-old mill structures are presented as a feature. No vineyard. Mount Nathan is named as Gold
+  Coast hinterland, with no mention of Tamborine Mountain. The farming question is left alone, since farm
+  animals and horse riding are named as activities and the place is not called a farm. No drive time from
+  Victoria Point is claimed, because no source states one.
+response_likelihood: 50
+a_note: |
+  Angle tickets-to-pass-on-no-outing-to-run: nothing-to-organise carried by the school-holiday
+  grandchildren hook, since the Form 3 disclosure confirms no village bus and no residents committee, and
+  54 ILU is small. Channel email first 23 September, with a same-day LinkedIn note and a phone call the
+  morning of 24 September. Warmth cold, prefetch clean across all five accounts. Australian English. One
+  challenger pass at 60 per cent reply, no factual errors. The revision answered how the code works in
+  practice, which was the only thing the persona wanted before committing to a number, and cut the
+  unsourced show count. LinkedIn identity is unverified, so that piece is the one to drop if the director
+  wants only corroborated channels.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [opening-week-seats, nothing-to-organise, big-top-at-a-heritage-farm, group-visit-later]
+    notes: |
+      free-by-code is carried implicitly: the tickets are free and the code follows in the reply, with no
+      code string, no price and no ticket link in the first touch, per the a_author appendix.
+      group-visit-later appears as one closing sentence, because message_goal accepts a named day for a
+      village outing, and it is phrased with no bus in it.
+    messages:
+      - channel: email
+        to: vmvicpoint@oaktreegroup.com.au
+        bcc: partnerships@rivermill.au
+        subject: Free circus tickets for Oak Tree Victoria Point residents this week
+        body: |
+          Dear Megan,
+
+          I am Priyanka Das and I look after partnerships at Historic Rivermill, a venue at Mount Nathan in the Gold Coast hinterland, with a cafe, horse riding and farm animals on the Coomera River.
+
+          CHARC Performance has put a big top up on our lawn for the school holidays with a family circus, WANTED – A Cirque Heist. I have free tickets for your residents and the families visiting them, across seven shows from this Thursday 24 September through to Sunday 27 September. The first one is Thursday at 1pm.
+
+          Reply with roughly how many you could use and I will send you a code and a booking link to pass around the village. Residents pick whichever show suits them and book it themselves, so there is nothing for you to run on the day.
+
+          The tickets are for Oak Tree residents, their families and your staff, so please keep them inside the village rather than posting them publicly.
+
+          If you would rather bring a group together properly, tell me a day the week after and I will come back to you about seating.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: linkedin
+        to: https://au.linkedin.com/in/megan-lia-0bb19411a
+        text: |
+          Connection note sent the same day as the email, not gated behind it.
+        director_note: |
+          Identity on this profile is corroborated only by a search-result page title. The profile itself
+          could not be fetched during profiling, two browser-serialiser timeouts at 540 seconds each.
+      - channel: phone
+        to: "0400 930 916"
+        text: |
+          Call on the morning of Thursday 24 September where the email has no reply.
+        script:
+          - point: Open
+            text: |
+              Good morning, is that Megan? Priyanka Das from Historic Rivermill at Mount Nathan. I sent
+              you an email yesterday about free circus tickets for your residents, and I am chasing it
+              because the shows start today.
+          - point: The offer
+            text: |
+              CHARC Performance has a big top on our lawn for the school holidays, a family circus called
+              WANTED – A Cirque Heist. I can cover tickets for your residents and the families visiting
+              them, across seven shows between today and Sunday. The first one is this afternoon at one
+              o'clock.
+          - point: The ask
+            text: |
+              If you tell me roughly how many you could use, I will email you a code and a booking link
+              this morning and your residents can book whichever show suits them.
+          - point: If she needs to check with head office or with residents first
+            text: |
+              That is fine. The shows finish on Sunday, so if you can come back to me today or tomorrow I
+              can still hold seats. I can send you the code and the link now and you can decide afterwards
+              whether to circulate it.
+          - point: If a group outing suits better than tickets passed around
+            text: |
+              If you would rather bring people together as a village group, tell me a day the week after
+              and I will come back to you about seating.
+          - point: Close
+            text: |
+              Is vmvicpoint@oaktreegroup.com.au the best address for that, or would you like it somewhere
+              else? The tickets are for your residents, their families and your staff, so I would ask that
+              they stay inside the village rather than going up on Facebook.
+        phone_note: |
+          Weekdays between 9am and 4pm. The village's Form 3 disclosure records a full-time onsite manager
+          in those hours.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      A cold email from a venue I've never dealt with, offering free circus tickets for my residents.
+      Nothing about it asks me for money or personal details, and the tone is plain rather than pushy.
+      What it doesn't explain is what "a code" actually involves. Is this something I hand to forty-odd
+      residents individually, and how does that work with an elderly cohort who mostly aren't booking
+      things online themselves? That's the part I'd want spelled out before I commit to a number.
+
+      On timing: is it possible in the time given? Partly. The first show is tomorrow afternoon, which is
+      nowhere near enough notice for me to get word to residents and have anyone actually attend that one.
+      But the offer runs right through Sunday, so replying today with a rough headcount and getting
+      information out over the next few days is realistic. I don't need to solve tomorrow's show, just the
+      window as a whole.
+
+      Nothing here stops me outright. I'd ask, rather than balk at: how the code and booking actually work
+      in practice, one code shared around or individual links, and whether there's a way to get this in
+      front of residents that doesn't rely on them booking themselves online. Those are questions for a
+      reply, not reasons not to send one.
+
+      REPLY_PCT: 60
+
+      Resolution scores from the persona's presupposition table, phrases at 2 or below: "seven shows"
+      scored 0, resolving nowhere; "a code" scored 1, promised but not explained; "posting them publicly"
+      scored 1, assuming an unnamed channel; "about seating" scored 1; "nothing to run on the day" and
+      "the day" scored 2 each.
+    fact_check:
+      - claim: Historic Rivermill is a venue at Mount Nathan in the Gold Coast hinterland with a cafe, horse riding and farm animals on the Coomera River.
+        source: business-overview.md
+        result: verified
+        note: Matches the overview's framing and is contradicted by no antifact.
+      - claim: CHARC Performance has a big top on the lawn with the family circus WANTED – A Cirque Heist.
+        source: campaign header and plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md
+        result: verified
+      - claim: Seven free shows from Thursday 24 September to Sunday 27 September.
+        source: campaign header (Director's ruling of 22 September 2026) and usps.opening-week-seats
+        result: verified
+        note: |
+          Verified as a fact, but the count was cut in revision on the persona's resolution score of 0. A
+          bare number with no itemised list resolves nowhere for the reader, and the date range carries
+          what she needs.
+      - claim: The first show is Thursday at 1pm.
+        source: showtimes file ("The season opens Thursday 24 September at 1pm")
+        result: verified
+        note: The only start time the showtimes file states as a time. The other thirteen live in the website's circus data file, so they stay for the booking link in the reply.
+      - claim: No price, discount, code string or ticket link appears in the first touch.
+        source: prompt_appendices.a_author and usps.free-by-code
+        result: verified
+      - claim: The tickets are for the organisation's own residents, families and staff, and are not for posting publicly.
+        source: campaign header ("passed to its staff, members and the families it brings")
+        result: verified
+      - claim: A group visit can be arranged for the following week instead.
+        source: usps.group-visit-later
+        result: verified
+      - claim: Nothing in the draft suggests seats are unsold, that the tent needs filling, or that the offer serves the sender.
+        source: prompt_appendices.a_author and the rests_on note under usps.free-by-code
+        result: verified
+      - claim: No feed-bag or animal-food offer, no subscriber discount, no Oztix link.
+        source: prompt_appendices.a_author and prompt_appendices.a_challenger
+        result: verified
+    antifact_check: |
+      Checked against every item in business-antifacts.md. No stone buildings, and no buildings of any age
+      are mentioned. No original or 100-year-old mill structures are presented as a feature. No vineyard.
+      The location reads "Mount Nathan in the Gold Coast hinterland", with no mention of Tamborine
+      Mountain. The farming question is left alone: the draft names a cafe, horse riding and farm animals
+      as things the venue offers visitors, and does not call the place a farm. No drive time from Victoria
+      Point is claimed, since no source states one.
+    revision_note: |
+      The persona raised more than three points, so each was sorted before the draft was touched.
+
+      Answer in this email: how the code works in practice. The persona named it as the thing wanted
+      before committing to a number, so leaving it out costs the reply. Absorbed by reframing the sentence
+      that already promised the code, not by adding a new one. It now reads as one code, the same for
+      everyone, able to go in a newsletter or up on the noticeboard, with each person picking their own
+      show.
+
+      Leave for the reply: residents who will not book online themselves. The persona filed it as a
+      question they would ask while replying, not a reason to hold off. Nothing in the fact sources
+      supports an offline booking path, so inventing one here would be a claim with no source. The phone
+      script gained a point for it, since a live call can take the question as it comes.
+
+      No change: the first show being tomorrow. The persona worked out that the window through Sunday is
+      the real offer, and the Thursday 1pm line is the only start time the showtimes file states.
+
+      Cut on resolution score: "seven shows" at 0, removed, with the date range left to carry it.
+      "Nothing for you to run on the day" at 2, sentence cut, with the nothing-to-organise USP now carried
+      concretely by each person picking their own show. "About seating" at 1, replaced by the concrete
+      thing being asked for, a block of seats on the day she names.
+
+      Introduced rather than cut: "posting them publicly" at 1. The a_author appendix requires a
+      not-for-public-posting line, so cutting it was closed off. The channels the code should travel on,
+      the newsletter and the noticeboard, are now named in the preceding sentence, and the reader resolves
+      them from her own workplace.
+    notes: |
+      One challenger pass, matching the profile's yield of 4 against SPAR-A section 4.6's band of one pass
+      for yield 3 to 5. Sonnet-class, context-isolated, role-play before fact-check.
+  - type: final
+    chosen_usps: [opening-week-seats, nothing-to-organise, big-top-at-a-heritage-farm, group-visit-later]
+    messages:
+      - channel: email
+        to: vmvicpoint@oaktreegroup.com.au
+        bcc: partnerships@rivermill.au
+        subject: Free circus tickets for Oak Tree Victoria Point residents this week
+        body: |
+          Dear Megan,
+
+          I am Priyanka Das and I look after partnerships at Historic Rivermill, a venue at Mount Nathan in the Gold Coast hinterland, with a cafe, horse riding and farm animals on the Coomera River.
+
+          CHARC Performance has put a big top up on our lawn for the school holidays with a family circus, WANTED – A Cirque Heist. I have free tickets for your residents and the families visiting them, for the shows from this Thursday 24 September through to Sunday 27 September. The first one is Thursday at 1pm.
+
+          Reply with a rough number of tickets and I will send you a code and a booking link. It is one code, the same for everyone, so it can go in a newsletter or up on the noticeboard. Each person then picks the show that suits them.
+
+          The tickets are for Oak Tree residents, their families and your staff, so I would ask that the code stays on those village channels rather than a public page.
+
+          If you would rather bring people together as a village group, tell me a day the week after and I will ask about holding a block of seats.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: linkedin
+        to: https://au.linkedin.com/in/megan-lia-0bb19411a
+        text: |
+          Hi Megan, I am Priyanka from Historic Rivermill at Mount Nathan. A family circus opens in a big
+          top on our lawn this Thursday for the school holidays, and I have free tickets for Oak Tree
+          Victoria Point residents and the families visiting them. I have emailed the village office with
+          the details.
+        director_note: |
+          Send the same day as the email, not after it. The offer closes Sunday 27 September, so a
+          connection note that gates the email for five days arrives too late to be worth anything.
+          Identity on this profile is corroborated only by a search-result page title reading "Megan Lia -
+          Senior Village Manager - Oak Tree Group | LinkedIn". The profile itself could not be fetched
+          during profiling, two browser-serialiser timeouts at 540 seconds each. This is the piece to drop
+          if only corroborated channels are wanted.
+        actioned_date: null
+      - channel: phone
+        to: "0400 930 916"
+        text: |
+          Call on the morning of Thursday 24 September where the email has no reply. Chase the email,
+          state the offer, take a rough number, and confirm the address to send the code to.
+        script:
+          - point: Open
+            text: |
+              Good morning, is that Megan? Priyanka Das from Historic Rivermill at Mount Nathan. I sent
+              you an email yesterday about free circus tickets for your residents. I am chasing it because
+              the shows start today.
+          - point: The offer
+            text: |
+              CHARC Performance has a big top on our lawn for the school holidays, a family circus called
+              WANTED – A Cirque Heist. I can cover tickets for your residents and the families visiting
+              them, for the shows between today and Sunday. The first one is this afternoon at one
+              o'clock.
+          - point: The ask
+            text: |
+              Tell me a rough number and I will email you a code and a booking link this morning. It is
+              one code, the same for everyone, so it can go in a newsletter or up on the noticeboard, and
+              each person picks the show that suits them.
+          - point: If she needs to check with head office or with residents first
+            text: |
+              That is fine. The shows finish on Sunday. If you come back to me today or tomorrow I can
+              still hold seats. I can send the code and the link now and you can decide afterwards whether
+              to put it out.
+          - point: If some residents would rather not book online
+            text: |
+              Tell me how many are in that position when you reply and I will work out the best way to
+              handle it with you.
+          - point: If a village group suits better than tickets passed around
+            text: |
+              If you would rather bring people together as a group, tell me a day the week after and I
+              will ask about holding a block of seats.
+          - point: Close
+            text: |
+              Is vmvicpoint@oaktreegroup.com.au the best address for that, or would you like it somewhere
+              else? The tickets are for your residents, their families and your staff, so I would ask that
+              the code stays inside the village rather than going up somewhere public like a Facebook
+              page.
+        phone_note: |
+          Weekdays between 9am and 4pm. The village's Form 3 Village Comparison Document records a
+          full-time onsite manager in those hours, and the operator's live location page carries the same
+          mobile.
+        actioned_date: null
+fact_provenance:
+  - claim: The sender is Priyanka Das, Partnerships, Historic Rivermill, writing from partnerships@rivermill.au with bcc to the same address.
+    source: campaign YAML sender block
+  - claim: Historic Rivermill is a venue at Mount Nathan in the Gold Coast hinterland, with a cafe, horse riding and farm animals on the Coomera River.
+    source: business-overview.md (address, venue offering, Coomera River setting)
+  - claim: CHARC Performance has a big top on the venue's lawn for the school holidays, staging the family circus WANTED – A Cirque Heist.
+    source: campaign YAML header and the showtimes file
+  - claim: Free tickets are available for the shows from Thursday 24 September to Sunday 27 September.
+    source: campaign YAML header (Director's ruling of 22 September 2026) and usps.opening-week-seats
+  - claim: The first show is Thursday 24 September at 1pm.
+    source: showtimes file ("The season opens Thursday 24 September at 1pm")
+  - claim: One code, the same for everyone, is sent in the reply with a booking link, and it is what makes the tickets free.
+    source: usps.free-by-code and usps.opening-week-seats (the code takes the price to nil on the operator's Eventbrite listing); prompt_appendices.a_author holds the code and the link back for the reply
+  - claim: The tickets are for Oak Tree residents, their families and village staff, and are not to be posted publicly.
+    source: campaign YAML header ("passed to its staff, members and the families it brings", kept off social media)
+  - claim: A village group visit can be requested for the week after, with a block of seats sought on the day named.
+    source: usps.group-visit-later
+  - claim: The recipient is Megan Lia, Village Manager, reachable on vmvicpoint@oaktreegroup.com.au and 0400 930 916, onsite full time on weekdays between 9am and 4pm.
+    source: profile (Form 3 Village Comparison Document item 1.4, correct as at June 2023, and the operator's live location page, both checked 2026-08-08)
+  - claim: The village has no village bus and no residents committee, and holds 54 independent living units.
+    source: profile (Form 3 item 6.1 facility checklist unchecked, item 17.6 answered "No"; 54 ILU, ref RV00000264). Shapes the angle, asserted nowhere in the message.
+  - claim: The LinkedIn URL is au.linkedin.com/in/megan-lia-0bb19411a, identity corroborated by a search-result page title only.
+    source: profile (P backfill, roster_patch linkedin_url; the profile page itself was unobtainable, two 540-second timeouts)
+quality_checklist: |
+  1. Structure. Root keys drawn from the section 6 set. Draft and review rounds carry type and number. The
+  final round holds one email message, one linkedin and one phone, so the email cardinality cap is met.
+  Addresses are real: vmvicpoint@oaktreegroup.com.au and partnerships@rivermill.au, both from verified
+  sources. No profile_hash written, per the harness note.
+
+  2. Coverage. fact_provenance reaches every factual claim in the final email, the LinkedIn note and the
+  phone script, including the two profile facts that shape the angle without appearing in the message.
+
+  3. Presupposition. Passed after revision. The persona's own table scored every remaining presupposition
+  at 3 or above, and the four phrases scoring 2 or below were cut or given a referent.
+
+  4. Manufactured connection. No claim of shared interest is made. The school-holiday hook rests on the
+  plan block's deciding_interest and on the offer's own dates, not on anything attributed to Megan Lia.
+  The profile found no public statements by her, and none is invented. The absence of a bus and of a
+  residents committee shapes what is asked for and is never stated back at her.
+
+  5. Concreteness. The ask answers in one sentence: a rough number of tickets, or a day for a village
+  group.
+
+  6. Band pattern. The opener leads with the sender and the venue, then the circus, then the ask. Nothing
+  else has been drafted in the retirement-village band yet, so this check reruns when the band is
+  complete, and other drafts should vary their openers rather than repeat this one.
+
+  7. Final email cardinality. One email in the final round.
