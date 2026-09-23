@@ -83,7 +83,7 @@ proc spar::write_file {path content} {
 oo::class create spar::ApproachHarness {
     superclass spar::Harness
     variable State Outfile RosterEmail ContactName RosterOrg \
-             MaxPasses ContactSummary ChallengerModel ContactNameMeta \
+             MaxPasses ContactSummary ChallengerModel AuthorModel ContactNameMeta \
              Pass Verdict ProfilePath SegmentDir
 
     constructor {prompt_dir log_dir} {
@@ -183,6 +183,8 @@ oo::class create spar::ApproachHarness {
         set Outfile          [dict get $meta OUTFILE]
         set ContactSummary   [dict get $meta CONTACT_SUMMARY]
         set ChallengerModel  [dict getdef $meta CHALLENGER_MODEL sonnet]
+        set AuthorModel      [dict getdef $meta AUTHOR_MODEL \
+            [expr {[info exists ::env(SPAR_AUTHOR_MODEL)] ? $::env(SPAR_AUTHOR_MODEL) : ""}]]
         set RosterEmail      [dict getdef $meta ROSTER_EMAIL ""]
         set RosterOrg        [dict getdef $meta ROSTER_ORGANISATION ""]
         set ContactNameMeta  [dict getdef $meta CONTACT_NAME ""]
@@ -190,6 +192,14 @@ oo::class create spar::ApproachHarness {
         set SegmentDir       [dict get $meta SEGMENT_DIR]
         set stem    [file rootname [file tail $Outfile]]
         set ProfilePath [spar::profile_path_for_stem $SegmentDir $stem]
+    }
+
+    # --model for the author's calls when the campaign's meta.env names
+    # AUTHOR_MODEL or the environment names SPAR_AUTHOR_MODEL; empty
+    # otherwise, which leaves the runner's own default in force.
+    method author_model_args {} {
+        if {$AuthorModel eq ""} { return {} }
+        return [list --model $AuthorModel]
     }
 
     method do_inject_courier {} {
@@ -208,7 +218,7 @@ oo::class create spar::ApproachHarness {
         set author_draft_log "${log_prefix}-author-draft.log"
         set author_prompt [spar::read_file [file join $prompt_dir author-draft.txt]]
 
-        if {[my call "author-draft" $author_draft_log $author_prompt]} {
+        if {[my call "author-draft" $author_draft_log $author_prompt {*}[my author_model_args]]} {
             return 1
         }
 
@@ -280,7 +290,7 @@ oo::class create spar::ApproachHarness {
 
             spar::write_file [file join $prompt_dir "author-rev${Pass}.txt"] $rev_prompt
 
-            if {[my resume "author-rev${Pass}" $author_rev_log $rev_prompt]} {
+            if {[my resume "author-rev${Pass}" $author_rev_log $rev_prompt {*}[my author_model_args]]} {
                 return 1
             }
 
@@ -367,7 +377,7 @@ oo::class create spar::ApproachHarness {
                 return 1
             }
         }
-        if {[my resume "assembly" $assembly_log $assembly_prompt]} {
+        if {[my resume "assembly" $assembly_log $assembly_prompt {*}[my author_model_args]]} {
             return 1
         }
         return 0
