@@ -1,0 +1,382 @@
+profile_hash: sha256:97b6bdf48f795217c7827da1a73d62cbff196c0dc5cdfdda2efe50b74d44d9e0
+# Contact:  Whaea Sissy, Group Organiser, Ngā Mokopuna Playgroup (Upper Coomera)
+# Channel:  email primary, phone follow-up Thursday 24 September
+# Language: en-au, with one te reo Māori greeting
+# Angle:    pass-to-families-no-outing
+decisions:
+  channel: email
+  channel_detail: |
+    Email today, Wednesday 23 September. Phone 0476 437 368 on the morning
+    of Thursday 24 September if no reply, per the campaign's
+    secondary_channel (wait_days 1, no_reply) and the segment's
+    approach_sequencing step 3. Ring in the morning: the first show is 1pm
+    that day and Sunday 27 September is the last free show. No LinkedIn on
+    the roster, so SPAR-A 4.2 gives email first with a phone fallback.
+  language: en-au
+  angle: pass-to-families-no-outing
+angle_rationale: |
+  Warmth: prior contact, unanswered. The dispatcher prefetch returns one
+  outbound, 31 March 2026, "Familiarisation visit: Historic Rivermill,
+  Mount Nathan", from partnerships@rivermill.au to
+  nga.mokopuna.qld@gmail.com, filed in the admin account's INBOX/Work Done
+  and Partnerships folders. No inbound from that address in any account. We
+  wrote; she did not answer. The campaign's a_author appendix requires that
+  be said in one plain line naming what the earlier note was about, and it
+  is, directly after the self-introduction, where it also earns the full
+  introduction a stranger needs. The profile records no dated conduct of
+  hers towards us, so no prior dealing is claimed.
+
+  Fresh subject, not a reply on the March thread. SPAR-A 4.1.1 allows a
+  thread reply only where a live thread exists. A single unanswered
+  outbound from six months ago is not live, its topic (an invitation to
+  come and look around) is not this campaign's offer, and replying on our
+  own unanswered mail would read as a bump. The default applies: new
+  subject with an in-body reference to the prior touchpoint.
+
+  Angle. The profile's bearing absence is explicit: no evidence of
+  organised outings, no references to farm outings, heritage venues or
+  nature excursions, and a stated purpose that is tikanga, te reo and
+  waiata rather than activities. An excursion pitch would therefore be
+  invented relevance (SPAR-A 4.4 step 2). What the profile does evidence is
+  reach: 1,100 Facebook followers for a free weekly playgroup, in a suburb
+  the profile records as holding one of Queensland's largest Māori and New
+  Zealand Australian communities, 15 to 20 minutes from the venue. So the
+  angle is distribution, not attendance. She passes tickets to her
+  families, each family books itself, and she organises nothing. That is
+  the scope nothing-to-organise states for itself, which names playgroups
+  among the organisations for which circulating an offer to members is
+  already the ordinary act. The challenger's in-character reader confirmed
+  the mechanism unprompted: the group is not meeting again until term
+  starts, and she holds phone numbers for most of her whānau.
+
+  Language. The plan block sets no language rule, so the campaign default
+  en-au holds. Every public post of the group is in te reo Māori and the
+  organiser is addressed by the title Whaea, so the greeting is "Kia ora
+  Whaea Sissy" and the call closes "Ngā mihi". One greeting sets the
+  register a local organisation would use. A message written in te reo by a
+  stranger would be performance, and the group's own words for its people
+  stay theirs: the email says families, not whānau.
+
+  USPs from the segment's own list, none invented: opening-week-seats
+  (seven shows Thursday to Sunday, free), nothing-to-organise (forward it,
+  no outing to run), not-advertised (this segment's emotional one, handing
+  her families something that is not going to the public), with
+  big-top-at-a-heritage-farm describing what the show is.
+  group-visit-later is carried in one closing sentence, because the
+  segment's first_ask text includes it and because the playgroup's Friday
+  session falls in the school holidays, which makes the second week the
+  easiest reply for her to give. It promises only that the sender will see
+  what can be held, which is what that USP's rests_on permits.
+
+  Timing. Today is Wednesday 23 September 2026. approach_sequencing was
+  written for a 22 September send ("opens this Thursday"), so the message
+  names the opening as tomorrow. The showtimes file states the season opens
+  Thursday 24 September at 1pm, after Marc Matousek's 15 September
+  amendment dropped today's noon show. That 1pm is the only opening-week
+  start time the file states in prose, the rest living in the website's
+  data file, so it is the only time named and the remainder travel with the
+  booking link. No Oztix link appears.
+
+  Response likelihood. The angle fits and the ask is cheap, which the
+  challenger scored at 80 per cent. Against that sits the one hard piece of
+  evidence about this contact's own behaviour: she did not answer our March
+  email. She is a volunteer organiser of a free playgroup, the notice is
+  one day, and her session does not run this week. The estimate is set
+  below the challenger's reading for that reason, and the Thursday phone
+  call carries most of the remaining chance.
+response_likelihood: 50
+a_note: |
+  pass-to-families-no-outing angle; email today plus phone Thursday morning on 0476 437 368; warmth prior-contact-unanswered (our 31 March familiarisation-visit note, no reply, named in one line per a_author); en-au with a te reo greeting, the group posting publicly only in te reo; profile records no outings of any kind, so the ask is a forward and a guess at numbers, never a headcount; her Friday session falls in the school holidays, so the second-week group visit is the easiest reply for her to give.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [opening-week-seats, nothing-to-organise, not-advertised, big-top-at-a-heritage-farm, group-visit-later]
+    notes: |
+      Five USPs against SPAR-A 4.5's "typically 1 to 3", because the
+      segment's own first_ask paragraph carries four of them and
+      group-visit-later besides. Only the first half of
+      big-top-at-a-heritage-farm is used: the big top on the lawn for the
+      school holidays. The heritage half is left out under
+      business-antifacts.md, which rules out presenting heritage
+      structures as a feature and leaves the farming question unsettled,
+      so the venue is named by its road, its suburb and the river.
+    messages:
+      - channel: email
+        to: nga.mokopuna.qld@gmail.com
+        bcc: partnerships@rivermill.au
+        subject: Free circus tickets for Ngā Mokopuna families, this Thursday to Sunday
+        body: |
+          Kia ora Whaea Sissy,
+
+          My name is Priyanka Das and I look after partnerships at Historic Rivermill, the riverside venue on Beaudesert Nerang Road at Mount Nathan, about twenty minutes from Coomera Springs. I wrote to you back in March about coming out to look around the place and never heard back on that one.
+
+          A circus company has a big top set up on our lawn for the school holidays, WANTED – A Cirque Heist, and I have free tickets for the families in your playgroup. There are seven shows between Thursday 24 September and Sunday 27 September, the first at 1pm on Thursday. Reply with roughly how many families would use them and I will send you a booking code and the link, with the session times.
+
+          There is nothing for you to organise. Each family books the show that suits them and comes along on its own, so there is no bus, no forms and no group to pull together at this notice.
+
+          These seats are not advertised and they are not going to the public. They are for your own families, so I would pass them round the group rather than put them on the page.
+
+          If the group would sooner come together, the following week suits that much better. Tell me a day and I will see what can be held.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+      - channel: phone
+        to: "0476 437 368"
+        text: |
+          Follow-up call the morning of Thursday 24 September if the email
+          draws no reply.
+        script:
+          - point: Opening
+            text: "Kia ora, is that Whaea Sissy? It's Priyanka from Historic Rivermill, the venue out at Mount Nathan. I sent you an email yesterday about free circus tickets for your playgroup families. Did it land?"
+          - point: If she has not seen it, the whole thing in three sentences
+            text: "There is a circus in a big top on our lawn for the school holidays, and I have free tickets for your families. They open this afternoon at 1pm and run through to Sunday, seven shows in all. If you tell me roughly how many families would use them, I will send you the booking code and the link today."
+          - point: The ask
+            text: "Rough number is all I need. Ten families, thirty, whatever you think."
+          - point: If the playgroup is not meeting this week
+            text: "That is fine, it does not need a session. A message round the group does it, and each family books the show that suits them and drives out on their own."
+          - point: If she asks what it costs
+            text: "Nothing for these ones. I will send the code and the link and it is done at the booking page."
+          - point: If she asks which times
+            text: "I will email the full list of session times with the link, so you can send it straight on."
+          - point: If she asks whether she can put it on the Facebook page
+            text: "Best kept to the group itself. These ones are for your own families rather than for the public."
+          - point: If she would rather bring the group together
+            text: "Then the following week works better for that. Give me a day that suits and I will come back to you on what can be held."
+          - point: Close
+            text: "I will send it through as soon as we hang up. Ngā mihi, and thanks for your time."
+        phone_note: |
+          Morning of Thursday 24 September. No code and no price on the
+          call; both go in the email that follows once she has given a
+          number. Add any number she gives to the per-show tally before
+          sending.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Kia ora, that's a lovely thing to have land in the inbox. Free seats
+      with no forms and no bus is exactly the kind of thing I can pass on
+      this week, even with us not meeting again until term starts. I have
+      phone numbers for most of our whānau and can just message them
+      directly. Māori culture and the outdoors go together, so a circus on
+      a farm-type property is an easy sell to our families.
+
+      One thing pulls me up short: "rather than put them on the page." I
+      have not said anything to her about a Facebook page, she has just
+      assumed I will know which page she means. I will take it she means
+      our own page, since that is the only one I run, but it is a slightly
+      odd thing to drop in without naming it, as if we had already talked
+      about it.
+
+      The March mention is fine. A bit embarrassing that I never got back
+      to her, but it reads as a plain statement of fact, not a guilt trip.
+      What she is asking is entirely possible in the time given: a rough
+      headcount by reply, today, costs me nothing to produce.
+
+      What would stop me replying: nothing here does. The unresolved "the
+      page" is a hiccup, not a dealbreaker, since I do not intend to post
+      it publicly anyway.
+
+      What I would simply ask in my reply: roughly how many families, which
+      I can supply straight away; possibly whether there is a Thursday or
+      Sunday daytime slot, since our families have younger tamariki.
+
+      Resolution scores on presupposed phrases: "the page" 2; "what can be
+      held" 3; "our lawn" 4; "the school holidays" 4; "at this notice" 4;
+      "the following week" 4. The named organisation, the dated March
+      correspondence, the show title and every ticket reference scored 5.
+      REPLY_PCT: 80.
+    fact_check:
+      - claim: Sender identity, role, organisation and address.
+        source: campaign YAML sender and venue blocks.
+        result: verified
+      - claim: Seven shows between Thursday 24 and Sunday 27 September, the first at 1pm on Thursday.
+        source: campaign YAML header comment; 2026-09-23-stampede-arena-showtimes.md.
+        result: verified
+      - claim: No code, no price, no discount, no suggestion that seats are unsold or that the offer serves the sender, no feed-bag offer, no Oztix link, no show time the showtimes file does not carry.
+        source: usps.opening-week-seats rests_on; prompt_appendices.a_author.
+        result: verified
+        note: The code and the Eventbrite link are withheld for the reply, as the USP's rests_on requires.
+      - claim: Nothing to organise, no bus, no forms.
+        source: usps.nothing-to-organise, listed for this segment.
+        result: verified
+      - claim: Not advertised, and for the organisation's own families rather than for posting publicly.
+        source: usps.not-advertised; segment first_ask; prompt_appendices.a_author.
+        result: verified
+      - claim: A group visit the following week instead.
+        source: usps.group-visit-later.
+        result: verified
+    antifact_check: |
+      Checked against business-antifacts.md in full. No stone buildings, no
+      100-year-old or original mill structures, no heritage structures
+      presented as a feature, no vineyard, no Tamborine Mountain location.
+      The unsettled farming item is respected: the venue is named by its
+      road, its suburb and the river, and is not called a farm. The
+      challenger's own reaction used the phrase "farm-type property", which
+      is her inference and not a claim the message makes. No denial of any
+      antifact appears in the draft. No FACTCHECK issues found.
+    revision_note: |
+      The persona raised more than three points, so each was sorted before
+      the draft was touched (SPAR-A 4.6).
+
+      Answer in this email. "The page" resolved nowhere and scored 2.
+      Nothing in the letter or in the March exchange names a page, so the
+      recipient had to supply the referent from her own knowledge of what
+      we had looked up, and she noticed. The sentence holding it is cut,
+      per the 0-to-2 resolution rule. It is not replaced by an
+      introduction: naming her Facebook page would put the sender's
+      reasoning about the group's public reach into the letter. The
+      condition a_author requires survives in the sentence beside it, which
+      says the seats are for her own families rather than for posting
+      publicly, and that sentence needs no antecedent she does not hold.
+
+      Leave for the reply. Her question about a Thursday or Sunday daytime
+      slot for younger tamariki. The showtimes file states one opening-week
+      start time in prose, so naming others here would be invention, and
+      the email already promises the session times with the booking link.
+
+      No change. The March line, the no-bus-no-forms paragraph, and her
+      ability to message families directly during the holidays. All scored
+      well and all serve the ask. The phone script keeps its Facebook line,
+      because there she raises the page herself and supplies the referent;
+      "the Facebook page" is made "her Facebook page" so the answer names
+      what she asked about.
+
+      No factual claim changed: the fact-check returned clean and no
+      antifact item was triggered.
+  - type: final
+    chosen_usps: [opening-week-seats, nothing-to-organise, not-advertised, big-top-at-a-heritage-farm, group-visit-later]
+    messages:
+      - channel: email
+        to: nga.mokopuna.qld@gmail.com
+        bcc: partnerships@rivermill.au
+        subject: Free circus tickets for Ngā Mokopuna families, this Thursday to Sunday
+        body: |
+          Kia ora Whaea Sissy,
+
+          My name is Priyanka Das and I look after partnerships at Historic Rivermill, the riverside venue on Beaudesert Nerang Road at Mount Nathan, about twenty minutes from Coomera Springs. I wrote to you back in March about coming out to look around the place and never heard back on that one.
+
+          A circus company has a big top set up on our lawn for the school holidays, WANTED – A Cirque Heist, and I have free tickets for the families in your playgroup. There are seven shows between Thursday 24 September and Sunday 27 September, the first at 1pm on Thursday. Reply with roughly how many families would use them and I will send you a booking code and the link, with the session times.
+
+          There is nothing for you to organise. Each family books the show that suits them and comes along on its own, so there is no bus, no forms and no group to pull together at this notice.
+
+          These seats are not advertised and they are not going to the public. They are for your own families rather than for posting publicly.
+
+          If the group would sooner come together, the following week suits that much better. Tell me a day and I will see what can be held.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "0476 437 368"
+        text: |
+          Follow-up call the morning of Thursday 24 September if the email
+          draws no reply.
+        script:
+          - point: Opening
+            text: "Kia ora, is that Whaea Sissy? It's Priyanka from Historic Rivermill, the venue out at Mount Nathan. I sent you an email yesterday about free circus tickets for your playgroup families. Did it land?"
+          - point: If she has not seen it, the whole thing in three sentences
+            text: "There is a circus in a big top on our lawn for the school holidays, and I have free tickets for your families. They open this afternoon at 1pm and run through to Sunday, seven shows in all. If you tell me roughly how many families would use them, I will send you the booking code and the link today."
+          - point: The ask
+            text: "Rough number is all I need. Ten families, thirty, whatever you think."
+          - point: If the playgroup is not meeting this week
+            text: "That is fine, it does not need a session. A message round the group does it, and each family books the show that suits them and drives out on their own."
+          - point: If she asks what it costs
+            text: "Nothing for these ones. I will send the code and the link and it is done at the booking page."
+          - point: If she asks which times, or about a daytime show for younger children
+            text: "I will email the full list of session times with the link, so you can send it straight on."
+          - point: If she asks whether she can put it on her Facebook page
+            text: "Best kept to the group itself. These ones are for your own families rather than for the public."
+          - point: If she would rather bring the group together
+            text: "Then the following week works better for that. Give me a day that suits and I will come back to you on what can be held."
+          - point: Close
+            text: "I will send it through as soon as we hang up. Ngā mihi, and thanks for your time."
+        phone_note: |
+          Ring 0476 437 368 on the morning of Thursday 24 September. No code
+          and no price on the call; both go in the email that follows once
+          she has said she will pass it on. Add any number she gives to the
+          per-show tally before sending. Her playgroup runs Fridays in term
+          time, so there is no session this week and she will be reaching
+          families by phone or message.
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: Priyanka Das looks after partnerships at Historic Rivermill; partnerships@rivermill.au.
+    source: campaign YAML, sender block.
+  - claim: A riverside venue on Beaudesert Nerang Road at Mount Nathan; 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211.
+    source: campaign YAML venue block; business-overview.md; sot/S2-fees-and-service-hours.md section 1. Wording gated by business-antifacts.md, which rules out heritage structures as a feature and leaves the farming question unsettled.
+  - claim: About twenty minutes from Coomera Springs.
+    source: profile, Relevance assessment ("Upper Coomera postcode 4209, within northern catchment of Rivermill, approx. 15-20 min drive"); the group meets at the Early Years Centre, Coomera Springs.
+  - claim: We wrote in March about coming out to look around the place, and heard nothing back.
+    source: >-
+      dispatcher courier prefetch, 2026-03-31 "Familiarisation visit:
+      Historic Rivermill, Mount Nathan", from partnerships@rivermill.au to
+      nga.mokopuna.qld@gmail.com, admin-rivermill-au INBOX/Work Done and
+      Partnerships; no inbound from that address in any account.
+  - claim: A circus company has a big top on the lawn for the school holidays.
+    source: campaign YAML header comment; usps.big-top-at-a-heritage-farm.
+  - claim: WANTED – A Cirque Heist, first show 1pm on Thursday 24 September.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md ("The season opens Thursday 24 September at 1pm").
+  - claim: Seven shows between Thursday 24 and Sunday 27 September, free.
+    source: usps.opening-week-seats; campaign YAML header comment.
+  - claim: The session times are held elsewhere and travel with the booking link rather than this message.
+    source: 2026-09-23-stampede-arena-showtimes.md (the fourteen start times live in the website's data file); usps.opening-week-seats rests_on.
+  - claim: A booking code and the link follow in the reply, not in this message.
+    source: usps.opening-week-seats rests_on; prompt_appendices.a_author.
+  - claim: Each family books the show that suits them; no bus, no forms, no group to pull together.
+    source: usps.nothing-to-organise, which names playgroups within its scope.
+  - claim: The seats are not advertised and are not going to the public.
+    source: usps.not-advertised claim.
+  - claim: The tickets are for the group's own families rather than for posting publicly.
+    source: segment first_ask; prompt_appendices.a_author.
+  - claim: A group visit the following week, with the sender seeing what can be held.
+    source: usps.group-visit-later.
+  - claim: Contact phone 0476 437 368.
+    source: roster row; profile, Current role.
+  - claim: The playgroup meets Fridays 9:30-11:30am in term time, so no session falls in the free window.
+    source: profile, Group description (schedule and term-time note).
+  - claim: The group's name is written Ngā Mokopuna, and the organiser is addressed as Whaea; a te reo greeting is the register they use publicly.
+    source: profile, Group description and What they have said publicly (all public posts in te reo Māori; the Whaea title in the role line).
+quality_checklist: |
+  1. Structure. Root keys drawn from the canonical set; every round carries
+  type, and the draft and review rounds carry number; the final round holds
+  one email message and one phone message, so the email cap of one holds;
+  nga.mokopuna.qld@gmail.com is the roster address, so no placeholder and
+  no desync. profile_hash omitted for the harness to prepend on line 1
+  (issue #63). The validator was not invoked from here, per SPAR-A 7.1.
+
+  2. Coverage. fact_provenance reaches every factual claim in the final
+  email and the phone script, including the phone number, the term-time
+  schedule behind the phone_note, and the macronised spelling of the
+  group's name, which the roster carries without macrons and the profile
+  and the group's own page carry with them.
+
+  3. Presupposition test. Pass after revision. The message tells Whaea
+  Sissy nothing about her own playgroup. The one phrase the challenger
+  could not resolve, "the page", is cut rather than introduced, and no
+  recited-history gesture appears.
+
+  4. Manufactured-connection test. Pass. No shared interest is claimed. The
+  profile records no outings, no excursions and no statements on farms,
+  heritage venues or nature, and none is asserted. The angle rests on what
+  the profile does evidence: a group whose organiser circulates notices to
+  a community of families, 15 to 20 minutes away.
+
+  5. Concreteness. Pass. "Reply with roughly how many families would use
+  them" is answerable in one sentence, and matches the segment's
+  message_goal of a reply with a rough number.
+
+  6. Band-level pattern check. Not executable from this contact's context.
+  The opener is contact-specific: a self-introduction, then the March note.
+  Worth a reviewer's eye across the band, since the prior-contact line
+  recurs wherever the prefetch finds an unanswered outbound, and it is the
+  second such opener in this campaign after Southport Day VIEW Club.
+
+  7. Final round email cardinality. Pass, one email.
+
+  No roster_patch declared. No new or corrected contact detail was found;
+  the roster email and phone both match the profile.
