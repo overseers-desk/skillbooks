@@ -23,12 +23,19 @@ proc spar::courier::accounts_block {} {
     return $hdr
 }
 
-proc spar::courier::contact_block {name org email} {
+# One courier cascade per contact, serving both prompts: `author` is the
+# correspondence block the author's brief carries under the accounts
+# header; `prior` is the "Prior correspondence" section the persona's
+# prompt carries, the pass-1 hits alone, and empty when there are none,
+# since an index with no hits does not show the message is the first.
+proc spar::courier::contact_blocks {name org email} {
     set name  [string trim $name]
     set org   [string trim $org]
     set email [string trim $email]
-    if {$name eq "" && $org eq "" && $email eq ""} { return "" }
-    if {[auto_execok courier] eq ""} { return "" }
+    set none [dict create author "" prior ""]
+    if {$name eq "" && $org eq "" && $email eq ""} { return $none }
+    if {[auto_execok courier] eq ""} { return $none }
+    set prior ""
 
     set who $name
     if {$who eq ""} { set who "(unnamed)" }
@@ -41,13 +48,16 @@ proc spar::courier::contact_block {name org email} {
         append out "# Pass 1 — email lookup\n\$ courier -A search '$q1' --format text --limit 10\n"
         lassign [spar::courier::_run $q1] rc text
         append out "$text\n"
-        if {$rc == 0} { set pass1_hit 1 }
+        if {$rc == 0} {
+            set pass1_hit 1
+            set prior "\n### Prior correspondence\n\n$text\n"
+        }
     } else {
         append out "(Pass 1 — email lookup — skipped: no email on roster.)\n"
     }
     if {$pass1_hit} {
         append out "\n(Pass 1 hit — pass 2 skipped per cascade rule.)\n"
-        return $out
+        return [dict create author $out prior $prior]
     }
 
     set q2_parts {}
@@ -55,26 +65,14 @@ proc spar::courier::contact_block {name org email} {
     if {$org  ne ""} { lappend q2_parts "subject:\"$org\"" }
     if {[llength $q2_parts] == 0} {
         append out "\n(Pass 2 skipped: no name or organisation to search on.)\n"
-        return $out
+        return [dict create author $out prior $prior]
     }
     set q2 [join $q2_parts " OR "]
     append out "\n# Pass 2 — subject-line search for name and organisation\n"
     append out "\$ courier -A search '$q2' --format text --limit 10\n"
     lassign [spar::courier::_run $q2] rc text
     append out "$text\n"
-    return $out
-}
-
-# Our dated messages to this address as the mail index holds them, for
-# the persona's prompt. An index with no hits does not show the message
-# is the first, so an empty result here just means the prompt says
-# nothing, not that there was no prior contact.
-proc spar::courier::prior_block {email} {
-    set email [string trim $email]
-    if {$email eq "" || [auto_execok courier] eq ""} { return "" }
-    lassign [spar::courier::_run "to:$email"] rc text
-    if {$rc != 0} { return "" }
-    return "\n### Prior correspondence\n\n$text\n"
+    return [dict create author $out prior $prior]
 }
 
 proc spar::courier::_run {query} {
