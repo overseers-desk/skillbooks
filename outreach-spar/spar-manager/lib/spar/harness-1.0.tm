@@ -198,7 +198,7 @@ oo::class create spar::ApproachHarness {
     # AUTHOR_MODEL or the environment names SPAR_AUTHOR_MODEL; empty
     # otherwise, which leaves the runner's own default in force.
     method author_model_args {} {
-        if {$AuthorModel eq ""} { return {} }
+        if {![info exists AuthorModel] || $AuthorModel eq ""} { return {} }
         return [list --model $AuthorModel]
     }
 
