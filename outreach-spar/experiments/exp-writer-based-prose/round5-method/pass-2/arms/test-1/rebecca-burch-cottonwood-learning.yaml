@@ -1,0 +1,586 @@
+profile_hash: sha256:d2000126456bc3ec4ec71d08063a878c422da1b943a172adbe713d0e07049d25
+# Contact:  Rebecca Burch, Founding Director, Cottonwood Learning Nature Playgroup
+# Channel:  Email (23 September), phone follow-up (24 September) if no reply
+# Language: en-au
+# Angle:    A school-holiday outing she hands to her families rather than organises
+decisions:
+  channel: email
+  channel_detail: |
+    Email plus phone, no platform channel on the roster, so SPAR-A §4.2 rule
+    two. The campaign's approach_sequencing for this segment overrides the
+    method's three-day phone default: phone the next morning where there is
+    no reply and a number is listed. Her Nature Playgroup runs Tuesday and
+    Thursday 9:00 to 10:30am, so the call is placed from 10:45.
+    New subject rather than a reply on the March thread: see angle_rationale.
+  language: en-au
+  angle: holiday-outing-to-hand-on
+angle_rationale: |
+  Warmth: prior contact, one way, unanswered. The dispatcher prefetch returns
+  a single outbound message, 2026-03-31, partnerships@rivermill.au to
+  hello@cottonwoodlearning.com.au, subject "Nature education venue on the
+  Coomera River -- visit invitation", filed in two folders of the
+  admin-rivermill-au account. No inbound message from that address appears in
+  any of the five accounts searched. So we wrote and heard nothing back.
+  Under §4.1 that is "prior contact": reference the touchpoint, claim no
+  relationship. The campaign's a_author appendix makes naming it mandatory,
+  in one plain line that says what the earlier note was about.
+
+  New subject, not a thread reply. §4.1.1's conjunction is met on two terms
+  of three: warmth is prior, and the roster email appears in the chain. It
+  fails on "a current thread". The chain is one unanswered outbound note from
+  nearly six months ago, so there is no conversation to continue. A "Re:" on
+  a March visit invitation would also put a stale subject in front of an
+  offer that expires on Sunday. The appendix's instruction to name what the
+  earlier note was about presupposes a message where it is not already quoted
+  below the signature. §4.1.1's false branch applies: new subject, in-body
+  reference to the prior touchpoint.
+
+  Angle candidates, ordered by evidence strength:
+
+  1. An outing for the playgroup's families, with nothing for her to
+     organise. Her Nature Playgroup is 0-4 year olds attending with families,
+     which is the population the seats are for. Circulating something to
+     those families is what a playgroup organiser already does. That is
+     exactly the condition the nothing-to-organise USP's rests_on sets, and
+     exactly the case its exclusion (childcare and OSHC enrolment lists) does
+     not cover. Selected as primary.
+  2. The setting. Her stated founding purpose is "giving children opportunity
+     for free play in nature", she holds Forest School Leader Level 3, and
+     her sessions run outdoors. A tent on open lawn is a real point of
+     contact with that audience. Held to one clause about our own ground,
+     because the profile records no statements on farm visits or animal
+     encounters, and reading nature pedagogy into a circus would be a
+     manufactured connection. The challenger confirmed the fit is soft:
+     "we're nature-and-outdoors, not circus, but our families would still
+     enjoy a free school-holiday outing regardless of the brand."
+  3. Distance. The profile names the ~40 minute drive from Currumbin as the
+     main constraint. The angle answers it structurally rather than arguing
+     with it: each family decides for itself, so the drive is never hers to
+     justify. One clause names the distance rather than leaving her to find
+     it out.
+  4. Rejected as the lead: a group visit. Her programme is mobile across
+     three southern Gold Coast sites and she runs drop-off holiday sessions,
+     so a Rivermill session is structurally plausible. It is not achievable
+     by Sunday. It survives as the closing alternative, which the segment's
+     own first_ask carries.
+
+  USPs: nothing-to-organise and opening-week-seats (functional),
+  big-top-at-a-heritage-farm (emotional). not-advertised was held back for
+  two passes, because its segment framing ("handing members something nobody
+  else can get") invites flattery. The pass-2 reaction changed that: the
+  recipient's one hesitation was not knowing why a season would give away its
+  opening week, and the registry's claim answers precisely that. It entered
+  at draft 3, absorbed into the sentence already governing the offer's
+  non-public shape. The reasoning behind the Director's ruling stays out, as
+  its own rests_on requires.
+
+  Response likelihood held at 45 against the challenger's closing 80. The
+  three persona passes ran 55, 50, 80 on a draft that changed little between
+  the second and third. The drags are structural and no wording removes them:
+  our March approach went unanswered, the drive is forty minutes, and the
+  notice is one day. Against that, the ask is a single line to answer and
+  costs her nothing.
+response_likelihood: 45
+a_note: |
+  Angle: the holiday outing she hands to her families rather than organises,
+  with the second week offered for a group. Channel: email 23 September,
+  phone 24 September from 10:45am if no reply. Warmth: prior contact, one
+  way, unanswered since 31 March 2026, named in the message. Language: en-au.
+  Drafting note: the number asked for is the size of the group, not a
+  forecast of uptake, after the persona read a headcount ask as a commitment
+  she could not make two days out.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      Element order a-b-c per §4.5: introduce, ask, then reasons. The prior
+      touchpoint is folded into the introduction rather than given its own
+      paragraph. not-advertised deliberately omitted; its substance carried
+      by the mandated "not for posting publicly" line.
+    messages:
+      - channel: email
+        to: hello@cottonwoodlearning.com.au
+        subject: Free circus tickets for your Cottonwood families, from tomorrow
+        body: |
+          Dear Rebecca,
+
+          I am Priyanka Das and I look after partnerships at Historic Rivermill, a venue on the Coomera River at Mount Nathan, about forty minutes inland from Currumbin. I wrote to you in March inviting you to visit, and heard nothing back, so I will keep this short.
+
+          I have free tickets to WANTED – A Cirque Heist for your Cottonwood families. It is a family circus in a big top on our lawn, seven shows from tomorrow, Thursday 24 September, through to Sunday, the first at 1pm. Reply with roughly how many families you would pass it on to and I will send you a code and a booking link for the group. Each family books the show that suits them, so there is no outing for you to run and nothing for you to arrange in the days that are left.
+
+          They are for your own families rather than for posting publicly.
+
+          The tent stands on open lawn beside the river, under fig trees more than a hundred years old.
+
+          If the group would rather come together, next week suits that better. Tell me a day and I will come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          Colourful.land Pty Ltd
+          partnerships@rivermill.au
+      - channel: phone
+        to: 0473 021 887
+        text: |
+          Thursday 24 September from 10:45am, if no reply to the email. A
+          one-minute call to get a yes or no on passing the tickets to her
+          families, and a rough number.
+        script:
+          - point: Opening
+            text: |
+              Hi Rebecca, it's Priyanka Das from Historic Rivermill at Mount Nathan. I sent you an email yesterday about free circus tickets for your playgroup families. Have I caught you at a reasonable moment?
+          - point: The offer
+            text: |
+              There is a family circus in a big top on our lawn for the school holidays, WANTED – A Cirque Heist. It opened at one o'clock today and runs seven shows through to Sunday. I have free tickets for your families.
+          - point: The ask
+            text: |
+              If you can pass it around the group, tell me roughly how many families and I will email you a code and a booking link this morning. Each family books whichever show suits them, so there is nothing for you to organise.
+          - point: The boundary
+            text: |
+              They are for your own families rather than for putting on the page.
+          - point: Alternative
+            text: |
+              If the group would rather come together instead, next week suits that better. Give me a day and I will come back to you on seating.
+          - point: Close
+            text: |
+              No trouble either way. If it is not for you, say so and I will leave you to the holidays.
+        phone_note: |
+          Her Nature Playgroup sessions run Tuesday and Thursday 9:00 to
+          10:30am, so she is with families until about 10:30. Do not call
+          before 10:45. If she answers mid-pack-up, offer to call back rather
+          than press on.
+
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      The "heard nothing back" line names the true state of things plainly
+      rather than guilting me, so I am not embarrassed reading it. What would
+      stop me replying: I do not know Priyanka Das or Rivermill first-hand,
+      and forwarding something to my families on a stranger's word gives me a
+      moment's pause before I put my name behind it. The distance weighs too.
+      My families are Currumbin, Tugun and Elanora based, and Mount Nathan is
+      not somewhere most of them would drive for a one-off show on short
+      notice. Together those mean I am not certain the forwarding gets used,
+      which makes the ask feel more like a favour to Rivermill than to my
+      families. What I would just ask in my reply: how the code works when a
+      family books, and whether there is anything to say about pram or
+      wheelchair access on the lawn. The offer's shape is doable in the time.
+      Forwarding a link to my own group by tomorrow is realistic.
+      REPLY_PCT: 55
+    fact_check:
+      - claim: The phone script's "It opened at one o'clock today", spoken from 10:45am on Thursday 24 September.
+        source: "2026-09-23-stampede-arena-showtimes.md: the season opens Thursday 24 September at 1pm."
+        result: incorrect
+        note: At 10:45am the first show has not yet started, so the past tense is false at the moment of delivery.
+        correction: The first show is at one o'clock this afternoon, and there are seven shows through to Sunday.
+      - claim: Seven shows from Thursday 24 September through to Sunday, the first at 1pm.
+        source: Campaign YAML header (opening week, Thursday 24 to Sunday 27 September, seven shows) and the showtimes file (season opens Thursday 24 September at 1pm).
+        result: verified
+      - claim: We wrote to this contact in March inviting her to visit and heard nothing back.
+        source: "Courier prefetch: outbound 2026-03-31, \"Nature education venue on the Coomera River -- visit invitation\", no inbound from hello@cottonwoodlearning.com.au in any searched account."
+        result: verified
+    antifact_check: |
+      No code, price, discount, Oztix link, feed-bag or animal-food offer, and
+      no suggestion that seats are unsold or that the offer serves the sender.
+      mothers-group carries no farm or animal USP, and none appears.
+    revision_note: |
+      Point sorting before revising.
+      (1) "It opened at one o'clock today" spoken at 10:45am: factual error,
+      fixed in the phone script.
+      (2) Putting her name behind a stranger's offer: answer in this email. A
+      reply-stopper, not a curiosity. Absorbed two ways. The seats are set
+      aside under Cottonwood's name rather than circulated as a public code,
+      and the signature gains the street address so she can see we are a real
+      place before forwarding anything.
+      (3) The ask reads as a favour to Rivermill: absorb by reframing. The
+      ask now seeks the size of the group, not a forecast of how many will
+      go. No reassurance sentence was added, because any line about take-up
+      edges toward implying spare seats, which the a_author appendix rules
+      out.
+      (4) How the code works, and pram or wheelchair access: leave for the
+      reply, both named as questions rather than blockers. Access cannot be
+      answered at all yet, since the campaign holds its two disability
+      segments until the operator states the tent's position. The phone note
+      now tells the caller to undertake to find out rather than improvise.
+      (5) The March line and the offer's doable shape: read as intended, kept
+      unchanged.
+    notes: Persona reply estimate 55%.
+
+  - type: draft
+    number: 2
+    chosen_usps: [nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      Headcount ask reframed to group size; seats set aside under the
+      organisation's name; street address added to the signature; phone
+      script tense corrected; phone note gains the two deferrals.
+    messages:
+      - channel: email
+        to: hello@cottonwoodlearning.com.au
+        subject: Free circus tickets for your Cottonwood families, from tomorrow
+        body: |
+          Dear Rebecca,
+
+          I am Priyanka Das and I look after partnerships at Historic Rivermill, a venue on the Coomera River at Mount Nathan, about forty minutes inland from Currumbin. I wrote to you in March inviting you to visit, and heard nothing back, so I will keep this short.
+
+          I have free tickets to WANTED – A Cirque Heist for your Cottonwood families. It is a family circus in a big top on our lawn. Seven shows run from tomorrow, Thursday 24 September, through to Sunday, and the first is at 1pm.
+
+          Tell me roughly how many families are in the group and I will hold seats under Cottonwood's name. Then I will send you a code and a booking link to pass around. Each family books whichever show suits them, so there is no outing for you to run and nothing to arrange at this notice.
+
+          They are for your own families rather than for posting publicly.
+
+          The tent stands on open lawn beside the river, under fig trees more than a hundred years old.
+
+          If the group would rather come together, next week suits that better. Tell me a day and I will come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          Colourful.land Pty Ltd
+          950 Beaudesert Nerang Road, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+      - channel: phone
+        to: 0473 021 887
+        text: |
+          Thursday 24 September from 10:45am, if no reply to the email. A
+          one-minute call to get a yes or no on passing the tickets to her
+          families, and the size of the group.
+        script:
+          - point: Opening
+            text: |
+              Hi Rebecca, it's Priyanka Das from Historic Rivermill at Mount Nathan. I sent you an email yesterday about free circus tickets for your playgroup families. Have I caught you at a reasonable moment?
+          - point: The offer
+            text: |
+              There is a family circus in a big top on our lawn for the school holidays, WANTED – A Cirque Heist. The first show is at one o'clock this afternoon, and there are seven shows through to Sunday. I have free tickets for your families.
+          - point: The ask
+            text: |
+              Tell me roughly how many families are in the group and I will hold seats under Cottonwood's name. Then I will email you a code and a booking link this morning. Each family books whichever show suits them, so there is nothing for you to organise.
+          - point: The boundary
+            text: |
+              They are for your own families rather than for putting on the page.
+          - point: Alternative
+            text: |
+              If the group would rather come together instead, next week suits that better. Give me a day and I will come back to you on seating.
+          - point: Close
+            text: |
+              No trouble either way. If it is not for you, say so and I will leave you to the holidays.
+        phone_note: |
+          Her Nature Playgroup sessions run Tuesday and Thursday 9:00 to
+          10:30am, so she is with families until about 10:30. Do not call
+          before 10:45. If she answers mid-pack-up, offer to call back rather
+          than press on. If she asks how the code works for a booking, say it
+          comes with the email. If she asks about pram or wheelchair access
+          on the lawn, say you will check with the circus operator and come
+          back to her, and do not answer it on the call.
+
+  - type: review
+    number: 2
+    verdict: REVISE
+    in_character: |
+      Free circus tickets arriving cold from a hinterland venue I do not
+      recognise. My first instinct is mild wariness, the kind any "free"
+      offer in the business inbox gets. Reading on, nothing here actually
+      asks anything of me. No outing to run, no code to chase up front, just
+      a rough number and then forward what she sends. That is a low bar. The
+      March line is plausible; a lot comes through hello@ that I do not get
+      to, and a "come and visit" invitation is a bigger ask than free
+      tickets. That she is following up rather than writing me off is a point
+      in her favour. The timing is tight but the ask matches it. Had she
+      asked me to bring the group as an excursion by tomorrow, that would
+      stop me cold. We are an outdoor nature playgroup, not a bus-charter
+      operation. She has already offered the following week for that, which
+      is the sensible version. The one thing that gives me pause, not enough
+      to stop me but enough that I would ask it, is why a commercial season
+      gives away opening week rather than discounting it. I would want to
+      know it is not a mailing-list harvest before forwarding under my own
+      name. Fit is a soft consideration, not a blocker; we are
+      nature-and-outdoors, not circus, but our families would enjoy a free
+      school-holiday outing regardless. What would stop me replying: nothing
+      in the message. What I would ask: the code mechanics, and whether I can
+      just pass the link on rather than hold a headcount I cannot predict two
+      days out.
+      REPLY_PCT: 50
+    fact_check:
+      - claim: Under fig trees more than a hundred years old.
+        source: business-overview.md lists fig trees among the grounds' features with no age; business-antifacts.md ages the property's trees at more than 100 years with no species attached.
+        result: unsupported
+        note: No source ties the century-plus age to the figs rather than to another tree on the property.
+        correction: Remove the claim.
+      - claim: The tent stands on open lawn beside the river.
+        source: Campaign YAML places the big top on the lawn at the venue; business-overview.md places the dining deck beside the Coomera River.
+        result: unsupported
+        note: The tent's position relative to the water is asserted, not sourced. The river-adjacent structure the sources describe is a different one.
+        correction: Remove the claim. What the sources do support is a big top on our lawn, up for the school holidays only.
+      - claim: Seven shows Thursday through Sunday, first at 1pm; no code, price, discount, Oztix link, feed-bag offer or unsold-seat implication.
+        source: Campaign YAML mothers-group plan block and usps registry; showtimes file; a_challenger appendix.
+        result: verified
+    antifact_check: |
+      None of the antifact claims appear: no stone buildings, no original or
+      100-year-old mill structures, no vineyard, no Tamborine Mountain
+      location. The tree-age claim is the inverse case, asserting more than
+      the antifact file establishes, and is removed.
+    revision_note: |
+      Point sorting before revising.
+      (1) and (2) The tree age and the tent's position: both cut. The whole
+      setting sentence goes with them, since what survives is already carried
+      by the introduction (a venue on the Coomera River) and the offer
+      sentence (a big top on our lawn). The sourced remainder moves into the
+      offer sentence: a real big top, pitched on our lawn for the school
+      holidays only. The persona had already said the nature fit is soft, so
+      the deletion costs the angle nothing.
+      (3) Why a commercial season gives away opening week: half answered in
+      this email, half left for the reply. The sanctioned half is the
+      not-advertised claim, absorbed into the sentence already there about
+      not posting publicly. No line is added disclaiming any interest in her
+      families' details, because denying a suspicion in a first-touch email
+      is what plants it. The phone note gains the same sanctioned answer for
+      a caller who is asked.
+      (4) Holding a headcount she cannot predict: absorb by reframing. The
+      campaign needs a number to set seats aside per show, so the ask stays.
+      One clause says an approximate number is all that is wanted, and "hold"
+      becomes "set aside".
+      (5) The code and booking mechanics: leave for the reply, named as a
+      reply question in both passes.
+      (6) The March follow-up reading as persistence, the ask matching the
+      timing, the second-week alternative: kept unchanged.
+    notes: Persona reply estimate 50%. not-advertised enters chosen_usps at draft 3.
+
+  - type: draft
+    number: 3
+    chosen_usps: [not-advertised, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      Setting sentence removed; not-advertised absorbed into the
+      non-public-use line; the number explicitly approximate; phone note
+      gains the sanctioned answer to "why free".
+    messages:
+      - channel: email
+        to: hello@cottonwoodlearning.com.au
+        subject: Free circus tickets for your Cottonwood families, from tomorrow
+        body: |
+          Dear Rebecca,
+
+          I am Priyanka Das and I look after partnerships at Historic Rivermill, a venue on the Coomera River at Mount Nathan, about forty minutes inland from Currumbin. I wrote to you in March inviting you to visit, and heard nothing back, so I will keep this short.
+
+          I have free tickets to WANTED – A Cirque Heist for your Cottonwood families. It is a family circus in a real big top, pitched on our lawn for the school holidays only. Seven shows run from tomorrow, Thursday 24 September, through to Sunday, and the first is at 1pm.
+
+          Tell me roughly how many families are in the group and I will set seats aside under Cottonwood's name. An approximate number is all I need. Then I will send you a code and a booking link to pass around. Each family books whichever show suits them, so there is no outing for you to run and nothing to arrange at this notice.
+
+          Opening week is going to local groups rather than being advertised, so the tickets are for your own families rather than for posting publicly.
+
+          If the group would rather come together, next week suits that better. Tell me a day and I will come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          Colourful.land Pty Ltd
+          950 Beaudesert Nerang Road, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+      - channel: phone
+        to: 0473 021 887
+        text: |
+          Thursday 24 September from 10:45am, if no reply to the email. A
+          one-minute call to get a yes or no on passing the tickets to her
+          families, and a rough size for the group.
+        script:
+          - point: Opening
+            text: |
+              Hi Rebecca, it's Priyanka Das from Historic Rivermill at Mount Nathan. I sent you an email yesterday about free circus tickets for your playgroup families. Have I caught you at a reasonable moment?
+          - point: The offer
+            text: |
+              There is a family circus in a real big top on our lawn for the school holidays, WANTED – A Cirque Heist. The first show is at one o'clock this afternoon, and there are seven shows through to Sunday. I have free tickets for your families.
+          - point: The ask
+            text: |
+              Tell me roughly how many families are in the group and I will set seats aside under Cottonwood's name. A rough number is all I need. Then I will email you a code and a booking link this morning. Each family books whichever show suits them, so there is nothing for you to organise.
+          - point: The boundary
+            text: |
+              Opening week is going to local groups rather than being advertised, so they are for your own families rather than for putting on the page.
+          - point: Alternative
+            text: |
+              If the group would rather come together instead, next week suits that better. Give me a day and I will come back to you on seating.
+          - point: Close
+            text: |
+              No trouble either way. If it is not for you, say so and I will leave you to the holidays.
+        phone_note: |
+          Her Nature Playgroup sessions run Tuesday and Thursday 9:00 to
+          10:30am, so she is with families until about 10:30. Do not call
+          before 10:45. If she answers mid-pack-up, offer to call back rather
+          than press on. If she asks how the code works for a booking, say it
+          comes with the email. If she asks why the tickets are free, say
+          opening week is going to local organisations rather than being
+          advertised, and leave it there. If she asks about pram or
+          wheelchair access on the lawn, say you will check with the circus
+          operator and come back to her, and do not answer it on the call.
+
+  - type: review
+    number: 3
+    verdict: DONE
+    in_character: |
+      A venue I do not know well, forty minutes inland, offering free circus
+      tickets with no strings I can see. The ask is trivial: a rough
+      headcount, then forward a code when it comes, nothing to organise on my
+      end. The message explicitly is not asking me to run an excursion in a
+      day and a half. The reference to writing in March and hearing nothing
+      back is a fair, low-key way to reopen contact. It does not guilt-trip
+      me, it explains why she is keeping this short. Points that would stop
+      me replying: none. Nothing here asks for money, personal information,
+      or a commitment I cannot easily undo. Points I would simply ask in my
+      reply: whether the lawn and paths are pram-friendly, since my families
+      bring prams and toddlers; which of the seven shows suits families with
+      very young children; and I would give my rough family count once I have
+      put the word out.
+      REPLY_PCT: 80
+    fact_check:
+      - claim: Thursday 24 September, first show at 1pm, seven shows through to Sunday.
+        source: 2026-09-23-stampede-arena-showtimes.md and the campaign YAML's opening-week framing.
+        result: verified
+      - claim: Sender name, role, organisation, email and venue address.
+        source: Campaign YAML sender and venue blocks.
+        result: verified
+      - claim: A venue on the Coomera River.
+        source: business-overview.md U1.
+        result: verified
+      - claim: We wrote in March inviting her to visit.
+        source: "Courier record 2026-03-31, \"Nature education venue on the Coomera River -- visit invitation\"."
+        result: verified
+      - claim: No code, price, discount, Oztix link, feed-bag or animal-food offer; the code withheld for the reply.
+        source: usps registry (opening-week-seats rests_on) and prompt_appendices.a_author.
+        result: verified
+      - claim: The phone script's deferrals on pram and wheelchair access and on why the tickets are free.
+        source: "Campaign YAML: the two disability segments are held until CHARC states the tent's access position; the not-advertised claim covers the \"why free\" answer."
+        result: verified
+    antifact_check: |
+      None of the antifact claims appear: no stone buildings, no 100-year-old
+      or original mill structures, no vineyard, no Tamborine Mountain
+      location. The two unsupported claims from draft 2 are gone with the
+      sentence that carried them.
+    notes: |
+      Persona reply estimate 80%, against 55 and 50 on the two earlier
+      passes. response_likelihood is set at 45, below all three: the
+      structural drags (unanswered March approach, forty-minute drive, one
+      day's notice) are not wording problems and no revision removed them.
+
+  - type: final
+    chosen_usps: [not-advertised, nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: hello@cottonwoodlearning.com.au
+        subject: Free circus tickets for your Cottonwood families, from tomorrow
+        body: |
+          Dear Rebecca,
+
+          I am Priyanka Das and I look after partnerships at Historic Rivermill, a venue on the Coomera River at Mount Nathan, about forty minutes inland from Currumbin. I wrote to you in March inviting you to visit, and heard nothing back, so I will keep this short.
+
+          I have free tickets to WANTED – A Cirque Heist for your Cottonwood families. It is a family circus in a real big top, pitched on our lawn for the school holidays only. Seven shows run from tomorrow, Thursday 24 September, through to Sunday, and the first is at 1pm.
+
+          Tell me roughly how many families are in the group and I will set seats aside under Cottonwood's name. An approximate number is all I need. Then I will send you a code and a booking link to pass around. Each family books whichever show suits them, so there is no outing for you to run and nothing to arrange at this notice.
+
+          Opening week is going to local groups rather than being advertised, so the tickets are for your own families rather than for posting publicly.
+
+          If the group would rather come together, next week suits that better. Tell me a day and I will come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          Colourful.land Pty Ltd
+          950 Beaudesert Nerang Road, Mount Nathan QLD 4211
+          partnerships@rivermill.au
+        director_note: |
+          Send 23 September. The reply carries the code and the Eventbrite
+          link, plus the Sunday cut-off, and her number goes on the per-show
+          tally. Two questions are expected and deliberately unanswered here:
+          how the code works at booking, and pram or wheelchair access on the
+          lawn. The second cannot be answered until CHARC states the tent's
+          access position.
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: 0473 021 887
+        text: |
+          Thursday 24 September from 10:45am, if no reply to the email. A
+          one-minute call to get a yes or no on passing the tickets to her
+          families, and a rough size for the group.
+        script:
+          - point: Opening
+            text: |
+              Hi Rebecca, it's Priyanka Das from Historic Rivermill at Mount Nathan. I sent you an email yesterday about free circus tickets for your playgroup families. Have I caught you at a reasonable moment?
+          - point: The offer
+            text: |
+              There is a family circus in a real big top on our lawn for the school holidays, WANTED – A Cirque Heist. The first show is at one o'clock this afternoon, and there are seven shows through to Sunday. I have free tickets for your families.
+          - point: The ask
+            text: |
+              Tell me roughly how many families are in the group and I will set seats aside under Cottonwood's name. A rough number is all I need. Then I will email you a code and a booking link this morning. Each family books whichever show suits them, so there is nothing for you to organise.
+          - point: The boundary
+            text: |
+              Opening week is going to local groups rather than being advertised, so they are for your own families rather than for putting on the page.
+          - point: Alternative
+            text: |
+              If the group would rather come together instead, next week suits that better. Give me a day and I will come back to you on seating.
+          - point: Close
+            text: |
+              No trouble either way. If it is not for you, say so and I will leave you to the holidays.
+        phone_note: |
+          Her Nature Playgroup sessions run Tuesday and Thursday 9:00 to
+          10:30am, so she is with families until about 10:30. Do not call
+          before 10:45. If she answers mid-pack-up, offer to call back rather
+          than press on. If she asks how the code works for a booking, say it
+          comes with the email. If she asks why the tickets are free, say
+          opening week is going to local organisations rather than being
+          advertised, and leave it there. If she asks about pram or
+          wheelchair access on the lawn, say you will check with the circus
+          operator and come back to her, and do not answer it on the call.
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: Priyanka Das, Partnerships, Historic Rivermill (Colourful.land Pty Ltd), partnerships@rivermill.au.
+    source: Campaign YAML, sender block.
+  - claim: A venue on the Coomera River at Mount Nathan.
+    source: "business-overview.md: Mount Nathan, Gold Coast hinterland, on the Coomera River."
+  - claim: 950 Beaudesert Nerang Road, Mount Nathan QLD 4211.
+    source: Campaign YAML venue block, and business-overview.md.
+  - claim: About forty minutes inland from Currumbin.
+    source: "Profile, Relevance assessment: ~40 min drive from Currumbin to Rivermill."
+  - claim: We wrote in March inviting her to visit, and heard nothing back.
+    source: "Courier prefetch: outbound 2026-03-31 partnerships@rivermill.au to hello@cottonwoodlearning.com.au, \"Nature education venue on the Coomera River -- visit invitation\"; no inbound from that address in any of the five searched accounts."
+  - claim: Free tickets to the show for the organisation's families.
+    source: "Campaign YAML, usps.opening-week-seats: up to the segment's allocation, at any of the seven opening-week shows, free."
+  - claim: A family circus in a real big top, pitched on our lawn for the school holidays only.
+    source: "Campaign YAML, usps.big-top-at-a-heritage-farm, and the campaign header: CHARC Performance stages a family circus in a big top on the lawn at the venue."
+  - claim: Seven shows from Thursday 24 September through to Sunday.
+    source: "Campaign YAML header: opening week, Thursday 24 to Sunday 27 September, seven shows."
+  - claim: The first show is at 1pm.
+    source: "2026-09-23-stampede-arena-showtimes.md: the season opens Thursday 24 September at 1pm."
+  - claim: A code and a booking link follow in the reply, not in this message.
+    source: "Campaign YAML header and usps.opening-week-seats rests_on: the code is sent in the reply that answers the recipient, never in the first message."
+  - claim: Each family books whichever show suits them; no outing to run.
+    source: "Campaign YAML, usps.nothing-to-organise: the recipient forwards the tickets to families, who book whichever opening-week show suits them."
+  - claim: Opening week is going to local groups rather than being advertised.
+    source: "Campaign YAML, usps.not-advertised: the free opening-week seats are not advertised and are not offered to the public at any price."
+  - claim: The tickets are for her own families rather than for posting publicly.
+    source: "Campaign YAML, prompt_appendices.a_author and the campaign header: the code is for the organisation's own booking, kept off social media and not passed beyond the organisation."
+  - claim: A group visit next week can be arranged instead.
+    source: Campaign YAML, usps.group-visit-later, carried by the mothers-group first_ask.
+  - claim: Phone 0473 021 887.
+    source: Roster row, and the profile's Current role section.
+  - claim: Her Nature Playgroup runs Tuesday and Thursday 9:00 to 10:30am.
+    source: "Profile, Programmes: Nature Playgroup, children 0-4 years with families, Tue and Thu 9-10:30am."
+quality_checklist: |
+  1. Structure. Root keys drawn from §6's set. Every draft and review round
+     carries type and number. The final round holds one email and one phone
+     message, so the email cardinality cap holds. Both addresses are real,
+     taken from the roster and confirmed in the profile.
+  2. Coverage. fact_provenance covers every factual claim in the final email
+     and phone script. chosen_usps is present on all three draft rounds and
+     on the final round.
+  3. Presupposition. No sentence recites her programme, her qualifications,
+     her philosophy or her catchment back to her. The only facts about her
+     world in the message are the drive time and the word "families", and
+     both carry the proposition rather than perform research.
+  4. Manufactured connection. The nature-education alignment is not claimed.
+     The profile records no statements on farm visits or animal encounters,
+     and none is implied. The closest the message comes is naming the tent as
+     a real big top on a lawn, which is our own ground.
+  5. Concreteness. "Tell me roughly how many families are in the group" is
+     answerable in one sentence, and the campaign's message_goal asks for
+     exactly that.
+  6. Band pattern. The opener leads with the unanswered March note, which no
+     other message in this band can carry. The subject names Cottonwood, so
+     it deduplicates against every other subject in the campaign on an
+     element with attention value rather than on her name.
+  7. Final email cardinality. One email, one phone. Passes.

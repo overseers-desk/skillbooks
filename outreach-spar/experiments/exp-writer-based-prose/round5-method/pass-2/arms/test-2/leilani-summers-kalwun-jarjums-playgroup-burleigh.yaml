@@ -1,0 +1,404 @@
+profile_hash: sha256:118eca64c20053fa7235ad4e82bf8bdcfc1604c421f136d2d1fc9fbff9e3626a
+# Contact: Leilani Summers, Program Coordinator, Kalwun Jarjums Playgroup (Burleigh Heads)
+# Channel: email (BurleighCFSSAdmin@kalwun.com.au), phone follow-up (07 5520 8600)
+# Language: en-au
+# Angle: free opening-week seats to hand to her own families, with nothing to organise
+decisions:
+  channel: email
+  channel_detail: |
+    Email first to the Burleigh Child, Family and Support Services inbox on
+    23 September, phone follow-up to 07 5520 8600 on the morning of
+    24 September where no reply has come. No LinkedIn exists for this
+    contact and no personal email was located, so the branch inbox is the
+    only written route. The organisation's Facebook Page is Kalwun's
+    corporate Page, not a Jarjums channel, and a Page message would put the
+    offer in front of the wrong part of the organisation.
+  language: en-au
+  angle: tickets-to-hand-on-nothing-to-organise
+angle_rationale: |
+  Warmth is cold. The dispatcher prefetch searched both directions on
+  BurleighCFSSAdmin@kalwun.com.au, and searched the contact and
+  organisation names in subject lines, across all five configured accounts.
+  It returned no hits. The profile records no dated conduct by Leilani or
+  Kalwun towards us. So the message carries no prior-dealing line and no
+  "we wrote before and heard nothing" line: neither condition in the
+  campaign's a_author appendix is met.
+
+  The profile is institutional. Leilani has made no public statement, the
+  Kalwun Page names her nowhere, and the thirty harvested Kalwun posts hold
+  no excursion or outing post. The profile's absent-themes list rules out
+  building an angle on nature play, outings, heritage venues or Rivermill.
+  What remains is what the segment plan block's deciding_interest already
+  names: a recurring group with one decision-maker, at Burleigh Heads about
+  thirty minutes from Mount Nathan, delivered by employed educators, free
+  to attend, with no fee-collecting history.
+
+  That last fact picks the angle. The profile's relevance assessment says a
+  paid outing has a slow or non-existent path here, and that any offer needs
+  a complimentary frame. The plan block's nothing-to-organise USP is the
+  shape that fits: the ask is to forward tickets, not to assemble an
+  excursion. Jarjums runs in school term, so the group is unlikely to meet
+  during the holidays. The forwarding shape works with that rather than
+  against it, and the draft presupposes her reach over the break rather than
+  asserting anything about her calendar.
+
+  The profile also flags cultural safety: a general-population venue on
+  Yugambeh country with no published First Nations programming should
+  invite, not claim. The message therefore makes no cultural claim, no
+  acknowledgement gesture, and no reference to country. It is one local
+  organisation writing to another, which is the register the campaign
+  appendix asks for.
+
+  USPs: nothing-to-organise (functional, the one the message rests on),
+  opening-week-seats (functional), big-top-at-a-heritage-farm (emotional,
+  one line), and one clause of not-advertised carrying the "something your
+  families could not otherwise get" framing. make-a-day-of-it is not in this
+  segment's list and is left out.
+
+  Held out of the first message by campaign rule: the code, the price, the
+  Eventbrite link, any discount, and anything implying seats are unsold or
+  that the offer serves us. The pass-on wording says the tickets are for her
+  families rather than for posting publicly. group-visit-later appears as
+  the one-line alternative the plan block's first_ask specifies.
+response_likelihood: 55
+a_note: |
+  Angle: free opening-week seats to hand to her own families, with nothing
+  to organise, plus the second-week group visit as the alternative. Channel:
+  email to the Burleigh branch inbox, phone to 07 5520 8600 the next
+  morning. Warmth: cold, prefetch clean in both directions. Language:
+  en-au. Drafting considerations: the email lands in a shared admin inbox
+  rather than a personal one, so a colleague opening it can act on it;
+  Jarjums runs term-time only, so the message presupposes she reaches
+  families by her own list over the break instead of through a session; no
+  cultural claim is made, per the profile's cultural-safety finding.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm, not-advertised]
+    notes: |
+      First touch. Element order follows the method's ask-before-justification
+      rule: introduce the sender, make the ask, then supply the reasons. No
+      code, price or link.
+    messages:
+      - channel: email
+        to: BurleighCFSSAdmin@kalwun.com.au
+        bcc: partnerships@rivermill.au
+        subject: Free circus tickets for your Jarjums families, Thursday to Sunday
+        body: |
+          Hi Leilani,
+
+          I am Priyanka Das, partnerships at Historic Rivermill, the riverside venue on Beaudesert Nerang Road at Mount Nathan, about 30 minutes inland from Burleigh Heads.
+
+          I have free tickets to a family circus for the Jarjums families. A circus company has put a big top up on our lawn for the school holidays with a show called WANTED – A Cirque Heist, and there are seven sessions from this Thursday 24 September through to Sunday 27 September, the first at 1pm on Thursday. If you reply with a rough number of families, I will send you a booking code and the link for you to pass around the group.
+
+          The tickets are for your families rather than for posting publicly. There is nothing to organise at your end: each family books whichever session suits them. We are not advertising these seats anywhere, and the same shows are on sale at full price, so it is something your families would not come across on their own.
+
+          If the group would rather come out together instead, the following week suits that better. Tell me a day and I will come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill (Colourful.land Pty Ltd)
+          partnerships@rivermill.au | 07 3703 1307
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+        to_note: |
+          Organisational inbox for Kalwun's Burleigh Child, Family and Support
+          Services branch, published by Kalwun and backfilled to the roster by
+          P. Not a personal address for Leilani.
+      - channel: phone
+        to: 07 5520 8600
+        text: |
+          Follow-up call on the morning of Thursday 24 September where the
+          email has drawn no reply.
+        script:
+          - point: Opening
+            text: "Good morning, is Leilani there please? My name is Priyanka Das, I am with Historic Rivermill out at Mount Nathan. I sent an email to the Burleigh admin address yesterday about some free circus tickets and I wanted to make sure it had reached the right person."
+          - point: What it is
+            text: "There is a circus in a big top on our lawn for the school holidays, a family show, and I have free tickets set aside for the Jarjums families. Seven sessions between tomorrow and Sunday, and families pick whichever one suits them."
+          - point: Ask
+            text: "If you give me a rough number of families, I will email you a booking code and the link this morning and you can pass it around however you normally reach them."
+          - point: Close
+            text: "What is the best address for me to send the code to? Confirm the address, confirm the numbers, and say the code and link will be in her inbox within the hour."
+        phone_note: |
+          Kalwun Burleigh Child, Family and Support Services line. Ask for
+          Leilani Summers. Call between 9am and 11am; if she is unavailable,
+          ask when she is in and call back rather than leaving the offer with
+          whoever answers.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      An email arrives at the Burleigh admin inbox, naming me and the
+      playgroup correctly, offering free tickets to a circus at a venue I had
+      not previously dealt with. Nothing is asked of me beyond a headcount,
+      no money changes hands, and no personal information about the children
+      is requested. On its own terms it reads as what it claims to be, a
+      local business inviting a local community group. I would not take it
+      purely at face value: Kalwun runs on community trust, and before I
+      forward anything bearing an outside brand to the families I work with I
+      would want to be surer of the venue, and more practically of how I
+      would reach families this week, since our Tuesday session does not run
+      during the holidays the circus falls in. That is a logistics question,
+      not a reason to ignore the offer. The follow-up call complicates rather
+      than reassures. Ringing on the Thursday morning to say "seven sessions
+      between tomorrow and Sunday" describes a circus starting the next day,
+      when the email I hold says Thursday is the first day and the first show
+      is at 1pm that afternoon. Nothing here would stop me replying. I would
+      raise two practical things in the reply: how best to reach families
+      quickly during the term break, and which shows are actually on offer,
+      given the email and the call do not agree. Reply likelihood 72 per cent.
+    fact_check:
+      - claim: Seven sessions between tomorrow and Sunday (phone script, spoken Thursday 24 September morning).
+        source: Showtimes file and the campaign YAML header, both fixing the opening show at 1pm on Thursday 24 September.
+        result: wrong
+        note: The email sent the day before already states "this Thursday, the first at 1pm on Thursday". Said aloud on the Thursday, "tomorrow" pushes the first show to Friday.
+        correction: Name the one o'clock session on the day of the call instead of using a relative day.
+      - claim: Sender name, role, organisation, sending address, bcc and phone (07 3703 1307).
+        source: Campaign YAML sender block and the fees-and-service-hours business information block.
+        result: verified
+      - claim: Venue address, 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211, described as riverside.
+        source: Business overview (address and U1, the Coomera River dining deck).
+        result: verified
+      - claim: Seven sessions from Thursday 24 September to Sunday 27 September, the first at 1pm Thursday.
+        source: Showtimes file and the campaign YAML header ruling on opening week.
+        result: verified
+      - claim: No code, price, discount, Oztix link or unsold-seats implication in the first message.
+        source: Campaign a_author appendix and the not-advertised and opening-week-seats USP entries.
+        result: verified
+    antifact_check: |
+      No stone buildings, no century-old or original mill structures, no
+      vineyard, no farming claim, and no Tamborine Mountain placement. The
+      venue is described as a riverside venue at Mount Nathan.
+    revision_note: |
+      The persona raised five points; each was sorted before the draft moved.
+      (1) "Seven sessions between tomorrow and Sunday", scored 0: fixed in the
+      draft by cutting the sentence and naming the one o'clock session on the
+      day of the call. (2) "To make sure it had reached the right person",
+      scored 2: cut. The call happens because no reply came, so receipt cannot
+      be presupposed, and checking it aloud starts a conversation about the
+      inbox rather than the tickets. (3) Who Historic Rivermill is and why a
+      commercial venue gives seats to an ACCO with no strings named: left for
+      the reply. The persona named it as a thought, not a blocker, and the
+      only answers available to a first message are our own reasoning, which
+      the campaign keeps out, or a credential this segment's USP list does not
+      carry. (4) How she would reach families during the term break: absorbed
+      by reframing the sentence about nothing to organise, which now
+      presupposes she reaches families by her own means over the break.
+      Naming the break as an obstacle would narrate her world back at her.
+      (5) Which shows are on offer: this arose only from the email and the
+      script disagreeing, which point 1 settles.
+  - type: draft
+    number: 2
+    chosen_usps: [nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm, not-advertised]
+    notes: |
+      Email changed in one sentence, the phone script in two lines. The ask,
+      the USP selection and the sign-off are unchanged.
+    messages:
+      - channel: email
+        to: BurleighCFSSAdmin@kalwun.com.au
+        bcc: partnerships@rivermill.au
+        subject: Free circus tickets for your Jarjums families, Thursday to Sunday
+        body: |
+          Hi Leilani,
+
+          I am Priyanka Das, partnerships at Historic Rivermill, the riverside venue on Beaudesert Nerang Road at Mount Nathan, about 30 minutes inland from Burleigh Heads.
+
+          I have free tickets to a family circus for the Jarjums families. A circus company has put a big top up on our lawn for the school holidays with a show called WANTED – A Cirque Heist, and there are seven sessions from this Thursday 24 September through to Sunday 27 September, the first at 1pm on Thursday. If you reply with a rough number of families, I will send you a booking code and the link for you to pass around the group.
+
+          The tickets are for your families rather than for posting publicly. There is nothing to organise at your end. However you reach families over the break, each of them books whichever session suits, and we are not advertising these seats anywhere. The same shows are on sale at full price, so it is something your families would not come across on their own.
+
+          If the group would rather come out together instead, the following week suits that better. Tell me a day and I will come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill (Colourful.land Pty Ltd)
+          partnerships@rivermill.au | 07 3703 1307
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+      - channel: phone
+        to: 07 5520 8600
+        text: |
+          Follow-up call on the morning of Thursday 24 September where the
+          email has drawn no reply.
+        script:
+          - point: Opening
+            text: "Good morning, is Leilani there please? My name is Priyanka Das, I am with Historic Rivermill out at Mount Nathan. I emailed the Burleigh admin address yesterday about free circus tickets for the Jarjums families."
+          - point: What it is
+            text: "There is a circus in a big top on our lawn for the school holidays. It is a family show, and I have tickets set aside for your families at no cost. The first session is at one o'clock this afternoon, and there are seven altogether running through to Sunday. Families pick whichever one suits them."
+          - point: Ask
+            text: "If you give me a rough number of families, I will email you a booking code and the link this morning, and you can pass it around however you normally reach them."
+          - point: Close
+            text: "What is the best address for me to send the code to? Confirm the address, confirm the numbers, and say the code and link will be in her inbox within the hour."
+  - type: review
+    number: 2
+    verdict: DONE
+    in_character: |
+      A stranger, writing from a venue thirty minutes away I have never dealt
+      with, has offered our families free circus tickets for the school
+      holidays: no cost, no catch stated, no ask beyond a headcount. Nothing
+      presses me for money or a decision I cannot reverse, so there is little
+      downside to replying. The timing is the real question. Jarjums runs
+      during school term and this lands in the middle of the holidays, so I
+      have no scheduled session between now and Thursday to pass the word
+      through. I would be relying on whatever phone or text list I keep for
+      families outside term time. That is possible, but gathering even a rough
+      number by Thursday means reaching people today. Tight, not impossible.
+      Before forwarding I would want to know whether the venue and the show
+      suit little ones: shade and seating, pram and wheelchair ground,
+      anything culturally awkward I should check first. I would ask that in
+      the reply rather than hold the reply for it. Nothing named here would
+      stop me. The email came to our shared admin inbox rather than to me
+      directly, so it may sit unread for a day or two before I see it. That
+      is a practical filter on replying in time, not a reason not to. Reply
+      likelihood 45 per cent.
+    fact_check:
+      - claim: Seven sessions from this Thursday 24 September through to Sunday 27 September, the first at 1pm on Thursday.
+        source: Campaign YAML header ruling on opening week, and the showtimes file ("The season opens Thursday 24 September at 1pm").
+        result: verified
+      - claim: No code, price or discount in the first message; the code is deferred to the reply.
+        source: The opening-week-seats USP entry.
+        result: verified
+      - claim: The seats are not advertised and the same shows are on sale at full price.
+        source: The not-advertised USP entry.
+        result: verified
+      - claim: The phone script's claims, free tickets, nothing to pay at the gate, and the second-week group visit.
+        source: The opening-week-seats and group-visit-later USP entries.
+        result: verified
+      - claim: Venue described as a riverside venue at Mount Nathan.
+        source: Business overview; checked against the antifacts file.
+        result: verified
+        note: No stone-building, heritage-mill, vineyard or Tamborine Mountain claim is triggered.
+    antifact_check: |
+      Re-run on draft 2. No antifact triggered. No link appears in the draft
+      at all, which is correct at this stage: the only permitted link is the
+      Eventbrite listing, and it belongs in the reply that carries the code.
+    notes: |
+      The reply-likelihood figure fell between the two passes because the
+      second persona weighed the shared admin inbox and the term break, which
+      the first treated only as questions to raise. Both are real constraints
+      on this contact, and neither is fixable from inside the message.
+  - type: final
+    chosen_usps: [nothing-to-organise, opening-week-seats, big-top-at-a-heritage-farm, not-advertised]
+    messages:
+      - channel: email
+        to: BurleighCFSSAdmin@kalwun.com.au
+        bcc: partnerships@rivermill.au
+        subject: Free circus tickets for your Jarjums families, Thursday to Sunday
+        body: |
+          Hi Leilani,
+
+          I am Priyanka Das, partnerships at Historic Rivermill, the riverside venue on Beaudesert Nerang Road at Mount Nathan, about 30 minutes inland from Burleigh Heads.
+
+          I have free tickets to a family circus for the Jarjums families. A circus company has put a big top up on our lawn for the school holidays with a show called WANTED – A Cirque Heist, and there are seven sessions from this Thursday 24 September through to Sunday 27 September, the first at 1pm on Thursday. If you reply with a rough number of families, I will send you a booking code and the link for you to pass around the group.
+
+          The tickets are for your families rather than for posting publicly. There is nothing to organise at your end. However you reach families over the break, each of them books whichever session suits, and we are not advertising these seats anywhere. The same shows are on sale at full price, so it is something your families would not come across on their own.
+
+          If the group would rather come out together instead, the following week suits that better. Tell me a day and I will come back to you.
+
+          Priyanka Das
+          Partnerships, Historic Rivermill (Colourful.land Pty Ltd)
+          partnerships@rivermill.au | 07 3703 1307
+          950 Beaudesert Nerang Rd, Mount Nathan QLD 4211
+        to_note: |
+          Organisational inbox for Kalwun's Burleigh Child, Family and Support
+          Services branch. Not a personal address, so the body is written to
+          be actionable by whoever in the branch opens it.
+        director_note: |
+          Send 23 September. Reply within the hour to any response with the
+          code, the Eventbrite link and the Sunday cut-off, and add the
+          number to the per-show tally.
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: 07 5520 8600
+        text: |
+          Follow-up call on the morning of Thursday 24 September where the
+          email has drawn no reply.
+        script:
+          - point: Opening
+            text: "Good morning, is Leilani there please? My name is Priyanka Das, I am with Historic Rivermill out at Mount Nathan. I emailed the Burleigh admin address yesterday about free circus tickets for the Jarjums families."
+          - point: What it is
+            text: "There is a circus in a big top on our lawn for the school holidays. It is a family show, and I have tickets set aside for your families at no cost. The first session is at one o'clock this afternoon, and there are seven altogether running through to Sunday. Families pick whichever one suits them."
+          - point: Ask
+            text: "If you give me a rough number of families, I will email you a booking code and the link this morning, and you can pass it around however you normally reach them."
+          - point: If asked what it costs
+            text: "Nothing. The tickets are free and there is nothing to pay at the gate either."
+          - point: If asked what the catch is
+            text: "None. The seats are not advertised anywhere, and the same shows are on sale at full price."
+          - point: If asked about posting it on Facebook
+            text: "Ask that it stays with the Jarjums families rather than going up publicly."
+          - point: If she says they are on term break
+            text: "The families book themselves, so nothing needs to be organised around a session."
+          - point: If she would rather bring a group
+            text: "The following week suits a group visit better. Take a preferred day and say you will come back to her."
+          - point: Close
+            text: "What is the best address for me to send the code to? Confirm the address, confirm the numbers, and say the code and link will be in her inbox within the hour."
+        phone_note: |
+          Kalwun Burleigh Child, Family and Support Services line. Ask for
+          Leilani Summers. Call between 9am and 11am; if she is unavailable,
+          ask when she is in and call back rather than leaving the offer with
+          whoever answers. The roster has the Burleigh playgroup meeting
+          Mondays and Kalwun's own site says Tuesdays: confirm on the call and
+          correct the roster afterwards.
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: Priyanka Das, partnerships at Historic Rivermill, writing from partnerships@rivermill.au with bcc to the same address.
+    source: Campaign YAML, sender block.
+  - claim: Historic Rivermill is at 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211.
+    source: Business overview, business identity and the outreach facts section.
+  - claim: The venue is riverside.
+    source: Business overview, U1 (dining deck on the Coomera River).
+  - claim: About 30 minutes inland from Burleigh Heads.
+    source: Profile, relevance assessment (Burleigh Heads 4220, about 30 minutes from Rivermill), read with the business overview's hinterland position.
+  - claim: Contact phone 07 3703 1307.
+    source: Fees and service hours, business information (customer service 7:00am to 2:30pm).
+  - claim: A circus in a big top on the venue's lawn for the school holidays, the show WANTED – A Cirque Heist.
+    source: Campaign YAML header and the big-top-at-a-heritage-farm USP entry.
+  - claim: Seven sessions from Thursday 24 September to Sunday 27 September, the first at 1pm on the Thursday.
+    source: Showtimes file (season opens Thursday 24 September at 1pm) and the campaign YAML header (opening week, Thursday 24 to Sunday 27, seven shows).
+  - claim: The tickets are free.
+    source: Campaign YAML header (opening week given away) and the opening-week-seats USP entry.
+  - claim: A booking code and link follow in the reply, not in this message.
+    source: The opening-week-seats USP entry and the campaign a_author appendix.
+  - claim: The tickets are for her own families rather than for posting publicly.
+    source: Campaign YAML header (the code stays inside the organisation) and the a_author appendix.
+  - claim: Each family books the session that suits them, with no outing to arrange.
+    source: The nothing-to-organise USP entry and its segment framing.
+  - claim: The seats are not advertised, and the same shows are on sale at full price.
+    source: The not-advertised USP entry.
+  - claim: A group visit suits the following week better, subject to a day being named.
+    source: The group-visit-later USP entry.
+  - claim: Jarjums Playgroup runs during school term, free, at Burleigh Heads, with Leilani Summers as the named contact on 07 5520 8600.
+    source: Profile, current role.
+  - claim: BurleighCFSSAdmin@kalwun.com.au is Kalwun's published inbox for the Burleigh Child, Family and Support Services branch.
+    source: Profile, verification corrections.
+quality_checklist: |
+  1. Structure. Root keys drawn from the canonical set; no profile_hash,
+     which the harness prepends. Every draft and review round carries type
+     and number. The final round carries one email message and one phone
+     message, which satisfies the email cardinality cap. The to-address is a
+     real published inbox, not a placeholder.
+  2. Coverage. fact_provenance reaches every factual claim in the final
+     email and the final phone script: sender identity, venue identity and
+     location, distance, phone, the show and its setting, the seven
+     opening-week sessions and the 1pm Thursday opening, the free price, the
+     deferred code and link, the keep-it-inside-the-organisation wording, the
+     no-outing shape, the not-advertised comparison, the second-week
+     alternative, and the two profile facts the message leans on. chosen_usps
+     is present on both drafts and the final round. a_note carries angle,
+     channel, warmth, language and the three drafting constraints.
+  3. Presupposition. The message tells her nothing about herself. Her
+     playgroup's name, her term calendar and her own means of reaching
+     families are used as given, not explained back to her. Draft 2 removed
+     the one line that risked narrating the term break at her.
+  4. Manufactured connection. No claim of shared interest appears. The
+     profile found no public statement and no excursion history, so the
+     message asserts no affinity for outings, nature play or heritage
+     venues, and makes no cultural claim about a venue with no First Nations
+     programming.
+  5. Concreteness. The ask is a rough number of families, answerable in one
+     sentence, with a named alternative (a day next week) that is answerable
+     in one sentence too.
+  6. Band pattern. The opener leads with the sender's identity and location
+     rather than a compliment or a question, and the second sentence carries
+     the ask. The differentiators against the rest of the band are the
+     Jarjums name in the subject line and the Burleigh distance in the first
+     line.
+  7. Final email cardinality. One email in the final round.

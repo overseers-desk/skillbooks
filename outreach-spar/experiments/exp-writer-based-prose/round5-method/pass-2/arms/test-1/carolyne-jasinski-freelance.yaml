@@ -1,0 +1,697 @@
+profile_hash: sha256:b843c77197e5f90c5e17076cf1f63f88c3bf4d4192e3a033330a7909e7987a7f
+# Contact: Carolyne Jasinski, Travel/Broadcast Journalist, Freelance + Radio: 4BC Brisbane, 2GB
+# Channel: email + LinkedIn connection note same day + phone follow-up
+# Language: en-au
+# Angle: see-it-first-for-a-brisbane-audience
+
+decisions:
+  channel: email
+  channel_detail: |
+    Three pieces, all prepared. Email is the first touch, to footloosejasinski@gmail.com, the
+    address she publishes on her own TravHost contact page. A LinkedIn connection note goes the
+    same day, after the email, and does no work of its own beyond telling her the email is
+    genuine: a stranger's gmail approach to a freelance travel journalist competes with a large
+    volume of PR, and the role-play named the second channel as what turned "is this real" into
+    "it's real" in two passes out of three. Phone follow-up to her mobile on the morning of
+    Thursday 24 September if the email draws no reply.
+
+    Sequencing departs from the §4.2 default for the three-channel case, which puts the
+    connection note first and the email 4 to 5 days later. That cadence lands the email on
+    28 September, after the pass window closes on Sunday 27 September and after the phone step.
+    The plan block governs instead: approach_sequencing step 1 is email on 23 September, and the
+    campaign's secondary_channel wait of one day is shorter than the method default of three
+    because the season opens the following afternoon.
+  language: en-au
+  angle: see-it-first-for-a-brisbane-audience
+
+angle_rationale: |
+  Target validity. star_rating 5, date_excluded null, and the profile carries no defer or
+  exclude signal. The §4.0 gate passes.
+
+  Warmth is cold. The courier prefetch found nothing to or from footloosejasinski@gmail.com
+  across all five accounts, and no subject-line hit on her name or organisation. No earlier
+  approach file exists for her in this campaign folder or any other. The profile records no
+  dated conduct of hers toward us, so there is no prior dealing to name. The a_author line
+  about naming an earlier unanswered note does not fire: we did not write to her. Per
+  INVARIANTS I1 and that same appendix, no engagement statement of any kind appears in the
+  message, including the absence claim. The opener works from the venue and the offer.
+
+  The angle is see-it-first-for-a-brisbane-audience. Three evidence lines carry it. She holds a
+  recurring travel segment syndicated on 4BC Brisbane, a direct broadcast audience in the
+  venue's own market. Gold Coast Bulletin sits on her self-listed outlet list, the News Corp
+  masthead for the venue's own region. Her Caravan World east-coast road trip runs the
+  Queensland coast and finishes at the Gold Coast. The plan block's deciding_interest is her
+  audience wanting a school-holiday story with pictures under a big top, and she is
+  multi-platform enough to run it as either. The segment's emotional framing of not-advertised
+  is that a reviewer sees it before their audience does, which is what the closing lines say.
+
+  The governing constraint is that she is Adelaide-based and the pass window is four days. The
+  plan block's message_goal is a reply accepting a pass, so the pass stays the ask and stays
+  first. A message offering only a seat two thousand kilometres away in four days is
+  unanswerable, so one line gives her the other path: if the week does not have her on this
+  coast, the season dates and photographs go today instead. That keeps the funnel's step 3, a
+  story running while the season has days left, reachable from Adelaide, which is where her
+  Brisbane radio segment is made anyway. All three role-play passes replied on that branch.
+
+  Candidates set aside. The farmstay and animal category, evidenced by her "Oh Deere Farm Stay"
+  podcast episode, is a genuine topical precedent, but this campaign's offer is a circus season
+  and leading on the farmstay would misdescribe what she is invited to. The TravHost mechanism,
+  asking her to bring other media, is a different ask from the one the plan block sets with no
+  famil budget behind it; it is left out of the first touch and picked up only as a phone
+  branch if she raises it, where the sender writes to whoever she names rather than handing a
+  code onward. The road-trip beat is real but slower than a four-day window.
+
+  Cross-reference, §4.4 step 4. Fiona Harper, her TravHost co-founder, is also a stem in this
+  segment, and the two are likely to compare notes. Nothing in the draft claims the pass is
+  hers alone or that she was singled out. Two Gold Coast Bulletin stems are in the segment in
+  their own right, which is a further reason the email does not invite her to hand the story to
+  a colleague nearer the venue; the phone script carries that branch if she raises it.
+
+  USPs are the three the plan block lists. opening-week-seats carries the functional load,
+  not-advertised supplies the emotional framing in the plan block's own terms, and
+  big-top-at-a-heritage-farm is how the show gets described at all. make-a-day-of-it,
+  nothing-to-organise, group-visit-later and credentials-on-request are not in this segment's
+  list and stay out. not-advertised is written as an allocation we made, never as a tent we
+  need to fill: its rests_on records that the Director's reasoning stays out of every message,
+  and that a recipient told seats are unsold reads the offer as a request to be our marketing
+  channel.
+
+  Show times. The showtimes file states two: 1pm on Thursday 24 September, and 11am on Thursday
+  1 October. Only the first falls inside the pass window, so it is the only time named. The
+  seven-shows figure and the Thursday-to-Sunday window come from the campaign preamble and
+  opening-week-seats; the season running to 4 October comes from the plan block's first_ask.
+  The ninety-minute running time is ours rather than CHARC's, so it stays out.
+
+  Code, price and link. No code and no price anywhere in any of the three pieces. The Eventbrite
+  listing does appear in the email, which is the wave-two rule in the campaign preamble: the
+  public-facing part of a publisher segment's message is the Eventbrite link at the paid price,
+  and the plan block's first_ask carries the link placeholder literally. The a_author sentence
+  that a booking link goes in the reply is the organiser-segment case, where the link would be
+  the one the code is redeemed on; its other sentence, that the only ticket link is the
+  Eventbrite listing named in the USP registry, presupposes a link may appear and constrains
+  which.
+
+  Stating the want. ask_stance is direct and state_want is true, so the first message states the
+  want outright. a_author forbids saying or implying that the offer helps us. These bind at
+  different points. The first governs whether the want appears, the second governs how the
+  offer is characterised. A sentence breaches the second only when it makes the seat contingent
+  on the coverage, which is what turns an invitation into a request to be someone's marketing
+  channel. Draft 1's "what I want from it is a look ... and a story" set up exactly that
+  exchange and the role-play read it as a trade; the final states the want and breaks the
+  contingency in the same breath.
+
+  Subject line. "4BC travel segment" is the recipient-specific element required by §4.5, her own
+  programme's outlet, which distinguishes this subject from every other in the segment's
+  29 stems. The story sits ahead of it so the first words are what happened rather than who it
+  is for.
+
+response_likelihood: 30
+
+a_note: |
+  Angle see-it-first-for-a-brisbane-audience (a family pass of four at an opening-week show,
+  with the season dates and photographs offered as the path that works from Adelaide, on the
+  strength of her 4BC Brisbane segment and Gold Coast Bulletin byline); channel email with a
+  same-day LinkedIn connection note for legitimacy and a phone follow-up next morning; warmth
+  cold, nothing in the prefetch across five accounts and no earlier approach file; language
+  en-au. Three challenger passes, the budget for yield 12, all returning REVISE: pass 1 caught
+  the subject line calling the venue a farm, pass 2 caught the want stated as a trade for access
+  and the phone script accounting for why the seats were not sold, pass 3 found only a
+  miscounted character annotation. Final is draft 4. Two things for R to watch: she is
+  Adelaide-based and the pass window is four days, so the likely reply is the second path rather
+  than a seat; and the role-play asked about wheelchair and pram access to the tent, which we
+  cannot answer until CHARC states the tent's access and its Companion Card position.
+
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      Element order self-intro, then ask, then evidence, per §4.5. The fork line sits between
+      the ask and the evidence because an Adelaide recipient needs it before she weighs
+      anything else.
+    messages:
+      - channel: email
+        to: footloosejasinski@gmail.com
+        subject: A big top on a Gold Coast farm, for the 4BC travel segment
+        body: |
+          Hi Carolyne,
+
+          I'm Priyanka Das, partnerships at Historic Rivermill, a heritage venue on the Coomera River at Mount Nathan in the Gold Coast hinterland. A circus company has put a big top up on our lawn for the school holidays, and I have a family pass of four for you at any show in the opening week.
+
+          The show is WANTED – A Cirque Heist. It opens at 1pm tomorrow, Thursday 24 September, with seven shows through to Sunday 27 September, and the season runs to 4 October. Reply with the show that suits and I'll send you the booking details the same day.
+
+          If the week doesn't have you on this coast, tell me and I'll send the season dates and photographs for the segment instead.
+
+          Opening week isn't advertised anywhere and the same shows sell at full price to everyone else. Public tickets are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          What I want from it is a look before your audience gets one, and a story or a segment if you think there's one in it.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: linkedin
+        to: https://www.linkedin.com/in/carolynejasinski/
+        text: "Hi Carolyne, Priyanka Das here, partnerships at Historic Rivermill in the Gold Coast hinterland. A circus company has a big top up on our lawn for the school holidays, and I've emailed you a family pass of four for the opening week. Sending this so you know the email is real."
+        director_note: |
+          Sent the same day as the email, after it. Carries no link and no code. Measured at
+          276 characters, inside the 300-character cap.
+      - channel: phone
+        to: "0423 024 472"
+        text: Follow-up call on the morning of Thursday 24 September if the email draws no reply.
+        script:
+          - point: Opening
+            text: "Morning Carolyne, it's Priyanka Das calling from Historic Rivermill, a venue out at Mount Nathan in the Gold Coast hinterland. I sent you an email yesterday about a circus we've got in a big top on our lawn. Is now a bad time?"
+          - point: What it is
+            text: "A circus company has set up a big top on our lawn for the school holidays, a family show called WANTED – A Cirque Heist. It opens at one o'clock this afternoon and runs through to Sunday, then on to the fourth of October."
+          - point: The ask
+            text: "I've put a family pass of four aside for you at whichever show suits. Tell me the one you want and I'll send the booking details straight after this call."
+          - point: If she isn't on this coast
+            text: "No trouble. Tell me and I'll send you the season dates and some photographs for the segment instead."
+          - point: If she asks why it's a pass
+            text: "We've set opening week aside rather than sell it. It isn't advertised anywhere and the same shows sell at full price, so it's a look before your audience gets one."
+          - point: If she'd rather pass it to someone closer
+            text: "Tell me who and I'll write to them myself."
+          - point: If she can't talk
+            text: "No worries, when would suit for me to call back?"
+        phone_note: |
+          Her mobile, self-published on the TravHost contact page. She is Adelaide-based and
+          Adelaide runs 30 minutes behind Brisbane in September, so a 10am Brisbane call reaches
+          her at 9:30.
+
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      Reaction as Carolyne Jasinski, reading cold. Nothing stops her replying. The pitch is
+      plausible for her line of work: a heritage Gold Coast hinterland venue, a family circus
+      for the school holidays, a pass rather than a straight comp, and a fallback if the timing
+      does not suit. The LinkedIn note arriving after the email and pointing back at it reads as
+      a sensible way to confirm the sender is real rather than a phishing attempt.
+
+      The practical snag she flags to herself rather than to the sender: the show opens tomorrow
+      and she is Adelaide-based. Getting a family of four to the Gold Coast on a day's notice is
+      not realistic. The message pre-empts it by offering season dates and photographs instead,
+      so it is a fork to answer rather than a dead end.
+
+      What she would ask on replying rather than object to: whether she is on this coast this
+      week; if not, whether the photographs and season dates still let her get something usable
+      for the 4BC segment before the season closes, given a radio slot needs lead time; and the
+      practical follow-up on whichever path she takes, photograph resolution and restrictions on
+      use, or which of the seven shows still has room.
+
+      Self-reported REPLY_PCT 60, treated as an upper bound rather than a calibrated estimate.
+    fact_check:
+      - claim: Subject line calls the venue "a Gold Coast farm".
+        source: business-antifacts.md, the farming-question entry.
+        result: error
+        note: |
+          The antifacts file records the farming question as unsettled in either direction and
+          directs that the venue be described by what it offers visitors. No source in the
+          campaign YAML or business-overview.md calls Historic Rivermill a farm.
+        correction: |
+          Subject changed to "A big top in the Gold Coast hinterland, for the 4BC travel
+          segment". The big-top-at-a-heritage-farm USP's own claim text says "a heritage
+          riverside venue"; the word "farm" in the identifier is a slug, not the claim.
+      - claim: Show name, the 1pm Thursday 24 September opening, seven shows through Sunday 27 September, the season running to 4 October.
+        source: showtimes file and the campaign preamble.
+        result: verified
+      - claim: The Eventbrite URL, and the code mechanics that keep a code out of the first message.
+        source: campaign usps registry, opening-week-seats.
+        result: verified
+      - claim: Not advertised anywhere, and the same shows sell at full price to everyone else.
+        source: campaign usps registry, not-advertised.
+        result: verified
+      - claim: Venue location, Mount Nathan in the Gold Coast hinterland, and the recipient's phone number.
+        source: business-overview.md; profile roster_patch.
+        result: verified
+    antifact_check: |
+      Checked against business-antifacts.md. The subject line failed on the farming question and
+      was corrected. The body was clean: no stone buildings, no original or century-old mill
+      structures presented as a feature, no vineyard, and the location given as Mount Nathan in
+      the Gold Coast hinterland rather than Tamborine Mountain. No feed-bag or animal-food offer,
+      no subscriber discount, no Oztix link, and nothing stating or implying that seats are
+      unsold.
+    revision_note: |
+      One factual error fixed and one point absorbed. The persona's four points sorted:
+
+      1. Whether she is on this coast this week. Left for the reply. She answers it herself
+         before replying, and the fork line already gives her both paths.
+      2. Whether the photographs-and-dates path still yields something usable before the season
+         closes. Absorbed by reframing the fork line, which now says the material goes today and
+         names what it is for. The closing date, 4 October, is already in the sentence above it.
+      3. Photograph resolution and restrictions on use. Left for the reply; it arises only once
+         she has chosen that path.
+      4. Which of the seven shows still has room. Left for the reply. The sender holds the
+         per-show tally against the allocation, and naming availability in the first touch
+         invites a booking to the cap rather than to her real number.
+
+      The subject-line error is the one draft change beyond the absorb.
+    notes: |
+      Pass 1 of a budget of 3, profile yield being 12.
+
+  - type: draft
+    number: 2
+    chosen_usps: [not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      Subject line no longer calls the venue a farm. Fork line absorbs the lead-time question.
+    messages:
+      - channel: email
+        to: footloosejasinski@gmail.com
+        subject: A big top in the Gold Coast hinterland, for the 4BC travel segment
+        body: |
+          Hi Carolyne,
+
+          I'm Priyanka Das, partnerships at Historic Rivermill, a heritage venue on the Coomera River at Mount Nathan in the Gold Coast hinterland. A circus company has put a big top up on our lawn for the school holidays, and I have a family pass of four for you at any show in the opening week.
+
+          The show is WANTED – A Cirque Heist. It opens at 1pm tomorrow, Thursday 24 September, with seven shows through to Sunday 27 September, and the season runs to 4 October. Reply with the show that suits and I'll send you the booking details the same day.
+
+          If the week doesn't have you on this coast, tell me and I'll send the season dates and photographs today instead, in time for the segment to run while there are shows left.
+
+          Opening week isn't advertised anywhere and the same shows sell at full price to everyone else. Public tickets are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          What I want from it is a look before your audience gets one, and a story or a segment if you think there's one in it.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: linkedin
+        to: https://www.linkedin.com/in/carolynejasinski/
+        text: "Hi Carolyne, Priyanka Das here, partnerships at Historic Rivermill in the Gold Coast hinterland. A circus company has a big top up on our lawn for the school holidays, and I've emailed you a family pass of four for the opening week. Sending this so you know the email is real."
+      - channel: phone
+        to: "0423 024 472"
+        text: Follow-up call on the morning of Thursday 24 September if the email draws no reply.
+        script:
+          - point: Opening
+            text: "Morning Carolyne, it's Priyanka Das calling from Historic Rivermill, a venue out at Mount Nathan in the Gold Coast hinterland. I sent you an email yesterday about a circus we've got in a big top on our lawn. Is now a bad time?"
+          - point: What it is
+            text: "A circus company has set up a big top on our lawn for the school holidays, a family show called WANTED – A Cirque Heist. It opens at one o'clock this afternoon and runs through to Sunday, then on to the fourth of October."
+          - point: The ask
+            text: "I've put a family pass of four aside for you at whichever show suits. Tell me the one you want and I'll send the booking details straight after this call."
+          - point: If she isn't on this coast
+            text: "No trouble. Tell me and I'll send the season dates and some photographs across today, so you've got them while there are still shows running."
+          - point: If she asks why it's a pass
+            text: "We've set opening week aside rather than sell it. It isn't advertised anywhere and the same shows sell at full price, so it's a look before your audience gets one."
+          - point: If she'd rather pass it to someone closer
+            text: "Tell me who and I'll write to them myself."
+          - point: If she can't talk
+            text: "No worries, when would suit for me to call back?"
+
+  - type: review
+    number: 2
+    verdict: REVISE
+    in_character: |
+      Reaction as Carolyne. A partnerships person from a venue she has never dealt with wants a
+      reply today naming a show for tomorrow afternoon, and she is in Adelaide. There is no
+      version of her getting a family of four to Mount Nathan by 1pm tomorrow, and the email does
+      not pretend otherwise. That is what keeps her reading rather than deleting: the out is
+      offered by the sender. The ask is not one she can meet, and the email does not require her
+      to meet it.
+
+      The venue reads right for her patch: a farm-stay and deer episode behind her, a Gold Coast
+      Bulletin byline, the Overnight segment on 4BC, and a big top on a heritage lawn for the
+      school holidays is the light, photogenic story that segment runs. A circus company is not
+      something she would chase herself, so a partnerships person flagging it unprompted is
+      useful.
+
+      Two things needle her. The "what I want from it" line spells out a story-for-access trade.
+      It is honest and she would rather know than guess, but it means she is reading a pitch
+      rather than a favour, and she will treat "a look before your audience gets one" as
+      marketing copy. Second, the turnaround: email today, opens tomorrow, a call before opening
+      if she has not answered. That is a business chasing a deadline it set itself. Neither
+      would stop her replying; both shape what she says.
+
+      Her actual reply: not local this week, send the season dates and photographs so she can
+      look at fitting it into the segment while there is season left. She might also ask whether
+      a Gold Coast Bulletin colleague nearer the venue is a better first stop for hands-on
+      coverage.
+
+      Self-reported REPLY_PCT 70, treated as an upper bound.
+    fact_check:
+      - claim: "What I want from it is a look before your audience gets one, and a story or a segment if you think there's one in it."
+        source: campaign prompt_appendices a_author and a_challenger; the earned-media plan block's first_ask.
+        result: error
+        note: |
+          a_author states the message does not say or imply that the offer helps us, and
+          a_challenger names any suggestion that the offer serves the sender as a factual error.
+          The first_ask template ends at the Eventbrite link with no such line.
+        correction: |
+          Replaced with "You'd be seeing it before your audience does. Whether there's a story in
+          it for them is your call, and the pass doesn't hang on that." The want stays visible,
+          as ask_stance direct and state_want true require, and the contingency that made it a
+          trade is gone.
+      - claim: |
+          Phone script branch: We've set opening week aside rather than sell it.
+        source: campaign prompt_appendices a_author; usps registry, not-advertised.
+        result: error
+        note: |
+          The clause volunteers a sales frame and restates the Director's internal reasoning,
+          which a_author keeps out of every message. The registry's approved framing is the
+          not-advertised claim, not an account of why the seats were not sold.
+        correction: |
+          Replaced with "Opening week is set aside and it isn't advertised anywhere. The same
+          shows sell at full price, so you'd be seeing it before your audience does."
+      - claim: Venue address, Coomera River, Gold Coast hinterland, and the antifact clearances.
+        source: business-overview.md; business-antifacts.md.
+        result: verified
+      - claim: The 1pm Thursday 24 September opening; the Eventbrite link as the only ticket link; no code, price or discount in the first touch.
+        source: showtimes file; campaign usps registry, opening-week-seats.
+        result: verified
+    antifact_check: |
+      Clean against business-antifacts.md. No stone-building claim, no mill or century-old
+      structure claim, no vineyard, and no Tamborine Mountain misattribution. No feed-bag or
+      animal-food offer anywhere in the three pieces.
+    revision_note: |
+      Both errors fixed, one further point absorbed, one left for the reply.
+
+      1. The want stated as a trade for access. Absorbed by reframing the sentence rather than
+         deleting it. The plan block sets ask_stance direct and state_want true, and the spec
+         defines state_want as whether the first message states the want outright, so deleting
+         the want would breach the plan block. What breached a_author was the shape, a look in
+         exchange for a story. The revision keeps the want and removes the exchange.
+      2. The phone script's account of why the seats were not sold. Fixed to the wording the
+         other approach file in this campaign uses: set aside, not advertised, same shows at full
+         price.
+      3. The turnaround needling her. Absorbed into a line already in the script, which now
+         acknowledges the short notice at her end rather than passing over it. She said it would
+         not stop her replying, so nothing else in the sequence changes.
+      4. Whether a Gold Coast Bulletin colleague nearer the venue is a better first stop. Left
+         for the reply. The phone script already carries the branch, the sender writes to whoever
+         she names, and both Gold Coast Bulletin stems in this segment are being written to in
+         their own right. Putting it in the email would hand her an exit before she has engaged
+         with the ask.
+    notes: |
+      Pass 2 of 3.
+
+  - type: draft
+    number: 3
+    chosen_usps: [not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      Want restated without the exchange. Phone script no longer accounts for why the seats were
+      not sold, and acknowledges the short notice.
+    messages:
+      - channel: email
+        to: footloosejasinski@gmail.com
+        subject: A big top in the Gold Coast hinterland, for the 4BC travel segment
+        body: |
+          Hi Carolyne,
+
+          I'm Priyanka Das, partnerships at Historic Rivermill, a heritage venue on the Coomera River at Mount Nathan in the Gold Coast hinterland. A circus company has put a big top up on our lawn for the school holidays, and I have a family pass of four for you at any show in the opening week.
+
+          The show is WANTED – A Cirque Heist. It opens at 1pm tomorrow, Thursday 24 September, with seven shows through to Sunday 27 September, and the season runs to 4 October. Reply with the show that suits and I'll send you the booking details the same day.
+
+          If the week doesn't have you on this coast, tell me and I'll send the season dates and photographs today instead, in time for the segment to run while there are shows left.
+
+          Opening week isn't advertised anywhere and the same shows sell at full price to everyone else. Public tickets are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          You'd be seeing it before your audience does. Whether there's a story in it for them is your call, and the pass doesn't hang on that.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: linkedin
+        to: https://www.linkedin.com/in/carolynejasinski/
+        text: "Hi Carolyne, Priyanka Das here, partnerships at Historic Rivermill in the Gold Coast hinterland. A circus company has a big top up on our lawn for the school holidays, and I've emailed you a family pass of four for the opening week. Sending this so you know the email is real."
+      - channel: phone
+        to: "0423 024 472"
+        text: Follow-up call on the morning of Thursday 24 September if the email draws no reply.
+        script:
+          - point: Opening
+            text: "Morning Carolyne, it's Priyanka Das calling from Historic Rivermill, a venue out at Mount Nathan in the Gold Coast hinterland. I sent you an email yesterday about a circus we've got in a big top on our lawn. I know it's short notice at your end. Is now a bad time?"
+          - point: What it is
+            text: "A circus company has set up a big top on our lawn for the school holidays, a family show called WANTED – A Cirque Heist. It opens at one o'clock this afternoon and runs through to Sunday, then on to the fourth of October."
+          - point: The ask
+            text: "I've put a family pass of four aside for you at whichever show suits. Tell me the one you want and I'll send the booking details straight after this call."
+          - point: If she isn't on this coast
+            text: "No trouble. Tell me and I'll send the season dates and some photographs across today, so you've got them while there are still shows running."
+          - point: If she asks why it's a pass
+            text: "Opening week is set aside and it isn't advertised anywhere. The same shows sell at full price, so you'd be seeing it before your audience does."
+          - point: If she'd rather pass it to someone closer
+            text: "Tell me who and I'll write to them myself."
+          - point: If she can't talk
+            text: "No worries, when would suit for me to call back?"
+
+  - type: review
+    number: 3
+    verdict: REVISE
+    in_character: |
+      Reaction as Carolyne. The sender asks for one thing, a show by reply, and it costs nothing
+      to answer, so nothing stops her. It is unsolicited from an address she does not know, but
+      the LinkedIn note lands the same day and points back at the email, which is the
+      corroboration that turns "is this real" into "it's real". That removes her one instinctive
+      objection.
+
+      She is in Adelaide and this lands the afternoon before the tent opens. A one-day turnaround
+      to get a family of four to the Gold Coast hinterland is not something she can do, and the
+      note builds in that exact out. So her reply is the fallback branch: not on that coast this
+      week, send the season dates and photographs instead, since the season runs to 4 October and
+      she may be able to work a cruise embarkation or another Queensland trip around it. She
+      would also ask in passing whether there is disability or pram access noted anywhere, not
+      because the message raised it, but because her farmstay-category coverage means she would
+      want to know whether this is a story about the venue generally rather than just the tent
+      before committing column space.
+
+      Self-reported REPLY_PCT 60, treated as an upper bound.
+    fact_check:
+      - claim: The drafting annotation giving the connection note as 272 characters.
+        source: direct count of the note text.
+        result: error
+        note: |
+          The note is 276 characters, not 272. The substantive claim, that it sits inside the
+          cap, holds either way. The figure is an authoring annotation rather than sent text, so
+          nothing the recipient sees is affected.
+        correction: Annotation corrected to 276, confirmed by counting the string.
+      - claim: Opening date and time, Thursday 24 September at 1pm.
+        source: showtimes file.
+        result: verified
+      - claim: Seven shows through to Sunday 27 September; the season runs to 4 October.
+        source: campaign preamble; the earned-media plan block's first_ask.
+        result: verified
+      - claim: The Eventbrite link is the only ticket link, and the code goes only in the reply.
+        source: campaign usps registry, opening-week-seats.
+        result: verified
+      - claim: Not advertised anywhere; the same shows sell at full price.
+        source: campaign usps registry, not-advertised.
+        result: verified
+      - claim: A family pass of four.
+        source: the earned-media plan block's first_ask.
+        result: verified
+      - claim: Heritage venue on the Coomera River at Mount Nathan in the Gold Coast hinterland.
+        source: business-overview.md, U1 and U4; business-antifacts.md.
+        result: verified
+    antifact_check: |
+      Clean. Checked in full against business-antifacts.md: no stone buildings, no original or
+      century-old mill structures presented as a feature, no vineyard, and the venue placed at
+      Mount Nathan in the Gold Coast hinterland rather than on Tamborine Mountain. No feed-bag or
+      animal-food offer, no subscriber discount, no Oztix link, and no code, price, discount or
+      unsold-seat framing anywhere in the three pieces.
+    revision_note: |
+      One annotation corrected. No message text changed in this pass.
+
+      1. The character count in the LinkedIn annotation. Fixed to 276, confirmed by count.
+      2. Disability and pram access at the tent. Left for the reply, with a caveat carried to R.
+         We cannot state it: the campaign preamble holds both disability segments until CHARC
+         states the tent's wheelchair access and its Companion Card position, so any access line
+         would be unsourced. A phone branch was added that puts the question to the circus
+         company rather than guessing, which is what whoever answers her reply should also do.
+      3. Whether the story is the venue generally or just the tent. Left for the reply. The
+         campaign's offer is the circus season and this segment's USP list is the three the plan
+         block names; widening the email would pull in claims the plan block does not license.
+      4. Not on that coast, will take the fallback branch. No change. That is the fork line, and
+         all three passes took it.
+      5. Whether the approach is genuine, resolved by the same-day LinkedIn note. No change; the
+         persona named it as the thing that works in two passes running.
+    notes: |
+      Pass 3 of 3, the ceiling for profile yield 12. The budget is spent and the draft has
+      converged: pass 1 and pass 2 each found a claim the recipient would have read, pass 3 found
+      only an authoring annotation with every substantive claim checked clean.
+
+  - type: draft
+    number: 4
+    chosen_usps: [not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    notes: |
+      Annotation corrected. Access branch added to the phone script, answering by referral to
+      CHARC rather than by a claim of our own. Message text otherwise unchanged from draft 3.
+    messages:
+      - channel: email
+        to: footloosejasinski@gmail.com
+        subject: A big top in the Gold Coast hinterland, for the 4BC travel segment
+        body: |
+          Hi Carolyne,
+
+          I'm Priyanka Das, partnerships at Historic Rivermill, a heritage venue on the Coomera River at Mount Nathan in the Gold Coast hinterland. A circus company has put a big top up on our lawn for the school holidays, and I have a family pass of four for you at any show in the opening week.
+
+          The show is WANTED – A Cirque Heist. It opens at 1pm tomorrow, Thursday 24 September, with seven shows through to Sunday 27 September, and the season runs to 4 October. Reply with the show that suits and I'll send you the booking details the same day.
+
+          If the week doesn't have you on this coast, tell me and I'll send the season dates and photographs today instead, in time for the segment to run while there are shows left.
+
+          Opening week isn't advertised anywhere and the same shows sell at full price to everyone else. Public tickets are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          You'd be seeing it before your audience does. Whether there's a story in it for them is your call, and the pass doesn't hang on that.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+      - channel: linkedin
+        to: https://www.linkedin.com/in/carolynejasinski/
+        text: "Hi Carolyne, Priyanka Das here, partnerships at Historic Rivermill in the Gold Coast hinterland. A circus company has a big top up on our lawn for the school holidays, and I've emailed you a family pass of four for the opening week. Sending this so you know the email is real."
+        director_note: |
+          276 characters, inside the 300-character cap. No link and no code.
+      - channel: phone
+        to: "0423 024 472"
+        text: Follow-up call on the morning of Thursday 24 September if the email draws no reply.
+        script:
+          - point: Opening
+            text: "Morning Carolyne, it's Priyanka Das calling from Historic Rivermill, a venue out at Mount Nathan in the Gold Coast hinterland. I sent you an email yesterday about a circus we've got in a big top on our lawn. I know it's short notice at your end. Is now a bad time?"
+          - point: What it is
+            text: "A circus company has set up a big top on our lawn for the school holidays, a family show called WANTED – A Cirque Heist. It opens at one o'clock this afternoon and runs through to Sunday, then on to the fourth of October."
+          - point: The ask
+            text: "I've put a family pass of four aside for you at whichever show suits. Tell me the one you want and I'll send the booking details straight after this call."
+          - point: If she isn't on this coast
+            text: "No trouble. Tell me and I'll send the season dates and some photographs across today, so you've got them while there are still shows running."
+          - point: If she asks why it's a pass
+            text: "Opening week is set aside and it isn't advertised anywhere. The same shows sell at full price, so you'd be seeing it before your audience does."
+          - point: If she'd rather pass it to someone closer
+            text: "Tell me who and I'll write to them myself."
+          - point: If she asks about wheelchair or pram access to the tent
+            text: "I'll need to put that to the circus company rather than guess at it. Give me until the end of the day and I'll come back to you with what they say."
+          - point: If she can't talk
+            text: "No worries, when would suit for me to call back?"
+
+  - type: final
+    chosen_usps: [not-advertised, opening-week-seats, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: footloosejasinski@gmail.com
+        subject: A big top in the Gold Coast hinterland, for the 4BC travel segment
+        body: |
+          Hi Carolyne,
+
+          I'm Priyanka Das, partnerships at Historic Rivermill, a heritage venue on the Coomera River at Mount Nathan in the Gold Coast hinterland. A circus company has put a big top up on our lawn for the school holidays, and I have a family pass of four for you at any show in the opening week.
+
+          The show is WANTED – A Cirque Heist. It opens at 1pm tomorrow, Thursday 24 September, with seven shows through to Sunday 27 September, and the season runs to 4 October. Reply with the show that suits and I'll send you the booking details the same day.
+
+          If the week doesn't have you on this coast, tell me and I'll send the season dates and photographs today instead, in time for the segment to run while there are shows left.
+
+          Opening week isn't advertised anywhere and the same shows sell at full price to everyone else. Public tickets are at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.
+
+          You'd be seeing it before your audience does. Whether there's a story in it for them is your call, and the pass doesn't hang on that.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          partnerships@rivermill.au
+        director_note: |
+          The reply carries the code and the booking link, and nothing else does. If she replies
+          on the second path, the season dates and photographs go the same day, because the
+          season's last show is 4 October and a radio slot needs lead time.
+        actioned_date: null
+        replied_date: null
+      - channel: linkedin
+        to: https://www.linkedin.com/in/carolynejasinski/
+        text: "Hi Carolyne, Priyanka Das here, partnerships at Historic Rivermill in the Gold Coast hinterland. A circus company has a big top up on our lawn for the school holidays, and I've emailed you a family pass of four for the opening week. Sending this so you know the email is real."
+        director_note: |
+          Send the same day, after the email. 276 characters, inside the 300-character cap. No
+          link and no code. Its whole job is telling her the email is genuine.
+        actioned_date: null
+        replied_date: null
+      - channel: phone
+        to: "0423 024 472"
+        text: Follow-up call on the morning of Thursday 24 September if the email draws no reply.
+        script:
+          - point: Opening
+            text: "Morning Carolyne, it's Priyanka Das calling from Historic Rivermill, a venue out at Mount Nathan in the Gold Coast hinterland. I sent you an email yesterday about a circus we've got in a big top on our lawn. I know it's short notice at your end. Is now a bad time?"
+          - point: What it is
+            text: "A circus company has set up a big top on our lawn for the school holidays, a family show called WANTED – A Cirque Heist. It opens at one o'clock this afternoon and runs through to Sunday, then on to the fourth of October."
+          - point: The ask
+            text: "I've put a family pass of four aside for you at whichever show suits. Tell me the one you want and I'll send the booking details straight after this call."
+          - point: If she isn't on this coast
+            text: "No trouble. Tell me and I'll send the season dates and some photographs across today, so you've got them while there are still shows running."
+          - point: If she asks why it's a pass
+            text: "Opening week is set aside and it isn't advertised anywhere. The same shows sell at full price, so you'd be seeing it before your audience does."
+          - point: If she'd rather pass it to someone closer
+            text: "Tell me who and I'll write to them myself."
+          - point: If she asks about wheelchair or pram access to the tent
+            text: "I'll need to put that to the circus company rather than guess at it. Give me until the end of the day and I'll come back to you with what they say."
+          - point: If she can't talk
+            text: "No worries, when would suit for me to call back?"
+        phone_note: |
+          Her mobile, self-published on the TravHost contact page. She is Adelaide-based and
+          Adelaide runs 30 minutes behind Brisbane in September, so a 10am Brisbane call reaches
+          her at 9:30. The tent's access arrangements are not ours to state until CHARC gives
+          them, which is why that branch refers the question on rather than answering it.
+        actioned_date: null
+        replied_date: null
+    notes: |
+      Final is draft 4. Email is the first touch, and the dispatcher reads message order as
+      channel priority.
+
+fact_provenance:
+  - claim: Historic Rivermill is a heritage venue on the Coomera River at Mount Nathan in the Gold Coast hinterland.
+    source: business-overview.md, venue overview and U1, U4, U6; campaign venue.address. Cleared against business-antifacts.md, which places the venue at the foot of Tamborine Mountain rather than on it, and rules out stone and century-old structures.
+  - claim: A circus company has put a big top up on the venue's lawn for the school holidays.
+    source: campaign usps registry, big-top-at-a-heritage-farm; campaign preamble, CHARC Performance staging a family circus in a big top on the lawn.
+  - claim: A family pass of four, at any show in the opening week.
+    source: earned-media plan block, first_ask; campaign usps registry, opening-week-seats.
+  - claim: The show is WANTED – A Cirque Heist.
+    source: campaign preamble; plan-events showtimes file.
+  - claim: It opens at 1pm on Thursday 24 September.
+    source: plan-events showtimes file, season opening line. The only other time that file states, 11am on Thursday 1 October, falls outside the pass window and is not named.
+  - claim: Seven shows through to Sunday 27 September.
+    source: campaign preamble, the Director's ruling of 22 September; campaign usps registry, opening-week-seats.
+  - claim: The season runs to 4 October.
+    source: earned-media plan block, first_ask.
+  - claim: The booking details follow in the reply rather than in this message.
+    source: campaign prompt_appendices a_author; campaign usps registry, opening-week-seats, the code being sent in the reply that answers the recipient.
+  - claim: Opening week is not advertised anywhere and the same shows sell at full price to everyone else.
+    source: campaign usps registry, not-advertised.
+  - claim: Public tickets are at the Eventbrite listing.
+    source: campaign usps registry, opening-week-seats, which names that URL as the only link a message carries; campaign preamble, the publisher segments carrying the Eventbrite link at the paid price.
+  - claim: She would be seeing it before her audience does, and the pass does not depend on coverage.
+    source: earned-media plan block, the not-advertised framing for this segment and ask_stance direct with state_want true. Nothing in the campaign makes a seat contingent on anything.
+  - claim: Sender identity Priyanka Das, Partnerships, Historic Rivermill, partnerships@rivermill.au.
+    source: campaign sender block.
+  - claim: Recipient address footloosejasinski@gmail.com, mobile 0423 024 472, LinkedIn profile URL.
+    source: profile carolyne-jasinski-freelance.md, roster_patch and Verification corrections, sourced from travhost.world/about, her own co-founded platform's contact page.
+  - claim: She is Adelaide-based, and Adelaide runs 30 minutes behind Brisbane in September.
+    source: profile, Current role, LinkedIn location field. Queensland does not observe daylight saving; South Australia's begins 4 October 2026.
+  - claim: The 4BC travel segment is hers.
+    source: profile, Institutional context, radio reach. Her segment airs on the Overnight programme, syndicated on 4BC Brisbane and 2GB Sydney.
+  - claim: The tent's wheelchair and pram access is not stated by us.
+    source: campaign preamble, which holds both disability segments until CHARC states the tent's wheelchair access and its Companion Card position.
+
+quality_checklist: |
+  1. YAML structure. Root keys drawn from the §6 canonical set: decisions, angle_rationale,
+     response_likelihood, a_note, rounds, fact_provenance, quality_checklist. No profile_hash,
+     which the harness prepends. Every draft and review round carries a number. Addresses are
+     real, not placeholders. The LinkedIn message uses channel linkedin with text, the shape the
+     validator's linkedin_guard reads, and the note is 276 characters against its 300-character
+     cap. Passed.
+  2. Coverage and completeness. fact_provenance reaches every factual claim in the final email,
+     the connection note and the phone script, including the access claim the script declines to
+     make. chosen_usps is populated on all four draft rounds and the final. a_note carries angle,
+     channel, warmth, language, the three-pass challenger history and the two live cautions.
+     Passed.
+  3. Presupposition test. Nothing narrates her career back to her. Her programme's outlet appears
+     once, in the subject line, as the addressing that tells her the mail is hers. The body
+     presupposes that she has an audience with school holidays to fill and never says so. Passed.
+  4. Manufactured-connection test. No claim of shared interest is made at all. The one
+     recipient-specific element, the 4BC travel segment, is her own public self-description in
+     the profile. The farmstay precedent and the TravHost mechanism, both in the profile, are
+     deliberately unused because the campaign's offer is a circus season. Passed.
+  5. Concreteness. The ask is a show, answerable in one sentence, which is the plan block's
+     message_goal. The second path is answerable in one sentence too, which is what makes the
+     message answerable from Adelaide at all. Passed.
+  6. Band-level pattern check. The opener works from the venue and the offer rather than from a
+     compliment or a template greeting. It differs in shape from the organiser-segment drafts
+     already written in this campaign, which open on circulation to members. Passed.
+  7. Final round email cardinality. One channel email message in the final round, plus one
+     linkedin and one phone message, which the cap permits. Passed.

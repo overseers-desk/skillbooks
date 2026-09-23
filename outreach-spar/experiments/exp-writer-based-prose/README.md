@@ -2,7 +2,7 @@
 
 A letter drafted from a campaign brief carries the brief to the reader: a code and a link that were never introduced, a call that has not happened, reasons for the offer the reader did not ask for. The method already has what looks like the perfect detector for this. Before any fact-check, a context-isolated agent plays the recipient, with the recipient's profile and nothing of ours, and reacts. A reader who does not hold what the writer holds should be exactly the one who trips on a reference to nothing. It did not trip. It read the nonsense references, made sense of them, and passed letters that were not sendable. This experiment is about why, and about what, if anything, around the drafting loop can be made to catch what that reader did not.
 
-Fourteen arms across four rounds, 22 and 23 September 2026. None worked. The faults that survived were all written before drafting began, in the campaign's own inputs, where no guard around the loop can reach them.
+Sixteen arms across five rounds, 22 and 23 September 2026. Fourteen guards on the drafting loop did not work; the fifteenth, the inputs cleaned, halved the count, and the sixteenth, a challenger that maps before it reacts and a revise step that cuts, brought it under one per email. The faults that survived were all written before drafting began, in the campaign's own inputs, where no guard around the loop can reach them.
 
 The short answer to why the reader passes them, worked out in the sections below and confirmed by the rounds: it was asked to react, and a reaction is robust to gaps, because reading is repair; it was not given the date, so an impossible ask read as advance notice; and it was not given the facts, so a false claim read as information. The same model asked to point at every expression it cannot resolve, before reacting, finds three to four per letter. The capacity was there; the task did not call it, and the isolation that kept our framing out took the reader's own world with it.
 
@@ -129,6 +129,22 @@ The registry-born claims pass through the writer's own second pass as they passe
 **The same two designs on Opus 5.5, five pairs each.** The Opus 5.5 material from the first run of each design, the five contacts common to both, scored in a separate pass by the same reader ([key5.json](round3-rewrite/key5.json), [scores5.tsv](round3-rewrite/scores5.tsv)). A on 5.5, both drafts by 5.5, moves as on Opus 5: 41 words longer, unresolved references 1 / 2 / 2, false claims 0 / 3 / 2. B on 5.5 moves the other way: unresolved references 3 / 1 / 1, surprising sentences 4 / 1 / 0, false claims 4 / 1 / 0, sender-side 2 / 2 / 1, words +7. B's first writings are Opus 5's, so that pair changes model as well as pass, and A, where both passes are 5.5, did not gain; the reading that fits both is that 5.5 writes a tighter letter from the same brief, not that the second pass does. A B pair with a 5.5 first writing needs the harness run on 5.5.
 
 So the second pass by the writer, with or without its brief, reaches the letter's order and address and not the selection of what is in it. The cut needs a question the writer is not asking of its own sentences: is this here because an input said so, or because the reader would ask. That question needs the inputs in view, and it is the challenger's fact-check step with its question changed, not another pass by the author.
+
+### Round 5 — 23 September, the method that meets the number
+
+The target the Director set: an average of one unresolved reference or fewer per email on a test of 8 to 12 approach creations. Two tests through the harness itself, each on fresh contacts of the campaign inside the segments' allowlists, author Opus 5 by exact id, challenger Sonnet 5, scored by the round-3 reader in one pass over both tests under one rubric amendment: a thing the recipient is, owns or runs resolves ([round5-method/](round5-method/)).
+
+| test | what changed | n | unresolved references | surprising 4-5 | false | sender-side | words |
+|---|---|---|---|---|---|---|---|
+| round 2 letters, for scale | none | 25 | about 3.7 | 2.7 | 2.8 | 3.4 | 254 |
+| 1 | the inputs: every definite reference and sender-side sentence cut from the campaign's first_asks and appendices, the registry's false claims and an unverified certificate promise removed, an unauthorised giveaway removed | 8 | 1.38 | 1.12 | 1.12 | 2.25 | 225 |
+| 2 | test 1's inputs plus the challenger mapping the letter's presuppositions before it reacts, a phrase resolving 0 to 2 forcing REVISE, and the revise step cutting the sentence that holds it before introducing the thing (spar-manager 32c1e86) | 8 | 0.75 | 0.75 | 0.50 | 2.50 | 226 |
+
+Test 2 meets the number. Per letter it scored 1, 2, 0, 1, 0, 2, 0, 0. Seven of its eight letters went to revision on the 0-to-2 rule, one twice. Where the author introduced "a booking code and the link" before using "the code", the map scored the later use 5 and the verdict was DONE on merit. What still resolved nowhere across both tests was "the link" or "the booking link" in four letters, "the booking details" in three, and "the opening shows" before any date in three. Sender-side sentences did not fall; the map does not target them.
+
+Two things about the test itself. Twelve contacts were named to the dispatcher each time and eight came back each time, with no failure line for the rest; one was outside its allowlist and logged as skipped, the others were dropped in silence, and a dry run of three of test 2's absentees found one dispatchable. The reader's first pass over test 1 alone counted the recipient's own club or village as an unresolved definite in five of eight letters and gave 2.62; the amended rubric gave 1.38 on the same letters in the pass that scored test 2, which is why both tests sit in one pass.
+
+The method, as it stands for the campaign: the inputs at 25e0226ca in the business repository, the templates at 32c1e86, the author named by AUTHOR_MODEL or SPAR_AUTHOR_MODEL.
 
 ## What survived every arm
 

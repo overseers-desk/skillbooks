@@ -1,0 +1,416 @@
+profile_hash: sha256:db412ae99ba4bbaeca77b07cb0f175dcb47d6a014d5823412091e8fa738466d2
+decisions:
+  channel: email
+  channel_detail: |
+    Contact: Jennifer, Secretary per the roster, Robina VIEW Club (segment
+    community-organisation). Email robinaviewclub1@gmail.com and phone
+    0408 005 458 on the roster; no LinkedIn or Facebook found at profile time.
+    SPAR-A 4.2 email-plus-phone rule: email first on Wednesday 23 September,
+    phone the next morning if no reply, matching the segment's
+    approach_sequencing steps 1 and 3.
+    Warmth at drafting time: prior contact, one way, with the reply state
+    unsettled. The dispatcher prefetch found one outbound message, 9 April
+    2026, subject "Group outing at Historic Rivermill, Robina VIEW Club", sent
+    by Lia Movsisyan from partnerships@rivermill.au to
+    robinaviewclub1@gmail.com, folder Partnerships. It also found an unsent
+    draft of 20 April 2026, "Re: Robina VIEW", from admin@rivermill.au to the
+    same address, sitting in that account's Drafts folder. No inbound mail from
+    robinaviewclub1@gmail.com appears on any of the five searched accounts.
+    Reply-vs-new-thread (4.1.1): new subject. The April thread is five and a
+    half months old and carries no message from the club, so it is not a
+    current thread; the false branch applies, fresh subject with the earlier
+    note named in the body.
+  language: en-au
+  angle: club-calendar-pass-it-on
+angle_rationale: |
+  The profile records no public statement by Jennifer and names the absence
+  explicitly: no statements about heritage venues, hinterland or farm-style
+  excursions. The angle is therefore built on her office and the club's own
+  arrangements, not on an interest attributed to her.
+
+  Evidence used, strongest first:
+  1. The club meets on the first Wednesday at 9:30am at Club Robina. The next
+     meeting after this message falls on 7 October, after the free window
+     closes on Sunday 27 September. Any ask that needs a committee decision,
+     an assembled group or a bus is impossible inside opening week, and any
+     ask that needs none of those is possible tonight from her kitchen table.
+     That calendar fact is what makes nothing-to-organise the primary angle on
+     merit rather than by default.
+  2. The office she holds circulates things to members. VIEW clubs run on a
+     secretary or programmer passing arrangements to a member list.
+  3. Confirmed active social programme: High Tea at Royal Pines, Christmas
+     party at Club Robina, Country and Western events with line dancing. The
+     club does visit outside venues, which is what makes a second-week group
+     visit worth offering as the alternative.
+  4. Member demographic is women typically 55 to 80 plus, in Robina 4226,
+     inside the venue's catchment. The offer covers members and the families
+     they bring, which is how a children's circus reaches this roster: the
+     grandchildren are on school holidays.
+
+  Primary angle: a free thing with no administration attached, which she can
+  put in front of members without waiting for the October meeting. The ask is
+  a rough number of tickets, answerable in one sentence, which is the
+  segment's message_goal.
+
+  Rejected: a group-outing angle built on the High Tea at Royal Pines. The
+  evidence is real, but opening week is 48 hours away and a club excursion
+  cannot be arranged in that time, so it survives only as the one-sentence
+  second-week option the segment's first_ask prescribes.
+  Rejected: naming Patricia the Programmer, or Janine as Secretary, in the
+  message. The profile recommends Patricia as the excursion contact, and both
+  names come from a directory that may be stale. Naming either would display
+  research and would be wrong if the directory has moved on, so the message
+  addresses Jennifer by first name with no role title and closes the phone
+  script with a neutral pass-it-on branch instead.
+  Rejected: reciting the club's outing history back to it, which would tell
+  the recipient what she already knows about her own year and fail the 7.3
+  presupposition test. The meeting cadence is presupposed in the phrase
+  "nothing that needs to wait for a meeting" rather than narrated.
+response_likelihood: 55
+a_note: |
+  Club-calendar pass-it-on angle (nothing to organise, because the club's next
+  meeting falls after the free window closes); email first with phone follow-up
+  the next morning; warmth prior contact one way, April 2026 group-outing note
+  with the reply state unsettled; en-au.
+rounds:
+  - type: draft
+    number: 1
+    chosen_usps: [nothing-to-organise, opening-week-seats, not-advertised, big-top-at-a-heritage-farm]
+    notes: |
+      USPs taken from the community-organisation plan block, not invented.
+      nothing-to-organise and opening-week-seats carry the functional load,
+      not-advertised carries the emotional load in the framing the block gives
+      it, and big-top-at-a-heritage-farm supplies the one sentence saying what
+      the show is. The group-next-week sentence comes from the block's
+      first_ask. make-a-day-of-it was considered and left out: it is in the
+      registry but not among the four USPs this block lists, and the weekday
+      kitchen closes at 1:00 PM, the same moment Thursday's show starts.
+      No code, no price and no ticket link in the first message; the code and
+      the Eventbrite link go in the reply at funnel step 2.
+    messages:
+      - channel: email
+        to: robinaviewclub1@gmail.com
+        subject: Free circus tickets for Robina VIEW members, from tomorrow
+        body: |
+          Dear Jennifer,
+
+          I am Priyanka Das, from Historic Rivermill at Mount Nathan, a riverside venue with a cafe, horses and farm animals in the Gold Coast hinterland, half an hour from central Gold Coast. A colleague wrote to the club in April about a group outing here and we did not hear back, so I will take it that we are new to you.
+
+          I have free tickets to WANTED – A Cirque Heist for Robina VIEW members and their families. It is a family circus in a big top on our lawn, running for the school holidays, with seven shows from tomorrow, Thursday 24 September, through to Sunday. The season opens at 1pm on Thursday. Reply with a rough number and I will send you a code and a booking link to pass on.
+
+          Members book whichever show suits them, so there is nothing for the committee to organise, no bus, and nothing that needs to wait for a meeting. The seats are not on public sale, so they are for club members and the families they bring rather than for posting anywhere public.
+
+          If the club would rather come as a group, the following week suits that better. Tell me a day and I will come back to you about seating.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          Colourful.land Pty Ltd
+          partnerships@rivermill.au
+          historicrivermill.au
+      - channel: phone
+        to: "0408 005 458"
+        text: |
+          Morning-after follow-up on Thursday 24 September if the email brings
+          no reply, per the segment's approach_sequencing step 3.
+        script:
+          - point: Open
+            text: |
+              Good morning, is that Jennifer? Priyanka Das calling from Historic Rivermill at Mount Nathan. I sent the club an email yesterday about free circus tickets and thought a call might be easier.
+          - point: What it is
+            text: |
+              There is a family circus in a big top on our lawn for the school holidays, WANTED – A Cirque Heist. It opens at one o'clock this afternoon and runs through to Sunday, seven shows.
+          - point: The ask
+            text: |
+              I have free tickets for Robina VIEW members and their families. If you tell me roughly how many the club could use, I will email you a code and a booking link today and members book whichever show suits them.
+          - point: If she asks what it costs
+            text: |
+              Nothing for the club and nothing for the members. The tickets come to you free.
+          - point: If she says the club cannot organise anything this week
+            text: |
+              There is nothing to organise. Members book their own seats online with the code, so it does not need a meeting or a bus.
+          - point: On passing it on
+            text: |
+              The seats are not on public sale, so they are for your members and the families they bring. Please keep it to the club rather than a public page.
+          - point: If a group visit suits better
+            text: |
+              The following week works better for a group. Give me a day that suits the club and I will come back to you about seating.
+          - point: Wrong person
+            text: |
+              No trouble at all. Who looks after the club's programme, and would you mind passing my email to them?
+          - point: Close
+            text: |
+              I will send the code straight after this call. Thank you for your time, Jennifer.
+        phone_note: |
+          Call Thursday morning, inside the 7:00 AM to 2:30 PM service window in
+          S2 section 1 and before the 1pm opening show. The number is the
+          roster's, attributed to Jennifer. The Smith Family directory suggests
+          she may be Treasurer rather than Secretary, so open with the name and
+          let her place herself.
+  - type: review
+    number: 1
+    verdict: REVISE
+    in_character: |
+      A stranger's name, a circus, and a deadline of tomorrow afternoon is a
+      lot to land on a Wednesday. I do not recognise Priyanka Das, and I do not
+      recall a colleague of hers writing to us in April, though the club gets a
+      fair bit of mail and I would not swear to it either way. The claim that
+      we never replied I cannot check from here.
+
+      What she is actually asking of me is small: a rough head-count, nothing
+      organised, no bus, no waiting for the next meeting. That is genuinely
+      something I could do from my kitchen table tonight, reply with "say
+      twenty" and forward whatever she sends to the members list. So yes, what
+      the message asks is possible in the time it gives, precisely because it
+      sidesteps needing a meeting.
+
+      Two things nag a little. First, "the seats are not on public sale" and
+      "not for posting anywhere public" is an odd thing to stress twice in one
+      paragraph; it reads slightly like she is more worried about us leaking it
+      than about getting it to us, though not enough to make me suspicious of
+      the offer itself. Second, "the following week" for a proper group visit
+      names no dates, so if I wanted that option I would have to write back and
+      ask which days she means.
+
+      Neither of those would stop me replying. Nothing here would. What I would
+      simply ask in my reply: what date range "the following week" covers, and
+      whether "a rough number" means people or tickets.
+
+      Resolution scores below 3, which forced the revision: "we did not hear
+      back" at 2, "we are new to you" at 2, "posting anywhere public" at 1,
+      "the following week" at 1.
+
+      REPLY_PCT: 60
+    fact_check:
+      - claim: The season opens at 1pm on Thursday 24 September.
+        source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md.
+        result: verified
+        note: Matches the showtimes file wording exactly.
+      - claim: Seven shows run from Thursday 24 September through to Sunday.
+        source: Campaign YAML header and usps.opening-week-seats.
+        result: verified
+      - claim: A colleague wrote to the club in April about a group outing here and we did not hear back.
+        source: Dispatcher courier prefetch across five accounts.
+        result: rejected
+        note: |
+          The outbound half holds: 9 April 2026, a group-outing note from
+          partnerships@rivermill.au to robinaviewclub1@gmail.com. The no-reply
+          half does not. An unsent draft of 20 April 2026, "Re: Robina VIEW",
+          from admin@rivermill.au sits in that account's Drafts folder, which
+          is consistent with someone here answering an inbound message that
+          arrived from an address the prefetch search would not have matched.
+          The campaign's a_author appendix asks for the no-reply line where the
+          prefetch finds we wrote and heard nothing back, and that precondition
+          is not established here.
+        correction: |
+          The no-reply clause and the inference drawn from it are cut. The
+          clause that resolves cleanly is kept, so the earlier note is still
+          named and what it was about is still stated, with no claim about what
+          the club did.
+      - claim: Email and phone script carry no code, no price, no discount, no Oztix link, no ticket link, no suggestion that seats are unsold, and no feed-bag or animal-food offer.
+        source: Campaign prompt_appendices.a_author and a_challenger.
+        result: verified
+    antifact_check: |
+      Checked against the antifacts file. No building is named anywhere in
+      either message, so the stone-building and the 100-year-old or original
+      mill structure claims cannot arise. No vineyard and no wine. The venue is
+      described by what it offers visitors, a riverside venue with a cafe,
+      horses and farm animals, so the unsettled farming question is left alone
+      and the word "farm" appears only in "farm animals", which the antifact
+      file's own permitted description uses. Location given as Mount Nathan in
+      the Gold Coast hinterland, half an hour from central Gold Coast, never on
+      Tamborine Mountain, and no Scenic Rim claim is made.
+    revision_note: |
+      One factual error and five persona points. Sorting:
+
+      (1) Answer in this email: whether "a rough number" means people or
+      tickets. It sits inside the single act the message asks of her, and 4.5
+      requires an ask answerable in one sentence, so leaving the unit open puts
+      friction on the reply itself. Now "a rough number of tickets".
+
+      (3) Absorb by reframing: the doubled public-sale wording. Her reading,
+      that the sender minds leakage more than delivery, is the failure the
+      campaign's own note about not implying the offer serves us guards
+      against. The a_author appendix requires the own-members-and-not-for-
+      posting-publicly wording, so it cannot be cut; the two sentences fold
+      into one, and "anywhere public" narrows to the campaign's own phrase.
+
+      (3) Absorb by reframing: "the following week" names no dates. Cutting the
+      sentence would drop the one path that fits a club whose next meeting
+      falls on 7 October, so the span is named instead, 28 September to
+      4 October. No session in that week is asserted with it: the showtimes
+      file gives a start time for none of the second week except the Thursday
+      1 October 11am show, and Mondays and Tuesdays are dark. The day comes
+      back from her and the sender confirms what is running, which is also what
+      group-visit-later provides for.
+
+      Cut for resolution: "we did not hear back" and "we are new to you", per
+      the fact_check above. The remaining clause naming the April note is the
+      one she scored 5.
+
+      No action: "the committee" and "a bus" scored 3, inside the paragraph she
+      singled out as the reason she could act tonight. "The committee" became
+      "the club", which presumes less and leaves that framing intact.
+
+      Nothing was left for the reply. Both questions she would have asked on
+      replying are answered in the revised message.
+
+      The revised text (A1 draft 2) was accepted without a further spar and is
+      the final round below, unchanged.
+    notes: |
+      Challenger run context-isolated on sonnet, playing Jennifer. Pass budget
+      1, per profile yield 3 (4.6, yield 3 to 5).
+  - type: final
+    chosen_usps: [nothing-to-organise, opening-week-seats, not-advertised, big-top-at-a-heritage-farm]
+    messages:
+      - channel: email
+        to: robinaviewclub1@gmail.com
+        subject: Free circus tickets for Robina VIEW members, from tomorrow
+        body: |
+          Dear Jennifer,
+
+          I am Priyanka Das, from Historic Rivermill at Mount Nathan. We are a riverside venue with a cafe, horses and farm animals, in the Gold Coast hinterland half an hour from central Gold Coast. A colleague of mine wrote to the club in April about a group outing here.
+
+          I have free tickets to WANTED – A Cirque Heist for Robina VIEW members and their families. It is a family circus in a big top on our lawn, running for the school holidays. There are seven shows from tomorrow, Thursday 24 September, through to Sunday. The season opens at 1pm on Thursday. Reply with a rough number of tickets and I will send you a code and a booking link to pass on.
+
+          Members book whichever show suits them, so there is nothing for the club to organise, no bus, and nothing that needs to wait for a meeting. The seats are not on public sale, so they are for club members and the families they bring rather than for posting publicly.
+
+          If the club would rather come together as a group, the following week, 28 September to 4 October, suits that better. Tell me a day that suits and I will come back to you about what is running and whether seating can be held.
+
+          Kind regards,
+
+          Priyanka Das
+          Partnerships, Historic Rivermill
+          Colourful.land Pty Ltd
+          partnerships@rivermill.au
+          historicrivermill.au
+        actioned_date: null
+        replied_date: null
+        director_note: |
+          Two things to decide before this goes. First, the April note. The
+          message names it in one plain line and stops there, because the
+          unsent "Re: Robina VIEW" draft of 20 April in the admin account's
+          Drafts folder leaves open whether the club replied to us and nobody
+          answered. If the director knows the club never replied, the stronger
+          line the campaign appendix asks for can be restored: "and we did not
+          hear back". If the club did reply in April, the line as it stands is
+          still true and the draft in Drafts is worth finishing.
+          Second, the address. The Smith Family directory lists Janine as
+          Secretary and Jennifer as Treasurer, with Patricia as Programmer, so
+          this mail may reach someone who forwards it rather than acts on it.
+          The message uses her first name with no role title for that reason.
+          The profile's roster corrections stand: confirm who holds which
+          office, and add Patricia as the contact for excursion work.
+      - channel: phone
+        to: "0408 005 458"
+        text: |
+          Morning-after follow-up on Thursday 24 September if the email brings
+          no reply, per the segment's approach_sequencing step 3.
+        script:
+          - point: Open
+            text: |
+              Good morning, is that Jennifer? Priyanka Das calling from Historic Rivermill at Mount Nathan. I sent the club an email yesterday about free circus tickets and thought a call might be easier.
+          - point: What it is
+            text: |
+              There is a family circus in a big top on our lawn for the school holidays, WANTED – A Cirque Heist. It opens at one o'clock this afternoon and runs through to Sunday, seven shows.
+          - point: The ask
+            text: |
+              I have free tickets for Robina VIEW members and their families. Tell me roughly how many tickets the club could use and I will email you a code and a booking link today. Members book whichever show suits them.
+          - point: If she asks what it costs
+            text: |
+              Nothing for the club and nothing for the members. The tickets come to you free.
+          - point: If she says the club cannot organise anything this week
+            text: |
+              There is nothing to organise. Members book their own seats online with the code, so it does not need a meeting or a bus.
+          - point: On passing it on
+            text: |
+              The seats are not on public sale, so they are for your members and the families they bring rather than for posting publicly.
+          - point: If a group visit suits better
+            text: |
+              The following week suits a group better, 28 September to 4 October. Give me a day that works for the club and I will come back to you about what is running and the seating.
+          - point: Wrong person
+            text: |
+              No trouble at all. Who looks after the club's programme, and would you mind passing my email to them?
+          - point: Close
+            text: |
+              I will send the code straight after this call. Thank you for your time, Jennifer.
+        phone_note: |
+          Call Thursday morning, inside the 7:00 AM to 2:30 PM service window in
+          S2 section 1 and before the 1pm opening show. The number is the
+          roster's, attributed to Jennifer. The Smith Family directory suggests
+          she may be Treasurer rather than Secretary, so open with the name and
+          let her place herself; the wrong-person branch asks who looks after
+          the programme rather than naming Patricia, whose role comes from the
+          same directory. No show time in the second week may be named on the
+          call: the group branch offers the date span and promises to come back
+          with what is running.
+        actioned_date: null
+        replied_date: null
+fact_provenance:
+  - claim: Priyanka Das writes from partnerships@rivermill.au for Partnerships at Historic Rivermill.
+    source: Campaign YAML sender block (name, role, organisation, email, bcc).
+  - claim: Historic Rivermill is at Mount Nathan in the Gold Coast hinterland, a riverside venue with a cafe, horses and farm animals, half an hour from central Gold Coast.
+    source: business overview, opening paragraph, U6, and "What the venue offers"; the permitted description form in the antifacts file.
+  - claim: Colourful.land Pty Ltd is the operating entity behind Historic Rivermill, as named in the signature.
+    source: Business overview, "Business identity".
+  - claim: The venue website is historicrivermill.au.
+    source: S2-fees-and-service-hours.md section 1.
+  - claim: A colleague wrote to the club in April about a group outing here.
+    source: Dispatcher courier prefetch, 9 April 2026, group-outing note from Lia Movsisyan at partnerships@rivermill.au to robinaviewclub1@gmail.com, folder Partnerships.
+  - claim: WANTED – A Cirque Heist is a family circus in a big top on the venue's lawn, running for the school holidays.
+    source: Campaign YAML usps.big-top-at-a-heritage-farm; campaign header.
+  - claim: Seven shows run from Thursday 24 September to Sunday 27 September, free to the organisation's members and the families they bring.
+    source: Campaign YAML usps.opening-week-seats; campaign header.
+  - claim: The season opens at 1pm on Thursday 24 September.
+    source: plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md.
+  - claim: A code and a booking link follow in the reply, not in this message.
+    source: Campaign YAML usps.opening-week-seats rests_on; conversion_funnel steps 1 and 2; prompt_appendices.a_author.
+  - claim: Members book whichever show suits them, so there is nothing for the club to organise and no bus.
+    source: Campaign YAML usps.nothing-to-organise claim, with the segment framing "Forward it to members and their families to book what suits them; no outing to run."
+  - claim: The seats are not on public sale, and they are for club members and the families they bring rather than for posting publicly.
+    source: Campaign YAML usps.not-advertised claim; campaign header; segment first_ask. The internal reasoning behind the giveaway is excluded, as the USP's rests_on directs.
+  - claim: A group visit can be arranged in the following week, 28 September to 4 October, on a day the club names, with seating confirmed afterwards.
+    source: Campaign YAML usps.group-visit-later; segment first_ask. The date span is the calendar week after opening week, which closes Sunday 27 September per usps.opening-week-seats; no session in that week is named, since the showtimes file gives a start time for none of it except the Thursday 1 October 11am show and states Mondays and Tuesdays are dark.
+  - claim: The club's next meeting falls after the free window closes, which is what the "nothing that needs to wait for a meeting" clause presupposes.
+    source: Profile, Group profile section, 1st Wednesday 9:30am at Robina Bowls Club. The first Wednesday after 23 September 2026 is 7 October.
+  - claim: The recipient is Jennifer at Robina VIEW Club, reachable at robinaviewclub1@gmail.com and 0408 005 458.
+    source: Roster row; profile "Current role" and "Group profile".
+  - claim: Jennifer's office is uncertain, with a directory listing Janine as Secretary, Jennifer as Treasurer and Patricia as Programmer.
+    source: Profile, "Current role" and "Verification corrections", from The Smith Family VIEW Club directory. Used only in the director note and the phone script's handling, never asserted to the recipient.
+  - claim: The business is reachable by phone on a Thursday morning.
+    source: S2-fees-and-service-hours.md section 1, customer service hours 7:00 AM to 2:30 PM Brisbane time.
+quality_checklist: |
+  1. YAML structure: root keys drawn from the section 6 set (decisions, rounds,
+     angle_rationale, response_likelihood, a_note, fact_provenance,
+     quality_checklist); no profile_hash, which the harness prepends (issue
+     #63); every draft and review round carries type and number; addresses are
+     real, taken from the roster and the campaign sender block. No validator
+     subprocess was invoked.
+  2. Coverage: fact_provenance lists every factual claim in the final email and
+     the phone script, including the claims the phone script alone makes.
+     chosen_usps present on the draft and final rounds. a_note carries angle,
+     channel, warmth and language.
+  3. Presupposition test: no sentence recites the club's own year back to it.
+     The High Tea at Royal Pines, the Christmas party, the line dancing and the
+     named committee were all available and left out for this reason. The
+     meeting cadence is presupposed in "nothing that needs to wait for a
+     meeting" rather than narrated, and the April note is the sender's own
+     conduct, not the recipient's.
+  4. Manufactured-connection test: the angle rests on the meeting cadence, the
+     office she holds, the club's confirmed social programme, the member
+     demographic and the Robina 4226 location, each a profile data point. The
+     profile's recorded silence on heritage venues, hinterland and farm-style
+     excursions is respected: no interest in any of them is attributed to her,
+     and the April note appears as continuity only.
+  5. Concreteness: the ask is a rough number of tickets, answerable in one
+     sentence, which is the segment's message_goal. The unit was added in
+     revision after the challenger found it open.
+  6. Band-level pattern check: this opener gives the venue introduction, one
+     line naming the April note, then the ask. Read against the other two
+     community-organisation files already in the campaign folder, the shapes
+     differ: this one carries no "this one is smaller" pivot and makes no
+     assertion about the earlier note going unanswered. The full band sweep
+     stays with the reviewer, since this file is written on its own.
+  7. Final round email cardinality: one email and one phone message in the final
+     round, within the one-email cap.

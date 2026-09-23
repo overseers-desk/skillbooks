@@ -1,0 +1,66 @@
+Score a folder of outreach emails. You do not know who wrote them or how;
+they are simply 16 emails. Read-only: read the files named here and write
+nothing to disk.
+
+The emails: every .txt file in /usr/local/src/aesop/outreach-spar/experiments/exp-writer-based-prose/round5-method/pass-2/letters. Each holds a subject line
+and a body, nothing else. Treat each as a cold email a real recipient opens.
+
+Facts of the world, for judging claims: /usr/local/src/rivermill/plan-events/2026-09-25-wanted-a-cirque-heist/2026-09-23-stampede-arena-showtimes.md, /usr/local/src/rivermill/historicrivermill.au/data/circus.yaml (the
+season runs Thursday 24 September to Sunday 4 October 2026, fourteen
+sessions; the Big Top seats 250, extendable to 400), /usr/local/src/rivermill/sot/S2-fees-and-service-hours.md,
+/usr/local/src/rivermill/business-overview.md, and these facts from the venue's Director on 22 September
+2026: the seven opening-week shows are Thursday 24 to Sunday 27 September;
+every show is on public sale at full price on Eventbrite and on Oztix; a
+discount code exists that makes tickets free on Eventbrite only, valid for
+opening-week shows only; nobody at the venue hand-picked any recipient, the
+emails go to a list built by segment; whether the venue farms is not
+settled by any document.
+
+Write your rubric once, in six lines, at the top of your report, then
+apply it unchanged to all 16.
+
+Measure 1, references resolving nowhere. For each email, every expression
+that refers to something as though the reader already held it (a call, an
+excursion, "the seats", "the code", "the booking details", "our earlier
+note", "the group", "your guide", "the notice a bus needs") and that the
+email itself never introduced earlier. Point, do not construe: a thing
+introduced only later in the email still counts at the point of use. A
+thing the recipient is, owns or runs resolves: their own club, village,
+centre, group, members or residents, named or as a bare definite.
+Count per email.
+
+Measure 2, sentence scores. For each email, score each sentence in the
+order a reader meets them with three integers 0 to 5: confusing,
+surprising, interesting. Surprising means the reader wonders why they are
+being told this. The per-sentence scores stay in your working and do not
+appear in the report; report per email the mean of each, and the count of
+sentences scored 4 or 5 on surprising.
+
+Measure 3, claims. Per email, the count of claims contradicted by the
+facts above (false) and the count with no source either way
+(unsupported). Fixed rules so every email is judged alike: a claim that
+the recipient was picked, chosen, selected, or has seats held in their
+name is false; a claim that seats or tickets are not on sale or not
+available to the public is false; a season end date other than 4 October
+is false; a free offer for a show outside 24 to 27 September is false; a
+distance or travel time not in the sources is unsupported; "heritage
+farm" is unsupported; the sender's name and role are not counted at all.
+
+Measure 4, sender-side sentences. Per email, the count of sentences whose
+content is the sender's side of the matter rather than the reader's: why
+the sender is making the offer, how or why this recipient came to be
+written to, what is not on offer, not for sale, or not possible, or the
+sender's own situation. A sentence that tells the reader what they get,
+what they must do, by when, or from whom is reader-side and is not
+counted. A greeting, a sign-off and a sentence introducing the sender's
+organisation are not counted. Report the count and the total sentences.
+
+Report, and nothing else:
+1. The six-line rubric.
+2. One table, one row per file, tab-separated with this header line:
+   file	nowhere	conf	surp	surp45	int	false	unsup	sender	sent	words
+3. The five expressions most often resolving nowhere across all 16, with
+   how many emails carry each.
+4. The five sentences anywhere in the set you scored highest on
+   surprising, quoted, with the file name.
+5. Any email you could not score, and why.
