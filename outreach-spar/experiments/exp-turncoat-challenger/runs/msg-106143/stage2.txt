@@ -1,0 +1,23 @@
+Sentence-by-sentence pass. Scores are 0–5. "Resolves" location for each Paul-presupposing phrase: an earlier sentence in this email (quoted), the earlier thread (the April 2026-04-09 outing on record), something Paul would know (named), or nowhere.
+
+```csv
+seq,sentence,confusing,surprising,interesting,presupposition_phrase,resolves_where,resolves_score
+1,"Hello,",0,0,0,"none","",0
+2,"I am Priyanka Das, partnerships at Historic Rivermill, a riverside venue at Mount Nathan with a cafe, horse riding and farm animals.",1,1,2,"none","",0
+3,"A circus has put up a big top on our lawn for the school holidays, WANTED – A Cirque Heist, and it opens this Thursday, 24 September.",1,2,3,"none","",0
+4,"I have free tickets for Oxenford Men's Shed members and the families they bring.",0,1,2,"'Oxenford Men's Shed members' (assumes Paul currently holds a role over the shed's membership)","something Paul would know: his own current standing at the shed",1
+5,"Reply with a rough number and I will send you the booking code and the link to pass around.",0,1,2,"'pass around' (assumes Paul has a channel/list of members to distribute to)","something Paul would know: whether he still has that reach",1
+6,"There are seven shows in the opening run: Thursday 24 September at 1pm, Friday 25th and Saturday 26th at 4pm and 7pm, and Sunday 27th at 11am and 2pm.",2,0,1,"none","",0
+7,"Each person books whichever one suits them, so there is no outing to organise and no bus to fill.",1,4,4,"'no bus to fill' (assumes the shed's outings normally involve chartering a bus)","the earlier thread (bio: Buderim bus trip on record) — not named anywhere in this letter itself",3
+8,"The seats are not on sale at any price.",1,2,2,"none","",0
+9,"They go to a short list of local organisations we picked by name, and the shed is on it.",1,3,3,"'we picked by name, and the shed is on it' (assumes an existing relationship that earned the shed a spot)","the earlier thread (April contact)",3
+10,"They are for your members, their families and the people the shed looks after, rather than for posting publicly.",2,3,3,"'your members' (assumes Paul owns/leads the shed's membership now)","something Paul would know: his own current role — but this is exactly the unconfirmed point",1
+10,"They are for your members, their families and the people the shed looks after, rather than for posting publicly.",2,3,3,"'the people the shed looks after' (assumes an established care/outreach programme)","something Paul would know: the shed's own activities",2
+11,"If the shed would rather come along together, the week after suits a group better.",1,2,2,"'would rather come along together' (assumes a standing pattern of group attendance)","the earlier thread / something Paul would know (matches bus-trip culture)",3
+12,"Tell me a day and I will come back to you on it.",0,0,1,"none","",0
+13,"We wrote to this address in April about a group outing and did not hear back.",1,4,5,"'wrote to this address in April' (assumes Paul received or is answerable for that earlier letter)","the earlier thread — directly matches the recorded 2026-04-09 Rivermill outing",5
+14,"If outings are someone else's job at the shed, please pass this on or send me their address.",1,3,4,"'someone else's job at the shed' (quietly presupposes Paul may no longer be the right person, undercutting 'your members' in sentence 10)","nowhere explicit — the writer's own hedge, not confirmed either way",2
+15,"Priyanka Das / Partnerships, Historic Rivermill (Colourful.land Pty Ltd) / 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211 / partnerships@rivermill.au",0,0,0,"none","",0
+```
+
+The surprise spikes land on 7 and 13. Sentence 13 is the one that reads as the writer's own thought rather than template copy — it's the only place the "we already know you" stance actually cashes out against a real record, and it lands with a faint grievance ("did not hear back") that a pure form-letter wouldn't carry. Sentence 7's "no bus to fill" is a strangely specific detail for a generic mail-out; it only makes sense if the writer is thinking of *this* shed's actual habits, not sheds in general — but nothing in the letter itself grounds it, so it's presupposing knowledge the reader has to supply. Sentence 10's "your members" is the shakiest claim in the whole email: it's stated flattest and confidently, right where the profile says it's least certain (Paul's current role is unconfirmed), and sentence 14 then quietly hedges it.

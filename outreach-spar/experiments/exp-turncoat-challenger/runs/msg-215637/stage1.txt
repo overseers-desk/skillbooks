@@ -1,0 +1,9 @@
+I read the email — here's what stood out.
+
+**Content:** Priyanka Das from "Historic Rivermill" (a riverside cafe/animal venue at Mount Nathan) offers free opening-week tickets to a touring family circus ("WANTED – A Cirque Heist") for Beaudesert Probus members and their grandchildren, timed to school holidays. She asks only for a rough headcount by reply; says she'll then send a booking link and code. No payment, no bus, no organising required at the club's end.
+
+**Risk read:** I tried to verify "Historic Rivermill," the domain `rivermill.au`, and the circus name via web search, but search permission wasn't granted for this session, so I can't independently confirm the business exists — treat that as unverified, not confirmed. That said, the email itself doesn't carry the usual scam tells: no fee, no urgent threat, no request for money, banking details, or login credentials, and the ask (a headcount) exposes nothing sensitive. The "reply first, link comes after" structure and mild scarcity/urgency framing ("not advertised anywhere," "opens Thursday") are the kind of soft persuasion techniques that show up in both ordinary small-business marketing and social-engineering setups — so it's not disqualifying, just worth noting. The premise (regional venue hosting a touring circus over school holidays, offering local seniors' clubs free opening tickets for goodwill/PR) is mundane and plausible.
+
+**My take:** Reasonable to reply with a rough number — it's a low-cost, low-risk ask. Before passing any code or link around the club once it arrives, worth a quick sanity check that it actually points to `rivermill.au` (or Historic Rivermill's real booking system) rather than somewhere unrelated.
+
+reply

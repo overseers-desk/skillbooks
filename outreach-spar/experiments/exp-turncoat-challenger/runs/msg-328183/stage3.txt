@@ -1,0 +1,15 @@
+Reading it now as feedback to the person who drafted it, not as Corey — the verdict stands, reply.
+
+**Would have stopped the reply outright: none of them, alone.**
+That's the honest finding, not a hedge. Every presupposing phrase I flagged resolves to something plausible — Corey's role, the venue, the date range — nothing resolves to nowhere in a way that reads as fabricated. The two sharpest surprise scores (S9's bus logistics, S11's social-media line) read as informed, not intrusive. A cold email that gets the operating details of a retirement village right is doing the opposite of a scam tell — a phishing draft usually gets that texture wrong, not right.
+
+**Would only be asked back in the reply:**
+- S8, "the booking link" — Corey would reasonably reply "what platform will that be on?" before passing anything to residents, but he'd still reply first.
+- S11, "kept inside the village rather than going out on social media" — reads as a capacity-limit request, but the reason isn't stated. Worth a one-line "why" in the reply, not a reason to withhold one.
+
+**Sentences that need a question answered before they can stay, from your side, before this goes out again:**
+- S8. You're introducing "the booking link" as a definite object before anything has defined it. That's fine once — link, code, price-to-nil — but if you reuse this template, decide now which platform it'll be, and name it in the email. An unnamed link promised to a village manager for onward distribution to elderly residents is the one element in this draft that has zero slack for ambiguity later.
+- S11. "Best kept inside the village rather than going out on social media" needs its reason stated, not implied. Right now the sentence does work by suggestion — it reads as capacity management to a friendly reader and as a soft gag order to a suspicious one. Say the reason (limited free allocation, first-come only) and the sentence stops needing the reader's goodwill to land safely.
+
+**The one change that would have turned bin/reply around, if anything would:**
+Not tone, not the exclusivity framing, not the secrecy line — those are all soft enough to survive scrutiny. The tripwire is S7: what you asked Corey to *send back*. You asked for sessions and a headcount. If that line had instead asked for resident names, phone numbers, or any personal detail before the code went out, the whole email reclassifies — from a venue filling matinee seats to a script harvesting data on a retirement village's residents. That's the single sentence carrying the entire risk budget of the draft. Everything else can stay exactly as written as long as that one line never changes shape.

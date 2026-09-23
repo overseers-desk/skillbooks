@@ -1,0 +1,21 @@
+Sentence-by-sentence pass. Delimiter is `;` per your own punctuation; scores are 0–5.
+
+```
+sentence;text;confusing;surprising;interesting;presupposed_phrases
+1;"Hello,";0;0;0;"(none)"
+2;"I am Priyanka Das, from Historic Rivermill at Mount Nathan, the riverside place on Beaudesert Nerang Road with the cafe, the horses and the alpacas, on the old arrowroot mill site.";1;2;2;"'the cafe, the horses and the alpacas' -> earlier thread (unconfirmed, first mention in this letter) [2]"
+3;"A circus company, CHARC Performance, has put a big top up on our lawn for the school holidays, and I have free tickets to the opening shows for your members and the families they bring.";1;2;3;"'your members' -> something Paul Lennon would know, named: Oxenford Men's Shed's own membership [5] | 'the families they bring' -> nowhere (asserted, not established) [0]"
+4;"The season opens this Thursday, 24 September, and the free seats cover the seven shows through to Sunday: Thursday at 1pm, Friday and Saturday at 4pm and 7pm, Sunday at 11am and 2pm.";1;1;2;"(none)"
+5;"If the shed wants them, reply with a rough number and I will send you the booking code and the link to pass around.";1;2;3;"'the shed' -> something Paul Lennon would know, named: his own organisation [5] | 'them' -> sentence 3, quoted: 'free tickets to the opening shows' [5]"
+6;"Nobody has to run an outing for it.";3;4;4;"'it' -> sentence 3/5, quoted: 'free tickets' [4] | 'an outing' -> earlier thread, forward-pointing to sentence 13 [3]"
+7;"Each family books the show that suits them.";0;1;1;"'them' -> in-sentence antecedent 'each family' [5]"
+8;"The tickets are for your members and the families with them rather than for putting up on Facebook or anywhere public.";2;4;4;"'your members and the families with them' -> sentence 3, quoted [5] | 'Facebook' -> something Paul Lennon would know, named: the shed's own Facebook page and posting habit [4]"
+9;"These seats are not advertised and are not on offer to the public at any price.";1;2;2;"(none)"
+10;"We went through the local organisations that bring families together and wrote to them one at a time, and yours is one.";1;4;4;"'yours' -> sentence 5/8, quoted: 'the shed' [5]"
+11;"If the shed would rather come along as a group instead, the following week suits that better.";3;4;4;"'the shed' -> sentence 5, quoted [5] | 'the following week' -> sentence 4, quoted: 'this Thursday...through to Sunday' [4] | 'as a group' -> earlier thread, forward-pointing to sentence 13 [4]"
+12;"Tell me a day that works and I will see what can be held.";1;1;1;"(none)"
+13;"Lia Movsisyan from our office wrote to the shed in April about a group outing here and we did not hear back, so this may be the first of ours anyone has read.";2;5;5;"'the shed' -> sentence 5, quoted [5] | 'a group outing here' -> earlier thread, named: April letter, matches your own prior-correspondence record (2026-04-09) [5]"
+14;"Could you pass it to whoever looks after the social side.";2;3;4;"'it' -> whole message [4] | 'whoever looks after the social side' -> something Paul Lennon would know, named: the shed's internal social/outings coordinator (unspecified by sender) [3]"
+```
+
+Read as a whole: sentences 6 and 11 use "an outing" and "as a group" as if those were already shared concepts — but the letter hasn't earned them yet at that point. It's only sentence 13 that cashes the reference in, and it matches what you already had on file (April, group outing). That ordering is the tell worth noting: the writer wasn't building the "group outing" idea for this email, they were carrying it in from real memory of the April contact and let it slip early, twice, before formally introducing it. Sentence 8's Facebook reference is the other place a private fact about the shed (not something a stranger emailing cold would casually know) surfaces before it's justified. Both are consistent with a real correspondent who knows this shed, not a template being run across many targets.

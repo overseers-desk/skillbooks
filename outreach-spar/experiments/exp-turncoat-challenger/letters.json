@@ -1,0 +1,81 @@
+{
+ "msg-303859.txt": {
+  "stem": "beaudesert-probus-club",
+  "name": "Helen Parnell",
+  "email_path": "/usr/local/src/aesop/outreach-spar/experiments/exp-writer-based-prose/round2-blind/msg-303859.txt",
+  "prior": [],
+  "round2_verdict": "DONE",
+  "arm": "m12-opus-5"
+ },
+ "msg-215637.txt": {
+  "stem": "beaudesert-probus-club",
+  "name": "Helen Parnell",
+  "email_path": "/usr/local/src/aesop/outreach-spar/experiments/exp-writer-based-prose/round2-blind/msg-215637.txt",
+  "prior": [],
+  "round2_verdict": "DONE",
+  "arm": "none-opus-5"
+ },
+ "msg-385477.txt": {
+  "stem": "pine-lake-village",
+  "name": "Corey Hegge",
+  "email_path": "/usr/local/src/aesop/outreach-spar/experiments/exp-writer-based-prose/round2-blind/msg-385477.txt",
+  "prior": [],
+  "round2_verdict": "DONE",
+  "arm": "placebo-opus-5"
+ },
+ "msg-328183.txt": {
+  "stem": "pine-lake-village",
+  "name": "Corey Hegge",
+  "email_path": "/usr/local/src/aesop/outreach-spar/experiments/exp-writer-based-prose/round2-blind/msg-328183.txt",
+  "prior": [],
+  "round2_verdict": "DONE",
+  "arm": "m12-opus-5"
+ },
+ "msg-326941.txt": {
+  "stem": "iona-murray-imaginative-play-matters-gold-coast",
+  "name": "Iona Murray",
+  "email_path": "/usr/local/src/aesop/outreach-spar/experiments/exp-writer-based-prose/round2-blind/msg-326941.txt",
+  "prior": [
+   [
+    "2026-03-31",
+    "Historic Rivermill: complimentary visit for Gold Coast playgroup coordinators"
+   ]
+  ],
+  "round2_verdict": "DONE",
+  "arm": "none-opus-5"
+ },
+ "msg-106143.txt": {
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "name": "Paul Lennon",
+  "email_path": "/usr/local/src/aesop/outreach-spar/experiments/exp-writer-based-prose/round2-blind/msg-106143.txt",
+  "prior": [
+   [
+    "2026-04-09",
+    "Group outing to Historic Rivermill from Oxenford"
+   ]
+  ],
+  "round2_verdict": "DONE",
+  "arm": "m12-opus-5"
+ },
+ "msg-983473.txt": {
+  "stem": "paul-lennon-oxenford-mens-shed",
+  "name": "Paul Lennon",
+  "email_path": "/usr/local/src/aesop/outreach-spar/experiments/exp-writer-based-prose/round2-blind/msg-983473.txt",
+  "prior": [
+   [
+    "2026-04-09",
+    "Group outing to Historic Rivermill from Oxenford"
+   ]
+  ],
+  "round2_verdict": "DONE",
+  "arm": "placebo-opus-5"
+ },
+ "msg-409936.txt": {
+  "stem": "families-magazine",
+  "name": "Chinnu Sravya",
+  "email_path": "/usr/local/src/aesop/outreach-spar/experiments/exp-writer-based-prose/round2-blind/msg-409936.txt",
+  "prior": [],
+  "round2_verdict": "DONE",
+  "arm": "placebo-opus-5"
+ }
+}

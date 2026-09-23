@@ -1,0 +1,22 @@
+```csv
+num,sentence,confusing,surprising,interesting,presuppositions
+1,"Subject: Free circus tickets for Beaudesert Probus members, this Thursday to Sunday",0,1,3,"""Beaudesert Probus members"" [resolves: something Helen would know — she is Secretary of that club, 5]"
+2,"Hello Helen,",0,1,0,"""Helen"" — bare first name, no title [resolves: nowhere — no prior relationship established in this message, 1]"
+3,"Priyanka Das here, from Historic Rivermill at Mount Nathan.",0,1,1,"""Historic Rivermill"" treated as a name Helen should already recognise [resolves: nowhere yet — self-introduces mid-sentence, weakly self-resolving, 2]"
+4,"We are the heritage property out along the Beaudesert Nerang Road, with the cafe, the horses and the farm animals, and I look after partnerships.",1,3,2,"""the cafe, the horses and the farm animals"" — definite articles for features never introduced [resolves: nowhere in the letter, treated as common-knowledge fixtures, 1]"
+5,"A circus company has its big top up on our lawn for the school holidays, and I have free tickets to the opening week for your members and their grandchildren.",2,3,4,"""our lawn"" [resolves: S4, ""We are the heritage property..."", 5] | ""your members"" [resolves: something Helen would know — her role, 5] | ""their grandchildren"" — assumes members bring grandchildren [resolves: something Helen would know — Probus demographic, but unverified, 2] | ""the opening week"" — treated as already-defined [resolves: nowhere yet, only defined retroactively in S7, 0]"
+6,"The show is WANTED – A Cirque Heist.",0,1,2,"none"
+7,"Seven performances run between this Thursday 24 September and Sunday 27 September.",1,1,2,"none"
+8,"Thursday is at 1pm and Sunday at 11am and 2pm, with the Friday and Saturday shows at 4pm and 7pm.",2,0,1,"none"
+9,"Send me a rough number, even a loose one, and I will come back with the booking link and a code that takes the price to nil, for you to pass on to members.",2,2,3,"""the booking link"" — pre-named as if already discussed [resolves: nowhere, first mention, 0] | ""members"" [resolves: S5, ""your members"", 4]"
+10,"Everyone books the session that suits them, so there is no bus and nothing for the committee to run.",1,2,3,"""the committee"" [resolves: something Helen would know — Probus club has a running committee, 5]"
+11,"The seats are not on sale anywhere.",0,3,3,"none"
+12,"I am offering them to a handful of clubs near us, for your members and the families they bring, so the code is better going out on your own member list than anywhere public.",2,5,4,"""your members and the families they bring"" [resolves: S5, ""your members"", 5] | ""your own member list"" — assumes Helen runs a mailing list [resolves: something Helen would know — plausible for a Secretary, but not stated anywhere in the letter, 3]"
+13,"If the club would rather come along together, next week gives that the notice it needs.",3,3,3,"""the club"" [resolves: S1 subject line, ""Beaudesert Probus"", 4] | ""that notice it needs"" — antecedent for ""that"" never stated [resolves: nowhere, 1]"
+14,"Tell me a day that suits and I will come back to you about seating.",1,2,2,"""a day that suits"" — assumes Helen/committee run on a known schedule [resolves: something Helen would know — Probus meeting cadence, but never named in the letter, 2]"
+15,"Priyanka Das / Partnerships, Historic Rivermill / partnerships@rivermill.au",0,0,1,"""Partnerships"" as a named function [resolves: S4, ""I look after partnerships"", 5]"
+```
+
+Highest surprise: **sentence 12** (score 5). It's the one place the writer stops performing the pitch and explains the mechanics of it — why the code should go to Helen's list rather than anywhere public. That's not boilerplate marketing copy; it's the writer's own reasoning leaking onto the page. Second-highest is sentence 11's flat "not on sale anywhere" — a bare scarcity claim asserted with no support, which is the kind of line a person writes when they believe it rather than when they're reciting a script.
+
+The weakest-resolving presuppositions cluster in sentence 13: "that notice it needs" has no stated antecedent anywhere in the letter — it gestures at a process (the club needing lead time to organise a group outing) without ever naming it. Combined with the bare "Helen" opener that presupposes a familiarity the letter never earns, these are the two loose threads in an otherwise tightly-argued pitch.

@@ -1,0 +1,17 @@
+Fair — reading it cold as Chinnu and reading it now as your editor are different jobs, so here's the second one straight.
+
+**What would stop the reply outright:** nothing did, and nothing in the slow read should have. Every presupposition either resolved within the email or resolved to something Chinnu plausibly already knows (her readers, her guide, the school-holiday calendar). A stopper would need to be a presupposition that resolves *nowhere* AND costs her something if she plays along — I only found one candidate for that, "in your name," and even it isn't quite a stopper on its own (see below).
+
+**What would only surface as a question back in the reply, not a reason to bin:**
+- "in your name" (S5) — she'd write back and check "this hasn't gone anywhere public yet, right?" before confirming. That's a one-line clarification, not friction that kills the pitch.
+- "the readers you choose" (S9) — she'd ask how you want the giveaway run (her socials, a comment draw, whatever). Normal logistics, asked in-thread.
+- the Eventbrite link sitting right after the anti-link paragraph (S9→S10) — she'd likely ask "are the general-admission tickets on that link separate from the five passes?" rather than distrust the whole email over it.
+
+None of these are reasons not to write back. They're reasons the reply is a question, not a yes.
+
+**Sentences that need an answer before they can stay, if you're revising this to send again:**
+- S3, "the old arrowroot mill" — unexplained, resolves nowhere. Either earn it with a half-clause or cut it; right now it's a stray flourish that reads as padding, not proof of local knowledge.
+- S5, "in your name" — this is the only phrase in the whole email with a resolution score of 0. It presupposes a status Chinnu hasn't agreed to. Either she actually agreed to something already (say so, and say when), or reword it as an offer rather than an accomplished fact.
+- S9/S10 — the promise that booking stays off an open link, followed two sentences later by an open link, needs a bridge sentence or it reads as a claim undercut by its own next paragraph. Doesn't have to be true tension to cost you — it just has to look like it wasn't reread.
+
+**The one change that would have flipped my first answer to bin:** if "in your name" had been "in your name" *and already live somewhere* — i.e., if the presumption of consent had already turned into public exposure (announced on your socials, printed in a program) before she said yes. That's the one move that converts a pushy-but-harmless presumption into something she has to unwind rather than just answer. As written, it's a reservation held for her, not a fact about her already circulating — that's exactly the line that kept it on the reply side.

@@ -1,0 +1,21 @@
+Sentence-by-sentence read. Presuppositions are quoted phrases; resolution notes where the reader is expected to already hold that ground.
+
+```csv
+#,sentence,confusing,surprising,interesting,presuppositions
+1,"A family pass to a big top opening Thursday, for your school-holiday guide",1,2,3,"""your school-holiday guide"" -> something she'd know, named: her ongoing Brisbane school-holiday activities guide [4]"
+2,"Hi Chinnu,",0,0,0,"none"
+3,"Priyanka Das here, partnerships at Historic Rivermill, the venue on the Coomera River at Mount Nathan, on the site of the old arrowroot mill.",3,3,4,"""the Coomera River"" -> something she'd know, named: SE Queensland geography [2]; ""the old arrowroot mill"" -> nowhere [1]"
+4,"For these school holidays CHARC Performance has a circus big top up on our lawn, and the show, WANTED – A Cirque Heist, opens this Thursday 24 September.",2,3,4,"""these school holidays"" -> something she'd know, named: current AU school-holiday period [4]; ""our lawn"" -> earlier sentence, quoted: ""partnerships at Historic Rivermill"" (S3) [5]; ""the show"" -> resolves in same sentence, named immediately after: ""WANTED – A Cirque Heist"" [5]"
+5,"There is a family pass of four in your name for any of the opening-week shows, and five more passes for you to give away to your readers if you would like to run it.",3,4,5,"""in your name"" -> nowhere [0]; ""the opening-week shows"" -> later sentence, quoted: ""Opening week is Thursday 24 September..."" (S7) [3]; ""your readers"" -> something she'd know, named: her magazine's readership [5]; ""run it"" -> something she'd know, named: the magazine's stated practice of hosting giveaways [3]"
+6,"Reply with the show you would come to and I will send the booking details.",2,1,2,"""the show you would come to"" -> later sentence, quoted: schedule in S7 [2]; ""the booking details"" -> later sentence, quoted: ""Booking details come back to you..."" (S9) [3]"
+7,"Opening week is Thursday 24 September at 1pm, Friday 25 and Saturday 26 September at 4pm and 7pm, and Sunday 27 September at 11am and 2pm.",3,1,2,"""Opening week"" -> earlier sentence, quoted: ""for any of the opening-week shows"" (S5) [5]"
+8,"Seven shows across the four days, and the pass is good for any of them.",1,1,2,"""Seven shows across the four days"" -> earlier sentence, quoted: schedule in S7 [5]; ""the pass"" -> earlier sentence, quoted: ""a family pass of four"" (S5) [5]; ""any of them"" -> resolves in same sentence: ""Seven shows"" [5]"
+9,"Booking details come back to you rather than going out as a link anyone can use, so the passes stay with the readers you choose.",2,4,4,"""Booking details"" -> earlier sentence, quoted: ""I will send the booking details"" (S6) [5]; ""the passes"" -> earlier sentence, quoted: ""five more passes"" (S5) [5]; ""the readers you choose"" -> something she'd know, named: her own giveaway-winner selection process [3]"
+10,"Your readers can book seats at https://www.eventbrite.com.au/e/wanted-a-cirque-heist-tickets-2000810786924.",3,3,3,"""Your readers"" -> earlier sentence, quoted: ""your readers"" (S5) [5]"
+11,"Priyanka Das, Partnerships, Historic Rivermill, partnerships@rivermill.au, 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211",0,0,1,"none"
+```
+
+Two things stand out as carrying the writer's own voice rather than boilerplate:
+
+- **S5, "in your name"** — the pass is described as already reserved under Chinnu's name before she's replied to anything. Nothing earlier establishes that allocation; it presupposes a prior relationship or commitment that doesn't exist yet in the text. That's the highest surprise score and the only presupposition that resolves nowhere at all — worth noticing as a soft pressure tactic (you're already "in", just confirm).
+- **S9, the anti-link explanation** — "so the passes stay with the readers you choose" is an unprompted piece of operational reasoning: it explains *why* they're routing bookings through Chinnu by hand instead of a shareable link. That's the kind of detail a template wouldn't generate; it reads as the actual person thinking about leak control. It sits in mild tension with S10, which hands out an open Eventbrite link anyway — for paid general seats, not the passes, but the juxtaposition is the second-most surprising moment in the email.

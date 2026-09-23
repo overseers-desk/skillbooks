@@ -1,0 +1,13 @@
+I don't have web search permission granted right now, so I'll assess this on the content and context alone rather than verifying the venue independently.
+
+Here's what stands out:
+
+- **Unsolicited, mass-targeted approach**: The sender admits "we went through the villages and clubs near us and wrote to them one at a time" — i.e., this is a form letter sent to a list of retirement villages/clubs, not a personal relationship with Corey or Pine Lake.
+- **Manufactured urgency**: First show is "this Thursday," giving almost no lead time, while simultaneously noting the season runs three more weeks — the short fuse looks designed to pressure a quick reply rather than reflect real scheduling need.
+- **Push toward organizing a group outing**: Repeated nudges toward "the village bus" and getting "a rough number" of residents, i.e., trying to get the Village Manager to commit a batch of elderly residents to a specific place/time — more coordination than a simple "here are some spare tickets" offer would need.
+- **Vague/unverifiable identity**: A venue and touring show name that aren't well-known, a generic partnerships@ email, and a non-standard `.au` domain rather than `.com.au`. None of this is disqualifying on its own, but combined with the above it fits a common pattern of scams targeting retirement-village staff (building trust with a "free community treat," then later asking for prepayment, transport fees, personal details of attendees, or a "deposit" for the bus/booking).
+- **Nothing to lose by treating cautiously**: There's no ask for money or data *yet* — the email itself is low-risk to receive, but replying confirms the mailbox is live and invites the next step in whatever the actual pitch is.
+
+If Corey wants to pursue this, the safe path is to verify independently (search for Historic Rivermill and CHARC Performance separately, call the venue via a number found independently rather than one in the email) before committing any resident numbers or the village bus — not to reply directly to this thread first.
+
+bin

@@ -1,0 +1,15 @@
+Fair enough — reading it again from the writer's side, not Helen's.
+
+**Would have stopped the reply outright:** Nothing in the slow read actually crossed that line. None of the presupposition gaps (S2's bare "Helen," S5's forward-referenced "opening week," S9's premature "the booking link") land before the ask does — the core request (S9, "send me a rough number") comes early enough that a wary reader has already decided to engage by the time the vaguer sentences show up. And nothing asks for money, credentials, or an immediate click. So: no dealbreakers as written. The only thing that would function as one is if the domain hadn't matched the claimed business — see below.
+
+**Would only be asked back in it, not blocked over:**
+- S13's "that notice it needs" — Helen doesn't refuse over this, she just replies asking what exactly needs a week's notice.
+- S14's "a day that suits" — she doesn't ask a question here so much as answer with a fact (her club's actual meeting day), since it assumes a schedule you never named.
+- S5's "their grandchildren" — an assumption, not a challenge; at most gets a "just members, we don't usually bring family" correction.
+
+**Sentences that need a question answered before they can stay, from your side:**
+- S13 is the one that actually needs a rewrite, not just a defense. "Next week gives that the notice it needs" has no stated antecedent — you know what it refers to, Helen doesn't. Before this goes out, answer: notice of *what*? A private session headcount? Seating capacity? Say that plainly.
+- S11's "not on sale anywhere" is a hard, checkable claim sitting next to nothing that supports it. Before it stays, ask yourself whether that's literally true — it's the one line in the email a skeptical reader *could* verify and catch you on, and it costs you nothing to hedge it if you're not certain.
+- S2's bare "Hello Helen" — worth asking whether you want to spend one clause on how you got her details (directory, Facebook page), since it's the only sentence in the email presupposing a relationship that isn't established anywhere else in it.
+
+**The one change that would have turned the first answer around:** the sign-off address. `partnerships@rivermill.au` matching the claimed business name was doing real, load-bearing work — it's the only independently checkable anchor in the whole email, since everything else (the offer, the dates, the exclusivity) is a claim with no way to verify it from inside the message. If that address had been a personal Gmail instead of a domain matching "Historic Rivermill," that single mismatch — professional pitch, generic free-mail reply-to — would have been enough on its own to flip my first read to bin, independent of anything else in the copy.

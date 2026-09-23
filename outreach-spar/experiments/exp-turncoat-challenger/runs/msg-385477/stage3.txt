@@ -1,0 +1,20 @@
+Fair — cards on the table from my side too, since you're asking me to read my own analysis backward.
+
+**Would stop the reply outright, no matter how it's phrased:**
+- The contradiction between sentence 13 ("not advertised anywhere") and sentence 14 ("we wrote to the villages and clubs near us... Pine Lake is on that list"). You can't claim exclusivity and admit to a distribution list in the same breath — one of those two sentences has to go, not be reworded.
+- The unexplained specificity in sentences 10 and 11 — knowing Pine Lake has a noticeboard, a Facebook page, and a village bus, with no sentence anywhere saying how you know that. A recipient can't ask their way past this one; either the letter discloses the source ("we checked your community page") or it drops the specifics and speaks generically. As written it reads as either surveillance or a template with the blanks filled in — both kill trust the same way.
+- The gap between sentence 8 ("nothing for you to organise") and sentences 9/11/12 (headcount, a code, a bus day, seating) — not fatal alone, but stacked on the two above it reads as the same pattern: say the reassuring thing first, walk it back once the ask lands.
+
+**Would only be asked back, not bin the thing:**
+- "the code" / "the booking link" (sentence 9) — introduced as if already agreed. A reply would just ask "what code — is there a portal, or do you send it after I answer?" That's a question, not a wall.
+- The domain mismatch, rivermill.au vs. "Historic Rivermill" (sentence 18) — minor enough to ask "is this the right domain for you?" rather than assume it's fake.
+- The short notice on Thursday (sentences 5–6) — reads as pressure, but on its own a recipient would just ask to push to a later date rather than bin over it.
+
+**Sentences that need a question answered before they can stay as written:**
+- 9 — what is "the code," and does it exist yet, or does it get created after the reply?
+- 10 — how do you know about the noticeboard and the Facebook page? Say it, or cut it.
+- 11 — how do you know there's a village bus? Same choice.
+- 14 — does the list framing survive next to sentence 13's exclusivity claim, or does one of them get cut?
+
+**The one change that would have turned my first answer around:**
+Honestly — probably none of the wording. My "bin" wasn't built on any single sentence; it was built on the pattern of an unsolicited ask nudging a village manager toward committing a group of residents, with no way for me to check the venue or the show independently. A rewrite can remove the self-contradictions (13 vs. 14, 8 vs. 9) and that would move the letter from "actively undermines itself" to merely "unverifiable," but unverifiable-and-asking-for-a-headcount still isn't something I'd wave through from Corey's chair. The thing that actually flips it is outside the letter's text: a source Corey could check without going through you — the venue on a council events page, the show listed independently, a phone number findable elsewhere that confirms the same person. No sentence-level fix substitutes for that.

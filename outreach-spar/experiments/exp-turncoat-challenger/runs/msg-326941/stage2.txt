@@ -1,0 +1,29 @@
+Sentence-by-sentence pass. One row per (sentence × presupposition phrase); rows with no presupposition use "—".
+
+```csv
+sentence_no,sentence,confusing,surprising,interesting,presup_phrase,resolves_where,resolution_detail,resolution_score
+1,"Hi Iona,",0,0,0,—,—,—,—
+2,"Priyanka Das here, from Historic Rivermill over at Mount Nathan.",1,2,2,"Priyanka Das here",earlier_thread,"2026-03-31 prior contact: complimentary Rivermill visit for GC playgroup coordinators",3
+3,"We are a heritage riverside venue on Beaudesert Nerang Road, and for the school holidays a circus company, CHARC Performance, has its big top up on our lawn.",2,3,3,"for the school holidays",known_to_Iona,"QLD school holiday calendar — general shared knowledge",4
+4,"I can hold free tickets for the families in your groups.",1,3,4,"your groups",known_to_Iona,"her role coordinating multiple Play Matters playgroups (not yet stated in this letter — surfaces only at sentence 14)",2
+5,"The show is WANTED – A Cirque Heist, a family circus.",0,1,2,—,—,—,—
+6,"Opening week is seven performances, from this Thursday 24 September through to Sunday 27 September.",1,1,2,"this Thursday",known_to_Iona,"shared sense of today's date",5
+7,"Three of them are daytime sessions, which will suit the little ones best: Thursday at 1pm, then Sunday at 11am and again at 2pm.",0,1,2,"will suit the little ones best",known_to_Iona,"Play Matters cohort is birth-to-5 (public programme description)",4
+8,"Friday and Saturday run at 4pm and 7pm.",0,0,1,—,—,—,—
+9,"Reply with a rough number of families and I will send you the booking link and a code to pass around.",1,1,2,"a code to pass around",earlier_sentence,"'I can hold free tickets for the families in your groups' (sentence 4)",4
+10,"There is nothing for you to arrange at your end.",0,2,3,"at your end",known_to_Iona,"her operational/coordinator role organising group activities",3
+11,"Each family books the performance that suits them and turns up on the day, so there is no bus, no group to assemble and no list for you to keep.",1,4,4,"no bus, no group to assemble and no list for you to keep",earlier_thread,"assumes the March visit (or coordinator norm) usually involves buses/attendance lists — speculative, not confirmed anywhere",2
+12,"What I would ask is that it goes to your own families and your staff rather than onto the Play Matters Gold Coast page or a community group.",1,5,5,"the Play Matters Gold Coast page",known_to_Iona,"names the specific Facebook page her hub runs (facebook.com/playmattersgoldcoast) — exact, not generic",5
+12,"What I would ask is that it goes to your own families and your staff rather than onto the Play Matters Gold Coast page or a community group.",1,5,5,"your staff",known_to_Iona,"assumes she has staff under her — plausible for a coordinator, unconfirmed",3
+13,"The seats are not on sale anywhere, and we are offering them to a small number of local organisations one at a time.",1,3,4,—,—,—,—
+14,"You have groups well beyond Upper Coomera.",0,5,5,"groups well beyond Upper Coomera",known_to_Iona,"matches her hub's own public post on Northern/Central/Southern GC + Scenic Rim timetables almost verbatim",5
+15,"If coordinators elsewhere across the hub would want the same for their families, say so and I will put seats aside for them too.",1,4,5,"coordinators elsewhere across the hub",earlier_sentence,"'You have groups well beyond Upper Coomera' (sentence 14)",4
+16,"If bringing a group together would suit you better than sending families off individually, the week after gives you the notice that takes.",2,2,3,"the week after gives you the notice that takes",earlier_sentence,"contrasts with 'no bus, no group to assemble' (sentence 11)",3
+17,"Tell me a day and I will come back to you about seating.",1,1,1,—,—,—,—
+18,"Kind regards,",0,0,0,—,—,—,—
+19,"Priyanka Das, Partnerships, Historic Rivermill, Colourful.land Pty Ltd, partnerships@rivermill.au, 950 Beaudesert Nerang Rd, Mount Nathan QLD 4211",0,1,1,—,—,—,—
+```
+
+The surprise spikes aren't spread evenly — they stack on sentences 11, 12, 14, 15. That's one continuous thought: the writer knows exactly which Facebook page Iona runs, exactly how far her hub extends past her own venue, and has a specific (if speculative) picture of how she normally logistics a group outing. A first-contact circus promoter doesn't usually carry that much shape of a stranger's operation — someone did the reading before writing sentence 2's casual "here."
+
+Also worth flagging plainly: the sign-off is Colourful.land Pty Ltd — the same domain as your own address. If you're writing from Rivermill's side rather than Iona's, this pass has been reading your own letter for what it gives away.

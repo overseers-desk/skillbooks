@@ -1,0 +1,16 @@
+Straight talk, then.
+
+**Would have stopped the reply outright:** nothing in the letter as written. No single presupposition was disqualifying by itself — that's actually a comment on the drafting, not a compliment. The only thing that could stop it outright is if sentence 13 is false. That's the one claim I treated as fully resolved (score 5) and load-bearing for the whole "reply" call; if there's no real April letter behind it, the email stops being a warm follow-up and becomes manufactured familiarity, and Paul (or whoever reads it) bins it the moment it's checked.
+
+**Only asked back, not fatal:**
+- S4 / S10 "Oxenford Men's Shed members" / "your members" — reads fine, but from Paul's chair it produces a reply that redirects you to Keith Ward or Les Chapman rather than a yes. If the goal is a ticket count, not a correction, address it to the current committee to skip that round-trip.
+- S5 "pass around" — same issue, minor, rides along with the above.
+- S9 "picked by name" — plausible enough to pass, but specific enough that a careful reader might ask "picked how, by whom" before forwarding it on. Doesn't block a reply, just invites a question you should have an answer ready for.
+- S10b "the people the shed looks after" — could prompt "does that include the Women's Shed sessions too?" Worth being ready to say yes.
+
+**Sentences that need a question answered before they can stay:**
+- S13 — confirm, don't dress up: did you actually write in April, and is "did not hear back" true rather than "didn't follow up ourselves"? This sentence is carrying the whole letter's credibility; it can't stay as a rhetorical flourish, it has to be a fact you'd stand behind if asked.
+- S10 "your members" — before sending, check who's actually running the shed now. Sending it to Paul as "your members" when he may be a past president is the one line most likely to make the reader feel misread rather than remembered.
+- S9 "picked by name" — same test as S13: is there really a short list, or is that just warm phrasing? If it's phrasing, soften it; an exaggerated claim of exclusivity is the kind of thing that reads fine once and curdles on a second read.
+
+**The one change that would have turned my first answer around:** drop or falsify sentence 13. Everything else — the shaky "your members," the guessed bus habit, the "picked by name" claim — I read as ordinary imprecision in a real outreach letter, forgivable because S13 anchors it to an actual prior relationship. Take that anchor away and the same letter reads as someone reverse-engineering familiarity it doesn't have, and my answer flips to bin.
