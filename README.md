@@ -207,6 +207,23 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 **Procedure documents:** `presence-move/move-methodology.md`, the phase documents (`move-M-map.md`, `move-O-offer.md`, `move-V-value.md`, `move-E-elect.md`) and `presence-move/INVARIANTS.md`.
 
+### CART — Preparing a Contested Matter for Hearing
+
+**Phases:** Cite, Argue, Render, Tender
+
+**Direction:** Inbound and adversarial. Material has accumulated around a dispute over months, in several long documents nobody reads before the event. Someone has to walk into a hearing, a mediation or a conference able to answer anything the other side says, from one thing they can read while standing up. CART organises the material and builds that one thing. It ends at the artefact and its rebuilds; what becomes of the material afterwards is outside it.
+
+**What each phase does:**
+
+- **Cite** puts a source on every assertion, at two levels. The register of material points at sources instead of retelling them, which is what keeps it thin. The artefact points in the coordinates the forum itself uses, supplied by the matter rather than by the methodology, so a line can be spoken and the decision-maker can turn to it while it is spoken. A citation does two jobs: it holds up what our side says, and it impeaches what theirs says, because the page being pointed at is often their own earlier document contradicting their present position.
+- **Argue** decides what is run, what carries it, and what is held back. Held material is not duplicate material: a document kept available and untendered is doing its job, and a reduction pass that treats anything unused as redundant cuts exactly the reserve it exists to protect.
+- **Render** builds the artefact from the two documents above it. Selection is adversarial rather than archival, so material earns its place by persuading, by answering something the other side will say, or by being an inconsistency that can be put to them. A fact whose only home would be the artefact has been authored in the wrong place.
+- **Tender** is what actually goes before the forum, with the trigger that releases each held item: the claim it answers and the moment it would be produced. The artefact carries the trigger; the reasoning behind each hold stays upstream.
+
+**Model allocation:** Cite and Tender are Sonnet-tier (checking assertions against sources, maintaining a register with triggers). Argue and Render are Opus-tier, turning on judgement about what persuades and what to leave out.
+
+**Procedure documents:** `matter-cart/cart-methodology.md`.
+
 ### How the methodologies relate
 
 SPAR generates outbound messages. Those messages produce replies. The replies arrive in an inbox processed by TEND. TEND's thread assembly recognises the SPAR outreach message in the conversation history and can route the reply accordingly — flagging a positive response rather than filing it as unsolicited inbound.
@@ -221,7 +238,7 @@ LAMP and MIND divide the series between them. LAMP measures whether the market c
 
 The almanac and MOVE divide presence between them. The almanac's sweep discovers and rates events for a year or a season into a mostly add-only ledger in the operator's own repository; MOVE elects, over a date range the operator names, which plan of places and events to run, and writes the election beside the ledger rather than into it. The election's presence schedule is what the travel SOPs take as a journey's start: the almanac and MOVE decide where and when, travel decides how.
 
-The methodologies share a structural principle: read before writing. SPAR profiles a contact before drafting a message. SIFT investigates a listing before scoring it. TEND threads a conversation before classifying the email. SAGE surveys a market before anyone rules on a parameter. PLACE polls the users and records the field before the code is read. MIND reads the prior run and the panel before it names anything. In each case, the comprehension phase precedes the action phase, and the scoring rubric or taxonomy does the intellectual heavy lifting so that Sonnet-tier models can apply it reliably.
+The methodologies share a structural principle: read before writing. SPAR profiles a contact before drafting a message. SIFT investigates a listing before scoring it. TEND threads a conversation before classifying the email. SAGE surveys a market before anyone rules on a parameter. PLACE polls the users and records the field before the code is read. MIND reads the prior run and the panel before it names anything. CART registers what is held before anything is argued from it. In each case, the comprehension phase precedes the action phase, and the scoring rubric or taxonomy does the intellectual heavy lifting so that Sonnet-tier models can apply it reliably.
 
 ## Other directories
 
