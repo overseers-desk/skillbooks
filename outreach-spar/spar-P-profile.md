@@ -317,7 +317,7 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 
 ## Mechanism evidence
 
-[Dated evidence that the contact fits the segment's mechanism (`discovery_criteria`), each item with its date and source. A dated act of theirs towards us belongs here (§4.7).]
+[Dated evidence that the contact fits the segment's mechanism (`discovery_criteria`), each item with its date and source. A dated act of theirs towards us belongs here (§4.7). Where the segment lists `kinds`, state each kind as published, none published, or not assessed, with source and date, whatever the rubric weighs.]
 
 ## Relevance assessment
 
@@ -349,7 +349,7 @@ When the segment definition declares `target_type: qualification-only` (see `seg
 
 1. The current buyer-role holder's name (§4.1), or, where the name search is exhausted, the organisation's published office channel (§4.1's organisation-segment rule).
 2. A verified written channel, backfilled to the roster (§4.15).
-3. Confirmation the contact fits the segment's mechanism (`discovery_criteria`), with the evidence found.
+3. Confirmation the contact fits the segment's mechanism (`discovery_criteria`), with the evidence found, and, where the segment lists `kinds`, each kind's status (§5.2, Mechanism evidence).
 4. `star_rating` against the segment rubric (§4.13).
 
 Body sections: `# Profile:` heading, `## Current role` (or contact), `## Mechanism evidence`, `## Relevance assessment`, `## Verification corrections`. Career history, certifications, volunteer work, public statements, and connection mapping are omitted; front matter is unchanged (§5.1). Research effort follows the outcomes: when a register or the organisation's own page already answers a question, verifying it is the work, and depth beyond the four outcomes is spend without a reader. The declaration is a claim about the population's plausible uses; if a campaign later needs cue-required treatment of these contacts, re-profile the affected stems at full depth (explicit-stem rebuild).

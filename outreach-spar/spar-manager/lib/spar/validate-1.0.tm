@@ -1444,6 +1444,7 @@ proc spar::_yamlmuster_segment {} {
     $inst predicate seed_date_quoted ::spar::_pred_seed_date_quoted
     $inst predicate sweeper_resolves ::spar::_pred_sweeper_resolves
     $inst predicate platforms_vocab  ::spar::_pred_platforms_vocab
+    $inst predicate kinds_list       ::spar::_pred_kinds_list
     spar::_yamlmuster_load $inst segment.rules segment
     set _yamlmuster_segment_inst $inst
     return $inst
@@ -1527,6 +1528,24 @@ proc spar::_pred_platforms_vocab {node meta} {
             lappend out [dict create message \
                 "platforms.$platform value '$strength' — closed vocabulary: required | expected"]
         }
+    }
+    return $out
+}
+
+# kinds: unique lowercase tokens (letters, digits, hyphens); the profiling
+# prompt renders each verbatim as a checklist entry.
+proc spar::_pred_kinds_list {node meta} {
+    if {![dict exists $node kinds]} { return {} }
+    set out {}
+    set seen {}
+    foreach kind [dict get $node kinds] {
+        if {![regexp {^[a-z0-9]+(-[a-z0-9]+)*$} $kind]} {
+            lappend out [dict create message \
+                "kinds entry '$kind' — a token: lowercase letters, digits and hyphens"]
+        } elseif {$kind in $seen} {
+            lappend out [dict create message "kinds entry '$kind' listed twice"]
+        }
+        lappend seen $kind
     }
     return $out
 }

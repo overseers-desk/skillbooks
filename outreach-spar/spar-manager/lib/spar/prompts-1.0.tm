@@ -58,6 +58,14 @@ proc spar::platform_guidance {platforms} {
     return [join $parts " "]
 }
 
+# kinds_guidance — the checklist passage a segment's `kinds` list earns;
+# empty when the segment lists none, so the template's slot vanishes.
+proc spar::kinds_guidance {kinds} {
+    if {[llength $kinds] == 0} { return "" }
+    return [string map [list __KINDS__ [join $kinds ", "]] \
+        [spar::load_prompt_template kinds-guidance.txt]]
+}
+
 # spar::detect_browser_cmd — Probe the host once for a usable browser and
 # return the leading shell command that the agent's bash splices in front of
 # a `"URL"` argument. Memoised after first call so every per-segment prompt
@@ -272,6 +280,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
     if {$segment_data eq ""} {
         set platforms [dict create]
         set required_skills {}
+        set kinds {}
     } else {
         # Version pre-flight (refuse-to-start): refuse a segment whose declared
         # spec version this tool does not support. Unstamped is allowed.
@@ -279,6 +288,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             [spar::segment_version $segment_data]
         set platforms [spar::extract_platforms $segment_data $segment_yaml]
         set required_skills [spar::extract_required_skills $segment_data $segment_yaml]
+        set kinds [spar::extract_kinds $segment_data $segment_yaml]
     }
 
     set rows [spar::load_roster $roster_path]
@@ -389,6 +399,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             __STEM__          $stem \
             __BROWSER_CMD__   [spar::detect_browser_cmd] \
             __PLATFORM_GUIDANCE__ [spar::platform_guidance $platforms] \
+            __KINDS_GUIDANCE__ [spar::kinds_guidance $kinds] \
         ] [spar::load_prompt_template spar-p.txt]]
 
         # p_author (campaign prompt_appendices) is NOT appended to the profiler:
