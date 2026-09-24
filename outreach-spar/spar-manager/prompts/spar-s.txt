@@ -37,7 +37,7 @@ Roster writes are mediated: you declare rows and the harness that dispatched you
 
 ## Your deliverable
 
-Write one file, __OUTFILE__: YAML front matter between `---` fences, then the body.
+Write one file, __OUTFILE__: YAML front matter between `---` fences, then the body. Quote a value that contains colon-space, or that opens with a quote, wholly inside single quotes (inner single quotes doubled), or write it as a block scalar.
 
 The front matter carries what the harness applies:
 
