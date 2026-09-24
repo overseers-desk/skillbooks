@@ -20,7 +20,7 @@ __FINAL_DRAFT__
 
 ## Instructions
 
-Write the complete approach file to: __OUTFILE__
+Write the complete approach file to: __OUTFILE__. Quote a value that contains colon-space, or that opens with a quote, wholly inside single quotes (inner single quotes doubled), or write it as a block scalar.
 
 Follow §6 structure exactly. Include contact header, angle rationale, A1 Draft 1, all A2 responses, revision drafts, final draft, fact provenance table, and the root keys `response_likelihood` and `a_note`. The contact header fields are: Contact, Channel, Language, Angle.
 

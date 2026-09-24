@@ -301,6 +301,13 @@ Omit `subject`/`to` from a reply message — T3 derives them from the `parent` b
 
 The file is `campaigns/{campaign}/{stem}.yaml`, named by the contact's roster stem.
 
+**Parser constraints (tcllib yaml 0.4.2):**
+
+1. Quote a value that contains colon-space, or that opens with a quote, wholly inside single quotes (inner single quotes doubled), or write it as a block scalar.
+2. Write dates bare (`YYYY-MM-DD`, no quotes); they parse to epoch seconds and every consumer renders them ISO. A quoted date is flagged.
+3. No YAML anchors or aliases.
+4. End the file with a newline; no trailing bare valueless key.
+
 ## 7. Quality checklist
 
 Before presenting an approach file for human review:
