@@ -463,7 +463,7 @@ proc spar::_pred_profile_hash_actual {node meta} {
 # Path form: parses the YAML on every call. Used by CLI / harness
 # callers (ApproachHarness::validate_and_correct) that don't construct a State and so
 # can't share a cached projection. Render-path callers go through
-# spar::State approach_validation_error → validate_approach_data, which
+# spar::State approach_validation_error → _approach_gate_error, which
 # reuses the cached projection. Only this form has the file's text, which
 # it passes on for the scalars_as_written scan.
 #
@@ -1145,8 +1145,8 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1} {incl
         foreach f [glob -nocomplain [file join $profile_dir *.md]] {
             set filestem [file rootname [file tail $f]]
             if {$filestem ni $known_profile_names} {
-                lappend issues [spar::_issue warning orphan_profile "" \
-                    "Profile file '${filestem}.md' not referenced by any roster row" \
+                lappend issues [spar::_issue warning orphan_profile "${filestem}.md" \
+                    "Profile file not referenced by any roster row" \
                     [list segment $segment]]
             }
         }
@@ -1168,9 +1168,9 @@ proc spar::validate_campaign {all_classified_contacts {include_approach 1} {incl
         foreach f [glob -nocomplain [file join $approach_dir *.yaml]] {
             set filestem [file rootname [file tail $f]]
             if {$filestem ni $all_stems} {
-                lappend issues [spar::_issue warning orphan_approach "" \
-                    "Approach file '${filestem}.yaml' not referenced by any roster row" \
-                    [list segment ""]]
+                lappend issues [spar::_issue warning orphan_approach "${filestem}.yaml" \
+                    "Approach file not referenced by any roster row" \
+                    [list segment [file tail $approach_dir]]]
             }
         }
     }
