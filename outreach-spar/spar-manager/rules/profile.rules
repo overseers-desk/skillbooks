@@ -12,7 +12,7 @@
 # Call shape:
 #   validate <fm> -groups {profile} -context {raw <raw>} -extra {contact_name <cn>}
 # where <fm> is the parsed front-matter dict and <raw> is the whole profile
-# text. engagement_leak matches patterns against the `raw` context value.
+# text. engagement_leak and scalars_as_written read the `raw` context value.
 #
 # ORDERING (same model as approach.rules): yamlmuster fires all root-level
 # rules before descending to dependent_data, so `vocab dependent_data` emits
@@ -48,6 +48,11 @@ child root sources_new    list source_new
 # vocab walk at root. Built-in unknown_key / wrong_level (same wrapper
 # rename to unknown_key_<level> as approach). Legacy 579.
 rule vocab root -groups {profile}
+
+# A front-matter value the YAML parser returns other than written: text after a
+# closing quote, or ': ' in an unquoted value (spar::_pred_scalars_as_written).
+rule predicate root scalars_as_written -needs raw -code misparsed_scalar \
+    -groups {profile}
 
 # Required keys at root: legacy 588-593 (foreach req in this exact order).
 # Message template %k = the required key name, reproducing

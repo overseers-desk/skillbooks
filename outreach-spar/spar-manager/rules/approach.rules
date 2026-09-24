@@ -68,6 +68,13 @@ child message parent          dict parent
 #   wrong_level : "'<k>' at <level> belongs at <found_at>; move it there"
 rule vocab root -groups {approach}
 
+# A value the YAML parser returns other than written: text after a closing
+# quote, or ': ' in an unquoted value (spar::_pred_scalars_as_written).
+# Only the path form has the file's text; -needs raw drops the rule for the
+# render-path gate and the other dict-only callers.
+rule predicate root scalars_as_written -needs raw -code misparsed_scalar \
+    -groups {approach}
+
 # Quoted-date check at root (roster_patch_applied) and, below, at the
 # roster_patch and message levels: dates are written bare, and an ISO
 # string post-parse is the tell that the file quoted it.
