@@ -223,7 +223,7 @@ A row that appears to belong to another segment, or out of scope, is not a disco
 
 If the person has left the relevant role entirely (e.g. left the industry, retired), mark the roster entry with `date_excluded` and the reason, then search for their replacement at the same organisation. The replacement is declared as a new row (`rows_new`, below) with `discovered_via` recording they were found as a replacement ("profile:{stem} · successor in the role").
 
-If after §4.8 the entry still has no email and no platform URL, the contact is unreachable through any messaging channel. That is recorded reality, not an exclusion: `date_excluded` stays empty (it records a human do-not-contact decision), the row keeps its place in the roster, and the progress table counts the contact outside the approachable population until a channel is found. Do not produce a profile document; the research is better spent on contacts a campaign can reach. Phone-only contacts are not unreachable — they continue via the phone path (state-machine `has_phone_only`).
+If after §4.8 the entry still has no email and no platform URL, the contact is unreachable through any messaging channel. That is recorded reality, not an exclusion: `date_excluded` stays empty (it records a human do-not-contact decision), the row keeps its place in the roster, and the progress report shows the contact in no channel's count until a channel is found. Do not produce a profile document; the research is better spent on contacts a campaign can reach. Phone-only contacts are not unreachable — they continue via the phone path (state-machine `has_phone_only`).
 
 Record all corrections and backfills in the profile document under a "Verification corrections" section so the change history is traceable.
 

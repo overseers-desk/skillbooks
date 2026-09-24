@@ -162,7 +162,7 @@ assert_eq [dict get $multi campaign_name] "alpha, beta" "the set names the run"
 
 lassign [run_bounded [list tclsh9.0 $pcli $segA $segB] 60000] st out
 assert_eq $st ok "progress over two segments completes"
-assert_eq [regexp -all {\|TOTAL} $out] 1 "one table, one TOTAL row"
+assert_eq [regexp -all -line {^TOTAL } $out] 1 "one table, one TOTAL row"
 assert_match $out "*Segments:*" "header names the set"
 assert_eq [string match "*Reach*" $out] 0 "campaign columns absent without a campaign"
 assert_eq [string match "*Sent*" $out] 0 "engagement columns absent without a campaign"
