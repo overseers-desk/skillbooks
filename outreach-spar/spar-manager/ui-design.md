@@ -29,7 +29,7 @@ This is a compact summary, not an editor. Campaign YAML editing is a planned fea
 
 ### 1.2 Progress table
 
-A table built with the grid geometry manager, using ttk::Label widgets for cells and ttk::Checkbutton for the segment selection column. All columns are visible without horizontal scrolling; column widths are sized to fit the window. This reproduces the output of `spar-progress`.
+A table built with the grid geometry manager, using ttk::Label widgets for cells and ttk::Checkbutton for the segment selection column. All columns are visible without horizontal scrolling; column widths are sized to fit the window. Its columns are the flat counts of `spar::progress_counts`; the per-channel funnel `spar-progress` prints is not among them.
 
 **Why grid, not ttk::treeview.** The progress table requires per-cell background colouring for denominator bands and checkbox widgets in the segment column. ttk::Treeview supports neither: it cannot colour individual cells and cannot embed widgets in cells. The grid geometry manager with individual ttk::Label and ttk::Checkbutton widgets provides full control over cell appearance and per-cell styling. The transition manager (§2) uses ttk::treeview because it has a genuine parent-child hierarchy (transition types containing tasks, with a channel-group level when a send band mixes channels), which is what treeview is designed for.
 

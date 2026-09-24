@@ -1,6 +1,6 @@
 #!/usr/bin/env tclsh9.0
 # spar-progress — Campaign progress table and duplicate detection (CLI)
-# Usage: tclsh9.0 spar-progress [campaign_dir_or_yaml ...] [--campaign=YAML ...] [--no-reply-check] [--json] [--legend] [-v|--verbose]
+# Usage: tclsh9.0 spar-progress [campaign_dir_or_yaml ...] [--campaign=YAML ...] [--no-reply-check] [--json] [-v|--verbose]
 # Positional arg may be a directory or a campaign YAML file (directory derived from YAML path).
 # Several campaigns may be named in one run: each gets its own name line,
 # table and warnings, in the order given.
@@ -22,7 +22,6 @@ set segment_inputs {}   ;# segments/<name> positionals: one run over the set
 set json_mode 0
 set skip_reply_check 0
 set verbose 0
-set show_legend 0
 foreach arg $argv {
     switch -glob -- $arg {
         --campaign=*     { lappend campaign_specs [list [string range $arg 11 end] ""] }
@@ -30,7 +29,6 @@ foreach arg $argv {
         --no-reply-check { set skip_reply_check 1 }
         -v               -
         --verbose        { set verbose 1 }
-        --legend         { set show_legend 1 }
         --*              { puts stderr "Unknown flag: $arg"; exit 1 }
         default          {
             set _n [file normalize $arg]
@@ -133,6 +131,25 @@ proc analyse_campaign {State campaign_file campaign_dir} {
         segment_discovery $segment_discovery]]
 }
 
+# sum_counts -- fold a list of progress_counts dicts into one, the
+# per-channel funnel summed stage by stage. Channel order is the first
+# dict's, which under one campaign is every dict's.
+proc sum_counts {counts_list} {
+    set totals [dict create channels {}]
+    foreach c $counts_list {
+        dict for {k v} $c {
+            if {$k ne "channels"} { dict incr totals $k $v; continue }
+            dict for {ch funnel} $v {
+                dict for {stage n} $funnel {
+                    dict set totals channels $ch $stage \
+                        [expr {[dict getdef $totals channels $ch $stage 0] + $n}]
+                }
+            }
+        }
+    }
+    return $totals
+}
+
 # One State for the whole CLI run — its lifetime matches this script's.
 set State [spar::State new]
 
@@ -150,22 +167,25 @@ if {$json_mode} {
 
     package require json::write
 
+    # The tree mirrors the table: population counts, then the 3+★ band
+    # with its any-channel engagement and the per-channel funnel.
     proc _counts_tree {c} {
-        dict with c {}
+        set funnels {}
+        dict for {ch f} [dict getdef $c channels {}] {
+            lappend funnels $ch [::json::write object \
+                could   [dict get $f could] \
+                drafted [dict get $f drafted] \
+                sent    [dict get $f sent] \
+                replied [dict get $f replied]]
+        }
         ::json::write object \
-            valid     $valid \
-            profiled  $profiled \
+            valid     [dict get $c valid] \
+            profiled  [dict get $c profiled] \
             qualified [::json::write object \
-                count      $star3 \
-                approachable $approachable \
-                approached $approached_star3 \
-                sent       $sent \
-                replied    $replied \
-                channels   [::json::write object \
-                    email      $has_email \
-                    linkedin   $has_linkedin \
-                    facebook   $has_facebook \
-                    phone_only $has_phone_only]]
+                count    [dict get $c star3] \
+                sent     [dict get $c sent] \
+                replied  [dict get $c replied] \
+                channels [::json::write object {*}$funnels]]
     }
     proc progress_to_json {progress_dict} {
         set seg_list {}
@@ -210,13 +230,7 @@ if {$json_mode} {
         lappend seg_results [dict create name $label active 1 counts $counts \
             discovery [lindex $disc 1]]
     }
-    set totals [dict create valid 0 profiled 0 star3 0 approachable 0 \
-        approached_star3 0 has_email 0 has_linkedin 0 has_facebook 0 \
-        has_phone_only 0 sent 0 replied 0]
-    foreach seg_info $seg_results {
-        set sc [dict get $seg_info counts]
-        dict for {k v} $sc { dict set totals $k [expr {[dict get $totals $k] + $v}] }
-    }
+    set totals [sum_counts [lmap s $seg_results {dict get $s counts}]]
     # Transition labels come from the transition registry via
     # spar::transition_label; progress JSON includes the same T-ids as
     # the UI tree. --no-reply-check omits T7 from the output.
@@ -240,130 +254,59 @@ if {$json_mode} {
 }
 
 # --- Human-readable output ---
-proc fmt_cell {count denom} {
-    if {$denom > 0} {
-        set pct [expr {$count * 100.0 / $denom}]
-        return [format "%3d %3.0f%%" $count $pct]
-    } else {
-        return [format "%3d    -" $count]
-    }
-}
 proc pad_right {s w} { format "%-${w}s" $s }
 proc pad_left  {s w} { format "%${w}s" $s }
 
 # print_report -- one campaign's name line, progress table and warnings.
-# The name, table and legend go to stdout, so a multi-campaign run reads
-# and redirects as one document; the warnings go to stderr, so 2>/dev/null
+# The name and table go to stdout, so a multi-campaign run reads and
+# redirects as one document; the warnings go to stderr, so 2>/dev/null
 # drops them and leaves the tables.
+#
+# The table is one line per segment: the population (valid, profiled,
+# 3+★), then one cell per channel in scope. Under a campaign the cell
+# is the funnel could>drafted>sent for that channel; a run no campaign
+# anchors has no approach folder, so the cell is the could count alone.
+# Replies are rare and any-channel, so they sit on the name line.
 proc print_report {analysis} {
-    global verbose show_legend
+    global verbose
     dict with analysis {}
 
-    # The table's columns, one spec each: header, counts-dict key, and
-    # the key of the denominator column ({} = plain count). Campaign-
-    # tier columns carry the campaign flag: Reachable needs the campaign's
-    # channel scope and the engagement columns are campaign facts, so a
-    # run no campaign anchors ends at the channel counts.
-    set col_specs {
-        {Valid      valid            {}           population}
-        {Profile    profiled         valid        population}
-        {"3+★ "     star3            valid        population}
-        {Reachable      approachable     star3        campaign}
-        {"A/Reach " approached_star3 approachable campaign}
-        {Email      has_email        star3        population}
-        {LinkedIn   has_linkedin     star3        population}
-        {Facebook   has_facebook     star3        population}
-        {"Only ☎ "  has_phone_only   star3        population}
-        {Sent       sent             approached_star3 campaign}
-        {Repl       replied          sent         campaign}
-    }
     set population_only [expr {$yaml_path eq ""}]
+    set totals [sum_counts [lmap item $segment_counts {lindex $item 1}]]
+    set channels [dict keys [dict get $totals channels]]
+
     if {$population_only} {
-        set col_specs [lmap c $col_specs {
-            expr {[lindex $c 3] eq "population" ? $c : [continue]}
-        }]
+        puts "Segment[expr {[llength $segment_counts] > 1 ? "s" : ""}]: $campaign_name"
+    } else {
+        puts "Campaign: $campaign_name   min [dict getdef $analysis min_star 0]★   sent [dict get $totals sent]   replied [dict get $totals replied]"
     }
 
-    puts [expr {$population_only \
-        ? "Segment[expr {[llength $segment_counts] > 1 ? "s" : ""}]:    $campaign_name" \
-        : "Campaign:    $campaign_name"}]
-
-    set headers [list Segment {*}[lmap c $col_specs {lindex $c 0}]]
-    set ncols [llength $headers]
-    set widths [lmap h $headers {string length $h}]
-
-    # Rows: each segment, then TOTAL summed over the same keys.
-    set totals [dict create]
-    set data_rows {}
-    foreach item $segment_counts {
-        lassign $item label counts
-        foreach c $col_specs {
-            dict incr totals [lindex $c 1] [dict get $counts [lindex $c 1]]
-        }
-    }
+    set headers [list Segment valid prof "3+★" | {*}$channels]
+    set rows {}
     foreach item [concat $segment_counts [list [list TOTAL $totals]]] {
-        lassign $item label counts
-        set row [list $label]
-        foreach c $col_specs {
-            lassign $c _h key denom_key _tier
-            set n [dict get $counts $key]
-            if {$denom_key eq ""} {
-                lappend row $n
-            } else {
-                lappend row [fmt_cell $n [dict get $counts $denom_key]]
-            }
+        lassign $item label c
+        set row [list $label [dict get $c valid] [dict get $c profiled] [dict get $c star3] |]
+        foreach ch $channels {
+            set f [dict get $c channels $ch]
+            lappend row [expr {$population_only ? [dict get $f could] \
+                : "[dict get $f could]>[dict get $f drafted]>[dict get $f sent]"}]
         }
-        lappend data_rows $row
+        lappend rows $row
     }
 
-    # Update column widths
-    foreach row $data_rows {
-        for {set i 0} {$i < $ncols} {incr i} {
-            set cw [string length [lindex $row $i]]
-            if {$cw > [lindex $widths $i]} {
-                lset widths $i $cw
-            }
-        }
+    set widths [lmap h $headers {string length $h}]
+    foreach row $rows {
+        set widths [lmap w $widths cell $row {expr {max($w, [string length $cell])}}]
     }
-
-    # Header row
-    set parts {}
-    for {set i 0} {$i < $ncols} {incr i} {
-        set h [lindex $headers $i]
-        set w [lindex $widths $i]
-        if {$i == 0} {
-            lappend parts [pad_right $h $w]
-        } else {
-            lappend parts [pad_left $h $w]
+    foreach row [concat [list $headers] $rows] {
+        set parts [list [pad_right [lindex $row 0] [lindex $widths 0]]]
+        foreach cell [lrange $row 1 end] w [lrange $widths 1 end] {
+            lappend parts [pad_left $cell $w]
         }
+        puts [join $parts " "]
     }
-    puts "|[join $parts |]|"
-
-    # Separator row
-    set sparts {}
-    for {set i 0} {$i < $ncols} {incr i} {
-        set w [lindex $widths $i]
-        if {$i == 0} {
-            lappend sparts ":[string repeat - [expr {$w - 1}]]"
-        } else {
-            lappend sparts "[string repeat - [expr {$w - 1}]]:"
-        }
-    }
-    puts "|[join $sparts |]|"
-
-    # Data rows
-    foreach row $data_rows {
-        set parts {}
-        for {set i 0} {$i < $ncols} {incr i} {
-            set cell [lindex $row $i]
-            set w [lindex $widths $i]
-            if {$i == 0} {
-                lappend parts [pad_right $cell $w]
-            } else {
-                lappend parts [pad_left $cell $w]
-            }
-        }
-        puts "|[join $parts |]|"
+    if {!$population_only} {
+        puts "cell: could>drafted>sent per channel, 3+★ only; two channels count in both"
     }
 
     # Discovery yield: what profiling fed back to the sweep, per segment.
@@ -374,32 +317,6 @@ proc print_report {analysis} {
         lassign $item label d
         puts [format "  %s: %d profiles → %d rows, %d sources" \
             $label [dict get $d profiles] [dict get $d rows] [dict get $d sources]]
-    }
-
-    if {$show_legend} {
-        puts "\nColumn legend  (each cell is a count; the % is the share of the denominator named)"
-        puts "  Valid     Contacts not excluded. Denominator for Profile and 3+★."
-        puts "  Profile   Profiled or beyond, as % of Valid."
-        puts "  3+★       Rated 3 stars or higher — the qualified pool. Denominator for"
-        puts "            the channel counts."
-        if {!$population_only} {
-            puts "  Reachable Approachable: 3+★ holding at least one channel the campaign declares,"
-            puts "            as % of 3+★. The gap to 3+★ is the no-channel backlog — recorded"
-            puts "            reality, not an error; those contacts sit outside every denominator"
-            puts "            below until a channel is found."
-            puts "  A/Reach   Approached, as % of Reach — 100% means everyone approachable was."
-        }
-        puts "  Email     Has an email address, as % of 3+★."
-        puts "  LinkedIn  Has a LinkedIn profile, as % of 3+★."
-        puts "  Facebook  Has a Facebook profile, as % of 3+★."
-        puts "  Only ☎    Reachable by phone only (no email or social), as % of 3+★."
-        if {!$population_only} {
-            puts "  Sent      Sent on any channel (state SENT or beyond), as % of A/Reach."
-            puts "  Repl      Replied on any channel; the % is the REPLY RATE = replies ÷ sent."
-            puts "            This is the campaign's key conversion metric."
-        }
-    } else {
-        puts "\nRun with --legend to see column definitions."
     }
 
     # --- Warnings and validation ---

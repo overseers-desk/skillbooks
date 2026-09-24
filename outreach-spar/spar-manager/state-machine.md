@@ -203,22 +203,21 @@ oo::define spar::State method classify_segment {segment_dir} { ... }
 
 ## Progress table derivation
 
-The progress table columns are counts derived from running `classify_segment` across all active segments and grouping by state and secondary properties.
+The progress counts (`spar::progress_counts`) are projections of `classify_segment` output, refined, across all active segments. There is no separate scanning step.
 
-| Column | What it counts | Denominator | Filter |
-|--------|----------------|-------------|--------|
-| Valid | not EXCLUDED | total roster rows | — |
-| Profile | PROFILED or above | Valid | — |
-| 3+★ | Valid and star≥3 | Valid | — |
-| A/3+★ | APPROACHED or above, star≥3 | 3+★ | — |
-| Email | star≥3 and has_email | 3+★ | — |
-| LinkedIn | star≥3 and has_linkedin | 3+★ | — |
-| Facebook | star≥3 and has_facebook | 3+★ | — |
-| Only ☎ | star≥3 and has_phone_only | 3+★ | — |
-| Sent | state SENT or REPLIED | A/3+★ | — |
-| Repl | state REPLIED | Sent | — |
+| Count | What it counts |
+|-------|----------------|
+| valid | not EXCLUDED |
+| profiled | PROFILED or above |
+| star3 | Valid and star≥3 |
+| approachable | star≥3 holding a channel the campaign names |
+| approached_star3 | APPROACHED or above, star≥3 |
+| has_email, has_linkedin, has_facebook, has_phone_only | star≥3 with that channel property |
+| sent | state SENT or REPLIED |
+| replied | state REPLIED |
+| channels | per channel the campaign names (every channel when none is named): `could` star≥3 holding it, `drafted` a final-round message on it, `sent` that message actioned, `replied` it drew a reply |
 
-Every column is a projection of `classify_segment` output. There is no separate scanning step.
+`spar-progress` prints the population counts and the per-channel funnel; the GUI's progress table prints the flat counts. The three channel lists behind the funnel (`drafted_channels`, `sent_channels`, `replied_channels`) are set by `refine_contact` from the final round's messages.
 
 ### Duplicate warnings
 

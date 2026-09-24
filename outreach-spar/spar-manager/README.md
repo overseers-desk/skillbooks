@@ -118,7 +118,17 @@ tclsh9.0 spar-progress <campaign-dir-or-yaml> --no-reply-check
 
 Positional argument is either a campaign directory or the yaml inside it. Name several and each gets its own name line, table and warnings, in the order given, separated by a blank line. One that will not resolve prints its reason on stderr and makes the exit status 1; the campaigns named beside it still report.
 
-The campaign name, table and legend go to stdout; the warnings block and any errors go to stderr, so `tclsh9.0 spar-progress <campaign> 2>/dev/null` leaves the tables. `--json` emits machine-readable output for one campaign, since the object shape is the contract; naming more than one with `--json` is an error. `--no-reply-check` omits the T7 reply-check row; `--legend` prints the column definitions, and without it the report says so in one line; `-v` / `--verbose` lists the member names behind each grouped warning.
+The table is one line per segment and a TOTAL: the population (valid, profiled, 3+★), then one cell per channel the campaign names, reading `could>drafted>sent` for that channel over the 3+★ band. A contact holding two channels counts in both cells. Replies are any-channel and sit on the campaign line with the star floor and the any-channel sent count. A run over segment paths, with no campaign, has no approach folder, so its channel cells carry the could count alone.
+
+```
+Campaign: 2026-08 Market Stall Recruitment   min 3★   sent 3   replied 1
+Segment          valid prof 3+★ | email facebook linkedin
+market-stalls        5    3   4 | 4>3>1    2>0>0    1>1>1
+stall-introducer     2    1   2 | 2>1>1    0>0>0    0>0>0
+TOTAL                7    4   6 | 6>4>2    2>0>0    1>1>1
+```
+
+The campaign name and table go to stdout; the warnings block and any errors go to stderr, so `tclsh9.0 spar-progress <campaign> 2>/dev/null` leaves the tables. `--json` emits machine-readable output for one campaign, since the object shape is the contract; naming more than one with `--json` is an error. `--no-reply-check` omits the T7 reply-check row; `-v` / `--verbose` lists the member names behind each grouped warning.
 
 ### Harness
 

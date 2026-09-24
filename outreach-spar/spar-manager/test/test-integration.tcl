@@ -60,15 +60,14 @@ set jtotals [dict get $parsed totals]
 assert_eq [dict exists $jtotals qualified] 1 "json: totals has qualified"
 set jq [dict get $jtotals qualified]
 assert_eq [dict exists $jq count] 1 "json: qualified has count"
-assert_eq [dict exists $jq approached] 1 "json: qualified has approached"
 assert_eq [dict exists $jq sent] 1 "json: qualified has sent"
 assert_eq [dict exists $jq replied] 1 "json: qualified has replied"
 assert_eq [dict exists $jq channels] 1 "json: qualified has channels"
 set jch [dict get $jq channels]
-assert_eq [dict exists $jch email] 1 "json: channels has email"
-assert_eq [dict exists $jch linkedin] 1 "json: channels has linkedin"
-assert_eq [dict exists $jch facebook] 1 "json: channels has facebook"
-assert_eq [dict exists $jch phone_only] 1 "json: channels has phone_only"
+# No channel slot in the campaign, so every channel is in scope.
+assert_eq [dict keys $jch] {email linkedin facebook phone} "json: one funnel per channel"
+assert_eq [dict keys [dict get $jch email]] {could drafted sent replied} "json: funnel stages"
+assert_eq [dict get $jch email could] 2 "json: both qualified contacts hold email"
 assert_eq [dict exists $parsed segments] 1 "json: has segments"
 assert_eq [llength [dict get $parsed segments]] 1 "json: one segment"
 set jdisc [dict get [lindex [dict get $parsed segments] 0] discovery]
@@ -104,9 +103,9 @@ set fd [open $errfile r]; set err [read $fd]; close $fd
 
 set name_lines [lsearch -all -inline [split $out \n] "Campaign:*"]
 assert_eq [llength $name_lines] 2 "multi: one name line per campaign"
-assert_eq [lindex $name_lines 0] "Campaign:    Test Campaign" "multi: first name, in argument order"
-assert_eq [lindex $name_lines 1] "Campaign:    Second Campaign" "multi: second name"
-assert_eq [llength [lsearch -all -inline [split $out \n] "|TOTAL*"]] 2 "multi: one table per campaign"
+assert_match [lindex $name_lines 0] "Campaign: Test Campaign *" "multi: first name, in argument order"
+assert_match [lindex $name_lines 1] "Campaign: Second Campaign *" "multi: second name"
+assert_eq [llength [lsearch -all -inline [split $out \n] "TOTAL *"]] 2 "multi: one table per campaign"
 
 # Warnings go to stderr, so 2>/dev/null leaves the tables.
 assert_eq [string match "*## Warnings*" $out] 0 "multi: no warnings on stdout"
