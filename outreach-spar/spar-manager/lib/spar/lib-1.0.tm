@@ -510,7 +510,9 @@ proc spar::extract_required_skills {segment_data segment_path} {
 }
 
 # extract_kinds — the segment's `kinds` list (segment-schema.yaml), the
-# tokens the profiling prompt renders as a checklist. Empty when absent.
+# tokens the profiling prompt names one by one. Empty when absent. No
+# shape check here: a token has no lookup to fail, unlike a platform's
+# module, so segment.rules holds the only check, at authoring time.
 proc spar::extract_kinds {segment_data segment_path} {
     set kinds {}
     foreach kind [dict getdef $segment_data kinds {}] {

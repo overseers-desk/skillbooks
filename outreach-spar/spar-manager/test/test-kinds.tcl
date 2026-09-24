@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh9.0
 # Segment kinds (segment.yaml `kinds:`): the token list every profile of the
-# segment states kind by kind, its authoring-time check, and the checklist
-# passage the dispatcher renders from prompts/kinds-guidance.txt.
+# segment states kind by kind, its authoring-time check, and the passage
+# the dispatcher renders from prompts/kinds-guidance.txt.
 package require yaml
 package require TclOO
 package require logger
@@ -63,4 +63,4 @@ assert_eq [llength [lsearch -all -exact $codes invalid_kinds]] 2 \
 write_seed $segbase "scope_note: none"
 assert_eq [expr {"invalid_kinds" in [seed_codes $segbase]}] 0 "absent list passes"
 file delete -force $tmpdir
-cleanup_temps
+finish_tests

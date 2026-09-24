@@ -58,7 +58,7 @@ proc spar::platform_guidance {platforms} {
     return [join $parts " "]
 }
 
-# kinds_guidance — the checklist passage a segment's `kinds` list earns;
+# kinds_guidance — the kind-by-kind passage a segment's `kinds` list earns;
 # empty when the segment lists none, so the template's slot vanishes.
 proc spar::kinds_guidance {kinds} {
     if {[llength $kinds] == 0} { return "" }
@@ -272,9 +272,10 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
     set prompts_dir [file join $workdir prompts]
     file mkdir $prompts_dir
 
-    # Read the platform map from segment.yaml. Empty when the field is
-    # absent — no platform carries an instruction, and no audit. The
-    # harness §4.3/§4.4 audit fires only on the map's `required` entries.
+    # Read the platform map and the kinds list from segment.yaml. Each is
+    # empty when its field is absent: no platform carries an instruction,
+    # no audit, no kind-by-kind passage. The harness §4.3/§4.4 audit fires
+    # only on the map's `required` entries.
     set segment_yaml [spar::segment_yaml_for_segment $segment_dir]
     set segment_data [spar::read_segment_yaml $segment_yaml]
     if {$segment_data eq ""} {
