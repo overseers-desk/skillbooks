@@ -701,6 +701,7 @@ proc spar::_parse_worker_run {path} {
 #   has_email     bool
 #   has_linkedin  bool
 #   has_facebook  bool
+#   has_phone     bool
 #   has_phone_only bool
 #   any_sent      0 (placeholder; populated by refine_contact)
 #   email_sent    0 (placeholder; populated by refine_contact)
@@ -708,6 +709,9 @@ proc spar::_parse_worker_run {path} {
 #   any_replied   0 (placeholder; populated by refine_contact)
 #   to_addresses     {} (placeholder; populated by refine_contact)
 #   unsent_subjects  {} (placeholder; populated by refine_contact)
+#   drafted_channels {} (placeholder; populated by refine_contact)
+#   sent_channels    {} (placeholder; populated by refine_contact)
+#   replied_channels {} (placeholder; populated by refine_contact)
 #
 oo::define spar::State method classify_contact {roster_row segment_dir approach_dir} {
     # Extract roster fields with safe defaults.
@@ -738,7 +742,8 @@ oo::define spar::State method classify_contact {roster_row segment_dir approach_
     set has_email [expr {[string first "@" $email] >= 0 && ![spar::is_masked_email $email]}]
     set has_linkedin [expr {$linkedin ne ""}]
     set has_facebook [expr {$facebook ne ""}]
-    set has_phone_only [expr {$phone ne "" && !$has_email && !$has_linkedin && !$has_facebook}]
+    set has_phone [expr {$phone ne ""}]
+    set has_phone_only [expr {$has_phone && !$has_email && !$has_linkedin && !$has_facebook}]
 
     # Result dict: defaults for paths and approach-derived fields. Each
     # branch overrides `state` (and, after parsing the approach YAML,
@@ -753,13 +758,17 @@ oo::define spar::State method classify_contact {roster_row segment_dir approach_
         has_email $has_email \
         has_linkedin $has_linkedin \
         has_facebook $has_facebook \
+        has_phone $has_phone \
         has_phone_only $has_phone_only \
         any_sent 0 \
         email_sent 0 \
         linkedin_sent 0 \
         any_replied 0 \
         to_addresses {} \
-        unsent_subjects {}]
+        unsent_subjects {} \
+        drafted_channels {} \
+        sent_channels {} \
+        replied_channels {}]
 
     # State evaluation (ordered — first match wins)
 
@@ -841,7 +850,10 @@ oo::define spar::State method classify_contact {roster_row segment_dir approach_
 # refined form by parsing the approach YAML (via approach_summary, so
 # the parse is shared across the render). Returns a new dict with
 # SENT/REPLIED resolved on `state` and any_sent / email_sent /
-# linkedin_sent / any_replied / to_addresses / unsent_subjects populated.
+# linkedin_sent / any_replied / to_addresses / unsent_subjects populated,
+# plus the final round's channels as three lists: drafted_channels (a
+# message exists), sent_channels (it is actioned), replied_channels (it
+# drew a reply).
 #
 # Idempotent: refining an already-refined contact rebuilds from the
 # (cached) projection. Refining a contact whose state is something
@@ -873,6 +885,17 @@ oo::define spar::State method refine_contact {contact} {
     dict set contact any_replied     [dict get $fr any_replied]
     dict set contact to_addresses    [dict get $fr to_addresses]
     dict set contact unsent_subjects [dict get $fr unsent_subjects]
+    set drafted {}; set sent {}; set replied {}
+    foreach m [dict get $fr messages] {
+        set ch [dict get $m channel]
+        if {$ch eq ""} continue
+        if {$ch ni $drafted} { lappend drafted $ch }
+        if {[dict get $m is_actioned] && $ch ni $sent} { lappend sent $ch }
+        if {[dict get $m is_replied] && $ch ni $replied} { lappend replied $ch }
+    }
+    dict set contact drafted_channels $drafted
+    dict set contact sent_channels    $sent
+    dict set contact replied_channels $replied
 
     # Promote the campaign-bound engagement fields from the approach YAML
     # onto the contact dict. They live in the approach file (not the roster),
@@ -1411,13 +1434,20 @@ proc spar::detect_duplicates {all_classified_contacts} {
 #
 # Returns a dict with counts:
 #   valid, profiled, star3, approachable, approached_star3, has_email,
-#   has_linkedin, has_facebook, has_phone_only, sent, replied
+#   has_linkedin, has_facebook, has_phone_only, sent, replied, channels
 #
 # approachable is the approach denominator: 3+ star contacts holding at
 # least one channel the campaign declares. A contact with no channel is
 # recorded reality, not a finding: they sit outside the denominator (a
 # campaign that approached everyone approachable reads 100%) and are
 # inferable from the table as star3 minus approachable.
+#
+# channels is the per-channel funnel over the 3+ star band, keyed by
+# channel in the campaign's slot order (every channel when no campaign
+# anchors the count): could (holds the channel), drafted (the final
+# round carries a message on it), sent (that message is actioned),
+# replied (it drew a reply). A contact holding two channels counts in
+# both, so channel figures can sum past star3.
 proc spar::progress_counts {classified_contacts {cdata {}}} {
     set valid 0
     set profiled 0
@@ -1432,6 +1462,10 @@ proc spar::progress_counts {classified_contacts {cdata {}}} {
     set n_replied 0
     set in_scope [expr {[llength $cdata] > 0 \
         ? [spar::campaign_in_scope_channels $cdata] : {}}]
+    set channels {}
+    foreach ch [expr {[llength $in_scope] > 0 ? $in_scope : {email linkedin facebook phone}}] {
+        dict set channels $ch [dict create could 0 drafted 0 sent 0 replied 0]
+    }
 
     # States that are "profiled or above"
     set profiled_plus {PROFILED PROFILE_STALE APPROACHED APPROACH_STALE SENT REPLIED}
@@ -1500,6 +1534,17 @@ proc spar::progress_counts {classified_contacts {cdata {}}} {
             if {$state eq "REPLIED"} {
                 incr n_replied
             }
+
+            dict for {ch _} $channels {
+                if {[dict getdef $contact has_$ch 0]} {
+                    dict update channels $ch f { dict incr f could }
+                }
+                foreach {stage key} {drafted drafted_channels sent sent_channels replied replied_channels} {
+                    if {$ch in [dict getdef $contact $key {}]} {
+                        dict update channels $ch f { dict incr f $stage }
+                    }
+                }
+            }
         }
     }
 
@@ -1514,7 +1559,8 @@ proc spar::progress_counts {classified_contacts {cdata {}}} {
         has_facebook $has_facebook \
         has_phone_only $has_phone_only \
         sent $n_sent \
-        replied $n_replied]
+        replied $n_replied \
+        channels $channels]
 }
 
 # roster_counts -- compute progress counts from roster TSV alone (no filesystem).
