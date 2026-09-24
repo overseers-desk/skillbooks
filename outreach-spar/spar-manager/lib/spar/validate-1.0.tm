@@ -491,12 +491,12 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
 
 # validate_approach_data -- full validation of an already-parsed approach dict
 # on the yamlmuster approach ruleset (rules/approach.rules + the host
-# predicates registered in spar::_yamlmuster_approach). Render-path callers
-# (the State's approach_validation_error, via _approach_gate_error) pass the
-# projection from approach_summary so the parse is shared with the rest of the
-# render; CLI / harness callers pass a fresh parse. Returns every issue
-# (errors and warnings) in spar's legacy _issue shape; callers wanting only the
-# first error use the cost-limited gate, spar::_approach_gate_error.
+# predicates registered in spar::_yamlmuster_approach). validate_approach
+# passes a fresh parse of the file; tests pass a projection or a fixture.
+# The render path (the State's approach_validation_error) does not come
+# here: it runs the cost-limited gate, spar::_approach_gate_error, on the
+# cached projection and stops at the first error. Returns every issue
+# (errors and warnings) in spar's legacy _issue shape.
 #
 # approach_path drives the two file-bound profile_hash predicates: they carry
 # -needs approach_path, so passing "" (pure-dict callers with synthetic

@@ -202,7 +202,7 @@ proc spar::fingerprint_match {existing from_email timestamp} {
 
 # _dbc_errors -- return only error-severity issues from validate_approach.
 # misparsed_scalar is left out: a value the parser misread is an authoring
-# fault for the fix loop and spar-validate to report, and a file already
+# fault for the fix loop and spar-validate-cli.tcl to report, and a file already
 # carrying one must still have its send stamped and its replies recorded.
 proc spar::_dbc_errors {approach_path} {
     set errs {}
