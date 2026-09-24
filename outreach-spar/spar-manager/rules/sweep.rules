@@ -5,9 +5,11 @@
 # rounds/escapes empty.
 #
 # Call shape:
-#   validate <data> -groups {sweep} -context {expected_segment <name>}
+#   validate <data> -groups {sweep} \
+#       -context {expected_segment <name> raw <text>}
 # expected_segment is the filename stem; segment: must equal it, since the
-# file is found by that name.
+# file is found by that name. raw is the file's text, which
+# scalars_as_written scans.
 
 # ── Levels ───────────────────────────────────────────────────────────────
 level root -keys {version segment market_estimate coverage_target sources exclusions \
@@ -26,6 +28,11 @@ child root rounds  list round
 
 # ── ROOT rules ───────────────────────────────────────────────────────────
 rule vocab root -groups {sweep}
+
+# A value the YAML parser returns other than written: text after a closing
+# quote, or ': ' in an unquoted value (spar::_pred_scalars_as_written).
+rule predicate root scalars_as_written -needs raw -code misparsed_scalar \
+    -groups {sweep}
 
 rule require root version -nonblank -code missing_version \
     -message {Sweep file missing required key '%k'} -groups {sweep}

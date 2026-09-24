@@ -6,7 +6,9 @@
 # and a defect can reach at most the worker's own declaration.
 #
 # Call shape:
-#   validate <front matter dict> -groups {sweep_return}
+#   validate <front matter dict> -groups {sweep_return} -context {raw <text>}
+# raw is the deliverable's whole text; without it the scalars_as_written
+# rule does not run.
 #
 # The roster-relative checks (a stem already on the roster, a column this
 # roster does not have) are not here: they need the roster, and they live
@@ -22,6 +24,11 @@ level root -keys {rows_new source_status reconciliation sweep_feedback \
 
 # ── Rules ────────────────────────────────────────────────────────────────
 rule vocab root -groups {sweep_return}
+
+# A value the YAML parser returns other than written (approach.rules says
+# which shapes); the worker's s_note is where ': ' most often lands.
+rule predicate root scalars_as_written -needs raw -code misparsed_scalar \
+    -groups {sweep_return}
 
 rule require root source_status -nonblank -code missing_source_status \
     -message {Front matter missing '%k' — the sweep file records the status you leave the source in} \

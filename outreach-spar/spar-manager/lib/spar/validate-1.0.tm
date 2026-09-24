@@ -88,6 +88,7 @@ proc spar::_yamlmuster_approach {} {
     $inst predicate unsent_final_requires       ::spar::_pred_unsent_final_requires
     $inst predicate first_line_is_profile_hash  ::spar::_pred_first_line_is_profile_hash
     $inst predicate profile_hash_actual         ::spar::_pred_profile_hash_actual
+    $inst predicate scalars_as_written          ::spar::_pred_scalars_as_written
     spar::_yamlmuster_load $inst approach.rules approach
     set _yamlmuster_approach_inst $inst
     return $inst
@@ -147,6 +148,97 @@ proc spar::_approach_gate_error {approach_data approach_path roster_email contac
 # extra}; return a list of partial issue dicts ({} = pass). The engine fills
 # severity/code from the rule declaration and owns path/level; a predicate may
 # override severity/code/message per issue.
+
+# scalars_as_written -- a value tcllib yaml 0.4.2 parses without complaint
+# yet returns other than written, in two shapes a strict parser rejects:
+# text after a quoted scalar's closing quote, which is dropped, and ': ' in
+# an unquoted value, which becomes a nested map. The parsed dict no longer
+# shows either, so this scans the text (context `raw`), front matter only
+# between its fences, and reports each line carrying one.
+proc spar::_pred_scalars_as_written {node meta} {
+    # tcllib's own plain-scalar pattern: a value ends before the first word
+    # whose leading ':' or '#' is also its last character.
+    set plain {^(?:[^:#\t \n]*(?::[^\t \n]+)*(?:#[^\t \n]+)* *)*[^:#\t \n]*}
+    array set close {\" {^(?:[^\\"]|\\.)*"} ' {^(?:[^']|'')*'}}
+    set raw [dict getdef [dict get $meta context] raw ""]
+    set lines [split [string map {\r\n \n} $raw] \n]
+    set fence [expr {[string trim [lindex $lines 0]] eq "---"}]
+    set out {}
+    set skip -1; set cont -1; set quote ""; set n 0
+    foreach line $lines {
+        incr n
+        if {$fence && $n == 1} continue
+        if {$fence && [string trim $line] eq "---"} break
+        set bad ""
+        if {$quote ne ""} {
+            if {![regexp $close($quote) $line m]} continue
+            set s [string range $line [string length $m] end]
+            set kind tail-$quotekind
+            set quote ""
+        } else {
+            set s [string trimleft $line " "]
+            if {$s eq "" || [string index $s 0] eq "#"} continue
+            set col [expr {[string length $line] - [string length $s]}]
+            # Block scalar and flow lines sit deeper than their key or dash.
+            if {$skip >= 0 && $col > $skip} continue
+            set skip -1
+            if {$cont >= 0 && $col > $cont} {
+                # Continues the plain value above, where quotes are literal.
+                set kind cont
+            } else {
+                set cont -1; set owner -1; set kind key
+                while {[regexp {^-( +|$)(.*)} $s -> sp s]} {
+                    set owner $col
+                    incr col [expr {1 + [string length $sp]}]
+                }
+            }
+        }
+        while 1 {
+            if {$kind eq "tail-key" && [regexp {^\s*:(?:\s|$)(.*)} $s -> s]} {
+                set owner $col; set s [string trimleft $s]; set kind value
+                continue
+            }
+            if {[string match tail-* $kind]} {
+                if {![regexp {^\s*(#|$)} $s]} {
+                    set bad "the parser drops the text after the closing quote"
+                }
+                break
+            }
+            if {$kind ne "cont"} {
+                set c [string index $s 0]
+                if {$c in {\" '}} {
+                    if {![regexp $close($c) [string range $s 1 end] m]} {
+                        set quote $c; set quotekind $kind
+                        break
+                    }
+                    set s [string range $s [string length $m]+1 end]
+                    set kind tail-$kind
+                    continue
+                }
+                if {[regexp {^[[\{|>]} $s]} { set skip $owner; break }
+                if {[regexp {^([&*!?%@`#]|$)} $s]} break
+            }
+            regexp $plain $s m
+            set rest [string range $s [string length $m] end]
+            if {[string index $rest 0] eq ":"} {
+                if {$kind eq "key"} {
+                    set owner $col
+                    set s [string trimleft [string range $rest 1 end]]
+                    set kind value
+                    continue
+                }
+                set bad "the parser splits an unquoted value at ': ' into a map"
+            }
+            if {$kind ne "cont"} { set cont $owner }
+            break
+        }
+        if {$bad ne ""} {
+            lappend out [dict create message "line $n, '[string trim $line]':\
+                $bad; put the whole value in single quotes, inner ones doubled"]
+        }
+    }
+    return $out
+}
 
 # rounds_structural -- missing_rounds (two distinct messages) + no_final_round,
 # reproducing legacy validate_approach_data lines 193-216 including its
@@ -372,7 +464,8 @@ proc spar::_pred_profile_hash_actual {node meta} {
 # callers (ApproachHarness::validate_and_correct) that don't construct a State and so
 # can't share a cached projection. Render-path callers go through
 # spar::State approach_validation_error → validate_approach_data, which
-# reuses the cached projection.
+# reuses the cached projection. Only this form has the file's text, which
+# it passes on for the scalars_as_written scan.
 #
 proc spar::validate_approach {approach_path roster_email contact_name {roster_organisation ""}} {
     set issues {}
@@ -388,8 +481,12 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
         return $issues
     }
 
+    set fd [open $approach_path r]
+    fconfigure $fd -encoding utf-8
+    set raw [read $fd]
+    close $fd
     return [spar::validate_approach_data $approach_data $approach_path \
-        $roster_email $contact_name $roster_organisation]
+        $roster_email $contact_name $roster_organisation $raw]
 }
 
 # validate_approach_data -- full validation of an already-parsed approach dict
@@ -404,14 +501,17 @@ proc spar::validate_approach {approach_path roster_email contact_name {roster_or
 # approach_path drives the two file-bound profile_hash predicates: they carry
 # -needs approach_path, so passing "" (pure-dict callers with synthetic
 # fixtures) omits it from the engine context and opts out of those checks,
-# exactly the legacy behaviour. roster_organisation is unused, retained for
-# signature compatibility (the org/name_desync checks were retired with #63).
+# exactly the legacy behaviour. raw, the file's text, gates scalars_as_written
+# the same way (-needs raw); only validate_approach passes it. roster_organisation
+# is unused, retained for signature compatibility (the org/name_desync checks
+# were retired with #63).
 #
 proc spar::validate_approach_data {approach_data approach_path roster_email \
-        contact_name {roster_organisation ""}} {
+        contact_name {roster_organisation ""} {raw ""}} {
     set inst [spar::_yamlmuster_approach]
     set context [list roster_email $roster_email]
     if {$approach_path ne ""} { lappend context approach_path $approach_path }
+    if {$raw ne ""} { lappend context raw $raw }
     set issues {}
     foreach ei [$inst validate $approach_data \
             -groups approach -badnode ignore \
@@ -464,6 +564,7 @@ proc spar::_yamlmuster_profile {} {
     $inst predicate rows_new_shape      ::spar::_pred_rows_new_shape
     $inst predicate source_status_token ::spar::_pred_source_status_token
     $inst predicate profile_discovered_via ::spar::_pred_profile_discovered_via
+    $inst predicate scalars_as_written ::spar::_pred_scalars_as_written
     spar::_yamlmuster_load $inst profile.rules profile
     set _yamlmuster_profile_inst $inst
     return $inst
@@ -1445,6 +1546,7 @@ proc spar::_yamlmuster_segment {} {
     $inst predicate sweeper_resolves ::spar::_pred_sweeper_resolves
     $inst predicate platforms_vocab  ::spar::_pred_platforms_vocab
     $inst predicate kinds_list       ::spar::_pred_kinds_list
+    $inst predicate scalars_as_written ::spar::_pred_scalars_as_written
     spar::_yamlmuster_load $inst segment.rules segment
     set _yamlmuster_segment_inst $inst
     return $inst
@@ -1467,6 +1569,7 @@ proc spar::_yamlmuster_sweep {} {
     $inst predicate negative_evidence   ::spar::_pred_negative_evidence
     $inst predicate escapes_seeded      ::spar::_pred_escapes_seeded
     $inst predicate denominator_reconciled ::spar::_pred_denominator_reconciled
+    $inst predicate scalars_as_written  ::spar::_pred_scalars_as_written
     spar::_yamlmuster_load $inst sweep.rules sweep
     set _yamlmuster_sweep_inst $inst
     return $inst
@@ -1721,10 +1824,10 @@ proc spar::validate_seed {segment_base} {
         }
         if {$label eq "segment"} {
             set found [[spar::_yamlmuster_segment] validate $data \
-                -groups {seed} -context [dict create instance_root $instance_root]]
+                -groups {seed} -context [dict create instance_root $instance_root raw $raw]]
         } else {
             set found [[spar::_yamlmuster_sweep] validate $data \
-                -groups {sweep} -context [dict create expected_segment $name]]
+                -groups {sweep} -context [dict create expected_segment $name raw $raw]]
         }
         foreach issue $found {
             dict set issue segment $name
@@ -1802,6 +1905,7 @@ proc spar::_yamlmuster_sweep_return {} {
     $inst predicate rows_new_shape        ::spar::_pred_rows_new_shape
     $inst predicate return_feedback_shape ::spar::_pred_return_feedback_shape
     $inst predicate return_escape_shape   ::spar::_pred_return_escape_shape
+    $inst predicate scalars_as_written    ::spar::_pred_scalars_as_written
     spar::_yamlmuster_load $inst sweep-return.rules sweep_return
     set _yamlmuster_sweep_return_inst $inst
     return $inst
@@ -1959,10 +2063,17 @@ proc spar::validate_sweep_return {path} {
         return [list [dict create severity error code missing_front_matter \
             message "No parseable YAML front matter between --- fences in $path; a value carrying ': ' or a bare date needs quoting"]]
     }
-    return [spar::validate_sweep_return_data $fm]
+    set fd [open $path r]
+    fconfigure $fd -encoding utf-8
+    set raw [read $fd]
+    close $fd
+    return [spar::validate_sweep_return_data $fm $raw]
 }
 
-proc spar::validate_sweep_return_data {fm} {
-    return [[spar::_yamlmuster_sweep_return] validate $fm -groups {sweep_return}]
+proc spar::validate_sweep_return_data {fm {raw ""}} {
+    set context {}
+    if {$raw ne ""} { lappend context raw $raw }
+    return [[spar::_yamlmuster_sweep_return] validate $fm \
+        -groups {sweep_return} -context $context]
 }
 
