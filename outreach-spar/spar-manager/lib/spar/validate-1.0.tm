@@ -1533,7 +1533,7 @@ proc spar::_pred_platforms_vocab {node meta} {
 }
 
 # kinds: unique lowercase tokens (letters, digits, hyphens); the profiling
-# prompt renders each verbatim as a checklist entry.
+# prompt renders each verbatim.
 proc spar::_pred_kinds_list {node meta} {
     if {![dict exists $node kinds]} { return {} }
     set out {}

@@ -122,9 +122,9 @@ discovery_criteria: |
 #     that every profile of this segment states, each as published, none
 #     published or not assessed, with source and date, whatever the rubric
 #     weighs (spar-P-profile.md §5.2 Mechanism evidence; §5.5 at the
-#     qualification-only depth). The profiling prompt renders the list as a
-#     checklist. Tokens are the segment's own words, lowercase, hyphenated,
-#     unique. Omit the field when there is nothing to distinguish.) ---
+#     qualification-only depth). The profiling prompt names each token and
+#     asks its status. Tokens are the segment's own words, lowercase,
+#     hyphenated, unique. Omit the field when there is nothing to distinguish.) ---
 
 # kinds:
 #   - {kind}
