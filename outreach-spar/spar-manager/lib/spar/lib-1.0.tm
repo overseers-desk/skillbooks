@@ -509,6 +509,20 @@ proc spar::extract_required_skills {segment_data segment_path} {
     return $skills
 }
 
+# extract_kinds — the segment's `kinds` list (segment-schema.yaml), the
+# tokens the profiling prompt renders as a checklist. Empty when absent.
+proc spar::extract_kinds {segment_data segment_path} {
+    set kinds {}
+    foreach kind [dict getdef $segment_data kinds {}] {
+        set kind [string trim $kind]
+        if {$kind eq ""} {
+            error "Segment $segment_path: kinds holds a blank entry"
+        }
+        lappend kinds $kind
+    }
+    return $kinds
+}
+
 # roster_core_columns — the 14 columns spar-roster-format.md defines, in
 # its order. A live roster's header is authoritative (campaigns add their
 # own columns, e.g. application_url) and every reader takes the header it

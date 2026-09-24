@@ -118,6 +118,17 @@ discovery_criteria: |
 # platforms:
 #   {platform}: required | expected
 
+# --- Kinds (population facts: the kinds of work within the qualifying scope
+#     that every profile of this segment states, each as published, none
+#     published or not assessed, with source and date, whatever the rubric
+#     weighs (spar-P-profile.md §5.2 Mechanism evidence; §5.5 at the
+#     qualification-only depth). The profiling prompt renders the list as a
+#     checklist. Tokens are the segment's own words, lowercase, hyphenated,
+#     unique. Omit the field when there is nothing to distinguish.) ---
+
+# kinds:
+#   - {kind}
+
 # --- Scope note (boundary conditions with other segments, or exclusions from
 #     this segment's scope) ---
 
