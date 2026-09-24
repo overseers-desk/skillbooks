@@ -266,7 +266,7 @@ proc pad_left  {s w} { format "%${w}s" $s }
 # 3+★), then one cell per channel in scope. Under a campaign the cell
 # is the funnel could>drafted>sent for that channel; a run no campaign
 # anchors has no approach folder, so the cell is the could count alone.
-# Replies are rare and any-channel, so they sit on the name line.
+# Replies are any-channel, so they sit on the name line.
 proc print_report {analysis} {
     global verbose
     dict with analysis {}
