@@ -1379,4 +1379,33 @@ set pc_nocd [spar::progress_counts $pc_contacts]
 assert_eq [dict get $pc_nocd approachable] 2 \
     "empty cdata keeps the whole star band approachable"
 
+# ════════════════════════════════════════════════════════════════════════
+# progress_counts: the per-channel funnel
+# ════════════════════════════════════════════════════════════════════════
+section "progress_counts channels"
+
+set fn_seg [make_temp_segment]
+write_roster_tsv $fn_seg $::std_headers [list \
+    [make_base_row {contact_name "Emailed" stem "fn-sent" email "a@x.com" star_rating 4}] \
+    [make_base_row {contact_name "Both" stem "fn-both" email "b@x.com" linkedin_url "https://linkedin.com/in/b" star_rating 5}] \
+    [make_base_row {contact_name "Drafted" stem "fn-draft" email "c@x.com" star_rating 3}] \
+    [make_base_row {contact_name "Untouched" stem "fn-none" email "d@x.com" facebook_url "https://facebook.com/d" star_rating 4}] \
+    [make_base_row {contact_name "Low" stem "fn-low" email "e@x.com" star_rating 2}]]
+foreach st {fn-sent fn-both fn-draft} { write_profile $fn_seg $st }
+write_approach_yaml $fn_seg fn-sent  [approach_yaml_final_sent_email]
+write_approach_yaml $fn_seg fn-both  [approach_yaml_final_multi_channel]
+write_approach_yaml $fn_seg fn-draft [approach_yaml_final_unsent]
+set fn_contacts [$State refine_segment \
+    [$State classify_segment $fn_seg [approach_dir_of $fn_seg]]]
+set fn [dict get [spar::progress_counts $fn_contacts \
+    [dict create primary_channel email secondary_channel linkedin]] channels]
+assert_eq [dict keys $fn] {email linkedin} "funnel keys follow the campaign's slot order"
+assert_eq [dict get $fn email] {could 4 drafted 3 sent 1 replied 0} \
+    "email: four 3+★ hold it, three final rounds carry it, one actioned"
+assert_eq [dict get $fn linkedin] {could 1 drafted 1 sent 1 replied 0} \
+    "linkedin: the multi-channel contact counts in this funnel too"
+set fn_all [dict get [spar::progress_counts $fn_contacts] channels]
+assert_eq [dict keys $fn_all] {email linkedin facebook phone} "no campaign: every channel"
+assert_eq [dict get $fn_all facebook could] 1 "facebook: held by the untouched contact"
+
 finish_tests
