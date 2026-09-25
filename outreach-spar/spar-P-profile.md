@@ -317,7 +317,7 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 
 ## Mechanism evidence
 
-[Dated evidence that the contact fits the segment's mechanism (`discovery_criteria`), each item with its date and source. A dated act of theirs towards us belongs here (§4.7). Where the segment lists `kinds`, state each kind as published, none published, or not assessed, with source and date, whatever the rubric weighs.]
+[Dated evidence that the contact fits the segment's mechanism (`discovery_criteria`), each item with its date and source. A dated act of theirs towards us belongs here (§4.7). Where the segment lists `kinds`, state each kind as published, none published, or not assessed, with source and date, whatever the rubric weighs. Published means the member's own offer or a dated ceremony of theirs; a register entry is a credential and makes no kind published.]
 
 ## Relevance assessment
 
