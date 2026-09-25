@@ -161,7 +161,7 @@ A has two sub-phases:
 
 ### R — Reply
 
-R begins when a contact's final-round message is sent and ends when a reply is detected. The dispatcher's reply check (T7 in `spar-manager/state-machine.md`) watches the mailbox the campaign names, appends any reply to the contact's approach YAML, and stamps the message's `replied_date`. A reply in any form, on any channel, ends R for that contact: the contact reaches REPLIED, the reply check stops watching them, and the human holds the thread from there. A contact who has not replied stays in R.
+R begins when a contact's final-round message is sent and ends when a reply is detected. The dispatcher's reply check (T7 in `spar-manager/state-machine.md`) watches the mailbox the campaign names, appends any reply to the contact's approach YAML, and stamps the message's `replied_date`. A reply in any form, on any channel, ends R for that contact, whether it comes from the contact or from someone the message reached through them (a colleague answering a forward, a member of their group writing in): the contact reaches REPLIED, the reply check stops watching them, and the human holds the thread from there. A contact who has not replied stays in R.
 
 ## Stage notation
 
