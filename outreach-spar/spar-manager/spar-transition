@@ -359,7 +359,7 @@ set run_label [expr {$segment_mode \
     : "Campaign: $campaign_name"}]
 
 # --- Classify all contacts ---
-# In --auto mode, T1/T2/T3/T4 are the only active transitions and none
+# In --auto mode, T0/T1/T2/T3/T4 are the only active transitions and none
 # of them read parsed-approach fields (#63). Skip the refine pass —
 # cheap classify_segment is enough. Non-auto needs refined fields for
 # T6+ progress reporting; refine via the State's cache so any later
@@ -397,7 +397,7 @@ if {[llength $tid_scopes] == 0} {
 }
 
 # --auto drives the offline state machine. Included T-ids are those
-# whose metadata declares auto_safe=1 (T1/T2/T3/T4). T6 (email send) is
+# whose metadata declares auto_safe=1 (T0/T1/T2/T3/T4). T6 (email send) is
 # excluded because auto_safe=0; T7 has a runner but is kept out for the
 # same reason so the loop stays offline.
 if {$auto_mode} {
@@ -463,7 +463,7 @@ if {$dispatching} {
     # --auto iteration so disk changes from the previous pass feed the
     # next round of transition eligibility.
     #
-    # In --auto mode the only active T-ids are T1/T2/T3/T4 (auto_safe=1),
+    # In --auto mode the only active T-ids are T0/T1/T2/T3/T4 (auto_safe=1),
     # none of which read the refined approach fields; classify_segment
     # alone is the natural fit and transition_eligible refines lazily.
     proc reclassify_contacts {state segment_paths approach_dir {refine 0}} {
@@ -754,7 +754,7 @@ if {$dispatching} {
     }
 
     # ────────────────────────────────────────────────────────────────────
-    # --auto: state-machine loop. Re-classify between iterations so T1→T2
+    # --auto: state-machine loop. Re-classify between iterations so T0→T1→T2
     # and T3→T4 happen in a single invocation.
     # ────────────────────────────────────────────────────────────────────
     if {$auto_mode} {
